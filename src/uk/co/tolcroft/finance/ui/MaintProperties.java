@@ -1,0 +1,386 @@
+package uk.co.tolcroft.finance.ui;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle;
+import javax.swing.SpinnerDateModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
+import uk.co.tolcroft.finance.views.*;
+import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.Exception;
+
+public class MaintProperties implements ActionListener,
+										ItemListener,
+										ChangeListener {
+	/* Properties */
+	private View				theView				= null;
+	private MaintenanceTab		theParent			= null;
+	private JPanel              thePanel			= null;
+	private JPanel              theButtons			= null;
+	private JPanel              theChecks			= null;
+	private JTextField			theDBDriver			= null;
+	private JTextField			theDBConnect		= null;
+	private JTextField			theBaseSSheet		= null;
+	private JTextField			theBackupDir		= null;
+	private JTextField			theBackupFile		= null;
+	private JSpinner			theSpinner			= null;
+	private SpinnerDateModel	theModel			= null;
+	private JCheckBox			theShowDebug		= null;
+	private JCheckBox			theEncryptBackup	= null;
+	private JButton				theOKButton			= null;
+	private JButton				theResetButton		= null;
+	private View.ViewProperties	theExtract			= null;
+	private boolean				refreshingData		= false;
+	
+	/* Access methods */
+	public JPanel       	getPanel()       { return thePanel; }
+	
+	/* Constructor */
+	public MaintProperties(MaintenanceTab pParent) {
+		JLabel	myDBDriver;
+		JLabel	myDBConnect;
+		JLabel	myBaseSSheet;
+		JLabel	myBackupDir;
+		JLabel	myBackupFile;
+		JLabel	myBirthDate;
+		
+		/* Store parent */
+		theParent = pParent;
+		theView	  = pParent.getView();
+		
+		/* Create the labels */
+		myDBDriver 		= new JLabel("Driver String:");
+		myDBConnect 	= new JLabel("Connection String:");
+		myBaseSSheet	= new JLabel("Base Spreadsheet:");
+		myBackupDir		= new JLabel("Backup Directory:");
+		myBackupFile	= new JLabel("Backup FileName:");
+		myBirthDate		= new JLabel("BirthDate:");
+
+		/* Create the text fields */
+		theDBDriver 	= new JTextField();
+		theDBConnect 	= new JTextField();
+		theBaseSSheet	= new JTextField();
+		theBackupDir	= new JTextField();
+		theBackupFile	= new JTextField();
+		
+		/* Create the check boxes */
+		theShowDebug		= new JCheckBox("Show Debug");
+		theEncryptBackup	= new JCheckBox("Encrypt Backups");
+
+		/* Create the spinner */
+		theModel    = new SpinnerDateModel();
+		theSpinner  = new JSpinner(theModel);
+		theSpinner.setEditor(new JSpinner.DateEditor(theSpinner, "dd-MMM-yyyy"));
+		
+		/* Create the buttons */
+		theOKButton 	= new JButton("OK");
+		theResetButton 	= new JButton("Reset");
+		
+		/* Add listeners */
+		theDBDriver.addActionListener(this);
+		theDBConnect.addActionListener(this);
+		theBaseSSheet.addActionListener(this);
+		theBackupDir.addActionListener(this);
+		theBackupFile.addActionListener(this);
+		theModel.addChangeListener(this);
+		theOKButton.addActionListener(this);
+		theResetButton.addActionListener(this);
+		theShowDebug.addItemListener(this);
+		theEncryptBackup.addItemListener(this);
+		
+		/* Create the buttons panel */
+		theButtons = new JPanel();
+		theButtons.setBorder(javax.swing.BorderFactory
+				.createTitledBorder("Save Options"));
+		
+		/* Create the layout for the panel */
+	    GroupLayout myLayout = new GroupLayout(theButtons);
+	    theButtons.setLayout(myLayout);
+
+	    /* Set the layout */
+        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+        	.addGroup(myLayout.createSequentialGroup()
+        		.addContainerGap()
+                .addComponent(theOKButton)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(theResetButton)
+                .addContainerGap())
+        );
+        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addComponent(theOKButton)
+            .addComponent(theResetButton)
+        );
+            
+		/* Create the buttons panel */
+		theChecks = new JPanel();
+		theChecks.setBorder(javax.swing.BorderFactory
+				.createTitledBorder("Options"));
+		
+		/* Create the layout for the panel */
+	    myLayout = new GroupLayout(theChecks);
+	    theChecks.setLayout(myLayout);
+
+	    /* Set the layout */
+        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+        	.addGroup(myLayout.createSequentialGroup()
+        		.addContainerGap()
+                .addComponent(theShowDebug)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(theEncryptBackup)
+                .addContainerGap())
+        );
+        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addComponent(theShowDebug)
+            .addComponent(theEncryptBackup)
+        );
+            
+		/* Create the panel */
+		thePanel = new JPanel();
+		
+		/* Create the layout for the panel */
+	    myLayout = new GroupLayout(thePanel);
+	    thePanel.setLayout(myLayout);
+		    
+	    /* Set the layout */
+        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	    	.addGroup(myLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                	.addComponent(theButtons)
+                	.addComponent(theChecks)
+                    .addGroup(myLayout.createSequentialGroup()
+                        .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                            .addComponent(myDBDriver)
+                            .addComponent(myDBConnect)
+                            .addComponent(myBaseSSheet)
+                            .addComponent(myBackupDir)
+                            .addComponent(myBackupFile)
+                            .addComponent(myBirthDate))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addComponent(theDBDriver, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(theDBConnect, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(theBaseSSheet, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(theBackupDir, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(theBackupFile, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(theSpinner, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE))))
+  	            .addContainerGap())
+        );
+        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+		   	.addGroup(myLayout.createSequentialGroup()
+                .addContainerGap()
+	            .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	               	.addComponent(myDBDriver)
+                    .addComponent(theDBDriver, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+    	        .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+        	       	.addComponent(myDBConnect)
+                    .addComponent(theDBConnect, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+	            .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	               	.addComponent(myBaseSSheet)
+                    .addComponent(theBaseSSheet, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+	            .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	               	.addComponent(myBackupDir)
+                    .addComponent(theBackupDir, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+	            .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	               	.addComponent(myBackupFile)
+                    .addComponent(theBackupFile, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+	            .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	               	.addComponent(myBirthDate)
+                    .addComponent(theSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+	               	.addComponent(theChecks)
+	               	.addComponent(theButtons))
+        );            
+	}
+	
+	/* hasUpdates */
+	public boolean hasUpdates() {
+		return ((theExtract != null) && (theExtract.hasChanges()));
+	}
+	
+	/* performCommand */
+	public void performCommand(financeCommand pCmd) {
+		/* Switch on command */
+		switch (pCmd) {
+			case OK:
+				try { theExtract.applyChanges(); } catch (Exception e) {}
+				break;
+			case RESETALL:
+				theExtract.resetData();
+				break;
+		}
+		
+		/* Notify Status changes */
+		notifyChanges();			
+	}
+	
+	/* Note that changes have been made */
+	public void notifyChanges() {
+		/* Show the account */
+		showProperties();
+		
+		/* Adjust visible tabs */
+		theParent.setVisibleTabs();
+	}
+	
+	/* refreshData */
+	public void refreshData() {
+		/* Create a new view */
+		theExtract = theView.new ViewProperties();
+
+		/* Note that we are refreshing Data */
+		refreshingData = true;
+		
+		/* Show the BirthDate */
+		theModel.setValue(theExtract.getBirthDate().getDate());
+		
+		/* Set the check boxes */
+		theShowDebug.setSelected(theExtract.doShowDebug());
+		theEncryptBackup.setSelected(theExtract.doEncryptBackups());
+		
+		/* Notify the changes */
+		notifyChanges();
+
+		/* Note that we are finished refreshing Data */
+		refreshingData = false;
+	}
+	
+	/* Show Properties */
+	public void showProperties() {
+		/* Check for changes */
+		theExtract.checkChanges();
+		
+		/* Show the DB details */
+		theDBDriver.setText(theExtract.getDBDriver());
+		theDBConnect.setText(theExtract.getDBConnection());
+		
+		/* Show the DB details */
+		theBackupDir.setText(theExtract.getBackupDir());
+		theBackupFile.setText(theExtract.getBackupFile());
+		
+		/* Show the BaseSpreadsheet */
+		theBaseSSheet.setText(theExtract.getBaseSpreadSheet());
+		
+		/* Enable the buttons */
+		theOKButton.setEnabled(theExtract.hasChanges());
+		theResetButton.setEnabled(theExtract.hasChanges());
+	}
+	
+	/* Update text */
+	private void updateText() {
+		String  myText;
+
+		/* Access the value */
+		myText = theDBDriver.getText();
+		if (myText.length() != 0) theExtract.setDBDriver(myText);    
+
+		/* Access the value */
+		myText = theDBConnect.getText();
+		if (myText.length() != 0) theExtract.setDBConnection(myText);
+
+		/* Access the value */
+		myText = theBaseSSheet.getText();
+		if (myText.length() != 0) theExtract.setBaseSpreadSheet(myText);
+
+		/* Access the value */
+		myText = theBackupDir.getText();
+		if (myText.length() != 0) theExtract.setBackupDir(myText);
+
+		/* Access the value */
+		myText = theBackupFile.getText();
+		if (myText.length() != 0) theExtract.setBackupFile(myText);
+	}
+	
+	/* stateChanged listener event */
+	public void stateChanged(ChangeEvent evt) {
+		Date myDate;
+
+		/* Ignore selection if refreshing data */
+		if (refreshingData) return;
+		
+		/* If this event relates to the maturity box */
+		if (evt.getSource() == (Object)theModel) {
+			/* Access the value */
+			myDate = new Date(theModel.getDate());
+
+			/* Store the value */
+			theExtract.setBirthDate(myDate);
+			
+			/* Update the text */
+			updateText();
+			
+			/* Note that changes have occurred */
+			notifyChanges();
+		}								
+	}
+	
+	/* ActionPerformed listener event */
+	public void actionPerformed(ActionEvent evt) {			
+		/* If this event relates to the OK button */
+		if (evt.getSource() == (Object)theOKButton) {
+			/* Perform the command */
+			performCommand(financeCommand.OK);
+		}
+		
+		/* If this event relates to the reset button */
+		else if (evt.getSource() == (Object)theResetButton) {
+			/* Perform the command */
+			performCommand(financeCommand.RESETALL);
+		}
+		
+		/* If this event relates to the name field */
+		else if ((evt.getSource() == (Object)theDBDriver)   ||
+		         (evt.getSource() == (Object)theDBConnect)  ||
+		         (evt.getSource() == (Object)theBaseSSheet) ||
+		         (evt.getSource() == (Object)theBackupDir)  ||
+		         (evt.getSource() == (Object)theBackupFile)) {
+			/* Update the text */
+			updateText();
+			
+			/* Notify changes */
+			notifyChanges();
+		}			
+	}			
+	
+	/* ItemStateChanged listener event */
+	public void itemStateChanged(ItemEvent evt) {
+		/* Ignore selection if refreshing data */
+		if (refreshingData) return;
+					
+		/* If this event relates to the showDebug box */
+		if (evt.getSource() == (Object)theShowDebug) {
+			/* Note the new criteria and re-build lists */
+			theExtract.setDoShowDebug(theShowDebug.isSelected());
+
+			/* Update the text */
+			updateText();
+			
+			/* Notify changes */
+			notifyChanges();
+		}
+
+		/* If this event relates to the encryptBackup box */
+		if (evt.getSource() == (Object)theEncryptBackup) {
+			/* Note the new criteria and re-build lists */
+			theExtract.setDoEncryptBackups(theEncryptBackup.isSelected());
+
+			/* Update the text */
+			updateText();
+			
+			/* Notify changes */
+			notifyChanges();
+		}
+	}
+}
