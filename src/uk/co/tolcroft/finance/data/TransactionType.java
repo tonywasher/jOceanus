@@ -143,7 +143,7 @@ public class TransactionType extends DataItem {
 			theClass = TransClass.DIVIDEND;
 			theOrder = 2;
 		}
-		else if (sName.equals("UnitTrustDiv")) {
+		else if (sName.equals("UnitTrustDividend")) {
 			theClass = TransClass.UNITTRUSTDIV;
 			theOrder = 3;
 		}
@@ -159,93 +159,101 @@ public class TransactionType extends DataItem {
 			theClass = TransClass.BENEFIT;
 			theOrder = 6;
 		}
+		else if (sName.equals("TaxFreeInterest")) {
+			theClass = TransClass.TAXFREEINTEREST;
+			theOrder = 7;
+		}
+		else if (sName.equals("TaxFreeDividend")) {
+			theClass = TransClass.TAXFREEDIVIDEND;
+			theOrder = 8;
+		}
 		else if (sName.equals("TaxFreeIncome")) {
 			theClass = TransClass.TAXFREEINCOME;
-			theOrder = 7;
+			theOrder = 9;
 		}
 		else if (sName.equals("Inherited")) {
 			theClass = TransClass.INHERITED;
-			theOrder = 8;
+			theOrder = 10;
 		}
 		else if (sName.equals("DebtInterest")) {
 			theClass = TransClass.DEBTINTEREST;
-			theOrder = 9;
+			theOrder = 11;
 		}
 		else if (sName.equals("RentalIncome")) {
 			theClass = TransClass.RENTALINCOME;
-			theOrder = 10;
-		}
-		else if (sName.equals("DirectorsLoan")) {
-			theClass = TransClass.DIRLOAN;
-			theOrder = 11;
+			theOrder = 12;
 		}
 		else if (sName.equals("MarketGrowth")) {
 			theClass = TransClass.MKTGROWTH;
-			theOrder = 12;
+			theOrder = 13;
 		}
 		else if (sName.equals("MarketShrink")) {
 			theClass = TransClass.MKTSHRINK;
-			theOrder = 13;
+			theOrder = 14;
 		}
 		else if (sName.equals("MarketIncome")) {
 			theClass = TransClass.MKTINCOME;
-			theOrder = 14;
+			theOrder = 15;
 		}
 		else if (sName.equals("Expense")) {
 			theClass = TransClass.EXPENSE;
-			theOrder = 15;
+			theOrder = 16;
 		}
 		else if (sName.equals("Recovered")) {
 			theClass = TransClass.RECOVERED;
-			theOrder = 16;
+			theOrder = 17;
 		}
 		else if (sName.equals("Endowment")) {
 			theClass = TransClass.ENDOWMENT;
-			theOrder = 17;
+			theOrder = 18;
 		}
 		else if (sName.equals("Mortgage")) {
 			theClass = TransClass.MORTGAGE;
-			theOrder = 18;
+			theOrder = 19;
 		}
 		else if (sName.equals("Insurance")) {
 			theClass = TransClass.INSURANCE;
-			theOrder = 19;
+			theOrder = 20;
 		}
 		else if (sName.equals("ExtraTax")) {
 			theClass = TransClass.EXTRATAX;
-			theOrder = 20;
+			theOrder = 21;
 		}
 		else if (sName.equals("WriteOff")) {
 			theClass = TransClass.WRITEOFF;
-			theOrder = 21;
+			theOrder = 22;
 		}
 		else if (sName.equals("NatInsurance")) {
 			theClass = TransClass.NATINSURANCE;
-			theOrder = 22;
+			theOrder = 23;
+		}
+		else if (sName.equals("TaxCredit")) {
+			theClass = TransClass.TAXCREDIT;
+			theOrder = 24;
 		}
 		else if (sName.equals("TaxRelief")) {
 			theClass = TransClass.TAXRELIEF;
-			theOrder = 23;
+			theOrder = 25;
 		}
 		else if (sName.equals("TaxOwed")) {
 			theClass = TransClass.TAXOWED;
-			theOrder = 24;
+			theOrder = 26;
 		}
 		else if (sName.equals("TaxRefund")) {
 			theClass = TransClass.TAXREFUND;
-			theOrder = 25;
+			theOrder = 27;
 		}
 		else if (sName.equals("Transfer")) {
 			theClass = TransClass.TRANSFER;
-			theOrder = 26;
+			theOrder = 28;
 		}
 		else if (sName.equals("CashRecovery")) {
 			theClass = TransClass.CSHRECOVER;
-			theOrder = 27;
+			theOrder = 29;
 		}
 		else if (sName.equals("CashPayment")) {
 			theClass = TransClass.CSHPAY;
-			theOrder = 28;
+			theOrder = 30;
 		}
 		else {
 			throw new Exception(ExceptionClass.DATA,
@@ -325,6 +333,14 @@ public class TransactionType extends DataItem {
 	public boolean isDividend()  { 
 		return (theClass == TransClass.DIVIDEND); }
 	
+	/**
+	 * Determine whether the TransactionType is a interest
+	 * 
+	 * @return <code>true</code> if the transaction is interest, <code>false</code> otherwise.
+	 */
+	public boolean isInterest()  { 
+		return (theClass == TransClass.INTEREST); }
+
 	/**
 	 * Determine whether the TransactionType is a cash payment
 	 * 
@@ -461,6 +477,26 @@ public class TransactionType extends DataItem {
 	}		
 	
 	/**
+	 * Determine whether the TransactionType is hidden
+	 * 
+	 * @return <code>true</code> if the transaction is hidden, <code>false</code> otherwise.
+	 */
+	public boolean isHidden()  { 
+		switch (theClass) {
+			case UNITTRUSTDIV:
+			case TAXFREEDIVIDEND:
+			case TAXFREEINTEREST:
+			case MKTSHRINK:
+			case MKTGROWTH:
+			case TAXCREDIT:
+				return true;
+			default:
+				return false;
+		}
+	}		
+	
+	/**
+	/**
 	 * Determine whether the TransactionType is a tax credit
 	 * 
 	 * @return <code>true</code> if the transaction is tax credit, <code>false</code> otherwise.
@@ -505,7 +541,6 @@ public class TransactionType extends DataItem {
 			case DIVIDEND:
 			case UNITTRUSTDIV:
 			case RECOVERED:
-			case DIRLOAN:
 				return true;
 			default:
 				return false;
@@ -720,11 +755,6 @@ public class TransactionType extends DataItem {
 		TAXEDINCOME,
 
 		/**
-		 * Tax Free Income
-		 */
-		TAXFREEINCOME,
-
-		/**
 		 * Interest Income
 		 */
 		INTEREST,
@@ -748,6 +778,21 @@ public class TransactionType extends DataItem {
 		 * Capital Gain
 		 */
 		CAPITALGAIN,
+
+		/**
+		 * Tax Free Interest
+		 */
+		TAXFREEINTEREST,
+
+		/**
+		 * Tax Free Dividend
+		 */
+		TAXFREEDIVIDEND,
+
+		/**
+		 * Tax Free Income
+		 */
+		TAXFREEINCOME,
 
 		/**
 		 * Benefit
@@ -845,14 +890,14 @@ public class TransactionType extends DataItem {
 		DEBTINTEREST, 
 
 		/**
-		 * Directors Loan
-		 */
-		DIRLOAN,     
-
-		/**
 		 * Write Off
 		 */
 		WRITEOFF,
+
+		/**
+		 * Tax Credit
+		 */
+		TAXCREDIT,
 
 		/**
 		 * Rental Income

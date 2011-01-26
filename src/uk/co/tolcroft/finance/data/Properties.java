@@ -66,12 +66,12 @@ public class Properties {
 	/**
 	 * Default Database connection string
 	 */
-	private final static String	defDBConnection	= "jdbc:sqlserver://TONYLAP;instanceName=SQLEXPRESS1;database=NewFinance;integratedSecurity=true";
+	private final static String	defDBConnection	= "jdbc:sqlserver://Tony-LapTop;instanceName=SQLEXPRESS;database=Finance;integratedSecurity=true";
 	
 	/**
 	 * Default Source old format spreadsheet
 	 */
-	private final static String defBaseSSheet	= "C:\\clients\\Self\\tax\\Financenew1.xls";
+	private final static String defBaseSSheet	= "C:\\users\\Tony\\work\\Self\\tax\\Financenew1.xls";
 			
 	/**
 	 * Default Backup directory name

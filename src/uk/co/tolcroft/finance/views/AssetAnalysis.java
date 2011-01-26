@@ -152,7 +152,8 @@ public class AssetAnalysis {
 		
 		/* If the debit account is an asset */
 		myAccount = pEvent.getDebit();
-		if (!myAccount.isExternal()) {
+		if ((!myAccount.isExternal()) &&
+			(!pEvent.isInterest())) {
 			/* Locate its bucket */
 			myBucket = theBuckets.getAccountBucket(myAccount);
 			
@@ -846,8 +847,8 @@ public class AssetAnalysis {
 			if (myTax != null)
 				theInvestment.subtractAmount(myTax);				
 			
-			/* If this is a dividend re-investment */
-			if (pEvent.isDividendReInvestment()) {
+			/* If this is a dividend */
+			if (pEvent.getTransType().isDividend()) {
 				/* Adjust the dividends total */
 				theDividends.addAmount(myAmount);				
 				if (myTax != null)

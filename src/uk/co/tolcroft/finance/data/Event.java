@@ -498,9 +498,10 @@ public class Event extends DataItem {
 			addError("Description is too long", FIELD_DESC);
 		}
 			
-		/* Credit/Debit cannot be the same unless this is a dividend re-investment */
+		/* Credit/Debit cannot be the same unless this is a 
+		 * dividend re-investment or interest payment */
 		if ((!Utils.differs(getCredit(), getDebit())) &&
-			(!isDividendReInvestment())) {
+			(!isDividendReInvestment()) && (!isInterest())) {
 			addError("Credit and debit accounts are identical", FIELD_DEBIT);
 			addError("Credit and debit accounts are identical", FIELD_CREDIT);
 		}
@@ -512,9 +513,9 @@ public class Event extends DataItem {
 			addError("Dividend re-investment requires identical credit and debit accounts", FIELD_CREDIT);
 		}
 		
-		/* Market Adjustment is no longer allowed */
-		if ((getTransType() != null) &&	(getTransType().isMarketAdjust())) {
-			addError("Explicit market adjustment disallowed", FIELD_TRNTYP);
+		/* Hidden Events are not allowed */
+		if ((getTransType() != null) &&	(getTransType().isHidden())) {
+			addError("Hidden transaction types are not allowed", FIELD_TRNTYP);
 		}
 		
 		/* Check credit account */
@@ -574,7 +575,7 @@ public class Event extends DataItem {
 		
 		
 		/* If we need a tax credit */
-		else if ((getTransType() != null) && (getTransType().needsTaxCredit())) {
+		else if ((getTransType() != null) && (needsTaxCredit())) {
 			/* Tax Credit must be non-null and positive */
 			if ((getTaxCredit() == null) || (!getTaxCredit().isPositive())) {
 				addError("TaxCredit must be non-null", FIELD_TAXCREDIT);
@@ -683,8 +684,26 @@ public class Event extends DataItem {
 		boolean myResult = false;
 	
 		/* Check for dividend re-investment */
-		if ((getTransType().isDividend()) &&
+		if ((getTransType() != null) &&
+		    (getTransType().isDividend()) &&
 			(getCredit().isPriced()))
+			myResult = true;
+				
+		/* Return the result */
+		return myResult;
+	}
+
+	/**
+	 * Determines whether an event is an interest payment
+	 * 
+	 * @return interest true/false 
+	 */
+	public boolean isInterest() {
+		boolean myResult = false;
+	
+		/* Check for dividend re-investment */
+		if ((getTransType() != null) &&
+		    (getTransType().isInterest()))
 			myResult = true;
 				
 		/* Return the result */
@@ -699,15 +718,20 @@ public class Event extends DataItem {
 	public boolean needsTaxCredit() {
 		boolean myResult = false;
 	
-		/* If this is a Taxable Gain we need a tax credit */
-		if (getTransType().isTaxableGain())
-			myResult = true;
-			
-		/* Check for dividend */
-		if ((getTransType().isDividend()) &&
-			(!getDebit().isTaxFree()))
-			myResult = true;
-				
+		/* Switch on transaction type */
+		switch (getTransType().getTranClass()) {
+			/* If this is a Taxable Gain/TaxedIncome we need a tax credit */
+			case TAXABLEGAIN:
+			case TAXEDINCOME:
+				myResult = true;
+				break;
+			/* Check for dividend/interest */
+			case DIVIDEND: 
+			case INTEREST:
+				myResult = !getDebit().isTaxFree();
+				break;
+		}
+		
 		/* Return the result */
 		return myResult;
 	}

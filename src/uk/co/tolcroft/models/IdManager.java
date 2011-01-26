@@ -156,6 +156,7 @@ public class IdManager<T extends DataItem> {
 		 * @param pId the id of the item to retrieve 
 		 * @param pItem the item to store (or <code>null</code>) 
 		 */
+		@SuppressWarnings("unchecked")
 		private void setItem(long pId, T pItem) {
 			long 	myIndex 	= pId;
 			long 	myAdjust	= 1;

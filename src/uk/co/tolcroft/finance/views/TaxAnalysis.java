@@ -108,7 +108,7 @@ public class TaxAnalysis {
 			(!myTransType.isCashPayment()) &&
 			(!myTransType.isCashRecovery())) {
 			/* Locate its bucket */
-			myBucket = theTransBuckets.getTransBucket(myTransType);
+			myBucket = theTransBuckets.getTransBucket(pEvent);
 			
 			/* Add the Event to the bucket */
 			myBucket.addEvent(pEvent);
@@ -127,12 +127,14 @@ public class TaxAnalysis {
 	 * 
 	 * @param pBucket the market movement
 	 */
-	public void addMarketMovement(AssetAnalysis.AssetBucket pBucket) {
+	public void addMarketMovement(AssetAnalysis.AssetBucket pMovement) {
 		TranBucket     	myBucket;
 		Number.Money	myMovement;
 		
 		/* Access the current movement */
-		myMovement = pBucket.getMarket();
+		myMovement = new Number.Money(pMovement.getMarket());
+		if (pMovement.getDividends().isNonZero())
+			myMovement.subtractAmount(pMovement.getDividends());
 		
 		/* If the movement is positive */
 		if (myMovement.isPositive())
@@ -146,7 +148,6 @@ public class TaxAnalysis {
 		/* else this is a market shrink */
 		else {
 			/* Negate the value */
-			myMovement = new Number.Money(myMovement);
 			myMovement.negate();
 			
 			/* Access the Market Growth bucket */
@@ -247,13 +248,16 @@ public class TaxAnalysis {
 				 .searchFor(TaxClass.TAXFREE));
 		myBucket.addBucket(theTransBuckets
 				 .getTransBucket(theTransTypes
+				   		 .searchFor(TransClass.TAXFREEINTEREST)));
+		myBucket.addBucket(theTransBuckets
+				 .getTransBucket(theTransTypes
+				   		 .searchFor(TransClass.TAXFREEDIVIDEND)));
+		myBucket.addBucket(theTransBuckets
+				 .getTransBucket(theTransTypes
 				   		 .searchFor(TransClass.TAXFREEINCOME)));
 		myBucket.addBucket(theTransBuckets
 	             .getTransBucket(theTransTypes
 	            		 .searchFor(TransClass.INHERITED)));
-		myBucket.addBucket(theTransBuckets
-	             .getTransBucket(theTransTypes
-	            		 .searchFor(TransClass.DIRLOAN)));
 		myBucket.addBucket(theTransBuckets
 	             .getTransBucket(theTransTypes
 	            		 .searchFor(TransClass.DEBTINTEREST)));
@@ -1671,6 +1675,49 @@ public class TaxAnalysis {
 			return myCurr;
 		}
 		
+		/**
+		 * Obtain or allocate a bucket for an Event
+		 * 
+		 * @param  pEvent Event
+		 * @return The Transact Bucket
+		 */
+		private TranBucket getTransBucket(Event pEvent) {
+			TransactionType myTransType;
+			Account			myAccount;
+			TranBucket   	myBucket;
+			
+			/* Access the TransType and account type */
+			myTransType = pEvent.getTransType();
+			myAccount 	= pEvent.getDebit();
+			
+			/* If this is Tax Free interest */
+			if ((myTransType.isInterest()) && (myAccount.isTaxFree())) {
+				/* Swap the transaction type */
+				myTransType = theTransTypes.searchFor(TransClass.TAXFREEINTEREST);
+			}
+			
+			/* If this is Dividend */
+			else if (myTransType.isDividend()) {
+				/* If this is Tax Free */
+				if (myAccount.isTaxFree()) {
+					/* Swap the transaction type */
+					myTransType = theTransTypes.searchFor(TransClass.TAXFREEDIVIDEND);					
+				}
+				
+				/* else if this is unit trust, switch the transaction */
+				else if (myAccount.isUnitTrust()) {
+					/* Swap the transaction type */
+					myTransType = theTransTypes.searchFor(TransClass.UNITTRUSTDIV);
+				}
+			}
+			
+			/* Find the appropriate transaction bucket */
+			myBucket = getTransBucket(myTransType);
+					
+			/* Return the bucket */
+			return myBucket;
+		}
+			
 		/**
 		 * Obtain or allocate a bucket for a transact type
 		 * 

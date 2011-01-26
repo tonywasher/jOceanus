@@ -83,13 +83,26 @@ public class IncomeAnalysis {
 				/* Subtract from expense */
 				myBucket.subtractExpenseEvent(pEvent);					
 			}
-			else	
+			else {	
 				/* Add the Income Event to the bucket */
-				myBucket.addIncomeEvent(pEvent);	
+				myBucket.addIncomeEvent(pEvent);
+			}
 		}
 
-		/* If this is a dividend re-investment */
-		if (pEvent.isDividendReInvestment()) {
+		/* If this is a dividend */
+		if (myTransType.isDividend()) {
+			/* Access the parent account */
+			myAccount = myAccount.getParent();
+			
+			/* Locate its bucket */
+			myBucket = theBuckets.getAccountBucket(myAccount);
+			
+			/* Add the Income Event to the bucket */
+			myBucket.addIncomeEvent(pEvent);	
+		}
+
+		/* If this is an interest payment */
+		if (pEvent.isInterest()) {
 			/* Access the parent account */
 			myAccount = myAccount.getParent();
 			
@@ -102,7 +115,7 @@ public class IncomeAnalysis {
 
 		/* If there is a tax credit associated with the item */
 		if (pEvent.getTaxCredit() != null) {
-			/* Access the taxman account */
+			/* Access the TaxMan account */
 			myAccount = theAccounts.getTaxMan();
 			
 			/* Locate its bucket */
@@ -126,7 +139,7 @@ public class IncomeAnalysis {
 		myBucket = theBuckets.getAccountBucket(theAccounts.getMarket());
 		
 		/* Access the current market movement */
-		myMovement = pMovement.getMarket();
+		myMovement = new Money(pMovement.getMarket());
 		if (pMovement.getDividends().isNonZero())
 			myMovement.subtractAmount(pMovement.getDividends());
 		

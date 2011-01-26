@@ -199,7 +199,7 @@ public class ReportSelect implements	ActionListener,
 			/* If we have a selected year */
 			if (theYear != null) {
 				/* Select it in the new list */
-				theYearsBox.setSelectedItem(theYear.getDate().getYear());
+				theYearsBox.setSelectedItem(Integer.toString(theYear.getDate().getYear()));
 			}
 		
 			/* Else we have no year currently selected */

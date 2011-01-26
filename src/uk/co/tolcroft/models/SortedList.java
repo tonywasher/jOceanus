@@ -336,11 +336,12 @@ public class SortedList<T extends SortedList.linkObject> implements java.util.Li
 	 *  @param o - the relevant object
 	 *  @param isHidden - is the object hidden
 	 */
+	@SuppressWarnings("unchecked")
 	public void setHidden(T pItem, boolean isHidden) {
 		linkNode	myNode;
 		int			iAdjust;
 		
-		/* Reject if the object is null */
+		/* Reject if these object is null */
 		if (pItem == null) throw new java.lang.NullPointerException();
 		
 		/* Access the node of the item */
@@ -581,6 +582,7 @@ public class SortedList<T extends SortedList.linkObject> implements java.util.Li
 	 * @param o the item to remove
 	 * @return <code>true/false</code> was the item removed
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean remove(Object o) {
 		linkNode	myNode;
 		linkObject	myItem;
@@ -624,6 +626,7 @@ public class SortedList<T extends SortedList.linkObject> implements java.util.Li
 	 * @param o the object to find the index of
 	 * @return the index within the list (or -1 if not visible/present in the list)
 	 */
+	@SuppressWarnings("unchecked")
 	public int indexOf(Object o) {
 		int 			iIndex = 0;
 		linkNode		myNode;
@@ -666,6 +669,7 @@ public class SortedList<T extends SortedList.linkObject> implements java.util.Li
 	 * @param o the object to check
 	 * @return <code>true/false</code>
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean contains(Object o) {
 		linkNode		myNode;
 		linkObject		myItem;
@@ -694,6 +698,7 @@ public class SortedList<T extends SortedList.linkObject> implements java.util.Li
 	 * @param pItem the item from which to find the next item
 	 * @return the next item or <code>null</code>
 	 */
+	@SuppressWarnings("unchecked")
 	public T peekNext(T pItem) {
 		linkNode myNode;
 		
@@ -718,6 +723,7 @@ public class SortedList<T extends SortedList.linkObject> implements java.util.Li
 	 * @param pItem the item from which to find the previous item
 	 * @return the previous item or <code>null</code>
 	 */
+	@SuppressWarnings("unchecked")
 	public T peekPrevious(T pItem) {
 		linkNode myNode;
 		
@@ -1369,6 +1375,7 @@ public class SortedList<T extends SortedList.linkObject> implements java.util.Li
 		 * @param iIndex the index of the node
 		 * @return the relevant node (or null)
 		 */
+		@SuppressWarnings("unchecked")
 		private linkNode getNodeAtIndex(int iIndex) {
 			int 		iMapIndex;
 			linkNode 	myNode;
@@ -1399,6 +1406,7 @@ public class SortedList<T extends SortedList.linkObject> implements java.util.Li
 		 * Insert a map node
 		 * @param pNode the node to insert
 		 */
+		@SuppressWarnings("unchecked")
 		private void insertNode(linkNode pNode) {
 			int			iIndex;
 			int 		iMapIndex;
@@ -1456,6 +1464,7 @@ public class SortedList<T extends SortedList.linkObject> implements java.util.Li
 		 * Remove a map node
 		 * @param pNode the node to remove
 		 */
+		@SuppressWarnings("unchecked")
 		private void removeNode(linkNode pNode) {
 			int			iIndex;
 			int 		iMapIndex;

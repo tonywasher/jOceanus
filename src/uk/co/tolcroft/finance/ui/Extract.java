@@ -266,8 +266,11 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		/* Access the frequency iterator */
 		myIterator = theTransTypes.listIterator();
 		
-		/* Add the Frequency values to the frequencies box */
+		/* Add the Transaction values to the frequencies box */
 		while ((myType  = myIterator.next()) != null) {
+			/* Skip hidden values */
+			if (myType.isHidden()) continue;
+			
 			/* Add the item to the list */
 			theTranBox.addItem(myType.getName());
 			tranPopulated = true;
@@ -527,7 +530,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 						case COLUMN_YEARS:
 							return myEvent.getTransType().isTaxableGain();
 						case COLUMN_TAXCRED:
-							return myEvent.getTransType().needsTaxCredit();
+							return myEvent.needsTaxCredit();
 						default:	
 							return true;
 					}

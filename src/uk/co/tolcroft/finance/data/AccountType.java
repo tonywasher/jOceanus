@@ -364,26 +364,11 @@ public class AccountType extends DataItem {
 	}
 		
 	/**
-	 * Determine whether the AccountType is standard dividend provider
-	 * 
-	 * @return <code>true</code> if the account is a standard dividend provider, <code>false</code> otherwise.
-	 */
-	public boolean isStdDividend() {
-		switch (theClass) {
-			case SHARES:
-			case EMPLOYER:
-				return true;
-			default:
-				return false;
-		}
-	}
-		
-	/**
 	 * Determine whether the AccountType is unit dividend provider
 	 * 
 	 * @return <code>true</code> if the account is a unit dividend provider, <code>false</code> otherwise.
 	 */
-	public boolean isUnitDividend() {
+	public boolean isUnitTrust() {
 		switch (theClass) {
 			case UNITTRUST:
 				return true;

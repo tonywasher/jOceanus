@@ -336,7 +336,6 @@ public class DataSet implements htmlDumpable {
 		/* Switch on the TransType */
 		switch (pTrans.getTranClass()) {
 			case TAXFREEINCOME:
-			case INTEREST:
 			case TAXABLEGAIN:
 				if (!isCredit) myResult = (pType.isExternal() && !pType.isCash());
 				else           myResult = !pType.isExternal();
@@ -346,8 +345,11 @@ public class DataSet implements htmlDumpable {
 				if (!isCredit) myResult = pType.isDividend();
 				else           myResult = !pType.isExternal();
 				break;
+			case INTEREST:
+				if (!isCredit) myResult = pType.isMoney();
+				else           myResult = pType.isMoney();
+				break;
 			case TAXEDINCOME:
-			case DIRLOAN:
 				if (!isCredit) myResult = pType.isEmployer();
 				else           myResult = !pType.isExternal();
 				break;

@@ -424,6 +424,7 @@ public class Account extends DataItem {
 	protected boolean isWriteOff()  { return getActType().isWriteOff(); }
 	protected boolean isEndowment() { return getActType().isEndowment(); }
 	public	boolean isTaxFree()   { return getActType().isTaxFree(); }
+	public	boolean isUnitTrust() { return getActType().isUnitTrust(); }
 	public	boolean isDebt()      { return getActType().isDebt(); }
 	public 	boolean isChild()     { return getActType().isChild(); }
 	public 	boolean isBond()      { return getActType().isBond(); }

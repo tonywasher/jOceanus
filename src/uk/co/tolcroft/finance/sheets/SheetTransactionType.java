@@ -78,15 +78,6 @@ public class SheetTransactionType {
 					/* Access the cell by reference */
 					myCell = mySheet.getCell(myCol, i);
 				
-					/* If the event is a Tax Credit */
-					if ((myCell.getContents().compareTo("TaxPaid")    == 0) ||
-						(myCell.getContents().compareTo("TaxPaidInt") == 0) ||
-						(myCell.getContents().compareTo("TaxPaidDiv") == 0) ||
-						(myCell.getContents().compareTo("TaxPaidUnit") == 0)) {
-						/* Ignore it */
-						continue;						
-					}
-				
 					/* Add the value into the finance tables */
 					myList.addItem(0, myCell.getContents());
 				

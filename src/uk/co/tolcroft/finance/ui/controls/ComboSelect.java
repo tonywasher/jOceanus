@@ -38,8 +38,8 @@ public class ComboSelect {
 		
 		/* Loop through the TransType values adding to the types box */
 		while ((myTran = myTranIterator.next()) != null) {
-			/* Ignore market adjust */
-			if (myTran.isMarketAdjust()) continue;
+			/* Ignore hidden values */
+			if (myTran.isHidden()) continue;
 			
 			/* Access the list for this transaction type */
 			myTranList = searchFor(myTran);
