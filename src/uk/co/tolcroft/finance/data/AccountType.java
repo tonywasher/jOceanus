@@ -117,9 +117,9 @@ public class AccountType extends DataItem {
 	 * 
 	 * @throws {@link Exception} if type is not supported
 	 */
-	protected AccountType(List 		pList,
-			              long      uId, 
-			              String    sName) throws Exception {
+	private AccountType(List 	pList,
+			            long    uId, 
+			            String	sName) throws Exception {
 		super(pList, uId);
 		Values myObj = new Values();
 		setObj(myObj);
@@ -493,6 +493,21 @@ public class AccountType extends DataItem {
 	}
 	
 	/**
+	 * Determine whether the AccountType can alias
+	 * 
+	 * @return <code>true</code> if the account can alias, <code>false</code> otherwise.
+	 */
+	public boolean canAlias() {
+		switch (theClass) {
+			case UNITISA:
+			case UNITTRUST:
+				return true;
+			default:
+				return false;
+		}
+	}
+	
+	/**
 	 * Determine whether the AccountType is cash
 	 * 
 	 * @return <code>true</code> if the account is cash, <code>false</code> otherwise.
@@ -554,6 +569,13 @@ public class AccountType extends DataItem {
 	 * @return <code>true</code> if the account is benefit, <code>false</code> otherwise.
 	 */
 	protected boolean isBenefit()   { return (theClass == AccountClass.BENEFIT); }
+
+	/**
+	 * Determine whether the AccountType is a Share
+	 *  
+	 * @return <code>true</code> if the account is Share, <code>false</code> otherwise.
+	 */
+	protected boolean isShares()   { return (theClass == AccountClass.SHARES); }
 
 	/**
 	 * Determine whether the AccountType is a LifeBond

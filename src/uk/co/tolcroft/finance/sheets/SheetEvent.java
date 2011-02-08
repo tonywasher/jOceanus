@@ -40,6 +40,7 @@ public class SheetEvent {
 		String    		myUnits;
 		String    		myTranType;
 		String	  		myTaxCredit;
+		String			myDilution;
 		Integer	  		myYears;
 		Cell      		myCell;
 		DateCell  		myDateCell;
@@ -98,9 +99,18 @@ public class SheetEvent {
 						myCredit       = mySheet.getCell(myCol+4, i).getContents();
 						myTranType     = mySheet.getCell(myCol+7, i).getContents();
 			    
-						/* Handle Units which may be missing */
-						myCell    = mySheet.getCell(myCol+6, i);
-						myUnits   = null;
+						/* Handle Dilution which may be missing */
+						myCell    	= mySheet.getCell(myCol+5, i);
+						myDilution  = null;
+						if ((myCell.getType() != CellType.EMPTY) &&
+							(myCell.getContents().startsWith("0."))) {
+							double myDouble = ((NumberCell)myCell).getValue();
+							myDilution = Double.toString(myDouble);
+						}
+
+						/* Handle Dilution which may be missing */
+						myCell  = mySheet.getCell(myCol+6, i);
+						myUnits	= null;
 						if (myCell.getType() != CellType.EMPTY) {
 							double myDouble = ((NumberCell)myCell).getValue();
 							myUnits = Double.toString(myDouble);
@@ -130,6 +140,7 @@ public class SheetEvent {
 						               myUnits,
 						               myTranType,
 						               myTaxCredit,
+						               myDilution,
 						               myYears);
 				
 						/* Report the progress */
@@ -173,6 +184,7 @@ public class SheetEvent {
 		long      		myCredit; 
 		String    		myUnits;
 		String    		myTaxCredit;
+		String			myDilution;
 		long      		myTranType;
 		long      		myID;
 		Cell      		myCell;
@@ -250,8 +262,15 @@ public class SheetEvent {
 						myTaxCredit = myCell.getContents();
 					}
 
+					/* Handle Dilution which may be missing */
+					myCell      = mySheet.getCell(myCol+9, i);
+					myDilution = null;
+					if (myCell.getType() != CellType.EMPTY) {
+						myDilution = myCell.getContents();
+					}
+
 					/* Handle Years which may be missing */
-					myCell    = mySheet.getCell(myCol+9, i);
+					myCell    = mySheet.getCell(myCol+10, i);
 					myYears   = null;
 					if (myCell.getType() != CellType.EMPTY) {
 						myYears = new Integer(myCell.getContents());
@@ -267,6 +286,7 @@ public class SheetEvent {
 						           myUnits,
 						           myTranType,
 						           myTaxCredit,
+						           myDilution,
 						           myYears);
 				
 					/* Report the progress */
@@ -369,8 +389,13 @@ public class SheetEvent {
 												 myCurr.getTaxCredit().format(false));
 					mySheet.addCell(myCell);
 				}
-				if (myCurr.getYears() != null) {
+				if (myCurr.getDilution() != null) {
 					myCell = new jxl.write.Label(9, myRow, 
+												 myCurr.getDilution().format(false));
+					mySheet.addCell(myCell);
+				}
+				if (myCurr.getYears() != null) {
+					myCell = new jxl.write.Label(10, myRow, 
 												 myCurr.getYears().toString());
 					mySheet.addCell(myCell);
 				}
@@ -394,7 +419,7 @@ public class SheetEvent {
 	
 			/* Add the Range name */
 			if (myRow > 0)
-				pWorkbook.addNameArea(Events, mySheet, 0, 0, 9, myRow-1);
+				pWorkbook.addNameArea(Events, mySheet, 0, 0, 10, myRow-1);
 		}
 
 		catch (Throwable e) {

@@ -1,5 +1,7 @@
 package uk.co.tolcroft.finance.ui;
 
+import java.util.concurrent.*;
+
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -60,6 +62,7 @@ public class MainTab implements ActionListener,
 	private JMenuItem		theLoadBackup	= null;
 	private ThreadControl	theThread		= null;
 	private SecurityControl	theSecurity		= null;
+	private ExecutorService theExecutor		= null;
 	
 	/* Access methods */
 	public 		View			getView()  		{ return theView; }
@@ -99,7 +102,10 @@ public class MainTab implements ActionListener,
 		/* Access properties */
 		theProperties = new Properties();
 		
-		/* Create standard colour selections */
+		/* Create the Executor service */
+		theExecutor = Executors.newSingleThreadExecutor();
+		
+		/* Create standard font selections */
 		theStdFont    = new Font("Arial", Font.PLAIN, 12);
 		theNumFont    = new Font("Courier", Font.PLAIN, 12);
 		theChgFont    = new Font("Arial", Font.ITALIC, 12);
@@ -360,7 +366,7 @@ public class MainTab implements ActionListener,
 		theThread = myThread;
 
 		/* Execute it and lock tabs */
-		myThread.execute();	
+		theExecutor.execute(myThread);	
 		setVisibleTabs();
 	}
 	
@@ -373,7 +379,7 @@ public class MainTab implements ActionListener,
 		theThread = myThread;
 
 		/* Execute it and lock tabs */
-		myThread.execute();	
+		theExecutor.execute(myThread);	
 		setVisibleTabs();
 	}
 	
@@ -386,7 +392,7 @@ public class MainTab implements ActionListener,
 		theThread = myThread;
 
 		/* Execute it and lock tabs */
-		myThread.execute();	
+		theExecutor.execute(myThread);	
 		setVisibleTabs();
 	}
 	
@@ -399,7 +405,7 @@ public class MainTab implements ActionListener,
 		theThread = myThread;
 
 		/* Execute it and lock tabs */
-		myThread.execute();	
+		theExecutor.execute(myThread);	
 		setVisibleTabs();
 	}
 	
@@ -412,7 +418,7 @@ public class MainTab implements ActionListener,
 		theThread = myThread;
 
 		/* Execute it and lock tabs */
-		myThread.execute();	
+		theExecutor.execute(myThread);	
 		setVisibleTabs();
 	}
 	
@@ -425,7 +431,7 @@ public class MainTab implements ActionListener,
 		theThread = myThread;
 		
 		/* Execute it and lock tabs */
-		myThread.execute();	
+		theExecutor.execute(myThread);	
 		setVisibleTabs();
 	}
 	
@@ -438,7 +444,7 @@ public class MainTab implements ActionListener,
 		theThread = myThread;
 
 		/* Execute it and lock tabs */
-		myThread.execute();	
+		theExecutor.execute(myThread);	
 		setVisibleTabs();
 	}
 	

@@ -105,11 +105,9 @@ public class ReportTab implements HyperlinkListener,
 	}
 	
 	/* refreshData */
-	public void refreshData() {
-		DataSet myData = theView.getData();
-		
+	public void refreshData() {		
 		/* Refresh the data */
-		theList   = myData.getAnalyses();
+		theList   = theView.getAnalyses();
 		theSelect.refreshData(theList);
 		buildReport();
 	}

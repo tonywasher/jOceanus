@@ -123,9 +123,9 @@ public class Frequency extends DataItem {
 	 * 
 	 * @throws {@link Exception} if type is not supported
 	 */
-	public Frequency(List 	pList,
-			         long   uId,
-			         String sName) throws Exception {
+	private Frequency(List 	 pList,
+			          long   uId,
+			          String sName) throws Exception {
 		super(pList, uId);
 		Values myObj = new Values();
 		setObj(myObj);

@@ -21,7 +21,6 @@ public class DataSet implements htmlDumpable {
     private Pattern.List			thePatterns   = null; 
 	private Event.List				theEvents     = null;
     private Date.Range				theDateRange  = null;
-    private AnalysisYear.List		theAnalysis	  = null;
     private LoadState				theLoadState  = LoadState.INITIAL;
 
     /* Access methods */
@@ -38,7 +37,6 @@ public class DataSet implements htmlDumpable {
 	public Price.List 			getPrices()  		{ return thePrices; }
 	public Pattern.List 		getPatterns()  		{ return thePatterns; }
 	public Event.List 			getEvents()  		{ return theEvents; }
-	public AnalysisYear.List    getAnalyses()    	{ return theAnalysis; }
 	public Date.Range 			getDateRange()  	{ return theDateRange; }
 	public LoadState 			getLoadState()  	{ return theLoadState; }
 
@@ -278,9 +276,11 @@ public class DataSet implements htmlDumpable {
 	
 	/**
 	 * Analyse the data
+	 * @return the analysis of the year
 	 */
-	public void analyseData() throws Exception {
-		AssetAnalysis myAssets = null;
+	public AnalysisYear.List analyseData() throws Exception {
+		AssetAnalysis 		myAssets 	= null;
+		AnalysisYear.List	myList		= null;
 						
 		/* Update INITIAL Load status */
 		if (theLoadState == LoadState.INITIAL)
@@ -291,7 +291,7 @@ public class DataSet implements htmlDumpable {
 		theTaxYears.reset();
 		
 		/* Create the analysis */
-		theAnalysis = new AnalysisYear.List(this);
+		myList = new AnalysisYear.List(this);
 
 		/* Note active rates */
 		theRates.markActiveRates();
@@ -303,7 +303,7 @@ public class DataSet implements htmlDumpable {
 		thePatterns.markActivePatterns();
 		
 		/* Access the most recent asset report */
-		myAssets = theAnalysis.getLastAssets();
+		myAssets = myList.getLastAssets();
 		
 		/* Note active accounts by asset */
 		if (myAssets != null)
@@ -314,6 +314,9 @@ public class DataSet implements htmlDumpable {
 		
 		/* Note that we are now fully loaded */
 		theLoadState = LoadState.LOADED;
+		
+		/* Return the analysis */
+		return myList;
 	}
 
 	/**
@@ -336,14 +339,28 @@ public class DataSet implements htmlDumpable {
 		/* Switch on the TransType */
 		switch (pTrans.getTranClass()) {
 			case TAXFREEINCOME:
-			case TAXABLEGAIN:
 				if (!isCredit) myResult = (pType.isExternal() && !pType.isCash());
 				else           myResult = !pType.isExternal();
 				break;
+			case TAXABLEGAIN:
+				if (!isCredit) myResult = pType.isLifeBond();
+				else           myResult = !pType.isExternal();
+				break;
 			case DIVIDEND:
-			case UNITTRUSTDIV:
 				if (!isCredit) myResult = pType.isDividend();
 				else           myResult = !pType.isExternal();
+				break;
+			case STOCKDEMERGER:
+			case STOCKSPLIT:
+			case STOCKTAKEOVER:
+				myResult = pType.isShares();
+				break;
+			case STOCKRIGHTWAIVED:
+			case CASHTAKEOVER:
+				isCredit = !isCredit;
+			case STOCKRIGHTTAKEN:
+				if (!isCredit) myResult = (pType.isMoney() || pType.isDeferred());
+				else           myResult = pType.isShares();
 				break;
 			case INTEREST:
 				if (!isCredit) myResult = pType.isMoney();
@@ -351,7 +368,7 @@ public class DataSet implements htmlDumpable {
 				break;
 			case TAXEDINCOME:
 				if (!isCredit) myResult = pType.isEmployer();
-				else           myResult = !pType.isExternal();
+				else           myResult = ((pType.isMoney()) || (pType.isDeferred()));
 				break;
 			case NATINSURANCE:
 				if (!isCredit) myResult = pType.isEmployer();
@@ -371,7 +388,7 @@ public class DataSet implements htmlDumpable {
 				else           myResult = !pType.isExternal();
 				break;
 			case BENEFIT:
-				if (!isCredit) myResult = (pType.isExternal() && !pType.isCash());
+				if (!isCredit) myResult = pType.isEmployer();
 				else           myResult = pType.isBenefit();
 				break;
 			case RECOVERED:

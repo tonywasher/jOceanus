@@ -417,7 +417,8 @@ public class Number {
 			}
 			return myRate;
 		}
-	}	
+	}
+	
 	/**
 	 * Represents a Price object. 
 	 */
@@ -466,6 +467,38 @@ public class Number {
 			super.Parse(pPrice);
 		}		
 		
+		/**
+		 * obtain a Diluted price 
+		 * 
+		 * @param pDilution the dilution factor
+		 * @return the calculated value
+		 */
+		public DilutedPrice getDilutedPrice(Dilution pDilution) {
+			DilutedPrice	myTotal;
+			long    		myValue  = getPrice();
+			long    		myPower  = NUMDEC + Dilution.NUMDEC - DilutedPrice.NUMDEC;
+			long    		myFactor = 1;
+			long    		myDigit;
+	
+			/* Calculate division factor (less one) */
+			while (myPower-->1) myFactor  *= 10;       
+			
+			/* Calculate new value */
+			myValue  *= pDilution.getDilution();
+			myValue  /= myFactor;
+			
+			/* Access the last digit to allow rounding and complete the calculation */
+			myDigit  = myValue % 10;
+			myValue /= 10;
+			if (myDigit >= 5) myValue++;
+			
+			/* Allocate value */
+			myTotal = new DilutedPrice(myValue);
+		
+			/* Return value */
+			return myTotal;
+		}
+
 		/**
 		 * Format a Price 
 		 * 
@@ -519,6 +552,147 @@ public class Number {
 			Price myPrice;
 			try {
 				myPrice = new Price(pPrice);
+			}
+			catch (Exception e) {
+				myPrice = null;
+			}
+			return myPrice;
+		}
+	}
+	
+	/**
+	 * Represents a Diluted Price object. 
+	 */
+	public static class DilutedPrice extends Number {
+		/**
+		 * DilutedPrices have six decimal points 
+		 */
+		public final static int NUMDEC = 6;
+
+		/**
+		 * Prices are formatted in pretty mode with a width of 12 characters 
+		 */
+		public final static int WIDTH  = 12;
+		
+		/**
+		 * Access the value of the Price 
+		 * 
+		 * @return the value
+		 */
+		public long getDilutedPrice() { return getValue(); }
+		
+		/**
+		 * Construct a new DilutedPrice from a value 
+		 * 
+		 * @param uPrice the value
+		 */
+		public DilutedPrice(long uPrice) { super(NUMDEC, NumberClass.MONEY); super.setValue(uPrice); }	
+
+		/**
+		 * Construct a new DilutedPrice by copying another price 
+		 * 
+		 * @param pPrice the Price to copy
+		 */
+		public DilutedPrice(DilutedPrice pPrice) {
+			super(NUMDEC, NumberClass.MONEY);
+			super.setValue(pPrice.getDilutedPrice()); 
+		}	
+
+		/**
+		 * Construct a new DilutedPrice by parsing a string value 
+		 * 
+		 * @param pPrice the Price to parse
+		 */
+		public DilutedPrice(String pPrice) throws Exception {
+			super(NUMDEC, NumberClass.MONEY);
+			super.Parse(pPrice);
+		}		
+		
+		/**
+		 * obtain a base price 
+		 * 
+		 * @param pDilution the dilution factor
+		 * @return the calculated value
+		 */
+		public Price getPrice(Dilution pDilution) {
+			Price	myTotal;
+			long    myValue  = getDilutedPrice();
+			long    myPower  = NUMDEC + DilutedPrice.NUMDEC - Dilution.NUMDEC;
+			long    myFactor = 1;
+			long    myDigit;
+	
+			/* Calculate division factor (plus one) */
+			while (myPower-->-1) myFactor  *= 10;       
+			
+			/* Calculate new value */
+			myValue  *= myFactor;
+			myValue  /= pDilution.getDilution();
+			
+			/* Access the last digit to allow rounding and complete the calculation */
+			myDigit  = myValue % 10;
+			myValue /= 10;
+			if (myDigit >= 5) myValue++;
+			
+			/* Allocate value */
+			myTotal = new Price(myValue);
+		
+			/* Return value */
+			return myTotal;
+		}
+
+		/**
+		 * Format a Price 
+		 * 
+		 * @param bPretty <code>true</code> if the value is to be formatted with thousands separator
+		 * and with a £ sign at the beginning, <code>false</code> otherwise
+		 * @return the formatted Price
+		 */
+		public String format(boolean bPretty) {
+			StringBuilder	myFormat;
+			boolean 		isNegative;
+			
+			/* Format the value in a standard fashion */
+			myFormat = super.format(bPretty);
+			
+			/* If we are in pretty mode */
+			if (bPretty) {
+				/* If the value is zero */
+				if (!isNonZero()) {
+					/* Provide special display */
+					myFormat.setLength(0);
+					myFormat.append("£      -     ");
+				}
+				
+				/* Else non-zero value */
+				else {
+					/* If the value is negative, strip the leading minus sign */
+					isNegative = (myFormat.charAt(0) == '-');
+					if (isNegative) myFormat.deleteCharAt(0);
+					
+					/* Extend the value to the desired width */
+					while ((myFormat.length()) < WIDTH)
+						myFormat.insert(0, ' ');
+					
+					/* Add the pound sign */
+					myFormat.insert(0, '£');
+					
+					/* Add back any minus sign */
+					if (isNegative) myFormat.insert(0, '-');
+				}
+			}
+			return myFormat.toString();
+		}
+
+		/**
+		 * Create a new Price by parsing a string value 
+		 * 
+		 * @param pPrice the Price to parse
+		 * @return the new Price or <code>null</code> if parsing failed
+		 */
+		public static DilutedPrice Parse(String pPrice) {
+			DilutedPrice myPrice;
+			try {
+				myPrice = new DilutedPrice(pPrice);
 			}
 			catch (Exception e) {
 				myPrice = null;
@@ -644,6 +818,131 @@ public class Number {
 				myUnits = null;
 			}
 			return myUnits;
+		}
+	}
+	
+	/**
+	 * Represents a Dilution object. 
+	 */
+	public static class Dilution extends Number {
+		/**
+		 * Dilutions have six decimal points 
+		 */
+		public final static int NUMDEC = 6;
+		
+		/**
+		 * Define the maximum dilution value 
+		 */
+		public final static int MAX_VALUE = 1000000;
+		
+		/**
+		 * Define the minimum dilution value 
+		 */
+		public final static int MIN_VALUE = 0;
+		
+		/**
+		 * Access the value of the Dilution
+		 * 
+		 * @return the value
+		 */
+		public long getDilution() { return getValue(); }
+		
+		/**
+		 * Construct a new Dilution from a value 
+		 * 
+		 * @param uDilution the value
+		 */
+		public Dilution(long uDilution) { super(NUMDEC); super.setValue(uDilution); }	
+
+		/**
+		 * Construct a new Dilution by copying another dilution 
+		 * 
+		 * @param pDilution the Dilution to copy
+		 */
+		public Dilution(Dilution pDilution) {
+			super(NUMDEC);
+			super.setValue(pDilution.getDilution()); 
+		}	
+
+		/**
+		 * Construct a new Dilution by parsing a string value 
+		 * 
+		 * @param pDilution the Dilution to parse
+		 */
+		public Dilution(String pDilution) throws Exception {
+			super(NUMDEC);
+			super.Parse(pDilution);
+		}		
+		
+		/**
+		 * obtain a further dilution 
+		 * 
+		 * @param pDilution the dilution factor
+		 * @return the calculated value
+		 */
+		public Dilution getFurtherDilution(Dilution pDilution) {
+			Dilution	myTotal;
+			long    	myValue  = getDilution();
+			long    	myPower  = NUMDEC + Dilution.NUMDEC - Dilution.NUMDEC;
+			long    	myFactor = 1;
+			long    	myDigit;
+	
+			/* Calculate division factor (less one) */
+			while (myPower-->1) myFactor  *= 10;       
+			
+			/* Calculate new value */
+			myValue  *= pDilution.getDilution();
+			myValue  /= myFactor;
+			
+			/* Access the last digit to allow rounding and complete the calculation */
+			myDigit  = myValue % 10;
+			myValue /= 10;
+			if (myDigit >= 5) myValue++;
+			
+			/* Allocate value */
+			myTotal = new Dilution(myValue);
+		
+			/* Return value */
+			return myTotal;
+		}
+
+		/**
+		 * Is the dilution factor outside the valid range
+		 * @return true/false
+		 */
+		public boolean outOfRange() {
+			return ((getValue() > MAX_VALUE) ||
+					(getValue() < MIN_VALUE));
+		}
+		
+		/**
+		 * Format a Dilution
+		 * 
+		 * @param bPretty <code>true</code> if the value is to be formatted with thousands separator,
+		 * <code>false</code> otherwise
+		 * @return the formatted Units
+		 */
+		public String format(boolean bPretty) {
+			StringBuilder	myFormat;
+			myFormat = super.format(bPretty);
+			return myFormat.toString();
+		}
+
+		/**
+		 * Create a new Dilution by parsing a string value 
+		 * 
+		 * @param pDilutions the Dilution to parse
+		 * @return the new Dilution or <code>null</code> if parsing failed
+		 */
+		public static Dilution Parse(String pDilution) {
+			Dilution myDilution;
+			try {
+				myDilution = new Dilution(pDilution);
+			}
+			catch (Exception e) {
+				myDilution = null;
+			}
+			return myDilution;
 		}
 	}
 	
@@ -810,6 +1109,35 @@ public class Number {
 		 */
 		public Money valueAtWeight(Money pWeight,
 								   Money pTotal) {
+			Money   myTotal;
+			long    myValue  = getAmount();
+			long    myDigit;
+			
+			/* Calculate new value */
+			myValue  *= pWeight.getValue() * 10;
+			myValue  /= pTotal.getValue();
+			
+			/* Access the last digit */
+			myDigit  = myValue % 10;
+			myValue /= 10;
+			if (myDigit >= 5) myValue++;
+			
+			/* Allocate value */
+			myTotal = new Money(myValue);
+		
+			/* Return value */
+			return myTotal;
+		}
+
+		/**
+		 * calculate the value of this money at a given proportion (i.e. weight/total) 
+		 * 
+		 * @param pWeight the weight of this item
+		 * @param pTotal the total weight of all the items
+		 * @return the calculated value
+		 */
+		public Money valueAtWeight(Units pWeight,
+								   Units pTotal) {
 			Money   myTotal;
 			long    myValue  = getAmount();
 			long    myDigit;

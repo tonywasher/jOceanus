@@ -63,6 +63,7 @@ public class Account extends DataItem {
 	/* Members */
 	private int                   theOrder     = -1;
 	private long				  theParentId  = -1;
+	private long				  theAliasId   = -1;
 	private long 				  theActTypeId = -1;
 	private Event                 theEarliest  = null;
 	private Event                 theLatest    = null;
@@ -79,6 +80,8 @@ public class Account extends DataItem {
 	public  String      getDesc()      	{ return getObj().getDesc(); }
 	public  Account     getParent()    	{ return getObj().getParent(); }
 	public  long        getParentId()  	{ return theParentId; }
+	public  Account     getAlias()    	{ return getObj().getAlias(); }
+	public  long        getAliasId()  	{ return theAliasId; }
 	public  Event       getEarliest()  	{ return theEarliest; }
 	public  Event       getLatest()    	{ return theLatest; }
 	public  AccountType getActType()   	{ return getObj().getType(); }
@@ -118,14 +121,15 @@ public class Account extends DataItem {
 	public static final int FIELD_MATURITY = 4;
 	public static final int FIELD_CLOSE    = 5;
 	public static final int FIELD_PARENT   = 6;
-	public static final int FIELD_IV   	   = 7;
-	public static final int FIELD_WEBSITE  = 8;
-	public static final int FIELD_CUSTNO   = 9;
-	public static final int FIELD_USERID   = 10;
-	public static final int FIELD_PASSWORD = 11;
-	public static final int FIELD_ACCOUNT  = 12;
-	public static final int FIELD_NOTES    = 13;
-	public static final int NUMFIELDS	   = 14;
+	public static final int FIELD_ALIAS    = 7;
+	public static final int FIELD_IV   	   = 8;
+	public static final int FIELD_WEBSITE  = 9;
+	public static final int FIELD_CUSTNO   = 10;
+	public static final int FIELD_USERID   = 11;
+	public static final int FIELD_PASSWORD = 12;
+	public static final int FIELD_ACCOUNT  = 13;
+	public static final int FIELD_NOTES    = 14;
+	public static final int NUMFIELDS	   = 15;
 	
 	/**
 	 * Obtain the type of the item
@@ -152,6 +156,7 @@ public class Account extends DataItem {
 			case FIELD_CLOSE:		return "CloseDate";
 			case FIELD_MATURITY:	return "Maturity";
 			case FIELD_PARENT:		return "Parent";
+			case FIELD_ALIAS:		return "Alias";
 			case FIELD_IV:			return "InitVector";
 			case FIELD_WEBSITE:		return "WebSite";
 			case FIELD_CUSTNO:		return "CustomerNo";
@@ -201,6 +206,13 @@ public class Account extends DataItem {
 					myString += "Id=" + theParentId;
 				else
 					myString += Utils.formatAccount(myObj.getParent()); 
+				break;
+			case FIELD_ALIAS:	
+				if ((myObj.getAlias() == null) &&
+					(theAliasId != -1))
+					myString += "Id=" + theAliasId;
+				else
+					myString += Utils.formatAccount(myObj.getAlias()); 
 				break;
 			case FIELD_IV:	
 				if (myObj.getInitVector() != null) 
@@ -266,21 +278,22 @@ public class Account extends DataItem {
 	}
 	
 	/* Standard constructor */
-	protected Account(List    			pList,
-			          long           	uId, 
-					  String         	sName, 
-					  long			 	uAcTypeId,
-					  String         	pDesc,
-					  java.util.Date 	pMaturity,
-			          java.util.Date 	pClose,
-			          long           	uParentId,
-			          byte[]			pInitVect,
-			          byte[]			pWebSite,
-			          byte[]			pCustNo,
-			          byte[]			pUserId,
-			          byte[]			pPassword,
-			          byte[]			pAccount,
-			          byte[]			pNotes) throws Exception {
+	private Account(List    		pList,
+			        long           	uId, 
+					String         	sName, 
+					long			uAcTypeId,
+					String         	pDesc,
+					java.util.Date 	pMaturity,
+			        java.util.Date 	pClose,
+			        long           	uParentId,
+			        long           	uAliasId,
+			        byte[]			pInitVect,
+			        byte[]			pWebSite,
+			        byte[]			pCustNo,
+			        byte[]			pUserId,
+			        byte[]			pPassword,
+			        byte[]			pAccount,
+			        byte[]			pNotes) throws Exception {
 		/* Initialise the item */
 		super(pList, uId);
 		
@@ -303,6 +316,7 @@ public class Account extends DataItem {
 		/* Store the IDs */
 		theActTypeId = uAcTypeId;
 		theParentId  = uParentId;
+		theAliasId   = uAliasId;
 		
 		/* Look up the Account Type */
 		myActType = pList.theData.getAccountTypes().searchFor(uAcTypeId);
@@ -359,6 +373,7 @@ public class Account extends DataItem {
 		if (Utils.differs(getClose(),   	myAccount.getClose())) 		return false;
 		if (Utils.differs(getMaturity(),	myAccount.getMaturity())) 	return false;
 		if (Utils.differs(getParent(),      myAccount.getParent())) 	return false;			
+		if (Utils.differs(getAlias(),       myAccount.getAlias())) 		return false;			
 		if (Utils.differs(getInitVector(),	myAccount.getInitVector())) return false;
 		if (Utils.differs(getWebSite(),		myAccount.getWebSite())) 	return false;
 		if (Utils.differs(getCustNo(),		myAccount.getCustNo())) 	return false;
@@ -461,23 +476,33 @@ public class Account extends DataItem {
 			addError("Description is too long", FIELD_DESC);
 		}
 			
-		/* If the account is priced then prices must exist */
+		/* If the account is priced */
 		if (myType.isPriced()) {
-			if (!hasPrices)
-				addError("Priced account has no prices", FIELD_TYPE);
+			/* If this account has an alias */
+			if (getAlias() != null) {
+				/* Must not have prices */
+				if (hasPrices)
+					addError("Aliased account has prices", FIELD_TYPE);
+				
+				/* Alias account must have prices */
+				if (!getAlias().hasPrices)
+					addError("Alias account has no prices", FIELD_TYPE);
+			}
+			
+			/* else this is a standard account */
+			else {
+				/* Must have prices */
+				if (!hasPrices)
+					addError("Priced account has no prices", FIELD_TYPE);
+			}
 	    }
 		
-		/* If the account is not priced then prices cannot exist */
+		/* else the account is not priced */
 		else {
+			/* Prices cannot exist */
 			if (hasPrices)
 				addError("non-Priced account has prices", FIELD_TYPE);
 		}
-		
-		/* If the account is internal but not debt then patterns cannot exist */
-		if (myType.isInternal() && (!myType.isDebt())) {
-			if (hasPatterns)
-				addError("Internal non-Debt account has patterns", FIELD_TYPE);
-	    }
 		
 		/* If the account is not a child then parent cannot exist */
 		if (!myType.isChild()) {
@@ -502,6 +527,29 @@ public class Account extends DataItem {
 				if (!isClosed() && getParent().isClosed())
 					addError("Parent account must not be closed", FIELD_PARENT);
 			}
+	    }
+		
+		/* If we have an alias */
+		if (getAlias() != null) {
+			/* Cannot alias to self */
+			if (!Utils.differs(this, getAlias()))
+				addError("Cannot alias to self", FIELD_ALIAS);
+
+			/* Cannot alias to same type */
+			else if (!Utils.differs(myType, getAlias().getActType()))
+				addError("Cannot alias to same account type", FIELD_ALIAS);
+
+			/* Must be alias type */
+			if (!myType.canAlias())
+				addError("This account type cannot alias", FIELD_ALIAS);
+
+			/* Alias must be alias type */
+			if (!getAlias().getActType().canAlias())
+				addError("The alias account type is invalid", FIELD_ALIAS);
+
+			/* Alias cannot be aliased */
+			if (getAlias().getAlias() != null)
+				addError("The alias account is already aliased", FIELD_ALIAS);
 	    }
 		
 		/* If the account has rates then it must be money-based */
@@ -755,6 +803,15 @@ public class Account extends DataItem {
 	}
 	
 	/**
+	 * Set a new alias 
+	 *	 
+	 * @param pAlias the new alias 
+	 */
+	public void setAlias(Account pAlias) {
+		getObj().setAlias(pAlias);
+	}
+	
+	/**
 	 * Set a new account name 
 	 *	 
 	 * @param pName the new name 
@@ -870,6 +927,10 @@ public class Account extends DataItem {
 		/* Update the parent if required */
 		if (Utils.differs(getParent(), myAccount.getParent())) 
 			setParent(myAccount.getParent());
+		
+		/* Update the alias if required */
+		if (Utils.differs(getAlias(), myAccount.getAlias())) 
+			setParent(myAccount.getAlias());
 		
 		/* Update the InitVector if required */
 		if (Utils.differs(getInitVector(), myAccount.getInitVector())) 
@@ -1143,6 +1204,7 @@ public class Account extends DataItem {
 		 * @param pMaturity the Maturity date for a bond (or null)
 		 * @param pClosed the Close Date for the account (or null)
 		 * @param pParent the Name of the parent account (or null)
+		 * @param pAlias the Name of the alias account (or null)
 		 * @throws Exception on error
 		 */ 
 		public void addItem(long     		uId,
@@ -1152,6 +1214,7 @@ public class Account extends DataItem {
 				            java.util.Date  pMaturity,
 				            java.util.Date  pClosed,
 				            String   		pParent,
+				            String   		pAlias,
 					        byte[]			pInitVect,
 					        byte[]			pWebSite,
 					        byte[]			pCustNo,
@@ -1162,7 +1225,9 @@ public class Account extends DataItem {
 			AccountType.List 	myActTypes;
 			AccountType 		myActType;
 			Account		 		myParent;
+			Account		 		myAlias;
 			long				myParentId = -1;
+			long				myAliasId  = -1;
 				
 			/* Access the account types and accounts */
 			myActTypes = theData.getAccountTypes();
@@ -1171,9 +1236,9 @@ public class Account extends DataItem {
 			myActType = myActTypes.searchFor(pAcType);
 			if (myActType == null) 
 				throw new Exception(ExceptionClass.DATA,
-			                        "Account <" + pAccount + 
-			                        "> has invalid Account Type <" + 
-			                        pAcType + ">");
+			                        "Account [" + pName + 
+			                        "] has invalid Account Type [" + 
+			                        pAcType + "]");
 			
 			/* If we have a parent */
 			if (pParent != null) {
@@ -1181,10 +1246,22 @@ public class Account extends DataItem {
 				myParent = searchFor(pParent);
 				if (myParent == null) 
 					throw new Exception(ExceptionClass.DATA,
-			                            "Account <" + pAccount + 
-			                            "> has invalid Parent <" + 
-			                            pParent + ">");
+			                            "Account [" + pName + 
+			                            "] has invalid Parent [" + 
+			                            pParent + "]");
 				myParentId = myParent.getId();
+			}
+			
+			/* If we have a parent */
+			if (pAlias != null) {
+				/* Look up the Parent */
+				myAlias = searchFor(pAlias);
+				if (myAlias == null) 
+					throw new Exception(ExceptionClass.DATA,
+			                            "Account [" + pName + 
+			                            "] has invalid Alias [" + 
+			                            pAlias + "]");
+				myAliasId = myAlias.getId();
 			}
 			
 			/* Add the account */
@@ -1195,6 +1272,7 @@ public class Account extends DataItem {
 					pMaturity,
 					pClosed,
 					myParentId,
+					myAliasId,
 			        pInitVect,
 			        pWebSite,
 			        pCustNo,
@@ -1213,6 +1291,7 @@ public class Account extends DataItem {
 		 * @param pMaturity the Maturity date for a bond (or null)
 		 * @param pClosed the Close Date for the account (or null)
 		 * @param uParentId the Id of the parent account (or -1)
+		 * @param uAliasId the Id of the alias account (or -1)
 		 * @throws Exception on error
 		 */ 
 		public void addItem(long     		uId,
@@ -1222,6 +1301,7 @@ public class Account extends DataItem {
 				            java.util.Date  pMaturity,
 				            java.util.Date  pClosed,
 				            long     		uParentId,
+				            long     		uAliasId,
 					        byte[]			pInitVect,
 					        byte[]			pWebSite,
 					        byte[]			pCustNo,
@@ -1240,6 +1320,7 @@ public class Account extends DataItem {
 					                pMaturity,
 					                pClosed,
 					                uParentId,
+					                uAliasId,
 							        pInitVect,
 							        pWebSite,
 							        pCustNo,
@@ -1289,6 +1370,12 @@ public class Account extends DataItem {
 					myCurr.setParent(searchFor(myCurr.getParentId()));
 				}
 					
+				/* If the account has an alias Id */
+				if (myCurr.getAliasId() != -1) {
+					/* Set the alias */
+					myCurr.setAlias(searchFor(myCurr.getAliasId()));
+				}
+					
 				/* Validate the account */
 				myCurr.validate();
 					
@@ -1311,6 +1398,7 @@ public class Account extends DataItem {
 		private Date       	theMaturity 	= null;
 		private Date       	theClose    	= null;
 		private Account		theParent		= null;
+		private Account		theAlias		= null;
 		private byte[]		theInitVector	= null;
 		private byte[]		theWebSite		= null;
 		private byte[]		theCustNo		= null;
@@ -1326,6 +1414,7 @@ public class Account extends DataItem {
 		public Date       	getMaturity()  	{ return theMaturity; }
 		public Date       	getClose()     	{ return theClose; }
 		public Account		getParent()    	{ return theParent; }
+		public Account		getAlias()    	{ return theAlias; }
 		public byte[]		getInitVector()	{ return theInitVector; }
 		public byte[]		getWebSite()	{ return theWebSite; }
 		public byte[]		getCustNo()		{ return theCustNo; }
@@ -1346,6 +1435,8 @@ public class Account extends DataItem {
 			theClose     = pClose; }
 		public void setParent(Account pParent) {
 			theParent    = pParent; }
+		public void setAlias(Account pAlias) {
+			theAlias     = pAlias; }
 		public void setInitVector(byte[] pInitVector) {
 			theInitVector	= pInitVector; }
 		public void setWebSite(byte[] pWebSite) {
@@ -1370,6 +1461,7 @@ public class Account extends DataItem {
 			theMaturity   = pValues.getMaturity();
 			theClose      = pValues.getClose();
 			theParent     = pValues.getParent();
+			theAlias      = pValues.getAlias();
 			theInitVector = pValues.getInitVector();
 			theWebSite 	  = pValues.getWebSite();
 			theCustNo 	  = pValues.getCustNo();
@@ -1391,6 +1483,7 @@ public class Account extends DataItem {
 			if (Utils.differs(theMaturity, 		pValues.theMaturity)) 	return false;
 			if (Utils.differs(theClose,    		pValues.theClose))    	return false;
 			if (Utils.differs(theParent,   		pValues.theParent))   	return false;
+			if (Utils.differs(theAlias,   		pValues.theAlias))   	return false;
 			if (Utils.differs(theInitVector,	pValues.theInitVector)) return false;
 			if (Utils.differs(theWebSite,		pValues.theWebSite)) 	return false;
 			if (Utils.differs(theCustNo,		pValues.theCustNo)) 	return false;
@@ -1416,6 +1509,7 @@ public class Account extends DataItem {
 			theMaturity   = pValues.getMaturity();
 			theClose      = pValues.getClose();
 			theParent     = pValues.getParent();
+			theAlias      = pValues.getAlias();
 			theInitVector = pValues.getInitVector();
 			theWebSite 	  = pValues.getWebSite();
 			theCustNo 	  = pValues.getCustNo();
@@ -1445,6 +1539,9 @@ public class Account extends DataItem {
 					break;
 				case FIELD_PARENT:
 					bResult = (Utils.differs(theParent,   	pValues.theParent));
+					break;
+				case FIELD_ALIAS:
+					bResult = (Utils.differs(theAlias,   	pValues.theAlias));
 					break;
 				case FIELD_IV:
 					bResult = (Utils.differs(theInitVector,	pValues.theInitVector));
@@ -1544,28 +1641,23 @@ public class Account extends DataItem {
 		}
 		
 		/* Ensure that we have a cipher */
-		private	void ensureCipher() {
+		private	void ensureCipher() throws Exception {
 			/* If we do not have a cipher */
 			if (theCipher == null) {
-				/* Protect the operation */
-				try {					
-					/* If we have an InitVector */
-					if (theMaster.getInitVector() != null) {
-						/* Grab a security Cipher to encrypt the values */
-						theCipher = theKey.initEncryption(theMaster.getInitVector());
-					}
-					
-					/* Else we have to initialise the vector */
-					else
-					{
-						/* Grab a security Cipher to encrypt the values */
-						theCipher = theKey.initEncryption();
-						
-						/* record the vector */
-						theMaster.setInitVector(theCipher.getInitVector());
-					}
+				/* If we have an InitVector */
+				if (theMaster.getInitVector() != null) {
+					/* Grab a security Cipher to encrypt the values */
+					theCipher = theKey.initEncryption(theMaster.getInitVector());
 				}
-				catch (Throwable e) {}
+					
+				/* Else we have to initialise the vector */
+				else {
+					/* Grab a security Cipher to encrypt the values */
+					theCipher = theKey.initEncryption();
+					
+					/* record the vector */
+					theMaster.setInitVector(theCipher.getInitVector());
+				}
 			}
 		}
 		
@@ -1593,8 +1685,7 @@ public class Account extends DataItem {
 					}
 					
 					/* Else setting value to null */
-					else
-					{
+					else {
 						/* update */
 						theMaster.setWebSite(null);
 						
@@ -1631,8 +1722,7 @@ public class Account extends DataItem {
 					}
 					
 					/* Else setting value to null */
-					else
-					{
+					else {
 						/* update */
 						theMaster.setCustNo(null);
 						
@@ -1669,8 +1759,7 @@ public class Account extends DataItem {
 					}
 					
 					/* Else setting value to null */
-					else
-					{
+					else {
 						/* update */
 						theMaster.setUserId(null);
 						
@@ -1706,8 +1795,7 @@ public class Account extends DataItem {
 					}
 					
 					/* Else setting value to null */
-					else
-					{
+					else {
 						/* update */
 						theMaster.setPassword(null);
 						
@@ -1744,8 +1832,7 @@ public class Account extends DataItem {
 					}
 					
 					/* Else setting value to null */
-					else
-					{
+					else {
 						/* update */
 						theMaster.setAccount(null);
 						
@@ -1782,8 +1869,7 @@ public class Account extends DataItem {
 					}
 					
 					/* Else setting value to null */
-					else
-					{
+					else {
 						/* update */
 						theMaster.setNotes(null);
 						

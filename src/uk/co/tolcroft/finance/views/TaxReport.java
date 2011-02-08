@@ -414,11 +414,11 @@ public class TaxReport {
 	 * @return Web output
 	 */
 	public StringBuilder makeTaxSliceReport() {
-		StringBuilder				myOutput = new StringBuilder(1000);
-		TaxAnalysis.chargeableEvent	myCharge;
-		TaxBucket	    			myBucket;
-		TaxAnalysis.TaxList 	    myList;
-		TaxType.List	   			myTaxTypes;
+		StringBuilder		myOutput = new StringBuilder(1000);
+		ChargeableEvent		myCharge;
+		TaxBucket	    	myBucket;
+		TaxAnalysis.TaxList myList;
+		TaxType.List	   	myTaxTypes;
 
 		/* Access the bucket lists */
 		myList 		= theTax.getTaxBuckets();

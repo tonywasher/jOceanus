@@ -173,7 +173,7 @@ public class Database {
 		DataSet myData		= null;
 		
 		/* Set the number of stages */
-		if (!pThread.setNumStages(14)) return null;
+		if (!pThread.setNumStages(13)) return null;
 		
 		/* Create the new DataSet */
 		myData = new DataSet(pThread.getSecurity()); 
@@ -195,8 +195,6 @@ public class Database {
 		if (bContinue) bContinue = theEvents.loadItems(pThread, myData);
 		
 		/* analyse the data */
-		if (bContinue) bContinue = pThread.setNewStage("Analysing data");
-		if (bContinue) myData.analyseData();
 		if (bContinue) bContinue = pThread.setNewStage("Refreshing data");
 		
 		/* Check for cancellation */

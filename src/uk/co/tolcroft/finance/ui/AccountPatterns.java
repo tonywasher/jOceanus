@@ -59,8 +59,8 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 		
 	/* Table columns */
 	private static final int COLUMN_DATE 	 = 0;
-	private static final int COLUMN_DESC 	 = 1;
-	private static final int COLUMN_TRANTYP  = 2;
+	private static final int COLUMN_TRANTYP  = 1;
+	private static final int COLUMN_DESC 	 = 2;
 	private static final int COLUMN_PARTNER	 = 3;
 	private static final int COLUMN_CREDIT	 = 4;
 	private static final int COLUMN_DEBIT 	 = 5;
@@ -107,15 +107,15 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 		myCol.setCellEditor(theDateEditor);
 		myCol.setPreferredWidth(80);
 		
-		myCol = myColModel.getColumn(COLUMN_DESC);
-		myCol.setCellRenderer(theStringRenderer);
-		myCol.setCellEditor(theStringEditor);
-		myCol.setPreferredWidth(150);
-		
 		myCol = myColModel.getColumn(COLUMN_TRANTYP);
 		myCol.setCellRenderer(theStringRenderer);
 		myCol.setCellEditor(theComboEditor);
 		myCol.setPreferredWidth(110);
+		
+		myCol = myColModel.getColumn(COLUMN_DESC);
+		myCol.setCellRenderer(theStringRenderer);
+		myCol.setCellEditor(theStringEditor);
+		myCol.setPreferredWidth(150);
 		
 		myCol = myColModel.getColumn(COLUMN_PARTNER);
 		myCol.setCellRenderer(theStringRenderer);
@@ -383,7 +383,7 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 					break;
 				case COLUMN_DESC:	 	
 					o = myPattern.getDesc();
-					if ((o != null) & (((String)o).length() == 0))
+					if ((o != null) && (((String)o).length() == 0))
 						o = null;
 					break;
 				case COLUMN_TRANTYP:  	

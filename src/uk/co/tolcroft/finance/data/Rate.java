@@ -131,12 +131,12 @@ public class Rate extends DataItem {
 	}
 
 	/* Standard constructor */
-	public Rate(List       		pList,
-				long           	uId,
-				long 		   	uAccountId,
-				java.util.Date 	pEndDate, 
-				String		   	pRate,
-				String		   	pBonus) throws Exception {
+	private Rate(List       	pList,
+				 long           uId,
+				 long 		   	uAccountId,
+				 java.util.Date	pEndDate, 
+				 String		   	pRate,
+				 String		   	pBonus) throws Exception {
 		/* Initialise the item */
 		super(pList, uId);
 		
@@ -573,10 +573,10 @@ public class Rate extends DataItem {
 			myAccount = myAccounts.searchFor(pAccount);
 			if (myAccount == null) 
 				throw new Exception(ExceptionClass.DATA,
-			                        "Rate on <" + 
+			                        "Rate on [" + 
 			                        Utils.formatDate(new Date(pDate)) +
-			                        "> has invalid Account <" +
-			                        pAccount + ">");
+			                        "] has invalid Account [" +
+			                        pAccount + "]");
 				
 			/* Add the rate */
 			addItem(uId,
@@ -594,20 +594,29 @@ public class Rate extends DataItem {
 	            			String   		pRate,
 	            			java.util.Date  pDate,
 				            String   		pBonus) throws Exception {
-			Rate     	myLine;
+			Rate     	myRate;
 			
 			/* Create the period */
-			myLine    = new Rate(this, uId, uAccountId,
+			myRate    = new Rate(this, uId, uAccountId,
 					             pDate, pRate, pBonus);
 				
 			/* Check that this RateId has not been previously added */
 			if (!isIdUnique(uId)) 
 				throw new Exception(ExceptionClass.DATA,
-						            myLine,
+						            myRate,
 			  			            "Duplicate RateId");
 			 
+			/* Validate the rate */
+			myRate.validate();
+
+			/* Handle validation failure */
+			if (myRate.hasErrors()) 
+				throw new Exception(ExceptionClass.VALIDATE,
+									myRate,
+									"Failed validation");
+				
 			/* Add to the list */
-			myLine.addToList();
+			myRate.addToList();
 		}			
 	}
 

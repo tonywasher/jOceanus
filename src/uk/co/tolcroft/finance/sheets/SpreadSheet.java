@@ -13,6 +13,7 @@ import jxl.write.WritableWorkbook;
 
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.security.*;
 import uk.co.tolcroft.security.ZipFile.*;
 import uk.co.tolcroft.models.Exception;
@@ -175,6 +176,7 @@ public class SpreadSheet {
 		Workbook        		myWorkbook 	= null;
 		DataSet					myData		= null;
 		SheetStatic.YearRange	myRange 	= null;
+		DilutionEvent.List		myDilution	= null;
 		
 		/* Protect the workbook retrieval */
 		try {
@@ -186,6 +188,9 @@ public class SpreadSheet {
 
 			/* Create a YearRange */
 			myRange = new SheetStatic.YearRange();
+			
+			/* Create the dilution event list */
+			myDilution = new DilutionEvent.List(myData);
 			
 			/* Determine Year Range */
 			bContinue = SheetStatic.loadArchive(pThread, myWorkbook, myData, myRange);
@@ -200,19 +205,16 @@ public class SpreadSheet {
 			if (bContinue) myData.calculateDateRange();
 			if (bContinue) bContinue = SheetAccount.loadArchive(pThread, myWorkbook, myData);
 			if (bContinue) bContinue = SheetRate.loadArchive(pThread, myWorkbook, myData);
-			if (bContinue) bContinue = SheetPrice.loadArchive(pThread, myWorkbook, myData);
+			if (bContinue) bContinue = SheetDilution.loadArchive(pThread, myWorkbook, myData, myDilution);
+			if (bContinue) bContinue = SheetPrice.loadArchive(pThread, myWorkbook, myData, myDilution);
 			if (bContinue) bContinue = SheetPattern.loadArchive(pThread, myWorkbook, myData);
 			if (bContinue) myData.getAccounts().validateAccounts();
 			if (bContinue) bContinue = SheetEvent.loadArchive(pThread, myWorkbook, myData, myRange);
 		
-			/* Declare the new stage */
-			if (!pThread.setNewStage("Analysing data")) bContinue = false;
-			
 			/* Close the work book (and the input stream) */
 			myWorkbook.close();		
 		
-			/* Analyse the data */
-			if (bContinue) myData.analyseData();
+			/* Set the next stage */
 			if (!pThread.setNewStage("Refreshing data")) bContinue = false;
 							
 			/* Check for cancellation */
@@ -250,7 +252,7 @@ public class SpreadSheet {
 		/* Protect the workbook retrieval */
 		try {
 			/* Declare the number of stages */
-			bContinue = pThread.setNumStages(15);
+			bContinue = pThread.setNumStages(14);
 
 			/* Note the stage */
 			if (bContinue) bContinue = pThread.setNewStage("Loading");
@@ -277,14 +279,10 @@ public class SpreadSheet {
 			if (bContinue) myData.getAccounts().validateAccounts();
 			if (bContinue) bContinue = SheetEvent.loadBackup(pThread, myWorkbook, myData);
 		
-			/* Declare the new stage */
-			if (!pThread.setNewStage("Analysing data")) bContinue = false;
-			
 			/* Close the work book (and the input stream) */
 			myWorkbook.close();		
 		
 			/* Analyse the data */
-			if (bContinue) myData.analyseData();
 			if (!pThread.setNewStage("Refreshing data")) bContinue = false;
 							
 			/* Check for cancellation */

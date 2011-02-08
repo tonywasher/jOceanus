@@ -105,6 +105,11 @@ public class AnalysisYear implements SortedList.linkObject {
 	 * List of AnalysisYears
 	 */
 	public static class List extends SortedList<AnalysisYear> {
+		/* Members */
+		private DilutionEvent.List theDilutions = null;
+		
+		/* Access the Dilution Events */
+		public DilutionEvent.List getDilutions() { return theDilutions; }
 		
 		/* Constructor */
 		public List(DataSet pData) {
@@ -117,6 +122,9 @@ public class AnalysisYear implements SortedList.linkObject {
 			AnalysisYear					myYear 		= null;
 			TaxYear.List					myList;
 
+			/* Create the Dilution Event List */
+			theDilutions = new DilutionEvent.List(pData);
+			
 			/* Access the tax years list */
 			myList = pData.getTaxYears();
 			
@@ -158,6 +166,12 @@ public class AnalysisYear implements SortedList.linkObject {
 				myCurr.getCredit().touchAccount(myCurr);
 				myCurr.getDebit().touchAccount(myCurr);			
 				
+				/* If the event has a dilution factor */
+				if (myCurr.getDilution() != null) {
+					/* Add to the dilution event list */
+					theDilutions.addDilution(myCurr);
+				}
+
 				/* Process the event in the report set */
 				myYear.processEvent(myCurr);
 				myTax.setActive();

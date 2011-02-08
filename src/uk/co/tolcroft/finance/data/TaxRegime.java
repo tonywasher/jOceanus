@@ -121,9 +121,9 @@ public class TaxRegime extends DataItem {
 	 * @param uId   ID of TaxRegime
 	 * @param sName Name of TaxRegime
 	 */
-	public TaxRegime(List 	pList,
-			         long   uId,
-			         String sName) throws Exception {
+	private TaxRegime(List 	 pList,
+			          long   uId,
+			          String sName) throws Exception {
 		super(pList, uId);
 		Values myObj = new Values();
 		setObj(myObj);

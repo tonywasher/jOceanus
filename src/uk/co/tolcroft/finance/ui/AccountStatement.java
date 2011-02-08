@@ -600,7 +600,7 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 					break;
 				case COLUMN_DESC:
 					o = myLine.getDesc();
-					if ((o != null) & (((String)o).length() == 0))
+					if ((o != null) && (((String)o).length() == 0))
 						o = null;
 					break;
 				default:
@@ -718,13 +718,13 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 				Point p = new Point(e.getX(), e.getY());
 				int row = theTable.rowAtPoint(p);
 					
-				/* Access the row */
-				myRow = theLines.get(row-1);
-						
 				/* If we have an account */
 				if ((row > 0) &&
 					((!theTable.hasUpdates()) ||
 					 (!theTable.isLocked()))) {
+					/* Access the row */
+					myRow = theLines.get(row-1);
+							
 					/* Create the pop-up menu */
 					myMenu = new JPopupMenu();
 						
@@ -785,9 +785,8 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 						}
 					}
 						
-					/* If the table is not locked and the Account is external */
-					if ((!theTable.isLocked()) &&
-						(theAccount.isExternal())) {
+					/* If the table is not locked */
+					if (!theTable.isLocked()) {
 						/* Create the Add to Pattern choice */
 						myItem = new JMenuItem(popupPattern);
 						

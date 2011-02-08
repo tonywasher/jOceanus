@@ -91,7 +91,8 @@ public class Statement {
 					}
 					
 					/* If we have units */
-					else if ((isUnits) && (myCurr.getUnits() != null) ) {
+					else if ((isUnits) && 
+							 (myCurr.getUnits() != null)) {
 						/* If the Account is Credited */
 						if (pAccount.compareTo(myCurr.getCredit()) == 0) {
 							/* Adjust the start balance */
@@ -107,8 +108,10 @@ public class Statement {
 					continue;
 				}
 				
-				/* Skip unit lines that have no units */
-				if ((isUnits) && (myCurr.getUnits() == null)) continue;
+				/* Skip unit lines that have no units or dilution */
+				if ((isUnits) && 
+					(myCurr.getUnits() == null) &&
+					(myCurr.getDilution() == null)) continue;
 				
 				/* Add a statement line to the statement */
 				myLine = new Line(theLines, myCurr, theAccount);
@@ -192,7 +195,7 @@ public class Statement {
 		myBase.applyChanges(theLines);
 					
 		/* analyse the data */
-		try { myData.analyseData(); } catch (Throwable e) {}
+		theView.analyseData();
 		
 		/* Refresh windows */
 		theView.refreshWindow();
@@ -277,6 +280,9 @@ public class Statement {
 		public Number.Units       	getUnits()     		{ return getObj().getUnits(); }
 		public Number.Money       	getAmount()    		{ return getObj().getAmount(); }
 		public Account       		getPartner()   		{ return getObj().getPartner(); }
+		public Number.Dilution   	getDilution() 		{ return getObj().getDilution(); }
+		public Number.Money   		getTaxCredit() 		{ return getObj().getTaxCredit(); }
+		public Integer   			getYears() 			{ return getObj().getYears(); }
 		public TransactionType   	getTransType() 		{ return getObj().getTransType(); }
 		public Number.Money       	getBalance()   		{ return theBalance; }
 		public Number.Units       	getBalanceUnits() 	{ return theBalUnits; }
@@ -295,7 +301,10 @@ public class Statement {
 		public static final int FIELD_ACCOUNT  	= 6;
 		public static final int FIELD_UNITS    	= 7;
 		public static final int FIELD_CREDIT   	= 8;
-		public static final int NUMFIELDS	   	= 9;
+		public static final int FIELD_DILUTION 	= 9;
+		public static final int FIELD_TAXCREDIT	= 10;
+		public static final int FIELD_YEARS   	= 11;
+		public static final int NUMFIELDS	   	= 12;
 		
 		/**
 		 * Obtain the type of the item
@@ -324,6 +333,9 @@ public class Statement {
 				case FIELD_AMOUNT: 		return "Amount";
 				case FIELD_UNITS: 		return "Units";
 				case FIELD_CREDIT:		return "IsCredit";
+				case FIELD_DILUTION:	return "Dilution";
+				case FIELD_TAXCREDIT:	return "TaxCredit";
+				case FIELD_YEARS:		return "Years";
 				default:		  		return super.fieldName(iField);
 			}
 		}
@@ -365,6 +377,15 @@ public class Statement {
 				case FIELD_CREDIT: 
 					myString +=	(isCredit() ? "true" : "false");
 					break;
+				case FIELD_TAXCREDIT: 	
+					myString += Utils.formatMoney(myObj.getAmount());	
+					break;
+				case FIELD_YEARS:	
+					myString += myObj.getYears(); 
+					break;
+				case FIELD_DILUTION:	
+					myString += Utils.formatDilution(myObj.getDilution()); 
+					break;
 			}
 			return myString + "</td></tr>";
 		}
@@ -392,17 +413,22 @@ public class Statement {
 			myObj.setAmount(pEvent.getAmount());
 			myObj.setUnits(pEvent.getUnits());
 			myObj.setTransType(pEvent.getTransType());
+			myObj.setDilution(pEvent.getDilution());
+			myObj.setTaxCredit(pEvent.getTaxCredit());
+			myObj.setYears(pEvent.getYears());
 			setBase(pEvent);
 			setState(DataState.CLEAN);
-		
-			/* If the Account is Credited */
-			if (pAccount.compareTo(pEvent.getCredit()) == 0) {
-				myObj.setPartner(pEvent.getDebit());
-				isCredit   = true;
-			}
-			else if (pAccount.compareTo(pEvent.getDebit()) == 0) {
+
+			/* If the account is debited */
+			if (pAccount.compareTo(pEvent.getDebit()) == 0) {
 				myObj.setPartner(pEvent.getCredit());
 				isCredit   = false;
+			}
+			
+			/* If the Account is Credited */
+			else if (pAccount.compareTo(pEvent.getCredit()) == 0) {
+				myObj.setPartner(pEvent.getDebit());
+				isCredit   = true;
 			}
 		}
 					
@@ -443,6 +469,12 @@ public class Statement {
 						iField = Line.FIELD_TRNTYP; break;
 					case Event.FIELD_UNITS: 
 						iField = Line.FIELD_UNITS; break;
+					case Event.FIELD_DILUTION: 
+						iField = Line.FIELD_DILUTION; break;
+					case Event.FIELD_TAXCREDIT: 
+						iField = Line.FIELD_TAXCREDIT; break;
+					case Event.FIELD_YEARS: 
+						iField = Line.FIELD_YEARS; break;
 					case Event.FIELD_DEBIT: 
 						iField = (isCredit())
 									?  Line.FIELD_PARTNER
@@ -542,16 +574,22 @@ public class Statement {
 			if (iDiff < 0) return -1;
 			if (iDiff > 0) return 1;
 			
+			/* Compare the transaction type */
+			if (this.getTransType() == null) return 1;
+			if (myThat.getTransType() == null) return -1;
+			iDiff = getTransType().compareTo(myThat.getTransType());
+			if (iDiff < 0) return -1;
+			if (iDiff > 0) return 1;
+			
 			/* Compare the description */
-			if (this.getDesc() == myThat.getDesc()) return 0;
 			if (this.getDesc() == null) return 1;
 			if (myThat.getDesc() == null) return -1;
 			iDiff = getDesc().compareTo(myThat.getDesc());
 			if (iDiff < 0) return -1;
 			if (iDiff > 0) return 1;
 			
-			/* Compare the transaction type */
-			return getTransType().compareTo(myThat.getTransType());
+			/* Return equality */
+			return 0;
 		}
 
 		/**
@@ -601,6 +639,33 @@ public class Statement {
 		}
 		
 		/**
+		 * Set a new dilution
+		 * 
+		 * @param pDilution the dilution 
+		 */
+		public void setDilution(Number.Dilution pDilution) {
+			getObj().setDilution((pDilution == null) ? null : new Number.Dilution(pDilution));
+		}
+		
+		/**
+		 * Set a new tax credit
+		 * 
+		 * @param pTaxCredit the tax credit 
+		 */
+		public void setTaxCredit(Number.Money pTaxCredit) {
+			getObj().setTaxCredit((pTaxCredit == null) ? null : new Number.Money(pTaxCredit));
+		}
+		
+		/**
+		 * Set a new years 
+		 * 
+		 * @param pYears the years 
+		 */
+		public void setYears(Integer pYears) {
+			getObj().setYears((pYears == null) ? null : new Integer(pYears));
+		}
+		
+		/**
 		 * Set a new date 
 		 * 
 		 * @param pDate the new date 
@@ -619,6 +684,9 @@ public class Statement {
 		private Number.Money    theAmount    = null;
 		private Account         thePartner   = null;
 		private Number.Units    theUnits     = null;
+		private Number.Dilution	theDilution  = null;
+		private Number.Money	theTaxCredit = null;
+		private Integer			theYears  	 = null;
 		private TransactionType	theTransType = null;
 		
 		/* Access methods */
@@ -627,6 +695,9 @@ public class Statement {
 		public Number.Money     getAmount()    { return theAmount; }
 		public Account          getPartner()   { return thePartner; }
 		public Number.Units     getUnits()     { return theUnits; }
+		public Number.Dilution  getDilution()  { return theDilution; }
+		public Number.Money     getTaxCredit() { return theTaxCredit; }
+		public Integer     		getYears()     { return theYears; }
 		public TransactionType	getTransType() { return theTransType; }
 		
 		public void setDate(Date pDate) {
@@ -639,6 +710,12 @@ public class Statement {
 			thePartner   = pPartner; }
 		public void setUnits(Number.Units pUnits) {
 			theUnits     = pUnits; }
+		public void setDilution(Number.Dilution pDilution) {
+			theDilution  = pDilution; }
+		public void setTaxCredit(Number.Money pTaxCredit) {
+			theTaxCredit = pTaxCredit; }
+		public void setYears(Integer pYears) {
+			theYears     = pYears; }
 		public void setTransType(TransactionType pTransType) {
 			theTransType = pTransType; }
 
@@ -650,6 +727,9 @@ public class Statement {
 			theAmount    = pValues.getAmount();
 			thePartner   = pValues.getPartner();
 			theUnits     = pValues.getUnits();
+			theDilution  = pValues.getDilution();
+			theTaxCredit = pValues.getTaxCredit();
+			theYears     = pValues.getYears();
 			theTransType = pValues.getTransType();
 		}
 		
@@ -664,6 +744,9 @@ public class Statement {
 			if (Utils.differs(theAmount,    pValues.theAmount))    return false;
 			if (Utils.differs(theUnits,     pValues.theUnits))     return false;
 			if (Utils.differs(thePartner,   pValues.thePartner))   return false;
+			if (Utils.differs(theDilution,  pValues.theDilution))  return false;
+			if (Utils.differs(theTaxCredit, pValues.theTaxCredit)) return false;
+			if (Utils.differs(theYears,     pValues.theYears))     return false;
 			if (Utils.differs(theTransType, pValues.theTransType)) return false;
 			return true;
 		}
@@ -682,6 +765,9 @@ public class Statement {
 			theAmount    = pValues.getAmount();
 			thePartner   = pValues.getPartner();
 			theUnits     = pValues.getUnits();
+			theDilution  = pValues.getDilution();
+			theTaxCredit = pValues.getTaxCredit();
+			theYears     = pValues.getYears();
 			theTransType = pValues.getTransType();
 		}
 		public boolean	fieldChanged(int fieldNo, histObject pOriginal) {

@@ -89,8 +89,9 @@ public class IncomeAnalysis {
 			}
 		}
 
-		/* If this is a dividend */
-		if (myTransType.isDividend()) {
+		/* If this is a dividend from an asset */
+		if ((myTransType.isDividend() &&
+			(!myAccount.isExternal()))) {
 			/* Access the parent account */
 			myAccount = myAccount.getParent();
 			
@@ -140,8 +141,6 @@ public class IncomeAnalysis {
 		
 		/* Access the current market movement */
 		myMovement = new Money(pMovement.getMarket());
-		if (pMovement.getDividends().isNonZero())
-			myMovement.subtractAmount(pMovement.getDividends());
 		
 		/* If the movement is positive */
 		if (myMovement.isPositive())

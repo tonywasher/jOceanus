@@ -264,6 +264,47 @@ public class Renderer {
 		}
 	}			
 
+	/* Dilution Cell Renderer */
+	public static class DilutionCell extends DefaultTableCellRenderer {
+		private static final long serialVersionUID = 4073411390992240277L;
+		private RenderData theData = null;
+		
+		public DilutionCell() {
+			super();
+			theData = new RenderData(true);
+		}
+
+		public void setValue(Object value) {
+			Number.Dilution	myDilution;
+			String          s;
+			
+			if (value == theError)  s = theError;
+			else if (value == null) s = "";
+			else {
+				myDilution = (Number.Dilution)value;
+				s          = myDilution.format(true);
+			}
+			
+			super.setValue(s);
+		}
+		public JComponent getTableCellRendererComponent(JTable table, Object value,
+														boolean isSelected, 
+														boolean hasFocus, 
+														int row, int column) {	
+			super.getTableCellRendererComponent(table, value, isSelected,
+												hasFocus, row, column);
+			financeTable myTable = (financeTable)table;
+			theData.setPosition(row, column, isSelected);
+			myTable.getRenderData(theData);
+			setForeground(theData.getForeGround());
+			setBackground(theData.getBackGround());
+			setFont(theData.getFont());
+			setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+		    setToolTipText(theData.getToolTip());
+			return this;
+		}
+	}			
+
 	/* Price Cell Renderer */
 	public static class PriceCell extends DefaultTableCellRenderer {
 		private static final long serialVersionUID = -2085384960415300006L;
@@ -282,6 +323,48 @@ public class Renderer {
 			else if (value == null) s = "";
 			else {
 				myPrice = (Number.Price)value;
+				s       = myPrice.format(true);
+			}
+			
+			super.setValue(s);
+		}
+		
+		public JComponent getTableCellRendererComponent(JTable table, Object value,
+		                                                boolean isSelected, 
+		                                                boolean hasFocus, 
+		                                                int row, int column) {
+			super.getTableCellRendererComponent(table, value, isSelected,
+		                                        hasFocus, row, column);
+			financeTable myTable = (financeTable)table;
+			theData.setPosition(row, column, isSelected);
+			myTable.getRenderData(theData);
+			setForeground(theData.getForeGround());
+			setBackground(theData.getBackGround());
+			setFont(theData.getFont());
+			setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+		    setToolTipText(theData.getToolTip());
+		    return this;
+		}
+	}	
+	
+	/* DilutedPrice Cell Renderer */
+	public static class DilutedPriceCell extends DefaultTableCellRenderer {
+		private static final long serialVersionUID = -1928861688649200235L;
+		private RenderData theData = null;
+		
+		public DilutedPriceCell() {
+			super();
+			theData = new RenderData(true);
+		}
+
+		public void setValue(Object value) {
+			Number.DilutedPrice myPrice;
+			String 				s;
+			
+			if (value == theError)  s = theError;
+			else if (value == null) s = "";
+			else {
+				myPrice = (Number.DilutedPrice)value;
 				s       = myPrice.format(true);
 			}
 			

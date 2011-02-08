@@ -78,6 +78,32 @@ public class Utils {
 	}
 
 	/**
+	 * Determine whether two {@link DilutedPrice} objects differ.
+	 * 
+	 * @param pCurr The current DilutedPrice 
+	 * @param pNew The new DilutedPrice
+	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
+	 */	
+	public static boolean differs(Number.DilutedPrice pCurr, Number.DilutedPrice pNew) {
+		return (((pCurr == null) && (pNew != null)) ||
+				((pCurr != null) && 
+				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
+	}
+
+	/**
+	 * Determine whether two {@link Dilution} objects differ.
+	 * 
+	 * @param pCurr The current Dilution
+	 * @param pNew The new Dilution
+	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
+	 */	
+	public static boolean differs(Number.Dilution pCurr, Number.Dilution pNew) {
+		return (((pCurr == null) && (pNew != null)) ||
+				((pCurr != null) && 
+				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
+	}
+
+	/**
 	 * Determine whether two {@link Units} objects differ.
 	 * 
 	 * @param pCurr The current Units 
@@ -230,6 +256,32 @@ public class Utils {
 		String 	myFormat;
 		myFormat = (pPrice != null) ? pPrice.format(false)
 								   : "null";
+		return myFormat;
+	}
+
+	/**
+	 * Format a DilutedPrice 
+	 * 
+	 * @param pPrice the price to format
+	 * @return the formatted Price
+	 */
+	public static String formatDilutedPrice(Number.DilutedPrice pPrice) {
+		String 	myFormat;
+		myFormat = (pPrice != null) ? pPrice.format(false)
+								    : "null";
+		return myFormat;
+	}
+
+	/**
+	 * Format a Dilution 
+	 * 
+	 * @param pDilution the dilution to format
+	 * @return the formatted Dilution
+	 */
+	public static String formatDilution(Number.Dilution pDilution) {
+		String 	myFormat;
+		myFormat = (pDilution != null) ? pDilution.format(false)
+								       : "null";
 		return myFormat;
 	}
 

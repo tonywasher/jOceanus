@@ -780,37 +780,51 @@ public class AssetAnalysis {
 	/* The item class for Assets */
 	public class AssetBucket extends Bucket {
 		/* Members */
-		private		Number.Units	theUnits     	= null;
-		private		Number.Price	thePrice     	= null;
-		private		Number.Money    theInvestment   = null;
-		private		Number.Money    theDividends 	= null;
-		private		Number.Money    theMarket    	= null;
+		private		Number.Units	theUnits     		= null;
+		private		Number.Price	thePrice     		= null;
+		private		Number.Money    theInvestment  		= null;
+		private		Number.Money    theDividends   		= null;
+		private		Number.Money    theCost 	    	= null;
+		private		Number.Money    theRealisedGains	= null;
+		private		Number.Money    theProfit			= null;
+		private		Number.Money    theMarket    		= null;
 		
 		/* Access methods */
-		public 	Number.Units    getUnits()     	{ return theUnits; }
-		public 	Number.Price    getPrice()     	{ return thePrice; }
-		public 	Number.Money    getInvestment()	{ return theInvestment; }
-		public 	Number.Money    getDividends() 	{ return theDividends; }
-		public 	Number.Money    getMarket()    	{ return theMarket; }
-		public 	AssetBucket		getPrevious()  	{ return (AssetBucket)super.getPrevious(); }
+		public 	Number.Units    getUnits()     		{ return theUnits; }
+		public 	Number.Price    getPrice()     		{ return thePrice; }
+		public 	Number.Money    getInvestment()		{ return theInvestment; }
+		public 	Number.Money    getDividends() 		{ return theDividends; }
+		public 	Number.Money    getMarket()    		{ return theMarket; }
+		public 	Number.Money    getCost()			{ return theCost; }
+		public 	Number.Money    getRealisedGains() 	{ return theRealisedGains; }
+		public 	Number.Money    getProfit()			{ return theProfit; }
+		public 	AssetBucket		getPrevious()  		{ return (AssetBucket)super.getPrevious(); }
 
 		/* Constructors */
 		private AssetBucket(List pList, Account pAccount) { 
 			super(pList, pAccount);
-			theUnits     	= new Number.Units(0);
-			theInvestment	= new Number.Money(0);
-			theDividends	= new Number.Money(0);
+			theUnits     		= new Number.Units(0);
+			theInvestment		= new Number.Money(0);
+			theDividends		= new Number.Money(0);
+			theCost				= new Number.Money(0);
+			theRealisedGains	= new Number.Money(0);
 		}
 		private AssetBucket(List pList, AssetBucket pBucket) {
 			super(pList, pBucket);
-			theUnits     	= new Number.Units(pBucket.getUnits());
-			theInvestment	= new Number.Money(0);
-			theDividends	= new Number.Money(0);
+			theUnits     		= new Number.Units(pBucket.getUnits());
+			theCost     		= new Number.Money(pBucket.getCost());
+			theRealisedGains 	= new Number.Money(pBucket.getRealisedGains());
+			theInvestment		= new Number.Money(0);
+			theDividends		= new Number.Money(0);
 		}
 		private AssetBucket(List pList, BucketType pType) {
 			super(pList, pType);
 			theInvestment		= new Number.Money(0);
 			theMarket			= new Number.Money(0);
+			theDividends		= new Number.Money(0);
+			theCost				= new Number.Money(0);
+			theRealisedGains	= new Number.Money(0);
+			theProfit			= new Number.Money(0);
 		}
 		
 		/**
@@ -825,6 +839,9 @@ public class AssetAnalysis {
 			/* Adjust the investment total */
 			theInvestment.addAmount(myAmount);
 			
+			/* Adjust the cost base */
+			theCost.addAmount(myAmount);
+			
 			/* If we need to adjust units */
 			if ((myUnits != null) && (theUnits != null)) {
 				/* Adjust the units total */
@@ -838,15 +855,11 @@ public class AssetAnalysis {
 		 * @param  pEvent Event to subtract
 		 */
 		protected void subtractEvent(Event pEvent) {
-			Number.Money myAmount = pEvent.getAmount();
-			Number.Money myTax	  = pEvent.getTaxCredit();
-			Number.Units myUnits  = pEvent.getUnits();
+			Number.Money myAmount 		= pEvent.getAmount();
+			Number.Money myTax	  		= pEvent.getTaxCredit();
+			Number.Units myUnits  		= pEvent.getUnits();
+			Number.Money myReduction;
 
-			/* Adjust the investment total */
-			theInvestment.subtractAmount(myAmount);
-			if (myTax != null)
-				theInvestment.subtractAmount(myTax);				
-			
 			/* If this is a dividend */
 			if (pEvent.getTransType().isDividend()) {
 				/* Adjust the dividends total */
@@ -855,9 +868,41 @@ public class AssetAnalysis {
 					theDividends.addAmount(myTax);				
 			}
 			
+			/* else this a transfer of capital */
+			else {
+				/* Adjust the investment total */
+				theInvestment.subtractAmount(myAmount);
+				if (myTax != null)
+					theInvestment.subtractAmount(myTax);				
+				
+				/* If we are reducing units */
+				if ((myUnits != null) && (theUnits != null) &&
+					(Utils.differs(pEvent.getDebit(), pEvent.getCredit()))) {
+					/* Calculate the cost reduction */
+					myReduction = theCost.valueAtWeight(myUnits, theUnits);
+					
+				/* else if the cost reduction is more than the cost */
+				} else if (myAmount.getAmount() > theCost.getAmount())  {
+					/* Reduce the cost to zero */
+					myReduction = new Number.Money(theCost);
+					
+				/* else */	
+				} else {
+					/* Set the reduction as the amount */
+					myReduction = new Number.Money(myAmount);
+				}
+				
+				/* Reduce the cost */
+				theCost.subtractAmount(myReduction);
+			
+				/* Adjust the realised gains */
+				theRealisedGains.addAmount(myAmount);
+				theRealisedGains.subtractAmount(myReduction);
+			}
+			
 			/* If we need to adjust units */
 			if ((myUnits != null) && (theUnits != null) &&
-				(Utils.differs(pEvent.getDebit(), pEvent.getCredit()))) {
+				(!pEvent.getCredit().isPriced())) {
 				/* Adjust the units total */
 				theUnits.subtractUnits(myUnits);
 			}
@@ -869,10 +914,19 @@ public class AssetAnalysis {
 		 * @param  pBucket Bucket to add
 		 */
 		protected void addMarketBucket(AssetBucket pBucket) {
-			/* Adjust the money total */
+			/* Adjust the value */
 			super.addBucket(pBucket);
+			
+			/* Add Dividends back into investment */
+			pBucket.getInvestment().addAmount(pBucket.getDividends());
+			
+			/* Adjust totals */
 			theInvestment.addAmount(pBucket.getInvestment());
+			theDividends.addAmount(pBucket.getDividends());
 			theMarket.addAmount(pBucket.getMarket());
+			theCost.addAmount(pBucket.getCost());
+			theRealisedGains.addAmount(pBucket.getRealisedGains());
+			theProfit.addAmount(pBucket.getProfit());
 		}
 		
 		/**
@@ -888,6 +942,10 @@ public class AssetAnalysis {
 			
 			/* Calculate the market movement */
 			calculateMarketMovement();
+			
+			/* Calculate the Profit */
+			theProfit = new Number.Money(getAmount());
+			theProfit.subtractAmount(theCost);
 		}
 
 		/**
@@ -908,7 +966,7 @@ public class AssetAnalysis {
 				myMovement.subtractAmount(getPrevious().getAmount());
 			}
 			
-			/* Store it and return */
+			/* Store it as the movement */
 			theMarket = myMovement;
 			return;
 		}

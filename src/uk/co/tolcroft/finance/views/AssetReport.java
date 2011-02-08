@@ -199,7 +199,8 @@ public class AssetReport {
 		myOutput.append("</h1></a>");
 		myOutput.append("<table border=\"1\" width=\"95%\" align=\"center\">"); 
 		myOutput.append("<thead><th>Name</th><th>Value</th>");
-		myOutput.append("<th>Investment</th><th>MarketGrowth</th></thead>");
+		myOutput.append("<th>Investment</th><th>Dividends</th>");
+		myOutput.append("<th>MarketGrowth</th></thead>");
 		myOutput.append("<tbody>");
 		
 		/* Access the iterator */
@@ -225,6 +226,7 @@ public class AssetReport {
 			myOutput.append("</th>");
 			myOutput.append(Report.makeMoneyItem(myAsset.getAmount()));
 			myOutput.append(Report.makeMoneyItem(myAsset.getInvestment()));
+			myOutput.append(Report.makeMoneyItem(myAsset.getDividends()));
 			myOutput.append(Report.makeMoneyItem(myAsset.getMarket()));
 			myOutput.append("</tr>");
 		}
@@ -236,6 +238,7 @@ public class AssetReport {
 		myOutput.append("<tr><th>Totals</th>");
 		myOutput.append(Report.makeMoneyTotal(myAsset.getAmount()));
 		myOutput.append(Report.makeMoneyTotal(myAsset.getInvestment()));
+		myOutput.append(Report.makeMoneyTotal(myAsset.getDividends()));
 		myOutput.append(Report.makeMoneyTotal(myAsset.getMarket()));
 		myOutput.append("</tr></tbody></table>");
 		

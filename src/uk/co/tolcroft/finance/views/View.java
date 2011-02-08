@@ -5,37 +5,74 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.*;
+import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 public class View {
 	/* Members */
-	private DataSet     theData  = null;
-	private Date.Range  theRange = null;
-	private MainTab		theCtl 	 = null;
+	private DataSet     		theData  		= null;
+	private Date.Range  		theRange 		= null;
+	private MainTab				theCtl 	 		= null;
+    private AnalysisYear.List	theAnalysis		= null;
+    private DilutionEvent.List	theDilutions	= null;
+    private Exception			theError		= null;
 
 	/* Access methods */
-	public DataSet 		getData() 		{ return theData; }
-	public MainTab		getControl()	{ return theCtl; }
-	public Date.Range	getRange()		{ return theRange; }
+	public DataSet 				getData() 		{ return theData; }
+	public MainTab				getControl()	{ return theCtl; }
+	public Date.Range			getRange()		{ return theRange; }
+	public AnalysisYear.List    getAnalyses()	{ return theAnalysis; }
+	public DilutionEvent.List   getDilutions()	{ return theDilutions; }
+	public Exception			getError()		{ return theError; }
 	
  	/* Constructor */
 	public View(MainTab pCtl) {
 		theCtl	= pCtl;
 		theData = new DataSet(pCtl.getSecurity());
 		theData.calculateDateRange();
-		initialiseData();
+		analyseData();
 	}
 	
 	/* Update the data for a view */ 
 	public void setData(DataSet pData) {
+		/* Record the data */
 		theData = pData;
-		initialiseData();
+		
+		/* Analyse the data */
+		analyseData();
+		
+		/* Refresh the windows */
 		refreshWindow();
 	}
 	
 	/* initialise the view from the data */ 
-	public void initialiseData() {
+	public void analyseData() {
+		/* Clear the error */
+		theError = null;
+		
 		/* Access the range */
 		theRange = theData.getDateRange();
+
+		/* Protect against exceptions */
+		try {
+			/* Analyse the data */
+			theAnalysis  = theData.analyseData();
+		
+			/* Access the dilutions */
+			theDilutions = theAnalysis.getDilutions();
+		}
+		
+		/* Catch any exceptions */
+		catch (Exception e) {
+			theError = e;
+		}	
+
+		/* Catch any exceptions */
+		catch (Throwable e) {
+			/* Report the failure */
+			theError = new Exception(ExceptionClass.DATA,
+								     "Failed to analyse data",
+								     e);
+		}	
 	}
 	
 	/* refresh the window view */ 
@@ -105,7 +142,7 @@ public class View {
 			theData.calculateDateRange();
 			
 			/* analyse the data */
-			try { theData.analyseData(); } catch (Throwable e) {}
+			analyseData();
 			
 			/* Refresh windows */
 			refreshWindow();
@@ -172,7 +209,7 @@ public class View {
 			myBase.applyChanges(theList);
 						
 			/* analyse the data */
-			try { theData.analyseData(); } catch (Throwable e) {}
+			analyseData(); 
 			
 			/* Refresh windows */
 			refreshWindow();
@@ -395,7 +432,7 @@ public class View {
 			myBase.applyChanges(theEvents);
 			
 			/* analyse the data */
-			try { theData.analyseData(); } catch (Throwable e) {}
+			analyseData();
 			
 			/* Refresh windows */
 			refreshWindow();

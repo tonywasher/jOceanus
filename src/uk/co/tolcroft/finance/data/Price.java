@@ -126,11 +126,11 @@ public class Price extends DataItem {
 	}
 
 	/* Standard constructor */
-	public Price(List       	pList,
-			     long           uId, 
-				 long 		    uAccountId,
-			     java.util.Date pDate, 
-			     String 		pPrice) throws Exception {
+	private Price(List       		pList,
+			      long           	uId, 
+				  long 		    	uAccountId,
+			      java.util.Date 	pDate, 
+			      String 			pPrice) throws Exception {
 		/* Initialise the item */
 		super(pList, uId);
 		
@@ -158,6 +158,30 @@ public class Price extends DataItem {
 								this,
 								"Invalid Price: " + pPrice);
 		myObj.setPrice(myPrice);
+		
+		/* Allocate the id */
+		pList.setNewId(this);				
+	}
+
+	/* Special price constructor for diluted prices */
+	private Price(List       	pList,
+				  Account	    pAccount,
+			      Date 			pDate, 
+			      Number.Price	pPrice) {
+		/* Initialise the item */
+		super(pList, 0);
+		
+		/* Initialise the values */
+		Values myObj = new Values();
+		setObj(myObj);
+		
+		/* Record the Id */
+		theAccountId = pAccount.getId();
+		
+		/* Set the passed details */
+		myObj.setAccount(pAccount);
+		myObj.setDate(pDate);
+		myObj.setPrice(pPrice);
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -412,6 +436,10 @@ public class Price extends DataItem {
 			Price 			myItem;
 			ListIterator 	myIterator;
 
+			/* Skip to alias if required */
+			if ((pAccount != null) && (pAccount.getAlias() != null))
+				pAccount = pAccount.getAlias();
+			
 			/* Store the account */
 			theAccount = pAccount;
 
@@ -506,6 +534,10 @@ public class Price extends DataItem {
 			Price 			myPrice = null;
 			Price 			myCurr;
 
+			/* Skip to alias if required */
+			if (pAccount.getAlias() != null)
+				pAccount = pAccount.getAlias();
+			
 			/* Access the list iterator */
 			myIterator = listIterator();
 			
@@ -614,10 +646,10 @@ public class Price extends DataItem {
 			myAccount = myAccounts.searchFor(pAccount);
 			if (myAccount == null) 
 				throw new Exception(ExceptionClass.DATA,
-			                        "Price on <" + 
+			                        "Price on [" + 
 			                        Utils.formatDate(new Date(pDate)) +
-			                        "> has invalid Account <" +
-			                        pAccount + ">");
+			                        "] has invalid Account [" +
+			                        pAccount + "]");
 									
 			/* Add the price */
 			addItem(uId,
@@ -644,6 +676,39 @@ public class Price extends DataItem {
 									myPrice,
 									"Duplicate PriceId <" + uId + ">");
 			 
+			/* Validate the price */
+			myPrice.validate();
+
+			/* Handle validation failure */
+			if (myPrice.hasErrors()) 
+				throw new Exception(ExceptionClass.VALIDATE,
+									myPrice,
+									"Failed validation");
+				
+			/* Add to the list */
+			myPrice.addToList();
+		}			
+
+		/**
+		 *  Allow a price to be added
+		 */
+		public void addItem(Account 		pAccount,
+							Date  			pDate,
+				            Number.Price	pPrice) throws Exception {
+			Price     	myPrice;
+			
+			/* Create the price and PricePoint */
+			myPrice = new Price(this, pAccount, pDate, pPrice);
+			
+			/* Validate the price */
+			myPrice.validate();
+
+			/* Handle validation failure */
+			if (myPrice.hasErrors()) 
+				throw new Exception(ExceptionClass.VALIDATE,
+									myPrice,
+									"Failed validation");
+				
 			/* Add to the list */
 			myPrice.addToList();
 		}			

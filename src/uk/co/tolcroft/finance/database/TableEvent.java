@@ -56,6 +56,11 @@ public class TableEvent extends DatabaseTable<Event> {
 	private final static String theTaxCrtCol  	= "TaxCredit";
 
 	/**
+	 * The name of the Dilution column
+	 */
+	private final static String theDiluteCol   	= "Dilution";
+	
+	/**
 	 * The name of the Years column
 	 */
 	private final static String theYearsCol   	= "Years";
@@ -148,6 +153,14 @@ public class TableEvent extends DatabaseTable<Event> {
 	}
 
 	/**
+	 * Determine the Dilution of the newly loaded item
+	 * @return the Dilution 
+	 */
+	private String getDilution() throws SQLException {
+		return getString();
+	}
+
+	/**
 	 * Determine the Years of the newly loaded item
 	 * @return the Years
 	 */
@@ -217,6 +230,14 @@ public class TableEvent extends DatabaseTable<Event> {
 	 */
 	private void setTaxCredit(Number.Money pCredit) throws SQLException {
 		setString((pCredit == null) ? null : pCredit.format(false));
+	}
+
+	/**
+	 * Set the Dilution of the item to be inserted
+	 * @param pDilution the Dilution of the item
+	 */
+	private void setDilution(Number.Dilution pDilution) throws SQLException {
+		setString((pDilution == null) ? null : pDilution.format(false));
 	}
 
 	/**
@@ -292,6 +313,14 @@ public class TableEvent extends DatabaseTable<Event> {
 	}
 	
 	/**
+	 * Update the Dilution of the item
+	 * @param pValue the new dilution
+	 */
+	private void updateDilution(Number.Dilution pValue) {
+		updateString(theDiluteCol, (pValue == null) ? null : pValue.format(false));
+	}
+	
+	/**
 	 * Update the Frequency of the item
 	 * @param pValue the new frequency
 	 */
@@ -314,6 +343,7 @@ public class TableEvent extends DatabaseTable<Event> {
 		   	   theTrnTypCol	+ " bigint NOT NULL " +
 	   				"REFERENCES " + TableTransactionType.idReference() + ", " +
  			   theTaxCrtCol	+ " decimal(18,4) NULL, " +
+ 			   theDiluteCol	+ " decimal(18,6) NULL, " +
 			   theYearsCol	+ " int NULL )";
 	}
 	
@@ -326,7 +356,8 @@ public class TableEvent extends DatabaseTable<Event> {
         				theDescCol + "," + theAmntCol + "," + 
         				theDebCol + "," + theCredCol +  "," +
         				theUnitCol + "," + theTrnTypCol + "," +
-        				theTaxCrtCol + "," + theYearsCol + " " +
+        				theTaxCrtCol + "," + theDiluteCol + " " +
+        				theYearsCol + " " +
         				" from " + getTableName() +			
         				" order by " + theDateCol + "," + theDescCol;			
 	}
@@ -342,6 +373,7 @@ public class TableEvent extends DatabaseTable<Event> {
 		String 			myAmount;
 		String 			myUnits;
 		String 			myTaxCred;
+		String			myDilution;
 		Integer			myYears;
 		java.util.Date  myDate;
 		
@@ -357,6 +389,7 @@ public class TableEvent extends DatabaseTable<Event> {
 			myUnits 	= getUnits();
 			myTranType  = getTransType();
 			myTaxCred   = getTaxCredit();
+			myDilution  = getDilution();
 			myYears  	= getYears();
 	
 			/* Access the list */
@@ -372,6 +405,7 @@ public class TableEvent extends DatabaseTable<Event> {
 				           myUnits,
 				           myTranType,
 				           myTaxCred,
+				           myDilution,
 				           myYears);
 		}
 		
@@ -392,8 +426,9 @@ public class TableEvent extends DatabaseTable<Event> {
         			theDescCol + "," + theAmntCol + "," + 
         			theDebCol + "," + theCredCol +  "," +
         			theUnitCol + "," + theTrnTypCol + "," +
-        			theTaxCrtCol + "," + theYearsCol + ") " + 
-        			"VALUES(?,?,?,?,?,?,?,?,?,?)";
+        			theTaxCrtCol + "," + theDiluteCol + "," + 
+        			theYearsCol + ") " + 
+        			"VALUES(?,?,?,?,?,?,?,?,?,?,?)";
 	}
 	
 	/* Insert the event */
@@ -411,6 +446,7 @@ public class TableEvent extends DatabaseTable<Event> {
 			setUnits(pItem.getUnits());
 			setTransType(pItem.getTransType().getId());
 			setTaxCredit(pItem.getTaxCredit());
+			setDilution(pItem.getDilution());
 			setYears(pItem.getYears());
 		}
 				
@@ -459,6 +495,9 @@ public class TableEvent extends DatabaseTable<Event> {
 			if (Utils.differs(pItem.getTaxCredit(),
 				  	  		  myBase.getTaxCredit())) 
 				updateTaxCredit(pItem.getTaxCredit());
+			if (Utils.differs(pItem.getDilution(),
+		  	  		  		  myBase.getDilution())) 
+				updateDilution(pItem.getDilution());
 			if (Utils.differs(pItem.getYears(),
 		  	  		  		  myBase.getYears())) 
 				updateYears(pItem.getYears());

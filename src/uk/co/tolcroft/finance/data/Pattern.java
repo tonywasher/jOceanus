@@ -209,16 +209,16 @@ public class Pattern extends DataItem {
 	}
 
 	/* Standard constructor */
-	public Pattern(List      		pList,
-			       long             uId,
-			       long             uAccountId,
-	               java.util.Date   pDate,
-	               String           pDesc,
-	               String			pAmount,
-	               long				uPartnerId,
-	               long 			uTransId,
-	               long				uFreqId,
-	               boolean          isCredit) throws Exception {
+	private Pattern(List      		pList,
+			        long            uId,
+			        long            uAccountId,
+	                java.util.Date  pDate,
+	                String          pDesc,
+	                String			pAmount,
+	                long			uPartnerId,
+	                long 			uTransId,
+	                long			uFreqId,
+	                boolean         isCredit) throws Exception {
 		/* Initialise item */
 		super(pList, uId);
 		
@@ -722,7 +722,7 @@ public class Pattern extends DataItem {
 			theAccount = pAccount;
 			
 			/* Access the list iterator */
-			myIterator = listIterator(true);
+			myIterator = pList.listIterator(true);
 			
 			/* Loop through the Prices */
 			while ((myCurr = myIterator.next()) != null) {
@@ -849,37 +849,37 @@ public class Pattern extends DataItem {
 			myAccount = myAccounts.searchFor(pAccount);
 			if (myAccount == null) 
 				throw new Exception(ExceptionClass.DATA,
-			                        "Pattern on <" + 
+			                        "Pattern on [" + 
 			                        Utils.formatDate(new Date(pDate)) +
-			                        "> has invalid Account <" +
-			                        pAccount + ">");
+			                        "] has invalid Account [" +
+			                        pAccount + "]");
 				
 			/* Look up the Partner */
 			myPartner = myAccounts.searchFor(pPartner);
 			if (myPartner == null) 
 				throw new Exception(ExceptionClass.DATA,
-			                        "Pattern on <" + 
+			                        "Pattern on [" + 
 			                        Utils.formatDate(new Date(pDate)) +
-			                        "> has invalid Partner <" +
-			                        pPartner + ">");
+			                        "] has invalid Partner [" +
+			                        pPartner + "]");
 				
 			/* Look up the TransType */
 			myTransType = myTranTypes.searchFor(pTransType);
 			if (myTransType == null) 
 				throw new Exception(ExceptionClass.DATA,
-			                        "Pattern on <" + 
+			                        "Pattern on [" + 
 			                        Utils.formatDate(new Date(pDate)) +
-			                        "> has invalid TransType <" +
-			                        pTransType + ">");
+			                        "] has invalid TransType [" +
+			                        pTransType + "]");
 				
 			/* Look up the Frequency */
 			myFrequency = myFrequencies.searchFor(pFrequency);
 			if (myFrequency == null) 
 				throw new Exception(ExceptionClass.DATA,
-			                        "Pattern on <" + 
+			                        "Pattern on [" + 
 			                        Utils.formatDate(new Date(pDate)) +
-			                        "> has invalid Frequency <" +
-			                        pFrequency + ">");
+			                        "] has invalid Frequency [" +
+			                        pFrequency + "]");
 				
 			/* Add the pattern */
 			addItem(uId,
@@ -917,6 +917,15 @@ public class Pattern extends DataItem {
 				throw new Exception(ExceptionClass.DATA,
 			  			            "Duplicate PatternId <" + uId + ">");
 			 
+			/* Validate the pattern */
+			myPattern.validate();
+
+			/* Handle validation failure */
+			if (myPattern.hasErrors()) 
+				throw new Exception(ExceptionClass.VALIDATE,
+									myPattern,
+									"Failed validation");
+				
 			/* Add to the list */
 			myPattern.addToList();
 		}			

@@ -348,6 +348,50 @@ public class Editor {
 		}
 	}
 
+	/* Dilutions Cell Editor */
+	public static class DilutionCell extends AbstractCellEditor
+	                                 implements TableCellEditor {
+		private static final long serialVersionUID = -4764410922782962134L;
+		private JTextField theField;
+		
+		public DilutionCell() {
+			theField = new JTextField();
+		}
+		
+		public JComponent getTableCellEditorComponent(JTable  table,
+				                                      Object  value,
+				                                      boolean isSelected,
+				                                      int     row,
+				                                      int     col) {
+			theField.setText(((value == null) || (value == Renderer.theError))
+									? "" : ((Number.Dilution)value).format(false));
+			return theField;
+		}
+		
+		public Object getCellEditorValue() {
+			String s = theField.getText();
+			if (!s.equals("")) {
+				try {
+					Number.Dilution myDilution = new Number.Dilution(s);
+					return myDilution;
+				}
+				catch (Throwable e) {
+					return this;
+				}
+			}
+			return null;
+		}
+		
+		public boolean stopCellEditing() {
+			Number.Units myUnits = (Number.Units)getCellEditorValue();
+			if ((Object)myUnits == this) {
+				fireEditingCanceled();
+				return false;
+			}
+			return super.stopCellEditing();
+		}
+	}
+
 	/* Price Cell Editor */
 	public static class PriceCell extends AbstractCellEditor
 	                              implements TableCellEditor {
@@ -373,6 +417,50 @@ public class Editor {
 			if (!s.equals("")) {
 				try {
 					Number.Price myPrice = new Number.Price(s);
+					return myPrice;
+				}
+				catch (Throwable e) {
+					return null;
+				}
+			}
+			return null;
+		}
+		
+		public boolean stopCellEditing() {
+			Number.Price myPrice = (Number.Price)getCellEditorValue();
+			if (myPrice == null) {
+				fireEditingCanceled();
+				return false;
+			}
+			return super.stopCellEditing();
+		}
+	}
+
+	/* DilutedPrice Cell Editor */
+	public static class DilutedPriceCell extends AbstractCellEditor
+	                                     implements TableCellEditor {
+		private static final long serialVersionUID = 3930787232807465136L;
+		private JTextField theField;
+		
+		public DilutedPriceCell() {
+			theField = new JTextField();
+		}
+		
+		public JComponent getTableCellEditorComponent(JTable  table,
+				                                      Object  value,
+				                                      boolean isSelected,
+				                                      int     row,
+				                                      int     col) {
+			theField.setText(((value == null) || (value == Renderer.theError))
+								? "" : ((Number.DilutedPrice)value).format(false));
+			return theField;
+		}
+		
+		public Object getCellEditorValue() {
+			String s = theField.getText();
+			if (!s.equals("")) {
+				try {
+					Number.DilutedPrice myPrice = new Number.DilutedPrice(s);
 					return myPrice;
 				}
 				catch (Throwable e) {

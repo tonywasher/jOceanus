@@ -48,7 +48,7 @@ public class SpotPrices {
 		myBase.applyChanges(this);
 		
 		/* Analyse the data */
-		try { myData.analyseData(); } catch (Throwable e) {}
+		theView.analyseData();
 		
 		/* Refresh windows */
 		theView.refreshWindow();

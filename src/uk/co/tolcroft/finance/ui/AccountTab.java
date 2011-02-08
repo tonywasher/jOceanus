@@ -523,9 +523,8 @@ public class AccountTab implements ChangeListener,
 		/* Access the Patterns index */
 		iIndex = theTabs.indexOfTab(titlePatterns);
 	
-		/* If the account is not closed and is external/debt */
+		/* If the account is not closed */
 		if ((theAccount != null) &&
-			(theAccount.isExternal() || theAccount.isDebt()) && 
 			(!theAccount.isClosed())) {
 		
 			/* Add the Patterns if not present */

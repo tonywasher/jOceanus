@@ -45,6 +45,11 @@ public class TableAccount extends DatabaseTable<Account> {
 	private final static String theParentCol 	= "Parent";
 	
 	/**
+	 * The name of the Alias column
+	 */
+	private final static String theAliasCol 	= "Alias";
+	
+	/**
 	 * The name of the Parent column
 	 */
 	private final static String theInitVCol 	= "InitVector";
@@ -156,6 +161,16 @@ public class TableAccount extends DatabaseTable<Account> {
 	}
 
 	/**
+	 * Determine the Alias of the newly loaded item
+	 * @return the Alias
+	 */
+	private long getAlias() throws SQLException {
+		Long myResult = getLong();
+		if (myResult == null) return -1;
+		return myResult;
+	}
+
+	/**
 	 * Determine the InitVector of the newly loaded item
 	 * @return the InitVector
 	 */
@@ -260,6 +275,14 @@ public class TableAccount extends DatabaseTable<Account> {
 	}
 	
 	/**
+	 * Set the Alias of the item to be inserted/updated
+	 * @param pAlias the id of the TaxRegime for the item
+	 */
+	private void setAlias(long pAlias) throws SQLException {
+		setLong((pAlias == -1) ? null : pAlias);
+	}
+	
+	/**
 	 * Set the InitVector of the item to be inserted/updated
 	 * @param pValue the initVector
 	 */
@@ -356,6 +379,14 @@ public class TableAccount extends DatabaseTable<Account> {
 	}
 	
 	/**
+	 * Update the Alias of the item
+	 * @param pValue the new alias
+	 */
+	private void updateAlias(long pValue) {
+		updateLong(theAliasCol, (pValue == -1) ? null : pValue);
+	}
+	
+	/**
 	 * Update the InitVector of the item
 	 * @param pValue the new initVector
 	 */
@@ -423,6 +454,8 @@ public class TableAccount extends DatabaseTable<Account> {
 			   theCloseCol	+ " date NULL, " +
 			   theParentCol	+ " bigint NULL " +
 				  	"REFERENCES " + idReference() + ", " +
+			   theAliasCol	+ " bigint NULL " +
+				  	"REFERENCES " + idReference() + ", " +
 			   theInitVCol	+ " binary(" + Account.INITVLEN + ") NULL, " +
 			   theWebSiteCol + " varbinary(" + Account.WSITELEN + ") NULL, " +
 			   theCustNoCol + " varbinary(" + Account.CUSTLEN + ") NULL, " +
@@ -437,7 +470,8 @@ public class TableAccount extends DatabaseTable<Account> {
 		return "select " + theIdCol + "," + theNameCol + "," + 
 		                 theActTypCol + "," + theDescCol + "," +
 		                 theMatureCol + "," + theCloseCol + "," +
-		                 theParentCol + "," + theInitVCol + "," +
+		                 theParentCol + "," + theAliasCol + "," +
+		                 theInitVCol + "," +
 		                 theWebSiteCol + "," + theCustNoCol + "," +
 		                 theUserIdCol + "," + thePasswordCol + "," +
 		                 theAcctCol + "," + theNotesCol + 
@@ -451,6 +485,7 @@ public class TableAccount extends DatabaseTable<Account> {
 		String  		myName;
 		long    		myActTypeId;
 		long    		myParentId;
+		long    		myAliasId;
 		String  		myDesc;
 		java.util.Date  myMaturity;
 		java.util.Date  myClosed;
@@ -472,6 +507,7 @@ public class TableAccount extends DatabaseTable<Account> {
 			myMaturity  	= getMaturity();
 			myClosed    	= getClosed();
 			myParentId		= getParent();
+			myAliasId		= getAlias();
 			myInitVector	= getInitVector();
 			myWebSite		= getWebSite();
 			myCustNo		= getCustNo();
@@ -491,6 +527,7 @@ public class TableAccount extends DatabaseTable<Account> {
 				           myMaturity,
 				           myClosed,
 				           myParentId,
+				           myAliasId,
 					       myInitVector,
 					       myWebSite,
 					       myCustNo,
@@ -516,7 +553,8 @@ public class TableAccount extends DatabaseTable<Account> {
 		       " (" + theIdCol + "," + theNameCol + "," +
 		              theActTypCol + "," + theDescCol + "," +
 		              theMatureCol + "," + theCloseCol + "," +
-		              theParentCol + "," + theInitVCol + "," +
+		              theParentCol + "," + theAliasCol + "," + 
+		              theInitVCol + "," +
 		              theWebSiteCol + "," + theCustNoCol + "," +
 		              theUserIdCol + "," + thePasswordCol + "," +
 		              theAcctCol + "," + theNotesCol + ")" + 
@@ -537,6 +575,8 @@ public class TableAccount extends DatabaseTable<Account> {
 			setClosed(pItem.getClose());
 			setParent((pItem.getParent() != null)
 							? pItem.getParent().getId() : -1);
+			setAlias((pItem.getAlias() != null)
+					? pItem.getAlias().getId() : -1);
 			setInitVector(pItem.getInitVector());
 			setWebSite(pItem.getWebSite());
 			setCustNo(pItem.getCustNo());
@@ -583,6 +623,10 @@ public class TableAccount extends DatabaseTable<Account> {
 						  	  myBase.getParent()))
 				updateParent((pItem.getParent() != null)
 									? pItem.getParent().getId() : -1);
+			if (Utils.differs(pItem.getAlias(),
+				  	  		  myBase.getAlias()))
+				updateAlias((pItem.getAlias() != null)
+									? pItem.getAlias().getId() : -1);
 			if (Utils.differs(pItem.getInitVector(),
 				  	  		  myBase.getInitVector()))
 				updateInitVector(pItem.getInitVector());

@@ -4,6 +4,7 @@ import jxl.*;
 import jxl.write.*;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.finance.views.DilutionEvent;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
@@ -24,13 +25,14 @@ public class SheetPrice {
 	 *  @param pThread   the thread status control
 	 *  @param pWorkbook the workbook to load from
 	 *  @param pData the data set to load into
+	 *  @param pDilution the dilution events to modify the prices with
 	 *  @return continue to load <code>true/false</code> 
 	 */
-	protected static boolean loadArchive(statusCtl 	pThread,
-										 Workbook	pWorkbook,
-							   	  		 DataSet	pData) throws Exception {
+	protected static boolean loadArchive(statusCtl 			pThread,
+										 Workbook			pWorkbook,
+							   	  		 DataSet			pData,
+							   	  		 DilutionEvent.List pDilution) throws Exception {
 		/* Local variables */
-		Price.List 		myList;
 		Range[]   		myRange;
 		Sheet     		mySheet;
 		Cell      		myTop;
@@ -67,9 +69,6 @@ public class SheetPrice {
 				myActRow  = myTop.getRow();
 				myDateCol = myTop.getColumn();
 		
-				/* Access the list of prices */
-				myList = pData.getPrices();
-			
 				/* Count the number of tax classes */
 				myTotal  = (myBottom.getRow() - myTop.getRow() + 1);
 				myTotal *= (myBottom.getColumn() - myTop.getColumn() - 1);
@@ -101,12 +100,13 @@ public class SheetPrice {
 							double myDouble = ((NumberCell)myCell).getValue();
 							myPrice = Double.toString(myDouble);
 				
-							/* Add any non-zero prices into the finance tables */
-							if (!myPrice.equals("0.0"))
-								myList.addItem(0,
-					        		           myDate,
-					    	   				   myAccount,
-					    					   myPrice);
+							/* If the price is non-zero */
+							if (!myPrice.equals("0.0")) {
+								/* Add the item to the data set */
+								pDilution.addPrice(myAccount,
+					        		               myDate,
+					        		               myPrice);
+							}
 						}
 					
 						/* Report the progress */

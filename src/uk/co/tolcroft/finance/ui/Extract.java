@@ -53,6 +53,8 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 	private Editor.IntegerCell 		theIntegerEditor   	= null;
 	private Renderer.StringCell 	theStringRenderer 	= null;
 	private Editor.StringCell 		theStringEditor   	= null;
+	private Renderer.DilutionCell 	theDiluteRenderer 	= null;
+	private Editor.DilutionCell 	theDiluteEditor   	= null;
 	private Editor.ComboBoxCell 	theComboEditor    	= null;
 	private ComboSelect				theComboList    	= null;
 	private boolean					tranPopulated    	= false;
@@ -69,20 +71,22 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 	private static final String titleDebit   = "Debit";
 	private static final String titleCredit  = "Credit";
 	private static final String titleUnits   = "Units";
+	private static final String titleDilute  = "Dilution";
 	private static final String titleTaxCred = "TaxCredit";
 	private static final String titleYears   = "Years";
 		
 	/* Table columns */
 	private static final int COLUMN_DATE 	 = 0;
-	private static final int COLUMN_DESC 	 = 1;
-	private static final int COLUMN_TRANTYP  = 2;
+	private static final int COLUMN_TRANTYP  = 1;
+	private static final int COLUMN_DESC 	 = 2;
 	private static final int COLUMN_AMOUNT	 = 3;
 	private static final int COLUMN_DEBIT	 = 4;
 	private static final int COLUMN_CREDIT	 = 5;
 	private static final int COLUMN_UNITS	 = 6;
-	private static final int COLUMN_TAXCRED	 = 7;
-	private static final int COLUMN_YEARS	 = 8;
-	private static final int NUM_COLUMNS	 = 9;
+	private static final int COLUMN_DILUTE	 = 7;
+	private static final int COLUMN_TAXCRED	 = 8;
+	private static final int COLUMN_YEARS	 = 9;
+	private static final int NUM_COLUMNS	 = 10;
 		
 	/* Constructor */
 	public Extract(MainTab pParent) {
@@ -117,6 +121,8 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		theIntegerEditor   	= new Editor.IntegerCell();
 		theStringRenderer 	= new Renderer.StringCell();
 		theStringEditor   	= new Editor.StringCell();
+		theDiluteRenderer 	= new Renderer.DilutionCell();
+		theDiluteEditor   	= new Editor.DilutionCell();
 		theComboEditor    	= new Editor.ComboBoxCell();
 		
 		/* Set the relevant formatters/editors */
@@ -125,15 +131,15 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		myCol.setCellEditor(theDateEditor);
 		myCol.setPreferredWidth(80);
 			
-		myCol = myColModel.getColumn(COLUMN_DESC);
-		myCol.setCellRenderer(theStringRenderer);
-		myCol.setCellEditor(theStringEditor);
-		myCol.setPreferredWidth(150);
-		
 		myCol = myColModel.getColumn(COLUMN_TRANTYP);
 		myCol.setCellRenderer(theStringRenderer);
 		myCol.setCellEditor(theComboEditor);
 		myCol.setPreferredWidth(110);
+		
+		myCol = myColModel.getColumn(COLUMN_DESC);
+		myCol.setCellRenderer(theStringRenderer);
+		myCol.setCellEditor(theStringEditor);
+		myCol.setPreferredWidth(150);
 		
 		myCol = myColModel.getColumn(COLUMN_AMOUNT);
 		myCol.setCellRenderer(theMoneyRenderer);
@@ -153,6 +159,11 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		myCol = myColModel.getColumn(COLUMN_UNITS);
 		myCol.setCellRenderer(theUnitsRenderer);
 		myCol.setCellEditor(theUnitsEditor);
+		myCol.setPreferredWidth(80);
+			
+		myCol = myColModel.getColumn(COLUMN_DILUTE);
+		myCol.setCellRenderer(theDiluteRenderer);
+		myCol.setCellEditor(theDiluteEditor);
 		myCol.setPreferredWidth(80);
 			
 		myCol = myColModel.getColumn(COLUMN_TAXCRED);
@@ -340,6 +351,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 			case COLUMN_CREDIT:		return Event.FIELD_CREDIT;
 			case COLUMN_DEBIT:		return Event.FIELD_DEBIT;
 			case COLUMN_UNITS: 		return Event.FIELD_UNITS;
+			case COLUMN_DILUTE: 	return Event.FIELD_DILUTION;
 			case COLUMN_TAXCRED: 	return Event.FIELD_TAXCREDIT;
 			case COLUMN_YEARS: 		return Event.FIELD_YEARS;
 			default: 				return -1;
@@ -436,6 +448,16 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 			theModel.fireTableCellUpdated(row, COLUMN_UNITS);
 		}
 		
+		/* If this is a set Null Dilute request */
+		else if (myCmd.compareTo(extractMouse.popupSetNull + "Dilute") == 0) {
+			/* Access the correct row */
+			row = Integer.parseInt(myName);
+		
+			/* set the null value */
+			theModel.setValueAt(null, row, COLUMN_DILUTE);
+			theModel.fireTableCellUpdated(row, COLUMN_DILUTE);
+		}
+		
 		/* If this is a set Null TaxCredit request */
 		else if (myCmd.compareTo(extractMouse.popupSetNull + "Credit") == 0) {
 			/* Access the correct row */
@@ -443,7 +465,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		
 			/* set the null value */
 			theModel.setValueAt(null, row, COLUMN_TAXCRED);
-			theModel.fireTableCellUpdated(row, COLUMN_UNITS);
+			theModel.fireTableCellUpdated(row, COLUMN_TAXCRED);
 		}
 		
 		/* If this is a set Null Years request */
@@ -453,7 +475,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		
 			/* set the null value */
 			theModel.setValueAt(null, row, COLUMN_YEARS);
-			theModel.fireTableCellUpdated(row, COLUMN_UNITS);
+			theModel.fireTableCellUpdated(row, COLUMN_YEARS);
 		}
 	}
 		
@@ -479,6 +501,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 				case COLUMN_CREDIT:  	return titleCredit;
 				case COLUMN_DEBIT:	 	return titleDebit;
 				case COLUMN_UNITS: 		return titleUnits;
+				case COLUMN_DILUTE: 	return titleDilute;
 				case COLUMN_TAXCRED: 	return titleTaxCred;
 				case COLUMN_YEARS: 		return titleYears;
 				default: 				return null;
@@ -511,11 +534,11 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 			switch (col) {
 				case COLUMN_DATE:
 					return true;
-				case COLUMN_DESC:
-					return (myEvent.getDate() != null);
 				case COLUMN_TRANTYP:
+					return (myEvent.getDate() != null);
+				case COLUMN_DESC:
 					return ((myEvent.getDate() != null) &&
-							(myEvent.getDesc() != null));
+							(myEvent.getTransType() != null));
 				default:
 					if ((myEvent.getDate() == null) &&
 						(myEvent.getDesc() == null) &&
@@ -528,9 +551,12 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 									(myEvent.getCredit().isPriced() 
 										!= myEvent.getDebit().isPriced()));
 						case COLUMN_YEARS:
-							return myEvent.getTransType().isTaxableGain();
+							return ((myEvent.getTransType() != null) &&
+									(myEvent.getTransType().isTaxableGain()));
 						case COLUMN_TAXCRED:
 							return myEvent.needsTaxCredit();
+						case COLUMN_DILUTE:
+							return myEvent.needsDilution();
 						default:	
 							return true;
 					}
@@ -565,6 +591,9 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 				case COLUMN_AMOUNT:		
 					o = myEvent.getAmount();
 					break;
+				case COLUMN_DILUTE:		
+					o = myEvent.getDilution();
+					break;
 				case COLUMN_TAXCRED:		
 					o = myEvent.getTaxCredit();
 					break;
@@ -576,7 +605,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 					break;
 				case COLUMN_DESC:
 					o = myEvent.getDesc();
-					if ((o != null) & (((String)o).length() == 0))
+					if ((o != null) && (((String)o).length() == 0))
 						o = null;
 					break;
 				default:	
@@ -615,6 +644,9 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 					break;
 				case COLUMN_AMOUNT:
 					myEvent.setAmount((Number.Money)obj); 
+					break;
+				case COLUMN_DILUTE:
+					myEvent.setDilution((Number.Dilution)obj); 
 					break;
 				case COLUMN_TAXCRED:
 					myEvent.setTaxCredit((Number.Money)obj); 
@@ -687,6 +719,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 			Event           myRow     = null;
 			Account  		myAccount = null;
 			boolean         isUnits   = false;
+			boolean         isDilute  = false;
 			boolean         isTaxCred = false;
 			boolean         isYears   = false;
 				
@@ -707,6 +740,8 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 					myAccount = myRow.getDebit();
 				else if (col == COLUMN_UNITS)
 					isUnits = true;
+				else if (col == COLUMN_DILUTE)
+					isTaxCred = true;
 				else if (col == COLUMN_TAXCRED)
 					isTaxCred = true;
 				else if (col == COLUMN_YEARS)
@@ -721,6 +756,12 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 					 (myRow.getUnits() == null)))
 					isUnits = false;
 				
+				/* If we are pointing to Dilute then determine whether we can set null */
+				if ((isDilute) && 
+					((myRow.isLocked()) ||
+					 (myRow.getDilution() == null)))
+					isDilute = false;
+				
 				/* If we are pointing to TaxCredit then determine whether we can set null */
 				if ((isTaxCred) && 
 					((myRow.isLocked()) ||
@@ -733,8 +774,9 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 					 (myRow.getYears() == null)))
 					isYears = false;
 				
-				/* If we have an account or can set null units/years/tax */
-				if ((myAccount != null) || (isUnits) || (isTaxCred) || (isYears)) {
+				/* If we have an account or can set null units/dilution/years/tax */
+				if ((myAccount != null) || 
+					(isUnits) || (isDilute) || (isTaxCred) || (isYears)) {
 					/* Create the pop-up menu */
 					myMenu = new JPopupMenu();
 					
@@ -768,13 +810,13 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 						myMenu.add(myItem);
 					}
 					
-					/* If we have years */
-					if (isYears) {
+					/* If we have dilute */
+					if (isDilute) {
 						/* Create the set null choice */
 						myItem = new JMenuItem(popupSetNull);
 					
 						/* Set the command and add to menu */
-						myItem.setActionCommand(popupSetNull + "Year:" + row);
+						myItem.setActionCommand(popupSetNull + "Dilute:" + row);
 						myItem.addActionListener(theTable);
 						myMenu.add(myItem);
 					}
@@ -786,6 +828,17 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 					
 						/* Set the command and add to menu */
 						myItem.setActionCommand(popupSetNull + "Credit:" + row);
+						myItem.addActionListener(theTable);
+						myMenu.add(myItem);
+					}
+					
+					/* If we have years */
+					if (isYears) {
+						/* Create the set null choice */
+						myItem = new JMenuItem(popupSetNull);
+					
+						/* Set the command and add to menu */
+						myItem.setActionCommand(popupSetNull + "Year:" + row);
 						myItem.addActionListener(theTable);
 						myMenu.add(myItem);
 					}

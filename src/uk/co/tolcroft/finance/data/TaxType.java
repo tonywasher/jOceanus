@@ -119,9 +119,9 @@ public class TaxType extends DataItem {
 	 * @param uId   ID of Tax Type
 	 * @param sName Name of Tax Type
 	 */
-	public TaxType(List 	pList,
-			       long     uId, 
-			       String   sName) throws Exception {
+	private TaxType(List 	pList,
+			        long    uId, 
+			        String  sName) throws Exception {
 		super(pList, uId);
 		Values myObj = new Values();
 		setObj(myObj);

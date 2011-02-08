@@ -15,7 +15,7 @@ public class TaxAnalysis {
 	private TaxList                 theTaxBuckets   = null;
 	private TransactionType.List 	theTransTypes   = null;
 	private TaxType.List   			theTaxTypes     = null;
-	private chargeableEvent			theCharges		= null;
+	private ChargeableEvent			theCharges		= null;
 	private boolean                 hasTotals       = false;
 	private boolean					hasAgeAllowance = false;
 	private boolean					hasGainsSlices	= false;
@@ -28,7 +28,7 @@ public class TaxAnalysis {
 	public TaxType.List 	getTaxTypes() 	  { return theTaxTypes; }
 	public TranList         getTransBuckets() { return theTransBuckets; }
 	public TaxList          getTaxBuckets()   { return theTaxBuckets; }
-	public chargeableEvent  getCharges()   	  { return theCharges; }
+	public ChargeableEvent  getCharges()   	  { return theCharges; }
 	public boolean     		hasReducedAllow() { return hasReducedAllow; }
 	public boolean     		hasGainsSlices()  { return hasGainsSlices; }
 	public int				getAge()		  { return theAge; }
@@ -98,7 +98,7 @@ public class TaxAnalysis {
 	public void processEvent(Event pEvent) {
 		TransactionType	myTransType;
 		TranBucket      myBucket;
-		chargeableEvent	myCharge;
+		ChargeableEvent	myCharge;
 		
 		/* Access the transaction type */
 		myTransType = pEvent.getTransType();
@@ -116,8 +116,30 @@ public class TaxAnalysis {
 			/* If this is a taxable gain event */
 			if (myTransType.isTaxableGain()) {
 				/* Create and store the new taxable event */
-				myCharge = new chargeableEvent(pEvent, theCharges);
+				myCharge = new ChargeableEvent(pEvent, theCharges);
 				if (theCharges == null) theCharges = myCharge;
+
+				/* Remove this value from the market growth bucket */
+				myBucket = theTransBuckets.getTransBucket(theTransTypes
+			                 	.searchFor(TransClass.MKTGROWTH));
+			    myBucket.subtractAmount(pEvent.getAmount());
+			    myBucket.subtractAmount(pEvent.getTaxCredit());
+			}
+
+			/* If this is a capital gain event */
+			if (myTransType.isCapitalGain()) {
+				/* Access the Market Growth bucket */
+				myBucket = theTransBuckets.getTransBucket(theTransTypes
+			                 	.searchFor(TransClass.MKTGROWTH));
+			    myBucket.subtractAmount(pEvent.getAmount());
+			}
+
+			/* If this is a capital loss event */
+			if (myTransType.isCapitalLoss()) {
+				/* Access the Market Growth bucket */
+				myBucket = theTransBuckets.getTransBucket(theTransTypes
+			                 	.searchFor(TransClass.MKTSHRINK));
+			    myBucket.addAmount(pEvent.getAmount());
 			}
 		}
 	}
@@ -133,8 +155,6 @@ public class TaxAnalysis {
 		
 		/* Access the current movement */
 		myMovement = new Number.Money(pMovement.getMarket());
-		if (pMovement.getDividends().isNonZero())
-			myMovement.subtractAmount(pMovement.getDividends());
 		
 		/* If the movement is positive */
 		if (myMovement.isPositive())
@@ -210,6 +230,9 @@ public class TaxAnalysis {
 		myBucket.addBucket(theTransBuckets
 				 .getTransBucket(theTransTypes
 				   		 .searchFor(TransClass.CAPITALGAIN)));
+		myBucket.subtractBucket(theTransBuckets
+				 .getTransBucket(theTransTypes
+				   		 .searchFor(TransClass.CAPITALLOSS)));
 		
 		/* Build the Rental bucket */
 		myBucket = theTransBuckets.getSummaryBucket(theTaxTypes
@@ -2050,6 +2073,16 @@ public class TaxAnalysis {
 		}
 		
 		/**
+		 * Subtract an amount
+		 * 
+		 * @param  pAmount Amount to subtract
+		 */
+		protected void subtractAmount(Number.Money pAmount) {
+			/* Adjust the income total */
+			theAmount.subtractAmount(pAmount);
+		}
+		
+		/**
 		 * Add a bucket to a totalling bucket
 		 * 
 		 * @param  pBucket Bucket to add
@@ -2243,196 +2276,6 @@ public class TaxAnalysis {
 		protected void setRate(Number.Rate pRate) {
 			/* Set the value */
 			theRate    = pRate;
-		}
-	}
-	
-	/* The Chargeable event class */
-	public class chargeableEvent {
-		/* Members */
-		private		Event			theEvent    = null;
-		private		Number.Money	theSlice    = null;
-		private		Number.Money	theTaxation = null;
-		private 	chargeableEvent theNext 	= null;
-		
-		/**
-		 * Get the next item in the list 
-		 * @return the next item or <code>null</code>
-		 */
-		public chargeableEvent 	getNext()		{ return theNext; }
-
-		/**
-		 * Get the Date of the chargeable event 
-		 * @return the date of the chargeable event
-		 */
-		public Date 			getDate()		{ return theEvent.getDate(); }
-
-		/**
-		 * Get the Description of the chargeable event 
-		 * @return the description of the chargeable event
-		 */
-		public String 			getDesc()		{ return theEvent.getDesc(); }
-
-		/**
-		 * Get the Amount of the chargeable event 
-		 * @return the amount of the chargeable event
-		 */
-		public Number.Money		getAmount()		{ return theEvent.getAmount(); }
-
-		/**
-		 * Get the TaxCredit of the chargeable event 
-		 * @return the tax credit of the chargeable event
-		 */
-		public Number.Money		getTaxCredit()	{ return theEvent.getTaxCredit(); }
-
-		/**
-		 * Get the Taxation of the chargeable event 
-		 * @return the taxation of the chargeable event
-		 */
-		public Number.Money		getTaxation()	{ return theTaxation; }
-
-		/**
-		 * Get the Slice of the chargeable event 
-		 * @return the slice of the chargeable event
-		 */
-		public Number.Money		getSlice()		{ return theSlice; }
-
-		/**
-		 * Get the Years of the chargeable event 
-		 * @return the years of the chargeable event
-		 */
-		public Integer			getYears()		{ return theEvent.getYears(); }
-
-		/**
-		 * Constructor
-		 * @param pEvent
-		 * @param pFirst
-		 */
-		private chargeableEvent(Event pEvent, chargeableEvent pFirst) {
-			chargeableEvent myPrev = null;
-			long			myValue;
-			
-			/* Store the event */
-			theEvent = pEvent;
-			
-			/* Access the slice value of the event */
-			myValue 	 = pEvent.getAmount().getAmount();
-			myValue 	/= pEvent.getYears();
-			theSlice	 = new Number.Money(myValue);
-			
-			/* If there are elements in the list */
-			if (pFirst != null) {
-				/* Determine the last element in the list */
-				myPrev = pFirst;
-				while (myPrev.theNext != null) 
-					myPrev = myPrev.theNext;
-				
-				/* Link us in */
-				myPrev.theNext = this;
-			}
-		}
-		
-		/**
-		 * Get the SliceTotal of the chargeable event list. Each slice is the TaxCredit of the event
-		 * divided by the number of years that the charge is to be sliced over
-		 * @return the slice total of the chargeable event list 
-		 */
-		public Number.Money	getSliceTotal()		{
-			Number.Money myTotal;
-			
-			/* If we are the last slice */
-			if (theNext == null) {
-				/* Total is just us */
-				myTotal = new Number.Money(theSlice);
-			}
-			
-			/* else we have further elements */
-			else {
-				/* Get the total of the further elements */
-				myTotal = theNext.getSliceTotal();
-				
-				/* Add in our slice */
-				myTotal.addAmount(theSlice);
-			}
-			
-			/* Return the total */
-			return myTotal;
-		}
-
-		/**
-		 * Get the TaxTotal of the chargeable event list 
-		 * @return the tax total of the chargeable event list 
-		 */
-		public Number.Money	getTaxTotal()		{
-			Number.Money myTotal;
-			
-			/* If we are the last slice */
-			if (theNext == null) {
-				/* Total is just us */
-				myTotal = new Number.Money(theTaxation);
-			}
-			
-			/* else we have further elements */
-			else {
-				/* Get the total of the further elements */
-				myTotal = theNext.getTaxTotal();
-				
-				/* Add in our slice */
-				myTotal.addAmount(theTaxation);
-			}
-			
-			/* Return the total */
-			return myTotal;
-		}
-		
-		/**
-		 * Get the GainsTotal of the chargeable event list 
-		 * @return the gains total of the chargeable event list 
-		 */
-		public Number.Money	getGainsTotal()		{
-			Number.Money myTotal;
-			
-			/* If we are the last slice */
-			if (theNext == null) {
-				/* Total is just us */
-				myTotal = new Number.Money(getAmount());
-			}
-			
-			/* else we have further elements */
-			else {
-				/* Get the total of the further elements */
-				myTotal = theNext.getGainsTotal();
-				
-				/* Add in our slice */
-				myTotal.addAmount(getAmount());
-			}
-			
-			/* Return the total */
-			return myTotal;
-		}
-		
-		/**
-		 * Apply taxation of total slice to the individual events. This tax is first split 
-		 * proportionally among the slices and then multiplied by the years of each individual event   
-		 * @param pTax	the calculated taxation for the slice
-		 * @param pTotal the slice total of the event list 
-		 */
-		public void	applyTax(Number.Money pTax,
-				             Number.Money pTotal)	{
-			Number.Money 	myPortion;
-			long			myValue;
-			
-			/* Calculate the portion of tax that applies to this slice */
-			myPortion = pTax.valueAtWeight(theSlice, pTotal);
-			
-			/* Multiply by the number of years */
-			myValue = myPortion.getValue() * getYears();
-			theTaxation = new Number.Money(myValue);
-								
-			/* If we have further slices */
-			if (theNext != null) {
-				/* Apply tax further down */
-				theNext.applyTax(pTax, pTotal);
-			}
 		}
 	}
 	

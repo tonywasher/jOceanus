@@ -203,7 +203,7 @@ public class Threads {
 			catch (Throwable e) {
 				/* Report the failure */
 				theError = new Exception(ExceptionClass.DATA,
-									     "Failed to rebase backup",
+									     "Failed to load database",
 									     e);
 				return null;
 			}	
@@ -226,20 +226,28 @@ public class Threads {
 
 					/* If we have new data */
 					if (myData != null) {
-						/* Activate the data and set success */
+						/* Activate the data and obtain any error */
 						theView.setData(myData);
-						theStatusBar.setSuccess(myOp);
+						theError = theView.getError();
 					}
-
-					/* Else report the failure */
-					else theStatusBar.setFailure(myOp, theError);
+					
+					/* Set success/failure */
+					if (theError == null)
+						theStatusBar.setSuccess(myOp);
+					else
+						theStatusBar.setFailure(myOp, theError);
 				}
 
 				/* Report the cancellation */
 				else theStatusBar.setFailure(myOp, theError);
 			}	 	
-			catch (InterruptedException ignore) {}
-			catch (java.util.concurrent.ExecutionException ignore) {}
+			catch (Throwable e) {
+				/* Report the failure */
+				theError = new Exception(ExceptionClass.DATA,
+									     "Failed to obtain and activate new data",
+									     e);
+				theStatusBar.setFailure(myOp, theError);
+			}
 		}		
 
 		/* Process task (Event Thread)*/
@@ -308,7 +316,7 @@ public class Threads {
 				theStatusBar.setSteps(0, 100);
 				theStatusBar.getProgressPanel().setVisible(true);
 
-				/* Load workbook */
+				/* Load database */
 				myData   = myDatabase.loadDatabase(theStatus);
 
 				/* Create a difference set between the two data copies */
@@ -333,7 +341,7 @@ public class Threads {
 			catch (Throwable e) {
 				/* Report the failure */
 				theError = new Exception(ExceptionClass.DATA,
-										 "Failed to rebase backup",
+										 "Failed to store database",
 										 e);
 				return null;
 			}	
@@ -652,7 +660,7 @@ public class Threads {
 			catch (Throwable e) {
 				/* Report the failure */
 				theError = new Exception(ExceptionClass.DATA,
-										 "Failed to rebase backup",
+										 "Failed to load spreadsheet",
 										 e);
 				return null;
 			}	
@@ -674,13 +682,16 @@ public class Threads {
 					
 					/* If we have new data */
 					if (myData != null) {
-						/* Activate the data and set success */
+						/* Activate the data and obtain any error */
 						theView.setData(myData);
-						theStatusBar.setSuccess(myOp);
+						theError = theView.getError();
 					}
-
-					/* Else report the failure */
-					else theStatusBar.setFailure(myOp, theError);
+					
+					/* Set success/failure */
+					if (theError == null)
+						theStatusBar.setSuccess(myOp);
+					else
+						theStatusBar.setFailure(myOp, theError);
 				}
 
 				/* Report the cancellation */
@@ -688,7 +699,7 @@ public class Threads {
 			} 
 			catch (Throwable e) {
 				theError = new Exception(ExceptionClass.DATA,
-										 "Failure while refreshing data",
+										 "Failed to obtain and activate new data",
 										 e);				
 				theStatusBar.setFailure(myOp, theError);
 			}
@@ -816,13 +827,16 @@ public class Threads {
 
 					/* If we have new data */
 					if (myData != null) {
-						/* Activate the data and set success */
+						/* Activate the data and obtain any error */
 						theView.setData(myData);
-						theStatusBar.setSuccess(myOp);
+						theError = theView.getError();
 					}
-
-					/* Else report the failure */
-					else theStatusBar.setFailure(myOp, theError);
+					
+					/* Set success/failure */
+					if (theError == null)
+						theStatusBar.setSuccess(myOp);
+					else
+						theStatusBar.setFailure(myOp, theError);
 				}
 
 				/* Report the cancellation */
@@ -830,7 +844,7 @@ public class Threads {
 			} 
 			catch (Throwable e) {
 				theError = new Exception(ExceptionClass.DATA,
-										 "Failure while refreshing data",
+										 "Failed to obtain and activate new data",
 										 e);				
 				theStatusBar.setFailure(myOp, theError);
 			}
