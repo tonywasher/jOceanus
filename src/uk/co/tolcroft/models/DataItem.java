@@ -292,7 +292,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 		/* If we have an underlying object */
 		if (theBase != null) {
 			/* Format the Underlying object */
-			myString.append("<tr><td>Underlying</td><td>");
+			myString.append("<tr><td>Underlying</td><td colspan=\"2\">");
 			myString.append(theBase.toHTMLString());
 			myString.append("</td></tr>");
 		}

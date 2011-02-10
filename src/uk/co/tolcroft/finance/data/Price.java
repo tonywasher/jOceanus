@@ -377,8 +377,9 @@ public class Price extends DataItem {
 	 */
 	public static class List  extends DataList<Price> {
 		/* Members */
-		private Account	  	theAccount	= null;
-		private DataSet		theData		= null;
+		private Account	theAccount	= null;
+		private DataSet	theData		= null;
+		public 	DataSet getData()	{ return theData; }
 
 		/** 
 		 * Construct an empty CORE price list
@@ -406,7 +407,7 @@ public class Price extends DataItem {
 		 */
 		public List(List pList, ListStyle pStyle) { 
 			super(pList, pStyle);
-			theData = pList.theData;
+			theData = pList.getData();
 		}
 
 		/** 
@@ -416,7 +417,7 @@ public class Price extends DataItem {
 		 */
 		protected List(List pNew, List pOld) { 
 			super(pNew, pOld);
-			theData = pNew.theData;
+			theData = pNew.getData();
 		}
 
 		/**
@@ -429,7 +430,7 @@ public class Price extends DataItem {
 					Account pAccount) {
 			/* Make this list the correct style */
 			super(ListStyle.EDIT, false);
-			theData = pList.theData;
+			theData = pList.getData();
 
 			/* Local variables */
 			Price 			myCurr;

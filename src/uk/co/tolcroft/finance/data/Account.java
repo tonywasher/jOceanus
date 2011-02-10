@@ -452,7 +452,7 @@ public class Account extends DataItem {
 		boolean 		isValid;
 		AccountType 	myType = getActType();
 		List 			myList = (List)getList();
-		DataSet			mySet  = myList.theData;
+		DataSet			mySet  = myList.getData();
 		
 		/* Name must be non-null */
 		if (getName() == null) {
@@ -632,7 +632,7 @@ public class Account extends DataItem {
 		Money 							myAmount;
 		Money 							myValue;
 		List 							myList = (List)getList();
-		DataSet							mySet  = myList.theData;
+		DataSet							mySet  = myList.getData();
 		
 		/* Initialise money */
 		myValue = new Money(0);
@@ -969,7 +969,8 @@ public class Account extends DataItem {
 	 */
 	public static class List  extends DataList<Account> {		
 		private DataSet	theData			= null;
-
+		public 	DataSet getData()		{ return theData; }
+		
 		/** 
 	 	 * Construct an empty CORE account list
 	 	 * @param pData the DataSet for the list
@@ -996,7 +997,7 @@ public class Account extends DataItem {
 	 	 */
 		public List(List pList, ListStyle pStyle) { 
 			super(pList, pStyle);
-			theData = pList.theData;
+			theData = pList.getData();
 		}
 
 		/** 
@@ -1006,7 +1007,7 @@ public class Account extends DataItem {
 	 	 */
 		protected List(List pNew, List pOld) { 
 			super(pNew, pOld);
-			theData = pNew.theData;
+			theData = pNew.getData();
 		}
 		
 		/** 

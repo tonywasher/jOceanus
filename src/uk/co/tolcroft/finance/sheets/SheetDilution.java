@@ -66,7 +66,7 @@ public class SheetDilution {
 				if (!pThread.setNumSteps(myTotal)) return false;
 			
 				/* Loop through the rows of the table */
-				for (int i = myTop.getRow() + 1;
+				for (int i = myTop.getRow();
 			     	 i <= myBottom.getRow();
 			     	 i++) {
 				

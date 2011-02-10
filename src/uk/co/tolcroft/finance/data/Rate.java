@@ -127,6 +127,7 @@ public class Rate extends DataItem {
 		super(pList, 0);
 		Values myObj = new Values();
 		setObj(myObj);
+		setAccount(pList.theAccount);
 		setState(DataState.NEW);
 	}
 
@@ -255,7 +256,7 @@ public class Rate extends DataItem {
 		Rate 	myCurr;
 		Date 	myDate = getEndDate();
 		List 	myList = (List)getList();
-		DataSet	mySet  = myList.theData;
+		DataSet	mySet  = myList.getData();
 
 		/* If the date is null then we must be the last element for the account */
 		if ((myDate == null) || (myDate.isNull())) {
@@ -359,8 +360,9 @@ public class Rate extends DataItem {
 
 	public static class List  	extends DataList<Rate> {
 		/* Members */
-		private Account	  theAccount	= null;
-		private DataSet		theData		= null;
+		private Account	theAccount	= null;
+		private DataSet	theData		= null;
+		public 	DataSet getData()	{ return theData; }
 
 		/** 
 		 * Construct an empty CORE rate list
@@ -388,7 +390,7 @@ public class Rate extends DataItem {
 		 */
 		public List(List pList, ListStyle pStyle) {
 			super(pList, pStyle);
-			theData = pList.theData;
+			theData = pList.getData();
 		}
 
 		/** 
@@ -398,7 +400,7 @@ public class Rate extends DataItem {
 		 */
 		protected List(List pNew, List pOld) { 
 			super(pNew, pOld);
-			theData = pNew.theData;
+			theData = pNew.getData();
 		}
 
 		/**
@@ -411,7 +413,7 @@ public class Rate extends DataItem {
 				  	Account pAccount) {
 			/* Make this list the correct style */
 			super(ListStyle.EDIT, false);
-			theData = pList.theData;
+			theData = pList.getData();
 
 			/* Local variables */
 			ListIterator 	myIterator;

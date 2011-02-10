@@ -17,23 +17,27 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Number;
 import uk.co.tolcroft.models.*;
 
-public class AccountPrices extends FinanceTableModel<Price> {
+public class AccountPrices extends FinanceTableModel<ViewPrice> {
 	/* Members */
 	private static final long serialVersionUID 		= 1035380774297559650L;
 
-	private View				theView				= null;
-	private PricesModel			theModel			= null;
-	private Price.List  		thePrices  			= null;
-	private JPanel				thePanel			= null;
-	private AccountTab			theParent   		= null;
-	private Date.Range			theRange			= null;
-	private Account             theAccount  		= null;
-	private View.ViewPrices		theExtract			= null;
-	private EditButtons    		theRowButs  		= null;
-	private Renderer.DateCell 	theDateRenderer  	= null;
-	private Editor.DateCell 	theDateEditor    	= null;
-	private Renderer.PriceCell 	thePriceRenderer 	= null;
-	private Editor.PriceCell	thePriceEditor   	= null;
+	private View						theView				= null;
+	private PricesModel					theModel			= null;
+	private ViewPrice.List 				thePrices  			= null;
+	private JPanel						thePanel			= null;
+	private AccountTab					theParent   		= null;
+	private Date.Range					theRange			= null;
+	private Account             		theAccount  		= null;
+	private EditButtons    				theRowButs  		= null;
+	private Renderer.DateCell 			theDateRenderer  	= null;
+	private Editor.DateCell 			theDateEditor    	= null;
+	private Renderer.PriceCell 			thePriceRenderer 	= null;
+	private Editor.PriceCell			thePriceEditor   	= null;
+	private Renderer.DilutionCell 		theDiluteRenderer 	= null;
+	private Renderer.DilutedPriceCell	theDilPriceRenderer	= null;
+	private boolean						hasDilutions		= true;
+	private TableColumn					theDiluteCol		= null;
+	private TableColumn					theDilPriceCol		= null;
 
 	/* Access methods */
 	public JPanel  	getPanel()			{ return thePanel; }
@@ -43,13 +47,17 @@ public class AccountPrices extends FinanceTableModel<Price> {
 	public boolean needsMembers() 	{ return true; }
 		
 	/* Table headers */
-	private static final String titleDate  = "Date";
-	private static final String titlePrice = "Price";
+	private static final String titleDate  		= "Date";
+	private static final String titlePrice 		= "Price";
+	private static final String titleDilution 	= "Dilution";
+	private static final String titleDilPrice 	= "DilutedPrice";
 		
 	/* Table columns */
-	private static final int COLUMN_DATE  = 0;
-	private static final int COLUMN_PRICE = 1;
-	private static final int NUM_COLUMNS  = 2;
+	private static final int COLUMN_DATE  		 = 0;
+	private static final int COLUMN_PRICE 		 = 1;
+	private static final int COLUMN_DILUTION 	 = 2;
+	private static final int COLUMN_DILUTEDPRICE = 3;
+	private static final int NUM_COLUMNS  		 = 4;
 					
 	/* Constructor */
 	public AccountPrices(AccountTab pParent) {
@@ -74,10 +82,12 @@ public class AccountPrices extends FinanceTableModel<Price> {
 		myColModel = getColumnModel();
 			
 		/* Create the relevant formatters/editors */
-		theDateRenderer  = new Renderer.DateCell();
-		theDateEditor    = new Editor.DateCell();
-		thePriceRenderer = new Renderer.PriceCell();
-		thePriceEditor   = new Editor.PriceCell();
+		theDateRenderer  	= new Renderer.DateCell();
+		theDateEditor    	= new Editor.DateCell();
+		thePriceRenderer 	= new Renderer.PriceCell();
+		thePriceEditor  	= new Editor.PriceCell();
+		theDiluteRenderer 	= new Renderer.DilutionCell();
+		theDilPriceRenderer	= new Renderer.DilutedPriceCell();
 		
 		/* Set the relevant formatters/editors */
 		myCol = myColModel.getColumn(COLUMN_DATE);
@@ -89,6 +99,16 @@ public class AccountPrices extends FinanceTableModel<Price> {
 		myCol.setCellRenderer(thePriceRenderer);
 		myCol.setCellEditor(thePriceEditor);
 		myCol.setPreferredWidth(90);
+		
+		myCol = myColModel.getColumn(COLUMN_DILUTION);
+		myCol.setCellRenderer(theDiluteRenderer);
+		myCol.setPreferredWidth(90);
+		theDiluteCol = myCol;
+		
+		myCol = myColModel.getColumn(COLUMN_DILUTEDPRICE);
+		myCol.setCellRenderer(theDilPriceRenderer);
+		myCol.setPreferredWidth(110);
+		theDilPriceCol = myCol;
 		
 		getTableHeader().setReorderingAllowed(false);
 		setAutoResizeMode(AUTO_RESIZE_OFF);
@@ -148,8 +168,8 @@ public class AccountPrices extends FinanceTableModel<Price> {
 		
 	/* saveData */
 	public void saveData() {
-		if (theExtract != null) {
-			theExtract.applyChanges();
+		if (thePrices != null) {
+			thePrices.applyChanges();
 		}
 	}
 	
@@ -168,12 +188,34 @@ public class AccountPrices extends FinanceTableModel<Price> {
 		
 	/* Set Selection */
 	public void setSelection(Account pAccount) {
-		theExtract = theView.new ViewPrices(pAccount);
 		theAccount = pAccount;
-		thePrices  = theExtract.getPrices();
+		thePrices  = new ViewPrice.List(theView, pAccount);
+		setColSelection();
 		super.setList(thePrices);
 		theModel.fireTableDataChanged();
 		theRowButs.setLockDown();
+	}
+		
+	/* Set Column Selection */
+	public void setColSelection() {
+		/* If we should show dilutions */
+		if ((thePrices != null) && (thePrices.hasDilutions())) {
+			/* If we are not showing dilutions */
+			if (!hasDilutions) {
+				/* Add the dilutions columns and record the fact */
+				addColumn(theDiluteCol);
+				addColumn(theDilPriceCol);
+				hasDilutions = true;
+			}
+		}
+		
+		/* else If we are showing dilutions */
+		else if (hasDilutions) {
+			/* Remove the dilutions columns and record the fact */
+			removeColumn(theDiluteCol);
+			removeColumn(theDilPriceCol);
+			hasDilutions = false;
+		}
 	}
 		
 	/* Get field for column */
@@ -191,7 +233,7 @@ public class AccountPrices extends FinanceTableModel<Price> {
 		private static final long serialVersionUID = -2613779599240142148L;
 
 		/* get column count */
-		public int getColumnCount() { return NUM_COLUMNS; }
+		public int getColumnCount() { return (hasDilutions) ? NUM_COLUMNS : NUM_COLUMNS-2; }
 			
 		/* get row count */
 		public int getRowCount() { 
@@ -202,9 +244,11 @@ public class AccountPrices extends FinanceTableModel<Price> {
 		/* get column name */
 		public String getColumnName(int col) {
 			switch (col) {
-				case COLUMN_DATE:  	return titleDate;
-				case COLUMN_PRICE:	return titlePrice;
-				default:			return null;
+				case COLUMN_DATE:  			return titleDate;
+				case COLUMN_PRICE:			return titlePrice;
+				case COLUMN_DILUTION:		return titleDilution;
+				case COLUMN_DILUTEDPRICE:	return titleDilPrice;
+				default:					return null;
 			}
 		}
 			
@@ -214,15 +258,17 @@ public class AccountPrices extends FinanceTableModel<Price> {
 			if (theAccount.isClosed()) return false;
 			
 			switch (col) {
-				case COLUMN_DATE:  	return (theRange != null);
-				case COLUMN_PRICE:	return true;
-				default:			return true;
+				case COLUMN_DATE:  			return (theRange != null);
+				case COLUMN_PRICE:			return true;
+				case COLUMN_DILUTION:		return false;
+				case COLUMN_DILUTEDPRICE:	return false;
+				default:					return true;
 			}
 		}
 			
 		/* get value At */
 		public Object getValueAt(int row, int col) {
-			Price 	myPrice;
+			ViewPrice 	myPrice;
 			Object	o;
 			
 			/* Access the price */
@@ -230,9 +276,11 @@ public class AccountPrices extends FinanceTableModel<Price> {
 				
 			/* Return the appropriate value */
 			switch (col) {
-				case COLUMN_DATE:  	o = myPrice.getDate();	break;
-				case COLUMN_PRICE:	o = myPrice.getPrice();	break;
-				default:			o = null;				break;
+				case COLUMN_DATE:  			o = myPrice.getDate();			break;
+				case COLUMN_PRICE:			o = myPrice.getPrice();			break;
+				case COLUMN_DILUTION:		o = myPrice.getDilution();		break;
+				case COLUMN_DILUTEDPRICE:	o = myPrice.getDilutedPrice();	break;
+				default:					o = null;						break;
 			}
 			
 			/* If we have a null value for an error field,  set error description */
@@ -245,7 +293,7 @@ public class AccountPrices extends FinanceTableModel<Price> {
 			
 		/* set value At */
 		public void setValueAt(Object obj, int row, int col) {
-			Price myPrice;
+			ViewPrice myPrice;
 				
 			/* Access the price */
 			myPrice = thePrices.get(row);

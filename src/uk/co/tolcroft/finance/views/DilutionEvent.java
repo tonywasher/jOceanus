@@ -239,12 +239,16 @@ public class DilutionEvent implements SortedList.linkObject {
 				/* If the event is for this account */
 				if (!Utils.differs(pAccount, myEvent.getAccount())) {
 					/* If the dilution date is later */
-					if (pDate.compareTo(myEvent.getDate()) > 0) {
+					if (pDate.compareTo(myEvent.getDate()) < 0) {
 						/* add in the dilution factor */
 						myDilution = myDilution.getFurtherDilution(myEvent.getDilution());
 					}
 				}
 			}
+			
+			/* If there is no dilution at all */
+			if (myDilution.getValue() == Dilution.MAX_VALUE) 
+				myDilution = null;
 			
 			/* Return to caller */
 			return myDilution;
@@ -281,11 +285,9 @@ public class DilutionEvent implements SortedList.linkObject {
 			/* Create the date */
 			myDate = new Date(pDate);
 
-			/* If the account has diluted prices */
-			if (hasDilution(myAccount)) {
-				/* Obtain the dilution factor */
-				myDilution = getDilutionFactor(myAccount, myDate);
-			
+			/* If the account has diluted prices for this date */
+			if ((hasDilution(myAccount)) &&
+				((myDilution = getDilutionFactor(myAccount, myDate)) != null)) {
 				/* Obtain the diluted price */
 				myDilutedPrice = Number.DilutedPrice.Parse(pPrice);
 				if (myDilutedPrice == null) 

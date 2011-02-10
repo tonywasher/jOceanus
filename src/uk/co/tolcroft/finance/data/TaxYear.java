@@ -970,6 +970,7 @@ public class TaxYear extends DataItem {
 	/* The Tax Year List class */
 	public static class List extends DataList<TaxYear> {		
 		private DataSet	theData			= null;
+		public 	DataSet getData()		{ return theData; }
 
 		/** 
 	 	 * Construct an empty CORE TaxYear list
@@ -997,7 +998,7 @@ public class TaxYear extends DataItem {
 	 	 */
 		public List(List pList, ListStyle pStyle) { 
 			super(pList, pStyle);
-			theData = pList.theData;
+			theData = pList.getData();
 		}
 
 		/** 
@@ -1007,7 +1008,7 @@ public class TaxYear extends DataItem {
 	 	 */
 		protected List(List pNew, List pOld) { 
 			super(pNew, pOld);
-			theData = pNew.theData;
+			theData = pNew.getData();
 		}
 	
 		/** 

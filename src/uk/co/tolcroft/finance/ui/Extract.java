@@ -73,7 +73,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 	private static final String titleUnits   = "Units";
 	private static final String titleDilute  = "Dilution";
 	private static final String titleTaxCred = "TaxCredit";
-	private static final String titleYears   = "Years";
+	private static final String titleYears   = "Yrs";
 		
 	/* Table columns */
 	private static final int COLUMN_DATE 	 = 0;
@@ -129,7 +129,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		myCol = myColModel.getColumn(COLUMN_DATE);
 		myCol.setCellRenderer(theDateRenderer);
 		myCol.setCellEditor(theDateEditor);
-		myCol.setPreferredWidth(80);
+		myCol.setPreferredWidth(90);
 			
 		myCol = myColModel.getColumn(COLUMN_TRANTYP);
 		myCol.setCellRenderer(theStringRenderer);
@@ -139,7 +139,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		myCol = myColModel.getColumn(COLUMN_DESC);
 		myCol.setCellRenderer(theStringRenderer);
 		myCol.setCellEditor(theStringEditor);
-		myCol.setPreferredWidth(150);
+		myCol.setPreferredWidth(140);
 		
 		myCol = myColModel.getColumn(COLUMN_AMOUNT);
 		myCol.setCellRenderer(theMoneyRenderer);
@@ -164,7 +164,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		myCol = myColModel.getColumn(COLUMN_DILUTE);
 		myCol.setCellRenderer(theDiluteRenderer);
 		myCol.setCellEditor(theDiluteEditor);
-		myCol.setPreferredWidth(80);
+		myCol.setPreferredWidth(70);
 			
 		myCol = myColModel.getColumn(COLUMN_TAXCRED);
 		myCol.setCellRenderer(theMoneyRenderer);
@@ -174,13 +174,13 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		myCol = myColModel.getColumn(COLUMN_YEARS);
 		myCol.setCellRenderer(theIntegerRenderer);
 		myCol.setCellEditor(theIntegerEditor);
-		myCol.setPreferredWidth(50);
+		myCol.setPreferredWidth(30);
 			
 		getTableHeader().setReorderingAllowed(false);
 		setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
 
 		/* Set the number of visible rows */
-		setPreferredScrollableViewportSize(new Dimension(900, 200));
+		setPreferredScrollableViewportSize(new Dimension(1100, 200));
 		
 		/* Build the combo box */
 		theTranBox	  = new JComboBox();
@@ -741,7 +741,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 				else if (col == COLUMN_UNITS)
 					isUnits = true;
 				else if (col == COLUMN_DILUTE)
-					isTaxCred = true;
+					isDilute = true;
 				else if (col == COLUMN_TAXCRED)
 					isTaxCred = true;
 				else if (col == COLUMN_YEARS)

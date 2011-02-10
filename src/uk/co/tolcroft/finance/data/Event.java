@@ -475,7 +475,7 @@ public class Event extends DataItem {
 	 */
 	public void validate() {
 		List 			myList		= (List)getList();
-		DataSet			mySet 		= myList.theData;
+		DataSet			mySet 		= myList.getData();
 		Date 			myDate		= getDate();
 		String			myDesc		= getDesc();
 		Account			myDebit		= getDebit();
@@ -1087,6 +1087,7 @@ public class Event extends DataItem {
 	 */
 	public static class List extends DataList<Event> {
 		private DataSet	theData			= null;
+		public 	DataSet getData()		{ return theData; }
 
 		/** 
 	 	 * Construct an empty CORE event list
@@ -1113,7 +1114,7 @@ public class Event extends DataItem {
 	 	 */
 		public List(List pList, ListStyle pStyle) {
 			super(pList, pStyle);
-			theData = pList.theData;
+			theData = pList.getData();
 		}
 
 		/** 
@@ -1123,7 +1124,7 @@ public class Event extends DataItem {
 	 	 */
 		protected List(List pNew, List pOld) { 
 			super(pNew, pOld);
-			theData = pNew.theData;
+			theData = pNew.getData();
 		}
 	
 		/** 

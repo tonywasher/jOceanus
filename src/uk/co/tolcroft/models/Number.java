@@ -621,8 +621,8 @@ public class Number {
 			long    myFactor = 1;
 			long    myDigit;
 	
-			/* Calculate division factor (plus one) */
-			while (myPower-->-1) myFactor  *= 10;       
+			/* Calculate division factor (minus one) */
+			while (myPower-->1) myFactor  *= 10;       
 			
 			/* Calculate new value */
 			myValue  *= myFactor;

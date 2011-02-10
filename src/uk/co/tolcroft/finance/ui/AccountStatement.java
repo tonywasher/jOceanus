@@ -52,9 +52,19 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 	private Editor.UnitCell 		theUnitsEditor    	= null;
 	private Renderer.StringCell 	theStringRenderer 	= null;
 	private Editor.StringCell 		theStringEditor   	= null;
+	private Renderer.DilutionCell 	theDilutionRenderer	= null;
+	private Editor.DilutionCell 	theDilutionEditor  	= null;
+	private Renderer.IntegerCell 	theIntegerRenderer 	= null;
+	private Editor.IntegerCell 		theIntegerEditor   	= null;
 	private Editor.ComboBoxCell 	theComboEditor    	= null;
 	private boolean					hasBalance		  	= true;
+	private boolean					hasDilution		  	= true;
+	private boolean					hasTaxCredit	  	= true;
+	private boolean					hasYears	  		= true;
 	private TableColumn				theBalanceCol	  	= null;
+	private TableColumn				theDiluteCol	  	= null;
+	private TableColumn				theTaxCredCol	  	= null;
+	private TableColumn				theYearsCol	  		= null;
 	private ComboSelect				theComboList    	= null;
 	private boolean					isUnits			  	= false;
 
@@ -64,23 +74,29 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 	public JPanel  getPanel()			{ return thePanel; }
 
 	/* Table headers */
-	private static final String titleDate    = "Date";
-	private static final String titleDesc    = "Description";
-	private static final String titleTrans   = "TransactionType";
-	private static final String titlePartner = "Partner";
-	private static final String titleCredit  = "Credit";
-	private static final String titleDebit   = "Debit";
-	private static final String titleBalance = "Balance";
+	private static final String titleDate      = "Date";
+	private static final String titleDesc      = "Description";
+	private static final String titleTrans     = "TransactionType";
+	private static final String titlePartner   = "Partner";
+	private static final String titleCredit    = "Credit";
+	private static final String titleDebit     = "Debit";
+	private static final String titleBalance   = "Balance";
+	private static final String titleDilution  = "Dilution";
+	private static final String titleTaxCredit = "TaxCredit";
+	private static final String titleYears     = "Years";
 	
 	/* Table columns */
-	private static final int COLUMN_DATE 	 = 0;
-	private static final int COLUMN_DESC 	 = 1;
-	private static final int COLUMN_TRANTYP  = 2;
-	private static final int COLUMN_PARTNER	 = 3;
-	private static final int COLUMN_CREDIT	 = 4;
-	private static final int COLUMN_DEBIT 	 = 5;
-	private static final int COLUMN_BALANCE	 = 6;
-	private static final int NUM_COLUMNS	 = 7;
+	private static final int COLUMN_DATE 	 	= 0;
+	private static final int COLUMN_TRANTYP  	= 1;
+	private static final int COLUMN_DESC 	 	= 2;
+	private static final int COLUMN_PARTNER	 	= 3;
+	private static final int COLUMN_CREDIT	 	= 4;
+	private static final int COLUMN_DEBIT 	 	= 5;
+	private static final int COLUMN_BALANCE	 	= 6;
+	private static final int COLUMN_DILUTION	= 7;
+	private static final int COLUMN_TAXCREDIT 	= 8;
+	private static final int COLUMN_YEARS	 	= 9;
+	private static final int NUM_COLUMNS	 	= 10;
 				
 	/* Constructor */
 	public AccountStatement(AccountTab pParent, boolean isUnits) {
@@ -107,15 +123,19 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		myColModel = getColumnModel();
 		
 		/* Create the relevant formatters/editors */
-		theDateRenderer   = new Renderer.DateCell();
-		theDateEditor     = new Editor.DateCell();
-		theMoneyRenderer  = new Renderer.MoneyCell();
-		theMoneyEditor    = new Editor.MoneyCell();
-		theUnitsRenderer  = new Renderer.UnitCell();
-		theUnitsEditor    = new Editor.UnitCell();
-		theStringRenderer = new Renderer.StringCell();
-		theStringEditor   = new Editor.StringCell();
-		theComboEditor    = new Editor.ComboBoxCell();
+		theDateRenderer     = new Renderer.DateCell();
+		theDateEditor       = new Editor.DateCell();
+		theMoneyRenderer    = new Renderer.MoneyCell();
+		theMoneyEditor      = new Editor.MoneyCell();
+		theUnitsRenderer    = new Renderer.UnitCell();
+		theUnitsEditor      = new Editor.UnitCell();
+		theStringRenderer   = new Renderer.StringCell();
+		theStringEditor     = new Editor.StringCell();
+		theDilutionRenderer = new Renderer.DilutionCell();
+		theDilutionEditor   = new Editor.DilutionCell();
+		theIntegerRenderer  = new Renderer.IntegerCell();
+		theIntegerEditor    = new Editor.IntegerCell();
+		theComboEditor      = new Editor.ComboBoxCell();
 		
 		/* Set the relevant formatters/editors */
 		myCol = myColModel.getColumn(COLUMN_DATE);
@@ -152,6 +172,24 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		myCol.setCellRenderer((isUnits) ? theUnitsRenderer : theMoneyRenderer);
 		myCol.setPreferredWidth(90);
 		theBalanceCol = myCol;
+		
+		myCol = myColModel.getColumn(COLUMN_DILUTION); 
+		myCol.setCellRenderer(theDilutionRenderer);
+		myCol.setCellEditor(theDilutionEditor);
+		myCol.setPreferredWidth(80);
+		theDiluteCol = myCol;
+		
+		myCol = myColModel.getColumn(COLUMN_TAXCREDIT); 
+		myCol.setCellRenderer(theMoneyRenderer);
+		myCol.setCellEditor(theMoneyEditor);
+		myCol.setPreferredWidth(90);
+		theTaxCredCol = myCol;
+		
+		myCol = myColModel.getColumn(COLUMN_YEARS); 
+		myCol.setCellRenderer(theIntegerRenderer);
+		myCol.setCellEditor(theIntegerEditor);
+		myCol.setPreferredWidth(50);
+		theYearsCol = myCol;
 		
 		getTableHeader().setReorderingAllowed(false);
 			
@@ -253,10 +291,12 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 	
 	/* Set Selection */
 	public void setSelection(Account pAccount) {
+		AccountType myType;
 		theRange     = theSelect.getRange();
 		theDateEditor.setRange(theRange);
 		theAccount   = pAccount;
 		if (theAccount != null) {
+			myType = pAccount.getActType();
 			theStatement = new Statement(theView, pAccount, theRange, isUnits);
 			theLines     = theStatement.getLines();
 			if ((hasBalance) && 
@@ -271,10 +311,46 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 				hasBalance = true;
 				addColumn(theBalanceCol);
 			}
+			if ((hasDilution) && !myType.isShares()) {
+				hasDilution  = false;
+				removeColumn(theDiluteCol);				
+			}
+			else if ((!hasDilution) && myType.isShares()) {
+				hasDilution  = true;
+				addColumn(theDiluteCol);								
+			}
+			if ((hasTaxCredit) && !myType.isMoney() && !myType.isDividend()) {
+				hasTaxCredit = false;
+				removeColumn(theTaxCredCol);				
+			}
+			else if ((!hasTaxCredit) && (myType.isMoney() || myType.isDividend())) {
+				hasTaxCredit = true;
+				addColumn(theTaxCredCol);								
+			}
+			if ((hasYears) && !myType.isLifeBond()) {
+				hasYears     = false;
+				removeColumn(theYearsCol);				
+			}
+			else if ((!hasYears) && myType.isLifeBond()) {
+				hasYears     = true;
+				addColumn(theYearsCol);								
+			}
 		}
 		else {
 			theStatement = null;
 			theLines     = null;
+			if (hasDilution) {
+				hasDilution  = false;
+				removeColumn(theDiluteCol);
+			}
+			if (hasTaxCredit) {
+				hasTaxCredit = false;
+				removeColumn(theTaxCredCol);
+			}
+			if (hasYears) {
+				hasYears     = false;
+				removeColumn(theYearsCol);
+			}
 		}
 		super.setList(theLines);
 		theModel.fireTableDataChanged();
@@ -297,7 +373,9 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		
 	/* Set Selection */
 	public void setSelection(Date.Range pRange) {
+		AccountType myType;
 		if (theAccount != null) {
+			myType = theAccount.getActType();
 			theStatement = new Statement(theView, theAccount, pRange, isUnits);
 			theLines     = theStatement.getLines();
 			if ((hasBalance) && 
@@ -312,10 +390,46 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 				hasBalance = true;
 				addColumn(theBalanceCol);
 			}
+			if ((hasDilution) && !myType.isShares()) {
+				hasDilution  = false;
+				removeColumn(theDiluteCol);				
+			}
+			else if ((!hasDilution) && myType.isShares()) {
+				hasDilution  = true;
+				addColumn(theDiluteCol);								
+			}
+			if ((hasTaxCredit) && !myType.isMoney() && !myType.isDividend()) {
+				hasTaxCredit = false;
+				removeColumn(theTaxCredCol);				
+			}
+			else if ((!hasTaxCredit) && (myType.isMoney() || myType.isDividend())) {
+				hasTaxCredit = true;
+				addColumn(theTaxCredCol);								
+			}
+			if ((hasYears) && !myType.isLifeBond()) {
+				hasYears     = false;
+				removeColumn(theYearsCol);				
+			}
+			else if ((!hasYears) && myType.isLifeBond()) {
+				hasYears     = true;
+				addColumn(theYearsCol);								
+			}
 		}
 		else {
 			theStatement = null;
 			theLines     = null;
+			if (hasDilution) {
+				hasDilution  = false;
+				removeColumn(theDiluteCol);
+			}
+			if (hasTaxCredit) {
+				hasTaxCredit = false;
+				removeColumn(theTaxCredCol);
+			}
+			if (hasYears) {
+				hasYears     = false;
+				removeColumn(theYearsCol);
+			}
 		}
 		theRange = pRange;
 		theDateEditor.setRange(theRange);
@@ -341,6 +455,9 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 			case COLUMN_PARTNER:	return Statement.Line.FIELD_PARTNER;
 			case COLUMN_CREDIT:		return Statement.Line.FIELD_AMOUNT;
 			case COLUMN_DEBIT:		return Statement.Line.FIELD_AMOUNT;
+			case COLUMN_DILUTION:	return Statement.Line.FIELD_DILUTION;
+			case COLUMN_TAXCREDIT:	return Statement.Line.FIELD_TAXCREDIT;
+			case COLUMN_YEARS:		return Statement.Line.FIELD_YEARS;
 			default:				return -1; 
 		}
 	}
@@ -404,6 +521,26 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		else if (myCmd.compareTo(statementMouse.popupPattern) == 0) {
 			myRow = theLines.get(row);
 			theParent.addPattern(myRow);
+		}
+		/* If this is a set Null Dilute request */
+		else if (myCmd.compareTo(statementMouse.popupSetNull + "Dilute") == 0) {
+			/* set the null value */
+			theModel.setValueAt(null, row, COLUMN_DILUTION);
+			theModel.fireTableCellUpdated(row, COLUMN_DILUTION);
+		}
+		
+		/* If this is a set Null TaxCredit request */
+		else if (myCmd.compareTo(statementMouse.popupSetNull + "Credit") == 0) {
+			/* set the null value */
+			theModel.setValueAt(null, row, COLUMN_TAXCREDIT);
+			theModel.fireTableCellUpdated(row, COLUMN_TAXCREDIT);
+		}
+		
+		/* If this is a set Null Years request */
+		else if (myCmd.compareTo(statementMouse.popupSetNull + "Year") == 0) {
+			/* set the null value */
+			theModel.setValueAt(null, row, COLUMN_YEARS);
+			theModel.fireTableCellUpdated(row, COLUMN_YEARS);
 		}
 	}
 		
@@ -469,7 +606,14 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		private static final long serialVersionUID = 269477444398236458L;
 			/* get column count */
 
-		public int getColumnCount() { return (hasBalance) ? NUM_COLUMNS : NUM_COLUMNS-1; }
+		public int getColumnCount() {
+			int myCount = NUM_COLUMNS;
+			if (!hasBalance) myCount--;
+			if (!hasDilution) myCount--;
+			if (!hasTaxCredit) myCount--;
+			if (!hasYears) myCount--;
+			return myCount;
+		}
 			
 		/* get row count */
 		public int getRowCount() { 
@@ -487,6 +631,9 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 				case COLUMN_CREDIT:  	return titleCredit;
 				case COLUMN_DEBIT:	 	return titleDebit;
 				case COLUMN_BALANCE:	return titleBalance;
+				case COLUMN_DILUTION:	return titleDilution;
+				case COLUMN_TAXCREDIT:	return titleTaxCredit;
+				case COLUMN_YEARS:		return titleYears;
 				default:				return null;
 			}
 		}
@@ -524,21 +671,27 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 					return false;
 				case COLUMN_DATE:
 					return true;
-				case COLUMN_DESC:
-					return (myLine.getDate() != null);
 				case COLUMN_TRANTYP:
+					return (myLine.getDate() != null);
+				case COLUMN_DESC:
 					return ((myLine.getDate() != null) &&
-							(myLine.getDesc() != null));
+							(myLine.getTransType() != null));
 				default:
 					if ((myLine.getDate() == null) &&
 						(myLine.getDesc() == null) &&
 						(myLine.getTransType() == null))
 						return false;
 					
+					/* Access the transaction type */
+					TransactionType myType = myLine.getTransType();
+					
 					/* Handle columns */
 					switch (col) {
 						case COLUMN_CREDIT:		return myLine.isCredit();
 						case COLUMN_DEBIT:		return !myLine.isCredit();
+						case COLUMN_YEARS:		return myType.isTaxableGain();
+						case COLUMN_TAXCREDIT:	return myType.needsTaxCredit();
+						case COLUMN_DILUTION:	return myType.isDilutable();
 						default: 				return true;
 					}
 			}
@@ -603,6 +756,15 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 					if ((o != null) && (((String)o).length() == 0))
 						o = null;
 					break;
+				case COLUMN_DILUTION:	
+					o = myLine.getDilution();
+					break;
+				case COLUMN_TAXCREDIT:	
+					o = myLine.getTaxCredit();
+					break;
+				case COLUMN_YEARS:	
+					o = myLine.getYears();
+					break;
 				default:
 					o = null;
 					break;
@@ -644,6 +806,15 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 					break;
 				case COLUMN_PARTNER:
 					myLine.setPartner(theAccounts.searchFor((String)obj));    
+					break;
+				case COLUMN_DILUTION:  
+					myLine.setDilution((Number.Dilution)obj);            
+					break;
+				case COLUMN_TAXCREDIT:  
+					myLine.setTaxCredit((Number.Money)obj);            
+					break;
+				case COLUMN_YEARS:  
+					myLine.setYears((Integer)obj);            
 					break;
 			}
 			
@@ -696,6 +867,7 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		private static final String popupPartner  = "View Parther";
 		private static final String popupMPartner = "Maintain Parther";
 		private static final String popupPattern  = "Add to Pattern";
+		private static final String popupSetNull = "Set Null";
 				
 		/* handle mouse Pressed event */
 		public void mousePressed(MouseEvent e) {
@@ -717,6 +889,7 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 				/* Calculate the row/column that the mouse was clicked at */
 				Point p = new Point(e.getX(), e.getY());
 				int row = theTable.rowAtPoint(p);
+				int col = theTable.columnAtPoint(p);
 					
 				/* If we have an account */
 				if ((row > 0) &&
@@ -794,6 +967,42 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 						myItem.setActionCommand(popupPattern + ":" + (row-1));
 						myItem.addActionListener(theTable);
 						myMenu.add(myItem);
+
+						/* If we have dilute */
+						if ((col == COLUMN_DILUTION) &&
+							(myRow.getDilution() != null)) {
+							/* Create the set null choice */
+							myItem = new JMenuItem(popupSetNull);
+						
+							/* Set the command and add to menu */
+							myItem.setActionCommand(popupSetNull + "Dilute:" + row);
+							myItem.addActionListener(theTable);
+							myMenu.add(myItem);
+						}
+						
+						/* If we have dilute */
+						if ((col == COLUMN_TAXCREDIT) &&
+							(myRow.getTaxCredit() != null)) {
+							/* Create the set null choice */
+							myItem = new JMenuItem(popupSetNull);
+						
+							/* Set the command and add to menu */
+							myItem.setActionCommand(popupSetNull + "Credit:" + row);
+							myItem.addActionListener(theTable);
+							myMenu.add(myItem);
+						}
+						
+						/* If we have years */
+						if ((col == COLUMN_YEARS) &&
+							(myRow.getYears() != null)) {
+							/* Create the set null choice */
+							myItem = new JMenuItem(popupSetNull);
+						
+							/* Set the command and add to menu */
+							myItem.setActionCommand(popupSetNull + "Year:" + row);
+							myItem.addActionListener(theTable);
+							myMenu.add(myItem);
+						}						
 					}
 						
 					/* Show the pop-up menu */

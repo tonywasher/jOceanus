@@ -650,6 +650,23 @@ public class TransactionType extends DataItem {
 	}
 
 	/**
+	 * Determine whether the TransactionType is dilutable
+	 *  
+	 * @return <code>true</code> if the transaction is dilutable, <code>false</code> otherwise.
+	 */
+	public boolean isDilutable()   { 
+		switch (theClass) {
+			case STOCKSPLIT:
+			case STOCKDEMERGER:
+			case STOCKRIGHTWAIVED:
+			case STOCKRIGHTTAKEN:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	/**
 	 * Represents a list of {@link TransType} objects. 
 	 */
 	public static class List extends DataList<TransactionType> {

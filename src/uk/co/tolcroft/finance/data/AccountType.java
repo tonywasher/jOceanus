@@ -575,14 +575,14 @@ public class AccountType extends DataItem {
 	 *  
 	 * @return <code>true</code> if the account is Share, <code>false</code> otherwise.
 	 */
-	protected boolean isShares()   { return (theClass == AccountClass.SHARES); }
+	public boolean isShares()   { return (theClass == AccountClass.SHARES); }
 
 	/**
 	 * Determine whether the AccountType is a LifeBond
 	 * 
 	 * @return <code>true</code> if the account is LifeBond, <code>false</code> otherwise.
 	 */
-	protected boolean isLifeBond()   { return (theClass == AccountClass.LIFEBOND); }
+	public boolean isLifeBond()   { return (theClass == AccountClass.LIFEBOND); }
 
 	/**
 	 * Determine whether the AccountType is internal

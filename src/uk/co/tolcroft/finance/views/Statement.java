@@ -52,7 +52,7 @@ public class Statement {
 		theRange   = pRange;
 		theLines   = new List();
 		
-		/* If we have a units request for and non-priced account, just return */
+		/* If we have a units request for an non-priced account, just return */
 		if ((isUnits) && (!pAccount.isPriced())) return;
 		
 		/* Create the list of statement lines */
@@ -509,8 +509,11 @@ public class Statement {
 		 */
 		public void adjustBalance(Number.Money curBalance) {
 			/* adjust the balance */
-			if (isCredit) curBalance.addAmount(getAmount());
-			else          curBalance.subtractAmount(getAmount());
+			if ((isCredit) ||
+				(!Utils.differs(theAccount, getPartner())))
+				curBalance.addAmount(getAmount());
+			else 
+				curBalance.subtractAmount(getAmount());
 			   
 			/* Record the balance */
 			theBalance = new Number.Money(curBalance);
@@ -523,8 +526,11 @@ public class Statement {
 		 */
 		public void adjustUnits(Number.Units curBalance) {
 			/* adjust the balance */
-			if (isCredit) curBalance.addUnits(getUnits());
-			else          curBalance.subtractUnits(getUnits());
+			if ((isCredit) ||
+				(!Utils.differs(theAccount, getPartner())))
+				curBalance.addUnits(getUnits());
+			else 
+				curBalance.subtractUnits(getUnits());
 			   
 			/* Record the balance */
 			theBalUnits = new Number.Units(curBalance);
