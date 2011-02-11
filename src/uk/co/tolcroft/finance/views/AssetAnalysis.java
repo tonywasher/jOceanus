@@ -10,6 +10,7 @@ public class AssetAnalysis {
 	private DataSet			theData		= null;
 	private AnalysisYear	theYear	  	= null;
 	private Date 			theDate    	= null;
+	private Account			theAccount	= null;
 	private List    		theBuckets 	= null;
 	private boolean			hasTotals  	= false;
 	
@@ -68,7 +69,7 @@ public class AssetAnalysis {
 	 * 
 	 * @param  pData The DateSet for analysis
 	 * @param  pDate The Date of the valuation
-	 * @param  pSet  The Set of reports
+	 * @param  pYear The Set of reports
 	 */
 	public AssetAnalysis(DataSet pData, Date pDate, AnalysisYear pYear) {
 		/* Store date and create new list */
@@ -78,6 +79,35 @@ public class AssetAnalysis {
 		theBuckets 	= new List();
 	}
 		
+	/**
+	 * Obtain an asset valuation report
+	 * 
+	 * @param  pData The DateSet for analysis
+	 * @param  pDate The Date of the valuation
+	 * @param  pSet  The Set of reports
+	 */
+	protected AssetAnalysis(DataSet pData, Account pAccount) {
+		/* Store date and create new list */
+		theData		= pData;
+		theAccount	= pAccount;
+		theBuckets 	= new List();
+	}
+		
+	/**
+	 * Obtain the account bucket for an asset valuation report
+	 * @return the account bucket 
+	 */
+	protected Bucket getAccountBucket() {
+		Bucket myBucket = null;
+		
+		/* Access the Account bucket if present */
+		if (theAccount != null)
+			myBucket = theBuckets.getAccountBucket(theAccount);
+		
+		/* Return the bucket */
+		return myBucket;
+	}
+	
 	/**
 	 * Seed from previous end-of-year analysis
 	 * 
@@ -136,26 +166,38 @@ public class AssetAnalysis {
 	 * @param pEvent the event to process
 	 */
 	public void processEvent(Event pEvent) {
-		Account myAccount;
+		Account myCredit;
+		Account myDebit;
 		Bucket  myBucket;
+
+		/* Access the credit and debit accounts */
+		myCredit = pEvent.getCredit();
+		myDebit  = pEvent.getDebit();
+		
+		/* If we are only interested in a single account */
+		if (theAccount != null) {
+			/* Null values if they do not match the account */
+			if (theAccount.compareTo(myCredit) != 0) myCredit = null;
+			if (theAccount.compareTo(myDebit)  != 0) myDebit  = null;
+		}
 		
 		/* If the credit account is an asset */
-		myAccount = pEvent.getCredit();
-		if ((!myAccount.isExternal()) && 
-			(!myAccount.isBenefit())) {
+		if ((myCredit != null) &&
+			(!myCredit.isExternal()) && 
+			(!myCredit.isBenefit())) {
 			/* Locate its bucket */
-			myBucket = theBuckets.getAccountBucket(myAccount);
+			myBucket = theBuckets.getAccountBucket(myCredit);
 			
 			/* Add the Event to the bucket */
 			myBucket.addEvent(pEvent);
 		}
 		
 		/* If the debit account is an asset */
-		myAccount = pEvent.getDebit();
-		if ((!myAccount.isExternal()) &&
+		if ((myDebit != null) &&
+		    (!myDebit.isExternal()) &&
 			(!pEvent.isInterest())) {
 			/* Locate its bucket */
-			myBucket = theBuckets.getAccountBucket(myAccount);
+			myBucket = theBuckets.getAccountBucket(myDebit);
 			
 			/* Subtract the Event from the bucket */
 			myBucket.subtractEvent(pEvent);	

@@ -16,6 +16,7 @@ public class Statement {
 	private Number.Money    theEndBalance   = null;
 	private Number.Units    theStartUnits   = null;
 	private Number.Units    theEndUnits     = null;
+	private AssetAnalysis	theAnalysis		= null;
 	private List            theLines        = null;
 
 	/* Access methods */
@@ -40,6 +41,8 @@ public class Statement {
 		Line               				myLine;
 		int                				myResult;
 		DataList<Event>.ListIterator	myIterator;
+		AssetAnalysis.Bucket			myBucket;
+		AssetAnalysis.AssetBucket		myAssetBucket;
 
 		/* Create a copy of the account (plus surrounding list) */
 		theView	   = pView;
@@ -57,6 +60,9 @@ public class Statement {
 		myBase 		= myData.getEvents();
 		myIterator 	= myBase.listIterator(true);
 
+		/* Create an asset analysis for this account */
+		theAnalysis = new AssetAnalysis(myData, pAccount);
+		
 		/* Loop through the Events extracting relevant elements */
 		while ((myCurr = myIterator.next()) != null) {
 			/* Check the range */
@@ -65,50 +71,34 @@ public class Statement {
 			/* Handle past limit */
 			if (myResult == -1) break;
 			
-			/* If this Event relates to this account */
-			if (myCurr.relatesTo(theAccount)) {
-				/* If we are too early for the statement */
-				if (myResult == 1) {
-					/* If we have a balance */
-					if (hasBalance()) {
-						/* If the Account is Credited */
-						if (pAccount.compareTo(myCurr.getCredit()) == 0) {
-							/* Adjust the start balance */
-							theStartBalance.addAmount(myCurr.getAmount());
-						}
-						else if (pAccount.compareTo(myCurr.getDebit()) == 0) {
-							/* Adjust the start balance */
-							theStartBalance.subtractAmount(myCurr.getAmount());
-						}
-					}
-					
-					/* If we have units */
-					else if ((hasUnits()) && 
-							 (myCurr.getUnits() != null)) {
-						/* If the Account is Credited */
-						if (pAccount.compareTo(myCurr.getCredit()) == 0) {
-							/* Adjust the start balance */
-							theStartUnits.addUnits(myCurr.getUnits());
-						}
-						else if (pAccount.compareTo(myCurr.getDebit()) == 0) {
-							/* Adjust the start balance */
-							if (myCurr.getTransType().isStockTakeover())
-								theStartUnits.setZero();
-							else
-								theStartUnits.subtractUnits(myCurr.getUnits());
-						}
-					}
-					
-					/* Re-loop */
-					continue;
-				}
-				
-				/* Add a statement line to the statement */
-				myLine = new Line(theLines, myCurr, theAccount);
-				myLine.addToList();
+			/* Ignore items that do not relate to this account */
+			if (!myCurr.relatesTo(pAccount)) continue;
+			
+			/* If we are too early for the statement */
+			if (myResult == 1) {
+				/* Process the event and continue */
+				theAnalysis.processEvent(myCurr);
+				continue;
 			}
+				
+			/* Add a statement line to the statement */
+			myLine = new Line(theLines, myCurr, theAccount);
+			myLine.addToList();
 		}
 			 
+		/* Access the account bucket */
+		myBucket = theAnalysis.getAccountBucket();
+		
+		/* Access the starting balance */
+		if (hasBalance()) theStartBalance = myBucket.getAmount();
+		
+		/* If this has units */
+		if (hasUnits()) {
+			/* Access as an asset bucket */
+			myAssetBucket = (AssetAnalysis.AssetBucket) myBucket;
+			theStartUnits = myAssetBucket.getUnits();
+		}
+		
 		/* reset the balance */
 		resetBalance();
 	}
@@ -116,8 +106,15 @@ public class Statement {
  	/* recalculate balance */
 	public void resetBalance() {
 		Line            			myLine;
-		Number.Money    			myBalance = null;
-		Number.Units				myUnits   = null;
+		Event.List					myList;
+		Event						myEvent;
+		DataSet						myData;
+		Number.Money    			myInitAmount = null;
+		Number.Units				myInitUnits  = null;
+		Number.Money    			myAmount 	 = null;
+		Number.Units				myUnits   	 = null;
+		AssetAnalysis.Bucket		myBucket;
+		AssetAnalysis.AssetBucket	myAssetBucket = null;
 		DataList<Line>.ListIterator	myIterator;
 
 		/* Access the iterator */
@@ -126,35 +123,75 @@ public class Statement {
 		/* If we don't have balances just return */
 		if (!hasBalance() && !hasUnits()) return;
 		
-		/* Set the starting balances */
-		if (hasBalance())	myBalance = new Number.Money(theStartBalance);
-		if (hasUnits())		myUnits = new Number.Units(theStartUnits);
+		/* Create a new Event list */
+		myData = theView.getData();
+		myList = new Event.List(myData, ListStyle.VIEW);
+	
+		/* Access the bucket */
+		myBucket = theAnalysis.getAccountBucket();
+		
+		/* If we have a balance */
+		if (hasBalance()) {
+			/* Access the amount and save its initial value */
+			myAmount		= myBucket.getAmount();
+			myInitAmount 	= new Number.Money(myAmount);
+		}
+		
+		/* If we have units */
+		if (hasUnits()) {
+			/* Access as an asset bucket */
+			myAssetBucket = (AssetAnalysis.AssetBucket) myBucket;
+
+			/* Access the units and save its initial value */
+			myUnits 	= myAssetBucket.getUnits();
+			myInitUnits	= new Number.Units(myUnits);
+		}
 		
 		/* Loop through the lines adjusting the balance */
 		while ((myLine = myIterator.next()) != null) {
 			/* Skip deleted lines */
 			if (myLine.isDeleted()) continue;
 			
-			/* Adjust the value balance if required */
-			if ((hasBalance()) && 
-				(myLine.getAmount() != null))
-				myLine.adjustBalance(myBalance);
+			/* Create an event from this line */
+			myEvent = new Event(myList, myLine);
+
+			/* Process the event */
+			theAnalysis.processEvent(myEvent);
 			
-			/* Adjust the units balance if required */
-			if ((hasUnits()) && 
-				((myLine.getUnits() != null) || 
-				 (myLine.isStockTOver)))
-				myLine.adjustUnits(myUnits);
+			/* Take a copy of the balance if required */
+			if (hasBalance()) 
+				myLine.theBalance = new Number.Money(myAmount);
+			
+			/* Take a copy of the units balance if required */
+			if (hasUnits()) 
+				myLine.theBalUnits = new Number.Units(myUnits);
 		}
-			
+	
+		/* If we have balance */
+		if (hasBalance()) {
+			/* Set the end balance and restore the starting balance */
+			theEndBalance = new Number.Money(myAmount);
+			myAmount.setZero();
+			myAmount.addAmount(myInitAmount);
+		}
+		
+		/* If we have units */
+		if (hasUnits()) {
+			/* Set the end balance and restore the starting balance */
+			theEndUnits = new Number.Units(myUnits);
+			myUnits.setZero();
+			myUnits.addUnits(myInitUnits);
+		}
+		
 		/* Set the Ending balances */
-		if (hasUnits()) 	theEndUnits = new Number.Units(myUnits);
-		if (hasBalance())	theEndBalance = new Number.Money(myBalance);
+		if (hasUnits()) 	theEndUnits = new Number.Units(myAssetBucket.getUnits());
 	}
 	
 	/* Does the statement have a money balance */
 	public boolean hasBalance()   { 
-		return ((!theAccount.isExternal()) && (!theAccount.isPriced()));		
+		return ((!theAccount.isExternal()) &&
+				(!theAccount.isPriced()) &&
+				(!theAccount.isBenefit()));		
 	}
 	
 	/* Does the statement have units */
@@ -429,6 +466,7 @@ public class Statement {
 		
 			/* Access DataSet */
 			myData = theView.getData();
+			
 			/* Create a new Event list */
 			if (pList == null)
 				pList = new Event.List(myData, ListStyle.VIEW);
