@@ -108,7 +108,7 @@ public class Event extends DataItem {
 			case FIELD_TRNTYP: 	
 				if ((myObj.getTransType() == null) &&
 					(theTransId != -1))
-					myString += "Id=" + theDebitId;
+					myString += "Id=" + theTransId;
 				else
 					myString += Utils.formatTrans(myObj.getTransType());	
 				break;
