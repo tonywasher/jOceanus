@@ -27,7 +27,6 @@ public class AccountTab implements ChangeListener,
 	private JTabbedPane       	theTabs      = null;
 	private AccountSelect  		theSelect	 = null;
 	private AccountStatement	theStatement = null;
-	private AccountStatement	theUnits     = null;
 	private AccountPatterns		thePatterns  = null;
 	private AccountPrices		thePrices    = null;
 	private AccountRates		theRates     = null;
@@ -46,7 +45,6 @@ public class AccountTab implements ChangeListener,
 		
 	/* Tab headers */
 	private static final String titleStatement = "Statement";
-	private static final String titleUnits     = "UnitsStatement";
 	private static final String titlePatterns  = "Patterns";
 	private static final String titlePrices    = "Prices";
 	private static final String titleRates     = "Rates";
@@ -63,12 +61,11 @@ public class AccountTab implements ChangeListener,
 		theTabs = new JTabbedPane();
 	
 		/* Create the Statement table and add to tabbed pane */
-		theStatement = new AccountStatement(this, false);
+		theStatement = new AccountStatement(this);
 		theTabs.addTab(titleStatement, theStatement.getPanel());
 		theTabs.addChangeListener(this);
 										
 		/* Create the optional tables */
-		theUnits    = new AccountStatement(this, true);
 		thePatterns = new AccountPatterns(this);
 		theRates    = new AccountRates(this);
 		thePrices   = new AccountPrices(this);
@@ -126,7 +123,6 @@ public class AccountTab implements ChangeListener,
 		theRates.refreshData();
 		thePrices.refreshData();
 		thePatterns.refreshData();
-		theUnits.refreshData();
 		theStatement.refreshData();
 			
 		/* Redraw selection */
@@ -139,7 +135,6 @@ public class AccountTab implements ChangeListener,
 		
 		/* Determine whether we have updates */
 		hasUpdates = theStatement.hasUpdates();
-        if (!hasUpdates) hasUpdates = theUnits.hasUpdates();
         if (!hasUpdates) hasUpdates = thePatterns.hasUpdates();
         if (!hasUpdates) hasUpdates = theRates.hasUpdates();
         if (!hasUpdates) hasUpdates = thePrices.hasUpdates();
@@ -154,7 +149,6 @@ public class AccountTab implements ChangeListener,
 		
 		/* Determine whether we have updates */
 		hasErrors = theStatement.hasErrors() ||
-					theUnits.hasErrors()     ||
 					thePatterns.hasErrors()  ||
 					theRates.hasErrors()     ||
 					thePrices.hasErrors();
@@ -199,10 +193,6 @@ public class AccountTab implements ChangeListener,
 
 		/* Access the State of the Statement */
 		myState = theStatement.getEditState();
-		
-		/* Access and combine the State of the Units */
-		myNewState = theUnits.getEditState();
-		myState    = editCombine(myState, myNewState);
 		
 		/* Access and combine the State of the Patterns */
 		myNewState = thePatterns.getEditState();
@@ -250,7 +240,6 @@ public class AccountTab implements ChangeListener,
 	public void validateAll() {
 		/* Validate the data */
 		theStatement.validateAll();
-		theUnits.validateAll();
 		thePatterns.validateAll();
 		theRates.validateAll();
 		thePrices.validateAll();
@@ -261,7 +250,6 @@ public class AccountTab implements ChangeListener,
 	public void cancelEditing() {
 		/* cancel editing */
 		theStatement.cancelEditing();
-		theUnits.cancelEditing();
 		thePatterns.cancelEditing();
 		theRates.cancelEditing();
 		thePrices.cancelEditing();
@@ -271,7 +259,6 @@ public class AccountTab implements ChangeListener,
 	public void resetData() {
 		/* reset the data */
 		theStatement.resetData();
-		theUnits.resetData();
 		thePatterns.resetData();
 		theRates.resetData();
 		thePrices.resetData();
@@ -292,8 +279,7 @@ public class AccountTab implements ChangeListener,
 			thePatterns.saveData();
 			
 			/* Save the statement last since this will cascade data */
-			if (theUnits.hasUpdates()) theUnits.saveData();
-			else theStatement.saveData();
+			theStatement.saveData();
 		}
 	}
 		
@@ -326,13 +312,6 @@ public class AccountTab implements ChangeListener,
 			(theLastFocus == theStatement.getPanel())) {
 			/* Access the formatted output */
 			myList = theStatement.getList();
-			if (myList != null) myText = myList.toHTMLString().toString();
-		}
-		
-		/* If the Units is active */
-		else if (theLastFocus == theUnits.getPanel()) {
-			/* Access the formatted output */
-			myList = theUnits.getList();							
 			if (myList != null) myText = myList.toHTMLString().toString();
 		}
 		
@@ -383,7 +362,6 @@ public class AccountTab implements ChangeListener,
 		
 		/* Alert the different tables to the change */
 		theStatement.setSelection(theAccount);
-		theUnits.setSelection(theAccount);
 		thePatterns.setSelection(theAccount);
 		thePrices.setSelection(theAccount);
 		theRates.setSelection(theAccount);
@@ -397,52 +375,6 @@ public class AccountTab implements ChangeListener,
 		int         iIndex;
 		boolean     isPatternsSelected = false;
 		boolean     isPricesSelected   = false;
-		
-		/* Access the Units index */
-		iIndex = theTabs.indexOfTab(titleUnits);
-		
-		/* If the account has prices */
-		if ((theAccount != null) &&
-			(theAccount.isPriced())) {
-			
-			/* Add the UnitsStatement if not present */
-			if (iIndex == -1) {
-				theTabs.addTab(titleUnits, theUnits.getPanel());
-
-				/* Remove the prices tab if present */
-				iIndex = theTabs.indexOfTab(titlePrices);
-				if (iIndex != -1) {
-					/* Remember if Prices are selected since we need to restore this */
-					if (iIndex == theTabs.getSelectedIndex())
-						isPricesSelected = true;
-				
-					/* Remove the prices tab */
-					theTabs.removeTabAt(iIndex);
-				}
-				
-				/* Access the index of the Units tab */
-				iIndex = theTabs.indexOfTab(titleUnits);
-			}
-			
-			/* Disable the Units if statement has updates */
-			theTabs.setEnabledAt(iIndex, !theStatement.hasUpdates());
-			
-			/* Access the Statements index */
-			iIndex = theTabs.indexOfTab(titleStatement);
-			
-			/* Disable the Statement if units has updates */
-			theTabs.setEnabledAt(iIndex, !theUnits.hasUpdates());
-		}
-			
-		/* else if not units but tab is present */
-		else if (iIndex != -1) {
-			/* If the tab is selected then set statement as selected */ 
-			if (iIndex == theTabs.getSelectedIndex())
-				theTabs.setSelectedIndex(0);
-			
-			/* Remove the units tab */
-			theTabs.removeTabAt(iIndex);
-		}
 		
 		/* Access the Rates index */
 		iIndex = theTabs.indexOfTab(titleRates);
@@ -559,7 +491,6 @@ public class AccountTab implements ChangeListener,
 							  DateRange	pSource) {
 		/* Adjust the date selection for the statements appropriately */
 		theStatement.selectPeriod(pSource);
-		theUnits.selectPeriod(pSource);
 		
 		/* Adjust the account selection */
 		theSelect.setSelection(pAccount);

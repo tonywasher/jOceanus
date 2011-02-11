@@ -901,10 +901,12 @@ public class AssetAnalysis {
 			}
 			
 			/* If we need to adjust units */
-			if ((myUnits != null) && (theUnits != null) &&
-				(!pEvent.getCredit().isPriced())) {
+			if ((myUnits != null) && (theUnits != null)) {
 				/* Adjust the units total */
-				theUnits.subtractUnits(myUnits);
+				if (pEvent.getTransType().isStockTakeover())
+					theUnits.setZero();
+				else if (!pEvent.getCredit().isPriced())
+					theUnits.subtractUnits(myUnits);
 			}
 		}
 

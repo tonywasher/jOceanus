@@ -20,6 +20,7 @@ import javax.swing.table.TableColumnModel;
 
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.EditButtons.*;
+import uk.co.tolcroft.finance.ui.controls.StatementSelect.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Number;
@@ -43,6 +44,7 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 	private MainTab          		theTopWindow      	= null;
 	private Date.Range				theRange	 		= null;
 	private DateRange 				theSelect	 		= null;
+	private StatementSelect			theStateBox 		= null;
 	private EditButtons    			theRowButs   		= null;
 	private Renderer.DateCell 		theDateRenderer   	= null;
 	private Editor.DateCell 		theDateEditor     	= null;
@@ -61,12 +63,14 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 	private boolean					hasDilution		  	= true;
 	private boolean					hasTaxCredit	  	= true;
 	private boolean					hasYears	  		= true;
+	private TableColumn				theCreditCol	  	= null;
+	private TableColumn				theDebitCol	  		= null;
 	private TableColumn				theBalanceCol	  	= null;
 	private TableColumn				theDiluteCol	  	= null;
 	private TableColumn				theTaxCredCol	  	= null;
 	private TableColumn				theYearsCol	  		= null;
 	private ComboSelect				theComboList    	= null;
-	private boolean					isUnits			  	= false;
+	private StatementType			theStateType		= null;
 
 	/* Access methods */
 	public boolean hasHeader()		 	{ return true; }
@@ -99,7 +103,7 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 	private static final int NUM_COLUMNS	 	= 10;
 				
 	/* Constructor */
-	public AccountStatement(AccountTab pParent, boolean isUnits) {
+	public AccountStatement(AccountTab pParent) {
 		/* Initialise superclass */
 		super(pParent.getTopWindow());
 
@@ -111,7 +115,6 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		
 		/* Store passed details */
 		theParent    = pParent;
-		this.isUnits = isUnits;
 		theView   	 = pParent.getView();
 		theTopWindow = pParent.getTopWindow();
 
@@ -159,17 +162,14 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		myCol.setPreferredWidth(130);
 		
 		myCol = myColModel.getColumn(COLUMN_CREDIT); 
-		myCol.setCellRenderer((isUnits) ? theUnitsRenderer : theMoneyRenderer);
-		myCol.setCellEditor((isUnits) ? theUnitsEditor : theMoneyEditor);
 		myCol.setPreferredWidth(90);
+		theCreditCol = myCol;
 		
 		myCol = myColModel.getColumn(COLUMN_DEBIT);
-		myCol.setCellRenderer((isUnits) ? theUnitsRenderer : theMoneyRenderer);
-		myCol.setCellEditor((isUnits) ? theUnitsEditor : theMoneyEditor);
 		myCol.setPreferredWidth(90);
+		theDebitCol = myCol;
 		
 		myCol = myColModel.getColumn(COLUMN_BALANCE);
-		myCol.setCellRenderer((isUnits) ? theUnitsRenderer : theMoneyRenderer);
 		myCol.setPreferredWidth(90);
 		theBalanceCol = myCol;
 		
@@ -194,7 +194,7 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		getTableHeader().setReorderingAllowed(false);
 			
 		/* Set the number of visible rows */
-		setPreferredScrollableViewportSize(new Dimension(900, 200));
+		setPreferredScrollableViewportSize(new Dimension(1100, 200));
 		
 		/* Add the mouse listener */
 		theMouse = new statementMouse();
@@ -202,6 +202,7 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		
 		/* Create the sub panels */
 		theSelect    = new DateRange(this);
+		theStateBox  = new StatementSelect(this);
 		theRowButs   = new EditButtons(this, InsertStyle.CREDITDEBIT);
 		
 		/* Create a new Scroll Pane and add this table to it */
@@ -221,15 +222,22 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 	        	.addGroup(myLayout.createSequentialGroup()
 	        		.addContainerGap()
 	                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
-	                	.addComponent(theSelect.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-	                    .addComponent(myScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
+        	        	.addGroup(myLayout.createSequentialGroup()
+                                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                		.addComponent(theSelect.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        	        			.addContainerGap()
+                                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                		.addComponent(theStateBox.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+	                    .addComponent(myScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 1100, Short.MAX_VALUE)
 	                    .addComponent(theRowButs.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 	                .addContainerGap())
 	    );
         myLayout.setVerticalGroup(
         	myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	        	.addGroup(GroupLayout.Alignment.TRAILING, myLayout.createSequentialGroup()
-	        		.addComponent(theSelect.getPanel())
+       	        	.addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+       	        			.addComponent(theSelect.getPanel())
+      	        			.addComponent(theStateBox.getPanel()))
 	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                .addComponent(myScroll)
 	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
@@ -268,6 +276,12 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 			/* Set the new range */
 			setSelection(theSelect.getRange());
 		}
+
+		/* else if this is a change from the type */
+		else if (obj == (Object) theStateBox) {
+			/* Reset the account */
+			setSelection(theAccount);
+		}
 	}
 		
 	/* refresh data */
@@ -291,75 +305,223 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 	
 	/* Set Selection */
 	public void setSelection(Account pAccount) {
-		AccountType myType;
 		theRange     = theSelect.getRange();
 		theDateEditor.setRange(theRange);
 		theAccount   = pAccount;
+		theStateBox.setSelection(pAccount);
+		theStateType = theStateBox.getStatementType();
 		if (theAccount != null) {
-			myType = pAccount.getActType();
-			theStatement = new Statement(theView, pAccount, theRange, isUnits);
+			theStatement = new Statement(theView, pAccount, theRange);
 			theLines     = theStatement.getLines();
-			if ((hasBalance) && 
-				(!theStatement.hasBalance()) && 
-				(!isUnits)) {
-				hasBalance = false;
-				removeColumn(theBalanceCol);
-			}
-			else if ((!hasBalance) && 
-					 ((theStatement.hasBalance()) ||
-					  (isUnits))) {
-				hasBalance = true;
-				addColumn(theBalanceCol);
-			}
-			if ((hasDilution) && !myType.isShares()) {
-				hasDilution  = false;
-				removeColumn(theDiluteCol);				
-			}
-			else if ((!hasDilution) && myType.isShares()) {
-				hasDilution  = true;
-				addColumn(theDiluteCol);								
-			}
-			if ((hasTaxCredit) && !myType.isMoney() && !myType.isDividend()) {
-				hasTaxCredit = false;
-				removeColumn(theTaxCredCol);				
-			}
-			else if ((!hasTaxCredit) && (myType.isMoney() || myType.isDividend())) {
-				hasTaxCredit = true;
-				addColumn(theTaxCredCol);								
-			}
-			if ((hasYears) && !myType.isLifeBond()) {
-				hasYears     = false;
-				removeColumn(theYearsCol);				
-			}
-			else if ((!hasYears) && myType.isLifeBond()) {
-				hasYears     = true;
-				addColumn(theYearsCol);								
-			}
 		}
 		else {
 			theStatement = null;
 			theLines     = null;
-			if (hasDilution) {
-				hasDilution  = false;
-				removeColumn(theDiluteCol);
-			}
-			if (hasTaxCredit) {
-				hasTaxCredit = false;
-				removeColumn(theTaxCredCol);
-			}
-			if (hasYears) {
-				hasYears     = false;
-				removeColumn(theYearsCol);
-			}
 		}
+		setColumns();
 		super.setList(theLines);
 		theModel.fireTableDataChanged();
 		theRowButs.setLockDown();
 		theSelect.setLockDown();
+		theStateBox.setLockDown();
 	}
+	
+	/* Set Column to be visible or not */
+	private void setVisibleColumn(int pColumn, boolean bVisible) {
+		boolean hideSubsequent = false;
 		
+		/* Switch on the column id */
+		switch (pColumn) {
+			case COLUMN_BALANCE:
+				/* If we are in the wrong state */
+				if (hasBalance != bVisible) {
+					/* If we are setting to visible */
+					if (bVisible) {
+						/* Set the column to visible */
+						addColumn(theBalanceCol);
+						hasBalance = true;
+						
+						/* Hide subsequent columns */
+						hideSubsequent = true;
+					}
+					
+					/* else we are setting to invisible */
+					else {
+						/* Set the column to invisible */
+						removeColumn(theBalanceCol);
+						hasBalance = false;
+					}
+				}
+				break;
+			case COLUMN_DILUTION:
+				/* If we are in the wrong state */
+				if (hasDilution != bVisible) {
+					/* If we are setting to visible */
+					if (bVisible) {
+						/* Set the column to visible */
+						addColumn(theDiluteCol);
+						hasDilution = true;
+						
+						/* Hide subsequent columns */
+						hideSubsequent = true;
+					}
+					
+					/* else we are setting to invisible */
+					else {
+						/* Set the column to invisible */
+						removeColumn(theDiluteCol);
+						hasDilution = false;
+					}
+				}
+				break;
+			case COLUMN_TAXCREDIT:
+				/* If we are in the wrong state */
+				if (hasTaxCredit != bVisible) {
+					/* If we are setting to visible */
+					if (bVisible) {
+						/* Set the column to visible */
+						addColumn(theTaxCredCol);
+						hasTaxCredit = true;
+
+						/* Hide subsequent columns */
+						hideSubsequent = true;
+					}
+					
+					/* else we are setting to invisible */
+					else {
+						/* Set the column to invisible */
+						removeColumn(theTaxCredCol);
+						hasTaxCredit = false;
+					}
+				}
+				break;
+			case COLUMN_YEARS:
+				/* If we are in the wrong state */
+				if (hasYears != bVisible) {
+					/* If we are setting to visible */
+					if (bVisible) {
+						/* Set the column to visible */
+						addColumn(theYearsCol);
+						hasYears = true;
+
+						/* Hide subsequent columns */
+						hideSubsequent = true;
+					}
+					
+					/* else we are setting to invisible */
+					else {
+						/* Set the column to invisible */
+						removeColumn(theYearsCol);
+						hasYears = false;
+					}
+				}
+				break;
+		}
+		
+		/* If we need to hide subsequent columns */
+		if (hideSubsequent) {
+			/* Loop through subsequent columns */
+			for (int col = pColumn+1;
+				 col < NUM_COLUMNS;
+				 col++) {
+				/* Hide the column */
+				setVisibleColumn(col, false);
+			}
+		}
+	}
+	
+	/* Set visible columns according to the statement type */
+	public void setColumns() {
+		AccountType myType;
+		
+		/* Switch on statement type */
+		switch (theStateType) {
+			case EXTRACT:
+				/* Access account type */
+				myType = theAccount.getActType();
+				
+				/* Hide Balance column */
+				setVisibleColumn(COLUMN_BALANCE, false);
+				
+				/* Hide/Show Dilution column */
+				setVisibleColumn(COLUMN_DILUTION, myType.isShares());
+				
+				/* Hide/Show the TaxCredit column as required */
+				setVisibleColumn(COLUMN_TAXCREDIT, 
+								 (myType.isMoney() && !myType.isTaxFree()));
+				
+				/* Hide/Show the years column as required */
+				setVisibleColumn(COLUMN_YEARS, myType.isLifeBond());
+				
+				/* Set money Renderers */
+				theCreditCol.setCellRenderer(theMoneyRenderer);
+				theDebitCol.setCellRenderer(theMoneyRenderer);
+				theBalanceCol.setCellRenderer(theMoneyRenderer);
+
+				/* Set money Editors */
+				theCreditCol.setCellEditor(theMoneyEditor);
+				theDebitCol.setCellEditor(theMoneyEditor);
+				break;				
+			case VALUE:
+				/* Access account type */
+				myType = theAccount.getActType();
+				
+				/* Hide Dilution column */
+				setVisibleColumn(COLUMN_DILUTION, false);
+				
+				/* Show Balance column */
+				setVisibleColumn(COLUMN_BALANCE, true);
+				
+				/* Hide/Show the TaxCredit column as required */
+				setVisibleColumn(COLUMN_TAXCREDIT, 
+								 (myType.isMoney() && !myType.isTaxFree()));
+
+				/* Hide/Show the years column as required */
+				setVisibleColumn(COLUMN_YEARS, myType.isLifeBond());
+				
+				/* Set money Renderers */
+				theCreditCol.setCellRenderer(theMoneyRenderer);
+				theDebitCol.setCellRenderer(theMoneyRenderer);
+				theBalanceCol.setCellRenderer(theMoneyRenderer);
+
+				/* Set money Editors */
+				theCreditCol.setCellEditor(theMoneyEditor);
+				theDebitCol.setCellEditor(theMoneyEditor);
+				break;				
+			case UNITS:
+				/* Hide TaxCredit and Years columns */
+				setVisibleColumn(COLUMN_TAXCREDIT, false);
+				setVisibleColumn(COLUMN_YEARS, false);
+				
+				/* Show Balance and dilution columns */
+				setVisibleColumn(COLUMN_BALANCE, true);
+				setVisibleColumn(COLUMN_DILUTION, true);
+				
+				/* Set units Renderers */
+				theCreditCol.setCellRenderer(theUnitsRenderer);
+				theDebitCol.setCellRenderer(theUnitsRenderer);
+				theBalanceCol.setCellRenderer(theUnitsRenderer);
+
+				/* Set units Editors */
+				theCreditCol.setCellEditor(theUnitsEditor);
+				theDebitCol.setCellEditor(theUnitsEditor);
+				break;
+			case NULL:
+				/* Hide all optional columns */
+				setVisibleColumn(COLUMN_BALANCE,   false);
+				setVisibleColumn(COLUMN_DILUTION,  false);
+				setVisibleColumn(COLUMN_TAXCREDIT, false);
+				setVisibleColumn(COLUMN_YEARS,     false);
+				break;
+		}
+	}
+	
 	/* Note that there has been a list selection change */
 	public void notifyChanges() {
+		/* Update the date range and the state box */
+		theSelect.setLockDown();
+		theStateBox.setLockDown();
+		
 		/* Update the row buttons */
 		theRowButs.setLockDown();
 		
@@ -373,70 +535,24 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		
 	/* Set Selection */
 	public void setSelection(Date.Range pRange) {
-		AccountType myType;
 		if (theAccount != null) {
-			myType = theAccount.getActType();
-			theStatement = new Statement(theView, theAccount, pRange, isUnits);
+			theStatement = new Statement(theView, theAccount, pRange);
 			theLines     = theStatement.getLines();
-			if ((hasBalance) && 
-				(!theStatement.hasBalance()) && 
-				(!isUnits)) {
-				hasBalance = false;
-				removeColumn(theBalanceCol);
-			}
-			else if ((!hasBalance) && 
-					 ((theStatement.hasBalance()) ||
-					  (isUnits))) {
-				hasBalance = true;
-				addColumn(theBalanceCol);
-			}
-			if ((hasDilution) && !myType.isShares()) {
-				hasDilution  = false;
-				removeColumn(theDiluteCol);				
-			}
-			else if ((!hasDilution) && myType.isShares()) {
-				hasDilution  = true;
-				addColumn(theDiluteCol);								
-			}
-			if ((hasTaxCredit) && !myType.isMoney() && !myType.isDividend()) {
-				hasTaxCredit = false;
-				removeColumn(theTaxCredCol);				
-			}
-			else if ((!hasTaxCredit) && (myType.isMoney() || myType.isDividend())) {
-				hasTaxCredit = true;
-				addColumn(theTaxCredCol);								
-			}
-			if ((hasYears) && !myType.isLifeBond()) {
-				hasYears     = false;
-				removeColumn(theYearsCol);				
-			}
-			else if ((!hasYears) && myType.isLifeBond()) {
-				hasYears     = true;
-				addColumn(theYearsCol);								
-			}
 		}
 		else {
 			theStatement = null;
 			theLines     = null;
-			if (hasDilution) {
-				hasDilution  = false;
-				removeColumn(theDiluteCol);
-			}
-			if (hasTaxCredit) {
-				hasTaxCredit = false;
-				removeColumn(theTaxCredCol);
-			}
-			if (hasYears) {
-				hasYears     = false;
-				removeColumn(theYearsCol);
-			}
 		}
 		theRange = pRange;
 		theDateEditor.setRange(theRange);
+		theStateBox.setSelection(theAccount);
+		theStateType = theStateBox.getStatementType();
+		setColumns();
 		super.setList(theLines);
 		theModel.fireTableDataChanged();
 		theRowButs.setLockDown();
 		theSelect.setLockDown();
+		theStateBox.setLockDown();
 	}
 		
 	/* Select an explicit period */
@@ -712,8 +828,9 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 					case COLUMN_DESC:  		
 						return "Starting Balance";
 					case COLUMN_BALANCE:  		
-						return (isUnits) ? theStatement.getStartUnits() 
-								         : theStatement.getStartBalance();
+						return (theStateType == StatementType.UNITS)
+										? theStatement.getStartUnits() 
+								        : theStatement.getStartBalance();
 					default: return null;
 				}
 			}
@@ -739,16 +856,20 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 					if ((myNext != null) && 
 						(!Utils.differs(myNext.getDate(), myLine.getDate())))
 						o = null;
-					else o = (isUnits) ? myLine.getBalanceUnits() : myLine.getBalance();
+					else o = (theStateType == StatementType.UNITS)
+									? myLine.getBalanceUnits() 
+									: myLine.getBalance();
 					break;
 				case COLUMN_CREDIT:  	
-					o = (myLine.isCredit()) ? ((isUnits) ? myLine.getUnits()
-						 								 : myLine.getAmount())
+					o = (myLine.isCredit()) ? ((theStateType == StatementType.UNITS)
+													? myLine.getUnits()
+						 							: myLine.getAmount())
 											: null;
 					break;
 				case COLUMN_DEBIT:
-					o = (!myLine.isCredit()) ? ((isUnits) ? myLine.getUnits()
-														  : myLine.getAmount())
+					o = (!myLine.isCredit()) ? ((theStateType == StatementType.UNITS)
+													? myLine.getUnits()
+													: myLine.getAmount())
 											 : null;
 					break;
 				case COLUMN_DESC:
@@ -801,8 +922,10 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 					break;
 				case COLUMN_CREDIT:
 				case COLUMN_DEBIT:
-					if (isUnits) myLine.setUnits((Number.Units)obj);
-					else         myLine.setAmount((Number.Money)obj); 
+					if (theStateType == StatementType.UNITS)
+						myLine.setUnits((Number.Units)obj);
+					else
+						myLine.setAmount((Number.Money)obj); 
 					break;
 				case COLUMN_PARTNER:
 					myLine.setPartner(theAccounts.searchFor((String)obj));    
@@ -891,6 +1014,9 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 				int row = theTable.rowAtPoint(p);
 				int col = theTable.columnAtPoint(p);
 					
+				/* Adjust column for view differences */
+				col = theTable.convertColumnIndexToModel(col);
+				
 				/* If we have an account */
 				if ((row > 0) &&
 					((!theTable.hasUpdates()) ||

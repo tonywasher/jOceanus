@@ -17,7 +17,6 @@ public class Statement {
 	private Number.Units    theStartUnits   = null;
 	private Number.Units    theEndUnits     = null;
 	private List            theLines        = null;
-	private boolean			isUnits		 	= false;
 
 	/* Access methods */
 	public Account       	getAccount()      { return theAccount; }
@@ -34,8 +33,7 @@ public class Statement {
  	/* Constructor */
 	public Statement(View		pView,
 					 Account 	pAccount,
-			         Date.Range pRange,
-			         boolean 	isUnits) {
+			         Date.Range pRange) {
 		DataSet							myData;
 		Event              				myCurr;
 		Event.List         				myBase;
@@ -43,22 +41,16 @@ public class Statement {
 		int                				myResult;
 		DataList<Event>.ListIterator	myIterator;
 
-		/* Store the passed data */
-		this.isUnits = isUnits;
-		
 		/* Create a copy of the account (plus surrounding list) */
 		theView	   = pView;
 		theAccount = pAccount;
 		theRange   = pRange;
 		theLines   = new List();
 		
-		/* If we have a units request for an non-priced account, just return */
-		if ((isUnits) && (!pAccount.isPriced())) return;
-		
 		/* Create the list of statement lines */
 		theLines        = new List();
 		if (hasBalance()) theStartBalance = new Number.Money(0);
-		if (isUnits)	  theStartUnits   = new Number.Units(0);
+		if (hasUnits())	  theStartUnits   = new Number.Units(0);
 		
 		/* Access the underlying data and iterator */
 		myData 		= theView.getData();
@@ -91,7 +83,7 @@ public class Statement {
 					}
 					
 					/* If we have units */
-					else if ((isUnits) && 
+					else if ((hasUnits()) && 
 							 (myCurr.getUnits() != null)) {
 						/* If the Account is Credited */
 						if (pAccount.compareTo(myCurr.getCredit()) == 0) {
@@ -100,18 +92,16 @@ public class Statement {
 						}
 						else if (pAccount.compareTo(myCurr.getDebit()) == 0) {
 							/* Adjust the start balance */
-							theStartUnits.subtractUnits(myCurr.getUnits());
+							if (myCurr.getTransType().isStockTakeover())
+								theStartUnits.setZero();
+							else
+								theStartUnits.subtractUnits(myCurr.getUnits());
 						}
 					}
 					
 					/* Re-loop */
 					continue;
 				}
-				
-				/* Skip unit lines that have no units or dilution */
-				if ((isUnits) && 
-					(myCurr.getUnits() == null) &&
-					(myCurr.getDilution() == null)) continue;
 				
 				/* Add a statement line to the statement */
 				myLine = new Line(theLines, myCurr, theAccount);
@@ -126,58 +116,50 @@ public class Statement {
  	/* recalculate balance */
 	public void resetBalance() {
 		Line            			myLine;
-		Number.Money    			myBalance;
-		Number.Units				myUnits;
+		Number.Money    			myBalance = null;
+		Number.Units				myUnits   = null;
 		DataList<Line>.ListIterator	myIterator;
 
-		/* If we have a units request for and non-priced account, just return */
-		if ((isUnits) && (!theAccount.isPriced())) return;
-		
 		/* Access the iterator */
 		myIterator = theLines.listIterator();
 		
-		/* If this statement is the units statement */
-		if (isUnits) {
-			/* Set the starting balance */
-			myUnits = new Number.Units(theStartUnits);
+		/* If we don't have balances just return */
+		if (!hasBalance() && !hasUnits()) return;
 		
-			/* Loop through the lines adjusting the balance */
-			while ((myLine = myIterator.next()) != null) {
-				/* Skip lines with no units */
-				if (myLine.getUnits() == null)
-					continue;
-				
-				/* Adjust the balance */
-				myLine.adjustUnits(myUnits);
-			}
-			
-			/* Set the Ending balance */
-			theEndUnits = new Number.Units(myUnits);
-		}
+		/* Set the starting balances */
+		if (hasBalance())	myBalance = new Number.Money(theStartBalance);
+		if (hasUnits())		myUnits = new Number.Units(theStartUnits);
 		
-		/* If this statement has a balance */
-		else if (hasBalance()) {
-			/* Set the starting balance */
-			myBalance = new Number.Money(theStartBalance);
+		/* Loop through the lines adjusting the balance */
+		while ((myLine = myIterator.next()) != null) {
+			/* Skip deleted lines */
+			if (myLine.isDeleted()) continue;
 			
-			/* Loop through the lines adjusting the balance */
-			while ((myLine = myIterator.next()) != null) {
-				/* Skip lines with no amount */
-				if ((myLine.isDeleted()) || (myLine.getAmount() == null))
-					continue;
-				
-				/* Adjust the balance */
+			/* Adjust the value balance if required */
+			if ((hasBalance()) && 
+				(myLine.getAmount() != null))
 				myLine.adjustBalance(myBalance);
-			}
 			
-			/* Set the Ending balance */
-			theEndBalance = new Number.Money(myBalance);
+			/* Adjust the units balance if required */
+			if ((hasUnits()) && 
+				((myLine.getUnits() != null) || 
+				 (myLine.isStockTOver)))
+				myLine.adjustUnits(myUnits);
 		}
+			
+		/* Set the Ending balances */
+		if (hasUnits()) 	theEndUnits = new Number.Units(myUnits);
+		if (hasBalance())	theEndBalance = new Number.Money(myBalance);
 	}
 	
-	/* Does the statement have a balance */
+	/* Does the statement have a money balance */
 	public boolean hasBalance()   { 
 		return ((!theAccount.isExternal()) && (!theAccount.isPriced()));		
+	}
+	
+	/* Does the statement have units */
+	public boolean hasUnits()   { 
+		return (theAccount.isPriced());		
 	}
 	
 	/** 
@@ -271,6 +253,8 @@ public class Statement {
 		private Number.Money        theBalance   = null;
 		private Number.Units		theBalUnits  = null;
 		private boolean             isCredit     = false;
+		private boolean				isCircular	 = false;
+		private boolean				isStockTOver = false;
 
 		/* Access methods */
 		public Account       		getAccount()   		{ return theAccount; }
@@ -287,6 +271,7 @@ public class Statement {
 		public Number.Money       	getBalance()   		{ return theBalance; }
 		public Number.Units       	getBalanceUnits() 	{ return theBalUnits; }
 		public boolean              isCredit()     		{ return isCredit; }
+		public boolean              isCircular()     	{ return isCircular; }
 		
 		/* Linking methods */
 		public Event getBase() { return (Event)super.getBase(); }
@@ -304,7 +289,7 @@ public class Statement {
 		public static final int FIELD_DILUTION 	= 9;
 		public static final int FIELD_TAXCREDIT	= 10;
 		public static final int FIELD_YEARS   	= 11;
-		public static final int NUMFIELDS	   	= 12;
+		public static final int NUMFIELDS	   	= 13;
 		
 		/**
 		 * Obtain the type of the item
@@ -509,10 +494,9 @@ public class Statement {
 		 */
 		public void adjustBalance(Number.Money curBalance) {
 			/* adjust the balance */
-			if ((isCredit) ||
-				(!Utils.differs(theAccount, getPartner())))
+			if ((isCredit) || (isCircular))
 				curBalance.addAmount(getAmount());
-			else 
+			else
 				curBalance.subtractAmount(getAmount());
 			   
 			/* Record the balance */
@@ -526,9 +510,10 @@ public class Statement {
 		 */
 		public void adjustUnits(Number.Units curBalance) {
 			/* adjust the balance */
-			if ((isCredit) ||
-				(!Utils.differs(theAccount, getPartner())))
+			if ((isCredit) || (isCircular))
 				curBalance.addUnits(getUnits());
+			else if (isStockTOver)
+				curBalance.setZero();
 			else 
 				curBalance.subtractUnits(getUnits());
 			   
@@ -605,6 +590,7 @@ public class Statement {
 		 */
 		public void setPartner(Account pPartner) {
 			getObj().setPartner(pPartner);
+			isCircular = !Utils.differs(theAccount, pPartner);
 		}
 		
 		/**
@@ -614,6 +600,7 @@ public class Statement {
 		 */
 		public void setTransType(TransactionType pTranType) {
 			getObj().setTransType(pTranType);
+			isStockTOver = ((pTranType != null) && (pTranType.isStockTakeover()));
 		}
 		
 		/**
