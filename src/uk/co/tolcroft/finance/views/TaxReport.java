@@ -419,6 +419,8 @@ public class TaxReport {
 		TaxBucket	    	myBucket;
 		TaxAnalysis.TaxList myList;
 		TaxType.List	   	myTaxTypes;
+		
+		DataList<ChargeableEvent>.ListIterator myIterator;
 
 		/* Access the bucket lists */
 		myList 		= theTax.getTaxBuckets();
@@ -433,11 +435,11 @@ public class TaxReport {
 		myOutput.append("<th>Slice</th><th>Taxation</th></thead>");
 		myOutput.append("<tbody>");
 		
+		/* Create the list iterator */
+		myIterator = theTax.getCharges().listIterator();
+		
 		/* Loop through the Charges */
-		for (myCharge  = theTax.getCharges();
-		     myCharge != null;
-		     myCharge  = myCharge.getNext()) {
-			
+		while ((myCharge  = myIterator.next()) != null) {
 			/* Format the detail */
 			myOutput.append("<tr><td>");
 			myOutput.append(myCharge.getDate().formatDate(false));
@@ -453,6 +455,8 @@ public class TaxReport {
 			myOutput.append(Report.makeMoneyItem(myCharge.getTaxation()));
 			myOutput.append("</tr>");
 		}			 
+		
+		/* Format the totals */
 		myOutput.append("<tr><th>Totals</th><td/><td/>");
 		myOutput.append(Report.makeMoneyTotal(theTax.getCharges().getGainsTotal()));
 		myOutput.append("<td/>");

@@ -21,10 +21,10 @@ public class Pattern extends DataItem {
 	public final static int DESCLEN 		= Event.DESCLEN;
 
 	/* Local values */
-	private long 	theAccountId	= -1;
-	private long 	thePartnerId	= -1;
-	private long 	theTransId		= -1;
-	private long 	theFreqId		= -1;
+	private int 	theAccountId	= -1;
+	private int 	thePartnerId	= -1;
+	private int 	theTransId		= -1;
+	private int 	theFreqId		= -1;
 			
 	/* Access methods */
 	public  Values         	getObj()       	{ return (Values)super.getObj(); }	
@@ -93,7 +93,7 @@ public class Pattern extends DataItem {
 	 * @return the formatted field
 	 */
 	public String formatField(int iField, histObject pObj) {
-		String 	myString = "<tr><td>" + fieldName(iField) + "</td><td>";
+		String 	myString = "";
 		Values 	myObj 	 = (Values)pObj;
 		switch (iField) {
 			case FIELD_ID: 		
@@ -140,7 +140,7 @@ public class Pattern extends DataItem {
 				myString +=	(isCredit() ? "true" : "false");
 				break;
 		}
-		return myString + "</td></tr>";
+		return myString;
 	}
 							
 	/**
@@ -210,14 +210,14 @@ public class Pattern extends DataItem {
 
 	/* Standard constructor */
 	private Pattern(List      		pList,
-			        long            uId,
-			        long            uAccountId,
+			        int            	uId,
+			        int        		uAccountId,
 	                java.util.Date  pDate,
 	                String          pDesc,
 	                String			pAmount,
-	                long			uPartnerId,
-	                long 			uTransId,
-	                long			uFreqId,
+	                int				uPartnerId,
+	                int 			uTransId,
+	                int				uFreqId,
 	                boolean         isCredit) throws Exception {
 		/* Initialise item */
 		super(pList, uId);
@@ -823,7 +823,7 @@ public class Pattern extends DataItem {
 		/**
 		 *  Allow a pattern to be added
 		 */
-		public void addItem(long     		uId,
+		public void addItem(int     		uId,
 				            java.util.Date  pDate,
 				            String   		pDesc,
 				            String   		pAmount,
@@ -896,14 +896,14 @@ public class Pattern extends DataItem {
 		/**
 		 *  Allow a pattern to be added 
 		 */
-		public void addItem(long     		uId,
+		public void addItem(int     		uId,
 				            java.util.Date  pDate,
 				            String   		pDesc,
 				            String   		pAmount,
-				            long     		uAccountId,
-				            long   			uPartnerId,
-				            long			uTransId,
-				            long   			uFreqId,
+				            int     		uAccountId,
+				            int   			uPartnerId,
+				            int				uTransId,
+				            int   			uFreqId,
 				            boolean  		isCredit) throws Exception {
 			Pattern     myPattern;
 			

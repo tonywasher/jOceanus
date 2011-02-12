@@ -57,8 +57,8 @@ public class TablePrice extends DatabaseTable<Price> {
 	 * Determine the Account of the newly loaded item
 	 * @return the Account
 	 */
-	private long getAccount() throws SQLException {
-		return getLong();
+	private int getAccount() throws SQLException {
+		return getInteger();
 	}
 
 	/**
@@ -81,8 +81,8 @@ public class TablePrice extends DatabaseTable<Price> {
 	 * Set the Account of the item to be inserted
 	 * @param pAccount the account of the item
 	 */
-	private void setAccount(long pAccount) throws SQLException {
-		setLong(pAccount);
+	private void setAccount(int pAccount) throws SQLException {
+		setInteger(pAccount);
 	}
 
 	/**
@@ -105,8 +105,8 @@ public class TablePrice extends DatabaseTable<Price> {
 	 * Update the Account of the item
 	 * @param pValue the new account
 	 */
-	private void updateAccount(long pValue) {
-		updateLong(theActCol, pValue);
+	private void updateAccount(int pValue) {
+		updateInteger(theActCol, pValue);
 	}		
 
 	/**
@@ -129,8 +129,8 @@ public class TablePrice extends DatabaseTable<Price> {
 	/* Create statement for Prices */
 	protected String createStatement() {
 		return "create table " + theTabName + " ( " +
-			   theIdCol 	+ " bigint NOT NULL PRIMARY KEY, " +
-			   theActCol	+ " bigint NOT NULL " +
+			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
+			   theActCol	+ " int NOT NULL " +
 			   		"REFERENCES " + TableAccount.idReference() + ", " +
    			   theDateCol	+ " date NOT NULL, " +
 			   thePriceCol	+ " money NOT NULL )";
@@ -149,8 +149,8 @@ public class TablePrice extends DatabaseTable<Price> {
 	/* Load the price */
 	protected void loadItem() throws Exception {
 		Price.List		myList;
-		long    		myId;
-		long  			myAccountId;
+		int	    		myId;
+		int  			myAccountId;
 		String 			myPrice;
 		java.util.Date  myDate;
 		

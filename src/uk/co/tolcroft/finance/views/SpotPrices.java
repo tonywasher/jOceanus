@@ -248,7 +248,7 @@ public class SpotPrices {
 		 * @return the formatted field
 		 */
 		public String formatField(int iField, histObject pObj) {
-			String 		myString = "<tr><td>" + fieldName(iField) + "</td><td>";
+			String 		myString = "";
 			Values 	myObj 	 = (Values)pObj;
 			switch (iField) {
 				case FIELD_ID: 		
@@ -261,7 +261,7 @@ public class SpotPrices {
 					myString += Utils.formatPrice(myObj.getPrice());	
 					break;
 			}
-			return myString + "</td></tr>";
+			return myString;
 		}
 					
 		/**

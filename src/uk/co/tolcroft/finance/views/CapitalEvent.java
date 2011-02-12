@@ -96,7 +96,7 @@ public class CapitalEvent extends DataItem {
 	 * @return the formatted field
 	 */
 	public String formatField(int iField, histObject pObj) {
-		String myString = "<tr><td>" + fieldName(iField) + "</td><td>"; 
+		String myString = ""; 
 		switch (iField) {
 			case FIELD_ID: 			
 				myString += getId();
@@ -138,7 +138,7 @@ public class CapitalEvent extends DataItem {
 				myString += Utils.formatMoney(theProfit);
 				break;
 		}
-		return myString + "</td></tr>";
+		return myString;
 	}
 
 	/**
@@ -197,7 +197,7 @@ public class CapitalEvent extends DataItem {
 		if (Utils.differs(getTotalGains(),  myEvent.getTotalGains()))	return false;
 		if (Utils.differs(getDeltaGains(),	myEvent.getDeltaGains()))	return false;
 		if (Utils.differs(getProfit(),		myEvent.getProfit()))		return false;
-		return true;
+		return getBase().equals(myEvent.getBase());
 	}
 
 	/**
@@ -207,8 +207,6 @@ public class CapitalEvent extends DataItem {
 	 * 					or after the passed object in the sort order
 	 */
 	public int compareTo(Object pThat) {
-		int iDiff;
-		
 		/* Handle the trivial cases */
 		if (this == pThat) return 0;
 		if (pThat == null) return -1;
@@ -218,46 +216,9 @@ public class CapitalEvent extends DataItem {
 		
 		/* Access the object as a CapitalEvent */
 		CapitalEvent myThat = (CapitalEvent)pThat;
-
-		/* If the dates differ */
-		if (this.getDate() != myThat.getDate()) {
-			/* Handle null dates */
-			if (this.getDate() == null) return 1;
-			if (myThat.getDate() == null) return -1;
-			
-			/* Compare the dates */
-			iDiff = getDate().compareTo(myThat.getDate());
-			if (iDiff != 0) return iDiff;
-		}
 		
-		/* If the transaction types differ */
-		if (this.getTransType() != myThat.getTransType()) {
-			/* Handle nulls */
-			if (this.getTransType() == null) return 1;
-			if (myThat.getTransType() == null) return -1;
-			
-			/* Compare transaction types */
-			iDiff = getTransType().compareTo(myThat.getTransType());
-			if (iDiff != 0) return iDiff;
-		}
-		
-		/* If the descriptions differ */
-		if (this.getDesc() != myThat.getDesc()) {
-			/* Handle null descriptions */
-			if (this.getDesc() == null) return 1;
-			if (myThat.getDesc() == null) return -1;
-			
-			/* Compare the descriptions */
-			iDiff = getDesc().compareTo(myThat.getDesc());
-			if (iDiff < 0) return -1;
-			if (iDiff > 0) return 1;
-		}
-		
-		/* Compare ids */
-		iDiff = (int)(getId() - myThat.getId());
-		if (iDiff < 0) return -1;
-		if (iDiff > 0) return 1;
-		return 0;
+		/* Compare the underlying events */
+		return getBase().compareTo(myThat.getBase());
 	}
 	
 	/* The List of capital events */
@@ -318,6 +279,31 @@ public class CapitalEvent extends DataItem {
 		 */
 		public String itemType() { return objName; }		
 
+		/**
+		 * Add additional fields to HTML String
+		 * @param pBuffer the string buffer 
+		 */
+		public void addHTMLFields(StringBuilder pBuffer) {
+			/* Start the Fields section */
+			pBuffer.append("<tr><th rowspan=\"5\">Fields</th></tr>");
+				
+			/* Format the balances */
+			pBuffer.append("<tr><td>Account</td><td>"); 
+			pBuffer.append(Utils.formatAccount(theAccount)); 
+			pBuffer.append("</td></tr>");
+			
+			/* Format the totals */
+			pBuffer.append("<tr><td>Total Cost</td><td>"); 
+			pBuffer.append(Utils.formatMoney(theTotalCost)); 
+			pBuffer.append("</td></tr>"); 
+			pBuffer.append("<tr><td>Total Gains</td><td>"); 
+			pBuffer.append(Utils.formatMoney(theTotalGains)); 
+			pBuffer.append("</td></tr>"); 
+			pBuffer.append("<tr><td>Units</td><td>"); 
+			pBuffer.append(Utils.formatUnits(theUnits)); 
+			pBuffer.append("</td></tr>"); 
+		}
+		
 		/**
 		 * Add an event to the list
 		 * 

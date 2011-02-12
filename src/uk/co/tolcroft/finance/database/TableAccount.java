@@ -122,8 +122,8 @@ public class TableAccount extends DatabaseTable<Account> {
 	 * Determine the Account Type of the newly loaded item
 	 * @return the AccountType
 	 */
-	private long getAccountType() throws SQLException {
-		return getLong();
+	private int getAccountType() throws SQLException {
+		return getInteger();
 	}
 
 	/**
@@ -154,8 +154,8 @@ public class TableAccount extends DatabaseTable<Account> {
 	 * Determine the Parent of the newly loaded item
 	 * @return the Parent
 	 */
-	private long getParent() throws SQLException {
-		Long myResult = getLong();
+	private int getParent() throws SQLException {
+		Integer myResult = getInteger();
 		if (myResult == null) return -1;
 		return myResult;
 	}
@@ -164,8 +164,8 @@ public class TableAccount extends DatabaseTable<Account> {
 	 * Determine the Alias of the newly loaded item
 	 * @return the Alias
 	 */
-	private long getAlias() throws SQLException {
-		Long myResult = getLong();
+	private int getAlias() throws SQLException {
+		Integer myResult = getInteger();
 		if (myResult == null) return -1;
 		return myResult;
 	}
@@ -238,8 +238,8 @@ public class TableAccount extends DatabaseTable<Account> {
 	 * Set the AccountType of the item to be inserted
 	 * @param pActType the Account type of the item
 	 */
-	private void setAccountType(long pActType) throws SQLException {
-		setLong(pActType);
+	private void setAccountType(int pActType) throws SQLException {
+		setInteger(pActType);
 	}
 
 	/**
@@ -270,16 +270,16 @@ public class TableAccount extends DatabaseTable<Account> {
 	 * Set the Parent of the item to be inserted/updated
 	 * @param pParent the id of the TaxRegime for the item
 	 */
-	private void setParent(long pParent) throws SQLException {
-		setLong((pParent == -1) ? null : pParent);
+	private void setParent(int pParent) throws SQLException {
+		setInteger((pParent == -1) ? null : pParent);
 	}
 	
 	/**
 	 * Set the Alias of the item to be inserted/updated
 	 * @param pAlias the id of the TaxRegime for the item
 	 */
-	private void setAlias(long pAlias) throws SQLException {
-		setLong((pAlias == -1) ? null : pAlias);
+	private void setAlias(int pAlias) throws SQLException {
+		setInteger((pAlias == -1) ? null : pAlias);
 	}
 	
 	/**
@@ -374,16 +374,16 @@ public class TableAccount extends DatabaseTable<Account> {
 	 * Update the Parent of the item
 	 * @param pValue the new parent
 	 */
-	private void updateParent(long pValue) {
-		updateLong(theParentCol, (pValue == -1) ? null : pValue);
+	private void updateParent(int pValue) {
+		updateInteger(theParentCol, (pValue == -1) ? null : pValue);
 	}
 	
 	/**
 	 * Update the Alias of the item
 	 * @param pValue the new alias
 	 */
-	private void updateAlias(long pValue) {
-		updateLong(theAliasCol, (pValue == -1) ? null : pValue);
+	private void updateAlias(int pValue) {
+		updateInteger(theAliasCol, (pValue == -1) ? null : pValue);
 	}
 	
 	/**
@@ -445,16 +445,16 @@ public class TableAccount extends DatabaseTable<Account> {
 	/* Create statement for Accounts */
 	protected String createStatement() {
 		return "create table " + theTabName + " ( " +
-			   theIdCol 	+ " bigint NOT NULL PRIMARY KEY, " +
+			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
 			   theNameCol	+ " varchar(" + Account.NAMELEN + ") NOT NULL, " +
-			   theActTypCol	+ " bigint NOT NULL " +
+			   theActTypCol	+ " int NOT NULL " +
 			   		"REFERENCES " + TableAccountType.idReference() + ", " +
    			   theDescCol	+ " varchar(" + Account.DESCLEN + ") NULL, " +
 			   theMatureCol	+ " date NULL, " +
 			   theCloseCol	+ " date NULL, " +
-			   theParentCol	+ " bigint NULL " +
+			   theParentCol	+ " int NULL " +
 				  	"REFERENCES " + idReference() + ", " +
-			   theAliasCol	+ " bigint NULL " +
+			   theAliasCol	+ " int NULL " +
 				  	"REFERENCES " + idReference() + ", " +
 			   theInitVCol	+ " binary(" + Account.INITVLEN + ") NULL, " +
 			   theWebSiteCol + " varbinary(" + Account.WSITELEN + ") NULL, " +
@@ -481,11 +481,11 @@ public class TableAccount extends DatabaseTable<Account> {
 	/* Load the account */
 	protected void loadItem() throws Exception {
 		Account.List	myList;
-		long    		myId;
+		int	    		myId;
 		String  		myName;
-		long    		myActTypeId;
-		long    		myParentId;
-		long    		myAliasId;
+		int    			myActTypeId;
+		int 	   		myParentId;
+		int	    		myAliasId;
 		String  		myDesc;
 		java.util.Date  myMaturity;
 		java.util.Date  myClosed;
@@ -558,7 +558,7 @@ public class TableAccount extends DatabaseTable<Account> {
 		              theWebSiteCol + "," + theCustNoCol + "," +
 		              theUserIdCol + "," + thePasswordCol + "," +
 		              theAcctCol + "," + theNotesCol + ")" + 
-		       " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		       " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	}
 	
 	/* Insert the account */
@@ -576,7 +576,7 @@ public class TableAccount extends DatabaseTable<Account> {
 			setParent((pItem.getParent() != null)
 							? pItem.getParent().getId() : -1);
 			setAlias((pItem.getAlias() != null)
-					? pItem.getAlias().getId() : -1);
+							? pItem.getAlias().getId() : -1);
 			setInitVector(pItem.getInitVector());
 			setWebSite(pItem.getWebSite());
 			setCustNo(pItem.getCustNo());

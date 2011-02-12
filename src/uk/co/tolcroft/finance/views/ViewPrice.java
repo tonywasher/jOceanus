@@ -70,7 +70,7 @@ public class ViewPrice extends DataItem {
 	 * @return the formatted field
 	 */
 	public String formatField(int iField, histObject pObj) {
-		String 	myString = "<tr><td>" + fieldName(iField) + "</td><td>";
+		String 	myString = "";
 		Values 	myObj 	 = (Values)pObj;
 		switch (iField) {
 			case FIELD_ID: 		
@@ -92,7 +92,7 @@ public class ViewPrice extends DataItem {
 				myString += Utils.formatDilutedPrice(myObj.getDilutedPrice()); 
 				break;
 		}
-		return myString + "</td></tr>";
+		return myString;
 	}
 							
 	/**

@@ -210,12 +210,53 @@ public class IncomeAnalysis {
 		}
 	}
 	
-	public class List extends SortedList<Bucket> {
+	public class List extends DataList<Bucket> {
 		/**
 		 * Construct a top-level List
 		 */
-		public List() {}
+		public List() {	super(ListStyle.VIEW, false); }
 
+		/** 
+	 	 * Clone a Bucket list
+	 	 * @return the cloned list
+	 	 */
+		protected List cloneIt() { return null; }
+		
+		/**
+		 * Add a new item to the list
+		 * 
+		 * @param pItem the item to add
+		 * @return the newly added item
+		 */
+		public DataItem addNewItem(DataItem pItem) { return null; }
+
+		/**
+		 * Add a new item to the edit list
+		 * 
+		 * @param isCredit - ignored
+		 */
+		public void addNewItem(boolean isCredit) { return; }
+	
+		/**
+		 * Obtain the type of the item
+		 * @return the type of the item
+		 */
+		public String itemType() { return Bucket.objName; }		
+
+		/**
+		 * Add additional fields to HTML String
+		 * @param pBuffer the string buffer 
+		 */
+		public void addHTMLFields(StringBuilder pBuffer) {
+			/* Start the Fields section */
+			pBuffer.append("<tr><th rowspan=\"2\">Fields</th></tr>");
+				
+			/* Format the date */
+			pBuffer.append("<tr><td>Date</td><td>"); 
+			pBuffer.append(Utils.formatDate(theDate)); 
+			pBuffer.append("</td></tr>"); 
+		}
+		
 		/**
 		 * Search for a particular bucket
 		 * 
@@ -357,16 +398,11 @@ public class IncomeAnalysis {
 	}
 		
 	/* The bucket class */
-	public class Bucket implements SortedList.linkObject {
+	public class Bucket extends DataItem {
 		/**
-		 * The List that this bucket belongs to
+		 * The name of the object
 		 */
-		private 	List			 	theList		   = null;
-		
-	    /**
-		 * Storage for the List Node
-		 */
-	    private 	Object				theLink		= null;
+		private static final String objName = "IncomeExpenseBucket";
 
 		/* Members */
 		private		String				theName        = null;
@@ -376,17 +412,7 @@ public class IncomeAnalysis {
 		private		Money 				theIncome      = null;
 		private		Money 				theExpense     = null;
 		private		Bucket				thePrevious	   = null;
-		
-		/**
-		 * Add the item to the list 
-		 */
-		public void			addToList()  { theList.add(this); }
-		
-		/**
-		 * Unlink the item from the list
-		 */
-		public void			unLink()     { theList.remove(this); }
-		
+
 		/* Access methods */
 		public 	String		getName()       { return theName; }
 		private int    		getOrder()      { return theOrder; }
@@ -400,50 +426,33 @@ public class IncomeAnalysis {
 		private boolean     		 isDetail()   { 
 			return (theBucket == BucketType.DETAIL); }
 
-		/**
-		 * Get the link node for this item
-		 * @return the Link node or <code>null</code>
-		 */
-		public Object		getLinkNode(Object pList)	{ return theLink; }
-
-		/**
-		 * Get the link node for this item
-		 * @return the Link node or <code>null</code>
-		 */
-		public void			setLinkNode(Object l, Object o)	{ theLink = o; }
-
-		/**
-		 * Determine whether the item is visible to standard searches
-		 * @return <code>true/false</code>
-		 */
-		public boolean		isHidden()    	{ return false; }
-
 		/* Constructors */
-		private Bucket() {
+		private Bucket(List pList) {
+			super(pList, 0);
 			theIncome     = new Money(0);
 			theExpense    = new Money(0);
 		}
 		private Bucket(List pList, Account pAccount) {
-			theList		  = pList;
+			super(pList, 0);
 			theName       = pAccount.getName();
 			theBucket     = BucketType.DETAIL;
 			theOrder      = pAccount.getOrder();
 			theAccount    = pAccount;
 			theIncome     = new Money(0);
 			theExpense    = new Money(0);
-			thePrevious	  = new Bucket();
+			thePrevious	  = new Bucket(pList);
 		}
 		private Bucket(List pList, BucketType pType) { 
-			theList       = pList;
+			super(pList, 0);
 			theName       = null;
 			theBucket     = pType;
 			theOrder      = 0;
 			theIncome     = new Money(0);
 			theExpense    = new Money(0);
-			thePrevious   = new Bucket();
+			thePrevious   = new Bucket(pList);
 		}
 		private Bucket(List pList, Bucket pBucket) { 
-			theList       = pList;
+			super(pList, 0);
 			theName       = pBucket.getName();
 			theBucket     = pBucket.getBucket();
 			theOrder      = pBucket.getOrder();
@@ -453,6 +462,95 @@ public class IncomeAnalysis {
 			thePrevious   = pBucket;
 		}
 		
+		/* Field IDs */
+		public static final int FIELD_NAME  	= 0;
+		public static final int FIELD_TYPE  	= 1;
+		public static final int FIELD_ORDER  	= 2;
+		public static final int FIELD_INCOME  	= 3;
+		public static final int FIELD_EXPENSE   = 4;
+		public static final int NUMFIELDS	    = 5;
+		
+		/**
+		 * Obtain the type of the item
+		 * @return the type of the item
+		 */
+		public String itemType() { return objName; }
+		
+		/**
+		 * Obtain the number of fields for an item
+		 * @return the number of fields
+		 */
+		public int	numFields() {return NUMFIELDS; }
+		
+		/**
+		 * Determine the field name for a particular field
+		 * @return the field name
+		 */
+		public String	fieldName(int iField) {
+			switch (iField) {
+				case FIELD_NAME: 		return "Name";
+				case FIELD_TYPE: 		return "Type";
+				case FIELD_ORDER: 		return "Order";
+				case FIELD_INCOME: 		return "Income";
+				case FIELD_EXPENSE:		return "Expense";
+				default:		  		return super.fieldName(iField);
+			}
+		}
+		
+		/**
+		 * Format the value of a particular field as a table row
+		 * @param iField the field number
+		 * @param pObj the values to use
+		 * @return the formatted field
+		 */
+		public String formatField(int iField, histObject pObj) {
+			String myString = ""; 
+			switch (iField) {
+				case FIELD_NAME: 			
+					myString += theName;
+					break;
+				case FIELD_TYPE:		
+					myString += theBucket;
+					break;
+				case FIELD_ORDER: 		
+					myString += theOrder;
+					break;
+				case FIELD_INCOME: 	
+					myString += Utils.formatMoney(theIncome);
+					break;
+				case FIELD_EXPENSE: 	
+					myString += Utils.formatMoney(theExpense);
+					break;
+			}
+			return myString;
+		}
+
+		/**
+		 * Compare this Bucket to another to establish equality.
+		 * 
+		 * @param pThat The Bucket to compare to
+		 * @return <code>true</code> if the bucket is identical, <code>false</code> otherwise
+		 */
+		public boolean equals(Object pThat) {
+			/* Handle the trivial cases */
+			if (this == pThat) return true;
+			if (pThat == null) return false;
+			
+			/* Make sure that the object is a IncomeBucket */
+			if (pThat.getClass() != this.getClass()) return false;
+			
+			/* Access the object as a Bucket */
+			Bucket myBucket = (Bucket)pThat;
+			
+			/* Check for equality */
+			if (Utils.differs(getName(),      	myBucket.getName())) 		return false;
+			if (getBucket() != myBucket.getBucket()) 						return false;
+			if (getOrder() 	!= myBucket.getOrder()) 						return false;
+			if (Utils.differs(getIncome(),    	myBucket.getIncome())) 		return false;
+			if (Utils.differs(getExpense(),   	myBucket.getExpense()))		return false;
+			return true;
+		}
+
 		/**
 		 * Compare this Bucket to another to establish sort order.
 		 * 

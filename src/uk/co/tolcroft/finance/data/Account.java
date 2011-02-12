@@ -3,6 +3,7 @@ package uk.co.tolcroft.finance.data;
 import java.util.Arrays;
 
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
@@ -62,9 +63,9 @@ public class Account extends DataItem {
 
 	/* Members */
 	private int                   theOrder     = -1;
-	private long				  theParentId  = -1;
-	private long				  theAliasId   = -1;
-	private long 				  theActTypeId = -1;
+	private int					  theParentId  = -1;
+	private int					  theAliasId   = -1;
+	private int 				  theActTypeId = -1;
 	private Event                 theEarliest  = null;
 	private Event                 theLatest    = null;
 	private boolean               isCloseable  = true;
@@ -73,15 +74,16 @@ public class Account extends DataItem {
 	private boolean               hasPatterns  = false;
 	private boolean               isPatterned  = false;
 	private boolean               isParent	   = false;
+	private boolean               isAliasedTo  = false;
 		
 	/* Access methods */
 	public  Values      getObj()       	{ return (Values)super.getObj(); }	
 	public  String      getName()      	{ return getObj().getName(); }
 	public  String      getDesc()      	{ return getObj().getDesc(); }
 	public  Account     getParent()    	{ return getObj().getParent(); }
-	public  long        getParentId()  	{ return theParentId; }
+	public  int 		getParentId()  	{ return theParentId; }
 	public  Account     getAlias()    	{ return getObj().getAlias(); }
-	public  long        getAliasId()  	{ return theAliasId; }
+	public  int	        getAliasId()  	{ return theAliasId; }
 	public  Event       getEarliest()  	{ return theEarliest; }
 	public  Event       getLatest()    	{ return theLatest; }
 	public  AccountType getActType()   	{ return getObj().getType(); }
@@ -98,6 +100,8 @@ public class Account extends DataItem {
 	public  boolean     isCloseable()  	{ return isCloseable; }
 	public  boolean     isParent()  	{ return isParent; }
 	public  boolean     isClosed()     	{ return (getClose() != null); }
+	public  boolean     isAlias()     	{ return (getAlias() != null); }
+	public  boolean     isAliasedTo()  	{ return isAliasedTo; }
 	public  boolean     isDeletable()  	{ 
 		return ((theLatest == null) && 
 				(!isDeleted()) &&
@@ -105,6 +109,7 @@ public class Account extends DataItem {
 				(!hasRates)    &&
 				(!hasPrices)   &&
 				(!hasPatterns) && 
+				(!isAliasedTo) &&
 				(!isPatterned) && 
 				(!getActType().isReserved())); 
 	}
@@ -175,7 +180,7 @@ public class Account extends DataItem {
 	 * @return the formatted field
 	 */
 	public String formatField(int iField, histObject pObj) {
-		String 	myString = "<tr><td>" + fieldName(iField) + "</td><td>";
+		String	myString = "";
 		Values 	myObj 	 = (Values)pObj;
 		switch (iField) {
 			case FIELD_ID: 		
@@ -243,7 +248,7 @@ public class Account extends DataItem {
 					myString += Utils.HexStringFromBytes(myObj.getNotes()); 
 				break;
 		}
-		return myString + "</td></tr>";
+		return myString;
 	}
 							
 	/**
@@ -279,14 +284,14 @@ public class Account extends DataItem {
 	
 	/* Standard constructor */
 	private Account(List    		pList,
-			        long           	uId, 
+			        int           	uId, 
 					String         	sName, 
-					long			uAcTypeId,
+					int				uAcTypeId,
 					String         	pDesc,
 					java.util.Date 	pMaturity,
 			        java.util.Date 	pClose,
-			        long           	uParentId,
-			        long           	uAliasId,
+			        int           	uParentId,
+			        int           	uAliasId,
 			        byte[]			pInitVect,
 			        byte[]			pWebSite,
 			        byte[]			pCustNo,
@@ -325,8 +330,8 @@ public class Account extends DataItem {
 		                        this,
 					            "Invalid Account Type Id");
 		myObj.setType(myActType);
-		theOrder    = (myActType.isChild() ? 100 + myActType.getOrder() :  myActType.getOrder());
-		/*theOrder    = myActType.getOrder();*/
+		/*theOrder    = (myActType.isChild() ? 100 + myActType.getOrder() :  myActType.getOrder());*/
+		theOrder    = myActType.getOrder();
 
 		/* Parse the maturity date if it exists */
 		if (pMaturity != null) 
@@ -392,6 +397,7 @@ public class Account extends DataItem {
 	 */
 	public int compareTo(Object pThat) {
 		long result;
+		ListStyle myStyle;
 
 		/* Handle the trivial cases */
 		if (this == pThat) return 0;
@@ -402,6 +408,26 @@ public class Account extends DataItem {
 		
 		/* Access the object as an Account */
 		Account myThat = (Account)pThat;
+		
+		/* Access the list style */
+		myStyle = getList().getStyle();
+		
+		/* If this is in an update view we need to do some special ordering to handle alias and parent dependencies */
+		if (myStyle == ListStyle.UPDATE) {
+			/* If we are comparing child with parent */
+			if (isChild() != myThat.isChild()) {
+				/* List children after parents */
+				if (isChild()) 	return 1;
+				else			return -1;
+			}
+			
+			/* If we are comparing alias with non-alias */
+			if (isAlias() != myThat.isAlias()) {
+				/* List alias after non-alias */
+				if (isAlias()) 	return 1;
+				else			return -1;
+			}
+		}
 		
 		/* If the order differs */
 		if (theOrder < myThat.theOrder) return -1;
@@ -543,12 +569,16 @@ public class Account extends DataItem {
 			if (!myType.canAlias())
 				addError("This account type cannot alias", FIELD_ALIAS);
 
+			/* Must not be aliased to */
+			if (isAliasedTo)
+				addError("This account is already aliased to", FIELD_ALIAS);
+
 			/* Alias must be alias type */
 			if (!getAlias().getActType().canAlias())
 				addError("The alias account type is invalid", FIELD_ALIAS);
 
 			/* Alias cannot be aliased */
-			if (getAlias().getAlias() != null)
+			if (getAlias().isAlias())
 				addError("The alias account is already aliased", FIELD_ALIAS);
 	    }
 		
@@ -680,6 +710,7 @@ public class Account extends DataItem {
 		hasPatterns   = false;
 		isPatterned   = false;
 		isParent	  = false;
+		isAliasedTo	  = false;
 	}
 	
 	/**
@@ -727,8 +758,16 @@ public class Account extends DataItem {
 	 * Touch an account with a parent
 	 */
 	public void touchParent() {
-		/* Record the pattern */
+		/* Record the parent */
 		isParent = true;
+	}
+		
+	/**
+	 * Touch an account with an aliase
+	 */
+	public void touchAlias() {
+		/* Record the alias */
+		isAliasedTo = true;
 	}
 		
 	/**
@@ -1076,6 +1115,13 @@ public class Account extends DataItem {
 						myCurr.getParent().setNonCloseable();
 				}
 				
+				/* If we have an alias, mark the alias */
+				if (myCurr.getAlias() != null) {
+					myCurr.getAlias().touchAlias();
+					if (!myCurr.isClosed())
+						myCurr.getAlias().setNonCloseable();
+				}
+				
 				/* If we have no latest event, then we are not closeable */
 				if (myCurr.getLatest() == null) {
 					myCurr.setNonCloseable();
@@ -1208,7 +1254,7 @@ public class Account extends DataItem {
 		 * @param pAlias the Name of the alias account (or null)
 		 * @throws Exception on error
 		 */ 
-		public void addItem(long     		uId,
+		public void addItem(int     		uId,
 				            String   		pName,
 				            String   		pAcType,
 				            String   		pDesc,
@@ -1227,8 +1273,8 @@ public class Account extends DataItem {
 			AccountType 		myActType;
 			Account		 		myParent;
 			Account		 		myAlias;
-			long				myParentId = -1;
-			long				myAliasId  = -1;
+			int					myParentId = -1;
+			int					myAliasId  = -1;
 				
 			/* Access the account types and accounts */
 			myActTypes = theData.getAccountTypes();
@@ -1295,14 +1341,14 @@ public class Account extends DataItem {
 		 * @param uAliasId the Id of the alias account (or -1)
 		 * @throws Exception on error
 		 */ 
-		public void addItem(long     		uId,
+		public void addItem(int     		uId,
 				            String   		pName,
-				            long     		uAcTypeId,
+				            int     		uAcTypeId,
 				            String   		pDesc,
 				            java.util.Date  pMaturity,
 				            java.util.Date  pClosed,
-				            long     		uParentId,
-				            long     		uAliasId,
+				            int     		uParentId,
+				            int     		uAliasId,
 					        byte[]			pInitVect,
 					        byte[]			pWebSite,
 					        byte[]			pCustNo,

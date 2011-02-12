@@ -180,13 +180,13 @@ public class SheetEvent {
 		Cell      		myBottom;
 		String    		myDesc;
 		String    		myAmount;
-		long	  		myDebit;
-		long      		myCredit; 
+		int		  		myDebit;
+		int	      		myCredit; 
 		String    		myUnits;
 		String    		myTaxCredit;
 		String			myDilution;
-		long      		myTranType;
-		long      		myID;
+		int		   		myTranType;
+		int      		myID;
 		Cell      		myCell;
 		DateCell  		myDateCell;
 		java.util.Date	myDate;
@@ -232,13 +232,13 @@ public class SheetEvent {
 				
 					/* Access IDs */
 					myCell    	= mySheet.getCell(myCol, i);
-					myID      	= Long.parseLong(myCell.getContents());
+					myID      	= Integer.parseInt(myCell.getContents());
 					myCell    	= mySheet.getCell(myCol+3, i);
-					myDebit    	= Long.parseLong(myCell.getContents());
+					myDebit    	= Integer.parseInt(myCell.getContents());
 					myCell    	= mySheet.getCell(myCol+4, i);
-					myCredit   	= Long.parseLong(myCell.getContents());
+					myCredit   	= Integer.parseInt(myCell.getContents());
 					myCell    	= mySheet.getCell(myCol+6, i);
-					myTranType 	= Long.parseLong(myCell.getContents());
+					myTranType 	= Integer.parseInt(myCell.getContents());
 				
 					/* Access date */
 					myDateCell = (DateCell)mySheet.getCell(myCol+1, i);

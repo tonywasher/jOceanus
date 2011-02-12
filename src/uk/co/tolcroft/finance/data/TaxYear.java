@@ -18,7 +18,7 @@ public class TaxYear extends DataItem {
 	private static final String objName = "TaxYear";
 
 	/* Members */
-	private long	theRegimeId		= -1;
+	private int		theRegimeId		= -1;
 	private boolean	isActive		= false;
 
 	/* Access methods */
@@ -132,7 +132,7 @@ public class TaxYear extends DataItem {
 	 * @return the formatted field
 	 */
 	public String formatField(int iField, histObject pObj) {
-		String 	myString = "<tr><td>" + fieldName(iField) + "</td><td>";
+		String 	myString = "";
 		Values 	myObj 	 = (Values)pObj;
 		switch (iField) {
 			case FIELD_ID: 		
@@ -209,7 +209,7 @@ public class TaxYear extends DataItem {
 				myString += Utils.formatRate(myObj.getHiCapTaxRate());	
 				break;
 		}
-		return myString + "</td></tr>";
+		return myString;
 	}
 							
 	/**
@@ -242,8 +242,8 @@ public class TaxYear extends DataItem {
 	
 	/* Standard constructor */
 	private TaxYear(List     		pList,
-			        long            uId,
-			        long			uRegimeId,
+			        int            	uId,
+			        int				uRegimeId,
 			        java.util.Date  pDate,
 			        String 			pAllowance,
 			        String 			pRentalAllow,
@@ -1185,7 +1185,7 @@ public class TaxYear extends DataItem {
 		}
 		
 		/* Allow a tax parameter to be added */
-		public void addItem(long    		uId,
+		public void addItem(int	    		uId,
 							String  		pRegime,
 				            java.util.Date  pDate,
 				            String  		pAllowance,
@@ -1246,8 +1246,8 @@ public class TaxYear extends DataItem {
 	    }
 		
 		/* Allow a tax parameter to be added */
-		public void addItem(long    		uId,
-							long    		uRegimeId,
+		public void addItem(int    			uId,
+							int    			uRegimeId,
 				            java.util.Date  pDate,
 				            String  		pAllowance,
 				            String  		pRentalAllow,

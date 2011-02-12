@@ -70,7 +70,7 @@ public class TableFrequency extends DatabaseTable<Frequency> {
 	/* Create statement for Frequencies */
 	protected String createStatement() {
 		return "create table " + theTabName + " ( " +
-			   theIdCol 	+ " bigint NOT NULL PRIMARY KEY, " +
+			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
 			   theFreqCol	+ " varchar(" + Frequency.NAMELEN + ") NOT NULL )";
 	}
 	
@@ -86,7 +86,7 @@ public class TableFrequency extends DatabaseTable<Frequency> {
 	/* Load the frequency */
 	protected void loadItem() throws Exception {
 		Frequency.List	myList;
-		long    		myId;
+		int	    		myId;
 		String  		myFreq;
 		
 		/* Protect the access */

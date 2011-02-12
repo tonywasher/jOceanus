@@ -68,7 +68,7 @@ public class TableTaxRegime extends DatabaseTable<TaxRegime> {
 	/* Create statement for Tax Regimes */
 	protected String createStatement() {
 		return "create table " + theTabName + " ( " +
-			   theIdCol 	+ " bigint NOT NULL PRIMARY KEY, " +
+			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
 			   theTaxRegCol	+ " varchar(" + TaxRegime.NAMELEN + ") NOT NULL )";
 	}
 	
@@ -84,7 +84,7 @@ public class TableTaxRegime extends DatabaseTable<TaxRegime> {
 	/* Load the tax regime */
 	protected void loadItem() throws Exception {
 		TaxRegime.List	myList;
-		long    		myId;
+		int	    		myId;
 		String  		myType;
 		
 		/* Protect the access */

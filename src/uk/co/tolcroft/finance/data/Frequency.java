@@ -87,14 +87,14 @@ public class Frequency extends DataItem {
 	 * @return the formatted field
 	 */
 	public String formatField(int iField, histObject pObj) {
-		String myString = "<tr><td>" + fieldName(iField) + "</td><td>"; 
+		String myString = ""; 
 		switch (iField) {
 			case FIELD_ID: 		myString += getId();  	break;
 			case FIELD_NAME:	myString += getName(); 	break;
 			case FIELD_ORDER: 	myString += getOrder();	break;
 			case FIELD_CLASS: 	myString += theClass;	break;
 		}
-		return myString + "</td></tr>";
+		return myString;
 	}
 	
 	/**
@@ -124,7 +124,7 @@ public class Frequency extends DataItem {
 	 * @throws {@link Exception} if type is not supported
 	 */
 	private Frequency(List 	 pList,
-			          long   uId,
+			          int	 uId,
 			          String sName) throws Exception {
 		super(pList, uId);
 		Values myObj = new Values();
@@ -331,8 +331,8 @@ public class Frequency extends DataItem {
 		 * @param pFrequency the Name of the frequency
 		 * @throws Exception on error
 		 */ 
-		public void addItem(long   uId,
-				            String pFrequency) throws Exception {
+		public void addItem(int		uId,
+				            String 	pFrequency) throws Exception {
 			Frequency myFrequency;
 			
 			/* Create a new Frequency */

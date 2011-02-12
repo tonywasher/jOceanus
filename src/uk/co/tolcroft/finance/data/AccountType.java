@@ -29,7 +29,7 @@ public class AccountType extends DataItem {
 	 * Return the name of the Account Type
 	 * @return the name
 	 */
-	public String 	getName()				{ return getObj().getName(); }
+	public String 		getName()				{ return getObj().getName(); }
 	
 	/**
 	 * Return the sort order of the Account Type
@@ -81,14 +81,14 @@ public class AccountType extends DataItem {
 	 * @return the formatted field
 	 */
 	public String formatField(int iField, histObject pObj) {
-		String myString = "<tr><td>" + fieldName(iField) + "</td><td>"; 
+		String myString = ""; 
 		switch (iField) {
 			case FIELD_ID: 		myString += getId();  	break;
 			case FIELD_NAME:	myString += getName(); 	break;
 			case FIELD_ORDER: 	myString += getOrder();	break;
 			case FIELD_CLASS: 	myString += theClass;	break;
 		}
-		return myString + "</td></tr>";
+		return myString;
 	}
 			
 	/**
@@ -118,7 +118,7 @@ public class AccountType extends DataItem {
 	 * @throws {@link Exception} if type is not supported
 	 */
 	private AccountType(List 	pList,
-			            long    uId, 
+			            int		uId, 
 			            String	sName) throws Exception {
 		super(pList, uId);
 		Values myObj = new Values();
@@ -674,7 +674,7 @@ public class AccountType extends DataItem {
 		 * @param uId the Id of the account type
 		 * @param pActType the Name of the account type
 		 */ 
-		public void addItem(long   uId,
+		public void addItem(int    uId,
 				            String pActType) throws Exception {
 			AccountType myActType;
 				

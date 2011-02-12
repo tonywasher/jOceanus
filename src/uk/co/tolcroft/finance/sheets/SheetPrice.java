@@ -146,8 +146,8 @@ public class SheetPrice {
 		Cell      		myTop;
 		Cell      		myBottom;
 		int       		myCol;
-		long      		myID;
-		long      		myAccountID;
+		int      		myID;
+		int      		myAccountID;
 		String    		myPrice; 
 		java.util.Date  myDate;
 		DateCell  		myDateCell;
@@ -192,9 +192,9 @@ public class SheetPrice {
 									
 					/* Access id and account id */
 					myCell    	= mySheet.getCell(myCol, i);
-					myID      	= Long.parseLong(myCell.getContents());
+					myID      	= Integer.parseInt(myCell.getContents());
 					myCell    	= mySheet.getCell(myCol+1, i);
-					myAccountID	= Long.parseLong(myCell.getContents());
+					myAccountID	= Integer.parseInt(myCell.getContents());
 				
 					/* Handle Price */
 					myCell     	= mySheet.getCell(myCol+3, i);
@@ -285,10 +285,10 @@ public class SheetPrice {
 			while ((myCurr  = myIterator.next()) != null) {
 				/* Create the Identifier cell */
 				myCell = new jxl.write.Label(0, myRow, 
-											 Long.toString(myCurr.getId()));
+											 Integer.toString(myCurr.getId()));
 				mySheet.addCell(myCell);
 				myCell = new jxl.write.Label(1, myRow, 
-											 Long.toString(myCurr.getAccount().getId()));
+											 Integer.toString(myCurr.getAccount().getId()));
 				mySheet.addCell(myCell);
 			
 				/* Create the Price cells */

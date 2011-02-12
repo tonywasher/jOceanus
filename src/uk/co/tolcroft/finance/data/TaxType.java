@@ -86,14 +86,14 @@ public class TaxType extends DataItem {
 	 * @return the formatted field
 	 */
 	public String formatField(int iField, histObject pObj) {
-		String myString = "<tr><td>" + fieldName(iField) + "</td><td>"; 
+		String myString = ""; 
 		switch (iField) {
 			case FIELD_ID: 		myString += getId();  	break;
 			case FIELD_NAME:	myString += getName(); 	break;
 			case FIELD_ORDER: 	myString += getOrder();	break;
 			case FIELD_CLASS: 	myString += theClass;	break;
 		}
-		return myString + "</td></tr>";
+		return myString;
 	}
 			
 	/**
@@ -120,7 +120,7 @@ public class TaxType extends DataItem {
 	 * @param sName Name of Tax Type
 	 */
 	private TaxType(List 	pList,
-			        long    uId, 
+			        int		uId, 
 			        String  sName) throws Exception {
 		super(pList, uId);
 		Values myObj = new Values();
@@ -541,8 +541,8 @@ public class TaxType extends DataItem {
 		 * @param uId the Id of the tax type
 		 * @param pTaxType the Name of the tax type
 		 */ 
-		public void addItem(long   uId,
-				            String pTaxType) throws Exception {
+		public void addItem(int		uId,
+				            String 	pTaxType) throws Exception {
 			TaxType      myTaxType;
 			
 			/* Create a new Tax Type */

@@ -12,7 +12,7 @@ public class Rate extends DataItem {
 	private static final String objName = "Rate";
 
 	/* Local values */
-	private long 	theAccountId	= -1;
+	private int 		theAccountId	= -1;
 	
 	/* Access methods */
 	public  Values     	getObj()       	{ return (Values)super.getObj(); }	
@@ -69,7 +69,7 @@ public class Rate extends DataItem {
 	 * @return the formatted field
 	 */
 	public String formatField(int iField, histObject pObj) {
-		String 	myString = "<tr><td>" + fieldName(iField) + "</td><td>";
+		String 	myString = "";
 		Values 	myObj 	 = (Values)pObj;
 		switch (iField) {
 			case FIELD_ID: 		
@@ -92,7 +92,7 @@ public class Rate extends DataItem {
 				myString += Utils.formatDate(myObj.getEndDate()); 
 				break;
 		}
-		return myString + "</td></tr>";
+		return myString;
 	}
 		
 	/**
@@ -133,8 +133,8 @@ public class Rate extends DataItem {
 
 	/* Standard constructor */
 	private Rate(List       	pList,
-				 long           uId,
-				 long 		   	uAccountId,
+				 int			uId,
+				 int 		   	uAccountId,
 				 java.util.Date	pEndDate, 
 				 String		   	pRate,
 				 String		   	pBonus) throws Exception {
@@ -560,7 +560,7 @@ public class Rate extends DataItem {
 		/**
 		 *  Allow a rate to be added 
 		 */
-		public void addItem(long     		uId,
+		public void addItem(int     		uId,
 							String   		pAccount,
 	            			String   		pRate,
 	            			java.util.Date  pDate,
@@ -591,8 +591,8 @@ public class Rate extends DataItem {
 		/**
 		 *  Allow a rate to be added
 		 */
-		public void addItem(long     		uId,
-							long  	 		uAccountId,
+		public void addItem(int     		uId,
+							int  	 		uAccountId,
 	            			String   		pRate,
 	            			java.util.Date  pDate,
 				            String   		pBonus) throws Exception {

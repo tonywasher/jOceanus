@@ -19,9 +19,9 @@ public class Event extends DataItem {
 	public final static int DESCLEN 		= 50;
 
 	/* Local IDs for use in loading */
-	private long				theDebitId	= -1;
-	private long				theCreditId	= -1;
-	private long				theTransId	= -1;
+	private int					theDebitId	= -1;
+	private int					theCreditId	= -1;
+	private int					theTransId	= -1;
 	
 	/* Access methods */
 	public  Values         	getObj()       { return (Values)super.getObj(); }	
@@ -93,7 +93,7 @@ public class Event extends DataItem {
 	 * @return the formatted field
 	 */
 	public String formatField(int iField, histObject pObj) {
-		String 	myString = "<tr><td>" + fieldName(iField) + "</td><td>";
+		String 	myString = "";
 		Values 	myObj 	 = (Values)pObj;
 		switch (iField) {
 			case FIELD_ID: 		
@@ -142,7 +142,7 @@ public class Event extends DataItem {
 				myString += Utils.formatDilution(myObj.getDilution()); 
 				break;
 		}
-		return myString + "</td></tr>";
+		return myString;
 	}
 							
 	/**
@@ -271,12 +271,12 @@ public class Event extends DataItem {
 
 	/* Standard constructor */
 	private Event(List      		pList,
-			      long          	uId, 
+			      int	          	uId, 
 		          java.util.Date 	pDate,
 		          String         	sDesc,
-		          long           	uDebit,
-		          long	        	uCredit,
-		          long				uTransType,
+		          int           	uDebit,
+		          int	        	uCredit,
+		          int				uTransType,
 		          String     		pAmount,
 		          String			pUnits,
 		          String			pTaxCredit,
@@ -1172,7 +1172,7 @@ public class Event extends DataItem {
 		/**
 		 *  Allow an event to be added
 		 */
-		public void addItem(long     		uId,
+		public void addItem(int     		uId,
 				            java.util.Date	pDate,
 				            String   		pDesc,
 				            String   		pAmount,
@@ -1232,14 +1232,14 @@ public class Event extends DataItem {
 		/**
 		 *  Allow an event to be added
 		 */
-		public void addItem(long     		uId,
+		public void addItem(int     		uId,
 				            java.util.Date  pDate,
 				            String   		pDesc,
 				            String   		pAmount,
-				            long     		uDebitId,
-				            long     		uCreditId,
+				            int     		uDebitId,
+				            int     		uCreditId,
 				            String   		pUnits,
-				            long  	  		uTransId,
+				            int  	  		uTransId,
 				            String   		pTaxCredit,
 				            String			pDilution,
 				            Integer    		pYears) throws Exception {

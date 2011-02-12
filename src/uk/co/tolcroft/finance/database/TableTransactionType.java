@@ -68,7 +68,7 @@ public class TableTransactionType extends DatabaseTable<TransactionType> {
 	/* Create statement for Transaction Types */
 	public String createStatement() {
 		return "create table " + theTabName + " ( " +
-			   theIdCol 	+ " bigint NOT NULL PRIMARY KEY, " +
+			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
 			   theTrnTypCol	+ " varchar(" + TransactionType.NAMELEN + ") NOT NULL )";
 	}
 	
@@ -84,7 +84,7 @@ public class TableTransactionType extends DatabaseTable<TransactionType> {
 	/* Load the transaction type */
 	protected void loadItem() throws Exception {
 		TransactionType.List	myList;
-		long    				myId;
+		int	    				myId;
 		String  				myType;
 		
 		/* Protect the access */

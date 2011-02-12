@@ -15,7 +15,7 @@ public class TaxAnalysis {
 	private TaxList                 theTaxBuckets   = null;
 	private TransactionType.List 	theTransTypes   = null;
 	private TaxType.List   			theTaxTypes     = null;
-	private ChargeableEvent			theCharges		= null;
+	private ChargeableEvent.List	theCharges		= null;
 	private boolean                 hasTotals       = false;
 	private boolean					hasAgeAllowance = false;
 	private boolean					hasGainsSlices	= false;
@@ -23,15 +23,15 @@ public class TaxAnalysis {
 	private int						theAge			= 0;
 
 	/* Access methods */
-	public TaxYear    		getYear()         { return theYear; }
-	public Date      		getDate()         { return theDate; }
-	public TaxType.List 	getTaxTypes() 	  { return theTaxTypes; }
-	public TranList         getTransBuckets() { return theTransBuckets; }
-	public TaxList          getTaxBuckets()   { return theTaxBuckets; }
-	public ChargeableEvent  getCharges()   	  { return theCharges; }
-	public boolean     		hasReducedAllow() { return hasReducedAllow; }
-	public boolean     		hasGainsSlices()  { return hasGainsSlices; }
-	public int				getAge()		  { return theAge; }
+	public TaxYear    			getYear()         { return theYear; }
+	public Date      			getDate()         { return theDate; }
+	public TaxType.List 		getTaxTypes() 	  { return theTaxTypes; }
+	public TranList         	getTransBuckets() { return theTransBuckets; }
+	public TaxList          	getTaxBuckets()   { return theTaxBuckets; }
+	public ChargeableEvent.List getCharges()   	  { return theCharges; }
+	public boolean     			hasReducedAllow() { return hasReducedAllow; }
+	public boolean     			hasGainsSlices()  { return hasGainsSlices; }
+	public int					getAge()		  { return theAge; }
 	
 	/* Constructor */
 	public TaxAnalysis(DataSet pData, TaxYear pYear) {
@@ -41,6 +41,7 @@ public class TaxAnalysis {
 		theTaxTypes     = pData.getTaxTypes();
 		theTransBuckets = new TranList();
 		theTaxBuckets   = new TaxList();
+		theCharges		= new ChargeableEvent.List();
 	}
 	
 	/**
@@ -98,7 +99,6 @@ public class TaxAnalysis {
 	public void processEvent(Event pEvent) {
 		TransactionType	myTransType;
 		TranBucket      myBucket;
-		ChargeableEvent	myCharge;
 		
 		/* Access the transaction type */
 		myTransType = pEvent.getTransType();
@@ -116,8 +116,7 @@ public class TaxAnalysis {
 			/* If this is a taxable gain event */
 			if (myTransType.isTaxableGain()) {
 				/* Create and store the new taxable event */
-				myCharge = new ChargeableEvent(pEvent, theCharges);
-				if (theCharges == null) theCharges = myCharge;
+				theCharges.addEvent(pEvent);
 
 				/* Remove this value from the market growth bucket */
 				myBucket = theTransBuckets.getTransBucket(theTransTypes
@@ -1322,8 +1321,7 @@ public class TaxAnalysis {
 		boolean			isFinished  = false;
 		
 		/* Access Gains */
-		myGains = (theCharges != null) 	? theCharges.getGainsTotal()
-										: new Number.Money(0);
+		myGains = theCharges.getGainsTotal();
 
 		/* Store the total into the TaxDueTaxGains Bucket */
 		myTopBucket = theTaxBuckets.getTaxBucket(theTaxTypes
@@ -1362,7 +1360,7 @@ public class TaxAnalysis {
 				/* Set the tax bucket and add the tax */
 				myTax.addAmount(myTaxBucket.setAmount(pBands.theBasicBand));
 				
-				/* Adjust the interest to remove BasicBand */
+				/* Adjust the gains to remove BasicBand */
 				myGains.subtractAmount(pBands.theBasicBand);
 				pBands.theBasicBand.setZero();
 			}
@@ -1413,7 +1411,7 @@ public class TaxAnalysis {
 		
 		/* If we are not finished then we need top-slicing relief */
 		if (!isFinished) { 
-			/* Access to taxable slice */
+			/* Access the taxable slice */
 			mySlice 		= theCharges.getSliceTotal();
 			hasGainsSlices 	= true;
 
@@ -1653,12 +1651,53 @@ public class TaxAnalysis {
 	/**
 	 * Transaction Bucket list
 	 */
-	public class TranList extends SortedList<TranBucket> {
+	public class TranList extends DataList<TranBucket> {
 		/**
 		 * Construct a top-level List
 		 */
-		public TranList() { }
+		public TranList() { super(ListStyle.VIEW, false); }
 
+		/** 
+	 	 * Clone a Bucket list
+	 	 * @return the cloned list
+	 	 */
+		protected TranList cloneIt() { return null; }
+		
+		/**
+		 * Add a new item to the list
+		 * 
+		 * @param pItem the item to add
+		 * @return the newly added item
+		 */
+		public DataItem addNewItem(DataItem pItem) { return null; }
+
+		/**
+		 * Add a new item to the edit list
+		 * 
+		 * @param isCredit - ignored
+		 */
+		public void addNewItem(boolean isCredit) { return; }
+	
+		/**
+		 * Obtain the type of the item
+		 * @return the type of the item
+		 */
+		public String itemType() { return TranBucket.objName; }		
+
+		/**
+		 * Add additional fields to HTML String
+		 * @param pBuffer the string buffer 
+		 */
+		public void addHTMLFields(StringBuilder pBuffer) {
+			/* Start the Fields section */
+			pBuffer.append("<tr><th rowspan=\"2\">Fields</th></tr>");
+				
+			/* Format the date */
+			pBuffer.append("<tr><td>Date</td><td>"); 
+			pBuffer.append(Utils.formatDate(theDate)); 
+			pBuffer.append("</td></tr>"); 
+		}
+		
 		/**
 		 * Search for a particular bucket
 		 * 
@@ -1816,12 +1855,53 @@ public class TaxAnalysis {
 	/**
 	 * Tax Bucket list
 	 */
-	public class TaxList extends SortedList<TaxBucket> {		
+	public class TaxList extends DataList<TaxBucket> {		
 		/**
 		 * Construct a top-level List
 		 */
-		public TaxList() { }
+		public TaxList() { super(ListStyle.VIEW, false); }
 
+		/** 
+	 	 * Clone a Bucket list
+	 	 * @return the cloned list
+	 	 */
+		protected TaxList cloneIt() { return null; }
+		
+		/**
+		 * Add a new item to the list
+		 * 
+		 * @param pItem the item to add
+		 * @return the newly added item
+		 */
+		public DataItem addNewItem(DataItem pItem) { return null; }
+
+		/**
+		 * Add a new item to the edit list
+		 * 
+		 * @param isCredit - ignored
+		 */
+		public void addNewItem(boolean isCredit) { return; }
+	
+		/**
+		 * Obtain the type of the item
+		 * @return the type of the item
+		 */
+		public String itemType() { return TaxBucket.objName; }		
+
+		/**
+		 * Add additional fields to HTML String
+		 * @param pBuffer the string buffer 
+		 */
+		public void addHTMLFields(StringBuilder pBuffer) {
+			/* Start the Fields section */
+			pBuffer.append("<tr><th rowspan=\"2\">Fields</th></tr>");
+				
+			/* Format the date */
+			pBuffer.append("<tr><td>Date</td><td>"); 
+			pBuffer.append(Utils.formatDate(theDate)); 
+			pBuffer.append("</td></tr>"); 
+		}
+		
 		/**
 		 * Search for a particular bucket
 		 * 
@@ -1914,16 +1994,11 @@ public class TaxAnalysis {
 	/**
 	 * The transaction bucket class
 	 */
-	public class TranBucket  implements SortedList.linkObject {
+	public class TranBucket extends DataItem {
 		/**
-		 * The List that this bucket belongs to
+		 * The name of the object
 		 */
-		private 	TranList		theList		   	= null;
-		
-	    /**
-		 * Storage for the List Node
-		 */
-	    private 	Object			theLink			= null;
+		private static final String objName = "TransactionBucket";
 
 		/* Members */
 		private		String			theName      	= null;
@@ -1936,16 +2011,6 @@ public class TaxAnalysis {
 		private     Number.Money    theTaxCredit 	= null;
 		private     Number.Money    theOldTaxCred	= null;
 		
-		/**
-		 * Add the item to the list 
-		 */
-		public void			addToList()  { theList.add(this); }
-		
-		/**
-		 * Unlink the item from the list
-		 */
-		public void			unLink()     { theList.remove(this); }
-		
 		/* Access methods */
 		public 	String			getName()      	{ return theName; }
 		private int			 	getOrder()     	{ return theOrder; }
@@ -1957,27 +2022,9 @@ public class TaxAnalysis {
 		public  Number.Money    getTaxCredit()  { return theTaxCredit; }
 		public  Number.Money    getOldTaxCred()	{ return theOldTaxCred; }
 
-		/**
-		 * Get the link node for this item
-		 * @return the Link node or <code>null</code>
-		 */
-		public Object		getLinkNode(Object pList)	{ return theLink; }
-
-		/**
-		 * Get the link node for this item
-		 * @return the Link node or <code>null</code>
-		 */
-		public void			setLinkNode(Object l, Object o)	{ theLink = o; }
-
-		/**
-		 * Determine whether the item is visible to standard searches
-		 * @return <code>true/false</code>
-		 */
-		public boolean		isHidden()    	{ return false; }
-
 		/* Constructors */
 		private TranBucket(TranList pList, TransactionType pTransact) { 
-			theList      	= pList;
+			super(pList, 0);
 			theName      	= pTransact.getName();
 			theOrder     	= pTransact.getOrder();
 			theBucket    	= BucketType.DETAIL;
@@ -1988,7 +2035,7 @@ public class TaxAnalysis {
 			theOldTaxCred	= new Number.Money(0);
 		}
 		private TranBucket(TranList pList, TaxType pTaxType) {
-			theList      = pList;
+			super(pList, 0);
 			theName      = pTaxType.getName();
 			theOrder     = pTaxType.getOrder();
 			theBucket    = BucketType.SUMMARY;
@@ -1997,7 +2044,7 @@ public class TaxAnalysis {
 			theOldAmount = new Number.Money(0);
 		}
 		private TranBucket(TranList pList, TranBucket pBucket) { 
-			theList      = pList;
+			super(pList, 0);
 			theName      = pBucket.getName();
 			theOrder     = pBucket.getOrder();
 			theBucket    = pBucket.getBucket();
@@ -2011,6 +2058,119 @@ public class TaxAnalysis {
 			}
 		}
 		
+		/* Field IDs */
+		public static final int FIELD_NAME  	= 0;
+		public static final int FIELD_TYPE  	= 1;
+		public static final int FIELD_ORDER  	= 2;
+		public static final int FIELD_TRANTYPE 	= 3;
+		public static final int FIELD_TAXTYPE 	= 4;
+		public static final int FIELD_AMOUNT  	= 5;
+		public static final int FIELD_OLDAMOUNT = 6;
+		public static final int FIELD_TAXCREDIT	= 7;
+		public static final int FIELD_OLDTAXCRD	= 8;
+		public static final int NUMFIELDS	    = 9;
+		
+		/**
+		 * Obtain the type of the item
+		 * @return the type of the item
+		 */
+		public String itemType() { return objName; }
+		
+		/**
+		 * Obtain the number of fields for an item
+		 * @return the number of fields
+		 */
+		public int	numFields() {return NUMFIELDS; }
+		
+		/**
+		 * Determine the field name for a particular field
+		 * @return the field name
+		 */
+		public String	fieldName(int iField) {
+			switch (iField) {
+				case FIELD_NAME: 		return "Name";
+				case FIELD_TYPE: 		return "Type";
+				case FIELD_ORDER: 		return "Order";
+				case FIELD_TRANTYPE: 	return "TransactionType";
+				case FIELD_TAXTYPE: 	return "TaxType";
+				case FIELD_AMOUNT: 		return "Amount";
+				case FIELD_OLDAMOUNT: 	return "OldAmount";
+				case FIELD_TAXCREDIT:	return "TaxCredit";
+				case FIELD_OLDTAXCRD:	return "OldTaxCreditRate";
+				default:		  		return super.fieldName(iField);
+			}
+		}
+		
+		/**
+		 * Format the value of a particular field as a table row
+		 * @param iField the field number
+		 * @param pObj the values to use
+		 * @return the formatted field
+		 */
+		public String formatField(int iField, histObject pObj) {
+			String myString = ""; 
+			switch (iField) {
+				case FIELD_NAME: 			
+					myString += theName;
+					break;
+				case FIELD_TYPE:		
+					myString += theBucket;
+					break;
+				case FIELD_ORDER: 		
+					myString += theOrder;
+					break;
+				case FIELD_TRANTYPE: 	
+					myString += Utils.formatTrans(theTransact);
+					break;
+				case FIELD_TAXTYPE: 		
+					myString += Utils.formatTaxType(theTaxType);
+					break;
+				case FIELD_AMOUNT: 	
+					myString += Utils.formatMoney(theAmount);
+					break;
+				case FIELD_TAXCREDIT: 	
+					myString += Utils.formatMoney(theTaxCredit);
+					break;
+				case FIELD_OLDAMOUNT: 	
+					myString += Utils.formatMoney(theOldAmount);
+					break;
+				case FIELD_OLDTAXCRD: 	
+					myString += Utils.formatMoney(theOldTaxCred);
+					break;
+			}
+			return myString;
+		}
+
+		/**
+		 * Compare this Bucket to another to establish equality.
+		 * 
+		 * @param pThat The Bucket to compare to
+		 * @return <code>true</code> if the bucket is identical, <code>false</code> otherwise
+		 */
+		public boolean equals(Object pThat) {
+			/* Handle the trivial cases */
+			if (this == pThat) return true;
+			if (pThat == null) return false;
+			
+			/* Make sure that the object is a TranBucket */
+			if (pThat.getClass() != this.getClass()) return false;
+			
+			/* Access the object as a TranBucket */
+			TranBucket myBucket = (TranBucket)pThat;
+			
+			/* Check for equality */
+			if (Utils.differs(getName(),      	myBucket.getName())) 		return false;
+			if (getBucket() 	!= myBucket.getBucket()) 					return false;
+			if (getOrder() 		!= myBucket.getOrder()) 					return false;
+			if (Utils.differs(getTaxType(),  	myBucket.getTaxType()))		return false;
+			if (Utils.differs(getTransType(),  	myBucket.getTransType()))	return false;
+			if (Utils.differs(getAmount(),    	myBucket.getAmount())) 		return false;
+			if (Utils.differs(getTaxCredit(), 	myBucket.getTaxCredit()))	return false;
+			if (Utils.differs(getOldAmount(),  	myBucket.getOldAmount())) 	return false;
+			if (Utils.differs(getOldTaxCred(), 	myBucket.getOldTaxCred()))	return false;
+			return true;
+		}
+
 		/**
 		 * Compare this Bucket to another to establish sort order.
 		 * 
@@ -2129,16 +2289,11 @@ public class TaxAnalysis {
 	}
 	
 	/* The Tax bucket class */
-	public class TaxBucket  implements SortedList.linkObject {
+	public class TaxBucket extends DataItem {
 		/**
-		 * The List that this bucket belongs to
+		 * The name of the object
 		 */
-		private 	TaxList			theList		   = null;
-		
-	    /**
-		 * Storage for the List Node
-		 */
-	    private 	Object			theLink		= null;
+		private static final String objName = "TaxBucket";
 
 		/* Members */
 		private		String			theName      = null;
@@ -2150,16 +2305,6 @@ public class TaxAnalysis {
 		private		Number.Rate		theRate      = null;
 		private 	TaxBucket		theParent 	 = null;
 		
-		/**
-		 * Add the item to the list 
-		 */
-		public void			addToList()  { theList.add(this); }
-		
-		/**
-		 * Unlink the item from the list
-		 */
-		public void			unLink()     { theList.remove(this); }
-		
 		/* Access methods */
 		public 	String			getName()      { return theName; }
 		public 	BucketType		getBucket()    { return theBucket; }
@@ -2169,33 +2314,110 @@ public class TaxAnalysis {
 		public  Number.Rate		getRate()      { return theRate; }
 		public  TaxBucket		getParent()	   { return theParent; }
 
-		/**
-		 * Get the link node for this item
-		 * @return the Link node or <code>null</code>
-		 */
-		public Object		getLinkNode(Object pList)	{ return theLink; }
-
-		/**
-		 * Get the link node for this item
-		 * @return the Link node or <code>null</code>
-		 */
-		public void			setLinkNode(Object l, Object o)	{ theLink = o; }
-
-		/**
-		 * Determine whether the item is visible to standard searches
-		 * @return <code>true/false</code>
-		 */
-		public boolean		isHidden()    	{ return false; }
-
 		/* Constructor */
 		private TaxBucket(TaxList pList, TaxType pTaxType) {
-			theList      = pList;
+			super(pList, 0);
 			theName      = pTaxType.getName();
 			theOrder     = pTaxType.getOrder();
 			theBucket    = getTaxBucketType(pTaxType);
 			theTaxType   = pTaxType;
 		}
 		
+		/* Field IDs */
+		public static final int FIELD_NAME  	= 0;
+		public static final int FIELD_TYPE  	= 1;
+		public static final int FIELD_TAXTYPE  	= 2;
+		public static final int FIELD_AMOUNT  	= 3;
+		public static final int FIELD_TAXATION  = 4;
+		public static final int FIELD_RATE  	= 5;
+		public static final int NUMFIELDS	    = 6;
+		
+		/**
+		 * Obtain the type of the item
+		 * @return the type of the item
+		 */
+		public String itemType() { return objName; }
+		
+		/**
+		 * Obtain the number of fields for an item
+		 * @return the number of fields
+		 */
+		public int	numFields() {return NUMFIELDS; }
+		
+		/**
+		 * Determine the field name for a particular field
+		 * @return the field name
+		 */
+		public String	fieldName(int iField) {
+			switch (iField) {
+				case FIELD_NAME: 		return "Name";
+				case FIELD_TYPE: 		return "Type";
+				case FIELD_TAXTYPE: 	return "TaxType";
+				case FIELD_AMOUNT: 		return "Amount";
+				case FIELD_TAXATION:	return "Taxation";
+				case FIELD_RATE:		return "Rate";
+				default:		  		return super.fieldName(iField);
+			}
+		}
+		
+		/**
+		 * Format the value of a particular field as a table row
+		 * @param iField the field number
+		 * @param pObj the values to use
+		 * @return the formatted field
+		 */
+		public String formatField(int iField, histObject pObj) {
+			String myString = ""; 
+			switch (iField) {
+				case FIELD_NAME: 			
+					myString += theName;
+					break;
+				case FIELD_TYPE:		
+					myString += theBucket;
+					break;
+				case FIELD_TAXTYPE: 		
+					myString += Utils.formatTaxType(theTaxType);
+					break;
+				case FIELD_AMOUNT: 	
+					myString += Utils.formatMoney(theAmount);
+					break;
+				case FIELD_TAXATION: 	
+					myString += Utils.formatMoney(theTaxation);
+					break;
+				case FIELD_RATE: 	
+					myString += Utils.formatRate(theRate);
+					break;
+			}
+			return myString;
+		}
+
+		/**
+		 * Compare this Bucket to another to establish equality.
+		 * 
+		 * @param pThat The Bucket to compare to
+		 * @return <code>true</code> if the bucket is identical, <code>false</code> otherwise
+		 */
+		public boolean equals(Object pThat) {
+			/* Handle the trivial cases */
+			if (this == pThat) return true;
+			if (pThat == null) return false;
+			
+			/* Make sure that the object is a TaxBucket */
+			if (pThat.getClass() != this.getClass()) return false;
+			
+			/* Access the object as a TaxBucket */
+			TaxBucket myBucket = (TaxBucket)pThat;
+			
+			/* Check for equality */
+			if (Utils.differs(getName(),      	myBucket.getName())) 		return false;
+			if (getBucket() 	!= myBucket.getBucket()) 					return false;
+			if (Utils.differs(getTaxType(),  	myBucket.getTaxType()))		return false;
+			if (Utils.differs(getAmount(),    	myBucket.getAmount())) 		return false;
+			if (Utils.differs(getTaxation(),   	myBucket.getTaxation()))	return false;
+			if (Utils.differs(getRate(),   		myBucket.getRate()))		return false;
+			return true;
+		}
+
 		/**
 		 * Compare this Bucket to another to establish sort order.
 		 * 

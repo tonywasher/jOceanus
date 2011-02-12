@@ -29,11 +29,10 @@ public class DilutionEvent extends DataItem {
 	private Dilution		getDilution() 	{ return theDilution; }	
 
 	/* Field IDs */
-	public static final int FIELD_ID     	= 0;
-	public static final int FIELD_ACCOUNT  	= 1;
-	public static final int FIELD_DATE      = 2;
-	public static final int FIELD_DILUTION  = 3;
-	public static final int NUMFIELDS	    = 4;
+	public static final int FIELD_ACCOUNT  	= 0;
+	public static final int FIELD_DATE      = 1;
+	public static final int FIELD_DILUTION  = 2;
+	public static final int NUMFIELDS	    = 3;
 	
 	/**
 	 * Obtain the type of the item
@@ -53,7 +52,6 @@ public class DilutionEvent extends DataItem {
 	 */
 	public String	fieldName(int iField) {
 		switch (iField) {
-			case FIELD_ID: 	  		return "ID";
 			case FIELD_ACCOUNT: 	return "Name";
 			case FIELD_DATE: 		return "Date";
 			case FIELD_DILUTION:	return "Dilution";
@@ -68,11 +66,8 @@ public class DilutionEvent extends DataItem {
 	 * @return the formatted field
 	 */
 	public String formatField(int iField, histObject pObj) {
-		String myString = "<tr><td>" + fieldName(iField) + "</td><td>"; 
+		String myString = ""; 
 		switch (iField) {
-			case FIELD_ID: 			
-				myString += getId();
-				break;
 			case FIELD_ACCOUNT:		
 				myString += Utils.formatAccount(theAccount);
 				break;
@@ -83,7 +78,7 @@ public class DilutionEvent extends DataItem {
 				myString += Utils.formatDilution(theDilution);
 				break;
 		}
-		return myString + "</td></tr>";
+		return myString;
 	}
 
 	/**
@@ -104,11 +99,10 @@ public class DilutionEvent extends DataItem {
 		DilutionEvent myEvent = (DilutionEvent)pThat;
 		
 		/* Check for equality */
-		if (getId() != myEvent.getId()) return false;
 		if (Utils.differs(getDate(),      	myEvent.getDate())) 		return false;
 		if (Utils.differs(getAccount(),    	myEvent.getAccount())) 		return false;
 		if (Utils.differs(getDilution(),   	myEvent.getDilution()))		return false;
-		return true;
+		return getBase().equals(myEvent.getBase());
 	}
 
 	/**

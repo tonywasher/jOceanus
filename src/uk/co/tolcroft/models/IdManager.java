@@ -4,7 +4,7 @@ public class IdManager<T extends DataItem> {
 	/**
 	 * The maximum id
 	 */
-	private long 	theMaxId 	= 0;
+	private int 	theMaxId 	= 0;
 	
 	/**
 	 * The id map
@@ -16,7 +16,7 @@ public class IdManager<T extends DataItem> {
 	 * @param uId the Id to check
 	 * @return Whether the id is unique <code>true/false</code>
 	 */
-	protected boolean isIdUnique(long uId) {
+	protected boolean isIdUnique(int uId) {
 		/* Its unique if its unassigned or greater than the max id */
 		if ((uId == 0) || (uId > theMaxId)) return true;
 		
@@ -32,7 +32,7 @@ public class IdManager<T extends DataItem> {
 	 * @param pRate the new rate
 	 */
 	protected void setNewId(T pItem) {
-		long myId = pItem.getId();
+		int myId = pItem.getId();
 		
 		/* If we need to generate a new id */
 		if (myId == 0) {
@@ -55,7 +55,7 @@ public class IdManager<T extends DataItem> {
 	 * @param pId the id of the item to retrieve 
 	 * @return the item for the id (or <code>null</code>) 
 	 */
-	public T getItem(long pId) {
+	public T getItem(int pId) {
 		/* Locate the item in the map */
 		return theMap.getItem(pId);
 	}
@@ -65,7 +65,7 @@ public class IdManager<T extends DataItem> {
 	 * @param pId the id of the item to retrieve 
 	 * @param pItem the item to store (or <code>null</code>) 
 	 */
-	public void setItem(long pId, T pItem) {
+	public void setItem(int pId, T pItem) {
 		/* Store the item in the map */
 		theMap.setItem(pId, pItem);
 	}
@@ -111,8 +111,8 @@ public class IdManager<T extends DataItem> {
 		 * @return the item for the id (or <code>null</code>) 
 		 */
 		@SuppressWarnings("unchecked")
-		private T getItem(long pId) {
-			long 	myIndex  = pId;
+		private T getItem(int pId) {
+			int 	myIndex  = pId;
 			int 	myAdjust = 1;
 			idMap	myMap;
 
@@ -128,7 +128,7 @@ public class IdManager<T extends DataItem> {
 				if (myIndex >= maxElements) return null;
 
 				/* Access the relevant map */
-				myMap = (idMap)theArray[(int)myIndex];
+				myMap = (idMap)theArray[myIndex];
 
 				/* If the map is empty return null */
 				if (myMap == null) return null;
@@ -148,7 +148,7 @@ public class IdManager<T extends DataItem> {
 			
 			/* Calculate final index and return item */
 			myIndex = pId % maxElements;
-			return (T)theArray[(int)myIndex];
+			return (T)theArray[myIndex];
 		}
 
 		/**
@@ -157,9 +157,9 @@ public class IdManager<T extends DataItem> {
 		 * @param pItem the item to store (or <code>null</code>) 
 		 */
 		@SuppressWarnings("unchecked")
-		private void setItem(long pId, T pItem) {
-			long 	myIndex 	= pId;
-			long 	myAdjust	= 1;
+		private void setItem(int pId, T pItem) {
+			int 	myIndex 	= pId;
+			int 	myAdjust	= 1;
 			idMap	myMap		= null;
 			
 			/* Loop to find the index in this map */
@@ -195,7 +195,7 @@ public class IdManager<T extends DataItem> {
 			/* If we are not the final map */
 			if (theDepth > 0) {
 				/* Access the relevant map */
-				myMap = (idMap)theArray[(int)myIndex];
+				myMap = (idMap)theArray[myIndex];
 
 				/* If the map is empty */
 				if (myMap == null) {
@@ -203,7 +203,7 @@ public class IdManager<T extends DataItem> {
 					myMap = new idMap();
 					myMap.newArray();
 					myMap.theDepth = theDepth-1;
-					theArray[(int)myIndex] = myMap;
+					theArray[myIndex] = myMap;
 				}
 				
 				/* Adjust the index */
@@ -219,7 +219,7 @@ public class IdManager<T extends DataItem> {
 			
 			/* Store the item */
 			myIndex = pId % maxElements;
-			theArray[(int)myIndex] = pItem;
+			theArray[myIndex] = pItem;
 		}
 	}
 }

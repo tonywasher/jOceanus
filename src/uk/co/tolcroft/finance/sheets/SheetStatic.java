@@ -102,8 +102,8 @@ public class SheetStatic {
 		Range[] 			myRange;
 		Sheet   			mySheet;
 		Static.List 		myList;
-		long				myID;
-		long				myVersion;
+		int					myID;
+		int					myVersion;
 		byte[]				mySecurityKey;
 		Cell    			myTop;
 		Cell    			myBottom;
@@ -147,11 +147,11 @@ public class SheetStatic {
 					 i++) {
 					/* Access the id */
 					myCell = mySheet.getCell(myCol, i);
-					myID   = Long.parseLong(myCell.getContents());
+					myID   = Integer.parseInt(myCell.getContents());
 
 					/* Access the version */
 					myCell = mySheet.getCell(myCol+1, i);
-					myVersion = Long.parseLong(myCell.getContents());
+					myVersion = Integer.parseInt(myCell.getContents());
 
 					/* Access the SecurityKey */
 					myCell = mySheet.getCell(myCol+2, i);
@@ -230,11 +230,11 @@ public class SheetStatic {
 			while ((myCurr  = myIterator.next()) != null) {
 				/* Create the Identifier and Name cells */
 				myCell = new jxl.write.Label(0, myRow, 
-											 Long.toString(myCurr.getId()));
+											 Integer.toString(myCurr.getId()));
 				mySheet.addCell(myCell);
 				
 				/* Add the data version to the list */
-				myCell = new jxl.write.Label(1, myRow, Long.toString(myCurr.getDataVersion()));
+				myCell = new jxl.write.Label(1, myRow, Integer.toString(myCurr.getDataVersion()));
 				mySheet.addCell(myCell);
 				
 				/* Add the Security Key */

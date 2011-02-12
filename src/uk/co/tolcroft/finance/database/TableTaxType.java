@@ -68,7 +68,7 @@ public class TableTaxType extends DatabaseTable<TaxType> {
 	/* Create statement for Tax Types */
 	protected String createStatement() {
 		return "create table " + theTabName + " ( " +
-			   theIdCol 	+ " bigint NOT NULL PRIMARY KEY, " +
+			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
 			   theTaxTypCol	+ " varchar(" + TaxType.NAMELEN + ") NOT NULL )";
 	}
 	
@@ -84,7 +84,7 @@ public class TableTaxType extends DatabaseTable<TaxType> {
 	/* Load the tax type */
 	protected void loadItem() throws Exception {
 		TaxType.List	myList;
-		long    		myId;
+		int	    		myId;
 		String  		myType;
 		
 		/* Protect the access */

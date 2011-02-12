@@ -354,12 +354,54 @@ public class AssetAnalysis {
 		}
 	}
 	
-	public class List extends SortedList<Bucket> {
+	/* List of buckets */
+	public class List extends DataList<Bucket> {
 		/**
 		 * Construct a top-level List
 		 */
-		public List() { }
+		public List() { super(ListStyle.VIEW, false); }
 
+		/** 
+	 	 * Clone a Bucket list
+	 	 * @return the cloned list
+	 	 */
+		protected List cloneIt() { return null; }
+		
+		/**
+		 * Add a new item to the list
+		 * 
+		 * @param pItem the item to add
+		 * @return the newly added item
+		 */
+		public DataItem addNewItem(DataItem pItem) { return null; }
+	
+		/**
+		 * Add a new item to the edit list
+		 * 
+		 * @param isCredit - ignored
+		 */
+		public void addNewItem(boolean isCredit) { return; }
+	
+		/**
+		 * Obtain the type of the item
+		 * @return the type of the item
+		 */
+		public String itemType() { return Bucket.objName; }		
+
+		/**
+		 * Add additional fields to HTML String
+		 * @param pBuffer the string buffer 
+		 */
+		public void addHTMLFields(StringBuilder pBuffer) {
+			/* Start the Fields section */
+			pBuffer.append("<tr><th rowspan=\"2\">Fields</th></tr>");
+				
+			/* Format the date */
+			pBuffer.append("<tr><td>Date</td><td>"); 
+			pBuffer.append(Utils.formatDate(theDate)); 
+			pBuffer.append("</td></tr>"); 
+		}
+		
 		/**
 		 * Search for a particular bucket
 		 * 
@@ -643,16 +685,11 @@ public class AssetAnalysis {
 	}
 	
 	/* The item class */
-	public class Bucket  implements SortedList.linkObject {
+	public class Bucket extends DataItem {
 		/**
-		 * The List that this bucket belongs to
+		 * The name of the object
 		 */
-		private 	List			theList		   	= null;
-		
-	    /**
-		 * Storage for the List Node
-		 */
-	    private 	Object			theLink			= null;
+		private static final String objName = "AssetBucket";
 
 		/* Members */
 		private		String			theName      	= null;
@@ -663,19 +700,9 @@ public class AssetAnalysis {
 		private		Number.Money    theAmount    	= null;
 		private 	Bucket			thePrevious		= null;
 		
-		/**
-		 * Add the item to the list 
-		 */
-		public void			addToList()  { theList.add(this); }
-		
-		/**
-		 * Unlink the item from the list
-		 */
-		public void			unLink()     { theList.remove(this); }
-		
 		/* Access methods */
 		public 	String			getName()      { return theName; }
-		private int    			getOrder()     { return theOrder; }
+		protected int  			getOrder()     { return theOrder; }
 		public 	BucketType		getBucket()    { return theBucket; }
 		public 	Account       	getAccount()   { return theAccount; }
 		public 	AccountType 	getType()      { return theType; }
@@ -686,30 +713,13 @@ public class AssetAnalysis {
 		private boolean     		  isDetail()   { 
 			return (theBucket == BucketType.DETAIL); }
 
-		/**
-		 * Get the link node for this item
-		 * @return the Link node or <code>null</code>
-		 */
-		public Object		getLinkNode(Object pList)	{ return theLink; }
-
-		/**
-		 * Get the link node for this item
-		 * @return the Link node or <code>null</code>
-		 */
-		public void			setLinkNode(Object l, Object o)	{ theLink = o; }
-
-		/**
-		 * Determine whether the item is visible to standard searches
-		 * @return <code>true/false</code>
-		 */
-		public boolean		isHidden()    	{ return false; }
-
 		/* Constructors */
-		private Bucket() { 
+		private Bucket(List pList) { 
+			super(pList, 0);
 			theAmount   = new Number.Money(0);
 		}
 		private Bucket(List pList, Account pAccount) { 
-			theList	    = pList;
+			super(pList, 0);
 			theName     = pAccount.getName();
 			theType     = pAccount.getActType();
 			theBucket   = BucketType.DETAIL;
@@ -718,23 +728,23 @@ public class AssetAnalysis {
 			theAmount   = new Number.Money(0);
 		}
 		private Bucket(List pList, AccountType pType) { 
-			theList     = pList;
+			super(pList, 0);
 			theName     = pType.getName();
 			theType     = pType;
 			theBucket   = BucketType.SUMMARY;
 			theOrder    = pType.getOrder();
 			theAmount   = new Number.Money(0);
-			thePrevious = new Bucket();
+			thePrevious = new Bucket(pList);
 		}
 		private Bucket(List pList, BucketType pType) { 
-			theList     = pList;
+			super(pList, 0);
 			theBucket   = pType;
 			theOrder    = 0;
 			theAmount   = new Number.Money(0);
-			thePrevious = new Bucket();
+			thePrevious = new Bucket(pList);
 		}
 		private Bucket(List pList, Bucket pBucket) {
-			theList     = pList;
+			super(pList, 0);
 			theName     = pBucket.getName();
 			theOrder    = pBucket.getOrder();
 			theBucket   = pBucket.getBucket();
@@ -745,6 +755,95 @@ public class AssetAnalysis {
 			theAmount   = new Number.Money(pBucket.getAmount());
 		}
 		
+		/* Field IDs */
+		public static final int FIELD_NAME  	= 0;
+		public static final int FIELD_TYPE  	= 1;
+		public static final int FIELD_ACTTYPE 	= 2;
+		public static final int FIELD_ORDER  	= 3;
+		public static final int FIELD_VALUE  	= 4;
+		public static final int NUMFIELDS	    = 5;
+		
+		/**
+		 * Obtain the type of the item
+		 * @return the type of the item
+		 */
+		public String itemType() { return objName; }
+		
+		/**
+		 * Obtain the number of fields for an item
+		 * @return the number of fields
+		 */
+		public int	numFields() {return NUMFIELDS; }
+		
+		/**
+		 * Determine the field name for a particular field
+		 * @return the field name
+		 */
+		public String	fieldName(int iField) {
+			switch (iField) {
+				case FIELD_NAME: 		return "Name";
+				case FIELD_TYPE: 		return "Type";
+				case FIELD_ORDER: 		return "Order";
+				case FIELD_ACTTYPE: 	return "AccountType";
+				case FIELD_VALUE:		return "Value";
+				default:		  		return super.fieldName(iField);
+			}
+		}
+		
+		/**
+		 * Format the value of a particular field as a table row
+		 * @param iField the field number
+		 * @param pObj the values to use
+		 * @return the formatted field
+		 */
+		public String formatField(int iField, histObject pObj) {
+			String myString = ""; 
+			switch (iField) {
+				case FIELD_NAME: 			
+					myString += theName;
+					break;
+				case FIELD_TYPE:		
+					myString += theBucket;
+					break;
+				case FIELD_ORDER: 		
+					myString += theOrder;
+					break;
+				case FIELD_ACTTYPE: 	
+					myString += Utils.formatAccountType(theType);
+					break;
+				case FIELD_VALUE: 	
+					myString += Utils.formatMoney(theAmount);
+					break;
+			}
+			return myString;
+		}
+
+		/**
+		 * Compare this Bucket to another to establish equality.
+		 * 
+		 * @param pThat The Bucket to compare to
+		 * @return <code>true</code> if the bucket is identical, <code>false</code> otherwise
+		 */
+		public boolean equals(Object pThat) {
+			/* Handle the trivial cases */
+			if (this == pThat) return true;
+			if (pThat == null) return false;
+			
+			/* Make sure that the object is an AssetBucket */
+			if (pThat.getClass() != this.getClass()) return false;
+			
+			/* Access the object as a Bucket */
+			Bucket myBucket = (Bucket)pThat;
+			
+			/* Check for equality */
+			if (Utils.differs(getName(),      	myBucket.getName())) 		return false;
+			if (getBucket() != myBucket.getBucket()) 						return false;
+			if (getOrder() 	!= myBucket.getOrder()) 						return false;
+			if (Utils.differs(getType(),    	myBucket.getType())) 		return false;
+			if (Utils.differs(getAmount(),    	myBucket.getAmount())) 		return false;
+			return true;
+		}
+
 		/**
 		 * Compare this Bucket to another to establish sort order.
 		 * 
@@ -869,6 +968,115 @@ public class AssetAnalysis {
 			theProfit			= new Number.Money(0);
 		}
 		
+		/* Field IDs */
+		public static final int FIELD_UNITS  	= Bucket.NUMFIELDS;
+		public static final int FIELD_PRICE	    = Bucket.NUMFIELDS + 1;
+		public static final int FIELD_INVEST	= Bucket.NUMFIELDS + 2;
+		public static final int FIELD_DIVIDEND  = Bucket.NUMFIELDS + 3;
+		public static final int FIELD_COST	    = Bucket.NUMFIELDS + 4;
+		public static final int FIELD_GAINS	    = Bucket.NUMFIELDS + 5;
+		public static final int FIELD_PROFIT	= Bucket.NUMFIELDS + 6;
+		public static final int FIELD_MARKET	= Bucket.NUMFIELDS + 7;
+		public static final int NUMFIELDS	    = Bucket.NUMFIELDS + 8;
+		
+		/**
+		 * Obtain the number of fields for an item
+		 * @return the number of fields
+		 */
+		public int	numFields() {return NUMFIELDS; }
+		
+		/**
+		 * Determine the field name for a particular field
+		 * @return the field name
+		 */
+		public String	fieldName(int iField) {
+			switch (iField) {
+				case FIELD_UNITS:		return "Units";
+				case FIELD_PRICE:		return "Price";
+				case FIELD_INVEST:		return "Investment";
+				case FIELD_DIVIDEND:	return "Dividends";
+				case FIELD_COST:		return "Cost";
+				case FIELD_GAINS:		return "Gains";
+				case FIELD_PROFIT:		return "Profit";
+				case FIELD_MARKET:		return "Market";
+				default:		  		return super.fieldName(iField);
+			}
+		}
+		
+		/**
+		 * Format the value of a particular field as a table row
+		 * @param iField the field number
+		 * @param pObj the values to use
+		 * @return the formatted field
+		 */
+		public String formatField(int iField, histObject pObj) {
+			String myString = ""; 
+			switch (iField) {
+				case FIELD_UNITS: 	
+					myString += Utils.formatUnits(theUnits);
+					break;
+				case FIELD_PRICE: 	
+					myString += Utils.formatPrice(thePrice);
+					break;
+				case FIELD_INVEST: 	
+					myString += Utils.formatMoney(theInvestment);
+					break;
+				case FIELD_DIVIDEND: 	
+					myString += Utils.formatMoney(theDividends);
+					break;
+				case FIELD_COST: 	
+					myString += Utils.formatMoney(theCost);
+					break;
+				case FIELD_GAINS: 	
+					myString += Utils.formatMoney(theRealisedGains);
+					break;
+				case FIELD_PROFIT: 	
+					myString += Utils.formatMoney(theProfit);
+					break;
+				case FIELD_MARKET: 	
+					myString += Utils.formatMoney(theMarket);
+					break;
+				default: 	
+					myString += super.formatField(iField, pObj);
+					break;
+			}
+			return myString;
+		}
+
+		/**
+		 * Compare this Bucket to another to establish equality.
+		 * 
+		 * @param pThat The Bucket to compare to
+		 * @return <code>true</code> if the bucket is identical, <code>false</code> otherwise
+		 */
+		public boolean equals(Object pThat) {
+			/* Handle the trivial cases */
+			if (this == pThat) return true;
+			if (pThat == null) return false;
+			
+			/* Make sure that the object is an AssetBucket */
+			if (pThat.getClass() != this.getClass()) return false;
+			
+			/* Access the object as an AssetBucket */
+			AssetBucket myBucket = (AssetBucket)pThat;
+			
+			/* Check for equality */
+			if (Utils.differs(getName(),      		myBucket.getName())) 		return false;
+			if (getBucket() != myBucket.getBucket()) 							return false;
+			if (getOrder() 	!= myBucket.getOrder()) 							return false;
+			if (Utils.differs(getType(),    		myBucket.getType())) 		return false;
+			if (Utils.differs(getAmount(),    		myBucket.getAmount())) 		return false;
+			if (Utils.differs(getUnits(),    		myBucket.getUnits())) 		return false;
+			if (Utils.differs(getPrice(),    		myBucket.getPrice())) 		return false;
+			if (Utils.differs(getInvestment(),    	myBucket.getInvestment())) 	return false;
+			if (Utils.differs(getDividends(),    	myBucket.getDividends())) 	return false;
+			if (Utils.differs(getCost(),    		myBucket.getCost())) 		return false;
+			if (Utils.differs(getRealisedGains(),   myBucket.getRealisedGains()))return false;
+			if (Utils.differs(getProfit(),    		myBucket.getProfit())) 		return false;
+			if (Utils.differs(getMarket(),    		myBucket.getMarket())) 		return false;
+			return true;
+		}
+
 		/**
 		 * Add the event to the bucket
 		 * 
@@ -1035,6 +1243,76 @@ public class AssetAnalysis {
 			super(pList, pBucket);
 		}
 		
+		/* Field IDs */
+		public static final int FIELD_RATE  	= Bucket.NUMFIELDS;
+		public static final int FIELD_DATE	    = Bucket.NUMFIELDS + 1;
+		public static final int NUMFIELDS	    = Bucket.NUMFIELDS + 2;
+		
+		/**
+		 * Obtain the number of fields for an item
+		 * @return the number of fields
+		 */
+		public int	numFields() {return NUMFIELDS; }
+		
+		/**
+		 * Determine the field name for a particular field
+		 * @return the field name
+		 */
+		public String	fieldName(int iField) {
+			switch (iField) {
+				case FIELD_RATE:		return "Rate";
+				case FIELD_DATE:		return "Date";
+				default:		  		return super.fieldName(iField);
+			}
+		}
+		
+		/**
+		 * Format the value of a particular field as a table row
+		 * @param iField the field number
+		 * @param pObj the values to use
+		 * @return the formatted field
+		 */
+		public String formatField(int iField, histObject pObj) {
+			String myString = ""; 
+			switch (iField) {
+				case FIELD_RATE: 	
+					myString += Utils.formatRate(theRate);
+					break;
+				case FIELD_DATE: 	
+					myString += Utils.formatDate(theDate);
+					break;
+			}
+			return myString;
+		}
+
+		/**
+		 * Compare this Bucket to another to establish equality.
+		 * 
+		 * @param pThat The Bucket to compare to
+		 * @return <code>true</code> if the bucket is identical, <code>false</code> otherwise
+		 */
+		public boolean equals(Object pThat) {
+			/* Handle the trivial cases */
+			if (this == pThat) return true;
+			if (pThat == null) return false;
+			
+			/* Make sure that the object is a MoneyBucket */
+			if (pThat.getClass() != this.getClass()) return false;
+			
+			/* Access the object as a MoneyBucket */
+			MoneyBucket myBucket = (MoneyBucket)pThat;
+			
+			/* Check for equality */
+			if (Utils.differs(getName(),    myBucket.getName()))	return false;
+			if (getBucket() != myBucket.getBucket()) 				return false;
+			if (getOrder() 	!= myBucket.getOrder()) 				return false;
+			if (Utils.differs(getType(),    myBucket.getType())) 	return false;
+			if (Utils.differs(getAmount(),  myBucket.getAmount())) 	return false;
+			if (Utils.differs(getRate(),    myBucket.getRate())) 	return false;
+			if (Utils.differs(getDate(),	myBucket.getDate())) 	return false;
+			return true;
+		}
+
 		/**
 	 	 * Set a Rate and date for the account
 	 	 * @param  pPrice price for asset

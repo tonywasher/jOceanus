@@ -242,8 +242,8 @@ public class SheetTaxYear {
 		java.util.Date  myYear;
 		Cell	  		myCell;
 		DateCell  		myDateCell;
-		long      		myID;
-		long      		myRegimeID;
+		int      		myID;
+		int      		myRegimeID;
 		int		  		myCol;
 		int       		myTotal;
 		int				mySteps;
@@ -285,9 +285,9 @@ public class SheetTaxYear {
 				
 					/* Access IDs */
 					myCell    	= mySheet.getCell(myCol, i);
-					myID      	= Long.parseLong(myCell.getContents());
+					myID      	= Integer.parseInt(myCell.getContents());
 					myCell    	= mySheet.getCell(myCol+1, i);
-					myRegimeID 	= Long.parseLong(myCell.getContents());
+					myRegimeID 	= Integer.parseInt(myCell.getContents());
 				
 					/* Handle Date */
 					myCell     = mySheet.getCell(myCol+2, i);
@@ -451,10 +451,10 @@ public class SheetTaxYear {
 			while ((myCurr  = myIterator.next()) != null) {
 				/* Create the Identifier cell */
 				myCell = new jxl.write.Label(0, myRow, 
-						 					 Long.toString(myCurr.getId()));
+						 					 Integer.toString(myCurr.getId()));
 				mySheet.addCell(myCell);
 				myCell = new jxl.write.Label(1, myRow, 
-	 					 					 Long.toString(myCurr.getTaxRegime().getId()));
+	 					 					 Integer.toString(myCurr.getTaxRegime().getId()));
 				mySheet.addCell(myCell);
 				
 				/* Create the Date cells */

@@ -160,8 +160,8 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Determine the TaxRegime of the newly loaded item
 	 * @return the TaxRegime
 	 */
-	private long getTaxRegime() throws SQLException {
-		return getLong();
+	private int getTaxRegime() throws SQLException {
+		return getInteger();
 	}
 
 	/**
@@ -336,8 +336,8 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the TaxRegime of the item to be inserted
 	 * @param id the id of the TaxRegime for the item
 	 */
-	private void setTaxRegime(long id) throws SQLException {
-		setLong(id);
+	private void setTaxRegime(int id) throws SQLException {
+		setInteger(id);
 	}
 	
 	/**
@@ -512,8 +512,8 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the TaxRegime of the item
 	 * @param uId the id of the tax regime
 	 */
-	private void updateTaxRegime(long uId) {
-		updateLong(theTxRgCol, uId);
+	private void updateTaxRegime(int uId) {
+		updateInteger(theTxRgCol, uId);
 	}
 	
 	/**
@@ -679,10 +679,11 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	/* Create statement for TaxYears */
 	protected String createStatement() {
 		return "create table " + theTabName + " ( " +
-			   theIdCol 	+ " bigint NOT NULL PRIMARY KEY, " +
+			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
 			   theYearCol	+ " date NOT NULL, " +
-			   theTxRgCol	+ " bigint NOT NULL, " + 
-			   theAllwCol	+ " money NOT NULL, " +
+			   theTxRgCol	+ " int NOT NULL " + 
+		   			"REFERENCES " + TableTaxRegime.idReference() + ", " +
+		   	   theAllwCol	+ " money NOT NULL, " +
 			   theRentCol	+ " money NOT NULL, " +
 			   theLoBdCol	+ " money NOT NULL, " +
 			   theBsBdCol	+ " money NOT NULL, " +
@@ -728,7 +729,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	/* Load the tax year */
 	public void loadItem() throws Exception {
 		TaxYear.List	myList;
-		long    		myId;
+		int	    		myId;
 		java.util.Date  myYear;
 		String  		myAllowance;
 		String  		myRentalAllow;
@@ -750,7 +751,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 		String  		myAddDivTaxRate;
 		String  		myCapTaxRate;
 		String  		myHiCapTaxRate;
-		long	  		myRegime;
+		int		  		myRegime;
 		
 		/* Protect the access */
 		try {			

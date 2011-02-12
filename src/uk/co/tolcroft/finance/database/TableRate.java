@@ -62,8 +62,8 @@ public class TableRate extends DatabaseTable<Rate> {
 	 * Determine the Account of the newly loaded item
 	 * @return the Account
 	 */
-	private long getAccount() throws SQLException {
-		return getLong();
+	private int getAccount() throws SQLException {
+		return getInteger();
 	}
 
 	/**
@@ -94,8 +94,8 @@ public class TableRate extends DatabaseTable<Rate> {
 	 * Set the Account of the item to be inserted
 	 * @param pAccount the account of the item
 	 */
-	private void setAccount(long pAccount) throws SQLException {
-		setLong(pAccount);
+	private void setAccount(int pAccount) throws SQLException {
+		setInteger(pAccount);
 	}
 
 	/**
@@ -127,8 +127,8 @@ public class TableRate extends DatabaseTable<Rate> {
 	 * Update the Account of the item
 	 * @param pValue the new account
 	 */
-	private void updateAccount(long pValue) {
-		updateLong(theActCol, pValue);
+	private void updateAccount(int pValue) {
+		updateInteger(theActCol, pValue);
 	}		
 
 	/**
@@ -159,8 +159,8 @@ public class TableRate extends DatabaseTable<Rate> {
 	/* Create statement for Rates */
 	protected String createStatement() {
 		return "create table " + theTabName + " ( " +
-			   theIdCol 	+ " bigint NOT NULL PRIMARY KEY, " +
-			   theActCol	+ " bigint NOT NULL " +
+			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
+			   theActCol	+ " int NOT NULL " +
 			   		"REFERENCES " + TableAccount.idReference() + ", " +
    			   theRateCol	+ " decimal(4,2) NOT NULL, " +
 			   theBonusCol	+ " decimal(4,2) NULL, " +
@@ -181,8 +181,8 @@ public class TableRate extends DatabaseTable<Rate> {
 	/* Load the rate */
 	protected void loadItem() throws Exception {
 		Rate.List		myList;
-		long    		myId;
-		long  			myAccountId;
+		int	    		myId;
+		int	  			myAccountId;
 		String			myRate;
 		String 			myBonus;
 		java.util.Date  myEndDate;

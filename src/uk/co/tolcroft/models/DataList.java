@@ -375,7 +375,7 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>{
 	 * @param uId the Id to check
 	 * @return Whether the id is unique <code>true/false</code>
 	 */
-	public boolean isIdUnique(long uId) {
+	public boolean isIdUnique(int uId) {
 		/* Ask the Id Manager for the answer */
 		return theMgr.isIdUnique(uId);
 	}
@@ -400,7 +400,13 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>{
 	 * @return the type of the list
 	 */
 	abstract public String itemType();
-		
+	
+	/**
+	 * Stub for extensions to add their own fields
+	 * @param pBuffer the string buffer 
+	 */
+	public void addHTMLFields(StringBuilder pBuffer) {}
+	
 	/**
 	 * Provide a string representation of this object
 	 * @return formatted string
@@ -435,6 +441,7 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>{
 		myString.append(theEdit); 
 		myString.append("</td></tr>"); 
 		if (showDeleted) myString.append("<tr><td>showDeleted</td><td>true</td></tr>");
+		addHTMLFields(myString);
 		myString.append("</tbody></table>"); 
 			
 		/* Create an iterator for the source base list */
@@ -509,7 +516,7 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>{
 	 * @param uId Id of Item
 	 * @return The Item if present (or <code>null</code>)
 	 */
-	public T searchFor(long uId) {		
+	public T searchFor(int uId) {		
 		/* Access the item from the IdManager */
 		T myItem = theMgr.getItem(uId);
 			

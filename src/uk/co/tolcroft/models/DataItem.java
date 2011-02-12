@@ -100,7 +100,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
     /**
 	 * The id number of the item
 	 */
-	private long 	            theId 	   = 0;
+	private int 	            theId 	   = 0;
 
 	/**
 	 * The history control {@link historyCtl}
@@ -128,7 +128,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * Get the Id for this item
 	 * @return the Id
 	 */
-	public long			getId()        	{ return theId; }
+	public int			getId()        	{ return theId; }
 
 	/**
 	 * Get the EditState for this item
@@ -191,13 +191,13 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * Determine whether the underlying base item is deleted
 	 * @return <code>true/false</code>
 	 */
-	public boolean		isCoreDeleted()  { return (theBase != null) &&
-												  (theBase.isDeleted); }
+	public boolean		isCoreDeleted() { return (theBase != null) &&
+											     (theBase.isDeleted); }
 	/**
 	 * Set the id of the item
 	 * @param id of the item
 	 */
-	public void			setId(long id) 	{ theId = id; }
+	public void			setId(int id) 	{ theId = id; }
 	
 	/**
 	 * Set the base item for this item
@@ -236,7 +236,6 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 */
 	public StringBuilder toHTMLString() {
 		StringBuilder	myString = new StringBuilder(2000);
-		String	myTemp;
 		int     iField;
 		int		iNumFields = numFields();
 		
@@ -271,10 +270,12 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 		for (iField = 0;
 			 iField < iNumFields;
 			 iField++) {
-			/* Format the field */
-			myTemp = formatField(iField, theObj);
-			if (iField == 0)  myTemp = myTemp.substring(4);
-			myString.append(myTemp);
+			if (iField != 0) myString.append("<tr>"); 
+			myString.append("<td>"); 
+			myString.append(fieldName(iField)); 
+			myString.append("</td><td>"); 
+			myString.append(formatField(iField, theObj));
+			myString.append("</td></tr>");
 		}
 
 		/* If errors exist */
@@ -314,7 +315,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * Obtain the number of fields for an item
 	 * @return the number of fields
 	 */
-	abstract public int	numFields();
+	public int	numFields() { return 0; }
 	
 	/**
 	 * Format the value of a particular field
@@ -547,7 +548,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * @param uId the Id of the new item (or 0 if not yet known)
 	 */
 	@SuppressWarnings("unchecked")
-	public DataItem(DataList<?> pList, long uId) {
+	public DataItem(DataList<?> pList, int uId) {
 		theId      = uId;
 		theList    = (DataList<DataItem>)pList;
 		theHistory = new historyCtl();
@@ -1115,9 +1116,14 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 					 fieldId < numFields();
 					 fieldId++) {
 					/* If the field has changed */
-					if (theObj.fieldChanged(fieldId, myObj))
+					if (theObj.fieldChanged(fieldId, myObj)) {
 						/* Format the field */
+						myString.append("<tr><td>"); 
+						myString.append(fieldName(fieldId)); 
+						myString.append("</td><td>"); 
 						myString.append(formatField(fieldId, theObj));
+						myString.append("</td></tr>");
+					}
 				}
 				
 				/* Return the formatted string */

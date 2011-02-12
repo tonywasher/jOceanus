@@ -87,14 +87,14 @@ public class TransactionType extends DataItem {
 	 * @return the formatted field
 	 */
 	public String formatField(int iField, histObject pObj) {
-		String myString = "<tr><td>" + fieldName(iField) + "</td><td>"; 
+		String myString = ""; 
 		switch (iField) {
 			case FIELD_ID: 		myString += getId();  	break;
 			case FIELD_NAME:	myString += getName(); 	break;
 			case FIELD_ORDER: 	myString += getOrder();	break;
 			case FIELD_CLASS: 	myString += theClass;	break;
 		}
-		return myString + "</td></tr>";
+		return myString;
 	}
 	
 	/**
@@ -122,7 +122,7 @@ public class TransactionType extends DataItem {
 	 * @param sName Name of Transaction Type
 	 */
 	private TransactionType(List 	pList,
-                       		long    uId,
+                       		int		uId,
                        		String	sName) throws Exception {
 		super(pList, uId);
 		Values myObj = new Values();
@@ -771,7 +771,7 @@ public class TransactionType extends DataItem {
 		 * @param uId the Id of the transaction type
 		 * @param pTransType the Name of the transaction type
 		 */ 
-		public void addItem(long   uId,
+		public void addItem(int    uId,
 				            String pTransType) throws Exception {
 			TransactionType     myTransType;
 			

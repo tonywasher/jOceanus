@@ -256,6 +256,34 @@ public class Statement {
 		 */
 		public String itemType() { return "StatementLine"; }
 		
+		/**
+		 * Add additional fields to HTML String
+		 * @param pBuffer the string buffer 
+		 */
+		public void addHTMLFields(StringBuilder pBuffer) {
+			/* Start the Fields section */
+			pBuffer.append("<tr><th rowspan=\"6\">Fields</th></tr>");
+				
+			/* Format the balances */
+			pBuffer.append("<tr><td>Account</td><td>"); 
+			pBuffer.append(Utils.formatAccount(theAccount)); 
+			pBuffer.append("</td></tr>");
+			
+			/* Format the balances */
+			pBuffer.append("<tr><td>StartBalance</td><td>"); 
+			pBuffer.append(Utils.formatMoney(theStartBalance)); 
+			pBuffer.append("</td></tr>"); 
+			pBuffer.append("<tr><td>EndBalance</td><td>"); 
+			pBuffer.append(Utils.formatMoney(theEndBalance)); 
+			pBuffer.append("</td></tr>"); 
+			pBuffer.append("<tr><td>StartUnits</td><td>"); 
+			pBuffer.append(Utils.formatUnits(theStartUnits)); 
+			pBuffer.append("</td></tr>"); 
+			pBuffer.append("<tr><td>EndUnits</td><td>"); 
+			pBuffer.append(Utils.formatUnits(theEndUnits)); 
+			pBuffer.append("</td></tr>"); 
+		}
+		
 		/** 
 		 * Validate a statement
 		 */
@@ -369,7 +397,7 @@ public class Statement {
 		 * @return the formatted field
 		 */
 		public String formatField(int iField, histObject pObj) {
-			String 		myString = "<tr><td>" + fieldName(iField) + "</td><td>";
+			String 		myString = "";
 			Values 	myObj 	 = (Values)pObj;
 			switch (iField) {
 				case FIELD_ID: 		
@@ -409,7 +437,7 @@ public class Statement {
 					myString += Utils.formatDilution(myObj.getDilution()); 
 					break;
 			}
-			return myString + "</td></tr>";
+			return myString;
 		}
 								
 		/* Standard constructor for a newly inserted pattern */

@@ -14,7 +14,7 @@ public class Price extends DataItem {
 	private static final String objName = "Price";
 
 	/* Local values */
-	private long 	theAccountId	= -1;
+	private int		 	theAccountId	= -1;
 	
 	/* Access methods */
 	public  Values  		getObj()    	{ return (Values)super.getObj(); }
@@ -67,7 +67,7 @@ public class Price extends DataItem {
 	 * @return the formatted field
 	 */
 	public String formatField(int iField, histObject pObj) {
-		String 	myString = "<tr><td>" + fieldName(iField) + "</td><td>";
+		String 	myString = "";
 		Values 	myObj 	 = (Values)pObj;
 		switch (iField) {
 			case FIELD_ID: 		
@@ -87,7 +87,7 @@ public class Price extends DataItem {
 				myString += Utils.formatPrice(myObj.getPrice()); 
 				break;
 		}
-		return myString + "</td></tr>";
+		return myString;
 	}
 							
 	/**
@@ -127,8 +127,8 @@ public class Price extends DataItem {
 
 	/* Standard constructor */
 	private Price(List       		pList,
-			      long           	uId, 
-				  long 		    	uAccountId,
+			      int           	uId, 
+				  int 		    	uAccountId,
 			      java.util.Date 	pDate, 
 			      String 			pPrice) throws Exception {
 		/* Initialise the item */
@@ -633,7 +633,7 @@ public class Price extends DataItem {
 		/**
 		 *  Add a Price
 		 */
-		public void addItem(long     		uId,
+		public void addItem(int     		uId,
 							java.util.Date  pDate,
 	            			String   		pAccount,
 				            String   		pPrice) throws Exception {
@@ -662,9 +662,9 @@ public class Price extends DataItem {
 		/**
 		 *  Allow a price to be added
 		 */
-		public void addItem(long     		uId,
+		public void addItem(int     		uId,
 				            java.util.Date  pDate,
-				            long     		uAccountId,
+				            int     		uAccountId,
 				            String   		pPrice) throws Exception {
 			Price     	myPrice;
 			

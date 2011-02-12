@@ -111,7 +111,7 @@ public class SheetFrequency {
 		Cell    		myTop;
 		Cell    		myBottom;
 		Cell    		myCell;
-		long    		myID;
+		int	    		myID;
 		int     		myCol;
 		int     		myTotal;
 		int				mySteps;
@@ -152,7 +152,7 @@ public class SheetFrequency {
 					 i++) {
 					/* Access the cell by reference */
 					myCell = mySheet.getCell(myCol, i);
-					myID   = Long.parseLong(myCell.getContents());
+					myID   = Integer.parseInt(myCell.getContents());
 					myCell = mySheet.getCell(myCol+1, i);
 				
 					/* Add the value into the finance tables */
@@ -227,7 +227,7 @@ public class SheetFrequency {
 			while ((myCurr  = myIterator.next()) != null) {
 				/* Create the Identifier and Name cells */
 				myCell = new jxl.write.Label(0, myRow, 
-											 Long.toString(myCurr.getId()));
+											 Integer.toString(myCurr.getId()));
 				mySheet.addCell(myCell);
 				
 				/* Add the name to the list */

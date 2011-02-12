@@ -143,6 +143,19 @@ public class Utils {
 	}
 
 	/**
+	 * Determine whether two {@link TaxType} objects differ.
+	 * 
+	 * @param pCurr The current TaxType 
+	 * @param pNew The new TaxType
+	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
+	 */	
+	public static boolean differs(TaxType pCurr, TaxType pNew) {
+		return (((pCurr == null) && (pNew != null)) ||
+				((pCurr != null) && 
+				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
+	}
+
+	/**
 	 * Determine whether two {@link AccountType} objects differ.
 	 * 
 	 * @param pCurr The current AccountType 
@@ -321,6 +334,19 @@ public class Utils {
 		String 	myFormat;
 		myFormat = (pTrans != null) ? pTrans.getName()
 								    : "null";
+		return myFormat;
+	}
+
+	/**
+	 * Format a TaxType 
+	 * 
+	 * @param pTaxType the taxtype to format
+	 * @return the formatted taxtype
+	 */
+	public static String formatTaxType(TaxType pTaxType) {
+		String 	myFormat;
+		myFormat = (pTaxType != null) ? pTaxType.getName()
+								      : "null";
 		return myFormat;
 	}
 

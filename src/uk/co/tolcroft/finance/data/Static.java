@@ -17,7 +17,7 @@ public class Static extends DataItem {
 	private SymmetricKey	theKey			= null;
 	
 	/* Access methods */
-	public  long 			getDataVersion()  	{ return getObj().getDataVersion(); }
+	public  int 			getDataVersion()  	{ return getObj().getDataVersion(); }
 	public  byte[] 			getSecurityKey()  	{ return getObj().getSecurityKey(); }
 	public  SymmetricKey	getKey()			{ return theKey; }
 
@@ -68,7 +68,7 @@ public class Static extends DataItem {
 	 * @return the formatted field
 	 */
 	public String formatField(int iField, histObject pObj) {
-		String 	myString = "<tr><td>" + fieldName(iField) + "</td><td>";
+		String 	myString = "";
 		switch (iField) {
 			case FIELD_ID: 		
 				myString += getId(); 
@@ -80,7 +80,7 @@ public class Static extends DataItem {
 				myString += "?????"; 
 				break;
 		}
-		return myString + "</td></tr>";
+		return myString;
 	}
 							
 	/**
@@ -113,8 +113,8 @@ public class Static extends DataItem {
 
 	/* Standard constructor */
 	public Static(List      pList,
-				  long		uId,
-			      long      uVersion, 
+				  int		uId,
+			      int       uVersion, 
 				  byte[]	pSecurityKey) throws Exception {
 		/* Initialise the item */
 		super(pList, uId);
@@ -281,8 +281,8 @@ public class Static extends DataItem {
 		/**
 		 *  Add a Static
 		 */
-		public void addItem(long  	uId,
-							long  	uVersion,
+		public void addItem(int  	uId,
+							int  	uVersion,
 	            			byte[]	pSecurityKey) throws Exception {
 			Static     	myStatic;
 			
@@ -304,14 +304,14 @@ public class Static extends DataItem {
 	 * Values for a static 
 	 */
 	public class Values implements histObject {
-		private long 			theDataVersion	= -1;
+		private int 			theDataVersion	= -1;
 		private byte[]			theSecurityKey	= null;
 		
 		/* Access methods */
-		public  long 			getDataVersion()  	{ return theDataVersion; }
+		public  int 			getDataVersion()  	{ return theDataVersion; }
 		public  byte[] 			getSecurityKey()  	{ return theSecurityKey; }
 		
-		public void setDataVersion(long pValue) {
+		public void setDataVersion(int pValue) {
 			theDataVersion = pValue; }
 		public void setSecurityKey(byte[] pValue) {
 			theSecurityKey = pValue; }

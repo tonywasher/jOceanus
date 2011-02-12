@@ -165,12 +165,12 @@ public class SheetAccount {
 		Cell      		myBottom;
 		int       		myCol;
 		int       		myCols;
-		long	  		myID;
+		int		  		myID;
 		String    		myName;
 		String	  		myDesc;
-		long      		myAcTypeId;
-		long      		myParentId;
-		long			myAliasId;
+		int      		myAcTypeId;
+		int      		myParentId;
+		int				myAliasId;
 		String     		myHexString;
 		byte[]     		myInitVector;
 		byte[]     		myWebSite;
@@ -224,10 +224,10 @@ public class SheetAccount {
 				
 					/* Access account and account type */
 					myCell    	= mySheet.getCell(myCol, i);
-					myID      	= Long.parseLong(myCell.getContents());
+					myID      	= Integer.parseInt(myCell.getContents());
 					myName 		= mySheet.getCell(myCol+1, i).getContents();
 					myCell    	= mySheet.getCell(myCol+2, i);
-					myAcTypeId	= Long.parseLong(myCell.getContents());
+					myAcTypeId	= Integer.parseInt(myCell.getContents());
 
 					/* Handle description which may be missing */
 					myDesc = null;
@@ -243,7 +243,7 @@ public class SheetAccount {
 					if (myCols > myCol+4) {
 						myCell     = mySheet.getCell(myCol+4, i);
 						if (myCell.getType() != CellType.EMPTY) {
-							myParentId	= Long.parseLong(myCell.getContents());
+							myParentId	= Integer.parseInt(myCell.getContents());
 						}
 					}
 				
@@ -252,7 +252,7 @@ public class SheetAccount {
 					if (myCols > myCol+5) {
 						myCell     = mySheet.getCell(myCol+5, i);
 						if (myCell.getType() != CellType.EMPTY) {
-							myParentId	= Long.parseLong(myCell.getContents());
+							myParentId	= Integer.parseInt(myCell.getContents());
 						}
 					}
 				
@@ -437,19 +437,19 @@ public class SheetAccount {
 			while ((myCurr  = myIterator.next()) != null) {
 				/* Create the Identifier cell */
 				myCell   = new jxl.write.Label(0, myRow, 
-											   Long.toString(myCurr.getId()));
+											   Integer.toString(myCurr.getId()));
 				mySheet.addCell(myCell);
 				myCell   = new jxl.write.Label(2, myRow,
-											   Long.toString(myCurr.getActType().getId()));
+											   Integer.toString(myCurr.getActType().getId()));
 				mySheet.addCell(myCell);
 				if (myCurr.getParent() != null) {
 					myCell   = new jxl.write.Label(4, myRow, 
-										           Long.toString(myCurr.getParent().getId()));
+										           Integer.toString(myCurr.getParent().getId()));
 					mySheet.addCell(myCell);
 				}
 				if (myCurr.getAlias() != null) {
 					myCell   = new jxl.write.Label(5, myRow, 
-										           Long.toString(myCurr.getAlias().getId()));
+										           Integer.toString(myCurr.getAlias().getId()));
 					mySheet.addCell(myCell);
 				}
 			

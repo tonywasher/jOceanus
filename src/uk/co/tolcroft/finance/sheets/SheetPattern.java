@@ -146,12 +146,12 @@ public class SheetPattern {
 		Cell        		myBottom;
 		String      		myDesc;
 		String      		myAmount;
-		long	    		myAccount;
-		long        		myPartner; 
-		long        		myFrequency;
+		int		    		myAccount;
+		int	        		myPartner; 
+		int	        		myFrequency;
 		boolean     		isCredit;
-		long        		myTranType;
-		long        		myID;
+		int	        		myTranType;
+		int	        		myID;
 		Cell        		myCell;
 		DateCell    		myDateCell;
 		BooleanCell 		myBoolCell;
@@ -197,15 +197,15 @@ public class SheetPattern {
 				
 					/* Access ids */
 					myCell    	= mySheet.getCell(myCol, i);
-					myID      	= Long.parseLong(myCell.getContents());
+					myID      	= Integer.parseInt(myCell.getContents());
 					myCell    	= mySheet.getCell(myCol+1, i);
-					myAccount  	= Long.parseLong(myCell.getContents());
+					myAccount  	= Integer.parseInt(myCell.getContents());
 					myCell    	= mySheet.getCell(myCol+2, i);
-					myPartner  	= Long.parseLong(myCell.getContents());
+					myPartner  	= Integer.parseInt(myCell.getContents());
 					myCell    	= mySheet.getCell(myCol+5, i);
-					myTranType 	= Long.parseLong(myCell.getContents());
+					myTranType 	= Integer.parseInt(myCell.getContents());
 					myCell    	= mySheet.getCell(myCol+6, i);
-					myFrequency	= Long.parseLong(myCell.getContents());
+					myFrequency	= Integer.parseInt(myCell.getContents());
 				
 					/* Access date */
 					myDateCell = (DateCell)mySheet.getCell(myCol+3, i);
@@ -305,19 +305,19 @@ public class SheetPattern {
 			while ((myCurr  = myIterator.next()) != null) {
 				/* Create the Identifier cells */
 				myCell = new jxl.write.Label(0, myRow, 
-											 Long.toString(myCurr.getId()));
+											 Integer.toString(myCurr.getId()));
 				mySheet.addCell(myCell);
 				myCell = new jxl.write.Label(1, myRow, 
-											 Long.toString(myCurr.getAccount().getId()));
+											 Integer.toString(myCurr.getAccount().getId()));
 				mySheet.addCell(myCell);
 				myCell = new jxl.write.Label(2, myRow, 
-											 Long.toString(myCurr.getPartner().getId()));
+											 Integer.toString(myCurr.getPartner().getId()));
 				mySheet.addCell(myCell);
 				myCell = new jxl.write.Label(5, myRow, 
-											 Long.toString(myCurr.getTransType().getId()));
+											 Integer.toString(myCurr.getTransType().getId()));
 				mySheet.addCell(myCell);
 				myCell = new jxl.write.Label(6, myRow,
-											 Long.toString(myCurr.getFrequency().getId()));
+											 Integer.toString(myCurr.getFrequency().getId()));
 				mySheet.addCell(myCell);
 			
 				/* Create the Amount cells */

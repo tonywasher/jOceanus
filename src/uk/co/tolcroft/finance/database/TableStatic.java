@@ -51,8 +51,8 @@ public class TableStatic extends DatabaseTable<Static> {
 	 * Determine the Data Version of the newly loaded item
 	 * @return the Data Version
 	 */
-	private long getDataVersion() throws SQLException {
-		return getLong();
+	private int getDataVersion() throws SQLException {
+		return getInteger();
 	}
 		
 	/**
@@ -67,8 +67,8 @@ public class TableStatic extends DatabaseTable<Static> {
 	 * Set the DataVersion of the item to be inserted
 	 * @param pVersion the version of the item
 	 */
-	private void setDataVersion(long pVersion) throws SQLException {
-		setLong(pVersion);
+	private void setDataVersion(int pVersion) throws SQLException {
+		setInteger(pVersion);
 	}
 	
 	/**
@@ -83,8 +83,8 @@ public class TableStatic extends DatabaseTable<Static> {
 	 * Update the version of the item
 	 * @param pValue the new version
 	 */
-	private void updateDataVersion(long pValue) {
-		updateLong(theVersCol, pValue);
+	private void updateDataVersion(int pValue) {
+		updateInteger(theVersCol, pValue);
 	}	
 
 	/**
@@ -98,8 +98,8 @@ public class TableStatic extends DatabaseTable<Static> {
 	/* Create statement for Static */
 	protected String createStatement() {
 		return "create table " + theTabName + " ( " +
-			   theIdCol 	+ " bigint NOT NULL PRIMARY KEY, " +
-			   theVersCol	+ " bigint NOT NULL, " +
+			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
+			   theVersCol	+ " int NOT NULL, " +
 			   theKeyCol	+ " varbinary(1000) NOT NULL )";
 	}
 	
@@ -116,8 +116,8 @@ public class TableStatic extends DatabaseTable<Static> {
 	/* Load the static */
 	protected void loadItem() throws Exception {
 		Static.List	myList;
-		long    	myId;
-		long  		myVers;
+		int 	   	myId;
+		int	  		myVers;
 		byte[]		myKey;
 		
 		/* Protect the access */

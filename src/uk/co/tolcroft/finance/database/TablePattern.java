@@ -82,8 +82,8 @@ public class TablePattern extends DatabaseTable<Pattern> {
 	 * Determine the Account of the newly loaded item
 	 * @return the Account
 	 */
-	private long getAccount() throws SQLException {
-		return getLong();
+	private int getAccount() throws SQLException {
+		return getInteger();
 	}
 
 	/**
@@ -114,16 +114,16 @@ public class TablePattern extends DatabaseTable<Pattern> {
 	 * Determine the Partner Account of the newly loaded item
 	 * @return the Partner account
 	 */
-	private long getPartner() throws SQLException {
-		return getLong();
+	private int getPartner() throws SQLException {
+		return getInteger();
 	}
 
 	/**
 	 * Determine the TransType of the newly loaded item
 	 * @return the TransType
 	 */
-	private long getTransType() throws SQLException {
-		return getLong();
+	private int getTransType() throws SQLException {
+		return getInteger();
 	}
 
 	/**
@@ -138,16 +138,16 @@ public class TablePattern extends DatabaseTable<Pattern> {
 	 * Determine the Frequency of the newly loaded item
 	 * @return the Frequency
 	 */
-	private long getFrequency() throws SQLException {
-		return getLong();
+	private int getFrequency() throws SQLException {
+		return getInteger();
 	}		
 	
 	/**
 	 * Set the Account of the item to be inserted
 	 * @param pAccount the account of the item
 	 */
-	private void setAccount(long pAccount) throws SQLException {
-		setLong(pAccount);
+	private void setAccount(int pAccount) throws SQLException {
+		setInteger(pAccount);
 	}
 
 	/**
@@ -178,16 +178,16 @@ public class TablePattern extends DatabaseTable<Pattern> {
 	 * Set the Partner Account of the item to be inserted/updated
 	 * @param pPartner the partner account of the item
 	 */
-	private void setPartner(long pPartner) throws SQLException {
-		setLong(pPartner);
+	private void setPartner(int pPartner) throws SQLException {
+		setInteger(pPartner);
 	}
 
 	/**
 	 * Set the TransType of the item to be inserted/updated
 	 * @param pTransType the transtype of the item
 	 */
-	private void setTransType(long pTransType) throws SQLException {
-		setLong(pTransType);
+	private void setTransType(int pTransType) throws SQLException {
+		setInteger(pTransType);
 	}
 
 	/**
@@ -202,16 +202,16 @@ public class TablePattern extends DatabaseTable<Pattern> {
 	 * Set the Frequency of the item to be inserted/updated
 	 * @param pFrequency the frequency of the item
 	 */
-	private void setFrequency(long pFrequency) throws SQLException {
-		setLong(pFrequency);
+	private void setFrequency(int pFrequency) throws SQLException {
+		setInteger(pFrequency);
 	}
 	
 	/**
 	 * Update the Account of the item
 	 * @param pValue the new account
 	 */
-	private void updateAccount(long pValue) {
-		updateLong(theActCol, pValue);
+	private void updateAccount(int pValue) {
+		updateInteger(theActCol, pValue);
 	}		
 
 	/**
@@ -242,8 +242,8 @@ public class TablePattern extends DatabaseTable<Pattern> {
 	 * Update the Partner Account of the item
 	 * @param pValue the new partner account
 	 */
-	private void updatePartner(long pValue) {
-		updateLong(thePartCol, pValue);
+	private void updatePartner(int pValue) {
+		updateInteger(thePartCol, pValue);
 	}
 
 	/**
@@ -259,33 +259,33 @@ public class TablePattern extends DatabaseTable<Pattern> {
 	 * Update the TransType of the item
 	 * @param pValue the new transtype
 	 */
-	private void updateTransType(long pValue) {
-		updateLong(theTrnTypCol, pValue);
+	private void updateTransType(int pValue) {
+		updateInteger(theTrnTypCol, pValue);
 	}
 
 	/**
 	 * Update the Frequency of the item
 	 * @param pValue the new frequency
 	 */
-	private void updateFrequency(long pValue) {
-		updateLong(theFreqCol, pValue);
+	private void updateFrequency(int pValue) {
+		updateInteger(theFreqCol, pValue);
 	}
 	
 	/* Create statement for Patterns */
 	protected String createStatement() {
 		return "create table " + theTabName + " ( " +
-			   theIdCol 	+ " bigint NOT NULL PRIMARY KEY, " +
-			   theActCol	+ " bigint NOT NULL " +
+			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
+			   theActCol	+ " int NOT NULL " +
 			   		"REFERENCES " + TableAccount.idReference() + ", " +
    			   theDateCol	+ " date NOT NULL, " +
   			   theDescCol	+ " varchar(" + Pattern.DESCLEN + ") NOT NULL, " +
   			   theAmntCol	+ " money NOT NULL, " +
-  			   thePartCol	+ " bigint NOT NULL " +
+  			   thePartCol	+ " int NOT NULL " +
 		   			"REFERENCES " + TableAccount.idReference() + ", " +
-		   	   theTrnTypCol	+ " bigint NOT NULL " +
+		   	   theTrnTypCol	+ " int NOT NULL " +
 	   				"REFERENCES " + TableTransactionType.idReference() + ", " +
  			   theIsCrtCol	+ " bit NOT NULL, " +
-			   theFreqCol	+ " bigint NOT NULL " + 
+			   theFreqCol	+ " int NOT NULL " + 
 			   		"REFERENCES " + TableFrequency.idReference() + " )";
 	}
 	
@@ -305,11 +305,11 @@ public class TablePattern extends DatabaseTable<Pattern> {
 	/* Load the price */
 	protected void loadItem() throws Exception {
 		Pattern.List	myList;
-		long    		myId;
-		long  			myAccountId;
-		long  			myPartnerId;
-		long  			myTranType;
-		long  			myFreq;
+		int	    		myId;
+		int				myAccountId;
+		int  			myPartnerId;
+		int  			myTranType;
+		int  			myFreq;
 		boolean			isCredit;
 		String 			myDesc;
 		String 			myAmount;

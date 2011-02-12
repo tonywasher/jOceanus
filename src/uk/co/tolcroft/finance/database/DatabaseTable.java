@@ -218,16 +218,16 @@ public abstract class DatabaseTable<T extends DataItem> {
 	 * @return the ID
 	 * @throws SQLException
 	 */
-	protected long getID() throws SQLException {
-		return getLong();
+	protected int getID() throws SQLException {
+		return getInteger();
 	}			
 	
 	/**
 	 * Set the ID of the item to be inserted
 	 * @param pId the Id of the item
 	 */
-	protected void setID(long pId) throws SQLException {
-		setLong(pId);
+	protected void setID(int pId) throws SQLException {
+		setInteger(pId);
 	}
 	
 	/**
@@ -588,8 +588,8 @@ public abstract class DatabaseTable<T extends DataItem> {
 			/* Access the iterator */
 			myIterator = theList.listIterator(true);
 			
-			/* Loop through the list */
-			while ((myCurr = myIterator.next()) != null) {
+			/* Loop through the list in reverse order */
+			while ((myCurr = myIterator.previous()) != null) {
 				/* Ignore non-deleted items */
 				if (myCurr.getState() != DataState.DELETED) continue;
 				
@@ -600,7 +600,7 @@ public abstract class DatabaseTable<T extends DataItem> {
 				}
 				
 				/* Set the id */
-				setLong(myCurr.getId());
+				setInteger(myCurr.getId());
 		
 				/* Execute the delete */
 				execute();
@@ -951,7 +951,7 @@ public abstract class DatabaseTable<T extends DataItem> {
 	 * @param uId the ID of the item
 	 * @throws SQLException
 	 */
-	protected void updateId(long uId) throws SQLException {
+	protected void updateId(int uId) throws SQLException {
 		String myString;
 		
 		/* If we have updates */

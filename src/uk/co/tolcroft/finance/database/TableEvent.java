@@ -116,16 +116,16 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Determine the Debit Account of the newly loaded item
 	 * @return the Debit account
 	 */
-	private long getDebit() throws SQLException {
-		return getLong();
+	private int getDebit() throws SQLException {
+		return getInteger();
 	}
 
 	/**
 	 * Determine the Credit Account of the newly loaded item
 	 * @return the Credit account
 	 */
-	private long getCredit() throws SQLException {
-		return getLong();
+	private int getCredit() throws SQLException {
+		return getInteger();
 	}
 
 	/**
@@ -140,8 +140,8 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Determine the TransType of the newly loaded item
 	 * @return the TransType
 	 */
-	private long getTransType() throws SQLException {
-		return getLong();
+	private int getTransType() throws SQLException {
+		return getInteger();
 	}
 
 	/**
@@ -196,16 +196,16 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Set the Debit Account of the item to be inserted
 	 * @param pDebit the partner account of the item
 	 */
-	private void setDebit(long pDebit) throws SQLException {
-		setLong(pDebit);
+	private void setDebit(int pDebit) throws SQLException {
+		setInteger(pDebit);
 	}
 
 	/**
 	 * Set the Credit Account of the item to be inserted
 	 * @param pCredit the partner account of the item
 	 */
-	private void setCredit(long pCredit) throws SQLException {
-		setLong(pCredit);
+	private void setCredit(int pCredit) throws SQLException {
+		setInteger(pCredit);
 	}
 
 	/**
@@ -220,8 +220,8 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Set the TransType of the item to be inserted
 	 * @param pTransType the transtype of the item
 	 */
-	private void setTransType(long pTransType) throws SQLException {
-		setLong(pTransType);
+	private void setTransType(int pTransType) throws SQLException {
+		setInteger(pTransType);
 	}
 
 	/**
@@ -276,16 +276,16 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Update the Debit Account of the item
 	 * @param pValue the new debit account
 	 */
-	private void updateDebit(long pValue) {
-		updateLong(theDebCol, pValue);
+	private void updateDebit(int pValue) {
+		updateInteger(theDebCol, pValue);
 	}
 
 	/**
 	 * Update the Credit Account of the item
 	 * @param pValue the new credit account
 	 */
-	private void updateCredit(long pValue) {
-		updateLong(theCredCol, pValue);
+	private void updateCredit(int pValue) {
+		updateInteger(theCredCol, pValue);
 	}
 
 	/**
@@ -300,8 +300,8 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Update the TransType of the item
 	 * @param pValue the new transtype
 	 */
-	private void updateTransType(long pValue) {
-		updateLong(theTrnTypCol, pValue);
+	private void updateTransType(int pValue) {
+		updateInteger(theTrnTypCol, pValue);
 	}
 
 	/**
@@ -331,16 +331,16 @@ public class TableEvent extends DatabaseTable<Event> {
 	/* Create statement for Events */
 	protected String createStatement() {
 		return "create table " + theTabName + " ( " +
-			   theIdCol 	+ " bigint NOT NULL PRIMARY KEY, " +
+			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
    			   theDateCol	+ " date NOT NULL, " +
   			   theDescCol	+ " varchar(" + Event.DESCLEN + ") NOT NULL, " +
   			   theAmntCol	+ " money NOT NULL, " +
-			   theDebCol	+ " bigint NOT NULL " +
+			   theDebCol	+ " int NOT NULL " +
 		   			"REFERENCES " + TableAccount.idReference() + ", " +
-  			   theCredCol	+ " bigint NOT NULL " +
+  			   theCredCol	+ " int NOT NULL " +
 		   			"REFERENCES " + TableAccount.idReference() + ", " +
  			   theUnitCol	+ " money NULL, " +
-		   	   theTrnTypCol	+ " bigint NOT NULL " +
+		   	   theTrnTypCol	+ " int NOT NULL " +
 	   				"REFERENCES " + TableTransactionType.idReference() + ", " +
  			   theTaxCrtCol	+ " decimal(18,4) NULL, " +
  			   theDiluteCol	+ " decimal(18,6) NULL, " +
@@ -356,19 +356,19 @@ public class TableEvent extends DatabaseTable<Event> {
         				theDescCol + "," + theAmntCol + "," + 
         				theDebCol + "," + theCredCol +  "," +
         				theUnitCol + "," + theTrnTypCol + "," +
-        				theTaxCrtCol + "," + theDiluteCol + " " +
+        				theTaxCrtCol + "," + theDiluteCol + "," +
         				theYearsCol + " " +
         				" from " + getTableName() +			
-        				" order by " + theDateCol + "," + theDescCol;			
+        				" order by " + theDateCol;			
 	}
 	
 	/* Load the event */
 	protected void loadItem() throws Exception {
 		Event.List		myList;
-		long    		myId;
-		long  			myDebitId;
-		long  			myCreditId;
-		long  			myTranType;
+		int	    		myId;
+		int  			myDebitId;
+		int  			myCreditId;
+		int  			myTranType;
 		String 			myDesc;
 		String 			myAmount;
 		String 			myUnits;

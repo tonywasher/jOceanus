@@ -68,7 +68,7 @@ public class TableAccountType extends DatabaseTable<AccountType> {
 	/* Create statement for Account Types */
 	protected String createStatement() {
 		return "create table " + theTabName + " ( " +
-			   theIdCol 	+ " bigint NOT NULL PRIMARY KEY, " +
+			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
 			   theActTypCol	+ " varchar(" + AccountType.NAMELEN + ") NOT NULL )";
 	}
 	
@@ -84,7 +84,7 @@ public class TableAccountType extends DatabaseTable<AccountType> {
 	/* Load the account type */
 	protected void loadItem() throws Exception {
 		AccountType.List	myList;
-		long    			myId;
+		int	    			myId;
 		String  			myType;
 		
 		/* Protect the access */
