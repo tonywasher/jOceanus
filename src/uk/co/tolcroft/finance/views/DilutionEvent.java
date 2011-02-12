@@ -2,6 +2,8 @@ package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.Price;
+import uk.co.tolcroft.models.DataItem;
+import uk.co.tolcroft.models.DataState;
 import uk.co.tolcroft.models.Date;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Number;
@@ -10,11 +12,11 @@ import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.*;
 
-public class DilutionEvent implements SortedList.linkObject {
-    /**
-	 * Storage for the List Node
+public class DilutionEvent extends DataItem {
+	/**
+	 * The name of the object
 	 */
-    private Object			theLink		= null;
+	private static final String objName = "DilutionEvent";
 
 	/* Members */
 	private Account			theAccount	= null;
@@ -26,28 +28,93 @@ public class DilutionEvent implements SortedList.linkObject {
 	private Date			getDate() 		{ return theDate; }	
 	private Dilution		getDilution() 	{ return theDilution; }	
 
+	/* Field IDs */
+	public static final int FIELD_ID     	= 0;
+	public static final int FIELD_ACCOUNT  	= 1;
+	public static final int FIELD_DATE      = 2;
+	public static final int FIELD_DILUTION  = 3;
+	public static final int NUMFIELDS	    = 4;
+	
 	/**
-	 * Get the link node for this item
-	 * @return the Link node or <code>null</code>
+	 * Obtain the type of the item
+	 * @return the type of the item
 	 */
-	public Object		getLinkNode(Object pList)	{ return theLink; }
+	public String itemType() { return objName; }
+	
+	/**
+	 * Obtain the number of fields for an item
+	 * @return the number of fields
+	 */
+	public int	numFields() {return NUMFIELDS; }
+	
+	/**
+	 * Determine the field name for a particular field
+	 * @return the field name
+	 */
+	public String	fieldName(int iField) {
+		switch (iField) {
+			case FIELD_ID: 	  		return "ID";
+			case FIELD_ACCOUNT: 	return "Name";
+			case FIELD_DATE: 		return "Date";
+			case FIELD_DILUTION:	return "Dilution";
+			default:		  		return super.fieldName(iField);
+		}
+	}
+	
+	/**
+	 * Format the value of a particular field as a table row
+	 * @param iField the field number
+	 * @param pObj the values to use
+	 * @return the formatted field
+	 */
+	public String formatField(int iField, histObject pObj) {
+		String myString = "<tr><td>" + fieldName(iField) + "</td><td>"; 
+		switch (iField) {
+			case FIELD_ID: 			
+				myString += getId();
+				break;
+			case FIELD_ACCOUNT:		
+				myString += Utils.formatAccount(theAccount);
+				break;
+			case FIELD_DATE: 		
+				myString += Utils.formatDate(theDate);
+				break;
+			case FIELD_DILUTION: 	
+				myString += Utils.formatDilution(theDilution);
+				break;
+		}
+		return myString + "</td></tr>";
+	}
 
 	/**
-	 * Get the link node for this item
-	 * @return the Link node or <code>null</code>
-	 */
-	public void			setLinkNode(Object l, Object o)	{ theLink = o; }
-
-	/**
-	 * Determine whether the item is visible to standard searches
-	 * @return <code>true/false</code>
-	 */
-	public boolean		isHidden()    	{ return false; }
-
-	/**
-	 * Compare this AnalysisYear to another to establish sort order.
+	 * Compare this DilutionEvent to another to establish equality.
 	 * 
-	 * @param pThat The Year to compare to
+	 * @param pThat The DilutionEvent to compare to
+	 * @return <code>true</code> if the event is identical, <code>false</code> otherwise
+	 */
+	public boolean equals(Object pThat) {
+		/* Handle the trivial cases */
+		if (this == pThat) return true;
+		if (pThat == null) return false;
+		
+		/* Make sure that the object is a Dilution Event */
+		if (pThat.getClass() != this.getClass()) return false;
+		
+		/* Access the object as a DilutionEvent */
+		DilutionEvent myEvent = (DilutionEvent)pThat;
+		
+		/* Check for equality */
+		if (getId() != myEvent.getId()) return false;
+		if (Utils.differs(getDate(),      	myEvent.getDate())) 		return false;
+		if (Utils.differs(getAccount(),    	myEvent.getAccount())) 		return false;
+		if (Utils.differs(getDilution(),   	myEvent.getDilution()))		return false;
+		return true;
+	}
+
+	/**
+	 * Compare this DilutionEvent to another to establish sort order.
+	 * 
+	 * @param pThat The Event to compare to
 	 * @return (-1,0,1) depending of whether this object is before, equal, 
 	 * 					or after the passed object in the sort order
 	 */
@@ -81,9 +148,15 @@ public class DilutionEvent implements SortedList.linkObject {
 	
 	/**
 	 * Create a dilution event from an event
-	 * @param pEvent
+	 * @param pList the list
+	 * @param pEvent the underlying event
 	 */
-	private DilutionEvent(Event pEvent) {
+	private DilutionEvent(List 	pList, 
+						  Event pEvent) {
+		/* Call super constructor */
+		super(pList, pEvent.getId());
+		
+		/* Local variables */
 		Account 		myAccount;
 		TransactionType myType;
 		
@@ -107,6 +180,12 @@ public class DilutionEvent implements SortedList.linkObject {
 		theAccount 	= myAccount;
 		theDate		= pEvent.getDate();
 		theDilution = pEvent.getDilution();
+		
+		/* Link to the event */
+		setBase(pEvent);
+		
+		/* Set status */
+		setState(DataState.CLEAN);
 	}
 	
 	/**
@@ -115,19 +194,26 @@ public class DilutionEvent implements SortedList.linkObject {
 	 * @param pDate the Date
 	 * @param pDilution the dilution
 	 */
-	private DilutionEvent(Account 	pAccount,
+	private DilutionEvent(List		pList,
+						  Account 	pAccount,
 						  Date    	pDate,
 						  Dilution	pDilution) {
+		/* Call super constructor */
+		super(pList, 0);
+		
 		/* Store the values */
 		theAccount 	= pAccount;
 		theDate		= pDate;
 		theDilution = pDilution;
+		
+		/* Set status */
+		setState(DataState.CLEAN);
 	}
 	
 	/**
 	 * List of DilutionEvents
 	 */
-	public static class List extends SortedList<DilutionEvent> {
+	public static class List extends DataList<DilutionEvent> {
 		/* Members */
 		DataSet theData = null;
 		
@@ -136,9 +222,38 @@ public class DilutionEvent implements SortedList.linkObject {
 		 * @param pData the DataSet
 		 */
 		public List(DataSet pData) {
+			super(ListStyle.VIEW, false);
 			theData = pData;
 		}
 		
+		/** 
+	 	 * Clone a Dilution Event list
+	 	 * @return the cloned list
+	 	 */
+		protected List cloneIt() { return null; }
+		
+		/**
+		 * Add a new item to the list
+		 * 
+		 * @param pItem the item to add
+		 * @return the newly added item
+		 */
+		public DataItem addNewItem(DataItem pItem) { return null; }
+
+	
+		/**
+		 * Add a new item to the edit list
+		 * 
+		 * @param isCredit - ignored
+		 */
+		public void addNewItem(boolean isCredit) { return; }
+	
+		/**
+		 * Obtain the type of the item
+		 * @return the type of the item
+		 */
+		public String itemType() { return objName; }		
+
 		/**
 		 * Add Dilution Event to List
 		 * @param pEvent the base event
@@ -147,7 +262,7 @@ public class DilutionEvent implements SortedList.linkObject {
 			DilutionEvent myDilution;
 			
 			/* Create the dilution event */
-			myDilution = new DilutionEvent(pEvent);
+			myDilution = new DilutionEvent(this, pEvent);
 			
 			/* Add it to the list */
 			add(myDilution);
@@ -185,7 +300,8 @@ public class DilutionEvent implements SortedList.linkObject {
 									"Invalid Dilution: " + pDilution);
 			
 			/* Create the dilution event */
-			myEvent = new DilutionEvent(myAccount,
+			myEvent = new DilutionEvent(this,
+										myAccount,
 									 	myDate,
 									 	myDilution);
 			
