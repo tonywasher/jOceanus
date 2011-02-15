@@ -318,6 +318,9 @@ public class Static extends DataItem {
 		
 		/* Protected against exceptions */
 		try {
+			/* Handle null string */
+			if (pValue == null) return null;
+			
 			/* If the encryption cipher has been reset */
 			if (theEncrypt == null) {
 				/* Initialise the encryption cipher */
@@ -358,6 +361,9 @@ public class Static extends DataItem {
 		
 		/* Protected against exceptions */
 		try {
+			/* Handle null array */
+			if (pValue == null) return null;
+			
 			/* If the encryption cipher has been reset */
 			if (theEncrypt == null) {
 				/* Initialise the encryption cipher */
@@ -398,6 +404,9 @@ public class Static extends DataItem {
 		
 		/* Protected against exceptions */
 		try {
+			/* Handle null bytes */
+			if (pValue == null) return null;
+			
 			/* If the decryption cipher has been reset */
 			if (theDecrypt == null) {
 				/* Initialise the decryption cipher */
@@ -438,6 +447,9 @@ public class Static extends DataItem {
 		
 		/* Protected against exceptions */
 		try {
+			/* Handle null bytes */
+			if (pValue == null) return null;
+			
 			/* If the decryption cipher has been reset */
 			if (theDecrypt == null) {
 				/* Initialise the decryption cipher */
