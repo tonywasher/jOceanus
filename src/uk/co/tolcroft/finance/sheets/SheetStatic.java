@@ -77,8 +77,8 @@ public class SheetStatic {
 			/* Access the static */
 			myStatic = pData.getStatic();
 		
-			/* Add the value into the finance tables */
-			myStatic.addItem(0, Properties.CURRENTVERSION, null);
+			/* Add the value into the finance tables (with no security as yet) */
+			myStatic.addItem(0, Properties.CURRENTVERSION);
 		}
 
 		/* Calculate the number of stages */
@@ -104,7 +104,9 @@ public class SheetStatic {
 		Static.List 		myList;
 		int					myID;
 		int					myVersion;
+		String				myControlKey;
 		byte[]				mySecurityKey;
+		byte[]				myInitVector;
 		Cell    			myTop;
 		Cell    			myBottom;
 		Cell    			myCell;
@@ -153,12 +155,20 @@ public class SheetStatic {
 					myCell = mySheet.getCell(myCol+1, i);
 					myVersion = Integer.parseInt(myCell.getContents());
 
-					/* Access the SecurityKey */
+					/* Access the ControlKey */
 					myCell = mySheet.getCell(myCol+2, i);
+					myControlKey = myCell.getContents();
+
+					/* Access the SecurityKey */
+					myCell = mySheet.getCell(myCol+3, i);
 					mySecurityKey = Utils.BytesFromHexString(myCell.getContents());
 
+					/* Access the Initialisation Vector */
+					myCell = mySheet.getCell(myCol+4, i);
+					myInitVector  = Utils.BytesFromHexString(myCell.getContents());
+
 					/* Add the value into the finance tables */
-					myList.addItem(myID, myVersion, mySecurityKey);
+					myList.addItem(myID, myVersion, myControlKey, mySecurityKey, myInitVector);
 				
 					/* Report the progress */
 					myCount++;
@@ -234,12 +244,23 @@ public class SheetStatic {
 				mySheet.addCell(myCell);
 				
 				/* Add the data version to the list */
-				myCell = new jxl.write.Label(1, myRow, Integer.toString(myCurr.getDataVersion()));
+				myCell = new jxl.write.Label(1, myRow, 
+											 Integer.toString(myCurr.getDataVersion()));
 				mySheet.addCell(myCell);
 				
-				/* Add the Security Key */
+				/* Add the Control Key */
 				myCell = new jxl.write.Label(2, myRow, 
+											 myCurr.getControlKey());
+				mySheet.addCell(myCell);
+			
+				/* Add the Security Key */
+				myCell = new jxl.write.Label(3, myRow, 
 											 Utils.HexStringFromBytes(myCurr.getSecurityKey()));
+				mySheet.addCell(myCell);
+			
+				/* Add the Initialisation Vector */
+				myCell = new jxl.write.Label(4, myRow, 
+											 Utils.HexStringFromBytes(myCurr.getInitVector()));
 				mySheet.addCell(myCell);
 			
 				/* Report the progress */
@@ -251,7 +272,7 @@ public class SheetStatic {
 		
 			/* Add the Range name */
 			if (myRow > 0)
-				pWorkbook.addNameArea(Static, mySheet, 0, 0, 2, myRow-1);				
+				pWorkbook.addNameArea(Static, mySheet, 0, 0, 4, myRow-1);				
 		}
 	
 		catch (Throwable e) {

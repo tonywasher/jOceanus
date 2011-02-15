@@ -2,7 +2,7 @@ package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 
 public class ViewPrice extends DataItem {
 	/**
@@ -16,15 +16,15 @@ public class ViewPrice extends DataItem {
 	
 	/* Access methods */
 	public  Values  			getObj()    		{ return (Values)super.getObj(); }
-	public  Number.Price 		getPrice()  		{ return getObj().getPrice(); }
-	public  Number.Dilution		getDilution()  		{ return getObj().getDilution(); }
-	public  Number.DilutedPrice getDilutedPrice()  	{ return getObj().getDilutedPrice(); }
+	public  Price 				getPrice()  		{ return getObj().getPrice(); }
+	public  Dilution			getDilution()  		{ return getObj().getDilution(); }
+	public  DilutedPrice 		getDilutedPrice()  	{ return getObj().getDilutedPrice(); }
 	public  Date  				getDate()			{ return getObj().getDate(); }
 	public  Account				getAccount()		{ return theAccount; }
 	public  void	setAccount(Account pAccount)	{ theAccount = pAccount; }
 	
 	/* Linking methods */
-	public Price     getBase() { return (Price)super.getBase(); }
+	public AcctPrice     getBase() { return (AcctPrice)super.getBase(); }
 	
 	/* Field IDs */
 	public static final int FIELD_ID       		= 0;
@@ -77,19 +77,19 @@ public class ViewPrice extends DataItem {
 				myString += getId(); 
 				break;
 			case FIELD_ACCOUNT:
-				myString += Utils.formatAccount(getAccount()); 
+				myString += Account.format(getAccount()); 
 				break;
 			case FIELD_DATE:	
-				myString += Utils.formatDate(getDate()); 
+				myString += Date.format(getDate()); 
 				break;
 			case FIELD_PRICE:	
-				myString += Utils.formatPrice(myObj.getPrice()); 
+				myString += Price.format(myObj.getPrice()); 
 				break;
 			case FIELD_DILUTION:	
-				myString += Utils.formatDilution(getDilution()); 
+				myString += Dilution.format(getDilution()); 
 				break;
 			case FIELD_DILUTEDPRICE:	
-				myString += Utils.formatDilutedPrice(myObj.getDilutedPrice()); 
+				myString += DilutedPrice.format(myObj.getDilutedPrice()); 
 				break;
 		}
 		return myString;
@@ -100,7 +100,7 @@ public class ViewPrice extends DataItem {
  	* 
  	* @param pPrice The Price 
  	*/
-	protected ViewPrice(List pList, Price pPrice) {
+	protected ViewPrice(List pList, AcctPrice pPrice) {
 		/* Set standard values */
 		super(pList, pPrice.getId());
 		
@@ -117,7 +117,7 @@ public class ViewPrice extends DataItem {
 		/* If we have dilutions */
 		if (hasDilution) {
 			/* Determine the dilution factor for the date */
-			Number.Dilution myDilution = pList.getDilutions().getDilutionFactor(theAccount, getDate());
+			Dilution myDilution = pList.getDilutions().getDilutionFactor(theAccount, getDate());
 			
 			/* If we have a dilution factor */
 			if (myDilution != null) {
@@ -161,8 +161,8 @@ public class ViewPrice extends DataItem {
 		
 		/* Check for equality */
 		if (getId() != myPrice.getId()) return false;
-		if (Utils.differs(getDate(),    myPrice.getDate())) 	return false;
-		if (Utils.differs(getPrice(),   myPrice.getPrice())) 	return false;
+		if (Date.differs(getDate(),     myPrice.getDate())) 	return false;
+		if (Price.differs(getPrice(),   myPrice.getPrice())) 	return false;
 		return true;
 	}
 
@@ -246,15 +246,15 @@ public class ViewPrice extends DataItem {
 	 * 
 	 * @param pPrice the price 
 	 */
-	public void setPrice(Number.Price pPrice) {
-		getObj().setPrice((pPrice == null) ? null : new Number.Price(pPrice));
+	public void setPrice(Price pPrice) {
+		getObj().setPrice((pPrice == null) ? null : new Price(pPrice));
 		
 		/* If we have dilutions and a valid date/price */
 		if ((getDate() != null) && (pPrice != null) && (hasDilution)) {
 			ViewPrice.List myList = (ViewPrice.List)getList();
 			
 			/* Determine the dilution factor for the date */
-			Number.Dilution myDilution = myList.getDilutions().getDilutionFactor(theAccount, getDate());
+			Dilution myDilution = myList.getDilutions().getDilutionFactor(theAccount, getDate());
 			
 			/* If we have a dilution factor */
 			if (myDilution != null) {
@@ -293,7 +293,7 @@ public class ViewPrice extends DataItem {
 			ViewPrice.List myList = (ViewPrice.List)getList();
 			
 			/* Determine the dilution factor for the date */
-			Number.Dilution myDilution = myList.getDilutions().getDilutionFactor(theAccount, getDate());
+			Dilution myDilution = myList.getDilutions().getDilutionFactor(theAccount, getDate());
 			
 			/* If we have a dilution factor */
 			if (myDilution != null) {
@@ -346,10 +346,10 @@ public class ViewPrice extends DataItem {
 			theData = pView.getData();
 
 			/* Local variables */
-			Price.List						myPrices;
-			Price 							myCurr;
+			AcctPrice.List						myPrices;
+			AcctPrice 							myCurr;
 			ViewPrice 						myItem;
-			DataList<Price>.ListIterator 	myIterator;
+			DataList<AcctPrice>.ListIterator 	myIterator;
 
 			/* Skip to alias if required */
 			if ((pAccount != null) && (pAccount.getAlias() != null))
@@ -371,7 +371,7 @@ public class ViewPrice extends DataItem {
 			/* Loop through the list */
 			while ((myCurr = myIterator.next()) != null) {
 				/* If this item belongs to the account */
-				if (!Utils.differs(myCurr.getAccount(), pAccount)) {
+				if (!Account.differs(myCurr.getAccount(), pAccount)) {
 					/* Copy the item */
 					myItem = new ViewPrice(this, myCurr);
 					myItem.addToList();
@@ -442,7 +442,7 @@ public class ViewPrice extends DataItem {
 		 * Apply changes in a Prices view back into the core data
 		 */
 		public void applyChanges() {
-			Price.List myBase;
+			AcctPrice.List myBase;
 			
 			/* Access base details */
 			myBase     = theData.getPrices();
@@ -461,23 +461,23 @@ public class ViewPrice extends DataItem {
 	 */
 	public class Values implements histObject {
 		private Date       			theDate      	= null;
-		private Number.Price    	thePrice     	= null;
-		private Number.Dilution		theDilution		= null;
-		private Number.DilutedPrice	theDilutedPrice = null;
+		private Price    			thePrice     	= null;
+		private Dilution			theDilution		= null;
+		private DilutedPrice		theDilutedPrice = null;
 		
 		/* Access methods */
 		public Date       			getDate()      		{ return theDate; }
-		public Number.Price			getPrice()     		{ return thePrice; }
-		public Number.Dilution		getDilution()   	{ return theDilution; }
-		public Number.DilutedPrice	getDilutedPrice()   { return theDilutedPrice; }
+		public Price				getPrice()     		{ return thePrice; }
+		public Dilution				getDilution()   	{ return theDilution; }
+		public DilutedPrice			getDilutedPrice()   { return theDilutedPrice; }
 		
 		public void setDate(Date pDate) {
 			theDate      	= pDate; }
-		public void setPrice(Number.Price pPrice) {
+		public void setPrice(Price pPrice) {
 			thePrice     	= pPrice; }
-		public void setDilution(Number.Dilution pDilution) {
+		public void setDilution(Dilution pDilution) {
 			theDilution  	= pDilution; }
-		public void setDilutedPrice(Number.DilutedPrice pDilutedPrice) {
+		public void setDilutedPrice(DilutedPrice pDilutedPrice) {
 			theDilutedPrice	= pDilutedPrice; }
 
 		/* Constructor */
@@ -495,10 +495,10 @@ public class ViewPrice extends DataItem {
 			return histEquals(myValues);
 		}
 		public boolean histEquals(Values pValues) {
-			if (Utils.differs(theDate,    		pValues.theDate))    		return false;
-			if (Utils.differs(thePrice,   		pValues.thePrice))   		return false;
-			if (Utils.differs(theDilution, 		pValues.theDilution)) 		return false;
-			if (Utils.differs(theDilutedPrice, 	pValues.theDilutedPrice))	return false;
+			if (Date.differs(theDate,    				pValues.theDate))    		return false;
+			if (Price.differs(thePrice,   				pValues.thePrice))   		return false;
+			if (Dilution.differs(theDilution, 			pValues.theDilution)) 		return false;
+			if (DilutedPrice.differs(theDilutedPrice, 	pValues.theDilutedPrice))	return false;
 			return true;
 		}
 		
@@ -521,16 +521,16 @@ public class ViewPrice extends DataItem {
 			boolean	bResult = false;
 			switch (fieldNo) {
 				case FIELD_DATE:
-					bResult = (Utils.differs(theDate,      		pValues.theDate));
+					bResult = (Date.differs(theDate,      		pValues.theDate));
 					break;
 				case FIELD_PRICE:
-					bResult = (Utils.differs(thePrice,    		pValues.thePrice));
+					bResult = (Price.differs(thePrice,    		pValues.thePrice));
 					break;
 				case FIELD_DILUTION:
-					bResult = (Utils.differs(theDilution,   	pValues.theDilution));
+					bResult = (Dilution.differs(theDilution,   	pValues.theDilution));
 					break;
 				case FIELD_DILUTEDPRICE:
-					bResult = (Utils.differs(theDilutedPrice,	pValues.theDilutedPrice));
+					bResult = (DilutedPrice.differs(theDilutedPrice,	pValues.theDilutedPrice));
 					break;
 			}
 			return bResult;

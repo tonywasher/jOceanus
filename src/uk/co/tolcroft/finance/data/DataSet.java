@@ -2,12 +2,15 @@ package uk.co.tolcroft.finance.data;
 
 import uk.co.tolcroft.finance.views.AnalysisYear;
 import uk.co.tolcroft.finance.views.AssetAnalysis;
+import uk.co.tolcroft.finance.core.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.security.*;
 
 public class DataSet implements htmlDumpable {
-	private SecurityControl			theControl	  = null;
+	private SecureManager			theSecurity   = null;
+	private Static					theDefStatic  = null;
 	private Static.List				theStatic     = null;
 	private AccountType.List		theActTypes   = null;
 	private TransactionType.List	theTransTypes = null;
@@ -16,15 +19,15 @@ public class DataSet implements htmlDumpable {
     private Frequency.List			theFrequencys = null;
     private TaxYear.List			theTaxYears   = null;
     private Account.List			theAccounts   = null;
-    private Rate.List				theRates      = null;
-    private Price.List				thePrices     = null;
+    private AcctRate.List			theRates      = null;
+    private AcctPrice.List			thePrices     = null;
     private Pattern.List			thePatterns   = null; 
 	private Event.List				theEvents     = null;
     private Date.Range				theDateRange  = null;
     private LoadState				theLoadState  = LoadState.INITIAL;
 
     /* Access methods */
-	public SecurityControl		getSecurity() 		{ return theControl; }
+	protected SecureManager		getSecurity() 		{ return theSecurity; }
 	public Static.List 			getStatic() 		{ return theStatic; }
 	public AccountType.List 	getAccountTypes() 	{ return theActTypes; }
 	public TransactionType.List getTransTypes() 	{ return theTransTypes; }
@@ -33,8 +36,8 @@ public class DataSet implements htmlDumpable {
 	public Frequency.List 		getFrequencys() 	{ return theFrequencys; }
 	public TaxYear.List 		getTaxYears()  		{ return theTaxYears; }
 	public Account.List 		getAccounts()  		{ return theAccounts; }
-	public Rate.List 			getRates()  		{ return theRates; }
-	public Price.List 			getPrices()  		{ return thePrices; }
+	public AcctRate.List 		getRates()  		{ return theRates; }
+	public AcctPrice.List 		getPrices()  		{ return thePrices; }
 	public Pattern.List 		getPatterns()  		{ return thePatterns; }
 	public Event.List 			getEvents()  		{ return theEvents; }
 	public Date.Range 			getDateRange()  	{ return theDateRange; }
@@ -42,11 +45,10 @@ public class DataSet implements htmlDumpable {
 
 	/**
 	 *  Standard constructor
-	 *  @param pControl security Control
 	 */ 
-	public DataSet(SecurityControl pControl) {
-		/* Record the security Control */
-		theControl 	  = pControl;
+	public DataSet(SecureManager pSecurity) {
+		/* Store the security manager */
+		theSecurity   = pSecurity;
 		
 		/* Create the empty lists */
 		theStatic     = new Static.List(this);
@@ -57,8 +59,8 @@ public class DataSet implements htmlDumpable {
 		theFrequencys = new Frequency.List(this);
 		theTaxYears   = new TaxYear.List(this);
 		theAccounts   = new Account.List(this);
-		theRates      = new Rate.List(this);
-		thePrices     = new Price.List(this);
+		theRates      = new AcctRate.List(this);
+		thePrices     = new AcctPrice.List(this);
 		thePatterns   = new Pattern.List(this);
 		theEvents     = new Event.List(this);
 	}
@@ -74,9 +76,6 @@ public class DataSet implements htmlDumpable {
 	 * @param pOld The old list to extract from 
 	 */
 	public DataSet(DataSet pNew, DataSet pOld) {
-		/* Copy control from new */
-		theControl 	  = pNew.getSecurity();
-		
 		/* Build the static differences */
 		theStatic     = new Static.List(pNew.getStatic(), pOld.getStatic());
 		theActTypes   = new AccountType.List(pNew.getAccountTypes(), pOld.getAccountTypes());
@@ -88,8 +87,8 @@ public class DataSet implements htmlDumpable {
 		/* Build the data differences */
 		theTaxYears   = new TaxYear.List(pNew.getTaxYears(), pOld.getTaxYears());
 		theAccounts   = new Account.List(pNew.getAccounts(), pOld.getAccounts());
-		theRates      = new Rate.List(pNew.getRates(), pOld.getRates());
-		thePrices     = new Price.List(pNew.getPrices(), pOld.getPrices());
+		theRates      = new AcctRate.List(pNew.getRates(), pOld.getRates());
+		thePrices     = new AcctPrice.List(pNew.getPrices(), pOld.getPrices());
 		thePatterns   = new Pattern.List(pNew.getPatterns(), pOld.getPatterns());
 		theEvents     = new Event.List(pNew.getEvents(), pOld.getEvents());
 	}
@@ -129,7 +128,7 @@ public class DataSet implements htmlDumpable {
 		if (this == pThat) return true;
 		if (pThat == null) return false;
 		
-		/* Make sure that the object is an Event */
+		/* Make sure that the object is a DataSet */
 		if (pThat.getClass() != this.getClass()) return false;
 		
 		/* Access the object as a DataSet */
@@ -239,39 +238,72 @@ public class DataSet implements htmlDumpable {
 	}
 		
 	/**
-	 * Access the symmetric Key
+	 * Access the default static 
+	 * @param pControl the new control 
 	 */
-	public SymmetricKey			getKey() 		{ 
-		Static.List		myStaticList;
-		Static			myStatic;
-		
-		DataList<Static>.ListIterator myIterator;
-
+	protected Static ensureStatic() throws Exception {
 		/* Access the first static element */
-		myStaticList = getStatic();
-		myIterator	 = myStaticList.listIterator();
-		myStatic	 = myIterator.next();
+		theDefStatic	 = getStatic().getDefault();
 		
-		/* Return the key */
-		return (myStatic == null) ? null : myStatic.getKey();
+		/* Throw an exception if there is no static */
+		if (theDefStatic == null)
+			throw new Exception(ExceptionClass.LOGIC,
+								"No default static found");
+		
+		/* Return the static */
+		return theDefStatic;
 	}
 	
 	/**
-	 * Set the symmetric Key
+	 * Get the default static 
+	 * @return the default static 
 	 */
-	public void setKey(SymmetricKey pKey)	{ 
-		Static.List		myStaticList;
-		Static			myStatic;
+	public Static getDefaultStatic() throws Exception {
+		/* Ensure that we have a static element */
+		ensureStatic();
 		
-		DataList<Static>.ListIterator myIterator;
-
-		/* Access the first static element */
-		myStaticList = getStatic();
-		myIterator	 = myStaticList.listIterator();
-		myStatic	 = myIterator.next();
+		/* Set the control */
+		return theDefStatic;		
+	}
+	
+	/**
+	 * Initialise Static from database (if present) 
+	 * @param pDatabase the database static
+	 */
+	public void adoptStatic(DataSet pDatabase) throws Exception {
+		/* Ensure that we have a static element */
+		ensureStatic();
 		
-		/* Set the key */
-		if (myStatic != null) myStatic.setKey(pKey);
+		/* Access the default static element from the database */
+		Static myStatic = pDatabase.getStatic().getDefault();
+		
+		/* Set the control */
+		theDefStatic.setSecurity(myStatic);		
+	}
+	
+	/**
+	 * Get the Security control 
+	 * @return the security control 
+	 */
+	public SecurityControl getSecurityControl() throws Exception {
+		/* Ensure that we have a static element */
+		ensureStatic();
+		
+		/* Set the control */
+		return theDefStatic.getSecurityControl();		
+	}
+	
+	/**
+	 * Set a new Security control. This is used when a new password has been applied to
+	 * the security control, in order to update the security key representations 
+	 * @param pControl the new control 
+	 */
+	public void setSecurityControl(SecurityControl pControl) throws Exception {
+		/* Ensure that we have a static element */
+		ensureStatic();
+		
+		/* Set the control */
+		theDefStatic.setSecurityControl(pControl);		
 	}
 	
 	/**
@@ -319,128 +351,6 @@ public class DataSet implements htmlDumpable {
 		return myList;
 	}
 
-	/**
-	 * Determines whether an event can be valid
-	 * 
-	 * @param pTrans The transaction type of the event
-	 * @param pType The account type of the event
-	 * @param isCredit is the account a credit or a debit
-	 * @return valid true/false 
-	 */
-	public static boolean isValidEvent(TransactionType  pTrans,
-			                     	   AccountType		pType,
-			                           boolean          isCredit) {
-		boolean myResult = false;
-
-		/* Market is always false */
-		if (pType.isMarket())
-			return false;
-		
-		/* Switch on the TransType */
-		switch (pTrans.getTranClass()) {
-			case TAXFREEINCOME:
-				if (!isCredit) myResult = (pType.isExternal() && !pType.isCash());
-				else           myResult = !pType.isExternal();
-				break;
-			case TAXABLEGAIN:
-				if (!isCredit) myResult = pType.isLifeBond();
-				else           myResult = !pType.isExternal();
-				break;
-			case DIVIDEND:
-				if (!isCredit) myResult = pType.isDividend();
-				else           myResult = !pType.isExternal();
-				break;
-			case STOCKDEMERGER:
-			case STOCKSPLIT:
-			case STOCKTAKEOVER:
-				myResult = pType.isShares();
-				break;
-			case STOCKRIGHTWAIVED:
-			case CASHTAKEOVER:
-				isCredit = !isCredit;
-			case STOCKRIGHTTAKEN:
-				if (!isCredit) myResult = (pType.isMoney() || pType.isDeferred());
-				else           myResult = pType.isShares();
-				break;
-			case INTEREST:
-				if (!isCredit) myResult = pType.isMoney();
-				else           myResult = pType.isMoney();
-				break;
-			case TAXEDINCOME:
-				if (!isCredit) myResult = pType.isEmployer();
-				else           myResult = ((pType.isMoney()) || (pType.isDeferred()));
-				break;
-			case NATINSURANCE:
-				if (!isCredit) myResult = pType.isEmployer();
-				else           myResult = pType.isTaxMan();
-				break;
-			case TRANSFER:
-				myResult = !pType.isExternal();
-				break;
-			case CSHPAY:
-				isCredit = !isCredit;
-			case CSHRECOVER:
-				if (!isCredit) myResult = ((pType.isExternal()) && (!pType.isCash()));
-				else           myResult = pType.isCash();
-				break;
-			case INHERITED:
-				if (!isCredit) myResult = pType.isInheritance();
-				else           myResult = !pType.isExternal();
-				break;
-			case BENEFIT:
-				if (!isCredit) myResult = pType.isEmployer();
-				else           myResult = pType.isBenefit();
-				break;
-			case RECOVERED:
-				isCredit = !isCredit;
-			case EXPENSE:
-				if (!isCredit) myResult = !pType.isExternal();
-				else           myResult = pType.isExternal();
-				break;
-			case EXTRATAX:
-			case INSURANCE:
-			case ENDOWMENT:
-				if (!isCredit) myResult = !pType.isExternal();
-				else           myResult = (pType.isExternal() && !pType.isCash());
-				break;
-			case MORTGAGE:
-				if (!isCredit) myResult = pType.isDebt();
-				else           myResult = (pType.isExternal() && !pType.isCash());
-				break;
-			case TAXREFUND:
-				isCredit = !isCredit;
-			case TAXOWED:
-				if (!isCredit) myResult = !pType.isExternal();
-				else           myResult = pType.isTaxMan();
-				break;
-			case TAXRELIEF:
-				if (!isCredit) myResult = pType.isTaxMan();
-				else           myResult = pType.isDebt();
-				break;
-			case DEBTINTEREST:
-				if (!isCredit) myResult = (pType.isExternal() && !pType.isCash());
-				else           myResult = pType.isDebt();
-				break;
-			case MKTINCOME:
-				if (!isCredit) myResult = (pType.isExternal() && !pType.isCash());
-				else           myResult = pType.isEndowment();
-				break;
-			case WRITEOFF:
-				if (!isCredit) myResult = pType.isDebt();
-				else           myResult = pType.isWriteOff();
-				break;
-			case RENTALINCOME:
-				if (!isCredit) myResult = (pType.isExternal() && !pType.isCash());
-				else           myResult = pType.isDebt();
-				break;
-			default:
-				break;
-		}
-		
-		/* Return the result */
-		return myResult;
-	}
-	
 	/**
 	 * Enumeration of load states of data
 	 */

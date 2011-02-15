@@ -226,6 +226,32 @@ public class Frequency extends DataItem {
 	}
 
 	/**
+	 * Format a Frequency 
+	 * 
+	 * @param pFreq the frequency to format
+	 * @return the formatted frequency
+	 */
+	public static String format(Frequency pFreq) {
+		String 	myFormat;
+		myFormat = (pFreq != null) ? pFreq.getName()
+							       : "null";
+		return myFormat;
+	}
+	
+	/**
+	 * Determine whether two {@link Frequency} objects differ.
+	 * 
+	 * @param pCurr The current Frequency 
+	 * @param pNew The new Frequency
+	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
+	 */	
+	public static boolean differs(Frequency pCurr, Frequency pNew) {
+		return (((pCurr == null) && (pNew != null)) ||
+				((pCurr != null) && 
+				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
+	}
+
+	/**
 	 * Represents a list of {@link Frequency} objects. 
 	 */
 	public static class List  extends DataList<Frequency> {

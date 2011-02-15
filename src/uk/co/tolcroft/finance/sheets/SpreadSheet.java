@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import jxl.Workbook;
 import jxl.write.WritableWorkbook;
 
+import uk.co.tolcroft.finance.core.SecureManager;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.*;
@@ -18,7 +19,6 @@ import uk.co.tolcroft.security.*;
 import uk.co.tolcroft.security.ZipFile.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
-
 
 public class SpreadSheet {
 	/**
@@ -67,9 +67,13 @@ public class SpreadSheet {
 	  		 				  		 File 		pFile) throws Exception {
 		InputStream 		myStream  	= null;
 		FileInputStream     myInFile  	= null;
-		ZipFile.Input 		myFile;
+		ZipFile.Input 		myFile		= null;
 		DataSet				myData;
+		View				myView;
 		boolean				isEncrypted = false;
+		String				mySecurityKey;
+		SecurityControl		myControl;
+		SecureManager		mySecurity;
 		
 		/* Protect the workbook retrieval */
 		try {
@@ -85,8 +89,23 @@ public class SpreadSheet {
 								
 			/* else we are encrypted */
 			else {
-				/* Access the zip file and get an input stream from the first entry */
-				myFile = new ZipFile.Input(pThread.getSecurity(), pFile);
+				/* Access the zip file */
+				myFile = new ZipFile.Input(pFile);
+				
+				/* Obtain the security key from the file */
+				mySecurityKey = myFile.getSecurityKey();
+
+				/* Access the Security manager */
+				myView 		= pThread.getView();
+				mySecurity 	= myView.getSecurity();
+				
+				/* Obtain the initialised security control */
+				myControl = mySecurity.getSecurityControl(mySecurityKey, pFile.getName());
+				
+				/* Associate this control with the Zip file */
+				myFile.setSecurityControl(myControl);
+				
+				/* Access the input stream for the first file */
 				myStream = myFile.getInputStream(myFile.getFiles());
 			}
 				
@@ -98,6 +117,15 @@ public class SpreadSheet {
 		}
 
 		catch (Throwable e) {
+			/* Protect while cleaning up */
+			try { 
+				/* Close the input stream */
+				if (myStream != null) myStream.close();
+			} 
+			
+			/* Ignore errors */
+			catch (Throwable ex) {}
+			
 			/* Report the error */
 			throw new Exception(ExceptionClass.EXCEL, 
 					  			"Failed to load Workbook: " + pFile.getName(),
@@ -122,7 +150,7 @@ public class SpreadSheet {
 		OutputStream 		myStream  	= null;
 		FileOutputStream    myOutFile  	= null;
 		File				myTgtFile	= null;
-		ZipFile.Output 		myZipFile;
+		ZipFile.Output 		myZipFile   = null;
 		
 		/* Protect the workbook retrieval */
 		try {
@@ -142,7 +170,8 @@ public class SpreadSheet {
 				myTgtFile 	= new File(pFile.getPath() + ".zip");
 				
 				/* Create the new output Zip file */
-				myZipFile 	= new ZipFile.Output(pThread.getSecurity(), myTgtFile);
+				myZipFile 	= new ZipFile.Output(pData.getSecurityControl(),
+												 myTgtFile);
 				myStream 	= myZipFile.getOutputStream(pFile, zipMode.COMPRESS_AND_ENCRYPT);
 			}
 
@@ -151,9 +180,24 @@ public class SpreadSheet {
 			
 			/* Close the Stream to force out errors */
 			myStream.close();
+			
+			/* If we are encrypted close the Zip file */
+			if (myZipFile != null) myZipFile.close();
 		}
 
-		catch (Throwable e) {
+		catch (Throwable e) {			
+			/* Protect while cleaning up */
+			try { 
+				/* Close the output stream */
+				if (myStream != null) myStream.close();
+
+				/* If we are encrypted close the Zip file */
+				if (myZipFile != null) myZipFile.close();
+			} 
+			
+			/* Ignore errors */
+			catch (Throwable ex) {}
+			
 			/* Delete the file on error */
 			if (myTgtFile != null) myTgtFile.delete();			
 			
@@ -175,13 +219,15 @@ public class SpreadSheet {
 		boolean             	bContinue;
 		Workbook        		myWorkbook 	= null;
 		DataSet					myData		= null;
+		View					myView		= null;
 		SheetStatic.YearRange	myRange 	= null;
 		DilutionEvent.List		myDilution	= null;
 		
 		/* Protect the workbook retrieval */
 		try {
 			/* Create the Data */
-			myData = new DataSet(pThread.getSecurity());
+			myView = pThread.getView();
+			myData = new DataSet(myView.getSecurity());
 			
 			/* Access the workbook from the stream */
 			myWorkbook = Workbook.getWorkbook(pStream);
@@ -248,6 +294,7 @@ public class SpreadSheet {
 		boolean             bContinue;
 		Workbook        	myWorkbook 	= null;
 		DataSet				myData		= null;
+		View				myView		= null;
 		
 		/* Protect the workbook retrieval */
 		try {
@@ -258,7 +305,8 @@ public class SpreadSheet {
 			if (bContinue) bContinue = pThread.setNewStage("Loading");
 
 			/* Create the Data */
-			myData = new DataSet(pThread.getSecurity());
+			myView = pThread.getView();
+			myData = new DataSet(myView.getSecurity());
 			
 			/* Access the workbook from the stream */
 			if (bContinue) myWorkbook = Workbook.getWorkbook(pStream);

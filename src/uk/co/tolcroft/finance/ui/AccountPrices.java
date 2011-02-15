@@ -14,7 +14,7 @@ import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.EditButtons.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.*;
 
 public class AccountPrices extends FinanceTableModel<ViewPrice> {
@@ -222,8 +222,8 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 	public int getFieldForCol(int column) {
 		/* Switch on column */
 		switch (column) {
-			case COLUMN_DATE: 	return Price.FIELD_DATE;
-			case COLUMN_PRICE: 	return Price.FIELD_PRICE;
+			case COLUMN_DATE: 	return AcctPrice.FIELD_DATE;
+			case COLUMN_PRICE: 	return AcctPrice.FIELD_PRICE;
 			default:			return -1;
 		}
 	}
@@ -304,7 +304,7 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 			/* Store the appropriate value */
 			switch (col) {
 				case COLUMN_DATE:  	myPrice.setDate((Date)obj);  break;
-				case COLUMN_PRICE:	myPrice.setPrice((Number.Price)obj); break;
+				case COLUMN_PRICE:	myPrice.setPrice((Price)obj); break;
 			}
 				
 			/* If we have changes */

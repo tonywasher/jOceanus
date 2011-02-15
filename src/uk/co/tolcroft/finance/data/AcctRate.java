@@ -3,9 +3,9 @@ package uk.co.tolcroft.finance.data;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 
-public class Rate extends DataItem {
+public class AcctRate extends DataItem {
 	/**
 	 * The name of the object
 	 */
@@ -16,8 +16,8 @@ public class Rate extends DataItem {
 	
 	/* Access methods */
 	public  Values     	getObj()       	{ return (Values)super.getObj(); }	
-	public  Number.Rate getRate()      	{ return getObj().getRate(); }
-	public  Number.Rate getBonus()     	{ return getObj().getBonus(); }
+	public  Rate 		getRate()      	{ return getObj().getRate(); }
+	public  Rate 		getBonus()     	{ return getObj().getBonus(); }
 	public  Date 		getDate()   	{ return getObj().getEndDate(); }
 	public  Date 		getEndDate()   	{ return getObj().getEndDate(); }
 	public  Account		getAccount()	{ return getObj().getAccount(); }
@@ -25,7 +25,7 @@ public class Rate extends DataItem {
 		getObj().setAccount(pAccount); }
 
 	/* Linking methods */
-	public Rate     getBase() { return (Rate)super.getBase(); }
+	public AcctRate     getBase() { return (AcctRate)super.getBase(); }
 	
 	/* Field IDs */
 	public static final int FIELD_ID       = 0;
@@ -80,16 +80,16 @@ public class Rate extends DataItem {
 					(theAccountId != -1))
 					myString += "Id=" + theAccountId;
 				else
-					myString += Utils.formatAccount(getAccount()); 
+					myString += Account.format(getAccount()); 
 				break;
 			case FIELD_RATE:	
-				myString += Utils.formatRate(myObj.getRate()); 
+				myString += Rate.format(myObj.getRate()); 
 				break;
 			case FIELD_BONUS:	
-				myString += Utils.formatRate(myObj.getBonus()); 
+				myString += Rate.format(myObj.getBonus()); 
 				break;
 			case FIELD_ENDDATE:	
-				myString += Utils.formatDate(myObj.getEndDate()); 
+				myString += Date.format(myObj.getEndDate()); 
 				break;
 		}
 		return myString;
@@ -100,7 +100,7 @@ public class Rate extends DataItem {
 	 * 
 	 * @param pPeriod The Period to copy 
 	 */
-	protected Rate(List pList, Rate pPeriod) {
+	protected AcctRate(List pList, AcctRate pPeriod) {
 		/* Set standard values */
 		super(pList, pPeriod.getId());
 		Values myObj = new Values(pPeriod.getObj());
@@ -123,7 +123,7 @@ public class Rate extends DataItem {
 	}
 
 	/* Standard constructor for a newly inserted rate */
-	public Rate(List pList) {
+	public AcctRate(List pList) {
 		super(pList, 0);
 		Values myObj = new Values();
 		setObj(myObj);
@@ -132,7 +132,7 @@ public class Rate extends DataItem {
 	}
 
 	/* Standard constructor */
-	private Rate(List       	pList,
+	private AcctRate(List       	pList,
 				 int			uId,
 				 int 		   	uAccountId,
 				 java.util.Date	pEndDate, 
@@ -160,7 +160,7 @@ public class Rate extends DataItem {
 			myObj.setEndDate(new Date(pEndDate));
 		
 		/* Record the rate */
-		Number.Rate myRate = Number.Rate.Parse(pRate);
+		Rate myRate = Rate.Parse(pRate);
 		if (myRate == null) 
 			throw new Exception(ExceptionClass.DATA,
 								this,
@@ -170,7 +170,7 @@ public class Rate extends DataItem {
 		/* If we have a bonus */
 		if (pBonus != null) {
 			/* Record the bonus */
-			myRate = Number.Rate.Parse(pBonus);
+			myRate = Rate.Parse(pBonus);
 			if (myRate == null) 
 				throw new Exception(ExceptionClass.DATA,
 									this,
@@ -197,14 +197,14 @@ public class Rate extends DataItem {
 		if (pThat.getClass() != this.getClass()) return false;
 		
 		/* Access the object as a Rate */
-		Rate myRate = (Rate)pThat;
+		AcctRate myRate = (AcctRate)pThat;
 		
 		/* Check for equality */
 		if (getId() != myRate.getId()) return false;
-		if (Utils.differs(getAccount(), myRate.getAccount())) 	return false;
-		if (Utils.differs(getEndDate(), myRate.getEndDate())) 	return false;
-		if (Utils.differs(getRate(),    myRate.getRate())) 		return false;
-		if (Utils.differs(getBonus(),  	myRate.getBonus()))		return false;
+		if (Account.differs(getAccount(), 	myRate.getAccount())) 	return false;
+		if (Date.differs(getEndDate(), 		myRate.getEndDate())) 	return false;
+		if (Rate.differs(getRate(),			myRate.getRate())) 		return false;
+		if (Rate.differs(getBonus(), 		myRate.getBonus()))		return false;
 		return true;
 	}
 
@@ -225,7 +225,7 @@ public class Rate extends DataItem {
 		if (pThat.getClass() != this.getClass()) return -1;
 		
 		/* Access the object as a Rate */
-		Rate myThat = (Rate)pThat;
+		AcctRate myThat = (AcctRate)pThat;
 
 		/* Compare the accounts */
 		iDiff = getAccount().compareTo(myThat.getAccount());
@@ -253,10 +253,10 @@ public class Rate extends DataItem {
 	 * Validate the rate
 	 */
 	public void validate() {
-		Rate 	myCurr;
-		Date 	myDate = getEndDate();
-		List 	myList = (List)getList();
-		DataSet	mySet  = myList.getData();
+		AcctRate 	myCurr;
+		Date 		myDate = getEndDate();
+		List 		myList = (List)getList();
+		DataSet		mySet  = myList.getData();
 
 		/* If the date is null then we must be the last element for the account */
 		if ((myDate == null) || (myDate.isNull())) {
@@ -265,7 +265,7 @@ public class Rate extends DataItem {
 			
 			/* Ignore if this item doesn't belong to the account */
 			if ((myCurr != null) &&
-			    (!Utils.differs(myCurr.getAccount(), getAccount())))
+			    (!Account.differs(myCurr.getAccount(), getAccount())))
 				myCurr = null;
 
 			/* If we have a later element then error */
@@ -309,8 +309,8 @@ public class Rate extends DataItem {
 	 * 
 	 * @param pRate the rate 
 	 */
-	public void setRate(Number.Rate pRate) {
-		getObj().setRate((pRate == null) ? null : new Number.Rate(pRate));
+	public void setRate(Rate pRate) {
+		getObj().setRate((pRate == null) ? null : new Rate(pRate));
 	}
 
 	/**
@@ -318,8 +318,8 @@ public class Rate extends DataItem {
 	 * 
 	 * @param pBonus the rate 
 	 */
-	public void setBonus(Number.Rate pBonus) {
-		getObj().setBonus((pBonus == null) ? null : new Number.Rate(pBonus));
+	public void setBonus(Rate pBonus) {
+		getObj().setBonus((pBonus == null) ? null : new Rate(pBonus));
 	}
 
 	/**
@@ -337,28 +337,28 @@ public class Rate extends DataItem {
 	 * @param pRate the updated item 
 	 */
 	public void applyChanges(DataItem pRate) {
-		Rate myRate =  (Rate)pRate;
+		AcctRate myRate =  (AcctRate)pRate;
 
 		/* Store the current detail into history */
 		pushHistory();
 
 		/* Update the rate if required */
-		if (Utils.differs(getRate(), myRate.getRate())) 
+		if (Rate.differs(getRate(), myRate.getRate())) 
 			setRate(myRate.getRate());
 
 		/* Update the bonus if required */
-		if (Utils.differs(getBonus(), myRate.getBonus())) 
+		if (Rate.differs(getBonus(), myRate.getBonus())) 
 			setBonus(myRate.getBonus());
 
 		/* Update the date if required */
-		if (Utils.differs(getEndDate(), myRate.getEndDate())) 
+		if (Date.differs(getEndDate(), myRate.getEndDate())) 
 			setEndDate(myRate.getEndDate());
 
 		/* Check for changes */
 		if (checkForHistory()) setState(DataState.CHANGED);
 	}
 
-	public static class List  	extends DataList<Rate> {
+	public static class List  	extends DataList<AcctRate> {
 		/* Members */
 		private Account	theAccount	= null;
 		private DataSet	theData		= null;
@@ -417,8 +417,8 @@ public class Rate extends DataItem {
 
 			/* Local variables */
 			ListIterator 	myIterator;
-			Rate 			myCurr;
-			Rate 			myItem;
+			AcctRate 			myCurr;
+			AcctRate 			myItem;
 
 			/* Store the account */
 			theAccount = pAccount;
@@ -429,9 +429,9 @@ public class Rate extends DataItem {
 			/* Loop through the list */
 			while ((myCurr = myIterator.next()) != null) {
 				/* If this item belongs to the account */
-				if (!Utils.differs(myCurr.getAccount(), pAccount)) {
+				if (!Account.differs(myCurr.getAccount(), pAccount)) {
 					/* Copy the item */
-					myItem = new Rate(this, myCurr);
+					myItem = new AcctRate(this, myCurr);
 					myItem.addToList();
 				}
 			}
@@ -453,7 +453,7 @@ public class Rate extends DataItem {
 		 * @return the newly added item
 		 */
 		public DataItem addNewItem(DataItem pRate) {
-			Rate myRate = new Rate(this, (Rate)pRate);
+			AcctRate myRate = new AcctRate(this, (AcctRate)pRate);
 			myRate.addToList();
 			return myRate;
 		}
@@ -464,7 +464,7 @@ public class Rate extends DataItem {
 		 * @param isCredit - ignored
 		 */
 		public void addNewItem(boolean        isCredit) {
-			Rate myRate = new Rate(this);
+			AcctRate myRate = new AcctRate(this);
 			myRate.setAccount(theAccount);
 			myRate.addToList();
 		}
@@ -484,7 +484,7 @@ public class Rate extends DataItem {
 		protected int countInstances(Date 		pDate,
 									 Account    pAccount) {
 			ListIterator 	myIterator;
-			Rate 			myCurr;
+			AcctRate 			myCurr;
 			int  			iDiff;
 			int  			iCount = 0;
 
@@ -507,7 +507,7 @@ public class Rate extends DataItem {
 		 */
 		protected void markActiveRates() {
 			ListIterator 	myIterator;
-			Rate 			myCurr;
+			AcctRate 			myCurr;
 
 			/* Access the list iterator */
 			myIterator = listIterator(true);
@@ -525,11 +525,11 @@ public class Rate extends DataItem {
 		 *   @param pDate the date from which a rate is required
 		 *   @return The relevant Rate record 
 		 */
-		public Rate getLatestRate(Account   pAccount, 
+		public AcctRate getLatestRate(Account   pAccount, 
 								  Date 		pDate) {
 			ListIterator 	myIterator;
-			Rate    		myRate = null;
-			Rate    		myCurr;
+			AcctRate    		myRate = null;
+			AcctRate    		myCurr;
 			Date 			myDate;
 
 			/* Access the list iterator */
@@ -538,7 +538,7 @@ public class Rate extends DataItem {
 			/* Loop through the Rates */
 			while ((myCurr = myIterator.next()) != null) {
 				/* Skip records that do not belong to this account */
-				if (Utils.differs(myCurr.getAccount(), pAccount))
+				if (Account.differs(myCurr.getAccount(), pAccount))
 					continue;
 
 				/* Access the date */
@@ -576,7 +576,7 @@ public class Rate extends DataItem {
 			if (myAccount == null) 
 				throw new Exception(ExceptionClass.DATA,
 			                        "Rate on [" + 
-			                        Utils.formatDate(new Date(pDate)) +
+			                        Date.format(new Date(pDate)) +
 			                        "] has invalid Account [" +
 			                        pAccount + "]");
 				
@@ -596,10 +596,10 @@ public class Rate extends DataItem {
 	            			String   		pRate,
 	            			java.util.Date  pDate,
 				            String   		pBonus) throws Exception {
-			Rate     	myRate;
+			AcctRate     	myRate;
 			
 			/* Create the period */
-			myRate    = new Rate(this, uId, uAccountId,
+			myRate    = new AcctRate(this, uId, uAccountId,
 					             pDate, pRate, pBonus);
 				
 			/* Check that this RateId has not been previously added */
@@ -624,20 +624,20 @@ public class Rate extends DataItem {
 
 	/* RateValues */
 	public class Values implements histObject {
-		private Number.Rate theRate      = null;
-		private Number.Rate theBonus     = null;
+		private Rate 		theRate      = null;
+		private Rate 		theBonus     = null;
 		private Date       	theEndDate   = null;
 		private Account    	theAccount   = null;
 
 		/* Access methods */
-		public Number.Rate  getRate()      { return theRate; }
-		public Number.Rate  getBonus()     { return theBonus; }
+		public Rate  		getRate()      { return theRate; }
+		public Rate  		getBonus()     { return theBonus; }
 		public Date       	getEndDate()   { return theEndDate; }
 		public Account		getAccount()   { return theAccount; }
 
-		public void setRate(Number.Rate pRate) {
+		public void setRate(Rate pRate) {
 			theRate      = pRate; }
-		public void setBonus(Number.Rate pBonus) {
+		public void setBonus(Rate pBonus) {
 			theBonus     = pBonus; }
 		public void setEndDate(Date pEndDate) {
 			theEndDate   = pEndDate; }
@@ -659,10 +659,10 @@ public class Rate extends DataItem {
 			return histEquals(myValues);
 		}
 		public boolean histEquals(Values pValues) {
-			if (Utils.differs(theRate,    pValues.theRate))    return false;
-			if (Utils.differs(theBonus,   pValues.theBonus))   return false;
-			if (Utils.differs(theEndDate, pValues.theEndDate)) return false;
-			if (Utils.differs(theAccount, pValues.theAccount)) return false;
+			if (Rate.differs(theRate,    	pValues.theRate))    return false;
+			if (Rate.differs(theBonus,   	pValues.theBonus))   return false;
+			if (Date.differs(theEndDate, 	pValues.theEndDate)) return false;
+			if (Account.differs(theAccount, pValues.theAccount)) return false;
 			return true;
 		}
 
@@ -685,16 +685,16 @@ public class Rate extends DataItem {
 			boolean		bResult = false;
 			switch (fieldNo) {
 				case FIELD_RATE:
-					bResult = (Utils.differs(theRate,    pValues.theRate));
+					bResult = (Rate.differs(theRate,    pValues.theRate));
 					break;
 				case FIELD_BONUS:
-					bResult = (Utils.differs(theBonus,   pValues.theBonus));
+					bResult = (Rate.differs(theBonus,   pValues.theBonus));
 					break;
 				case FIELD_ENDDATE:
-					bResult = (Utils.differs(theEndDate, pValues.theEndDate));
+					bResult = (Date.differs(theEndDate, pValues.theEndDate));
 					break;
 				case FIELD_ACCOUNT:
-					bResult = (Utils.differs(theAccount,   pValues.theAccount));
+					bResult = (Account.differs(theAccount,   pValues.theAccount));
 					break;
 			}
 			return bResult;

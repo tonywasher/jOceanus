@@ -3,7 +3,7 @@ package uk.co.tolcroft.finance.views;
 import uk.co.tolcroft.finance.views.AnalysisYear.*;
 import uk.co.tolcroft.finance.views.IncomeAnalysis.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 
 public class IncomeReport {
 	/* Properties */
@@ -23,7 +23,7 @@ public class IncomeReport {
 	public String getReport() {
 		Bucket 							myBucket;
 		StringBuilder					myOutput = new StringBuilder(10000);
-		Number.Money    				myProfit;
+		Money    						myProfit;
 		IncomeAnalysis.List 			myList;
 		SortedList<Bucket>.ListIterator	myIterator;
 
@@ -83,11 +83,11 @@ public class IncomeReport {
 		
 		/* Format the profit */
 		myOutput.append("<tr><th>Profit</th>");
-		myProfit = new Number.Money(myBucket.getIncome());
+		myProfit = new Money(myBucket.getIncome());
 		myProfit.subtractAmount(myBucket.getExpense());
 		myOutput.append(Report.makeMoneyProfit(myProfit));
 		if (myBucket.getPrevious() != null) {
-			myProfit = new Number.Money(myBucket.getPrevIncome());
+			myProfit = new Money(myBucket.getPrevIncome());
 			myProfit.subtractAmount(myBucket.getPrevExpense());
 		}
 		myOutput.append(Report.makeMoneyProfit(myProfit));

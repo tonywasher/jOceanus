@@ -16,7 +16,7 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>{
 	private EditState 		theEdit	  	= EditState.CLEAN;
 		
 	/**
-	 * The edit state of the list
+	 * The id manager 
 	 */
 	private IdManager<T>	theMgr	  	= null;
 		

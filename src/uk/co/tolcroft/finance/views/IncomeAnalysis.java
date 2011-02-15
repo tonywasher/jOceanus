@@ -253,7 +253,7 @@ public class IncomeAnalysis {
 				
 			/* Format the date */
 			pBuffer.append("<tr><td>Date</td><td>"); 
-			pBuffer.append(Utils.formatDate(theDate)); 
+			pBuffer.append(Date.format(theDate)); 
 			pBuffer.append("</td></tr>"); 
 		}
 		
@@ -516,10 +516,10 @@ public class IncomeAnalysis {
 					myString += theOrder;
 					break;
 				case FIELD_INCOME: 	
-					myString += Utils.formatMoney(theIncome);
+					myString += Money.format(theIncome);
 					break;
 				case FIELD_EXPENSE: 	
-					myString += Utils.formatMoney(theExpense);
+					myString += Money.format(theExpense);
 					break;
 			}
 			return myString;
@@ -546,8 +546,8 @@ public class IncomeAnalysis {
 			if (Utils.differs(getName(),      	myBucket.getName())) 		return false;
 			if (getBucket() != myBucket.getBucket()) 						return false;
 			if (getOrder() 	!= myBucket.getOrder()) 						return false;
-			if (Utils.differs(getIncome(),    	myBucket.getIncome())) 		return false;
-			if (Utils.differs(getExpense(),   	myBucket.getExpense()))		return false;
+			if (Money.differs(getIncome(),    	myBucket.getIncome())) 		return false;
+			if (Money.differs(getExpense(),   	myBucket.getExpense()))		return false;
 			return true;
 		}
 

@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.DataList.*;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
@@ -344,7 +344,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the Allowance of the item to be inserted
 	 * @param pAllow the Allowance of the item
 	 */
-	private void setAllowance(Number.Money pAllow) throws SQLException {
+	private void setAllowance(Money pAllow) throws SQLException {
 		setString(pAllow.format(false));
 	}
 
@@ -352,7 +352,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the Rental Allowance of the item to be inserted
 	 * @param pAllow the RentalAllowance of the item
 	 */
-	private void setRentalAllow(Number.Money pAllow) throws SQLException {
+	private void setRentalAllow(Money pAllow) throws SQLException {
 		setString(pAllow.format(false));
 	}
 
@@ -360,7 +360,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the LoTaxBand of the item to be inserted
 	 * @param pBand the LoTaxBand of the item
 	 */
-	private void setLoTaxBand(Number.Money pBand) throws SQLException {
+	private void setLoTaxBand(Money pBand) throws SQLException {
 		setString(pBand.format(false));
 	}
 
@@ -368,7 +368,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the BasicTaxBand of the item to be inserted
 	 * @param pBand the BasicTaxBand of the item
 	 */
-	private void setBasicTaxBand(Number.Money pBand) throws SQLException {
+	private void setBasicTaxBand(Money pBand) throws SQLException {
 		setString(pBand.format(false));
 	}
 
@@ -376,7 +376,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the LoAgeAllow of the item to be inserted
 	 * @param pBand the loAgeAllow of the item
 	 */
-	private void setLoAgeAllow(Number.Money pBand) throws SQLException {
+	private void setLoAgeAllow(Money pBand) throws SQLException {
 		setString(pBand.format(false));
 	}
 
@@ -384,7 +384,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the HiAgeAllow of the item to be inserted
 	 * @param pBand the hiAgeAllow of the item
 	 */
-	private void setHiAgeAllow(Number.Money pBand) throws SQLException {
+	private void setHiAgeAllow(Money pBand) throws SQLException {
 		setString(pBand.format(false));
 	}
 
@@ -392,7 +392,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the AgeAllowLimit of the item to be inserted
 	 * @param pBand the ageAllowLimit of the item
 	 */
-	private void setAgeAllowLimit(Number.Money pBand) throws SQLException {
+	private void setAgeAllowLimit(Money pBand) throws SQLException {
 		setString(pBand.format(false));
 	}
 
@@ -400,7 +400,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the AddAllowLimit of the item to be inserted
 	 * @param pBand the addAllowLimit of the item
 	 */
-	private void setAddAllowLimit(Number.Money pBand) throws SQLException {
+	private void setAddAllowLimit(Money pBand) throws SQLException {
 		setString((pBand == null) ? null : pBand.format(false));
 	}
 
@@ -408,7 +408,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the LoTaxRate of the item to be inserted
 	 * @param pRate the LoTaxRate of the item
 	 */
-	private void setLoTaxRate(Number.Rate pRate) throws SQLException {
+	private void setLoTaxRate(Rate pRate) throws SQLException {
 		setString(pRate.format(false));
 	}
 
@@ -416,7 +416,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the BasicTaxRate of the item to be inserted
 	 * @param pRate the BasicTaxRate of the item
 	 */
-	private void setBasicTaxRate(Number.Rate pRate) throws SQLException {
+	private void setBasicTaxRate(Rate pRate) throws SQLException {
 		setString(pRate.format(false));
 	}
 
@@ -424,7 +424,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the HiTaxRate of the item to be inserted
 	 * @param pRate the HiTaxRate of the item
 	 */
-	private void setHiTaxRate(Number.Rate pRate) throws SQLException {
+	private void setHiTaxRate(Rate pRate) throws SQLException {
 		setString(pRate.format(false));
 	}
 
@@ -432,7 +432,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the IntTaxRate of the item to be inserted
 	 * @param pRate the IntTaxRate of the item
 	 */
-	private void setIntTaxRate(Number.Rate pRate) throws SQLException {
+	private void setIntTaxRate(Rate pRate) throws SQLException {
 		setString(pRate.format(false));
 	}
 
@@ -440,7 +440,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the DivTaxRate of the item to be inserted
 	 * @param pRate the DivTaxRate of the item
 	 */
-	private void setDivTaxRate(Number.Rate pRate) throws SQLException {
+	private void setDivTaxRate(Rate pRate) throws SQLException {
 		setString(pRate.format(false));
 	}
 
@@ -448,7 +448,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the HiDivTaxRate of the item to be inserted
 	 * @param pRate the HiDivTaxRate of the item
 	 */
-	private void setHiDivTaxRate(Number.Rate pRate) throws SQLException {
+	private void setHiDivTaxRate(Rate pRate) throws SQLException {
 		setString(pRate.format(false));
 	}
 
@@ -456,7 +456,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the AddTaxRate of the item to be inserted
 	 * @param pRate the AddTaxRate of the item
 =	 */
-	private void setAddTaxRate(Number.Rate pRate) throws SQLException {
+	private void setAddTaxRate(Rate pRate) throws SQLException {
 		setString((pRate == null) ? null : pRate.format(false));
 	}
 
@@ -464,7 +464,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the AddDivTaxRate of the item to be inserted
 	 * @param pRate the AddDivTaxRate of the item
 	 */
-	private void setAddDivTaxRate(Number.Rate pRate) throws SQLException {
+	private void setAddDivTaxRate(Rate pRate) throws SQLException {
 		setString((pRate == null) ? null : pRate.format(false));
 	}
 
@@ -472,7 +472,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the AddIncBoundary of the item to be inserted
 	 * @param pBand the AddIncBoundary of the item
 	 */
-	private void setAddIncBoundary(Number.Money pBand) throws SQLException {
+	private void setAddIncBoundary(Money pBand) throws SQLException {
 		setString((pBand == null) ? null : pBand.format(false));
 	}
 
@@ -480,7 +480,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the CapitalAllowance of the item to be inserted
 	 * @param pBand the CapitalAllowance of the item
 	 */
-	private void setCapitalAllow(Number.Money pBand) throws SQLException {
+	private void setCapitalAllow(Money pBand) throws SQLException {
 		setString(pBand.format(false));
 	}
 
@@ -488,7 +488,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the CapitalTaxRate of the item to be inserted
 	 * @param pRate the CapTaxRate of the item
 	 */
-	private void setCapTaxRate(Number.Rate pRate) throws SQLException {
+	private void setCapTaxRate(Rate pRate) throws SQLException {
 		setString((pRate == null) ? null : pRate.format(false));
 	}
 
@@ -496,7 +496,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Set the HiCapitalTaxRate of the item to be inserted
 	 * @param pRate the HiCapTaxRate of the item
 	 */
-	private void setHiCapTaxRate(Number.Rate pRate) throws SQLException {
+	private void setHiCapTaxRate(Rate pRate) throws SQLException {
 		setString((pRate == null) ? null : pRate.format(false));
 	}
 
@@ -520,7 +520,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the allowance of the item
 	 * @param pValue the new allowance
 	 */
-	private void updateAllowance(Number.Money pValue) {
+	private void updateAllowance(Money pValue) {
 		updateString(theAllwCol, pValue.format(false));
 	}
 
@@ -528,7 +528,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the rental allowance of the item
 	 * @param pValue the new rental allowance
 	 */
-	private void updateRentalAllow(Number.Money pValue) {
+	private void updateRentalAllow(Money pValue) {
 		updateString(theRentCol, pValue.format(false));
 	}
 
@@ -536,7 +536,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the LoTaxBand of the item
 	 * @param pValue the new Lo tax band
 	 */
-	private void updateLoTaxBand(Number.Money pValue) {
+	private void updateLoTaxBand(Money pValue) {
 		updateString(theLoBdCol, pValue.format(false));
 	}	
 
@@ -544,7 +544,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the BasicTaxBand of the item
 	 * @param pValue the new Basic tax band
 	 */
-	private void updateBasicTaxBand(Number.Money pValue) {
+	private void updateBasicTaxBand(Money pValue) {
 		updateString(theBsBdCol, pValue.format(false));
 	}
 
@@ -552,7 +552,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the LoAgeAllow of the item
 	 * @param pValue the new Lo Age allowance
 	 */
-	private void updateLoAgeAllow(Number.Money pValue) {
+	private void updateLoAgeAllow(Money pValue) {
 		updateString(theLoAACol, pValue.format(false));
 	}
 
@@ -560,7 +560,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the HiAgeAllow of the item
 	 * @param pValue the new Hi Age allowance
 	 */
-	private void updateHiAgeAllow(Number.Money pValue) {
+	private void updateHiAgeAllow(Money pValue) {
 		updateString(theHiAACol, pValue.format(false));
 	}
 
@@ -568,7 +568,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the AgeAllowLimit of the item
 	 * @param pValue the new age allowance limit
 	 */
-	private void updateAgeAllowLimit(Number.Money pValue) {
+	private void updateAgeAllowLimit(Money pValue) {
 		updateString(theAgLmCol, pValue.format(false));
 	}
 
@@ -576,7 +576,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the AddAllowLimit of the item
 	 * @param pValue the new additional allowance limit
 	 */
-	private void updateAddAllowLimit(Number.Money pValue) {
+	private void updateAddAllowLimit(Money pValue) {
 		updateString(theAdLmCol, (pValue == null) ? null : pValue.format(false));
 	}
 
@@ -584,7 +584,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the LoTaxRate of the item
 	 * @param pValue the new lo tax rate
 	 */
-	private void updateLoTaxRate(Number.Rate pValue) {
+	private void updateLoTaxRate(Rate pValue) {
 		updateString(theLoTxCol, pValue.format(false));
 	}
 
@@ -592,7 +592,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the BasicTaxRate of the item
 	 * @param pValue the new Basic tax rate
 	 */
-	private void updateBasicTaxRate(Number.Rate pValue) {
+	private void updateBasicTaxRate(Rate pValue) {
 		updateString(theBsTxCol, pValue.format(false));
 	}
 
@@ -600,7 +600,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the HiTaxRate of the item
 	 * @param pValue the new high tax rate
 	 */
-	private void updateHiTaxRate(Number.Rate pValue) {
+	private void updateHiTaxRate(Rate pValue) {
 		updateString(theHiTxCol, pValue.format(false));
 	}
 
@@ -608,7 +608,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the IntTaxRate of the item
 	 * @param pValue the new IntTaxRate
 	 */
-	private void updateIntTaxRate(Number.Rate pValue) {
+	private void updateIntTaxRate(Rate pValue) {
 		updateString(theInTxCol, pValue.format(false));
 	}
 
@@ -616,7 +616,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the DivTaxRate of the item
 	 * @param pValue the new DivTaxRate
 	 */
-	private void updateDivTaxRate(Number.Rate pValue) {
+	private void updateDivTaxRate(Rate pValue) {
 		updateString(theDvTxCol, pValue.format(false));
 	}
 
@@ -624,7 +624,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the HiDivTaxRate of the item
 	 * @param pValue the new HiDivTaxRate
 	 */
-	private void updateHiDivTaxRate(Number.Rate pValue) {
+	private void updateHiDivTaxRate(Rate pValue) {
 		updateString(theHDTxCol, pValue.format(false));
 	}
 
@@ -632,7 +632,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the AddTaxRate of the item
 	 * @param pValue the new additional tax rate
 	 */
-	private void updateAddTaxRate(Number.Rate pValue) {
+	private void updateAddTaxRate(Rate pValue) {
 		updateString(theAdTxCol, (pValue == null) ? null : pValue.format(false));
 	}
 
@@ -640,7 +640,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the AddDivTaxRate of the item
 	 * @param pValue the new additional dividend rate
 	 */
-	private void updateAddDivTaxRate(Number.Rate pValue) {
+	private void updateAddDivTaxRate(Rate pValue) {
 		updateString(theADTxCol, (pValue == null) ? null : pValue.format(false));
 	}
 
@@ -648,7 +648,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the AddIncBoundary of the item
 	 * @param pValue the new additional income boundary
 	 */
-	private void updateAddIncBoundary(Number.Money pValue) {
+	private void updateAddIncBoundary(Money pValue) {
 		updateString(theADTxCol, (pValue == null) ? null : pValue.format(false));
 	}
 
@@ -656,7 +656,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the CapitalAllowance of the item
 	 * @param pValue the new CapitalAllowance
 	 */
-	private void updateCapitalAllow(Number.Money pValue) {
+	private void updateCapitalAllow(Money pValue) {
 		updateString(theCpAlCol, pValue.format(false));
 	}
 
@@ -664,7 +664,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the CapTaxRate of the item
 	 * @param pValue the new CapTaxRate
 	 */
-	private void updateCapTaxRate(Number.Rate pValue) {
+	private void updateCapTaxRate(Rate pValue) {
 		updateString(theCpTxCol, (pValue == null) ? null : pValue.format(false));
 	}
 
@@ -672,7 +672,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * Update the HiCapTaxRate of the item
 	 * @param pValue the new HiCapTaxRate
 	 */
-	private void updateHiCapTaxRate(Number.Rate pValue) {
+	private void updateHiCapTaxRate(Rate pValue) {
 		updateString(theHCTxCol, (pValue == null) ? null : pValue.format(false));
 	}
 	
@@ -878,71 +878,71 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 		/* Protect the update */
 		try {			
 			/* Update the fields */
-			if (Utils.differs(pItem.getDate(), 
-							  myBase.getYear()))
+			if (Date.differs(pItem.getDate(), 
+							 myBase.getYear()))
 				updateYear(pItem.getDate());
-			if (Utils.differs(pItem.getTaxRegime(),
-					  		  myBase.getTaxRegime()))
+			if (TaxRegime.differs(pItem.getTaxRegime(),
+					  			  myBase.getTaxRegime()))
 				updateTaxRegime(pItem.getTaxRegime().getId());
-			if (Utils.differs(pItem.getAllowance(),
+			if (Money.differs(pItem.getAllowance(),
 		  		  			  myBase.getAllowance()))
 				updateAllowance(pItem.getAllowance());
-			if (Utils.differs(pItem.getRentalAllowance(),
+			if (Money.differs(pItem.getRentalAllowance(),
 							  myBase.getRentalAllow()))
 				updateRentalAllow(pItem.getRentalAllowance());
-			if (Utils.differs(pItem.getLoBand(),
+			if (Money.differs(pItem.getLoBand(),
 		  		  			  myBase.getLoBand()))
 				updateLoTaxBand(pItem.getLoBand());
-			if (Utils.differs(pItem.getBasicBand(),
+			if (Money.differs(pItem.getBasicBand(),
 		  		  			  myBase.getBasicBand()))
 				updateBasicTaxBand(pItem.getBasicBand());
-			if (Utils.differs(pItem.getLoAgeAllow(),
+			if (Money.differs(pItem.getLoAgeAllow(),
 		  		 			  myBase.getLoAgeAllow()))
 				updateLoAgeAllow(pItem.getLoAgeAllow());
-			if (Utils.differs(pItem.getHiAgeAllow(),
+			if (Money.differs(pItem.getHiAgeAllow(),
 		  		  			  myBase.getHiAgeAllow()))
 				updateHiAgeAllow(pItem.getHiAgeAllow());
-			if (Utils.differs(pItem.getCapitalAllow(),
+			if (Money.differs(pItem.getCapitalAllow(),
 							  myBase.getCapitalAllow()))
 				updateCapitalAllow(pItem.getHiAgeAllow());
-			if (Utils.differs(pItem.getAgeAllowLimit(),
+			if (Money.differs(pItem.getAgeAllowLimit(),
 		  		  			  myBase.getAgeAllowLimit()))
 				updateAgeAllowLimit(pItem.getAgeAllowLimit());
-			if (Utils.differs(pItem.getAddAllowLimit(),
+			if (Money.differs(pItem.getAddAllowLimit(),
 		  		  			  myBase.getAddAllowLimit()))
 				updateAddAllowLimit(pItem.getAddAllowLimit());
-			if (Utils.differs(pItem.getAddIncBound(),
+			if (Money.differs(pItem.getAddIncBound(),
 		  		  		      myBase.getAddIncBound()))
 				updateAddIncBoundary(pItem.getAddIncBound());
-			if (Utils.differs(pItem.getLoTaxRate(),
-		  		  			  myBase.getLoTaxRate()))
+			if (Rate.differs(pItem.getLoTaxRate(),
+		  		  			 myBase.getLoTaxRate()))
 				updateLoTaxRate(pItem.getLoTaxRate());
-			if (Utils.differs(pItem.getBasicTaxRate(),
-		  		  			  myBase.getBasicTaxRate()))
+			if (Rate.differs(pItem.getBasicTaxRate(),
+		  		  			 myBase.getBasicTaxRate()))
 				updateBasicTaxRate(pItem.getBasicTaxRate());
-			if (Utils.differs(pItem.getHiTaxRate(),
-		  		  			  myBase.getHiTaxRate()))
+			if (Rate.differs(pItem.getHiTaxRate(),
+		  		  			 myBase.getHiTaxRate()))
 				updateHiTaxRate(pItem.getHiTaxRate());
-			if (Utils.differs(pItem.getIntTaxRate(),
-		  		  			  myBase.getIntTaxRate()))
+			if (Rate.differs(pItem.getIntTaxRate(),
+		  		  			 myBase.getIntTaxRate()))
 				updateIntTaxRate(pItem.getIntTaxRate());
-			if (Utils.differs(pItem.getDivTaxRate(),
-		  		  			  myBase.getDivTaxRate()))
+			if (Rate.differs(pItem.getDivTaxRate(),
+		  		  			 myBase.getDivTaxRate()))
 				updateDivTaxRate(pItem.getDivTaxRate());
-			if (Utils.differs(pItem.getHiDivTaxRate(),
-		  		  			  myBase.getHiDivTaxRate()))
+			if (Rate.differs(pItem.getHiDivTaxRate(),
+		  		  			 myBase.getHiDivTaxRate()))
 				updateHiDivTaxRate(pItem.getHiDivTaxRate());
-			if (Utils.differs(pItem.getAddTaxRate(),
-		  		  			  myBase.getAddTaxRate()))
+			if (Rate.differs(pItem.getAddTaxRate(),
+		  		  			 myBase.getAddTaxRate()))
 				updateAddTaxRate(pItem.getAddTaxRate());
-			if (Utils.differs(pItem.getAddDivTaxRate(),
-		  		  			  myBase.getAddDivTaxRate()))
+			if (Rate.differs(pItem.getAddDivTaxRate(),
+		  		  			 myBase.getAddDivTaxRate()))
 				updateAddDivTaxRate(pItem.getAddDivTaxRate());
-			if (Utils.differs(pItem.getCapTaxRate(),
-		  		  			  myBase.getCapTaxRate()))
+			if (Rate.differs(pItem.getCapTaxRate(),
+		  		  			 myBase.getCapTaxRate()))
 				updateCapTaxRate(pItem.getCapTaxRate());
-			if (Utils.differs(pItem.getHiCapTaxRate(),
-		  		  			  myBase.getHiCapTaxRate()))
+			if (Rate.differs(pItem.getHiCapTaxRate(),
+		  		  			 myBase.getHiCapTaxRate()))
 				updateHiCapTaxRate(pItem.getHiCapTaxRate());
 		}
 		

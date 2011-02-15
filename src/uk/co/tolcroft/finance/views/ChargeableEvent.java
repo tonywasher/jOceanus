@@ -2,7 +2,7 @@ package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.Event;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 
 public class ChargeableEvent extends DataItem {
 	/**
@@ -11,8 +11,8 @@ public class ChargeableEvent extends DataItem {
 	private static final String objName = "ChargeableEvent";
 
 	/* Members */
-	private		Number.Money	theSlice    = null;
-	private		Number.Money	theTaxation = null;
+	private		Money	theSlice    = null;
+	private		Money	theTaxation = null;
 		
 	/* Linking methods */
 	public Event     		getBase() 		{ return (Event)super.getBase(); }
@@ -33,25 +33,25 @@ public class ChargeableEvent extends DataItem {
 	 * Get the Amount of the chargeable event 
 	 * @return the amount of the chargeable event
 	 */
-	public Number.Money		getAmount()		{ return getBase().getAmount(); }
+	public Money			getAmount()		{ return getBase().getAmount(); }
 
 	/**
 	 * Get the TaxCredit of the chargeable event 
 	 * @return the tax credit of the chargeable event
 	 */
-	public Number.Money		getTaxCredit()	{ return getBase().getTaxCredit(); }
+	public Money			getTaxCredit()	{ return getBase().getTaxCredit(); }
 
 	/**
 	 * Get the Taxation of the chargeable event 
 	 * @return the taxation of the chargeable event
 	 */
-	public Number.Money		getTaxation()	{ return theTaxation; }
+	public Money			getTaxation()	{ return theTaxation; }
 
 	/**
 	 * Get the Slice of the chargeable event 
 	 * @return the slice of the chargeable event
 	 */
-	public Number.Money		getSlice()		{ return theSlice; }
+	public Money			getSlice()		{ return theSlice; }
 
 	/**
 	 * Get the Years of the chargeable event 
@@ -74,7 +74,7 @@ public class ChargeableEvent extends DataItem {
 		/* Access the slice value of the event */
 		myValue 	 = pEvent.getAmount().getAmount();
 		myValue 	/= pEvent.getYears();
-		theSlice	 = new Number.Money(myValue);
+		theSlice	 = new Money(myValue);
 		
 		/* Link to the event */
 		setBase(pEvent);
@@ -122,10 +122,10 @@ public class ChargeableEvent extends DataItem {
 		String myString = ""; 
 		switch (iField) {
 			case FIELD_SLICE:		
-				myString += Utils.formatMoney(theSlice);
+				myString += Money.format(theSlice);
 				break;
 			case FIELD_TAXATION: 		
-				myString += Utils.formatMoney(theTaxation);
+				myString += Money.format(theTaxation);
 				break;
 		}
 		return myString;
@@ -149,8 +149,8 @@ public class ChargeableEvent extends DataItem {
 		ChargeableEvent myEvent = (ChargeableEvent)pThat;
 		
 		/* Check for equality */
-		if (Utils.differs(getSlice(),      	myEvent.getSlice())) 		return false;
-		if (Utils.differs(getTaxation(),   	myEvent.getTaxation()))		return false;
+		if (Money.differs(getSlice(),      	myEvent.getSlice())) 		return false;
+		if (Money.differs(getTaxation(),   	myEvent.getTaxation()))		return false;
 		return getBase().equals(myEvent.getBase());
 	}
 
@@ -182,17 +182,17 @@ public class ChargeableEvent extends DataItem {
 	 * @param pTax	the calculated taxation for the slice
 	 * @param pTotal the slice total of the event list 
 	 */
-	private void applyTax(Number.Money pTax,
-			              Number.Money pTotal)	{
-		Number.Money 	myPortion;
-		long			myValue;
+	private void applyTax(Money pTax,
+			              Money pTotal)	{
+		Money 	myPortion;
+		long	myValue;
 		
 		/* Calculate the portion of tax that applies to this slice */
 		myPortion = pTax.valueAtWeight(theSlice, pTotal);
 		
 		/* Multiply by the number of years */
 		myValue = myPortion.getValue() * getYears();
-		theTaxation = new Number.Money(myValue);
+		theTaxation = new Money(myValue);
 	}
 	
 	/**
@@ -252,8 +252,8 @@ public class ChargeableEvent extends DataItem {
 		 * divided by the number of years that the charge is to be sliced over
 		 * @return the slice total of the chargeable event list 
 		 */
-		public Number.Money	getSliceTotal()		{
-			Number.Money 	myTotal;
+		public Money	getSliceTotal()		{
+			Money 			myTotal;
 			ChargeableEvent myEvent;
 			ListIterator 	myIterator;
 			
@@ -261,7 +261,7 @@ public class ChargeableEvent extends DataItem {
 			myIterator = listIterator();
 			
 			/* Initialise the total */
-			myTotal = new Number.Money(0);
+			myTotal = new Money(0);
 			
 			/* Loop through the list */
 			while ((myEvent = myIterator.next()) != null) {				
@@ -278,8 +278,8 @@ public class ChargeableEvent extends DataItem {
 		 * This is the total of the tax that has been apportioned to each slice
 		 * @return the tax total of the chargeable event list 
 		 */
-		public Number.Money	getTaxTotal()		{
-			Number.Money 	myTotal;
+		public Money	getTaxTotal()		{
+			Money 			myTotal;
 			ChargeableEvent myEvent;
 			ListIterator 	myIterator;
 			
@@ -287,7 +287,7 @@ public class ChargeableEvent extends DataItem {
 			myIterator = listIterator();
 			
 			/* Initialise the total */
-			myTotal = new Number.Money(0);
+			myTotal = new Money(0);
 			
 			/* Loop through the list */
 			while ((myEvent = myIterator.next()) != null) {				
@@ -305,8 +305,8 @@ public class ChargeableEvent extends DataItem {
 		 * divided by the number of years that the charge is to be sliced over
 		 * @return the slice total of the chargeable event list 
 		 */
-		public Number.Money	getGainsTotal()		{
-			Number.Money 	myTotal;
+		public Money	getGainsTotal()		{
+			Money 			myTotal;
 			ChargeableEvent myEvent;
 			ListIterator 	myIterator;
 			
@@ -314,7 +314,7 @@ public class ChargeableEvent extends DataItem {
 			myIterator = listIterator();
 			
 			/* Initialise the total */
-			myTotal = new Number.Money(0);
+			myTotal = new Money(0);
 			
 			/* Loop through the list */
 			while ((myEvent = myIterator.next()) != null) {				
@@ -332,8 +332,8 @@ public class ChargeableEvent extends DataItem {
 		 * @param pTax	the calculated taxation for the slice
 		 * @param pTotal the slice total of the event list 
 		 */
-		public void applyTax(Number.Money pTax,
-				             Number.Money pTotal)	{
+		public void applyTax(Money pTax,
+				             Money pTotal)	{
 			ChargeableEvent myEvent;
 			ListIterator 	myIterator;
 			

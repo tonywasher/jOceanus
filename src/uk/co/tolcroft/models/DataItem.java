@@ -231,6 +231,12 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	public String		fieldName(int fieldId)	{ return "Unknown"; }
 	
 	/**
+	 * Stub for extensions to add their own fields
+	 * @param pBuffer the string buffer 
+	 */
+	public void addHTMLFields(StringBuilder pBuffer) {}
+	
+	/**
 	 * Format this item to a string
 	 * @return the formatted item
 	 */
@@ -278,6 +284,9 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 			myString.append("</td></tr>");
 		}
 
+		/* Add any additional HTML Fields */
+		addHTMLFields(myString);
+		
 		/* If errors exist */
 		if (hasErrors()) {
 			/* Add details of the errors */

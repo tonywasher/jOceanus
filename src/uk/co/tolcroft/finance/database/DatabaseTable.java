@@ -62,7 +62,7 @@ public abstract class DatabaseTable<T extends DataItem> {
 	 * The update parameters
 	 */
 	private ParameterList          	theParms      	= null;
-	
+
 	/**
 	 * Constructor
 	 */

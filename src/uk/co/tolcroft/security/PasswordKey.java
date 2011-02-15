@@ -62,7 +62,7 @@ public class PasswordKey {
 	 * Obtain the SecurityKey
 	 * @return the Security Key 
 	 */
-	public byte[] 	getSecurityKey() 	{ return theSaltAndHash; }
+	public byte[] 		getSecurityKey() 	{ return theSaltAndHash; }
 	
 	/**
 	 * Obtain the KeyPair
@@ -76,7 +76,8 @@ public class PasswordKey {
 	 * @param pRandom Secure Random byte generator
 	 */
 	protected PasswordKey(char[] 			pPassword,
-						  SecureRandom		pRandom) throws WrongPasswordException, Exception {
+						  SecureRandom		pRandom) throws WrongPasswordException,
+						  									Exception {
 		/* Store the salt and hash */
 		theRandom	= pRandom;
 		
@@ -92,7 +93,8 @@ public class PasswordKey {
 	 */
 	protected PasswordKey(byte[]			pSaltAndHash,
 			  			  char[] 			pPassword,
-						  SecureRandom		pRandom) throws WrongPasswordException, Exception {
+						  SecureRandom		pRandom) throws WrongPasswordException,
+						  									Exception {
 		/* Store the salt and hash */
 		theSaltAndHash 	= pSaltAndHash;
 		theRandom		= pRandom;
@@ -109,7 +111,8 @@ public class PasswordKey {
 	 */
 	protected PasswordKey(String		pSecurityKey,
 						  char[] 		pPassword,
-						  SecureRandom	pRandom) throws WrongPasswordException, Exception {
+						  SecureRandom	pRandom) throws WrongPasswordException,
+						  								Exception {
 		/* Store the Random byte generator */
 		theRandom	= pRandom;
 		
@@ -197,9 +200,22 @@ public class PasswordKey {
 	/**
 	 * Seed the password key with the password
 	 * @param pPassword the password (cleared after usage)
-	 * @return <code>true/false</code> whether password is valid 
 	 */
-	private void setPassword(char[] pPassword) throws WrongPasswordException, Exception {
+	public void setNewPassword(char[] pPassword) throws WrongPasswordException,
+														Exception {
+		/* Clear the salt and hash */
+		theSaltAndHash = null;
+		
+		/* Reset the password */
+		setPassword(pPassword);
+	}
+	
+	/**
+	 * Seed the password key with the password
+	 * @param pPassword the password (cleared after usage)
+	 */
+	private void setPassword(char[] pPassword) throws WrongPasswordException,
+													  Exception {
 		PBEKeySpec 			myKeySpec;
 		SecretKeyFactory 	myKeyFactory;
 		byte[]				mySalt;

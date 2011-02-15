@@ -104,10 +104,10 @@ public class Pattern extends DataItem {
 					(theAccountId != -1))
 					myString += "Id=" + theAccountId;
 				else
-					myString += Utils.formatAccount(getAccount()); 
+					myString += Account.format(getAccount()); 
 				break;
 			case FIELD_DATE:	
-				myString += Utils.formatDate(myObj.getDate()); 
+				myString += Date.format(myObj.getDate()); 
 				break;
 			case FIELD_DESC:	
 				myString += myObj.getDesc(); 
@@ -117,24 +117,24 @@ public class Pattern extends DataItem {
 					(thePartnerId != -1))
 					myString += "Id=" + thePartnerId;
 				else
-					myString += Utils.formatAccount(myObj.getPartner()); 
+					myString += Account.format(myObj.getPartner()); 
 				break;
 			case FIELD_TRNTYP:	
 				if ((myObj.getTransType() == null) &&
 					(theTransId != -1))
 					myString += "Id=" + theTransId;
 				else
-					myString += Utils.formatTrans(myObj.getTransType()); 
+					myString += TransactionType.format(myObj.getTransType()); 
 				break;
 			case FIELD_AMOUNT:	
-				myString += Utils.formatMoney(myObj.getAmount()); 
+				myString += Money.format(myObj.getAmount()); 
 				break;
 			case FIELD_FREQ:	
 				if ((myObj.getFrequency() == null) &&
 					(theFreqId != -1))
 					myString += "Id=" + theFreqId;
 				else
-					myString += Utils.formatFreq(myObj.getFrequency()); 
+					myString += Frequency.format(myObj.getFrequency()); 
 				break;
 			case FIELD_CREDIT: 
 				myString +=	(isCredit() ? "true" : "false");
@@ -307,15 +307,15 @@ public class Pattern extends DataItem {
 		Pattern myPattern = (Pattern)pThat;
 		
 		/* Check for equality */
-		if (getId() != myPattern.getId()) return false;
-		if (Utils.differs(getDate(),       myPattern.getDate())) 		return false;
-		if (Utils.differs(getDesc(),       myPattern.getDesc())) 		return false;
-		if (Utils.differs(getTransType(),  myPattern.getTransType())) 	return false;
-		if (Utils.differs(getAmount(),     myPattern.getAmount())) 		return false;
-		if (Utils.differs(getAccount(),    myPattern.getAccount())) 	return false;
-		if (Utils.differs(getPartner(),    myPattern.getPartner())) 	return false;
-		if (Utils.differs(getFrequency(),  myPattern.getFrequency())) 	return false;
-		if (isCredit() != myPattern.isCredit()) return false;
+		if (getId() != myPattern.getId()) 										return false;
+		if (Date.differs(getDate(),        			myPattern.getDate())) 		return false;
+		if (Utils.differs(getDesc(),       			myPattern.getDesc())) 		return false;
+		if (TransactionType.differs(getTransType(), myPattern.getTransType())) 	return false;
+		if (Money.differs(getAmount(),     			myPattern.getAmount())) 	return false;
+		if (Account.differs(getAccount(),    		myPattern.getAccount())) 	return false;
+		if (Account.differs(getPartner(),    		myPattern.getPartner())) 	return false;
+		if (Frequency.differs(getFrequency(),		myPattern.getFrequency())) 	return false;
+		if (isCredit() != myPattern.isCredit()) 								return false;
 		return true;
 	}
 
@@ -629,15 +629,15 @@ public class Pattern extends DataItem {
 		pushHistory();
 		
 		/* Update the partner if required */
-		if (Utils.differs(getPartner(), myPattern.getPartner())) 
+		if (Account.differs(getPartner(), myPattern.getPartner())) 
 			setPartner(myPattern.getPartner());
 	
 		/* Update the transtype if required */
-		if (Utils.differs(getTransType(), myPattern.getTransType())) 
+		if (TransactionType.differs(getTransType(), myPattern.getTransType())) 
 			setTransType(myPattern.getTransType());
 	
 		/* Update the frequency if required */
-		if (Utils.differs(getFrequency(), myPattern.getFrequency())) 
+		if (Frequency.differs(getFrequency(), myPattern.getFrequency())) 
 			setFrequency(myPattern.getFrequency());
 	
 		/* Update the description if required */
@@ -645,11 +645,11 @@ public class Pattern extends DataItem {
 			setDesc(myPattern.getDesc());
 	
 		/* Update the amount if required */
-		if (Utils.differs(getAmount(), myPattern.getAmount())) 
+		if (Money.differs(getAmount(), myPattern.getAmount())) 
 			setAmount(myPattern.getAmount());
 		
 		/* Update the date if required */
-		if (Utils.differs(getDate(), myPattern.getDate())) 
+		if (Date.differs(getDate(), myPattern.getDate())) 
 			setDate(myPattern.getDate());
 		
 		/* Check for changes */
@@ -727,7 +727,7 @@ public class Pattern extends DataItem {
 			/* Loop through the Prices */
 			while ((myCurr = myIterator.next()) != null) {
 				/* If this item belongs to the account */
-				if (!Utils.differs(myCurr.getAccount(), pAccount)) {
+				if (!Account.differs(myCurr.getAccount(), pAccount)) {
 					/* Copy the item */
 					myItem = new Pattern(this, myCurr);
 					myItem.addToList();
@@ -850,7 +850,7 @@ public class Pattern extends DataItem {
 			if (myAccount == null) 
 				throw new Exception(ExceptionClass.DATA,
 			                        "Pattern on [" + 
-			                        Utils.formatDate(new Date(pDate)) +
+			                        Date.format(new Date(pDate)) +
 			                        "] has invalid Account [" +
 			                        pAccount + "]");
 				
@@ -859,7 +859,7 @@ public class Pattern extends DataItem {
 			if (myPartner == null) 
 				throw new Exception(ExceptionClass.DATA,
 			                        "Pattern on [" + 
-			                        Utils.formatDate(new Date(pDate)) +
+			                        Date.format(new Date(pDate)) +
 			                        "] has invalid Partner [" +
 			                        pPartner + "]");
 				
@@ -868,7 +868,7 @@ public class Pattern extends DataItem {
 			if (myTransType == null) 
 				throw new Exception(ExceptionClass.DATA,
 			                        "Pattern on [" + 
-			                        Utils.formatDate(new Date(pDate)) +
+			                        Date.format(new Date(pDate)) +
 			                        "] has invalid TransType [" +
 			                        pTransType + "]");
 				
@@ -877,7 +877,7 @@ public class Pattern extends DataItem {
 			if (myFrequency == null) 
 				throw new Exception(ExceptionClass.DATA,
 			                        "Pattern on [" + 
-			                        Utils.formatDate(new Date(pDate)) +
+			                        Date.format(new Date(pDate)) +
 			                        "] has invalid Frequency [" +
 			                        pFrequency + "]");
 				
@@ -990,14 +990,14 @@ public class Pattern extends DataItem {
 			return histEquals(myValues);
 		}
 		public boolean histEquals(Values pValues) {
-			if (Utils.differs(theDate,   pValues.theDate))         return false;
-			if (Utils.differs(theDesc,   pValues.theDesc))         return false;
-			if (Utils.differs(theAmount, pValues.theAmount))       return false;
-			if (Utils.differs(thePartner, pValues.thePartner))     return false;
-			if (Utils.differs(theFrequency, pValues.theFrequency)) return false;
-			if (Utils.differs(theTransType, pValues.theTransType)) return false;
-			if (Utils.differs(theAccount, pValues.theAccount)) 	   return false;
-			if (isCredit != pValues.isCredit) 	   				   return false;
+			if (Date.differs(theDate,    				pValues.theDate))       return false;
+			if (Utils.differs(theDesc,   				pValues.theDesc))       return false;
+			if (Money.differs(theAmount, 				pValues.theAmount))     return false;
+			if (Account.differs(thePartner, 			pValues.thePartner))    return false;
+			if (Frequency.differs(theFrequency, 		pValues.theFrequency))	return false;
+			if (TransactionType.differs(theTransType,	pValues.theTransType)) 	return false;
+			if (Account.differs(theAccount, 			pValues.theAccount))	return false;
+			if (isCredit != pValues.isCredit) 	   							   	return false;
 			return true;
 		}
 		
@@ -1024,25 +1024,25 @@ public class Pattern extends DataItem {
 			boolean	bResult = false;
 			switch (fieldNo) {
 				case FIELD_DATE:
-					bResult = (Utils.differs(theDate,      pValues.theDate));
+					bResult = (Date.differs(theDate,       pValues.theDate));
 					break;
 				case FIELD_DESC:
 					bResult = (Utils.differs(theDesc,      pValues.theDesc));
 					break;
 				case FIELD_TRNTYP:
-					bResult = (Utils.differs(theTransType, pValues.theTransType));
+					bResult = (TransactionType.differs(theTransType, pValues.theTransType));
 					break;
 				case FIELD_AMOUNT:
-					bResult = (Utils.differs(theAmount,    pValues.theAmount));
+					bResult = (Money.differs(theAmount,    pValues.theAmount));
 					break;
 				case FIELD_PARTNER:
-					bResult = (Utils.differs(thePartner,   pValues.thePartner));
+					bResult = (Account.differs(thePartner,   pValues.thePartner));
 					break;
 				case FIELD_FREQ:
-					bResult = (Utils.differs(theFrequency, pValues.theFrequency));
+					bResult = (Frequency.differs(theFrequency, pValues.theFrequency));
 					break;
 				case FIELD_ACCOUNT:
-					bResult = (Utils.differs(theAccount,   pValues.theAccount));
+					bResult = (Account.differs(theAccount,   pValues.theAccount));
 					break;
 				case FIELD_CREDIT:
 					bResult = (isCredit != pValues.isCredit);

@@ -247,7 +247,7 @@ public class DateRange  implements 	ItemListener,
 			
 			/* Note that previous and next are not allowed */
 			isNextOK = false;
-			isPrevOK = (Utils.differs(theStartDate, theFirstDate));
+			isPrevOK = (Date.differs(theStartDate, theFirstDate));
 		}
 		
 		/* else we have to calculate the date */

@@ -5,11 +5,11 @@ import java.sql.SQLException;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.DataList.*;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
-public class TablePrice extends DatabaseTable<Price> {
+public class TablePrice extends DatabaseTable<AcctPrice> {
 	/**
 	 * The name of the Prices table
 	 */
@@ -44,13 +44,13 @@ public class TablePrice extends DatabaseTable<Price> {
 	}
 	
 	/* Get the List for the table for loading */
-	protected Price.List  getLoadList(DataSet pData) {
+	protected AcctPrice.List  getLoadList(DataSet pData) {
 		return pData.getPrices();
 	}
 	
 	/* Get the List for the table for updates */
-	protected Price.List  getUpdateList(DataSet pData) {
-		return new Price.List(pData.getPrices(), ListStyle.UPDATE);
+	protected AcctPrice.List  getUpdateList(DataSet pData) {
+		return new AcctPrice.List(pData.getPrices(), ListStyle.UPDATE);
 	}
 	
 	/**
@@ -97,7 +97,7 @@ public class TablePrice extends DatabaseTable<Price> {
 	 * Set the Price of the item to be inserted
 	 * @param pPrice the price of the item
 	 */
-	private void setPrice(Number.Price pPrice) throws SQLException {
+	private void setPrice(Price pPrice) throws SQLException {
 		setString(pPrice.format(false));
 	}
 
@@ -121,7 +121,7 @@ public class TablePrice extends DatabaseTable<Price> {
 	 * Update the Price of the item
 	 * @param pPrice the new price
 	 */
-	private void updatePrice(Number.Price pValue) {
+	private void updatePrice(Price pValue) {
 		updateString(thePriceCol, (pValue == null) ? null
                 								   : pValue.format(false));
 	}	
@@ -148,7 +148,7 @@ public class TablePrice extends DatabaseTable<Price> {
 	
 	/* Load the price */
 	protected void loadItem() throws Exception {
-		Price.List		myList;
+		AcctPrice.List		myList;
 		int	    		myId;
 		int  			myAccountId;
 		String 			myPrice;
@@ -163,7 +163,7 @@ public class TablePrice extends DatabaseTable<Price> {
 			myPrice     = getPrice();
 	
 			/* Access the list */
-			myList = (Price.List)getList();
+			myList = (AcctPrice.List)getList();
 			
 			/* Add into the list */
 			myList.addItem(myId, 
@@ -191,7 +191,7 @@ public class TablePrice extends DatabaseTable<Price> {
 	}
 	
 	/* Insert the price */
-	protected void insertItem(Price	pItem) throws Exception {
+	protected void insertItem(AcctPrice	pItem) throws Exception {
 		
 		/* Protect the access */
 		try {			
@@ -214,22 +214,22 @@ public class TablePrice extends DatabaseTable<Price> {
 	}
 	
 	/* Update the price */
-	protected void updateItem(Price	pItem) throws Exception {
-		Price.Values 	myBase;
+	protected void updateItem(AcctPrice	pItem) throws Exception {
+		AcctPrice.Values 	myBase;
 		
 		/* Access the base */
-		myBase = (Price.Values)pItem.getBaseObj();
+		myBase = (AcctPrice.Values)pItem.getBaseObj();
 			
 		/* Protect the update */
 		try {			
 			/* Update the fields */
-			if (Utils.differs(pItem.getAccount(),
-		  		  	  		  myBase.getAccount()))
+			if (Account.differs(pItem.getAccount(),
+		  		  	  			myBase.getAccount()))
 				updateAccount(pItem.getAccount().getId());
-			if (Utils.differs(pItem.getDate(),
-				  		  	  myBase.getDate()))
+			if (Date.differs(pItem.getDate(),
+				  		  	 myBase.getDate()))
 				updateDate(pItem.getDate());
-			if (Utils.differs(pItem.getPrice(),
+			if (Price.differs(pItem.getPrice(),
 						  	  myBase.getPrice())) 
 				updatePrice(pItem.getPrice());
 		}

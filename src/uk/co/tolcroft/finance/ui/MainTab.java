@@ -27,7 +27,6 @@ import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.security.*;
 
 public class MainTab implements ActionListener,
 								ChangeListener,
@@ -61,7 +60,6 @@ public class MainTab implements ActionListener,
 	private JMenuItem		theWriteBackup	= null;
 	private JMenuItem		theLoadBackup	= null;
 	private ThreadControl	theThread		= null;
-	private SecurityControl	theSecurity		= null;
 	private ExecutorService theExecutor		= null;
 	
 	/* Access methods */
@@ -70,7 +68,6 @@ public class MainTab implements ActionListener,
 	public 		JFrame      	getFrame()      { return theFrame; }
 	public 		JPanel      	getPanel()      { return thePanel; }
 	public 		StatusBar   	getStatusBar()  { return theStatusBar; }
-	public 		SecurityControl	getSecurity()	{ return theSecurity; }
 	protected 	ComboSelect		getComboList()	{ return theComboList; }
 
 	/* Get explicit font */
@@ -228,36 +225,6 @@ public class MainTab implements ActionListener,
 		theFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		theFrame.addWindowListener(this);
 
-		/* Prompt for the password */
-		PasswordDialog 	myPass 			= new PasswordDialog(theFrame, false);
-		boolean 		isPasswordOk 	= false;
-		while (myPass.showDialog()) {
-			/* Access the password */
-			char[] myPassword = myPass.getPassword();
-			
-			try {
-				String myKey = theProperties.getSecurityKey();
-				
-				/* Check the password */
-				theSecurity 	= new SecurityControl(myKey, myPassword);
-				isPasswordOk 	= true;
-				
-				/* Store new value if required */
-				if (myKey == null) { 
-					theProperties.setSecurityKey(theSecurity.getSecurityKey());
-					theProperties.flushChanges();
-				}
-				break;
-			}
-			catch (WrongPasswordException e) {
-				myPass = new PasswordDialog(theFrame, true);
-				continue;
-			}
-		}
-		
-		/* If we have cancelled the operation, then exit */
-		if (!isPasswordOk) System.exit(0);
-		
 		/* Load data from the spreadsheet */
 		loadSpreadsheet();
 	}

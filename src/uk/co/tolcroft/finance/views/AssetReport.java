@@ -4,7 +4,7 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.AnalysisYear.*;
 import uk.co.tolcroft.finance.views.AssetAnalysis.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 
 public class AssetReport {
 	/* Properties */
@@ -26,7 +26,7 @@ public class AssetReport {
 		Bucket							myBucket;
 		StringBuilder		   			myOutput = new StringBuilder(10000);
 		StringBuilder          			myDetail = new StringBuilder(10000);	
-		Number.Money        			myProfit;
+		Money		        			myProfit;
 		AssetAnalysis.List 				myList;
 
 		/* Endure that totals have been produced */
@@ -83,7 +83,7 @@ public class AssetReport {
 		
 		/* Format the profit */
 		myOutput.append("<tr><th>Profit</th>");
-		myProfit = new Number.Money(myBucket.getAmount());
+		myProfit = new Money(myBucket.getAmount());
 		if (myBucket.getPrevAmount() != null)
 			myProfit.subtractAmount(myBucket.getPrevAmount());
 		myOutput.append(Report.makeMoneyProfit(myProfit));
@@ -292,7 +292,7 @@ public class AssetReport {
 			if (myBucket.getBucket() != BucketType.DETAIL) break;
 			
 			/* Skip record if incorrect type */
-			if (Utils.differs(myBucket.getType(), myType)) continue;
+			if (AccountType.differs(myBucket.getType(), myType)) continue;
 
 			/* Format the detail */
 			myOutput.append("<tr><th align=\"center\">");
@@ -352,7 +352,7 @@ public class AssetReport {
 			if (myBucket.getBucket() != BucketType.DETAIL) break;
 			
 			/* Skip record if incorrect type */
-			if (Utils.differs(myBucket.getType(), myType)) continue;
+			if (AccountType.differs(myBucket.getType(), myType)) continue;
 
 			/* Access the bucket */
 			myMoney = (MoneyBucket) myBucket;
@@ -414,7 +414,7 @@ public class AssetReport {
 			if (myBucket.getBucket() != BucketType.DETAIL) break;
 			
 			/* Skip record if incorrect type */
-			if (Utils.differs(myBucket.getType(), myType)) continue;
+			if (AccountType.differs(myBucket.getType(), myType)) continue;
 
 			/* Format the detail */
 			myOutput.append("<tr><th align=\"center\">");
@@ -472,7 +472,7 @@ public class AssetReport {
 			if (myBucket.getBucket() != BucketType.DETAIL) break;
 			
 			/* Skip record if incorrect type */
-			if (Utils.differs(myBucket.getType(), myType)) continue;
+			if (AccountType.differs(myBucket.getType(), myType)) continue;
 
 			/* Access the asset */
 			myAsset = (AssetBucket) myBucket;

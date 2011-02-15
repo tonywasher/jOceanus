@@ -238,6 +238,32 @@ public class Date {
 	}
 	
 	/**
+	 * Format a Date 
+	 * 
+	 * @param pDate the date to format
+	 * @return the formatted Date
+	 */
+	public static String format(Date pDate) {
+		String 	myFormat;
+		myFormat = (pDate != null) ? pDate.formatDate(false)
+							       : "null";
+		return myFormat;
+	}
+
+	/**
+	 * Determine whether two Date objects differ.
+	 * 
+	 * @param pCurr The current Date 
+	 * @param pNew The new Date
+	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
+	 */	
+	public static boolean differs(Date pCurr, Date pNew) {
+		return (((pCurr == null) && (pNew != null)) ||
+				((pCurr != null) && 
+				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
+	}
+
+	/**
 	 * Represents a contiguous Range of dates 
 	 */
 	public static class Range {

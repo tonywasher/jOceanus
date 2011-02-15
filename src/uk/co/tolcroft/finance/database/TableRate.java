@@ -6,10 +6,10 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
-public class TableRate extends DatabaseTable<Rate> {
+public class TableRate extends DatabaseTable<AcctRate> {
 	/**
 	 * The name of the Rates table
 	 */
@@ -49,13 +49,13 @@ public class TableRate extends DatabaseTable<Rate> {
 	}
 	
 	/* Get the List for the table for loading */
-	protected Rate.List  getLoadList(DataSet pData) {
+	protected AcctRate.List  getLoadList(DataSet pData) {
 		return pData.getRates();
 	}
 	
 	/* Get the List for the table for updates */
-	protected Rate.List  getUpdateList(DataSet pData) {
-		return new Rate.List(pData.getRates(), ListStyle.UPDATE);
+	protected AcctRate.List  getUpdateList(DataSet pData) {
+		return new AcctRate.List(pData.getRates(), ListStyle.UPDATE);
 	}
 	
 	/**
@@ -102,7 +102,7 @@ public class TableRate extends DatabaseTable<Rate> {
 	 * Set the Rate of the item to be inserted
 	 * @param pRate the Rate of the item
 	 */
-	private void setRate(Number.Rate pRate) throws SQLException {
+	private void setRate(Rate pRate) throws SQLException {
 		setString(pRate.format(false));
 	}
 
@@ -110,7 +110,7 @@ public class TableRate extends DatabaseTable<Rate> {
 	 * Set the Bonus of the item to be inserted
 	 * @param pBonus the bonus of the item
 	 */
-	private void setBonus(Number.Rate pBonus) throws SQLException {
+	private void setBonus(Rate pBonus) throws SQLException {
 		setString((pBonus == null) ? null 
                 				   : pBonus.format(false));
 	}
@@ -135,7 +135,7 @@ public class TableRate extends DatabaseTable<Rate> {
 	 * Update the Rate of the item
 	 * @param pValue the new rate
 	 */
-	private void updateRate(Number.Rate pValue) {
+	private void updateRate(Rate pValue) {
 		updateString(theRateCol, pValue.format(false));
 	}		
 
@@ -143,7 +143,7 @@ public class TableRate extends DatabaseTable<Rate> {
 	 * Update the Bonus of the item
 	 * @param pValue the new bonus
 	 */
-	private void updateBonus(Number.Rate pValue) {
+	private void updateBonus(Rate pValue) {
 		updateString(theBonusCol, (pValue == null) ? null
                 								   : pValue.format(false));
 	}	
@@ -180,7 +180,7 @@ public class TableRate extends DatabaseTable<Rate> {
 	
 	/* Load the rate */
 	protected void loadItem() throws Exception {
-		Rate.List		myList;
+		AcctRate.List		myList;
 		int	    		myId;
 		int	  			myAccountId;
 		String			myRate;
@@ -197,7 +197,7 @@ public class TableRate extends DatabaseTable<Rate> {
 			myEndDate  	= getEndDate();
 	
 			/* Access the list */
-			myList = (Rate.List)getList();
+			myList = (AcctRate.List)getList();
 			
 			/* Add into the list */
 			myList.addItem(myId, 
@@ -227,7 +227,7 @@ public class TableRate extends DatabaseTable<Rate> {
 	}
 	
 	/* Insert the rate */
-	protected void insertItem(Rate	pItem) throws Exception {
+	protected void insertItem(AcctRate	pItem) throws Exception {
 		
 		/* Protect the access */
 		try {			
@@ -251,26 +251,26 @@ public class TableRate extends DatabaseTable<Rate> {
 	}
 	
 	/* Update the rate */
-	protected void updateItem(Rate	pItem) throws Exception {
-		Rate.Values myBase;
+	protected void updateItem(AcctRate	pItem) throws Exception {
+		AcctRate.Values myBase;
 		
 		/* Access the base */
-		myBase = (Rate.Values)pItem.getBaseObj();
+		myBase = (AcctRate.Values)pItem.getBaseObj();
 			
 		/* Protect the update */
 		try {			
 			/* Update the fields */
-			if (Utils.differs(pItem.getAccount(),
-		  	  		  		  myBase.getAccount()))
+			if (Account.differs(pItem.getAccount(),
+		  	  		  		  	myBase.getAccount()))
 				updateAccount(pItem.getAccount().getId());
-			if (Utils.differs(pItem.getRate(),
-				  		  	  myBase.getRate()))
+			if (Rate.differs(pItem.getRate(),
+				  		  	 myBase.getRate()))
 				updateRate(pItem.getRate());
-			if (Utils.differs(pItem.getBonus(),
-						  	  myBase.getBonus())) 
+			if (Rate.differs(pItem.getBonus(),
+					  		 myBase.getBonus())) 
 				updateBonus(pItem.getBonus());
-			if (Utils.differs(pItem.getEndDate(),
-				              myBase.getEndDate())) 
+			if (Date.differs(pItem.getEndDate(),
+				             myBase.getEndDate())) 
 				updateEndDate(pItem.getEndDate());
 		}
 		

@@ -592,6 +592,32 @@ public class AccountType extends DataItem {
 	public boolean isInternal()  { return !isExternal(); }
 	
 	/**
+	 * Format an AccountType 
+	 * 
+	 * @param pActType the account type to format
+	 * @return the formatted account type
+	 */
+	public static String format(AccountType pActType) {
+		String 	myFormat;
+		myFormat = (pActType != null) ? pActType.getName()
+							 	      : "null";
+		return myFormat;
+	}
+
+	/**
+	 * Determine whether two AccountType objects differ.
+	 * 
+	 * @param pCurr The current AccountType 
+	 * @param pNew The new AccountType
+	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
+	 */	
+	public static boolean differs(AccountType pCurr, AccountType pNew) {
+		return (((pCurr == null) && (pNew != null)) ||
+				((pCurr != null) && 
+				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
+	}
+
+	/**
 	 * Represents a list of {@link AccountType} objects. 
 	 */
 	public static class List extends DataList<AccountType> {	

@@ -110,15 +110,22 @@ public class ZipFile {
 		public OutputStream getOutputStream(File pFile, zipMode pMode) throws Exception {
 			GZIPOutputStream myZip;
 		
-			/* Reject call if we have an closed the stream */
+			/* Reject call if we have closed the stream */
 			if (theStream == null)
-				throw new Exception(ExceptionClass.DATA,
+				throw new Exception(ExceptionClass.LOGIC,
 						  			"ZipFile is closed");
 			
 			/* Reject call if we have an open stream */
 			if (theOutput != null)
-				throw new Exception(ExceptionClass.DATA,
+				throw new Exception(ExceptionClass.LOGIC,
 						  			"Output stream already open");
+			
+			/* Reject call if we have no security and encryption is requested */
+			if ((theControl == null) &&
+				((pMode == zipMode.ENCRYPT) ||
+				 (pMode == zipMode.COMPRESS_AND_ENCRYPT)))
+				throw new Exception(ExceptionClass.LOGIC,
+						  			"Encryption not allowed for this ZipFile. No security credentials were provided.");
 			
 			/* Protect against exceptions */
 			try {
@@ -277,6 +284,7 @@ public class ZipFile {
 		public void close() throws IOException {
 			String		 myHeader;
 			byte[]		 myBytes;
+			ZipFileEntry myEntry;
 			
 			/* Close any open output stream */
 			closeOutputStream();
@@ -286,7 +294,20 @@ public class ZipFile {
 				/* Protect against exceptions */
 				try {
 					/* If we have stored files */
-					if (theFiles != null) {
+					if (theFiles != null) {						
+						/* Create a new zipFileEntry */
+						myEntry = new ZipFileEntry();
+						addToList(myEntry);
+						
+						/* Add the name of the header entry */
+						myEntry.setProperty(ZipFileEntry.propName,
+											fileHeader.getBytes(propEncoding));
+				
+						/* Add the security string to the header entry */
+						if (theControl != null)
+							myEntry.setProperty(ZipFileEntry.propSecurityKey,
+												theControl.getSecurityKey().getBytes(propEncoding));
+				
 						/* Access the encoded file string */
 						myHeader = theFiles.getEncodedString();
 						myBytes  = myHeader.getBytes(propEncoding);
@@ -411,6 +432,11 @@ public class ZipFile {
 		private SecurityControl		theControl 		= null;
 		
 		/**
+		 * Security Key for this zip file
+		 */
+		private String				theSecurityKey	= null;
+		
+		/**
 		 *	The list of files contained in this ZipFile together with properties 
 		 */
 		private ZipFileEntry		theFiles		= null;
@@ -424,29 +450,31 @@ public class ZipFile {
 		 * Obtain the next file entry 
 		 * @return the next file entry
 		 */
-		public ZipFileEntry	getFiles() 				{ return theFiles; }
+		public ZipFileEntry			getFiles() 		{ return theFiles; }
+		
+		/**
+		 * Obtain the security key for the file 
+		 * @return the next file entry
+		 */
+		public String				getSecurityKey(){ return theSecurityKey; }
 		
 		/**
 		 * Constructor 
 		 * @param pControl the security control
 		 * @param pFile the file to read
 		 */
-		public Input(SecurityControl	pControl,
-				 	 File 				pFile) throws Exception {
+		public Input(File	pFile) throws Exception {
 			FileInputStream 	myInFile;
 			BufferedInputStream myInBuffer;
-			ZipInputStream		myZipFile;
+			ZipInputStream		myZipFile	= null;
 			ZipEntry			myEntry;
-			byte[]			    myBuffer = new byte[BUFFERSIZE];
+			byte[]			    myBuffer 	= new byte[BUFFERSIZE];
 			int					myRead;
 			int					myLen;
 			int					mySpace;
 		
 			/* Protect against exceptions */
 			try {
-				/* record the security control */
-				theControl 	= pControl;
-				
 				/* Store the zipFile name */
 				theZipFile = new File(pFile.getPath());
 				
@@ -487,14 +515,45 @@ public class ZipFile {
 				
 				/* Close the file */
 				myZipFile.close();
+				
+				/* Loop through the files to obtain the file header */
+				ZipFileEntry myZipEntry;
+				for (myZipEntry  = theFiles; 
+					 myZipEntry != null;
+					 myZipEntry  = myZipEntry.getNext()) {
+					/* Break if we have the file header */
+					if (myZipEntry.getFileName().equals(fileHeader))
+						break;
+				}
+				
+				/* Pick up security key if present */
+				if ((myZipEntry != null) && (myZipEntry.hasSecurityKey()))
+					theSecurityKey = myZipEntry.getSecurityKey();	
 			}
 			
 			/* Catch exceptions */
 			catch (Throwable e) {
+				/* Close the file */
+				try { if (myZipFile != null) myZipFile.close(); } catch (Throwable ex) {}
+				
 				throw new Exception(ExceptionClass.DATA,
 									"Exception writing to Zip file",
 									e);
 			}
+		}
+		
+		/**
+		 * Set the security control
+		 * @param pControl the security control
+		 */
+		public void setSecurityControl(SecurityControl pControl) throws Exception {
+			/* Reject this is the wrong security control */
+			if (!pControl.getSecurityKey().equals(theSecurityKey))
+				throw new Exception(ExceptionClass.LOGIC,
+			  						"Security control does not match ZipFile Security.");					
+			
+			/* Store the control */
+			theControl = pControl;
 		}
 		
 		/**
@@ -532,6 +591,11 @@ public class ZipFile {
 				
 				/* If the file is encrypted */
 				if (pFile.isEncrypted()) {
+					/* Reject call if we have no security provided */
+					if (theControl == null) 
+						throw new Exception(ExceptionClass.LOGIC,
+								  			"Decryption required for this entry. No security credentials were provided.");					
+					
 					/* Verify Encryption details and set for decryption */
 					theControl.verifyFile(pFile);
 					

@@ -417,6 +417,20 @@ public class Number {
 			}
 			return myRate;
 		}
+
+		/**
+		 * Determine whether two Rate objects differ.
+		 * 
+		 * @param pCurr The current Rate 
+		 * @param pNew The new Rate
+		 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
+		 */	
+		public static boolean differs(Rate pCurr, Rate pNew) {
+			return (((pCurr == null) && (pNew != null)) ||
+					((pCurr != null) && 
+					 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
+		}
+
 	}
 	
 	/**
@@ -557,6 +571,32 @@ public class Number {
 				myPrice = null;
 			}
 			return myPrice;
+		}
+		
+		/**
+		 * Format a Price 
+		 * 
+		 * @param pPrice the price to format
+		 * @return the formatted Price
+		 */
+		public static String format(Price pPrice) {
+			String 	myFormat;
+			myFormat = (pPrice != null) ? pPrice.format(false)
+									   : "null";
+			return myFormat;
+		}
+
+		/**
+		 * Determine whether two Price objects differ.
+		 * 
+		 * @param pCurr The current Price 
+		 * @param pNew The new Price
+		 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
+		 */	
+		public static boolean differs(Price pCurr, Price pNew) {
+			return (((pCurr == null) && (pNew != null)) ||
+					((pCurr != null) && 
+					 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
 		}
 	}
 	
@@ -699,6 +739,32 @@ public class Number {
 			}
 			return myPrice;
 		}
+
+		/**
+		 * Format a DilutedPrice 
+		 * 
+		 * @param pPrice the price to format
+		 * @return the formatted Price
+		 */
+		public static String format(DilutedPrice pPrice) {
+			String 	myFormat;
+			myFormat = (pPrice != null) ? pPrice.format(false)
+									    : "null";
+			return myFormat;
+		}
+
+		/**
+		 * Determine whether two DilutedPrice objects differ.
+		 * 
+		 * @param pCurr The current DilutedPrice 
+		 * @param pNew The new DilutedPrice
+		 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
+		 */	
+		public static boolean differs(DilutedPrice pCurr, DilutedPrice pNew) {
+			return (((pCurr == null) && (pNew != null)) ||
+					((pCurr != null) && 
+					 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
+		}
 	}
 	
 	/**
@@ -818,6 +884,32 @@ public class Number {
 				myUnits = null;
 			}
 			return myUnits;
+		}
+
+		/**
+		 * Format a Units 
+		 * 
+		 * @param pUnits the units to format
+		 * @return the formatted Units
+		 */
+		public static String format(Units pUnits) {
+			String 	myFormat;
+			myFormat = (pUnits != null) ? pUnits.format(false)
+									    : "null";
+			return myFormat;
+		}
+
+		/**
+		 * Determine whether two Units objects differ.
+		 * 
+		 * @param pCurr The current Units 
+		 * @param pNew The new Units
+		 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
+		 */	
+		public static boolean differs(Units pCurr, Units pNew) {
+			return (((pCurr == null) && (pNew != null)) ||
+					((pCurr != null) && 
+					 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
 		}
 	}
 	
@@ -944,6 +1036,32 @@ public class Number {
 			}
 			return myDilution;
 		}
+
+		/**
+		 * Format a Dilution 
+		 * 
+		 * @param pDilution the dilution to format
+		 * @return the formatted Dilution
+		 */
+		public static String format(Dilution pDilution) {
+			String 	myFormat;
+			myFormat = (pDilution != null) ? pDilution.format(false)
+									       : "null";
+			return myFormat;
+		}
+
+		/**
+		 * Determine whether two Dilution objects differ.
+		 * 
+		 * @param pCurr The current Dilution
+		 * @param pNew The new Dilution
+		 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
+		 */	
+		public static boolean differs(Dilution pCurr, Dilution pNew) {
+			return (((pCurr == null) && (pNew != null)) ||
+					((pCurr != null) && 
+					 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
+		}
 	}
 	
 	/**
@@ -1052,6 +1170,19 @@ public class Number {
 		}
 
 		/**
+		 * Format money 
+		 * 
+		 * @param pMoney the money to format
+		 * @return the formatted Money
+		 */
+		public static String format(Money pMoney) {
+			String 	myFormat;
+			myFormat = (pMoney != null) ? pMoney.format(false)
+									    : "null";
+			return myFormat;
+		}
+
+		/**
 		 * Create a new Money by parsing a string value 
 		 * 
 		 * @param pMoney the Money to parse
@@ -1068,6 +1199,19 @@ public class Number {
 			return myMoney;
 		}
 		
+		/**
+		 * Determine whether two Money objects differ.
+		 * 
+		 * @param pCurr The current Money 
+		 * @param pNew The new Money
+		 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
+		 */	
+		public static boolean differs(Money pCurr, Money pNew) {
+			return (((pCurr == null) && (pNew != null)) ||
+					((pCurr != null) && 
+					 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
+		}
+
 		/**
 		 * calculate the value of this money at a given rate 
 		 * 

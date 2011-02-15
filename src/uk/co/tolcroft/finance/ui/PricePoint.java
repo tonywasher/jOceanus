@@ -19,7 +19,7 @@ import javax.swing.table.TableColumnModel;
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.*;
 
 public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implements ActionListener {
@@ -166,7 +166,7 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 			if (getList().getShowDeleted() != theSelect.getShowClosed())
 				setShowDeleted(theSelect.getShowClosed());
 			
-			if (Utils.differs(theDate, theSelect.getDate()))
+			if (Date.differs(theDate, theSelect.getDate()))
 				setSelection(theSelect.getDate());
 		}			
 	}
@@ -218,8 +218,8 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 	public int getFieldForCol(int column) {
 		/* Switch on column */
 		switch (column) {
-			case COLUMN_ASSET: 		return Price.FIELD_ACCOUNT;
-			case COLUMN_PRICE:		return Price.FIELD_PRICE;
+			case COLUMN_ASSET: 		return AcctPrice.FIELD_ACCOUNT;
+			case COLUMN_PRICE:		return AcctPrice.FIELD_PRICE;
 			default: 				return -1;
 		}
 	}
@@ -228,10 +228,10 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 	public boolean isValidObj(DataItem 				pItem,
 							  DataItem.histObject  	pObj) {
 		SpotPrices.SpotPrice	mySpot  = (SpotPrices.SpotPrice) pItem;
-		Price.Values          	myPrice = (Price.Values) pObj;
+		AcctPrice.Values          	myPrice = (AcctPrice.Values) pObj;
 		
 		/* Check whether the date is the same */
-		if (Utils.differs(mySpot.getDate(), myPrice.getDate()))
+		if (Date.differs(mySpot.getDate(), myPrice.getDate()))
 			return false;
 
 		/* Otherwise OK */
@@ -359,7 +359,7 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 			/* Store the appropriate value */
 			switch (col) {
 				case COLUMN_PRICE:  
-					mySpot.setPrice((Number.Price)obj);    
+					mySpot.setPrice((Price)obj);    
 					break;
 			}
 				

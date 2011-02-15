@@ -4,7 +4,6 @@ import java.util.Calendar;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
-import uk.co.tolcroft.models.Number;
 import uk.co.tolcroft.models.Number.*;
 
 /**
@@ -35,16 +34,16 @@ public class TaxYear extends DataItem {
 	public  Money 		getAgeAllowLimit()			{ return getObj().getAgeAllowLimit(); }
 	public  Money 		getAddAllowLimit()			{ return getObj().getAddAllowLimit(); }
 	public  Money 		getAddIncBound()  			{ return getObj().getAddIncBound(); }
-	public  Number.Rate getLoTaxRate()    			{ return getObj().getLoTaxRate(); }
-	public  Number.Rate getBasicTaxRate() 			{ return getObj().getBasicTaxRate(); }
-	public  Number.Rate getHiTaxRate()    			{ return getObj().getHiTaxRate(); }
-	public  Number.Rate getIntTaxRate()   			{ return getObj().getIntTaxRate(); }
-	public  Number.Rate getDivTaxRate()   			{ return getObj().getDivTaxRate(); }
-	public  Number.Rate getHiDivTaxRate() 			{ return getObj().getHiDivTaxRate(); }
-	public  Number.Rate getAddTaxRate()   			{ return getObj().getAddTaxRate(); }
-	public  Number.Rate getAddDivTaxRate()			{ return getObj().getAddDivTaxRate(); }
-	public  Number.Rate getCapTaxRate()   			{ return getObj().getCapTaxRate(); }
-	public  Number.Rate getHiCapTaxRate() 			{ return getObj().getHiCapTaxRate(); }
+	public  Rate 		getLoTaxRate()    			{ return getObj().getLoTaxRate(); }
+	public  Rate 		getBasicTaxRate() 			{ return getObj().getBasicTaxRate(); }
+	public  Rate 		getHiTaxRate()    			{ return getObj().getHiTaxRate(); }
+	public  Rate 		getIntTaxRate()   			{ return getObj().getIntTaxRate(); }
+	public  Rate 		getDivTaxRate()   			{ return getObj().getDivTaxRate(); }
+	public  Rate 		getHiDivTaxRate() 			{ return getObj().getHiDivTaxRate(); }
+	public  Rate 		getAddTaxRate()   			{ return getObj().getAddTaxRate(); }
+	public  Rate 		getAddDivTaxRate()			{ return getObj().getAddDivTaxRate(); }
+	public  Rate 		getCapTaxRate()   			{ return getObj().getCapTaxRate(); }
+	public  Rate 		getHiCapTaxRate() 			{ return getObj().getHiCapTaxRate(); }
 	public  boolean		isActive() 	  	  			{ return isActive; }
 	public  boolean     hasLoSalaryBand() 			{ return getTaxRegime().hasLoSalaryBand(); }
 	public  boolean     hasAdditionalTaxBand() 		{ return getTaxRegime().hasAdditionalTaxBand(); }
@@ -143,70 +142,70 @@ public class TaxYear extends DataItem {
 					(theRegimeId != -1))
 					myString += "Id=" + theRegimeId;
 				else
-					myString += Utils.formatRegime(myObj.getTaxRegime()); 
+					myString += TaxRegime.format(myObj.getTaxRegime()); 
 				break;
 			case FIELD_YEAR:	
-				myString += Utils.formatDate(getDate()); 
+				myString += Date.format(getDate()); 
 				break;
 			case FIELD_ALLOW:	
-				myString += Utils.formatMoney(myObj.getAllowance()); 
+				myString += Money.format(myObj.getAllowance()); 
 				break;
 			case FIELD_LOBAND: 	
-				myString += Utils.formatMoney(myObj.getLoBand());	
+				myString += Money.format(myObj.getLoBand());	
 				break;
 			case FIELD_BSBAND:	
-				myString += Utils.formatMoney(myObj.getBasicBand()); 
+				myString += Money.format(myObj.getBasicBand()); 
 				break;
 			case FIELD_RENTAL:	
-				myString += Utils.formatMoney(myObj.getRentalAllow()); 
+				myString += Money.format(myObj.getRentalAllow()); 
 				break;
 			case FIELD_LOTAX: 	
-				myString += Utils.formatRate(myObj.getLoTaxRate());	
+				myString += Rate.format(myObj.getLoTaxRate());	
 				break;
 			case FIELD_BASTAX: 	
-				myString += Utils.formatRate(myObj.getBasicTaxRate());	
+				myString += Rate.format(myObj.getBasicTaxRate());	
 				break;
 			case FIELD_HITAX: 	
-				myString += Utils.formatRate(myObj.getHiTaxRate());	
+				myString += Rate.format(myObj.getHiTaxRate());	
 				break;
 			case FIELD_INTTAX: 	
-				myString += Utils.formatRate(myObj.getIntTaxRate());	
+				myString += Rate.format(myObj.getIntTaxRate());	
 				break;
 			case FIELD_DIVTAX: 	
-				myString += Utils.formatRate(myObj.getDivTaxRate());	
+				myString += Rate.format(myObj.getDivTaxRate());	
 				break;
 			case FIELD_HDVTAX: 	
-				myString += Utils.formatRate(myObj.getHiDivTaxRate());	
+				myString += Rate.format(myObj.getHiDivTaxRate());	
 				break;
 			case FIELD_ADDTAX: 	
-				myString += Utils.formatRate(myObj.getAddTaxRate());	
+				myString += Rate.format(myObj.getAddTaxRate());	
 				break;
 			case FIELD_ADVTAX: 	
-				myString += Utils.formatRate(myObj.getAddDivTaxRate());	
+				myString += Rate.format(myObj.getAddDivTaxRate());	
 				break;
 			case FIELD_LOAGAL: 	
-				myString += Utils.formatMoney(myObj.getLoAgeAllow());	
+				myString += Money.format(myObj.getLoAgeAllow());	
 				break;
 			case FIELD_HIAGAL: 	
-				myString += Utils.formatMoney(myObj.getHiAgeAllow());	
+				myString += Money.format(myObj.getHiAgeAllow());	
 				break;
 			case FIELD_AGELMT: 	
-				myString += Utils.formatMoney(myObj.getAgeAllowLimit());	
+				myString += Money.format(myObj.getAgeAllowLimit());	
 				break;
 			case FIELD_ADDLMT: 	
-				myString += Utils.formatMoney(myObj.getAddAllowLimit());	
+				myString += Money.format(myObj.getAddAllowLimit());	
 				break;
 			case FIELD_ADDBDY: 	
-				myString += Utils.formatMoney(myObj.getAddIncBound());	
+				myString += Money.format(myObj.getAddIncBound());	
 				break;
 			case FIELD_CAPALW: 	
-				myString += Utils.formatMoney(myObj.getCapitalAllow());	
+				myString += Money.format(myObj.getCapitalAllow());	
 				break;
 			case FIELD_CAPTAX: 	
-				myString += Utils.formatRate(myObj.getCapTaxRate());	
+				myString += Rate.format(myObj.getCapTaxRate());	
 				break;
 			case FIELD_HCPTAX: 	
-				myString += Utils.formatRate(myObj.getHiCapTaxRate());	
+				myString += Rate.format(myObj.getHiCapTaxRate());	
 				break;
 		}
 		return myString;
@@ -354,44 +353,44 @@ public class TaxYear extends DataItem {
 		}
 
 		/* Record the rates */
-		Number.Rate myRate = Number.Rate.Parse(pLoTaxRate);
+		Rate myRate = Rate.Parse(pLoTaxRate);
 		if (myRate == null) 
 			throw new Exception(ExceptionClass.DATA,
 								this,
 								"Invalid Low Tax Rate: " + pLoTaxRate);
 		myObj.setLoTaxRate(myRate);
-		myRate = Number.Rate.Parse(pBasicTaxRate);
+		myRate = Rate.Parse(pBasicTaxRate);
 		if (myRate == null) 
 			throw new Exception(ExceptionClass.DATA,
 								this,
 								"Invalid Basic Tax Rate: " + pBasicTaxRate);
 		myObj.setBasicTaxRate(myRate);
-		myRate = Number.Rate.Parse(pHiTaxRate);
+		myRate = Rate.Parse(pHiTaxRate);
 		if (myRate == null) 
 			throw new Exception(ExceptionClass.DATA,
 								this,
 								"Invalid High Tax Rate: " + pHiTaxRate);
 		myObj.setHiTaxRate(myRate);
-		myRate = Number.Rate.Parse(pIntTaxRate);
+		myRate = Rate.Parse(pIntTaxRate);
 		if (myRate == null) 
 			throw new Exception(ExceptionClass.DATA,
 								this,
 								"Invalid Int Tax Rate: " + pIntTaxRate);
 		myObj.setIntTaxRate(myRate);
-		myRate = Number.Rate.Parse(pDivTaxRate);
+		myRate = Rate.Parse(pDivTaxRate);
 		if (myRate == null) 
 			throw new Exception(ExceptionClass.DATA,
 								this,
 								"Invalid Div Tax Rate: " + pDivTaxRate);
 		myObj.setDivTaxRate(myRate);
-		myRate = Number.Rate.Parse(pHiDivTaxRate);
+		myRate = Rate.Parse(pHiDivTaxRate);
 		if (myRate == null) 
 			throw new Exception(ExceptionClass.DATA,
 								this,
 								"Invalid High Div Tax Rate: " + pHiDivTaxRate);
 		myObj.setHiDivTaxRate(myRate);
 		if (pAddTaxRate != null) {
-			myRate = Number.Rate.Parse(pAddTaxRate);
+			myRate = Rate.Parse(pAddTaxRate);
 			if (myRate == null) 
 				throw new Exception(ExceptionClass.DATA,
 									this,
@@ -399,7 +398,7 @@ public class TaxYear extends DataItem {
 			myObj.setAddTaxRate(myRate);
 		}
 		if (pAddDivTaxRate != null) {
-			myRate = Number.Rate.Parse(pAddDivTaxRate);
+			myRate = Rate.Parse(pAddDivTaxRate);
 			if (myRate == null) 
 				throw new Exception(ExceptionClass.DATA,
 									this,
@@ -407,7 +406,7 @@ public class TaxYear extends DataItem {
 			myObj.setAddDivTaxRate(myRate);
 		}
 		if (pCapTaxRate != null) {
-			myRate = Number.Rate.Parse(pCapTaxRate);
+			myRate = Rate.Parse(pCapTaxRate);
 			if (myRate == null) 
 				throw new Exception(ExceptionClass.DATA,
 									this,
@@ -415,7 +414,7 @@ public class TaxYear extends DataItem {
 			myObj.setCapTaxRate(myRate);
 		}
 		if (pHiCapTaxRate != null) {
-			myRate = Number.Rate.Parse(pHiCapTaxRate);
+			myRate = Rate.Parse(pHiCapTaxRate);
 			if (myRate == null) 
 				throw new Exception(ExceptionClass.DATA,
 									this,
@@ -453,28 +452,28 @@ public class TaxYear extends DataItem {
 		
 		/* Check for equality */
 		if (getId() != myYear.getId()) 											return false;
-		if (Utils.differs(getDate(),            myYear.getDate())) 				return false;
-		if (Utils.differs(getTaxRegime(),       myYear.getTaxRegime())) 		return false;
-		if (Utils.differs(getAllowance(),       myYear.getAllowance())) 		return false;
-		if (Utils.differs(getLoBand(),          myYear.getLoBand())) 			return false;
-		if (Utils.differs(getBasicBand(),       myYear.getBasicBand())) 		return false;
-		if (Utils.differs(getRentalAllowance(), myYear.getRentalAllowance())) 	return false;
-		if (Utils.differs(getCapitalAllow(),    myYear.getCapitalAllow())) 		return false;
-		if (Utils.differs(getLoAgeAllow(), 		myYear.getLoAgeAllow()))	 	return false;
-		if (Utils.differs(getHiAgeAllow(), 		myYear.getHiAgeAllow()))	 	return false;
-		if (Utils.differs(getAgeAllowLimit(), 	myYear.getAgeAllowLimit()))	 	return false;
-		if (Utils.differs(getAddAllowLimit(), 	myYear.getAddAllowLimit()))	 	return false;
-		if (Utils.differs(getAddIncBound(), 	myYear.getAddIncBound()))	 	return false;
-		if (Utils.differs(getLoTaxRate(),       myYear.getLoTaxRate())) 		return false;
-		if (Utils.differs(getBasicTaxRate(),    myYear.getBasicTaxRate())) 		return false;
-		if (Utils.differs(getHiTaxRate(),       myYear.getHiTaxRate())) 		return false;
-		if (Utils.differs(getIntTaxRate(),      myYear.getIntTaxRate())) 		return false;
-		if (Utils.differs(getDivTaxRate(),      myYear.getDivTaxRate())) 		return false;
-		if (Utils.differs(getHiDivTaxRate(),    myYear.getHiDivTaxRate()))    	return false;
-		if (Utils.differs(getAddTaxRate(),      myYear.getAddTaxRate()))    	return false;
-		if (Utils.differs(getAddDivTaxRate(),   myYear.getAddDivTaxRate()))    	return false;
-		if (Utils.differs(getCapTaxRate(),      myYear.getCapTaxRate()))    	return false;
-		if (Utils.differs(getHiCapTaxRate(),    myYear.getHiCapTaxRate()))    	return false;
+		if (Date.differs(getDate(),             myYear.getDate())) 				return false;
+		if (TaxRegime.differs(getTaxRegime(),   myYear.getTaxRegime())) 		return false;
+		if (Money.differs(getAllowance(),       myYear.getAllowance())) 		return false;
+		if (Money.differs(getLoBand(),          myYear.getLoBand())) 			return false;
+		if (Money.differs(getBasicBand(),       myYear.getBasicBand())) 		return false;
+		if (Money.differs(getRentalAllowance(), myYear.getRentalAllowance())) 	return false;
+		if (Money.differs(getCapitalAllow(),    myYear.getCapitalAllow())) 		return false;
+		if (Money.differs(getLoAgeAllow(), 		myYear.getLoAgeAllow()))	 	return false;
+		if (Money.differs(getHiAgeAllow(), 		myYear.getHiAgeAllow()))	 	return false;
+		if (Money.differs(getAgeAllowLimit(), 	myYear.getAgeAllowLimit()))	 	return false;
+		if (Money.differs(getAddAllowLimit(), 	myYear.getAddAllowLimit()))	 	return false;
+		if (Money.differs(getAddIncBound(), 	myYear.getAddIncBound()))	 	return false;
+		if (Rate.differs(getLoTaxRate(),     	myYear.getLoTaxRate())) 		return false;
+		if (Rate.differs(getBasicTaxRate(),  	myYear.getBasicTaxRate())) 		return false;
+		if (Rate.differs(getHiTaxRate(),     	myYear.getHiTaxRate())) 		return false;
+		if (Rate.differs(getIntTaxRate(),    	myYear.getIntTaxRate())) 		return false;
+		if (Rate.differs(getDivTaxRate(),    	myYear.getDivTaxRate())) 		return false;
+		if (Rate.differs(getHiDivTaxRate(),  	myYear.getHiDivTaxRate()))    	return false;
+		if (Rate.differs(getAddTaxRate(),    	myYear.getAddTaxRate()))    	return false;
+		if (Rate.differs(getAddDivTaxRate(), 	myYear.getAddDivTaxRate()))    	return false;
+		if (Rate.differs(getCapTaxRate(),    	myYear.getCapTaxRate()))    	return false;
+		if (Rate.differs(getHiCapTaxRate(),  	myYear.getHiCapTaxRate()))    	return false;
 		return true;
 	}
 
@@ -780,8 +779,8 @@ public class TaxYear extends DataItem {
 	 * 
 	 * @param pRate the Low Tax Rate 
 	 */
-	public void setLoTaxRate(Number.Rate pRate) {
-		getObj().setLoTaxRate((pRate == null) ? null : new Number.Rate(pRate));
+	public void setLoTaxRate(Rate pRate) {
+		getObj().setLoTaxRate((pRate == null) ? null : new Rate(pRate));
 	}
 	
 	/**
@@ -789,8 +788,8 @@ public class TaxYear extends DataItem {
 	 * 
 	 * @param pRate the Basic tax rate 
 	 */
-	public void setBasicTaxRate(Number.Rate pRate) {
-		getObj().setBasicTaxRate((pRate == null) ? null : new Number.Rate(pRate));
+	public void setBasicTaxRate(Rate pRate) {
+		getObj().setBasicTaxRate((pRate == null) ? null : new Rate(pRate));
 	}
 	
 	/**
@@ -798,8 +797,8 @@ public class TaxYear extends DataItem {
 	 * 
 	 * @param pRate the high tax rate 
 	 */
-	public void setHiTaxRate(Number.Rate pRate) {
-		getObj().setHiTaxRate((pRate == null) ? null : new Number.Rate(pRate));
+	public void setHiTaxRate(Rate pRate) {
+		getObj().setHiTaxRate((pRate == null) ? null : new Rate(pRate));
 	}
 	
 	/**
@@ -807,8 +806,8 @@ public class TaxYear extends DataItem {
 	 * 
 	 * @param pRate the Interest Tax Rate 
 	 */
-	public void setIntTaxRate(Number.Rate pRate) {
-		getObj().setIntTaxRate((pRate == null) ? null : new Number.Rate(pRate));
+	public void setIntTaxRate(Rate pRate) {
+		getObj().setIntTaxRate((pRate == null) ? null : new Rate(pRate));
 	}
 	
 	/**
@@ -816,8 +815,8 @@ public class TaxYear extends DataItem {
 	 * 
 	 * @param pRate the Dividend tax rate 
 	 */
-	public void setDivTaxRate(Number.Rate pRate) {
-		getObj().setDivTaxRate((pRate == null) ? null : new Number.Rate(pRate));
+	public void setDivTaxRate(Rate pRate) {
+		getObj().setDivTaxRate((pRate == null) ? null : new Rate(pRate));
 	}
 	
 	/**
@@ -825,8 +824,8 @@ public class TaxYear extends DataItem {
 	 * 
 	 * @param pRate the high dividend tax rate 
 	 */
-	public void setHiDivTaxRate(Number.Rate pRate) {
-		getObj().setHiDivTaxRate((pRate == null) ? null : new Number.Rate(pRate));
+	public void setHiDivTaxRate(Rate pRate) {
+		getObj().setHiDivTaxRate((pRate == null) ? null : new Rate(pRate));
 	}
 	
 	/**
@@ -834,8 +833,8 @@ public class TaxYear extends DataItem {
 	 * 
 	 * @param pRate the additional tax rate 
 	 */
-	public void setAddTaxRate(Number.Rate pRate) {
-		getObj().setAddTaxRate((pRate == null) ? null : new Number.Rate(pRate));
+	public void setAddTaxRate(Rate pRate) {
+		getObj().setAddTaxRate((pRate == null) ? null : new Rate(pRate));
 	}
 	
 	/**
@@ -843,8 +842,8 @@ public class TaxYear extends DataItem {
 	 * 
 	 * @param pRate the additional dividend tax rate 
 	 */
-	public void setAddDivTaxRate(Number.Rate pRate) {
-		getObj().setAddDivTaxRate((pRate == null) ? null : new Number.Rate(pRate));
+	public void setAddDivTaxRate(Rate pRate) {
+		getObj().setAddDivTaxRate((pRate == null) ? null : new Rate(pRate));
 	}
 	
 	/**
@@ -852,8 +851,8 @@ public class TaxYear extends DataItem {
 	 * 
 	 * @param pRate the capital tax rate 
 	 */
-	public void setCapTaxRate(Number.Rate pRate) {
-		getObj().setCapTaxRate((pRate == null) ? null : new Number.Rate(pRate));
+	public void setCapTaxRate(Rate pRate) {
+		getObj().setCapTaxRate((pRate == null) ? null : new Rate(pRate));
 	}
 	
 	/**
@@ -861,8 +860,8 @@ public class TaxYear extends DataItem {
 	 * 
 	 * @param pRate the additional dividend tax rate 
 	 */
-	public void setHiCapTaxRate(Number.Rate pRate) {
-		getObj().setHiCapTaxRate((pRate == null) ? null : new Number.Rate(pRate));
+	public void setHiCapTaxRate(Rate pRate) {
+		getObj().setHiCapTaxRate((pRate == null) ? null : new Rate(pRate));
 	}
 	
 	/**
@@ -884,83 +883,83 @@ public class TaxYear extends DataItem {
 		pushHistory();
 		
 		/* Update the tax regime if required */
-		if (Utils.differs(getTaxRegime(), myTaxYear.getTaxRegime()))
+		if (TaxRegime.differs(getTaxRegime(), myTaxYear.getTaxRegime()))
 			setTaxRegime(myTaxYear.getTaxRegime());
 	
 		/* Update the allowance if required */
-		if (Utils.differs(getAllowance(), myTaxYear.getAllowance()))
+		if (Money.differs(getAllowance(), myTaxYear.getAllowance()))
 			setAllowance(myTaxYear.getAllowance());
 	
 		/* Update the rental allowance if required */
-		if (Utils.differs(getRentalAllowance(), myTaxYear.getRentalAllowance()))
+		if (Money.differs(getRentalAllowance(), myTaxYear.getRentalAllowance()))
 			setRentalAllowance(myTaxYear.getRentalAllowance());
 	
 		/* Update the Low band if required */
-		if (Utils.differs(getLoBand(), myTaxYear.getLoBand()))
+		if (Money.differs(getLoBand(), myTaxYear.getLoBand()))
 			setLoBand(myTaxYear.getLoBand());
 			
 		/* Update the basic band if required */
-		if (Utils.differs(getBasicBand(), myTaxYear.getBasicBand()))
+		if (Money.differs(getBasicBand(), myTaxYear.getBasicBand()))
 			setBasicBand(myTaxYear.getBasicBand());
 		
 		/* Update the low age allowance if required */
-		if (Utils.differs(getLoAgeAllow(), myTaxYear.getLoAgeAllow()))
+		if (Money.differs(getLoAgeAllow(), myTaxYear.getLoAgeAllow()))
 			setLoAgeAllow(myTaxYear.getLoAgeAllow());
 		
 		/* Update the high age allowance if required */
-		if (Utils.differs(getHiAgeAllow(), myTaxYear.getHiAgeAllow()))
+		if (Money.differs(getHiAgeAllow(), myTaxYear.getHiAgeAllow()))
 			setHiAgeAllow(myTaxYear.getHiAgeAllow());
 		
 		/* Update the age allowance limit if required */
-		if (Utils.differs(getAgeAllowLimit(), myTaxYear.getAgeAllowLimit()))
+		if (Money.differs(getAgeAllowLimit(), myTaxYear.getAgeAllowLimit()))
 			setAgeAllowLimit(myTaxYear.getAgeAllowLimit());
 		
 		/* Update the additional allowance limit if required */
-		if (Utils.differs(getAddAllowLimit(), myTaxYear.getAddAllowLimit()))
+		if (Money.differs(getAddAllowLimit(), myTaxYear.getAddAllowLimit()))
 			setAddAllowLimit(myTaxYear.getAddAllowLimit());
 		
 		/* Update the additional income boundary if required */
-		if (Utils.differs(getAddIncBound(), myTaxYear.getAddIncBound()))
+		if (Money.differs(getAddIncBound(), myTaxYear.getAddIncBound()))
 			setAddIncBound(myTaxYear.getAddIncBound());
 		
 		/* Update the Low tax rate if required */
-		if (Utils.differs(getLoTaxRate(), myTaxYear.getLoTaxRate()))
+		if (Rate.differs(getLoTaxRate(), myTaxYear.getLoTaxRate()))
 			setLoTaxRate(myTaxYear.getLoTaxRate());
 		
 		/* Update the standard tax rate if required */
-		if (Utils.differs(getBasicTaxRate(), myTaxYear.getBasicTaxRate()))
+		if (Rate.differs(getBasicTaxRate(), myTaxYear.getBasicTaxRate()))
 			setBasicTaxRate(myTaxYear.getBasicTaxRate());
 						
 		/* Update the high tax rate if required */
-		if (Utils.differs(getHiTaxRate(), myTaxYear.getHiTaxRate()))
+		if (Rate.differs(getHiTaxRate(), myTaxYear.getHiTaxRate()))
 			setHiTaxRate(myTaxYear.getHiTaxRate());
 						
 		/* Update the interest tax rate if required */
-		if (Utils.differs(getIntTaxRate(), myTaxYear.getIntTaxRate()))
+		if (Rate.differs(getIntTaxRate(), myTaxYear.getIntTaxRate()))
 			setIntTaxRate(myTaxYear.getIntTaxRate());
 		
 		/* Update the dividend tax rate if required */
-		if (Utils.differs(getDivTaxRate(), myTaxYear.getDivTaxRate()))
+		if (Rate.differs(getDivTaxRate(), myTaxYear.getDivTaxRate()))
 			setDivTaxRate(myTaxYear.getDivTaxRate());
 						
 		/* Update the high dividend rate if required */
-		if (Utils.differs(getHiDivTaxRate(), myTaxYear.getHiDivTaxRate()))
+		if (Rate.differs(getHiDivTaxRate(), myTaxYear.getHiDivTaxRate()))
 			setHiDivTaxRate(myTaxYear.getHiDivTaxRate());
 		
 		/* Update the additional rate if required */
-		if (Utils.differs(getAddTaxRate(), myTaxYear.getAddTaxRate()))
+		if (Rate.differs(getAddTaxRate(), myTaxYear.getAddTaxRate()))
 			setAddTaxRate(myTaxYear.getAddTaxRate());
 		
 		/* Update the additional dividend rate if required */
-		if (Utils.differs(getAddDivTaxRate(), myTaxYear.getAddDivTaxRate()))
+		if (Rate.differs(getAddDivTaxRate(), myTaxYear.getAddDivTaxRate()))
 			setAddDivTaxRate(myTaxYear.getAddDivTaxRate());
 		
 		/* Update the capital rate if required */
-		if (Utils.differs(getCapTaxRate(), myTaxYear.getCapTaxRate()))
+		if (Rate.differs(getCapTaxRate(), myTaxYear.getCapTaxRate()))
 			setCapTaxRate(myTaxYear.getCapTaxRate());
 		
 		/* Update the high capital rate if required */
-		if (Utils.differs(getHiCapTaxRate(), myTaxYear.getHiCapTaxRate()))
+		if (Rate.differs(getHiCapTaxRate(), myTaxYear.getHiCapTaxRate()))
 			setHiCapTaxRate(myTaxYear.getHiCapTaxRate());
 		
 		/* Check for changes */
@@ -1216,7 +1215,7 @@ public class TaxYear extends DataItem {
 			if (myTaxRegime == null) 
 				throw new Exception(ExceptionClass.DATA,
 			                        "TaxYear on <" + 
-			                        Utils.formatDate(new Date(pDate)) +
+			                        Date.format(new Date(pDate)) +
 			                        "> has invalid TaxRegime <" + pRegime + ">");
 			
 			/* Create the tax year */
@@ -1340,16 +1339,16 @@ public class TaxYear extends DataItem {
 		private Money 		theAgeAllowLimit = null;
 		private Money 		theAddAllowLimit = null;
 		private Money 		theAddIncBound	 = null;
-		private Number.Rate theLoTaxRate     = null;
-		private Number.Rate theBasicTaxRate  = null;
-		private Number.Rate theHiTaxRate     = null;
-		private Number.Rate theIntTaxRate    = null;
-		private Number.Rate theDivTaxRate    = null;
-		private Number.Rate theHiDivTaxRate  = null;
-		private Number.Rate theAddTaxRate 	 = null;
-		private Number.Rate theAddDivTaxRate = null;
-		private Number.Rate theCapTaxRate 	 = null;
-		private Number.Rate theHiCapTaxRate  = null;
+		private Rate 		theLoTaxRate     = null;
+		private Rate 		theBasicTaxRate  = null;
+		private Rate 		theHiTaxRate     = null;
+		private Rate 		theIntTaxRate    = null;
+		private Rate 		theDivTaxRate    = null;
+		private Rate 		theHiDivTaxRate  = null;
+		private Rate 		theAddTaxRate 	 = null;
+		private Rate 		theAddDivTaxRate = null;
+		private Rate 		theCapTaxRate 	 = null;
+		private Rate 		theHiCapTaxRate  = null;
 		
 		/* Access methods */
 		public Date 		getYear()			{ return theYear; }
@@ -1364,16 +1363,16 @@ public class TaxYear extends DataItem {
 		public Money		getAgeAllowLimit()  { return theAgeAllowLimit; }
 		public Money		getAddAllowLimit()  { return theAddAllowLimit; }
 		public Money		getAddIncBound()  	{ return theAddIncBound; }
-		public Number.Rate  getLoTaxRate()    	{ return theLoTaxRate; }
-		public Number.Rate  getBasicTaxRate()   { return theBasicTaxRate; }
-		public Number.Rate  getHiTaxRate()    	{ return theHiTaxRate; }
-		public Number.Rate  getIntTaxRate()   	{ return theIntTaxRate; }
-		public Number.Rate  getDivTaxRate()   	{ return theDivTaxRate; }
-		public Number.Rate  getHiDivTaxRate() 	{ return theHiDivTaxRate; }
-		public Number.Rate  getAddTaxRate() 	{ return theAddTaxRate; }
-		public Number.Rate  getAddDivTaxRate() 	{ return theAddDivTaxRate; }
-		public Number.Rate  getCapTaxRate() 	{ return theCapTaxRate; }
-		public Number.Rate  getHiCapTaxRate() 	{ return theHiCapTaxRate; }
+		public Rate  		getLoTaxRate()    	{ return theLoTaxRate; }
+		public Rate  		getBasicTaxRate()   { return theBasicTaxRate; }
+		public Rate  		getHiTaxRate()    	{ return theHiTaxRate; }
+		public Rate  		getIntTaxRate()   	{ return theIntTaxRate; }
+		public Rate  		getDivTaxRate()   	{ return theDivTaxRate; }
+		public Rate  		getHiDivTaxRate() 	{ return theHiDivTaxRate; }
+		public Rate  		getAddTaxRate() 	{ return theAddTaxRate; }
+		public Rate  		getAddDivTaxRate() 	{ return theAddDivTaxRate; }
+		public Rate  		getCapTaxRate() 	{ return theCapTaxRate; }
+		public Rate  		getHiCapTaxRate() 	{ return theHiCapTaxRate; }
 		
 		public void setYear(Date pYear) {
 			theYear   		= pYear; }
@@ -1399,25 +1398,25 @@ public class TaxYear extends DataItem {
 			theAddAllowLimit = pLimit; }
 		public void setAddIncBound(Money pBound) {
 			theAddIncBound	= pBound; }
-		public void setLoTaxRate(Number.Rate pLoTaxRate) {
+		public void setLoTaxRate(Rate pLoTaxRate) {
 			theLoTaxRate    = pLoTaxRate; }
-		public void setBasicTaxRate(Number.Rate pBasicTaxRate) {
+		public void setBasicTaxRate(Rate pBasicTaxRate) {
 			theBasicTaxRate   = pBasicTaxRate; }
-		public void setHiTaxRate(Number.Rate pHiTaxRate) {
+		public void setHiTaxRate(Rate pHiTaxRate) {
 			theHiTaxRate    = pHiTaxRate; }
-		public void setIntTaxRate(Number.Rate pIntTaxRate) {
+		public void setIntTaxRate(Rate pIntTaxRate) {
 			theIntTaxRate   = pIntTaxRate; }
-		public void setDivTaxRate(Number.Rate pDivTaxRate) {
+		public void setDivTaxRate(Rate pDivTaxRate) {
 			theDivTaxRate   = pDivTaxRate; }
-		public void setHiDivTaxRate(Number.Rate pHiDivTaxRate) {
+		public void setHiDivTaxRate(Rate pHiDivTaxRate) {
 			theHiDivTaxRate = pHiDivTaxRate; }
-		public void setAddTaxRate(Number.Rate pAddTaxRate) {
+		public void setAddTaxRate(Rate pAddTaxRate) {
 			theAddTaxRate = pAddTaxRate; }
-		public void setAddDivTaxRate(Number.Rate pAddDivTaxRate) {
+		public void setAddDivTaxRate(Rate pAddDivTaxRate) {
 			theAddDivTaxRate = pAddDivTaxRate; }
-		public void setCapTaxRate(Number.Rate pCapTaxRate) {
+		public void setCapTaxRate(Rate pCapTaxRate) {
 			theCapTaxRate = pCapTaxRate; }
-		public void setHiCapTaxRate(Number.Rate pHiCapTaxRate) {
+		public void setHiCapTaxRate(Rate pHiCapTaxRate) {
 			theHiCapTaxRate = pHiCapTaxRate; }
 
 		/* Constructor */
@@ -1453,28 +1452,28 @@ public class TaxYear extends DataItem {
 			return histEquals(myValues);
 		}
 		public boolean histEquals(Values pValues) {
-			if (Utils.differs(theYear,     		pValues.theYear))     	   return false;
-			if (Utils.differs(theTaxRegime,     pValues.theTaxRegime))     return false;
-			if (Utils.differs(theAllowance,     pValues.theAllowance))     return false;
-			if (Utils.differs(theRentalAllow,   pValues.theRentalAllow))   return false;
-			if (Utils.differs(theLoBand,        pValues.theLoBand))        return false;
-			if (Utils.differs(theBasicBand,     pValues.theBasicBand))     return false;
-			if (Utils.differs(theCapitalAllow,  pValues.theCapitalAllow))  return false;
-			if (Utils.differs(theLoAgeAllow,    pValues.theLoAgeAllow))    return false;
-			if (Utils.differs(theHiAgeAllow,    pValues.theHiAgeAllow))    return false;
-			if (Utils.differs(theAgeAllowLimit, pValues.theAgeAllowLimit)) return false;
-			if (Utils.differs(theAddAllowLimit, pValues.theAddAllowLimit)) return false;
-			if (Utils.differs(theAddIncBound,   pValues.theAddIncBound))   return false;
-			if (Utils.differs(theLoTaxRate,     pValues.theLoTaxRate))     return false;
-			if (Utils.differs(theBasicTaxRate,  pValues.theBasicTaxRate))  return false;
-			if (Utils.differs(theHiTaxRate,     pValues.theHiTaxRate))     return false;
-			if (Utils.differs(theIntTaxRate,    pValues.theIntTaxRate))    return false;
-			if (Utils.differs(theDivTaxRate,    pValues.theDivTaxRate))    return false;
-			if (Utils.differs(theHiDivTaxRate,  pValues.theHiDivTaxRate))  return false;
-			if (Utils.differs(theAddTaxRate,    pValues.theAddTaxRate))    return false;
-			if (Utils.differs(theAddDivTaxRate, pValues.theAddDivTaxRate)) return false;
-			if (Utils.differs(theCapTaxRate,    pValues.theCapTaxRate))    return false;
-			if (Utils.differs(theHiCapTaxRate,  pValues.theHiCapTaxRate))  return false;
+			if (Date.differs(theYear,     			pValues.theYear))     	   return false;
+			if (TaxRegime.differs(theTaxRegime,     pValues.theTaxRegime))     return false;
+			if (Money.differs(theAllowance,     	pValues.theAllowance))     return false;
+			if (Money.differs(theRentalAllow,   	pValues.theRentalAllow))   return false;
+			if (Money.differs(theLoBand,       		pValues.theLoBand))        return false;
+			if (Money.differs(theBasicBand,     	pValues.theBasicBand))     return false;
+			if (Money.differs(theCapitalAllow,  	pValues.theCapitalAllow))  return false;
+			if (Money.differs(theLoAgeAllow,    	pValues.theLoAgeAllow))    return false;
+			if (Money.differs(theHiAgeAllow,    	pValues.theHiAgeAllow))    return false;
+			if (Money.differs(theAgeAllowLimit, 	pValues.theAgeAllowLimit)) return false;
+			if (Money.differs(theAddAllowLimit, 	pValues.theAddAllowLimit)) return false;
+			if (Money.differs(theAddIncBound,   	pValues.theAddIncBound))   return false;
+			if (Rate.differs(theLoTaxRate,   		pValues.theLoTaxRate))     return false;
+			if (Rate.differs(theBasicTaxRate,		pValues.theBasicTaxRate))  return false;
+			if (Rate.differs(theHiTaxRate,   		pValues.theHiTaxRate))     return false;
+			if (Rate.differs(theIntTaxRate,  		pValues.theIntTaxRate))    return false;
+			if (Rate.differs(theDivTaxRate,  		pValues.theDivTaxRate))    return false;
+			if (Rate.differs(theHiDivTaxRate,		pValues.theHiDivTaxRate))  return false;
+			if (Rate.differs(theAddTaxRate,  		pValues.theAddTaxRate))    return false;
+			if (Rate.differs(theAddDivTaxRate, 		pValues.theAddDivTaxRate)) return false;
+			if (Rate.differs(theCapTaxRate,    		pValues.theCapTaxRate))    return false;
+			if (Rate.differs(theHiCapTaxRate,  		pValues.theHiCapTaxRate))  return false;
 			return true;
 		}
 		
@@ -1515,70 +1514,70 @@ public class TaxYear extends DataItem {
 			boolean	bResult = false;
 			switch (fieldNo) {
 				case FIELD_YEAR:
-					bResult = (Utils.differs(theYear,  			pValues.theYear));
+					bResult = (Date.differs(theYear,  			pValues.theYear));
 					break;
 				case FIELD_REGIME:
-					bResult = (Utils.differs(theTaxRegime,  	pValues.theTaxRegime));
+					bResult = (TaxRegime.differs(theTaxRegime,  pValues.theTaxRegime));
 					break;
 				case FIELD_ALLOW:
-					bResult = (Utils.differs(theAllowance,  	pValues.theAllowance));
+					bResult = (Money.differs(theAllowance,  	pValues.theAllowance));
 					break;
 				case FIELD_RENTAL:
-					bResult = (Utils.differs(theRentalAllow,  	pValues.theRentalAllow));
+					bResult = (Money.differs(theRentalAllow,  	pValues.theRentalAllow));
 					break;
 				case FIELD_LOBAND:
-					bResult = (Utils.differs(theLoBand,       	pValues.theLoBand));
+					bResult = (Money.differs(theLoBand,       	pValues.theLoBand));
 					break;
 				case FIELD_BSBAND:
-					bResult = (Utils.differs(theBasicBand,    	pValues.theBasicBand));
+					bResult = (Money.differs(theBasicBand,    	pValues.theBasicBand));
 					break;
 				case FIELD_CAPALW:
-					bResult = (Utils.differs(theCapitalAllow, 	pValues.theCapitalAllow));
+					bResult = (Money.differs(theCapitalAllow, 	pValues.theCapitalAllow));
 					break;
 				case FIELD_LOAGAL:
-					bResult = (Utils.differs(theLoAgeAllow, 	pValues.theLoAgeAllow));
+					bResult = (Money.differs(theLoAgeAllow, 	pValues.theLoAgeAllow));
 					break;
 				case FIELD_HIAGAL:
-					bResult = (Utils.differs(theHiAgeAllow, 	pValues.theHiAgeAllow));
+					bResult = (Money.differs(theHiAgeAllow, 	pValues.theHiAgeAllow));
 					break;
 				case FIELD_AGELMT:
-					bResult = (Utils.differs(theAgeAllowLimit, 	pValues.theAgeAllowLimit));
+					bResult = (Money.differs(theAgeAllowLimit, 	pValues.theAgeAllowLimit));
 					break;
 				case FIELD_ADDLMT:
-					bResult = (Utils.differs(theAddAllowLimit, 	pValues.theAddAllowLimit));
+					bResult = (Money.differs(theAddAllowLimit, 	pValues.theAddAllowLimit));
 					break;
 				case FIELD_ADDBDY:
-					bResult = (Utils.differs(theAddIncBound, 	pValues.theAddIncBound));
+					bResult = (Money.differs(theAddIncBound, 	pValues.theAddIncBound));
 					break;
 				case FIELD_LOTAX:
-					bResult = (Utils.differs(theLoTaxRate,  	pValues.theLoTaxRate));
+					bResult = (Rate.differs(theLoTaxRate,  		pValues.theLoTaxRate));
 					break;
 				case FIELD_BASTAX:
-					bResult = (Utils.differs(theBasicTaxRate, 	pValues.theBasicTaxRate));
+					bResult = (Rate.differs(theBasicTaxRate, 	pValues.theBasicTaxRate));
 					break;
 				case FIELD_HITAX:
-					bResult = (Utils.differs(theHiTaxRate,  	pValues.theHiTaxRate));
+					bResult = (Rate.differs(theHiTaxRate,  		pValues.theHiTaxRate));
 					break;
 				case FIELD_INTTAX:
-					bResult = (Utils.differs(theIntTaxRate, 	pValues.theIntTaxRate));
+					bResult = (Rate.differs(theIntTaxRate, 		pValues.theIntTaxRate));
 					break;
 				case FIELD_DIVTAX:
-					bResult = (Utils.differs(theDivTaxRate, 	pValues.theDivTaxRate));
+					bResult = (Rate.differs(theDivTaxRate, 		pValues.theDivTaxRate));
 					break;
 				case FIELD_HDVTAX:
-					bResult = (Utils.differs(theHiDivTaxRate, 	pValues.theHiDivTaxRate));
+					bResult = (Rate.differs(theHiDivTaxRate, 	pValues.theHiDivTaxRate));
 					break;
 				case FIELD_ADDTAX:
-					bResult = (Utils.differs(theAddTaxRate, 	pValues.theAddTaxRate));
+					bResult = (Rate.differs(theAddTaxRate, 		pValues.theAddTaxRate));
 					break;
 				case FIELD_ADVTAX:
-					bResult = (Utils.differs(theAddDivTaxRate, 	pValues.theAddDivTaxRate));
+					bResult = (Rate.differs(theAddDivTaxRate, 	pValues.theAddDivTaxRate));
 					break;
 				case FIELD_CAPTAX:
-					bResult = (Utils.differs(theCapTaxRate, 	pValues.theCapTaxRate));
+					bResult = (Rate.differs(theCapTaxRate, 		pValues.theCapTaxRate));
 					break;
 				case FIELD_HCPTAX:
-					bResult = (Utils.differs(theHiCapTaxRate, 	pValues.theHiCapTaxRate));
+					bResult = (Rate.differs(theHiCapTaxRate, 	pValues.theHiCapTaxRate));
 					break;
 			}
 			return bResult;

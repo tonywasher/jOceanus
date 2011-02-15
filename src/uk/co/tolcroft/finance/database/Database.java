@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 import uk.co.tolcroft.finance.core.Threads.statusCtl;
 import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
@@ -171,12 +172,16 @@ public class Database {
 	public DataSet loadDatabase(statusCtl 	pThread) throws Exception {
 		boolean bContinue 	= true;
 		DataSet myData		= null;
+		View	myView;
 		
 		/* Set the number of stages */
 		if (!pThread.setNumStages(13)) return null;
 		
+		/* Access the view */
+		
 		/* Create the new DataSet */
-		myData = new DataSet(pThread.getSecurity()); 
+		myView = pThread.getView();
+		myData = new DataSet(myView.getSecurity()); 
 			
 		/* Load entries from tables */
 		bContinue = theStatic.loadItems(pThread, myData);

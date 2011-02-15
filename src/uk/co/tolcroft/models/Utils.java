@@ -6,7 +6,6 @@ import java.io.OutputStreamWriter;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
-import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.security.SecurityControl;
@@ -39,175 +38,6 @@ public class Utils {
 	}
 
 	/**
-	 * Determine whether two {@link Rate} objects differ.
-	 * 
-	 * @param pCurr The current Rate 
-	 * @param pNew The new Rate
-	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-	 */	
-	public static boolean differs(Number.Rate pCurr, Number.Rate pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
-	}
-
-	/**
-	 * Determine whether two {@link Money} objects differ.
-	 * 
-	 * @param pCurr The current Money 
-	 * @param pNew The new Money
-	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-	 */	
-	public static boolean differs(Number.Money pCurr, Number.Money pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
-	}
-
-	/**
-	 * Determine whether two {@link Price} objects differ.
-	 * 
-	 * @param pCurr The current Price 
-	 * @param pNew The new Price
-	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-	 */	
-	public static boolean differs(Number.Price pCurr, Number.Price pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
-	}
-
-	/**
-	 * Determine whether two {@link DilutedPrice} objects differ.
-	 * 
-	 * @param pCurr The current DilutedPrice 
-	 * @param pNew The new DilutedPrice
-	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-	 */	
-	public static boolean differs(Number.DilutedPrice pCurr, Number.DilutedPrice pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
-	}
-
-	/**
-	 * Determine whether two {@link Dilution} objects differ.
-	 * 
-	 * @param pCurr The current Dilution
-	 * @param pNew The new Dilution
-	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-	 */	
-	public static boolean differs(Number.Dilution pCurr, Number.Dilution pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
-	}
-
-	/**
-	 * Determine whether two {@link Units} objects differ.
-	 * 
-	 * @param pCurr The current Units 
-	 * @param pNew The new Units
-	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-	 */	
-	public static boolean differs(Number.Units pCurr, Number.Units pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
-	}
-
-	/**
-	 * Determine whether two {@link Date} objects differ.
-	 * 
-	 * @param pCurr The current Date 
-	 * @param pNew The new Date
-	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-	 */	
-	public static boolean differs(Date pCurr, Date pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
-	}
-
-	/**
-	 * Determine whether two {@link TransactionType} objects differ.
-	 * 
-	 * @param pCurr The current TransType 
-	 * @param pNew The new TransType
-	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-	 */	
-	public static boolean differs(TransactionType pCurr, TransactionType pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
-	}
-
-	/**
-	 * Determine whether two {@link TaxType} objects differ.
-	 * 
-	 * @param pCurr The current TaxType 
-	 * @param pNew The new TaxType
-	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-	 */	
-	public static boolean differs(TaxType pCurr, TaxType pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
-	}
-
-	/**
-	 * Determine whether two {@link AccountType} objects differ.
-	 * 
-	 * @param pCurr The current AccountType 
-	 * @param pNew The new AccountType
-	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-	 */	
-	public static boolean differs(AccountType pCurr, AccountType pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
-	}
-
-	/**
-	 * Determine whether two {@link TaxRegime} objects differ.
-	 * 
-	 * @param pCurr The current TransRegime
-	 * @param pNew The new TransRegime
-	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-	 */	
-	public static boolean differs(TaxRegime pCurr, TaxRegime pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
-	}
-
-	/**
-	 * Determine whether two {@link Frequency} objects differ.
-	 * 
-	 * @param pCurr The current Frequency 
-	 * @param pNew The new Frequency
-	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-	 */	
-	public static boolean differs(Frequency pCurr, Frequency pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
-	}
-
-	/**
-	 * Determine whether two {@link account} objects differ.
-	 * 
-	 * @param pCurr The current Account 
-	 * @param pNew The new Account
-	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-	 */	
-	public static boolean differs(Account pCurr, Account pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
-	}
-	
-	/**
 	 * Determine whether two char array objects differ.
 	 * 
 	 * @param pCurr The current array 
@@ -231,175 +61,6 @@ public class Utils {
 		return (((pCurr == null) && (pNew != null)) ||
 				((pCurr != null) && 
 				 ((pNew == null) || (!Arrays.equals(pCurr, pNew)))));
-	}
-	
-	/**
-	 * Format a Rate 
-	 * 
-	 * @param pRate the rate to format
-	 * @return the formatted Rate
-	 */
-	public static String formatRate(Number.Rate pRate) {
-		String 	myFormat;
-		myFormat = (pRate != null) ? pRate.format(false)
-								   : "null";
-		return myFormat;
-	}
-
-	/**
-	 * Format a Money 
-	 * 
-	 * @param pMoney the money to format
-	 * @return the formatted Money
-	 */
-	public static String formatMoney(Number.Money pMoney) {
-		String 	myFormat;
-		myFormat = (pMoney != null) ? pMoney.format(false)
-								    : "null";
-		return myFormat;
-	}
-
-	/**
-	 * Format a Price 
-	 * 
-	 * @param pPrice the price to format
-	 * @return the formatted Price
-	 */
-	public static String formatPrice(Number.Price pPrice) {
-		String 	myFormat;
-		myFormat = (pPrice != null) ? pPrice.format(false)
-								   : "null";
-		return myFormat;
-	}
-
-	/**
-	 * Format a DilutedPrice 
-	 * 
-	 * @param pPrice the price to format
-	 * @return the formatted Price
-	 */
-	public static String formatDilutedPrice(Number.DilutedPrice pPrice) {
-		String 	myFormat;
-		myFormat = (pPrice != null) ? pPrice.format(false)
-								    : "null";
-		return myFormat;
-	}
-
-	/**
-	 * Format a Dilution 
-	 * 
-	 * @param pDilution the dilution to format
-	 * @return the formatted Dilution
-	 */
-	public static String formatDilution(Number.Dilution pDilution) {
-		String 	myFormat;
-		myFormat = (pDilution != null) ? pDilution.format(false)
-								       : "null";
-		return myFormat;
-	}
-
-	/**
-	 * Format a Units 
-	 * 
-	 * @param pUnits the units to format
-	 * @return the formatted Units
-	 */
-	public static String formatUnits(Number.Units pUnits) {
-		String 	myFormat;
-		myFormat = (pUnits != null) ? pUnits.format(false)
-								    : "null";
-		return myFormat;
-	}
-
-	/**
-	 * Format a Date 
-	 * 
-	 * @param pDate the date to format
-	 * @return the formatted Date
-	 */
-	public static String formatDate(Date pDate) {
-		String 	myFormat;
-		myFormat = (pDate != null) ? pDate.formatDate(false)
-							       : "null";
-		return myFormat;
-	}
-
-	/**
-	 * Format a TransType 
-	 * 
-	 * @param pTrans the transtype to format
-	 * @return the formatted transtype
-	 */
-	public static String formatTrans(TransactionType pTrans) {
-		String 	myFormat;
-		myFormat = (pTrans != null) ? pTrans.getName()
-								    : "null";
-		return myFormat;
-	}
-
-	/**
-	 * Format a TaxType 
-	 * 
-	 * @param pTaxType the taxtype to format
-	 * @return the formatted taxtype
-	 */
-	public static String formatTaxType(TaxType pTaxType) {
-		String 	myFormat;
-		myFormat = (pTaxType != null) ? pTaxType.getName()
-								      : "null";
-		return myFormat;
-	}
-
-	/**
-	 * Format an Account 
-	 * 
-	 * @param pAccount the account to format
-	 * @return the formatted account
-	 */
-	public static String formatAccount(Account pAccount) {
-		String 	myFormat;
-		myFormat = (pAccount != null) ? pAccount.getName()
-							 	      : "null";
-		return myFormat;
-	}
-
-	/**
-	 * Format an AccountType 
-	 * 
-	 * @param pActType the account type to format
-	 * @return the formatted account type
-	 */
-	public static String formatAccountType(AccountType pActType) {
-		String 	myFormat;
-		myFormat = (pActType != null) ? pActType.getName()
-							 	      : "null";
-		return myFormat;
-	}
-
-	/**
-	 * Format an TaxRegime 
-	 * 
-	 * @param pRegime the tax regime to format
-	 * @return the formatted tax regime
-	 */
-	public static String formatRegime(TaxRegime pRegime) {
-		String 	myFormat;
-		myFormat = (pRegime != null) ? pRegime.getName()
-							      	 : "null";
-		return myFormat;
-	}
-
-	/**
-	 * Format a Frequency 
-	 * 
-	 * @param pFreq the frequency to format
-	 * @return the formatted frequency
-	 */
-	public static String formatFreq(Frequency pFreq) {
-		String 	myFormat;
-		myFormat = (pFreq != null) ? pFreq.getName()
-							       : "null";
-		return myFormat;
 	}
 	
 	/**
@@ -587,7 +248,7 @@ public class Utils {
 	public static byte[] charToByteArray(char[] pChars) throws Exception {
 		/* protect against exceptions */
 		try {
-			/* Initialise the hash value as the UTF-8 version of the password */
+			/* Transform the character array to a byte array */
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			OutputStreamWriter out = new OutputStreamWriter(baos, SecurityControl.ENCODING);
 			for(int ch : pChars) { out.write(ch); }
@@ -607,14 +268,20 @@ public class Utils {
 	 */
 	public	static char[] byteToCharArray(byte[] pBytes) throws Exception {
 		/* protect against exceptions */
-		try {
+		try {			
 			/* Allocate the character array allowing for one character per byte */
 			char[] myArray = new char[pBytes.length];
+			int myLen;
 			
-			/* Initialise the hash value as the UTF-8 version of the password */
+			/* Transform the byte array to a character array */
 			ByteArrayInputStream bais = new ByteArrayInputStream(pBytes);
 			InputStreamReader in = new InputStreamReader(bais, SecurityControl.ENCODING);
-			in.read(myArray);
+			myLen = in.read(myArray);
+			
+			/* Cut down the array to the actual length */
+			myArray = java.util.Arrays.copyOf(myArray, myLen);
+			
+			/* Return the array */
 			return myArray;
 		}
 		catch (Throwable e) {

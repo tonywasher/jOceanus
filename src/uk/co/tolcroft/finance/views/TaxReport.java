@@ -5,7 +5,7 @@ import uk.co.tolcroft.finance.data.TaxType.*;
 import uk.co.tolcroft.finance.views.AnalysisYear.*;
 import uk.co.tolcroft.finance.views.TaxAnalysis.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 
 public class TaxReport {
 	/* Properties */
@@ -184,7 +184,7 @@ public class TaxReport {
 		myOutput.append("<tr><th align=\"center\">");
 		myOutput.append(myTranBucket.getName());
 		myOutput.append("</th>");
-		myOutput.append(Report.makeMoneyTotal(new Number.Money(0)));
+		myOutput.append(Report.makeMoneyTotal(new Money(0)));
 		myOutput.append(Report.makeMoneyTotal(myTranBucket.getAmount()));
 		myOutput.append("</tr>");
 

@@ -69,7 +69,6 @@ public class EncryptionStream {
 		 * Construct the encrypt output stream
 		 * @param pControl the security control
 		 * @param pStream the stream to encrypt to
-		 * @throws finObject.Exception
 		 */
 		public Output(SecurityControl		pControl,
 				 	  java.io.OutputStream 	pStream) throws Exception {

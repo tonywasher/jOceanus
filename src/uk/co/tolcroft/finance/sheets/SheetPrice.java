@@ -140,7 +140,7 @@ public class SheetPrice {
 			 							Workbook	pWorkbook,
 		   	  				   	        DataSet		pData) throws Exception {
 		/* Local variables */
-		Price.List		myList;
+		AcctPrice.List		myList;
 		Range[]   		myRange;
 		Sheet     		mySheet;
 		Cell      		myTop;
@@ -240,9 +240,9 @@ public class SheetPrice {
 										 WritableWorkbook	pWorkbook,
 		   	        					 DataSet			pData) throws Exception {
 		WritableSheet 					mySheet;
-		DataList<Price>.ListIterator	myIterator;
-		Price.List						myPrices;
-		Price							myCurr;
+		DataList<AcctPrice>.ListIterator	myIterator;
+		AcctPrice.List						myPrices;
+		AcctPrice							myCurr;
 		int								myRow;
 		int								myCount;
 		int								myTotal;

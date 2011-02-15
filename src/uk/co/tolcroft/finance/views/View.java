@@ -2,6 +2,7 @@ package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.ui.*;
 import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.finance.core.SecureManager;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.*;
@@ -9,13 +10,14 @@ import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 public class View {
 	/* Members */
-	private DataSet     		theData  		= null;
-	private Date.Range  		theRange 		= null;
-	private MainTab				theCtl 	 		= null;
-    private AnalysisYear.List	theAnalysis		= null;
-    private DilutionEvent.List	theDilutions	= null;
-    private Exception			theError		= null;
-
+	private DataSet     			theData  		= null;
+	private Date.Range  			theRange 		= null;
+	private MainTab					theCtl 	 		= null;
+    private AnalysisYear.List		theAnalysis		= null;
+    private DilutionEvent.List		theDilutions	= null;
+    private Exception				theError		= null;
+    private SecureManager			theSecurity		= null;
+ 
 	/* Access methods */
 	public DataSet 				getData() 		{ return theData; }
 	public MainTab				getControl()	{ return theCtl; }
@@ -23,11 +25,18 @@ public class View {
 	public AnalysisYear.List    getAnalyses()	{ return theAnalysis; }
 	public DilutionEvent.List   getDilutions()	{ return theDilutions; }
 	public Exception			getError()		{ return theError; }
+	public SecureManager		getSecurity() 	{ return theSecurity; }
 	
  	/* Constructor */
 	public View(MainTab pCtl) {
+		/* Store access to the main window */
 		theCtl	= pCtl;
-		theData = new DataSet(pCtl.getSecurity());
+		
+		/* Create a new security manager */
+		theSecurity = new SecureManager(pCtl);
+		
+		/* Create an empty data set */
+		theData = new DataSet(theSecurity);
 		theData.calculateDateRange();
 		analyseData();
 	}
@@ -219,27 +228,27 @@ public class View {
 	/* Rates Extract Class */
 	public class ViewRates {
 		/* Members */
-		private Rate.List 	theList    = null;
+		private AcctRate.List 	theList    = null;
 		
 		/* Access methods */
-		public Rate.List getRates() { return theList; }
+		public AcctRate.List getRates() { return theList; }
 		
 		/* Constructor */
 		public ViewRates(Account pAccount) {
-			Rate.List myRates;
+			AcctRate.List myRates;
 			
 			/* Access the existing rates */
 			myRates = theData.getRates();
 			
 			/* Create a copy of the rates */
-			theList = new Rate.List(myRates, pAccount);
+			theList = new AcctRate.List(myRates, pAccount);
 		}
 				
 		/** 
 		 * Apply changes in a Rates view back into the core data
 		 */
 		public void applyChanges() {
-			Rate.List myBase;
+			AcctRate.List myBase;
 			
 			/* Access base details */
 			myBase     = theData.getRates();
@@ -256,27 +265,27 @@ public class View {
 	/* Prices Extract Class */
 	public class ViewPrices {
 		/* Members */
-		private Price.List 	theList    = null;
+		private AcctPrice.List 	theList    = null;
 		
 		/* Access methods */
-		public Price.List getPrices() { return theList; }
+		public AcctPrice.List getPrices() { return theList; }
 		
 		/* Constructor */
 		public ViewPrices(Account pAccount) {
-			Price.List myPrices;
+			AcctPrice.List myPrices;
 			
 			/* Access the existing prices */
 			myPrices = theData.getPrices();
 			
 			/* Create a copy of the prices */
-			theList = new Price.List(myPrices, pAccount);
+			theList = new AcctPrice.List(myPrices, pAccount);
 		}
 				
 		/** 
 		 * Apply changes in a Prices view back into the core data
 		 */
 		public void applyChanges() {
-			Price.List myBase;
+			AcctPrice.List myBase;
 			
 			/* Access base details */
 			myBase     = theData.getPrices();
@@ -663,7 +672,7 @@ public class View {
 				theProperties.setBackupFile(getBackupFile());
 				
 			/* Update the BirthDate if required */
-			if (Utils.differs(getBirthDate(), theProperties.getBirthDate()))  
+			if (Date.differs(getBirthDate(), theProperties.getBirthDate()))  
 				theProperties.setBirthDate(getBirthDate());
 				
 			/* Update the doShowDebug flag if required */
@@ -689,7 +698,7 @@ public class View {
 						  (Utils.differs(getBaseSpreadSheet(), theProperties.getBaseSpreadSheet())) ||  
 						  (Utils.differs(getBackupDir(), theProperties.getBackupDir())) 			||  
 						  (Utils.differs(getBackupFile(), theProperties.getBackupFile()))           ||  
-						  (Utils.differs(getBirthDate(), theProperties.getBirthDate()))				||  
+						  (Date.differs(getBirthDate(), theProperties.getBirthDate()))				||  
 						  (doShowDebug != theProperties.doShowDebug())									||  
 						  (doEncryptBackups != theProperties.doEncryptBackups()));  
 		}		

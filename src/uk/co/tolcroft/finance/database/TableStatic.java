@@ -20,9 +20,19 @@ public class TableStatic extends DatabaseTable<Static> {
 	private final static String theVersCol 		= "DataVersion";
 				
 	/**
+	 * The name of the ControlKey column
+	 */
+	private final static String theControlCol 	= "ControlKey";
+				
+	/**
 	 * The name of the SecurityKey column
 	 */
 	private final static String theKeyCol 		= "SecurityKey";
+				
+	/**
+	 * The name of the InitVector column
+	 */
+	private final static String theIVCol 		= "InitVector";
 				
 	/**
 	 * Constructor
@@ -56,10 +66,26 @@ public class TableStatic extends DatabaseTable<Static> {
 	}
 		
 	/**
+	 * Determine the ControlKey of the newly loaded item
+	 * @return the Control Key
+	 */
+	private String getControlKey() throws SQLException {
+		return getString();
+	}
+		
+	/**
 	 * Determine the SecurityKey of the newly loaded item
 	 * @return the Security Key
 	 */
 	private byte[] getSecurityKey() throws SQLException {
+		return getBinary();
+	}
+		
+	/**
+	 * Determine the InitVector of the newly loaded item
+	 * @return the InitVector
+	 */
+	private byte[] getInitVector() throws SQLException {
 		return getBinary();
 	}
 		
@@ -72,11 +98,27 @@ public class TableStatic extends DatabaseTable<Static> {
 	}
 	
 	/**
+	 * Set the ControlKey of the item to be inserted
+	 * @param pKey the SecurityKey of the item
+	 */
+	private void setControlKey(String pKey) throws SQLException {
+		setString(pKey);
+	}
+	
+	/**
 	 * Set the SecurityKey of the item to be inserted
-	 * @param pSecurityKey the SecurityKey of the item
+	 * @param pKey the SecurityKey of the item
 	 */
 	private void setSecurityKey(byte[] pKey) throws SQLException {
 		setBinary(pKey);
+	}
+	
+	/**
+	 * Set the InitVector of the item to be inserted
+	 * @param pInitVector the InitVector of the item
+	 */
+	private void setInitVector(byte[] pInitVector) throws SQLException {
+		setBinary(pInitVector);
 	}
 	
 	/**
@@ -88,6 +130,14 @@ public class TableStatic extends DatabaseTable<Static> {
 	}	
 
 	/**
+	 * Update the ControlKey of the item
+	 * @param pValue the new key
+	 */
+	private void updateControlKey(String pValue) {
+		updateString(theControlCol, pValue);
+	}	
+
+	/**
 	 * Update the SecurityKey of the item
 	 * @param pValue the new key
 	 */
@@ -95,12 +145,22 @@ public class TableStatic extends DatabaseTable<Static> {
 		updateBinary(theKeyCol, pValue);
 	}	
 
+	/**
+	 * Update the InitVector of the item
+	 * @param pValue the new initVector
+	 */
+	private void updateInitVector(byte[] pValue) {
+		updateBinary(theIVCol, pValue);
+	}	
+
 	/* Create statement for Static */
 	protected String createStatement() {
 		return "create table " + theTabName + " ( " +
-			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
-			   theVersCol	+ " int NOT NULL, " +
-			   theKeyCol	+ " varbinary(1000) NOT NULL )";
+			   theIdCol 		+ " int NOT NULL PRIMARY KEY, " +
+			   theVersCol		+ " int NOT NULL, " +
+			   theControlCol	+ " varchar(" + Static.CTLLEN + ") NOT NULL," +
+			   theKeyCol		+ " varbinary(" + Static.KEYLEN + ") NOT NULL," +
+		   	   theIVCol			+ " binary(" + Static.INITVLEN + ") NOT NULL )";
 	}
 	
 	/* Determine the item name */
@@ -109,29 +169,34 @@ public class TableStatic extends DatabaseTable<Static> {
 	/* Load statement for Static */
 	protected String loadStatement() {
 		return "select " + theIdCol + "," + theVersCol + 
-		 			 "," + theKeyCol + 
+		 			 "," + theControlCol + 
+		 			 "," + theKeyCol + "," + theIVCol +
 		       " from " + getTableName();			
 	}
 		
 	/* Load the static */
 	protected void loadItem() throws Exception {
-		Static.List	myList;
-		int 	   	myId;
-		int	  		myVers;
-		byte[]		myKey;
+		Static.List		myList;
+		int 	   		myId;
+		int	  			myVers;
+		String			myControl;
+		byte[]			myKey;
+		byte[]			myVector;
 		
 		/* Protect the access */
 		try {			
 			/* Get the various fields */
-			myId   = getID();
-			myVers = getDataVersion();
-			myKey  = getSecurityKey();
+			myId   			= getID();
+			myVers 			= getDataVersion();
+			myControl		= getControlKey();
+			myKey  			= getSecurityKey();
+			myVector		= getInitVector();
 			
 			/* Access the list */
 			myList = (Static.List)getList();
 			
 			/* Add into the list */
-			myList.addItem(myId, myVers, myKey);
+			myList.addItem(myId, myVers, myControl, myKey, myVector);
 		}
 								
 		catch (Throwable e) {
@@ -148,8 +213,9 @@ public class TableStatic extends DatabaseTable<Static> {
 	protected String insertStatement() {
 		return "insert into " + getTableName() + 
 		       " (" + theIdCol + "," + theVersCol + 
-		       "," + theKeyCol + ")" +
-		       " VALUES(?,?,?)";
+ 			   "," + theControlCol + 
+		       "," + theKeyCol + "," + theIVCol + ")" +
+		       " VALUES(?,?,?,?,?)";
 	}
 		
 	/* Insert a Static */
@@ -160,7 +226,9 @@ public class TableStatic extends DatabaseTable<Static> {
 			/* Set the fields */
 			setID(pItem.getId());
 			setDataVersion(pItem.getDataVersion());
+			setControlKey(pItem.getControlKey());
 			setSecurityKey(pItem.getSecurityKey());
+			setInitVector(pItem.getInitVector());
 		}
 		
 		catch (Throwable e) {
@@ -186,9 +254,15 @@ public class TableStatic extends DatabaseTable<Static> {
 			/* Update the fields */
 			if (pItem.getDataVersion() != myBase.getDataVersion())
 				updateDataVersion(pItem.getDataVersion());
+			if (Utils.differs(pItem.getControlKey(),
+							  myBase.getControlKey()))
+				updateControlKey(pItem.getControlKey());
 			if (Utils.differs(pItem.getSecurityKey(),
-							  myBase.getSecurityKey()))
+					  		  myBase.getSecurityKey()))
 				updateSecurityKey(pItem.getSecurityKey());
+			if (Utils.differs(pItem.getInitVector(),
+					  		  myBase.getInitVector()))
+				updateInitVector(pItem.getInitVector());
 		}
 		
 		catch (Throwable e) {

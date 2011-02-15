@@ -21,7 +21,7 @@ import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.EditButtons.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.*;
 
 public class Extract extends FinanceTableModel<Event> implements ActionListener {
@@ -180,7 +180,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
 
 		/* Set the number of visible rows */
-		setPreferredScrollableViewportSize(new Dimension(1100, 200));
+		setPreferredScrollableViewportSize(new Dimension(900, 200));
 		
 		/* Build the combo box */
 		theTranBox	  = new JComboBox();
@@ -212,7 +212,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 	        		.addContainerGap()
 	                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, true)
 	                	.addComponent(theSelect.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-	                    .addComponent(myScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 1100, Short.MAX_VALUE)
+	                    .addComponent(myScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
 	                    .addComponent(theRowButs.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                    .addComponent(theTabButs.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 	                .addContainerGap())
@@ -643,19 +643,19 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 					myEvent.setTransType(theTransTypes.searchFor((String)obj));    
 					break;
 				case COLUMN_AMOUNT:
-					myEvent.setAmount((Number.Money)obj); 
+					myEvent.setAmount((Money)obj); 
 					break;
 				case COLUMN_DILUTE:
-					myEvent.setDilution((Number.Dilution)obj); 
+					myEvent.setDilution((Dilution)obj); 
 					break;
 				case COLUMN_TAXCRED:
-					myEvent.setTaxCredit((Number.Money)obj); 
+					myEvent.setTaxCredit((Money)obj); 
 					break;
 				case COLUMN_YEARS:
 					myEvent.setYears((Integer)obj); 
 					break;
 				case COLUMN_UNITS:
-					myEvent.setUnits((Number.Units)obj); 
+					myEvent.setUnits((Units)obj); 
 					break;
 				case COLUMN_CREDIT:
 					myEvent.setCredit(theAccounts.searchFor((String)obj));    

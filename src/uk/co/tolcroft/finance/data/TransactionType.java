@@ -667,6 +667,32 @@ public class TransactionType extends DataItem {
 	}
 
 	/**
+	 * Format a TransType 
+	 * 
+	 * @param pTrans the transtype to format
+	 * @return the formatted transtype
+	 */
+	public static String format(TransactionType pTrans) {
+		String 	myFormat;
+		myFormat = (pTrans != null) ? pTrans.getName()
+								    : "null";
+		return myFormat;
+	}
+
+	/**
+	 * Determine whether two TransactionType objects differ.
+	 * 
+	 * @param pCurr The current TransType 
+	 * @param pNew The new TransType
+	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
+	 */	
+	public static boolean differs(TransactionType pCurr, TransactionType pNew) {
+		return (((pCurr == null) && (pNew != null)) ||
+				((pCurr != null) && 
+				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
+	}
+
+	/**
 	 * Represents a list of {@link TransType} objects. 
 	 */
 	public static class List extends DataList<TransactionType> {

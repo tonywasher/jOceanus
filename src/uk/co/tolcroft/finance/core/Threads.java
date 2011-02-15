@@ -11,7 +11,6 @@ import uk.co.tolcroft.finance.sheets.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.ui.*;
 import uk.co.tolcroft.finance.ui.controls.*;
-import uk.co.tolcroft.security.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 
@@ -58,23 +57,23 @@ public class Threads {
 	public static class statusCtl implements StatusControl {
 		private ThreadControl 	theThread		= null;
 		private ThreadStatus 	theStatus		= null;
-		private SecurityControl	theSecurity		= null;
+		private View			theView			= null;
 		private Properties		theProperties	= null;
 		private int          	theSteps    	= 50;
 		
 		/* Access methods */
-		public int 				getReportingSteps() { return theSteps; }
-		public Properties 		getProperties() 	{ return theProperties; }
-		public SecurityControl 	getSecurity() 		{ return theSecurity; }
+		public int 			getReportingSteps() { return theSteps; }
+		public Properties 	getProperties() 	{ return theProperties; }
+		public View			getView() 			{ return theView; }
 			
 		/* Constructor */
-		public statusCtl(ThreadControl 		pThread,
-				         Properties 		pProperties,
-				         SecurityControl 	pSecurity) {
+		public statusCtl(ThreadControl 	pThread,
+				         Properties 	pProperties,
+				         View			pView) {
 			/* Store parameter */
 			theThread 		= pThread;
 			theProperties 	= pProperties;
-			theSecurity		= pSecurity;
+			theView			= pView;
 			
 			/* Create the status */
 			theStatus = new ThreadStatus();
@@ -171,7 +170,7 @@ public class Threads {
 			theStatusBar = theWindow.getStatusBar();
 
 			/* Create the status */
-			theStatus = new statusCtl(this, theWindow.getProperties(), theWindow.getSecurity());
+			theStatus = new statusCtl(this, theWindow.getProperties(), pView);
 
 			/* Initialise the status window */
 			theStatusBar.setOperation("Loading Database");
@@ -288,7 +287,7 @@ public class Threads {
 			theStatusBar = theWindow.getStatusBar();
 
 			/* Create the status */
-			theStatus = new statusCtl(this, theWindow.getProperties(), theWindow.getSecurity());
+			theStatus = new statusCtl(this, theWindow.getProperties(), pView);
 
 			/* Initialise the status window */
 			theStatusBar.setOperation("Storing to Database");
@@ -402,7 +401,7 @@ public class Threads {
 			theStatusBar = theWindow.getStatusBar();
 
 			/* Create the status */
-			theStatus = new statusCtl(this, theWindow.getProperties(), theWindow.getSecurity());
+			theStatus = new statusCtl(this, theWindow.getProperties(), pView);
 
 			/* Initialise the status window */
 			theStatusBar.setOperation("Creating Database");
@@ -425,7 +424,7 @@ public class Threads {
 				myDatabase.createTables(theStatus);
 
 				/* Re-base this set on a null set */
-				myNull = new DataSet(theWindow.getSecurity());
+				myNull = new DataSet(null);
 				myData = theView.getData();
 				myData.reBase(myNull);
 			}	
@@ -501,7 +500,7 @@ public class Threads {
 			theStatusBar = theWindow.getStatusBar();
 
 			/* Create the status */
-			theStatus = new statusCtl(this, theWindow.getProperties(), theWindow.getSecurity());
+			theStatus = new statusCtl(this, theWindow.getProperties(), pView);
 
 			/* Initialise the status window */
 			theStatusBar.setOperation("Purging Database");
@@ -524,7 +523,7 @@ public class Threads {
 				myDatabase.purgeTables(theStatus);
 
 				/* Re-base this set on a null set */
-				myNull = new DataSet(theWindow.getSecurity());
+				myNull = new DataSet(null);
 				myData = theView.getData();
 				myData.reBase(myNull);
 			}	
@@ -589,7 +588,6 @@ public class Threads {
 		private StatusBar   	theStatusBar 	= null;
 		private statusCtl		theStatus    	= null;
 		private Properties		theProperties	= null;
-		private SecurityControl	theSecurity		= null;
 		private Exception 		theError 	 	= null;
 
 		/* Access methods */
@@ -601,13 +599,12 @@ public class Threads {
 			theView   		= pView;
 			theWindow 		= pWindow;
 			theProperties 	= theWindow.getProperties();
-			theSecurity		= theWindow.getSecurity();
 
 			/* Access the Status Bar */
 			theStatusBar = theWindow.getStatusBar();
 
 			/* Create the status */
-			theStatus = new statusCtl(this, theProperties, theSecurity);
+			theStatus = new statusCtl(this, theProperties, pView);
 
 			/* Initialise the status window */
 			theStatusBar.setOperation("Loading Spreadsheet");
@@ -621,7 +618,6 @@ public class Threads {
 			DataSet    		myData   = null;
 			DataSet			myStore;
 			Database		myDatabase;
-			SymmetricKey	myKey;
 
 			try {
 				/* Load workbook */
@@ -640,11 +636,8 @@ public class Threads {
 				/* Load underlying database */
 				myStore	= myDatabase.loadDatabase(theStatus);
 
-				/* Access the key for the underlying data */
-				myKey  = myStore.getKey();
-				
-				/* If there is an underlying key, use it as the key for this data */
-				if (myKey != null) myData.setKey(myKey);
+				/* Initialise the static, either from database or with a new security control */
+				myData.adoptStatic(myStore);
 				
 				/* Re-base the loaded spreadsheet onto the database image */
 				myData.reBase(myStore);
@@ -748,7 +741,7 @@ public class Threads {
 			theStatusBar = theWindow.getStatusBar();
 
 			/* Create the status */
-			theStatus = new statusCtl(this, theWindow.getProperties(), theWindow.getSecurity());
+			theStatus = new statusCtl(this, theWindow.getProperties(), pView);
 
 			/* Initialise the status window */
 			theStatusBar.setOperation("Loading Backup");
@@ -893,7 +886,7 @@ public class Threads {
 			theStatusBar = theWindow.getStatusBar();
 
 			/* Create the status */
-			theStatus = new statusCtl(this, theWindow.getProperties(), theWindow.getSecurity());
+			theStatus = new statusCtl(this, theWindow.getProperties(), pView);
 
 			/* Initialise the status window */
 			theStatusBar.setOperation("Writing Backup");
@@ -932,6 +925,10 @@ public class Threads {
 				theStatusBar.setSteps(0, 100);
 				theStatusBar.getProgressPanel().setVisible(true);
 
+				/* If we encrypted then .zip was added to the file */
+				if (theProperties.doEncryptBackups())
+					myFile 	= new File(myFile.getPath() + ".zip");
+				
 				/* Load workbook */
 				myData   = SpreadSheet.loadBackup(theStatus, 
 												  myFile);

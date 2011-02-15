@@ -246,6 +246,32 @@ public class TaxRegime extends DataItem {
 	}
 
 	/**
+	 * Format a TaxRegime 
+	 * 
+	 * @param pRegime the tax regime to format
+	 * @return the formatted tax regime
+	 */
+	public static String format(TaxRegime pRegime) {
+		String 	myFormat;
+		myFormat = (pRegime != null) ? pRegime.getName()
+							      	 : "null";
+		return myFormat;
+	}
+
+	/**
+	 * Determine whether two TaxRegime objects differ.
+	 * 
+	 * @param pCurr The current TaxRegime
+	 * @param pNew The new TaxRegime
+	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
+	 */	
+	public static boolean differs(TaxRegime pCurr, TaxRegime pNew) {
+		return (((pCurr == null) && (pNew != null)) ||
+				((pCurr != null) && 
+				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
+	}
+
+	/**
 	 * Represents a list of {@link TaxRegime} objects. 
 	 */
 	public static class List  extends DataList<TaxRegime> {			

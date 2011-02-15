@@ -14,7 +14,7 @@ import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.EditButtons.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.*;
 
 public class AccountPatterns extends FinanceTableModel<Pattern> {
@@ -442,7 +442,7 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 					break;
 				case COLUMN_CREDIT:
 				case COLUMN_DEBIT:
-					myPattern.setAmount((Number.Money)obj); 
+					myPattern.setAmount((Money)obj); 
 					break;
 				case COLUMN_PARTNER:  
 					myPattern.setPartner(theAccounts.searchFor((String)obj));    

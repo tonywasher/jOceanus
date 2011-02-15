@@ -25,7 +25,7 @@ public class SheetRate {
 										 Workbook	pWorkbook,
 							   	  		 DataSet	pData) throws Exception {
 		/* Local variables */
-		Rate.List		myList;
+		AcctRate.List		myList;
 		Range[]   		myRange;
 		Sheet     		mySheet;
 		Cell      		myTop;
@@ -134,7 +134,7 @@ public class SheetRate {
 			 							Workbook	pWorkbook,
 		   	  				   	        DataSet		pData) throws Exception {
 		/* Local variables */
-		Rate.List		myList;
+		AcctRate.List		myList;
 		Range[]   		myRange;
 		Sheet     		mySheet;
 		Cell      		myTop;
@@ -246,9 +246,9 @@ public class SheetRate {
 										 WritableWorkbook	pWorkbook,
 		   	        					 DataSet			pData) throws Exception {
 		WritableSheet 				mySheet;
-		DataList<Rate>.ListIterator	myIterator;
-		Rate.List					myRates;
-		Rate						myCurr;
+		DataList<AcctRate>.ListIterator	myIterator;
+		AcctRate.List					myRates;
+		AcctRate						myCurr;
 		int							myRow;
 		int							myCount;
 		int							myTotal;

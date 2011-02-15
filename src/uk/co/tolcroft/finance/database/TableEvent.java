@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
@@ -188,7 +188,7 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Set the Amount of the item to be inserted
 	 * @param pAmount the amount of the item
 	 */
-	private void setAmount(Number.Money pAmount) throws SQLException {
+	private void setAmount(Money pAmount) throws SQLException {
 		setString(pAmount.format(false));
 	}
 
@@ -212,7 +212,7 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Set the Units of the item to be inserted
 	 * @param pUnits the transtype of the item
 	 */
-	private void setUnits(Number.Units pUnits) throws SQLException {
+	private void setUnits(Units pUnits) throws SQLException {
 		setString((pUnits == null) ? null : pUnits.format(false));
 	}
 
@@ -228,7 +228,7 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Set the TaxCredit of the item to be inserted
 	 * @param pCredit the TaxCredit of the item
 	 */
-	private void setTaxCredit(Number.Money pCredit) throws SQLException {
+	private void setTaxCredit(Money pCredit) throws SQLException {
 		setString((pCredit == null) ? null : pCredit.format(false));
 	}
 
@@ -236,7 +236,7 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Set the Dilution of the item to be inserted
 	 * @param pDilution the Dilution of the item
 	 */
-	private void setDilution(Number.Dilution pDilution) throws SQLException {
+	private void setDilution(Dilution pDilution) throws SQLException {
 		setString((pDilution == null) ? null : pDilution.format(false));
 	}
 
@@ -268,7 +268,7 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Update the Amount of the item
 	 * @param pValue the new amount
 	 */
-	private void updateAmount(Number.Money pValue) {
+	private void updateAmount(Money pValue) {
 		updateString(theAmntCol, pValue.format(false));
 	}	
 
@@ -292,7 +292,7 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Update the Units of the item
 	 * @param pValue the new units
 	 */
-	private void updateUnits(Number.Units pValue) {
+	private void updateUnits(Units pValue) {
 		updateString(theUnitCol, (pValue == null) ? null : pValue.format(false));
 	}
 
@@ -308,7 +308,7 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Update the TaxCredit of the item
 	 * @param pValue the new tax credit
 	 */
-	private void updateTaxCredit(Number.Money pValue) {
+	private void updateTaxCredit(Money pValue) {
 		updateString(theTaxCrtCol, (pValue == null) ? null : pValue.format(false));
 	}
 	
@@ -316,7 +316,7 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Update the Dilution of the item
 	 * @param pValue the new dilution
 	 */
-	private void updateDilution(Number.Dilution pValue) {
+	private void updateDilution(Dilution pValue) {
 		updateString(theDiluteCol, (pValue == null) ? null : pValue.format(false));
 	}
 	
@@ -471,32 +471,32 @@ public class TableEvent extends DatabaseTable<Event> {
 		/* Protect the update */
 		try {			
 			/* Update the fields */
-			if (Utils.differs(pItem.getDate(),
-				  		  	  myBase.getDate()))
+			if (Date.differs(pItem.getDate(),
+				  		  	 myBase.getDate()))
 				updateDate(pItem.getDate());
 			if (Utils.differs(pItem.getDesc(),
 						  	  myBase.getDesc())) 
 				updateDescription(pItem.getDesc());
-			if (Utils.differs(pItem.getAmount(),
+			if (Money.differs(pItem.getAmount(),
 		  		  	  		  myBase.getAmount()))
 				updateAmount(pItem.getAmount());
-			if (Utils.differs(pItem.getDebit(),
-				  	  		  myBase.getDebit())) 
+			if (Account.differs(pItem.getDebit(),
+				  	  			myBase.getDebit())) 
 				updateDebit(pItem.getDebit().getId());
-			if (Utils.differs(pItem.getCredit(),
-		  	  		  		  myBase.getCredit())) 
+			if (Account.differs(pItem.getCredit(),
+		  	  		  			myBase.getCredit())) 
 				updateCredit(pItem.getCredit().getId());
-			if (Utils.differs(pItem.getUnits(),
+			if (Units.differs(pItem.getUnits(),
   		  	  		  		  myBase.getUnits()))
 				updateUnits(pItem.getUnits());
-			if (Utils.differs(pItem.getTransType(),
-		  		  	  		  myBase.getTransType()))
+			if (TransactionType.differs(pItem.getTransType(),
+		  		  	  		  			myBase.getTransType()))
 				updateTransType(pItem.getTransType().getId());
-			if (Utils.differs(pItem.getTaxCredit(),
+			if (Money.differs(pItem.getTaxCredit(),
 				  	  		  myBase.getTaxCredit())) 
 				updateTaxCredit(pItem.getTaxCredit());
-			if (Utils.differs(pItem.getDilution(),
-		  	  		  		  myBase.getDilution())) 
+			if (Dilution.differs(pItem.getDilution(),
+		  	  		  		  	 myBase.getDilution())) 
 				updateDilution(pItem.getDilution());
 			if (Utils.differs(pItem.getYears(),
 		  	  		  		  myBase.getYears())) 

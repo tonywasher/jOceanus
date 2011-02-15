@@ -1,13 +1,11 @@
 package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.data.Price;
+import uk.co.tolcroft.finance.data.AcctPrice;
 import uk.co.tolcroft.models.DataItem;
 import uk.co.tolcroft.models.DataState;
 import uk.co.tolcroft.models.Date;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Number;
-import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.*;
@@ -69,13 +67,13 @@ public class DilutionEvent extends DataItem {
 		String myString = ""; 
 		switch (iField) {
 			case FIELD_ACCOUNT:		
-				myString += Utils.formatAccount(theAccount);
+				myString += Account.format(theAccount);
 				break;
 			case FIELD_DATE: 		
-				myString += Utils.formatDate(theDate);
+				myString += Date.format(theDate);
 				break;
 			case FIELD_DILUTION: 	
-				myString += Utils.formatDilution(theDilution);
+				myString += Dilution.format(theDilution);
 				break;
 		}
 		return myString;
@@ -99,9 +97,9 @@ public class DilutionEvent extends DataItem {
 		DilutionEvent myEvent = (DilutionEvent)pThat;
 		
 		/* Check for equality */
-		if (Utils.differs(getDate(),      	myEvent.getDate())) 		return false;
-		if (Utils.differs(getAccount(),    	myEvent.getAccount())) 		return false;
-		if (Utils.differs(getDilution(),   	myEvent.getDilution()))		return false;
+		if (Date.differs(getDate(),      	myEvent.getDate())) 		return false;
+		if (Account.differs(getAccount(),  	myEvent.getAccount())) 		return false;
+		if (Dilution.differs(getDilution(),	myEvent.getDilution()))		return false;
 		return getBase().equals(myEvent.getBase());
 	}
 
@@ -319,7 +317,7 @@ public class DilutionEvent extends DataItem {
 			/* Loop through the items */
 			while ((myEvent = myIterator.next()) != null) {
 				/* If the event is for this account */
-				if (!Utils.differs(pAccount, myEvent.getAccount())) {
+				if (!Account.differs(pAccount, myEvent.getAccount())) {
 					/* Set result and break loop */
 					myResult = true;
 					break;
@@ -347,7 +345,7 @@ public class DilutionEvent extends DataItem {
 			/* Loop through the items */
 			while ((myEvent = myIterator.next()) != null) {
 				/* If the event is for this account */
-				if (!Utils.differs(pAccount, myEvent.getAccount())) {
+				if (!Account.differs(pAccount, myEvent.getAccount())) {
 					/* If the dilution date is later */
 					if (pDate.compareTo(myEvent.getDate()) < 0) {
 						/* add in the dilution factor */
@@ -374,13 +372,13 @@ public class DilutionEvent extends DataItem {
 		public void addPrice(String 		pAccount,
 							 java.util.Date pDate,
 							 String			pPrice) throws Exception {
-			Account				myAccount;
-			Account.List 		myAccounts;
-			Price.List			myPrices;
-			Date				myDate;
-			Number.Price    	myPrice;
-			Number.DilutedPrice myDilutedPrice;
-			Dilution			myDilution;
+			Account			myAccount;
+			Account.List 	myAccounts;
+			AcctPrice.List	myPrices;
+			Date			myDate;
+			Price    		myPrice;
+			DilutedPrice 	myDilutedPrice;
+			Dilution		myDilution;
 			
 			/* Obtain the prices and accounts */
 			myAccounts 	= theData.getAccounts();
@@ -399,7 +397,7 @@ public class DilutionEvent extends DataItem {
 			if ((hasDilution(myAccount)) &&
 				((myDilution = getDilutionFactor(myAccount, myDate)) != null)) {
 				/* Obtain the diluted price */
-				myDilutedPrice = Number.DilutedPrice.Parse(pPrice);
+				myDilutedPrice = DilutedPrice.Parse(pPrice);
 				if (myDilutedPrice == null) 
 					throw new Exception(ExceptionClass.DATA,
 										"Invalid DilutedPrice: " + pPrice);
@@ -411,7 +409,7 @@ public class DilutionEvent extends DataItem {
 			/* Else this is just a price */
 			else {
 				/* Obtain the the price */
-				myPrice = Number.Price.Parse(pPrice);
+				myPrice = Price.Parse(pPrice);
 				if (myPrice == null) 
 					throw new Exception(ExceptionClass.DATA,
 										"Invalid Price: " + pPrice);

@@ -19,7 +19,7 @@ import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 
 public class MaintTaxYear implements ActionListener,
 									 ItemListener,
@@ -1000,14 +1000,14 @@ public class MaintTaxYear implements ActionListener,
 	/* Update text */
 	private void updateText() {
 		String			myText;
-		Number.Money 	myMoney;
-		Number.Rate  	myRate;
+		Money 			myMoney;
+		Rate  			myRate;
 
 		/* Access the value */
 		myText  = theAllowance.getText();
 		myMoney = null;
 		if (myText.length() == 0) myText = null;
-		if (myText != null) myMoney = Number.Money.Parse(myText); 
+		if (myText != null) myMoney = Money.Parse(myText); 
 		
 		/* Store the appropriate value */
 		if (myMoney != null) theTaxYear.setAllowance(myMoney);    
@@ -1016,7 +1016,7 @@ public class MaintTaxYear implements ActionListener,
 		myText  = theLoAgeAllow.getText();
 		myMoney = null;
 		if (myText.length() == 0) myText = null;
-		if (myText != null) myMoney = Number.Money.Parse(myText); 
+		if (myText != null) myMoney = Money.Parse(myText); 
 		
 		/* Store the appropriate value */
 		if (myMoney != null) theTaxYear.setLoAgeAllow(myMoney);    
@@ -1025,7 +1025,7 @@ public class MaintTaxYear implements ActionListener,
 		myText  = theHiAgeAllow.getText();
 		myMoney = null;
 		if (myText.length() == 0) myText = null;
-		if (myText != null) myMoney = Number.Money.Parse(myText); 
+		if (myText != null) myMoney = Money.Parse(myText); 
 		
 		/* Store the appropriate value */
 		if (myMoney != null) theTaxYear.setHiAgeAllow(myMoney);    
@@ -1034,7 +1034,7 @@ public class MaintTaxYear implements ActionListener,
 		myText  = theCapitalAllow.getText();
 		myMoney = null;
 		if (myText.length() == 0) myText = null;
-		if (myText != null) myMoney = Number.Money.Parse(myText); 
+		if (myText != null) myMoney = Money.Parse(myText); 
 		
 		/* Store the appropriate value */
 		if (myMoney != null) theTaxYear.setCapitalAllow(myMoney);    
@@ -1043,7 +1043,7 @@ public class MaintTaxYear implements ActionListener,
 		myText  = theRental.getText();
 		myMoney = null;
 		if (myText.length() == 0) myText = null;
-		if (myText != null) myMoney = Number.Money.Parse(myText); 
+		if (myText != null) myMoney = Money.Parse(myText); 
 		
 		/* Store the appropriate value */
 		if (myMoney != null) theTaxYear.setRentalAllowance(myMoney);    
@@ -1052,7 +1052,7 @@ public class MaintTaxYear implements ActionListener,
 		myText  = theAgeAllowLimit.getText();
 		myMoney = null;
 		if (myText.length() == 0) myText = null;
-		if (myText != null) myMoney = Number.Money.Parse(myText); 
+		if (myText != null) myMoney = Money.Parse(myText); 
 		
 		/* Store the appropriate value */
 		if (myMoney != null) theTaxYear.setAgeAllowLimit(myMoney);    
@@ -1061,7 +1061,7 @@ public class MaintTaxYear implements ActionListener,
 		myText  = theAddAllowLimit.getText();
 		myMoney = null;
 		if (myText.length() == 0) myText = null;
-		if (myText != null) myMoney = Number.Money.Parse(myText); 
+		if (myText != null) myMoney = Money.Parse(myText); 
 		
 		/* Store the appropriate value */
 		if (myMoney != null) theTaxYear.setAddAllowLimit(myMoney);    
@@ -1070,7 +1070,7 @@ public class MaintTaxYear implements ActionListener,
 		myText  = theAddIncomeBndry.getText();
 		myMoney = null;
 		if (myText.length() == 0) myText = null;
-		if (myText != null) myMoney = Number.Money.Parse(myText); 
+		if (myText != null) myMoney = Money.Parse(myText); 
 		
 		/* Store the appropriate value */
 		if (myMoney != null) theTaxYear.setAddIncBound(myMoney);    
@@ -1079,7 +1079,7 @@ public class MaintTaxYear implements ActionListener,
 		myText  = theLoTaxBand.getText();
 		myMoney = null;
 		if (myText.length() == 0) myText = null;
-		if (myText != null) myMoney = Number.Money.Parse(myText); 
+		if (myText != null) myMoney = Money.Parse(myText); 
 		
 		/* Store the appropriate value */
 		if (myMoney != null) theTaxYear.setLoBand(myMoney);    
@@ -1088,7 +1088,7 @@ public class MaintTaxYear implements ActionListener,
 		myText  = theBasicTaxBand.getText();
 		myMoney = null;
 		if (myText.length() == 0) myText = null;
-		if (myText != null) myMoney = Number.Money.Parse(myText); 
+		if (myText != null) myMoney = Money.Parse(myText); 
 		
 		/* Store the appropriate value */
 		if (myMoney != null) theTaxYear.setBasicBand(myMoney);    
@@ -1097,7 +1097,7 @@ public class MaintTaxYear implements ActionListener,
 		myText  = theLoTaxRate.getText();
 		myRate = null;
 		if (myText.length() == 0) myText = null;
-		if (myText != null) myRate = Number.Rate.Parse(myText); 
+		if (myText != null) myRate = Rate.Parse(myText); 
 		
 		/* Store the appropriate value */
 		if (myRate != null) theTaxYear.setLoTaxRate(myRate);    
@@ -1106,7 +1106,7 @@ public class MaintTaxYear implements ActionListener,
 		myText  = theBasicTaxRate.getText();
 		myRate = null;
 		if (myText.length() == 0) myText = null;
-		if (myText != null) myRate = Number.Rate.Parse(myText); 
+		if (myText != null) myRate = Rate.Parse(myText); 
 		
 		/* Store the appropriate value */
 		if (myRate != null) theTaxYear.setBasicTaxRate(myRate);    
@@ -1115,7 +1115,7 @@ public class MaintTaxYear implements ActionListener,
 		myText  = theHiTaxRate.getText();
 		myRate = null;
 		if (myText.length() == 0) myText = null;
-		if (myText != null) myRate = Number.Rate.Parse(myText); 
+		if (myText != null) myRate = Rate.Parse(myText); 
 		
 		/* Store the appropriate value */
 		if (myRate != null) theTaxYear.setHiTaxRate(myRate);    
@@ -1124,7 +1124,7 @@ public class MaintTaxYear implements ActionListener,
 		myText  = theIntTaxRate.getText();
 		myRate = null;
 		if (myText.length() == 0) myText = null;
-		if (myText != null) myRate = Number.Rate.Parse(myText); 
+		if (myText != null) myRate = Rate.Parse(myText); 
 		
 		/* Store the appropriate value */
 		if (myRate != null) theTaxYear.setIntTaxRate(myRate);    
@@ -1133,7 +1133,7 @@ public class MaintTaxYear implements ActionListener,
 		myText  = theDivTaxRate.getText();
 		myRate = null;
 		if (myText.length() == 0) myText = null;
-		if (myText != null) myRate = Number.Rate.Parse(myText); 
+		if (myText != null) myRate = Rate.Parse(myText); 
 		
 		/* Store the appropriate value */
 		if (myRate != null) theTaxYear.setDivTaxRate(myRate);    
@@ -1142,7 +1142,7 @@ public class MaintTaxYear implements ActionListener,
 		myText  = theHiDivTaxRate.getText();
 		myRate = null;
 		if (myText.length() == 0) myText = null;
-		if (myText != null) myRate = Number.Rate.Parse(myText); 
+		if (myText != null) myRate = Rate.Parse(myText); 
 		
 		/* Store the appropriate value */
 		if (myRate != null) theTaxYear.setHiDivTaxRate(myRate);    
@@ -1151,7 +1151,7 @@ public class MaintTaxYear implements ActionListener,
 		myText  = theAddTaxRate.getText();
 		myRate = null;
 		if (myText.length() == 0) myText = null;
-		if (myText != null) myRate = Number.Rate.Parse(myText); 
+		if (myText != null) myRate = Rate.Parse(myText); 
 		
 		/* Store the appropriate value */
 		if (myRate != null) theTaxYear.setAddTaxRate(myRate);    
@@ -1160,7 +1160,7 @@ public class MaintTaxYear implements ActionListener,
 		myText  = theAddDivTaxRate.getText();
 		myRate = null;
 		if (myText.length() == 0) myText = null;
-		if (myText != null) myRate = Number.Rate.Parse(myText); 
+		if (myText != null) myRate = Rate.Parse(myText); 
 		
 		/* Store the appropriate value */
 		if (myRate != null) theTaxYear.setAddDivTaxRate(myRate);    
@@ -1169,7 +1169,7 @@ public class MaintTaxYear implements ActionListener,
 		myText  = theCapTaxRate.getText();
 		myRate = null;
 		if (myText.length() == 0) myText = null;
-		if (myText != null) myRate = Number.Rate.Parse(myText); 
+		if (myText != null) myRate = Rate.Parse(myText); 
 		
 		/* Store the appropriate value */
 		if (myRate != null) theTaxYear.setCapTaxRate(myRate);    
@@ -1178,7 +1178,7 @@ public class MaintTaxYear implements ActionListener,
 		myText  = theHiCapTaxRate.getText();
 		myRate = null;
 		if (myText.length() == 0) myText = null;
-		if (myText != null) myRate = Number.Rate.Parse(myText); 
+		if (myText != null) myRate = Rate.Parse(myText); 
 		
 		/* Store the appropriate value (allow null) */
 		theTaxYear.setHiCapTaxRate(myRate);    

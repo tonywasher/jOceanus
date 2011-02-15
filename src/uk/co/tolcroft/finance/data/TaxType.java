@@ -437,6 +437,32 @@ public class TaxType extends DataItem {
 	}
 
 	/**
+	 * Format a TaxType 
+	 * 
+	 * @param pTaxType the taxtype to format
+	 * @return the formatted taxtype
+	 */
+	public static String format(TaxType pTaxType) {
+		String 	myFormat;
+		myFormat = (pTaxType != null) ? pTaxType.getName()
+								      : "null";
+		return myFormat;
+	}
+
+	/**
+	 * Determine whether two TaxType objects differ.
+	 * 
+	 * @param pCurr The current TaxType 
+	 * @param pNew The new TaxType
+	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
+	 */	
+	public static boolean differs(TaxType pCurr, TaxType pNew) {
+		return (((pCurr == null) && (pNew != null)) ||
+				((pCurr != null) && 
+				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
+	}
+
+	/**
 	 * Represents a list of {@link TaxType} objects. 
 	 */
 	public static class List extends DataList<TaxType> {

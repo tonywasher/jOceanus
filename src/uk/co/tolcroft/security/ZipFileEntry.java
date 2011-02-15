@@ -63,6 +63,11 @@ public class ZipFileEntry {
 	protected final static String propInitVector	= "InitVector";
 	
 	/**
+	 * The SecurityKey property name of a zipfile
+	 */
+	protected final static String propSecurityKey	= "SecurityKey";
+	
+	/**
 	 * The next file in the list
 	 */
 	private ZipFileEntry 		theNext 			= null;
@@ -83,6 +88,11 @@ public class ZipFileEntry {
 	private boolean 			isCompressed		= false;
 
 	/**
+	 * Has the file got a security key
+	 */
+	private boolean 			hasSecurityKey		= false;
+
+	/**
 	 * Is the file encrypted in the zip file
 	 * @return is the file encrypted?   
 	 */
@@ -93,6 +103,12 @@ public class ZipFileEntry {
 	 * @return is the file compressed?
 	 */
 	public boolean 		isCompressed() 			{ return isCompressed; }
+	
+	/**
+	 * Has the file got a security key 
+	 * @return true/false?
+	 */
+	public boolean 		hasSecurityKey() 		{ return hasSecurityKey; }
 	
 	/**
 	 * Obtain the next file entry 
@@ -161,6 +177,12 @@ public class ZipFileEntry {
 	public byte[] 		getSignature() 			{ return getByteProperty(propSignature); }
 	
 	/**
+	 * Obtain the SecurityKey of the ZipFile 
+	 * @return the SecurityKey of the file
+	 */
+	public String 		getSecurityKey() 		{ return new String(getByteProperty(propSecurityKey)); }
+	
+	/**
 	 * Standard constructor 
 	 */
 	protected ZipFileEntry() {}
@@ -179,7 +201,7 @@ public class ZipFileEntry {
 		if ((myLoc = myString.indexOf(myFileSep)) != -1) {
 			/* Parse the trailing data and remove it */
 			theNext = new ZipFileEntry(myString.substring(myLoc+1));
-			myString.setLength(myLoc-1);
+			myString.setLength(myLoc);
 		}
 		
 		/* while we have separators in the string */
@@ -197,9 +219,12 @@ public class ZipFileEntry {
 		
 		/* Determine whether the file is compressed */
 		if (getProperty(propCompData) != null) 	isCompressed 	= true;
+		
+		/* Determine whether the file has a security key */
+		if (getProperty(propSecurityKey) != null) 	hasSecurityKey 	= true;
 	}
 	
-	/**
+	/**s
 	 * Obtain the bytes value of the named property
 	 * @return the value of the property or <code>null</code> if the property does not exist
 	 */

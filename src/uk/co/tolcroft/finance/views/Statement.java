@@ -5,27 +5,27 @@ import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.DataList.*;
 import uk.co.tolcroft.models.DataItem.*;
 import uk.co.tolcroft.models.DataItem.validationCtl.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 
 public class Statement {
 	/* Members */
 	private View      		theView      	= null;
 	private Account      	theAccount      = null;
 	private Date.Range      theRange        = null;
-	private Number.Money    theStartBalance = null;
-	private Number.Money    theEndBalance   = null;
-	private Number.Units    theStartUnits   = null;
-	private Number.Units    theEndUnits     = null;
+	private Money    		theStartBalance = null;
+	private Money    		theEndBalance   = null;
+	private Units    		theStartUnits   = null;
+	private Units    		theEndUnits     = null;
 	private AssetAnalysis	theAnalysis		= null;
 	private List            theLines        = null;
 
 	/* Access methods */
 	public Account       	getAccount()      { return theAccount; }
 	public Date.Range       getDateRange()    { return theRange; }
-	public Number.Money     getStartBalance() { return theStartBalance; }
-	public Number.Money     getEndBalance()   { return theEndBalance; }
-	public Number.Units     getStartUnits()   { return theStartUnits; }
-	public Number.Units     getEndUnits()     { return theEndUnits; }
+	public Money     		getStartBalance() { return theStartBalance; }
+	public Money     		getEndBalance()   { return theEndBalance; }
+	public Units     		getStartUnits()   { return theStartUnits; }
+	public Units     		getEndUnits()     { return theEndUnits; }
 	public AccountType 		getActType()      { return theAccount.getActType(); }
 	public List             getLines()        { return theLines; }
 	public Line extractItemAt(long uIndex) {
@@ -52,8 +52,8 @@ public class Statement {
 		
 		/* Create the list of statement lines */
 		theLines        = new List();
-		if (hasBalance()) theStartBalance = new Number.Money(0);
-		if (hasUnits())	  theStartUnits   = new Number.Units(0);
+		if (hasBalance()) theStartBalance = new Money(0);
+		if (hasUnits())	  theStartUnits   = new Units(0);
 		
 		/* Access the underlying data and iterator */
 		myData 		= theView.getData();
@@ -109,10 +109,10 @@ public class Statement {
 		Event.List					myList;
 		Event						myEvent;
 		DataSet						myData;
-		Number.Money    			myInitAmount = null;
-		Number.Units				myInitUnits  = null;
-		Number.Money    			myAmount 	 = null;
-		Number.Units				myUnits   	 = null;
+		Money    					myInitAmount = null;
+		Units						myInitUnits  = null;
+		Money    					myAmount 	 = null;
+		Units						myUnits   	 = null;
 		AssetAnalysis.Bucket		myBucket;
 		AssetAnalysis.AssetBucket	myAssetBucket = null;
 		DataList<Line>.ListIterator	myIterator;
@@ -134,7 +134,7 @@ public class Statement {
 		if (hasBalance()) {
 			/* Access the amount and save its initial value */
 			myAmount		= myBucket.getAmount();
-			myInitAmount 	= new Number.Money(myAmount);
+			myInitAmount 	= new Money(myAmount);
 		}
 		
 		/* If we have units */
@@ -144,7 +144,7 @@ public class Statement {
 
 			/* Access the units and save its initial value */
 			myUnits 	= myAssetBucket.getUnits();
-			myInitUnits	= new Number.Units(myUnits);
+			myInitUnits	= new Units(myUnits);
 		}
 		
 		/* Loop through the lines adjusting the balance */
@@ -160,17 +160,17 @@ public class Statement {
 			
 			/* Take a copy of the balance if required */
 			if (hasBalance()) 
-				myLine.theBalance = new Number.Money(myAmount);
+				myLine.theBalance = new Money(myAmount);
 			
 			/* Take a copy of the units balance if required */
 			if (hasUnits()) 
-				myLine.theBalUnits = new Number.Units(myUnits);
+				myLine.theBalUnits = new Units(myUnits);
 		}
 	
 		/* If we have balance */
 		if (hasBalance()) {
 			/* Set the end balance and restore the starting balance */
-			theEndBalance = new Number.Money(myAmount);
+			theEndBalance = new Money(myAmount);
 			myAmount.setZero();
 			myAmount.addAmount(myInitAmount);
 		}
@@ -178,13 +178,10 @@ public class Statement {
 		/* If we have units */
 		if (hasUnits()) {
 			/* Set the end balance and restore the starting balance */
-			theEndUnits = new Number.Units(myUnits);
+			theEndUnits = new Units(myUnits);
 			myUnits.setZero();
 			myUnits.addUnits(myInitUnits);
 		}
-		
-		/* Set the Ending balances */
-		if (hasUnits()) 	theEndUnits = new Number.Units(myAssetBucket.getUnits());
 	}
 	
 	/* Does the statement have a money balance */
@@ -266,21 +263,21 @@ public class Statement {
 				
 			/* Format the balances */
 			pBuffer.append("<tr><td>Account</td><td>"); 
-			pBuffer.append(Utils.formatAccount(theAccount)); 
+			pBuffer.append(Account.format(theAccount)); 
 			pBuffer.append("</td></tr>");
 			
 			/* Format the balances */
 			pBuffer.append("<tr><td>StartBalance</td><td>"); 
-			pBuffer.append(Utils.formatMoney(theStartBalance)); 
+			pBuffer.append(Money.format(theStartBalance)); 
 			pBuffer.append("</td></tr>"); 
 			pBuffer.append("<tr><td>EndBalance</td><td>"); 
-			pBuffer.append(Utils.formatMoney(theEndBalance)); 
+			pBuffer.append(Money.format(theEndBalance)); 
 			pBuffer.append("</td></tr>"); 
 			pBuffer.append("<tr><td>StartUnits</td><td>"); 
-			pBuffer.append(Utils.formatUnits(theStartUnits)); 
+			pBuffer.append(Units.format(theStartUnits)); 
 			pBuffer.append("</td></tr>"); 
 			pBuffer.append("<tr><td>EndUnits</td><td>"); 
-			pBuffer.append(Utils.formatUnits(theEndUnits)); 
+			pBuffer.append(Units.format(theEndUnits)); 
 			pBuffer.append("</td></tr>"); 
 		}
 		
@@ -315,28 +312,25 @@ public class Statement {
 	}
 			
 	public class Line extends DataItem  {
-		private Number.Money        theBalance   = null;
-		private Number.Units		theBalUnits  = null;
+		private Money        		theBalance   = null;
+		private Units				theBalUnits  = null;
 		private boolean             isCredit     = false;
-		private boolean				isCircular	 = false;
-		private boolean				isStockTOver = false;
 
 		/* Access methods */
 		public Account       		getAccount()   		{ return theAccount; }
 		public Values      		 	getObj()       		{ return (Values)super.getObj(); }
 		public Date        			getDate()      		{ return getObj().getDate(); }
 		public String               getDesc()      		{ return getObj().getDesc(); }
-		public Number.Units       	getUnits()     		{ return getObj().getUnits(); }
-		public Number.Money       	getAmount()    		{ return getObj().getAmount(); }
+		public Units       			getUnits()     		{ return getObj().getUnits(); }
+		public Money       			getAmount()    		{ return getObj().getAmount(); }
 		public Account       		getPartner()   		{ return getObj().getPartner(); }
-		public Number.Dilution   	getDilution() 		{ return getObj().getDilution(); }
-		public Number.Money   		getTaxCredit() 		{ return getObj().getTaxCredit(); }
+		public Dilution   			getDilution() 		{ return getObj().getDilution(); }
+		public Money   				getTaxCredit() 		{ return getObj().getTaxCredit(); }
 		public Integer   			getYears() 			{ return getObj().getYears(); }
 		public TransactionType   	getTransType() 		{ return getObj().getTransType(); }
-		public Number.Money       	getBalance()   		{ return theBalance; }
-		public Number.Units       	getBalanceUnits() 	{ return theBalUnits; }
+		public Money       			getBalance()   		{ return theBalance; }
+		public Units       			getBalanceUnits() 	{ return theBalUnits; }
 		public boolean              isCredit()     		{ return isCredit; }
-		public boolean              isCircular()     	{ return isCircular; }
 		
 		/* Linking methods */
 		public Event getBase() { return (Event)super.getBase(); }
@@ -404,37 +398,37 @@ public class Statement {
 					myString += getId(); 
 					break;
 				case FIELD_ACCOUNT:	
-					myString += Utils.formatAccount(theAccount); 
+					myString += Account.format(theAccount); 
 					break;
 				case FIELD_DATE:	
-					myString += Utils.formatDate(myObj.getDate()); 
+					myString += Date.format(myObj.getDate()); 
 					break;
 				case FIELD_DESC:	
 					myString += myObj.getDesc(); 
 					break;
 				case FIELD_TRNTYP: 	
-					myString += Utils.formatTrans(myObj.getTransType());	
+					myString += TransactionType.format(myObj.getTransType());	
 					break;
 				case FIELD_PARTNER:	
-					myString += Utils.formatAccount(myObj.getPartner()); 
+					myString += Account.format(myObj.getPartner()); 
 					break;
 				case FIELD_AMOUNT: 	
-					myString += Utils.formatMoney(myObj.getAmount());	
+					myString += Money.format(myObj.getAmount());	
 					break;
 				case FIELD_UNITS: 	
-					myString += Utils.formatUnits(myObj.getUnits());	
+					myString += Units.format(myObj.getUnits());	
 					break;
 				case FIELD_CREDIT: 
 					myString +=	(isCredit() ? "true" : "false");
 					break;
 				case FIELD_TAXCREDIT: 	
-					myString += Utils.formatMoney(myObj.getAmount());	
+					myString += Money.format(myObj.getAmount());	
 					break;
 				case FIELD_YEARS:	
 					myString += myObj.getYears(); 
 					break;
 				case FIELD_DILUTION:	
-					myString += Utils.formatDilution(myObj.getDilution()); 
+					myString += Dilution.format(myObj.getDilution()); 
 					break;
 			}
 			return myString;
@@ -554,40 +548,6 @@ public class Statement {
 		public boolean equals(Object that) { return (this == that); }
 		
 		/**
-		 *  Adjust Balance for a statement line
-		 *  
-		 *   @param curBalance current balance
-		 */
-		public void adjustBalance(Number.Money curBalance) {
-			/* adjust the balance */
-			if ((isCredit) || (isCircular))
-				curBalance.addAmount(getAmount());
-			else
-				curBalance.subtractAmount(getAmount());
-			   
-			/* Record the balance */
-			theBalance = new Number.Money(curBalance);
-		}
-		
-		/**
-		 *  Adjust Units Balance for a statement line
-		 *  
-		 *   @param curBalance current balance
-		 */
-		public void adjustUnits(Number.Units curBalance) {
-			/* adjust the balance */
-			if ((isCredit) || (isCircular))
-				curBalance.addUnits(getUnits());
-			else if (isStockTOver)
-				curBalance.setZero();
-			else 
-				curBalance.subtractUnits(getUnits());
-			   
-			/* Record the balance */
-			theBalUnits = new Number.Units(curBalance);
-		}
-		
-		/**
 		 * Determines whether a line is locked to updates
 		 * 
 		 * @return true/false 
@@ -656,7 +616,6 @@ public class Statement {
 		 */
 		public void setPartner(Account pPartner) {
 			getObj().setPartner(pPartner);
-			isCircular = !Utils.differs(theAccount, pPartner);
 		}
 		
 		/**
@@ -666,7 +625,6 @@ public class Statement {
 		 */
 		public void setTransType(TransactionType pTranType) {
 			getObj().setTransType(pTranType);
-			isStockTOver = ((pTranType != null) && (pTranType.isStockTakeover()));
 		}
 		
 		/**
@@ -683,9 +641,9 @@ public class Statement {
 		 * 
 		 * @param pAmount the amount 
 		 */
-		public void setAmount(Number.Money pAmount) {
+		public void setAmount(Money pAmount) {
 			getObj().setAmount((pAmount == null) ? null 
-					                             : new Number.Money(pAmount));
+					                             : new Money(pAmount));
 		}
 		
 		/**
@@ -693,8 +651,8 @@ public class Statement {
 		 * 
 		 * @param pUnits the units 
 		 */
-		public void setUnits(Number.Units pUnits) {
-			getObj().setUnits((pUnits == null) ? null : new Number.Units(pUnits));
+		public void setUnits(Units pUnits) {
+			getObj().setUnits((pUnits == null) ? null : new Units(pUnits));
 		}
 		
 		/**
@@ -702,8 +660,8 @@ public class Statement {
 		 * 
 		 * @param pDilution the dilution 
 		 */
-		public void setDilution(Number.Dilution pDilution) {
-			getObj().setDilution((pDilution == null) ? null : new Number.Dilution(pDilution));
+		public void setDilution(Dilution pDilution) {
+			getObj().setDilution((pDilution == null) ? null : new Dilution(pDilution));
 		}
 		
 		/**
@@ -711,8 +669,8 @@ public class Statement {
 		 * 
 		 * @param pTaxCredit the tax credit 
 		 */
-		public void setTaxCredit(Number.Money pTaxCredit) {
-			getObj().setTaxCredit((pTaxCredit == null) ? null : new Number.Money(pTaxCredit));
+		public void setTaxCredit(Money pTaxCredit) {
+			getObj().setTaxCredit((pTaxCredit == null) ? null : new Money(pTaxCredit));
 		}
 		
 		/**
@@ -740,22 +698,22 @@ public class Statement {
 	public class Values implements histObject {
 		private Date       		theDate      = null;
 		private String          theDesc      = null;
-		private Number.Money    theAmount    = null;
+		private Money    		theAmount    = null;
 		private Account         thePartner   = null;
-		private Number.Units    theUnits     = null;
-		private Number.Dilution	theDilution  = null;
-		private Number.Money	theTaxCredit = null;
+		private Units    		theUnits     = null;
+		private Dilution		theDilution  = null;
+		private Money			theTaxCredit = null;
 		private Integer			theYears  	 = null;
 		private TransactionType	theTransType = null;
 		
 		/* Access methods */
 		public Date       		getDate()      { return theDate; }
 		public String           getDesc()      { return theDesc; }
-		public Number.Money     getAmount()    { return theAmount; }
+		public Money     		getAmount()    { return theAmount; }
 		public Account          getPartner()   { return thePartner; }
-		public Number.Units     getUnits()     { return theUnits; }
-		public Number.Dilution  getDilution()  { return theDilution; }
-		public Number.Money     getTaxCredit() { return theTaxCredit; }
+		public Units     		getUnits()     { return theUnits; }
+		public Dilution  		getDilution()  { return theDilution; }
+		public Money     		getTaxCredit() { return theTaxCredit; }
 		public Integer     		getYears()     { return theYears; }
 		public TransactionType	getTransType() { return theTransType; }
 		
@@ -763,15 +721,15 @@ public class Statement {
 			theDate      = pDate; }
 		public void setDesc(String pDesc) {
 			theDesc      = pDesc; }
-		public void setAmount(Number.Money pAmount) {
+		public void setAmount(Money pAmount) {
 			theAmount    = pAmount; }
 		public void setPartner(Account pPartner) {
 			thePartner   = pPartner; }
-		public void setUnits(Number.Units pUnits) {
+		public void setUnits(Units pUnits) {
 			theUnits     = pUnits; }
-		public void setDilution(Number.Dilution pDilution) {
+		public void setDilution(Dilution pDilution) {
 			theDilution  = pDilution; }
-		public void setTaxCredit(Number.Money pTaxCredit) {
+		public void setTaxCredit(Money pTaxCredit) {
 			theTaxCredit = pTaxCredit; }
 		public void setYears(Integer pYears) {
 			theYears     = pYears; }
@@ -798,15 +756,15 @@ public class Statement {
 			return histEquals(myValues);
 		}
 		public boolean histEquals(Values pValues) {
-			if (Utils.differs(theDate,      pValues.theDate))      return false;
-			if (Utils.differs(theDesc,      pValues.theDesc))      return false;
-			if (Utils.differs(theAmount,    pValues.theAmount))    return false;
-			if (Utils.differs(theUnits,     pValues.theUnits))     return false;
-			if (Utils.differs(thePartner,   pValues.thePartner))   return false;
-			if (Utils.differs(theDilution,  pValues.theDilution))  return false;
-			if (Utils.differs(theTaxCredit, pValues.theTaxCredit)) return false;
-			if (Utils.differs(theYears,     pValues.theYears))     return false;
-			if (Utils.differs(theTransType, pValues.theTransType)) return false;
+			if (Date.differs(theDate,      				pValues.theDate))      return false;
+			if (Utils.differs(theDesc,      			pValues.theDesc))      return false;
+			if (Money.differs(theAmount,    			pValues.theAmount))    return false;
+			if (Units.differs(theUnits,     			pValues.theUnits))     return false;
+			if (Account.differs(thePartner,   			pValues.thePartner))   return false;
+			if (Dilution.differs(theDilution,			pValues.theDilution))  return false;
+			if (Money.differs(theTaxCredit, 			pValues.theTaxCredit)) return false;
+			if (Utils.differs(theYears,     			pValues.theYears))     return false;
+			if (TransactionType.differs(theTransType,	pValues.theTransType)) return false;
 			return true;
 		}
 		
@@ -834,22 +792,31 @@ public class Statement {
 			boolean	bResult = false;
 			switch (fieldNo) {
 				case Statement.Line.FIELD_DATE:
-					bResult = (Utils.differs(theDate,      pValues.theDate));
+					bResult = (Date.differs(theDate,       pValues.theDate));
 					break;
 				case Statement.Line.FIELD_DESC:
 					bResult = (Utils.differs(theDesc,      pValues.theDesc));
 					break;
 				case Statement.Line.FIELD_AMOUNT:
-					bResult = (Utils.differs(theAmount,    pValues.theAmount));
+					bResult = (Money.differs(theAmount,    pValues.theAmount));
 					break;
 				case Statement.Line.FIELD_PARTNER:
-					bResult = (Utils.differs(thePartner,   pValues.thePartner));
+					bResult = (Account.differs(thePartner,   pValues.thePartner));
 					break;
 				case Statement.Line.FIELD_UNITS:
-					bResult = (Utils.differs(theUnits,     pValues.theUnits));
+					bResult = (Units.differs(theUnits,     pValues.theUnits));
 					break;
 				case Statement.Line.FIELD_TRNTYP:
-					bResult = (Utils.differs(theTransType, pValues.theTransType));
+					bResult = (TransactionType.differs(theTransType, pValues.theTransType));
+					break;
+				case Statement.Line.FIELD_TAXCREDIT:
+					bResult = (Money.differs(theTaxCredit, pValues.theTaxCredit));
+					break;
+				case Statement.Line.FIELD_YEARS:
+					bResult = (Utils.differs(theYears,     pValues.theYears));
+					break;
+				case Statement.Line.FIELD_DILUTION:
+					bResult = (Dilution.differs(theDilution,  pValues.theDilution));
 					break;
 			}
 			return bResult;

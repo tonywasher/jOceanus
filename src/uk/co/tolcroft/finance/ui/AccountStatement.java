@@ -23,7 +23,7 @@ import uk.co.tolcroft.finance.ui.controls.EditButtons.*;
 import uk.co.tolcroft.finance.ui.controls.StatementSelect.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.*;
 
 public class AccountStatement extends FinanceTableModel<Statement.Line> implements ActionListener {
@@ -194,7 +194,7 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		getTableHeader().setReorderingAllowed(false);
 			
 		/* Set the number of visible rows */
-		setPreferredScrollableViewportSize(new Dimension(1100, 200));
+		setPreferredScrollableViewportSize(new Dimension(900, 200));
 		
 		/* Add the mouse listener */
 		theMouse = new statementMouse();
@@ -228,7 +228,7 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
         	        			.addContainerGap()
                                 .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                                 		.addComponent(theStateBox.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-	                    .addComponent(myScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 1100, Short.MAX_VALUE)
+	                    .addComponent(myScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
 	                    .addComponent(theRowButs.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 	                .addContainerGap())
 	    );
@@ -680,7 +680,7 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 			
 			/* Access the values */
 			myDate    = myEventVals.getDate();
-			isCredit  = Utils.differs(myEvent.getDebit(), theAccount);
+			isCredit  = Account.differs(myEvent.getDebit(), theAccount);
 			myPartner = (isCredit) ? myEventVals.getDebit()
 								   : myEventVals.getCredit();
 			mySelf 	  = (isCredit) ? myEventVals.getCredit()
@@ -710,7 +710,7 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 			return false;
 		
 		/* Check that line is still related */
-		if (Utils.differs(mySelf, theAccount)) 
+		if (Account.differs(mySelf, theAccount)) 
 			return false;
 		
 		/* Otherwise OK */
@@ -854,7 +854,7 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 					break;
 				case COLUMN_BALANCE:
 					if ((myNext != null) && 
-						(!Utils.differs(myNext.getDate(), myLine.getDate())))
+						(!Date.differs(myNext.getDate(), myLine.getDate())))
 						o = null;
 					else o = (theStateType == StatementType.UNITS)
 									? myLine.getBalanceUnits() 
@@ -923,18 +923,18 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 				case COLUMN_CREDIT:
 				case COLUMN_DEBIT:
 					if (theStateType == StatementType.UNITS)
-						myLine.setUnits((Number.Units)obj);
+						myLine.setUnits((Units)obj);
 					else
-						myLine.setAmount((Number.Money)obj); 
+						myLine.setAmount((Money)obj); 
 					break;
 				case COLUMN_PARTNER:
 					myLine.setPartner(theAccounts.searchFor((String)obj));    
 					break;
 				case COLUMN_DILUTION:  
-					myLine.setDilution((Number.Dilution)obj);            
+					myLine.setDilution((Dilution)obj);            
 					break;
 				case COLUMN_TAXCREDIT:  
-					myLine.setTaxCredit((Number.Money)obj);            
+					myLine.setTaxCredit((Money)obj);            
 					break;
 				case COLUMN_YEARS:  
 					myLine.setYears((Integer)obj);            

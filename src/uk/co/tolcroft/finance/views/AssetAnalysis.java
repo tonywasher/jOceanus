@@ -3,7 +3,7 @@ package uk.co.tolcroft.finance.views;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.AnalysisYear.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 
 public class AssetAnalysis {
 	/* Members */
@@ -291,10 +291,10 @@ public class AssetAnalysis {
 		Bucket      		myCurr;
 		AssetBucket			myAsset;
 		MoneyBucket			myMoney;
-		Price 				myPrice;
-		Price.List			myPrices;
-		Rate  				myRate;
-		Rate.List			myRates;
+		AcctPrice 				myPrice;
+		AcctPrice.List			myPrices;
+		AcctRate  				myRate;
+		AcctRate.List			myRates;
 		Date        		myDate;
 
 		/* Access the Rates/Prices */
@@ -398,7 +398,7 @@ public class AssetAnalysis {
 				
 			/* Format the date */
 			pBuffer.append("<tr><td>Date</td><td>"); 
-			pBuffer.append(Utils.formatDate(theDate)); 
+			pBuffer.append(Date.format(theDate)); 
 			pBuffer.append("</td></tr>"); 
 		}
 		
@@ -697,7 +697,7 @@ public class AssetAnalysis {
 		private 	BucketType		theBucket	 	= null;
 		private 	Account       	theAccount   	= null;
 		private		AccountType 	theType      	= null;
-		private		Number.Money    theAmount    	= null;
+		private		Money    		theAmount    	= null;
 		private 	Bucket			thePrevious		= null;
 		
 		/* Access methods */
@@ -707,16 +707,16 @@ public class AssetAnalysis {
 		public 	Account       	getAccount()   { return theAccount; }
 		public 	AccountType 	getType()      { return theType; }
 		public 	Date        	getDate()      { return theDate; }
-		public 	Number.Money    getAmount()    { return theAmount; }
+		public 	Money    		getAmount()    { return theAmount; }
 		public 	Bucket    		getPrevious()  { return thePrevious; }
-		public 	Number.Money    getPrevAmount(){ return (thePrevious == null) ? null : thePrevious.theAmount; }
+		public 	Money    		getPrevAmount(){ return (thePrevious == null) ? null : thePrevious.theAmount; }
 		private boolean     		  isDetail()   { 
 			return (theBucket == BucketType.DETAIL); }
 
 		/* Constructors */
 		private Bucket(List pList) { 
 			super(pList, 0);
-			theAmount   = new Number.Money(0);
+			theAmount   = new Money(0);
 		}
 		private Bucket(List pList, Account pAccount) { 
 			super(pList, 0);
@@ -725,7 +725,7 @@ public class AssetAnalysis {
 			theBucket   = BucketType.DETAIL;
 			theOrder    = pAccount.getOrder();
 			theAccount  = pAccount;
-			theAmount   = new Number.Money(0);
+			theAmount   = new Money(0);
 		}
 		private Bucket(List pList, AccountType pType) { 
 			super(pList, 0);
@@ -733,14 +733,14 @@ public class AssetAnalysis {
 			theType     = pType;
 			theBucket   = BucketType.SUMMARY;
 			theOrder    = pType.getOrder();
-			theAmount   = new Number.Money(0);
+			theAmount   = new Money(0);
 			thePrevious = new Bucket(pList);
 		}
 		private Bucket(List pList, BucketType pType) { 
 			super(pList, 0);
 			theBucket   = pType;
 			theOrder    = 0;
-			theAmount   = new Number.Money(0);
+			theAmount   = new Money(0);
 			thePrevious = new Bucket(pList);
 		}
 		private Bucket(List pList, Bucket pBucket) {
@@ -750,9 +750,9 @@ public class AssetAnalysis {
 			theBucket   = pBucket.getBucket();
 			theAccount  = pBucket.getAccount();
 			theType     = pBucket.getType();
-			theAmount   = new Number.Money(0);
+			theAmount   = new Money(0);
 			thePrevious = pBucket;
-			theAmount   = new Number.Money(pBucket.getAmount());
+			theAmount   = new Money(pBucket.getAmount());
 		}
 		
 		/* Field IDs */
@@ -809,10 +809,10 @@ public class AssetAnalysis {
 					myString += theOrder;
 					break;
 				case FIELD_ACTTYPE: 	
-					myString += Utils.formatAccountType(theType);
+					myString += AccountType.format(theType);
 					break;
 				case FIELD_VALUE: 	
-					myString += Utils.formatMoney(theAmount);
+					myString += Money.format(theAmount);
 					break;
 			}
 			return myString;
@@ -839,8 +839,8 @@ public class AssetAnalysis {
 			if (Utils.differs(getName(),      	myBucket.getName())) 		return false;
 			if (getBucket() != myBucket.getBucket()) 						return false;
 			if (getOrder() 	!= myBucket.getOrder()) 						return false;
-			if (Utils.differs(getType(),    	myBucket.getType())) 		return false;
-			if (Utils.differs(getAmount(),    	myBucket.getAmount())) 		return false;
+			if (AccountType.differs(getType(),  myBucket.getType())) 		return false;
+			if (Money.differs(getAmount(),    	myBucket.getAmount())) 		return false;
 			return true;
 		}
 
@@ -885,7 +885,7 @@ public class AssetAnalysis {
 		 * @param  pEvent Event to add
 		 */
 		protected void addEvent(Event pEvent) {
-			Number.Money myAmount = pEvent.getAmount();
+			Money myAmount = pEvent.getAmount();
 
 			/* Adjust the money total */
 			theAmount.addAmount(myAmount);
@@ -897,7 +897,7 @@ public class AssetAnalysis {
 		 * @param  pEvent Event to subtract
 		 */
 		protected void subtractEvent(Event pEvent) {
-			Number.Money myAmount = pEvent.getAmount();
+			Money myAmount = pEvent.getAmount();
 
 			/* Adjust the money total */
 			theAmount.subtractAmount(myAmount);
@@ -909,7 +909,7 @@ public class AssetAnalysis {
 		 * @param  pBucket Bucket to add
 		 */
 		protected void addBucket(Bucket pBucket) {
-			Number.Money myAmount = pBucket.getAmount();
+			Money myAmount = pBucket.getAmount();
 
 			/* Adjust the money total */
 			theAmount.addAmount(myAmount);
@@ -921,51 +921,51 @@ public class AssetAnalysis {
 	/* The item class for Assets */
 	public class AssetBucket extends Bucket {
 		/* Members */
-		private		Number.Units	theUnits     		= null;
-		private		Number.Price	thePrice     		= null;
-		private		Number.Money    theInvestment  		= null;
-		private		Number.Money    theDividends   		= null;
-		private		Number.Money    theCost 	    	= null;
-		private		Number.Money    theRealisedGains	= null;
-		private		Number.Money    theProfit			= null;
-		private		Number.Money    theMarket    		= null;
+		private		Units			theUnits     		= null;
+		private		Price			thePrice     		= null;
+		private		Money    		theInvestment  		= null;
+		private		Money    		theDividends   		= null;
+		private		Money    		theCost 	    	= null;
+		private		Money    		theRealisedGains	= null;
+		private		Money    		theProfit			= null;
+		private		Money    		theMarket    		= null;
 		
 		/* Access methods */
-		public 	Number.Units    getUnits()     		{ return theUnits; }
-		public 	Number.Price    getPrice()     		{ return thePrice; }
-		public 	Number.Money    getInvestment()		{ return theInvestment; }
-		public 	Number.Money    getDividends() 		{ return theDividends; }
-		public 	Number.Money    getMarket()    		{ return theMarket; }
-		public 	Number.Money    getCost()			{ return theCost; }
-		public 	Number.Money    getRealisedGains() 	{ return theRealisedGains; }
-		public 	Number.Money    getProfit()			{ return theProfit; }
+		public 	Units    		getUnits()     		{ return theUnits; }
+		public 	Price    		getPrice()     		{ return thePrice; }
+		public 	Money    		getInvestment()		{ return theInvestment; }
+		public 	Money    		getDividends() 		{ return theDividends; }
+		public 	Money    		getMarket()    		{ return theMarket; }
+		public 	Money    		getCost()			{ return theCost; }
+		public 	Money    		getRealisedGains() 	{ return theRealisedGains; }
+		public 	Money    		getProfit()			{ return theProfit; }
 		public 	AssetBucket		getPrevious()  		{ return (AssetBucket)super.getPrevious(); }
 
 		/* Constructors */
 		private AssetBucket(List pList, Account pAccount) { 
 			super(pList, pAccount);
-			theUnits     		= new Number.Units(0);
-			theInvestment		= new Number.Money(0);
-			theDividends		= new Number.Money(0);
-			theCost				= new Number.Money(0);
-			theRealisedGains	= new Number.Money(0);
+			theUnits     		= new Units(0);
+			theInvestment		= new Money(0);
+			theDividends		= new Money(0);
+			theCost				= new Money(0);
+			theRealisedGains	= new Money(0);
 		}
 		private AssetBucket(List pList, AssetBucket pBucket) {
 			super(pList, pBucket);
-			theUnits     		= new Number.Units(pBucket.getUnits());
-			theCost     		= new Number.Money(pBucket.getCost());
-			theRealisedGains 	= new Number.Money(pBucket.getRealisedGains());
-			theInvestment		= new Number.Money(0);
-			theDividends		= new Number.Money(0);
+			theUnits     		= new Units(pBucket.getUnits());
+			theCost     		= new Money(pBucket.getCost());
+			theRealisedGains 	= new Money(pBucket.getRealisedGains());
+			theInvestment		= new Money(0);
+			theDividends		= new Money(0);
 		}
 		private AssetBucket(List pList, BucketType pType) {
 			super(pList, pType);
-			theInvestment		= new Number.Money(0);
-			theMarket			= new Number.Money(0);
-			theDividends		= new Number.Money(0);
-			theCost				= new Number.Money(0);
-			theRealisedGains	= new Number.Money(0);
-			theProfit			= new Number.Money(0);
+			theInvestment		= new Money(0);
+			theMarket			= new Money(0);
+			theDividends		= new Money(0);
+			theCost				= new Money(0);
+			theRealisedGains	= new Money(0);
+			theProfit			= new Money(0);
 		}
 		
 		/* Field IDs */
@@ -1013,28 +1013,28 @@ public class AssetAnalysis {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_UNITS: 	
-					myString += Utils.formatUnits(theUnits);
+					myString += Units.format(theUnits);
 					break;
 				case FIELD_PRICE: 	
-					myString += Utils.formatPrice(thePrice);
+					myString += Price.format(thePrice);
 					break;
 				case FIELD_INVEST: 	
-					myString += Utils.formatMoney(theInvestment);
+					myString += Money.format(theInvestment);
 					break;
 				case FIELD_DIVIDEND: 	
-					myString += Utils.formatMoney(theDividends);
+					myString += Money.format(theDividends);
 					break;
 				case FIELD_COST: 	
-					myString += Utils.formatMoney(theCost);
+					myString += Money.format(theCost);
 					break;
 				case FIELD_GAINS: 	
-					myString += Utils.formatMoney(theRealisedGains);
+					myString += Money.format(theRealisedGains);
 					break;
 				case FIELD_PROFIT: 	
-					myString += Utils.formatMoney(theProfit);
+					myString += Money.format(theProfit);
 					break;
 				case FIELD_MARKET: 	
-					myString += Utils.formatMoney(theMarket);
+					myString += Money.format(theMarket);
 					break;
 				default: 	
 					myString += super.formatField(iField, pObj);
@@ -1064,16 +1064,16 @@ public class AssetAnalysis {
 			if (Utils.differs(getName(),      		myBucket.getName())) 		return false;
 			if (getBucket() != myBucket.getBucket()) 							return false;
 			if (getOrder() 	!= myBucket.getOrder()) 							return false;
-			if (Utils.differs(getType(),    		myBucket.getType())) 		return false;
-			if (Utils.differs(getAmount(),    		myBucket.getAmount())) 		return false;
-			if (Utils.differs(getUnits(),    		myBucket.getUnits())) 		return false;
-			if (Utils.differs(getPrice(),    		myBucket.getPrice())) 		return false;
-			if (Utils.differs(getInvestment(),    	myBucket.getInvestment())) 	return false;
-			if (Utils.differs(getDividends(),    	myBucket.getDividends())) 	return false;
-			if (Utils.differs(getCost(),    		myBucket.getCost())) 		return false;
-			if (Utils.differs(getRealisedGains(),   myBucket.getRealisedGains()))return false;
-			if (Utils.differs(getProfit(),    		myBucket.getProfit())) 		return false;
-			if (Utils.differs(getMarket(),    		myBucket.getMarket())) 		return false;
+			if (AccountType.differs(getType(),    	myBucket.getType())) 		return false;
+			if (Money.differs(getAmount(),    		myBucket.getAmount())) 		return false;
+			if (Units.differs(getUnits(),    		myBucket.getUnits())) 		return false;
+			if (Price.differs(getPrice(),    		myBucket.getPrice())) 		return false;
+			if (Money.differs(getInvestment(),    	myBucket.getInvestment())) 	return false;
+			if (Money.differs(getDividends(),    	myBucket.getDividends())) 	return false;
+			if (Money.differs(getCost(),    		myBucket.getCost())) 		return false;
+			if (Money.differs(getRealisedGains(),   myBucket.getRealisedGains()))return false;
+			if (Money.differs(getProfit(),    		myBucket.getProfit())) 		return false;
+			if (Money.differs(getMarket(),    		myBucket.getMarket())) 		return false;
 			return true;
 		}
 
@@ -1083,8 +1083,8 @@ public class AssetAnalysis {
 		 * @param  pEvent Event to add
 		 */
 		protected void addEvent(Event pEvent) {
-			Number.Money myAmount = pEvent.getAmount();
-			Number.Units myUnits  = pEvent.getUnits();
+			Money	myAmount = pEvent.getAmount();
+			Units 	myUnits  = pEvent.getUnits();
 
 			/* Adjust the investment total */
 			theInvestment.addAmount(myAmount);
@@ -1105,10 +1105,10 @@ public class AssetAnalysis {
 		 * @param  pEvent Event to subtract
 		 */
 		protected void subtractEvent(Event pEvent) {
-			Number.Money myAmount 		= pEvent.getAmount();
-			Number.Money myTax	  		= pEvent.getTaxCredit();
-			Number.Units myUnits  		= pEvent.getUnits();
-			Number.Money myReduction;
+			Money myAmount 		= pEvent.getAmount();
+			Money myTax	  		= pEvent.getTaxCredit();
+			Units myUnits  		= pEvent.getUnits();
+			Money myReduction;
 
 			/* If this is a dividend */
 			if (pEvent.getTransType().isDividend()) {
@@ -1127,19 +1127,19 @@ public class AssetAnalysis {
 				
 				/* If we are reducing units */
 				if ((myUnits != null) && (theUnits != null) &&
-					(Utils.differs(pEvent.getDebit(), pEvent.getCredit()))) {
+					(Account.differs(pEvent.getDebit(), pEvent.getCredit()))) {
 					/* Calculate the cost reduction */
 					myReduction = theCost.valueAtWeight(myUnits, theUnits);
 					
 				/* else if the cost reduction is more than the cost */
 				} else if (myAmount.getAmount() > theCost.getAmount())  {
 					/* Reduce the cost to zero */
-					myReduction = new Number.Money(theCost);
+					myReduction = new Money(theCost);
 					
 				/* else */	
 				} else {
 					/* Set the reduction as the amount */
-					myReduction = new Number.Money(myAmount);
+					myReduction = new Money(myAmount);
 				}
 				
 				/* Reduce the cost */
@@ -1185,9 +1185,9 @@ public class AssetAnalysis {
 	 	 * Set a price and valuation for asset
 	 	 * @param  pPrice price for asset
 	 	 */
-		protected void setPrice(Number.Price pPrice) {
+		protected void setPrice(Price pPrice) {
 			/* Record the price of the asset */
-			thePrice  = new Number.Price(pPrice);
+			thePrice  = new Price(pPrice);
 
 			/* Record the value of the asset */
 			super.theAmount = theUnits.valueAtPrice(pPrice);
@@ -1196,7 +1196,7 @@ public class AssetAnalysis {
 			calculateMarketMovement();
 			
 			/* Calculate the Profit */
-			theProfit = new Number.Money(getAmount());
+			theProfit = new Money(getAmount());
 			theProfit.subtractAmount(theCost);
 		}
 
@@ -1207,7 +1207,7 @@ public class AssetAnalysis {
 			/** Calculate the market movement 
 			 * This is defined as is NewValue - OldValue - Investment
 			 */
-			Number.Money myMovement = new Number.Money(getAmount());
+			Money myMovement = new Money(getAmount());
 			
 			/* Subtract any investment this year */
 			myMovement.subtractAmount(theInvestment);
@@ -1227,11 +1227,11 @@ public class AssetAnalysis {
 	/* The item class for Money */
 	public class MoneyBucket extends Bucket {
 		/* Members */
-		private		Number.Rate		theRate     	= null;
-		private		Date			theDate     	= null;
+		private		Rate		theRate     	= null;
+		private		Date		theDate     	= null;
 		
 		/* Access methods */
-		public 	Number.Rate    	getRate()     	{ return theRate; }
+		public 	Rate    		getRate()     	{ return theRate; }
 		public 	Date    		getDate()     	{ return theDate; }
 		public 	MoneyBucket		getPrevious()  	{ return (MoneyBucket)super.getPrevious(); }
 
@@ -1276,10 +1276,10 @@ public class AssetAnalysis {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_RATE: 	
-					myString += Utils.formatRate(theRate);
+					myString += Rate.format(theRate);
 					break;
 				case FIELD_DATE: 	
-					myString += Utils.formatDate(theDate);
+					myString += Date.format(theDate);
 					break;
 			}
 			return myString;
@@ -1303,13 +1303,13 @@ public class AssetAnalysis {
 			MoneyBucket myBucket = (MoneyBucket)pThat;
 			
 			/* Check for equality */
-			if (Utils.differs(getName(),    myBucket.getName()))	return false;
+			if (Utils.differs(getName(),    	myBucket.getName()))	return false;
 			if (getBucket() != myBucket.getBucket()) 				return false;
 			if (getOrder() 	!= myBucket.getOrder()) 				return false;
-			if (Utils.differs(getType(),    myBucket.getType())) 	return false;
-			if (Utils.differs(getAmount(),  myBucket.getAmount())) 	return false;
-			if (Utils.differs(getRate(),    myBucket.getRate())) 	return false;
-			if (Utils.differs(getDate(),	myBucket.getDate())) 	return false;
+			if (AccountType.differs(getType(),  myBucket.getType())) 	return false;
+			if (Money.differs(getAmount(),  	myBucket.getAmount())) 	return false;
+			if (Rate.differs(getRate(),   		myBucket.getRate())) 	return false;
+			if (Date.differs(getDate(),			myBucket.getDate())) 	return false;
 			return true;
 		}
 
@@ -1317,10 +1317,10 @@ public class AssetAnalysis {
 	 	 * Set a Rate and date for the account
 	 	 * @param  pPrice price for asset
 	 	 */
-		protected void setRate(Number.Rate pRate,
-							   Date		   pDate) {
+		protected void setRate(Rate pRate,
+							   Date	pDate) {
 			/* Record the rate and date of the account */
-			theRate  = new Number.Rate(pRate);
+			theRate  = new Rate(pRate);
 			if (pDate != null) theDate = new Date(pDate);
 		}
 	}

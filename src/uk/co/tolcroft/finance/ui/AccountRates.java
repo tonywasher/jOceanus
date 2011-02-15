@@ -21,16 +21,16 @@ import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.EditButtons.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.*;
 
-public class AccountRates extends FinanceTableModel<Rate> implements ActionListener {
+public class AccountRates extends FinanceTableModel<AcctRate> implements ActionListener {
 	/* Members */
 	private static final long serialVersionUID = 36193763696660335L;
 	
 	private View					theView			= null;
 	private RatesModel				theModel		= null;
-	private Rate.List		    	theRates   		= null;
+	private AcctRate.List		    	theRates   		= null;
 	private JPanel					thePanel		= null;
 	private AccountRates			theTable    	= this;
 	private ratesMouse				theMouse		= null;
@@ -197,9 +197,9 @@ public class AccountRates extends FinanceTableModel<Rate> implements ActionListe
 	public int getFieldForCol(int column) {
 		/* Switch on column */
 		switch (column) {
-			case COLUMN_RATE: 	return Rate.FIELD_RATE;
-			case COLUMN_BONUS:	return Rate.FIELD_BONUS;
-			case COLUMN_DATE:  	return Rate.FIELD_ENDDATE;
+			case COLUMN_RATE: 	return AcctRate.FIELD_RATE;
+			case COLUMN_BONUS:	return AcctRate.FIELD_BONUS;
+			case COLUMN_DATE:  	return AcctRate.FIELD_ENDDATE;
 			default:			return -1;
 		}
 	}
@@ -275,7 +275,7 @@ public class AccountRates extends FinanceTableModel<Rate> implements ActionListe
 			
 		/* get value At */
 		public Object getValueAt(int row, int col) {
-			Rate 	myRate;
+			AcctRate 	myRate;
 			Object  o;
 			
 			/* Access the rate */
@@ -299,7 +299,7 @@ public class AccountRates extends FinanceTableModel<Rate> implements ActionListe
 			
 		/* set value At */
 		public void setValueAt(Object obj, int row, int col) {
-			Rate 	myRate;
+			AcctRate 	myRate;
 			
 			/* Access the rate */
 			myRate = theRates.get(row);
@@ -309,8 +309,8 @@ public class AccountRates extends FinanceTableModel<Rate> implements ActionListe
 			
 			/* Store the appropriate value */
 			switch (col) {
-				case COLUMN_RATE:  	myRate.setRate((Number.Rate)obj);  break;
-				case COLUMN_BONUS:  myRate.setBonus((Number.Rate)obj); break;
+				case COLUMN_RATE:  	myRate.setRate((Rate)obj);  break;
+				case COLUMN_BONUS:  myRate.setBonus((Rate)obj); break;
 				case COLUMN_DATE:	myRate.setEndDate((Date)obj);  break;
 			}
 				
@@ -357,8 +357,8 @@ public class AccountRates extends FinanceTableModel<Rate> implements ActionListe
 		public void maybeShowPopup(MouseEvent e) {
 			JPopupMenu      myMenu;
 			JMenuItem       myItem;
-			Rate    		myRow     = null;
-			Rate    		myCurr;
+			AcctRate    		myRow     = null;
+			AcctRate    		myCurr;
 			boolean         isBonus   = false;
 			boolean         isDate    = false;
 				

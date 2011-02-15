@@ -1,13 +1,10 @@
 package uk.co.tolcroft.finance.data;
 
-import java.util.Arrays;
-
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
-import uk.co.tolcroft.security.*;
 import uk.co.tolcroft.finance.data.DataSet.*;
 
 public class Account extends DataItem {
@@ -56,11 +53,6 @@ public class Account extends DataItem {
 	 */
 	public final static int NOTELEN 		= 500;
 
-	/**
-	 * Account InitVector length
-	 */
-	public final static int INITVLEN 		= SymmetricKey.IVSIZE;
-
 	/* Members */
 	private int                   theOrder     = -1;
 	private int					  theParentId  = -1;
@@ -90,7 +82,6 @@ public class Account extends DataItem {
 	public  int         getOrder()     	{ return theOrder; }
 	public  Date        getMaturity()  	{ return getObj().getMaturity(); }
 	public  Date    	getClose()     	{ return getObj().getClose(); }
-	public  byte[]    	getInitVector()	{ return getObj().getInitVector(); }
 	public  byte[]    	getWebSite()	{ return getObj().getWebSite(); }
 	public  byte[]    	getCustNo()		{ return getObj().getCustNo(); }
 	public  byte[]    	getUserId()		{ return getObj().getUserId(); }
@@ -127,14 +118,13 @@ public class Account extends DataItem {
 	public static final int FIELD_CLOSE    = 5;
 	public static final int FIELD_PARENT   = 6;
 	public static final int FIELD_ALIAS    = 7;
-	public static final int FIELD_IV   	   = 8;
-	public static final int FIELD_WEBSITE  = 9;
-	public static final int FIELD_CUSTNO   = 10;
-	public static final int FIELD_USERID   = 11;
-	public static final int FIELD_PASSWORD = 12;
-	public static final int FIELD_ACCOUNT  = 13;
-	public static final int FIELD_NOTES    = 14;
-	public static final int NUMFIELDS	   = 15;
+	public static final int FIELD_WEBSITE  = 8;
+	public static final int FIELD_CUSTNO   = 9;
+	public static final int FIELD_USERID   = 10;
+	public static final int FIELD_PASSWORD = 11;
+	public static final int FIELD_ACCOUNT  = 12;
+	public static final int FIELD_NOTES    = 13;
+	public static final int NUMFIELDS	   = 14;
 	
 	/**
 	 * Obtain the type of the item
@@ -162,7 +152,6 @@ public class Account extends DataItem {
 			case FIELD_MATURITY:	return "Maturity";
 			case FIELD_PARENT:		return "Parent";
 			case FIELD_ALIAS:		return "Alias";
-			case FIELD_IV:			return "InitVector";
 			case FIELD_WEBSITE:		return "WebSite";
 			case FIELD_CUSTNO:		return "CustomerNo";
 			case FIELD_USERID:		return "UserId";
@@ -197,31 +186,27 @@ public class Account extends DataItem {
 					(theActTypeId != -1))
 					myString += "Id=" + theActTypeId;
 				else
-					myString += Utils.formatAccountType(getActType()); 
+					myString += AccountType.format(getActType()); 
 				break;
 			case FIELD_CLOSE:	
-				myString += Utils.formatDate(myObj.getClose()); 
+				myString += Date.format(myObj.getClose()); 
 				break;
 			case FIELD_MATURITY:	
-				myString += Utils.formatDate(myObj.getMaturity()); 
+				myString += Date.format(myObj.getMaturity()); 
 				break;
 			case FIELD_PARENT:	
 				if ((myObj.getParent() == null) &&
 					(theParentId != -1))
 					myString += "Id=" + theParentId;
 				else
-					myString += Utils.formatAccount(myObj.getParent()); 
+					myString += Account.format(myObj.getParent()); 
 				break;
 			case FIELD_ALIAS:	
 				if ((myObj.getAlias() == null) &&
 					(theAliasId != -1))
 					myString += "Id=" + theAliasId;
 				else
-					myString += Utils.formatAccount(myObj.getAlias()); 
-				break;
-			case FIELD_IV:	
-				if (myObj.getInitVector() != null) 
-					myString += Utils.HexStringFromBytes(myObj.getInitVector()); 
+					myString += Account.format(myObj.getAlias()); 
 				break;
 			case FIELD_WEBSITE:	
 				if (myObj.getWebSite() != null) 
@@ -292,7 +277,6 @@ public class Account extends DataItem {
 			        java.util.Date 	pClose,
 			        int           	uParentId,
 			        int           	uAliasId,
-			        byte[]			pInitVect,
 			        byte[]			pWebSite,
 			        byte[]			pCustNo,
 			        byte[]			pUserId,
@@ -310,7 +294,6 @@ public class Account extends DataItem {
 		setObj(myObj);
 		myObj.setName(sName);
 		myObj.setDesc(pDesc);
-		myObj.setInitVector(pInitVect);
 		myObj.setWebSite(pWebSite);
 		myObj.setCustNo(pCustNo);
 		myObj.setUserId(pUserId);
@@ -372,20 +355,19 @@ public class Account extends DataItem {
 		
 		/* Check for equality */
 		if (getId() != myAccount.getId()) return false;
-		if (Utils.differs(getName(),    	myAccount.getName())) 		return false;
-		if (Utils.differs(getDesc(),    	myAccount.getDesc())) 		return false;
-		if (Utils.differs(getActType(), 	myAccount.getActType())) 	return false;
-		if (Utils.differs(getClose(),   	myAccount.getClose())) 		return false;
-		if (Utils.differs(getMaturity(),	myAccount.getMaturity())) 	return false;
-		if (Utils.differs(getParent(),      myAccount.getParent())) 	return false;			
-		if (Utils.differs(getAlias(),       myAccount.getAlias())) 		return false;			
-		if (Utils.differs(getInitVector(),	myAccount.getInitVector())) return false;
-		if (Utils.differs(getWebSite(),		myAccount.getWebSite())) 	return false;
-		if (Utils.differs(getCustNo(),		myAccount.getCustNo())) 	return false;
-		if (Utils.differs(getUserId(),		myAccount.getUserId())) 	return false;
-		if (Utils.differs(getPassword(),	myAccount.getPassword())) 	return false;
-		if (Utils.differs(getAccount(),		myAccount.getAccount())) 	return false;
-		if (Utils.differs(getNotes(),		myAccount.getNotes())) 		return false;
+		if (Utils.differs(getName(),    		myAccount.getName())) 		return false;
+		if (Utils.differs(getDesc(),    		myAccount.getDesc())) 		return false;
+		if (AccountType.differs(getActType(),	myAccount.getActType())) 	return false;
+		if (Date.differs(getClose(),   			myAccount.getClose())) 		return false;
+		if (Date.differs(getMaturity(),			myAccount.getMaturity())) 	return false;
+		if (Account.differs(getParent(),     	myAccount.getParent())) 	return false;			
+		if (Account.differs(getAlias(),       	myAccount.getAlias())) 		return false;			
+		if (Utils.differs(getWebSite(),			myAccount.getWebSite())) 	return false;
+		if (Utils.differs(getCustNo(),			myAccount.getCustNo())) 	return false;
+		if (Utils.differs(getUserId(),			myAccount.getUserId())) 	return false;
+		if (Utils.differs(getPassword(),		myAccount.getPassword())) 	return false;
+		if (Utils.differs(getAccount(),			myAccount.getAccount())) 	return false;
+		if (Utils.differs(getNotes(),			myAccount.getNotes())) 		return false;
 		return true;
 	}
 
@@ -558,11 +540,11 @@ public class Account extends DataItem {
 		/* If we have an alias */
 		if (getAlias() != null) {
 			/* Cannot alias to self */
-			if (!Utils.differs(this, getAlias()))
+			if (!Account.differs(this, getAlias()))
 				addError("Cannot alias to self", FIELD_ALIAS);
 
 			/* Cannot alias to same type */
-			else if (!Utils.differs(myType, getAlias().getActType()))
+			else if (!AccountType.differs(myType, getAlias().getActType()))
 				addError("Cannot alias to same account type", FIELD_ALIAS);
 
 			/* Must be alias type */
@@ -603,14 +585,9 @@ public class Account extends DataItem {
 		/* If data has been fully loaded and the account is closed */
 		if ((mySet.getLoadState() == LoadState.LOADED) && 
 			(isClosed())) {
-			/* Account must be closeable */
+			/* Account must be close-able */
 			if (!isCloseable())
 				addError("Non-closeable account is closed", FIELD_CLOSE);
-		}
-			
-		/* The InitVector must not be correct length */
-		if ((getInitVector() != null) && (getInitVector().length != INITVLEN)) {
-			addError("Initialisation Vector is incorrect length", FIELD_IV);
 		}
 			
 		/* The WebSite must not be too long */
@@ -870,15 +847,6 @@ public class Account extends DataItem {
 	}
 	
 	/**
-	 * Set a new initialisation vector
-	 *	 
-	 * @param pVector the new vector 
-	 */
-	public void setInitVector(byte[] pVector) {
-		getObj().setInitVector(pVector);
-	}
-	
-	/**
 	 * Set a new web site
 	 *	 
 	 * @param pWebSite the new site 
@@ -952,28 +920,24 @@ public class Account extends DataItem {
 			setDescription(myAccount.getDesc());
 			
 		/* Update the account type if required */
-		if (Utils.differs(getActType(), myAccount.getActType())) 
+		if (AccountType.differs(getActType(), myAccount.getActType())) 
 			setActType(myAccount.getActType());
 			
 		/* Update the maturity if required */
-		if (Utils.differs(getMaturity(), myAccount.getMaturity())) 
+		if (Date.differs(getMaturity(), myAccount.getMaturity())) 
 			setMaturity(myAccount.getMaturity());
 		
 		/* Update the close if required */
-		if (Utils.differs(getClose(), myAccount.getClose())) 
+		if (Date.differs(getClose(), myAccount.getClose())) 
 			setClose(myAccount.getClose());
 		
 		/* Update the parent if required */
-		if (Utils.differs(getParent(), myAccount.getParent())) 
+		if (Account.differs(getParent(), myAccount.getParent())) 
 			setParent(myAccount.getParent());
 		
 		/* Update the alias if required */
-		if (Utils.differs(getAlias(), myAccount.getAlias())) 
+		if (Account.differs(getAlias(), myAccount.getAlias())) 
 			setParent(myAccount.getAlias());
-		
-		/* Update the InitVector if required */
-		if (Utils.differs(getInitVector(), myAccount.getInitVector())) 
-			setInitVector(myAccount.getInitVector());
 		
 		/* Update the WebSite if required */
 		if (Utils.differs(getWebSite(), myAccount.getWebSite())) 
@@ -1003,6 +967,32 @@ public class Account extends DataItem {
 		if (checkForHistory()) setState(DataState.CHANGED);
 	}
 
+	/**
+	 * Format an Account 
+	 * 
+	 * @param pAccount the account to format
+	 * @return the formatted account
+	 */
+	public static String format(Account pAccount) {
+		String 	myFormat;
+		myFormat = (pAccount != null) ? pAccount.getName()
+							 	      : "null";
+		return myFormat;
+	}
+
+	/**
+	 * Determine whether two {@link account} objects differ.
+	 * 
+	 * @param pCurr The current Account 
+	 * @param pNew The new Account
+	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
+	 */	
+	public static boolean differs(Account pCurr, Account pNew) {
+		return (((pCurr == null) && (pNew != null)) ||
+				((pCurr != null) && 
+				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
+	}
+	
 	/**
 	 * AccountList class
 	 */
@@ -1106,7 +1096,7 @@ public class Account extends DataItem {
 			/* Access the iterator */
 			myIterator = listIterator();
 			
-			/* Loop through the items to find the entry */
+			/* Loop through the accounts */
 			while ((myCurr = myIterator.next()) != null) {				
 				/* If we have a parent, mark the parent */
 				if (myCurr.getParent() != null) {
@@ -1122,12 +1112,12 @@ public class Account extends DataItem {
 						myCurr.getAlias().setNonCloseable();
 				}
 				
-				/* If we have no latest event, then we are not closeable */
+				/* If we have no latest event, then we are not close-able */
 				if (myCurr.getLatest() == null) {
 					myCurr.setNonCloseable();
 				}
 				
-				/* If we have patterns or are touched by patterns, then we are not closeable */
+				/* If we have patterns or are touched by patterns, then we are not close-able */
 				if (myCurr.hasPatterns || myCurr.isPatterned) {
 					myCurr.setNonCloseable();
 				}
@@ -1138,9 +1128,15 @@ public class Account extends DataItem {
 					/* Check whether we need to adjust the date */
 					myCurr.adjustClosed();
 				}
-				
-				/* If we are in final loading stage */
-				if (theData.getLoadState() == LoadState.FINAL) {
+			}	
+			
+			/* If we are in final loading stage */
+			if (theData.getLoadState() == LoadState.FINAL) {
+				/* Access a new iterator */
+				myIterator = listIterator();
+			
+				/* Loop through the accounts */
+				while ((myCurr = myIterator.next()) != null) {
 					/* Validate the account */
 					myCurr.validate();
 					if (myCurr.hasErrors()) 
@@ -1148,7 +1144,7 @@ public class Account extends DataItem {
 											myCurr,
 											"Failed validation");
 				}
-			}			 
+			}
 		}
 
 		/**
@@ -1320,7 +1316,6 @@ public class Account extends DataItem {
 					pClosed,
 					myParentId,
 					myAliasId,
-			        pInitVect,
 			        pWebSite,
 			        pCustNo,
 			        pUserId,
@@ -1349,7 +1344,6 @@ public class Account extends DataItem {
 				            java.util.Date  pClosed,
 				            int     		uParentId,
 				            int     		uAliasId,
-					        byte[]			pInitVect,
 					        byte[]			pWebSite,
 					        byte[]			pCustNo,
 					        byte[]			pUserId,
@@ -1368,7 +1362,6 @@ public class Account extends DataItem {
 					                pClosed,
 					                uParentId,
 					                uAliasId,
-							        pInitVect,
 							        pWebSite,
 							        pCustNo,
 							        pUserId,
@@ -1415,14 +1408,22 @@ public class Account extends DataItem {
 				if (myCurr.getParentId() != -1) {
 					/* Set the parent */
 					myCurr.setParent(searchFor(myCurr.getParentId()));
+					myCurr.getParent().touchParent();
 				}
 					
 				/* If the account has an alias Id */
 				if (myCurr.getAliasId() != -1) {
 					/* Set the alias */
 					myCurr.setAlias(searchFor(myCurr.getAliasId()));
+					myCurr.getAlias().touchAlias();
 				}
-					
+			}
+
+			/* Create another iterator */
+			myIterator = listIterator(true);
+			
+			/* Loop through the items to find the entry */
+			while ((myCurr = myIterator.next()) != null) {
 				/* Validate the account */
 				myCurr.validate();
 					
@@ -1446,7 +1447,6 @@ public class Account extends DataItem {
 		private Date       	theClose    	= null;
 		private Account		theParent		= null;
 		private Account		theAlias		= null;
-		private byte[]		theInitVector	= null;
 		private byte[]		theWebSite		= null;
 		private byte[]		theCustNo		= null;
 		private byte[]		theUserId		= null;
@@ -1462,7 +1462,6 @@ public class Account extends DataItem {
 		public Date       	getClose()     	{ return theClose; }
 		public Account		getParent()    	{ return theParent; }
 		public Account		getAlias()    	{ return theAlias; }
-		public byte[]		getInitVector()	{ return theInitVector; }
 		public byte[]		getWebSite()	{ return theWebSite; }
 		public byte[]		getCustNo()		{ return theCustNo; }
 		public byte[]		getUserId()		{ return theUserId; }
@@ -1484,8 +1483,6 @@ public class Account extends DataItem {
 			theParent    = pParent; }
 		public void setAlias(Account pAlias) {
 			theAlias     = pAlias; }
-		public void setInitVector(byte[] pInitVector) {
-			theInitVector	= pInitVector; }
 		public void setWebSite(byte[] pWebSite) {
 			theWebSite		= pWebSite; }
 		public void setCustNo(byte[] pCustNo) {
@@ -1509,7 +1506,6 @@ public class Account extends DataItem {
 			theClose      = pValues.getClose();
 			theParent     = pValues.getParent();
 			theAlias      = pValues.getAlias();
-			theInitVector = pValues.getInitVector();
 			theWebSite 	  = pValues.getWebSite();
 			theCustNo 	  = pValues.getCustNo();
 			theUserId 	  = pValues.getUserId();
@@ -1526,12 +1522,11 @@ public class Account extends DataItem {
 		public boolean histEquals(Values pValues) {
 			if (Utils.differs(theName,     		pValues.theName))     	return false;
 			if (Utils.differs(theDesc,     		pValues.theDesc))     	return false;
-			if (Utils.differs(theType,     		pValues.theType))     	return false;
-			if (Utils.differs(theMaturity, 		pValues.theMaturity)) 	return false;
-			if (Utils.differs(theClose,    		pValues.theClose))    	return false;
-			if (Utils.differs(theParent,   		pValues.theParent))   	return false;
-			if (Utils.differs(theAlias,   		pValues.theAlias))   	return false;
-			if (Utils.differs(theInitVector,	pValues.theInitVector)) return false;
+			if (AccountType.differs(theType,    pValues.theType))     	return false;
+			if (Date.differs(theMaturity, 		pValues.theMaturity)) 	return false;
+			if (Date.differs(theClose,    		pValues.theClose))    	return false;
+			if (Account.differs(theParent,   	pValues.theParent))   	return false;
+			if (Account.differs(theAlias,   	pValues.theAlias))   	return false;
 			if (Utils.differs(theWebSite,		pValues.theWebSite)) 	return false;
 			if (Utils.differs(theCustNo,		pValues.theCustNo)) 	return false;
 			if (Utils.differs(theUserId,		pValues.theUserId)) 	return false;
@@ -1557,7 +1552,6 @@ public class Account extends DataItem {
 			theClose      = pValues.getClose();
 			theParent     = pValues.getParent();
 			theAlias      = pValues.getAlias();
-			theInitVector = pValues.getInitVector();
 			theWebSite 	  = pValues.getWebSite();
 			theCustNo 	  = pValues.getCustNo();
 			theUserId 	  = pValues.getUserId();
@@ -1576,22 +1570,19 @@ public class Account extends DataItem {
 					bResult = (Utils.differs(theDesc,     	pValues.theDesc));
 					break;
 				case FIELD_TYPE:
-					bResult = (Utils.differs(theType,     	pValues.theType));
+					bResult = (AccountType.differs(theType, pValues.theType));
 					break;
 				case FIELD_MATURITY:
-					bResult = (Utils.differs(theMaturity, 	pValues.theMaturity));
+					bResult = (Date.differs(theMaturity, 	pValues.theMaturity));
 					break;
 				case FIELD_CLOSE:
-					bResult = (Utils.differs(theClose,    	pValues.theClose));
+					bResult = (Date.differs(theClose,    	pValues.theClose));
 					break;
 				case FIELD_PARENT:
-					bResult = (Utils.differs(theParent,   	pValues.theParent));
+					bResult = (Account.differs(theParent,   pValues.theParent));
 					break;
 				case FIELD_ALIAS:
-					bResult = (Utils.differs(theAlias,   	pValues.theAlias));
-					break;
-				case FIELD_IV:
-					bResult = (Utils.differs(theInitVector,	pValues.theInitVector));
+					bResult = (Account.differs(theAlias,   	pValues.theAlias));
 					break;
 				case FIELD_WEBSITE:
 					bResult = (Utils.differs(theWebSite,	pValues.theWebSite));
@@ -1613,320 +1604,6 @@ public class Account extends DataItem {
 					break;
 			}
 			return bResult;
-		}
-	}
-	
-	/**
-	 * SecureValues
-	 */
-	public static class SecureValues {
-		/* Members */
-		private SymmetricKey 	theKey 		= null;
-		private SecurityCipher 	theCipher 	= null;
-		private Account			theMaster	= null;
-		private char[]			theWebSite	= null;
-		private char[]			theCustNo 	= null;
-		private char[]			theUserId	= null;
-		private char[]			thePassword = null;
-		private char[]			theAccount	= null;
-		private char[]			theNotes 	= null;
-		
-		/* Access methods */
-		public	char[] getWebSite()		{ return theWebSite; }
-		public	char[] getCustNo()		{ return theCustNo; }
-		public	char[] getUserId()		{ return theUserId; }
-		public	char[] getPassword()	{ return thePassword; }
-		public	char[] getAccount()		{ return theAccount; }
-		public	char[] getNotes()		{ return theNotes; }
-
-		/* Constructor */
-		private SecureValues(Account pAccount) {
-			SecurityCipher 	myCipher;
-			List 		   	myList = (List)pAccount.getList();
-			DataSet			myData = myList.theData;
-		
-			/* Record the master account */
-			theMaster = pAccount;
-			
-			/* protect against exceptions */
-			try {
-				/* If we have an initialisation vector */
-				if (pAccount.getInitVector() != null) {
-					/* Grab a security Cipher to decrypt the values */
-					theKey   = myData.getKey();
-					myCipher = theKey.initDecryption(pAccount.getInitVector());
-				
-					/* Access the values */
-					if (pAccount.getWebSite() != null)
-						theWebSite  = myCipher.decryptBytes(pAccount.getWebSite());
-					if (pAccount.getCustNo() != null)
-						theCustNo   = myCipher.decryptBytes(pAccount.getCustNo());
-					if (pAccount.getUserId() != null)
-						theUserId   = myCipher.decryptBytes(pAccount.getUserId());
-					if (pAccount.getPassword() != null)
-						thePassword = myCipher.decryptBytes(pAccount.getPassword());
-					if (pAccount.getAccount() != null)
-						theAccount  = myCipher.decryptBytes(pAccount.getAccount());
-					if (pAccount.getWebSite() != null)
-						theNotes    = myCipher.decryptBytes(pAccount.getNotes());
-				}				
-			}
-			catch (Throwable e) {}
-		}
-		
-		/**
-		 * Clear arrays on garbage collection
-		 */
-		protected void finalize() throws Throwable {
-			/* Null existing values */
-			if (theWebSite  != null) Arrays.fill(theWebSite,  (char) 0);
-			if (theCustNo   != null) Arrays.fill(theCustNo,   (char) 0);
-			if (theUserId   != null) Arrays.fill(theUserId,   (char) 0);
-			if (thePassword != null) Arrays.fill(thePassword, (char) 0);
-			if (theAccount  != null) Arrays.fill(theAccount,  (char) 0);
-			if (theNotes    != null) Arrays.fill(theNotes,    (char) 0);
-		}
-		
-		/* Ensure that we have a cipher */
-		private	void ensureCipher() throws Exception {
-			/* If we do not have a cipher */
-			if (theCipher == null) {
-				/* If we have an InitVector */
-				if (theMaster.getInitVector() != null) {
-					/* Grab a security Cipher to encrypt the values */
-					theCipher = theKey.initEncryption(theMaster.getInitVector());
-				}
-					
-				/* Else we have to initialise the vector */
-				else {
-					/* Grab a security Cipher to encrypt the values */
-					theCipher = theKey.initEncryption();
-					
-					/* record the vector */
-					theMaster.setInitVector(theCipher.getInitVector());
-				}
-			}
-		}
-		
-		/* Access methods */
-		public	void setWebSite(char[] pWebSite) {
-			byte[] myBytes;
-			
-			/* If we have changed the value */
-			if (Utils.differs(theWebSite, pWebSite)) {
-				/* Protect the operation */
-				try {
-					/* If we have a new value */
-					if (pWebSite != null) {
-						/* Ensure that we have a cipher */
-						ensureCipher();
-						
-						/* Encrypt and update */
-						myBytes = theCipher.encryptChars(pWebSite);
-						theMaster.setWebSite(myBytes);
-					
-						/* Null existing value */
-						if (theWebSite != null) Arrays.fill(theWebSite, (char) 0);
-						theWebSite = Arrays.copyOf(pWebSite, pWebSite.length);
-						Arrays.fill(pWebSite, (char) 0);
-					}
-					
-					/* Else setting value to null */
-					else {
-						/* update */
-						theMaster.setWebSite(null);
-						
-						/* Null existing value */
-						if (theWebSite != null) Arrays.fill(theWebSite, (char) 0);
-						theWebSite = null;
-					}
-				}
-				catch (Throwable e) {}
-			}
-		}
-		
-		/* Access methods */
-		public	void setCustNo(char[] pCustNo) {
-			byte[] myBytes;
-			
-			/* If we have changed the value */
-			if (Utils.differs(theCustNo, pCustNo)) {
-				/* Protect the operation */
-				try {
-					/* If we have a new value */
-					if (pCustNo != null) {
-						/* Ensure that we have a cipher */
-						ensureCipher();
-
-						/* Encrypt and update */
-						myBytes = theCipher.encryptChars(pCustNo);
-						theMaster.setCustNo(myBytes);
-					
-						/* Null existing value */
-						if (theCustNo != null) Arrays.fill(theCustNo, (char) 0);
-						theCustNo = Arrays.copyOf(pCustNo, pCustNo.length);
-						Arrays.fill(pCustNo, (char) 0);
-					}
-					
-					/* Else setting value to null */
-					else {
-						/* update */
-						theMaster.setCustNo(null);
-						
-						/* Null existing value */
-						if (theCustNo != null) Arrays.fill(theCustNo, (char) 0);
-						theCustNo = null;
-					}
-				}
-				catch (Throwable e) {}
-			}
-		}
-		
-		/* Access methods */
-		public	void setUserId(char[] pUserId) {
-			byte[] myBytes;
-			
-			/* If we have changed the value */
-			if (Utils.differs(theUserId, pUserId)) {
-				/* Protect the operation */
-				try {
-					/* If we have a new value */
-					if (pUserId != null) {
-						/* Ensure that we have a cipher */
-						ensureCipher();
-
-						/* Encrypt and update */
-						myBytes = theCipher.encryptChars(pUserId);
-						theMaster.setUserId(myBytes);
-					
-						/* Null existing value */
-						if (theUserId != null) Arrays.fill(theUserId, (char) 0);
-						theUserId = Arrays.copyOf(pUserId, pUserId.length);
-						Arrays.fill(pUserId, (char) 0);
-					}
-					
-					/* Else setting value to null */
-					else {
-						/* update */
-						theMaster.setUserId(null);
-						
-						/* Null existing value */
-						if (theUserId != null) Arrays.fill(theUserId, (char) 0);
-						theUserId = null;
-					}
-				}
-				catch (Throwable e) {}
-			}
-		}
-		/* Access methods */
-		public	void setPassword(char[] pPassword) {
-			byte[] myBytes;
-			
-			/* If we have changed the value */
-			if (Utils.differs(thePassword, pPassword)) {
-				/* Protect the operation */
-				try {
-					/* If we have a new value */
-					if (pPassword != null) {
-						/* Ensure that we have a cipher */
-						ensureCipher();
-
-						/* Encrypt and update */
-						myBytes = theCipher.encryptChars(pPassword);
-						theMaster.setPassword(myBytes);
-					
-						/* Null existing value */
-						if (thePassword != null) Arrays.fill(thePassword, (char) 0);
-						thePassword = Arrays.copyOf(pPassword, pPassword.length);
-						Arrays.fill(pPassword, (char) 0);
-					}
-					
-					/* Else setting value to null */
-					else {
-						/* update */
-						theMaster.setPassword(null);
-						
-						/* Null existing value */
-						if (thePassword != null) Arrays.fill(thePassword, (char) 0);
-						thePassword = null;
-					}
-				}
-				catch (Throwable e) {}
-			}
-		}
-		
-		/* Access methods */
-		public	void setAccount(char[] pAccount) {
-			byte[] myBytes;
-			
-			/* If we have changed the value */
-			if (Utils.differs(theAccount, pAccount)) {
-				/* Protect the operation */
-				try {
-					/* If we have a new value */
-					if (pAccount != null) {
-						/* Ensure that we have a cipher */
-						ensureCipher();
-
-						/* Encrypt and update */
-						myBytes = theCipher.encryptChars(pAccount);
-						theMaster.setAccount(myBytes);
-					
-						/* Null existing value */
-						if (theAccount != null) Arrays.fill(theAccount, (char) 0);
-						theAccount = Arrays.copyOf(pAccount, pAccount.length);
-						Arrays.fill(pAccount, (char) 0);
-					}
-					
-					/* Else setting value to null */
-					else {
-						/* update */
-						theMaster.setAccount(null);
-						
-						/* Null existing value */
-						if (theAccount != null) Arrays.fill(theAccount, (char) 0);
-						theAccount = null;
-					}
-				}
-				catch (Throwable e) {}
-			}
-		}
-		
-		/* Access methods */
-		public	void setNotes(char[] pNotes) {
-			byte[] myBytes;
-			
-			/* If we have changed the value */
-			if (Utils.differs(theNotes, pNotes)) {
-				/* Protect the operation */
-				try {
-					/* If we have a new value */
-					if (pNotes != null) {
-						/* Ensure that we have a cipher */
-						ensureCipher();
-
-						/* Encrypt and update */
-						myBytes = theCipher.encryptChars(pNotes);
-						theMaster.setNotes(myBytes);
-					
-						/* Null existing value */
-						if (theNotes != null) Arrays.fill(theNotes, (char) 0);
-						theWebSite = Arrays.copyOf(pNotes, pNotes.length);
-						Arrays.fill(pNotes, (char) 0);
-					}
-					
-					/* Else setting value to null */
-					else {
-						/* update */
-						theMaster.setNotes(null);
-						
-						/* Null existing value */
-						if (theNotes != null) Arrays.fill(theNotes, (char) 0);
-						theNotes = null;
-					}
-				}
-				catch (Throwable e) {}
-			}
 		}
 	}
 }

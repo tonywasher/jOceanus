@@ -5,9 +5,9 @@ import uk.co.tolcroft.finance.views.SpotPrices.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 
-public class Price extends DataItem {
+public class AcctPrice extends DataItem {
 	/**
 	 * The name of the object
 	 */
@@ -18,14 +18,14 @@ public class Price extends DataItem {
 	
 	/* Access methods */
 	public  Values  		getObj()    	{ return (Values)super.getObj(); }
-	public  Number.Price 	getPrice()  	{ return getObj().getPrice(); }
+	public  Price 			getPrice()  	{ return getObj().getPrice(); }
 	public  Date  			getDate()		{ return getObj().getDate(); }
 	public  Account			getAccount()	{ return getObj().getAccount(); }
 	private void    		setAccount(Account pAccount)   {
 		getObj().setAccount(pAccount); }
 
 	/* Linking methods */
-	public Price     getBase() { return (Price)super.getBase(); }
+	public AcctPrice     getBase() { return (AcctPrice)super.getBase(); }
 	
 	/* Field IDs */
 	public static final int FIELD_ID       = 0;
@@ -78,13 +78,13 @@ public class Price extends DataItem {
 					(theAccountId != -1))
 					myString += "Id=" + theAccountId;
 				else
-					myString += Utils.formatAccount(getAccount()); 
+					myString += Account.format(getAccount()); 
 				break;
 			case FIELD_DATE:	
-				myString += Utils.formatDate(getDate()); 
+				myString += Date.format(getDate()); 
 				break;
 			case FIELD_PRICE:	
-				myString += Utils.formatPrice(myObj.getPrice()); 
+				myString += Price.format(myObj.getPrice()); 
 				break;
 		}
 		return myString;
@@ -95,7 +95,7 @@ public class Price extends DataItem {
  	* 
  	* @param pPrice The Price 
  	*/
-	protected Price(List pList, Price pPrice) {
+	protected AcctPrice(List pList, AcctPrice pPrice) {
 		/* Set standard values */
 		super(pList, pPrice.getId());
 		Values myObj = new Values(pPrice.getObj());
@@ -118,7 +118,7 @@ public class Price extends DataItem {
 	}
 
 	/* Standard constructor for a newly inserted price */
-	private Price(List pList) {
+	private AcctPrice(List pList) {
 		super(pList, 0);
 		Values myObj = new Values();
 		setObj(myObj);
@@ -126,7 +126,7 @@ public class Price extends DataItem {
 	}
 
 	/* Standard constructor */
-	private Price(List       		pList,
+	private AcctPrice(List       		pList,
 			      int           	uId, 
 				  int 		    	uAccountId,
 			      java.util.Date 	pDate, 
@@ -152,7 +152,7 @@ public class Price extends DataItem {
 		myObj.setDate(new Date(pDate));
 		
 		/* Record the price */
-		Number.Price myPrice = Number.Price.Parse(pPrice);
+		Price myPrice = Price.Parse(pPrice);
 		if (myPrice == null) 
 			throw new Exception(ExceptionClass.DATA,
 								this,
@@ -164,10 +164,10 @@ public class Price extends DataItem {
 	}
 
 	/* Special price constructor for diluted prices */
-	private Price(List       	pList,
-				  Account	    pAccount,
-			      Date 			pDate, 
-			      Number.Price	pPrice) {
+	private AcctPrice(List       	pList,
+				  	  Account	    pAccount,
+				  	  Date 			pDate, 
+				  	  Price			pPrice) {
 		/* Initialise the item */
 		super(pList, 0);
 		
@@ -202,13 +202,13 @@ public class Price extends DataItem {
 		if (pThat.getClass() != this.getClass()) return false;
 		
 		/* Access the object as a Price */
-		Price myPrice = (Price)pThat;
+		AcctPrice myPrice = (AcctPrice)pThat;
 		
 		/* Check for equality */
 		if (getId() != myPrice.getId()) return false;
-		if (Utils.differs(getAccount(),	myPrice.getAccount())) 	return false;
-		if (Utils.differs(getDate(),    myPrice.getDate())) 	return false;
-		if (Utils.differs(getPrice(),   myPrice.getPrice())) 	return false;
+		if (Account.differs(getAccount(),	myPrice.getAccount())) 	return false;
+		if (Date.differs(getDate(),     	myPrice.getDate())) 	return false;
+		if (Price.differs(getPrice(),   	myPrice.getPrice())) 	return false;
 		return true;
 	}
 
@@ -229,7 +229,7 @@ public class Price extends DataItem {
 		if (pThat.getClass() != this.getClass()) return -1;
 		
 		/* Access the object as a Price */
-		Price myThat = (Price)pThat;
+		AcctPrice myThat = (AcctPrice)pThat;
 
 		/* Compare the accounts */
 		iDiff = getAccount().compareTo(myThat.getAccount());
@@ -296,8 +296,8 @@ public class Price extends DataItem {
 	 * 
 	 * @param pPrice the price 
 	 */
-	public void setPrice(Number.Price pPrice) {
-		getObj().setPrice((pPrice == null) ? null : new Number.Price(pPrice));
+	public void setPrice(Price pPrice) {
+		getObj().setPrice((pPrice == null) ? null : new Price(pPrice));
 	}
 
 	/**
@@ -315,8 +315,8 @@ public class Price extends DataItem {
 	 * @param pItem the price extract 
 	 */
 	public void applyChanges(DataItem pItem) {
-		if (pItem instanceof Price) {
-			Price myPrice = (Price)pItem;
+		if (pItem instanceof AcctPrice) {
+			AcctPrice myPrice = (AcctPrice)pItem;
 			applyChanges(myPrice);
 		}
 		else if (pItem instanceof SpotPrice) {
@@ -330,16 +330,16 @@ public class Price extends DataItem {
 	 * 
 	 * @param pPrice the price extract 
 	 */
-	public void applyChanges(Price pPrice) {
+	public void applyChanges(AcctPrice pPrice) {
 		/* Store the current detail into history */
 		pushHistory();
 		
 		/* Update the price if required */
-		if (Utils.differs(getPrice(), pPrice.getPrice())) 
+		if (Price.differs(getPrice(), pPrice.getPrice())) 
 			setPrice(pPrice.getPrice());
 	
 		/* Update the date if required */
-		if (Utils.differs(getDate(), pPrice.getDate())) 
+		if (Date.differs(getDate(), pPrice.getDate())) 
 			setDate(pPrice.getDate());
 		
 		/* Check for changes */
@@ -364,7 +364,7 @@ public class Price extends DataItem {
 			pushHistory();
 		
 			/* Update the price if required */
-			if (Utils.differs(getPrice(), pPrice.getPrice())) 
+			if (Price.differs(getPrice(), pPrice.getPrice())) 
 				setPrice(pPrice.getPrice());
 	
 			/* Check for changes */
@@ -375,7 +375,7 @@ public class Price extends DataItem {
 	/**
 	 * Price List
 	 */
-	public static class List  extends DataList<Price> {
+	public static class List  extends DataList<AcctPrice> {
 		/* Members */
 		private Account	theAccount	= null;
 		private DataSet	theData		= null;
@@ -433,8 +433,8 @@ public class Price extends DataItem {
 			theData = pList.getData();
 
 			/* Local variables */
-			Price 			myCurr;
-			Price 			myItem;
+			AcctPrice 			myCurr;
+			AcctPrice 			myItem;
 			ListIterator 	myIterator;
 
 			/* Skip to alias if required */
@@ -450,9 +450,9 @@ public class Price extends DataItem {
 			/* Loop through the list */
 			while ((myCurr = myIterator.next()) != null) {
 				/* If this item belongs to the account */
-				if (!Utils.differs(myCurr.getAccount(), pAccount)) {
+				if (!Account.differs(myCurr.getAccount(), pAccount)) {
 					/* Copy the item */
-					myItem = new Price(this, myCurr);
+					myItem = new AcctPrice(this, myCurr);
 					myItem.addToList();
 				}
 			}
@@ -474,7 +474,7 @@ public class Price extends DataItem {
 		 * @return the newly added item
 		 */
 		public DataItem addNewItem(DataItem pPrice) {
-			Price myPrice = new Price(this, (Price)pPrice);
+			AcctPrice myPrice = new AcctPrice(this, (AcctPrice)pPrice);
 			myPrice.addToList();
 			return myPrice;
 		}
@@ -485,7 +485,7 @@ public class Price extends DataItem {
 		 * @param isCredit - ignored
 		 */
 		public void addNewItem(boolean        isCredit) {
-			Price myPrice = new Price(this);
+			AcctPrice myPrice = new AcctPrice(this);
 			myPrice.setAccount(theAccount);
 			myPrice.addToList();
 		}
@@ -505,7 +505,7 @@ public class Price extends DataItem {
 		protected int countInstances(Date 		pDate,
 									 Account	pAccount) {
 			ListIterator 	myIterator;
-			Price    		myCurr;
+			AcctPrice    		myCurr;
 			int      		iDiff;
 			int      		iCount = 0;
 
@@ -529,11 +529,11 @@ public class Price extends DataItem {
 		 *   @param pDate the date from which a price is required
 		 *   @return The relevant Price record 
 		 */
-		public Price getLatestPrice(Account pAccount,
+		public AcctPrice getLatestPrice(Account pAccount,
 									Date 	pDate) {
 			ListIterator 	myIterator;
-			Price 			myPrice = null;
-			Price 			myCurr;
+			AcctPrice 			myPrice = null;
+			AcctPrice 			myCurr;
 
 			/* Skip to alias if required */
 			if (pAccount.getAlias() != null)
@@ -545,7 +545,7 @@ public class Price extends DataItem {
 			/* Loop through the Prices */
 			while ((myCurr = myIterator.next()) != null) {
 				/* Skip records that do not belong to this account */
-				if (Utils.differs(myCurr.getAccount(), pAccount))
+				if (Account.differs(myCurr.getAccount(), pAccount))
 					continue;
 
 				/* break loop if we have passed the date */
@@ -564,7 +564,7 @@ public class Price extends DataItem {
 		 */
 		protected void markActivePrices () {
 			ListIterator 	myIterator;
-			Price 			myCurr;
+			AcctPrice 			myCurr;
 
 			/* Access the list iterator */
 			myIterator = listIterator(true);
@@ -584,8 +584,8 @@ public class Price extends DataItem {
 			SpotPrices.List 	 				myList;
 			SpotPrice 							mySpot;
 			Date								myDate;
-			Number.Price						myPoint;
-			Price								myPrice;
+			Price								myPoint;
+			AcctPrice							myPrice;
 
 			/* Access details */
 			myDate = pPrices.getDate();
@@ -611,11 +611,11 @@ public class Price extends DataItem {
 					/* else if we have a new price with no underlying */
 					else if (myPoint != null) {
 						/* Create the new Price */
-						myPrice = new Price(this);
+						myPrice = new AcctPrice(this);
 
 						/* Set the date and price */
 						myPrice.setDate(new Date(myDate));
-						myPrice.setPrice(new Number.Price(myPoint));
+						myPrice.setPrice(new Price(myPoint));
 						myPrice.setAccount(mySpot.getAccount());
 
 						/* Add to the list and link backwards */
@@ -648,7 +648,7 @@ public class Price extends DataItem {
 			if (myAccount == null) 
 				throw new Exception(ExceptionClass.DATA,
 			                        "Price on [" + 
-			                        Utils.formatDate(new Date(pDate)) +
+			                        Date.format(new Date(pDate)) +
 			                        "] has invalid Account [" +
 			                        pAccount + "]");
 									
@@ -666,10 +666,10 @@ public class Price extends DataItem {
 				            java.util.Date  pDate,
 				            int     		uAccountId,
 				            String   		pPrice) throws Exception {
-			Price     	myPrice;
+			AcctPrice     	myPrice;
 			
 			/* Create the price and PricePoint */
-			myPrice = new Price(this, uId, uAccountId, pDate, pPrice);
+			myPrice = new AcctPrice(this, uId, uAccountId, pDate, pPrice);
 			
 			/* Check that this PriceId has not been previously added */
 			if (!isIdUnique(uId)) 
@@ -693,13 +693,13 @@ public class Price extends DataItem {
 		/**
 		 *  Allow a price to be added
 		 */
-		public void addItem(Account 		pAccount,
-							Date  			pDate,
-				            Number.Price	pPrice) throws Exception {
-			Price     	myPrice;
+		public void addItem(Account pAccount,
+							Date  	pDate,
+				            Price	pPrice) throws Exception {
+			AcctPrice     	myPrice;
 			
 			/* Create the price and PricePoint */
-			myPrice = new Price(this, pAccount, pDate, pPrice);
+			myPrice = new AcctPrice(this, pAccount, pDate, pPrice);
 			
 			/* Validate the price */
 			myPrice.validate();
@@ -719,18 +719,18 @@ public class Price extends DataItem {
 	 * Values for a price 
 	 */
 	public class Values implements histObject {
-		private Date       		theDate      = null;
-		private Number.Price    thePrice     = null;
-		private Account    		theAccount   = null;
+		private Date    theDate      = null;
+		private Price   thePrice     = null;
+		private Account theAccount   = null;
 		
 		/* Access methods */
-		public Date       	getDate()      { return theDate; }
-		public Number.Price	getPrice()     { return thePrice; }
-		public Account		getAccount()   { return theAccount; }
+		public Date     getDate()      { return theDate; }
+		public Price	getPrice()     { return thePrice; }
+		public Account	getAccount()   { return theAccount; }
 		
 		public void setDate(Date pDate) {
 			theDate      = pDate; }
-		public void setPrice(Number.Price pPrice) {
+		public void setPrice(Price pPrice) {
 			thePrice     = pPrice; }
 		public void setAccount(Account pAccount) {
 			theAccount   = pAccount; }
@@ -749,9 +749,9 @@ public class Price extends DataItem {
 			return histEquals(myValues);
 		}
 		public boolean histEquals(Values pValues) {
-			if (Utils.differs(theDate,    pValues.theDate))    return false;
-			if (Utils.differs(thePrice,   pValues.thePrice))   return false;
-			if (Utils.differs(theAccount, pValues.theAccount)) return false;
+			if (Date.differs(theDate,     	pValues.theDate))    return false;
+			if (Price.differs(thePrice,   	pValues.thePrice))   return false;
+			if (Account.differs(theAccount, pValues.theAccount)) return false;
 			return true;
 		}
 		
@@ -773,13 +773,13 @@ public class Price extends DataItem {
 			boolean	bResult = false;
 			switch (fieldNo) {
 				case FIELD_DATE:
-					bResult = (Utils.differs(theDate,      pValues.theDate));
+					bResult = (Date.differs(theDate,      pValues.theDate));
 					break;
 				case FIELD_PRICE:
-					bResult = (Utils.differs(thePrice,     pValues.thePrice));
+					bResult = (Price.differs(thePrice,     pValues.thePrice));
 					break;
 				case FIELD_ACCOUNT:
-					bResult = (Utils.differs(theAccount,   pValues.theAccount));
+					bResult = (Account.differs(theAccount,   pValues.theAccount));
 					break;
 			}
 			return bResult;

@@ -52,7 +52,6 @@ public class DigestStream {
 		/**
 		 * Construct the output stream
 		 * @param pFile the file to write encrypted data to
-		 * @throws finObject.Exception
 		 */
 		public Output(java.io.OutputStream pStream) throws Exception {		
 			/* Protect against exceptions */

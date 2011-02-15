@@ -289,7 +289,7 @@ public class AccountSelect implements ItemListener {
 		refreshingData = false;
 		
 		/* Return whether we have changed selection */
-		return Utils.differs(theSelected, myOld);
+		return Account.differs(theSelected, myOld);
 	}
 	
 	/* Set account explicitly */

@@ -100,7 +100,7 @@ public class Event extends DataItem {
 				myString += getId(); 
 				break;
 			case FIELD_DATE:	
-				myString += Utils.formatDate(myObj.getDate()); 
+				myString += Date.format(myObj.getDate()); 
 				break;
 			case FIELD_DESC:	
 				myString += myObj.getDesc(); 
@@ -110,36 +110,36 @@ public class Event extends DataItem {
 					(theTransId != -1))
 					myString += "Id=" + theTransId;
 				else
-					myString += Utils.formatTrans(myObj.getTransType());	
+					myString += TransactionType.format(myObj.getTransType());	
 				break;
 			case FIELD_DEBIT:
 				if ((myObj.getDebit() == null) &&
 					(theDebitId != -1))
 					myString += "Id=" + theDebitId;
 				else
-					myString += Utils.formatAccount(myObj.getDebit()); 
+					myString += Account.format(myObj.getDebit()); 
 				break;
 			case FIELD_CREDIT:	
 				if ((myObj.getCredit() == null) &&
 					(theCreditId != -1))
 					myString += "Id=" + theCreditId;
 				else
-					myString += Utils.formatAccount(myObj.getCredit()); 
+					myString += Account.format(myObj.getCredit()); 
 				break;
 			case FIELD_AMOUNT: 	
-				myString += Utils.formatMoney(myObj.getAmount());	
+				myString += Money.format(myObj.getAmount());	
 				break;
 			case FIELD_UNITS: 	
-				myString += Utils.formatUnits(myObj.getUnits());	
+				myString += Units.format(myObj.getUnits());	
 				break;
 			case FIELD_TAXCREDIT:	
-				myString += Utils.formatMoney(myObj.getTaxCredit()); 
+				myString += Money.format(myObj.getTaxCredit()); 
 				break;
 			case FIELD_YEARS:	
 				myString += myObj.getYears(); 
 				break;
 			case FIELD_DILUTION:	
-				myString += Utils.formatDilution(myObj.getDilution()); 
+				myString += Dilution.format(myObj.getDilution()); 
 				break;
 		}
 		return myString;
@@ -396,17 +396,17 @@ public class Event extends DataItem {
 		Event myEvent = (Event)pThat;
 		
 		/* Check for equality */
-		if (getId() != myEvent.getId()) return false;
-		if (Utils.differs(getDate(),       myEvent.getDate())) 		return false;
-		if (Utils.differs(getDesc(),       myEvent.getDesc())) 		return false;
-		if (Utils.differs(getTransType(),  myEvent.getTransType())) return false;
-		if (Utils.differs(getAmount(),     myEvent.getAmount())) 	return false;
-		if (Utils.differs(getCredit(), 	   myEvent.getCredit())) 	return false;
-		if (Utils.differs(getDebit(),      myEvent.getDebit())) 	return false;
-		if (Utils.differs(getUnits(),      myEvent.getUnits())) 	return false;
-		if (Utils.differs(getTaxCredit(),  myEvent.getTaxCredit()))	return false;
-		if (Utils.differs(getYears(),      myEvent.getYears()))		return false;
-		if (Utils.differs(getDilution(),   myEvent.getDilution()))	return false;
+		if (getId() != myEvent.getId()) 										return false;
+		if (Date.differs(getDate(),       			myEvent.getDate())) 		return false;
+		if (Utils.differs(getDesc(),       			myEvent.getDesc())) 		return false;
+		if (TransactionType.differs(getTransType(), myEvent.getTransType())) 	return false;
+		if (Money.differs(getAmount(),     			myEvent.getAmount())) 		return false;
+		if (Account.differs(getCredit(), 	   		myEvent.getCredit())) 		return false;
+		if (Account.differs(getDebit(),      		myEvent.getDebit())) 		return false;
+		if (Units.differs(getUnits(),      			myEvent.getUnits())) 		return false;
+		if (Money.differs(getTaxCredit(),  			myEvent.getTaxCredit()))	return false;
+		if (Utils.differs(getYears(),      			myEvent.getYears()))		return false;
+		if (Dilution.differs(getDilution(), 		myEvent.getDilution()))		return false;
 		return true;
 	}
 
@@ -471,6 +471,128 @@ public class Event extends DataItem {
 	}
 
 	/**
+	 * Determines whether an event can be valid
+	 * 
+	 * @param pTrans The transaction type of the event
+	 * @param pType The account type of the event
+	 * @param isCredit is the account a credit or a debit
+	 * @return valid true/false 
+	 */
+	public static boolean isValidEvent(TransactionType  pTrans,
+			                     	   AccountType		pType,
+			                           boolean          isCredit) {
+		boolean myResult = false;
+
+		/* Market is always false */
+		if (pType.isMarket())
+			return false;
+		
+		/* Switch on the TransType */
+		switch (pTrans.getTranClass()) {
+			case TAXFREEINCOME:
+				if (!isCredit) myResult = (pType.isExternal() && !pType.isCash());
+				else           myResult = !pType.isExternal();
+				break;
+			case TAXABLEGAIN:
+				if (!isCredit) myResult = pType.isLifeBond();
+				else           myResult = !pType.isExternal();
+				break;
+			case DIVIDEND:
+				if (!isCredit) myResult = pType.isDividend();
+				else           myResult = !pType.isExternal();
+				break;
+			case STOCKDEMERGER:
+			case STOCKSPLIT:
+			case STOCKTAKEOVER:
+				myResult = pType.isShares();
+				break;
+			case STOCKRIGHTWAIVED:
+			case CASHTAKEOVER:
+				isCredit = !isCredit;
+			case STOCKRIGHTTAKEN:
+				if (!isCredit) myResult = (pType.isMoney() || pType.isDeferred());
+				else           myResult = pType.isShares();
+				break;
+			case INTEREST:
+				if (!isCredit) myResult = pType.isMoney();
+				else           myResult = pType.isMoney();
+				break;
+			case TAXEDINCOME:
+				if (!isCredit) myResult = pType.isEmployer();
+				else           myResult = ((pType.isMoney()) || (pType.isDeferred()));
+				break;
+			case NATINSURANCE:
+				if (!isCredit) myResult = pType.isEmployer();
+				else           myResult = pType.isTaxMan();
+				break;
+			case TRANSFER:
+				myResult = !pType.isExternal();
+				break;
+			case CSHPAY:
+				isCredit = !isCredit;
+			case CSHRECOVER:
+				if (!isCredit) myResult = ((pType.isExternal()) && (!pType.isCash()));
+				else           myResult = pType.isCash();
+				break;
+			case INHERITED:
+				if (!isCredit) myResult = pType.isInheritance();
+				else           myResult = !pType.isExternal();
+				break;
+			case BENEFIT:
+				if (!isCredit) myResult = pType.isEmployer();
+				else           myResult = pType.isBenefit();
+				break;
+			case RECOVERED:
+				isCredit = !isCredit;
+			case EXPENSE:
+				if (!isCredit) myResult = !pType.isExternal();
+				else           myResult = pType.isExternal();
+				break;
+			case EXTRATAX:
+			case INSURANCE:
+			case ENDOWMENT:
+				if (!isCredit) myResult = !pType.isExternal();
+				else           myResult = (pType.isExternal() && !pType.isCash());
+				break;
+			case MORTGAGE:
+				if (!isCredit) myResult = pType.isDebt();
+				else           myResult = (pType.isExternal() && !pType.isCash());
+				break;
+			case TAXREFUND:
+				isCredit = !isCredit;
+			case TAXOWED:
+				if (!isCredit) myResult = !pType.isExternal();
+				else           myResult = pType.isTaxMan();
+				break;
+			case TAXRELIEF:
+				if (!isCredit) myResult = pType.isTaxMan();
+				else           myResult = pType.isDebt();
+				break;
+			case DEBTINTEREST:
+				if (!isCredit) myResult = (pType.isExternal() && !pType.isCash());
+				else           myResult = pType.isDebt();
+				break;
+			case MKTINCOME:
+				if (!isCredit) myResult = (pType.isExternal() && !pType.isCash());
+				else           myResult = pType.isEndowment();
+				break;
+			case WRITEOFF:
+				if (!isCredit) myResult = pType.isDebt();
+				else           myResult = pType.isWriteOff();
+				break;
+			case RENTALINCOME:
+				if (!isCredit) myResult = (pType.isExternal() && !pType.isCash());
+				else           myResult = pType.isDebt();
+				break;
+			default:
+				break;
+		}
+		
+		/* Return the result */
+		return myResult;
+	}
+	
+	/**
 	 * Validate the event
 	 */
 	public void validate() {
@@ -524,21 +646,21 @@ public class Event extends DataItem {
 			
 		/* Credit/Debit cannot be the same unless this is a 
 		 * dividend re-investment or interest payment or StockSplit */
-		if ((!Utils.differs(myCredit, myDebit)) &&
+		if ((!Account.differs(myCredit, myDebit)) &&
 			(!isDividendReInvestment()) && (!isInterest()) && (!isStockSplit())) {
 			addError("Credit and debit accounts are identical", FIELD_DEBIT);
 			addError("Credit and debit accounts are identical", FIELD_CREDIT);
 		}
 		
 		/* Dividend re-investment must have identical Credit/Debit */
-		if ((Utils.differs(myCredit, myDebit)) &&
+		if ((Account.differs(myCredit, myDebit)) &&
 			(isDividendReInvestment())) {
 			addError("Dividend re-investment requires identical credit and debit accounts", FIELD_DEBIT);
 			addError("Dividend re-investment requires identical credit and debit accounts", FIELD_CREDIT);
 		}
 		
 		/* Stock Split must have identical Credit/Debit */
-		if ((Utils.differs(myCredit, myDebit)) &&
+		if ((Account.differs(myCredit, myDebit)) &&
 			(isStockSplit())) {
 			addError("Stock Split requires identical credit and debit accounts", FIELD_DEBIT);
 			addError("Stock Split requires identical credit and debit accounts", FIELD_CREDIT);
@@ -551,12 +673,12 @@ public class Event extends DataItem {
 		
 		/* Check credit account */
 		if ((myTransType != null) &&	(myCredit != null) &&
-			(!DataSet.isValidEvent(myTransType, myCredit.getActType(), true)))
+			(!isValidEvent(myTransType, myCredit.getActType(), true)))
 				addError("Invalid credit account for transaction", FIELD_CREDIT);
 		
 		/* Check debit account */
 		if ((myTransType != null) &&	(myDebit != null) &&
-			(!DataSet.isValidEvent(myTransType, myDebit.getActType(), false)))
+			(!isValidEvent(myTransType, myDebit.getActType(), false)))
 				addError("Invalid debit account for transaction", FIELD_DEBIT);
 		
 		/* If we have units */
@@ -585,7 +707,7 @@ public class Event extends DataItem {
 					/* Dividend between priced requires identical credit/debit */
 					if ((myTransType != null) &&
 						(myTransType.isDividend()) &&
-						(Utils.differs(myCredit, myDebit))) {
+						(Account.differs(myCredit, myDebit))) {
 						addError("Unit Dividends between assets must be between same asset", 
 								 FIELD_UNITS);
 					}
@@ -979,7 +1101,7 @@ public class Event extends DataItem {
 		pushHistory();
 		
 		/* Update the date if required */
-		if (Utils.differs(getDate(), pLine.getDate())) 
+		if (Date.differs(getDate(), pLine.getDate())) 
 			setDate(pLine.getDate());
 	
 		/* Update the description if required */
@@ -987,41 +1109,37 @@ public class Event extends DataItem {
 			setDescription(pLine.getDesc());
 		
 		/* Update the amount if required */
-		if (Utils.differs(getAmount(), pLine.getAmount())) 
+		if (Money.differs(getAmount(), pLine.getAmount())) 
 			setAmount(pLine.getAmount());
 		
 		/* Update the units if required */
-		if (Utils.differs(getUnits(), pLine.getUnits())) 
+		if (Units.differs(getUnits(), pLine.getUnits())) 
 			setUnits(pLine.getUnits());
-				
-		/* If the transType has changed */
-		if (Utils.differs(getTransType(), pLine.getTransType())) {
-			/* Set the new transtype */
-			setTransType(pLine.getTransType());
-			
-			/* Sort out new or deleted Tax Credit */
-			if (getTransType().needsTaxCredit()) {
-				if (getTaxCredit() == null)	setTaxCredit(new Money(0)); 
-			} else {
-				setTaxCredit(null);
-			}
-					
-			/* Sort out new or deleted Tax Years */
-			if (getTransType().isTaxableGain()) {
-				if (getYears() == null)	setYears(new Integer(1)); 
-			} else {
-				setYears(null);
-			}
-		}
 	
+		/* Update the tranType if required */
+		if (TransactionType.differs(getTransType(), pLine.getTransType())) 
+			setTransType(pLine.getTransType());
+	
+		/* Update the tax credit if required */
+		if (Money.differs(getTaxCredit(), pLine.getTaxCredit())) 
+			setTaxCredit(pLine.getTaxCredit());
+	
+		/* Update the years if required */
+		if (Utils.differs(getYears(), pLine.getYears())) 
+			setYears(pLine.getYears());
+		
+		/* Update the dilution if required */
+		if (Dilution.differs(getDilution(), pLine.getDilution())) 
+			setDilution(pLine.getDilution());
+				
 		/* If this is a credit */
 		if (pLine.isCredit()) {			
 			/* Update the debit if required */
-			if (Utils.differs(getDebit(), pLine.getPartner())) 
+			if (Account.differs(getDebit(), pLine.getPartner())) 
 				setDebit(pLine.getPartner());
 		} else {
 			/* Update the credit if required */
-			if (Utils.differs(getCredit(), pLine.getPartner())) 
+			if (Account.differs(getCredit(), pLine.getPartner())) 
 				setCredit(pLine.getPartner());
 		}
 		
@@ -1039,7 +1157,7 @@ public class Event extends DataItem {
 		pushHistory();
 		
 		/* Update the date if required */
-		if (Utils.differs(getDate(), pEvent.getDate())) 
+		if (Date.differs(getDate(), pEvent.getDate())) 
 			setDate(pEvent.getDate());
 	
 		/* Update the description if required */
@@ -1047,27 +1165,27 @@ public class Event extends DataItem {
 			setDescription(pEvent.getDesc());
 		
 		/* Update the amount if required */
-		if (Utils.differs(getAmount(), pEvent.getAmount())) 
+		if (Money.differs(getAmount(), pEvent.getAmount())) 
 			setAmount(pEvent.getAmount());
 		
 		/* Update the units if required */
-		if (Utils.differs(getUnits(), pEvent.getUnits())) 
+		if (Units.differs(getUnits(), pEvent.getUnits())) 
 			setUnits(pEvent.getUnits());
 				
 		/* Update the tranType if required */
-		if (Utils.differs(getTransType(), pEvent.getTransType())) 
+		if (TransactionType.differs(getTransType(), pEvent.getTransType())) 
 			setTransType(pEvent.getTransType());
 	
 		/* Update the debit if required */
-		if (Utils.differs(getDebit(), pEvent.getDebit())) 
+		if (Account.differs(getDebit(), pEvent.getDebit())) 
 			setDebit(pEvent.getDebit());
 	
 		/* Update the credit if required */
-		if (Utils.differs(getCredit(), pEvent.getCredit())) 
+		if (Account.differs(getCredit(), pEvent.getCredit())) 
 			setCredit(pEvent.getCredit());		
 		
 		/* Update the tax credit if required */
-		if (Utils.differs(getTaxCredit(), pEvent.getTaxCredit())) 
+		if (Money.differs(getTaxCredit(), pEvent.getTaxCredit())) 
 			setTaxCredit(pEvent.getTaxCredit());
 	
 		/* Update the years if required */
@@ -1075,7 +1193,7 @@ public class Event extends DataItem {
 			setYears(pEvent.getYears());
 		
 		/* Update the dilution if required */
-		if (Utils.differs(getDilution(), pEvent.getDilution())) 
+		if (Dilution.differs(getDilution(), pEvent.getDilution())) 
 			setDilution(pEvent.getDilution());
 				
 		/* Check for changes */
@@ -1196,7 +1314,7 @@ public class Event extends DataItem {
 			if (myTransType == null) 
 				throw new Exception(ExceptionClass.DATA,
 			                        "Event on [" + 
-			                        Utils.formatDate(new Date(pDate)) +
+			                        Date.format(new Date(pDate)) +
 			                        "] has invalid Transact Type [" + pTransType + "]");
 			
 			/* Look up the Credit Account */
@@ -1204,7 +1322,7 @@ public class Event extends DataItem {
 			if (myCredit == null) 
 				throw new Exception(ExceptionClass.DATA,
 			                        "Event on [" + 
-			                        Utils.formatDate(new Date(pDate)) +
+			                        Date.format(new Date(pDate)) +
 			                        "] has invalid Credit account [" + pCredit + "]");
 			
 			/* Look up the Debit Account */
@@ -1212,7 +1330,7 @@ public class Event extends DataItem {
 			if (myDebit == null) 
 				throw new Exception(ExceptionClass.DATA,
 			                        "Event on [" + 
-			                        Utils.formatDate(new Date(pDate)) +
+			                        Date.format(new Date(pDate)) +
 			                        "] has invalid Debit account [" + pDebit + "]");
 			
 			/* Add the event */
@@ -1343,16 +1461,16 @@ public class Event extends DataItem {
 			return histEquals(myValues);
 		}
 		public boolean histEquals(Values pValues) {
-			if (Utils.differs(theDate,      pValues.theDate))      return false;
-			if (Utils.differs(theDesc,      pValues.theDesc))      return false;
-			if (Utils.differs(theAmount,    pValues.theAmount))    return false;
-			if (Utils.differs(theUnits,     pValues.theUnits))     return false;
-			if (Utils.differs(theDebit,     pValues.theDebit))     return false;
-			if (Utils.differs(theCredit,    pValues.theCredit))    return false;
-			if (Utils.differs(theTransType, pValues.theTransType)) return false;
-			if (Utils.differs(theTaxCredit, pValues.theTaxCredit)) return false;
-			if (Utils.differs(theYears,     pValues.theYears))	   return false;
-			if (Utils.differs(theDilution,  pValues.theDilution))  return false;
+			if (Date.differs(theDate,      				pValues.theDate))      return false;
+			if (Utils.differs(theDesc,      			pValues.theDesc))      return false;
+			if (Money.differs(theAmount,    			pValues.theAmount))    return false;
+			if (Units.differs(theUnits,     			pValues.theUnits))     return false;
+			if (Account.differs(theDebit,    			pValues.theDebit))     return false;
+			if (Account.differs(theCredit,    			pValues.theCredit))    return false;
+			if (TransactionType.differs(theTransType, 	pValues.theTransType)) return false;
+			if (Money.differs(theTaxCredit, 			pValues.theTaxCredit)) return false;
+			if (Utils.differs(theYears,     			pValues.theYears))	   return false;
+			if (Dilution.differs(theDilution,			pValues.theDilution))  return false;
 			return true;
 		}
 		
@@ -1381,34 +1499,34 @@ public class Event extends DataItem {
 			boolean			bResult = false;
 			switch (fieldNo) {
 				case FIELD_DATE:
-					bResult = (Utils.differs(theDate,      pValues.theDate));
+					bResult = (Date.differs(theDate,      	pValues.theDate));
 					break;
 				case FIELD_DESC:
-					bResult = (Utils.differs(theDesc,      pValues.theDesc));
+					bResult = (Utils.differs(theDesc,      	pValues.theDesc));
 					break;
 				case FIELD_TRNTYP:
-					bResult = (Utils.differs(theTransType, pValues.theTransType));
+					bResult = (TransactionType.differs(theTransType, pValues.theTransType));
 					break;
 				case FIELD_AMOUNT:
-					bResult = (Utils.differs(theAmount,    pValues.theAmount));
+					bResult = (Money.differs(theAmount,    	pValues.theAmount));
 					break;
 				case FIELD_DEBIT:
-					bResult = (Utils.differs(theDebit,     pValues.theDebit));
+					bResult = (Account.differs(theDebit,	pValues.theDebit));
 					break;
 				case FIELD_CREDIT:
-					bResult = (Utils.differs(theCredit,    pValues.theCredit));
+					bResult = (Account.differs(theCredit,	pValues.theCredit));
 					break;
 				case FIELD_UNITS:
-					bResult = (Utils.differs(theUnits,     pValues.theUnits));
+					bResult = (Units.differs(theUnits,     	pValues.theUnits));
 					break;
 				case FIELD_TAXCREDIT:
-					bResult = (Utils.differs(theTaxCredit, pValues.theTaxCredit));
+					bResult = (Money.differs(theTaxCredit, 	pValues.theTaxCredit));
 					break;
 				case FIELD_YEARS:
-					bResult = (Utils.differs(theYears,     pValues.theYears));
+					bResult = (Utils.differs(theYears,     	pValues.theYears));
 					break;
 				case FIELD_DILUTION:
-					bResult = (Utils.differs(theDilution,  pValues.theDilution));
+					bResult = (Dilution.differs(theDilution,  pValues.theDilution));
 					break;
 			}
 			return bResult;

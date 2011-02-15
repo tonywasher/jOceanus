@@ -21,6 +21,11 @@ public class AsymmetricKey {
 	protected final static int    	KEYSIZE   		= 2048;
 	
 	/**
+	 * Encrypted ID Key Size
+	 */
+	public 	  final static int		IDSIZE   		= 8000;
+	
+	/**
 	 * Signature algorithm
 	 */
 	private final static String 	SIGNATURE		= "SHA256withRSA";
@@ -39,6 +44,11 @@ public class AsymmetricKey {
 	 * The Security Key 
 	 */
 	private String					theSecurityKey	= null;
+
+	/**
+	 * The Public Key 
+	 */
+	private String					thePublicKey	= null;
 
 	/**
 	 * Constructor
@@ -69,7 +79,7 @@ public class AsymmetricKey {
 	}
 	
 	/**
-	 * Compare this symmetric key to another for equality 
+	 * Compare this asymmetric key to another for equality 
 	 * @param pThat the key to compare to
 	 * @return <code>true/false</code> 
 	 */
@@ -100,6 +110,19 @@ public class AsymmetricKey {
 		/* Compare the two */
 		return myKey.equals(myThatKey);
 	}
+
+	/**
+	 * Set new security control
+	 * @param pControl the security control
+	 */
+	public void	setSecurityControl(SecurityControl pControl) {
+		/* Access the relevant pass key */
+		thePassKey = pControl.getPassKey();
+		
+		/* Reset the Security keys */
+		theSecurityKey 	= null;
+		thePublicKey 	= null;
+	}
 	
 	/**
 	 * Obtain the wrapped security key 
@@ -110,6 +133,11 @@ public class AsymmetricKey {
 		if (theSecurityKey == null) {
 			/* Calculate it */
 			theSecurityKey = thePassKey.wrapKeyPair(theKeyPair, false);
+			
+			/* Keep a look out for the key being too large */
+			if (theSecurityKey.length() > IDSIZE)
+				throw new Exception(ExceptionClass.ENCRYPT,
+									"Security Key length too large: " + theSecurityKey.length());
 		}
 		
 		/* Return it */
@@ -121,8 +149,14 @@ public class AsymmetricKey {
 	 * @return the Wrapped public key
 	 */
 	public String		getPublicKey() throws Exception {
-		/* Wrap the key pair */
-		return thePassKey.wrapKeyPair(theKeyPair, true);
+		/* If we do not know the public key */
+		if (thePublicKey == null) {
+			/* Calculate it */
+			thePublicKey = thePassKey.wrapKeyPair(theKeyPair, true);
+		}
+		
+		/* Return it */
+		return thePublicKey; 
 	}
 	
 	/**
@@ -249,7 +283,6 @@ public class AsymmetricKey {
 	 * Obtain the signature for the file entry
 	 * @param pEntry the ZipFile properties
 	 * @return the signature 
-	 * @throws finObject.Exception if there are any errors
 	 */
 	protected byte[] signFile(ZipFileEntry pEntry) throws Exception {
 		byte[]			 	myKeyEnc;

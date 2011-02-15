@@ -65,7 +65,7 @@ public class ComboSelect {
 				}
 
 				/* If this is OK for a credit account */
-				if (DataSet.isValidEvent(myTran, myType, true)) {
+				if (Event.isValidEvent(myTran, myType, true)) {
 					
 					/* Add it to the list */
 					if (isFirst) myActList.addCredit(myTran.getName());
@@ -73,7 +73,7 @@ public class ComboSelect {
 				}
 						
 				/* If this is OK for a debit account */
-				if (DataSet.isValidEvent(myTran, myType, false)) {
+				if (Event.isValidEvent(myTran, myType, false)) {
 					/* Add it to the list */
 					if (isFirst) myActList.addDebit(myTran.getName());
 					myTranList.addDebit(myAcct.getName());
@@ -92,7 +92,7 @@ public class ComboSelect {
 		for (myCurr = theFirst;
 		     myCurr != null;
 		     myCurr = myCurr.theNext) {
-			if (!Utils.differs(pTransType, myCurr.theTransType))
+			if (!TransactionType.differs(pTransType, myCurr.theTransType))
 				break;
 		}
 		if (myCurr == null) myCurr = new Item(pTransType);
@@ -109,7 +109,7 @@ public class ComboSelect {
 		for (myCurr = theFirst;
 		     myCurr != null;
 		     myCurr = myCurr.theNext) {
-			if (!Utils.differs(pActType, myCurr.theActType))
+			if (!AccountType.differs(pActType, myCurr.theActType))
 				break;
 		}
 		if (myCurr == null) myCurr = new Item(pActType);

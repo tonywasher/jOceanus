@@ -2,7 +2,7 @@ package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 
 public class CapitalEvent extends DataItem {
 	/**
@@ -15,28 +15,28 @@ public class CapitalEvent extends DataItem {
 	private Date			theDate			= null;
 	private TransactionType theTransType	= null;
 	private String 			theDesc			= null;
-	private Number.Money	theTotalCost	= null;
-	private Number.Money	theDeltaCost	= null;
-	private Number.Units	theUnits		= null;
-	private Number.Price	thePrice		= null;
-	private Number.Money	theDeltaGains	= null;
-	private Number.Money	theTotalGains	= null;
-	private Number.Money	theValue		= null;
-	private Number.Money	theProfit		= null;
+	private Money			theTotalCost	= null;
+	private Money			theDeltaCost	= null;
+	private Units			theUnits		= null;
+	private Price			thePrice		= null;
+	private Money			theDeltaGains	= null;
+	private Money			theTotalGains	= null;
+	private Money			theValue		= null;
+	private Money			theProfit		= null;
 	
 	/* Access methods */
 	public Account 			getAccount() 	{ return theAccount; }
 	public Date 			getDate() 		{ return theDate; }
 	public String 			getDesc() 		{ return theDesc; }
 	public TransactionType	getTransType() 	{ return theTransType; }
-	public Number.Money 	getTotalCost() 	{ return theTotalCost; }
-	public Number.Money 	getDeltaCost() 	{ return theDeltaCost; }
-	public Number.Units 	getUnits() 		{ return theUnits; }
-	public Number.Price 	getPrice() 		{ return thePrice; }
-	public Number.Money 	getDeltaGains()	{ return theDeltaGains; }
-	public Number.Money 	getTotalGains() { return theTotalGains; }
-	public Number.Money 	getValue() 		{ return theValue; }
-	public Number.Money 	getProfit() 	{ return theProfit; }
+	public Money 			getTotalCost() 	{ return theTotalCost; }
+	public Money 			getDeltaCost() 	{ return theDeltaCost; }
+	public Units 			getUnits() 		{ return theUnits; }
+	public Price 			getPrice() 		{ return thePrice; }
+	public Money 			getDeltaGains()	{ return theDeltaGains; }
+	public Money 			getTotalGains() { return theTotalGains; }
+	public Money 			getValue() 		{ return theValue; }
+	public Money 			getProfit() 	{ return theProfit; }
 	
 	/* Field IDs */
 	public static final int FIELD_ID     	= 0;
@@ -102,40 +102,40 @@ public class CapitalEvent extends DataItem {
 				myString += getId();
 				break;
 			case FIELD_ACCOUNT:		
-				myString += Utils.formatAccount(theAccount);
+				myString += Account.format(theAccount);
 				break;
 			case FIELD_DATE: 		
-				myString += Utils.formatDate(theDate);
+				myString += Date.format(theDate);
 				break;
 			case FIELD_TRANTYPE: 	
-				myString += Utils.formatTrans(theTransType);
+				myString += TransactionType.format(theTransType);
 				break;
 			case FIELD_DESC: 	
 				myString += theDesc;
 				break;
 			case FIELD_TOTALCOST:
-				myString += Utils.formatMoney(theTotalCost);
+				myString += Money.format(theTotalCost);
 				break;
 			case FIELD_DELTACOST:
-				myString += Utils.formatMoney(theDeltaCost);
+				myString += Money.format(theDeltaCost);
 				break;
 			case FIELD_UNITS:
-				myString += Utils.formatUnits(theUnits);
+				myString += Units.format(theUnits);
 				break;
 			case FIELD_PRICE:
-				myString += Utils.formatPrice(thePrice);
+				myString += Price.format(thePrice);
 				break;
 			case FIELD_VALUE:
-				myString += Utils.formatMoney(theValue);
+				myString += Money.format(theValue);
 				break;
 			case FIELD_TOTALGAIN:
-				myString += Utils.formatMoney(theTotalGains);
+				myString += Money.format(theTotalGains);
 				break;
 			case FIELD_DELTAGAIN:
-				myString += Utils.formatMoney(theDeltaGains);
+				myString += Money.format(theDeltaGains);
 				break;
 			case FIELD_PROFIT:
-				myString += Utils.formatMoney(theProfit);
+				myString += Money.format(theProfit);
 				break;
 		}
 		return myString;
@@ -185,18 +185,18 @@ public class CapitalEvent extends DataItem {
 		
 		/* Check for equality */
 		if (getId() != myEvent.getId()) return false;
-		if (Utils.differs(getDate(),      	myEvent.getDate())) 		return false;
-		if (Utils.differs(getAccount(),    	myEvent.getAccount())) 		return false;
-		if (Utils.differs(getTransType(),  	myEvent.getTransType())) 	return false;
-		if (Utils.differs(getDesc(),  		myEvent.getDesc())) 		return false;
-		if (Utils.differs(getTotalCost(),   myEvent.getTotalCost())) 	return false;
-		if (Utils.differs(getDeltaCost(), 	myEvent.getDeltaCost())) 	return false;
-		if (Utils.differs(getUnits(),      	myEvent.getUnits())) 		return false;
-		if (Utils.differs(getPrice(),      	myEvent.getPrice())) 		return false;
-		if (Utils.differs(getValue(),  		myEvent.getValue()))		return false;
-		if (Utils.differs(getTotalGains(),  myEvent.getTotalGains()))	return false;
-		if (Utils.differs(getDeltaGains(),	myEvent.getDeltaGains()))	return false;
-		if (Utils.differs(getProfit(),		myEvent.getProfit()))		return false;
+		if (Date.differs(getDate(),      			myEvent.getDate())) 		return false;
+		if (Account.differs(getAccount(),    		myEvent.getAccount())) 		return false;
+		if (TransactionType.differs(getTransType(),	myEvent.getTransType())) 	return false;
+		if (Utils.differs(getDesc(),  				myEvent.getDesc())) 		return false;
+		if (Money.differs(getTotalCost(),   		myEvent.getTotalCost())) 	return false;
+		if (Money.differs(getDeltaCost(), 			myEvent.getDeltaCost())) 	return false;
+		if (Units.differs(getUnits(),      			myEvent.getUnits())) 		return false;
+		if (Price.differs(getPrice(),      			myEvent.getPrice())) 		return false;
+		if (Money.differs(getValue(),  				myEvent.getValue()))		return false;
+		if (Money.differs(getTotalGains(),  		myEvent.getTotalGains()))	return false;
+		if (Money.differs(getDeltaGains(),			myEvent.getDeltaGains()))	return false;
+		if (Money.differs(getProfit(),				myEvent.getProfit()))		return false;
 		return getBase().equals(myEvent.getBase());
 	}
 
@@ -225,15 +225,15 @@ public class CapitalEvent extends DataItem {
 	public static class List extends DataList<CapitalEvent> {
 		/* Members */
 		private Account			theAccount		= null;
-		private Number.Money	theTotalCost	= null;
-		private Number.Units	theUnits		= null;
-		private Number.Money	theTotalGains	= null;
+		private Money			theTotalCost	= null;
+		private Units			theUnits		= null;
+		private Money			theTotalGains	= null;
 	
 		/* Access methods */
 		public Account 			getAccount() 	{ return theAccount; }
-		public Number.Money 	getTotalCost() 	{ return theTotalCost; }
-		public Number.Units 	getUnits() 		{ return theUnits; }
-		public Number.Money 	getTotalGains() { return theTotalGains; }
+		public Money 			getTotalCost() 	{ return theTotalCost; }
+		public Units 			getUnits() 		{ return theUnits; }
+		public Money 			getTotalGains() { return theTotalGains; }
 
 		/** 
 	 	 * Construct an empty Capital event list
@@ -246,9 +246,9 @@ public class CapitalEvent extends DataItem {
 			theAccount 		= pAccount;
 			
 			/* Initialise the totals */
-			theTotalCost 	= new Number.Money(0);
-			theTotalGains 	= new Number.Money(0);
-			theUnits		= new Number.Units(0);
+			theTotalCost 	= new Money(0);
+			theTotalGains 	= new Money(0);
+			theUnits		= new Units(0);
 		}
 
 		/** 
@@ -289,18 +289,18 @@ public class CapitalEvent extends DataItem {
 				
 			/* Format the balances */
 			pBuffer.append("<tr><td>Account</td><td>"); 
-			pBuffer.append(Utils.formatAccount(theAccount)); 
+			pBuffer.append(Account.format(theAccount)); 
 			pBuffer.append("</td></tr>");
 			
 			/* Format the totals */
 			pBuffer.append("<tr><td>Total Cost</td><td>"); 
-			pBuffer.append(Utils.formatMoney(theTotalCost)); 
+			pBuffer.append(Money.format(theTotalCost)); 
 			pBuffer.append("</td></tr>"); 
 			pBuffer.append("<tr><td>Total Gains</td><td>"); 
-			pBuffer.append(Utils.formatMoney(theTotalGains)); 
+			pBuffer.append(Money.format(theTotalGains)); 
 			pBuffer.append("</td></tr>"); 
 			pBuffer.append("<tr><td>Units</td><td>"); 
-			pBuffer.append(Utils.formatUnits(theUnits)); 
+			pBuffer.append(Units.format(theUnits)); 
 			pBuffer.append("</td></tr>"); 
 		}
 		

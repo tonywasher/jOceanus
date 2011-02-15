@@ -18,6 +18,11 @@ public class SymmetricKey {
 	protected final static int		KEYSIZE   		= 256;
 	
 	/**
+	 * Encrypted ID Key Size
+	 */
+	public 	  final static int		IDSIZE   		= 1000;
+	
+	/**
 	 * Initialisation Vector size 
 	 */
 	public    final static int		IVSIZE   		= 16;
@@ -133,10 +138,25 @@ public class SymmetricKey {
 		if (theSecurityKey == null) {
 			/* Calculate it */
 			theSecurityKey = theControl.getWrappedKey(this);
+			
+			/* Keep a look out for the key being too large */
+			if (theSecurityKey.length > IDSIZE)
+				throw new Exception(ExceptionClass.ENCRYPT,
+									"Security Key length too large: " + theSecurityKey.length);
 		}
 		
 		/* Return it */
 		return theSecurityKey; 
+	}
+	
+	/**
+	 * Transfer the symmetric key to a new controller
+	 * @param pControl the new control
+	 */
+	public void	setSecurityControl(SecurityControl pControl) {
+		/* Reset variables */
+		theControl = pControl;
+		theSecurityKey = null;
 	}
 	
 	/**

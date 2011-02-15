@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
@@ -170,7 +170,7 @@ public class TablePattern extends DatabaseTable<Pattern> {
 	 * Set the Amount of the item to be inserted/updated
 	 * @param pAmount the amount of the item
 	 */
-	private void setAmount(Number.Money pAmount) throws SQLException {
+	private void setAmount(Money pAmount) throws SQLException {
 		setString(pAmount.format(false));
 	}
 
@@ -234,7 +234,7 @@ public class TablePattern extends DatabaseTable<Pattern> {
 	 * Update the Amount of the item
 	 * @param pValue the new amount
 	 */
-	private void updateAmount(Number.Money pValue) {
+	private void updateAmount(Money pValue) {
 		updateString(theAmntCol, pValue.format(false));
 	}	
 
@@ -401,28 +401,28 @@ public class TablePattern extends DatabaseTable<Pattern> {
 		/* Protect the update */
 		try {			
 			/* Update the fields */
-			if (Utils.differs(pItem.getAccount(),
-				  		  	  myBase.getAccount()))
+			if (Account.differs(pItem.getAccount(),
+				  		  	    myBase.getAccount()))
 				updateAccount(pItem.getAccount().getId());
-			if (Utils.differs(pItem.getDate(),
-		  		  	  		  myBase.getDate()))
+			if (Date.differs(pItem.getDate(),
+		  		  	  		 myBase.getDate()))
 				updateDate(pItem.getDate());
 			if (Utils.differs(pItem.getDesc(),
 						  	  myBase.getDesc())) 
 				updateDescription(pItem.getDesc());
-			if (Utils.differs(pItem.getAmount(),
+			if (Money.differs(pItem.getAmount(),
 		  		  	  		  myBase.getAmount()))
 				updateAmount(pItem.getAmount());
-			if (Utils.differs(pItem.getPartner(),
-				  	  		  myBase.getPartner())) 
+			if (Account.differs(pItem.getPartner(),
+				  	  			myBase.getPartner())) 
 				updatePartner(pItem.getPartner().getId());
-			if (Utils.differs(pItem.getTransType(),
-		  		  	  		  myBase.getTransType()))
+			if (TransactionType.differs(pItem.getTransType(),
+		  		  	  					myBase.getTransType()))
 				updateTransType(pItem.getTransType().getId());
 			if (pItem.isCredit() != myBase.isCredit()) 
 				updateIsCredit(pItem.isCredit());
-			if (Utils.differs(pItem.getFrequency(),
-		  	  		  		  myBase.getFrequency())) 
+			if (Frequency.differs(pItem.getFrequency(),
+		  	  		  			  myBase.getFrequency())) 
 				updateFrequency(pItem.getFrequency().getId());
 		}
 		

@@ -47,10 +47,36 @@ public class SecurityCipher {
 	}
 	
 	/**
+	 * Encrypt string
+	 * @param pString string to encrypt
+	 * @return Encrypted bytes
+	 * @throws Exception 
+	 */
+	public byte[] encryptString(String pString) throws Exception {
+		byte[] myBytes;
+		
+		/* Protect against exceptions */
+		try {
+			/* Convert the string to a byte array */
+			myBytes = pString.getBytes(SecurityControl.ENCODING);
+			
+			/* Encrypt the byte array */
+			myBytes = theCipher.doFinal(myBytes);
+		}
+		catch (Throwable e) {
+			throw new Exception(ExceptionClass.ENCRYPT,
+								"Failed to encrypt string",
+								e);
+		}
+		
+		/* Return to caller */
+		return myBytes;
+	}		
+	
+	/**
 	 * Encrypt character array
 	 * @param pChars Characters to encrypt
 	 * @return Encrypted bytes
-	 * @throws finObject.Exception 
 	 */
 	public byte[] encryptChars(char[] pChars) throws Exception {
 		byte[] myBytes;
@@ -65,7 +91,7 @@ public class SecurityCipher {
 		}
 		catch (Throwable e) {
 			throw new Exception(ExceptionClass.ENCRYPT,
-								"Failed to encrypt string",
+								"Failed to encrypt character array",
 								e);
 		}
 		
@@ -74,12 +100,38 @@ public class SecurityCipher {
 	}		
 	
 	/**
-	 * Decrypt bytes into a character array
-	 * @param pString String to encrypt
-	 * @return Encrypted bytes
-	 * @throws finObject.Exception 
+	 * Decrypt bytes into a string
+	 * @param pBytes bytes to decrypt
+	 * @return Decrypted string
 	 */
-	public char[] decryptBytes(byte[] pBytes) throws Exception {
+	public String decryptString(byte[] pBytes) throws Exception {
+		byte[] 	myBytes;
+		String	myString;
+		
+		/* Protect against exceptions */
+		try {
+			/* Decrypt the bytes */
+			myBytes  = theCipher.doFinal(pBytes);
+			
+			/* Convert the bytes to a string */ 
+			myString = new String(myBytes, SecurityControl.ENCODING);
+		}
+		catch (Throwable e) {
+			throw new Exception(ExceptionClass.ENCRYPT,
+								"Failed to decrypt string",
+								e);
+		}
+		
+		/* Return to caller */
+		return myString;
+	}		
+
+	/**
+	 * Decrypt bytes into a character array
+	 * @param pBytes Bytes to decrypt
+	 * @return Decrypted character array
+	 */
+	public char[] decryptChars(byte[] pBytes) throws Exception {
 		byte[] 	myBytes;
 		char[]	myChars;
 		
@@ -93,7 +145,7 @@ public class SecurityCipher {
 		}
 		catch (Throwable e) {
 			throw new Exception(ExceptionClass.ENCRYPT,
-								"Failed to decrypt bytes",
+								"Failed to decrypt character array",
 								e);
 		}
 		

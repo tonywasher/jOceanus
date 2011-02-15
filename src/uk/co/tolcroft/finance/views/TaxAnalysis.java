@@ -5,7 +5,7 @@ import uk.co.tolcroft.finance.data.TaxType.*;
 import uk.co.tolcroft.finance.data.TransactionType.*;
 import uk.co.tolcroft.finance.views.AnalysisYear.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 
 public class TaxAnalysis {
 	/* Members */
@@ -150,10 +150,10 @@ public class TaxAnalysis {
 	 */
 	public void addMarketMovement(AssetAnalysis.AssetBucket pMovement) {
 		TranBucket     	myBucket;
-		Number.Money	myMovement;
+		Money			myMovement;
 		
 		/* Access the current movement */
-		myMovement = new Number.Money(pMovement.getMarket());
+		myMovement = new Money(pMovement.getMarket());
 		
 		/* If the movement is positive */
 		if (myMovement.isPositive())
@@ -388,8 +388,8 @@ public class TaxAnalysis {
 	 */
 	public void calculateTax(Properties pProperties) {
 		taxBands		myBands;
-		Number.Money 	myIncome	= new Number.Money(0);
-		Number.Money 	myTax		= new Number.Money(0);
+		Money 			myIncome	= new Money(0);
+		Money 			myTax		= new Money(0);
 		TaxBucket		myBucket;
 		TranBucket		mySrcBucket;
 		
@@ -445,7 +445,7 @@ public class TaxAnalysis {
 		/* Build the TaxProfitBucket */
 		myBucket = theTaxBuckets.getTaxBucket(theTaxTypes
 					     .searchFor(TaxClass.TAXPROFIT));
-		myBucket.setAmount(new Number.Money(0));
+		myBucket.setAmount(new Money(0));
 		myBucket.setTaxation(myTax);
 	}
 
@@ -455,8 +455,8 @@ public class TaxAnalysis {
 	public void calculateGrossIncome() {
 		TaxBucket     	myBucket;
 		TranBucket     	mySrcBucket;
-		Number.Money 	myIncome = new Number.Money(0);
-		Number.Money 	myChargeable;
+		Money 			myIncome = new Money(0);
+		Money 			myChargeable;
 		
 		/* Access the salary bucket and add to income */
 		mySrcBucket = theTransBuckets.getSummaryBucket(theTaxTypes
@@ -466,7 +466,7 @@ public class TaxAnalysis {
 		/* Access the rental bucket */
 		mySrcBucket = theTransBuckets.getSummaryBucket(theTaxTypes
 				   		 				.searchFor(TaxClass.GROSSRENTAL));
-		myChargeable = new Number.Money(mySrcBucket.getAmount());
+		myChargeable = new Money(mySrcBucket.getAmount());
 		
 		/* If we have a chargeable element */
 		if (myChargeable.compareTo(theYear.getRentalAllowance()) > 0) {
@@ -503,7 +503,7 @@ public class TaxAnalysis {
 		/* Access the capital gains bucket */
 		mySrcBucket = theTransBuckets.getSummaryBucket(theTaxTypes
 				   		 				.searchFor(TaxClass.GROSSCAPGAINS));
-		myChargeable = new Number.Money(mySrcBucket.getAmount());
+		myChargeable = new Money(mySrcBucket.getAmount());
 		
 		/* If we have a chargeable element */
 		if (myChargeable.compareTo(theYear.getCapitalAllow()) > 0) {
@@ -526,9 +526,9 @@ public class TaxAnalysis {
 		taxBands     	myBands;
 		TaxBucket		myBucket;
 		TaxBucket		myParentBucket;
-		Number.Money 	myGrossIncome;
-		Number.Money 	myAdjust;
-		Number.Money 	myAllowance;
+		Money 			myGrossIncome;
+		Money 			myAdjust;
+		Money 			myAllowance;
 		long			myValue;
 		
 		/* Allocate the tax bands class */
@@ -550,9 +550,9 @@ public class TaxAnalysis {
 			myAllowance 		= theYear.getAllowance();
 			
 		/* Set Allowance and Tax Bands */
-		myBands.theAllowance = new Number.Money(myAllowance);
-		myBands.theLoBand    = new Number.Money(theYear.getLoBand());
-		myBands.theBasicBand = new Number.Money(theYear.getBasicBand());
+		myBands.theAllowance = new Money(myAllowance);
+		myBands.theLoBand    = new Money(theYear.getLoBand());
+		myBands.theBasicBand = new Money(theYear.getBasicBand());
 		
 		/* Record the Original allowance */
 		myParentBucket = theTaxBuckets.getTaxBucket(theTaxTypes
@@ -571,30 +571,30 @@ public class TaxAnalysis {
 			/* Calculate the limit at which age allowance will disappear */
 			myValue  = myBands.theAllowance.getValue();
 			myValue *= 2; /* £1 reduction for every £2 increase */
-			myAdjust = new Number.Money(myValue);
+			myAdjust = new Money(myValue);
 			myAdjust.addAmount(theYear.getAgeAllowLimit());
 			
 			/* If the gross income is above this limit */
 			if (myGrossIncome.compareTo(myAdjust) > 0) {
 				/* Personal allowance is reduced to standard allowance */
-				myBands.theAllowance = new Number.Money(theYear.getAllowance());
+				myBands.theAllowance = new Money(theYear.getAllowance());
 				hasAgeAllowance = false;
 			}
 			
 			/* else we need to reduce the personal allowance */
 			else {
 				/* Calculate the margin */
-				myAdjust = new Number.Money(myGrossIncome);
+				myAdjust = new Money(myGrossIncome);
 				myAdjust.subtractAmount(theYear.getAgeAllowLimit());
 				myValue  = myAdjust.getValue();
 				
 				/* Divide by £2 and then multiply up to £1 */
 				myValue /= 200;
 				myValue *= 100;
-				myAdjust = new Number.Money(myValue);
+				myAdjust = new Money(myValue);
 				
 				/* Adjust the allowance by this value */
-				myBands.theAllowance = new Number.Money(myBands.theAllowance);
+				myBands.theAllowance = new Money(myBands.theAllowance);
 				myBands.theAllowance.subtractAmount(myAdjust);
 			}
 			
@@ -609,7 +609,7 @@ public class TaxAnalysis {
 		/* If we have an additional tax band */
 		if (theYear.hasAdditionalTaxBand()) {
 			/* Set the High tax band */
-			myBands.theHiBand = new Number.Money(theYear.getAddIncBound());
+			myBands.theHiBand = new Money(theYear.getAddIncBound());
 			
 			/* Remove the basic band from this one */
 			myBands.theHiBand.subtractAmount(myBands.theBasicBand);
@@ -625,29 +625,29 @@ public class TaxAnalysis {
 				/* Calculate the limit at which personal allowance will disappear */
 				myValue  = myBands.theAllowance.getValue();
 				myValue *= 2; /* £1 reduction for every £2 increase */
-				myAdjust = new Number.Money(myValue);
+				myAdjust = new Money(myValue);
 				myAdjust.addAmount(theYear.getAddAllowLimit());
 				
 				/* If the gross income is above this limit */
 				if (myGrossIncome.compareTo(myAdjust) > 0) {
 					/* Personal allowance is reduced to zero */
-					myBands.theAllowance = new Number.Money(0);
+					myBands.theAllowance = new Money(0);
 				}
 				
 				/* else we need to reduce the personal allowance */
 				else {
 					/* Calculate the margin */
-					myAdjust = new Number.Money(myGrossIncome);
+					myAdjust = new Money(myGrossIncome);
 					myAdjust.subtractAmount(theYear.getAddAllowLimit());
 					myValue  = myAdjust.getValue();
 					
 					/* Divide by £2 and then multiply up to £1 */
 					myValue /= 200;
 					myValue *= 100;
-					myAdjust = new Number.Money(myValue);
+					myAdjust = new Money(myValue);
 					
 					/* Adjust the allowance by this value */
-					myBands.theAllowance = new Number.Money(myBands.theAllowance);
+					myBands.theAllowance = new Money(myBands.theAllowance);
 					myBands.theAllowance.subtractAmount(myAdjust);
 				}
 				
@@ -673,14 +673,14 @@ public class TaxAnalysis {
 		TranBucket     	mySrcBucket;
 		TaxBucket     	myTaxBucket;
 		TaxBucket     	myTopBucket;
-		Number.Money 	mySalary;
-		Number.Money 	myTax		= new Number.Money(0);
+		Money 			mySalary;
+		Money 			myTax		= new Money(0);
 		boolean			isFinished  = false;
 		
 		/* Access Salary */
 		mySrcBucket = theTransBuckets.getSummaryBucket(theTaxTypes
 				           		.searchFor(TaxClass.GROSSSALARY));
-		mySalary    = new Number.Money(mySrcBucket.getAmount());
+		mySalary    = new Money(mySrcBucket.getAmount());
 	
 		/* Store the total into the TaxDueSalary Bucket */
 		myTopBucket = theTaxBuckets.getTaxBucket(theTaxTypes
@@ -845,15 +845,15 @@ public class TaxAnalysis {
 		TranBucket     	mySrcBucket;
 		TaxBucket     	myTaxBucket;
 		TaxBucket     	myTopBucket;
-		Number.Money 	myRental;
-		Number.Money 	myAllowance;
-		Number.Money 	myTax		= new Number.Money(0);
+		Money 			myRental;
+		Money 			myAllowance;
+		Money 			myTax		= new Money(0);
 		boolean			isFinished  = false;
 		
 		/* Access Rental */
 		mySrcBucket = theTransBuckets.getSummaryBucket(theTaxTypes
 				           		.searchFor(TaxClass.GROSSRENTAL));
-		myRental    = new Number.Money(mySrcBucket.getAmount());
+		myRental    = new Money(mySrcBucket.getAmount());
 	
 		/* Store the total into the TaxDueRental Bucket */
 		myTopBucket = theTaxBuckets.getTaxBucket(theTaxTypes
@@ -1040,8 +1040,8 @@ public class TaxAnalysis {
 		TranBucket     	mySrcBucket;
 		TaxBucket     	myTaxBucket;
 		TaxBucket     	myTopBucket;
-		Number.Money 	myInterest;
-		Number.Money 	myTax		= new Number.Money(0);
+		Money 			myInterest;
+		Money 			myTax		= new Money(0);
 		boolean			isFinished  = false;
 		
 		/* If we do not have a Low salary band */
@@ -1053,7 +1053,7 @@ public class TaxAnalysis {
 		/* Access Interest */
 		mySrcBucket = theTransBuckets.getSummaryBucket(theTaxTypes
 				           		.searchFor(TaxClass.GROSSINTEREST));
-			myInterest  = new Number.Money(mySrcBucket.getAmount());
+			myInterest  = new Money(mySrcBucket.getAmount());
 	
 		/* Store the total into the TaxDueInterest Bucket */
 		myTopBucket = theTaxBuckets.getTaxBucket(theTaxTypes
@@ -1209,14 +1209,14 @@ public class TaxAnalysis {
 		TranBucket     	mySrcBucket;
 		TaxBucket     	myTaxBucket;
 		TaxBucket     	myTopBucket;
-		Number.Money 	myDividends;
-		Number.Money 	myTax		= new Number.Money(0);
+		Money 			myDividends;
+		Money 			myTax		= new Money(0);
 		boolean			isFinished  = false;
 		
 		/* Access Dividends */
 		mySrcBucket = theTransBuckets.getSummaryBucket(theTaxTypes
 				           		.searchFor(TaxClass.GROSSDIVIDEND));
-		myDividends = new Number.Money(mySrcBucket.getAmount());
+		myDividends = new Money(mySrcBucket.getAmount());
 	
 		/* Access Unit Trust Dividends */
 		mySrcBucket = theTransBuckets.getSummaryBucket(theTaxTypes
@@ -1314,10 +1314,10 @@ public class TaxAnalysis {
 		TaxBucket     	myTaxBucket;
 		TaxBucket     	myTopBucket;
 		TaxBucket     	mySliceBucket;
-		Number.Money 	myGains;
-		Number.Money	mySlice;
-		Number.Money	myHiTax;
-		Number.Money 	myTax		= new Number.Money(0);
+		Money 			myGains;
+		Money			mySlice;
+		Money			myHiTax;
+		Money 			myTax		= new Money(0);
 		boolean			isFinished  = false;
 		
 		/* Access Gains */
@@ -1461,7 +1461,7 @@ public class TaxAnalysis {
 				myTaxBucket.setAmount(pBands.theBasicBand);
 				
 				/* Remember this taxation amount to remove from HiTax bucket */
-				myHiTax = new Number.Money(myTaxBucket.getTaxation());
+				myHiTax = new Money(myTaxBucket.getTaxation());
 				myHiTax.negate();
 				
 				/* Access the HiSliceBucket */
@@ -1523,7 +1523,7 @@ public class TaxAnalysis {
 			/* Re-access the gains */
 			mySrcBucket = theTransBuckets.getSummaryBucket(theTaxTypes
 					           		.searchFor(TaxClass.GROSSTAXGAINS));
-			myGains     = new Number.Money(mySrcBucket.getAmount());
+			myGains     = new Money(mySrcBucket.getAmount());
 		
 			/* Subtract the gains from the tax bands */
 			myGains.subtractAmount(pBands.theBasicBand);
@@ -1550,16 +1550,16 @@ public class TaxAnalysis {
 		TranBucket     	mySrcBucket;
 		TaxBucket     	myTaxBucket;
 		TaxBucket     	myTopBucket;
-		Number.Money 	myCapital;
-		Number.Money 	myAllowance;
-		Number.Money 	myTax		= new Number.Money(0);
+		Money 			myCapital;
+		Money 			myAllowance;
+		Money 			myTax		= new Money(0);
 		TaxRegime		myRegime	= theYear.getTaxRegime();
 		boolean			isFinished  = false;
 		
 		/* Access Capital */
 		mySrcBucket = theTransBuckets.getSummaryBucket(theTaxTypes
 				           		.searchFor(TaxClass.GROSSCAPGAINS));
-		myCapital   = new Number.Money(mySrcBucket.getAmount());
+		myCapital   = new Money(mySrcBucket.getAmount());
 	
 		/* Store the total into the TaxDueCapital Bucket */
 		myTopBucket = theTaxBuckets.getTaxBucket(theTaxTypes
@@ -1694,7 +1694,7 @@ public class TaxAnalysis {
 				
 			/* Format the date */
 			pBuffer.append("<tr><td>Date</td><td>"); 
-			pBuffer.append(Utils.formatDate(theDate)); 
+			pBuffer.append(Date.format(theDate)); 
 			pBuffer.append("</td></tr>"); 
 		}
 		
@@ -1898,7 +1898,7 @@ public class TaxAnalysis {
 				
 			/* Format the date */
 			pBuffer.append("<tr><td>Date</td><td>"); 
-			pBuffer.append(Utils.formatDate(theDate)); 
+			pBuffer.append(Date.format(theDate)); 
 			pBuffer.append("</td></tr>"); 
 		}
 		
@@ -2006,10 +2006,10 @@ public class TaxAnalysis {
 		private 	BucketType		theBucket	 	= null;
 		private 	TransactionType theTransact  	= null;
 		private 	TaxType   		theTaxType   	= null;
-		private		Number.Money    theAmount    	= null;
-		private     Number.Money    theOldAmount 	= null;
-		private     Number.Money    theTaxCredit 	= null;
-		private     Number.Money    theOldTaxCred	= null;
+		private		Money    		theAmount    	= null;
+		private     Money    		theOldAmount 	= null;
+		private     Money    		theTaxCredit 	= null;
+		private     Money    		theOldTaxCred	= null;
 		
 		/* Access methods */
 		public 	String			getName()      	{ return theName; }
@@ -2017,10 +2017,10 @@ public class TaxAnalysis {
 		public 	BucketType		getBucket()   	{ return theBucket; }
 		public  TransactionType getTransType() 	{ return theTransact; }
 		public  TaxType    		getTaxType()   	{ return theTaxType; }
-		public  Number.Money    getAmount()    	{ return theAmount; }
-		public  Number.Money    getOldAmount() 	{ return theOldAmount; }
-		public  Number.Money    getTaxCredit()  { return theTaxCredit; }
-		public  Number.Money    getOldTaxCred()	{ return theOldTaxCred; }
+		public  Money    		getAmount()    	{ return theAmount; }
+		public  Money    		getOldAmount() 	{ return theOldAmount; }
+		public  Money    		getTaxCredit()  { return theTaxCredit; }
+		public  Money    		getOldTaxCred()	{ return theOldTaxCred; }
 
 		/* Constructors */
 		private TranBucket(TranList pList, TransactionType pTransact) { 
@@ -2029,10 +2029,10 @@ public class TaxAnalysis {
 			theOrder     	= pTransact.getOrder();
 			theBucket    	= BucketType.DETAIL;
 			theTransact  	= pTransact;
-			theAmount    	= new Number.Money(0);
-			theOldAmount 	= new Number.Money(0);
-			theTaxCredit	= new Number.Money(0);
-			theOldTaxCred	= new Number.Money(0);
+			theAmount    	= new Money(0);
+			theOldAmount 	= new Money(0);
+			theTaxCredit	= new Money(0);
+			theOldTaxCred	= new Money(0);
 		}
 		private TranBucket(TranList pList, TaxType pTaxType) {
 			super(pList, 0);
@@ -2040,8 +2040,8 @@ public class TaxAnalysis {
 			theOrder     = pTaxType.getOrder();
 			theBucket    = BucketType.SUMMARY;
 			theTaxType   = pTaxType;
-			theAmount    = new Number.Money(0);
-			theOldAmount = new Number.Money(0);
+			theAmount    = new Money(0);
+			theOldAmount = new Money(0);
 		}
 		private TranBucket(TranList pList, TranBucket pBucket) { 
 			super(pList, 0);
@@ -2050,11 +2050,11 @@ public class TaxAnalysis {
 			theBucket    = pBucket.getBucket();
 			theTaxType   = pBucket.getTaxType();
 			theTransact  = pBucket.getTransType();
-			theAmount    = new Number.Money(0);
-			theOldAmount = new Number.Money(pBucket.getAmount());
+			theAmount    = new Money(0);
+			theOldAmount = new Money(pBucket.getAmount());
 			if (theBucket == BucketType.DETAIL) {
-				theTaxCredit 	= new Number.Money(0);
-				theOldTaxCred 	= new Number.Money(pBucket.getTaxCredit());
+				theTaxCredit 	= new Money(0);
+				theOldTaxCred 	= new Money(pBucket.getTaxCredit());
 			}
 		}
 		
@@ -2120,22 +2120,22 @@ public class TaxAnalysis {
 					myString += theOrder;
 					break;
 				case FIELD_TRANTYPE: 	
-					myString += Utils.formatTrans(theTransact);
+					myString += TransactionType.format(theTransact);
 					break;
 				case FIELD_TAXTYPE: 		
-					myString += Utils.formatTaxType(theTaxType);
+					myString += TaxType.format(theTaxType);
 					break;
 				case FIELD_AMOUNT: 	
-					myString += Utils.formatMoney(theAmount);
+					myString += Money.format(theAmount);
 					break;
 				case FIELD_TAXCREDIT: 	
-					myString += Utils.formatMoney(theTaxCredit);
+					myString += Money.format(theTaxCredit);
 					break;
 				case FIELD_OLDAMOUNT: 	
-					myString += Utils.formatMoney(theOldAmount);
+					myString += Money.format(theOldAmount);
 					break;
 				case FIELD_OLDTAXCRD: 	
-					myString += Utils.formatMoney(theOldTaxCred);
+					myString += Money.format(theOldTaxCred);
 					break;
 			}
 			return myString;
@@ -2159,15 +2159,15 @@ public class TaxAnalysis {
 			TranBucket myBucket = (TranBucket)pThat;
 			
 			/* Check for equality */
-			if (Utils.differs(getName(),      	myBucket.getName())) 		return false;
-			if (getBucket() 	!= myBucket.getBucket()) 					return false;
-			if (getOrder() 		!= myBucket.getOrder()) 					return false;
-			if (Utils.differs(getTaxType(),  	myBucket.getTaxType()))		return false;
-			if (Utils.differs(getTransType(),  	myBucket.getTransType()))	return false;
-			if (Utils.differs(getAmount(),    	myBucket.getAmount())) 		return false;
-			if (Utils.differs(getTaxCredit(), 	myBucket.getTaxCredit()))	return false;
-			if (Utils.differs(getOldAmount(),  	myBucket.getOldAmount())) 	return false;
-			if (Utils.differs(getOldTaxCred(), 	myBucket.getOldTaxCred()))	return false;
+			if (Utils.differs(getName(),      			myBucket.getName())) 		return false;
+			if (getBucket() 	!= myBucket.getBucket()) 							return false;
+			if (getOrder() 		!= myBucket.getOrder()) 							return false;
+			if (TaxType.differs(getTaxType(),  			myBucket.getTaxType()))		return false;
+			if (TransactionType.differs(getTransType(), myBucket.getTransType()))	return false;
+			if (Money.differs(getAmount(),    			myBucket.getAmount())) 		return false;
+			if (Money.differs(getTaxCredit(), 			myBucket.getTaxCredit()))	return false;
+			if (Money.differs(getOldAmount(),  			myBucket.getOldAmount())) 	return false;
+			if (Money.differs(getOldTaxCred(), 			myBucket.getOldTaxCred()))	return false;
 			return true;
 		}
 
@@ -2212,8 +2212,8 @@ public class TaxAnalysis {
 		 * @param  pEvent Event to add
 		 */
 		protected void addEvent(Event pEvent) {
-			Number.Money   myAmount = pEvent.getAmount();
-			Number.Money   myTax	= pEvent.getTaxCredit();
+			Money   myAmount = pEvent.getAmount();
+			Money   myTax	= pEvent.getTaxCredit();
 
 			/* Adjust the total amount */
 			theAmount.addAmount(myAmount);
@@ -2227,7 +2227,7 @@ public class TaxAnalysis {
 		 * 
 		 * @param  pAmount Amount to add
 		 */
-		protected void addAmount(Number.Money pAmount) {
+		protected void addAmount(Money pAmount) {
 			/* Adjust the income total */
 			theAmount.addAmount(pAmount);
 		}
@@ -2237,7 +2237,7 @@ public class TaxAnalysis {
 		 * 
 		 * @param  pAmount Amount to subtract
 		 */
-		protected void subtractAmount(Number.Money pAmount) {
+		protected void subtractAmount(Money pAmount) {
 			/* Adjust the income total */
 			theAmount.subtractAmount(pAmount);
 		}
@@ -2248,7 +2248,7 @@ public class TaxAnalysis {
 		 * @param  pBucket Bucket to add
 		 */
 		protected void addBucket(TranBucket pBucket) {
-			Number.Money myAmount = pBucket.getAmount();
+			Money myAmount = pBucket.getAmount();
 
 			/* If this is the tax paid bucket and we are adding a tax creditable bucket */
 			if ((theTaxType.isTaxPaid()) &&
@@ -2280,7 +2280,7 @@ public class TaxAnalysis {
 		 * @param  pBucket Bucket to subtract
 		 */
 		protected void subtractBucket(TranBucket pBucket) {
-			Number.Money myAmount = pBucket.getAmount();
+			Money myAmount = pBucket.getAmount();
 
 			/* Adjust the money total */
 			theAmount.subtractAmount(myAmount);
@@ -2300,18 +2300,18 @@ public class TaxAnalysis {
 		private 	int             theOrder 	 = -1;
 		private 	BucketType		theBucket	 = null;
 		private 	TaxType   		theTaxType   = null;
-		private		Number.Money    theAmount    = null;
-		private     Number.Money    theTaxation  = null;
-		private		Number.Rate		theRate      = null;
+		private		Money    		theAmount    = null;
+		private     Money    		theTaxation  = null;
+		private		Rate			theRate      = null;
 		private 	TaxBucket		theParent 	 = null;
 		
 		/* Access methods */
 		public 	String			getName()      { return theName; }
 		public 	BucketType		getBucket()    { return theBucket; }
 		public  TaxType    		getTaxType()   { return theTaxType; }
-		public  Number.Money    getAmount()    { return theAmount; }
-		public  Number.Money    getTaxation()  { return theTaxation; }
-		public  Number.Rate		getRate()      { return theRate; }
+		public  Money    		getAmount()    { return theAmount; }
+		public  Money    		getTaxation()  { return theTaxation; }
+		public  Rate			getRate()      { return theRate; }
 		public  TaxBucket		getParent()	   { return theParent; }
 
 		/* Constructor */
@@ -2376,16 +2376,16 @@ public class TaxAnalysis {
 					myString += theBucket;
 					break;
 				case FIELD_TAXTYPE: 		
-					myString += Utils.formatTaxType(theTaxType);
+					myString += TaxType.format(theTaxType);
 					break;
 				case FIELD_AMOUNT: 	
-					myString += Utils.formatMoney(theAmount);
+					myString += Money.format(theAmount);
 					break;
 				case FIELD_TAXATION: 	
-					myString += Utils.formatMoney(theTaxation);
+					myString += Money.format(theTaxation);
 					break;
 				case FIELD_RATE: 	
-					myString += Utils.formatRate(theRate);
+					myString += Rate.format(theRate);
 					break;
 			}
 			return myString;
@@ -2411,10 +2411,10 @@ public class TaxAnalysis {
 			/* Check for equality */
 			if (Utils.differs(getName(),      	myBucket.getName())) 		return false;
 			if (getBucket() 	!= myBucket.getBucket()) 					return false;
-			if (Utils.differs(getTaxType(),  	myBucket.getTaxType()))		return false;
-			if (Utils.differs(getAmount(),    	myBucket.getAmount())) 		return false;
-			if (Utils.differs(getTaxation(),   	myBucket.getTaxation()))	return false;
-			if (Utils.differs(getRate(),   		myBucket.getRate()))		return false;
+			if (TaxType.differs(getTaxType(),  	myBucket.getTaxType()))		return false;
+			if (Money.differs(getAmount(),    	myBucket.getAmount())) 		return false;
+			if (Money.differs(getTaxation(),   	myBucket.getTaxation()))	return false;
+			if (Rate.differs(getRate(),  		myBucket.getRate()))		return false;
 			return true;
 		}
 
@@ -2459,13 +2459,13 @@ public class TaxAnalysis {
 		 * @param  	pAmount 		Amount to set
 		 * @return the taxation on this bucket
 		 */
-		protected Number.Money setAmount(Number.Money pAmount) {
+		protected Money setAmount(Money pAmount) {
 			/* Set the value */
-			theAmount    = new Number.Money(pAmount);
+			theAmount    = new Money(pAmount);
             
             /* Calculate the tax if we have a rate*/
 			theTaxation = (theRate != null) ? theAmount.valueAtRate(theRate)
-											: new Number.Money(0);
+											: new Money(0);
 			
 			/* Return the taxation amount */
 			return theTaxation;
@@ -2476,9 +2476,9 @@ public class TaxAnalysis {
 		 * 
 		 * @param  	pAmount 		Amount to set
 		 */
-		protected void setTaxation(Number.Money pAmount) {
+		protected void setTaxation(Money pAmount) {
 			/* Set the value */
-			theTaxation = new Number.Money(pAmount);
+			theTaxation = new Money(pAmount);
 		}
 		
 		/**
@@ -2495,7 +2495,7 @@ public class TaxAnalysis {
 		 * 
 		 * @param  pRate 	 Amount to set
 		 */
-		protected void setRate(Number.Rate pRate) {
+		protected void setRate(Rate pRate) {
 			/* Set the value */
 			theRate    = pRate;
 		}
@@ -2506,10 +2506,10 @@ public class TaxAnalysis {
 	 */
 	private class taxBands {
 		/* properties */
-		private Number.Money 	theAllowance = null;
-		private Number.Money		theLoBand	 = null;
-		private Number.Money		theBasicBand = null;
-		private Number.Money		theHiBand	 = null;
+		private Money 	theAllowance = null;
+		private Money	theLoBand	 = null;
+		private Money	theBasicBand = null;
+		private Money	theHiBand	 = null;
 	}
 
 	

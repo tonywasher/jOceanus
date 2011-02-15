@@ -6,7 +6,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 
 public class Renderer {
 	/* Properties */
@@ -152,13 +152,13 @@ public class Renderer {
 		}
 
 		public void setValue(Object value) {
-			Number.Rate myRate;
+			Rate 		myRate;
 			String      s;
 			
 			if (value == theError)  s = theError;
 			else if (value == null) s = "";
 			else {
-				myRate = (Number.Rate)value;
+				myRate = (Rate)value;
 				s      = myRate.format(true);
 			}
 			
@@ -193,13 +193,13 @@ public class Renderer {
 		}
 
 		public void setValue(Object value) {
-			Number.Money	myMoney;
-			String          s;
+			Money	myMoney;
+			String  s;
 			
 			if (value == theError)  s = theError;
 			else if (value == null) s = "";
 			else {
-				myMoney = (Number.Money)value;
+				myMoney = (Money)value;
 				s       = myMoney.format(true);
 			}
 			
@@ -234,13 +234,13 @@ public class Renderer {
 		}
 
 		public void setValue(Object value) {
-			Number.Units 	myUnits;
-			String          s;
+			Units 		myUnits;
+			String      s;
 			
 			if (value == theError)  s = theError;
 			else if (value == null) s = "";
 			else {
-				myUnits = (Number.Units)value;
+				myUnits = (Units)value;
 				s       = myUnits.format(true);
 			}
 			
@@ -275,13 +275,13 @@ public class Renderer {
 		}
 
 		public void setValue(Object value) {
-			Number.Dilution	myDilution;
+			Dilution		myDilution;
 			String          s;
 			
 			if (value == theError)  s = theError;
 			else if (value == null) s = "";
 			else {
-				myDilution = (Number.Dilution)value;
+				myDilution = (Dilution)value;
 				s          = myDilution.format(true);
 			}
 			
@@ -316,13 +316,13 @@ public class Renderer {
 		}
 
 		public void setValue(Object value) {
-			Number.Price myPrice;
-			String s;
+			Price 	myPrice;
+			String 	s;
 			
 			if (value == theError)  s = theError;
 			else if (value == null) s = "";
 			else {
-				myPrice = (Number.Price)value;
+				myPrice = (Price)value;
 				s       = myPrice.format(true);
 			}
 			
@@ -358,13 +358,13 @@ public class Renderer {
 		}
 
 		public void setValue(Object value) {
-			Number.DilutedPrice myPrice;
+			DilutedPrice myPrice;
 			String 				s;
 			
 			if (value == theError)  s = theError;
 			else if (value == null) s = "";
 			else {
-				myPrice = (Number.DilutedPrice)value;
+				myPrice = (DilutedPrice)value;
 				s       = myPrice.format(true);
 			}
 			

@@ -158,7 +158,7 @@ public class AccountTab implements ChangeListener,
 	}
 		
 	/**
-	 * Determine the precedence for a {@link finObject.EditState} value.
+	 * Determine the precedence for a {@link EditState} value.
 	 * 
 	 * @param pTest The EditState 
 	 * @return the precedence 

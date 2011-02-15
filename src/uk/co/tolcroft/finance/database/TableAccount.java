@@ -50,11 +50,6 @@ public class TableAccount extends DatabaseTable<Account> {
 	private final static String theAliasCol 	= "Alias";
 	
 	/**
-	 * The name of the Parent column
-	 */
-	private final static String theInitVCol 	= "InitVector";
-	
-	/**
 	 * The name of the WebSite column
 	 */
 	private final static String theWebSiteCol 	= "WebSite";
@@ -171,14 +166,6 @@ public class TableAccount extends DatabaseTable<Account> {
 	}
 
 	/**
-	 * Determine the InitVector of the newly loaded item
-	 * @return the InitVector
-	 */
-	private byte[] getInitVector() throws SQLException {
-		return getBinary();
-	}
-
-	/**
 	 * Determine the WebSite of the newly loaded item
 	 * @return the WebSite
 	 */
@@ -283,14 +270,6 @@ public class TableAccount extends DatabaseTable<Account> {
 	}
 	
 	/**
-	 * Set the InitVector of the item to be inserted/updated
-	 * @param pValue the initVector
-	 */
-	private void setInitVector(byte[] pValue) throws SQLException {
-		setBinary(pValue);
-	}
-
-	/**
 	 * Set the WebSite of the item to be inserted/updated
 	 * @param pValue the webSite
 	 */
@@ -387,14 +366,6 @@ public class TableAccount extends DatabaseTable<Account> {
 	}
 	
 	/**
-	 * Update the InitVector of the item
-	 * @param pValue the new initVector
-	 */
-	private void updateInitVector(byte[] pValue) {
-		updateBinary(theInitVCol, pValue);
-	}
-
-	/**
 	 * Update the WebSite of the item
 	 * @param pValue the new webSite
 	 */
@@ -456,7 +427,6 @@ public class TableAccount extends DatabaseTable<Account> {
 				  	"REFERENCES " + idReference() + ", " +
 			   theAliasCol	+ " int NULL " +
 				  	"REFERENCES " + idReference() + ", " +
-			   theInitVCol	+ " binary(" + Account.INITVLEN + ") NULL, " +
 			   theWebSiteCol + " varbinary(" + Account.WSITELEN + ") NULL, " +
 			   theCustNoCol + " varbinary(" + Account.CUSTLEN + ") NULL, " +
 			   theUserIdCol + " varbinary(" + Account.UIDLEN + ") NULL, " +
@@ -471,7 +441,6 @@ public class TableAccount extends DatabaseTable<Account> {
 		                 theActTypCol + "," + theDescCol + "," +
 		                 theMatureCol + "," + theCloseCol + "," +
 		                 theParentCol + "," + theAliasCol + "," +
-		                 theInitVCol + "," +
 		                 theWebSiteCol + "," + theCustNoCol + "," +
 		                 theUserIdCol + "," + thePasswordCol + "," +
 		                 theAcctCol + "," + theNotesCol + 
@@ -489,7 +458,6 @@ public class TableAccount extends DatabaseTable<Account> {
 		String  		myDesc;
 		java.util.Date  myMaturity;
 		java.util.Date  myClosed;
-		byte[]     		myInitVector;
 		byte[]     		myWebSite;
 		byte[]     		myCustNo;
 		byte[]     		myUserId;
@@ -508,7 +476,6 @@ public class TableAccount extends DatabaseTable<Account> {
 			myClosed    	= getClosed();
 			myParentId		= getParent();
 			myAliasId		= getAlias();
-			myInitVector	= getInitVector();
 			myWebSite		= getWebSite();
 			myCustNo		= getCustNo();
 			myUserId		= getUserId();
@@ -528,7 +495,6 @@ public class TableAccount extends DatabaseTable<Account> {
 				           myClosed,
 				           myParentId,
 				           myAliasId,
-					       myInitVector,
 					       myWebSite,
 					       myCustNo,
 					       myUserId,
@@ -554,11 +520,10 @@ public class TableAccount extends DatabaseTable<Account> {
 		              theActTypCol + "," + theDescCol + "," +
 		              theMatureCol + "," + theCloseCol + "," +
 		              theParentCol + "," + theAliasCol + "," + 
-		              theInitVCol + "," +
 		              theWebSiteCol + "," + theCustNoCol + "," +
 		              theUserIdCol + "," + thePasswordCol + "," +
 		              theAcctCol + "," + theNotesCol + ")" + 
-		       " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		       " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	}
 	
 	/* Insert the account */
@@ -577,7 +542,6 @@ public class TableAccount extends DatabaseTable<Account> {
 							? pItem.getParent().getId() : -1);
 			setAlias((pItem.getAlias() != null)
 							? pItem.getAlias().getId() : -1);
-			setInitVector(pItem.getInitVector());
 			setWebSite(pItem.getWebSite());
 			setCustNo(pItem.getCustNo());
 			setUserId(pItem.getUserId());
@@ -613,23 +577,20 @@ public class TableAccount extends DatabaseTable<Account> {
 			if (Utils.differs(pItem.getDesc(),
 						  	  myBase.getDesc())) 
 				updateDescription(pItem.getDesc());
-			if (Utils.differs(pItem.getMaturity(),
-				              myBase.getMaturity())) 
+			if (Date.differs(pItem.getMaturity(),
+				             myBase.getMaturity())) 
 				updateMaturity(pItem.getMaturity());
-			if (Utils.differs(pItem.getClose(),
-						  	  myBase.getClose()))
+			if (Date.differs(pItem.getClose(),
+						  	 myBase.getClose()))
 				updateClosed(pItem.getClose());
-			if (Utils.differs(pItem.getParent(),
-						  	  myBase.getParent()))
+			if (Account.differs(pItem.getParent(),
+								myBase.getParent()))
 				updateParent((pItem.getParent() != null)
 									? pItem.getParent().getId() : -1);
-			if (Utils.differs(pItem.getAlias(),
-				  	  		  myBase.getAlias()))
+			if (Account.differs(pItem.getAlias(),
+				  	  			myBase.getAlias()))
 				updateAlias((pItem.getAlias() != null)
 									? pItem.getAlias().getId() : -1);
-			if (Utils.differs(pItem.getInitVector(),
-				  	  		  myBase.getInitVector()))
-				updateInitVector(pItem.getInitVector());
 			if (Utils.differs(pItem.getWebSite(),
 				  	  		  myBase.getWebSite()))
 				updateWebSite(pItem.getWebSite());

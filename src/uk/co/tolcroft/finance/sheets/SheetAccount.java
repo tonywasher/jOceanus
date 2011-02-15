@@ -172,7 +172,6 @@ public class SheetAccount {
 		int      		myParentId;
 		int				myAliasId;
 		String     		myHexString;
-		byte[]     		myInitVector;
 		byte[]     		myWebSite;
 		byte[]     		myCustNo;
 		byte[]     		myUserId;
@@ -252,7 +251,7 @@ public class SheetAccount {
 					if (myCols > myCol+5) {
 						myCell     = mySheet.getCell(myCol+5, i);
 						if (myCell.getType() != CellType.EMPTY) {
-							myParentId	= Integer.parseInt(myCell.getContents());
+							myAliasId	= Integer.parseInt(myCell.getContents());
 						}
 					}
 				
@@ -276,20 +275,10 @@ public class SheetAccount {
 						}
 					}
 				
-					/* Handle initVector which may be missing */
-					myInitVector = null;
-					if (myCols > myCol+8) {
-						myCell     = mySheet.getCell(myCol+8, i);
-						if (myCell.getType() != CellType.EMPTY) {
-							myHexString  = myCell.getContents();
-							myInitVector = Utils.BytesFromHexString(myHexString);
-						}
-					}
-				
 					/* Handle WebSite which may be missing */
 					myWebSite = null;
-					if (myCols > myCol+9) {
-						myCell     = mySheet.getCell(myCol+9, i);
+					if (myCols > myCol+8) {
+						myCell     = mySheet.getCell(myCol+8, i);
 						if (myCell.getType() != CellType.EMPTY) {
 							myHexString  = myCell.getContents();
 							myWebSite    = Utils.BytesFromHexString(myHexString);
@@ -298,8 +287,8 @@ public class SheetAccount {
 				
 					/* Handle CustNo which may be missing */
 					myCustNo = null;
-					if (myCols > myCol+10) {
-						myCell     = mySheet.getCell(myCol+10, i);
+					if (myCols > myCol+9) {
+						myCell     = mySheet.getCell(myCol+9, i);
 						if (myCell.getType() != CellType.EMPTY) {
 							myHexString  = myCell.getContents();
 							myCustNo     = Utils.BytesFromHexString(myHexString);
@@ -309,7 +298,7 @@ public class SheetAccount {
 					/* Handle userId which may be missing */
 					myUserId = null;
 					if (myCols > myCol+10) {
-						myCell     = mySheet.getCell(myCol+11, i);
+						myCell     = mySheet.getCell(myCol+10, i);
 						if (myCell.getType() != CellType.EMPTY) {
 							myHexString  = myCell.getContents();
 							myUserId     = Utils.BytesFromHexString(myHexString);
@@ -319,7 +308,7 @@ public class SheetAccount {
 					/* Handle password which may be missing */
 					myPassword = null;
 					if (myCols > myCol+11) {
-						myCell     = mySheet.getCell(myCol+12, i);
+						myCell     = mySheet.getCell(myCol+11, i);
 						if (myCell.getType() != CellType.EMPTY) {
 							myHexString  = myCell.getContents();
 							myPassword   = Utils.BytesFromHexString(myHexString);
@@ -329,7 +318,7 @@ public class SheetAccount {
 					/* Handle account which may be missing */
 					myAccount = null;
 					if (myCols > myCol+12) {
-						myCell     = mySheet.getCell(myCol+13, i);
+						myCell     = mySheet.getCell(myCol+12, i);
 						if (myCell.getType() != CellType.EMPTY) {
 							myHexString  = myCell.getContents();
 							myAccount    = Utils.BytesFromHexString(myHexString);
@@ -339,7 +328,7 @@ public class SheetAccount {
 					/* Handle notes which may be missing */
 					myNotes = null;
 					if (myCols > myCol+13) {
-						myCell     = mySheet.getCell(myCol+14, i);
+						myCell     = mySheet.getCell(myCol+13, i);
 						if (myCell.getType() != CellType.EMPTY) {
 							myHexString  = myCell.getContents();
 							myNotes      = Utils.BytesFromHexString(myHexString);
@@ -355,7 +344,6 @@ public class SheetAccount {
 						           myClosed,
 						           myParentId,
 						           myAliasId,
-							       myInitVector,
 							       myWebSite,
 							       myCustNo,
 							       myUserId,
@@ -476,38 +464,33 @@ public class SheetAccount {
 				}
 			
 				/* Create the Security cells */
-				if (myCurr.getInitVector() != null) {
-					myCell = new jxl.write.Label(8, myRow, 
-											     Utils.HexStringFromBytes(myCurr.getInitVector()));
-					mySheet.addCell(myCell);
-				}
 				if (myCurr.getWebSite() != null) {
-					myCell = new jxl.write.Label(9, myRow, 
+					myCell = new jxl.write.Label(8, myRow, 
 											     Utils.HexStringFromBytes(myCurr.getWebSite()));
 					mySheet.addCell(myCell);
 				}
 				if (myCurr.getCustNo() != null) {
-					myCell = new jxl.write.Label(10, myRow, 
+					myCell = new jxl.write.Label(9, myRow, 
 											     Utils.HexStringFromBytes(myCurr.getCustNo()));
 					mySheet.addCell(myCell);
 				}
 				if (myCurr.getUserId() != null) {
-					myCell = new jxl.write.Label(11, myRow, 
+					myCell = new jxl.write.Label(10, myRow, 
 											     Utils.HexStringFromBytes(myCurr.getUserId()));
 					mySheet.addCell(myCell);
 				}
 				if (myCurr.getPassword() != null) {
-					myCell = new jxl.write.Label(12, myRow, 
+					myCell = new jxl.write.Label(11, myRow, 
 											     Utils.HexStringFromBytes(myCurr.getPassword()));
 					mySheet.addCell(myCell);
 				}
 				if (myCurr.getAccount() != null) {
-					myCell = new jxl.write.Label(13, myRow, 
+					myCell = new jxl.write.Label(12, myRow, 
 											     Utils.HexStringFromBytes(myCurr.getAccount()));
 					mySheet.addCell(myCell);
 				}
 				if (myCurr.getNotes() != null) {
-					myCell = new jxl.write.Label(14, myRow, 
+					myCell = new jxl.write.Label(13, myRow, 
 											     Utils.HexStringFromBytes(myCurr.getNotes()));
 					mySheet.addCell(myCell);
 				}
@@ -521,7 +504,7 @@ public class SheetAccount {
 	
 			/* Add the Range name */
 			if (myRow > 0)
-				pWorkbook.addNameArea(Accounts, mySheet, 0, 0, 14, myRow-1);
+				pWorkbook.addNameArea(Accounts, mySheet, 0, 0, 13, myRow-1);
 		}
 
 		catch (Throwable e) {

@@ -13,7 +13,7 @@ import javax.swing.table.TableCellEditor;
 
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 
 public class Editor {
 	/* String Cell Editor */
@@ -232,7 +232,7 @@ public class Editor {
 				                                      int     row,
 				                                      int     col) {
 			theField.setText(((value == null) || (value == Renderer.theError)) 
-								? "" : ((Number.Rate)value).format(false));
+								? "" : ((Rate)value).format(false));
 			return theField;
 		}
 		
@@ -240,7 +240,7 @@ public class Editor {
 			String s = theField.getText();
 			if (!s.equals("")) {
 				try {
-					Number.Rate myRate = new Number.Rate(s);
+					Rate myRate = new Rate(s);
 					return myRate;
 				}
 				catch (Throwable e) {
@@ -251,7 +251,7 @@ public class Editor {
 		}
 		
 		public boolean stopCellEditing() {
-			Number.Rate myRate = (Number.Rate)getCellEditorValue();
+			Rate myRate = (Rate)getCellEditorValue();
 			if (myRate == null) {
 				fireEditingCanceled();
 				return false;
@@ -276,7 +276,7 @@ public class Editor {
 				                                      int     row,
 				                                      int     col) {
 			theField.setText(((value == null) || (value == Renderer.theError))
-								? "" : ((Number.Money)value).format(false));
+								? "" : ((Money)value).format(false));
 			return theField;
 		}
 		
@@ -284,7 +284,7 @@ public class Editor {
 			String s = theField.getText();
 			if (!s.equals("")) {
 				try {
-					Number.Money myMoney = new Number.Money(s);
+					Money myMoney = new Money(s);
 					return myMoney;
 				}
 				catch (Throwable e) {
@@ -295,7 +295,7 @@ public class Editor {
 		}
 		
 		public boolean stopCellEditing() {
-			Number.Money myMoney = (Number.Money)getCellEditorValue();
+			Money myMoney = (Money)getCellEditorValue();
 			if (myMoney == null) {
 				fireEditingCanceled();
 				return false;
@@ -320,7 +320,7 @@ public class Editor {
 				                                      int     row,
 				                                      int     col) {
 			theField.setText(((value == null) || (value == Renderer.theError))
-									? "" : ((Number.Units)value).format(false));
+									? "" : ((Units)value).format(false));
 			return theField;
 		}
 		
@@ -328,7 +328,7 @@ public class Editor {
 			String s = theField.getText();
 			if (!s.equals("")) {
 				try {
-					Number.Units myUnits = new Number.Units(s);
+					Units myUnits = new Units(s);
 					return myUnits;
 				}
 				catch (Throwable e) {
@@ -339,7 +339,7 @@ public class Editor {
 		}
 		
 		public boolean stopCellEditing() {
-			Number.Units myUnits = (Number.Units)getCellEditorValue();
+			Units myUnits = (Units)getCellEditorValue();
 			if ((Object)myUnits == this) {
 				fireEditingCanceled();
 				return false;
@@ -364,7 +364,7 @@ public class Editor {
 				                                      int     row,
 				                                      int     col) {
 			theField.setText(((value == null) || (value == Renderer.theError))
-									? "" : ((Number.Dilution)value).format(false));
+									? "" : ((Dilution)value).format(false));
 			return theField;
 		}
 		
@@ -372,7 +372,7 @@ public class Editor {
 			String s = theField.getText();
 			if (!s.equals("")) {
 				try {
-					Number.Dilution myDilution = new Number.Dilution(s);
+					Dilution myDilution = new Dilution(s);
 					return myDilution;
 				}
 				catch (Throwable e) {
@@ -383,7 +383,7 @@ public class Editor {
 		}
 		
 		public boolean stopCellEditing() {
-			Number.Units myUnits = (Number.Units)getCellEditorValue();
+			Units myUnits = (Units)getCellEditorValue();
 			if ((Object)myUnits == this) {
 				fireEditingCanceled();
 				return false;
@@ -408,7 +408,7 @@ public class Editor {
 				                                      int     row,
 				                                      int     col) {
 			theField.setText(((value == null) || (value == Renderer.theError))
-								? "" : ((Number.Price)value).format(false));
+								? "" : ((Price)value).format(false));
 			return theField;
 		}
 		
@@ -416,7 +416,7 @@ public class Editor {
 			String s = theField.getText();
 			if (!s.equals("")) {
 				try {
-					Number.Price myPrice = new Number.Price(s);
+					Price myPrice = new Price(s);
 					return myPrice;
 				}
 				catch (Throwable e) {
@@ -427,7 +427,7 @@ public class Editor {
 		}
 		
 		public boolean stopCellEditing() {
-			Number.Price myPrice = (Number.Price)getCellEditorValue();
+			Price myPrice = (Price)getCellEditorValue();
 			if (myPrice == null) {
 				fireEditingCanceled();
 				return false;
@@ -452,7 +452,7 @@ public class Editor {
 				                                      int     row,
 				                                      int     col) {
 			theField.setText(((value == null) || (value == Renderer.theError))
-								? "" : ((Number.DilutedPrice)value).format(false));
+								? "" : ((DilutedPrice)value).format(false));
 			return theField;
 		}
 		
@@ -460,7 +460,7 @@ public class Editor {
 			String s = theField.getText();
 			if (!s.equals("")) {
 				try {
-					Number.DilutedPrice myPrice = new Number.DilutedPrice(s);
+					DilutedPrice myPrice = new DilutedPrice(s);
 					return myPrice;
 				}
 				catch (Throwable e) {
@@ -471,7 +471,7 @@ public class Editor {
 		}
 		
 		public boolean stopCellEditing() {
-			Number.Price myPrice = (Number.Price)getCellEditorValue();
+			Price myPrice = (Price)getCellEditorValue();
 			if (myPrice == null) {
 				fireEditingCanceled();
 				return false;

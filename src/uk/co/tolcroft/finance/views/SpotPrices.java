@@ -2,7 +2,7 @@ package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Number;
+import uk.co.tolcroft.models.Number.*;
 
 public class SpotPrices {
 	/**
@@ -37,7 +37,7 @@ public class SpotPrices {
 	 * Apply changes in a statement back into the underlying finance objects
 	 */
 	public void applyChanges() {
-		Price.List  myBase;
+		AcctPrice.List  myBase;
 		DataSet		myData;
 		
 		/* Access base details */
@@ -62,15 +62,15 @@ public class SpotPrices {
 			
 			/* Declare variables */
 			DataSet 	myData;
-			Price 		myCurr;
-			Price 		myLast;
+			AcctPrice 		myCurr;
+			AcctPrice 		myLast;
 			int			iDiff;
 			boolean		isNew;
 			boolean		isSet;
 			Account 	myAcct;
 			SpotPrice 	myPrice;
 			
-			DataList<Price>.ListIterator myIterator;
+			DataList<AcctPrice>.ListIterator myIterator;
 			
 			/* Access the iterator */
 			myData 		= theView.getData();
@@ -83,7 +83,7 @@ public class SpotPrices {
 			while ((myCurr = myIterator.next()) != null) {
 				/* Test the date and account */
 				iDiff 	= theDate.compareTo(myCurr.getDate()); 
-				isNew	= Utils.differs(myAcct, myCurr.getAccount());
+				isNew	= Account.differs(myAcct, myCurr.getAccount());
 				
 				/* If this is a new account */
 				if (isNew) {
@@ -196,19 +196,19 @@ public class SpotPrices {
 	public class SpotPrice 	extends DataItem  {
 		/* Properties */
 		private Account       	theAccount  	= null;
-		private Number.Price	thePrevPrice	= null;
+		private Price			thePrevPrice	= null;
 		private Date			thePrevDate		= null;
 		
 		/* Access methods */
 		public Date        	getDate()      { return theDate; }
 		public Account		getAccount()   { return theAccount; }
 		public Values      	getObj()       { return (Values)super.getObj(); }
-		public Number.Price getPrice()     { return getObj().getPrice(); }
-		public Number.Price getPrevPrice() { return thePrevPrice; }
+		public Price 		getPrice()     { return getObj().getPrice(); }
+		public Price 		getPrevPrice() { return thePrevPrice; }
 		public Date			getPrevDate()  { return thePrevDate; }
 		
 		/* Linking methods */
-		public Price	 getBase() { return (Price)super.getBase(); }
+		public AcctPrice	 getBase() { return (AcctPrice)super.getBase(); }
 
 		/* Field IDs */
 		public static final int FIELD_ID       = 0;
@@ -258,7 +258,7 @@ public class SpotPrices {
 					myString += theAccount.getName(); 
 					break;
 				case FIELD_PRICE: 	
-					myString += Utils.formatPrice(myObj.getPrice());	
+					myString += Price.format(myObj.getPrice());	
 					break;
 			}
 			return myString;
@@ -270,7 +270,7 @@ public class SpotPrices {
 		 *  @param pPrice the price for the date
 		 *  @param pLast the last price for the account
 		 */
-		public SpotPrice(List pList, Price pPrice, Price pLast) {
+		public SpotPrice(List pList, AcctPrice pPrice, AcctPrice pLast) {
 			super(pList, 0);
 	
 			/* Variables */
@@ -303,7 +303,7 @@ public class SpotPrices {
 		 *  @param pAccount the price for the date
 		 *  @param pLast the last price for the account
 		 */
-		public SpotPrice(List pList, Account pAccount, Price pLast) {
+		public SpotPrice(List pList, Account pAccount, AcctPrice pLast) {
 			super(pList, 0);
 	
 			/* Variables */
@@ -364,18 +364,18 @@ public class SpotPrices {
 		 * 
 		 * @param pPrice the new price 
 		 */
-		public void setPrice(Number.Price pPrice) {
+		public void setPrice(Price pPrice) {
 			getObj().setPrice(pPrice);
 		}
 		
 		/* SpotValues */
 		public class Values implements histObject {
-			private Number.Price		thePrice	= null;
+			private Price		thePrice	= null;
 			
 			/* Access methods */
-			public Number.Price		getPrice()     { return thePrice; }
+			public Price		getPrice()     { return thePrice; }
 			
-			public void setPrice(Number.Price pPrice) {
+			public void setPrice(Price pPrice) {
 				thePrice  = pPrice; }
 
 			/* Constructor */
@@ -390,7 +390,7 @@ public class SpotPrices {
 				return histEquals(myValues);
 			}
 			public boolean histEquals(Values pValues) {
-				if (Utils.differs(thePrice,     pValues.thePrice))      return false;
+				if (Price.differs(thePrice,     pValues.thePrice))      return false;
 				return true;
 			}
 			
@@ -410,7 +410,7 @@ public class SpotPrices {
 				boolean		bResult = false;
 				switch (fieldNo) {
 					case SpotPrices.SpotPrice.FIELD_PRICE:
-						bResult = (Utils.differs(thePrice,  pValues.thePrice));
+						bResult = (Price.differs(thePrice,  pValues.thePrice));
 						break;
 				}
 				return bResult;
