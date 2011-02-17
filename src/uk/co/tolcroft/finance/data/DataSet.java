@@ -354,7 +354,7 @@ public class DataSet implements htmlDumpable {
 	/**
 	 * Enumeration of load states of data
 	 */
-	protected static enum LoadState {
+	public static enum LoadState {
 		/**
 		 * Initial loading, with parental account links and close-ability not yet done
 		 */

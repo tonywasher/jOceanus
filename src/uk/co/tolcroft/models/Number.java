@@ -81,6 +81,20 @@ public class Number {
 	public void setZero() { theValue = 0; }
 	
 	/**
+	 * Convert a whole number value to include decimals 
+	 * @param pValue the whole number value 
+	 * @param pNumDec the number of decimals for this number type
+	 * @return the converted value with added zeros 
+	 */
+	private static long convertToValue(long pValue, int pNumDecimals) { 
+		/* Build in the decimals to the value */
+		while (pNumDecimals-->0) pValue *= 10;       
+		
+		/* return the value */
+		return pValue;
+	}
+	
+	/**
 	 * Add a number to the value 
 	 * 
 	 * @param pValue The number to add to this one.
@@ -285,7 +299,7 @@ public class Number {
 				myBuild.insert(0, myWhole);
 				myWhole = myBuild.toString();
 			}
-			}
+		}
 		
 		/* Rebuild the number */
 		myString.setLength(0);
@@ -431,6 +445,18 @@ public class Number {
 					 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
 		}
 
+		/**
+		 * Convert a whole number value to include decimals 
+		 * @param pValue the whole number value 
+		 * @return the converted value with added zeros 
+		 */
+		public static long convertToValue(long pValue) { 
+			/* Build in the decimals to the value */
+			convertToValue(pValue, NUMDEC);       
+			
+			/* return the value */
+			return pValue;
+		}		
 	}
 	
 	/**
@@ -1127,6 +1153,38 @@ public class Number {
 		}		
 		
 		/**
+		 * obtain a Diluted value 
+		 * 
+		 * @param pDilution the dilution factor
+		 * @return the calculated value
+		 */
+		public Money getDilutedAmount(Dilution pDilution) {
+			Money	myTotal;
+			long 	myValue  = getAmount();
+			long 	myPower  = NUMDEC + Dilution.NUMDEC - NUMDEC;
+			long 	myFactor = 1;
+			long 	myDigit;
+	
+			/* Calculate division factor (less one) */
+			while (myPower-->1) myFactor  *= 10;       
+			
+			/* Calculate new value */
+			myValue  *= pDilution.getDilution();
+			myValue  /= myFactor;
+			
+			/* Access the last digit to allow rounding and complete the calculation */
+			myDigit  = myValue % 10;
+			myValue /= 10;
+			if (myDigit >= 5) myValue++;
+			
+			/* Allocate value */
+			myTotal = new Money(myValue);
+		
+			/* Return value */
+			return myTotal;
+		}
+
+		/**
 		 * Format a Money 
 		 * 
 		 * @param bPretty <code>true</code> if the value is to be formatted with thousands separator
@@ -1245,6 +1303,78 @@ public class Number {
 		}
 		
 		/**
+		 * calculate the gross value of this money at a given rate
+		 * used to convert from net to gross values form interest and dividends 
+		 * 
+		 * @param pRate the rate to calculate at
+		 * @return the calculated value
+		 */
+		public Money grossValueAtRate(Rate pRate) {
+			Money   myTotal;
+			long    myValue  = getAmount();
+			long    myDigit;
+			
+			/* Obtain 100% as a value */
+			long myFactor = Rate.convertToValue(100);
+			
+			/* Multiply by 100% and then by 10 */
+			myValue *= myFactor;
+			myValue *= 10;
+			
+			/* Calculate the divisor */
+			myFactor -= pRate.getRate();
+			
+			/* Divide by the factor */
+			myValue  /= myFactor;
+			
+			/* Access the last digit */
+			myDigit  = myValue % 10;
+			myValue /= 10;
+			if (myDigit >= 5) myValue++;
+			
+			/* Allocate value */
+			myTotal = new Money(myValue);
+		
+			/* Return value */
+			return myTotal;
+		}
+		
+		/**
+		 * calculate the TaxCredit value of this money at a given rate
+		 * used to convert from net to gross values form interest and dividends 
+		 * 
+		 * @param pRate the rate to calculate at
+		 * @return the calculated value
+		 */
+		public Money taxCreditAtRate(Rate pRate) {
+			Money   myTotal;
+			long    myValue  = getAmount();
+			long    myDigit;
+			
+			/* Obtain 100% - Rate as a value */
+			long myFactor = Rate.convertToValue(100);
+			myFactor -= pRate.getRate();
+			
+			/* Multiply by the rate and then by 10 */
+			myValue *= pRate.getRate();
+			myValue *= 10;
+			
+			/* Divide by the factor */
+			myValue  /= myFactor;
+			
+			/* Access the last digit */
+			myDigit  = myValue % 10;
+			myValue /= 10;
+			if (myDigit >= 5) myValue++;
+			
+			/* Allocate value */
+			myTotal = new Money(myValue);
+		
+			/* Return value */
+			return myTotal;
+		}
+		
+		/**
 		 * calculate the value of this money at a given proportion (i.e. weight/total) 
 		 * 
 		 * @param pWeight the weight of this item
@@ -1301,5 +1431,18 @@ public class Number {
 			/* Return value */
 			return myTotal;
 		}
+
+		/**
+		 * Convert a whole number value to include decimals 
+		 * @param pValue the whole number value 
+		 * @return the converted value with added zeros 
+		 */
+		public static long convertToValue(long pValue) { 
+			/* Build in the decimals to the value */
+			convertToValue(pValue, NUMDEC);       
+			
+			/* return the value */
+			return pValue;
+		}		
 	}	
 }

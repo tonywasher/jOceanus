@@ -1,6 +1,7 @@
 package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.finance.data.DataSet.*;
 import uk.co.tolcroft.models.*;
 
 public class AnalysisYear implements SortedList.linkObject {
@@ -121,9 +122,15 @@ public class AnalysisYear implements SortedList.linkObject {
 			AnalysisYear					myLast 		= null;
 			AnalysisYear					myYear 		= null;
 			TaxYear.List					myList;
+			Account							myCredit;
+			Account							myDebit;
+			boolean							isLoaded;
 
 			/* Create the Dilution Event List */
 			theDilutions = new DilutionEvent.List(pData);
+			
+			/* Determine whether the DataSet is fully loaded */
+			isLoaded = (pData.getLoadState() == LoadState.LOADED);
 			
 			/* Access the tax years list */
 			myList = pData.getTaxYears();
@@ -162,10 +169,18 @@ public class AnalysisYear implements SortedList.linkObject {
 					if (myLast != null) myYear.seedAnalyses(myLast);
 				}
 							
-				/* Touch credit and debit accounts */
-				myCurr.getCredit().touchAccount(myCurr);
-				myCurr.getDebit().touchAccount(myCurr);			
+				/* Touch credit accounts */
+				myCredit = myCurr.getCredit();
+				myCredit.touchAccount(myCurr);
+				if ((isLoaded) && (myCredit.isChild()))
+					myCredit.getParent().touchAccount(myCurr);
 				
+				/* Touch debit accounts */
+				myDebit = myCurr.getDebit();
+				myDebit.touchAccount(myCurr);
+				if ((isLoaded) && (myDebit.isChild()))
+					myDebit.getParent().touchAccount(myCurr);
+
 				/* If the event has a dilution factor */
 				if (myCurr.getDilution() != null) {
 					/* Add to the dilution event list */
