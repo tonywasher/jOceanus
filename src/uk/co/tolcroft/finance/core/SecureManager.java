@@ -42,7 +42,7 @@ public class SecureManager {
 			
 			/* Create the title for the window */
 			if (needConfirm)
-				myTitle = "Enter new Password for " + pSource;
+				myTitle = "Enter New Password for " + pSource;
 			else 
 				myTitle = "Enter Password for " + pSource;
 			

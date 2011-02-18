@@ -194,7 +194,9 @@ public class Static extends DataItem {
 	 *  @param pStatic the static from the database
 	 */
 	public void setSecurity(Static pStatic) throws Exception {
-		Values myValues = getObj();
+		Values 	myValues 	= getObj();
+		List 	myList 		= (List)getList();
+		DataSet myData 		= myList.getData();
 		
 		/* If we have static from the database */
 		if (pStatic != null) {
@@ -211,8 +213,6 @@ public class Static extends DataItem {
 		/* else we need to allocate a new security control */
 		else {
 			/* Access the Security manager */
-			List 			myList 		= (List)getList();
-			DataSet 		myData 		= myList.getData();
 			SecureManager 	mySecurity 	= myData.getSecurity();
 			
 			/* Obtain a new security control */
@@ -229,6 +229,10 @@ public class Static extends DataItem {
 			theEncrypt = theKey.initEncryption();
 			myValues.setInitVector(theEncrypt.getInitVector());						
 		}
+		
+		/* Ensure encryption of the spreadsheet load */
+		myData.getAccountTypes().ensureEncryption();
+		myData.getTransTypes().ensureEncryption();
 	}
 
 	/**
@@ -414,7 +418,7 @@ public class Static extends DataItem {
 			}
 			
 			/* Decrypt the string */
-			myString = theEncrypt.decryptString(pValue);
+			myString = theDecrypt.decryptString(pValue);
 		}
 		
 		/* Catch exceptions */

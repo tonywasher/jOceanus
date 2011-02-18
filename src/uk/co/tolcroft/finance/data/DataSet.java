@@ -24,6 +24,7 @@ public class DataSet implements htmlDumpable {
     private Pattern.List			thePatterns   = null; 
 	private Event.List				theEvents     = null;
     private Date.Range				theDateRange  = null;
+    private EncryptedPair			thePairs	  = null;
     private LoadState				theLoadState  = LoadState.INITIAL;
 
     /* Access methods */
@@ -41,6 +42,7 @@ public class DataSet implements htmlDumpable {
 	public Pattern.List 		getPatterns()  		{ return thePatterns; }
 	public Event.List 			getEvents()  		{ return theEvents; }
 	public Date.Range 			getDateRange()  	{ return theDateRange; }
+	public EncryptedPair		getEncryptedPairs() { return thePairs; }
 	public LoadState 			getLoadState()  	{ return theLoadState; }
 
 	/**
@@ -49,6 +51,9 @@ public class DataSet implements htmlDumpable {
 	public DataSet(SecureManager pSecurity) {
 		/* Store the security manager */
 		theSecurity   = pSecurity;
+		
+		/* Create the encrypted pairs control */
+		thePairs 	  = new EncryptedPair(this);
 		
 		/* Create the empty lists */
 		theStatic     = new Static.List(this);

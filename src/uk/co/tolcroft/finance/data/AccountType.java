@@ -1,5 +1,6 @@
 package uk.co.tolcroft.finance.data;
 
+import uk.co.tolcroft.finance.data.EncryptedPair.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
@@ -29,7 +30,15 @@ public class AccountType extends DataItem {
 	 * Return the name of the Account Type
 	 * @return the name
 	 */
-	public String 		getName()				{ return getObj().getName(); }
+	public String 		getName() { 
+		return getObj().getName().getValue(); }
+	
+	/**
+	 * Return the encrypted name of the Account Type
+	 * @return the encrypted name
+	 */
+	public byte[] 		getNameBytes() { 
+		return getObj().getName().getBytes(); }
 	
 	/**
 	 * Return the sort order of the Account Type
@@ -114,8 +123,6 @@ public class AccountType extends DataItem {
 	 * @param pList	The list to associate the Account Type with
 	 * @param uId   ID of Account Type
 	 * @param sName Name of Account Type
-	 * 
-	 * @throws {@link Exception} if type is not supported
 	 */
 	private AccountType(List 	pList,
 			            int		uId, 
@@ -123,8 +130,69 @@ public class AccountType extends DataItem {
 		super(pList, uId);
 		Values myObj = new Values();
 		setObj(myObj);
-		myObj.setName(sName);
+		
+		/* Create the Encrypted pair for the name */
+		DataSet 		myData 	= pList.getData();
+		EncryptedPair	myPairs = myData.getEncryptedPairs();
+		myObj.setName(myPairs.new StringPair(sName));
+	
+		/* Determine class of Account */
+		determineClass();
+
+		/* Allocate the id */
 		pList.setNewId(this);				
+	}
+	
+	/**
+	 * Construct a standard account type on load
+	 * 
+	 * @param pList	The list to associate the Account Type with
+	 * @param uId   ID of Account Type
+	 * @param pBytes Encrypted Name of Account Type
+	 */
+	private AccountType(List 	pList,
+			            int		uId, 
+			            byte[]	pBytes) throws Exception {
+		super(pList, uId);
+		Values myObj = new Values();
+		setObj(myObj);
+		
+		/* Create the Encrypted pair for the name */
+		DataSet 		myData 	= pList.getData();
+		EncryptedPair	myPairs = myData.getEncryptedPairs();
+		myObj.setName(myPairs.new StringPair(pBytes));
+	
+		/* Determine class of Account */
+		determineClass();
+
+		/* Allocate the id */
+		pList.setNewId(this);				
+	}
+	
+	/**
+	 * Ensure encryption after spreadsheet load
+	 */
+	private void ensureEncryption() throws Exception {
+		/* Protect against exceptions */
+		try {
+			/* Ensure the encryption */
+			getObj().getName().ensureEncryption();
+		}
+		
+		/* Catch exception */
+		catch (Throwable e) {
+			throw new Exception(ExceptionClass.ENCRYPT,
+								this,
+								"Failed to complete encryption",
+								e);
+		}
+	}
+	
+	/**
+	 * Determine the class and order of the account type
+	 */
+	private void determineClass() throws Exception {
+		String sName = getName();
 	
 		/* Determine class of Account */
 		if (sName.equals("Current")) {
@@ -620,19 +688,36 @@ public class AccountType extends DataItem {
 	/**
 	 * Represents a list of {@link AccountType} objects. 
 	 */
-	public static class List extends DataList<AccountType> {	
+	public static class List extends DataList<AccountType> {
+		/**
+		 * The DataSet that this list belongs to
+		 */
+		private DataSet theData = null;
+		
+		/**
+		 * Access the owning DataSet
+		 * @return the DataSet
+		 */
+		private DataSet getData() { return theData; }
+		
 	 	/** 
 	 	 * Construct an empty CORE account type list
 	 	 * @param pData the DataSet for the list
 	 	 */
-		protected List(DataSet pData) { super(ListStyle.CORE, false); }
+		protected List(DataSet pData) { 
+			super(ListStyle.CORE, false);
+			theData = pData;
+		}
 
 		/** 
 	 	 * Construct a generic account type list
 	 	 * @param pList the source account type list 
 	 	 * @param pStyle the style of the list 
 	 	 */
-		public List(List pList, ListStyle pStyle) { super(pList, pStyle); }
+		public List(List pList, ListStyle pStyle) { 
+			super(pList, pStyle);
+			theData = pList.theData;
+		}
 
 		/** 
 	 	 * Construct a difference account type list
@@ -696,6 +781,26 @@ public class AccountType extends DataItem {
 		}	
 
 		/**
+		 * Ensure encryption of items in the list after spreadsheet load
+		 */
+		protected void ensureEncryption() throws Exception {
+			ListIterator 	myIterator;
+			AccountType		myCurr;
+			
+			/* Access the iterator */
+			myIterator = listIterator();
+			
+			/* Loop through the items */
+			while ((myCurr = myIterator.next()) != null) {
+				/* Ensure encryption of the item */
+				myCurr.ensureEncryption();
+			}
+			
+			/* Return to caller */
+			return;
+		}	
+
+		/**
 		 * Add an AccountType to the list
 		 * @param uId the Id of the account type
 		 * @param pActType the Name of the account type
@@ -722,24 +827,53 @@ public class AccountType extends DataItem {
 			/* Add the Account Type to the list */
 			myActType.addToList();
 		}	
+
+		/**
+		 * Add an AccountType to the list
+		 * @param uId the Id of the account type
+		 * @param pActType the encrypted Name of the account type
+		 */ 
+		public void addItem(int    uId,
+				            byte[] pActType) throws Exception {
+			AccountType myActType;
+				
+			/* Create a new Account Type */
+			myActType = new AccountType(this, uId, pActType);
+				
+			/* Check that this AccountTypeId has not been previously added */
+			if (!isIdUnique(uId)) 
+				throw new Exception(ExceptionClass.DATA,
+	                      			myActType,
+			  			            "Duplicate AccountTypeId");
+				 
+			/* Check that this AccountType has not been previously added */
+			if (searchFor(myActType.getName()) != null) 
+				throw new Exception(ExceptionClass.DATA,
+	   					  			myActType,
+			  			            "Duplicate Account Type");
+				 
+			/* Add the Account Type to the list */
+			myActType.addToList();
+		}	
 	}	
 		
 	/**
 	 * Values for an account type 
 	 */
 	public class Values implements histObject {
-		private String     		theName      = null;
+		private StringPair	theName      = null;
 		
 		/* Access methods */
-		public String      	getName()      { return theName; }
+		public StringPair  	getName()      	{ return theName; }
+		public byte[]  		getNameBytes() 	{ return theName.getBytes(); }
 		
-		public void setName(String pName) {
-			theName      = pName; }
+		/* Value setting */
+		public void setName(StringPair pName) { theName = pName; }
 
 		/* Constructor */
-		public Values() {}
+		public Values() { }
 		public Values(Values pValues) {
-			theName      = pValues.getName();
+			theName      = pValues.theName;
 		}
 		
 		/* Check whether this object is equal to that passed */
@@ -748,7 +882,7 @@ public class AccountType extends DataItem {
 			return histEquals(myValues);
 		}
 		public boolean histEquals(Values pValues) {
-			if (Utils.differs(theName,    pValues.theName))    return false;
+			if (EncryptedPair.differs(theName,    pValues.theName))    return false;
 			return true;
 		}
 		
@@ -761,14 +895,14 @@ public class AccountType extends DataItem {
 			return new Values(this);
 		}
 		public void    copyFrom(Values pValues) {
-			theName      = pValues.getName();
+			theName      = pValues.theName;
 		}
 		public boolean	fieldChanged(int fieldNo, histObject pOriginal) {
 			Values 	pValues = (Values)pOriginal;
 			boolean	bResult = false;
 			switch (fieldNo) {
 				case FIELD_NAME:
-					bResult = (Utils.differs(theName,      pValues.theName));
+					bResult = (EncryptedPair.differs(theName, pValues.theName));
 					break;
 			}
 			return bResult;

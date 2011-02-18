@@ -1,5 +1,6 @@
 package uk.co.tolcroft.finance.data;
 
+import uk.co.tolcroft.finance.data.EncryptedPair.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
@@ -26,11 +27,19 @@ public class TransactionType extends DataItem {
 	private int          theOrder = -1;
 	
 	/**
-	 * Return the name of the Transaction Type
+	 * Return the name of the Account Type
 	 * @return the name
 	 */
-	public String     	getName()              { return getObj().getName(); }
-
+	public String 		getName() { 
+		return getObj().getName().getValue(); }
+	
+	/**
+	 * Return the encrypted name of the Account Type
+	 * @return the encrypted name
+	 */
+	public byte[] 		getNameBytes() { 
+		return getObj().getName().getBytes(); }
+	
 	/**
 	 * Return the sort order of the Transaction Type
 	 * @return the order
@@ -127,8 +136,69 @@ public class TransactionType extends DataItem {
 		super(pList, uId);
 		Values myObj = new Values();
 		setObj(myObj);
-		myObj.setName(sName);
-		pList.setNewId(this);				
+		
+		/* Create the Encrypted pair for the name */
+		DataSet 		myData 	= pList.getData();
+		EncryptedPair	myPairs = myData.getEncryptedPairs();
+		myObj.setName(myPairs.new StringPair(sName));
+	
+		/* Determine class of Account */
+		determineClass();
+
+		/* Allocate the id */
+		pList.setNewId(this);					
+	}
+
+	/**
+	 * Construct a standard Transaction type on load
+	 * 
+	 * @param pList	The list to associate the Transaction Type with
+	 * @param uId   ID of Transaction Type
+	 * @param pBytes Encrypted Name of Transaction Type
+	 */
+	private TransactionType(List 	pList,
+                       		int		uId,
+                       		byte[]	pBytes) throws Exception {
+		super(pList, uId);
+		Values myObj = new Values();
+		setObj(myObj);
+		
+		/* Create the Encrypted pair for the name */
+		DataSet 		myData 	= pList.getData();
+		EncryptedPair	myPairs = myData.getEncryptedPairs();
+		myObj.setName(myPairs.new StringPair(pBytes));
+	
+		/* Determine class of Account */
+		determineClass();
+
+		/* Allocate the id */
+		pList.setNewId(this);					
+	}
+
+	/**
+	 * Ensure encryption after spreadsheet load
+	 */
+	private void ensureEncryption() throws Exception {
+		/* Protect against exceptions */
+		try {
+			/* Ensure the encryption */
+			getObj().getName().ensureEncryption();
+		}
+		
+		/* Catch exception */
+		catch (Throwable e) {
+			throw new Exception(ExceptionClass.ENCRYPT,
+								this,
+								"Failed to complete encryption",
+								e);
+		}
+	}
+	
+	/**
+	 * Determine the class and order of the account type
+	 */
+	private void determineClass() throws Exception {
+		String sName = getName();
 	
 		/* Determine class of Transaction */
 		if (sName.equals("TaxedIncome")) {
@@ -696,18 +766,35 @@ public class TransactionType extends DataItem {
 	 * Represents a list of {@link TransType} objects. 
 	 */
 	public static class List extends DataList<TransactionType> {
+		/**
+		 * The DataSet that this list belongs to
+		 */
+		private DataSet theData = null;
+		
+		/**
+		 * Access the owning DataSet
+		 * @return the DataSet
+		 */
+		private DataSet getData() { return theData; }
+		
 	 	/** 
 	 	 * Construct an empty CORE transaction type list
 	 	 * @param pData the DataSet for the list
 	 	 */
-		protected List(DataSet pData) { super(ListStyle.CORE, true); }
+		protected List(DataSet pData) { 
+			super(ListStyle.CORE, true);
+			theData = pData;
+		}
 
 		/** 
 	 	 * Construct a generic transtype list
 	 	 * @param pList the source transtype list 
 	 	 * @param pStyle the style of the list 
 	 	 */
-		public List(List pList, ListStyle pStyle) { super(pList, pStyle); }
+		public List(List pList, ListStyle pStyle) {
+			super(pList, pStyle);
+			theData = pList.getData();
+		}
 
 		/** 
 	 	 * Construct a difference transtype list
@@ -793,6 +880,26 @@ public class TransactionType extends DataItem {
 		}
 		
 		/**
+		 * Ensure encryption of items in the list after spreadsheet load
+		 */
+		protected void ensureEncryption() throws Exception {
+			ListIterator 	myIterator;
+			TransactionType	myCurr;
+			
+			/* Access the iterator */
+			myIterator = listIterator();
+			
+			/* Loop through the items */
+			while ((myCurr = myIterator.next()) != null) {
+				/* Ensure encryption of the item */
+				myCurr.ensureEncryption();
+			}
+			
+			/* Return to caller */
+			return;
+		}	
+
+		/**
 		 * Add a TransactionType
 		 * @param uId the Id of the transaction type
 		 * @param pTransType the Name of the transaction type
@@ -819,18 +926,47 @@ public class TransactionType extends DataItem {
 			/* Add the Transaction Type to the list */
 			myTransType.addToList();		
 		}			
+
+		/**
+		 * Add a TransactionType
+		 * @param uId the Id of the transaction type
+		 * @param pTransType the Encrypted Name of the transaction type
+		 */ 
+		public void addItem(int    uId,
+				            byte[] pTransType) throws Exception {
+			TransactionType     myTransType;
+			
+			/* Create a new Transaction Type */
+			myTransType = new TransactionType(this, uId, pTransType);
+			
+			/* Check that this TransTypeId has not been previously added */
+			if (!isIdUnique(uId)) 
+				throw new Exception(ExceptionClass.DATA,
+	   					  			myTransType,
+			  			            "Duplicate TransTypeId");
+				 
+			/* Check that this TransactionType has not been previously added */
+			if (searchFor(myTransType.getName()) != null) 
+				throw new Exception(ExceptionClass.DATA,
+	  					  			myTransType,
+			                        "Duplicate Transaction Type");
+				
+			/* Add the Transaction Type to the list */
+			myTransType.addToList();		
+		}			
 	}
 	
 	/**
 	 * Values for a transaction type 
 	 */
 	public class Values implements histObject {
-		private String     		theName      = null;
+		private StringPair	theName      = null;
 		
 		/* Access methods */
-		public String      	getName()      { return theName; }
+		public StringPair   getName()		{ return theName; }
+		public byte[]  		getNameBytes() 	{ return theName.getBytes(); }
 		
-		public void setName(String pName) {
+		public void setName(StringPair pName) {
 			theName      = pName; }
 
 		/* Constructor */
@@ -845,7 +981,7 @@ public class TransactionType extends DataItem {
 			return histEquals(myValues);
 		}
 		public boolean histEquals(Values pValues) {
-			if (Utils.differs(theName,    pValues.theName))    return false;
+			if (EncryptedPair.differs(theName,    pValues.theName))    return false;
 			return true;
 		}
 		
@@ -865,7 +1001,7 @@ public class TransactionType extends DataItem {
 			boolean	bResult = false;
 			switch (fieldNo) {
 				case FIELD_NAME:
-					bResult = (Utils.differs(theName,      pValues.theName));
+					bResult = (EncryptedPair.differs(theName,      pValues.theName));
 					break;
 			}
 			return bResult;

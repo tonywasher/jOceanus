@@ -111,6 +111,7 @@ public class SheetAccountType {
 		Cell    			myTop;
 		Cell    			myBottom;
 		Cell    			myCell;
+		byte[]				myNameBytes;
 		int	    			myID;
 		int     			myCol;
 		int     			myTotal;
@@ -155,8 +156,11 @@ public class SheetAccountType {
 					myID   = Integer.parseInt(myCell.getContents());
 					myCell = mySheet.getCell(myCol+1, i);
 				
+					/* Access the name bytes */
+					myNameBytes = Utils.BytesFromHexString(myCell.getContents());
+					
 					/* Add the value into the finance tables */
-					myList.addItem(myID, myCell.getContents());
+					myList.addItem(myID, myNameBytes);
 				
 					/* Report the progress */
 					myCount++;
@@ -232,7 +236,8 @@ public class SheetAccountType {
 				mySheet.addCell(myCell);
 				
 				/* Add the name to the list */
-				myCell = new jxl.write.Label(1, myRow, myCurr.getName());
+				myCell = new jxl.write.Label(1, myRow, 
+											 Utils.HexStringFromBytes(myCurr.getNameBytes()));
 				mySheet.addCell(myCell);
 				
 				/* Report the progress */

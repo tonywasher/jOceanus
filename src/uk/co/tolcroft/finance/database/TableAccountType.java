@@ -45,31 +45,31 @@ public class TableAccountType extends DatabaseTable<AccountType> {
 	 * Determine the Account Type of the newly loaded item
 	 * @return the Account Type
 	 */
-	private String getAccountType() throws SQLException {
-		return getString();
+	private byte[] getAccountType() throws SQLException {
+		return getBinary();
 	}
 		
 	/**
 	 * Set the AccountType of the item to be inserted
 	 * @param pActType the Account Type of the item
 	 */
-	private void setAccountType(String pActType) throws SQLException {
-		setString(pActType);
+	private void setAccountType(byte[] pActType) throws SQLException {
+		setBinary(pActType);
 	}
 	
 	/**
 	 * Update the Name of the item
 	 * @param pValue the new name
 	 */
-	private void updateName(String pValue) {
-		updateString(theActTypCol, pValue);
+	private void updateName(byte[] pValue) {
+		updateBinary(theActTypCol, pValue);
 	}	
 
 	/* Create statement for Account Types */
 	protected String createStatement() {
 		return "create table " + theTabName + " ( " +
 			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
-			   theActTypCol	+ " varchar(" + AccountType.NAMELEN + ") NOT NULL )";
+			   theActTypCol	+ " varbinary(" + AccountType.NAMELEN + ") NOT NULL )";
 	}
 	
 	/* Determine the item name */
@@ -85,7 +85,7 @@ public class TableAccountType extends DatabaseTable<AccountType> {
 	protected void loadItem() throws Exception {
 		AccountType.List	myList;
 		int	    			myId;
-		String  			myType;
+		byte[]  			myType;
 		
 		/* Protect the access */
 		try {			
@@ -124,7 +124,7 @@ public class TableAccountType extends DatabaseTable<AccountType> {
 		try {			
 			/* Set the fields */
 			setID(pItem.getId());
-			setAccountType(pItem.getName());
+			setAccountType(pItem.getNameBytes());
 		}
 		
 		catch (Throwable e) {
@@ -148,9 +148,9 @@ public class TableAccountType extends DatabaseTable<AccountType> {
 		/* Protect the update */
 		try {			
 			/* Update the fields */
-			if (Utils.differs(pItem.getName(),
-				  		  	  myBase.getName()))
-				updateName(pItem.getName());
+			if (Utils.differs(pItem.getNameBytes(),
+				  		  	  myBase.getNameBytes()))
+				updateName(pItem.getNameBytes());
 		}
 		
 		catch (Throwable e) {

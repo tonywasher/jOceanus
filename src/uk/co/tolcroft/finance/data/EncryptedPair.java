@@ -144,33 +144,15 @@ public class EncryptedPair {
 		 * Access the encrypted value
 		 * @return the encrypted value
 		 */
-		public byte[] getBytes() throws Exception { 
-			/* If the value has never been encrypted */
-			if ((theBytes == null) && (theValue != null)) {
-				/* Encrypt the value */
-				theBytes = encryptString(theValue);
-			}
-			
-			/* Return the encrypted bytes */
-			return theBytes;
-		} 
+		public byte[] getBytes() { return theBytes;	} 
 
 		/**
 		 * Constructor from a clear text value
 		 * @param pValue the clear text value
 		 */
-		protected StringPair(String pValue) throws Exception { 
-			/* Store the value */
+		protected StringPair(String pValue) { 
+			/* Store the value and reset bytes */
 			theValue = pValue;
-			
-			/* Access the static element */
-			Static myStatic = theData.ensureStatic();
-
-			/* If we have a security control */
-			if (myStatic.getSecurityControl() != null) {
-				/* Encrypt the value */
-				theBytes = encryptString(theValue);
-			}
 		} 
 
 		/**
@@ -182,19 +164,31 @@ public class EncryptedPair {
 			theBytes = pBytes;
 			
 			/* Decrypt the value */
-			theValue = decryptString(theBytes);
+			if (theBytes != null)
+				theValue = decryptString(theBytes);
 		} 
 
 		/**
 		 * Set a new value
 		 * @param pValue the new clear text value
 		 */
-		public void setValue(String pValue) throws Exception { 
+		public void setVaccclue(String pValue) throws Exception { 
 			/* Store the value */
 			theValue = pValue;
-
-			/* Encrypt the value */
-			theBytes = encryptString(theValue);
+			theBytes = null;
+			
+			/* Encrypt the value if required */
+			if (theValue != null)
+				theBytes = encryptString(pValue);
+		}
+		
+		/**
+		 * Ensure encryption after spreadsheet load
+		 */
+		public void ensureEncryption() throws Exception { 
+			/* Encrypt the value if required */
+			if ((theBytes == null) && (theValue != null))
+				theBytes = encryptString(theValue);
 		}
 		
 		/**
@@ -213,8 +207,9 @@ public class EncryptedPair {
 			/* Access the target Pair */
 			StringPair myThat = (StringPair)pThat;
 			
+			/* Check differences */
 			if (Utils.differs(theValue, myThat.getValue())) return false;
-			if (Utils.differs(theBytes, myThat.theBytes))   return false;
+			if (Utils.differs(theBytes, myThat.getBytes())) return false;
 			return true;
 		}
 	}
@@ -235,16 +230,7 @@ public class EncryptedPair {
 		 * Access the encrypted value
 		 * @return the encrypted value
 		 */
-		public byte[] getBytes() throws Exception { 
-			/* If the value has never been encrypted */
-			if ((theBytes == null) && (theValue != null)) {
-				/* Encrypt the value */
-				theBytes = encryptChars(theValue);
-			}
-			
-			/* Return the encrypted bytes */
-			return theBytes;
-		} 
+		public byte[] getBytes() { return theBytes;	} 
 
 		/**
 		 * Constructor from a clear text value
@@ -253,15 +239,6 @@ public class EncryptedPair {
 		protected CharArrayPair(char[] pValue) throws Exception { 
 			/* Store the value */
 			theValue = pValue;
-			
-			/* Access the static element */
-			Static myStatic = theData.ensureStatic();
-
-			/* If we have a security control */
-			if (myStatic.getSecurityControl() != null) {
-				/* Encrypt the value */
-				theBytes = encryptChars(theValue);
-			}
 		} 
 
 		/**
@@ -283,10 +260,21 @@ public class EncryptedPair {
 		public void setValue(char[] pValue) throws Exception { 
 			/* Store the value */
 			theValue = pValue;
-
-			/* Encrypt the value */
-			theBytes = encryptChars(theValue);
+			theBytes = null;
+			
+			/* Encrypt the value if required */
+			if (theValue != null)
+				theBytes = encryptChars(pValue);
 		} 
+		
+		/**
+		 * Ensure encryption after spreadsheet load
+		 */
+		public void ensureEncryption() throws Exception { 
+			/* Encrypt the value if required */
+			if ((theBytes == null) && (theValue != null))
+				theBytes = encryptChars(theValue);
+		}
 		
 		/**
 		 * Compare this CharArrayPair type to another to establish equality.
@@ -304,8 +292,9 @@ public class EncryptedPair {
 			/* Access the target Pair */
 			CharArrayPair myThat = (CharArrayPair)pThat;
 			
+			/* Check differences */
 			if (Utils.differs(theValue, myThat.getValue())) return false;
-			if (Utils.differs(theBytes, myThat.theBytes))   return false;
+			if (Utils.differs(theBytes, myThat.getBytes())) return false;
 			return true;
 		}
 	}
@@ -326,19 +315,7 @@ public class EncryptedPair {
 		 * Access the encrypted value
 		 * @return the encrypted value
 		 */
-		public byte[] getBytes() throws Exception { 
-			/* If the value has never been encrypted */
-			if ((theBytes == null) && (theValue != null)) {
-				/* Format the value */
-				String myValue = theValue.format(false);
-				
-				/* Encrypt the value */
-				theBytes = encryptString(myValue);
-			}
-			
-			/* Return the encrypted bytes */
-			return theBytes;
-		} 
+		public byte[] getBytes() { return theBytes;	} 
 
 		/**
 		 * Constructor from a clear value
@@ -347,21 +324,6 @@ public class EncryptedPair {
 		protected MoneyPair(Money pValue) throws Exception { 
 			/* Store the value */
 			theValue = pValue;
-			
-			/* We have finished if the value is null */
-			if (pValue == null) return;
-			
-			/* Access the static element */
-			Static myStatic = theData.ensureStatic();
-
-			/* If we have a security control */
-			if (myStatic.getSecurityControl() != null) {
-				/* Format the value */
-				String myValue = theValue.format(false);
-				
-				/* Encrypt the value */
-				theBytes = encryptString(myValue);
-			}
 		} 
 
 		/**
@@ -389,13 +351,30 @@ public class EncryptedPair {
 		public void setValue(Money pValue) throws Exception { 
 			/* Store the value */
 			theValue = pValue;
+			theBytes = null;
 
+			/* We have finished if the value is null */
+			if (pValue == null) return;
+			
 			/* Format the value */
 			String myValue = theValue.format(false);
-			
+
 			/* Encrypt the value */
 			theBytes = encryptString(myValue);
 		} 
+		
+		/**
+		 * Ensure encryption after spreadsheet load
+		 */
+		public void ensureEncryption() throws Exception { 
+			/* Encrypt the value if required */
+			if ((theBytes == null) && (theValue != null)) {
+				/* Format the value */
+				String myValue = theValue.format(false);
+
+				theBytes = encryptString(myValue);
+			}
+		}
 		
 		/**
 		 * Compare this MoneyPair type to another to establish equality.
@@ -413,6 +392,7 @@ public class EncryptedPair {
 			/* Access the target Pair */
 			MoneyPair myThat = (MoneyPair)pThat;
 			
+			/* Check differences */
 			if (Money.differs(theValue, myThat.getValue())) return false;
 			if (Utils.differs(theBytes, myThat.theBytes))   return false;
 			return true;
@@ -435,19 +415,7 @@ public class EncryptedPair {
 		 * Access the encrypted value
 		 * @return the encrypted value
 		 */
-		public byte[] getBytes() throws Exception { 
-			/* If the value has never been encrypted */
-			if ((theBytes == null) && (theValue != null)) {
-				/* Format the value */
-				String myValue = theValue.format(false);
-				
-				/* Encrypt the value */
-				theBytes = encryptString(myValue);
-			}
-			
-			/* Return the encrypted bytes */
-			return theBytes;
-		} 
+		public byte[] getBytes() { return theBytes;	} 
 
 		/**
 		 * Constructor from a clear value
@@ -456,21 +424,6 @@ public class EncryptedPair {
 		protected UnitsPair(Units pValue) throws Exception { 
 			/* Store the value */
 			theValue = pValue;
-			
-			/* We have finished if the value is null */
-			if (pValue == null) return;
-			
-			/* Access the static element */
-			Static myStatic = theData.ensureStatic();
-
-			/* If we have a security control */
-			if (myStatic.getSecurityControl() != null) {
-				/* Format the value */
-				String myValue = theValue.format(false);
-				
-				/* Encrypt the value */
-				theBytes = encryptString(myValue);
-			}
 		} 
 
 		/**
@@ -498,13 +451,30 @@ public class EncryptedPair {
 		public void setValue(Units pValue) throws Exception { 
 			/* Store the value */
 			theValue = pValue;
+			theBytes = null;
 
+			/* We have finished if the value is null */
+			if (pValue == null) return;
+			
 			/* Format the value */
 			String myValue = theValue.format(false);
-			
+
 			/* Encrypt the value */
 			theBytes = encryptString(myValue);
 		} 
+		
+		/**
+		 * Ensure encryption after spreadsheet load
+		 */
+		public void ensureEncryption() throws Exception { 
+			/* Encrypt the value if required */
+			if ((theBytes == null) && (theValue != null)) {
+				/* Format the value */
+				String myValue = theValue.format(false);
+
+				theBytes = encryptString(myValue);
+			}
+		}
 		
 		/**
 		 * Compare this MoneyPair type to another to establish equality.
@@ -522,6 +492,7 @@ public class EncryptedPair {
 			/* Access the target Pair */
 			UnitsPair myThat = (UnitsPair)pThat;
 			
+			/* Check differences */
 			if (Units.differs(theValue, myThat.getValue())) return false;
 			if (Utils.differs(theBytes, myThat.theBytes))   return false;
 			return true;

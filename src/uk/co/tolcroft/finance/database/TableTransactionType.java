@@ -45,31 +45,31 @@ public class TableTransactionType extends DatabaseTable<TransactionType> {
 	 * Determine the Transaction Type of the newly loaded item
 	 * @return the Transaction Type
 	 */
-	private String getTransType() throws SQLException {
-		return getString();
+	private byte[] getTransType() throws SQLException {
+		return getBinary();
 	}
 	
 	/**
 	 * Set the TransactionType of the item to be inserted/updated
 	 * @param pTransType the Transaction Type of the item
 	 */
-	private void setTransType(String pTransType) throws SQLException {
-		setString(pTransType);
+	private void setTransType(byte[] pTransType) throws SQLException {
+		setBinary(pTransType);
 	}
 
 	/**
 	 * Update the Name of the item
 	 * @param pValue the new name
 	 */
-	private void updateName(String pValue) {
-		updateString(theTrnTypCol, pValue);
+	private void updateName(byte[] pValue) {
+		updateBinary(theTrnTypCol, pValue);
 	}	
 
 	/* Create statement for Transaction Types */
 	public String createStatement() {
 		return "create table " + theTabName + " ( " +
 			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
-			   theTrnTypCol	+ " varchar(" + TransactionType.NAMELEN + ") NOT NULL )";
+			   theTrnTypCol	+ " varbinary(" + TransactionType.NAMELEN + ") NOT NULL )";
 	}
 	
 	/* Determine the item name */
@@ -85,7 +85,7 @@ public class TableTransactionType extends DatabaseTable<TransactionType> {
 	protected void loadItem() throws Exception {
 		TransactionType.List	myList;
 		int	    				myId;
-		String  				myType;
+		byte[]  				myType;
 		
 		/* Protect the access */
 		try {			
@@ -124,7 +124,7 @@ public class TableTransactionType extends DatabaseTable<TransactionType> {
 		try {			
 			/* Set the fields */
 			setID(pItem.getId());
-			setTransType(pItem.getName());
+			setTransType(pItem.getNameBytes());
 		}
 		
 		catch (Throwable e) {
@@ -148,9 +148,9 @@ public class TableTransactionType extends DatabaseTable<TransactionType> {
 		/* Protect the update */
 		try {			
 			/* Update the fields */
-			if (Utils.differs(pItem.getName(),
-				  		  	  myBase.getName()))
-				updateName(pItem.getName());
+			if (Utils.differs(pItem.getNameBytes(),
+				  		  	  myBase.getNameBytes()))
+				updateName(pItem.getNameBytes());
 		}
 		
 		catch (Throwable e) {

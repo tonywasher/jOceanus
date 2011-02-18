@@ -3,6 +3,9 @@ package uk.co.tolcroft.finance.ui.controls;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.FocusTraversalPolicy;
+import java.awt.Container;
+import java.awt.Component;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -185,6 +188,10 @@ public class PasswordDialog extends JDialog
 						.addComponent(theError)
 		                .addContainerGap())
 			);			
+			
+			/* Set a focus traversal policy */
+			myPanel.setFocusTraversalPolicy(new TraversalPolicy());
+			myPanel.setFocusCycleRoot(true);
 		}
 		
 		/* Else we need no confirmation */
@@ -293,5 +300,74 @@ public class PasswordDialog extends JDialog
 	public void showDialog() {
 		/* Show the dialog */
 		setVisible(true);
+	}
+	
+	/* Focus traversal policy, used so that you tab straight to confirm from password */
+	private class TraversalPolicy extends FocusTraversalPolicy {
+		/**
+		 * Get component after 
+		 * @param pRoot the focus cycle root
+		 * @param pCurrent the current component
+		 * @return the component after the current component
+		 */
+		public Component getComponentAfter(Container pRoot,
+										   Component pCurrent) {
+			/* Handle field order */
+			if (pCurrent == thePassField) 		return theConfirmField;
+			if (pCurrent == theConfirmField) 	return theOKButton;
+			if (pCurrent == theOKButton) 		return theCancelButton;
+			if (pCurrent == theCancelButton) 	return thePassField;
+			
+			/* Return a default value */
+			return getFirstComponent(pRoot);
+		}
+
+		/**
+		 * Get component before 
+		 * @param pRoot the focus cycle root
+		 * @param pCurrent the current component
+		 * @return the component before the current component
+		 */
+		public Component getComponentBefore(Container pRoot,
+										    Component pCurrent) {
+			/* Handle field order */
+			if (pCurrent == thePassField) 		return theCancelButton;
+			if (pCurrent == theConfirmField) 	return thePassField;
+			if (pCurrent == theOKButton) 		return theConfirmField;
+			if (pCurrent == theCancelButton) 	return theOKButton;
+			
+			/* Return a default value */
+			return getFirstComponent(pRoot);
+		}
+
+		/**
+		 * Get default component 
+		 * @param pRoot the focus cycle root
+		 * @return the default component
+		 */
+		public Component getDefaultComponent(Container pRoot) {
+			/* Return the first component */
+			return getFirstComponent(pRoot);
+		}
+
+		/**
+		 * Get first component 
+		 * @param pRoot the focus cycle root
+		 * @return the first component
+		 */
+		public Component getFirstComponent(Container pRoot) {
+			/* Return the password field */
+			return thePassField;
+		}
+
+		/**
+		 * Get last component 
+		 * @param pRoot the focus cycle root
+		 * @return the last component
+		 */
+		public Component getLastComponent(Container pRoot) {
+			/* Return the password field */
+			return theCancelButton;
+		}
 	}
 }

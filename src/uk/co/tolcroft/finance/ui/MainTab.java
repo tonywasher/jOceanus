@@ -247,7 +247,10 @@ public class MainTab implements ActionListener,
 			
 			/* Ignore if no was responded */
 			if (myOption != JOptionPane.YES_OPTION) return;
-		}
+		}		
+		
+		/* terminate the executor */
+		theExecutor.shutdown();
 		
 		/* Dispose of the frame */
 		theFrame.dispose();
