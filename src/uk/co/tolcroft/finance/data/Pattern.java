@@ -1,5 +1,6 @@
 package uk.co.tolcroft.finance.data;
 
+import uk.co.tolcroft.finance.data.EncryptedPair.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.DataList.*;
 import uk.co.tolcroft.models.DataItem.validationCtl.*;
@@ -26,11 +27,21 @@ public class Pattern extends DataItem {
 	private int 	theTransId		= -1;
 	private int 	theFreqId		= -1;
 			
+	/* Encrypted access */
+	private static String getStringPairValue(StringPair pPair) {
+		return (pPair == null) ? null : pPair.getValue(); }
+	private static byte[] getStringPairBytes(StringPair pPair) {
+		return (pPair == null) ? null : pPair.getBytes(); }
+	private static Money getMoneyPairValue(MoneyPair pPair) {
+		return (pPair == null) ? null : pPair.getValue(); }
+	private static byte[] getMoneyPairBytes(MoneyPair pPair) {
+		return (pPair == null) ? null : pPair.getBytes(); }
+	
 	/* Access methods */
 	public  Values         	getObj()       	{ return (Values)super.getObj(); }	
 	public  Date        	getDate()      	{ return getObj().getDate(); }
-	public  String          getDesc()      	{ return getObj().getDesc(); }
-	public  Money       	getAmount()    	{ return getObj().getAmount(); }
+	public  String          getDesc()      	{ return getStringPairValue(getObj().getDesc()); }
+	public  Money       	getAmount()    	{ return getMoneyPairValue(getObj().getAmount()); }
 	public  Account         getPartner()   	{ return getObj().getPartner(); }
 	public  Frequency   	getFrequency() 	{ return getObj().getFrequency(); }
 	public  TransactionType getTransType() 	{ return getObj().getTransType(); }
@@ -39,6 +50,10 @@ public class Pattern extends DataItem {
 	public  Account		   	getAccount()	{ return getObj().getAccount(); }
 	private void         	setAccount(Account pAccount)   {
 		getObj().setAccount(pAccount); }
+
+	/* Encrypted value access */
+	public  byte[]	getAmountBytes()    { return getMoneyPairBytes(getObj().getAmount()); }
+	public  byte[]  getDescBytes()      { return getStringPairBytes(getObj().getDesc()); }
 
 	/* Linking methods */
 	public Pattern     getBase() { return (Pattern)super.getBase(); }
@@ -110,7 +125,7 @@ public class Pattern extends DataItem {
 				myString += Date.format(myObj.getDate()); 
 				break;
 			case FIELD_DESC:	
-				myString += myObj.getDesc(); 
+				myString += getStringPairValue(myObj.getDesc()); 
 				break;
 			case FIELD_PARTNER:	
 				if ((myObj.getPartner() == null) &&
@@ -127,7 +142,7 @@ public class Pattern extends DataItem {
 					myString += TransactionType.format(myObj.getTransType()); 
 				break;
 			case FIELD_AMOUNT:	
-				myString += Money.format(myObj.getAmount()); 
+				myString += Money.format(getMoneyPairValue(myObj.getAmount())); 
 				break;
 			case FIELD_FREQ:	
 				if ((myObj.getFrequency() == null) &&
@@ -187,12 +202,14 @@ public class Pattern extends DataItem {
 	public Pattern(List pList, Statement.Line pLine) {
 		/* Set standard values */
 		super(pList, 0);
-		Values myObj   = new Values();
+		Values 				myObj   = new Values();
+		Statement.Values	myNew	= pLine.getObj();
 		setObj(myObj);
+		
 		myObj.setDate(new Date(pLine.getDate()));
-		myObj.setDesc(pLine.getDesc());
+		myObj.setDesc(myNew.getDesc());
 		myObj.setTransType(pLine.getTransType());
-		myObj.setAmount(pLine.getAmount());
+		myObj.setAmount(myNew.getAmount());
 		myObj.setPartner(pLine.getPartner());
 		myObj.setFrequency(pList.theData.getFrequencys().searchFor(FreqClass.ANNUALLY));
 		myObj.setAccount(pLine.getAccount());
@@ -213,8 +230,8 @@ public class Pattern extends DataItem {
 			        int            	uId,
 			        int        		uAccountId,
 	                java.util.Date  pDate,
-	                String          pDesc,
-	                String			pAmount,
+	                byte[]          pDesc,
+	                byte[]			pAmount,
 	                int				uPartnerId,
 	                int 			uTransId,
 	                int				uFreqId,
@@ -231,7 +248,14 @@ public class Pattern extends DataItem {
 		/* Initialise values */
 		Values myObj = new Values();
 		setObj(myObj);
-		myObj.setDesc(pDesc);
+		
+		/* Create the Encrypted pair for the values */
+		DataSet 		myData 	= pList.getData();
+		EncryptedPair	myPairs = myData.getEncryptedPairs();
+		
+		/* Record the encrypted values */
+		myObj.setDesc(myPairs.new StringPair(pDesc));
+		myObj.setAmount(myPairs.new MoneyPair(pAmount));
 		myObj.setIsCredit(isCredit);
 		
 		/* Record the IDs */
@@ -277,14 +301,41 @@ public class Pattern extends DataItem {
 		/* Create the date */
 		myObj.setDate(new Date(pDate));
 		
-		/* Record the amount */
-		Money myAmount = Money.Parse(pAmount);
-		if (myAmount == null) 
-			throw new Exception(ExceptionClass.DATA,
-								this,
-								"Invalid Amount: " + pAmount);
-		myObj.setAmount(myAmount);
+		/* Allocate the id */
+		pList.setNewId(this);				
+	}
+			
+	/* Standard constructor */
+	private Pattern(List      		pList,
+			        Account    		pAccount,
+	                java.util.Date  pDate,
+	                String          pDesc,
+	                String			pAmount,
+	                Account			pPartner,
+	                TransactionType	pTransType,
+	                Frequency		pFrequency,
+	                boolean         isCredit) throws Exception {
+		/* Initialise item */
+		super(pList, 0);
+		
+		/* Initialise values */
+		Values myObj = new Values();
+		setObj(myObj);
 
+		/* Create the Encrypted pair for the values */
+		DataSet 		myData 	= pList.getData();
+		EncryptedPair	myPairs = myData.getEncryptedPairs();
+		
+		/* Record the encrypted values */
+		myObj.setDesc(myPairs.new StringPair(pDesc));
+		myObj.setAmount(myPairs.new MoneyPair(pAmount));
+		myObj.setAccount(pAccount);
+		myObj.setPartner(pPartner);
+		myObj.setTransType(pTransType);
+		myObj.setFrequency(pFrequency);
+		myObj.setDate(new Date(pDate));
+		myObj.setIsCredit(isCredit);
+		
 		/* Allocate the id */
 		pList.setNewId(this);				
 	}
@@ -594,8 +645,21 @@ public class Pattern extends DataItem {
 	 * 
 	 * @param pDesc the description 
 	 */
-	public void setDesc(String pDesc) {
-		getObj().setDesc((pDesc == null) ? null : new String(pDesc));
+	public void setDesc(String pDesc) throws Exception {
+		/* If we are setting a non null value */
+		if (pDesc != null) {
+			/* Create the Encrypted pair for the values */
+			DataSet 		myData 	= ((List)getList()).getData();
+			EncryptedPair	myPairs = myData.getEncryptedPairs();
+			StringPair		myPair	= myPairs.new StringPair(pDesc);
+		
+			/* Record the value and encrypt it*/
+			getObj().setDesc(myPair);
+			myPair.ensureEncryption();
+		}
+		
+		/* Else we are setting a null value */
+		else getObj().setDesc(null);
 	}
 	
 	/**
@@ -603,9 +667,21 @@ public class Pattern extends DataItem {
 	 * 
 	 * @param pAmount the amount 
 	 */
-	public void setAmount(Money pAmount) {
-		getObj().setAmount((pAmount == null) ? null 
-				  						     : new Money(pAmount));
+	public void setAmount(Money pAmount) throws Exception {
+		/* If we are setting a non null value */
+		if (pAmount != null) {
+			/* Create the Encrypted pair for the values */
+			DataSet 		myData 	= ((List)getList()).getData();
+			EncryptedPair	myPairs = myData.getEncryptedPairs();
+			MoneyPair		myPair	= myPairs.new MoneyPair(pAmount);
+		
+			/* Record the value and encrypt it*/
+			getObj().setAmount(myPair);
+			myPair.ensureEncryption();
+		}
+		
+		/* Else we are setting a null value */
+		else getObj().setAmount(null);
 	}
 	
 	/**
@@ -623,7 +699,9 @@ public class Pattern extends DataItem {
 	 * @param pPattern the pattern extract 
 	 */
 	public void applyChanges(DataItem pPattern) {
-		Pattern myPattern = (Pattern)pPattern;
+		Pattern myPattern 	= (Pattern)pPattern;
+		Values	myObj		= getObj();
+		Values	myNew		= myPattern.getObj();
 		
 		/* Store the current detail into history */
 		pushHistory();
@@ -642,11 +720,11 @@ public class Pattern extends DataItem {
 	
 		/* Update the description if required */
 		if (Utils.differs(getDesc(), myPattern.getDesc())) 
-			setDesc(myPattern.getDesc());
+			myObj.setDesc(myNew.getDesc());
 	
 		/* Update the amount if required */
 		if (Money.differs(getAmount(), myPattern.getAmount())) 
-			setAmount(myPattern.getAmount());
+			myObj.setAmount(myNew.getAmount());
 		
 		/* Update the date if required */
 		if (Date.differs(getDate(), myPattern.getDate())) 
@@ -656,6 +734,28 @@ public class Pattern extends DataItem {
 		if (checkForHistory()) setState(DataState.CHANGED);
 	}
 
+	/**
+	 * Ensure encryption after spreadsheet load
+	 */
+	private void ensureEncryption() throws Exception {
+		Values myObj = getObj();
+
+		/* Protect against exceptions */
+		try {
+			/* Ensure the encryption */
+			myObj.getDesc().ensureEncryption();
+			myObj.getAmount().ensureEncryption();
+		}
+		
+		/* Catch exception */
+		catch (Throwable e) {
+			throw new Exception(ExceptionClass.ENCRYPT,
+								this,
+								"Failed to complete encryption",
+								e);
+		}
+	}
+	
 	public static class List extends DataList<Pattern> {
 		/* Local values */
 		private Account	theAccount	= null;
@@ -821,10 +921,29 @@ public class Pattern extends DataItem {
 		}
 		
 		/**
+		 * Ensure encryption of items in the list after spreadsheet load
+		 */
+		protected void ensureEncryption() throws Exception {
+			ListIterator 	myIterator;
+			Pattern			myCurr;
+			
+			/* Access the iterator */
+			myIterator = listIterator();
+			
+			/* Loop through the items */
+			while ((myCurr = myIterator.next()) != null) {
+				/* Ensure encryption of the item */
+				myCurr.ensureEncryption();
+			}
+			
+			/* Return to caller */
+			return;
+		}	
+
+		/**
 		 *  Allow a pattern to be added
 		 */
-		public void addItem(int     		uId,
-				            java.util.Date  pDate,
+		public void addItem(java.util.Date  pDate,
 				            String   		pDesc,
 				            String   		pAmount,
 				            String   		pAccount,
@@ -839,6 +958,7 @@ public class Pattern extends DataItem {
 			Account     			myPartner;
 			TransactionType    		myTransType;
 			Frequency    			myFrequency;
+			Pattern					myPattern;
 			
 			/* Access the Lists */
 			myAccounts 		= theData.getAccounts();
@@ -881,16 +1001,22 @@ public class Pattern extends DataItem {
 			                        "] has invalid Frequency [" +
 			                        pFrequency + "]");
 				
-			/* Add the pattern */
-			addItem(uId,
-					pDate,
-					pDesc,
-					pAmount,
-					myAccount.getId(),
-					myPartner.getId(),
-					myTransType.getId(),
-					myFrequency.getId(),
-					isCredit);
+			/* Create the new pattern */
+			myPattern = new Pattern(this, myAccount, pDate, 
+									pDesc, pAmount, myPartner, 
+								 	myTransType, myFrequency, isCredit);
+			
+			/* Validate the pattern */
+			myPattern.validate();
+
+			/* Handle validation failure */
+			if (myPattern.hasErrors()) 
+				throw new Exception(ExceptionClass.VALIDATE,
+									myPattern,
+									"Failed validation");
+				
+			/* Add to the list */
+			myPattern.addToList();
 		}
 			
 		/**
@@ -898,8 +1024,8 @@ public class Pattern extends DataItem {
 		 */
 		public void addItem(int     		uId,
 				            java.util.Date  pDate,
-				            String   		pDesc,
-				            String   		pAmount,
+				            byte[]   		pDesc,
+				            byte[]   		pAmount,
 				            int     		uAccountId,
 				            int   			uPartnerId,
 				            int				uTransId,
@@ -936,8 +1062,8 @@ public class Pattern extends DataItem {
 	 */
 	public class Values implements histObject {
 		private Date       		theDate      = null;
-		private String      	theDesc      = null;
-		private Money      		theAmount    = null;
+		private StringPair    	theDesc      = null;
+		private MoneyPair  		theAmount    = null;
 		private Account			thePartner   = null;
 		private Frequency		theFrequency = null;
 		private TransactionType	theTransType = null;
@@ -946,19 +1072,23 @@ public class Pattern extends DataItem {
 		
 		/* Access methods */
 		public Date       		getDate()      { return theDate; }
-		public String           getDesc()      { return theDesc; }
-		public Money      		getAmount()    { return theAmount; }
+		public StringPair       getDesc()      { return theDesc; }
+		public MoneyPair   		getAmount()    { return theAmount; }
 		public Account          getPartner()   { return thePartner; }
 		public Frequency  		getFrequency() { return theFrequency; }
 		public TransactionType  getTransType() { return theTransType; }
 		public Account			getAccount()   { return theAccount; }
 		public boolean         	isCredit()     { return isCredit; }
 		
+		/* Encrypted value access */
+		public  byte[]	getAmountBytes()    { return getMoneyPairBytes(getAmount()); }
+		public  byte[]  getDescBytes()      { return getStringPairBytes(getDesc()); }
+
 		public void setDate(Date pDate) {
 			theDate      = pDate; }
-		public void setDesc(String pDesc) {
+		public void setDesc(StringPair pDesc) {
 			theDesc      = pDesc; }
-		public void setAmount(Money pAmount) {
+		public void setAmount(MoneyPair pAmount) {
 			theAmount    = pAmount; }
 		public void setPartner(Account pPartner) {
 			thePartner   = pPartner; }
@@ -991,8 +1121,8 @@ public class Pattern extends DataItem {
 		}
 		public boolean histEquals(Values pValues) {
 			if (Date.differs(theDate,    				pValues.theDate))       return false;
-			if (Utils.differs(theDesc,   				pValues.theDesc))       return false;
-			if (Money.differs(theAmount, 				pValues.theAmount))     return false;
+			if (EncryptedPair.differs(theDesc,   		pValues.theDesc))       return false;
+			if (EncryptedPair.differs(theAmount, 		pValues.theAmount))     return false;
 			if (Account.differs(thePartner, 			pValues.thePartner))    return false;
 			if (Frequency.differs(theFrequency, 		pValues.theFrequency))	return false;
 			if (TransactionType.differs(theTransType,	pValues.theTransType)) 	return false;
@@ -1024,25 +1154,25 @@ public class Pattern extends DataItem {
 			boolean	bResult = false;
 			switch (fieldNo) {
 				case FIELD_DATE:
-					bResult = (Date.differs(theDate,       pValues.theDate));
+					bResult = (Date.differs(theDate,       			pValues.theDate));
 					break;
 				case FIELD_DESC:
-					bResult = (Utils.differs(theDesc,      pValues.theDesc));
+					bResult = (EncryptedPair.differs(theDesc,		pValues.theDesc));
 					break;
 				case FIELD_TRNTYP:
 					bResult = (TransactionType.differs(theTransType, pValues.theTransType));
 					break;
 				case FIELD_AMOUNT:
-					bResult = (Money.differs(theAmount,    pValues.theAmount));
+					bResult = (EncryptedPair.differs(theAmount,		pValues.theAmount));
 					break;
 				case FIELD_PARTNER:
-					bResult = (Account.differs(thePartner,   pValues.thePartner));
+					bResult = (Account.differs(thePartner,   		pValues.thePartner));
 					break;
 				case FIELD_FREQ:
-					bResult = (Frequency.differs(theFrequency, pValues.theFrequency));
+					bResult = (Frequency.differs(theFrequency, 		pValues.theFrequency));
 					break;
 				case FIELD_ACCOUNT:
-					bResult = (Account.differs(theAccount,   pValues.theAccount));
+					bResult = (Account.differs(theAccount,   		pValues.theAccount));
 					break;
 				case FIELD_CREDIT:
 					bResult = (isCredit != pValues.isCredit);

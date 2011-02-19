@@ -1,7 +1,9 @@
 package uk.co.tolcroft.finance.views;
 
+import uk.co.tolcroft.finance.data.EncryptedPair.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.*;
 import uk.co.tolcroft.models.DataItem.*;
 import uk.co.tolcroft.models.DataItem.validationCtl.*;
@@ -19,6 +21,14 @@ public class Statement {
 	private AssetAnalysis	theAnalysis		= null;
 	private List            theLines        = null;
 
+	/* Encrypted access */
+	private static String getStringPairValue(StringPair pPair) {
+		return (pPair == null) ? null : pPair.getValue(); }
+	private static Money getMoneyPairValue(MoneyPair pPair) {
+		return (pPair == null) ? null : pPair.getValue(); }
+	private static Units getUnitsPairValue(UnitsPair pPair) {
+		return (pPair == null) ? null : pPair.getValue(); }
+	
 	/* Access methods */
 	public Account       	getAccount()      { return theAccount; }
 	public Date.Range       getDateRange()    { return theRange; }
@@ -317,20 +327,20 @@ public class Statement {
 		private boolean             isCredit     = false;
 
 		/* Access methods */
-		public Account       		getAccount()   		{ return theAccount; }
-		public Values      		 	getObj()       		{ return (Values)super.getObj(); }
-		public Date        			getDate()      		{ return getObj().getDate(); }
-		public String               getDesc()      		{ return getObj().getDesc(); }
-		public Units       			getUnits()     		{ return getObj().getUnits(); }
-		public Money       			getAmount()    		{ return getObj().getAmount(); }
-		public Account       		getPartner()   		{ return getObj().getPartner(); }
-		public Dilution   			getDilution() 		{ return getObj().getDilution(); }
-		public Money   				getTaxCredit() 		{ return getObj().getTaxCredit(); }
-		public Integer   			getYears() 			{ return getObj().getYears(); }
-		public TransactionType   	getTransType() 		{ return getObj().getTransType(); }
-		public Money       			getBalance()   		{ return theBalance; }
-		public Units       			getBalanceUnits() 	{ return theBalUnits; }
-		public boolean              isCredit()     		{ return isCredit; }
+		public Account       	getAccount()   		{ return theAccount; }
+		public Values      		getObj()       		{ return (Values)super.getObj(); }
+		public Date        		getDate()      		{ return getObj().getDate(); }
+		public String           getDesc()      		{ return getStringPairValue(getObj().getDesc()); }
+		public Units       		getUnits()     		{ return getUnitsPairValue(getObj().getUnits()); }
+		public Money       		getAmount()    		{ return getMoneyPairValue(getObj().getAmount()); }
+		public Account       	getPartner()   		{ return getObj().getPartner(); }
+		public Dilution   		getDilution() 		{ return getObj().getDilution(); }
+		public Money   			getTaxCredit() 		{ return getMoneyPairValue(getObj().getTaxCredit()); }
+		public Integer   		getYears() 			{ return getObj().getYears(); }
+		public TransactionType	getTransType() 		{ return getObj().getTransType(); }
+		public Money       		getBalance()   		{ return theBalance; }
+		public Units       		getBalanceUnits() 	{ return theBalUnits; }
+		public boolean          isCredit()     		{ return isCredit; }
 		
 		/* Linking methods */
 		public Event getBase() { return (Event)super.getBase(); }
@@ -404,7 +414,7 @@ public class Statement {
 					myString += Date.format(myObj.getDate()); 
 					break;
 				case FIELD_DESC:	
-					myString += myObj.getDesc(); 
+					myString += getStringPairValue(myObj.getDesc()); 
 					break;
 				case FIELD_TRNTYP: 	
 					myString += TransactionType.format(myObj.getTransType());	
@@ -413,16 +423,16 @@ public class Statement {
 					myString += Account.format(myObj.getPartner()); 
 					break;
 				case FIELD_AMOUNT: 	
-					myString += Money.format(myObj.getAmount());	
+					myString += Money.format(getMoneyPairValue(myObj.getAmount()));	
 					break;
 				case FIELD_UNITS: 	
-					myString += Units.format(myObj.getUnits());	
+					myString += Units.format(getUnitsPairValue(myObj.getUnits()));	
 					break;
 				case FIELD_CREDIT: 
 					myString +=	(isCredit() ? "true" : "false");
 					break;
 				case FIELD_TAXCREDIT: 	
-					myString += Money.format(myObj.getAmount());	
+					myString += Money.format(getMoneyPairValue(myObj.getAmount()));	
 					break;
 				case FIELD_YEARS:	
 					myString += myObj.getYears(); 
@@ -450,15 +460,17 @@ public class Statement {
 					Account 	pAccount) {
 			/* Make this an element */
 			super(pList, 0);
-			Values myObj = new Values();
+			Values 			myObj 	= new Values();
+			Event.Values	myBase 	= pEvent.getObj();
+			
 			setObj(myObj);
 			myObj.setDate(pEvent.getDate());
-			myObj.setDesc(pEvent.getDesc());
-			myObj.setAmount(pEvent.getAmount());
-			myObj.setUnits(pEvent.getUnits());
+			myObj.setDesc(myBase.getDesc());
+			myObj.setAmount(myBase.getAmount());
+			myObj.setUnits(myBase.getUnits());
 			myObj.setTransType(pEvent.getTransType());
 			myObj.setDilution(pEvent.getDilution());
-			myObj.setTaxCredit(pEvent.getTaxCredit());
+			myObj.setTaxCredit(myBase.getTaxCredit());
 			myObj.setYears(pEvent.getYears());
 			setBase(pEvent);
 			setState(DataState.CLEAN);
@@ -632,8 +644,21 @@ public class Statement {
 		 * 
 		 * @param pDesc the description 
 		 */
-		public void setDescription(String pDesc) {
-			getObj().setDesc((pDesc == null) ? null : new String(pDesc));
+		public void setDescription(String pDesc) throws Exception {
+			/* If we are setting a non null value */
+			if (pDesc != null) {
+				/* Create the Encrypted pair for the values */
+				DataSet 		myData 	= theView.getData();
+				EncryptedPair	myPairs = myData.getEncryptedPairs();
+				StringPair		myPair	= myPairs.new StringPair(pDesc);
+			
+				/* Record the value and encrypt it*/
+				getObj().setDesc(myPair);
+				myPair.ensureEncryption();
+			}
+			
+			/* Else we are setting a null value */
+			else getObj().setDesc(null);
 		}
 		
 		/**
@@ -641,9 +666,21 @@ public class Statement {
 		 * 
 		 * @param pAmount the amount 
 		 */
-		public void setAmount(Money pAmount) {
-			getObj().setAmount((pAmount == null) ? null 
-					                             : new Money(pAmount));
+		public void setAmount(Money pAmount) throws Exception {
+			/* If we are setting a non null value */
+			if (pAmount != null) {
+				/* Create the Encrypted pair for the values */
+				DataSet 		myData 	= theView.getData();
+				EncryptedPair	myPairs = myData.getEncryptedPairs();
+				MoneyPair		myPair	= myPairs.new MoneyPair(pAmount);
+			
+				/* Record the value and encrypt it*/
+				getObj().setAmount(myPair);
+				myPair.ensureEncryption();
+			}
+			
+			/* Else we are setting a null value */
+			else getObj().setAmount(null);
 		}
 		
 		/**
@@ -651,8 +688,21 @@ public class Statement {
 		 * 
 		 * @param pUnits the units 
 		 */
-		public void setUnits(Units pUnits) {
-			getObj().setUnits((pUnits == null) ? null : new Units(pUnits));
+		public void setUnits(Units pUnits) throws Exception {
+			/* If we are setting a non null value */
+			if (pUnits != null) {
+				/* Create the Encrypted pair for the values */
+				DataSet 		myData 	= theView.getData();
+				EncryptedPair	myPairs = myData.getEncryptedPairs();
+				UnitsPair		myPair	= myPairs.new UnitsPair(pUnits);
+			
+				/* Record the value and encrypt it*/
+				getObj().setUnits(myPair);
+				myPair.ensureEncryption();
+			}
+			
+			/* Else we are setting a null value */
+			else getObj().setUnits(null);
 		}
 		
 		/**
@@ -669,8 +719,21 @@ public class Statement {
 		 * 
 		 * @param pTaxCredit the tax credit 
 		 */
-		public void setTaxCredit(Money pTaxCredit) {
-			getObj().setTaxCredit((pTaxCredit == null) ? null : new Money(pTaxCredit));
+		public void setTaxCredit(Money pTaxCredit) throws Exception {
+			/* If we are setting a non null value */
+			if (pTaxCredit != null) {
+				/* Create the Encrypted pair for the values */
+				DataSet 		myData 	= theView.getData();
+				EncryptedPair	myPairs = myData.getEncryptedPairs();
+				MoneyPair		myPair	= myPairs.new MoneyPair(pTaxCredit);
+			
+				/* Record the value and encrypt it*/
+				getObj().setTaxCredit(myPair);
+				myPair.ensureEncryption();
+			}
+			
+			/* Else we are setting a null value */
+			else getObj().setTaxCredit(null);
 		}
 		
 		/**
@@ -697,39 +760,39 @@ public class Statement {
 	 */
 	public class Values implements histObject {
 		private Date       		theDate      = null;
-		private String          theDesc      = null;
-		private Money    		theAmount    = null;
+		private StringPair      theDesc      = null;
+		private MoneyPair  		theAmount    = null;
 		private Account         thePartner   = null;
-		private Units    		theUnits     = null;
+		private UnitsPair  		theUnits     = null;
 		private Dilution		theDilution  = null;
-		private Money			theTaxCredit = null;
+		private MoneyPair		theTaxCredit = null;
 		private Integer			theYears  	 = null;
 		private TransactionType	theTransType = null;
 		
 		/* Access methods */
 		public Date       		getDate()      { return theDate; }
-		public String           getDesc()      { return theDesc; }
-		public Money     		getAmount()    { return theAmount; }
+		public StringPair       getDesc()      { return theDesc; }
+		public MoneyPair   		getAmount()    { return theAmount; }
 		public Account          getPartner()   { return thePartner; }
-		public Units     		getUnits()     { return theUnits; }
+		public UnitsPair  		getUnits()     { return theUnits; }
 		public Dilution  		getDilution()  { return theDilution; }
-		public Money     		getTaxCredit() { return theTaxCredit; }
+		public MoneyPair   		getTaxCredit() { return theTaxCredit; }
 		public Integer     		getYears()     { return theYears; }
 		public TransactionType	getTransType() { return theTransType; }
 		
 		public void setDate(Date pDate) {
 			theDate      = pDate; }
-		public void setDesc(String pDesc) {
+		public void setDesc(StringPair pDesc) {
 			theDesc      = pDesc; }
-		public void setAmount(Money pAmount) {
+		public void setAmount(MoneyPair pAmount) {
 			theAmount    = pAmount; }
 		public void setPartner(Account pPartner) {
 			thePartner   = pPartner; }
-		public void setUnits(Units pUnits) {
+		public void setUnits(UnitsPair pUnits) {
 			theUnits     = pUnits; }
 		public void setDilution(Dilution pDilution) {
 			theDilution  = pDilution; }
-		public void setTaxCredit(Money pTaxCredit) {
+		public void setTaxCredit(MoneyPair pTaxCredit) {
 			theTaxCredit = pTaxCredit; }
 		public void setYears(Integer pYears) {
 			theYears     = pYears; }
@@ -757,12 +820,12 @@ public class Statement {
 		}
 		public boolean histEquals(Values pValues) {
 			if (Date.differs(theDate,      				pValues.theDate))      return false;
-			if (Utils.differs(theDesc,      			pValues.theDesc))      return false;
-			if (Money.differs(theAmount,    			pValues.theAmount))    return false;
-			if (Units.differs(theUnits,     			pValues.theUnits))     return false;
+			if (EncryptedPair.differs(theDesc,      	pValues.theDesc))      return false;
+			if (EncryptedPair.differs(theAmount,    	pValues.theAmount))    return false;
+			if (EncryptedPair.differs(theUnits,     	pValues.theUnits))     return false;
 			if (Account.differs(thePartner,   			pValues.thePartner))   return false;
 			if (Dilution.differs(theDilution,			pValues.theDilution))  return false;
-			if (Money.differs(theTaxCredit, 			pValues.theTaxCredit)) return false;
+			if (EncryptedPair.differs(theTaxCredit, 	pValues.theTaxCredit)) return false;
 			if (Utils.differs(theYears,     			pValues.theYears))     return false;
 			if (TransactionType.differs(theTransType,	pValues.theTransType)) return false;
 			return true;
@@ -792,31 +855,31 @@ public class Statement {
 			boolean	bResult = false;
 			switch (fieldNo) {
 				case Statement.Line.FIELD_DATE:
-					bResult = (Date.differs(theDate,       pValues.theDate));
+					bResult = (Date.differs(theDate,       			pValues.theDate));
 					break;
 				case Statement.Line.FIELD_DESC:
-					bResult = (Utils.differs(theDesc,      pValues.theDesc));
+					bResult = (EncryptedPair.differs(theDesc,      	pValues.theDesc));
 					break;
 				case Statement.Line.FIELD_AMOUNT:
-					bResult = (Money.differs(theAmount,    pValues.theAmount));
+					bResult = (EncryptedPair.differs(theAmount,    	pValues.theAmount));
 					break;
 				case Statement.Line.FIELD_PARTNER:
-					bResult = (Account.differs(thePartner,   pValues.thePartner));
+					bResult = (Account.differs(thePartner,   		pValues.thePartner));
 					break;
 				case Statement.Line.FIELD_UNITS:
-					bResult = (Units.differs(theUnits,     pValues.theUnits));
+					bResult = (EncryptedPair.differs(theUnits,     	pValues.theUnits));
 					break;
 				case Statement.Line.FIELD_TRNTYP:
 					bResult = (TransactionType.differs(theTransType, pValues.theTransType));
 					break;
 				case Statement.Line.FIELD_TAXCREDIT:
-					bResult = (Money.differs(theTaxCredit, pValues.theTaxCredit));
+					bResult = (EncryptedPair.differs(theTaxCredit, 	pValues.theTaxCredit));
 					break;
 				case Statement.Line.FIELD_YEARS:
-					bResult = (Utils.differs(theYears,     pValues.theYears));
+					bResult = (Utils.differs(theYears,     			pValues.theYears));
 					break;
 				case Statement.Line.FIELD_DILUTION:
-					bResult = (Dilution.differs(theDilution,  pValues.theDilution));
+					bResult = (Dilution.differs(theDilution,  		pValues.theDilution));
 					break;
 			}
 			return bResult;

@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
@@ -98,16 +97,16 @@ public class TablePattern extends DatabaseTable<Pattern> {
 	 * Determine the Description of the newly loaded item
 	 * @return the Description
 	 */
-	private String getDesc() throws SQLException {
-		return getString();
+	private byte[] getDesc() throws SQLException {
+		return getBinary();
 	}
 
 	/**
 	 * Determine the Amount of the newly loaded item
 	 * @return the Amount
 	 */
-	private String getAmount() throws SQLException {
-		return getString();
+	private byte[] getAmount() throws SQLException {
+		return getBinary();
 	}
 
 	/**
@@ -162,16 +161,16 @@ public class TablePattern extends DatabaseTable<Pattern> {
 	 * Set the Description of the item to be inserted/updated
 	 * @param pDesc the description of the item
 	 */
-	private void setDesc(String pDesc) throws SQLException {
-		setString(pDesc);
+	private void setDesc(byte[] pDesc) throws SQLException {
+		setBinary(pDesc);
 	}
 
 	/**
 	 * Set the Amount of the item to be inserted/updated
 	 * @param pAmount the amount of the item
 	 */
-	private void setAmount(Money pAmount) throws SQLException {
-		setString(pAmount.format(false));
+	private void setAmount(byte[] pAmount) throws SQLException {
+		setBinary(pAmount);
 	}
 
 	/**
@@ -226,16 +225,16 @@ public class TablePattern extends DatabaseTable<Pattern> {
 	 * Update the Description of the item
 	 * @param pValue the new description
 	 */
-	private void updateDescription(String pValue) {
-		updateString(theDescCol, pValue);
+	private void updateDescription(byte[] pValue) {
+		updateBinary(theDescCol, pValue);
 	}
 
 	/**
 	 * Update the Amount of the item
 	 * @param pValue the new amount
 	 */
-	private void updateAmount(Money pValue) {
-		updateString(theAmntCol, pValue.format(false));
+	private void updateAmount(byte[] pValue) {
+		updateBinary(theAmntCol, pValue);
 	}	
 
 	/**
@@ -278,8 +277,8 @@ public class TablePattern extends DatabaseTable<Pattern> {
 			   theActCol	+ " int NOT NULL " +
 			   		"REFERENCES " + TableAccount.idReference() + ", " +
    			   theDateCol	+ " date NOT NULL, " +
-  			   theDescCol	+ " varchar(" + Pattern.DESCLEN + ") NOT NULL, " +
-  			   theAmntCol	+ " money NOT NULL, " +
+  			   theDescCol	+ " varbinary(" + Pattern.DESCLEN + ") NOT NULL, " +
+  			   theAmntCol	+ " varbinary(" + EncryptedPair.MONEYLEN + ") NOT NULL, " +
   			   thePartCol	+ " int NOT NULL " +
 		   			"REFERENCES " + TableAccount.idReference() + ", " +
 		   	   theTrnTypCol	+ " int NOT NULL " +
@@ -311,8 +310,8 @@ public class TablePattern extends DatabaseTable<Pattern> {
 		int  			myTranType;
 		int  			myFreq;
 		boolean			isCredit;
-		String 			myDesc;
-		String 			myAmount;
+		byte[] 			myDesc;
+		byte[] 			myAmount;
 		java.util.Date  myDate;
 		
 		/* Protect the access */
@@ -372,8 +371,8 @@ public class TablePattern extends DatabaseTable<Pattern> {
 			setID(pItem.getId());
 			setAccount(pItem.getAccount().getId());
 			setDate(pItem.getDate());
-			setDesc(pItem.getDesc());
-			setAmount(pItem.getAmount());
+			setDesc(pItem.getDescBytes());
+			setAmount(pItem.getAmountBytes());
 			setPartner(pItem.getPartner().getId());
 			setTransType(pItem.getTransType().getId());
 			setIsCredit(pItem.isCredit());
@@ -407,12 +406,12 @@ public class TablePattern extends DatabaseTable<Pattern> {
 			if (Date.differs(pItem.getDate(),
 		  		  	  		 myBase.getDate()))
 				updateDate(pItem.getDate());
-			if (Utils.differs(pItem.getDesc(),
-						  	  myBase.getDesc())) 
-				updateDescription(pItem.getDesc());
-			if (Money.differs(pItem.getAmount(),
-		  		  	  		  myBase.getAmount()))
-				updateAmount(pItem.getAmount());
+			if (Utils.differs(pItem.getDescBytes(),
+						  	  myBase.getDescBytes())) 
+				updateDescription(pItem.getDescBytes());
+			if (Utils.differs(pItem.getAmountBytes(),
+		  		  	  		  myBase.getAmountBytes()))
+				updateAmount(pItem.getAmountBytes());
 			if (Account.differs(pItem.getPartner(),
 				  	  			myBase.getPartner())) 
 				updatePartner(pItem.getPartner().getId());

@@ -121,13 +121,11 @@ public class AccountType extends DataItem {
 	 * Construct a standard account type on load
 	 * 
 	 * @param pList	The list to associate the Account Type with
-	 * @param uId   ID of Account Type
 	 * @param sName Name of Account Type
 	 */
 	private AccountType(List 	pList,
-			            int		uId, 
 			            String	sName) throws Exception {
-		super(pList, uId);
+		super(pList, 0);
 		Values myObj = new Values();
 		setObj(myObj);
 		
@@ -802,22 +800,14 @@ public class AccountType extends DataItem {
 
 		/**
 		 * Add an AccountType to the list
-		 * @param uId the Id of the account type
 		 * @param pActType the Name of the account type
 		 */ 
-		public void addItem(int    uId,
-				            String pActType) throws Exception {
+		public void addItem(String pActType) throws Exception {
 			AccountType myActType;
 				
 			/* Create a new Account Type */
-			myActType = new AccountType(this, uId, pActType);
+			myActType = new AccountType(this, pActType);
 				
-			/* Check that this AccountTypeId has not been previously added */
-			if (!isIdUnique(uId)) 
-				throw new Exception(ExceptionClass.DATA,
-	                      			myActType,
-			  			            "Duplicate AccountTypeId");
-				 
 			/* Check that this AccountType has not been previously added */
 			if (searchFor(pActType) != null) 
 				throw new Exception(ExceptionClass.DATA,

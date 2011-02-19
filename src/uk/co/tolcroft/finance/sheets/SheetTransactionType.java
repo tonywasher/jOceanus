@@ -79,7 +79,7 @@ public class SheetTransactionType {
 					myCell = mySheet.getCell(myCol, i);
 				
 					/* Add the value into the finance tables */
-					myList.addItem(0, myCell.getContents());
+					myList.addItem(myCell.getContents());
 				
 					/* Report the progress */
 					myCount++;

@@ -908,7 +908,9 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 			
 			/* Push history */
 			myLine.pushHistory();
-			
+
+			/* TODO protect against exceptions */
+			try {
 			/* Store the appropriate value */
 			switch (col) {
 				case COLUMN_DATE:  
@@ -940,6 +942,8 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 					myLine.setYears((Integer)obj);            
 					break;
 			}
+			/* TODO handle Exceptions */
+			}catch (Throwable e) {}
 			
 			/* Check for changes */
 			if (myLine.checkForHistory()) {

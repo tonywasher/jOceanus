@@ -233,6 +233,9 @@ public class Static extends DataItem {
 		/* Ensure encryption of the spreadsheet load */
 		myData.getAccountTypes().ensureEncryption();
 		myData.getTransTypes().ensureEncryption();
+		myData.getAccounts().ensureEncryption();
+		myData.getPatterns().ensureEncryption();
+		myData.getEvents().ensureEncryption();
 	}
 
 	/**

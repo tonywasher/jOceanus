@@ -620,19 +620,25 @@ public class MaintAccount implements ActionListener,
 	private void updateText() {
 		String  myText;
 
-		/* Access the value */
-		myText = theName.getText();
-		if (myText.length() == 0) myText = null;
+		/* Protect against exceptions */
+		try {
+			/* Access the value */
+			myText = theName.getText();
+			if (myText.length() == 0) myText = null;
 		
-		/* Store the appropriate value */
-		theAccount.setAccountName(myText);    
+			/* Store the appropriate value */
+			theAccount.setAccountName(myText);    
 
-		/* Access the value */
-		myText = theDesc.getText();
-		if (myText.length() == 0) myText = null;
+			/* Access the value */
+			myText = theDesc.getText();
+			if (myText.length() == 0) myText = null;
 		
-		/* Store the appropriate value */
-		theAccount.setDescription(myText);    			
+			/* Store the appropriate value */
+			theAccount.setDescription(myText);
+		}
+		
+		/* Catch exceptions TODO Do something with this*/
+		catch (Throwable e) {}
 	}
 	
 	/* Undo changes */

@@ -112,21 +112,12 @@ public class SheetAccount {
 					}
 				
 					/* Add the value into the finance tables */
-					myList.addItem(0,
-						           myAccount,
+					myList.addItem(myAccount,
 						           myAcType,
-						           null,
 						           myMaturity,
 						           myClosed,
 						           myParent,
-						           myAlias,
-						           null,
-						           null,
-						           null,
-						           null,
-						           null,
-						           null,
-						           null);
+						           myAlias);
 				
 					/* Report the progress */
 					myCount++;
@@ -166,8 +157,8 @@ public class SheetAccount {
 		int       		myCol;
 		int       		myCols;
 		int		  		myID;
-		String    		myName;
-		String	  		myDesc;
+		byte[]    		myName;
+		byte[]	  		myDesc;
 		int      		myAcTypeId;
 		int      		myParentId;
 		int				myAliasId;
@@ -224,7 +215,8 @@ public class SheetAccount {
 					/* Access account and account type */
 					myCell    	= mySheet.getCell(myCol, i);
 					myID      	= Integer.parseInt(myCell.getContents());
-					myName 		= mySheet.getCell(myCol+1, i).getContents();
+					myHexString	= mySheet.getCell(myCol+1, i).getContents();
+					myName	    = Utils.BytesFromHexString(myHexString);
 					myCell    	= mySheet.getCell(myCol+2, i);
 					myAcTypeId	= Integer.parseInt(myCell.getContents());
 
@@ -233,7 +225,8 @@ public class SheetAccount {
 					if (myCols > myCol+3) {
 						myCell     = mySheet.getCell(myCol+3, i);
 						if (myCell.getType() != CellType.EMPTY) {
-							myDesc = myCell.getContents();
+							myHexString  = myCell.getContents();
+							myDesc       = Utils.BytesFromHexString(myHexString);
 						}
 					}
 			
@@ -442,10 +435,12 @@ public class SheetAccount {
 				}
 			
 				/* Create the String cells */
-				myCell = new jxl.write.Label(1, myRow, myCurr.getName());
+				myCell = new jxl.write.Label(1, myRow, 
+											 Utils.HexStringFromBytes(myCurr.getNameBytes()));
 				mySheet.addCell(myCell);
-				if (myCurr.getDesc() != null) {
-					myCell = new jxl.write.Label(3, myRow, myCurr.getDesc());
+				if (myCurr.getDescBytes() != null) {
+					myCell = new jxl.write.Label(3, myRow,
+												 Utils.HexStringFromBytes(myCurr.getDescBytes()));
 					mySheet.addCell(myCell);
 				}
 				
@@ -464,34 +459,34 @@ public class SheetAccount {
 				}
 			
 				/* Create the Security cells */
-				if (myCurr.getWebSite() != null) {
+				if (myCurr.getWebSiteBytes() != null) {
 					myCell = new jxl.write.Label(8, myRow, 
-											     Utils.HexStringFromBytes(myCurr.getWebSite()));
+											     Utils.HexStringFromBytes(myCurr.getWebSiteBytes()));
 					mySheet.addCell(myCell);
 				}
-				if (myCurr.getCustNo() != null) {
+				if (myCurr.getCustNoBytes() != null) {
 					myCell = new jxl.write.Label(9, myRow, 
-											     Utils.HexStringFromBytes(myCurr.getCustNo()));
+											     Utils.HexStringFromBytes(myCurr.getCustNoBytes()));
 					mySheet.addCell(myCell);
 				}
-				if (myCurr.getUserId() != null) {
+				if (myCurr.getUserIdBytes() != null) {
 					myCell = new jxl.write.Label(10, myRow, 
-											     Utils.HexStringFromBytes(myCurr.getUserId()));
+											     Utils.HexStringFromBytes(myCurr.getUserIdBytes()));
 					mySheet.addCell(myCell);
 				}
-				if (myCurr.getPassword() != null) {
+				if (myCurr.getPasswordBytes() != null) {
 					myCell = new jxl.write.Label(11, myRow, 
-											     Utils.HexStringFromBytes(myCurr.getPassword()));
+											     Utils.HexStringFromBytes(myCurr.getPasswordBytes()));
 					mySheet.addCell(myCell);
 				}
-				if (myCurr.getAccount() != null) {
+				if (myCurr.getAccountBytes() != null) {
 					myCell = new jxl.write.Label(12, myRow, 
-											     Utils.HexStringFromBytes(myCurr.getAccount()));
+											     Utils.HexStringFromBytes(myCurr.getAccountBytes()));
 					mySheet.addCell(myCell);
 				}
-				if (myCurr.getNotes() != null) {
+				if (myCurr.getNotesBytes() != null) {
 					myCell = new jxl.write.Label(13, myRow, 
-											     Utils.HexStringFromBytes(myCurr.getNotes()));
+											     Utils.HexStringFromBytes(myCurr.getNotesBytes()));
 					mySheet.addCell(myCell);
 				}
 

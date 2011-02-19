@@ -127,13 +127,11 @@ public class TransactionType extends DataItem {
 	 * Construct a standard Transaction type on load
 	 * 
 	 * @param pList	The list to associate the Transaction Type with
-	 * @param uId   ID of Transaction Type
 	 * @param sName Name of Transaction Type
 	 */
 	private TransactionType(List 	pList,
-                       		int		uId,
-                       		String	sName) throws Exception {
-		super(pList, uId);
+                      		String	sName) throws Exception {
+		super(pList, 0);
 		Values myObj = new Values();
 		setObj(myObj);
 		
@@ -901,22 +899,14 @@ public class TransactionType extends DataItem {
 
 		/**
 		 * Add a TransactionType
-		 * @param uId the Id of the transaction type
 		 * @param pTransType the Name of the transaction type
 		 */ 
-		public void addItem(int    uId,
-				            String pTransType) throws Exception {
+		public void addItem(String pTransType) throws Exception {
 			TransactionType     myTransType;
 			
 			/* Create a new Transaction Type */
-			myTransType = new TransactionType(this, uId, pTransType);
+			myTransType = new TransactionType(this, pTransType);
 			
-			/* Check that this TransTypeId has not been previously added */
-			if (!isIdUnique(uId)) 
-				throw new Exception(ExceptionClass.DATA,
-	   					  			myTransType,
-			  			            "Duplicate TransTypeId");
-				 
 			/* Check that this TransactionType has not been previously added */
 			if (searchFor(pTransType) != null) 
 				throw new Exception(ExceptionClass.DATA,

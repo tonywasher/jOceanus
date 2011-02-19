@@ -100,16 +100,16 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Determine the Description of the newly loaded item
 	 * @return the Description
 	 */
-	private String getDesc() throws SQLException {
-		return getString();
+	private byte[] getDesc() throws SQLException {
+		return getBinary();
 	}
 
 	/**
 	 * Determine the Amount of the newly loaded item
 	 * @return the Amount
 	 */
-	private String getAmount() throws SQLException {
-		return getString();
+	private byte[] getAmount() throws SQLException {
+		return getBinary();
 	}
 
 	/**
@@ -132,8 +132,8 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Determine the Units of the newly loaded item
 	 * @return the Units
 	 */
-	private String getUnits() throws SQLException {
-		return getString();
+	private byte[] getUnits() throws SQLException {
+		return getBinary();
 	}
 
 	/**
@@ -148,8 +148,8 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Determine the TaxCredit of the newly loaded item
 	 * @return the TaxCredit 
 	 */
-	private String getTaxCredit() throws SQLException {
-		return getString();
+	private byte[] getTaxCredit() throws SQLException {
+		return getBinary();
 	}
 
 	/**
@@ -180,16 +180,16 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Set the Description of the item to be inserted
 	 * @param pDesc the description of the item
 	 */
-	private void setDesc(String pDesc) throws SQLException {
-		setString(pDesc);
+	private void setDesc(byte[] pDesc) throws SQLException {
+		setBinary(pDesc);
 	}
 
 	/**
 	 * Set the Amount of the item to be inserted
 	 * @param pAmount the amount of the item
 	 */
-	private void setAmount(Money pAmount) throws SQLException {
-		setString(pAmount.format(false));
+	private void setAmount(byte[] pAmount) throws SQLException {
+		setBinary(pAmount);
 	}
 
 	/**
@@ -210,10 +210,10 @@ public class TableEvent extends DatabaseTable<Event> {
 
 	/**
 	 * Set the Units of the item to be inserted
-	 * @param pUnits the transtype of the item
+	 * @param pUnits the units of the item
 	 */
-	private void setUnits(Units pUnits) throws SQLException {
-		setString((pUnits == null) ? null : pUnits.format(false));
+	private void setUnits(byte[] pUnits) throws SQLException {
+		setBinary(pUnits);
 	}
 
 	/**
@@ -228,8 +228,8 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Set the TaxCredit of the item to be inserted
 	 * @param pCredit the TaxCredit of the item
 	 */
-	private void setTaxCredit(Money pCredit) throws SQLException {
-		setString((pCredit == null) ? null : pCredit.format(false));
+	private void setTaxCredit(byte[] pCredit) throws SQLException {
+		setBinary(pCredit);
 	}
 
 	/**
@@ -260,16 +260,16 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Update the Description of the item
 	 * @param pValue the new description
 	 */
-	private void updateDescription(String pValue) {
-		updateString(theDescCol, pValue);
+	private void updateDescription(byte[] pValue) {
+		updateBinary(theDescCol, pValue);
 	}
 
 	/**
 	 * Update the Amount of the item
 	 * @param pValue the new amount
 	 */
-	private void updateAmount(Money pValue) {
-		updateString(theAmntCol, pValue.format(false));
+	private void updateAmount(byte[] pValue) {
+		updateBinary(theAmntCol, pValue);
 	}	
 
 	/**
@@ -292,8 +292,8 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Update the Units of the item
 	 * @param pValue the new units
 	 */
-	private void updateUnits(Units pValue) {
-		updateString(theUnitCol, (pValue == null) ? null : pValue.format(false));
+	private void updateUnits(byte[] pValue) {
+		updateBinary(theUnitCol, pValue);
 	}
 
 	/**
@@ -308,8 +308,8 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * Update the TaxCredit of the item
 	 * @param pValue the new tax credit
 	 */
-	private void updateTaxCredit(Money pValue) {
-		updateString(theTaxCrtCol, (pValue == null) ? null : pValue.format(false));
+	private void updateTaxCredit(byte[] pValue) {
+		updateBinary(theTaxCrtCol, pValue);
 	}
 	
 	/**
@@ -333,16 +333,16 @@ public class TableEvent extends DatabaseTable<Event> {
 		return "create table " + theTabName + " ( " +
 			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
    			   theDateCol	+ " date NOT NULL, " +
-  			   theDescCol	+ " varchar(" + Event.DESCLEN + ") NOT NULL, " +
-  			   theAmntCol	+ " money NOT NULL, " +
+  			   theDescCol	+ " varbinary(" + Event.DESCLEN + ") NOT NULL, " +
+  			   theAmntCol	+ " varbinary(" + EncryptedPair.MONEYLEN + ") NOT NULL, " +
 			   theDebCol	+ " int NOT NULL " +
 		   			"REFERENCES " + TableAccount.idReference() + ", " +
   			   theCredCol	+ " int NOT NULL " +
 		   			"REFERENCES " + TableAccount.idReference() + ", " +
- 			   theUnitCol	+ " money NULL, " +
+ 			   theUnitCol	+ " varbinary(" + EncryptedPair.UNITSLEN + ") NULL, " +
 		   	   theTrnTypCol	+ " int NOT NULL " +
 	   				"REFERENCES " + TableTransactionType.idReference() + ", " +
- 			   theTaxCrtCol	+ " decimal(18,4) NULL, " +
+ 			   theTaxCrtCol	+ " varbinary(" + EncryptedPair.MONEYLEN + ") NULL, " +
  			   theDiluteCol	+ " decimal(18,6) NULL, " +
 			   theYearsCol	+ " int NULL )";
 	}
@@ -369,10 +369,10 @@ public class TableEvent extends DatabaseTable<Event> {
 		int  			myDebitId;
 		int  			myCreditId;
 		int  			myTranType;
-		String 			myDesc;
-		String 			myAmount;
-		String 			myUnits;
-		String 			myTaxCred;
+		byte[] 			myDesc;
+		byte[] 			myAmount;
+		byte[] 			myUnits;
+		byte[] 			myTaxCred;
 		String			myDilution;
 		Integer			myYears;
 		java.util.Date  myDate;
@@ -439,13 +439,13 @@ public class TableEvent extends DatabaseTable<Event> {
 			/* Set the fields */
 			setID(pItem.getId());
 			setDate(pItem.getDate());
-			setDesc(pItem.getDesc());
-			setAmount(pItem.getAmount());
+			setDesc(pItem.getDescBytes());
+			setAmount(pItem.getAmountBytes());
 			setDebit(pItem.getDebit().getId());
 			setCredit(pItem.getCredit().getId());
-			setUnits(pItem.getUnits());
+			setUnits(pItem.getUnitsBytes());
 			setTransType(pItem.getTransType().getId());
-			setTaxCredit(pItem.getTaxCredit());
+			setTaxCredit(pItem.getTaxCredBytes());
 			setDilution(pItem.getDilution());
 			setYears(pItem.getYears());
 		}
@@ -474,27 +474,27 @@ public class TableEvent extends DatabaseTable<Event> {
 			if (Date.differs(pItem.getDate(),
 				  		  	 myBase.getDate()))
 				updateDate(pItem.getDate());
-			if (Utils.differs(pItem.getDesc(),
-						  	  myBase.getDesc())) 
-				updateDescription(pItem.getDesc());
-			if (Money.differs(pItem.getAmount(),
-		  		  	  		  myBase.getAmount()))
-				updateAmount(pItem.getAmount());
+			if (Utils.differs(pItem.getDescBytes(),
+						  	  myBase.getDescBytes())) 
+				updateDescription(pItem.getDescBytes());
+			if (Utils.differs(pItem.getAmountBytes(),
+		  		  	  		  myBase.getAmountBytes()))
+				updateAmount(pItem.getAmountBytes());
 			if (Account.differs(pItem.getDebit(),
 				  	  			myBase.getDebit())) 
 				updateDebit(pItem.getDebit().getId());
 			if (Account.differs(pItem.getCredit(),
 		  	  		  			myBase.getCredit())) 
 				updateCredit(pItem.getCredit().getId());
-			if (Units.differs(pItem.getUnits(),
-  		  	  		  		  myBase.getUnits()))
-				updateUnits(pItem.getUnits());
+			if (Utils.differs(pItem.getUnitsBytes(),
+  		  	  		  		  myBase.getUnitsBytes()))
+				updateUnits(pItem.getUnitsBytes());
 			if (TransactionType.differs(pItem.getTransType(),
 		  		  	  		  			myBase.getTransType()))
 				updateTransType(pItem.getTransType().getId());
-			if (Money.differs(pItem.getTaxCredit(),
-				  	  		  myBase.getTaxCredit())) 
-				updateTaxCredit(pItem.getTaxCredit());
+			if (Utils.differs(pItem.getTaxCredBytes(),
+				  	  		  myBase.getTaxCredBytes())) 
+				updateTaxCredit(pItem.getTaxCredBytes());
 			if (Dilution.differs(pItem.getDilution(),
 		  	  		  		  	 myBase.getDilution())) 
 				updateDilution(pItem.getDilution());

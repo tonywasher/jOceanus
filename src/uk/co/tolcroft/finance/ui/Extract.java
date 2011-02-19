@@ -630,7 +630,9 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 			
 			/* Push history */
 			myEvent.pushHistory();
-			
+
+			/* TODO protect against Exceptions*/
+			try {
 			/* Store the appropriate value */
 			switch (col) {
 				case COLUMN_DATE:  
@@ -664,6 +666,8 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 					myEvent.setDebit(theAccounts.searchFor((String)obj));    
 					break;
 			}
+			/* TODO handle exceptions */
+			} catch (Throwable e) {}
 				
 			/* Check for changes */
 			if (myEvent.checkForHistory()) {

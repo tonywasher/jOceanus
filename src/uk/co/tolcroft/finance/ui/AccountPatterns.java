@@ -429,6 +429,8 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 			/* Push history */
 			myPattern.pushHistory();
 			
+			/* TODO process errors caught here */
+			try {
 			/* Store the appropriate value */
 			switch (col) {
 				case COLUMN_DATE:  
@@ -452,6 +454,8 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 					myPattern.setFrequency(theFreqs.searchFor((String)obj));    
 					break;
 			}
+			/* TODO Catch errors */
+			} catch(Throwable e) {}
 				
 			/* Check for changes */
 			if (myPattern.checkForHistory()) {

@@ -131,8 +131,7 @@ public class SheetEvent {
 						}
 
 						/* Add the event */
-						myList.addItem(0,
-						               myDate,
+						myList.addItem(myDate,
 						               myDesc,
 						               myAmount,
 						               myDebit,
@@ -178,13 +177,14 @@ public class SheetEvent {
 		Sheet     		mySheet;
 		Cell      		myTop;
 		Cell      		myBottom;
-		String    		myDesc;
-		String    		myAmount;
+		byte[]    		myDesc;
+		byte[]    		myAmount;
 		int		  		myDebit;
 		int	      		myCredit; 
-		String    		myUnits;
-		String    		myTaxCredit;
+		byte[]    		myUnits;
+		byte[]    		myTaxCredit;
 		String			myDilution;
+		String			myHexString;
 		int		   		myTranType;
 		int      		myID;
 		Cell      		myCell;
@@ -245,21 +245,25 @@ public class SheetEvent {
 					myDate     = myDateCell.getDate();
 			    
 					/* Access the values */
-					myDesc         = mySheet.getCell(myCol+2, i).getContents();
-					myAmount       = mySheet.getCell(myCol+5, i).getContents();
+					myHexString	= mySheet.getCell(myCol+2, i).getContents();
+					myDesc      = Utils.BytesFromHexString(myHexString);
+					myHexString	= mySheet.getCell(myCol+5, i).getContents();
+					myAmount    = Utils.BytesFromHexString(myHexString);
 			    
 					/* Handle Units which may be missing */
 					myCell    = mySheet.getCell(myCol+7, i);
 					myUnits   = null;
 					if (myCell.getType() != CellType.EMPTY) {
-						myUnits = myCell.getContents();
+						myHexString	= myCell.getContents();
+						myUnits     = Utils.BytesFromHexString(myHexString);
 					}
 
 					/* Handle TaxCredit which may be missing */
 					myCell      = mySheet.getCell(myCol+8, i);
 					myTaxCredit = null;
 					if (myCell.getType() != CellType.EMPTY) {
-						myTaxCredit = myCell.getContents();
+						myHexString	= myCell.getContents();
+						myTaxCredit = Utils.BytesFromHexString(myHexString);
 					}
 
 					/* Handle Dilution which may be missing */
@@ -377,16 +381,16 @@ public class SheetEvent {
 			
 				/* Create the Amount cells */
 				myCell = new jxl.write.Label(5, myRow,
-											 myCurr.getAmount().format(false));
+											 Utils.HexStringFromBytes(myCurr.getAmountBytes()));
 				mySheet.addCell(myCell);
 				if (myCurr.getUnits() != null) {
 					myCell = new jxl.write.Label(7, myRow, 
-												 myCurr.getUnits().format(false));
+												 Utils.HexStringFromBytes(myCurr.getUnitsBytes()));
 					mySheet.addCell(myCell);
 				}
 				if (myCurr.getTaxCredit() != null) {
 					myCell = new jxl.write.Label(8, myRow, 
-												 myCurr.getTaxCredit().format(false));
+												 Utils.HexStringFromBytes(myCurr.getTaxCredBytes()));
 					mySheet.addCell(myCell);
 				}
 				if (myCurr.getDilution() != null) {
@@ -401,7 +405,8 @@ public class SheetEvent {
 				}
 				
 				/* Create the Desc cells */
-				myCell = new jxl.write.Label(2, myRow, myCurr.getDesc());
+				myCell = new jxl.write.Label(2, myRow, 
+											 Utils.HexStringFromBytes(myCurr.getDescBytes()));
 				mySheet.addCell(myCell);
 				
 				/* Create the Date cells */

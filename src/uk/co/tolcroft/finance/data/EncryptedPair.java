@@ -1,5 +1,7 @@
 package uk.co.tolcroft.finance.data;
 
+import java.util.Arrays;
+
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.models.Number.*;
@@ -9,6 +11,16 @@ public class EncryptedPair {
 	private DataSet theData 	= null;
 	private Static  theStatic	= null;
 	
+	/**
+	 * Encrypted Money length
+	 */
+	public final static int MONEYLEN 		= 20;
+
+	/**
+	 * Encrypted Units length
+	 */
+	public final static int UNITSLEN 		= 20;
+
 	/**
 	 * Constructor
 	 * @param pData the Data set
@@ -150,7 +162,7 @@ public class EncryptedPair {
 		 * Constructor from a clear text value
 		 * @param pValue the clear text value
 		 */
-		protected StringPair(String pValue) { 
+		public StringPair(String pValue) { 
 			/* Store the value and reset bytes */
 			theValue = pValue;
 		} 
@@ -167,21 +179,6 @@ public class EncryptedPair {
 			if (theBytes != null)
 				theValue = decryptString(theBytes);
 		} 
-
-		/**
-		 * Set a new value
-		 * @param pValue the new clear text value
-		 */
-		public void setVaccclue(String pValue) throws Exception { 
-			/* Store the value */
-			theValue = pValue;
-			theBytes = null;
-			
-			/* Encrypt the value if required */
-			if (theValue != null)
-				theBytes = encryptString(pValue);
-		}
-		
 		/**
 		 * Ensure encryption after spreadsheet load
 		 */
@@ -236,7 +233,7 @@ public class EncryptedPair {
 		 * Constructor from a clear text value
 		 * @param pValue the clear text value
 		 */
-		protected CharArrayPair(char[] pValue) throws Exception { 
+		protected CharArrayPair(char[] pValue) { 
 			/* Store the value */
 			theValue = pValue;
 		} 
@@ -254,18 +251,11 @@ public class EncryptedPair {
 		} 
 
 		/**
-		 * Set a new value
-		 * @param pValue the new clear text value
+		 * clear out the character array on termination
 		 */
-		public void setValue(char[] pValue) throws Exception { 
-			/* Store the value */
-			theValue = pValue;
-			theBytes = null;
-			
-			/* Encrypt the value if required */
-			if (theValue != null)
-				theBytes = encryptChars(pValue);
-		} 
+		protected void finalize() throws Throwable {
+			if (theValue != null) Arrays.fill(theValue, (char) 0);
+		}
 		
 		/**
 		 * Ensure encryption after spreadsheet load
@@ -321,9 +311,18 @@ public class EncryptedPair {
 		 * Constructor from a clear value
 		 * @param pValue the clear value
 		 */
-		protected MoneyPair(Money pValue) throws Exception { 
+		public MoneyPair(Money pValue) { 
 			/* Store the value */
 			theValue = pValue;
+		} 
+
+		/**
+		 * Constructor from a string value
+		 * @param pValue the clear value
+		 */
+		protected MoneyPair(String pValue) throws Exception { 
+			/* Store the value */
+			theValue = Money.Parse(pValue);
 		} 
 
 		/**
@@ -344,25 +343,6 @@ public class EncryptedPair {
 			theValue = Money.Parse(myValue);
 		} 
 
-		/**
-		 * Set a new value
-		 * @param pValue the new clear text value
-		 */
-		public void setValue(Money pValue) throws Exception { 
-			/* Store the value */
-			theValue = pValue;
-			theBytes = null;
-
-			/* We have finished if the value is null */
-			if (pValue == null) return;
-			
-			/* Format the value */
-			String myValue = theValue.format(false);
-
-			/* Encrypt the value */
-			theBytes = encryptString(myValue);
-		} 
-		
 		/**
 		 * Ensure encryption after spreadsheet load
 		 */
@@ -421,9 +401,18 @@ public class EncryptedPair {
 		 * Constructor from a clear value
 		 * @param pValue the clear value
 		 */
-		protected UnitsPair(Units pValue) throws Exception { 
+		public UnitsPair(Units pValue) { 
 			/* Store the value */
 			theValue = pValue;
+		} 
+
+		/**
+		 * Constructor from a string value
+		 * @param pValue the clear value
+		 */
+		protected UnitsPair(String pValue) throws Exception { 
+			/* Store the value */
+			theValue = Units.Parse(pValue);
 		} 
 
 		/**
@@ -444,25 +433,6 @@ public class EncryptedPair {
 			theValue = Units.Parse(myValue);
 		} 
 
-		/**
-		 * Set a new value
-		 * @param pValue the new clear text value
-		 */
-		public void setValue(Units pValue) throws Exception { 
-			/* Store the value */
-			theValue = pValue;
-			theBytes = null;
-
-			/* We have finished if the value is null */
-			if (pValue == null) return;
-			
-			/* Format the value */
-			String myValue = theValue.format(false);
-
-			/* Encrypt the value */
-			theBytes = encryptString(myValue);
-		} 
-		
 		/**
 		 * Ensure encryption after spreadsheet load
 		 */

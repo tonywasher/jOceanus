@@ -109,8 +109,8 @@ public class TableAccount extends DatabaseTable<Account> {
 	 * Determine the Name of the newly loaded item
 	 * @return the Name
 	 */
-	private String getName() throws SQLException {
-		return getString();
+	private byte[] getName() throws SQLException {
+		return getBinary();
 	}
 
 	/**
@@ -125,8 +125,8 @@ public class TableAccount extends DatabaseTable<Account> {
 	 * Determine the Description of the newly loaded item
 	 * @return the Description
 	 */
-	private String getDescription() throws SQLException {
-		return getString();
+	private byte[] getDescription() throws SQLException {
+		return getBinary();
 	}
 
 	/**
@@ -217,8 +217,8 @@ public class TableAccount extends DatabaseTable<Account> {
 	 * Set the Name of the item to be inserted
 	 * @param pAccount the name of the item
 	 */
-	private void setName(String pAccount) throws SQLException {
-		setString(pAccount);
+	private void setName(byte[] pAccount) throws SQLException {
+		setBinary(pAccount);
 	}
 
 	/**
@@ -233,8 +233,8 @@ public class TableAccount extends DatabaseTable<Account> {
 	 * Set the Description of the item to be inserted
 	 * @param pDesc the description of the item
 	 */
-	private void setDescription(String pDesc) throws SQLException {
-		setString(pDesc);
+	private void setDescription(byte[] pDesc) throws SQLException {
+		setBinary(pDesc);
 	}
 
 	/**
@@ -321,16 +321,16 @@ public class TableAccount extends DatabaseTable<Account> {
 	 * Update the Name of the item
 	 * @param pValue the new name
 	 */
-	private void updateName(String pValue) {
-		updateString(theNameCol, pValue);
+	private void updateName(byte[] pValue) {
+		updateBinary(theNameCol, pValue);
 	}		
 
 	/**
 	 * Update the Description of the item
 	 * @param pValue the new description
 	 */
-	private void updateDescription(String pValue) {
-		updateString(theDescCol, pValue);
+	private void updateDescription(byte[] pValue) {
+		updateBinary(theDescCol, pValue);
 	}	
 
 	/**
@@ -417,10 +417,10 @@ public class TableAccount extends DatabaseTable<Account> {
 	protected String createStatement() {
 		return "create table " + theTabName + " ( " +
 			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
-			   theNameCol	+ " varchar(" + Account.NAMELEN + ") NOT NULL, " +
+			   theNameCol	+ " varbinary(" + Account.NAMELEN + ") NOT NULL, " +
 			   theActTypCol	+ " int NOT NULL " +
 			   		"REFERENCES " + TableAccountType.idReference() + ", " +
-   			   theDescCol	+ " varchar(" + Account.DESCLEN + ") NULL, " +
+   			   theDescCol	+ " varbinary(" + Account.DESCLEN + ") NULL, " +
 			   theMatureCol	+ " date NULL, " +
 			   theCloseCol	+ " date NULL, " +
 			   theParentCol	+ " int NULL " +
@@ -451,11 +451,11 @@ public class TableAccount extends DatabaseTable<Account> {
 	protected void loadItem() throws Exception {
 		Account.List	myList;
 		int	    		myId;
-		String  		myName;
+		byte[]  		myName;
 		int    			myActTypeId;
 		int 	   		myParentId;
 		int	    		myAliasId;
-		String  		myDesc;
+		byte[]  		myDesc;
 		java.util.Date  myMaturity;
 		java.util.Date  myClosed;
 		byte[]     		myWebSite;
@@ -533,21 +533,21 @@ public class TableAccount extends DatabaseTable<Account> {
 		try {			
 			/* Set the fields */
 			setID(pItem.getId());
-			setName(pItem.getName());
+			setName(pItem.getNameBytes());
 			setAccountType(pItem.getActType().getId());
-			setDescription(pItem.getDesc());
+			setDescription(pItem.getDescBytes());
 			setMaturity(pItem.getMaturity());
 			setClosed(pItem.getClose());
 			setParent((pItem.getParent() != null)
 							? pItem.getParent().getId() : -1);
 			setAlias((pItem.getAlias() != null)
 							? pItem.getAlias().getId() : -1);
-			setWebSite(pItem.getWebSite());
-			setCustNo(pItem.getCustNo());
-			setUserId(pItem.getUserId());
-			setPassword(pItem.getPassword());
-			setAccount(pItem.getAccount());
-			setNotes(pItem.getNotes());
+			setWebSite(pItem.getWebSiteBytes());
+			setCustNo(pItem.getCustNoBytes());
+			setUserId(pItem.getUserIdBytes());
+			setPassword(pItem.getPasswordBytes());
+			setAccount(pItem.getAccountBytes());
+			setNotes(pItem.getNotesBytes());
 		}
 				
 		catch (Throwable e) {
@@ -571,12 +571,12 @@ public class TableAccount extends DatabaseTable<Account> {
 		/* Protect the update */
 		try {			
 			/* Update the fields */
-			if (Utils.differs(pItem.getName(),
-				  		  	  myBase.getName()))
-				updateName(pItem.getName());
-			if (Utils.differs(pItem.getDesc(),
-						  	  myBase.getDesc())) 
-				updateDescription(pItem.getDesc());
+			if (Utils.differs(pItem.getNameBytes(),
+				  		  	  myBase.getNameBytes()))
+				updateName(pItem.getNameBytes());
+			if (Utils.differs(pItem.getDescBytes(),
+						  	  myBase.getDescBytes())) 
+				updateDescription(pItem.getDescBytes());
 			if (Date.differs(pItem.getMaturity(),
 				             myBase.getMaturity())) 
 				updateMaturity(pItem.getMaturity());
@@ -591,24 +591,24 @@ public class TableAccount extends DatabaseTable<Account> {
 				  	  			myBase.getAlias()))
 				updateAlias((pItem.getAlias() != null)
 									? pItem.getAlias().getId() : -1);
-			if (Utils.differs(pItem.getWebSite(),
-				  	  		  myBase.getWebSite()))
-				updateWebSite(pItem.getWebSite());
-			if (Utils.differs(pItem.getCustNo(),
-				  	  		  myBase.getCustNo()))
-				updateCustNo(pItem.getCustNo());
-			if (Utils.differs(pItem.getUserId(),
-				  	  		  myBase.getUserId()))
-				updateUserId(pItem.getUserId());
-			if (Utils.differs(pItem.getPassword(),
-				  	  		  myBase.getPassword()))
-				updatePassword(pItem.getPassword());
-			if (Utils.differs(pItem.getAccount(),
-				  	  		  myBase.getAccount()))
-				updateAccount(pItem.getAccount());
-			if (Utils.differs(pItem.getNotes(),
-				  	  		  myBase.getNotes()))
-				updateNotes(pItem.getNotes());
+			if (Utils.differs(pItem.getWebSiteBytes(),
+				  	  		  myBase.getWebSiteBytes()))
+				updateWebSite(pItem.getWebSiteBytes());
+			if (Utils.differs(pItem.getCustNoBytes(),
+				  	  		  myBase.getCustNoBytes()))
+				updateCustNo(pItem.getCustNoBytes());
+			if (Utils.differs(pItem.getUserIdBytes(),
+				  	  		  myBase.getUserIdBytes()))
+				updateUserId(pItem.getUserIdBytes());
+			if (Utils.differs(pItem.getPasswordBytes(),
+				  	  		  myBase.getPasswordBytes()))
+				updatePassword(pItem.getPasswordBytes());
+			if (Utils.differs(pItem.getAccountBytes(),
+				  	  		  myBase.getAccountBytes()))
+				updateAccount(pItem.getAccountBytes());
+			if (Utils.differs(pItem.getNotesBytes(),
+				  	  		  myBase.getNotesBytes()))
+				updateNotes(pItem.getNotesBytes());
 		}
 		
 		catch (Throwable e) {

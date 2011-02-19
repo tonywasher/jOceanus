@@ -99,8 +99,7 @@ public class SheetPattern {
 					isCredit 	= myBoolCell.getValue();
 				
 					/* Add the value into the finance tables */
-					myList.addItem(0,
-					               myDate,
+					myList.addItem(myDate,
 					               myDesc,
 					               myAmount,
 					               myAccount,
@@ -144,8 +143,9 @@ public class SheetPattern {
 		Sheet       		mySheet;
 		Cell        		myTop;
 		Cell        		myBottom;
-		String      		myDesc;
-		String      		myAmount;
+		String     			myHexString;
+		byte[]      		myDesc;
+		byte[]      		myAmount;
 		int		    		myAccount;
 		int	        		myPartner; 
 		int	        		myFrequency;
@@ -216,8 +216,10 @@ public class SheetPattern {
 					isCredit   = myBoolCell.getValue();
 			    
 					/* Access the values */
-					myDesc         = mySheet.getCell(myCol+7, i).getContents();
-					myAmount       = mySheet.getCell(myCol+8, i).getContents();
+					myHexString	= mySheet.getCell(myCol+7, i).getContents();
+					myDesc	    = Utils.BytesFromHexString(myHexString);
+					myHexString	= mySheet.getCell(myCol+8, i).getContents();
+					myAmount    = Utils.BytesFromHexString(myHexString);
 			    
 					/* Add the pattern */
 					myList.addItem(myID,
@@ -322,7 +324,7 @@ public class SheetPattern {
 			
 				/* Create the Amount cells */
 				myCell = new jxl.write.Label(8, myRow, 
-											 myCurr.getAmount().format(false));
+											 Utils.HexStringFromBytes(myCurr.getAmountBytes()));
 				mySheet.addCell(myCell);
 			
 				/* Create the IsCredit cells */
@@ -330,7 +332,8 @@ public class SheetPattern {
 				mySheet.addCell(myCredit);
 				
 				/* Create the Desc cells */
-				myCell = new jxl.write.Label(7, myRow, myCurr.getDesc());
+				myCell = new jxl.write.Label(7, myRow, 
+											 Utils.HexStringFromBytes(myCurr.getDescBytes()));
 				mySheet.addCell(myCell);
 				
 				/* Create the Date cells */
