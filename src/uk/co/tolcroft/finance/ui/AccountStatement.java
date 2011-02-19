@@ -658,6 +658,19 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 			theModel.setValueAt(null, row, COLUMN_YEARS);
 			theModel.fireTableCellUpdated(row, COLUMN_YEARS);
 		}
+
+		/* If this is a set calculate Tax Credit request */
+		else if (myCmd.compareTo(statementMouse.popupCalcTax) == 0) {
+			/* Access the Line */
+			myRow = theLines.get(row);
+
+			/* Calculate the tax credit */
+			Money myCredit = myRow.calculateTaxCredit();
+			
+			/* set the null value */
+			theModel.setValueAt(myCredit, row, COLUMN_TAXCREDIT);
+			theModel.fireTableCellUpdated(row, COLUMN_TAXCREDIT);
+		}
 	}
 		
 	/* Check whether this is a valid Object for selection */
@@ -909,41 +922,49 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 			/* Push history */
 			myLine.pushHistory();
 
-			/* TODO protect against exceptions */
+			/* Protect against exceptions */
 			try {
-			/* Store the appropriate value */
-			switch (col) {
-				case COLUMN_DATE:  
-					myLine.setDate((Date)obj);    
-					break;
-				case COLUMN_DESC:  
-					myLine.setDescription((String)obj);            
-					break;
-				case COLUMN_TRANTYP:  
-					myLine.setTransType(theTransTypes.searchFor((String)obj));    
-					break;
-				case COLUMN_CREDIT:
-				case COLUMN_DEBIT:
-					if (theStateType == StatementType.UNITS)
-						myLine.setUnits((Units)obj);
-					else
-						myLine.setAmount((Money)obj); 
-					break;
-				case COLUMN_PARTNER:
-					myLine.setPartner(theAccounts.searchFor((String)obj));    
-					break;
-				case COLUMN_DILUTION:  
-					myLine.setDilution((Dilution)obj);            
-					break;
-				case COLUMN_TAXCREDIT:  
-					myLine.setTaxCredit((Money)obj);            
-					break;
-				case COLUMN_YEARS:  
-					myLine.setYears((Integer)obj);            
-					break;
+				/* Store the appropriate value */
+				switch (col) {
+					case COLUMN_DATE:  
+						myLine.setDate((Date)obj);    
+						break;
+					case COLUMN_DESC:  
+						myLine.setDescription((String)obj);            
+						break;
+					case COLUMN_TRANTYP:  
+						myLine.setTransType(theTransTypes.searchFor((String)obj));    
+						break;
+					case COLUMN_CREDIT:
+					case COLUMN_DEBIT:
+						if (theStateType == StatementType.UNITS)
+							myLine.setUnits((Units)obj);
+						else
+							myLine.setAmount((Money)obj); 
+						break;
+					case COLUMN_PARTNER:
+						myLine.setPartner(theAccounts.searchFor((String)obj));    
+						break;
+					case COLUMN_DILUTION:  
+						myLine.setDilution((Dilution)obj);            
+						break;
+					case COLUMN_TAXCREDIT:  
+						myLine.setTaxCredit((Money)obj);            
+						break;
+					case COLUMN_YEARS:  
+						myLine.setYears((Integer)obj);            
+						break;
+				}
 			}
-			/* TODO handle Exceptions */
-			}catch (Throwable e) {}
+			
+			/* Handle Exceptions */
+			catch (Throwable e) {
+				/* Reset values */
+				myLine.popHistory();
+				myLine.pushHistory();
+				
+				/* TODO report the error */
+			}
 			
 			/* Check for changes */
 			if (myLine.checkForHistory()) {
@@ -994,7 +1015,8 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		private static final String popupPartner  = "View Parther";
 		private static final String popupMPartner = "Maintain Parther";
 		private static final String popupPattern  = "Add to Pattern";
-		private static final String popupSetNull = "Set Null";
+		private static final String popupSetNull  = "Set Null";
+		private static final String popupCalcTax   = "Calculate Tax Credit";
 				
 		/* handle mouse Pressed event */
 		public void mousePressed(MouseEvent e) {
@@ -1110,7 +1132,7 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 							myMenu.add(myItem);
 						}
 						
-						/* If we have dilute */
+						/* If we have tax credit */
 						if ((col == COLUMN_TAXCREDIT) &&
 							(myRow.getTaxCredit() != null)) {
 							/* Create the set null choice */
@@ -1118,6 +1140,22 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 						
 							/* Set the command and add to menu */
 							myItem.setActionCommand(popupSetNull + "Credit:" + row);
+							myItem.addActionListener(theTable);
+							myMenu.add(myItem);
+						}
+						
+						/* If we have tax credit */
+						if ((col == COLUMN_TAXCREDIT) &&
+						    ((myRow.getTaxCredit() == null) ||
+							 (!myRow.getTaxCredit().isNonZero())) &&
+							((myRow.getTransType() != null) &&
+							 ((myRow.getTransType().isInterest()) ||
+							  (myRow.getTransType().isDividend())))) {
+							/* Create the calculate tax choice */
+							myItem = new JMenuItem(popupCalcTax);
+						
+							/* Set the command and add to menu */
+							myItem.setActionCommand(popupCalcTax + ":" + row);
 							myItem.addActionListener(theTable);
 							myMenu.add(myItem);
 						}

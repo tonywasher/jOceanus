@@ -912,30 +912,6 @@ public class Event extends DataItem {
 	}
 		
 	/**
-	 * Determines whether an event is a market adjustment
-	 * 
-	 * @return market adjustment true/false 
-	 */
-	protected boolean isMarketAdjustment() {
-		boolean myResult = false;
-	
-		/* Check for market growth */
-		if ((getCredit().isPriced()) &&
-			(getDebit().isMarket()) &&
-			(getTransType().isMarketAdjust()))
-			myResult = true;
-		
-		/* Check for market shrink */
-		else if ((getDebit().isPriced()) &&
-				 (getCredit().isMarket()) &&
-				 (getTransType().isMarketAdjust()))
-			myResult = true;
-				
-		/* Return the result */
-		return myResult;
-	}
-
-	/**
 	 * Determines whether an event is a dividend re-investment
 	 * 
 	 * @return dividend re-investment true/false 
@@ -1039,6 +1015,43 @@ public class Event extends DataItem {
 		
 		/* Return the result */
 		return myResult;
+	}
+
+	/**
+	 * Calculate the tax credit for an event
+	 * @return the calculated tax credit
+	 */
+	public Money calculateTaxCredit() {
+		DataSet			myData	= ((List)getList()).getData(); 
+		TaxYear.List 	myList  = myData.getTaxYears(); 
+		TaxYear 		myTax;
+		Rate			myRate;
+		Money			myCredit;
+		
+		/* Ignore unless tax credit is null/zero */
+		if ((getTaxCredit() != null) && (getTaxCredit().isNonZero()))
+			return getTaxCredit();
+		
+		/* Ignore unless transaction type is interest/dividend */
+		if ((getTransType() == null) ||
+			((!getTransType().isInterest()) &&
+			 (!getTransType().isDividend())))
+			return getTaxCredit();
+		
+		/* Access the relevant tax year */
+		myTax  = myList.searchFor(getDate());
+		
+		/* Determine the tax credit rate */
+		if (getTransType().isInterest())
+			myRate = myTax.getIntTaxRate();
+		else
+			myRate = myTax.getDivTaxRate();
+		
+		/* Calculate the tax credit */
+		myCredit = getAmount().taxCreditAtRate(myRate);
+		
+		/* Return the tax credit */
+		return myCredit;
 	}
 
 	/**

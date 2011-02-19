@@ -369,6 +369,9 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 				int row = theTable.rowAtPoint(p);
 				int col = theTable.columnAtPoint(p);
 				
+				/* Adjust column for view differences */
+				col = theTable.convertColumnIndexToModel(col);
+				
 				/* Access the row */
 				myRow = theRates.get(row);
 					

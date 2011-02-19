@@ -409,6 +409,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		String      tokens[];
 		String      myName = null;
 		Account 	myAccount;
+		Event		myEvent;
 		int         row;
 
 		/* Access the action command */
@@ -472,10 +473,26 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		else if (myCmd.compareTo(extractMouse.popupSetNull + "Year") == 0) {
 			/* Access the correct row */
 			row = Integer.parseInt(myName);
-		
+			
 			/* set the null value */
 			theModel.setValueAt(null, row, COLUMN_YEARS);
 			theModel.fireTableCellUpdated(row, COLUMN_YEARS);
+		}
+		
+		/* If this is a calculate Tax Credit request */
+		else if (myCmd.compareTo(extractMouse.popupCalcTax) == 0) {
+			/* Access the correct row */
+			row = Integer.parseInt(myName);
+			
+			/* Access the Event */
+			myEvent = theEvents.get(row);
+
+			/* Calculate the tax credit */
+			Money myCredit = myEvent.calculateTaxCredit();
+			
+			/* set the null value */
+			theModel.setValueAt(myCredit, row, COLUMN_TAXCRED);
+			theModel.fireTableCellUpdated(row, COLUMN_TAXCRED);
 		}
 	}
 		
@@ -631,44 +648,52 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 			/* Push history */
 			myEvent.pushHistory();
 
-			/* TODO protect against Exceptions*/
+			/* Protect against Exceptions*/
 			try {
-			/* Store the appropriate value */
-			switch (col) {
-				case COLUMN_DATE:  
-					myEvent.setDate((Date)obj);    
-					break;
-				case COLUMN_DESC:  
-					myEvent.setDescription((String)obj);            
-					break;
-				case COLUMN_TRANTYP:  
-					myEvent.setTransType(theTransTypes.searchFor((String)obj));    
-					break;
-				case COLUMN_AMOUNT:
-					myEvent.setAmount((Money)obj); 
-					break;
-				case COLUMN_DILUTE:
-					myEvent.setDilution((Dilution)obj); 
-					break;
-				case COLUMN_TAXCRED:
-					myEvent.setTaxCredit((Money)obj); 
-					break;
-				case COLUMN_YEARS:
-					myEvent.setYears((Integer)obj); 
-					break;
-				case COLUMN_UNITS:
-					myEvent.setUnits((Units)obj); 
-					break;
-				case COLUMN_CREDIT:
-					myEvent.setCredit(theAccounts.searchFor((String)obj));    
-					break;
-				case COLUMN_DEBIT:
-					myEvent.setDebit(theAccounts.searchFor((String)obj));    
-					break;
+				/* Store the appropriate value */
+				switch (col) {
+					case COLUMN_DATE:  
+						myEvent.setDate((Date)obj);    
+						break;
+					case COLUMN_DESC:  
+						myEvent.setDescription((String)obj);            
+						break;
+					case COLUMN_TRANTYP:  
+						myEvent.setTransType(theTransTypes.searchFor((String)obj));    
+						break;
+					case COLUMN_AMOUNT:
+						myEvent.setAmount((Money)obj); 
+						break;
+					case COLUMN_DILUTE:
+						myEvent.setDilution((Dilution)obj); 
+						break;
+					case COLUMN_TAXCRED:
+						myEvent.setTaxCredit((Money)obj); 
+						break;
+					case COLUMN_YEARS:
+						myEvent.setYears((Integer)obj); 
+						break;
+					case COLUMN_UNITS:
+						myEvent.setUnits((Units)obj); 
+						break;
+					case COLUMN_CREDIT:
+						myEvent.setCredit(theAccounts.searchFor((String)obj));    
+						break;
+					case COLUMN_DEBIT:
+						myEvent.setDebit(theAccounts.searchFor((String)obj));    
+						break;
+				}
 			}
-			/* TODO handle exceptions */
-			} catch (Throwable e) {}
+			
+			/* Handle Exceptions */
+			catch (Throwable e) {
+				/* Reset values */
+				myEvent.popHistory();
+				myEvent.pushHistory();
 				
+				/* TODO report the error */
+			}
+			
 			/* Check for changes */
 			if (myEvent.checkForHistory()) {
 				/* Note that the item has changed */
@@ -706,6 +731,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		private static final String popupView    = "View Account";
 		private static final String popupMaint   = "Maintain Account";
 		private static final String popupSetNull = "Set Null";
+		private static final String popupCalcTax = "Calculate Tax Credit";
 			
 		/* handle mouse Pressed event */
 		public void mousePressed(MouseEvent e) {
@@ -725,6 +751,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 			boolean         isUnits   = false;
 			boolean         isDilute  = false;
 			boolean         isTaxCred = false;
+			boolean         isTaxCalc = false;
 			boolean         isYears   = false;
 				
 			if (e.isPopupTrigger() && 
@@ -733,6 +760,9 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 				Point p = new Point(e.getX(), e.getY());
 				int row = theTable.rowAtPoint(p);
 				int col = theTable.columnAtPoint(p);
+				
+				/* Adjust column for view differences */
+				col = theTable.convertColumnIndexToModel(col);
 				
 				/* Access the row */
 				myRow = theEvents.get(row);
@@ -747,7 +777,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 				else if (col == COLUMN_DILUTE)
 					isDilute = true;
 				else if (col == COLUMN_TAXCRED)
-					isTaxCred = true;
+					{ isTaxCred = true; isTaxCalc = true; }
 				else if (col == COLUMN_YEARS)
 					isYears = true;
 				
@@ -772,6 +802,16 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 					 (myRow.getTaxCredit() == null)))
 					isTaxCred = false;
 				
+				/* If we are pointing to TaxCredit then determine whether we can calculate tax */
+				if ((isTaxCalc) && 
+					((myRow.isLocked()) ||
+					 ((myRow.getTaxCredit() != null) &&
+					  (myRow.getTaxCredit().isNonZero())) ||
+					 ((myRow.getTransType() == null) ||
+					  ((!myRow.getTransType().isInterest()) &&
+					   (!myRow.getTransType().isDividend())))))
+					isTaxCalc = false;
+				
 				/* If we are pointing to years then determine whether we can set null */
 				if ((isYears) && 
 					((myRow.isLocked()) ||
@@ -780,7 +820,8 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 				
 				/* If we have an account or can set null units/dilution/years/tax */
 				if ((myAccount != null) || 
-					(isUnits) || (isDilute) || (isTaxCred) || (isYears)) {
+					(isUnits) || (isDilute) || 
+					(isTaxCred) || (isTaxCalc) || (isYears)) {
 					/* Create the pop-up menu */
 					myMenu = new JPopupMenu();
 					
@@ -832,6 +873,17 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 					
 						/* Set the command and add to menu */
 						myItem.setActionCommand(popupSetNull + "Credit:" + row);
+						myItem.addActionListener(theTable);
+						myMenu.add(myItem);
+					}
+					
+					/* If we have Tax Calculation */
+					if (isTaxCalc) {
+						/* Create the set tax choice */
+						myItem = new JMenuItem(popupCalcTax);
+					
+						/* Set the command and add to menu */
+						myItem.setActionCommand(popupCalcTax + ":" + row);
 						myItem.addActionListener(theTable);
 						myMenu.add(myItem);
 					}

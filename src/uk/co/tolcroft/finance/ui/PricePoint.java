@@ -407,6 +407,9 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 				int row = theTable.rowAtPoint(p);
 				int col = theTable.columnAtPoint(p);
 				
+				/* Adjust column for view differences */
+				col = theTable.convertColumnIndexToModel(col);
+				
 				/* Access the row */
 				myRow = thePrices.get(row);
 					

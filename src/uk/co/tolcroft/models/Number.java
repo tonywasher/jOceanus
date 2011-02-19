@@ -452,10 +452,7 @@ public class Number {
 		 */
 		public static long convertToValue(long pValue) { 
 			/* Build in the decimals to the value */
-			convertToValue(pValue, NUMDEC);       
-			
-			/* return the value */
-			return pValue;
+			return convertToValue(pValue, NUMDEC);       
 		}		
 	}
 	
@@ -1439,10 +1436,7 @@ public class Number {
 		 */
 		public static long convertToValue(long pValue) { 
 			/* Build in the decimals to the value */
-			convertToValue(pValue, NUMDEC);       
-			
-			/* return the value */
-			return pValue;
+			return convertToValue(pValue, NUMDEC);       
 		}		
 	}	
 }

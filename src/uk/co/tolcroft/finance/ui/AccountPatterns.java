@@ -429,34 +429,42 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 			/* Push history */
 			myPattern.pushHistory();
 			
-			/* TODO process errors caught here */
+			/* Process errors caught here */
 			try {
-			/* Store the appropriate value */
-			switch (col) {
-				case COLUMN_DATE:  
-					myPattern.setDate((Date)obj);    
-					break;
-				case COLUMN_DESC:  
-					myPattern.setDesc((String)obj);            
-					break;
-				case COLUMN_TRANTYP:  
-					myPattern.setTransType(theTransTypes.searchFor((String)obj));    
-					break;
-				case COLUMN_CREDIT:
-				case COLUMN_DEBIT:
-					myPattern.setAmount((Money)obj); 
-					break;
-				case COLUMN_PARTNER:  
-					myPattern.setPartner(theAccounts.searchFor((String)obj));    
-					break;
-				case COLUMN_FREQ:
-				default: 
-					myPattern.setFrequency(theFreqs.searchFor((String)obj));    
-					break;
+				/* Store the appropriate value */
+				switch (col) {
+					case COLUMN_DATE:  
+						myPattern.setDate((Date)obj);    
+						break;
+					case COLUMN_DESC:  
+						myPattern.setDesc((String)obj);            
+						break;
+					case COLUMN_TRANTYP:  
+						myPattern.setTransType(theTransTypes.searchFor((String)obj));    
+						break;
+					case COLUMN_CREDIT:
+					case COLUMN_DEBIT:
+						myPattern.setAmount((Money)obj); 
+						break;
+					case COLUMN_PARTNER:  
+						myPattern.setPartner(theAccounts.searchFor((String)obj));    
+						break;
+					case COLUMN_FREQ:
+					default: 
+						myPattern.setFrequency(theFreqs.searchFor((String)obj));    
+						break;
+				}
 			}
-			/* TODO Catch errors */
-			} catch(Throwable e) {}
+			
+			/* Handle Exceptions */
+			catch (Throwable e) {
+				/* Reset values */
+				myPattern.popHistory();
+				myPattern.pushHistory();
 				
+				/* TODO report the error */
+			}
+			
 			/* Check for changes */
 			if (myPattern.checkForHistory()) {
 				/* Note that the item has changed */

@@ -555,6 +555,28 @@ public class Statement {
 		}
 		
 		/**
+		 * Calculate the tax credit
+		 * @return the tax credit
+		 */
+		public Money calculateTaxCredit() {
+			Event        myEvent;
+			Event.List   myList;
+			DataSet		 myData;
+		
+			/* Access DataSet */
+			myData = theView.getData();
+			
+			/* Create a new Event list */
+			myList = new Event.List(myData, ListStyle.VIEW);
+		
+			/* Create a new event based on this line */
+			myEvent = new Event(myList, this);
+
+			/* calculate the tax credit */
+			return myEvent.calculateTaxCredit();
+		}
+		
+		/**
 		 * Compare the line
 		 */
 		public boolean equals(Object that) { return (this == that); }
