@@ -619,11 +619,16 @@ public class Threads {
 			DataSet    		myData   = null;
 			DataSet			myStore;
 			Database		myDatabase;
+			File			myFile;
 
 			try {
+				/* Determine the name of the file to load */
+				ArchiveLoad myDialog = new ArchiveLoad(theWindow);
+				myDialog.selectFile();
+				myFile = myDialog.getSelectedFile();
+				
 				/* Load workbook */
-				myData   = SpreadSheet.loadArchive(theStatus, 
-												   new File(theProperties.getBaseSpreadSheet()));
+				myData   = SpreadSheet.loadArchive(theStatus, myFile);
 
 				/* Re-initialise the status window */
 				theStatusBar.setOperation("Accessing Data Store");

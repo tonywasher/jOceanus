@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -17,6 +18,7 @@ import javax.swing.SpinnerDateModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import uk.co.tolcroft.finance.ui.controls.FileSelector.*;
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
@@ -35,13 +37,15 @@ public class MaintProperties implements ActionListener,
 	private JTextField			theDBConnect		= null;
 	private JTextField			theBaseSSheet		= null;
 	private JTextField			theBackupDir		= null;
-	private JTextField			theBackupFile		= null;
+	private JTextField			theBackupPrefix		= null;
 	private JSpinner			theSpinner			= null;
 	private SpinnerDateModel	theModel			= null;
 	private JCheckBox			theShowDebug		= null;
 	private JCheckBox			theEncryptBackup	= null;
 	private JButton				theOKButton			= null;
 	private JButton				theResetButton		= null;
+	private JButton				theBaseSel			= null;
+	private JButton				theBackupSel		= null;
 	private View.ViewProperties	theExtract			= null;
 	private boolean				refreshingData		= false;
 	
@@ -54,7 +58,7 @@ public class MaintProperties implements ActionListener,
 		JLabel	myDBConnect;
 		JLabel	myBaseSSheet;
 		JLabel	myBackupDir;
-		JLabel	myBackupFile;
+		JLabel	myBackupPrefix;
 		JLabel	myBirthDate;
 		
 		/* Store parent */
@@ -66,7 +70,7 @@ public class MaintProperties implements ActionListener,
 		myDBConnect 	= new JLabel("Connection String:");
 		myBaseSSheet	= new JLabel("Base Spreadsheet:");
 		myBackupDir		= new JLabel("Backup Directory:");
-		myBackupFile	= new JLabel("Backup FileName:");
+		myBackupPrefix	= new JLabel("Backup Prefix:");
 		myBirthDate		= new JLabel("BirthDate:");
 
 		/* Create the text fields */
@@ -74,7 +78,7 @@ public class MaintProperties implements ActionListener,
 		theDBConnect 	= new JTextField();
 		theBaseSSheet	= new JTextField();
 		theBackupDir	= new JTextField();
-		theBackupFile	= new JTextField();
+		theBackupPrefix	= new JTextField();
 		
 		/* Create the check boxes */
 		theShowDebug		= new JCheckBox("Show Debug");
@@ -88,16 +92,20 @@ public class MaintProperties implements ActionListener,
 		/* Create the buttons */
 		theOKButton 	= new JButton("OK");
 		theResetButton 	= new JButton("Reset");
+		theBaseSel		= new JButton("Choose");
+		theBackupSel	= new JButton("Choose");
 		
 		/* Add listeners */
 		theDBDriver.addActionListener(this);
 		theDBConnect.addActionListener(this);
 		theBaseSSheet.addActionListener(this);
 		theBackupDir.addActionListener(this);
-		theBackupFile.addActionListener(this);
+		theBackupPrefix.addActionListener(this);
 		theModel.addChangeListener(this);
 		theOKButton.addActionListener(this);
 		theResetButton.addActionListener(this);
+		theBaseSel.addActionListener(this);
+		theBackupSel.addActionListener(this);
 		theShowDebug.addItemListener(this);
 		theEncryptBackup.addItemListener(this);
 		
@@ -167,7 +175,7 @@ public class MaintProperties implements ActionListener,
                             .addComponent(myDBConnect)
                             .addComponent(myBaseSSheet)
                             .addComponent(myBackupDir)
-                            .addComponent(myBackupFile)
+                            .addComponent(myBackupPrefix)
                             .addComponent(myBirthDate))
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -175,8 +183,12 @@ public class MaintProperties implements ActionListener,
                             .addComponent(theDBConnect, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
                             .addComponent(theBaseSSheet, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
                             .addComponent(theBackupDir, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
-                            .addComponent(theBackupFile, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
-                            .addComponent(theSpinner, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(theBackupPrefix, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(theSpinner, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addComponent(theBackupSel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(theBaseSel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE))))
   	            .addContainerGap())
         );
         myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -190,13 +202,15 @@ public class MaintProperties implements ActionListener,
                     .addComponent(theDBConnect, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 	            .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	               	.addComponent(myBaseSSheet)
-                    .addComponent(theBaseSSheet, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(theBaseSSheet, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(theBaseSel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 	            .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	               	.addComponent(myBackupDir)
-                    .addComponent(theBackupDir, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(theBackupDir, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+	                .addComponent(theBackupSel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 	            .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-	               	.addComponent(myBackupFile)
-                    .addComponent(theBackupFile, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+	               	.addComponent(myBackupPrefix)
+                    .addComponent(theBackupPrefix, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 	            .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	               	.addComponent(myBirthDate)
                     .addComponent(theSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -268,7 +282,7 @@ public class MaintProperties implements ActionListener,
 		
 		/* Show the DB details */
 		theBackupDir.setText(theExtract.getBackupDir());
-		theBackupFile.setText(theExtract.getBackupFile());
+		theBackupPrefix.setText(theExtract.getBackupPrefix());
 		
 		/* Show the BaseSpreadsheet */
 		theBaseSSheet.setText(theExtract.getBaseSpreadSheet());
@@ -299,8 +313,8 @@ public class MaintProperties implements ActionListener,
 		if (myText.length() != 0) theExtract.setBackupDir(myText);
 
 		/* Access the value */
-		myText = theBackupFile.getText();
-		if (myText.length() != 0) theExtract.setBackupFile(myText);
+		myText = theBackupPrefix.getText();
+		if (myText.length() != 0) theExtract.setBackupPrefix(myText);
 	}
 	
 	/* stateChanged listener event */
@@ -340,12 +354,38 @@ public class MaintProperties implements ActionListener,
 			performCommand(financeCommand.RESETALL);
 		}
 		
+		/* If this event relates to the Base Select button */
+		else if (evt.getSource() == (Object)theBaseSel) {
+			/* Create the and run the dialog */
+			ArchiveLoad myDialog = new ArchiveLoad(theParent.getTopWindow());
+			myDialog.selectFile();
+			File myFile = myDialog.getSelectedFile();
+			if (myFile != null)
+				theExtract.setBaseSpreadSheet(myFile.getPath());
+			
+			/* Note that changes have occurred */
+			notifyChanges();
+		}
+		
+		/* If this event relates to the Backup Select button */
+		else if (evt.getSource() == (Object)theBackupSel) {
+			/* Create the and run the dialog */
+			BackupDirectory myDialog = new BackupDirectory(theParent.getTopWindow());
+			myDialog.selectFile();
+			File myFile = myDialog.getSelectedFile();
+			if (myFile != null)
+				theExtract.setBackupDir(myFile.getPath());
+			
+			/* Note that changes have occurred */
+			notifyChanges();
+		}
+		
 		/* If this event relates to the name field */
 		else if ((evt.getSource() == (Object)theDBDriver)   ||
 		         (evt.getSource() == (Object)theDBConnect)  ||
 		         (evt.getSource() == (Object)theBaseSSheet) ||
 		         (evt.getSource() == (Object)theBackupDir)  ||
-		         (evt.getSource() == (Object)theBackupFile)) {
+		         (evt.getSource() == (Object)theBackupPrefix)) {
 			/* Update the text */
 			updateText();
 			

@@ -36,7 +36,7 @@ public class Properties {
 	/**
 	 * Registry name for Backup file
 	 */
-	private final static String nameBackupFile	= "Backupfile";
+	private final static String nameBackupPrefix= "Backupprefix";
 
 	/**
 	 * Registry name for Encrypt Backups flag
@@ -52,11 +52,6 @@ public class Properties {
 	 * Registry name for BirthDate
 	 */
 	private final static String nameBirthDate	= "Birthdate";
-
-	/**
-	 * Registry name for SecurityKey
-	 */
-	private final static String nameSecurityKey	= "DataKey";
 
 	/**
 	 * Default Database driver string
@@ -81,7 +76,7 @@ public class Properties {
 	/**
 	 * Default Backup file name
 	 */
-	private final static String defBackupFile	= "TestBackup.xls";
+	private final static String defBackupPrefix	= "FinanceBackup";
 			
 	/**
 	 * Default Encrypt backups value
@@ -134,9 +129,9 @@ public class Properties {
 	private String  theBackupDir			= null;
 			
 	/**
-	 * Backup file name
+	 * Backup file prefix
 	 */
-	private String  theBackupFile			= null;
+	private String  theBackupPrefix			= null;
 			
 	/**
 	 * Backups done using encryption?
@@ -152,11 +147,6 @@ public class Properties {
 	 * BirthDate for tax purposes
 	 */
 	private Date 			theBirthDate	= null;
-			
-	/**
-	 * PublicKeySpec
-	 */
-	private String		 	theSecurityKey	= null;
 			
 	/**
 	 * Determine the DB Driver string
@@ -183,10 +173,10 @@ public class Properties {
 	public String getBackupDir() 			{ return theBackupDir; }
 
 	/**
-	 * Determine the backup file name
-	 * @return the backup file name
+	 * Determine the backup file prefix
+	 * @return the backup file prefix
 	 */
-	public String getBackupFile() 			{ return theBackupFile; }
+	public String getBackupPrefix() 		{ return theBackupPrefix; }
 
 	/**
 	 * Do we encrypt backups?
@@ -205,12 +195,6 @@ public class Properties {
 	 * @return the birthday
 	 */
 	public Date getBirthDate() 				{ return theBirthDate; }
-
-	/**
-	 * Determine security key encrypted value
-	 * @return the security key
-	 */
-	public String getSecurityKey() 			{ return theSecurityKey; }
 
 	/**
 	 * Constructor 
@@ -247,9 +231,9 @@ public class Properties {
 		theBackupDir = theHandle.get(nameBackupDir, null);
 		if (theBackupDir == null) setBackupDir(defBackupDir);
 		
-		/* Access the BackupFile name */
-		theBackupFile = theHandle.get(nameBackupFile, null);
-		if (theBackupFile == null) setBackupFile(defBackupFile);
+		/* Access the BackupFile prefix */
+		theBackupPrefix = theHandle.get(nameBackupPrefix, null);
+		if (theBackupPrefix == null) setBackupPrefix(defBackupPrefix);
 		
 		/* Access the EncryptBackups flag */
 		doEncryptBackups = theHandle.getBoolean(nameEncBackups, defEncBackups);
@@ -273,10 +257,6 @@ public class Properties {
 								"Failed to parse Date: " + myBirthDate,
 								e);
 		}
-	
-		/* Access the Security Key */
-		theSecurityKey = theHandle.get(nameSecurityKey, null);
-
 		/* Flush changes */
 		flushChanges();
 	}
@@ -347,15 +327,15 @@ public class Properties {
 	}
 
 	/**
-	 * Set the Backup File name 
+	 * Set the Backup File prefix 
 	 * @param pValue the new value
 	 */
-	public void setBackupFile(String pValue) {
+	public void setBackupPrefix(String pValue) {
 		/* Record the new value */
-		theBackupFile = new String(pValue);
+		theBackupPrefix = new String(pValue);
 		
 		/* Store the value into the preferences */
-		theHandle.put(nameBackupFile, theBackupFile);
+		theHandle.put(nameBackupPrefix, theBackupPrefix);
 	}
 
 	/**
@@ -401,17 +381,5 @@ public class Properties {
 	private void setBirthDate(String pValue) {
 		/* Store the value into the preferences */
 		theHandle.put(nameBirthDate, pValue);
-	}
-
-	/**
-	 * Set the Public Key encrypted value 
-	 * @param pValue the new value
-	 */
-	public void setSecurityKey(String pValue) {
-		/* Record the new value */
-		theSecurityKey = new String(pValue);
-		
-		/* Store the value into the preferences */
-		theHandle.put(nameSecurityKey, theSecurityKey);
 	}
 }

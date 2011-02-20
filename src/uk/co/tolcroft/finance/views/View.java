@@ -482,9 +482,9 @@ public class View {
 		private String  		theBackupDir		= null;
 				
 		/**
-		 * Backup file name
+		 * Backup file prefix
 		 */
-		private String  		theBackupFile		= null;
+		private String  		theBackupPrefix		= null;
 				
 		/**
 		 * Backups done using encryption?
@@ -526,10 +526,10 @@ public class View {
 		public String getBackupDir() 			{ return theBackupDir; }
 
 		/**
-		 * Determine the backup file name
-		 * @return the backup file name
+		 * Determine the backup file prefix
+		 * @return the backup file prefix
 		 */
-		public String getBackupFile() 			{ return theBackupFile; }
+		public String getBackupPrefix()			{ return theBackupPrefix; }
 
 		/**
 		 * Do we encrypt backups?
@@ -575,7 +575,7 @@ public class View {
 			theDBConnection  	= theProperties.getDBConnection();
 			theBaseSpreadSheet	= theProperties.getBaseSpreadSheet();
 			theBackupDir     	= theProperties.getBackupDir();
-			theBackupFile    	= theProperties.getBackupFile();
+			theBackupPrefix    	= theProperties.getBackupPrefix();
 			doEncryptBackups 	= theProperties.doEncryptBackups();
 			doShowDebug      	= theProperties.doShowDebug();
 			theBirthDate		= theProperties.getBirthDate();
@@ -616,11 +616,11 @@ public class View {
 		}
 
 		/**
-		 * Set the Backup File name 
+		 * Set the Backup File prefix 
 		 * @param pValue the new value
 		 */
-		public void setBackupFile(String pValue) {
-			theBackupFile = new String(pValue);
+		public void setBackupPrefix(String pValue) {
+			theBackupPrefix = new String(pValue);
 		}
 
 		/**
@@ -667,9 +667,9 @@ public class View {
 			if (Utils.differs(getBackupDir(), theProperties.getBackupDir()))  
 				theProperties.setBackupDir(getBackupDir());
 				
-			/* Update the BackupFile if required */
-			if (Utils.differs(getBackupFile(), theProperties.getBackupFile()))  
-				theProperties.setBackupFile(getBackupFile());
+			/* Update the BackupPrefix if required */
+			if (Utils.differs(getBackupPrefix(), theProperties.getBackupPrefix()))  
+				theProperties.setBackupPrefix(getBackupPrefix());
 				
 			/* Update the BirthDate if required */
 			if (Date.differs(getBirthDate(), theProperties.getBirthDate()))  
@@ -697,7 +697,7 @@ public class View {
 						  (Utils.differs(getDBConnection(), theProperties.getDBConnection()))       ||  
 						  (Utils.differs(getBaseSpreadSheet(), theProperties.getBaseSpreadSheet())) ||  
 						  (Utils.differs(getBackupDir(), theProperties.getBackupDir())) 			||  
-						  (Utils.differs(getBackupFile(), theProperties.getBackupFile()))           ||  
+						  (Utils.differs(getBackupPrefix(), theProperties.getBackupPrefix()))           ||  
 						  (Date.differs(getBirthDate(), theProperties.getBirthDate()))				||  
 						  (doShowDebug != theProperties.doShowDebug())									||  
 						  (doEncryptBackups != theProperties.doEncryptBackups()));  
