@@ -11,6 +11,7 @@ import uk.co.tolcroft.finance.sheets.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.ui.*;
 import uk.co.tolcroft.finance.ui.controls.*;
+import uk.co.tolcroft.finance.ui.controls.FileSelector.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 
@@ -724,7 +725,6 @@ public class Threads {
 		private MainTab     theWindow    	= null;
 		private StatusBar   theStatusBar 	= null;
 		private statusCtl	theStatus    	= null;
-		private Properties	theProperties	= null;
 		private Exception	theError 	 	= null;
 
 		/* Access methods */
@@ -735,7 +735,6 @@ public class Threads {
 			/* Store passed parameters */
 			theView   		= pView;
 			theWindow 		= pWindow;
-			theProperties 	= theWindow.getProperties();
 
 			/* Access the Status Bar */
 			theStatusBar = theWindow.getStatusBar();
@@ -755,18 +754,14 @@ public class Threads {
 			DataSet						myData	  = null;
 			DataSet						myStore;
 			Database					myDatabase;
-			String						myName;
 			File						myFile;
 
 			try {
-				/* Build the file name */
-				myName  = theProperties.getBackupDir();
-				myName += File.separator;
-				myName += theProperties.getBackupFile();
-				if (theProperties.doEncryptBackups()) 
-					myName += ".zip";
-				myFile  = new File(myName);
-
+				/* Determine the name of the file to load */
+				BackupLoad myDialog = new BackupLoad(theWindow);
+				myDialog.selectFile();
+				myFile = myDialog.getSelectedFile();
+				
 				/* Load workbook */
 				myData   = SpreadSheet.loadBackup(theStatus, 
 												  myFile);
@@ -900,15 +895,13 @@ public class Threads {
 			DataSet		myData	  = null;
 			DataSet		myDiff	  = null;
 			boolean		doDelete  = false;
-			String		myName;
 			File		myFile;
 
-			/* Build the file name */
-			myName  = theProperties.getBackupDir();
-			myName += File.separator;
-			myName += theProperties.getBackupFile();
-			myFile  = new File(myName);
-
+			/* Determine the name of the file to build */
+			BackupCreate myDialog = new BackupCreate(theWindow);
+			myDialog.selectFile();
+			myFile = myDialog.getSelectedFile();
+			
 			try {
 				/* Create backup */
 				SpreadSheet.createBackup(theStatus, 

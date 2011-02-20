@@ -271,76 +271,76 @@ public class TransactionType extends DataItem {
 			theClass = TransClass.STOCKTAKEOVER;
 			theOrder = 17;
 		}
+		else if (sName.equals("TaxableGain")) {
+			theClass = TransClass.TAXABLEGAIN;
+			theOrder = 18;
+		}
 		else if (sName.equals("Transfer")) {
 			theClass = TransClass.TRANSFER;
-			theOrder = 18;
+			theOrder = 19;
 		}
 		else if (sName.equals("CashRecovery")) {
 			theClass = TransClass.CSHRECOVER;
-			theOrder = 19;
+			theOrder = 20;
 		}
 		else if (sName.equals("CashPayment")) {
 			theClass = TransClass.CSHPAY;
-			theOrder = 20;
+			theOrder = 21;
 		}
 		else if (sName.equals("Expense")) {
 			theClass = TransClass.EXPENSE;
-			theOrder = 21;
+			theOrder = 22;
 		}
 		else if (sName.equals("Endowment")) {
 			theClass = TransClass.ENDOWMENT;
-			theOrder = 22;
+			theOrder = 23;
 		}
 		else if (sName.equals("Mortgage")) {
 			theClass = TransClass.MORTGAGE;
-			theOrder = 23;
+			theOrder = 24;
 		}
 		else if (sName.equals("Insurance")) {
 			theClass = TransClass.INSURANCE;
-			theOrder = 24;
+			theOrder = 25;
 		}
 		else if (sName.equals("ExtraTax")) {
 			theClass = TransClass.EXTRATAX;
-			theOrder = 25;
+			theOrder = 26;
 		}
 		else if (sName.equals("WriteOff")) {
 			theClass = TransClass.WRITEOFF;
-			theOrder = 26;
+			theOrder = 27;
 		}
 		else if (sName.equals("NatInsurance")) {
 			theClass = TransClass.NATINSURANCE;
-			theOrder = 27;
+			theOrder = 28;
 		}
 		else if (sName.equals("TaxOwed")) {
 			theClass = TransClass.TAXOWED;
-			theOrder = 28;
+			theOrder = 29;
 		}
 		else if (sName.equals("TaxCredit")) {
 			theClass = TransClass.TAXCREDIT;
-			theOrder = 29;
+			theOrder = 30;
 		}
 		else if (sName.equals("MarketGrowth")) {
 			theClass = TransClass.MKTGROWTH;
-			theOrder = 30;
+			theOrder = 31;
 		}
 		else if (sName.equals("MarketShrink")) {
 			theClass = TransClass.MKTSHRINK;
-			theOrder = 31;
+			theOrder = 32;
 		}
 		else if (sName.equals("UnitTrustDividend")) {
 			theClass = TransClass.UNITTRUSTDIV;
-			theOrder = 32;
+			theOrder = 33;
 		}
 		else if (sName.equals("TaxFreeInterest")) {
 			theClass = TransClass.TAXFREEINTEREST;
-			theOrder = 33;
+			theOrder = 34;
 		}
 		else if (sName.equals("TaxFreeDividend")) {
 			theClass = TransClass.TAXFREEDIVIDEND;
-			theOrder = 34;
-		}
-		else if (sName.equals("TaxableGain")) {
-			theClass = TransClass.TAXABLEGAIN;
 			theOrder = 35;
 		}
 		else if (sName.equals("CapitalGain")) {
@@ -598,21 +598,6 @@ public class TransactionType extends DataItem {
 		return (theClass == TransClass.STOCKTAKEOVER); }
 
 	/**
-	 * Determine whether the TransactionType is a market adjustment
-	 * 
-	 * @return <code>true</code> if the transaction is market adjustment, <code>false</code> otherwise.
-	 */
-	public boolean isMarketAdjust() { 
-		switch (theClass) {
-			case MKTGROWTH:
-			case MKTSHRINK:
-				return true;
-			default:
-				return false;
-		}
-	}
-	
-	/**
 	 * Determine whether the TransactionType is a recovery
 	 * 
 	 * @return <code>true</code> if the transaction is recovery, <code>false</code> otherwise.
@@ -641,6 +626,8 @@ public class TransactionType extends DataItem {
 			case MKTSHRINK:
 			case MKTGROWTH:
 			case TAXCREDIT:
+			case CAPITALGAIN:
+			case CAPITALLOSS:
 				return true;
 			default:
 				return false;
