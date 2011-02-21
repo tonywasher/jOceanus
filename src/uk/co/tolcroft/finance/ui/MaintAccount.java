@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Arrays;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -12,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.JPasswordField;
 import javax.swing.LayoutStyle;
 import javax.swing.SpinnerDateModel;
 import javax.swing.event.ChangeEvent;
@@ -21,6 +23,7 @@ import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.*;
 
 public class MaintAccount implements ActionListener,
@@ -30,19 +33,30 @@ public class MaintAccount implements ActionListener,
 	/* Properties */
 	private MaintenanceTab		theParent		= null;
 	private JPanel              thePanel		= null;
+	private JPanel              theDetail		= null;
+	private JPanel              theStatus		= null;
 	private JPanel				theButtons		= null;
+	private JPanel				theSecure		= null;
 	private AccountSelect 		theSelect		= null;
 	private SaveButtons  		theSaveButs   	= null;
 	private JTextField			theName			= null;
 	private JTextField			theDesc			= null;
+	private JPasswordField		theWebSite		= null;
+	private JPasswordField		theCustNo		= null;
+	private JPasswordField		theUserId		= null;
+	private JPasswordField		thePassword		= null;
+	private JPasswordField		theActDetail	= null;
+	private JPasswordField		theNotes		= null;
 	private JLabel				theFirst		= null;
 	private JLabel				theLast			= null;
 	private JComboBox			theTypesBox		= null;
 	private JComboBox			theParentBox	= null;
+	private JComboBox			theAliasBox		= null;
 	private JSpinner			theSpinner		= null;
 	private SpinnerDateModel	theModel		= null;
 	private JLabel				theTypLabel		= null;
 	private JLabel				theParLabel		= null;
+	private JLabel				theAlsLabel		= null;
 	private JLabel				theMatLabel		= null;
 	private JButton				theInsButton	= null;
 	private JButton				theDelButton	= null;
@@ -55,6 +69,7 @@ public class MaintAccount implements ActionListener,
 	private boolean				refreshingData	= false;
 	private boolean				typesPopulated	= false;
 	private boolean				parPopulated	= false;
+	private boolean				alsPopulated	= false;
 	private View				theView			= null;
 	
 	/* Access methods */
@@ -67,6 +82,14 @@ public class MaintAccount implements ActionListener,
 		JLabel  myDesc;
 		JLabel  myFirst;
 		JLabel	myLast;
+		JLabel	myWebSite;
+		JLabel  myCustNo;
+		JLabel	myUserId;
+		JLabel  myPassword;
+		JLabel	myAccount;
+		JLabel  myNotes;
+		String	myDefValue;
+		char[]	myDefChars;
 		
 		/* Store passed data */
 		theParent = pParent;
@@ -80,18 +103,47 @@ public class MaintAccount implements ActionListener,
 		theTypLabel = new JLabel("AccountType:");
 		theMatLabel	= new JLabel("Maturity:");
 		theParLabel	= new JLabel("Parent:");
+		theAlsLabel	= new JLabel("Alias:");
 		myFirst	 	= new JLabel("FirstEvent:");
 		myLast 	 	= new JLabel("LastEvent:");
 		theFirst 	= new JLabel();
 		theLast  	= new JLabel();
+		myWebSite 	= new JLabel("WebSite:");
+		myCustNo 	= new JLabel("CustomerNo:");
+		myUserId 	= new JLabel("UserId:");
+		myPassword 	= new JLabel("Password:");
+		myAccount 	= new JLabel("Account:");
+		myNotes  	= new JLabel("Notes:");
 		
 		/* Create the text fields */
-		theName  = new JTextField();
-		theDesc  = new JTextField();
+		theName  = new JTextField(Account.NAMELEN);
+		theDesc  = new JTextField(Account.DESCLEN);
+		
+		/* Create the password fields */
+		theWebSite		= new JPasswordField(Account.WSITELEN);
+		theCustNo  		= new JPasswordField(Account.CUSTLEN);
+		theUserId		= new JPasswordField(Account.UIDLEN);
+		thePassword		= new JPasswordField(Account.PWDLEN);
+		theActDetail	= new JPasswordField(Account.ACTLEN);
+		theNotes	  	= new JPasswordField(Account.NOTELEN);
 		
 		/* Create the combo boxes */
 		theTypesBox  = new JComboBox();
 		theParentBox = new JComboBox();
+		theAliasBox  = new JComboBox();
+		
+		/* Dimension the account boxes correctly */
+		myDefChars = new char[Account.NAMELEN];
+		Arrays.fill(myDefChars, 'X');
+		myDefValue = new String(myDefChars);
+		theParentBox.setPrototypeDisplayValue(myDefValue);
+		theAliasBox.setPrototypeDisplayValue(myDefValue);
+		
+		/* Dimension the account type box correctly */
+		myDefChars = new char[AccountType.NAMELEN];
+		Arrays.fill(myDefChars, 'X');
+		myDefValue = new String(myDefChars);
+		theTypesBox.setPrototypeDisplayValue(myDefValue);
 		
 		/* Create the spinner */
 		theModel    = new SpinnerDateModel();
@@ -107,8 +159,15 @@ public class MaintAccount implements ActionListener,
 		/* Add listeners */
 		theName.addActionListener(this);
 		theDesc.addActionListener(this);
+		theWebSite.addActionListener(this);
+		theCustNo.addActionListener(this);
+		theUserId.addActionListener(this);
+		thePassword.addActionListener(this);
+		theActDetail.addActionListener(this);
+		theNotes.addActionListener(this);
 		theTypesBox.addItemListener(this);
 		theParentBox.addItemListener(this);
+		theAliasBox.addItemListener(this);
 		theModel.addChangeListener(this);
 		theInsButton.addActionListener(this);
 		theDelButton.addActionListener(this);
@@ -150,6 +209,164 @@ public class MaintAccount implements ActionListener,
             .addComponent(theClsButton)
         );
             
+		/* Create the secure panel */
+		theSecure = new JPanel();
+		theSecure.setBorder(javax.swing.BorderFactory
+				.createTitledBorder("Security Details"));
+		
+		/* Create the layout for the panel */
+	    myLayout = new GroupLayout(theSecure);
+	    theSecure.setLayout(myLayout);
+
+	    /* Set the layout */
+        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+        	.addGroup(myLayout.createSequentialGroup()
+        		.addContainerGap()
+                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                 	.addComponent(myWebSite)
+                  	.addComponent(myCustNo)
+                  	.addComponent(myUserId)
+                  	.addComponent(myPassword)
+                  	.addComponent(myAccount)
+                    .addComponent(myNotes))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                 	.addComponent(theWebSite, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                  	.addComponent(theCustNo, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                  	.addComponent(theUserId, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                  	.addComponent(thePassword, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                  	.addComponent(theActDetail, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(theNotes, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(myLayout.createSequentialGroup()
+            	.addContainerGap()
+                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                	.addComponent(myWebSite)
+                    .addComponent(theWebSite, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    	.addComponent(myCustNo)
+                        .addComponent(theCustNo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    	.addComponent(myUserId)
+                        .addComponent(theUserId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                	.addComponent(myPassword)
+                    .addComponent(thePassword, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(myAccount)
+                    .addComponent(theActDetail, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(myNotes)
+                    .addComponent(theNotes, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+        );
+            
+		/* Create the detail panel */
+		theDetail = new JPanel();
+		theDetail.setBorder(javax.swing.BorderFactory
+				.createTitledBorder("Account Details"));
+		
+		/* Create the layout for the panel */
+	    myLayout = new GroupLayout(theDetail);
+	    theDetail.setLayout(myLayout);
+
+	    /* Set the layout */
+        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+        	.addGroup(myLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                     .addGroup(myLayout.createSequentialGroup()
+                        .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                            .addComponent(myName)
+                            .addComponent(myDesc)
+                            .addComponent(theParLabel)
+                            .addComponent(theMatLabel))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addGroup(myLayout.createSequentialGroup()
+                               	.addComponent(theName, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(theTypLabel)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(theDesc, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addGroup(myLayout.createSequentialGroup()
+                               	.addComponent(theParentBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(theAlsLabel)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(theAliasBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(theSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
+        );
+        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(myLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(myName)
+                    .addComponent(theName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(theTypLabel)
+                    .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(myDesc)
+                    .addComponent(theDesc, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(theParLabel)
+                    .addComponent(theParentBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(theAlsLabel)
+                    .addComponent(theAliasBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(theMatLabel)
+                    .addComponent(theSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+            
+		/* Create the status panel */
+		theStatus = new JPanel();
+		theStatus.setBorder(javax.swing.BorderFactory
+				.createTitledBorder("Account Status"));
+		
+		/* Create the layout for the panel */
+	    myLayout = new GroupLayout(theStatus);
+	    theStatus.setLayout(myLayout);
+
+	    /* Set the layout */
+        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+        	.addGroup(myLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                     .addGroup(myLayout.createSequentialGroup()
+                        .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                            .addComponent(myFirst)
+                            .addComponent(myLast))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                            .addComponent(theFirst)
+                            .addComponent(theLast))))
+                .addContainerGap())
+        );
+        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(myLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(myFirst)
+                    .addComponent(theFirst, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                 .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(myLast)
+                    .addComponent(theLast, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+            
 		/* Create the panel */
 		thePanel = new JPanel();
 		
@@ -162,72 +379,34 @@ public class MaintAccount implements ActionListener,
         	.addGroup(myLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                	.addComponent(theSelect.getPanel())
+                   	.addComponent(theSelect.getPanel())
                 	.addComponent(theSaveButs.getPanel())
-                    .addComponent(theButtons)
                     .addGroup(myLayout.createSequentialGroup()
-                        .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                            .addComponent(theTypLabel)
-                            .addComponent(myName)
-                            .addComponent(myDesc)
-                            .addComponent(theMatLabel)
-                            .addComponent(myFirst))
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                            .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                            .addGroup(myLayout.createSequentialGroup()
-                            	.addComponent(theName, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(theParLabel)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(theParentBox, 75, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(theDesc, GroupLayout.PREFERRED_SIZE, 650, GroupLayout.PREFERRED_SIZE)
-                            .addGroup(myLayout.createSequentialGroup()
-                            	.addComponent(theFirst, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(myLast)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(theLast, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE))
-                            .addComponent(theSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
+                    		.addComponent(theDetail)
+                    		.addComponent(theStatus))
+                	.addComponent(theSecure)
+                    .addComponent(theButtons))
                 .addContainerGap())
-            );
-            myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(theSelect.getPanel())
-                    .addContainerGap(10,30)
-                    .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(theTypLabel)
-                        .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                    .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(myName)
-                        .addComponent(theName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(theParLabel)
-                        .addComponent(theParentBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                    .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(myDesc)
-                        .addComponent(theDesc, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                    .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(theMatLabel)
-                        .addComponent(theSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addContainerGap(10,30)
-                    .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(myFirst)
-                        .addComponent(theFirst, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(myLast)
-                        .addComponent(theLast, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addContainerGap(10,30)
-                    .addComponent(theButtons)
-                    .addContainerGap(10,30)
-                    .addComponent(theSaveButs.getPanel())
-                    .addContainerGap())
-            );
+        );
+        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(myLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(theSelect.getPanel())
+                .addContainerGap(10,30)
+                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                	.addComponent(theDetail)
+                	.addComponent(theStatus))
+                .addContainerGap(10,30)
+                .addComponent(theSecure)
+                .addContainerGap(10,30)
+                .addComponent(theButtons)
+                .addContainerGap(10,30)
+                .addComponent(theSaveButs.getPanel())
+                .addContainerGap())
+        );
             
-            /* Set initial display */
-            showAccount();
+        /* Set initial display */
+        showAccount();
 	}
 	
 	/* hasUpdates */
@@ -435,6 +614,9 @@ public class MaintAccount implements ActionListener,
 		
 		/* If we have an active account */
 		if (theAccount != null) {
+			/* Note that we are refreshing data */
+			refreshingData = true;
+			
 			/* Access details */
 			myType 	 = theAccount.getActType();
 			isClosed = theAccount.isClosed();
@@ -442,6 +624,7 @@ public class MaintAccount implements ActionListener,
 			/* Set the name */
 			theName.setText(theAccount.getName() != null ? 
 								theAccount.getName() : "");
+			theName.setEnabled(true);
 			theParent.formatComponent(theName, Account.FIELD_NAME, theAccount, false, (theAccount.getName() == null));
 		
 			/* Set the description */
@@ -449,6 +632,42 @@ public class MaintAccount implements ActionListener,
 								theAccount.getDesc() : "");
 			theDesc.setEnabled(!isClosed && !theAccount.isDeleted());
 			theParent.formatComponent(theDesc, Account.FIELD_DESC, theAccount, false, (theAccount.getDesc() == null));
+		
+			/* Set the WebSite */
+			theWebSite.setText(theAccount.getWebSite() != null ? 
+							   new String(theAccount.getWebSite()) : "");
+			theWebSite.setEnabled(!isClosed && !theAccount.isDeleted());
+			theParent.formatComponent(theWebSite, Account.FIELD_WEBSITE, theAccount, false, (theAccount.getWebSite() == null));
+		
+			/* Set the CustNo */
+			theCustNo.setText(theAccount.getCustNo() != null ? 
+							  new String(theAccount.getCustNo()) : "");
+			theCustNo.setEnabled(!isClosed && !theAccount.isDeleted());
+			theParent.formatComponent(theCustNo, Account.FIELD_CUSTNO, theAccount, false, (theAccount.getCustNo() == null));
+		
+			/* Set the UserId */
+			theUserId.setText(theAccount.getUserId() != null ? 
+							  new String(theAccount.getUserId()) : "");
+			theUserId.setEnabled(!isClosed && !theAccount.isDeleted());
+			theParent.formatComponent(theUserId, Account.FIELD_USERID, theAccount, false, (theAccount.getUserId() == null));
+		
+			/* Set the Password */
+			thePassword.setText(theAccount.getPassword() != null ? 
+							    new String(theAccount.getPassword()) : "");
+			thePassword.setEnabled(!isClosed && !theAccount.isDeleted());
+			theParent.formatComponent(thePassword, Account.FIELD_PASSWORD, theAccount, false, (theAccount.getPassword() == null));
+		
+			/* Set the WebSite */
+			theActDetail.setText(theAccount.getAccount() != null ? 
+							     new String(theAccount.getAccount()) : "");
+			theActDetail.setEnabled(!isClosed && !theAccount.isDeleted());
+			theParent.formatComponent(theActDetail, Account.FIELD_ACCOUNT, theAccount, false, (theAccount.getAccount() == null));
+		
+			/* Set the Notes */
+			theNotes.setText(theAccount.getNotes() != null ? 
+							   new String(theAccount.getNotes()) : "");
+			theNotes.setEnabled(!isClosed && !theAccount.isDeleted());
+			theParent.formatComponent(theNotes, Account.FIELD_NOTES, theAccount, false, (theAccount.getNotes() == null));
 		
 			/* Set the type */
 			theTypesBox.setSelectedItem(myType.getName());
@@ -486,6 +705,57 @@ public class MaintAccount implements ActionListener,
 			}
 			theParentBox.setEnabled(!isClosed && !theAccount.isDeleted());
 
+			/* Handle alias */
+			if (myType.canAlias() && (!theAccount.isAliasedTo())) {
+				/* If we have alias already populated */
+				if (alsPopulated) {	
+					/* Remove the items */
+					theAliasBox.removeAllItems();
+					alsPopulated = false;
+				}
+				
+				/* Create an account iterator */
+				DataList<Account>.ListIterator  myActIterator = theAccounts.listIterator();
+				Account							myAcct;
+				
+				/* Add the Account values to the parents box */
+				while ((myAcct  = myActIterator.next()) != null) {
+					/* Access the type */
+					myType = myAcct.getActType();
+					
+					/* Ignore the account if it cannot alias */
+					if (!myType.canAlias()) continue;
+
+					/* Ignore the account if it is same type */
+					if (myType.equals(theAccount.getActType())) continue;
+
+					/* Ignore the account if it is an alias */
+					if (myAcct.getAlias() != null) continue;
+
+					/* Ignore the account if it is us */
+					if (myAcct.compareTo(theAccount) == 0) continue;
+
+					/* Add the item to the list */
+					theAliasBox.addItem(myAcct.getName());
+					alsPopulated = true;
+				}
+				
+				/* Set up the aliases */
+				if (theAccount.getAlias() != null)
+					theAliasBox.setSelectedItem(theAccount.getAlias().getName());
+				else
+					theAliasBox.setSelectedItem(null);
+				theAliasBox.setVisible(true);
+				theAlsLabel.setVisible(true);
+				theParent.formatComponent(theAliasBox, Account.FIELD_ALIAS, theAccount, 
+										  false, (theAccount.getAlias() == null));
+			}
+			else {
+				theAliasBox.setVisible(false);
+				theAlsLabel.setVisible(false);
+			}
+			theAliasBox.setEnabled(!isClosed && !theAccount.isDeleted());
+
 			/* Set the First Event */
 			theFirst.setText((theAccount.getEarliest() != null)
 								? theAccount.getEarliest().getDate().formatDate(false) 
@@ -508,6 +778,9 @@ public class MaintAccount implements ActionListener,
 			theInsButton.setEnabled(!theAccount.hasChanges() && (!theAccount.getActType().isReserved()));
 			theClsButton.setEnabled((isClosed) || (theAccount.isCloseable()));
 			theUndoButton.setEnabled(theAccount.hasChanges());
+
+			/* Note that we are finished refreshing data */
+			refreshingData = false;
 		}
 		
 		/* else no account selected */
@@ -517,10 +790,22 @@ public class MaintAccount implements ActionListener,
 			theDesc.setText("");
 			theFirst.setText("");
 			theLast.setText("");
+			theWebSite.setText("");
+			theCustNo.setText("");
+			theUserId.setText("");
+			thePassword.setText("");
+			theActDetail.setText("");
+			theNotes.setText("");
 			
 			/* Disable field entry */
 			theName.setEnabled(false);
 			theDesc.setEnabled(false);
+			theWebSite.setEnabled(false);
+			theCustNo.setEnabled(false);
+			theUserId.setEnabled(false);
+			thePassword.setEnabled(false);
+			theActDetail.setEnabled(false);
+			theNotes.setEnabled(false);
 			theClsButton.setVisible(false);
 			theUndoButton.setEnabled(false);
 			
@@ -531,6 +816,8 @@ public class MaintAccount implements ActionListener,
 			/* Hide parent and maturity */
 			theParLabel.setVisible(false);
 			theParentBox.setVisible(false);
+			theAlsLabel.setVisible(false);
+			theAliasBox.setVisible(false);
 			theSpinner.setVisible(false);
 			theMatLabel.setVisible(false);
 			theTypLabel.setVisible(false);
@@ -548,46 +835,71 @@ public class MaintAccount implements ActionListener,
 		/* Push history */
 		theAccount.pushHistory();
 		
-		/* If this event relates to the period box */
-		if (evt.getSource() == (Object)theTypesBox) {
-			myName = (String)evt.getItem();
-			if (evt.getStateChange() == ItemEvent.SELECTED) {
-				/* Store the appropriate value */
-				theAccount.setActType(theAcTypList.searchFor(myName));
+		/* Protect against exceptions */
+		try {
+			/* If this event relates to the period box */
+			if (evt.getSource() == (Object)theTypesBox) {
+				myName = (String)evt.getItem();
+				if (evt.getStateChange() == ItemEvent.SELECTED) {
+					/* Store the appropriate value */
+					theAccount.setActType(theAcTypList.searchFor(myName));
 				
-				/* If the account is now a bond */
-				if (theAccount.isBond()) {
-					/* If it doesn't have a maturity */
-					if (theAccount.getMaturity() == null) {
-						/* Create a default maturity */
-						theAccount.setMaturity(new Date());
-						theAccount.getMaturity().adjustYear(1);
+					/* If the account is now a bond */
+					if (theAccount.isBond()) {
+						/* If it doesn't have a maturity */
+						if (theAccount.getMaturity() == null) {
+							/* Create a default maturity */
+							theAccount.setMaturity(new Date());
+							theAccount.getMaturity().adjustYear(1);
+						}
 					}
+				
+					/* Else set maturity to null for non-bonds */
+					else theAccount.setMaturity(null);	
+				
+					/* Set parent to null for non-child accounts */
+					if (!theAccount.isChild()) theAccount.setParent(null);
+				
+					/* Update text */
+					updateText();
 				}
-				
-				/* Else set maturity to null for non-bonds */
-				else theAccount.setMaturity(null);	
-				
-				/* Set parent to null for non-child accounts */
-				if (!theAccount.isChild()) theAccount.setParent(null);
-				
-				/* Update text */
-				updateText();
 			}
-		}
 	
-		/* If this event relates to the period box */
-		else if (evt.getSource() == (Object)theParentBox) {
-			myName = (String)evt.getItem();
-			if (evt.getStateChange() == ItemEvent.SELECTED) {
-				/* Store the appropriate value */
-				theAccount.setParent(theAccounts.searchFor(myName));
+			/* If this event relates to the parent box */
+			else if (evt.getSource() == (Object)theParentBox) {
+				myName = (String)evt.getItem();
+				if (evt.getStateChange() == ItemEvent.SELECTED) {
+					/* Store the appropriate value */
+					theAccount.setParent(theAccounts.searchFor(myName));
 				
-				/* Update text */
-				updateText();
+					/* Update text */
+					updateText();
+				}
+			}
+			
+			/* If this event relates to the alias box */
+			else if (evt.getSource() == (Object)theAliasBox) {
+				myName = (String)evt.getItem();
+				if (evt.getStateChange() == ItemEvent.SELECTED) {
+					/* Store the appropriate value */
+					theAccount.setAlias(theAccounts.searchFor(myName));
+				
+					/* Update text */
+					updateText();
+				}
 			}
 		}
-
+		
+		
+		/* Handle Exceptions */
+		catch (Throwable e) {
+			/* Reset values */
+			theAccount.popHistory();
+			theAccount.pushHistory();
+			
+			/* TODO report the error */
+		}
+		
 		/* Check for changes */
 		if (theAccount.checkForHistory()) {
 			/* Note that the item has changed */
@@ -617,28 +929,65 @@ public class MaintAccount implements ActionListener,
 	}
 	
 	/* Update text */
-	private void updateText() {
+	private void updateText() throws Exception {
 		String  myText;
+		char[]	myArray;
 
-		/* Protect against exceptions */
-		try {
-			/* Access the value */
-			myText = theName.getText();
-			if (myText.length() == 0) myText = null;
+		/* Access the value */
+		myText = theName.getText();
+		if (myText.length() == 0) myText = null;
 		
-			/* Store the appropriate value */
-			theAccount.setAccountName(myText);    
+		/* Store the appropriate value */
+		theAccount.setAccountName(myText);    
 
-			/* Access the value */
-			myText = theDesc.getText();
-			if (myText.length() == 0) myText = null;
+		/* Access the value */
+		myText = theDesc.getText();
+		if (myText.length() == 0) myText = null;
 		
-			/* Store the appropriate value */
-			theAccount.setDescription(myText);
-		}
+		/* Store the appropriate value */
+		theAccount.setDescription(myText);
+
+		/* Access the value */
+		myArray = theWebSite.getPassword();
+		if (myArray.length == 0) myArray = null;
 		
-		/* Catch exceptions TODO Do something with this*/
-		catch (Throwable e) {}
+		/* Store the appropriate value */
+		theAccount.setWebSite(myArray);
+
+		/* Access the value */
+		myArray = theCustNo.getPassword();
+		if (myArray.length == 0) myArray = null;
+		
+		/* Store the appropriate value */
+		theAccount.setCustNo(myArray);
+
+		/* Access the value */
+		myArray = theUserId.getPassword();
+		if (myArray.length == 0) myArray = null;
+		
+		/* Store the appropriate value */
+		theAccount.setUserId(myArray);
+
+		/* Access the value */
+		myArray = thePassword.getPassword();
+		if (myArray.length == 0) myArray = null;
+		
+		/* Store the appropriate value */
+		theAccount.setPassword(myArray);
+
+		/* Access the value */
+		myArray = theActDetail.getPassword();
+		if (myArray.length == 0) myArray = null;
+		
+		/* Store the appropriate value */
+		theAccount.setAccount(myArray);
+
+		/* Access the value */
+		myArray = theNotes.getPassword();
+		if (myArray.length == 0) myArray = null;
+		
+		/* Store the appropriate value */
+		theAccount.setNotes(myArray);
 	}
 	
 	/* Undo changes */
@@ -707,21 +1056,34 @@ public class MaintAccount implements ActionListener,
 		/* Push history */
 		theAccount.pushHistory();
 		
-		/* If this event relates to the name field */
-		if ((evt.getSource() == (Object)theName) ||
-		    (evt.getSource() == (Object)theDesc)) {
-			/* Update the text */
-			updateText();
+		/* Protect against exceptions */
+		try {
+			/* If this event relates to the name field */
+			if ((evt.getSource() == (Object)theName) ||
+				(evt.getSource() == (Object)theDesc)) {
+				/* Update the text */
+				updateText();
+			}
+		
+			/* If this event relates to the close button */
+			else if (evt.getSource() == (Object)theClsButton) {
+				/* Re-open or close the account as required */
+				if (theAccount.isClosed()) 	theAccount.reOpenAccount();
+				else						theAccount.closeAccount();
+			
+				/* Update the text */
+				updateText();
+			}
+		
 		}
 		
-		/* If this event relates to the close button */
-		else if (evt.getSource() == (Object)theClsButton) {
-			/* Re-open or close the account as required */
-			if (theAccount.isClosed()) 	theAccount.reOpenAccount();
-			else						theAccount.closeAccount();
+		/* Handle Exceptions */
+		catch (Throwable e) {
+			/* Reset values */
+			theAccount.popHistory();
+			theAccount.pushHistory();
 			
-			/* Update the text */
-			updateText();
+			/* TODO report the error */
 		}
 		
 		/* Check for changes */
@@ -749,11 +1111,23 @@ public class MaintAccount implements ActionListener,
 			/* Push history */
 			theAccount.pushHistory();
 			
-			/* Store the appropriate value */
-			theAccount.setMaturity(myDate);    
+			/* Protect against exceptions */
+			try {
+				/* Store the appropriate value */
+				theAccount.setMaturity(myDate);    
 		
-			/* Update the text */
-			updateText();
+				/* Update the text */
+				updateText();
+			}	
+			
+			/* Handle Exceptions */
+			catch (Throwable e) {
+				/* Reset values */
+				theAccount.popHistory();
+				theAccount.pushHistory();
+				
+				/* TODO report the error */
+			}
 			
 			/* Check for changes */
 			if (theAccount.checkForHistory()) {

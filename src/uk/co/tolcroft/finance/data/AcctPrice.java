@@ -395,7 +395,7 @@ public class AcctPrice extends DataItem {
 	 	 * @param pData the DataSet for the list
 		 * @param pStyle the style of the list 
 		 */
-		protected List(DataSet pData, ListStyle pStyle) {
+		public List(DataSet pData, ListStyle pStyle) {
 			super(pStyle, false);
 			theData = pData;
 		}

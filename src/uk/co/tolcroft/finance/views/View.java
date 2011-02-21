@@ -4,6 +4,7 @@ import uk.co.tolcroft.finance.ui.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.core.SecureManager;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.*;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
@@ -163,6 +164,7 @@ public class View {
 		/* Members */
 		private Account.List 	theList    = null;
 		private Account			theAccount = null;
+		private AcctPrice.List 	thePrices  = null;
 		
 		/* Access methods */
 		public 	Account 		getAccount() { return theAccount; }
@@ -203,6 +205,16 @@ public class View {
 				theAccount.setMaturity(new Date());
 				theAccount.getMaturity().adjustYear(1);
 			}
+
+			/* If the account is prices */
+			if (theAccount.getActType().isPriced()) {
+				/* Create an empty price list */
+				thePrices = new AcctPrice.List(theData, ListStyle.EDIT);
+				
+				/* Add a default £1 price for this account on this date */
+				try { thePrices.addItem(theAccount, new Date(), new Price(Price.convertToValue(1))); } catch (Throwable e) {}
+				theAccount.touchPrice();
+			}
 		}
 		
 		/** 
@@ -210,13 +222,16 @@ public class View {
 		 */
 		public void applyChanges() {
 			Account.List myBase;
+			AcctPrice.List myPrices;
 			
 			/* Access base details */
-			myBase     = theData.getAccounts();
+			myBase     	= theData.getAccounts();
+			myPrices	= theData.getPrices();
 			
 			/* Apply the changes */
 			myBase.applyChanges(theList);
-						
+			if (thePrices != null) myPrices.applyChanges(thePrices); 
+				
 			/* analyse the data */
 			analyseData(); 
 			

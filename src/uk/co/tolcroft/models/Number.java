@@ -621,6 +621,16 @@ public class Number {
 					((pCurr != null) && 
 					 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
 		}
+
+		/**
+		 * Convert a whole number value to include decimals 
+		 * @param pValue the whole number value 
+		 * @return the converted value with added zeros 
+		 */
+		public static long convertToValue(long pValue) { 
+			/* Build in the decimals to the value */
+			return convertToValue(pValue, NUMDEC);       
+		}		
 	}
 	
 	/**

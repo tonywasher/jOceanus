@@ -17,7 +17,7 @@ public class Account extends DataItem {
 	/**
 	 * Account Name length
 	 */
-	public final static int NAMELEN 		= 50;
+	public final static int NAMELEN 		= 30;
 
 	/**
 	 * Account Description length
@@ -52,7 +52,7 @@ public class Account extends DataItem {
 	/**
 	 * Account UserId length
 	 */
-	public final static int NOTELEN 		= 500;
+	public final static int NOTELEN 		= 100;
 
 	/* Members */
 	private int                   theOrder     = -1;
@@ -234,28 +234,22 @@ public class Account extends DataItem {
 					myString += Account.format(myObj.getAlias()); 
 				break;
 			case FIELD_WEBSITE:	
-				if (myObj.getWebSite() != null) 
-					myString += getCharArrayPairString(myObj.getWebSite()); 
+				myString += getCharArrayPairString(myObj.getWebSite()); 
 				break;
 			case FIELD_CUSTNO:	
-				if (myObj.getCustNo() != null) 
-					myString += getCharArrayPairString(myObj.getCustNo()); 
+				myString += getCharArrayPairString(myObj.getCustNo()); 
 				break;
 			case FIELD_USERID:	
-				if (myObj.getUserId() != null) 
-					myString += getCharArrayPairString(myObj.getUserId()); 
+				myString += getCharArrayPairString(myObj.getUserId()); 
 				break;
 			case FIELD_PASSWORD:	
-				if (myObj.getPassword() != null) 
-					myString += getCharArrayPairString(myObj.getPassword()); 
+				myString += getCharArrayPairString(myObj.getPassword()); 
 				break;
 			case FIELD_ACCOUNT:	
-				if (myObj.getAccount() != null) 
-					myString += getCharArrayPairString(myObj.getAccount()); 
+				myString += getCharArrayPairString(myObj.getAccount()); 
 				break;
 			case FIELD_NOTES:	
-				if (myObj.getNotes() != null) 
-					myString += getCharArrayPairString(myObj.getNotes()); 
+				myString += getCharArrayPairString(myObj.getNotes()); 
 				break;
 		}
 		return myString;
@@ -275,6 +269,12 @@ public class Account extends DataItem {
 		theEarliest  = pAccount.theEarliest;
 		theLatest    = pAccount.theLatest;
 		isCloseable  = pAccount.isCloseable();
+		isAliasedTo  = pAccount.isAliasedTo();
+		isParent     = pAccount.isParent();
+		isPatterned  = pAccount.isPatterned;
+		hasPatterns  = pAccount.hasPatterns;
+		hasRates     = pAccount.hasRates;
+		hasPrices    = pAccount.hasPrices;
 			
 		/* Switch on the LinkStyle */
 		switch (pList.getStyle()) {
@@ -823,7 +823,7 @@ public class Account extends DataItem {
 	}
 		
 	/**
-	 * Touch an account with an aliase
+	 * Touch an account with an alias
 	 */
 	public void touchAlias() {
 		/* Record the alias */

@@ -206,7 +206,7 @@ public class MaintenanceTab {
 	 * Format the component for the field
 	 * @param pComp the component
 	 * @param iField the field number
-	 * @param pState the data state of the field
+	 * @param pItem the data item
 	 * @param isNumeric is the field numeric
 	 * @param isNull is the field null
 	 */
