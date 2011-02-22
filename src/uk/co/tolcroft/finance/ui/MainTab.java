@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import javax.swing.Box;
 import javax.swing.GroupLayout;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -25,6 +26,8 @@ import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.finance.help.*;
+import uk.co.tolcroft.help.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 
@@ -59,8 +62,10 @@ public class MainTab implements ActionListener,
 	private JMenuItem		theSaveDBase	= null;
 	private JMenuItem		theWriteBackup	= null;
 	private JMenuItem		theLoadBackup	= null;
+	private JMenuItem		theHelpMgr		= null;
 	private ThreadControl	theThread		= null;
 	private ExecutorService theExecutor		= null;
+	private HelpWindow		theHelpWdw		= null;
 	
 	/* Access methods */
 	public 		View			getView()  		{ return theView; }
@@ -209,6 +214,12 @@ public class MainTab implements ActionListener,
 		theLoadBackup = new JMenuItem("Restore from Backup");
 		theLoadBackup.addActionListener(this);
 		theBackupMenu.add(theLoadBackup);
+		theHelpMgr = new JMenuItem("Help");
+		theHelpMgr.addActionListener(this);
+		theMainMenu.add(Box.createHorizontalGlue());
+		theMainMenu.add(Box.createHorizontalGlue());
+		theMainMenu.add(Box.createHorizontalGlue());
+		theMainMenu.add(theHelpMgr);
 		
 		/* Initialise the data */
 		refreshData();
@@ -225,8 +236,8 @@ public class MainTab implements ActionListener,
 		theFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		theFrame.addWindowListener(this);
 
-		/* Load data from the spreadsheet */
-		loadSpreadsheet();
+		/* Load data from the database */
+		loadDatabase();
 	}
 	
 	public void windowClosed(WindowEvent e) {}
@@ -237,23 +248,33 @@ public class MainTab implements ActionListener,
 	public void windowDeactivated(WindowEvent e) {}
 	
 	public void windowClosing(WindowEvent e) {
-		/* If we have updates or changes */
-		if ((hasUpdates()) || (hasChanges())) {
-			/* Ask whether to continue */
-			int myOption = JOptionPane.showConfirmDialog(theFrame,
-														 "Discard unsaved data changes?",
-														 "Confirm Close",
-														 JOptionPane.YES_NO_OPTION);
+		/* If this is the frame that is closing down */
+		if (e.getSource() == theFrame) {
+			/* If we have updates or changes */
+			if ((hasUpdates()) || (hasChanges())) {
+				/* Ask whether to continue */
+				int myOption = JOptionPane.showConfirmDialog(theFrame,
+														     "Discard unsaved data changes?",
+														     "Confirm Close",
+														     JOptionPane.YES_NO_OPTION);
 			
-			/* Ignore if no was responded */
-			if (myOption != JOptionPane.YES_OPTION) return;
-		}		
+				/* Ignore if no was responded */
+				if (myOption != JOptionPane.YES_OPTION) return;
+			}		
 		
-		/* terminate the executor */
-		theExecutor.shutdown();
+			/* terminate the executor */
+			theExecutor.shutdown();
 		
-		/* Dispose of the frame */
-		theFrame.dispose();
+			/* Dispose of the frame */
+			theFrame.dispose();
+		}
+		
+		/* else if this is the Help Window shutting down */
+		else if (e.getSource() == theHelpWdw) {
+			/* Re-enable the help menu item */
+			theHelpMgr.setEnabled(true);
+			theHelpWdw = null;
+		}
 	}
 
 	public boolean hasUpdates() {
@@ -310,6 +331,12 @@ public class MainTab implements ActionListener,
 		if (evt.getSource() == (Object)theLoadBackup) {
 			/* Start a restore backup operation */
 			restoreBackup();
+		}		
+		
+		/* If this event relates to the Display Help item */
+		if (evt.getSource() == (Object)theHelpMgr) {
+			/* Open the help window */
+			displayHelp();
 		}		
 	}
 	
@@ -382,7 +409,7 @@ public class MainTab implements ActionListener,
 	/* Purge Database */
 	public void purgeDatabase() {
 		purgeDatabase myThread;
-
+		
 		/* Create the worker thread */
 		myThread = new purgeDatabase(theView, this);
 		theThread = myThread;
@@ -416,6 +443,24 @@ public class MainTab implements ActionListener,
 		/* Execute it and lock tabs */
 		theExecutor.execute(myThread);	
 		setVisibleTabs();
+	}
+	
+	/* Display Help */
+	public void displayHelp() {
+		try { 
+			/* Create the help window */
+			theHelpWdw = new HelpWindow(theFrame, new FinanceHelp());
+			
+			/* Listen for its closure */
+			theHelpWdw.addWindowListener(this);
+			
+			/* Disable the menu item */
+			theHelpMgr.setEnabled(false);
+			
+			/* Display it */
+			theHelpWdw.showDialog();
+		}
+		catch (Throwable e) {}
 	}
 	
 	/* Finish Thread */
@@ -486,11 +531,13 @@ public class MainTab implements ActionListener,
 	public void setVisibleTabs() {
 		int         iIndex;
 		boolean     hasUpdates;
+		boolean		hasChanges;
 		boolean		hasWorker;
 		boolean		showTab;
 		
 		/* Determine whether we have any updates */
 		hasUpdates = hasUpdates();
+		hasChanges = hasChanges();
 		
 		/* Note whether we have a worker thread */
 		hasWorker = (theThread != null);
@@ -540,7 +587,16 @@ public class MainTab implements ActionListener,
 		theDataMenu.setEnabled(!hasWorker);
 		theBackupMenu.setEnabled(!hasWorker);
 		
-		/* TODO disable load/backup if we have changes */
+		/* If we have changes disable the create backup option */
+		theWriteBackup.setEnabled(!hasChanges && !hasUpdates);
+
+		/* If we have updates disable the load backup/database option */
+		theLoadBackup.setEnabled(!hasUpdates);
+		theLoadDBase.setEnabled(!hasUpdates);
+		theLoadSheet.setEnabled(!hasUpdates);
+
+		/* If we have updates or no changes disable the save database */
+		theSaveDBase.setEnabled(!hasUpdates && hasChanges);
 	}
 
 	/* Get Formatted Debug output */
