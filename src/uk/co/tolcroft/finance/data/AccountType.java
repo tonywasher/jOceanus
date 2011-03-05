@@ -574,6 +574,38 @@ public class AccountType extends DataItem {
 	}
 	
 	/**
+	 * Determine whether the AccountType is subject to Capital Gains
+	 * 
+	 * @return <code>true</code> if the account is subject to Capital Gains, <code>false</code> otherwise.
+	 */
+	public boolean isCapitalGains() {
+		switch (theClass) {
+			case SHARES:
+			case UNITTRUST:
+				return true;
+			default:
+				return false;
+		}
+	}
+	
+	/**
+	 * Determine whether the AccountType is Capital
+	 * 
+	 * @return <code>true</code> if the account is Capital, <code>false</code> otherwise.
+	 */
+	public boolean isCapital() {
+		switch (theClass) {
+			case SHARES:
+			case LIFEBOND:
+			case UNITTRUST:
+			case UNITISA:
+				return true;
+			default:
+				return false;
+		}
+	}
+	
+	/**
 	 * Determine whether the AccountType is cash
 	 * 
 	 * @return <code>true</code> if the account is cash, <code>false</code> otherwise.

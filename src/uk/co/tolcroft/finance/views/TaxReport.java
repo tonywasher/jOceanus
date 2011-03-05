@@ -43,7 +43,7 @@ public class TaxReport {
 		myOutput.append(theDate.getYear());
 		myOutput.append("</h1></a>");
 		myOutput.append("<a name=\"TransactionTotals\"><h2 align=\"center\">Transaction Totals</h2></a>");
-		myOutput.append("<table border=\"1\" width=\"75%\" align=\"center\">"); 
+		myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">"); 
 		myOutput.append("<thead><th rowspan=\"2\">Class</th><th colspan=\"2\">Value</th></thead>");
 		myOutput.append("<thead><th>");
 		myOutput.append(theDate.getYear());
@@ -70,7 +70,7 @@ public class TaxReport {
 		/* Format the next table */
 		myOutput.append("</tbody></table>");
 		myOutput.append("<a name=\"Trans\"><h2 align=\"center\">Transaction Breakdown</h2></a>");
-		myOutput.append("<table border=\"1\" width=\"75%\" align=\"center\">"); 
+		myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">"); 
 		myOutput.append("<thead><th rowspan=\"2\">Class</th>");
 		myOutput.append("<th colspan=\"2\">");
 		myOutput.append(theDate.getYear());
@@ -140,7 +140,7 @@ public class TaxReport {
 		myOutput.append(theDate.getYear());
 		myOutput.append("</h1></a>");
 		myOutput.append("<a name=\"TaxSummary\"><h2 align=\"center\">Taxation Summary</h2></a>");
-		myOutput.append("<table border=\"1\" width=\"75%\" align=\"center\">"); 
+		myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">"); 
 		myOutput.append("<thead><th>Class</th><th>Total Income</th><th>Taxation Due</th></thead>");
 		myOutput.append("<tbody>");
 	
@@ -205,7 +205,7 @@ public class TaxReport {
 
 		/* Format the allowances */
 		myOutput.append("<a name=\"Allowances\"><h2 align=\"center\">Allowances</h2></a>");
-		myOutput.append("<table border=\"1\" width=\"75%\" align=\"center\">");
+		myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">");
 		myOutput.append("<thead><th>Name</th><th>Value</th></thead>");
 		myOutput.append("<tbody>");
 		myOutput.append("<tr><th>PersonalAllowance</th>");
@@ -235,7 +235,7 @@ public class TaxReport {
 		
 		/* Format the Rates */
 		myOutput.append("<a name=\"Allowances\"><h2 align=\"center\">TaxRates</h2></a>");
-		myOutput.append("<table border=\"1\" width=\"75%\" align=\"center\">");
+		myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">");
 		myOutput.append("<thead><th>IncomeType</th><th>LoRate</th>");
 		myOutput.append("<th>BasicRate</th><th>HiRate</th>");
 		if (myYear.hasAdditionalTaxBand()) 
@@ -282,7 +282,7 @@ public class TaxReport {
 		
 		/* Format the tax bands */
 		myOutput.append("<a name=\"Allowances\"><h2 align=\"center\">TaxBands</h2></a>");
-		myOutput.append("<table border=\"1\" width=\"75%\" align=\"center\">");
+		myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">");
 		myOutput.append("<thead><th>Name</th><th>Value</th></thead>");
 		myOutput.append("<tbody>");
 		myOutput.append("<tr><th>Age for Tax Year</th>");
@@ -372,7 +372,7 @@ public class TaxReport {
 		myOutput.append("<h2 align=\"center\">");
 		myOutput.append(pSummary.getName());
 		myOutput.append("</h2></a>");
-		myOutput.append("<table border=\"1\" width=\"75%\" align=\"center\">"); 
+		myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">"); 
 		myOutput.append("<thead><th>Class</th><th>Income</th>");
 		myOutput.append("<th>Rate</th><th>Taxation Due</th></thead>");
 		myOutput.append("<tbody>");
@@ -429,7 +429,7 @@ public class TaxReport {
 		/* Format the detail */
 		myOutput.append("<a name=\"DetailChargeableEvents>");
 		myOutput.append("<h2 align=\"center\">Chargeable Events</h2></a>");
-		myOutput.append("<table border=\"1\" width=\"75%\" align=\"center\">"); 
+		myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">"); 
 		myOutput.append("<thead><th>Date</th><th>Description</th>");
 		myOutput.append("<th>Amount</th><th>TaxCredit</th><th>Years</th>");
 		myOutput.append("<th>Slice</th><th>Taxation</th></thead>");

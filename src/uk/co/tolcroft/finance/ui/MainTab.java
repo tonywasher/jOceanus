@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import javax.swing.Box;
 import javax.swing.GroupLayout;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -216,9 +215,6 @@ public class MainTab implements ActionListener,
 		theBackupMenu.add(theLoadBackup);
 		theHelpMgr = new JMenuItem("Help");
 		theHelpMgr.addActionListener(this);
-		theMainMenu.add(Box.createHorizontalGlue());
-		theMainMenu.add(Box.createHorizontalGlue());
-		theMainMenu.add(Box.createHorizontalGlue());
 		theMainMenu.add(theHelpMgr);
 		
 		/* Initialise the data */

@@ -69,6 +69,9 @@ public class View {
 		
 			/* Access the dilutions */
 			theDilutions = theAnalysis.getDilutions();
+			
+			EventAnalysis myNew = new EventAnalysis(theData);
+			myNew.getAnalysis();
 		}
 		
 		/* Catch any exceptions */

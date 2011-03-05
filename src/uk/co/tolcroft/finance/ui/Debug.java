@@ -31,10 +31,12 @@ public class Debug implements HyperlinkListener,
 		
 	/* Selection modes */
 	private static final String selEvents 	= "Events";
+	private static final String selStatemt	= "Statement";
 	private static final String selRates  	= "Rates";
 	private static final String selPrices	= "Prices";
 	private static final String selPatterns	= "Patterns";
-	private static final String selAccounts	= "Events";
+	private static final String selAnalysis	= "Analysis";
+	private static final String selAccounts	= "Account";
 	private static final String selTaxYears	= "TaxYears";
 	private static final String selError	= "Error";
 	
@@ -74,9 +76,11 @@ public class Debug implements HyperlinkListener,
 		/* Create the selection box and add the items */
 		theDataBox = new JComboBox();
 		theDataBox.addItem(selEvents);
+		theDataBox.addItem(selStatemt);
 		theDataBox.addItem(selRates);
 		theDataBox.addItem(selPrices);
 		theDataBox.addItem(selPatterns);
+		theDataBox.addItem(selAnalysis);
 		theDataBox.addItem(selAccounts);
 		theDataBox.addItem(selTaxYears);
 		theDataBox.addItem(selError);
@@ -103,8 +107,8 @@ public class Debug implements HyperlinkListener,
 	    myLayout.setVerticalGroup(
 	      	myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 		       	.addGroup(GroupLayout.Alignment.TRAILING, myLayout.createSequentialGroup()
-		            .addComponent(theDataBox, GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
-		            .addComponent(myScroll)
+		            .addComponent(theDataBox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+		            .addComponent(myScroll, GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
 		            .addContainerGap())
 		);			
 	}
@@ -164,11 +168,11 @@ public class Debug implements HyperlinkListener,
 		ERROR,
 		EXTRACT,
 		STATEMENT,
-		UNITSTATEMENT,
 		RATES,
 		PATTERNS,
 		PRICES,
 		SPOTPRICES,
+		ANALYSIS,
 		ACCOUNT,
 		TAXYEAR,
 		NONE;

@@ -79,8 +79,7 @@ public class Account extends DataItem {
 	private static byte[] getCharArrayPairBytes(CharArrayPair pPair) {
 		return (pPair == null) ? null : pPair.getBytes(); }
 	private static String getCharArrayPairString(CharArrayPair pPair) {
-		char[] myChars = pPair.getValue();
-		return (myChars == null) ? null : new String(myChars);
+		return ((pPair == null) || (pPair.getValue() == null)) ? null : new String(pPair.getValue());
 	}
 	
 	/* Access methods */
@@ -535,6 +534,9 @@ public class Account extends DataItem {
 	public 	boolean isChild()     { return getActType().isChild(); }
 	public 	boolean isBond()      { return getActType().isBond(); }
 	public 	boolean isBenefit()   { return getActType().isBenefit(); }
+	public 	boolean isLifeBond()  { return getActType().isLifeBond(); }
+	public 	boolean isCapital()   { return getActType().isCapital(); }
+	public 	boolean isCapitalGains()   { return getActType().isCapitalGains(); }
 	
 	/**
 	 * Validate the account
@@ -604,7 +606,7 @@ public class Account extends DataItem {
 		/* else we should have a parent */
 		else {
 			/* If data has been fully loaded we have no parent */
-			if ((mySet.getLoadState() == LoadState.LOADED) && 
+			if ((mySet.getLoadState() != LoadState.INITIAL) && 
 				(getParent() == null)) 
 				addError("Child Account must have parent", FIELD_PARENT);
 				
@@ -666,7 +668,7 @@ public class Account extends DataItem {
 		}
 			
 		/* If data has been fully loaded and the account is closed */
-		if ((mySet.getLoadState() == LoadState.LOADED) && 
+		if ((mySet.getLoadState() != LoadState.INITIAL) && 
 			(isClosed())) {
 			/* Account must be close-able */
 			if (!isCloseable())
@@ -1336,8 +1338,8 @@ public class Account extends DataItem {
 						myCurr.getAlias().setNonCloseable();
 				}
 				
-				/* If we have no latest event, then we are not close-able */
-				if (myCurr.getLatest() == null) {
+				/* If we are a child and have no latest event, and are then we are not close-able */
+				if ((myCurr.isChild()) && (myCurr.getLatest() == null)) {
 					myCurr.setNonCloseable();
 				}
 				

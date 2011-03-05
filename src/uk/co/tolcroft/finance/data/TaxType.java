@@ -42,6 +42,12 @@ public class TaxType extends DataItem {
 	 */
 	public	int    getOrder()             { return theOrder; }
 		
+	/**
+	 * Return the Tax class of the Tax Type
+	 * @return the class
+	 */
+	public TaxClass 	getTaxClass()     { return theClass; }
+
 	/* Linking methods */
 	public TaxType getBase() { return (TaxType)super.getBase(); }
 	public Values  getObj()  { return (Values)super.getObj(); }	
@@ -172,173 +178,181 @@ public class TaxType extends DataItem {
 			theClass = TaxClass.EXPENSE;
 			theOrder = 10;
 		}
+		else if (sName.equals("VirtualIncome")) {
+			theClass = TaxClass.VIRTUAL;
+			theOrder = 11;
+		}
+		else if (sName.equals("NonCoreIncome")) {
+			theClass = TaxClass.NONCORE;
+			theOrder = 12;
+		}
 		else if (sName.equals("Profit/Loss")) {
 			theClass = TaxClass.PROFIT;
-			theOrder = 11;
+			theOrder = 0+CLASSDIVIDE;
 		}
 		else if (sName.equals("CoreProfit/Loss")) {
 			theClass = TaxClass.COREPROFIT;
-			theOrder = 12;
+			theOrder = 1+CLASSDIVIDE;
 		}
 		else if (sName.equals("GrossIncome")) {
 			theClass = TaxClass.GROSSINCOME;
-			theOrder = 0+CLASSDIVIDE;
+			theOrder = 0+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("OriginalAllowance")) {
 			theClass = TaxClass.ORIGALLOW;
-			theOrder = 1+CLASSDIVIDE;
+			theOrder = 1+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("AdjustedAllowance")) {
 			theClass = TaxClass.ADJALLOW;
-			theOrder = 2+CLASSDIVIDE;
+			theOrder = 2+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("HighTaxBand")) {
 			theClass = TaxClass.HITAXBAND;
-			theOrder = 3+CLASSDIVIDE;
+			theOrder = 3+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("SalaryNilRate")) {
 			theClass = TaxClass.SALARYFREE;
-			theOrder = 4+CLASSDIVIDE;
+			theOrder = 4+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("RentalNilRate")) {
 			theClass = TaxClass.RENTALFREE;
-			theOrder = 5+CLASSDIVIDE;
+			theOrder = 5+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("InterestNilRate")) {
 			theClass = TaxClass.INTERESTFREE;
-			theOrder = 6+CLASSDIVIDE;
+			theOrder = 6+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("CapitalNilRate")) {
 			theClass = TaxClass.CAPITALFREE;
-			theOrder = 7+CLASSDIVIDE;
+			theOrder = 7+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("SalaryLowRate")) {
 			theClass = TaxClass.SALARYLO;
-			theOrder = 8+CLASSDIVIDE;
+			theOrder = 8+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("RentalLowRate")) {
 			theClass = TaxClass.RENTALLO;
-			theOrder = 9+CLASSDIVIDE;
+			theOrder = 9+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("InterestLowRate")) {
 			theClass = TaxClass.INTERESTLO;
-			theOrder = 10+CLASSDIVIDE;
+			theOrder = 10+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("SalaryBasicRate")) {
 			theClass = TaxClass.SALARYBASIC;
-			theOrder = 11+CLASSDIVIDE;
+			theOrder = 11+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("RentalBasicRate")) {
 			theClass = TaxClass.RENTALBASIC;
-			theOrder = 12+CLASSDIVIDE;
+			theOrder = 12+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("InterestBasicRate")) {
 			theClass = TaxClass.INTERESTBASIC;
-			theOrder = 13+CLASSDIVIDE;
+			theOrder = 13+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("DividendBasicRate")) {
 			theClass = TaxClass.DIVIDENDBASIC;
-			theOrder = 14+CLASSDIVIDE;
+			theOrder = 14+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("SliceBasicRate")) {
 			theClass = TaxClass.SLICEBASIC;
-			theOrder = 15+CLASSDIVIDE;
+			theOrder = 15+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("GainsBasicRate")) {
 			theClass = TaxClass.GAINSBASIC;
-			theOrder = 16+CLASSDIVIDE;
+			theOrder = 16+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("CapitalBasicRate")) {
 			theClass = TaxClass.CAPITALBASIC;
-			theOrder = 17+CLASSDIVIDE;
+			theOrder = 17+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("SalaryHighRate")) {
 			theClass = TaxClass.SALARYHI;
-			theOrder = 18+CLASSDIVIDE;
+			theOrder = 18+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("RentalHighRate")) {
 			theClass = TaxClass.RENTALHI;
-			theOrder = 19+CLASSDIVIDE;
+			theOrder = 19+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("InterestHighRate")) {
 			theClass = TaxClass.INTERESTHI;
-			theOrder = 20+CLASSDIVIDE;
+			theOrder = 20+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("DividendHighRate")) {
 			theClass = TaxClass.DIVIDENDHI;
-			theOrder = 21+CLASSDIVIDE;
+			theOrder = 21+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("SliceHighRate")) {
 			theClass = TaxClass.SLICEHI;
-			theOrder = 22+CLASSDIVIDE;
+			theOrder = 22+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("GainsHighRate")) {
 			theClass = TaxClass.GAINSHI;
-			theOrder = 23+CLASSDIVIDE;
+			theOrder = 23+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("CapitalHighRate")) {
 			theClass = TaxClass.CAPITALHI;
-			theOrder = 24+CLASSDIVIDE;
+			theOrder = 24+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("SalaryAdditionalRate")) {
 			theClass = TaxClass.SALARYADD;
-			theOrder = 25+CLASSDIVIDE;
+			theOrder = 25+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("RentalAdditionalRate")) {
 			theClass = TaxClass.RENTALADD;
-			theOrder = 26+CLASSDIVIDE;
+			theOrder = 26+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("InterestAdditionalRate")) {
 			theClass = TaxClass.INTERESTADD;
-			theOrder = 27+CLASSDIVIDE;
+			theOrder = 27+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("DividendAdditionalRate")) {
 			theClass = TaxClass.DIVIDENDADD;
-			theOrder = 28+CLASSDIVIDE;
+			theOrder = 28+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("SliceAdditionalRate")) {
 			theClass = TaxClass.SLICEADD;
-			theOrder = 29+CLASSDIVIDE;
+			theOrder = 29+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("GainsAdditionalRate")) {
 			theClass = TaxClass.GAINSADD;
-			theOrder = 20+CLASSDIVIDE;
+			theOrder = 20+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("TaxDueSlice")) {
 			theClass = TaxClass.TAXDUESLICE;
-			theOrder = 21+CLASSDIVIDE;
+			theOrder = 21+2*CLASSDIVIDE;
 		}
 		else if (sName.equals("TaxDueSalary")) {
 			theClass = TaxClass.TAXDUESALARY;
-			theOrder = 0+2*CLASSDIVIDE;
+			theOrder = 0+3*CLASSDIVIDE;
 		}
 		else if (sName.equals("TaxDueRental")) {
 			theClass = TaxClass.TAXDUERENTAL;
-			theOrder = 1+2*CLASSDIVIDE;
+			theOrder = 1+3*CLASSDIVIDE;
 		}
 		else if (sName.equals("TaxDueInterest")) {
 			theClass = TaxClass.TAXDUEINTEREST;
-			theOrder = 2+2*CLASSDIVIDE;
+			theOrder = 2+3*CLASSDIVIDE;
 		}
 		else if (sName.equals("TaxDueDividends")) {
 			theClass = TaxClass.TAXDUEDIVIDEND;
-			theOrder = 3+2*CLASSDIVIDE;
+			theOrder = 3+3*CLASSDIVIDE;
 		}
 		else if (sName.equals("TaxDueTaxableGains")) {
 			theClass = TaxClass.TAXDUETAXGAINS;
-			theOrder = 4+2*CLASSDIVIDE;
+			theOrder = 4+3*CLASSDIVIDE;
 		}
 		else if (sName.equals("TaxDueCapitalGains")) {
 			theClass = TaxClass.TAXDUECAPGAINS;
-			theOrder = 5+2*CLASSDIVIDE;
+			theOrder = 5+3*CLASSDIVIDE;
 		}
 		else if (sName.equals("TotalTaxation")) {
 			theClass = TaxClass.TOTALTAX;
-			theOrder = 0+3*CLASSDIVIDE;
+			theOrder = 0+4*CLASSDIVIDE;
 		}
 		else if (sName.equals("TaxProfit/Loss")) {
 			theClass = TaxClass.TAXPROFIT;
-			theOrder = 1+3*CLASSDIVIDE;
+			theOrder = 1+4*CLASSDIVIDE;
 		}
 		else {
 			throw new Exception(ExceptionClass.DATA,
@@ -700,6 +714,16 @@ public class TaxType extends DataItem {
 		 * Gross Expense
 		 */
 		EXPENSE,
+
+		/**
+		 * Virtual Income
+		 */
+		VIRTUAL,
+
+		/**
+		 * Non-Core Income
+		 */
+		NONCORE,
 
 		/**
 		 * Profit on Year

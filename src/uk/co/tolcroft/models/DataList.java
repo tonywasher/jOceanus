@@ -422,7 +422,7 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>{
 		showDeleted = !getSkipHidden();
 			
 		/* Format the table headers */
-		myString.append("<table border=\"1\" width=\"75%\" align=\"center\">");
+		myString.append("<table border=\"1\" width=\"90%\" align=\"center\">");
 		myString.append("<thead><th>");
 		myString.append(itemType());
 		myString.append("List</th>");

@@ -38,7 +38,7 @@ public class IncomeReport {
 		myOutput.append("<h1 align=\"center\">Income/Expense Report for ");
 		myOutput.append(theDate.getYear());
 		myOutput.append("</h1></a>");
-		myOutput.append("<table border=\"1\" width=\"75%\" align=\"center\">"); 
+		myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">"); 
 		myOutput.append("<thead><th rowspan=\"2\">Name</th>");
 		myOutput.append("<th colspan=\"2\">");
 		myOutput.append(theDate.getYear());

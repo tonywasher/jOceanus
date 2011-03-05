@@ -62,7 +62,7 @@ public class Report {
 
 		/* Build the cell */
 		myOutput.append("<td align=\"right\" color=\"blue\">");
-		if (pUnits.isNonZero())
+		if ((pUnits != null) && (pUnits.isNonZero()))
 			myOutput.append(pUnits.format(true));
 		myOutput.append("</td>");
 

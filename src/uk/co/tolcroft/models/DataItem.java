@@ -246,7 +246,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 		int		iNumFields = numFields();
 		
 		/* Initialise the string with an item name */
-		myString.append("<table border=\"1\" width=\"75%\" align=\"center\">");
+		myString.append("<table border=\"1\" width=\"90%\" align=\"center\">");
 		myString.append("<thead><th>");
 		myString.append(itemType());
 		myString.append("</th>");

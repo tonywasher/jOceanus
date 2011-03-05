@@ -95,7 +95,7 @@ public class Exception 	extends java.lang.Exception
 		int					myNumDetail  = 4;
 		
 		/* Initialise the string with an item name */
-		myString.append("<table border=\"1\" width=\"75%\" align=\"center\">");
+		myString.append("<table border=\"1\" width=\"90%\" align=\"center\">");
 		myString.append("<thead><th>Exception</th>");
 		myString.append("<th>Field</th><th>Value</th></thead><tbody>");
 		
@@ -158,7 +158,7 @@ public class Exception 	extends java.lang.Exception
 		/* If there is a stack trace */
 		if (myTrace != null) {
 			/* Add the stack trace */
-			myString.append("<p><table border=\"1\" width=\"75%\" align=\"center\">");
+			myString.append("<p><table border=\"1\" width=\"90%\" align=\"center\">");
 			myString.append("<thead><th>Stack Trace</th></thead><tbody>");
 			
 			/* Loop through the elements */

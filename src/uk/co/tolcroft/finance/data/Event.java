@@ -551,11 +551,11 @@ public class Event extends DataItem {
 				break;
 			case TAXABLEGAIN:
 				if (!isCredit) myResult = pType.isLifeBond();
-				else           myResult = !pType.isExternal();
+				else           myResult = pType.isMoney();
 				break;
 			case DIVIDEND:
 				if (!isCredit) myResult = pType.isDividend();
-				else           myResult = !pType.isExternal();
+				else           myResult = (pType.isMoney() || pType.isCapital() || pType.isDeferred());
 				break;
 			case STOCKDEMERGER:
 			case STOCKSPLIT:
@@ -607,7 +607,7 @@ public class Event extends DataItem {
 			case EXTRATAX:
 			case INSURANCE:
 			case ENDOWMENT:
-				if (!isCredit) myResult = !pType.isExternal();
+				if (!isCredit) myResult = (pType.isMoney() || pType.isDebt());
 				else           myResult = (pType.isExternal() && !pType.isCash());
 				break;
 			case MORTGAGE:
@@ -617,7 +617,7 @@ public class Event extends DataItem {
 			case TAXREFUND:
 				isCredit = !isCredit;
 			case TAXOWED:
-				if (!isCredit) myResult = !pType.isExternal();
+				if (!isCredit) myResult = (pType.isMoney() || pType.isDeferred());
 				else           myResult = pType.isTaxMan();
 				break;
 			case TAXRELIEF:
@@ -781,6 +781,12 @@ public class Event extends DataItem {
 				 (!myTransType.isStockSplit()))) { 
 				addError("Units must positive unless this is a StockSplit", FIELD_UNITS);
 			}
+		}
+		
+		/* Else check for required units */
+		else {
+			if (isStockSplit()) 
+				addError("Stock Split requires non-zero Units", FIELD_UNITS);
 		}
 		
 		/* Money must not be negative */

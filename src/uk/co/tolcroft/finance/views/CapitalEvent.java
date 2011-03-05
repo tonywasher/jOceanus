@@ -1,6 +1,7 @@
 package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.finance.data.TransactionType.TransClass;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 
@@ -11,70 +12,46 @@ public class CapitalEvent extends DataItem {
 	private static final String objName = "CapitalEvent";
 
 	/**
-	 * The Amount Tax threshold for "small" transactions (£3000)
+	 * The attributes
 	 */
-	private final static Money valueLimit 	= new Money(Money.convertToValue(3000));
-
-	/**
-	 * The Rate Tax threshold for "small" transactions (5%)
-	 */
-	private final static Rate rateLimit 	= new Rate(Rate.convertToValue(5));
+	public static final String capitalInitialCost	= "CostInitial";
+	public static final String capitalDeltaCost		= "CostDelta";
+	public static final String capitalFinalCost		= "CostFinal";
+	public static final String capitalInitialUnits	= "UnitsInitial";
+	public static final String capitalDeltaUnits	= "UnitsDelta";
+	public static final String capitalFinalUnits	= "UnitsFinal";
+	public static final String capitalInitialGains	= "GainsInitial";
+	public static final String capitalDeltaGains	= "GainsDelta";
+	public static final String capitalFinalGains	= "GainsFinal";
+	public static final String capitalInitialGained	= "GainedInitial";
+	public static final String capitalDeltaGained	= "GainedDelta";
+	public static final String capitalFinalGained	= "GainedFinal";
+	public static final String capitalInitialDiv	= "DividendInitial";
+	public static final String capitalDeltaDiv		= "DividendDelta";
+	public static final String capitalFinalDiv		= "DividendFinal";
+	public static final String capitalInitialInvest	= "InvestedInitial";
+	public static final String capitalDeltaInvest	= "InvestedDelta";
+	public static final String capitalFinalInvest	= "InvestedFinal";
+	public static final String capitalInitialValue	= "ValueInitial";
+	public static final String capitalFinalValue	= "ValueFinal";
+	public static final String capitalInitialPrice	= "PriceInitial";
+	public static final String capitalMarket		= "MarketMovement";
+	public static final String capitalTakeoverCost	= "TakeoverCost";
+	public static final String capitalTakeoverCash	= "TakeoverCash";
+	public static final String capitalTakeoverStock	= "TakeoverStock";
+	public static final String capitalTakeoverTotal	= "TakeoverTotal";
+	public static final String capitalTakeoverPrice	= "TakeoverPrice";
+	public static final String capitalTakeoverValue	= "TakeoverValue";
 
 	/* Members */
-	private Account			theAccount		= null;
+	private AttributeList	theAttributes	= null;
 	private Date			theDate			= null;
-	private TransactionType theTransType	= null;
-	private String 			theDesc			= null;
-	private Money			theCashTakeover	= null;
-	private Money			theInvestment	= null;
-	private Money			theDividends	= null;
-	private Money			theTotalCost	= null;
-	private Money			theDeltaCost	= null;
-	private Units			theUnits		= null;
-	private Price			thePrice		= null;
-	private Money			theDeltaGains	= null;
-	private Money			theTotalGains	= null;
-	private Money			theValue		= null;
-	private Money			theProfit		= null;
-	
-	private boolean			isReinvestment	= false;
 	
 	/* Access methods */
-	public Account 			getAccount() 	{ return theAccount; }
-	public Date 			getDate() 		{ return theDate; }
-	public String 			getDesc() 		{ return theDesc; }
-	public TransactionType	getTransType() 	{ return theTransType; }
-	public Money 			getInvestment() { return theInvestment; }
-	public Money 			getDividends()  { return theDividends; }
-	public Money 			getTotalCost() 	{ return theTotalCost; }
-	public Money 			getDeltaCost() 	{ return theDeltaCost; }
-	public Units 			getUnits() 		{ return theUnits; }
-	public Price 			getPrice() 		{ return thePrice; }
-	public Money 			getDeltaGains()	{ return theDeltaGains; }
-	public Money 			getTotalGains() { return theTotalGains; }
-	public Money 			getValue() 		{ return theValue; }
-	public Money 			getProfit() 	{ return theProfit; }
+	public	Date			getDate()		{ return theDate; }
 	
 	/* Map the getBase function */
 	public Event 			getBase()		{ return (Event)super.getBase(); }
-	
-	/* Field IDs */
-	public static final int FIELD_ID     	= 0;
-	public static final int FIELD_ACCOUNT  	= 1;
-	public static final int FIELD_DATE      = 2;
-	public static final int FIELD_TRANTYPE  = 3;
-	public static final int FIELD_DESC		= 4;
-	public static final int FIELD_INVESTMNT = 5;
-	public static final int FIELD_DIVIDENDS = 6;
-	public static final int FIELD_TOTALCOST = 7;
-	public static final int FIELD_DELTACOST = 8;
-	public static final int FIELD_UNITS 	= 9;
-	public static final int FIELD_PRICE 	= 10;
-	public static final int FIELD_VALUE		= 11;
-	public static final int FIELD_TOTALGAIN = 12;
-	public static final int FIELD_DELTAGAIN = 13;
-	public static final int FIELD_PROFIT	= 14;
-	public static final int NUMFIELDS	    = 15;
 	
 	/**
 	 * Obtain the type of the item
@@ -86,31 +63,27 @@ public class CapitalEvent extends DataItem {
 	 * Obtain the number of fields for an item
 	 * @return the number of fields
 	 */
-	public int	numFields() {return NUMFIELDS; }
+	public int	numFields() { return 1 + theAttributes.getNumAttributes(); }
 	
 	/**
 	 * Determine the field name for a particular field
 	 * @return the field name
 	 */
 	public String	fieldName(int iField) {
-		switch (iField) {
-			case FIELD_ID: 	  		return "ID";
-			case FIELD_ACCOUNT: 	return "Name";
-			case FIELD_DATE: 		return "Date";
-			case FIELD_DESC: 		return "Description";
-			case FIELD_TRANTYPE: 	return "TransType";
-			case FIELD_INVESTMNT: 	return "Investment";
-			case FIELD_DIVIDENDS: 	return "Dividends";
-			case FIELD_TOTALCOST: 	return "TotalCost";
-			case FIELD_DELTACOST: 	return "DeltaCost";
-			case FIELD_UNITS: 		return "Units";
-			case FIELD_PRICE: 		return "Price";
-			case FIELD_VALUE: 	  	return "Value";
-			case FIELD_TOTALGAIN: 	return "TotalGain";
-			case FIELD_DELTAGAIN: 	return "DeltaGain";
-			case FIELD_PROFIT: 		return "Profit";
-			default:		  		return super.fieldName(iField);
+		Attribute myAttr;
+
+		/* If we have a valid element */
+		if (iField < numFields()) {
+			/* Handle id of zero */
+			if (iField == 0) return "Date";
+			
+			/* Access the attribute */
+			myAttr = theAttributes.get(iField-1);
+			return myAttr.getName();
 		}
+		
+		/* Handle out of range */
+		return super.fieldName(iField);
 	}
 	
 	/**
@@ -120,49 +93,22 @@ public class CapitalEvent extends DataItem {
 	 * @return the formatted field
 	 */
 	public String formatField(int iField, histObject pObj) {
-		String myString = ""; 
-		switch (iField) {
-			case FIELD_ID: 			
-				myString += getId();
-				break;
-			case FIELD_ACCOUNT:		
-				myString += Account.format(theAccount);
-				break;
-			case FIELD_DATE: 		
-				myString += Date.format(theDate);
-				break;
-			case FIELD_TRANTYPE: 	
-				myString += TransactionType.format(theTransType);
-				break;
-			case FIELD_DESC: 	
-				myString += theDesc;
-				break;
-			case FIELD_TOTALCOST:
-				myString += Money.format(theTotalCost);
-				break;
-			case FIELD_DELTACOST:
-				myString += Money.format(theDeltaCost);
-				break;
-			case FIELD_UNITS:
-				myString += Units.format(theUnits);
-				break;
-			case FIELD_PRICE:
-				myString += Price.format(thePrice);
-				break;
-			case FIELD_VALUE:
-				myString += Money.format(theValue);
-				break;
-			case FIELD_TOTALGAIN:
-				myString += Money.format(theTotalGains);
-				break;
-			case FIELD_DELTAGAIN:
-				myString += Money.format(theDeltaGains);
-				break;
-			case FIELD_PROFIT:
-				myString += Money.format(theProfit);
-				break;
+		Attribute myAttr;
+
+		/* If we have a valid element */
+		if (iField < numFields()) {
+			/* Handle id of zero */
+			if (iField == 0) return Date.format(theDate);
+
+			/* Access the attribute */
+			myAttr = theAttributes.get(iField-1);
+
+			/* format the attribute */
+			return myAttr.format();
 		}
-		return myString;
+		
+		/* Handle out of range */
+		return "";
 	}
 
 	/**
@@ -171,44 +117,34 @@ public class CapitalEvent extends DataItem {
 	 * @param pEvent the underlying event
 	 */
 	private CapitalEvent(List 			pList,
-						 Event 			pEvent,
-						 CapitalEvent	pPrevious) {
+						 Event 			pEvent) {
 		/* Call super-constructor */
 		super(pList, pEvent.getId());
 		
-		/* Store the account from the list */
-		theAccount 		= pList.getAccount();
-		
-		/* Pick up sorting values from the event */
-		theDate 		= pEvent.getDate();
-		theTransType 	= pEvent.getTransType();
-		theDesc 		= pEvent.getDesc();
-		
-		/* If we have a previous capital event */
-		if (pPrevious != null) {
-			/* Initialise totals from previous event */
-			theUnits 		= new Units(pPrevious.getUnits());
-			theTotalCost	= new Money(pPrevious.getTotalCost());
-			theTotalGains	= new Money(pPrevious.getTotalGains());
-			theInvestment	= new Money(pPrevious.getInvestment());
-			theDividends	= new Money(pPrevious.getDividends());
-		}
-		
-		/* else this is the first capital event */
-		else {
-			/* Initialise the totals */
-			theUnits 		= new Units(0);
-			theTotalCost 	= new Money(0);
-			theTotalGains	= new Money(0);
-			theInvestment	= new Money(0);
-			theDividends	= new Money(0);
-		}
-		
-		/* Process the event */
-		processEvent(pEvent);
+		/* Create the attributes list */
+		theAttributes = new AttributeList();
+		theDate		  = pEvent.getDate();
 		
 		/* Link to the event */
 		setBase(pEvent);
+		
+		/* Set status */
+		setState(DataState.CLEAN);
+	}
+	
+	/**
+	 * Constructor
+	 * @param pList the list to belong to
+	 * @param pEvent the underlying event
+	 */
+	private CapitalEvent(List 			pList,
+						 Date			pDate) {
+		/* Call super-constructor */
+		super(pList, 0);
+		
+		/* Create the attributes list */
+		theAttributes = new AttributeList();
+		theDate		  = pDate;
 		
 		/* Set status */
 		setState(DataState.CLEAN);
@@ -231,20 +167,16 @@ public class CapitalEvent extends DataItem {
 		/* Access the object as a CapitalEvent */
 		CapitalEvent myEvent = (CapitalEvent)pThat;
 		
+		/* Compare the dates */
+		if (!theDate.equals(myEvent.theDate)) return false;
+		
+		/* If we have a null base then equal if and only if that has null base */
+		if (getBase() == null) return (myEvent.getBase() != null);
+		
+		/* If we don't have null base then non-equal if that has null base */
+		if (myEvent.getBase() == null) return false;
+
 		/* Check for equality */
-		if (getId() != myEvent.getId()) return false;
-		if (Date.differs(getDate(),      			myEvent.getDate())) 		return false;
-		if (Account.differs(getAccount(),    		myEvent.getAccount())) 		return false;
-		if (TransactionType.differs(getTransType(),	myEvent.getTransType())) 	return false;
-		if (Utils.differs(getDesc(),  				myEvent.getDesc())) 		return false;
-		if (Money.differs(getTotalCost(),   		myEvent.getTotalCost())) 	return false;
-		if (Money.differs(getDeltaCost(), 			myEvent.getDeltaCost())) 	return false;
-		if (Units.differs(getUnits(),      			myEvent.getUnits())) 		return false;
-		if (Price.differs(getPrice(),      			myEvent.getPrice())) 		return false;
-		if (Money.differs(getValue(),  				myEvent.getValue()))		return false;
-		if (Money.differs(getTotalGains(),  		myEvent.getTotalGains()))	return false;
-		if (Money.differs(getDeltaGains(),			myEvent.getDeltaGains()))	return false;
-		if (Money.differs(getProfit(),				myEvent.getProfit()))		return false;
 		return getBase().equals(myEvent.getBase());
 	}
 
@@ -265,379 +197,86 @@ public class CapitalEvent extends DataItem {
 		/* Access the object as a CapitalEvent */
 		CapitalEvent myThat = (CapitalEvent)pThat;
 		
+		/* Compare the dates */
+		int iResult = theDate.compareTo(myThat.theDate);
+		if (iResult != 0) return iResult;
+		
+		/* If we have a null base then we are after non-null and equal to null */
+		if (getBase() == null) return (myThat.getBase() == null) ? 0 : 1;
+		
+		/* If we don't have null base then before any null base */
+		if (myThat.getBase() == null) return -1;
+
 		/* Compare the underlying events */
 		return getBase().compareTo(myThat.getBase());
 	}
 	
 	/**
-	 * Process Event
-	 * @param pEvent the event
+	 * Add Money Attribute
+	 * @param pName the name of the attribute 
+	 * @param pValue the value of the attribute
 	 */
-	private void processEvent(Event pEvent) {
-		Money 		myAmount 		= pEvent.getAmount();
-		Money 		myTaxCredit		= pEvent.getTaxCredit();
-		Units 		myUnits 		= pEvent.getUnits();
-		Dilution	myDilution		= pEvent.getDilution();
-		boolean 	isDebit			= !Account.differs(theAccount, pEvent.getDebit());
-		boolean 	isCredit		= !Account.differs(theAccount, pEvent.getCredit());
-
+	protected void addAttribute(String 	pName,
+								Money	pValue) {
+		/* Create the attribute and add to the list */
+		MoneyAttribute myAttr = new MoneyAttribute(pName, 
+												   new Money(pValue));
+		theAttributes.add(myAttr);
 	}
 	
 	/**
-	 * Process an event that is a stock split.
-	 * This capital event relates only to the Debit Account
-	 * @param pEvent the event
+	 * Add Units Attribute
+	 * @param pName the name of the attribute 
+	 * @param pValue the value of the attribute
 	 */
-	private void processStockSplit(Event pEvent) {
-		Units 	myUnits 	= pEvent.getUnits();
-
-		/* Add/Subtract the units movement for the account */
-		if (myUnits != null) theUnits.addUnits(myUnits);
+	protected void addAttribute(String 	pName,
+								Units	pValue) {
+		/* Create the attribute and add to the list */
+		UnitsAttribute myAttr = new UnitsAttribute(pName,
+												   new Units(pValue));
+		theAttributes.add(myAttr);
 	}
 	
 	/**
-	 * Process an event that is a transfer into capital (also StockRightTaken and Dividend Re-investment).
-	 * This capital event relates only to the Credit Account
-	 * @param pEvent the event
+	 * Add Price Attribute
+	 * @param pName the name of the attribute 
+	 * @param pValue the value of the attribute
 	 */
-	private void processTransferIn(Event pEvent) {
-		Money	myAmount 	= pEvent.getAmount();
-		Units 	myUnits 	= pEvent.getUnits();
-
-		/* Add any new units into the account */
-		if (myUnits != null) theUnits.addUnits(myUnits);
-			
-		/* This amount is added to the cost, so record as the delta cost */
-		theDeltaCost = new Money(myAmount);
-
-		/* Adjust the total cost of this account */
-		theTotalCost.addAmount(myAmount);
-
-		/* Adjust the total money invested into this account */
-		theInvestment.addAmount(myAmount);
+	protected void addAttribute(String 	pName,
+								Price	pValue) {
+		/* Create the attribute and add to the list */
+		PriceAttribute myAttr = new PriceAttribute(pName, 
+												   new Price(pValue));
+		theAttributes.add(myAttr);
 	}
 	
 	/**
-	 * Process a dividend event.
-	 * This capital event relates to the only to Debit account, 
-	 * although this may be a re-investment in which case we will utilise
-	 * the TransferIn logic for the re-investment part
-	 * @param pEvent the event
+	 * Find an attribute
+	 * @param pName the name of the attribute
+	 * @return the value of the attribute or null
 	 */
-	private void processDividend(Event pEvent) {
-		Money	myAmount 	= pEvent.getAmount();
-		Money	myTaxCredit	= pEvent.getTaxCredit();
-
-		if (isReinvestment) {
-			/* Process as a transfer in */
-			processTransferIn(pEvent);
-		}
-
-		/* Add the amount plus any tax credit to dividends */
-		theDividends.addAmount(myAmount);
-		theDividends.addAmount(myTaxCredit);
-	}
-	
-	/**
-	 * Process an event that is a transfer from capital.
-	 * This capital event relates only to the Debit Account
-	 * @param pEvent the event
-	 */
-	private void processTransferOut(Event pEvent) {
-		Money	myAmount 	= pEvent.getAmount();
-		Units 	myUnits 	= pEvent.getUnits();
-		Money	myReduction;
-
-		/* Adjust the total amount invested into this account */
-		theInvestment.subtractAmount(myAmount);
-		
-		/* Assume the the cost reduction is the full value */
-		myReduction = new Money(myAmount);
-		
-		/* If we are reducing units in the account */
-		if ((myUnits != null) && (myUnits.isNonZero())) {
-			/* The reduction is the relevant fraction of the cost */
-			myReduction = theTotalCost.valueAtWeight(myUnits, theUnits);
-		}
-		
-		/* If the reduction is greater than the total cost */
-		if (myReduction.getValue() > theTotalCost.getValue()) {
-			/* Reduction is the total cost */
-			myReduction = new Money(theTotalCost);
-		}
-		
-		/* Adjust the total cost */
-		theDeltaCost = new Money(myReduction);
-		theDeltaCost.negate();
-		theTotalCost.addAmount(theDeltaCost);
-		
-		/* Adjust the gains */
-		theDeltaGains = new Money(myAmount);
-		theDeltaGains.addAmount(theDeltaCost);
-		theTotalGains.addAmount(theDeltaGains);
-		
-		/* Subtract any redeemed units from the account */
-		if (myUnits != null) theUnits.subtractUnits(myUnits);
-	}
-	
-	/**
-	 * Process an event that is stock right waived.
-	 * This capital event relates only to the Debit Account
-	 * @param pEvent the event
-	 */
-	private void processStockRightWaived(Event pEvent) {
-		DataSet 		myData		= ((List)getList()).getData();
-		AcctPrice.List 	myPrices	= myData.getPrices();
-		Money			myAmount 	= pEvent.getAmount();
-		AcctPrice		myPrice;
-		Money			myReduction;
-		Money			myPortion;
-
-		/* Adjust the total amount invested into this account */
-		theInvestment.subtractAmount(myAmount);
-		
-		/* Get the appropriate price for the account */
-		myPrice  = myPrices.getLatestPrice(pEvent.getDebit(),
-										   pEvent.getDate());
-		thePrice = myPrice.getPrice();
-		
-		/* Determine value of this stock at the current time */
-		theValue = theUnits.valueAtPrice(thePrice);
-		
-		/* Calculate the portion of the value that creates a large transaction */
-		myPortion = theValue.valueAtRate(rateLimit);
-		
-		/* If this is a large stock waiver (> both valueLimit and rateLimit of value) */
-		if ((myAmount.getValue() > valueLimit.getValue()) &&
-			(myAmount.getValue() > myPortion.getValue()))
-		{
-			/* Determine the total value of rights plus share value */
-			Money myTotalValue = new Money(myAmount);
-			myTotalValue.addAmount(myAmount);
-			
-			/* Determine the reduction as a proportion of the total value */
-			myReduction = theTotalCost.valueAtWeight(myAmount, myTotalValue);						
-		}
-		
-		/* else this is viewed as small and is taken out of the cost */
-		else {
-			/* Set the reduction to be the entire amount */
-			myReduction = new Money(myAmount);
-		}
-		
-		/* If the reduction is greater than the total cost */
-		if (myReduction.getValue() > theTotalCost.getValue()) {
-			/* Reduction is the total cost */
-			myReduction = new Money(theTotalCost);
-		}
-		
-		/* Adjust the total cost */
-		theDeltaCost = new Money(myReduction);
-		theDeltaCost.negate();
-		theTotalCost.addAmount(theDeltaCost);
-		
-		/* Adjust the gains */
-		theDeltaGains = new Money(myAmount);
-		theDeltaGains.addAmount(theDeltaCost);
-		theTotalGains.addAmount(theDeltaGains);
-	}
-	
-	/**
-	 * Process an event that is Stock DeMerger.
-	 * This capital event relates to both the Credit and Debit accounts
-	 * @param pEvent the event
-	 */
-	private void processStockDeMerger(Event pEvent) {
-		Dilution	myDilution 	= pEvent.getDilution();
-		Units		myUnits		= pEvent.getUnits();
-		Money		myCost;
-
-		/* Calculate the diluted value of the Debit account */
-		myCost = theTotalCost.getDilutedAmount(myDilution);
-		
-		/* Calculate the delta to the cost */
-		theDeltaCost = new Money(myCost);
-		theDeltaCost.subtractAmount(theTotalCost);
-		
-		/* Record the new total cost */
-		theTotalCost = new Money(myCost);
-		
-		/* Adjust the investment for the debit account */
-		theInvestment.addAmount(theDeltaCost);
-		
-		/* The deltaCost is transferred to the credit account */
-		theDeltaCost = new Money(theDeltaCost);
-		theDeltaCost.negate();
-		
-		/* Add the deltaCost to investment and total cost of credit account */
-		theInvestment.addAmount(theDeltaCost);
-		theTotalCost.addAmount(theDeltaCost);
-		
-		/* Adjust the units for the credit account */
-		theUnits.addUnits(myUnits);
-	}
-	
-	/**
-	 * Process an event that is StockTakeover.
-	 * This capital event relates to both the Credit and Debit accounts
-	 * In particular it makes reference to the CashTakeOver aspect of the debit account
-	 * @param pEvent the event
-	 */
-	private void processStockTakeover(Event pEvent) {
-		DataSet 		myData		= ((List)getList()).getData();
-		AcctPrice.List 	myPrices	= myData.getPrices();
-		Units			myUnits		= pEvent.getUnits();
-		AcctPrice		myPrice;
-		Money			myStockCost;
-		Money			myCashCost;
-		Money			myTotalCost;
-		
-		/* Adjust the units for the credit account */
-		theUnits.addUnits(myUnits);
-
-		/* If we have a Cash TakeOver component in the debit */
-		if (theCashTakeover != null) {
-			/* Get the appropriate price for the credit account */
-			myPrice  = myPrices.getLatestPrice(pEvent.getCredit(),
-										   	   pEvent.getDate());
-			thePrice = myPrice.getPrice();
-			
-			/* Determine value of the stock part of the takeover */
-			theValue = myUnits.valueAtPrice(thePrice);
-			
-			/* Calculate the total cost of the takeover */
-			myTotalCost = new Money(theCashTakeover);
-			myTotalCost.addAmount(theValue);
-		
-			/* Split the total cost of the debit account between stock and cash */
-			myStockCost = theTotalCost.valueAtWeight(theValue, myTotalCost);
-			myCashCost  = new Money(myTotalCost);
-			myCashCost.subtractAmount(myStockCost);
-			
-			/* The debit cost now becomes zero */
-			theDeltaCost = new Money(theTotalCost);
-			theTotalCost.setZero();
-			
-			/* The Delta Gains is the Amount minus the CashCost */
-			theDeltaGains = new Money(theCashTakeover);
-			theDeltaGains.subtractAmount(myCashCost);
-			theTotalGains.addAmount(theDeltaGains);
-
-			/* The units now becomes zero */
-			theUnits.setZero();
-
-			/* The cost of the credit account is the Stock Cost */
-			theDeltaCost = new Money(myStockCost);
-			theTotalCost.addAmount(theDeltaCost);
-			theInvestment.addAmount(theDeltaCost);
-		}
-		
-		/* else there is no cash part to this takeover */
-		else {
-			/* Simply transfer the cost from the debit account */
-			theTotalCost.addAmount(theTotalCost);
-			theDeltaCost = new Money(theTotalCost);
-			theInvestment.addAmount(theDeltaCost);
-			
-			/* The debit cost now becomes zero */
-			theDeltaCost = new Money(theTotalCost);
-			theDeltaCost.negate();
-			theTotalCost.setZero();
-			
-			/* The units now becomes zero */
-			theUnits.setZero();
-		}		
-	}
-	
-	/**
-	 * Process an event that is the Cash portion of a StockTakeOver.
-	 * This capital event relates only to the Debit Account
-	 * @param pEvent the event
-	 */
-	private void processCashTakeover(Event pEvent) {
-		DataSet 		myData		= ((List)getList()).getData();
-		AcctPrice.List 	myPrices	= myData.getPrices();
-		Money			myAmount 	= pEvent.getAmount();
-		AcctPrice	 	myPrice;
-		Money			myPortion;
-		Money			myReduction;
-
-		/* Adjust the total amount invested into this account */
-		theInvestment.subtractAmount(myAmount);
-		
-		/* Get the appropriate price for the account */
-		myPrice  = myPrices.getLatestPrice(pEvent.getDebit(),
-										   pEvent.getDate());
-		thePrice = myPrice.getPrice();
-		
-		/* Determine value of this stock at the current time */
-		theValue = theUnits.valueAtPrice(thePrice);
-		
-		/* Calculate the portion of the value that creates a large transaction */
-		myPortion = theValue.valueAtRate(rateLimit);
-		
-		/* If this is a large cash takeover portion (> both valueLimit and rateLimit of value) */
-		if ((myAmount.getValue() > valueLimit.getValue()) &&
-			(myAmount.getValue() > myPortion.getValue()))
-		{
-			/* We have to defer the allocation of cost until we know of the Stock takeover part */
-			theCashTakeover = new Money(myAmount);
-		}
-		
-		/* else this is viewed as small and is taken out of the cost */
-		else {
-			/* Set the reduction to be the entire amount */
-			myReduction = new Money(myAmount);
-		
-			/* If the reduction is greater than the total cost */
-			if (myReduction.getValue() > theTotalCost.getValue()) {
-				/* Reduction is the total cost */
-				myReduction = new Money(theTotalCost);
-			}
-				
-			/* Adjust the total cost */
-			theDeltaCost = new Money(myReduction);
-			theDeltaCost.negate();
-			theTotalCost.addAmount(theDeltaCost);
-		
-			/* Adjust the gains */
-			theDeltaGains = new Money(myAmount);
-			theDeltaGains.addAmount(theDeltaCost);
-			theTotalGains.addAmount(theDeltaGains);
-		}
+	public Object findAttribute(String pName) {
+		/* Search for the attribute */
+		return theAttributes.findAttribute(pName);
 	}
 	
 	/* The List of capital events */
 	public static class List extends DataList<CapitalEvent> {
 		/* Members */
 		private DataSet			theData			= null;
-		private Account			theAccount		= null;
-		private Money			theTotalCost	= null;
-		private Units			theUnits		= null;
-		private Money			theTotalGains	= null;
 	
 		/* Access methods */
 		public DataSet			getData()		{ return theData; }
-		public Account 			getAccount() 	{ return theAccount; }
-		public Money 			getTotalCost() 	{ return theTotalCost; }
-		public Units 			getUnits() 		{ return theUnits; }
-		public Money 			getTotalGains() { return theTotalGains; }
 
 		/** 
 	 	 * Construct an empty Capital event list
 	 	 * @param pAccount the Account for the list
 	 	 */
-		protected List(DataSet pData, Account pAccount) { 
+		protected List(DataSet pData) { 
 			super(ListStyle.VIEW, false);
 			
-			/* Store the account */
+			/* Store the data */
 			theData			= pData;
-			theAccount 		= pAccount;
-			
-			/* Initialise the totals */
-			theTotalCost 	= new Money(0);
-			theTotalGains 	= new Money(0);
-			theUnits		= new Units(0);
 		}
 
 		/** 
@@ -669,47 +308,232 @@ public class CapitalEvent extends DataItem {
 		public String itemType() { return objName; }		
 
 		/**
-		 * Add additional fields to HTML String
-		 * @param pBuffer the string buffer 
-		 */
-		public void addHTMLFields(StringBuilder pBuffer) {
-			/* Start the Fields section */
-			pBuffer.append("<tr><th rowspan=\"5\">Fields</th></tr>");
-				
-			/* Format the balances */
-			pBuffer.append("<tr><td>Account</td><td>"); 
-			pBuffer.append(Account.format(theAccount)); 
-			pBuffer.append("</td></tr>");
-			
-			/* Format the totals */
-			pBuffer.append("<tr><td>Total Cost</td><td>"); 
-			pBuffer.append(Money.format(theTotalCost)); 
-			pBuffer.append("</td></tr>"); 
-			pBuffer.append("<tr><td>Total Gains</td><td>"); 
-			pBuffer.append(Money.format(theTotalGains)); 
-			pBuffer.append("</td></tr>"); 
-			pBuffer.append("<tr><td>Units</td><td>"); 
-			pBuffer.append(Units.format(theUnits)); 
-			pBuffer.append("</td></tr>"); 
-		}
-		
-		/**
 		 * Add an event to the list
-		 * 
 		 * @param pEvent the Event to add
-		 * @param pPrevious the previous capital event
-		 * @return the newly created capital event
 		 */
-		protected CapitalEvent addEvent(Event 			pEvent,
-										CapitalEvent	pPrevious) {
+		protected CapitalEvent addEvent(Event 	pEvent) {
 			CapitalEvent myEvent;
 			
 			/* Create the Capital Event and add to list */
-			myEvent = new CapitalEvent(this, pEvent, pPrevious);
+			myEvent = new CapitalEvent(this, pEvent);
 			myEvent.addToList();
 			
 			/* return the new event */
 			return myEvent;
+		}
+
+		/**
+		 * Add a date event to the list
+		 * @param pDate the Date for the event
+		 */
+		protected CapitalEvent addEvent(Date 	pDate) {
+			CapitalEvent myEvent;
+			
+			/* Create the Capital Event and add to list */
+			myEvent = new CapitalEvent(this, pDate);
+			myEvent.addToList();
+			
+			/* return the new event */
+			return myEvent;
+		}
+		
+		/**
+		 * Find the cash takeover event (if present)
+		 */
+		protected CapitalEvent getCashTakeOver() {
+			ListIterator myIterator;
+			CapitalEvent myEvent;
+			
+			/* Create the iterator */
+			myIterator = listIterator();
+			
+			/* Access the last element */
+			myEvent = myIterator.peekLast();
+			
+			/* If the element is a cash takeover */
+			if ((myEvent.getBase() != null) &&
+				(myEvent.getBase().getTransType().getTranClass() == TransClass.CASHTAKEOVER))
+				return myEvent;
+			
+			/* Return no such event */
+			return null;
+		}
+	}
+	
+	/* Attribute class */
+	private abstract class Attribute implements SortedList.linkObject {
+	    /**
+		 * Storage for the List Node
+		 */
+	    private 	Object				theLink		= null;
+
+		/* Members */
+		private String 	theName 	= null;
+		private Object 	theValue	= null;
+		
+		/* Access methods */
+		public	String	getName()	{ return theName; }
+		public	Object	getValue()	{ return theValue; }
+
+		/**
+		 * Get the link node for this item
+		 * @return the Link node or <code>null</code>
+		 */
+		public Object		getLinkNode(Object pList)	{ return theLink; }
+
+		/**
+		 * Get the link node for this item
+		 * @return the Link node or <code>null</code>
+		 */
+		public void			setLinkNode(Object l, Object o)	{ theLink = o; }
+
+		/**
+		 * Determine whether the item is visible to standard searches
+		 * @return <code>true/false</code>
+		 */
+		public boolean		isHidden()    	{ return false; }
+
+		/**
+		 * Constructor
+		 * @param pName the name
+		 * @param pValue the value
+		 */
+		private Attribute(String pName,
+						  Object pValue) {
+			/* Store the values */
+			theName 	= pName;
+			theValue 	= pValue;
+		}
+
+		/**
+		 * Compare this Attribute to another to establish sort order.
+		 * 
+		 * @param pThat The Attribute to compare to
+		 * @return (-1,0,1) depending of whether this object is before, equal, 
+		 * 					or after the passed object in the sort order
+		 */
+		public int compareTo(Object pThat) {
+			/* Handle the trivial cases */
+			if (this == pThat) return 0;
+			if (pThat == null) return -1;
+			
+			/* Make sure that the object is an Attributer */
+			if (pThat.getClass() != this.getClass()) return -1;
+			
+			/* Access the object as an Attribute */
+			Attribute myThat = (Attribute)pThat;
+			
+			/* Compare the year */
+			return theName.compareTo(myThat.theName);
+		}
+		
+		/**
+		 * Format the element
+		 * @return the formatted element 
+		 */
+		public abstract String format();
+	}
+
+	/* MoneyAttribute class */
+	public class MoneyAttribute extends Attribute {
+		/* Access methods */
+		public	Money	getValue()	{ return (Money)super.getValue(); }
+		
+		/**
+		 * Constructor
+		 * @param pName the name
+		 * @param pValue the value
+		 */
+		private MoneyAttribute(String pName,
+						  	   Money  pValue) {
+			/* Store the values */
+			super(pName, pValue);
+		}
+
+		/**
+		 * Format the element
+		 * @return the formatted element 
+		 */
+		public String format() { return Money.format(getValue()); }
+	}
+
+	/* UnitsAttribute class */
+	public class UnitsAttribute extends Attribute {
+		/* Access methods */
+		public	Units	getValue()	{ return (Units)super.getValue(); }
+		
+		/**
+		 * Constructor
+		 * @param pName the name
+		 * @param pValue the value
+		 */
+		private UnitsAttribute(String pName,
+						  	   Units  pValue) {
+			/* Store the values */
+			super(pName, pValue);
+		}
+
+		/**
+		 * Format the element
+		 * @return the formatted element 
+		 */
+		public String format() { return Units.format(getValue()); }
+	}
+	
+	/* PricesAttribute class */
+	public class PriceAttribute extends Attribute {
+		/* Access methods */
+		public	Price	getValue()	{ return (Price)super.getValue(); }
+		
+		/**
+		 * Constructor
+		 * @param pName the name
+		 * @param pValue the value
+		 */
+		private PriceAttribute(String pName,
+						  	   Price  pValue) {
+			/* Store the values */
+			super(pName, pValue);
+		}
+
+		/**
+		 * Format the element
+		 * @return the formatted element 
+		 */
+		public String format() { return Price.format(getValue()); }
+	}
+	
+	/**
+	 * List of Attributes
+	 */
+	public class AttributeList extends SortedList<Attribute> {
+		/* Members */
+		private int	theNumAttributes	= 0;
+		
+		/* Access methods */
+		private int	getNumAttributes() { return theNumAttributes; }
+
+		/**
+		 * Find an attribute
+		 * @param pName the name of the attribute
+		 * @return the value of the attribute or null
+		 */
+		protected Object findAttribute(String pName) {
+			ListIterator 	myIterator;
+			Attribute		myCurr;
+			
+			/* Access the iterator */
+			myIterator = listIterator();
+			
+			/* Loop through the attributes */
+			while ((myCurr = myIterator.next()) != null) {
+				/* If we found the name return its value */
+				if (myCurr.getName().equals(pName))
+					return myCurr.getValue();
+			}
+
+			/* return attribute not found */
+			return null;
 		}
 	}
 }

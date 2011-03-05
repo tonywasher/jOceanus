@@ -133,8 +133,9 @@ public class ReportTab implements HyperlinkListener,
 	/* Build Report */
 	private void buildReport() {
 		AnalysisYear    mySet;
-		AssetAnalysis	mySnapshot;
+		EventAnalysis	mySnapshot;
 		AssetReport    	myAsset;
+		AnalysisReport	myReport;
 		IncomeReport	myIncome;
 		TaxReport     	myTax;
 		String          myText = "";
@@ -150,6 +151,7 @@ public class ReportTab implements HyperlinkListener,
 		/* Skip if year is null */
 		if (theYear == null) return;
 		
+		try {
 		/* Switch on report type */
 		switch (theReportType) {
 			case ASSET:
@@ -177,17 +179,18 @@ public class ReportTab implements HyperlinkListener,
 				break;
 				
 			case INSTANT:
-				mySnapshot = new AssetAnalysis(theView.getData(), theDate);
-				myAsset    = new AssetReport(mySnapshot);
-				myText     = myAsset.getInstantReport();
+				mySnapshot = new EventAnalysis(theView.getData(), theDate);
+				myReport   = new AnalysisReport(mySnapshot.getAnalysis());
+				myText     = myReport.getInstantReport();
 				break;
 				
 			case MARKET:
-				mySnapshot = new AssetAnalysis(theView.getData(), theDate);
-				myAsset    = new AssetReport(mySnapshot);
-				myText     = myAsset.getMarketReport();
+				mySnapshot = new EventAnalysis(theView.getData(), theDate);
+				myReport   = new AnalysisReport(mySnapshot.getAnalysis());
+				myText     = myReport.getMarketReport();
 				break;
 		}
+		} catch (Throwable e) {}
 
 		/* Set the report text */
 		theEditor.setText(myText);

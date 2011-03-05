@@ -120,12 +120,20 @@ public class MaintAccount implements ActionListener,
 		theDesc  = new JTextField(Account.DESCLEN);
 		
 		/* Create the password fields */
-		theWebSite		= new JPasswordField(Account.WSITELEN);
+		theWebSite		= new JPasswordField(Account.CUSTLEN);
 		theCustNo  		= new JPasswordField(Account.CUSTLEN);
 		theUserId		= new JPasswordField(Account.UIDLEN);
 		thePassword		= new JPasswordField(Account.PWDLEN);
-		theActDetail	= new JPasswordField(Account.ACTLEN);
-		theNotes	  	= new JPasswordField(Account.NOTELEN);
+		theActDetail	= new JPasswordField(Account.CUSTLEN);
+		theNotes	  	= new JPasswordField(Account.CUSTLEN);
+		
+		/* Display the values in the password fields */
+		theWebSite.setEchoChar((char)0);
+		theCustNo.setEchoChar((char)0);
+		theUserId.setEchoChar((char)0);
+		thePassword.setEchoChar((char)0);
+		theActDetail.setEchoChar((char)0);
+		theNotes.setEchoChar((char)0);
 		
 		/* Create the combo boxes */
 		theTypesBox  = new JComboBox();
@@ -229,7 +237,7 @@ public class MaintAccount implements ActionListener,
                   	.addComponent(myPassword)
                   	.addComponent(myAccount)
                     .addComponent(myNotes))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                  	.addComponent(theWebSite, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                   	.addComponent(theCustNo, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -1059,8 +1067,14 @@ public class MaintAccount implements ActionListener,
 		/* Protect against exceptions */
 		try {
 			/* If this event relates to the name field */
-			if ((evt.getSource() == (Object)theName) ||
-				(evt.getSource() == (Object)theDesc)) {
+			if ((evt.getSource() == (Object)theName)      ||
+				(evt.getSource() == (Object)theDesc)      ||
+				(evt.getSource() == (Object)theWebSite)   ||
+				(evt.getSource() == (Object)theCustNo)    ||
+				(evt.getSource() == (Object)theUserId)    ||
+				(evt.getSource() == (Object)thePassword)  ||
+				(evt.getSource() == (Object)theActDetail) ||
+				(evt.getSource() == (Object)theNotes)) {
 				/* Update the text */
 				updateText();
 			}
