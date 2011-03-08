@@ -8,12 +8,15 @@ import javax.swing.GroupLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import uk.co.tolcroft.finance.views.*;
+import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 
-public class MaintenanceTab {
+public class MaintenanceTab implements ChangeListener {
 	/* properties */
 	private View				theView 	  	= null;
 	private MainTab				theParent	  	= null;
@@ -23,6 +26,7 @@ public class MaintenanceTab {
 	private MaintTaxYear		theTaxYearTab	= null;
 	private MaintProperties		theProperties	= null;
 	private MaintNewYear  		thePatternYear	= null;
+	private DebugEntry			theDebugEntry	= null;
 	private Font		        theStdFont    	= null;
 	private Font		        theChgFont    	= null;
 	private Font				theNumFont		= null;
@@ -34,6 +38,7 @@ public class MaintenanceTab {
 	protected Font	getStdFont(boolean isFixed) { return null; }
 	protected Font	getChgFont(boolean isFixed) { return null; }
 	protected MainTab	getTopWindow()	{ return theParent; }
+	public DebugEntry	getDebugEntry()	{ return theDebugEntry; }
 	
 	/* Tab titles */
 	private static final String titleAccounts 	= "Accounts";
@@ -47,6 +52,12 @@ public class MaintenanceTab {
 		theView 	= pTop.getView();
 		theParent 	= pTop;
 		
+		/* Create the top level debug entry for this view  */
+		DebugManager myDebugMgr = theView.getDebugMgr();
+		DebugEntry   mySection  = myDebugMgr.getViews();
+        theDebugEntry = myDebugMgr.new DebugEntry("Maintenance");
+        theDebugEntry.addAsChildOf(mySection);
+		
 		/* Access the fonts */
 		theStdFont    = theParent.getFont(false, false);
 		theChgFont    = theParent.getFont(false, true);
@@ -55,6 +66,7 @@ public class MaintenanceTab {
 		
 		/* Create the Tabbed Pane */
 		theTabs = new JTabbedPane();
+		theTabs.addChangeListener(this);
 			
 		/* Create the account Tab and add it */
 		theAccountTab = new MaintAccount(this);
@@ -175,33 +187,6 @@ public class MaintenanceTab {
 		theParent.setVisibleTabs();
 	}
 	
-	/* Get Formatted Debug output */
-	protected String getDebugText() {
-		Component 	myComp;
-		Account		myAccount;
-		TaxYear		myTaxYear;
-		String		myText = "";
-		
-		/* Determine the active tab */
-		myComp = theTabs.getSelectedComponent();
-
-		/* If the accounts panel is active */
-		if (myComp == (Component)theAccountTab.getPanel()) {
-			/* Access the formatted output */
-			myAccount = theAccountTab.getAccount();
-			if (myAccount != null) myText = myAccount.toHTMLString().toString();
-		}
-		
-		/* If the TaxYearTab is active */
-		else if (myComp == (Component)theTaxYearTab.getPanel()) {
-			/* Access the formatted output */
-			myTaxYear = theTaxYearTab.getTaxYear();
-			if (myTaxYear != null) myText = myTaxYear.toHTMLString().toString();
-		}
-		
-		/* Return to caller */
-		return myText;
-	}	
 	/**
 	 * Format the component for the field
 	 * @param pComp the component
@@ -254,5 +239,32 @@ public class MaintenanceTab {
 		pComp.setBackground((isFlipped) ? myFore : myBack);
 		pComp.setToolTipText(myTip);
 		pComp.setFont(myFont);
-	}	
+	}
+	
+	/* Change listener */
+	public void stateChanged(ChangeEvent e) {
+		/* Ignore if it is not the tabs */
+		if (e.getSource() != theTabs) return;
+		
+		/* Determine the focus */
+		determineFocus();
+	}
+
+	/* Determine Focus */
+	protected void determineFocus() {
+		/* Access the selected component */
+		Component myComponent = theTabs.getSelectedComponent();
+		
+		/* If the selected component is Accounts */
+		if (myComponent == (Component)theAccountTab.getPanel()) {
+			/* Set the debug focus */
+			theAccountTab.getDebugEntry().setFocus();
+		}
+		
+		/* If the selected component is TaxYear */
+		else if (myComponent == (Component)theTaxYearTab.getPanel()) {
+			/* Set the debug focus */
+			theTaxYearTab.getDebugEntry().setFocus();			
+		}
+	}
 }

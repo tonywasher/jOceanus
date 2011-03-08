@@ -4,7 +4,7 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 
-public class SpotPrices {
+public class SpotPrices implements htmlDumpable {
 	/**
 	 * The name of the object
 	 */
@@ -39,6 +39,7 @@ public class SpotPrices {
 	public void applyChanges() {
 		AcctPrice.List  myBase;
 		DataSet		myData;
+
 		
 		/* Access base details */
 		myData	= theView.getData();
@@ -54,6 +55,11 @@ public class SpotPrices {
 		theView.refreshWindow();
 	}
 	
+	/**
+	 * The toHTMLString method just maps to that of the prices 
+	 */
+	public StringBuilder toHTMLString() { return thePrices.toHTMLString(); }		
+
 	/* The List class */
 	public class List extends DataList<SpotPrice> {		
 		/* Constructors */
@@ -191,6 +197,26 @@ public class SpotPrices {
 			/* Set the valid indication */
 			setEditState(EditState.VALID);	
 		}
+		
+		/**
+		 * Add additional fields to HTML String
+		 * @param pBuffer the string buffer 
+		 */
+		public void addHTMLFields(StringBuilder pBuffer) {
+			/* Start the Fields section */
+			pBuffer.append("<tr><th rowspan=\"4\">Fields</th></tr>");
+				
+			/* Format the range */
+			pBuffer.append("<tr><td>Date</td><td>"); 
+			pBuffer.append(Date.format(theDate)); 
+			pBuffer.append("</td></tr>");
+			pBuffer.append("<tr><td>Next</td><td>"); 
+			pBuffer.append(Date.format(theNext)); 
+			pBuffer.append("</td></tr>");
+			pBuffer.append("<tr><td>Previous</td><td>"); 
+			pBuffer.append(Date.format(thePrev)); 
+			pBuffer.append("</td></tr>");
+		}		
 	}
 			
 	public class SpotPrice 	extends DataItem  {

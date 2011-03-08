@@ -17,6 +17,7 @@ import javax.swing.LayoutStyle;
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.finance.views.*;
+import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
@@ -68,6 +69,7 @@ public class MaintTaxYear implements ActionListener,
 	private TaxYear.List		theTaxYears			= null;
 	private TaxRegime.List		theTaxRegimes		= null;
 	private View.ViewTaxYear	theTaxView			= null;
+	private DebugEntry			theDebugEntry		= null;
 	private boolean				refreshingData		= false;
 	private boolean				yearsPopulated		= false;
 	private boolean				regimesPopulated	= false;
@@ -77,6 +79,9 @@ public class MaintTaxYear implements ActionListener,
 	/* Access methods */
 	public JPanel   getPanel()      { return thePanel; }
 	public TaxYear	getTaxYear()	{ return theTaxYear; }
+	
+	/* Access the debug entry */
+	protected DebugEntry getDebugEntry()	{ return theDebugEntry; }
 	
 	/* Constructor */
 	public MaintTaxYear(MaintenanceTab pParent) {
@@ -593,6 +598,11 @@ public class MaintTaxYear implements ActionListener,
             	.addComponent(theSaveButs.getPanel()))
             );
         
+        /* Create the debug entry, attach to MaintenanceDebug entry and hide it */
+        DebugManager myDebugMgr	= theView.getDebugMgr();
+        theDebugEntry = myDebugMgr.new DebugEntry("TaxYear");
+        theDebugEntry.addAsChildOf(pParent.getDebugEntry());
+      
         /* Set initial display */
         showTaxYear();
 	}
@@ -776,6 +786,7 @@ public class MaintTaxYear implements ActionListener,
 			
 			/* Create the view of the tax year */
 			theTaxView = theView.new ViewTaxYear(pTaxYear);
+			theDebugEntry.setObject(theTaxView);
 		
 			/* Access the tax year */
 			theTaxYear = theTaxView.getTaxYear();
@@ -1287,6 +1298,7 @@ public class MaintTaxYear implements ActionListener,
 	private void newTaxYear() {
 		/* Create a tax view for a new tax year */
 		theTaxView = theView.new ViewTaxYear();
+		theDebugEntry.setObject(theTaxView);
 	
 		/* Access the account */
 		theTaxYear = theTaxView.getTaxYear();			

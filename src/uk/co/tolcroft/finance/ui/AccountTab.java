@@ -10,14 +10,15 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.DataList.*;
 
-public class AccountTab implements ChangeListener,
-								   financePanel {
+public class AccountTab implements financePanel,
+								   ChangeListener {
 	/* Members */
 	private static final long serialVersionUID  = 7682053546233794088L;
 
@@ -33,7 +34,7 @@ public class AccountTab implements ChangeListener,
 	private Account				theAccount   = null;
 	private Account.List		theAcList	 = null;
 	private SaveButtons  		theTabButs   = null;
-	private Component		  	theLastFocus = null;
+	private DebugEntry			theDebugEntry= null;
 		
 	/* Access methods */
 	public View			getView()				  { return theView; }
@@ -41,6 +42,7 @@ public class AccountTab implements ChangeListener,
 	public JPanel  		getPanel()   			  { return thePanel; }
 	public int  		getFieldForCol(int col)   { return -1; }
 	public ComboSelect	getComboList()			  { return theParent.getComboList(); }
+	public DebugEntry	getDebugEntry()			  { return theDebugEntry; }
 	public void 		printIt()				  { }
 		
 	/* Tab headers */
@@ -52,10 +54,17 @@ public class AccountTab implements ChangeListener,
 	/* Constructor */
 	public AccountTab(MainTab pParent) {
 		GroupLayout			myLayout;
+		DebugEntry			mySection;
 		
 		/* Record passed details */
 		theParent = pParent;
 		theView   = pParent.getView();
+		
+		/* Create the top level debug entry for this view  */
+		DebugManager myDebugMgr = theView.getDebugMgr();
+		mySection = myDebugMgr.getViews();
+        theDebugEntry = myDebugMgr.new DebugEntry("Account");
+        theDebugEntry.addAsChildOf(mySection);
 		
 		/* Create the Tabbed Pane */
 		theTabs = new JTabbedPane();
@@ -64,7 +73,7 @@ public class AccountTab implements ChangeListener,
 		theStatement = new AccountStatement(this);
 		theTabs.addTab(titleStatement, theStatement.getPanel());
 		theTabs.addChangeListener(this);
-										
+		
 		/* Create the optional tables */
 		thePatterns = new AccountPatterns(this);
 		theRates    = new AccountRates(this);
@@ -106,14 +115,6 @@ public class AccountTab implements ChangeListener,
 	    );
 	}
 
-	/* Change listener */
-	public void stateChanged(ChangeEvent e) {
-		Component myComponent = theTabs.getSelectedComponent();
-
-		/* Note the last focus */
-		theLastFocus = myComponent;
-	}
-	
 	/* RefreshData */
 	public void refreshData() {
 		/* Refresh the account selection */
@@ -302,44 +303,6 @@ public class AccountTab implements ChangeListener,
 		setVisibleTabs();
 	}	
 		
-	/* Get Formatted Debug output */
-	protected String getDebugText() {
-		String				myText = "";
-		DataList<?>			myList;
-		
-		/* If the statement panel is active */
-		if ((theLastFocus == null) ||
-			(theLastFocus == theStatement.getPanel())) {
-			/* Access the formatted output */
-			myList = theStatement.getList();
-			if (myList != null) myText = myList.toHTMLString().toString();
-		}
-		
-		/* If the rates is active */
-		else if (theLastFocus == theRates.getPanel()) {
-			/* Access the formatted output */
-			myList = theRates.getList();			
-			if (myList != null) myText = myList.toHTMLString().toString();
-		}
-		
-		/* If the prices is active */
-		else if (theLastFocus == thePrices.getPanel()) {
-			/* Access the formatted output */
-			myList = thePrices.getList();							
-			if (myList != null) myText = myList.toHTMLString().toString();
-		}
-		
-		/* If the patterns is active */
-		else if (theLastFocus == thePatterns.getPanel()) {
-			/* Access the formatted output */
-			myList = thePatterns.getList();							
-			if (myList != null) myText = myList.toHTMLString().toString();
-		}
-		
-		/* Return to caller */
-		return myText;
-	}
-	
 	/* Set Selection */
 	public void setSelection(Account pAccount) {
 		DataSet myData = theView.getData();
@@ -386,6 +349,7 @@ public class AccountTab implements ChangeListener,
 			/* Add the Rates if not present */
 			if (iIndex == -1) {
 				theTabs.addTab(titleRates, theRates.getPanel());
+				theRates.getDebugEntry().showEntry();
 			
 				/* Remove the patterns tab if present */
 				iIndex = theTabs.indexOfTab(titlePatterns);
@@ -397,6 +361,7 @@ public class AccountTab implements ChangeListener,
 			
 					/* Remove the patterns tab */
 					theTabs.removeTabAt(iIndex);
+					thePatterns.getDebugEntry().hideEntry();
 				}
 			}
 		}
@@ -409,6 +374,7 @@ public class AccountTab implements ChangeListener,
 			
 			/* Remove the units tab */
 			theTabs.removeTabAt(iIndex);
+			theRates.getDebugEntry().hideEntry();
 		}
 		
 		/* Access the Prices index */
@@ -421,6 +387,7 @@ public class AccountTab implements ChangeListener,
 			/* Add the Prices if not present */
 			if (iIndex == -1) {
 				theTabs.addTab(titlePrices, thePrices.getPanel());
+				thePrices.getDebugEntry().showEntry();
 								
 				/* If the prices were selected  */
 				if (isPricesSelected) {
@@ -438,6 +405,7 @@ public class AccountTab implements ChangeListener,
 			
 					/* Remove the patterns tab */
 					theTabs.removeTabAt(iIndex);
+					thePatterns.getDebugEntry().hideEntry();
 				}
 			}
 		}
@@ -450,6 +418,7 @@ public class AccountTab implements ChangeListener,
 			
 			/* Remove the units tab */
 			theTabs.removeTabAt(iIndex);
+			thePrices.getDebugEntry().hideEntry();
 		}
 	
 		/* Access the Patterns index */
@@ -462,6 +431,7 @@ public class AccountTab implements ChangeListener,
 			/* Add the Patterns if not present */
 			if (iIndex == -1) {
 				theTabs.addTab(titlePatterns, thePatterns.getPanel());
+				thePatterns.getDebugEntry().showEntry();
 			
 				/* If the patterns were selected  */
 				if (isPatternsSelected) {
@@ -480,6 +450,7 @@ public class AccountTab implements ChangeListener,
 			
 			/* Remove the units tab */
 			theTabs.removeTabAt(iIndex);
+			thePatterns.getDebugEntry().hideEntry();
 		}
 		
 		/* Update the top level tabs */
@@ -515,5 +486,44 @@ public class AccountTab implements ChangeListener,
 	
 		/* Select the required tab */
 		theTabs.setSelectedIndex(iIndex);
+	}
+
+	/* Change listener */
+	public void stateChanged(ChangeEvent e) {
+		/* Ignore if it is not the tabs */
+		if (e.getSource() != theTabs) return;
+		
+		/* Determine the focus */
+		determineFocus();
+	}
+
+	/* Determine Focus */
+	protected void determineFocus() {
+		/* Access the selected component */
+		Component myComponent = theTabs.getSelectedComponent();
+		
+		/* If the selected component is Statement */
+		if (myComponent == (Component)theStatement.getPanel()) {
+			/* Set the debug focus */
+			theStatement.getDebugEntry().setFocus();
+		}
+		
+		/* If the selected component is Rates */
+		else if (myComponent == (Component)theRates.getPanel()) {
+			/* Set the debug focus */
+			theRates.getDebugEntry().setFocus();			
+		}
+
+		/* If the selected component is Prices */
+		else if (myComponent == (Component)thePrices.getPanel()) {
+			/* Set the debug focus */
+			thePrices.getDebugEntry().setFocus();			
+		}
+		
+		/* If the selected component is Patterns */
+		else if (myComponent == (Component)thePatterns.getPanel()) {
+			/* Set the debug focus */
+			thePatterns.getDebugEntry().setFocus();						
+		}
 	}
 }

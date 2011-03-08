@@ -35,6 +35,7 @@ public class CapitalEvent extends DataItem {
 	public static final String capitalInitialValue	= "ValueInitial";
 	public static final String capitalFinalValue	= "ValueFinal";
 	public static final String capitalInitialPrice	= "PriceInitial";
+	public static final String capitalFinalPrice	= "PriceFinal";
 	public static final String capitalMarket		= "MarketMovement";
 	public static final String capitalTakeoverCost	= "TakeoverCost";
 	public static final String capitalTakeoverCash	= "TakeoverCash";
@@ -63,7 +64,7 @@ public class CapitalEvent extends DataItem {
 	 * Obtain the number of fields for an item
 	 * @return the number of fields
 	 */
-	public int	numFields() { return 1 + theAttributes.getNumAttributes(); }
+	public int	numFields() { return 1 + theAttributes.size(); }
 	
 	/**
 	 * Determine the field name for a particular field
@@ -264,19 +265,23 @@ public class CapitalEvent extends DataItem {
 	public static class List extends DataList<CapitalEvent> {
 		/* Members */
 		private DataSet			theData			= null;
+		private Account			theAccount		= null;
 	
 		/* Access methods */
 		public DataSet			getData()		{ return theData; }
 
 		/** 
 	 	 * Construct an empty Capital event list
+	 	 * @param pData the Dataset
 	 	 * @param pAccount the Account for the list
 	 	 */
-		protected List(DataSet pData) { 
+		protected List(DataSet 	pData,
+					   Account	pAccount) { 
 			super(ListStyle.VIEW, false);
 			
 			/* Store the data */
 			theData			= pData;
+			theAccount		= pAccount;
 		}
 
 		/** 
@@ -357,6 +362,20 @@ public class CapitalEvent extends DataItem {
 			
 			/* Return no such event */
 			return null;
+		}
+
+		/**
+		 * Add additional fields to HTML String
+		 * @param pBuffer the string buffer 
+		 */
+		public void addHTMLFields(StringBuilder pBuffer) {
+			/* Start the Fields section */
+			pBuffer.append("<tr><th rowspan=\"2\">Fields</th></tr>");
+				
+			/* Format the date and account */
+			pBuffer.append("<tr><td>State</td><td>"); 
+			pBuffer.append(Account.format(theAccount)); 
+			pBuffer.append("</td></tr>"); 
 		}
 	}
 	
@@ -507,12 +526,6 @@ public class CapitalEvent extends DataItem {
 	 * List of Attributes
 	 */
 	public class AttributeList extends SortedList<Attribute> {
-		/* Members */
-		private int	theNumAttributes	= 0;
-		
-		/* Access methods */
-		private int	getNumAttributes() { return theNumAttributes; }
-
 		/**
 		 * Find an attribute
 		 * @param pName the name of the attribute

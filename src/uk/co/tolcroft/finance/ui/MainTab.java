@@ -27,7 +27,6 @@ import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.help.*;
 import uk.co.tolcroft.help.*;
-import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 
 public class MainTab implements ActionListener,
@@ -43,8 +42,6 @@ public class MainTab implements ActionListener,
 	private ReportTab		theReportTab	= null;
 	private PricePoint	  	theSpotView		= null;
 	private MaintenanceTab	theMaint		= null;
-	private Debug  		  	theDebug		= null;
-	private Component		theLastFocus	= null;
 	private	Font 			theStdFont 		= null;
 	private	Font 			theNumFont 		= null;
 	private	Font 			theChgFont 		= null;
@@ -61,10 +58,13 @@ public class MainTab implements ActionListener,
 	private JMenuItem		theSaveDBase	= null;
 	private JMenuItem		theWriteBackup	= null;
 	private JMenuItem		theLoadBackup	= null;
+	private JMenuItem		theShowDebug	= null;
 	private JMenuItem		theHelpMgr		= null;
 	private ThreadControl	theThread		= null;
 	private ExecutorService theExecutor		= null;
 	private HelpWindow		theHelpWdw		= null;
+	private DebugManager	theDebugMgr		= null;
+	private DebugWindow		theDebugWdw		= null;
 	
 	/* Access methods */
 	public 		View			getView()  		{ return theView; }
@@ -72,6 +72,7 @@ public class MainTab implements ActionListener,
 	public 		JFrame      	getFrame()      { return theFrame; }
 	public 		JPanel      	getPanel()      { return thePanel; }
 	public 		StatusBar   	getStatusBar()  { return theStatusBar; }
+	public 		DebugManager  	getDebugMgr()  	{ return theDebugMgr; }
 	protected 	ComboSelect		getComboList()	{ return theComboList; }
 
 	/* Get explicit font */
@@ -90,12 +91,14 @@ public class MainTab implements ActionListener,
 	private static final String titleReport    	= "Report";
 	private static final String titleSpotView  	= "SpotPrices";
 	private static final String titleMaint  	= "Maintenance";
-	private static final String titleDebug  	= "Debug";
 		
 	/* Constructor */
 	public MainTab() throws Exception {
 		JPanel  myProgress;
 		JPanel  myStatus;
+		
+		/* Create the debug manager */
+		theDebugMgr	  = new DebugManager();
 		
 		/* Create the view */
 		theView       = new View(this);
@@ -114,7 +117,6 @@ public class MainTab implements ActionListener,
 			
 		/* Create the Tabbed Pane */
 		theTabs = new JTabbedPane();
-		theTabs.addChangeListener(this);
 			
 		/* Create the extract table and add to tabbed pane */
 		theExtract = new Extract(this);
@@ -136,9 +138,9 @@ public class MainTab implements ActionListener,
 		theMaint = new MaintenanceTab(this);
 		theTabs.addTab(titleMaint, theMaint.getPanel());
 		
-		/* Create the Debug Tab */
-		theDebug = new Debug(this);
-		theTabs.addTab(titleDebug, theDebug.getPanel());
+		/* Add change listener */
+		theTabs.addChangeListener(this);
+		determineFocus();
 		
 		/* Create the new status bar */
 		theStatusBar = new StatusBar(this);
@@ -189,6 +191,12 @@ public class MainTab implements ActionListener,
 		theMainMenu.add(theDataMenu);
 		theBackupMenu = new JMenu("Backup");
 		theMainMenu.add(theBackupMenu);
+		theShowDebug = new JMenuItem("Debug");
+		theShowDebug.addActionListener(this);
+		theMainMenu.add(theShowDebug);
+		theHelpMgr = new JMenuItem("Help");
+		theHelpMgr.addActionListener(this);
+		theMainMenu.add(theHelpMgr);
 		theFrame.setJMenuBar(theMainMenu);
 		
 		/* Create the file menu items */
@@ -213,9 +221,6 @@ public class MainTab implements ActionListener,
 		theLoadBackup = new JMenuItem("Restore from Backup");
 		theLoadBackup.addActionListener(this);
 		theBackupMenu.add(theLoadBackup);
-		theHelpMgr = new JMenuItem("Help");
-		theHelpMgr.addActionListener(this);
-		theMainMenu.add(theHelpMgr);
 		
 		/* Initialise the data */
 		refreshData();
@@ -265,6 +270,16 @@ public class MainTab implements ActionListener,
 			theFrame.dispose();
 		}
 		
+		/* else if this is the Debug Window shutting down */
+		else if (e.getSource() == theDebugWdw) {
+			/* Re-enable the help menu item */
+			theShowDebug.setEnabled(true);
+			theDebugWdw = null;
+			
+			/* Notify debug manager */
+			theDebugMgr.declareWindow(null);
+		}
+
 		/* else if this is the Help Window shutting down */
 		else if (e.getSource() == theHelpWdw) {
 			/* Re-enable the help menu item */
@@ -329,25 +344,17 @@ public class MainTab implements ActionListener,
 			restoreBackup();
 		}		
 		
+		/* If this event relates to the Display Debug item */
+		if (evt.getSource() == (Object)theShowDebug) {
+			/* Open the debug window */
+			displayDebug();
+		}		
+		
 		/* If this event relates to the Display Help item */
 		if (evt.getSource() == (Object)theHelpMgr) {
 			/* Open the help window */
 			displayHelp();
 		}		
-	}
-	
-	/* Change listener */
-	public void stateChanged(ChangeEvent e) {
-		Component myComponent = theTabs.getSelectedComponent();
-		if (theDebug == null) return;
-		if (myComponent == theDebug.getPanel()) {
-			/* Get the debug window to build its report */
-			theDebug.buildReport();
-		}
-		else if (myComponent != theReportTab.getPanel()) {
-			/* Note the last focus */
-			theLastFocus = myComponent;
-		}
 	}
 	
 	/* Load Spreadsheet */
@@ -439,6 +446,24 @@ public class MainTab implements ActionListener,
 		/* Execute it and lock tabs */
 		theExecutor.execute(myThread);	
 		setVisibleTabs();
+	}
+	
+	/* Display Debug */
+	public void displayDebug() {
+		try { 
+			/* Create the debug window */
+			theDebugWdw = new DebugWindow(theFrame, theDebugMgr);
+			
+			/* Listen for its closure */
+			theDebugWdw.addWindowListener(this);
+			
+			/* Disable the menu item */
+			theShowDebug.setEnabled(false);
+			
+			/* Display it */
+			theDebugWdw.showDialog();
+		}
+		catch (Throwable e) {}
 	}
 	
 	/* Display Help */
@@ -572,16 +597,12 @@ public class MainTab implements ActionListener,
 		/* Enable/Disable the maintenance tab */
 		if (iIndex != -1) theTabs.setEnabledAt(iIndex, showTab);
 		
-		/* Access the Debug panel */
-		iIndex = theTabs.indexOfTab(titleDebug);
-		showTab = theProperties.doShowDebug(); 
-		
-		/* Enable/Disable the debug tab */
-		if (iIndex != -1) theTabs.setEnabledAt(iIndex, showTab);
-		
 		/* Disable menus if we have a worker thread */
 		theDataMenu.setEnabled(!hasWorker);
 		theBackupMenu.setEnabled(!hasWorker);
+		
+		/* Enable/Disable the debug menu item */
+		theShowDebug.setVisible(theProperties.doShowDebug());
 		
 		/* If we have changes disable the create backup option */
 		theWriteBackup.setEnabled(!hasChanges && !hasUpdates);
@@ -594,50 +615,44 @@ public class MainTab implements ActionListener,
 		/* If we have updates or no changes disable the save database */
 		theSaveDBase.setEnabled(!hasUpdates && hasChanges);
 	}
+	
+	/* Change listener */
+	public void stateChanged(ChangeEvent e) {
+		/* Ignore if it is not the tabs */
+		if (e.getSource() != theTabs) return;
+		
+		/* Determine the focus */
+		determineFocus();
+		
+	}
 
-	/* Get Formatted Debug output */
-	protected String getDebugText() {
-		Exception 	myError;
-		DataList<?>	myList;
-		String		myText = "";
+	/* Change listener */
+	private void determineFocus() {
+		/* Access the selected component */
+		Component myComponent = theTabs.getSelectedComponent();
 		
-		/* Determine whether we have an active error */
-		myError = theStatusBar.getError();
-		
-		/* If we have an error */
-		if (myError != null) {
-			/* Access the formatted error */
-			myText = myError.toHTMLString().toString();
+		/* If the selected component is extract */
+		if (myComponent == (Component)theExtract.getPanel()) {
+			/* Set the debug focus */
+			theExtract.getDebugEntry().setFocus();
 		}
 		
-		/* Else if the last focus was the extracts tab */
-		else if ((theLastFocus == null) ||
-				 (theLastFocus == theExtract.getPanel())) {
-			/* Access the formatted text */
-			myList = theExtract.getList();
-			if (myList != null) myText = myList.toHTMLString().toString();
+		/* If the selected component is account */
+		else if (myComponent == (Component)theAccountCtl.getPanel()) {
+			/* Determine focus of accounts */
+			theAccountCtl.determineFocus();
+		}
+
+		/* If the selected component is SpotView */
+		else if (myComponent == (Component)theSpotView.getPanel()) {
+			/* Set the debug focus */
+			theSpotView.getDebugEntry().setFocus();			
 		}
 		
-		/* Else if the last focus was the accounts tab */
-		else if (theLastFocus == theAccountCtl.getPanel()) {
-			/* Access the formatted text */
-			myText = theAccountCtl.getDebugText();
+		/* If the selected component is Maintenance */
+		else if (myComponent == (Component)theMaint.getPanel()) {
+			/* Determine focus of maintenance */
+			theMaint.determineFocus();			
 		}
-		
-		/* Else if the last focus was the accounts tab */
-		else if (theLastFocus == theSpotView.getPanel()) {
-			/* Access the formatted text */
-			myList = theSpotView.getList();
-			if (myList != null) myText = myList.toHTMLString().toString();
-		}
-		
-		/* Else if the last focus was the maintenance tab */
-		else if (theLastFocus == theMaint.getPanel()) {
-			/* Access the formatted text */
-			myText = theMaint.getDebugText();
-		}
-		
-		/* Return to caller */
-		return myText;
-	}	
+	}
 }

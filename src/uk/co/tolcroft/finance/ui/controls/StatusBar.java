@@ -12,6 +12,8 @@ import javax.swing.LayoutStyle;
 import javax.swing.Timer;
 
 import uk.co.tolcroft.finance.ui.*;
+import uk.co.tolcroft.finance.views.DebugManager;
+import uk.co.tolcroft.finance.views.DebugManager.DebugEntry;
 import uk.co.tolcroft.models.Exception;
 
 public class StatusBar implements ActionListener {
@@ -28,6 +30,8 @@ public class StatusBar implements ActionListener {
 	private MainTab					theControl		= null;
 	private Exception				theError		= null;
 	private Timer					theTimer		= null;
+    private DebugManager			theDebugMgr		= null;
+    private DebugEntry				theDebug		= null;
 	
 	/* Access methods */
 	public  JPanel           	   	getProgressPanel()  { return theProgPanel; }
@@ -40,6 +44,10 @@ public class StatusBar implements ActionListener {
 	
 		/* Record passed parameters */
 		theControl = pControl;
+		
+		/* Store access to the Debug Manager */
+		theDebugMgr = theControl.getDebugMgr();
+		theDebug	= theDebugMgr.getError();
 		
 		/* Create the boxes */
 		theCancel      = new JButton("Cancel");
@@ -153,7 +161,10 @@ public class StatusBar implements ActionListener {
 		if (evt.getSource() == (Object)theTimer) {
 			/* Make the Status window invisible */
 			theStatPanel.setVisible(false);
+			
+			/* Clear the error */
 			theError = null;
+			theDebug.hideEntry();
 			
 			/* Finish the thread */
 			theControl.finishThread();
@@ -220,6 +231,11 @@ public class StatusBar implements ActionListener {
 		
 		/* Store the error */
 		theError = pError;
+		
+		/* Enable debug for this error */
+		theDebug.setObject(theError);
+		theDebug.showPrimeEntry();
+		theDebug.setFocus();
 		
 		/* Set the status text field */
 		theStatusLabel.setText(myText);

@@ -9,32 +9,31 @@ import uk.co.tolcroft.models.Number.*;
 
 public class AnalysisReport {
 	/* Properties */
-	private MetaAnalysis	theMetaAnalysis	= null;
 	private Analysis		theAnalysis		= null;
+	private AnalysisYear	theAnalysisYear	= null;
 	private Date  			theDate 		= null;
 	private TaxYear			theYear			= null;
 	
 	/* Constructor */
-	public AnalysisReport(Analysis pAnalysis) {
+	public AnalysisReport(EventAnalysis pAnalysis) {
 		/* Record the details */
-		theAnalysis = pAnalysis;
-		theDate  	= pAnalysis.getDate();
+		theAnalysis = pAnalysis.getAnalysis();
+		theDate  	= theAnalysis.getDate();
 
-		/* Create a MetaAnalysis and ensure that totals are created */
-		theMetaAnalysis = new MetaAnalysis(theAnalysis);
-		theMetaAnalysis.produceTotals();
+		/* Produce totals */
+		pAnalysis.getMetaAnalysis().produceTotals();
 	}
 	
 	/* Constructor */
 	public AnalysisReport(AnalysisYear pAnalysisYear) {
 		/* Record the details */
-		theAnalysis = pAnalysisYear.getAnalysis();
-		theDate  	= theAnalysis.getDate();
-		theYear		= pAnalysisYear.getTaxYear();
+		theAnalysisYear = pAnalysisYear;
+		theAnalysis 	= pAnalysisYear.getAnalysis();
+		theDate  		= theAnalysis.getDate();
+		theYear			= pAnalysisYear.getTaxYear();
 
-		/* Create a MetaAnalysis and ensure that totals are created */
-		theMetaAnalysis = pAnalysisYear.getMetaAnalysis();
-		theMetaAnalysis.produceTotals();
+		/* Produce totals for the analysis year */
+		pAnalysisYear.produceTotals();
 	}
 	
 	/**
@@ -315,7 +314,7 @@ public class AnalysisReport {
 		/* Loop through the Detail Buckets */
 		while ((myBucket = myIterator.next()) != null) {
 			/* Skip bucket if this is not an external account */
-			if (myBucket.getBucketType() != BucketType.EXTERNALDETAIL) break;
+			if (myBucket.getBucketType() != BucketType.EXTERNALDETAIL) continue;
 							
 			/* Access the account */
 			myExternal = (ExternalAccount)myBucket;
@@ -744,8 +743,8 @@ public class AnalysisReport {
 		
 		/* Loop through the Transaction Summary Buckets */
 		while ((myBucket = myIterator.next()) != null) {
-			/* Break loop if we have completed the details */
-			if (myBucket.getBucketType() != BucketType.TRANSDETAIL) break;
+			/* Skip entries that are not TransDetail */
+			if (myBucket.getBucketType() != BucketType.TRANSDETAIL) continue;
 							
 			/* Access the detail */
 			myDetail = (TransDetail)myBucket;
@@ -783,7 +782,7 @@ public class AnalysisReport {
 		TransSummary							myTrans;
 
 		/* Ensure that tax has been calculated */
-		theMetaAnalysis.calculateTax(pProperties);
+		theAnalysisYear.calculateTax(pProperties);
 		
 		/* Access the bucket lists */
 		myList  = theAnalysis.getList();
@@ -1035,8 +1034,8 @@ public class AnalysisReport {
 		
 		/* Loop through the Transaction Summary Buckets */
 		while ((myBucket = myIterator.next()) != null) {
-			/* Break loop if we have completed the details */
-			if (myBucket.getBucketType() != BucketType.TAXDETAIL) break;
+			/* Skip non-detail buckets */
+			if (myBucket.getBucketType() != BucketType.TAXDETAIL) continue;
 			
 			/* Access the bucket */
 			myTax = (TaxDetail)myBucket;

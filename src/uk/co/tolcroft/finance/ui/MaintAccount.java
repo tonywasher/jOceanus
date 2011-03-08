@@ -22,6 +22,7 @@ import javax.swing.event.ChangeListener;
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.finance.views.*;
+import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.*;
@@ -66,6 +67,7 @@ public class MaintAccount implements ActionListener,
 	private Account.List		theAccounts		= null;
 	private View.ViewAccount	theActView		= null;
 	private AccountType.List	theAcTypList	= null;
+	private DebugEntry			theDebugEntry	= null;
 	private boolean				refreshingData	= false;
 	private boolean				typesPopulated	= false;
 	private boolean				parPopulated	= false;
@@ -75,6 +77,9 @@ public class MaintAccount implements ActionListener,
 	/* Access methods */
 	public JPanel       getPanel()       { return thePanel; }
 	public Account		getAccount()	 { return theAccount; }
+	
+	/* Access the debug entry */
+	protected DebugEntry getDebugEntry()	{ return theDebugEntry; }
 	
 	/* Constructor */
 	public MaintAccount(MaintenanceTab pParent) {
@@ -412,7 +417,12 @@ public class MaintAccount implements ActionListener,
                 .addComponent(theSaveButs.getPanel())
                 .addContainerGap())
         );
-            
+                    
+        /* Create the debug entry, attach to MaintenanceDebug entry and hide it */
+        DebugManager myDebugMgr	= theView.getDebugMgr();
+        theDebugEntry = myDebugMgr.new DebugEntry("Account");
+        theDebugEntry.addAsChildOf(pParent.getDebugEntry());
+      
         /* Set initial display */
         showAccount();
 	}
@@ -606,8 +616,9 @@ public class MaintAccount implements ActionListener,
 		/* If we have a selected account */
 		if (pAccount != null) {
 			/* Create the view of the account */
-			theActView = theView.new ViewAccount(pAccount);
-		
+			theActView = theView.new ViewAccount(pAccount);	
+			theDebugEntry.setObject(theActView);
+			
 			/* Access the account */
 			theAccount = theActView.getAccount();
 		}
@@ -928,6 +939,7 @@ public class MaintAccount implements ActionListener,
 	private void newAccount() {
 		/* Create a account View for an empty account */
 		theActView = theView.new ViewAccount(theSelect.getType());
+		theDebugEntry.setObject(theActView);
 	
 		/* Access the account */
 		theAccount = theActView.getAccount();			

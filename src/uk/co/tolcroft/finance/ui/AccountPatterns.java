@@ -12,6 +12,7 @@ import javax.swing.table.TableColumnModel;
 
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.EditButtons.*;
+import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Number.*;
@@ -41,13 +42,17 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 	private Editor.StringCell 		theStringEditor   	= null;
 	private Editor.ComboBoxCell		theComboEditor    	= null;
 	private ComboSelect				theComboList    	= null;
+	private DebugEntry				theDebugEntry		= null;
 	private boolean					freqsPopulated    	= false;
 
 	/* Access methods */
 	public JPanel  getPanel()			{ return thePanel; }
 	public boolean hasCreditChoice() 	{ return true; }
 	public boolean hasHeader()			{ return false; }
-		
+	
+	/* Access the debug entry */
+	protected DebugEntry getDebugEntry()	{ return theDebugEntry; }
+	
 	/* Table headers */
 	private static final String titleDate    = "Date";
 	private static final String titleDesc    = "Description";
@@ -175,6 +180,12 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 	                .addComponent(myScroll)
 	                .addComponent(theRowButs.getPanel()))
 	    );
+        
+        /* Create the debug entry, attach to AccountDebug entry and hide it */
+        DebugManager myDebugMgr	= theView.getDebugMgr();
+        theDebugEntry = myDebugMgr.new DebugEntry("Patterns");
+        theDebugEntry.addAsChildOf(pParent.getDebugEntry());
+        theDebugEntry.hideEntry();
 	}
 		
 	/* Note that there has been a selection change */
@@ -248,6 +259,7 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 		theAccount  = pAccount;
 		thePatterns = theExtract.getPatterns();
 		super.setList(thePatterns);
+		theDebugEntry.setObject(theExtract);
 		theModel.fireTableDataChanged();
 		theRowButs.setLockDown();
 	}

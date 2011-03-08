@@ -9,7 +9,7 @@ import uk.co.tolcroft.models.DataItem.*;
 import uk.co.tolcroft.models.DataItem.validationCtl.*;
 import uk.co.tolcroft.models.Number.*;
 
-public class Statement {
+public class Statement implements htmlDumpable {
 	/* Members */
 	private View      		theView      	= null;
 	private Account      	theAccount      = null;
@@ -227,6 +227,11 @@ public class Statement {
 		theView.refreshWindow();
 	}
 	
+	/**
+	 * The toHTMLString method just maps to that of the lines 
+	 */
+	public StringBuilder toHTMLString() { return theLines.toHTMLString(); }		
+
 	/* The List class */
 	public class List extends DataList<Line> {
 		
@@ -269,11 +274,16 @@ public class Statement {
 		 */
 		public void addHTMLFields(StringBuilder pBuffer) {
 			/* Start the Fields section */
-			pBuffer.append("<tr><th rowspan=\"6\">Fields</th></tr>");
+			pBuffer.append("<tr><th rowspan=\"7\">Fields</th></tr>");
 				
 			/* Format the balances */
 			pBuffer.append("<tr><td>Account</td><td>"); 
 			pBuffer.append(Account.format(theAccount)); 
+			pBuffer.append("</td></tr>");
+			
+			/* Format the range */
+			pBuffer.append("<tr><td>Range</td><td>"); 
+			pBuffer.append(Date.Range.format(theRange)); 
 			pBuffer.append("</td></tr>");
 			
 			/* Format the balances */

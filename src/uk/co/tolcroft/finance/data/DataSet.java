@@ -1,7 +1,6 @@
 package uk.co.tolcroft.finance.data;
 
-import uk.co.tolcroft.finance.views.AnalysisYear;
-import uk.co.tolcroft.finance.views.AssetAnalysis;
+import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.core.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
@@ -313,22 +312,23 @@ public class DataSet implements htmlDumpable {
 	
 	/**
 	 * Analyse the data
-	 * @return the analysis of the year
+	 * @param pDebugMgr the debug manager
+	 * @return the full analysis of the data
 	 */
-	public AnalysisYear.List analyseData() throws Exception {
-		AssetAnalysis 		myAssets 	= null;
-		AnalysisYear.List	myList		= null;
+	public EventAnalysis analyseData(DebugManager pDebugMgr) throws Exception {
+		EventAnalysis		myAnalysis;
+		MetaAnalysis 		myMetaAnalysis;
 						
 		/* Update INITIAL Load status */
 		if (theLoadState == LoadState.INITIAL)
 			theLoadState = LoadState.FINAL;
 		
-		/* Reset the flags on the accounts and tax years*/
+		/* Reset the flags on the accounts and tax years */
 		theAccounts.reset();
 		theTaxYears.reset();
 		
 		/* Create the analysis */
-		myList = new AnalysisYear.List(this);
+		myAnalysis = new EventAnalysis(pDebugMgr, this);
 
 		/* Note active rates */
 		theRates.markActiveRates();
@@ -339,12 +339,12 @@ public class DataSet implements htmlDumpable {
 		/* Note active patterns */
 		thePatterns.markActivePatterns();
 		
-		/* Access the most recent asset report */
-		myAssets = myList.getLastAssets();
+		/* Access the most recent metaAnalysis */
+		myMetaAnalysis = myAnalysis.getMetaAnalysis();
 		
 		/* Note active accounts by asset */
-		if (myAssets != null)
-			myAssets.getBuckets().markActiveAccounts();
+		if (myMetaAnalysis != null)
+			myMetaAnalysis.markActiveAccounts();
 		
 		/* Note active accounts */
 		theAccounts.markActiveAccounts();
@@ -353,7 +353,7 @@ public class DataSet implements htmlDumpable {
 		theLoadState = LoadState.LOADED;
 		
 		/* Return the analysis */
-		return myList;
+		return myAnalysis;
 	}
 
 	/**

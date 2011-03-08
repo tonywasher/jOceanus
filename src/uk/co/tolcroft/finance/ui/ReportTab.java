@@ -18,6 +18,8 @@ import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.finance.ui.controls.ReportSelect.*;
 import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.finance.views.DebugManager.*;
+import uk.co.tolcroft.finance.views.EventAnalysis.AnalysisYear;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
 
@@ -32,7 +34,7 @@ public class ReportTab implements HyperlinkListener,
 	private ReportType			theReportType = null;
 	private Date				theDate       = null;
 	private TaxYear				theYear       = null;
-	private AnalysisYear.List	theList		  = null;
+	private EventAnalysis		theAnalysis	  = null;
 	private Properties			theProperties = null;
 	
 	/* Access methods */
@@ -106,9 +108,12 @@ public class ReportTab implements HyperlinkListener,
 	
 	/* refreshData */
 	public void refreshData() {		
+		/* Hide the instant debug since it is now invalid */
+		theView.getDebugMgr().getInstant().hideEntry();
+
 		/* Refresh the data */
-		theList   = theView.getAnalyses();
-		theSelect.refreshData(theList);
+		theAnalysis	= theView.getAnalysis();
+		theSelect.refreshData(theAnalysis);
 		buildReport();
 	}
 	
@@ -132,12 +137,11 @@ public class ReportTab implements HyperlinkListener,
 		
 	/* Build Report */
 	private void buildReport() {
-		AnalysisYear    mySet;
+		AnalysisYear    myYear;
 		EventAnalysis	mySnapshot;
-		AssetReport    	myAsset;
 		AnalysisReport	myReport;
-		IncomeReport	myIncome;
-		TaxReport     	myTax;
+		DebugManager	myDebugMgr;
+		DebugEntry		myDebug;
 		String          myText = "";
 		
 		/* Access the values from the selection */
@@ -151,46 +155,58 @@ public class ReportTab implements HyperlinkListener,
 		/* Skip if year is null */
 		if (theYear == null) return;
 		
+		/* Access debug manager */
+		myDebugMgr = theView.getDebugMgr();
+		myDebug	   = myDebugMgr.getInstant();
+		
 		try {
 		/* Switch on report type */
 		switch (theReportType) {
 			case ASSET:
-				mySet   = theList.searchFor(theYear);
-				myAsset = new AssetReport(mySet.getAssetAnalysis());
-				myText  = myAsset.getYearReport(); 
+				myYear  	= theAnalysis.getAnalysisYear(theYear);
+				myReport	= new AnalysisReport(myYear);
+				myText  	= myReport.getYearReport(); 
 				break;
 				
 			case INCOME:
-				mySet    = theList.searchFor(theYear);
-				myIncome = new IncomeReport(mySet.getIncomeAnalysis());
-				myText   = myIncome.getReport();
+				myYear  	= theAnalysis.getAnalysisYear(theYear);
+				myReport	= new AnalysisReport(myYear);
+				myText   	= myReport.getIncomeReport();
 				break;
 				
 			case TRANSACTION:
-				mySet  = theList.searchFor(theYear);
-				myTax  = new TaxReport(theProperties, mySet.getTaxAnalysis());
-				myText = myTax.getTransReport();
+				myYear  	= theAnalysis.getAnalysisYear(theYear);
+				myReport	= new AnalysisReport(myYear);
+				myText 		= myReport.getTransReport();
 				break;
 				
 			case TAX:
-				mySet  = theList.searchFor(theYear);
-				myTax  = new TaxReport(theProperties, mySet.getTaxAnalysis());
-				myText = myTax.getTaxReport();
+				myYear  	= theAnalysis.getAnalysisYear(theYear);
+				myReport	= new AnalysisReport(myYear);
+				myText 		= myReport.getTaxReport(theProperties);
 				break;
 				
 			case INSTANT:
-				mySnapshot = new EventAnalysis(theView.getData(), theDate);
-				myReport   = new AnalysisReport(mySnapshot.getAnalysis());
-				myText     = myReport.getInstantReport();
+				mySnapshot 	= new EventAnalysis(myDebugMgr,
+												theView.getData(),
+												theDate);
+				myReport   	= new AnalysisReport(mySnapshot);
+				myText     	= myReport.getInstantReport();
+				myDebug.setObject(mySnapshot.getAnalysis().getList());
+				myDebug.showEntry();
 				break;
 				
 			case MARKET:
-				mySnapshot = new EventAnalysis(theView.getData(), theDate);
-				myReport   = new AnalysisReport(mySnapshot.getAnalysis());
-				myText     = myReport.getMarketReport();
+				mySnapshot 	= new EventAnalysis(myDebugMgr,
+												theView.getData(),
+												theDate);
+				myReport   	= new AnalysisReport(mySnapshot);
+				myText     	= myReport.getMarketReport();
+				myDebug.setObject(mySnapshot.getAnalysis().getList());
+				myDebug.showEntry();
 				break;
 		}
-		} catch (Throwable e) {}
+		} catch (Throwable e) {} /* TODO do something */
 
 		/* Set the report text */
 		theEditor.setText(myText);

@@ -21,6 +21,7 @@ import javax.swing.table.TableColumnModel;
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.EditButtons.*;
 import uk.co.tolcroft.finance.ui.controls.StatementSelect.*;
+import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Number.*;
@@ -59,6 +60,7 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 	private Renderer.IntegerCell 	theIntegerRenderer 	= null;
 	private Editor.IntegerCell 		theIntegerEditor   	= null;
 	private Editor.ComboBoxCell 	theComboEditor    	= null;
+	private DebugEntry				theDebugEntry		= null;
 	private boolean					hasBalance		  	= true;
 	private boolean					hasDilution		  	= true;
 	private boolean					hasTaxCredit	  	= true;
@@ -77,6 +79,9 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 	public boolean hasCreditChoice() 	{ return true; }
 	public JPanel  getPanel()			{ return thePanel; }
 
+	/* Access the debug entry */
+	protected DebugEntry getDebugEntry()	{ return theDebugEntry; }
+	
 	/* Table headers */
 	private static final String titleDate      = "Date";
 	private static final String titleDesc      = "Description";
@@ -244,6 +249,11 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 	                .addComponent(theRowButs.getPanel())
 	                .addContainerGap())
 	    );
+        
+        /* Create the debug entry, attach to AccountDebug entry and hide it */
+        DebugManager myDebugMgr	= theView.getDebugMgr();
+        theDebugEntry = myDebugMgr.new DebugEntry("Statement");
+        theDebugEntry.addAsChildOf(pParent.getDebugEntry());
 	}
 
 	/* Calculate table */
@@ -320,6 +330,7 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		}
 		setColumns();
 		super.setList(theLines);
+		theDebugEntry.setObject(theStatement);
 		theModel.fireTableDataChanged();
 		theRowButs.setLockDown();
 		theSelect.setLockDown();
@@ -549,6 +560,7 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		theStateType = theStateBox.getStatementType();
 		setColumns();
 		super.setList(theLines);
+		theDebugEntry.setObject(theStatement);
 		theModel.fireTableDataChanged();
 		theRowButs.setLockDown();
 		theSelect.setLockDown();

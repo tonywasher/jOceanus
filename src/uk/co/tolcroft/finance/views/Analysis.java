@@ -8,20 +8,20 @@ import uk.co.tolcroft.models.Number.*;
 
 public class Analysis {
 	/* Members */
-	private DataSet 				theData 		= null;
-	private AnalysisState			theState		= AnalysisState.RAW;
-	private BucketList				theList			= null;
-	private ChargeableEvent.List	theCharges		= null;
-	private TaxYear 				theYear			= null;
-	private Date					theDate			= null;
-	private Account					theAccount		= null;
-	private boolean					hasGainsSlices	= false;
-	private boolean					hasReducedAllow	= false;
-	private int						theAge			= 0;
+	private DataSet 				theData 			= null;
+	private AnalysisState			theAnalysisState	= AnalysisState.RAW;
+	private BucketList				theList				= null;
+	private ChargeableEvent.List	theCharges			= null;
+	private TaxYear 				theYear				= null;
+	private Date					theDate				= null;
+	private Account					theAccount			= null;
+	private boolean					hasGainsSlices		= false;
+	private boolean					hasReducedAllow		= false;
+	private int						theAge				= 0;
 
 	/* Access methods */
 	public DataSet				getData() 			{ return theData; }
-	public AnalysisState		getState() 			{ return theState; }
+	public AnalysisState		getState() 			{ return theAnalysisState; }
 	public BucketList 			getList() 			{ return theList; }
 	public TaxYear 				getTaxYear() 		{ return theYear; }
 	public Date 				getDate() 			{ return theDate; }
@@ -32,7 +32,7 @@ public class Analysis {
 	public int					getAge()		  	{ return theAge; }
 	
 	/*Set methods */
-	protected void	setState(AnalysisState pState) 			{ theState = pState; }
+	protected void	setState(AnalysisState pState) 			{ theAnalysisState = pState; }
 	protected void	setAge(int pAge) 						{ theAge = pAge; }
 	protected void	setHasReducedAllow(boolean hasReduced)	{ hasReducedAllow = hasReduced; }
 	protected void	setHasGainsSlices(boolean hasSlices)	{ hasGainsSlices = hasSlices; }
@@ -302,9 +302,12 @@ public class Analysis {
 		 */
 		public void addHTMLFields(StringBuilder pBuffer) {
 			/* Start the Fields section */
-			pBuffer.append("<tr><th rowspan=\"3\">Fields</th></tr>");
+			pBuffer.append("<tr><th rowspan=\"4\">Fields</th></tr>");
 				
 			/* Format the date and account */
+			pBuffer.append("<tr><td>State</td><td>"); 
+			pBuffer.append(theAnalysisState); 
+			pBuffer.append("</td></tr>"); 
 			pBuffer.append("<tr><td>Date</td><td>"); 
 			pBuffer.append(Date.format(theDate)); 
 			pBuffer.append("</td></tr>"); 
@@ -1437,7 +1440,7 @@ public class Analysis {
 			theGains	 	= new Money(0);
 		
 			/* allocate the Capital events */
-			theEvents 		= new CapitalEvent.List(theData);
+			theEvents 		= new CapitalEvent.List(theData, pAccount);
 			
 			/* Set status */
 			setState(DataState.CLEAN);
@@ -1483,6 +1486,13 @@ public class Analysis {
 			theInvested		= new Money(pPrevious.getInvested());
 			theDividend		= new Money(pPrevious.getDividend());
 			theGains		= new Money(pPrevious.getGains());
+			
+			/* Copy price if available */
+			if (pPrevious.getPrice() != null)
+				thePrice	= new Price(pPrevious.getPrice());
+			
+			/* Initialise the Money values */
+			setValue(new Money(pPrevious.getValue()));
 			
 			/* Set status */
 			setState(DataState.CLEAN);
@@ -1559,6 +1569,9 @@ public class Analysis {
 				case FIELD_PROFIT:		
 					myString += Money.format(theProfit);
 					break;
+				case FIELD_PRICE:		
+					myString += Price.format(thePrice);
+					break;
 				default:
 					myString += super.formatField(iField, pObj);
 					break;
@@ -1612,20 +1625,6 @@ public class Analysis {
 			theProfit.addAmount(theGained);
 		}
 
-		/**
-		 * Add additional fields to HTML String
-		 * @param pBuffer the string buffer 
-		 */
-		public void addHTMLFields(StringBuilder pBuffer) {
-			/* Start the Fields section */
-			pBuffer.append("<tr><th rowspan=\"2\">CapitalEvents</th></tr>");
-				
-			/* Format the capital events  */
-			pBuffer.append("<tr><td>Date</td><td>"); 
-			pBuffer.append(theEvents.toHTMLString()); 
-			pBuffer.append("</td></tr>"); 
-		}
-		
 		/**
 		 * Adjust account for debit
 		 * @param pEvent the event causing the debit
@@ -2913,7 +2912,15 @@ public class Analysis {
 		/**
 		 * is the bucket relevant (i.e. should it be reported)
 		 */
-		protected boolean isRelevant() {	return true; }
+		protected boolean isRelevant() {	
+			/* Relevant if this value or the previous value is non-zero */
+			return (theAmount.isNonZero() ||
+					theTaxation.isNonZero() ||
+					((getPrevAmount() != null) &&
+					 (getPrevAmount().isNonZero())) ||
+					((getPrevTax() != null) &&
+					 (getPrevTax().isNonZero())));
+		}
 		
 		/**
 		 * Set a taxation amount and calculate the tax on it

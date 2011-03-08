@@ -348,7 +348,7 @@ public class ViewPrice extends DataItem {
 			/* Local variables */
 			AcctPrice.List						myPrices;
 			AcctPrice 							myCurr;
-			ViewPrice 						myItem;
+			ViewPrice 							myItem;
 			DataList<AcctPrice>.ListIterator 	myIterator;
 
 			/* Skip to alias if required */
@@ -453,6 +453,20 @@ public class ViewPrice extends DataItem {
 			/*
 			 * Analyse and refresh are performed in the statement view
 			 */
+		}
+
+		/**
+		 * Add additional fields to HTML String
+		 * @param pBuffer the string buffer 
+		 */
+		public void addHTMLFields(StringBuilder pBuffer) {
+			/* Start the Fields section */
+			pBuffer.append("<tr><th rowspan=\"2\">Fields</th></tr>");
+
+			/* Format the range */
+			pBuffer.append("<tr><td>Account</td><td>"); 
+			pBuffer.append(Account.format(theAccount)); 
+			pBuffer.append("</td></tr>");
 		}
 	}
 	

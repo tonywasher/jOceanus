@@ -4,7 +4,8 @@ package uk.co.tolcroft.models;
  * Generic implementation of a DataList for DataItems Stack
  * @author Tony Washer
  */
-public abstract class DataList<T extends DataItem> extends SortedList<T>{
+public abstract class DataList<T extends DataItem> extends SortedList<T> 
+												   implements htmlDumpable {
 	/**
 	 * The style of the list
 	 */

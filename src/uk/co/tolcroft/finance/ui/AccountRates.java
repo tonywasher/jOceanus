@@ -19,6 +19,7 @@ import javax.swing.table.TableColumnModel;
 
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.EditButtons.*;
+import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Number.*;
@@ -30,7 +31,7 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 	
 	private View					theView			= null;
 	private RatesModel				theModel		= null;
-	private AcctRate.List		    	theRates   		= null;
+	private AcctRate.List		    theRates   		= null;
 	private JPanel					thePanel		= null;
 	private AccountRates			theTable    	= this;
 	private ratesMouse				theMouse		= null;
@@ -39,6 +40,7 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 	private Account                 theAccount  	= null;
 	private View.ViewRates			theExtract		= null;
 	private EditButtons    			theRowButs  	= null;
+	private DebugEntry				theDebugEntry	= null;
 	private Renderer.DateCell 		theDateRenderer = null;
 	private Editor.DateCell 		theDateEditor   = null;
 	private Renderer.RateCell 		theRateRenderer = null;
@@ -48,6 +50,9 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 	public JPanel  	getPanel()			{ return thePanel; }
 	public boolean 	hasHeader()			{ return false; }
 
+	/* Access the debug entry */
+	protected DebugEntry getDebugEntry()	{ return theDebugEntry; }
+	
 	/* Table headers */
 	private static final String titleRate  = "Rate";
 	private static final String titleBonus = "Bonus";
@@ -145,6 +150,12 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 	                .addComponent(theRowButs.getPanel())
 	                .addContainerGap())
 	    );
+        
+        /* Create the debug entry, attach to AccountDebug entry and hide it */
+        DebugManager myDebugMgr	= theView.getDebugMgr();
+        theDebugEntry = myDebugMgr.new DebugEntry("Rates");
+        theDebugEntry.addAsChildOf(pParent.getDebugEntry());
+        theDebugEntry.hideEntry();
 	}
 		
 	/* Note that there has been a selection change */
@@ -189,6 +200,7 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 		theAccount = pAccount;
 		theRates   = theExtract.getRates();
 		setList(theRates);
+		theDebugEntry.setObject(theExtract);
 		theModel.fireTableDataChanged();
 		theRowButs.setLockDown();
 	}

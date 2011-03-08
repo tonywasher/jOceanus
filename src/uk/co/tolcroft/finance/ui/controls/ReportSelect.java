@@ -18,6 +18,7 @@ import javax.swing.event.ChangeListener;
 
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.finance.views.EventAnalysis.AnalysisYear;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
 
@@ -151,12 +152,12 @@ public class ReportSelect implements	ActionListener,
 	}
 	
 	/* refresh data */
-	public void refreshData(AnalysisYear.List pList) {
+	public void refreshData(EventAnalysis pAnalysis) {
 		DataSet			myData;
 		AnalysisYear  	myYear;
 		Date.Range  	myRange;
 		
-		SortedList<AnalysisYear>.ListIterator myIterator;
+		DataList<AnalysisYear>.ListIterator myIterator;
 		
 		/* Access the data */
 		myData  = theView.getData();
@@ -184,10 +185,10 @@ public class ReportSelect implements	ActionListener,
 			yearsPopulated = false;
 		}
 		
-		/* If we have a list */
-		if (pList != null) {
+		/* If we have an analysis */
+		if (pAnalysis != null) {
 			/* Access the iterator */
-			myIterator = pList.listIterator();
+			myIterator = pAnalysis.getAnalysisYears().listIterator();
 		
 			/* Add the Year values to the years box in reverse order */
 			while ((myYear  = myIterator.previous()) != null) {
@@ -206,7 +207,7 @@ public class ReportSelect implements	ActionListener,
 			else if (yearsPopulated) {
 				/* Select the first year */
 				theYearsBox.setSelectedIndex(0);
-				theYear = myIterator.peekLast().getYear();
+				theYear = myIterator.peekLast().getTaxYear();
 			}
 		}
 

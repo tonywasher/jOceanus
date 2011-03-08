@@ -12,6 +12,7 @@ import javax.swing.table.TableColumnModel;
 
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.EditButtons.*;
+import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Number.*;
@@ -36,6 +37,7 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 	private Renderer.DilutionCell 		theDiluteRenderer 	= null;
 	private Renderer.DilutedPriceCell	theDilPriceRenderer	= null;
 	private boolean						hasDilutions		= true;
+	private DebugEntry					theDebugEntry		= null;
 	private TableColumn					theDiluteCol		= null;
 	private TableColumn					theDilPriceCol		= null;
 
@@ -43,6 +45,9 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 	public JPanel  	getPanel()			{ return thePanel; }
 	public boolean 	hasHeader()			{ return false; }
 		
+	/* Access the debug entry */
+	protected DebugEntry getDebugEntry()	{ return theDebugEntry; }
+	
 	/* Hooks */
 	public boolean needsMembers() 	{ return true; }
 		
@@ -148,6 +153,12 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 	                .addComponent(theRowButs.getPanel())
 	                .addContainerGap())
 	    );
+        
+        /* Create the debug entry, attach to AccountDebug entry and hide it */
+        DebugManager myDebugMgr	= theView.getDebugMgr();
+        theDebugEntry = myDebugMgr.new DebugEntry("Prices");
+        theDebugEntry.addAsChildOf(pParent.getDebugEntry());
+        theDebugEntry.hideEntry();
 	}
 
 	
@@ -192,6 +203,7 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 		thePrices  = new ViewPrice.List(theView, pAccount);
 		setColSelection();
 		super.setList(thePrices);
+		theDebugEntry.setObject(thePrices);
 		theModel.fireTableDataChanged();
 		theRowButs.setLockDown();
 	}

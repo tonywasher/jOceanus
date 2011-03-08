@@ -6,7 +6,6 @@ import uk.co.tolcroft.finance.core.SecureManager;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.DataList.*;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 public class View {
@@ -14,24 +13,29 @@ public class View {
 	private DataSet     			theData  		= null;
 	private Date.Range  			theRange 		= null;
 	private MainTab					theCtl 	 		= null;
-    private AnalysisYear.List		theAnalysis		= null;
+    private EventAnalysis			theAnalysis		= null;
     private DilutionEvent.List		theDilutions	= null;
     private Exception				theError		= null;
     private SecureManager			theSecurity		= null;
- 
+    private DebugManager			theDebugMgr		= null;
+    
 	/* Access methods */
 	public DataSet 				getData() 		{ return theData; }
 	public MainTab				getControl()	{ return theCtl; }
 	public Date.Range			getRange()		{ return theRange; }
-	public AnalysisYear.List    getAnalyses()	{ return theAnalysis; }
+	public EventAnalysis    	getAnalysis()	{ return theAnalysis; }
 	public DilutionEvent.List   getDilutions()	{ return theDilutions; }
 	public Exception			getError()		{ return theError; }
 	public SecureManager		getSecurity() 	{ return theSecurity; }
+	public DebugManager			getDebugMgr() 	{ return theDebugMgr; }
 	
  	/* Constructor */
 	public View(MainTab pCtl) {
 		/* Store access to the main window */
 		theCtl	= pCtl;
+		
+		/* Store access to the Debug Manager */
+		theDebugMgr = pCtl.getDebugMgr();
 		
 		/* Create a new security manager */
 		theSecurity = new SecureManager(pCtl);
@@ -65,13 +69,10 @@ public class View {
 		/* Protect against exceptions */
 		try {
 			/* Analyse the data */
-			theAnalysis  = theData.analyseData();
+			theAnalysis = theData.analyseData(theDebugMgr);
 		
 			/* Access the dilutions */
 			theDilutions = theAnalysis.getDilutions();
-			
-			EventAnalysis myNew = new EventAnalysis(theData);
-			myNew.getAnalysis();
 		}
 		
 		/* Catch any exceptions */
@@ -95,9 +96,8 @@ public class View {
 	}
 	
 	/* TaxYear Extract Class */
-	public class ViewTaxYear {
+	public class ViewTaxYear extends TaxYear.List {
 		/* Members */
-		private TaxYear.List 	theList 	= null;
 		private TaxYear			theTaxYear 	= null;
 		
 		/* Access methods */
@@ -105,16 +105,20 @@ public class View {
 		
 		/* Constructor */
 		public ViewTaxYear(TaxYear pTaxYear) {
-			/* Create an empty list */
-			theList = new TaxYear.List(theData, ListStyle.EDIT);
+			/* Call super constructor */
+			super(theData, ListStyle.EDIT);
 			
 			/* Create a new tax year based on the passed tax year */
-			theTaxYear = new TaxYear(theList, pTaxYear);
+			theTaxYear = new TaxYear(this, pTaxYear);
 			theTaxYear.addToList();
 		}
 		
 		/* Constructor */
 		public ViewTaxYear() {
+			/* Call super constructor */
+			super(theData, ListStyle.EDIT);
+
+			/* Local Variables */
 			TaxYear.List 					myTaxYears;
 			TaxYear    						myBase;
 			DataList<TaxYear>.ListIterator 	myIterator;
@@ -123,12 +127,9 @@ public class View {
 			myTaxYears = theData.getTaxYears();
 			myIterator = myTaxYears.listIterator(true);
 			
-			/* Create an empty list */
-			theList = new TaxYear.List(theData, ListStyle.EDIT);
-
 			/* Create a new tax year for the list */
 			myBase = myIterator.peekLast();
-			theTaxYear = new TaxYear(theList, myBase);
+			theTaxYear = new TaxYear(this, myBase);
 			theTaxYear.setBase(null);
 			theTaxYear.setState(DataState.NEW);
 			theTaxYear.setId(0);
@@ -149,7 +150,7 @@ public class View {
 			myBase = theData.getTaxYears();
 			
 			/* Apply the changes from this list */
-			myBase.applyChanges(theList);
+			myBase.applyChanges(this);
 			
 			/* Update Range details */
 			theData.calculateDateRange();
@@ -163,9 +164,8 @@ public class View {
 	}
 	
 	/* Account Extract Class */
-	public class ViewAccount {
+	public class ViewAccount extends Account.List {
 		/* Members */
-		private Account.List 	theList    = null;
 		private Account			theAccount = null;
 		private AcctPrice.List 	thePrices  = null;
 		
@@ -174,29 +174,19 @@ public class View {
 		
 		/* Constructor */
 		public ViewAccount(Account pAccount) {
-			Account.List myAccounts;
+			/* Call super constructor */
+			super(theData.getAccounts(), ListStyle.EDIT);
 			
-			/* Access the existing accounts */
-			myAccounts = theData.getAccounts();
-			
-			/* Create a copy of the accounts */
-			theList = new Account.List(myAccounts, ListStyle.EDIT);
-
 			/* Locate the account in the list */
-			theAccount = theList.searchFor(pAccount.getName());
+			theAccount = searchFor(pAccount.getName());
 		}
 		
 		public ViewAccount(AccountType pType) {
-			Account.List myAccounts;
-			
-			/* Access the existing accounts */
-			myAccounts = theData.getAccounts();
-			
-			/* Create a copy of the accounts */
-			theList = new Account.List(myAccounts, ListStyle.EDIT);
+			/* Call super constructor */
+			super(theData.getAccounts(), ListStyle.EDIT);
 			
 			/* Create an new empty account */
-			theAccount = new Account(theList);
+			theAccount = new Account(this);
 			theAccount.addToList();
 			
 			/* Set the type of the account */
@@ -232,7 +222,7 @@ public class View {
 			myPrices	= theData.getPrices();
 			
 			/* Apply the changes */
-			myBase.applyChanges(theList);
+			myBase.applyChanges(this);
 			if (thePrices != null) myPrices.applyChanges(thePrices); 
 				
 			/* analyse the data */
@@ -241,25 +231,28 @@ public class View {
 			/* Refresh windows */
 			refreshWindow();
 		}
+		
+		/**
+		 * Override the toHTMLString method to just return the account 
+		 */
+		public StringBuilder toHTMLString() { return theAccount.toHTMLString(); }		
 	}
 	
 	/* Rates Extract Class */
-	public class ViewRates {
+	public class ViewRates extends AcctRate.List {
 		/* Members */
-		private AcctRate.List 	theList    = null;
+		private Account 	theAccount	= null;
 		
 		/* Access methods */
-		public AcctRate.List getRates() { return theList; }
+		public AcctRate.List getRates() { return this; }
 		
 		/* Constructor */
 		public ViewRates(Account pAccount) {
-			AcctRate.List myRates;
+			/* Call super constructor */
+			super(theData.getRates(), pAccount);
 			
-			/* Access the existing rates */
-			myRates = theData.getRates();
-			
-			/* Create a copy of the rates */
-			theList = new AcctRate.List(myRates, pAccount);
+			/* Store the account */
+			theAccount = pAccount;
 		}
 				
 		/** 
@@ -272,68 +265,43 @@ public class View {
 			myBase     = theData.getRates();
 			
 			/* Apply the changes */
-			myBase.applyChanges(theList);
+			myBase.applyChanges(this);
 			
 			/*
 			 * Analyse and refresh are performed in the statement view
 			 */
 		}
-	}
-	
-	/* Prices Extract Class */
-	public class ViewPrices {
-		/* Members */
-		private AcctPrice.List 	theList    = null;
-		
-		/* Access methods */
-		public AcctPrice.List getPrices() { return theList; }
-		
-		/* Constructor */
-		public ViewPrices(Account pAccount) {
-			AcctPrice.List myPrices;
-			
-			/* Access the existing prices */
-			myPrices = theData.getPrices();
-			
-			/* Create a copy of the prices */
-			theList = new AcctPrice.List(myPrices, pAccount);
-		}
-				
-		/** 
-		 * Apply changes in a Prices view back into the core data
+
+		/**
+		 * Add additional fields to HTML String
+		 * @param pBuffer the string buffer 
 		 */
-		public void applyChanges() {
-			AcctPrice.List myBase;
-			
-			/* Access base details */
-			myBase     = theData.getPrices();
-			
-			/* Apply the changes */
-			myBase.applyChanges(theList);
-			
-			/*
-			 * Analyse and refresh are performed in the statement view
-			 */
+		public void addHTMLFields(StringBuilder pBuffer) {
+			/* Start the Fields section */
+			pBuffer.append("<tr><th rowspan=\"2\">Fields</th></tr>");
+
+			/* Format the range */
+			pBuffer.append("<tr><td>Account</td><td>"); 
+			pBuffer.append(Account.format(theAccount)); 
+			pBuffer.append("</td></tr>");
 		}
 	}
 	
 	/* Patterns Extract Class */
-	public class ViewPatterns {
+	public class ViewPatterns extends Pattern.List {
 		/* Members */
-		private Pattern.List 	theList    = null;
+		private Account 	theAccount	= null;
 		
 		/* Access methods */
-		public Pattern.List getPatterns() { return theList; }
+		public Pattern.List getPatterns() { return this; }
 		
 		/* Constructor */
 		public ViewPatterns(Account pAccount) {
-			Pattern.List myPatterns;
+			/* Call super constructor */
+			super(theData.getPatterns(), pAccount);
 			
-			/* Access the existing patterns */
-			myPatterns = theData.getPatterns();
-			
-			/* Create a copy of the patterns */
-			theList = new Pattern.List(myPatterns, pAccount);
+			/* Store the account */
+			theAccount = pAccount;
 		}
 				
 		/** 
@@ -346,26 +314,43 @@ public class View {
 			myBase     = theData.getPatterns();
 			
 			/* Apply the changes */
-			myBase.applyChanges(theList);
+			myBase.applyChanges(this);
 			
 			/*
 			 * Analyse and refresh are performed in the statement view
 			 */
 		}
+
+		/**
+		 * Add additional fields to HTML String
+		 * @param pBuffer the string buffer 
+		 */
+		public void addHTMLFields(StringBuilder pBuffer) {
+			/* Start the Fields section */
+			pBuffer.append("<tr><th rowspan=\"2\">Fields</th></tr>");
+
+			/* Format the range */
+			pBuffer.append("<tr><td>Account</td><td>"); 
+			pBuffer.append(Account.format(theAccount)); 
+			pBuffer.append("</td></tr>");
+		}
 	}
 	
 	/* Event Extract Class */
-	public class ViewEvents {
+	public class ViewEvents extends Event.List {
 		/* Members */
 		private Date.Range  theRange   = null;
-		private Event.List 	theEvents  = null;
 
 		/* Access methods */
 		public Date.Range   getRange()     { return theRange; }
-	 	public Event.List 	getEvents()    { return theEvents; }
+	 	public Event.List 	getEvents()    { return this; }
 	 	
 	 	/* Constructor */
 		public ViewEvents(Date.Range pRange) {
+			/* Call super constructor */
+			super(theData, ListStyle.EDIT);
+			
+			/* local variable */
 			DataList<Event>.ListIterator 	myIterator;
 			Event.List  					myBase;
 			Event      						myCurr;
@@ -374,7 +359,6 @@ public class View {
 			
 			/* Record range and initialise the list */
 			theRange   = pRange;
-			theEvents  = new Event.List(theData, ListStyle.EDIT);
 			
 			/* Access the underlying data */
 			myBase 		= getData().getEvents();
@@ -390,13 +374,17 @@ public class View {
 				if (myResult == -1) break;
 				
 				/* Build the new linked event and add it to the extract */
-				myEvent = new Event(theEvents, myCurr);
+				myEvent = new Event(this, myCurr);
 				myEvent.addToList();
 			}
 		}
 
 	 	/* Constructor */
 		public ViewEvents(TaxYear pTaxYear) {
+			/* Call super constructor */
+			super(theData, ListStyle.EDIT);
+
+			/* Local variables */
 			DataList<Pattern>.ListIterator 	myIterator;
 			Pattern.List 					myPatterns;
 			Pattern     					myCurr;
@@ -405,7 +393,6 @@ public class View {
 			
 			/* Record range and initialise the list */
 			theRange   = pTaxYear.getRange();
-			theEvents  = new Event.List(theData, ListStyle.EDIT);
 			
 			/* Access the underlying data */
 			myPatterns 	= getData().getPatterns();
@@ -417,7 +404,7 @@ public class View {
 				myDate = new Date(myCurr.getDate());
 					
 				/* Loop while we have an event to add */
-				while ((myEvent = myCurr.nextEvent(theEvents,
+				while ((myEvent = myCurr.nextEvent(this,
 												   pTaxYear, 
 												   myDate)) != null) {
 					/* Add it to the extract */
@@ -426,6 +413,20 @@ public class View {
 			}
 		}
 
+		/**
+		 * Add additional fields to HTML String
+		 * @param pBuffer the string buffer 
+		 */
+		public void addHTMLFields(StringBuilder pBuffer) {
+			/* Start the Fields section */
+			pBuffer.append("<tr><th rowspan=\"2\">Fields</th></tr>");
+
+			/* Format the range */
+			pBuffer.append("<tr><td>Range</td><td>"); 
+			pBuffer.append(Date.Range.format(theRange)); 
+			pBuffer.append("</td></tr>");
+		}
+		
 		/** 
 		 * Validate an extract
 		 */
@@ -434,10 +435,10 @@ public class View {
 			Event 							myCurr;
 
 			/* Clear the errors */
-			theEvents.clearErrors();
+			clearErrors();
 			
 			/* Access the underlying data */
-			myIterator 	= theEvents.listIterator();
+			myIterator 	= listIterator();
 			
 			/* Loop through the lines */
 			while ((myCurr = myIterator.next()) != null) {
@@ -456,7 +457,7 @@ public class View {
 			myBase = getData().getEvents();
 			
 			/* Apply the changes from this list */
-			myBase.applyChanges(theEvents);
+			myBase.applyChanges(this);
 			
 			/* analyse the data */
 			analyseData();
@@ -465,6 +466,7 @@ public class View {
 			refreshWindow();
 		}
 	}
+	
 	/**
 	 * The properties view class
 	 */

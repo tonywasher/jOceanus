@@ -20,6 +20,7 @@ import javax.swing.table.TableColumnModel;
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.EditButtons.*;
 import uk.co.tolcroft.finance.views.*;
+import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.*;
@@ -43,6 +44,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 	private DateRange 				theSelect	 		= null;
 	private EditButtons    			theRowButs   		= null;
 	private SaveButtons  			theTabButs   		= null;
+	private DebugEntry				theDebugEntry		= null;
 	private Renderer.DateCell 		theDateRenderer   	= null;
 	private Editor.DateCell 		theDateEditor     	= null;
 	private Renderer.MoneyCell 		theMoneyRenderer  	= null;
@@ -62,6 +64,9 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 	/* Access methods */
 	public JPanel  	getPanel()			{ return thePanel; }
 	public boolean 	hasHeader()			{ return false; }
+	
+	/* Access the debug entry */
+	protected DebugEntry getDebugEntry()	{ return theDebugEntry; }
 	
 	/* Table headers */
 	private static final String titleDate    = "Date";
@@ -98,11 +103,18 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		TableColumn			myCol;
 		JScrollPane			myScroll;
 		GroupLayout			myLayout;
+		DebugEntry			mySection;
 			
 		/* Record the passed details */
 		theParent = pParent;
 		theView   = pParent.getView();
 
+		/* Create the top level debug entry for this view  */
+		DebugManager myDebugMgr = theView.getDebugMgr();
+		mySection = myDebugMgr.getViews();
+        theDebugEntry = myDebugMgr.new DebugEntry("Extract");
+        theDebugEntry.addAsChildOf(mySection);
+		
 		/* Create the model and declare it to our superclass */
 		theModel  = new ExtractModel();
 		setModel(theModel);
@@ -324,6 +336,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 			theEvents  = null;				
 		}
 		setList(theEvents);
+		theDebugEntry.setObject(theExtract);
 		theModel.fireTableDataChanged();
 		theRowButs.setLockDown();
 		theTabButs.setLockDown();

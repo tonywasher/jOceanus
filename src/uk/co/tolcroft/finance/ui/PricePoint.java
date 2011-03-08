@@ -18,6 +18,7 @@ import javax.swing.table.TableColumnModel;
 
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
+import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.*;
@@ -37,6 +38,7 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 	private Date					theDate				= null;
 	private SpotSelect				theSelect	 		= null;
 	private SaveButtons  			theTabButs   		= null;
+	private DebugEntry				theDebugEntry		= null;
 	private Renderer.DateCell 		theDateRenderer  	= null;
 	private Renderer.PriceCell 		thePriceRenderer  	= null;
 	private Editor.PriceCell 		thePriceEditor    	= null;
@@ -45,6 +47,9 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 	/* Access methods */
 	public JPanel  	getPanel()			{ return thePanel; }
 	public boolean	hasHeader()			{ return false; }
+	
+	/* Access the debug entry */
+	protected DebugEntry getDebugEntry()	{ return theDebugEntry; }
 	
 	/* Table headers */
 	private static final String titleAsset   	= "Asset";
@@ -69,11 +74,18 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 		TableColumn			myCol;
 		JScrollPane			myScroll;
 		GroupLayout			myLayout;
+		DebugEntry			mySection;
 			
 		/* Record the passed details */
 		theParent = pParent;
 		theView   = pParent.getView();
 
+		/* Create the top level debug entry for this view  */
+		DebugManager myDebugMgr = theView.getDebugMgr();
+		mySection = myDebugMgr.getViews();
+        theDebugEntry = myDebugMgr.new DebugEntry("SpotPrices");
+        theDebugEntry.addAsChildOf(mySection);
+		
 		/* Create the model and declare it to our superclass */
 		theModel  = new spotViewModel();
 		setModel(theModel);
@@ -208,6 +220,7 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 			theSelect.setAdjacent(null, null);
 		}
 		setList(thePrices);
+		theDebugEntry.setObject(theSnapshot);
 		theModel.fireTableDataChanged();
 		theTabButs.setLockDown();
 		theSelect.setLockDown();

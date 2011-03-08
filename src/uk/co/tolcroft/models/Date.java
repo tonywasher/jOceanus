@@ -346,5 +346,27 @@ public class Date {
 			}
 	        return 0;
 		}
+
+		/**
+		 * Format a Range 
+		 * 
+		 * @param pDate the date to format
+		 * @return the formatted Date
+		 */
+		public static String format(Range pRange) {
+			String 	myFormat;
+			
+			/* Handle null range */
+			if (pRange == null) return "null";
+			
+			/* Build range description */
+			myFormat  = Date.format(pRange.getStart());
+			myFormat += " to ";
+			myFormat += Date.format(pRange.getEnd());
+
+			/* return the format */
+			return myFormat;
+		}
+
 	}	
 }

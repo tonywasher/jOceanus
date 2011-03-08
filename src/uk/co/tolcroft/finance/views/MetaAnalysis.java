@@ -4,6 +4,7 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.TaxType.TaxClass;
 import uk.co.tolcroft.finance.data.TransactionType.TransClass;
 import uk.co.tolcroft.finance.views.Analysis.*;
+import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 
@@ -104,12 +105,13 @@ public class MetaAnalysis {
 		CapitalEvent myEvent = pAsset.getCapitalEvents().addEvent(theDate);
 		
 		/* Add price and value */
-		myEvent.addAttribute(CapitalEvent.capitalInitialPrice, pAsset.getPrice());
+		myEvent.addAttribute(CapitalEvent.capitalFinalPrice, pAsset.getPrice());
 		if (pAsset.getPrevValue() != null)
 			myEvent.addAttribute(CapitalEvent.capitalInitialValue, pAsset.getPrevValue());
 		myEvent.addAttribute(CapitalEvent.capitalFinalValue, pAsset.getValue());
 		myEvent.addAttribute(CapitalEvent.capitalFinalInvest, pAsset.getInvested());
 		myEvent.addAttribute(CapitalEvent.capitalFinalGains, pAsset.getGains());
+		myEvent.addAttribute(CapitalEvent.capitalFinalDiv, pAsset.getDividend());
 
 		/* Calculate basic market movement which is defined as
 		 * currentValue - previousValue - amountInvested
@@ -158,9 +160,17 @@ public class MetaAnalysis {
 			}
 		}
 	
-		/* Add the Gains and dividend into the realised gains */
-		pAsset.getGained().addAmount(myGain);
-		pAsset.getGained().addAmount(pAsset.getDividend());
+		/* Determine the delta gained */
+		Money myDeltaGained = new Money(myGain);
+		myDeltaGained.addAmount(pAsset.getDividend());
+		
+		/* Record initial and delta gained */
+		myEvent.addAttribute(CapitalEvent.capitalInitialGained, pAsset.getGained());
+		myEvent.addAttribute(CapitalEvent.capitalDeltaGained, myDeltaGained);
+		
+		/* Adjust the Gained Total */
+		pAsset.getGained().addAmount(myDeltaGained);
+		myEvent.addAttribute(CapitalEvent.capitalFinalGained, pAsset.getGained());
 		
 		/* If the market movement is positive */
 		if (myMarket.isPositive()) {
@@ -277,6 +287,41 @@ public class MetaAnalysis {
 	}
 	
 	/**
+	 * Annotate Capital events debug 
+	 * @param the Debug manager
+	 */
+	protected DebugEntry annotateCapitalDebug(DebugManager 	pDebugMgr) {
+		DataList<AnalysisBucket>.ListIterator 	myIterator;
+		AnalysisBucket							myCurr;
+		AssetAccount							myAsset;
+		DebugEntry								myMaster;
+		DebugEntry								myDebug;
+
+		/* Create the debug entry for the capital events */
+		myMaster = pDebugMgr.new DebugEntry("CapitalEvents");
+
+		/* Access the iterator */
+		myIterator = theList.listIterator();
+		
+		/* Loop through the buckets */
+		while ((myCurr = myIterator.next()) != null) {
+			/* Ignore if this is not an asset detail */
+			if (myCurr.getBucketType() != BucketType.ASSETDETAIL) continue;
+
+			/* Access the Asset Detail */
+			myAsset = (AssetAccount)myCurr;
+			
+			/* Create the debug entry for the capital events */
+			myDebug = pDebugMgr.new DebugEntry(myAsset.getAccount().getName());
+			myDebug.setObject(myAsset.getCapitalEvents());
+			myDebug.addAsChildOf(myMaster);
+		}
+		
+		/* Return the debug entry */
+		return myMaster;
+	}
+	
+	/**
 	 * Calculate tax
 	 * @param pProperties the properties
 	 */
@@ -357,6 +402,9 @@ public class MetaAnalysis {
 		myBucket = theList.getTaxDetail(TaxClass.TAXPROFIT);
 		myBucket.setAmount(new Money(0));
 		myBucket.setTaxation(myTax);
+
+		/* Prune the analysis list */
+		theList.prune();
 
 		/* Set the state to taxed and record values */
 		theAnalysis.setState(AnalysisState.TAXED);
