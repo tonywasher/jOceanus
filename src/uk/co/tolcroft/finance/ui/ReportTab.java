@@ -22,20 +22,26 @@ import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.views.EventAnalysis.AnalysisYear;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 /* Report Tab */
 public class ReportTab implements HyperlinkListener,
 								  financePanel {
 	/* Properties */
-	private View 				theView 	  = null;
-	private JPanel              thePanel  	  = null;
-	private JEditorPane         theEditor     = null;
-	private ReportSelect 		theSelect     = null;
-	private ReportType			theReportType = null;
-	private Date				theDate       = null;
-	private TaxYear				theYear       = null;
-	private EventAnalysis		theAnalysis	  = null;
-	private Properties			theProperties = null;
+	private View 				theView 	  	= null;
+	private MainTab				theParent		= null;
+	private JPanel              thePanel  	  	= null;
+	private JScrollPane			theScroll		= null;
+	private JEditorPane         theEditor     	= null;
+	private ReportSelect 		theSelect     	= null;
+	private ReportType			theReportType 	= null;
+	private Date				theDate       	= null;
+	private TaxYear				theYear       	= null;
+	private EventAnalysis		theAnalysis	  	= null;
+	private Properties			theProperties 	= null;
+	private DebugEntry			theDebugReport	= null;
+	private ErrorPanel			theError		= null;
 	
 	/* Access methods */
 	public JPanel       getPanel()       { return thePanel; }
@@ -44,16 +50,30 @@ public class ReportTab implements HyperlinkListener,
 	public EditState    getEditState()   { return EditState.CLEAN; }
 	public void      	performCommand(financeCommand pCmd) { }
 	
-	/* Constructor */
+	/* Access the debug entry */
+	public DebugEntry 	getDebugEntry()		{ return theDebugReport; }
+	public DebugManager getDebugManager() 	{ return theParent.getDebugMgr(); }
+	
+	/**
+	 * Constructor for Report Window
+	 * @param pParent the parent window
+	 */
 	public ReportTab(MainTab pWindow) {
-		JScrollPane   myScroll;
 		HTMLEditorKit myKit;
 		StyleSheet    myStyle;
 		Document      myDoc;
+		DebugEntry	  mySection;
 		
 		/* Store the view and properties */
+		theParent	  = pWindow;
 		theView       = pWindow.getView();
 		theProperties = pWindow.getProperties();
+		
+		/* Create the top level debug entry for this view  */
+		DebugManager myDebugMgr = theView.getDebugMgr();
+		mySection = myDebugMgr.getViews();
+        theDebugReport = myDebugMgr.new DebugEntry("Report");
+        theDebugReport.addAsChildOf(mySection);
 		
 		/* Create the editor pane as non-editable */
 		theEditor = new JEditorPane();
@@ -65,7 +85,7 @@ public class ReportTab implements HyperlinkListener,
 		theEditor.setEditorKit(myKit);
 		
 		/* Create a scroll-pane for the editor */
-		myScroll = new JScrollPane(theEditor);
+		theScroll = new JScrollPane(theEditor);
 		
 		/* Create the style-sheet for the window */
 		myStyle = myKit.getStyleSheet();
@@ -80,6 +100,9 @@ public class ReportTab implements HyperlinkListener,
 		/* Create the Report Selection panel */
 		theSelect = new ReportSelect(theView, this);
 		
+        /* Create the error panel for this view */
+        theError = new ErrorPanel(this);
+        
 		/* Create the panel */
 		thePanel = new JPanel();
 		
@@ -93,21 +116,25 @@ public class ReportTab implements HyperlinkListener,
 	        	.addGroup(myLayout.createSequentialGroup()
 	        		.addContainerGap()
 	                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
+	                    .addComponent(theError.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                    .addComponent(theSelect.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-	                    .addComponent(myScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE))
+	                    .addComponent(theScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE))
 	                .addContainerGap())
 	    );
         myLayout.setVerticalGroup(
         	myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	        	.addGroup(GroupLayout.Alignment.TRAILING, myLayout.createSequentialGroup()
+	                .addComponent(theError.getPanel())
 	                .addComponent(theSelect.getPanel())
-	                .addComponent(myScroll)
+	                .addComponent(theScroll)
 	                .addContainerGap())
 	    );			
 	}
 	
-	/* refreshData */
-	public void refreshData() {		
+	/**
+	 * Refresh views/controls after a load/update of underlying data
+	 */
+	public void refreshData() throws Exception {		
 		/* Hide the instant debug since it is now invalid */
 		theView.getDebugMgr().getInstant().hideEntry();
 
@@ -115,18 +142,58 @@ public class ReportTab implements HyperlinkListener,
 		theAnalysis	= theView.getAnalysis();
 		theSelect.refreshData(theAnalysis);
 		buildReport();
+		
+		/* Create SavePoint */
+		theSelect.createSavePoint();
 	}
 	
-	/* Note that there has been a selection change */
+	/**
+	 * Lock on error
+	 * @param isError is there an error (True/False)
+	 */
+	public void lockOnError(boolean isError) {
+		/* Hide selection panel */
+		theSelect.getPanel().setVisible(!isError);
+
+		/* Lock scroll-able area */
+		theScroll.setEnabled(!isError);
+	}
+	
+	/**
+	 *  Notify window that there has been a change in selection by an underlying control
+	 *  @param obj the underlying control that has changed selection
+	 */
 	public void    notifySelection(Object obj)    {
 		/* If this is a change from the report selection */
 		if (obj == (Object) theSelect) {
-			/* Build the report */
-			buildReport();
+			/* Protect against exceptions */
+			try {
+				/* Build the report */
+				buildReport();
+				
+				/* Create SavePoint */
+				theSelect.createSavePoint();
+			}
+			
+			/* Catch Exceptions */
+			catch (Exception e) {
+				/* Build the error */
+				Exception myError = new Exception(ExceptionClass.DATA,
+										          "Failed to change selection",
+										          e);
+				
+				/* Show the error */
+				theError.setError(myError);
+				
+				/* Restore SavePoint */
+				theSelect.restoreSavePoint();
+			}
 		}			
 	}
 		
-	/* Print the report */
+	/**
+	 *  Print the report
+	 */
 	public void    printIt() {
 		/* Print the current report */
 		try {
@@ -135,8 +202,10 @@ public class ReportTab implements HyperlinkListener,
 		catch (java.awt.print.PrinterException e) {}
 	}
 		
-	/* Build Report */
-	private void buildReport() {
+	/**
+	 *  Build the report
+	 */
+	private void buildReport() throws Exception {
 		AnalysisYear    myYear;
 		EventAnalysis	mySnapshot;
 		AnalysisReport	myReport;
@@ -159,7 +228,6 @@ public class ReportTab implements HyperlinkListener,
 		myDebugMgr = theView.getDebugMgr();
 		myDebug	   = myDebugMgr.getInstant();
 		
-		try {
 		/* Switch on report type */
 		switch (theReportType) {
 			case ASSET:
@@ -206,7 +274,6 @@ public class ReportTab implements HyperlinkListener,
 				myDebug.showEntry();
 				break;
 		}
-		} catch (Throwable e) {} /* TODO do something */
 
 		/* Set the report text */
 		theEditor.setText(myText);
@@ -214,6 +281,10 @@ public class ReportTab implements HyperlinkListener,
 		theEditor.requestFocusInWindow();
 	}
 	
+	/**
+	 *  Handle a HyperLink event
+	 *  @param e the event
+	 */
 	public void hyperlinkUpdate(HyperlinkEvent e ){
 		/* If this is an activated event */
 		if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {

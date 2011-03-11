@@ -4,7 +4,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Calendar;
 
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
@@ -32,14 +31,13 @@ public class SpotSelect implements ItemListener,
 	private JCheckBox				theShowClosed   = null;
 	private JButton					theNext   		= null;
 	private JButton					thePrev   		= null;
-	private Date					theSpotDate		= null;
-	private Date					theNextDate		= null;
-	private Date					thePrevDate		= null;
+	private SpotState				theState		= null;
+	private SpotState				theSavePoint	= null;
 	private boolean					doShowClosed	= false;
 	
 	/* Access methods */
 	public JPanel   getPanel()  	{ return thePanel; }
-	public Date		getDate()		{ return theSpotDate; }
+	public Date		getDate()		{ return theState.getDate(); }
 	public boolean	getShowClosed() { return doShowClosed; }
 				
 	/* Constructor */
@@ -64,19 +62,12 @@ public class SpotSelect implements ItemListener,
 		/* Initialise the data from the view */
 		refreshData();
 		
-		/* Limit the spinner to the Range */
-		theModel.setValue(new java.util.Date());
-		theSpotDate = new Date(theModel.getDate());
+		/* Create initial state */
+		theState = new SpotState();
 	
 		/* Set the format of the date */
 		theDateBox.setEditor(new JSpinner.DateEditor(theDateBox, "dd-MMM-yyyy"));
-	
-		/* Add the listener for item changes */
-		theModel.addChangeListener(this);
-		theShowClosed.addItemListener(this);
-		theNext.addActionListener(this);
-		thePrev.addActionListener(this);
-		
+			
 		/* Create the panel */
 		thePanel = new JPanel();
 		thePanel.setBorder(javax.swing.BorderFactory
@@ -108,8 +99,14 @@ public class SpotSelect implements ItemListener,
 	                .addComponent(theShowClosed))
 	    );
 
-		/* Initiate lock-down mode */
-		setLockDown();
+		/* Apply the current state */
+		theState.applyState();
+
+		/* Add the listener for item changes */
+		theModel.addChangeListener(this);
+		theShowClosed.addItemListener(this);
+		theNext.addActionListener(this);
+		thePrev.addActionListener(this);
 	}
 	
 	/* refresh data */
@@ -121,16 +118,6 @@ public class SpotSelect implements ItemListener,
 		
 		/* Set the range for the Date Spinner */
 		setRange(myRange);				
-	}
-
-	/* Set Adjacent dates */
-	public void setAdjacent(Date pPrev, Date pNext) {
-		/* Record the dates */
-		thePrevDate = pPrev;
-		theNextDate = pNext;
-		
-		/* Adjust values */
-		setLockDown();				
 	}
 
 	/* Set the range for the date box */
@@ -153,43 +140,57 @@ public class SpotSelect implements ItemListener,
 	public void setLockDown() {
 		boolean bLock = theParent.hasUpdates();
 		
-		theNext.setEnabled(theNextDate != null);
-		thePrev.setEnabled(thePrevDate != null);
+		theNext.setEnabled(theState.getNextDate() != null);
+		thePrev.setEnabled(theState.getPrevDate() != null);
 		
 		theDateBox.setEnabled(!bLock);
 	}
 	
+	/**
+	 *  Create SavePoint
+	 */
+	public void createSavePoint() {
+		/* Create the savePoint */
+		theSavePoint = new SpotState(theState);
+	}
+
+	/**
+	 *  Restore SavePoint
+	 */
+	public void restoreSavePoint() {
+		/* Restore the savePoint */
+		theState = new SpotState(theSavePoint);
+		
+		/* Apply the state */
+		theState.applyState();		
+	}
+
+	/**
+	 * Set Adjacent dates
+	 * @param pPrev the previous Date
+	 * @param pNext the next Date
+	 */
+	public void setAdjacent(Date pPrev, Date pNext) {
+		/* Record the dates */
+		theState.setAdjacent(pPrev, pNext);
+	}
+
 	/* actionPerformed listener event */
 	public void actionPerformed(ActionEvent evt) {
-		boolean     bChange = false;
-		Calendar	myDate;
 
 		/* If this event relates to the Next button */
 		if (evt.getSource() == (Object)theNext) {
-			/* Access new date */
-			myDate = Calendar.getInstance();
-			myDate.setTime(theNextDate.getDate());
-			
-			/* Set the new date */
-			theModel.setValue(myDate.getTime());
-			theSpotDate = new Date(theModel.getDate());
-			bChange = true;
+			/* Set the Date to be the Next date */
+			theState.setNext();
 		}
 		
 		/* If this event relates to the previous button */
 		else if (evt.getSource() == (Object)thePrev) {
-			/* Access new date */
-			myDate = Calendar.getInstance();
-			myDate.setTime(thePrevDate.getDate());
-			
-			/* Set the new date */
-			theModel.setValue(myDate.getTime());
-			theSpotDate = new Date(theModel.getDate());
-			bChange = true;
+			/* Set the Date to be the Previous date */
+			theState.setPrev();
 		}
-
-		/* If we have a change, alert the table */
-		if (bChange) { theParent.notifySelection(this); }
+		
+		/* No need to notify the parent since this will have been done by state update */
 	}
 	
 	/* ItemStateChanged listener event */
@@ -213,11 +214,93 @@ public class SpotSelect implements ItemListener,
 		
 		/* If this event relates to the start box */
 		if (evt.getSource() == (Object)theModel) {
-			theSpotDate = new Date(theModel.getDate());
+			theState.setDate(theModel);
 			bChange    = true;
 		}			
 				
 		/* If we have a change, notify the main program */
 		if (bChange) { theParent.notifySelection(this); }
 	}
+	
+	/* SavePoint values */
+	private class SpotState {
+		/* Members */
+		private Date	theDate		= null;
+		private Date	theNextDate	= null;
+		private Date	thePrevDate	= null;
+		
+		/* Access methods */
+		private Date	getDate() 		{ return theDate; }
+		private Date 	getNextDate() 	{ return theNextDate; }
+		private Date 	getPrevDate() 	{ return thePrevDate; }
+
+		/**
+		 * Constructor
+		 */
+		private SpotState() {
+			theDate = new Date();
+		}
+		
+		/**
+		 * Constructor
+		 * @param pState state to copy from
+		 */
+		private SpotState(SpotState pState) {
+			theDate 	= new Date(pState.getDate());
+			if (pState.getNextDate() != null)
+				theNextDate = new Date(pState.getNextDate());
+			if (pState.getPrevDate() != null)
+				thePrevDate = new Date(pState.getPrevDate());
+		}
+		
+		/**
+		 * Set new Date
+		 * @param pModel the Spinner with the new date 
+		 */
+		private void setDate(SpinnerDateModel pModel) {
+			/* Adjust the date */
+			theDate = new Date(theModel.getDate());
+		}
+		
+		/**
+		 * Set Next Date
+		 */
+		private void setNext() {
+			/* Copy date */
+			theDate = new Date(theNextDate);
+			applyState();
+		}
+
+		/**
+		 * Set Previous Date
+		 */
+		private void setPrev() {
+			/* Copy date */
+			theDate = new Date(thePrevDate);
+			applyState();
+		}
+
+		/**
+		 * Set Adjacent dates
+		 * @param pPrev the previous Date
+		 * @param pNext the next Date
+		 */
+		private void setAdjacent(Date pPrev, Date pNext) {
+			/* Record the dates */
+			thePrevDate = pPrev;
+			theNextDate = pNext;
+			
+			/* Adjust values */
+			setLockDown();				
+		}
+
+		/**
+		 *  Apply the State
+		 */
+		private void applyState() {
+			/* Adjust the lock-down */
+			setLockDown();
+			theModel.setValue(theDate.getDate());
+		}
+	}	
 }

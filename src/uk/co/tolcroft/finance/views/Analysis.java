@@ -703,6 +703,16 @@ public class Analysis {
 		 * @param pEvent the event causing the credit
 		 */
 		protected abstract void adjustForCredit(Event pEvent);
+
+		/**
+		 * Create a save point
+		 */
+		protected abstract void createSavePoint();
+
+		/**
+		 * Restore a save point
+		 */
+		protected abstract void restoreSavePoint();
 	}
 	
 	/* The Account Type Bucket class */
@@ -1134,8 +1144,9 @@ public class Analysis {
 		private static final String objName = "MoneyAccountBucket";
 
 		/* Members */
-		private Rate 	theRate		= null;
-		private Date 	theMaturity	= null;
+		private Rate 			theRate			= null;
+		private Date 			theMaturity		= null;
+		private MoneyAccount	theSavePoint	= null;
 
 		/* Override of getBase method */
 		public MoneyAccount getBase() 	{ return (MoneyAccount)super.getBase(); }
@@ -1268,6 +1279,25 @@ public class Analysis {
 			/* Store the maturity */
 			theMaturity = myDate;
 		}
+		
+		/**
+		 * Create a Save Point 
+		 */
+		protected void createSavePoint() {
+			/* Create a save of the values */
+			theSavePoint = new MoneyAccount(this);
+		}
+
+		/**
+		 * Restore a Save Point 
+		 */
+		protected void restoreSavePoint() {
+			/* If we have a Save point */
+			if (theSavePoint != null) {
+				/* Restore original value */
+				setValue(new Money(theSavePoint.getValue()));
+			}
+		}
 	}
 	
 	/* The DebtAccount Bucket class */
@@ -1278,7 +1308,8 @@ public class Analysis {
 		private static final String objName = "DebtAccountBucket";
 
 		/* Members */
-		private Money 	theSpend	= null;
+		private Money 		theSpend		= null;
+		private DebtAccount	theSavePoint	= null;
 
 		/* Override of getBase method */
 		public DebtAccount getBase() 	{ return (DebtAccount)super.getBase(); }
@@ -1378,6 +1409,26 @@ public class Analysis {
 			}
 			return myString;
 		}
+		
+		/**
+		 * Create a Save Point 
+		 */
+		protected void createSavePoint() {
+			/* Create a save of the values */
+			theSavePoint = new DebtAccount(this);
+		}
+
+		/**
+		 * Restore a Save Point 
+		 */
+		protected void restoreSavePoint() {
+			/* If we have a Save point */
+			if (theSavePoint != null) {
+				/* Restore original value */
+				setValue(new Money(theSavePoint.getValue()));
+				theSpend = new Money(theSavePoint.getSpend());
+			}
+		}
 	}
 		
 	/* The AssetAccount Bucket class */
@@ -1388,17 +1439,18 @@ public class Analysis {
 		private static final String objName = "AssetAccountBucket";
 
 		/* Members */
-		private CapitalEvent.List	theEvents	= null;
-		private Money 				theCost 	= null;
-		private Units 				theUnits	= null;
-		private Money 				theGained	= null;
+		private CapitalEvent.List	theEvents		= null;
+		private Money 				theCost 		= null;
+		private Units 				theUnits		= null;
+		private Money 				theGained		= null;
 
-		private Money 				theInvested	= null;
-		private Money 				theDividend	= null;
-		private Money 				theGains	= null;
+		private Money 				theInvested		= null;
+		private Money 				theDividend		= null;
+		private Money 				theGains		= null;
 
-		private Money 				theProfit	= null;
-		private Price 				thePrice	= null;
+		private Money 				theProfit		= null;
+		private Price 				thePrice		= null;
+		private AssetAccount		theSavePoint	= null;
 		
 		/* Override of getBase method */
 		public AssetAccount getBase() 	{ return (AssetAccount)super.getBase(); }
@@ -1644,6 +1696,39 @@ public class Analysis {
 			if (pEvent.getUnits() != null)
 				theUnits.addUnits(pEvent.getUnits());
 		}
+		/**
+		 * Create a Save Point 
+		 */
+		protected void createSavePoint() {
+			/* Create a save of the values */
+			theSavePoint = new AssetAccount(this);
+		}
+
+		/**
+		 * Restore a Save Point 
+		 */
+		protected void restoreSavePoint() {
+			/* If we have a Save point */
+			if (theSavePoint != null) {
+				/* Restore original value */
+				setValue(new Money(theSavePoint.getValue()));
+
+				/* Initialise the Money values */
+				theUnits		= new Units(theSavePoint.getUnits());
+				theCost			= new Money(theSavePoint.getCost());
+				theGained		= new Money(theSavePoint.getGained());
+				theInvested		= new Money(theSavePoint.getInvested());
+				theDividend		= new Money(theSavePoint.getDividend());
+				theGains		= new Money(theSavePoint.getGains());
+				
+				/* Copy price if available */
+				if (theSavePoint.getPrice() != null)
+					thePrice	= new Price(theSavePoint.getPrice());
+				
+				/* Trim back the capital events */
+				theEvents.purgeAfterDate(theDate);
+			}
+		}
 	}
 	
 	/* The ExternalAccount Bucket class */
@@ -1654,8 +1739,9 @@ public class Analysis {
 		private static final String objName = "ExternalAccountBucket";
 
 		/* Members */
-		private Money theIncome 	= null;
-		private Money theExpense	= null;
+		private Money 			theIncome 		= null;
+		private Money 			theExpense		= null;
+		private ExternalAccount	theSavePoint	= null;
 
 		/* Override of getBase method */
 		public ExternalAccount getBase() 	{ return (ExternalAccount)super.getBase(); }
@@ -1834,6 +1920,35 @@ public class Analysis {
 		protected void adjustForTaxCredit(Event pEvent) {
 			/* Adjust for expense */
 			theExpense.addAmount(pEvent.getTaxCredit());
+		}
+		
+		/**
+		 * Adjust account for taxable gain tax credit
+		 * @param pEvent the event causing the tax credit
+		 */
+		protected void adjustForTaxGainTaxCredit(Event pEvent) {
+			/* Adjust for expense */
+			theIncome.addAmount(pEvent.getTaxCredit());
+		}
+		
+		/**
+		 * Create a Save Point 
+		 */
+		protected void createSavePoint() {
+			/* Create a save of the values */
+			theSavePoint = new ExternalAccount(this);
+		}
+
+		/**
+		 * Restore a Save Point 
+		 */
+		protected void restoreSavePoint() {
+			/* If we have a Save point */
+			if (theSavePoint != null) {
+				/* Restore original value */
+				theIncome  = new Money(theSavePoint.getIncome());
+				theExpense = new Money(theSavePoint.getExpense());
+			}
 		}
 	}
 	

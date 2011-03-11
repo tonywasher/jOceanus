@@ -2,6 +2,8 @@ package uk.co.tolcroft.finance.ui.controls;
 
 import javax.swing.JComboBox;
 
+import uk.co.tolcroft.finance.views.DebugManager;
+import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.models.DataItem;
 import uk.co.tolcroft.models.EditState;
 
@@ -22,12 +24,15 @@ public class FinanceInterfaces {
 	}
 
 	public interface financePanel {
-		public	void		notifySelection(Object o);
-		public	boolean		hasUpdates();
-		public	void		printIt();
-		public	boolean		isLocked();
-		public	void		performCommand(financeCommand pCmd);
-		public	EditState	getEditState();
+		public	void			notifySelection(Object o);
+		public	boolean			hasUpdates();
+		public	void			printIt();
+		public	boolean			isLocked();
+		public	void			performCommand(financeCommand pCmd);
+		public	EditState		getEditState();
+		public  DebugManager	getDebugManager();
+		public  DebugEntry		getDebugEntry();
+		public  void			lockOnError(boolean isError);
 	}
 	
 	public interface financeTable extends DataItem.tableHistory,

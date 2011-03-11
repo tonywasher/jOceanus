@@ -37,8 +37,9 @@ public class MaintenanceTab implements ChangeListener {
 	protected View		getView() 		{ return theView; }
 	protected Font	getStdFont(boolean isFixed) { return null; }
 	protected Font	getChgFont(boolean isFixed) { return null; }
-	protected MainTab	getTopWindow()	{ return theParent; }
-	public DebugEntry	getDebugEntry()	{ return theDebugEntry; }
+	protected MainTab	getTopWindow()		{ return theParent; }
+	public DebugEntry	getDebugEntry()		{ return theDebugEntry; }
+	public DebugManager getDebugManager() 	{ return theParent.getDebugMgr(); }
 	
 	/* Tab titles */
 	private static final String titleAccounts 	= "Accounts";

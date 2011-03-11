@@ -553,6 +553,9 @@ public class Event extends DataItem {
 				if (!isCredit) myResult = pType.isLifeBond();
 				else           myResult = pType.isMoney();
 				break;
+			case ADMINCHARGE:
+				myResult = pType.isLifeBond();
+				break;
 			case DIVIDEND:
 				if (!isCredit) myResult = pType.isDividend();
 				else           myResult = (pType.isMoney() || pType.isCapital() || pType.isDeferred());
@@ -703,7 +706,8 @@ public class Event extends DataItem {
 		/* Credit/Debit cannot be the same unless this is a 
 		 * dividend re-investment or interest payment or StockSplit */
 		if ((!Account.differs(myCredit, myDebit)) &&
-			(!isDividendReInvestment()) && (!isInterest()) && (!isStockSplit())) {
+			(!isDividendReInvestment()) && (!isInterest()) && 
+			(!isStockSplit()) && (!isAdminCharge())) {
 			addError("Credit and debit accounts are identical", FIELD_DEBIT);
 			addError("Credit and debit accounts are identical", FIELD_CREDIT);
 		}
@@ -720,6 +724,13 @@ public class Event extends DataItem {
 			(isStockSplit())) {
 			addError("Stock Split requires identical credit and debit accounts", FIELD_DEBIT);
 			addError("Stock Split requires identical credit and debit accounts", FIELD_CREDIT);
+		}
+		
+		/* Stock Split must have identical Credit/Debit */
+		if ((Account.differs(myCredit, myDebit)) &&
+			(isAdminCharge())) {
+			addError("Admin Charge requires identical credit and debit accounts", FIELD_DEBIT);
+			addError("Admin Charge requires identical credit and debit accounts", FIELD_CREDIT);
 		}
 		
 		/* Hidden Events are not allowed */
@@ -749,14 +760,15 @@ public class Event extends DataItem {
 
 				/* If both credit/debit are both priced */
 				if ((myCredit.isPriced()) && (myDebit.isPriced())) {
-					/* Transtype must be stock split or dividend between same account */
+					/* TranType must be stock split or dividend between same account */
 					if ((myTransType == null) ||
 						((!myTransType.isDividend()) &&
 						 (!myTransType.isStockSplit()) &&
+						 (!myTransType.isAdminCharge()) &&
 						 (!myTransType.isStockDemerger()) &&
-						 (!myTransType.isStockTakeover()))) {
+						 (!myTransType.isStockTakeover()))) { 
 						addError("Units can only refer to a single priced asset unless " +
-								 "transaction is StockSplit/Demerger/Takeover or Dividend", 
+								 "transaction is StockSplit/AdminCharge/Demerger/Takeover or Dividend", 
 								 FIELD_UNITS);
 					}
 						
@@ -770,7 +782,7 @@ public class Event extends DataItem {
 				}
 			}
 			
-			/* Units must not non-zero */
+			/* Units must be non-zero */
 			if (!myUnits.isNonZero()) { 
 				addError("Units must be non-Zero", FIELD_UNITS);
 			}
@@ -778,8 +790,9 @@ public class Event extends DataItem {
 			/* Units must not be negative unless it is stock split */
 			if ((!myUnits.isPositive()) &&
 				((myTransType == null) ||
-				 (!myTransType.isStockSplit()))) { 
-				addError("Units must positive unless this is a StockSplit", FIELD_UNITS);
+				 ((!myTransType.isStockSplit()) &&
+				  (!myTransType.isAdminCharge())))) {  
+				addError("Units must positive unless this is a StockSplit/AdminCharge", FIELD_UNITS);
 			}
 		}
 		
@@ -787,6 +800,8 @@ public class Event extends DataItem {
 		else {
 			if (isStockSplit()) 
 				addError("Stock Split requires non-zero Units", FIELD_UNITS);
+			if (isAdminCharge()) 
+				addError("Admin Charge requires non-zero Units", FIELD_UNITS);
 		}
 		
 		/* Money must not be negative */
@@ -955,7 +970,7 @@ public class Event extends DataItem {
 	/**
 	 * Determines whether an event is a stock split
 	 * 
-	 * @return interest true/false 
+	 * @return stock split true/false 
 	 */
 	public boolean isStockSplit() {
 		boolean myResult = false;
@@ -963,6 +978,23 @@ public class Event extends DataItem {
 		/* Check for stocksplit */
 		if ((getTransType() != null) &&
 		    (getTransType().isStockSplit()))
+			myResult = true;
+				
+		/* Return the result */
+		return myResult;
+	}
+
+	/**
+	 * Determines whether an event is an Admin Charge
+	 * 
+	 * @return admin charge true/false 
+	 */
+	public boolean isAdminCharge() {
+		boolean myResult = false;
+	
+		/* Check for admin charge */
+		if ((getTransType() != null) &&
+		    (getTransType().isAdminCharge()))
 			myResult = true;
 				
 		/* Return the result */

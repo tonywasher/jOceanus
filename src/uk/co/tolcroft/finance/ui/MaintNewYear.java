@@ -15,6 +15,7 @@ import javax.swing.table.TableColumnModel;
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.finance.views.*;
+import uk.co.tolcroft.finance.views.DebugManager.DebugEntry;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 
@@ -29,6 +30,7 @@ public class MaintNewYear extends FinanceTableModel<Event> implements ActionList
 	private TaxYear				theYear				= null;
 	private patternYearModel	theModel			= null;
 	private JButton				thePattern			= null;
+	private DebugEntry			theDebugYear		= null;
 	private Renderer.DateCell 	theDateRenderer   	= null;
 	private Renderer.MoneyCell 	theMoneyRenderer  	= null;
 	private Renderer.StringCell	theStringRenderer 	= null;
@@ -37,6 +39,9 @@ public class MaintNewYear extends FinanceTableModel<Event> implements ActionList
 	public JPanel  getPanel()			{ return thePanel; }
 	public boolean hasHeader()		 	{ return false; }
 	
+	/* Access the debug entry */
+	public DebugEntry getDebugEntry()	{ return theDebugYear; }
+
 	/* Table headers */
 	private static final String titleDate    = "Date";
 	private static final String titleDesc    = "Description";
@@ -54,7 +59,10 @@ public class MaintNewYear extends FinanceTableModel<Event> implements ActionList
 	private static final int COLUMN_CREDIT	 = 5;
 	private static final int NUM_COLUMNS	 = 6;
 		
-	/* Constructor */
+	/**
+	 * Constructor for New Year Window
+	 * @param pParent the parent window
+	 */
 	public MaintNewYear(MaintenanceTab pParent) {
 		/* Initialise superclass */
 		super(pParent.getTopWindow());
@@ -145,9 +153,14 @@ public class MaintNewYear extends FinanceTableModel<Event> implements ActionList
 	                .addComponent(myScroll)
 	                .addComponent(thePattern))
 	    );
+
+        /* Create the debug entry, attach to MaintenanceDebug entry */
+        DebugManager myDebugMgr	= theView.getDebugMgr();
+        theDebugYear = myDebugMgr.new DebugEntry("NewYear");
+        theDebugYear.addAsChildOf(pParent.getDebugEntry());
 	}
 		
-	/* saveData */
+	/* Stubs */
 	public void saveData() {}
 	public void notifyChanges() {}
 	public boolean hasUpdates() { return false; }
@@ -155,8 +168,11 @@ public class MaintNewYear extends FinanceTableModel<Event> implements ActionList
 	public EditState getEditState() { return EditState.CLEAN; }
 	public void performCommand(financeCommand pCmd) {}
 	public void notifySelection(Object pObj) {}
+	public void lockOnError(boolean isError) {}
 		
-	/* refresh data */
+	/**
+	 * Refresh views/controls after a load/update of underlying data
+	 */
 	public void refreshData() {
 		DataSet 		myData = theView.getData();
 		TaxYear.List 	myList = myData.getTaxYears();
@@ -167,7 +183,9 @@ public class MaintNewYear extends FinanceTableModel<Event> implements ActionList
 		setSelection();
 	}
 	
-	/* Set Selection */
+	/**
+	 * Set Selection
+	 */
 	public void setSelection() {
 		if (theYear != null) {
 			theExtract = theView.new ViewEvents(theYear);
@@ -182,11 +200,15 @@ public class MaintNewYear extends FinanceTableModel<Event> implements ActionList
 			theEvents  = null;			
 			thePattern.setVisible(false);
 		}
+		theDebugYear.setObject(theExtract);
 		theModel.fireTableDataChanged();
 		theParent.setVisibleTabs();
 	}
 		
-	/* ActionPerformed listener event */
+	/**
+	 * Perform actions for controls/pop-ups on this table
+	 * @param evt the event
+	 */
 	public void actionPerformed(ActionEvent evt) {			
 		/* If this event relates to the pattern button */
 		if (evt.getSource() == (Object)thePattern) {
@@ -195,7 +217,10 @@ public class MaintNewYear extends FinanceTableModel<Event> implements ActionList
 		}
 	}
 	
-	/* Get field for column */
+	/**
+	 * Obtain the Field id associated with the column
+	 * @param column the column
+	 */
 	public int getFieldForCol(int column) {
 		/* Switch on column */
 		switch (column) {
@@ -207,16 +232,26 @@ public class MaintNewYear extends FinanceTableModel<Event> implements ActionList
 	public class patternYearModel extends AbstractTableModel {
 		private static final long serialVersionUID = 4796112294536415723L;
 
-			/* get column count */
+		/**
+		 * Get the number of display columns
+		 * @return the columns
+		 */
 		public int getColumnCount() { return NUM_COLUMNS; }
 		
-		/* get row count */
+		/**
+		 * Get the number of rows in the current table
+		 * @return the number of rows
+		 */
 		public int getRowCount() { 
 			return (theEvents == null) ? 0
 					                   : theEvents.size();
 		}
 		
-		/* get column name */
+		/**
+		 * Get the name of the column
+		 * @param col the column
+		 * @return the name of the column
+		 */
 		public String getColumnName(int col) {
 			switch (col) {
 				case COLUMN_DATE: 		return titleDate;
@@ -229,7 +264,11 @@ public class MaintNewYear extends FinanceTableModel<Event> implements ActionList
 			}
 		}
 		
-		/* is get column class */
+		/**
+		 * Get the object class of the column
+		 * @param col the column
+		 * @return the class of the objects associated with the column
+		 */
 		public Class<?> getColumnClass(int col) {				
 			switch (col) {
 				case COLUMN_DESC: 		return String.class;
@@ -240,12 +279,17 @@ public class MaintNewYear extends FinanceTableModel<Event> implements ActionList
 			}
 		}
 			
-		/* is cell edit-able */
+		/**
+		 * Is the cell at (row, col) editable
+		 */
 		public boolean isCellEditable(int row, int col) {
 			return false;
 		}
 			
-		/* get value At */
+		/**
+		 * Get the value at (row, col)
+		 * @return the object value
+		 */
 		public Object getValueAt(int row, int col) {
 			Event 	myEvent;
 			Object  o;

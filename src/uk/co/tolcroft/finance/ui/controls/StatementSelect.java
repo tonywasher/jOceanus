@@ -96,8 +96,8 @@ public class StatementSelect implements	ItemListener {
 		
 		/* If we have an account */
 		if (pAccount != null) {
-			/* Add Value if the account is Money */
-			if (pAccount.isMoney()) 
+			/* Add Value if the account is Money/Debt */
+			if (pAccount.isMoney() || pAccount.isDebt()) 
 				theStateBox.addItem(Value);
 			else if (theType == StatementType.VALUE)
 				theType = StatementType.NULL;
@@ -115,7 +115,8 @@ public class StatementSelect implements	ItemListener {
 			/* If we have no type */
 			if (theType == StatementType.NULL) {
 				/* Select the default type for the account */
-				if      (pAccount.isMoney()) theType = StatementType.VALUE;
+				if      (pAccount.isMoney())  theType = StatementType.VALUE;
+				else if (pAccount.isDebt())   theType = StatementType.VALUE;
 				else if (pAccount.isPriced()) theType = StatementType.UNITS;
 				else theType = StatementType.EXTRACT;
 			}

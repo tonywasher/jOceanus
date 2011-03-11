@@ -251,105 +251,109 @@ public class TransactionType extends DataItem {
 			theClass = TransClass.STOCKDEMERGER;
 			theOrder = 12;
 		}
+		else if (sName.equals("AdminCharge")) {
+			theClass = TransClass.ADMINCHARGE;
+			theOrder = 13;
+		}
 		else if (sName.equals("StockSplit")) {
 			theClass = TransClass.STOCKSPLIT;
-			theOrder = 13;
+			theOrder = 14;
 		}
 		else if (sName.equals("StockRightTaken")) {
 			theClass = TransClass.STOCKRIGHTTAKEN;
-			theOrder = 14;
+			theOrder = 15;
 		}
 		else if (sName.equals("StockRightWaived")) {
 			theClass = TransClass.STOCKRIGHTWAIVED;
-			theOrder = 15;
+			theOrder = 16;
 		}
 		else if (sName.equals("CashTakeover")) {
 			theClass = TransClass.CASHTAKEOVER;
-			theOrder = 16;
+			theOrder = 17;
 		}
 		else if (sName.equals("StockTakeover")) {
 			theClass = TransClass.STOCKTAKEOVER;
-			theOrder = 17;
+			theOrder = 18;
 		}
 		else if (sName.equals("TaxableGain")) {
 			theClass = TransClass.TAXABLEGAIN;
-			theOrder = 18;
+			theOrder = 19;
 		}
 		else if (sName.equals("Transfer")) {
 			theClass = TransClass.TRANSFER;
-			theOrder = 19;
+			theOrder = 20;
 		}
 		else if (sName.equals("CashRecovery")) {
 			theClass = TransClass.CSHRECOVER;
-			theOrder = 20;
+			theOrder = 21;
 		}
 		else if (sName.equals("CashPayment")) {
 			theClass = TransClass.CSHPAY;
-			theOrder = 21;
+			theOrder = 22;
 		}
 		else if (sName.equals("Expense")) {
 			theClass = TransClass.EXPENSE;
-			theOrder = 22;
+			theOrder = 23;
 		}
 		else if (sName.equals("Endowment")) {
 			theClass = TransClass.ENDOWMENT;
-			theOrder = 23;
+			theOrder = 24;
 		}
 		else if (sName.equals("Mortgage")) {
 			theClass = TransClass.MORTGAGE;
-			theOrder = 24;
+			theOrder = 25;
 		}
 		else if (sName.equals("Insurance")) {
 			theClass = TransClass.INSURANCE;
-			theOrder = 25;
+			theOrder = 26;
 		}
 		else if (sName.equals("ExtraTax")) {
 			theClass = TransClass.EXTRATAX;
-			theOrder = 26;
+			theOrder = 27;
 		}
 		else if (sName.equals("WriteOff")) {
 			theClass = TransClass.WRITEOFF;
-			theOrder = 27;
+			theOrder = 28;
 		}
 		else if (sName.equals("NatInsurance")) {
 			theClass = TransClass.NATINSURANCE;
-			theOrder = 28;
+			theOrder = 29;
 		}
 		else if (sName.equals("TaxOwed")) {
 			theClass = TransClass.TAXOWED;
-			theOrder = 29;
+			theOrder = 30;
 		}
 		else if (sName.equals("TaxCredit")) {
 			theClass = TransClass.TAXCREDIT;
-			theOrder = 30;
+			theOrder = 31;
 		}
 		else if (sName.equals("MarketGrowth")) {
 			theClass = TransClass.MKTGROWTH;
-			theOrder = 31;
+			theOrder = 32;
 		}
 		else if (sName.equals("MarketShrink")) {
 			theClass = TransClass.MKTSHRINK;
-			theOrder = 32;
+			theOrder = 33;
 		}
 		else if (sName.equals("UnitTrustDividend")) {
 			theClass = TransClass.UNITTRUSTDIV;
-			theOrder = 33;
+			theOrder = 34;
 		}
 		else if (sName.equals("TaxFreeInterest")) {
 			theClass = TransClass.TAXFREEINTEREST;
-			theOrder = 34;
+			theOrder = 35;
 		}
 		else if (sName.equals("TaxFreeDividend")) {
 			theClass = TransClass.TAXFREEDIVIDEND;
-			theOrder = 35;
+			theOrder = 36;
 		}
 		else if (sName.equals("CapitalGain")) {
 			theClass = TransClass.CAPITALGAIN;
-			theOrder = 36;
+			theOrder = 37;
 		}
 		else if (sName.equals("CapitalLoss")) {
 			theClass = TransClass.CAPITALLOSS;
-			theOrder = 37;
+			theOrder = 38;
 		}
 		else {
 			throw new Exception(ExceptionClass.DATA,
@@ -556,6 +560,14 @@ public class TransactionType extends DataItem {
 	 */
 	public boolean isStockSplit()  { 
 		return (theClass == TransClass.STOCKSPLIT); }
+
+	/**
+	 * Determine whether the TransactionType is an admin charge
+	 * 
+	 * @return <code>true</code> if the transaction is admin charge, <code>false</code> otherwise.
+	 */
+	public boolean isAdminCharge()  { 
+		return (theClass == TransClass.ADMINCHARGE); }
 
 	/**
 	 * Determine whether the TransactionType is a stock demerger
@@ -1078,6 +1090,11 @@ public class TransactionType extends DataItem {
 		 * Transfer
 		 */
 		TRANSFER,
+
+		/**
+		 * Admin charge
+		 */
+		ADMINCHARGE,
 
 		/**
 		 * Stock Split

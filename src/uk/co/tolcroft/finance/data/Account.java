@@ -27,32 +27,32 @@ public class Account extends DataItem {
 	/**
 	 * Account WebSite length
 	 */
-	public final static int WSITELEN 		= 100;
+	public final static int WSITELEN 		= 50;
 
 	/**
 	 * Account CustNo length
 	 */
-	public final static int CUSTLEN 		= 50;
+	public final static int CUSTLEN 		= 20;
 
 	/**
 	 * Account UserId length
 	 */
-	public final static int UIDLEN 			= 50;
+	public final static int UIDLEN 			= 20;
 
 	/**
 	 * Account PassWord length
 	 */
-	public final static int PWDLEN 			= 50;
+	public final static int PWDLEN 			= 20;
 
 	/**
 	 * Account details length
 	 */
-	public final static int ACTLEN 			= 100;
+	public final static int ACTLEN 			= 20;
 
 	/**
-	 * Account UserId length
+	 * Account Notes length
 	 */
-	public final static int NOTELEN 		= 100;
+	public final static int NOTELEN 		= 500;
 
 	/* Members */
 	private int                   theOrder     = -1;

@@ -90,9 +90,25 @@ public class View {
 	}
 	
 	/* refresh the window view */ 
-	public void refreshWindow() {
-		/* Refresh the Control*/
-		if (theCtl != null) theCtl.refreshData();
+	protected void refreshWindow() {
+		/* Protect against exceptions */
+		try {
+			/* Refresh the Control*/
+			theCtl.refreshData();
+		}
+
+		/* Catch any exceptions */
+		catch (Exception e) {
+			theError = e;
+		}	
+
+		/* Catch any exceptions */
+		catch (Throwable e) {
+			/* Report the failure */
+			theError = new Exception(ExceptionClass.DATA,
+								     "Failed refresh window",
+								     e);
+		}	
 	}
 	
 	/* TaxYear Extract Class */

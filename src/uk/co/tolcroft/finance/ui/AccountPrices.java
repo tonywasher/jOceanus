@@ -17,6 +17,8 @@ import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 public class AccountPrices extends FinanceTableModel<ViewPrice> {
 	/* Members */
@@ -26,6 +28,7 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 	private PricesModel					theModel			= null;
 	private ViewPrice.List 				thePrices  			= null;
 	private JPanel						thePanel			= null;
+	private JScrollPane					theScroll			= null;
 	private AccountTab					theParent   		= null;
 	private Date.Range					theRange			= null;
 	private Account             		theAccount  		= null;
@@ -38,6 +41,7 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 	private Renderer.DilutedPriceCell	theDilPriceRenderer	= null;
 	private boolean						hasDilutions		= true;
 	private DebugEntry					theDebugEntry		= null;
+	private ErrorPanel					theError			= null;
 	private TableColumn					theDiluteCol		= null;
 	private TableColumn					theDilPriceCol		= null;
 
@@ -46,7 +50,7 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 	public boolean 	hasHeader()			{ return false; }
 		
 	/* Access the debug entry */
-	protected DebugEntry getDebugEntry()	{ return theDebugEntry; }
+	public DebugEntry getDebugEntry()	{ return theDebugEntry; }
 	
 	/* Hooks */
 	public boolean needsMembers() 	{ return true; }
@@ -64,7 +68,10 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 	private static final int COLUMN_DILUTEDPRICE = 3;
 	private static final int NUM_COLUMNS  		 = 4;
 					
-	/* Constructor */
+	/**
+	 * Constructor for Prices Window
+	 * @param pParent the parent window
+	 */
 	public AccountPrices(AccountTab pParent) {
 		/* Initialise superclass */
 		super(pParent.getTopWindow());
@@ -72,7 +79,6 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 		/* Declare variables */
 		TableColumnModel 			myColModel;
 		TableColumn		 			myCol;
-		JScrollPane		     		myScroll;
 		GroupLayout		 	       	myLayout;
 			
 		/* Store details about the parent */
@@ -125,9 +131,18 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 		theRowButs   = new EditButtons(this, InsertStyle.INSERT);
 			
 		/* Create a new Scroll Pane and add this table to it */
-		myScroll     = new JScrollPane();
-		myScroll.setViewportView(this);
+		theScroll     = new JScrollPane();
+		theScroll.setViewportView(this);
+        
+        /* Create the debug entry, attach to AccountDebug entry and hide it */
+        DebugManager myDebugMgr	= theView.getDebugMgr();
+        theDebugEntry = myDebugMgr.new DebugEntry("Prices");
+        theDebugEntry.addAsChildOf(pParent.getDebugEntry());
+        theDebugEntry.hideEntry();
 			
+        /* Create the error panel for this view */
+        theError = new ErrorPanel(this);
+        
 		/* Create the panel */
 		thePanel = new JPanel();
 
@@ -141,28 +156,26 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 	        	.addGroup(myLayout.createSequentialGroup()
 	        		.addContainerGap()
 	                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
-	                    .addComponent(myScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                    .addComponent(theError.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                    .addComponent(theScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                    .addComponent(theRowButs.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 	                .addContainerGap())
 	    );
         myLayout.setVerticalGroup(
         	myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	        	.addGroup(GroupLayout.Alignment.TRAILING, myLayout.createSequentialGroup()
-	                .addComponent(myScroll)
+	                .addComponent(theError.getPanel())
+	                .addComponent(theScroll)
 	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 	                .addComponent(theRowButs.getPanel())
 	                .addContainerGap())
 	    );
-        
-        /* Create the debug entry, attach to AccountDebug entry and hide it */
-        DebugManager myDebugMgr	= theView.getDebugMgr();
-        theDebugEntry = myDebugMgr.new DebugEntry("Prices");
-        theDebugEntry.addAsChildOf(pParent.getDebugEntry());
-        theDebugEntry.hideEntry();
 	}
 
-	
-	/* Note that there has been a selection change */
+	/**
+	 *  Notify table that there has been a change in selection by an underlying control
+	 *  @param obj the underlying control that has changed selection
+	 */
 	public void    notifySelection(Object obj)    {
 		/* If this is a change from the buttons */
 		if (obj == (Object) theRowButs) {
@@ -171,20 +184,38 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 		}
 	}
 		
-	/* Refresh the data */
+	/**
+	 * Refresh views/controls after a load/update of underlying data
+	 */
 	public void refreshData() {			
 		theRange = theView.getRange();
 		theDateEditor.setRange(theRange);
 	}
 		
-	/* saveData */
+	/**
+	 * Save changes from the view into the underlying data
+	 */
 	public void saveData() {
 		if (thePrices != null) {
 			thePrices.applyChanges();
 		}
 	}
 	
-	/* Note that there has been a change */
+	/**
+	 * Lock on error
+	 * @param isError is there an error (True/False)
+	 */
+	public void lockOnError(boolean isError) {
+		/* Lock scroll-able area */
+		theScroll.setEnabled(!isError);
+
+		/* Lock row/tab buttons area */
+		theRowButs.getPanel().setEnabled(!isError);
+	}
+	
+	/**
+	 * Call underlying controls to take notice of changes in view/selection
+	 */
 	public void notifyChanges() {
 		/* Update the row buttons */
 		theRowButs.setLockDown();
@@ -197,8 +228,11 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 		theParent.notifyChanges(); 
 	}
 		
-	/* Set Selection */
-	public void setSelection(Account pAccount) {
+	/**
+	 * Set Selection to the specified account
+	 * @param pAccount the Account for the extract
+	 */
+	public void setSelection(Account pAccount) throws Exception {
 		theAccount = pAccount;
 		thePrices  = new ViewPrice.List(theView, pAccount);
 		setColSelection();
@@ -208,7 +242,9 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 		theRowButs.setLockDown();
 	}
 		
-	/* Set Column Selection */
+	/**
+	 * Set column selection for this view
+	 */
 	public void setColSelection() {
 		/* If we should show dilutions */
 		if ((thePrices != null) && (thePrices.hasDilutions())) {
@@ -230,7 +266,10 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 		}
 	}
 		
-	/* Get field for column */
+	/**
+	 * Obtain the Field id associated with the column
+	 * @param column the column
+	 */
 	public int getFieldForCol(int column) {
 		/* Switch on column */
 		switch (column) {
@@ -244,16 +283,26 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 	public class PricesModel extends AbstractTableModel {
 		private static final long serialVersionUID = -2613779599240142148L;
 
-		/* get column count */
+		/**
+		 * Get the number of display columns
+		 * @return the columns
+		 */
 		public int getColumnCount() { return (hasDilutions) ? NUM_COLUMNS : NUM_COLUMNS-2; }
 			
-		/* get row count */
+		/**
+		 * Get the number of rows in the current table
+		 * @return the number of rows
+		 */
 		public int getRowCount() { 
 			return (thePrices == null) ? 0
 					                   : thePrices.size();
 		}
 			
-		/* get column name */
+		/**
+		 * Get the name of the column
+		 * @param col the column
+		 * @return the name of the column
+		 */
 		public String getColumnName(int col) {
 			switch (col) {
 				case COLUMN_DATE:  			return titleDate;
@@ -264,7 +313,9 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 			}
 		}
 			
-		/* is cell edit-able */
+		/**
+		 * Is the cell at (row, col) editable
+		 */
 		public boolean isCellEditable(int row, int col) {				
 			/* Locked if the account is closed */
 			if (theAccount.isClosed()) return false;
@@ -278,7 +329,10 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 			}
 		}
 			
-		/* get value At */
+		/**
+		 * Get the value at (row, col)
+		 * @return the object value
+		 */
 		public Object getValueAt(int row, int col) {
 			ViewPrice 	myPrice;
 			Object	o;
@@ -303,7 +357,10 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 			return o;
 		}
 			
-		/* set value At */
+		/**
+		 * Set the value at (row, col)
+		 * @param obj the object value to set
+		 */
 		public void setValueAt(Object obj, int row, int col) {
 			ViewPrice myPrice;
 				
@@ -313,12 +370,31 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 			/* Push history */
 			myPrice.pushHistory();
 			
-			/* Store the appropriate value */
-			switch (col) {
-				case COLUMN_DATE:  	myPrice.setDate((Date)obj);  break;
-				case COLUMN_PRICE:	myPrice.setPrice((Price)obj); break;
+			/* Protect against Exceptions */
+			try {
+				/* Store the appropriate value */
+				switch (col) {
+					case COLUMN_DATE:  	myPrice.setDate((Date)obj);  break;
+					case COLUMN_PRICE:	myPrice.setPrice((Price)obj); break;
+				}	
 			}
+			
+			/* Handle Exceptions */
+			catch (Throwable e) {
+				/* Reset values */
+				myPrice.popHistory();
+				myPrice.pushHistory();
 				
+				/* Build the error */
+				Exception myError = new Exception(ExceptionClass.DATA,
+										          "Failed to update field at ("
+										          + row + "," + col +")",
+										          e);
+				
+				/* Show the error */
+				theError.setError(myError);
+			}
+
 			/* If we have changes */
 			if (myPrice.checkForHistory()) {
 				/* Set new state */

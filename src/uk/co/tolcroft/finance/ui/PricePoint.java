@@ -20,8 +20,10 @@ import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.Exception;
 
 public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implements ActionListener {
 	/* Members */
@@ -33,12 +35,14 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 	private SpotPrices.List        	thePrices			= null;
 	private MainTab					theParent			= null;
 	private JPanel					thePanel			= null;
+	private JScrollPane				theScroll			= null;
 	private PricePoint			 	theTable			= this;
 	private spotViewMouse			theMouse			= null;
 	private Date					theDate				= null;
 	private SpotSelect				theSelect	 		= null;
 	private SaveButtons  			theTabButs   		= null;
-	private DebugEntry				theDebugEntry		= null;
+	private DebugEntry				theDebugPrice		= null;
+	private ErrorPanel				theError			= null;
 	private Renderer.DateCell 		theDateRenderer  	= null;
 	private Renderer.PriceCell 		thePriceRenderer  	= null;
 	private Editor.PriceCell 		thePriceEditor    	= null;
@@ -49,7 +53,8 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 	public boolean	hasHeader()			{ return false; }
 	
 	/* Access the debug entry */
-	protected DebugEntry getDebugEntry()	{ return theDebugEntry; }
+	public DebugEntry 	getDebugEntry()		{ return theDebugPrice; }
+	public DebugManager getDebugManager() 	{ return theParent.getDebugMgr(); }
 	
 	/* Table headers */
 	private static final String titleAsset   	= "Asset";
@@ -72,7 +77,6 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 		/* Declare variables */
 		TableColumnModel    myColModel;
 		TableColumn			myCol;
-		JScrollPane			myScroll;
 		GroupLayout			myLayout;
 		DebugEntry			mySection;
 			
@@ -83,8 +87,8 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 		/* Create the top level debug entry for this view  */
 		DebugManager myDebugMgr = theView.getDebugMgr();
 		mySection = myDebugMgr.getViews();
-        theDebugEntry = myDebugMgr.new DebugEntry("SpotPrices");
-        theDebugEntry.addAsChildOf(mySection);
+        theDebugPrice = myDebugMgr.new DebugEntry("SpotPrices");
+        theDebugPrice.addAsChildOf(mySection);
 		
 		/* Create the model and declare it to our superclass */
 		theModel  = new spotViewModel();
@@ -132,9 +136,12 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 		theTabButs   = new SaveButtons(this);
 			
 		/* Create a new Scroll Pane and add this table to it */
-		myScroll     = new JScrollPane();
-		myScroll.setViewportView(this);
+		theScroll     = new JScrollPane();
+		theScroll.setViewportView(this);
 			
+        /* Create the error panel for this view */
+        theError = new ErrorPanel(this);
+        
 		/* Create the panel */
 		thePanel = new JPanel();
 
@@ -148,21 +155,25 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 	        	.addGroup(myLayout.createSequentialGroup()
 	        		.addContainerGap()
 	                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, true)
+	                	.addComponent(theError.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                	.addComponent(theSelect.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-	                    .addComponent(myScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
+	                    .addComponent(theScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
 	                    .addComponent(theTabButs.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 	                .addContainerGap())
 	    );
         myLayout.setVerticalGroup(
         	myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	        	.addGroup(GroupLayout.Alignment.TRAILING, myLayout.createSequentialGroup()
+	        		.addComponent(theError.getPanel())
 	        		.addComponent(theSelect.getPanel())
-	                .addComponent(myScroll)
+	                .addComponent(theScroll)
 	                .addComponent(theTabButs.getPanel()))
 	    );
 	}
 		
-	/* saveData */
+	/**
+	 * Save changes from the view into the underlying data
+	 */
 	public void saveData() {
 		if (theSnapshot != null) {
 			validateAll();
@@ -170,28 +181,75 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 		}
 	}
 		
-	/* Note that there has been a selection change */
+	/**
+	 * Lock on error
+	 * @param isError is there an error (True/False)
+	 */
+	public void lockOnError(boolean isError) {
+		/* Hide selection panel */
+		theSelect.getPanel().setVisible(!isError);
+
+		/* Lock scroll-able area */
+		theScroll.setEnabled(!isError);
+
+		/* Lock tab buttons area */
+		theTabButs.getPanel().setEnabled(!isError);
+	}
+	
+	/**
+	 *  Notify table that there has been a change in selection by an underlying control
+	 *  @param obj the underlying control that has changed selection
+	 */
 	public void    notifySelection(Object obj)    {
 		/* if this is a change from the date */
 		if (obj == (Object) theSelect) {
-			/* Set the new range */
+			/* Set the deleted option */
 			if (getList().getShowDeleted() != theSelect.getShowClosed())
 				setShowDeleted(theSelect.getShowClosed());
 			
-			if (Date.differs(theDate, theSelect.getDate()))
-				setSelection(theSelect.getDate());
+			/* Set the new date */
+			if (Date.differs(theDate, theSelect.getDate())) {
+				/* Protect against exceptions */
+				try {
+					setSelection(theSelect.getDate());
+					
+					/* Create SavePoint */
+					theSelect.createSavePoint();
+				}
+				
+				/* Catch Exceptions */
+				catch (Exception e) {
+					/* Build the error */
+					Exception myError = new Exception(ExceptionClass.DATA,
+											          "Failed to change selection",
+											          e);
+					
+					/* Show the error */
+					theError.setError(myError);
+					
+					/* Restore SavePoint */
+					theSelect.restoreSavePoint();
+				}
+			}
 		}			
 	}
 		
-	/* refresh data */
-	public void refreshData() {
+	/**
+	 * Refresh views/controls after a load/update of underlying data
+	 */
+	public void refreshData() throws Exception {
 		Date.Range myRange = theView.getRange();
 		theSelect.setRange(myRange);
 		theDate = theSelect.getDate();
 		setSelection(theDate);
+		
+		/* Create SavePoint */
+		theSelect.createSavePoint();
 	}
 	
-	/* Note that there has been a list selection change */
+	/**
+	 * Call underlying controls to take notice of changes in view/selection
+	 */
 	public void notifyChanges() {
 		/* Find the edit state */
 		if (thePrices != null)
@@ -205,8 +263,11 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 		theParent.setVisibleTabs();
 	}
 		
-	/* Set Selection */
-	public void setSelection(Date pDate) {
+	/**
+	 * Set Selection to the specified date
+	 * @param pDate the Date for the extract
+	 */
+	public void setSelection(Date pDate) throws Exception {
 		theDate = pDate;
 		if (theDate != null) {
 			theSnapshot = new SpotPrices(theView, pDate);
@@ -220,14 +281,17 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 			theSelect.setAdjacent(null, null);
 		}
 		setList(thePrices);
-		theDebugEntry.setObject(theSnapshot);
+		theDebugPrice.setObject(theSnapshot);
 		theModel.fireTableDataChanged();
 		theTabButs.setLockDown();
 		theSelect.setLockDown();
 		theParent.setVisibleTabs();
 	}
 		
-	/* Get field for column */
+	/**
+	 * Obtain the Field id associated with the column
+	 * @param column the column
+	 */
 	public int getFieldForCol(int column) {
 		/* Switch on column */
 		switch (column) {
@@ -237,7 +301,11 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 		}
 	}
 		
-	/* Check whether this is a valid Object for selection */
+	/**
+	 * Check whether the restoration of the passed object is compatible with the current selection
+	 * @param pItem the current item
+	 * @param pObj the potential object for restoration
+	 */
 	public boolean isValidObj(DataItem 				pItem,
 							  DataItem.histObject  	pObj) {
 		SpotPrices.SpotPrice	mySpot  = (SpotPrices.SpotPrice) pItem;
@@ -251,7 +319,10 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 		return true;
 	}
 		
-	/* action performed listener event */
+	/**
+	 * Perform actions for controls/pop-ups on this table
+	 * @param evt the event
+	 */
 	public void actionPerformed(ActionEvent evt) {
 		String          myCmd;
 		String          tokens[];
@@ -282,16 +353,26 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 	public class spotViewModel extends AbstractTableModel {
 		private static final long serialVersionUID = 2520681944053000625L;
 
-			/* get column count */
+		/**
+		 * Get the number of display columns
+		 * @return the columns
+		 */
 		public int getColumnCount() { return NUM_COLUMNS; }
 		
-		/* get row count */
+		/**
+		 * Get the number of rows in the current table
+		 * @return the number of rows
+		 */
 		public int getRowCount() { 
 			return (thePrices == null) ? 0
 					                   : thePrices.size();
 		}
 		
-		/* get column name */
+		/**
+		 * Get the name of the column
+		 * @param col the column
+		 * @return the name of the column
+		 */
 		public String getColumnName(int col) {
 			switch (col) {
 				case COLUMN_ASSET: 		return titleAsset;
@@ -302,7 +383,11 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 			}
 		}
 		
-		/* is get column class */
+		/**
+		 * Get the object class of the column
+		 * @param col the column
+		 * @return the class of the objects associated with the column
+		 */
 		public Class<?> getColumnClass(int col) {				
 			switch (col) {
 				case COLUMN_ASSET: 		return String.class;
@@ -310,7 +395,9 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 			}
 		}
 			
-		/* is cell edit-able */
+		/**
+		 * Is the cell at (row, col) editable
+		 */
 		public boolean isCellEditable(int row, int col) {
 			/* switch on column */
 			switch (col) {
@@ -324,7 +411,10 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 			}
 		}
 			
-		/* get value At */
+		/**
+		 * Get the value at (row, col)
+		 * @return the object value
+		 */
 		public Object getValueAt(int row, int col) {
 			SpotPrices.SpotPrice 	mySpot;
 			Object         			o;
@@ -359,7 +449,10 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 			return o;
 		}
 			
-		/* set value At */
+		/**
+		 * Set the value at (row, col)
+		 * @param obj the object value to set
+		 */
 		public void setValueAt(Object obj, int row, int col) {
 			SpotPrices.SpotPrice mySpot;
 			
@@ -369,13 +462,33 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 			/* Push history */
 			mySpot.pushHistory();
 			
-			/* Store the appropriate value */
-			switch (col) {
-				case COLUMN_PRICE:  
-					mySpot.setPrice((Price)obj);    
-					break;
-			}
+			/* Protect against Exceptions */
+			try {
+				/* Store the appropriate value */
+				switch (col) {
+					case COLUMN_PRICE:  
+						mySpot.setPrice((Price)obj);    
+						break;
+				}
 				
+			}
+			
+			/* Handle Exceptions */
+			catch (Throwable e) {
+				/* Reset values */
+				mySpot.popHistory();
+				mySpot.pushHistory();
+				
+				/* Build the error */
+				Exception myError = new Exception(ExceptionClass.DATA,
+										          "Failed to update field at ("
+										          + row + "," + col +")",
+										          e);
+				
+				/* Show the error */
+				theError.setError(myError);
+			}
+
 			/* Check for changes */
 			if (mySpot.checkForHistory()) {
 				/* Note that the item has changed */

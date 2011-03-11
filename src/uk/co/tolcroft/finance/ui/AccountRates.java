@@ -24,6 +24,8 @@ import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 public class AccountRates extends FinanceTableModel<AcctRate> implements ActionListener {
 	/* Members */
@@ -33,6 +35,7 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 	private RatesModel				theModel		= null;
 	private AcctRate.List		    theRates   		= null;
 	private JPanel					thePanel		= null;
+	private JScrollPane				theScroll		= null;
 	private AccountRates			theTable    	= this;
 	private ratesMouse				theMouse		= null;
 	private AccountTab				theParent   	= null;
@@ -41,6 +44,7 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 	private View.ViewRates			theExtract		= null;
 	private EditButtons    			theRowButs  	= null;
 	private DebugEntry				theDebugEntry	= null;
+	private ErrorPanel				theError		= null;
 	private Renderer.DateCell 		theDateRenderer = null;
 	private Editor.DateCell 		theDateEditor   = null;
 	private Renderer.RateCell 		theRateRenderer = null;
@@ -51,7 +55,7 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 	public boolean 	hasHeader()			{ return false; }
 
 	/* Access the debug entry */
-	protected DebugEntry getDebugEntry()	{ return theDebugEntry; }
+	public DebugEntry getDebugEntry()	{ return theDebugEntry; }
 	
 	/* Table headers */
 	private static final String titleRate  = "Rate";
@@ -64,7 +68,10 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 	private static final int COLUMN_DATE  = 2;
 	private static final int NUM_COLUMNS  = 3;
 		
-	/* Constructor */
+	/**
+	 * Constructor for Rates Window
+	 * @param pParent the parent window
+	 */
 	public AccountRates(AccountTab pParent) {
 		/* Initialise superclass */
 		super(pParent.getTopWindow());
@@ -72,7 +79,6 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 		/* Declare variables */
 		TableColumnModel 	myColModel;
 		TableColumn		 	myCol;
-		JScrollPane		 	myScroll;
 		GroupLayout		 	myLayout;
 		
 		/* Store details about the parent */
@@ -122,9 +128,18 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 		theRowButs   = new EditButtons(this, InsertStyle.INSERT);
 		
 		/* Create a new Scroll Pane and add this table to it */
-		myScroll     = new JScrollPane();
-		myScroll.setViewportView(this);
+		theScroll     = new JScrollPane();
+		theScroll.setViewportView(this);
+        
+        /* Create the debug entry, attach to AccountDebug entry and hide it */
+        DebugManager myDebugMgr	= theView.getDebugMgr();
+        theDebugEntry = myDebugMgr.new DebugEntry("Rates");
+        theDebugEntry.addAsChildOf(pParent.getDebugEntry());
+        theDebugEntry.hideEntry();
 			
+        /* Create the error panel for this view */
+        theError = new ErrorPanel(this);
+        
 		/* Create the panel */
 		thePanel = new JPanel();
 
@@ -138,27 +153,26 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 	        	.addGroup(myLayout.createSequentialGroup()
 	        		.addContainerGap()
 	                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
-	                    .addComponent(myScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                    .addComponent(theError.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                    .addComponent(theScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                    .addComponent(theRowButs.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 	                .addContainerGap())
 	    );
         myLayout.setVerticalGroup(
        	myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
        		.addGroup(GroupLayout.Alignment.TRAILING, myLayout.createSequentialGroup()
-	                .addComponent(myScroll)
+	                .addComponent(theError.getPanel())
+	                .addComponent(theScroll)
 	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 	                .addComponent(theRowButs.getPanel())
 	                .addContainerGap())
 	    );
-        
-        /* Create the debug entry, attach to AccountDebug entry and hide it */
-        DebugManager myDebugMgr	= theView.getDebugMgr();
-        theDebugEntry = myDebugMgr.new DebugEntry("Rates");
-        theDebugEntry.addAsChildOf(pParent.getDebugEntry());
-        theDebugEntry.hideEntry();
 	}
 		
-	/* Note that there has been a selection change */
+	/**
+	 *  Notify table that there has been a change in selection by an underlying control
+	 *  @param obj the underlying control that has changed selection
+	 */
 	public void    notifySelection(Object obj)    {
 		/* If this is a change from the buttons */
 		if (obj == (Object) theRowButs) {
@@ -167,21 +181,39 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 		}
 	}
 		
-	/* saveData */
+	/**
+	 * Save changes from the view into the underlying data
+	 */
 	public void saveData() {
 		if (theExtract != null) {
 			theExtract.applyChanges();
 		}
 	}
 	
-	/* Refresh the data */
+	/**
+	 * Lock on error
+	 * @param isError is there an error (True/False)
+	 */
+	public void lockOnError(boolean isError) {
+		/* Lock scroll-able area */
+		theScroll.setEnabled(!isError);
+
+		/* Lock row/tab buttons area */
+		theRowButs.getPanel().setEnabled(!isError);
+	}
+	
+	/**
+	 * Refresh views/controls after a load/update of underlying data
+	 */
 	public void refreshData() {			
 		theRange = theView.getRange();
 		theRange = new Date.Range(theRange.getStart(), null);
 		theDateEditor.setRange(theRange);
 	}
 		
-	/* Note that there has been a change */
+	/**
+	 * Call underlying controls to take notice of changes in view/selection
+	 */
 	public void notifyChanges() {
 		/* Update the row buttons */
 		theRowButs.setLockDown();
@@ -194,8 +226,11 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 		theParent.notifyChanges(); 
 	}
 		
-	/* Set Selection */
-	public void setSelection(Account pAccount) {
+	/**
+	 * Set Selection to the specified account
+	 * @param pAccount the Account for the extract
+	 */
+	public void setSelection(Account pAccount) throws Exception {
 		theExtract = theView.new ViewRates(pAccount);
 		theAccount = pAccount;
 		theRates   = theExtract.getRates();
@@ -205,7 +240,10 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 		theRowButs.setLockDown();
 	}
 		
-	/* Get field for column */
+	/**
+	 * Obtain the Field id associated with the column
+	 * @param column the column
+	 */
 	public int getFieldForCol(int column) {
 		/* Switch on column */
 		switch (column) {
@@ -216,7 +254,10 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 		}
 	}
 		
-	/* action performed listener event */
+	/**
+	 * Perform actions for controls/pop-ups on this table
+	 * @param evt the event
+	 */
 	public void actionPerformed(ActionEvent evt) {
 		String          myCmd;
 		String          tokens[];
@@ -257,16 +298,26 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 	public class RatesModel extends AbstractTableModel {
 		private static final long serialVersionUID = 296797947278000196L;
 
-		/* get column count */
+		/**
+		 * Get the number of display columns
+		 * @return the columns
+		 */
 		public int getColumnCount() { return NUM_COLUMNS; }
 			
-		/* get row count */
+		/**
+		 * Get the number of rows in the current table
+		 * @return the number of rows
+		 */
 		public int getRowCount() { 
 			return (theRates == null) ? 0
 					                  : theRates.size();
 		}
 			
-		/* get column name */
+		/**
+		 * Get the name of the column
+		 * @param col the column
+		 * @return the name of the column
+		 */
 		public String getColumnName(int col) {
 			switch (col) {
 				case COLUMN_RATE:  	return titleRate;
@@ -276,7 +327,9 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 			}
 		}
 			
-		/* is cell edit-able */
+		/**
+		 * Is the cell at (row, col) editable
+		 */
 		public boolean isCellEditable(int row, int col) {				
 			/* Locked if the account is closed */
 			if (theAccount.isClosed()) return false;
@@ -285,7 +338,10 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 			return true;
 		}
 			
-		/* get value At */
+		/**
+		 * Get the value at (row, col)
+		 * @return the object value
+		 */
 		public Object getValueAt(int row, int col) {
 			AcctRate 	myRate;
 			Object  o;
@@ -309,7 +365,10 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 			return o;
 		}
 			
-		/* set value At */
+		/**
+		 * Set the value at (row, col)
+		 * @param obj the object value to set
+		 */
 		public void setValueAt(Object obj, int row, int col) {
 			AcctRate 	myRate;
 			
@@ -319,11 +378,30 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 			/* Push history */
 			myRate.pushHistory();
 			
-			/* Store the appropriate value */
-			switch (col) {
-				case COLUMN_RATE:  	myRate.setRate((Rate)obj);  break;
-				case COLUMN_BONUS:  myRate.setBonus((Rate)obj); break;
-				case COLUMN_DATE:	myRate.setEndDate((Date)obj);  break;
+			/* Protect against Exceptions */
+			try {
+				/* Store the appropriate value */
+				switch (col) {
+					case COLUMN_RATE:  	myRate.setRate((Rate)obj);  break;
+					case COLUMN_BONUS:  myRate.setBonus((Rate)obj); break;
+					case COLUMN_DATE:	myRate.setEndDate((Date)obj);  break;
+				}
+			}
+			
+			/* Handle Exceptions */
+			catch (Throwable e) {
+				/* Reset values */
+				myRate.popHistory();
+				myRate.pushHistory();
+				
+				/* Build the error */
+				Exception myError = new Exception(ExceptionClass.DATA,
+										          "Failed to update field at ("
+										          + row + "," + col +")",
+										          e);
+				
+				/* Show the error */
+				theError.setError(myError);
 			}
 				
 			/* reset history if no change */

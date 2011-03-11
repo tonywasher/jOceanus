@@ -14,6 +14,7 @@ import javax.swing.table.AbstractTableModel;
 
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.finance.ui.controls.*;
+import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
 
 public abstract class FinanceTableModel<T extends DataItem> extends JTable
@@ -28,6 +29,7 @@ public abstract class FinanceTableModel<T extends DataItem> extends JTable
 	private Font		  		theNumFont    	= null;
 	private Font		      	theChgFont	    = null;
 	private Font		      	theChgNumFont	= null;
+	private MainTab				theMainTab		= null;
 
 	/* Access methods */
 	public AbstractTableModel getTableModel() { return theModel; }
@@ -40,13 +42,14 @@ public abstract class FinanceTableModel<T extends DataItem> extends JTable
 												 theList.hasErrors(); }
 	public boolean isActive()			{ return isEnabled; }
 	public void    notifySelection(Object obj)    { }
-	public boolean calculateTable()				  { return false; }
+	public boolean calculateTable()  	{ return false; }
 		
 	public void    setActive(boolean isActive)	{ isEnabled = isActive; }
 	public JComboBox getComboBox(int row, int col) { return null; }
 	public boolean isValidObj(DataItem pItem, DataItem.histObject  pObj) { return true; }
 	public DataList<T> getList() { return theList; }
 	public void 	printIt()			{ }
+	public DebugManager getDebugManager() { return theMainTab.getDebugMgr(); }
 		
 	/* Abstract methods */
 	public abstract int  	getFieldForCol(int iField);
@@ -56,6 +59,7 @@ public abstract class FinanceTableModel<T extends DataItem> extends JTable
 		
 	/* Constructor */
 	FinanceTableModel(MainTab pMainTab) {
+		theMainTab 		= pMainTab;
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		theStdFont 		= pMainTab.getFont(false, false);
 		theChgFont 		= pMainTab.getFont(false, true);

@@ -417,22 +417,22 @@ public class TableAccount extends DatabaseTable<Account> {
 	protected String createStatement() {
 		return "create table " + theTabName + " ( " +
 			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
-			   theNameCol	+ " varbinary(" + Account.NAMELEN + ") NOT NULL, " +
+			   theNameCol	+ " varbinary(" + 2*Account.NAMELEN + ") NOT NULL, " +
 			   theActTypCol	+ " int NOT NULL " +
 			   		"REFERENCES " + TableAccountType.idReference() + ", " +
-   			   theDescCol	+ " varbinary(" + Account.DESCLEN + ") NULL, " +
+   			   theDescCol	+ " varbinary(" + 2*Account.DESCLEN + ") NULL, " +
 			   theMatureCol	+ " date NULL, " +
 			   theCloseCol	+ " date NULL, " +
 			   theParentCol	+ " int NULL " +
 				  	"REFERENCES " + idReference() + ", " +
 			   theAliasCol	+ " int NULL " +
 				  	"REFERENCES " + idReference() + ", " +
-			   theWebSiteCol + " varbinary(" + Account.WSITELEN + ") NULL, " +
-			   theCustNoCol + " varbinary(" + Account.CUSTLEN + ") NULL, " +
-			   theUserIdCol + " varbinary(" + Account.UIDLEN + ") NULL, " +
-			   thePasswordCol + " varbinary(" + Account.PWDLEN + ") NULL, " +
-			   theAcctCol + " varbinary(" + Account.ACTLEN + ") NULL, " +
-			   theNotesCol + " varbinary(" + Account.NOTELEN + ") NULL )";
+			   theWebSiteCol + " varbinary(" + 2*Account.WSITELEN + ") NULL, " +
+			   theCustNoCol + " varbinary(" + 2*Account.CUSTLEN + ") NULL, " +
+			   theUserIdCol + " varbinary(" + 2*Account.UIDLEN + ") NULL, " +
+			   thePasswordCol + " varbinary(" + 2*Account.PWDLEN + ") NULL, " +
+			   theAcctCol + " varbinary(" + 2*Account.ACTLEN + ") NULL, " +
+			   theNotesCol + " varbinary(" + 2*Account.NOTELEN + ") NULL )";
 	}
 	
 	/* Load statement for Accounts */

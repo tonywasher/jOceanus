@@ -14,27 +14,30 @@ import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
+import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.DataList.*;
+import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 public class AccountTab implements financePanel,
 								   ChangeListener {
 	/* Members */
 	private static final long serialVersionUID  = 7682053546233794088L;
 
-	private View				theView		 = null;
-	private JPanel				thePanel	 = null;
-	private MainTab				theParent    = null;
-	private JTabbedPane       	theTabs      = null;
-	private AccountSelect  		theSelect	 = null;
-	private AccountStatement	theStatement = null;
-	private AccountPatterns		thePatterns  = null;
-	private AccountPrices		thePrices    = null;
-	private AccountRates		theRates     = null;
-	private Account				theAccount   = null;
-	private Account.List		theAcList	 = null;
-	private SaveButtons  		theTabButs   = null;
-	private DebugEntry			theDebugEntry= null;
+	private View				theView		 	= null;
+	private JPanel				thePanel	 	= null;
+	private MainTab				theParent    	= null;
+	private JTabbedPane       	theTabs      	= null;
+	private AccountSelect  		theSelect	 	= null;
+	private AccountStatement	theStatement 	= null;
+	private AccountPatterns		thePatterns  	= null;
+	private AccountPrices		thePrices    	= null;
+	private AccountRates		theRates     	= null;
+	private Account				theAccount   	= null;
+	private Account.List		theAcList	 	= null;
+	private SaveButtons  		theTabButs   	= null;
+	private DebugEntry			theDebugEntry	= null;
+	private ErrorPanel			theError		= null;
 		
 	/* Access methods */
 	public View			getView()				  { return theView; }
@@ -43,6 +46,7 @@ public class AccountTab implements financePanel,
 	public int  		getFieldForCol(int col)   { return -1; }
 	public ComboSelect	getComboList()			  { return theParent.getComboList(); }
 	public DebugEntry	getDebugEntry()			  { return theDebugEntry; }
+	public DebugManager getDebugManager() 		  { return theParent.getDebugMgr(); }
 	public void 		printIt()				  { }
 		
 	/* Tab headers */
@@ -51,7 +55,10 @@ public class AccountTab implements financePanel,
 	private static final String titlePrices    = "Prices";
 	private static final String titleRates     = "Rates";
 		
-	/* Constructor */
+	/**
+	 * Constructor for Account Window
+	 * @param pParent the parent window
+	 */
 	public AccountTab(MainTab pParent) {
 		GroupLayout			myLayout;
 		DebugEntry			mySection;
@@ -85,6 +92,9 @@ public class AccountTab implements financePanel,
 		/* Create the table buttons */
 		theTabButs  = new SaveButtons(this);
 			
+        /* Create the error panel for this view */
+        theError = new ErrorPanel(this);
+        
 		/* Create the panel */
 		thePanel = new JPanel();
 
@@ -98,6 +108,7 @@ public class AccountTab implements financePanel,
 	        	.addGroup(myLayout.createSequentialGroup()
 	        		.addContainerGap()
 	                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
+	                    .addComponent(theError.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                    .addComponent(theSelect.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                    .addComponent(theTabs, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                    .addComponent(theTabButs.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -106,6 +117,7 @@ public class AccountTab implements financePanel,
         myLayout.setVerticalGroup(
         	myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	        	.addGroup(GroupLayout.Alignment.TRAILING, myLayout.createSequentialGroup()
+	                .addComponent(theError.getPanel())
 	                .addComponent(theSelect.getPanel())
 	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                .addComponent(theTabs)
@@ -115,8 +127,23 @@ public class AccountTab implements financePanel,
 	    );
 	}
 
-	/* RefreshData */
-	public void refreshData() {
+	/**
+	 * Lock on error
+	 * @param isError is there an error (True/False)
+	 */
+	public void lockOnError(boolean isError) {
+		/* Hide selection panel */
+		theSelect.getPanel().setVisible(!isError);
+
+		/* Lock tabs and buttons area */
+		theTabs.setEnabled(!isError);
+		theTabButs.getPanel().setEnabled(!isError);
+	}
+	
+	/**
+	 * Refresh views/controls after a load/update of underlying data
+	 */
+	public void refreshData() throws Exception {
 		/* Refresh the account selection */
 		theSelect.refreshData();
 			
@@ -128,9 +155,14 @@ public class AccountTab implements financePanel,
 			
 		/* Redraw selection */
 		setSelection(theSelect.getSelected());
+		
+		/* Create SavePoint */
+		theSelect.createSavePoint();
 	}
 		
-	/* Has this set of tables got updates */
+	/**
+	 * Has this set of tables got updates
+	 */
 	public boolean hasUpdates() {
 		boolean hasUpdates = false;
 		
@@ -144,7 +176,9 @@ public class AccountTab implements financePanel,
 		return hasUpdates;
 	}
 		
-	/* Has this set of tables got errors */
+	/**
+	 * Has this set of tables got errors
+	 */
 	public boolean hasErrors() {
 		boolean hasErrors = false;
 		
@@ -187,7 +221,10 @@ public class AccountTab implements financePanel,
 			return(pThat);
 	}
 	
-	/* Get the Edit State */
+	/**
+	 * Get the edit state of this set of tables
+	 * @return the edit state
+	 */
 	public EditState getEditState() {
 		EditState myState;
 		EditState myNewState;
@@ -211,7 +248,10 @@ public class AccountTab implements financePanel,
 		return myState;
 	}
 		
-	/* Perform command function */
+	/**
+	 * Perform a command
+	 * @param pCmd the command to perform
+	 */
 	public void performCommand(financeCommand pCmd) {
 		/* Cancel any editing */
 		cancelEditing();
@@ -231,13 +271,17 @@ public class AccountTab implements financePanel,
 		notifyChanges();
 	}
 		
-	/* is this table locked */
+	/**
+	 * Is this table locked
+	 */
 	public boolean isLocked() {
 		/* State whether account is locked */
 		return ((theAccount == null) || theAccount.isClosed());
 	}
 				
-	/* validateAll */
+	/**
+	 * Validate all tables
+	 */
 	public void validateAll() {
 		/* Validate the data */
 		theStatement.validateAll();
@@ -247,7 +291,9 @@ public class AccountTab implements financePanel,
 		notifyChanges();
 	}
 		
-	/* cancel editing */
+	/**
+	 * Cancel all editing
+	 */
 	public void cancelEditing() {
 		/* cancel editing */
 		theStatement.cancelEditing();
@@ -256,7 +302,9 @@ public class AccountTab implements financePanel,
 		thePrices.cancelEditing();
 	}
 		
-	/* resetData */
+	/**
+	 * Reset all table data
+	 */
 	public void resetData() {
 		/* reset the data */
 		theStatement.resetData();
@@ -265,7 +313,9 @@ public class AccountTab implements financePanel,
 		thePrices.resetData();
 	}
 		
-	/* saveData */
+	/**
+	 * Save changes from the view into the underlying data
+	 */
 	public void saveData() {
 		/* Validate the data */
 		validateAll();
@@ -284,16 +334,40 @@ public class AccountTab implements financePanel,
 		}
 	}
 		
-	/* Note that there has been a selection change */
+	/**
+	 *  Notify table that there has been a change in selection by an underlying control
+	 *  @param obj the underlying control that has changed selection
+	 */
 	public void notifySelection(Object obj)    {
 		/* If this is a change from the account selection */
 		if (obj == (Object) theSelect) {
-			/* Set the new account */
-			setSelection(theSelect.getSelected());
+			/* Protect against exceptions */
+			try {
+				/* Select the account */
+				setSelection(theSelect.getSelected());
+					
+				/* Create SavePoint */
+				theSelect.createSavePoint();
+			} 
+			
+			catch (Throwable e) {
+				/* Build the error */
+				Exception myError = new Exception(ExceptionClass.DATA,
+										          "Failed to change selection",
+										          e);
+				
+				/* Show the error */
+				theError.setError(myError);
+				
+				/* Restore SavePoint */
+				theSelect.restoreSavePoint();			
+			} 
 		}
 	}
 		
-	/* Note that changes have been made */
+	/**
+	 * Call underlying controls to take notice of changes in view/selection
+	 */
 	public void notifyChanges() {
 		/* Lock down the table buttons and the selection */
 		theTabButs.setLockDown();
@@ -303,8 +377,11 @@ public class AccountTab implements financePanel,
 		setVisibleTabs();
 	}	
 		
-	/* Set Selection */
-	public void setSelection(Account pAccount) {
+	/**
+	 * Select an explicit account
+	 * @param pAccount the account to select
+	 */
+	public void setSelection(Account pAccount) throws Exception {
 		DataSet myData = theView.getData();
 		
 		/* Release old list */
@@ -333,7 +410,9 @@ public class AccountTab implements financePanel,
 		notifyChanges();
 	}
 		
-	/* Set visible tabs */
+	/**
+	 * Set tabs to be visible or not depending on the type of account
+	 */
 	private void setVisibleTabs() {
 		int         iIndex;
 		boolean     isPatternsSelected = false;
@@ -457,20 +536,44 @@ public class AccountTab implements financePanel,
 		theParent.setVisibleTabs();
 	}
 	
-	/* Select an explicit account and period */
+	/**
+	 * Select an explicit account and period
+	 * @param pAccount the account to select
+	 * @param pSource the period source
+	 */
 	public void selectAccount(Account  	pAccount,
 							  DateRange	pSource) {
-		/* Adjust the date selection for the statements appropriately */
-		theStatement.selectPeriod(pSource);
+		/* Protect against exceptions */
+		try {
+			/* Adjust the date selection for the statements appropriately */
+			theStatement.selectPeriod(pSource);
 		
-		/* Adjust the account selection */
-		theSelect.setSelection(pAccount);
-		
-		/* Redraw selection */
-		setSelection(theSelect.getSelected());
+			/* Adjust the account selection */
+			theSelect.setSelection(pAccount);
+			setSelection(theSelect.getSelected());
+			
+			/* Create SavePoint */
+			theSelect.createSavePoint();
+		} 
+
+		catch (Throwable e) {
+			/* Build the error */
+			Exception myError = new Exception(ExceptionClass.DATA,
+									          "Failed to change selection",
+									          e);
+			
+			/* Show the error */
+			theError.setError(myError);
+			
+			/* Restore SavePoint */
+			theSelect.restoreSavePoint();						
+		} 
 	}
 	
-	/* Add a pattern from a statement line */
+	/**
+	 * Add a pattern from a statement line
+	 * @param pLine the line to add
+	 */
 	public void addPattern(Statement.Line pLine) {
 		/* Pass through to the Patterns table */
 		thePatterns.addPattern(pLine);
@@ -479,7 +582,10 @@ public class AccountTab implements financePanel,
 		gotoNamedTab(titlePatterns);
 	}
 	
-	/* Goto the specific tab */
+	/**
+	 * Select the explicitly named tab
+	 * @param pTabName the tab to select
+	 */
 	public void gotoNamedTab(String pTabName) {
 		/* Access the required index */
 		int iIndex = theTabs.indexOfTab(pTabName);
@@ -488,7 +594,10 @@ public class AccountTab implements financePanel,
 		theTabs.setSelectedIndex(iIndex);
 	}
 
-	/* Change listener */
+	/**
+	 * Handle state changed events (change of select tab)
+	 * @param e the change event
+	 */
 	public void stateChanged(ChangeEvent e) {
 		/* Ignore if it is not the tabs */
 		if (e.getSource() != theTabs) return;
@@ -497,7 +606,9 @@ public class AccountTab implements financePanel,
 		determineFocus();
 	}
 
-	/* Determine Focus */
+	/**
+	 * Determine the current focus
+	 */
 	protected void determineFocus() {
 		/* Access the selected component */
 		Component myComponent = theTabs.getSelectedComponent();

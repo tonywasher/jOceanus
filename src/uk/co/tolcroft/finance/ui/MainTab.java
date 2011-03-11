@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import javax.swing.Box;
 import javax.swing.GroupLayout;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -51,6 +52,7 @@ public class MainTab implements ActionListener,
 	private JMenuBar		theMainMenu		= null;
 	private JMenu			theDataMenu		= null;
 	private JMenu			theBackupMenu	= null;
+	private JMenu			theHelpMenu		= null;
 	private JMenuItem		theLoadSheet	= null;
 	private JMenuItem		theCreateDBase	= null;
 	private JMenuItem		thePurgeDBase	= null;
@@ -191,12 +193,9 @@ public class MainTab implements ActionListener,
 		theMainMenu.add(theDataMenu);
 		theBackupMenu = new JMenu("Backup");
 		theMainMenu.add(theBackupMenu);
-		theShowDebug = new JMenuItem("Debug");
-		theShowDebug.addActionListener(this);
-		theMainMenu.add(theShowDebug);
-		theHelpMgr = new JMenuItem("Help");
-		theHelpMgr.addActionListener(this);
-		theMainMenu.add(theHelpMgr);
+		theMainMenu.add(Box.createHorizontalGlue());
+		theHelpMenu = new JMenu("Help");
+		theMainMenu.add(theHelpMenu);
 		theFrame.setJMenuBar(theMainMenu);
 		
 		/* Create the file menu items */
@@ -221,6 +220,12 @@ public class MainTab implements ActionListener,
 		theLoadBackup = new JMenuItem("Restore from Backup");
 		theLoadBackup.addActionListener(this);
 		theBackupMenu.add(theLoadBackup);
+		theHelpMgr = new JMenuItem("Help");
+		theHelpMgr.addActionListener(this);
+		theHelpMenu.add(theHelpMgr);
+		theShowDebug = new JMenuItem("Debug");
+		theShowDebug.addActionListener(this);
+		theHelpMenu.add(theShowDebug);
 		
 		/* Initialise the data */
 		refreshData();
@@ -533,7 +538,7 @@ public class MainTab implements ActionListener,
 	}
 	
 	/* refresh data */
-	public void refreshData() {
+	public void refreshData() throws Exception {
 		/* Create the combo list */
 		theComboList  = new ComboSelect(theView);
 			

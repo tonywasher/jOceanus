@@ -26,6 +26,7 @@ import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 public class MaintAccount implements ActionListener,
 									 ItemListener,
@@ -68,6 +69,7 @@ public class MaintAccount implements ActionListener,
 	private View.ViewAccount	theActView		= null;
 	private AccountType.List	theAcTypList	= null;
 	private DebugEntry			theDebugEntry	= null;
+	private ErrorPanel			theError		= null;
 	private boolean				refreshingData	= false;
 	private boolean				typesPopulated	= false;
 	private boolean				parPopulated	= false;
@@ -79,7 +81,8 @@ public class MaintAccount implements ActionListener,
 	public Account		getAccount()	 { return theAccount; }
 	
 	/* Access the debug entry */
-	protected DebugEntry getDebugEntry()	{ return theDebugEntry; }
+	public DebugEntry 	getDebugEntry()		{ return theDebugEntry; }
+	public DebugManager getDebugManager() 	{ return theParent.getDebugManager(); }
 	
 	/* Constructor */
 	public MaintAccount(MaintenanceTab pParent) {
@@ -125,12 +128,12 @@ public class MaintAccount implements ActionListener,
 		theDesc  = new JTextField(Account.DESCLEN);
 		
 		/* Create the password fields */
-		theWebSite		= new JPasswordField(Account.CUSTLEN);
+		theWebSite		= new JPasswordField(Account.WSITELEN);
 		theCustNo  		= new JPasswordField(Account.CUSTLEN);
 		theUserId		= new JPasswordField(Account.UIDLEN);
 		thePassword		= new JPasswordField(Account.PWDLEN);
-		theActDetail	= new JPasswordField(Account.CUSTLEN);
-		theNotes	  	= new JPasswordField(Account.CUSTLEN);
+		theActDetail	= new JPasswordField(Account.ACTLEN);
+		theNotes	  	= new JPasswordField(Account.WSITELEN);
 		
 		/* Display the values in the password fields */
 		theWebSite.setEchoChar((char)0);
@@ -193,6 +196,14 @@ public class MaintAccount implements ActionListener,
 		/* Create the Save buttons panel */
 		theSaveButs = new SaveButtons(this);
 		
+        /* Create the debug entry, attach to MaintenanceDebug entry */
+        DebugManager myDebugMgr	= theView.getDebugMgr();
+        theDebugEntry = myDebugMgr.new DebugEntry("Account");
+        theDebugEntry.addAsChildOf(pParent.getDebugEntry());
+      
+        /* Create the error panel for this view */
+        theError = new ErrorPanel(this);
+        
 		/* Create the buttons panel */
 		theButtons = new JPanel();
 		theButtons.setBorder(javax.swing.BorderFactory
@@ -233,24 +244,32 @@ public class MaintAccount implements ActionListener,
 
 	    /* Set the layout */
         myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-        	.addGroup(myLayout.createSequentialGroup()
-        		.addContainerGap()
-                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                 	.addComponent(myWebSite)
-                  	.addComponent(myCustNo)
-                  	.addComponent(myUserId)
-                  	.addComponent(myPassword)
-                  	.addComponent(myAccount)
-                    .addComponent(myNotes))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+           	.addGroup(myLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                 	.addComponent(theWebSite, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-                  	.addComponent(theCustNo, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-                  	.addComponent(theUserId, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-                  	.addComponent(thePassword, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-                  	.addComponent(theActDetail, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(theNotes, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    .addGroup(myLayout.createSequentialGroup()
+                        .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                            .addComponent(myWebSite)
+                            .addComponent(myCustNo)
+                            .addComponent(myUserId)
+                            .addComponent(myNotes))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addComponent(theWebSite)
+                            .addComponent(theNotes)
+                            .addGroup(myLayout.createSequentialGroup()
+                                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                	.addComponent(theCustNo, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                                	.addComponent(theUserId, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                	.addComponent(myAccount, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                                	.addComponent(myPassword, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                	.addComponent(theActDetail, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                                	.addComponent(thePassword, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))))
+                        .addContainerGap())))
         );
         myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(myLayout.createSequentialGroup()
@@ -258,23 +277,19 @@ public class MaintAccount implements ActionListener,
                 .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                 	.addComponent(myWebSite)
                     .addComponent(theWebSite, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    	.addComponent(myCustNo)
-                        .addComponent(theCustNo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    	.addComponent(myUserId)
-                        .addComponent(theUserId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                	.addComponent(myPassword)
-                    .addComponent(thePassword, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(myCustNo)
+                    .addComponent(theCustNo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(myAccount)
                     .addComponent(theActDetail, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(myUserId)
+                    .addComponent(theUserId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                	.addComponent(myPassword)
+                    .addComponent(thePassword, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(myNotes)
                     .addComponent(theNotes, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
@@ -296,51 +311,51 @@ public class MaintAccount implements ActionListener,
                 .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                      .addGroup(myLayout.createSequentialGroup()
                         .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                            .addComponent(theTypLabel)
                             .addComponent(myName)
                             .addComponent(myDesc)
-                            .addComponent(theParLabel)
-                            .addComponent(theMatLabel))
+                            .addComponent(theParLabel))
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                            .addGroup(myLayout.createSequentialGroup()
-                               	.addComponent(theName, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(theTypLabel)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(theDesc, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addGroup(myLayout.createSequentialGroup()
+                               	.addComponent(theName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(theMatLabel)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(theSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                             .addGroup(myLayout.createSequentialGroup()
                                	.addComponent(theParentBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(theAlsLabel)
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(theAliasBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(theSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(theAliasBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(myLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(myName)
-                    .addComponent(theName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(theTypLabel)
                     .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(myName)
+                    .addComponent(theName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(theMatLabel)
+                    .addComponent(theSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(myDesc)
                     .addComponent(theDesc, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(theParLabel)
                     .addComponent(theParentBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(theAlsLabel)
                     .addComponent(theAliasBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(theMatLabel)
-                    .addComponent(theSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+               .addContainerGap())
         );
             
 		/* Create the status panel */
@@ -392,6 +407,7 @@ public class MaintAccount implements ActionListener,
         	.addGroup(myLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                   	.addComponent(theError.getPanel())
                    	.addComponent(theSelect.getPanel())
                 	.addComponent(theSaveButs.getPanel())
                     .addGroup(myLayout.createSequentialGroup()
@@ -404,6 +420,7 @@ public class MaintAccount implements ActionListener,
         myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(myLayout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(theError.getPanel())
                 .addComponent(theSelect.getPanel())
                 .addContainerGap(10,30)
                 .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
@@ -418,11 +435,6 @@ public class MaintAccount implements ActionListener,
                 .addContainerGap())
         );
                     
-        /* Create the debug entry, attach to MaintenanceDebug entry and hide it */
-        DebugManager myDebugMgr	= theView.getDebugMgr();
-        theDebugEntry = myDebugMgr.new DebugEntry("Account");
-        theDebugEntry.addAsChildOf(pParent.getDebugEntry());
-      
         /* Set initial display */
         showAccount();
 	}
@@ -444,6 +456,23 @@ public class MaintAccount implements ActionListener,
 	public EditState getEditState() {
 		if (theAccount == null) return EditState.CLEAN;
 		return theAccount.getEditState();
+	}
+	
+	/**
+	 * Lock on error
+	 * @param isError is there an error (True/False)
+	 */
+	public void lockOnError(boolean isError) {
+		/* Hide selection panel */
+		theSelect.getPanel().setVisible(!isError);
+
+		/* Lock data areas */
+		theDetail.setEnabled(!isError);
+		theSecure.setEnabled(!isError);
+
+		/* Lock row/tab buttons area */
+		theButtons.setEnabled(!isError);
+		theSaveButs.getPanel().setEnabled(!isError);
 	}
 	
 	/* performCommand */
@@ -916,7 +945,13 @@ public class MaintAccount implements ActionListener,
 			theAccount.popHistory();
 			theAccount.pushHistory();
 			
-			/* TODO report the error */
+			/* Build the error */
+			Exception myError = new Exception(ExceptionClass.DATA,
+									          "Failed to update field",
+									          e);
+			
+			/* Show the error */
+			theError.setError(myError);
 		}
 		
 		/* Check for changes */
@@ -1099,8 +1134,7 @@ public class MaintAccount implements ActionListener,
 			
 				/* Update the text */
 				updateText();
-			}
-		
+			}	
 		}
 		
 		/* Handle Exceptions */
@@ -1109,7 +1143,13 @@ public class MaintAccount implements ActionListener,
 			theAccount.popHistory();
 			theAccount.pushHistory();
 			
-			/* TODO report the error */
+			/* Build the error */
+			Exception myError = new Exception(ExceptionClass.DATA,
+									          "Failed to update field",
+									          e);
+			
+			/* Show the error */
+			theError.setError(myError);
 		}
 		
 		/* Check for changes */
@@ -1152,7 +1192,13 @@ public class MaintAccount implements ActionListener,
 				theAccount.popHistory();
 				theAccount.pushHistory();
 				
-				/* TODO report the error */
+				/* Build the error */
+				Exception myError = new Exception(ExceptionClass.DATA,
+										          "Failed to update field",
+										          e);
+				
+				/* Show the error */
+				theError.setError(myError);
 			}
 			
 			/* Check for changes */

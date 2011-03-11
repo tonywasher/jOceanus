@@ -1394,6 +1394,9 @@ public class Number {
 			long    myValue  = getAmount();
 			long    myDigit;
 			
+			/* Handle zero total */
+			if (!pTotal.isNonZero()) return new Money(0);
+			
 			/* Calculate new value */
 			myValue  *= pWeight.getValue() * 10;
 			myValue  /= pTotal.getValue();
@@ -1422,6 +1425,9 @@ public class Number {
 			Money   myTotal;
 			long    myValue  = getAmount();
 			long    myDigit;
+			
+			/* Handle zero total */
+			if (!pTotal.isNonZero()) return new Money(0);
 			
 			/* Calculate new value */
 			myValue  *= pWeight.getValue() * 10;

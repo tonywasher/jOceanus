@@ -6,6 +6,7 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.DataSet.LoadState;
 import uk.co.tolcroft.finance.data.TransactionType.TransClass;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.Exception;
@@ -38,7 +39,6 @@ public class EventAnalysis {
 	public MetaAnalysis			getMetaAnalysis()				{ return theMetaAnalysis; }
 	public List					getAnalysisYears() 				{ return theYears; }
 	public AnalysisYear			getAnalysisYear(TaxYear pYear) 	{ return (theYears == null) ? null : theYears.searchFor(pYear); }
-	public ActDetail			getAccountBucket() 				{ return theAccount; }
 	public DilutionEvent.List 	getDilutions() 					{ return theDilutions; }
 	
 	/**
@@ -118,26 +118,33 @@ public class EventAnalysis {
 	}
 	
 	/**
-	 * Constructor for a dated account analysis
+	 * Constructor for a statement analysis
 	 * @param pDebugMgr the debug manager
 	 * @param pData	the data to analyse events for
-	 * @param pAccount the account to analyse
-	 * @param pDate	the Date for the analysis
+	 * @param pStatement the statement to prepare
 	 */
 	public EventAnalysis(DebugManager	pDebugMgr,
 						 DataSet		pData,
-						 Account 		pAccount,
-						 Date	 		pDate)  throws Exception {
+						 Statement 		pStatement)  throws Exception {
 		DataList<Event>.ListIterator 	myIterator;
 		Event.List					 	myEvents;
 		Event 							myCurr;
+		Date.Range						myRange;
+		Account							myAccount;
+		Statement.Line					myLine;
+		Statement.List					myList;
 		DebugEntry						mySection;
 		DebugEntry						myDebug;
 		int   							myResult;
 
+		/* Access key points of the statement */
+		myRange		= pStatement.getDateRange();
+		myAccount	= pStatement.getAccount();
+		myList		= pStatement.getLines();
+
 		/* Store the parameters */
 		theData 	= pData;
-		theDate		= pDate;
+		theDate		= myRange.getStart();
 		
 		/* Access the debug manager */
 		theDebugMgr = pDebugMgr;
@@ -148,7 +155,7 @@ public class EventAnalysis {
 
 		/* Create the analysis */
 		theAnalysis = new Analysis(theData,
-								   pAccount,
+								   myAccount,
 								   theDate);
 
 		/* Access the TaxMan account and Tax Credit transaction */
@@ -156,6 +163,7 @@ public class EventAnalysis {
 		BucketList	myBuckets	= theAnalysis.getList();
 		theTaxMan 	= (ExternalAccount)myBuckets.getAccountDetail(myTaxMan);
 		theTaxPaid 	= myBuckets.getTransDetail(TransClass.TAXCREDIT);
+		theAccount  = myBuckets.getAccountDetail(myAccount);
 		
 		/* Access the events and the iterator */
 		myEvents 	= pData.getEvents();
@@ -164,21 +172,46 @@ public class EventAnalysis {
 		/* Loop through the Events extracting relevant elements */
 		while ((myCurr = myIterator.next()) != null) {
 			/* Check the range */
-			myResult = theDate.compareTo(myCurr.getDate());
+			myResult = myRange.compareTo(myCurr.getDate());
 			
-			/* Handle out of range */
-			if (myResult == -1) break;
+			/* If we are at or past the range break the loop */
+			if (myResult != 1) break;
 			
 			/* Ignore items that do not relate to this account */
-			if (!myCurr.relatesTo(pAccount)) continue;
+			if (!myCurr.relatesTo(myAccount)) continue;
 			
 			/* Process the event in the asset report */
 			processEvent(myCurr);
 		}	
 		
-		/* Store the account bucket */
-		theAccount = theAnalysis.getList().getAccountDetail(pAccount);
+		/* move the iterator back one */
+		myIterator.previous();
+		
+		/* create a save point */
+		theAccount.createSavePoint();
 
+		/* Set starting balance and units for account */
+		pStatement.setStartBalances(theAccount);
+		
+		/* Continue looping through the Events extracting relevant elements */
+		while ((myCurr = myIterator.next()) != null) {
+			/* Check the range */
+			myResult = myRange.compareTo(myCurr.getDate());
+			
+			/* Handle past limit */
+			if (myResult == -1) break;
+			
+			/* Ignore items that do not relate to this account */
+			if (!myCurr.relatesTo(myAccount)) continue;
+			
+			/* Add a statement line to the statement */
+			myLine = pStatement.new Line(myList, myCurr, myAccount);
+			myLine.addToList();
+		}
+	
+		/* Reset the statement balances */
+		resetStatementBalance(pStatement);
+		
 		/* Create the debug entry for this analysis and add it as a child of the main entry  */
 		myDebug = theDebugMgr.new DebugEntry("Totals");
 		myDebug.addAsChildOf(mySection);
@@ -194,6 +227,50 @@ public class EventAnalysis {
 
 		/* Update display */
 		mySection.setChanged();
+	}
+	
+ 	/**
+ 	 * recalculate statement balance
+ 	 * @param pStatement the statement
+ 	 */
+	protected void resetStatementBalance(Statement pStatement) throws Exception {
+		Statement.Line     			myLine;
+		Statement.List				myLines;
+		Event.List					myList;
+		Event						myEvent;
+		
+		DataList<Statement.Line>.ListIterator	myIterator;
+
+		/* Access the iterator */
+		myLines		= pStatement.getLines();
+		myIterator = myLines.listIterator();
+		
+		/* If we don't have balances just return */
+		if (theAccount instanceof ExternalAccount) return;
+		
+		/* Restore the SavePoint */
+		theAccount.restoreSavePoint();
+		
+		/* Create a new Event list */
+		myList = new Event.List(theData, ListStyle.VIEW);
+	
+		/* Loop through the lines adjusting the balance */
+		while ((myLine = myIterator.next()) != null) {
+			/* Skip deleted lines */
+			if (myLine.isDeleted()) continue;
+			
+			/* Create an event from this line */
+			myEvent = new Event(myList, myLine);
+
+			/* Process the event */
+			processEvent(myEvent);
+			
+			/* Update the balances */
+			myLine.setBalances();
+		}
+	
+		/* Set the ending balances */
+		pStatement.setEndBalances();
 	}
 	
 	/**
@@ -654,6 +731,7 @@ public class EventAnalysis {
 		switch (myTrans.getTranClass()) {
 			/* Process a stock split */
 			case STOCKSPLIT:
+			case ADMINCHARGE:
 				processStockSplit(pEvent);
 				break;
 			/* Process a stock right taken */
@@ -838,6 +916,14 @@ public class EventAnalysis {
 			myAsset.getCost().addAmount(myAmount);
 			myEvent.addAttribute(CapitalEvent.capitalFinalCost, myAsset.getCost());
 
+			/* Record the current/delta investment */
+			myEvent.addAttribute(CapitalEvent.capitalInitialInvest, myAsset.getInvested());
+			myEvent.addAttribute(CapitalEvent.capitalDeltaInvest, myAmount);
+			
+			/* Adjust the total money invested into this account */
+			myAsset.getInvested().addAmount(myAmount);
+			myEvent.addAttribute(CapitalEvent.capitalFinalInvest, myAsset.getInvested());
+					
 			/* If we have new units */
 			if (myUnits != null) {
 				/* Record current and delta units */
@@ -1007,19 +1093,19 @@ public class EventAnalysis {
 		Account			myAccount 	= pEvent.getDebit();
 		Account			myCredit 	= pEvent.getCredit();
 		Money			myAmount 	= pEvent.getAmount();
-		Money			myTaxCredit	= pEvent.getTaxCredit();
 		Units 			myUnits 	= pEvent.getUnits();
 		TransactionType	myTrans		= pEvent.getTransType();
 		Money			myReduction;
 		Money			myDeltaCost;
 		Money			myDeltaGains;
 		Money			myCost;
+		Account			myDebit;
 
 		/* Access the Asset Account Bucket */
 		BucketList 		myBuckets 	= theAnalysis.getList();
 		AssetAccount	myAsset		= (AssetAccount)myBuckets.getAccountDetail(myAccount);
 
-		/* Allocate a Capital event and record Current and delta costs */
+		/* Allocate a Capital event */
 		CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
 
 		/* Record the current/delta investment */
@@ -1064,7 +1150,6 @@ public class EventAnalysis {
 		/* Determine the delta to the gains */
 		myDeltaGains = new Money(myAmount);
 		myDeltaGains.addAmount(myDeltaCost);
-		myDeltaGains.addAmount(myTaxCredit);
 		
 		/* If we have a delta to the gains */
 		if (myDeltaGains.isNonZero()) {
@@ -1091,6 +1176,13 @@ public class EventAnalysis {
 			myAsset.getUnits().subtractUnits(myUnits);
 			myEvent.addAttribute(CapitalEvent.capitalFinalUnits, myAsset.getUnits());
 		}
+
+		/* True debit account is the parent */
+		myDebit = myAccount.getParent();
+	
+		/* Adjust the debit account bucket */
+		ExternalAccount myDebitBucket 	= (ExternalAccount)myBuckets.getAccountDetail(myDebit);
+		myDebitBucket.adjustForTaxGainTaxCredit(pEvent);
 
 		/* Adjust the credit account bucket */
 		ActDetail myBucket = myBuckets.getAccountDetail(myCredit);

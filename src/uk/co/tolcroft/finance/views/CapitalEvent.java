@@ -365,6 +365,28 @@ public class CapitalEvent extends DataItem {
 		}
 
 		/**
+		 * Purge events after date
+		 * @param pDate date from which to purge events
+		 */
+		protected void purgeAfterDate(Date pDate) {
+			ListIterator myIterator;
+			CapitalEvent myEvent;
+			
+			/* Access the iterator */
+			myIterator = listIterator();
+			
+			/* Loop through the events */
+			while ((myEvent = myIterator.next()) != null) {
+				/* If this is past (or on) the date remove it */
+				if (pDate.compareTo(myEvent.getDate()) <= 0)
+					myIterator.remove();
+			}
+			
+			/* Return */
+			return;
+		}
+
+		/**
 		 * Add additional fields to HTML String
 		 * @param pBuffer the string buffer 
 		 */

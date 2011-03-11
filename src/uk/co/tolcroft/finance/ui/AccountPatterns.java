@@ -17,6 +17,8 @@ import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 public class AccountPatterns extends FinanceTableModel<Pattern> {
 	/* Members */
@@ -29,6 +31,7 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 	private Frequency.List			theFreqs			= null;
 	private TransactionType.List	theTransTypes		= null;
 	private JPanel					thePanel			= null;
+	private JScrollPane				theScroll			= null;
 	private JComboBox				theFreqBox			= null;
 	private AccountTab				theParent   		= null;
 	private EditButtons    			theRowButs  		= null;
@@ -43,6 +46,7 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 	private Editor.ComboBoxCell		theComboEditor    	= null;
 	private ComboSelect				theComboList    	= null;
 	private DebugEntry				theDebugEntry		= null;
+	private ErrorPanel				theError			= null;
 	private boolean					freqsPopulated    	= false;
 
 	/* Access methods */
@@ -51,7 +55,7 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 	public boolean hasHeader()			{ return false; }
 	
 	/* Access the debug entry */
-	protected DebugEntry getDebugEntry()	{ return theDebugEntry; }
+	public DebugEntry getDebugEntry()	{ return theDebugEntry; }
 	
 	/* Table headers */
 	private static final String titleDate    = "Date";
@@ -72,7 +76,10 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 	private static final int COLUMN_FREQ 	 = 6;
 	private static final int NUM_COLUMNS	 = 7;
 				
-	/* Constructor */
+	/**
+	 * Constructor for Patterns Window
+	 * @param pParent the parent window
+	 */
 	public AccountPatterns(AccountTab pParent) {
 		/* Initialise superclass */
 		super(pParent.getTopWindow());
@@ -80,7 +87,6 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 		/* Declare variables */
 		TableColumnModel    myColModel;
 		TableColumn			myCol;
-		JScrollPane		 	myScroll;
 		GroupLayout		 	myLayout;
 			
 		/* Store details about the parent */
@@ -154,9 +160,18 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 		theRowButs   = new EditButtons(this, InsertStyle.NONE);
 			
 		/* Create a new Scroll Pane and add this table to it */
-		myScroll     = new JScrollPane();
-		myScroll.setViewportView(this);
+		theScroll     = new JScrollPane();
+		theScroll.setViewportView(this);
+        
+        /* Create the debug entry, attach to AccountDebug entry and hide it */
+        DebugManager myDebugMgr	= theView.getDebugMgr();
+        theDebugEntry = myDebugMgr.new DebugEntry("Patterns");
+        theDebugEntry.addAsChildOf(pParent.getDebugEntry());
+        theDebugEntry.hideEntry();
 			
+        /* Create the error panel for this view */
+        theError = new ErrorPanel(this);
+        
 		/* Create the panel */
 		thePanel = new JPanel();
 
@@ -170,25 +185,24 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 	        	.addGroup(myLayout.createSequentialGroup()
 	        		.addContainerGap()
 	                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
-	                    .addComponent(myScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
+	                    .addComponent(theError.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                    .addComponent(theScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
 	                    .addComponent(theRowButs.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 	                .addContainerGap())
 	    );
         myLayout.setVerticalGroup(
         	myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	        	.addGroup(GroupLayout.Alignment.TRAILING, myLayout.createSequentialGroup()
-	                .addComponent(myScroll)
+	                .addComponent(theError.getPanel())
+	                .addComponent(theScroll)
 	                .addComponent(theRowButs.getPanel()))
 	    );
-        
-        /* Create the debug entry, attach to AccountDebug entry and hide it */
-        DebugManager myDebugMgr	= theView.getDebugMgr();
-        theDebugEntry = myDebugMgr.new DebugEntry("Patterns");
-        theDebugEntry.addAsChildOf(pParent.getDebugEntry());
-        theDebugEntry.hideEntry();
 	}
 		
-	/* Note that there has been a selection change */
+	/**
+	 *  Notify table that there has been a change in selection by an underlying control
+	 *  @param obj the underlying control that has changed selection
+	 */
 	public void    notifySelection(Object obj)    {
 		/* If this is a change from the buttons */
 		if (obj == (Object) theRowButs) {
@@ -197,7 +211,9 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 		}
 	}
 		
-	/* refresh data */
+	/**
+	 * Refresh views/controls after a load/update of underlying data
+	 */
 	public void refreshData() {
 		DataSet		myData;
 		Frequency   myFreq;
@@ -233,14 +249,30 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 		}
 	}
 	
-	/* saveData */
+	/**
+	 * Save changes from the view into the underlying data
+	 */
 	public void saveData() {
 		if (theExtract != null) {
 			theExtract.applyChanges();
 		}
 	}
 	
-	/* Note that there has been a list selection change */
+	/**
+	 * Lock on error
+	 * @param isError is there an error (True/False)
+	 */
+	public void lockOnError(boolean isError) {
+		/* Lock scroll-able area */
+		theScroll.setEnabled(!isError);
+
+		/* Lock row/tab buttons area */
+		theRowButs.getPanel().setEnabled(!isError);
+	}
+	
+	/**
+	 * Call underlying controls to take notice of changes in view/selection
+	 */
 	public void notifyChanges() {
 		/* Update the row buttons */
 		theRowButs.setLockDown();
@@ -253,8 +285,11 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 		theParent.notifyChanges(); 
 	}
 	
-	/* Set Selection */
-	public void setSelection(Account pAccount) {
+	/**
+	 * Set Selection to the specified account
+	 * @param pAccount the Account for the extract
+	 */
+	public void setSelection(Account pAccount) throws Exception {
 		theExtract  = theView.new ViewPatterns(pAccount);
 		theAccount  = pAccount;
 		thePatterns = theExtract.getPatterns();
@@ -264,7 +299,10 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 		theRowButs.setLockDown();
 	}
 		
-	/* Get field for column */
+	/**
+	 * Obtain the Field id associated with the column
+	 * @param column the column
+	 */
 	public int getFieldForCol(int column) {
 		/* Switch on column */
 		switch (column) {
@@ -279,7 +317,9 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 		}
 	}
 		
-	/* Get combo box for cell */
+	/**
+	 * Obtain the correct ComboBox for the given row/column
+	 */
 	public JComboBox getComboBox(int row, int column) {
 		Pattern 			myPattern;
 		ComboSelect.Item    mySelect;
@@ -304,7 +344,10 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 		}
 	}
 		
-	/* Add a pattern based on a statement line */
+	/**
+	 * Add a pattern based on a statement line
+	 * @param pLine the statement line
+	 */
 	public void addPattern(Statement.Line pLine) {
 		Pattern myPattern;
 		
@@ -323,16 +366,26 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 	public class PatternsModel extends AbstractTableModel {
 		private static final long serialVersionUID = -8445100544184045930L;
 
-		/* get column count */
+		/**
+		 * Get the number of display columns
+		 * @return the columns
+		 */
 		public int getColumnCount() { return NUM_COLUMNS; }
 		
-		/* get row count */
+		/**
+		 * Get the number of rows in the current table
+		 * @return the number of rows
+		 */
 		public int getRowCount() { 
 			return (thePatterns == null) ? 0
 					                     : thePatterns.size();
 		}
 			
-		/* get column name */
+		/**
+		 * Get the name of the column
+		 * @param col the column
+		 * @return the name of the column
+		 */
 		public String getColumnName(int col) {
 			switch (col) {
 				case COLUMN_DATE:  		return titleDate;
@@ -346,7 +399,11 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 			}
 		}
 			
-		/* is get column class */
+		/**
+		 * Get the object class of the column
+		 * @param col the column
+		 * @return the class of the objects associated with the column
+		 */
 		public Class<?> getColumnClass(int col) {				
 			switch (col) {
 				case COLUMN_DESC:  		return String.class;
@@ -359,7 +416,9 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 			}
 		}
 			
-		/* is cell edit-able */
+		/**
+		 * Is the cell at (row, col) editable
+		 */
 		public boolean isCellEditable(int row, int col) {
 			Pattern myPattern;
 			
@@ -380,7 +439,10 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 			}
 		}
 			
-		/* get value At */
+		/**
+		 * Get the value at (row, col)
+		 * @return the object value
+		 */
 		public Object getValueAt(int row, int col) {
 			Pattern myPattern;
 			Object  o;
@@ -431,7 +493,10 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 			return o;
 		}
 			
-		/* set value At */
+		/**
+		 * Set the value at (row, col)
+		 * @param obj the object value to set
+		 */
 		public void setValueAt(Object obj, int row, int col) {
 			Pattern myPattern;
 			
@@ -474,7 +539,14 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 				myPattern.popHistory();
 				myPattern.pushHistory();
 				
-				/* TODO report the error */
+				/* Build the error */
+				Exception myError = new Exception(ExceptionClass.DATA,
+										          "Failed to update field at ("
+										          + row + "," + col +")",
+										          e);
+				
+				/* Show the error */
+				theError.setError(myError);
 			}
 			
 			/* Check for changes */

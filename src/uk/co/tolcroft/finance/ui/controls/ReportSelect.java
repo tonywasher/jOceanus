@@ -37,18 +37,17 @@ public class ReportSelect implements	ActionListener,
 	private JLabel				theYearLabel	= null;
 	private JLabel				theDateLabel	= null;
 	private JButton				thePrintButton	= null;
-	private Date				theRepDate		= null;
-	private TaxYear	 			theYear			= null;
-	private ReportType			theReport		= null;
 	private TaxYear.List		theYears		= null;
+	private ReportState			theState		= null;
+	private ReportState			theSavePoint	= null;
 	private boolean				yearsPopulated 	= false;
 	private boolean				refreshingData  = false;
 	
 	/* Access methods */
 	public  JPanel      getPanel()      { return thePanel; }
-	public 	ReportType 	getReportType() { return theReport; }
-	public 	TaxYear 	getTaxYear()    { return theYear; }
-	public	Date 	    getReportDate() { return theRepDate; }
+	public 	ReportType 	getReportType() { return theState.getType(); }
+	public 	TaxYear 	getTaxYear()    { return theState.getYear(); }
+	public	Date 	    getReportDate() { return theState.getDate(); }
 				
 	/* Report descriptions */
 	private static final String Assets    	= "Asset";
@@ -73,6 +72,9 @@ public class ReportSelect implements	ActionListener,
 		theModel   = new SpinnerDateModel();
 		theDateBox = new JSpinner(theModel);
 		
+		/* Create initial state */
+		theState = new ReportState();
+		
 		/* Initialise the data from the view */
 		refreshData(null);
 		
@@ -84,7 +86,6 @@ public class ReportSelect implements	ActionListener,
 		theReportBox.addItem(Taxation);
 		theReportBox.addItem(Market);
 		theReportBox.setSelectedItem(Instant);
-		theReport = ReportType.INSTANT;
 		
 		/* Create the labels */
 		theRepLabel  = new JLabel("Report:");
@@ -95,18 +96,9 @@ public class ReportSelect implements	ActionListener,
 		thePrintButton = new JButton("Print");
 		thePrintButton.addActionListener(this);
 		
-		/* Limit the spinner to the Range */
-		theModel.setValue(new java.util.Date());
-		theRepDate = new Date(theModel.getDate());
-	
 		/* Set the format of the date */
 		theDateBox.setEditor(new JSpinner.DateEditor(theDateBox, "dd-MMM-yyyy"));
 	
-		/* Add the listener for item changes */
-		theReportBox.addItemListener(this);
-		theYearsBox.addItemListener(this);
-		theModel.addChangeListener(this);
-		
 		/* Create the panel */
 		thePanel = new JPanel();
 		thePanel.setBorder(javax.swing.BorderFactory
@@ -147,8 +139,13 @@ public class ReportSelect implements	ActionListener,
 	                .addComponent(thePrintButton)
 	    );
 
-		/* Initiate lock-down mode */
-		setLockDown();
+		/* Apply the current state */
+		theState.applyState();
+
+		/* Add the listener for item changes */
+		theReportBox.addItemListener(this);
+		theYearsBox.addItemListener(this);
+		theModel.addChangeListener(this);
 	}
 	
 	/* refresh data */
@@ -156,6 +153,7 @@ public class ReportSelect implements	ActionListener,
 		DataSet			myData;
 		AnalysisYear  	myYear;
 		Date.Range  	myRange;
+		TaxYear 		myTaxYear = theState.getYear();
 		
 		DataList<AnalysisYear>.ListIterator myIterator;
 		
@@ -175,9 +173,9 @@ public class ReportSelect implements	ActionListener,
 		/* If we have years already populated */
 		if (yearsPopulated) {	
 			/* If we have a selected year */
-			if (theYear != null) {
+			if (myTaxYear != null) {
 				/* Find it in the new list */
-				theYear = theYears.searchFor(theYear.getDate());
+				myTaxYear = theYears.searchFor(myTaxYear.getDate());
 			}
 			
 			/* Remove the types */
@@ -198,16 +196,16 @@ public class ReportSelect implements	ActionListener,
 			}
 		
 			/* If we have a selected year */
-			if (theYear != null) {
+			if (myTaxYear != null) {
 				/* Select it in the new list */
-				theYearsBox.setSelectedItem(Integer.toString(theYear.getDate().getYear()));
+				theYearsBox.setSelectedItem(Integer.toString(myTaxYear.getDate().getYear()));
 			}
 		
 			/* Else we have no year currently selected */
 			else if (yearsPopulated) {
 				/* Select the first year */
 				theYearsBox.setSelectedIndex(0);
-				theYear = myIterator.peekLast().getTaxYear();
+				theState.setYear(myIterator.peekLast().getTaxYear());
 			}
 		}
 
@@ -231,11 +229,32 @@ public class ReportSelect implements	ActionListener,
 		theModel.setEnd((myLast == null) ? null : myLast.getDate());
 	}
 	
+	/**
+	 *  Create SavePoint
+	 */
+	public void createSavePoint() {
+		/* Create the savePoint */
+		theSavePoint = new ReportState(theState);
+	}
+
+	/**
+	 *  Restore SavePoint
+	 */
+	public void restoreSavePoint() {
+		/* Restore the savePoint */
+		theState = new ReportState(theSavePoint);
+		
+		/* Apply the state */
+		theState.applyState();		
+	}
+
 	/* Lock/Unlock the selection */
 	public void setLockDown() {
-		boolean isDate    = ((theReport == ReportType.INSTANT) ||
-				             (theReport == ReportType.MARKET));
-		boolean isNull    = (theReport == null);
+		ReportType myType = theState.getType();
+		
+		boolean isDate    = ((myType == ReportType.INSTANT) ||
+				             (myType == ReportType.MARKET));
+		boolean isNull    = (myType == null);
 		boolean isYear    = (!isNull && !isDate);
 		
 		theDateBox.setEnabled(isDate);
@@ -246,7 +265,6 @@ public class ReportSelect implements	ActionListener,
 	
 	/* actionPerformed listener event */
 	public void actionPerformed(ActionEvent evt) {
-
 		/* If this event relates to the Print button */
 		if (evt.getSource() == (Object)thePrintButton) {
 			/* Pass command to the table */
@@ -256,8 +274,9 @@ public class ReportSelect implements	ActionListener,
 	
 	/* ItemStateChanged listener event */
 	public void itemStateChanged(ItemEvent evt) {
-		String                myName;
-		boolean               bChange = false;
+		String      myName;
+		ReportType	myType	= null;
+		boolean   	bChange	= false;
 
 		/* Ignore selection if refreshing data */
 		if (refreshingData) return;
@@ -267,7 +286,7 @@ public class ReportSelect implements	ActionListener,
 			myName = (String)evt.getItem();
 			if (evt.getStateChange() == ItemEvent.SELECTED) {
 				/* Select the new year */
-				theYear = theYears.searchFor(myName);
+				theState.setYear(theYears.searchFor(myName));
 				bChange = true;
 			}
 		}
@@ -278,17 +297,20 @@ public class ReportSelect implements	ActionListener,
 			if (evt.getStateChange() == ItemEvent.SELECTED) {
 				/* Determine the new report */
 				bChange = true;
-				if (myName == Assets)	      	theReport = ReportType.ASSET;
-				else if (myName == IncomeExp) 	theReport = ReportType.INCOME;
-				else if (myName == Transaction)	theReport = ReportType.TRANSACTION;
-				else if (myName == Taxation)  	theReport = ReportType.TAX;
-				else if (myName == Instant)   	theReport = ReportType.INSTANT;
-				else if (myName == Market)    	theReport = ReportType.MARKET;
+				if (myName == Assets)	      	myType = ReportType.ASSET;
+				else if (myName == IncomeExp) 	myType = ReportType.INCOME;
+				else if (myName == Transaction)	myType = ReportType.TRANSACTION;
+				else if (myName == Taxation)  	myType = ReportType.TAX;
+				else if (myName == Instant)   	myType = ReportType.INSTANT;
+				else if (myName == Market)    	myType = ReportType.MARKET;
 				else bChange = false;
+				
+				/* Update state if we have a change */
+				if (bChange) theState.setType(myType);
 			}
 		}
 		
-		/* If we have a change, alert the table */
+		/* If we have a change, notify the main program */
 		if (bChange) { theParent.notifySelection(this); }
 	}
 	
@@ -301,12 +323,87 @@ public class ReportSelect implements	ActionListener,
 		
 		/* If this event relates to the start box */
 		if (evt.getSource() == (Object)theModel) {
-			theRepDate = new Date(theModel.getDate());
+			/* Adjust the date according to the model */
+			theState.setDate(theModel);
 			bChange    = true;
 		}			
 				
 		/* If we have a change, notify the main program */
 		if (bChange) { theParent.notifySelection(this); }
+	}
+	
+	/* SavePoint values */
+	private class ReportState {
+		/* Members */
+		private Date				theDate		= null;
+		private TaxYear	 			theYear		= null;
+		private ReportType			theType		= null;
+		
+		/* Access methods */
+		private Date 		getDate() 	{ return theDate; }
+		private TaxYear 	getYear() 	{ return theYear; }
+		private ReportType 	getType() 	{ return theType; }
+
+		/**
+		 * Constructor
+		 */
+		private ReportState() {
+			theDate = new Date();
+			theYear = null;
+			theType = ReportType.INSTANT;
+		}
+		
+		/**
+		 * Constructor
+		 * @param pState state to copy from
+		 */
+		private ReportState(ReportState pState) {
+			theDate = new Date(pState.getDate());
+			theYear = pState.getYear();
+			theType	= pState.getType();
+		}
+		
+		/**
+		 * Set new Date
+		 * @param pModel the Spinner with the new date 
+		 */
+		private void setDate(SpinnerDateModel pModel) {
+			/* Adjust the date */
+			theDate = new Date(theModel.getDate());
+		}
+		
+		/**
+		 * Set new Tax Year
+		 * @param pYear the new Tax Year 
+		 */
+		private void setYear(TaxYear pYear) {
+			/* Set the new year and apply State */
+			theYear = pYear;
+			applyState();
+		}
+		
+		/**
+		 * Set new Report Type
+		 * @param pType the new type 
+		 */
+		private void setType(ReportType pType) {
+			/* Set the new type and apply State */
+			theType = pType;
+			applyState();
+		}
+		
+		/**
+		 *  Apply the State
+		 */
+		private void applyState() {
+			/* Adjust the lock-down */
+			setLockDown();
+			theModel.setValue(theDate.getDate());
+			if (theYear != null)
+				theYearsBox.setSelectedItem(Integer.toString(theYear.getDate().getYear()));
+			else 
+				theYearsBox.setSelectedItem(null);
+		}
 	}
 	
 	/* Report Types */

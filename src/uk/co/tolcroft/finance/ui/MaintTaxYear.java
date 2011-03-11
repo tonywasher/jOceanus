@@ -20,6 +20,8 @@ import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.Number.*;
 
 public class MaintTaxYear implements ActionListener,
@@ -70,6 +72,7 @@ public class MaintTaxYear implements ActionListener,
 	private TaxRegime.List		theTaxRegimes		= null;
 	private View.ViewTaxYear	theTaxView			= null;
 	private DebugEntry			theDebugEntry		= null;
+	private ErrorPanel			theError			= null;
 	private boolean				refreshingData		= false;
 	private boolean				yearsPopulated		= false;
 	private boolean				regimesPopulated	= false;
@@ -81,7 +84,8 @@ public class MaintTaxYear implements ActionListener,
 	public TaxYear	getTaxYear()	{ return theTaxYear; }
 	
 	/* Access the debug entry */
-	protected DebugEntry getDebugEntry()	{ return theDebugEntry; }
+	public DebugEntry 	getDebugEntry()		{ return theDebugEntry; }
+	public DebugManager getDebugManager() 	{ return theParent.getDebugManager(); }
 	
 	/* Constructor */
 	public MaintTaxYear(MaintenanceTab pParent) {
@@ -228,7 +232,15 @@ public class MaintTaxYear implements ActionListener,
 
 		/* Create the Table buttons panel */
 		theSaveButs = new SaveButtons(this);
+        
+        /* Create the debug entry, attach to MaintenanceDebug entry and hide it */
+        DebugManager myDebugMgr	= theView.getDebugMgr();
+        theDebugEntry = myDebugMgr.new DebugEntry("TaxYear");
+        theDebugEntry.addAsChildOf(pParent.getDebugEntry());
 		
+        /* Create the error panel for this view */
+        theError = new ErrorPanel(this);
+        
 		/* Create the buttons panel */
 		theButtons = new JPanel();
 		theButtons.setBorder(javax.swing.BorderFactory
@@ -562,6 +574,7 @@ public class MaintTaxYear implements ActionListener,
                 .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 	.addComponent(theSaveButs.getPanel())
                     .addComponent(theButtons)
+                    .addComponent(theError.getPanel())
                     .addComponent(theSelect)
                     .addComponent(theRegime)
                     .addGroup(myLayout.createSequentialGroup()
@@ -579,6 +592,7 @@ public class MaintTaxYear implements ActionListener,
         myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 		   	.addGroup(myLayout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(theError.getPanel())
                 .addComponent(theSelect)
                 .addContainerGap(10,30)
                 .addComponent(theRegime)
@@ -597,11 +611,6 @@ public class MaintTaxYear implements ActionListener,
                 .addContainerGap()
             	.addComponent(theSaveButs.getPanel()))
             );
-        
-        /* Create the debug entry, attach to MaintenanceDebug entry and hide it */
-        DebugManager myDebugMgr	= theView.getDebugMgr();
-        theDebugEntry = myDebugMgr.new DebugEntry("TaxYear");
-        theDebugEntry.addAsChildOf(pParent.getDebugEntry());
       
         /* Set initial display */
         showTaxYear();
@@ -692,6 +701,32 @@ public class MaintTaxYear implements ActionListener,
 		}
 	}
 		
+	/**
+	 * Lock on error
+	 * @param isError is there an error (True/False)
+	 */
+	public void lockOnError(boolean isError) {
+		/* Hide selection panel */
+		theSelect.setVisible(!isError);
+
+		/* Lock regime areas */
+		theRegime.setEnabled(!isError);
+
+		/* Lock bands areas */
+		theAllows.setEnabled(!isError);
+		theLimits.setEnabled(!isError);
+		theBands.setEnabled(!isError);
+
+		/* Lock rates areas */
+		theStdRates.setEnabled(!isError);
+		theXtraRates.setEnabled(!isError);
+		theCapRates.setEnabled(!isError);
+
+		/* Lock row/tab buttons area */
+		theButtons.setEnabled(!isError);
+		theSaveButs.getPanel().setEnabled(!isError);
+	}
+	
 	/* refreshData */
 	public void refreshData() {
 		DataSet		myData;
@@ -1333,6 +1368,7 @@ public class MaintTaxYear implements ActionListener,
 				/* Notify changes */
 				notifyChanges();
 			}
+			return;
 		}
 		
 		/* If this event relates to the undo button */
@@ -1345,29 +1381,47 @@ public class MaintTaxYear implements ActionListener,
 		/* Push history */
 		theTaxYear.pushHistory();
 		
-		/* If this event relates to the update-able fields */
-		if ((evt.getSource() == (Object)theAllowance)  		||
-			(evt.getSource() == (Object)theLoAgeAllow) 		||
-			(evt.getSource() == (Object)theHiAgeAllow) 		||
-			(evt.getSource() == (Object)theRental)     		||
-			(evt.getSource() == (Object)theCapitalAllow)	||
-			(evt.getSource() == (Object)theAgeAllowLimit)	||
-			(evt.getSource() == (Object)theAddAllowLimit)	||
-			(evt.getSource() == (Object)theAddIncomeBndry)	||
-		    (evt.getSource() == (Object)theLoTaxBand)  		||
-		    (evt.getSource() == (Object)theBasicTaxBand)	||
-		    (evt.getSource() == (Object)theLoTaxRate)  		||
-		    (evt.getSource() == (Object)theBasicTaxRate)	||
-			(evt.getSource() == (Object)theHiTaxRate)  		||
-		    (evt.getSource() == (Object)theIntTaxRate) 		||
-		    (evt.getSource() == (Object)theDivTaxRate) 		||
-			(evt.getSource() == (Object)theHiDivTaxRate)	||
-		    (evt.getSource() == (Object)theCapTaxRate) 		||
-			(evt.getSource() == (Object)theHiCapTaxRate)	||
-		    (evt.getSource() == (Object)theAddTaxRate) 		||
-			(evt.getSource() == (Object)theAddDivTaxRate)) {
-			/* Update the text */
-			updateText();
+		/* Protect against Exceptions */
+		try {
+			/* If this event relates to the update-able fields */
+			if ((evt.getSource() == (Object)theAllowance)  		||
+				(evt.getSource() == (Object)theLoAgeAllow) 		||
+				(evt.getSource() == (Object)theHiAgeAllow) 		||
+				(evt.getSource() == (Object)theRental)     		||
+				(evt.getSource() == (Object)theCapitalAllow)	||
+				(evt.getSource() == (Object)theAgeAllowLimit)	||
+				(evt.getSource() == (Object)theAddAllowLimit)	||
+				(evt.getSource() == (Object)theAddIncomeBndry)	||
+				(evt.getSource() == (Object)theLoTaxBand)  		||
+				(evt.getSource() == (Object)theBasicTaxBand)	||
+				(evt.getSource() == (Object)theLoTaxRate)  		||
+				(evt.getSource() == (Object)theBasicTaxRate)	||
+				(evt.getSource() == (Object)theHiTaxRate)  		||
+				(evt.getSource() == (Object)theIntTaxRate) 		||
+				(evt.getSource() == (Object)theDivTaxRate) 		||
+				(evt.getSource() == (Object)theHiDivTaxRate)	||
+				(evt.getSource() == (Object)theCapTaxRate) 		||
+				(evt.getSource() == (Object)theHiCapTaxRate)	||
+				(evt.getSource() == (Object)theAddTaxRate) 		||
+				(evt.getSource() == (Object)theAddDivTaxRate)) {
+				/* Update the text */
+				updateText();
+			}
+		}
+		
+		/* Handle Exceptions */
+		catch (Throwable e) {
+			/* Reset values */
+			theTaxYear.popHistory();
+			theTaxYear.pushHistory();
+			
+			/* Build the error */
+			Exception myError = new Exception(ExceptionClass.DATA,
+									          "Failed to update field",
+									          e);
+			
+			/* Show the error */
+			theError.setError(myError);
 		}
 		
 		/* Check for changes */

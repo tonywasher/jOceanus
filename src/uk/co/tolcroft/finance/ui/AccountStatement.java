@@ -25,6 +25,8 @@ import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.*;
 
 public class AccountStatement extends FinanceTableModel<Statement.Line> implements ActionListener {
@@ -39,6 +41,7 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 	private Account.List			theAccounts			= null;
 	private TransactionType.List	theTransTypes		= null;
 	private JPanel					thePanel	 		= null;
+	private JScrollPane				theScroll			= null;
 	private AccountStatement		theTable	 		= this;
 	private statementMouse			theMouse	 		= null;
 	private AccountTab				theParent    		= null;
@@ -61,6 +64,7 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 	private Editor.IntegerCell 		theIntegerEditor   	= null;
 	private Editor.ComboBoxCell 	theComboEditor    	= null;
 	private DebugEntry				theDebugEntry		= null;
+	private ErrorPanel				theError			= null;
 	private boolean					hasBalance		  	= true;
 	private boolean					hasDilution		  	= true;
 	private boolean					hasTaxCredit	  	= true;
@@ -80,7 +84,7 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 	public JPanel  getPanel()			{ return thePanel; }
 
 	/* Access the debug entry */
-	protected DebugEntry getDebugEntry()	{ return theDebugEntry; }
+	public DebugEntry getDebugEntry()	{ return theDebugEntry; }
 	
 	/* Table headers */
 	private static final String titleDate      = "Date";
@@ -107,7 +111,10 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 	private static final int COLUMN_YEARS	 	= 9;
 	private static final int NUM_COLUMNS	 	= 10;
 				
-	/* Constructor */
+	/**
+	 * Constructor for Statement Window
+	 * @param pParent the parent window
+	 */
 	public AccountStatement(AccountTab pParent) {
 		/* Initialise superclass */
 		super(pParent.getTopWindow());
@@ -115,7 +122,6 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		/* Declare variables */
 		TableColumnModel myColModel;
 		TableColumn		 myCol;
-		JScrollPane		 myScroll;
 		GroupLayout		 myLayout;
 		
 		/* Store passed details */
@@ -211,9 +217,17 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		theRowButs   = new EditButtons(this, InsertStyle.CREDITDEBIT);
 		
 		/* Create a new Scroll Pane and add this table to it */
-		myScroll     = new JScrollPane();
-		myScroll.setViewportView(this);
-		
+		theScroll     = new JScrollPane();
+		theScroll.setViewportView(this);
+		        
+        /* Create the debug entry, attach to AccountDebug entry and hide it */
+        DebugManager myDebugMgr	= theView.getDebugMgr();
+        theDebugEntry = myDebugMgr.new DebugEntry("Statement");
+        theDebugEntry.addAsChildOf(pParent.getDebugEntry());
+ 
+        /* Create the error panel for this view */
+        theError = new ErrorPanel(this);
+        
 		/* Create the panel */
 		thePanel = new JPanel();
 
@@ -227,53 +241,87 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 	        	.addGroup(myLayout.createSequentialGroup()
 	        		.addContainerGap()
 	                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
+		                .addComponent(theError.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         	        	.addGroup(myLayout.createSequentialGroup()
                                 .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                                 		.addComponent(theSelect.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         	        			.addContainerGap()
                                 .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                                 		.addComponent(theStateBox.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-	                    .addComponent(myScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
+	                    .addComponent(theScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
 	                    .addComponent(theRowButs.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 	                .addContainerGap())
 	    );
         myLayout.setVerticalGroup(
         	myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	        	.addGroup(GroupLayout.Alignment.TRAILING, myLayout.createSequentialGroup()
+	                .addComponent(theError.getPanel())
        	        	.addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
        	        			.addComponent(theSelect.getPanel())
       	        			.addComponent(theStateBox.getPanel()))
 	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-	                .addComponent(myScroll)
+	                .addComponent(theScroll)
 	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 	                .addComponent(theRowButs.getPanel())
 	                .addContainerGap())
 	    );
-        
-        /* Create the debug entry, attach to AccountDebug entry and hide it */
-        DebugManager myDebugMgr	= theView.getDebugMgr();
-        theDebugEntry = myDebugMgr.new DebugEntry("Statement");
-        theDebugEntry.addAsChildOf(pParent.getDebugEntry());
 	}
 
-	/* Calculate table */
+	/**
+	 * Save changes from the view into the underlying data
+	 */
 	public boolean calculateTable() {
 		/* Reset the balance */
-		if (theStatement != null) 
-			theStatement.resetBalance();
-		
+		if (theStatement != null) {
+			/* Protect against exceptions */
+			try {
+				/* Reset the balances */
+				theStatement.resetBalances();
+			}
+			/* Catch Exceptions */
+			catch (Exception e) {
+				/* Build the error */
+				Exception myError = new Exception(ExceptionClass.DATA,
+										          "Failed to calculate table",
+										          e);
+				
+				/* Show the error */
+				theError.setError(myError);
+			}
+		}
 		/* Return that table refresh is required */
 		return true;
 	}
 	
-	/* saveData */
+	/**
+	 * Save changes from the view into the underlying data
+	 */
 	public void saveData() {
 		if (theStatement != null) {
 			theStatement.applyChanges();
 		}
 	}
 	
-	/* Note that there has been a selection change */
+	/**
+	 * Lock on error
+	 * @param isError is there an error (True/False)
+	 */
+	public void lockOnError(boolean isError) {
+		/* Hide selection panel */
+		theSelect.getPanel().setVisible(!isError);
+		theStateBox.getPanel().setVisible(!isError);
+
+		/* Lock scroll-able area */
+		theScroll.setEnabled(!isError);
+
+		/* Lock row/tab buttons area */
+		theRowButs.getPanel().setEnabled(!isError);
+	}
+	
+	/**
+	 *  Notify table that there has been a change in selection by an underlying control
+	 *  @param obj the underlying control that has changed selection
+	 */
 	public void    notifySelection(Object obj)    {
 		/* If this is a change from the buttons */
 		if (obj == (Object) theRowButs) {
@@ -283,18 +331,40 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		
 		/* else if this is a change from the range */
 		else if (obj == (Object) theSelect) {
-			/* Set the new range */
-			setSelection(theSelect.getRange());
+			/* Protect against exceptions */
+			try {
+				/* Set the new range */
+				setSelection(theSelect.getRange());
+				
+				/* Create SavePoint */
+				theSelect.createSavePoint();
+			}
+			
+			/* Catch Exceptions */
+			catch (Exception e) {
+				/* Build the error */
+				Exception myError = new Exception(ExceptionClass.DATA,
+										          "Failed to change selection",
+										          e);
+				
+				/* Show the error */
+				theError.setError(myError);
+				
+				/* Restore SavePoint */
+				theSelect.restoreSavePoint();
+			}
 		}
 
 		/* else if this is a change from the type */
 		else if (obj == (Object) theStateBox) {
 			/* Reset the account */
-			setSelection(theAccount);
+			try {setSelection(theAccount); } catch (Throwable e) {}
 		}
 	}
 		
-	/* refresh data */
+	/**
+	 * Refresh views/controls after a load/update of underlying data
+	 */
 	public void refreshData() {
 		DataSet myData;
 		
@@ -310,11 +380,17 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		
 		/* Update the possible date range */
 		Date.Range myRange = theView.getRange();
-		theSelect.setRange(myRange);
+		theSelect.setOverallRange(myRange);
+		
+		/* Create SavePoint */
+		theSelect.createSavePoint();
 	}
 	
-	/* Set Selection */
-	public void setSelection(Account pAccount) {
+	/**
+	 * Set Selection to the specified account
+	 * @param pAccount the Account for the extract
+	 */
+	public void setSelection(Account pAccount) throws Exception {
 		theRange     = theSelect.getRange();
 		theDateEditor.setRange(theRange);
 		theAccount   = pAccount;
@@ -337,7 +413,11 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		theStateBox.setLockDown();
 	}
 	
-	/* Set Column to be visible or not */
+	/**
+	 * Set the column to be visible or not
+	 * @param pColumn the column
+	 * @param bVisible should column be visible or not
+	 */
 	private void setVisibleColumn(int pColumn, boolean bVisible) {
 		boolean hideSubsequent = false;
 		
@@ -441,7 +521,9 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		}
 	}
 	
-	/* Set visible columns according to the statement type */
+	/**
+	 * Set visible columns according to the statement type
+	 */
 	public void setColumns() {
 		AccountType myType;
 		
@@ -527,7 +609,9 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		}
 	}
 	
-	/* Note that there has been a list selection change */
+	/**
+	 * Call underlying controls to take notice of changes in view/selection
+	 */
 	public void notifyChanges() {
 		/* Update the date range and the state box */
 		theSelect.setLockDown();
@@ -544,8 +628,11 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		theParent.notifyChanges(); 
 	}
 		
-	/* Set Selection */
-	public void setSelection(Date.Range pRange) {
+	/**
+	 * Set Selection to the specified date range
+	 * @param pRange the Date range for the extract
+	 */
+	public void setSelection(Date.Range pRange) throws Exception {
 		if (theAccount != null) {
 			theStatement = new Statement(theView, theAccount, pRange);
 			theLines     = theStatement.getLines();
@@ -567,13 +654,19 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		theStateBox.setLockDown();
 	}
 		
-	/* Select an explicit period */
+	/**
+	 * Set selection to the period designated by the referenced control
+	 * @param pSource the source control
+	 */
 	public void selectPeriod(DateRange pSource) {
 		/* Adjust the period selection */
 		theSelect.setSelection(pSource);
 	}
 	
-	/* Get field for column */
+	/**
+	 * Obtain the Field id associated with the column
+	 * @param column the column
+	 */
 	public int getFieldForCol(int column) {
 		/* Switch on column */
 		switch (column) {
@@ -590,7 +683,9 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		}
 	}
 		
-	/* Get combo box for cell */
+	/**
+	 * Obtain the correct ComboBox for the given row/column
+	 */
 	public JComboBox getComboBox(int row, int column) {
 		Statement.Line 		myLine;
 		ComboSelect.Item    mySelect;
@@ -613,7 +708,10 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		}
 	}
 		
-	/* action performed listener event */
+	/**
+	 * Perform actions for controls/pop-ups on this table
+	 * @param evt the event
+	 */
 	public void actionPerformed(ActionEvent evt) {
 		String          myCmd;
 		String          tokens[];
@@ -685,7 +783,11 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 		}
 	}
 		
-	/* Check whether this is a valid Object for selection */
+	/**
+	 * Check whether the restoration of the passed object is compatible with the current selection
+	 * @param pItem the current item
+	 * @param pObj the potential object for restoration
+	 */
 	public boolean isValidObj(DataItem 				pItem,
 			  				  DataItem.histObject  	pObj) {
 		Statement.Line 		myLine;
@@ -745,8 +847,11 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 	/* Statement table model */
 	public class StatementModel extends AbstractTableModel {
 		private static final long serialVersionUID = 269477444398236458L;
-			/* get column count */
 
+		/**
+		 * Get the number of display columns
+		 * @return the columns
+		 */
 		public int getColumnCount() {
 			int myCount = NUM_COLUMNS;
 			if (!hasBalance) myCount--;
@@ -756,13 +861,20 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 			return myCount;
 		}
 			
-		/* get row count */
+		/**
+		 * Get the number of rows in the current table
+		 * @return the number of rows
+		 */
 		public int getRowCount() { 
 			return (theLines == null) ? 0
 					                  : theLines.size() + 1;
 		}
 		
-		/* get column name */
+		/**
+		 * Get the name of the column
+		 * @param col the column
+		 * @return the name of the column
+		 */
 		public String getColumnName(int col) {
 			switch (col) {
 				case COLUMN_DATE:  		return titleDate;
@@ -779,7 +891,11 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 			}
 		}
 			
-		/* is get column class */
+		/**
+		 * Get the object class of the column
+		 * @param col the column
+		 * @return the class of the objects associated with the column
+		 */
 		public Class<?> getColumnClass(int col) {				
 			switch (col) {
 				case COLUMN_DESC:  		return String.class;
@@ -789,7 +905,9 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 			}
 		}
 			
-		/* is cell edit-able */
+		/**
+		 * Is the cell at (row, col) editable
+		 */
 		public boolean isCellEditable(int row, int col) {
 			Statement.Line myLine;
 			
@@ -839,7 +957,10 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 			
 		}
 			
-		/* get value At */
+		/**
+		 * Get the value at (row, col)
+		 * @return the object value
+		 */
 		public Object getValueAt(int row, int col) {
 			Statement.Line 	myLine;
 			Statement.Line	myNext;
@@ -924,7 +1045,10 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 			return o;
 		}
 		
-		/* set value At */
+		/**
+		 * Set the value at (row, col)
+		 * @param obj the object value to set
+		 */
 		public void setValueAt(Object obj, int row, int col) {
 			Statement.Line myLine;
 			
@@ -940,12 +1064,15 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 				switch (col) {
 					case COLUMN_DATE:  
 						myLine.setDate((Date)obj);    
+						calculateTable();
 						break;
 					case COLUMN_DESC:  
 						myLine.setDescription((String)obj);            
+						calculateTable();
 						break;
 					case COLUMN_TRANTYP:  
 						myLine.setTransType(theTransTypes.searchFor((String)obj));    
+						calculateTable();
 						break;
 					case COLUMN_CREDIT:
 					case COLUMN_DEBIT:
@@ -953,6 +1080,7 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 							myLine.setUnits((Units)obj);
 						else
 							myLine.setAmount((Money)obj); 
+						calculateTable();
 						break;
 					case COLUMN_PARTNER:
 						myLine.setPartner(theAccounts.searchFor((String)obj));    
@@ -974,8 +1102,15 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 				/* Reset values */
 				myLine.popHistory();
 				myLine.pushHistory();
+								
+				/* Build the error */
+				Exception myError = new Exception(ExceptionClass.DATA,
+										          "Failed to update field at ("
+										          + row + "," + col +")",
+										          e);
 				
-				/* TODO report the error */
+				/* Show the error */
+				theError.setError(myError);
 			}
 			
 			/* Check for changes */
@@ -991,7 +1126,6 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 					case COLUMN_DESC:
 					case COLUMN_TRANTYP: 
 						myLine.reSort();
-						calculateTable();
 						fireTableDataChanged();
 						row = theLines.indexOf(myLine);
 						selectRow(row);
@@ -1000,7 +1134,6 @@ public class AccountStatement extends FinanceTableModel<Statement.Line> implemen
 					/* Recalculate balance if required */	
 					case COLUMN_CREDIT:
 					case COLUMN_DEBIT:
-						calculateTable();
 						fireTableDataChanged();
 						break;
 						

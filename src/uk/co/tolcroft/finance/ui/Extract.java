@@ -22,6 +22,8 @@ import uk.co.tolcroft.finance.ui.controls.EditButtons.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.*;
 
@@ -37,6 +39,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 	private TransactionType.List	theTransTypes		= null;
 	private MainTab					theParent	 		= null;
 	private JPanel					thePanel	 		= null;
+	private JScrollPane				theScroll			= null;
 	private JComboBox				theTranBox			= null;
 	private Extract				 	theTable	 		= this;
 	private extractMouse			theMouse	 		= null;
@@ -44,7 +47,8 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 	private DateRange 				theSelect	 		= null;
 	private EditButtons    			theRowButs   		= null;
 	private SaveButtons  			theTabButs   		= null;
-	private DebugEntry				theDebugEntry		= null;
+	private DebugEntry				theDebugExtract		= null;
+	private ErrorPanel				theError			= null;
 	private Renderer.DateCell 		theDateRenderer   	= null;
 	private Editor.DateCell 		theDateEditor     	= null;
 	private Renderer.MoneyCell 		theMoneyRenderer  	= null;
@@ -66,7 +70,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 	public boolean 	hasHeader()			{ return false; }
 	
 	/* Access the debug entry */
-	protected DebugEntry getDebugEntry()	{ return theDebugEntry; }
+	public DebugEntry getDebugEntry()	{ return theDebugExtract; }
 	
 	/* Table headers */
 	private static final String titleDate    = "Date";
@@ -93,7 +97,10 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 	private static final int COLUMN_YEARS	 = 9;
 	private static final int NUM_COLUMNS	 = 10;
 		
-	/* Constructor */
+	/**
+	 * Constructor for Extract Window
+	 * @param pParent the parent window
+	 */
 	public Extract(MainTab pParent) {
 		/* Initialise superclass */
 		super(pParent);
@@ -101,7 +108,6 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		/* Declare variables */
 		TableColumnModel    myColModel;
 		TableColumn			myCol;
-		JScrollPane			myScroll;
 		GroupLayout			myLayout;
 		DebugEntry			mySection;
 			
@@ -112,8 +118,8 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		/* Create the top level debug entry for this view  */
 		DebugManager myDebugMgr = theView.getDebugMgr();
 		mySection = myDebugMgr.getViews();
-        theDebugEntry = myDebugMgr.new DebugEntry("Extract");
-        theDebugEntry.addAsChildOf(mySection);
+        theDebugExtract = myDebugMgr.new DebugEntry("Extract");
+        theDebugExtract.addAsChildOf(mySection);
 		
 		/* Create the model and declare it to our superclass */
 		theModel  = new ExtractModel();
@@ -207,9 +213,12 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		theTabButs   = new SaveButtons(this);
 			
 		/* Create a new Scroll Pane and add this table to it */
-		myScroll     = new JScrollPane();
-		myScroll.setViewportView(this);
+		theScroll     = new JScrollPane();
+		theScroll.setViewportView(this);
 			
+        /* Create the error panel for this view */
+        theError = new ErrorPanel(this);
+        
 		/* Create the panel */
 		thePanel = new JPanel();
 
@@ -223,8 +232,9 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 	        	.addGroup(myLayout.createSequentialGroup()
 	        		.addContainerGap()
 	                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, true)
+		                .addComponent(theError.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                	.addComponent(theSelect.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-	                    .addComponent(myScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
+	                    .addComponent(theScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
 	                    .addComponent(theRowButs.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                    .addComponent(theTabButs.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 	                .addContainerGap())
@@ -232,14 +242,17 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
         myLayout.setVerticalGroup(
         	myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	        	.addGroup(GroupLayout.Alignment.TRAILING, myLayout.createSequentialGroup()
+	        		.addComponent(theError.getPanel())
 	        		.addComponent(theSelect.getPanel())
-	                .addComponent(myScroll)
+	                .addComponent(theScroll)
 	                .addComponent(theRowButs.getPanel())
 	                .addComponent(theTabButs.getPanel()))
 	    );
 	}
 		
-	/* saveData */
+	/**
+	 * Save changes from the view into the underlying data
+	 */
 	public void saveData() {
 		if (theExtract != null) {
 			super.validateAll();
@@ -247,7 +260,26 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		}
 	}
 		
-	/* Note that there has been a selection change */
+	/**
+	 * Lock on error
+	 * @param isError is there an error (True/False)
+	 */
+	public void lockOnError(boolean isError) {
+		/* Hide selection panel */
+		theSelect.getPanel().setVisible(!isError);
+
+		/* Lock scroll-able area */
+		theScroll.setEnabled(!isError);
+
+		/* Lock row/tab buttons area */
+		theRowButs.getPanel().setEnabled(!isError);
+		theTabButs.getPanel().setEnabled(!isError);
+	}
+	
+	/**
+	 *  Notify table that there has been a change in selection by an underlying control
+	 *  @param obj the underlying control that has changed selection
+	 */
 	public void    notifySelection(Object obj)    {
 		/* If this is a change from the buttons */
 		if (obj == (Object) theRowButs) {
@@ -257,13 +289,35 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		
 		/* else if this is a change from the range */
 		else if (obj == (Object) theSelect) {
-			/* Set the new range */
-			setSelection(theSelect.getRange());
+			/* Protect against exceptions */
+			try {
+				/* Set the new range */
+				setSelection(theSelect.getRange());
+				
+				/* Create SavePoint */
+				theSelect.createSavePoint();
+			}
+			
+			/* Catch Exceptions */
+			catch (Exception e) {
+				/* Build the error */
+				Exception myError = new Exception(ExceptionClass.DATA,
+										          "Failed to change selection",
+										          e);
+				
+				/* Show the error */
+				theError.setError(myError);
+				
+				/* Restore SavePoint */
+				theSelect.restoreSavePoint();
+			}
 		}
 	}
 		
-	/* refresh data */
-	public void refreshData() {
+	/**
+	 * Refresh views/controls after a load/update of underlying data
+	 */
+	public void refreshData() throws Exception {
 		DataSet 		myData;
 		TransactionType	myType;
 		
@@ -301,12 +355,17 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		
 		/* Access range */
 		Date.Range myRange = theView.getRange();
-		theSelect.setRange(myRange);
+		theSelect.setOverallRange(myRange);
 		theRange = theSelect.getRange();
 		setSelection(theRange);
+		
+		/* Create SavePoint */
+		theSelect.createSavePoint();
 	}
 	
-	/* Note that there has been a list selection change */
+	/**
+	 * Call underlying controls to take notice of changes in view/selection
+	 */
 	public void notifyChanges() {
 		/* Update the row buttons */
 		theRowButs.setLockDown();
@@ -323,8 +382,11 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		theParent.setVisibleTabs();
 	}
 		
-	/* Set Selection */
-	public void setSelection(Date.Range pRange) {
+	/**
+	 * Set Selection to the specified date range
+	 * @param pRange the Date range for the extract
+	 */
+	public void setSelection(Date.Range pRange) throws Exception {
 		theRange   = pRange;
 		if (theRange != null) {
 			theDateEditor.setRange(pRange);
@@ -336,7 +398,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 			theEvents  = null;				
 		}
 		setList(theEvents);
-		theDebugEntry.setObject(theExtract);
+		theDebugExtract.setObject(theExtract);
 		theModel.fireTableDataChanged();
 		theRowButs.setLockDown();
 		theTabButs.setLockDown();
@@ -344,16 +406,39 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		theParent.setVisibleTabs();
 	}
 		
-	/* Select an explicit period */
+	/**
+	 * Set selection to the period designated by the referenced control
+	 * @param pSource the source control
+	 */
 	public void selectPeriod(DateRange pSource) {
-		/* Adjust the period selection */
-		theSelect.setSelection(pSource);
+		/* Protect against exceptions */
+		try {
+			/* Adjust the period selection (this will not call back) */
+			theSelect.setSelection(pSource);
 		
-		/* Explicitly redraw the table */
-		setSelection(theSelect.getRange());
+			/* Utilise the selection */
+			setSelection(theSelect.getRange());
+		}
+		
+		/* Catch exceptions */
+		catch (Exception e) {
+			/* Build the error */
+			Exception myError = new Exception(ExceptionClass.DATA,
+									          "Failed to select Period",
+									          e);
+			
+			/* Show the error */
+			theError.setError(myError);
+			
+			/* Restore the original selection */
+			theSelect.restoreSavePoint();
+		}
 	}
 	
-	/* Get field for column */
+	/**
+	 * Obtain the Field id associated with the column
+	 * @param column the column
+	 */
 	public int getFieldForCol(int column) {
 		/* Switch on column */
 		switch (column) {
@@ -371,7 +456,9 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		}
 	}
 		
-	/* Get combo box for cell */
+	/**
+	 * Obtain the correct ComboBox for the given row/column
+	 */
 	public JComboBox getComboBox(int row, int column) {
 		Event myEvent;
 		
@@ -393,7 +480,11 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		}
 	}
 		
-	/* Check whether this is a valid Object for selection */
+	/**
+	 * Check whether the restoration of the passed object is compatible with the current selection
+	 * @param pItem the current item
+	 * @param pObj the potential object for restoration
+	 */
 	public boolean isValidObj(DataItem 				pItem,
 							  DataItem.histObject  	pObj) {
 		Event.Values myEvent = (Event.Values) pObj;
@@ -416,7 +507,10 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		return true;
 	}
 		
-	/* action performed listener event */
+	/**
+	 * Perform actions for controls/pop-ups on this table
+	 * @param evt the event
+	 */
 	public void actionPerformed(ActionEvent evt) {
 		String      myCmd;
 		String      tokens[];
@@ -439,7 +533,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 			/* Access the correct account */
 			myAccount = theView.getData().getAccounts().searchFor(myName);
 		
-			/* Handle commands */
+			/* Switch view */
 			theParent.selectAccount(myAccount, theSelect);
 		}
 		
@@ -448,7 +542,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 			/* Access the correct account */
 			myAccount = theView.getData().getAccounts().searchFor(myName);
 		
-			/* Handle commands */
+			/* Switch view */
 			theParent.selectAccountMaint(myAccount);
 		}
 		
@@ -512,16 +606,27 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 	/* Extract table model */
 	public class ExtractModel extends AbstractTableModel {
 		private static final long serialVersionUID = 7997087757206121152L;
-			/* get column count */
+		
+		/**
+		 * Get the number of display columns
+		 * @return the columns
+		 */
 		public int getColumnCount() { return NUM_COLUMNS; }
 		
-		/* get row count */
+		/**
+		 * Get the number of rows in the current table
+		 * @return the number of rows
+		 */
 		public int getRowCount() { 
 			return (theEvents == null) ? 0
 					                   : theEvents.size();
 		}
 		
-		/* get column name */
+		/**
+		 * Get the name of the column
+		 * @param col the column
+		 * @return the name of the column
+		 */
 		public String getColumnName(int col) {
 			switch (col) {
 				case COLUMN_DATE:  		return titleDate;
@@ -538,7 +643,11 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 			}
 		}
 		
-		/* is get column class */
+		/**
+		 * Get the object class of the column
+		 * @param col the column
+		 * @return the class of the objects associated with the column
+		 */
 		public Class<?> getColumnClass(int col) {				
 			switch (col) {
 				case COLUMN_DESC:  		return String.class;
@@ -549,7 +658,9 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 			}
 		}
 			
-		/* is cell edit-able */
+		/**
+		 * Is the cell at (row, col) editable
+		 */
 		public boolean isCellEditable(int row, int col) {
 			Event myEvent;
 			
@@ -593,7 +704,10 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 			}
 		}
 			
-		/* get value At */
+		/**
+		 * Get the value at (row, col)
+		 * @return the object value
+		 */
 		public Object getValueAt(int row, int col) {
 			Event 	myEvent;
 			Object  o;
@@ -651,7 +765,10 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 			return o;
 		}
 			
-		/* set value At */
+		/**
+		 * Set the value at (row, col)
+		 * @param obj the object value to set
+		 */
 		public void setValueAt(Object obj, int row, int col) {
 			Event myEvent;
 			
@@ -661,7 +778,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 			/* Push history */
 			myEvent.pushHistory();
 
-			/* Protect against Exceptions*/
+			/* Protect against Exceptions */
 			try {
 				/* Store the appropriate value */
 				switch (col) {
@@ -704,7 +821,14 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 				myEvent.popHistory();
 				myEvent.pushHistory();
 				
-				/* TODO report the error */
+				/* Build the error */
+				Exception myError = new Exception(ExceptionClass.DATA,
+										          "Failed to update field at ("
+										          + row + "," + col +")",
+										          e);
+				
+				/* Show the error */
+				theError.setError(myError);
 			}
 			
 			/* Check for changes */

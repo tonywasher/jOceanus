@@ -51,6 +51,7 @@ public class MetaAnalysis {
 		AnalysisBucket							myCurr;
 		AnalysisState							myState;
 		AssetAccount							myAsset;
+		MoneyAccount							myMoney;
 		DataSet									myData;
 		Account.List							myAccounts;
 
@@ -76,20 +77,32 @@ public class MetaAnalysis {
 		
 		/* Loop through the buckets */
 		while ((myCurr = myIterator.next()) != null) {
-			/* Ignore non-Assets */
-			if (myCurr.getBucketType() != BucketType.ASSETDETAIL) continue;
+			/* Switch on bucket Type*/
+			switch (myCurr.getBucketType()) {
+				/* Money */
+				case MONEYDETAIL:
+					/* Access the Money account */
+					myMoney = (MoneyAccount)myCurr;
 			
-			/* Access the Asset account */
-			myAsset = (AssetAccount)myCurr;
+					/* Record the Rate */
+					myMoney.recordRate(theDate);
+					break;
+
+				/* Assets */
+				case ASSETDETAIL:
+					/* Access the Asset account */
+					myAsset = (AssetAccount)myCurr;
 			
-			/* Value the asset and calculate */
-			myAsset.valueAsset(theDate);
+					/* Value the asset and calculate */
+					myAsset.valueAsset(theDate);
 			
-			/* Process the market movement */
-			processMarketMovement(myAsset);
+					/* Process the market movement */
+					processMarketMovement(myAsset);
 			
-			/* Calculate the profit */
-			myAsset.calculateProfit();
+					/* Calculate the profit */
+					myAsset.calculateProfit();
+					break;
+			}
 		}
 		
 		/* Set the state to valued */

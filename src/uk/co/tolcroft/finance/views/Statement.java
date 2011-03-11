@@ -2,6 +2,7 @@ package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.EncryptedPair.*;
 import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.finance.views.Analysis.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.*;
@@ -13,12 +14,13 @@ public class Statement implements htmlDumpable {
 	/* Members */
 	private View      		theView      	= null;
 	private Account      	theAccount      = null;
+	private ActDetail		theBucket		= null;
 	private Date.Range      theRange        = null;
 	private Money    		theStartBalance = null;
 	private Money    		theEndBalance   = null;
 	private Units    		theStartUnits   = null;
 	private Units    		theEndUnits     = null;
-	private AssetAnalysis	theAnalysis		= null;
+	private EventAnalysis	theAnalysis		= null;
 	private List            theLines        = null;
 
 	/* Encrypted access */
@@ -44,166 +46,79 @@ public class Statement implements htmlDumpable {
  	/* Constructor */
 	public Statement(View		pView,
 					 Account 	pAccount,
-			         Date.Range pRange) {
-		DataSet							myData;
-		Event              				myCurr;
-		Event.List         				myBase;
-		Line               				myLine;
-		int                				myResult;
-		DataList<Event>.ListIterator	myIterator;
-		AssetAnalysis.Bucket			myBucket;
-		AssetAnalysis.AssetBucket		myAssetBucket;
-
+			         Date.Range pRange) throws Exception {
 		/* Create a copy of the account (plus surrounding list) */
 		theView	   = pView;
 		theAccount = pAccount;
 		theRange   = pRange;
 		theLines   = new List();
 		
-		/* Create the list of statement lines */
-		theLines        = new List();
-		if (hasBalance()) theStartBalance = new Money(0);
-		if (hasUnits())	  theStartUnits   = new Units(0);
-		
-		/* Access the underlying data and iterator */
-		myData 		= theView.getData();
-		myBase 		= myData.getEvents();
-		myIterator 	= myBase.listIterator(true);
-
-		/* Create an asset analysis for this account */
-		theAnalysis = new AssetAnalysis(myData, pAccount);
-		
-		/* Loop through the Events extracting relevant elements */
-		while ((myCurr = myIterator.next()) != null) {
-			/* Check the range */
-			myResult = pRange.compareTo(myCurr.getDate());
-			
-			/* Handle past limit */
-			if (myResult == -1) break;
-			
-			/* Ignore items that do not relate to this account */
-			if (!myCurr.relatesTo(pAccount)) continue;
-			
-			/* If we are too early for the statement */
-			if (myResult == 1) {
-				/* Process the event and continue */
-				theAnalysis.processEvent(myCurr);
-				continue;
-			}
-				
-			/* Add a statement line to the statement */
-			myLine = new Line(theLines, myCurr, theAccount);
-			myLine.addToList();
-		}
-			 
-		/* Access the account bucket */
-		myBucket = theAnalysis.getAccountBucket();
-		
-		/* Access the starting balance */
-		if (hasBalance()) theStartBalance = myBucket.getAmount();
-		
-		/* If this has units */
-		if (hasUnits()) {
-			/* Access as an asset bucket */
-			myAssetBucket = (AssetAnalysis.AssetBucket) myBucket;
-			theStartUnits = myAssetBucket.getUnits();
-		}
-		
-		/* reset the balance */
-		resetBalance();
+		/* Create an analysis for this statement */
+		theAnalysis = new EventAnalysis(theView.getDebugMgr(),
+										theView.getData(), 
+										this);
 	}
-	
- 	/* recalculate balance */
-	public void resetBalance() {
-		Line            			myLine;
-		Event.List					myList;
-		Event						myEvent;
-		DataSet						myData;
-		Money    					myInitAmount = null;
-		Units						myInitUnits  = null;
-		Money    					myAmount 	 = null;
-		Units						myUnits   	 = null;
-		AssetAnalysis.Bucket		myBucket;
-		AssetAnalysis.AssetBucket	myAssetBucket = null;
-		DataList<Line>.ListIterator	myIterator;
 
-		/* Access the iterator */
-		myIterator = theLines.listIterator();
+	/**
+	 *  Set the ending balances for the statement
+	 *  @param pAccount the Account Bucket
+	 */
+	protected void setStartBalances(ActDetail pAccount) {
+		/* Record the bucket and access bucket type */
+		theBucket 	= pAccount;
 		
-		/* If we don't have balances just return */
-		if (!hasBalance() && !hasUnits()) return;
-		
-		/* Create a new Event list */
-		myData = theView.getData();
-		myList = new Event.List(myData, ListStyle.VIEW);
-	
-		/* Access the bucket */
-		myBucket = theAnalysis.getAccountBucket();
-		
-		/* If we have a balance */
+		/* If the bucket has a balance */
 		if (hasBalance()) {
-			/* Access the amount and save its initial value */
-			myAmount		= myBucket.getAmount();
-			myInitAmount 	= new Money(myAmount);
+			/* Set starting balance */
+			theStartBalance = new Money(((ValueAccount)theBucket).getValue());
 		}
 		
-		/* If we have units */
+		/* If the bucket has units */
 		if (hasUnits()) {
-			/* Access as an asset bucket */
-			myAssetBucket = (AssetAnalysis.AssetBucket) myBucket;
-
-			/* Access the units and save its initial value */
-			myUnits 	= myAssetBucket.getUnits();
-			myInitUnits	= new Units(myUnits);
-		}
-		
-		/* Loop through the lines adjusting the balance */
-		while ((myLine = myIterator.next()) != null) {
-			/* Skip deleted lines */
-			if (myLine.isDeleted()) continue;
-			
-			/* Create an event from this line */
-			myEvent = new Event(myList, myLine);
-
-			/* Process the event */
-			theAnalysis.processEvent(myEvent);
-			
-			/* Take a copy of the balance if required */
-			if (hasBalance()) 
-				myLine.theBalance = new Money(myAmount);
-			
-			/* Take a copy of the units balance if required */
-			if (hasUnits()) 
-				myLine.theBalUnits = new Units(myUnits);
-		}
-	
-		/* If we have balance */
-		if (hasBalance()) {
-			/* Set the end balance and restore the starting balance */
-			theEndBalance = new Money(myAmount);
-			myAmount.setZero();
-			myAmount.addAmount(myInitAmount);
-		}
-		
-		/* If we have units */
-		if (hasUnits()) {
-			/* Set the end balance and restore the starting balance */
-			theEndUnits = new Units(myUnits);
-			myUnits.setZero();
-			myUnits.addUnits(myInitUnits);
+			/* Set starting units */
+			theStartUnits = new Units(((AssetAccount)theBucket).getUnits());
 		}
 	}
 	
-	/* Does the statement have a money balance */
+	/**
+	 *  Set the ending balances for the statement
+	 */
+	protected void setEndBalances() {
+		/* If the bucket has a balance */
+		if (hasBalance()) {
+			/* Set ending balance */
+			theEndBalance = new Money(((ValueAccount)theBucket).getValue());
+		}
+		
+		/* If the bucket has units */
+		if (hasUnits()) {
+			/* Set ending units */
+			theEndUnits = new Units(((AssetAccount)theBucket).getUnits());
+		}
+	}
+	
+	/**
+	 *  Reset the balances
+	 */
+	public void resetBalances() throws Exception {
+		/* Reset the balances */
+		theAnalysis.resetStatementBalance(this);
+	}
+	
+	/**
+	 *  Does the statement have a money balance
+	 *  @return TRUE/FALSE
+	 */
 	public boolean hasBalance()   { 
-		return ((!theAccount.isExternal()) &&
-				(!theAccount.isPriced()) &&
-				(!theAccount.isBenefit()));		
+		return (theBucket.getBucketType() != BucketType.EXTERNALDETAIL);		
 	}
 	
-	/* Does the statement have units */
+	/**
+	 *  Does the statement have units
+	 *  @return TRUE/FALSE
+	 */
 	public boolean hasUnits()   { 
-		return (theAccount.isPriced());		
+		return (theBucket.getBucketType() == BucketType.ASSETDETAIL);		
 	}
 	
 	/** 
@@ -562,6 +477,23 @@ public class Statement implements htmlDumpable {
 			
 			/* Set validation flag */
 			if (!hasErrors()) setValidEdit();
+		}
+		
+		/**
+		 *  Set Balances
+		 */
+		protected void setBalances() {
+			/* If the bucket has a balance */
+			if (hasBalance()) {
+				/* Set current balance */
+				theBalance = new Money(((ValueAccount)theBucket).getValue());
+			}
+			
+			/* If the bucket has units */
+			if (hasUnits()) {
+				/* Set current units */
+				theBalUnits = new Units(((AssetAccount)theBucket).getUnits());
+			}
 		}
 		
 		/**
