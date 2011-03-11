@@ -112,7 +112,7 @@ public class Account extends DataItem {
 				(!isDeleted()) &&
 				(!isParent)    &&
 				(!hasRates)    &&
-				(!hasPrices)   &&
+				((!hasPrices) || (getState() == DataState.NEW))  &&
 				(!hasPatterns) && 
 				(!isAliasedTo) &&
 				(!isPatterned) && 

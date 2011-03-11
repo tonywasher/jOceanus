@@ -114,8 +114,8 @@ public class MaintAccount implements ActionListener,
 		theAlsLabel	= new JLabel("Alias:");
 		myFirst	 	= new JLabel("FirstEvent:");
 		myLast 	 	= new JLabel("LastEvent:");
-		theFirst 	= new JLabel();
-		theLast  	= new JLabel();
+		theFirst 	= new JLabel("01-01-2000");
+		theLast  	= new JLabel("01-01-2000");
 		myWebSite 	= new JLabel("WebSite:");
 		myCustNo 	= new JLabel("CustomerNo:");
 		myUserId 	= new JLabel("UserId:");
@@ -317,7 +317,7 @@ public class MaintAccount implements ActionListener,
                             .addComponent(theParLabel))
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                            .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addComponent(theDesc, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addGroup(myLayout.createSequentialGroup()
                                	.addComponent(theName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -330,7 +330,7 @@ public class MaintAccount implements ActionListener,
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(theAlsLabel)
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(theAliasBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                                .addComponent(theAliasBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap())
         );
         myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -659,6 +659,9 @@ public class MaintAccount implements ActionListener,
 	private void showAccount() {
 		AccountType 	myType;
 		boolean			isClosed;
+
+		/* Access the type from the selection */
+		myType = theSelect.getType();
 		
 		/* If we have an active account */
 		if (theAccount != null) {
@@ -666,7 +669,6 @@ public class MaintAccount implements ActionListener,
 			refreshingData = true;
 			
 			/* Access details */
-			myType 	 = theAccount.getActType();
 			isClosed = theAccount.isClosed();
 			
 			/* Set the name */
@@ -807,12 +809,12 @@ public class MaintAccount implements ActionListener,
 			/* Set the First Event */
 			theFirst.setText((theAccount.getEarliest() != null)
 								? theAccount.getEarliest().getDate().formatDate(false) 
-								: "");
+								: "N/A");
 			
 			/* Set the First Event */
 			theLast.setText((theAccount.getLatest() != null)
 								? theAccount.getLatest().getDate().formatDate(false) 
-								: "");
+								: "N/A");
 			
 			/* Set text for close button */
 			theClsButton.setText((isClosed) ? "ReOpen" : "Close");
@@ -857,8 +859,8 @@ public class MaintAccount implements ActionListener,
 			theClsButton.setVisible(false);
 			theUndoButton.setEnabled(false);
 			
-			theInsButton.setEnabled(theAccount != null);
-			theDelButton.setVisible(theAccount != null);
+			theInsButton.setEnabled(myType != null);
+			theDelButton.setVisible(false);
 			theDelButton.setText("Recover");
 			
 			/* Hide parent and maturity */
@@ -1099,6 +1101,7 @@ public class MaintAccount implements ActionListener,
 				/* Notify changes */
 				notifyChanges();
 			}
+			return;
 		}
 		
 		/* If this event relates to the undo button */

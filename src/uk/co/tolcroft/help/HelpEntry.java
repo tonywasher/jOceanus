@@ -1,9 +1,42 @@
 package uk.co.tolcroft.help;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.Exception.ExceptionClass;
+
+import java.util.Arrays;
+
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+/**
+ * Help Entry class. This class provides structure to the help system, providing parent child relationships
+ * to implement chapters and also providing maps between the name of a help page and the file that holds the HTML
+ * for the page 
+ */
 public class HelpEntry {
+	/**
+	 * Element name for Help Entry
+	 */
+	protected static final String elementHelp 	= "HelpElement";
+	
+	/**
+	 * Attribute for filename
+	 */
+	protected static final String attrFileName 	= "file";
+	
+	/**
+	 * Attribute for title
+	 */
+	protected static final String attrTitle 	= "title";
+
+	/**
+	 * Attribute for name
+	 */
+	protected static final String attrName 		= "name";
+	
 	/* Members */
 	private String 		theTitle	= null;
 	private String 		theName 	= null;
@@ -26,6 +59,80 @@ public class HelpEntry {
 	 */
 	protected void 		setHelpPage(HelpPage pPage) { thePage = pPage; }
 	
+	/**
+	 * Constructor for an HTML element built from an XML node
+	 * @param pElement the XML element describing the help entry
+	 */
+	protected static HelpEntry[] getHelpEntryArray(Element pElement) throws Exception {
+		Node 		myNode;
+		Element 	myChild;
+		HelpEntry	myEntry;
+		HelpEntry[] myEntries = null;
+		
+		/* Loop through the children */
+		for (myNode  = pElement.getFirstChild();
+		     myNode != null;
+		     myNode  = myNode.getNextSibling()) {
+						
+			/* Skip nonElement nodes */
+			if (myNode.getNodeType() != Node.ELEMENT_NODE) continue;
+				
+			/* Access node as element */
+			myChild = (Element)myNode;
+				
+			/* Create an entry based on this node */
+			myEntry = new HelpEntry(myChild);
+				
+			/* If this is the first child */
+			if (myEntries == null) {
+				/* Allocate a single entry array and store the element */
+				myEntries 		= new HelpEntry[1];
+				myEntries[0] 	= myEntry;
+			}
+				
+			/* else we already have an entry */
+			else {
+				/* Extend the array and add entry as last element */
+				myEntries = Arrays.copyOf(myEntries, myEntries.length+1);
+				myEntries[myEntries.length-1] = myEntry;
+			}
+		}
+		
+		/* Return the entries */
+		return myEntries;
+	}
+
+	/**
+	 * Constructor for an HTML element built from an XML node
+	 * @param pElement the XML element describing the help entry
+	 */
+	public HelpEntry(Element pElement) throws Exception {
+		/* Reject entry if it is not a HelpElement */
+		if (!pElement.getNodeName().equals(elementHelp))
+			throw new Exception(ExceptionClass.DATA,
+								"Invalid element name: " + pElement.getNodeName());
+
+		/* Access the name of the element */
+		theName 	= pElement.getAttribute(attrName);
+		if (theName == null)
+			throw new Exception(ExceptionClass.DATA,
+								"Node has no associated name");
+		
+		/* Access the title of the element and default it if required */
+		theTitle 	= pElement.getAttribute(attrTitle);
+		if (theTitle.equals("")) theTitle = theName;
+		
+		/* Access the filename for the element and default it if required */
+		theFileName = pElement.getAttribute(attrFileName);
+		if (theFileName.equals("")) theFileName = null;
+		
+		/* If the node has sub-elements */
+		if (pElement.hasChildNodes()) {
+			/* Parse the children */
+			theChildren = getHelpEntryArray(pElement);
+		}
+	}
+
 	/**
 	 * Constructor for an HTML leaf element (no children)
 	 * @param pName the name by which this entry is referenced

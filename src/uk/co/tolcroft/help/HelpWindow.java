@@ -28,10 +28,11 @@ public class HelpWindow extends JFrame implements HyperlinkListener,
 	private static final long serialVersionUID = 3908377793788072474L;
 
 	/* Members */
-	private JEditorPane     theEditor   = null;
-	private JTree			theTree		= null;
-	private HelpEntry[]		theEntries	= null;
-	private HelpPage.List	theList		= null;
+	private JEditorPane     		theEditor   = null;
+	private JTree					theTree		= null;
+	private HelpEntry[]				theEntries	= null;
+	private HelpPage.List			theList		= null;
+	private DefaultMutableTreeNode	theRoot		= null;
 	
 	/**
 	 * Constructor
@@ -79,11 +80,11 @@ public class HelpWindow extends JFrame implements HyperlinkListener,
 		theEditor.setDocument(myDoc);
 		
 		/* Get the tree node from the help entries */
-		DefaultMutableTreeNode myNode = HelpEntry.createTree(pModule.getTitle(), 
-															 theEntries);
+		theRoot = HelpEntry.createTree(pModule.getTitle(), 
+									   theEntries);
 		
 		/* Create the JTree object */
-		theTree = new JTree(myNode);
+		theTree = new JTree(theRoot);
 		
 		/* Make sure that we have single selection model */
 		theTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -136,21 +137,45 @@ public class HelpWindow extends JFrame implements HyperlinkListener,
 	
 	/* display the page */
 	private void displayPage(String pName) {
-		/* Access the help page */
-		HelpPage myPage = theList.searchFor(pName);
+		String myInternal = null;
 		
-		/* If we have no page just skip */
-		if (myPage == null) return;
+		/* If the name has a # in it */
+		if (pName.contains("#")) {
+			/* Split on the # */
+			String[] myTokens = pName.split("#");
+			
+			/* Allocate the values */
+			pName = myTokens[0];
+			myInternal = myTokens[1];
+			
+			/* Handle an internal reference */
+			if (pName.length() == 0) pName = null;
+		}
 		
-		/* Set the help text */
-		theEditor.setText(myPage.getHtml());
-		theEditor.setCaretPosition(0);
-		theEditor.requestFocusInWindow();
+		/* If we are switching pages */
+		if (pName != null) {
+			/* Access the help page */
+			HelpPage myPage = theList.searchFor(pName);
 		
-		/* Sort out the tree */
-		TreePath myPath = myPage.getEntry().getTreePath();
-		theTree.setSelectionPath(myPath);
-		theTree.scrollPathToVisible(myPath);
+			/* If we have a page */
+			if (myPage != null) {
+				/* Set the help text */
+				theEditor.setText(myPage.getHtml());
+				theEditor.setCaretPosition(0);
+				theEditor.requestFocusInWindow();
+		
+				/* Sort out the tree */
+				TreePath myPath = myPage.getEntry().getTreePath();
+				theTree.setSelectionPath(myPath);
+				theTree.scrollPathToVisible(myPath);
+			}
+		}
+		
+		/* If we have an internal reference */
+		if (myInternal != null) {
+			/* Scroll to the reference */
+			theEditor.scrollToReference(myInternal);
+		}
 	}
 	
 	/* Handle link movement */
@@ -167,17 +192,8 @@ public class HelpWindow extends JFrame implements HyperlinkListener,
 					URL    url  = e.getURL();
 					String desc = e.getDescription();
 					if (url == null) {
-						/* If this is an internal reference */
-						if (desc.startsWith("#")) {
-							/* Scroll to the reference */
-							theEditor.scrollToReference(desc.substring(1));
-						}
-						
-						/* else it is a reference to a new page */
-						else {
-							/* display the new page */
-							displayPage(desc);
-						}
+						/* display the new page */
+						displayPage(desc);
 					}
 					else theEditor.setPage(e.getURL());
 				}
@@ -191,8 +207,9 @@ public class HelpWindow extends JFrame implements HyperlinkListener,
 		DefaultMutableTreeNode myNode = 
 			(DefaultMutableTreeNode) theTree.getLastSelectedPathComponent();
 		
-		/* Ignore if there is no selection */
-		if (myNode == null) return;
+		/* Ignore if there is no selection or if this is the root */
+		if (myNode == null)    return;
+		if (myNode == theRoot) return;
 		
 		/* Access the Help Entry */
 		HelpEntry myEntry = (HelpEntry)myNode.getUserObject();

@@ -6,7 +6,9 @@ import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
-/* Help Page class */
+/**
+ *  Help Page class. This class maps between the name of a help page and the html that the name represents.
+ */
 public class HelpPage extends DataItem {
 	/* Members */
 	private String		theName		= null;
