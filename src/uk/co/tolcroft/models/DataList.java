@@ -290,13 +290,12 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>
 	 * @param o the item to remove
 	 * @return <code>true/false</code> was the item removed
 	 */
-	@SuppressWarnings("unchecked")
 	public boolean remove(Object o) {
 		/* Remove the underlying item */
 		boolean bSuccess = super.remove(o);
 				
 		/* Access the object */
-		T myItem = (T)o;
+		DataItem myItem = (DataItem)o;
 		
 		/* Declare to the id Manager */
 		if (bSuccess) theMgr.setItem(myItem.getId(), null);
@@ -599,13 +598,13 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>
 	 * Create a new element in the core list from an edit session (to be over-written)
 	 * @param pElement - element to base new item on
 	 */
-	public abstract DataItem addNewItem(DataItem pElement);
+	public abstract T addNewItem(DataItem pElement);
 		
 	/**
 	 * Create a new empty element in the edit list (to be over-written)
 	 * @param isCredit - is the item a credit or debit
 	 */
-	public abstract void addNewItem(boolean isCredit);
+	public abstract T addNewItem(boolean isCredit);
 		
 	/** 
 	 * Apply changes in an edit view back into the core data
@@ -708,18 +707,118 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>
 				case CLEAN:
 					break;
 						
-				/* If this is a deleted or recovered item */
-				case DELETED:
-				case RECOVERED:				
-					/* Mark the item as clean */
-					myCurr.setState(DataState.CLEAN);
-					break;
-					
 				/* If this is a changed or DELCHG item */
 				case CHANGED:
 				case DELCHG:
-					/* Clear changes and mark as clean */
+					/* Clear changes and fall through */
 					myCurr.resetHistory();
+
+				/* If this is a deleted or recovered item */
+				case DELETED:
+				case RECOVERED:				
+					/* Clear errors and mark the item as clean */
+					myCurr.clearErrors();
+					myCurr.setState(DataState.CLEAN);
+					break;
+			}
+		}
+	}
+		
+	/** 
+	 * RollBack changes in an edit view that have been applied to core data
+	 * @param pChanges - edit view with changes that have been applied
+	 */
+	@SuppressWarnings("unchecked")
+	public void rollBackChanges(DataList<? extends DataItem> pChanges) {
+		DataList<? extends DataItem>.ListIterator 	myIterator;
+		DataItem									myCurr;
+		DataItem									myItem;
+			
+		/* Create an iterator for the changes list */
+		myIterator = pChanges.listIterator(true);
+			
+		/* Loop through the elements */
+		while ((myCurr = myIterator.next()) != null) {		
+			/* Switch on the state */
+			switch (myCurr.getState()) {
+				/* Ignore the item if it is clean or DelNew */
+				case CLEAN:
+				case DELNEW:
+					break;
+					
+				/* If this is a new item, remove the base item */
+				case NEW:
+					/* Remove the base item and its reference */
+					remove(myCurr.getBase());	
+					myCurr.setBase(null);
+					break;
+						
+				/* If this is a deleted or deleted-changed item */
+				case DELETED:
+				case DELCHG:
+					/* Access the underlying item and mark as not deleted */
+					myItem = myCurr.getBase();
+					myItem.setState(DataState.RECOVERED);
+					break;
+						
+				/* If this is a recovered item */
+				case RECOVERED:
+					/* Access the underlying item and mark as deleted */
+					myItem = myCurr.getBase();					
+					myItem.setState(DataState.DELETED);
+					break;
+						
+				/* If this is a changed item */
+				case CHANGED:
+					/* Access underlying item, pop the applied change */
+					myItem = myCurr.getBase();					
+					myItem.popHistory();
+					
+					/* If the item is now clean */
+					if (!myItem.hasHistory()) {
+						/* Set the new status (TODO Check NEW state) */
+						myItem.setState(DataState.CLEAN);
+					}
+						
+					/* Re-sort the item */
+					reSort((T)myItem);
+					break;
+			}
+		}
+	}
+		
+	/** 
+	 * Commit changes in an edit view that have been applied to the core data
+	 * @param pChanges - edit view with changes that have been applied
+	 */
+	public void commitChanges(DataList<? extends DataItem> pChanges) {
+		DataList<? extends DataItem>.ListIterator 	myIterator;
+		DataItem									myCurr;
+			
+		/* Create an iterator for the changes list */
+		myIterator = pChanges.listIterator(true);
+			
+		/* Loop through the elements */
+		while ((myCurr = myIterator.next()) != null) {		
+			/* Switch on the state */
+			switch (myCurr.getState()) {
+				/* Ignore the item if it is clean */
+				case CLEAN:
+					break;
+						
+				/* Delete the item from the list if it is a deleted new item */
+				case DELNEW:
+					myIterator.remove();
+					break;
+					
+				/* All other states clear history and, convert it to Clean */
+				case NEW:
+				case DELETED:
+				case DELCHG:
+				case RECOVERED:
+				case CHANGED:
+					/* Clear history and set as a clean item */
+					myCurr.clearHistory();
 					myCurr.setState(DataState.CLEAN);
 					break;
 			}

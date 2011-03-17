@@ -1,33 +1,27 @@
 package uk.co.tolcroft.finance.ui;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.DefaultTableColumnModel;
 
 import uk.co.tolcroft.finance.ui.controls.*;
-import uk.co.tolcroft.finance.ui.controls.EditButtons.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.models.DataItem;
+import uk.co.tolcroft.models.Date;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.*;
 
-public class Extract extends FinanceTableModel<Event> implements ActionListener {
+public class Extract extends FinanceTable<Event> {
 	/* Members */
 	private static final long serialVersionUID = -5531752729052421790L;
 
@@ -39,29 +33,15 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 	private TransactionType.List	theTransTypes		= null;
 	private MainTab					theParent	 		= null;
 	private JPanel					thePanel	 		= null;
-	private JScrollPane				theScroll			= null;
 	private JComboBox				theTranBox			= null;
 	private Extract				 	theTable	 		= this;
 	private extractMouse			theMouse	 		= null;
+	private DataColumnModel			theColumns			= null;
 	private Date.Range				theRange	 		= null;
 	private DateRange 				theSelect	 		= null;
-	private EditButtons    			theRowButs   		= null;
 	private SaveButtons  			theTabButs   		= null;
 	private DebugEntry				theDebugExtract		= null;
 	private ErrorPanel				theError			= null;
-	private Renderer.DateCell 		theDateRenderer   	= null;
-	private Editor.DateCell 		theDateEditor     	= null;
-	private Renderer.MoneyCell 		theMoneyRenderer  	= null;
-	private Editor.MoneyCell 		theMoneyEditor    	= null;
-	private Renderer.UnitCell 		theUnitsRenderer  	= null;
-	private Editor.UnitCell 		theUnitsEditor    	= null;
-	private Renderer.IntegerCell	theIntegerRenderer 	= null;
-	private Editor.IntegerCell 		theIntegerEditor   	= null;
-	private Renderer.StringCell 	theStringRenderer 	= null;
-	private Editor.StringCell 		theStringEditor   	= null;
-	private Renderer.DilutionCell 	theDiluteRenderer 	= null;
-	private Editor.DilutionCell 	theDiluteEditor   	= null;
-	private Editor.ComboBoxCell 	theComboEditor    	= null;
 	private ComboSelect				theComboList    	= null;
 	private boolean					tranPopulated    	= false;
 
@@ -95,7 +75,6 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 	private static final int COLUMN_DILUTE	 = 7;
 	private static final int COLUMN_TAXCRED	 = 8;
 	private static final int COLUMN_YEARS	 = 9;
-	private static final int NUM_COLUMNS	 = 10;
 		
 	/**
 	 * Constructor for Extract Window
@@ -106,8 +85,6 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		super(pParent);
 		
 		/* Declare variables */
-		TableColumnModel    myColModel;
-		TableColumn			myCol;
 		GroupLayout			myLayout;
 		DebugEntry			mySection;
 			
@@ -125,75 +102,11 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		theModel  = new ExtractModel();
 		setModel(theModel);
 			
-		/* Access the column model */
-		myColModel = getColumnModel();
+		/* Create the data column model and declare it */
+		theColumns = new DataColumnModel();
+		setColumnModel(theColumns);
 		
-		/* Create the relevant formatters/editors */
-		theDateRenderer   	= new Renderer.DateCell();
-		theDateEditor     	= new Editor.DateCell();
-		theMoneyRenderer  	= new Renderer.MoneyCell();
-		theMoneyEditor    	= new Editor.MoneyCell();
-		theUnitsRenderer  	= new Renderer.UnitCell();
-		theUnitsEditor    	= new Editor.UnitCell();
-		theIntegerRenderer 	= new Renderer.IntegerCell();
-		theIntegerEditor   	= new Editor.IntegerCell();
-		theStringRenderer 	= new Renderer.StringCell();
-		theStringEditor   	= new Editor.StringCell();
-		theDiluteRenderer 	= new Renderer.DilutionCell();
-		theDiluteEditor   	= new Editor.DilutionCell();
-		theComboEditor    	= new Editor.ComboBoxCell();
-		
-		/* Set the relevant formatters/editors */
-		myCol = myColModel.getColumn(COLUMN_DATE);
-		myCol.setCellRenderer(theDateRenderer);
-		myCol.setCellEditor(theDateEditor);
-		myCol.setPreferredWidth(90);
-			
-		myCol = myColModel.getColumn(COLUMN_TRANTYP);
-		myCol.setCellRenderer(theStringRenderer);
-		myCol.setCellEditor(theComboEditor);
-		myCol.setPreferredWidth(110);
-		
-		myCol = myColModel.getColumn(COLUMN_DESC);
-		myCol.setCellRenderer(theStringRenderer);
-		myCol.setCellEditor(theStringEditor);
-		myCol.setPreferredWidth(140);
-		
-		myCol = myColModel.getColumn(COLUMN_AMOUNT);
-		myCol.setCellRenderer(theMoneyRenderer);
-		myCol.setCellEditor(theMoneyEditor);
-		myCol.setPreferredWidth(90);
-			
-		myCol= myColModel.getColumn(COLUMN_DEBIT);
-		myCol.setCellRenderer(theStringRenderer);
-		myCol.setCellEditor(theComboEditor);
-		myCol.setPreferredWidth(130);
-			
-		myCol = myColModel.getColumn(COLUMN_CREDIT);
-		myCol.setCellRenderer(theStringRenderer);
-		myCol.setCellEditor(theComboEditor);
-		myCol.setPreferredWidth(130);
-			
-		myCol = myColModel.getColumn(COLUMN_UNITS);
-		myCol.setCellRenderer(theUnitsRenderer);
-		myCol.setCellEditor(theUnitsEditor);
-		myCol.setPreferredWidth(80);
-			
-		myCol = myColModel.getColumn(COLUMN_DILUTE);
-		myCol.setCellRenderer(theDiluteRenderer);
-		myCol.setCellEditor(theDiluteEditor);
-		myCol.setPreferredWidth(70);
-			
-		myCol = myColModel.getColumn(COLUMN_TAXCRED);
-		myCol.setCellRenderer(theMoneyRenderer);
-		myCol.setCellEditor(theMoneyEditor);
-		myCol.setPreferredWidth(90);
-			
-		myCol = myColModel.getColumn(COLUMN_YEARS);
-		myCol.setCellRenderer(theIntegerRenderer);
-		myCol.setCellEditor(theIntegerEditor);
-		myCol.setPreferredWidth(30);
-			
+		/* Prevent reordering of columns and auto-resizing */			
 		getTableHeader().setReorderingAllowed(false);
 		setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
 
@@ -209,12 +122,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		
 		/* Create the sub panels */
 		theSelect    = new DateRange(this);
-		theRowButs   = new EditButtons(this, InsertStyle.INSERT);
 		theTabButs   = new SaveButtons(this);
-			
-		/* Create a new Scroll Pane and add this table to it */
-		theScroll     = new JScrollPane();
-		theScroll.setViewportView(this);
 			
         /* Create the error panel for this view */
         theError = new ErrorPanel(this);
@@ -234,8 +142,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 	                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, true)
 		                .addComponent(theError.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                	.addComponent(theSelect.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-	                    .addComponent(theScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
-	                    .addComponent(theRowButs.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                    .addComponent(getScrollPane(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
 	                    .addComponent(theTabButs.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 	                .addContainerGap())
 	    );
@@ -244,8 +151,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 	        	.addGroup(GroupLayout.Alignment.TRAILING, myLayout.createSequentialGroup()
 	        		.addComponent(theError.getPanel())
 	        		.addComponent(theSelect.getPanel())
-	                .addComponent(theScroll)
-	                .addComponent(theRowButs.getPanel())
+	                .addComponent(getScrollPane())
 	                .addComponent(theTabButs.getPanel()))
 	    );
 	}
@@ -269,10 +175,9 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		theSelect.getPanel().setVisible(!isError);
 
 		/* Lock scroll-able area */
-		theScroll.setEnabled(!isError);
+		getScrollPane().setEnabled(!isError);
 
 		/* Lock row/tab buttons area */
-		theRowButs.getPanel().setEnabled(!isError);
 		theTabButs.getPanel().setEnabled(!isError);
 	}
 	
@@ -281,14 +186,8 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 	 *  @param obj the underlying control that has changed selection
 	 */
 	public void    notifySelection(Object obj)    {
-		/* If this is a change from the buttons */
-		if (obj == (Object) theRowButs) {
-			/* Set the correct show selected value */
-			super.setShowDeleted(theRowButs.getShowDel());
-		}
-		
-		/* else if this is a change from the range */
-		else if (obj == (Object) theSelect) {
+		/* if this is a change from the range */
+		if (obj == (Object) theSelect) {
 			/* Protect against exceptions */
 			try {
 				/* Set the new range */
@@ -367,9 +266,6 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 	 * Call underlying controls to take notice of changes in view/selection
 	 */
 	public void notifyChanges() {
-		/* Update the row buttons */
-		theRowButs.setLockDown();
-		
 		/* Find the edit state */
 		if (theEvents != null)
 			theEvents.findEditState();
@@ -389,7 +285,7 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 	public void setSelection(Date.Range pRange) throws Exception {
 		theRange   = pRange;
 		if (theRange != null) {
-			theDateEditor.setRange(pRange);
+			theColumns.setDateEditorRange(theRange);
 			theExtract = theView.new ViewEvents(pRange);
 			theEvents  = theExtract.getEvents();
 		}
@@ -399,8 +295,6 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		}
 		setList(theEvents);
 		theDebugExtract.setObject(theExtract);
-		theModel.fireTableDataChanged();
-		theRowButs.setLockDown();
 		theTabButs.setLockDown();
 		theSelect.setLockDown();
 		theParent.setVisibleTabs();
@@ -506,112 +400,16 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		/* Otherwise OK */
 		return true;
 	}
-		
-	/**
-	 * Perform actions for controls/pop-ups on this table
-	 * @param evt the event
-	 */
-	public void actionPerformed(ActionEvent evt) {
-		String      myCmd;
-		String      tokens[];
-		String      myName = null;
-		Account 	myAccount;
-		Event		myEvent;
-		int         row;
-
-		/* Access the action command */
-		myCmd  = evt.getActionCommand();
-		tokens = myCmd.split(":");
-		myCmd  = tokens[0];
-		if (tokens.length > 1) myName = tokens[1];
-		
-		/* Cancel any editing */
-		if (isEditing()) cellEditor.cancelCellEditing();
-		
-		/* If this is an account view request */
-		if (myCmd.compareTo(extractMouse.popupView) == 0) {
-			/* Access the correct account */
-			myAccount = theView.getData().getAccounts().searchFor(myName);
-		
-			/* Switch view */
-			theParent.selectAccount(myAccount, theSelect);
-		}
-		
-		/* If this is an account maintenance request */
-		else if (myCmd.compareTo(extractMouse.popupMaint) == 0) {
-			/* Access the correct account */
-			myAccount = theView.getData().getAccounts().searchFor(myName);
-		
-			/* Switch view */
-			theParent.selectAccountMaint(myAccount);
-		}
-		
-		/* If this is a set Null Units request */
-		else if (myCmd.compareTo(extractMouse.popupSetNull + "Unit") == 0) {
-			/* Access the correct row */
-			row = Integer.parseInt(myName);
-		
-			/* set the null value */
-			theModel.setValueAt(null, row, COLUMN_UNITS);
-			theModel.fireTableCellUpdated(row, COLUMN_UNITS);
-		}
-		
-		/* If this is a set Null Dilute request */
-		else if (myCmd.compareTo(extractMouse.popupSetNull + "Dilute") == 0) {
-			/* Access the correct row */
-			row = Integer.parseInt(myName);
-		
-			/* set the null value */
-			theModel.setValueAt(null, row, COLUMN_DILUTE);
-			theModel.fireTableCellUpdated(row, COLUMN_DILUTE);
-		}
-		
-		/* If this is a set Null TaxCredit request */
-		else if (myCmd.compareTo(extractMouse.popupSetNull + "Credit") == 0) {
-			/* Access the correct row */
-			row = Integer.parseInt(myName);
-		
-			/* set the null value */
-			theModel.setValueAt(null, row, COLUMN_TAXCRED);
-			theModel.fireTableCellUpdated(row, COLUMN_TAXCRED);
-		}
-		
-		/* If this is a set Null Years request */
-		else if (myCmd.compareTo(extractMouse.popupSetNull + "Year") == 0) {
-			/* Access the correct row */
-			row = Integer.parseInt(myName);
-			
-			/* set the null value */
-			theModel.setValueAt(null, row, COLUMN_YEARS);
-			theModel.fireTableCellUpdated(row, COLUMN_YEARS);
-		}
-		
-		/* If this is a calculate Tax Credit request */
-		else if (myCmd.compareTo(extractMouse.popupCalcTax) == 0) {
-			/* Access the correct row */
-			row = Integer.parseInt(myName);
-			
-			/* Access the Event */
-			myEvent = theEvents.get(row);
-
-			/* Calculate the tax credit */
-			Money myCredit = myEvent.calculateTaxCredit();
-			
-			/* set the null value */
-			theModel.setValueAt(myCredit, row, COLUMN_TAXCRED);
-			theModel.fireTableCellUpdated(row, COLUMN_TAXCRED);
-		}
-	}
-		
+				
 	/* Extract table model */
-	public class ExtractModel extends AbstractTableModel {
+	public class ExtractModel extends DataTableModel {
 		private static final long serialVersionUID = 7997087757206121152L;
 		
 		/**
 		 * Get the number of display columns
 		 * @return the columns
 		 */
-		public int getColumnCount() { return NUM_COLUMNS; }
+		public int getColumnCount() { return (theColumns == null) ? 0 : theColumns.getColumnCount(); }
 		
 		/**
 		 * Get the number of rows in the current table
@@ -839,15 +637,25 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 				
 				/* Switch on the updated column */
 				switch (col) {
-					/* redraw whole table if we have updated a sort col */
+					/* If we have changed a sorting column */
 					case COLUMN_DATE:
 					case COLUMN_DESC:
 					case COLUMN_TRANTYP:
+						/* Re-Sort the row */
 						myEvent.reSort();
-						fireTableDataChanged();
-						row = theEvents.indexOf(myEvent);
-						selectRow(row);
-						break;
+						
+						/* Determine new row # */
+						int myNewRowNo = myEvent.indexOf();
+						
+						/* If the row # has changed */
+						if (myNewRowNo != row) {
+							/* Report the move of the row */
+							fireMoveRowEvents(row, myNewRowNo);					
+							selectRowWithScroll(myNewRowNo);
+							break;
+						}
+						
+						/* else fall through */
 						
 					/* else note that we have updated this cell */
 					default:
@@ -861,186 +669,428 @@ public class Extract extends FinanceTableModel<Event> implements ActionListener 
 		}
 	}
 	
-	/* Extract mouse listener */
-	public class extractMouse extends MouseAdapter {
+	/**
+	 *  Extract mouse listener
+	 */
+	private class extractMouse extends FinanceMouse<Event> {
 			
 		/* Pop-up Menu items */
-		private static final String popupView    = "View Account";
-		private static final String popupMaint   = "Maintain Account";
-		private static final String popupSetNull = "Set Null";
-		private static final String popupCalcTax = "Calculate Tax Credit";
+		private static final String popupView    		= "View Account";
+		private static final String popupMaint  		= "Maintain Account";
+		private static final String popupSetNullUnits 	= "Set Null Units";
+		private static final String popupSetNullTax 	= "Set Null TaxCredit";
+		private static final String popupSetNullYears 	= "Set Null Years";
+		private static final String popupSetNullDilute 	= "Set Null Dilution";
+		private static final String popupCalcTax 		= "Calculate Tax Credit";
 			
-		/* handle mouse Pressed event */
-		public void mousePressed(MouseEvent e) {
-			maybeShowPopup(e);
+		/**
+		 * Constructor
+		 */
+		private extractMouse() {
+			/* Call super-constructor */
+			super(theTable);
 		}
-		/* handle mouse Released event */
-		public void mouseReleased(MouseEvent e) {
-			maybeShowPopup(e);
-		}
+		
+		/**
+		 * Add Null commands to menu
+		 * @param pMenu the menu to add to
+		 */
+		protected void addNullCommands(JPopupMenu pMenu) {
+			JMenuItem 	myItem;
+			Event		myEvent;
+			boolean		enableNullUnits 	= false;
+			boolean		enableNullTax 		= false;
+			boolean		enableNullYears 	= false;
+			boolean		enableNullDilution 	= false;
 			
-		/* Maybe show the pop-up */
-		public void maybeShowPopup(MouseEvent e) {
-			JPopupMenu      myMenu;
-			JMenuItem       myItem;
-			Event           myRow     = null;
-			Account  		myAccount = null;
-			boolean         isUnits   = false;
-			boolean         isDilute  = false;
-			boolean         isTaxCred = false;
-			boolean         isTaxCalc = false;
-			boolean         isYears   = false;
+			/* Nothing to do if the table is locked */
+			if (theTable.isLocked()) return;
+			
+			/* Loop through the selected rows */
+			for (DataItem myRow : theTable.cacheSelectedRows()) {
+				/* Ignore locked rows */
+				if ((myRow == null) || (myRow.isLocked())) continue;
 				
-			if (e.isPopupTrigger() && 
-				(theTable.isEnabled())) {
-				/* Calculate the row/column that the mouse was clicked at */
-				Point p = new Point(e.getX(), e.getY());
-				int row = theTable.rowAtPoint(p);
-				int col = theTable.columnAtPoint(p);
+				/* Ignore deleted rows */
+				if (myRow.isDeleted()) continue;
 				
-				/* Adjust column for view differences */
-				col = theTable.convertColumnIndexToModel(col);
+				/* Access as event */
+				myEvent = (Event)myRow;
 				
-				/* Access the row */
-				myRow = theEvents.get(row);
-					
-				/* If the column is Credit */
-				if (col == COLUMN_CREDIT)
-					myAccount = myRow.getCredit();
-				else if (col == COLUMN_DEBIT)
-					myAccount = myRow.getDebit();
-				else if (col == COLUMN_UNITS)
-					isUnits = true;
-				else if (col == COLUMN_DILUTE)
-					isDilute = true;
-				else if (col == COLUMN_TAXCRED)
-					{ isTaxCred = true; isTaxCalc = true; }
-				else if (col == COLUMN_YEARS)
-					isYears = true;
+				/* Enable null Units if we have units */
+				if (myEvent.getUnits()     != null) 	enableNullUnits	= true;
 				
-				/* If we have updates then ignore the account */
-				if (theTable.hasUpdates()) myAccount = null;
+				/* Enable null Tax if we have tax */
+				if (myEvent.getTaxCredit() != null) 	enableNullTax = true;
 				
-				/* If we are pointing to units then determine whether we can set null */
-				if ((isUnits) && 
-					((myRow.isLocked()) ||
-					 (myRow.getUnits() == null)))
-					isUnits = false;
+				/* Enable null Years if we have years */
+				if (myEvent.getYears()     != null) 	enableNullYears = true;
 				
-				/* If we are pointing to Dilute then determine whether we can set null */
-				if ((isDilute) && 
-					((myRow.isLocked()) ||
-					 (myRow.getDilution() == null)))
-					isDilute = false;
-				
-				/* If we are pointing to TaxCredit then determine whether we can set null */
-				if ((isTaxCred) && 
-					((myRow.isLocked()) ||
-					 (myRow.getTaxCredit() == null)))
-					isTaxCred = false;
-				
-				/* If we are pointing to TaxCredit then determine whether we can calculate tax */
-				if ((isTaxCalc) && 
-					((myRow.isLocked()) ||
-					 ((myRow.getTaxCredit() != null) &&
-					  (myRow.getTaxCredit().isNonZero())) ||
-					 ((myRow.getTransType() == null) ||
-					  ((!myRow.getTransType().isInterest()) &&
-					   (!myRow.getTransType().isDividend())))))
-					isTaxCalc = false;
-				
-				/* If we are pointing to years then determine whether we can set null */
-				if ((isYears) && 
-					((myRow.isLocked()) ||
-					 (myRow.getYears() == null)))
-					isYears = false;
-				
-				/* If we have an account or can set null units/dilution/years/tax */
-				if ((myAccount != null) || 
-					(isUnits) || (isDilute) || 
-					(isTaxCred) || (isTaxCalc) || (isYears)) {
-					/* Create the pop-up menu */
-					myMenu = new JPopupMenu();
-					
-					/* If we have an account name */
-					if (myAccount != null) {
-						/* Create the View account choice */
-						myItem = new JMenuItem(popupView + ": " + myAccount.getName());
-					
-						/* Set the command and add to menu */
-						myItem.setActionCommand(popupView + ":" + myAccount.getName());
-						myItem.addActionListener(theTable);
-						myMenu.add(myItem);
-						
-						/* Create the Maintain account choice */
-						myItem = new JMenuItem(popupMaint + ": " + myAccount.getName());
-					
-						/* Set the command and add to menu */
-						myItem.setActionCommand(popupMaint + ":" + myAccount.getName());
-						myItem.addActionListener(theTable);
-						myMenu.add(myItem);
-					}
-					
-					/* If we have units */
-					if (isUnits) {
-						/* Create the set null choice */
-						myItem = new JMenuItem(popupSetNull);
-					
-						/* Set the command and add to menu */
-						myItem.setActionCommand(popupSetNull + "Unit:" + row);
-						myItem.addActionListener(theTable);
-						myMenu.add(myItem);
-					}
-					
-					/* If we have dilute */
-					if (isDilute) {
-						/* Create the set null choice */
-						myItem = new JMenuItem(popupSetNull);
-					
-						/* Set the command and add to menu */
-						myItem.setActionCommand(popupSetNull + "Dilute:" + row);
-						myItem.addActionListener(theTable);
-						myMenu.add(myItem);
-					}
-					
-					/* If we have Tax Credit */
-					if (isTaxCred) {
-						/* Create the set null choice */
-						myItem = new JMenuItem(popupSetNull);
-					
-						/* Set the command and add to menu */
-						myItem.setActionCommand(popupSetNull + "Credit:" + row);
-						myItem.addActionListener(theTable);
-						myMenu.add(myItem);
-					}
-					
-					/* If we have Tax Calculation */
-					if (isTaxCalc) {
-						/* Create the set tax choice */
-						myItem = new JMenuItem(popupCalcTax);
-					
-						/* Set the command and add to menu */
-						myItem.setActionCommand(popupCalcTax + ":" + row);
-						myItem.addActionListener(theTable);
-						myMenu.add(myItem);
-					}
-					
-					/* If we have years */
-					if (isYears) {
-						/* Create the set null choice */
-						myItem = new JMenuItem(popupSetNull);
-					
-						/* Set the command and add to menu */
-						myItem.setActionCommand(popupSetNull + "Year:" + row);
-						myItem.addActionListener(theTable);
-						myMenu.add(myItem);
-					}
-					
-					/* Show the pop-up menu */
-					myMenu.show(e.getComponent(),
-								e.getX(), e.getY());
-				}					
+				/* Enable null Dilution if we have dilution */
+				if (myEvent.getDilution()  != null) 	enableNullDilution = true;
+			}	
+
+			/* If there is something to add and there are already items in the menu */
+			if ((enableNullUnits || enableNullTax || enableNullYears || enableNullDilution) &&
+			    (pMenu.getComponentCount() > 0)) {
+				/* Add a separator */
+				pMenu.addSeparator();
 			}
+			
+			/* If we can set null units */
+			if (enableNullUnits) {
+				/* Add the undo change choice */
+				myItem = new JMenuItem(popupSetNullUnits);
+				myItem.setActionCommand(popupSetNullUnits);
+				myItem.addActionListener(this);
+				pMenu.add(myItem);			
+			}
+
+			/* If we can set null tax */
+			if (enableNullTax) {
+				/* Add the undo change choice */
+				myItem = new JMenuItem(popupSetNullTax);
+				myItem.setActionCommand(popupSetNullTax);
+				myItem.addActionListener(this);
+				pMenu.add(myItem);			
+			}
+
+			/* If we can set null years */
+			if (enableNullYears) {
+				/* Add the undo change choice */
+				myItem = new JMenuItem(popupSetNullYears);
+				myItem.setActionCommand(popupSetNullYears);
+				myItem.addActionListener(this);
+				pMenu.add(myItem);			
+			}
+
+			/* If we can set null dilution */
+			if (enableNullDilution) {
+				/* Add the undo change choice */
+				myItem = new JMenuItem(popupSetNullDilute);
+				myItem.setActionCommand(popupSetNullDilute);
+				myItem.addActionListener(this);
+				pMenu.add(myItem);			
+			}
+		}
+
+		/**
+		 * Add Special commands to menu
+		 * @param pMenu the menu to add to
+		 */
+		protected void addSpecialCommands(JPopupMenu pMenu) {
+			JMenuItem 		myItem;
+			Event			myEvent;
+			Money			myTax;
+			TransactionType	myTrans;
+			boolean			enableCalcTax	= false;
+			
+			/* Nothing to do if the table is locked */
+			if (theTable.isLocked()) return;
+			
+			/* Loop through the selected rows */
+			for (DataItem myRow : theTable.cacheSelectedRows()) {
+				/* Ignore locked rows */
+				if ((myRow == null) || (myRow.isLocked())) continue;
+				
+				/* Ignore deleted rows */
+				if (myRow.isDeleted()) continue;
+				
+				/* Access as event */
+				myEvent = (Event)myRow;
+				myTax	= myEvent.getTaxCredit();
+				myTrans = myEvent.getTransType();
+
+				/* If we have a calculable tax credit */
+				if ((myTrans != null) &&
+					((myTrans.isInterest()) ||
+					 (myTrans.isDividend()))) {
+					/* Enable calculation of tax if tax is null or zero */
+					if  ((myTax == null) || (!myTax.isNonZero()))
+						enableCalcTax = true;
+				}				
+			}
+			
+			/* If there is something to add and there are already items in the menu */
+			if ((enableCalcTax) &&
+			    (pMenu.getComponentCount() > 0)) {
+				/* Add a separator */
+				pMenu.addSeparator();
+			}
+			
+			/* If we can calculate tax */
+			if (enableCalcTax) {
+				/* Add the undo change choice */
+				myItem = new JMenuItem(popupCalcTax);
+				myItem.setActionCommand(popupCalcTax);
+				myItem.addActionListener(this);
+				pMenu.add(myItem);			
+			}
+		}
+
+		/**
+		 * Add Navigation commands to menu
+		 * @param pMenu the menu to add to
+		 */
+		protected void addNavigationCommands(JPopupMenu pMenu) {
+			JMenuItem 		myItem;
+			Event			myEvent;
+			Account			myAccount;
+			int				myRow;
+			int				myCol;
+			boolean			enableNavigate	= false;
+			
+			/* Nothing to do if the table is locked */
+			if (theTable.isLocked()) return;
+			
+			/* Access the popUp row/column and ignore if not valid */
+			myRow = getPopupRow();
+			myCol = getPopupCol();
+			if (myRow < 0) return;
+			
+			/* Access the event */
+			myEvent = theTable.extractItemAt(myRow);
+			
+			/* If the column is Credit */
+			if (myCol == COLUMN_CREDIT)
+				myAccount = myEvent.getCredit();
+			else if (myCol == COLUMN_DEBIT)
+				myAccount = myEvent.getDebit();
+			else
+				myAccount = null;
+			
+			/* If we have an account we can navigate */ 
+			if (myAccount != null) enableNavigate = true;
+			
+			/* If there is something to add and there are already items in the menu */
+			if ((enableNavigate) &&
+			    (pMenu.getComponentCount() > 0)) {
+				/* Add a separator */
+				pMenu.addSeparator();
+			}
+			
+			/* If we can navigate */
+			if (enableNavigate) {
+				/* Create the View account choice */
+				myItem = new JMenuItem(popupView + ": " + myAccount.getName());
+			
+				/* Set the command and add to menu */
+				myItem.setActionCommand(popupView + ":" + myAccount.getName());
+				myItem.addActionListener(this);
+				pMenu.add(myItem);
+				
+				/* Create the Maintain account choice */
+				myItem = new JMenuItem(popupMaint + ": " + myAccount.getName());
+			
+				/* Set the command and add to menu */
+				myItem.setActionCommand(popupMaint + ":" + myAccount.getName());
+				myItem.addActionListener(this);
+				pMenu.add(myItem);
+			}			
+		}
+
+		/**
+		 * Perform actions for controls/pop-ups on this table
+		 * @param evt the event
+		 */
+		public void actionPerformed(ActionEvent evt) {
+			String myCmd = evt.getActionCommand();
+			
+			/* Cancel any editing */
+			theTable.cancelEditing();
+			
+			/* If this is a set null units command */
+			if (myCmd.equals(popupSetNullUnits)) {
+				/* Set Units column to null */
+				setColumnToNull(COLUMN_UNITS);
+			}
+			
+			/* else if this is a set null tax command */
+			else if (myCmd.equals(popupSetNullTax)) {
+				/* Set Tax column to null */
+				setColumnToNull(COLUMN_TAXCRED);				
+			}
+			
+			/* If this is a set null years command */
+			else if (myCmd.equals(popupSetNullYears)) {
+				/* Set Years column to null */
+				setColumnToNull(COLUMN_YEARS);								
+			}
+			
+			/* If this is a set null dilute command */
+			else if (myCmd.equals(popupSetNullDilute)) {
+				/* Set Dilution column to null */
+				setColumnToNull(COLUMN_DILUTE);				
+			}
+			
+			/* If this is a calculate Tax Credits command */
+			else if (myCmd.equals(popupCalcTax)) {
+				/* Calculate the tax credits */
+				calculateTaxCredits();				
+			}
+			
+			/* If this is a navigate command */
+			else if ((myCmd.startsWith(popupView)) ||
+     			     (myCmd.startsWith(popupMaint))) {
+				/* perform the navigation */
+				performNavigation(myCmd);				
+			}
+			
+			/* else we do not recognise the action */
+			else {
+				/* Pass it to the superclass */
+				super.actionPerformed(evt);
+				return;
+			}
+			
+			/* Notify of any changes */
+			notifyChanges();
+		}
+		
+		/**
+		 * Calculate tax credits
+		 */
+		private void calculateTaxCredits() {
+			Event				myEvent;
+			TransactionType		myTrans;
+			Money				myTax;
+			int					row;
+
+			/* Loop through the selected rows */
+			for (DataItem myRow : theTable.cacheSelectedRows()) {
+				/* Ignore locked rows */
+				if ((myRow == null) || (myRow.isLocked())) continue;
+				
+				/* Ignore deleted rows */
+				if (myRow.isDeleted()) continue;
+
+				/* Determine row */
+				row = myRow.indexOf();
+				if (theTable.hasHeader()) row--;
+				
+				/* Access the event */
+				myEvent = (Event)myRow;
+				myTrans	= myEvent.getTransType();
+				myTax	= myEvent.getTaxCredit();
+				
+				/* Ignore rows with invalid transaction type */
+				if ((myTrans == null) ||
+					((!myTrans.isInterest()) &&
+					 (!myTrans.isDividend()))) continue;
+				
+				/* Ignore rows with tax credit already set */
+				if  ((myTax != null) && (myTax.isNonZero())) continue;
+
+				/* Calculate the tax credit */
+				myTax = myEvent.calculateTaxCredit();
+				
+				/* set the tax credit value */
+				theModel.setValueAt(myTax, row, COLUMN_TAXCRED);
+				theModel.fireTableCellUpdated(row, COLUMN_TAXCRED);
+			}
+		}
+		
+		/**
+		 * Perform a navigation command
+		 * @param pCmd the navigation command
+		 */
+		private void performNavigation(String pCmd) {
+			String      tokens[];
+			String      myName = null;
+			Account 	myAccount;
+
+			/* Access the action command */
+			tokens = pCmd.split(":");
+			pCmd   = tokens[0];
+			if (tokens.length > 1) myName = tokens[1];
+			
+			/* Access the correct account */
+			myAccount = theView.getData().getAccounts().searchFor(myName);
+		
+			/* If this is an account view request */
+			if (pCmd.compareTo(popupView) == 0) {
+				/* Switch view */
+				theParent.selectAccount(myAccount, theSelect);
+			}
+			
+			/* If this is an account maintenance request */
+			else if (pCmd.compareTo(popupMaint) == 0) {
+				/* Switch view */
+				theParent.selectAccountMaint(myAccount);
+			}
+		}			
+	}
+	
+	/**
+	 * Column Model class
+	 */
+	private class DataColumnModel extends DefaultTableColumnModel {
+		private static final long serialVersionUID = -7502445487118370020L;
+
+		/* Renderers/Editors */
+		private Renderer.DateCell 		theDateRenderer   	= null;
+		private Editor.DateCell 		theDateEditor     	= null;
+		private Renderer.MoneyCell 		theMoneyRenderer  	= null;
+		private Editor.MoneyCell 		theMoneyEditor    	= null;
+		private Renderer.UnitCell 		theUnitsRenderer  	= null;
+		private Editor.UnitCell 		theUnitsEditor    	= null;
+		private Renderer.IntegerCell	theIntegerRenderer 	= null;
+		private Editor.IntegerCell 		theIntegerEditor   	= null;
+		private Renderer.StringCell 	theStringRenderer 	= null;
+		private Editor.StringCell 		theStringEditor   	= null;
+		private Renderer.DilutionCell 	theDiluteRenderer 	= null;
+		private Editor.DilutionCell 	theDiluteEditor   	= null;
+		private Editor.ComboBoxCell 	theComboEditor    	= null;
+
+		/**
+		 * Constructor 
+		 */
+		private DataColumnModel() {		
+			/* Create the relevant formatters/editors */
+			theDateRenderer   	= new Renderer.DateCell();
+			theDateEditor     	= new Editor.DateCell();
+			theMoneyRenderer  	= new Renderer.MoneyCell();
+			theMoneyEditor    	= new Editor.MoneyCell();
+			theUnitsRenderer  	= new Renderer.UnitCell();
+			theUnitsEditor    	= new Editor.UnitCell();
+			theIntegerRenderer 	= new Renderer.IntegerCell();
+			theIntegerEditor   	= new Editor.IntegerCell();
+			theStringRenderer 	= new Renderer.StringCell();
+			theStringEditor   	= new Editor.StringCell();
+			theDiluteRenderer 	= new Renderer.DilutionCell();
+			theDiluteEditor   	= new Editor.DilutionCell();
+			theComboEditor    	= new Editor.ComboBoxCell();
+			
+			/* Create the columns */
+			addColumn(new DataColumn(COLUMN_DATE,     90, theDateRenderer,    theDateEditor));
+			addColumn(new DataColumn(COLUMN_TRANTYP, 110, theStringRenderer,  theComboEditor));
+			addColumn(new DataColumn(COLUMN_DESC,    140, theStringRenderer,  theStringEditor));
+			addColumn(new DataColumn(COLUMN_AMOUNT,   90, theMoneyRenderer,   theMoneyEditor));
+			addColumn(new DataColumn(COLUMN_DEBIT,   130, theStringRenderer,  theComboEditor));
+			addColumn(new DataColumn(COLUMN_CREDIT,  130, theStringRenderer,  theComboEditor));
+			addColumn(new DataColumn(COLUMN_UNITS,    80, theUnitsRenderer,   theUnitsEditor));
+			addColumn(new DataColumn(COLUMN_DILUTE,   70, theDiluteRenderer,  theDiluteEditor));
+			addColumn(new DataColumn(COLUMN_TAXCRED,  90, theMoneyRenderer,   theMoneyEditor));
+			addColumn(new DataColumn(COLUMN_YEARS,    30, theIntegerRenderer, theIntegerEditor));
+		}
+		
+		/**
+		 * Set the date editor range 
+		 * @param pRange
+		 */
+		private void setDateEditorRange(Date.Range pRange) {
+			/* Set the range */
+			theDateEditor.setRange(pRange);			
+		}
+
+		/**
+		 * Add a column to the end of the model 
+		 * @param pColumn
+		 */
+		private void addColumn(DataColumn pColumn) {
+			/* Set the range */
+			super.addColumn(pColumn);
+			pColumn.setMember(true);
 		}
 	}
 }

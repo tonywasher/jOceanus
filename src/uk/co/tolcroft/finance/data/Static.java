@@ -542,11 +542,10 @@ public class Static extends DataItem {
 
 		/**
 		 * Add a new item to the core list
-		 * 
 		 * @param pItem item
 		 * @return the newly added item
 		 */
-		public DataItem addNewItem(DataItem pItem) { 
+		public Static addNewItem(DataItem pItem) { 
 			Static myStatic = new Static(this, (Static)pItem);
 			myStatic.addToList();
 			return myStatic; 
@@ -554,10 +553,10 @@ public class Static extends DataItem {
 
 		/**
 		 * Add a new item to the edit list
-		 * 
 		 * @param isCredit - ignored
+		 * @return the newly added item
 		 */
-		public void addNewItem(boolean        isCredit) {}
+		public Static addNewItem(boolean isCredit) { return null; }
 
 		/**
 		 * 	Obtain the type of the item

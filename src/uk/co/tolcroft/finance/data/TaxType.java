@@ -508,11 +508,10 @@ public class TaxType extends DataItem {
 		
 		/**
 		 * Add a new item to the list
-		 * 
 		 * @param pItem item to be added
 		 * @return the newly added item
 		 */
-		public DataItem addNewItem(DataItem pItem) {
+		public TaxType addNewItem(DataItem pItem) {
 			TaxType myType = new TaxType(this, (TaxType)pItem);
 			myType.addToList();
 			return myType;
@@ -521,8 +520,9 @@ public class TaxType extends DataItem {
 		/**
 		 * Create a new empty element in the edit list (null-operation)
 		 * @param isCredit - is the item a credit or debit
+		 * @return the newly added item
 		 */
-		public void addNewItem(boolean isCredit) {};
+		public TaxType addNewItem(boolean isCredit) { return null; }
 			
 		/**
 		 * Obtain the type of the item

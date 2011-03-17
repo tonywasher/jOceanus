@@ -116,7 +116,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * Get the list control for this item
 	 * @return the list control
 	 */
-	public DataList<?>   getList()  	{ return theList; }
+	public DataList<? extends DataItem>   getList()  	{ return theList; }
 	
 	/**
 	 * Get the changeable values object for this item 
@@ -557,7 +557,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * @param uId the Id of the new item (or 0 if not yet known)
 	 */
 	@SuppressWarnings("unchecked")
-	public DataItem(DataList<?> pList, int uId) {
+	public DataItem(DataList<? extends DataItem> pList, int uId) {
 		theId      = uId;
 		theList    = (DataList<DataItem>)pList;
 		theHistory = new historyCtl();

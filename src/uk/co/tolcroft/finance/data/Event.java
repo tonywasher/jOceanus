@@ -1444,11 +1444,10 @@ public class Event extends DataItem {
 		
 		/**
 		 * Add a new item to the list
-		 * 
 		 * @param pItem the item to add
 		 * @return the newly added item
 		 */
-		public DataItem addNewItem(DataItem pItem) {
+		public Event addNewItem(DataItem pItem) {
 			if (pItem instanceof Event) {
 				Event myEvent = new Event(this, (Event)pItem);
 				myEvent.addToList();
@@ -1464,12 +1463,13 @@ public class Event extends DataItem {
 	
 		/**
 		 * Add a new item to the edit list
-		 * 
 		 * @param isCredit - ignored
+		 * @return the newly added item
 		 */
-		public void addNewItem(boolean        isCredit) {
+		public Event addNewItem(boolean isCredit) {
 			Event myEvent = new Event(this);
 			myEvent.addToList();
+			return myEvent;
 		}
 	
 		/**

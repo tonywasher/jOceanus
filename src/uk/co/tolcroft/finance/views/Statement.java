@@ -165,16 +165,18 @@ public class Statement implements htmlDumpable {
 		/**
 		 * Add a new item (never used)
 		 */
-		public DataItem addNewItem(DataItem pElement) {
+		public Line addNewItem(DataItem pElement) {
 			return null;}
 		
 		/**
 		 * Add a new item to the edit list
-		 * @param isCredit - ignored
+		 * @param isCredit - is this a credit item
+		 * @return the newly added item
 		 */
-		public void addNewItem(boolean        isCredit) {
+		public Line addNewItem(boolean isCredit) {
 			Line myLine = new Line(this, isCredit);
 			myLine.addToList();
+			return myLine;
 		}
 	
 		/**

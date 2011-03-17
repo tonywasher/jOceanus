@@ -1277,7 +1277,7 @@ public class Account extends DataItem {
 		 * @param pAccount item
 		 * @return the newly added item
 		 */
-		public DataItem addNewItem(DataItem pAccount) {
+		public Account addNewItem(DataItem pAccount) {
 			Account myAccount = new Account(this, (Account)pAccount);
 			myAccount.addToList();
 			return myAccount;
@@ -1286,8 +1286,9 @@ public class Account extends DataItem {
 		/**
 		 * Create a new empty element in the edit list (null-operation)
 		 * @param isCredit - is the item a credit or debit
+		 * @return the newly added item
 		 */
-		public void addNewItem(boolean isCredit) {};
+		public Account addNewItem(boolean isCredit) { return null; }
 			
 		/**
 		 * Obtain the type of the item

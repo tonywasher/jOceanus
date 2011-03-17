@@ -1,17 +1,10 @@
 package uk.co.tolcroft.finance.ui;
 
-import java.awt.Dimension;
-
 import javax.swing.GroupLayout;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.LayoutStyle;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.DefaultTableColumnModel;
 
 import uk.co.tolcroft.finance.ui.controls.*;
-import uk.co.tolcroft.finance.ui.controls.EditButtons.*;
 import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
@@ -20,7 +13,7 @@ import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
-public class AccountPrices extends FinanceTableModel<ViewPrice> {
+public class AccountPrices extends FinanceTable<ViewPrice> {
 	/* Members */
 	private static final long serialVersionUID 		= 1035380774297559650L;
 
@@ -28,22 +21,14 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 	private PricesModel					theModel			= null;
 	private ViewPrice.List 				thePrices  			= null;
 	private JPanel						thePanel			= null;
-	private JScrollPane					theScroll			= null;
 	private AccountTab					theParent   		= null;
 	private Date.Range					theRange			= null;
 	private Account             		theAccount  		= null;
-	private EditButtons    				theRowButs  		= null;
-	private Renderer.DateCell 			theDateRenderer  	= null;
-	private Editor.DateCell 			theDateEditor    	= null;
-	private Renderer.PriceCell 			thePriceRenderer 	= null;
-	private Editor.PriceCell			thePriceEditor   	= null;
-	private Renderer.DilutionCell 		theDiluteRenderer 	= null;
-	private Renderer.DilutedPriceCell	theDilPriceRenderer	= null;
-	private boolean						hasDilutions		= true;
+	private AccountPrices				theTable	    	= this;
+	private pricesMouse					theMouse			= null;
+	private DataColumnModel				theColumns			= null;
 	private DebugEntry					theDebugEntry		= null;
 	private ErrorPanel					theError			= null;
-	private TableColumn					theDiluteCol		= null;
-	private TableColumn					theDilPriceCol		= null;
 
 	/* Access methods */
 	public JPanel  	getPanel()			{ return thePanel; }
@@ -66,7 +51,6 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 	private static final int COLUMN_PRICE 		 = 1;
 	private static final int COLUMN_DILUTION 	 = 2;
 	private static final int COLUMN_DILUTEDPRICE = 3;
-	private static final int NUM_COLUMNS  		 = 4;
 					
 	/**
 	 * Constructor for Prices Window
@@ -77,8 +61,6 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 		super(pParent.getTopWindow());
 
 		/* Declare variables */
-		TableColumnModel 			myColModel;
-		TableColumn		 			myCol;
 		GroupLayout		 	       	myLayout;
 			
 		/* Store details about the parent */
@@ -89,57 +71,24 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 		theModel  = new PricesModel();
 		setModel(theModel);
 			
-		/* Access the column model */
-		myColModel = getColumnModel();
-			
-		/* Create the relevant formatters/editors */
-		theDateRenderer  	= new Renderer.DateCell();
-		theDateEditor    	= new Editor.DateCell();
-		thePriceRenderer 	= new Renderer.PriceCell();
-		thePriceEditor  	= new Editor.PriceCell();
-		theDiluteRenderer 	= new Renderer.DilutionCell();
-		theDilPriceRenderer	= new Renderer.DilutedPriceCell();
-		
-		/* Set the relevant formatters/editors */
-		myCol = myColModel.getColumn(COLUMN_DATE);
-		myCol.setCellRenderer(theDateRenderer);
-		myCol.setCellEditor(theDateEditor);
-		myCol.setPreferredWidth(80);
-		
-		myCol = myColModel.getColumn(COLUMN_PRICE);
-		myCol.setCellRenderer(thePriceRenderer);
-		myCol.setCellEditor(thePriceEditor);
-		myCol.setPreferredWidth(90);
-		
-		myCol = myColModel.getColumn(COLUMN_DILUTION);
-		myCol.setCellRenderer(theDiluteRenderer);
-		myCol.setPreferredWidth(90);
-		theDiluteCol = myCol;
-		
-		myCol = myColModel.getColumn(COLUMN_DILUTEDPRICE);
-		myCol.setCellRenderer(theDilPriceRenderer);
-		myCol.setPreferredWidth(110);
-		theDilPriceCol = myCol;
-		
+		/* Create the data column model and declare it */
+		theColumns = new DataColumnModel();
+		setColumnModel(theColumns);
+
+		/* Prevent reordering of columns and auto-resizing */
 		getTableHeader().setReorderingAllowed(false);
 		setAutoResizeMode(AUTO_RESIZE_OFF);
 			
-		/* Set the number of visible rows */
-		setPreferredScrollableViewportSize(new Dimension(800, 200));
-		
-		/* Create the sub panels */
-		theRowButs   = new EditButtons(this, InsertStyle.INSERT);
-			
-		/* Create a new Scroll Pane and add this table to it */
-		theScroll     = new JScrollPane();
-		theScroll.setViewportView(this);
-        
         /* Create the debug entry, attach to AccountDebug entry and hide it */
         DebugManager myDebugMgr	= theView.getDebugMgr();
         theDebugEntry = myDebugMgr.new DebugEntry("Prices");
         theDebugEntry.addAsChildOf(pParent.getDebugEntry());
         theDebugEntry.hideEntry();
 			
+		/* Add the mouse listener */
+		theMouse = new pricesMouse();
+		addMouseListener(theMouse);
+		
         /* Create the error panel for this view */
         theError = new ErrorPanel(this);
         
@@ -157,39 +106,24 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 	        		.addContainerGap()
 	                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
 	                    .addComponent(theError.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-	                    .addComponent(theScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-	                    .addComponent(theRowButs.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+	                    .addComponent(getScrollPane(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 	                .addContainerGap())
 	    );
         myLayout.setVerticalGroup(
         	myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	        	.addGroup(GroupLayout.Alignment.TRAILING, myLayout.createSequentialGroup()
 	                .addComponent(theError.getPanel())
-	                .addComponent(theScroll)
-	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-	                .addComponent(theRowButs.getPanel())
+	                .addComponent(getScrollPane())
 	                .addContainerGap())
 	    );
 	}
 
 	/**
-	 *  Notify table that there has been a change in selection by an underlying control
-	 *  @param obj the underlying control that has changed selection
-	 */
-	public void    notifySelection(Object obj)    {
-		/* If this is a change from the buttons */
-		if (obj == (Object) theRowButs) {
-			/* Set the correct show selected value */
-			super.setShowDeleted(theRowButs.getShowDel());
-		}
-	}
-		
-	/**
 	 * Refresh views/controls after a load/update of underlying data
 	 */
 	public void refreshData() {			
 		theRange = theView.getRange();
-		theDateEditor.setRange(theRange);
+		theColumns.setDateEditorRange(theRange);
 	}
 		
 	/**
@@ -207,19 +141,13 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 	 */
 	public void lockOnError(boolean isError) {
 		/* Lock scroll-able area */
-		theScroll.setEnabled(!isError);
-
-		/* Lock row/tab buttons area */
-		theRowButs.getPanel().setEnabled(!isError);
+		getScrollPane().setEnabled(!isError);
 	}
 	
 	/**
 	 * Call underlying controls to take notice of changes in view/selection
 	 */
 	public void notifyChanges() {
-		/* Update the row buttons */
-		theRowButs.setLockDown();
-		
 		/* Find the edit state */
 		if (thePrices != null)
 			thePrices.findEditState();
@@ -235,35 +163,9 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 	public void setSelection(Account pAccount) throws Exception {
 		theAccount = pAccount;
 		thePrices  = new ViewPrice.List(theView, pAccount);
-		setColSelection();
+		theColumns.setColumnSelection();
 		super.setList(thePrices);
 		theDebugEntry.setObject(thePrices);
-		theModel.fireTableDataChanged();
-		theRowButs.setLockDown();
-	}
-		
-	/**
-	 * Set column selection for this view
-	 */
-	public void setColSelection() {
-		/* If we should show dilutions */
-		if ((thePrices != null) && (thePrices.hasDilutions())) {
-			/* If we are not showing dilutions */
-			if (!hasDilutions) {
-				/* Add the dilutions columns and record the fact */
-				addColumn(theDiluteCol);
-				addColumn(theDilPriceCol);
-				hasDilutions = true;
-			}
-		}
-		
-		/* else If we are showing dilutions */
-		else if (hasDilutions) {
-			/* Remove the dilutions columns and record the fact */
-			removeColumn(theDiluteCol);
-			removeColumn(theDilPriceCol);
-			hasDilutions = false;
-		}
 	}
 		
 	/**
@@ -280,14 +182,14 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 	}
 		
 	/* Prices table model */
-	public class PricesModel extends AbstractTableModel {
+	public class PricesModel extends DataTableModel {
 		private static final long serialVersionUID = -2613779599240142148L;
 
 		/**
 		 * Get the number of display columns
 		 * @return the columns
 		 */
-		public int getColumnCount() { return (hasDilutions) ? NUM_COLUMNS : NUM_COLUMNS-2; }
+		public int getColumnCount() { return (theColumns == null) ? 0 : theColumns.getColumnCount(); }
 			
 		/**
 		 * Get the number of rows in the current table
@@ -401,20 +303,137 @@ public class AccountPrices extends FinanceTableModel<ViewPrice> {
 				myPrice.setState(DataState.CHANGED);
 				thePrices.findEditState();
 				
-				/* If we may have re-sorted re-Draw the table */
-				if (col == COLUMN_DATE) {
-					myPrice.reSort();
-					fireTableDataChanged();
-					row = thePrices.indexOf(myPrice);
-					selectRow(row);
+				/* Switch on the updated column */
+				switch (col) {
+					case COLUMN_DATE:
+						/* Re-Sort the row */
+						myPrice.reSort();
+
+						/* Determine new row # */
+						int myNewRowNo = myPrice.indexOf();
+					
+						/* If the row # has changed */
+						if (myNewRowNo != row) {
+							/* Report the move of the row */
+							fireMoveRowEvents(row, myNewRowNo);					
+							selectRowWithScroll(myNewRowNo);
+							break;
+						}
+					
+						/* else fall through */
+		
+					/* else note that we have updated this cell */
+					default:
+						fireTableCellUpdated(row, col);
+						break;
 				}
-				
-				/* else note that we have updated this cell */
-				else fireTableCellUpdated(row, col);
 			
 				/* Update components to reflect changes */
 				notifyChanges();
 			}
 		}
 	}			
+
+	/**
+	 *  Prices mouse listener
+	 */
+	private class pricesMouse extends FinanceMouse<ViewPrice> {
+		/**
+		 * Constructor
+		 */
+		private pricesMouse() {
+			/* Call super-constructor */
+			super(theTable);
+		}		
+	}		
+
+	/**
+	 * Column Model class
+	 */
+	private class DataColumnModel extends DefaultTableColumnModel {
+		private static final long serialVersionUID = -851990835577845594L;
+
+		/* Renderers/Editors */
+		private Renderer.DateCell 			theDateRenderer  	= null;
+		private Editor.DateCell 			theDateEditor    	= null;
+		private Renderer.PriceCell 			thePriceRenderer 	= null;
+		private Editor.PriceCell			thePriceEditor   	= null;
+		private Renderer.DilutionCell 		theDiluteRenderer 	= null;
+		private Renderer.DilutedPriceCell	theDilPriceRenderer	= null;
+		private DataColumn					theDiluteCol		= null;
+		private DataColumn					theDilPriceCol		= null;
+		private boolean						hasDilutions		= true;
+
+		/**
+		 * Constructor 
+		 */
+		private DataColumnModel() {		
+			/* Create the relevant formatters/editors */
+			theDateRenderer  	= new Renderer.DateCell();
+			theDateEditor    	= new Editor.DateCell();
+			thePriceRenderer 	= new Renderer.PriceCell();
+			thePriceEditor  	= new Editor.PriceCell();
+			theDiluteRenderer 	= new Renderer.DilutionCell();
+			theDilPriceRenderer	= new Renderer.DilutedPriceCell();
+			
+			/* Create the columns */
+			addColumn(new DataColumn(COLUMN_DATE,          80, theDateRenderer, theDateEditor));
+			addColumn(new DataColumn(COLUMN_PRICE, 	       90, thePriceRenderer, thePriceEditor));
+			addColumn(theDiluteCol   = new DataColumn(COLUMN_DILUTION,      90, theDiluteRenderer, null));
+			addColumn(theDilPriceCol = new DataColumn(COLUMN_DILUTEDPRICE, 100, theDilPriceRenderer, null));
+		}
+		
+		/**
+		 * Set the date editor range 
+		 * @param pRange
+		 */
+		private void setDateEditorRange(Date.Range pRange) {
+			/* Set the range */
+			theDateEditor.setRange(pRange);			
+		}
+
+		/**
+		 * Set column selection for this view
+		 */
+		private void setColumnSelection() {
+			/* If we should show dilutions */
+			if ((thePrices != null) && (thePrices.hasDilutions())) {
+				/* If we are not showing dilutions */
+				if (!hasDilutions) {
+					/* Add the dilutions columns and record the fact */
+					addColumn(theDiluteCol);
+					addColumn(theDilPriceCol);
+					hasDilutions = true;
+				}
+			}
+			
+			/* else If we are showing dilutions */
+			else if (hasDilutions) {
+				/* Remove the dilutions columns and record the fact */
+				removeColumn(theDiluteCol);
+				removeColumn(theDilPriceCol);
+				hasDilutions = false;
+			}
+		}
+
+		/**
+		 * Add a column to the end of the model 
+		 * @param pColumn
+		 */
+		private void addColumn(DataColumn pColumn) {
+			/* Set the range */
+			super.addColumn(pColumn);
+			pColumn.setMember(true);
+		}
+
+		/**
+		 * Remove a column from the model 
+		 * @param pColumn
+		 */
+		private void removeColumn(DataColumn pColumn) {
+			/* Set the range */
+			super.removeColumn(pColumn);
+			pColumn.setMember(false);
+		}
+	}
 }

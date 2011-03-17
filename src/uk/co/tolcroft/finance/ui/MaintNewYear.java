@@ -7,10 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.DefaultTableColumnModel;
 
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
@@ -19,7 +16,7 @@ import uk.co.tolcroft.finance.views.DebugManager.DebugEntry;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 
-public class MaintNewYear extends FinanceTableModel<Event> implements ActionListener {
+public class MaintNewYear extends FinanceTable<Event> implements ActionListener {
 	private static final long serialVersionUID = 7406051901546832781L;
 	
 	private View				theView				= null;
@@ -27,13 +24,11 @@ public class MaintNewYear extends FinanceTableModel<Event> implements ActionList
 	private Event.List	        theEvents			= null;
 	private MaintenanceTab		theParent			= null;
 	private JPanel				thePanel			= null;
+	private DataColumnModel		theColumns			= null;
 	private TaxYear				theYear				= null;
 	private patternYearModel	theModel			= null;
 	private JButton				thePattern			= null;
 	private DebugEntry			theDebugYear		= null;
-	private Renderer.DateCell 	theDateRenderer   	= null;
-	private Renderer.MoneyCell 	theMoneyRenderer  	= null;
-	private Renderer.StringCell	theStringRenderer 	= null;
 
 	/* Access methods */
 	public JPanel  getPanel()			{ return thePanel; }
@@ -57,7 +52,6 @@ public class MaintNewYear extends FinanceTableModel<Event> implements ActionList
 	private static final int COLUMN_AMOUNT	 = 3;
 	private static final int COLUMN_DEBIT	 = 4;
 	private static final int COLUMN_CREDIT	 = 5;
-	private static final int NUM_COLUMNS	 = 6;
 		
 	/**
 	 * Constructor for New Year Window
@@ -68,9 +62,6 @@ public class MaintNewYear extends FinanceTableModel<Event> implements ActionList
 		super(pParent.getTopWindow());
 
 		/* Declare variables */
-		TableColumnModel    myColModel;
-		TableColumn			myCol;
-		JScrollPane			myScroll;
 		GroupLayout			myLayout;
 			
 		/* Record the passed details */
@@ -83,48 +74,16 @@ public class MaintNewYear extends FinanceTableModel<Event> implements ActionList
 		/* Set the table model */
 		setModel(theModel);
 			
-		/* Access the column model */
-		myColModel = getColumnModel();
+		/* Create the data column model and declare it */
+		theColumns = new DataColumnModel();
+		setColumnModel(theColumns);
 		
-		/* Create the relevant formatters/editors */
-		theDateRenderer   = new Renderer.DateCell();
-		theMoneyRenderer  = new Renderer.MoneyCell();
-		theStringRenderer = new Renderer.StringCell();
-		
-		/* Set the relevant formatters/editors */
-		myCol = myColModel.getColumn(COLUMN_DATE);
-		myCol.setCellRenderer(theDateRenderer);
-		myCol.setPreferredWidth(80);
-			
-		myCol = myColModel.getColumn(COLUMN_DESC);
-		myCol.setCellRenderer(theStringRenderer);
-		myCol.setPreferredWidth(150);
-		
-		myCol = myColModel.getColumn(COLUMN_TRANTYP);
-		myCol.setCellRenderer(theStringRenderer);
-		myCol.setPreferredWidth(110);
-		
-		myCol = myColModel.getColumn(COLUMN_AMOUNT);
-		myCol.setCellRenderer(theMoneyRenderer);
-		myCol.setPreferredWidth(90);
-			
-		myCol= myColModel.getColumn(COLUMN_DEBIT);
-		myCol.setCellRenderer(theStringRenderer);
-		myCol.setPreferredWidth(130);
-			
-		myCol = myColModel.getColumn(COLUMN_CREDIT);
-		myCol.setCellRenderer(theStringRenderer);
-		myCol.setPreferredWidth(130);
-			
+		/* Prevent reordering of columns and auto-resizing */
 		getTableHeader().setReorderingAllowed(false);
 		setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
 
 		/* Set the number of visible rows */
 		setPreferredScrollableViewportSize(new Dimension(800, 200));
-		
-		/* Create a new Scroll Pane and add this table to it */
-		myScroll     = new JScrollPane();
-		myScroll.setViewportView(this);
 		
 		/* Create the button */
 		thePattern = new JButton("Apply");
@@ -143,14 +102,14 @@ public class MaintNewYear extends FinanceTableModel<Event> implements ActionList
 	        	.addGroup(myLayout.createSequentialGroup()
 	        		.addContainerGap()
 	                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, true)
-	                    .addComponent(myScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
+	                    .addComponent(getScrollPane(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
 	                    .addComponent(thePattern))
 	                .addContainerGap())
 	    );
         myLayout.setVerticalGroup(
         	myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	        	.addGroup(GroupLayout.Alignment.TRAILING, myLayout.createSequentialGroup()
-	                .addComponent(myScroll)
+	                .addComponent(getScrollPane())
 	                .addComponent(thePattern))
 	    );
 
@@ -201,7 +160,6 @@ public class MaintNewYear extends FinanceTableModel<Event> implements ActionList
 			thePattern.setVisible(false);
 		}
 		theDebugYear.setObject(theExtract);
-		theModel.fireTableDataChanged();
 		theParent.setVisibleTabs();
 	}
 		
@@ -229,14 +187,14 @@ public class MaintNewYear extends FinanceTableModel<Event> implements ActionList
 	}
 		
 	/* PatternYear table model */
-	public class patternYearModel extends AbstractTableModel {
+	public class patternYearModel extends DataTableModel {
 		private static final long serialVersionUID = 4796112294536415723L;
 
 		/**
 		 * Get the number of display columns
 		 * @return the columns
 		 */
-		public int getColumnCount() { return NUM_COLUMNS; }
+		public int getColumnCount() { return (theColumns == null) ? 0 : theColumns.getColumnCount(); }
 		
 		/**
 		 * Get the number of rows in the current table
@@ -334,5 +292,45 @@ public class MaintNewYear extends FinanceTableModel<Event> implements ActionList
 			/* Return to caller */
 			return o;
 		}				
+	}
+
+	/**
+	 * Column Model class
+	 */
+	private class DataColumnModel extends DefaultTableColumnModel {
+		private static final long serialVersionUID = -894489367275603586L;
+
+		/* Renderers/Editors */
+		private Renderer.DateCell 	theDateRenderer   	= null;
+		private Renderer.MoneyCell 	theMoneyRenderer  	= null;
+		private Renderer.StringCell	theStringRenderer 	= null;
+
+		/**
+		 * Constructor 
+		 */
+		private DataColumnModel() {		
+			/* Create the relevant formatters/editors */
+			theDateRenderer   = new Renderer.DateCell();
+			theMoneyRenderer  = new Renderer.MoneyCell();
+			theStringRenderer = new Renderer.StringCell();
+			
+			/* Create the columns */
+			addColumn(new DataColumn(COLUMN_DATE,     80, theDateRenderer,   null));
+			addColumn(new DataColumn(COLUMN_DESC,    150, theStringRenderer, null));
+			addColumn(new DataColumn(COLUMN_TRANTYP, 110, theStringRenderer, null));
+			addColumn(new DataColumn(COLUMN_AMOUNT,   90, theMoneyRenderer,  null));
+			addColumn(new DataColumn(COLUMN_DEBIT,   130, theStringRenderer, null));
+			addColumn(new DataColumn(COLUMN_CREDIT,  130, theStringRenderer, null));
+		}
+		
+		/**
+		 * Add a column to the end of the model 
+		 * @param pColumn
+		 */
+		private void addColumn(DataColumn pColumn) {
+			/* Set the range */
+			super.addColumn(pColumn);
+			pColumn.setMember(true);
+		}
 	}
 }

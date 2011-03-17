@@ -473,7 +473,7 @@ public class AcctPrice extends DataItem {
 		 * @param pPrice item
 		 * @return the newly added item
 		 */
-		public DataItem addNewItem(DataItem pPrice) {
+		public AcctPrice addNewItem(DataItem pPrice) {
 			AcctPrice myPrice = new AcctPrice(this, (AcctPrice)pPrice);
 			myPrice.addToList();
 			return myPrice;
@@ -481,13 +481,14 @@ public class AcctPrice extends DataItem {
 
 		/**
 		 * Add a new item to the edit list
-		 * 
 		 * @param isCredit - ignored
+		 * @return the newly added item
 		 */
-		public void addNewItem(boolean        isCredit) {
+		public AcctPrice addNewItem(boolean	isCredit) {
 			AcctPrice myPrice = new AcctPrice(this);
 			myPrice.setAccount(theAccount);
 			myPrice.addToList();
+			return myPrice;
 		}
 
 		/**

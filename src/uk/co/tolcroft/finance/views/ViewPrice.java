@@ -391,18 +391,19 @@ public class ViewPrice extends DataItem {
 		/**
 		 * Add a new item (never used)
 		 */
-		public DataItem addNewItem(DataItem pElement) {
+		public ViewPrice addNewItem(DataItem pElement) {
 			return null;}
 		
 		/**
 		 * Add a new item to the edit list
-		 * 
 		 * @param isCredit - ignored
+		 * @return the newly added item
 		 */
-		public void addNewItem(boolean        isCredit) {
+		public ViewPrice addNewItem(boolean isCredit) {
 			ViewPrice myPrice = new ViewPrice(this);
 			myPrice.setAccount(theAccount);
 			myPrice.addToList();
+			return myPrice;
 		}
 
 		/**

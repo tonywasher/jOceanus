@@ -352,13 +352,16 @@ public class SortedList<T extends SortedList.linkObject> implements java.util.Li
 			
 		/* If we are changing things */
 		if (isHidden != myNode.isHidden) {
+			/* set the hidden value */
+			myNode.isHidden = isHidden;
+
 			/* Loop through subsequent elements adjusting the indices */
 			iAdjust = (isHidden) ? -1 : 1;
 			while (myNode != null) {
 				/* Decrement indices */
 				myNode.theHiddenIndex += iAdjust;
 				myNode = myNode.theNext;
-			}
+			}			
 	    }
 	}
 		
@@ -524,8 +527,25 @@ public class SortedList<T extends SortedList.linkObject> implements java.util.Li
 		
 		/* If we have an element in the list */
 		if (theLast != null) {
-			/* Get the relevant index and add 1 */
+			/* Get the full index and add 1 */
 			iSize = 1 + theLast.theIndex;
+		}
+		
+		/* Return the count */
+		return iSize;
+	}
+	
+	/**
+	 * obtain the full size of the list (including hidden items)
+	 * @return the number of visible items in the list
+	 */
+	public int sizeNormal() {
+		int				iSize = 0;
+		
+		/* If we have an element in the list */
+		if (theLast != null) {
+			/* Get the hidden index and add 1 */
+			iSize = 1 + theLast.theHiddenIndex;
 		}
 		
 		/* Return the count */

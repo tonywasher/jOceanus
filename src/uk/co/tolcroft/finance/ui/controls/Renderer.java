@@ -4,7 +4,6 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 
@@ -43,7 +42,7 @@ public class Renderer {
 	                                                	int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 	                                        	hasFocus, row, column);
-			financeTable myTable = (financeTable)table;
+			FinanceTable<?> myTable = (FinanceTable<?>)table;
 			theData.setPosition(row, column, isSelected);
 			myTable.getRenderData(theData);
 			setForeground(theData.getForeGround());
@@ -88,7 +87,7 @@ public class Renderer {
 	                                                	int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 	                                        	hasFocus, row, column);
-			financeTable myTable = (financeTable)table;
+			FinanceTable<?> myTable = (FinanceTable<?>)table;
 			theData.setPosition(row, column, isSelected);
 			myTable.getRenderData(theData);
 			setForeground(theData.getForeGround());
@@ -129,7 +128,7 @@ public class Renderer {
 														int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 												hasFocus, row, column);
-			financeTable myTable = (financeTable)table;
+			FinanceTable<?> myTable = (FinanceTable<?>)table;
 			theData.setPosition(row, column, isSelected);
 			myTable.getRenderData(theData);
 			setForeground(theData.getForeGround());
@@ -170,7 +169,7 @@ public class Renderer {
 														int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 												hasFocus, row, column);
-			financeTable myTable = (financeTable)table;
+			FinanceTable<?> myTable = (FinanceTable<?>)table;
 			theData.setPosition(row, column, isSelected);
 			myTable.getRenderData(theData);
 			setForeground(theData.getForeGround());
@@ -211,7 +210,7 @@ public class Renderer {
 														int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 												hasFocus, row, column);
-			financeTable myTable = (financeTable)table;
+			FinanceTable<?> myTable = (FinanceTable<?>)table;
 			theData.setPosition(row, column, isSelected);
 			myTable.getRenderData(theData);
 			setForeground(theData.getForeGround());
@@ -252,7 +251,7 @@ public class Renderer {
 														int row, int column) {	
 			super.getTableCellRendererComponent(table, value, isSelected,
 												hasFocus, row, column);
-			financeTable myTable = (financeTable)table;
+			FinanceTable<?> myTable = (FinanceTable<?>)table;
 			theData.setPosition(row, column, isSelected);
 			myTable.getRenderData(theData);
 			setForeground(theData.getForeGround());
@@ -293,7 +292,7 @@ public class Renderer {
 														int row, int column) {	
 			super.getTableCellRendererComponent(table, value, isSelected,
 												hasFocus, row, column);
-			financeTable myTable = (financeTable)table;
+			FinanceTable<?> myTable = (FinanceTable<?>)table;
 			theData.setPosition(row, column, isSelected);
 			myTable.getRenderData(theData);
 			setForeground(theData.getForeGround());
@@ -335,7 +334,7 @@ public class Renderer {
 		                                                int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 		                                        hasFocus, row, column);
-			financeTable myTable = (financeTable)table;
+			FinanceTable<?> myTable = (FinanceTable<?>)table;
 			theData.setPosition(row, column, isSelected);
 			myTable.getRenderData(theData);
 			setForeground(theData.getForeGround());
@@ -377,7 +376,7 @@ public class Renderer {
 		                                                int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 		                                        hasFocus, row, column);
-			financeTable myTable = (financeTable)table;
+			FinanceTable<?> myTable = (FinanceTable<?>)table;
 			theData.setPosition(row, column, isSelected);
 			myTable.getRenderData(theData);
 			setForeground(theData.getForeGround());

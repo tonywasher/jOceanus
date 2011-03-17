@@ -1,24 +1,14 @@
 package uk.co.tolcroft.finance.ui;
 
-import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.swing.GroupLayout;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.LayoutStyle;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.DefaultTableColumnModel;
 
 import uk.co.tolcroft.finance.ui.controls.*;
-import uk.co.tolcroft.finance.ui.controls.EditButtons.*;
 import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
@@ -27,7 +17,7 @@ import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
-public class AccountRates extends FinanceTableModel<AcctRate> implements ActionListener {
+public class AccountRates extends FinanceTable<AcctRate> {
 	/* Members */
 	private static final long serialVersionUID = 36193763696660335L;
 	
@@ -35,20 +25,15 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 	private RatesModel				theModel		= null;
 	private AcctRate.List		    theRates   		= null;
 	private JPanel					thePanel		= null;
-	private JScrollPane				theScroll		= null;
 	private AccountRates			theTable    	= this;
 	private ratesMouse				theMouse		= null;
+	private DataColumnModel			theColumns		= null;
 	private AccountTab				theParent   	= null;
 	private Date.Range				theRange		= null;
 	private Account                 theAccount  	= null;
 	private View.ViewRates			theExtract		= null;
-	private EditButtons    			theRowButs  	= null;
 	private DebugEntry				theDebugEntry	= null;
 	private ErrorPanel				theError		= null;
-	private Renderer.DateCell 		theDateRenderer = null;
-	private Editor.DateCell 		theDateEditor   = null;
-	private Renderer.RateCell 		theRateRenderer = null;
-	private Editor.RateCell 		theRateEditor   = null;
 		
 	/* Access methods */
 	public JPanel  	getPanel()			{ return thePanel; }
@@ -66,7 +51,6 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 	private static final int COLUMN_RATE  = 0;
 	private static final int COLUMN_BONUS = 1;
 	private static final int COLUMN_DATE  = 2;
-	private static final int NUM_COLUMNS  = 3;
 		
 	/**
 	 * Constructor for Rates Window
@@ -75,62 +59,30 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 	public AccountRates(AccountTab pParent) {
 		/* Initialise superclass */
 		super(pParent.getTopWindow());
-
-		/* Declare variables */
-		TableColumnModel 	myColModel;
-		TableColumn		 	myCol;
+		
+		/* Declare variables */ 
 		GroupLayout		 	myLayout;
 		
 		/* Store details about the parent */
 		theParent = pParent;
 		theView   = pParent.getView();
 
-		/* Create the model and declare it to our superclass */
+		/* Create the table model and declare it to our superclass */
 		theModel  = new RatesModel();
 		setModel(theModel);
 		
-		/* Access the column model */
-		myColModel = getColumnModel();
-			
-		/* Create the relevant formatters/editors */
-		theDateRenderer = new Renderer.DateCell();
-		theDateEditor   = new Editor.DateCell();
-		theRateRenderer = new Renderer.RateCell();
-		theRateEditor   = new Editor.RateCell();
-		
-		/* Set the relevant formatters/editors */
-		myCol = myColModel.getColumn(COLUMN_RATE);
-		myCol.setCellRenderer(theRateRenderer);
-		myCol.setCellEditor(theRateEditor);
-		myCol.setPreferredWidth(90);
-		
-		myCol = myColModel.getColumn(COLUMN_BONUS);
-		myCol.setCellRenderer(theRateRenderer);
-		myCol.setCellEditor(theRateEditor);
-		myCol.setPreferredWidth(90);
-		
-		myCol = myColModel.getColumn(COLUMN_DATE);
-		myCol.setCellRenderer(theDateRenderer);
-		myCol.setCellEditor(theDateEditor);
-		myCol.setPreferredWidth(100);
-		
+		/* Create the data column model and declare it */
+		theColumns = new DataColumnModel();
+		setColumnModel(theColumns);
+
+		/* Prevent reordering of columns and auto-resizing */
 		getTableHeader().setReorderingAllowed(false);
 		setAutoResizeMode(AUTO_RESIZE_OFF);
 			
-		/* Set the number of visible rows */
-		setPreferredScrollableViewportSize(new Dimension(800, 200));
-		
 		/* Add the mouse listener */
 		theMouse = new ratesMouse();
 		addMouseListener(theMouse);
 		
-		/* Create the sub panels */
-		theRowButs   = new EditButtons(this, InsertStyle.INSERT);
-		
-		/* Create a new Scroll Pane and add this table to it */
-		theScroll     = new JScrollPane();
-		theScroll.setViewportView(this);
-        
         /* Create the debug entry, attach to AccountDebug entry and hide it */
         DebugManager myDebugMgr	= theView.getDebugMgr();
         theDebugEntry = myDebugMgr.new DebugEntry("Rates");
@@ -154,31 +106,16 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 	        		.addContainerGap()
 	                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
 	                    .addComponent(theError.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-	                    .addComponent(theScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-	                    .addComponent(theRowButs.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+	                    .addComponent(getScrollPane(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 	                .addContainerGap())
 	    );
         myLayout.setVerticalGroup(
        	myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
        		.addGroup(GroupLayout.Alignment.TRAILING, myLayout.createSequentialGroup()
 	                .addComponent(theError.getPanel())
-	                .addComponent(theScroll)
-	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-	                .addComponent(theRowButs.getPanel())
+	                .addComponent(getScrollPane())
 	                .addContainerGap())
 	    );
-	}
-		
-	/**
-	 *  Notify table that there has been a change in selection by an underlying control
-	 *  @param obj the underlying control that has changed selection
-	 */
-	public void    notifySelection(Object obj)    {
-		/* If this is a change from the buttons */
-		if (obj == (Object) theRowButs) {
-			/* Set the correct show selected value */
-			super.setShowDeleted(theRowButs.getShowDel());
-		}
 	}
 		
 	/**
@@ -196,10 +133,7 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 	 */
 	public void lockOnError(boolean isError) {
 		/* Lock scroll-able area */
-		theScroll.setEnabled(!isError);
-
-		/* Lock row/tab buttons area */
-		theRowButs.getPanel().setEnabled(!isError);
+		getScrollPane().setEnabled(!isError);
 	}
 	
 	/**
@@ -208,16 +142,13 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 	public void refreshData() {			
 		theRange = theView.getRange();
 		theRange = new Date.Range(theRange.getStart(), null);
-		theDateEditor.setRange(theRange);
+		theColumns.setDateEditorRange(theRange);
 	}
 		
 	/**
 	 * Call underlying controls to take notice of changes in view/selection
 	 */
 	public void notifyChanges() {
-		/* Update the row buttons */
-		theRowButs.setLockDown();
-		
 		/* Find the edit state */
 		if (theRates != null)
 			theRates.findEditState();
@@ -236,8 +167,6 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 		theRates   = theExtract.getRates();
 		setList(theRates);
 		theDebugEntry.setObject(theExtract);
-		theModel.fireTableDataChanged();
-		theRowButs.setLockDown();
 	}
 		
 	/**
@@ -254,55 +183,15 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 		}
 	}
 		
-	/**
-	 * Perform actions for controls/pop-ups on this table
-	 * @param evt the event
-	 */
-	public void actionPerformed(ActionEvent evt) {
-		String          myCmd;
-		String          tokens[];
-		String          myName = null;
-		int             row;
-
-		/* Access the action command */
-		myCmd  = evt.getActionCommand();
-		tokens = myCmd.split(":");
-		myCmd  = tokens[0];
-		if (tokens.length > 1) myName = tokens[1];
-		
-		/* Cancel any editing */
-		if (isEditing()) cellEditor.cancelCellEditing();
-		
-		/* If this is a set Null Date request */
-		if (myCmd.compareTo(ratesMouse.popupSetNullDate) == 0) {
-			/* Access the correct row */
-			row = Integer.parseInt(myName);
-		
-			/* set the null value */
-			theModel.setValueAt(null, row, COLUMN_DATE);
-			theModel.fireTableCellUpdated(row, COLUMN_DATE);
-		}
-		
-		/* If this is a set Null Bonus request */
-		else if (myCmd.compareTo(ratesMouse.popupSetNullBonus) == 0) {
-			/* Access the correct row */
-			row = Integer.parseInt(myName);
-		
-			/* set the null value */
-			theModel.setValueAt(null, row, COLUMN_BONUS);
-			theModel.fireTableCellUpdated(row, COLUMN_BONUS);
-		}
-	}
-		
 	/* Rates table model */
-	public class RatesModel extends AbstractTableModel {
+	public class RatesModel extends DataTableModel {
 		private static final long serialVersionUID = 296797947278000196L;
 
 		/**
 		 * Get the number of display columns
 		 * @return the columns
 		 */
-		public int getColumnCount() { return NUM_COLUMNS; }
+		public int getColumnCount() { return (theColumns == null) ? 0 : theColumns.getColumnCount(); }
 			
 		/**
 		 * Get the number of rows in the current table
@@ -410,16 +299,31 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 				myRate.setState(DataState.CHANGED);
 				theRates.findEditState();
 			
-				/* If we may have re-sorted re-Draw the table */
-				if (col == COLUMN_DATE) {
-					myRate.reSort();
-					fireTableDataChanged();
-					row = theRates.indexOf(myRate);
-					selectRow(row);
-				}
+				/* Switch on the updated column */
+				switch (col) {
+					/* if we have updated a sort col */
+					case COLUMN_DATE:
+						/* Re-Sort the row */
+						myRate.reSort();
+
+						/* Determine new row # */
+						int myNewRowNo = myRate.indexOf();
+						
+						/* If the row # has changed */
+						if (myNewRowNo != row) {
+							/* Report the move of the row */
+							fireMoveRowEvents(row, myNewRowNo);					
+							selectRowWithScroll(myNewRowNo);
+							break;
+						}
+						
+						/* else fall through */
 			
-				/* else note that we have updated this cell */
-				else fireTableCellUpdated(row, col);
+					/* else note that we have updated this cell */
+					default:
+						fireTableCellUpdated(row, col);
+						break;
+				}
 			
 				/* Update components to reflect changes */
 				notifyChanges();
@@ -427,103 +331,158 @@ public class AccountRates extends FinanceTableModel<AcctRate> implements ActionL
 		}
 	}
 	
-	/* Rates mouse listener */
-	public class ratesMouse extends MouseAdapter {
+	/**
+	 *  Rates mouse listener
+	 */
+	private class ratesMouse extends FinanceMouse<AcctRate> {
 			
 		/* Pop-up Menu items */
 		private static final String popupSetNullDate  = "Set Null Date";
 		private static final String popupSetNullBonus = "Set Null Bonus";
 			
-		/* handle mouse Pressed event */
-		public void mousePressed(MouseEvent e) {
-			maybeShowPopup(e);
-		}
-		/* handle mouse Released event */
-		public void mouseReleased(MouseEvent e) {
-			maybeShowPopup(e);
-		}
+		/**
+		 * Constructor
+		 */
+		private ratesMouse() {
+			/* Call super-constructor */
+			super(theTable);
+		}		
+		
+		/**
+		 * Add Null commands to menu
+		 * @param pMenu the menu to add to
+		 */
+		protected void addNullCommands(JPopupMenu pMenu) {
+			JMenuItem 	myItem;
+			AcctRate	myRate;
+			boolean		enableNullDate 	= false;
+			boolean		enableNullBonus	= false;
 			
-		/* Maybe show the pop-up */
-		public void maybeShowPopup(MouseEvent e) {
-			JPopupMenu      myMenu;
-			JMenuItem       myItem;
-			AcctRate    		myRow     = null;
-			AcctRate    		myCurr;
-			boolean         isBonus   = false;
-			boolean         isDate    = false;
+			/* Nothing to do if the table is locked */
+			if (theTable.isLocked()) return;
+			
+			/* Loop through the selected rows */
+			for (DataItem myRow : theTable.cacheSelectedRows()) {
+				/* Ignore locked rows */
+				if ((myRow == null) || (myRow.isLocked())) continue;
 				
-			if (e.isPopupTrigger() && 
-				(theTable.isEnabled())) {
-				/* Calculate the row/column that the mouse was clicked at */
-				Point p = new Point(e.getX(), e.getY());
-				int row = theTable.rowAtPoint(p);
-				int col = theTable.columnAtPoint(p);
+				/* Ignore deleted rows */
+				if (myRow.isDeleted()) continue;
 				
-				/* Adjust column for view differences */
-				col = theTable.convertColumnIndexToModel(col);
+				/* Access as rate */
+				myRate = (AcctRate)myRow;
 				
-				/* Access the row */
-				myRow = theRates.get(row);
-					
-				/* Determine column */
-				if (col == COLUMN_DATE)
-					isDate = true;
-				else if (col == COLUMN_BONUS)
-					isBonus = true;
+				/* Enable null Date if we have date */
+				if (myRate.getDate()  != null) 	enableNullDate	= true;
 				
-				/* If we are pointing to date then determine whether we can set null */
-				if (isDate) {
-					/* Handle null date */
-					if ((myRow.isLocked()) ||
-					    (myRow.getDate() == null) ||
-					    (myRow.getDate().isNull()))
-						isDate = false;
-					
-					/* Access the next valid element */
-					myCurr = theRates.peekNext(myRow);
-					
-					/* Handle not last */
-					if (myCurr != null) isDate = false;
-				}
-				
-				/* If we are pointing to date then determine whether we can set null */
-				if ((isBonus) && 
-					((myRow.isLocked()) ||
-					 (myRow.getBonus() == null)))
-					isBonus = false;
-				
-				/* If we can set null value */
-				if ((isBonus) || (isDate)) {
-					/* Create the pop-up menu */
-					myMenu = new JPopupMenu();
-					
-					/* If we have date */
-					if (isDate) {
-						/* Create the View account choice */
-						myItem = new JMenuItem(popupSetNullDate);
-					
-						/* Set the command and add to menu */
-						myItem.setActionCommand(popupSetNullDate + ":" + row);
-						myItem.addActionListener(theTable);
-						myMenu.add(myItem);
-					}
-					
-					/* If we have bonus */
-					if (isBonus) {
-						/* Create the View account choice */
-						myItem = new JMenuItem(popupSetNullBonus);
-					
-						/* Set the command and add to menu */
-						myItem.setActionCommand(popupSetNullBonus + ":" + row);
-						myItem.addActionListener(theTable);
-						myMenu.add(myItem);
-					}
-					
-					/* Show the pop-up menu */
-					myMenu.show(e.getComponent(),
-								e.getX(), e.getY());
-				}					
+				/* Enable null Tax if we have tax */
+				if (myRate.getBonus() != null) 	enableNullBonus = true;
+			}	
+
+			/* If there is something to add and there are already items in the menu */
+			if ((enableNullDate || enableNullBonus) &&
+			    (pMenu.getComponentCount() > 0)) {
+				/* Add a separator */
+				pMenu.addSeparator();
 			}
+			
+			/* If we can set null date */
+			if (enableNullDate) {
+				/* Add the undo change choice */
+				myItem = new JMenuItem(popupSetNullDate);
+				myItem.setActionCommand(popupSetNullDate);
+				myItem.addActionListener(this);
+				pMenu.add(myItem);			
+			}
+
+			/* If we can set null bonus */
+			if (enableNullBonus) {
+				/* Add the undo change choice */
+				myItem = new JMenuItem(popupSetNullBonus);
+				myItem.setActionCommand(popupSetNullBonus);
+				myItem.addActionListener(this);
+				pMenu.add(myItem);			
+			}
+		}
+		/**
+		 * Perform actions for controls/pop-ups on this table
+		 * @param evt the event
+		 */
+		public void actionPerformed(ActionEvent evt) {
+			String myCmd = evt.getActionCommand();
+			
+			/* Cancel any editing */
+			theTable.cancelEditing();
+			
+			/* If this is a set null date command */
+			if (myCmd.equals(popupSetNullDate)) {
+				/* Set Date column to null */
+				setColumnToNull(COLUMN_DATE);
+			}
+			
+			/* else if this is a set null bonus command */
+			else if (myCmd.equals(popupSetNullBonus)) {
+				/* Set Bonus column to null */
+				setColumnToNull(COLUMN_BONUS);				
+			}
+			
+			/* else we do not recognise the action */
+			else {
+				/* Pass it to the superclass */
+				super.actionPerformed(evt);
+				return;
+			}
+			
+			/* Notify of any changes */
+			notifyChanges();
+		}		
+	}
+	
+	/**
+	 * Column Model class
+	 */
+	private class DataColumnModel extends DefaultTableColumnModel {
+		private static final long serialVersionUID = -3431873508431574944L;
+
+		/* Renderers/Editors */
+		private Renderer.DateCell 		theDateRenderer = null;
+		private Editor.DateCell 		theDateEditor   = null;
+		private Renderer.RateCell 		theRateRenderer = null;
+		private Editor.RateCell 		theRateEditor   = null;
+
+		/**
+		 * Constructor 
+		 */
+		private DataColumnModel() {		
+			/* Create the relevant formatters/editors */
+			theDateRenderer = new Renderer.DateCell();
+			theDateEditor   = new Editor.DateCell();
+			theRateRenderer = new Renderer.RateCell();
+			theRateEditor   = new Editor.RateCell();
+			
+			/* Create the columns */
+			addColumn(new DataColumn(COLUMN_RATE,  90, theRateRenderer, theRateEditor));
+			addColumn(new DataColumn(COLUMN_BONUS, 90, theRateRenderer, theRateEditor));
+			addColumn(new DataColumn(COLUMN_DATE, 100, theDateRenderer, theDateEditor));
+		}
+		
+		/**
+		 * Set the date editor range 
+		 * @param pRange
+		 */
+		private void setDateEditorRange(Date.Range pRange) {
+			/* Set the range */
+			theDateEditor.setRange(pRange);			
+		}
+
+		/**
+		 * Add a column to the end of the model 
+		 * @param pColumn
+		 */
+		private void addColumn(DataColumn pColumn) {
+			/* Set the range */
+			super.addColumn(pColumn);
+			pColumn.setMember(true);
 		}
 	}
 }

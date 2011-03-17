@@ -292,19 +292,17 @@ public class CapitalEvent extends DataItem {
 		
 		/**
 		 * Add a new item to the list
-		 * 
 		 * @param pItem the item to add
 		 * @return the newly added item
 		 */
-		public DataItem addNewItem(DataItem pItem) { return null; }
+		public CapitalEvent addNewItem(DataItem pItem) { return null; }
 
 	
 		/**
 		 * Add a new item to the edit list
-		 * 
 		 * @param isCredit - ignored
 		 */
-		public void addNewItem(boolean isCredit) { return; }
+		public CapitalEvent addNewItem(boolean isCredit) { return null; }
 	
 		/**
 		 * Obtain the type of the item
@@ -356,7 +354,8 @@ public class CapitalEvent extends DataItem {
 			myEvent = myIterator.peekLast();
 			
 			/* If the element is a cash takeover */
-			if ((myEvent.getBase() != null) &&
+			if ((myEvent != null) &&
+				(myEvent.getBase() != null) &&
 				(myEvent.getBase().getTransType().getTranClass() == TransClass.CASHTAKEOVER))
 				return myEvent;
 			

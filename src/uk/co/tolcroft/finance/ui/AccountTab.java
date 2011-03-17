@@ -617,24 +617,28 @@ public class AccountTab implements financePanel,
 		if (myComponent == (Component)theStatement.getPanel()) {
 			/* Set the debug focus */
 			theStatement.getDebugEntry().setFocus();
+			theStatement.requestFocusInWindow();
 		}
 		
 		/* If the selected component is Rates */
 		else if (myComponent == (Component)theRates.getPanel()) {
 			/* Set the debug focus */
-			theRates.getDebugEntry().setFocus();			
+			theRates.getDebugEntry().setFocus();
+			theRates.requestFocusInWindow();
 		}
 
 		/* If the selected component is Prices */
 		else if (myComponent == (Component)thePrices.getPanel()) {
 			/* Set the debug focus */
-			thePrices.getDebugEntry().setFocus();			
+			thePrices.getDebugEntry().setFocus();
+			thePrices.requestFocusInWindow();
 		}
 		
 		/* If the selected component is Patterns */
 		else if (myComponent == (Component)thePatterns.getPanel()) {
 			/* Set the debug focus */
-			thePatterns.getDebugEntry().setFocus();						
+			thePatterns.getDebugEntry().setFocus();
+			thePatterns.requestFocusInWindow();
 		}
 	}
 }

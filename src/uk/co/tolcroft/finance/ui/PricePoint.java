@@ -1,20 +1,13 @@
 package uk.co.tolcroft.finance.ui;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.swing.GroupLayout;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.DefaultTableColumnModel;
 
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
@@ -25,7 +18,7 @@ import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 
-public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implements ActionListener {
+public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 	/* Members */
 	private static final long serialVersionUID = 5826211763056873599L;
 	
@@ -35,18 +28,14 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 	private SpotPrices.List        	thePrices			= null;
 	private MainTab					theParent			= null;
 	private JPanel					thePanel			= null;
-	private JScrollPane				theScroll			= null;
 	private PricePoint			 	theTable			= this;
 	private spotViewMouse			theMouse			= null;
+	private DataColumnModel			theColumns			= null;
 	private Date					theDate				= null;
 	private SpotSelect				theSelect	 		= null;
 	private SaveButtons  			theTabButs   		= null;
 	private DebugEntry				theDebugPrice		= null;
 	private ErrorPanel				theError			= null;
-	private Renderer.DateCell 		theDateRenderer  	= null;
-	private Renderer.PriceCell 		thePriceRenderer  	= null;
-	private Editor.PriceCell 		thePriceEditor    	= null;
-	private Renderer.StringCell 	theStringRenderer 	= null;
 
 	/* Access methods */
 	public JPanel  	getPanel()			{ return thePanel; }
@@ -67,7 +56,6 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 	private static final int COLUMN_PRICE	 	= 1;
 	private static final int COLUMN_PREVPRICE	= 2;
 	private static final int COLUMN_PREVDATE	= 3;
-	private static final int NUM_COLUMNS	 	= 4;
 		
 	/* Constructor */
 	public PricePoint(MainTab pParent) {
@@ -75,8 +63,6 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 		super(pParent);
 
 		/* Declare variables */
-		TableColumnModel    myColModel;
-		TableColumn			myCol;
 		GroupLayout			myLayout;
 		DebugEntry			mySection;
 			
@@ -94,33 +80,11 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 		theModel  = new spotViewModel();
 		setModel(theModel);
 			
-		/* Access the column model */
-		myColModel = getColumnModel();
+		/* Create the data column model and declare it */
+		theColumns = new DataColumnModel();
+		setColumnModel(theColumns);
 		
-		/* Create the relevant formatters/editors */
-		theDateRenderer    = new Renderer.DateCell();
-		thePriceRenderer   = new Renderer.PriceCell();
-		thePriceEditor     = new Editor.PriceCell();
-		theStringRenderer  = new Renderer.StringCell();
-		
-		/* Set the relevant formatters/editors */
-		myCol = myColModel.getColumn(COLUMN_ASSET);
-		myCol.setCellRenderer(theStringRenderer);
-		myCol.setPreferredWidth(130);
-			
-		myCol = myColModel.getColumn(COLUMN_PRICE);
-		myCol.setCellRenderer(thePriceRenderer);
-		myCol.setCellEditor(thePriceEditor);
-		myCol.setPreferredWidth(130);
-		
-		myCol = myColModel.getColumn(COLUMN_PREVPRICE);
-		myCol.setCellRenderer(thePriceRenderer);
-		myCol.setPreferredWidth(130);
-		
-		myCol = myColModel.getColumn(COLUMN_PREVDATE);
-		myCol.setCellRenderer(theDateRenderer);
-		myCol.setPreferredWidth(130);
-		
+		/* Prevent reordering of columns and auto-resizing */
 		getTableHeader().setReorderingAllowed(false);
 		setAutoResizeMode(AUTO_RESIZE_OFF);
 
@@ -134,10 +98,6 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 		/* Create the sub panels */
 		theSelect    = new SpotSelect(theView, this);
 		theTabButs   = new SaveButtons(this);
-			
-		/* Create a new Scroll Pane and add this table to it */
-		theScroll     = new JScrollPane();
-		theScroll.setViewportView(this);
 			
         /* Create the error panel for this view */
         theError = new ErrorPanel(this);
@@ -157,7 +117,7 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 	                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, true)
 	                	.addComponent(theError.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                	.addComponent(theSelect.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-	                    .addComponent(theScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
+	                    .addComponent(getScrollPane(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
 	                    .addComponent(theTabButs.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 	                .addContainerGap())
 	    );
@@ -166,7 +126,7 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 	        	.addGroup(GroupLayout.Alignment.TRAILING, myLayout.createSequentialGroup()
 	        		.addComponent(theError.getPanel())
 	        		.addComponent(theSelect.getPanel())
-	                .addComponent(theScroll)
+	                .addComponent(getScrollPane())
 	                .addComponent(theTabButs.getPanel()))
 	    );
 	}
@@ -190,7 +150,7 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 		theSelect.getPanel().setVisible(!isError);
 
 		/* Lock scroll-able area */
-		theScroll.setEnabled(!isError);
+		getScrollPane().setEnabled(!isError);
 
 		/* Lock tab buttons area */
 		theTabButs.getPanel().setEnabled(!isError);
@@ -282,7 +242,6 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 		}
 		setList(thePrices);
 		theDebugPrice.setObject(theSnapshot);
-		theModel.fireTableDataChanged();
 		theTabButs.setLockDown();
 		theSelect.setLockDown();
 		theParent.setVisibleTabs();
@@ -319,45 +278,15 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 		return true;
 	}
 		
-	/**
-	 * Perform actions for controls/pop-ups on this table
-	 * @param evt the event
-	 */
-	public void actionPerformed(ActionEvent evt) {
-		String          myCmd;
-		String          tokens[];
-		String          myName = null;
-		int             row;
-
-		/* Access the action command */
-		myCmd  = evt.getActionCommand();
-		tokens = myCmd.split(":");
-		myCmd  = tokens[0];
-		if (tokens.length > 1) myName = tokens[1];
-		
-		/* Cancel any editing */
-		if (isEditing()) cellEditor.cancelCellEditing();
-		
-		/* If this is a set Null request */
-		if (myCmd.compareTo(spotViewMouse.popupSetNull) == 0) {
-			/* Access the correct row */
-			row = Integer.parseInt(myName);
-		
-			/* set the null value */
-			theModel.setValueAt(null, row, COLUMN_PRICE);
-			theModel.fireTableCellUpdated(row, COLUMN_PRICE);
-		}
-	}
-		
 	/* SpotView table model */
-	public class spotViewModel extends AbstractTableModel {
+	public class spotViewModel extends DataTableModel {
 		private static final long serialVersionUID = 2520681944053000625L;
 
 		/**
 		 * Get the number of display columns
 		 * @return the columns
 		 */
-		public int getColumnCount() { return NUM_COLUMNS; }
+		public int getColumnCount() { return (theColumns == null) ? 0 : theColumns.getColumnCount(); }
 		
 		/**
 		 * Get the number of rows in the current table
@@ -504,71 +433,137 @@ public class PricePoint extends FinanceTableModel<SpotPrices.SpotPrice> implemen
 		}
 	}
 	
-	/* spotView mouse listener */
-	public class spotViewMouse extends MouseAdapter {
+	/**
+	 *  SpotView mouse listener
+	 */
+	private class spotViewMouse extends FinanceMouse<SpotPrices.SpotPrice> {
 			
 		/* Pop-up Menu items */
-		private static final String popupSetNull = "Set Null";
+		private static final String popupSetNull = "Set Null Price";
 			
-		/* handle mouse Pressed event */
-		public void mousePressed(MouseEvent e) {
-			maybeShowPopup(e);
+		/**
+		 * Constructor
+		 */
+		private spotViewMouse() {
+			/* Call super-constructor */
+			super(theTable);
 		}
-		/* handle mouse Released event */
-		public void mouseReleased(MouseEvent e) {
-			maybeShowPopup(e);
-		}
+		
+		/**
+		 * Disable Add Insert/Delete commands to menu
+		 * @param pMenu the menu to add to
+		 */
+		protected void addInsertDelete(JPopupMenu pMenu) {}
+		
+		/**
+		 * Add Null commands to menu
+		 * @param pMenu the menu to add to
+		 */
+		protected void addNullCommands(JPopupMenu pMenu) {
+			JMenuItem 				myItem;
+			SpotPrices.SpotPrice	myPrice;
+			boolean					enableNullPrice	= false;
 			
-		/* Maybe show the pop-up */
-		public void maybeShowPopup(MouseEvent e) {
-			JPopupMenu              myMenu;
-			JMenuItem               myItem;
-			SpotPrices.SpotPrice	myRow;
-			boolean                 isPrice  = false;
+			/* Nothing to do if the table is locked */
+			if (theTable.isLocked()) return;
+			
+			/* Loop through the selected rows */
+			for (DataItem myRow : theTable.cacheSelectedRows()) {
+				/* Ignore locked rows */
+				if ((myRow == null) || (myRow.isLocked())) continue;
 				
-			if (e.isPopupTrigger() && 
-				(theTable.isEnabled())) {
-				/* Calculate the row/column that the mouse was clicked at */
-				Point p = new Point(e.getX(), e.getY());
-				int row = theTable.rowAtPoint(p);
-				int col = theTable.columnAtPoint(p);
+				/* Ignore deleted rows */
+				if (myRow.isDeleted()) continue;
 				
-				/* Adjust column for view differences */
-				col = theTable.convertColumnIndexToModel(col);
+				/* Access as Price */
+				myPrice = (SpotPrices.SpotPrice)myRow;
 				
-				/* Access the row */
-				myRow = thePrices.get(row);
-					
-				/* If the column is Price */
-				if (col == COLUMN_PRICE)
-					isPrice = true;
-				
-				/* If we are pointing to units then determine whether we can set null */
-				if ((isPrice) && 
-					(myRow.getPrice() == null))
-					isPrice = false;
-				
-				/* If we can set null price */
-				if (isPrice) {
-					/* Create the pop-up menu */
-					myMenu = new JPopupMenu();
-					
-					/* If we have price */
-					if (isPrice) {
-						/* Create the View account choice */
-						myItem = new JMenuItem(popupSetNull);
-					
-						/* Set the command and add to menu */
-						myItem.setActionCommand(popupSetNull + ":" + row);
-						myItem.addActionListener(theTable);
-						myMenu.add(myItem);
-					}
-					
-					/* Show the pop-up menu */
-					myMenu.show(e.getComponent(),
-								e.getX(), e.getY());
-				}					
+				/* Enable null Price if we have price */
+				if (myPrice.getPrice() != null)	enableNullPrice	= true;
+			}	
+
+			/* If there is something to add and there are already items in the menu */
+			if ((enableNullPrice) &&
+			    (pMenu.getComponentCount() > 0)) {
+				/* Add a separator */
+				pMenu.addSeparator();
 			}
+			
+			/* If we can set null price */
+			if (enableNullPrice) {
+				/* Add the undo change choice */
+				myItem = new JMenuItem(popupSetNull);
+				myItem.setActionCommand(popupSetNull);
+				myItem.addActionListener(this);
+				pMenu.add(myItem);			
+			}
+		}
+		
+		/**
+		 * Perform actions for controls/pop-ups on this table
+		 * @param evt the event
+		 */
+		public void actionPerformed(ActionEvent evt) {
+			String myCmd = evt.getActionCommand();
+			
+			/* Cancel any editing */
+			theTable.cancelEditing();
+			
+			/* If this is a set null units command */
+			if (myCmd.equals(popupSetNull)) {
+				/* Set Price column to null */
+				setColumnToNull(COLUMN_PRICE);
+			}
+			
+			/* else we do not recognise the action */
+			else {
+				/* Pass it to the superclass */
+				super.actionPerformed(evt);
+				return;
+			}
+			
+			/* Notify of any changes */
+			notifyChanges();
+		}		
+	}
+
+	/**
+	 * Column Model class
+	 */
+	private class DataColumnModel extends DefaultTableColumnModel {
+		private static final long serialVersionUID = 5102715203937500181L;
+
+		/* Renderers/Editors */
+		private Renderer.DateCell 		theDateRenderer  	= null;
+		private Renderer.PriceCell 		thePriceRenderer  	= null;
+		private Editor.PriceCell 		thePriceEditor    	= null;
+		private Renderer.StringCell 	theStringRenderer 	= null;
+
+		/**
+		 * Constructor 
+		 */
+		private DataColumnModel() {		
+			/* Create the relevant formatters/editors */
+			theDateRenderer    = new Renderer.DateCell();
+			thePriceRenderer   = new Renderer.PriceCell();
+			thePriceEditor     = new Editor.PriceCell();
+			theStringRenderer  = new Renderer.StringCell();
+			
+			/* Create the columns */
+			addColumn(new DataColumn(COLUMN_ASSET,      130, theStringRenderer, null));
+			addColumn(new DataColumn(COLUMN_PRICE,      130, thePriceRenderer,  thePriceEditor));
+			addColumn(new DataColumn(COLUMN_PREVPRICE,  130, thePriceRenderer,  null));
+			addColumn(new DataColumn(COLUMN_PREVDATE,   130, theDateRenderer,   null));
+		}
+		
+		/**
+		 * Add a column to the end of the model 
+		 * @param pColumn
+		 */
+		private void addColumn(DataColumn pColumn) {
+			/* Set the range */
+			super.addColumn(pColumn);
+			pColumn.setMember(true);
 		}
 	}
 }

@@ -1018,11 +1018,10 @@ public class TaxYear extends DataItem {
 		
 		/**
 		 * Add a new item to the core list
-		 * 
 		 * @param pTaxYear item
 		 * @return the newly added item
 		 */
-		public DataItem addNewItem(DataItem pTaxYear) {
+		public TaxYear addNewItem(DataItem pTaxYear) {
 			TaxYear myYear = new TaxYear(this, (TaxYear)pTaxYear);
 			myYear.addToList();
 			return myYear;
@@ -1031,8 +1030,9 @@ public class TaxYear extends DataItem {
 		/**
 		 * Create a new empty element in the edit list (null-operation)
 		 * @param isCredit - is the item a credit or debit
+		 * @return the newly added item
 		 */
-		public void addNewItem(boolean isCredit) {};
+		public TaxYear addNewItem(boolean isCredit) { return null; }
 			
 		/**
 		 * Obtain the type of the item

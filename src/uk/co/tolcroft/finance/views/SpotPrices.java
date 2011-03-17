@@ -162,15 +162,14 @@ public class SpotPrices implements htmlDumpable {
 		/**
 		 * Add a new item (never used)
 		 */
-		public DataItem addNewItem(DataItem pElement) {
+		public SpotPrice addNewItem(DataItem pElement) {
 			return null;}
 		
 		/**
 		 * Add a new item to the edit list
-		 * 
 		 * @param isCredit - ignored
 		 */
-		public void addNewItem(boolean        isCredit) {}
+		public SpotPrice addNewItem(boolean isCredit) { return null; }
 	
 		/**
 		 * Obtain the type of the item

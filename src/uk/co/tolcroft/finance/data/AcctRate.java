@@ -452,7 +452,7 @@ public class AcctRate extends DataItem {
 		 * @param pRate item
 		 * @return the newly added item
 		 */
-		public DataItem addNewItem(DataItem pRate) {
+		public AcctRate addNewItem(DataItem pRate) {
 			AcctRate myRate = new AcctRate(this, (AcctRate)pRate);
 			myRate.addToList();
 			return myRate;
@@ -463,10 +463,11 @@ public class AcctRate extends DataItem {
 		 *
 		 * @param isCredit - ignored
 		 */
-		public void addNewItem(boolean        isCredit) {
+		public AcctRate addNewItem(boolean isCredit) {
 			AcctRate myRate = new AcctRate(this);
 			myRate.setAccount(theAccount);
 			myRate.addToList();
+			return myRate;
 		}
 
 		/**

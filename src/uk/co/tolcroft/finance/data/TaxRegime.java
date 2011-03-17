@@ -303,11 +303,10 @@ public class TaxRegime extends DataItem {
 		
 		/**
 		 * Add a new item to the list
-		 * 
 		 * @param pItem item to be added
 		 * @return the newly added item
 		 */
-		public DataItem addNewItem(DataItem pItem) {
+		public TaxRegime addNewItem(DataItem pItem) {
 			TaxRegime myRegime = new TaxRegime(this, (TaxRegime)pItem);
 			myRegime.addToList();
 			return myRegime;
@@ -316,8 +315,9 @@ public class TaxRegime extends DataItem {
 		/**
 		 * Create a new empty element in the edit list (null-operation)
 		 * @param isCredit - is the item a credit or debit
+		 * @return the newly added item
 		 */
-		public void addNewItem(boolean isCredit) {};
+		public TaxRegime addNewItem(boolean isCredit) { return null; }
 			
 		/**
 		 * Obtain the type of the item

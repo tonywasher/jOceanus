@@ -267,5 +267,12 @@ public class MaintenanceTab implements ChangeListener {
 			/* Set the debug focus */
 			theTaxYearTab.getDebugEntry().setFocus();			
 		}
+
+		/* If the selected component is NewYear */
+		else if (myComponent == (Component)thePatternYear.getPanel()) {
+			/* Set the debug focus */
+			thePatternYear.getDebugEntry().setFocus();
+			thePatternYear.requestFocusInWindow();
+		}
 	}
 }

@@ -78,8 +78,8 @@ public class MainTab implements ActionListener,
 	protected 	ComboSelect		getComboList()	{ return theComboList; }
 
 	/* Get explicit font */
-	protected Font getFont(boolean	isNumeric,
-					  	   boolean	isChanged) {
+	public Font getFont(boolean	isNumeric,
+					  	boolean	isChanged) {
 		/* Return the appropriate font */
 		if (isNumeric)
 			return (isChanged) ? theChgNumFont 	: theNumFont;
@@ -627,8 +627,7 @@ public class MainTab implements ActionListener,
 		if (e.getSource() != theTabs) return;
 		
 		/* Determine the focus */
-		determineFocus();
-		
+		determineFocus();		
 	}
 
 	/* Change listener */
@@ -640,6 +639,7 @@ public class MainTab implements ActionListener,
 		if (myComponent == (Component)theExtract.getPanel()) {
 			/* Set the debug focus */
 			theExtract.getDebugEntry().setFocus();
+			theExtract.requestFocusInWindow();
 		}
 		
 		/* If the selected component is account */
@@ -652,6 +652,7 @@ public class MainTab implements ActionListener,
 		else if (myComponent == (Component)theSpotView.getPanel()) {
 			/* Set the debug focus */
 			theSpotView.getDebugEntry().setFocus();			
+			theSpotView.requestFocusInWindow();
 		}
 		
 		/* If the selected component is Maintenance */

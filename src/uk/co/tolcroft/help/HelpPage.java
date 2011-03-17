@@ -197,14 +197,13 @@ public class HelpPage extends DataItem {
 		 * @param pItem the item to add
 		 * @return the newly added item
 		 */
-		public DataItem addNewItem(DataItem pItem) { return null; }
+		public HelpPage addNewItem(DataItem pItem) { return null; }
 	
 		/**
 		 * Add a new item to the edit list
-		 * 
 		 * @param isCredit - ignored
 		 */
-		public void addNewItem(boolean isCredit) { return; }
+		public HelpPage addNewItem(boolean isCredit) { return null; }
 		
 		/**
 		 * Add a help page to the list

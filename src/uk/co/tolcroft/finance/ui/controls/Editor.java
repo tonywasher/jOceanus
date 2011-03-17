@@ -11,7 +11,6 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.table.TableCellEditor;
 
-import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 
@@ -107,7 +106,7 @@ public class Editor {
 													  boolean isSelected,
 													  int     row,
 													  int     col) {
-			financeTable myTable = (financeTable)table;
+			FinanceTable<?> myTable = (FinanceTable<?>)table;
 			theCombo = myTable.getComboBox(row, col);
 			theCombo.setSelectedItem((java.lang.String)value);
 			return theCombo;
@@ -115,7 +114,7 @@ public class Editor {
 	
 		public Object getCellEditorValue() {
 			String s = (String)theCombo.getSelectedItem();
-			if (!s.equals("")) {
+			if ((s != null) && (!s.equals(""))) {
 				return s;
 			}
 			return null;

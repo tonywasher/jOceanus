@@ -1,17 +1,11 @@
 package uk.co.tolcroft.finance.ui;
 
-import java.awt.Dimension;
-
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.DefaultTableColumnModel;
 
 import uk.co.tolcroft.finance.ui.controls.*;
-import uk.co.tolcroft.finance.ui.controls.EditButtons.*;
 import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
@@ -20,7 +14,7 @@ import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
-public class AccountPatterns extends FinanceTableModel<Pattern> {
+public class AccountPatterns extends FinanceTable<Pattern> {
 	/* Members */
 	private static final long serialVersionUID = 1968946370981616222L;
 
@@ -31,19 +25,13 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 	private Frequency.List			theFreqs			= null;
 	private TransactionType.List	theTransTypes		= null;
 	private JPanel					thePanel			= null;
-	private JScrollPane				theScroll			= null;
 	private JComboBox				theFreqBox			= null;
+	private AccountPatterns		 	theTable	 		= this;
+	private patternMouse			theMouse	 		= null;
+	private DataColumnModel			theColumns			= null;
 	private AccountTab				theParent   		= null;
-	private EditButtons    			theRowButs  		= null;
 	private Account                 theAccount  		= null;
 	private View.ViewPatterns		theExtract			= null;
-	private Renderer.DateCell 		theDateRenderer   	= null;
-	private Editor.DateCell 		theDateEditor     	= null;
-	private Renderer.MoneyCell 		theMoneyRenderer  	= null;
-	private Editor.MoneyCell 		theMoneyEditor    	= null;
-	private Renderer.StringCell 	theStringRenderer 	= null;
-	private Editor.StringCell 		theStringEditor   	= null;
-	private Editor.ComboBoxCell		theComboEditor    	= null;
 	private ComboSelect				theComboList    	= null;
 	private DebugEntry				theDebugEntry		= null;
 	private ErrorPanel				theError			= null;
@@ -74,7 +62,6 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 	private static final int COLUMN_CREDIT	 = 4;
 	private static final int COLUMN_DEBIT 	 = 5;
 	private static final int COLUMN_FREQ 	 = 6;
-	private static final int NUM_COLUMNS	 = 7;
 				
 	/**
 	 * Constructor for Patterns Window
@@ -85,8 +72,6 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 		super(pParent.getTopWindow());
 
 		/* Declare variables */
-		TableColumnModel    myColModel;
-		TableColumn			myCol;
 		GroupLayout		 	myLayout;
 			
 		/* Store details about the parent */
@@ -97,78 +82,26 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 		theModel  = new PatternsModel();
 		setModel(theModel);
 		
-		/* Access the column model */
-		myColModel = getColumnModel();
-			
-		/* Create the relevant formatters/editors */
-		theDateRenderer   = new Renderer.DateCell();
-		theDateEditor     = new Editor.DateCell();
-		theMoneyRenderer  = new Renderer.MoneyCell();
-		theMoneyEditor    = new Editor.MoneyCell();
-		theStringRenderer = new Renderer.StringCell();
-		theStringEditor   = new Editor.StringCell();
-		theComboEditor    = new Editor.ComboBoxCell();
+		/* Create the data column model and declare it */
+		theColumns = new DataColumnModel();
+		setColumnModel(theColumns);
+
+		/* Prevent reordering of columns */
+		getTableHeader().setReorderingAllowed(false);
 		
 		/* Build the combo box */
 		theFreqBox    = new JComboBox();
 
-		/* Set the relevant formatters/editors */
-		myCol = myColModel.getColumn(COLUMN_DATE);
-		myCol.setCellRenderer(theDateRenderer);
-		myCol.setCellEditor(theDateEditor);
-		myCol.setPreferredWidth(80);
-		
-		myCol = myColModel.getColumn(COLUMN_TRANTYP);
-		myCol.setCellRenderer(theStringRenderer);
-		myCol.setCellEditor(theComboEditor);
-		myCol.setPreferredWidth(110);
-		
-		myCol = myColModel.getColumn(COLUMN_DESC);
-		myCol.setCellRenderer(theStringRenderer);
-		myCol.setCellEditor(theStringEditor);
-		myCol.setPreferredWidth(150);
-		
-		myCol = myColModel.getColumn(COLUMN_PARTNER);
-		myCol.setCellRenderer(theStringRenderer);
-		myCol.setCellEditor(theComboEditor);
-		myCol.setPreferredWidth(130);
-		
-		myCol = myColModel.getColumn(COLUMN_CREDIT);
-		myCol.setCellRenderer(theMoneyRenderer);
-		myCol.setCellEditor(theMoneyEditor);
-		myCol.setPreferredWidth(90);
-		
-		myCol = myColModel.getColumn(COLUMN_DEBIT);
-		myCol.setCellRenderer(theMoneyRenderer);
-		myCol.setCellEditor(theMoneyEditor);
-		myCol.setPreferredWidth(90);
-		
-		myCol = myColModel.getColumn(COLUMN_FREQ);
-		myCol.setCellRenderer(theStringRenderer);
-		myCol.setCellEditor(theComboEditor);
-		myCol.setPreferredWidth(110);
-		
-		getTableHeader().setReorderingAllowed(false);
-		
-		/* Set the date editor to show no years */
-		theDateEditor.setNoYear();
-		
-		/* Set the number of visible rows */
-		setPreferredScrollableViewportSize(new Dimension(900, 200));
-
-		/* Create the sub panels */
-		theRowButs   = new EditButtons(this, InsertStyle.NONE);
-			
-		/* Create a new Scroll Pane and add this table to it */
-		theScroll     = new JScrollPane();
-		theScroll.setViewportView(this);
-        
         /* Create the debug entry, attach to AccountDebug entry and hide it */
         DebugManager myDebugMgr	= theView.getDebugMgr();
         theDebugEntry = myDebugMgr.new DebugEntry("Patterns");
         theDebugEntry.addAsChildOf(pParent.getDebugEntry());
         theDebugEntry.hideEntry();
 			
+		/* Add the mouse listener */
+		theMouse = new patternMouse();
+		addMouseListener(theMouse);
+		
         /* Create the error panel for this view */
         theError = new ErrorPanel(this);
         
@@ -186,29 +119,15 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 	        		.addContainerGap()
 	                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
 	                    .addComponent(theError.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-	                    .addComponent(theScroll, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
-	                    .addComponent(theRowButs.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+	                    .addComponent(getScrollPane(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE))
 	                .addContainerGap())
 	    );
         myLayout.setVerticalGroup(
         	myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	        	.addGroup(GroupLayout.Alignment.TRAILING, myLayout.createSequentialGroup()
 	                .addComponent(theError.getPanel())
-	                .addComponent(theScroll)
-	                .addComponent(theRowButs.getPanel()))
+	                .addComponent(getScrollPane()))
 	    );
-	}
-		
-	/**
-	 *  Notify table that there has been a change in selection by an underlying control
-	 *  @param obj the underlying control that has changed selection
-	 */
-	public void    notifySelection(Object obj)    {
-		/* If this is a change from the buttons */
-		if (obj == (Object) theRowButs) {
-			/* Set the correct show selected value */
-			super.setShowDeleted(theRowButs.getShowDel());
-		}
 	}
 		
 	/**
@@ -264,19 +183,13 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 	 */
 	public void lockOnError(boolean isError) {
 		/* Lock scroll-able area */
-		theScroll.setEnabled(!isError);
-
-		/* Lock row/tab buttons area */
-		theRowButs.getPanel().setEnabled(!isError);
+		getScrollPane().setEnabled(!isError);
 	}
 	
 	/**
 	 * Call underlying controls to take notice of changes in view/selection
 	 */
 	public void notifyChanges() {
-		/* Update the row buttons */
-		theRowButs.setLockDown();
-		
 		/* Find the edit state */
 		if (thePatterns != null)
 			thePatterns.findEditState();
@@ -295,8 +208,6 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 		thePatterns = theExtract.getPatterns();
 		super.setList(thePatterns);
 		theDebugEntry.setObject(theExtract);
-		theModel.fireTableDataChanged();
-		theRowButs.setLockDown();
 	}
 		
 	/**
@@ -350,6 +261,7 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 	 */
 	public void addPattern(Statement.Line pLine) {
 		Pattern myPattern;
+		int		myRow;
 		
 		/* Create the new Item */
 		myPattern = new Pattern(thePatterns, pLine);
@@ -358,19 +270,22 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 		/* Note the changes */
 		notifyChanges();
 		
-		/* Notify of the insertion of the column */
-		theModel.fireTableDataChanged();
+		/* Access the row # */
+		myRow = myPattern.indexOf();
+		
+		/* Notify of the insertion of the row */
+		theModel.fireTableRowsInserted(myRow, myRow);
 	}
 	
 	/* Patterns table model */
-	public class PatternsModel extends AbstractTableModel {
+	public class PatternsModel extends DataTableModel {
 		private static final long serialVersionUID = -8445100544184045930L;
 
 		/**
 		 * Get the number of display columns
 		 * @return the columns
 		 */
-		public int getColumnCount() { return NUM_COLUMNS; }
+		public int getColumnCount() { return (theColumns == null) ? 0 : theColumns.getColumnCount(); }
 		
 		/**
 		 * Get the number of rows in the current table
@@ -557,15 +472,25 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 				
 				/* Switch on the updated column */
 				switch (col) {
-					/* redraw whole table if we have updated a sort col */
+					/* if we have updated a sort col */
 					case COLUMN_DATE:
 					case COLUMN_DESC:
 					case COLUMN_TRANTYP: 
+						/* Re-Sort the row */
 						myPattern.reSort();
-						fireTableDataChanged();
-						row = thePatterns.indexOf(myPattern);
-						selectRow(row);
-						break;
+
+						/* Determine new row # */
+						int myNewRowNo = myPattern.indexOf();
+						
+						/* If the row # has changed */
+						if (myNewRowNo != row) {
+							/* Report the move of the row */
+							fireMoveRowEvents(row, myNewRowNo);					
+							selectRowWithScroll(myNewRowNo);
+							break;
+						}
+						
+						/* else fall through */
 						
 					/* else note that we have updated this cell */
 					default:
@@ -576,6 +501,71 @@ public class AccountPatterns extends FinanceTableModel<Pattern> {
 				/* Update components to reflect changes */
 				notifyChanges();
 			}
+		}
+	}
+
+	/**
+	 *  Pattern mouse listener
+	 */
+	private class patternMouse extends FinanceMouse<Pattern> {
+		/**
+		 * Constructor
+		 */
+		private patternMouse() {
+			/* Call super-constructor */
+			super(theTable);
+		}		
+	}		
+
+	/**
+	 * Column Model class
+	 */
+	private class DataColumnModel extends DefaultTableColumnModel {
+		private static final long serialVersionUID = 520785956133901998L;
+
+		/* Renderers/Editors */
+		private Renderer.DateCell 		theDateRenderer   	= null;
+		private Editor.DateCell 		theDateEditor     	= null;
+		private Renderer.MoneyCell 		theMoneyRenderer  	= null;
+		private Editor.MoneyCell 		theMoneyEditor    	= null;
+		private Renderer.StringCell 	theStringRenderer 	= null;
+		private Editor.StringCell 		theStringEditor   	= null;
+		private Editor.ComboBoxCell		theComboEditor    	= null;
+
+		/**
+		 * Constructor 
+		 */
+		private DataColumnModel() {		
+			/* Create the relevant formatters/editors */
+			theDateRenderer   = new Renderer.DateCell();
+			theDateEditor     = new Editor.DateCell();
+			theMoneyRenderer  = new Renderer.MoneyCell();
+			theMoneyEditor    = new Editor.MoneyCell();
+			theStringRenderer = new Renderer.StringCell();
+			theStringEditor   = new Editor.StringCell();
+			theComboEditor    = new Editor.ComboBoxCell();
+			
+			/* Set the date editor to show no years */
+			theDateEditor.setNoYear();
+			
+			/* Create the columns */
+			addColumn(new DataColumn(COLUMN_DATE,     80, theDateRenderer,   theDateEditor));
+			addColumn(new DataColumn(COLUMN_TRANTYP, 110, theStringRenderer, theComboEditor));
+			addColumn(new DataColumn(COLUMN_DESC,    150, theStringRenderer, theStringEditor));
+			addColumn(new DataColumn(COLUMN_PARTNER, 130, theStringRenderer, theComboEditor));
+			addColumn(new DataColumn(COLUMN_CREDIT,   90, theMoneyRenderer,  theMoneyEditor));
+			addColumn(new DataColumn(COLUMN_DEBIT,    90, theMoneyRenderer,  theMoneyEditor));
+			addColumn(new DataColumn(COLUMN_FREQ,    110, theStringRenderer, theComboEditor));
+		}
+		
+		/**
+		 * Add a column to the end of the model 
+		 * @param pColumn
+		 */
+		private void addColumn(DataColumn pColumn) {
+			/* Set the range */
+			super.addColumn(pColumn);
+			pColumn.setMember(true);
 		}
 	}
 }

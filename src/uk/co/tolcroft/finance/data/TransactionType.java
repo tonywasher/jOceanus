@@ -808,11 +808,10 @@ public class TransactionType extends DataItem {
 		
 		/**
 		 * Add a new item to the list
-		 * 
 		 * @param pItem item to be added
 		 * @return the newly added item
 		 */
-		public DataItem addNewItem(DataItem pItem) {
+		public TransactionType addNewItem(DataItem pItem) {
 			TransactionType myType = new TransactionType(this, (TransactionType)pItem);
 			myType.addToList();
 			return myType;
@@ -821,8 +820,9 @@ public class TransactionType extends DataItem {
 		/**
 		 * Create a new empty element in the edit list (null-operation)
 		 * @param isCredit - is the item a credit or debit
+		 * @return the newly added item
 		 */
-		public void addNewItem(boolean isCredit) {};
+		public TransactionType addNewItem(boolean isCredit) { return null; }
 			
 		/**
 		 * Obtain the type of the item

@@ -846,11 +846,10 @@ public class Pattern extends DataItem {
 		
 		/**
 		 * Add a new item to the core list
-		 * 
 		 * @param pPattern item
 		 * @return the newly added item
 		 */
-		public DataItem addNewItem(DataItem pPattern) {
+		public Pattern addNewItem(DataItem pPattern) {
 			Pattern myPattern = new Pattern(this, (Pattern)pPattern);
 			myPattern.addToList();
 			return myPattern;
@@ -858,13 +857,14 @@ public class Pattern extends DataItem {
 	
 		/**
 		 * Add a new item to the edit list
-		 * 
 		 * @param isCredit - is this a credit item
+		 * @return the newly added item
 		 */
-		public void addNewItem(boolean        isCredit) {
+		public Pattern addNewItem(boolean isCredit) {
 			Pattern myPattern = new Pattern(this, isCredit);
 			myPattern.setAccount(theAccount);
 			myPattern.addToList();
+			return myPattern;
 		}
 	
 		/**

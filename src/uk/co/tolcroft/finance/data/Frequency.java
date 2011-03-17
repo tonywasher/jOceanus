@@ -283,11 +283,10 @@ public class Frequency extends DataItem {
 		
 		/**
 		 * Add a new item to the list
-		 * 
 		 * @param pItem item to be added
 		 * @return the newly added item
 		 */
-		public DataItem addNewItem(DataItem pItem) {
+		public Frequency addNewItem(DataItem pItem) {
 			Frequency myFreq = new Frequency(this, (Frequency)pItem);
 			myFreq.addToList();
 			return myFreq;
@@ -296,8 +295,9 @@ public class Frequency extends DataItem {
 		/**
 		 * Create a new empty element in the edit list (null-operation)
 		 * @param isCredit - is the item a credit or debit
+		 * @return the newly added item
 		 */
-		public void addNewItem(boolean isCredit) {};
+		public Frequency addNewItem(boolean isCredit) { return null; }
 			
 		/**
 		 * Obtain the type of the item
