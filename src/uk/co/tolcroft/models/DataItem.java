@@ -541,9 +541,17 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * @param iField the associated field
 	 * @return the error text
 	 */
-	public 	  String		getFieldError(int iField) {
-		return theErrors.getFieldError(iField);	}
+	public 	  String		getFieldErrors(int iField) {
+		return theErrors.getFieldErrors(iField);	}
 
+	/**
+	 * Get the error text for a set of fields
+	 * @param iFields the set of fields
+	 * @return the error text
+	 */
+	public 	  String		getFieldErrors(int[] iFields) {
+		return theErrors.getFieldErrors(iFields);	}
+	
 	/**
 	 * Get the first error element for an item
 	 * @return the first error (or <code>null</code>)
@@ -1209,14 +1217,70 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 		 *  @param iField - the field number to check
 		 *  @return the error text
 		 */
-		private String getFieldError(int iField) {
-			errorElement myCurr;
+		private String getFieldErrors(int iField) {
+			errorElement 	myCurr;
+			String			myErrors = null;
+			
+			/* Loop through the errors */
 			for (myCurr = theTop;
 			     myCurr != null;
 			     myCurr = myCurr.getNext()) {
-				if (myCurr.getField() == iField) return myCurr.getError();
+				/* If the field matches */
+				if (myCurr.getField() == iField) {					
+					/* Add the error */
+					myErrors = addErrorText(myErrors, myCurr.getError());
+				}
 			}
-			return null;
+			return myErrors;
+		}
+		
+		/**
+		 * Get the error text for fields outside a set of fields
+		 * @param iFields the set of fields
+		 * @return the error text
+		 */
+		private	String	getFieldErrors(int[] iFields) {
+			errorElement 	myCurr;
+			boolean 		bFound;
+			int 			myField;
+			String			myErrors = null;
+			
+			/* Loop through the errors */
+			for (myCurr = theTop;
+			     myCurr != null;
+			     myCurr = myCurr.getNext()) {
+				/* Assume that field is not in set */
+				myField	= myCurr.getField();
+				bFound 	= false;
+				
+				/* Search the field set */
+				for(int i : iFields) {
+					/* If we have found the field note it and break loop */
+					if (i == myField) { bFound = true; break; }
+				}
+				
+				/* Skip error if the field was found */
+				if (bFound) continue;
+				
+				/* Add the error */
+				myErrors = addErrorText(myErrors, myCurr.getError());
+			}
+			
+			/* Return errors */
+			return myErrors;
+		}
+		
+		/**
+		 * Add error text
+		 * @param pCurrent existing error text
+		 * @param pError new error text
+		 */
+		private String addErrorText(String pCurrent, String pError) {
+			/* Return text if current is null */
+			if (pCurrent == null) return pError;
+			
+			/* return with error appended */
+			return pCurrent + "\n" + pError;
 		}
 		
 		/**

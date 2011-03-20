@@ -6,7 +6,6 @@ import javax.swing.GroupLayout;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.table.DefaultTableColumnModel;
 
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.DebugManager.*;
@@ -27,7 +26,7 @@ public class AccountRates extends FinanceTable<AcctRate> {
 	private JPanel					thePanel		= null;
 	private AccountRates			theTable    	= this;
 	private ratesMouse				theMouse		= null;
-	private DataColumnModel			theColumns		= null;
+	private ratesColumnModel		theColumns		= null;
 	private AccountTab				theParent   	= null;
 	private Date.Range				theRange		= null;
 	private Account                 theAccount  	= null;
@@ -72,7 +71,7 @@ public class AccountRates extends FinanceTable<AcctRate> {
 		setModel(theModel);
 		
 		/* Create the data column model and declare it */
-		theColumns = new DataColumnModel();
+		theColumns = new ratesColumnModel();
 		setColumnModel(theColumns);
 
 		/* Prevent reordering of columns and auto-resizing */
@@ -169,20 +168,6 @@ public class AccountRates extends FinanceTable<AcctRate> {
 		theDebugEntry.setObject(theExtract);
 	}
 		
-	/**
-	 * Obtain the Field id associated with the column
-	 * @param column the column
-	 */
-	public int getFieldForCol(int column) {
-		/* Switch on column */
-		switch (column) {
-			case COLUMN_RATE: 	return AcctRate.FIELD_RATE;
-			case COLUMN_BONUS:	return AcctRate.FIELD_BONUS;
-			case COLUMN_DATE:  	return AcctRate.FIELD_ENDDATE;
-			default:			return -1;
-		}
-	}
-		
 	/* Rates table model */
 	public class RatesModel extends DataTableModel {
 		private static final long serialVersionUID = 296797947278000196L;
@@ -213,6 +198,20 @@ public class AccountRates extends FinanceTable<AcctRate> {
 				case COLUMN_BONUS:  return titleBonus;
 				case COLUMN_DATE:	return titleDate;
 				default:			return null;
+			}
+		}
+			
+		/**
+		 * Obtain the Field id associated with the column
+		 * @param column the column
+		 */
+		public int getFieldForCol(int column) {
+			/* Switch on column */
+			switch (column) {
+				case COLUMN_RATE: 	return AcctRate.FIELD_RATE;
+				case COLUMN_BONUS:	return AcctRate.FIELD_BONUS;
+				case COLUMN_DATE:  	return AcctRate.FIELD_ENDDATE;
+				default:			return -1;
 			}
 		}
 			
@@ -441,7 +440,7 @@ public class AccountRates extends FinanceTable<AcctRate> {
 	/**
 	 * Column Model class
 	 */
-	private class DataColumnModel extends DefaultTableColumnModel {
+	private class ratesColumnModel extends DataColumnModel {
 		private static final long serialVersionUID = -3431873508431574944L;
 
 		/* Renderers/Editors */
@@ -453,7 +452,7 @@ public class AccountRates extends FinanceTable<AcctRate> {
 		/**
 		 * Constructor 
 		 */
-		private DataColumnModel() {		
+		private ratesColumnModel() {		
 			/* Create the relevant formatters/editors */
 			theDateRenderer = new Renderer.DateCell();
 			theDateEditor   = new Editor.DateCell();
@@ -473,16 +472,6 @@ public class AccountRates extends FinanceTable<AcctRate> {
 		private void setDateEditorRange(Date.Range pRange) {
 			/* Set the range */
 			theDateEditor.setRange(pRange);			
-		}
-
-		/**
-		 * Add a column to the end of the model 
-		 * @param pColumn
-		 */
-		private void addColumn(DataColumn pColumn) {
-			/* Set the range */
-			super.addColumn(pColumn);
-			pColumn.setMember(true);
 		}
 	}
 }

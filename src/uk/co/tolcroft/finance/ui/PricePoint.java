@@ -7,7 +7,6 @@ import javax.swing.GroupLayout;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.table.DefaultTableColumnModel;
 
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
@@ -30,7 +29,7 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 	private JPanel					thePanel			= null;
 	private PricePoint			 	theTable			= this;
 	private spotViewMouse			theMouse			= null;
-	private DataColumnModel			theColumns			= null;
+	private spotViewColumnModel		theColumns			= null;
 	private Date					theDate				= null;
 	private SpotSelect				theSelect	 		= null;
 	private SaveButtons  			theTabButs   		= null;
@@ -81,7 +80,7 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 		setModel(theModel);
 			
 		/* Create the data column model and declare it */
-		theColumns = new DataColumnModel();
+		theColumns = new spotViewColumnModel();
 		setColumnModel(theColumns);
 		
 		/* Prevent reordering of columns and auto-resizing */
@@ -248,19 +247,6 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 	}
 		
 	/**
-	 * Obtain the Field id associated with the column
-	 * @param column the column
-	 */
-	public int getFieldForCol(int column) {
-		/* Switch on column */
-		switch (column) {
-			case COLUMN_ASSET: 		return AcctPrice.FIELD_ACCOUNT;
-			case COLUMN_PRICE:		return AcctPrice.FIELD_PRICE;
-			default: 				return -1;
-		}
-	}
-		
-	/**
 	 * Check whether the restoration of the passed object is compatible with the current selection
 	 * @param pItem the current item
 	 * @param pObj the potential object for restoration
@@ -321,6 +307,19 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 			switch (col) {
 				case COLUMN_ASSET: 		return String.class;
 				default: 				return Object.class;
+			}
+		}
+			
+		/**
+		 * Obtain the Field id associated with the column
+		 * @param column the column
+		 */
+		public int getFieldForCol(int column) {
+			/* Switch on column */
+			switch (column) {
+				case COLUMN_ASSET: 		return AcctPrice.FIELD_ACCOUNT;
+				case COLUMN_PRICE:		return AcctPrice.FIELD_PRICE;
+				default: 				return -1;
 			}
 		}
 			
@@ -530,7 +529,7 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 	/**
 	 * Column Model class
 	 */
-	private class DataColumnModel extends DefaultTableColumnModel {
+	private class spotViewColumnModel extends DataColumnModel {
 		private static final long serialVersionUID = 5102715203937500181L;
 
 		/* Renderers/Editors */
@@ -542,7 +541,7 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 		/**
 		 * Constructor 
 		 */
-		private DataColumnModel() {		
+		private spotViewColumnModel() {		
 			/* Create the relevant formatters/editors */
 			theDateRenderer    = new Renderer.DateCell();
 			thePriceRenderer   = new Renderer.PriceCell();
@@ -554,16 +553,6 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 			addColumn(new DataColumn(COLUMN_PRICE,      130, thePriceRenderer,  thePriceEditor));
 			addColumn(new DataColumn(COLUMN_PREVPRICE,  130, thePriceRenderer,  null));
 			addColumn(new DataColumn(COLUMN_PREVDATE,   130, theDateRenderer,   null));
-		}
-		
-		/**
-		 * Add a column to the end of the model 
-		 * @param pColumn
-		 */
-		private void addColumn(DataColumn pColumn) {
-			/* Set the range */
-			super.addColumn(pColumn);
-			pColumn.setMember(true);
 		}
 	}
 }

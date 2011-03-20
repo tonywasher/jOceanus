@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.table.DefaultTableColumnModel;
 
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
@@ -24,7 +23,7 @@ public class MaintNewYear extends FinanceTable<Event> implements ActionListener 
 	private Event.List	        theEvents			= null;
 	private MaintenanceTab		theParent			= null;
 	private JPanel				thePanel			= null;
-	private DataColumnModel		theColumns			= null;
+	private yearColumnModel		theColumns			= null;
 	private TaxYear				theYear				= null;
 	private patternYearModel	theModel			= null;
 	private JButton				thePattern			= null;
@@ -75,7 +74,7 @@ public class MaintNewYear extends FinanceTable<Event> implements ActionListener 
 		setModel(theModel);
 			
 		/* Create the data column model and declare it */
-		theColumns = new DataColumnModel();
+		theColumns = new yearColumnModel();
 		setColumnModel(theColumns);
 		
 		/* Prevent reordering of columns and auto-resizing */
@@ -175,17 +174,6 @@ public class MaintNewYear extends FinanceTable<Event> implements ActionListener 
 		}
 	}
 	
-	/**
-	 * Obtain the Field id associated with the column
-	 * @param column the column
-	 */
-	public int getFieldForCol(int column) {
-		/* Switch on column */
-		switch (column) {
-			default: 				return -1;
-		}
-	}
-		
 	/* PatternYear table model */
 	public class patternYearModel extends DataTableModel {
 		private static final long serialVersionUID = 4796112294536415723L;
@@ -222,6 +210,17 @@ public class MaintNewYear extends FinanceTable<Event> implements ActionListener 
 			}
 		}
 		
+		/**
+		 * Obtain the Field id associated with the column
+		 * @param column the column
+		 */
+		public int getFieldForCol(int column) {
+			/* Switch on column */
+			switch (column) {
+				default: 				return -1;
+			}
+		}
+			
 		/**
 		 * Get the object class of the column
 		 * @param col the column
@@ -297,7 +296,7 @@ public class MaintNewYear extends FinanceTable<Event> implements ActionListener 
 	/**
 	 * Column Model class
 	 */
-	private class DataColumnModel extends DefaultTableColumnModel {
+	private class yearColumnModel extends DataColumnModel {
 		private static final long serialVersionUID = -894489367275603586L;
 
 		/* Renderers/Editors */
@@ -308,7 +307,7 @@ public class MaintNewYear extends FinanceTable<Event> implements ActionListener 
 		/**
 		 * Constructor 
 		 */
-		private DataColumnModel() {		
+		private yearColumnModel() {		
 			/* Create the relevant formatters/editors */
 			theDateRenderer   = new Renderer.DateCell();
 			theMoneyRenderer  = new Renderer.MoneyCell();
@@ -321,16 +320,6 @@ public class MaintNewYear extends FinanceTable<Event> implements ActionListener 
 			addColumn(new DataColumn(COLUMN_AMOUNT,   90, theMoneyRenderer,  null));
 			addColumn(new DataColumn(COLUMN_DEBIT,   130, theStringRenderer, null));
 			addColumn(new DataColumn(COLUMN_CREDIT,  130, theStringRenderer, null));
-		}
-		
-		/**
-		 * Add a column to the end of the model 
-		 * @param pColumn
-		 */
-		private void addColumn(DataColumn pColumn) {
-			/* Set the range */
-			super.addColumn(pColumn);
-			pColumn.setMember(true);
 		}
 	}
 }

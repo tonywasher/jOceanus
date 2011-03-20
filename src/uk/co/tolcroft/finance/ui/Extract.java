@@ -8,7 +8,6 @@ import javax.swing.JComboBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.table.DefaultTableColumnModel;
 
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
@@ -36,7 +35,7 @@ public class Extract extends FinanceTable<Event> {
 	private JComboBox				theTranBox			= null;
 	private Extract				 	theTable	 		= this;
 	private extractMouse			theMouse	 		= null;
-	private DataColumnModel			theColumns			= null;
+	private extractColumnModel		theColumns			= null;
 	private Date.Range				theRange	 		= null;
 	private DateRange 				theSelect	 		= null;
 	private SaveButtons  			theTabButs   		= null;
@@ -103,7 +102,7 @@ public class Extract extends FinanceTable<Event> {
 		setModel(theModel);
 			
 		/* Create the data column model and declare it */
-		theColumns = new DataColumnModel();
+		theColumns = new extractColumnModel();
 		setColumnModel(theColumns);
 		
 		/* Prevent reordering of columns and auto-resizing */			
@@ -330,27 +329,6 @@ public class Extract extends FinanceTable<Event> {
 	}
 	
 	/**
-	 * Obtain the Field id associated with the column
-	 * @param column the column
-	 */
-	public int getFieldForCol(int column) {
-		/* Switch on column */
-		switch (column) {
-			case COLUMN_DATE: 		return Event.FIELD_DATE;
-			case COLUMN_DESC:		return Event.FIELD_DESC;
-			case COLUMN_TRANTYP:	return Event.FIELD_TRNTYP;
-			case COLUMN_AMOUNT:		return Event.FIELD_AMOUNT;
-			case COLUMN_CREDIT:		return Event.FIELD_CREDIT;
-			case COLUMN_DEBIT:		return Event.FIELD_DEBIT;
-			case COLUMN_UNITS: 		return Event.FIELD_UNITS;
-			case COLUMN_DILUTE: 	return Event.FIELD_DILUTION;
-			case COLUMN_TAXCRED: 	return Event.FIELD_TAXCREDIT;
-			case COLUMN_YEARS: 		return Event.FIELD_YEARS;
-			default: 				return -1;
-		}
-	}
-		
-	/**
 	 * Obtain the correct ComboBox for the given row/column
 	 */
 	public JComboBox getComboBox(int row, int column) {
@@ -453,6 +431,27 @@ public class Extract extends FinanceTable<Event> {
 				case COLUMN_CREDIT:  	return String.class;
 				case COLUMN_DEBIT:  	return String.class;
 				default: 				return Object.class;
+			}
+		}
+			
+		/**
+		 * Obtain the Field id associated with the column
+		 * @param column the column
+		 */
+		public int getFieldForCol(int column) {
+			/* Switch on column */
+			switch (column) {
+				case COLUMN_DATE: 		return Event.FIELD_DATE;
+				case COLUMN_DESC:		return Event.FIELD_DESC;
+				case COLUMN_TRANTYP:	return Event.FIELD_TRNTYP;
+				case COLUMN_AMOUNT:		return Event.FIELD_AMOUNT;
+				case COLUMN_CREDIT:		return Event.FIELD_CREDIT;
+				case COLUMN_DEBIT:		return Event.FIELD_DEBIT;
+				case COLUMN_UNITS: 		return Event.FIELD_UNITS;
+				case COLUMN_DILUTE: 	return Event.FIELD_DILUTION;
+				case COLUMN_TAXCRED: 	return Event.FIELD_TAXCREDIT;
+				case COLUMN_YEARS: 		return Event.FIELD_YEARS;
+				default: 				return -1;
 			}
 		}
 			
@@ -1024,7 +1023,7 @@ public class Extract extends FinanceTable<Event> {
 	/**
 	 * Column Model class
 	 */
-	private class DataColumnModel extends DefaultTableColumnModel {
+	private class extractColumnModel extends DataColumnModel {
 		private static final long serialVersionUID = -7502445487118370020L;
 
 		/* Renderers/Editors */
@@ -1045,7 +1044,7 @@ public class Extract extends FinanceTable<Event> {
 		/**
 		 * Constructor 
 		 */
-		private DataColumnModel() {		
+		private extractColumnModel() {		
 			/* Create the relevant formatters/editors */
 			theDateRenderer   	= new Renderer.DateCell();
 			theDateEditor     	= new Editor.DateCell();
@@ -1081,16 +1080,6 @@ public class Extract extends FinanceTable<Event> {
 		private void setDateEditorRange(Date.Range pRange) {
 			/* Set the range */
 			theDateEditor.setRange(pRange);			
-		}
-
-		/**
-		 * Add a column to the end of the model 
-		 * @param pColumn
-		 */
-		private void addColumn(DataColumn pColumn) {
-			/* Set the range */
-			super.addColumn(pColumn);
-			pColumn.setMember(true);
 		}
 	}
 }

@@ -31,7 +31,6 @@ public class SecurityCipher {
 	/**
 	 * Constructor
 	 * @param pCipher the cipher
-	 * @param pInitVect the initialisation vector
 	 */
 	protected SecurityCipher(Cipher pCipher) {
 		theCipher 		= pCipher;

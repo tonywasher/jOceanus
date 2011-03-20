@@ -7,7 +7,6 @@ import java.awt.event.ItemListener;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -31,7 +30,7 @@ public class MaintTaxYear implements ActionListener,
 	private MaintenanceTab		theParent			= null;
 	private JPanel          	thePanel			= null;
 	private JPanel				theButtons			= null;
-	private JPanel				theSelect			= null;
+	private TaxYearSelect		theSelect			= null;
 	private JPanel				theRegime			= null;
 	private JPanel				theAllows			= null;
 	private JPanel				theBands			= null;
@@ -40,9 +39,7 @@ public class MaintTaxYear implements ActionListener,
 	private JPanel				theXtraRates		= null;
 	private JPanel				theCapRates			= null;
 	private SaveButtons  		theSaveButs   		= null;
-	private JComboBox			theYearsBox			= null;
 	private JComboBox			theRegimesBox		= null;
-	private JCheckBox			theShowDeleted		= null;
 	private JTextField			theYear				= null;
 	private JTextField			theAllowance		= null;
 	private JTextField			theLoAgeAllow		= null;
@@ -74,7 +71,6 @@ public class MaintTaxYear implements ActionListener,
 	private DebugEntry			theDebugEntry		= null;
 	private ErrorPanel			theError			= null;
 	private boolean				refreshingData		= false;
-	private boolean				yearsPopulated		= false;
 	private boolean				regimesPopulated	= false;
 	private boolean				doShowDeleted		= false;
 	private View				theView				= null;
@@ -89,7 +85,6 @@ public class MaintTaxYear implements ActionListener,
 	
 	/* Constructor */
 	public MaintTaxYear(MaintenanceTab pParent) {
-		JLabel	mySelect;
 		JLabel  myYear;
 		JLabel  myRegime;
 		JLabel  myAllow;
@@ -120,7 +115,6 @@ public class MaintTaxYear implements ActionListener,
 		theView 	= pParent.getView();
 		
 		/* Create the labels */
-		mySelect 		= new JLabel("Select Year:");
 		myYear 	 		= new JLabel("Year:");
 		myRegime		= new JLabel("Tax Regime:");
 		myAllow	 		= new JLabel("Personal Allowance:");
@@ -145,12 +139,10 @@ public class MaintTaxYear implements ActionListener,
 		myHiCapTaxRate	= new JLabel("High Capital Rate:");
 		
 		/* Create the combo boxes */
-		theYearsBox  	= new JComboBox();
 		theRegimesBox  	= new JComboBox();
 		
-		/* Create the combo boxes */
-		theShowDeleted  = new JCheckBox("ShowDeleted");
-		theShowDeleted.setSelected(doShowDeleted);
+		/* Create the TaxYearSelect panel */
+		theSelect = new TaxYearSelect(theView, this);
 		
 		/* Create the text fields */
 		theYear				= new JTextField();
@@ -203,7 +195,6 @@ public class MaintTaxYear implements ActionListener,
 		theUndoButton = new JButton("Undo");
 		
 		/* Add listeners */
-		theYearsBox.addItemListener(this);
 		theRegimesBox.addItemListener(this);
 		theAllowance.addActionListener(this);
 		theLoAgeAllow.addActionListener(this);
@@ -228,7 +219,6 @@ public class MaintTaxYear implements ActionListener,
 		theInsButton.addActionListener(this);
 		theDelButton.addActionListener(this);
 		theUndoButton.addActionListener(this);
-		theShowDeleted.addItemListener(this);
 
 		/* Create the Table buttons panel */
 		theSaveButs = new SaveButtons(this);
@@ -265,32 +255,6 @@ public class MaintTaxYear implements ActionListener,
             .addComponent(theInsButton)
             .addComponent(theUndoButton)
             .addComponent(theDelButton)
-        );
-            
-		/* Create the selection panel */
-		theSelect = new JPanel();
-		theSelect.setBorder(javax.swing.BorderFactory
-				.createTitledBorder("Selection"));
-		
-		/* Create the layout for the panel */
-	    myLayout = new GroupLayout(theSelect);
-	    theSelect.setLayout(myLayout);
-
-	    /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-        	.addGroup(myLayout.createSequentialGroup()
-        		.addContainerGap()
-    			.addComponent(mySelect)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-    			.addComponent(theYearsBox)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-    			.addComponent(theShowDeleted)
-                .addContainerGap())
-        );
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-	                .addComponent(mySelect)
-	                .addComponent(theYearsBox)
-	                .addComponent(theShowDeleted)
         );
             
 		/* Create the regime panel */
@@ -575,7 +539,7 @@ public class MaintTaxYear implements ActionListener,
                 	.addComponent(theSaveButs.getPanel())
                     .addComponent(theButtons)
                     .addComponent(theError.getPanel())
-                    .addComponent(theSelect)
+                    .addComponent(theSelect.getPanel())
                     .addComponent(theRegime)
                     .addGroup(myLayout.createSequentialGroup()
                         .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -593,7 +557,7 @@ public class MaintTaxYear implements ActionListener,
 		   	.addGroup(myLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(theError.getPanel())
-                .addComponent(theSelect)
+                .addComponent(theSelect.getPanel())
                 .addContainerGap(10,30)
                 .addComponent(theRegime)
                 .addContainerGap(10,30)
@@ -659,8 +623,7 @@ public class MaintTaxYear implements ActionListener,
 	public void notifyChanges() {
 		/* Lock down the table buttons and the selection */
 		theSaveButs.setLockDown();
-		theYearsBox.setEnabled(!hasUpdates());
-		theShowDeleted.setEnabled(!hasUpdates());
+		theSelect.getPanel().setEnabled(!hasUpdates());
 		
 		/* Show the Tax Year */
 		showTaxYear();
@@ -670,7 +633,13 @@ public class MaintTaxYear implements ActionListener,
 	}	
 		
 	/* Note that there has been a selection change */
-	public void    notifySelection(Object obj)    {}
+	public void    notifySelection(Object obj)    {
+		/* If this is a change from the year selection */
+		if (obj == (Object) theSelect) {
+			/* Set the new account */
+			setSelection(theSelect.getTaxYear());
+		}		
+	}
 	
 	/* resetData */
 	public void resetData() {
@@ -707,7 +676,7 @@ public class MaintTaxYear implements ActionListener,
 	 */
 	public void lockOnError(boolean isError) {
 		/* Hide selection panel */
-		theSelect.setVisible(!isError);
+		theSelect.getPanel().setVisible(!isError);
 
 		/* Lock regime areas */
 		theRegime.setEnabled(!isError);
@@ -730,10 +699,8 @@ public class MaintTaxYear implements ActionListener,
 	/* refreshData */
 	public void refreshData() {
 		DataSet		myData;
-		TaxYear  	myYear;
 		TaxRegime	myRegime;
 
-		DataList<TaxYear>.ListIterator 		myYearIterator;
 		DataList<TaxRegime>.ListIterator	myRegIterator;
 		
 		/* Access the data */
@@ -746,39 +713,9 @@ public class MaintTaxYear implements ActionListener,
 		/* Note that we are refreshing data */
 		refreshingData = true;
 		
-		/* If we have years already populated */
-		if (yearsPopulated) {	
-			/* If we have a selected year */
-			if (theTaxYear != null) {
-				/* Find it in the new list */
-				theTaxYear = theTaxYears.searchFor(theTaxYear.getDate());
-			}
+		/* Refresh the year selection */
+		theSelect.refreshData();
 			
-			/* Remove the years */
-			theYearsBox.removeAllItems();
-			yearsPopulated = false;
-		}
-		
-		/* Create a Tax Year iterator */
-		myYearIterator = theTaxYears.listIterator(true);
-		
-		/* Add the Tax Years to the years box in reverse order */
-		while ((myYear  = myYearIterator.previous()) != null) {
-			/* If the year is not deleted */
-			if ((!doShowDeleted) &&
-				(myYear.isDeleted())) continue;
-			
-			/* Add the item to the list */
-			theYearsBox.addItem(Integer.toString(myYear.getDate().getYear()));
-			yearsPopulated = true;
-		}
-		
-		/* If we have a selected year */
-		if (theTaxYear != null) {
-			/* Select it in the new list */
-			theYearsBox.setSelectedItem(Integer.toString(theTaxYear.getDate().getYear()));
-		}
-		
 		/* If we have regimes already populated */
 		if (regimesPopulated) {	
 			/* Remove the types */
@@ -799,9 +736,8 @@ public class MaintTaxYear implements ActionListener,
 		/* Note that we have finished refreshing data */
 		refreshingData = false;
 		
-		/* Show the current tax year */
-		String myName = (String)theYearsBox.getSelectedItem();
-		setSelection((myName != null) ? theTaxYears.searchFor(myName) : null);
+		/* Show the account */
+		setSelection(theSelect.getTaxYear());
 	}
 	
 	/* Set Selection */
@@ -816,7 +752,6 @@ public class MaintTaxYear implements ActionListener,
 			if ((!doShowDeleted) && (pTaxYear.isDeleted())) {
 				/* Set the flag correctly */
 				doShowDeleted = true;
-				theShowDeleted.setSelected(doShowDeleted);
 			}
 			
 			/* Create the view of the tax year */
@@ -1265,16 +1200,6 @@ public class MaintTaxYear implements ActionListener,
 		/* Ignore selection if refreshing data */
 		if (refreshingData) return;
 		
-		/* If this event relates to the years box */
-		if (evt.getSource() == (Object)theYearsBox) {
-			myName = (String)evt.getItem();
-			if (evt.getStateChange() == ItemEvent.SELECTED) {
-				/* Select the new year and notify the change */
-				setSelection(theTaxYears.searchFor(myName));
-				notifyChanges();
-			}
-		}
-		
 		/* If this event relates to the regimes box */
 		if (evt.getSource() == (Object)theRegimesBox) {
 			myName = (String)evt.getItem();
@@ -1308,13 +1233,6 @@ public class MaintTaxYear implements ActionListener,
 					notifyChanges();
 				}
 			}
-		}
-		
-		/* If this event relates to the showDeleted box */
-		if (evt.getSource() == (Object)theShowDeleted) {
-			/* Note the new criteria and re-build lists */
-			doShowDeleted = theShowDeleted.isSelected();
-			refreshData();
 		}
 	}
 

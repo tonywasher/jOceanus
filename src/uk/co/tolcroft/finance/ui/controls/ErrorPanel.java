@@ -8,6 +8,7 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.LayoutStyle;
 
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.financePanel;
 import uk.co.tolcroft.finance.views.DebugManager;
@@ -62,7 +63,7 @@ public class ErrorPanel implements ActionListener {
         	.addGroup(myLayout.createSequentialGroup()
            		.addContainerGap()
                 .addComponent(theClearButton)
-        		.addContainerGap()
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(theErrorField)
                 .addContainerGap())
         );

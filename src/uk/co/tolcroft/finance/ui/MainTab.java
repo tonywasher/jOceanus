@@ -271,6 +271,10 @@ public class MainTab implements ActionListener,
 			/* terminate the executor */
 			theExecutor.shutdown();
 		
+			/* Dispose of the debug/help Windows if they exist */
+			if (theDebugWdw != null) theDebugWdw.dispose();
+			if (theHelpWdw  != null) theHelpWdw.dispose();
+
 			/* Dispose of the frame */
 			theFrame.dispose();
 		}
@@ -279,6 +283,7 @@ public class MainTab implements ActionListener,
 		else if (e.getSource() == theDebugWdw) {
 			/* Re-enable the help menu item */
 			theShowDebug.setEnabled(true);
+			theDebugWdw.dispose();
 			theDebugWdw = null;
 			
 			/* Notify debug manager */
@@ -289,6 +294,7 @@ public class MainTab implements ActionListener,
 		else if (e.getSource() == theHelpWdw) {
 			/* Re-enable the help menu item */
 			theHelpMgr.setEnabled(true);
+			theHelpWdw.dispose();
 			theHelpWdw = null;
 		}
 	}

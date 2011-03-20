@@ -101,6 +101,34 @@ public class EncryptionStream {
 		}
 		
 		/**
+		 * Construct the obfuscation output stream
+		 * @param pControl the security control
+		 * @param pStream the stream to encrypt to
+		 */
+		public Output(PasswordKey			pPassword,
+				 	  java.io.OutputStream 	pStream) throws Exception {
+			
+			/* Protect against exceptions */
+			try {
+				/* record the output stream */
+				theStream 	= pStream;
+				
+				/* Generate the Secret key and initialise for encryption */
+				theCipher 	= theKey.initEncryption();
+				
+				/* Access the initialisation vector */
+				theInitVector	= theCipher.getInitVector();
+			}
+			
+			/* Catch exceptions */
+			catch (Throwable e) {
+				throw new Exception(ExceptionClass.ENCRYPT,
+									"Exception creating encryption output stream",
+									e);
+			}			
+		}
+		
+		/**
 		 * Close the output stream
 		 * @throws IOException
 		 */

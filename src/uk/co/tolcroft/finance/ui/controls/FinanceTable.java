@@ -15,6 +15,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -65,7 +67,6 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 	public DebugManager getDebugManager() 				{ return theMainTab.getDebugMgr(); }
 		
 	/* Abstract methods */
-	public abstract int  	getFieldForCol(int iField);
 	public abstract void 	notifyChanges();
 	public abstract void 	saveData();
 
@@ -100,7 +101,7 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 		theModel = pModel;
 
 		/* Create a row Header table */
-		theRowHdrTable = new JTable(theRowHdrModel);
+		theRowHdrTable = new JTable(theRowHdrModel, new rowColumnModel());
 		theRowHdrTable.setBackground(getTableHeader().getBackground());
 		theRowHdrTable.setColumnSelectionAllowed(false);
 		theRowHdrTable.setCellSelectionEnabled(false);
@@ -205,78 +206,6 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 	public void cancelEditing() {		
 		/* Cancel any editing */
 		if (isEditing()) cellEditor.cancelCellEditing();
-	}
-	
-	/**
-	 * Get render data for row
-	 * @param pData the Render details
-	 */
-	public void getRenderData(RenderData pData) {
-		T			myRow;
-		String     	myTip = null;
-		int			iRow;
-		int			myIndex;
-		int         iField;
-		Color		myFore;
-		Color		myBack;
-		Font		myFont;
-		boolean 	isChanged = false;
-		
-		/* If we have a header decrement the index */
-		iRow = pData.getRow();
-		myIndex = iRow;
-		if (hasHeader()) myIndex--;
-		
-		/* Default is black on white */
-		myBack = Color.white;
-		myFore = Color.black;
-
-		/* If this is a data row */
-		if (myIndex >= 0) {
-			/* Access the row */
-			myRow  = theList.get(myIndex);
-			iField = getFieldForCol(pData.getCol());
-			
-			/* Has the field changed */
-			isChanged = myRow.fieldChanged(iField);
-			
-			/* Determine the colour */
-			if (myRow.isDeleted()) {
-				myFore = Color.lightGray;
-			}
-			else if ((myRow.hasErrors()) &&
-					 (myRow.hasErrors(iField))) {
-				myFore = Color.red;
-				myTip = myRow.getFieldError(iField);
-			}
-			else if (isChanged)
-				myFore = Color.magenta;
-			else if (myRow.getState() == DataState.NEW)
-				myFore = Color.blue;
-			else if (myRow.getState() == DataState.RECOVERED)
-				myFore = Color.darkGray;
-		}
-			
-		/* For selected items flip the foreground/background */
-		if (pData.isSelected()){
-			Color myTemp = myFore;
-			myFore = myBack;
-			myBack = myTemp;
-		}
-			
-		/* Select the font */
-		if (pData.isFixed())
-			myFont = isChanged	? theChgNumFont 
-								: theNumFont;
-		else
-			myFont = isChanged	? theChgFont 
-								: theStdFont;
-		
-		/* Set the data */
-		pData.setData(myFore, myBack, myFont, myTip);
-			
-		/* return to the caller */
-		return;
 	}
 	
 	/* valueChanged listener event */
@@ -794,7 +723,7 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 	/**
 	 * Row Table model class
 	 */
-	private class rowTableModel extends AbstractTableModel {
+	public class rowTableModel extends AbstractTableModel {
 		private static final long serialVersionUID = -7172213268168894124L;
 
 		/* Table headers */
@@ -831,6 +760,68 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 		 * @return the object value
 		 */
 		public Object getValueAt(int row, int col) { return hasHeader() ? row : row+1; }
+		
+		/**
+		 * Get render data for row
+		 * @param pData the Render details
+		 */
+		@SuppressWarnings("unchecked")
+		public void getRenderData(RenderData pData) {
+			T				myRow;
+			String     		myTip = null;
+			int				iRow;
+			int				myIndex;
+			int[]       	iFields;
+			Color			myFore;
+			Color			myBack;
+			Font			myFont;
+			DataColumnModel myColModel;
+			boolean 		isChanged = false;
+			
+			/* If we have a header decrement the index */
+			iRow = pData.getRow();
+			myIndex = iRow;
+			if (hasHeader()) myIndex--;
+			
+			/* Obtain defaults from table header */
+			JTableHeader myHeader = getTableHeader();
+			myBack = myHeader.getBackground();
+			myFore = myHeader.getForeground();
+			myFont = myHeader.getFont();
+
+			/* If this is a data row */
+			if (myIndex >= 0) {
+				/* Access the row */
+				myRow   	= theList.get(myIndex);
+				myColModel 	= (DataColumnModel)getColumnModel();
+				iFields 	= myColModel.getColumnFields();
+				
+				/* Has the row changed */
+				isChanged = myRow.hasHistory();
+				
+				/* Determine the colour */
+				if (myRow.isDeleted()) {
+					myFore = Color.lightGray;
+				}
+				else if (myRow.hasErrors()) {
+					myFore = Color.black;
+					myBack = Color.red;
+					myTip  = myRow.getFieldErrors(iFields);
+				}
+				else if (isChanged)
+					myFore = Color.magenta;
+				else if (myRow.getState() == DataState.NEW)
+					myFore = Color.blue;
+				else if (myRow.getState() == DataState.RECOVERED)
+					myFore = Color.darkGray;
+			}
+				
+			/* Set the data */
+			pData.setData(myFore, myBack, myFont, myTip);
+				
+			/* return to the caller */
+			return;
+		}		
 	}
 	
 	/**
@@ -838,6 +829,9 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 	 */
 	protected abstract class DataTableModel extends AbstractTableModel {
 		private static final long serialVersionUID = 3815818983288519203L;
+
+		/* Abstract methods */
+		public abstract int  	getFieldForCol(int iField);
 
 		/**
 		 * fire events for moving of a row
@@ -919,6 +913,78 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 			fireTableDataChanged();
 			theRowHdrModel.fireTableDataChanged();
 		}
+		
+		/**
+		 * Get render data for row
+		 * @param pData the Render details
+		 */
+		public void getRenderData(RenderData pData) {
+			T			myRow;
+			String     	myTip = null;
+			int			iRow;
+			int			myIndex;
+			int         iField;
+			Color		myFore;
+			Color		myBack;
+			Font		myFont;
+			boolean 	isChanged = false;
+			
+			/* If we have a header decrement the index */
+			iRow = pData.getRow();
+			myIndex = iRow;
+			if (hasHeader()) myIndex--;
+			
+			/* Default is black on white */
+			myBack = Color.white;
+			myFore = Color.black;
+
+			/* If this is a data row */
+			if (myIndex >= 0) {
+				/* Access the row */
+				myRow  = theList.get(myIndex);
+				iField = getFieldForCol(pData.getCol());
+				
+				/* Has the field changed */
+				isChanged = myRow.fieldChanged(iField);
+				
+				/* Determine the colour */
+				if (myRow.isDeleted()) {
+					myFore = Color.lightGray;
+				}
+				else if ((myRow.hasErrors()) &&
+						 (myRow.hasErrors(iField))) {
+					myFore = Color.red;
+					myTip = myRow.getFieldErrors(iField);
+				}
+				else if (isChanged)
+					myFore = Color.magenta;
+				else if (myRow.getState() == DataState.NEW)
+					myFore = Color.blue;
+				else if (myRow.getState() == DataState.RECOVERED)
+					myFore = Color.darkGray;
+			}
+				
+			/* For selected items flip the foreground/background */
+			if (pData.isSelected()){
+				Color myTemp = myFore;
+				myFore = myBack;
+				myBack = myTemp;
+			}
+				
+			/* Select the font */
+			if (pData.isFixed())
+				myFont = isChanged	? theChgNumFont 
+									: theNumFont;
+			else
+				myFont = isChanged	? theChgFont 
+									: theStdFont;
+			
+			/* Set the data */
+			pData.setData(myFore, myBack, myFont, myTip);
+				
+			/* return to the caller */
+			return;
+		}		
 	}
 	
 	/**
@@ -950,6 +1016,75 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 		public Object getHeaderValue() {
 			/* Return the column name according to the model */
 			return theModel.getColumnName(getModelIndex());
+		}
+	}
+	
+	/**
+	 * Column Model class
+	 */
+	protected class DataColumnModel extends DefaultTableColumnModel {
+		private static final long serialVersionUID = -5503203201580691221L;
+
+		/**
+		 * Add a column to the end of the model 
+		 * @param pColumn
+		 */
+		protected void addColumn(DataColumn pColumn) {
+			/* Set the range */
+			super.addColumn(pColumn);
+			pColumn.setMember(true);
+		}
+
+		/**
+		 * Remove a column from the model 
+		 * @param pColumn
+		 */
+		protected void removeColumn(DataColumn pColumn) {
+			/* Set the range */
+			super.removeColumn(pColumn);
+			pColumn.setMember(false);
+		}
+		
+		/**
+		 * Access the array of displayed column indices
+		 */
+		protected int[] getColumnFields() {
+			/* Declare the field array */
+			int[] myFields = new int[getColumnCount()];
+			int   myCol;
+			
+			/* Loop through the columns */
+			for(int i=0; i<myFields.length; i++){
+				/* Access the column index for this column */
+				myCol = getColumn(i).getModelIndex();
+				
+				/* Store the field # */
+				myFields[i] = theModel.getFieldForCol(myCol);			
+			}
+			
+			/* return the fields */
+			return myFields;
+		}
+	}
+	
+	/**
+	 * Row Column Model class
+	 */
+	private class rowColumnModel extends DataColumnModel {
+		private static final long serialVersionUID = -579928883936388389L;
+
+		/* Renderers/Editors */
+		private Renderer.RowCell	theRowRenderer  	= null;
+
+		/**
+		 * Constructor 
+		 */
+		private rowColumnModel() {		
+			/* Create the relevant formatters/editors */
+			theRowRenderer  	= new Renderer.RowCell();
+			
+			/* Create the columns */
+			addColumn(new DataColumn(0, 30, theRowRenderer, null));
 		}
 	}
 }

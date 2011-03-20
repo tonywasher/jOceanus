@@ -2,7 +2,6 @@ package uk.co.tolcroft.finance.ui;
 
 import javax.swing.GroupLayout;
 import javax.swing.JPanel;
-import javax.swing.table.DefaultTableColumnModel;
 
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.DebugManager.*;
@@ -26,7 +25,7 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 	private Account             		theAccount  		= null;
 	private AccountPrices				theTable	    	= this;
 	private pricesMouse					theMouse			= null;
-	private DataColumnModel				theColumns			= null;
+	private pricesColumnModel			theColumns			= null;
 	private DebugEntry					theDebugEntry		= null;
 	private ErrorPanel					theError			= null;
 
@@ -72,7 +71,7 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 		setModel(theModel);
 			
 		/* Create the data column model and declare it */
-		theColumns = new DataColumnModel();
+		theColumns = new pricesColumnModel();
 		setColumnModel(theColumns);
 
 		/* Prevent reordering of columns and auto-resizing */
@@ -168,19 +167,6 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 		theDebugEntry.setObject(thePrices);
 	}
 		
-	/**
-	 * Obtain the Field id associated with the column
-	 * @param column the column
-	 */
-	public int getFieldForCol(int column) {
-		/* Switch on column */
-		switch (column) {
-			case COLUMN_DATE: 	return AcctPrice.FIELD_DATE;
-			case COLUMN_PRICE: 	return AcctPrice.FIELD_PRICE;
-			default:			return -1;
-		}
-	}
-		
 	/* Prices table model */
 	public class PricesModel extends DataTableModel {
 		private static final long serialVersionUID = -2613779599240142148L;
@@ -212,6 +198,19 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 				case COLUMN_DILUTION:		return titleDilution;
 				case COLUMN_DILUTEDPRICE:	return titleDilPrice;
 				default:					return null;
+			}
+		}
+			
+		/**
+		 * Obtain the Field id associated with the column
+		 * @param column the column
+		 */
+		public int getFieldForCol(int column) {
+			/* Switch on column */
+			switch (column) {
+				case COLUMN_DATE: 	return AcctPrice.FIELD_DATE;
+				case COLUMN_PRICE: 	return AcctPrice.FIELD_PRICE;
+				default:			return -1;
 			}
 		}
 			
@@ -350,7 +349,7 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 	/**
 	 * Column Model class
 	 */
-	private class DataColumnModel extends DefaultTableColumnModel {
+	private class pricesColumnModel extends DataColumnModel {
 		private static final long serialVersionUID = -851990835577845594L;
 
 		/* Renderers/Editors */
@@ -367,7 +366,7 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 		/**
 		 * Constructor 
 		 */
-		private DataColumnModel() {		
+		private pricesColumnModel() {		
 			/* Create the relevant formatters/editors */
 			theDateRenderer  	= new Renderer.DateCell();
 			theDateEditor    	= new Editor.DateCell();
@@ -414,26 +413,6 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 				removeColumn(theDilPriceCol);
 				hasDilutions = false;
 			}
-		}
-
-		/**
-		 * Add a column to the end of the model 
-		 * @param pColumn
-		 */
-		private void addColumn(DataColumn pColumn) {
-			/* Set the range */
-			super.addColumn(pColumn);
-			pColumn.setMember(true);
-		}
-
-		/**
-		 * Remove a column from the model 
-		 * @param pColumn
-		 */
-		private void removeColumn(DataColumn pColumn) {
-			/* Set the range */
-			super.removeColumn(pColumn);
-			pColumn.setMember(false);
 		}
 	}
 }

@@ -8,7 +8,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.LayoutStyle;
-import javax.swing.table.DefaultTableColumnModel;
 
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.StatementSelect.*;
@@ -36,7 +35,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 	private JPanel					thePanel	 		= null;
 	private AccountStatement		theTable	 		= this;
 	private statementMouse			theMouse	 		= null;
-	private DataColumnModel			theColumns			= null;
+	private statementColumnModel	theColumns			= null;
 	private AccountTab				theParent    		= null;
 	private MainTab          		theTopWindow      	= null;
 	private Date.Range				theRange	 		= null;
@@ -100,7 +99,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 		setModel(theModel);
 		
 		/* Create the data column model and declare it */
-		theColumns = new DataColumnModel();
+		theColumns = new statementColumnModel();
 		setColumnModel(theColumns);
 
 		/* Prevent reordering of columns */		
@@ -343,26 +342,6 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 	}
 	
 	/**
-	 * Obtain the Field id associated with the column
-	 * @param column the column
-	 */
-	public int getFieldForCol(int column) {
-		/* Switch on column */
-		switch (column) {
-			case COLUMN_DATE: 		return Statement.Line.FIELD_DATE;
-			case COLUMN_DESC:		return Statement.Line.FIELD_DESC;
-			case COLUMN_TRANTYP:	return Statement.Line.FIELD_TRNTYP;
-			case COLUMN_PARTNER:	return Statement.Line.FIELD_PARTNER;
-			case COLUMN_CREDIT:		return Statement.Line.FIELD_AMOUNT;
-			case COLUMN_DEBIT:		return Statement.Line.FIELD_AMOUNT;
-			case COLUMN_DILUTION:	return Statement.Line.FIELD_DILUTION;
-			case COLUMN_TAXCREDIT:	return Statement.Line.FIELD_TAXCREDIT;
-			case COLUMN_YEARS:		return Statement.Line.FIELD_YEARS;
-			default:				return -1; 
-		}
-	}
-		
-	/**
 	 * Obtain the correct ComboBox for the given row/column
 	 */
 	public JComboBox getComboBox(int row, int column) {
@@ -499,6 +478,26 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 				case COLUMN_TRANTYP:  	return String.class;
 				case COLUMN_PARTNER:  	return String.class;
 				default: 				return Object.class;
+			}
+		}
+			
+		/**
+		 * Obtain the Field id associated with the column
+		 * @param column the column
+		 */
+		public int getFieldForCol(int column) {
+			/* Switch on column */
+			switch (column) {
+				case COLUMN_DATE: 		return Statement.Line.FIELD_DATE;
+				case COLUMN_DESC:		return Statement.Line.FIELD_DESC;
+				case COLUMN_TRANTYP:	return Statement.Line.FIELD_TRNTYP;
+				case COLUMN_PARTNER:	return Statement.Line.FIELD_PARTNER;
+				case COLUMN_CREDIT:		return Statement.Line.FIELD_AMOUNT;
+				case COLUMN_DEBIT:		return Statement.Line.FIELD_AMOUNT;
+				case COLUMN_DILUTION:	return Statement.Line.FIELD_DILUTION;
+				case COLUMN_TAXCREDIT:	return Statement.Line.FIELD_TAXCREDIT;
+				case COLUMN_YEARS:		return Statement.Line.FIELD_YEARS;
+				default:				return -1; 
 			}
 		}
 			
@@ -1194,7 +1193,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 	/**
 	 * Column Model class
 	 */
-	private class DataColumnModel extends DefaultTableColumnModel {
+	private class statementColumnModel extends DataColumnModel {
 		private static final long serialVersionUID = -183944035127105952L;
 
 		/* Renderers/Editors */
@@ -1221,7 +1220,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 		/**
 		 * Constructor 
 		 */
-		private DataColumnModel() {		
+		private statementColumnModel() {		
 			/* Create the relevant formatters/editors */
 			theDateRenderer     = new Renderer.DateCell();
 			theDateEditor       = new Editor.DateCell();
@@ -1259,26 +1258,6 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 			theDateEditor.setRange(pRange);			
 		}
 
-		/**
-		 * Add a column to the end of the model 
-		 * @param pColumn
-		 */
-		private void addColumn(DataColumn pColumn) {
-			/* Set the range */
-			super.addColumn(pColumn);
-			pColumn.setMember(true);
-		}
-
-		/**
-		 * Remove a column from the model 
-		 * @param pColumn
-		 */
-		private void removeColumn(DataColumn pColumn) {
-			/* Set the range */
-			super.removeColumn(pColumn);
-			pColumn.setMember(false);
-		}
-		
 		/**
 		 * Determine whether a column is visible
 		 * @param pCol the column id

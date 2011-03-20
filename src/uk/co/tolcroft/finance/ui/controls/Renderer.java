@@ -42,9 +42,9 @@ public class Renderer {
 	                                                	int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 	                                        	hasFocus, row, column);
-			FinanceTable<?> myTable = (FinanceTable<?>)table;
+			FinanceTable<?>.DataTableModel myModel = (FinanceTable<?>.DataTableModel)table.getModel();
 			theData.setPosition(row, column, isSelected);
-			myTable.getRenderData(theData);
+			myModel.getRenderData(theData);
 			setForeground(theData.getForeGround());
 			setBackground(theData.getBackGround());
 			setFont(theData.getFont());
@@ -87,9 +87,9 @@ public class Renderer {
 	                                                	int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 	                                        	hasFocus, row, column);
-			FinanceTable<?> myTable = (FinanceTable<?>)table;
+			FinanceTable<?>.DataTableModel myModel = (FinanceTable<?>.DataTableModel)table.getModel();
 			theData.setPosition(row, column, isSelected);
-			myTable.getRenderData(theData);
+			myModel.getRenderData(theData);
 			setForeground(theData.getForeGround());
 			setBackground(theData.getBackGround());
 			setFont(theData.getFont());
@@ -128,9 +128,9 @@ public class Renderer {
 														int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 												hasFocus, row, column);
-			FinanceTable<?> myTable = (FinanceTable<?>)table;
+			FinanceTable<?>.DataTableModel myModel = (FinanceTable<?>.DataTableModel)table.getModel();
 			theData.setPosition(row, column, isSelected);
-			myTable.getRenderData(theData);
+			myModel.getRenderData(theData);
 			setForeground(theData.getForeGround());
 			setBackground(theData.getBackGround());
 			setFont(theData.getFont());
@@ -169,9 +169,9 @@ public class Renderer {
 														int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 												hasFocus, row, column);
-			FinanceTable<?> myTable = (FinanceTable<?>)table;
+			FinanceTable<?>.DataTableModel myModel = (FinanceTable<?>.DataTableModel)table.getModel();
 			theData.setPosition(row, column, isSelected);
-			myTable.getRenderData(theData);
+			myModel.getRenderData(theData);
 			setForeground(theData.getForeGround());
 			setBackground(theData.getBackGround());
 			setFont(theData.getFont());
@@ -210,9 +210,9 @@ public class Renderer {
 														int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 												hasFocus, row, column);
-			FinanceTable<?> myTable = (FinanceTable<?>)table;
+			FinanceTable<?>.DataTableModel myModel = (FinanceTable<?>.DataTableModel)table.getModel();
 			theData.setPosition(row, column, isSelected);
-			myTable.getRenderData(theData);
+			myModel.getRenderData(theData);
 			setForeground(theData.getForeGround());
 			setBackground(theData.getBackGround());
 			setFont(theData.getFont());
@@ -251,9 +251,9 @@ public class Renderer {
 														int row, int column) {	
 			super.getTableCellRendererComponent(table, value, isSelected,
 												hasFocus, row, column);
-			FinanceTable<?> myTable = (FinanceTable<?>)table;
+			FinanceTable<?>.DataTableModel myModel = (FinanceTable<?>.DataTableModel)table.getModel();
 			theData.setPosition(row, column, isSelected);
-			myTable.getRenderData(theData);
+			myModel.getRenderData(theData);
 			setForeground(theData.getForeGround());
 			setBackground(theData.getBackGround());
 			setFont(theData.getFont());
@@ -292,9 +292,9 @@ public class Renderer {
 														int row, int column) {	
 			super.getTableCellRendererComponent(table, value, isSelected,
 												hasFocus, row, column);
-			FinanceTable<?> myTable = (FinanceTable<?>)table;
+			FinanceTable<?>.DataTableModel myModel = (FinanceTable<?>.DataTableModel)table.getModel();
 			theData.setPosition(row, column, isSelected);
-			myTable.getRenderData(theData);
+			myModel.getRenderData(theData);
 			setForeground(theData.getForeGround());
 			setBackground(theData.getBackGround());
 			setFont(theData.getFont());
@@ -334,9 +334,9 @@ public class Renderer {
 		                                                int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 		                                        hasFocus, row, column);
-			FinanceTable<?> myTable = (FinanceTable<?>)table;
+			FinanceTable<?>.DataTableModel myModel = (FinanceTable<?>.DataTableModel)table.getModel();
 			theData.setPosition(row, column, isSelected);
-			myTable.getRenderData(theData);
+			myModel.getRenderData(theData);
 			setForeground(theData.getForeGround());
 			setBackground(theData.getBackGround());
 			setFont(theData.getFont());
@@ -376,9 +376,9 @@ public class Renderer {
 		                                                int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 		                                        hasFocus, row, column);
-			FinanceTable<?> myTable = (FinanceTable<?>)table;
+			FinanceTable<?>.DataTableModel myModel = (FinanceTable<?>.DataTableModel)table.getModel();
 			theData.setPosition(row, column, isSelected);
-			myTable.getRenderData(theData);
+			myModel.getRenderData(theData);
 			setForeground(theData.getForeGround());
 			setBackground(theData.getBackGround());
 			setFont(theData.getFont());
@@ -386,5 +386,48 @@ public class Renderer {
 		    setToolTipText(theData.getToolTip());
 		    return this;
 		}
-	}			
+	}	
+	
+	/* Row Cell Renderer */
+	public static class RowCell extends DefaultTableCellRenderer {
+		private static final long serialVersionUID = 8710214547908947657L;
+		private RenderData theData = null;
+		
+		public RowCell() {
+			super();
+			theData = new RenderData(false);
+		}
+
+		public void setValue(Object value) {
+			String s;
+			
+			if (value == theError)  s = theError;
+			else if (value == null) s = "";
+			else
+			{
+				Integer myRow = (Integer)value;
+				s = myRow.toString();
+			}
+			
+			super.setValue(s);
+		}
+	
+		public JComponent getTableCellRendererComponent(JTable table, 
+														Object value,
+	                                                	boolean isSelected, 
+	                                                	boolean hasFocus, 
+	                                                	int row, int column) {
+			super.getTableCellRendererComponent(table, value, isSelected,
+	                                        	hasFocus, row, column);
+			FinanceTable<?>.rowTableModel myModel = (FinanceTable<?>.rowTableModel)table.getModel();
+			theData.setPosition(row, column, isSelected);
+			myModel.getRenderData(theData);
+			setForeground(theData.getForeGround());
+			setBackground(theData.getBackGround());
+			setFont(theData.getFont());
+			setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+			setToolTipText(theData.getToolTip());
+			return this;
+		}
+	}	
 }

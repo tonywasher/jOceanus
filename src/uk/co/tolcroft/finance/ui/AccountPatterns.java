@@ -3,7 +3,6 @@ package uk.co.tolcroft.finance.ui;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import javax.swing.table.DefaultTableColumnModel;
 
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.DebugManager.*;
@@ -28,7 +27,7 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 	private JComboBox				theFreqBox			= null;
 	private AccountPatterns		 	theTable	 		= this;
 	private patternMouse			theMouse	 		= null;
-	private DataColumnModel			theColumns			= null;
+	private patternColumnModel		theColumns			= null;
 	private AccountTab				theParent   		= null;
 	private Account                 theAccount  		= null;
 	private View.ViewPatterns		theExtract			= null;
@@ -83,7 +82,7 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 		setModel(theModel);
 		
 		/* Create the data column model and declare it */
-		theColumns = new DataColumnModel();
+		theColumns = new patternColumnModel();
 		setColumnModel(theColumns);
 
 		/* Prevent reordering of columns */
@@ -211,24 +210,6 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 	}
 		
 	/**
-	 * Obtain the Field id associated with the column
-	 * @param column the column
-	 */
-	public int getFieldForCol(int column) {
-		/* Switch on column */
-		switch (column) {
-			case COLUMN_DATE: 		return Pattern.FIELD_DATE;
-			case COLUMN_DESC:		return Pattern.FIELD_DESC;
-			case COLUMN_TRANTYP:	return Pattern.FIELD_TRNTYP;
-			case COLUMN_CREDIT: 	return Pattern.FIELD_AMOUNT;
-			case COLUMN_DEBIT: 		return Pattern.FIELD_AMOUNT;
-			case COLUMN_PARTNER:	return Pattern.FIELD_PARTNER;
-			case COLUMN_FREQ:  		return Pattern.FIELD_FREQ;
-			default:				return -1;
-		}
-	}
-		
-	/**
 	 * Obtain the correct ComboBox for the given row/column
 	 */
 	public JComboBox getComboBox(int row, int column) {
@@ -328,6 +309,24 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 				case COLUMN_DEBIT:  	return String.class;
 				case COLUMN_FREQ:  		return String.class;
 				default: 				return Object.class;
+			}
+		}
+			
+		/**
+		 * Obtain the Field id associated with the column
+		 * @param column the column
+		 */
+		public int getFieldForCol(int column) {
+			/* Switch on column */
+			switch (column) {
+				case COLUMN_DATE: 		return Pattern.FIELD_DATE;
+				case COLUMN_DESC:		return Pattern.FIELD_DESC;
+				case COLUMN_TRANTYP:	return Pattern.FIELD_TRNTYP;
+				case COLUMN_CREDIT: 	return Pattern.FIELD_AMOUNT;
+				case COLUMN_DEBIT: 		return Pattern.FIELD_AMOUNT;
+				case COLUMN_PARTNER:	return Pattern.FIELD_PARTNER;
+				case COLUMN_FREQ:  		return Pattern.FIELD_FREQ;
+				default:				return -1;
 			}
 		}
 			
@@ -520,7 +519,7 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 	/**
 	 * Column Model class
 	 */
-	private class DataColumnModel extends DefaultTableColumnModel {
+	private class patternColumnModel extends DataColumnModel {
 		private static final long serialVersionUID = 520785956133901998L;
 
 		/* Renderers/Editors */
@@ -535,7 +534,7 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 		/**
 		 * Constructor 
 		 */
-		private DataColumnModel() {		
+		private patternColumnModel() {		
 			/* Create the relevant formatters/editors */
 			theDateRenderer   = new Renderer.DateCell();
 			theDateEditor     = new Editor.DateCell();
@@ -556,16 +555,6 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 			addColumn(new DataColumn(COLUMN_CREDIT,   90, theMoneyRenderer,  theMoneyEditor));
 			addColumn(new DataColumn(COLUMN_DEBIT,    90, theMoneyRenderer,  theMoneyEditor));
 			addColumn(new DataColumn(COLUMN_FREQ,    110, theStringRenderer, theComboEditor));
-		}
-		
-		/**
-		 * Add a column to the end of the model 
-		 * @param pColumn
-		 */
-		private void addColumn(DataColumn pColumn) {
-			/* Set the range */
-			super.addColumn(pColumn);
-			pColumn.setMember(true);
 		}
 	}
 }
