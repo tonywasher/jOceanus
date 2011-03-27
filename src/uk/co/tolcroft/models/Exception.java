@@ -90,55 +90,54 @@ public class Exception 	extends java.lang.Exception
 		StringBuilder		myString     = new StringBuilder(10000);
 		StringBuilder		myDetail	 = new StringBuilder(10000);	
 		StackTraceElement[] myTrace      = null;
-		Object				myUnderLying = null;
-		StringBuilder		myXtra	 	 = null;
-		int					myNumDetail  = 4;
+		Throwable			myException  = this;
+		StringBuilder		myObj	 	 = new StringBuilder(10000);
+		int					myNumDetail  = 2;
 		
 		/* Initialise the string with an item name */
 		myString.append("<table border=\"1\" width=\"90%\" align=\"center\">");
 		myString.append("<thead><th>Exception</th>");
 		myString.append("<th>Field</th><th>Value</th></thead><tbody>");
 		
-		/* Add the message details */
-		myDetail.append("<tr><td>Message</td><td>");
-		myDetail.append(getMessage());
-		myDetail.append("</td></tr>");
-		myDetail.append("<tr><td>Class</td><td>");
-		myDetail.append(theClass);
-		myDetail.append("</td></tr>");
+		/* Access this exception */
+		myException = this;
 		
-		/* Access the underlying cause */
-		myUnderLying = getCause();
-		
-		/* If the underlying cause is non-null */
-		if (myUnderLying != null) {
-			/* If the underlying cause is another instance of us */
-			if (myUnderLying instanceof Exception) {
-				/* Format the underlying exception */
-				myXtra = ((Exception)myUnderLying).toHTMLString();
+		/* while the current exception is non-null */
+		while (myException != null) {
+			/* If the exception is an instance of us */
+			if (myException instanceof Exception) {
+				Exception myExc = (Exception)myException;
+				
+				/* Add the message details */
+				myDetail.append("<tr><td>Class</td><td>");
+				myDetail.append(myExc.theClass);
+				myDetail.append("</td></tr>");
+
+				/* If there is an associated object */
+				if (myExc.theObject != null) {
+					/* Format the object */
+					myObj.append("<p>");
+					myObj.append(myExc.theObject.toHTMLString());
+				}
 			}
 			
-			/* else we need to access the message and the stack trace */
+			/* else this is a java exception */
 			else {
 				/* Record the underlying message */
 				myDetail.append("<tr><td>ExceptionType</td><td>");
-				myDetail.append(myUnderLying.getClass().getName());
+				myDetail.append(myException.getClass().getName());
 				myDetail.append("</td></tr>");
-				myNumDetail++;
-				myDetail.append("<tr><td>Message</td><td>");
-				myDetail.append(getCause().getMessage());
-				myDetail.append("</td></tr>");
-				myNumDetail++;
-				
-				/* Access the stack trace */
-				myTrace = getCause().getStackTrace();
 			}
-		}
-		
-		/* Else we are the original exception */
-		else {
-			/* Access the stack trace */
-			myTrace = getStackTrace();
+
+			/* Record the message details */
+			myDetail.append("<tr><td>Message</td><td>");
+			myDetail.append(myException.getMessage());
+			myDetail.append("</td></tr>");
+			myNumDetail+=2;
+			
+			/* Access the stack trace and the next cause */
+			myTrace 	= myException.getStackTrace();
+			myException	= myException.getCause();
 		}
 		
 		/* Add the details */
@@ -148,12 +147,8 @@ public class Exception 	extends java.lang.Exception
 		myString.append(myDetail);
 		myString.append("</tbody></table>");
 		
-		/* If there is an associated object */
-		if (theObject != null) {
-			/* Format the object */
-			myString.append("<p>");
-			myString.append(theObject.toHTMLString());
-		}
+		/* Add any objects */
+		myString.append(myObj);
 		
 		/* If there is a stack trace */
 		if (myTrace != null) {
@@ -171,13 +166,6 @@ public class Exception 	extends java.lang.Exception
 			
 			/* Terminate the table */
 			myString.append("</tbody></table>");
-		}
-		
-		/* If there is an underlying exception */
-		if (myXtra != null) {
-			/* Format the Xtra detail*/
-			myString.append("<p>");
-			myString.append(myXtra);
 		}
 		
 		return myString;
@@ -198,9 +186,9 @@ public class Exception 	extends java.lang.Exception
 		EXCEL,
 		
 		/**
-		 * Exception from Encryption library
+		 * Exception from Cryptographic library
 		 */
-		ENCRYPT,
+		CRYPTO,
 		
 		/**
 		 * Exception from Data
@@ -220,6 +208,11 @@ public class Exception 	extends java.lang.Exception
 		/**
 		 * Exception from logic
 		 */
-		LOGIC;
+		LOGIC,
+		
+		/**
+		 * Exception from subversion
+		 */
+		SUBVERSION;
 	}	
 }

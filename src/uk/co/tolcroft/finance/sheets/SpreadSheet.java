@@ -16,7 +16,8 @@ import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.security.*;
-import uk.co.tolcroft.security.ZipFile.*;
+import uk.co.tolcroft.security.SecurityControl.DigestType;
+import uk.co.tolcroft.security.SymmetricKey.SymKeyType;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 
@@ -172,7 +173,9 @@ public class SpreadSheet {
 				/* Create the new output Zip file */
 				myZipFile 	= new ZipFile.Output(pData.getSecurityControl(),
 												 myTgtFile);
-				myStream 	= myZipFile.getOutputStream(pFile, zipMode.COMPRESS_AND_ENCRYPT);
+				myStream 	= myZipFile.getOutputStream(new File(ZipFile.fileData), 
+														ZipEntryMode.getEncryptionMode(SymKeyType.Serpent,
+																			 	DigestType.Tiger));
 			}
 
 			/* Write the data from the stream */

@@ -302,7 +302,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 		/* If we have an underlying object */
 		if (theBase != null) {
 			/* Format the Underlying object */
-			myString.append("<tr><td>Underlying</td><td colspan=\"2\">");
+			myString.append("<tr><th>Underlying</th><td colspan=\"2\">");
 			myString.append(theBase.toHTMLString());
 			myString.append("</td></tr>");
 		}
@@ -525,7 +525,10 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	/**
 	 * Clear all errors for this item
 	 */
-	public	  void			clearErrors()  { theErrors.clearErrors(); }
+	public	  void			clearErrors()  {
+		theEdit = EditState.CLEAN;
+		theErrors.clearErrors();
+	}
 
 	/**
 	 * Add an error for this item
@@ -1013,6 +1016,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 		private void clearHistory() {
 			/* Remove all history */
 			while (theTop != null) popTheHistory();
+			theCursor = null;
 		}
 		
 		/**
@@ -1023,6 +1027,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 			
 			/* Remove all history */
 			while (theTop != null) myLast = popTheHistory();
+			theCursor = null;
 			return myLast;
 		}
 		

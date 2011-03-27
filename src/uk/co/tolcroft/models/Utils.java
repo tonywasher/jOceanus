@@ -289,4 +289,52 @@ public class Utils {
 								"Unable to convert byte array to characters");
 		}
 	}
+	
+	/**
+	 * parse a long from a byte array
+	 * @param pBytes the eight byte array holding the long
+	 * @return the long value
+	 */
+	public static long LongFromBytes(byte[] pBytes) {
+		int 	myByte;
+		long	myValue = 0;
+
+ 		/* Loop through the bytes */
+ 		for (int i=0; i<8; i++) {
+			/* Access the next byte as an unsigned integer */
+			myByte = pBytes[i];
+			myByte &= 255;
+
+			/* Add in to value */
+			myValue *= 256;
+			myValue += myByte;
+ 		}
+		
+ 		/* Return the value */
+ 		return myValue;
+	}
+
+	/**
+	 * build a byte array from a long
+	 * @param pBytes the eight byte array holding the long
+	 * @return the long value
+	 */
+	public static byte[] BytesFromLong(long pValue) {
+		byte 	myByte;
+		byte[]	myBytes = new byte[8];
+		long	myValue = pValue;
+
+ 		/* Loop through the bytes */
+ 		for (int i=8; i>0; i--) {
+			/* Access the next byte as an unsigned integer */
+			myByte = (byte)(myValue & 255);
+			myBytes[i-1] = myByte;
+			
+			/* Adjust value */
+			myValue /= 256;
+ 		}
+		
+ 		/* Return the value */
+ 		return myBytes;
+	}
 }

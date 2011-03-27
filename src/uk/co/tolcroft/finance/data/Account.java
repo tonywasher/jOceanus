@@ -849,6 +849,12 @@ public class Account extends DataItem {
 			/* Record the more accurate date */
 			setClose(theLatest.getDate());
 		}
+
+		/* If the maturity is null for a bond set it to close date */
+		if (isBond() && getMaturity() == null) {
+			/* Record a date for maturity */
+			setMaturity(theLatest.getDate());
+		}
 	}
 	
 	/**
@@ -1186,7 +1192,7 @@ public class Account extends DataItem {
 		
 		/* Catch exception */
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.ENCRYPT,
+			throw new Exception(ExceptionClass.CRYPTO,
 								this,
 								"Failed to complete encryption",
 								e);

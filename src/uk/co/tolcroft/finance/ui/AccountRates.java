@@ -78,7 +78,7 @@ public class AccountRates extends FinanceTable<AcctRate> {
 		getTableHeader().setReorderingAllowed(false);
 		setAutoResizeMode(AUTO_RESIZE_OFF);
 			
-		/* Add the mouse listener */
+		/* Create the mouse listener (automatically added) */
 		theMouse = new ratesMouse();
 		addMouseListener(theMouse);
 		
@@ -144,6 +144,13 @@ public class AccountRates extends FinanceTable<AcctRate> {
 		theColumns.setDateEditorRange(theRange);
 	}
 		
+ 	/**
+	 * Update Debug view 
+	 */
+	public void updateDebug() {			
+		theDebugEntry.setObject(theExtract);
+	}
+		
 	/**
 	 * Call underlying controls to take notice of changes in view/selection
 	 */
@@ -165,7 +172,6 @@ public class AccountRates extends FinanceTable<AcctRate> {
 		theAccount = pAccount;
 		theRates   = theExtract.getRates();
 		setList(theRates);
-		theDebugEntry.setObject(theExtract);
 	}
 		
 	/* Rates table model */
@@ -326,6 +332,7 @@ public class AccountRates extends FinanceTable<AcctRate> {
 			
 				/* Update components to reflect changes */
 				notifyChanges();
+				updateDebug();
 			}
 		}
 	}
@@ -434,6 +441,7 @@ public class AccountRates extends FinanceTable<AcctRate> {
 			
 			/* Notify of any changes */
 			notifyChanges();
+			updateDebug();
 		}		
 	}
 	

@@ -25,9 +25,14 @@ public class ZipFile {
 	private final static String fileHeader			= "zipHeader";
 	
 	/**
+	 * The Data file name
+	 */
+	public  final static String fileData			= "zipData";
+	
+	/**
 	 * The encoding property name of a file
 	 */
-	private final static String propEncoding		= "UTF-8";
+	private final static String propEncoding		= SecurityControl.ENCODING;
 	
 	/**
 	 * ZipOutputFile Class represents a zip file that is in the process of being built 
@@ -36,42 +41,42 @@ public class ZipFile {
 		/**
 		 * Security Control for this zip file
 		 */
-		private SecurityControl			theControl 		= null;
-		
-		/**
-		 *	The list of files contained in this ZipFile together with properties 
-		 */
-		private ZipFileEntry			theFiles		= null;
+		private SecurityControl				theControl 		= null;
 		
 		/**
 		 * The underlying zip output stream
 		 */
-		private ZipOutputStream 		theStream		= null;
+		private ZipOutputStream 			theStream		= null;
 
+		/**
+		 *	The list of files contained in this ZipFile together with properties 
+		 */
+		private ZipFileEntry				theFiles		= null;
+		
+		/**
+		 * The active zipEntry
+		 */
+		private ZipEntry 					theEntry		= null;
+
+		/**
+		 *	The mode of the current Zip file 
+		 */
+		private ZipEntryMode				theMode			= null;
+		
 		/**
 		 * The active output stream
 		 */
-		private DigestStream.Output		theOutput		= null;
+		private OutputStream				theOutput		= null;
 
 		/**
 		 * The compressed output stream
 		 */
-		private DigestStream.Output 	theCompDigest	= null;
-
-		/**
-		 * The encrypted output stream
-		 */
-		private DigestStream.Output 	theEncDigest	= null;
+		private DigestStream.Output[] 		theDigests		= null;
 
 		/**
 		 * The encryption output stream
 		 */
-		private EncryptionStream.Output theEncrypted	= null;
-
-		/**
-		 * The active zipEntry
-		 */
-		private ZipEntry 				theEntry		= null;
+		private EncryptionStream.Output[] 	theEncrypts		= null;
 
 		/**
 		 *	Constructor for new output zip file
@@ -107,8 +112,12 @@ public class ZipFile {
 		 *	@param pFile the file details for the new zip entry
 		 *	@param pMode the mode to store the new file in 
 		 */
-		public OutputStream getOutputStream(File pFile, zipMode pMode) throws Exception {
-			GZIPOutputStream myZip;
+		public OutputStream getOutputStream(File pFile, ZipEntryMode pMode) throws Exception {
+			GZIPOutputStream 		myZip;
+			DigestStream.Output		myDigest;
+			EncryptionStream.Output	myEncrypt;
+			int						iDigest;
+			int						iEncrypt;
 		
 			/* Reject call if we have closed the stream */
 			if (theStream == null)
@@ -120,10 +129,14 @@ public class ZipFile {
 				throw new Exception(ExceptionClass.LOGIC,
 						  			"Output stream already open");
 			
+			/* Reject call if the filename is fileHeader */
+			if (pFile.getPath().equals(fileHeader))
+				throw new Exception(ExceptionClass.LOGIC,
+						  			"Cannot use reserved filename: " + fileHeader);
+			
 			/* Reject call if we have no security and encryption is requested */
 			if ((theControl == null) &&
-				((pMode == zipMode.ENCRYPT) ||
-				 (pMode == zipMode.COMPRESS_AND_ENCRYPT)))
+				(pMode.doEncrypt()))
 				throw new Exception(ExceptionClass.LOGIC,
 						  			"Encryption not allowed for this ZipFile. No security credentials were provided.");
 			
@@ -132,60 +145,52 @@ public class ZipFile {
 				/* Start the new entry */
 				theEntry 	= new ZipEntry(pFile.getPath());
 				theStream.putNextEntry(theEntry);
-			}
-			
-			/* Catch exceptions */
-			catch (Throwable e) {
-				throw new Exception(ExceptionClass.DATA,
-									"Exception writing to Zip file",
-									e);
-			}			
-			
-			/* Protect against exceptions */
-			try {
-				/* Switch on the mode */
-				switch (pMode) {
-					case RAW:
-						/* Create the digest output stream directly onto the Zip stream */
-						theOutput 		= new DigestStream.Output(new wrapOutputStream());
-						break;
-					case COMPRESS:
-						/* Create the compressed digest stream directly onto the Zip stream */
-						theCompDigest	= new DigestStream.Output(new wrapOutputStream());
+
+				/* Store the mode */
+				theMode 	= pMode;
+				
+				/* Simply create a wrapper on the output stream */
+				theOutput 	= new wrapOutputStream();
+
+				/* If we are encrypting */
+				if (pMode.doEncrypt()) {
+					/* Create the arrays */
+					theDigests 	= new DigestStream.Output[pMode.getNumDigests()];
+					theEncrypts	= new EncryptionStream.Output[pMode.getNumEncrypts()];
+					iDigest		= 0;
 					
-						/* Create a GZIP output stream onto the compressed digest stream */
-						myZip			= new GZIPOutputStream(theCompDigest);
+					/* Create an initial digest stream */
+					myDigest 	= new DigestStream.Output(pMode.getDigestType(), theOutput);
+					theOutput	= myDigest;
+					theDigests[iDigest++] = myDigest;
 					
-						/* Create the digest output stream directly onto the GZIP stream */
-						theOutput		= new DigestStream.Output(myZip);
-						break;					
-					case ENCRYPT:
-						/* Create the encrypted digest stream directly onto the Zip stream */
-						theEncDigest	= new DigestStream.Output(new wrapOutputStream());
+					/* For each encryption stream */
+					for (iEncrypt=0; iEncrypt<pMode.getNumEncrypts(); iEncrypt++) {
+						/* Create the encryption stream */
+						myEncrypt 	= new EncryptionStream.Output(theControl,
+																  pMode.getKeyType(iEncrypt+1),
+																  theOutput);
+						theOutput	= myEncrypt;
+						theEncrypts[iEncrypt] = myEncrypt;
 					
-						/* Create the encryption stream directly onto the encryption digest stream */
-						theEncrypted	= new EncryptionStream.Output(theControl, theEncDigest);
+						/* if we are debugging */
+						if (pMode.doDebug()) {
+							/* Create an extra digest stream */
+							myDigest 	= new DigestStream.Output(pMode.getDigestType(), theOutput);
+							theOutput	= myDigest;
+							theDigests[iDigest++] = myDigest;
+						}
+					}
 					
-						/* Create the digest output stream directly onto the encryption stream */
-						theOutput		= new DigestStream.Output(theEncrypted);
-						break;					
-					case COMPRESS_AND_ENCRYPT:
-						/* Create the encrypted digest stream directly onto the Zip stream */
-						theEncDigest	= new DigestStream.Output(new wrapOutputStream());
-					
-						/* Create the encryption stream directly onto the encryption digest stream */
-						theEncrypted	= new EncryptionStream.Output(theControl, theEncDigest);
-					
-						/* Create the compressed output stream directly onto the Encryption stream */
-						theCompDigest	= new DigestStream.Output(theEncrypted);
-					
-						/* Create a GZIP output stream onto the compressed digest stream */
-						myZip			= new GZIPOutputStream(theCompDigest);					
-						
-						/* Create the raw output stream directly onto the GZIP stream */
-						theOutput		= new DigestStream.Output(myZip);
-						break;					
-				}
+					/* Create a GZIP output stream onto the output */
+					myZip		= new GZIPOutputStream(theOutput);
+					theOutput	= myZip;
+
+					/* Create a final digest stream */
+					myDigest 	= new DigestStream.Output(pMode.getDigestType(), theOutput);
+					theOutput	= myDigest;
+					theDigests[iDigest++] = myDigest;
+				}					
 			}
 			
 			/* Catch exceptions */
@@ -204,11 +209,7 @@ public class ZipFile {
 		 */
 		private void closeOutputStream() throws IOException {
 			ZipFileEntry 	myEntry;
-			byte[]			myDigest;
-			byte[]			myKey;
-			byte[]			myVector;
 			byte[]			mySign;
-			long			myLength;
 			
 			/* Protect against exceptions */
 			try {
@@ -221,42 +222,29 @@ public class ZipFile {
 					myEntry = new ZipFileEntry();
 					addToList(myEntry);
 					
-					/* Add the name of the file entry */
+					/* Add the name and mode of the file entry */
 					myEntry.setProperty(ZipFileEntry.propName, theEntry.getName().getBytes(propEncoding));
+					myEntry.setProperty(ZipFileEntry.propName, theMode.getMode());
 			
-					/* Access raw details */
-					myDigest = theOutput.getDigest();
-					myLength = theOutput.getDataLen();
-					
-					/* Set the properties */
-					myEntry.setProperty(ZipFileEntry.propRawData, myDigest);
-					myEntry.setProperty(ZipFileEntry.propRawData, myLength);
-
-					/* If we have a compression digest */
-					if (theCompDigest != null) {
-						/* Access compressed details */
-						myDigest = theCompDigest.getDigest();
-						myLength = theCompDigest.getDataLen();
-						
-						/* Set the properties */
-						myEntry.setProperty(ZipFileEntry.propCompData, myDigest);
-						myEntry.setProperty(ZipFileEntry.propCompData, myLength);
+					/* If we have digest streams */
+					if (theDigests != null) {
+						/* Loop through the digests */
+						for (int iDigest=0; iDigest < theDigests.length; iDigest++) {
+							/* Set the digest properties */
+							myEntry.setProperty(ZipFileEntry.propDigest, iDigest+1, theDigests[iDigest].getDigest());
+							myEntry.setProperty(ZipFileEntry.propDigest, iDigest+1, theDigests[iDigest].getDataLen());							
+						}
 					}
 					
-					/* If we have an encrypted digest */
-					if (theEncrypted != null) {
-						/* Access encrypted details */
-						myDigest = theEncDigest.getDigest();
-						myLength = theEncDigest.getDataLen();
-						myKey 	 = theEncrypted.getWrappedKey();
-						myVector = theEncrypted.getInitVector();
-						
-						/* Set the properties */
-						myEntry.setProperty(ZipFileEntry.propEncData, 	myDigest);
-						myEntry.setProperty(ZipFileEntry.propEncData, 	myLength);
-						myEntry.setProperty(ZipFileEntry.propSecretKey,  myKey);
-						myEntry.setProperty(ZipFileEntry.propInitVector, myVector);
-						
+					/* If we have encryption streams */
+					if (theEncrypts != null) {
+						/* Loop through the digests */
+						for (int iEncrypt=0; iEncrypt < theEncrypts.length; iEncrypt++) {
+							/* Set the encryption properties */
+							myEntry.setProperty(ZipFileEntry.propSecretKey,  iEncrypt+1, theEncrypts[iEncrypt].getWrappedKey());
+							myEntry.setProperty(ZipFileEntry.propInitVector, iEncrypt+1, theEncrypts[iEncrypt].getInitVector());
+						}
+
 						/* Calculate the signature and add it to properties */
 						mySign = theControl.signFile(myEntry);
 						myEntry.setProperty(ZipFileEntry.propSignature, mySign);
@@ -267,10 +255,10 @@ public class ZipFile {
 				}
 				
 				/* Reset streams */
-				theOutput 		= null;
-				theCompDigest 	= null;
-				theEncDigest 	= null;
-				theEncrypted 	= null;
+				theOutput 	= null;
+				theDigests 	= null;
+				theEncrypts	= null;
+				theMode		= null;
 			}
 			
 			/* Catch exceptions */
@@ -284,7 +272,6 @@ public class ZipFile {
 		public void close() throws IOException {
 			String		 myHeader;
 			byte[]		 myBytes;
-			ZipFileEntry myEntry;
 			
 			/* Close any open output stream */
 			closeOutputStream();
@@ -295,25 +282,23 @@ public class ZipFile {
 				try {
 					/* If we have stored files */
 					if (theFiles != null) {						
-						/* Create a new zipFileEntry */
-						myEntry = new ZipFileEntry();
-						addToList(myEntry);
-						
-						/* Add the name of the header entry */
-						myEntry.setProperty(ZipFileEntry.propName,
-											fileHeader.getBytes(propEncoding));
-				
-						/* Add the security string to the header entry */
-						if (theControl != null)
-							myEntry.setProperty(ZipFileEntry.propSecurityKey,
-												theControl.getSecurityKey().getBytes(propEncoding));
-				
 						/* Access the encoded file string */
 						myHeader = theFiles.getEncodedString();
-						myBytes  = myHeader.getBytes(propEncoding);
 
-						/* Start the new entry */
+						/* Create the header entry */
 						theEntry 	= new ZipEntry(fileHeader);
+						
+						/* If we have security control */
+						if (theControl != null) {
+							/* Declare the security control and encrypt the header */
+							theEntry.setExtra(theControl.getSecurityKey().getBytes(propEncoding));
+							myBytes = theControl.getAsymKey().encryptString(myHeader);
+						}
+						
+						/* else just extract the bytes from the string */
+						else myBytes  = myHeader.getBytes(propEncoding);
+						
+						/* Start the new entry */
 						theStream.putNextEntry(theEntry);
 
 						/* Write the bytes to the zip file and close the entry */
@@ -325,6 +310,9 @@ public class ZipFile {
 					theStream.flush();
 					theStream.close();
 					theStream = null;
+					
+					/* reSeed the random number generator */
+					theControl.reSeedRandom();
 				}
 			
 				/* Catch exceptions */
@@ -360,7 +348,7 @@ public class ZipFile {
 		}
 		
 		/**
-		 * Wrapper class to catch close of output stream and prevent it from closing the zipfile
+		 * Wrapper class to catch close of output stream and prevent it from closing the ZipFile
 		 */
 		private class wrapOutputStream extends java.io.OutputStream {
 			/**
@@ -393,31 +381,6 @@ public class ZipFile {
 	}
 	
 	/**
-	 * Enumeration class for Zip modes 
-	 */
-	public enum zipMode {
-		/**
-		 * Raw Data
-		 */
-		RAW,
-		
-		/**
-		 * Compressed data
-		 */
-		COMPRESS,
-		
-		/**
-		 * Encrypted data
-		 */
-		ENCRYPT,
-		
-		/**
-		 * Compressed and Encrypted data
-		 */
-		COMPRESS_AND_ENCRYPT;
-	}
-	
-	/**
 	 * ZipInputFile Class represents a zip file that can be read 
 	 */
 	public static class Input {
@@ -447,6 +410,11 @@ public class ZipFile {
 		private File				theZipFile		= null;
 		
 		/**
+		 * The Header input stream
+		 */
+		private ZipInputStream		theHdrStream	= null;
+		
+		/**
 		 * Obtain the next file entry 
 		 * @return the next file entry
 		 */
@@ -466,12 +434,7 @@ public class ZipFile {
 		public Input(File	pFile) throws Exception {
 			FileInputStream 	myInFile;
 			BufferedInputStream myInBuffer;
-			ZipInputStream		myZipFile	= null;
 			ZipEntry			myEntry;
-			byte[]			    myBuffer 	= new byte[BUFFERSIZE];
-			int					myRead;
-			int					myLen;
-			int					mySpace;
 		
 			/* Protect against exceptions */
 			try {
@@ -479,65 +442,25 @@ public class ZipFile {
 				theZipFile = new File(pFile.getPath());
 				
 				/* Open the zip file for reading */
-				myInFile   = new FileInputStream(pFile);
-				myInBuffer = new BufferedInputStream(myInFile);
-				myZipFile  = new ZipInputStream(myInBuffer);
+				myInFile   		= new FileInputStream(pFile);
+				myInBuffer 		= new BufferedInputStream(myInFile);
+				theHdrStream	= new ZipInputStream(myInBuffer);
 		
 				/* Loop through the Zip file entries */
-				while((myEntry = myZipFile.getNextEntry()) != null) {
+				while((myEntry = theHdrStream.getNextEntry()) != null) {
 					/* Break if we found the header entry */
 					if (myEntry.getName().compareTo(fileHeader) == 0) break;
 				}
 				
-				/* Initialise variables */
-				myLen   = 0;
-				mySpace = BUFFERSIZE;
-				
-				/* Read the header entry */
-				while ((myRead = myZipFile.read(myBuffer, myLen, mySpace)) != -1) {
-					/* Adjust buffer */
-					myLen   += myRead;
-					mySpace -= myRead;
-					
-					/* If we have finished up the buffer */
-					if (mySpace == 0) {
-						/* Increase the buffer */
-						myBuffer = Arrays.copyOf(myBuffer, myLen+BUFFERSIZE);
-						mySpace += BUFFERSIZE;
-					}
-				}
-				
-				/* Cut down the buffer to size */
-				myBuffer = Arrays.copyOf(myBuffer, myLen);
-				
-				/* Parse the header details */
-				theFiles = new ZipFileEntry(new String(myBuffer));
-				
-				/* Close the file */
-				myZipFile.close();
-				
-				/* Loop through the files to obtain the file header */
-				ZipFileEntry myZipEntry;
-				for (myZipEntry  = theFiles; 
-					 myZipEntry != null;
-					 myZipEntry  = myZipEntry.getNext()) {
-					/* Break if we have the file header */
-					if (myZipEntry.getFileName().equals(fileHeader))
-						break;
-				}
-				
-				/* Pick up security key if present */
-				if ((myZipEntry != null) && (myZipEntry.hasSecurityKey()))
-					theSecurityKey = myZipEntry.getSecurityKey();	
+				/* Pick up security key if it is present */
+				if (myEntry.getExtra() != null) 
+					theSecurityKey = new String(myEntry.getExtra());
 			}
 			
 			/* Catch exceptions */
 			catch (Throwable e) {
-				/* Close the file */
-				try { if (myZipFile != null) myZipFile.close(); } catch (Throwable ex) {}
-				
 				throw new Exception(ExceptionClass.DATA,
-									"Exception writing to Zip file",
+									"Exception accessing Zip file",
 									e);
 			}
 		}
@@ -547,13 +470,71 @@ public class ZipFile {
 		 * @param pControl the security control
 		 */
 		public void setSecurityControl(SecurityControl pControl) throws Exception {
-			/* Reject this is the wrong security control */
-			if (!pControl.getSecurityKey().equals(theSecurityKey))
-				throw new Exception(ExceptionClass.LOGIC,
-			  						"Security control does not match ZipFile Security.");					
+			byte[]			    myBuffer 	= new byte[BUFFERSIZE];
+			int					myRead;
+			int					myLen;
+			int					mySpace;
 			
-			/* Store the control */
-			theControl = pControl;
+			/* Protect against exceptions */
+			try {
+				/* If we have a security string */
+				if (theSecurityKey != null) {
+					/* Reject this is the wrong security control */
+					if (!pControl.getSecurityKey().equals(theSecurityKey))
+						throw new Exception(ExceptionClass.LOGIC,
+			  								"Security control does not match ZipFile Security.");					
+			
+					/* Store the control */
+					theControl = pControl;
+				}
+
+				/* Initialise variables */
+				myLen   = 0;
+				mySpace = BUFFERSIZE;
+			
+				/* Read the header entry */
+				while ((myRead = theHdrStream.read(myBuffer, myLen, mySpace)) != -1) {
+					/* Adjust buffer */
+					myLen   += myRead;
+					mySpace -= myRead;
+				
+					/* If we have finished up the buffer */
+					if (mySpace == 0) {
+						/* Increase the buffer */
+						myBuffer = Arrays.copyOf(myBuffer, myLen+BUFFERSIZE);
+						mySpace += BUFFERSIZE;
+					}
+				}
+
+				/* Cut down the buffer to size */
+				myBuffer = Arrays.copyOf(myBuffer, myLen);
+			
+				/* If we have a security string */
+				if (theSecurityKey != null) {
+					/* Parse the decrypted header */
+					theFiles = new ZipFileEntry(theControl.getAsymKey().decryptString(myBuffer));
+				}
+				
+				/* else we have not encrypted */
+				else {
+					/* Parse the header details */
+					theFiles = new ZipFileEntry(new String(myBuffer));
+				}
+			}
+			
+			/* Catch exceptions */
+			catch (Exception e) { throw e; }
+			catch (Throwable e) {				
+				throw new Exception(ExceptionClass.DATA,
+									"Exception reading header of Zip file",
+									e);
+			}
+			
+			finally { 
+				/* Close the file */
+				try { if (theHdrStream != null) theHdrStream.close(); } catch (Throwable e) {}
+				theHdrStream = null;
+			}
 		}
 		
 		/**
@@ -569,6 +550,9 @@ public class ZipFile {
 			InputStream				myCurrent;
 			DigestStream.Input		myDigest;
 			EncryptionStream.Input	myDecrypt;
+			ZipEntryMode			myMode;
+			int						iDigest;
+			int						iDecrypt;
 		
 			/* Protect against exceptions */
 			try {
@@ -577,8 +561,9 @@ public class ZipFile {
 				myInBuffer = new BufferedInputStream(myInFile);
 				myZipFile  = new ZipInputStream(myInBuffer);
 		
-				/* Access the name of the file entry */
+				/* Access the name and mode of the file entry */
 				myName = pFile.getFileName();
+				myMode = pFile.getFileMode();
 				
 				/* Loop through the Zip file entries */
 				while((myEntry = myZipFile.getNextEntry()) != null) {
@@ -588,9 +573,10 @@ public class ZipFile {
 				
 				/* Note the current input stream */
 				myCurrent = myZipFile;
+				iDigest	  = 1;
 				
 				/* If the file is encrypted */
-				if (pFile.isEncrypted()) {
+				if (myMode.doEncrypt()) {
 					/* Reject call if we have no security provided */
 					if (theControl == null) 
 						throw new Exception(ExceptionClass.LOGIC,
@@ -600,52 +586,53 @@ public class ZipFile {
 					theControl.verifyFile(pFile);
 					
 					/* Wrap a digest input stream around the zip file */
-					myDigest = new DigestStream.Input(myCurrent);
-					
-					/* Tell the digest about the expected compression digest and length */
-					myDigest.setExpectedDetails("Compressed", 
-												pFile.getEncryptedDataLen(),
-												pFile.getEncryptedDigest());
+					myDigest  = new DigestStream.Input(myMode.getDigestType(), myCurrent);
+					myCurrent = myDigest;
+				
+					/* Tell the digest stream about the expected digest and length */
+					myDigest.setExpectedDetails("Final", 
+												pFile.getDigestLen(iDigest),
+												pFile.getDigest(iDigest++));
 
-					/* Wrap the zip file with the decrypt stream */
-					myDecrypt = new EncryptionStream.Input(theControl, myDigest);
-					
-					/* Tell the encryption about the expected encryption details */
-					myDecrypt.setExpectedDetails("Encrypted", 
-												 pFile.getSecretKey(),
-												 pFile.getInitVector());
+					/* For each decryption stream */
+					for (iDecrypt=0; iDecrypt<myMode.getNumEncrypts(); iDecrypt++) {
+						/* Create the encryption stream */
+						myDecrypt 	= new EncryptionStream.Input(theControl,
+																 pFile.getSecretKey(iDecrypt+1),
+																 myMode.getKeyType(iDecrypt+1),
+																 pFile.getInitVector(iDecrypt+1),
+																 myCurrent);
+						myCurrent	= myDecrypt;
+						
+						/* if we are debugging */
+						if (myMode.doDebug()) {
+							/* Create an extra digest stream */
+							myDigest 	= new DigestStream.Input(myMode.getDigestType(), myCurrent);
+							myCurrent	= myDigest;
 
-					/* Record the current stream */
-					myCurrent = myDecrypt;
+							/* Tell the digest stream about the expected digest and length */
+							myDigest.setExpectedDetails("Debug" + iDigest, 
+														pFile.getDigestLen(iDigest),
+														pFile.getDigest(iDigest++));
+						}
+					}					
+
+					/* Wrap a GZIPInputStream around the stream */
+					myCurrent = new GZIPInputStream(myCurrent);
+					
+					/* Wrap a digest input stream around the stream */
+					myDigest  = new DigestStream.Input(myMode.getDigestType(), myCurrent);
+					myCurrent = myDigest;
+				
+					/* Tell the digest stream about the expected digest and length */
+					myDigest.setExpectedDetails("Raw", 
+												pFile.getDigestLen(iDigest),
+												pFile.getDigest(iDigest++));
 				}
-				
-				/* If the file is compressed */
-				if (pFile.isCompressed()) {
-					/* Wrap a digest input stream around the zip file */
-					myDigest = new DigestStream.Input(myCurrent);
-					
-					/* Tell the digest about the expected compression digest and length */
-					myDigest.setExpectedDetails("Compressed", 
-												pFile.getCompressedDataLen(),
-												pFile.getCompressedDigest());
-
-					/* Wrap a GZIPInputStream around the digest */
-					myCurrent = new GZIPInputStream(myDigest);
-				}
-				
-				/* Wrap a digest input stream around the zip file */
-				myDigest = new DigestStream.Input(myCurrent);
-				
-				/* Tell the digest about the expected compression digest and length */
-				myDigest.setExpectedDetails("Raw", 
-											pFile.getRawDataLen(),
-											pFile.getRawDigest());
-
-				/* Record the current stream */
-				myCurrent = myDigest;
 			}
 			
 			/* Catch exceptions */
+			catch (Exception e) { throw e; }
 			catch (Throwable e) {
 				throw new Exception(ExceptionClass.DATA,
 									"Exception creating new Output stream",

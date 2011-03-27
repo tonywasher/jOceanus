@@ -20,10 +20,12 @@ public abstract class FinanceMouse<T extends DataItem> extends MouseAdapter
 	private boolean				doShowDeleted	= false;
 	private int					theRow			= -1;
 	private int					theCol			= -1;
+	private boolean				isHeader		= false;
 
 	/* Access methods */
-	protected int	getPopupRow()	{ return theRow; }
-	protected int	getPopupCol()	{ return theCol; }
+	protected int		getPopupRow()	{ return theRow; }
+	protected int		getPopupCol()	{ return theCol; }
+	protected boolean	isHeader()		{ return isHeader; }
 	
 	/* Pop-up Menu items */
 	private static final String popupInsertCredit  = "Insert Credit";
@@ -45,6 +47,9 @@ public abstract class FinanceMouse<T extends DataItem> extends MouseAdapter
 	public FinanceMouse(FinanceTable<T> pTable) {
 		/* Store parameters */
 		theTable = pTable;
+		
+		/* Add as listener to the header */
+		theTable.getTableHeader().addMouseListener(this);
 	}
 	/**
 	 * Handle mouse Pressed event
@@ -61,31 +66,46 @@ public abstract class FinanceMouse<T extends DataItem> extends MouseAdapter
 	}
 		
 	/**
-	 * Maybe show the popup
+	 * Maybe show the PopUp
 	 */
 	public void maybeShowPopup(MouseEvent e) {
 		JPopupMenu      myMenu;
 		int				myRow;
 				
+		/* If we can trigger a PopUp menu */
 		if ((e.isPopupTrigger()) && 
 			(theTable.isEnabled())) {
-			/* Calculate the row/column that the mouse was clicked at */
+			/* Note if this is a header PopUp */
+			isHeader = (e.getComponent() == theTable.getTableHeader());
+			
+			/* Access the point that the mouse was clicked at */
 			Point p = new Point(e.getX(), e.getY());
-			theRow = theTable.rowAtPoint(p);
-			theCol = theTable.columnAtPoint(p);
-			myRow  = theRow;
+			
+			/* If we are in the table */
+			if (!isHeader) {
+				/* Access column and row */
+				theRow = theTable.rowAtPoint(p);
+				theCol = theTable.columnAtPoint(p);
+				myRow  = theRow;
 				
-			/* Adjust row for header */
-			if (theTable.hasHeader()) theRow--;
+				/* Adjust column for view differences */
+				theCol = theTable.convertColumnIndexToModel(theCol);
+				
+				/* If the table has a header */
+				if (theTable.hasHeader()) {
+					/* Row zero is the same as header */
+					if (theRow == 0) isHeader = true;
 			
-			/* Adjust column for view differences */
-			theCol = theTable.convertColumnIndexToModel(theCol);
+					/* else adjust row for header */
+					else theRow--;
+				}
 			
-			/* If we are on a valid row  */
-			if (theRow >= 0) {
-				/* Ensure that this row is selected */
-				if (!theTable.isRowSelected(myRow))
-					theTable.setRowSelectionInterval(myRow, myRow);
+				/* If we are on a valid row  */
+				if ((!isHeader) && (theRow >= 0)) {
+					/* Ensure that this row is selected */
+					if (!theTable.isRowSelected(myRow))
+						theTable.setRowSelectionInterval(myRow, myRow);
+				}
 			}
 
 			/* Create the pop-up menu */
@@ -458,5 +478,6 @@ public abstract class FinanceMouse<T extends DataItem> extends MouseAdapter
 		
 		/* Notify of any changes */
 		theTable.notifyChanges();
+		theTable.updateDebug();
 	}
 }

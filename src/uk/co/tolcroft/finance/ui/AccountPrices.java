@@ -125,6 +125,13 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 		theColumns.setDateEditorRange(theRange);
 	}
 		
+ 	/**
+	 * Update Debug view 
+	 */
+	public void updateDebug() {			
+		theDebugEntry.setObject(thePrices);
+	}
+		
 	/**
 	 * Save changes from the view into the underlying data
 	 */
@@ -164,7 +171,6 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 		thePrices  = new ViewPrice.List(theView, pAccount);
 		theColumns.setColumnSelection();
 		super.setList(thePrices);
-		theDebugEntry.setObject(thePrices);
 	}
 		
 	/* Prices table model */
@@ -329,6 +335,7 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 			
 				/* Update components to reflect changes */
 				notifyChanges();
+				updateDebug();
 			}
 		}
 	}			

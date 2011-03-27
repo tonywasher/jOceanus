@@ -23,6 +23,11 @@ public class SecurityCipher {
 	private byte[]    			theBuffer		= null;
 	
 	/**
+	 * The initialisation vector
+	 */
+	private byte[]    			theInitVector	= null;
+	
+	/**
 	 * Obtain the output buffer
 	 * @return the output buffer
 	 */
@@ -31,9 +36,12 @@ public class SecurityCipher {
 	/**
 	 * Constructor
 	 * @param pCipher the cipher
+	 * @param pVector the initialisation vector
 	 */
-	protected SecurityCipher(Cipher pCipher) {
+	protected SecurityCipher(Cipher pCipher,
+							 byte[]	pVector) {
 		theCipher 		= pCipher;
+		theInitVector	= pVector;
 		theBuffer		= new byte[BUFSIZE];
 	}
 	
@@ -42,7 +50,7 @@ public class SecurityCipher {
 	 * @return the initialisation vector
 	 */
 	public byte[] getInitVector() {
-		return theCipher.getIV();
+		return theInitVector;
 	}
 	
 	/**
@@ -63,7 +71,7 @@ public class SecurityCipher {
 			myBytes = theCipher.doFinal(myBytes);
 		}
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.ENCRYPT,
+			throw new Exception(ExceptionClass.CRYPTO,
 								"Failed to encrypt string",
 								e);
 		}
@@ -89,7 +97,7 @@ public class SecurityCipher {
 			myBytes = theCipher.doFinal(myBytes);
 		}
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.ENCRYPT,
+			throw new Exception(ExceptionClass.CRYPTO,
 								"Failed to encrypt character array",
 								e);
 		}
@@ -116,7 +124,7 @@ public class SecurityCipher {
 			myString = new String(myBytes, SecurityControl.ENCODING);
 		}
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.ENCRYPT,
+			throw new Exception(ExceptionClass.CRYPTO,
 								"Failed to decrypt string",
 								e);
 		}
@@ -143,7 +151,7 @@ public class SecurityCipher {
 			myChars = Utils.byteToCharArray(myBytes);
 		}
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.ENCRYPT,
+			throw new Exception(ExceptionClass.CRYPTO,
 								"Failed to decrypt character array",
 								e);
 		}
@@ -172,11 +180,10 @@ public class SecurityCipher {
 				theBuffer = new byte[iNumBytes];
 		
 			/* Update the data */
-			iNumBytes = theCipher.update(pBytes, pOffset, pLength, theBuffer);
-		
+			iNumBytes = theCipher.update(pBytes, pOffset, pLength, theBuffer);					
 		}
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.ENCRYPT,
+			throw new Exception(ExceptionClass.CRYPTO,
 								"Failed to update cipher",
 								e);
 		}
@@ -205,7 +212,7 @@ public class SecurityCipher {
 			iNumBytes = theCipher.doFinal(theBuffer, 0);
 		}
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.ENCRYPT,
+			throw new Exception(ExceptionClass.CRYPTO,
 								"Failed to finish cipher operation",
 								e);
 		}

@@ -4,9 +4,14 @@ import java.security.*;
 
 import javax.crypto.*;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.security.AsymmetricKey.AsymKeyType;
+import uk.co.tolcroft.security.PasswordKey.PBEKeyType;
+import uk.co.tolcroft.security.SymmetricKey.SymKeyType;
 
 public class SecurityControl extends DataItem {
 	/**
@@ -14,11 +19,6 @@ public class SecurityControl extends DataItem {
 	 */
 	private static final String objName = "SecurityControl";
 
-	/**
-	 * Message Digest algorithm
-	 */
-	protected final static String 	DIGEST 		= "SHA-256";
-	
 	/**
 	 * Byte encoding
 	 */
@@ -32,18 +32,8 @@ public class SecurityControl extends DataItem {
 	/**
 	 * The secure random generator
 	 */
-	private SecureRandom			theRandom		= null;
-	
-	/**
-	 * The secret key generator
-	 */
-	private KeyGenerator			theKeyGen		= null;
-
-	/**
-	 * The key pair generator
-	 */
-	private KeyPairGenerator		thePairGen		= null;
-
+	protected SecureRandom			theRandom		= null;
+	/*TODO */
 	/**
 	 * The password key 
 	 */
@@ -70,11 +60,12 @@ public class SecurityControl extends DataItem {
 	private String					thePublicKey	= null;
 
 	/* Access methods */
-	public 		boolean		isInitialised()		{ return isInitialised; }
-	public 		boolean		newPassword()		{ return (theSecurityKey == null); }
-	protected 	PasswordKey	getPassKey()		{ return thePassKey; }
-	public 		String		getSecurityKey()	{ return theSecurityKey; }
-	public 		String		getPublicKey()		{ return thePublicKey; }
+	public 		boolean			isInitialised()		{ return isInitialised; }
+	public 		boolean			newPassword()		{ return (theSecurityKey == null); }
+	protected 	AsymmetricKey	getAsymKey()		{ return theAsymKey; }
+	protected 	PasswordKey		getPassKey()		{ return thePassKey; }
+	public 		String			getSecurityKey()	{ return theSecurityKey; }
+	public 		String			getPublicKey()		{ return thePublicKey; }
 	
 	/**
 	 * Constructor
@@ -90,19 +81,11 @@ public class SecurityControl extends DataItem {
 			/* Create a new secure random generator */
 			theRandom 	= new SecureRandom();
 
-			/* Create the secret key generator */
-			theKeyGen 	= KeyGenerator.getInstance(SymmetricKey.ALGORITHM);
-			theKeyGen.init(SymmetricKey.KEYSIZE, theRandom);
-
-			/* Create an instance of the asymmetric key generator */
-			thePairGen  = KeyPairGenerator.getInstance(AsymmetricKey.ALGORITHM);
-			thePairGen.initialize(AsymmetricKey.KEYSIZE, theRandom);
-		
 			/* Store the security key */
 			theSecurityKey = pSecurityKey;
 		}
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.ENCRYPT,
+			throw new Exception(ExceptionClass.CRYPTO,
 								"Failed to initialise security control",
 								e);
 		}
@@ -112,24 +95,33 @@ public class SecurityControl extends DataItem {
 	 * Initialise the security control with a password
 	 * @param pPassword the password (cleared after usage)
 	 */
-	public void initControl(char[] 	pPassword) throws WrongPasswordException,
-													  Exception {
+	public void initControl(char[] pPassword) throws WrongPasswordException,
+													 Exception {
 		/* Handle already initialised */
 		if (isInitialised)
 			throw new Exception(ExceptionClass.LOGIC,
 								"Security Control already initialised");
 			
 		/* Protect against exceptions */
-		try { 
+		try {
+			/* Ensure addition of Bouncy castle security provider RSA//ISO9796-1PADDING*/
+			Security.addProvider(new BouncyCastleProvider());
+
 			/* If the security key is currently null */
 			if (theSecurityKey == null) {
 				/* Generate the password key */
 				thePassKey 	= new PasswordKey(pPassword,
+											  PBEKeyMode.getPBEKeyMode(DigestType.WHIRLPOOL,
+													  				   DigestType.Tiger,
+													  				   PBEKeyType.TwoFish,
+													  				   AsymKeyType.RSA,
+													  				   theRandom),
 											  theRandom);
 							
 				/* Create the asymmetric key */
-				theAsymKey  = new AsymmetricKey(thePairGen.generateKeyPair(),
-												thePassKey);			
+				theAsymKey  = new AsymmetricKey(AsymKeyType.RSA,
+												thePassKey,
+												theRandom);			
 
 				/* Access the security keys */
 				theSecurityKey = theAsymKey.getSecurityKey();
@@ -138,15 +130,16 @@ public class SecurityControl extends DataItem {
 			
 			/* Else we need to decode the keys */
 			else {
-				/* Generate the password key */
+				/* Rebuild the password key */
 				thePassKey 	= new PasswordKey(theSecurityKey,
 											  pPassword,
 											  theRandom);
 						
-				/* Create the asymmetric key */
-				theAsymKey  = new AsymmetricKey(thePassKey.getKeyPair(),
-												theSecurityKey,
-												thePassKey);
+				/* Rebuild the asymmetric key */
+				theAsymKey  = new AsymmetricKey(theSecurityKey,
+												AsymKeyType.RSA,
+												thePassKey,
+												theRandom);
 
 				/* Access the public keys */
 				thePublicKey   = theAsymKey.getPublicKey();
@@ -159,7 +152,7 @@ public class SecurityControl extends DataItem {
 		catch (WrongPasswordException e) { throw e; }
 
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.ENCRYPT,
+			throw new Exception(ExceptionClass.CRYPTO,
 								"Failed to initialise security control",
 								e);
 		}
@@ -185,6 +178,15 @@ public class SecurityControl extends DataItem {
 		/* Access the security keys */
 		theSecurityKey = theAsymKey.getSecurityKey();
 		thePublicKey   = theAsymKey.getPublicKey();		
+	}
+	
+	/**
+	 * ReSeed the random number generator
+	 */
+	public void reSeedRandom() {
+		/* Generate and apply the new seed */
+		byte[] mySeed = SecureRandom.getSeed(8);
+		theRandom.setSeed(mySeed);
 	}
 	
 	/**
@@ -219,9 +221,11 @@ public class SecurityControl extends DataItem {
 	/**
 	 * Generate a new PasswordKey 
 	 * @param pPassword the password (cleared after usage)
+	 * @param pKeyMode the key mode
 	 * @return the Password key
 	 */
-	public PasswordKey	getPasswordKey(char[]	pPassword) throws Exception {
+	public PasswordKey	getPasswordKey(char[]		pPassword,
+									   PBEKeyMode 	pKeyMode) throws Exception {
 		PasswordKey 	myPassKey;
 		
 		/* Handle not initialised */
@@ -230,7 +234,7 @@ public class SecurityControl extends DataItem {
 								"Security Control uninitialised");
 			
 		/* Generate the password key class */
-		myPassKey = new PasswordKey(pPassword, theRandom);
+		myPassKey = new PasswordKey(pPassword, pKeyMode, theRandom);
 		
 		/* Return the new key */
 		return myPassKey;
@@ -242,9 +246,9 @@ public class SecurityControl extends DataItem {
 	 * @param pSaltAndHash the Salt And Hash array for the password 
 	 * @return the Password key
 	 */
-	public PasswordKey	getPasswordKey(char[]	pPassword,
-									   byte[]	pSaltAndHash) throws WrongPasswordException,
-									   								 Exception {
+	public PasswordKey	getPasswordKey(char[]		pPassword,
+									   byte[]		pSaltAndHash) throws WrongPasswordException,
+									   								 	 Exception {
 		PasswordKey 	myPassKey;
 		
 		/* Handle not initialised */
@@ -261,9 +265,10 @@ public class SecurityControl extends DataItem {
 	
 	/**
 	 * Generate a new AsymmetricKey 
+	 * @param pKeyType the Asymmetric key type
 	 * @return the Asymmetric key
 	 */
-	public AsymmetricKey	getAsymmetricKey() throws Exception {
+	public AsymmetricKey	getAsymmetricKey(AsymKeyType pKeyType) throws Exception {
 		AsymmetricKey 	myAsymKey;
 		
 		/* Handle not initialised */
@@ -272,31 +277,29 @@ public class SecurityControl extends DataItem {
 								"Security Control uninitialised");
 			
 		/* Generate the asymmetric key class */
-		myAsymKey = new AsymmetricKey(thePairGen.generateKeyPair(), thePassKey);
+		myAsymKey = new AsymmetricKey(pKeyType, thePassKey, theRandom);
 		
 		/* Return the new key */
 		return myAsymKey;
 	}
 	
 	/**
-	 * Generate a new AsymmetricKey 
-	 * @param pSecurityKey the SecurityKey for the key 
+	 * Rebuild an AsymmetricKey from a security key 
+	 * @param pSecurityKey the SecurityKey for the key
+	 * @param pKeyType the Asymmetric key type
 	 * @return the Asymmetric key
 	 */
-	public AsymmetricKey	getAsymmetricKey(String pSecurityKey) throws Exception {
+	public AsymmetricKey	getAsymmetricKey(String 		pSecurityKey,
+											 AsymKeyType	pKeyType) throws Exception {
 		AsymmetricKey 	myAsymKey;
-		KeyPair			myKeyPair;
 		
 		/* Handle not initialised */
 		if (!isInitialised)
 			throw new Exception(ExceptionClass.LOGIC,
 								"Security Control uninitialised");
 			
-		/* Access the KeyPair */
-		myKeyPair = thePassKey.getKeyPair(pSecurityKey);
-		
 		/* Generate the asymmetric key class */
-		myAsymKey = new AsymmetricKey(myKeyPair, pSecurityKey, thePassKey);
+		myAsymKey = new AsymmetricKey(pSecurityKey, pKeyType, thePassKey, theRandom);
 		
 		/* Return the new key */
 		return myAsymKey;
@@ -304,10 +307,10 @@ public class SecurityControl extends DataItem {
 	
 	/**
 	 * Generate a new SymmetricKey 
+	 * @param pType the Symmetric key type
 	 * @return the Symmetric key
 	 */
-	public SymmetricKey	getSymmetricKey() throws Exception {
-		SecretKey 		myKey;
+	public SymmetricKey	getSymmetricKey(SymKeyType pType) throws Exception {
 		SymmetricKey 	mySymKey;
 		
 		/* Handle not initialised */
@@ -315,23 +318,21 @@ public class SecurityControl extends DataItem {
 			throw new Exception(ExceptionClass.LOGIC,
 								"Security Control uninitialised");
 			
-		/* Generate the Secret key */
-		myKey = theKeyGen.generateKey();
-		
 		/* Generate the symmetric key class */
-		mySymKey = new SymmetricKey(this, myKey, theRandom);
+		mySymKey = new SymmetricKey(this, pType, theRandom);
 		
 		/* Return the new key */
 		return mySymKey;
 	}
 	
 	/**
-	 * Generate a SymmetricKey from wrapped key
+	 * Rebuild a SymmetricKey from wrapped key
 	 * @param pWrappedKey the wrapped key
+	 * @param pType the Symmetric key type
 	 * @return the Symmetric key
 	 */
-	public SymmetricKey	getSymmetricKey(byte[] pWrappedKey) throws Exception {
-		SecretKey 		myKey;
+	public SymmetricKey	getSymmetricKey(byte[] 		pWrappedKey,
+										SymKeyType	pType) throws Exception {
 		SymmetricKey 	mySymKey;
 		
 		/* Handle not initialised */
@@ -339,23 +340,23 @@ public class SecurityControl extends DataItem {
 			throw new Exception(ExceptionClass.LOGIC,
 								"Security Control uninitialised");
 			
-		/* Protect against exceptions */
-		try {			
-			/* unwrap the key */
-			myKey = theAsymKey.unwrapSecretKey(pWrappedKey);
-
-			/* Generate the symmetric key class */
-			mySymKey = new SymmetricKey(this, myKey, pWrappedKey, theRandom);
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.ENCRYPT,
-								"Failed to unwrap key",
-								e);
-		}
+		/* Build the symmetric key class */
+		mySymKey = new SymmetricKey(this, pWrappedKey, pType, theRandom);
 		
 		/* Return the new key */
 		return mySymKey;
+	}
+	
+	/**
+	 * Obtain secret key from wrapped key
+	 * @param pWrappedKey the wrapped key
+	 * @param pKeyType the key type that is being unwrapped
+	 * @return the Secret key
+	 */
+	protected SecretKey	unwrapSecretKey(byte[]		pWrappedKey,
+										SymKeyType 	pKeyType) throws Exception {
+		/* Pass call to the Asymmetric Key */
+		return theAsymKey.unwrapSecretKey(pWrappedKey, pKeyType);
 	}
 	
 	/**
@@ -378,7 +379,7 @@ public class SecurityControl extends DataItem {
 		}
 		
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.ENCRYPT,
+			throw new Exception(ExceptionClass.CRYPTO,
 								"Failed to wrap key",
 								e);
 		}
@@ -552,6 +553,89 @@ public class SecurityControl extends DataItem {
 			
 			/* Return to caller */
 			return myControl;
+		}
+	}
+	
+	/**
+	 * Digest type
+	 */
+	public enum DigestType {
+		SHA256(1),
+		Tiger(2),
+		WHIRLPOOL(3);
+
+		/**
+		 * Key values 
+		 */
+		private int theId = 0;
+		
+		/* Access methods */
+		public int getId() 		{ return theId; }
+		
+		/**
+		 * Constructor
+		 */
+		private DigestType(int id) {
+			theId 		= id;
+		}
+		
+		/**
+		 * get value from id
+		 * @param id the id value
+		 * @return the corresponding enum object
+		 */
+		public static DigestType fromId(int id) throws Exception {
+			for (DigestType myType: values()) {	if (myType.getId() == id) return myType; }
+			throw new Exception(ExceptionClass.DATA,
+								"Invalid DigestType: " + id);
+		}
+
+		/**
+		 * Return the associated algorithm
+		 * @return the algorithm
+		 */
+		public String getAlgorithm() {
+			switch (this) {
+				case SHA256: 	return "SHA-256";
+				default:		return toString();
+			}
+		}
+		
+		/**
+		 * Get random unique set of digest types
+		 * @param pNumTypes the number of types
+		 * @param pRandom the random generator
+		 * @return the random set
+		 */
+		public static DigestType[] getRandomTypes(int pNumTypes, SecureRandom pRandom) throws Exception {
+			/* Access the values */
+			DigestType[] myValues 	= values();
+			int			 iNumValues = myValues.length;
+			int			 iIndex;
+			
+			/* Reject call if invalid number of types */
+			if ((pNumTypes < 1) || (pNumTypes > iNumValues))
+				throw new Exception(ExceptionClass.LOGIC,
+									"Invalid number of digests: " + pNumTypes);
+			
+			/* Create the result set */
+			DigestType[] myTypes  = new DigestType[pNumTypes];
+			
+			/* Loop through the types */
+			for (int i=0; i<pNumTypes; i++) {
+				/* Access the next random index */
+				iIndex = pRandom.nextInt(iNumValues);
+				
+				/* Store the type */
+				myTypes[i] = myValues[iIndex];
+				
+				/* Shift last value down in place of the one thats been used */
+				myValues[iIndex] = myValues[iNumValues - 1];
+				iNumValues--;
+			}
+			
+			/* Return the types */
+			return myTypes;
 		}
 	}
 }

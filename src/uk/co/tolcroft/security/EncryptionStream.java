@@ -6,6 +6,7 @@ import java.io.OutputStream;
 
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.security.SymmetricKey.SymKeyType;
 
 public class EncryptionStream {
 	/**
@@ -13,11 +14,6 @@ public class EncryptionStream {
 	 * and encrypts the data before passing it on.
 	 */
 	public static class Output extends java.io.OutputStream {
-		/**
-		 * Security Control for this stream
-		 */
-		private SecurityControl			theControl 		= null;
-		
 		/**
 		 * The underlying output stream
 		 */
@@ -28,11 +24,6 @@ public class EncryptionStream {
 		 */
 		private boolean					isClosed 		= false;
 
-		/**
-		 * The Symmetric Key
-		 */
-		private SymmetricKey 			theKey 			= null;
-		
 		/**
 		 * The Security Cipher
 		 */
@@ -66,46 +57,48 @@ public class EncryptionStream {
 		public byte[]	getWrappedKey()			{ return theWrappedKey; }
 		
 		/**
-		 * Construct the encrypt output stream
+		 * Construct a symmetric key encryption output stream
 		 * @param pControl the security control
+		 * @param pKeyType the symmetric key type to generate
 		 * @param pStream the stream to encrypt to
 		 */
 		public Output(SecurityControl		pControl,
+					  SymKeyType			pKeyType,
 				 	  java.io.OutputStream 	pStream) throws Exception {
+			SymmetricKey myKey;
 			
 			/* Protect against exceptions */
 			try {
-				/* record the security control */
-				theControl 	= pControl;
-				
 				/* record the output stream */
 				theStream 	= pStream;
 				
 				/* Generate the Secret key and initialise for encryption */
-				theKey 		= theControl.getSymmetricKey();
-				theCipher 	= theKey.initEncryption();
+				myKey 		= pControl.getSymmetricKey(pKeyType);
+				theCipher 	= myKey.initEncryption();
 				
 				/* Access the initialisation vector */
 				theInitVector	= theCipher.getInitVector();
 				
 				/* Access the wrapped key */
-				theWrappedKey 	= theControl.getWrappedKey(theKey);
+				theWrappedKey 	= pControl.getWrappedKey(myKey);
 			}
 			
 			/* Catch exceptions */
 			catch (Throwable e) {
-				throw new Exception(ExceptionClass.ENCRYPT,
+				throw new Exception(ExceptionClass.CRYPTO,
 									"Exception creating encryption output stream",
 									e);
 			}			
 		}
 		
 		/**
-		 * Construct the obfuscation output stream
-		 * @param pControl the security control
+		 * Construct a password key encryption output stream
+		 * @param pKey the password key
+		 * @param bGenerate generate new initVector or use PartialHash
 		 * @param pStream the stream to encrypt to
 		 */
-		public Output(PasswordKey			pPassword,
+		public Output(PasswordKey			pKey,
+					  boolean				bGenerate,
 				 	  java.io.OutputStream 	pStream) throws Exception {
 			
 			/* Protect against exceptions */
@@ -113,8 +106,17 @@ public class EncryptionStream {
 				/* record the output stream */
 				theStream 	= pStream;
 				
-				/* Generate the Secret key and initialise for encryption */
-				theCipher 	= theKey.initEncryption();
+				/* If we should generate a new hash */
+				if (bGenerate) {
+					/* initialise for encryption */
+					theCipher 	= pKey.initEncryption();
+				}
+				
+				/* else we should use the partial hash */
+				else {
+					/* initialise for encryption */
+					theCipher 	= pKey.initEncryption(pKey.getPartialHash());					
+				}
 				
 				/* Access the initialisation vector */
 				theInitVector	= theCipher.getInitVector();
@@ -122,7 +124,7 @@ public class EncryptionStream {
 			
 			/* Catch exceptions */
 			catch (Throwable e) {
-				throw new Exception(ExceptionClass.ENCRYPT,
+				throw new Exception(ExceptionClass.CRYPTO,
 									"Exception creating encryption output stream",
 									e);
 			}			
@@ -240,11 +242,6 @@ public class EncryptionStream {
 		protected final static int	BUFSIZE   			= 1024;
 		
 		/**
-		 * Security Control for this stream
-		 */
-		private SecurityControl		theControl 			= null;
-		
-		/**
 		 * The underlying input stream
 		 */
 		private InputStream 		theStream			= null;
@@ -254,11 +251,6 @@ public class EncryptionStream {
 		 */
 		private boolean				isClosed 			= false;
 
-		/**
-		 * The Symmetric Key
-		 */
-		private SymmetricKey	 	theKey 				= null;
-		
 		/**
 		 * The Security Cipher
 		 */
@@ -280,45 +272,77 @@ public class EncryptionStream {
 		private decryptBuffer		theDecrypted		= new decryptBuffer();
 		
 		/**
-		 * Construct the decrypt input stream
+		 * Construct the decryption input stream
 		 * @param pControl the security control
+		 * @param pSecretKey the encoded secret key  
+		 * @param pKeyType the symmetric key type
+		 * @param pInitVector the initialisation vector  
 		 * @param pStream the stream to decrypt from
 		 */
 		public Input(SecurityControl		pControl,
-					 java.io.InputStream 	pStream) {
-			/* record the security control */
-			theControl 	= pControl;
-			
-			/* record the input stream */
-			theStream 	= pStream;
-		}
-		
-		/**
-		 * Set the expected digest details
-		 * @param pName the name of the digest
-		 * @param pSecretKey the encoded secret key  
-		 * @param pInitVector the initialisation vector  
-		 */
-		public	void setExpectedDetails(String  pName,
-										byte[]  pSecretKey,
-										byte[]  pInitVector) throws Exception {
+					 byte[]  				pSecretKey,
+					 SymKeyType				pKeyType,
+					 byte[]  				pInitVector,
+					 java.io.InputStream 	pStream) throws Exception {
+			SymmetricKey myKey;
 			
 			/* Protect from exceptions */
 			try {
+				/* record the input stream */
+				theStream 	= pStream;
+
 				/* Access the new cipher */
-				theKey = theControl.getSymmetricKey(pSecretKey);
+				myKey = pControl.getSymmetricKey(pSecretKey, pKeyType);
 
 				/* Initialise the decryption */
-				theCipher = theKey.initDecryption(pInitVector);
-			} 
-		
+				theCipher = myKey.initDecryption(pInitVector);
+			}
+
 			/* Catch exceptions */
 			catch (Exception e) {
-				throw new Exception(ExceptionClass.ENCRYPT,
+				throw new Exception(ExceptionClass.CRYPTO,
 									"Exception deciphering secret key",
 									e);
 			}
-		}		
+		}
+		
+		/**
+		 * Construct the password key decryption input stream
+		 * @param pKey the password key
+		 * @param bDecrypt encrypt or decrypt?
+		 * @param pStream the stream to decrypt from
+		 */
+		public Input(PasswordKey			pKey,
+					 java.io.InputStream 	pStream) throws Exception {
+			/* Pass to standard constructor */
+			this(pKey, pKey.getPartialHash(), pStream);
+		}
+		
+		/**
+		 * Construct the password key decryption input stream
+		 * @param pKey the password key
+		 * @param pInitVector the initialisation vector
+		 * @param pStream the stream to decrypt from
+		 */
+		public Input(PasswordKey			pKey,
+					 byte[]					pInitVector,
+					 java.io.InputStream 	pStream) throws Exception {
+			/* Protect from exceptions */
+			try {
+				/* record the input stream */
+				theStream 	= pStream;
+
+				/* Initialise the decryption */
+				theCipher = pKey.initDecryption(pInitVector);
+			}				
+			
+			/* Catch exceptions */
+			catch (Exception e) {
+				throw new Exception(ExceptionClass.CRYPTO,
+									"Exception initialising password decryption",
+									e);
+			}
+		}
 		
 		/**
 		 * Close the input stream

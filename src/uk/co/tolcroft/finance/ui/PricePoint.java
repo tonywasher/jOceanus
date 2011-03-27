@@ -140,6 +140,13 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 		}
 	}
 		
+ 	/**
+	 * Update Debug view 
+	 */
+	public void updateDebug() {			
+		theDebugPrice.setObject(theSnapshot);
+	}
+		
 	/**
 	 * Lock on error
 	 * @param isError is there an error (True/False)
@@ -240,7 +247,6 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 			theSelect.setAdjacent(null, null);
 		}
 		setList(thePrices);
-		theDebugPrice.setObject(theSnapshot);
 		theTabButs.setLockDown();
 		theSelect.setLockDown();
 		theParent.setVisibleTabs();
@@ -428,6 +434,7 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 				
 				/* Note that changes have occurred */
 				notifyChanges();
+				updateDebug();
 			}
 		}
 	}
@@ -523,6 +530,7 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 			
 			/* Notify of any changes */
 			notifyChanges();
+			updateDebug();
 		}		
 	}
 

@@ -192,6 +192,13 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 		}
 	}
 	
+ 	/**
+	 * Update Debug view 
+	 */
+	public void updateDebug() {			
+		theDebugEntry.setObject(theStatement);
+	}
+		
 	/**
 	 * Lock on error
 	 * @param isError is there an error (True/False)
@@ -287,7 +294,6 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 		}
 		theColumns.setColumns();
 		super.setList(theLines);
-		theDebugEntry.setObject(theStatement);
 		theSelect.setLockDown();
 		theStateBox.setLockDown();
 	}
@@ -327,7 +333,6 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 		theStateType = theStateBox.getStatementType();
 		theColumns.setColumns();
 		super.setList(theLines);
-		theDebugEntry.setObject(theStatement);
 		theSelect.setLockDown();
 		theStateBox.setLockDown();
 	}
@@ -748,6 +753,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 
 				/* Update components to reflect changes */
 				notifyChanges();
+				updateDebug();
 			}
 		}
 	}
@@ -1084,6 +1090,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 			
 			/* Notify of any changes */
 			notifyChanges();
+			updateDebug();
 		}
 		
 		/**

@@ -70,6 +70,7 @@ public class MaintAccount implements ActionListener,
 	private AccountType.List	theAcTypList	= null;
 	private DebugEntry			theDebugEntry	= null;
 	private ErrorPanel			theError		= null;
+	private boolean				doShowClosed	= false;
 	private boolean				refreshingData	= false;
 	private boolean				typesPopulated	= false;
 	private boolean				parPopulated	= false;
@@ -505,17 +506,31 @@ public class MaintAccount implements ActionListener,
 		theParent.setVisibleTabs();
 	}	
 		
+ 	/**
+	 * Update Debug view 
+	 */
+	public void updateDebug() {			
+		theDebugEntry.setObject(theActView);
+	}
+		
 	/* resetData */
 	public void resetData() {
 		theAccount.clearErrors();
 		theAccount.resetHistory();
 		theAccount.validate();
+				
+		/* Recalculate edit state */
+		theActView.findEditState();
 		
 		/* if this is a new account */
 		if (theAccount.getState() == DataState.NEW) {
 			/* Delete the new account */
 			delNewAccount();
 		}
+		
+		/* Notify changes */
+		notifyChanges();
+		updateDebug();
 	}
 	
 	/* print */
@@ -525,6 +540,7 @@ public class MaintAccount implements ActionListener,
 	public void validate() {
 		theAccount.clearErrors();
 		theAccount.validate();
+		updateDebug();
 	}
 	
 	/* saveData */
@@ -540,11 +556,9 @@ public class MaintAccount implements ActionListener,
 	/* refreshData */
 	public void refreshData() {
 		DataSet			myData;
-		Account	  	  	myAcct;
 		AccountType 	myType;
 	
 		DataList<AccountType>.ListIterator 	myTypeIterator;
-		DataList<Account>.ListIterator		myActIterator;
 		
 		/* Access the data */
 		myData = theView.getData();
@@ -579,6 +593,28 @@ public class MaintAccount implements ActionListener,
 			typesPopulated = true;
 		}
 		
+		/* Note that we have finished refreshing data */
+		refreshingData = false;
+
+		/* refresh the parents */
+		refreshParents();
+		
+		/* Adjust the account selection */
+		if (theAccount != null) theSelect.setSelection(theAccount);
+
+		/* Show the account */
+		setSelection(theSelect.getSelected());
+	}
+	
+	/* refreshParents */
+	private void refreshParents() {
+		Account	  	  	myAcct;
+		AccountType		myType;
+		DataList<Account>.ListIterator		myActIterator;
+		
+		/* Note that we are refreshing data */
+		refreshingData = true;
+		
 		/* If we have parents already populated */
 		if (parPopulated) {	
 			/* Remove the types */
@@ -594,14 +630,14 @@ public class MaintAccount implements ActionListener,
 			/* Access the type */
 			myType = myAcct.getActType();
 			
-			/* Ignore the account if it is not internal */
+			/* Ignore the account if it is internal */
 			if (myType.isInternal()) continue;
 			
 			/* Ignore the account if it is special external */
 			if (myType.isSpecial()) continue;
 			
-			/* Ignore the account if it is closed */
-			if (myAcct.isClosed()) continue;
+			/* Ignore the account if it is closed and we are not showing closed */
+			if (myAcct.isClosed() && (!doShowClosed)) continue;
 			
 			/* Add the item to the list */
 			theParentBox.addItem(myAcct.getName());
@@ -610,18 +646,19 @@ public class MaintAccount implements ActionListener,
 					
 		/* Note that we have finished refreshing data */
 		refreshingData = false;
-		
-		/* Adjust the account selection */
-		if (theAccount != null) theSelect.setSelection(theAccount);
-
-		/* Show the account */
-		setSelection(theSelect.getSelected());
 	}
 	
 	/* Note that there has been a selection change */
 	public void    notifySelection(Object obj)    {
 		/* If this is a change from the account selection */
 		if (obj == (Object) theSelect) {
+			/* If we have changed the show closed option */
+			if (theSelect.doShowClosed() != doShowClosed) {
+				/* Record details and refresh parents */
+				doShowClosed = theSelect.doShowClosed();
+				refreshParents();
+			}
+			
 			/* Set the new account */
 			setSelection(theSelect.getSelected());
 		}
@@ -646,7 +683,6 @@ public class MaintAccount implements ActionListener,
 		if (pAccount != null) {
 			/* Create the view of the account */
 			theActView = theView.new ViewAccount(pAccount);	
-			theDebugEntry.setObject(theActView);
 			
 			/* Access the account */
 			theAccount = theActView.getAccount();
@@ -654,6 +690,7 @@ public class MaintAccount implements ActionListener,
 		
 		/* notify changes */
 		notifyChanges();
+		updateDebug();
 	}
 	
 	private void showAccount() {
@@ -674,7 +711,7 @@ public class MaintAccount implements ActionListener,
 			/* Set the name */
 			theName.setText(theAccount.getName() != null ? 
 								theAccount.getName() : "");
-			theName.setEnabled(true);
+			theName.setEnabled(!isClosed && !theAccount.isDeleted());
 			theParent.formatComponent(theName, Account.FIELD_NAME, theAccount, false, (theAccount.getName() == null));
 		
 			/* Set the description */
@@ -963,6 +1000,7 @@ public class MaintAccount implements ActionListener,
 			
 			/* Note that changes have occurred */
 			notifyChanges();
+			updateDebug();
 		}
 	}
 
@@ -983,6 +1021,7 @@ public class MaintAccount implements ActionListener,
 		
 		/* Notify changes */
 		notifyChanges();
+		updateDebug();
 	}
 	
 	/* Update text */
@@ -1066,6 +1105,7 @@ public class MaintAccount implements ActionListener,
 			
 			/* Notify changes */
 			notifyChanges();
+			updateDebug();
 		}
 		
 		/* else if this is a new account */
@@ -1100,6 +1140,7 @@ public class MaintAccount implements ActionListener,
 				
 				/* Notify changes */
 				notifyChanges();
+				updateDebug();
 			}
 			return;
 		}
@@ -1162,6 +1203,7 @@ public class MaintAccount implements ActionListener,
 			
 			/* Note that changes have occurred */
 			notifyChanges();
+			updateDebug();
 		}
 	}	
 	
@@ -1211,6 +1253,7 @@ public class MaintAccount implements ActionListener,
 				
 				/* Note that changes have occurred */
 				notifyChanges();
+				updateDebug();
 			}
 		}								
 	}

@@ -179,7 +179,7 @@ public class AccountType extends DataItem {
 		
 		/* Catch exception */
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.ENCRYPT,
+			throw new Exception(ExceptionClass.CRYPTO,
 								this,
 								"Failed to complete encryption",
 								e);

@@ -406,7 +406,7 @@ public class Renderer {
 			else
 			{
 				Integer myRow = (Integer)value;
-				s = myRow.toString();
+				s = (myRow == 0) ? "" : myRow.toString();
 			}
 			
 			super.setValue(s);

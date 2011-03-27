@@ -5,6 +5,7 @@ import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.security.*;
+import uk.co.tolcroft.security.SymmetricKey.SymKeyType;
 
 public class Static extends DataItem {
 	/**
@@ -164,7 +165,7 @@ public class Static extends DataItem {
 		
 		/* Obtain the relevant symmetric key */
 		myObj.setSecurityKey(pSecurityKey);
-		theKey	= theControl.getSymmetricKey(getSecurityKey());
+		theKey	= theControl.getSymmetricKey(getSecurityKey(), SymKeyType.AES);
 
 		/* Record the initialisation vector */
 		myObj.setInitVector(pInitVector);			
@@ -222,7 +223,7 @@ public class Static extends DataItem {
 			myValues.setControlKey(theControl.getSecurityKey());			
 			
 			/* Generate a new key and get its security key */
-			theKey	= theControl.getSymmetricKey();
+			theKey	= theControl.getSymmetricKey(SymKeyType.AES);
 			myValues.setSecurityKey(theKey.getSecurityKey());			
 
 			/* Initialise an encryption cipher and store its initialisation vector */
@@ -349,7 +350,7 @@ public class Static extends DataItem {
 		catch (Throwable e) {
 			/* Reset the encryption cipher and report the failure */
 			theEncrypt = null;
-			throw new Exception(ExceptionClass.ENCRYPT,
+			throw new Exception(ExceptionClass.CRYPTO,
 								"Failed to encrypt string",
 								e);
 		}	
@@ -392,7 +393,7 @@ public class Static extends DataItem {
 		catch (Throwable e) {
 			/* Reset the encryption cipher and report the failure */
 			theEncrypt = null;
-			throw new Exception(ExceptionClass.ENCRYPT,
+			throw new Exception(ExceptionClass.CRYPTO,
 								"Failed to encrypt characters",
 								e);
 		}	
@@ -435,7 +436,7 @@ public class Static extends DataItem {
 		catch (Throwable e) {
 			/* Reset the decryption cipher and report the failure */
 			theDecrypt = null;
-			throw new Exception(ExceptionClass.ENCRYPT,
+			throw new Exception(ExceptionClass.CRYPTO,
 								"Failed to decrypt string",
 								e);
 		}	
@@ -478,7 +479,7 @@ public class Static extends DataItem {
 		catch (Throwable e) {
 			/* Reset the decryption cipher and report the failure */
 			theDecrypt = null;
-			throw new Exception(ExceptionClass.ENCRYPT,
+			throw new Exception(ExceptionClass.CRYPTO,
 								"Failed to decrypt characters",
 								e);
 		}	

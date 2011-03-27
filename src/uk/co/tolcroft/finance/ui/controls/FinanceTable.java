@@ -61,6 +61,7 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 	public DataList<T> 	getList() 						{ return theList; }
 	public JScrollPane 	getScrollPane()					{ return theScroll; }
 	public void    		notifySelection(Object obj)    	{ }
+	public void    		updateDebug()			    	{ }
 	public void    		setActive(boolean isActive)		{ isEnabled = isActive; }
 	public JComboBox 	getComboBox(int row, int col) 	{ return null; }
 	public boolean 		isValidObj(DataItem pItem, DataItem.histObject  pObj) { return true; }
@@ -139,6 +140,7 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 		/* Store list and select correct mode */
 		theList = pList;
 		if (pList != null) pList.setShowDeleted(doShowDel);
+		updateDebug();
 			
 		/* Redraw the table and row headers */
 		theModel.fireNewDataEvents();
@@ -183,6 +185,7 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 		
 		/* Recalculate the table if required */
 		calculateTable();
+		updateDebug();
 		
 		/* Notify that the entire table has changed */
 		theModel.fireNewDataEvents();
@@ -195,6 +198,7 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 		/* Validate the list */
 		theList.validate();
 		theList.findEditState();
+		updateDebug();
 			
 		/* Re-draw the table */
 		theModel.fireNewDataEvents();
@@ -996,9 +1000,13 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 		/* Is the column currently in the model */
 		private boolean isMember = false;
 		
+		/* Is the column a row header */
+		private boolean isHeader = false;
+		
 		/* Access methods */
 		public	boolean	isMember() 					{ return isMember; }
 		public	void	setMember(boolean isMember) { this.isMember = isMember; }
+		public	void	setHeader(boolean isHeader) { this.isHeader = isHeader; }
 		
 		/**
 		 * Constructor
@@ -1015,7 +1023,8 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 		 */
 		public Object getHeaderValue() {
 			/* Return the column name according to the model */
-			return theModel.getColumnName(getModelIndex());
+			return (isHeader) ? theRowHdrModel.getColumnName(getModelIndex())
+							  : theModel.getColumnName(getModelIndex());
 		}
 	}
 	
@@ -1080,11 +1089,14 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 		 * Constructor 
 		 */
 		private rowColumnModel() {		
+			DataColumn myCol;
+			
 			/* Create the relevant formatters/editors */
 			theRowRenderer  	= new Renderer.RowCell();
-			
+
 			/* Create the columns */
-			addColumn(new DataColumn(0, 30, theRowRenderer, null));
+			addColumn(myCol = new DataColumn(0, 30, theRowRenderer, null));
+			myCol.setHeader(true);
 		}
 	}
 }

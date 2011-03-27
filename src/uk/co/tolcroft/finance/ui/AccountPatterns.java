@@ -167,6 +167,13 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 		}
 	}
 	
+ 	/**
+	 * Update Debug view 
+	 */
+	public void updateDebug() {			
+		theDebugEntry.setObject(theExtract);
+	}
+		
 	/**
 	 * Save changes from the view into the underlying data
 	 */
@@ -206,7 +213,6 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 		theAccount  = pAccount;
 		thePatterns = theExtract.getPatterns();
 		super.setList(thePatterns);
-		theDebugEntry.setObject(theExtract);
 	}
 		
 	/**
@@ -499,6 +505,7 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 			
 				/* Update components to reflect changes */
 				notifyChanges();
+				updateDebug();
 			}
 		}
 	}

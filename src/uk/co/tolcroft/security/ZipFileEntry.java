@@ -33,19 +33,9 @@ public class ZipFileEntry {
 	protected final static String propName			= "Name";
 	
 	/**
-	 * The RawData property name of a file
+	 * The Digest property name of a file
 	 */
-	protected final static String propRawData		= "RawData";
-	
-	/**
-	 * The CompData property name of a file
-	 */
-	protected final static String propCompData		= "CompressedData";
-	
-	/**
-	 * The EncData property name of a file
-	 */
-	protected final static String propEncData		= "EncryptedData";
+	protected final static String propDigest		= "Digest";
 	
 	/**
 	 * The Signature property name of a file
@@ -63,11 +53,6 @@ public class ZipFileEntry {
 	protected final static String propInitVector	= "InitVector";
 	
 	/**
-	 * The SecurityKey property name of a zipfile
-	 */
-	protected final static String propSecurityKey	= "SecurityKey";
-	
-	/**
 	 * The next file in the list
 	 */
 	private ZipFileEntry 		theNext 			= null;
@@ -77,39 +62,6 @@ public class ZipFileEntry {
 	 */
 	private property 			theProperties		= null;
 
-	/**
-	 * Is the file encrypted
-	 */
-	private boolean 			isEncrypted			= false;
-
-	/**
-	 * Is the file compressed
-	 */
-	private boolean 			isCompressed		= false;
-
-	/**
-	 * Has the file got a security key
-	 */
-	private boolean 			hasSecurityKey		= false;
-
-	/**
-	 * Is the file encrypted in the zip file
-	 * @return is the file encrypted?   
-	 */
-	public boolean 		isEncrypted() 			{ return isEncrypted; }
-	
-	/**
-	 * Is the file compressed in the zip file 
-	 * @return is the file compressed?
-	 */
-	public boolean 		isCompressed() 			{ return isCompressed; }
-	
-	/**
-	 * Has the file got a security key 
-	 * @return true/false?
-	 */
-	public boolean 		hasSecurityKey() 		{ return hasSecurityKey; }
-	
 	/**
 	 * Obtain the next file entry 
 	 * @return the next file entry
@@ -123,65 +75,46 @@ public class ZipFileEntry {
 	public String 		getFileName() 			{ return new String(getByteProperty(propName)); }
 	
 	/**
-	 * Obtain the raw data length of the file 
-	 * @return the raw data length of the file
+	 * Obtain the mode of the file 
+	 * @return the mode of the file
 	 */
-	public long 		getRawDataLen() 		{ return getLongProperty(propRawData); }
+	public ZipEntryMode	getFileMode() throws Exception 			
+		{ return new ZipEntryMode(getLongProperty(propName)); }
 	
 	/**
-	 * Obtain the compressed data length of the file 
-	 * @return the compressed data length of the file
+	 * Obtain data length at index
+	 * @param iIndex the digest index 
+	 * @return the data length at index
 	 */
-	public long 		getCompressedDataLen() 	{ return getLongProperty(propCompData); }
+	public long 		getDigestLen(int iIndex) 	{ return getLongProperty(propDigest + iIndex); }
 	
 	/**
-	 * Obtain the encrypted data length of the file 
-	 * @return the encrypted data length of the file
+	 * Obtain the data digest at index 
+	 * @param iIndex the digest index 
+	 * @return the data digest at index
 	 */
-	public long 		getEncryptedDataLen() 	{ return getLongProperty(propEncData); }
+	public byte[] 		getDigest(int iIndex) 		{ return getByteProperty(propDigest + iIndex); }
 	
 	/**
-	 * Obtain the raw data digest of the file 
-	 * @return the raw data digest of the file
+	 * Obtain the initialisation vector at index 
+	 * @param iIndex the IV index 
+	 * @return the IV at index
 	 */
-	public byte[] 		getRawDigest() 			{ return getByteProperty(propRawData); }
+	public byte[] 		getInitVector(int iIndex) 	{ return getByteProperty(propInitVector + iIndex); }
 	
 	/**
-	 * Obtain the compressed data digest of the file 
-	 * @return the compressed data digest of the file
-	 */
-	public byte[] 		getCompressedDigest() 	{ return getByteProperty(propCompData); }
-	
-	/**
-	 * Obtain the encrypted data digest of the file 
-	 * @return the encrypted data digest of the file
-	 */
-	public byte[] 		getEncryptedDigest() 	{ return getByteProperty(propEncData); }
-	
-	/**
-	 * Obtain the initialisation vector for the file 
-	 * @return the initialisation vector for the file
-	 */
-	public byte[] 		getInitVector() 		{ return getByteProperty(propInitVector); }
-	
-	/**
-	 * Obtain the secret key for the file 
+	 * Obtain the secret key at index 
+	 * @param iIndex the Secret key index 
 	 * @return the secret key for the file
 	 */
-	public byte[] 		getSecretKey() 			{ return getByteProperty(propSecretKey); }
+	public byte[] 		getSecretKey(int iIndex) 	{ return getByteProperty(propSecretKey + iIndex); }
 	
 	/**
 	 * Obtain the signature for the file 
 	 * @return the signature for the file
 	 */
 	public byte[] 		getSignature() 			{ return getByteProperty(propSignature); }
-	
-	/**
-	 * Obtain the SecurityKey of the ZipFile 
-	 * @return the SecurityKey of the file
-	 */
-	public String 		getSecurityKey() 		{ return new String(getByteProperty(propSecurityKey)); }
-	
+
 	/**
 	 * Standard constructor 
 	 */
@@ -213,19 +146,11 @@ public class ZipFileEntry {
 		
 		/* Parse the remaining property */
 		parseEncodedProperty(myString.toString());
-		
-		/* Determine whether the file is encrypted */
-		if (getProperty(propEncData) != null) 	isEncrypted 	= true;
-		
-		/* Determine whether the file is compressed */
-		if (getProperty(propCompData) != null) 	isCompressed 	= true;
-		
-		/* Determine whether the file has a security key */
-		if (getProperty(propSecurityKey) != null) 	hasSecurityKey 	= true;
 	}
 	
-	/**s
+	/**
 	 * Obtain the bytes value of the named property
+	 * @param pName the name of the property
 	 * @return the value of the property or <code>null</code> if the property does not exist
 	 */
 	public byte[] getByteProperty(String pName) {
@@ -240,6 +165,7 @@ public class ZipFileEntry {
 	
 	/**
 	 * Obtain the long value of the named property
+	 * @param pName the name of the property
 	 * @return the value of the property or <code>-1</code> if the property does not exist
 	 */
 	private long getLongProperty(String pName) {
@@ -260,6 +186,7 @@ public class ZipFileEntry {
 
 	/**
 	 * Obtain the named property
+	 * @param pName the name of the property
 	 * @return the value of the property or <code>null</code> if the property does not exist
 	 */
 	private property getProperty(String pName) {
@@ -275,6 +202,16 @@ public class ZipFileEntry {
 		
 		/* Return the value */
 		return myProperty;
+	}
+	
+	/**
+	 * Set the named property at index
+	 * @param pName the name of the property
+	 * @param iIndex the index of the property
+	 * @param pValue the Value of the property
+	 */
+	protected void setProperty(String pName, int iIndex, byte[] pValue) {
+		setProperty(pName + iIndex, pValue);
 	}
 	
 	/**
@@ -304,6 +241,16 @@ public class ZipFileEntry {
 		}
 	}
 	
+	/**
+	 * Set the named property
+	 * @param pName the name of the property
+	 * @param iIndex the index of the property
+	 * @param pValue the Value of the property
+	 */
+	protected void setProperty(String pName, int iIndex, long pValue) {
+		setProperty(pName + iIndex, pValue);		
+	}
+
 	/**
 	 * Set the named property
 	 * @param pName the name of the property

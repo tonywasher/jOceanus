@@ -165,6 +165,13 @@ public class Extract extends FinanceTable<Event> {
 		}
 	}
 		
+ 	/**
+	 * Update Debug view 
+	 */
+	public void updateDebug() {			
+		theDebugExtract.setObject(theExtract);
+	}
+		
 	/**
 	 * Lock on error
 	 * @param isError is there an error (True/False)
@@ -293,7 +300,6 @@ public class Extract extends FinanceTable<Event> {
 			theEvents  = null;				
 		}
 		setList(theEvents);
-		theDebugExtract.setObject(theExtract);
 		theTabButs.setLockDown();
 		theSelect.setLockDown();
 		theParent.setVisibleTabs();
@@ -664,6 +670,7 @@ public class Extract extends FinanceTable<Event> {
 				
 				/* Note that changes have occurred */
 				notifyChanges();
+				updateDebug();
 			}
 		}
 	}
@@ -944,6 +951,7 @@ public class Extract extends FinanceTable<Event> {
 			
 			/* Notify of any changes */
 			notifyChanges();
+			updateDebug();
 		}
 		
 		/**

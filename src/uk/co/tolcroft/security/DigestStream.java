@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.security.SecurityControl.DigestType;
 
 public class DigestStream {
 	/**
@@ -51,13 +52,15 @@ public class DigestStream {
 		
 		/**
 		 * Construct the output stream
+		 * @param pDigestType the type of digest
 		 * @param pFile the file to write encrypted data to
 		 */
-		public Output(java.io.OutputStream pStream) throws Exception {		
+		public Output(DigestType 			pDigestType,
+					  java.io.OutputStream 	pStream) throws Exception {		
 			/* Protect against exceptions */
 			try {
 				/* Create the message digest */
-				theDigest = MessageDigest.getInstance(SecurityControl.DIGEST);
+				theDigest = MessageDigest.getInstance(pDigestType.getAlgorithm());
 
 				/* Store the stream */
 				theStream = pStream;
@@ -65,7 +68,7 @@ public class DigestStream {
 			
 			/* Catch exceptions */
 			catch (Throwable e) {
-				throw new Exception(ExceptionClass.ENCRYPT,
+				throw new Exception(ExceptionClass.CRYPTO,
 									"Exception creating digest output stream",
 									e);
 			}			
@@ -219,14 +222,16 @@ public class DigestStream {
 		
 		/**
 		 * Construct the input stream
+		 * @param pDigestType the type of digest
 		 * @param pStream the Stream to read data from
 		 * @throws IOException
 		 */
-		public Input(java.io.InputStream pStream) throws Exception {
+		public Input(DigestType 			pDigestType,
+				  	 java.io.InputStream 	pStream) throws Exception {
 			/* Protect against exceptions */
 			try {
 				/* Create a message digest */
-				theDigest = MessageDigest.getInstance(SecurityControl.DIGEST);
+				theDigest = MessageDigest.getInstance(pDigestType.getAlgorithm());
 
 				/* Store the stream details */
 				theStream = pStream;
@@ -234,7 +239,7 @@ public class DigestStream {
 			
 			/* Catch exceptions */
 			catch (Throwable e) {
-				throw new Exception(ExceptionClass.ENCRYPT,
+				throw new Exception(ExceptionClass.CRYPTO,
 									"Exception creating digest input stream",
 									e);
 			}			

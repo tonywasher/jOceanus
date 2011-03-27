@@ -228,7 +228,7 @@ public class MaintenanceTab implements ChangeListener {
 		myFont 		= (isChanged) ? (isNumeric ? theChgNumFont : theChgFont) 
 								  : (isNumeric ? theNumFont : theStdFont);
 		if (isError = pItem.hasErrors(iField)) 
-			myTip  = pItem.getFieldErrors(Account.FIELD_TYPE);
+			myTip  = pItem.getFieldErrors(iField);
 		myFore	= ((isError) ? Color.red  
 				 			 : (isChanged)	? Color.magenta
 				 							: myFore);

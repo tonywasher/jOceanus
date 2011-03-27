@@ -641,23 +641,38 @@ public class MaintTaxYear implements ActionListener,
 		}		
 	}
 	
+ 	/**
+	 * Update Debug view 
+	 */
+	public void updateDebug() {			
+		theDebugEntry.setObject(theTaxView);
+	}
+		
 	/* resetData */
 	public void resetData() {
 		theTaxYear.clearErrors();
 		theTaxYear.resetHistory();
 		theTaxYear.validate();
 		
+		/* Recalculate edit state */
+		theTaxView.findEditState();
+		
 		/* if this is a new Tax Year */
 		if (theTaxYear.getState() == DataState.NEW) {
 			/* Delete the new tax year */
 			delNewTaxYear();
 		}
+		
+		/* Notify changes */
+		notifyChanges();
+		updateDebug();
 	}
 	
 	/* validate */
 	public void validate() {
 		theTaxYear.clearErrors();
 		theTaxYear.validate();
+		updateDebug();
 	}
 	
 	/* saveData */
@@ -756,7 +771,6 @@ public class MaintTaxYear implements ActionListener,
 			
 			/* Create the view of the tax year */
 			theTaxView = theView.new ViewTaxYear(pTaxYear);
-			theDebugEntry.setObject(theTaxView);
 		
 			/* Access the tax year */
 			theTaxYear = theTaxView.getTaxYear();
@@ -764,6 +778,7 @@ public class MaintTaxYear implements ActionListener,
 		
 		/* notify changes */
 		notifyChanges();
+		updateDebug();
 	}
 
 	/* Show the tax year */
@@ -1184,6 +1199,7 @@ public class MaintTaxYear implements ActionListener,
 			
 			/* Notify changes */
 			notifyChanges();
+			updateDebug();
 		}
 		
 		/* else if this is a new tax year */
@@ -1231,6 +1247,7 @@ public class MaintTaxYear implements ActionListener,
 					
 					/* Note that changes have occurred */
 					notifyChanges();
+					updateDebug();
 				}
 			}
 		}
@@ -1258,6 +1275,7 @@ public class MaintTaxYear implements ActionListener,
 		
 		/* Notify changes */
 		notifyChanges();
+		updateDebug();
 	}
 	
 	/* ActionPerformed listener event */
@@ -1285,6 +1303,7 @@ public class MaintTaxYear implements ActionListener,
 				
 				/* Notify changes */
 				notifyChanges();
+				updateDebug();
 			}
 			return;
 		}
@@ -1349,6 +1368,7 @@ public class MaintTaxYear implements ActionListener,
 			
 			/* Note that changes have occurred */
 			notifyChanges();
+			updateDebug();
 		}
 	}			
 }
