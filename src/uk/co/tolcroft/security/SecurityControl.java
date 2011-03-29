@@ -10,7 +10,6 @@ import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.security.AsymmetricKey.AsymKeyType;
-import uk.co.tolcroft.security.PasswordKey.PBEKeyType;
 import uk.co.tolcroft.security.SymmetricKey.SymKeyType;
 
 public class SecurityControl extends DataItem {
@@ -32,8 +31,8 @@ public class SecurityControl extends DataItem {
 	/**
 	 * The secure random generator
 	 */
-	protected SecureRandom			theRandom		= null;
-	/*TODO */
+	private SecureRandom			theRandom		= null;
+	
 	/**
 	 * The password key 
 	 */
@@ -66,6 +65,7 @@ public class SecurityControl extends DataItem {
 	protected 	PasswordKey		getPassKey()		{ return thePassKey; }
 	public 		String			getSecurityKey()	{ return theSecurityKey; }
 	public 		String			getPublicKey()		{ return thePublicKey; }
+	public 		SecureRandom	getRandom()			{ return theRandom; }
 	
 	/**
 	 * Constructor
@@ -92,6 +92,37 @@ public class SecurityControl extends DataItem {
 	}
 	
 	/**
+	 * Constructor as a clone of another security control
+	 * @param pSource
+	 */
+	public SecurityControl(SecurityControl pSource) throws Exception {
+		/* Call super-constructor */
+		super((List)pSource.getList(), 0);
+
+		/* Copy the random generator */
+		theRandom 	= pSource.getRandom();
+
+		/* Generate a cloned password key */
+		thePassKey = new PasswordKey(pSource.getPassKey());
+		
+		/* Access the key mode */
+		PBEKeyMode myKeyMode = thePassKey.getKeyMode();
+		
+		/* Create the asymmetric key */
+		theAsymKey  = new AsymmetricKey(myKeyMode.getAsymKeyType(),
+										thePassKey,
+										theRandom);			
+		
+		/* Access the security keys */
+		theSecurityKey = theAsymKey.getSecurityKey();
+		thePublicKey   = theAsymKey.getPublicKey();		
+		
+		/* Note that we are now initialised and add to the list */
+		isInitialised = true;
+		addToList();
+	}
+	
+	/**
 	 * Initialise the security control with a password
 	 * @param pPassword the password (cleared after usage)
 	 */
@@ -104,22 +135,23 @@ public class SecurityControl extends DataItem {
 			
 		/* Protect against exceptions */
 		try {
+			PBEKeyMode myKeyMode;
+			
 			/* Ensure addition of Bouncy castle security provider RSA//ISO9796-1PADDING*/
 			Security.addProvider(new BouncyCastleProvider());
-
+			
 			/* If the security key is currently null */
 			if (theSecurityKey == null) {
+				/* Generate the key mode */
+				myKeyMode = PBEKeyMode.getPBEKeyMode(theRandom);
+				
 				/* Generate the password key */
 				thePassKey 	= new PasswordKey(pPassword,
-											  PBEKeyMode.getPBEKeyMode(DigestType.WHIRLPOOL,
-													  				   DigestType.Tiger,
-													  				   PBEKeyType.TwoFish,
-													  				   AsymKeyType.RSA,
-													  				   theRandom),
+											  myKeyMode,
 											  theRandom);
 							
 				/* Create the asymmetric key */
-				theAsymKey  = new AsymmetricKey(AsymKeyType.RSA,
+				theAsymKey  = new AsymmetricKey(myKeyMode.getAsymKeyType(),
 												thePassKey,
 												theRandom);			
 
@@ -134,10 +166,12 @@ public class SecurityControl extends DataItem {
 				thePassKey 	= new PasswordKey(theSecurityKey,
 											  pPassword,
 											  theRandom);
-						
+				/* Access the key mode */
+				myKeyMode = thePassKey.getKeyMode();
+				
 				/* Rebuild the asymmetric key */
 				theAsymKey  = new AsymmetricKey(theSecurityKey,
-												AsymKeyType.RSA,
+												myKeyMode.getAsymKeyType(),
 												thePassKey,
 												theRandom);
 
@@ -173,13 +207,13 @@ public class SecurityControl extends DataItem {
 		thePassKey.setNewPassword(pPassword);
 		
 		/* Adjust the Asymmetric key */
-		theAsymKey.setSecurityControl(this);
+		theAsymKey.setPasswordKey(thePassKey);
 		
 		/* Access the security keys */
 		theSecurityKey = theAsymKey.getSecurityKey();
 		thePublicKey   = theAsymKey.getPublicKey();		
 	}
-	
+
 	/**
 	 * ReSeed the random number generator
 	 */

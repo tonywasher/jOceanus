@@ -1,22 +1,23 @@
-package uk.co.tolcroft.finance.core;
+package uk.co.tolcroft.security;
 
+import java.util.Arrays;
+
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import uk.co.tolcroft.finance.ui.MainTab;
-import uk.co.tolcroft.finance.ui.controls.PasswordDialog;
+import uk.co.tolcroft.models.DataList;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
-import uk.co.tolcroft.security.*;
 
 public class SecureManager {
 	/* Members */
 	private SecurityControl.List 	theSecurity = null;
-	private MainTab					theCtl 	 	= null;
+	private JFrame					theFrame 	= null;
 	
 	/* Constructor */
-	public SecureManager(MainTab pCtl) {
-		/* Record the main window */
-		theCtl = pCtl;
+	public SecureManager(JFrame pFrame) {
+		/* Record the main frame */
+		theFrame = pFrame;
 		
 		/* Allocate a new Security list */ 
 		theSecurity = new SecurityControl.List();
@@ -26,12 +27,17 @@ public class SecureManager {
 	 *  Access the required Security Control
 	 *  @param pKey the key for the required security control
 	 *  @param pSource the description of the secured resource
+	 *  @return the security control
 	 */
 	public SecurityControl getSecurityControl(String pKey,
 											  String pSource) throws Exception {
 		/* Access or create the required Security control */
 		SecurityControl myControl = theSecurity.getSecurityControl(pKey);
 
+		/* If it is not initialised try known passwords */
+		if (!myControl.isInitialised()) 
+			attemptKnownPasswords(myControl);
+		
 		/* If the security control is not initialised */
 		if (!myControl.isInitialised()) {
 			String 	myTitle;
@@ -47,7 +53,7 @@ public class SecureManager {
 				myTitle = "Enter Password for " + pSource;
 			
 			/* Create a new password dialog */
-			PasswordDialog 	myPass 	= new PasswordDialog(theCtl.getFrame(),
+			PasswordDialog 	myPass 	= new PasswordDialog(theFrame,
 														 myTitle,
 														 needConfirm);
 			
@@ -66,6 +72,11 @@ public class SecureManager {
 				catch (WrongPasswordException e) {
 					myPass.setError("Incorrect password. Please re-enter");
 					continue;
+				}
+				finally {
+					/* Clear out the password */
+					if (myPassword != null)
+						Arrays.fill(myPassword, (char) 0);
 				}
 			}
 			
@@ -107,5 +118,33 @@ public class SecureManager {
 		
 		/* Return to caller */
 		return pDialog.isPasswordSet();
+	}
+	
+	/**
+	 * Attempt known passwords
+	 * @param pControl the control to attempt
+	 */
+	private void attemptKnownPasswords(SecurityControl pControl) {
+		DataList<SecurityControl>.ListIterator 	myIterator;
+		SecurityControl							myCurr;
+		PasswordKey								myPassKey;
+		
+		/* Access the iterator */
+		myIterator = theSecurity.listIterator();
+		
+		/* Loop through the security controls */
+		while ((myCurr = myIterator.next()) != null) {
+			/* Skip if not initialised */
+			if (!myCurr.isInitialised()) continue;
+			
+			/* Access the password key for this control */
+			myPassKey = myCurr.getPassKey();
+			
+			/* Attempt to initialise the control from this password */
+			myPassKey.attemptPassword(pControl);
+			
+			/* Break loop if we managed to initialise it */
+			if (pControl.isInitialised()) break;
+		}
 	}
 }

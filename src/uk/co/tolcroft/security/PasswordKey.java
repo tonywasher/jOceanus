@@ -73,16 +73,21 @@ public class PasswordKey {
 	private byte[] 				theAlternateHash	= null;
 
 	/**
+	 * Encrypted password 
+	 */
+	private byte[] 				thePassword			= null;
+
+	/**
 	 * Obtain the SecurityKey
 	 * @return the Security Key 
 	 */
-	public byte[] 		getSecurityKey() 	{ return theSaltAndHash; }
+	public 		byte[] 			getSecurityKey() 	{ return theSaltAndHash; }
 	
 	/**
-	 * Obtain the KeyPair
-	 * @return the KeyPair 
+	 * Obtain the KeyMode
+	 * @return the KeyMode 
 	 */
-	protected byte[] 	getPartialHash()	{ return thePartialHash; }
+	protected 	PBEKeyMode		getKeyMode()		{ return theKeyMode; }
 	
 	/**
 	 * Constructor for a completely new password key 
@@ -158,6 +163,41 @@ public class PasswordKey {
 		
 		/* Validate the password */
 		setPassword(pPassword);
+	}
+	
+	/**
+	 * Constructor for alternate password key sharing same password
+	 * @param pSource the source key
+	 */
+	protected PasswordKey(PasswordKey pSource) throws Exception {
+		char[] 		myPassword = null;
+		
+		/* Build the encryption cipher */
+		SecurityCipher myCipher = pSource.initDecryption(pSource.theAlternateHash);
+		
+		/* Access the original password */
+		myPassword = myCipher.decryptChars(pSource.thePassword);
+		
+		/* Protect against exceptions */
+		try {
+			/* Store the secure random generator */
+			theRandom = pSource.theRandom;
+			
+			/* Create a random PBE KeyMode */
+			PBEKeyMode myMode = PBEKeyMode.getPBEKeyMode(theRandom);
+			
+			/* Store the key type and secure random generator */
+			theKeyMode		= myMode;
+			theKeyType		= myMode.getPBEKeyType();
+			theAlgorithm	= theKeyType.getAlgorithm();
+			
+			/* Validate the password */
+			setPassword(myPassword);
+		}
+		
+		/* Catch Exceptions */
+		catch (Exception e) { throw e; }
+		finally { if (myPassword != null) Arrays.fill(myPassword, (char)0); }
 	}
 	
 	/**
@@ -264,6 +304,9 @@ public class PasswordKey {
 														theKeyMode.getSecondIterate(), 
 														theAlternateHash, 
 														pPassword);
+			
+			/* Encrypt the password */
+			encryptPassword(pPassword);
 			
 			/* Clear out the password */
 			Arrays.fill(pPassword, (char) 0);
@@ -690,6 +733,42 @@ public class PasswordKey {
 								"Failed to initialise cipher",
 								e);
 		}
+	}
+	
+	/**
+	 * Record the encrypted password 
+	 */
+	private void encryptPassword(char[] pPassword) throws Exception {
+		/* Build the encryption cipher */
+		SecurityCipher myCipher = initEncryption(theAlternateHash);
+		
+		/* Encrypt the password characters */
+		thePassword = myCipher.encryptChars(pPassword);
+	}
+	
+	/**
+	 * Create alternate Password key for this password
+	 * @param pRandom the random generator
+	 * @return the cloned key
+	 */
+	protected void attemptPassword(SecurityControl pControl) {
+		char[] 		myPassword = null;
+
+		/* Protect against exceptions */
+		try {
+			/* Build the encryption cipher */
+			SecurityCipher myCipher = initDecryption(theAlternateHash);
+		
+			/* Access the original password */
+			myPassword = myCipher.decryptChars(thePassword);
+			
+			/* Try to initialise the control */
+			pControl.initControl(myPassword);
+		}
+		
+		/* Catch Exceptions */
+		catch (Exception e) { }
+		finally { if (myPassword != null) Arrays.fill(myPassword, (char)0); }		
 	}
 	
 	/**

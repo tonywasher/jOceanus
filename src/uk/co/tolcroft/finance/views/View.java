@@ -2,7 +2,7 @@ package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.ui.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.core.SecureManager;
+import uk.co.tolcroft.security.SecureManager;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.Exception;
@@ -38,7 +38,7 @@ public class View {
 		theDebugMgr = pCtl.getDebugMgr();
 		
 		/* Create a new security manager */
-		theSecurity = new SecureManager(pCtl);
+		theSecurity = new SecureManager(pCtl.getFrame());
 		
 		/* Create an empty data set */
 		theData = new DataSet(theSecurity);
@@ -518,6 +518,11 @@ public class View {
 		private String  		theBackupDir		= null;
 				
 		/**
+		 * Repository directory name
+		 */
+		private String  		theRepoDir			= null;
+				
+		/**
 		 * Backup file prefix
 		 */
 		private String  		theBackupPrefix		= null;
@@ -560,6 +565,12 @@ public class View {
 		 * @return the backup directory name
 		 */
 		public String getBackupDir() 			{ return theBackupDir; }
+
+		/**
+		 * Determine the repository directory name
+		 * @return the repository directory name
+		 */
+		public String getRepoDir() 				{ return theRepoDir; }
 
 		/**
 		 * Determine the backup file prefix
@@ -611,6 +622,7 @@ public class View {
 			theDBConnection  	= theProperties.getDBConnection();
 			theBaseSpreadSheet	= theProperties.getBaseSpreadSheet();
 			theBackupDir     	= theProperties.getBackupDir();
+			theRepoDir     		= theProperties.getRepoDir();
 			theBackupPrefix    	= theProperties.getBackupPrefix();
 			doEncryptBackups 	= theProperties.doEncryptBackups();
 			doShowDebug      	= theProperties.doShowDebug();
@@ -649,6 +661,14 @@ public class View {
 		 */
 		public void setBackupDir(String pValue) {
 			theBackupDir = new String(pValue);
+		}
+
+		/**
+		 * Set the Repository Directory name 
+		 * @param pValue the new value
+		 */
+		public void setRepoDir(String pValue) {
+			theRepoDir = new String(pValue);
 		}
 
 		/**
@@ -703,6 +723,10 @@ public class View {
 			if (Utils.differs(getBackupDir(), theProperties.getBackupDir()))  
 				theProperties.setBackupDir(getBackupDir());
 				
+			/* Update the RepoDirectory if required */
+			if (Utils.differs(getRepoDir(), theProperties.getRepoDir()))  
+				theProperties.setRepoDir(getRepoDir());
+				
 			/* Update the BackupPrefix if required */
 			if (Utils.differs(getBackupPrefix(), theProperties.getBackupPrefix()))  
 				theProperties.setBackupPrefix(getBackupPrefix());
@@ -733,9 +757,10 @@ public class View {
 						  (Utils.differs(getDBConnection(), theProperties.getDBConnection()))       ||  
 						  (Utils.differs(getBaseSpreadSheet(), theProperties.getBaseSpreadSheet())) ||  
 						  (Utils.differs(getBackupDir(), theProperties.getBackupDir())) 			||  
-						  (Utils.differs(getBackupPrefix(), theProperties.getBackupPrefix()))           ||  
+						  (Utils.differs(getRepoDir(), theProperties.getRepoDir())) 				||  
+						  (Utils.differs(getBackupPrefix(), theProperties.getBackupPrefix()))       ||  
 						  (Date.differs(getBirthDate(), theProperties.getBirthDate()))				||  
-						  (doShowDebug != theProperties.doShowDebug())									||  
+						  (doShowDebug != theProperties.doShowDebug())								||  
 						  (doEncryptBackups != theProperties.doEncryptBackups()));  
 		}		
 	}

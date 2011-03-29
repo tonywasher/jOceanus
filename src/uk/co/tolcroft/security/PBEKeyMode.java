@@ -155,11 +155,11 @@ public class PBEKeyMode {
 	 * Construct a random set of iterations
 	 * @param pRandom the random generator
 	 */
-	private void setRandomIterations(SecureRandom pRandom) throws Exception {
+	protected void setRandomIterations(SecureRandom pRandom) throws Exception {
 		/* Access a random set of Iterations */
-		int iFirst  = 1 + pRandom.nextInt(14);		
-		int iSecond = 1 + pRandom.nextInt(14);		
-		int iThird  = 1 + pRandom.nextInt(14);		
+		int iFirst  = 1 + pRandom.nextInt(15);		
+		int iSecond = 1 + pRandom.nextInt(15);		
+		int iThird  = 1 + pRandom.nextInt(15);		
 
 		/* Set the iterations */
 		setIterations(iFirst, iSecond, iThird);

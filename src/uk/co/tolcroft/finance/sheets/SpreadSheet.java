@@ -11,13 +11,10 @@ import java.io.OutputStream;
 import jxl.Workbook;
 import jxl.write.WritableWorkbook;
 
-import uk.co.tolcroft.finance.core.SecureManager;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.security.*;
-import uk.co.tolcroft.security.SecurityControl.DigestType;
-import uk.co.tolcroft.security.SymmetricKey.SymKeyType;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 
@@ -152,16 +149,20 @@ public class SpreadSheet {
 		FileOutputStream    myOutFile  	= null;
 		File				myTgtFile	= null;
 		ZipFile.Output 		myZipFile   = null;
+		SecurityControl		myControl;
 		
 		/* Protect the workbook retrieval */
 		try {
 			/* If we are not encrypted */
 			if (!isEncrypted) {
+				/* The Target file has .xls appended */
+				myTgtFile 	= new File(pFile.getPath() + ".xls");
+
 				/* The Target file is the named file */
 				myTgtFile = pFile;
 				
 				/* Create an output stream to the file */
-				myOutFile = new FileOutputStream(pFile);
+				myOutFile = new FileOutputStream(myTgtFile);
 				myStream  = new BufferedOutputStream(myOutFile);
 			}
 		
@@ -169,13 +170,15 @@ public class SpreadSheet {
 			else {
 				/* The Target file has .zip appended */
 				myTgtFile 	= new File(pFile.getPath() + ".zip");
+
+				/* Create a clone of the security control */
+				myControl	= new SecurityControl(pData.getSecurityControl());
 				
 				/* Create the new output Zip file */
-				myZipFile 	= new ZipFile.Output(pData.getSecurityControl(),
+				myZipFile 	= new ZipFile.Output(myControl,
 												 myTgtFile);
 				myStream 	= myZipFile.getOutputStream(new File(ZipFile.fileData), 
-														ZipEntryMode.getEncryptionMode(SymKeyType.Serpent,
-																			 	DigestType.Tiger));
+														ZipEntryMode.getRandomTrioMode(myControl.getRandom()));
 			}
 
 			/* Write the data from the stream */

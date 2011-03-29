@@ -94,11 +94,9 @@ public class EncryptionStream {
 		/**
 		 * Construct a password key encryption output stream
 		 * @param pKey the password key
-		 * @param bGenerate generate new initVector or use PartialHash
 		 * @param pStream the stream to encrypt to
 		 */
 		public Output(PasswordKey			pKey,
-					  boolean				bGenerate,
 				 	  java.io.OutputStream 	pStream) throws Exception {
 			
 			/* Protect against exceptions */
@@ -106,17 +104,8 @@ public class EncryptionStream {
 				/* record the output stream */
 				theStream 	= pStream;
 				
-				/* If we should generate a new hash */
-				if (bGenerate) {
-					/* initialise for encryption */
-					theCipher 	= pKey.initEncryption();
-				}
-				
-				/* else we should use the partial hash */
-				else {
-					/* initialise for encryption */
-					theCipher 	= pKey.initEncryption(pKey.getPartialHash());					
-				}
+				/* initialise for encryption */
+				theCipher 	= pKey.initEncryption();
 				
 				/* Access the initialisation vector */
 				theInitVector	= theCipher.getInitVector();
@@ -304,18 +293,6 @@ public class EncryptionStream {
 									"Exception deciphering secret key",
 									e);
 			}
-		}
-		
-		/**
-		 * Construct the password key decryption input stream
-		 * @param pKey the password key
-		 * @param bDecrypt encrypt or decrypt?
-		 * @param pStream the stream to decrypt from
-		 */
-		public Input(PasswordKey			pKey,
-					 java.io.InputStream 	pStream) throws Exception {
-			/* Pass to standard constructor */
-			this(pKey, pKey.getPartialHash(), pStream);
 		}
 		
 		/**

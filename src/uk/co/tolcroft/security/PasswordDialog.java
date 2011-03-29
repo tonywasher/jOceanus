@@ -1,23 +1,24 @@
-package uk.co.tolcroft.finance.ui.controls;
+package uk.co.tolcroft.security;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FocusTraversalPolicy;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.FocusTraversalPolicy;
-import java.awt.Container;
-import java.awt.Component;
+import java.util.Arrays;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JDialog;
 import javax.swing.LayoutStyle;
 
-public class PasswordDialog extends JDialog 
-							implements ActionListener {
+public class PasswordDialog  extends JDialog 
+									 implements ActionListener {
 	/**
 	 * Serial version ID	
 	 */
@@ -232,6 +233,13 @@ public class PasswordDialog extends JDialog
 	}
 
 	/**
+	 * clear out the password array on termination
+	 */
+	protected void finalize() throws Throwable {
+		if (thePassword != null) Arrays.fill(thePassword, (char) 0);
+	}
+	
+	/**
 	 * Perform a requested action
 	 * @param evt the action event
 	 */
@@ -288,7 +296,10 @@ public class PasswordDialog extends JDialog
 	public void setError(String pError) {
 		/* Set the string to the error field */
 		theErrorField.setText(pError);
-
+		
+		/* Show that we need to update the password */
+		isPasswordSet = false;
+		
 		/* Set the error panel to visible */
 		theError.setVisible(true);
 		pack();

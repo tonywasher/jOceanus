@@ -16,8 +16,6 @@ import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.security.SecurityControl;
 import uk.co.tolcroft.security.ZipEntryMode;
 import uk.co.tolcroft.security.ZipFile;
-import uk.co.tolcroft.security.SecurityControl.DigestType;
-import uk.co.tolcroft.security.SymmetricKey.SymKeyType;
 
 public class Subversion {
 	SVNClientManager	theManager = null;
@@ -74,7 +72,7 @@ public class Subversion {
 			myEntryName	= new File(ZipFile.fileData);
 			
 			/* Determine the name of the zip file */
-			myZipName 	= new File(pBackupDir.getPath() + myName + ".zip");
+			myZipName 	= new File(pBackupDir.getPath() + myName + "Repo.zip");
 
 			/* If the backup file exists */
 			if (myZipName.exists()) {
@@ -95,14 +93,16 @@ public class Subversion {
 			/* Note presumption of failure */
 			bSuccess = false;
 			
+			/* Create a clone of the security control */
+			SecurityControl myControl	= new SecurityControl(pControl);
+			
 			/* Create the new zip file */
-			myZipFile 	= new ZipFile.Output(pControl,
+			myZipFile 	= new ZipFile.Output(myControl,
 					 						 myZipName);
 
 			/* Create the output stream to the zip file */
 			myStream = myZipFile.getOutputStream(myEntryName, 
-												 ZipEntryMode.getEncryptionMode(SymKeyType.AES, 
-														 						DigestType.SHA256));
+												 ZipEntryMode.getRandomTrioMode(myControl.getRandom()));
 
 			/* Dump the data to the zip file */
 			theAdminClient.doDump(pRepository, 

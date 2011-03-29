@@ -277,6 +277,9 @@ public class MainTab implements ActionListener,
 
 			/* Dispose of the frame */
 			theFrame.dispose();
+			
+			/* Exit the application */
+			System.exit(0);
 		}
 		
 		/* else if this is the Debug Window shutting down */

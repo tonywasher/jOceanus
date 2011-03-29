@@ -34,6 +34,11 @@ public class Properties {
 	private final static String nameBackupDir	= "Backupdir";
 
 	/**
+	 * Registry name for Repository directory
+	 */
+	private final static String nameRepoDir		= "Repodir";
+
+	/**
 	 * Registry name for Backup file
 	 */
 	private final static String nameBackupPrefix= "Backupprefix";
@@ -71,7 +76,12 @@ public class Properties {
 	/**
 	 * Default Backup directory name
 	 */
-	private final static String defBackupDir	= "C:\\clients";
+	private final static String defBackupDir	= "C:\\Users\\Tony\\Backup";
+			
+	/**
+	 * Default Repository directory name
+	 */
+	private final static String defRepoDir		= "C:\\Program Files\\csvn\\data\\repositories";
 			
 	/**
 	 * Default Backup file name
@@ -129,6 +139,11 @@ public class Properties {
 	private String  theBackupDir			= null;
 			
 	/**
+	 * Repository directory name
+	 */
+	private String  theRepoDir				= null;
+			
+	/**
 	 * Backup file prefix
 	 */
 	private String  theBackupPrefix			= null;
@@ -171,6 +186,12 @@ public class Properties {
 	 * @return the backup directory name
 	 */
 	public String getBackupDir() 			{ return theBackupDir; }
+
+	/**
+	 * Determine the repository directory name
+	 * @return the repository directory name
+	 */
+	public String getRepoDir() 				{ return theRepoDir; }
 
 	/**
 	 * Determine the backup file prefix
@@ -231,6 +252,10 @@ public class Properties {
 		theBackupDir = theHandle.get(nameBackupDir, null);
 		if (theBackupDir == null) setBackupDir(defBackupDir);
 		
+		/* Access the RepositoryDir name */
+		theRepoDir = theHandle.get(nameRepoDir, null);
+		if (theRepoDir == null) setRepoDir(defRepoDir);
+		
 		/* Access the BackupFile prefix */
 		theBackupPrefix = theHandle.get(nameBackupPrefix, null);
 		if (theBackupPrefix == null) setBackupPrefix(defBackupPrefix);
@@ -257,6 +282,7 @@ public class Properties {
 								"Failed to parse Date: " + myBirthDate,
 								e);
 		}
+		
 		/* Flush changes */
 		flushChanges();
 	}
@@ -324,6 +350,18 @@ public class Properties {
 		
 		/* Store the value into the preferences */
 		theHandle.put(nameBackupDir, theBackupDir);
+	}
+
+	/**
+	 * Set the Repository Directory name 
+	 * @param pValue the new value
+	 */
+	public void setRepoDir(String pValue) {
+		/* Record the new value */
+		theRepoDir = new String(pValue);
+		
+		/* Store the value into the preferences */
+		theHandle.put(nameRepoDir, theRepoDir);
 	}
 
 	/**

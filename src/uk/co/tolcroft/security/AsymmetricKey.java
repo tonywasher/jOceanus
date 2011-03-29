@@ -162,12 +162,12 @@ public class AsymmetricKey {
 	}
 
 	/**
-	 * Set new security control
-	 * @param pControl the security control
+	 * Set new password key
+	 * @param pPassKey the password key
 	 */
-	public void	setSecurityControl(SecurityControl pControl) {
+	public void	setPasswordKey(PasswordKey pPassKey) {
 		/* Access the relevant pass key */
-		thePassKey = pControl.getPassKey();
+		thePassKey = pPassKey;
 		
 		/* Reset the Security keys */
 		theSecurityKey 	= null;

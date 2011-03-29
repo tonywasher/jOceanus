@@ -36,6 +36,7 @@ public class MaintProperties implements ActionListener,
 	private JTextField			theDBDriver			= null;
 	private JTextField			theDBConnect		= null;
 	private JTextField			theBaseSSheet		= null;
+	private JTextField			theRepoDir			= null;
 	private JTextField			theBackupDir		= null;
 	private JTextField			theBackupPrefix		= null;
 	private JSpinner			theSpinner			= null;
@@ -46,6 +47,7 @@ public class MaintProperties implements ActionListener,
 	private JButton				theResetButton		= null;
 	private JButton				theBaseSel			= null;
 	private JButton				theBackupSel		= null;
+	private JButton				theRepoSel			= null;
 	private View.ViewProperties	theExtract			= null;
 	private boolean				refreshingData		= false;
 	
@@ -57,6 +59,7 @@ public class MaintProperties implements ActionListener,
 		JLabel	myDBDriver;
 		JLabel	myDBConnect;
 		JLabel	myBaseSSheet;
+		JLabel	myRepoDir;
 		JLabel	myBackupDir;
 		JLabel	myBackupPrefix;
 		JLabel	myBirthDate;
@@ -69,6 +72,7 @@ public class MaintProperties implements ActionListener,
 		myDBDriver 		= new JLabel("Driver String:");
 		myDBConnect 	= new JLabel("Connection String:");
 		myBaseSSheet	= new JLabel("Base Spreadsheet:");
+		myRepoDir		= new JLabel("Repository Directory:");
 		myBackupDir		= new JLabel("Backup Directory:");
 		myBackupPrefix	= new JLabel("Backup Prefix:");
 		myBirthDate		= new JLabel("BirthDate:");
@@ -77,6 +81,7 @@ public class MaintProperties implements ActionListener,
 		theDBDriver 	= new JTextField();
 		theDBConnect 	= new JTextField();
 		theBaseSSheet	= new JTextField();
+		theRepoDir		= new JTextField();
 		theBackupDir	= new JTextField();
 		theBackupPrefix	= new JTextField();
 		
@@ -94,11 +99,13 @@ public class MaintProperties implements ActionListener,
 		theResetButton 	= new JButton("Reset");
 		theBaseSel		= new JButton("Choose");
 		theBackupSel	= new JButton("Choose");
+		theRepoSel		= new JButton("Choose");
 		
 		/* Add listeners */
 		theDBDriver.addActionListener(this);
 		theDBConnect.addActionListener(this);
 		theBaseSSheet.addActionListener(this);
+		theRepoDir.addActionListener(this);
 		theBackupDir.addActionListener(this);
 		theBackupPrefix.addActionListener(this);
 		theModel.addChangeListener(this);
@@ -106,6 +113,7 @@ public class MaintProperties implements ActionListener,
 		theResetButton.addActionListener(this);
 		theBaseSel.addActionListener(this);
 		theBackupSel.addActionListener(this);
+		theRepoSel.addActionListener(this);
 		theShowDebug.addItemListener(this);
 		theEncryptBackup.addItemListener(this);
 		
@@ -174,6 +182,7 @@ public class MaintProperties implements ActionListener,
                             .addComponent(myDBDriver)
                             .addComponent(myDBConnect)
                             .addComponent(myBaseSSheet)
+                            .addComponent(myRepoDir)
                             .addComponent(myBackupDir)
                             .addComponent(myBackupPrefix)
                             .addComponent(myBirthDate))
@@ -182,11 +191,13 @@ public class MaintProperties implements ActionListener,
                             .addComponent(theDBDriver, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
                             .addComponent(theDBConnect, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
                             .addComponent(theBaseSSheet, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(theRepoDir, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
                             .addComponent(theBackupDir, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
                             .addComponent(theBackupPrefix, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
                             .addComponent(theSpinner, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addComponent(theRepoSel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
                             .addComponent(theBackupSel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
                             .addComponent(theBaseSel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE))))
   	            .addContainerGap())
@@ -204,6 +215,10 @@ public class MaintProperties implements ActionListener,
 	               	.addComponent(myBaseSSheet)
                     .addComponent(theBaseSSheet, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(theBaseSel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+	            .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	               	.addComponent(myRepoDir)
+                    .addComponent(theRepoDir, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+	                .addComponent(theRepoSel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 	            .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	               	.addComponent(myBackupDir)
                     .addComponent(theBackupDir, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -280,10 +295,13 @@ public class MaintProperties implements ActionListener,
 		theDBDriver.setText(theExtract.getDBDriver());
 		theDBConnect.setText(theExtract.getDBConnection());
 		
-		/* Show the DB details */
+		/* Show the Backup details */
 		theBackupDir.setText(theExtract.getBackupDir());
 		theBackupPrefix.setText(theExtract.getBackupPrefix());
 		
+		/* Show the Repository details */
+		theRepoDir.setText(theExtract.getRepoDir());
+
 		/* Show the BaseSpreadsheet */
 		theBaseSSheet.setText(theExtract.getBaseSpreadSheet());
 		
@@ -307,6 +325,10 @@ public class MaintProperties implements ActionListener,
 		/* Access the value */
 		myText = theBaseSSheet.getText();
 		if (myText.length() != 0) theExtract.setBaseSpreadSheet(myText);
+
+		/* Access the value */
+		myText = theRepoDir.getText();
+		if (myText.length() != 0) theExtract.setRepoDir(myText);
 
 		/* Access the value */
 		myText = theBackupDir.getText();
@@ -367,6 +389,19 @@ public class MaintProperties implements ActionListener,
 			notifyChanges();
 		}
 		
+		/* If this event relates to the Repo Select button */
+		else if (evt.getSource() == (Object)theRepoSel) {
+			/* Create the and run the dialog */
+			BackupDirectory myDialog = new BackupDirectory(theParent.getTopWindow());
+			myDialog.selectFile();
+			File myFile = myDialog.getSelectedFile();
+			if (myFile != null)
+				theExtract.setRepoDir(myFile.getPath());
+			
+			/* Note that changes have occurred */
+			notifyChanges();
+		}
+		
 		/* If this event relates to the Backup Select button */
 		else if (evt.getSource() == (Object)theBackupSel) {
 			/* Create the and run the dialog */
@@ -384,6 +419,7 @@ public class MaintProperties implements ActionListener,
 		else if ((evt.getSource() == (Object)theDBDriver)   ||
 		         (evt.getSource() == (Object)theDBConnect)  ||
 		         (evt.getSource() == (Object)theBaseSSheet) ||
+		         (evt.getSource() == (Object)theRepoDir)    ||
 		         (evt.getSource() == (Object)theBackupDir)  ||
 		         (evt.getSource() == (Object)theBackupPrefix)) {
 			/* Update the text */

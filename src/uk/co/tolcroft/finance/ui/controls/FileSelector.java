@@ -1,7 +1,7 @@
 package uk.co.tolcroft.finance.ui.controls;
 
 import java.io.File;
-import java.util.Calendar;
+//import java.util.Calendar;
 
 import javax.swing.JFrame;
 import javax.swing.JFileChooser;
@@ -221,8 +221,8 @@ public class FileSelector {
 				String myName = pFile.getName();
 				if (!myName.startsWith(thePrefix)) return false;
 			
-				/* It must end with .xls or .xls.zip */
-				if (myName.endsWith(".xls") || myName.endsWith(".xls.zip"))
+				/* It must end with .xls or .zip */
+				if (myName.endsWith(".xls") || myName.endsWith(".zip"))
 					return true;
 			
 				/* reject the file */
@@ -311,8 +311,8 @@ public class FileSelector {
 		 */
 		private void showDialog() {
 			String 		myName;
-			Calendar	myNow;
-			int		 	myValue;
+			//Calendar	myNow;
+			//int		 	myValue;
 			
 			/* Show the dialog and select the file */
 			int iRet = theChooser.showSaveDialog(theFrame);
@@ -323,20 +323,20 @@ public class FileSelector {
 				theResult = theChooser.getSelectedFile();
 				
 				/* Obtain the current date/time */
-				myNow = Calendar.getInstance();
+				//myNow = Calendar.getInstance();
 				
 				/* Create the name of the file */
 				myName 	 = new String(thePrefix);
-				myName 	+= myNow.get(Calendar.YEAR);
-				myValue  = myNow.get(Calendar.MONTH) + 1;
-				if (myValue < 10) myName += "0";
-				myName += myValue;
-				myValue  = myNow.get(Calendar.DAY_OF_MONTH);
-				if (myValue < 10) myName += "0";
-				myName += myValue;
+				//myName 	+= myNow.get(Calendar.YEAR);
+				//myValue  = myNow.get(Calendar.MONTH) + 1;
+				//if (myValue < 10) myName += "0";
+				//myName += myValue;
+				//myValue  = myNow.get(Calendar.DAY_OF_MONTH);
+				//if (myValue < 10) myName += "0";
+				//myName += myValue;
 				
 				/* Add extension */
-				myName += ".xls";
+				//myName += ".xls";
 				
 				/* Build new file name */
 				theResult = new File(theResult, myName);

@@ -2,6 +2,8 @@ package uk.co.tolcroft.security;
 
 import javax.crypto.Cipher;
 
+import org.bouncycastle.util.Arrays;
+
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
@@ -87,14 +89,18 @@ public class SecurityCipher {
 	 */
 	public byte[] encryptChars(char[] pChars) throws Exception {
 		byte[] myBytes;
+		byte[] myRawBytes;
 		
 		/* Protect against exceptions */
 		try {
 			/* Convert the characters to a byte array */
-			myBytes = Utils.charToByteArray(pChars);
+			myRawBytes = Utils.charToByteArray(pChars);
 			
 			/* Encrypt the characters */
-			myBytes = theCipher.doFinal(myBytes);
+			myBytes = theCipher.doFinal(myRawBytes);
+						
+			/* Clear out the bytes */
+			Arrays.fill(myRawBytes, (byte)0);
 		}
 		catch (Throwable e) {
 			throw new Exception(ExceptionClass.CRYPTO,
@@ -149,6 +155,9 @@ public class SecurityCipher {
 			
 			/* Convert the bytes to characters */ 
 			myChars = Utils.byteToCharArray(myBytes);
+			
+			/* Clear out the bytes */
+			Arrays.fill(myBytes, (byte)0);
 		}
 		catch (Throwable e) {
 			throw new Exception(ExceptionClass.CRYPTO,

@@ -1,7 +1,6 @@
 package uk.co.tolcroft.finance.data;
 
 import uk.co.tolcroft.finance.views.*;
-import uk.co.tolcroft.finance.core.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
