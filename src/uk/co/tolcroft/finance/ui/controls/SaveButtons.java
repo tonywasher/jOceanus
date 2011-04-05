@@ -15,7 +15,7 @@ public class SaveButtons implements ActionListener {
 	private JPanel					thePanel		= null;
 	private financePanel			theParent		= null;
 	private JButton               	theOKButton 	= null;
-	private JButton               	theValidButton	= null;
+	//private JButton               	theValidButton	= null;
 	private JButton                 theResetButton  = null;
 	
 	/* Access methods */
@@ -27,13 +27,13 @@ public class SaveButtons implements ActionListener {
 		
 		/* Create the boxes */
 		theOKButton    = new JButton("OK");
-		theValidButton = new JButton("Validate");
+		//theValidButton = new JButton("Validate");
 		theResetButton = new JButton("Reset");
 		theParent	   = pParent;
 		
 		/* Add the listener for item changes */
 		theOKButton.addActionListener(this);
-		theValidButton.addActionListener(this);
+		//theValidButton.addActionListener(this);
 		theResetButton.addActionListener(this);
 		
 		/* Create the save panel */
@@ -52,8 +52,8 @@ public class SaveButtons implements ActionListener {
 	                .addContainerGap()
 	        		.addComponent(theOKButton)
 	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-	                .addComponent(theValidButton)
-	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                //.addComponent(theValidButton)
+	                //.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                .addComponent(theResetButton)
 	                .addContainerGap())
 	    );
@@ -62,7 +62,7 @@ public class SaveButtons implements ActionListener {
 		        	.addGroup(panelLayout.createSequentialGroup()
 		                .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
 		                	.addComponent(theOKButton, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-		                    .addComponent(theValidButton, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+		                    //.addComponent(theValidButton, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 		                    .addComponent(theResetButton, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
 	    );
 
@@ -75,7 +75,7 @@ public class SaveButtons implements ActionListener {
 		/* If the table is locked clear the buttons */
 		if (theParent.isLocked()) {
 			theOKButton.setEnabled(false);
-			theValidButton.setEnabled(false);
+			//theValidButton.setEnabled(false);
 			theResetButton.setEnabled(false);
 			
 		/* Else look at the edit state */
@@ -83,18 +83,18 @@ public class SaveButtons implements ActionListener {
 			switch (theParent.getEditState()) {
 				case CLEAN:
 					theOKButton.setEnabled(false);
-					theValidButton.setEnabled(false);
+					//theValidButton.setEnabled(false);
 					theResetButton.setEnabled(false);
 					break;
 				case DIRTY:
 				case ERROR:
 					theOKButton.setEnabled(false);
-					theValidButton.setEnabled(true);
+					//theValidButton.setEnabled(true);
 					theResetButton.setEnabled(true);
 					break;
 				case VALID:
 					theOKButton.setEnabled(true);
-					theValidButton.setEnabled(false);
+					//theValidButton.setEnabled(false);
 					theResetButton.setEnabled(true);
 					break;
 			}
@@ -117,10 +117,10 @@ public class SaveButtons implements ActionListener {
 		}
 		
 		/* If this event relates to the OK box */
-		else if (evt.getSource() == (Object)theValidButton) {
+		//else if (evt.getSource() == (Object)theValidButton) {
 			/* Pass command to the table */
-			theParent.performCommand(financeCommand.VALIDATEALL);
-		}
+			//theParent.performCommand(financeCommand.VALIDATEALL);
+		//}
 		
 		/* Set the lockDown Status */
 		setLockDown();

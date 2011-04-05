@@ -310,27 +310,31 @@ public class AcctPrice extends DataItem {
 	}
 
 	/**
-	 * Update Price from an item Element 
-	 * 
+	 * Update Price from an item Element  
 	 * @param pItem the price extract 
+	 * @return whether changes have been made
 	 */
-	public void applyChanges(DataItem pItem) {
+	public boolean applyChanges(DataItem pItem) {
+		boolean bChanged = false;
 		if (pItem instanceof AcctPrice) {
 			AcctPrice myPrice = (AcctPrice)pItem;
-			applyChanges(myPrice);
+			bChanged = applyChanges(myPrice);
 		}
 		else if (pItem instanceof SpotPrice) {
 			SpotPrice mySpot = (SpotPrice)pItem;
-			applyChanges(mySpot);
+			bChanged = applyChanges(mySpot);
 		}
+		return bChanged;
 	}
 	
 	/**
 	 * Update Price from a Price extract 
-	 * 
 	 * @param pPrice the price extract 
+	 * @return whether changes have been made
 	 */
-	public void applyChanges(AcctPrice pPrice) {
+	private boolean applyChanges(AcctPrice pPrice) {
+		boolean bChanged = false;
+		
 		/* Store the current detail into history */
 		pushHistory();
 		
@@ -343,15 +347,24 @@ public class AcctPrice extends DataItem {
 			setDate(pPrice.getDate());
 		
 		/* Check for changes */
-		if (checkForHistory()) setState(DataState.CHANGED);
+		if (checkForHistory()) {
+			/* Mark as changed */
+			setState(DataState.CHANGED);
+			bChanged = true;
+		}
+		
+		/* Return to caller */
+		return bChanged;
 	}
 	
 	/**
 	 * Update Price from a Price extract 
-	 * 
 	 * @param pPrice the price extract 
+	 * @return whether changes have been made
 	 */
-	public void applyChanges(SpotPrice pPrice) {			
+	private boolean applyChanges(SpotPrice pPrice) {			
+		boolean bChanged = false;
+		
 		/* If we are setting a null price */
 		if (pPrice == null) {
 			/* We are actually deleting the price */
@@ -368,8 +381,15 @@ public class AcctPrice extends DataItem {
 				setPrice(pPrice.getPrice());
 	
 			/* Check for changes */
-			if (checkForHistory()) setState(DataState.CHANGED);
+			if (checkForHistory()) {
+				/* Mark as changed */
+				setState(DataState.CHANGED);
+				bChanged = false;
+			}
 		}
+		
+		/* Return to caller */
+		return bChanged;
 	}
 
 	/**
@@ -573,7 +593,7 @@ public class AcctPrice extends DataItem {
 			/* Loop through the Prices */
 			while ((myCurr = myIterator.next()) != null) {
 				/* mark the account referred to */
-				myCurr.getAccount().touchPrice(); 
+				myCurr.getAccount().touchPrice(myCurr); 
 			}
 		}
 
@@ -694,9 +714,9 @@ public class AcctPrice extends DataItem {
 		/**
 		 *  Allow a price to be added
 		 */
-		public void addItem(Account pAccount,
-							Date  	pDate,
-				            Price	pPrice) throws Exception {
+		public AcctPrice addItem(Account 	pAccount,
+							     Date  		pDate,
+							     Price		pPrice) throws Exception {
 			AcctPrice     	myPrice;
 			
 			/* Create the price and PricePoint */
@@ -713,6 +733,9 @@ public class AcctPrice extends DataItem {
 				
 			/* Add to the list */
 			myPrice.addToList();
+			
+			/* Return the caller */
+			return myPrice;
 		}			
 	}
 	

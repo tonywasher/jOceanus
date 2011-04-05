@@ -212,9 +212,10 @@ public class MaintNewYear extends FinanceTable<Event> implements ActionListener 
 		
 		/**
 		 * Obtain the Field id associated with the column
+		 * @param row the row
 		 * @param column the column
 		 */
-		public int getFieldForCol(int column) {
+		public int getFieldForCell(int row, int column) {
 			/* Switch on column */
 			switch (column) {
 				default: 				return -1;
@@ -285,7 +286,7 @@ public class MaintNewYear extends FinanceTable<Event> implements ActionListener 
 			}
 			
 			/* If we have a null value for an error field,  set error description */
-			if ((o == null) && (myEvent.hasErrors(getFieldForCol(col))))
+			if ((o == null) && (myEvent.hasErrors(getFieldForCell(row, col))))
 				o = Renderer.getError();
 			
 			/* Return to caller */

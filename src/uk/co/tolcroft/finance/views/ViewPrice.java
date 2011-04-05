@@ -440,20 +440,31 @@ public class ViewPrice extends DataItem {
 		}
 
 		/** 
-		 * Apply changes in a Prices view back into the core data
+		 * Prepare changes in a Prices view back into the core data
 		 */
-		public void applyChanges() {
+		protected void prepareChanges() {
 			AcctPrice.List myBase;
 			
 			/* Access base details */
 			myBase     = theData.getPrices();
 			
 			/* Apply the changes */
-			myBase.applyChanges(this);
+			myBase.prepareChanges(this);
+		}
+
+		/** 
+		 * Commit/RollBack changes in a Prices view back into the core data
+		 * @param bCommit <code>true/false</code>
+		 */
+		protected void commitChanges(boolean bCommit) {
+			AcctPrice.List myBase;
 			
-			/*
-			 * Analyse and refresh are performed in the statement view
-			 */
+			/* Access base details */
+			myBase     = theData.getPrices();
+			
+			/* Commit /RollBack the changes */
+			if (bCommit)	myBase.commitChanges(this);
+			else			myBase.rollBackChanges(this);
 		}
 
 		/**

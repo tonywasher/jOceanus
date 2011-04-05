@@ -30,6 +30,7 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 	private patternColumnModel		theColumns			= null;
 	private AccountTab				theParent   		= null;
 	private Account                 theAccount  		= null;
+	private AccountSet				theViewSet			= null;
 	private View.ViewPatterns		theExtract			= null;
 	private ComboSelect				theComboList    	= null;
 	private DebugEntry				theDebugEntry		= null;
@@ -74,8 +75,9 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 		GroupLayout		 	myLayout;
 			
 		/* Store details about the parent */
-		theParent = pParent;
-		theView   = pParent.getView();
+		theParent  = pParent;
+		theView    = pParent.getView();
+		theViewSet = pParent.getViewSet();
 
 		/* Create the model and declare it to our superclass */
 		theModel  = new PatternsModel();
@@ -178,9 +180,8 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 	 * Save changes from the view into the underlying data
 	 */
 	public void saveData() {
-		if (theExtract != null) {
-			theExtract.applyChanges();
-		}
+		/* Just update the debug, save has already been done */
+		updateDebug();
 	}
 	
 	/**
@@ -213,6 +214,7 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 		theAccount  = pAccount;
 		thePatterns = theExtract.getPatterns();
 		super.setList(thePatterns);
+		theViewSet.setPatterns(theExtract);
 	}
 		
 	/**
@@ -253,6 +255,7 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 		/* Create the new Item */
 		myPattern = new Pattern(thePatterns, pLine);
 		myPattern.addToList();
+		myPattern.validate();
 	
 		/* Note the changes */
 		notifyChanges();
@@ -320,9 +323,10 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 			
 		/**
 		 * Obtain the Field id associated with the column
+		 * @param row the row
 		 * @param column the column
 		 */
-		public int getFieldForCol(int column) {
+		public int getFieldForCell(int row, int column) {
 			/* Switch on column */
 			switch (column) {
 				case COLUMN_DATE: 		return Pattern.FIELD_DATE;
@@ -406,7 +410,7 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 			}
 			
 			/* If we have a null value for an error field,  set error description */
-			if ((o == null) && (myPattern.hasErrors(getFieldForCol(col))))
+			if ((o == null) && (myPattern.hasErrors(getFieldForCell(row, col))))
 				o = Renderer.getError();
 			
 			/* Return to caller */
@@ -473,6 +477,10 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 			if (myPattern.checkForHistory()) {
 				/* Note that the item has changed */
 				myPattern.setState(DataState.CHANGED);
+
+				/* Validate the item and update the edit state */
+				myPattern.clearErrors();
+				myPattern.validate();
 				thePatterns.findEditState();
 				
 				/* Switch on the updated column */
@@ -499,7 +507,7 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 						
 					/* else note that we have updated this cell */
 					default:
-						fireTableCellUpdated(row, col);
+						fireTableRowsUpdated(row, row);
 						break;
 				}
 			

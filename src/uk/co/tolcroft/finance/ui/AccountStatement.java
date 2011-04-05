@@ -28,6 +28,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 	private View					theView				= null;
 	private StatementModel			theModel			= null;
 	private Account					theAccount   		= null;
+	private AccountSet				theViewSet			= null;
 	private Statement            	theStatement 		= null;
 	private Statement.List  	 	theLines 	 		= null;
 	private Account.List			theAccounts			= null;
@@ -92,6 +93,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 		/* Store passed details */
 		theParent    = pParent;
 		theView   	 = pParent.getView();
+		theViewSet	 = pParent.getViewSet();
 		theTopWindow = pParent.getTopWindow();
 
 		/* Create the model and declare it to our superclass */
@@ -187,9 +189,8 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 	 * Save changes from the view into the underlying data
 	 */
 	public void saveData() {
-		if (theStatement != null) {
-			theStatement.applyChanges();
-		}
+		/* Just update the debug, save has already been done */
+		updateDebug();
 	}
 	
  	/**
@@ -246,7 +247,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 		/* else if this is a change from the type */
 		else if (obj == (Object) theStateBox) {
 			/* Reset the account */
-			try {setSelection(theAccount); } catch (Throwable e) {}
+			try { setSelection(theAccount); } catch (Throwable e) {}
 		}
 	}
 		
@@ -294,6 +295,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 		}
 		theColumns.setColumns();
 		super.setList(theLines);
+		theViewSet.setStatement(theStatement);
 		theSelect.setLockDown();
 		theStateBox.setLockDown();
 	}
@@ -333,6 +335,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 		theStateType = theStateBox.getStatementType();
 		theColumns.setColumns();
 		super.setList(theLines);
+		theViewSet.setStatement(theStatement);
 		theSelect.setLockDown();
 		theStateBox.setLockDown();
 	}
@@ -488,20 +491,32 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 			
 		/**
 		 * Obtain the Field id associated with the column
+		 * @param row the row
 		 * @param column the column
 		 */
-		public int getFieldForCol(int column) {
+		public int getFieldForCell(int row, int column) {
+			Statement.Line myLine = null;
+			if (row > 0) myLine = theLines.get(row-1);
+
 			/* Switch on column */
 			switch (column) {
 				case COLUMN_DATE: 		return Statement.Line.FIELD_DATE;
 				case COLUMN_DESC:		return Statement.Line.FIELD_DESC;
 				case COLUMN_TRANTYP:	return Statement.Line.FIELD_TRNTYP;
 				case COLUMN_PARTNER:	return Statement.Line.FIELD_PARTNER;
-				case COLUMN_CREDIT:		return Statement.Line.FIELD_AMOUNT;
-				case COLUMN_DEBIT:		return Statement.Line.FIELD_AMOUNT;
 				case COLUMN_DILUTION:	return Statement.Line.FIELD_DILUTION;
 				case COLUMN_TAXCREDIT:	return Statement.Line.FIELD_TAXCREDIT;
 				case COLUMN_YEARS:		return Statement.Line.FIELD_YEARS;
+				case COLUMN_CREDIT:		if ((myLine != null) && (myLine.isCredit()))
+											return ((theStateType == StatementType.UNITS) 
+														? Statement.Line.FIELD_UNITS
+														: Statement.Line.FIELD_AMOUNT);
+										else return -1;
+				case COLUMN_DEBIT:		if ((myLine != null) && (!myLine.isCredit()))
+											return ((theStateType == StatementType.UNITS) 
+														? Statement.Line.FIELD_UNITS
+														: Statement.Line.FIELD_AMOUNT);
+										else return -1;
 				default:				return -1; 
 			}
 		}
@@ -565,7 +580,8 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 		public Object getValueAt(int row, int col) {
 			Statement.Line 	myLine;
 			Statement.Line	myNext;
-			Object          o;
+			Object          o		= null;
+			boolean			bShow 	= true;
 			
 			/* If this is the first row */
 			if (row == 0) { 
@@ -608,16 +624,16 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 									: myLine.getBalance();
 					break;
 				case COLUMN_CREDIT:  	
-					o = (myLine.isCredit()) ? ((theStateType == StatementType.UNITS)
+					bShow = myLine.isCredit();
+					if (bShow) o = ((theStateType == StatementType.UNITS)
 													? myLine.getUnits()
-						 							: myLine.getAmount())
-											: null;
+						 							: myLine.getAmount());
 					break;
 				case COLUMN_DEBIT:
-					o = (!myLine.isCredit()) ? ((theStateType == StatementType.UNITS)
+					bShow = !myLine.isCredit();
+					if (bShow) o = ((theStateType == StatementType.UNITS)
 													? myLine.getUnits()
-													: myLine.getAmount())
-											 : null;
+													: myLine.getAmount());
 					break;
 				case COLUMN_DESC:
 					o = myLine.getDesc();
@@ -639,7 +655,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 			}
 			
 			/* If we have a null value for an error field,  set error description */
-			if ((o == null) && (myLine.hasErrors(getFieldForCol(col))))
+			if ((o == null) && (bShow) && (myLine.hasErrors(getFieldForCell(row, col))))
 				o = Renderer.getError();
 			
 			/* Return to caller */
@@ -715,6 +731,10 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 			if (myLine.checkForHistory()) {
 				/* Note that the item has changed */
 				myLine.setState(DataState.CHANGED);
+
+				/* Validate the item and update the edit state */
+				myLine.clearErrors();
+				myLine.validate();
 				theLines.findEditState();
 			
 				/* Switch on the updated column */
@@ -737,6 +757,8 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 							selectRowWithScroll(myNewRowNo);
 							break;
 						}
+						fireTableRowsUpdated(row, row);
+						break;
 						
 					/* Recalculate balance if required */	
 					case COLUMN_CREDIT:
@@ -747,7 +769,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 						
 					/* else note that we have updated this cell */
 					default:
-						fireTableCellUpdated(row, col);
+						fireTableRowsUpdated(row, row);
 						break;
 				}
 
@@ -962,7 +984,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 			myRow = getPopupRow();
 			
 			/* If it is valid */
-			if (myRow >= 0) {
+			if ((!isHeader()) && (myRow >= 0)) {
 				/* Access the line and partner */
 				myLine = theTable.extractItemAt(myRow);
 				myAccount = myLine.getPartner();

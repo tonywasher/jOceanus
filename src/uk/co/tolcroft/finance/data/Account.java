@@ -61,6 +61,7 @@ public class Account extends DataItem {
 	private int 				  theActTypeId = -1;
 	private Event                 theEarliest  = null;
 	private Event                 theLatest    = null;
+	private AcctPrice             theInitPrice = null;
 	private boolean               isCloseable  = true;
 	private boolean               hasRates	   = false;
 	private boolean               hasPrices	   = false;
@@ -92,6 +93,7 @@ public class Account extends DataItem {
 	public  int	        getAliasId()  	{ return theAliasId; }
 	public  Event       getEarliest()  	{ return theEarliest; }
 	public  Event       getLatest()    	{ return theLatest; }
+	public  AcctPrice   getInitPrice()  { return theInitPrice; }
 	public  AccountType getActType()   	{ return getObj().getType(); }
 	public  int         getOrder()     	{ return theOrder; }
 	public  Date        getMaturity()  	{ return getObj().getMaturity(); }
@@ -711,8 +713,7 @@ public class Account extends DataItem {
 	}
 	
 	/**
-	 * Get the value of an account on a specific date
-	 * 
+	 * Get the value of an account on a specific date 
 	 * @param  pDate    The date of the valuation
 	 * @return Valuation of account
 	 */
@@ -767,6 +768,7 @@ public class Account extends DataItem {
 		isCloseable   = true;
 		theEarliest   = null;
 		theLatest     = null;
+		theInitPrice  = null;
 		hasRates      = false;
 		hasPrices     = false;
 		hasPatterns   = false;
@@ -787,23 +789,25 @@ public class Account extends DataItem {
 	/**
 	 * Touch an account with a rate
 	 */
-	public void touchRate() {
+	protected void touchRate() {
 		/* Record the rate */
 		hasRates = true;
 	}
 		
 	/**
-	 * Touch an account with a pattern
+	 * Touch an account with a price
+	 * @param pPrice the price
 	 */
-	public void touchPrice() {
+	public void touchPrice(AcctPrice pPrice) {
 		/* Record the price */
 		hasPrices = true;
+		if (theInitPrice == null) theInitPrice = pPrice;
 	}
 		
 	/**
 	 * Touch an account with a pattern
 	 */
-	public void touchPattern() {
+	protected void touchPattern() {
 		/* Record the pattern */
 		hasPatterns = true;
 	}
@@ -1097,13 +1101,14 @@ public class Account extends DataItem {
 	
 	/**
 	 * Update base account from an edited account 
-	 * 
 	 * @param pAccount the edited account 
+	 * @return whether changes have been made
 	 */
-	public void applyChanges(DataItem pAccount) {
+	public boolean applyChanges(DataItem pAccount) {
 		Account myAccount 	= (Account)pAccount;
 		Values	myObj		= getObj();
 		Values	myNew		= myAccount.getObj();
+		boolean bChanged	= false;
 		
 		/* Store the current detail into history */
 		pushHistory();
@@ -1161,7 +1166,14 @@ public class Account extends DataItem {
 			myObj.setNotes(myNew.getNotes());
 		
 		/* Check for changes */
-		if (checkForHistory()) setState(DataState.CHANGED);
+		if (checkForHistory()) {
+			/* Set changed status */
+			setState(DataState.CHANGED);
+			bChanged = true;
+		}
+		
+		/* Return to caller */
+		return bChanged;
 	}
 
 	/**

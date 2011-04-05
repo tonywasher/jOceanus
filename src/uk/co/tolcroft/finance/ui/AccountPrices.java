@@ -23,6 +23,7 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 	private AccountTab					theParent   		= null;
 	private Date.Range					theRange			= null;
 	private Account             		theAccount  		= null;
+	private AccountSet					theViewSet			= null;
 	private AccountPrices				theTable	    	= this;
 	private pricesMouse					theMouse			= null;
 	private pricesColumnModel			theColumns			= null;
@@ -63,8 +64,9 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 		GroupLayout		 	       	myLayout;
 			
 		/* Store details about the parent */
-		theParent = pParent;
-		theView   = pParent.getView();
+		theParent  = pParent;
+		theView    = pParent.getView();
+		theViewSet = pParent.getViewSet();
 
 		/* Create the model and declare it to our superclass */
 		theModel  = new PricesModel();
@@ -136,9 +138,8 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 	 * Save changes from the view into the underlying data
 	 */
 	public void saveData() {
-		if (thePrices != null) {
-			thePrices.applyChanges();
-		}
+		/* Just update the debug, save has already been done */
+		updateDebug();
 	}
 	
 	/**
@@ -171,6 +172,7 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 		thePrices  = new ViewPrice.List(theView, pAccount);
 		theColumns.setColumnSelection();
 		super.setList(thePrices);
+		theViewSet.setPrices(thePrices);
 	}
 		
 	/* Prices table model */
@@ -209,9 +211,10 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 			
 		/**
 		 * Obtain the Field id associated with the column
+		 * @param row the row
 		 * @param column the column
 		 */
-		public int getFieldForCol(int column) {
+		public int getFieldForCell(int row, int column) {
 			/* Switch on column */
 			switch (column) {
 				case COLUMN_DATE: 	return AcctPrice.FIELD_DATE;
@@ -257,7 +260,7 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 			}
 			
 			/* If we have a null value for an error field,  set error description */
-			if ((o == null) && (myPrice.hasErrors(getFieldForCol(col))))
+			if ((o == null) && (myPrice.hasErrors(getFieldForCell(row, col))))
 				o = Renderer.getError();
 			
 			/* Return to caller */
@@ -306,6 +309,10 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 			if (myPrice.checkForHistory()) {
 				/* Set new state */
 				myPrice.setState(DataState.CHANGED);
+				
+				/* Validate the item and update the edit state */
+				myPrice.clearErrors();
+				myPrice.validate();
 				thePrices.findEditState();
 				
 				/* Switch on the updated column */
@@ -327,9 +334,9 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 					
 						/* else fall through */
 		
-					/* else note that we have updated this cell */
+					/* else note that we have updated this row */
 					default:
-						fireTableCellUpdated(row, col);
+						fireTableRowsUpdated(row, row);
 						break;
 				}
 			

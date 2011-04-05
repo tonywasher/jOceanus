@@ -873,11 +873,12 @@ public class TaxYear extends DataItem {
 	
 	/**
 	 * Update taxYear from a taxYear extract 
-	 * 
 	 * @param pTaxYear the changed taxYear 
+	 * @return whether changes have been made
 	 */
-	public void applyChanges(DataItem pTaxYear) {
+	public boolean applyChanges(DataItem pTaxYear) {
 		TaxYear myTaxYear = (TaxYear)pTaxYear;
+		boolean bChanged  = false;
 		
 		/* Store the current detail into history */
 		pushHistory();
@@ -963,7 +964,14 @@ public class TaxYear extends DataItem {
 			setHiCapTaxRate(myTaxYear.getHiCapTaxRate());
 		
 		/* Check for changes */
-		if (checkForHistory()) setState(DataState.CHANGED);
+		if (checkForHistory()) {
+			/* Mark as changed */
+			setState(DataState.CHANGED);
+			bChanged = true;
+		}
+		
+		/* Return to caller */
+		return bChanged;
 	}
 
 	/* The Tax Year List class */

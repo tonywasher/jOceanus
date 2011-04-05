@@ -49,7 +49,7 @@ public class SpotPrices implements htmlDumpable {
 		myBase.applyChanges(this);
 		
 		/* Analyse the data */
-		theView.analyseData();
+		theView.analyseData(false);
 		
 		/* Refresh windows */
 		theView.refreshWindow();

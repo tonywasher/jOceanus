@@ -332,12 +332,13 @@ public class AcctRate extends DataItem {
 	}
 
 	/**
-	 * Update Rate from a Rate extract 
-	 * 
+	 * Update Rate from a Rate extract  
 	 * @param pRate the updated item 
+	 * @return whether changes have been made
 	 */
-	public void applyChanges(DataItem pRate) {
-		AcctRate myRate =  (AcctRate)pRate;
+	public boolean applyChanges(DataItem pRate) {
+		AcctRate myRate 	=  (AcctRate)pRate;
+		boolean  bChanged	= false;
 
 		/* Store the current detail into history */
 		pushHistory();
@@ -355,7 +356,14 @@ public class AcctRate extends DataItem {
 			setEndDate(myRate.getEndDate());
 
 		/* Check for changes */
-		if (checkForHistory()) setState(DataState.CHANGED);
+		if (checkForHistory()) {
+			/* Mark as changed */
+			setState(DataState.CHANGED);
+			bChanged = true;
+		}
+		
+		/* Return to caller */
+		return bChanged;
 	}
 
 	public static class List  	extends DataList<AcctRate> {

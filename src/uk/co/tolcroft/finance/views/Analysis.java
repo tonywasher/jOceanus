@@ -1659,8 +1659,14 @@ public class Analysis {
 			/* Obtain the appropriate price record */
 			myActPrice = myPrices.getLatestPrice(getAccount(), pDate);
 			
-			/* Store the price */
-			thePrice = myActPrice.getPrice();
+			/* If we found a price */
+			if (myActPrice != null) {
+				/* Store the price */
+				thePrice = myActPrice.getPrice();
+			}
+			
+			/* else (can happen at present until we lock it down TODO) */
+			else thePrice = new Price(0);
 			
 			/* Calculate the value */
 			setValue(theUnits.valueAtPrice(thePrice));

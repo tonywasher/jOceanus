@@ -241,57 +241,61 @@ public class AccountType extends DataItem {
 			theClass = AccountClass.UNITISA;
 			theOrder = 11;
 		}
-		else if (sName.equals("Asset")) {
-			theClass = AccountClass.ASSETS;
+		else if (sName.equals("Car")) {
+			theClass = AccountClass.CAR;
 			theOrder = 12;
+		}
+		else if (sName.equals("House")) {
+			theClass = AccountClass.HOUSE;
+			theOrder = 13;
 		}
 		else if (sName.equals("Endowment")) {
 			theClass = AccountClass.ENDOWMENT;
-			theOrder = 13;
+			theOrder = 14;
 		}
 		else if (sName.equals("CreditCard")) {
 			theClass = AccountClass.CREDITCARD;
-			theOrder = 14;
+			theOrder = 15;
 		}
 		else if (sName.equals("Debts")) {
 			theClass = AccountClass.DEBTS;
-			theOrder = 15;
+			theOrder = 16;
 		}
 		else if (sName.equals("Deferred")) {
 			theClass = AccountClass.DEFERRED;
-			theOrder = 16;
+			theOrder = 17;
 		}
 		else if (sName.equals("Employer")) {
 			theClass = AccountClass.EMPLOYER;
-			theOrder = 17;
+			theOrder = 18;
 		}
 		else if (sName.equals("Cash")) {
 			theClass = AccountClass.CASH;
-			theOrder = 18;
+			theOrder = 19;
 		}
 		else if (sName.equals("TaxMan")) {
 			theClass = AccountClass.TAXMAN;
-			theOrder = 19;
+			theOrder = 20;
 		}
 		else if (sName.equals("Inheritance")) {
 			theClass = AccountClass.INHERITANCE;
-			theOrder = 20;
+			theOrder = 21;
 		}
 		else if (sName.equals("WriteOff")) {
 			theClass = AccountClass.WRITEOFF;
-			theOrder = 21;
+			theOrder = 22;
 		}
 		else if (sName.equals("Benefit")) {
 			theClass = AccountClass.BENEFIT;
-			theOrder = 22;
+			theOrder = 23;
 		}
 		else if (sName.equals("External")) {
 			theClass = AccountClass.EXTERNAL;
-			theOrder = 23;
+			theOrder = 24;
 		}
 		else if (sName.equals("Market")) {
 			theClass = AccountClass.MARKET;
-			theOrder = 24;
+			theOrder = 25;
 		}
 		else {
 			throw new Exception(ExceptionClass.DATA,
@@ -401,7 +405,8 @@ public class AccountType extends DataItem {
 	 */
 	public boolean isPriced() {
 		switch (theClass) {
-			case ASSETS:
+			case HOUSE:
+			case CAR:
 			case SHARES:
 			case LIFEBOND:
 			case UNITTRUST:
@@ -997,9 +1002,14 @@ public class AccountType extends DataItem {
 		UNITISA,
 
 		/**
-		 * Assets
+		 * Car
 		 */
-		ASSETS,
+		CAR,
+
+		/**
+		 * House
+		 */
+		HOUSE,
 
 		/**
 		 * Debts

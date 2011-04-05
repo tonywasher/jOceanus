@@ -442,9 +442,10 @@ public class Extract extends FinanceTable<Event> {
 			
 		/**
 		 * Obtain the Field id associated with the column
+		 * @param row the row
 		 * @param column the column
 		 */
-		public int getFieldForCol(int column) {
+		public int getFieldForCell(int row, int column) {
 			/* Switch on column */
 			switch (column) {
 				case COLUMN_DATE: 		return Event.FIELD_DATE;
@@ -561,7 +562,7 @@ public class Extract extends FinanceTable<Event> {
 			}
 			
 			/* If we have a null value for an error field,  set error description */
-			if ((o == null) && (myEvent.hasErrors(getFieldForCol(col))))
+			if ((o == null) && (myEvent.hasErrors(getFieldForCell(row, col))))
 				o = Renderer.getError();
 			
 			/* Return to caller */
@@ -638,8 +639,12 @@ public class Extract extends FinanceTable<Event> {
 			if (myEvent.checkForHistory()) {
 				/* Note that the item has changed */
 				myEvent.setState(DataState.CHANGED);
+
+				/* Validate the item and update the edit state */
+				myEvent.clearErrors();
+				myEvent.validate();
 				theEvents.findEditState();
-				
+			
 				/* Switch on the updated column */
 				switch (col) {
 					/* If we have changed a sorting column */
@@ -664,7 +669,7 @@ public class Extract extends FinanceTable<Event> {
 						
 					/* else note that we have updated this cell */
 					default:
-						fireTableCellUpdated(row, col);
+						fireTableRowsUpdated(row, row);
 						break;
 				}
 				

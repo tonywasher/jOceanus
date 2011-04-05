@@ -30,6 +30,7 @@ public class AccountRates extends FinanceTable<AcctRate> {
 	private AccountTab				theParent   	= null;
 	private Date.Range				theRange		= null;
 	private Account                 theAccount  	= null;
+	private AccountSet				theViewSet		= null;
 	private View.ViewRates			theExtract		= null;
 	private DebugEntry				theDebugEntry	= null;
 	private ErrorPanel				theError		= null;
@@ -63,8 +64,9 @@ public class AccountRates extends FinanceTable<AcctRate> {
 		GroupLayout		 	myLayout;
 		
 		/* Store details about the parent */
-		theParent = pParent;
-		theView   = pParent.getView();
+		theParent  = pParent;
+		theView    = pParent.getView();
+		theViewSet = pParent.getViewSet();
 
 		/* Create the table model and declare it to our superclass */
 		theModel  = new RatesModel();
@@ -121,9 +123,8 @@ public class AccountRates extends FinanceTable<AcctRate> {
 	 * Save changes from the view into the underlying data
 	 */
 	public void saveData() {
-		if (theExtract != null) {
-			theExtract.applyChanges();
-		}
+		/* Just update the debug, save has already been done */
+		updateDebug();
 	}
 	
 	/**
@@ -172,6 +173,7 @@ public class AccountRates extends FinanceTable<AcctRate> {
 		theAccount = pAccount;
 		theRates   = theExtract.getRates();
 		setList(theRates);
+		theViewSet.setRates(theExtract);
 	}
 		
 	/* Rates table model */
@@ -209,9 +211,10 @@ public class AccountRates extends FinanceTable<AcctRate> {
 			
 		/**
 		 * Obtain the Field id associated with the column
+		 * @param row the row
 		 * @param column the column
 		 */
-		public int getFieldForCol(int column) {
+		public int getFieldForCell(int row, int column) {
 			/* Switch on column */
 			switch (column) {
 				case COLUMN_RATE: 	return AcctRate.FIELD_RATE;
@@ -252,7 +255,7 @@ public class AccountRates extends FinanceTable<AcctRate> {
 			}
 			
 			/* If we have a null value for an error field,  set error description */
-			if ((o == null) && (myRate.hasErrors(getFieldForCol(col))))
+			if ((o == null) && (myRate.hasErrors(getFieldForCell(row, col))))
 				o = Renderer.getError();
 			
 			/* Return to caller */
@@ -302,11 +305,15 @@ public class AccountRates extends FinanceTable<AcctRate> {
 			if (myRate.checkForHistory()) {
 				/* Set changed status */
 				myRate.setState(DataState.CHANGED);
+
+				/* Validate the item and update the edit state */
+				myRate.clearErrors();
+				myRate.validate();
 				theRates.findEditState();
-			
+				
 				/* Switch on the updated column */
 				switch (col) {
-					/* if we have updated a sort col */
+					/* if we have updated a sort column */
 					case COLUMN_DATE:
 						/* Re-Sort the row */
 						myRate.reSort();
@@ -326,7 +333,7 @@ public class AccountRates extends FinanceTable<AcctRate> {
 			
 					/* else note that we have updated this cell */
 					default:
-						fireTableCellUpdated(row, col);
+						fireTableRowsUpdated(row, row);
 						break;
 				}
 			

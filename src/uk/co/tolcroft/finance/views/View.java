@@ -43,25 +43,31 @@ public class View {
 		/* Create an empty data set */
 		theData = new DataSet(theSecurity);
 		theData.calculateDateRange();
-		analyseData();
+		analyseData(false);
 	}
 	
-	/* Update the data for a view */ 
+	/**
+	 * Update the data for a view
+	 * @param pData the new data set
+	 */ 
 	public void setData(DataSet pData) {
 		/* Record the data */
 		theData = pData;
 		
 		/* Analyse the data */
-		analyseData();
+		analyseData(false);
 		
 		/* Refresh the windows */
 		refreshWindow();
 	}
 	
-	/* initialise the view from the data */ 
-	public void analyseData() {
+	/**
+	 * Analyse the data in the view
+	 * @param bPreserve preserve any error
+	 */ 
+	protected boolean analyseData(boolean bPreserve) {
 		/* Clear the error */
-		theError = null;
+		if (!bPreserve) theError = null;
 		
 		/* Access the range */
 		theRange = theData.getDateRange();
@@ -77,19 +83,25 @@ public class View {
 		
 		/* Catch any exceptions */
 		catch (Exception e) {
-			theError = e;
+			if (!bPreserve) theError = e;
 		}	
 
 		/* Catch any exceptions */
 		catch (Throwable e) {
 			/* Report the failure */
-			theError = new Exception(ExceptionClass.DATA,
-								     "Failed to analyse data",
-								     e);
+			if (!bPreserve)
+				theError = new Exception(ExceptionClass.DATA,
+								     	 "Failed to analyse data",
+								     	 e);
 		}	
+		
+		/* Return whether there was success */
+		return (theError == null);
 	}
 	
-	/* refresh the window view */ 
+	/**
+	 *  refresh the window view
+	 */ 
 	protected void refreshWindow() {
 		/* Protect against exceptions */
 		try {
@@ -165,17 +177,35 @@ public class View {
 			/* Access base details */
 			myBase = theData.getTaxYears();
 			
-			/* Apply the changes from this list */
-			myBase.applyChanges(this);
+			/* Prepare the changes from this list */
+			myBase.prepareChanges(this);
 			
 			/* Update Range details */
 			theData.calculateDateRange();
 			
 			/* analyse the data */
-			analyseData();
+			boolean bSuccess = analyseData(false); 
 			
-			/* Refresh windows */
-			refreshWindow();
+			/* If we were successful */
+			if (bSuccess) {
+				/* Commit the changes */
+				myBase.commitChanges(this);
+
+				/* Refresh windows */
+				refreshWindow();
+			}
+	
+			/* else we failed */
+			else {
+				/* Rollback the changes */ 
+				myBase.rollBackChanges(this);
+				
+				/* Update Range details */
+				theData.calculateDateRange();
+				
+				/* Re-analyse the data */
+				analyseData(true);
+			}
 		}
 	}
 	
@@ -221,8 +251,12 @@ public class View {
 				thePrices = new AcctPrice.List(theData, ListStyle.EDIT);
 				
 				/* Add a default £1 price for this account on this date */
-				try { thePrices.addItem(theAccount, new Date(), new Price(Price.convertToValue(1))); } catch (Throwable e) {}
-				theAccount.touchPrice();
+				try { 
+					AcctPrice myPrice = thePrices.addItem(theAccount, 
+														  new Date(), 
+														  new Price(Price.convertToValue(1)));
+					theAccount.touchPrice(myPrice);
+				} catch (Throwable e) {}
 			}
 		}
 		
@@ -238,14 +272,31 @@ public class View {
 			myPrices	= theData.getPrices();
 			
 			/* Apply the changes */
-			myBase.applyChanges(this);
-			if (thePrices != null) myPrices.applyChanges(thePrices); 
+			myBase.prepareChanges(this);
+			if (thePrices != null) myPrices.prepareChanges(thePrices); 
 				
 			/* analyse the data */
-			analyseData(); 
+			boolean bSuccess = analyseData(false); 
 			
-			/* Refresh windows */
-			refreshWindow();
+			/* If we were successful */
+			if (bSuccess) {
+				/* Commit the changes */
+				myBase.commitChanges(this);
+				if (thePrices != null) myPrices.commitChanges(thePrices); 
+
+				/* Refresh windows */
+				refreshWindow();
+			}
+	
+			/* else we failed */
+			else {
+				/* Rollback the changes */ 
+				if (thePrices != null) myPrices.rollBackChanges(thePrices); 
+				myBase.rollBackChanges(this);
+				
+				/* Re-analyse the data */
+				analyseData(true);
+			}
 		}
 		
 		/**
@@ -272,20 +323,31 @@ public class View {
 		}
 				
 		/** 
-		 * Apply changes in a Rates view back into the core data
+		 * Prepare changes in a Rates view back into the core data
 		 */
-		public void applyChanges() {
+		protected void prepareChanges() {
 			AcctRate.List myBase;
 			
 			/* Access base details */
 			myBase     = theData.getRates();
 			
 			/* Apply the changes */
-			myBase.applyChanges(this);
+			myBase.prepareChanges(this);
+		}
+
+		/** 
+		 * Commit/RollBack changes in a patterns view back into the core data
+		 * @param bCommit <code>true/false</code>
+		 */
+		protected void commitChanges(boolean bCommit) {
+			AcctRate.List myBase;
 			
-			/*
-			 * Analyse and refresh are performed in the statement view
-			 */
+			/* Access base details */
+			myBase     = theData.getRates();
+			
+			/* Commit /RollBack the changes */
+			if (bCommit)	myBase.commitChanges(this);
+			else			myBase.rollBackChanges(this);
 		}
 
 		/**
@@ -321,20 +383,31 @@ public class View {
 		}
 				
 		/** 
-		 * Apply changes in a patterns view back into the core data
+		 * Prepare changes in a patterns view back into the core data
 		 */
-		public void applyChanges() {
+		protected void prepareChanges() {
 			Pattern.List myBase;
 			
 			/* Access base details */
 			myBase     = theData.getPatterns();
 			
-			/* Apply the changes */
-			myBase.applyChanges(this);
+			/* Prepare the changes */
+			myBase.prepareChanges(this);
+		}
+
+		/** 
+		 * Commit/RollBack changes in a patterns view back into the core data
+		 * @param bCommit <code>true/false</code>
+		 */
+		protected void commitChanges(boolean bCommit) {
+			Pattern.List myBase;
 			
-			/*
-			 * Analyse and refresh are performed in the statement view
-			 */
+			/* Access base details */
+			myBase     = theData.getPatterns();
+			
+			/* Commit /RollBack the changes */
+			if (bCommit)	myBase.commitChanges(this);
+			else			myBase.rollBackChanges(this);
 		}
 
 		/**
@@ -473,13 +546,28 @@ public class View {
 			myBase = getData().getEvents();
 			
 			/* Apply the changes from this list */
-			myBase.applyChanges(this);
+			myBase.prepareChanges(this);
 			
 			/* analyse the data */
-			analyseData();
+			boolean bSuccess = analyseData(false);
 			
-			/* Refresh windows */
-			refreshWindow();
+			/* If we were successful */
+			if (bSuccess) {
+				/* Commit the changes */
+				myBase.commitChanges(this);
+
+				/* Refresh windows */
+				refreshWindow();
+			}
+	
+			/* else we failed */
+			else {
+				/* Rollback the changes */ 
+				myBase.rollBackChanges(this);
+				
+				/* Re-analyse the data */
+				analyseData(true);
+			}
 		}
 	}
 	

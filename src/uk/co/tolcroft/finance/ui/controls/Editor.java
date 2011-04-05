@@ -30,7 +30,8 @@ public class Editor {
 													  boolean isSelected,
 													  int     row,
 													  int     col) {
-			theField.setText((String)value);
+			theField.setText(((value == null) || (value == Renderer.theError))
+							 ? "" : (String)value);
 			return theField;
 		}
 	
@@ -67,7 +68,8 @@ public class Editor {
 													  boolean isSelected,
 													  int     row,
 													  int     col) {
-			theField.setText(Integer.toString((Integer)value));
+			theField.setText(((value == null) || (value == Renderer.theError))
+							 ? "" : Integer.toString((Integer)value));
 			return theField;
 		}
 	

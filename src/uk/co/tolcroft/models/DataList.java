@@ -725,6 +725,73 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>
 	}
 		
 	/** 
+	 * Prepare changes in an edit view back into the core data
+	 * @param pChanges - edit view with changes to apply
+	 */
+	@SuppressWarnings("unchecked")
+	public void prepareChanges(DataList<?> pChanges) {
+		DataList<?>.ListIterator 	myIterator;
+		DataItem					myCurr;
+		T							myItem;
+			
+		/* Create an iterator for the changes list */
+		myIterator = pChanges.listIterator(true);
+			
+		/* Loop through the elements */
+		while ((myCurr = myIterator.next()) != null) {		
+			/* Switch on the state */
+			switch (myCurr.getState()) {
+				/* Ignore the item if it is clean or DELNEW */
+				case CLEAN:
+				case DELNEW:
+					break;
+					
+				/* If this is a new item, add it to the list */
+				case NEW:
+					/* Link this item to the new item */
+					myCurr.setBase(addNewItem(myCurr));
+					break;
+						
+				/* If this is a deleted or deleted-changed item */
+				case DELETED:
+				case DELCHG:
+					/* Access the underlying item and mark as deleted */
+					myItem = (T)myCurr.getBase();					
+					myItem.setState(DataState.DELETED);
+					break;
+						
+				/* If this is a recovered item */
+				case RECOVERED:
+					/* Access the underlying item and mark as restored */
+					myItem = (T)myCurr.getBase();					
+					myItem.setState(DataState.RECOVERED);
+					myItem.setRestoring(true);
+					break;
+						
+				/* If this is a changed item */
+				case CHANGED:
+					/* Access underlying item */
+					myItem = (T)myCurr.getBase();
+					
+					/* Apply changes and note if history has been applied */
+					if (myItem.applyChanges(myCurr))
+						myItem.setChangeing(true);
+					
+					/* Note if we are restoring an item */
+					if (myItem.isDeleted())	
+						myItem.setRestoring(true);
+					
+					/* Set new state */
+					myItem.setState(DataState.CHANGED);
+						
+					/* Re-sort the item */
+					reSort(myItem);
+					break;
+			}
+		}
+	}
+		
+	/** 
 	 * RollBack changes in an edit view that have been applied to core data
 	 * @param pChanges - edit view with changes that have been applied
 	 */
@@ -766,17 +833,28 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>
 					/* Access the underlying item and mark as deleted */
 					myItem = myCurr.getBase();					
 					myItem.setState(DataState.DELETED);
+					myItem.setRestoring(false);
 					break;
 						
 				/* If this is a changed item */
 				case CHANGED:
-					/* Access underlying item, pop the applied change */
-					myItem = myCurr.getBase();					
-					myItem.popHistory();
+					/* Access underlying item */
+					myItem = myCurr.getBase();
+					
+					/* If we were changing pop the changes */
+					if (myItem.isChangeing())
+						myItem.popHistory();
+					
+					/* If we were restoring */
+					if (myItem.isRestoring()) {
+						/* Set the item to be deleted again */
+						myItem.setState(DataState.DELETED);
+						myItem.setRestoring(false);
+					}
 					
 					/* If the item is now clean */
-					if (!myItem.hasHistory()) {
-						/* Set the new status (TODO Check NEW state) */
+					else if (!myItem.hasHistory()) {
+						/* Set the new status */
 						myItem.setState(DataState.CLEAN);
 					}
 						
@@ -819,6 +897,7 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>
 				case CHANGED:
 					/* Clear history and set as a clean item */
 					myCurr.clearHistory();
+					myCurr.setRestoring(false);
 					myCurr.setState(DataState.CLEAN);
 					break;
 			}

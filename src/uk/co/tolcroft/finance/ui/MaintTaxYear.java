@@ -1245,6 +1245,10 @@ public class MaintTaxYear implements ActionListener,
 					/* Note that the item has changed */
 					theTaxYear.setState(DataState.CHANGED);
 					
+					/* validate it */
+					theTaxYear.clearErrors();
+					theTaxYear.validate();
+					
 					/* Note that changes have occurred */
 					notifyChanges();
 					updateDebug();
@@ -1365,6 +1369,10 @@ public class MaintTaxYear implements ActionListener,
 		if (theTaxYear.checkForHistory()) {
 			/* Note that the item has changed */
 			theTaxYear.setState(DataState.CHANGED);
+			
+			/* validate it */
+			theTaxYear.clearErrors();
+			theTaxYear.validate();
 			
 			/* Note that changes have occurred */
 			notifyChanges();

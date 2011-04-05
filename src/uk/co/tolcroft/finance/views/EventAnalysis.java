@@ -258,6 +258,11 @@ public class EventAnalysis {
 		while ((myLine = myIterator.next()) != null) {
 			/* Skip deleted lines */
 			if (myLine.isDeleted()) continue;
+
+			/* Ignore if it is not a valid event */
+			if (myLine.getPartner() == null) continue;
+			if (myLine.getTransType() == null) continue;
+			if (myLine.getAmount() == null) continue;
 			
 			/* Create an event from this line */
 			myEvent = new Event(myList, myLine);

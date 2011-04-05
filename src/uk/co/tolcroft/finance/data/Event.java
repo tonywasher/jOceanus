@@ -748,6 +748,23 @@ public class Event extends DataItem {
 			(!isValidEvent(myTransType, myDebit.getActType(), false)))
 				addError("Invalid debit account for transaction", FIELD_DEBIT);
 		
+		/* Check for valid priced credit account */
+		if ((myCredit != null) && (myCredit.isPriced())) {
+			/* If the date of this event is prior to the first price */
+			if ((myCredit.getInitPrice() != null) &&
+			    (getDate().compareTo(myCredit.getInitPrice().getDate()) < 0))
+				addError("Event Date is prior to first priced date for Credit Account", FIELD_DATE);
+		}
+		
+		/* Check for valid priced debit account */
+		if ((myDebit != null) && (myDebit.isPriced()) &&
+			(Account.differs(myCredit, myDebit))) {
+			/* If the date of this event is prior to the first price */
+			if ((myDebit.getInitPrice() != null) &&
+			    (getDate().compareTo(myDebit.getInitPrice().getDate()) < 0))
+				addError("Event Date is prior to first priced date for Debit Account", FIELD_DATE);
+		}
+		
 		/* If we have units */
 		if (myUnits != null) { 
 			/* If we have credit/debit accounts */
@@ -804,12 +821,13 @@ public class Event extends DataItem {
 				addError("Admin Charge requires non-zero Units", FIELD_UNITS);
 		}
 		
-		/* Money must not be negative */
-		if ((myAmount == null) ||
-			(!myAmount.isPositive())) { 
+		/* Money must not be null/negative */
+		if (myAmount == null) 
+			addError("Amount must be non-null", 
+				     FIELD_AMOUNT);
+		else if (!myAmount.isPositive()) 
 			addError("Amount cannot be negative", 
 					 FIELD_AMOUNT);
-		}
 		
 		/* Money must not be zero for stock split/demerger */
 		if ((myAmount != null) &&
@@ -975,7 +993,7 @@ public class Event extends DataItem {
 	public boolean isStockSplit() {
 		boolean myResult = false;
 	
-		/* Check for stocksplit */
+		/* Check for stock split */
 		if ((getTransType() != null) &&
 		    (getTransType().isStockSplit()))
 			myResult = true;
@@ -1235,29 +1253,32 @@ public class Event extends DataItem {
 	}
 	
 	/**
-	 * Update event from an element 
-	 * 
-	 * @param pItem the changed element 
+	 * Update event from an element  
+	 * @param pItem the changed element
+	 * @return whether changes have been made 
 	 */
-	public void applyChanges(DataItem pItem){
+	public boolean applyChanges(DataItem pItem){
+		boolean bChanged = false;
 		if (pItem instanceof Event) {
 			Event myEvent = (Event)pItem;
-			applyChanges(myEvent);
+			bChanged = applyChanges(myEvent);
 		}
 		else if (pItem instanceof Statement.Line) {
 			Statement.Line myLine = (Statement.Line)pItem;
-			applyChanges(myLine);
+			bChanged = applyChanges(myLine);
 		}
+		return bChanged;
 	}
 	
 	/**
 	 * Update event from a Statement Line 
-	 * 
 	 * @param pLine the changed line 
+	 * @return whether changes have been made
 	 */
-	private void applyChanges(Statement.Line pLine) {
-		Values				myObj	= getObj();
-		Statement.Values	myNew	= pLine.getObj();
+	private boolean applyChanges(Statement.Line pLine) {
+		Values				myObj		= getObj();
+		Statement.Values	myNew		= pLine.getObj();
+		boolean				bChanged	= false;
 
 		/* Store the current detail into history */
 		pushHistory();
@@ -1306,17 +1327,25 @@ public class Event extends DataItem {
 		}
 		
 		/* Check for changes */
-		if (checkForHistory()) setState(DataState.CHANGED);
+		if (checkForHistory()) {
+			/* Mark as changed */
+			setState(DataState.CHANGED);
+			bChanged = true;
+		}
+		
+		/* Return to caller */
+		return bChanged;
 	}
 	
 	/**
-	 * Update event from an Event extract 
-	 * 
+	 * Update event from an Event extract  
 	 * @param pEvent the changed event 
+	 * @return whether changes have been made
 	 */
-	private void applyChanges(Event pEvent) {
+	private boolean applyChanges(Event pEvent) {
 		Values	myObj		= getObj();
 		Values	myNew		= pEvent.getObj();
+		boolean bChanged	= false;
 
 		/* Store the current detail into history */
 		pushHistory();
@@ -1362,7 +1391,14 @@ public class Event extends DataItem {
 			setDilution(pEvent.getDilution());
 				
 		/* Check for changes */
-		if (checkForHistory()) setState(DataState.CHANGED);
+		if (checkForHistory()) {
+			/* Mark as changed */
+			setState(DataState.CHANGED);
+			bChanged = true;
+		}
+		
+		/* Return to caller */
+		return bChanged;
 	}
 
 	/**

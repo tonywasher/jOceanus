@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.MouseListener;
 import java.util.Arrays;
 
 import javax.swing.JComboBox;
@@ -119,6 +120,19 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 		theScroll.getRowHeader().setPreferredSize(new Dimension(30, 200));
 		theScroll.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, 
 							theRowHdrTable.getTableHeader());
+	}
+	
+	/**
+	 * Set the table model
+	 * @param pModel the table model
+	 */
+	public void addMouseListener(MouseListener pListener) {
+		/* Pass call on */
+		super.addMouseListener(pListener);
+		
+		/* Listen for the row header table as well */
+		if (theRowHdrTable != null)
+			theRowHdrTable.addMouseListener(pListener);
 	}
 	
 	/**
@@ -339,6 +353,9 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 		/* Determine the row # allowing for header */
 		myRowNo = myItem.indexOf();
 		if (hasHeader()) myRowNo++;
+
+		/* Validate the new item */
+		myItem.validate();
 		
 		/* Notify of the insertion of the row */
 		theModel.fireInsertRowEvents(myRowNo);
@@ -722,6 +739,9 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 				validateAll();
 				break;
 		}
+		
+		/* Notify changes */
+		notifyChanges();
 	}
 	
 	/**
@@ -835,7 +855,7 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 		private static final long serialVersionUID = 3815818983288519203L;
 
 		/* Abstract methods */
-		public abstract int  	getFieldForCol(int iField);
+		public abstract int  	getFieldForCell(int row, int col);
 
 		/**
 		 * fire events for moving of a row
@@ -946,7 +966,7 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 			if (myIndex >= 0) {
 				/* Access the row */
 				myRow  = theList.get(myIndex);
-				iField = getFieldForCol(pData.getCol());
+				iField = getFieldForCell(iRow, pData.getCol());
 				
 				/* Has the field changed */
 				isChanged = myRow.fieldChanged(iField);
@@ -1059,16 +1079,16 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 		 */
 		protected int[] getColumnFields() {
 			/* Declare the field array */
-			int[] myFields = new int[getColumnCount()];
-			int   myCol;
-			
+			int[] 		myFields = new int[getColumnCount()];
+			int   		myCol;
+
 			/* Loop through the columns */
 			for(int i=0; i<myFields.length; i++){
 				/* Access the column index for this column */
 				myCol = getColumn(i).getModelIndex();
 				
 				/* Store the field # */
-				myFields[i] = theModel.getFieldForCol(myCol);			
+				myFields[i] = theModel.getFieldForCell(-1, myCol);			
 			}
 			
 			/* return the fields */

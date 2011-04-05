@@ -694,14 +694,15 @@ public class Pattern extends DataItem {
 	}
 
 	/**
-	 * Update Pattern from a pattern extract 
-	 * 
-	 * @param pPattern the pattern extract 
+	 * Update Pattern from a pattern extract  
+	 * @param pPattern the pattern extract
+	 * @return whether changes have been made 
 	 */
-	public void applyChanges(DataItem pPattern) {
+	public boolean applyChanges(DataItem pPattern) {
 		Pattern myPattern 	= (Pattern)pPattern;
 		Values	myObj		= getObj();
 		Values	myNew		= myPattern.getObj();
+		boolean bChanged	= false;
 		
 		/* Store the current detail into history */
 		pushHistory();
@@ -731,7 +732,14 @@ public class Pattern extends DataItem {
 			setDate(myPattern.getDate());
 		
 		/* Check for changes */
-		if (checkForHistory()) setState(DataState.CHANGED);
+		if (checkForHistory()) {
+			/* Marke as changed */
+			setState(DataState.CHANGED);
+			bChanged = true;
+		}
+		
+		/* Return to caller */
+		return bChanged;
 	}
 
 	/**

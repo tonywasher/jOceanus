@@ -74,10 +74,8 @@ public class StatementSelect implements	ItemListener {
 	
 	/* Lock/Unlock the selection */
 	public void setLockDown() {
-		boolean bLock = theParent.hasUpdates();
-		
 		/* Lock/Unlock the selection */
-		theStateBox.setEnabled(!bLock && (theType != StatementType.NULL));
+		theStateBox.setEnabled(theType != StatementType.NULL);
 	}
 
 	/* setSelection */

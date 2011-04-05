@@ -317,12 +317,13 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 		}
 			
 		/**
-		 * Obtain the Field id associated with the column
-		 * @param column the column
+		 * Obtain the Field id associated with the row
+		 * @param pRow the row
+		 * @param pCol the column
 		 */
-		public int getFieldForCol(int column) {
+		public int getFieldForCell(int pRow, int pCol) {
 			/* Switch on column */
-			switch (column) {
+			switch (pCol) {
 				case COLUMN_ASSET: 		return AcctPrice.FIELD_ACCOUNT;
 				case COLUMN_PRICE:		return AcctPrice.FIELD_PRICE;
 				default: 				return -1;
@@ -375,8 +376,8 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 					break;
 			}
 			
-			/* If we have a null value for an error field,  set error description */
-			if ((o == null) && (mySpot.hasErrors(getFieldForCol(col))))
+			/* If we have a null value */
+			if ((o == null) && (mySpot.hasErrors(getFieldForCell(row, col))))
 				o = Renderer.getError();
 			
 			/* Return to caller */
@@ -427,10 +428,14 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 			if (mySpot.checkForHistory()) {
 				/* Note that the item has changed */
 				mySpot.setState(DataState.CHANGED);
+
+				/* Validate the item and update the edit state */
+				mySpot.clearErrors();
+				mySpot.validate();
 				thePrices.findEditState();
-				
+			
 				/* note that we have updated this cell */
-				fireTableCellUpdated(row, col);
+				fireTableRowsUpdated(row, row);
 				
 				/* Note that changes have occurred */
 				notifyChanges();

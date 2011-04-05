@@ -93,6 +93,16 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
     private boolean             isDeleted	= false;
 
     /**
+	 * Is the item in the process of being changed
+	 */
+    private boolean             isChangeing	= false;
+
+    /**
+	 * Is the item in the process of being restored
+	 */
+    private boolean             isRestoring	= false;
+
+    /**
 	 * Storage for the List Node
 	 */
     private Object				theLink		= null;
@@ -162,11 +172,27 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 
 	/**
 	 * Determine whether the item is visible to standard searches
-	 * @return <code>true/false</code>
+	 * @param isDeleted <code>true/false</code>
 	 */
 	private void		setDeleted(boolean bDeleted) {
 		isDeleted = bDeleted;
 		theList.setHidden(this, isDeleted);
+	}
+
+	/**
+	 * Determine whether the item is in the process of being changed
+	 * @param isChangeing <code>true/false</code>
+	 */
+	protected void	setChangeing(boolean bChangeing) {
+		isChangeing = bChangeing;
+	}
+
+	/**
+	 * Determine whether the item is in the process of being restored
+	 * @param isRestoring <code>true/false</code>
+	 */
+	protected void	setRestoring(boolean bRestoring) {
+		isRestoring = bRestoring;
 	}
 
 	/**
@@ -180,6 +206,18 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * @return <code>true/false</code>
 	 */
 	public boolean		isDeleted()    	{ return isDeleted; }
+
+	/**
+	 * Determine whether the item is in the process of being changed
+	 * @return <code>true/false</code>
+	 */
+	protected boolean	isChangeing()   { return isChangeing; }
+
+	/**
+	 * Determine whether the item is in the process of being restored
+	 * @return <code>true/false</code>
+	 */
+	protected boolean	isRestoring()   { return isRestoring; }
 
 	/**
 	 * Determine whether the item is visible to standard searches
@@ -513,13 +551,23 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * Note that this item has been validated 
 	 */
 	public	  void			setValidEdit() {
-		if (isCoreDeleted())
-			theEdit = (isDeleted) ? EditState.CLEAN : EditState.VALID;
-		else if (isDeleted) 
-			theEdit = EditState.VALID;
-		else
-			theEdit = ((hasHistory()) || (getBase() == null)) 
-							? EditState.VALID : EditState.CLEAN;
+		switch (theList.getStyle()) {
+			case CORE:
+				if (theState == DataState.CLEAN) 
+					theEdit = EditState.CLEAN;
+				else
+					theEdit = EditState.DIRTY;
+				break;
+			default:
+				if (isCoreDeleted())
+					theEdit = (isDeleted) ? EditState.CLEAN : EditState.VALID;
+				else if (isDeleted) 
+					theEdit = EditState.VALID;
+				else
+					theEdit = ((hasHistory()) || (getBase() == null)) 
+									? EditState.VALID : EditState.CLEAN;
+				break;
+		}
 	}
 
 	/**
@@ -596,8 +644,9 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 *  Apply changes to the item from a changed version
 	 *  Overwritten by objects that have changes
 	 *  @param pElement the changed element
+	 *  @return were changes made
 	 */
-	public void applyChanges(DataItem pElement){};
+	public boolean applyChanges(DataItem pElement) { return false; };
 	
 	/**
 	 *  Validate the element
@@ -1236,7 +1285,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 					myErrors = addErrorText(myErrors, myCurr.getError());
 				}
 			}
-			return myErrors;
+			return (myErrors == null) ? null : myErrors + "</html>";
 		}
 		
 		/**
@@ -1272,7 +1321,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 			}
 			
 			/* Return errors */
-			return myErrors;
+			return (myErrors == null) ? null : myErrors + "</html>";
 		}
 		
 		/**
@@ -1282,10 +1331,10 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 		 */
 		private String addErrorText(String pCurrent, String pError) {
 			/* Return text if current is null */
-			if (pCurrent == null) return pError;
+			if (pCurrent == null) return "<html>" + pError;
 			
 			/* return with error appended */
-			return pCurrent + "\n" + pError;
+			return pCurrent + "<br>" + pError;
 		}
 		
 		/**

@@ -997,6 +997,10 @@ public class MaintAccount implements ActionListener,
 		if (theAccount.checkForHistory()) {
 			/* Note that the item has changed */
 			theAccount.setState(DataState.CHANGED);
+
+			/* validate it */
+			theAccount.clearErrors();
+			theAccount.validate();
 			
 			/* Note that changes have occurred */
 			notifyChanges();
@@ -1201,6 +1205,10 @@ public class MaintAccount implements ActionListener,
 			/* Note that the item has changed */
 			theAccount.setState(DataState.CHANGED);
 			
+			/* validate it */
+			theAccount.clearErrors();
+			theAccount.validate();
+			
 			/* Note that changes have occurred */
 			notifyChanges();
 			updateDebug();
@@ -1250,6 +1258,10 @@ public class MaintAccount implements ActionListener,
 			if (theAccount.checkForHistory()) {
 				/* Note that the item has changed */
 				theAccount.setState(DataState.CHANGED);
+				
+				/* validate it */
+				theAccount.clearErrors();
+				theAccount.validate();
 				
 				/* Note that changes have occurred */
 				notifyChanges();

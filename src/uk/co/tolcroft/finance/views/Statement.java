@@ -122,9 +122,9 @@ public class Statement implements htmlDumpable {
 	}
 	
 	/** 
-	 * Apply changes in a statement back into the underlying finance objects
+	 * Prepare changes in a statement back into the underlying finance objects
 	 */
-	public void applyChanges() {
+	protected void prepareChanges() {
 		Event.List  myBase;
 		DataSet		myData;
 		
@@ -133,13 +133,24 @@ public class Statement implements htmlDumpable {
 		myBase  = myData.getEvents();
 		
 		/* Apply the changes from this list */
-		myBase.applyChanges(theLines);
-					
-		/* analyse the data */
-		theView.analyseData();
+		myBase.prepareChanges(theLines);
+	}
+	
+	/** 
+	 * Commit/RollBack changes in a statement back into the underlying finance objects
+	 * @param bCommit <code>true/false</code>
+	 */
+	protected void commitChanges(boolean bCommit) {
+		Event.List  myBase;
+		DataSet		myData;
 		
-		/* Refresh windows */
-		theView.refreshWindow();
+		/* Access base details */
+		myData	= theView.getData();
+		myBase  = myData.getEvents();
+		
+		/* Commit /RollBack the changes */
+		if (bCommit)	myBase.commitChanges(theLines);
+		else			myBase.rollBackChanges(theLines);
 	}
 	
 	/**
@@ -285,7 +296,7 @@ public class Statement implements htmlDumpable {
 		public static final int FIELD_DILUTION 	= 9;
 		public static final int FIELD_TAXCREDIT	= 10;
 		public static final int FIELD_YEARS   	= 11;
-		public static final int NUMFIELDS	   	= 13;
+		public static final int NUMFIELDS	   	= 12;
 		
 		/**
 		 * Obtain the type of the item
@@ -359,7 +370,7 @@ public class Statement implements htmlDumpable {
 					myString +=	(isCredit() ? "true" : "false");
 					break;
 				case FIELD_TAXCREDIT: 	
-					myString += Money.format(getMoneyPairValue(myObj.getAmount()));	
+					myString += Money.format(getMoneyPairValue(myObj.getTaxCredit()));	
 					break;
 				case FIELD_YEARS:	
 					myString += myObj.getYears(); 
@@ -402,16 +413,16 @@ public class Statement implements htmlDumpable {
 			setBase(pEvent);
 			setState(DataState.CLEAN);
 
-			/* If the account is debited */
-			if (pAccount.compareTo(pEvent.getDebit()) == 0) {
-				myObj.setPartner(pEvent.getCredit());
-				isCredit   = false;
-			}
-			
-			/* If the Account is Credited */
-			else if (pAccount.compareTo(pEvent.getCredit()) == 0) {
+			/* If the account is credited */
+			if (pAccount.compareTo(pEvent.getCredit()) == 0) {
 				myObj.setPartner(pEvent.getDebit());
 				isCredit   = true;
+			}
+			
+			/* If the Account is debited */
+			else if (pAccount.compareTo(pEvent.getDebit()) == 0) {
+				myObj.setPartner(pEvent.getCredit());
+				isCredit   = false;
 			}
 		}
 					

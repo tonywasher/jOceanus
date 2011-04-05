@@ -33,6 +33,7 @@ public class AccountTab implements financePanel,
 	private AccountPatterns		thePatterns  	= null;
 	private AccountPrices		thePrices    	= null;
 	private AccountRates		theRates     	= null;
+	private AccountSet			theViewSet		= null;
 	private Account				theAccount   	= null;
 	private Account.List		theAcList	 	= null;
 	private SaveButtons  		theTabButs   	= null;
@@ -45,6 +46,7 @@ public class AccountTab implements financePanel,
 	public JPanel  		getPanel()   			  { return thePanel; }
 	public int  		getFieldForCol(int col)   { return -1; }
 	public ComboSelect	getComboList()			  { return theParent.getComboList(); }
+	public AccountSet	getViewSet()			  { return theViewSet; }
 	public DebugEntry	getDebugEntry()			  { return theDebugEntry; }
 	public DebugManager getDebugManager() 		  { return theParent.getDebugMgr(); }
 	public void 		printIt()				  { }
@@ -64,8 +66,11 @@ public class AccountTab implements financePanel,
 		DebugEntry			mySection;
 		
 		/* Record passed details */
-		theParent = pParent;
-		theView   = pParent.getView();
+		theParent 	= pParent;
+		theView   	= pParent.getView();
+		
+		/* Build the Account set */
+		theViewSet	= new AccountSet(theView);
 		
 		/* Create the top level debug entry for this view  */
 		DebugManager myDebugMgr = theView.getDebugMgr();
@@ -317,21 +322,20 @@ public class AccountTab implements financePanel,
 	 * Save changes from the view into the underlying data
 	 */
 	public void saveData() {
-		/* Validate the data */
-		validateAll();
-		if (!hasErrors()) {
-			/* Save details for the account */
-			if (theAccount != null)
-				theAccount.getBase().applyChanges(theAccount);
-			
-			/* Save details for the Rates/Prices/Patterns */
-			theRates.saveData();
-			thePrices.saveData();
-			thePatterns.saveData();
-			
-			/* Save the statement last since this will cascade data */
-			theStatement.saveData();
-		}
+		/* Apply changes in the view set */
+		theViewSet.applyChanges();
+
+		/* Access any error */
+		Exception myError = theView.getError();
+		
+		/* Show the error */
+		if (myError != null) theError.setError(myError);
+		
+		/* Update the debug of the underlying entries */
+		theRates.saveData();
+		thePatterns.saveData();
+		thePrices.saveData();
+		theStatement.saveData();
 	}
 		
 	/**
