@@ -530,6 +530,7 @@ public class Account extends DataItem {
 	protected boolean isCash()      { return getActType().isCash(); }
 	protected boolean isWriteOff()  { return getActType().isWriteOff(); }
 	protected boolean isEndowment() { return getActType().isEndowment(); }
+	protected boolean isOwner()   { return getActType().isOwner(); }
 	public	boolean isTaxFree()   { return getActType().isTaxFree(); }
 	public	boolean isUnitTrust() { return getActType().isUnitTrust(); }
 	public	boolean isDebt()      { return getActType().isDebt(); }
@@ -614,9 +615,9 @@ public class Account extends DataItem {
 				
 			/* if we have a parent */
 			if (getParent() != null) {
-				/* check that any parent is external */
-				if (!getParent().isExternal())
-					addError("Parent account must be external", FIELD_PARENT);
+				/* check that any parent is owner */
+				if (!getParent().isOwner())
+					addError("Parent account must be owner", FIELD_PARENT);
 			
 				/* If we are open then parent must be open */
 				if (!isClosed() && getParent().isClosed())

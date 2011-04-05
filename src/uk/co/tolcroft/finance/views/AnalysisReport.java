@@ -251,8 +251,11 @@ public class AnalysisReport {
 			myOutput.append(Report.makeMoneyItem(myAsset.getProfit()));
 			myOutput.append("</tr>");
 
-			/* Format the detail */
-			myDetail.append(makeCapitalEventReport(myAsset));
+			/* If this is not an Endowment */
+			if (!myType.isEndowment()) {
+				/* Format the detail */
+				myDetail.append(makeCapitalEventReport(myAsset));
+			}
 		}
 		
 		/* Access the totals */

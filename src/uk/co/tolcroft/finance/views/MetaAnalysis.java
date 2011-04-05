@@ -615,7 +615,6 @@ public class MetaAnalysis {
 				myBucket.subtractValues(pBucket);
 				break;
 			case MKTGROWTH:
-			case MKTINCOME:
 				/* Adjust the Market bucket */
 				myBucket = theList.getTransSummary(TaxClass.MARKET);
 				myBucket.addValues(pBucket);

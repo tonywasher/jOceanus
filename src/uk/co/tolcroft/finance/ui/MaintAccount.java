@@ -630,11 +630,8 @@ public class MaintAccount implements ActionListener,
 			/* Access the type */
 			myType = myAcct.getActType();
 			
-			/* Ignore the account if it is internal */
-			if (myType.isInternal()) continue;
-			
-			/* Ignore the account if it is special external */
-			if (myType.isSpecial()) continue;
+			/* Ignore the account if it is not an owner */
+			if (!myType.isOwner()) continue;
 			
 			/* Ignore the account if it is closed and we are not showing closed */
 			if (myAcct.isClosed() && (!doShowClosed)) continue;

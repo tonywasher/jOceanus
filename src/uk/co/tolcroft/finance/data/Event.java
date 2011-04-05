@@ -586,6 +586,11 @@ public class Event extends DataItem {
 				break;
 			case TRANSFER:
 				myResult = !pType.isExternal();
+				if (isCredit) myResult &= !pType.isEndowment();
+				break;
+			case ENDOWMENT:
+				if (!isCredit) myResult = (pType.isMoney() || pType.isDebt());
+				else myResult = pType.isEndowment();
 				break;
 			case CSHPAY:
 				isCredit = !isCredit;
@@ -609,7 +614,6 @@ public class Event extends DataItem {
 				break;
 			case EXTRATAX:
 			case INSURANCE:
-			case ENDOWMENT:
 				if (!isCredit) myResult = (pType.isMoney() || pType.isDebt());
 				else           myResult = (pType.isExternal() && !pType.isCash());
 				break;
@@ -630,10 +634,6 @@ public class Event extends DataItem {
 			case DEBTINTEREST:
 				if (!isCredit) myResult = (pType.isExternal() && !pType.isCash());
 				else           myResult = pType.isDebt();
-				break;
-			case MKTINCOME:
-				if (!isCredit) myResult = (pType.isExternal() && !pType.isCash());
-				else           myResult = pType.isEndowment();
 				break;
 			case WRITEOFF:
 				if (!isCredit) myResult = pType.isDebt();

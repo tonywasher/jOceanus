@@ -293,9 +293,13 @@ public class AccountType extends DataItem {
 			theClass = AccountClass.EXTERNAL;
 			theOrder = 24;
 		}
+		else if (sName.equals("Owner")) {
+			theClass = AccountClass.OWNER;
+			theOrder = 25;
+		}
 		else if (sName.equals("Market")) {
 			theClass = AccountClass.MARKET;
-			theOrder = 25;
+			theOrder = 26;
 		}
 		else {
 			throw new Exception(ExceptionClass.DATA,
@@ -368,6 +372,7 @@ public class AccountType extends DataItem {
 	public boolean isExternal() {
 		switch (theClass) {
 			case EXTERNAL:
+			case OWNER:
 			case EMPLOYER:
 			case INHERITANCE:
 			case CASH:
@@ -411,6 +416,7 @@ public class AccountType extends DataItem {
 			case LIFEBOND:
 			case UNITTRUST:
 			case UNITISA:
+			case ENDOWMENT:
 				return true;
 			default:
 				return false;
@@ -539,6 +545,7 @@ public class AccountType extends DataItem {
 			case LIFEBOND:
 			case UNITISA:
 			case CREDITCARD:
+			case ENDOWMENT:
 				return true;
 			default:
 				return false;
@@ -653,11 +660,18 @@ public class AccountType extends DataItem {
 	protected boolean isEmployer()    { return (theClass == AccountClass.EMPLOYER); }
 
 	/**
+	 * Determine whether the AccountType is Owner
+	 * 
+	 * @return <code>true</code> if the account is owner, <code>false</code> otherwise.
+	 */
+	public boolean isOwner()    { return (theClass == AccountClass.OWNER); }
+
+	/**
 	 * Determine whether the AccountType is endowment
 	 * 
 	 * @return <code>true</code> if the account is endowment, <code>false</code> otherwise.
 	 */
-	protected boolean isEndowment() { return (theClass == AccountClass.ENDOWMENT); }
+	public boolean isEndowment() { return (theClass == AccountClass.ENDOWMENT); }
 
 	/**
 	 * Determine whether the AccountType is deferred
@@ -1035,6 +1049,11 @@ public class AccountType extends DataItem {
 		 * Employer Account
 		 */
 		EMPLOYER,
+
+		/**
+		 * Asset Owner Account
+		 */
+		OWNER,
 
 		/**
 		 * Market

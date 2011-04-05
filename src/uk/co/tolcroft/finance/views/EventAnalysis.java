@@ -768,6 +768,7 @@ public class EventAnalysis {
 				break;
 			/* Process standard transfer in/out */
 			case TRANSFER:
+			case ENDOWMENT:
 			case EXPENSE:
 			case INHERITED:
 			case TAXFREEINCOME:

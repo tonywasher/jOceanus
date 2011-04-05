@@ -227,133 +227,129 @@ public class TransactionType extends DataItem {
 			theClass = TransClass.RENTALINCOME;
 			theOrder = 6;
 		}
-		else if (sName.equals("MarketIncome")) {
-			theClass = TransClass.MKTINCOME;
-			theOrder = 7;
-		}
 		else if (sName.equals("Benefit")) {
 			theClass = TransClass.BENEFIT;
-			theOrder = 8;
+			theOrder = 7;
 		}
 		else if (sName.equals("TaxRefund")) {
 			theClass = TransClass.TAXREFUND;
-			theOrder = 9;
+			theOrder = 8;
 		}
 		else if (sName.equals("Recovered")) {
 			theClass = TransClass.RECOVERED;
-			theOrder = 10;
+			theOrder = 9;
 		}
 		else if (sName.equals("TaxRelief")) {
 			theClass = TransClass.TAXRELIEF;
-			theOrder = 11;
+			theOrder = 10;
 		}
 		else if (sName.equals("StockDemerger")) {
 			theClass = TransClass.STOCKDEMERGER;
-			theOrder = 12;
+			theOrder = 11;
 		}
 		else if (sName.equals("AdminCharge")) {
 			theClass = TransClass.ADMINCHARGE;
-			theOrder = 13;
+			theOrder = 12;
 		}
 		else if (sName.equals("StockSplit")) {
 			theClass = TransClass.STOCKSPLIT;
-			theOrder = 14;
+			theOrder = 13;
 		}
 		else if (sName.equals("StockRightTaken")) {
 			theClass = TransClass.STOCKRIGHTTAKEN;
-			theOrder = 15;
+			theOrder = 14;
 		}
 		else if (sName.equals("StockRightWaived")) {
 			theClass = TransClass.STOCKRIGHTWAIVED;
-			theOrder = 16;
+			theOrder = 15;
 		}
 		else if (sName.equals("CashTakeover")) {
 			theClass = TransClass.CASHTAKEOVER;
-			theOrder = 17;
+			theOrder = 16;
 		}
 		else if (sName.equals("StockTakeover")) {
 			theClass = TransClass.STOCKTAKEOVER;
-			theOrder = 18;
+			theOrder = 17;
 		}
 		else if (sName.equals("TaxableGain")) {
 			theClass = TransClass.TAXABLEGAIN;
-			theOrder = 19;
+			theOrder = 18;
 		}
 		else if (sName.equals("Transfer")) {
 			theClass = TransClass.TRANSFER;
-			theOrder = 20;
+			theOrder = 19;
 		}
 		else if (sName.equals("CashRecovery")) {
 			theClass = TransClass.CSHRECOVER;
-			theOrder = 21;
+			theOrder = 20;
 		}
 		else if (sName.equals("CashPayment")) {
 			theClass = TransClass.CSHPAY;
-			theOrder = 22;
+			theOrder = 21;
 		}
 		else if (sName.equals("Expense")) {
 			theClass = TransClass.EXPENSE;
-			theOrder = 23;
+			theOrder = 22;
 		}
 		else if (sName.equals("Endowment")) {
 			theClass = TransClass.ENDOWMENT;
-			theOrder = 24;
+			theOrder = 23;
 		}
 		else if (sName.equals("Mortgage")) {
 			theClass = TransClass.MORTGAGE;
-			theOrder = 25;
+			theOrder = 24;
 		}
 		else if (sName.equals("Insurance")) {
 			theClass = TransClass.INSURANCE;
-			theOrder = 26;
+			theOrder = 25;
 		}
 		else if (sName.equals("ExtraTax")) {
 			theClass = TransClass.EXTRATAX;
-			theOrder = 27;
+			theOrder = 26;
 		}
 		else if (sName.equals("WriteOff")) {
 			theClass = TransClass.WRITEOFF;
-			theOrder = 28;
+			theOrder = 27;
 		}
 		else if (sName.equals("NatInsurance")) {
 			theClass = TransClass.NATINSURANCE;
-			theOrder = 29;
+			theOrder = 28;
 		}
 		else if (sName.equals("TaxOwed")) {
 			theClass = TransClass.TAXOWED;
-			theOrder = 30;
+			theOrder = 29;
 		}
 		else if (sName.equals("TaxCredit")) {
 			theClass = TransClass.TAXCREDIT;
-			theOrder = 31;
+			theOrder = 30;
 		}
 		else if (sName.equals("MarketGrowth")) {
 			theClass = TransClass.MKTGROWTH;
-			theOrder = 32;
+			theOrder = 31;
 		}
 		else if (sName.equals("MarketShrink")) {
 			theClass = TransClass.MKTSHRINK;
-			theOrder = 33;
+			theOrder = 32;
 		}
 		else if (sName.equals("UnitTrustDividend")) {
 			theClass = TransClass.UNITTRUSTDIV;
-			theOrder = 34;
+			theOrder = 33;
 		}
 		else if (sName.equals("TaxFreeInterest")) {
 			theClass = TransClass.TAXFREEINTEREST;
-			theOrder = 35;
+			theOrder = 34;
 		}
 		else if (sName.equals("TaxFreeDividend")) {
 			theClass = TransClass.TAXFREEDIVIDEND;
-			theOrder = 36;
+			theOrder = 35;
 		}
 		else if (sName.equals("CapitalGain")) {
 			theClass = TransClass.CAPITALGAIN;
-			theOrder = 37;
+			theOrder = 36;
 		}
 		else if (sName.equals("CapitalLoss")) {
 			theClass = TransClass.CAPITALLOSS;
-			theOrder = 38;
+			theOrder = 37;
 		}
 		else {
 			throw new Exception(ExceptionClass.DATA,
@@ -464,14 +460,6 @@ public class TransactionType extends DataItem {
 	 */
 	protected boolean isWriteOff()  { 
 		return (theClass == TransClass.WRITEOFF); }
-	
-	/**
-	 * Determine whether the TransactionType is a market income
-	 * 
-	 * @return <code>true</code> if the transaction is market income, <code>false</code> otherwise.
-	 */
-	protected boolean isMktIncome()  { 
-		return (theClass == TransClass.MKTINCOME); }
 	
 	/**
 	 * Determine whether the TransactionType is a inheritance
@@ -1070,11 +1058,6 @@ public class TransactionType extends DataItem {
 		 * Market Shrinkage
 		 */
 		MKTSHRINK,
-
-		/**
-		 * Market Income
-		 */
-		MKTINCOME,
 
 		/**
 		 * Expense
