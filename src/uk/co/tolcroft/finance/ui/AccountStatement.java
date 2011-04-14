@@ -354,7 +354,6 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 	 */
 	public JComboBox getComboBox(int row, int column) {
 		Statement.Line 		myLine;
-		ComboSelect.Item    mySelect;
 		
 		/* Access the line */
 		myLine = theLines.get(row-1);
@@ -362,13 +361,11 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 		/* Switch on column */
 		switch (column) {
 			case COLUMN_TRANTYP:		
-				mySelect = theComboList.searchFor(theStatement.getActType());
-				return (myLine.isCredit()) ? mySelect.getCredit()
-						                   : mySelect.getDebit();
+				return (myLine.isCredit()) ? theComboList.getCreditTranTypes(theStatement.getActType())
+						                   : theComboList.getDebitTranTypes(theStatement.getActType());
 			case COLUMN_PARTNER:
-				mySelect = theComboList.searchFor(myLine.getTransType());
-				return (myLine.isCredit()) ? mySelect.getDebit()
-						                   : mySelect.getCredit();
+				return (myLine.isCredit()) ? theComboList.getDebitAccounts(myLine.getTransType(), theStatement.getAccount())
+						                   : theComboList.getCreditAccounts(myLine.getTransType(), theStatement.getAccount());
 			default: 				
 				return null;
 		}

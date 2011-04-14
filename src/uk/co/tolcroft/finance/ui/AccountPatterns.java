@@ -222,7 +222,6 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 	 */
 	public JComboBox getComboBox(int row, int column) {
 		Pattern 			myPattern;
-		ComboSelect.Item    mySelect;
 		
 		/* Access the pattern */
 		myPattern = thePatterns.get(row);
@@ -232,13 +231,11 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 			case COLUMN_FREQ:	
 				return theFreqBox;
 			case COLUMN_TRANTYP:		
-				mySelect = theComboList.searchFor(myPattern.getActType());
-				return (myPattern.isCredit()) ? mySelect.getCredit()
-						                      : mySelect.getDebit();
+				return (myPattern.isCredit()) ? theComboList.getCreditTranTypes(theAccount.getActType())
+						                      : theComboList.getDebitTranTypes(theAccount.getActType());
 			case COLUMN_PARTNER:
-				mySelect = theComboList.searchFor(myPattern.getTransType());
-				return (myPattern.isCredit()) ? mySelect.getDebit()
-						                      : mySelect.getCredit();
+				return (myPattern.isCredit()) ? theComboList.getDebitAccounts(myPattern.getTransType(), theAccount)
+						                      : theComboList.getCreditAccounts(myPattern.getTransType(), theAccount);
 			default: 				
 				return null;
 		}

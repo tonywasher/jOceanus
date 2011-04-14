@@ -269,9 +269,6 @@ public class AccountTab implements financePanel,
 			case RESETALL:
 				resetData();
 				break;
-			case VALIDATEALL:
-				validateAll();
-				break;
 		}
 		notifyChanges();
 	}

@@ -32,7 +32,6 @@ public class Extract extends FinanceTable<Event> {
 	private TransactionType.List	theTransTypes		= null;
 	private MainTab					theParent	 		= null;
 	private JPanel					thePanel	 		= null;
-	private JComboBox				theTranBox			= null;
 	private Extract				 	theTable	 		= this;
 	private extractMouse			theMouse	 		= null;
 	private extractColumnModel		theColumns			= null;
@@ -42,7 +41,6 @@ public class Extract extends FinanceTable<Event> {
 	private DebugEntry				theDebugExtract		= null;
 	private ErrorPanel				theError			= null;
 	private ComboSelect				theComboList    	= null;
-	private boolean					tranPopulated    	= false;
 
 	/* Access methods */
 	public JPanel  	getPanel()			{ return thePanel; }
@@ -112,9 +110,6 @@ public class Extract extends FinanceTable<Event> {
 		/* Set the number of visible rows */
 		setPreferredScrollableViewportSize(new Dimension(900, 200));
 		
-		/* Build the combo box */
-		theTranBox	  = new JComboBox();
-			
 		/* Add the mouse listener */
 		theMouse = new extractMouse();
 		addMouseListener(theMouse);
@@ -224,9 +219,6 @@ public class Extract extends FinanceTable<Event> {
 	 */
 	public void refreshData() throws Exception {
 		DataSet 		myData;
-		TransactionType	myType;
-		
-		DataList<TransactionType>.ListIterator myIterator;
 		
 		/* Access data */
 		myData = theView.getData();
@@ -237,26 +229,6 @@ public class Extract extends FinanceTable<Event> {
 		
 		/* Access the combo list from parent */
 		theComboList 	= theParent.getComboList();
-		
-		/* If we have frequencies already populated */
-		if (tranPopulated) {	
-			/* Remove the frequencies */
-			theTranBox.removeAllItems();
-			tranPopulated = false;
-		}
-	
-		/* Access the frequency iterator */
-		myIterator = theTransTypes.listIterator();
-		
-		/* Add the Transaction values to the frequencies box */
-		while ((myType  = myIterator.next()) != null) {
-			/* Skip hidden values */
-			if (myType.isHidden()) continue;
-			
-			/* Add the item to the list */
-			theTranBox.addItem(myType.getName());
-			tranPopulated = true;
-		}
 		
 		/* Access range */
 		Date.Range myRange = theView.getRange();
@@ -346,13 +318,11 @@ public class Extract extends FinanceTable<Event> {
 		/* Switch on column */
 		switch (column) {
 			case COLUMN_TRANTYP:	
-				return theTranBox;
+				return theComboList.getAllTransTypes();
 			case COLUMN_CREDIT:		
-				return theComboList.searchFor(myEvent.getTransType())
-							.getCredit();
+				return theComboList.getCreditAccounts(myEvent.getTransType(), myEvent.getDebit());
 			case COLUMN_DEBIT:
-				return theComboList.searchFor(myEvent.getTransType())
-							.getDebit();
+				return theComboList.getDebitAccounts(myEvent.getTransType());
 			default: 				
 				return null;
 		}

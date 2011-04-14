@@ -7,7 +7,6 @@ import uk.co.tolcroft.models.EditState;
 public class FinanceInterfaces {
 	public enum financeCommand {
 		OK,
-		VALIDATEALL,
 		RESETALL;
 	}
 

@@ -652,6 +652,55 @@ public class Event extends DataItem {
 	}
 	
 	/**
+	 * Is an event allowed between these two accounts, used for more detailed analysis once the event is
+	 * deemed valid based on the account types
+	 * @param pTrans The transaction type of the event
+	 * @param pDebit the debit account
+	 * @param pCredit the credit account
+	 * @return true/false 
+	 */
+	public static boolean isValidEvent(TransactionType pTrans, Account pDebit, Account pCredit) {
+		boolean myResult;
+		
+		/* Generally we must not be recursive */
+		myResult = Account.differs(pDebit, pCredit);
+		
+		/* Switch on the TransType */
+		switch (pTrans.getTranClass()) {
+			/* Dividend */
+			case DIVIDEND:
+				/* If the credit account is capital */
+				if (pCredit.isCapital()) {
+					/* Debit and credit accounts must be identical */
+					myResult = !myResult;
+				}
+				break;
+			/* AdminCharge/StockSplit */
+			case ADMINCHARGE:
+			case STOCKSPLIT:
+				/* Debit and credit accounts must be identical */
+				myResult = !myResult;
+				break;
+			/* Interest can be recursive */
+			case INTEREST:
+				myResult = true;
+				break;
+			/* Debt Interest and Rental Income must come from the owner of the debt */
+			case RENTALINCOME:
+			case DEBTINTEREST:
+				myResult = !Account.differs(pDebit, pCredit.getParent());
+				break;
+			/* Mortgage payment must be to the owner of the mortgage */
+			case MORTGAGE:
+				myResult = !Account.differs(pCredit, pDebit.getParent());
+				break;
+		}
+		
+		/* Return the result */
+		return myResult;
+	}
+	
+	/**
 	 * Validate the event
 	 */
 	public void validate() {
@@ -703,36 +752,6 @@ public class Event extends DataItem {
 			addError("Description is too long", FIELD_DESC);
 		}
 			
-		/* Credit/Debit cannot be the same unless this is a 
-		 * dividend re-investment or interest payment or StockSplit */
-		if ((!Account.differs(myCredit, myDebit)) &&
-			(!isDividendReInvestment()) && (!isInterest()) && 
-			(!isStockSplit()) && (!isAdminCharge())) {
-			addError("Credit and debit accounts are identical", FIELD_DEBIT);
-			addError("Credit and debit accounts are identical", FIELD_CREDIT);
-		}
-		
-		/* Dividend re-investment must have identical Credit/Debit */
-		if ((Account.differs(myCredit, myDebit)) &&
-			(isDividendReInvestment())) {
-			addError("Dividend re-investment requires identical credit and debit accounts", FIELD_DEBIT);
-			addError("Dividend re-investment requires identical credit and debit accounts", FIELD_CREDIT);
-		}
-		
-		/* Stock Split must have identical Credit/Debit */
-		if ((Account.differs(myCredit, myDebit)) &&
-			(isStockSplit())) {
-			addError("Stock Split requires identical credit and debit accounts", FIELD_DEBIT);
-			addError("Stock Split requires identical credit and debit accounts", FIELD_CREDIT);
-		}
-		
-		/* Stock Split must have identical Credit/Debit */
-		if ((Account.differs(myCredit, myDebit)) &&
-			(isAdminCharge())) {
-			addError("Admin Charge requires identical credit and debit accounts", FIELD_DEBIT);
-			addError("Admin Charge requires identical credit and debit accounts", FIELD_CREDIT);
-		}
-		
 		/* Hidden Events are not allowed */
 		if ((myTransType != null) && (myTransType.isHidden())) {
 			addError("Hidden transaction types are not allowed", FIELD_TRNTYP);
@@ -747,6 +766,13 @@ public class Event extends DataItem {
 		if ((myTransType != null) &&	(myDebit != null) &&
 			(!isValidEvent(myTransType, myDebit.getActType(), false)))
 				addError("Invalid debit account for transaction", FIELD_DEBIT);
+		
+		/* Check valid Credit/Debit combination */
+		if ((myTransType != null) && (myCredit != null) && (myDebit != null) &&
+ 			(!isValidEvent(myTransType, myDebit, myCredit))) {
+				addError("Invalid Debit/Credit combination account for transaction", FIELD_DEBIT);
+				addError("Invalid Debit/Credit combination account for transaction", FIELD_CREDIT);
+		}
 		
 		/* Check for valid priced credit account */
 		if ((myCredit != null) && (myCredit.isPriced())) {
@@ -817,7 +843,7 @@ public class Event extends DataItem {
 		else {
 			if (isStockSplit()) 
 				addError("Stock Split requires non-zero Units", FIELD_UNITS);
-			if (isAdminCharge()) 
+			else if (isAdminCharge()) 
 				addError("Admin Charge requires non-zero Units", FIELD_UNITS);
 		}
 		
@@ -829,7 +855,7 @@ public class Event extends DataItem {
 			addError("Amount cannot be negative", 
 					 FIELD_AMOUNT);
 		
-		/* Money must not be zero for stock split/demerger */
+		/* Money must be zero for stock split/demerger */
 		if ((myAmount != null) &&
 			(myAmount.isNonZero()) &&
 			(myTransType != null) &&
@@ -961,6 +987,7 @@ public class Event extends DataItem {
 		/* Check for dividend re-investment */
 		if ((getTransType() != null) &&
 		    (getTransType().isDividend()) &&
+		    (getCredit() != null) &&
 			(getCredit().isPriced()))
 			myResult = true;
 				
@@ -1040,7 +1067,7 @@ public class Event extends DataItem {
 			/* Check for dividend/interest */
 			case DIVIDEND: 
 			case INTEREST:
-				myResult = !getDebit().isTaxFree();
+				myResult = (getDebit() != null) && !getDebit().isTaxFree();
 				break;
 		}
 		

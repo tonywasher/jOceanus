@@ -486,9 +486,6 @@ public class MaintAccount implements ActionListener,
 			case RESETALL:
 				resetData();
 				break;
-			case VALIDATEALL:
-				validate();
-				break;
 		}
 		notifyChanges();			
 	}

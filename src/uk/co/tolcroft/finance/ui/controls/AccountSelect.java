@@ -173,12 +173,29 @@ public class AccountSelect implements ItemListener {
 		theState.applyState();		
 	}
 
-	/* refresh data */
+	/**
+	 *  refresh data
+	 */
 	public void refreshData() {
-		DataSet			myData;
-		AccountType 	myType;
+		/* Build the account types */
+		buildAccountTypes();
 		
-		DataList<AccountType>.ListIterator	myIterator;
+		/* Build the account list for the type */ 
+		buildAccounts();	
+	}
+	
+	/**
+	 *  build the account types
+	 */
+	private void buildAccountTypes() {
+		DataSet		myData;
+		AccountType myType  = null;
+		AccountType myFirst = null;
+		Account		myAccount;
+		boolean		doShowDeleted;
+		boolean		doShowClosed;
+		
+		DataList<Account>.ListIterator	myIterator;
 		
 		/* Access the data */
 		myData = theView.getData();
@@ -187,6 +204,10 @@ public class AccountSelect implements ItemListener {
 		theTypes    = myData.getAccountTypes();
 		theAccounts = myData.getAccounts();
 	
+		/* Access current values */
+		doShowDeleted = doShowDeleted();
+		doShowClosed  = doShowClosed();
+
 		/* Note that we are refreshing data */
 		refreshingData = true;
 		
@@ -204,13 +225,28 @@ public class AccountSelect implements ItemListener {
 		}
 		
 		/* Access the iterator */
-		myIterator = theTypes.listIterator();
+		myIterator = theAccounts.listIterator(true);
 		
-		/* Add the AccountType values to the types box */
-		while ((myType  = myIterator.next()) != null) {
-			/* Add the item to the list */
-			theTypesBox.addItem(myType.getName());
-			typesPopulated = true;
+		/* Loop through the accounts */
+		while ((myAccount = myIterator.next()) != null) {
+			/* Skip deleted items */
+			if ((!doShowDeleted) &&
+				(myAccount.isDeleted())) continue;
+			
+			/* Skip closed items if required */
+			if ((!doShowClosed) && 
+				(myAccount.isClosed())) continue;
+			
+			/* If the type of this account is new */
+			if (AccountType.differs(myType, myAccount.getActType())) {
+				/* Note the type */
+				myType = myAccount.getActType();
+				if (myFirst == null) myFirst = myType;
+			
+				/* Add the item to the list */
+				theTypesBox.addItem(myType.getName());
+				typesPopulated = true;
+			}
 		}
 		
 		/* If we have a selected type */
@@ -223,17 +259,16 @@ public class AccountSelect implements ItemListener {
 		else if (typesPopulated) {
 			/* Select the first account type */
 			theTypesBox.setSelectedIndex(0);
-			theState.setType(myIterator.peekFirst());
+			theState.setType(myFirst);
 		}
 
 		/* Note that we have finished refreshing data */
 		refreshingData = false;
-
-		/* Build the account list for the type */ 
-		buildAccounts();	
 	}
 	
-	/* build the accounts comboBox */
+	/**
+	 * build the accounts comboBox 
+	 */
 	private boolean buildAccounts() {
 		Account     myAcct;
 		Account     myFirst;
@@ -327,7 +362,10 @@ public class AccountSelect implements ItemListener {
 		return Account.differs(getSelected(), myOld);
 	}
 	
-	/* Set account explicitly */
+	/**
+	 *  Set account explicitly
+	 *  @param pAccount the account
+	 */
 	public void setSelection(Account pAccount) {
 		Account myAccount;
 		
@@ -365,7 +403,9 @@ public class AccountSelect implements ItemListener {
 		buildAccounts();
 	}
 
-	/* Lock/Unlock the selection */
+	/**
+	 * Lock/Unlock the selection
+	 */
 	public void setLockDown() {
 		boolean bLock 		= theParent.hasUpdates();
 		Account mySelected 	= getSelected();
@@ -394,7 +434,9 @@ public class AccountSelect implements ItemListener {
 		theShowDeleted.setEnabled(!bLock);
 	}
 	
-	/* ItemStateChanged listener event */
+	/**
+	 *  ItemStateChanged listener event
+	 */
 	public void itemStateChanged(ItemEvent evt) {
 		String                myName;
 		boolean               bChange = false;
@@ -426,6 +468,7 @@ public class AccountSelect implements ItemListener {
 		if (evt.getSource() == (Object)theShowClosed) {
 			/* Note the new criteria and re-build lists */
 			theState.setDoShowClosed(theShowClosed.isSelected());
+			buildAccountTypes();
 			bChange = buildAccounts();
 		}
 		
@@ -433,6 +476,7 @@ public class AccountSelect implements ItemListener {
 		if (evt.getSource() == (Object)theShowDeleted) {
 			/* Note the new criteria and re-build lists */
 			theState.setDoShowDeleted(theShowDeleted.isSelected());
+			buildAccountTypes();
 			bChange = buildAccounts();
 		}
 		

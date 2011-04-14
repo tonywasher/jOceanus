@@ -612,9 +612,6 @@ public class MaintTaxYear implements ActionListener,
 			case RESETALL:
 				resetData();
 				break;
-			case VALIDATEALL:
-				validate();
-				break;
 		}
 		notifyChanges();			
 	}

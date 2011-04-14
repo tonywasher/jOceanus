@@ -735,9 +735,6 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 			case RESETALL:
 				resetData();
 				break;
-			case VALIDATEALL:
-				validateAll();
-				break;
 		}
 		
 		/* Notify changes */

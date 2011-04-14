@@ -4,7 +4,7 @@ package uk.co.tolcroft.models;
  * Enumeration of states of DataItem and DataList objects
  */
 public enum DataState {
-	/*
+	/**
 	 * No known state
 	 */
 	NOSTATE,

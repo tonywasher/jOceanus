@@ -21,6 +21,7 @@ public class MetaAnalysis {
 	private ExternalTotal 			theExternalTotals	= null;
 	private TransTotal 				theTransProfit		= null;
 	private TransTotal 				theCoreProfit		= null;
+	private TransTotal 				theCoreIncome		= null;
 	private ExternalAccount			theMarketAccount	= null;
 	private TransDetail				theMarketGrowth		= null;
 	private TransDetail				theMarketShrink		= null;
@@ -223,6 +224,7 @@ public class MetaAnalysis {
 		theExternalTotals 	= theList.getExternalTotal();
 		theTransProfit 		= theList.getTransTotal(TaxClass.PROFIT);
 		theCoreProfit		= theList.getTransTotal(TaxClass.COREPROFIT);
+		theCoreIncome		= theList.getTransTotal(TaxClass.COREINCOME);
 		
 		/* Access the iterator */
 		myIterator = theList.listIterator();
@@ -601,7 +603,6 @@ public class MetaAnalysis {
 			case EXPENSE:
 			case MORTGAGE:
 			case INSURANCE:
-			case ENDOWMENT:
 			case EXTRATAX:
 			case WRITEOFF:
 				/* Adjust the Expense bucket */
@@ -639,6 +640,7 @@ public class MetaAnalysis {
 			case STOCKRIGHTTAKEN:
 			case STOCKRIGHTWAIVED:
 			case TRANSFER:
+			case ENDOWMENT:
 			case CSHPAY:
 			case CSHRECOVER:
 				break;
@@ -665,8 +667,11 @@ public class MetaAnalysis {
 				/* Adjust the Total Profit buckets */
 				theTransProfit.addValues(pBucket);
 				theCoreProfit.addValues(pBucket);
+				theCoreIncome.addValues(pBucket);
 				break;
 			case TAXPAID:
+				theCoreIncome.subtractValues(pBucket);
+				/* Fall through */
 			case EXPENSE:
 				/* Adjust the Total profits buckets */
 				theTransProfit.subtractValues(pBucket);
@@ -676,10 +681,12 @@ public class MetaAnalysis {
 				/* Adjust the Total profits buckets */
 				theTransProfit.subtractValues(pBucket);
 				theCoreProfit.subtractValues(pBucket);
+				theCoreIncome.subtractValues(pBucket);
 				break;
 			case NONCORE:
 				/* Adjust the Core profits buckets */
 				theCoreProfit.subtractValues(pBucket);
+				theCoreIncome.subtractValues(pBucket);
 				break;
 		}
 	}

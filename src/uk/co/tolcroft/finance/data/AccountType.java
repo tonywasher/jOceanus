@@ -546,6 +546,7 @@ public class AccountType extends DataItem {
 			case UNITISA:
 			case CREDITCARD:
 			case ENDOWMENT:
+			case DEBTS:
 				return true;
 			default:
 				return false;
@@ -618,6 +619,21 @@ public class AccountType extends DataItem {
 	}
 	
 	/**
+	 * Determine whether the AccountType is Owner
+	 * 
+	 * @return <code>true</code> if the account is Owner, <code>false</code> otherwise.
+	 */
+	public boolean isOwner() {
+		switch (theClass) {
+			case INHERITANCE:
+			case OWNER:
+				return true;
+			default:
+				return false;
+		}
+	}
+	
+	/**
 	 * Determine whether the AccountType is cash
 	 * 
 	 * @return <code>true</code> if the account is cash, <code>false</code> otherwise.
@@ -634,7 +650,7 @@ public class AccountType extends DataItem {
 	/**
 	 * Determine whether the AccountType is WriteOff
 	 * 
-	 * @return <code>true</code> if the account is writeoff, <code>false</code> otherwise.
+	 * @return <code>true</code> if the account is WriteOff, <code>false</code> otherwise.
 	 */
 	protected boolean isWriteOff()  { return (theClass == AccountClass.WRITEOFF); }
 
@@ -658,13 +674,6 @@ public class AccountType extends DataItem {
 	 * @return <code>true</code> if the account is employer, <code>false</code> otherwise.
 	 */
 	protected boolean isEmployer()    { return (theClass == AccountClass.EMPLOYER); }
-
-	/**
-	 * Determine whether the AccountType is Owner
-	 * 
-	 * @return <code>true</code> if the account is owner, <code>false</code> otherwise.
-	 */
-	public boolean isOwner()    { return (theClass == AccountClass.OWNER); }
 
 	/**
 	 * Determine whether the AccountType is endowment

@@ -190,9 +190,13 @@ public class TaxType extends DataItem {
 			theClass = TaxClass.PROFIT;
 			theOrder = 0+CLASSDIVIDE;
 		}
+		else if (sName.equals("CoreIncome")) {
+			theClass = TaxClass.COREINCOME;
+			theOrder = 1+CLASSDIVIDE;
+		}
 		else if (sName.equals("CoreProfit/Loss")) {
 			theClass = TaxClass.COREPROFIT;
-			theOrder = 1+CLASSDIVIDE;
+			theOrder = 2+CLASSDIVIDE;
 		}
 		else if (sName.equals("GrossIncome")) {
 			theClass = TaxClass.GROSSINCOME;
@@ -729,6 +733,11 @@ public class TaxType extends DataItem {
 		 * Profit on Year
 		 */
 		PROFIT,
+		
+		/**
+		 * Core Income after tax ignoring market movements and inheritance
+		 */
+		COREINCOME,
 		
 		/**
 		 * Profit on year after ignoring market movements and inheritance
