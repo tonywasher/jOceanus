@@ -60,7 +60,8 @@ public class DigestStream {
 			/* Protect against exceptions */
 			try {
 				/* Create the message digest */
-				theDigest = MessageDigest.getInstance(pDigestType.getAlgorithm());
+				theDigest = MessageDigest.getInstance(pDigestType.getAlgorithm(), 
+													  SecurityControl.BCSIGN);
 
 				/* Store the stream */
 				theStream = pStream;
@@ -231,7 +232,8 @@ public class DigestStream {
 			/* Protect against exceptions */
 			try {
 				/* Create a message digest */
-				theDigest = MessageDigest.getInstance(pDigestType.getAlgorithm());
+				theDigest = MessageDigest.getInstance(pDigestType.getAlgorithm(),
+													  SecurityControl.BCSIGN);
 
 				/* Store the stream details */
 				theStream = pStream;

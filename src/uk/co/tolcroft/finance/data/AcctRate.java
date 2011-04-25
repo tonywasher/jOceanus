@@ -2,6 +2,7 @@ package uk.co.tolcroft.finance.data;
 
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
 
@@ -108,12 +109,17 @@ public class AcctRate extends DataItem {
 
 		/* Switch on the LinkStyle */
 		switch (pList.getStyle()) {
-			case CORE:
-				pList.setNewId(this);				
-				break;
 			case EDIT:
-				setBase(pPeriod);
-				setState(DataState.CLEAN);
+				if (pPeriod.getList().getStyle() != ListStyle.EDIT) {
+					setBase(pPeriod);
+					pList.setNewId(this);		
+					break;
+				}
+				/* Fall through for duplicate item */
+			case CORE:
+				/* Create a new id for the item */
+				setId(0); 
+				pList.setNewId(this);		
 				break;
 			case UPDATE:
 				setBase(pPeriod);
@@ -128,7 +134,7 @@ public class AcctRate extends DataItem {
 		Values myObj = new Values();
 		setObj(myObj);
 		setAccount(pList.theAccount);
-		setState(DataState.NEW);
+		pList.setNewId(this);		
 	}
 
 	/* Standard constructor */
@@ -449,7 +455,7 @@ public class AcctRate extends DataItem {
 		 * Clone a Rate list
 		 * @return the cloned list
 		 */
-		protected List cloneIt() { return new List(this, ListStyle.CORE); }
+		protected List cloneIt() { return new List(this, ListStyle.DIFFER); }
 
 		/* Is this list locked */
 		public boolean isLocked() { return ((theAccount != null) && (theAccount.isLocked())); }

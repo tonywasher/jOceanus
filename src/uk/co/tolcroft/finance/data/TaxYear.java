@@ -226,11 +226,13 @@ public class TaxYear extends DataItem {
 		/* Switch on the ListStyle */
 		switch (pList.getStyle()) {
 			case CORE:
-				pList.setNewId(this);				
+				/* Create a new id for the item */
+				setId(0); 
+				pList.setNewId(this);
 				break;
 			case EDIT:
 				setBase(pTaxYear);
-				setState(DataState.CLEAN);
+				pList.setNewId(this);
 				break;
 			case UPDATE:
 				setBase(pTaxYear);
@@ -1022,7 +1024,7 @@ public class TaxYear extends DataItem {
 	 	 * Clone a TaxYear list
 	 	 * @return the cloned list
 	 	 */
-		protected List cloneIt() { return new List(this, ListStyle.CORE); }
+		protected List cloneIt() { return new List(this, ListStyle.DIFFER); }
 		
 		/**
 		 * Add a new item to the core list

@@ -649,7 +649,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * @param pValue the new additional income boundary
 	 */
 	private void updateAddIncBoundary(Money pValue) {
-		updateString(theADTxCol, (pValue == null) ? null : pValue.format(false));
+		updateString(theAdBdCol, (pValue == null) ? null : pValue.format(false));
 	}
 
 	/**

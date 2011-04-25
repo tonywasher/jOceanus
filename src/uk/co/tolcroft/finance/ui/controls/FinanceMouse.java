@@ -32,6 +32,7 @@ public abstract class FinanceMouse<T extends DataItem> extends MouseAdapter
 	private static final String popupInsertDebit   = "Insert Debit";
 	private static final String popupInsertItem    = "Insert Item";
 	private static final String popupDeleteItems   = "Delete Item(s)";
+	private static final String popupDuplItems     = "Duplicate Item(s)";
 	private static final String popupRecoverItems  = "Recover Item(s)";
 	private static final String popupShowDeleted   = "Show Deleted";
 	private static final String popupUndoChange    = "Undo";
@@ -146,6 +147,7 @@ public abstract class FinanceMouse<T extends DataItem> extends MouseAdapter
 		boolean				enableRecov = false;
 		boolean				enableDel	= false;
 		boolean				enableShow	= true;
+		boolean				enableDupl	= true;
 		
 		/* Nothing to do if the table is locked */
 		if (theTable.isLocked()) return;
@@ -198,11 +200,22 @@ public abstract class FinanceMouse<T extends DataItem> extends MouseAdapter
 				/* If we can delete this element */
 				if ((!theTable.needsMembers()) || 
 					(theTable.getList().sizeNormal() > 1))
-					enableDel	= true;			
+					enableDel	= true;
+				
+				/* Say that we can duplicate the item */
+				enableDupl = true;
 			}
 		}			
 		
-		/* If we have items to add and there are existing items */
+		/* If we can duplicate a row */
+		if (enableDupl) {
+			/* Add the duplicate items choice */
+			myItem = new JMenuItem(popupDuplItems);
+			myItem.setActionCommand(popupDuplItems);
+			myItem.addActionListener(this);
+			pMenu.add(myItem);			
+		}
+		
 		/* If we can delete a row */
 		if (enableDel) {
 			/* Add the delete items choice */
@@ -423,6 +436,12 @@ public abstract class FinanceMouse<T extends DataItem> extends MouseAdapter
 		else if (myCmd.equals(popupInsertDebit)) {
 			/* Insert a debit row into the table */
 			theTable.insertRow(false);						
+		}
+		
+		/* if this is a duplicate command */
+		else if (myCmd.equals(popupDuplItems)) {
+			/* Duplicate selected items */
+			theTable.duplicateRows();						
 		}
 		
 		/* if this is a delete items command */

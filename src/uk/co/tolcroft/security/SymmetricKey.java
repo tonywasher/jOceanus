@@ -24,11 +24,6 @@ public class SymmetricKey {
 	public    final static int		IVSIZE   		= 16;
 	
 	/**
-	 * Symmetric full algorithm
-	 */
-	private final static String 	FULLALGORITHM	= "/CBC/PKCS5PADDING";
-	
-	/**
 	 * The Secret Key 
 	 */
 	private SecretKey		theKey			= null;
@@ -37,11 +32,6 @@ public class SymmetricKey {
 	 * The Key Type 
 	 */
 	private SymKeyType		theKeyType		= null;
-	
-	/**
-	 * The FullAlgorithm 
-	 */
-	private String			theFullAlgorithm= null;
 	
 	/**
 	 * The secure random generator
@@ -62,7 +52,13 @@ public class SymmetricKey {
 	 * Obtain the secret key
 	 * @return the secret key
 	 */
-	protected SecretKey getSecretKey() { return theKey; }
+	protected SecretKey getSecretKey() 	{ return theKey; }
+
+	/**
+	 * Obtain the secret key type
+	 * @return the secret key type
+	 */
+	protected SymKeyType getKeyType() 	{ return theKeyType; }
 
 	/**
 	 * Constructor
@@ -80,9 +76,6 @@ public class SymmetricKey {
 		
 		/* Generate the new key */
 		theKey			= SymKeyGenerator.getInstance(theKeyType, theRandom);
-
-		/* Record the full algorithm */
-		theFullAlgorithm = pKeyType.toString() + FULLALGORITHM;
 	}
 	
 	/**
@@ -107,9 +100,25 @@ public class SymmetricKey {
 
 		/* Obtain the unwrapped Secret Key */
 		theKey = theControl.unwrapSecretKey(pWrappedKey, pKeyType);
-		
-		/* Record the full algorithm */
-		theFullAlgorithm = pKeyType.toString() + FULLALGORITHM;
+	}
+	
+	/**
+	 * Constructor
+	 * @param pControl the security control 
+	 * @param pKey Secret Key for algorithm
+	 * @param pWrappedKey Wrapped Key
+	 * @param pKeyType Symmetric KeyType
+	 * @param pRandom Secure Random byte generator
+	 */
+	protected SymmetricKey(SecurityControl	pControl,
+			 			   SecretKey		pKey,
+			   			   SymKeyType		pKeyType,
+						   SecureRandom		pRandom) throws Exception {
+		/* Store the Control, KeyType and the Secure Random instance */
+		theControl		= pControl;
+		theKeyType		= pKeyType;
+		theRandom 		= pRandom;
+		theKey			= pKey;
 	}
 	
 	/**
@@ -190,7 +199,8 @@ public class SymmetricKey {
 		/* Protect against exceptions */
 		try {
 			/* Create a new cipher */
-			myCipher = Cipher.getInstance(theFullAlgorithm);
+			myCipher = Cipher.getInstance(theKeyType.getCipher(), 
+										  SecurityControl.BCSIGN);
 			
 			/* Initialise the cipher using the password */
 			myParms = new IvParameterSpec(pInitVector);
@@ -218,7 +228,8 @@ public class SymmetricKey {
 		/* Protect against exceptions */
 		try {
 			/* Create a new cipher */
-			myCipher = Cipher.getInstance(theFullAlgorithm);
+			myCipher = Cipher.getInstance(theKeyType.getCipher(), 
+					  					  SecurityControl.BCSIGN);
 			
 			/* Initialise the cipher generating a random Initialisation vector */
 			myCipher.init(Cipher.ENCRYPT_MODE, theKey, theRandom);
@@ -246,7 +257,8 @@ public class SymmetricKey {
 		/* Protect against exceptions */
 		try {
 			/* Create a new cipher */
-			myCipher = Cipher.getInstance(theFullAlgorithm);
+			myCipher = Cipher.getInstance(theKeyType.getCipher(), 
+					  					  SecurityControl.BCSIGN);
 			
 			/* Initialise the cipher using the password */
 			myParms = new IvParameterSpec(pInitVector);
@@ -289,7 +301,8 @@ public class SymmetricKey {
 			try {
 				/* Create the key generator */
 				theKeyType 		= pKeyType;
-				theGenerator 	= KeyGenerator.getInstance(pKeyType.toString());
+				theGenerator 	= KeyGenerator.getInstance(pKeyType.getAlgorithm(), 
+						  								   SecurityControl.BCSIGN);
 				theGenerator.init(pKeyType.getKeySize(), pRandom);
 				
 				/* Add to the list of generators */
@@ -340,6 +353,27 @@ public class SymmetricKey {
 	}
 	
 	/**
+	 * Symmetric key definition
+	 */
+	public static class KeyDef {
+		/* Members */
+		private SecretKey 	theKey 	= null;
+		private byte[]		theIv	= null;
+		
+		/* Access methods */
+		public SecretKey 	getKey() 	{ return theKey; }
+		public byte[]		getIv()		{ return theIv; }
+		
+		/**
+		 * Constructor
+		 */
+		protected KeyDef(SecretKey pKey, byte[] pIv) {
+			theKey = pKey;
+			theIv  = pIv;
+		}
+	}
+	
+	/**
 	 * Symmetric key types
 	 */
 	public enum SymKeyType {
@@ -349,6 +383,11 @@ public class SymmetricKey {
 		CAMELLIA(4, 256, 16);
 		
 		/**
+		 * Symmetric full algorithm
+		 */
+		private final static String 	FULLALGORITHM	= "/CBC/PKCS5PADDING";
+		
+		/**
 		 * Key values 
 		 */
 		private int theId = 0;
@@ -356,9 +395,11 @@ public class SymmetricKey {
 		private int theIvLen = 0;
 		
 		/* Access methods */
-		public int getId() 		{ return theId; }
-		public int getKeySize() { return theKeySize; }
-		public int getIvLen() 	{ return theIvLen; }
+		public int 		getId() 		{ return theId; }
+		public int 		getKeySize() 	{ return theKeySize; }
+		public int 		getIvLen() 		{ return theIvLen; }
+		public String 	getAlgorithm() 	{ return toString(); }
+		public String 	getCipher() 	{ return getAlgorithm() + FULLALGORITHM; }
 		
 		/**
 		 * Constructor

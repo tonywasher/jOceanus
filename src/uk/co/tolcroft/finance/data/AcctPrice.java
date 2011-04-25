@@ -4,6 +4,7 @@ import uk.co.tolcroft.finance.views.SpotPrices;
 import uk.co.tolcroft.finance.views.SpotPrices.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
 
@@ -103,12 +104,17 @@ public class AcctPrice extends DataItem {
 
 		/* Switch on the LinkStyle */
 		switch (pList.getStyle()) {
-			case CORE:
-				pList.setNewId(this);				
-				break;
 			case EDIT:
-				setBase(pPrice);
-				setState(DataState.CLEAN);
+				if (pPrice.getList().getStyle() != ListStyle.EDIT) {
+					setBase(pPrice);
+					pList.setNewId(this);
+					break;
+				}
+				/* Fall through for duplicate item */
+			case CORE:
+				/* Create a new id for the item */
+				setId(0); 
+				pList.setNewId(this);
 				break;
 			case UPDATE:
 				setBase(pPrice);
@@ -122,7 +128,7 @@ public class AcctPrice extends DataItem {
 		super(pList, 0);
 		Values myObj = new Values();
 		setObj(myObj);
-		setState(DataState.NEW);
+		pList.setNewId(this);
 	}
 
 	/* Standard constructor */
@@ -482,7 +488,7 @@ public class AcctPrice extends DataItem {
 		 * 	Clone a Price list
 		 * @return the cloned list
 		 */
-		protected List cloneIt() {return new List(this, ListStyle.CORE); }
+		protected List cloneIt() {return new List(this, ListStyle.DIFFER); }
 
 		/* Is this list locked */
 		public boolean isLocked() { return ((theAccount != null) && (theAccount.isLocked())); }

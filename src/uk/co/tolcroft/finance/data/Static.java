@@ -4,7 +4,6 @@ import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.security.*;
-import uk.co.tolcroft.security.SymmetricKey.SymKeyType;
 
 public class Static extends DataItem {
 	/**
@@ -164,7 +163,8 @@ public class Static extends DataItem {
 		
 		/* Obtain the relevant symmetric key */
 		myObj.setSecurityKey(pSecurityKey);
-		theKey	= theControl.getSymmetricKey(getSecurityKey(), SymKeyType.AES);
+		theKey	= theControl.getSymmetricKey(getSecurityKey(), 
+											 theControl.getControlMode().getSymKeyType());
 
 		/* Record the initialisation vector */
 		myObj.setInitVector(pInitVector);			
@@ -222,7 +222,7 @@ public class Static extends DataItem {
 			myValues.setControlKey(theControl.getSecurityKey());			
 			
 			/* Generate a new key and get its security key */
-			theKey	= theControl.getSymmetricKey(SymKeyType.AES);
+			theKey	= theControl.getSymmetricKey(theControl.getControlMode().getSymKeyType());
 			myValues.setSecurityKey(theKey.getSecurityKey());			
 
 			/* Initialise an encryption cipher and store its initialisation vector */

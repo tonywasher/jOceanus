@@ -290,9 +290,12 @@ public class ZipFile {
 						
 						/* If we have security control */
 						if (theControl != null) {
+							/* Access the asymmetric key */
+							AsymmetricKey myKey = theControl.getAsymKey();
+							
 							/* Declare the security control and encrypt the header */
 							theEntry.setExtra(theControl.getSecurityKey().getBytes(propEncoding));
-							myBytes = theControl.getAsymKey().encryptString(myHeader);
+							myBytes = myKey.encryptString(myHeader, myKey);
 						}
 						
 						/* else just extract the bytes from the string */
@@ -511,8 +514,11 @@ public class ZipFile {
 			
 				/* If we have a security string */
 				if (theSecurityKey != null) {
+					/* Access the asymmetric key */
+					AsymmetricKey myKey = theControl.getAsymKey();
+					
 					/* Parse the decrypted header */
-					theFiles = new ZipFileEntry(theControl.getAsymKey().decryptString(myBuffer));
+					theFiles = new ZipFileEntry(myKey.decryptString(myBuffer, myKey));
 				}
 				
 				/* else we have not encrypted */

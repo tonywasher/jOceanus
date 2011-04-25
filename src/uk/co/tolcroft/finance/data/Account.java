@@ -258,7 +258,6 @@ public class Account extends DataItem {
 							
 	/**
 	 * Construct a copy of an Account
-	 * 
 	 * @param pAccount The Account to copy 
 	 */
 	public Account(List pList, Account pAccount) {
@@ -280,11 +279,13 @@ public class Account extends DataItem {
 		/* Switch on the LinkStyle */
 		switch (pList.getStyle()) {
 			case CORE:
-				pList.setNewId(this);				
+				/* Create a new id for the item */
+				setId(0); 
+				pList.setNewId(this);
 				break;
 			case EDIT:
 				setBase(pAccount);
-				setState(DataState.CLEAN);
+				pList.setNewId(this);				
 				break;
 			case UPDATE:
 				setBase(pAccount);
@@ -293,7 +294,24 @@ public class Account extends DataItem {
 		}
 	}
 	
-	/* Standard constructor */
+	/**
+	 * Standard constructor for account added from Database/Backup
+	 * @param pList the List to add to
+	 * @param uId the Account id
+	 * @param pName the Encrypted Name of the account
+	 * @param uAcTypeId the Account type id
+	 * @param pDesc the Encrypted Description of the account
+	 * @param pMaturity the Maturity date for the account
+	 * @param pClose the Close date for the account
+	 * @param uParentId the Parent id (or -1 if no parent)
+	 * @param uAliasId the Alias id (or -1 if no parent)
+	 * @param pWebSite the Encrypted WebSite of the account
+	 * @param pCustNo the Encrypted CustomerId of the account
+	 * @param pUserId the Encrypted UserId of the account
+	 * @param pPassword the Encrypted Password of the account
+	 * @param pAccount the Encrypted Account details of the account
+	 * @param pNotes the Encrypted Notes for the account
+	 */
 	private Account(List    		pList,
 			        int           	uId, 
 					byte[]			pName, 
@@ -345,7 +363,6 @@ public class Account extends DataItem {
 		                        this,
 					            "Invalid Account Type Id");
 		myObj.setType(myActType);
-		/*theOrder    = (myActType.isChild() ? 100 + myActType.getOrder() :  myActType.getOrder());*/
 		theOrder    = myActType.getOrder();
 
 		/* Parse the maturity date if it exists */
@@ -360,7 +377,16 @@ public class Account extends DataItem {
 		pList.setNewId(this);				
 	}
 	
-	/* Standard constructor */
+	/**
+	 * Standard constructor for account added from SpreadSheet
+	 * @param pList the List to add to
+	 * @param sName the Name of the account
+	 * @param uAcTypeId the Account type id
+	 * @param pMaturity the Maturity date for the account
+	 * @param pClose the Close date for the account
+	 * @param uParentId the Parent id (or -1 if no parent)
+	 * @param uAliasId the Alias id (or -1 if no parent)
+	 */
 	private Account(List    		pList,
 					String         	sName, 
 					int				uAcTypeId,
@@ -397,7 +423,6 @@ public class Account extends DataItem {
 		                        this,
 					            "Invalid Account Type Id");
 		myObj.setType(myActType);
-		/*theOrder    = (myActType.isChild() ? 100 + myActType.getOrder() :  myActType.getOrder());*/
 		theOrder    = myActType.getOrder();
 
 		/* Parse the maturity date if it exists */
@@ -417,7 +442,7 @@ public class Account extends DataItem {
 		super(pList, 0);
 		Values theObj = new Values();
 		setObj(theObj);
-		setState(DataState.NEW);
+		pList.setNewId(this);				
 	}
 
 	/**
@@ -880,7 +905,6 @@ public class Account extends DataItem {
 	
 	/**
 	 * Set a new description 
-	 * 
 	 * @param pDesc the description 
 	 */
 	public void setDescription(String pDesc) throws Exception {
@@ -902,7 +926,6 @@ public class Account extends DataItem {
 	
 	/**
 	 * Set a new maturity date 
-	 *	 
 	 * @param pDate the new date 
 	 */
 	public void setMaturity(Date pDate) {
@@ -911,7 +934,6 @@ public class Account extends DataItem {
 	
 	/**
 	 * Set a new close date 
-	 *	 
 	 * @param pDate the new date 
 	 */
 	public void setClose(Date pDate) {
@@ -920,7 +942,6 @@ public class Account extends DataItem {
 	
 	/**
 	 * Set a new parent 
-	 *	 
 	 * @param pParent the new parent 
 	 */
 	public void setParent(Account pParent) {
@@ -929,7 +950,6 @@ public class Account extends DataItem {
 	
 	/**
 	 * Set a new alias 
-	 *	 
 	 * @param pAlias the new alias 
 	 */
 	public void setAlias(Account pAlias) {
@@ -938,7 +958,6 @@ public class Account extends DataItem {
 	
 	/**
 	 * Set a new account name 
-	 *	 
 	 * @param pName the new name 
 	 */
 	public void setAccountName(String pName) throws Exception {
@@ -960,7 +979,6 @@ public class Account extends DataItem {
 	
 	/**
 	 * Set a new account type
-	 *	 
 	 * @param pType the new type 
 	 */
 	public void setActType(AccountType pType) {
@@ -970,7 +988,6 @@ public class Account extends DataItem {
 	
 	/**
 	 * Set a new web site
-	 *	 
 	 * @param pWebSite the new site 
 	 */
 	public void setWebSite(char[] pWebSite) throws Exception {
@@ -992,7 +1009,6 @@ public class Account extends DataItem {
 	
 	/**
 	 * Set a new customer number
-	 *	 
 	 * @param pCustNo the new number 
 	 */
 	public void setCustNo(char[] pCustNo) throws Exception {
@@ -1014,7 +1030,6 @@ public class Account extends DataItem {
 	
 	/**
 	 * Set a new UserId
-	 *	 
 	 * @param pUserId the new id 
 	 */
 	public void setUserId(char[] pUserId) throws Exception {
@@ -1036,7 +1051,6 @@ public class Account extends DataItem {
 	
 	/**
 	 * Set a new password
-	 *	 
 	 * @param pPassword the new password 
 	 */
 	public void setPassword(char[] pPassword) throws Exception {
@@ -1058,7 +1072,6 @@ public class Account extends DataItem {
 	
 	/**
 	 * Set a new account
-	 *	 
 	 * @param pAccount the new account 
 	 */
 	public void setAccount(char[] pAccount) throws Exception {
@@ -1080,7 +1093,6 @@ public class Account extends DataItem {
 	
 	/**
 	 * Set a new notes
-	 *	 
 	 * @param pNotes the new notes 
 	 */
 	public void setNotes(char[] pNotes) throws Exception {
@@ -1214,7 +1226,6 @@ public class Account extends DataItem {
 	
 	/**
 	 * Format an Account 
-	 * 
 	 * @param pAccount the account to format
 	 * @return the formatted account
 	 */
@@ -1227,7 +1238,6 @@ public class Account extends DataItem {
 
 	/**
 	 * Determine whether two {@link account} objects differ.
-	 * 
 	 * @param pCurr The current Account 
 	 * @param pNew The new Account
 	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
@@ -1288,11 +1298,10 @@ public class Account extends DataItem {
 	 	 * Clone an Account list
 	 	 * @return the cloned list
 	 	 */
-		protected List cloneIt() { return new List(this, ListStyle.CORE); }
+		protected List cloneIt() { return new List(this, ListStyle.DIFFER); }
 		
 		/**
 		 * Add a new item to the list
-		 * 
 		 * @param pAccount item
 		 * @return the newly added item
 		 */
@@ -1395,7 +1404,6 @@ public class Account extends DataItem {
 
 		/**
 		 * Count the instances of a string
-		 * 
 		 * @param pName the string to check for
 		 * @return The Item if present (or null)
 		 */
@@ -1420,7 +1428,6 @@ public class Account extends DataItem {
 		
 		/**
 		 * Search for a particular item by Name
-		 * 
 		 * @param sName Name of item
 		 * @return The Item if present (or null)
 		 */
@@ -1444,7 +1451,6 @@ public class Account extends DataItem {
 		
 		/**
 		 * Get the market account from the list
-		 * 
 		 * @return the Market account
 		 */
 		public Account getMarket() {
@@ -1465,7 +1471,6 @@ public class Account extends DataItem {
 		
 		/**
 		 * Get the taxman account from the list
-		 * 
 		 * @return the TaxMan account
 		 */
 		public Account getTaxMan() {
@@ -1585,13 +1590,19 @@ public class Account extends DataItem {
 		/**
 		 * Add an Account
 		 * @param uId the Id of the account
-		 * @param pAccount the Name of the account 
+		 * @param pAccount the Encrypted Name of the account 
 		 * @param uAcTypeId the Id of the account type
-		 * @param pDesc the Description of the account (or null)
+		 * @param pDesc the Encrypted Description of the account (or null)
 		 * @param pMaturity the Maturity date for a bond (or null)
 		 * @param pClosed the Close Date for the account (or null)
 		 * @param uParentId the Id of the parent account (or -1)
 		 * @param uAliasId the Id of the alias account (or -1)
+		 * @param pWebSite the Encrypted WebSite of the account
+		 * @param pCustNo the Encrypted CustomerId of the account
+		 * @param pUserId the Encrypted UserId of the account
+		 * @param pPassword the Encrypted Password of the account
+		 * @param pAccount the Encrypted Account details of the account
+		 * @param pNotes the Encrypted Notes for the account
 		 * @throws Exception on error
 		 */ 
 		public void addItem(int     		uId,

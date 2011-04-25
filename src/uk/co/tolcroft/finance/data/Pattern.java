@@ -172,11 +172,13 @@ public class Pattern extends DataItem {
 		/* Switch on the LinkStyle */
 		switch (pList.getStyle()) {
 			case CORE:
+				/* Create a new id for the item */
+				setId(0);
 				pList.setNewId(this);				
 				break;
 			case EDIT:
 				setBase(pPattern);
-				setState(DataState.CLEAN);
+				pList.setNewId(this);		
 				break;
 			case UPDATE:
 				setBase(pPattern);
@@ -195,7 +197,7 @@ public class Pattern extends DataItem {
 		Values myObj 	= new Values();
 		setObj(myObj);
 		myObj.setIsCredit(isCredit);
-		setState(DataState.NEW);
+		pList.setNewId(this);		
 	}
 
 	/* Construct a new pattern from a statement line */
@@ -847,7 +849,7 @@ public class Pattern extends DataItem {
 	 	 * Clone a Pattern list
 	 	 * @return the cloned list
 	 	 */
-		protected List cloneIt() { return new List(this, ListStyle.CORE); }
+		protected List cloneIt() { return new List(this, ListStyle.DIFFER); }
 		
 		/* Is this list locked */
 		public boolean isLocked() { return (theAccount != null) && (theAccount.isLocked()); }

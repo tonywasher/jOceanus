@@ -177,7 +177,10 @@ public class Statement implements htmlDumpable {
 		 * Add a new item (never used)
 		 */
 		public Line addNewItem(DataItem pElement) {
-			return null;}
+			Line myLine = new Line(this, (Line)pElement);
+			myLine.addToList();
+			return myLine;
+		}
 		
 		/**
 		 * Add a new item to the edit list
@@ -382,14 +385,26 @@ public class Statement implements htmlDumpable {
 			return myString;
 		}
 								
-		/* Standard constructor for a newly inserted pattern */
+		/**
+	 	* Construct a copy of a Line
+	 	* @param pLine The Line
+	 	*/
+		protected Line(List pList, Line pLine) {
+			/* Set standard values */
+			super(pList, 0);
+			Values myObj = new Values(pLine.getObj());
+			setObj(myObj);
+			pList.setNewId(this);
+		}
+
+		/* Standard constructor for a newly inserted line */
 		public Line(List           pList, 
 				    boolean        isCredit) {
 			super(pList, 0);
 			Values myObj = new Values();
 			setObj(myObj);
 			this.isCredit = isCredit;
-			setState(DataState.NEW);
+			pList.setNewId(this);				
 		}
 
 		/* Standard constructor */
@@ -397,7 +412,7 @@ public class Statement implements htmlDumpable {
 				    Event   	pEvent,
 					Account 	pAccount) {
 			/* Make this an element */
-			super(pList, 0);
+			super(pList, pEvent.getId());
 			Values 			myObj 	= new Values();
 			Event.Values	myBase 	= pEvent.getObj();
 			
@@ -411,7 +426,7 @@ public class Statement implements htmlDumpable {
 			myObj.setTaxCredit(myBase.getTaxCredit());
 			myObj.setYears(pEvent.getYears());
 			setBase(pEvent);
-			setState(DataState.CLEAN);
+			pList.setNewId(this);				
 
 			/* If the account is credited */
 			if (pAccount.compareTo(pEvent.getCredit()) == 0) {

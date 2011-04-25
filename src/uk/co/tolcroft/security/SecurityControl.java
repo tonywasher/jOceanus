@@ -29,9 +29,24 @@ public class SecurityControl extends DataItem {
 	protected final static char		KEYSEP 		= '!';
 	
 	/**
+	 * The BouncyCastle signature 
+	 */
+	protected final static String	BCSIGN 		= "BC";
+	
+	/**
+	 * Have providers been added 
+	 */
+	protected static boolean		providersAdded	= false;
+	
+	/**
 	 * The secure random generator
 	 */
 	private SecureRandom			theRandom		= null;
+	
+	/**
+	 * The control mode
+	 */
+	private ControlMode				theControlMode	= null;
 	
 	/**
 	 * The password key 
@@ -63,6 +78,7 @@ public class SecurityControl extends DataItem {
 	public 		boolean			newPassword()		{ return (theSecurityKey == null); }
 	protected 	AsymmetricKey	getAsymKey()		{ return theAsymKey; }
 	protected 	PasswordKey		getPassKey()		{ return thePassKey; }
+	public 		ControlMode		getControlMode()	{ return theControlMode; }
 	public 		String			getSecurityKey()	{ return theSecurityKey; }
 	public 		String			getPublicKey()		{ return thePublicKey; }
 	public 		SecureRandom	getRandom()			{ return theRandom; }
@@ -106,10 +122,11 @@ public class SecurityControl extends DataItem {
 		thePassKey = new PasswordKey(pSource.getPassKey());
 		
 		/* Access the key mode */
-		PBEKeyMode myKeyMode = thePassKey.getKeyMode();
+		theControlMode = thePassKey.getKeyMode();
 		
 		/* Create the asymmetric key */
-		theAsymKey  = new AsymmetricKey(myKeyMode.getAsymKeyType(),
+		theAsymKey  = new AsymmetricKey(theControlMode.getAsymKeyType(),
+										theControlMode,
 										thePassKey,
 										theRandom);			
 		
@@ -126,8 +143,8 @@ public class SecurityControl extends DataItem {
 	 * Initialise the security control with a password
 	 * @param pPassword the password (cleared after usage)
 	 */
-	public void initControl(char[] pPassword) throws WrongPasswordException,
-													 Exception {
+	public synchronized void initControl(char[] pPassword) throws WrongPasswordException,
+													 			  Exception {
 		/* Handle already initialised */
 		if (isInitialised)
 			throw new Exception(ExceptionClass.LOGIC,
@@ -135,23 +152,26 @@ public class SecurityControl extends DataItem {
 			
 		/* Protect against exceptions */
 		try {
-			PBEKeyMode myKeyMode;
-			
-			/* Ensure addition of Bouncy castle security provider RSA//ISO9796-1PADDING*/
-			Security.addProvider(new BouncyCastleProvider());
+			/* If we have not previously added providers */
+			if (!providersAdded) {
+				/* Ensure addition of Bouncy castle security provider */
+				Security.addProvider(new BouncyCastleProvider());
+				providersAdded = true;
+			}
 			
 			/* If the security key is currently null */
 			if (theSecurityKey == null) {
 				/* Generate the key mode */
-				myKeyMode = PBEKeyMode.getPBEKeyMode(theRandom);
+				theControlMode = ControlMode.getControlMode(theRandom);
 				
 				/* Generate the password key */
 				thePassKey 	= new PasswordKey(pPassword,
-											  myKeyMode,
+											  theControlMode,
 											  theRandom);
 							
 				/* Create the asymmetric key */
-				theAsymKey  = new AsymmetricKey(myKeyMode.getAsymKeyType(),
+				theAsymKey  = new AsymmetricKey(theControlMode.getAsymKeyType(),
+												theControlMode,
 												thePassKey,
 												theRandom);			
 
@@ -166,12 +186,13 @@ public class SecurityControl extends DataItem {
 				thePassKey 	= new PasswordKey(theSecurityKey,
 											  pPassword,
 											  theRandom);
-				/* Access the key mode */
-				myKeyMode = thePassKey.getKeyMode();
+				/* Access the control mode */
+				theControlMode = thePassKey.getKeyMode();
 				
 				/* Rebuild the asymmetric key */
 				theAsymKey  = new AsymmetricKey(theSecurityKey,
-												myKeyMode.getAsymKeyType(),
+												theControlMode,
+												theControlMode.getAsymKeyType(),
 												thePassKey,
 												theRandom);
 
@@ -259,7 +280,7 @@ public class SecurityControl extends DataItem {
 	 * @return the Password key
 	 */
 	public PasswordKey	getPasswordKey(char[]		pPassword,
-									   PBEKeyMode 	pKeyMode) throws Exception {
+									   ControlMode 	pKeyMode) throws Exception {
 		PasswordKey 	myPassKey;
 		
 		/* Handle not initialised */
@@ -311,7 +332,7 @@ public class SecurityControl extends DataItem {
 								"Security Control uninitialised");
 			
 		/* Generate the asymmetric key class */
-		myAsymKey = new AsymmetricKey(pKeyType, thePassKey, theRandom);
+		myAsymKey = new AsymmetricKey(pKeyType, theControlMode, thePassKey, theRandom);
 		
 		/* Return the new key */
 		return myAsymKey;
@@ -333,7 +354,7 @@ public class SecurityControl extends DataItem {
 								"Security Control uninitialised");
 			
 		/* Generate the asymmetric key class */
-		myAsymKey = new AsymmetricKey(pSecurityKey, pKeyType, thePassKey, theRandom);
+		myAsymKey = new AsymmetricKey(pSecurityKey, theControlMode, pKeyType, thePassKey, theRandom);
 		
 		/* Return the new key */
 		return myAsymKey;
@@ -409,7 +430,8 @@ public class SecurityControl extends DataItem {
 		/* Protect against exceptions */
 		try {			
 			/* wrap the key */
-			myWrappedKey = theAsymKey.wrapSecretKey(pKey.getSecretKey());
+			myWrappedKey = theAsymKey.wrapSecretKey(pKey.getSecretKey(),
+													pKey.getKeyType());
 		}
 		
 		catch (Throwable e) {

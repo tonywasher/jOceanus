@@ -4,7 +4,7 @@ import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.views.Statement.*;
 import uk.co.tolcroft.finance.data.EncryptedPair.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.DataList.*;
+import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
@@ -176,15 +176,20 @@ public class Event extends DataItem {
 		/* Set standard values */
 		super(pList, pEvent.getId()); 
 		setObj(new Values(pEvent.getObj()));
-	
+
 		/* Switch on the ListStyle */
 		switch (pList.getStyle()) {
-			case CORE:
-				pList.setNewId(this);				
-				break;
 			case EDIT:
-				setBase(pEvent);
-				setState(DataState.CLEAN);
+				if (pEvent.getList().getStyle() != ListStyle.EDIT) {
+					setBase(pEvent);
+					pList.setNewId(this);				
+					break;
+				}
+				/* Fall Through for duplicating item */
+			case CORE:
+				/* Force new id for item */
+				setId(0);
+				pList.setNewId(this);				
 				break;
 			case UPDATE:
 				setBase(pEvent);
@@ -227,9 +232,8 @@ public class Event extends DataItem {
 			myObj.setCredit(pLine.getPartner());
 		}
 			
-		/* Allocate the id if adding to core */
-		if (pList.getStyle() == ListStyle.CORE)
-			pList.setNewId(this);				
+		/* Allocate the id */
+		pList.setNewId(this);				
 	}
 	
 	/**
@@ -284,9 +288,8 @@ public class Event extends DataItem {
 			myObj.setDilution(new Dilution(Dilution.MAX_VALUE));
 		}
 		
-		/* Allocate the id if adding to core */
-		if (pList.getStyle() == ListStyle.CORE)
-			pList.setNewId(this);				
+		/* Allocate the id */
+		pList.setNewId(this);				
 	}
 	
 	/* Standard constructor for a newly inserted event */
@@ -294,7 +297,7 @@ public class Event extends DataItem {
 		super(pList, 0);
 		Values theObj = new Values();
 		setObj(theObj);
-		setState(DataState.NEW);
+		pList.setNewId(this);				
 	}
 
 	/* Standard constructor */
@@ -1503,7 +1506,7 @@ public class Event extends DataItem {
 	 	 * Clone an Event list
 	 	 * @return the cloned list
 	 	 */
-		protected List cloneIt() { return new List(this, ListStyle.CORE); }
+		protected List cloneIt() { return new List(this, ListStyle.DIFFER); }
 		
 		/**
 		 * Add a new item to the list

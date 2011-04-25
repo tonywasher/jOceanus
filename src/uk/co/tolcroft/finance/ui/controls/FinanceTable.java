@@ -409,6 +409,48 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 	}
 		
 	/**
+	 * Duplicate the selected items
+	 */
+	protected void duplicateRows() {
+		DataItem[]	myRows;
+		DataItem	myRow;
+		T			myItem;
+		int			myRowNo;
+		
+		/* Access the selected rows */
+		myRows = cacheSelectedRows();
+					
+		/* Loop through the selected rows */
+		for (int i=0; i<myRows.length; i++) {
+			/* Access the row */
+			myRow = myRows[i];
+			
+			/* Ignore null/deleted entries */
+			if ((myRow == null) || (myRow.isDeleted())) continue;				
+
+			/* Access the row # and adjust for header */
+			myRowNo = myRow.indexOf();
+			if (hasHeader()) myRowNo++;
+
+			/* Create the new Item */
+			myItem = theList.addNewItem(myRow);
+			
+			/* Determine the row # allowing for header */
+			myRowNo = myItem.indexOf();
+			if (hasHeader()) myRowNo++;
+
+			/* Validate the new item */
+			myItem.validate();
+			
+			/* Notify of the insertion of the row */
+			theModel.fireInsertRowEvents(myRowNo);				
+		}
+			
+		/* Recalculate the table if required */
+		calculateTable();
+	}
+		
+	/**
 	 * Recover the selected items
 	 */
 	protected void recoverRows() {		

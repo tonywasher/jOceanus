@@ -82,7 +82,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
     private EditState           theEdit		= EditState.CLEAN;
 
     /**
-	 * The base item to which this item is linked. This will be <code>null>/code> in CORE list
+	 * The base item to which this item is linked. This will be <code>null</code> in CORE list
 	 * and for new items etc.
 	 */
     private DataItem         	theBase		= null;

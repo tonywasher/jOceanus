@@ -45,7 +45,7 @@ public class PasswordKey {
 	/**
 	 * Key Mode 
 	 */
-	private PBEKeyMode			theKeyMode			= null;
+	private ControlMode			theKeyMode			= null;
 	
 	/**
 	 * Algorithm 
@@ -87,7 +87,7 @@ public class PasswordKey {
 	 * Obtain the KeyMode
 	 * @return the KeyMode 
 	 */
-	protected 	PBEKeyMode		getKeyMode()		{ return theKeyMode; }
+	protected 	ControlMode		getKeyMode()		{ return theKeyMode; }
 	
 	/**
 	 * Constructor for a completely new password key 
@@ -96,7 +96,7 @@ public class PasswordKey {
 	 * @param pRandom Secure Random byte generator
 	 */
 	protected PasswordKey(char[] 			pPassword,
-						  PBEKeyMode		pKeyMode,
+						  ControlMode		pKeyMode,
 						  SecureRandom		pRandom) throws WrongPasswordException,
 						  									Exception {
 		/* Store the key type and secure random generator */
@@ -183,8 +183,8 @@ public class PasswordKey {
 			/* Store the secure random generator */
 			theRandom = pSource.theRandom;
 			
-			/* Create a random PBE KeyMode */
-			PBEKeyMode myMode = PBEKeyMode.getPBEKeyMode(theRandom);
+			/* Create a random ControlMode */
+			ControlMode myMode = ControlMode.getControlMode(theRandom);
 			
 			/* Store the key type and secure random generator */
 			theKeyMode		= myMode;
@@ -241,7 +241,7 @@ public class PasswordKey {
 		long myValue = Utils.LongFromBytes(myBytes);
 		
 		/* Convert to PBEKeyMode */
-		theKeyMode = new PBEKeyMode(myValue); 
+		theKeyMode = new ControlMode(myValue); 
 	}
 	
 	/**
@@ -575,7 +575,7 @@ public class PasswordKey {
 				myCipher.init(Cipher.UNWRAP_MODE, thePassKey, mySpec);
 		
 				/* unwrap the private key */
-				myPrivateKey = (PrivateKey)myCipher.unwrap(myKeyEnc, pKeyType.toString(), Cipher.PRIVATE_KEY);
+				myPrivateKey = (PrivateKey)myCipher.unwrap(myKeyEnc, pKeyType.getAlgorithm(), Cipher.PRIVATE_KEY);
 			}
 			
 			/* Access the Public Key salt and key */
@@ -593,7 +593,7 @@ public class PasswordKey {
 			myCipher.init(Cipher.UNWRAP_MODE, thePassKey, mySpec);
 		
 			/* unwrap the private key */
-			myPublicKey = (PublicKey)myCipher.unwrap(myKeyEnc, pKeyType.toString(), Cipher.PUBLIC_KEY);
+			myPublicKey = (PublicKey)myCipher.unwrap(myKeyEnc, pKeyType.getAlgorithm(), Cipher.PUBLIC_KEY);
 			
 			/* Create the Key Pair */
 			myKeyPair = new KeyPair(myPublicKey, myPrivateKey);
