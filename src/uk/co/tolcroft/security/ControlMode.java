@@ -8,8 +8,9 @@ import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.security.AsymmetricKey.AsymKeyType;
 import uk.co.tolcroft.security.SecurityControl.DigestType;
 import uk.co.tolcroft.security.PasswordKey.PBEKeyType;
+import uk.co.tolcroft.security.SymmetricKey.SymKeyType;
 
-public class PBEKeyMode {
+public class ControlMode {
 	/**
 	 * The mode	
 	 */
@@ -22,6 +23,7 @@ public class PBEKeyMode {
 	private final static int 		placeDIGEST2	= 3;
 	private final static int 		placePBEKEY		= 4;
 	private final static int 		placeASYMKEY	= 5;
+	private final static int 		placeSYMKEY		= 6;
 	
 	/**
 	 * The iteration locations (in units of 4-bit shifts)
@@ -37,6 +39,7 @@ public class PBEKeyMode {
 	private DigestType	theSecondDigest		= null;
 	private PBEKeyType	thePBEKeyType		= null;
 	private AsymKeyType	theAsymKeyType		= null;
+	private SymKeyType	theSymKeyType		= null;
 	private	int			theFirstIteration	= 1024;
 	private	int			theSecondIteration	= 1536;
 	private	int			theThirdIteration	= 2048;
@@ -50,15 +53,16 @@ public class PBEKeyMode {
 	public	DigestType	getSecondDigest()	{ return theSecondDigest; }
 	public	PBEKeyType	getPBEKeyType()		{ return thePBEKeyType; }
 	public	AsymKeyType	getAsymKeyType()	{ return theAsymKeyType; }
+	public	SymKeyType	getSymKeyType()		{ return theSymKeyType; }
 	public	int			getFirstIterate()	{ return theFirstIteration; }
 	public	int			getSecondIterate()	{ return theSecondIteration; }
 	public	int			getThirdIterate()	{ return theThirdIteration; }
 
 	/**
 	 * Constructor from node
-	 * @param pMode the Zip Mode
+	 * @param pMode the Control Mode
 	 */
-	protected PBEKeyMode(long pMode) throws Exception {
+	protected ControlMode(long pMode) throws Exception {
 		/* Not allowed unless version is zero */
 		if (getVersion(pMode) != 0)
 			throw new Exception(ExceptionClass.LOGIC,
@@ -81,30 +85,35 @@ public class PBEKeyMode {
 
 		/* Set AsymKeyPBE value */
 		setAsymKeyType(AsymKeyType.fromId(getId(pMode, placeASYMKEY)));
+
+		/* Set SymKeyPBE value */
+		setSymKeyType(SymKeyType.fromId(getId(pMode, placeSYMKEY)));
 	}
 
 	/**
 	 * Standard constructor
 	 */
-	private PBEKeyMode() {
+	private ControlMode() {
 		setVersion(0);
 	}
 	
 	/**
-	 * Construct a PBE KeyMode
+	 * Construct a ControlMode
 	 * @param pFirstDigest the first digest type
 	 * @param pSecondDigest the second digest type
 	 * @param pPBEKeyType the PBE key type
 	 * @param pAsymKeyType the Asym Key type
+	 * @param pSymKeyType the Sym Key type
 	 * @param pRandom the random generator
 	 */
-	public static PBEKeyMode getPBEKeyMode(DigestType	pFirstDigest,
-				   						   DigestType	pSecondDigest,
-				   						   PBEKeyType	pPBEKeyType,
-				   						   AsymKeyType	pAsymKeyType,
-				   						   SecureRandom pRandom) throws Exception {
+	public static ControlMode getControlMode(DigestType		pFirstDigest,
+				   							 DigestType		pSecondDigest,
+				   							 PBEKeyType		pPBEKeyType,
+				   							 AsymKeyType	pAsymKeyType,
+				   							 SymKeyType		pSymKeyType,
+				   							 SecureRandom	pRandom) throws Exception {
 		/* Create a new PBEKeyMode */
-		PBEKeyMode myMode = new PBEKeyMode();
+		ControlMode myMode = new ControlMode();
 
 		/* Set digest options */
 		myMode.setDigestTypes(pFirstDigest, pSecondDigest);
@@ -115,6 +124,9 @@ public class PBEKeyMode {
 		/* Set Asym key option */
 		myMode.setAsymKeyType(pAsymKeyType);
 		
+		/* Set Sym key option */
+		myMode.setSymKeyType(pSymKeyType);
+		
 		/* Set iterations */
 		myMode.setRandomIterations(pRandom);
 		
@@ -123,17 +135,18 @@ public class PBEKeyMode {
 	}
 	
 	/**
-	 * Construct a random PBE KeyMode
+	 * Construct a random ControlMode
 	 * @param pRandom the random generator
 	 */
-	public static PBEKeyMode getPBEKeyMode(SecureRandom pRandom) throws Exception {
+	public static ControlMode getControlMode(SecureRandom pRandom) throws Exception {
 		/* Create a new PBEKeyMode */
-		PBEKeyMode myMode = new PBEKeyMode();
+		ControlMode myMode = new ControlMode();
 
 		/* Access a random set of SymKeyTypes and DigestTypes */
 		AsymKeyType[] myAsym 	= AsymKeyType.getRandomTypes(1, pRandom);		
 		PBEKeyType[]  myPBE 	= PBEKeyType.getRandomTypes(1, pRandom);		
 		DigestType[]  myDigest	= DigestType.getRandomTypes(2, pRandom);
+		SymKeyType[]  mySym 	= SymKeyType.getRandomTypes(1, pRandom);		
 		
 		/* Set digest options */
 		myMode.setDigestTypes(myDigest[0], myDigest[1]);
@@ -143,6 +156,9 @@ public class PBEKeyMode {
 		
 		/* Set Asym key option */
 		myMode.setAsymKeyType(myAsym[0]);
+		
+		/* Set Sym key option */
+		myMode.setSymKeyType(mySym[0]);
 		
 		/* Set iterations */
 		myMode.setRandomIterations(pRandom);
@@ -319,5 +335,17 @@ public class PBEKeyMode {
 
 		/* Set the value into the mode */
 		setId(pAsymKeyType.getId(), placeASYMKEY);
+	}
+
+	/**
+	 * Set SymKeyType type
+	 * @param pSymKeyType the Sym key type
+	 */
+	private void setSymKeyType(SymKeyType pSymKeyType) throws Exception {
+		/* Record the key type */
+		theSymKeyType 	= pSymKeyType;
+
+		/* Set the value into the mode */
+		setId(pSymKeyType.getId(), placeSYMKEY);
 	}
 }
