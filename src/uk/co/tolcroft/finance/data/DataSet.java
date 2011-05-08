@@ -3,6 +3,7 @@ package uk.co.tolcroft.finance.data;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.security.*;
 
@@ -66,6 +67,28 @@ public class DataSet implements htmlDumpable {
 		thePrices     = new AcctPrice.List(this);
 		thePatterns   = new Pattern.List(this);
 		theEvents     = new Event.List(this);
+	}
+	
+	/**
+	 * Construct an update extract for a DataSet.
+	 * @param pSource The underlying DataSet 
+	 */
+	public DataSet(DataSet pSource) {
+		/* Build the static differences */
+		theStatic     = new Static.List(pSource.getStatic(), ListStyle.UPDATE);
+		theActTypes   = new AccountType.List(pSource.getAccountTypes(), ListStyle.UPDATE);
+		theTransTypes = new TransactionType.List(pSource.getTransTypes(), ListStyle.UPDATE);
+		theTaxTypes   = new TaxType.List(pSource.getTaxTypes(), ListStyle.UPDATE);
+		theTaxRegimes = new TaxRegime.List(pSource.getTaxRegimes(), ListStyle.UPDATE);
+		theFrequencys = new Frequency.List(pSource.getFrequencys(), ListStyle.UPDATE);
+		
+		/* Build the data differences */
+		theTaxYears   = new TaxYear.List(pSource.getTaxYears(), ListStyle.UPDATE);
+		theAccounts   = new Account.List(pSource.getAccounts(), ListStyle.UPDATE);
+		theRates      = new AcctRate.List(pSource.getRates(), ListStyle.UPDATE);
+		thePrices     = new AcctPrice.List(pSource.getPrices(), ListStyle.UPDATE);
+		thePatterns   = new Pattern.List(pSource.getPatterns(), ListStyle.UPDATE);
+		theEvents     = new Event.List(pSource.getEvents(), ListStyle.UPDATE);
 	}
 	
 	/**

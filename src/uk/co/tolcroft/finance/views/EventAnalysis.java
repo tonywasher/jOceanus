@@ -3,7 +3,6 @@ package uk.co.tolcroft.finance.views;
 import uk.co.tolcroft.finance.views.Analysis.*;
 import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.data.DataSet.LoadState;
 import uk.co.tolcroft.finance.data.TransactionType.TransClass;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.DataList.ListStyle;
@@ -295,7 +294,6 @@ public class EventAnalysis {
 		Account							myAccount;
 		DebugEntry						mySection;
 		DebugEntry						myDebug;
-		boolean							isLoaded;
 
 		/* Store the parameters */
 		theData 	= pData;
@@ -312,9 +310,6 @@ public class EventAnalysis {
 
 		/* Create the Dilution Event List */
 		theDilutions = new DilutionEvent.List(theData);
-		
-		/* Determine whether the DataSet is fully loaded */
-		isLoaded = (theData.getLoadState() == LoadState.LOADED);
 		
 		/* Access the tax years list */
 		myList = theData.getTaxYears();
@@ -361,16 +356,10 @@ public class EventAnalysis {
 			/* Touch credit account */
 			myAccount = myCurr.getCredit();
 			myAccount.touchAccount(myCurr);
-			if ((isLoaded) && (myAccount.isChild())) {
-				myAccount.getParent().touchAccount(myCurr);
-			}
 			
 			/* Touch debit accounts */
 			myAccount = myCurr.getDebit();
 			myAccount.touchAccount(myCurr);
-			if ((isLoaded) && (myAccount.isChild())) {
-				myAccount.getParent().touchAccount(myCurr);
-			}
 
 			/* If the event has a dilution factor */
 			if (myCurr.getDilution() != null) {

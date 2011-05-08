@@ -810,6 +810,10 @@ public class Account extends DataItem {
 		/* Record the event */
 		if (theEarliest == null) theEarliest = pEvent;
 		theLatest = pEvent;
+		
+		/* If we have a parent, touch it */
+		if (getParent() != null) 
+			getParent().touchAccount(pEvent);
 	}
 
 	/**
@@ -1367,7 +1371,7 @@ public class Account extends DataItem {
 						myCurr.getAlias().setNonCloseable();
 				}
 				
-				/* If we are a child and have no latest event, and are then we are not close-able */
+				/* If we are a child and have no latest event, then we are not close-able */
 				if ((myCurr.isChild()) && (myCurr.getLatest() == null)) {
 					myCurr.setNonCloseable();
 				}
@@ -1654,8 +1658,11 @@ public class Account extends DataItem {
 			myAccount.addToList();				
 		}
 		
-		/* Validate accounts */
-		public void validateAccounts() throws Exception {
+		/**
+		 * Validate newly loaded accounts. This is deliberately deferred until after loading
+		 * of the Rates/Patterns/Prices so as to validate the interrelationships
+		 */
+		public void validateLoadedAccounts() throws Exception {
 			ListIterator myIterator;
 			Account      myCurr;
 		

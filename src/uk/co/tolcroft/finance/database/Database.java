@@ -196,7 +196,7 @@ public class Database {
 		if (bContinue) bContinue = theRates.loadItems(pThread, myData);
 		if (bContinue) bContinue = thePrices.loadItems(pThread, myData);
 		if (bContinue) bContinue = thePatterns.loadItems(pThread, myData);
-		if (bContinue) myData.getAccounts().validateAccounts();
+		if (bContinue) myData.getAccounts().validateLoadedAccounts();
 		if (bContinue) bContinue = theEvents.loadItems(pThread, myData);
 		
 		/* analyse the data */

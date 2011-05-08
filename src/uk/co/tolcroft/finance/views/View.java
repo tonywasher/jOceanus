@@ -1,6 +1,7 @@
 package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.ui.*;
+import uk.co.tolcroft.finance.views.DebugManager.DebugEntry;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.security.SecureManager;
 import uk.co.tolcroft.models.*;
@@ -79,6 +80,10 @@ public class View {
 		
 			/* Access the dilutions */
 			theDilutions = theAnalysis.getDilutions();
+
+			/* Adjust the updates debug view */
+			DebugEntry myDebug = theDebugMgr.getUpdates();
+			myDebug.setObject(new DataSet(theData));
 		}
 		
 		/* Catch any exceptions */

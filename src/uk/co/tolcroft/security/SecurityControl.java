@@ -1,6 +1,7 @@
 package uk.co.tolcroft.security;
 
 import java.security.*;
+import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.*;
 
@@ -71,17 +72,17 @@ public class SecurityControl extends DataItem {
 	/**
 	 * The public key
 	 */
-	private String					thePublicKey	= null;
+	private X509EncodedKeySpec		thePublicKey	= null;
 
 	/* Access methods */
-	public 		boolean			isInitialised()		{ return isInitialised; }
-	public 		boolean			newPassword()		{ return (theSecurityKey == null); }
-	protected 	AsymmetricKey	getAsymKey()		{ return theAsymKey; }
-	protected 	PasswordKey		getPassKey()		{ return thePassKey; }
-	public 		ControlMode		getControlMode()	{ return theControlMode; }
-	public 		String			getSecurityKey()	{ return theSecurityKey; }
-	public 		String			getPublicKey()		{ return thePublicKey; }
-	public 		SecureRandom	getRandom()			{ return theRandom; }
+	public 		boolean				isInitialised()		{ return isInitialised; }
+	public 		boolean				newPassword()		{ return (theSecurityKey == null); }
+	protected 	AsymmetricKey		getAsymKey()		{ return theAsymKey; }
+	protected 	PasswordKey			getPassKey()		{ return thePassKey; }
+	public 		ControlMode			getControlMode()	{ return theControlMode; }
+	public 		String				getSecurityKey()	{ return theSecurityKey; }
+	public 		X509EncodedKeySpec	getPublicKey()		{ return thePublicKey; }
+	public 		SecureRandom		getRandom()			{ return theRandom; }
 	
 	/**
 	 * Constructor
@@ -126,7 +127,7 @@ public class SecurityControl extends DataItem {
 		
 		/* Create the asymmetric key */
 		theAsymKey  = new AsymmetricKey(theControlMode.getAsymKeyType(),
-										theControlMode,
+										theControlMode.getSymKeyType(),
 										thePassKey,
 										theRandom);			
 		
@@ -171,7 +172,7 @@ public class SecurityControl extends DataItem {
 							
 				/* Create the asymmetric key */
 				theAsymKey  = new AsymmetricKey(theControlMode.getAsymKeyType(),
-												theControlMode,
+												theControlMode.getSymKeyType(),
 												thePassKey,
 												theRandom);			
 
@@ -191,8 +192,8 @@ public class SecurityControl extends DataItem {
 				
 				/* Rebuild the asymmetric key */
 				theAsymKey  = new AsymmetricKey(theSecurityKey,
-												theControlMode,
 												theControlMode.getAsymKeyType(),
+												theControlMode.getSymKeyType(),
 												thePassKey,
 												theRandom);
 
@@ -232,7 +233,6 @@ public class SecurityControl extends DataItem {
 		
 		/* Access the security keys */
 		theSecurityKey = theAsymKey.getSecurityKey();
-		thePublicKey   = theAsymKey.getPublicKey();		
 	}
 
 	/**
@@ -332,7 +332,7 @@ public class SecurityControl extends DataItem {
 								"Security Control uninitialised");
 			
 		/* Generate the asymmetric key class */
-		myAsymKey = new AsymmetricKey(pKeyType, theControlMode, thePassKey, theRandom);
+		myAsymKey = new AsymmetricKey(pKeyType, theControlMode.getSymKeyType(), thePassKey, theRandom);
 		
 		/* Return the new key */
 		return myAsymKey;
@@ -354,7 +354,7 @@ public class SecurityControl extends DataItem {
 								"Security Control uninitialised");
 			
 		/* Generate the asymmetric key class */
-		myAsymKey = new AsymmetricKey(pSecurityKey, theControlMode, pKeyType, thePassKey, theRandom);
+		myAsymKey = new AsymmetricKey(pSecurityKey, pKeyType, theControlMode.getSymKeyType(), thePassKey, theRandom);
 		
 		/* Return the new key */
 		return myAsymKey;

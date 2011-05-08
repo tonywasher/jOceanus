@@ -16,6 +16,7 @@ public class DebugManager {
 	private String					theTitle	= "Debug Manager";
 	private DebugEntry				theError	= null;
 	private DebugEntry				theViews	= null;
+	private DebugEntry				theUpdates	= null;
 	private DebugEntry				theAnalysis	= null;
 	private DebugEntry				theInstant	= null;
 	private DebugEntry				theAccount	= null;
@@ -26,6 +27,7 @@ public class DebugManager {
 	public String		getTitle()		{ return theTitle; }
 	public DebugEntry	getError()		{ return theError; }
 	public DebugEntry	getViews()		{ return theViews; }
+	public DebugEntry	getUpdates()	{ return theUpdates; }
 	public DebugEntry	getAnalysis()	{ return theAnalysis; }
 	public DebugEntry	getInstant()	{ return theInstant; }
 	public DebugEntry	getAccount()	{ return theAccount; }
@@ -44,6 +46,7 @@ public class DebugManager {
 		
 		/* Create the default entries */
 		theViews 	= new DebugEntry("EditViews");
+		theUpdates 	= new DebugEntry("Updates");
 		theAnalysis	= new DebugEntry("Analysis");
 		theInstant	= new DebugEntry("InstantAnalysis");
 		theAccount	= new DebugEntry("AccountAnalysis");
@@ -51,6 +54,7 @@ public class DebugManager {
 		
 		/* Add them to the root */
 		theViews.addAsRootChild();
+		theUpdates.addAsRootChild();
 		theAnalysis.addAsRootChild();
 		theAccount.addAsRootChild();
 		theInstant.addAsRootChild();

@@ -260,7 +260,7 @@ public class SpreadSheet {
 			if (bContinue) bContinue = SheetDilution.loadArchive(pThread, myWorkbook, myData, myDilution);
 			if (bContinue) bContinue = SheetPrice.loadArchive(pThread, myWorkbook, myData, myDilution);
 			if (bContinue) bContinue = SheetPattern.loadArchive(pThread, myWorkbook, myData);
-			if (bContinue) myData.getAccounts().validateAccounts();
+			if (bContinue) myData.getAccounts().validateLoadedAccounts();
 			if (bContinue) bContinue = SheetEvent.loadArchive(pThread, myWorkbook, myData, myRange);
 		
 			/* Close the work book (and the input stream) */
@@ -330,7 +330,7 @@ public class SpreadSheet {
 			if (bContinue) bContinue = SheetRate.loadBackup(pThread, myWorkbook, myData);
 			if (bContinue) bContinue = SheetPrice.loadBackup(pThread, myWorkbook, myData);
 			if (bContinue) bContinue = SheetPattern.loadBackup(pThread, myWorkbook, myData);
-			if (bContinue) myData.getAccounts().validateAccounts();
+			if (bContinue) myData.getAccounts().validateLoadedAccounts();
 			if (bContinue) bContinue = SheetEvent.loadBackup(pThread, myWorkbook, myData);
 		
 			/* Close the work book (and the input stream) */

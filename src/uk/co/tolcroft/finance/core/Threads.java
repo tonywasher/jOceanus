@@ -14,6 +14,7 @@ import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.FileSelector.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.security.SecureManager;
 
 public class Threads {
 	public interface ThreadControl {
@@ -413,9 +414,10 @@ public class Threads {
 
 		/* Background task (Worker Thread)*/
 		public Void doInBackground() {
-			Database	myDatabase	= null;
-			DataSet		myData;
-			DataSet		myNull;
+			Database		myDatabase	= null;
+			DataSet			myData;
+			DataSet			myNull;
+			SecureManager	myManager	= null;
 
 			try {
 				/* Create interface */
@@ -425,7 +427,7 @@ public class Threads {
 				myDatabase.createTables(theStatus);
 
 				/* Re-base this set on a null set */
-				myNull = new DataSet(null);
+				myNull = new DataSet(myManager);
 				myData = theView.getData();
 				myData.reBase(myNull);
 			}	
@@ -512,11 +514,13 @@ public class Threads {
 
 		/* Background task (Worker Thread)*/
 		public Void doInBackground() {
-			Database	myDatabase	= null;
-			DataSet		myData;
-			DataSet		myNull;
+			Database		myDatabase	= null;
+			DataSet			myData;
+			DataSet			myNull;
+			SecureManager 	myManager = null;
 
 			try {
+				
 				/* Create interface */
 				myDatabase = new Database(theWindow.getProperties());
 
@@ -524,7 +528,7 @@ public class Threads {
 				myDatabase.purgeTables(theStatus);
 
 				/* Re-base this set on a null set */
-				myNull = new DataSet(null);
+				myNull = new DataSet(myManager);
 				myData = theView.getData();
 				myData.reBase(myNull);
 			}	
@@ -589,6 +593,7 @@ public class Threads {
 		private StatusBar   	theStatusBar 	= null;
 		private statusCtl		theStatus    	= null;
 		private Properties		theProperties	= null;
+		private DebugManager	theDebugMgr		= null;
 		private Exception 		theError 	 	= null;
 
 		/* Access methods */
@@ -600,6 +605,7 @@ public class Threads {
 			theView   		= pView;
 			theWindow 		= pWindow;
 			theProperties 	= theWindow.getProperties();
+			theDebugMgr		= theWindow.getDebugMgr();
 
 			/* Access the Status Bar */
 			theStatusBar = theWindow.getStatusBar();
@@ -644,6 +650,9 @@ public class Threads {
 
 				/* Initialise the static, either from database or with a new security control */
 				myData.adoptStatic(myStore);
+				
+				/* Analyse the Data to ensure that close dates are updated */
+				myData.analyseData(theDebugMgr);
 				
 				/* Re-base the loaded spreadsheet onto the database image */
 				myData.reBase(myStore);
