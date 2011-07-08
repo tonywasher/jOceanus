@@ -1,21 +1,231 @@
 package uk.co.tolcroft.finance.sheets;
 
 import jxl.*;
-import jxl.write.WritableWorkbook;
-import jxl.write.WritableSheet;
-import jxl.write.WritableCellFormat;
-import jxl.write.DateFormats;
+import jxl.write.WritableCellFeatures;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
+import uk.co.tolcroft.finance.sheets.SpreadSheet.OutputSheet;
+import uk.co.tolcroft.finance.sheets.SpreadSheet.SheetType;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 
-public class SheetPattern {
+public class SheetPattern extends SheetDataItem<Pattern> {
 	/**
 	 * NamedArea for Patterns
 	 */
-	private static final String Patterns 	   = "Patterns";
+	private static final String Patterns 	   = Pattern.listName;
+	
+	/**
+	 * Is the spreadsheet a backup spreadsheet or an edit-able one
+	 */
+	private boolean isBackup	= false;
+	
+	/**
+	 * Validation control for Account Name
+	 */
+	private WritableCellFeatures theAccountCtl	= null;
+	
+	/**
+	 * Validation control for Transaction Type
+	 */
+	private WritableCellFeatures theTransCtl	= null;
+	
+	/**
+	 * Validation control for Frequency
+	 */
+	private WritableCellFeatures theFreqCtl		= null;
+	
+	/**
+	 * Patterns data list
+	 */
+	private Pattern.List theList		= null;
+
+	/**
+	 * Accounts data list
+	 */
+	private Account.List theAccounts	= null;
+
+	/**
+	 * Constructor for loading a spreadsheet
+	 * @param pInput the input spreadsheet
+	 */
+	protected SheetPattern(InputSheet	pInput) {
+		/* Call super constructor */
+		super(pInput, Patterns);
+		
+		/* Note whether this is a backup */
+		isBackup = (pInput.getType() == SheetType.BACKUP);
+		
+		/* Access the Lists */
+		DataSet myData = pInput.getData();
+		theAccounts = myData.getAccounts();
+		theList 	= myData.getPatterns();
+	}
+
+	/**
+	 *  Constructor for creating a spreadsheet
+	 *  @param pOutput the output spreadsheet
+	 */
+	protected SheetPattern(OutputSheet	pOutput) {
+		/* Call super constructor */
+		super(pOutput, Patterns);
+		
+		/* Note whether this is a backup */
+		isBackup = (pOutput.getType() == SheetType.BACKUP);
+				
+		/* Access the Patterns list */
+		theList = pOutput.getData().getPatterns();
+		setDataList(theList);
+		
+		/* If this is not a backup */
+		if (!isBackup) {
+			/* Obtain validation for the Account Name */
+			theAccountCtl 	= obtainCellValidation(SheetAccount.AccountNames);
+
+			/* Obtain validation for the Transaction Types */
+			theTransCtl 	= obtainCellValidation(SheetTransactionType.TranTypeNames);
+			
+			/* Obtain validation for the Frequencies */
+			theFreqCtl 		= obtainCellValidation(SheetFrequency.FrequencyNames);
+		}
+	}
+	
+	/**
+	 * Load an item from the spreadsheet
+	 */
+	protected void loadItem() throws Throwable {
+
+		/* If this is a backup load */
+		if (isBackup) {
+			/* Access the IDs */
+			int	myID 		= loadInteger(0);
+			int	myActId		= loadInteger(1);
+			int	myPartId	= loadInteger(2);
+			int	myTranId	= loadInteger(5);
+			int	myFreqId	= loadInteger(6);
+		
+			/* Access the date and credit flag */
+			java.util.Date 	myDate 		= loadDate(3);
+			boolean 		isCredit 	= loadBoolean(4);
+		
+			/* Access the binary values  */
+			byte[] 	myDesc 		= loadBytes(7);
+			byte[]	myAmount 	= loadBytes(8);
+		
+			/* Load the item */
+			theList.addItem(myID, myDate, myDesc, myAmount, myActId, myPartId, myTranId, myFreqId, isCredit);
+		}
+		
+		/* else this is a load from an edit-able spreadsheet */
+		else {
+			/* Access the Account */
+			String myAccount	= loadString(0);
+			String myPartner	= loadString(5);
+			String myTransType	= loadString(6);
+			String myFrequency	= loadString(7);
+		
+			/* Access the name and description bytes */
+			java.util.Date 	myDate 		= loadDate(1);
+			Boolean 		isCredit	= loadBoolean(3);
+		
+			/* Access the binary values  */
+			String 	myDesc 		= loadString(2);
+			String	myAmount 	= loadString(4);
+		
+			/* Load the item */
+			theList.addItem(myDate, myDesc, myAmount, myAccount, myPartner, myTransType, myFrequency, isCredit);
+		}
+	}
+
+	/**
+	 *  Insert a item into the spreadsheet
+	 *  @param pItem the Item to insert
+	 *  @param isBackup is the spreadsheet a backup, or else clear text
+	 */
+	protected void insertItem(Pattern	pItem) throws Throwable  {
+		/* If we are creating a backup */
+		if (isBackup) {
+			/* Set the fields */
+			writeInteger(0, pItem.getId());
+			writeInteger(1, pItem.getAccount().getId());				
+			writeInteger(2, pItem.getPartner().getId());				
+			writeInteger(5, pItem.getTransType().getId());				
+			writeInteger(6, pItem.getFrequency().getId());				
+			writeDate(3, pItem.getDate());
+			writeBoolean(4, pItem.isCredit());
+			writeBytes(7, pItem.getDescBytes());
+			writeBytes(8, pItem.getAmountBytes());
+		}
+
+		/* else we are creating an edit-able spreadsheet */
+		else {
+			/* Set the fields */
+			writeValidatedString(0, pItem.getAccount().getName(), theAccountCtl);				
+			writeValidatedString(5, pItem.getPartner().getName(), theAccountCtl);				
+			writeValidatedString(6, pItem.getTransType().getName(), theTransCtl);				
+			writeValidatedString(7, pItem.getFrequency().getName(), theFreqCtl);				
+			writeDate(1, pItem.getDate());
+			writeBoolean(3, pItem.isCredit());			
+			writeString(2, pItem.getDesc());			
+			writeNumber(4, pItem.getAmount());			
+		}
+	}
+
+	/**
+	 * PreProcess on write
+	 */
+	protected boolean preProcessOnWrite() throws Throwable {		
+		/* Ignore if we are creating a backup */
+		if (isBackup) return false;
+
+		/* Write titles */
+		writeString(0, Pattern.fieldName(Pattern.FIELD_ACCOUNT));
+		writeString(1, Pattern.fieldName(Pattern.FIELD_DATE));
+		writeString(2, Pattern.fieldName(Pattern.FIELD_DESC));			
+		writeString(3, Pattern.fieldName(Pattern.FIELD_CREDIT));			
+		writeString(4, Pattern.fieldName(Pattern.FIELD_AMOUNT));			
+		writeString(5, Pattern.fieldName(Pattern.FIELD_PARTNER));			
+		writeString(6, Pattern.fieldName(Pattern.FIELD_TRNTYP));			
+		writeString(7, Pattern.fieldName(Pattern.FIELD_FREQ));			
+		return true;
+	}	
+
+	/**
+	 * PostProcess on write
+	 */
+	protected void postProcessOnWrite() throws Throwable {		
+		/* If we are creating a backup */
+		if (isBackup) {
+			/* Set the nine columns as the range */
+			nameRange(9);
+		}
+
+		/* else this is an edit-able spreadsheet */
+		else {
+			/* Set the eight columns as the range */
+			nameRange(8);
+
+			/* Set the Account column width */
+			setColumnWidth(0, Account.NAMELEN);
+			setColumnWidth(2, Pattern.DESCLEN);
+			setColumnWidth(5, Account.NAMELEN);
+			setColumnWidth(6, StaticClass.NAMELEN);
+			setColumnWidth(7, StaticClass.NAMELEN);
+			
+			/* Set Number columns */
+			setDateColumn(1);
+			setBooleanColumn(3);
+			setMoneyColumn(4);
+		}
+	}
+
+	/**
+	 * postProcess on Load
+	 */
+	protected void postProcessOnLoad() throws Throwable {
+		theAccounts.validateLoadedAccounts();
+	}
 	
 	/**
 	 *  Load the Patterns from an archive
@@ -126,241 +336,4 @@ public class SheetPattern {
 		/* Return to caller */
 		return true;
 	}
-	
-	/**
-	 *  Load the Patterns from a backup
-	 *  @param pThread   the thread status control
-	 *  @param pWorkbook the workbook to load from
-	 *  @param pData the data set to load into
-	 *  @return continue to write <code>true/false</code> 
-	 */
-	protected static boolean loadBackup(statusCtl 	pThread,
-			 							Workbook	pWorkbook,
-		   	  				   	        DataSet		pData) throws Exception {
-		/* Local variables */
-		Pattern.List		myList;
-		Range[]     		myRange;
-		Sheet       		mySheet;
-		Cell        		myTop;
-		Cell        		myBottom;
-		String     			myHexString;
-		byte[]      		myDesc;
-		byte[]      		myAmount;
-		int		    		myAccount;
-		int	        		myPartner; 
-		int	        		myFrequency;
-		boolean     		isCredit;
-		int	        		myTranType;
-		int	        		myID;
-		Cell        		myCell;
-		DateCell    		myDateCell;
-		BooleanCell 		myBoolCell;
-		java.util.Date      myDate;
-		int         		myCol;
-		int         		myTotal;
-		int					mySteps;
-		int         		myCount = 0;
-		
-		/* Protect against exceptions*/
-		try {
-			/* Find the range of cells */
-			myRange = pWorkbook.findByName(Patterns);
-		
-			/* Access the number of reporting steps */
-			mySteps = pThread.getReportingSteps();
-			
-			/* Declare the new stage */
-			if (!pThread.setNewStage(Patterns)) return false;
-		
-			/* If we found the range OK */
-			if ((myRange != null) && (myRange.length == 1)) {
-			
-				/* Access the relevant sheet and Cell references */
-				mySheet   = pWorkbook.getSheet(myRange[0].getFirstSheetIndex());
-				myTop     = myRange[0].getTopLeft();
-				myBottom  = myRange[0].getBottomRight();
-				myCol     = myTop.getColumn();
-			
-				/* Count the number of Patterns */
-				myTotal  = myBottom.getRow() - myTop.getRow() + 1;
-			
-				/* Access the list of patterns */
-				myList = pData.getPatterns();
-			
-				/* Declare the number of steps */
-				if (!pThread.setNumSteps(myTotal)) return false;
-			
-				/* Loop through the rows of the table */
-				for (int i = myTop.getRow();
-					 i <= myBottom.getRow();
-					 i++) {
-				
-					/* Access ids */
-					myCell    	= mySheet.getCell(myCol, i);
-					myID      	= Integer.parseInt(myCell.getContents());
-					myCell    	= mySheet.getCell(myCol+1, i);
-					myAccount  	= Integer.parseInt(myCell.getContents());
-					myCell    	= mySheet.getCell(myCol+2, i);
-					myPartner  	= Integer.parseInt(myCell.getContents());
-					myCell    	= mySheet.getCell(myCol+5, i);
-					myTranType 	= Integer.parseInt(myCell.getContents());
-					myCell    	= mySheet.getCell(myCol+6, i);
-					myFrequency	= Integer.parseInt(myCell.getContents());
-				
-					/* Access date */
-					myDateCell = (DateCell)mySheet.getCell(myCol+3, i);
-					myDate     = myDateCell.getDate();
-			    
-					/* Access Flag */
-					myBoolCell = (BooleanCell)mySheet.getCell(myCol+4, i);
-					isCredit   = myBoolCell.getValue();
-			    
-					/* Access the values */
-					myHexString	= mySheet.getCell(myCol+7, i).getContents();
-					myDesc	    = Utils.BytesFromHexString(myHexString);
-					myHexString	= mySheet.getCell(myCol+8, i).getContents();
-					myAmount    = Utils.BytesFromHexString(myHexString);
-			    
-					/* Add the pattern */
-					myList.addItem(myID,
-						           myDate,
-						           myDesc,
-				  		           myAmount,
-						           myAccount,
-						           myPartner,
-						           myTranType,
-						           myFrequency,
-						           isCredit);
-				
-					/* Report the progress */
-				    myCount++;
-				    if ((myCount % mySteps) == 0) 
-				    	if (!pThread.setStepsDone(myCount)) return false;
-				}
-			}
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.EXCEL, 
-								"Failed to load Patterns",
-								e);
-		}
-		
-		/* Return to caller */
-		return true;
-	}
-	
-	/**
-	 *  Write the Account Types to a backup
-	 *  @param pThread   the thread status control
-	 *  @param pWorkbook the workbook to write to
-	 *  @param pData the data set to write from
-	 *  @return continue to write <code>true/false</code> 
-	 */
-	protected static boolean writeBackup(statusCtl 			pThread,
-										 WritableWorkbook	pWorkbook,
-		   	        					 DataSet			pData) throws Exception {
-		WritableSheet 					mySheet;
-		DataList<Pattern>.ListIterator	myIterator;
-		Pattern.List					myPatterns;
-		Pattern							myCurr;
-		int								myRow;
-		int								myCount;
-		int								myTotal;
-		int								mySteps;
-		jxl.write.Label					myCell;
-		jxl.write.Boolean				myCredit;
-		jxl.write.DateTime				myDate;
-		WritableCellFormat				myFormat;
-
-		/* Protect against exceptions */
-		try { 
-			/* Declare the new stage */
-			if (!pThread.setNewStage(Patterns)) return false;
-		
-			/* Create the formats */
-			myFormat		= new WritableCellFormat(DateFormats.FORMAT2);
-	
-			/* Create the sheet */
-			mySheet    = pWorkbook.createSheet(Patterns, 0);
-	
-			/* Access the patterns */
-			myPatterns = pData.getPatterns();
-	
-			/* Access the number of reporting steps */
-			mySteps = pThread.getReportingSteps();
-
-			/* Count the number of patterns */
-			myTotal   = myPatterns.size();
-		
-			/* Declare the number of steps */
-			if (!pThread.setNumSteps(myTotal)) return false;
-		
-			/* Initialise counts */
-			myRow   = 0;
-			myCount = 0;
-		
-			/* Access the iterator */
-			myIterator = myPatterns.listIterator();
-			
-			/* Loop through the patterns */
-			while ((myCurr  = myIterator.next()) != null) {
-				/* Create the Identifier cells */
-				myCell = new jxl.write.Label(0, myRow, 
-											 Integer.toString(myCurr.getId()));
-				mySheet.addCell(myCell);
-				myCell = new jxl.write.Label(1, myRow, 
-											 Integer.toString(myCurr.getAccount().getId()));
-				mySheet.addCell(myCell);
-				myCell = new jxl.write.Label(2, myRow, 
-											 Integer.toString(myCurr.getPartner().getId()));
-				mySheet.addCell(myCell);
-				myCell = new jxl.write.Label(5, myRow, 
-											 Integer.toString(myCurr.getTransType().getId()));
-				mySheet.addCell(myCell);
-				myCell = new jxl.write.Label(6, myRow,
-											 Integer.toString(myCurr.getFrequency().getId()));
-				mySheet.addCell(myCell);
-			
-				/* Create the Amount cells */
-				myCell = new jxl.write.Label(8, myRow, 
-											 Utils.HexStringFromBytes(myCurr.getAmountBytes()));
-				mySheet.addCell(myCell);
-			
-				/* Create the IsCredit cells */
-				myCredit = new jxl.write.Boolean(4, myRow, myCurr.isCredit(), myFormat);
-				mySheet.addCell(myCredit);
-				
-				/* Create the Desc cells */
-				myCell = new jxl.write.Label(7, myRow, 
-											 Utils.HexStringFromBytes(myCurr.getDescBytes()));
-				mySheet.addCell(myCell);
-				
-				/* Create the Date cells */
-				myDate = new jxl.write.DateTime(3, myRow, 
-												myCurr.getDate().getDate(),
-												myFormat);
-				mySheet.addCell(myDate);
-			
-				/* Report the progress */
-				myCount++;
-				myRow++;
-				if ((myCount % mySteps) == 0) 
-					if (!pThread.setStepsDone(myCount)) return false;
-			}
-	
-			/* Add the Range name */
-			if (myRow > 0)
-				pWorkbook.addNameArea(Patterns, mySheet, 0, 0, 8, myRow-1);
-		}
-
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.EXCEL, 
-								"Failed to create Patterns",
-								e);
-		}
-	
-		/* Return to caller */
-		return true;
-	}	
 }

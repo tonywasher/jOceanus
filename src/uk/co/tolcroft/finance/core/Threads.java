@@ -648,8 +648,8 @@ public class Threads {
 				/* Load underlying database */
 				myStore	= myDatabase.loadDatabase(theStatus);
 
-				/* Initialise the static, either from database or with a new security control */
-				myData.adoptStatic(myStore);
+				/* Initialise the control, either from database or with a new security control */
+				myData.adoptControl(myStore);
 				
 				/* Analyse the Data to ensure that close dates are updated */
 				myData.analyseData(theDebugMgr);
@@ -878,7 +878,6 @@ public class Threads {
 		private MainTab    	theWindow    	= null;
 		private StatusBar   theStatusBar 	= null;
 		private statusCtl	theStatus    	= null;
-		private Properties	theProperties	= null;
 		private Exception 	theError 	 	= null;
 
 		/* Access methods */
@@ -889,7 +888,6 @@ public class Threads {
 			/* Store passed parameters */
 			theView       = pView;
 			theWindow     = pWindow;
-			theProperties = theWindow.getProperties();
 
 			/* Access the Status Bar */
 			theStatusBar = theWindow.getStatusBar();
@@ -920,8 +918,7 @@ public class Threads {
 				/* Create backup */
 				SpreadSheet.createBackup(theStatus, 
 										 theView.getData(), 
-										 myFile, 
-										 theProperties.doEncryptBackups());
+										 myFile);
 
 				/* File created, so delete on error */
 				doDelete = true;
@@ -932,9 +929,8 @@ public class Threads {
 				theStatusBar.setSteps(0, 100);
 				theStatusBar.getProgressPanel().setVisible(true);
 
-				/* If we encrypted then .zip was added to the file */
-				if (theProperties.doEncryptBackups())
-					myFile 	= new File(myFile.getPath() + ".zip");
+				/* As we have encrypted then .zip was added to the file */
+				myFile 	= new File(myFile.getPath() + ".zip");
 				
 				/* Load workbook */
 				myData   = SpreadSheet.loadBackup(theStatus, 

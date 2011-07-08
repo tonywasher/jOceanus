@@ -51,7 +51,7 @@ public class ViewPrice extends DataItem {
 	 * Determine the field name for a particular field
 	 * @return the field name
 	 */
-	public String	fieldName(int iField) {
+	public static String	fieldName(int iField) {
 		switch (iField) {
 			case FIELD_ID:				return "ID";
 			case FIELD_ACCOUNT:			return "Account";
@@ -59,10 +59,15 @@ public class ViewPrice extends DataItem {
 			case FIELD_PRICE:			return "Price";
 			case FIELD_DILUTION:		return "Dilution";
 			case FIELD_DILUTEDPRICE:	return "DilutedPrice";
-			default:		  			return super.fieldName(iField);
+			default:		  			return DataItem.fieldName(iField);
 		}
 	}
 				
+	/**
+	 * Determine the field name in a non-static fashion 
+	 */
+	public String getFieldName(int iField) { return fieldName(iField); }
+	
 	/**
 	 * Format the value of a particular field as a table row
 	 * @param iField the field number

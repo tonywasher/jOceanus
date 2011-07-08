@@ -1,11 +1,8 @@
 package uk.co.tolcroft.finance.database;
 
-import java.sql.SQLException;
-
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.DataList.*;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
@@ -13,22 +10,22 @@ public class TablePrice extends DatabaseTable<AcctPrice> {
 	/**
 	 * The name of the Prices table
 	 */
-	private final static String theTabName 		= "Prices";
+	private final static String theTabName 		= AcctPrice.listName;
 				
 	/**
 	 * The name of the Account column
 	 */
-	private final static String theActCol    	= "Account";
+	private final static String theActCol    	= AcctPrice.fieldName(AcctPrice.FIELD_ACCOUNT);
 
 	/**
 	 * The name of the Date column
 	 */
-	private final static String theDateCol 		= "Date";
+	private final static String theDateCol 		= AcctPrice.fieldName(AcctPrice.FIELD_DATE);
 
 	/**
 	 * The name of the Price column
 	 */
-	private final static String thePriceCol 	= "Price";
+	private final static String thePriceCol 	= AcctPrice.fieldName(AcctPrice.FIELD_PRICE);
 
 	/**
 	 * Constructor
@@ -53,79 +50,6 @@ public class TablePrice extends DatabaseTable<AcctPrice> {
 		return new AcctPrice.List(pData.getPrices(), ListStyle.UPDATE);
 	}
 	
-	/**
-	 * Determine the Account of the newly loaded item
-	 * @return the Account
-	 */
-	private int getAccount() throws SQLException {
-		return getInteger();
-	}
-
-	/**
-	 * Determine the Date of the newly loaded item
-	 * @return the Rate
-	 */
-	protected java.util.Date getDate() throws SQLException {
-		return super.getDate();
-	}
-
-	/**
-	 * Determine the Price of the newly loaded item
-	 * @return the Bonus
-	 */
-	private String getPrice() throws SQLException {
-		return getString();
-	}
-
-	/**
-	 * Set the Account of the item to be inserted
-	 * @param pAccount the account of the item
-	 */
-	private void setAccount(int pAccount) throws SQLException {
-		setInteger(pAccount);
-	}
-
-	/**
-	 * Set the Date of the item to be inserted
-	 * @param pDate the Date of the item
-	 */
-	protected void setDate(Date pDate) throws SQLException {
-		super.setDate(pDate);
-	}
-
-	/**
-	 * Set the Price of the item to be inserted
-	 * @param pPrice the price of the item
-	 */
-	private void setPrice(Price pPrice) throws SQLException {
-		setString(pPrice.format(false));
-	}
-
-	/**
-	 * Update the Account of the item
-	 * @param pValue the new account
-	 */
-	private void updateAccount(int pValue) {
-		updateInteger(theActCol, pValue);
-	}		
-
-	/**
-	 * Update the Date of the item
-	 * @param pValue the new date
-	 */
-	private void updateDate(Date pValue) {
-		updateDate(theDateCol, pValue);
-	}		
-
-	/**
-	 * Update the Price of the item
-	 * @param pPrice the new price
-	 */
-	private void updatePrice(Price pValue) {
-		updateString(thePriceCol, (pValue == null) ? null
-                								   : pValue.format(false));
-	}	
-
 	/* Create statement for Prices */
 	protected String createStatement() {
 		return "create table " + theTabName + " ( " +
@@ -133,7 +57,7 @@ public class TablePrice extends DatabaseTable<AcctPrice> {
 			   theActCol	+ " int NOT NULL " +
 			   		"REFERENCES " + TableAccount.idReference() + ", " +
    			   theDateCol	+ " date NOT NULL, " +
-			   thePriceCol	+ " money NOT NULL )";
+			   thePriceCol	+ " varbinary(" + 2*EncryptedPair.PRICELEN + ") NOT NULL )";
 	}
 	
 	/* Determine the item name */
@@ -151,16 +75,16 @@ public class TablePrice extends DatabaseTable<AcctPrice> {
 		AcctPrice.List		myList;
 		int	    		myId;
 		int  			myAccountId;
-		String 			myPrice;
+		byte[] 			myPrice;
 		java.util.Date  myDate;
 		
 		/* Protect the access */
 		try {			
 			/* Get the various fields */
-			myId        = getID();
-			myAccountId = getAccount();
+			myId        = getInteger();
+			myAccountId = getInteger();
 			myDate 		= getDate();
-			myPrice     = getPrice();
+			myPrice     = getBinary();
 	
 			/* Access the list */
 			myList = (AcctPrice.List)getList();
@@ -196,10 +120,10 @@ public class TablePrice extends DatabaseTable<AcctPrice> {
 		/* Protect the access */
 		try {			
 			/* Set the fields */
-			setID(pItem.getId());
-			setAccount(pItem.getAccount().getId());
+			setInteger(pItem.getId());
+			setInteger(pItem.getAccount().getId());
 			setDate(pItem.getDate());
-			setPrice(pItem.getPrice());
+			setBinary(pItem.getPriceBytes());
 		}
 				
 		catch (Throwable e) {
@@ -225,13 +149,13 @@ public class TablePrice extends DatabaseTable<AcctPrice> {
 			/* Update the fields */
 			if (Account.differs(pItem.getAccount(),
 		  		  	  			myBase.getAccount()))
-				updateAccount(pItem.getAccount().getId());
+				updateInteger(theActCol, pItem.getAccount().getId());
 			if (Date.differs(pItem.getDate(),
 				  		  	 myBase.getDate()))
-				updateDate(pItem.getDate());
-			if (Price.differs(pItem.getPrice(),
-						  	  myBase.getPrice())) 
-				updatePrice(pItem.getPrice());
+				updateDate(theDateCol, pItem.getDate());
+			if (Utils.differs(pItem.getPriceBytes(),
+						  	  myBase.getPriceBytes())) 
+				updateBinary(thePriceCol, pItem.getPriceBytes());
 		}
 		
 		catch (Throwable e) {

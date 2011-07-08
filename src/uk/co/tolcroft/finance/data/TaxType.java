@@ -3,62 +3,28 @@ package uk.co.tolcroft.finance.data;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.finance.data.StaticClass.TaxClass;
 
-public class TaxType extends DataItem {
+public class TaxType extends StaticData<TaxClass> {
 	/**
 	 * The name of the object
 	 */
-	private static final String objName = "TaxClass";
+	public static final String objName = "TaxClass";
 
 	/**
-	 * TaxType Name length
+	 * The name of the object
 	 */
-	public final static int NAMELEN = 50;
+	public static final String listName = objName + "es";
 
-	/**
-	 * The class of the TaxType
-	 */
-	private TaxClass   theClass = null;
-
-	/**
-	 * The sort order of the Tax Type
-	 */
-	private int        theOrder = -1;
-	
-	/**
-	 * Constant to provide separation of classes in sort order
-	 */		
-	public final static short CLASSDIVIDE = 100;
-	
-	/**
-	 * Return the name of the Tax Type
-	 * @return the name
-	 */
-	public	String getName()              { return getObj().getName(); }
-
-	/**
-	 * Return the sort order of the Account Type
-	 * @return the order
-	 */
-	public	int    getOrder()             { return theOrder; }
-		
 	/**
 	 * Return the Tax class of the Tax Type
 	 * @return the class
 	 */
-	public TaxClass 	getTaxClass()     { return theClass; }
+	public TaxClass 	getTaxClass()     { return super.getStaticClass(); }
 
 	/* Linking methods */
 	public TaxType getBase() { return (TaxType)super.getBase(); }
-	public Values  getObj()  { return (Values)super.getObj(); }	
 
-	/* Field IDs */
-	public static final int FIELD_ID     	= 0;
-	public static final int FIELD_NAME     	= 1;
-	public static final int FIELD_ORDER     = 2;
-	public static final int FIELD_CLASS     = 3;
-	public static final int NUMFIELDS	    = 4;
-	
 	/**
 	 * Obtain the type of the item
 	 * @return the type of the item
@@ -72,354 +38,57 @@ public class TaxType extends DataItem {
 	public int	numFields() {return NUMFIELDS; }
 	
 	/**
-	 * Determine the field name for a particular field
-	 * @return the field name
-	 */
-	public String	fieldName(int iField) {
-		switch (iField) {
-			case FIELD_ID: 	  return "ID";
-			case FIELD_NAME:  return "Name";
-			case FIELD_ORDER: return "Order";
-			case FIELD_CLASS: return "Class";
-			default:		  return super.fieldName(iField);
-		}
-	}
-	
-	/**
-	 * Format the value of a particular field as a table row
-	 * @param iField the field number
-	 * @param pObj the values to use
-	 * @return the formatted field
-	 */
-	public String formatField(int iField, histObject pObj) {
-		String myString = ""; 
-		switch (iField) {
-			case FIELD_ID: 		myString += getId();  	break;
-			case FIELD_NAME:	myString += getName(); 	break;
-			case FIELD_ORDER: 	myString += getOrder();	break;
-			case FIELD_CLASS: 	myString += theClass;	break;
-		}
-		return myString;
-	}
-			
-	/**
 	 * Construct a copy of a Tax Type.
 	 * 
 	 * @param pList	The list to associate the Tax Type with
 	 * @param pTaxType The Tax Type to copy 
 	 */
 	protected TaxType(List pList, TaxType pTaxType) { 
-		super(pList, pTaxType.getId());
-		Values myObj = new Values(pTaxType.getObj());
-		setObj(myObj);
-		theClass = pTaxType.theClass;
-		setBase(pTaxType);
-		setState(pTaxType.getState());
-		theOrder = pTaxType.getOrder();
+		super(pList, pTaxType);
 	}
 	
 	/**
 	 * Construct a standard Tax type on load
 	 * 
 	 * @param pList	The list to associate the Tax Type with
-	 * @param uId   ID of Tax Type
 	 * @param sName Name of Tax Type
 	 */
 	private TaxType(List 	pList,
-			        int		uId, 
 			        String  sName) throws Exception {
-		super(pList, uId);
-		Values myObj = new Values();
-		setObj(myObj);
-		myObj.setName(sName);
+		super(pList, sName);
+		pList.setNewId(this);					
+	}
+	
+	/**
+	 * Construct a standard tax type on load
+	 * @param pList	The list to associate the Tax Type with
+	 * @param uClassId the class id of the new item
+	 * @param pName Name of Tax Type
+	 * @param pDesc Description of Tax Type
+	 */
+	private TaxType(List 	pList,
+			        int		uClassId,
+			        String	pName,
+			        String	pDesc) throws Exception {
+		super(pList, uClassId, pName, pDesc);
 		pList.setNewId(this);				
-	
-		if (sName.equals("GrossSalary")) {
-			theClass = TaxClass.GROSSSALARY;
-			theOrder = 0;
-		}
-		else if (sName.equals("GrossInterest")) {
-			theClass = TaxClass.GROSSINTEREST;
-			theOrder = 1;
-		}
-		else if (sName.equals("GrossDividends")) {
-			theClass = TaxClass.GROSSDIVIDEND;
-			theOrder = 2;
-		}
-		else if (sName.equals("GrossUnitTrustDividends")) {
-			theClass = TaxClass.GROSSUTDIVS;
-			theOrder = 3;
-		}
-		else if (sName.equals("GrossRental")) {
-			theClass = TaxClass.GROSSRENTAL;
-			theOrder = 4;
-		}
-		else if (sName.equals("GrossTaxableGains")) {
-			theClass = TaxClass.GROSSTAXGAINS;
-			theOrder = 5;
-		}
-		else if (sName.equals("GrossCapitalGains")) {
-			theClass = TaxClass.GROSSCAPGAINS;
-			theOrder = 6;
-		}
-		else if (sName.equals("TaxationPaid")) {
-			theClass = TaxClass.TAXPAID;
-			theOrder = 7;
-		}
-		else if (sName.equals("TaxFree")) {
-			theClass = TaxClass.TAXFREE;
-			theOrder = 8;
-		}
-		else if (sName.equals("Market")) {
-			theClass = TaxClass.MARKET;
-			theOrder = 9;
-		}
-		else if (sName.equals("Expense")) {
-			theClass = TaxClass.EXPENSE;
-			theOrder = 10;
-		}
-		else if (sName.equals("VirtualIncome")) {
-			theClass = TaxClass.VIRTUAL;
-			theOrder = 11;
-		}
-		else if (sName.equals("NonCoreIncome")) {
-			theClass = TaxClass.NONCORE;
-			theOrder = 12;
-		}
-		else if (sName.equals("Profit/Loss")) {
-			theClass = TaxClass.PROFIT;
-			theOrder = 0+CLASSDIVIDE;
-		}
-		else if (sName.equals("CoreIncome")) {
-			theClass = TaxClass.COREINCOME;
-			theOrder = 1+CLASSDIVIDE;
-		}
-		else if (sName.equals("CoreProfit/Loss")) {
-			theClass = TaxClass.COREPROFIT;
-			theOrder = 2+CLASSDIVIDE;
-		}
-		else if (sName.equals("GrossIncome")) {
-			theClass = TaxClass.GROSSINCOME;
-			theOrder = 0+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("OriginalAllowance")) {
-			theClass = TaxClass.ORIGALLOW;
-			theOrder = 1+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("AdjustedAllowance")) {
-			theClass = TaxClass.ADJALLOW;
-			theOrder = 2+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("HighTaxBand")) {
-			theClass = TaxClass.HITAXBAND;
-			theOrder = 3+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("SalaryNilRate")) {
-			theClass = TaxClass.SALARYFREE;
-			theOrder = 4+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("RentalNilRate")) {
-			theClass = TaxClass.RENTALFREE;
-			theOrder = 5+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("InterestNilRate")) {
-			theClass = TaxClass.INTERESTFREE;
-			theOrder = 6+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("CapitalNilRate")) {
-			theClass = TaxClass.CAPITALFREE;
-			theOrder = 7+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("SalaryLowRate")) {
-			theClass = TaxClass.SALARYLO;
-			theOrder = 8+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("RentalLowRate")) {
-			theClass = TaxClass.RENTALLO;
-			theOrder = 9+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("InterestLowRate")) {
-			theClass = TaxClass.INTERESTLO;
-			theOrder = 10+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("SalaryBasicRate")) {
-			theClass = TaxClass.SALARYBASIC;
-			theOrder = 11+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("RentalBasicRate")) {
-			theClass = TaxClass.RENTALBASIC;
-			theOrder = 12+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("InterestBasicRate")) {
-			theClass = TaxClass.INTERESTBASIC;
-			theOrder = 13+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("DividendBasicRate")) {
-			theClass = TaxClass.DIVIDENDBASIC;
-			theOrder = 14+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("SliceBasicRate")) {
-			theClass = TaxClass.SLICEBASIC;
-			theOrder = 15+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("GainsBasicRate")) {
-			theClass = TaxClass.GAINSBASIC;
-			theOrder = 16+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("CapitalBasicRate")) {
-			theClass = TaxClass.CAPITALBASIC;
-			theOrder = 17+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("SalaryHighRate")) {
-			theClass = TaxClass.SALARYHI;
-			theOrder = 18+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("RentalHighRate")) {
-			theClass = TaxClass.RENTALHI;
-			theOrder = 19+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("InterestHighRate")) {
-			theClass = TaxClass.INTERESTHI;
-			theOrder = 20+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("DividendHighRate")) {
-			theClass = TaxClass.DIVIDENDHI;
-			theOrder = 21+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("SliceHighRate")) {
-			theClass = TaxClass.SLICEHI;
-			theOrder = 22+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("GainsHighRate")) {
-			theClass = TaxClass.GAINSHI;
-			theOrder = 23+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("CapitalHighRate")) {
-			theClass = TaxClass.CAPITALHI;
-			theOrder = 24+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("SalaryAdditionalRate")) {
-			theClass = TaxClass.SALARYADD;
-			theOrder = 25+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("RentalAdditionalRate")) {
-			theClass = TaxClass.RENTALADD;
-			theOrder = 26+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("InterestAdditionalRate")) {
-			theClass = TaxClass.INTERESTADD;
-			theOrder = 27+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("DividendAdditionalRate")) {
-			theClass = TaxClass.DIVIDENDADD;
-			theOrder = 28+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("SliceAdditionalRate")) {
-			theClass = TaxClass.SLICEADD;
-			theOrder = 29+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("GainsAdditionalRate")) {
-			theClass = TaxClass.GAINSADD;
-			theOrder = 20+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("TaxDueSlice")) {
-			theClass = TaxClass.TAXDUESLICE;
-			theOrder = 21+2*CLASSDIVIDE;
-		}
-		else if (sName.equals("TaxDueSalary")) {
-			theClass = TaxClass.TAXDUESALARY;
-			theOrder = 0+3*CLASSDIVIDE;
-		}
-		else if (sName.equals("TaxDueRental")) {
-			theClass = TaxClass.TAXDUERENTAL;
-			theOrder = 1+3*CLASSDIVIDE;
-		}
-		else if (sName.equals("TaxDueInterest")) {
-			theClass = TaxClass.TAXDUEINTEREST;
-			theOrder = 2+3*CLASSDIVIDE;
-		}
-		else if (sName.equals("TaxDueDividends")) {
-			theClass = TaxClass.TAXDUEDIVIDEND;
-			theOrder = 3+3*CLASSDIVIDE;
-		}
-		else if (sName.equals("TaxDueTaxableGains")) {
-			theClass = TaxClass.TAXDUETAXGAINS;
-			theOrder = 4+3*CLASSDIVIDE;
-		}
-		else if (sName.equals("TaxDueCapitalGains")) {
-			theClass = TaxClass.TAXDUECAPGAINS;
-			theOrder = 5+3*CLASSDIVIDE;
-		}
-		else if (sName.equals("TotalTaxation")) {
-			theClass = TaxClass.TOTALTAX;
-			theOrder = 0+4*CLASSDIVIDE;
-		}
-		else if (sName.equals("TaxProfit/Loss")) {
-			theClass = TaxClass.TAXPROFIT;
-			theOrder = 1+4*CLASSDIVIDE;
-		}
-		else {
-			throw new Exception(ExceptionClass.DATA,
-  					  			this,
-                                "Invalid TaxType");
-		}
 	}
 	
 	/**
-	 * Compare this tax type to another to establish equality.
-	 * 
-	 * @param pThat The Tax type to compare to
-	 * @return <code>true</code> if the tax type is identical, <code>false</code> otherwise
+	 * Construct a standard TaxType on load
+	 * @param pList	The list to associate the TaxType with
+	 * @param uId   ID of TaxType
+	 * @param uClassId the class id of the new item
+	 * @param sName Encrypted Name of TaxType
+	 * @param pDesc Encrypted Description of TaxType
 	 */
-	public boolean equals(Object pThat) {
-		/* Handle the trivial cases */
-		if (this == pThat) return true;
-		if (pThat == null) return false;
-		
-		/* Make sure that the object is a TransactionType */
-		if (pThat.getClass() != this.getClass()) return false;
-		
-		/* Access the target transactionType */
-		TaxType myType = (TaxType)pThat;
-
-		if (getId() != myType.getId()) return false;
-		return (getName().compareTo(myType.getName()) == 0);
-	}
-
-	/**
-	 * Compare this tax type to another to establish sort order.
-	 * 
-	 * @param pThat The Tax type to compare to
-	 * @return (-1,0,1) depending of whether this object is before, equal, 
-	 * 					or after the passed object in the sort order
-	 */
-	public int compareTo(Object pThat) {
-		long result;
-
-		/* Handle the trivial cases */
-		if (this == pThat) return 0;
-		if (pThat == null) return -1;
-		
-		/* Make sure that the object is a TaxType */
-		if (pThat.getClass() != this.getClass()) return -1;
-		
-		/* Access the target taxType */
-		TaxType myThat = (TaxType)pThat;
-		
-		/* Compare on order */
-		if (theOrder < myThat.theOrder) return -1;
-		if (theOrder > myThat.theOrder) return  1;
-		
-		/* Compare on name */
-		result = getName().compareTo(myThat.getName());
-		if (result < 0) return -1;
-		if (result > 0) return 1;
-		
-		/* Compare on id */
-		result = (int)(getId() - myThat.getId());
-		if (result == 0) return 0;
-		else if (result < 0) return -1;
-		else return 1;
+	private TaxType(List 	pList,
+			      	int		uId,
+			      	int		uClassId,
+			      	byte[]	sName,
+			      	byte[]	pDesc) throws Exception {
+		super(pList, uId, uClassId, sName, pDesc);
+		pList.setNewId(this);				
 	}
 
 	/**
@@ -428,7 +97,7 @@ public class TaxType extends DataItem {
 	 * @return <code>true</code> if we should add tax credits to the total, <code>false</code> otherwise.
 	 */
 	public boolean hasTaxCredits() { 
-		switch (theClass) {
+		switch (getTaxClass()) {
 			case GROSSSALARY:
 			case GROSSINTEREST:
 			case GROSSDIVIDEND:
@@ -446,7 +115,7 @@ public class TaxType extends DataItem {
 	 * @return <code>true</code> if we should add tax credits to the total, <code>false</code> otherwise.
 	 */
 	public boolean isTaxPaid() { 
-		switch (theClass) {
+		switch (getTaxClass()) {
 			case TAXPAID:
 				return true;
 			default:
@@ -455,40 +124,15 @@ public class TaxType extends DataItem {
 	}
 
 	/**
-	 * Format a TaxType 
-	 * 
-	 * @param pTaxType the taxtype to format
-	 * @return the formatted taxtype
-	 */
-	public static String format(TaxType pTaxType) {
-		String 	myFormat;
-		myFormat = (pTaxType != null) ? pTaxType.getName()
-								      : "null";
-		return myFormat;
-	}
-
-	/**
-	 * Determine whether two TaxType objects differ.
-	 * 
-	 * @param pCurr The current TaxType 
-	 * @param pNew The new TaxType
-	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-	 */	
-	public static boolean differs(TaxType pCurr, TaxType pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
-	}
-
-	/**
 	 * Represents a list of {@link TaxType} objects. 
 	 */
-	public static class List extends DataList<TaxType> {
+	public static class List extends StaticList<TaxType, TaxClass> {
 	 	/** 
 	 	 * Construct an empty CORE tax type list
 	 	 * @param pData the DataSet for the list
 	 	 */
-		protected List(DataSet pData) { super(ListStyle.CORE, true); }
+		protected List(DataSet pData) { 
+			super(TaxClass.class, pData.getEncryptedPairs(), ListStyle.CORE); }
 
 		/** 
 	 	 * Construct a generic tax type list
@@ -532,65 +176,79 @@ public class TaxType extends DataItem {
 		 * Obtain the type of the item
 		 * @return the type of the item
 		 */
-		public String itemType() { return objName; }
-		
-		/**
-		 * Search for a particular item by class
-		 *  
-		 * @param eClass The class of the item to search for
-		 * @return The Item if present (or <code>null</code> if not found)
-		 */
-		public TaxType searchFor(TaxClass eClass) {
-			ListIterator 	myIterator;
-			TaxType 		myCurr;
-			
-			/* Access the iterator */
-			myIterator = listIterator();
-			
-			/* Loop through the items to find the entry */
-			while ((myCurr = myIterator.next()) != null) {
-				if (myCurr.theClass == eClass) break;
-			}
-			
-			/* Return */
-			return myCurr;
-		}
-		
-		/**
-		 * Search for a particular item by Name
-		 * 
-		 * @param sName The name of the item to search for
-		 * @return The Item if present (or <code>null</code> if not found)
-		 */
-		protected TaxType searchFor(String sName) {
-			ListIterator 	myIterator;
-			TaxType 		myCurr;
-			int     		iDiff;
-			
-			/* Access the iterator */
-			myIterator = listIterator();
-			
-			/* Loop through the items to find the entry */
-			while ((myCurr = myIterator.next()) != null) {
-				iDiff = sName.compareTo(myCurr.getName());
-				if (iDiff == 0) break;
-			}
-			
-			/* Return to caller */
-			return myCurr;
-		}
+		public String itemType() { return listName; }
 		
 		/**
 		 * Add a TaxType
-		 * @param uId the Id of the tax type
 		 * @param pTaxType the Name of the tax type
 		 */ 
-		public void addItem(int		uId,
-				            String 	pTaxType) throws Exception {
+		public void addItem(String 	pTaxType) throws Exception {
 			TaxType      myTaxType;
 			
 			/* Create a new Tax Type */
-			myTaxType = new TaxType(this, uId, pTaxType);
+			myTaxType = new TaxType(this, pTaxType);
+			
+			/* Check that this TaxType has not been previously added */
+			if (searchFor(pTaxType) != null) 
+				throw new Exception(ExceptionClass.DATA,
+	  					  			myTaxType,
+			                        "Duplicate Tax Type");
+				
+			/* Check that this ClassId has not been previously added */
+			if (searchForEnum(myTaxType.getStaticClassId()) != null) 
+				throw new Exception(ExceptionClass.DATA,
+	  					  			myTaxType,
+			                        "Duplicate TaxClass");
+				
+			/* Add the Tax Type to the list */
+			myTaxType.addToList();
+		}			
+
+		/**
+		 * Add a TaxType to the list
+		 * @param uClassId the ClassId of the tax type
+		 * @param pTaxType the Name of the tax type
+		 * @param pDesc the Description of the tax type
+		 */ 
+		public void addItem(int	   uClassId,
+				            String pTaxType,
+				            String pDesc) throws Exception {
+			TaxType myTaxType;
+				
+			/* Create a new Tax Type */
+			myTaxType = new TaxType(this, uClassId, pTaxType, pDesc);
+				
+			/* Check that this TaxType has not been previously added */
+			if (searchFor(myTaxType.getName()) != null) 
+				throw new Exception(ExceptionClass.DATA,
+	   					  			myTaxType,
+			  			            "Duplicate Tax Type");
+				 
+			/* Check that this ClassId has not been previously added */
+			if (searchForEnum(uClassId) != null) 
+				throw new Exception(ExceptionClass.DATA,
+	  					  			myTaxType,
+			                        "Duplicate TaxClass");
+				
+			/* Add the Tax Type to the list */
+			myTaxType.addToList();
+		}	
+
+		/**
+		 * Add a TaxType
+		 * @param uId the Id of the tax type
+		 * @param uClassId the ClassId of the tax type
+		 * @param pTaxType the Encrypted Name of the tax type
+		 * @param pDesc the Encrypted Description of the tax type
+		 */ 
+		public void addItem(int		uId,
+							int		uClassId,
+				            byte[] 	pTaxType,
+				            byte[]	pDesc) throws Exception {
+			TaxType      myTaxType;
+			
+			/* Create a new Tax Type */
+			myTaxType = new TaxType(this, uId, uClassId, pTaxType, pDesc);
 			
 			/* Check that this TaxTypeId has not been previously added */
 			if (!isIdUnique(uId)) 
@@ -599,349 +257,19 @@ public class TaxType extends DataItem {
 			  			            "Duplicate TaxTypeId");
 				 
 			/* Check that this TaxType has not been previously added */
-			if (searchFor(pTaxType) != null) 
+			if (searchFor(myTaxType.getName()) != null) 
 				throw new Exception(ExceptionClass.DATA,
 	  					  			myTaxType,
 			                        "Duplicate Tax Type");
 				
+			/* Check that this ClassId has not been previously added */
+			if (searchForEnum(uClassId) != null) 
+				throw new Exception(ExceptionClass.DATA,
+	  					  			myTaxType,
+			                        "Duplicate TaxClass");
+				
 			/* Add the Tax Type to the list */
 			myTaxType.addToList();
 		}			
-	}
-		
-	/**
-	 * Values for a tax type 
-	 */
-	public class Values implements histObject {
-		private String     		theName      = null;
-		
-		/* Access methods */
-		public String      	getName()      { return theName; }
-		
-		public void setName(String pName) {
-			theName      = pName; }
-
-		/* Constructor */
-		public Values() {}
-		public Values(Values pValues) {
-			theName      = pValues.getName();
-		}
-		
-		/* Check whether this object is equal to that passed */
-		public boolean histEquals(histObject pCompare) {
-			Values myValues = (Values)pCompare;
-			return histEquals(myValues);
-		}
-		public boolean histEquals(Values pValues) {
-			if (Utils.differs(theName,    pValues.theName))    return false;
-			return true;
-		}
-		
-		/* Copy values */
-		public void    copyFrom(histObject pSource) {
-			Values myValues = (Values)pSource;
-			copyFrom(myValues);
-		}
-		public histObject copySelf() {
-			return new Values(this);
-		}
-		public void    copyFrom(Values pValues) {
-			theName      = pValues.getName();
-		}
-		public boolean	fieldChanged(int fieldNo, histObject pOriginal) {
-			Values 	pValues = (Values)pOriginal;
-			boolean	bResult = false;
-			switch (fieldNo) {
-				case FIELD_NAME:
-					bResult = (Utils.differs(theName,      pValues.theName));
-					break;
-			}
-			return bResult;
-		}
-	}
-	
-	/**
-	 * Enumeration of Tax Type Classes. 
-	 */
-	public enum TaxClass {
-		/**
-		 * Gross Salary Income
-		 */
-		GROSSSALARY,
-
-		/**
-		 * Gross Interest Income
-		 */
-		GROSSINTEREST,
-
-		/**
-		 * Gross Dividend Income
-		 */
-		GROSSDIVIDEND,
-
-		/**
-		 * Gross Unit Trust Dividend Income
-		 */
-		GROSSUTDIVS,
-
-		/**
-		 * Gross Rental Income
-		 */
-		GROSSRENTAL,
-
-		/**
-		 * Gross Taxable gains
-		 */
-		GROSSTAXGAINS,
-
-		/**
-		 * Gross Capital gains
-		 */
-		GROSSCAPGAINS,
-
-		/**
-		 * Total Tax Paid
-		 */
-		TAXPAID,
-
-		/**
-		 * Market Growth/Shrinkage
-		 */
-		MARKET,     
-
-		/**
-		 * Tax Free Income
-		 */
-		TAXFREE,
-
-		/**
-		 * Gross Expense
-		 */
-		EXPENSE,
-
-		/**
-		 * Virtual Income
-		 */
-		VIRTUAL,
-
-		/**
-		 * Non-Core Income
-		 */
-		NONCORE,
-
-		/**
-		 * Profit on Year
-		 */
-		PROFIT,
-		
-		/**
-		 * Core Income after tax ignoring market movements and inheritance
-		 */
-		COREINCOME,
-		
-		/**
-		 * Profit on year after ignoring market movements and inheritance
-		 */
-		COREPROFIT,
-		
-		/**
-		 * Gross Income
-		 */
-		GROSSINCOME,
-
-		/**
-		 * Original Allowance
-		 */
-		ORIGALLOW,
-
-		/**
-		 * Adjusted Allowance
-		 */
-		ADJALLOW,
-
-		/**
-		 * High Tax Band
-		 */
-		HITAXBAND,
-
-		/**
-		 * Salary at nil-rate
-		 */
-		SALARYFREE,
-
-		/**
-		 * Salary at low-rate
-		 */
-		SALARYLO,
-
-		/**
-		 * Salary at basic-rate
-		 */
-		SALARYBASIC,
-
-		/**
-		 * Salary at high-rate
-		 */
-		SALARYHI,
-
-		/**
-		 * Salary at additional-rate
-		 */
-		SALARYADD,
-
-		/**
-		 * Rental at nil-rate
-		 */
-		RENTALFREE,
-
-		/**
-		 * Rental at low-rate
-		 */
-		RENTALLO,
-
-		/**
-		 * Rental at basic-rate
-		 */
-		RENTALBASIC,
-
-		/**
-		 * Rental at high-rate
-		 */
-		RENTALHI,
-
-		/**
-		 * Rental at additional-rate
-		 */
-		RENTALADD,
-
-		/**
-		 * Interest at nil-rate
-		 */
-		INTERESTFREE,
-
-		/**
-		 * Interest at low-rate
-		 */
-		INTERESTLO,
-
-		/**
-		 * Interest at basic-rate
-		 */
-		INTERESTBASIC,
-
-		/**
-		 * Interest at high-rate
-		 */
-		INTERESTHI,
-
-		/**
-		 * Interest at additional-rate
-		 */
-		INTERESTADD,
-
-		/**
-		 * Dividends at basic-rate
-		 */
-		DIVIDENDBASIC,
-
-		/**
-		 * Dividends at high-rate
-		 */
-		DIVIDENDHI,
-
-		/**
-		 * Dividends at additional-rate
-		 */
-		DIVIDENDADD,
-
-		/**
-		 * Slice at basic-rate
-		 */
-		SLICEBASIC,
-
-		/**
-		 * Slice at high-rate
-		 */
-		SLICEHI,
-
-		/**
-		 * Slice at additional-rate
-		 */
-		SLICEADD,
-
-		/**
-		 * Gains at basic-rate
-		 */
-		GAINSBASIC,
-
-		/**
-		 * Gains at high-rate
-		 */
-		GAINSHI,
-
-		/**
-		 * Gains at additional-rate
-		 */
-		GAINSADD,
-
-		/**
-		 * Capital at nil-rate
-		 */
-		CAPITALFREE,
-
-		/**
-		 * Capital at basic-rate
-		 */
-		CAPITALBASIC,
-
-		/**
-		 * Capital at high-rate
-		 */
-		CAPITALHI,
-
-		/**
-		 * Total Taxation Due on Salary
-		 */
-		TAXDUESALARY,
-
-		/**
-		 * Total Taxation Due on Rental
-		 */
-		TAXDUERENTAL,
-
-		/**
-		 * Total Taxation Due on Interest
-		 */
-		TAXDUEINTEREST,
-
-		/**
-		 * Total Taxation Due on Dividends
-		 */
-		TAXDUEDIVIDEND,
-
-		/**
-		 * Total Taxation Due on Taxable Gains
-		 */
-		TAXDUETAXGAINS,
-
-		/**
-		 * Total Taxation Due on Slice
-		 */
-		TAXDUESLICE,
-
-		/**
-		 * Total Taxation Due on Capital Gains
-		 */
-		TAXDUECAPGAINS,
-
-		/**
-		 * Total Taxation Due
-		 */
-		TOTALTAX,
-
-		/**
-		 * Taxation Profit (TaxDue-TaxPaid)
-		 */
-		TAXPROFIT;
-	}
+	}		
 }

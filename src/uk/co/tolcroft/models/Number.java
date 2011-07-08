@@ -6,7 +6,7 @@ import uk.co.tolcroft.models.Exception.*;
 /**
  * Represents the underlying number class.
  */	
-public class Number {
+public abstract class Number {
 	/**
 	 * The number of decimals for this object.
 	 */	
@@ -43,7 +43,7 @@ public class Number {
 	 * 
 	 * @param uDecimals the number of decimals for the number.
 	 */
-	protected Number(int uDecimals) { theDecimals = uDecimals; }	
+	private Number(int uDecimals) { theDecimals = uDecimals; }	
 
 	/**
 	 * Construct a specific number 
@@ -51,7 +51,7 @@ public class Number {
 	 * @param uDecimals the number of decimals for the number.
 	 * @param pClass the class of the number
 	 */
-	protected Number(int uDecimals, NumberClass pClass) {
+	private Number(int uDecimals, NumberClass pClass) {
 		theDecimals = uDecimals;
 		theClass    = pClass;      
 	}	
@@ -95,6 +95,18 @@ public class Number {
 	}
 	
 	/**
+	 * Convert the value into a Double 
+	 * @return the value as a double 
+	 */
+	public double convertToDouble() { 
+		/* Format the string */
+		String myString = format(false);       
+		
+		/* return the double value */
+		return Double.parseDouble(myString);
+	}
+	
+	/**
 	 * Add a number to the value 
 	 * 
 	 * @param pValue The number to add to this one.
@@ -117,7 +129,7 @@ public class Number {
 	 * 
 	 * @param pString The string to parse.
 	 */
-	private void Parse(String pString) throws uk.co.tolcroft.models.Exception {
+	private void ParseString(String pString) throws Exception {
 		int 			myLen 		= pString.length();
 		StringBuilder	myWork;
 		StringBuilder	myDecimals	= null;
@@ -241,7 +253,7 @@ public class Number {
 	 * <code>false</code> otherwise
 	 * @return the formatted value.
 	 */
-	private StringBuilder format(boolean bPretty) {
+	private StringBuilder formatNumber(boolean bPretty) {
 		StringBuilder	myString = new StringBuilder(20);
 		StringBuilder	myBuild;
 		String  		myDecimals;
@@ -320,11 +332,34 @@ public class Number {
 	 * 					or after the passed object in the sort order
 	 */
 	public int compareTo(Number that) {
+		/* Handle trivial case */
         if (this == that) return 0;
+        
+		/* Make sure that the object is the same class */
+		if (that.getClass() != this.getClass()) return -1;
+		
+        /* Compare values */
         if (theValue < that.theValue) return -1;
         if (theValue > that.theValue) return  1;
 		return 0;
 	}
+	
+	/* Number interfaces */
+	public abstract String format(boolean bPretty);
+	
+	/**
+	 * Determine whether two Number objects differ.
+	 * 
+	 * @param pCurr The current Number 
+	 * @param pNew The new Number
+	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
+	 */	
+	public static boolean differs(Number pCurr, Number pNew) {
+		return (((pCurr == null) && (pNew != null)) ||
+				((pCurr != null) && 
+				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
+	}
+
 	/**
 	 * Class of a number for formatting purposes.
 	 */	
@@ -385,7 +420,7 @@ public class Number {
 		 */
 		public Rate(String pRate) throws Exception {
 			super(NUMDEC, NumberClass.RATE);
-			super.Parse(pRate);
+			super.ParseString(pRate);
 		}		
 
 		/**
@@ -397,7 +432,7 @@ public class Number {
 		 */
 		public String format(boolean bPretty) {
 			StringBuilder myFormat;
-			myFormat = super.format(bPretty);
+			myFormat = super.formatNumber(bPretty);
 			if (bPretty) myFormat.append('%');
 			return myFormat.toString();
 		}
@@ -433,19 +468,6 @@ public class Number {
 		}
 
 		/**
-		 * Determine whether two Rate objects differ.
-		 * 
-		 * @param pCurr The current Rate 
-		 * @param pNew The new Rate
-		 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-		 */	
-		public static boolean differs(Rate pCurr, Rate pNew) {
-			return (((pCurr == null) && (pNew != null)) ||
-					((pCurr != null) && 
-					 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
-		}
-
-		/**
 		 * Convert a whole number value to include decimals 
 		 * @param pValue the whole number value 
 		 * @return the converted value with added zeros 
@@ -454,6 +476,22 @@ public class Number {
 			/* Build in the decimals to the value */
 			return convertToValue(pValue, NUMDEC);       
 		}		
+
+		/**
+		 * Convert the value into a Double 
+		 * @return the value as a double 
+		 */
+		public double convertToDouble() {
+			/* Convert the value into units (to increase decimals by two) */
+			Units myUnits = new Units(getValue());
+			
+			/* Format the string */
+			String myString = myUnits.format(false);       
+			
+			/* return the double value */
+			return Double.parseDouble(myString);
+		}
+		
 	}
 	
 	/**
@@ -501,7 +539,7 @@ public class Number {
 		 */
 		public Price(String pPrice) throws Exception {
 			super(NUMDEC, NumberClass.MONEY);
-			super.Parse(pPrice);
+			super.ParseString(pPrice);
 		}		
 		
 		/**
@@ -548,7 +586,7 @@ public class Number {
 			boolean 		isNegative;
 			
 			/* Format the value in a standard fashion */
-			myFormat = super.format(bPretty);
+			myFormat = super.formatNumber(bPretty);
 			
 			/* If we are in pretty mode */
 			if (bPretty) {
@@ -610,19 +648,6 @@ public class Number {
 		}
 
 		/**
-		 * Determine whether two Price objects differ.
-		 * 
-		 * @param pCurr The current Price 
-		 * @param pNew The new Price
-		 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-		 */	
-		public static boolean differs(Price pCurr, Price pNew) {
-			return (((pCurr == null) && (pNew != null)) ||
-					((pCurr != null) && 
-					 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
-		}
-
-		/**
 		 * Convert a whole number value to include decimals 
 		 * @param pValue the whole number value 
 		 * @return the converted value with added zeros 
@@ -678,7 +703,7 @@ public class Number {
 		 */
 		public DilutedPrice(String pPrice) throws Exception {
 			super(NUMDEC, NumberClass.MONEY);
-			super.Parse(pPrice);
+			super.ParseString(pPrice);
 		}		
 		
 		/**
@@ -725,7 +750,7 @@ public class Number {
 			boolean 		isNegative;
 			
 			/* Format the value in a standard fashion */
-			myFormat = super.format(bPretty);
+			myFormat = super.formatNumber(bPretty);
 			
 			/* If we are in pretty mode */
 			if (bPretty) {
@@ -785,19 +810,6 @@ public class Number {
 									    : "null";
 			return myFormat;
 		}
-
-		/**
-		 * Determine whether two DilutedPrice objects differ.
-		 * 
-		 * @param pCurr The current DilutedPrice 
-		 * @param pNew The new DilutedPrice
-		 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-		 */	
-		public static boolean differs(DilutedPrice pCurr, DilutedPrice pNew) {
-			return (((pCurr == null) && (pNew != null)) ||
-					((pCurr != null) && 
-					 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
-		}
 	}
 	
 	/**
@@ -854,7 +866,7 @@ public class Number {
 		 */
 		public Units(String pUnits) throws Exception {
 			super(NUMDEC);
-			super.Parse(pUnits);
+			super.ParseString(pUnits);
 		}		
 		
 		/**
@@ -866,7 +878,7 @@ public class Number {
 		 */
 		public String format(boolean bPretty) {
 			StringBuilder	myFormat;
-			myFormat = super.format(bPretty);
+			myFormat = super.formatNumber(bPretty);
 			return myFormat.toString();
 		}
 		
@@ -931,19 +943,6 @@ public class Number {
 									    : "null";
 			return myFormat;
 		}
-
-		/**
-		 * Determine whether two Units objects differ.
-		 * 
-		 * @param pCurr The current Units 
-		 * @param pNew The new Units
-		 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-		 */	
-		public static boolean differs(Units pCurr, Units pNew) {
-			return (((pCurr == null) && (pNew != null)) ||
-					((pCurr != null) && 
-					 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
-		}
 	}
 	
 	/**
@@ -996,7 +995,7 @@ public class Number {
 		 */
 		public Dilution(String pDilution) throws Exception {
 			super(NUMDEC);
-			super.Parse(pDilution);
+			super.ParseString(pDilution);
 		}		
 		
 		/**
@@ -1049,7 +1048,7 @@ public class Number {
 		 */
 		public String format(boolean bPretty) {
 			StringBuilder	myFormat;
-			myFormat = super.format(bPretty);
+			myFormat = super.formatNumber(bPretty);
 			return myFormat.toString();
 		}
 
@@ -1081,19 +1080,6 @@ public class Number {
 			myFormat = (pDilution != null) ? pDilution.format(false)
 									       : "null";
 			return myFormat;
-		}
-
-		/**
-		 * Determine whether two Dilution objects differ.
-		 * 
-		 * @param pCurr The current Dilution
-		 * @param pNew The new Dilution
-		 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-		 */	
-		public static boolean differs(Dilution pCurr, Dilution pNew) {
-			return (((pCurr == null) && (pNew != null)) ||
-					((pCurr != null) && 
-					 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
 		}
 	}
 	
@@ -1156,7 +1142,7 @@ public class Number {
 		 */
 		public Money(String pMoney) throws Exception {
 			super(NUMDEC, NumberClass.MONEY);
-			super.Parse(pMoney);
+			super.ParseString(pMoney);
 		}		
 		
 		/**
@@ -1203,7 +1189,7 @@ public class Number {
 			boolean 		isNegative;
 
 			/* Format the value in a standard fashion */
-			myFormat = super.format(bPretty);
+			myFormat = super.formatNumber(bPretty);
 
 			/* If we are in pretty mode */
 			if (bPretty) {
@@ -1264,19 +1250,6 @@ public class Number {
 			return myMoney;
 		}
 		
-		/**
-		 * Determine whether two Money objects differ.
-		 * 
-		 * @param pCurr The current Money 
-		 * @param pNew The new Money
-		 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-		 */	
-		public static boolean differs(Money pCurr, Money pNew) {
-			return (((pCurr == null) && (pNew != null)) ||
-					((pCurr != null) && 
-					 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
-		}
-
 		/**
 		 * calculate the value of this money at a given rate 
 		 * 

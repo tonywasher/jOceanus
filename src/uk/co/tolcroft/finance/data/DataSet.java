@@ -9,8 +9,8 @@ import uk.co.tolcroft.security.*;
 
 public class DataSet implements htmlDumpable {
 	private SecureManager			theSecurity   = null;
-	private Static					theDefStatic  = null;
-	private Static.List				theStatic     = null;
+	private ControlData				theDefControl = null;
+	private ControlData.List		theControl    = null;
 	private AccountType.List		theActTypes   = null;
 	private TransactionType.List	theTransTypes = null;
 	private TaxType.List			theTaxTypes   = null;
@@ -28,7 +28,7 @@ public class DataSet implements htmlDumpable {
 
     /* Access methods */
 	protected SecureManager		getSecurity() 		{ return theSecurity; }
-	public Static.List 			getStatic() 		{ return theStatic; }
+	public ControlData.List 	getControl() 		{ return theControl; }
 	public AccountType.List 	getAccountTypes() 	{ return theActTypes; }
 	public TransactionType.List getTransTypes() 	{ return theTransTypes; }
 	public TaxType.List 		getTaxTypes() 		{ return theTaxTypes; }
@@ -52,10 +52,10 @@ public class DataSet implements htmlDumpable {
 		theSecurity   = pSecurity;
 		
 		/* Create the encrypted pairs control */
-		thePairs 	  = new EncryptedPair(this);
+		thePairs 	  = new EncryptedPair();
 		
 		/* Create the empty lists */
-		theStatic     = new Static.List(this);
+		theControl    = new ControlData.List(this);
 		theActTypes   = new AccountType.List(this);
 		theTransTypes = new TransactionType.List(this);
 		theTaxTypes   = new TaxType.List(this);
@@ -75,7 +75,7 @@ public class DataSet implements htmlDumpable {
 	 */
 	public DataSet(DataSet pSource) {
 		/* Build the static differences */
-		theStatic     = new Static.List(pSource.getStatic(), ListStyle.UPDATE);
+		theControl    = new ControlData.List(pSource.getControl(), ListStyle.UPDATE);
 		theActTypes   = new AccountType.List(pSource.getAccountTypes(), ListStyle.UPDATE);
 		theTransTypes = new TransactionType.List(pSource.getTransTypes(), ListStyle.UPDATE);
 		theTaxTypes   = new TaxType.List(pSource.getTaxTypes(), ListStyle.UPDATE);
@@ -103,7 +103,7 @@ public class DataSet implements htmlDumpable {
 	 */
 	public DataSet(DataSet pNew, DataSet pOld) {
 		/* Build the static differences */
-		theStatic     = new Static.List(pNew.getStatic(), pOld.getStatic());
+		theControl    = new ControlData.List(pNew.getControl(), pOld.getControl());
 		theActTypes   = new AccountType.List(pNew.getAccountTypes(), pOld.getAccountTypes());
 		theTransTypes = new TransactionType.List(pNew.getTransTypes(), pOld.getTransTypes());
 		theTaxTypes   = new TaxType.List(pNew.getTaxTypes(), pOld.getTaxTypes());
@@ -126,7 +126,7 @@ public class DataSet implements htmlDumpable {
 	 */
 	public void reBase(DataSet pOld) {
 		/* ReBase the static items */
-		theStatic.reBase(pOld.getStatic());
+		theControl.reBase(pOld.getControl());
 		theActTypes.reBase(pOld.getAccountTypes());
 		theTransTypes.reBase(pOld.getTransTypes());
 		theTaxTypes.reBase(pOld.getTaxTypes());
@@ -161,7 +161,7 @@ public class DataSet implements htmlDumpable {
 		DataSet myThat = (DataSet)pThat;
 		
 		/* Compare static data */
-		if (!theStatic.equals(myThat.getStatic())) return false;
+		if (!theControl.equals(myThat.getControl())) return false;
 		if (!theActTypes.equals(myThat.getAccountTypes())) return false;
 		if (!theTransTypes.equals(myThat.getTransTypes())) return false;
 		if (!theTaxTypes.equals(myThat.getTaxTypes())) return false;
@@ -189,7 +189,7 @@ public class DataSet implements htmlDumpable {
 		StringBuilder myString = new StringBuilder(10000);
 		
 		/* Format the individual parts */
-		myString.append(theStatic.toHTMLString());
+		myString.append(theControl.toHTMLString());
 		myString.append(theActTypes.toHTMLString());
 		myString.append(theTransTypes.toHTMLString());
 		myString.append(theTaxTypes.toHTMLString());
@@ -215,7 +215,7 @@ public class DataSet implements htmlDumpable {
 		boolean isEmpty;
 		
 		/* Determine whether the data is empty */
-		isEmpty =	theStatic.isEmpty()     &&
+		isEmpty =	theControl.isEmpty()    &&
 					theActTypes.isEmpty()   &&
 					theTransTypes.isEmpty() &&
 					theTaxTypes.isEmpty()   &&
@@ -239,7 +239,7 @@ public class DataSet implements htmlDumpable {
 	public boolean hasUpdates() {
 			
 		/* Determine whether we have updates */
-		if (theStatic.hasUpdates()) return true;
+		if (theControl.hasUpdates()) return true;
 		if (theActTypes.hasUpdates()) return true;
 		if (theTransTypes.hasUpdates()) return true;
 		if (theTaxTypes.hasUpdates()) return true;
@@ -264,47 +264,46 @@ public class DataSet implements htmlDumpable {
 	}
 		
 	/**
-	 * Access the default static 
-	 * @param pControl the new control 
+	 * Access the default control  
 	 */
-	protected Static ensureStatic() throws Exception {
-		/* Access the first static element */
-		theDefStatic	 = getStatic().getDefault();
+	private ControlData ensureControl() throws Exception {
+		/* Access the first control element */
+		theDefControl	 = getControl().getDefault();
 		
 		/* Throw an exception if there is no static */
-		if (theDefStatic == null)
+		if (theDefControl == null)
 			throw new Exception(ExceptionClass.LOGIC,
-								"No default static found");
+								"No default control found");
 		
-		/* Return the static */
-		return theDefStatic;
+		/* Return the control */
+		return theDefControl;
 	}
 	
 	/**
 	 * Get the default static 
 	 * @return the default static 
 	 */
-	public Static getDefaultStatic() throws Exception {
-		/* Ensure that we have a static element */
-		ensureStatic();
+	public ControlData getDefaultControl() throws Exception {
+		/* Ensure that we have a control element */
+		ensureControl();
 		
 		/* Set the control */
-		return theDefStatic;		
+		return theDefControl;		
 	}
 	
 	/**
 	 * Initialise Static from database (if present) 
 	 * @param pDatabase the database static
 	 */
-	public void adoptStatic(DataSet pDatabase) throws Exception {
+	public void adoptControl(DataSet pDatabase) throws Exception {
 		/* Ensure that we have a static element */
-		ensureStatic();
+		ensureControl();
 		
-		/* Access the default static element from the database */
-		Static myStatic = pDatabase.getStatic().getDefault();
+		/* Access the default control element from the database */
+		ControlData myControl = pDatabase.getControl().getDefault();
 		
 		/* Set the control */
-		theDefStatic.setSecurity(myStatic);		
+		theDefControl.setSecurity(myControl);		
 	}
 	
 	/**
@@ -312,11 +311,11 @@ public class DataSet implements htmlDumpable {
 	 * @return the security control 
 	 */
 	public SecurityControl getSecurityControl() throws Exception {
-		/* Ensure that we have a static element */
-		ensureStatic();
+		/* Ensure that we have a control element */
+		ensureControl();
 		
 		/* Set the control */
-		return theDefStatic.getSecurityControl();		
+		return theDefControl.getSecurityControl();		
 	}
 	
 	/**
@@ -325,11 +324,28 @@ public class DataSet implements htmlDumpable {
 	 * @param pControl the new control 
 	 */
 	public void setSecurityControl(SecurityControl pControl) throws Exception {
-		/* Ensure that we have a static element */
-		ensureStatic();
+		/* Ensure that we have a control element */
+		ensureControl();
 		
 		/* Set the control */
-		theDefStatic.setSecurityControl(pControl);		
+		theDefControl.setSecurityControl(pControl);		
+	}
+	
+	/**
+	 * Ensure encryption of clear text after load
+	 */
+	public void ensureEncryption() throws Exception {
+		/* Ensure encryption of the spreadsheet load */
+		theActTypes.ensureEncryption();
+		theTransTypes.ensureEncryption();
+		theTaxTypes.ensureEncryption();
+		theFrequencys.ensureEncryption();
+		theTaxRegimes.ensureEncryption();
+		theAccounts.ensureEncryption();
+		theRates.ensureEncryption();
+		thePrices.ensureEncryption();
+		thePatterns.ensureEncryption();
+		theEvents.ensureEncryption();
 	}
 	
 	/**

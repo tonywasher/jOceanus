@@ -2,276 +2,110 @@ package uk.co.tolcroft.finance.data;
 
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.finance.data.StaticClass.FreqClass;
 
-public class Frequency extends DataItem {
+public class Frequency extends StaticData<FreqClass> {
 	/**
 	 * The name of the object
 	 */
-	private static final String objName = "Frequency";
+	public static final String objName = "Frequency";
 
 	/**
-	 * Frequency Name length
+	 * The name of the object
 	 */
-	public final static int NAMELEN = 50;
-
-	/**
-	 * The class of the Frequency
-	 */
-	private FreqClass  theClass = null;
-
-	/**
-	 * The sort order of the Frequency
-	 */
-	private int        theOrder = -1;
-	
-	/**
-	 * Return the name of the Frequency
-	 * @return the name
-	 */
-	public String    	getName()              { return getObj().getName(); }
-
-	/**
-	 * Return the sort order of the Frequency
-	 * @return the order
-	 */
-	protected int       getOrder()             { return theOrder; }
+	public static final String listName = "Frequencies";
 
 	/**
 	 * Return the Frequency class of the Frequency
 	 * @return the class
 	 */
-	protected FreqClass getFrequency()         { return theClass; }
+	public FreqClass getFrequency()         { return super.getStaticClass(); }
 	
 	/* Linking methods */
 	public Frequency getBase() { return (Frequency)super.getBase(); }
-	public Values  	 getObj()  { return (Values)super.getObj(); }	
 
-	/* Field IDs */
-	public static final int FIELD_ID     	= 0;
-	public static final int FIELD_NAME     	= 1;
-	public static final int FIELD_ORDER     = 2;
-	public static final int FIELD_CLASS     = 3;
-	public static final int NUMFIELDS	    = 4;
-	
 	/**
 	 * Obtain the type of the item
 	 * @return the type of the item
 	 */
 	public String itemType() { return objName; }
-	
-	/**
-	 * Obtain the number of fields for an item
-	 * @return the number of fields
-	 */
-	public int	numFields() {return NUMFIELDS; }
-	
-	/**
-	 * Determine the field name for a particular field
-	 * @return the field name
-	 */
-	public String	fieldName(int iField) {
-		switch (iField) {
-			case FIELD_ID: 	  return "ID";
-			case FIELD_NAME:  return "Name";
-			case FIELD_ORDER: return "Order";
-			case FIELD_CLASS: return "Class";
-			default:		  return super.fieldName(iField);
-		}
-	}
-	
-	/**
-	 * Format the value of a particular field as a table row
-	 * @param iField the field number
-	 * @param pObj the values to use
-	 * @return the formatted field
-	 */
-	public String formatField(int iField, histObject pObj) {
-		String myString = ""; 
-		switch (iField) {
-			case FIELD_ID: 		myString += getId();  	break;
-			case FIELD_NAME:	myString += getName(); 	break;
-			case FIELD_ORDER: 	myString += getOrder();	break;
-			case FIELD_CLASS: 	myString += theClass;	break;
-		}
-		return myString;
-	}
-	
+			
 	/**
 	 * Construct a copy of a Frequency.
-	 * 
 	 * @param pList	The list to associate the Frequency with
 	 * @param pFrequency The frequency to copy 
 	 */
-	protected Frequency(List  		pList,
-			            Frequency 	pFrequency) { 
-		super(pList, pFrequency.getId());
-		Values myObj = new Values(pFrequency.getObj());
-		setObj(myObj);
-		theClass = pFrequency.theClass;
-		setBase(pFrequency);
-		setState(pFrequency.getState());
-		theOrder = pFrequency.getOrder();
+	protected Frequency(List		pList,
+			            Frequency	pFrequency) { 
+		super(pList, pFrequency);
 	}
 	
 	/**
 	 * Construct a standard Frequency on load
-	 * 
+	 * @param pList	The list to associate the Frequency with
+	 * @param sName Name of Frequency
+	 */
+	private Frequency(List 		pList,
+			      	  String	sName) throws Exception {
+		super(pList, sName);
+		pList.setNewId(this);				
+	}
+
+	/**
+	 * Construct a standard frequency on load
+	 * @param pList	The list to associate the Frequency with
+	 * @param uClassId the class id of the new item
+	 * @param pName Name of Frequency
+	 * @param pDesc Description of Frequency
+	 */
+	private Frequency(List 		pList,
+			          int		uClassId,
+			          String	pName,
+			          String	pDesc) throws Exception {
+		super(pList, uClassId, pName, pDesc);
+		pList.setNewId(this);				
+	}
+	
+	/**
+	 * Construct a standard Frequency on load
 	 * @param pList	The list to associate the Frequency with
 	 * @param uId   ID of Frequency
-	 * @param sName Name of Frequency
-	 * 
-	 * @throws {@link Exception} if type is not supported
+	 * @param uClassId the class id of the new item
+	 * @param pName Encrypted Name of Frequency
+	 * @param pDesc Encrypted Description of TaxRegime
 	 */
-	private Frequency(List 	 pList,
-			          int	 uId,
-			          String sName) throws Exception {
-		super(pList, uId);
-		Values myObj = new Values();
-		setObj(myObj);
-		myObj.setName(sName);
+	private Frequency(List 		pList,
+			      	  int		uId,
+			      	  int		uClassId,
+			      	  byte[]	pName,
+			      	  byte[]	pDesc) throws Exception {
+		super(pList, uId, uClassId, pName, pDesc);
 		pList.setNewId(this);				
-	
-		/* Determine class of Frequency */
-		if (sName.equals("Monthly")) {
-			theClass = FreqClass.MONTHLY;
-			theOrder = 0;
-		}
-		else if (sName.equals("EndOfMonth")) {
-			theClass = FreqClass.ENDMONTH;
-			theOrder = 1;
-		}
-		else if (sName.equals("Quarterly")) {
-			theClass = FreqClass.QUARTERLY;
-			theOrder = 2;
-		}
-		else if (sName.equals("HalfYearly")) {
-			theClass = FreqClass.HALFYEARLY;
-			theOrder = 3;
-		}
-		else if (sName.equals("Annually")) {
-			theClass = FreqClass.ANNUALLY;
-			theOrder = 4;
-		}
-		else if (sName.equals("Maturity")) {
-			theClass = FreqClass.MATURITY;
-			theOrder = 5;
-		}
-		else if (sName.equals("TenMonths")) {
-			theClass = FreqClass.TENMONTHS;
-			theOrder = 6;
-		}
-		else {
-			throw new Exception(ExceptionClass.DATA,
-  					  			this,
-                                "Invalid Frequency");
-		}
-	}
-	
-	/**
-	 * Compare this frequency to another to establish equality.
-	 * 
-	 * @param that The Frequency to compare to
-	 * @return <code>true</code> if the frequency is identical, <code>false</code> otherwise
-	 */
-	public boolean equals(Object pThat) {
-		/* Handle the trivial cases */
-		if (this == pThat) return true;
-		if (pThat == null) return false;
-		
-		/* Make sure that the object is a Frequency */
-		if (pThat.getClass() != this.getClass()) return false;
-		
-		/* Access the target Frequency */
-		Frequency myFreq = (Frequency)pThat;
-
-		if (getId() != myFreq.getId()) return false;
-		return (getName().compareTo(myFreq.getName()) == 0);
-	}
-
-	/**
-	 * Compare this frequency to another to establish sort order.
-	 * 
-	 * @param pThat The Frequency to compare to
-	 * @return (-1,0,1) depending of whether this object is before, equal, 
-	 * 					or after the passed object in the sort order
-	 */
-	public int compareTo(Object pThat) {
-		long result;
-
-		/* Handle the trivial cases */
-		if (this == pThat) return 0;
-		if (pThat == null) return -1;
-		
-		/* Make sure that the object is a Frequency */
-		if (pThat.getClass() != this.getClass()) return -1;
-		
-		/* Access the target frequency */
-		Frequency myThat = (Frequency)pThat;
-		
-		/* Compare on order */
-		if (theOrder < myThat.theOrder) return -1;
-		if (theOrder > myThat.theOrder) return  1;
-
-		/* Compare on name */
-		result = getName().compareTo(myThat.getName());
-		if (result < 0) return -1;
-		if (result > 0) return 1;
-		
-		/* Compare on id */
-		result = (int)(getId() - myThat.getId());
-		if (result == 0) return 0;
-		else if (result < 0) return -1;
-		else return 1;
-	}
-
-	/**
-	 * Format a Frequency 
-	 * 
-	 * @param pFreq the frequency to format
-	 * @return the formatted frequency
-	 */
-	public static String format(Frequency pFreq) {
-		String 	myFormat;
-		myFormat = (pFreq != null) ? pFreq.getName()
-							       : "null";
-		return myFormat;
-	}
-	
-	/**
-	 * Determine whether two {@link Frequency} objects differ.
-	 * 
-	 * @param pCurr The current Frequency 
-	 * @param pNew The new Frequency
-	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-	 */	
-	public static boolean differs(Frequency pCurr, Frequency pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
 	}
 
 	/**
 	 * Represents a list of {@link Frequency} objects. 
 	 */
-	public static class List  extends DataList<Frequency> {
+	public static class List  extends StaticList<Frequency, FreqClass> {
 	 	/** 
 	 	 * Construct an empty CORE frequency list
 	 	 * @param pData the DataSet for the list
 	 	 */
-		protected List(DataSet pData) { super(ListStyle.CORE, true); }
-
+		protected List(DataSet pData) { 
+			super(FreqClass.class, pData.getEncryptedPairs(), ListStyle.CORE); }
+		
 		/** 
-	 	 * Construct a generic frequency list
+	 	 * Construct a generic frequency data list
 	 	 * @param pList the source Frequency list 
 	 	 * @param pStyle the style of the list 
 	 	 */
 		public List(List pList, ListStyle pStyle) { super(pList, pStyle); }
 
 		/** 
-	 	 * Construct a difference frequency list
-	 	 * @param pNew the new Frequency list 
-	 	 * @param pOld the old Frequency list 
+	 	 * Construct a difference static data list
+	 	 * @param pNew the new static data list 
+	 	 * @param pOld the old static data list 
 	 	 */
 		protected List(List pNew, List pOld) { super(pNew, pOld); }
 		
@@ -281,6 +115,12 @@ public class Frequency extends DataItem {
 	 	 */
 		protected List cloneIt() { return new List(this, ListStyle.CORE); }
 		
+		/**
+		 * Obtain the type of the item
+		 * @return the type of the item
+		 */
+		public String itemType() { return listName; }
+
 		/**
 		 * Add a new item to the list
 		 * @param pItem item to be added
@@ -297,72 +137,81 @@ public class Frequency extends DataItem {
 		 * @param isCredit - is the item a credit or debit
 		 * @return the newly added item
 		 */
-		public Frequency addNewItem(boolean isCredit) { return null; }
-			
-		/**
-		 * Obtain the type of the item
-		 * @return the type of the item
-		 */
-		public String itemType() { return objName; }
-				
-		/**
-		 * Search for a particular item by class
-		 *  
-		 * @param eClass The class of the item to search for
-		 * @return The Item if present (or <code>null</code> if not found)
-		 */
-		protected Frequency searchFor(FreqClass eClass) {
-			ListIterator 	myIterator;
-			Frequency 		myCurr;
-			
-			/* Access the iterator */
-			myIterator = listIterator();
-			
-			/* Loop through the items to find the entry */
-			while ((myCurr = myIterator.next()) != null) {
-				if (myCurr.theClass == eClass) break;
-			}
-			
-			/* Return to caller */
-			return myCurr;
-		}
-		
-		/**
-		 * Search for a particular item by Name
-		 * 
-		 * @param sName The name of the item to search for
-		 * @return The Item if present (or <code>null</code> if not found)
-		 */
-		public Frequency searchFor(String sName) {
-			ListIterator 	myIterator;
-			Frequency   	myCurr;
-			int         	iDiff;
-			
-			/* Access the iterator */
-			myIterator = listIterator();
-			
-			/* Loop through the items to find the entry */
-			while ((myCurr = myIterator.next()) != null) {
-				iDiff = sName.compareTo(myCurr.getName());
-				if (iDiff == 0) break;
-			}
-			
-			/* Return to caller */
-			return myCurr;
-		}
+		public Frequency addNewItem(boolean isCredit) { return null; }			
 		
 		/**
 		 * Add a Frequency
-		 * @param uId the Id of the frequency
 		 * @param pFrequency the Name of the frequency
 		 * @throws Exception on error
 		 */ 
-		public void addItem(int		uId,
-				            String 	pFrequency) throws Exception {
+		public void addItem(String 	pFrequency) throws Exception {
 			Frequency myFrequency;
 			
 			/* Create a new Frequency */
-			myFrequency = new Frequency(this, uId, pFrequency);
+			myFrequency = new Frequency(this, pFrequency);
+				
+			/* Check that this Frequency has not been previously added */
+			if (searchFor(pFrequency) != null) 
+				throw new Exception(ExceptionClass.DATA,
+	  					  			myFrequency,
+			                        "Duplicate Frequency");
+				
+			/* Check that this ClassId has not been previously added */
+			if (searchForEnum(myFrequency.getStaticClassId()) != null) 
+				throw new Exception(ExceptionClass.DATA,
+	  					  			myFrequency,
+			                        "Duplicate FrequencyClass");
+				
+			/* Add the Frequency to the list */
+			myFrequency.addToList();		
+		}
+		
+		/**
+		 * Add a Frequency to the list
+		 * @param uClassId the ClassId of the frequency
+		 * @param pFrequency the Name of the frequency
+		 * @param pDesc the Description of the frequency
+		 */ 
+		public void addItem(int	   uClassId,
+				            String pFrequency,
+				            String pDesc) throws Exception {
+			Frequency myFreq;
+				
+			/* Create a new Frequency */
+			myFreq = new Frequency(this, uClassId, pFrequency, pDesc);
+				
+			/* Check that this Frequency has not been previously added */
+			if (searchFor(myFreq.getName()) != null) 
+				throw new Exception(ExceptionClass.DATA,
+	   					  			myFreq,
+			  			            "Duplicate Frequency");
+				 
+			/* Check that this ClassId has not been previously added */
+			if (searchForEnum(uClassId) != null) 
+				throw new Exception(ExceptionClass.DATA,
+	  					  			myFreq,
+			                        "Duplicate FrequencyClass");
+				
+			/* Add the Frequency to the list */
+			myFreq.addToList();
+		}	
+
+		/**
+		 * Add a Frequency
+		 * @param uId the Id of the frequency
+		 * @param uClassId the ClassId of the frequency
+		 * @param pFrequency the Encrypted Name of the frequency
+		 * @param pDesc the Encrypted Description of the frequency
+		 * @throws Exception on error
+		 */ 
+		public void addItem(int		uId,
+							int		uClassId,
+				            byte[] 	pFrequency,
+				            byte[]	pDesc) throws Exception {
+			Frequency myFrequency;
+			
+			/* Create a new Frequency */
+			myFrequency = new Frequency(this, uId, uClassId, pFrequency, pDesc);
 				
 			/* Check that this FrequencyId has not been previously added */
 			if (!isIdUnique(uId)) 
@@ -371,104 +220,19 @@ public class Frequency extends DataItem {
 			  			            "Duplicate FrequencyId");
 				 
 			/* Check that this Frequency has not been previously added */
-			if (searchFor(pFrequency) != null) 
+			if (searchFor(myFrequency.getName()) != null) 
 				throw new Exception(ExceptionClass.DATA,
 	  					  			myFrequency,
 			                        "Duplicate Frequency");
 				
+			/* Check that this ClassId has not been previously added */
+			if (searchForEnum(uClassId) != null) 
+				throw new Exception(ExceptionClass.DATA,
+	  					  			myFrequency,
+			                        "Duplicate FrequencyClass");
+				
 			/* Add the Frequency to the list */
 			myFrequency.addToList();		
 		}		
-	}
-	
-	/**
-	 * Values for a frequency 
-	 */
-	public class Values implements histObject {
-		private String     		theName      = null;
-		
-		/* Access methods */
-		public String      	getName()      { return theName; }
-		
-		public void setName(String pName) {
-			theName      = pName; }
-
-		/* Constructor */
-		public Values() {}
-		public Values(Values pValues) {
-			theName      = pValues.getName();
-		}
-		
-		/* Check whether this object is equal to that passed */
-		public boolean histEquals(histObject pCompare) {
-			Values myValues = (Values)pCompare;
-			return histEquals(myValues);
-		}
-		public boolean histEquals(Values pValues) {
-			if (Utils.differs(theName,    pValues.theName))    return false;
-			return true;
-		}
-		
-		/* Copy values */
-		public void    copyFrom(histObject pSource) {
-			Values myValues = (Values)pSource;
-			copyFrom(myValues);
-		}
-		public histObject copySelf() {
-			return new Values(this);
-		}
-		public void    copyFrom(Values pValues) {
-			theName      = pValues.getName();
-		}
-		public boolean	fieldChanged(int fieldNo, histObject pOriginal) {
-			Values 	pValues = (Values)pOriginal;
-			boolean	bResult = false;
-			switch (fieldNo) {
-				case FIELD_NAME:
-					bResult = (Utils.differs(theName,      pValues.theName));
-					break;
-			}
-			return bResult;
-		}
-	}
-	
-	/**
-	 * Enumeration of Frequency Classes. 
-	 */
-	protected enum FreqClass {
-		/**
-		 * Monthly Frequency
-		 */
-		MONTHLY,
-
-		/**
-		 * Monthly Frequency (at end of month)
-		 */
-		ENDMONTH,
-
-		/**
-		 * Quarterly Frequency
-		 */
-		QUARTERLY,
-		
-		/**
-		 * Half Yearly Frequency
-		 */
-		HALFYEARLY,
-
-		/**
-		 * Annual Frequency
-		 */
-		ANNUALLY,
-
-		/**
-		 * Only on Maturity
-		 */
-		MATURITY,
-
-		/**
-		 * Monthly for up to ten-months
-		 */
-		TENMONTHS;     
 	}
 }

@@ -42,7 +42,6 @@ public class MaintProperties implements ActionListener,
 	private JSpinner			theSpinner			= null;
 	private SpinnerDateModel	theModel			= null;
 	private JCheckBox			theShowDebug		= null;
-	private JCheckBox			theEncryptBackup	= null;
 	private JButton				theOKButton			= null;
 	private JButton				theResetButton		= null;
 	private JButton				theBaseSel			= null;
@@ -87,7 +86,6 @@ public class MaintProperties implements ActionListener,
 		
 		/* Create the check boxes */
 		theShowDebug		= new JCheckBox("Show Debug");
-		theEncryptBackup	= new JCheckBox("Encrypt Backups");
 
 		/* Create the spinner */
 		theModel    = new SpinnerDateModel();
@@ -115,7 +113,6 @@ public class MaintProperties implements ActionListener,
 		theBackupSel.addActionListener(this);
 		theRepoSel.addActionListener(this);
 		theShowDebug.addItemListener(this);
-		theEncryptBackup.addItemListener(this);
 		
 		/* Create the buttons panel */
 		theButtons = new JPanel();
@@ -154,13 +151,10 @@ public class MaintProperties implements ActionListener,
         	.addGroup(myLayout.createSequentialGroup()
         		.addContainerGap()
                 .addComponent(theShowDebug)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(theEncryptBackup)
                 .addContainerGap())
         );
         myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addComponent(theShowDebug)
-            .addComponent(theEncryptBackup)
         );
             
 		/* Create the panel */
@@ -283,7 +277,6 @@ public class MaintProperties implements ActionListener,
 		
 		/* Set the check boxes */
 		theShowDebug.setSelected(theExtract.doShowDebug());
-		theEncryptBackup.setSelected(theExtract.doEncryptBackups());
 		
 		/* Notify the changes */
 		notifyChanges();
@@ -445,18 +438,6 @@ public class MaintProperties implements ActionListener,
 		if (evt.getSource() == (Object)theShowDebug) {
 			/* Note the new criteria and re-build lists */
 			theExtract.setDoShowDebug(theShowDebug.isSelected());
-
-			/* Update the text */
-			updateText();
-			
-			/* Notify changes */
-			notifyChanges();
-		}
-
-		/* If this event relates to the encryptBackup box */
-		if (evt.getSource() == (Object)theEncryptBackup) {
-			/* Note the new criteria and re-build lists */
-			theExtract.setDoEncryptBackups(theEncryptBackup.isSelected());
 
 			/* Update the text */
 			updateText();

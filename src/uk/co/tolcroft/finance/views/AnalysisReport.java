@@ -3,7 +3,7 @@ package uk.co.tolcroft.finance.views;
 import uk.co.tolcroft.finance.views.Analysis.*;
 import uk.co.tolcroft.finance.views.EventAnalysis.AnalysisYear;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.data.TaxType.TaxClass;
+import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 
@@ -830,7 +830,7 @@ public class AnalysisReport {
 		}
 
 		/* Access the Total taxation bucket */
-		myTax = myList.getTaxDetail(TaxClass.TOTALTAX);
+		myTax = myList.getTaxDetail(TaxClass.TOTALTAXATION);
 		myOutput.append("<tr><th align=\"center\">");
 		myOutput.append(myTax.getName());
 		myOutput.append("</th>");
@@ -848,7 +848,7 @@ public class AnalysisReport {
 		myOutput.append("</tr>");
 
 		/* Access the Tax Profit bucket */
-		myTax = myList.getTaxDetail(TaxClass.TAXPROFIT);
+		myTax = myList.getTaxDetail(TaxClass.TAXPROFITLOSS);
 		myOutput.append("<tr><th align=\"center\">");
 		myOutput.append(myTax.getName());
 		myOutput.append("</th>");

@@ -1,8 +1,7 @@
 package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.data.TaxType.TaxClass;
-import uk.co.tolcroft.finance.data.TransactionType.TransClass;
+import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.finance.views.Analysis.*;
 import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.models.*;
@@ -68,8 +67,8 @@ public class MetaAnalysis {
 		
 		/* Obtain access to key elements */
 		theMarketAccount	= (ExternalAccount)theList.getAccountDetail(myAccounts.getMarket());
-		theMarketGrowth		= theList.getTransDetail(TransClass.MKTGROWTH);
-		theMarketShrink		= theList.getTransDetail(TransClass.MKTSHRINK);
+		theMarketGrowth		= theList.getTransDetail(TransClass.MARKETGROWTH);
+		theMarketShrink		= theList.getTransDetail(TransClass.MARKETSHRINK);
 		theCapitalGains		= theList.getTransDetail(TransClass.CAPITALGAIN);
 		theCapitalLoss		= theList.getTransDetail(TransClass.CAPITALLOSS);
 		
@@ -222,8 +221,8 @@ public class MetaAnalysis {
 		theAssetTotals 		= theList.getAssetTotal();
 		theMarketTotals 	= theList.getMarketTotal();
 		theExternalTotals 	= theList.getExternalTotal();
-		theTransProfit 		= theList.getTransTotal(TaxClass.PROFIT);
-		theCoreProfit		= theList.getTransTotal(TaxClass.COREPROFIT);
+		theTransProfit 		= theList.getTransTotal(TaxClass.PROFITLOSS);
+		theCoreProfit		= theList.getTransTotal(TaxClass.COREPROFITLOSS);
 		theCoreIncome		= theList.getTransTotal(TaxClass.COREINCOME);
 		
 		/* Access the iterator */
@@ -403,7 +402,7 @@ public class MetaAnalysis {
 		myTax.addAmount(myBucket.getTaxation());
 					
 		/* Build the TotalTaxBucket */
-		myBucket = theList.getTaxDetail(TaxClass.TOTALTAX);
+		myBucket = theList.getTaxDetail(TaxClass.TOTALTAXATION);
 		myBucket.setAmount(myIncome);
 		myBucket.setTaxation(myTax);
 		
@@ -414,7 +413,7 @@ public class MetaAnalysis {
 		myTax.subtractAmount(mySrcBucket.getAmount());
 
 		/* Build the TaxProfitBucket */
-		myBucket = theList.getTaxDetail(TaxClass.TAXPROFIT);
+		myBucket = theList.getTaxDetail(TaxClass.TAXPROFITLOSS);
 		myBucket.setAmount(new Money(0));
 		myBucket.setTaxation(myTax);
 
@@ -484,6 +483,7 @@ public class MetaAnalysis {
 			}
 		}
 	}
+	
 	/**
 	 * Adjust Asset Summary 
 	 */
@@ -537,7 +537,7 @@ public class MetaAnalysis {
 				myBucket = theList.getTransSummary(TaxClass.GROSSDIVIDEND);
 				myBucket.addValues(pBucket);
 				break;
-			case UNITTRUSTDIV:
+			case UNITTRUSTDIVIDEND:
 				/* Adjust the Gross interest bucket */
 				myBucket = theList.getTransSummary(TaxClass.GROSSUTDIVS);
 				myBucket.addValues(pBucket);
@@ -615,7 +615,7 @@ public class MetaAnalysis {
 				myBucket = theList.getTransSummary(TaxClass.EXPENSE);
 				myBucket.subtractValues(pBucket);
 				break;
-			case MKTGROWTH:
+			case MARKETGROWTH:
 				/* Adjust the Market bucket */
 				myBucket = theList.getTransSummary(TaxClass.MARKET);
 				myBucket.addValues(pBucket);
@@ -624,7 +624,7 @@ public class MetaAnalysis {
 				myBucket = theList.getTransSummary(TaxClass.NONCORE);
 				myBucket.addValues(pBucket);
 				break;
-			case MKTSHRINK:
+			case MARKETSHRINK:
 				/* Adjust the Market bucket */
 				myBucket = theList.getTransSummary(TaxClass.MARKET);
 				myBucket.subtractValues(pBucket);
@@ -641,8 +641,8 @@ public class MetaAnalysis {
 			case STOCKRIGHTWAIVED:
 			case TRANSFER:
 			case ENDOWMENT:
-			case CSHPAY:
-			case CSHRECOVER:
+			case CASHPAYMENT:
+			case CASHRECOVERY:
 				break;
 		}
 	}

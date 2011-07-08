@@ -44,11 +44,6 @@ public class Properties {
 	private final static String nameBackupPrefix= "Backupprefix";
 
 	/**
-	 * Registry name for Encrypt Backups flag
-	 */
-	private final static String nameEncBackups	= "Encryptbackups";
-
-	/**
 	 * Registry name for Show Debug flag
 	 */
 	private final static String nameShowDebug	= "Showdebug";
@@ -87,11 +82,6 @@ public class Properties {
 	 * Default Backup file name
 	 */
 	private final static String defBackupPrefix	= "FinanceBackup";
-			
-	/**
-	 * Default Encrypt backups value
-	 */
-	private final static boolean defEncBackups	= true;
 			
 	/**
 	 * Default Show Debug value
@@ -149,11 +139,6 @@ public class Properties {
 	private String  theBackupPrefix			= null;
 			
 	/**
-	 * Backups done using encryption?
-	 */
-	private boolean doEncryptBackups		= defEncBackups;
-			
-	/**
 	 * Show debug window?
 	 */
 	private boolean doShowDebug				= defShowDebug;
@@ -198,12 +183,6 @@ public class Properties {
 	 * @return the backup file prefix
 	 */
 	public String getBackupPrefix() 		{ return theBackupPrefix; }
-
-	/**
-	 * Do we encrypt backups?
-	 * @return whether backups are encrypted or not
-	 */
-	public boolean doEncryptBackups() 		{ return doEncryptBackups; }
 
 	/**
 	 * Do we show the Debug window?
@@ -259,9 +238,6 @@ public class Properties {
 		/* Access the BackupFile prefix */
 		theBackupPrefix = theHandle.get(nameBackupPrefix, null);
 		if (theBackupPrefix == null) setBackupPrefix(defBackupPrefix);
-		
-		/* Access the EncryptBackups flag */
-		doEncryptBackups = theHandle.getBoolean(nameEncBackups, defEncBackups);
 		
 		/* Access the ShowDebug flag */
 		doShowDebug = theHandle.getBoolean(nameShowDebug, defShowDebug);
@@ -374,18 +350,6 @@ public class Properties {
 		
 		/* Store the value into the preferences */
 		theHandle.put(nameBackupPrefix, theBackupPrefix);
-	}
-
-	/**
-	 * Set the Encrypt Backup flag 
-	 * @param bValue the new value
-	 */
-	public void setDoEncryptBackups(boolean bValue) {
-		/* Record the new value */
-		doEncryptBackups = bValue;
-		
-		/* Store the value into the preferences */
-		theHandle.putBoolean(nameEncBackups, doEncryptBackups);
 	}
 
 	/**

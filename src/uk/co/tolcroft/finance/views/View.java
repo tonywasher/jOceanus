@@ -621,11 +621,6 @@ public class View {
 		private String  		theBackupPrefix		= null;
 				
 		/**
-		 * Backups done using encryption?
-		 */
-		private boolean 		doEncryptBackups	= false;
-				
-		/**
 		 * Show debug window?
 		 */
 		private boolean 		doShowDebug			= false;
@@ -672,12 +667,6 @@ public class View {
 		public String getBackupPrefix()			{ return theBackupPrefix; }
 
 		/**
-		 * Do we encrypt backups?
-		 * @return whether backups are encrypted or not
-		 */
-		public boolean doEncryptBackups() 		{ return doEncryptBackups; }
-
-		/**
 		 * Do we show the Debug window?
 		 * @return whether we show the debug window
 		 */
@@ -717,7 +706,6 @@ public class View {
 			theBackupDir     	= theProperties.getBackupDir();
 			theRepoDir     		= theProperties.getRepoDir();
 			theBackupPrefix    	= theProperties.getBackupPrefix();
-			doEncryptBackups 	= theProperties.doEncryptBackups();
 			doShowDebug      	= theProperties.doShowDebug();
 			theBirthDate		= theProperties.getBirthDate();
 			
@@ -773,14 +761,6 @@ public class View {
 		}
 
 		/**
-		 * Set the Encrypt Backup flag 
-		 * @param bValue the new value
-		 */
-		public void setDoEncryptBackups(boolean bValue) {
-			doEncryptBackups = bValue;
-		}
-
-		/**
 		 * Set the Show Debug flag 
 		 * @param bValue the new value
 		 */
@@ -832,10 +812,6 @@ public class View {
 			if (doShowDebug != theProperties.doShowDebug())  
 				theProperties.setDoShowDebug(doShowDebug);
 				
-			/* Update the doEncryptBackups flag if required */
-			if (doEncryptBackups != theProperties.doEncryptBackups())  
-				theProperties.setDoEncryptBackups(doEncryptBackups);
-			
 			/* Flush changes and clear the changes flag */
 			theProperties.flushChanges();
 			hasChanges   = false;
@@ -853,8 +829,7 @@ public class View {
 						  (Utils.differs(getRepoDir(), theProperties.getRepoDir())) 				||  
 						  (Utils.differs(getBackupPrefix(), theProperties.getBackupPrefix()))       ||  
 						  (Date.differs(getBirthDate(), theProperties.getBirthDate()))				||  
-						  (doShowDebug != theProperties.doShowDebug())								||  
-						  (doEncryptBackups != theProperties.doEncryptBackups()));  
+						  (doShowDebug != theProperties.doShowDebug()));  
 		}		
 	}
 }

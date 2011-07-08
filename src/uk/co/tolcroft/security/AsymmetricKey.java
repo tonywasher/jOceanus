@@ -104,12 +104,10 @@ public class AsymmetricKey {
 	}
 	
 	/**
-	 * Constructor from security key
-	 * @param pSecurityKey the security key 
+	 * Constructor from public KeySpec
+	 * @param pKeySpec the public KeySpec 
 	 * @param pKeyType the key type 
 	 * @param pSymKeyType the symmetric key type 
-	 * @param pPassKey the password key 
-	 * @param pRandom the secure random generator 
 	 */
 	protected  AsymmetricKey(X509EncodedKeySpec	pKeySpec,
 							 AsymKeyType		pKeyType,
@@ -399,7 +397,7 @@ public class AsymmetricKey {
 			/* If the secret is not long enough */
 			if (mySecret.length < myKeyLen + pKeyType.getIvLen()) 
 				throw new Exception(ExceptionClass.CRYPTO,
-						"Shared secret is insufficient in length"); 
+									"Shared secret is insufficient in length"); 
 			
 			/* Build the secret key specification */
 			myKey = new SecretKeySpec(Arrays.copyOf(mySecret, myKeyLen), pKeyType.getAlgorithm());
@@ -892,12 +890,12 @@ public class AsymmetricKey {
 		/**
 		 * Encryption algorithm
 		 */
-		private final static String 	FULLALGORITHM	= "/None/PKCS1Padding";
+		private final static String 	BASEALGORITHM	= "/None/OAEPWithSHA256AndMGF1Padding";
 		
 		/**
 		 * Signature algorithm
 		 */
-		private final static String 	FULLSIGNATURE	= "SHA256with";
+		private final static String 	BASESIGNATURE	= "SHA256with";
 		
 		/**
 		 * Key values 
@@ -917,12 +915,12 @@ public class AsymmetricKey {
 			else			return toString();
 		}
 		public String		getSignature()	{
-			if (isElliptic) return "ECDSA";
-			else			return FULLSIGNATURE + toString();
+			if (isElliptic) return BASESIGNATURE + "ECDSA";
+			else			return BASESIGNATURE + toString();
 		}
 		public String		getCipher()	{
 			if (isElliptic) return "Null";
-			else			return toString() + FULLALGORITHM;
+			else			return toString() + BASEALGORITHM;
 		}
 
 		/**

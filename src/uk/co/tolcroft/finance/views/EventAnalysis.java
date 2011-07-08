@@ -3,7 +3,7 @@ package uk.co.tolcroft.finance.views;
 import uk.co.tolcroft.finance.views.Analysis.*;
 import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.data.TransactionType.TransClass;
+import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
@@ -204,7 +204,7 @@ public class EventAnalysis {
 			if (!myCurr.relatesTo(myAccount)) continue;
 			
 			/* Add a statement line to the statement */
-			myLine = pStatement.new Line(myList, myCurr, myAccount);
+			myLine = new Statement.Line(myList, myCurr, myAccount);
 			myLine.addToList();
 		}
 	
@@ -306,7 +306,7 @@ public class EventAnalysis {
 		mySection.removeChildren();
 
 		/* Create a list of AnalysisYears */
-		theYears = new List();
+		theYears = new List(this);
 
 		/* Create the Dilution Event List */
 		theDilutions = new DilutionEvent.List(theData);
@@ -392,7 +392,7 @@ public class EventAnalysis {
 	}
 	
 	/* Public class for analysis year */
-	public class AnalysisYear extends DataItem {
+	public static class AnalysisYear extends DataItem {
 		/**
 		 * The name of the object
 		 */
@@ -404,6 +404,8 @@ public class EventAnalysis {
 		private TaxYear			theYear			= null;
 		private DebugEntry		theListDebug	= null;
 		private DebugEntry		theChargeDebug	= null;
+		private DataSet			theData			= null;
+		private DebugManager	theDebugMgr		= null;
 
 		/* Access methods */
 		public 	Date			getDate()			{ return theYear.getDate(); }
@@ -419,6 +421,8 @@ public class EventAnalysis {
 							 Analysis	pPrevious) {
 			/* Call super-constructor */
 			super(pList, 0);
+			theData		= pList.theEvents.theData;
+			theDebugMgr	= pList.theEvents.theDebugMgr;
 			
 			/* Debug entry */
 			DebugEntry myDebug;
@@ -470,13 +474,18 @@ public class EventAnalysis {
 		 * Determine the field name for a particular field
 		 * @return the field name
 		 */
-		public String	fieldName(int iField) {
+		public static String	fieldName(int iField) {
 			switch (iField) {
 				case FIELD_YEAR: 		return "Year";
-				default:		  		return super.fieldName(iField);
+				default:		  		return DataItem.fieldName(iField);
 			}
 		}
 	
+		/**
+		 * Determine the field name in a non-static fashion 
+		 */
+		public String getFieldName(int iField) { return fieldName(iField); }
+		
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
@@ -578,6 +587,7 @@ public class EventAnalysis {
 	public class List extends DataList<AnalysisYear> {
 		/* Members */
 		private DebugEntry		theDebug		= null;
+		private EventAnalysis	theEvents		= null;
 
 		/**
 		 * Access the debug entry for this list 
@@ -588,9 +598,10 @@ public class EventAnalysis {
 		/**
 		 * Construct a top-level List
 		 */
-		public List() {
+		public List(EventAnalysis pEvents) {
 			/* Call super constructor */
 			super(ListStyle.VIEW, false);
+			theEvents = pEvents;
 			
 			/* Create debug entry for this list */
 			theDebug = theDebugMgr.new DebugEntry("AnnualTotals");
@@ -883,7 +894,7 @@ public class EventAnalysis {
 		/* else if the account is a unit trust */
 		else if (myAccount.isUnitTrust()) {
 			/* The true transaction type is UnitTrustDividend */
-			myTrans = myTranList.searchFor(TransClass.UNITTRUSTDIV);
+			myTrans = myTranList.searchFor(TransClass.UNITTRUSTDIVIDEND);
 		}
 		
 		/* True debit account is the parent */

@@ -1,8 +1,7 @@
 package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.data.TaxType.*;
-import uk.co.tolcroft.finance.data.TransactionType.*;
+import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 
@@ -49,7 +48,7 @@ public class Analysis {
 		theDate	= pDate;
 		
 		/* Create a new list */
-		theList 	= new BucketList();
+		theList 	= new BucketList(this);
 		theCharges	= new ChargeableEvent.List();
 	}
 	
@@ -68,7 +67,7 @@ public class Analysis {
 		theAccount	= pAccount;
 		
 		/* Create a new list */
-		theList 	= new BucketList();
+		theList 	= new BucketList(this);
 		theCharges	= new ChargeableEvent.List();
 	}
 	
@@ -96,7 +95,7 @@ public class Analysis {
 		theDate	= pYear.getDate();
 		
 		/* Create a new list */
-		theList		= new BucketList();
+		theList		= new BucketList(this);
 		theCharges	= new ChargeableEvent.List();
 	
 		/* Return if we are the first analysis */
@@ -144,12 +143,16 @@ public class Analysis {
 	}
 	
 	/* The core AnalysisBucket Class */
-	protected abstract class AnalysisBucket extends DataItem {
+	protected static abstract class AnalysisBucket extends DataItem {
 		/* Members */
 		private BucketType	theBucketType = null;
+		private DataSet		theData		  = null;
+		private Date		theDate		  = null;
 	
 		/* Access methods */
-		public BucketType getBucketType() { return theBucketType; }
+		public 		BucketType 	getBucketType() { return theBucketType; }
+		protected 	DataSet 	getData()		{ return theData; }
+		protected 	Date 		getDate()		{ return theDate; }
 
 		/* Constructor */
 		public AnalysisBucket(BucketList   	pList,
@@ -157,6 +160,8 @@ public class Analysis {
 							  int 			uId) {
 			/* Call super-constructor */
 			super(pList, uId + pType.getIdShift());
+			theData = pList.theAnalysis.theData;
+			theDate = pList.theAnalysis.theDate;
 		
 			/* Store the bucket type */
 			theBucketType = pType;
@@ -171,11 +176,11 @@ public class Analysis {
 		 * Determine the field name for a particular field
 		 * @return the field name
 		 */
-		public String	fieldName(int iField) {
+		public static String	fieldName(int iField) {
 			switch (iField) {
 				case FIELD_ID: 			return "Id";
 				case FIELD_TYPE: 		return "Type";
-				default:		  		return super.fieldName(iField);
+				default:		  		return DataItem.fieldName(iField);
 			}
 		}
 	
@@ -259,6 +264,9 @@ public class Analysis {
 	
 	/* The List class */
 	public class BucketList extends DataList<AnalysisBucket> {
+		/* Members */
+		private Analysis theAnalysis	= null;
+		
 		/**
 		 * The name of the object
 		 */
@@ -267,7 +275,10 @@ public class Analysis {
 		/**
 		 * Construct a top-level List
 		 */
-		public BucketList() { super(ListStyle.VIEW, false); }
+		public BucketList(Analysis pAnalysis) { 
+			super(ListStyle.VIEW, false);
+			theAnalysis = pAnalysis;
+		}
 
 		/** 
 	 	 * Clone a Bucket list
@@ -583,7 +594,7 @@ public class Analysis {
 	}
 	
 	/* The Account Bucket class */
-	protected abstract class ActDetail extends AnalysisBucket {
+	protected static abstract class ActDetail extends AnalysisBucket {
 		/* Members */
 		private Account theAccount = null;
 
@@ -611,10 +622,10 @@ public class Analysis {
 		 * Determine the field name for a particular field
 		 * @return the field name
 		 */
-		public String	fieldName(int iField) {
+		public static String	fieldName(int iField) {
 			switch (iField) {
 				case FIELD_ACCOUNT: 	return "Account";
-				default:		  		return super.fieldName(iField);
+				default:		  		return AnalysisBucket.fieldName(iField);
 			}
 		}
 		
@@ -715,7 +726,7 @@ public class Analysis {
 	}
 	
 	/* The Account Type Bucket class */
-	private abstract class ActType extends AnalysisBucket {
+	private static abstract class ActType extends AnalysisBucket {
 		/* Members */
 		private AccountType theAccountType = null;
 
@@ -741,10 +752,10 @@ public class Analysis {
 		 * Determine the field name for a particular field
 		 * @return the field name
 		 */
-		public String	fieldName(int iField) {
+		public static String	fieldName(int iField) {
 			switch (iField) {
 				case FIELD_ACCOUNTTYPE:	return "AccountType";
-				default:		  		return super.fieldName(iField);
+				default:		  		return AnalysisBucket.fieldName(iField);
 			}
 		}
 		
@@ -823,7 +834,7 @@ public class Analysis {
 	}
 	
 	/* The TransType Bucket class */
-	private abstract class TransType extends AnalysisBucket {
+	private static abstract class TransType extends AnalysisBucket {
 		/* Members */
 		private TransactionType theTransType = null;
 
@@ -849,10 +860,10 @@ public class Analysis {
 		 * Determine the field name for a particular field
 		 * @return the field name
 		 */
-		public String	fieldName(int iField) {
+		public static String	fieldName(int iField) {
 			switch (iField) {
 				case FIELD_TRANSTYPE:	return "TransType";
-				default:		  		return super.fieldName(iField);
+				default:		  		return AnalysisBucket.fieldName(iField);
 			}
 		}
 		
@@ -931,7 +942,7 @@ public class Analysis {
 	}
 	
 	/* The Tax Bucket class */
-	private abstract class Tax extends AnalysisBucket {
+	private static abstract class Tax extends AnalysisBucket {
 		/* Members */
 		private TaxType 	theTaxType = null;
 
@@ -957,10 +968,10 @@ public class Analysis {
 		 * Determine the field name for a particular field
 		 * @return the field name
 		 */
-		public String	fieldName(int iField) {
+		public static String	fieldName(int iField) {
 			switch (iField) {
 				case FIELD_TAXTYPE:	return "TaxType";
-				default:			return super.fieldName(iField);
+				default:			return AnalysisBucket.fieldName(iField);
 			}
 		}
 		
@@ -1039,7 +1050,7 @@ public class Analysis {
 	}
 	
 	/* The ValueAccount Bucket class */
-	protected abstract class ValueAccount extends ActDetail {
+	protected static abstract class ValueAccount extends ActDetail {
 		/* Members */
 		private Money 	theValue 	= null;
 
@@ -1072,12 +1083,17 @@ public class Analysis {
 		 * Determine the field name for a particular field
 		 * @return the field name
 		 */
-		public String	fieldName(int iField) {
+		public static String	fieldName(int iField) {
 			switch (iField) {
 				case FIELD_VALUE:		return "Value";
-				default:		  		return super.fieldName(iField);
+				default:		  		return ActDetail.fieldName(iField);
 			}
 		}
+		
+		/**
+		 * Determine the field name in a non-static fashion 
+		 */
+		public String getFieldName(int iField) { return fieldName(iField); }
 		
 		/**
 		 * Format the value of a particular field as a table row
@@ -1136,7 +1152,7 @@ public class Analysis {
 	}
 		
 	/* The MoneyAccount Bucket class */
-	public class MoneyAccount extends ValueAccount {
+	public static class MoneyAccount extends ValueAccount {
 		/**
 		 * The name of the object
 		 */
@@ -1223,11 +1239,11 @@ public class Analysis {
 		 * Determine the field name for a particular field
 		 * @return the field name
 		 */
-		public String	fieldName(int iField) {
+		public static String	fieldName(int iField) {
 			switch (iField) {
 				case FIELD_RATE:		return "Rate";
 				case FIELD_MATURITY:	return "Maturity";
-				default:		  		return super.fieldName(iField);
+				default:		  		return ValueAccount.fieldName(iField);
 			}
 		}
 		
@@ -1258,7 +1274,7 @@ public class Analysis {
 		 * @param pDate the date of valuation
 		 */
 		protected void recordRate(Date pDate) {
-			AcctRate.List	myRates = theData.getRates();
+			AcctRate.List	myRates = getData().getRates();
 			AcctRate 		myRate;
 			Date			myDate;
 
@@ -1300,7 +1316,7 @@ public class Analysis {
 	}
 	
 	/* The DebtAccount Bucket class */
-	public class DebtAccount extends ValueAccount {
+	public static class DebtAccount extends ValueAccount {
 		/**
 		 * The name of the object
 		 */
@@ -1383,10 +1399,10 @@ public class Analysis {
 		 * Determine the field name for a particular field
 		 * @return the field name
 		 */
-		public String	fieldName(int iField) {
+		public static String	fieldName(int iField) {
 			switch (iField) {
 				case FIELD_SPEND:		return "Spend";
-				default:		  		return super.fieldName(iField);
+				default:		  		return ValueAccount.fieldName(iField);
 			}
 		}
 		
@@ -1431,7 +1447,7 @@ public class Analysis {
 	}
 		
 	/* The AssetAccount Bucket class */
-	public class AssetAccount extends ValueAccount {
+	public static class AssetAccount extends ValueAccount {
 		/**
 		 * The name of the object
 		 */
@@ -1491,7 +1507,7 @@ public class Analysis {
 			theGains	 	= new Money(0);
 		
 			/* allocate the Capital events */
-			theEvents 		= new CapitalEvent.List(theData, pAccount);
+			theEvents 		= new CapitalEvent.List(getData(), pAccount);
 			
 			/* Set status */
 			setState(DataState.CLEAN);
@@ -1576,7 +1592,7 @@ public class Analysis {
 		 * Determine the field name for a particular field
 		 * @return the field name
 		 */
-		public String	fieldName(int iField) {
+		public static String	fieldName(int iField) {
 			switch (iField) {
 				case FIELD_UNITS:		return "Units";
 				case FIELD_PRICE:		return "Price";
@@ -1586,7 +1602,7 @@ public class Analysis {
 				case FIELD_DIVIDEND:	return "Dividend";
 				case FIELD_GAINS:		return "Gains";
 				case FIELD_PROFIT:		return "Profit";
-				default:		  		return super.fieldName(iField);
+				default:		  		return ValueAccount.fieldName(iField);
 			}
 		}
 		
@@ -1653,7 +1669,7 @@ public class Analysis {
 		 * @param pDate the date of valuation
 		 */
 		protected void valueAsset(Date pDate) {
-			AcctPrice.List	myPrices = theData.getPrices();
+			AcctPrice.List	myPrices = getData().getPrices();
 			AcctPrice 		myActPrice;
 
 			/* Obtain the appropriate price record */
@@ -1731,13 +1747,13 @@ public class Analysis {
 					thePrice	= new Price(theSavePoint.getPrice());
 				
 				/* Trim back the capital events */
-				theEvents.purgeAfterDate(theDate);
+				theEvents.purgeAfterDate(getDate());
 			}
 		}
 	}
 	
 	/* The ExternalAccount Bucket class */
-	public class ExternalAccount extends ActDetail {
+	public static class ExternalAccount extends ActDetail {
 		/**
 		 * The name of the object
 		 */
@@ -1830,13 +1846,18 @@ public class Analysis {
 		 * Determine the field name for a particular field
 		 * @return the field name
 		 */
-		public String	fieldName(int iField) {
+		public static String	fieldName(int iField) {
 			switch (iField) {
 				case FIELD_INCOME:		return "Income";
 				case FIELD_EXPENSE:		return "Expense";
-				default:		  		return super.fieldName(iField);
+				default:		  		return ActDetail.fieldName(iField);
 			}
 		}
+		
+		/**
+		 * Determine the field name in a non-static fashion 
+		 */
+		public String getFieldName(int iField) { return fieldName(iField); }
 		
 		/**
 		 * Format the value of a particular field as a table row
@@ -1958,7 +1979,7 @@ public class Analysis {
 	}
 	
 	/* The AssetSummary Bucket class */
-	public class AssetSummary extends ActType {
+	public static class AssetSummary extends ActType {
 		/**
 		 * The name of the object
 		 */
@@ -2023,12 +2044,17 @@ public class Analysis {
 		 * Determine the field name for a particular field
 		 * @return the field name
 		 */
-		public String	fieldName(int iField) {
+		public static String	fieldName(int iField) {
 			switch (iField) {
 				case FIELD_VALUE:		return "Value";
-				default:		  		return super.fieldName(iField);
+				default:		  		return ActType.fieldName(iField);
 			}
 		}
+		
+		/**
+		 * Determine the field name in a non-static fashion 
+		 */
+		public String getFieldName(int iField) { return fieldName(iField); }
 		
 		/**
 		 * Format the value of a particular field as a table row
@@ -2077,7 +2103,7 @@ public class Analysis {
 	}
 	
 	/* The AssetTotal Bucket class */
-	public class AssetTotal extends AnalysisBucket {
+	public static class AssetTotal extends AnalysisBucket {
 		/**
 		 * The name of the object
 		 */
@@ -2145,13 +2171,18 @@ public class Analysis {
 		 * Determine the field name for a particular field
 		 * @return the field name
 		 */
-		public String	fieldName(int iField) {
+		public static String	fieldName(int iField) {
 			switch (iField) {
 				case FIELD_VALUE:		return "Value";
 				case FIELD_PROFIT:		return "Profit";
-				default:		  		return super.fieldName(iField);
+				default:		  		return AnalysisBucket.fieldName(iField);
 			}
 		}
+		
+		/**
+		 * Determine the field name in a non-static fashion 
+		 */
+		public String getFieldName(int iField) { return fieldName(iField); }
 		
 		/**
 		 * Format the value of a particular field as a table row
@@ -2212,7 +2243,7 @@ public class Analysis {
 	}
 	
 	/* The ExternalTotal Bucket class */
-	public class ExternalTotal extends AnalysisBucket {
+	public static class ExternalTotal extends AnalysisBucket {
 		/**
 		 * The name of the object
 		 */
@@ -2289,14 +2320,19 @@ public class Analysis {
 		 * Determine the field name for a particular field
 		 * @return the field name
 		 */
-		public String	fieldName(int iField) {
+		public static String	fieldName(int iField) {
 			switch (iField) {
 				case FIELD_INCOME:		return "Income";
 				case FIELD_EXPENSE:		return "Expense";
 				case FIELD_PROFIT:		return "Profit";
-				default:		  		return super.fieldName(iField);
+				default:		  		return AnalysisBucket.fieldName(iField);
 			}
 		}
+		
+		/**
+		 * Determine the field name in a non-static fashion 
+		 */
+		public String getFieldName(int iField) { return fieldName(iField); }
 		
 		/**
 		 * Format the value of a particular field as a table row
@@ -2363,7 +2399,7 @@ public class Analysis {
 	}
 	
 	/* The MarketTotal Bucket class */
-	public class MarketTotal extends AnalysisBucket {
+	public static class MarketTotal extends AnalysisBucket {
 		/**
 		 * The name of the object
 		 */
@@ -2422,15 +2458,20 @@ public class Analysis {
 		 * Determine the field name for a particular field
 		 * @return the field name
 		 */
-		public String	fieldName(int iField) {
+		public static String	fieldName(int iField) {
 			switch (iField) {
 				case FIELD_COST:		return "Cost";
 				case FIELD_VALUE:		return "Value";
 				case FIELD_GAINED:		return "Gained";
 				case FIELD_PROFIT:		return "Profit";
-				default:		  		return super.fieldName(iField);
+				default:		  		return AnalysisBucket.fieldName(iField);
 			}
 		}
+		
+		/**
+		 * Determine the field name in a non-static fashion 
+		 */
+		public String getFieldName(int iField) { return fieldName(iField); }
 		
 		/**
 		 * Format the value of a particular field as a table row
@@ -2483,7 +2524,7 @@ public class Analysis {
 	}
 	
 	/* The Transaction Detail Bucket class */
-	public class TransDetail extends TransType {
+	public static class TransDetail extends TransType {
 		/**
 		 * The name of the object
 		 */
@@ -2570,13 +2611,18 @@ public class Analysis {
 		 * Determine the field name for a particular field
 		 * @return the field name
 		 */
-		public String	fieldName(int iField) {
+		public static String	fieldName(int iField) {
 			switch (iField) {
 				case FIELD_AMOUNT:		return "Amount";
 				case FIELD_TAXCREDIT:	return "TaxCredit";
-				default:		  		return super.fieldName(iField);
+				default:		  		return TransType.fieldName(iField);
 			}
 		}
+		
+		/**
+		 * Determine the field name in a non-static fashion 
+		 */
+		public String getFieldName(int iField) { return fieldName(iField); }
 		
 		/**
 		 * Format the value of a particular field as a table row
@@ -2643,7 +2689,7 @@ public class Analysis {
 	}
 	
 	/* The Transaction Summary Bucket class */
-	public class TransSummary extends Tax {
+	public static class TransSummary extends Tax {
 		/**
 		 * The name of the object
 		 */
@@ -2708,12 +2754,17 @@ public class Analysis {
 		 * Determine the field name for a particular field
 		 * @return the field name
 		 */
-		public String	fieldName(int iField) {
+		public static String	fieldName(int iField) {
 			switch (iField) {
 				case FIELD_AMOUNT:		return "Amount";
-				default:		  		return super.fieldName(iField);
+				default:		  		return Tax.fieldName(iField);
 			}
 		}
+		
+		/**
+		 * Determine the field name in a non-static fashion 
+		 */
+		public String getFieldName(int iField) { return fieldName(iField); }
 		
 		/**
 		 * Format the value of a particular field as a table row
@@ -2781,7 +2832,7 @@ public class Analysis {
 	}
 	
 	/* The Transaction Total Bucket class */
-	public class TransTotal extends Tax {
+	public static class TransTotal extends Tax {
 		/**
 		 * The name of the object
 		 */
@@ -2846,12 +2897,17 @@ public class Analysis {
 		 * Determine the field name for a particular field
 		 * @return the field name
 		 */
-		public String	fieldName(int iField) {
+		public static String	fieldName(int iField) {
 			switch (iField) {
 				case FIELD_AMOUNT:		return "Amount";
-				default:		  		return super.fieldName(iField);
+				default:		  		return Tax.fieldName(iField);
 			}
 		}
+		
+		/**
+		 * Determine the field name in a non-static fashion 
+		 */
+		public String getFieldName(int iField) { return fieldName(iField); }
 		
 		/**
 		 * Format the value of a particular field as a table row
@@ -2918,7 +2974,7 @@ public class Analysis {
 	}
 	
 	/* The Taxation Detail Bucket class */
-	public class TaxDetail extends Tax {
+	public static class TaxDetail extends Tax {
 		/**
 		 * The name of the object
 		 */
@@ -2984,20 +3040,25 @@ public class Analysis {
 		 * Obtain the number of fields for an item
 		 * @return the number of fields
 		 */
-		public int	numFields() {return NUMFIELDS; }
+		public int	numFields() { return NUMFIELDS; }
 		
 		/**
 		 * Determine the field name for a particular field
 		 * @return the field name
 		 */
-		public String	fieldName(int iField) {
+		public static String	fieldName(int iField) {
 			switch (iField) {
 				case FIELD_AMOUNT:		return "Amount";
 				case FIELD_TAXATION:	return "Taxation";
 				case FIELD_RATE:		return "Rate";
-				default:		  		return super.fieldName(iField);
+				default:		  		return Tax.fieldName(iField);
 			}
 		}
+		
+		/**
+		 * Determine the field name in a non-static fashion 
+		 */
+		public String getFieldName(int iField) { return fieldName(iField); }
 		
 		/**
 		 * Format the value of a particular field as a table row
@@ -3156,13 +3217,13 @@ public class Analysis {
 		 * @return the id shift
 		 */
 		private static BucketType getTaxBucketType(TaxType pTaxType) {
-			int        myOrder  = pTaxType.getOrder();
-			switch (myOrder / TaxType.CLASSDIVIDE) {
-				case 1: 	return TRANSTOTAL;
-				case 2: 	return TAXDETAIL;
-				case 3: 	return TAXSUMMARY;
-				case 4: 	return TAXTOTAL;
-				default: 	return TRANSSUMMARY;
+			TaxBucket	myBucket = pTaxType.getTaxClass().getClassBucket();
+			switch (myBucket) {
+				case TRANSTOTAL: 	return TRANSTOTAL;
+				case TAXDETAIL: 	return TAXDETAIL;
+				case TAXSUMM: 		return TAXSUMMARY;
+				case TAXTOTAL: 		return TAXTOTAL;
+				default: 			return TRANSSUMMARY;
 			}
 		}
 	}

@@ -4,16 +4,240 @@ import jxl.*;
 import jxl.write.*;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
+import uk.co.tolcroft.finance.sheets.SpreadSheet.OutputSheet;
+import uk.co.tolcroft.finance.sheets.SpreadSheet.SheetType;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 
-public class SheetAccount {
+public class SheetAccount extends SheetDataItem<Account> {
 	/**
 	 * NamedArea for Accounts
 	 */
-	private static final String Accounts 	   = "Accounts";
+	private static final String Accounts 	   = Account.listName;	
 	
+	/**
+	 * NameList for Accounts
+	 */
+	protected static final String AccountNames = Account.objName + "Names";
+	
+	/**
+	 * Is the spreadsheet a backup spreadsheet or an edit-able one
+	 */
+	private boolean isBackup	= false;
+	
+	/**
+	 * Validation control for Account Type
+	 */
+	private WritableCellFeatures theTypeCtl	= null;
+	
+	/**
+	 * Account data list
+	 */
+	private Account.List theList		= null;
+
+	/**
+	 * Constructor for loading a spreadsheet
+	 * @param pInput the input spreadsheet
+	 */
+	protected SheetAccount(InputSheet	pInput) {
+		/* Call super constructor */
+		super(pInput, Accounts);
+		
+		/* Note whether this is a backup */
+		isBackup = (pInput.getType() == SheetType.BACKUP);
+				
+		/* Access the Lists */
+		DataSet myData = pInput.getData();
+		theList 	= myData.getAccounts();
+	}
+
+	/**
+	 *  Constructor for creating a spreadsheet
+	 *  @param pOutput the output spreadsheet
+	 */
+	protected SheetAccount(OutputSheet	pOutput) {
+		/* Call super constructor */
+		super(pOutput, Accounts);
+		
+		/* Note whether this is a backup */
+		isBackup = (pOutput.getType() == SheetType.BACKUP);
+				
+		/* Access the Accounts list */
+		theList = pOutput.getData().getAccounts();
+		setDataList(theList);
+		
+		/* If this is not a backup */
+		if (!isBackup) {
+			/* Obtain validation for the Account Name */
+			theTypeCtl 	= obtainCellValidation(SheetAccountType.ActTypeNames);
+		}
+	}
+	
+	/**
+	 * Load an item from the spreadsheet
+	 */
+	protected void loadItem() throws Throwable {
+
+		/* If this is a backup load */
+		if (isBackup) {
+			/* Access the IDs */
+			int		myID 		= loadInteger(0);
+			int		myActTypeId	= loadInteger(1);
+			Integer	myParentId	= loadInteger(2);
+			Integer	myAliasId 	= loadInteger(3);
+		
+			/* Access the dates */
+			java.util.Date 	myClose		= loadDate(4);
+			java.util.Date	myMaturity 	= loadDate(5);
+		
+			/* Access the binary values  */
+			byte[] 	myName 		= loadBytes(6);
+			byte[]	myDesc 		= loadBytes(7);
+			byte[]	myWebSite	= loadBytes(8);
+			byte[]	myCustNo 	= loadBytes(9);
+			byte[]	myUserId 	= loadBytes(10);
+			byte[]	myPassword	= loadBytes(11);
+			byte[]	myAccount 	= loadBytes(12);
+			byte[]	myNotes 	= loadBytes(13);
+		
+			/* Load the item */
+			theList.addItem(myID, myName, myActTypeId, myDesc,
+							myMaturity, myClose, myParentId, myAliasId,
+							myWebSite, myCustNo, myUserId, myPassword, myAccount, myNotes);
+		}
+		
+		/* else this is a load from an edit-able spreadsheet */
+		else {
+			/* Access the Account */
+			String myName		= loadString(0);
+			String myActType	= loadString(1);
+			String myDesc		= loadString(2);
+			String myParent		= loadString(3);
+			String myAlias		= loadString(4);
+		
+			/* Access the date and name and description bytes */
+			java.util.Date 	myClose		= loadDate(5);
+			java.util.Date 	myMaturity 	= loadDate(6);
+		
+			/* Access the binary values  */
+			char[] 	myWebSite 	= loadChars(7);
+			char[]	myCustNo 	= loadChars(8);
+			char[]	myUserId 	= loadChars(9);
+			char[]	myPassword	= loadChars(10);
+			char[]	myAccount	= loadChars(11);
+			char[]	myNotes		= loadChars(12);
+		
+			/* Load the item */
+			theList.addItem(myName, myActType, myDesc, myMaturity, myClose, 
+							myParent, myAlias, myWebSite, myCustNo,
+							myUserId, myPassword, myAccount, myNotes);
+		}
+	}
+
+	/**
+	 *  Insert a item into the spreadsheet
+	 *  @param pItem the Item to insert
+	 *  @param isBackup is the spreadsheet a backup, or else clear text
+	 */
+	protected void insertItem(Account	pItem) throws Throwable  {
+		/* If we are creating a backup */
+		if (isBackup) {
+			/* Set the fields */
+			writeInteger(0, pItem.getId());
+			writeInteger(1, pItem.getActType().getId());	
+			if (pItem.getParent() != null)
+				writeInteger(2, pItem.getParent().getId());				
+			if (pItem.getAlias() != null)
+				writeInteger(3, pItem.getAlias().getId());				
+			writeDate(4, pItem.getClose());
+			writeDate(5, pItem.getMaturity());
+			writeBytes(6, pItem.getNameBytes());
+			writeBytes(7, pItem.getDescBytes());
+			writeBytes(8, pItem.getWebSiteBytes());
+			writeBytes(9, pItem.getCustNoBytes());
+			writeBytes(10, pItem.getUserIdBytes());
+			writeBytes(11, pItem.getPasswordBytes());
+			writeBytes(12, pItem.getAccountBytes());
+			writeBytes(13, pItem.getNotesBytes());
+		}
+
+		/* else we are creating an edit-able spreadsheet */
+		else {
+			/* Set the fields */
+			writeString(0, pItem.getName());			
+			writeValidatedString(1, pItem.getActType().getName(), theTypeCtl);				
+			writeString(2, pItem.getDesc());
+			if (pItem.getParent() != null)
+				writeString(3, pItem.getParent().getName());				
+			if (pItem.getAlias() != null)
+				writeString(4, pItem.getAlias().getName());				
+			writeDate(5, pItem.getClose());			
+			writeDate(6, pItem.getMaturity());			
+			writeChars(7, pItem.getWebSite());			
+			writeChars(8, pItem.getCustNo());			
+			writeChars(9, pItem.getUserId());			
+			writeChars(10, pItem.getPassword());			
+			writeChars(11, pItem.getAccount());			
+			writeChars(12, pItem.getNotes());			
+		}
+	}
+
+	/**
+	 * PreProcess on write
+	 */
+	protected boolean preProcessOnWrite() throws Throwable {		
+		/* Ignore if we are creating a backup */
+		if (isBackup) return false;
+
+		/* Write titles */
+		writeString(0, Account.fieldName(Account.FIELD_NAME));
+		writeString(1, Account.fieldName(Account.FIELD_TYPE));			
+		writeString(2, Account.fieldName(Account.FIELD_DESC));			
+		writeString(3, Account.fieldName(Account.FIELD_PARENT));			
+		writeString(4, Account.fieldName(Account.FIELD_ALIAS));			
+		writeString(5, Account.fieldName(Account.FIELD_CLOSE));			
+		writeString(6, Account.fieldName(Account.FIELD_MATURITY));			
+		writeString(7, Account.fieldName(Account.FIELD_WEBSITE));			
+		writeString(8, Account.fieldName(Account.FIELD_CUSTNO));			
+		writeString(9, Account.fieldName(Account.FIELD_USERID));			
+		writeString(10, Account.fieldName(Account.FIELD_PASSWORD));			
+		writeString(11, Account.fieldName(Account.FIELD_ACCOUNT));			
+		writeString(12, Account.fieldName(Account.FIELD_NOTES));			
+		return true;
+	}	
+
+	/**
+	 * PostProcess on write
+	 */
+	protected void postProcessOnWrite() throws Throwable {		
+		/* If we are creating a backup */
+		if (isBackup) {
+			/* Set the fourteen columns as the range */
+			nameRange(14);
+		}
+
+		/* else this is an edit-able spreadsheet */
+		else {
+			/* Set the thirteen columns as the range */
+			nameRange(10);
+
+			/* Set the name column width and range */
+			nameColumnRange(0, AccountNames);
+			
+			/* Set the Account column width */
+			setColumnWidth(0, Account.NAMELEN);
+			setColumnWidth(1, StaticClass.NAMELEN);
+			setColumnWidth(2, Account.DESCLEN);
+			setColumnWidth(3, Account.NAMELEN);
+			setColumnWidth(4, Account.NAMELEN);
+			
+			/* Set Number columns */
+			setDateColumn(5);
+			setDateColumn(6);
+		}
+	}
+
 	/**
 	 *  Load the Accounts from an archive
 	 *  @param pThread   the thread status control
@@ -114,10 +338,12 @@ public class SheetAccount {
 					/* Add the value into the finance tables */
 					myList.addItem(myAccount,
 						           myAcType,
+						           null,
 						           myMaturity,
 						           myClosed,
 						           myParent,
-						           myAlias);
+						           myAlias,
+						           null, null, null, null, null, null);
 				
 					/* Report the progress */
 					myCount++;
@@ -134,380 +360,6 @@ public class SheetAccount {
 								e);
 		}
 		
-		/* Return to caller */
-		return true;
-	}
-	
-	/**
-	 *  Load the Accounts from a backup
-	 *  @param pThread   the thread status control
-	 *  @param pWorkbook the workbook to load from
-	 *  @param pData the data set to load into
-	 *  @return continue to write <code>true/false</code> 
-	 */
-	protected static boolean loadBackup(statusCtl 	pThread,
-			 							Workbook	pWorkbook,
-		   	  				   	        DataSet		pData) throws Exception {
-		/* Local variables */
-		Account.List 	myList;
-		Range[]   		myRange;
-		Sheet     		mySheet;
-		Cell      		myTop;
-		Cell      		myBottom;
-		int       		myCol;
-		int       		myCols;
-		int		  		myID;
-		byte[]    		myName;
-		byte[]	  		myDesc;
-		int      		myAcTypeId;
-		int      		myParentId;
-		int				myAliasId;
-		String     		myHexString;
-		byte[]     		myWebSite;
-		byte[]     		myCustNo;
-		byte[]     		myUserId;
-		byte[]     		myPassword;
-		byte[]     		myAccount;
-		byte[]     		myNotes;
-		java.util.Date  myMaturity;
-		java.util.Date  myClosed;
-		DateCell  		myDateCell;
-		Cell      		myCell;
-		int       		myTotal;
-		int				mySteps;
-		int       		myCount = 0;
-		
-		/* Protect against exceptions */
-		try {
-			/* Find the range of cells */
-			myRange = pWorkbook.findByName(Accounts);
-		
-			/* Access the number of reporting steps */
-			mySteps = pThread.getReportingSteps();
-			
-			/* Declare the new stage */
-			if (!pThread.setNewStage(Accounts)) return false;
-		
-			/* If we found the range OK */
-			if ((myRange != null) && (myRange.length == 1)) {
-			
-				/* Access the relevant sheet and Cell references */
-				mySheet  = pWorkbook.getSheet(myRange[0].getFirstSheetIndex());
-				myTop    = myRange[0].getTopLeft();
-				myBottom = myRange[0].getBottomRight();
-				myCol    = myTop.getColumn();
-				myCols   = mySheet.getColumns();
-		
-				/* Count the number of accounts */
-				myTotal  = myBottom.getRow() - myTop.getRow() + 1;
-			
-				/* Access the list of accounts */
-				myList = pData.getAccounts();
-			
-				/* Declare the number of steps */
-				if (!pThread.setNumSteps(myTotal)) return false;
-			
-				/* Loop through the rows of the table */
-				for (int i = myTop.getRow();
-					 i <= myBottom.getRow();
-					 i++) {
-				
-					/* Access account and account type */
-					myCell    	= mySheet.getCell(myCol, i);
-					myID      	= Integer.parseInt(myCell.getContents());
-					myHexString	= mySheet.getCell(myCol+1, i).getContents();
-					myName	    = Utils.BytesFromHexString(myHexString);
-					myCell    	= mySheet.getCell(myCol+2, i);
-					myAcTypeId	= Integer.parseInt(myCell.getContents());
-
-					/* Handle description which may be missing */
-					myDesc = null;
-					if (myCols > myCol+3) {
-						myCell     = mySheet.getCell(myCol+3, i);
-						if (myCell.getType() != CellType.EMPTY) {
-							myHexString  = myCell.getContents();
-							myDesc       = Utils.BytesFromHexString(myHexString);
-						}
-					}
-			
-					/* Handle parentId which may be missing */
-					myParentId = -1;
-					if (myCols > myCol+4) {
-						myCell     = mySheet.getCell(myCol+4, i);
-						if (myCell.getType() != CellType.EMPTY) {
-							myParentId	= Integer.parseInt(myCell.getContents());
-						}
-					}
-				
-					/* Handle aliasId which may be missing */
-					myAliasId = -1;
-					if (myCols > myCol+5) {
-						myCell     = mySheet.getCell(myCol+5, i);
-						if (myCell.getType() != CellType.EMPTY) {
-							myAliasId	= Integer.parseInt(myCell.getContents());
-						}
-					}
-				
-					/* Handle maturity which may be missing */
-					myMaturity = null;
-					if (myCols > myCol+6) {
-						myCell     = mySheet.getCell(myCol+6, i);
-						if (myCell.getType() != CellType.EMPTY) {
-							myDateCell = (DateCell)myCell;
-							myMaturity = myDateCell.getDate();
-						}
-					}
-			
-					/* Handle closed which may be missing */
-					myClosed = null;
-					if (myCols > myCol+7) {
-						myCell     = mySheet.getCell(myCol+7, i);
-						if (myCell.getType() != CellType.EMPTY) {
-							myDateCell = (DateCell)myCell;
-							myClosed = myDateCell.getDate();
-						}
-					}
-				
-					/* Handle WebSite which may be missing */
-					myWebSite = null;
-					if (myCols > myCol+8) {
-						myCell     = mySheet.getCell(myCol+8, i);
-						if (myCell.getType() != CellType.EMPTY) {
-							myHexString  = myCell.getContents();
-							myWebSite    = Utils.BytesFromHexString(myHexString);
-						}
-					}
-				
-					/* Handle CustNo which may be missing */
-					myCustNo = null;
-					if (myCols > myCol+9) {
-						myCell     = mySheet.getCell(myCol+9, i);
-						if (myCell.getType() != CellType.EMPTY) {
-							myHexString  = myCell.getContents();
-							myCustNo     = Utils.BytesFromHexString(myHexString);
-						}
-					}
-				
-					/* Handle userId which may be missing */
-					myUserId = null;
-					if (myCols > myCol+10) {
-						myCell     = mySheet.getCell(myCol+10, i);
-						if (myCell.getType() != CellType.EMPTY) {
-							myHexString  = myCell.getContents();
-							myUserId     = Utils.BytesFromHexString(myHexString);
-						}
-					}
-				
-					/* Handle password which may be missing */
-					myPassword = null;
-					if (myCols > myCol+11) {
-						myCell     = mySheet.getCell(myCol+11, i);
-						if (myCell.getType() != CellType.EMPTY) {
-							myHexString  = myCell.getContents();
-							myPassword   = Utils.BytesFromHexString(myHexString);
-						}
-					}
-				
-					/* Handle account which may be missing */
-					myAccount = null;
-					if (myCols > myCol+12) {
-						myCell     = mySheet.getCell(myCol+12, i);
-						if (myCell.getType() != CellType.EMPTY) {
-							myHexString  = myCell.getContents();
-							myAccount    = Utils.BytesFromHexString(myHexString);
-						}
-					}
-				
-					/* Handle notes which may be missing */
-					myNotes = null;
-					if (myCols > myCol+13) {
-						myCell     = mySheet.getCell(myCol+13, i);
-						if (myCell.getType() != CellType.EMPTY) {
-							myHexString  = myCell.getContents();
-							myNotes      = Utils.BytesFromHexString(myHexString);
-						}
-					}
-				
-					/* Add the value into the finance tables */
-					myList.addItem(myID,
-						           myName,
-						           myAcTypeId,
-						           myDesc,
-						           myMaturity,
-						           myClosed,
-						           myParentId,
-						           myAliasId,
-							       myWebSite,
-							       myCustNo,
-							       myUserId,
-							       myPassword,
-							       myAccount,
-							       myNotes);
-				
-					/* Report the progress */
-					myCount++;
-					if ((myCount % mySteps) == 0) 
-						if (!pThread.setStepsDone(myCount)) return false;
-				}
-			}
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.EXCEL, 
-								"Failed to load Accounts",
-								e);
-		}
-		
-		/* Return to caller */
-		return true;
-	}
-	
-	/**
-	 *  Write the Accounts to a backup
-	 *  @param pThread   the thread status control
-	 *  @param pWorkbook the workbook to write to
-	 *  @param pData the data set to write from
-	 *  @return continue to write <code>true/false</code> 
-	 */
-	protected static boolean writeBackup(statusCtl 			pThread,
-										 WritableWorkbook	pWorkbook,
-		   	        					 DataSet			pData) throws Exception {
-		WritableSheet 					mySheet;
-		DataList<Account>.ListIterator	myIterator;
-		Account.List					myAccounts;
-		Account							myCurr;
-		int								myRow;
-		int								myCount;
-		int								myTotal;
-		int								mySteps;
-		jxl.write.Label					myCell;
-		jxl.write.DateTime				myDate;
-		WritableCellFormat				myFormat;
-
-		/* Protect against exceptions */
-		try { 
-			/* Declare the new stage */
-			if (!pThread.setNewStage(Accounts)) return false;
-		
-			/* Create the formats */
-			myFormat		= new WritableCellFormat(DateFormats.FORMAT2);
-	
-			/* Create the sheet */
-			mySheet    = pWorkbook.createSheet(Accounts, 0);
-	
-			/* Access the number of reporting steps */
-			mySteps = pThread.getReportingSteps();
-
-			/* Access the accounts */
-			myAccounts = pData.getAccounts();
-	
-			/* Count the number of accounts */
-			myTotal   = myAccounts.size();
-		
-			/* Declare the number of steps */
-			if (!pThread.setNumSteps(myTotal)) return false;
-		
-			/* Initialise counts */
-			myRow   = 0;
-			myCount = 0;
-		
-			/* Access the iterator */
-			myIterator = myAccounts.listIterator();
-			
-			/* Loop through the account */
-			while ((myCurr  = myIterator.next()) != null) {
-				/* Create the Identifier cell */
-				myCell   = new jxl.write.Label(0, myRow, 
-											   Integer.toString(myCurr.getId()));
-				mySheet.addCell(myCell);
-				myCell   = new jxl.write.Label(2, myRow,
-											   Integer.toString(myCurr.getActType().getId()));
-				mySheet.addCell(myCell);
-				if (myCurr.getParent() != null) {
-					myCell   = new jxl.write.Label(4, myRow, 
-										           Integer.toString(myCurr.getParent().getId()));
-					mySheet.addCell(myCell);
-				}
-				if (myCurr.getAlias() != null) {
-					myCell   = new jxl.write.Label(5, myRow, 
-										           Integer.toString(myCurr.getAlias().getId()));
-					mySheet.addCell(myCell);
-				}
-			
-				/* Create the String cells */
-				myCell = new jxl.write.Label(1, myRow, 
-											 Utils.HexStringFromBytes(myCurr.getNameBytes()));
-				mySheet.addCell(myCell);
-				if (myCurr.getDescBytes() != null) {
-					myCell = new jxl.write.Label(3, myRow,
-												 Utils.HexStringFromBytes(myCurr.getDescBytes()));
-					mySheet.addCell(myCell);
-				}
-				
-				/* Create the Date cells */
-				if (myCurr.getMaturity() != null) {
-					myDate = new jxl.write.DateTime(6, myRow, 
-					   						    	myCurr.getMaturity().getDate(),
-					   						    	myFormat);
-					mySheet.addCell(myDate);
-				}
-				if (myCurr.getClose() != null) {
-					myDate = new jxl.write.DateTime(7, myRow, 
-					   						    	myCurr.getClose().getDate(),
-					   						    	myFormat);
-					mySheet.addCell(myDate);
-				}
-			
-				/* Create the Security cells */
-				if (myCurr.getWebSiteBytes() != null) {
-					myCell = new jxl.write.Label(8, myRow, 
-											     Utils.HexStringFromBytes(myCurr.getWebSiteBytes()));
-					mySheet.addCell(myCell);
-				}
-				if (myCurr.getCustNoBytes() != null) {
-					myCell = new jxl.write.Label(9, myRow, 
-											     Utils.HexStringFromBytes(myCurr.getCustNoBytes()));
-					mySheet.addCell(myCell);
-				}
-				if (myCurr.getUserIdBytes() != null) {
-					myCell = new jxl.write.Label(10, myRow, 
-											     Utils.HexStringFromBytes(myCurr.getUserIdBytes()));
-					mySheet.addCell(myCell);
-				}
-				if (myCurr.getPasswordBytes() != null) {
-					myCell = new jxl.write.Label(11, myRow, 
-											     Utils.HexStringFromBytes(myCurr.getPasswordBytes()));
-					mySheet.addCell(myCell);
-				}
-				if (myCurr.getAccountBytes() != null) {
-					myCell = new jxl.write.Label(12, myRow, 
-											     Utils.HexStringFromBytes(myCurr.getAccountBytes()));
-					mySheet.addCell(myCell);
-				}
-				if (myCurr.getNotesBytes() != null) {
-					myCell = new jxl.write.Label(13, myRow, 
-											     Utils.HexStringFromBytes(myCurr.getNotesBytes()));
-					mySheet.addCell(myCell);
-				}
-
-				/* Report the progress */
-				myCount++;
-				myRow++;
-				if ((myCount % mySteps) == 0) 
-					if (!pThread.setStepsDone(myCount)) return false;
-			}
-	
-			/* Add the Range name */
-			if (myRow > 0)
-				pWorkbook.addNameArea(Accounts, mySheet, 0, 0, 13, myRow-1);
-		}
-
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.EXCEL, 
-								"Failed to create Accounts",
-								e);
-		}
-	
 		/* Return to caller */
 		return true;
 	}

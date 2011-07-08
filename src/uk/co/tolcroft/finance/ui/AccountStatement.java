@@ -378,14 +378,14 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 	 */
 	public boolean isValidObj(DataItem 				pItem,
 			  				  DataItem.histObject  	pObj) {
-		Statement.Line 		myLine;
-		Statement.Values	myLineVals; 
-		Event		   		myEvent;
-		Event.Values    	myEventVals;
-		Date				myDate;
-		boolean				isCredit;
-		Account				myPartner;			
-		Account				mySelf;
+		Statement.Line 			myLine;
+		Statement.Line.Values	myLineVals; 
+		Event		   			myEvent;
+		Event.Values    		myEventVals;
+		Date					myDate;
+		boolean					isCredit;
+		Account					myPartner;			
+		Account					mySelf;
 		
 		/* If this is an Event item */
 		if (pItem instanceof Event) {
@@ -406,7 +406,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 		else {
 			/* Access the element and the values */
 			myLine     = (Statement.Line)pItem;
-			myLineVals = (Statement.Values) pObj;
+			myLineVals = (Statement.Line.Values) pObj;
 			
 			/* Access the values */
 			myDate    = myLineVals.getDate();

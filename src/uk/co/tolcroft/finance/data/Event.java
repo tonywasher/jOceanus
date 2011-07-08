@@ -2,8 +2,8 @@ package uk.co.tolcroft.finance.data;
 
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.views.Statement.*;
-import uk.co.tolcroft.finance.data.EncryptedPair.*;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.EncryptedPair.*;
 import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
@@ -13,7 +13,12 @@ public class Event extends DataItem {
 	/**
 	 * The name of the object
 	 */
-	private static final String objName = "Event";
+	public static final String objName = "Event";
+
+	/**
+	 * The name of the object
+	 */
+	public static final String listName = objName + "s";
 
 	/**
 	 * Event Description length
@@ -25,38 +30,32 @@ public class Event extends DataItem {
 	private int					theCreditId	= -1;
 	private int					theTransId	= -1;
 	
-	/* Encrypted access */
-	private static String getStringPairValue(StringPair pPair) {
-		return (pPair == null) ? null : pPair.getValue(); }
-	private static byte[] getStringPairBytes(StringPair pPair) {
-		return (pPair == null) ? null : pPair.getBytes(); }
-	private static Money getMoneyPairValue(MoneyPair pPair) {
-		return (pPair == null) ? null : pPair.getValue(); }
-	private static byte[] getMoneyPairBytes(MoneyPair pPair) {
-		return (pPair == null) ? null : pPair.getBytes(); }
-	private static Units getUnitsPairValue(UnitsPair pPair) {
-		return (pPair == null) ? null : pPair.getValue(); }
-	private static byte[] getUnitsPairBytes(UnitsPair pPair) {
-		return (pPair == null) ? null : pPair.getBytes(); }
-	
 	/* Access methods */
 	public  Values         	getObj()       { return (Values)super.getObj(); }	
 	public  Date      		getDate()      { return getObj().getDate(); }
-	public  String          getDesc()      { return getStringPairValue(getObj().getDesc()); }
-	public  Money     		getAmount()    { return getMoneyPairValue(getObj().getAmount()); }
+	public  String          getDesc()      { return EncryptedPair.getPairValue(getObj().getDesc()); }
+	public  Money     		getAmount()    { return EncryptedPair.getPairValue(getObj().getAmount()); }
 	public  Account         getDebit()     { return getObj().getDebit(); }
 	public  Account         getCredit()    { return getObj().getCredit(); }
-	public  Units     		getUnits()     { return getUnitsPairValue(getObj().getUnits()); }
+	public  Units     		getUnits()     { return EncryptedPair.getPairValue(getObj().getUnits()); }
 	public  TransactionType getTransType() { return getObj().getTransType(); }
-	public  Money     		getTaxCredit() { return getMoneyPairValue(getObj().getTaxCredit()); }
+	public  Money     		getTaxCredit() { return EncryptedPair.getPairValue(getObj().getTaxCredit()); }
 	public  Integer	        getYears()     { return getObj().getYears(); }
-	public  Dilution        getDilution()  { return getObj().getDilution(); }
+	public  Dilution        getDilution()  { return EncryptedPair.getPairValue(getObj().getDilution()); }
 
 	/* Encrypted value access */
-	public  byte[]	getAmountBytes()    { return getMoneyPairBytes(getObj().getAmount()); }
-	public  byte[]  getDescBytes()      { return getStringPairBytes(getObj().getDesc()); }
-	public  byte[]	getUnitsBytes()     { return getUnitsPairBytes(getObj().getUnits()); }
-	public  byte[]  getTaxCredBytes()   { return getMoneyPairBytes(getObj().getTaxCredit()); }
+	public  byte[]	getAmountBytes()    { return EncryptedPair.getPairBytes(getObj().getAmount()); }
+	public  byte[]  getDescBytes()      { return EncryptedPair.getPairBytes(getObj().getDesc()); }
+	public  byte[]	getUnitsBytes()     { return EncryptedPair.getPairBytes(getObj().getUnits()); }
+	public  byte[]  getTaxCredBytes()   { return EncryptedPair.getPairBytes(getObj().getTaxCredit()); }
+	public  byte[]  getDilutionBytes()  { return EncryptedPair.getPairBytes(getObj().getDilution()); }
+
+	/* Encrypted pair access */
+	private MoneyPair		getAmountPair()    	{ return getObj().getAmount(); }
+	private StringPair  	getDescPair()      	{ return getObj().getDesc(); }
+	private UnitsPair		getUnitsPair()     	{ return getObj().getUnits(); }
+	private MoneyPair		getTaxCredPair()   	{ return getObj().getTaxCredit(); }
+	private DilutionPair	getDilutionPair()	{ return getObj().getDilution(); }
 
 	/* Linking methods */
 	public Event     getBase() { return (Event)super.getBase(); }
@@ -91,7 +90,7 @@ public class Event extends DataItem {
 	 * Determine the field name for a particular field
 	 * @return the field name
 	 */
-	public String	fieldName(int iField) {
+	public static String	fieldName(int iField) {
 		switch (iField) {
 			case FIELD_ID:			return "ID";
 			case FIELD_DATE:		return "Date";
@@ -104,9 +103,14 @@ public class Event extends DataItem {
 			case FIELD_YEARS:		return "Years";
 			case FIELD_TRNTYP:		return "TransactionType";
 			case FIELD_DILUTION:	return "Dilution";
-			default:		  		return super.fieldName(iField);
+			default:		  		return DataItem.fieldName(iField);
 		}
 	}
+	
+	/**
+	 * Determine the field name in a non-static fashion 
+	 */
+	public String getFieldName(int iField) { return fieldName(iField); }
 	
 	/**
 	 * Format the value of a particular field as a table row
@@ -125,7 +129,7 @@ public class Event extends DataItem {
 				myString += Date.format(myObj.getDate()); 
 				break;
 			case FIELD_DESC:	
-				myString += getStringPairValue(myObj.getDesc()); 
+				myString += myObj.getDescValue(); 
 				break;
 			case FIELD_TRNTYP: 	
 				if ((myObj.getTransType() == null) &&
@@ -149,19 +153,19 @@ public class Event extends DataItem {
 					myString += Account.format(myObj.getCredit()); 
 				break;
 			case FIELD_AMOUNT: 	
-				myString += Money.format(getMoneyPairValue(myObj.getAmount()));	
+				myString += Money.format(myObj.getAmountValue());	
 				break;
 			case FIELD_UNITS: 	
-				myString += Units.format(getUnitsPairValue(myObj.getUnits()));	
+				myString += Units.format(myObj.getUnitsValue());	
 				break;
 			case FIELD_TAXCREDIT:	
-				myString += Money.format(getMoneyPairValue(myObj.getTaxCredit())); 
+				myString += Money.format(myObj.getTaxCredValue()); 
 				break;
 			case FIELD_YEARS:	
 				myString += myObj.getYears(); 
 				break;
 			case FIELD_DILUTION:	
-				myString += Dilution.format(myObj.getDilution()); 
+				myString += Dilution.format(myObj.getDilutionValue()); 
 				break;
 		}
 		return myString;
@@ -208,15 +212,15 @@ public class Event extends DataItem {
 	
 		/* Set standard values */
 		super(pList, 0);
-		Values 				myObj 	= new Values();
-		Statement.Values	myBase	= pLine.getObj();
+		Values 					myObj 	= new Values();
+		Statement.Line.Values	myBase	= pLine.getObj();
 		setObj(myObj);
 		myObj.setDate(pLine.getDate());
 		myObj.setDesc(myBase.getDesc());
 		myObj.setAmount(myBase.getAmount());
 		myObj.setUnits(myBase.getUnits());
 		myObj.setTransType(pLine.getTransType());
-		myObj.setDilution(pLine.getDilution());
+		myObj.setDilution(myBase.getDilution());
 		myObj.setTaxCredit(myBase.getTaxCredit());
 		myObj.setYears(pLine.getYears());
 		
@@ -266,12 +270,12 @@ public class Event extends DataItem {
 			myObj.setCredit(pLine.getPartner());
 		}
 			
+		/* Access the Encrypted pair for the values */
+		DataSet 		myData 	= pList.getData();
+		EncryptedPair	myPairs = myData.getEncryptedPairs();
+		
 		/* If the event needs a Tax Credit */
 		if (needsTaxCredit()) {
-			/* Create the Encrypted pair for the values */
-			DataSet 		myData 	= pList.getData();
-			EncryptedPair	myPairs = myData.getEncryptedPairs();
-			
 			/* Set a new null tax credit */
 			myObj.setTaxCredit(myPairs.new MoneyPair(new Money(0)));
 			
@@ -285,7 +289,7 @@ public class Event extends DataItem {
 		/* If the event needs dilution */
 		if (needsDilution()) {
 			/* Set a null dilution value */
-			myObj.setDilution(new Dilution(Dilution.MAX_VALUE));
+			myObj.setDilution(myPairs.new DilutionPair(new Dilution(Dilution.MAX_VALUE)));
 		}
 		
 		/* Allocate the id */
@@ -311,7 +315,7 @@ public class Event extends DataItem {
 		          byte[]     		pAmount,
 		          byte[]			pUnits,
 		          byte[]			pTaxCredit,
-		          String			pDilution,
+		          byte[]			pDilution,
 		          Integer			pYears) throws Exception {
 		/* Initialise item */
 		super(pList, uId);
@@ -337,6 +341,7 @@ public class Event extends DataItem {
 		myObj.setAmount(myPairs.new MoneyPair(pAmount));
 		myObj.setUnits((pUnits == null) ? null : myPairs.new UnitsPair(pUnits));
 		myObj.setTaxCredit((pTaxCredit == null) ? null : myPairs.new MoneyPair(pTaxCredit));
+		myObj.setDilution((pDilution == null) ? null : myPairs.new DilutionPair(pDilution));
 
 		/* Store the IDs that we will look up */
 		theDebitId  = uDebit;
@@ -372,17 +377,6 @@ public class Event extends DataItem {
 		
 		/* Set the years */
 		myObj.setYears(pYears);
-
-		/* If there is dilution */
-		if (pDilution != null) {
-			/* Record the dilution */
-			Dilution myDilution = Dilution.Parse(pDilution);
-			if (myDilution == null) 
-				throw new Exception(ExceptionClass.DATA,
-									this,
-									"Invalid Dilution: " + pDilution);
-			myObj.setDilution(myDilution);
-		}
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -416,22 +410,12 @@ public class Event extends DataItem {
 		myObj.setAmount(myPairs.new MoneyPair(pAmount));
 		myObj.setUnits((pUnits == null) ? null : myPairs.new UnitsPair(pUnits));
 		myObj.setTaxCredit((pTaxCredit == null) ? null : myPairs.new MoneyPair(pTaxCredit));
+		myObj.setDilution((pDilution == null) ? null : myPairs.new DilutionPair(pDilution));
 		myObj.setDebit(pDebit);
 		myObj.setCredit(pCredit);
 		myObj.setTransType(pTransType);
 		myObj.setDate(new Date(pDate));
 		myObj.setYears(pYears);
-
-		/* If there is dilution */
-		if (pDilution != null) {
-			/* Record the dilution */
-			Dilution myDilution = Dilution.Parse(pDilution);
-			if (myDilution == null) 
-				throw new Exception(ExceptionClass.DATA,
-									this,
-									"Invalid Dilution: " + pDilution);
-			myObj.setDilution(myDilution);
-		}
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -457,15 +441,15 @@ public class Event extends DataItem {
 		/* Check for equality */
 		if (getId() != myEvent.getId()) 										return false;
 		if (Date.differs(getDate(),       			myEvent.getDate())) 		return false;
-		if (Utils.differs(getDesc(),       			myEvent.getDesc())) 		return false;
+		if (EncryptedPair.differs(getDescPair(),    myEvent.getDescPair())) 	return false;
 		if (TransactionType.differs(getTransType(), myEvent.getTransType())) 	return false;
-		if (Money.differs(getAmount(),     			myEvent.getAmount())) 		return false;
+		if (EncryptedPair.differs(getAmountPair(),  myEvent.getAmountPair())) 	return false;
 		if (Account.differs(getCredit(), 	   		myEvent.getCredit())) 		return false;
 		if (Account.differs(getDebit(),      		myEvent.getDebit())) 		return false;
-		if (Units.differs(getUnits(),      			myEvent.getUnits())) 		return false;
-		if (Money.differs(getTaxCredit(),  			myEvent.getTaxCredit()))	return false;
+		if (EncryptedPair.differs(getUnitsPair(),   myEvent.getUnitsPair())) 	return false;
+		if (EncryptedPair.differs(getTaxCredPair(), myEvent.getTaxCredPair()))	return false;
 		if (Utils.differs(getYears(),      			myEvent.getYears()))		return false;
-		if (Dilution.differs(getDilution(), 		myEvent.getDilution()))		return false;
+		if (EncryptedPair.differs(getDilutionPair(), myEvent.getDilutionPair()))return false;
 		return true;
 	}
 
@@ -595,9 +579,9 @@ public class Event extends DataItem {
 				if (!isCredit) myResult = (pType.isMoney() || pType.isDebt());
 				else myResult = pType.isEndowment();
 				break;
-			case CSHPAY:
+			case CASHPAYMENT:
 				isCredit = !isCredit;
-			case CSHRECOVER:
+			case CASHRECOVERY:
 				if (!isCredit) myResult = ((pType.isExternal()) && (!pType.isCash()));
 				else           myResult = pType.isCash();
 				break;
@@ -1278,8 +1262,21 @@ public class Event extends DataItem {
 	 * 
 	 * @param pDilution the dilution 
 	 */
-	public void setDilution(Dilution pDilution) {
-		getObj().setDilution(pDilution);
+	public void setDilution(Dilution pDilution) throws Exception {
+		/* If we are setting a non null value */
+		if (pDilution != null) {
+			/* Create the Encrypted pair for the values */
+			DataSet 		myData 	= ((List)getList()).getData();
+			EncryptedPair	myPairs = myData.getEncryptedPairs();
+			DilutionPair	myPair	= myPairs.new DilutionPair(pDilution);
+		
+			/* Record the value and encrypt it*/
+			getObj().setDilution(myPair);
+			myPair.ensureEncryption();
+		}
+		
+		/* Else we are setting a null value */
+		else getObj().setDilution(null);
 	}
 	
 	/**
@@ -1306,9 +1303,9 @@ public class Event extends DataItem {
 	 * @return whether changes have been made
 	 */
 	private boolean applyChanges(Statement.Line pLine) {
-		Values				myObj		= getObj();
-		Statement.Values	myNew		= pLine.getObj();
-		boolean				bChanged	= false;
+		Values					myObj		= getObj();
+		Statement.Line.Values	myNew		= pLine.getObj();
+		boolean					bChanged	= false;
 
 		/* Store the current detail into history */
 		pushHistory();
@@ -1318,15 +1315,15 @@ public class Event extends DataItem {
 			setDate(pLine.getDate());
 	
 		/* Update the description if required */
-		if (Utils.differs(getDesc(), pLine.getDesc()))
+		if (EncryptedPair.differs(myObj.getDesc(), myNew.getDesc()))
 			myObj.setDesc(myNew.getDesc());
 		
 		/* Update the amount if required */
-		if (Money.differs(getAmount(), pLine.getAmount())) 
+		if (EncryptedPair.differs(myObj.getAmount(), myNew.getAmount())) 
 			myObj.setAmount(myNew.getAmount());
 		
 		/* Update the units if required */
-		if (Units.differs(getUnits(), pLine.getUnits())) 
+		if (EncryptedPair.differs(myObj.getUnits(), myNew.getUnits())) 
 			myObj.setUnits(myNew.getUnits());
 	
 		/* Update the tranType if required */
@@ -1334,7 +1331,7 @@ public class Event extends DataItem {
 			setTransType(pLine.getTransType());
 	
 		/* Update the tax credit if required */
-		if (Money.differs(getTaxCredit(), pLine.getTaxCredit())) 
+		if (EncryptedPair.differs(myObj.getTaxCredit(), myNew.getTaxCredit())) 
 			myObj.setTaxCredit(myNew.getTaxCredit());
 	
 		/* Update the years if required */
@@ -1342,8 +1339,8 @@ public class Event extends DataItem {
 			setYears(pLine.getYears());
 		
 		/* Update the dilution if required */
-		if (Dilution.differs(getDilution(), pLine.getDilution())) 
-			setDilution(pLine.getDilution());
+		if (EncryptedPair.differs(myObj.getDilution(), myNew.getDilution())) 
+			myObj.setDilution(myNew.getDilution());
 				
 		/* If this is a credit */
 		if (pLine.isCredit()) {			
@@ -1385,15 +1382,15 @@ public class Event extends DataItem {
 			setDate(pEvent.getDate());
 	
 		/* Update the description if required */
-		if (Utils.differs(getDesc(), pEvent.getDesc())) 
+		if (EncryptedPair.differs(myObj.getDesc(), myNew.getDesc())) 
 			myObj.setDesc(myNew.getDesc());
 		
 		/* Update the amount if required */
-		if (Money.differs(getAmount(), pEvent.getAmount())) 
+		if (EncryptedPair.differs(myObj.getAmount(), myNew.getAmount())) 
 			myObj.setAmount(myNew.getAmount());
 		
 		/* Update the units if required */
-		if (Units.differs(getUnits(), pEvent.getUnits())) 
+		if (EncryptedPair.differs(myObj.getUnits(), myNew.getUnits())) 
 			myObj.setUnits(myNew.getUnits());
 				
 		/* Update the tranType if required */
@@ -1409,17 +1406,17 @@ public class Event extends DataItem {
 			setCredit(pEvent.getCredit());		
 		
 		/* Update the tax credit if required */
-		if (Money.differs(getTaxCredit(), pEvent.getTaxCredit())) 
+		if (EncryptedPair.differs(myObj.getTaxCredit(), myNew.getTaxCredit())) 
 			myObj.setTaxCredit(myNew.getTaxCredit());
 	
+		/* Update the dilution if required */
+		if (EncryptedPair.differs(myObj.getDilution(), myNew.getDilution())) 
+			myObj.setDilution(myNew.getDilution());
+				
 		/* Update the years if required */
 		if (Utils.differs(getYears(), pEvent.getYears())) 
 			setYears(pEvent.getYears());
 		
-		/* Update the dilution if required */
-		if (Dilution.differs(getDilution(), pEvent.getDilution())) 
-			setDilution(pEvent.getDilution());
-				
 		/* Check for changes */
 		if (checkForHistory()) {
 			/* Mark as changed */
@@ -1434,7 +1431,7 @@ public class Event extends DataItem {
 	/**
 	 * Ensure encryption after spreadsheet load
 	 */
-	private void ensureEncryption() throws Exception {
+	protected void ensureEncryption() throws Exception {
 		Values myObj = getObj();
 
 		/* Protect against exceptions */
@@ -1446,6 +1443,8 @@ public class Event extends DataItem {
 				myObj.getUnits().ensureEncryption();
 			if (myObj.getTaxCredit() != null)
 				myObj.getTaxCredit().ensureEncryption();
+			if (myObj.getDilution() != null)
+				myObj.getDilution().ensureEncryption();
 		}
 		
 		/* Catch exception */
@@ -1542,28 +1541,8 @@ public class Event extends DataItem {
 		 * Obtain the type of the item
 		 * @return the type of the item
 		 */
-		public String itemType() { return objName; }
+		public String itemType() { return listName; }
 		
-		/**
-		 * Ensure encryption of items in the list after spreadsheet load
-		 */
-		protected void ensureEncryption() throws Exception {
-			ListIterator 	myIterator;
-			Event			myCurr;
-			
-			/* Access the iterator */
-			myIterator = listIterator();
-			
-			/* Loop through the items */
-			while ((myCurr = myIterator.next()) != null) {
-				/* Ensure encryption of the item */
-				myCurr.ensureEncryption();
-			}
-			
-			/* Return to caller */
-			return;
-		}	
-
 		/**
 		 *  Allow an event to be added
 		 */
@@ -1641,7 +1620,7 @@ public class Event extends DataItem {
 				            byte[]   		pUnits,
 				            int  	  		uTransId,
 				            byte[]   		pTaxCredit,
-				            String			pDilution,
+				            byte[]			pDilution,
 				            Integer    		pYears) throws Exception {
 			Event	myEvent;
 			
@@ -1684,7 +1663,7 @@ public class Event extends DataItem {
 		private TransactionType	theTransType = null;
 		private MoneyPair  		theTaxCredit = null;
 		private Integer         theYears     = null;
-		private Dilution		theDilution  = null;
+		private DilutionPair	theDilution  = null;
 		
 		/* Access methods */
 		public Date       		getDate()      { return theDate; }
@@ -1696,13 +1675,21 @@ public class Event extends DataItem {
 		public TransactionType	getTransType() { return theTransType; }
 		public MoneyPair  		getTaxCredit() { return theTaxCredit; }
 		public Integer          getYears()     { return theYears; }
-		public Dilution         getDilution()  { return theDilution; }
+		public DilutionPair     getDilution()  { return theDilution; }
 		
 		/* Encrypted value access */
-		public  byte[]	getAmountBytes()    { return getMoneyPairBytes(getAmount()); }
-		public  byte[]  getDescBytes()      { return getStringPairBytes(getDesc()); }
-		public  byte[]	getTaxCredBytes()   { return getMoneyPairBytes(getTaxCredit()); }
-		public  byte[]	getUnitsBytes()     { return getUnitsPairBytes(getUnits()); }
+		public  Money		getAmountValue()    { return EncryptedPair.getPairValue(getAmount()); }
+		public  String  	getDescValue()      { return EncryptedPair.getPairValue(getDesc()); }
+		public  Money		getTaxCredValue()   { return EncryptedPair.getPairValue(getTaxCredit()); }
+		public  Units		getUnitsValue()     { return EncryptedPair.getPairValue(getUnits()); }
+		public  Dilution	getDilutionValue()  { return EncryptedPair.getPairValue(getDilution()); }
+
+		/* Encrypted bytes access */
+		public  byte[]	getAmountBytes()    { return EncryptedPair.getPairBytes(getAmount()); }
+		public  byte[]  getDescBytes()      { return EncryptedPair.getPairBytes(getDesc()); }
+		public  byte[]	getTaxCredBytes()   { return EncryptedPair.getPairBytes(getTaxCredit()); }
+		public  byte[]	getUnitsBytes()     { return EncryptedPair.getPairBytes(getUnits()); }
+		public  byte[]	getDilutionBytes()  { return EncryptedPair.getPairBytes(getDilution()); }
 
 		public void setDate(Date pDate) {
 			theDate      = pDate; }
@@ -1722,7 +1709,7 @@ public class Event extends DataItem {
 			theTaxCredit = pTaxCredit; }
 		public void setYears(Integer iYears) {
 			theYears     = iYears; }
-		public void setDilution(Dilution pDilution) {
+		public void setDilution(DilutionPair pDilution) {
 			theDilution  = pDilution; }
 
 		/* Constructor */
@@ -1755,7 +1742,7 @@ public class Event extends DataItem {
 			if (TransactionType.differs(theTransType, 	pValues.theTransType)) return false;
 			if (EncryptedPair.differs(theTaxCredit,		pValues.theTaxCredit)) return false;
 			if (Utils.differs(theYears,     			pValues.theYears))	   return false;
-			if (Dilution.differs(theDilution,			pValues.theDilution))  return false;
+			if (EncryptedPair.differs(theDilution,		pValues.theDilution))  return false;
 			return true;
 		}
 		
@@ -1811,7 +1798,7 @@ public class Event extends DataItem {
 					bResult = (Utils.differs(theYears,				pValues.theYears));
 					break;
 				case FIELD_DILUTION:
-					bResult = (Dilution.differs(theDilution,  		pValues.theDilution));
+					bResult = (EncryptedPair.differs(theDilution,  	pValues.theDilution));
 					break;
 			}
 			return bResult;

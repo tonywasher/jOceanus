@@ -104,13 +104,18 @@ public class ChargeableEvent extends DataItem {
 	 * Determine the field name for a particular field
 	 * @return the field name
 	 */
-	public String	fieldName(int iField) {
+	public static String	fieldName(int iField) {
 		switch (iField) {
 			case FIELD_SLICE: 		return "Slice";
 			case FIELD_TAXATION: 	return "Taxation";
-			default:		  		return super.fieldName(iField);
+			default:		  		return DataItem.fieldName(iField);
 		}
 	}
+	
+	/**
+	 * Determine the field name in a non-static fashion 
+	 */
+	public String getFieldName(int iField) { return fieldName(iField); }
 	
 	/**
 	 * Format the value of a particular field as a table row

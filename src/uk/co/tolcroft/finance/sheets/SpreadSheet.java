@@ -7,6 +7,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import jxl.Workbook;
 import jxl.write.WritableWorkbook;
@@ -63,74 +66,13 @@ public class SpreadSheet {
 	 */
 	public static DataSet loadBackup(statusCtl 	pThread,
 	  		 				  		 File 		pFile) throws Exception {
-		InputStream 		myStream  	= null;
-		FileInputStream     myInFile  	= null;
-		ZipFile.Input 		myFile		= null;
-		DataSet				myData;
-		View				myView;
-		boolean				isEncrypted = false;
-		String				mySecurityKey;
-		SecurityControl		myControl;
-		SecureManager		mySecurity;
+		/* Create an input sheet object */
+		InputSheet mySheet = new InputSheet(pThread);
+			
+		/* Create the backup */
+		DataSet myData = mySheet.loadBackup(pFile);
 		
-		/* Protect the workbook retrieval */
-		try {
-			/* The backup is encrypted if the filename ends in .zip */
-			if (pFile.getName().endsWith(".zip")) isEncrypted = true;
-			
-			/* If we are not encrypted */
-			if (!isEncrypted) {
-				/* Create an input stream to the file */
-				myInFile = new FileInputStream(pFile);
-				myStream = new BufferedInputStream(myInFile);
-			}
-								
-			/* else we are encrypted */
-			else {
-				/* Access the zip file */
-				myFile = new ZipFile.Input(pFile);
-				
-				/* Obtain the security key from the file */
-				mySecurityKey = myFile.getSecurityKey();
-
-				/* Access the Security manager */
-				myView 		= pThread.getView();
-				mySecurity 	= myView.getSecurity();
-				
-				/* Obtain the initialised security control */
-				myControl = mySecurity.getSecurityControl(mySecurityKey, pFile.getName());
-				
-				/* Associate this control with the Zip file */
-				myFile.setSecurityControl(myControl);
-				
-				/* Access the input stream for the first file */
-				myStream = myFile.getInputStream(myFile.getFiles());
-			}
-				
-			/* Load the data from the stream */
-			myData = loadBackupStream(pThread, myStream);
-			
-			/* Close the Stream to force out errors */
-			myStream.close();
-		}
-
-		catch (Throwable e) {
-			/* Protect while cleaning up */
-			try { 
-				/* Close the input stream */
-				if (myStream != null) myStream.close();
-			} 
-			
-			/* Ignore errors */
-			catch (Throwable ex) {}
-			
-			/* Report the error */
-			throw new Exception(ExceptionClass.EXCEL, 
-					  			"Failed to load Workbook: " + pFile.getName(),
-					  			e);				
-		}
-		
-		/* Return the new DataSet */
+		/* Return the data */
 		return myData;
 	}
 		
@@ -139,79 +81,49 @@ public class SpreadSheet {
 	 *  @param pThread Thread Control for task
 	 *  @param pData Data to write out
 	 *  @param pFile the backup file to write to
-	 *  @param isEncrypted should we encrypt the file
 	 */
 	public static void createBackup(statusCtl 	pThread,
 							 		DataSet		pData,
-							 		File 		pFile,
-							 		boolean		isEncrypted) throws Exception {
-		OutputStream 		myStream  	= null;
-		FileOutputStream    myOutFile  	= null;
-		File				myTgtFile	= null;
-		ZipFile.Output 		myZipFile   = null;
-		SecurityControl		myControl;
+							 		File 		pFile) throws Exception {
+		/* Create an output sheet object */
+		OutputSheet mySheet = new OutputSheet(pThread);
+			
+		/* Create the backup */
+		mySheet.createBackup(pData, pFile);
+	}
 		
-		/* Protect the workbook retrieval */
-		try {
-			/* If we are not encrypted */
-			if (!isEncrypted) {
-				/* The Target file has .xls appended */
-				myTgtFile 	= new File(pFile.getPath() + ".xls");
-
-				/* The Target file is the named file */
-				myTgtFile = pFile;
-				
-				/* Create an output stream to the file */
-				myOutFile = new FileOutputStream(myTgtFile);
-				myStream  = new BufferedOutputStream(myOutFile);
-			}
+	/**
+	 *  Load an Edit-able Workbook
+	 *  @param pThread Thread Control for task
+	 *  @param pFile the edit-able file to load from
+	 *  @return the newly loaded data
+	 */
+	public static DataSet loadEditable(statusCtl 	pThread,
+	  		 				  		   File 		pFile) throws Exception {
+		/* Create an input sheet object */
+		InputSheet mySheet = new InputSheet(pThread);
+			
+		/* Load the edit-able file */
+		DataSet myData = mySheet.loadEditable(pFile);
 		
-			/* else we are encrypted */
-			else {
-				/* The Target file has .zip appended */
-				myTgtFile 	= new File(pFile.getPath() + ".zip");
-
-				/* Create a clone of the security control */
-				myControl	= new SecurityControl(pData.getSecurityControl());
-				
-				/* Create the new output Zip file */
-				myZipFile 	= new ZipFile.Output(myControl,
-												 myTgtFile);
-				myStream 	= myZipFile.getOutputStream(new File(ZipFile.fileData), 
-														ZipEntryMode.getRandomTrioMode(myControl.getRandom()));
-			}
-
-			/* Write the data from the stream */
-			createBackupStream(pThread, pData, myStream);
+		/* Return the data */
+		return myData;
+	}
+		
+	/**
+	 *  Create a Backup Workbook
+	 *  @param pThread Thread Control for task
+	 *  @param pData Data to write out
+	 *  @param pFile the edit-able file to write to
+	 */
+	public static void createEditable(statusCtl pThread,
+							 		  DataSet	pData,
+							 		  File 		pFile) throws Exception {
+		/* Create an output sheet object */
+		OutputSheet mySheet = new OutputSheet(pThread);
 			
-			/* Close the Stream to force out errors */
-			myStream.close();
-			
-			/* If we are encrypted close the Zip file */
-			if (myZipFile != null) myZipFile.close();
-		}
-
-		catch (Throwable e) {			
-			/* Protect while cleaning up */
-			try { 
-				/* Close the output stream */
-				if (myStream != null) myStream.close();
-
-				/* If we are encrypted close the Zip file */
-				if (myZipFile != null) myZipFile.close();
-			} 
-			
-			/* Ignore errors */
-			catch (Throwable ex) {}
-			
-			/* Delete the file on error */
-			if (myTgtFile != null) myTgtFile.delete();			
-			
-			/* Report the error */
-			throw new Exception(ExceptionClass.EXCEL, 
-					  			"Failed to create Workbook: " + pFile.getName(),
-					  			e);				
-		}
+		/* Create the Edit-able file */
+		mySheet.createEditable(pData, pFile);
 	}
 		
 	/**
@@ -226,7 +138,7 @@ public class SpreadSheet {
 		Workbook        		myWorkbook 	= null;
 		DataSet					myData		= null;
 		View					myView		= null;
-		SheetStatic.YearRange	myRange 	= null;
+		SheetControl.YearRange	myRange 	= null;
 		DilutionEvent.List		myDilution	= null;
 		
 		/* Protect the workbook retrieval */
@@ -239,13 +151,13 @@ public class SpreadSheet {
 			myWorkbook = Workbook.getWorkbook(pStream);
 
 			/* Create a YearRange */
-			myRange = new SheetStatic.YearRange();
+			myRange = new SheetControl.YearRange();
 			
 			/* Create the dilution event list */
 			myDilution = new DilutionEvent.List(myData);
 			
 			/* Determine Year Range */
-			bContinue = SheetStatic.loadArchive(pThread, myWorkbook, myData, myRange);
+			bContinue = SheetControl.loadArchive(pThread, myWorkbook, myData, myRange);
 			
 			/* Load Tables */
 			if (bContinue) bContinue = SheetAccountType.loadArchive(pThread, myWorkbook, myData);
@@ -290,132 +202,483 @@ public class SpreadSheet {
 	}
 	
 	/**
-	 *  Load a Backup Workbook from a stream
-	 *  @param pThread Thread Control for task
-	 *  @param pStream Input stream to load from
-	 *  @return the newly loaded data
+	 * Input Spreadsheet class
 	 */
-	private static DataSet loadBackupStream(statusCtl 	pThread,
-			 						 	    InputStream	pStream) throws Exception {
-		boolean             bContinue;
-		Workbook        	myWorkbook 	= null;
-		DataSet				myData		= null;
-		View				myView		= null;
+	protected static class InputSheet {
+		/**
+		 * Thread control
+		 */
+		private statusCtl				theThread	= null;
 		
-		/* Protect the workbook retrieval */
-		try {
+		/**
+		 * Spreadsheet
+		 */
+		private Workbook				theWorkBook	= null;
+		
+		/**
+		 * The DataSet
+		 */
+		private DataSet					theData		= null;
+		
+		/**
+		 * The WorkSheets
+		 */
+		private List<SheetDataItem<?>>	theSheets	= null;
+		
+		/**
+		 * Class of output sheet
+		 */
+		private SheetType				theType		= null;
+		
+		/* Access methods */
+		protected statusCtl			getThread()		{ return theThread; }
+		protected Workbook			getWorkBook()	{ return theWorkBook; }
+		protected DataSet			getData()		{ return theData; }
+		protected SheetType			getType()		{ return theType; }
+		
+		/**
+		 * Constructor
+		 * @param pThread the Thread control
+		 */
+		public InputSheet(statusCtl pThread) { theThread = pThread; }
+		
+		/**
+		 *  Load a Backup Workbook
+		 *  @param pFile the backup file to write to
+		 *  @returns the loaded DataSet
+		 */
+		public DataSet loadBackup(File 		pFile) throws Exception {
+			InputStream 		myStream  	= null;
+			ZipFile.Input 		myFile		= null;
+			View				myView;
+			String				mySecurityKey;
+			SecurityControl		myControl;
+			SecureManager		mySecurity;
+			
+			/* Protect the workbook retrieval */
+			try {
+				/* Note the type of file */
+				theType	 = SheetType.BACKUP;
+
+				/* Access the zip file */
+				myFile = new ZipFile.Input(pFile);
+					
+				/* Obtain the security key from the file */
+				mySecurityKey = myFile.getSecurityKey();
+
+				/* Access the Security manager */
+				myView 		= theThread.getView();
+				mySecurity 	= myView.getSecurity();
+					
+				/* Obtain the initialised security control */
+				myControl = mySecurity.getSecurityControl(mySecurityKey, pFile.getName());
+					
+				/* Associate this control with the Zip file */
+				myFile.setSecurityControl(myControl);
+					
+				/* Access the input stream for the first file */
+				myStream = myFile.getInputStream(myFile.getFiles());
+				
+				/* Initialise the workbook */
+				boolean bContinue = initialiseWorkBook(myStream);
+				
+				/* Load the workbook */
+				if (bContinue) bContinue = loadWorkBook();
+				
+				/* Close the Stream to force out errors */
+				myStream.close();
+				
+				/* Check for cancellation */
+				if (!bContinue) 
+					throw new Exception(ExceptionClass.EXCEL,
+										"Operation Cancelled");
+			}
+
+			catch (Throwable e) {
+				/* Protect while cleaning up */
+				try { 
+					/* Close the input stream */
+					if (myStream != null) myStream.close();
+				} 
+				
+				/* Ignore errors */
+				catch (Throwable ex) {}
+				
+				/* Report the error */
+				throw new Exception(ExceptionClass.EXCEL, 
+						  			"Failed to load Backup Workbook: " + pFile.getName(),
+						  			e);				
+			}
+			
+			/* Return the new DataSet */
+			return theData;			
+		}
+
+		/**
+		 *  Load an Edit-able Workbook
+		 *  @param pFile the Edit-able file to load from
+		 *  @returns the loaded DataSet
+		 */
+		public DataSet loadEditable(File 		pFile) throws Exception {
+			InputStream 		myStream  	= null;
+			FileInputStream		myInFile	= null;
+			
+			/* Protect the workbook retrieval */
+			try {
+				/* Note the type of file */
+				theType	 = SheetType.EDITABLE;
+
+				/* Create an input stream to the file */
+				myInFile = new FileInputStream(pFile);
+				myStream = new BufferedInputStream(myInFile);
+
+				/* Initialise the workbook */
+				boolean bContinue = initialiseWorkBook(myStream);
+				
+				/* Load the workbook */
+				if (bContinue) bContinue = loadWorkBook();
+				
+				/* Close the Stream to force out errors */
+				myStream.close();
+				
+				/* Check for cancellation */
+				if (!bContinue) 
+					throw new Exception(ExceptionClass.EXCEL,
+										"Operation Cancelled");
+			}
+
+			catch (Throwable e) {
+				/* Protect while cleaning up */
+				try { 
+					/* Close the input stream */
+					if (myStream != null) myStream.close();
+				} 
+				
+				/* Ignore errors */
+				catch (Throwable ex) {}
+				
+				/* Report the error */
+				throw new Exception(ExceptionClass.EXCEL, 
+						  			"Failed to load Edit-able Workbook: " + pFile.getName(),
+						  			e);				
+			}
+			
+			/* Return the new DataSet */
+			return theData;			
+		}
+
+		/**
+		 * Create the list of sheets to load
+		 * @param the input stream
+		 */
+		private boolean initialiseWorkBook(InputStream pStream) throws Throwable {
+			View				myView;
+			
+			/* Create the new DataSet */
+			myView = theThread.getView();
+			theData = new DataSet(myView.getSecurity());
+			
+			/* Initialise the list */
+			theSheets = new ArrayList<SheetDataItem<?>>();
+			
+			/* Add the items */
+			theSheets.add(new SheetControl(this));
+			theSheets.add(new SheetAccountType(this));
+			theSheets.add(new SheetTransactionType(this));
+			theSheets.add(new SheetTaxType(this));
+			theSheets.add(new SheetTaxRegime(this));
+			theSheets.add(new SheetFrequency(this));
+			theSheets.add(new SheetTaxYear(this));
+			theSheets.add(new SheetAccount(this));
+			theSheets.add(new SheetRate(this));
+			theSheets.add(new SheetPrice(this));
+			theSheets.add(new SheetPattern(this));
+			theSheets.add(new SheetEvent(this));
+			
 			/* Declare the number of stages */
-			bContinue = pThread.setNumStages(14);
+			boolean bContinue = theThread.setNumStages(theSheets.size()+2);
 
 			/* Note the stage */
-			if (bContinue) bContinue = pThread.setNewStage("Loading");
+			if (bContinue) bContinue = theThread.setNewStage("Loading");
 
-			/* Create the Data */
-			myView = pThread.getView();
-			myData = new DataSet(myView.getSecurity());
-			
 			/* Access the workbook from the stream */
-			if (bContinue) myWorkbook = Workbook.getWorkbook(pStream);
-
-			/* Load tables */
-			if (bContinue) bContinue = SheetStatic.loadBackup(pThread, myWorkbook, myData);
-			if (bContinue) bContinue = SheetAccountType.loadBackup(pThread, myWorkbook, myData);
-			if (bContinue) bContinue = SheetTransactionType.loadBackup(pThread, myWorkbook, myData);
-			if (bContinue) bContinue = SheetTaxType.loadBackup(pThread, myWorkbook, myData);
-			if (bContinue) bContinue = SheetTaxRegime.loadBackup(pThread, myWorkbook, myData);
-			if (bContinue) bContinue = SheetFrequency.loadBackup(pThread, myWorkbook, myData);
-			if (bContinue) bContinue = SheetTaxYear.loadBackup(pThread, myWorkbook, myData);
-			if (bContinue) myData.calculateDateRange();
-			if (bContinue) bContinue = SheetAccount.loadBackup(pThread, myWorkbook, myData);
-			if (bContinue) bContinue = SheetRate.loadBackup(pThread, myWorkbook, myData);
-			if (bContinue) bContinue = SheetPrice.loadBackup(pThread, myWorkbook, myData);
-			if (bContinue) bContinue = SheetPattern.loadBackup(pThread, myWorkbook, myData);
-			if (bContinue) myData.getAccounts().validateLoadedAccounts();
-			if (bContinue) bContinue = SheetEvent.loadBackup(pThread, myWorkbook, myData);
+			if (bContinue) theWorkBook = Workbook.getWorkbook(pStream);
+			
+			/* Return continue status */
+			return bContinue;
+		}
 		
+		/**
+		 * Load the WorkBook
+		 */
+		private boolean loadWorkBook() throws Throwable {
+			SheetDataItem<?> mySheet;
+			
+			/* Access the iterator for the list */
+			Iterator<SheetDataItem<?>> myIterator = theSheets.iterator();
+			
+			/* Declare the number of stages */
+			boolean bContinue = theThread.setNumStages(theSheets.size()+1);
+
+			/* Loop through the sheets */
+			while ((bContinue) &&
+				   (myIterator.hasNext())) {
+				/* Access the next sheet */
+				mySheet = myIterator.next();
+				
+				/* Write data for the sheet */
+				bContinue = mySheet.loadSpreadSheet();
+			}
+			
 			/* Close the work book (and the input stream) */
-			myWorkbook.close();		
+			theWorkBook.close();		
 		
 			/* Analyse the data */
-			if (!pThread.setNewStage("Refreshing data")) bContinue = false;
+			if (!theThread.setNewStage("Refreshing data")) bContinue = false;
 							
-			/* Check for cancellation */
-			if (!bContinue) 
-				throw new Exception(ExceptionClass.EXCEL,
-									"Operation Cancelled");
+			/* Return continue status */
+			return bContinue;
 		}
-		
-		catch (Throwable e) {
-			/* Show we are cancelled */
-			bContinue = false;
-			
-			/* Report the error */
-			throw new Exception(ExceptionClass.EXCEL, 
-					  			"Failed to load Workbook",
-					  			e);				
-		}
-					
-		/* Return the new data */
-		return (bContinue) ? myData : null;
 	}
 	
 	/**
-	 *  Write a Backup Workbook to a stream
-	 *  @param pThread Thread Control for task
-	 *  @param pData Data to write out
-	 *  @param pStream Output stream to write to
-	 *  @return the newly loaded data
+	 * Output Spreadsheet class
 	 */
-	private static void createBackupStream(statusCtl 	pThread,
-										   DataSet		pData,
-										   OutputStream	pStream) throws Exception {
-		boolean             bContinue;
-		WritableWorkbook 	myWorkbook = null;
-				
-		/* Protect the workbook creation */
-		try {
-			/* Declare the number of stages */
-			bContinue = pThread.setNumStages(13);
-
-			/* Create the workbook attached to the output stream */
-			if (bContinue) myWorkbook = Workbook.createWorkbook(pStream);									
+	protected static class OutputSheet {
+		/**
+		 * Thread control
+		 */
+		private statusCtl				theThread	= null;
 		
-			/* build the workbook */
-			if (bContinue) bContinue = SheetStatic.writeBackup(pThread, myWorkbook, pData);
-			if (bContinue) bContinue = SheetAccountType.writeBackup(pThread, myWorkbook, pData);
-			if (bContinue) bContinue = SheetTransactionType.writeBackup(pThread, myWorkbook, pData);
-			if (bContinue) bContinue = SheetTaxType.writeBackup(pThread, myWorkbook, pData);
-			if (bContinue) bContinue = SheetTaxRegime.writeBackup(pThread, myWorkbook, pData);
-			if (bContinue) bContinue = SheetFrequency.writeBackup(pThread, myWorkbook, pData);
-			if (bContinue) bContinue = SheetTaxYear.writeBackup(pThread, myWorkbook, pData);
-			if (bContinue) bContinue = SheetAccount.writeBackup(pThread, myWorkbook, pData);
-			if (bContinue) bContinue = SheetRate.writeBackup(pThread, myWorkbook, pData);
-			if (bContinue) bContinue = SheetPrice.writeBackup(pThread, myWorkbook, pData);
-			if (bContinue) bContinue = SheetPattern.writeBackup(pThread, myWorkbook, pData);
-			if (bContinue) bContinue = SheetEvent.writeBackup(pThread, myWorkbook, pData);
-			if (bContinue) bContinue = pThread.setNewStage("Writing");
+		/**
+		 * Writable spreadsheet
+		 */
+		private WritableWorkbook		theWorkBook	= null;
+		
+		/**
+		 * The DataSet
+		 */
+		private DataSet					theData		= null;
+		
+		/**
+		 * The WorkSheets
+		 */
+		private List<SheetDataItem<?>>	theSheets	= null;
+		
+		/**
+		 * Class of output sheet
+		 */
+		private SheetType				theType		= null;
+		
+		/* Access methods */
+		protected statusCtl			getThread()		{ return theThread; }
+		protected WritableWorkbook	getWorkBook()	{ return theWorkBook; }
+		protected DataSet			getData()		{ return theData; }
+		protected SheetType			getType()		{ return theType; }
+		
+		/**
+		 * Constructor
+		 * @param pThread the Thread control
+		 */
+		public OutputSheet(statusCtl pThread) { theThread = pThread; }
+		
+		/**
+		 *  Create a Backup Workbook
+		 *  @param pData Data to write out
+		 *  @param pFile the backup file to write to
+		 */
+		public void createBackup(DataSet	pData,
+								 File 		pFile) throws Exception {
+			OutputStream		myStream	= null;
+			File				myTgtFile	= null;
+			ZipFile.Output 		myZipFile   = null;
+			SecurityControl		myControl;
+			
+			/* Protect the workbook access */
+			try {
+				/* Note the type of file */
+				theType	 = SheetType.BACKUP;
+
+				/* Record the DataSet */
+				theData	= pData;
+				
+				/* The Target file has ".zip" appended */
+				myTgtFile 	= new File(pFile.getPath() + ".zip");
+
+				/* Create a clone of the security control */
+				myControl	= new SecurityControl(pData.getSecurityControl());
+					
+				/* Create the new output Zip file */
+				myZipFile 	= new ZipFile.Output(myControl,
+												 myTgtFile);
+				myStream 	= myZipFile.getOutputStream(new File(ZipFile.fileData), 
+														ZipEntryMode.getRandomTrioMode(myControl.getRandom()));
+				
+				/* Initialise the WorkBook */
+				initialiseWorkBook(myStream);									
+			
+				/* Write the data to the work book */
+				writeWorkBook();
+				
+				/* Close the Stream to force out errors */
+				myStream.close();
+				
+				/* Close the Zip file */
+				myZipFile.close();
+			}
+
+			catch (Throwable e) {			
+				/* Protect while cleaning up */
+				try { 
+					/* Close the output stream */
+					if (myStream != null) myStream.close();
+
+					/* If we are encrypted close the Zip file */
+					if (myZipFile != null) myZipFile.close();
+				} 
+				
+				/* Ignore errors */
+				catch (Throwable ex) {}
+				
+				/* Delete the file on error */
+				if (myTgtFile != null) myTgtFile.delete();			
+				
+				/* Report the error */
+				throw new Exception(ExceptionClass.EXCEL, 
+						  			"Failed to create Backup Workbook: " + pFile.getName(),
+						  			e);				
+			}
+		}
+		
+		/**
+		 *  Create an Edit-able Workbook
+		 *  @param pData Data to write out
+		 *  @param pFile the backup file to write to
+		 */
+		public void createEditable(DataSet	pData,
+								   File 	pFile) throws Exception {
+			OutputStream		myStream	= null;
+			FileOutputStream    myOutFile  	= null;
+			File				myTgtFile	= null;
+			
+			/* Protect the workbook access */
+			try {
+				/* Note the type of file */
+				theType	 = SheetType.EDITABLE;
+
+				/* Record the DataSet */
+				theData	= pData;
+				
+				/* The Target file has ".xls" appended */
+				myTgtFile 	= new File(pFile.getPath() + ".xls");
+
+				/* The Target file is the named file */
+				myTgtFile = pFile;
+					
+				/* Create an output stream to the file */
+				myOutFile = new FileOutputStream(myTgtFile);
+				myStream  = new BufferedOutputStream(myOutFile);
+
+				/* Initialise the WorkBook */
+				initialiseWorkBook(myStream);									
+			
+				/* Write the data to the work book */
+				writeWorkBook();
+				
+				/* Close the Stream to force out errors */
+				myStream.close();				
+			}
+
+			catch (Throwable e) {			
+				/* Protect while cleaning up */
+				try { 
+					/* Close the output stream */
+					if (myStream != null) myStream.close();
+				} 
+				
+				/* Ignore errors */
+				catch (Throwable ex) {}
+				
+				/* Delete the file on error */
+				if (myTgtFile != null) myTgtFile.delete();			
+				
+				/* Report the error */
+				throw new Exception(ExceptionClass.EXCEL, 
+						  			"Failed to create Editable Workbook: " + pFile.getName(),
+						  			e);				
+			}
+		}
+		
+		/**
+		 * Create the list of sheets to write
+		 * @param the output stream
+		 */
+		private void initialiseWorkBook(OutputStream pStream) throws Throwable {
+			/* Create the workbook attached to the output stream */
+			theWorkBook = Workbook.createWorkbook(pStream);									
+		
+			/* Initialise the list */
+			theSheets = new ArrayList<SheetDataItem<?>>();
+			
+			/* Add the items */
+			theSheets.add(new SheetControl(this));
+			theSheets.add(new SheetAccountType(this));
+			theSheets.add(new SheetTransactionType(this));
+			theSheets.add(new SheetTaxType(this));
+			theSheets.add(new SheetTaxRegime(this));
+			theSheets.add(new SheetFrequency(this));
+			theSheets.add(new SheetTaxYear(this));
+			theSheets.add(new SheetAccount(this));
+			theSheets.add(new SheetRate(this));
+			theSheets.add(new SheetPrice(this));
+			theSheets.add(new SheetPattern(this));
+			theSheets.add(new SheetEvent(this));
+		}
+		
+		/**
+		 * Write the WorkBook
+		 */
+		private void writeWorkBook() throws Throwable {
+			SheetDataItem<?> mySheet;
+			
+			/* Access the iterator for the list */
+			Iterator<SheetDataItem<?>> myIterator = theSheets.iterator();
+			
+			/* Declare the number of stages */
+			boolean bContinue = theThread.setNumStages(theSheets.size()+1);
+
+			/* Loop through the sheets */
+			while ((bContinue) &&
+				   (myIterator.hasNext())) {
+				/* Access the next sheet */
+				mySheet = myIterator.next();
+				
+				/* Write data for the sheet */
+				bContinue = mySheet.writeSpreadSheet();
+			}
+			
+			/* If we have built all the sheets */
+			if (bContinue) bContinue = theThread.setNewStage("Writing");
 			
 			/* If we have created the workbook OK */
 			if (bContinue) {
 				/* Write it out to disk and close the stream */
-				myWorkbook.write();
-				myWorkbook.close();
+				theWorkBook.write();
+				theWorkBook.close();
 			}
-			
-			/* Close the buffers */
-			pStream.close();
 			
 			/* Check for cancellation */
 			if (!bContinue) 
 				throw new Exception(ExceptionClass.EXCEL,
 									"Operation Cancelled");
-		} 
-		
-		catch (Throwable e) {
-			/* Report the error */
-			throw new Exception(ExceptionClass.EXCEL, 
-					  			"Failed to create Workbook",
-					  			e);				
 		}
-	}	
+ 	}
+	
+	/**
+	 * Spreadsheet types
+	 */
+	protected enum SheetType {
+		BACKUP,
+		EDITABLE;
+	}
 }

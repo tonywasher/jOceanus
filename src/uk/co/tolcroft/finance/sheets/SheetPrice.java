@@ -1,25 +1,177 @@
 package uk.co.tolcroft.finance.sheets;
 
 import jxl.*;
-import jxl.write.*;
+import jxl.write.WritableCellFeatures;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
+import uk.co.tolcroft.finance.sheets.SpreadSheet.OutputSheet;
+import uk.co.tolcroft.finance.sheets.SpreadSheet.SheetType;
 import uk.co.tolcroft.finance.views.DilutionEvent;
-import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 
-public class SheetPrice {
+public class SheetPrice extends SheetDataItem<AcctPrice> {
 	/**
 	 * NamedArea for Prices
 	 */
-	private static final String Prices 	   	= "Prices";
+	private static final String Prices 	   	= AcctPrice.listName;
 
 	/**
 	 * Alternate NamedArea for Prices
 	 */
 	private static final String Prices1		= "SpotPricesData";
 
+	/**
+	 * Is the spreadsheet a backup spreadsheet or an edit-able one
+	 */
+	private boolean isBackup	= false;
+	
+	/**
+	 * Validation control for Account Name
+	 */
+	private WritableCellFeatures theAccountCtl	= null;
+	
+	/**
+	 * Prices data list
+	 */
+	private AcctPrice.List theList	= null;
+
+	/**
+	 * Constructor for loading a spreadsheet
+	 * @param pInput the input spreadsheet
+	 */
+	protected SheetPrice(InputSheet	pInput) {
+		/* Call super constructor */
+		super(pInput, Prices);
+		
+		/* Note whether this is a backup */
+		isBackup = (pInput.getType() == SheetType.BACKUP);
+		
+		/* Access the Prices list */
+		theList = pInput.getData().getPrices();
+	}
+
+	/**
+	 *  Constructor for creating a spreadsheet
+	 *  @param pOutput the output spreadsheet
+	 */
+	protected SheetPrice(OutputSheet	pOutput) {
+		/* Call super constructor */
+		super(pOutput, Prices);
+		
+		/* Note whether this is a backup */
+		isBackup = (pOutput.getType() == SheetType.BACKUP);
+				
+		/* Access the Prices list */
+		theList = pOutput.getData().getPrices();
+		setDataList(theList);
+		
+		/* Obtain validation for the Account Name */
+		theAccountCtl = obtainCellValidation(SheetAccount.AccountNames);
+	}
+	
+	/**
+	 * Load an item from the spreadsheet
+	 */
+	protected void loadItem() throws Throwable {
+		byte[]			myPriceBytes;
+		String			myPrice;
+		String			myAccount;
+		java.util.Date	myDate;
+		int	    		myID;
+		int	    		myActId;
+
+		/* If this is a backup load */
+		if (isBackup) {
+			/* Access the IDs */
+			myID 	= loadInteger(0);
+			myActId	= loadInteger(1);
+		
+			/* Access the rates and end-date */
+			myDate 			= loadDate(2);
+			myPriceBytes 	= loadBytes(3);
+		
+			/* Load the item */
+			theList.addItem(myID, myDate, myActId, myPriceBytes);
+		}
+		
+		/* else this is a load from an edit-able spreadsheet */
+		else {
+			/* Access the Account */
+			myAccount	= loadString(0);
+		
+			/* Access the name and description bytes */
+			myDate 		= loadDate(1);
+			myPrice		= loadString(2);
+		
+			/* Load the item */
+			theList.addItem(myDate, myAccount, myPrice);
+		}
+	}
+
+	/**
+	 *  Insert a item into the spreadsheet
+	 *  @param pItem the Item to insert
+	 *  @param isBackup is the spreadsheet a backup, or else clear text
+	 */
+	protected void insertItem(AcctPrice	pItem) throws Throwable  {
+		/* If we are creating a backup */
+		if (isBackup) {
+			/* Set the fields */
+			writeInteger(0, pItem.getId());
+			writeInteger(1, pItem.getAccount().getId());				
+			writeDate(2, pItem.getDate());
+			writeBytes(3, pItem.getPriceBytes());
+		}
+
+		/* else we are creating an edit-able spreadsheet */
+		else {
+			/* Set the fields */
+			writeValidatedString(0, pItem.getAccount().getName(), theAccountCtl);				
+			writeDate(1, pItem.getDate());
+			writeNumber(2, pItem.getPrice());			
+		}
+	}
+
+	/**
+	 * PreProcess on write
+	 */
+	protected boolean preProcessOnWrite() throws Throwable {		
+		/* Ignore if we are creating a backup */
+		if (isBackup) return false;
+
+		/* Write titles */
+		writeString(0, AcctPrice.fieldName(AcctPrice.FIELD_ACCOUNT));
+		writeString(1, AcctPrice.fieldName(AcctPrice.FIELD_DATE));
+		writeString(2, AcctPrice.fieldName(AcctPrice.FIELD_PRICE));			
+		return true;
+	}	
+
+	/**
+	 * PostProcess on write
+	 */
+	protected void postProcessOnWrite() throws Throwable {		
+		/* If we are creating a backup */
+		if (isBackup) {
+			/* Set the four columns as the range */
+			nameRange(4);
+		}
+
+		/* else this is an edit-able spreadsheet */
+		else {
+			/* Set the three columns as the range */
+			nameRange(3);
+
+			/* Set the Account column width */
+			setColumnWidth(0, Account.NAMELEN);
+			
+			/* Set Price and Date columns */
+			setDateColumn(1);
+			setPriceColumn(2);
+		}
+	}
+	
 	/**
 	 *  Load the Prices from an archive
 	 *  @param pThread   the thread status control
@@ -128,199 +280,4 @@ public class SheetPrice {
 		/* Return to caller */
 		return true;
 	}
-	
-	/**
-	 *  Load the Prices from a backup
-	 *  @param pThread   the thread status control
-	 *  @param pWorkbook the workbook to load from
-	 *  @param pData the data set to load into
-	 *  @return continue to write <code>true/false</code> 
-	 */
-	protected static boolean loadBackup(statusCtl 	pThread,
-			 							Workbook	pWorkbook,
-		   	  				   	        DataSet		pData) throws Exception {
-		/* Local variables */
-		AcctPrice.List		myList;
-		Range[]   		myRange;
-		Sheet     		mySheet;
-		Cell      		myTop;
-		Cell      		myBottom;
-		int       		myCol;
-		int      		myID;
-		int      		myAccountID;
-		String    		myPrice; 
-		java.util.Date  myDate;
-		DateCell  		myDateCell;
-		Cell      		myCell;
-		int       		myTotal;
-		int				mySteps;
-		int       		myCount = 0;
-		
-		/* Protect against exceptions */
-		try { 
-			/* Find the range of cells */
-			myRange = pWorkbook.findByName(Prices);
-		
-			/* Access the number of reporting steps */
-			mySteps = pThread.getReportingSteps();
-			
-			/* Declare the new stage */
-			if (!pThread.setNewStage(Prices)) return false;
-		
-			/* If we found the range OK */
-			if ((myRange != null) && (myRange.length == 1)) {
-			
-				/* Access the relevant sheet and Cell references */
-				mySheet   = pWorkbook.getSheet(myRange[0].getFirstSheetIndex());
-				myTop     = myRange[0].getTopLeft();
-				myBottom  = myRange[0].getBottomRight();
-				myCol     = myTop.getColumn();
-		
-				/* Count the number of prices */
-				myTotal  = (myBottom.getRow() - myTop.getRow() + 1);
-			
-				/* Access the list of prices */
-				myList = pData.getPrices();
-			
-				/* Declare the number of steps */
-				if (!pThread.setNumSteps(myTotal)) return false;
-			
-				/* Loop through the rows of the table */
-				for (int i = myTop.getRow();
-					 i <= myBottom.getRow();
-					 i++) {
-									
-					/* Access id and account id */
-					myCell    	= mySheet.getCell(myCol, i);
-					myID      	= Integer.parseInt(myCell.getContents());
-					myCell    	= mySheet.getCell(myCol+1, i);
-					myAccountID	= Integer.parseInt(myCell.getContents());
-				
-					/* Handle Price */
-					myCell     	= mySheet.getCell(myCol+3, i);
-					myPrice		= myCell.getContents();
-				
-					/* Handle Date */
-					myCell     = mySheet.getCell(myCol+2, i);
-					myDateCell = (DateCell)myCell;
-					myDate     = myDateCell.getDate();
-				
-					/* Add the price into the finance tables */
-					myList.addItem(myID,
-		        		           myDate,
-		        		           myAccountID,
-		        		           myPrice);
-					
-					/* Report the progress */
-					myCount++;
-					if ((myCount % mySteps) == 0) 
-						if (!pThread.setStepsDone(myCount)) return false;
-				}
-			}
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.EXCEL, 
-								"Failed to load Prices",
-								e);
-		}
-		
-		/* Return to caller */
-		return true;
-	}
-	
-	/**
-	 *  Write the Prices to a backup
-	 *  @param pThread   the thread status control
-	 *  @param pWorkbook the workbook to write to
-	 *  @param pData the data set to write from
-	 *  @return continue to write <code>true/false</code> 
-	 */
-	protected static boolean writeBackup(statusCtl 			pThread,
-										 WritableWorkbook	pWorkbook,
-		   	        					 DataSet			pData) throws Exception {
-		WritableSheet 					mySheet;
-		DataList<AcctPrice>.ListIterator	myIterator;
-		AcctPrice.List						myPrices;
-		AcctPrice							myCurr;
-		int								myRow;
-		int								myCount;
-		int								myTotal;
-		int								mySteps;
-		jxl.write.Label					myCell;
-		jxl.write.DateTime				myDate;
-		WritableCellFormat				myFormat;
-
-		/* Protect against exceptions */
-		try { 
-			/* Declare the new stage */
-			if (!pThread.setNewStage(Prices)) return false;
-		
-			/* Create the formats */
-			myFormat		= new WritableCellFormat(DateFormats.FORMAT2);
-	
-			/* Create the sheet */
-			mySheet    = pWorkbook.createSheet(Prices, 0);
-	
-			/* Access the number of reporting steps */
-			mySteps = pThread.getReportingSteps();
-
-			/* Access the prices */
-			myPrices  = pData.getPrices();
-			
-			/* Count the number of prices */
-			myTotal   = myPrices.size();
-		
-			/* Declare the number of steps */
-			if (!pThread.setNumSteps(myTotal)) return false;
-		
-			/* Initialise counts */
-			myRow   = 0;
-			myCount = 0;
-		
-			/* Access the iterator */
-			myIterator = myPrices.listIterator();
-			
-			/* Loop through the account */
-			while ((myCurr  = myIterator.next()) != null) {
-				/* Create the Identifier cell */
-				myCell = new jxl.write.Label(0, myRow, 
-											 Integer.toString(myCurr.getId()));
-				mySheet.addCell(myCell);
-				myCell = new jxl.write.Label(1, myRow, 
-											 Integer.toString(myCurr.getAccount().getId()));
-				mySheet.addCell(myCell);
-			
-				/* Create the Price cells */
-				myCell = new jxl.write.Label(3, myRow, 
-						 					 myCurr.getPrice().format(false));
-				mySheet.addCell(myCell);
-				
-				/* Create the Date cells */
-				myDate = new jxl.write.DateTime(2, myRow, 
-												myCurr.getDate().getDate(),
-												myFormat);
-				mySheet.addCell(myDate);
-			
-				/* Report the progress */
-				myCount++;
-				myRow++;
-				if ((myCount % mySteps) == 0) 
-					if (!pThread.setStepsDone(myCount)) return false;
-			}
-	
-			/* Add the Range name */
-			if (myRow > 0)
-				pWorkbook.addNameArea(Prices, mySheet, 0, 0, 3, myRow-1);
-		}
-
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.EXCEL, 
-								"Failed to create Prices",
-								e);
-		}
-	
-		/* Return to caller */
-		return true;
-	}	
 }

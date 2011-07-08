@@ -1,18 +1,69 @@
 package uk.co.tolcroft.finance.sheets;
 
 import jxl.*;
-import jxl.write.*;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
+import uk.co.tolcroft.finance.sheets.SpreadSheet.OutputSheet;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 
-public class SheetTaxType {
+public class SheetTaxType extends SheetStaticData<TaxType> {
 	/**
 	 * NamedArea for Tax Types
 	 */
-	private static String TaxClasses   = "TaxClasses";
+	private static String TaxClasses   = TaxType.listName;
+	
+	/**
+	 * NameList for TaxTypes
+	 */
+	protected static final String TaxTypeNames = TaxType.objName + "Names";
+	
+	/**
+	 * TaxTypes data list
+	 */
+	private TaxType.List theList	= null;
+
+	/**
+	 * Constructor for loading a spreadsheet
+	 * @param pOutput the output spreadsheet
+	 */
+	protected SheetTaxType(InputSheet pInput) {
+		/* Call super-constructor */
+		super(pInput, TaxClasses);
+				
+		/* Access the Tax Type list */
+		theList = pInput.getData().getTaxTypes();
+	}
+
+	/**
+	 * Constructor for creating a spreadsheet
+	 * @param pOutput the output spreadsheet
+	 */
+	protected SheetTaxType(OutputSheet pOutput) {
+		/* Call super-constructor */
+		super(pOutput, TaxClasses, TaxTypeNames);
+				
+		/* Access the Tax Type list */
+		theList = pOutput.getData().getTaxTypes();
+		setDataList(theList);
+	}
+
+	/**
+	 * Load encrypted 
+	 */
+	protected void loadEncryptedItem(int pId, int pClassId, byte[] pName, byte[] pDesc) throws Exception {
+		/* Create the item */
+		theList.addItem(pId, pClassId, pName, pDesc);		
+	}
+
+	/**
+	 * Load clear text 
+	 */
+	protected void loadClearTextItem(int pClassId, String pName, String pDesc) throws Exception {
+		/* Create the item */
+		theList.addItem(pClassId, pName, pDesc);		
+	}
 	
 	/**
 	 *  Load the Tax Types from an archive
@@ -73,7 +124,7 @@ public class SheetTaxType {
 					myCell = mySheet.getCell(myCol, i);
 				
 					/* Add the value into the finance tables */
-					myList.addItem(0, myCell.getContents());
+					myList.addItem(myCell.getContents());
 				
 					/* Report the progress */
 					myCount++;
@@ -92,167 +143,5 @@ public class SheetTaxType {
 		
 		/* Return to caller */
 		return true;
-	}
-	
-	/**
-	 *  Load the Tax Types from a backup
-	 *  @param pThread   the thread status control
-	 *  @param pWorkbook the workbook to load from
-	 *  @param pData the data set to load into
-	 *  @return continue to write <code>true/false</code> 
-	 */
-	protected static boolean loadBackup(statusCtl 	pThread,
-			 							Workbook	pWorkbook,
-		   	  				   	        DataSet		pData) throws Exception {
-		/* Local variables */
-		TaxType.List	myList;
-		Range[] 		myRange;
-		Sheet   		mySheet;
-		Cell    		myTop;
-		Cell    		myBottom;
-		Cell    		myCell;
-		int				myID;
-		int     		myCol;
-		int     		myTotal;
-		int				mySteps;
-		int     		myCount = 0;
-		
-		/* Protect against exceptions */
-		try {
-			/* Find the range of cells */
-			myRange = pWorkbook.findByName(TaxClasses);
-		
-			/* Declare the new stage */
-			if (!pThread.setNewStage(TaxClasses)) return false;
-		
-			/* Access the number of reporting steps */
-			mySteps = pThread.getReportingSteps();
-		
-			/* If we found the range OK */
-			if ((myRange != null) && (myRange.length == 1)) {
-			
-				/* Access the relevant sheet and Cell references */
-				mySheet  = pWorkbook.getSheet(myRange[0].getFirstSheetIndex());
-				myTop    = myRange[0].getTopLeft();
-				myBottom = myRange[0].getBottomRight();
-				myCol    = myTop.getColumn();
-		
-				/* Count the number of tax classes */
-				myTotal  = myBottom.getRow() - myTop.getRow() + 1;
-			
-				/* Access the list of tax types */
-				myList = pData.getTaxTypes();
-			
-				/* Declare the number of steps */
-				if (!pThread.setNumSteps(myTotal)) return false;
-			
-				/* Loop through the rows of the single column range */
-				for (int i = myTop.getRow();
-					 i <= myBottom.getRow();
-					 i++) {
-					/* Access the cell by reference */
-					myCell = mySheet.getCell(myCol, i);
-					myID   = Integer.parseInt(myCell.getContents());
-					myCell = mySheet.getCell(myCol+1, i);
-				
-					/* Add the value into the finance tables */
-					myList.addItem(myID, myCell.getContents());
-				
-					/* Report the progress */
-					myCount++;
-					if ((myCount % mySteps) == 0) 
-						if (!pThread.setStepsDone(myCount)) return false;
-				}
-			}
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.EXCEL, 
-								"Failed to load Tax Classes",
-								e);
-		}
-		
-		/* Return to caller */
-		return true;
-	}
-	
-	/**
-	 *  Write the Account Types to a backup
-	 *  @param pThread   the thread status control
-	 *  @param pWorkbook the workbook to write to
-	 *  @param pData the data set to write from
-	 *  @return continue to write <code>true/false</code> 
-	 */
-	protected static boolean writeBackup(statusCtl 			pThread,
-										 WritableWorkbook	pWorkbook,
-		   	        					 DataSet			pData) throws Exception {
-		WritableSheet 					mySheet;
-		DataList<TaxType>.ListIterator	myIterator;
-		TaxType.List 					myTaxTypes;
-		TaxType							myCurr;
-		int								myRow;
-		int								myCount;
-		int								myTotal;
-		int								mySteps;
-		jxl.write.Label					myCell;
-	
-		/* Protect against exceptions */
-		try { 
-			/* Declare the new stage */
-			if (!pThread.setNewStage(TaxClasses)) return false;
-			
-			/* Access the number of reporting steps */
-			mySteps = pThread.getReportingSteps();
-
-			/* Create the sheet */
-			mySheet	= pWorkbook.createSheet(TaxClasses, 0);
-		
-			/* Access the tax classes */
-			myTaxTypes = pData.getTaxTypes();
-		
-			/* Count the number of tax classes */
-			myTotal   = myTaxTypes.size();
-			
-			/* Declare the number of steps */
-			if (!pThread.setNumSteps(myTotal)) return false;
-			
-			/* Initialise counts */
-			myRow   = 0;
-			myCount = 0;
-			
-			/* Access the iterator */
-			myIterator = myTaxTypes.listIterator();
-			
-			/* Loop through the account types */
-			while ((myCurr  = myIterator.next()) != null) {
-				/* Create the Identifier and Name cells */
-				myCell = new jxl.write.Label(0, myRow, 
-											 Integer.toString(myCurr.getId()));
-				mySheet.addCell(myCell);
-				
-				/* Add the name to the list */
-				myCell = new jxl.write.Label(1, myRow, myCurr.getName());
-				mySheet.addCell(myCell);
-
-				/* Report the progress */
-				myCount++;
-				myRow++;
-				if ((myCount % mySteps) == 0) 
-					if (!pThread.setStepsDone(myCount)) return false;
-			}
-		
-			/* Add the Range name */
-			if (myRow > 0)
-				pWorkbook.addNameArea(TaxClasses, mySheet, 0, 0, 1, myRow-1);
-		}
-	
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.EXCEL, 
-								"Failed to create TaxClasses",
-								e);
-		}
-		
-		/* Return to caller */
-		return true;
-	}
+	}	
 }

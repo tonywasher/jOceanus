@@ -5,32 +5,35 @@ import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.security.*;
 
-public class Static extends DataItem {
+public class ControlData extends DataItem {
 	/**
 	 * The name of the object
 	 */
-	private static final String objName = "Static";
+	public static final String objName = "Static";
 
 	/**
-	 * Account Control Key Length
+	 * The name of the object
+	 */
+	public static final String listName = objName + "s";
+
+	/**
+	 * Control Key Length
 	 */
 	public final static int CTLLEN 		= AsymmetricKey.IDSIZE;
 
 	/**
-	 * Account Symmetric Key Length
+	 * Symmetric Key Length
 	 */
 	public final static int KEYLEN 		= SymmetricKey.IDSIZE;
 
 	/**
-	 * Account InitVector length
+	 * InitVector length
 	 */
 	public final static int INITVLEN 	= SymmetricKey.IVSIZE;
 
 	/* Local values */
 	private SecurityControl	theControl	= null;
 	private SymmetricKey	theKey		= null;
-	private SecurityCipher	theEncrypt	= null;
-	private SecurityCipher	theDecrypt	= null;
 	
 	/* Access methods */
 	public  int 			getDataVersion()  	{ return getObj().getDataVersion(); }
@@ -41,7 +44,7 @@ public class Static extends DataItem {
 	private SymmetricKey	getKey()			{ return theKey; }
 
 	/* Linking methods */
-	public Static	getBase() { return (Static)super.getBase(); }
+	public ControlData	getBase() { return (ControlData)super.getBase(); }
 	public Values  	getObj()  { return (Values)super.getObj(); }	
 	
 	/* Field IDs */
@@ -68,17 +71,22 @@ public class Static extends DataItem {
 	 * Determine the field name for a particular field
 	 * @return the field name
 	 */
-	public String	fieldName(int iField) {
+	public static String	fieldName(int iField) {
 		switch (iField) {
 			case FIELD_ID:			return "ID";
 			case FIELD_VERS:		return "Version";
 			case FIELD_CONTROL:		return "Control";
-			case FIELD_KEY:			return "Key";
+			case FIELD_KEY:			return "SecurityKey";
 			case FIELD_IV:			return "InitVector";
-			default:		  		return super.fieldName(iField);
+			default:		  		return DataItem.fieldName(iField);
 		}
 	}
 				
+	/**
+	 * Determine the field name in a non-static fashion 
+	 */
+	public String getFieldName(int iField) { return fieldName(iField); }
+	
 	/**
 	 * Format the value of a particular field as a table row
 	 * @param iField the field number
@@ -112,7 +120,7 @@ public class Static extends DataItem {
  	* 
  	* @param pPrice The Price 
  	*/
-	protected Static(List pList, Static pStatic) {
+	protected ControlData(List pList, ControlData pStatic) {
 		/* Set standard values */
 		super(pList, pStatic.getId());
 		Values myObj = new Values(pStatic.getObj());
@@ -137,10 +145,10 @@ public class Static extends DataItem {
 	}
 
 	/* Standard constructor */
-	public Static(List      pList,
-				  int		uId,
-			      int       uVersion, 
-			      String	pControlKey,
+	public ControlData(List     pList,
+				  	   int		uId,
+				  	   int      uVersion, 
+				  	   String	pControlKey,
 				  byte[]	pSecurityKey,
 		  		  byte[]	pInitVector) throws Exception {
 		/* Initialise the item */
@@ -154,6 +162,7 @@ public class Static extends DataItem {
 		/* Access the Security manager */
 		DataSet 		myData 		= pList.getData();
 		SecureManager 	mySecurity 	= myData.getSecurity();
+		EncryptedPair	myPairs		= myData.getEncryptedPairs();
 		
 		/* Obtain the required security control */
 		theControl = mySecurity.getSecurityControl(pControlKey, "Database");
@@ -169,14 +178,17 @@ public class Static extends DataItem {
 		/* Record the initialisation vector */
 		myObj.setInitVector(pInitVector);			
 		
+		/* declare key and initialisation vector to the encrypted pairs */
+		myPairs.setEncryptionDtl(theKey, getInitVector());
+
 		/* Allocate the id */
 		pList.setNewId(this);				
 	}
 
 	/* Limited (no security) constructor */
-	public Static(List      		pList,
-				  int				uId,
-			      int       		uVersion) {
+	public ControlData(List pList,
+				  	   int	uId,
+				  	   int	uVersion) {
 		/* Initialise the item */
 		super(pList, uId);
 		Values myObj = new Values();
@@ -190,13 +202,14 @@ public class Static extends DataItem {
 	}
 
 	/**
-	 *  Initialise security from database values
+	 *  Initialise security for a spreadsheet load
 	 *  @param pStatic the static from the database
 	 */
-	public void setSecurity(Static pStatic) throws Exception {
-		Values 	myValues 	= getObj();
-		List 	myList 		= (List)getList();
-		DataSet myData 		= myList.getData();
+	public void setSecurity(ControlData pStatic) throws Exception {
+		Values 			myValues 	= getObj();
+		List 			myList 		= (List)getList();
+		DataSet 		myData 		= myList.getData();
+		EncryptedPair	myPairs		= myData.getEncryptedPairs();
 		
 		/* If we have static from the database */
 		if (pStatic != null) {
@@ -208,6 +221,9 @@ public class Static extends DataItem {
 			/* Access the control and symmetric key */
 			theControl		= pStatic.getSecurityControl();
 			theKey			= pStatic.getKey();
+			
+			/* declare key and initialisation vector to the encrypted pairs */
+			myPairs.setEncryptionDtl(theKey, getInitVector());
 		}
 		
 		/* else we need to allocate a new security control */
@@ -225,17 +241,12 @@ public class Static extends DataItem {
 			theKey	= theControl.getSymmetricKey(theControl.getControlMode().getSymKeyType());
 			myValues.setSecurityKey(theKey.getSecurityKey());			
 
-			/* Initialise an encryption cipher and store its initialisation vector */
-			theEncrypt = theKey.initEncryption();
-			myValues.setInitVector(theEncrypt.getInitVector());						
+			/* Declare the key to the encryption pairs and record the initialisation vector */
+			myValues.setInitVector(myPairs.setEncryptionDtl(theKey));						
 		}
 		
 		/* Ensure encryption of the spreadsheet load */
-		myData.getAccountTypes().ensureEncryption();
-		myData.getTransTypes().ensureEncryption();
-		myData.getAccounts().ensureEncryption();
-		myData.getPatterns().ensureEncryption();
-		myData.getEvents().ensureEncryption();
+		myData.ensureEncryption();
 	}
 
 	/**
@@ -253,7 +264,7 @@ public class Static extends DataItem {
 		if (pThat.getClass() != this.getClass()) return false;
 		
 		/* Access the object as a Static */
-		Static myStatic = (Static)pThat;
+		ControlData myStatic = (ControlData)pThat;
 		
 		/* Check for equality */
 		if (getId() != myStatic.getId()) return false;
@@ -281,7 +292,7 @@ public class Static extends DataItem {
 		if (pThat.getClass() != this.getClass()) return -1;
 		
 		/* Access the object as a Static */
-		Static myThat = (Static)pThat;
+		ControlData myThat = (ControlData)pThat;
 
 		/* Compare the Versions */
 		iDiff =(int)(getDataVersion() - myThat.getDataVersion());
@@ -316,181 +327,9 @@ public class Static extends DataItem {
 	}
 	
 	/**
-	 * Encrypt a string
-	 * @param pValue string to encrypt
-	 * @return the encrypted bytes 
-	 */
-	protected byte[] encryptString(String pValue) throws Exception {
-		byte[] myBytes = null;
-		
-		/* Protected against exceptions */
-		try {
-			/* Handle null string */
-			if (pValue == null) return null;
-			
-			/* If the encryption cipher has been reset */
-			if (theEncrypt == null) {
-				/* Initialise the encryption cipher */
-				theEncrypt = theKey.initEncryption(getInitVector());
-			}
-			
-			/* Encrypt the string */
-			myBytes = theEncrypt.encryptString(pValue);
-		}
-		
-		/* Catch exceptions */
-		catch (Exception e) {
-			/* Reset the encryption cipher and cascade the Exception */
-			theEncrypt = null;
-			throw e;
-		}
-		
-		/* Catch any exceptions */
-		catch (Throwable e) {
-			/* Reset the encryption cipher and report the failure */
-			theEncrypt = null;
-			throw new Exception(ExceptionClass.CRYPTO,
-								"Failed to encrypt string",
-								e);
-		}	
-
-		/* Return the encrypted bytes */
-		return myBytes;
-	}
-	
-	/**
-	 * Encrypt a character array
-	 * @param pValue character array to encrypt
-	 * @return the encrypted bytes 
-	 */
-	protected byte[] encryptChars(char[] pValue) throws Exception {
-		byte[] myBytes = null;
-		
-		/* Protected against exceptions */
-		try {
-			/* Handle null array */
-			if (pValue == null) return null;
-			
-			/* If the encryption cipher has been reset */
-			if (theEncrypt == null) {
-				/* Initialise the encryption cipher */
-				theEncrypt = theKey.initEncryption(getInitVector());
-			}
-			
-			/* Encrypt the characters */
-			myBytes = theEncrypt.encryptChars(pValue);
-		}
-		
-		/* Catch exceptions */
-		catch (Exception e) {
-			/* Reset the encryption cipher and cascade the Exception */
-			theEncrypt = null;
-			throw e;
-		}
-		
-		/* Catch any exceptions */
-		catch (Throwable e) {
-			/* Reset the encryption cipher and report the failure */
-			theEncrypt = null;
-			throw new Exception(ExceptionClass.CRYPTO,
-								"Failed to encrypt characters",
-								e);
-		}	
-
-		/* Return the encrypted bytes */
-		return myBytes;
-	}
-	
-	/**
-	 * Decrypt a string
-	 * @param pValue bytes to decrypt
-	 * @return the decrypted string
-	 */
-	protected String decryptString(byte[] pValue) throws Exception {
-		String myString = null;
-		
-		/* Protected against exceptions */
-		try {
-			/* Handle null bytes */
-			if (pValue == null) return null;
-			
-			/* If the decryption cipher has been reset */
-			if (theDecrypt == null) {
-				/* Initialise the decryption cipher */
-				theDecrypt = theKey.initDecryption(getInitVector());
-			}
-			
-			/* Decrypt the string */
-			myString = theDecrypt.decryptString(pValue);
-		}
-		
-		/* Catch exceptions */
-		catch (Exception e) {
-			/* Reset the decryption cipher and cascade the Exception */
-			theDecrypt = null;
-			throw e;
-		}
-		
-		/* Catch any exceptions */
-		catch (Throwable e) {
-			/* Reset the decryption cipher and report the failure */
-			theDecrypt = null;
-			throw new Exception(ExceptionClass.CRYPTO,
-								"Failed to decrypt string",
-								e);
-		}	
-
-		/* Return the decrypted string */
-		return myString;
-	}
-	
-	/**
-	 * Decrypt a character array
-	 * @param pValue bytes to decrypt
-	 * @return the decrypted bytes 
-	 */
-	protected char[] decryptChars(byte[] pValue) throws Exception {
-		char[] myChars = null;
-		
-		/* Protected against exceptions */
-		try {
-			/* Handle null bytes */
-			if (pValue == null) return null;
-			
-			/* If the decryption cipher has been reset */
-			if (theDecrypt == null) {
-				/* Initialise the decryption cipher */
-				theDecrypt = theKey.initDecryption(getInitVector());
-			}
-			
-			/* Decrypt the characters */
-			myChars = theDecrypt.decryptChars(pValue);
-		}
-		
-		/* Catch exceptions */
-		catch (Exception e) {
-			/* Reset the decryption cipher and cascade the Exception */
-			theDecrypt = null;
-			throw e;
-		}
-		
-		/* Catch any exceptions */
-		catch (Throwable e) {
-			/* Reset the decryption cipher and report the failure */
-			theDecrypt = null;
-			throw new Exception(ExceptionClass.CRYPTO,
-								"Failed to decrypt characters",
-								e);
-		}	
-
-		/* Return the decrypted characters */
-		return myChars;
-	}
-	
-	/**
 	 * Static List
 	 */
-	public static class List  extends DataList<Static> {
+	public static class List  extends DataList<ControlData> {
 		/* Members */
 		private DataSet		theData		= null;
 		public 	DataSet 	getData()	{ return theData; }
@@ -545,8 +384,8 @@ public class Static extends DataItem {
 		 * @param pItem item
 		 * @return the newly added item
 		 */
-		public Static addNewItem(DataItem pItem) { 
-			Static myStatic = new Static(this, (Static)pItem);
+		public ControlData addNewItem(DataItem pItem) { 
+			ControlData myStatic = new ControlData(this, (ControlData)pItem);
 			myStatic.addToList();
 			return myStatic; 
 		}
@@ -556,13 +395,13 @@ public class Static extends DataItem {
 		 * @param isCredit - ignored
 		 * @return the newly added item
 		 */
-		public Static addNewItem(boolean isCredit) { return null; }
+		public ControlData addNewItem(boolean isCredit) { return null; }
 
 		/**
 		 * 	Obtain the type of the item
 		 * @return the type of the item
 		 */
-		public String itemType() { return objName; }
+		public String itemType() { return listName; }
 
 		/**
 		 *  Add a Static item
@@ -572,10 +411,10 @@ public class Static extends DataItem {
 							String	pControlKey,
 	            			byte[]	pSecurityKey,
 							byte[]	pInitVector) throws Exception {
-			Static     	myStatic;
+			ControlData     	myStatic;
 			
 			/* Create the static */
-			myStatic = new Static(this, 
+			myStatic = new ControlData(this, 
 								  uId, 
 								  uVersion,
 								  pControlKey,
@@ -597,10 +436,10 @@ public class Static extends DataItem {
 		 */
 		public void addItem(int  			uId,
 							int  			uVersion) throws Exception {
-			Static     	myStatic;
+			ControlData     	myStatic;
 			
 			/* Create the static */
-			myStatic = new Static(this, 
+			myStatic = new ControlData(this, 
 								  uId, 
 								  uVersion);
 			
@@ -617,8 +456,8 @@ public class Static extends DataItem {
 		/**
 		 *  Access default Static item
 		 */
-		protected Static getDefault() {
-			Static     		myStatic;
+		protected ControlData getDefault() {
+			ControlData     		myStatic;
 			ListIterator 	myIterator;
 
 			/* Access the first static element */

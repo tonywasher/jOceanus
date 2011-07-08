@@ -378,7 +378,7 @@ public class PasswordKey {
 				myAltDigest.update((byte)(i % 256));
 				myAltHash = myAltDigest.digest();
 				
-				/* Reset the main digest skipping every fifth time */
+				/* Reset the alternate digest skipping every fifth time */
 				if (((i+1) % 5) != 0) myAltDigest.reset();
 				
 				/* If we have hit the switch iteration */
@@ -398,7 +398,7 @@ public class PasswordKey {
 			theAlternateHash = myAltHash;
 			
 			/* Combine the salt and hash */
-			mySaltAndHash = new byte[pSalt.length+ MODELENGTH+myMainHash.length];
+			mySaltAndHash = new byte[pSalt.length+MODELENGTH+myMainHash.length];
 			System.arraycopy(pSalt, 0, mySaltAndHash, 0, pSalt.length);
 			System.arraycopy(theKeyMode.getByteMode(), 0, mySaltAndHash, pSalt.length, MODELENGTH);
 			System.arraycopy(myMainHash, 0, mySaltAndHash, pSalt.length+MODELENGTH, myMainHash.length);

@@ -606,6 +606,26 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>
 	 */
 	public abstract T addNewItem(boolean isCredit);
 		
+	/**
+	 * Ensure encryption of items in the list
+	 */
+	public void ensureEncryption() throws Exception {
+		ListIterator 	myIterator;
+		T				myCurr;
+		
+		/* Access the iterator */
+		myIterator = listIterator();
+		
+		/* Loop through the items */
+		while ((myCurr = myIterator.next()) != null) {
+			/* Ensure encryption of the item */
+			myCurr.ensureEncryption();
+		}
+		
+		/* Return to caller */
+		return;
+	}	
+
 	/** 
 	 * Reset changes in an edit view
 	 */

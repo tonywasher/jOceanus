@@ -1,7 +1,5 @@
 package uk.co.tolcroft.finance.database;
 
-import java.sql.SQLException;
-
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
@@ -12,72 +10,72 @@ public class TableAccount extends DatabaseTable<Account> {
 	/**
 	 * The name of the Account table
 	 */
-	private final static String theTabName 		= "Accounts";
+	private final static String theTabName 		= Account.listName;
 				
 	/**
 	 * The name of the Account column
 	 */
-	private final static String theNameCol    	= "Name";
+	private final static String theNameCol    	= Account.fieldName(Account.FIELD_NAME);
 
 	/**
 	 * The name of the Account Type column
 	 */
-	private final static String theActTypCol 	= "AccountType";
+	private final static String theActTypCol 	= Account.fieldName(Account.FIELD_TYPE);
 
 	/**
 	 * The name of the Description column
 	 */
-	private final static String theDescCol   	= "Description";
+	private final static String theDescCol   	= Account.fieldName(Account.FIELD_DESC);
 
 	/**
 	 * The name of the Maturity column
 	 */
-	private final static String theMatureCol 	= "Maturity";
+	private final static String theMatureCol 	= Account.fieldName(Account.FIELD_MATURITY);
 
 	/**
 	 * The name of the Closed column
 	 */
-	private final static String theCloseCol  	= "Closed";
+	private final static String theCloseCol  	= Account.fieldName(Account.FIELD_CLOSE);
 
 	/**
 	 * The name of the Parent column
 	 */
-	private final static String theParentCol 	= "Parent";
+	private final static String theParentCol 	= Account.fieldName(Account.FIELD_PARENT);
 	
 	/**
 	 * The name of the Alias column
 	 */
-	private final static String theAliasCol 	= "Alias";
+	private final static String theAliasCol 	= Account.fieldName(Account.FIELD_ALIAS);
 	
 	/**
 	 * The name of the WebSite column
 	 */
-	private final static String theWebSiteCol 	= "WebSite";
+	private final static String theWebSiteCol 	= Account.fieldName(Account.FIELD_WEBSITE);
 	
 	/**
 	 * The name of the CustNo column
 	 */
-	private final static String theCustNoCol 	= "CustomerNo";
+	private final static String theCustNoCol 	= Account.fieldName(Account.FIELD_CUSTNO);
 	
 	/**
 	 * The name of the UserId column
 	 */
-	private final static String theUserIdCol 	= "UserId";
+	private final static String theUserIdCol 	= Account.fieldName(Account.FIELD_USERID);
 	
 	/**
 	 * The name of the Password column
 	 */
-	private final static String thePasswordCol 	= "Password";
+	private final static String thePasswordCol 	= Account.fieldName(Account.FIELD_PASSWORD);
 	
 	/**
 	 * The name of the Account column
 	 */
-	private final static String theAcctCol 		= "Account";
+	private final static String theAcctCol 		= Account.fieldName(Account.FIELD_ACCOUNT);
 	
 	/**
 	 * The name of the Notes column
 	 */
-	private final static String theNotesCol 	= "Notes";
+	private final static String theNotesCol 	= Account.fieldName(Account.FIELD_NOTES);
 	
 	/**
 	 * Constructor
@@ -92,6 +90,9 @@ public class TableAccount extends DatabaseTable<Account> {
 		return theTabName +  "(" + theIdCol + ")";
 	}
 		
+	/* Determine the item name */
+	protected String getItemsName() { return theTabName; }
+
 	/* Get the List for the table for loading */
 	protected Account.List  getLoadList(DataSet pData) {
 		return pData.getAccounts();
@@ -102,317 +103,6 @@ public class TableAccount extends DatabaseTable<Account> {
 		return new Account.List(pData.getAccounts(), ListStyle.UPDATE);
 	}
 	
-	/* Determine the item name */
-	protected String getItemsName() { return theTabName; }
-
-	/**
-	 * Determine the Name of the newly loaded item
-	 * @return the Name
-	 */
-	private byte[] getName() throws SQLException {
-		return getBinary();
-	}
-
-	/**
-	 * Determine the Account Type of the newly loaded item
-	 * @return the AccountType
-	 */
-	private int getAccountType() throws SQLException {
-		return getInteger();
-	}
-
-	/**
-	 * Determine the Description of the newly loaded item
-	 * @return the Description
-	 */
-	private byte[] getDescription() throws SQLException {
-		return getBinary();
-	}
-
-	/**
-	 * Determine the Maturity of the newly loaded item
-	 * @return the Maturity
-	 */
-	private java.util.Date getMaturity() throws SQLException {
-		return getDate();
-	}
-
-	/**
-	 * Determine the Closed Date of the newly loaded item
-	 * @return the ClosedDate
-	 */
-	private java.util.Date getClosed() throws SQLException {
-		return getDate();
-	}
-
-	/**
-	 * Determine the Parent of the newly loaded item
-	 * @return the Parent
-	 */
-	private int getParent() throws SQLException {
-		Integer myResult = getInteger();
-		if (myResult == null) return -1;
-		return myResult;
-	}
-
-	/**
-	 * Determine the Alias of the newly loaded item
-	 * @return the Alias
-	 */
-	private int getAlias() throws SQLException {
-		Integer myResult = getInteger();
-		if (myResult == null) return -1;
-		return myResult;
-	}
-
-	/**
-	 * Determine the WebSite of the newly loaded item
-	 * @return the WebSite
-	 */
-	private byte[] getWebSite() throws SQLException {
-		return getBinary();
-	}
-
-	/**
-	 * Determine the CustNo of the newly loaded item
-	 * @return the CustomerNo
-	 */
-	private byte[] getCustNo() throws SQLException {
-		return getBinary();
-	}
-
-	/**
-	 * Determine the UserId of the newly loaded item
-	 * @return the UserId
-	 */
-	private byte[] getUserId() throws SQLException {
-		return getBinary();
-	}
-
-	/**
-	 * Determine the Password of the newly loaded item
-	 * @return the Password
-	 */
-	private byte[] getPassword() throws SQLException {
-		return getBinary();
-	}
-
-	/**
-	 * Determine the Account of the newly loaded item
-	 * @return the Account
-	 */
-	private byte[] getAccount() throws SQLException {
-		return getBinary();
-	}
-
-	/**
-	 * Determine the Notes of the newly loaded item
-	 * @return the Notes
-	 */
-	private byte[] getNotes() throws SQLException {
-		return getBinary();
-	}
-
-	/**
-	 * Set the Name of the item to be inserted
-	 * @param pAccount the name of the item
-	 */
-	private void setName(byte[] pAccount) throws SQLException {
-		setBinary(pAccount);
-	}
-
-	/**
-	 * Set the AccountType of the item to be inserted
-	 * @param pActType the Account type of the item
-	 */
-	private void setAccountType(int pActType) throws SQLException {
-		setInteger(pActType);
-	}
-
-	/**
-	 * Set the Description of the item to be inserted
-	 * @param pDesc the description of the item
-	 */
-	private void setDescription(byte[] pDesc) throws SQLException {
-		setBinary(pDesc);
-	}
-
-	/**
-	 * Set the Maturity of the item to be inserted/updated
-	 * @param pMaturity the maturity of the item
-	 */
-	private void setMaturity(Date pMaturity) throws SQLException {
-		setDate(pMaturity);
-	}
-
-	/**
-	 * Set the Closed Date of the item to be inserted/updated
-	 * @param pClosed the Close Date of the item
-	 */
-	private void setClosed(Date pClosed) throws SQLException {
-		setDate(pClosed);
-	}
-
-	/**
-	 * Set the Parent of the item to be inserted/updated
-	 * @param pParent the id of the TaxRegime for the item
-	 */
-	private void setParent(int pParent) throws SQLException {
-		setInteger((pParent == -1) ? null : pParent);
-	}
-	
-	/**
-	 * Set the Alias of the item to be inserted/updated
-	 * @param pAlias the id of the TaxRegime for the item
-	 */
-	private void setAlias(int pAlias) throws SQLException {
-		setInteger((pAlias == -1) ? null : pAlias);
-	}
-	
-	/**
-	 * Set the WebSite of the item to be inserted/updated
-	 * @param pValue the webSite
-	 */
-	private void setWebSite(byte[] pValue) throws SQLException {
-		setBinary(pValue);
-	}
-
-	/**
-	 * Set the CustomerNo of the item to be inserted/updated
-	 * @param pValue the custNo
-	 */
-	private void setCustNo(byte[] pValue) throws SQLException {
-		setBinary(pValue);
-	}
-
-	/**
-	 * Set the UserId of the item to be inserted/updated
-	 * @param pValue the userId
-	 */
-	private void setUserId(byte[] pValue) throws SQLException {
-		setBinary(pValue);
-	}
-
-	/**
-	 * Set the Password of the item to be inserted/updated
-	 * @param pValue the password
-	 */
-	private void setPassword(byte[] pValue) throws SQLException {
-		setBinary(pValue);
-	}
-
-	/**
-	 * Set the Account of the item to be inserted/updated
-	 * @param pValue the account
-	 */
-	private void setAccount(byte[] pValue) throws SQLException {
-		setBinary(pValue);
-	}
-
-	/**
-	 * Set the Notes of the item to be inserted/updated
-	 * @param pValue the notes
-	 */
-	private void setNotes(byte[] pValue) throws SQLException {
-		setBinary(pValue);
-	}
-
-	/**
-	 * Update the Name of the item
-	 * @param pValue the new name
-	 */
-	private void updateName(byte[] pValue) {
-		updateBinary(theNameCol, pValue);
-	}		
-
-	/**
-	 * Update the Description of the item
-	 * @param pValue the new description
-	 */
-	private void updateDescription(byte[] pValue) {
-		updateBinary(theDescCol, pValue);
-	}	
-
-	/**
-	 * Update the Maturity of the item
-	 * @param pValue the new maturity
-	 */
-	private void updateMaturity(Date pValue) {
-		updateDate(theMatureCol, pValue);
-	}
-
-	/**
-	 * Update the Closed Date of the item
-	 * @param pValue the new closed date
-	 */
-	private void updateClosed(Date pValue) {
-		updateDate(theCloseCol, pValue);
-	}
-
-	/**
-	 * Update the Parent of the item
-	 * @param pValue the new parent
-	 */
-	private void updateParent(int pValue) {
-		updateInteger(theParentCol, (pValue == -1) ? null : pValue);
-	}
-	
-	/**
-	 * Update the Alias of the item
-	 * @param pValue the new alias
-	 */
-	private void updateAlias(int pValue) {
-		updateInteger(theAliasCol, (pValue == -1) ? null : pValue);
-	}
-	
-	/**
-	 * Update the WebSite of the item
-	 * @param pValue the new webSite
-	 */
-	private void updateWebSite(byte[] pValue) {
-		updateBinary(theWebSiteCol, pValue);
-	}
-
-	/**
-	 * Update the CustomerNo of the item
-	 * @param pValue the new custNo
-	 */
-	private void updateCustNo(byte[] pValue) {
-		updateBinary(theCustNoCol, pValue);
-	}
-
-	/**
-	 * Update the UserId of the item
-	 * @param pValue the new userId
-	 */
-	private void updateUserId(byte[] pValue) {
-		updateBinary(theUserIdCol, pValue);
-	}
-
-	/**
-	 * Update the Password of the item
-	 * @param pValue the new password
-	 */
-	private void updatePassword(byte[] pValue) {
-		updateBinary(thePasswordCol, pValue);
-	}
-
-	/**
-	 * Update the Account of the item
-	 * @param pValue the new Account
-	 */
-	private void updateAccount(byte[] pValue) {
-		updateBinary(theAcctCol, pValue);
-	}
-
-	/**
-	 * Update the Notes of the item
-	 * @param pValue the new notes
-	 */
-	private void updateNotes(byte[] pValue) {
-		updateBinary(theNotesCol, pValue);
-	}
-
 	/* Create statement for Accounts */
 	protected String createStatement() {
 		return "create table " + theTabName + " ( " +
@@ -453,8 +143,8 @@ public class TableAccount extends DatabaseTable<Account> {
 		int	    		myId;
 		byte[]  		myName;
 		int    			myActTypeId;
-		int 	   		myParentId;
-		int	    		myAliasId;
+		Integer	   		myParentId;
+		Integer    		myAliasId;
 		byte[]  		myDesc;
 		java.util.Date  myMaturity;
 		java.util.Date  myClosed;
@@ -468,20 +158,20 @@ public class TableAccount extends DatabaseTable<Account> {
 		/* Protect the access */
 		try {			
 			/* Get the various fields */
-			myId        	= getID();
-			myName   		= getName();
-			myActTypeId 	= getAccountType();
-			myDesc      	= getDescription();
-			myMaturity  	= getMaturity();
-			myClosed    	= getClosed();
-			myParentId		= getParent();
-			myAliasId		= getAlias();
-			myWebSite		= getWebSite();
-			myCustNo		= getCustNo();
-			myUserId		= getUserId();
-			myPassword		= getPassword();
-			myAccount		= getAccount();
-			myNotes			= getNotes();
+			myId        	= getInteger();
+			myName   		= getBinary();
+			myActTypeId 	= getInteger();
+			myDesc      	= getBinary();
+			myMaturity  	= getDate();
+			myClosed    	= getDate();
+			myParentId		= getInteger();
+			myAliasId		= getInteger();
+			myWebSite		= getBinary();
+			myCustNo		= getBinary();
+			myUserId		= getBinary();
+			myPassword		= getBinary();
+			myAccount		= getBinary();
+			myNotes			= getBinary();
 	
 			/* Access the list */
 			myList = (Account.List)getList();
@@ -532,22 +222,22 @@ public class TableAccount extends DatabaseTable<Account> {
 		/* Protect the access */
 		try {			
 			/* Set the fields */
-			setID(pItem.getId());
-			setName(pItem.getNameBytes());
-			setAccountType(pItem.getActType().getId());
-			setDescription(pItem.getDescBytes());
-			setMaturity(pItem.getMaturity());
-			setClosed(pItem.getClose());
-			setParent((pItem.getParent() != null)
-							? pItem.getParent().getId() : -1);
-			setAlias((pItem.getAlias() != null)
-							? pItem.getAlias().getId() : -1);
-			setWebSite(pItem.getWebSiteBytes());
-			setCustNo(pItem.getCustNoBytes());
-			setUserId(pItem.getUserIdBytes());
-			setPassword(pItem.getPasswordBytes());
-			setAccount(pItem.getAccountBytes());
-			setNotes(pItem.getNotesBytes());
+			setInteger(pItem.getId());
+			setBinary(pItem.getNameBytes());
+			setInteger(pItem.getActType().getId());
+			setBinary(pItem.getDescBytes());
+			setDate(pItem.getMaturity());
+			setDate(pItem.getClose());
+			setInteger((pItem.getParent() != null)
+							? pItem.getParent().getId() : null);
+			setInteger((pItem.getAlias() != null)
+							? pItem.getAlias().getId() : null);
+			setBinary(pItem.getWebSiteBytes());
+			setBinary(pItem.getCustNoBytes());
+			setBinary(pItem.getUserIdBytes());
+			setBinary(pItem.getPasswordBytes());
+			setBinary(pItem.getAccountBytes());
+			setBinary(pItem.getNotesBytes());
 		}
 				
 		catch (Throwable e) {
@@ -573,42 +263,42 @@ public class TableAccount extends DatabaseTable<Account> {
 			/* Update the fields */
 			if (Utils.differs(pItem.getNameBytes(),
 				  		  	  myBase.getNameBytes()))
-				updateName(pItem.getNameBytes());
+				updateBinary(theNameCol, pItem.getNameBytes());
 			if (Utils.differs(pItem.getDescBytes(),
 						  	  myBase.getDescBytes())) 
-				updateDescription(pItem.getDescBytes());
+				updateBinary(theDescCol, pItem.getDescBytes());
 			if (Date.differs(pItem.getMaturity(),
 				             myBase.getMaturity())) 
-				updateMaturity(pItem.getMaturity());
+				updateDate(theMatureCol, pItem.getMaturity());
 			if (Date.differs(pItem.getClose(),
 						  	 myBase.getClose()))
-				updateClosed(pItem.getClose());
+				updateDate(theCloseCol, pItem.getClose());
 			if (Account.differs(pItem.getParent(),
 								myBase.getParent()))
-				updateParent((pItem.getParent() != null)
-									? pItem.getParent().getId() : -1);
+				updateInteger(theParentCol, (pItem.getParent() != null)
+												? pItem.getParent().getId() : null);
 			if (Account.differs(pItem.getAlias(),
 				  	  			myBase.getAlias()))
-				updateAlias((pItem.getAlias() != null)
-									? pItem.getAlias().getId() : -1);
+				updateInteger(theAliasCol, (pItem.getAlias() != null)
+												? pItem.getAlias().getId() : null);
 			if (Utils.differs(pItem.getWebSiteBytes(),
 				  	  		  myBase.getWebSiteBytes()))
-				updateWebSite(pItem.getWebSiteBytes());
+				updateBinary(theWebSiteCol, pItem.getWebSiteBytes());
 			if (Utils.differs(pItem.getCustNoBytes(),
 				  	  		  myBase.getCustNoBytes()))
-				updateCustNo(pItem.getCustNoBytes());
+				updateBinary(theCustNoCol, pItem.getCustNoBytes());
 			if (Utils.differs(pItem.getUserIdBytes(),
 				  	  		  myBase.getUserIdBytes()))
-				updateUserId(pItem.getUserIdBytes());
+				updateBinary(theUserIdCol, pItem.getUserIdBytes());
 			if (Utils.differs(pItem.getPasswordBytes(),
 				  	  		  myBase.getPasswordBytes()))
-				updatePassword(pItem.getPasswordBytes());
+				updateBinary(thePasswordCol, pItem.getPasswordBytes());
 			if (Utils.differs(pItem.getAccountBytes(),
 				  	  		  myBase.getAccountBytes()))
-				updateAccount(pItem.getAccountBytes());
+				updateBinary(theAcctCol, pItem.getAccountBytes());
 			if (Utils.differs(pItem.getNotesBytes(),
 				  	  		  myBase.getNotesBytes()))
-				updateNotes(pItem.getNotesBytes());
+				updateBinary(theNotesCol, pItem.getNotesBytes());
 		}
 		
 		catch (Throwable e) {

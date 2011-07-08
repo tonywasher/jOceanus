@@ -6,15 +6,332 @@ import jxl.write.*;
 import java.util.Calendar;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
+import uk.co.tolcroft.finance.sheets.SpreadSheet.OutputSheet;
+import uk.co.tolcroft.finance.sheets.SpreadSheet.SheetType;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 
-public class SheetTaxYear {
+public class SheetTaxYear extends SheetDataItem<TaxYear> {
 	/**
 	 * NamedArea for TaxYears
 	 */
 	private static final String TaxYears 	   = "TaxParameters";
+	
+	/**
+	 * Is the spreadsheet a backup spreadsheet or an edit-able one
+	 */
+	private boolean isBackup	= false;
+	
+	/**
+	 * Validation control for TaxRegimes
+	 */
+	private WritableCellFeatures theRegimeCtl	= null;
+	
+	/**
+	 * TaxYear data list
+	 */
+	private TaxYear.List theList				= null;
+
+	/**
+	 * DataSet
+	 */
+	private DataSet theData						= null;
+
+	/**
+	 * Constructor for loading a spreadsheet
+	 * @param pInput the input spreadsheet
+	 */
+	protected SheetTaxYear(InputSheet	pInput) {
+		/* Call super constructor */
+		super(pInput, TaxYears);
+		
+		/* Note whether this is a backup */
+		isBackup = (pInput.getType() == SheetType.BACKUP);
+				
+		/* Access the Lists */
+		theData	= pInput.getData();
+		theList = theData.getTaxYears();
+	}
+
+	/**
+	 *  Constructor for creating a spreadsheet
+	 *  @param pOutput the output spreadsheet
+	 */
+	protected SheetTaxYear(OutputSheet	pOutput) {
+		/* Call super constructor */
+		super(pOutput, TaxYears);
+		
+		/* Note whether this is a backup */
+		isBackup = (pOutput.getType() == SheetType.BACKUP);
+				
+		/* Access the TaxYears list */
+		theList = pOutput.getData().getTaxYears();
+		setDataList(theList);
+		
+		/* If this is not a backup */
+		if (!isBackup) {
+			/* Obtain validation for the TaxRegimes */
+			theRegimeCtl 	= obtainCellValidation(SheetTaxRegime.TaxRegNames);
+		}
+	}
+	
+	/**
+	 * Load an item from the spreadsheet
+	 */
+	protected void loadItem() throws Throwable {
+
+		/* If this is a backup load */
+		if (isBackup) {
+			/* Access the IDs */
+			int	myID 		= loadInteger(0);
+			int	myRegimeId	= loadInteger(2);
+		
+			/* Access the dates */
+			java.util.Date 	myYear		= loadDate(1);
+		
+			/* Access the String values  */
+			String 	myAllowance	= loadString(3);
+			String	myLoAgeAllw	= loadString(4);
+			String	myHiAgeAllw	= loadString(5);
+			String	myCapAllow 	= loadString(6);
+			String	myRental 	= loadString(7);
+			String 	myAgeLimit	= loadString(8);
+			String	myLoBand	= loadString(9);
+			String	myBasicBand	= loadString(10);
+			String	myLoTax 	= loadString(11);
+			String	myBasicTax 	= loadString(12);
+			String 	myHiTax		= loadString(13);
+			String	myAddTax	= loadString(14);
+			String	myIntTax	= loadString(15);
+			String	myDivTax 	= loadString(16);
+			String	myHiDivTax 	= loadString(17);
+			String	myAddDivTax = loadString(18);
+			String	myCapTax 	= loadString(19);
+			String	myHiCapTax 	= loadString(20);
+			String	myAddLimit 	= loadString(21);
+			String	myAddBound 	= loadString(22);
+		
+			/* Add the Tax Year */
+			theList.addItem(myID, myRegimeId, myYear, myAllowance, myRental,
+        		           	myLoAgeAllw, myHiAgeAllw, myCapAllow, myAgeLimit,
+        		           	myAddLimit, myLoBand, myBasicBand, myAddBound,
+        		           	myLoTax, myBasicTax, myHiTax, myIntTax,
+        		           	myDivTax, myHiDivTax, myAddTax,
+        		           	myAddDivTax, myCapTax, myHiCapTax);
+		}
+		
+		/* else this is a load from an edit-able spreadsheet */
+		else {
+			/* Access the Strings */
+			String myTaxRegime		= loadString(1);
+		
+			/* Access the year */
+			java.util.Date 	myYear	= loadDate(0);
+		
+			/* Access the binary values  */
+			String 	myAllowance	= loadString(2);
+			String	myLoAgeAllw	= loadString(3);
+			String	myHiAgeAllw	= loadString(4);
+			String	myCapAllow 	= loadString(5);
+			String	myRental 	= loadString(6);
+			String 	myAgeLimit	= loadString(7);
+			String	myLoBand	= loadString(8);
+			String	myBasicBand	= loadString(9);
+			String	myLoTax 	= loadString(10);
+			String	myBasicTax 	= loadString(11);
+			String 	myHiTax		= loadString(12);
+			String	myAddTax	= loadString(13);
+			String	myIntTax	= loadString(14);
+			String	myDivTax 	= loadString(15);
+			String	myHiDivTax 	= loadString(16);
+			String	myAddDivTax = loadString(17);
+			String	myCapTax 	= loadString(18);
+			String	myHiCapTax 	= loadString(19);
+			String	myAddLimit 	= loadString(20);
+			String	myAddBound 	= loadString(21);
+		
+			/* Add the Tax Year */
+			theList.addItem(myTaxRegime,
+        		           	myYear,
+        		           	myAllowance,
+        		           	myRental,
+        		           	myLoAgeAllw,
+        		           	myHiAgeAllw,
+        		           	myCapAllow,
+        		           	myAgeLimit,
+        		           	myAddLimit,
+        		           	myLoBand,
+        		           	myBasicBand,
+        		           	myAddBound,
+        		           	myLoTax,
+        		           	myBasicTax,
+        		           	myHiTax,
+        		           	myIntTax,
+        		           	myDivTax,
+        		           	myHiDivTax,
+        		           	myAddTax,
+        		           	myAddDivTax,
+        		           	myCapTax,
+        		           	myHiCapTax);
+		
+		}
+	}
+
+	/**
+	 *  Insert a item into the spreadsheet
+	 *  @param pItem the Item to insert
+	 *  @param isBackup is the spreadsheet a backup, or else clear text
+	 */
+	protected void insertItem(TaxYear	pItem) throws Throwable  {
+		/* If we are creating a backup */
+		if (isBackup) {
+			/* Set the fields */
+			writeInteger(0, pItem.getId());
+			writeDate(1, pItem.getDate());
+			writeInteger(2, pItem.getTaxRegime().getId());	
+			writeNumber(3, pItem.getAllowance());
+			writeNumber(4, pItem.getLoAgeAllow());
+			writeNumber(5, pItem.getHiAgeAllow());
+			writeNumber(6, pItem.getCapitalAllow());
+			writeNumber(7, pItem.getRentalAllowance());
+			writeNumber(8, pItem.getAgeAllowLimit());
+			writeNumber(9, pItem.getLoBand());
+			writeNumber(10, pItem.getBasicBand());
+			writeNumber(11, pItem.getLoTaxRate());
+			writeNumber(12, pItem.getBasicTaxRate());
+			writeNumber(13, pItem.getHiTaxRate());
+			writeNumber(14, pItem.getAddTaxRate());
+			writeNumber(15, pItem.getIntTaxRate());
+			writeNumber(16, pItem.getDivTaxRate());
+			writeNumber(17, pItem.getHiDivTaxRate());
+			writeNumber(18, pItem.getAddDivTaxRate());
+			writeNumber(19, pItem.getCapTaxRate());
+			writeNumber(20, pItem.getHiCapTaxRate());
+			writeNumber(21, pItem.getAddAllowLimit());
+			writeNumber(22, pItem.getAddIncBound());
+		}
+
+		/* else we are creating an edit-able spreadsheet */
+		else {
+			/* Set the fields */
+			writeDate(0, pItem.getDate());
+			writeValidatedString(1, pItem.getTaxRegime().getName(), theRegimeCtl);				
+			writeNumber(2, pItem.getAllowance());
+			writeNumber(3, pItem.getLoAgeAllow());
+			writeNumber(4, pItem.getHiAgeAllow());
+			writeNumber(5, pItem.getCapitalAllow());
+			writeNumber(6, pItem.getRentalAllowance());
+			writeNumber(7, pItem.getAgeAllowLimit());
+			writeNumber(8, pItem.getLoBand());
+			writeNumber(9, pItem.getBasicBand());
+			writeNumber(10, pItem.getLoTaxRate());
+			writeNumber(11, pItem.getBasicTaxRate());
+			writeNumber(12, pItem.getHiTaxRate());
+			writeNumber(13, pItem.getAddTaxRate());
+			writeNumber(14, pItem.getIntTaxRate());
+			writeNumber(15, pItem.getDivTaxRate());
+			writeNumber(16, pItem.getHiDivTaxRate());
+			writeNumber(17, pItem.getAddDivTaxRate());
+			writeNumber(18, pItem.getCapTaxRate());
+			writeNumber(19, pItem.getHiCapTaxRate());
+			writeNumber(20, pItem.getAddAllowLimit());
+			writeNumber(21, pItem.getAddIncBound());
+		}
+	}
+
+	/**
+	 * PreProcess on write
+	 */
+	protected boolean preProcessOnWrite() throws Throwable {		
+		/* Ignore if we are creating a backup */
+		if (isBackup) return false;
+
+		/* Write titles */
+		writeString(0, TaxYear.fieldName(TaxYear.FIELD_YEAR));
+		writeString(1, TaxYear.fieldName(TaxYear.FIELD_REGIME));			
+		writeString(2, TaxYear.fieldName(TaxYear.FIELD_ALLOW));			
+		writeString(3, TaxYear.fieldName(TaxYear.FIELD_LOAGAL));			
+		writeString(4, TaxYear.fieldName(TaxYear.FIELD_HIAGAL));			
+		writeString(5, TaxYear.fieldName(TaxYear.FIELD_CAPALW));			
+		writeString(6, TaxYear.fieldName(TaxYear.FIELD_RENTAL));			
+		writeString(7, TaxYear.fieldName(TaxYear.FIELD_AGELMT));			
+		writeString(8, TaxYear.fieldName(TaxYear.FIELD_LOBAND));			
+		writeString(9, TaxYear.fieldName(TaxYear.FIELD_BSBAND));			
+		writeString(10, TaxYear.fieldName(TaxYear.FIELD_LOTAX));			
+		writeString(11, TaxYear.fieldName(TaxYear.FIELD_BASTAX));			
+		writeString(12, TaxYear.fieldName(TaxYear.FIELD_HITAX));			
+		writeString(13, TaxYear.fieldName(TaxYear.FIELD_ADDTAX));			
+		writeString(14, TaxYear.fieldName(TaxYear.FIELD_INTTAX));			
+		writeString(15, TaxYear.fieldName(TaxYear.FIELD_DIVTAX));			
+		writeString(16, TaxYear.fieldName(TaxYear.FIELD_HDVTAX));			
+		writeString(17, TaxYear.fieldName(TaxYear.FIELD_ADVTAX));			
+		writeString(18, TaxYear.fieldName(TaxYear.FIELD_CAPTAX));			
+		writeString(19, TaxYear.fieldName(TaxYear.FIELD_HCPTAX));			
+		writeString(20, TaxYear.fieldName(TaxYear.FIELD_ADDLMT));			
+		writeString(21, TaxYear.fieldName(TaxYear.FIELD_ADDBDY));			
+		return true;
+	}	
+
+	/**
+	 * PostProcess on write
+	 */
+	protected void postProcessOnWrite() throws Throwable {		
+		/* If we are creating a backup */
+		if (isBackup) {
+			/* Set the fourteen columns as the range */
+			nameRange(23);
+			setRateColumn(11);
+			setRateColumn(12);
+			setRateColumn(13);
+			setRateColumn(14);
+			setRateColumn(15);
+			setRateColumn(16);
+			setRateColumn(17);
+			setRateColumn(18);
+			setRateColumn(19);
+			setRateColumn(20);
+		}
+
+		/* else this is an edit-able spreadsheet */
+		else {
+			/* Set the thirteen columns as the range */
+			nameRange(22);
+
+			/* Set the String column width */
+			setColumnWidth(1, StaticClass.NAMELEN);
+			
+			/* Set Number columns */
+			setDateColumn(0);
+			setMoneyColumn(2);
+			setMoneyColumn(3);
+			setMoneyColumn(4);
+			setMoneyColumn(5);
+			setMoneyColumn(6);
+			setMoneyColumn(7);
+			setMoneyColumn(8);
+			setMoneyColumn(9);
+			setMoneyColumn(20);
+			setMoneyColumn(21);
+			setRateColumn(10);
+			setRateColumn(11);
+			setRateColumn(12);
+			setRateColumn(13);
+			setRateColumn(14);
+			setRateColumn(15);
+			setRateColumn(16);
+			setRateColumn(17);
+			setRateColumn(18);
+			setRateColumn(19);
+		}
+	}
+
+	/**
+	 * postProcess on Load
+	 */
+	protected void postProcessOnLoad() throws Throwable {
+		theData.calculateDateRange();
+	}
 	
 	/**
 	 *  Load the TaxYears from an archive
@@ -27,7 +344,7 @@ public class SheetTaxYear {
 	protected static boolean loadArchive(statusCtl 				pThread,
 										 Workbook				pWorkbook,
 							   	  		 DataSet				pData,
-							   	  		 SheetStatic.YearRange	pRange) throws Exception {
+							   	  		 SheetControl.YearRange	pRange) throws Exception {
 		/* Local variables */
 		TaxYear.List	myList;
 		Range[]   		myRange;
@@ -160,8 +477,7 @@ public class SheetTaxYear {
 					}
 			    
 					/* Add the Tax Year */
-					myList.addItem(0,
-		        				   myTaxRegime,
+					myList.addItem(myTaxRegime,
 		        		           myYear.getTime(),
 		    	   				   myAllowance,
 		    	   				   myRentalAllow,
@@ -196,364 +512,6 @@ public class SheetTaxYear {
 		catch (Throwable e) {
 			throw new Exception(ExceptionClass.EXCEL, 
 								"Failed to Load TaxYears",
-								e);
-		}
-		
-		/* Return to caller */
-		return true;
-	}
-	
-	/**
-	 *  Load the Tax Years from a backup
-	 *  @param pThread   the thread status control
-	 *  @param pWorkbook the workbook to load from
-	 *  @param pData the data set to load into
-	 *  @return continue to write <code>true/false</code> 
-	 */
-	protected static boolean loadBackup(statusCtl 	pThread,
-			 							Workbook	pWorkbook,
-		   	  				   	        DataSet		pData) throws Exception {
-		/* Local variables */
-		TaxYear.List	myList;
-		Range[]   		myRange;
-		Sheet     		mySheet;
-		Cell      		myTop;
-		Cell      		myBottom;
-		String    		myAllowance;
-		String    		myRentalAllow;
-		String    		myLoTaxBand;
-		String    		myBasicTaxBand;
-		String    		myLoAgeAllow;
-		String    		myHiAgeAllow;
-		String	  		myCapitalAllow;
-		String    		myAgeAllowLimit;
-		String    		myAddAllowLimit;
-		String    		myAddIncBound;
-		String    		myLoTaxRate; 
-		String    		myBasicTaxRate;
-		String    		myHiTaxRate;
-		String    		myIntTaxRate;
-		String    		myDivTaxRate;
-		String    		myHiDivTaxRate;
-		String    		myAddTaxRate;
-		String    		myAddDivTaxRate;
-		String	  		myCapTaxRate;
-		String	  		myHiCapTaxRate;
-		java.util.Date  myYear;
-		Cell	  		myCell;
-		DateCell  		myDateCell;
-		int      		myID;
-		int      		myRegimeID;
-		int		  		myCol;
-		int       		myTotal;
-		int				mySteps;
-		int       		myCount = 0;
-		
-		/* Protect against exceptions */
-		try {
-			/* Find the range of cells */
-			myRange = pWorkbook.findByName(TaxYears);
-		
-			/* Access the number of reporting steps */
-			mySteps = pThread.getReportingSteps();
-			
-			/* Declare the new stage */
-			if (!pThread.setNewStage(TaxYears)) return false;
-		
-			/* If we found the range OK */
-			if ((myRange != null) && (myRange.length == 1)) {
-			
-				/* Access the relevant sheet and Cell references */
-				mySheet   = pWorkbook.getSheet(myRange[0].getFirstSheetIndex());
-				myTop     = myRange[0].getTopLeft();
-				myBottom  = myRange[0].getBottomRight();
-				myCol  	  = myTop.getColumn();
-			
-				/* Count the number of TaxYears */
-				myTotal  = myBottom.getRow() - myTop.getRow() + 1;
-			
-				/* Access the list of tax years */
-				myList = pData.getTaxYears();
-			
-				/* Declare the number of steps */
-				if (!pThread.setNumSteps(myTotal)) return false;
-			
-				/* Loop through the rows of the table */
-				for (int i = myTop.getRow();
-					 i <= myBottom.getRow();
-					 i++) {
-				
-					/* Access IDs */
-					myCell    	= mySheet.getCell(myCol, i);
-					myID      	= Integer.parseInt(myCell.getContents());
-					myCell    	= mySheet.getCell(myCol+1, i);
-					myRegimeID 	= Integer.parseInt(myCell.getContents());
-				
-					/* Handle Date */
-					myCell     = mySheet.getCell(myCol+2, i);
-					myDateCell = (DateCell)myCell;
-					myYear     = myDateCell.getDate();
-				
-					/* Access the values */
-					myAllowance     = mySheet.getCell(myCol+3, i).getContents();
-					myLoAgeAllow    = mySheet.getCell(myCol+4, i).getContents();
-					myHiAgeAllow    = mySheet.getCell(myCol+5, i).getContents();
-					myCapitalAllow  = mySheet.getCell(myCol+6, i).getContents();
-					myRentalAllow   = mySheet.getCell(myCol+7, i).getContents();
-					myAgeAllowLimit = mySheet.getCell(myCol+8, i).getContents();
-					myLoTaxBand     = mySheet.getCell(myCol+9, i).getContents();
-					myBasicTaxBand  = mySheet.getCell(myCol+10, i).getContents();
-					myLoTaxRate     = mySheet.getCell(myCol+11, i).getContents();
-					myBasicTaxRate  = mySheet.getCell(myCol+12, i).getContents();
-					myHiTaxRate     = mySheet.getCell(myCol+13, i).getContents();
-					myIntTaxRate    = mySheet.getCell(myCol+14, i).getContents();
-					myDivTaxRate    = mySheet.getCell(myCol+15, i).getContents();
-					myHiDivTaxRate  = mySheet.getCell(myCol+16, i).getContents();
-
-					/* Handle AddAllowLimit which may be missing */
-					myCell 		 	= mySheet.getCell(myCol+17, i);
-					myAddAllowLimit = null;
-					if (myCell.getType() != CellType.EMPTY) {
-						myAddAllowLimit = myCell.getContents();
-					}
-					
-					/* Handle AddIncBound which may be missing */
-					myCell 		  = mySheet.getCell(myCol+18, i);
-					myAddIncBound = null;
-					if (myCell.getType() != CellType.EMPTY) {
-						myAddIncBound = myCell.getContents();
-					}
-					
-					/* Handle AddTaxRate which may be missing */
-					myCell 		 = mySheet.getCell(myCol+19, i);
-					myAddTaxRate = null;
-					if (myCell.getType() != CellType.EMPTY) {
-						myAddTaxRate    = myCell.getContents();
-					}
-					
-					/* Handle AddDivTaxRate which may be missing */
-					myCell    		= mySheet.getCell(myCol+20, i);
-					myAddDivTaxRate = null;
-					if (myCell.getType() != CellType.EMPTY) {
-						myAddDivTaxRate = myCell.getContents();
-					}
-					
-					/* Handle CapTaxRate which may be missing */
-					myCell 		 = mySheet.getCell(myCol+21, i);
-					myCapTaxRate = null;
-					if (myCell.getType() != CellType.EMPTY) {
-						myCapTaxRate    = myCell.getContents();
-					}
-					
-					/* Handle HiCapTaxRate which may be missing */
-					myCell   	   = mySheet.getCell(myCol+22, i);
-					myHiCapTaxRate = null;
-					if (myCell.getType() != CellType.EMPTY) {
-						myHiCapTaxRate = myCell.getContents();
-					}
-			
-					/* Add the Tax Year */
-					myList.addItem(myID,
-								   myRegimeID,
-		        		           myYear,
-		        		           myAllowance,
-		        		           myRentalAllow,
-		        		           myLoAgeAllow,
-		        		           myHiAgeAllow,
-		        		           myCapitalAllow,
-		        		           myAgeAllowLimit,
-		        		           myAddAllowLimit,
-		        		           myLoTaxBand,
-		        		           myBasicTaxBand,
-		        		           myAddIncBound,
-		        		           myLoTaxRate,
-		        		           myBasicTaxRate,
-		        		           myHiTaxRate,
-		        		           myIntTaxRate,
-		        		           myDivTaxRate,
-		        		           myHiDivTaxRate,
-		        		           myAddTaxRate,
-		        		           myAddDivTaxRate,
-		        		           myCapTaxRate,
-		        		           myHiCapTaxRate);
-				
-					/* Report the progress */
-					myCount++;
-					if ((myCount % mySteps) == 0) 
-						if (!pThread.setStepsDone(myCount)) return false;
-				}
-			}
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.EXCEL, 
-								"Failed to load TaxYears",
-								e);
-		}
-		
-		/* Return to caller */
-		return true;
-	}
-	
-	/**
-	 *  Write the Account Types to a backup
-	 *  @param pThread   the thread status control
-	 *  @param pWorkbook the workbook to write to
-	 *  @param pData the data set to write from
-	 *  @return continue to write <code>true/false</code> 
-	 */
-	protected static boolean writeBackup(statusCtl 			pThread,
-										 WritableWorkbook	pWorkbook,
-		   	        					 DataSet			pData) throws Exception {
-		WritableSheet 					mySheet;
-		DataList<TaxYear>.ListIterator	myIterator;
-		TaxYear.List					myYears;
-		TaxYear							myCurr;
-		int								myRow;
-		int								myCount;
-		int								myTotal;
-		int								mySteps;
-		jxl.write.Label					myCell;
-		jxl.write.DateTime				myDate;
-		WritableCellFormat				myFormat;
-	
-		/* Protect against exceptions */
-		try { 
-			/* Declare the new stage */
-			if (!pThread.setNewStage(TaxYears)) return false;
-			
-			/* Create the formats */
-			myFormat		= new WritableCellFormat(DateFormats.FORMAT2);
-		
-			/* Create the sheet */
-			mySheet   = pWorkbook.createSheet(TaxYears, 0);
-		
-			/* Access the number of reporting steps */
-			mySteps = pThread.getReportingSteps();
-
-			/* Access the tax years */
-			myYears	  = pData.getTaxYears();
-		
-			/* Count the number of years */
-			myTotal   = myYears.size();
-			
-			/* Declare the number of steps */
-			if (!pThread.setNumSteps(myTotal)) return false;
-			
-			/* Initialise counts */
-			myRow   = 0;
-			myCount = 0;
-			
-			/* Access the iterator */
-			myIterator = myYears.listIterator();
-			
-			/* Loop through the years */
-			while ((myCurr  = myIterator.next()) != null) {
-				/* Create the Identifier cell */
-				myCell = new jxl.write.Label(0, myRow, 
-						 					 Integer.toString(myCurr.getId()));
-				mySheet.addCell(myCell);
-				myCell = new jxl.write.Label(1, myRow, 
-	 					 					 Integer.toString(myCurr.getTaxRegime().getId()));
-				mySheet.addCell(myCell);
-				
-				/* Create the Date cells */
-				myDate = new jxl.write.DateTime(2, myRow, 
-						   						myCurr.getDate().getDate(),
-						   						myFormat);
-				mySheet.addCell(myDate);
-				
-				/* Create the Money cells */
-				myCell = new jxl.write.Label(3, myRow, 
-									   		 myCurr.getAllowance().format(false));
-				mySheet.addCell(myCell);
-				myCell = new jxl.write.Label(4, myRow, 
-						 					 myCurr.getLoAgeAllow().format(false));
-				mySheet.addCell(myCell);
-				myCell = new jxl.write.Label(5, myRow, 
-						 					 myCurr.getHiAgeAllow().format(false));
-				mySheet.addCell(myCell);
-				myCell = new jxl.write.Label(6, myRow, 
-						 					 myCurr.getCapitalAllow().format(false));
-				mySheet.addCell(myCell);
-				myCell = new jxl.write.Label(7, myRow, 
-				         					 myCurr.getRentalAllowance().format(false));
-				mySheet.addCell(myCell);
-				myCell = new jxl.write.Label(8, myRow, 
-						 					 myCurr.getAgeAllowLimit().format(false));
-				mySheet.addCell(myCell);
-				myCell = new jxl.write.Label(9, myRow, 
-						   			         myCurr.getLoBand().format(false));
-				mySheet.addCell(myCell);
-				myCell = new jxl.write.Label(10, myRow, 
-									         myCurr.getBasicBand().format(false));
-				mySheet.addCell(myCell);
-				
-				/* Create the Rate cells */
-				myCell = new jxl.write.Label(11, myRow, 
-									         myCurr.getLoTaxRate().format(false));
-				mySheet.addCell(myCell);
-				myCell = new jxl.write.Label(12, myRow, 
-						   			         myCurr.getBasicTaxRate().format(false));
-				mySheet.addCell(myCell);
-				myCell = new jxl.write.Label(13, myRow, 
-						   			         myCurr.getHiTaxRate().format(false));
-				mySheet.addCell(myCell);
-				myCell = new jxl.write.Label(14, myRow, 
-						   			         myCurr.getIntTaxRate().format(false));
-				mySheet.addCell(myCell);
-				myCell = new jxl.write.Label(15, myRow, 
-								             myCurr.getDivTaxRate().format(false));
-				mySheet.addCell(myCell);
-				myCell = new jxl.write.Label(16, myRow, 
-									         myCurr.getHiDivTaxRate().format(false));
-				mySheet.addCell(myCell);
-				if (myCurr.getAddAllowLimit() != null) {
-					myCell = new jxl.write.Label(17, myRow, 
-												 myCurr.getAddAllowLimit().format(false));
-					mySheet.addCell(myCell);
-				}
-				if (myCurr.getAddIncBound() != null) {
-					myCell = new jxl.write.Label(18, myRow, 
-												 myCurr.getAddIncBound().format(false));
-					mySheet.addCell(myCell);
-				}
-				if (myCurr.getAddTaxRate() != null) {
-					myCell = new jxl.write.Label(19, myRow, 
-												 myCurr.getAddTaxRate().format(false));
-					mySheet.addCell(myCell);
-				}
-				if (myCurr.getAddDivTaxRate() != null) {
-					myCell = new jxl.write.Label(20, myRow, 
-												 myCurr.getAddDivTaxRate().format(false));
-					mySheet.addCell(myCell);
-				}
-				if (myCurr.getCapTaxRate() != null) {
-					myCell = new jxl.write.Label(21, myRow, 
-												 myCurr.getCapTaxRate().format(false));
-					mySheet.addCell(myCell);
-				}
-				if (myCurr.getHiCapTaxRate() != null) {
-					myCell = new jxl.write.Label(22, myRow, 
-												 myCurr.getHiCapTaxRate().format(false));
-					mySheet.addCell(myCell);
-				}
-				
-				/* Report the progress */
-				myCount++;
-				myRow++;
-				if ((myCount % mySteps) == 0) 
-					if (!pThread.setStepsDone(myCount)) return false;
-			}
-		
-			/* Add the Range name */
-			if (myRow > 0)
-				pWorkbook.addNameArea(TaxYears, mySheet, 0, 0, 22, myRow-1);
-		}
-	
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.EXCEL, 
-								"Failed to create TaxYears",
 								e);
 		}
 		

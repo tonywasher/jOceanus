@@ -1,8 +1,8 @@
 package uk.co.tolcroft.finance.data;
 
-import uk.co.tolcroft.finance.data.EncryptedPair.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.DataList.ListStyle;
+import uk.co.tolcroft.models.EncryptedPair.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
@@ -12,7 +12,12 @@ public class Account extends DataItem {
 	/**
 	 * The name of the object
 	 */
-	private static final String objName = "Account";
+	public static final String objName = "Account";
+
+	/**
+	 * The name of the object
+	 */
+	public static final String listName = objName + "s";
 
 	/**
 	 * Account Name length
@@ -56,8 +61,8 @@ public class Account extends DataItem {
 
 	/* Members */
 	private int                   theOrder     = -1;
-	private int					  theParentId  = -1;
-	private int					  theAliasId   = -1;
+	private Integer				  theParentId  = null;
+	private Integer				  theAliasId   = null;
 	private int 				  theActTypeId = -1;
 	private Event                 theEarliest  = null;
 	private Event                 theLatest    = null;
@@ -70,27 +75,14 @@ public class Account extends DataItem {
 	private boolean               isParent	   = false;
 	private boolean               isAliasedTo  = false;
 		
-	/* Encrypted access */
-	private static String getStringPairValue(StringPair pPair) {
-		return (pPair == null) ? null : pPair.getValue(); }
-	private static byte[] getStringPairBytes(StringPair pPair) {
-		return (pPair == null) ? null : pPair.getBytes(); }
-	private static char[] getCharArrayPairValue(CharArrayPair pPair) {
-		return (pPair == null) ? null : pPair.getValue(); }
-	private static byte[] getCharArrayPairBytes(CharArrayPair pPair) {
-		return (pPair == null) ? null : pPair.getBytes(); }
-	private static String getCharArrayPairString(CharArrayPair pPair) {
-		return ((pPair == null) || (pPair.getValue() == null)) ? null : new String(pPair.getValue());
-	}
-	
 	/* Access methods */
 	public  Values      getObj()       	{ return (Values)super.getObj(); }	
-	public  String      getName()      	{ return getStringPairValue(getObj().getName()); }
-	public  String      getDesc()      	{ return getStringPairValue(getObj().getDesc()); }
+	public  String      getName()      	{ return EncryptedPair.getPairValue(getObj().getName()); }
+	public  String      getDesc()      	{ return EncryptedPair.getPairValue(getObj().getDesc()); }
 	public  Account     getParent()    	{ return getObj().getParent(); }
-	public  int 		getParentId()  	{ return theParentId; }
+	public  Integer		getParentId()  	{ return theParentId; }
 	public  Account     getAlias()    	{ return getObj().getAlias(); }
-	public  int	        getAliasId()  	{ return theAliasId; }
+	public  Integer     getAliasId()  	{ return theAliasId; }
 	public  Event       getEarliest()  	{ return theEarliest; }
 	public  Event       getLatest()    	{ return theLatest; }
 	public  AcctPrice   getInitPrice()  { return theInitPrice; }
@@ -98,12 +90,12 @@ public class Account extends DataItem {
 	public  int         getOrder()     	{ return theOrder; }
 	public  Date        getMaturity()  	{ return getObj().getMaturity(); }
 	public  Date    	getClose()     	{ return getObj().getClose(); }
-	public  char[]    	getWebSite()	{ return getCharArrayPairValue(getObj().getWebSite()); }
-	public  char[]    	getCustNo()		{ return getCharArrayPairValue(getObj().getCustNo()); }
-	public  char[]    	getUserId()		{ return getCharArrayPairValue(getObj().getUserId()); }
-	public  char[]    	getPassword()	{ return getCharArrayPairValue(getObj().getPassword()); }
-	public  char[]    	getAccount()	{ return getCharArrayPairValue(getObj().getAccount()); }
-	public  char[]    	getNotes()		{ return getCharArrayPairValue(getObj().getNotes()); }
+	public  char[]    	getWebSite()	{ return EncryptedPair.getPairValue(getObj().getWebSite()); }
+	public  char[]    	getCustNo()		{ return EncryptedPair.getPairValue(getObj().getCustNo()); }
+	public  char[]    	getUserId()		{ return EncryptedPair.getPairValue(getObj().getUserId()); }
+	public  char[]    	getPassword()	{ return EncryptedPair.getPairValue(getObj().getPassword()); }
+	public  char[]    	getAccount()	{ return EncryptedPair.getPairValue(getObj().getAccount()); }
+	public  char[]    	getNotes()		{ return EncryptedPair.getPairValue(getObj().getNotes()); }
 	public  boolean     isCloseable()  	{ return isCloseable; }
 	public  boolean     isParent()  	{ return isParent; }
 	public  boolean     isClosed()     	{ return (getClose() != null); }
@@ -121,16 +113,26 @@ public class Account extends DataItem {
 				(!getActType().isReserved())); 
 	}
 		
-	/* Encrypted value access */
-	public  byte[]	getNameBytes()      { return getStringPairBytes(getObj().getName()); }
-	public  byte[]  getDescBytes()      { return getStringPairBytes(getObj().getDesc()); }
-	public  byte[]  getWebSiteBytes()	{ return getCharArrayPairBytes(getObj().getWebSite()); }
-	public  byte[]  getCustNoBytes()	{ return getCharArrayPairBytes(getObj().getCustNo()); }
-	public  byte[]  getUserIdBytes()	{ return getCharArrayPairBytes(getObj().getUserId()); }
-	public  byte[]  getPasswordBytes()	{ return getCharArrayPairBytes(getObj().getPassword()); }
-	public  byte[]  getAccountBytes()	{ return getCharArrayPairBytes(getObj().getAccount()); }
-	public  byte[]  getNotesBytes()		{ return getCharArrayPairBytes(getObj().getNotes()); }
+	/* Encrypted bytes access */
+	public  byte[]	getNameBytes()      { return EncryptedPair.getPairBytes(getObj().getName()); }
+	public  byte[]  getDescBytes()      { return EncryptedPair.getPairBytes(getObj().getDesc()); }
+	public  byte[]  getWebSiteBytes()	{ return EncryptedPair.getPairBytes(getObj().getWebSite()); }
+	public  byte[]  getCustNoBytes()	{ return EncryptedPair.getPairBytes(getObj().getCustNo()); }
+	public  byte[]  getUserIdBytes()	{ return EncryptedPair.getPairBytes(getObj().getUserId()); }
+	public  byte[]  getPasswordBytes()	{ return EncryptedPair.getPairBytes(getObj().getPassword()); }
+	public  byte[]  getAccountBytes()	{ return EncryptedPair.getPairBytes(getObj().getAccount()); }
+	public  byte[]  getNotesBytes()		{ return EncryptedPair.getPairBytes(getObj().getNotes()); }
 	
+	/* Encrypted bytes access */
+	private StringPair    getNamePair()     { return getObj().getName(); }
+	private StringPair 	  getDescPair()     { return getObj().getDesc(); }
+	private CharArrayPair getWebSitePair()	{ return getObj().getWebSite(); }
+	private CharArrayPair getCustNoPair()	{ return getObj().getCustNo(); }
+	private CharArrayPair getUserIdPair()	{ return getObj().getUserId(); }
+	private CharArrayPair getPasswordPair()	{ return getObj().getPassword(); }
+	private CharArrayPair getAccountPair()	{ return getObj().getAccount(); }
+	private CharArrayPair getNotesPair()	{ return getObj().getNotes(); }
+
 	/* Linking methods */
 	public Account     getBase() { return (Account)super.getBase(); }
 	public boolean	   isLocked(){ return isClosed(); }
@@ -168,7 +170,7 @@ public class Account extends DataItem {
 	 * Determine the field name for a particular field
 	 * @return the field name
 	 */
-	public String	fieldName(int iField) {
+	public static String	fieldName(int iField) {
 		switch (iField) {
 			case FIELD_ID:			return "ID";
 			case FIELD_NAME:		return "Name";
@@ -184,9 +186,14 @@ public class Account extends DataItem {
 			case FIELD_PASSWORD:	return "Password";
 			case FIELD_ACCOUNT:		return "Account";
 			case FIELD_NOTES:		return "Notes";
-			default:		  		return super.fieldName(iField);
+			default:		  		return DataItem.fieldName(iField);
 		}
 	}
+	
+	/**
+	 * Determine the field name in a non-static fashion 
+	 */
+	public String getFieldName(int iField) { return fieldName(iField); }
 	
 	/**
 	 * Format the value of a particular field as a table row
@@ -202,10 +209,10 @@ public class Account extends DataItem {
 				myString += getId(); 
 				break;
 			case FIELD_NAME:	
-				myString += getStringPairValue(myObj.getName()); 
+				myString += myObj.getNameValue(); 
 				break;
 			case FIELD_DESC:	
-				myString += getStringPairValue(myObj.getDesc()); 
+				myString += myObj.getDescValue(); 
 				break;
 			case FIELD_TYPE:	
 				if ((getActType() == null) &&
@@ -222,35 +229,35 @@ public class Account extends DataItem {
 				break;
 			case FIELD_PARENT:	
 				if ((myObj.getParent() == null) &&
-					(theParentId != -1))
+					(theParentId != null))
 					myString += "Id=" + theParentId;
 				else
 					myString += Account.format(myObj.getParent()); 
 				break;
 			case FIELD_ALIAS:	
 				if ((myObj.getAlias() == null) &&
-					(theAliasId != -1))
+					(theAliasId != null))
 					myString += "Id=" + theAliasId;
 				else
 					myString += Account.format(myObj.getAlias()); 
 				break;
 			case FIELD_WEBSITE:	
-				myString += getCharArrayPairString(myObj.getWebSite()); 
+				myString += EncryptedPair.getCharArrayPairString(myObj.getWebSite()); 
 				break;
 			case FIELD_CUSTNO:	
-				myString += getCharArrayPairString(myObj.getCustNo()); 
+				myString += EncryptedPair.getCharArrayPairString(myObj.getCustNo()); 
 				break;
 			case FIELD_USERID:	
-				myString += getCharArrayPairString(myObj.getUserId()); 
+				myString += EncryptedPair.getCharArrayPairString(myObj.getUserId()); 
 				break;
 			case FIELD_PASSWORD:	
-				myString += getCharArrayPairString(myObj.getPassword()); 
+				myString += EncryptedPair.getCharArrayPairString(myObj.getPassword()); 
 				break;
 			case FIELD_ACCOUNT:	
-				myString += getCharArrayPairString(myObj.getAccount()); 
+				myString += EncryptedPair.getCharArrayPairString(myObj.getAccount()); 
 				break;
 			case FIELD_NOTES:	
-				myString += getCharArrayPairString(myObj.getNotes()); 
+				myString += EncryptedPair.getCharArrayPairString(myObj.getNotes()); 
 				break;
 		}
 		return myString;
@@ -319,8 +326,8 @@ public class Account extends DataItem {
 					byte[]         	pDesc,
 					java.util.Date 	pMaturity,
 			        java.util.Date 	pClose,
-			        int           	uParentId,
-			        int           	uAliasId,
+			        Integer        	pParentId,
+			        Integer        	pAliasId,
 			        byte[]			pWebSite,
 			        byte[]			pCustNo,
 			        byte[]			pUserId,
@@ -353,8 +360,8 @@ public class Account extends DataItem {
 		
 		/* Store the IDs */
 		theActTypeId = uAcTypeId;
-		theParentId  = uParentId;
-		theAliasId   = uAliasId;
+		theParentId  = pParentId;
+		theAliasId   = pAliasId;
 		
 		/* Look up the Account Type */
 		myActType = pList.theData.getAccountTypes().searchFor(uAcTypeId);
@@ -390,10 +397,17 @@ public class Account extends DataItem {
 	private Account(List    		pList,
 					String         	sName, 
 					int				uAcTypeId,
+					String			pDesc,
 					java.util.Date 	pMaturity,
 			        java.util.Date 	pClose,
-			        int           	uParentId,
-			        int           	uAliasId) throws Exception {
+			        Integer        	pParentId,
+			        Integer        	pAliasId,
+			        char[]			pWebSite,
+			        char[]			pCustNo,
+			        char[]			pUserId,
+			        char[]			pPassword,
+			        char[]			pAccount,
+			        char[]			pNotes) throws Exception {
 		/* Initialise the item */
 		super(pList, 0);
 		
@@ -410,11 +424,18 @@ public class Account extends DataItem {
 		
 		/* Record the encrypted values */
 		myObj.setName(myPairs.new StringPair(sName));
+		myObj.setDesc((pDesc == null) ? null : myPairs.new StringPair(pDesc));
+		myObj.setWebSite((pWebSite == null) ? null : myPairs.new CharArrayPair(pWebSite));
+		myObj.setCustNo((pCustNo == null) ? null : myPairs.new CharArrayPair(pCustNo));
+		myObj.setUserId((pUserId == null) ? null : myPairs.new CharArrayPair(pUserId));
+		myObj.setPassword((pPassword == null) ? null : myPairs.new CharArrayPair(pPassword));
+		myObj.setAccount((pAccount == null) ? null : myPairs.new CharArrayPair(pAccount));
+		myObj.setNotes((pNotes == null) ? null : myPairs.new CharArrayPair(pNotes));
 		
 		/* Store the IDs */
 		theActTypeId = uAcTypeId;
-		theParentId  = uParentId;
-		theAliasId   = uAliasId;
+		theParentId  = pParentId;
+		theAliasId   = pAliasId;
 		
 		/* Look up the Account Type */
 		myActType = pList.theData.getAccountTypes().searchFor(uAcTypeId);
@@ -464,19 +485,19 @@ public class Account extends DataItem {
 		
 		/* Check for equality */
 		if (getId() != myAccount.getId()) return false;
-		if (Utils.differs(getName(),    		myAccount.getName())) 		return false;
-		if (Utils.differs(getDesc(),    		myAccount.getDesc())) 		return false;
-		if (AccountType.differs(getActType(),	myAccount.getActType())) 	return false;
-		if (Date.differs(getClose(),   			myAccount.getClose())) 		return false;
-		if (Date.differs(getMaturity(),			myAccount.getMaturity())) 	return false;
-		if (Account.differs(getParent(),     	myAccount.getParent())) 	return false;			
-		if (Account.differs(getAlias(),       	myAccount.getAlias())) 		return false;			
-		if (Utils.differs(getWebSite(),			myAccount.getWebSite())) 	return false;
-		if (Utils.differs(getCustNo(),			myAccount.getCustNo())) 	return false;
-		if (Utils.differs(getUserId(),			myAccount.getUserId())) 	return false;
-		if (Utils.differs(getPassword(),		myAccount.getPassword())) 	return false;
-		if (Utils.differs(getAccount(),			myAccount.getAccount())) 	return false;
-		if (Utils.differs(getNotes(),			myAccount.getNotes())) 		return false;
+		if (EncryptedPair.differs(getNamePair(),    	myAccount.getNamePair())) 		return false;
+		if (EncryptedPair.differs(getDescPair(),    	myAccount.getDescPair())) 		return false;
+		if (AccountType.differs(getActType(),			myAccount.getActType())) 		return false;
+		if (Date.differs(getClose(),   					myAccount.getClose())) 			return false;
+		if (Date.differs(getMaturity(),					myAccount.getMaturity())) 		return false;
+		if (Account.differs(getParent(),     			myAccount.getParent())) 		return false;			
+		if (Account.differs(getAlias(),       			myAccount.getAlias())) 			return false;			
+		if (EncryptedPair.differs(getWebSitePair(),		myAccount.getWebSitePair())) 	return false;
+		if (EncryptedPair.differs(getCustNoPair(),		myAccount.getCustNoPair())) 	return false;
+		if (EncryptedPair.differs(getUserIdPair(),		myAccount.getUserIdPair())) 	return false;
+		if (EncryptedPair.differs(getPasswordPair(),	myAccount.getPasswordPair())) 	return false;
+		if (EncryptedPair.differs(getAccountPair(),		myAccount.getAccountPair())) 	return false;
+		if (EncryptedPair.differs(getNotesPair(),		myAccount.getNotesPair())) 		return false;
 		return true;
 	}
 
@@ -1131,11 +1152,11 @@ public class Account extends DataItem {
 		pushHistory();
 		
 		/* Update the Name if required */
-		if (Utils.differs(getName(), myAccount.getName()))  
+		if (EncryptedPair.differs(myObj.getName(), myNew.getName()))  
 			myObj.setName(myNew.getName());
 			
 		/* Update the description if required */
-		if (Utils.differs(getDesc(), myAccount.getDesc())) 
+		if (EncryptedPair.differs(myObj.getDesc(), myNew.getDesc())) 
 			myObj.setDesc(myNew.getDesc());
 			
 		/* Update the account type if required */
@@ -1159,27 +1180,27 @@ public class Account extends DataItem {
 			setAlias(myAccount.getAlias());
 		
 		/* Update the WebSite if required */
-		if (Utils.differs(getWebSite(), myAccount.getWebSite())) 
+		if (EncryptedPair.differs(myObj.getWebSite(), myNew.getWebSite())) 
 			myObj.setWebSite(myNew.getWebSite());
 		
 		/* Update the customer number if required */
-		if (Utils.differs(getCustNo(), myAccount.getCustNo())) 
+		if (EncryptedPair.differs(myObj.getCustNo(), myNew.getCustNo())) 
 			myObj.setCustNo(myNew.getCustNo());
 		
 		/* Update the UserId if required */
-		if (Utils.differs(getUserId(), myAccount.getUserId())) 
+		if (EncryptedPair.differs(myObj.getUserId(), myNew.getUserId())) 
 			myObj.setUserId(myNew.getUserId());
 		
 		/* Update the Password if required */
-		if (Utils.differs(getPassword(), myAccount.getPassword())) 
+		if (EncryptedPair.differs(myObj.getPassword(), myNew.getPassword())) 
 			myObj.setPassword(myNew.getPassword());
 		
 		/* Update the account if required */
-		if (Utils.differs(getAccount(), myAccount.getAccount())) 
+		if (EncryptedPair.differs(myObj.getAccount(), myNew.getAccount())) 
 			myObj.setAccount(myNew.getAccount());
 		
 		/* Update the notes if required */
-		if (Utils.differs(getNotes(), myAccount.getNotes())) 
+		if (EncryptedPair.differs(myObj.getNotes(), myNew.getNotes())) 
 			myObj.setNotes(myNew.getNotes());
 		
 		/* Check for changes */
@@ -1196,7 +1217,7 @@ public class Account extends DataItem {
 	/**
 	 * Ensure encryption after spreadsheet load
 	 */
-	private void ensureEncryption() throws Exception {
+	protected void ensureEncryption() throws Exception {
 		Values myObj = getObj();
 
 		/* Protect against exceptions */
@@ -1326,7 +1347,7 @@ public class Account extends DataItem {
 		 * Obtain the type of the item
 		 * @return the type of the item
 		 */
-		public String itemType() { return objName; }
+		public String itemType() { return listName; }
 				
 		/**
 		 * Reset the account flags after changes to events
@@ -1494,26 +1515,6 @@ public class Account extends DataItem {
 		}
 		
 		/**
-		 * Ensure encryption of items in the list after spreadsheet load
-		 */
-		protected void ensureEncryption() throws Exception {
-			ListIterator 	myIterator;
-			Account			myCurr;
-			
-			/* Access the iterator */
-			myIterator = listIterator();
-			
-			/* Loop through the items */
-			while ((myCurr = myIterator.next()) != null) {
-				/* Ensure encryption of the item */
-				myCurr.ensureEncryption();
-			}
-			
-			/* Return to caller */
-			return;
-		}	
-
-		/**
 		 * Add an Account
 		 * @param pAccount the Name of the account 
 		 * @param pAcType the Name of the account type
@@ -1525,17 +1526,24 @@ public class Account extends DataItem {
 		 */ 
 		public void addItem(String   		pName,
 				            String   		pAcType,
+				            String			pDesc,
 				            java.util.Date  pMaturity,
 				            java.util.Date  pClosed,
 				            String   		pParent,
-				            String   		pAlias) throws Exception {
+				            String   		pAlias,
+					        char[]			pWebSite,
+					        char[]			pCustNo,
+					        char[]			pUserId,
+					        char[]			pPassword,
+					        char[]			pAccount,
+					        char[]			pNotes) throws Exception {
 			AccountType.List 	myActTypes;
 			AccountType 		myActType;
 			Account       		myAccount;			
 			Account		 		myParent;
 			Account		 		myAlias;
-			int					myParentId = -1;
-			int					myAliasId  = -1;
+			Integer				myParentId = null;
+			Integer				myAliasId  = null;
 				
 			/* Access the account types and accounts */
 			myActTypes = theData.getAccountTypes();
@@ -1576,10 +1584,17 @@ public class Account extends DataItem {
 			myAccount = new Account(this,
 					                pName, 
 					                myActType.getId(),
+					                pDesc,
 					                pMaturity,
 					                pClosed,
 					                myParentId,
-					                myAliasId);
+					                myAliasId,
+							        pWebSite,
+							        pCustNo,
+							        pUserId,
+							        pPassword,
+							        pAccount,
+							        pNotes);
 				
 			/* Check that this Account has not been previously added */
 			if (searchFor(myAccount.getName()) != null) 
@@ -1615,8 +1630,8 @@ public class Account extends DataItem {
 				            byte[]   		pDesc,
 				            java.util.Date  pMaturity,
 				            java.util.Date  pClosed,
-				            int     		uParentId,
-				            int     		uAliasId,
+				            Integer    		pParentId,
+				            Integer 		pAliasId,
 					        byte[]			pWebSite,
 					        byte[]			pCustNo,
 					        byte[]			pUserId,
@@ -1633,8 +1648,8 @@ public class Account extends DataItem {
 					                pDesc,
 					                pMaturity,
 					                pClosed,
-					                uParentId,
-					                uAliasId,
+					                pParentId,
+					                pAliasId,
 							        pWebSite,
 							        pCustNo,
 							        pUserId,
@@ -1681,14 +1696,14 @@ public class Account extends DataItem {
 			/* Loop through the items to find the entry */
 			while ((myCurr = myIterator.next()) != null) {
 				/* If the account has a parent Id */
-				if (myCurr.getParentId() != -1) {
+				if (myCurr.getParentId() != null) {
 					/* Set the parent */
 					myCurr.setParent(searchFor(myCurr.getParentId()));
 					myCurr.getParent().touchParent();
 				}
 					
 				/* If the account has an alias Id */
-				if (myCurr.getAliasId() != -1) {
+				if (myCurr.getAliasId() != null) {
 					/* Set the alias */
 					myCurr.setAlias(searchFor(myCurr.getAliasId()));
 					myCurr.getAlias().touchAlias();
@@ -1746,14 +1761,24 @@ public class Account extends DataItem {
 		public CharArrayPair	getNotes()		{ return theNotes; }
 
 		/* Encrypted value access */
-		public  byte[]	getNameBytes()      { return getStringPairBytes(getName()); }
-		public  byte[]  getDescBytes()      { return getStringPairBytes(getDesc()); }
-		public  byte[]  getWebSiteBytes()	{ return getCharArrayPairBytes(getWebSite()); }
-		public  byte[]  getCustNoBytes()	{ return getCharArrayPairBytes(getCustNo()); }
-		public  byte[]  getUserIdBytes()	{ return getCharArrayPairBytes(getUserId()); }
-		public  byte[]  getPasswordBytes()	{ return getCharArrayPairBytes(getPassword()); }
-		public  byte[]  getAccountBytes()	{ return getCharArrayPairBytes(getAccount()); }
-		public  byte[]  getNotesBytes()		{ return getCharArrayPairBytes(getNotes()); }
+		public  String	getNameValue()      { return EncryptedPair.getPairValue(getName()); }
+		public  String  getDescValue()      { return EncryptedPair.getPairValue(getDesc()); }
+		public  char[]  getWebSiteValue()	{ return EncryptedPair.getPairValue(getWebSite()); }
+		public  char[]  getCustNoValue()	{ return EncryptedPair.getPairValue(getCustNo()); }
+		public  char[]  getUserIdValue()	{ return EncryptedPair.getPairValue(getUserId()); }
+		public  char[]  getPasswordValue()	{ return EncryptedPair.getPairValue(getPassword()); }
+		public  char[]  getAccountValue()	{ return EncryptedPair.getPairValue(getAccount()); }
+		public  char[]  getNotesValue()		{ return EncryptedPair.getPairValue(getNotes()); }
+		
+		/* Encrypted bytes access */
+		public  byte[]	getNameBytes()      { return EncryptedPair.getPairBytes(getName()); }
+		public  byte[]  getDescBytes()      { return EncryptedPair.getPairBytes(getDesc()); }
+		public  byte[]  getWebSiteBytes()	{ return EncryptedPair.getPairBytes(getWebSite()); }
+		public  byte[]  getCustNoBytes()	{ return EncryptedPair.getPairBytes(getCustNo()); }
+		public  byte[]  getUserIdBytes()	{ return EncryptedPair.getPairBytes(getUserId()); }
+		public  byte[]  getPasswordBytes()	{ return EncryptedPair.getPairBytes(getPassword()); }
+		public  byte[]  getAccountBytes()	{ return EncryptedPair.getPairBytes(getAccount()); }
+		public  byte[]  getNotesBytes()		{ return EncryptedPair.getPairBytes(getNotes()); }
 		
 		public void setName(StringPair pName) {
 			theName      = pName; }

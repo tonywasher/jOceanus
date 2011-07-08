@@ -263,10 +263,17 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 
 	/**
 	 * Determine the field name for a particular field
+	 * This method is the underlying method called when the id is unknown 
+	 * @return the field name
+	 */
+	public static String	fieldName(int fieldId)	{ return "Unknown"; }
+	
+	/**
+	 * Determine the field name for a particular field
 	 * This method is always overridden but is used to supply the default field name 
 	 * @return the field name
 	 */
-	public String		fieldName(int fieldId)	{ return "Unknown"; }
+	public abstract String	getFieldName(int fieldId);
 	
 	/**
 	 * Stub for extensions to add their own fields
@@ -316,7 +323,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 			 iField++) {
 			if (iField != 0) myString.append("<tr>"); 
 			myString.append("<td>"); 
-			myString.append(fieldName(iField)); 
+			myString.append(getFieldName(iField)); 
 			myString.append("</td><td>"); 
 			myString.append(formatField(iField, theObj));
 			myString.append("</td></tr>");
@@ -371,6 +378,11 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * @return the formatted field
 	 */
 	abstract public String formatField(int iField, histObject pObj);
+
+	/**
+	 * Ensure encryption of the item
+	 */
+	protected void ensureEncryption() throws Exception {}
 	
 	/**
 	 * Add the item to the list 

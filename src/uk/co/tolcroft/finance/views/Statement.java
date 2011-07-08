@@ -1,12 +1,11 @@
 package uk.co.tolcroft.finance.views;
 
-import uk.co.tolcroft.finance.data.EncryptedPair.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.Analysis.*;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.EncryptedPair.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.*;
-import uk.co.tolcroft.models.DataItem.*;
 import uk.co.tolcroft.models.DataItem.validationCtl.*;
 import uk.co.tolcroft.models.Number.*;
 
@@ -23,14 +22,6 @@ public class Statement implements htmlDumpable {
 	private EventAnalysis	theAnalysis		= null;
 	private List            theLines        = null;
 
-	/* Encrypted access */
-	private static String getStringPairValue(StringPair pPair) {
-		return (pPair == null) ? null : pPair.getValue(); }
-	private static Money getMoneyPairValue(MoneyPair pPair) {
-		return (pPair == null) ? null : pPair.getValue(); }
-	private static Units getUnitsPairValue(UnitsPair pPair) {
-		return (pPair == null) ? null : pPair.getValue(); }
-	
 	/* Access methods */
 	public Account       	getAccount()      { return theAccount; }
 	public Date.Range       getDateRange()    { return theRange; }
@@ -51,7 +42,7 @@ public class Statement implements htmlDumpable {
 		theView	   = pView;
 		theAccount = pAccount;
 		theRange   = pRange;
-		theLines   = new List();
+		theLines   = new List(this);
 		
 		/* Create an analysis for this statement */
 		theAnalysis = new EventAnalysis(theView.getDebugMgr(),
@@ -160,9 +151,13 @@ public class Statement implements htmlDumpable {
 
 	/* The List class */
 	public class List extends DataList<Line> {
+		private Statement theStatement = null;
 		
 		/* Constructors */
-		public List() { super(ListStyle.EDIT, false); }
+		public List(Statement pStatement) { 
+			super(ListStyle.EDIT, false);
+			theStatement = pStatement;
+		}
 		
 		/** 
 	 	 * Clone a StatementLine list (never used)
@@ -262,26 +257,30 @@ public class Statement implements htmlDumpable {
 		}
 	}
 			
-	public class Line extends DataItem  {
+	public static class Line extends DataItem  {
 		private Money        		theBalance   = null;
 		private Units				theBalUnits  = null;
 		private boolean             isCredit     = false;
+		private Statement			theStatement = null;
 
 		/* Access methods */
-		public Account       	getAccount()   		{ return theAccount; }
+		public Account       	getAccount()   		{ return theStatement.theAccount; }
 		public Values      		getObj()       		{ return (Values)super.getObj(); }
 		public Date        		getDate()      		{ return getObj().getDate(); }
-		public String           getDesc()      		{ return getStringPairValue(getObj().getDesc()); }
-		public Units       		getUnits()     		{ return getUnitsPairValue(getObj().getUnits()); }
-		public Money       		getAmount()    		{ return getMoneyPairValue(getObj().getAmount()); }
+		public String           getDesc()      		{ return EncryptedPair.getPairValue(getObj().getDesc()); }
+		public Units       		getUnits()     		{ return EncryptedPair.getPairValue(getObj().getUnits()); }
+		public Money       		getAmount()    		{ return EncryptedPair.getPairValue(getObj().getAmount()); }
 		public Account       	getPartner()   		{ return getObj().getPartner(); }
-		public Dilution   		getDilution() 		{ return getObj().getDilution(); }
-		public Money   			getTaxCredit() 		{ return getMoneyPairValue(getObj().getTaxCredit()); }
+		public Dilution   		getDilution() 		{ return EncryptedPair.getPairValue(getObj().getDilution()); }
+		public Money   			getTaxCredit() 		{ return EncryptedPair.getPairValue(getObj().getTaxCredit()); }
 		public Integer   		getYears() 			{ return getObj().getYears(); }
 		public TransactionType	getTransType() 		{ return getObj().getTransType(); }
 		public Money       		getBalance()   		{ return theBalance; }
 		public Units       		getBalanceUnits() 	{ return theBalUnits; }
 		public boolean          isCredit()     		{ return isCredit; }
+		
+		private View       		getView()   		{ return theStatement.theView; }
+		private ActDetail		getBucket()			{ return theStatement.theBucket; }
 		
 		/* Linking methods */
 		public Event getBase() { return (Event)super.getBase(); }
@@ -317,7 +316,7 @@ public class Statement implements htmlDumpable {
 		 * Determine the field name for a particular field
 		 * @return the field name
 		 */
-		public String	fieldName(int iField) {
+		public static String	fieldName(int iField) {
 			switch (iField) {
 				case FIELD_ID: 	  		return "ID";
 				case FIELD_DATE: 		return "Date";
@@ -331,9 +330,14 @@ public class Statement implements htmlDumpable {
 				case FIELD_DILUTION:	return "Dilution";
 				case FIELD_TAXCREDIT:	return "TaxCredit";
 				case FIELD_YEARS:		return "Years";
-				default:		  		return super.fieldName(iField);
+				default:		  		return DataItem.fieldName(iField);
 			}
 		}
+		
+		/**
+		 * Determine the field name in a non-static fashion 
+		 */
+		public String getFieldName(int iField) { return fieldName(iField); }
 		
 		/**
 		 * Format the value of a particular field as a table row
@@ -349,13 +353,13 @@ public class Statement implements htmlDumpable {
 					myString += getId(); 
 					break;
 				case FIELD_ACCOUNT:	
-					myString += Account.format(theAccount); 
+					myString += Account.format(getAccount()); 
 					break;
 				case FIELD_DATE:	
 					myString += Date.format(myObj.getDate()); 
 					break;
 				case FIELD_DESC:	
-					myString += getStringPairValue(myObj.getDesc()); 
+					myString += myObj.getDescValue(); 
 					break;
 				case FIELD_TRNTYP: 	
 					myString += TransactionType.format(myObj.getTransType());	
@@ -364,22 +368,22 @@ public class Statement implements htmlDumpable {
 					myString += Account.format(myObj.getPartner()); 
 					break;
 				case FIELD_AMOUNT: 	
-					myString += Money.format(getMoneyPairValue(myObj.getAmount()));	
+					myString += Money.format(myObj.getAmountValue());	
 					break;
 				case FIELD_UNITS: 	
-					myString += Units.format(getUnitsPairValue(myObj.getUnits()));	
+					myString += Units.format(myObj.getUnitsValue());	
 					break;
 				case FIELD_CREDIT: 
 					myString +=	(isCredit() ? "true" : "false");
 					break;
 				case FIELD_TAXCREDIT: 	
-					myString += Money.format(getMoneyPairValue(myObj.getTaxCredit()));	
+					myString += Money.format(myObj.getTaxCredValue());	
 					break;
 				case FIELD_YEARS:	
 					myString += myObj.getYears(); 
 					break;
 				case FIELD_DILUTION:	
-					myString += Dilution.format(myObj.getDilution()); 
+					myString += Dilution.format(myObj.getDilutionValue()); 
 					break;
 			}
 			return myString;
@@ -392,6 +396,7 @@ public class Statement implements htmlDumpable {
 		protected Line(List pList, Line pLine) {
 			/* Set standard values */
 			super(pList, 0);
+			theStatement = pList.theStatement;
 			Values myObj = new Values(pLine.getObj());
 			setObj(myObj);
 			pList.setNewId(this);
@@ -401,6 +406,7 @@ public class Statement implements htmlDumpable {
 		public Line(List           pList, 
 				    boolean        isCredit) {
 			super(pList, 0);
+			theStatement = pList.theStatement;
 			Values myObj = new Values();
 			setObj(myObj);
 			this.isCredit = isCredit;
@@ -413,6 +419,7 @@ public class Statement implements htmlDumpable {
 					Account 	pAccount) {
 			/* Make this an element */
 			super(pList, pEvent.getId());
+			theStatement = pList.theStatement;
 			Values 			myObj 	= new Values();
 			Event.Values	myBase 	= pEvent.getObj();
 			
@@ -422,7 +429,7 @@ public class Statement implements htmlDumpable {
 			myObj.setAmount(myBase.getAmount());
 			myObj.setUnits(myBase.getUnits());
 			myObj.setTransType(pEvent.getTransType());
-			myObj.setDilution(pEvent.getDilution());
+			myObj.setDilution(myBase.getDilution());
 			myObj.setTaxCredit(myBase.getTaxCredit());
 			myObj.setYears(pEvent.getYears());
 			setBase(pEvent);
@@ -452,7 +459,7 @@ public class Statement implements htmlDumpable {
 			DataSet		 myData;
 		
 			/* Access DataSet */
-			myData = theView.getData();
+			myData = getView().getData();
 			
 			/* Create a new Event list */
 			if (pList == null)
@@ -512,15 +519,15 @@ public class Statement implements htmlDumpable {
 		 */
 		protected void setBalances() {
 			/* If the bucket has a balance */
-			if (hasBalance()) {
+			if (theStatement.hasBalance()) {
 				/* Set current balance */
-				theBalance = new Money(((ValueAccount)theBucket).getValue());
+				theBalance = new Money(((ValueAccount)getBucket()).getValue());
 			}
 			
 			/* If the bucket has units */
-			if (hasUnits()) {
+			if (theStatement.hasUnits()) {
 				/* Set current units */
-				theBalUnits = new Units(((AssetAccount)theBucket).getUnits());
+				theBalUnits = new Units(((AssetAccount)getBucket()).getUnits());
 			}
 		}
 		
@@ -534,7 +541,7 @@ public class Statement implements htmlDumpable {
 			DataSet		 myData;
 		
 			/* Access DataSet */
-			myData = theView.getData();
+			myData = getView().getData();
 			
 			/* Create a new Event list */
 			myList = new Event.List(myData, ListStyle.VIEW);
@@ -562,7 +569,7 @@ public class Statement implements htmlDumpable {
 			/* Check credit and debit accounts */
 			return ((myPartner != null) &&
 					((getPartner().isClosed()) ||
-					 (theAccount.isClosed())));
+					 (getAccount().isClosed())));
 		}
 			
 		/**
@@ -640,7 +647,7 @@ public class Statement implements htmlDumpable {
 			/* If we are setting a non null value */
 			if (pDesc != null) {
 				/* Create the Encrypted pair for the values */
-				DataSet 		myData 	= theView.getData();
+				DataSet 		myData 	= getView().getData();
 				EncryptedPair	myPairs = myData.getEncryptedPairs();
 				StringPair		myPair	= myPairs.new StringPair(pDesc);
 			
@@ -662,7 +669,7 @@ public class Statement implements htmlDumpable {
 			/* If we are setting a non null value */
 			if (pAmount != null) {
 				/* Create the Encrypted pair for the values */
-				DataSet 		myData 	= theView.getData();
+				DataSet 		myData 	= getView().getData();
 				EncryptedPair	myPairs = myData.getEncryptedPairs();
 				MoneyPair		myPair	= myPairs.new MoneyPair(pAmount);
 			
@@ -684,7 +691,7 @@ public class Statement implements htmlDumpable {
 			/* If we are setting a non null value */
 			if (pUnits != null) {
 				/* Create the Encrypted pair for the values */
-				DataSet 		myData 	= theView.getData();
+				DataSet 		myData 	= getView().getData();
 				EncryptedPair	myPairs = myData.getEncryptedPairs();
 				UnitsPair		myPair	= myPairs.new UnitsPair(pUnits);
 			
@@ -702,8 +709,21 @@ public class Statement implements htmlDumpable {
 		 * 
 		 * @param pDilution the dilution 
 		 */
-		public void setDilution(Dilution pDilution) {
-			getObj().setDilution((pDilution == null) ? null : new Dilution(pDilution));
+		public void setDilution(Dilution pDilution) throws Exception {
+			/* If we are setting a non null value */
+			if (pDilution != null) {
+				/* Create the Encrypted pair for the values */
+				DataSet 		myData 	= getView().getData();
+				EncryptedPair	myPairs = myData.getEncryptedPairs();
+				DilutionPair	myPair	= myPairs.new DilutionPair(pDilution);
+			
+				/* Record the value and encrypt it*/
+				getObj().setDilution(myPair);
+				myPair.ensureEncryption();
+			}
+			
+			/* Else we are setting a null value */
+			else getObj().setDilution(null);
 		}
 		
 		/**
@@ -715,7 +735,7 @@ public class Statement implements htmlDumpable {
 			/* If we are setting a non null value */
 			if (pTaxCredit != null) {
 				/* Create the Encrypted pair for the values */
-				DataSet 		myData 	= theView.getData();
+				DataSet 		myData 	= getView().getData();
 				EncryptedPair	myPairs = myData.getEncryptedPairs();
 				MoneyPair		myPair	= myPairs.new MoneyPair(pTaxCredit);
 			
@@ -745,136 +765,143 @@ public class Statement implements htmlDumpable {
 		public void setDate(Date pDate) {
 			getObj().setDate((pDate == null) ? null : new Date(pDate));
 		}
-	}
-	
-	/**
-	 *  Values for a line 
-	 */
-	public class Values implements histObject {
-		private Date       		theDate      = null;
-		private StringPair      theDesc      = null;
-		private MoneyPair  		theAmount    = null;
-		private Account         thePartner   = null;
-		private UnitsPair  		theUnits     = null;
-		private Dilution		theDilution  = null;
-		private MoneyPair		theTaxCredit = null;
-		private Integer			theYears  	 = null;
-		private TransactionType	theTransType = null;
 		
-		/* Access methods */
-		public Date       		getDate()      { return theDate; }
-		public StringPair       getDesc()      { return theDesc; }
-		public MoneyPair   		getAmount()    { return theAmount; }
-		public Account          getPartner()   { return thePartner; }
-		public UnitsPair  		getUnits()     { return theUnits; }
-		public Dilution  		getDilution()  { return theDilution; }
-		public MoneyPair   		getTaxCredit() { return theTaxCredit; }
-		public Integer     		getYears()     { return theYears; }
-		public TransactionType	getTransType() { return theTransType; }
-		
-		public void setDate(Date pDate) {
-			theDate      = pDate; }
-		public void setDesc(StringPair pDesc) {
-			theDesc      = pDesc; }
-		public void setAmount(MoneyPair pAmount) {
-			theAmount    = pAmount; }
-		public void setPartner(Account pPartner) {
-			thePartner   = pPartner; }
-		public void setUnits(UnitsPair pUnits) {
-			theUnits     = pUnits; }
-		public void setDilution(Dilution pDilution) {
-			theDilution  = pDilution; }
-		public void setTaxCredit(MoneyPair pTaxCredit) {
-			theTaxCredit = pTaxCredit; }
-		public void setYears(Integer pYears) {
-			theYears     = pYears; }
-		public void setTransType(TransactionType pTransType) {
-			theTransType = pTransType; }
+		/**
+		 *  Values for a line 
+		 */
+		public class Values implements histObject {
+			private Date       		theDate      = null;
+			private StringPair      theDesc      = null;
+			private MoneyPair  		theAmount    = null;
+			private Account         thePartner   = null;
+			private UnitsPair  		theUnits     = null;
+			private DilutionPair	theDilution  = null;
+			private MoneyPair		theTaxCredit = null;
+			private Integer			theYears  	 = null;
+			private TransactionType	theTransType = null;
+			
+			/* Access methods */
+			public Date       		getDate()      { return theDate; }
+			public StringPair       getDesc()      { return theDesc; }
+			public MoneyPair   		getAmount()    { return theAmount; }
+			public Account          getPartner()   { return thePartner; }
+			public UnitsPair  		getUnits()     { return theUnits; }
+			public DilutionPair		getDilution()  { return theDilution; }
+			public MoneyPair   		getTaxCredit() { return theTaxCredit; }
+			public Integer     		getYears()     { return theYears; }
+			public TransactionType	getTransType() { return theTransType; }
+			
+			/* Encrypted value access */
+			public  Money		getAmountValue()    { return EncryptedPair.getPairValue(getAmount()); }
+			public  String  	getDescValue()      { return EncryptedPair.getPairValue(getDesc()); }
+			public  Money		getTaxCredValue()   { return EncryptedPair.getPairValue(getTaxCredit()); }
+			public  Units		getUnitsValue()     { return EncryptedPair.getPairValue(getUnits()); }
+			public  Dilution	getDilutionValue()  { return EncryptedPair.getPairValue(getDilution()); }
 
-		/* Constructor */
-		public Values() {}
-		public Values(Values pValues) {
-			theDate      = pValues.getDate();
-			theDesc      = pValues.getDesc();
-			theAmount    = pValues.getAmount();
-			thePartner   = pValues.getPartner();
-			theUnits     = pValues.getUnits();
-			theDilution  = pValues.getDilution();
-			theTaxCredit = pValues.getTaxCredit();
-			theYears     = pValues.getYears();
-			theTransType = pValues.getTransType();
-		}
-		
-		/* Check whether this object is equal to that passed */
-		public boolean histEquals(histObject pCompare) {
-			Values myValues = (Values)pCompare;
-			return histEquals(myValues);
-		}
-		public boolean histEquals(Values pValues) {
-			if (Date.differs(theDate,      				pValues.theDate))      return false;
-			if (EncryptedPair.differs(theDesc,      	pValues.theDesc))      return false;
-			if (EncryptedPair.differs(theAmount,    	pValues.theAmount))    return false;
-			if (EncryptedPair.differs(theUnits,     	pValues.theUnits))     return false;
-			if (Account.differs(thePartner,   			pValues.thePartner))   return false;
-			if (Dilution.differs(theDilution,			pValues.theDilution))  return false;
-			if (EncryptedPair.differs(theTaxCredit, 	pValues.theTaxCredit)) return false;
-			if (Utils.differs(theYears,     			pValues.theYears))     return false;
-			if (TransactionType.differs(theTransType,	pValues.theTransType)) return false;
-			return true;
-		}
-		
-		/* Copy values */
-		public void    copyFrom(histObject pSource) {
-			Values myValues = (Values)pSource;
-			copyFrom(myValues);
-		}
-		public histObject copySelf() {
-			return new Values(this);
-		}
-		public void    copyFrom(Values pValues) {
-			theDate      = pValues.getDate();
-			theDesc      = pValues.getDesc();
-			theAmount    = pValues.getAmount();
-			thePartner   = pValues.getPartner();
-			theUnits     = pValues.getUnits();
-			theDilution  = pValues.getDilution();
-			theTaxCredit = pValues.getTaxCredit();
-			theYears     = pValues.getYears();
-			theTransType = pValues.getTransType();
-		}
-		public boolean	fieldChanged(int fieldNo, histObject pOriginal) {
-			Values	pValues = (Values)pOriginal;
-			boolean	bResult = false;
-			switch (fieldNo) {
-				case Statement.Line.FIELD_DATE:
-					bResult = (Date.differs(theDate,       			pValues.theDate));
-					break;
-				case Statement.Line.FIELD_DESC:
-					bResult = (EncryptedPair.differs(theDesc,      	pValues.theDesc));
-					break;
-				case Statement.Line.FIELD_AMOUNT:
-					bResult = (EncryptedPair.differs(theAmount,    	pValues.theAmount));
-					break;
-				case Statement.Line.FIELD_PARTNER:
-					bResult = (Account.differs(thePartner,   		pValues.thePartner));
-					break;
-				case Statement.Line.FIELD_UNITS:
-					bResult = (EncryptedPair.differs(theUnits,     	pValues.theUnits));
-					break;
-				case Statement.Line.FIELD_TRNTYP:
-					bResult = (TransactionType.differs(theTransType, pValues.theTransType));
-					break;
-				case Statement.Line.FIELD_TAXCREDIT:
-					bResult = (EncryptedPair.differs(theTaxCredit, 	pValues.theTaxCredit));
-					break;
-				case Statement.Line.FIELD_YEARS:
-					bResult = (Utils.differs(theYears,     			pValues.theYears));
-					break;
-				case Statement.Line.FIELD_DILUTION:
-					bResult = (Dilution.differs(theDilution,  		pValues.theDilution));
-					break;
+			public void setDate(Date pDate) {
+				theDate      = pDate; }
+			public void setDesc(StringPair pDesc) {
+				theDesc      = pDesc; }
+			public void setAmount(MoneyPair pAmount) {
+				theAmount    = pAmount; }
+			public void setPartner(Account pPartner) {
+				thePartner   = pPartner; }
+			public void setUnits(UnitsPair pUnits) {
+				theUnits     = pUnits; }
+			public void setDilution(DilutionPair pDilution) {
+				theDilution  = pDilution; }
+			public void setTaxCredit(MoneyPair pTaxCredit) {
+				theTaxCredit = pTaxCredit; }
+			public void setYears(Integer pYears) {
+				theYears     = pYears; }
+			public void setTransType(TransactionType pTransType) {
+				theTransType = pTransType; }
+
+			/* Constructor */
+			public Values() {}
+			public Values(Values pValues) {
+				theDate      = pValues.getDate();
+				theDesc      = pValues.getDesc();
+				theAmount    = pValues.getAmount();
+				thePartner   = pValues.getPartner();
+				theUnits     = pValues.getUnits();
+				theDilution  = pValues.getDilution();
+				theTaxCredit = pValues.getTaxCredit();
+				theYears     = pValues.getYears();
+				theTransType = pValues.getTransType();
 			}
-			return bResult;
+			
+			/* Check whether this object is equal to that passed */
+			public boolean histEquals(histObject pCompare) {
+				Values myValues = (Values)pCompare;
+				return histEquals(myValues);
+			}
+			public boolean histEquals(Values pValues) {
+				if (Date.differs(theDate,      				pValues.theDate))      return false;
+				if (EncryptedPair.differs(theDesc,      	pValues.theDesc))      return false;
+				if (EncryptedPair.differs(theAmount,    	pValues.theAmount))    return false;
+				if (EncryptedPair.differs(theUnits,     	pValues.theUnits))     return false;
+				if (Account.differs(thePartner,   			pValues.thePartner))   return false;
+				if (EncryptedPair.differs(theDilution,		pValues.theDilution))  return false;
+				if (EncryptedPair.differs(theTaxCredit, 	pValues.theTaxCredit)) return false;
+				if (Utils.differs(theYears,     			pValues.theYears))     return false;
+				if (TransactionType.differs(theTransType,	pValues.theTransType)) return false;
+				return true;
+			}
+			
+			/* Copy values */
+			public void    copyFrom(histObject pSource) {
+				Values myValues = (Values)pSource;
+				copyFrom(myValues);
+			}
+			public histObject copySelf() {
+				return new Values(this);
+			}
+			public void    copyFrom(Values pValues) {
+				theDate      = pValues.getDate();
+				theDesc      = pValues.getDesc();
+				theAmount    = pValues.getAmount();
+				thePartner   = pValues.getPartner();
+				theUnits     = pValues.getUnits();
+				theDilution  = pValues.getDilution();
+				theTaxCredit = pValues.getTaxCredit();
+				theYears     = pValues.getYears();
+				theTransType = pValues.getTransType();
+			}
+			public boolean	fieldChanged(int fieldNo, histObject pOriginal) {
+				Values	pValues = (Values)pOriginal;
+				boolean	bResult = false;
+				switch (fieldNo) {
+					case Statement.Line.FIELD_DATE:
+						bResult = (Date.differs(theDate,       			pValues.theDate));
+						break;
+					case Statement.Line.FIELD_DESC:
+						bResult = (EncryptedPair.differs(theDesc,      	pValues.theDesc));
+						break;
+					case Statement.Line.FIELD_AMOUNT:
+						bResult = (EncryptedPair.differs(theAmount,    	pValues.theAmount));
+						break;
+					case Statement.Line.FIELD_PARTNER:
+						bResult = (Account.differs(thePartner,   		pValues.thePartner));
+						break;
+					case Statement.Line.FIELD_UNITS:
+						bResult = (EncryptedPair.differs(theUnits,     	pValues.theUnits));
+						break;
+					case Statement.Line.FIELD_TRNTYP:
+						bResult = (TransactionType.differs(theTransType, pValues.theTransType));
+						break;
+					case Statement.Line.FIELD_TAXCREDIT:
+						bResult = (EncryptedPair.differs(theTaxCredit, 	pValues.theTaxCredit));
+						break;
+					case Statement.Line.FIELD_YEARS:
+						bResult = (Utils.differs(theYears,     			pValues.theYears));
+						break;
+					case Statement.Line.FIELD_DILUTION:
+						bResult = (EncryptedPair.differs(theDilution,  	pValues.theDilution));
+						break;
+				}
+				return bResult;
+			}
 		}
-	}
+	}	
 }

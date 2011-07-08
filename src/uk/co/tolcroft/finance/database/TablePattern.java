@@ -1,7 +1,5 @@
 package uk.co.tolcroft.finance.database;
 
-import java.sql.SQLException;
-
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
@@ -12,47 +10,47 @@ public class TablePattern extends DatabaseTable<Pattern> {
 	/**
 	 * The name of the Patterns table
 	 */
-	private final static String theTabName 		= "Patterns";
+	private final static String theTabName 		= Pattern.listName;
 				
 	/**
 	 * The name of the Account column
 	 */
-	private final static String theActCol    	= "Account";
+	private final static String theActCol    	= Pattern.fieldName(Pattern.FIELD_ACCOUNT);
 
 	/**
 	 * The name of the Date column
 	 */
-	private final static String theDateCol 		= "Date";
+	private final static String theDateCol 		= Pattern.fieldName(Pattern.FIELD_DATE);
 
 	/**
 	 * The name of the Description column
 	 */
-	private final static String theDescCol   	= "Description";
+	private final static String theDescCol   	= Pattern.fieldName(Pattern.FIELD_DESC);
 
 	/**
 	 * The name of the Amount column
 	 */
-	private final static String theAmntCol   	= "Amount";
+	private final static String theAmntCol   	= Pattern.fieldName(Pattern.FIELD_AMOUNT);
 
 	/**
 	 * The name of the Partner Account column
 	 */
-	private final static String thePartCol   	= "Partner";
+	private final static String thePartCol   	= Pattern.fieldName(Pattern.FIELD_PARTNER);
 
 	/**
 	 * The name of the TransType column
 	 */
-	private final static String theTrnTypCol 	= "TransactionType";
+	private final static String theTrnTypCol 	= Pattern.fieldName(Pattern.FIELD_TRNTYP);
 
 	/**
 	 * The name of the isCredit flag column
 	 */
-	private final static String theIsCrtCol  	= "isCredit";
+	private final static String theIsCrtCol  	= Pattern.fieldName(Pattern.FIELD_CREDIT);
 
 	/**
 	 * The name of the Frequency column
 	 */
-	private final static String theFreqCol   	= "Frequency";
+	private final static String theFreqCol   	= Pattern.fieldName(Pattern.FIELD_FREQ);
 	
 	/**
 	 * Constructor
@@ -77,199 +75,6 @@ public class TablePattern extends DatabaseTable<Pattern> {
 		return new Pattern.List(pData.getPatterns(), ListStyle.UPDATE);
 	}
 	
-	/**
-	 * Determine the Account of the newly loaded item
-	 * @return the Account
-	 */
-	private int getAccount() throws SQLException {
-		return getInteger();
-	}
-
-	/**
-	 * Determine the Date of the newly loaded item
-	 * @return the Rate
-	 */
-	protected java.util.Date getDate() throws SQLException {
-		return super.getDate();
-	}
-
-	/**
-	 * Determine the Description of the newly loaded item
-	 * @return the Description
-	 */
-	private byte[] getDesc() throws SQLException {
-		return getBinary();
-	}
-
-	/**
-	 * Determine the Amount of the newly loaded item
-	 * @return the Amount
-	 */
-	private byte[] getAmount() throws SQLException {
-		return getBinary();
-	}
-
-	/**
-	 * Determine the Partner Account of the newly loaded item
-	 * @return the Partner account
-	 */
-	private int getPartner() throws SQLException {
-		return getInteger();
-	}
-
-	/**
-	 * Determine the TransType of the newly loaded item
-	 * @return the TransType
-	 */
-	private int getTransType() throws SQLException {
-		return getInteger();
-	}
-
-	/**
-	 * Determine the isCredit flag of the newly loaded item
-	 * @return the isCredit Flag
-	 */
-	private boolean getIsCredit() throws SQLException {
-		return getBoolean();
-	}
-
-	/**
-	 * Determine the Frequency of the newly loaded item
-	 * @return the Frequency
-	 */
-	private int getFrequency() throws SQLException {
-		return getInteger();
-	}		
-	
-	/**
-	 * Set the Account of the item to be inserted
-	 * @param pAccount the account of the item
-	 */
-	private void setAccount(int pAccount) throws SQLException {
-		setInteger(pAccount);
-	}
-
-	/**
-	 * Set the Date of the item to be inserted
-	 * @param pDate the Date of the item
-	 */
-	protected void setDate(Date pDate) throws SQLException {
-		super.setDate(pDate);
-	}
-
-	/**
-	 * Set the Description of the item to be inserted/updated
-	 * @param pDesc the description of the item
-	 */
-	private void setDesc(byte[] pDesc) throws SQLException {
-		setBinary(pDesc);
-	}
-
-	/**
-	 * Set the Amount of the item to be inserted/updated
-	 * @param pAmount the amount of the item
-	 */
-	private void setAmount(byte[] pAmount) throws SQLException {
-		setBinary(pAmount);
-	}
-
-	/**
-	 * Set the Partner Account of the item to be inserted/updated
-	 * @param pPartner the partner account of the item
-	 */
-	private void setPartner(int pPartner) throws SQLException {
-		setInteger(pPartner);
-	}
-
-	/**
-	 * Set the TransType of the item to be inserted/updated
-	 * @param pTransType the transtype of the item
-	 */
-	private void setTransType(int pTransType) throws SQLException {
-		setInteger(pTransType);
-	}
-
-	/**
-	 * Set the IsCredit flag of the item to be inserted/updated
-	 * @param isCredit the isCredit flag of the item
-	 */
-	private void setIsCredit(boolean isCredit) throws SQLException {
-		setBoolean(isCredit);
-	}
-
-	/**
-	 * Set the Frequency of the item to be inserted/updated
-	 * @param pFrequency the frequency of the item
-	 */
-	private void setFrequency(int pFrequency) throws SQLException {
-		setInteger(pFrequency);
-	}
-	
-	/**
-	 * Update the Account of the item
-	 * @param pValue the new account
-	 */
-	private void updateAccount(int pValue) {
-		updateInteger(theActCol, pValue);
-	}		
-
-	/**
-	 * Update the Date of the item
-	 * @param pValue the new date
-	 */
-	private void updateDate(Date pValue) {
-		updateDate(theDateCol, pValue);
-	}		
-
-	/**
-	 * Update the Description of the item
-	 * @param pValue the new description
-	 */
-	private void updateDescription(byte[] pValue) {
-		updateBinary(theDescCol, pValue);
-	}
-
-	/**
-	 * Update the Amount of the item
-	 * @param pValue the new amount
-	 */
-	private void updateAmount(byte[] pValue) {
-		updateBinary(theAmntCol, pValue);
-	}	
-
-	/**
-	 * Update the Partner Account of the item
-	 * @param pValue the new partner account
-	 */
-	private void updatePartner(int pValue) {
-		updateInteger(thePartCol, pValue);
-	}
-
-	/**
-	 * Update the isCredit flag
-	 * @param pValue the new flag
-	 */
-	private void updateIsCredit(boolean isCredit) {
-		updateBoolean(theIsCrtCol, isCredit);
-	}
-
-	/**
-	/**
-	 * Update the TransType of the item
-	 * @param pValue the new transtype
-	 */
-	private void updateTransType(int pValue) {
-		updateInteger(theTrnTypCol, pValue);
-	}
-
-	/**
-	 * Update the Frequency of the item
-	 * @param pValue the new frequency
-	 */
-	private void updateFrequency(int pValue) {
-		updateInteger(theFreqCol, pValue);
-	}
-	
 	/* Create statement for Patterns */
 	protected String createStatement() {
 		return "create table " + theTabName + " ( " +
@@ -277,8 +82,8 @@ public class TablePattern extends DatabaseTable<Pattern> {
 			   theActCol	+ " int NOT NULL " +
 			   		"REFERENCES " + TableAccount.idReference() + ", " +
    			   theDateCol	+ " date NOT NULL, " +
-  			   theDescCol	+ " varbinary(" + Pattern.DESCLEN + ") NOT NULL, " +
-  			   theAmntCol	+ " varbinary(" + EncryptedPair.MONEYLEN + ") NOT NULL, " +
+  			   theDescCol	+ " varbinary(" + 2*Pattern.DESCLEN + ") NOT NULL, " +
+  			   theAmntCol	+ " varbinary(" + 2*EncryptedPair.MONEYLEN + ") NOT NULL, " +
   			   thePartCol	+ " int NOT NULL " +
 		   			"REFERENCES " + TableAccount.idReference() + ", " +
 		   	   theTrnTypCol	+ " int NOT NULL " +
@@ -317,15 +122,15 @@ public class TablePattern extends DatabaseTable<Pattern> {
 		/* Protect the access */
 		try {			
 			/* Get the various fields */
-			myId        = getID();
-			myAccountId = getAccount();
+			myId        = getInteger();
+			myAccountId = getInteger();
 			myDate 		= getDate();
-			myDesc    	= getDesc();
-			myAmount    = getAmount();
-			myPartnerId = getPartner();
-			myTranType  = getTransType();
-			isCredit    = getIsCredit();
-			myFreq  	= getFrequency();
+			myDesc    	= getBinary();
+			myAmount    = getBinary();
+			myPartnerId = getInteger();
+			myTranType  = getInteger();
+			isCredit    = getBoolean();
+			myFreq  	= getInteger();
 	
 			/* Access the list */
 			myList = (Pattern.List)getList();
@@ -368,15 +173,15 @@ public class TablePattern extends DatabaseTable<Pattern> {
 		/* Protect the access */
 		try {			
 			/* Set the fields */
-			setID(pItem.getId());
-			setAccount(pItem.getAccount().getId());
+			setInteger(pItem.getId());
+			setInteger(pItem.getAccount().getId());
 			setDate(pItem.getDate());
-			setDesc(pItem.getDescBytes());
-			setAmount(pItem.getAmountBytes());
-			setPartner(pItem.getPartner().getId());
-			setTransType(pItem.getTransType().getId());
-			setIsCredit(pItem.isCredit());
-			setFrequency(pItem.getFrequency().getId());
+			setBinary(pItem.getDescBytes());
+			setBinary(pItem.getAmountBytes());
+			setInteger(pItem.getPartner().getId());
+			setInteger(pItem.getTransType().getId());
+			setBoolean(pItem.isCredit());
+			setInteger(pItem.getFrequency().getId());
 		}
 				
 		catch (Throwable e) {
@@ -402,27 +207,27 @@ public class TablePattern extends DatabaseTable<Pattern> {
 			/* Update the fields */
 			if (Account.differs(pItem.getAccount(),
 				  		  	    myBase.getAccount()))
-				updateAccount(pItem.getAccount().getId());
+				updateInteger(theActCol, pItem.getAccount().getId());
 			if (Date.differs(pItem.getDate(),
 		  		  	  		 myBase.getDate()))
-				updateDate(pItem.getDate());
+				updateDate(theDateCol, pItem.getDate());
 			if (Utils.differs(pItem.getDescBytes(),
 						  	  myBase.getDescBytes())) 
-				updateDescription(pItem.getDescBytes());
+				updateBinary(theDescCol, pItem.getDescBytes());
 			if (Utils.differs(pItem.getAmountBytes(),
 		  		  	  		  myBase.getAmountBytes()))
-				updateAmount(pItem.getAmountBytes());
+				updateBinary(theAmntCol, pItem.getAmountBytes());
 			if (Account.differs(pItem.getPartner(),
 				  	  			myBase.getPartner())) 
-				updatePartner(pItem.getPartner().getId());
+				updateInteger(thePartCol, pItem.getPartner().getId());
 			if (TransactionType.differs(pItem.getTransType(),
 		  		  	  					myBase.getTransType()))
-				updateTransType(pItem.getTransType().getId());
+				updateInteger(theTrnTypCol, pItem.getTransType().getId());
 			if (pItem.isCredit() != myBase.isCredit()) 
-				updateIsCredit(pItem.isCredit());
+				updateBoolean(theIsCrtCol, pItem.isCredit());
 			if (Frequency.differs(pItem.getFrequency(),
 		  	  		  			  myBase.getFrequency())) 
-				updateFrequency(pItem.getFrequency().getId());
+				updateInteger(theFreqCol, pItem.getFrequency().getId());
 		}
 		
 		catch (Throwable e) {

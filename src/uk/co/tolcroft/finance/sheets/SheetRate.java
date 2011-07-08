@@ -1,18 +1,178 @@
 package uk.co.tolcroft.finance.sheets;
 
 import jxl.*;
-import jxl.write.*;
+import jxl.write.WritableCellFeatures;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
+import uk.co.tolcroft.finance.sheets.SpreadSheet.OutputSheet;
+import uk.co.tolcroft.finance.sheets.SpreadSheet.SheetType;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 
-public class SheetRate {
+public class SheetRate extends SheetDataItem<AcctRate> {
 	/**
 	 * NamedArea for Rates
 	 */
-	private static final String Rates 	   = "Rates";
+	private static final String Rates 	   = AcctRate.listName;
+	
+	/**
+	 * Is the spreadsheet a backup spreadsheet or an edit-able one
+	 */
+	private boolean isBackup	= false;
+	
+	/**
+	 * Validation control for Account Name
+	 */
+	private WritableCellFeatures theAccountCtl	= null;
+	
+	/**
+	 * Rates data list
+	 */
+	private AcctRate.List theList	= null;
+
+	/**
+	 * Constructor for loading a spreadsheet
+	 * @param pInput the input spreadsheet
+	 */
+	protected SheetRate(InputSheet	pInput) {
+		/* Call super constructor */
+		super(pInput, Rates);
+		
+		/* Note whether this is a backup */
+		isBackup = (pInput.getType() == SheetType.BACKUP);
+		
+		/* Access the Rates list */
+		theList = pInput.getData().getRates();
+	}
+
+	/**
+	 *  Constructor for creating a spreadsheet
+	 *  @param pOutput the output spreadsheet
+	 */
+	protected SheetRate(OutputSheet	pOutput) {
+		/* Call super constructor */
+		super(pOutput, Rates);
+		
+		/* Note whether this is a backup */
+		isBackup = (pOutput.getType() == SheetType.BACKUP);
+				
+		/* Access the Rates list */
+		theList = pOutput.getData().getRates();
+		setDataList(theList);
+		
+		/* Obtain validation for the Account Name */
+		theAccountCtl = obtainCellValidation(SheetAccount.AccountNames);
+	}
+	
+	/**
+	 * Load an item from the spreadsheet
+	 */
+	protected void loadItem() throws Throwable {
+		byte[]			myRateBytes;
+		byte[]			myBonusBytes;
+		String			myRate;
+		String			myBonus;
+		String			myAccount;
+		java.util.Date	myEndDate;
+		int	    		myID;
+		int	    		myActId;
+
+		/* If this is a backup load */
+		if (isBackup) {
+			/* Access the IDs */
+			myID 	= loadInteger(0);
+			myActId	= loadInteger(1);
+		
+			/* Access the rates and end-date */
+			myRateBytes 	= loadBytes(2);
+			myBonusBytes 	= loadBytes(3);
+			myEndDate 		= loadDate(4);
+		
+			/* Load the item */
+			theList.addItem(myID, myActId, myRateBytes, myEndDate, myBonusBytes);
+		}
+		
+		/* else this is a load from an edit-able spreadsheet */
+		else {
+			/* Access the account */
+			myAccount	= loadString(0);
+		
+			/* Access the name and description bytes */
+			myRate 		= loadString(1);
+			myBonus		= loadString(2);
+			myEndDate	= loadDate(3);
+		
+			/* Load the item */
+			theList.addItem(myAccount, myRate, myEndDate, myBonus);
+		}
+	}
+
+	/**
+	 *  Insert a item into the spreadsheet
+	 *  @param pItem the Item to insert
+	 *  @param isBackup is the spreadsheet a backup, or else clear text
+	 */
+	protected void insertItem(AcctRate	pItem) throws Throwable  {
+		/* If we are creating a backup */
+		if (isBackup) {
+			/* Set the fields */
+			writeInteger(0, pItem.getId());
+			writeInteger(1, pItem.getAccount().getId());				
+			writeBytes(2, pItem.getRateBytes());
+			writeBytes(3, pItem.getBonusBytes());
+			writeDate(4, pItem.getEndDate());
+		}
+
+		/* else we are creating an edit-able spreadsheet */
+		else {
+			/* Set the fields */
+			writeValidatedString(0, pItem.getAccount().getName(), theAccountCtl);				
+			writeNumber(1, pItem.getRate());
+			writeNumber(2, pItem.getBonus());			
+			writeDate(3, pItem.getEndDate());			
+		}
+	}
+
+	/**
+	 * PreProcess on write
+	 */
+	protected boolean preProcessOnWrite() throws Throwable {		
+		/* Ignore if we are creating a backup */
+		if (isBackup) return false;
+
+		/* Write titles */
+		writeString(0, AcctRate.fieldName(AcctRate.FIELD_ACCOUNT));
+		writeString(1, AcctRate.fieldName(AcctRate.FIELD_RATE));
+		writeString(2, AcctRate.fieldName(AcctRate.FIELD_BONUS));			
+		writeString(3, AcctRate.fieldName(AcctRate.FIELD_ENDDATE));			
+		return true;
+	}	
+
+	/**
+	 * PostProcess on write
+	 */
+	protected void postProcessOnWrite() throws Throwable {		
+		/* If we are creating a backup */
+		if (isBackup) {
+			/* Set the five columns as the range */
+			nameRange(5);
+		}
+
+		/* else this is an edit-able spreadsheet */
+		else {
+			/* Set the four columns as the range */
+			nameRange(4);
+
+			/* Set the Account column width */
+			setColumnWidth(0, Account.NAMELEN);
+			
+			/* Set Rate and Date columns */
+			setRateColumn(1);
+			setRateColumn(2);
+			setDateColumn(3);
+		}
+	}
 	
 	/**
 	 *  Load the Rates from an archive
@@ -25,7 +185,7 @@ public class SheetRate {
 										 Workbook	pWorkbook,
 							   	  		 DataSet	pData) throws Exception {
 		/* Local variables */
-		AcctRate.List		myList;
+		AcctRate.List	myList;
 		Range[]   		myRange;
 		Sheet     		mySheet;
 		Cell      		myTop;
@@ -98,8 +258,7 @@ public class SheetRate {
 					}
 				
 					/* Add the value into the finance tables */
-					myList.addItem(0,
-					               myAccount,
+					myList.addItem(myAccount,
 					               myRate,
 					               myExpiry,
 					               myBonus);
@@ -122,219 +281,4 @@ public class SheetRate {
 		/* Return to caller */
 		return true;
 	}
-	
-	/**
-	 *  Load the Rates from a backup
-	 *  @param pThread   the thread status control
-	 *  @param pWorkbook the workbook to load from
-	 *  @param pData the data set to load into
-	 *  @return continue to write <code>true/false</code> 
-	 */
-	protected static boolean loadBackup(statusCtl 	pThread,
-			 							Workbook	pWorkbook,
-		   	  				   	        DataSet		pData) throws Exception {
-		/* Local variables */
-		AcctRate.List		myList;
-		Range[]   		myRange;
-		Sheet     		mySheet;
-		Cell      		myTop;
-		Cell      		myBottom;
-		int       		myCol;
-		String    		myRate;
-		String    		myBonus;
-		java.util.Date	myEndDate;
-		int      		myID;
-		int      		myAccountID;
-		DateCell  		myDateCell;
-		Cell      		myCell;
-		int       		myTotal;
-		int				mySteps;
-		int       		myCount = 0;
-		
-		/* Protect against exceptions */
-		try {
-			/* Find the range of cells */
-			myRange = pWorkbook.findByName(Rates);
-		
-			/* Access the number of reporting steps */
-			mySteps = pThread.getReportingSteps();
-			
-			/* Declare the new stage */
-			if (!pThread.setNewStage(Rates)) return false;
-		
-			/* If we found the range OK */
-			if ((myRange != null) && (myRange.length == 1)) {
-			
-				/* Access the relevant sheet and Cell references */
-				mySheet  = pWorkbook.getSheet(myRange[0].getFirstSheetIndex());
-				myTop    = myRange[0].getTopLeft();
-				myBottom = myRange[0].getBottomRight();
-				myCol    = myTop.getColumn();
-		
-				/* Count the number of rates */
-				myTotal  = myBottom.getRow() - myTop.getRow() + 1;
-			
-				/* Access the list of rates */
-				myList = pData.getRates();
-			
-				/* Declare the number of steps */
-				if (!pThread.setNumSteps(myTotal)) return false;
-			
-				/* Loop through the rows of the table */
-				for (int i = myTop.getRow();
-					 i <= myBottom.getRow();
-					 i++) {
-				
-					/* Access id and account id */
-					myCell    	= mySheet.getCell(myCol, i);
-					myID      	= Integer.parseInt(myCell.getContents());
-					myCell    	= mySheet.getCell(myCol+1, i);
-					myAccountID	= Integer.parseInt(myCell.getContents());
-				
-					/* Handle Rate */
-					myCell     	= mySheet.getCell(myCol+2, i);
-					myRate 		= myCell.getContents();
-				
-					/* Handle bonus which may be missing */
-					myCell     = mySheet.getCell(myCol+3, i);
-					myBonus	   = null;
-					if (myCell.getType() != CellType.EMPTY) {
-						myBonus = myCell.getContents();
-					}
-				
-					/* Handle endDate which may be missing */
-					myCell     = mySheet.getCell(myCol+4, i);
-					myEndDate  = null;
-					if (myCell.getType() != CellType.EMPTY) {
-						myDateCell = (DateCell)myCell;
-						myEndDate  = myDateCell.getDate();
-					}
-				
-					/* Add the value into the finance tables */
-					myList.addItem(myID,
-						           myAccountID,
-						           myRate,
-						           myEndDate,
-						           myBonus);
-				
-					/* Report the progress */
-					myCount++;
-					if ((myCount % mySteps) == 0) 
-						if (!pThread.setStepsDone(myCount)) return false;
-				}
-			}
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.EXCEL, 
-								"Failed to load Rates",
-								e);
-		}
-		
-		/* Return to caller */
-		return true;
-	}
-	
-	/**
-	 *  Write the Rates to a backup
-	 *  @param pThread   the thread status control
-	 *  @param pWorkbook the workbook to write to
-	 *  @param pData the data set to write from
-	 *  @return continue to write <code>true/false</code> 
-	 */
-	protected static boolean writeBackup(statusCtl 			pThread,
-										 WritableWorkbook	pWorkbook,
-		   	        					 DataSet			pData) throws Exception {
-		WritableSheet 				mySheet;
-		DataList<AcctRate>.ListIterator	myIterator;
-		AcctRate.List					myRates;
-		AcctRate						myCurr;
-		int							myRow;
-		int							myCount;
-		int							myTotal;
-		int							mySteps;
-		jxl.write.Label				myCell;
-		jxl.write.DateTime			myDate;
-		WritableCellFormat			myFormat;
-
-		/* Protect against exceptions */
-		try { 
-			/* Declare the new stage */
-			if (!pThread.setNewStage(Rates)) return false;
-		
-			/* Access the number of reporting steps */
-			mySteps = pThread.getReportingSteps();
-
-			/* Create the formats */
-			myFormat		= new WritableCellFormat(DateFormats.FORMAT2);
-	
-			/* Create the sheet */
-			mySheet    = pWorkbook.createSheet(Rates, 0);
-	
-			/* Access the Rates */
-			myRates = pData.getRates();
-	
-			/* Count the number of rates */
-			myTotal   = myRates.size();
-		
-			/* Declare the number of steps */
-			if (!pThread.setNumSteps(myTotal)) return false;
-		
-			/* Initialise counts */
-			myRow   = 0;
-			myCount = 0;
-		
-			/* Access the iterator */
-			myIterator = myRates.listIterator();
-			
-			/* Loop through the rates */
-			while ((myCurr  = myIterator.next()) != null) {
-				/* Create the Identifier cell */
-				myCell = new jxl.write.Label(0, myRow, 
-											 Integer.toString(myCurr.getId()));
-				mySheet.addCell(myCell);
-				myCell = new jxl.write.Label(1, myRow,
-											 Integer.toString(myCurr.getAccount().getId()));
-				mySheet.addCell(myCell);
-			
-				/* Create the Rate cells */
-				myCell = new jxl.write.Label(2, myRow, 
-											 myCurr.getRate().format(false));
-				mySheet.addCell(myCell);
-				if (myCurr.getBonus() != null) {
-					myCell = new jxl.write.Label(3, myRow, 
-												 myCurr.getBonus().format(false));
-					mySheet.addCell(myCell);
-				}
-				
-				/* Create the Date cells */
-				if (myCurr.getEndDate() != null) {
-					myDate = new jxl.write.DateTime(4, myRow, 
-													myCurr.getEndDate().getDate(),
-													myFormat);
-					mySheet.addCell(myDate);
-				}
-			
-				/* Report the progress */
-				myCount++;
-				myRow++;
-				if ((myCount % mySteps) == 0) 
-					if (!pThread.setStepsDone(myCount)) return false;
-			}
-	
-			/* Add the Range name */
-			if (myRow > 0)
-				pWorkbook.addNameArea(Rates, mySheet, 0, 0, 4, myRow-1);
-		}
-
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.EXCEL, 
-								"Failed to create Rates",
-								e);
-		}
-	
-		/* Return to caller */
-		return true;
-	}
-	
 }

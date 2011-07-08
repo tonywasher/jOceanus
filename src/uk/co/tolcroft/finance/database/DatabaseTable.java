@@ -11,6 +11,7 @@ import uk.co.tolcroft.finance.data.DataSet;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.Number;
 
 public abstract class DatabaseTable<T extends DataItem> {
 	/**
@@ -211,23 +212,6 @@ public abstract class DatabaseTable<T extends DataItem> {
 	 */
 	protected String purgeStatement() {
 		return "delete from " + theTableName;
-	}
-	
-	/**
-	 * Determine the ID of the newly loaded item
-	 * @return the ID
-	 * @throws SQLException
-	 */
-	protected int getID() throws SQLException {
-		return getInteger();
-	}			
-	
-	/**
-	 * Set the ID of the item to be inserted
-	 * @param pId the Id of the item
-	 */
-	protected void setID(int pId) throws SQLException {
-		setInteger(pId);
 	}
 	
 	/**
@@ -797,6 +781,16 @@ public abstract class DatabaseTable<T extends DataItem> {
 	}
 	
 	/** 
+	 *  Set a number field
+	 *  @param pValue the number value
+	 */
+	protected void setNumber(Number pValue) throws SQLException {
+		String myString = null;
+		if (pValue != null) myString = pValue.format(false);
+		setString(myString);
+	}
+	
+	/** 
 	 *  Set a string field
 	 *  @param pValue the string value
 	 */
@@ -854,6 +848,19 @@ public abstract class DatabaseTable<T extends DataItem> {
 		/* Increment the index and set the string */
 		theParms.theIndex++;
 		Parameter.applyBinary(theStmt, theParms.theIndex, pValue);
+	}
+	
+	/** 
+	 *  Update a number field
+	 *  @param pField the field name
+	 *  @param pValue the string value
+	 */
+	protected void updateNumber(String pField,
+			               	 	Number pValue) {
+		/* Format the number and apply as a string */
+		String myString = null;
+		if (pValue != null) myString = pValue.format(false);
+		updateString(pField, myString);
 	}
 	
 	/** 

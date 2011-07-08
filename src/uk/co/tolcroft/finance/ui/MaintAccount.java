@@ -157,7 +157,7 @@ public class MaintAccount implements ActionListener,
 		theAliasBox.setPrototypeDisplayValue(myDefValue);
 		
 		/* Dimension the account type box correctly */
-		myDefChars = new char[AccountType.NAMELEN];
+		myDefChars = new char[StaticClass.NAMELEN];
 		Arrays.fill(myDefChars, 'X');
 		myDefValue = new String(myDefChars);
 		theTypesBox.setPrototypeDisplayValue(myDefValue);

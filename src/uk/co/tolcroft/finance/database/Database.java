@@ -29,7 +29,7 @@ public class Database {
 	/**
 	 * Static table access
 	 */
-	private TableStatic		        theStatic		= null;
+	private TableControl		        theStatic		= null;
 
 	/**
 	 * Account Type table access
@@ -106,7 +106,7 @@ public class Database {
 		}
 		
 		/* Create the table classes */
-		theStatic		= new TableStatic(this);
+		theStatic		= new TableControl(this);
 		theAccountTypes = new TableAccountType(this);
 		theTransTypes   = new TableTransactionType(this);
 		theTaxTypes     = new TableTaxType(this);

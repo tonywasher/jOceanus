@@ -14,7 +14,12 @@ public class TaxYear extends DataItem {
 	/**
 	 * The name of the object
 	 */
-	private static final String objName = "TaxYear";
+	public static final String objName = "TaxYear";
+
+	/**
+	 * The name of the object
+	 */
+	public static final String listName = objName + "s";
 
 	/* Members */
 	private int		theRegimeId		= -1;
@@ -95,7 +100,7 @@ public class TaxYear extends DataItem {
 	 * Determine the field name for a particular field
 	 * @return the field name
 	 */
-	public String	fieldName(int iField) {
+	public static String	fieldName(int iField) {
 		switch (iField) {
 			case FIELD_ID:		return "ID";
 			case FIELD_REGIME:	return "Regime";
@@ -120,9 +125,14 @@ public class TaxYear extends DataItem {
 			case FIELD_AGELMT:	return "AgeAllowanceLimit";
 			case FIELD_ADDLMT:	return "AdditionalAllowanceLimit";
 			case FIELD_ADDBDY:	return "AdditionalIncomeBoundary";
-			default:		  	return super.fieldName(iField);
+			default:		  	return DataItem.fieldName(iField);
 		}
 	}
+	
+	/**
+	 * Determine the field name in a non-static fashion 
+	 */
+	public String getFieldName(int iField) { return fieldName(iField); }
 	
 	/**
 	 * Format the value of a particular field as a table row
@@ -1048,7 +1058,7 @@ public class TaxYear extends DataItem {
 		 * Obtain the type of the item
 		 * @return the type of the item
 		 */
-		public String itemType() { return objName; }
+		public String itemType() { return listName; }
 				
 		/**
 		 * Search for the tax year that encompasses this date
@@ -1194,8 +1204,7 @@ public class TaxYear extends DataItem {
 		}
 		
 		/* Allow a tax parameter to be added */
-		public void addItem(int	    		uId,
-							String  		pRegime,
+		public void addItem(String  		pRegime,
 				            java.util.Date  pDate,
 				            String  		pAllowance,
 				            String  		pRentalAllow,
@@ -1229,7 +1238,7 @@ public class TaxYear extends DataItem {
 			                        "> has invalid TaxRegime <" + pRegime + ">");
 			
 			/* Create the tax year */
-			addItem(uId,
+			addItem(0,
 					myTaxRegime.getId(),
 					pDate,
 					pAllowance,

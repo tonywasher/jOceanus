@@ -1,7 +1,7 @@
 package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.data.TransactionType.TransClass;
+import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 
@@ -70,21 +70,28 @@ public class CapitalEvent extends DataItem {
 	 * Determine the field name for a particular field
 	 * @return the field name
 	 */
-	public String	fieldName(int iField) {
+	public static String	fieldName(int iField) {
+		/* Handle id of zero */
+		if (iField == 0) return "Date";
+		
+		/* Handle out of range */
+		return DataItem.fieldName(iField);
+	}
+	
+	/**
+	 * Determine the field name in a non-static fashion 
+	 */
+	public String getFieldName(int iField) { 
 		Attribute myAttr;
-
+		
 		/* If we have a valid element */
-		if (iField < numFields()) {
-			/* Handle id of zero */
-			if (iField == 0) return "Date";
-			
+		if ((iField > 0) && (iField < numFields())) {			
 			/* Access the attribute */
 			myAttr = theAttributes.get(iField-1);
 			return myAttr.getName();
 		}
 		
-		/* Handle out of range */
-		return super.fieldName(iField);
+		return fieldName(iField);
 	}
 	
 	/**

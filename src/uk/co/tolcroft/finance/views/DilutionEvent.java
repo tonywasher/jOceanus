@@ -1,7 +1,6 @@
 package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.data.AcctPrice;
 import uk.co.tolcroft.models.DataItem;
 import uk.co.tolcroft.models.DataState;
 import uk.co.tolcroft.models.Date;
@@ -48,14 +47,19 @@ public class DilutionEvent extends DataItem {
 	 * Determine the field name for a particular field
 	 * @return the field name
 	 */
-	public String	fieldName(int iField) {
+	public static String	fieldName(int iField) {
 		switch (iField) {
 			case FIELD_ACCOUNT: 	return "Name";
 			case FIELD_DATE: 		return "Date";
 			case FIELD_DILUTION:	return "Dilution";
-			default:		  		return super.fieldName(iField);
+			default:		  		return DataItem.fieldName(iField);
 		}
 	}
+	
+	/**
+	 * Determine the field name in a non-static fashion 
+	 */
+	public String getFieldName(int iField) { return fieldName(iField); }
 	
 	/**
 	 * Format the value of a particular field as a table row
