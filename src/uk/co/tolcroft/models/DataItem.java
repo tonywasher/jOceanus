@@ -280,6 +280,12 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * @param pBuffer the string buffer 
 	 */
 	public void addHTMLFields(StringBuilder pBuffer) {}
+
+	/**
+	 * Id for standard field
+	 */
+	public static final int 	FIELD_ID	= 0;
+	public static final String	NAME_ID		= "Id";
 	
 	/**
 	 * Format this item to a string

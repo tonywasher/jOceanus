@@ -4,70 +4,50 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.ListStyle;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 public class TablePattern extends DatabaseTable<Pattern> {
 	/**
 	 * The name of the Patterns table
 	 */
-	private final static String theTabName 		= Pattern.listName;
+	protected final static String TableName		= Pattern.listName;
 				
 	/**
-	 * The name of the Account column
+	 * The table definition
 	 */
-	private final static String theActCol    	= Pattern.fieldName(Pattern.FIELD_ACCOUNT);
+	private TableDefinition theTableDef;	/* Set during load */
 
 	/**
-	 * The name of the Date column
+	 * The pattern list
 	 */
-	private final static String theDateCol 		= Pattern.fieldName(Pattern.FIELD_DATE);
+	private Pattern.List	theList 			= null;
 
-	/**
-	 * The name of the Description column
-	 */
-	private final static String theDescCol   	= Pattern.fieldName(Pattern.FIELD_DESC);
-
-	/**
-	 * The name of the Amount column
-	 */
-	private final static String theAmntCol   	= Pattern.fieldName(Pattern.FIELD_AMOUNT);
-
-	/**
-	 * The name of the Partner Account column
-	 */
-	private final static String thePartCol   	= Pattern.fieldName(Pattern.FIELD_PARTNER);
-
-	/**
-	 * The name of the TransType column
-	 */
-	private final static String theTrnTypCol 	= Pattern.fieldName(Pattern.FIELD_TRNTYP);
-
-	/**
-	 * The name of the isCredit flag column
-	 */
-	private final static String theIsCrtCol  	= Pattern.fieldName(Pattern.FIELD_CREDIT);
-
-	/**
-	 * The name of the Frequency column
-	 */
-	private final static String theFreqCol   	= Pattern.fieldName(Pattern.FIELD_FREQ);
-	
 	/**
 	 * Constructor
 	 * @param pDatabase the database control
 	 */
 	protected TablePattern(Database	pDatabase) {
-		super(pDatabase, theTabName);
+		super(pDatabase, TableName);
 	}
 	
-	/* The Id for reference */
-	protected static String idReference() {
-		return theTabName +  "(" + theIdCol + ")";
+	/**
+	 * Define the table columns (called from within super-constructor)
+	 * @param pTableDef the table definition
+	 */
+	protected void defineTable(TableDefinition	pTableDef) {
+		theTableDef = pTableDef;
+		theTableDef.addReferenceColumn(Pattern.FIELD_ACCOUNT, Pattern.fieldName(Pattern.FIELD_ACCOUNT), TableAccount.TableName);
+		theTableDef.addDateColumn(Pattern.FIELD_DATE, Pattern.fieldName(Pattern.FIELD_DATE));
+		theTableDef.addEncryptedColumn(Pattern.FIELD_DESC, Pattern.fieldName(Pattern.FIELD_DESC), Pattern.DESCLEN);
+		theTableDef.addEncryptedColumn(Pattern.FIELD_AMOUNT, Pattern.fieldName(Pattern.FIELD_AMOUNT), EncryptedPair.MONEYLEN);
+		theTableDef.addReferenceColumn(Pattern.FIELD_PARTNER, Pattern.fieldName(Pattern.FIELD_PARTNER), TableAccount.TableName);
+		theTableDef.addReferenceColumn(Pattern.FIELD_TRNTYP, Pattern.fieldName(Pattern.FIELD_TRNTYP), TableTransactionType.TableName);
+		theTableDef.addBooleanColumn(Pattern.FIELD_CREDIT, Pattern.fieldName(Pattern.FIELD_CREDIT));
+		theTableDef.addReferenceColumn(Pattern.FIELD_FREQ, Pattern.fieldName(Pattern.FIELD_FREQ), TableFrequency.TableName);
 	}
 	
-	/* Get the List for the table for loading */
-	protected Pattern.List  getLoadList(DataSet pData) {
-		return pData.getPatterns();
+	/* PreProcess on Load */
+	protected void preProcessOnLoad(DataSet pData) {
+		theList = pData.getPatterns();
 	}
 	
 	/* Get the List for the table for updates */
@@ -75,41 +55,16 @@ public class TablePattern extends DatabaseTable<Pattern> {
 		return new Pattern.List(pData.getPatterns(), ListStyle.UPDATE);
 	}
 	
-	/* Create statement for Patterns */
-	protected String createStatement() {
-		return "create table " + theTabName + " ( " +
-			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
-			   theActCol	+ " int NOT NULL " +
-			   		"REFERENCES " + TableAccount.idReference() + ", " +
-   			   theDateCol	+ " date NOT NULL, " +
-  			   theDescCol	+ " varbinary(" + 2*Pattern.DESCLEN + ") NOT NULL, " +
-  			   theAmntCol	+ " varbinary(" + 2*EncryptedPair.MONEYLEN + ") NOT NULL, " +
-  			   thePartCol	+ " int NOT NULL " +
-		   			"REFERENCES " + TableAccount.idReference() + ", " +
-		   	   theTrnTypCol	+ " int NOT NULL " +
-	   				"REFERENCES " + TableTransactionType.idReference() + ", " +
- 			   theIsCrtCol	+ " bit NOT NULL, " +
-			   theFreqCol	+ " int NOT NULL " + 
-			   		"REFERENCES " + TableFrequency.idReference() + " )";
+	/**
+	 * postProcess on Load
+	 */
+	protected void postProcessOnLoad(DataSet pData) throws Exception {
+		Account.List myAccounts = pData.getAccounts();
+		myAccounts.validateLoadedAccounts();
 	}
 	
-	/* Determine the item name */
-	protected String getItemsName() { return theTabName; }
-
-	/* Load statement for Patterns */
-	protected String loadStatement() {
-		return "select " + theIdCol + "," + theActCol + "," + 
-        				theDateCol + "," + theDescCol + "," + 
-        				theAmntCol + "," + thePartCol +  "," +
-        				theTrnTypCol + "," + theIsCrtCol + "," +
-        				theFreqCol + " from " + getTableName() +			
-        				" order by " + theActCol + "," + theDateCol;			
-	}
-	
-	/* Load the price */
-	protected void loadItem() throws Exception {
-		Pattern.List	myList;
-		int	    		myId;
+	/* Load the pattern */
+	protected void loadItem(int pId) throws Exception {
 		int				myAccountId;
 		int  			myPartnerId;
 		int  			myTranType;
@@ -119,125 +74,43 @@ public class TablePattern extends DatabaseTable<Pattern> {
 		byte[] 			myAmount;
 		java.util.Date  myDate;
 		
-		/* Protect the access */
-		try {			
-			/* Get the various fields */
-			myId        = getInteger();
-			myAccountId = getInteger();
-			myDate 		= getDate();
-			myDesc    	= getBinary();
-			myAmount    = getBinary();
-			myPartnerId = getInteger();
-			myTranType  = getInteger();
-			isCredit    = getBoolean();
-			myFreq  	= getInteger();
+		/* Get the various fields */
+		myAccountId = theTableDef.getIntegerValue(Pattern.FIELD_ACCOUNT);
+		myDate 		= theTableDef.getDateValue(Pattern.FIELD_DATE);
+		myDesc    	= theTableDef.getBinaryValue(Pattern.FIELD_DESC);
+		myAmount    = theTableDef.getBinaryValue(Pattern.FIELD_AMOUNT);
+		myPartnerId = theTableDef.getIntegerValue(Pattern.FIELD_PARTNER);
+		myTranType  = theTableDef.getIntegerValue(Pattern.FIELD_TRNTYP);
+		isCredit    = theTableDef.getBooleanValue(Pattern.FIELD_CREDIT);
+		myFreq  	= theTableDef.getIntegerValue(Pattern.FIELD_FREQ);
 	
-			/* Access the list */
-			myList = (Pattern.List)getList();
-			
-			/* Add into the list */
-			myList.addItem(myId, 
-			           	   myDate,
-				           myDesc,
-				           myAmount,
-				           myAccountId, 
-				           myPartnerId,
-				           myTranType,
-				           myFreq,
-				           isCredit);
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
-					            "Failed to load item",
-					            e);
-		}
+		/* Add into the list */
+		theList.addItem(pId, 
+		           	    myDate,
+			            myDesc,
+			            myAmount,
+			            myAccountId, 
+			            myPartnerId,
+			            myTranType,
+			            myFreq,
+			            isCredit);
 		
 		/* Return to caller */
 		return;
 	}
 	
-	/* Insert statement for Patterns */
-	protected String insertStatement() {
-		return "insert into " + getTableName() + 
-        			" (" + theIdCol + "," + theActCol + "," +
-        			theDateCol + "," + theDescCol + "," + 
-        			theAmntCol + "," + thePartCol +  "," +
-        			theTrnTypCol + "," + theIsCrtCol + "," +
-        			theFreqCol + ") VALUES(?,?,?,?,?,?,?,?,?)";
-	}
-	
-	/* Insert the pattern */
-	protected void insertItem(Pattern	pItem) throws Exception {
-		
-		/* Protect the access */
-		try {			
-			/* Set the fields */
-			setInteger(pItem.getId());
-			setInteger(pItem.getAccount().getId());
-			setDate(pItem.getDate());
-			setBinary(pItem.getDescBytes());
-			setBinary(pItem.getAmountBytes());
-			setInteger(pItem.getPartner().getId());
-			setInteger(pItem.getTransType().getId());
-			setBoolean(pItem.isCredit());
-			setInteger(pItem.getFrequency().getId());
+	/* Set a field value */
+	protected void setFieldValue(Pattern	pItem, int iField) throws Exception  {
+		/* Switch on field id */
+		switch (iField) {
+			case Pattern.FIELD_ACCOUNT:	theTableDef.setIntegerValue(Pattern.FIELD_ACCOUNT, pItem.getAccount().getId());		break;
+			case Pattern.FIELD_DATE:	theTableDef.setDateValue(Pattern.FIELD_DATE, pItem.getDate());						break;
+			case Pattern.FIELD_DESC:	theTableDef.setBinaryValue(Pattern.FIELD_DESC, pItem.getDescBytes());				break;
+			case Pattern.FIELD_AMOUNT:	theTableDef.setBinaryValue(Pattern.FIELD_AMOUNT, pItem.getAmountBytes());			break;
+			case Pattern.FIELD_PARTNER:	theTableDef.setIntegerValue(Pattern.FIELD_PARTNER, pItem.getPartner().getId());		break;
+			case Pattern.FIELD_TRNTYP:	theTableDef.setIntegerValue(Pattern.FIELD_TRNTYP, pItem.getTransType().getId());	break;
+			case Pattern.FIELD_CREDIT:	theTableDef.setBooleanValue(Pattern.FIELD_CREDIT, pItem.isCredit());				break;
+			case Pattern.FIELD_FREQ:	theTableDef.setIntegerValue(Pattern.FIELD_FREQ, pItem.getFrequency().getId());		break;
 		}
-				
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
-								pItem,
-					            "Failed to insert item",
-					            e);
-		}
-		
-		/* Return to caller */
-		return;
-	}
-	
-	/* Update the pattern */
-	protected void updateItem(Pattern	pItem) throws Exception {
-		Pattern.Values 	myBase;
-		
-		/* Access the base */
-		myBase = (Pattern.Values)pItem.getBaseObj();
-			
-		/* Protect the update */
-		try {			
-			/* Update the fields */
-			if (Account.differs(pItem.getAccount(),
-				  		  	    myBase.getAccount()))
-				updateInteger(theActCol, pItem.getAccount().getId());
-			if (Date.differs(pItem.getDate(),
-		  		  	  		 myBase.getDate()))
-				updateDate(theDateCol, pItem.getDate());
-			if (Utils.differs(pItem.getDescBytes(),
-						  	  myBase.getDescBytes())) 
-				updateBinary(theDescCol, pItem.getDescBytes());
-			if (Utils.differs(pItem.getAmountBytes(),
-		  		  	  		  myBase.getAmountBytes()))
-				updateBinary(theAmntCol, pItem.getAmountBytes());
-			if (Account.differs(pItem.getPartner(),
-				  	  			myBase.getPartner())) 
-				updateInteger(thePartCol, pItem.getPartner().getId());
-			if (TransactionType.differs(pItem.getTransType(),
-		  		  	  					myBase.getTransType()))
-				updateInteger(theTrnTypCol, pItem.getTransType().getId());
-			if (pItem.isCredit() != myBase.isCredit()) 
-				updateBoolean(theIsCrtCol, pItem.isCredit());
-			if (Frequency.differs(pItem.getFrequency(),
-		  	  		  			  myBase.getFrequency())) 
-				updateInteger(theFreqCol, pItem.getFrequency().getId());
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
-								pItem,
-					            "Failed to update item",
-					            e);
-		}
-			
-		/* Return to caller */
-		return;
 	}
 }

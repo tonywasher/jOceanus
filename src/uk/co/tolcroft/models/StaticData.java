@@ -90,7 +90,6 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	public StaticData<?>.Values  getObj()  { return (StaticData<?>.Values)super.getObj(); }	
 
 	/* Field IDs */
-	public static final int FIELD_ID     	= 0;
 	public static final int FIELD_NAME     	= 1;
 	public static final int FIELD_DESC     	= 2;
 	public static final int FIELD_ORDER     = 3;
@@ -110,7 +109,7 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	 */
 	public static String	fieldName(int iField) {
 		switch (iField) {
-			case FIELD_ID: 	    return "ID";
+			case FIELD_ID: 	    return NAME_ID;
 			case FIELD_NAME:    return "Name";
 			case FIELD_DESC:    return "Description";
 			case FIELD_ORDER:   return "Order";

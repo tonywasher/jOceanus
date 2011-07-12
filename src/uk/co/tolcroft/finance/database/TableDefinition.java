@@ -8,12 +8,19 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import uk.co.tolcroft.models.DataItem;
+import uk.co.tolcroft.models.Date;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.Number.Money;
 import uk.co.tolcroft.models.Number.Rate;
 
 public class TableDefinition {
+	/**
+	 * The Column Array expansion size
+	 */
+	private final static int		COLUMN_BLOCKSIZE	= 5;
+	
 	/**
 	 * The Table name
 	 */
@@ -29,6 +36,11 @@ public class TableDefinition {
 	 */
 	private List<ColumnDefinition>	theSortList		= null;
 
+	/**
+	 * The array list for the columns
+	 */
+	private ColumnDefinition[]      theColumns		= null;
+	
 	/**
 	 * The prepared statement for the insert/update
 	 */
@@ -50,6 +62,11 @@ public class TableDefinition {
 	protected boolean isIndexed() 	{ return theSortList.size() > 0; }
 
 	/**
+	 * Column Definitions array 
+	 */
+	protected ColumnDefinition[] getColumns() 	{ return theColumns; }
+
+	/**
 	 * Constructor
 	 * @param pName the table name
 	 */
@@ -63,6 +80,9 @@ public class TableDefinition {
 		/* Create the sort list */
 		theSortList = new ArrayList<ColumnDefinition>();
 
+		/* Create the initial column list */
+		theColumns  = new ColumnDefinition[COLUMN_BLOCKSIZE];
+		
 		/* Add an Id column */
 		theList.add(new IdColumn());
 	}
@@ -230,6 +250,27 @@ public class TableDefinition {
 	}
 	
 	/**
+	 * Add an encrypted column
+	 * @param pId the column id
+	 * @param pName the column name
+	 * @param pLength the underlying (character) length 
+	 * @return the binary column
+	 */
+	protected BinaryColumn addEncryptedColumn(int pId, String pName, int pLength) {
+		/* Create the new binary column */
+		BinaryColumn myColumn = new BinaryColumn(pId, pName, 2*pLength);
+		
+		/* Add it to the list and return it */
+		theList.add(myColumn);
+		return myColumn;
+	}
+	protected BinaryColumn addNullEncryptedColumn(int pId, String pName, int pLength) {
+		BinaryColumn myColumn = addEncryptedColumn(pId, pName, pLength);
+		myColumn.setNullable();
+		return myColumn;
+	}
+	
+	/**
 	 * Add a string column
 	 * @param pId the column id
 	 * @param pName the column name
@@ -251,30 +292,6 @@ public class TableDefinition {
 	}
 
 	/**
-	 * Add a sort column
-	 */
-	protected ColumnDefinition addSortColumn(int pId) throws Exception {
-		/* Obtain the correct id */
-		ColumnDefinition myCol = getColumnForId(pId);
-
-		/* Reject if the value is not set */
-		if (myCol.getSortOrder() != null)
-			throw new Exception(ExceptionClass.LOGIC,
-								"Column " + myCol.getColumnName() + 
-								" in table " + theTableName +
-								" is already in sort list");
-				
-		/* Add to sort list and return */
-		theSortList.add(myCol);
-		myCol.theOrder = SortOrder.ASCENDING;
-		return myCol;
-	}
-	protected ColumnDefinition addDescSortColumn(int pId) throws Exception {
-		ColumnDefinition myCol = addSortColumn(pId);
-		myCol.theOrder = SortOrder.DESCENDING;
-		return myCol;
-	}
-	/**
 	 * Load results
 	 * @param pResults the result set
 	 */
@@ -283,8 +300,9 @@ public class TableDefinition {
 		ColumnDefinition			myDef;
 		int							myIndex	= 1;
 
-		/* Store the result set */
+		/* Store the result set and clear values */
 		theResults = pResults;
+		clearValues();
 		
 		/* Create the iterator */
 		myIterator = theList.iterator();
@@ -365,15 +383,12 @@ public class TableDefinition {
 	 * Clear values for table
 	 */
 	protected void clearValues() {
-		Iterator<ColumnDefinition>	myIterator;
-		ColumnDefinition			myDef;
-
-		/* Create the iterator */
-		myIterator = theList.iterator();
-		
-		/* Loop through the columns */
-		while (myIterator.hasNext()) {
-			myDef = myIterator.next();
+		/* Loop over the non-null Column Definitions */
+		for (ColumnDefinition myDef: theColumns) {
+			/* Skip null columns */
+			if (myDef == null) continue;
+			
+			/* Clear value */
 			myDef.clearValue();
 		}
 	}
@@ -487,7 +502,7 @@ public class TableDefinition {
 		ColumnDefinition myCol = getColumnForId(pId);
 		
 		/* Reject if this is not a string column */
-		if (!(myCol instanceof StringColumn))
+		if (!(myCol instanceof BinaryColumn))
 			throw new Exception(ExceptionClass.LOGIC,
 								"Column " + myCol.getColumnName() + 
 								" in table " + theTableName +
@@ -566,7 +581,7 @@ public class TableDefinition {
 	 * @param pId the column id
 	 * @param pValue the value
 	 */
-	protected void setDateValue(int pId, java.util.Date pValue) throws Exception {
+	protected void setDateValue(int pId, Date pValue) throws Exception {
 		/* Obtain the correct id */
 		ColumnDefinition myCol = getColumnForId(pId);
 		
@@ -672,22 +687,18 @@ public class TableDefinition {
 	 * @return the column   
 	 */
 	private ColumnDefinition getColumnForId(int pId) throws Exception {
-		Iterator<ColumnDefinition>	myIterator;
-		ColumnDefinition			myDef;
+		ColumnDefinition myDef = null;
 
-		/* Create the iterator */
-		myIterator = theList.iterator();
+		/* If the column is in range of the array, extract its definition */
+		if (pId < theColumns.length) myDef = theColumns[pId];
 		
-		/* Loop through the columns */
-		while (myIterator.hasNext()) {
-			/* Break if we have found the column */
-			myDef = myIterator.next();
-			if (myDef.getColumnId() == pId) return myDef;
-		}
+		/* Check that the id is in range and present */
+		if (myDef == null)
+			throw new Exception(ExceptionClass.LOGIC,
+								"Invalid Column Id: " + pId + " for " + theTableName);
 		
-		/* Throw Exception */
-		throw new Exception(ExceptionClass.LOGIC,
-							"Invalid Column Id: " + pId + " for " + theTableName);	
+		/* Return the column definition */
+		return myDef;
 	}
 	
 	/**
@@ -766,13 +777,10 @@ public class TableDefinition {
 	protected String getDropTableString() {
 		StringBuilder 				myBuilder 	= new StringBuilder(1000);
 		
-		/* Return null if we are not indexed */
-		if (!isIndexed()) return null;
-		
 		/* Build the initial create */
 		myBuilder.append("if exists (select * from sys.tables where name = '");
 		myBuilder.append(theTableName);
-		myBuilder.append("') drop table");
+		myBuilder.append("') drop table ");
 		myBuilder.append(theTableName);
 		return myBuilder.toString();
 	}
@@ -829,7 +837,7 @@ public class TableDefinition {
 		if (isIndexed()) {
 			/* Create the iterator */
 			myIterator 	= theSortList.iterator();
-			myFirst		= false;
+			myFirst		= true;
 		
 			/* Add the order clause */
 			myBuilder.append(" order by ");
@@ -976,6 +984,19 @@ public class TableDefinition {
 	}
 	
 	/**
+	 * Build the count string for a table
+	 * @return the SQL string 
+	 */
+	protected String getCountString() {
+		StringBuilder 				myBuilder 	= new StringBuilder(1000);
+		
+		/* Build the initial delete */
+		myBuilder.append("select count(*) from ");
+		myBuilder.append(theTableName);
+		return myBuilder.toString();
+	}
+	
+	/**
 	 * The underlying column definition class
 	 */
 	protected abstract class ColumnDefinition {
@@ -1025,14 +1046,14 @@ public class TableDefinition {
 		protected SortOrder		getSortOrder() 		{ return theOrder; }
 		
 		/**
-		 * Set	value 
-		 */
-		private void 			setValue(Object pValue) 	{ theValue = pValue; isValueSet = true; }
-		
-		/**
 		 * Clear value 
 		 */
 		private void 			clearValue() 		{ theValue = null; isValueSet = false; }
+		
+		/**
+		 * Set value 
+		 */
+		private void 			setValue(Object pValue) 	{ theValue = pValue; isValueSet = true; }
 		
 		/**
 		 * Is the value set 
@@ -1048,6 +1069,17 @@ public class TableDefinition {
 			/* Record the identity and name */
 			theIdentity	= pId;
 			theName		= pName;
+			
+			/* If the column list size is too small */
+			if (theIdentity > theColumns.length-1) {
+				/* Extend the column array */
+				theColumns = java.util.Arrays.copyOf(theColumns,
+													 theColumns.length+COLUMN_BLOCKSIZE,
+													 ColumnDefinition[].class);
+			}
+			
+			/* Store this column into the list */
+			theColumns[theIdentity] = this;
 		}
 		
 		/**
@@ -1063,8 +1095,8 @@ public class TableDefinition {
 			buildColumnType(pBuilder);
 			
 			/* Add null-able indication */
-			if (!isNullable) pBuilder.append(" NOT");
-			pBuilder.append("NULL");
+			if (!isNullable) pBuilder.append(" not");
+			pBuilder.append(" null");
 			
 			/* build the key reference */
 			buildKeyReference(pBuilder);
@@ -1074,6 +1106,14 @@ public class TableDefinition {
 		 * Set null-able column 
 		 */
 		protected void setNullable() { isNullable = true; }
+		
+		/** 
+		 * Set sortOrder 
+		 */
+		protected void setSortOrder(SortOrder pOrder) {
+			theOrder = pOrder;
+			theSortList.add(this);
+		}
 		
 		/**
 		 * Build the column type for this column 
@@ -1171,7 +1211,7 @@ public class TableDefinition {
 		 */
 		private IdColumn() {
 			/* Record the column type */
-			super(0, "ID");
+			super(0, DataItem.NAME_ID);
 		}
 		
 		/**
@@ -1214,7 +1254,7 @@ public class TableDefinition {
 			pBuilder.append(" references ");
 			pBuilder.append(theReference);
 			pBuilder.append('(');
-			pBuilder.append("ID");
+			pBuilder.append(DataItem.NAME_ID);
 			pBuilder.append(')');
 		}
 	}
@@ -1310,6 +1350,15 @@ public class TableDefinition {
 		 */
 		private void setValue(java.util.Date pValue) {
 			super.setValue(pValue);
+		}
+		
+		/**
+		 * Set the value
+		 * @param pValue the value
+		 */
+		private void setValue(Date pValue) {
+			super.setValue((pValue == null) ? null 
+										    : pValue.getDate());
 		}
 		
 		/**
@@ -1565,8 +1614,8 @@ public class TableDefinition {
 		 */
 		protected void buildColumnType(StringBuilder pBuilder) {
 			/* Add the column type */
-			pBuilder.append("varchar(");
-			pBuilder.append(2*theLength);
+			pBuilder.append("varbinary(");
+			pBuilder.append(theLength);
 			pBuilder.append(')');
 		}
 		

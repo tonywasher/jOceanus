@@ -3,6 +3,10 @@ package uk.co.tolcroft.finance.database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 import uk.co.tolcroft.finance.core.Threads.statusCtl;
 import uk.co.tolcroft.finance.data.*;
@@ -27,65 +31,10 @@ public class Database {
 	private Connection          	theConn         = null;
 	
 	/**
-	 * Static table access
+	 * List of Database tables
 	 */
-	private TableControl		        theStatic		= null;
-
-	/**
-	 * Account Type table access
-	 */
-	private TableAccountType        theAccountTypes = null;
-
-	/**
-	 * Transaction Type table access
-	 */
-	private TableTransactionType	theTransTypes   = null;
-
-	/**
-	 * Tax Type table access
-	 */
-	private TableTaxType            theTaxTypes     = null;
-
-	/**
-	 * Tax Regime table access
-	 */
-	private TableTaxRegime          theTaxRegimes   = null;
-
-	/**
-	 * Frequency table access
-	 */
-	private TableFrequency          theFrequencys   = null;
-
-	/**
-	 * TaxYear table access
-	 */
-	private TableTaxYear          	theTaxYears     = null;
-
-	/**
-	 * Account Type table access
-	 */
-	private TableAccount            theAccounts     = null;
-
-	/**
-	 * Rate table access
-	 */
-	private TableRate               theRates        = null;
-
-	/**
-	 * Price table access
-	 */
-	private TablePrice              thePrices       = null;
-
-	/**
-	 * Pattern table access
-	 */
-	private TablePattern            thePatterns     = null;
-
-	/**
-	 * Event table access
-	 */
-	private TableEvent              theEvents       = null;
-
+	private List<DatabaseTable<?>>	theTables		= null;
+	
 	/**
 	 * Construct a new Database class
 	 */
@@ -105,19 +54,20 @@ public class Database {
 								e);
 		}
 		
-		/* Create the table classes */
-		theStatic		= new TableControl(this);
-		theAccountTypes = new TableAccountType(this);
-		theTransTypes   = new TableTransactionType(this);
-		theTaxTypes     = new TableTaxType(this);
-		theTaxRegimes   = new TableTaxRegime(this);
-		theFrequencys   = new TableFrequency(this);
-		theTaxYears     = new TableTaxYear(this);
-		theAccounts     = new TableAccount(this);
-		theRates        = new TableRate(this);
-		thePrices       = new TablePrice(this);
-		thePatterns     = new TablePattern(this);
-		theEvents       = new TableEvent(this);
+		/* Create table list and add the tables to the list */
+		theTables = new ArrayList<DatabaseTable<?>>();
+		theTables.add(new TableControl(this));
+		theTables.add(new TableAccountType(this));
+		theTables.add(new TableTransactionType(this));
+		theTables.add(new TableTaxType(this));
+		theTables.add(new TableTaxRegime(this));
+		theTables.add(new TableFrequency(this));
+		theTables.add(new TableTaxYear(this));
+		theTables.add(new TableAccount(this));
+		theTables.add(new TableRate(this));
+		theTables.add(new TablePrice(this));
+		theTables.add(new TablePattern(this));
+		theTables.add(new TableEvent(this));
 	}
 	
 	/**
@@ -146,19 +96,18 @@ public class Database {
 		/* Roll-back any outstanding transaction */
 		theConn.rollback();
 		
-		/* Close the result set and statements */
-		if (theStatic       != null) theStatic.closeStmt();
-		if (theAccountTypes != null) theAccountTypes.closeStmt();
-		if (theTransTypes   != null) theTransTypes.closeStmt();
-		if (theTaxTypes     != null) theTaxTypes.closeStmt();
-		if (theTaxRegimes   != null) theTaxRegimes.closeStmt();
-		if (theFrequencys   != null) theFrequencys.closeStmt();
-		if (theTaxYears     != null) theTaxYears.closeStmt();
-		if (theAccounts     != null) theAccounts.closeStmt();
-		if (theRates        != null) theRates.closeStmt();
-		if (thePrices       != null) thePrices.closeStmt();
-		if (thePatterns     != null) thePatterns.closeStmt();
-		if (theEvents       != null) theEvents.closeStmt();
+		/* Create the iterator */
+		Iterator<DatabaseTable<?>> 	myIterator;
+		DatabaseTable<?>			myTable;
+		myIterator = theTables.iterator();
+		
+		/* Loop through the tables */
+		while (myIterator.hasNext()) {
+			myTable = myIterator.next();
+			
+			/* Close the Statement */
+			myTable.closeStmt();
+		}
 
 		/* Close the connection */
 		theConn.close();
@@ -175,7 +124,7 @@ public class Database {
 		View	myView;
 		
 		/* Set the number of stages */
-		if (!pThread.setNumStages(13)) return null;
+		if (!pThread.setNumStages(1+theTables.size())) return null;
 		
 		/* Access the view */
 		
@@ -183,21 +132,19 @@ public class Database {
 		myView = pThread.getView();
 		myData = new DataSet(myView.getSecurity()); 
 			
-		/* Load entries from tables */
-		bContinue = theStatic.loadItems(pThread, myData);
-		if (bContinue) bContinue = theAccountTypes.loadItems(pThread, myData);
-		if (bContinue) bContinue = theTransTypes.loadItems(pThread, myData);
-		if (bContinue) bContinue = theTaxTypes.loadItems(pThread, myData);
-		if (bContinue) bContinue = theTaxRegimes.loadItems(pThread, myData);
-		if (bContinue) bContinue = theFrequencys.loadItems(pThread, myData);
-		if (bContinue) bContinue = theTaxYears.loadItems(pThread, myData);
-		if (bContinue) myData.calculateDateRange();
-		if (bContinue) bContinue = theAccounts.loadItems(pThread, myData);
-		if (bContinue) bContinue = theRates.loadItems(pThread, myData);
-		if (bContinue) bContinue = thePrices.loadItems(pThread, myData);
-		if (bContinue) bContinue = thePatterns.loadItems(pThread, myData);
-		if (bContinue) myData.getAccounts().validateLoadedAccounts();
-		if (bContinue) bContinue = theEvents.loadItems(pThread, myData);
+		/* Create the iterator */
+		Iterator<DatabaseTable<?>> 	myIterator;
+		DatabaseTable<?>			myTable;
+		myIterator = theTables.iterator();
+		
+		/* Loop through the tables */
+		while ((bContinue) &&
+			   (myIterator.hasNext())) {
+			myTable = myIterator.next();
+			
+			/* Load the items */
+			bContinue = myTable.loadItems(pThread, myData);
+		}
 		
 		/* analyse the data */
 		if (bContinue) bContinue = pThread.setNewStage("Refreshing data");
@@ -221,49 +168,52 @@ public class Database {
 		boolean bContinue = true;
 		
 		/* Set the number of stages */
-		if (!pThread.setNumStages(36)) return;
+		if (!pThread.setNumStages(3*theTables.size())) return;
 		
-		/* Insert entries into tables */
-		bContinue = theStatic.insertItems(pThread, pData);
-		if (bContinue) bContinue = theAccountTypes.insertItems(pThread, pData);
-		if (bContinue) bContinue = theTransTypes.insertItems(pThread, pData);
-		if (bContinue) bContinue = theTaxTypes.insertItems(pThread, pData);
-		if (bContinue) bContinue = theTaxRegimes.insertItems(pThread, pData);
-		if (bContinue) bContinue = theFrequencys.insertItems(pThread, pData);
-		if (bContinue) bContinue = theTaxYears.insertItems(pThread, pData);
-		if (bContinue) bContinue = theAccounts.insertItems(pThread, pData);
-		if (bContinue) bContinue = theRates.insertItems(pThread, pData);
-		if (bContinue) bContinue = thePrices.insertItems(pThread, pData);
-		if (bContinue) bContinue = thePatterns.insertItems(pThread, pData);
-		if (bContinue) bContinue = theEvents.insertItems(pThread, pData);
+		/* Create the iterator */
+		Iterator<DatabaseTable<?>> 	myIterator;
+		DatabaseTable<?>			myTable;
+		myIterator = theTables.iterator();
 		
-		/* Update entries in tables */
-		if (bContinue) bContinue = theStatic.updateItems(pThread);
-		if (bContinue) bContinue = theAccountTypes.updateItems(pThread);
-		if (bContinue) bContinue = theTransTypes.updateItems(pThread);
-		if (bContinue) bContinue = theTaxTypes.updateItems(pThread);
-		if (bContinue) bContinue = theTaxRegimes.updateItems(pThread);
-		if (bContinue) bContinue = theFrequencys.updateItems(pThread);
-		if (bContinue) bContinue = theTaxYears.updateItems(pThread);
-		if (bContinue) bContinue = theAccounts.updateItems(pThread);
-		if (bContinue) bContinue = theRates.updateItems(pThread);
-		if (bContinue) bContinue = thePrices.updateItems(pThread);
-		if (bContinue) bContinue = thePatterns.updateItems(pThread);
-		if (bContinue) bContinue = theEvents.updateItems(pThread);
+		/* Loop through the tables */
+		while ((bContinue) &&
+			(myIterator.hasNext())) {
+			myTable = myIterator.next();
+			
+			/* Load the items */
+			bContinue = myTable.insertItems(pThread, pData);
+		}
+
+		/* Recreate the iterator */
+		myIterator = theTables.iterator();
 		
-		/* Delete entries from table in reverse order */
-		if (bContinue) bContinue = theEvents.deleteItems(pThread);
-		if (bContinue) bContinue = thePatterns.deleteItems(pThread);
-		if (bContinue) bContinue = thePrices.deleteItems(pThread);
-		if (bContinue) bContinue = theRates.deleteItems(pThread);
-		if (bContinue) bContinue = theAccounts.deleteItems(pThread);
-		if (bContinue) bContinue = theTaxYears.deleteItems(pThread);
-		if (bContinue) bContinue = theFrequencys.deleteItems(pThread);
-		if (bContinue) bContinue = theTaxRegimes.deleteItems(pThread);
-		if (bContinue) bContinue = theTaxTypes.deleteItems(pThread);
-		if (bContinue) bContinue = theTransTypes.deleteItems(pThread);
-		if (bContinue) bContinue = theAccountTypes.deleteItems(pThread);
-		if (bContinue) bContinue = theStatic.deleteItems(pThread);
+		/* Loop through the tables */
+		while ((bContinue) &&
+			   (myIterator.hasNext())) {
+			myTable = myIterator.next();
+			
+			/* Load the items */
+			bContinue = myTable.updateItems(pThread);
+		}
+		
+		/* Create the list iterator */
+		ListIterator<DatabaseTable<?>> 	myListIterator;
+		myListIterator = theTables.listIterator();
+		
+		/* Loop through the tables to the end of the list */
+		while ((bContinue) &&
+			   (myListIterator.hasNext())) {
+			myTable = myListIterator.next();
+		}
+		
+		/* Loop through the tables in reverse order */
+		while ((bContinue) &&
+			   (myListIterator.hasPrevious())) {
+			myTable = myListIterator.previous();
+			
+			/* Delete items from the table */
+			bContinue = myTable.deleteItems(pThread);
+		}
 		
 		/* Check for cancellation */
 		if (!bContinue) 
@@ -277,29 +227,24 @@ public class Database {
 	 * @return Continue <code>true/false</code>
 	 */
 	public void createTables(statusCtl 	pThread) throws Exception {
-		
 		/* Drop any existing tables */
 		dropTables(pThread);
 		
 		/* Set the number of stages */
 		if (!pThread.setNumStages(1)) return;
 		
-		/* Create tables */
-		theStatic.createTable();
-		theAccountTypes.createTable();
-		theTransTypes.createTable();
-		theTaxTypes.createTable();
-		theTaxRegimes.createTable();
-		theFrequencys.createTable();
-		theTaxYears.createTable();
-		theAccounts.createTable();
-		theRates.createTable();
-		thePrices.createTable();
-		thePatterns.createTable();
-		theEvents.createTable();
-
-		/* Return the data */
-		return;
+		/* Create the iterator */
+		Iterator<DatabaseTable<?>> 	myIterator;
+		DatabaseTable<?>			myTable;
+		myIterator = theTables.iterator();
+		
+		/* Loop through the tables */
+		while (myIterator.hasNext()) {
+			myTable = myIterator.next();
+			
+			/* Create the table */
+			myTable.createTable();
+		}
 	}	
 
 	/**
@@ -312,20 +257,24 @@ public class Database {
 		/* Set the number of stages */
 		if (!pThread.setNumStages(1)) return;
 		
-		/* Drop tables */
-		theEvents.dropTable();
-		thePatterns.dropTable();
-		thePrices.dropTable();
-		theRates.dropTable();
-		theAccounts.dropTable();
-		theTaxYears.dropTable();
-		theFrequencys.dropTable();
-		theTaxRegimes.dropTable();
-		theTaxTypes.dropTable();
-		theTransTypes.dropTable();
-		theAccountTypes.dropTable();
-		theStatic.dropTable();
-
+		/* Create the iterator */
+		ListIterator<DatabaseTable<?>> 	myIterator;
+		DatabaseTable<?>			myTable;
+		myIterator = theTables.listIterator();
+		
+		/* Loop through the tables to the end of the list */
+		while (myIterator.hasNext()) {
+			myTable = myIterator.next();
+		}
+		
+		/* Loop through the tables in reverse order */
+		while (myIterator.hasPrevious()) {
+			myTable = myIterator.previous();
+			
+			/* Drop the table */
+			myTable.dropTable();
+		}
+		
 		/* Return the data */
 		return;
 	}	
@@ -340,20 +289,24 @@ public class Database {
 		/* Set the number of stages */
 		if (!pThread.setNumStages(1)) return;
 		
-		/* Purge entries from tables */
-		theEvents.purgeTable();
-		thePatterns.purgeTable();
-		thePrices.purgeTable();
-		theRates.purgeTable();
-		theAccounts.purgeTable();
-		theTaxYears.purgeTable();
-		theFrequencys.purgeTable();
-		theTaxRegimes.purgeTable();
-		theTaxTypes.purgeTable();
-		theTransTypes.purgeTable();
-		theAccountTypes.purgeTable();
-		theStatic.purgeTable();
-
+		/* Create the iterator */
+		ListIterator<DatabaseTable<?>> 	myIterator;
+		DatabaseTable<?>			myTable;
+		myIterator = theTables.listIterator();
+		
+		/* Loop through the tables to the end of the list */
+		while (myIterator.hasNext()) {
+			myTable = myIterator.next();
+		}
+		
+		/* Loop through the tables in reverse order */
+		while (myIterator.hasPrevious()) {
+			myTable = myIterator.previous();
+			
+			/* Purge the table */
+			myTable.purgeTable();
+		}
+		
 		/* Return the data */
 		return;
 	}	

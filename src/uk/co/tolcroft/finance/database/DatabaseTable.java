@@ -4,20 +4,20 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 
 import uk.co.tolcroft.finance.core.Threads.statusCtl;
 import uk.co.tolcroft.finance.data.DataSet;
+import uk.co.tolcroft.finance.database.TableDefinition.ColumnDefinition;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.DataItem.histObject;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
-import uk.co.tolcroft.models.Number;
 
 public abstract class DatabaseTable<T extends DataItem> {
 	/**
 	 * The Id column name
 	 */
-	protected final static String 	theIdCol   		= "ID";
+	protected final static String 	theIdCol   		= DataItem.NAME_ID;
 	
 	/**
 	 * The Database control
@@ -29,11 +29,6 @@ public abstract class DatabaseTable<T extends DataItem> {
 	 */
 	private Connection				theConn			= null;
 
-	/**
-	 * The table name
-	 */
-	private String 					theTableName	= null;
-	
 	/**
 	 * The batch size
 	 */
@@ -55,15 +50,10 @@ public abstract class DatabaseTable<T extends DataItem> {
 	private ResultSet           	theResults      = null;
 	
 	/**
-	 * The update string
+	 * The table definition
 	 */
-	private String              	theUpdates      = null;
-	
-	/**
-	 * The update parameters
-	 */
-	private ParameterList          	theParms      	= null;
-
+	private TableDefinition			theTable		= null;
+			
 	/**
 	 * Constructor
 	 */
@@ -72,22 +62,27 @@ public abstract class DatabaseTable<T extends DataItem> {
 		/* Set the table */
 		theDatabase		= pDatabase;
 		theConn	 		= theDatabase.getConn();
-		theTableName 	= pTable;
-		theParms 		= new ParameterList();
+		theTable 		= new TableDefinition(pTable);
+		defineTable(theTable);
 	}
 	
+	/**
+	 * define the table columns
+	 * @param pTableDef the Table definition
+	 */
+	protected abstract void defineTable(TableDefinition	pTableDef);
+
 	/**
 	 * Access the table name 
 	 * @return the table name
 	 */
-	protected String getTableName() { return theTableName; }
+	protected String getTableName() { return theTable.getTableName(); }
 	
 	/** 
 	 *  Close the result set and statement
 	 */
 	protected void closeStmt() throws SQLException {
-		theParms.clear();
-		theUpdates = null;
+		theTable.clearValues();
 		if (theResults != null) theResults.close();
 		if (theStmt    != null) theStmt.close();
 	}
@@ -96,7 +91,6 @@ public abstract class DatabaseTable<T extends DataItem> {
 	 *  Shift to next line in result set
 	 */
 	private boolean next() throws SQLException {
-		theParms.clear();
 		return theResults.next();
 	}
 	
@@ -113,13 +107,14 @@ public abstract class DatabaseTable<T extends DataItem> {
 	 */
 	private void execute() throws SQLException {
 		theStmt.executeUpdate();
-		theParms.clear();
+		theTable.clearValues();
 	}
 	
 	/** 
 	 *  Query the prepared statement
 	 */
 	private void executeQuery() throws SQLException {
+		theTable.clearValues();
 		theResults = theStmt.executeQuery();
 	}
 	
@@ -139,7 +134,7 @@ public abstract class DatabaseTable<T extends DataItem> {
 		String myString;
 		int    myCount = 0;
 
-		myString   = "select count(*) from " + theTableName;
+		myString   = theTable.getCountString();
 		prepareStatement(myString);
 		executeQuery();
 		
@@ -157,13 +152,6 @@ public abstract class DatabaseTable<T extends DataItem> {
 	}
 	
 	/**
-	 * Get the List for the table for loading
-	 * @param pData the Data set
-	 * @return pList the target list for loading
-	 */
-	protected abstract DataList<T>  getLoadList(DataSet pData);
-	
-	/**
 	 * Get the List for the table for updates
 	 * @param pData the Data set
 	 * @return pList the source extract list for updates
@@ -171,76 +159,31 @@ public abstract class DatabaseTable<T extends DataItem> {
 	protected abstract DataList<T>  getUpdateList(DataSet pData);
 	
 	/**
-	 * get the query string for loading items from the database
-	 * @return the query statement
-	 */
-	protected abstract String 	loadStatement();
-	
-	/**
-	 * get the insert string for inserting items into the database
-	 * @return the insert statement
-	 */
-	protected abstract String 	insertStatement();
-	
-	/**
-	 * get the create string for creating the table in the database
-	 * @return the insert statement
-	 */
-	protected abstract String 	createStatement();
-	
-	/**
-	 * get the delete string for deleting items from the database
-	 * @return the delete statement
-	 */
-	protected String deleteStatement() {
-		return "delete from " + theTableName + 
-		       " where " + theIdCol + "=?";
-	}
-		
-	/**
-	 * get the drop string for deleting the table from the database
-	 * @return the delete statement
-	 */
-	protected String dropStatement() {
-		return "if exists (select * from sys.tables where name = '" +
-			   theTableName + "') drop table " + theTableName;
-	}
-	
-	/**
-	 * get the drop string for deleting the table from the database
-	 * @return the delete statement
-	 */
-	protected String purgeStatement() {
-		return "delete from " + theTableName;
-	}
-	
-	/**
 	 * Obtain the list of items
 	 */
 	protected DataList<T>	getList() { return theList; }
 	
 	/**
-	 * Determine the name of the items in the list
-	 * @return the name
-	 */
-	protected abstract String 	getItemsName();
-	
-	/**
 	 * Load an individual item from the result set 
 	 */
-	protected abstract void   	loadItem()	throws Exception;
+	protected abstract void   	loadItem(int pId)	throws Exception;
 	
 	/**
-	 * Insert an individual item from the list
+	 * Set a field value for an item
 	 * @param pItem the item to insert
+	 * @param iField the field id
 	 */
-	protected abstract void   	insertItem(T	pItem)	throws Exception;
+	protected abstract void   	setFieldValue(T	pItem, int iField)	throws Exception;
 	
 	/**
-	 * Update an individual item from the list
-	 * @param pItem the item to update
+	 * PreProcess on a load operation
 	 */
-	protected abstract void		updateItem(T	pItem)	throws Exception;
+	protected void	preProcessOnLoad(DataSet pData) {} 
+	
+	/**
+	 * Post-Process on a load operation
+	 */
+	protected void	postProcessOnLoad(DataSet pData) throws Exception {} 
 	
 	/**
 	 * Load items from the list into the table
@@ -256,10 +199,10 @@ public abstract class DatabaseTable<T extends DataItem> {
 		int     myCount   = 0;
 		
 		/* Declare the new stage */
-		if (!pThread.setNewStage(getItemsName())) return false;
+		if (!pThread.setNewStage(getTableName())) return false;
 
-		/* Record the list for this load */
-		theList = getLoadList(pData); 
+		/* PreProcess the load */
+		preProcessOnLoad(pData); 
 			
 		/* Access reporting steps */
 		mySteps = pThread.getReportingSteps();
@@ -270,14 +213,18 @@ public abstract class DatabaseTable<T extends DataItem> {
 			if (!pThread.setNumSteps(countItems())) return false;
 			
 			/* Load the items from the table */
-			myQuery = loadStatement();
+			myQuery = theTable.getLoadString();
 			prepareStatement(myQuery);
 			executeQuery();
 		
 			/* Loop through the results */
 			while (next()) {
+				/* Read in the results */
+				theTable.loadResults(theResults);
+				int myId = theTable.getIntegerValue(DataItem.FIELD_ID);
+				
 				/* Load the next item */
-				loadItem();
+				loadItem(myId);
 				
 				/* Report the progress */
 				myCount++;
@@ -287,11 +234,14 @@ public abstract class DatabaseTable<T extends DataItem> {
 			
 			/* Close the Statement */
 			closeStmt();
+			
+			/* Perform post process */
+			postProcessOnLoad(pData);
 		}
 		
 		catch (Throwable e) {
 			throw new Exception(ExceptionClass.SQLSERVER,
-					            "Failed to load " + getItemsName(),
+					            "Failed to load " + getTableName(),
 					            e);
 		}
 		
@@ -352,7 +302,7 @@ public abstract class DatabaseTable<T extends DataItem> {
 		}	
 		catch (Throwable e) {
 			throw new Exception(ExceptionClass.SQLSERVER,
-								"Failed to commit " + getItemsName(),
+								"Failed to commit " + getTableName(),
 								e);
 		}
 	}
@@ -362,7 +312,7 @@ public abstract class DatabaseTable<T extends DataItem> {
 	 * @param pState the particular state
 	 * @return the count of items
 	 */
-	private int countItems(DataState pState) {
+	private int countStateItems(DataState pState) {
 		DataList<T>.ListIterator	myIterator;
 		T							myCurr;
 		int 						iCount = 0;
@@ -400,7 +350,7 @@ public abstract class DatabaseTable<T extends DataItem> {
 		boolean             		bContinue = true;
 		
 		/* Declare the new stage */
-		if (!pThread.setNewStage("Inserting " + getItemsName())) return false;
+		if (!pThread.setNewStage("Inserting " + getTableName())) return false;
 		
 		/* Access reporting steps */
 		mySteps = pThread.getReportingSteps();
@@ -411,10 +361,10 @@ public abstract class DatabaseTable<T extends DataItem> {
 		/* Protect the insert */
 		try {
 			/* Declare the number of steps */
-			if (!pThread.setNumSteps(countItems(DataState.NEW))) return false;
+			if (!pThread.setNumSteps(countStateItems(DataState.NEW))) return false;
 			
 			/* Prepare the insert statement */
-			myInsert = insertStatement();
+			myInsert = theTable.getInsertString();
 			prepareStatement(myInsert);
 		
 			/* Access the iterator */
@@ -425,8 +375,26 @@ public abstract class DatabaseTable<T extends DataItem> {
 				/* Ignore non-new items */
 				if (myCurr.getState() != DataState.NEW) continue;
 				
-				/* Set the fields */
-				insertItem(myCurr);
+				/* set the id value */
+				theTable.setIntegerValue(DataItem.FIELD_ID, myCurr.getId());
+				
+				/* Loop through the columns */
+				for (ColumnDefinition myCol: theTable.getColumns()) {
+					/* Skip null columns */
+					if (myCol == null) continue;
+					
+					/* Access the column id */
+					int iField = myCol.getColumnId();
+					
+					/* Ignore ID column */
+					if (iField == DataItem.FIELD_ID) continue;
+					
+					/* Set the field value */
+					setFieldValue(myCurr, iField);
+				}
+				
+				/* Apply the values */
+				theTable.insertValues(theStmt);
 			
 				/* Execute the insert */
 				execute();
@@ -458,7 +426,7 @@ public abstract class DatabaseTable<T extends DataItem> {
 		catch (Throwable e) {
 			throw new Exception(ExceptionClass.SQLSERVER,
 								myCurr,
-					            "Failed to insert " + getItemsName(),
+					            "Failed to insert " + getTableName(),
 					            e);
 		}
 		
@@ -477,10 +445,11 @@ public abstract class DatabaseTable<T extends DataItem> {
 		int              			iBatch    = 0;
 		int     					myCount   = 0;
 		int							mySteps;
+		String						myUpdate;
 		boolean          			bContinue = true;
 	
 		/* Declare the new stage */
-		if (!pThread.setNewStage("Updating " + getItemsName())) return false;
+		if (!pThread.setNewStage("Updating " + getTableName())) return false;
 		
 		/* Access reporting steps */
 		mySteps = pThread.getReportingSteps();
@@ -488,7 +457,7 @@ public abstract class DatabaseTable<T extends DataItem> {
 		/* Protect the update */
 		try {
 			/* Declare the number of steps */
-			if (!pThread.setNumSteps(countItems(DataState.CHANGED))) return false;
+			if (!pThread.setNumSteps(countStateItems(DataState.CHANGED))) return false;
 			
 			/* Access the iterator */
 			myIterator = theList.listIterator(true);
@@ -499,29 +468,37 @@ public abstract class DatabaseTable<T extends DataItem> {
 				if (myCurr.getState() != DataState.CHANGED) continue;
 				
 				/* Update the item */
-				updateItem(myCurr);
-									
-				/* Set Id and execute update */
-				updateId(myCurr.getId());
-				myCurr = null;
+				if (updateItem(myCurr)) {
+					/* Record the id and access the update string */
+					theTable.setIntegerValue(DataItem.FIELD_ID, myCurr.getId());
+					myUpdate = theTable.getUpdateString();
+
+					/* Prepare the statement and declare values */
+					prepareStatement(myUpdate);
+					theTable.updateValues(theStmt);
 					
-				/* Close the Statement */
-				closeStmt();
+					/* Execute the update */
+					execute();
+					myCurr = null;
+					
+					/* Close the Statement */
+					closeStmt();
 				
-				/* If we should commit the batch */
-				if ((theBatchSize > 0) &&
-					(++iBatch >= theBatchSize)) {
-					/* Reset the batch count */
-					iBatch = 0;
+					/* If we should commit the batch */
+					if ((theBatchSize > 0) &&
+						(++iBatch >= theBatchSize)) {
+						/* Reset the batch count */
+						iBatch = 0;
 					
-					/* Commit the batch */
-					commitBatch(DataState.CHANGED);
+						/* Commit the batch */
+						commitBatch(DataState.CHANGED);
+					}
+				
+					/* Report the progress */
+					myCount++;
+					if ((myCount % mySteps) == 0) 
+						if (!pThread.setStepsDone(myCount)) return false;
 				}
-				
-				/* Report the progress */
-				myCount++;
-				if ((myCount % mySteps) == 0) 
-					if (!pThread.setStepsDone(myCount)) return false;
 			}
 								
 			/* Handle outstanding commits */
@@ -531,7 +508,7 @@ public abstract class DatabaseTable<T extends DataItem> {
 		catch (Throwable e) {
 			throw new Exception(ExceptionClass.SQLSERVER,
 								myCurr,
-								"Failed to update " + getItemsName(),
+								"Failed to update " + getTableName(),
 								e);
 		}
 		
@@ -539,6 +516,48 @@ public abstract class DatabaseTable<T extends DataItem> {
 		return bContinue;
 	}
 	
+	/* Update the rate */
+	private boolean updateItem(T	pItem) throws Exception {
+		histObject 	myCurr;
+		histObject 	myBase;
+		boolean		isUpdated = false;
+		
+		/* Access the object and base */
+		myCurr = pItem.getObj();
+		myBase = pItem.getBaseObj();
+			
+		/* Protect the update */
+		try {			
+			/* Loop through the fields */
+			for (ColumnDefinition myCol: theTable.getColumns()) {
+				/* Skip null columns */
+				if (myCol == null) continue;
+				
+				/* Access the column id */
+				int iField = myCol.getColumnId();
+				
+				/* Ignore ID column */
+				if (iField == DataItem.FIELD_ID) continue;
+				
+				/* If the field has changed */
+				if (myCurr.fieldChanged(iField, myBase)) {
+					/* Record the change */
+					isUpdated = true;
+					setFieldValue(pItem, iField);
+				}
+			}
+		}
+		
+		catch (Throwable e) {
+			throw new Exception(ExceptionClass.SQLSERVER,
+								pItem,
+					            "Failed to update item",
+					            e);
+		}
+			
+		/* Return to caller */
+		return isUpdated;
+	}
 	/**
 	 * Delete items from the list
 	 * @param pThread the thread control
@@ -554,7 +573,7 @@ public abstract class DatabaseTable<T extends DataItem> {
 		boolean          			bContinue = true;
 	
 		/* Declare the new stage */
-		if (!pThread.setNewStage("Deleting " + getItemsName())) return false;
+		if (!pThread.setNewStage("Deleting " + getTableName())) return false;
 	
 		/* Access reporting steps */
 		mySteps = pThread.getReportingSteps();
@@ -562,12 +581,11 @@ public abstract class DatabaseTable<T extends DataItem> {
 		/* Protect the delete */
 		try {
 			/* Declare the number of steps */
-			if (!pThread.setNumSteps(countItems(DataState.DELETED))) return false;
+			if (!pThread.setNumSteps(countStateItems(DataState.DELETED))) return false;
 			
 			/* Prepare the delete statement */
-			myDelete = deleteStatement();
+			myDelete = theTable.getDeleteString();
 			prepareStatement(myDelete);
-		
 	
 			/* Access the iterator */
 			myIterator = theList.listIterator(true);
@@ -583,8 +601,9 @@ public abstract class DatabaseTable<T extends DataItem> {
 					continue;
 				}
 				
-				/* Set the id */
-				setInteger(myCurr.getId());
+				/* Apply the id */
+				theTable.setIntegerValue(DataItem.FIELD_ID, myCurr.getId());
+				theTable.updateValues(theStmt);
 		
 				/* Execute the delete */
 				execute();
@@ -616,7 +635,7 @@ public abstract class DatabaseTable<T extends DataItem> {
 		catch (Throwable e) {
 			throw new Exception(ExceptionClass.SQLSERVER,
 								myCurr,
-								"Failed to delete " + getItemsName(),
+								"Failed to delete " + getTableName(),
 								e);
 		}
 		
@@ -633,7 +652,7 @@ public abstract class DatabaseTable<T extends DataItem> {
 		/* Protect the create */
 		try {
 			/* Prepare the create statement */
-			myCreate = createStatement();
+			myCreate = theTable.getCreateTableString();
 			prepareStatement(myCreate);
 			
 			/* Execute the delete */
@@ -642,11 +661,25 @@ public abstract class DatabaseTable<T extends DataItem> {
 				
 			/* Close the Statement */
 			closeStmt();
+			
+			/* If the table has an index */
+			if (theTable.isIndexed()) {
+				/* Prepare the create statement */
+				myCreate = theTable.getCreateIndexString();
+				prepareStatement(myCreate);
+				
+				/* Execute the delete */
+				execute();
+				commit();
+					
+				/* Close the Statement */
+				closeStmt();				
+			}
 		}
 	
 		catch (Throwable e) {
 			throw new Exception(ExceptionClass.SQLSERVER,
-								"Failed to create " + getItemsName(),
+								"Failed to create " + getTableName(),
 								e);
 		}
 		
@@ -662,8 +695,22 @@ public abstract class DatabaseTable<T extends DataItem> {
 	
 		/* Protect the drop */
 		try {
+			/* If the table has an index */
+			if (theTable.isIndexed()) {
+				/* Prepare the drip statement */
+				myDrop = theTable.getDropIndexString();
+				prepareStatement(myDrop);
+				
+				/* Execute the delete */
+				execute();
+				commit();
+					
+				/* Close the Statement */
+				closeStmt();				
+			}
+
 			/* Prepare the drop statement */
-			myDrop = dropStatement();
+			myDrop = theTable.getDropTableString();
 			prepareStatement(myDrop);
 			
 			/* Execute the delete */
@@ -676,7 +723,7 @@ public abstract class DatabaseTable<T extends DataItem> {
 	
 		catch (Throwable e) {
 			throw new Exception(ExceptionClass.SQLSERVER,
-								"Failed to drop " + getItemsName(),
+								"Failed to drop " + getTableName(),
 								e);
 		}
 		
@@ -693,7 +740,7 @@ public abstract class DatabaseTable<T extends DataItem> {
 		/* Protect the truncate */
 		try {
 			/* Prepare the truncate statement */
-			myTrunc = purgeStatement();
+			myTrunc = theTable.getPurgeString();
 			prepareStatement(myTrunc);
 			
 			/* Execute the delete */
@@ -706,550 +753,11 @@ public abstract class DatabaseTable<T extends DataItem> {
 	
 		catch (Throwable e) {
 			throw new Exception(ExceptionClass.SQLSERVER,
-								"Failed to purge " + getItemsName(),
+								"Failed to purge " + getTableName(),
 								e);
 		}
 		
 		/* Return to caller */
 		return;
-	}
-		
-	/** 
-	 *  Get a string field
-	 *  @return the string value
-	 */
-	protected String getString() throws SQLException {
-		/* Increment the index and set the string */
-		theParms.theIndex++;
-		return theResults.getString(theParms.theIndex);
-	}
-	
-	/** 
-	 *  Get a long field
-	 *  @return the long value
-	 */
-	protected Long getLong() throws SQLException {
-		/* Increment the index and set the string */
-		theParms.theIndex++;
-		long myValue = theResults.getLong(theParms.theIndex);
-		if ((myValue == 0) && (theResults.wasNull())) return null;
-		return myValue;
-	}
-	
-	/** 
-	 *  Get an integer field
-	 *  @return the integer value
-	 */
-	protected Integer getInteger() throws SQLException {
-		/* Increment the index and set the string */
-		theParms.theIndex++;
-		int myValue = theResults.getInt(theParms.theIndex);
-		if ((myValue == 0) && (theResults.wasNull())) return null;
-		return myValue;
-	}
-	
-	/** 
-	 *  Get a boolean field
-	 *  @return the boolean value
-	 */
-	protected Boolean getBoolean() throws SQLException {
-		/* Increment the index and set the string */
-		theParms.theIndex++;
-		boolean myValue = theResults.getBoolean(theParms.theIndex);
-		if ((myValue == false) && (theResults.wasNull())) return null;
-		return myValue;
-	}
-	
-	/** 
-	 *  Get a date field
-	 *  @return the date value
-	 */
-	protected java.util.Date getDate() throws SQLException {
-		/* Increment the index and set the string */
-		theParms.theIndex++;
-		return theResults.getDate(theParms.theIndex);
-	}
-	
-	/** 
-	 *  Get a binary field
-	 *  @return the binary value
-	 */
-	protected byte[] getBinary() throws SQLException {
-		/* Increment the index and set the string */
-		theParms.theIndex++;
-		return theResults.getBytes(theParms.theIndex);
-	}
-	
-	/** 
-	 *  Set a number field
-	 *  @param pValue the number value
-	 */
-	protected void setNumber(Number pValue) throws SQLException {
-		String myString = null;
-		if (pValue != null) myString = pValue.format(false);
-		setString(myString);
-	}
-	
-	/** 
-	 *  Set a string field
-	 *  @param pValue the string value
-	 */
-	protected void setString(String pValue) throws SQLException {
-		/* Increment the index and set the string */
-		theParms.theIndex++;
-		Parameter.applyString(theStmt, theParms.theIndex, pValue);
-	}
-	
-	/** 
-	 *  Set a Long field
-	 *  @param pValue the long value
-	 */
-	protected void setLong(Long pValue) throws SQLException {
-		/* Increment the index and set the string */
-		theParms.theIndex++;
-		Parameter.applyLong(theStmt, theParms.theIndex, pValue);
-	}
-	
-	/** 
-	 *  Set an Integer field
-	 *  @param pValue the integer value
-	 */
-	protected void setInteger(Integer pValue) throws SQLException {
-		/* Increment the index and set the string */
-		theParms.theIndex++;
-		Parameter.applyInteger(theStmt, theParms.theIndex, pValue);
-	}
-	
-	/** 
-	 *  Set a boolean field
-	 *  @param pValue the boolean value
-	 */
-	protected void setBoolean(Boolean pValue) throws SQLException {
-		/* Increment the index and set the string */
-		theParms.theIndex++;
-		Parameter.applyBoolean(theStmt, theParms.theIndex, pValue);
-	}
-	
-	/** 
-	 *  Set a date field
-	 *  @param pValue the date value
-	 */
-	protected void setDate(Date pValue) throws SQLException {
-		/* Increment the index and set the string */
-		theParms.theIndex++;
-		Parameter.applyDate(theStmt, theParms.theIndex, pValue);
-	}
-	
-	/** 
-	 *  Set a binary field
-	 *  @param pValue the binary value
-	 */
-	protected void setBinary(byte[] pValue) throws SQLException {
-		/* Increment the index and set the string */
-		theParms.theIndex++;
-		Parameter.applyBinary(theStmt, theParms.theIndex, pValue);
-	}
-	
-	/** 
-	 *  Update a number field
-	 *  @param pField the field name
-	 *  @param pValue the string value
-	 */
-	protected void updateNumber(String pField,
-			               	 	Number pValue) {
-		/* Format the number and apply as a string */
-		String myString = null;
-		if (pValue != null) myString = pValue.format(false);
-		updateString(pField, myString);
-	}
-	
-	/** 
-	 *  Update a string field
-	 *  @param pField the field name
-	 *  @param pValue the string value
-	 */
-	protected void updateString(String pField,
-			               	 	String pValue) {
-		/* Adjust the statement */
-		if (theUpdates != null) theUpdates += ", "; else theUpdates = "";
-		theUpdates += pField + "=?";
-		
-		/* Add the parameter to the parameter list */
-		theParms.addParameter(ParmType.String, pValue);
-	}
-	
-	/** 
-	 *  Update a Long field
-	 *  @param pField the field name
-	 *  @param pValue the long value
-	 */
-	protected void updateLong(String 	pField,
-			               	  Long		pValue) {
-		/* Adjust the statement */
-		if (theUpdates != null) theUpdates += ", "; else theUpdates = "";
-		theUpdates += pField + "=?";
-		
-		/* Add the parameter to the parameter list */
-		theParms.addParameter(ParmType.Long, pValue);
-	}
-	
-	/** 
-	 *  Update an integer field
-	 *  @param pField the field name
-	 *  @param pValue the string value
-	 */
-	protected void updateInteger(String 	pField,
-			               	     Integer	pValue) {
-		/* Adjust the statement */
-		if (theUpdates != null) theUpdates += ", "; else theUpdates = "";
-		theUpdates += pField + "=?";
-		
-		/* Add the parameter to the parameter list */
-		theParms.addParameter(ParmType.Integer, pValue);
-	}
-	
-	/** 
-	 *  Update a boolean field
-	 *  @param pField the field name
-	 *  @param pValue the boolean value
-	 */
-	protected void updateBoolean(String 	pField,
-			               	 	 Boolean	pValue) {
-		/* Adjust the statement */
-		if (theUpdates != null) theUpdates += ", "; else theUpdates = "";
-		theUpdates += pField + "=?";
-		
-		/* Add the parameter to the parameter list */
-		theParms.addParameter(ParmType.Boolean, pValue);
-	}
-	
-	/** 
-	 *  Update a string field
-	 *  @param pField the field name
-	 *  @param pValue the string value
-	 */
-	protected void updateDate(String pField,
-			               	  Date	 pValue) {
-		/* Adjust the statement */
-		if (theUpdates != null) theUpdates += ", "; else theUpdates = "";
-		theUpdates += pField + "=?";
-		
-		/* Add the parameter to the parameter list */
-		theParms.addParameter(ParmType.Date, pValue);
-	}
-	
-	/** 
-	 *  Update a binary field
-	 *  @param pField the field name
-	 *  @param pValue the binary value
-	 */
-	protected void updateBinary(String 	pField,
-			               	 	byte[]	pValue) {
-		/* Adjust the statement */
-		if (theUpdates != null) theUpdates += ", "; else theUpdates = "";
-		theUpdates += pField + "=?";
-		
-		/* Add the parameter to the parameter list */
-		theParms.addParameter(ParmType.Binary, pValue); 
-	}
-	
-	/**
-	 * Execute the updates for the specified id
-	 * @param uId the ID of the item
-	 * @throws SQLException
-	 */
-	protected void updateId(int uId) throws SQLException {
-		String myString;
-		
-		/* If we have updates */
-		if (theUpdates != null) {
-			/* Build the SQL statement */
-			myString = "update " + theTableName + " set " +
-			           theUpdates + " where " + theIdCol +
-			           " = " + uId;
-			
-			/* Prepare the statement and apply the parameters */
-			prepareStatement(myString);
-			theParms.applyParameters(theStmt);
-			
-			/* Execute the updates and reset the parameters */
-			execute();
-			theParms.clear();
-		}
-	}
-	
-	/**
-	 * parameter list class 
-	 */
-	private class ParameterList {
-		/**
-		 * The first parameter
-		 */
-		private Parameter 	theFirst 	= null;
-
-		/**
-		 * The last parameter
-		 */
-		private Parameter 	theLast		= null;
-		
-		/**
-		 * The first parameter
-		 */
-		private int 		theIndex 	= 0;
-		
-		/**
-		 * Add a parameter to the list
-		 * @param pType the parameter type
-		 * @param pObject the object
-		 */
-		private void addParameter(ParmType 	pType,
-								  Object	pValue) {
-			Parameter myParm;
-			
-			/* Allocate the new parameter */
-			theIndex++;
-			myParm = new Parameter(theIndex, pType, pValue);
-			
-			/* If this is the first element */
-			if (theLast == null) {
-				/* Record as the only element */
-				theFirst = myParm;
-				theLast  = myParm;
-			}
-			
-			else {
-				/* Record as last element */
-				theLast.theNext = myParm;
-				theLast			= myParm;
-			}
-		}
-
-		/**
-		 * Apply parameters
-		 * @param pStmt the Statement to apply the parameter to
-		 */
-		private void applyParameters(PreparedStatement pStmt) throws SQLException {
-			Parameter myParm;
-			
-			/* Loop through the parameters */
-			for (myParm = theFirst;
-			     myParm != null;
-			     myParm  = myParm.theNext) {
-				/* Apply the parameter */
-				myParm.applyParm(pStmt);
-			}
-		}
-
-		/**
-		 * Clear parameters
-		 */
-		private void clear() {
-			Parameter myParm;
-
-			/* Reset details */
-			while (theFirst != null) { 
-				myParm 			 = theFirst.theNext;
-				theFirst.theNext = null;
-				theFirst 		 = myParm;
-			}
-			theLast  = null;
-			theIndex = 0;
-		}
-	}
-	
-	/**
-	 * parameter class 
-	 */
-	private static class Parameter {
-		/**
-		 * Parameter index
-		 */
-		private int 		theIndex = -1;
-		
-		/**
-		 * Parameter type
-		 */
-		private ParmType	theType		= null;
-		
-		/**
-		 * Parameter value
-		 */
-		private Object		theValue	= null;
-		
-		/**
-		 * Next parameter
-		 */
-		private Parameter	theNext		= null;
-		
-		/**
-		 * Constructor
-		 * @param iIndex the index
-		 * @param pType the parameter type
-		 * @param pValue the object
-		 */
-		private Parameter(int 		iIndex,
-						  ParmType 	pType,
-						  Object	pValue) {
-			/* Store the values */
-			theIndex = iIndex;
-			theType  = pType;
-			theValue = pValue;
-		}
-		
-		/** 
-		 * Apply parameter
-		 * @param pStmt the Statement to apply the parameter to
-		 */
-		private void applyParm(PreparedStatement pStmt) throws SQLException {
-			
-			/* Switch to apply the appropriate value */
-			switch (theType) {
-				case String:
-					applyString(pStmt, theIndex, (String)theValue);
-					break;
-				case Long:
-					applyLong(pStmt, theIndex, (Long)theValue);
-					break;
-				case Integer:
-					applyInteger(pStmt, theIndex, (Integer)theValue);
-					break;
-				case Boolean:
-					applyBoolean(pStmt, theIndex, (Boolean)theValue);
-					break;
-				case Date:
-					applyDate(pStmt, theIndex, (Date)theValue);
-					break;
-				case Binary:
-					applyBinary(pStmt, theIndex, (byte[])theValue);
-					break;
-			}
-		}
-
-		/** 
-		 * Apply String
-		 * @param pStmt the Statement to apply the parameter to
-		 * @param iIndex the index
-		 * @param pValue the value
-		 */
-		private static void applyString(PreparedStatement 	pStmt,
-								 		int			   		pIndex,
-								 		String			   	pValue) throws SQLException {
-			
-			/* Apply the string value */
-			pStmt.setString(pIndex, pValue);
-		}
-
-		/** 
-		 * Apply Long
-		 * @param pStmt the Statement to apply the parameter to
-		 * @param iIndex the index
-		 * @param pValue the value
-		 */
-		private static void applyLong(PreparedStatement pStmt,
-								 	  int			   	pIndex,
-								 	  Long			   	pValue) throws SQLException {
-			
-			/* Apply the long value */
-			if (pValue == null) pStmt.setNull(pIndex, Types.BIGINT);
-			else pStmt.setLong(pIndex, pValue);
-		}
-
-		/** 
-		 * Apply Integer
-		 * @param pStmt the Statement to apply the parameter to
-		 * @param iIndex the index
-		 * @param pValue the value
-		 */
-		private static void applyInteger(PreparedStatement 	pStmt,
-								 	     int				pIndex,
-								 	     Integer		   	pValue) throws SQLException {
-			
-			/* Apply the integer value */
-			if (pValue == null) pStmt.setNull(pIndex, Types.INTEGER);
-			else pStmt.setInt(pIndex, pValue);
-		}
-
-		/** 
-		 * Apply Boolean
-		 * @param pStmt the Statement to apply the parameter to
-		 * @param iIndex the index
-		 * @param pValue the value
-		 */
-		private static void applyBoolean(PreparedStatement 	pStmt,
-								 	     int				pIndex,
-								 	     Boolean		   	pValue) throws SQLException {
-			
-			/* Apply the integer value */
-			if (pValue == null) pStmt.setNull(pIndex, Types.BIT);
-			else pStmt.setBoolean(pIndex, pValue);
-		}
-		
-		/** 
-		 * Apply Date
-		 * @param pStmt the Statement to apply the parameter to
-		 * @param iIndex the index
-		 * @param pValue the value
-		 */
-		private static void applyDate(PreparedStatement 	pStmt,
-								 	  int			   		pIndex,
-								 	  Date					pValue) throws SQLException {			
-			java.sql.Date myDate = null;
-			
-			/* Build the date as a SQL date */
-			if ((pValue != null) && (pValue.getDate() != null))
-				myDate = new java.sql.Date(pValue.getDate().getTime()); 
-				
-			/* Apply the date value */
-			pStmt.setDate(pIndex, myDate);
-		}
-
-		/** 
-		 * Apply Binary
-		 * @param pStmt the Statement to apply the parameter to
-		 * @param iIndex the index
-		 * @param pValue the value
-		 */
-		private static void applyBinary(PreparedStatement 	pStmt,
-								 		int			   		pIndex,
-								 		byte[]			   	pValue) throws SQLException {
-			
-			/* Apply the binary value */
-			pStmt.setBytes(pIndex, pValue);
-		}
-	}
-	
-	/**
-	 * Update parameter enumeration
-	 */
-	private enum ParmType {
-		/**
-		 * String
-		 */
-		String,
-		
-		/**
-		 * Long
-		 */
-		Long,
-		
-		/**
-		 * Integer
-		 */
-		Integer,
-		
-		/**
-		 * Date
-		 */
-		Date,
-		
-		/**
-		 * Boolean
-		 */
-		Boolean,
-		
-		/**
-		 * Binary 
-		 */
-		Binary;
-	}
+	}		
 }

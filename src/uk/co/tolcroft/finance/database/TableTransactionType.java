@@ -3,30 +3,35 @@ package uk.co.tolcroft.finance.database;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.*;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 public class TableTransactionType extends TableStaticData<TransactionType> {
 	/**
 	 * The name of the TransType table
 	 */
-	private final static String 	theTabName		= TransactionType.listName;
+	protected final static String 	TableName	= TransactionType.listName;
 				
+	/**
+	 * The transaction type list
+	 */
+	private TransactionType.List	theList 	= null;
+
+	/**
+	 * Obtain the data column name
+	 * @return the data column name
+	 */
+	protected String getDataName()  { return TransactionType.objName; }
+	
 	/**
 	 * Constructor
 	 * @param pDatabase the database control
 	 */
 	protected TableTransactionType(Database 	pDatabase) { 
-		super(pDatabase, theTabName, TransactionType.objName); 
+		super(pDatabase, TableName); 
 	}
 	
-	/* The Id for reference */
-	protected static String idReference() {
-		return theTabName +  "(" + theIdCol + ")";
-	}
-	
-	/* Get the List for the table for loading */
-	protected TransactionType.List  getLoadList(DataSet pData) {
-		return pData.getTransTypes();
+	/* PreProcess on Load */
+	protected void preProcessOnLoad(DataSet pData) {
+		theList = pData.getTransTypes();
 	}
 	
 	/* Get the List for the table for updates */
@@ -36,24 +41,7 @@ public class TableTransactionType extends TableStaticData<TransactionType> {
 	
 	/* Load the transaction type */
 	protected void loadTheItem(int pId, int pClassId, byte[] pTrans, byte[] pDesc) throws Exception {
-		TransactionType.List	myList;
-		
-		/* Protect the access */
-		try {			
-			/* Access the list */
-			myList = (TransactionType.List)getList();
-			
-			/* Add into the list */
-			myList.addItem(pId, pClassId, pTrans, pDesc);
-		}
-								
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
-					            "Failed to load " + theTabName + " item",
-					            e);
-		}
-		
-		/* Return to caller */
-		return;
+		/* Add into the list */
+		theList.addItem(pId, pClassId, pTrans, pDesc);
 	}
 }

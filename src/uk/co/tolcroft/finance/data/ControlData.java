@@ -48,7 +48,6 @@ public class ControlData extends DataItem {
 	public Values  	getObj()  { return (Values)super.getObj(); }	
 	
 	/* Field IDs */
-	public static final int FIELD_ID       = 0;
 	public static final int FIELD_VERS	   = 1;
 	public static final int FIELD_CONTROL  = 2;
 	public static final int FIELD_KEY	   = 3;
@@ -73,7 +72,7 @@ public class ControlData extends DataItem {
 	 */
 	public static String	fieldName(int iField) {
 		switch (iField) {
-			case FIELD_ID:			return "ID";
+			case FIELD_ID:			return NAME_ID;
 			case FIELD_VERS:		return "Version";
 			case FIELD_CONTROL:		return "Control";
 			case FIELD_KEY:			return "SecurityKey";

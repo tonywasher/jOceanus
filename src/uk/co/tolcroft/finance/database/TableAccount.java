@@ -1,101 +1,57 @@
 package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.*;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 public class TableAccount extends DatabaseTable<Account> {
 	/**
 	 * The name of the Account table
 	 */
-	private final static String theTabName 		= Account.listName;
+	protected final static String TableName		= Account.listName;
 				
 	/**
-	 * The name of the Account column
+	 * The table definition
 	 */
-	private final static String theNameCol    	= Account.fieldName(Account.FIELD_NAME);
+	private TableDefinition theTableDef;	/* Set during load */
 
 	/**
-	 * The name of the Account Type column
+	 * The account list
 	 */
-	private final static String theActTypCol 	= Account.fieldName(Account.FIELD_TYPE);
+	private Account.List	theList 			= null;
 
-	/**
-	 * The name of the Description column
-	 */
-	private final static String theDescCol   	= Account.fieldName(Account.FIELD_DESC);
-
-	/**
-	 * The name of the Maturity column
-	 */
-	private final static String theMatureCol 	= Account.fieldName(Account.FIELD_MATURITY);
-
-	/**
-	 * The name of the Closed column
-	 */
-	private final static String theCloseCol  	= Account.fieldName(Account.FIELD_CLOSE);
-
-	/**
-	 * The name of the Parent column
-	 */
-	private final static String theParentCol 	= Account.fieldName(Account.FIELD_PARENT);
-	
-	/**
-	 * The name of the Alias column
-	 */
-	private final static String theAliasCol 	= Account.fieldName(Account.FIELD_ALIAS);
-	
-	/**
-	 * The name of the WebSite column
-	 */
-	private final static String theWebSiteCol 	= Account.fieldName(Account.FIELD_WEBSITE);
-	
-	/**
-	 * The name of the CustNo column
-	 */
-	private final static String theCustNoCol 	= Account.fieldName(Account.FIELD_CUSTNO);
-	
-	/**
-	 * The name of the UserId column
-	 */
-	private final static String theUserIdCol 	= Account.fieldName(Account.FIELD_USERID);
-	
-	/**
-	 * The name of the Password column
-	 */
-	private final static String thePasswordCol 	= Account.fieldName(Account.FIELD_PASSWORD);
-	
-	/**
-	 * The name of the Account column
-	 */
-	private final static String theAcctCol 		= Account.fieldName(Account.FIELD_ACCOUNT);
-	
-	/**
-	 * The name of the Notes column
-	 */
-	private final static String theNotesCol 	= Account.fieldName(Account.FIELD_NOTES);
-	
 	/**
 	 * Constructor
 	 * @param pDatabase the database control
 	 */
 	protected TableAccount(Database 	pDatabase) {
-		super(pDatabase, theTabName);
+		super(pDatabase, TableName);
 	}
 	
-	/* The Id for reference */
-	protected static String idReference() {
-		return theTabName +  "(" + theIdCol + ")";
+	/**
+	 * Define the table columns (called from within super-constructor)
+	 * @param pTableDef the table definition
+	 */
+	protected void defineTable(TableDefinition	pTableDef) {
+		theTableDef = pTableDef;
+		theTableDef.addEncryptedColumn(Account.FIELD_NAME, Account.fieldName(Account.FIELD_NAME), Account.NAMELEN);
+		theTableDef.addReferenceColumn(Account.FIELD_TYPE, Account.fieldName(Account.FIELD_TYPE), TableAccountType.TableName);
+		theTableDef.addNullEncryptedColumn(Account.FIELD_DESC, Account.fieldName(Account.FIELD_DESC), Account.DESCLEN);
+		theTableDef.addNullDateColumn(Account.FIELD_MATURITY, Account.fieldName(Account.FIELD_MATURITY));
+		theTableDef.addNullDateColumn(Account.FIELD_CLOSE, Account.fieldName(Account.FIELD_CLOSE));
+		theTableDef.addNullReferenceColumn(Account.FIELD_PARENT, Account.fieldName(Account.FIELD_PARENT), TableName);
+		theTableDef.addNullReferenceColumn(Account.FIELD_ALIAS, Account.fieldName(Account.FIELD_ALIAS), TableName);
+		theTableDef.addNullEncryptedColumn(Account.FIELD_WEBSITE, Account.fieldName(Account.FIELD_WEBSITE), Account.WSITELEN);
+		theTableDef.addNullEncryptedColumn(Account.FIELD_CUSTNO, Account.fieldName(Account.FIELD_CUSTNO), Account.CUSTLEN);
+		theTableDef.addNullEncryptedColumn(Account.FIELD_USERID, Account.fieldName(Account.FIELD_USERID), Account.UIDLEN);
+		theTableDef.addNullEncryptedColumn(Account.FIELD_PASSWORD, Account.fieldName(Account.FIELD_PASSWORD), Account.PWDLEN);
+		theTableDef.addNullEncryptedColumn(Account.FIELD_ACCOUNT, Account.fieldName(Account.FIELD_ACCOUNT), Account.ACTLEN);
+		theTableDef.addNullEncryptedColumn(Account.FIELD_NOTES, Account.fieldName(Account.FIELD_NOTES), Account.NOTELEN);
 	}
-		
-	/* Determine the item name */
-	protected String getItemsName() { return theTabName; }
-
-	/* Get the List for the table for loading */
-	protected Account.List  getLoadList(DataSet pData) {
-		return pData.getAccounts();
+	
+	/* PreProcess on Load */
+	protected void preProcessOnLoad(DataSet pData) {
+		theList = pData.getAccounts();
 	}
 	
 	/* Get the List for the table for updates */
@@ -103,44 +59,8 @@ public class TableAccount extends DatabaseTable<Account> {
 		return new Account.List(pData.getAccounts(), ListStyle.UPDATE);
 	}
 	
-	/* Create statement for Accounts */
-	protected String createStatement() {
-		return "create table " + theTabName + " ( " +
-			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
-			   theNameCol	+ " varbinary(" + 2*Account.NAMELEN + ") NOT NULL, " +
-			   theActTypCol	+ " int NOT NULL " +
-			   		"REFERENCES " + TableAccountType.idReference() + ", " +
-   			   theDescCol	+ " varbinary(" + 2*Account.DESCLEN + ") NULL, " +
-			   theMatureCol	+ " date NULL, " +
-			   theCloseCol	+ " date NULL, " +
-			   theParentCol	+ " int NULL " +
-				  	"REFERENCES " + idReference() + ", " +
-			   theAliasCol	+ " int NULL " +
-				  	"REFERENCES " + idReference() + ", " +
-			   theWebSiteCol + " varbinary(" + 2*Account.WSITELEN + ") NULL, " +
-			   theCustNoCol + " varbinary(" + 2*Account.CUSTLEN + ") NULL, " +
-			   theUserIdCol + " varbinary(" + 2*Account.UIDLEN + ") NULL, " +
-			   thePasswordCol + " varbinary(" + 2*Account.PWDLEN + ") NULL, " +
-			   theAcctCol + " varbinary(" + 2*Account.ACTLEN + ") NULL, " +
-			   theNotesCol + " varbinary(" + 2*Account.NOTELEN + ") NULL )";
-	}
-	
-	/* Load statement for Accounts */
-	protected String loadStatement() {
-		return "select " + theIdCol + "," + theNameCol + "," + 
-		                 theActTypCol + "," + theDescCol + "," +
-		                 theMatureCol + "," + theCloseCol + "," +
-		                 theParentCol + "," + theAliasCol + "," +
-		                 theWebSiteCol + "," + theCustNoCol + "," +
-		                 theUserIdCol + "," + thePasswordCol + "," +
-		                 theAcctCol + "," + theNotesCol + 
-		                 " from " + getTableName();			
-	}
-	
 	/* Load the account */
-	protected void loadItem() throws Exception {
-		Account.List	myList;
-		int	    		myId;
+	protected void loadItem(int pId) throws Exception {
 		byte[]  		myName;
 		int    			myActTypeId;
 		Integer	   		myParentId;
@@ -155,160 +75,57 @@ public class TableAccount extends DatabaseTable<Account> {
 		byte[]     		myAccount;
 		byte[]     		myNotes;
 		
-		/* Protect the access */
-		try {			
-			/* Get the various fields */
-			myId        	= getInteger();
-			myName   		= getBinary();
-			myActTypeId 	= getInteger();
-			myDesc      	= getBinary();
-			myMaturity  	= getDate();
-			myClosed    	= getDate();
-			myParentId		= getInteger();
-			myAliasId		= getInteger();
-			myWebSite		= getBinary();
-			myCustNo		= getBinary();
-			myUserId		= getBinary();
-			myPassword		= getBinary();
-			myAccount		= getBinary();
-			myNotes			= getBinary();
+		/* Get the various fields */
+		myName   		= theTableDef.getBinaryValue(Account.FIELD_NAME);
+		myActTypeId 	= theTableDef.getIntegerValue(Account.FIELD_TYPE);
+		myDesc      	= theTableDef.getBinaryValue(Account.FIELD_DESC);
+		myMaturity  	= theTableDef.getDateValue(Account.FIELD_MATURITY);
+		myClosed    	= theTableDef.getDateValue(Account.FIELD_CLOSE);
+		myParentId		= theTableDef.getIntegerValue(Account.FIELD_PARENT);
+		myAliasId		= theTableDef.getIntegerValue(Account.FIELD_ALIAS);
+		myWebSite		= theTableDef.getBinaryValue(Account.FIELD_WEBSITE);
+		myCustNo		= theTableDef.getBinaryValue(Account.FIELD_CUSTNO);
+		myUserId		= theTableDef.getBinaryValue(Account.FIELD_USERID);
+		myPassword		= theTableDef.getBinaryValue(Account.FIELD_PASSWORD);
+		myAccount		= theTableDef.getBinaryValue(Account.FIELD_ACCOUNT);
+		myNotes			= theTableDef.getBinaryValue(Account.FIELD_NOTES);
 	
-			/* Access the list */
-			myList = (Account.List)getList();
-			
-			/* Add into the list */
-			myList.addItem(myId, 
-				           myName, 
-				           myActTypeId,
-				           myDesc, 
-				           myMaturity,
-				           myClosed,
-				           myParentId,
-				           myAliasId,
-					       myWebSite,
-					       myCustNo,
-					       myUserId,
-					       myPassword,
-					       myAccount,
-					       myNotes);
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
-					            "Failed to load " + theTabName + " item",
-					            e);
-		}
-		
-		/* Return to caller */
-		return;
+		/* Add into the list */
+		theList.addItem(pId, 
+			            myName, 
+				        myActTypeId,
+				        myDesc, 
+				        myMaturity,
+				        myClosed,
+				        myParentId,
+				        myAliasId,
+					    myWebSite,
+					    myCustNo,
+					    myUserId,
+					    myPassword,
+					    myAccount,
+					    myNotes);
 	}
 	
-	/* Insert statement for Accounts */
-	protected String insertStatement() {
-		return "insert into " + getTableName() + 
-		       " (" + theIdCol + "," + theNameCol + "," +
-		              theActTypCol + "," + theDescCol + "," +
-		              theMatureCol + "," + theCloseCol + "," +
-		              theParentCol + "," + theAliasCol + "," + 
-		              theWebSiteCol + "," + theCustNoCol + "," +
-		              theUserIdCol + "," + thePasswordCol + "," +
-		              theAcctCol + "," + theNotesCol + ")" + 
-		       " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-	}
-	
-	/* Insert the account */
-	protected void insertItem(Account	pItem) throws Exception {
-		
-		/* Protect the access */
-		try {			
-			/* Set the fields */
-			setInteger(pItem.getId());
-			setBinary(pItem.getNameBytes());
-			setInteger(pItem.getActType().getId());
-			setBinary(pItem.getDescBytes());
-			setDate(pItem.getMaturity());
-			setDate(pItem.getClose());
-			setInteger((pItem.getParent() != null)
-							? pItem.getParent().getId() : null);
-			setInteger((pItem.getAlias() != null)
-							? pItem.getAlias().getId() : null);
-			setBinary(pItem.getWebSiteBytes());
-			setBinary(pItem.getCustNoBytes());
-			setBinary(pItem.getUserIdBytes());
-			setBinary(pItem.getPasswordBytes());
-			setBinary(pItem.getAccountBytes());
-			setBinary(pItem.getNotesBytes());
+	/* Set a field value */
+	protected void setFieldValue(Account	pItem, int iField) throws Exception  {
+		/* Switch on field id */
+		switch (iField) {
+			case Account.FIELD_NAME:		theTableDef.setBinaryValue(iField, pItem.getNameBytes());			break;
+			case Account.FIELD_TYPE:		theTableDef.setIntegerValue(iField, pItem.getActType().getId());	break;
+			case Account.FIELD_DESC:		theTableDef.setBinaryValue(iField, pItem.getDescBytes());			break;
+			case Account.FIELD_MATURITY:	theTableDef.setDateValue(iField, pItem.getMaturity());				break;
+			case Account.FIELD_CLOSE:		theTableDef.setDateValue(iField, pItem.getClose());					break;
+			case Account.FIELD_PARENT:		theTableDef.setIntegerValue(iField, (pItem.getParent() != null)
+															? pItem.getParent().getId() : null);				break;
+			case Account.FIELD_ALIAS:		theTableDef.setIntegerValue(iField, (pItem.getAlias() != null)
+															? pItem.getAlias().getId() : null);					break;
+			case Account.FIELD_WEBSITE:		theTableDef.setBinaryValue(iField, pItem.getWebSiteBytes());		break;
+			case Account.FIELD_CUSTNO:		theTableDef.setBinaryValue(iField, pItem.getCustNoBytes());			break;
+			case Account.FIELD_USERID:		theTableDef.setBinaryValue(iField, pItem.getUserIdBytes());			break;
+			case Account.FIELD_PASSWORD:	theTableDef.setBinaryValue(iField, pItem.getPasswordBytes());		break;
+			case Account.FIELD_ACCOUNT:		theTableDef.setBinaryValue(iField, pItem.getAccountBytes());		break;
+			case Account.FIELD_NOTES:		theTableDef.setBinaryValue(iField, pItem.getNotesBytes());			break;
 		}
-				
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
-								pItem,
-					            "Failed to insert " + theTabName + " item",
-					            e);
-		}
-		
-		/* Return to caller */
-		return;
-	}
-	
-	/* Update the account */
-	protected void updateItem(Account	pItem) throws Exception {
-		Account.Values 	myBase;
-		
-		/* Access the base */
-		myBase = (Account.Values)pItem.getBaseObj();
-			
-		/* Protect the update */
-		try {			
-			/* Update the fields */
-			if (Utils.differs(pItem.getNameBytes(),
-				  		  	  myBase.getNameBytes()))
-				updateBinary(theNameCol, pItem.getNameBytes());
-			if (Utils.differs(pItem.getDescBytes(),
-						  	  myBase.getDescBytes())) 
-				updateBinary(theDescCol, pItem.getDescBytes());
-			if (Date.differs(pItem.getMaturity(),
-				             myBase.getMaturity())) 
-				updateDate(theMatureCol, pItem.getMaturity());
-			if (Date.differs(pItem.getClose(),
-						  	 myBase.getClose()))
-				updateDate(theCloseCol, pItem.getClose());
-			if (Account.differs(pItem.getParent(),
-								myBase.getParent()))
-				updateInteger(theParentCol, (pItem.getParent() != null)
-												? pItem.getParent().getId() : null);
-			if (Account.differs(pItem.getAlias(),
-				  	  			myBase.getAlias()))
-				updateInteger(theAliasCol, (pItem.getAlias() != null)
-												? pItem.getAlias().getId() : null);
-			if (Utils.differs(pItem.getWebSiteBytes(),
-				  	  		  myBase.getWebSiteBytes()))
-				updateBinary(theWebSiteCol, pItem.getWebSiteBytes());
-			if (Utils.differs(pItem.getCustNoBytes(),
-				  	  		  myBase.getCustNoBytes()))
-				updateBinary(theCustNoCol, pItem.getCustNoBytes());
-			if (Utils.differs(pItem.getUserIdBytes(),
-				  	  		  myBase.getUserIdBytes()))
-				updateBinary(theUserIdCol, pItem.getUserIdBytes());
-			if (Utils.differs(pItem.getPasswordBytes(),
-				  	  		  myBase.getPasswordBytes()))
-				updateBinary(thePasswordCol, pItem.getPasswordBytes());
-			if (Utils.differs(pItem.getAccountBytes(),
-				  	  		  myBase.getAccountBytes()))
-				updateBinary(theAcctCol, pItem.getAccountBytes());
-			if (Utils.differs(pItem.getNotesBytes(),
-				  	  		  myBase.getNotesBytes()))
-				updateBinary(theNotesCol, pItem.getNotesBytes());
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
-								pItem,
-					            "Failed to update " + theTabName + " item",
-					            e);
-		}
-			
-		/* Return to caller */
-		return;
 	}	
 }

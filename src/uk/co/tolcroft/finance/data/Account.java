@@ -138,7 +138,6 @@ public class Account extends DataItem {
 	public boolean	   isLocked(){ return isClosed(); }
 	
 	/* Field IDs */
-	public static final int FIELD_ID       = 0;
 	public static final int FIELD_NAME     = 1;
 	public static final int FIELD_DESC     = 2;
 	public static final int FIELD_TYPE     = 3;
@@ -172,7 +171,7 @@ public class Account extends DataItem {
 	 */
 	public static String	fieldName(int iField) {
 		switch (iField) {
-			case FIELD_ID:			return "ID";
+			case FIELD_ID:			return NAME_ID;
 			case FIELD_NAME:		return "Name";
 			case FIELD_DESC:		return "Description";
 			case FIELD_TYPE:		return "AccountType";

@@ -58,7 +58,6 @@ public class Pattern extends DataItem {
 	public Pattern     getBase() { return (Pattern)super.getBase(); }
 	
 	/* Field IDs */
-	public static final int FIELD_ID       = 0;
 	public static final int FIELD_ACCOUNT  = 1;
 	public static final int FIELD_DATE     = 2;
 	public static final int FIELD_DESC     = 3;
@@ -87,7 +86,7 @@ public class Pattern extends DataItem {
 	 */
 	public static String	fieldName(int iField) {
 		switch (iField) {
-			case FIELD_ID:			return "ID";
+			case FIELD_ID:			return NAME_ID;
 			case FIELD_ACCOUNT:		return "Account";
 			case FIELD_DATE:		return "Date";
 			case FIELD_DESC:		return "Description";

@@ -59,7 +59,6 @@ public class TaxYear extends DataItem {
 	public TaxYear    	getBase() { return (TaxYear)super.getBase(); }
 	
 	/* Field IDs */
-	public static final int FIELD_ID     		= 0;
 	public static final int FIELD_REGIME  		= 1;
 	public static final int FIELD_YEAR   		= 2;
 	public static final int FIELD_RENTAL 		= 3;
@@ -102,7 +101,7 @@ public class TaxYear extends DataItem {
 	 */
 	public static String	fieldName(int iField) {
 		switch (iField) {
-			case FIELD_ID:		return "ID";
+			case FIELD_ID:		return NAME_ID;
 			case FIELD_REGIME:	return "Regime";
 			case FIELD_YEAR:	return "Date";
 			case FIELD_ALLOW:	return "Allowance";

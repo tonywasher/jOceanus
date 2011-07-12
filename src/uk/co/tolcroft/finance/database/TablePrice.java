@@ -4,45 +4,45 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.*;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 public class TablePrice extends DatabaseTable<AcctPrice> {
 	/**
 	 * The name of the Prices table
 	 */
-	private final static String theTabName 		= AcctPrice.listName;
+	protected final static String TableName		= AcctPrice.listName;
 				
 	/**
-	 * The name of the Account column
+	 * The table definition
 	 */
-	private final static String theActCol    	= AcctPrice.fieldName(AcctPrice.FIELD_ACCOUNT);
+	private TableDefinition theTableDef;	/* Set during load */
 
 	/**
-	 * The name of the Date column
+	 * The price list
 	 */
-	private final static String theDateCol 		= AcctPrice.fieldName(AcctPrice.FIELD_DATE);
-
-	/**
-	 * The name of the Price column
-	 */
-	private final static String thePriceCol 	= AcctPrice.fieldName(AcctPrice.FIELD_PRICE);
+	private AcctPrice.List	theList 			= null;
 
 	/**
 	 * Constructor
 	 * @param pDatabase the database control
 	 */
 	protected TablePrice(Database 	pDatabase) {
-		super(pDatabase, theTabName);
+		super(pDatabase, TableName);
 	}
 	
-	/* The Id for reference */
-	protected static String idReference() {
-		return theTabName +  "(" + theIdCol + ")";
+	/**
+	 * Define the table columns (called from within super-constructor)
+	 * @param pTableDef the table definition
+	 */
+	protected void defineTable(TableDefinition	pTableDef) {
+		theTableDef = pTableDef;
+		theTableDef.addReferenceColumn(AcctPrice.FIELD_ACCOUNT, AcctPrice.fieldName(AcctPrice.FIELD_ACCOUNT), TableAccount.TableName);
+		theTableDef.addDateColumn(AcctPrice.FIELD_DATE, AcctPrice.fieldName(AcctPrice.FIELD_DATE));
+		theTableDef.addEncryptedColumn(AcctPrice.FIELD_PRICE, AcctPrice.fieldName(AcctPrice.FIELD_PRICE), EncryptedPair.PRICELEN);
 	}
 	
-	/* Get the List for the table for loading */
-	protected AcctPrice.List  getLoadList(DataSet pData) {
-		return pData.getPrices();
+	/* PreProcess on Load */
+	protected void preProcessOnLoad(DataSet pData) {
+		theList = pData.getPrices();
 	}
 	
 	/* Get the List for the table for updates */
@@ -50,122 +50,34 @@ public class TablePrice extends DatabaseTable<AcctPrice> {
 		return new AcctPrice.List(pData.getPrices(), ListStyle.UPDATE);
 	}
 	
-	/* Create statement for Prices */
-	protected String createStatement() {
-		return "create table " + theTabName + " ( " +
-			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
-			   theActCol	+ " int NOT NULL " +
-			   		"REFERENCES " + TableAccount.idReference() + ", " +
-   			   theDateCol	+ " date NOT NULL, " +
-			   thePriceCol	+ " varbinary(" + 2*EncryptedPair.PRICELEN + ") NOT NULL )";
-	}
-	
-	/* Determine the item name */
-	protected String getItemsName() { return theTabName; }
-
-	/* Load statement for Prices */
-	protected String loadStatement() {
-		return "select " + theIdCol + "," + theActCol + "," + 
-		                 theDateCol + "," + thePriceCol + 
-		                 " from " + getTableName();			
-	}
-	
 	/* Load the price */
-	protected void loadItem() throws Exception {
-		AcctPrice.List		myList;
-		int	    		myId;
+	protected void loadItem(int pId) throws Exception {
 		int  			myAccountId;
 		byte[] 			myPrice;
 		java.util.Date  myDate;
 		
-		/* Protect the access */
-		try {			
-			/* Get the various fields */
-			myId        = getInteger();
-			myAccountId = getInteger();
-			myDate 		= getDate();
-			myPrice     = getBinary();
+		/* Get the various fields */
+		myAccountId = theTableDef.getIntegerValue(AcctPrice.FIELD_ACCOUNT);
+		myDate 		= theTableDef.getDateValue(AcctPrice.FIELD_DATE);
+		myPrice     = theTableDef.getBinaryValue(AcctPrice.FIELD_PRICE);
 	
-			/* Access the list */
-			myList = (AcctPrice.List)getList();
-			
-			/* Add into the list */
-			myList.addItem(myId, 
-			           	   myDate,
-				           myAccountId, 
-				           myPrice);
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
-					            "Failed to load item",
-					            e);
-		}
+		/* Add into the list */
+		theList.addItem(pId, 
+		           	    myDate,
+			            myAccountId, 
+			            myPrice);
 		
 		/* Return to caller */
 		return;
 	}
 	
-	/* Insert statement for Prices */
-	protected String insertStatement() {
-		return "insert into " + getTableName() + 
-		       " (" + theIdCol + "," + theActCol + "," +
-		              theDateCol + "," + thePriceCol + ")" + 
-		       " VALUES(?,?,?,?)";
-	}
-	
-	/* Insert the price */
-	protected void insertItem(AcctPrice	pItem) throws Exception {
-		
-		/* Protect the access */
-		try {			
-			/* Set the fields */
-			setInteger(pItem.getId());
-			setInteger(pItem.getAccount().getId());
-			setDate(pItem.getDate());
-			setBinary(pItem.getPriceBytes());
+	/* Set a field value */
+	protected void setFieldValue(AcctPrice	pItem, int iField) throws Exception  {
+		/* Switch on field id */
+		switch (iField) {
+			case AcctPrice.FIELD_ACCOUNT:	theTableDef.setIntegerValue(AcctPrice.FIELD_ACCOUNT, pItem.getAccount().getId());	break;
+			case AcctPrice.FIELD_DATE:		theTableDef.setDateValue(AcctPrice.FIELD_DATE, pItem.getDate());					break;
+			case AcctPrice.FIELD_PRICE:		theTableDef.setBinaryValue(AcctPrice.FIELD_PRICE, pItem.getPriceBytes());			break;
 		}
-				
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
-								pItem,
-					            "Failed to insert item",
-					            e);
-		}
-		
-		/* Return to caller */
-		return;
-	}
-	
-	/* Update the price */
-	protected void updateItem(AcctPrice	pItem) throws Exception {
-		AcctPrice.Values 	myBase;
-		
-		/* Access the base */
-		myBase = (AcctPrice.Values)pItem.getBaseObj();
-			
-		/* Protect the update */
-		try {			
-			/* Update the fields */
-			if (Account.differs(pItem.getAccount(),
-		  		  	  			myBase.getAccount()))
-				updateInteger(theActCol, pItem.getAccount().getId());
-			if (Date.differs(pItem.getDate(),
-				  		  	 myBase.getDate()))
-				updateDate(theDateCol, pItem.getDate());
-			if (Utils.differs(pItem.getPriceBytes(),
-						  	  myBase.getPriceBytes())) 
-				updateBinary(thePriceCol, pItem.getPriceBytes());
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
-								pItem,
-					            "Failed to update item",
-					            e);
-		}
-			
-		/* Return to caller */
-		return;
 	}
 }

@@ -10,6 +10,7 @@ public class Control {
 		try { 
 			theWindow = new MainTab();			
 			theWindow.makeFrame();
+			
 		}
 		catch (Exception e) {
 			System.out.println("Help");

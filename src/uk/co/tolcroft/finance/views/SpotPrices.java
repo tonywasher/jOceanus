@@ -102,7 +102,7 @@ public class SpotPrices implements htmlDumpable {
 				/* If this is a new account */
 				if (isNew) {
 					/* If we have not set a price for this account */
-					if ((myAcct != null) &&(!isSet)) {
+					if ((myAcct != null) && (!isSet)) {
 						/* Create the new spot price and add it to the list */
 						myPrice = new SpotPrice(this, myAcct, myLast);
 						myPrice.addToList();
@@ -151,7 +151,7 @@ public class SpotPrices implements htmlDumpable {
 			}	
 
 			/* If we have not set a price for this account */
-			if ((myAcct != null) &&(!isSet)) {
+			if ((myAcct != null) && (!isSet)) {
 				/* Create the new spot price and add it to the list */
 				myPrice = new SpotPrice(this, myAcct, myLast);
 				myPrice.addToList();
@@ -249,7 +249,6 @@ public class SpotPrices implements htmlDumpable {
 		public AcctPrice	 getBase() { return (AcctPrice)super.getBase(); }
 
 		/* Field IDs */
-		public static final int FIELD_ID       = 0;
 		public static final int FIELD_ACCOUNT  = 1;
 		public static final int FIELD_PRICE    = 2;
 		public static final int NUMFIELDS	   = 3;
@@ -272,7 +271,7 @@ public class SpotPrices implements htmlDumpable {
 		 */
 		public static String	fieldName(int iField) {
 			switch (iField) {
-				case FIELD_ID: 	  	return "ID";
+				case FIELD_ID: 	  	return NAME_ID;
 				case FIELD_ACCOUNT: return "Account";
 				case FIELD_PRICE: 	return "Price";
 				default:		  	return DataItem.fieldName(iField);

@@ -3,144 +3,64 @@ package uk.co.tolcroft.finance.database;
 import uk.co.tolcroft.finance.data.StaticClass;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 public abstract class TableStaticData<T extends StaticData<?>> extends DatabaseTable<T> {
 	/**
-	 * The name of the StaticData class column
+	 * The table definition
 	 */
-	private final static String 	theClassCol		= StaticData.fieldName(StaticData.FIELD_CLASSID);
+	private TableDefinition 		theTableDef;	/* Set during load */
 
-	/**
-	 * The name of the Description column
-	 */
-	private final static String 	theDescCol		= StaticData.fieldName(StaticData.FIELD_DESC);
-			
-	/**
-	 * The name of the Data column
-	 */
-	private String 					theDataCol;
-			
 	/**
 	 * Constructor
 	 * @param pDatabase the database control
 	 */
 	protected TableStaticData(Database 	pDatabase, 
-							  String 	pTabName,
-							  String	pDataCol) {
+							  String 	pTabName) {
 		super(pDatabase, pTabName);
-		theDataCol = pDataCol;
 	}
 	
-	/* Create statement for Static Data */
-	protected String createStatement() {
-		return "create table " + getTableName() + " ( " +
-			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
-			   theClassCol 	+ " int NOT NULL, " +
-			   theDataCol	+ " varbinary(" + StaticClass.NAMELEN + ") NOT NULL, " +
-	   	   	   theDescCol	+ " varbinary(" + StaticClass.DESCLEN + ") NULL )";
+	/**
+	 * Define the table columns (called from within super-constructor)
+	 * @param pTableDef the table definition
+	 */
+	protected void defineTable(TableDefinition	pTableDef) {
+		theTableDef = pTableDef;
+		theTableDef.addIntegerColumn(StaticData.FIELD_CLASSID, StaticData.fieldName(StaticData.FIELD_CLASSID));
+		theTableDef.addEncryptedColumn(StaticData.FIELD_NAME, getDataName(), StaticClass.NAMELEN);
+		theTableDef.addNullEncryptedColumn(StaticData.FIELD_DESC, StaticData.fieldName(StaticData.FIELD_DESC), StaticClass.DESCLEN);
 	}
 	
-	/* Determine the item name */
-	protected String getItemsName() { return getTableName(); }
-
-	/* Load statement for Static Data */
-	protected String loadStatement() {
-		return "select " + theIdCol + "," + theClassCol + "," +
-		   	   theDataCol + "," + theDescCol + 
-		       " from " + getTableName();			
-	}
-		
 	/* Load the Static Data */
-	protected  abstract void loadTheItem(int pId, int pClassId, byte[] pRegime, byte[] pDesc) throws Exception;
+	protected  abstract void loadTheItem(int pId, int pClassId, byte[] pName, byte[] pDesc) throws Exception;
+	
+	/* Name the data column */
+	protected  abstract String getDataName();
 	
 	/* Load the static data */
-	protected void loadItem() throws Exception {
-		int	    						myId;
+	protected void loadItem(int pId) throws Exception {
 		int	    						myClassId;
 		byte[]  						myType;
 		byte[]  						myDesc;
 		
-		/* Protect the access */
-		try {			
-			/* Get the various fields */
-			myId   		= getInteger();
-			myClassId	= getInteger();
-			myType 		= getBinary();
-			myDesc 		= getBinary();
+		/* Get the various fields */
+		myClassId	= theTableDef.getIntegerValue(StaticData.FIELD_CLASSID);
+		myType 		= theTableDef.getBinaryValue(StaticData.FIELD_NAME);
+		myDesc 		= theTableDef.getBinaryValue(StaticData.FIELD_DESC);
 			
-			/* Add into the list */
-			loadTheItem(myId, myClassId, myType, myDesc);
-		}
-
-		catch (Exception e) { throw e; }
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
-					            "Failed to load " + getTableName() + " item",
-					            e);
-		}
+		/* Add into the list */
+		loadTheItem(pId, myClassId, myType, myDesc);
 		
 		/* Return to caller */
 		return;
 	}
 	
-	/* Insert statement for Static Data */
-	protected String insertStatement() {
-		return "insert into " + getTableName() + 
-	       " (" + theIdCol + "," + theClassCol + "," +
-    		      theDataCol + "," + theDescCol + ")" +
-		       " VALUES(?,?,?,?)";
+	/* Set a field value */
+	protected void setFieldValue(T	pItem, int iField) throws Exception  {
+		/* Switch on field id */
+		switch (iField) {
+			case StaticData.FIELD_CLASSID: 	theTableDef.setIntegerValue(iField, pItem.getStaticClassId());	break;
+			case StaticData.FIELD_NAME: 	theTableDef.setBinaryValue(iField,  pItem.getNameBytes());		break;
+			case StaticData.FIELD_DESC: 	theTableDef.setBinaryValue(iField, pItem.getDescBytes());		break;
+		}
 	}
-		
-	/* Insert a Static Data */
-	protected void insertItem(T	pItem) throws Exception  {
-		
-		/* Protect the load */
-		try {			
-			/* Set the fields */
-			setInteger(pItem.getId());
-			setInteger(pItem.getStaticClassId());
-			setBinary(pItem.getNameBytes());
-			setBinary(pItem.getDescBytes());
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
-								pItem,
-					            "Failed to insert " + getTableName() + " item",
-					            e);
-		}
-		
-		/* Return to caller */
-		return;
-	}
-
-	/* Update the Static Data */
-	protected void updateItem(T	pItem) throws Exception {
-		StaticData<?>.Values	myBase;
-		
-		/* Access the base */
-		myBase = (StaticData<?>.Values)pItem.getBaseObj();
-			
-		/* Protect the update */
-		try {			
-			/* Update the fields */
-			if (Utils.differs(pItem.getNameBytes(),
-				  		  	  myBase.getNameBytes()))
-				updateBinary(theDataCol, pItem.getNameBytes());
-			if (Utils.differs(pItem.getDescBytes(),
-		  		  	          myBase.getDescBytes()))
-				updateBinary(theDescCol, pItem.getDescBytes());
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
-								pItem,
-					            "Failed to update " + getTableName() + " item",
-					            e);
-		}
-			
-		/* Return to caller */
-		return;
-	}	
 }

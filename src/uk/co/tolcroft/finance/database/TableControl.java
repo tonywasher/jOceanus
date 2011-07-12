@@ -2,179 +2,79 @@ package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.models.DataList.ListStyle;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 public class TableControl extends DatabaseTable<ControlData> {
 	/**
 	 * The name of the Static table
 	 */
-	private final static String theTabName 		= ControlData.listName;
+	protected final static String TableName		= ControlData.listName;
 				
 	/**
-	 * The name of the DataVersion column
+	 * The table definition
 	 */
-	private final static String theVersCol 		= ControlData.fieldName(ControlData.FIELD_VERS);
-				
+	private TableDefinition 	theTableDef;	/* Set during load */
+
 	/**
-	 * The name of the ControlKey column
+	 * The control data list
 	 */
-	private final static String theControlCol 	= ControlData.fieldName(ControlData.FIELD_CONTROL);
-				
-	/**
-	 * The name of the SecurityKey column
-	 */
-	private final static String theKeyCol 		= ControlData.fieldName(ControlData.FIELD_KEY);
-				
-	/**
-	 * The name of the InitVector column
-	 */
-	private final static String theIVCol 		= ControlData.fieldName(ControlData.FIELD_IV);
-				
+	private ControlData.List	theList 		= null;
+
 	/**
 	 * Constructor
 	 * @param pDatabase the database control
 	 */
 	protected TableControl(Database	pDatabase) {
-		super(pDatabase, theTabName);
+		super(pDatabase, TableName);
 	}
 	
-	/* The Id for reference */
-	protected static String idReference() {
-		return theTabName +  "(" + theIdCol + ")";
+	/**
+	 * Define the table columns (called from within super-constructor)
+	 * @param pTableDef the table definition
+	 */
+	protected void defineTable(TableDefinition	pTableDef) {
+		theTableDef = pTableDef;
+		theTableDef.addIntegerColumn(ControlData.FIELD_VERS, ControlData.fieldName(ControlData.FIELD_VERS));
+		theTableDef.addStringColumn(ControlData.FIELD_CONTROL, ControlData.fieldName(ControlData.FIELD_CONTROL), ControlData.CTLLEN);
+		theTableDef.addBinaryColumn(ControlData.FIELD_KEY, ControlData.fieldName(ControlData.FIELD_KEY), ControlData.KEYLEN);
+		theTableDef.addBinaryColumn(ControlData.FIELD_IV, ControlData.fieldName(ControlData.FIELD_IV), ControlData.INITVLEN);
 	}
 	
-	/* Get the List for the table for loading */
-	protected ControlData.List  getLoadList(DataSet pData) {
-		return pData.getControl();
+	/* PreProcess on Load */
+	protected void preProcessOnLoad(DataSet pData) {
+		theList = pData.getControl();
 	}
-	
+		
 	/* Get the List for the table for updates */
 	protected ControlData.List  getUpdateList(DataSet pData) {
 		return new ControlData.List(pData.getControl(), ListStyle.UPDATE);
 	}
 	
-	/* Create statement for Static */
-	protected String createStatement() {
-		return "create table " + theTabName + " ( " +
-			   theIdCol 		+ " int NOT NULL PRIMARY KEY, " +
-			   theVersCol		+ " int NOT NULL, " +
-			   theControlCol	+ " varchar(" + ControlData.CTLLEN + ") NOT NULL," +
-			   theKeyCol		+ " varbinary(" + ControlData.KEYLEN + ") NOT NULL," +
-		   	   theIVCol			+ " binary(" + ControlData.INITVLEN + ") NOT NULL )";
-	}
-	
-	/* Determine the item name */
-	protected String getItemsName() { return theTabName; }
-
-	/* Load statement for Static */
-	protected String loadStatement() {
-		return "select " + theIdCol + "," + theVersCol + 
-		 			 "," + theControlCol + 
-		 			 "," + theKeyCol + "," + theIVCol +
-		       " from " + getTableName();			
-	}
-		
-	/* Load the static */
-	protected void loadItem() throws Exception {
-		ControlData.List		myList;
-		int 	   		myId;
+	/* Load the control data */
+	protected void loadItem(int pId) throws Exception {
 		int	  			myVers;
 		String			myControl;
 		byte[]			myKey;
 		byte[]			myVector;
 		
-		/* Protect the access */
-		try {			
-			/* Get the various fields */
-			myId   			= getInteger();
-			myVers 			= getInteger();
-			myControl		= getString();
-			myKey  			= getBinary();
-			myVector		= getBinary();
+		/* Get the various fields */
+		myVers 			= theTableDef.getIntegerValue(ControlData.FIELD_VERS);
+		myControl		= theTableDef.getStringValue(ControlData.FIELD_CONTROL);
+		myKey  			= theTableDef.getBinaryValue(ControlData.FIELD_KEY);
+		myVector		= theTableDef.getBinaryValue(ControlData.FIELD_IV);
 			
-			/* Access the list */
-			myList = (ControlData.List)getList();
-			
-			/* Add into the list */
-			myList.addItem(myId, myVers, myControl, myKey, myVector);
-		}
-								
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
-					            "Failed to load " + theTabName + " item",
-					            e);
-		}
-		
-		/* Return to caller */
-		return;
+		/* Add into the list */
+		theList.addItem(pId, myVers, myControl, myKey, myVector);
 	}
 	
-	/* Insert statement for Static */
-	protected String insertStatement() {
-		return "insert into " + getTableName() + 
-		       " (" + theIdCol + "," + theVersCol + 
- 			   "," + theControlCol + 
-		       "," + theKeyCol + "," + theIVCol + ")" +
-		       " VALUES(?,?,?,?,?)";
+	/* Set a field value */
+	protected void setFieldValue(ControlData	pItem, int iField) throws Exception  {
+		/* Switch on field id */
+		switch (iField) {
+			case ControlData.FIELD_VERS:	theTableDef.setIntegerValue(iField, pItem.getDataVersion());	break;
+			case ControlData.FIELD_CONTROL:	theTableDef.setStringValue(iField,  pItem.getControlKey());		break;
+			case ControlData.FIELD_KEY:		theTableDef.setBinaryValue(iField,  pItem.getSecurityKey());	break;
+			case ControlData.FIELD_IV:		theTableDef.setBinaryValue(iField,  pItem.getInitVector());		break;
+		}
 	}
-		
-	/* Insert a Static */
-	protected void insertItem(ControlData	pItem) throws Exception  {
-		
-		/* Protect the load */
-		try {			
-			/* Set the fields */
-			setInteger(pItem.getId());
-			setInteger(pItem.getDataVersion());
-			setString(pItem.getControlKey());
-			setBinary(pItem.getSecurityKey());
-			setBinary(pItem.getInitVector());
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
-								pItem,
-					            "Failed to insert " + theTabName + " item",
-					            e);
-		}
-		
-		/* Return to caller */
-		return;
-	}
-
-	/* Update the Static */
-	protected void updateItem(ControlData	pItem) throws Exception {
-		ControlData.Values	myBase;
-		
-		/* Access the base */
-		myBase = (ControlData.Values)pItem.getBaseObj();
-			
-		/* Protect the update */
-		try {			
-			/* Update the fields */
-			if (pItem.getDataVersion() != myBase.getDataVersion())
-				updateInteger(theVersCol, pItem.getDataVersion());
-			if (Utils.differs(pItem.getControlKey(),
-							  myBase.getControlKey()))
-				updateString(theControlCol, pItem.getControlKey());
-			if (Utils.differs(pItem.getSecurityKey(),
-					  		  myBase.getSecurityKey()))
-				updateBinary(theKeyCol, pItem.getSecurityKey());
-			if (Utils.differs(pItem.getInitVector(),
-					  		  myBase.getInitVector()))
-				updateBinary(theIVCol, pItem.getInitVector());
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
-								pItem,
-					            "Failed to update " + theTabName + " item",
-					            e);
-		}
-			
-		/* Return to caller */
-		return;
-	}	
 }

@@ -39,7 +39,6 @@ public class AcctRate extends DataItem {
 	public AcctRate     getBase() { return (AcctRate)super.getBase(); }
 	
 	/* Field IDs */
-	public static final int FIELD_ID       = 0;
 	public static final int FIELD_ACCOUNT  = 1;
 	public static final int FIELD_RATE     = 2;
 	public static final int FIELD_BONUS    = 3;
@@ -64,7 +63,7 @@ public class AcctRate extends DataItem {
 	 */
 	public static String	fieldName(int iField) {
 		switch (iField) {
-			case FIELD_ID:			return "ID";
+			case FIELD_ID:			return NAME_ID;
 			case FIELD_ACCOUNT:		return "Account";
 			case FIELD_RATE:		return "Rate";
 			case FIELD_BONUS:		return "Bonus";

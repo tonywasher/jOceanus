@@ -1,128 +1,67 @@
 package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.finance.database.TableDefinition.DateColumn;
+import uk.co.tolcroft.finance.database.TableDefinition.SortOrder;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.ListStyle;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 public class TableEvent extends DatabaseTable<Event> {
 	/**
 	 * The name of the Events table
 	 */
-	private final static String theTabName 		= Event.listName;
+	protected final static String TableName 	= Event.listName;
 				
 	/**
-	 * The name of the Date column
+	 * The table definition
 	 */
-	private final static String theDateCol 		= Event.fieldName(Event.FIELD_DATE);
+	private TableDefinition theTableDef;	/* Set during load */
 
 	/**
-	 * The name of the Description column
+	 * The event list
 	 */
-	private final static String theDescCol   	= Event.fieldName(Event.FIELD_DESC);
+	private Event.List		theList 			= null;
 
-	/**
-	 * The name of the Amount column
-	 */
-	private final static String theAmntCol   	= Event.fieldName(Event.FIELD_AMOUNT);
-
-	/**
-	 * The name of the Debit Account column
-	 */
-	private final static String theDebCol   	= Event.fieldName(Event.FIELD_DEBIT);
-
-	/**
-	 * The name of the Credit Account column
-	 */
-	private final static String theCredCol   	= Event.fieldName(Event.FIELD_CREDIT);
-
-	/**
-	 * The name of the Units column
-	 */
-	private final static String theUnitCol   	= Event.fieldName(Event.FIELD_UNITS);
-
-	/**
-	 * The name of the TransType column
-	 */
-	private final static String theTrnTypCol 	= Event.fieldName(Event.FIELD_TRNTYP);
-
-	/**
-	 * The name of the TaxCredit flag column
-	 */
-	private final static String theTaxCrtCol  	= Event.fieldName(Event.FIELD_TAXCREDIT);
-
-	/**
-	 * The name of the Dilution column
-	 */
-	private final static String theDiluteCol   	= Event.fieldName(Event.FIELD_DILUTION);
-	
-	/**
-	 * The name of the Years column
-	 */
-	private final static String theYearsCol   	= Event.fieldName(Event.FIELD_YEARS);
-	
 	/**
 	 * Constructor
 	 * @param pDatabase the database control
 	 */
 	protected TableEvent(Database 	pDatabase) {
-		super(pDatabase, theTabName);
+		super(pDatabase, TableName);
 	}
 	
-	/* The Id for reference */
-	protected static String idReference() {
-		return theTabName +  "(" + theIdCol + ")";
+	/**
+	 * Define the table columns (called from within super-constructor)
+	 * @param pTableDef the table definition
+	 */
+	protected void defineTable(TableDefinition	pTableDef) {
+		theTableDef = pTableDef;
+		DateColumn myDateCol = theTableDef.addDateColumn(Event.FIELD_DATE, Event.fieldName(Event.FIELD_DATE));
+		theTableDef.addEncryptedColumn(Event.FIELD_DESC, Event.fieldName(Event.FIELD_DESC), Event.DESCLEN);
+		theTableDef.addEncryptedColumn(Event.FIELD_AMOUNT, Event.fieldName(Event.FIELD_AMOUNT), EncryptedPair.MONEYLEN);
+		theTableDef.addReferenceColumn(Event.FIELD_DEBIT, Event.fieldName(Event.FIELD_DEBIT), TableAccount.TableName);
+		theTableDef.addReferenceColumn(Event.FIELD_CREDIT, Event.fieldName(Event.FIELD_CREDIT), TableAccount.TableName);
+		theTableDef.addNullEncryptedColumn(Event.FIELD_UNITS, Event.fieldName(Event.FIELD_UNITS), EncryptedPair.UNITSLEN);
+		theTableDef.addReferenceColumn(Event.FIELD_TRNTYP, Event.fieldName(Event.FIELD_TRNTYP), TableTransactionType.TableName);
+		theTableDef.addNullEncryptedColumn(Event.FIELD_TAXCREDIT, Event.fieldName(Event.FIELD_TAXCREDIT), EncryptedPair.MONEYLEN);
+		theTableDef.addNullEncryptedColumn(Event.FIELD_DILUTION, Event.fieldName(Event.FIELD_DILUTION), EncryptedPair.DILUTELEN);
+		theTableDef.addNullIntegerColumn(Event.FIELD_YEARS, Event.fieldName(Event.FIELD_YEARS));
+		myDateCol.setSortOrder(SortOrder.ASCENDING);
 	}
 	
-	/* Get the List for the table for loading */
-	protected Event.List  getLoadList(DataSet pData) {
-		return pData.getEvents();
+	/* PreProcess on Load */
+	protected void preProcessOnLoad(DataSet pData) {
+		theList = pData.getEvents();
 	}
-	
+		
 	/* Get the List for the table for updates */
 	protected Event.List  getUpdateList(DataSet pData) {
 		return new Event.List(pData.getEvents(), ListStyle.UPDATE);
 	}
 	
-	/* Create statement for Events */
-	protected String createStatement() {
-		return "create table " + theTabName + " ( " +
-			   theIdCol 	+ " int NOT NULL PRIMARY KEY, " +
-   			   theDateCol	+ " date NOT NULL, " +
-  			   theDescCol	+ " varbinary(" + 2*Event.DESCLEN + ") NOT NULL, " +
-  			   theAmntCol	+ " varbinary(" + 2*EncryptedPair.MONEYLEN + ") NOT NULL, " +
-			   theDebCol	+ " int NOT NULL " +
-		   			"REFERENCES " + TableAccount.idReference() + ", " +
-  			   theCredCol	+ " int NOT NULL " +
-		   			"REFERENCES " + TableAccount.idReference() + ", " +
- 			   theUnitCol	+ " varbinary(" + 2*EncryptedPair.UNITSLEN + ") NULL, " +
-		   	   theTrnTypCol	+ " int NOT NULL " +
-	   				"REFERENCES " + TableTransactionType.idReference() + ", " +
- 			   theTaxCrtCol	+ " varbinary(" + 2*EncryptedPair.MONEYLEN + ") NULL, " +
- 			   theDiluteCol	+ " varbinary(" + 2*EncryptedPair.DILUTELEN + ") NULL, " +
-			   theYearsCol	+ " int NULL )";
-	}
-	
-	/* Determine the item name */
-	protected String getItemsName() { return theTabName; }
-
-	/* Load statement for Events */
-	protected String loadStatement() {
-		return "select " + theIdCol + "," + theDateCol + "," + 
-        				theDescCol + "," + theAmntCol + "," + 
-        				theDebCol + "," + theCredCol +  "," +
-        				theUnitCol + "," + theTrnTypCol + "," +
-        				theTaxCrtCol + "," + theDiluteCol + "," +
-        				theYearsCol + " " +
-        				" from " + getTableName() +			
-        				" order by " + theDateCol;			
-	}
-	
 	/* Load the event */
-	protected void loadItem() throws Exception {
-		Event.List		myList;
-		int	    		myId;
+	protected void loadItem(int pId) throws Exception {
 		int  			myDebitId;
 		int  			myCreditId;
 		int  			myTranType;
@@ -134,140 +73,46 @@ public class TableEvent extends DatabaseTable<Event> {
 		Integer			myYears;
 		java.util.Date  myDate;
 		
-		/* Protect the access */
-		try {			
-			/* Get the various fields */
-			myId        = getInteger();
-			myDate 		= getDate();
-			myDesc    	= getBinary();
-			myAmount    = getBinary();
-			myDebitId 	= getInteger();
-			myCreditId 	= getInteger();
-			myUnits 	= getBinary();
-			myTranType  = getInteger();
-			myTaxCred   = getBinary();
-			myDilution  = getBinary();
-			myYears  	= getInteger();
+		/* Get the various fields */
+		myDate 		= theTableDef.getDateValue(Event.FIELD_DATE);
+		myDesc    	= theTableDef.getBinaryValue(Event.FIELD_DESC);
+		myAmount    = theTableDef.getBinaryValue(Event.FIELD_AMOUNT);
+		myDebitId 	= theTableDef.getIntegerValue(Event.FIELD_DEBIT);
+		myCreditId 	= theTableDef.getIntegerValue(Event.FIELD_CREDIT);
+		myUnits 	= theTableDef.getBinaryValue(Event.FIELD_UNITS);
+		myTranType  = theTableDef.getIntegerValue(Event.FIELD_TRNTYP);
+		myTaxCred   = theTableDef.getBinaryValue(Event.FIELD_TAXCREDIT);
+		myDilution  = theTableDef.getBinaryValue(Event.FIELD_DILUTION);
+		myYears  	= theTableDef.getIntegerValue(Event.FIELD_YEARS);
 	
-			/* Access the list */
-			myList = (Event.List)getList();
-			
-			/* Add into the list */
-			myList.addItem(myId, 
-			           	   myDate,
-				           myDesc,
-				           myAmount,
-				           myDebitId, 
-				           myCreditId,
-				           myUnits,
-				           myTranType,
-				           myTaxCred,
-				           myDilution,
-				           myYears);
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
-					            "Failed to load item",
-					            e);
-		}
-		
-		/* Return to caller */
-		return;
+		/* Add into the list */
+		theList.addItem(pId, 
+			       	   	myDate,
+				        myDesc,
+				        myAmount,
+				        myDebitId, 
+				        myCreditId,
+				        myUnits,
+				        myTranType,
+				        myTaxCred,
+				        myDilution,
+				        myYears);
 	}
 	
-	/* Insert statement for Events */
-	protected String insertStatement() {
-		return "insert into " + getTableName() + 
-        			" (" + theIdCol + "," + theDateCol + "," +
-        			theDescCol + "," + theAmntCol + "," + 
-        			theDebCol + "," + theCredCol +  "," +
-        			theUnitCol + "," + theTrnTypCol + "," +
-        			theTaxCrtCol + "," + theDiluteCol + "," + 
-        			theYearsCol + ") " + 
-        			"VALUES(?,?,?,?,?,?,?,?,?,?,?)";
-	}
-	
-	/* Insert the event */
-	protected void insertItem(Event			pItem) throws Exception {
-
-		/* Protect the access */
-		try {			
-			/* Set the fields */
-			setInteger(pItem.getId());
-			setDate(pItem.getDate());
-			setBinary(pItem.getDescBytes());
-			setBinary(pItem.getAmountBytes());
-			setInteger(pItem.getDebit().getId());
-			setInteger(pItem.getCredit().getId());
-			setBinary(pItem.getUnitsBytes());
-			setInteger(pItem.getTransType().getId());
-			setBinary(pItem.getTaxCredBytes());
-			setBinary(pItem.getDilutionBytes());
-			setInteger(pItem.getYears());
+	/* Set a field value */
+	protected void setFieldValue(Event	pItem, int iField) throws Exception  {
+		/* Switch on field id */
+		switch (iField) {
+			case Event.FIELD_DATE: 		theTableDef.setDateValue(Event.FIELD_DATE, pItem.getDate());					break;
+			case Event.FIELD_DESC:		theTableDef.setBinaryValue(Event.FIELD_DESC, pItem.getDescBytes());				break;
+			case Event.FIELD_AMOUNT:	theTableDef.setBinaryValue(Event.FIELD_AMOUNT, pItem.getAmountBytes());			break;
+			case Event.FIELD_DEBIT:		theTableDef.setIntegerValue(Event.FIELD_DEBIT, pItem.getDebit().getId());		break;
+			case Event.FIELD_CREDIT:	theTableDef.setIntegerValue(Event.FIELD_CREDIT, pItem.getCredit().getId());		break;
+			case Event.FIELD_UNITS:		theTableDef.setBinaryValue(Event.FIELD_UNITS, pItem.getUnitsBytes());			break;
+			case Event.FIELD_TRNTYP:	theTableDef.setIntegerValue(Event.FIELD_TRNTYP, pItem.getTransType().getId());	break;
+			case Event.FIELD_TAXCREDIT:	theTableDef.setBinaryValue(Event.FIELD_TAXCREDIT, pItem.getTaxCredBytes());		break;
+			case Event.FIELD_DILUTION:	theTableDef.setBinaryValue(Event.FIELD_DILUTION, pItem.getDilutionBytes());		break;
+			case Event.FIELD_YEARS:		theTableDef.setIntegerValue(Event.FIELD_YEARS, pItem.getYears());				break;
 		}
-				
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
-								pItem,
-					            "Failed to insert item",
-					            e);
-		}
-		
-		/* Return to caller */
-		return;
-	}
-	
-	/* Update the event */
-	protected void updateItem(Event			pItem) throws Exception {
-		Event.Values 	myBase;
-		
-		/* Access the base */
-		myBase = (Event.Values)pItem.getBaseObj();
-			
-		/* Protect the update */
-		try {			
-			/* Update the fields */
-			if (Date.differs(pItem.getDate(),
-				  		  	 myBase.getDate()))
-				updateDate(theDateCol, pItem.getDate());
-			if (Utils.differs(pItem.getDescBytes(),
-						  	  myBase.getDescBytes())) 
-				updateBinary(theDescCol, pItem.getDescBytes());
-			if (Utils.differs(pItem.getAmountBytes(),
-		  		  	  		  myBase.getAmountBytes()))
-				updateBinary(theAmntCol, pItem.getAmountBytes());
-			if (Account.differs(pItem.getDebit(),
-				  	  			myBase.getDebit())) 
-				updateInteger(theDebCol, pItem.getDebit().getId());
-			if (Account.differs(pItem.getCredit(),
-		  	  		  			myBase.getCredit())) 
-				updateInteger(theCredCol, pItem.getCredit().getId());
-			if (Utils.differs(pItem.getUnitsBytes(),
-  		  	  		  		  myBase.getUnitsBytes()))
-				updateBinary(theUnitCol, pItem.getUnitsBytes());
-			if (TransactionType.differs(pItem.getTransType(),
-		  		  	  		  			myBase.getTransType()))
-				updateInteger(theTrnTypCol, pItem.getTransType().getId());
-			if (Utils.differs(pItem.getTaxCredBytes(),
-				  	  		  myBase.getTaxCredBytes())) 
-				updateBinary(theTaxCrtCol, pItem.getTaxCredBytes());
-			if (Utils.differs(pItem.getDilutionBytes(),
-		  	  		  		  myBase.getDilutionBytes())) 
-				updateBinary(theDiluteCol, pItem.getDilutionBytes());
-			if (Utils.differs(pItem.getYears(),
-		  	  		  		  myBase.getYears())) 
-				updateInteger(theYearsCol, pItem.getYears());
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
-								pItem,
-					            "Failed to update item",
-					            e);
-		}
-			
-		/* Return to caller */
-		return;
 	}
 }
