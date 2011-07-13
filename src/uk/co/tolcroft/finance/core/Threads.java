@@ -309,7 +309,7 @@ public class Threads {
 				myDatabase = new Database(theWindow.getProperties());
 
 				/* Store database */
-				myDatabase.updateItems(theStatus, theView.getData());
+				myDatabase.updateDatabase(theStatus, theView.getData());
 
 				/* Re-initialise the status window */
 				theStatusBar.setOperation("Verifying Store");

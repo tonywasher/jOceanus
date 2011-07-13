@@ -30,11 +30,6 @@ public abstract class DatabaseTable<T extends DataItem> {
 	private Connection				theConn			= null;
 
 	/**
-	 * The batch size
-	 */
-	private int 					theBatchSize	= Database.BATCH_SIZE;
-	
-	/**
 	 * The list of items for this table
 	 */
 	private DataList<T>				theList  		= null;
@@ -64,6 +59,7 @@ public abstract class DatabaseTable<T extends DataItem> {
 		theConn	 		= theDatabase.getConn();
 		theTable 		= new TableDefinition(pTable);
 		defineTable(theTable);
+		theTable.trimColumns();
 	}
 	
 	/**
@@ -125,12 +121,28 @@ public abstract class DatabaseTable<T extends DataItem> {
 		theConn.commit();
 	}
 	
+	/** 
+	 *  Execute a statement
+	 *  
+	 */
+	private void executeStatement(String pStatement) throws SQLException {
+		/* Prepare the statement */
+		prepareStatement(pStatement);
+		
+		/* Execute the delete */
+		execute();
+		commit();
+			
+		/* Close the Statement */
+		closeStmt();
+	}
+	
 	/**
 	 * Count the number of items to be loaded
 	 * @return the count of items
 	 * @throws SQLException
 	 */
-	protected int countItems() throws SQLException {
+	protected int countLoadItems() throws SQLException {
 		String myString;
 		int    myCount = 0;
 
@@ -210,7 +222,7 @@ public abstract class DatabaseTable<T extends DataItem> {
 		/* Protect the load */
 		try {
 			/* Count the Items to be loaded */
-			if (!pThread.setNumSteps(countItems())) return false;
+			if (!pThread.setNumSteps(countLoadItems())) return false;
 			
 			/* Load the items from the table */
 			myQuery = theTable.getLoadString();
@@ -250,64 +262,6 @@ public abstract class DatabaseTable<T extends DataItem> {
 	}
 	
 	/**
-	 * Mark an item as committed
-	 * @param pItem the item
-	 */
-	private void commitItem(T pItem) {
-		/* Handle Deletions */
-		if (pItem.getState() == DataState.DELETED)
-			pItem.getBase().unLink();
-	
-		/* else  */
-		else { 
-			/* Set the item to clean and clear history */
-			pItem.getBase().setState(DataState.CLEAN);
-			pItem.getBase().clearHistory();
-		}
-
-		/* Mark this item as clean */
-		pItem.setState(DataState.CLEAN);
-	}
-	
-	/**
-	 * Mark a batch of updates as committed
-	 * @param pState the state of the items to update
-	 */
-	private void commitBatch(DataState pState)	throws Exception {
-		DataList<T>.ListIterator	myIterator;
-		T							myCurr;
-		int 						iBatch = 0;
-		
-		/* Protect the commit */
-		try {
-			/* Commit the update */
-			commit();
-				
-			/* Access the iterator */
-			myIterator = theList.listIterator(true);
-			
-			/* Loop through the list */
-			while ((myCurr = myIterator.next()) != null) {
-				/* Ignore items that are not this type */
-				if ((pState != DataState.NOSTATE) && 
-					(myCurr.getState() != pState)) continue;
-				
-				/* commit the Item */
-				commitItem(myCurr);
-				
-				/* Handle end of batch */
-				if ((theBatchSize > 0) &&
-					(++iBatch >= theBatchSize)) break;
-			}
-		}	
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
-								"Failed to commit " + getTableName(),
-								e);
-		}
-	}
-	
-	/**
 	 * Determine the count of items that are in a particular state
 	 * @param pState the particular state
 	 * @return the count of items
@@ -340,10 +294,10 @@ public abstract class DatabaseTable<T extends DataItem> {
 	 * @return Continue <code>true/false</code>
 	 */
 	protected boolean insertItems(statusCtl 	pThread,
-								  DataSet		pData) throws Exception {
+								  DataSet		pData,
+								  BatchControl	pBatch) throws Exception {
 		DataList<T>.ListIterator	myIterator;
 		T							myCurr    = null;
-		int                 		iBatch    = 0;
 		int     					myCount   = 0;
 		int							mySteps;
 		String						myInsert;
@@ -362,6 +316,9 @@ public abstract class DatabaseTable<T extends DataItem> {
 		try {
 			/* Declare the number of steps */
 			if (!pThread.setNumSteps(countStateItems(DataState.NEW))) return false;
+			
+			/* Declare the table and mode */
+			pBatch.setCurrentTable(this, DataState.NEW);
 			
 			/* Prepare the insert statement */
 			myInsert = theTable.getInsertString();
@@ -395,19 +352,19 @@ public abstract class DatabaseTable<T extends DataItem> {
 				
 				/* Apply the values */
 				theTable.insertValues(theStmt);
+				pBatch.addBatchItem();
 			
 				/* Execute the insert */
 				execute();
 				myCurr = null;
 				
-				/* If we should commit the batch */
-				if ((theBatchSize > 0) &&
-					(++iBatch >= theBatchSize)) {
-					/* Reset the batch count */
-					iBatch = 0;
+				/* If we have no further space in the batch */
+				if (pBatch.isFull()) {
+					/* Commit the database */
+					commit();
 					
 					/* Commit the batch */
-					commitBatch(DataState.NEW);
+					pBatch.commitItems();
 				}
 				
 				/* Report the progress */
@@ -416,9 +373,6 @@ public abstract class DatabaseTable<T extends DataItem> {
 					if (!pThread.setStepsDone(myCount)) return false;
 			}
 								
-			/* Handle outstanding commits */
-			if (iBatch > 0)	commitBatch(DataState.NEW);
-									
 			/* Close the Statement */
 			closeStmt();
 		}
@@ -439,10 +393,10 @@ public abstract class DatabaseTable<T extends DataItem> {
 	 * @param pThread the thread control
 	 * @return Continue <code>true/false</code>
 	 */
-	protected boolean updateItems(statusCtl 	pThread) throws Exception {
+	protected boolean updateItems(statusCtl 	pThread,
+			  					  BatchControl	pBatch) throws Exception {
 		DataList<T>.ListIterator	myIterator;
 		T							myCurr    = null;
-		int              			iBatch    = 0;
 		int     					myCount   = 0;
 		int							mySteps;
 		String						myUpdate;
@@ -458,6 +412,9 @@ public abstract class DatabaseTable<T extends DataItem> {
 		try {
 			/* Declare the number of steps */
 			if (!pThread.setNumSteps(countStateItems(DataState.CHANGED))) return false;
+			
+			/* Declare the table and mode */
+			pBatch.setCurrentTable(this, DataState.CHANGED);
 			
 			/* Access the iterator */
 			myIterator = theList.listIterator(true);
@@ -476,6 +433,7 @@ public abstract class DatabaseTable<T extends DataItem> {
 					/* Prepare the statement and declare values */
 					prepareStatement(myUpdate);
 					theTable.updateValues(theStmt);
+					pBatch.addBatchItem();
 					
 					/* Execute the update */
 					execute();
@@ -484,25 +442,21 @@ public abstract class DatabaseTable<T extends DataItem> {
 					/* Close the Statement */
 					closeStmt();
 				
-					/* If we should commit the batch */
-					if ((theBatchSize > 0) &&
-						(++iBatch >= theBatchSize)) {
-						/* Reset the batch count */
-						iBatch = 0;
-					
+					/* If we have no further space in the batch */
+					if (pBatch.isFull()) {
+						/* Commit the database */
+						commit();
+						
 						/* Commit the batch */
-						commitBatch(DataState.CHANGED);
+						pBatch.commitItems();
 					}
-				
+					
 					/* Report the progress */
 					myCount++;
 					if ((myCount % mySteps) == 0) 
 						if (!pThread.setStepsDone(myCount)) return false;
 				}
 			}
-								
-			/* Handle outstanding commits */
-			if (iBatch > 0)	commitBatch(DataState.CHANGED);
 		}
 	
 		catch (Throwable e) {
@@ -558,15 +512,16 @@ public abstract class DatabaseTable<T extends DataItem> {
 		/* Return to caller */
 		return isUpdated;
 	}
+
 	/**
 	 * Delete items from the list
 	 * @param pThread the thread control
 	 * @return Continue <code>true/false</code>
 	 */
-	protected boolean deleteItems(statusCtl 	pThread) throws Exception {
+	protected boolean deleteItems(statusCtl 	pThread,
+			  					  BatchControl	pBatch) throws Exception {
 		DataList<T>.ListIterator	myIterator;
 		T							myCurr    = null;
-		int              			iBatch    = 0;
 		int     					myCount   = 0;
 		int							mySteps;
 		String						myDelete;
@@ -583,6 +538,9 @@ public abstract class DatabaseTable<T extends DataItem> {
 			/* Declare the number of steps */
 			if (!pThread.setNumSteps(countStateItems(DataState.DELETED))) return false;
 			
+			/* Declare the table and mode */
+			pBatch.setCurrentTable(this, DataState.DELETED);
+			
 			/* Prepare the delete statement */
 			myDelete = theTable.getDeleteString();
 			prepareStatement(myDelete);
@@ -595,28 +553,27 @@ public abstract class DatabaseTable<T extends DataItem> {
 				/* Ignore non-deleted items */
 				if (myCurr.getState() != DataState.DELETED) continue;
 				
-				/* DelNew items are just discarded */
-				if (myCurr.getBase().getState() == DataState.DELNEW) {
-					commitItem(myCurr);
-					continue;
+				/* Declare the item in the batch */
+				pBatch.addBatchItem();
+				
+				/* Ignore DelNew items as far as the database is concerned */
+				if (myCurr.getBase().getState() != DataState.DELNEW) {
+					/* Apply the id */
+					theTable.setIntegerValue(DataItem.FIELD_ID, myCurr.getId());
+					theTable.updateValues(theStmt);
+		
+					/* Execute the delete */
+					execute();
+					myCurr = null;
 				}
 				
-				/* Apply the id */
-				theTable.setIntegerValue(DataItem.FIELD_ID, myCurr.getId());
-				theTable.updateValues(theStmt);
-		
-				/* Execute the delete */
-				execute();
-				myCurr = null;
-				
-				/* If we should commit the batch */
-				if ((theBatchSize > 0) &&
-					(++iBatch >= theBatchSize)) {
-					/* Reset the batch count */
-					iBatch = 0;
+				/* If we have no further space in the batch */
+				if (pBatch.isFull()) {
+					/* Commit the database */
+					commit();
 					
 					/* Commit the batch */
-					commitBatch(DataState.DELETED);
+					pBatch.commitItems();
 				}
 				
 				/* Report the progress */
@@ -624,9 +581,6 @@ public abstract class DatabaseTable<T extends DataItem> {
 				if ((myCount % mySteps) == 0) 
 					if (!pThread.setStepsDone(myCount)) return false;
 			}
-								
-			/* Handle outstanding commits */
-			if (iBatch > 0)	commitBatch(DataState.DELETED);
 							
 			/* Close the Statement */
 			closeStmt();
@@ -651,29 +605,15 @@ public abstract class DatabaseTable<T extends DataItem> {
 	
 		/* Protect the create */
 		try {
-			/* Prepare the create statement */
+			/* Execute the create index statement */
 			myCreate = theTable.getCreateTableString();
-			prepareStatement(myCreate);
-			
-			/* Execute the delete */
-			execute();
-			commit();
-				
-			/* Close the Statement */
-			closeStmt();
-			
+			executeStatement(myCreate);
+
 			/* If the table has an index */
 			if (theTable.isIndexed()) {
-				/* Prepare the create statement */
+				/* Prepare the create index statement */
 				myCreate = theTable.getCreateIndexString();
-				prepareStatement(myCreate);
-				
-				/* Execute the delete */
-				execute();
-				commit();
-					
-				/* Close the Statement */
-				closeStmt();				
+				executeStatement(myCreate);
 			}
 		}
 	
@@ -697,28 +637,14 @@ public abstract class DatabaseTable<T extends DataItem> {
 		try {
 			/* If the table has an index */
 			if (theTable.isIndexed()) {
-				/* Prepare the drip statement */
+				/* Execute the drop index statement */
 				myDrop = theTable.getDropIndexString();
-				prepareStatement(myDrop);
-				
-				/* Execute the delete */
-				execute();
-				commit();
-					
-				/* Close the Statement */
-				closeStmt();				
+				executeStatement(myDrop);
 			}
 
-			/* Prepare the drop statement */
+			/* Execute the drop table statement */
 			myDrop = theTable.getDropTableString();
-			prepareStatement(myDrop);
-			
-			/* Execute the delete */
-			execute();
-			commit();
-				
-			/* Close the Statement */
-			closeStmt();
+			executeStatement(myDrop);
 		}
 	
 		catch (Throwable e) {
@@ -739,16 +665,9 @@ public abstract class DatabaseTable<T extends DataItem> {
 	
 		/* Protect the truncate */
 		try {
-			/* Prepare the truncate statement */
+			/* Execute the purge statement */
 			myTrunc = theTable.getPurgeString();
-			prepareStatement(myTrunc);
-			
-			/* Execute the delete */
-			execute();
-			commit();
-				
-			/* Close the Statement */
-			closeStmt();
+			executeStatement(myTrunc);
 		}
 	
 		catch (Throwable e) {

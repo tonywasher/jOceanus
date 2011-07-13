@@ -16,11 +16,6 @@ import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 public class Database {
 	/**
-	 * Default batch size for updates
-	 */
-	protected final static int    	BATCH_SIZE 		= 50;
-
-	/**
 	 * Properties for application
 	 */
 	private Properties				theProperties	= null;
@@ -163,9 +158,10 @@ public class Database {
 	 * @param pThread the thread control
 	 * @param pData the data
 	 */
-	public void updateItems(statusCtl 	pThread,
-							DataSet 	pData) throws Exception {
-		boolean bContinue = true;
+	public void updateDatabase(statusCtl 	pThread,
+							   DataSet 		pData) throws Exception {
+		boolean 		bContinue 	= true;
+		BatchControl	myBatch		= new BatchControl();
 		
 		/* Set the number of stages */
 		if (!pThread.setNumStages(3*theTables.size())) return;
@@ -181,29 +177,20 @@ public class Database {
 			myTable = myIterator.next();
 			
 			/* Load the items */
-			bContinue = myTable.insertItems(pThread, pData);
+			bContinue = myTable.insertItems(pThread, pData, myBatch);
 		}
 
-		/* Recreate the iterator */
-		myIterator = theTables.iterator();
-		
-		/* Loop through the tables */
-		while ((bContinue) &&
-			   (myIterator.hasNext())) {
-			myTable = myIterator.next();
-			
-			/* Load the items */
-			bContinue = myTable.updateItems(pThread);
-		}
-		
 		/* Create the list iterator */
 		ListIterator<DatabaseTable<?>> 	myListIterator;
 		myListIterator = theTables.listIterator();
 		
-		/* Loop through the tables to the end of the list */
+		/* Loop through the tables */
 		while ((bContinue) &&
 			   (myListIterator.hasNext())) {
 			myTable = myListIterator.next();
+			
+			/* Load the items */
+			bContinue = myTable.updateItems(pThread, myBatch);
 		}
 		
 		/* Loop through the tables in reverse order */
@@ -212,7 +199,20 @@ public class Database {
 			myTable = myListIterator.previous();
 			
 			/* Delete items from the table */
-			bContinue = myTable.deleteItems(pThread);
+			bContinue = myTable.deleteItems(pThread, myBatch);
+		}
+		
+		/* If we have active work in the batch */
+		if ((bContinue) && (myBatch.isActive())) {
+			/* Commit the database */
+			try { theConn.commit(); }
+			catch (Throwable e) {
+				throw new Exception(ExceptionClass.SQLSERVER,
+									"Failed to commit transction");				
+			}
+			
+			/* Commit the batch */
+			myBatch.commitItems();
 		}
 		
 		/* Check for cancellation */

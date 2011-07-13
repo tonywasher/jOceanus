@@ -995,6 +995,27 @@ public class TableDefinition {
 		myBuilder.append(theTableName);
 		return myBuilder.toString();
 	}
+
+	/**
+	 * Trim the column definitions 
+	 */
+	protected void trimColumns() {
+		int	iMaxColumn = 0;
+		
+		/* Loop through the columns to find the maximum active column */
+		for (int i=0; i<theColumns.length; i++) {
+			/* Record maximum active column */
+			if (theColumns[i] != null) iMaxColumn = i;
+		}
+		
+		/* If we need to adjust the array length */
+		if (iMaxColumn < theColumns.length-1) {
+			/* Trim the column array */
+			theColumns = java.util.Arrays.copyOf(theColumns,
+												 iMaxColumn+1,
+												 ColumnDefinition[].class);
+		}
+	}
 	
 	/**
 	 * The underlying column definition class
