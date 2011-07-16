@@ -3,7 +3,6 @@ package uk.co.tolcroft.finance.data;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
-import uk.co.tolcroft.security.*;
 
 public class ControlData extends DataItem {
 	/**
@@ -16,43 +15,21 @@ public class ControlData extends DataItem {
 	 */
 	public static final String listName = objName + "s";
 
-	/**
-	 * Control Key Length
-	 */
-	public final static int CTLLEN 		= AsymmetricKey.IDSIZE;
-
-	/**
-	 * Symmetric Key Length
-	 */
-	public final static int KEYLEN 		= SymmetricKey.IDSIZE;
-
-	/**
-	 * InitVector length
-	 */
-	public final static int INITVLEN 	= SymmetricKey.IVSIZE;
-
 	/* Local values */
-	private SecurityControl	theControl	= null;
-	private SymmetricKey	theKey		= null;
+	private int				theControlId = -1;
 	
 	/* Access methods */
 	public  int 			getDataVersion()  	{ return getObj().getDataVersion(); }
-	public  String 			getControlKey()  	{ return getObj().getControlKey(); }
-	public  byte[] 			getSecurityKey()  	{ return getObj().getSecurityKey(); }
-	public  byte[] 			getInitVector()  	{ return getObj().getInitVector(); }
-	public  SecurityControl	getSecurityControl(){ return theControl; }
-	private SymmetricKey	getKey()			{ return theKey; }
+	public  ControlKey		getControlKey()  	{ return getObj().getControlKey(); }
 
 	/* Linking methods */
 	public ControlData	getBase() { return (ControlData)super.getBase(); }
-	public Values  	getObj()  { return (Values)super.getObj(); }	
+	public Values  		getObj()  { return (Values)super.getObj(); }	
 	
 	/* Field IDs */
 	public static final int FIELD_VERS	   = 1;
 	public static final int FIELD_CONTROL  = 2;
-	public static final int FIELD_KEY	   = 3;
-	public static final int FIELD_IV	   = 4;
-	public static final int NUMFIELDS	   = 5; 
+	public static final int NUMFIELDS	   = 3; 
 
 	/**
 	 * Obtain the type of the item
@@ -75,8 +52,6 @@ public class ControlData extends DataItem {
 			case FIELD_ID:			return NAME_ID;
 			case FIELD_VERS:		return "Version";
 			case FIELD_CONTROL:		return "Control";
-			case FIELD_KEY:			return "SecurityKey";
-			case FIELD_IV:			return "InitVector";
 			default:		  		return DataItem.fieldName(iField);
 		}
 	}
@@ -102,13 +77,7 @@ public class ControlData extends DataItem {
 				myString += getDataVersion(); 
 				break;
 			case FIELD_CONTROL:
-				myString += getControlKey(); 
-				break;
-			case FIELD_KEY:
-				myString += Utils.HexStringFromBytes(getSecurityKey()); 
-				break;
-			case FIELD_IV:
-				myString += Utils.HexStringFromBytes(getInitVector()); 
+				myString += theControlId; 
 				break;
 		}
 		return myString;
@@ -117,15 +86,13 @@ public class ControlData extends DataItem {
 	/**
  	* Construct a copy of a Static
  	* 
- 	* @param pPrice The Price 
+ 	* @param pStatic The Static 
  	*/
 	protected ControlData(List pList, ControlData pStatic) {
 		/* Set standard values */
 		super(pList, pStatic.getId());
 		Values myObj = new Values(pStatic.getObj());
 		setObj(myObj);
-		theControl		= pStatic.getSecurityControl();
-		theKey			= pStatic.getKey();
 
 		/* Switch on the LinkStyle */
 		switch (pList.getStyle()) {
@@ -144,52 +111,38 @@ public class ControlData extends DataItem {
 	}
 
 	/* Standard constructor */
-	public ControlData(List     pList,
-				  	   int		uId,
-				  	   int      uVersion, 
-				  	   String	pControlKey,
-				  byte[]	pSecurityKey,
-		  		  byte[]	pInitVector) throws Exception {
+	private ControlData(List pList,
+				  	    int	uId,
+				  	    int  uVersion, 
+				  	    int	uControlId) throws Exception {
 		/* Initialise the item */
 		super(pList, uId);
 		Values myObj = new Values();
 		setObj(myObj);
 
+		/* Record the ID */
+		theControlId	= uControlId;
+
 		/* Record the values */
 		myObj.setDataVersion(uVersion);
 		
-		/* Access the Security manager */
-		DataSet 		myData 		= pList.getData();
-		SecureManager 	mySecurity 	= myData.getSecurity();
-		EncryptedPair	myPairs		= myData.getEncryptedPairs();
-		
-		/* Obtain the required security control */
-		theControl = mySecurity.getSecurityControl(pControlKey, "Database");
-		
-		/* Record the control */
-		myObj.setControlKey(pControlKey);			
-		
-		/* Obtain the relevant symmetric key */
-		myObj.setSecurityKey(pSecurityKey);
-		theKey	= theControl.getSymmetricKey(getSecurityKey(), 
-											 theControl.getControlMode().getSymKeyType());
-
-		/* Record the initialisation vector */
-		myObj.setInitVector(pInitVector);			
-		
-		/* declare key and initialisation vector to the encrypted pairs */
-		myPairs.setEncryptionDtl(theKey, getInitVector());
+		/* Look up the ControlKey */
+		ControlKey myControl = pList.theData.getControlKeys().searchFor(uControlId);
+		if (myControl == null) 
+			throw new Exception(ExceptionClass.DATA,
+		                        this,
+					            "Invalid ControlKey Id");
+		myObj.setControlKey(myControl);
 
 		/* Allocate the id */
 		pList.setNewId(this);				
 	}
 
 	/* Limited (no security) constructor */
-	public ControlData(List pList,
-				  	   int	uId,
-				  	   int	uVersion) {
+	private ControlData(List pList,
+				  	    int	 uVersion) {
 		/* Initialise the item */
-		super(pList, uId);
+		super(pList, 0);
 		Values myObj = new Values();
 		setObj(myObj);
 
@@ -198,54 +151,6 @@ public class ControlData extends DataItem {
 				
 		/* Allocate the id */
 		pList.setNewId(this);				
-	}
-
-	/**
-	 *  Initialise security for a spreadsheet load
-	 *  @param pStatic the static from the database
-	 */
-	public void setSecurity(ControlData pStatic) throws Exception {
-		Values 			myValues 	= getObj();
-		List 			myList 		= (List)getList();
-		DataSet 		myData 		= myList.getData();
-		EncryptedPair	myPairs		= myData.getEncryptedPairs();
-		
-		/* If we have static from the database */
-		if (pStatic != null) {
-			/* Store the required object values */
-			myValues.setControlKey(pStatic.getControlKey());			
-			myValues.setSecurityKey(pStatic.getSecurityKey());
-			myValues.setInitVector(pStatic.getInitVector());			
-		
-			/* Access the control and symmetric key */
-			theControl		= pStatic.getSecurityControl();
-			theKey			= pStatic.getKey();
-			
-			/* declare key and initialisation vector to the encrypted pairs */
-			myPairs.setEncryptionDtl(theKey, getInitVector());
-		}
-		
-		/* else we need to allocate a new security control */
-		else {
-			/* Access the Security manager */
-			SecureManager 	mySecurity 	= myData.getSecurity();
-			
-			/* Obtain a new security control */
-			theControl = mySecurity.getSecurityControl(null, "Database");
-			
-			/* Record the control */
-			myValues.setControlKey(theControl.getSecurityKey());			
-			
-			/* Generate a new key and get its security key */
-			theKey	= theControl.getSymmetricKey(theControl.getControlMode().getSymKeyType());
-			myValues.setSecurityKey(theKey.getSecurityKey());			
-
-			/* Declare the key to the encryption pairs and record the initialisation vector */
-			myValues.setInitVector(myPairs.setEncryptionDtl(theKey));						
-		}
-		
-		/* Ensure encryption of the spreadsheet load */
-		myData.ensureEncryption();
 	}
 
 	/**
@@ -267,16 +172,14 @@ public class ControlData extends DataItem {
 		
 		/* Check for equality */
 		if (getId() != myStatic.getId()) return false;
-		if (getDataVersion() != myStatic.getDataVersion()) 				return false;
-		if (Utils.differs(getControlKey(),  myStatic.getControlKey()))  return false;
-		if (Utils.differs(getSecurityKey(), myStatic.getSecurityKey())) return false;
-		if (Utils.differs(getInitVector(),  myStatic.getInitVector())) 	return false;
+		if (getDataVersion() != myStatic.getDataVersion()) 					return false;
+		if (ControlKey.differs(getControlKey(),  myStatic.getControlKey())) return false;
 		return true;
 	}
 
 	/**
-	 * Compare this price to another to establish sort order. 
-	 * @param pThat The Price to compare to
+	 * Compare this static to another to establish sort order. 
+	 * @param pThat The Static to compare to
 	 * @return (-1,0,1) depending of whether this object is before, equal, 
 	 * 					or after the passed object in the sort order
 	 */
@@ -306,20 +209,24 @@ public class ControlData extends DataItem {
 	}
 
 	/**
-	 * Set a new Security control 
-	 * @param pControl the new control 
+	 * Set a new ControlKey 
+	 * @param pControl the new control key 
 	 */
-	protected void setSecurityControl(SecurityControl pControl) throws Exception {
+	protected void setControlKey(ControlKey pControl) throws Exception {
+		/* If we do not have a control Key */
+		if (theControlId == -1) {
+			/* Store the control details and return */
+			theControlId	= pControl.getId();
+			getObj().setControlKey(pControl);
+			return;
+		}
+		
 		/* Store the current detail into history */
 		pushHistory();
 
-		/* Store the Control and record the new Control Key */
-		theControl = pControl;
-		getObj().setControlKey(theControl.getSecurityKey());
-
-		/* Re-associate the Symmetric Key and store the new Security Key */
-		theKey.setSecurityControl(pControl);
-		getObj().setSecurityKey(theKey.getSecurityKey());
+		/* Store the control details */
+		theControlId	= pControl.getId();
+		getObj().setControlKey(pControl);
 
 		/* Check for changes */
 		if (checkForHistory()) setState(DataState.CHANGED);
@@ -330,9 +237,11 @@ public class ControlData extends DataItem {
 	 */
 	public static class List  extends DataList<ControlData> {
 		/* Members */
-		private DataSet		theData		= null;
-		public 	DataSet 	getData()	{ return theData; }
-
+		private DataSet		theData			= null;
+		public 	DataSet 	getData()		{ return theData; }
+		private ControlData	theControl		= null;
+		public 	ControlData	getControl()	{ return theControl; }
+		
 		/** 
 		 * Construct an empty CORE static list
 	 	 * @param pData the DataSet for the list
@@ -407,18 +316,14 @@ public class ControlData extends DataItem {
 		 */
 		public void addItem(int  	uId,
 							int  	uVersion,
-							String	pControlKey,
-	            			byte[]	pSecurityKey,
-							byte[]	pInitVector) throws Exception {
+							int		uControlId) throws Exception {
 			ControlData     	myStatic;
 			
 			/* Create the static */
 			myStatic = new ControlData(this, 
 								  uId, 
 								  uVersion,
-								  pControlKey,
-								  pSecurityKey,
-								  pInitVector);
+								  uControlId);
 			
 			/* Check that this StaticId has not been previously added */
 			if (!isIdUnique(uId)) 
@@ -426,45 +331,35 @@ public class ControlData extends DataItem {
 									myStatic,
 									"Duplicate StaticId <" + uId + ">");
 			 
+			/* Only one static is allowed */
+			if (theControl != null) 
+				throw new Exception(ExceptionClass.DATA,
+									myStatic,
+									"Control record already exists");
+			 
 			/* Add to the list */
+			theControl = myStatic;
 			myStatic.addToList();
 		}			
 
 		/**
 		 *  Add a Static item (with no security as yet)
 		 */
-		public void addItem(int  			uId,
-							int  			uVersion) throws Exception {
+		public void addItem(int  			uVersion) throws Exception {
 			ControlData     	myStatic;
 			
 			/* Create the static */
-			myStatic = new ControlData(this, 
-								  uId, 
-								  uVersion);
+			myStatic = new ControlData(this,  uVersion);
 			
-			/* Check that this StaticId has not been previously added */
-			if (!isIdUnique(uId)) 
+			/* Only one static is allowed */
+			if (theControl != null) 
 				throw new Exception(ExceptionClass.DATA,
 									myStatic,
-									"Duplicate StaticId <" + uId + ">");
+									"Control record already exists");
 			 
 			/* Add to the list */
+			theControl = myStatic;
 			myStatic.addToList();
-		}			
-
-		/**
-		 *  Access default Static item
-		 */
-		protected ControlData getDefault() {
-			ControlData     		myStatic;
-			ListIterator 	myIterator;
-
-			/* Access the first static element */
-			myIterator	 = listIterator();
-			myStatic	 = myIterator.next();
-			
-			/* Return to caller */
-			return myStatic;			
 		}			
 	}
 
@@ -473,32 +368,22 @@ public class ControlData extends DataItem {
 	 */
 	public class Values implements histObject {
 		private int 			theDataVersion	= -1;
-		private String			theControlKey	= null;
-		private byte[]			theSecurityKey	= null;
-		private byte[]			theInitVector	= null;
+		private ControlKey		theControlKey	= null;
 		
 		/* Access methods */
 		public  int 			getDataVersion()  	{ return theDataVersion; }
-		public  String 			getControlKey()  	{ return theControlKey; }
-		public  byte[] 			getSecurityKey()  	{ return theSecurityKey; }
-		public  byte[] 			getInitVector()  	{ return theInitVector; }
+		public  ControlKey		getControlKey()  	{ return theControlKey; }
 		
 		public void setDataVersion(int pValue) {
 			theDataVersion = pValue; }
-		public void setControlKey(String pValue) {
+		public void setControlKey(ControlKey pValue) {
 			theControlKey  = pValue; }
-		public void setSecurityKey(byte[] pValue) {
-			theSecurityKey = pValue; }
-		public void setInitVector(byte[] pValue) {
-			theInitVector  = pValue; }
 
 		/* Constructor */
 		public Values() {}
 		public Values(Values pValues) {
 			theDataVersion	= pValues.getDataVersion();
 			theControlKey	= pValues.getControlKey();
-			theSecurityKey	= pValues.getSecurityKey();
-			theInitVector	= pValues.getInitVector();
 		}
 		
 		/* Check whether this object is equal to that passed */
@@ -507,10 +392,8 @@ public class ControlData extends DataItem {
 			return histEquals(myValues);
 		}
 		public boolean histEquals(Values pValues) {
-			if (theDataVersion != pValues.theDataVersion)   				return false;
-			if (Utils.differs(theControlKey,    pValues.theControlKey))   	return false;
-			if (Utils.differs(theSecurityKey,   pValues.theSecurityKey))   	return false;
-			if (Utils.differs(theInitVector,	pValues.theInitVector))   	return false;
+			if (theDataVersion != pValues.theDataVersion)   					return false;
+			if (ControlKey.differs(theControlKey,    pValues.theControlKey))   	return false;
 			return true;
 		}
 		
@@ -525,8 +408,6 @@ public class ControlData extends DataItem {
 		public void    copyFrom(Values pValues) {
 			theDataVersion	= pValues.getDataVersion();
 			theControlKey	= pValues.getControlKey();
-			theSecurityKey	= pValues.getSecurityKey();
-			theInitVector	= pValues.getInitVector();
 		}
 		public boolean	fieldChanged(int fieldNo, histObject pOriginal) {
 			Values 	pValues = (Values)pOriginal;
@@ -536,13 +417,7 @@ public class ControlData extends DataItem {
 					bResult = (theDataVersion != pValues.theDataVersion);
 					break;
 				case FIELD_CONTROL:
-					bResult = (Utils.differs(theControlKey,		pValues.theControlKey));
-					break;
-				case FIELD_KEY:
-					bResult = (Utils.differs(theSecurityKey,	pValues.theSecurityKey));
-					break;
-				case FIELD_IV:
-					bResult = (Utils.differs(theInitVector, 	pValues.theInitVector));
+					bResult = (ControlKey.differs(theControlKey,		pValues.theControlKey));
 					break;
 			}
 			return bResult;

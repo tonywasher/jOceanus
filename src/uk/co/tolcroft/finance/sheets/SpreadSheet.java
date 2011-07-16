@@ -380,6 +380,13 @@ public class SpreadSheet {
 			
 			/* Initialise the list */
 			theSheets = new ArrayList<SheetDataItem<?>>();
+
+			/* If this is a backup */
+			if (theType == SheetType.BACKUP) {
+				/* Add security details */
+				theSheets.add(new SheetControlKey(this));
+				theSheets.add(new SheetDataKey(this));				
+			}
 			
 			/* Add the items */
 			theSheets.add(new SheetControl(this));
@@ -619,6 +626,13 @@ public class SpreadSheet {
 		
 			/* Initialise the list */
 			theSheets = new ArrayList<SheetDataItem<?>>();
+			
+			/* If this is a backup */
+			if (theType == SheetType.BACKUP) {
+				/* Add security details */
+				theSheets.add(new SheetControlKey(this));
+				theSheets.add(new SheetDataKey(this));				
+			}
 			
 			/* Add the items */
 			theSheets.add(new SheetControl(this));

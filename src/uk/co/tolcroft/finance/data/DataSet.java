@@ -4,31 +4,33 @@ import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.ListStyle;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.security.*;
 
 public class DataSet implements htmlDumpable {
-	private SecureManager			theSecurity   = null;
-	private ControlData				theDefControl = null;
-	private ControlData.List		theControl    = null;
-	private AccountType.List		theActTypes   = null;
-	private TransactionType.List	theTransTypes = null;
-	private TaxType.List			theTaxTypes   = null;
-	private TaxRegime.List			theTaxRegimes = null;
-    private Frequency.List			theFrequencys = null;
-    private TaxYear.List			theTaxYears   = null;
-    private Account.List			theAccounts   = null;
-    private AcctRate.List			theRates      = null;
-    private AcctPrice.List			thePrices     = null;
-    private Pattern.List			thePatterns   = null; 
-	private Event.List				theEvents     = null;
-    private Date.Range				theDateRange  = null;
-    private EncryptedPair			thePairs	  = null;
-    private LoadState				theLoadState  = LoadState.INITIAL;
+	private SecureManager			theSecurity   	= null;
+	private ControlKey.List			theControlKeys  = null;
+	private DataKey.List			theDataKeys		= null;
+	private ControlData.List		theControlData 	= null;
+	private AccountType.List		theActTypes   	= null;
+	private TransactionType.List	theTransTypes 	= null;
+	private TaxType.List			theTaxTypes   	= null;
+	private TaxRegime.List			theTaxRegimes 	= null;
+    private Frequency.List			theFrequencys 	= null;
+    private TaxYear.List			theTaxYears   	= null;
+    private Account.List			theAccounts  	= null;
+    private AcctRate.List			theRates      	= null;
+    private AcctPrice.List			thePrices     	= null;
+    private Pattern.List			thePatterns   	= null; 
+	private Event.List				theEvents     	= null;
+    private Date.Range				theDateRange  	= null;
+    private EncryptedPair			thePairs	  	= null;
+    private LoadState				theLoadState  	= LoadState.INITIAL;
 
     /* Access methods */
 	protected SecureManager		getSecurity() 		{ return theSecurity; }
-	public ControlData.List 	getControl() 		{ return theControl; }
+	public ControlKey.List 		getControlKeys() 	{ return theControlKeys; }
+	public DataKey.List 		getDataKeys() 		{ return theDataKeys; }
+	public ControlData.List 	getControlData() 	{ return theControlData; }
 	public AccountType.List 	getAccountTypes() 	{ return theActTypes; }
 	public TransactionType.List getTransTypes() 	{ return theTransTypes; }
 	public TaxType.List 		getTaxTypes() 		{ return theTaxTypes; }
@@ -55,18 +57,20 @@ public class DataSet implements htmlDumpable {
 		thePairs 	  = new EncryptedPair();
 		
 		/* Create the empty lists */
-		theControl    = new ControlData.List(this);
-		theActTypes   = new AccountType.List(this);
-		theTransTypes = new TransactionType.List(this);
-		theTaxTypes   = new TaxType.List(this);
-		theTaxRegimes = new TaxRegime.List(this);
-		theFrequencys = new Frequency.List(this);
-		theTaxYears   = new TaxYear.List(this);
-		theAccounts   = new Account.List(this);
-		theRates      = new AcctRate.List(this);
-		thePrices     = new AcctPrice.List(this);
-		thePatterns   = new Pattern.List(this);
-		theEvents     = new Event.List(this);
+		theControlKeys = new ControlKey.List(this);
+		theDataKeys    = new DataKey.List(this);
+		theControlData = new ControlData.List(this);
+		theActTypes    = new AccountType.List(this);
+		theTransTypes  = new TransactionType.List(this);
+		theTaxTypes    = new TaxType.List(this);
+		theTaxRegimes  = new TaxRegime.List(this);
+		theFrequencys  = new Frequency.List(this);
+		theTaxYears    = new TaxYear.List(this);
+		theAccounts    = new Account.List(this);
+		theRates       = new AcctRate.List(this);
+		thePrices      = new AcctPrice.List(this);
+		thePatterns    = new Pattern.List(this);
+		theEvents      = new Event.List(this);
 	}
 	
 	/**
@@ -75,12 +79,14 @@ public class DataSet implements htmlDumpable {
 	 */
 	public DataSet(DataSet pSource) {
 		/* Build the static differences */
-		theControl    = new ControlData.List(pSource.getControl(), ListStyle.UPDATE);
-		theActTypes   = new AccountType.List(pSource.getAccountTypes(), ListStyle.UPDATE);
-		theTransTypes = new TransactionType.List(pSource.getTransTypes(), ListStyle.UPDATE);
-		theTaxTypes   = new TaxType.List(pSource.getTaxTypes(), ListStyle.UPDATE);
-		theTaxRegimes = new TaxRegime.List(pSource.getTaxRegimes(), ListStyle.UPDATE);
-		theFrequencys = new Frequency.List(pSource.getFrequencys(), ListStyle.UPDATE);
+		theControlKeys  = new ControlKey.List(pSource.getControlKeys(), ListStyle.UPDATE);
+		theDataKeys   	= new DataKey.List(pSource.getDataKeys(), ListStyle.UPDATE);
+		theControlData 	= new ControlData.List(pSource.getControlData(), ListStyle.UPDATE);
+		theActTypes   	= new AccountType.List(pSource.getAccountTypes(), ListStyle.UPDATE);
+		theTransTypes 	= new TransactionType.List(pSource.getTransTypes(), ListStyle.UPDATE);
+		theTaxTypes   	= new TaxType.List(pSource.getTaxTypes(), ListStyle.UPDATE);
+		theTaxRegimes 	= new TaxRegime.List(pSource.getTaxRegimes(), ListStyle.UPDATE);
+		theFrequencys 	= new Frequency.List(pSource.getFrequencys(), ListStyle.UPDATE);
 		
 		/* Build the data differences */
 		theTaxYears   = new TaxYear.List(pSource.getTaxYears(), ListStyle.UPDATE);
@@ -103,12 +109,14 @@ public class DataSet implements htmlDumpable {
 	 */
 	public DataSet(DataSet pNew, DataSet pOld) {
 		/* Build the static differences */
-		theControl    = new ControlData.List(pNew.getControl(), pOld.getControl());
-		theActTypes   = new AccountType.List(pNew.getAccountTypes(), pOld.getAccountTypes());
-		theTransTypes = new TransactionType.List(pNew.getTransTypes(), pOld.getTransTypes());
-		theTaxTypes   = new TaxType.List(pNew.getTaxTypes(), pOld.getTaxTypes());
-		theTaxRegimes = new TaxRegime.List(pNew.getTaxRegimes(), pOld.getTaxRegimes());
-		theFrequencys = new Frequency.List(pNew.getFrequencys(), pOld.getFrequencys());
+		theControlKeys  = new ControlKey.List(pNew.getControlKeys(), pOld.getControlKeys());
+		theDataKeys   	= new DataKey.List(pNew.getDataKeys(), pOld.getDataKeys());
+		theControlData	= new ControlData.List(pNew.getControlData(), pOld.getControlData());
+		theActTypes   	= new AccountType.List(pNew.getAccountTypes(), pOld.getAccountTypes());
+		theTransTypes 	= new TransactionType.List(pNew.getTransTypes(), pOld.getTransTypes());
+		theTaxTypes   	= new TaxType.List(pNew.getTaxTypes(), pOld.getTaxTypes());
+		theTaxRegimes 	= new TaxRegime.List(pNew.getTaxRegimes(), pOld.getTaxRegimes());
+		theFrequencys 	= new Frequency.List(pNew.getFrequencys(), pOld.getFrequencys());
 		
 		/* Build the data differences */
 		theTaxYears   = new TaxYear.List(pNew.getTaxYears(), pOld.getTaxYears());
@@ -126,7 +134,9 @@ public class DataSet implements htmlDumpable {
 	 */
 	public void reBase(DataSet pOld) {
 		/* ReBase the static items */
-		theControl.reBase(pOld.getControl());
+		theControlKeys.reBase(pOld.getControlKeys());
+		theDataKeys.reBase(pOld.getDataKeys());
+		theControlData.reBase(pOld.getControlData());
 		theActTypes.reBase(pOld.getAccountTypes());
 		theTransTypes.reBase(pOld.getTransTypes());
 		theTaxTypes.reBase(pOld.getTaxTypes());
@@ -161,7 +171,9 @@ public class DataSet implements htmlDumpable {
 		DataSet myThat = (DataSet)pThat;
 		
 		/* Compare static data */
-		if (!theControl.equals(myThat.getControl())) return false;
+		if (!theControlKeys.equals(myThat.getControlKeys())) return false;
+		if (!theDataKeys.equals(myThat.getDataKeys())) return false;
+		if (!theControlData.equals(myThat.getControlData())) return false;
 		if (!theActTypes.equals(myThat.getAccountTypes())) return false;
 		if (!theTransTypes.equals(myThat.getTransTypes())) return false;
 		if (!theTaxTypes.equals(myThat.getTaxTypes())) return false;
@@ -189,7 +201,9 @@ public class DataSet implements htmlDumpable {
 		StringBuilder myString = new StringBuilder(10000);
 		
 		/* Format the individual parts */
-		myString.append(theControl.toHTMLString());
+		myString.append(theControlKeys.toHTMLString());
+		myString.append(theDataKeys.toHTMLString());
+		myString.append(theControlData.toHTMLString());
 		myString.append(theActTypes.toHTMLString());
 		myString.append(theTransTypes.toHTMLString());
 		myString.append(theTaxTypes.toHTMLString());
@@ -215,17 +229,19 @@ public class DataSet implements htmlDumpable {
 		boolean isEmpty;
 		
 		/* Determine whether the data is empty */
-		isEmpty =	theControl.isEmpty()    &&
-					theActTypes.isEmpty()   &&
-					theTransTypes.isEmpty() &&
-					theTaxTypes.isEmpty()   &&
-					theTaxRegimes.isEmpty() &&
-					theFrequencys.isEmpty() &&
-					theTaxYears.isEmpty()   &&
-					theAccounts.isEmpty()   &&
-					theRates.isEmpty()      &&
-					thePrices.isEmpty()     &&
-					thePatterns.isEmpty()   &&
+		isEmpty =	theControlKeys.isEmpty() &&
+					theDataKeys.isEmpty()    &&
+					theControlData.isEmpty() &&
+					theActTypes.isEmpty()    &&
+					theTransTypes.isEmpty()  &&
+					theTaxTypes.isEmpty()    &&
+					theTaxRegimes.isEmpty()  &&
+					theFrequencys.isEmpty()  &&
+					theTaxYears.isEmpty()    &&
+					theAccounts.isEmpty()    &&
+					theRates.isEmpty()       &&
+					thePrices.isEmpty()      &&
+					thePatterns.isEmpty()    &&
 					theEvents.isEmpty();
 		
 		/* Return the indication */
@@ -239,7 +255,9 @@ public class DataSet implements htmlDumpable {
 	public boolean hasUpdates() {
 			
 		/* Determine whether we have updates */
-		if (theControl.hasUpdates()) return true;
+		if (theControlKeys.hasUpdates()) return true;
+		if (theDataKeys.hasUpdates()) return true;
+		if (theControlData.hasUpdates()) return true;
 		if (theActTypes.hasUpdates()) return true;
 		if (theTransTypes.hasUpdates()) return true;
 		if (theTaxTypes.hasUpdates()) return true;
@@ -264,46 +282,28 @@ public class DataSet implements htmlDumpable {
 	}
 		
 	/**
-	 * Access the default control  
+	 * Get the control record
+	 * @return the control record 
 	 */
-	private ControlData ensureControl() throws Exception {
-		/* Access the first control element */
-		theDefControl	 = getControl().getDefault();
-		
-		/* Throw an exception if there is no static */
-		if (theDefControl == null)
-			throw new Exception(ExceptionClass.LOGIC,
-								"No default control found");
-		
-		/* Return the control */
-		return theDefControl;
+	public ControlData getControl() throws Exception {
+		/* Set the control */
+		return getControlData().getControl();		
 	}
 	
 	/**
-	 * Get the default static 
-	 * @return the default static 
+	 * Initialise Security from database (if present) 
+	 * @param pDatabase the database data
 	 */
-	public ControlData getDefaultControl() throws Exception {
-		/* Ensure that we have a control element */
-		ensureControl();
+	public void initialiseSecurity(DataSet pDatabase) throws Exception {
+		/* Access the control element from the database */
+		ControlData myControl = pDatabase.getControl();
+		ControlKey  myKey		= null;
 		
-		/* Set the control */
-		return theDefControl;		
-	}
-	
-	/**
-	 * Initialise Static from database (if present) 
-	 * @param pDatabase the database static
-	 */
-	public void adoptControl(DataSet pDatabase) throws Exception {
-		/* Ensure that we have a static element */
-		ensureControl();
-		
-		/* Access the default control element from the database */
-		ControlData myControl = pDatabase.getControl().getDefault();
-		
-		/* Set the control */
-		theDefControl.setSecurity(myControl);		
+		/* Access control key from control data */
+		if (myControl != null) myKey = myControl.getControlKey();
+
+		/* Initialise Security */
+		theControlKeys.initialiseSecurity(myKey);		
 	}
 	
 	/**
@@ -311,11 +311,15 @@ public class DataSet implements htmlDumpable {
 	 * @return the security control 
 	 */
 	public SecurityControl getSecurityControl() throws Exception {
-		/* Ensure that we have a control element */
-		ensureControl();
+		/* Access the control element from the database */
+		ControlData myControl = getControl();
+		ControlKey  myKey		= null;
+		
+		/* Access control key from control data */
+		if (myControl != null) myKey = myControl.getControlKey();
 		
 		/* Set the control */
-		return theDefControl.getSecurityControl();		
+		return (myKey == null) ? null : myKey.getSecurityControl();		
 	}
 	
 	/**
@@ -325,10 +329,10 @@ public class DataSet implements htmlDumpable {
 	 */
 	public void setSecurityControl(SecurityControl pControl) throws Exception {
 		/* Ensure that we have a control element */
-		ensureControl();
+		//ensureControl();
 		
 		/* Set the control */
-		theDefControl.setSecurityControl(pControl);		
+		//theControl.getControlKey().setSecurityControl(pControl);		
 	}
 	
 	/**

@@ -40,7 +40,7 @@ public class SheetControl extends SheetDataItem<ControlData> {
 		
 		/* Access the Lists */
 		theData	= pInput.getData();
-		theList = theData.getControl();
+		theList = theData.getControlData();
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class SheetControl extends SheetDataItem<ControlData> {
 		isBackup = (pOutput.getType() == SheetType.BACKUP);
 				
 		/* Access the Control list */
-		theList = pOutput.getData().getControl();
+		theList = pOutput.getData().getControlData();
 		setDataList(theList);
 	}
 	
@@ -63,17 +63,27 @@ public class SheetControl extends SheetDataItem<ControlData> {
 	 * Load an item from the spreadsheet
 	 */
 	protected void loadItem() throws Throwable {
-		/* Access the IDs */
-		int	myID 		= loadInteger(0);
-		int	myVersion	= loadInteger(1);
-		
-		/* Access the String values  */
-		String 	myControl		= loadString(3);
-		byte[]	myKey			= loadBytes(4);
-		byte[]	myInitVector	= loadBytes(5);
+		/* If this is a backup */
+		if (isBackup) {
+			/* Access the IDs */
+			int	myID 		= loadInteger(0);
+			int	myVersion	= loadInteger(1);
 
-		/* Add the Control */
-		theList.addItem(myID, myVersion, myControl, myKey, myInitVector);
+			/* Access the Control Key  */
+			int 	myControl		= loadInteger(2);
+
+			/* Add the Control */
+			theList.addItem(myID, myVersion, myControl);
+		}
+		
+		/* else this is plain text */
+		else {
+			/* Access the Version */
+			int	myVersion	= loadInteger(0);
+
+			/* Add the Control */
+			theList.addItem(myVersion);			
+		}
 	}
 
 	/**
@@ -82,12 +92,16 @@ public class SheetControl extends SheetDataItem<ControlData> {
 	 *  @param isBackup is the spreadsheet a backup, or else clear text
 	 */
 	protected void insertItem(ControlData	pItem) throws Throwable  {
-		/* Set the fields */
-		writeInteger(0, pItem.getId());
-		writeInteger(1, pItem.getDataVersion());	
-		writeString(3, pItem.getControlKey());
-		writeBytes(4, pItem.getSecurityKey());
-		writeBytes(5, pItem.getInitVector());
+		/* If this is a backup */
+		if (isBackup) {
+			/* Set the fields */
+			writeInteger(0, pItem.getId());
+			writeInteger(1, pItem.getDataVersion());
+			writeInteger(2, pItem.getControlKey().getId());
+		}
+		
+		/* else just write the data version */
+		else writeInteger(0, pItem.getDataVersion());
 	}
 
 	/**
@@ -98,11 +112,7 @@ public class SheetControl extends SheetDataItem<ControlData> {
 		if (isBackup) return false;
 
 		/* Write titles */
-		writeString(0, ControlData.fieldName(ControlData.FIELD_ID));
-		writeString(1, ControlData.fieldName(ControlData.FIELD_VERS));			
-		writeString(2, ControlData.fieldName(ControlData.FIELD_CONTROL));			
-		writeString(3, ControlData.fieldName(ControlData.FIELD_KEY));			
-		writeString(4, ControlData.fieldName(ControlData.FIELD_IV));			
+		writeString(0, ControlData.fieldName(ControlData.FIELD_VERS));			
 		return true;
 	}	
 
@@ -110,8 +120,18 @@ public class SheetControl extends SheetDataItem<ControlData> {
 	 * PostProcess on write
 	 */
 	protected void postProcessOnWrite() throws Throwable {		
-		/* Set the five columns as the range */
-		nameRange(5);
+		/* If we are creating a backup */
+		if (isBackup) {
+			/* Set the three columns as the range */
+			nameRange(3);
+		}
+		
+		/* else */
+		else {
+			/* Set the one column as the range */
+			nameRange(1);
+			setColumnWidth(0, 8);
+		}
 	}
 
 	/**
@@ -173,10 +193,10 @@ public class SheetControl extends SheetDataItem<ControlData> {
 			pRange.setMaxYear(Integer.parseInt(myCell.getContents()));
 			
 			/* Access the static */
-			myStatic = pData.getControl();
+			myStatic = pData.getControlData();
 		
 			/* Add the value into the finance tables (with no security as yet) */
-			myStatic.addItem(0, Properties.CURRENTVERSION);
+			myStatic.addItem(Properties.CURRENTVERSION);
 		}
 
 		/* Calculate the number of stages */

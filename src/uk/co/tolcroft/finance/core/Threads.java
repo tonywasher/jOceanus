@@ -648,8 +648,8 @@ public class Threads {
 				/* Load underlying database */
 				myStore	= myDatabase.loadDatabase(theStatus);
 
-				/* Initialise the control, either from database or with a new security control */
-				myData.adoptControl(myStore);
+				/* Initialise the security, either from database or with a new security control */
+				myData.initialiseSecurity(myStore);
 				
 				/* Analyse the Data to ensure that close dates are updated */
 				myData.analyseData(theDebugMgr);

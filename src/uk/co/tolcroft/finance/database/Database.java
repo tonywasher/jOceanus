@@ -51,6 +51,8 @@ public class Database {
 		
 		/* Create table list and add the tables to the list */
 		theTables = new ArrayList<DatabaseTable<?>>();
+		theTables.add(new TableControlKeys(this));
+		theTables.add(new TableDataKeys(this));
 		theTables.add(new TableControl(this));
 		theTables.add(new TableAccountType(this));
 		theTables.add(new TableTransactionType(this));
