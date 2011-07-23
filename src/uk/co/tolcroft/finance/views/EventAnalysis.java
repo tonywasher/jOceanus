@@ -205,7 +205,7 @@ public class EventAnalysis {
 			
 			/* Add a statement line to the statement */
 			myLine = new Statement.Line(myList, myCurr, myAccount);
-			myLine.addToList();
+			myList.add(myLine);
 		}
 	
 		/* Reset the statement balances */
@@ -392,7 +392,7 @@ public class EventAnalysis {
 	}
 	
 	/* Public class for analysis year */
-	public static class AnalysisYear extends DataItem {
+	public static class AnalysisYear extends DataItem<AnalysisYear> {
 		/**
 		 * The name of the object
 		 */
@@ -600,7 +600,7 @@ public class EventAnalysis {
 		 */
 		public List(EventAnalysis pEvents) {
 			/* Call super constructor */
-			super(ListStyle.VIEW, false);
+			super(AnalysisYear.class, ListStyle.VIEW, false);
 			theEvents = pEvents;
 			
 			/* Create debug entry for this list */
@@ -618,7 +618,7 @@ public class EventAnalysis {
 		 * @param pItem the item to add
 		 * @return the newly added item
 		 */
-		public AnalysisYear addNewItem(DataItem pItem) { return null; }
+		public AnalysisYear addNewItem(DataItem<?> pItem) { return null; }
 	
 		/**
 		 * Add a new item to the edit list
@@ -643,7 +643,7 @@ public class EventAnalysis {
 									      	  Analysis	pAnalysis) {
 			/* Locate the bucket in the list */
 			AnalysisYear myYear = new AnalysisYear(this, pYear, pAnalysis);
-			myYear.addToList();
+			add(myYear);
 			return myYear;
 		}		
 		

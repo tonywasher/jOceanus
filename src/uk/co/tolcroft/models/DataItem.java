@@ -10,7 +10,7 @@ import uk.co.tolcroft.models.EditState;
  * {@link SortedList.linkObject} interface means that this object can only be held in one list at a time
  * @see uk.co.tolcroft.models.DataList
  */
-public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
+public abstract class DataItem<T extends DataItem<T>> extends LinkObject<T> implements htmlDumpable {
 	/**
 	 * Interface for Value objects allowing history functions
 	 */
@@ -53,18 +53,18 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 		 * @param pObj the history values to check
 		 * @return <code>true</code> if the history object is valid <code>false</code> otherwise
 		 */
-		boolean    isValidObj(DataItem pItem, histObject pObj);
+		boolean    isValidObj(DataItem<?> pItem, histObject pObj);
 	}
 	
 	/**
 	 * The list to which this item belongs
 	 */
-	private DataList<DataItem>	theList		= null;
+	private DataList<T>			theList		= null;
 	
 	/**
-	 * Self reference
+	 * Self reference (built as cast during constructor)
 	 */
-	private DataItem			theItem		= this;
+	private T					theItem;
 	
 	/**
 	 * The changeable values for this item
@@ -85,7 +85,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * The base item to which this item is linked. This will be <code>null</code> in CORE list
 	 * and for new items etc.
 	 */
-    private DataItem         	theBase		= null;
+    private DataItem<?>        	theBase		= null;
 
     /**
 	 * Is the item visible to standard searches
@@ -105,7 +105,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
     /**
 	 * Storage for the List Node
 	 */
-    private Object				theLink		= null;
+    private LinkNode<T>			theLink		= null;
 
     /**
 	 * The id number of the item
@@ -126,7 +126,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * Get the list control for this item
 	 * @return the list control
 	 */
-	public DataList<? extends DataItem>   getList()  	{ return theList; }
+	public DataList<T>   		getList()  	{ return theList; }
 	
 	/**
 	 * Get the changeable values object for this item 
@@ -156,19 +156,19 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * Get the base item for this item
 	 * @return the Base item or <code>null</code>
 	 */
-	public DataItem		getBase()      	{ return theBase; }
+	public DataItem<?>	getBase()      	{ return theBase; }
 
 	/**
 	 * Get the link node for this item
 	 * @return the Link node or <code>null</code>
 	 */
-	public Object		getLinkNode(Object pList)	{ return theLink; }
+	public LinkNode<T>	getLinkNode(SortedList<T> pList)	{ return theLink; }
 
 	/**
 	 * Get the link node for this item
 	 * @return the Link node or <code>null</code>
 	 */
-	public void			setLinkNode(Object l, Object o)	{ theLink = o; }
+	public void			setLinkNode(SortedList<T> l, LinkNode<T> o)	{ theLink = o; }
 
 	/**
 	 * Determine whether the item is visible to standard searches
@@ -176,7 +176,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 */
 	private void		setDeleted(boolean bDeleted) {
 		isDeleted = bDeleted;
-		theList.setHidden(this, isDeleted);
+		theList.setHidden(theItem, isDeleted);
 	}
 
 	/**
@@ -241,7 +241,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * Set the base item for this item
 	 * @param pBase the Base item
 	 */
-	public void			setBase(DataItem pBase) { theBase = pBase; }
+	public void			setBase(DataItem<?> pBase) { theBase = pBase; }
 	
 	/**
 	 * Set the changeable values object for this item
@@ -266,8 +266,29 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * This method is the underlying method called when the id is unknown 
 	 * @return the field name
 	 */
-	public static String	fieldName(int fieldId)	{ return "Unknown"; }
+	public static String	fieldName(int fieldId)	{
+		switch (fieldId) {
+			case FIELD_ID:	return NAME_ID;
+			default: 		return "Unknown";
+		}
+	}
 	
+	/**
+	 * Format the value of a particular field as a table row
+	 * @param iField the field number
+	 * @param pObj the values to use
+	 * @return the formatted field
+	 */
+	public String formatField(int iField, histObject pObj) {
+		String 	myString = "";
+		switch (iField) {
+			case FIELD_ID: 		
+				myString += getId(); 
+				break;
+		}
+		return myString;
+	}
+							
 	/**
 	 * Determine the field name for a particular field
 	 * This method is always overridden but is used to supply the default field name 
@@ -285,6 +306,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * Id for standard field
 	 */
 	public static final int 	FIELD_ID	= 0;
+	public static final int 	NUMFIELDS	= FIELD_ID+1; 
 	public static final String	NAME_ID		= "Id";
 	
 	/**
@@ -317,6 +339,24 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 		myString.append("</td></tr>");
 		if (isDeleted) 
 			myString.append("<tr><td>Deleted</td><td>true</td></tr>");
+		
+		/* If we are part of a list */
+		if (theLink != null) {
+			/* Start the status section */
+			myString.append("<tr><th rowspan=\"");
+			myString.append((theLink.isHidden()) ? 4 : 3);
+			myString.append("\">Indices</th></tr>");
+			
+			/* Format the State and edit State */
+			myString.append("<tr><td>Index</td><td>");
+			myString.append(theLink.theIndex);
+			myString.append("</td></tr>");
+			myString.append("<tr><td>HiddenIndex</td><td>");
+			myString.append(theLink.theHiddenIndex);
+			myString.append("</td></tr>");
+			if (theLink.isHidden()) 
+				myString.append("<tr><td>Hidden</td><td>true</td></tr>");
+		}
 		
 		/* Start the values section */
 		myString.append("<tr><th rowspan=\"");
@@ -378,32 +418,9 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	public int	numFields() { return 0; }
 	
 	/**
-	 * Format the value of a particular field
-	 * @param iField the field number
-	 * @param pObj the values to use
-	 * @return the formatted field
-	 */
-	abstract public String formatField(int iField, histObject pObj);
-
-	/**
-	 * Ensure encryption of the item
-	 */
-	protected void ensureEncryption() throws Exception {}
-	
-	/**
-	 * Add the item to the list 
-	 */
-	public void			addToList()  { theList.add(this); }
-	
-	/**
 	 * Unlink the item from the list
 	 */
 	public void			unLink()     { theList.remove(this); }
-	
-	/**
-	 * Re-sort the item in the list
-	 */
-	public void			reSort()     { theList.reSort(this); }
 	
 	/**
 	 * Determine whether the item has changes
@@ -429,7 +446,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * list is the original values of the base
 	 */
 	public 	  void		setHistory()  { 
-		DataItem myItem = getBase();
+		DataItem<?> myItem = getBase();
 		histObject  myObj  = myItem.theHistory.getBase();
 		theHistory.setHistory(myObj);
 	}
@@ -510,11 +527,11 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * Restore values from a further history item beyond the current cursor 
 	 */
 	public void				peekFurther()    {
-		historyCtl.histElement myElement;
+		histObject myElement;
 		myElement = theBase.theHistory.peekFurther();
 		if (myElement != null) {
 			pushHistory();
-			theObj.copyFrom(myElement.theObj);
+			theObj.copyFrom(myElement);
 			setState(DataState.CHANGED);
 		}
 	}
@@ -523,11 +540,11 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * Restore values from a previous history item beyond the current cursor 
 	 */
 	public void				peekPrevious()    {
-		historyCtl.histElement myElement;
+		histObject myElement;
 		myElement = theBase.theHistory.peekPrevious();
 		if (myElement != null) {
 			pushHistory();
-			theObj.copyFrom(myElement.theObj);
+			theObj.copyFrom(myElement);
 			theHistory.maybePopHistory(theObj);
 		}
 		else {
@@ -633,12 +650,12 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 * @param pCtl the list that this item is associated with
 	 * @param uId the Id of the new item (or 0 if not yet known)
 	 */
-	@SuppressWarnings("unchecked")
-	public DataItem(DataList<? extends DataItem> pList, int uId) {
+	public DataItem(DataList<T> pList, int uId) {
 		theId      = uId;
-		theList    = (DataList<DataItem>)pList;
+		theList    = pList;
 		theHistory = new historyCtl();
 		theErrors  = new validationCtl();
+		theItem	   = pList.getBaseClass().cast(this);
 	}
 	
 	/**
@@ -664,7 +681,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 	 *  @param pElement the changed element
 	 *  @return were changes made
 	 */
-	public boolean applyChanges(DataItem pElement) { return false; };
+	public boolean applyChanges(DataItem<?> pElement) { return false; };
 	
 	/**
 	 *  Validate the element
@@ -976,17 +993,17 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 		 *  peek the next item from the history
 		 *  @return the next item
 		 */
-		private histElement peekFurther() {
+		private histObject peekFurther() {
 			/* If we have no cursor, point to start of history */
 			if (theCursor == null) {
 				theCursor = theTop;
-				return theCursor;
+				return (theCursor == null) ? null : theCursor.theObj;
 			}
 			
 			/* Shift cursor */
 			if (theCursor.theNext != null) {
 				theCursor = theCursor.theNext;
-				return theCursor;
+				return (theCursor == null) ? null : theCursor.theObj;
 			}
 			
 			/* No item to return */
@@ -997,11 +1014,11 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 		 *  peek the previous item from the history
 		 *  @return the previous item
 		 */
-		private histElement peekPrevious() {
+		private histObject peekPrevious() {
 			/* If we have a cursor return its previous value */
 			if (theCursor != null) {
 				theCursor = theCursor.thePrev;
-				return theCursor;
+				return (theCursor == null) ? null : theCursor.theObj;
 			}
 			
 			/* No item to return */
@@ -1208,7 +1225,7 @@ public abstract class DataItem implements SortedList.linkObject, htmlDumpable {
 					if (theObj.fieldChanged(fieldId, myObj)) {
 						/* Format the field */
 						myString.append("<tr><td>"); 
-						myString.append(fieldName(fieldId)); 
+						myString.append(getFieldName(fieldId)); 
 						myString.append("</td><td>"); 
 						myString.append(formatField(fieldId, theObj));
 						myString.append("</td></tr>");

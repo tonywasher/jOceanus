@@ -27,9 +27,9 @@ import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.finance.views.DebugManager;
 import uk.co.tolcroft.models.*;
 
-public abstract class FinanceTable<T extends DataItem> extends JTable 
-															   implements financePanel,
-															   			  DataItem.tableHistory {
+public abstract class FinanceTable<T extends DataItem<T>> extends JTable 
+														  implements financePanel,
+																  	 DataItem.tableHistory {
 	/* Members */
 	private static final long serialVersionUID = 1258025191244933784L;
 	private JTable				theRowHdrTable	= null;
@@ -65,7 +65,7 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 	public void    		updateDebug()			    	{ }
 	public void    		setActive(boolean isActive)		{ isEnabled = isActive; }
 	public JComboBox 	getComboBox(int row, int col) 	{ return null; }
-	public boolean 		isValidObj(DataItem pItem, DataItem.histObject  pObj) { return true; }
+	public boolean 		isValidObj(DataItem<?> pItem, DataItem.histObject  pObj) { return true; }
 	public DebugManager getDebugManager() 				{ return theMainTab.getDebugMgr(); }
 		
 	/* Abstract methods */
@@ -270,17 +270,18 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 	 * Get an array of the selected rows
 	 * @return array of selected rows 
 	 */
-	protected DataItem[] cacheSelectedRows() {
-		DataItem[]	myRows;
-		int[]		mySelected;
-		int			myIndex;
-		int			i,j;
+	@SuppressWarnings("unchecked")
+	protected T[] cacheSelectedRows() {
+		T[]		myRows;
+		int[]	mySelected;
+		int		myIndex;
+		int		i,j;
 
 		/* Determine the selected rows */
 		mySelected = getSelectedRows();
 	
 		/* Create a row array relating to the selections */
-		myRows = new DataItem[mySelected.length];
+		myRows = (T[])new DataItem[mySelected.length];
 		Arrays.fill(myRows, null);
 	
 		/* Loop through the selection indices */
@@ -305,8 +306,8 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 	 * @param doShowDel the new setting
 	 */
 	protected void setShowDeleted(boolean doShowDel) {
-		DataItem[]	myRows;
-		int			myRowNo;
+		T[]	myRows;
+		int	myRowNo;
 
 		/* If we are changing the value */
 		if (this.doShowDel != doShowDel) {
@@ -325,7 +326,7 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 			theModel.fireNewDataEvents();
 				
 			/* Loop through the selected rows */
-			for (DataItem myRow : myRows) {
+			for (T myRow : myRows) {
 				/* Ignore null/deleted entries */
 				if ((myRow == null) || (myRow.isDeleted())) continue;				
 
@@ -368,9 +369,9 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 	 * Delete the selected items
 	 */
 	protected void deleteRows() {
-		DataItem[]	myRows;
-		DataItem	myRow;
-		int			myRowNo;
+		T[]	myRows;
+		T	myRow;
+		int	myRowNo;
 		
 		/* Access the selected rows */
 		myRows = cacheSelectedRows();
@@ -412,10 +413,10 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 	 * Duplicate the selected items
 	 */
 	protected void duplicateRows() {
-		DataItem[]	myRows;
-		DataItem	myRow;
-		T			myItem;
-		int			myRowNo;
+		T[]	myRows;
+		T	myRow;
+		T	myItem;
+		int	myRowNo;
 		
 		/* Access the selected rows */
 		myRows = cacheSelectedRows();
@@ -454,9 +455,9 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 	 * Recover the selected items
 	 */
 	protected void recoverRows() {		
-		DataItem[]	myRows;
-		DataItem	myRow;
-		int			myRowNo;
+		T[]	myRows;
+		T	myRow;
+		int	myRowNo;
 		
 		/* Access the selected rows */
 		myRows = cacheSelectedRows();
@@ -490,9 +491,9 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 	 * Validate the selected items
 	 */
 	protected void validateRows() {		
-		DataItem[]	myRows;
-		DataItem	myRow;
-		int			myRowNo;
+		T[]	myRows;
+		T	myRow;
+		int	myRowNo;
 		
 		/* Access the selected rows */
 		myRows = cacheSelectedRows();
@@ -522,10 +523,10 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 	 * Reset the selected rows
 	 */
 	protected void resetRows() {		
-		DataItem[]	myRows;
-		DataItem	myRow;
-		int			myRowNo;
-		int			myNewRowNo;
+		T[]	myRows;
+		T	myRow;
+		int	myRowNo;
+		int	myNewRowNo;
 		
 		/* Access the selected rows */
 		myRows = cacheSelectedRows();
@@ -578,10 +579,10 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 	 * Undo changes to rows
 	 */
 	protected void unDoRows() {		
-		DataItem[]	myRows;
-		DataItem	myRow;
-		int			myRowNo;
-		int			myNewRowNo;
+		T[]	myRows;
+		T	myRow;
+		int	myRowNo;
+		int	myNewRowNo;
 		
 		/* Access the selected rows */
 		myRows = cacheSelectedRows();
@@ -604,7 +605,7 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 				myRow.popHistory();
 			
 				/* Resort the item */
-				myRow.reSort();
+				theList.reSort(myRow);
 				myRow.clearErrors();
 				myRow.validate();
 			
@@ -643,10 +644,10 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 	 *  Restore next history row
 	 */
 	public void restoreNextHistoryRows() {		
-		DataItem[]	myRows;
-		DataItem	myRow;
-		int			myRowNo;
-		int			myNewRowNo;
+		T[]	myRows;
+		T	myRow;
+		int	myRowNo;
+		int	myNewRowNo;
 		
 		/* Access the selected rows */
 		myRows = cacheSelectedRows();
@@ -669,7 +670,7 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 				myRow.peekFurther();
 		
 				/* Resort the item */
-				myRow.reSort();
+				theList.reSort(myRow);
 				myRow.clearErrors();
 				myRow.validate();
 
@@ -703,10 +704,10 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 	 * Restore a previous history row
 	 */
 	public void restorePrevHistoryRows() {		
-		DataItem[]	myRows;
-		DataItem	myRow;
-		int			myRowNo;
-		int			myNewRowNo;
+		T[]	myRows;
+		T	myRow;
+		int	myRowNo;
+		int	myNewRowNo;
 		
 		/* Access the selected rows */
 		myRows = cacheSelectedRows();
@@ -729,7 +730,7 @@ public abstract class FinanceTable<T extends DataItem> extends JTable
 				myRow.peekPrevious();
 		
 				/* Resort the item */
-				myRow.reSort();
+				theList.reSort(myRow);
 				myRow.clearErrors();
 				myRow.validate();
 

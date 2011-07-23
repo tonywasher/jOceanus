@@ -149,8 +149,8 @@ public class BatchControl {
 		 */
 		private void commitBatch() {
 			DataList<?>.ListIterator	myIterator;
-			DataItem					myCurr;
-			DataItem					myBase;
+			DataItem<?>					myCurr;
+			DataItem<?>					myBase;
 			
 			/* Access the iterator */
 			myIterator = theTable.getList().listIterator(true);

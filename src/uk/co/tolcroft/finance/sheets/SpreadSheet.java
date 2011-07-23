@@ -93,28 +93,28 @@ public class SpreadSheet {
 	}
 		
 	/**
-	 *  Load an Edit-able Workbook
+	 *  Load an Extract Workbook
 	 *  @param pThread Thread Control for task
-	 *  @param pFile the edit-able file to load from
+	 *  @param pFile the extract file to load from
 	 *  @return the newly loaded data
 	 */
-	public static DataSet loadEditable(statusCtl 	pThread,
-	  		 				  		   File 		pFile) throws Exception {
+	public static DataSet loadExtract(statusCtl pThread,
+	  		 				  		  File 		pFile) throws Exception {
 		/* Create an input sheet object */
 		InputSheet mySheet = new InputSheet(pThread);
 			
-		/* Load the edit-able file */
-		DataSet myData = mySheet.loadEditable(pFile);
+		/* Load the extract file */
+		DataSet myData = mySheet.loadExtract(pFile);
 		
 		/* Return the data */
 		return myData;
 	}
 		
 	/**
-	 *  Create a Backup Workbook
+	 *  Create an Extract Workbook
 	 *  @param pThread Thread Control for task
 	 *  @param pData Data to write out
-	 *  @param pFile the edit-able file to write to
+	 *  @param pFile the extract file to write to
 	 */
 	public static void createEditable(statusCtl pThread,
 							 		  DataSet	pData,
@@ -122,8 +122,8 @@ public class SpreadSheet {
 		/* Create an output sheet object */
 		OutputSheet mySheet = new OutputSheet(pThread);
 			
-		/* Create the Edit-able file */
-		mySheet.createEditable(pData, pFile);
+		/* Create the Extract file */
+		mySheet.createExtract(pData, pFile);
 	}
 		
 	/**
@@ -315,18 +315,18 @@ public class SpreadSheet {
 		}
 
 		/**
-		 *  Load an Edit-able Workbook
-		 *  @param pFile the Edit-able file to load from
+		 *  Load an Extract Workbook
+		 *  @param pFile the Extract file to load from
 		 *  @returns the loaded DataSet
 		 */
-		public DataSet loadEditable(File 		pFile) throws Exception {
+		public DataSet loadExtract(File pFile) throws Exception {
 			InputStream 		myStream  	= null;
 			FileInputStream		myInFile	= null;
 			
 			/* Protect the workbook retrieval */
 			try {
 				/* Note the type of file */
-				theType	 = SheetType.EDITABLE;
+				theType	 = SheetType.EXTRACT;
 
 				/* Create an input stream to the file */
 				myInFile = new FileInputStream(pFile);
@@ -558,12 +558,12 @@ public class SpreadSheet {
 		}
 		
 		/**
-		 *  Create an Edit-able Workbook
+		 *  Create an Extract Workbook
 		 *  @param pData Data to write out
 		 *  @param pFile the backup file to write to
 		 */
-		public void createEditable(DataSet	pData,
-								   File 	pFile) throws Exception {
+		public void createExtract(DataSet	pData,
+								  File 		pFile) throws Exception {
 			OutputStream		myStream	= null;
 			FileOutputStream    myOutFile  	= null;
 			File				myTgtFile	= null;
@@ -571,7 +571,7 @@ public class SpreadSheet {
 			/* Protect the workbook access */
 			try {
 				/* Note the type of file */
-				theType	 = SheetType.EDITABLE;
+				theType	 = SheetType.EXTRACT;
 
 				/* Record the DataSet */
 				theData	= pData;
@@ -693,6 +693,6 @@ public class SpreadSheet {
 	 */
 	protected enum SheetType {
 		BACKUP,
-		EDITABLE;
+		EXTRACT;
 	}
 }

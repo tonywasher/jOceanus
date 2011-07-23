@@ -9,7 +9,7 @@ import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.*;
 
-public class DilutionEvent extends DataItem {
+public class DilutionEvent extends DataItem<DilutionEvent> {
 	/**
 	 * The name of the object
 	 */
@@ -218,7 +218,7 @@ public class DilutionEvent extends DataItem {
 		 * @param pData the DataSet
 		 */
 		public List(DataSet pData) {
-			super(ListStyle.VIEW, false);
+			super(DilutionEvent.class, ListStyle.VIEW, false);
 			theData = pData;
 		}
 		
@@ -233,7 +233,7 @@ public class DilutionEvent extends DataItem {
 		 * @param pItem the item to add
 		 * @return the newly added item
 		 */
-		public DilutionEvent addNewItem(DataItem pItem) { return null; }
+		public DilutionEvent addNewItem(DataItem<?> pItem) { return null; }
 
 	
 		/**

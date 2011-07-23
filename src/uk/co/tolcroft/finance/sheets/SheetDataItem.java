@@ -23,7 +23,7 @@ import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.Number;
 
-public abstract class SheetDataItem<T extends DataItem> {
+public abstract class SheetDataItem<T extends DataItem<T>> {
 	/**
 	 * The thread control
 	 */

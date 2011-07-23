@@ -4,8 +4,8 @@ package uk.co.tolcroft.models;
  * Generic implementation of a DataList for DataItems Stack
  * @author Tony Washer
  */
-public abstract class DataList<T extends DataItem> extends SortedList<T> 
-												   implements htmlDumpable {
+public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T> 
+												   		implements htmlDumpable {
 	/**
 	 * The style of the list
 	 */
@@ -19,65 +19,66 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>
 	/**
 	 * The id manager 
 	 */
-	private IdManager<T>	theMgr	  	= null;
+	private	IdManager<T>	theMgr	  	= null;
 		
 	/**
 	 * Get the style of the list
 	 * @return the list style
 	 */
-	public ListStyle		getStyle()	{ return theStyle; }
+	public 	ListStyle		getStyle()	{ return theStyle; }
 
 	/**
 	 * Get the EditState of the list
 	 * @return the Edit State
 	 */
-	public    EditState      getEditState(){ return theEdit; }
+	public  EditState		getEditState(){ return theEdit; }
 
 	/**
 	 * Determine whether the list got any errors
 	 * @return <code>true/false</code>
 	 */
-	public	  boolean        hasErrors()   { return (theEdit == EditState.ERROR); }
+	public	boolean 		hasErrors()   { return (theEdit == EditState.ERROR); }
 
 	/**
 	 * Determine whether the list got any changes
 	 * @return <code>true/false</code>
 	 */
-	public	  boolean        hasChanges()  { return (theEdit != EditState.CLEAN); }
+	public	boolean   		hasChanges()  { return (theEdit != EditState.CLEAN); }
 
 	/**
 	 * Determine whether the list is valid (or are there errors/non-validated changes)
 	 * @return <code>true/false</code>
 	 */
-	public	  boolean        isValid()     { return ((theEdit == EditState.CLEAN) ||
-			                                         (theEdit == EditState.VALID)); }
+	public	boolean			isValid()     { return ((theEdit == EditState.CLEAN) ||
+			                                        (theEdit == EditState.VALID)); }
 
 	/**
 	 * Determine whether the list is Locked (overwritten as required)
 	 * @return <code>true/false</code>
 	 */
-	public 	  boolean		 isLocked()    { return false; }
+	public	boolean			isLocked()    { return false; }
 
 	/**
 	 * Determine whether we should count deleted items as present
 	 * @return <code>true/false</code>
 	 */
-	public 	  boolean        getShowDeleted() { return !getSkipHidden(); }
+	public	boolean 		getShowDeleted() { return !getSkipHidden(); }
 		
 	/**
 	 * Set whether we should count deleted items as present
 	 * @param bShow <code>true/false</code>
 	 */
-	public	  void           setShowDeleted(boolean bShow) { setSkipHidden(!bShow); }
+	public	void			setShowDeleted(boolean bShow) { setSkipHidden(!bShow); }
 
 	/**
 	 * Construct a new object
 	 * @param pStyle the new {@link finLink.itemCtl.ListStyle}
 	 * @param fromStart - should inserts be attempted from start/end of list
 	 */
-	protected DataList(ListStyle pStyle,
+	protected DataList(Class<T>	 pClass,
+					   ListStyle pStyle,
 			           boolean   fromStart) {
-		super(fromStart);
+		super(pClass, fromStart);
 		theStyle = pStyle;
 		theMgr	 = new IdManager<T>();
 	}
@@ -87,16 +88,18 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>
 	 * @param pList      The list to extract from
 	 * @param pStyle	 the Style of the list  
 	 */
-	protected DataList(DataList<T> pList, ListStyle pStyle) {
+	protected DataList(Class<T>	 	pClass,
+			   		   DataList<?> 	pList,
+			   		   ListStyle 	pStyle) {
 		/* Make this list the correct style */
-		super(false);
+		super(pClass, false);
 		theStyle = pStyle;
 		theMgr	 = new IdManager<T>();
 			
 		/* Local variables */
-		ListIterator 	myIterator;
-		DataItem		myCurr;
-		DataItem		myItem;
+		DataList<?>.ListIterator 	myIterator;
+		DataItem<?>					myCurr;
+		DataItem<T>					myItem;
 			
 		/* Note that this list should show deleted items on UPDATE */
 		if (pStyle == ListStyle.UPDATE) setShowDeleted(true);
@@ -134,15 +137,15 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>
 	 */
 	protected DataList(DataList<T> pNew, DataList<T> pOld) {
 		/* Make this list the correct style */
-		super(false);
+		super(pNew.getBaseClass(), false);
 		theStyle = ListStyle.DIFFER;
 		theMgr	 = new IdManager<T>();
 			
 		/* Local variables */
 		ListIterator 	myIterator;
-		DataItem		myCurr;
-		DataItem		myItem;
-		DataItem		myNew;
+		DataItem<T>		myCurr;
+		DataItem<T>		myItem;
+		DataItem<T>		myNew;
 		DataList<T>		myOld;
 			
 		/* Create a clone of the old list */
@@ -209,8 +212,8 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>
 	public void reBase(DataList<T> pBase) {
 		/* Local variables */
 		ListIterator 	myIterator;
-		DataItem		myCurr;
-		DataItem		myItem;
+		DataItem<T>		myCurr;
+		DataItem<T>		myItem;
 		DataList<T>		myBase;
 			
 		/* Create a clone of the base list */
@@ -291,11 +294,14 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>
 	 * @return <code>true/false</code> was the item removed
 	 */
 	public boolean remove(Object o) {
+		/* Make sure that the object is the same data class */
+		if (o.getClass() != getBaseClass()) return false;
+		
 		/* Remove the underlying item */
 		boolean bSuccess = super.remove(o);
 				
 		/* Access the object */
-		DataItem myItem = (DataItem)o;
+		DataItem<T> myItem = getBaseClass().cast(o);
 		
 		/* Declare to the id Manager */
 		if (bSuccess) theMgr.setItem(myItem.getId(), null);
@@ -598,7 +604,7 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>
 	 * Create a new element in the core list from an edit session (to be over-written)
 	 * @param pElement - element to base new item on
 	 */
-	public abstract T addNewItem(DataItem pElement);
+	public abstract T addNewItem(DataItem<?> pElement);
 		
 	/**
 	 * Create a new empty element in the edit list (to be over-written)
@@ -606,26 +612,6 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>
 	 */
 	public abstract T addNewItem(boolean isCredit);
 		
-	/**
-	 * Ensure encryption of items in the list
-	 */
-	public void ensureEncryption() throws Exception {
-		ListIterator 	myIterator;
-		T				myCurr;
-		
-		/* Access the iterator */
-		myIterator = listIterator();
-		
-		/* Loop through the items */
-		while ((myCurr = myIterator.next()) != null) {
-			/* Ensure encryption of the item */
-			myCurr.ensureEncryption();
-		}
-		
-		/* Return to caller */
-		return;
-	}	
-
 	/** 
 	 * Reset changes in an edit view
 	 */
@@ -671,11 +657,10 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>
 	 * Prepare changes in an edit view back into the core data
 	 * @param pChanges - edit view with changes to apply
 	 */
-	@SuppressWarnings("unchecked")
 	public void prepareChanges(DataList<?> pChanges) {
 		DataList<?>.ListIterator 	myIterator;
-		DataItem					myCurr;
-		T							myItem;
+		DataItem<T>					myCurr;
+		DataItem<?>					myBase;
 			
 		/* Create an iterator for the changes list */
 		myIterator = pChanges.listIterator(true);
@@ -699,36 +684,36 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>
 				case DELETED:
 				case DELCHG:
 					/* Access the underlying item and mark as deleted */
-					myItem = (T)myCurr.getBase();					
-					myItem.setState(DataState.DELETED);
+					myBase = myCurr.getBase();					
+					myBase.setState(DataState.DELETED);
 					break;
 						
 				/* If this is a recovered item */
 				case RECOVERED:
 					/* Access the underlying item and mark as restored */
-					myItem = (T)myCurr.getBase();					
-					myItem.setState(DataState.RECOVERED);
-					myItem.setRestoring(true);
+					myBase = myCurr.getBase();					
+					myBase.setState(DataState.RECOVERED);
+					myBase.setRestoring(true);
 					break;
 						
 				/* If this is a changed item */
 				case CHANGED:
 					/* Access underlying item */
-					myItem = (T)myCurr.getBase();
+					myBase = myCurr.getBase();
 					
 					/* Apply changes and note if history has been applied */
-					if (myItem.applyChanges(myCurr))
-						myItem.setChangeing(true);
+					if (myBase.applyChanges(myCurr))
+						myBase.setChangeing(true);
 					
 					/* Note if we are restoring an item */
-					if (myItem.isDeleted())	
-						myItem.setRestoring(true);
+					if (myBase.isDeleted())	
+						myBase.setRestoring(true);
 					
 					/* Set new state */
-					myItem.setState(DataState.CHANGED);
+					myBase.setState(DataState.CHANGED);
 						
 					/* Re-sort the item */
-					reSort(myItem);
+					reSort(getBaseClass().cast(myBase));
 					break;
 			}
 		}
@@ -738,11 +723,10 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>
 	 * RollBack changes in an edit view that have been applied to core data
 	 * @param pChanges - edit view with changes that have been applied
 	 */
-	@SuppressWarnings("unchecked")
-	public void rollBackChanges(DataList<? extends DataItem> pChanges) {
-		DataList<? extends DataItem>.ListIterator 	myIterator;
-		DataItem									myCurr;
-		DataItem									myItem;
+	public void rollBackChanges(DataList<? extends DataItem<?>> pChanges) {
+		DataList<? extends DataItem<?>>.ListIterator 	myIterator;
+		DataItem<?>										myCurr;
+		DataItem<?>										myBase;
 			
 		/* Create an iterator for the changes list */
 		myIterator = pChanges.listIterator(true);
@@ -767,42 +751,42 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>
 				case DELETED:
 				case DELCHG:
 					/* Access the underlying item and mark as not deleted */
-					myItem = myCurr.getBase();
-					myItem.setState(DataState.RECOVERED);
+					myBase = myCurr.getBase();
+					myBase.setState(DataState.RECOVERED);
 					break;
 						
 				/* If this is a recovered item */
 				case RECOVERED:
 					/* Access the underlying item and mark as deleted */
-					myItem = myCurr.getBase();					
-					myItem.setState(DataState.DELETED);
-					myItem.setRestoring(false);
+					myBase = myCurr.getBase();					
+					myBase.setState(DataState.DELETED);
+					myBase.setRestoring(false);
 					break;
 						
 				/* If this is a changed item */
 				case CHANGED:
 					/* Access underlying item */
-					myItem = myCurr.getBase();
+					myBase = myCurr.getBase();
 					
 					/* If we were changing pop the changes */
-					if (myItem.isChangeing())
-						myItem.popHistory();
+					if (myBase.isChangeing())
+						myBase.popHistory();
 					
 					/* If we were restoring */
-					if (myItem.isRestoring()) {
+					if (myBase.isRestoring()) {
 						/* Set the item to be deleted again */
-						myItem.setState(DataState.DELETED);
-						myItem.setRestoring(false);
+						myBase.setState(DataState.DELETED);
+						myBase.setRestoring(false);
 					}
 					
 					/* If the item is now clean */
-					else if (!myItem.hasHistory()) {
+					else if (!myBase.hasHistory()) {
 						/* Set the new status */
-						myItem.setState(DataState.CLEAN);
+						myBase.setState(DataState.CLEAN);
 					}
 						
 					/* Re-sort the item */
-					reSort((T)myItem);
+					reSort(getBaseClass().cast(myBase));
 					break;
 			}
 		}
@@ -812,9 +796,9 @@ public abstract class DataList<T extends DataItem> extends SortedList<T>
 	 * Commit changes in an edit view that have been applied to the core data
 	 * @param pChanges - edit view with changes that have been applied
 	 */
-	public void commitChanges(DataList<? extends DataItem> pChanges) {
-		DataList<? extends DataItem>.ListIterator 	myIterator;
-		DataItem									myCurr;
+	public void commitChanges(DataList<? extends DataItem<?>> pChanges) {
+		DataList<? extends DataItem<?>>.ListIterator 	myIterator;
+		DataItem<?>									myCurr;
 			
 		/* Create an iterator for the changes list */
 		myIterator = pChanges.listIterator(true);

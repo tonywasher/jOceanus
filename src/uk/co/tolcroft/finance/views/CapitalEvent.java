@@ -5,7 +5,7 @@ import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 
-public class CapitalEvent extends DataItem {
+public class CapitalEvent extends DataItem<CapitalEvent> {
 	/**
 	 * The name of the object
 	 */
@@ -284,7 +284,7 @@ public class CapitalEvent extends DataItem {
 	 	 */
 		protected List(DataSet 	pData,
 					   Account	pAccount) { 
-			super(ListStyle.VIEW, false);
+			super(CapitalEvent.class, ListStyle.VIEW, false);
 			
 			/* Store the data */
 			theData			= pData;
@@ -302,7 +302,7 @@ public class CapitalEvent extends DataItem {
 		 * @param pItem the item to add
 		 * @return the newly added item
 		 */
-		public CapitalEvent addNewItem(DataItem pItem) { return null; }
+		public CapitalEvent addNewItem(DataItem<?> pItem) { return null; }
 
 	
 		/**
@@ -326,7 +326,7 @@ public class CapitalEvent extends DataItem {
 			
 			/* Create the Capital Event and add to list */
 			myEvent = new CapitalEvent(this, pEvent);
-			myEvent.addToList();
+			add(myEvent);
 			
 			/* return the new event */
 			return myEvent;
@@ -341,7 +341,7 @@ public class CapitalEvent extends DataItem {
 			
 			/* Create the Capital Event and add to list */
 			myEvent = new CapitalEvent(this, pDate);
-			myEvent.addToList();
+			add(myEvent);
 			
 			/* return the new event */
 			return myEvent;
@@ -408,11 +408,11 @@ public class CapitalEvent extends DataItem {
 	}
 	
 	/* Attribute class */
-	private abstract class Attribute implements SortedList.linkObject {
+	private abstract class Attribute extends LinkObject<Attribute> {
 	    /**
 		 * Storage for the List Node
 		 */
-	    private 	Object				theLink		= null;
+	    private 	LinkNode<Attribute>		theLink		= null;
 
 		/* Members */
 		private String 	theName 	= null;
@@ -426,13 +426,13 @@ public class CapitalEvent extends DataItem {
 		 * Get the link node for this item
 		 * @return the Link node or <code>null</code>
 		 */
-		public Object		getLinkNode(Object pList)	{ return theLink; }
+		public LinkNode<Attribute>	getLinkNode(SortedList<Attribute> pList)	{ return theLink; }
 
 		/**
 		 * Get the link node for this item
 		 * @return the Link node or <code>null</code>
 		 */
-		public void			setLinkNode(Object l, Object o)	{ theLink = o; }
+		public void			setLinkNode(SortedList<Attribute> l, LinkNode<Attribute> o)	{ theLink = o; }
 
 		/**
 		 * Determine whether the item is visible to standard searches
@@ -554,6 +554,11 @@ public class CapitalEvent extends DataItem {
 	 * List of Attributes
 	 */
 	public class AttributeList extends SortedList<Attribute> {
+		/**
+		 *  Construct a list. Inserts search backwards from the end for the insert point
+		 */
+		private AttributeList() { super(Attribute.class); }
+			
 		/**
 		 * Find an attribute
 		 * @param pName the name of the attribute

@@ -1,8 +1,8 @@
 package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.finance.data.EncryptedItem.EncryptedList;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.EncryptedPair.PricePair;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Number.*;
 
@@ -63,16 +63,14 @@ public class SpotPrices implements htmlDumpable {
 	public StringBuilder toHTMLString() { return thePrices.toHTMLString(); }		
 
 	/* The List class */
-	public class List extends DataList<SpotPrice> {
+	public class List extends EncryptedList<SpotPrice> {
 		/* Members */
 		private Date 		theDate 	= null;
-		private SpotPrices	thePrices 	= null;
 		
 		/* Constructors */
 		public List(SpotPrices pPrices) { 
-			super(ListStyle.SPOT, false);
+			super(SpotPrice.class, theView.getData(), ListStyle.SPOT);
 			theDate   = pPrices.theDate;
-			thePrices = pPrices;
 			
 			/* Declare variables */
 			DataSet 	myData;
@@ -105,7 +103,7 @@ public class SpotPrices implements htmlDumpable {
 					if ((myAcct != null) && (!isSet)) {
 						/* Create the new spot price and add it to the list */
 						myPrice = new SpotPrice(this, myAcct, myLast);
-						myPrice.addToList();
+						add(myPrice);
 					}
 					
 					/* Record the account and note that we have no last value */
@@ -129,7 +127,7 @@ public class SpotPrices implements htmlDumpable {
 				if (iDiff == 0) {
 					/* Create the new spot price and add it to the list */
 					myPrice = new SpotPrice(this, myCurr, myLast);
-					myPrice.addToList();
+					add(myPrice);
 					isSet 	= true;
 				}
 				
@@ -139,7 +137,7 @@ public class SpotPrices implements htmlDumpable {
 					if (!isSet) {
 						/* Create the new spot price and add it to the list */
 						myPrice = new SpotPrice(this, myAcct, myLast);
-						myPrice.addToList();
+						add(myPrice);
 						isSet = true;
 					}
 					
@@ -154,7 +152,7 @@ public class SpotPrices implements htmlDumpable {
 			if ((myAcct != null) && (!isSet)) {
 				/* Create the new spot price and add it to the list */
 				myPrice = new SpotPrice(this, myAcct, myLast);
-				myPrice.addToList();
+				add(myPrice);
 			}
 		}
 		
@@ -170,7 +168,7 @@ public class SpotPrices implements htmlDumpable {
 		/**
 		 * Add a new item (never used)
 		 */
-		public SpotPrice addNewItem(DataItem pElement) {
+		public SpotPrice addNewItem(DataItem<?> pElement) {
 			return null;}
 		
 		/**
@@ -226,32 +224,30 @@ public class SpotPrices implements htmlDumpable {
 		}		
 	}
 			
-	public static class SpotPrice 	extends DataItem  {
+	public static class SpotPrice 	extends EncryptedItem<SpotPrice>  {
 		/* Properties */
 		private Account       	theAccount  	= null;
 		private Price			thePrevPrice	= null;
 		private Date			thePrevDate		= null;
 		private Date			theDate			= null;
-		private SpotPrices		thePrices 		= null;
 		
 		/* Access methods */
 		public Date        	getDate()      { return theDate; }
 		public Account		getAccount()   { return theAccount; }
 		public Values      	getObj()       { return (Values)super.getObj(); }
-		public Price 		getPrice()     { return EncryptedPair.getPairValue(getObj().getPrice()); }
+		public Price 		getPrice()     { return getPairValue(getObj().getPrice()); }
 		public Price 		getPrevPrice() { return thePrevPrice; }
 		public Date			getPrevDate()  { return thePrevDate; }
 
 		public PricePair	getPricePair() { return getObj().getPrice(); }
-		private View       	getView()      { return thePrices.theView; }
 		
 		/* Linking methods */
 		public AcctPrice	 getBase() { return (AcctPrice)super.getBase(); }
 
 		/* Field IDs */
-		public static final int FIELD_ACCOUNT  = 1;
-		public static final int FIELD_PRICE    = 2;
-		public static final int NUMFIELDS	   = 3;
+		public static final int FIELD_ACCOUNT  = EncryptedItem.NUMFIELDS;
+		public static final int FIELD_PRICE    = EncryptedItem.NUMFIELDS+1;
+		public static final int NUMFIELDS	   = EncryptedItem.NUMFIELDS+2;
 		
 		/**
 		 * Obtain the type of the item
@@ -271,10 +267,9 @@ public class SpotPrices implements htmlDumpable {
 		 */
 		public static String	fieldName(int iField) {
 			switch (iField) {
-				case FIELD_ID: 	  	return NAME_ID;
 				case FIELD_ACCOUNT: return "Account";
 				case FIELD_PRICE: 	return "Price";
-				default:		  	return DataItem.fieldName(iField);
+				default:		  	return EncryptedItem.fieldName(iField);
 			}
 		}
 		
@@ -293,14 +288,14 @@ public class SpotPrices implements htmlDumpable {
 			String 		myString = "";
 			Values 	myObj 	 = (Values)pObj;
 			switch (iField) {
-				case FIELD_ID: 		
-					myString += getId(); 
-					break;
 				case FIELD_ACCOUNT:	
 					myString += theAccount.getName(); 
 					break;
 				case FIELD_PRICE: 	
 					myString += Price.format(myObj.getPriceValue());	
+					break;
+				default: 		
+					myString += super.formatField(iField, pObj); 
 					break;
 			}
 			return myString;
@@ -315,7 +310,6 @@ public class SpotPrices implements htmlDumpable {
 		public SpotPrice(List pList, AcctPrice pPrice, AcctPrice pLast) {
 			super(pList, 0);
 			theDate = pList.theDate;
-			thePrices = pList.thePrices;
 	
 			/* Variables */
 			Values 							myObj = new Values();
@@ -329,7 +323,7 @@ public class SpotPrices implements htmlDumpable {
 			}
 				
 			/* Set the price if it is not deleted */
-			if (!pPrice.isDeleted()) myObj.setPrice(pPrice.getPricePair());
+			if (!pPrice.isDeleted()) myObj.setPrice(new PricePair(pPrice.getPricePair()));
 			
 			/* Link to base */
 			setBase(pPrice);
@@ -350,7 +344,6 @@ public class SpotPrices implements htmlDumpable {
 		public SpotPrice(List pList, Account pAccount, AcctPrice pLast) {
 			super(pList, 0);
 			theDate = pList.theDate;
-			thePrices = pList.thePrices;
 	
 			/* Variables */
 			Values 							myObj = new Values();
@@ -411,30 +404,18 @@ public class SpotPrices implements htmlDumpable {
 		 * @param pPrice the new price 
 		 */
 		public void setPrice(Price pPrice) throws Exception {
-			/* If we are setting a non null value */
-			if (pPrice != null) {
-				/* Create the Encrypted pair for the values */
-				DataSet 		myData 	= getView().getData();
-				EncryptedPair	myPairs = myData.getEncryptedPairs();
-				PricePair		myPair	= myPairs.new PricePair(pPrice);
-			
-				/* Record the value and encrypt it*/
-				getObj().setPrice(myPair);
-				myPair.ensureEncryption();
-			}
-			
-			/* Else we are setting a null value */
-			else getObj().setPrice(null);
+			if (pPrice != null) getObj().setPrice(new PricePair(pPrice));
+			else 				getObj().setPrice(null);
 		}
 		
 		/* SpotValues */
-		public class Values implements histObject {
+		public class Values extends EncryptedValues {
 			private PricePair	thePrice	= null;
 			
 			/* Access methods */
 			public PricePair	getPrice()     { return thePrice; }
-			public Price  		getPriceValue() { return EncryptedPair.getPairValue(thePrice); }
-			public byte[]  		getPriceBytes() { return EncryptedPair.getPairBytes(thePrice); }
+			public Price  		getPriceValue() { return getPairValue(thePrice); }
+			public byte[]  		getPriceBytes() { return getPairBytes(thePrice); }
 			
 			public void setPrice(PricePair pPrice) {
 				thePrice  = pPrice; }
@@ -451,7 +432,7 @@ public class SpotPrices implements htmlDumpable {
 				return histEquals(myValues);
 			}
 			public boolean histEquals(Values pValues) {
-				if (EncryptedPair.differs(thePrice,     pValues.thePrice))      return false;
+				if (differs(thePrice,     pValues.thePrice))      return false;
 				return true;
 			}
 			
@@ -471,11 +452,19 @@ public class SpotPrices implements htmlDumpable {
 				boolean		bResult = false;
 				switch (fieldNo) {
 					case SpotPrices.SpotPrice.FIELD_PRICE:
-						bResult = (EncryptedPair.differs(thePrice,  pValues.thePrice));
+						bResult = (differs(thePrice,  pValues.thePrice));
 						break;
 				}
 				return bResult;
 			}
+
+			/**
+			 * Ensure encryption after security change
+			 */
+			protected void applySecurity() throws Exception {
+				/* Apply the encryption */
+				thePrice.encryptPair();
+			}		
 		}		
 	}
 }

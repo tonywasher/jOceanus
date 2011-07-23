@@ -251,7 +251,7 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 		
 		/* Create the new Item */
 		myPattern = new Pattern(thePatterns, pLine);
-		myPattern.addToList();
+		thePatterns.add(myPattern);
 		myPattern.validate();
 	
 		/* Note the changes */
@@ -487,7 +487,7 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 					case COLUMN_DESC:
 					case COLUMN_TRANTYP: 
 						/* Re-Sort the row */
-						myPattern.reSort();
+						thePatterns.reSort(myPattern);
 
 						/* Determine new row # */
 						int myNewRowNo = myPattern.indexOf();

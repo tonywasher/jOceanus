@@ -4,7 +4,7 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 
-public class ViewPrice extends DataItem {
+public class ViewPrice extends DataItem<ViewPrice> {
 	/**
 	 * The name of the object
 	 */
@@ -27,13 +27,12 @@ public class ViewPrice extends DataItem {
 	public AcctPrice     getBase() { return (AcctPrice)super.getBase(); }
 	
 	/* Field IDs */
-	public static final int FIELD_ID       		= 0;
-	public static final int FIELD_ACCOUNT  		= 1;
-	public static final int FIELD_DATE     		= 2;
-	public static final int FIELD_PRICE    		= 3;
-	public static final int FIELD_DILUTION 		= 4;
-	public static final int FIELD_DILUTEDPRICE 	= 5;
-	public static final int NUMFIELDS	   		= 6;
+	public static final int FIELD_ACCOUNT  		= DataItem.NUMFIELDS;
+	public static final int FIELD_DATE     		= DataItem.NUMFIELDS+1;
+	public static final int FIELD_PRICE    		= DataItem.NUMFIELDS+2;
+	public static final int FIELD_DILUTION 		= DataItem.NUMFIELDS+3;
+	public static final int FIELD_DILUTEDPRICE 	= DataItem.NUMFIELDS+4;
+	public static final int NUMFIELDS	   		= DataItem.NUMFIELDS+5;
 
 	/**
 	 * Obtain the type of the item
@@ -53,7 +52,6 @@ public class ViewPrice extends DataItem {
 	 */
 	public static String	fieldName(int iField) {
 		switch (iField) {
-			case FIELD_ID:				return "ID";
 			case FIELD_ACCOUNT:			return "Account";
 			case FIELD_DATE:			return "Date";
 			case FIELD_PRICE:			return "Price";
@@ -78,9 +76,6 @@ public class ViewPrice extends DataItem {
 		String 	myString = "";
 		Values 	myObj 	 = (Values)pObj;
 		switch (iField) {
-			case FIELD_ID: 		
-				myString += getId(); 
-				break;
 			case FIELD_ACCOUNT:
 				myString += Account.format(getAccount()); 
 				break;
@@ -95,6 +90,9 @@ public class ViewPrice extends DataItem {
 				break;
 			case FIELD_DILUTEDPRICE:	
 				myString += DilutedPrice.format(myObj.getDilutedPrice()); 
+				break;
+			default: 		
+				myString += super.formatField(iField, pObj); 
 				break;
 		}
 		return myString;
@@ -347,7 +345,7 @@ public class ViewPrice extends DataItem {
 		public List(View				pView,
 					Account 			pAccount) {
 			/* Make this list the correct style */
-			super(ListStyle.EDIT, false);
+			super(ViewPrice.class, ListStyle.EDIT, false);
 			theData = pView.getData();
 
 			/* Local variables */
@@ -379,7 +377,7 @@ public class ViewPrice extends DataItem {
 				if (!Account.differs(myCurr.getAccount(), pAccount)) {
 					/* Copy the item */
 					myItem = new ViewPrice(this, myCurr);
-					myItem.addToList();
+					add(myItem);
 				}
 			}
 		}
@@ -396,7 +394,7 @@ public class ViewPrice extends DataItem {
 		/**
 		 * Add a new item (never used)
 		 */
-		public ViewPrice addNewItem(DataItem pElement) {
+		public ViewPrice addNewItem(DataItem<?> pElement) {
 			return null;}
 		
 		/**
@@ -407,7 +405,7 @@ public class ViewPrice extends DataItem {
 		public ViewPrice addNewItem(boolean isCredit) {
 			ViewPrice myPrice = new ViewPrice(this);
 			myPrice.setAccount(theAccount);
-			myPrice.addToList();
+			add(myPrice);
 			return myPrice;
 		}
 

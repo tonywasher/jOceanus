@@ -9,7 +9,7 @@ import uk.co.tolcroft.models.Exception.ExceptionClass;
 /**
  *  Help Page class. This class maps between the name of a help page and the html that the name represents.
  */
-public class HelpPage extends DataItem {
+public class HelpPage extends DataItem<HelpPage> {
 	/* Members */
 	private String		theName		= null;
 	private String		theHtml		= null;
@@ -182,7 +182,7 @@ public class HelpPage extends DataItem {
 		/**
 		 * Construct a top-level List
 		 */
-		public List() { super(ListStyle.VIEW, false); }
+		public List() { super(HelpPage.class, ListStyle.VIEW, false); }
 
 		/**
 		 * Return the item type
@@ -202,7 +202,7 @@ public class HelpPage extends DataItem {
 		 * @param pItem the item to add
 		 * @return the newly added item
 		 */
-		public HelpPage addNewItem(DataItem pItem) { return null; }
+		public HelpPage addNewItem(DataItem<?> pItem) { return null; }
 	
 		/**
 		 * Add a new item to the edit list
@@ -222,7 +222,7 @@ public class HelpPage extends DataItem {
 			myPage = new HelpPage(this, pEntry, pStream);
 			
 			/* Add it to the list */
-			myPage.addToList();
+			add(myPage);
 		}
 
 		/**

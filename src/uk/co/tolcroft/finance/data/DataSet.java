@@ -1,6 +1,7 @@
 package uk.co.tolcroft.finance.data;
 
 import uk.co.tolcroft.finance.views.*;
+import uk.co.tolcroft.finance.views.DebugManager.DebugEntry;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.ListStyle;
@@ -23,7 +24,6 @@ public class DataSet implements htmlDumpable {
     private Pattern.List			thePatterns   	= null; 
 	private Event.List				theEvents     	= null;
     private Date.Range				theDateRange  	= null;
-    private EncryptedPair			thePairs	  	= null;
     private LoadState				theLoadState  	= LoadState.INITIAL;
 
     /* Access methods */
@@ -43,7 +43,6 @@ public class DataSet implements htmlDumpable {
 	public Pattern.List 		getPatterns()  		{ return thePatterns; }
 	public Event.List 			getEvents()  		{ return theEvents; }
 	public Date.Range 			getDateRange()  	{ return theDateRange; }
-	public EncryptedPair		getEncryptedPairs() { return thePairs; }
 	public LoadState 			getLoadState()  	{ return theLoadState; }
 
 	/**
@@ -52,9 +51,6 @@ public class DataSet implements htmlDumpable {
 	public DataSet(SecureManager pSecurity) {
 		/* Store the security manager */
 		theSecurity   = pSecurity;
-		
-		/* Create the encrypted pairs control */
-		thePairs 	  = new EncryptedPair();
 		
 		/* Create the empty lists */
 		theControlKeys = new ControlKey.List(this);
@@ -285,9 +281,25 @@ public class DataSet implements htmlDumpable {
 	 * Get the control record
 	 * @return the control record 
 	 */
-	public ControlData getControl() throws Exception {
+	public ControlData getControl() {
 		/* Set the control */
 		return getControlData().getControl();		
+	}
+	
+	/**
+	 * Get the active control key
+	 * @return the control key 
+	 */
+	public ControlKey getControlKey() {
+		/* Access the control element from the database */
+		ControlData myControl = getControl();
+		ControlKey  myKey		= null;
+		
+		/* Access control key from control data */
+		if (myControl != null) myKey = myControl.getControlKey();
+		
+		/* Return the key */
+		return myKey;
 	}
 	
 	/**
@@ -295,12 +307,8 @@ public class DataSet implements htmlDumpable {
 	 * @param pDatabase the database data
 	 */
 	public void initialiseSecurity(DataSet pDatabase) throws Exception {
-		/* Access the control element from the database */
-		ControlData myControl = pDatabase.getControl();
-		ControlKey  myKey		= null;
-		
-		/* Access control key from control data */
-		if (myControl != null) myKey = myControl.getControlKey();
+		/* Access the active control key from the database */
+		ControlKey  myKey	= pDatabase.getControlKey();
 
 		/* Initialise Security */
 		theControlKeys.initialiseSecurity(myKey);		
@@ -311,12 +319,8 @@ public class DataSet implements htmlDumpable {
 	 * @return the security control 
 	 */
 	public SecurityControl getSecurityControl() throws Exception {
-		/* Access the control element from the database */
-		ControlData myControl = getControl();
-		ControlKey  myKey		= null;
-		
-		/* Access control key from control data */
-		if (myControl != null) myKey = myControl.getControlKey();
+		/* Access the active control key */
+		ControlKey  myKey	= getControlKey();
 		
 		/* Set the control */
 		return (myKey == null) ? null : myKey.getSecurityControl();		
@@ -339,17 +343,20 @@ public class DataSet implements htmlDumpable {
 	 * Ensure encryption of clear text after load
 	 */
 	public void ensureEncryption() throws Exception {
+		/* Access the control key */
+		ControlKey myControl = getControl().getControlKey();
+		
 		/* Ensure encryption of the spreadsheet load */
-		theActTypes.ensureEncryption();
-		theTransTypes.ensureEncryption();
-		theTaxTypes.ensureEncryption();
-		theFrequencys.ensureEncryption();
-		theTaxRegimes.ensureEncryption();
-		theAccounts.ensureEncryption();
-		theRates.ensureEncryption();
-		thePrices.ensureEncryption();
-		thePatterns.ensureEncryption();
-		theEvents.ensureEncryption();
+		theActTypes.initialiseSecurity(myControl);
+		theTransTypes.initialiseSecurity(myControl);
+		theTaxTypes.initialiseSecurity(myControl);
+		theFrequencys.initialiseSecurity(myControl);
+		theTaxRegimes.initialiseSecurity(myControl);
+		theAccounts.initialiseSecurity(myControl);
+		theRates.initialiseSecurity(myControl);
+		thePrices.initialiseSecurity(myControl);
+		thePatterns.initialiseSecurity(myControl);
+		theEvents.initialiseSecurity(myControl);
 	}
 	
 	/**
@@ -399,6 +406,47 @@ public class DataSet implements htmlDumpable {
 	}
 
 	/**
+	 * Add Debug entries
+	 * @param pDebugMgr the Debug Manager
+	 * @param pDebug the debug entry to register under
+	 */
+	public void addDebugEntries(DebugManager 	pDebugMgr,
+							    DebugEntry 		pDebug) {
+		/* Remove Existing entries */
+		pDebug.removeChildren();
+
+		/* Add entries for each data list  */
+		addDebugEntry(pDebugMgr, pDebug,  theControlKeys);
+		addDebugEntry(pDebugMgr, pDebug,  theDataKeys);
+		addDebugEntry(pDebugMgr, pDebug,  theControlData);
+		addDebugEntry(pDebugMgr, pDebug,  theActTypes);
+		addDebugEntry(pDebugMgr, pDebug,  theTransTypes);
+		addDebugEntry(pDebugMgr, pDebug,  theTaxTypes);
+		addDebugEntry(pDebugMgr, pDebug,  theTaxRegimes);
+		addDebugEntry(pDebugMgr, pDebug,  theFrequencys);
+		addDebugEntry(pDebugMgr, pDebug,  theTaxYears);
+		addDebugEntry(pDebugMgr, pDebug,  theAccounts);
+		addDebugEntry(pDebugMgr, pDebug,  theRates);
+		addDebugEntry(pDebugMgr, pDebug,  thePrices);
+		addDebugEntry(pDebugMgr, pDebug,  thePatterns);
+		addDebugEntry(pDebugMgr, pDebug,  theEvents);
+	}
+	
+	/**
+	 * Add Debug entries
+	 * @param pDebugMgr the Debug Manager
+	 * @param pDebug the debug entry to register under
+	 */
+	private void addDebugEntry(DebugManager 	pDebugMgr,
+							   DebugEntry 	pDebug,
+							   DataList<?>	pData) {
+		/* Create the debug entry for this datalist and add it as a child of the main entry  */
+		DebugEntry myDebug = pDebugMgr.new DebugEntry(pData.itemType());
+		myDebug.addAsChildOf(pDebug);
+		myDebug.setObject(pData);
+	}
+	
+	/** 
 	 * Enumeration of load states of data
 	 */
 	public static enum LoadState {

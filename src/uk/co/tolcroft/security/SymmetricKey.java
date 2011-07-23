@@ -61,6 +61,16 @@ public class SymmetricKey {
 	protected SymKeyType getKeyType() 	{ return theKeyType; }
 
 	/**
+	 * Encryption length
+	 * @param pDataLength the length of data to be encrypted
+	 * @return the length of encrypted data
+	 */
+	public static int	getEncryptionLength(int pDataLength) {
+		int iBlocks = 1 +((pDataLength-1) % IVSIZE);
+		return iBlocks * IVSIZE;
+	}
+	
+	/**
 	 * Constructor
 	 * @param pControl the security control 
 	 * @param pKeyType Symmetric KeyType
@@ -208,6 +218,32 @@ public class SymmetricKey {
 			
 			/* Return the Security Cipher */
 			return new SecurityCipher(myCipher, pInitVector);
+		}
+		
+		/* catch exceptions */
+		catch (Throwable e) {
+			throw new Exception(ExceptionClass.CRYPTO,
+								"Failed to initialise cipher",
+								e);
+		}
+	}
+	
+	/**
+	 * Initialise cipher for encryption with initialisation vector
+	 * @param pInitVector Initialisation vector for cipher
+	 * @return the Security Cipher
+	 */
+	public SecurityCipher initCipher() throws Exception {
+		Cipher					myCipher;
+
+		/* Protect against exceptions */
+		try {
+			/* Create a new cipher */
+			myCipher = Cipher.getInstance(theKeyType.getCipher(), 
+										  SecurityControl.BCSIGN);
+			
+			/* Return the Security Cipher */
+			return new SecurityCipher(myCipher, this);
 		}
 		
 		/* catch exceptions */
@@ -377,10 +413,12 @@ public class SymmetricKey {
 	 * Symmetric key types
 	 */
 	public enum SymKeyType {
-		AES(1, 256, 16),
-		TwoFish(2, 256, 16),
-		Serpent(3, 256, 16),
-		CAMELLIA(4, 256, 16);
+		AES(1, 256, IVSIZE),
+		TwoFish(2, 256, IVSIZE),
+		Serpent(3, 256, IVSIZE),
+		CAMELLIA(4, 256, IVSIZE),
+		RC6(5, 256, IVSIZE),
+		CAST6(6, 256, IVSIZE);
 		
 		/**
 		 * Symmetric full algorithm

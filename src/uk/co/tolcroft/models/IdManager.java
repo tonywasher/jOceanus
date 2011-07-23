@@ -1,6 +1,6 @@
 package uk.co.tolcroft.models;
 
-public class IdManager<T extends DataItem> {
+public class IdManager<T extends DataItem<T>> {
 	/**
 	 * The maximum id
 	 */

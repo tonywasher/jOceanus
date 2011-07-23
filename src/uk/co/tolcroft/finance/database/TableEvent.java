@@ -3,7 +3,6 @@ package uk.co.tolcroft.finance.database;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.database.TableDefinition.DateColumn;
 import uk.co.tolcroft.finance.database.TableDefinition.SortOrder;
-import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.ListStyle;
 
@@ -37,15 +36,16 @@ public class TableEvent extends DatabaseTable<Event> {
 	 */
 	protected void defineTable(TableDefinition	pTableDef) {
 		theTableDef = pTableDef;
+		theTableDef.addReferenceColumn(EncryptedItem.FIELD_CONTROL, EncryptedItem.NAME_CTLID, TableControlKeys.TableName);
 		DateColumn myDateCol = theTableDef.addDateColumn(Event.FIELD_DATE, Event.fieldName(Event.FIELD_DATE));
 		theTableDef.addEncryptedColumn(Event.FIELD_DESC, Event.fieldName(Event.FIELD_DESC), Event.DESCLEN);
-		theTableDef.addEncryptedColumn(Event.FIELD_AMOUNT, Event.fieldName(Event.FIELD_AMOUNT), EncryptedPair.MONEYLEN);
+		theTableDef.addEncryptedColumn(Event.FIELD_AMOUNT, Event.fieldName(Event.FIELD_AMOUNT), EncryptedItem.MONEYLEN);
 		theTableDef.addReferenceColumn(Event.FIELD_DEBIT, Event.fieldName(Event.FIELD_DEBIT), TableAccount.TableName);
 		theTableDef.addReferenceColumn(Event.FIELD_CREDIT, Event.fieldName(Event.FIELD_CREDIT), TableAccount.TableName);
-		theTableDef.addNullEncryptedColumn(Event.FIELD_UNITS, Event.fieldName(Event.FIELD_UNITS), EncryptedPair.UNITSLEN);
+		theTableDef.addNullEncryptedColumn(Event.FIELD_UNITS, Event.fieldName(Event.FIELD_UNITS), EncryptedItem.UNITSLEN);
 		theTableDef.addReferenceColumn(Event.FIELD_TRNTYP, Event.fieldName(Event.FIELD_TRNTYP), TableTransactionType.TableName);
-		theTableDef.addNullEncryptedColumn(Event.FIELD_TAXCREDIT, Event.fieldName(Event.FIELD_TAXCREDIT), EncryptedPair.MONEYLEN);
-		theTableDef.addNullEncryptedColumn(Event.FIELD_DILUTION, Event.fieldName(Event.FIELD_DILUTION), EncryptedPair.DILUTELEN);
+		theTableDef.addNullEncryptedColumn(Event.FIELD_TAXCREDIT, Event.fieldName(Event.FIELD_TAXCREDIT), EncryptedItem.MONEYLEN);
+		theTableDef.addNullEncryptedColumn(Event.FIELD_DILUTION, Event.fieldName(Event.FIELD_DILUTION), EncryptedItem.DILUTELEN);
 		theTableDef.addNullIntegerColumn(Event.FIELD_YEARS, Event.fieldName(Event.FIELD_YEARS));
 		myDateCol.setSortOrder(SortOrder.ASCENDING);
 	}
@@ -62,6 +62,7 @@ public class TableEvent extends DatabaseTable<Event> {
 	
 	/* Load the event */
 	protected void loadItem(int pId) throws Exception {
+		int	    		myControlId;
 		int  			myDebitId;
 		int  			myCreditId;
 		int  			myTranType;
@@ -74,6 +75,7 @@ public class TableEvent extends DatabaseTable<Event> {
 		java.util.Date  myDate;
 		
 		/* Get the various fields */
+		myControlId	= theTableDef.getIntegerValue(EncryptedItem.FIELD_CONTROL);
 		myDate 		= theTableDef.getDateValue(Event.FIELD_DATE);
 		myDesc    	= theTableDef.getBinaryValue(Event.FIELD_DESC);
 		myAmount    = theTableDef.getBinaryValue(Event.FIELD_AMOUNT);
@@ -86,7 +88,8 @@ public class TableEvent extends DatabaseTable<Event> {
 		myYears  	= theTableDef.getIntegerValue(Event.FIELD_YEARS);
 	
 		/* Add into the list */
-		theList.addItem(pId, 
+		theList.addItem(pId,
+						myControlId,
 			       	   	myDate,
 				        myDesc,
 				        myAmount,
@@ -103,6 +106,7 @@ public class TableEvent extends DatabaseTable<Event> {
 	protected void setFieldValue(Event	pItem, int iField) throws Exception  {
 		/* Switch on field id */
 		switch (iField) {
+			case EncryptedItem.FIELD_CONTROL: 	theTableDef.setIntegerValue(iField, pItem.getControlKey().getId());	break;
 			case Event.FIELD_DATE: 		theTableDef.setDateValue(Event.FIELD_DATE, pItem.getDate());					break;
 			case Event.FIELD_DESC:		theTableDef.setBinaryValue(Event.FIELD_DESC, pItem.getDescBytes());				break;
 			case Event.FIELD_AMOUNT:	theTableDef.setBinaryValue(Event.FIELD_AMOUNT, pItem.getAmountBytes());			break;

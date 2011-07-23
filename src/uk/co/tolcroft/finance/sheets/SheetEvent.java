@@ -86,23 +86,24 @@ public class SheetEvent extends SheetDataItem<Event> {
 		if (isBackup) {
 			/* Access the IDs */
 			int	myID 		= loadInteger(0);
-			int	myDebitId	= loadInteger(2);
-			int	myCreditId	= loadInteger(3);
-			int	myTranId	= loadInteger(4);
+			int myControlId	= loadInteger(1);
+			int	myDebitId	= loadInteger(3);
+			int	myCreditId	= loadInteger(4);
+			int	myTranId	= loadInteger(5);
 		
 			/* Access the date and years */
-			java.util.Date 	myDate 		= loadDate(1);
-			Integer 		myYears 	= loadInteger(10);
+			java.util.Date 	myDate 		= loadDate(2);
+			Integer 		myYears 	= loadInteger(11);
 		
 			/* Access the binary values  */
-			byte[] 	myDesc 		= loadBytes(5);
-			byte[]	myAmount 	= loadBytes(6);
-			byte[]	myTaxCredit	= loadBytes(9);
-			byte[]	myUnits 	= loadBytes(7);
-			byte[]	myDilution 	= loadBytes(8);
+			byte[] 	myDesc 		= loadBytes(6);
+			byte[]	myAmount 	= loadBytes(7);
+			byte[]	myTaxCredit	= loadBytes(10);
+			byte[]	myUnits 	= loadBytes(8);
+			byte[]	myDilution 	= loadBytes(9);
 		
 			/* Load the item */
-			theList.addItem(myID, myDate, myDesc, myAmount, myDebitId, myCreditId, myUnits, myTranId, myTaxCredit, myDilution, myYears);
+			theList.addItem(myID, myControlId, myDate, myDesc, myAmount, myDebitId, myCreditId, myUnits, myTranId, myTaxCredit, myDilution, myYears);
 		}
 		
 		/* else this is a load from an edit-able spreadsheet */
@@ -138,16 +139,17 @@ public class SheetEvent extends SheetDataItem<Event> {
 		if (isBackup) {
 			/* Set the fields */
 			writeInteger(0, pItem.getId());
-			writeDate(1, pItem.getDate());
-			writeInteger(2, pItem.getDebit().getId());				
-			writeInteger(3, pItem.getCredit().getId());				
-			writeInteger(4, pItem.getTransType().getId());				
-			writeBytes(5, pItem.getDescBytes());
-			writeBytes(6, pItem.getAmountBytes());
-			writeBytes(7, pItem.getUnitsBytes());
-			writeBytes(8, pItem.getDilutionBytes());
-			writeBytes(9, pItem.getTaxCredBytes());
-			writeInteger(10, pItem.getYears());				
+			writeInteger(1, pItem.getControlKey().getId());				
+			writeDate(2, pItem.getDate());
+			writeInteger(3, pItem.getDebit().getId());				
+			writeInteger(4, pItem.getCredit().getId());				
+			writeInteger(5, pItem.getTransType().getId());				
+			writeBytes(6, pItem.getDescBytes());
+			writeBytes(7, pItem.getAmountBytes());
+			writeBytes(8, pItem.getUnitsBytes());
+			writeBytes(9, pItem.getDilutionBytes());
+			writeBytes(10, pItem.getTaxCredBytes());
+			writeInteger(11, pItem.getYears());				
 		}
 
 		/* else we are creating an edit-able spreadsheet */
@@ -193,8 +195,8 @@ public class SheetEvent extends SheetDataItem<Event> {
 	protected void postProcessOnWrite() throws Throwable {		
 		/* If we are creating a backup */
 		if (isBackup) {
-			/* Set the eleven columns as the range */
-			nameRange(11);
+			/* Set the twelve columns as the range */
+			nameRange(12);
 		}
 
 		/* else this is an edit-able spreadsheet */

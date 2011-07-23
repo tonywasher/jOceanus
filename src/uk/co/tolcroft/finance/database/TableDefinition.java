@@ -8,12 +8,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import uk.co.tolcroft.finance.data.ControlKey;
 import uk.co.tolcroft.models.DataItem;
 import uk.co.tolcroft.models.Date;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.Number.Money;
 import uk.co.tolcroft.models.Number.Rate;
+import uk.co.tolcroft.security.SymmetricKey;
 
 public class TableDefinition {
 	/**
@@ -258,7 +260,10 @@ public class TableDefinition {
 	 */
 	protected BinaryColumn addEncryptedColumn(int pId, String pName, int pLength) {
 		/* Create the new binary column */
-		BinaryColumn myColumn = new BinaryColumn(pId, pName, 2*pLength);
+		BinaryColumn myColumn = new BinaryColumn(pId, pName, 
+												 SymmetricKey.IVSIZE 
+												 	+ ControlKey.KEYIDLEN 
+												 	+ SymmetricKey.getEncryptionLength(2*pLength));
 		
 		/* Add it to the list and return it */
 		theList.add(myColumn);

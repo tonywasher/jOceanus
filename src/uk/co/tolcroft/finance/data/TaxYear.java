@@ -10,7 +10,7 @@ import uk.co.tolcroft.models.Number.*;
  * Tax Year Class representing taxation parameters for a tax year
  * @author Tony Washer
  */
-public class TaxYear extends DataItem {
+public class TaxYear extends DataItem<TaxYear> {
 	/**
 	 * The name of the object
 	 */
@@ -59,29 +59,29 @@ public class TaxYear extends DataItem {
 	public TaxYear    	getBase() { return (TaxYear)super.getBase(); }
 	
 	/* Field IDs */
-	public static final int FIELD_REGIME  		= 1;
-	public static final int FIELD_YEAR   		= 2;
-	public static final int FIELD_RENTAL 		= 3;
-	public static final int FIELD_ALLOW  		= 4;
-	public static final int FIELD_LOAGAL 		= 5;
-	public static final int FIELD_HIAGAL 		= 6;
-	public static final int FIELD_LOBAND 		= 7;
-	public static final int FIELD_BSBAND 		= 8;
-	public static final int FIELD_CAPALW 		= 9;
-	public static final int FIELD_AGELMT 		= 10;
-	public static final int FIELD_ADDLMT 		= 11;
-	public static final int FIELD_ADDBDY 		= 12;
-	public static final int FIELD_LOTAX  		= 13;
-	public static final int FIELD_BASTAX 		= 14;
-	public static final int FIELD_HITAX  		= 15;
-	public static final int FIELD_INTTAX 		= 16;
-	public static final int FIELD_DIVTAX 		= 17;
-	public static final int FIELD_HDVTAX 		= 18;
-	public static final int FIELD_ADDTAX 		= 19;
-	public static final int FIELD_ADVTAX 		= 20;
-	public static final int FIELD_CAPTAX 		= 21;
-	public static final int FIELD_HCPTAX 		= 22;
-	public static final int NUMFIELDS	    	= 23;
+	public static final int FIELD_REGIME  		= DataItem.NUMFIELDS;
+	public static final int FIELD_YEAR   		= DataItem.NUMFIELDS+1;
+	public static final int FIELD_RENTAL 		= DataItem.NUMFIELDS+2;
+	public static final int FIELD_ALLOW  		= DataItem.NUMFIELDS+3;
+	public static final int FIELD_LOAGAL 		= DataItem.NUMFIELDS+4;
+	public static final int FIELD_HIAGAL 		= DataItem.NUMFIELDS+5;
+	public static final int FIELD_LOBAND 		= DataItem.NUMFIELDS+6;
+	public static final int FIELD_BSBAND 		= DataItem.NUMFIELDS+7;
+	public static final int FIELD_CAPALW 		= DataItem.NUMFIELDS+8;
+	public static final int FIELD_AGELMT 		= DataItem.NUMFIELDS+9;
+	public static final int FIELD_ADDLMT 		= DataItem.NUMFIELDS+10;
+	public static final int FIELD_ADDBDY 		= DataItem.NUMFIELDS+11;
+	public static final int FIELD_LOTAX  		= DataItem.NUMFIELDS+12;
+	public static final int FIELD_BASTAX 		= DataItem.NUMFIELDS+13;
+	public static final int FIELD_HITAX  		= DataItem.NUMFIELDS+14;
+	public static final int FIELD_INTTAX 		= DataItem.NUMFIELDS+15;
+	public static final int FIELD_DIVTAX 		= DataItem.NUMFIELDS+16;
+	public static final int FIELD_HDVTAX 		= DataItem.NUMFIELDS+17;
+	public static final int FIELD_ADDTAX 		= DataItem.NUMFIELDS+18;
+	public static final int FIELD_ADVTAX 		= DataItem.NUMFIELDS+19;
+	public static final int FIELD_CAPTAX 		= DataItem.NUMFIELDS+20;
+	public static final int FIELD_HCPTAX 		= DataItem.NUMFIELDS+21;
+	public static final int NUMFIELDS	    	= DataItem.NUMFIELDS+22;
 	
 	/**
 	 * Obtain the type of the item
@@ -101,7 +101,6 @@ public class TaxYear extends DataItem {
 	 */
 	public static String	fieldName(int iField) {
 		switch (iField) {
-			case FIELD_ID:		return NAME_ID;
 			case FIELD_REGIME:	return "Regime";
 			case FIELD_YEAR:	return "Date";
 			case FIELD_ALLOW:	return "Allowance";
@@ -143,9 +142,6 @@ public class TaxYear extends DataItem {
 		String 	myString = "";
 		Values 	myObj 	 = (Values)pObj;
 		switch (iField) {
-			case FIELD_ID: 		
-				myString += getId(); 
-				break;
 			case FIELD_REGIME:
 				if ((myObj.getTaxRegime() == null) &&
 					(theRegimeId != -1))
@@ -215,6 +211,9 @@ public class TaxYear extends DataItem {
 				break;
 			case FIELD_HCPTAX: 	
 				myString += Rate.format(myObj.getHiCapTaxRate());	
+				break;
+			default: 		
+				myString += super.formatField(iField, pObj); 
 				break;
 		}
 		return myString;
@@ -459,33 +458,13 @@ public class TaxYear extends DataItem {
 		if (pThat.getClass() != this.getClass()) return false;
 		
 		/* Access the object as a TaxYear */
-		TaxYear myYear = (TaxYear)pThat;
+		TaxYear myThat = (TaxYear)pThat;
 		
-		/* Check for equality */
-		if (getId() != myYear.getId()) 											return false;
-		if (Date.differs(getDate(),             myYear.getDate())) 				return false;
-		if (TaxRegime.differs(getTaxRegime(),   myYear.getTaxRegime())) 		return false;
-		if (Money.differs(getAllowance(),       myYear.getAllowance())) 		return false;
-		if (Money.differs(getLoBand(),          myYear.getLoBand())) 			return false;
-		if (Money.differs(getBasicBand(),       myYear.getBasicBand())) 		return false;
-		if (Money.differs(getRentalAllowance(), myYear.getRentalAllowance())) 	return false;
-		if (Money.differs(getCapitalAllow(),    myYear.getCapitalAllow())) 		return false;
-		if (Money.differs(getLoAgeAllow(), 		myYear.getLoAgeAllow()))	 	return false;
-		if (Money.differs(getHiAgeAllow(), 		myYear.getHiAgeAllow()))	 	return false;
-		if (Money.differs(getAgeAllowLimit(), 	myYear.getAgeAllowLimit()))	 	return false;
-		if (Money.differs(getAddAllowLimit(), 	myYear.getAddAllowLimit()))	 	return false;
-		if (Money.differs(getAddIncBound(), 	myYear.getAddIncBound()))	 	return false;
-		if (Rate.differs(getLoTaxRate(),     	myYear.getLoTaxRate())) 		return false;
-		if (Rate.differs(getBasicTaxRate(),  	myYear.getBasicTaxRate())) 		return false;
-		if (Rate.differs(getHiTaxRate(),     	myYear.getHiTaxRate())) 		return false;
-		if (Rate.differs(getIntTaxRate(),    	myYear.getIntTaxRate())) 		return false;
-		if (Rate.differs(getDivTaxRate(),    	myYear.getDivTaxRate())) 		return false;
-		if (Rate.differs(getHiDivTaxRate(),  	myYear.getHiDivTaxRate()))    	return false;
-		if (Rate.differs(getAddTaxRate(),    	myYear.getAddTaxRate()))    	return false;
-		if (Rate.differs(getAddDivTaxRate(), 	myYear.getAddDivTaxRate()))    	return false;
-		if (Rate.differs(getCapTaxRate(),    	myYear.getCapTaxRate()))    	return false;
-		if (Rate.differs(getHiCapTaxRate(),  	myYear.getHiCapTaxRate()))    	return false;
-		return true;
+		/* Check for equality on id */
+		if (getId() != myThat.getId())	return false;
+		
+		/* Compare the changeable values */
+		return getObj().histEquals(myThat.getObj());
 	}
 
 	/**
@@ -887,7 +866,7 @@ public class TaxYear extends DataItem {
 	 * @param pTaxYear the changed taxYear 
 	 * @return whether changes have been made
 	 */
-	public boolean applyChanges(DataItem pTaxYear) {
+	public boolean applyChanges(DataItem<?> pTaxYear) {
 		TaxYear myTaxYear = (TaxYear)pTaxYear;
 		boolean bChanged  = false;
 		
@@ -995,7 +974,7 @@ public class TaxYear extends DataItem {
 	 	 * @param pData the DataSet for the list
 	 	 */
 		protected List(DataSet pData) { 
-			super(ListStyle.CORE, false);
+			super(TaxYear.class, ListStyle.CORE, false);
 			theData = pData;
 		}
 
@@ -1005,7 +984,7 @@ public class TaxYear extends DataItem {
 	 	 * @param pStyle the style of the list 
 	 	 */
 		public List(DataSet pData, ListStyle pStyle) { 
-			super(pStyle, false);
+			super(TaxYear.class, pStyle, false);
 			theData = pData;
 		}
 
@@ -1015,7 +994,7 @@ public class TaxYear extends DataItem {
 	 	 * @param pStyle the style of the list 
 	 	 */
 		public List(List pList, ListStyle pStyle) { 
-			super(pList, pStyle);
+			super(TaxYear.class, pList, pStyle);
 			theData = pList.getData();
 		}
 
@@ -1040,9 +1019,9 @@ public class TaxYear extends DataItem {
 		 * @param pTaxYear item
 		 * @return the newly added item
 		 */
-		public TaxYear addNewItem(DataItem pTaxYear) {
+		public TaxYear addNewItem(DataItem<?> pTaxYear) {
 			TaxYear myYear = new TaxYear(this, (TaxYear)pTaxYear);
-			myYear.addToList();
+			add(myYear);
 			return myYear;
 		}
 	
@@ -1337,7 +1316,7 @@ public class TaxYear extends DataItem {
 									"Failed validation");
 			
 			/* Add the TaxYear to the list */
-			myTaxYear.addToList();				
+			add(myTaxYear);				
 	    }		
 	}
 

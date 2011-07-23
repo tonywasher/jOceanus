@@ -15,6 +15,7 @@ import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.Exception;
 
 public class MaintenanceTab implements ChangeListener {
 	/* properties */
@@ -109,7 +110,7 @@ public class MaintenanceTab implements ChangeListener {
 	}
 	
 	/* refresh data */
-	public void refreshData() {
+	public void refreshData() throws Exception {
 		/* Refresh sub-panels */
 		theAccountTab.refreshData();
 		theTaxYearTab.refreshData();
@@ -198,7 +199,7 @@ public class MaintenanceTab implements ChangeListener {
 	 */
 	protected void formatComponent(JComponent	pComp,
 								   int			iField,
-								   DataItem		pItem,
+								   DataItem<?>	pItem,
 							   	   boolean 		isNumeric,
 							   	   boolean		isNull) {
 		boolean 	isChanged;

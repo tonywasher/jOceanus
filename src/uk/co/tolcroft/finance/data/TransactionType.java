@@ -5,7 +5,7 @@ import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 
-public class TransactionType extends StaticData<TransClass> {
+public class TransactionType extends StaticData<TransactionType, TransClass> {
 	/**
 	 * The name of the object
 	 */
@@ -72,16 +72,18 @@ public class TransactionType extends StaticData<TransClass> {
 	 * Construct a standard Transaction type on load
 	 * @param pList	The list to associate the Transaction Type with
 	 * @param uId   ID of Transaction Type
+	 * @param uControlId the control id of the new item
 	 * @param uClassId the class id of the new item
 	 * @param pName Encrypted Name of Transaction Type
 	 * @param pDesc Encrypted Description of Transaction Type
 	 */
 	private TransactionType(List 	pList,
                        		int		uId,
+                       		int		uControlId,
     			            int		uClassId,
     			            byte[]	pName,
     			            byte[]	pDesc) throws Exception {
-		super(pList, uId, uClassId, pName, pDesc);
+		super(pList, uId, uControlId, uClassId, pName, pDesc);
 		pList.setNewId(this);					
 	}
 
@@ -286,11 +288,11 @@ public class TransactionType extends StaticData<TransClass> {
 	}		
 	
 	/**
-	 * Determine whether the TransactionType is hidden
+	 * Determine whether the TransactionType is hidden type
 	 * 
 	 * @return <code>true</code> if the transaction is hidden, <code>false</code> otherwise.
 	 */
-	public boolean isHidden()  { 
+	public boolean isHiddenType()  { 
 		switch (getTranClass()) {
 			case UNITTRUSTDIVIDEND:
 			case TAXFREEDIVIDEND:
@@ -397,12 +399,14 @@ public class TransactionType extends StaticData<TransClass> {
 	 * Represents a list of {@link TransType} objects. 
 	 */
 	public static class List extends StaticList<TransactionType, TransClass> {
-	 	/** 
+		protected Class<TransClass> getEnumClass() { return TransClass.class; }
+
+		/** 
 	 	 * Construct an empty CORE transaction type list
 	 	 * @param pData the DataSet for the list
 	 	 */
 		protected List(DataSet pData) { 
-			super(TransClass.class, pData.getEncryptedPairs(), ListStyle.CORE);
+			super(TransactionType.class, pData, ListStyle.CORE);
 		}
 
 		/** 
@@ -410,7 +414,7 @@ public class TransactionType extends StaticData<TransClass> {
 	 	 * @param pList the source transtype list 
 	 	 * @param pStyle the style of the list 
 	 	 */
-		public List(List pList, ListStyle pStyle) {	super(pList, pStyle); }
+		public List(List pList, ListStyle pStyle) {	super(TransactionType.class, pList, pStyle); }
 
 		/** 
 	 	 * Construct a difference transtype list
@@ -430,9 +434,9 @@ public class TransactionType extends StaticData<TransClass> {
 		 * @param pItem item to be added
 		 * @return the newly added item
 		 */
-		public TransactionType addNewItem(DataItem pItem) {
+		public TransactionType addNewItem(DataItem<?> pItem) {
 			TransactionType myType = new TransactionType(this, (TransactionType)pItem);
-			myType.addToList();
+			add(myType);
 			return myType;
 		}
 	
@@ -472,7 +476,7 @@ public class TransactionType extends StaticData<TransClass> {
 			                        "Duplicate TransactionClass");
 				
 			/* Add the Transaction Type to the list */
-			myTransType.addToList();		
+			add(myTransType);		
 		}			
 
 		/**
@@ -502,24 +506,26 @@ public class TransactionType extends StaticData<TransClass> {
 			                        "Duplicate TransactionClass");
 				
 			/* Add the Transaction Type to the list */
-			myTranType.addToList();
+			add(myTranType);
 		}	
 
 		/**
 		 * Add a TransactionType
 		 * @param uId the Id of the transaction type
+		 * @param uControlId the control id of the new item
 		 * @param uClassId the ClassId of the transaction type
 		 * @param pTransType the Encrypted Name of the transaction type
 		 * @param pDesc the Encrypted Description of the transaction type
 		 */ 
 		public void addItem(int    uId,
+							int	   uControlId,
 							int	   uClassId,
 				            byte[] pTransType,
 				            byte[] pDesc) throws Exception {
 			TransactionType     myTransType;
 			
 			/* Create a new Transaction Type */
-			myTransType = new TransactionType(this, uId, uClassId, pTransType, pDesc);
+			myTransType = new TransactionType(this, uId, uControlId, uClassId, pTransType, pDesc);
 			
 			/* Check that this TransTypeId has not been previously added */
 			if (!isIdUnique(uId)) 
@@ -540,7 +546,7 @@ public class TransactionType extends StaticData<TransClass> {
 			                        "Duplicate TransactionClass");
 				
 			/* Add the Transaction Type to the list */
-			myTransType.addToList();		
+			add(myTransType);		
 		}			
 	}
 }

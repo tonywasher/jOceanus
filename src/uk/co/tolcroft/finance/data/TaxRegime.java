@@ -5,7 +5,7 @@ import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.finance.data.StaticClass.TaxRegClass;
 
-public class TaxRegime extends StaticData<TaxRegClass> {
+public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 	/**
 	 * The name of the object
 	 */
@@ -72,16 +72,18 @@ public class TaxRegime extends StaticData<TaxRegClass> {
 	 * Construct a standard TaxRegime on load
 	 * @param pList	The list to associate the TaxRegime with
 	 * @param uId   ID of TaxRegime
+	 * @param uControlId the control id of the new item
 	 * @param uClassId the class id of the new item
 	 * @param pName Encrypted Name of TaxRegime
 	 * @param pDesc Encrypted Description of TaxRegime
 	 */
 	private TaxRegime(List 		pList,
 			      	  int		uId,
+			      	  int		uControlId,
 			      	  int		uClassId,
 			      	  byte[]	pName,
 			      	  byte[]	pDesc) throws Exception {
-		super(pList, uId, uClassId, pName, pDesc);
+		super(pList, uId, uControlId, uClassId, pName, pDesc);
 		pList.setNewId(this);				
 	}
 
@@ -123,19 +125,21 @@ public class TaxRegime extends StaticData<TaxRegClass> {
 	 * Represents a list of {@link TaxRegime} objects. 
 	 */
 	public static class List  extends StaticList<TaxRegime, TaxRegClass> {
+		protected Class<TaxRegClass> getEnumClass() { return TaxRegClass.class; }
+		
 	 	/** 
 	 	 * Construct an empty CORE tax regime list
 	 	 * @param pData the DataSet for the list
 	 	 */
 		protected List(DataSet pData) { 
-			super(TaxRegClass.class, pData.getEncryptedPairs(), ListStyle.CORE); }
+			super(TaxRegime.class, pData, ListStyle.CORE); }
 
 		/** 
 	 	 * Construct a generic tax regime list
 	 	 * @param pList the source Tax Regime list 
 	 	 * @param pStyle the style of the list 
 	 	 */
-		public List(List pList, ListStyle pStyle) { super(pList, pStyle); }
+		public List(List pList, ListStyle pStyle) { super(TaxRegime.class, pList, pStyle); }
 
 		/** 
 	 	 * Construct a difference tax regime list
@@ -155,9 +159,9 @@ public class TaxRegime extends StaticData<TaxRegClass> {
 		 * @param pItem item to be added
 		 * @return the newly added item
 		 */
-		public TaxRegime addNewItem(DataItem pItem) {
+		public TaxRegime addNewItem(DataItem<?> pItem) {
 			TaxRegime myRegime = new TaxRegime(this, (TaxRegime)pItem);
-			myRegime.addToList();
+			add(myRegime);
 			return myRegime;
 		}
 	
@@ -197,7 +201,7 @@ public class TaxRegime extends StaticData<TaxRegClass> {
 			                        "Duplicate TaxRegimeClass");
 				
 			/* Add the TaxRegime to the list */
-			myTaxRegime.addToList();		
+			add(myTaxRegime);		
 		}			
 
 		/**
@@ -227,24 +231,26 @@ public class TaxRegime extends StaticData<TaxRegClass> {
 			                        "Duplicate TaxRegimeClass");
 				
 			/* Add the Tax Regime to the list */
-			myTaxReg.addToList();
+			add(myTaxReg);
 		}	
 
 		/**
 		 * Add a TaxRegime
 		 * @param uId the Id of the tax regime
+		 * @param uControlId the control id of the new item
 		 * @param uClassId the ClassId of the tax regime
 		 * @param pTaxRegime the Encrypted Name of the tax regime
 		 * @param pDesc the Encrypted Description of the tax regime
 		 */ 
 		public void addItem(int    uId,
+							int	   uControlId,
 							int	   uClassId,
 				            byte[] pTaxRegime,
 				            byte[] pDesc) throws Exception {
 			TaxRegime     myTaxRegime;
 			
 			/* Create a new tax regime */
-			myTaxRegime = new TaxRegime(this, uId, uClassId, pTaxRegime, pDesc);
+			myTaxRegime = new TaxRegime(this, uId, uControlId, uClassId, pTaxRegime, pDesc);
 				
 			/* Check that this TaxRegimeId has not been previously added */
 			if (!isIdUnique(uId)) 
@@ -265,7 +271,7 @@ public class TaxRegime extends StaticData<TaxRegClass> {
 			                        "Duplicate TaxRegimeClass");
 				
 			/* Add the TaxRegime to the list */
-			myTaxRegime.addToList();		
+			add(myTaxRegime);		
 		}			
 	}
 }

@@ -83,26 +83,27 @@ public class SheetAccount extends SheetDataItem<Account> {
 		if (isBackup) {
 			/* Access the IDs */
 			int		myID 		= loadInteger(0);
-			int		myActTypeId	= loadInteger(1);
-			Integer	myParentId	= loadInteger(2);
-			Integer	myAliasId 	= loadInteger(3);
+			int 	myControlId	= loadInteger(1);
+			int		myActTypeId	= loadInteger(2);
+			Integer	myParentId	= loadInteger(3);
+			Integer	myAliasId 	= loadInteger(4);
 		
 			/* Access the dates */
-			java.util.Date 	myClose		= loadDate(4);
-			java.util.Date	myMaturity 	= loadDate(5);
+			java.util.Date 	myClose		= loadDate(5);
+			java.util.Date	myMaturity 	= loadDate(6);
 		
 			/* Access the binary values  */
-			byte[] 	myName 		= loadBytes(6);
-			byte[]	myDesc 		= loadBytes(7);
-			byte[]	myWebSite	= loadBytes(8);
-			byte[]	myCustNo 	= loadBytes(9);
-			byte[]	myUserId 	= loadBytes(10);
-			byte[]	myPassword	= loadBytes(11);
-			byte[]	myAccount 	= loadBytes(12);
-			byte[]	myNotes 	= loadBytes(13);
+			byte[] 	myName 		= loadBytes(7);
+			byte[]	myDesc 		= loadBytes(8);
+			byte[]	myWebSite	= loadBytes(9);
+			byte[]	myCustNo 	= loadBytes(10);
+			byte[]	myUserId 	= loadBytes(11);
+			byte[]	myPassword	= loadBytes(12);
+			byte[]	myAccount 	= loadBytes(13);
+			byte[]	myNotes 	= loadBytes(14);
 		
 			/* Load the item */
-			theList.addItem(myID, myName, myActTypeId, myDesc,
+			theList.addItem(myID, myControlId, myName, myActTypeId, myDesc,
 							myMaturity, myClose, myParentId, myAliasId,
 							myWebSite, myCustNo, myUserId, myPassword, myAccount, myNotes);
 		}
@@ -145,21 +146,22 @@ public class SheetAccount extends SheetDataItem<Account> {
 		if (isBackup) {
 			/* Set the fields */
 			writeInteger(0, pItem.getId());
-			writeInteger(1, pItem.getActType().getId());	
+			writeInteger(1, pItem.getControlKey().getId());				
+			writeInteger(2, pItem.getActType().getId());	
 			if (pItem.getParent() != null)
-				writeInteger(2, pItem.getParent().getId());				
+				writeInteger(3, pItem.getParent().getId());				
 			if (pItem.getAlias() != null)
-				writeInteger(3, pItem.getAlias().getId());				
-			writeDate(4, pItem.getClose());
-			writeDate(5, pItem.getMaturity());
-			writeBytes(6, pItem.getNameBytes());
-			writeBytes(7, pItem.getDescBytes());
-			writeBytes(8, pItem.getWebSiteBytes());
-			writeBytes(9, pItem.getCustNoBytes());
-			writeBytes(10, pItem.getUserIdBytes());
-			writeBytes(11, pItem.getPasswordBytes());
-			writeBytes(12, pItem.getAccountBytes());
-			writeBytes(13, pItem.getNotesBytes());
+				writeInteger(4, pItem.getAlias().getId());				
+			writeDate(5, pItem.getClose());
+			writeDate(6, pItem.getMaturity());
+			writeBytes(7, pItem.getNameBytes());
+			writeBytes(8, pItem.getDescBytes());
+			writeBytes(9, pItem.getWebSiteBytes());
+			writeBytes(10, pItem.getCustNoBytes());
+			writeBytes(11, pItem.getUserIdBytes());
+			writeBytes(12, pItem.getPasswordBytes());
+			writeBytes(13, pItem.getAccountBytes());
+			writeBytes(14, pItem.getNotesBytes());
 		}
 
 		/* else we are creating an edit-able spreadsheet */
@@ -213,14 +215,14 @@ public class SheetAccount extends SheetDataItem<Account> {
 	protected void postProcessOnWrite() throws Throwable {		
 		/* If we are creating a backup */
 		if (isBackup) {
-			/* Set the fourteen columns as the range */
-			nameRange(14);
+			/* Set the fifteen columns as the range */
+			nameRange(15);
 		}
 
 		/* else this is an edit-able spreadsheet */
 		else {
 			/* Set the thirteen columns as the range */
-			nameRange(10);
+			nameRange(13);
 
 			/* Set the name column width and range */
 			nameColumnRange(0, AccountNames);

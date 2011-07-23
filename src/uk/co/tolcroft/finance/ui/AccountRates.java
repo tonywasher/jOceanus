@@ -316,7 +316,7 @@ public class AccountRates extends FinanceTable<AcctRate> {
 					/* if we have updated a sort column */
 					case COLUMN_DATE:
 						/* Re-Sort the row */
-						myRate.reSort();
+						theRates.reSort(myRate);
 
 						/* Determine new row # */
 						int myNewRowNo = myRate.indexOf();
@@ -375,7 +375,7 @@ public class AccountRates extends FinanceTable<AcctRate> {
 			if (theTable.isLocked()) return;
 			
 			/* Loop through the selected rows */
-			for (DataItem myRow : theTable.cacheSelectedRows()) {
+			for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
 				/* Ignore locked rows */
 				if ((myRow == null) || (myRow.isLocked())) continue;
 				

@@ -36,6 +36,9 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
 		/* Call super constructor */
 		super(pInput, Keys);
 		
+		/* Note whether this is a backup */
+		isBackup = (pInput.getType() == SheetType.BACKUP);
+		
 		/* Access the Lists */
 		theData	= pInput.getData();
 		theList = theData.getDataKeys();

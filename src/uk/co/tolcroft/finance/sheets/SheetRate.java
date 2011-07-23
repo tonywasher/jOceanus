@@ -69,39 +69,31 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 	 * Load an item from the spreadsheet
 	 */
 	protected void loadItem() throws Throwable {
-		byte[]			myRateBytes;
-		byte[]			myBonusBytes;
-		String			myRate;
-		String			myBonus;
-		String			myAccount;
-		java.util.Date	myEndDate;
-		int	    		myID;
-		int	    		myActId;
-
 		/* If this is a backup load */
 		if (isBackup) {
 			/* Access the IDs */
-			myID 	= loadInteger(0);
-			myActId	= loadInteger(1);
+			int	myID 		= loadInteger(0);
+			int myControlId	= loadInteger(1);
+			int myActId		= loadInteger(2);
 		
 			/* Access the rates and end-date */
-			myRateBytes 	= loadBytes(2);
-			myBonusBytes 	= loadBytes(3);
-			myEndDate 		= loadDate(4);
+			byte[] 			myRateBytes 	= loadBytes(3);
+			byte[] 			myBonusBytes 	= loadBytes(4);
+			java.util.Date	myEndDate 		= loadDate(5);
 		
 			/* Load the item */
-			theList.addItem(myID, myActId, myRateBytes, myEndDate, myBonusBytes);
+			theList.addItem(myID, myControlId, myActId, myRateBytes, myEndDate, myBonusBytes);
 		}
 		
 		/* else this is a load from an edit-able spreadsheet */
 		else {
 			/* Access the account */
-			myAccount	= loadString(0);
+			String myAccount	= loadString(0);
 		
 			/* Access the name and description bytes */
-			myRate 		= loadString(1);
-			myBonus		= loadString(2);
-			myEndDate	= loadDate(3);
+			String 			myRate 		= loadString(1);
+			String 			myBonus		= loadString(2);
+			java.util.Date	myEndDate	= loadDate(3);
 		
 			/* Load the item */
 			theList.addItem(myAccount, myRate, myEndDate, myBonus);
@@ -118,10 +110,11 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 		if (isBackup) {
 			/* Set the fields */
 			writeInteger(0, pItem.getId());
-			writeInteger(1, pItem.getAccount().getId());				
-			writeBytes(2, pItem.getRateBytes());
-			writeBytes(3, pItem.getBonusBytes());
-			writeDate(4, pItem.getEndDate());
+			writeInteger(1, pItem.getControlKey().getId());				
+			writeInteger(2, pItem.getAccount().getId());				
+			writeBytes(3, pItem.getRateBytes());
+			writeBytes(4, pItem.getBonusBytes());
+			writeDate(5, pItem.getEndDate());
 		}
 
 		/* else we are creating an edit-able spreadsheet */
@@ -155,8 +148,8 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 	protected void postProcessOnWrite() throws Throwable {		
 		/* If we are creating a backup */
 		if (isBackup) {
-			/* Set the five columns as the range */
-			nameRange(5);
+			/* Set the six columns as the range */
+			nameRange(6);
 		}
 
 		/* else this is an edit-able spreadsheet */

@@ -5,7 +5,7 @@ import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.finance.data.StaticClass.TaxClass;
 
-public class TaxType extends StaticData<TaxClass> {
+public class TaxType extends StaticData<TaxType, TaxClass> {
 	/**
 	 * The name of the object
 	 */
@@ -78,16 +78,18 @@ public class TaxType extends StaticData<TaxClass> {
 	 * Construct a standard TaxType on load
 	 * @param pList	The list to associate the TaxType with
 	 * @param uId   ID of TaxType
+	 * @param uControlId the control id of the new item
 	 * @param uClassId the class id of the new item
 	 * @param sName Encrypted Name of TaxType
 	 * @param pDesc Encrypted Description of TaxType
 	 */
 	private TaxType(List 	pList,
 			      	int		uId,
+			      	int		uControlId,
 			      	int		uClassId,
 			      	byte[]	sName,
 			      	byte[]	pDesc) throws Exception {
-		super(pList, uId, uClassId, sName, pDesc);
+		super(pList, uId, uControlId, uClassId, sName, pDesc);
 		pList.setNewId(this);				
 	}
 
@@ -127,19 +129,21 @@ public class TaxType extends StaticData<TaxClass> {
 	 * Represents a list of {@link TaxType} objects. 
 	 */
 	public static class List extends StaticList<TaxType, TaxClass> {
-	 	/** 
+		protected Class<TaxClass> getEnumClass() { return TaxClass.class; }
+
+		/** 
 	 	 * Construct an empty CORE tax type list
 	 	 * @param pData the DataSet for the list
 	 	 */
 		protected List(DataSet pData) { 
-			super(TaxClass.class, pData.getEncryptedPairs(), ListStyle.CORE); }
+			super(TaxType.class, pData, ListStyle.CORE); }
 
 		/** 
 	 	 * Construct a generic tax type list
 	 	 * @param pList the source tax type list 
 	 	 * @param pStyle the style of the list 
 	 	 */
-		public List(List pList, ListStyle pStyle) { super(pList, pStyle); }
+		public List(List pList, ListStyle pStyle) { super(TaxType.class, pList, pStyle); }
 
 		/** 
 	 	 * Construct a difference tax type list
@@ -159,9 +163,9 @@ public class TaxType extends StaticData<TaxClass> {
 		 * @param pItem item to be added
 		 * @return the newly added item
 		 */
-		public TaxType addNewItem(DataItem pItem) {
+		public TaxType addNewItem(DataItem<?> pItem) {
 			TaxType myType = new TaxType(this, (TaxType)pItem);
-			myType.addToList();
+			add(myType);
 			return myType;
 		}
 	
@@ -201,7 +205,7 @@ public class TaxType extends StaticData<TaxClass> {
 			                        "Duplicate TaxClass");
 				
 			/* Add the Tax Type to the list */
-			myTaxType.addToList();
+			add(myTaxType);
 		}			
 
 		/**
@@ -231,24 +235,26 @@ public class TaxType extends StaticData<TaxClass> {
 			                        "Duplicate TaxClass");
 				
 			/* Add the Tax Type to the list */
-			myTaxType.addToList();
+			add(myTaxType);
 		}	
 
 		/**
 		 * Add a TaxType
 		 * @param uId the Id of the tax type
+		 * @param uControlId the control id of the new item
 		 * @param uClassId the ClassId of the tax type
 		 * @param pTaxType the Encrypted Name of the tax type
 		 * @param pDesc the Encrypted Description of the tax type
 		 */ 
 		public void addItem(int		uId,
+							int		uControlId,
 							int		uClassId,
 				            byte[] 	pTaxType,
 				            byte[]	pDesc) throws Exception {
 			TaxType      myTaxType;
 			
 			/* Create a new Tax Type */
-			myTaxType = new TaxType(this, uId, uClassId, pTaxType, pDesc);
+			myTaxType = new TaxType(this, uId, uControlId, uClassId, pTaxType, pDesc);
 			
 			/* Check that this TaxTypeId has not been previously added */
 			if (!isIdUnique(uId)) 
@@ -269,7 +275,7 @@ public class TaxType extends StaticData<TaxClass> {
 			                        "Duplicate TaxClass");
 				
 			/* Add the Tax Type to the list */
-			myTaxType.addToList();
+			add(myTaxType);
 		}			
 	}		
 }

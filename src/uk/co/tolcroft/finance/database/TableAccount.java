@@ -34,6 +34,7 @@ public class TableAccount extends DatabaseTable<Account> {
 	 */
 	protected void defineTable(TableDefinition	pTableDef) {
 		theTableDef = pTableDef;
+		theTableDef.addReferenceColumn(EncryptedItem.FIELD_CONTROL, EncryptedItem.NAME_CTLID, TableControlKeys.TableName);
 		theTableDef.addEncryptedColumn(Account.FIELD_NAME, Account.fieldName(Account.FIELD_NAME), Account.NAMELEN);
 		theTableDef.addReferenceColumn(Account.FIELD_TYPE, Account.fieldName(Account.FIELD_TYPE), TableAccountType.TableName);
 		theTableDef.addNullEncryptedColumn(Account.FIELD_DESC, Account.fieldName(Account.FIELD_DESC), Account.DESCLEN);
@@ -61,6 +62,7 @@ public class TableAccount extends DatabaseTable<Account> {
 	
 	/* Load the account */
 	protected void loadItem(int pId) throws Exception {
+		int				myControlId;
 		byte[]  		myName;
 		int    			myActTypeId;
 		Integer	   		myParentId;
@@ -76,6 +78,7 @@ public class TableAccount extends DatabaseTable<Account> {
 		byte[]     		myNotes;
 		
 		/* Get the various fields */
+		myControlId		= theTableDef.getIntegerValue(EncryptedItem.FIELD_CONTROL);
 		myName   		= theTableDef.getBinaryValue(Account.FIELD_NAME);
 		myActTypeId 	= theTableDef.getIntegerValue(Account.FIELD_TYPE);
 		myDesc      	= theTableDef.getBinaryValue(Account.FIELD_DESC);
@@ -91,7 +94,8 @@ public class TableAccount extends DatabaseTable<Account> {
 		myNotes			= theTableDef.getBinaryValue(Account.FIELD_NOTES);
 	
 		/* Add into the list */
-		theList.addItem(pId, 
+		theList.addItem(pId,
+						myControlId,
 			            myName, 
 				        myActTypeId,
 				        myDesc, 
@@ -111,6 +115,7 @@ public class TableAccount extends DatabaseTable<Account> {
 	protected void setFieldValue(Account	pItem, int iField) throws Exception  {
 		/* Switch on field id */
 		switch (iField) {
+			case EncryptedItem.FIELD_CONTROL: 	theTableDef.setIntegerValue(iField, pItem.getControlKey().getId());	break;
 			case Account.FIELD_NAME:		theTableDef.setBinaryValue(iField, pItem.getNameBytes());			break;
 			case Account.FIELD_TYPE:		theTableDef.setIntegerValue(iField, pItem.getActType().getId());	break;
 			case Account.FIELD_DESC:		theTableDef.setBinaryValue(iField, pItem.getDescBytes());			break;

@@ -376,7 +376,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 	 * @param pItem the current item
 	 * @param pObj the potential object for restoration
 	 */
-	public boolean isValidObj(DataItem 				pItem,
+	public boolean isValidObj(DataItem<?>			pItem,
 			  				  DataItem.histObject  	pObj) {
 		Statement.Line 			myLine;
 		Statement.Line.Values	myLineVals; 
@@ -741,7 +741,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 					case COLUMN_DESC:
 					case COLUMN_TRANTYP: 
 						/* Re-Sort the row */
-						myLine.reSort();
+						theLines.reSort(myLine);
 						calculateTable();
 						
 						/* Determine new row # */
@@ -820,7 +820,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 			if (theTable.isLocked()) return;
 			
 			/* Loop through the selected rows */
-			for (DataItem myRow : theTable.cacheSelectedRows()) {
+			for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
 				/* Ignore locked rows */
 				if ((myRow == null) || (myRow.isLocked())) continue;
 				
@@ -911,7 +911,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 			if (theTable.isLocked()) return;
 			
 			/* Loop through the selected rows */
-			for (DataItem myRow : theTable.cacheSelectedRows()) {
+			for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
 				/* Ignore locked rows */
 				if ((myRow == null) || (myRow.isLocked())) continue;
 				
@@ -1122,7 +1122,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 			int					row;
 
 			/* Loop through the selected rows */
-			for (DataItem myRow : theTable.cacheSelectedRows()) {
+			for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
 				/* Ignore locked rows */
 				if ((myRow == null) || (myRow.isLocked())) continue;
 				
@@ -1163,7 +1163,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 			int					row;
 
 			/* Loop through the selected rows */
-			for (DataItem myRow : theTable.cacheSelectedRows()) {
+			for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
 				/* Ignore locked rows */
 				if ((myRow == null) || (myRow.isLocked())) continue;
 				

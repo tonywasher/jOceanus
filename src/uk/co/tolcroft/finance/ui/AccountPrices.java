@@ -319,7 +319,7 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 				switch (col) {
 					case COLUMN_DATE:
 						/* Re-Sort the row */
-						myPrice.reSort();
+						thePrices.reSort(myPrice);
 
 						/* Determine new row # */
 						int myNewRowNo = myPrice.indexOf();

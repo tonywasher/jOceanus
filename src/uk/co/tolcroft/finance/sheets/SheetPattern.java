@@ -100,21 +100,22 @@ public class SheetPattern extends SheetDataItem<Pattern> {
 		if (isBackup) {
 			/* Access the IDs */
 			int	myID 		= loadInteger(0);
-			int	myActId		= loadInteger(1);
-			int	myPartId	= loadInteger(2);
-			int	myTranId	= loadInteger(5);
-			int	myFreqId	= loadInteger(6);
+			int myControlId	= loadInteger(1);
+			int	myActId		= loadInteger(2);
+			int	myPartId	= loadInteger(3);
+			int	myTranId	= loadInteger(6);
+			int	myFreqId	= loadInteger(7);
 		
 			/* Access the date and credit flag */
-			java.util.Date 	myDate 		= loadDate(3);
-			boolean 		isCredit 	= loadBoolean(4);
+			java.util.Date 	myDate 		= loadDate(4);
+			boolean 		isCredit 	= loadBoolean(5);
 		
 			/* Access the binary values  */
-			byte[] 	myDesc 		= loadBytes(7);
-			byte[]	myAmount 	= loadBytes(8);
+			byte[] 	myDesc 		= loadBytes(8);
+			byte[]	myAmount 	= loadBytes(9);
 		
 			/* Load the item */
-			theList.addItem(myID, myDate, myDesc, myAmount, myActId, myPartId, myTranId, myFreqId, isCredit);
+			theList.addItem(myID, myControlId, myDate, myDesc, myAmount, myActId, myPartId, myTranId, myFreqId, isCredit);
 		}
 		
 		/* else this is a load from an edit-able spreadsheet */
@@ -148,14 +149,15 @@ public class SheetPattern extends SheetDataItem<Pattern> {
 		if (isBackup) {
 			/* Set the fields */
 			writeInteger(0, pItem.getId());
-			writeInteger(1, pItem.getAccount().getId());				
-			writeInteger(2, pItem.getPartner().getId());				
-			writeInteger(5, pItem.getTransType().getId());				
-			writeInteger(6, pItem.getFrequency().getId());				
-			writeDate(3, pItem.getDate());
-			writeBoolean(4, pItem.isCredit());
-			writeBytes(7, pItem.getDescBytes());
-			writeBytes(8, pItem.getAmountBytes());
+			writeInteger(1, pItem.getControlKey().getId());				
+			writeInteger(2, pItem.getAccount().getId());				
+			writeInteger(3, pItem.getPartner().getId());				
+			writeInteger(6, pItem.getTransType().getId());				
+			writeInteger(7, pItem.getFrequency().getId());				
+			writeDate(4, pItem.getDate());
+			writeBoolean(5, pItem.isCredit());
+			writeBytes(8, pItem.getDescBytes());
+			writeBytes(9, pItem.getAmountBytes());
 		}
 
 		/* else we are creating an edit-able spreadsheet */
@@ -197,8 +199,8 @@ public class SheetPattern extends SheetDataItem<Pattern> {
 	protected void postProcessOnWrite() throws Throwable {		
 		/* If we are creating a backup */
 		if (isBackup) {
-			/* Set the nine columns as the range */
-			nameRange(9);
+			/* Set the ten columns as the range */
+			nameRange(10);
 		}
 
 		/* else this is an edit-able spreadsheet */

@@ -1,7 +1,6 @@
 package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.ListStyle;
 
@@ -35,10 +34,11 @@ public class TablePattern extends DatabaseTable<Pattern> {
 	 */
 	protected void defineTable(TableDefinition	pTableDef) {
 		theTableDef = pTableDef;
+		theTableDef.addReferenceColumn(EncryptedItem.FIELD_CONTROL, EncryptedItem.NAME_CTLID, TableControlKeys.TableName);
 		theTableDef.addReferenceColumn(Pattern.FIELD_ACCOUNT, Pattern.fieldName(Pattern.FIELD_ACCOUNT), TableAccount.TableName);
 		theTableDef.addDateColumn(Pattern.FIELD_DATE, Pattern.fieldName(Pattern.FIELD_DATE));
 		theTableDef.addEncryptedColumn(Pattern.FIELD_DESC, Pattern.fieldName(Pattern.FIELD_DESC), Pattern.DESCLEN);
-		theTableDef.addEncryptedColumn(Pattern.FIELD_AMOUNT, Pattern.fieldName(Pattern.FIELD_AMOUNT), EncryptedPair.MONEYLEN);
+		theTableDef.addEncryptedColumn(Pattern.FIELD_AMOUNT, Pattern.fieldName(Pattern.FIELD_AMOUNT), EncryptedItem.MONEYLEN);
 		theTableDef.addReferenceColumn(Pattern.FIELD_PARTNER, Pattern.fieldName(Pattern.FIELD_PARTNER), TableAccount.TableName);
 		theTableDef.addReferenceColumn(Pattern.FIELD_TRNTYP, Pattern.fieldName(Pattern.FIELD_TRNTYP), TableTransactionType.TableName);
 		theTableDef.addBooleanColumn(Pattern.FIELD_CREDIT, Pattern.fieldName(Pattern.FIELD_CREDIT));
@@ -65,6 +65,7 @@ public class TablePattern extends DatabaseTable<Pattern> {
 	
 	/* Load the pattern */
 	protected void loadItem(int pId) throws Exception {
+		int	    		myControlId;
 		int				myAccountId;
 		int  			myPartnerId;
 		int  			myTranType;
@@ -75,6 +76,7 @@ public class TablePattern extends DatabaseTable<Pattern> {
 		java.util.Date  myDate;
 		
 		/* Get the various fields */
+		myControlId	= theTableDef.getIntegerValue(EncryptedItem.FIELD_CONTROL);
 		myAccountId = theTableDef.getIntegerValue(Pattern.FIELD_ACCOUNT);
 		myDate 		= theTableDef.getDateValue(Pattern.FIELD_DATE);
 		myDesc    	= theTableDef.getBinaryValue(Pattern.FIELD_DESC);
@@ -85,7 +87,8 @@ public class TablePattern extends DatabaseTable<Pattern> {
 		myFreq  	= theTableDef.getIntegerValue(Pattern.FIELD_FREQ);
 	
 		/* Add into the list */
-		theList.addItem(pId, 
+		theList.addItem(pId,
+						myControlId,
 		           	    myDate,
 			            myDesc,
 			            myAmount,
@@ -103,6 +106,7 @@ public class TablePattern extends DatabaseTable<Pattern> {
 	protected void setFieldValue(Pattern	pItem, int iField) throws Exception  {
 		/* Switch on field id */
 		switch (iField) {
+			case EncryptedItem.FIELD_CONTROL: 	theTableDef.setIntegerValue(iField, pItem.getControlKey().getId());	break;
 			case Pattern.FIELD_ACCOUNT:	theTableDef.setIntegerValue(Pattern.FIELD_ACCOUNT, pItem.getAccount().getId());		break;
 			case Pattern.FIELD_DATE:	theTableDef.setDateValue(Pattern.FIELD_DATE, pItem.getDate());						break;
 			case Pattern.FIELD_DESC:	theTableDef.setBinaryValue(Pattern.FIELD_DESC, pItem.getDescBytes());				break;

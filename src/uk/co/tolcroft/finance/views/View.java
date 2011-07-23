@@ -75,6 +75,10 @@ public class View {
 
 		/* Protect against exceptions */
 		try {
+			/* Adjust the data debug view */
+			DebugEntry myDebug = theDebugMgr.getData();
+			theData.addDebugEntries(theDebugMgr, myDebug);
+			
 			/* Analyse the data */
 			theAnalysis = theData.analyseData(theDebugMgr);
 		
@@ -82,8 +86,9 @@ public class View {
 			theDilutions = theAnalysis.getDilutions();
 
 			/* Adjust the updates debug view */
-			DebugEntry myDebug = theDebugMgr.getUpdates();
-			myDebug.setObject(new DataSet(theData));
+			myDebug = theDebugMgr.getUpdates();
+			DataSet myUpdates = new DataSet(theData);
+			myUpdates.addDebugEntries(theDebugMgr, myDebug);
 		}
 		
 		/* Catch any exceptions */
@@ -143,7 +148,7 @@ public class View {
 			
 			/* Create a new tax year based on the passed tax year */
 			theTaxYear = new TaxYear(this, pTaxYear);
-			theTaxYear.addToList();
+			add(theTaxYear);
 		}
 		
 		/* Constructor */
@@ -170,7 +175,7 @@ public class View {
 			/* Adjust the year and add to list */
 			theTaxYear.setDate(new Date(myBase.getDate()));
 			theTaxYear.getDate().adjustYear(1);
-			theTaxYear.addToList();
+			add(theTaxYear);
 		}
 				
 		/** 
@@ -238,7 +243,7 @@ public class View {
 			
 			/* Create an new empty account */
 			theAccount = new Account(this);
-			theAccount.addToList();
+			add(theAccount);
 			
 			/* Set the type of the account */
 			theAccount.setActType(pType);
@@ -469,12 +474,12 @@ public class View {
 				
 				/* Build the new linked event and add it to the extract */
 				myEvent = new Event(this, myCurr);
-				myEvent.addToList();
+				add(myEvent);
 			}
 		}
 
 	 	/* Constructor */
-		public ViewEvents(TaxYear pTaxYear) {
+		public ViewEvents(TaxYear pTaxYear) throws Exception {
 			/* Call super constructor */
 			super(theData, ListStyle.EDIT);
 
@@ -502,7 +507,7 @@ public class View {
 												   pTaxYear, 
 												   myDate)) != null) {
 					/* Add it to the extract */
-					myEvent.addToList();
+					add(myEvent);
 				}
 			}
 		}

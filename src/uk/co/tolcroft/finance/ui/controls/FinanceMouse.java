@@ -13,8 +13,8 @@ import javax.swing.table.AbstractTableModel;
 
 import uk.co.tolcroft.models.*;
 
-public abstract class FinanceMouse<T extends DataItem> extends MouseAdapter
-													   implements ActionListener {
+public abstract class FinanceMouse<T extends DataItem<T>> extends MouseAdapter
+													      implements ActionListener {
 	/* Members */
 	private FinanceTable<T> 	theTable 		= null;
 	private boolean				doShowDeleted	= false;
@@ -181,7 +181,7 @@ public abstract class FinanceMouse<T extends DataItem> extends MouseAdapter
 		}
 		
 		/* Loop through the selected rows */
-		for (DataItem myRow : theTable.cacheSelectedRows()) {
+		for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
 			/* Ignore locked rows */
 			if ((myRow == null) || (myRow.isLocked())) continue;
 			
@@ -263,7 +263,7 @@ public abstract class FinanceMouse<T extends DataItem> extends MouseAdapter
 		if (theTable.isLocked()) return;
 		
 		/* Loop through the selected rows */
-		for (DataItem myRow : theTable.cacheSelectedRows()) {
+		for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
 			if ((myRow == null) || (myRow.isLocked())) continue;
 			
 			/* Ignore deleted rows */
@@ -389,7 +389,7 @@ public abstract class FinanceMouse<T extends DataItem> extends MouseAdapter
 		myModel = theTable.getTableModel();
 		
 		/* Loop through the selected rows */
-		for (DataItem myRow : theTable.cacheSelectedRows()) {
+		for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
 			/* Ignore locked rows */
 			if ((myRow == null) || (myRow.isLocked())) continue;
 			

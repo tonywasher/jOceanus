@@ -1,6 +1,10 @@
 package uk.co.tolcroft.security;
 
+import java.security.spec.AlgorithmParameterSpec;
+
 import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 
 import org.bouncycastle.util.Arrays;
 
@@ -18,6 +22,11 @@ public class SecurityCipher {
 	 * The cipher
 	 */
 	private Cipher 				theCipher 		= null;
+		
+	/**
+	 * The key
+	 */
+	private SecretKey 			theKey 			= null;
 		
 	/**
 	 * The transfer buffer
@@ -48,12 +57,85 @@ public class SecurityCipher {
 	}
 	
 	/**
+	 * Constructor
+	 * @param pCipher the cipher
+	 * @param pKey the Key
+	 */
+	protected SecurityCipher(Cipher 		pCipher,
+							 SymmetricKey 	pKey) {
+		theCipher 		= pCipher;
+		theKey			= pKey.getSecretKey();
+	}
+	
+	/**
 	 * Get Initialisation vector
 	 * @return the initialisation vector
 	 */
 	public byte[] getInitVector() {
 		return theInitVector;
 	}
+	
+	/**
+	 * Encrypt bytes
+	 * @param pBytes bytes to encrypt
+	 * @param pVector initialisation vector
+	 * @return Encrypted bytes
+	 * @throws Exception 
+	 */
+	public byte[] encryptBytes(byte[] pBytes,
+							   byte[] pVector) throws Exception {
+		AlgorithmParameterSpec 	myParms;
+		byte[]					myBytes;
+		
+		/* Protect against exceptions */
+		try {
+			/* Initialise the cipher using the password */
+			myParms = new IvParameterSpec(pVector);
+			theCipher.init(Cipher.ENCRYPT_MODE, theKey, myParms);
+			
+			/* Encrypt the byte array */
+			myBytes = theCipher.doFinal(pBytes);
+		}
+		catch (Throwable e) {
+			throw new Exception(ExceptionClass.CRYPTO,
+								"Failed to encrypt bytes",
+								e);
+		}
+		
+		/* Return to caller */
+		return myBytes;
+	}		
+	
+	/**
+	 * Decrypt bytes
+	 * @param pBytes bytes to decrypt
+	 * @param pVector initialisation vector
+	 * @return Decrypted bytes
+	 * @throws Exception 
+	 */
+	public byte[] decryptBytes(byte[] pBytes,
+							   byte[] pVector) throws Exception {
+		AlgorithmParameterSpec 	myParms;
+		byte[]					myBytes;
+		
+		/* Protect against exceptions */
+		try {
+			/* Initialise the cipher using the password */
+			myParms = new IvParameterSpec(pVector);
+			theCipher.init(Cipher.DECRYPT_MODE, theKey, myParms);
+			
+			/* Encrypt the byte array */
+			myBytes = theCipher.doFinal(pBytes);
+		}
+		catch (Throwable e) {
+			throw new Exception(ExceptionClass.CRYPTO,
+								"Failed to decrypt bytes",
+								e);
+		}
+		
+		/* Return to caller */
+		return myBytes;
+	}		
 	
 	/**
 	 * Encrypt string

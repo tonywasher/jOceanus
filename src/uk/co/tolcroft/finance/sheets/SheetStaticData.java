@@ -7,10 +7,10 @@ import uk.co.tolcroft.finance.sheets.SpreadSheet.SheetType;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.StaticData;
 
-public abstract class SheetStaticData <T extends StaticData<?>> extends SheetDataItem<T> {
+public abstract class SheetStaticData <T extends StaticData<T,?>> extends SheetDataItem<T> {
 
 	/* Load the Static Data */
-	protected  abstract void loadEncryptedItem(int pId, int pClassId, byte[] pName, byte[] pDesc) throws Exception;
+	protected  abstract void loadEncryptedItem(int pId, int pControlId, int pClassId, byte[] pName, byte[] pDesc) throws Exception;
 	protected  abstract void loadClearTextItem(int pClassId, String pName, String pDesc) throws Exception;
 
 	/**
@@ -60,35 +60,29 @@ public abstract class SheetStaticData <T extends StaticData<?>> extends SheetDat
 	 * Load an item from the spreadsheet
 	 */
 	protected void loadItem() throws Throwable {
-		byte[]	myNameBytes;
-		byte[]	myDescBytes;
-		String	myName;
-		String	myDesc;
-		int	    myID;
-		int	    myClassId;
-
 		/* If this is a backup load */
 		if (isBackup) {
 			/* Access the IDs */
-			myID 		= loadInteger(0);
-			myClassId	= loadInteger(1);
+			int myID 		= loadInteger(0);
+			int myControlId	= loadInteger(1);
+			int myClassId	= loadInteger(2);
 		
 			/* Access the name and description bytes */
-			myNameBytes = loadBytes(2);
-			myDescBytes = loadBytes(3);
+			byte[] myNameBytes = loadBytes(3);
+			byte[] myDescBytes = loadBytes(4);
 		
 			/* Load the item */
-			loadEncryptedItem(myID, myClassId, myNameBytes, myDescBytes);
+			loadEncryptedItem(myID, myControlId, myClassId, myNameBytes, myDescBytes);
 		}
 		
 		/* else this is a load from an edit-able spreadsheet */
 		else {
 			/* Access the IDs */
-			myClassId	= loadInteger(0);
+			int myClassId	= loadInteger(0);
 		
 			/* Access the name and description bytes */
-			myName 		= loadString(1);
-			myDesc 		= loadString(2);
+			String myName 	= loadString(1);
+			String myDesc 	= loadString(2);
 		
 			/* Load the item */
 			loadClearTextItem(myClassId, myName, myDesc);
@@ -105,9 +99,10 @@ public abstract class SheetStaticData <T extends StaticData<?>> extends SheetDat
 		if (isBackup) {
 			/* Set the fields */
 			writeInteger(0, pItem.getId());
-			writeInteger(1, pItem.getStaticClassId());				
-			writeBytes(2, pItem.getNameBytes());
-			writeBytes(3, pItem.getDescBytes());
+			writeInteger(1, pItem.getControlKey().getId());				
+			writeInteger(2, pItem.getStaticClassId());				
+			writeBytes(3, pItem.getNameBytes());
+			writeBytes(4, pItem.getDescBytes());
 		}
 
 		/* else we are creating an edit-able spreadsheet */
@@ -139,8 +134,8 @@ public abstract class SheetStaticData <T extends StaticData<?>> extends SheetDat
 	protected void postProcessOnWrite() throws Throwable {		
 		/* If we are creating a backup */
 		if (isBackup) {
-			/* Set the four columns as the range */
-			nameRange(4);
+			/* Set the five columns as the range */
+			nameRange(5);
 		}
 
 		/* else this is an edit-able spreadsheet */

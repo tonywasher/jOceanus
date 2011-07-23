@@ -75,35 +75,29 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 	 * Load an item from the spreadsheet
 	 */
 	protected void loadItem() throws Throwable {
-		byte[]			myPriceBytes;
-		String			myPrice;
-		String			myAccount;
-		java.util.Date	myDate;
-		int	    		myID;
-		int	    		myActId;
-
 		/* If this is a backup load */
 		if (isBackup) {
 			/* Access the IDs */
-			myID 	= loadInteger(0);
-			myActId	= loadInteger(1);
+			int myID 		= loadInteger(0);
+			int myControlId	= loadInteger(1);
+			int myActId		= loadInteger(2);
 		
 			/* Access the rates and end-date */
-			myDate 			= loadDate(2);
-			myPriceBytes 	= loadBytes(3);
+			java.util.Date	myDate 			= loadDate(3);
+			byte[]			myPriceBytes 	= loadBytes(4);
 		
 			/* Load the item */
-			theList.addItem(myID, myDate, myActId, myPriceBytes);
+			theList.addItem(myID, myControlId, myDate, myActId, myPriceBytes);
 		}
 		
 		/* else this is a load from an edit-able spreadsheet */
 		else {
 			/* Access the Account */
-			myAccount	= loadString(0);
+			String myAccount	= loadString(0);
 		
 			/* Access the name and description bytes */
-			myDate 		= loadDate(1);
-			myPrice		= loadString(2);
+			java.util.Date	myDate 	= loadDate(1);
+			String			myPrice	= loadString(2);
 		
 			/* Load the item */
 			theList.addItem(myDate, myAccount, myPrice);
@@ -120,9 +114,10 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 		if (isBackup) {
 			/* Set the fields */
 			writeInteger(0, pItem.getId());
-			writeInteger(1, pItem.getAccount().getId());				
-			writeDate(2, pItem.getDate());
-			writeBytes(3, pItem.getPriceBytes());
+			writeInteger(1, pItem.getControlKey().getId());				
+			writeInteger(2, pItem.getAccount().getId());				
+			writeDate(3, pItem.getDate());
+			writeBytes(4, pItem.getPriceBytes());
 		}
 
 		/* else we are creating an edit-able spreadsheet */
@@ -154,8 +149,8 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 	protected void postProcessOnWrite() throws Throwable {		
 		/* If we are creating a backup */
 		if (isBackup) {
-			/* Set the four columns as the range */
-			nameRange(4);
+			/* Set the five columns as the range */
+			nameRange(5);
 		}
 
 		/* else this is an edit-able spreadsheet */

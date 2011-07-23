@@ -5,7 +5,7 @@ import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 
-public class AccountType extends StaticData<AccountClass> {
+public class AccountType extends StaticData<AccountType, AccountClass> {
 	/**
 	 * The name of the object
 	 */
@@ -71,16 +71,18 @@ public class AccountType extends StaticData<AccountClass> {
 	 * Construct a standard account type on load
 	 * @param pList	The list to associate the Account Type with
 	 * @param uId   ID of Account Type
+	 * @param uControlId the control id of the new item
 	 * @param uClassId the class id of the new item
 	 * @param pName Encrypted Name of Account Type
 	 * @param pDesc Encrypted Description of Account Type
 	 */
 	private AccountType(List 	pList,
 			            int		uId,
+			            int		uControlId,
 			            int		uClassId,
 			            byte[]	pName,
 			            byte[]	pDesc) throws Exception {
-		super(pList, uId, uClassId, pName, pDesc);
+		super(pList, uId, uControlId, uClassId, pName, pDesc);
 		pList.setNewId(this);				
 	}
 	
@@ -441,12 +443,14 @@ public class AccountType extends StaticData<AccountClass> {
 	 * Represents a list of {@link AccountType} objects. 
 	 */
 	public static class List extends StaticList<AccountType, AccountClass> {
+		protected Class<AccountClass> getEnumClass() { return AccountClass.class; }
+		
 	 	/** 
 	 	 * Construct an empty CORE account type list
 	 	 * @param pData the DataSet for the list
 	 	 */
 		protected List(DataSet pData) { 
-			super(AccountClass.class, pData.getEncryptedPairs(), ListStyle.CORE);
+			super(AccountType.class, pData, ListStyle.CORE);
 		}
 
 		/** 
@@ -454,7 +458,7 @@ public class AccountType extends StaticData<AccountClass> {
 	 	 * @param pList the source account type list 
 	 	 * @param pStyle the style of the list 
 	 	 */
-		public List(List pList, ListStyle pStyle) { super(pList, pStyle); }
+		public List(List pList, ListStyle pStyle) { super(AccountType.class, pList, pStyle); }
 
 		/** 
 	 	 * Construct a difference account type list
@@ -475,9 +479,9 @@ public class AccountType extends StaticData<AccountClass> {
 		 * @param pItem item to be added
 		 * @return the newly added item
 		 */
-		public AccountType addNewItem(DataItem pItem) {
+		public AccountType addNewItem(DataItem<?> pItem) {
 			AccountType myType = new AccountType(this, (AccountType)pItem);
-			myType.addToList();
+			add(myType);
 			return myType;
 		}
 	
@@ -517,7 +521,7 @@ public class AccountType extends StaticData<AccountClass> {
 			                        "Duplicate AccountClass");
 				
 			/* Add the Account Type to the list */
-			myActType.addToList();
+			add(myActType);
 		}	
 
 		/**
@@ -547,24 +551,26 @@ public class AccountType extends StaticData<AccountClass> {
 			                        "Duplicate AccountClass");
 				
 			/* Add the Account Type to the list */
-			myActType.addToList();
+			add(myActType);
 		}	
 
 		/**
 		 * Add an AccountType to the list
 		 * @param uId the Id of the account type
+		 * @param uControlId the control id of the new item
 		 * @param uClassId the ClassId of the account type
 		 * @param pActType the encrypted Name of the account type
 		 * @param pDesc the Encrypted Description of the account type
 		 */ 
 		public void addItem(int    uId,
+							int	   uControlId,
 							int	   uClassId,
 				            byte[] pActType,
 				            byte[] pDesc) throws Exception {
 			AccountType myActType;
 				
 			/* Create a new Account Type */
-			myActType = new AccountType(this, uId, uClassId, pActType, pDesc);
+			myActType = new AccountType(this, uId, uControlId, uClassId, pActType, pDesc);
 				
 			/* Check that this AccountTypeId has not been previously added */
 			if (!isIdUnique(uId)) 
@@ -585,7 +591,7 @@ public class AccountType extends StaticData<AccountClass> {
 			                        "Duplicate AccountClass");
 				
 			/* Add the Account Type to the list */
-			myActType.addToList();
-		}	
+			add(myActType);
+		}
 	}	
 }

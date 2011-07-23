@@ -4,7 +4,7 @@ import uk.co.tolcroft.finance.data.Event;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 
-public class ChargeableEvent extends DataItem {
+public class ChargeableEvent extends DataItem<ChargeableEvent> {
 	/**
 	 * The name of the object
 	 */
@@ -207,7 +207,7 @@ public class ChargeableEvent extends DataItem {
 		/**
 		 * Constructor
 		 */
-		public List() { super(ListStyle.VIEW, false); }
+		public List() { super(ChargeableEvent.class, ListStyle.VIEW, false); }
 		
 		/** 
 	 	 * Clone a Chargeable Event list
@@ -220,7 +220,7 @@ public class ChargeableEvent extends DataItem {
 		 * @param pItem the item to add
 		 * @return the newly added item
 		 */
-		public ChargeableEvent addNewItem(DataItem pItem) { return null; }
+		public ChargeableEvent addNewItem(DataItem<?> pItem) { return null; }
 
 	
 		/**

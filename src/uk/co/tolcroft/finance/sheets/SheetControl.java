@@ -38,6 +38,9 @@ public class SheetControl extends SheetDataItem<ControlData> {
 		/* Call super constructor */
 		super(pInput, Static);
 		
+		/* Note whether this is a backup */
+		isBackup = (pInput.getType() == SheetType.BACKUP);
+		
 		/* Access the Lists */
 		theData	= pInput.getData();
 		theList = theData.getControlData();

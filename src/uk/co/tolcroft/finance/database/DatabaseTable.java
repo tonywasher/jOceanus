@@ -13,7 +13,7 @@ import uk.co.tolcroft.models.DataItem.histObject;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
-public abstract class DatabaseTable<T extends DataItem> {
+public abstract class DatabaseTable<T extends DataItem<T>> {
 	/**
 	 * The Id column name
 	 */

@@ -333,7 +333,7 @@ public class Extract extends FinanceTable<Event> {
 	 * @param pItem the current item
 	 * @param pObj the potential object for restoration
 	 */
-	public boolean isValidObj(DataItem 				pItem,
+	public boolean isValidObj(DataItem<?>			pItem,
 							  DataItem.histObject  	pObj) {
 		Event.Values myEvent = (Event.Values) pObj;
 		
@@ -622,7 +622,7 @@ public class Extract extends FinanceTable<Event> {
 					case COLUMN_DESC:
 					case COLUMN_TRANTYP:
 						/* Re-Sort the row */
-						myEvent.reSort();
+						theEvents.reSort(myEvent);
 						
 						/* Determine new row # */
 						int myNewRowNo = myEvent.indexOf();
@@ -688,7 +688,7 @@ public class Extract extends FinanceTable<Event> {
 			if (theTable.isLocked()) return;
 			
 			/* Loop through the selected rows */
-			for (DataItem myRow : theTable.cacheSelectedRows()) {
+			for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
 				/* Ignore locked rows */
 				if ((myRow == null) || (myRow.isLocked())) continue;
 				
@@ -770,7 +770,7 @@ public class Extract extends FinanceTable<Event> {
 			if (theTable.isLocked()) return;
 			
 			/* Loop through the selected rows */
-			for (DataItem myRow : theTable.cacheSelectedRows()) {
+			for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
 				/* Ignore locked rows */
 				if ((myRow == null) || (myRow.isLocked())) continue;
 				
@@ -939,7 +939,7 @@ public class Extract extends FinanceTable<Event> {
 			int					row;
 
 			/* Loop through the selected rows */
-			for (DataItem myRow : theTable.cacheSelectedRows()) {
+			for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
 				/* Ignore locked rows */
 				if ((myRow == null) || (myRow.isLocked())) continue;
 				

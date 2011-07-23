@@ -63,14 +63,19 @@ public class PasswordKey {
 	private byte[] 				theSaltAndHash 		= null;
 	
 	/**
-	 * Partial hash 
+	 * Key hash 
 	 */
-	private byte[] 				thePartialHash 		= null;
-	
+	private byte[] 				theKeyHash			= null;
+
 	/**
-	 * Alternate hash 
+	 * Password hash 
 	 */
-	private byte[] 				theAlternateHash	= null;
+	private byte[] 				thePasswordHash		= null;
+
+	/**
+	 * Obscure hash 
+	 */
+	private byte[] 				theObscureHash		= null;
 
 	/**
 	 * Encrypted password 
@@ -173,7 +178,7 @@ public class PasswordKey {
 		char[] 		myPassword = null;
 		
 		/* Build the encryption cipher */
-		SecurityCipher myCipher = pSource.initDecryption(pSource.theAlternateHash);
+		SecurityCipher myCipher = pSource.initDecryption(pSource.thePasswordHash);
 		
 		/* Access the original password */
 		myPassword = myCipher.decryptChars(pSource.thePassword);
@@ -302,7 +307,7 @@ public class PasswordKey {
 			/* Generate the key */
 			thePassKey 		= PBEKeyFactory.getInstance(theKeyType,
 														theKeyMode.getSecondIterate(), 
-														theAlternateHash, 
+														theKeyHash, 
 														pPassword);
 			
 			/* Encrypt the password */
@@ -332,6 +337,8 @@ public class PasswordKey {
 		byte[] 			mySaltAndHash;
 		byte[] 			myMainHash;
 		byte[] 			myAltHash;
+		byte[] 			myPartialHash		= null;
+		byte[] 			myPartialAltHash	= null;
 		byte[]			mySeed = { 'T', 'o', 'L', 'C', 'r', '0', 'F', 't' };
 		MessageDigest 	myMainDigest;
 		MessageDigest 	myAltDigest;
@@ -357,9 +364,12 @@ public class PasswordKey {
 			
 			/* Loop through the iterations */
 			for (int i=0; i < iThird; i++) {
-				/* If we have hit the partial iteration point store the partial hash */
-				if (i == iSecond) 
-					thePartialHash = Arrays.copyOf(myAltHash, myAltHash.length); 
+				/* If we have hit the partial iteration point */
+				if (i == iSecond) {
+					/* Store the partial hashes */
+					myPartialHash 		= Arrays.copyOf(myAltHash, myAltHash.length);
+					myPartialAltHash	= Arrays.copyOf(myMainHash, myMainHash.length);
+				}
 				
 				/* Update the main digest and calculate it */
 				myMainDigest.update(myMainHash);
@@ -390,18 +400,20 @@ public class PasswordKey {
 				}
 			}
 			
+			/* Combine the hashes as required */
+			byte[] myExternalHash 	= combineHashes(myMainHash, myAltHash);
+			theKeyHash				= combineHashes(myMainHash, myPartialAltHash);
+			thePasswordHash			= combineHashes(myAltHash, 	myPartialHash);
+			theObscureHash			= combineHashes(myPartialAltHash, 	myPartialHash);
+			
 			/* Obscure the hash arrays */
-			myMainHash = obscureArray(myMainHash);
-			myAltHash  = obscureArray(myAltHash);
-			
-			/* Store the alternate hash */
-			theAlternateHash = myAltHash;
-			
+			myExternalHash = obscureArray(myExternalHash);
+
 			/* Combine the salt and hash */
-			mySaltAndHash = new byte[pSalt.length+MODELENGTH+myMainHash.length];
+			mySaltAndHash = new byte[pSalt.length+MODELENGTH+myExternalHash.length];
 			System.arraycopy(pSalt, 0, mySaltAndHash, 0, pSalt.length);
 			System.arraycopy(theKeyMode.getByteMode(), 0, mySaltAndHash, pSalt.length, MODELENGTH);
-			System.arraycopy(myMainHash, 0, mySaltAndHash, pSalt.length+MODELENGTH, myMainHash.length);
+			System.arraycopy(myExternalHash, 0, mySaltAndHash, pSalt.length+MODELENGTH, myExternalHash.length);
 		}
 		
 		catch (Throwable e) {
@@ -622,7 +634,7 @@ public class PasswordKey {
 		int	   			i;
 		
 		/* If password has not been set */
-		if (thePartialHash == null) {
+		if (theObscureHash == null) {
 			/* Throw an exception */
 			throw new Exception(ExceptionClass.LOGIC,
 								"Password not set");
@@ -632,16 +644,51 @@ public class PasswordKey {
 		myArray = Arrays.copyOf(pArray, pArray.length);
 		
 		/* Determine length of operation */
-		myLen = thePartialHash.length;
+		myLen = theObscureHash.length;
 		
 		/* Loop through the array bytes */
 		for (i=0; i<pArray.length; i++) {
 			/* Obscure the byte */
-			myArray[i] ^= thePartialHash[i % myLen];
+			myArray[i] ^= theObscureHash[i % myLen];
 		}
 					
 		/* return the array */
 		return myArray;
+	}	
+
+	/**
+	 * Simple function to combine hashes. Hashes are simply XORed together.
+	 * @param pFirst the first Hash
+	 * @param pSecond the second Hash
+	 * @return the combined hash
+	 */
+	private byte[] combineHashes(byte[] pFirst, byte[] pSecond) throws Exception {
+		byte[] 			myTarget	= pSecond;
+		byte[]			mySource	= pFirst;
+		int	   			myLen;
+		int	   			i;
+		
+		/* If the target is smaller than the source */
+		if (myTarget.length < mySource.length) {
+			/* Reverse the order to make use of all bits */
+			myTarget = pFirst;
+			mySource = pSecond;
+		}
+		
+		/* Allocate the target as a copy of the input */
+		myTarget = Arrays.copyOf(myTarget, myTarget.length);
+		
+		/* Determine length of operation */
+		myLen = mySource.length;
+		
+		/* Loop through the array bytes */
+		for (i=0; i<myTarget.length; i++) {
+			/* Combine the bytes */
+			myTarget[i] ^= mySource[i % myLen];
+		}
+					
+		/* return the array */
+		return myTarget;
 	}	
 
 	/**
@@ -740,7 +787,7 @@ public class PasswordKey {
 	 */
 	private void encryptPassword(char[] pPassword) throws Exception {
 		/* Build the encryption cipher */
-		SecurityCipher myCipher = initEncryption(theAlternateHash);
+		SecurityCipher myCipher = initEncryption(thePasswordHash);
 		
 		/* Encrypt the password characters */
 		thePassword = myCipher.encryptChars(pPassword);
@@ -757,7 +804,7 @@ public class PasswordKey {
 		/* Protect against exceptions */
 		try {
 			/* Build the encryption cipher */
-			SecurityCipher myCipher = initDecryption(theAlternateHash);
+			SecurityCipher myCipher = initDecryption(thePasswordHash);
 		
 			/* Access the original password */
 			myPassword = myCipher.decryptChars(thePassword);

@@ -5,7 +5,7 @@ import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.finance.data.StaticClass.FreqClass;
 
-public class Frequency extends StaticData<FreqClass> {
+public class Frequency extends StaticData<Frequency, FreqClass> {
 	/**
 	 * The name of the object
 	 */
@@ -71,16 +71,18 @@ public class Frequency extends StaticData<FreqClass> {
 	 * Construct a standard Frequency on load
 	 * @param pList	The list to associate the Frequency with
 	 * @param uId   ID of Frequency
+	 * @param uControlId the control id of the new item
 	 * @param uClassId the class id of the new item
 	 * @param pName Encrypted Name of Frequency
 	 * @param pDesc Encrypted Description of TaxRegime
 	 */
 	private Frequency(List 		pList,
 			      	  int		uId,
+			      	  int		uControlId,
 			      	  int		uClassId,
 			      	  byte[]	pName,
 			      	  byte[]	pDesc) throws Exception {
-		super(pList, uId, uClassId, pName, pDesc);
+		super(pList, uId, uControlId, uClassId, pName, pDesc);
 		pList.setNewId(this);				
 	}
 
@@ -88,19 +90,21 @@ public class Frequency extends StaticData<FreqClass> {
 	 * Represents a list of {@link Frequency} objects. 
 	 */
 	public static class List  extends StaticList<Frequency, FreqClass> {
-	 	/** 
+		protected Class<FreqClass> getEnumClass() { return FreqClass.class; }
+
+		/** 
 	 	 * Construct an empty CORE frequency list
 	 	 * @param pData the DataSet for the list
 	 	 */
 		protected List(DataSet pData) { 
-			super(FreqClass.class, pData.getEncryptedPairs(), ListStyle.CORE); }
+			super(Frequency.class, pData, ListStyle.CORE); }
 		
 		/** 
 	 	 * Construct a generic frequency data list
 	 	 * @param pList the source Frequency list 
 	 	 * @param pStyle the style of the list 
 	 	 */
-		public List(List pList, ListStyle pStyle) { super(pList, pStyle); }
+		public List(List pList, ListStyle pStyle) { super(Frequency.class, pList, pStyle); }
 
 		/** 
 	 	 * Construct a difference static data list
@@ -126,9 +130,9 @@ public class Frequency extends StaticData<FreqClass> {
 		 * @param pItem item to be added
 		 * @return the newly added item
 		 */
-		public Frequency addNewItem(DataItem pItem) {
+		public Frequency addNewItem(DataItem<?> pItem) {
 			Frequency myFreq = new Frequency(this, (Frequency)pItem);
-			myFreq.addToList();
+			add(myFreq);
 			return myFreq;
 		}
 	
@@ -163,7 +167,7 @@ public class Frequency extends StaticData<FreqClass> {
 			                        "Duplicate FrequencyClass");
 				
 			/* Add the Frequency to the list */
-			myFrequency.addToList();		
+			add(myFrequency);		
 		}
 		
 		/**
@@ -193,25 +197,27 @@ public class Frequency extends StaticData<FreqClass> {
 			                        "Duplicate FrequencyClass");
 				
 			/* Add the Frequency to the list */
-			myFreq.addToList();
+			add(myFreq);
 		}	
 
 		/**
 		 * Add a Frequency
 		 * @param uId the Id of the frequency
+		 * @param uControlId the control id of the new item
 		 * @param uClassId the ClassId of the frequency
 		 * @param pFrequency the Encrypted Name of the frequency
 		 * @param pDesc the Encrypted Description of the frequency
 		 * @throws Exception on error
 		 */ 
 		public void addItem(int		uId,
+							int		uControlId,
 							int		uClassId,
 				            byte[] 	pFrequency,
 				            byte[]	pDesc) throws Exception {
 			Frequency myFrequency;
 			
 			/* Create a new Frequency */
-			myFrequency = new Frequency(this, uId, uClassId, pFrequency, pDesc);
+			myFrequency = new Frequency(this, uId, uControlId, uClassId, pFrequency, pDesc);
 				
 			/* Check that this FrequencyId has not been previously added */
 			if (!isIdUnique(uId)) 
@@ -232,7 +238,7 @@ public class Frequency extends StaticData<FreqClass> {
 			                        "Duplicate FrequencyClass");
 				
 			/* Add the Frequency to the list */
-			myFrequency.addToList();		
+			add(myFrequency);		
 		}		
 	}
 }

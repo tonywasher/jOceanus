@@ -1,9 +1,11 @@
 package uk.co.tolcroft.models;
 
-import uk.co.tolcroft.models.EncryptedPair.StringPair;
+import uk.co.tolcroft.finance.data.DataSet;
+import uk.co.tolcroft.finance.data.EncryptedItem;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
-public abstract class StaticData<E extends Enum<E>> extends DataItem {
+public abstract class StaticData<T extends StaticData<T,E>,
+								 E extends Enum<E>> extends EncryptedItem<T> {
 	/**
 	 * Interface for Static Classes
 	 */
@@ -13,9 +15,9 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	}
 	
 	/**
-	 * The class of the Static Data
+	 * The Enum class of the Static Data
 	 */
-	private Class<E>		theDataClass 	= null;
+	private Class<E>		theEnumClass 	= null;
 
 	/**
 	 * The instance enum of the Static Data
@@ -45,12 +47,6 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	public byte[] 		getNameBytes() 	{ return getObj().getNameBytes(); }
 	
 	/**
-	 * Return the encrypted pair name of the Static Data
-	 * @return the encrypted pair name
-	 */
-	private StringPair	getNamePair() 	{ return getObj().getName(); }
-	
-	/**
 	 * Return the description of the Static Data
 	 * @return the description
 	 */
@@ -61,12 +57,6 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	 * @return the encrypted description
 	 */
 	public byte[] 		getDescBytes() 	{ return getObj().getDescBytes(); }
-	
-	/**
-	 * Return the encrypted pair description of the Static Data
-	 * @return the encrypted pair description
-	 */
-	private StringPair	getDescPair() 	{ return getObj().getDesc(); }
 	
 	/**
 	 * Return the sort order of the Static Data
@@ -87,15 +77,15 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	public int			getStaticClassId()	{ return theClassId; }
 	
 	/* Linking methods */
-	public StaticData<?>.Values  getObj()  { return (StaticData<?>.Values)super.getObj(); }	
+	public StaticData<?,?>.Values  getObj()  { return (StaticData<?,?>.Values)super.getObj(); }	
 
 	/* Field IDs */
-	public static final int FIELD_NAME     	= 1;
-	public static final int FIELD_DESC     	= 2;
-	public static final int FIELD_ORDER     = 3;
-	public static final int FIELD_CLASS     = 4;
-	public static final int FIELD_CLASSID   = 5;
-	public static final int NUMFIELDS	    = 6;
+	public static final int FIELD_NAME     	= EncryptedItem.NUMFIELDS;
+	public static final int FIELD_DESC     	= EncryptedItem.NUMFIELDS+1;
+	public static final int FIELD_ORDER     = EncryptedItem.NUMFIELDS+2;
+	public static final int FIELD_CLASS     = EncryptedItem.NUMFIELDS+3;
+	public static final int FIELD_CLASSID   = EncryptedItem.NUMFIELDS+4;
+	public static final int NUMFIELDS	    = EncryptedItem.NUMFIELDS+5;
 	
 	/**
 	 * Obtain the number of fields for an item
@@ -109,13 +99,12 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	 */
 	public static String	fieldName(int iField) {
 		switch (iField) {
-			case FIELD_ID: 	    return NAME_ID;
 			case FIELD_NAME:    return "Name";
 			case FIELD_DESC:    return "Description";
 			case FIELD_ORDER:   return "Order";
 			case FIELD_CLASS:   return "Class";
 			case FIELD_CLASSID: return "ClassId";
-			default:		    return DataItem.fieldName(iField);
+			default:		    return EncryptedItem.fieldName(iField);
 		}
 	}
 	
@@ -132,15 +121,14 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	 */
 	public String formatField(int iField, histObject pObj) {
 		String myString = ""; 
-		@SuppressWarnings("unchecked")
-		Values 	myObj 	 = (Values)pObj;
+		StaticData<?,?>.Values 	myObj 	 = (StaticData<?,?>.Values)pObj;
 		switch (iField) {
-			case FIELD_ID: 		myString += getId();  	break;
 			case FIELD_NAME:	myString += myObj.getNameValue(); 	break;
 			case FIELD_DESC:	myString += myObj.getDescValue(); 	break;
 			case FIELD_ORDER: 	myString += getOrder();	break;
 			case FIELD_CLASS: 	myString += theClass;	break;
 			case FIELD_CLASSID: myString += theClassId;	break;
+			default:			myString += super.formatField(iField, pObj); break;
 		}
 		return myString;
 	}
@@ -160,17 +148,17 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 		if (pThat.getClass() != this.getClass()) return false;
 		
 		/* Access the target StaticData */
-		StaticData<?> myThat = (StaticData<?>)pThat;
+		StaticData<?,?> myThat = (StaticData<?,?>)pThat;
 
 		/* Make sure that the object is the same enumeration class */
-		if (myThat.theDataClass != this.theDataClass) 	return false;
+		if (myThat.theEnumClass != this.theEnumClass) 	return false;
 		
-		/* Compare the id and name */
+		/* Compare the id and class */
 		if (getId() 	!= myThat.getId()) 								return false;
 		if (getStaticClass() != myThat.getStaticClass())				return false;
-		if (EncryptedPair.differs(getNamePair(), myThat.getNamePair())) return false;
-		if (EncryptedPair.differs(getDescPair(), myThat.getDescPair())) return false;
-		return true;
+		
+		/* Compare the changeable values */
+		return getObj().histEquals(myThat.getObj());
 	}
 
 	/**
@@ -191,10 +179,10 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 		if (pThat.getClass() != this.getClass()) return -1;
 		
 		/* Access the target Static Data */
-		StaticData<?> myThat = (StaticData<?>)pThat;
+		StaticData<?,?> myThat = (StaticData<?,?>)pThat;
 		
 		/* Make sure that the object is the same enumeration class */
-		if (myThat.theDataClass != this.theDataClass) return -1;
+		if (myThat.theEnumClass != this.theEnumClass) return -1;
 		
 		/* Compare on order */
 		if (theOrder < myThat.theOrder) return -1;
@@ -217,13 +205,14 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	 * @param pList	The list to associate the Static Data with
 	 * @param pSource The static data to copy 
 	 */
-	protected StaticData(StaticList<?,E>	pList,
-			             StaticData<E>		pSource) { 
+	protected StaticData(StaticList<T,E>	pList,
+			             StaticData<T,E>	pSource) { 
 		super(pList, pSource.getId());
 		Values myObj = new Values(pSource.getObj());
 		setObj(myObj);
+		setControlKey(pSource.getControlKey());		
 		theClass 		= pSource.theClass;
-		theDataClass 	= pSource.theDataClass;
+		theEnumClass 	= pSource.theEnumClass;
 		theOrder 		= pSource.getOrder();
 		theClassId 		= pSource.getStaticClassId();
 		setBase(pSource);
@@ -236,17 +225,16 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	 * @param uId the id of the new item
 	 * @param pValue the name of the new item
 	 */
-	protected StaticData(StaticList<?,E> 	pList, 
+	protected StaticData(StaticList<T,E> 	pList, 
 					  	 String				pValue) throws Exception {
 		super(pList, 0);
-		theDataClass = pList.theDataClass;
+		theEnumClass = pList.getEnumClass();
 		parseEnumValue(pValue);
 		Values myObj = new Values();
 		setObj(myObj);
 
-		/* Create the Encrypted pair for the name */
-		EncryptedPair	myPairs = pList.thePairs;
-		myObj.setName(myPairs.new StringPair(pValue));
+		/* Create the pair for the name */
+		myObj.setName(new StringPair(pValue));
 	}
 	
 	/**
@@ -256,47 +244,48 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	 * @param pValue the encrypted name of the new item
 	 * @param pDesc the encrypted description of the new item
 	 */
-	protected StaticData(StaticList<?,E> 	pList, 
+	protected StaticData(StaticList<T,E> 	pList, 
 					  	 int 				uClassId,
 					  	 String				pValue,
 					  	 String				pDesc) throws Exception {
 		super(pList, 0);
-		theDataClass = pList.theDataClass;
+		theEnumClass = pList.getEnumClass();
 		parseEnumId(uClassId);
 		Values myObj = new Values();
 		setObj(myObj);
-		
-		/* Create the Encrypted pair for the name */
-		EncryptedPair	myPairs = pList.thePairs;
-		myObj.setName(myPairs.new StringPair(pValue));
-		if (pDesc != null)
-			myObj.setDesc(myPairs.new StringPair(pDesc));
+				
+		/* Create the pairs for the name and description */
+		myObj.setName(new StringPair(pValue));
+		if (pDesc != null) myObj.setDesc(new StringPair(pDesc));
 	}
 	
 	/**
 	 * Encrypted constructor
 	 * @param pList The list to associate the Static Data with
 	 * @param uId the id of the new item
+	 * @param uControlId the control id of the new item
 	 * @param uClassId the class id of the new item
 	 * @param pValue the encrypted name of the new item
 	 * @param pDesc the encrypted description of the new item
 	 */
-	protected StaticData(StaticList<?,E> 	pList, 
+	protected StaticData(StaticList<T,E> 	pList, 
 					  	 int 				uId,
+					  	 int 				uControlId,
 					  	 int 				uClassId,
 					  	 byte[]				pValue,
 					  	 byte[]				pDesc) throws Exception {
 		super(pList, uId);
-		theDataClass = pList.theDataClass;
+		theEnumClass = pList.getEnumClass();
 		parseEnumId(uClassId);
 		Values myObj = new Values();
 		setObj(myObj);
 		
-		/* Create the Encrypted pair for the name */
-		EncryptedPair	myPairs = pList.thePairs;
-		myObj.setName(myPairs.new StringPair(pValue));
-		if (pDesc != null)
-			myObj.setDesc(myPairs.new StringPair(pDesc));
+		/* Store the controlId */
+		setControlKey(uControlId);
+		
+		/* Create the pairs for the name and description */
+		myObj.setName(new StringPair(pValue));
+		if (pDesc != null) myObj.setDesc(new StringPair(pDesc));
 	}
 	
 	/**
@@ -305,7 +294,7 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	 */
 	private void parseEnumValue(String pValue) throws Exception {
 		StaticInterface myIFace 	= null;
-		E[] 			myValues 	= (E[])theDataClass.getEnumConstants();
+		E[] 			myValues 	= (E[])theEnumClass.getEnumConstants();
 		
 		/* Loop through the enum constants */
 		for (E myValue: myValues) {
@@ -328,13 +317,13 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 		/* Reject if we didn't find the class */
 		if (theClass == null) 
 			throw new Exception(ExceptionClass.DATA,
-							    "Invalid value for " + theDataClass.getSimpleName() +
+							    "Invalid value for " + theEnumClass.getSimpleName() +
 								": " + pValue);
 		
 		/* Reject if class was wrong type */
 		if (myIFace == null) 
 			throw new Exception(ExceptionClass.DATA,
-							    "Class: " + theDataClass.getSimpleName() +
+							    "Class: " + theEnumClass.getSimpleName() +
 								" is not valid for StaticData");
 	}
 	
@@ -344,14 +333,14 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	 */
 	private void parseEnumId(int pId) throws Exception {
 		StaticInterface myIFace 	= null;
-		E[] 			myValues 	= (E[])theDataClass.getEnumConstants();
+		E[] 			myValues 	= (E[])theEnumClass.getEnumConstants();
 		
 		/* Loop through the enum constants */
 		for (E myValue: myValues) {
 			/* Ensure that the class is of the right type */
 			if (!(myValue instanceof StaticInterface)) 
 				throw new Exception(ExceptionClass.DATA,
-									"Class: " + theDataClass.getSimpleName() +
+									"Class: " + theEnumClass.getSimpleName() +
 									" is not valid for StaticData");
 				
 			/* Access via interface */
@@ -370,7 +359,7 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 		/* Reject if we didn't find the class */
 		if (theClass == null) 
 			throw new Exception(ExceptionClass.DATA,
-							    "Invalid id for " + theDataClass.getSimpleName() +
+							    "Invalid id for " + theEnumClass.getSimpleName() +
 								": " + pId);		
 	}
 	
@@ -379,7 +368,7 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	 * @param pData the static data to format
 	 * @return the formatted data
 	 */
-	public static String format(StaticData<?> pData) {
+	public static String format(StaticData<?,?> pData) {
 		String 	myFormat;
 		myFormat = (pData != null) ? pData.getName()
 							       : "null";
@@ -392,7 +381,7 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	 * @param pNew The new Data
 	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
 	 */	
-	public static boolean differs(StaticData<?> pCurr, StaticData<?> pNew) {
+	public static boolean differs(StaticData<?,?> pCurr, StaticData<?,?> pNew) {
 		return (((pCurr == null) && (pNew != null)) ||
 				((pCurr != null) && 
 				 ((pNew == null) || (!pCurr.equals(pNew)))));
@@ -403,19 +392,8 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	 * @param pName the name 
 	 */
 	public void setName(String pName) throws Exception {
-		/* If we are setting a non null value */
-		if (pName != null) {
-			/* Create the Encrypted pair for the values */
-			EncryptedPair	myPairs = ((StaticList<?,?>)getList()).thePairs;
-			StringPair		myPair	= myPairs.new StringPair(pName);
-		
-			/* Record the value and encrypt it*/
-			getObj().setName(myPair);
-			myPair.ensureEncryption();
-		}
-		
-		/* Else we are setting a null value */
-		else getObj().setName(null);
+		if (pName != null) 	getObj().setName(new StringPair(pName));
+		else 				getObj().setName(null);
 	}
 
 	/**
@@ -423,19 +401,9 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	 * @param pDesc the description 
 	 */
 	public void setDescription(String pDesc) throws Exception {
-		/* If we are setting a non null value */
-		if (pDesc != null) {
-			/* Create the Encrypted pair for the values */
-			EncryptedPair	myPairs = ((StaticList<?,?>)getList()).thePairs;
-			StringPair		myPair	= myPairs.new StringPair(pDesc);
-		
-			/* Record the value and encrypt it*/
-			getObj().setDesc(myPair);
-			myPair.ensureEncryption();
-		}
-		
-		/* Else we are setting a null value */
-		else getObj().setDesc(null);
+		/* Set the appropriate value */
+		if (pDesc != null) 	getObj().setDesc(new StringPair(pDesc));
+		else 				getObj().setDesc(null);
 	}
 
 	/**
@@ -443,21 +411,21 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	 * @param pData the updated item 
 	 * @return whether changes have been made
 	 */
-	public boolean applyChanges(DataItem pData) {
-		StaticData<?>			myData 		=  (StaticData<?>)pData;
-		StaticData<?>.Values	myObj		= getObj();
-		StaticData<?>.Values	myNew		= myData.getObj();
+	public boolean applyChanges(DataItem<?> pData) {
+		StaticData<?,?>			myData 		= (StaticData<?,?>)pData;
+		StaticData<?,?>.Values	myObj		= getObj();
+		StaticData<?,?>.Values	myNew		= myData.getObj();
 		boolean  				bChanged	= false;
 
 		/* Store the current detail into history */
 		pushHistory();
 
 		/* Update the name if required */
-		if (EncryptedPair.differs(myObj.getName(), myNew.getName())) 
+		if (differs(myObj.getName(), myNew.getName())) 
 			myObj.setName(myNew.getName());
 
 		/* Update the description if required */
-		if (EncryptedPair.differs(myObj.getDesc(), myNew.getDesc())) 
+		if (differs(myObj.getDesc(), myNew.getDesc())) 
 			myObj.setDesc(myNew.getDesc());
 
 		/* Check for changes */
@@ -472,50 +440,25 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	}
 
 	/**
-	 * Ensure encryption after spreadsheet load
-	 */
-	protected void ensureEncryption() throws Exception {
-		StaticData<?>.Values myObj = getObj();
-
-		/* Protect against exceptions */
-		try {
-			/* Ensure the encryption */
-			myObj.getName().ensureEncryption();
-			if (myObj.getDesc() != null)
-				myObj.getDesc().ensureEncryption();
-		}
-		
-		/* Catch exception */
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
-								this,
-								"Failed to complete encryption",
-								e);
-		}
-	}
-	
-	/**
 	 * Represents a list of StaticData objects. 
 	 */
-	public abstract static class StaticList<T extends StaticData<E>, E extends Enum<E>>  extends DataList<T> {
+	public abstract static class StaticList<T extends StaticData<T, E>, E extends Enum<E>>  extends EncryptedList<T> {
 		/**
-		 * The class of the Static Data
+		 * Obtain the enumClass
+		 * @return the enumClass
 		 */
-		private Class<E>		theDataClass 	= null;
-		private EncryptedPair	thePairs 		= null;
-
+		protected abstract Class<E>		getEnumClass();
+		
 		/** 
 	 	 * Construct a generic static data list
 	 	 * @param enumClass the static class of the items
 	 	 * @param pPairs the encrypted pair control  
 	 	 * @param pStyle the style of the list 
 	 	 */
-		public StaticList(Class<E>		enumClass,
-						  EncryptedPair	pPairs,
+		public StaticList(Class<T>		pClass,
+						  DataSet		pData,
 						  ListStyle 	pStyle) { 
-			super(pStyle, true);
-			theDataClass 	= enumClass;
-			thePairs		= pPairs;
+			super(pClass, pData, pStyle);
 		}
 
 		/** 
@@ -523,10 +466,10 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	 	 * @param pList the source Data list 
 	 	 * @param pStyle the style of the list 
 	 	 */
-		public StaticList(StaticList<T,E> pList, ListStyle pStyle) { 
-			super(pList, pStyle);
-			theDataClass 	= pList.theDataClass;
-			thePairs		= pList.thePairs;
+		public StaticList(Class<T> pClass, 
+						  StaticList<T,E> pList,
+						  ListStyle pStyle) { 
+			super(pClass, pList, pStyle);
 		}
 
 		/** 
@@ -536,8 +479,6 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	 	 */
 		protected StaticList(StaticList<T,E> pNew, StaticList<T,E> pOld) { 
 			super(pNew, pOld);
-			theDataClass 	= pNew.theDataClass;
-			thePairs		= pNew.thePairs;
 		}
 				
 		/* List Iterators */
@@ -613,18 +554,18 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 	/**
 	 * Values for a static data
 	 */
-	public class Values implements histObject {
+	public class Values extends EncryptedValues {
 		private StringPair	theName      = null;
 		private StringPair	theDesc      = null;
 		
 		/* Access methods */
 		public StringPair  	getName()      	{ return theName; }
 		public StringPair  	getDesc()      	{ return theDesc; }
-		private	Class<E>   	getDataClass()	{ return theDataClass; }
-		public String  		getNameValue()  { return EncryptedPair.getPairValue(theName); }
-		public String  		getDescValue()  { return EncryptedPair.getPairValue(theDesc); }
-		public byte[]  		getNameBytes()  { return EncryptedPair.getPairBytes(theName); }
-		public byte[]  		getDescBytes()  { return EncryptedPair.getPairBytes(theDesc); }
+		private	Class<E>   	getEnumClass()	{ return theEnumClass; }
+		public String  		getNameValue()  { return getPairValue(theName); }
+		public String  		getDescValue()  { return getPairValue(theDesc); }
+		public byte[]  		getNameBytes()  { return getPairBytes(theName); }
+		public byte[]  		getDescBytes()  { return getPairBytes(theDesc); }
 		
 		/* Value setting */
 		public void setName(StringPair pName) { theName = pName; }
@@ -632,9 +573,10 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 
 		/* Constructor */
 		public Values() {}
-		public Values(StaticData<?>.Values pValues) {
-			theName      = pValues.getName();
-			theDesc      = pValues.getDesc();
+		public Values(StaticData<?,?>.Values pValues) {
+			theName      = new StringPair(pValues.getName());
+			if (pValues.getDesc() != null)
+				theDesc  = new StringPair(pValues.getDesc());
 		}
 		
 		/* Check whether this object is equal to that passed */
@@ -643,23 +585,23 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 			if (pCompare.getClass() != this.getClass()) return false;
 			
 			/* Cast correctly */
-			StaticData<?>.Values myValues = (StaticData<?>.Values)pCompare;
+			StaticData<?,?>.Values myValues = (StaticData<?,?>.Values)pCompare;
 			
 			/* Make sure that the object is the same enumeration class */
-			if (myValues.getDataClass() != theDataClass) return false;
+			if (myValues.getEnumClass() != theEnumClass) return false;
 
 			/* Make the actual comparison */
 			return histEquals(myValues);
 		}
 		public boolean histEquals(Values pValues) {
-			if (EncryptedPair.differs(theName,    pValues.theName))    return false;
-			if (EncryptedPair.differs(theDesc,    pValues.theDesc))    return false;
+			if (differs(theName,    pValues.theName))    return false;
+			if (differs(theDesc,    pValues.theDesc))    return false;
 			return true;
 		}
 		
 		/* Copy values */
 		public void    copyFrom(histObject pSource) {
-			StaticData<?>.Values myValues = (StaticData<?>.Values)pSource;
+			StaticData<?,?>.Values myValues = (StaticData<?,?>.Values)pSource;
 			copyFrom(myValues);
 		}
 		public histObject copySelf() {
@@ -669,17 +611,26 @@ public abstract class StaticData<E extends Enum<E>> extends DataItem {
 			theName      = pValues.getName();
 		}
 		public boolean	fieldChanged(int fieldNo, histObject pOriginal) {
-			StaticData<?>.Values 	pValues = (StaticData<?>.Values)pOriginal;
+			StaticData<?,?>.Values 	pValues = (StaticData<?,?>.Values)pOriginal;
 			boolean	bResult = false;
 			switch (fieldNo) {
 				case FIELD_NAME:
-					bResult = (EncryptedPair.differs(theName,      pValues.theName));
+					bResult = (differs(theName,      pValues.theName));
 					break;
 				case FIELD_DESC:
-					bResult = (EncryptedPair.differs(theDesc,      pValues.theDesc));
+					bResult = (differs(theDesc,      pValues.theDesc));
 					break;
 			}
 			return bResult;
 		}
+
+		/**
+		 * Ensure encryption after security change
+		 */
+		protected void applySecurity() throws Exception {
+			/* Apply the encryption */
+			theName.encryptPair();
+			if (theDesc != null) theDesc.encryptPair();
+		}		
 	}
 }

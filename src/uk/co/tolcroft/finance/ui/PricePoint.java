@@ -257,7 +257,7 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 	 * @param pItem the current item
 	 * @param pObj the potential object for restoration
 	 */
-	public boolean isValidObj(DataItem 				pItem,
+	public boolean isValidObj(DataItem<?>			pItem,
 							  DataItem.histObject  	pObj) {
 		SpotPrices.SpotPrice	mySpot  = (SpotPrices.SpotPrice) pItem;
 		AcctPrice.Values          	myPrice = (AcctPrice.Values) pObj;
@@ -479,7 +479,7 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 			if (theTable.isLocked()) return;
 			
 			/* Loop through the selected rows */
-			for (DataItem myRow : theTable.cacheSelectedRows()) {
+			for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
 				/* Ignore locked rows */
 				if ((myRow == null) || (myRow.isLocked())) continue;
 				

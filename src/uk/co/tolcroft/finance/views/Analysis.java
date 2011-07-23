@@ -111,31 +111,31 @@ public class Analysis {
 				case ASSETDETAIL:
 					if (myCurr.isActive()) {
 						myAsset = new AssetAccount(theList, (AssetAccount)myCurr);
-						myAsset.addToList();
+						theList.add(myAsset);
 					}
 					break;
 				case DEBTDETAIL:
 					if (myCurr.isActive()) {
 						myDebt = new DebtAccount(theList, (DebtAccount)myCurr);
-						myDebt.addToList();
+						theList.add(myDebt);
 					}
 					break;
 				case MONEYDETAIL:
 					if (myCurr.isActive()) {
 						myMoney = new MoneyAccount(theList, (MoneyAccount)myCurr);
-						myMoney.addToList();
+						theList.add(myMoney);
 					}
 					break;
 				case EXTERNALDETAIL:
 					if (myCurr.isActive()) {
 						myExternal = new ExternalAccount(theList, (ExternalAccount)myCurr);
-						myExternal.addToList();
+						theList.add(myExternal);
 					}
 					break;
 				case TRANSDETAIL:
 					if (myCurr.isActive()) {
 						myTrans = new TransDetail(theList, (TransDetail)myCurr);
-						myTrans.addToList();
+						theList.add(myTrans);
 					}
 					break;
 			}
@@ -143,7 +143,7 @@ public class Analysis {
 	}
 	
 	/* The core AnalysisBucket Class */
-	protected static abstract class AnalysisBucket extends DataItem {
+	protected static abstract class AnalysisBucket extends DataItem<AnalysisBucket> {
 		/* Members */
 		private BucketType	theBucketType = null;
 		private DataSet		theData		  = null;
@@ -168,9 +168,8 @@ public class Analysis {
 		}
 	
 		/* Field IDs */
-		public static final int FIELD_ID	  	= 0;
-		public static final int FIELD_TYPE  	= 1;
-		public static final int NUMFIELDS	    = 2;
+		public static final int FIELD_TYPE  	= DataItem.NUMFIELDS;
+		public static final int NUMFIELDS	    = DataItem.NUMFIELDS+1;
 	
 		/**
 		 * Determine the field name for a particular field
@@ -178,7 +177,6 @@ public class Analysis {
 		 */
 		public static String	fieldName(int iField) {
 			switch (iField) {
-				case FIELD_ID: 			return "Id";
 				case FIELD_TYPE: 		return "Type";
 				default:		  		return DataItem.fieldName(iField);
 			}
@@ -193,11 +191,11 @@ public class Analysis {
 		public String formatField(int iField, histObject pObj) {
 			String myString = ""; 
 			switch (iField) {
-				case FIELD_ID: 			
-					myString += getId();
-					break;
 				case FIELD_TYPE:		
 					myString += theBucketType;
+					break;
+				default: 			
+					myString += super.formatField(iField, pObj);
 					break;
 			}
 			return myString;
@@ -276,7 +274,7 @@ public class Analysis {
 		 * Construct a top-level List
 		 */
 		public BucketList(Analysis pAnalysis) { 
-			super(ListStyle.VIEW, false);
+			super(AnalysisBucket.class, ListStyle.VIEW, false);
 			theAnalysis = pAnalysis;
 		}
 
@@ -291,7 +289,7 @@ public class Analysis {
 		 * @param pItem the item to add
 		 * @return the newly added item
 		 */
-		public AnalysisBucket addNewItem(DataItem pItem) { return null; }
+		public AnalysisBucket addNewItem(DataItem<?> pItem) { return null; }
 	
 		/**
 		 * Add a new item to the edit list
@@ -354,7 +352,7 @@ public class Analysis {
 				}
 				
 				/* Add to the list */
-				myItem.addToList();
+				add(myItem);
 			}
 			
 			/* Return the bucket */
@@ -378,7 +376,7 @@ public class Analysis {
 			if (myItem == null) {
 				/* Allocate it and add to the list */
 				myItem = new AssetSummary(this, pActType);
-				myItem.addToList();
+				add(myItem);
 			}
 			
 			/* Return the bucket */
@@ -415,7 +413,7 @@ public class Analysis {
 			if (myItem == null) {
 				/* Allocate it and add to the list */
 				myItem = new TransDetail(this, pTransType);
-				myItem.addToList();
+				add(myItem);
 			}
 			
 			/* Return the bucket */
@@ -440,7 +438,7 @@ public class Analysis {
 			if (myItem == null) {
 				/* Allocate it and add to the list */
 				myItem = new TransSummary(this, myTaxType);
-				myItem.addToList();
+				add(myItem);
 			}
 			
 			/* Return the bucket */
@@ -465,7 +463,7 @@ public class Analysis {
 			if (myItem == null) {
 				/* Allocate it and add to the list */
 				myItem = new TaxDetail(this, myTaxType);
-				myItem.addToList();
+				add(myItem);
 			}
 			
 			/* Return the bucket */
@@ -488,7 +486,7 @@ public class Analysis {
 			if (myItem == null) {
 				/* Allocate it and add to the list */
 				myItem = new AssetTotal(this);
-				myItem.addToList();
+				add(myItem);
 			}
 			
 			/* Return the bucket */
@@ -511,7 +509,7 @@ public class Analysis {
 			if (myItem == null) {
 				/* Allocate it and add to the list */
 				myItem = new ExternalTotal(this);
-				myItem.addToList();
+				add(myItem);
 			}
 			
 			/* Return the bucket */
@@ -534,7 +532,7 @@ public class Analysis {
 			if (myItem == null) {
 				/* Allocate it and add to the list */
 				myItem = new MarketTotal(this);
-				myItem.addToList();
+				add(myItem);
 			}
 			
 			/* Return the bucket */
@@ -559,7 +557,7 @@ public class Analysis {
 			if (myItem == null) {
 				/* Allocate it and add to the list */
 				myItem = new TransTotal(this, myTaxType);
-				myItem.addToList();
+				add(myItem);
 			}
 			
 			/* Return the bucket */

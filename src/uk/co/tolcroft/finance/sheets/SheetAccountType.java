@@ -57,9 +57,9 @@ public class SheetAccountType extends SheetStaticData<AccountType> {
 	/**
 	 * Load encrypted 
 	 */
-	protected void loadEncryptedItem(int pId, int pClassId, byte[] pName, byte[] pDesc) throws Exception {
+	protected void loadEncryptedItem(int pId, int pControlId, int pClassId, byte[] pName, byte[] pDesc) throws Exception {
 		/* Create the item */
-		theList.addItem(pId, pClassId, pName, pDesc);		
+		theList.addItem(pId, pControlId, pClassId, pName, pDesc);		
 	}
 
 	/**

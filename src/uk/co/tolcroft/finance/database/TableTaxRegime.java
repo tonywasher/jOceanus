@@ -40,8 +40,8 @@ public class TableTaxRegime extends TableStaticData<TaxRegime> {
 	}
 	
 	/* Load the tax regime */
-	protected void loadTheItem(int pId, int pClassId, byte[] pRegime, byte[] pDesc) throws Exception {
+	protected void loadTheItem(int pId, int pControlId, int pClassId, byte[] pRegime, byte[] pDesc) throws Exception {
 		/* Add into the list */
-		theList.addItem(pId, pClassId, pRegime, pDesc);
+		theList.addItem(pId, pControlId, pClassId, pRegime, pDesc);
 	}	
 }

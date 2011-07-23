@@ -13,7 +13,7 @@ import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.security.AsymmetricKey.AsymKeyType;
 import uk.co.tolcroft.security.SymmetricKey.SymKeyType;
 
-public class SecurityControl extends DataItem {
+public class SecurityControl extends DataItem<SecurityControl> {
 	/**
 	 * The name of the object
 	 */
@@ -95,9 +95,6 @@ public class SecurityControl extends DataItem {
 		
 		/* Protect against exceptions */
 		try { 
-			/* Create a new secure random generator */
-			theRandom 	= new SecureRandom();
-
 			/* Store the security key */
 			theSecurityKey = pSecurityKey;
 		}
@@ -137,15 +134,14 @@ public class SecurityControl extends DataItem {
 		
 		/* Note that we are now initialised and add to the list */
 		isInitialised = true;
-		addToList();
+		getList().add(this);
 	}
 	
 	/**
 	 * Initialise the security control with a password
 	 * @param pPassword the password (cleared after usage)
 	 */
-	public synchronized void initControl(char[] pPassword) throws WrongPasswordException,
-													 			  Exception {
+	public synchronized void initControl(char[] pPassword) throws WrongPasswordException, Exception {
 		/* Handle already initialised */
 		if (isInitialised)
 			throw new Exception(ExceptionClass.LOGIC,
@@ -160,6 +156,9 @@ public class SecurityControl extends DataItem {
 				providersAdded = true;
 			}
 			
+			/* Create a new secure random generator */
+			theRandom 	= new SecureRandom();
+
 			/* If the security key is currently null */
 			if (theSecurityKey == null) {
 				/* Generate the key mode */
@@ -240,7 +239,7 @@ public class SecurityControl extends DataItem {
 	 */
 	public void reSeedRandom() {
 		/* Generate and apply the new seed */
-		byte[] mySeed = SecureRandom.getSeed(8);
+		byte[] mySeed = SecureRandom.getSeed(32);
 		theRandom.setSeed(mySeed);
 	}
 	
@@ -445,11 +444,10 @@ public class SecurityControl extends DataItem {
 	}	
 
 	/* Field IDs */
-	public static final int FIELD_ID  		= 0;
-	public static final int FIELD_INIT 		= 1;
-	public static final int FIELD_SECKEY	= 2;
-	public static final int FIELD_PUBKEY	= 3;
-	public static final int NUMFIELDS	    = 4;
+	public static final int FIELD_INIT 		= 0;
+	public static final int FIELD_SECKEY	= 1;
+	public static final int FIELD_PUBKEY	= 2;
+	public static final int NUMFIELDS	    = 3;
 	
 	/**
 	 * Obtain the type of the item
@@ -469,7 +467,6 @@ public class SecurityControl extends DataItem {
 	 */
 	public static String	fieldName(int iField) {
 		switch (iField) {
-			case FIELD_ID: 			return "ID";
 			case FIELD_INIT: 		return "Initialised";
 			case FIELD_SECKEY: 		return "SecurityKey";
 			case FIELD_PUBKEY: 		return "PublicKey";
@@ -491,9 +488,6 @@ public class SecurityControl extends DataItem {
 	public String formatField(int iField, histObject pObj) {
 		String myString = ""; 
 		switch (iField) {
-			case FIELD_ID: 			
-				myString += getId();
-				break;
 			case FIELD_INIT: 
 				myString +=	(isInitialised() ? "true" : "false");
 				break;
@@ -560,7 +554,7 @@ public class SecurityControl extends DataItem {
 		/**
 		 * Construct a top-level List
 		 */
-		public List() { super(ListStyle.VIEW, false); }
+		public List() { super(SecurityControl.class, ListStyle.VIEW, false); }
 
 		/** 
 	 	 * Clone a Bucket list
@@ -573,7 +567,7 @@ public class SecurityControl extends DataItem {
 		 * @param pItem the item to add
 		 * @return the newly added item
 		 */
-		public SecurityControl addNewItem(DataItem pItem) { return null; }
+		public SecurityControl addNewItem(DataItem<?> pItem) { return null; }
 	
 		/**
 		 * Add a new item to the edit list
@@ -609,7 +603,7 @@ public class SecurityControl extends DataItem {
 			if (myControl == null) {
 				/* Create a new control and add it to the list */
 				myControl = new SecurityControl(this, pSecurityKey);
-				myControl.addToList();
+				add(myControl);
 			}
 			
 			/* Return to caller */
@@ -621,23 +615,28 @@ public class SecurityControl extends DataItem {
 	 * Digest type
 	 */
 	public enum DigestType {
-		SHA256(1),
-		Tiger(2),
-		WHIRLPOOL(3);
+		SHA256(1, 256),
+		Tiger(2, 192),
+		WHIRLPOOL(3, 512),
+		RIPEMD(4, 320),
+		GOST(5, 256);
 
 		/**
 		 * Key values 
 		 */
 		private int theId = 0;
+		private int theHashLen = 0;
 		
 		/* Access methods */
 		public int getId() 		{ return theId; }
+		public int getHashLen()	{ return theHashLen; }
 		
 		/**
 		 * Constructor
 		 */
-		private DigestType(int id) {
+		private DigestType(int id, int iLen) {
 			theId 		= id;
+			theHashLen	= iLen;
 		}
 		
 		/**
@@ -658,6 +657,8 @@ public class SecurityControl extends DataItem {
 		public String getAlgorithm() {
 			switch (this) {
 				case SHA256: 	return "SHA-256";
+				case RIPEMD: 	return "RIPEMD320";
+				case GOST: 		return "GOST3411";
 				default:		return toString();
 			}
 		}

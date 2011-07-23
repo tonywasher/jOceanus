@@ -40,8 +40,8 @@ public class TableTaxType extends TableStaticData<TaxType> {
 	}
 	
 	/* Load the tax type */
-	protected void loadTheItem(int pId, int pClassId, byte[] pType, byte[] pDesc) throws Exception {
+	protected void loadTheItem(int pId, int pControlId, int pClassId, byte[] pType, byte[] pDesc) throws Exception {
 		/* Add into the list */
-		theList.addItem(pId, pClassId, pType, pDesc);
+		theList.addItem(pId, pControlId, pClassId, pType, pDesc);
 	}
 }

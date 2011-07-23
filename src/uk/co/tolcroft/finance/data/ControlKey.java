@@ -1,21 +1,24 @@
 package uk.co.tolcroft.finance.data;
 
+import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import uk.co.tolcroft.models.DataItem;
 import uk.co.tolcroft.models.DataList;
 import uk.co.tolcroft.models.DataState;
-import uk.co.tolcroft.models.EncryptedPair;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.security.AsymmetricKey;
 import uk.co.tolcroft.security.SecureManager;
 import uk.co.tolcroft.security.SecurityControl;
+import uk.co.tolcroft.security.SymmetricKey;
 import uk.co.tolcroft.security.SymmetricKey.SymKeyType;
 
-public class ControlKey extends DataItem {
+public class ControlKey extends DataItem<ControlKey> {
 	/**
 	 * The name of the object
 	 */
@@ -27,9 +30,19 @@ public class ControlKey extends DataItem {
 	public static final String listName = objName + "s";
 
 	/**
+	 * Number of Encryption steps 
+	 */
+	public final static int NUMSTEPS	= 3;
+
+	/**
 	 * Control Key Length
 	 */
 	public final static int CTLLEN 		= AsymmetricKey.IDSIZE;
+
+	/**
+	 * Control Key Length
+	 */
+	public final static int KEYIDLEN 	= numKeyBytes(NUMSTEPS);
 
 	/**
 	 * The DataKey Map
@@ -38,6 +51,7 @@ public class ControlKey extends DataItem {
 	
 	/* Local values */
 	private SecurityControl	theControl	= null;
+	private SecureRandom	theRandom	= null;
 	
 	/* Access methods */
 	public  SecurityControl	getSecurityControl()	{ return theControl; }
@@ -48,8 +62,8 @@ public class ControlKey extends DataItem {
 	public Values  		getObj()  { return (Values)super.getObj(); }	
 	
 	/* Field IDs */
-	public static final int FIELD_KEY	   = 1;
-	public static final int NUMFIELDS	   = 2; 
+	public static final int FIELD_KEY	   = DataItem.NUMFIELDS;
+	public static final int NUMFIELDS	   = DataItem.NUMFIELDS+1; 
 
 	/**
 	 * Obtain the type of the item
@@ -69,7 +83,6 @@ public class ControlKey extends DataItem {
 	 */
 	public static String	fieldName(int iField) {
 		switch (iField) {
-			case FIELD_ID:			return NAME_ID;
 			case FIELD_KEY:			return "ControlKey";
 			default:		  		return DataItem.fieldName(iField);
 		}
@@ -89,11 +102,11 @@ public class ControlKey extends DataItem {
 	public String formatField(int iField, histObject pObj) {
 		String 	myString = "";
 		switch (iField) {
-			case FIELD_ID: 		
-				myString += getId(); 
-				break;
 			case FIELD_KEY:
 				myString += getSecurityKey(); 
+				break;
+			default: 		
+				myString += super.formatField(iField, pObj); 
 				break;
 		}
 		return myString;
@@ -109,6 +122,7 @@ public class ControlKey extends DataItem {
 		Values myObj = new Values(pKey.getObj());
 		setObj(myObj);
 		theControl		= pKey.getSecurityControl();
+		theRandom		= theControl.getRandom();
 
 		/* Switch on the LinkStyle */
 		switch (pList.getStyle()) {
@@ -149,6 +163,7 @@ public class ControlKey extends DataItem {
 		
 		/* Obtain the required security control */
 		theControl = mySecurity.getSecurityControl(pSecurityKey, "Database");
+		theRandom  = theControl.getRandom();
 		
 		/* Create the DataKey Map */
 		theMap = new EnumMap<SymKeyType,DataKey>(SymKeyType.class);
@@ -170,10 +185,10 @@ public class ControlKey extends DataItem {
 		/* Access the Security manager */
 		DataSet 		myData 		= pList.getData();
 		SecureManager 	mySecurity 	= myData.getSecurity();
-		EncryptedPair	myPairs		= myData.getEncryptedPairs();
 		
 		/* Obtain the required security control */
 		theControl = mySecurity.getSecurityControl(null, "Database");
+		theRandom  = theControl.getRandom();
 		myObj.setSecurityKey(theControl.getSecurityKey());
 		
 		/* Create the DataKey Map */
@@ -184,10 +199,6 @@ public class ControlKey extends DataItem {
 				
 		/* Allocate the DataKeys */
 		allocateDataKeys(pList.getData());
-		
-		/* TEMP Obtain the AES key */
-		DataKey myKey = theMap.get(SymKeyType.AES);
-		myPairs.setEncryptionDtl(myKey.getDataKey(), myKey.getInitVector());
 	}
 
 	/**
@@ -204,12 +215,13 @@ public class ControlKey extends DataItem {
 		if (pThat.getClass() != this.getClass()) return false;
 		
 		/* Access the object as a ControlKey */
-		ControlKey myKey = (ControlKey)pThat;
+		ControlKey myThat = (ControlKey)pThat;
 		
 		/* Check for equality */
-		if (getId() != myKey.getId()) 		return false;
-		if (Utils.differs(getSecurityKey(), myKey.getSecurityKey())) return false;
-		return true;
+		if (getId() != myThat.getId()) 		return false;
+		
+		/* Compare the changeable values */
+		return getObj().histEquals(myThat.getObj());
 	}
 
 	/**
@@ -257,18 +269,160 @@ public class ControlKey extends DataItem {
 	}
 	
 	/**
+	 * Delete the old set of ControlKey and DataKeys 
+	 * @param pData the DataSet
+	 */
+	private void deleteControlSet() {
+		/* Loop through the SymKeyType values */
+		for (SymKeyType myType: SymKeyType.values()) {
+			/* Access the Data Key */
+			DataKey myKey = theMap.get(myType);
+			
+			/* Mark as deleted */
+			if (myKey != null) myKey.setState(DataState.DELETED);
+		}
+		
+		/* Mark this control key as deleted */
+		setState(DataState.DELETED);
+	}
+	
+	/**
 	 * Register DataKey 
 	 * @param pKey the DataKey to register
 	 */
 	protected void registerDataKey(DataKey pKey) throws Exception {
 		/* Store the DataKey into the map */
 		theMap.put(pKey.getKeyType(), pKey);
-
-		/* TEMP Obtain the AES key */
-		if (pKey.getKeyType() == SymKeyType.AES) {
-			EncryptedPair myPairs = ((List)getList()).theData.getEncryptedPairs();
-			myPairs.setEncryptionDtl(pKey.getDataKey(), pKey.getInitVector());
+	}
+	
+	/**
+	 * Encrypt item 
+	 * @param pBytes the bytes to encrypt
+	 * @return the encrypted bytes
+	 */
+	protected byte[] encryptBytes(byte[] pBytes) throws Exception {
+		/* Allocate a new initialisation vector */
+		byte[] myVector = new byte[SymmetricKey.IVSIZE];
+		theRandom.nextBytes(myVector);
+		
+		/* Determine the SymKeyTypes to use */
+		SymKeyType[] myKeyTypes = SymKeyType.getRandomTypes(NUMSTEPS, theRandom);
+		
+		/* Encode the array */
+		byte[] myKeyBytes = encodeSymKeyTypes(myKeyTypes);
+		
+		/* Loop through the SymKeyTypes */
+		for (int i=0; i < myKeyTypes.length; i++) {
+			/* Access the DataKey */
+			DataKey myKey = theMap.get(myKeyTypes[i]);
+			
+			/* Encrypt the bytes */
+			pBytes = myKey.getCipher().encryptBytes(pBytes, myVector);
 		}
+		
+		/* Allocate the bytes */
+		byte[] myEncrypt = new byte[SymmetricKey.IVSIZE + myKeyBytes.length + pBytes.length];
+		System.arraycopy(myVector, 0, myEncrypt, 0, SymmetricKey.IVSIZE);
+		System.arraycopy(myKeyBytes, 0, myEncrypt, SymmetricKey.IVSIZE, myKeyBytes.length);
+		System.arraycopy(pBytes, 0, myEncrypt, SymmetricKey.IVSIZE+myKeyBytes.length,  pBytes.length);
+		
+		/* Return the encrypted bytes */
+		return myEncrypt;
+	}
+
+	/**
+	 * Determine length of bytes to encode the number of keys
+	 * @param pNumKeys the number of keys
+	 * @return the number of bytes 
+	 */
+	private static int numKeyBytes(int pNumKeys) {
+		/* Determine the number of bytes */
+		return 1 + (pNumKeys/2);
+	}
+	
+	/**
+	 * Encode SymKeyTypes
+	 * @param pTypes the types to encode
+	 * @return the encoded types
+	 */
+	private byte[] encodeSymKeyTypes(SymKeyType[] pTypes) throws Exception {
+		/* Determine the number of bytes */
+		int myNumBytes = numKeyBytes(pTypes.length);
+		
+		/* Allocate the bytes */
+		byte[] myBytes = new byte[myNumBytes];
+		Arrays.fill(myBytes, (byte)0);
+		
+		/* Loop through the keys */
+		for (int i=0, j=0; i<pTypes.length; i++) {
+			/* Access the id of the Symmetric Key */
+			int myId = pTypes[i].getId();
+			
+			/* Access the id */
+			if ((i % 2) == 1) { myId *= 16; j++; }
+			myBytes[j] |= myId;
+		}
+		
+		/* Encode the number of keys */
+		myBytes[0] |= (16*pTypes.length);
+		
+		/* Return the bytes */
+		return myBytes;
+	}
+	
+	/**
+	 * Decode SymKeyTypes
+	 * @param pBytes the encrypted bytes
+	 * @return the array of SymKeyTypes
+	 */
+	private SymKeyType[] decodeSymKeyTypes(byte[] pBytes) throws Exception {
+		/* Extract the number of SymKeys */
+		int myNumKeys = pBytes[SymmetricKey.IVSIZE] / 16;
+		
+		/* Allocate the array */
+		SymKeyType[] myTypes = new SymKeyType[myNumKeys];
+		
+		/* Loop through the keys */
+		for (int i=0, j=SymmetricKey.IVSIZE; i<myNumKeys; i++) {
+			/* Access the id of the Symmetric Key */
+			int myId = pBytes[j];
+			
+			/* Isolate the id */
+			if ((i % 2) == 1)  myId /= 16; else j++;
+			myId &= 15;
+			
+			/* Determine the SymKeyType */
+			myTypes[i] = SymKeyType.fromId(myId);
+		}
+		
+		/* Return the array */
+		return myTypes;
+	}
+	
+	/**
+	 * Decrypt item 
+	 * @param pBytes the bytes to decrypt
+	 * @return the decrypted bytes
+	 */
+	protected byte[] decryptBytes(byte[] pBytes) throws Exception {
+		/* Split the bytes into the separate parts */
+		byte[] 			myVector = Arrays.copyOf(pBytes, SymmetricKey.IVSIZE);
+		SymKeyType[]	myTypes	 = decodeSymKeyTypes(pBytes);	
+		byte[] 			myBytes  = Arrays.copyOfRange(pBytes, 
+													  SymmetricKey.IVSIZE+numKeyBytes(myTypes.length), 
+													  pBytes.length);
+		
+		/* Loop through the SymKeyTypes */
+		for (int i=myTypes.length-1; i >= 0; i--) {
+			/* Access the DataKey */
+			DataKey myKey = theMap.get(myTypes[i]);
+			
+			/* Encrypt the bytes */
+			myBytes = myKey.getCipher().decryptBytes(myBytes, myVector);
+		}
+		
+		/* Return the decrypted bytes */
+		return myBytes;
 	}
 	
 	/**
@@ -296,7 +450,7 @@ public class ControlKey extends DataItem {
 	 	 * @param pData the DataSet for the list
 		 */
 		protected List(DataSet pData) { 
-			super(ListStyle.CORE, false);
+			super(ControlKey.class, ListStyle.CORE, false);
 			theData = pData;
 		}
 
@@ -306,7 +460,7 @@ public class ControlKey extends DataItem {
 		 * @param pStyle the style of the list 
 		 */
 		protected List(DataSet pData, ListStyle pStyle) {
-			super(pStyle, false);
+			super(ControlKey.class, pStyle, false);
 			theData = pData;
 		}
 
@@ -316,7 +470,7 @@ public class ControlKey extends DataItem {
 		 * @param pStyle the style of the list 
 		 */
 		public List(List pList, ListStyle pStyle) { 
-			super(pList, pStyle);
+			super(ControlKey.class, pList, pStyle);
 			theData = pList.theData;
 		}
 
@@ -341,9 +495,9 @@ public class ControlKey extends DataItem {
 		 * @param pItem item
 		 * @return the newly added item
 		 */
-		public ControlKey addNewItem(DataItem pItem) { 
+		public ControlKey addNewItem(DataItem<?> pItem) { 
 			ControlKey myKey = new ControlKey(this, (ControlKey)pItem);
-			myKey.addToList();
+			add(myKey);
 			return myKey; 
 		}
 
@@ -379,7 +533,7 @@ public class ControlKey extends DataItem {
 									"Duplicate ControlKeyId <" + uId + ">");
 			 
 			/* Add to the list */
-			myKey.addToList();
+			add(myKey);
 			return myKey;
 		}			
 
@@ -393,12 +547,12 @@ public class ControlKey extends DataItem {
 			myKey = new ControlKey(this);
 			
 			/* Add to the list */
-			myKey.addToList();
+			add(myKey);
 			return myKey;
 		}			
 
 		/**
-		 * Initialise Security from a DataBase 
+		 * Initialise Security from a DataBase for a SpreadSheet load
 		 * @param pControlKey the ControlKey to clone (or null)
 		 */
 		protected void initialiseSecurity(ControlKey pControlKey) throws Exception {
@@ -424,6 +578,22 @@ public class ControlKey extends DataItem {
 		}
 		
 		/**
+		 * Delete old controlKeys 
+		 */
+		protected void purgeOldControlKeys() {
+			/* Access the current control Key */
+			ControlKey myKey = theData.getControlKey();
+			
+			/* Loop through the controlKeys */
+			Iterator<ControlKey> myIterator = iterator();
+			ControlKey myCurr;
+			while ((myCurr = myIterator.next()) != null) { 
+				/* Delete if this is not the active key */
+				if (!myKey.equals(myCurr)) myCurr.deleteControlSet(); 
+			}
+		}
+		
+		/**
 		 * Clone Security from a DataBase 
 		 * @param pControlKey the ControlKey to clone
 		 */
@@ -446,12 +616,6 @@ public class ControlKey extends DataItem {
 				
 				/* Store the DataKey into the map */
 				myControl.theMap.put(myType, myKey);
-
-				/* TEMP Obtain the AES key */
-				if (myType == SymKeyType.AES) {
-					EncryptedPair myPairs = theData.getEncryptedPairs();
-					myPairs.setEncryptionDtl(myKey.getDataKey(), myKey.getInitVector());
-				}
 			}
 			
 			/* return the cloned key */

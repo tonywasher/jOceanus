@@ -4,11 +4,11 @@ import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 
-public class ControlData extends DataItem {
+public class ControlData extends DataItem<ControlData> {
 	/**
 	 * The name of the object
 	 */
-	public static final String objName = "Static";
+	public static final String objName = "ControlData";
 
 	/**
 	 * The name of the object
@@ -27,9 +27,9 @@ public class ControlData extends DataItem {
 	public Values  		getObj()  { return (Values)super.getObj(); }	
 	
 	/* Field IDs */
-	public static final int FIELD_VERS	   = 1;
-	public static final int FIELD_CONTROL  = 2;
-	public static final int NUMFIELDS	   = 3; 
+	public static final int FIELD_VERS	   = DataItem.NUMFIELDS;
+	public static final int FIELD_CONTROL  = DataItem.NUMFIELDS+1;
+	public static final int NUMFIELDS	   = DataItem.NUMFIELDS+2; 
 
 	/**
 	 * Obtain the type of the item
@@ -49,7 +49,6 @@ public class ControlData extends DataItem {
 	 */
 	public static String	fieldName(int iField) {
 		switch (iField) {
-			case FIELD_ID:			return NAME_ID;
 			case FIELD_VERS:		return "Version";
 			case FIELD_CONTROL:		return "Control";
 			default:		  		return DataItem.fieldName(iField);
@@ -70,14 +69,14 @@ public class ControlData extends DataItem {
 	public String formatField(int iField, histObject pObj) {
 		String 	myString = "";
 		switch (iField) {
-			case FIELD_ID: 		
-				myString += getId(); 
-				break;
 			case FIELD_VERS:
 				myString += getDataVersion(); 
 				break;
 			case FIELD_CONTROL:
 				myString += theControlId; 
+				break;
+			default: 		
+				myString += super.formatField(iField, pObj); 
 				break;
 		}
 		return myString;
@@ -168,13 +167,13 @@ public class ControlData extends DataItem {
 		if (pThat.getClass() != this.getClass()) return false;
 		
 		/* Access the object as a Static */
-		ControlData myStatic = (ControlData)pThat;
+		ControlData myThat = (ControlData)pThat;
 		
-		/* Check for equality */
-		if (getId() != myStatic.getId()) return false;
-		if (getDataVersion() != myStatic.getDataVersion()) 					return false;
-		if (ControlKey.differs(getControlKey(),  myStatic.getControlKey())) return false;
-		return true;
+		/* Check for equality on id */
+		if (getId() != myThat.getId())	return false;
+		
+		/* Compare the changeable values */
+		return getObj().histEquals(myThat.getObj());
 	}
 
 	/**
@@ -247,7 +246,7 @@ public class ControlData extends DataItem {
 	 	 * @param pData the DataSet for the list
 		 */
 		protected List(DataSet pData) { 
-			super(ListStyle.CORE, false);
+			super(ControlData.class, ListStyle.CORE, false);
 			theData = pData;
 		}
 
@@ -257,7 +256,7 @@ public class ControlData extends DataItem {
 		 * @param pStyle the style of the list 
 		 */
 		protected List(DataSet pData, ListStyle pStyle) {
-			super(pStyle, false);
+			super(ControlData.class, pStyle, false);
 			theData = pData;
 		}
 
@@ -267,7 +266,7 @@ public class ControlData extends DataItem {
 		 * @param pStyle the style of the list 
 		 */
 		public List(List pList, ListStyle pStyle) { 
-			super(pList, pStyle);
+			super(ControlData.class, pList, pStyle);
 			theData = pList.theData;
 		}
 
@@ -292,9 +291,9 @@ public class ControlData extends DataItem {
 		 * @param pItem item
 		 * @return the newly added item
 		 */
-		public ControlData addNewItem(DataItem pItem) { 
+		public ControlData addNewItem(DataItem<?> pItem) { 
 			ControlData myStatic = new ControlData(this, (ControlData)pItem);
-			myStatic.addToList();
+			add(myStatic);
 			return myStatic; 
 		}
 
@@ -339,7 +338,7 @@ public class ControlData extends DataItem {
 			 
 			/* Add to the list */
 			theControl = myStatic;
-			myStatic.addToList();
+			add(myStatic);
 		}			
 
 		/**
@@ -359,7 +358,7 @@ public class ControlData extends DataItem {
 			 
 			/* Add to the list */
 			theControl = myStatic;
-			myStatic.addToList();
+			add(myStatic);
 		}			
 	}
 

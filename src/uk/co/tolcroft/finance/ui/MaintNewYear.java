@@ -14,6 +14,7 @@ import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.views.DebugManager.DebugEntry;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.Exception;
 
 public class MaintNewYear extends FinanceTable<Event> implements ActionListener {
 	private static final long serialVersionUID = 7406051901546832781L;
@@ -131,7 +132,7 @@ public class MaintNewYear extends FinanceTable<Event> implements ActionListener 
 	/**
 	 * Refresh views/controls after a load/update of underlying data
 	 */
-	public void refreshData() {
+	public void refreshData() throws Exception {
 		DataSet 		myData = theView.getData();
 		TaxYear.List 	myList = myData.getTaxYears();
 		DataList<TaxYear>.ListIterator myIterator;
@@ -144,7 +145,7 @@ public class MaintNewYear extends FinanceTable<Event> implements ActionListener 
 	/**
 	 * Set Selection
 	 */
-	public void setSelection() {
+	public void setSelection() throws Exception {
 		if (theYear != null) {
 			theExtract = theView.new ViewEvents(theYear);
 			theEvents  = theExtract.getEvents();
