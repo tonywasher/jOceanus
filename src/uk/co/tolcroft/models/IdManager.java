@@ -95,14 +95,29 @@ public class IdManager<T extends DataItem<T>> {
 		/**
 		 * The map indexed by id
 		 */
-		private Object[] 			theArray	= null;
+		private idMap[] 			theMaps		= null;
 		
 		/**
-		 * constructor for map
+		 * The map indexed by id
 		 */
-		private void newArray() {
-			theArray = new Object[maxElements];
-			java.util.Arrays.fill(theArray, null);
+		private T[] 				theObjects	= null;
+		
+		/**
+		 * Build a new map array
+		 */
+		@SuppressWarnings("unchecked")
+		private void newMaps() {
+			theMaps = new IdManager.idMap[maxElements];
+			java.util.Arrays.fill(theMaps, null);
+		}
+		
+		/**
+		 * Build a new objects array
+		 */
+		@SuppressWarnings("unchecked")
+		private void newObjects() {
+			theObjects = (T[])new DataItem[maxElements];
+			java.util.Arrays.fill(theObjects, null);
 		}
 		
 		/**
@@ -110,7 +125,6 @@ public class IdManager<T extends DataItem<T>> {
 		 * @param pId the id of the item to retrieve 
 		 * @return the item for the id (or <code>null</code>) 
 		 */
-		@SuppressWarnings("unchecked")
 		private T getItem(int pId) {
 			int 	myIndex  = pId;
 			int 	myAdjust = 1;
@@ -128,7 +142,7 @@ public class IdManager<T extends DataItem<T>> {
 				if (myIndex >= maxElements) return null;
 
 				/* Access the relevant map */
-				myMap = (idMap)theArray[myIndex];
+				myMap = theMaps[myIndex];
 
 				/* If the map is empty return null */
 				if (myMap == null) return null;
@@ -143,12 +157,12 @@ public class IdManager<T extends DataItem<T>> {
 			/* If we are beyond the scope of this map return null */
 			if (myIndex >= maxElements) return null;
 
-			/* Return null if we have no array */
-			if (theArray == null) return null;
+			/* Return null if we have no objects */
+			if (theObjects == null) return null;
 			
 			/* Calculate final index and return item */
 			myIndex = pId % maxElements;
-			return (T)theArray[myIndex];
+			return theObjects[myIndex];
 		}
 
 		/**
@@ -156,7 +170,6 @@ public class IdManager<T extends DataItem<T>> {
 		 * @param pId the id of the item to retrieve 
 		 * @param pItem the item to store (or <code>null</code>) 
 		 */
-		@SuppressWarnings("unchecked")
 		private void setItem(int pId, T pItem) {
 			int 	myIndex 	= pId;
 			int 	myAdjust	= 1;
@@ -171,21 +184,22 @@ public class IdManager<T extends DataItem<T>> {
 			/* If we are beyond the scope of this map */
 			if (myIndex >= maxElements) {
 				/* If this map is non-empty */
-				if (theArray != null) {
+				if ((theMaps != null) || (theObjects != null)) { 
 					/* Create a sub-map based on this one */
 					myMap = new idMap();
-					myMap.theDepth = theDepth;
-					myMap.theArray = theArray;
+					myMap.theDepth 		= theDepth;
+					myMap.theMaps  		= theMaps;
+					myMap.theObjects	= theObjects;
 				}
 				
 				/* Increase the depth of this map */
 				theDepth++;
 
-				/* Create a new array for this map */
-				newArray();
+				/* Create a new maps array for this map */
+				newMaps();
 				
 				/* Store the map */
-				theArray[0] = myMap;
+				theMaps[0] = myMap;
 
 				/* Try with the adjusted map depth */
 				setItem(pId, pItem);
@@ -195,15 +209,15 @@ public class IdManager<T extends DataItem<T>> {
 			/* If we are not the final map */
 			if (theDepth > 0) {
 				/* Access the relevant map */
-				myMap = (idMap)theArray[myIndex];
+				myMap = theMaps[myIndex];
 
 				/* If the map is empty */
 				if (myMap == null) {
 					/* Create and store a new id map */
 					myMap = new idMap();
-					myMap.newArray();
+					myMap.newMaps();
 					myMap.theDepth = theDepth-1;
-					theArray[myIndex] = myMap;
+					theMaps[myIndex] = myMap;
 				}
 				
 				/* Adjust the index */
@@ -214,12 +228,12 @@ public class IdManager<T extends DataItem<T>> {
 				return;
 			}
 
-			/* Allocate the array if needed */
-			if (theArray == null) newArray();
+			/* Allocate the objects array if needed */
+			if (theObjects == null) newObjects();
 			
 			/* Store the item */
 			myIndex = pId % maxElements;
-			theArray[myIndex] = pItem;
+			theObjects[myIndex] = pItem;
 		}
 	}
 }

@@ -259,24 +259,23 @@ public class Statement implements htmlDumpable {
 	public static class Line extends EncryptedItem<Line>  {
 		private Money        		theBalance   = null;
 		private Units				theBalUnits  = null;
-		private boolean             isCredit     = false;
 		private Statement			theStatement = null;
 
 		/* Access methods */
 		public Account       	getAccount()   		{ return theStatement.theAccount; }
-		public Values      		getObj()       		{ return (Values)super.getObj(); }
-		public Date        		getDate()      		{ return getObj().getDate(); }
-		public String           getDesc()      		{ return getPairValue(getObj().getDesc()); }
-		public Units       		getUnits()     		{ return getPairValue(getObj().getUnits()); }
-		public Money       		getAmount()    		{ return getPairValue(getObj().getAmount()); }
-		public Account       	getPartner()   		{ return getObj().getPartner(); }
-		public Dilution   		getDilution() 		{ return getPairValue(getObj().getDilution()); }
-		public Money   			getTaxCredit() 		{ return getPairValue(getObj().getTaxCredit()); }
-		public Integer   		getYears() 			{ return getObj().getYears(); }
-		public TransactionType	getTransType() 		{ return getObj().getTransType(); }
+		public Values      		getValues()       	{ return (Values)super.getValues(); }
+		public Date        		getDate()      		{ return getValues().getDate(); }
+		public String           getDesc()      		{ return getPairValue(getValues().getDesc()); }
+		public Units       		getUnits()     		{ return getPairValue(getValues().getUnits()); }
+		public Money       		getAmount()    		{ return getPairValue(getValues().getAmount()); }
+		public Account       	getPartner()   		{ return getValues().getPartner(); }
+		public Dilution   		getDilution() 		{ return getPairValue(getValues().getDilution()); }
+		public Money   			getTaxCredit() 		{ return getPairValue(getValues().getTaxCredit()); }
+		public Integer   		getYears() 			{ return getValues().getYears(); }
+		public TransactionType	getTransType() 		{ return getValues().getTransType(); }
 		public Money       		getBalance()   		{ return theBalance; }
 		public Units       		getBalanceUnits() 	{ return theBalUnits; }
-		public boolean          isCredit()     		{ return isCredit; }
+		public boolean          isCredit()     		{ return getValues().isCredit(); }
 		
 		private View       		getView()   		{ return theStatement.theView; }
 		private ActDetail		getBucket()			{ return theStatement.theBucket; }
@@ -339,48 +338,48 @@ public class Statement implements htmlDumpable {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
-			String 		myString = "";
-			Values 	myObj 	 = (Values)pObj;
+		public String formatField(int iField, HistoryValues<Line> pValues) {
+			String 	myString = "";
+			Values 	myValues = (Values)pValues;
 			switch (iField) {
 				case FIELD_ACCOUNT:	
 					myString += Account.format(getAccount()); 
 					break;
 				case FIELD_DATE:	
-					myString += Date.format(myObj.getDate()); 
+					myString += Date.format(myValues.getDate()); 
 					break;
 				case FIELD_DESC:	
-					myString += myObj.getDescValue(); 
+					myString += myValues.getDescValue(); 
 					break;
 				case FIELD_TRNTYP: 	
-					myString += TransactionType.format(myObj.getTransType());	
+					myString += TransactionType.format(myValues.getTransType());	
 					break;
 				case FIELD_PARTNER:	
-					myString += Account.format(myObj.getPartner()); 
+					myString += Account.format(myValues.getPartner()); 
 					break;
 				case FIELD_AMOUNT: 	
-					myString += Money.format(myObj.getAmountValue());	
+					myString += Money.format(myValues.getAmountValue());	
 					break;
 				case FIELD_UNITS: 	
-					myString += Units.format(myObj.getUnitsValue());	
+					myString += Units.format(myValues.getUnitsValue());	
 					break;
 				case FIELD_CREDIT: 
 					myString +=	(isCredit() ? "true" : "false");
 					break;
 				case FIELD_TAXCREDIT: 	
-					myString += Money.format(myObj.getTaxCredValue());	
+					myString += Money.format(myValues.getTaxCredValue());	
 					break;
 				case FIELD_YEARS:	
-					myString += myObj.getYears(); 
+					myString += myValues.getYears(); 
 					break;
 				case FIELD_DILUTION:	
-					myString += Dilution.format(myObj.getDilutionValue()); 
+					myString += Dilution.format(myValues.getDilutionValue()); 
 					break;
 				default: 		
-					myString += super.formatField(iField, pObj); 
+					myString += super.formatField(iField, pValues); 
 					break;
 			}
 			return myString;
@@ -394,8 +393,8 @@ public class Statement implements htmlDumpable {
 			/* Set standard values */
 			super(pList, 0);
 			theStatement = pList.theStatement;
-			Values myObj = new Values(pLine.getObj());
-			setObj(myObj);
+			Values myValues = new Values(pLine.getValues());
+			setValues(myValues);
 			pList.setNewId(this);
 		}
 
@@ -404,48 +403,22 @@ public class Statement implements htmlDumpable {
 				    boolean        isCredit) {
 			super(pList, 0);
 			theStatement = pList.theStatement;
-			Values myObj = new Values();
-			setObj(myObj);
-			this.isCredit = isCredit;
+			Values myValues = new Values();
+			setValues(myValues);
+			myValues.setIsCredit(isCredit);
 			pList.setNewId(this);				
 		}
 
 		/* Standard constructor */
 		public Line(List        pList,
-				    Event   	pEvent,
-					Account 	pAccount) {
+				    Event   	pEvent) {
 			/* Make this an element */
 			super(pList, pEvent.getId());
 			theStatement = pList.theStatement;
-			Values 			myObj 	= new Values();
-			Event.Values	myBase 	= pEvent.getObj();
-			
-			setObj(myObj);
-			myObj.setDate(pEvent.getDate());
-			myObj.setDesc(new StringPair(myBase.getDesc()));
-			myObj.setAmount(new MoneyPair(myBase.getAmount()));
-			if (myBase.getUnits() != null)
-				myObj.setUnits(new UnitsPair(myBase.getUnits()));
-			myObj.setTransType(pEvent.getTransType());
-			if (myBase.getDilution() != null)
-				myObj.setDilution(new DilutionPair(myBase.getDilution()));
-			if (myBase.getTaxCredit() != null)
-				myObj.setTaxCredit(new MoneyPair(myBase.getTaxCredit()));
-			myObj.setYears(pEvent.getYears());
+			Values 			myValues	= new Values(pEvent.getValues());		
+			setValues(myValues);
 			setBase(pEvent);
 			pList.setNewId(this);				
-
-			/* If the account is credited */
-			if (pAccount.compareTo(pEvent.getCredit()) == 0) {
-				myObj.setPartner(pEvent.getDebit());
-				isCredit   = true;
-			}
-			
-			/* If the Account is debited */
-			else if (pAccount.compareTo(pEvent.getDebit()) == 0) {
-				myObj.setPartner(pEvent.getCredit());
-				isCredit   = false;
-			}
 		}
 					
 		/**
@@ -453,10 +426,10 @@ public class Statement implements htmlDumpable {
 		 */
 		public void validate() { validate(null); }
 		public void validate(Event.List pList) {
-			Event        						myEvent;
-			Event.validationCtl.errorElement 	myError;
-			int          						iField;
-			DataSet		 						myData;
+			Event        							myEvent;
+			ValidationControl<Event>.errorElement 	myError;
+			int          							iField;
+			DataSet		 							myData;
 		
 			/* Access DataSet */
 			myData = getView().getData();
@@ -626,7 +599,7 @@ public class Statement implements htmlDumpable {
 		 * @param pPartner the new partner 
 		 */
 		public void setPartner(Account pPartner) {
-			getObj().setPartner(pPartner);
+			getValues().setPartner(pPartner);
 		}
 		
 		/**
@@ -635,7 +608,7 @@ public class Statement implements htmlDumpable {
 		 * @param pTranType the transtype 
 		 */
 		public void setTransType(TransactionType pTranType) {
-			getObj().setTransType(pTranType);
+			getValues().setTransType(pTranType);
 		}
 		
 		/**
@@ -644,8 +617,8 @@ public class Statement implements htmlDumpable {
 		 * @param pDesc the description 
 		 */
 		public void setDescription(String pDesc) throws Exception {
-			if (pDesc != null) getObj().setDesc(new StringPair(pDesc));
-			else 			   getObj().setDesc(null);
+			if (pDesc != null) getValues().setDesc(new StringPair(pDesc));
+			else 			   getValues().setDesc(null);
 		}
 		
 		/**
@@ -654,8 +627,8 @@ public class Statement implements htmlDumpable {
 		 * @param pAmount the amount 
 		 */
 		public void setAmount(Money pAmount) throws Exception {
-			if (pAmount != null) getObj().setAmount(new MoneyPair(pAmount));
-			else 				 getObj().setAmount(null);
+			if (pAmount != null) getValues().setAmount(new MoneyPair(pAmount));
+			else 				 getValues().setAmount(null);
 		}
 		
 		/**
@@ -664,8 +637,8 @@ public class Statement implements htmlDumpable {
 		 * @param pUnits the units 
 		 */
 		public void setUnits(Units pUnits) throws Exception {
-			if (pUnits != null) getObj().setUnits(new UnitsPair(pUnits));
-			else 				getObj().setUnits(null);
+			if (pUnits != null) getValues().setUnits(new UnitsPair(pUnits));
+			else 				getValues().setUnits(null);
 		}
 		
 		/**
@@ -674,8 +647,8 @@ public class Statement implements htmlDumpable {
 		 * @param pDilution the dilution 
 		 */
 		public void setDilution(Dilution pDilution) throws Exception {
-			if (pDilution != null) getObj().setDilution(new DilutionPair(pDilution));
-			else 				   getObj().setDilution(null);
+			if (pDilution != null) getValues().setDilution(new DilutionPair(pDilution));
+			else 				   getValues().setDilution(null);
 		}
 		
 		/**
@@ -684,8 +657,8 @@ public class Statement implements htmlDumpable {
 		 * @param pTaxCredit the tax credit 
 		 */
 		public void setTaxCredit(Money pTaxCredit) throws Exception {
-			if (pTaxCredit != null) getObj().setTaxCredit(new MoneyPair(pTaxCredit));
-			else 				    getObj().setTaxCredit(null);
+			if (pTaxCredit != null) getValues().setTaxCredit(new MoneyPair(pTaxCredit));
+			else 				    getValues().setTaxCredit(null);
 		}
 		
 		/**
@@ -694,7 +667,7 @@ public class Statement implements htmlDumpable {
 		 * @param pYears the years 
 		 */
 		public void setYears(Integer pYears) {
-			getObj().setYears((pYears == null) ? null : new Integer(pYears));
+			getValues().setYears((pYears == null) ? null : new Integer(pYears));
 		}
 		
 		/**
@@ -703,7 +676,7 @@ public class Statement implements htmlDumpable {
 		 * @param pDate the new date 
 		 */
 		public void setDate(Date pDate) {
-			getObj().setDate((pDate == null) ? null : new Date(pDate));
+			getValues().setDate((pDate == null) ? null : new Date(pDate));
 		}
 		
 		/**
@@ -719,6 +692,7 @@ public class Statement implements htmlDumpable {
 			private MoneyPair		theTaxCredit = null;
 			private Integer			theYears  	 = null;
 			private TransactionType	theTransType = null;
+			private boolean         isCredit     = false;
 			
 			/* Access methods */
 			public Date       		getDate()      { return theDate; }
@@ -730,6 +704,8 @@ public class Statement implements htmlDumpable {
 			public MoneyPair   		getTaxCredit() { return theTaxCredit; }
 			public Integer     		getYears()     { return theYears; }
 			public TransactionType	getTransType() { return theTransType; }
+			public boolean			isCredit() 	   { return isCredit; }
+			public Account       	getAccount()   { return theStatement.theAccount; }
 			
 			/* Encrypted value access */
 			public  Money		getAmountValue()    { return getPairValue(getAmount()); }
@@ -756,62 +732,89 @@ public class Statement implements htmlDumpable {
 				theYears     = pYears; }
 			public void setTransType(TransactionType pTransType) {
 				theTransType = pTransType; }
+			public void setIsCredit(boolean isCredit) {
+				this.isCredit = isCredit; }
 
 			/* Constructor */
 			public Values() {}
-			public Values(Values pValues) {
-				theDate      = pValues.getDate();
-				theDesc      = pValues.getDesc();
-				theAmount    = pValues.getAmount();
-				thePartner   = pValues.getPartner();
-				theUnits     = pValues.getUnits();
-				theDilution  = pValues.getDilution();
-				theTaxCredit = pValues.getTaxCredit();
-				theYears     = pValues.getYears();
-				theTransType = pValues.getTransType();
-			}
+			public Values(Values 		pValues) { copyFrom(pValues); }
+			public Values(Event.Values 	pValues) { copyFrom(pValues); }
 			
 			/* Check whether this object is equal to that passed */
-			public boolean histEquals(histObject pCompare) {
+			public boolean histEquals(HistoryValues<Line> pCompare) {
 				Values myValues = (Values)pCompare;
-				return histEquals(myValues);
-			}
-			public boolean histEquals(Values pValues) {
-				if (Date.differs(theDate,      				pValues.theDate))      return false;
-				if (differs(theDesc,      					pValues.theDesc))      return false;
-				if (differs(theAmount,    					pValues.theAmount))    return false;
-				if (differs(theUnits,     					pValues.theUnits))     return false;
-				if (Account.differs(thePartner,   			pValues.thePartner))   return false;
-				if (differs(theDilution,					pValues.theDilution))  return false;
-				if (differs(theTaxCredit, 					pValues.theTaxCredit)) return false;
-				if (Utils.differs(theYears,     			pValues.theYears))     return false;
-				if (TransactionType.differs(theTransType,	pValues.theTransType)) return false;
+				if (!super.histEquals(pCompare))					  				return false;
+				if (isCredit != myValues.isCredit)      							return false;
+				if (Date.differs(theDate,      				myValues.theDate))      return false;
+				if (differs(theDesc,      					myValues.theDesc))      return false;
+				if (differs(theAmount,    					myValues.theAmount))    return false;
+				if (differs(theUnits,     					myValues.theUnits))     return false;
+				if (Account.differs(thePartner,   			myValues.thePartner))   return false;
+				if (differs(theDilution,					myValues.theDilution))  return false;
+				if (differs(theTaxCredit, 					myValues.theTaxCredit)) return false;
+				if (Utils.differs(theYears,     			myValues.theYears))     return false;
+				if (TransactionType.differs(theTransType,	myValues.theTransType)) return false;
 				return true;
 			}
 			
 			/* Copy values */
-			public void    copyFrom(histObject pSource) {
-				Values myValues = (Values)pSource;
-				copyFrom(myValues);
-			}
-			public histObject copySelf() {
+			public HistoryValues<Line> copySelf() {
 				return new Values(this);
 			}
-			public void    copyFrom(Values pValues) {
-				theDate      = pValues.getDate();
-				theDesc      = pValues.getDesc();
-				theAmount    = pValues.getAmount();
-				thePartner   = pValues.getPartner();
-				theUnits     = pValues.getUnits();
-				theDilution  = pValues.getDilution();
-				theTaxCredit = pValues.getTaxCredit();
-				theYears     = pValues.getYears();
-				theTransType = pValues.getTransType();
+			public void    copyFrom(HistoryValues<?> pSource) {
+				/* Handle a Line Values */
+				if (pSource instanceof Values) {
+					Values myValues = (Values)pSource;
+					super.copyFrom(myValues);
+					isCredit     = myValues.isCredit();
+					theDate      = myValues.getDate();
+					theDesc      = myValues.getDesc();
+					theAmount    = myValues.getAmount();
+					thePartner   = myValues.getPartner();
+					theUnits     = myValues.getUnits();
+					theDilution  = myValues.getDilution();
+					theTaxCredit = myValues.getTaxCredit();
+					theYears     = myValues.getYears();
+					theTransType = myValues.getTransType();
+				}
+
+				/* Handle a Line Values */
+				else if (pSource instanceof Event.Values) {
+					Event.Values myValues = (Event.Values)pSource;
+					super.setControl(myValues.getControl());
+					theDate 	 = myValues.getDate();
+					theDesc 	 = new StringPair(myValues.getDesc());
+					theAmount 	 = new MoneyPair(myValues.getAmount());
+					theTransType = myValues.getTransType();
+					theYears	 = myValues.getYears();
+					if (myValues.getUnits() != null)
+						theUnits     = new UnitsPair(myValues.getUnits());
+					if (myValues.getDilution() != null)
+						theDilution  = new DilutionPair(myValues.getDilution());
+					if (myValues.getTaxCredit() != null)
+						theTaxCredit = new MoneyPair(myValues.getTaxCredit());
+
+					/* If the account is credited */
+					if (getAccount().compareTo(myValues.getCredit()) == 0) {
+						thePartner = myValues.getDebit();
+						isCredit   = true;
+					}
+					
+					/* If the Account is debited */
+					else {
+						thePartner = myValues.getCredit();
+						isCredit   = false;
+					}
+				}
 			}
-			public boolean	fieldChanged(int fieldNo, histObject pOriginal) {
+			
+			public boolean	fieldChanged(int fieldNo, HistoryValues<Line> pOriginal) {
 				Values	pValues = (Values)pOriginal;
 				boolean	bResult = false;
 				switch (fieldNo) {
+					case Statement.Line.FIELD_CREDIT:
+						bResult = (isCredit != pValues.isCredit);
+						break;
 					case Statement.Line.FIELD_DATE:
 						bResult = (Date.differs(theDate,       			pValues.theDate));
 						break;
@@ -839,6 +842,9 @@ public class Statement implements htmlDumpable {
 					case Statement.Line.FIELD_DILUTION:
 						bResult = (differs(theDilution,  				pValues.theDilution));
 						break;
+					default:
+						bResult = super.fieldChanged(fieldNo, pValues);
+						break;
 				}
 				return bResult;
 			}
@@ -848,12 +854,26 @@ public class Statement implements htmlDumpable {
 			 */
 			protected void applySecurity() throws Exception {
 				/* Apply the encryption */
-				/* Apply the encryption */
 				theDesc.encryptPair();
 				theAmount.encryptPair();
 				if (theUnits     != null) theUnits.encryptPair();
 				if (theTaxCredit != null) theTaxCredit.encryptPair();
 				if (theDilution  != null) theDilution.encryptPair();
+			}		
+			
+			/**
+			 * Adopt encryption from base
+			 * @param pBase the Base values
+			 */
+			protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {
+				Values myBase = (Values)pBase;
+
+				/* Apply the encryption */
+				theDesc.encryptPair(myBase.getDesc());
+				theAmount.encryptPair(myBase.getAmount());
+				if (theUnits     != null) theUnits.encryptPair(myBase.getUnits());
+				if (theTaxCredit != null) theTaxCredit.encryptPair(myBase.getTaxCredit());
+				if (theDilution  != null) theDilution.encryptPair(myBase.getDilution());
 			}		
 		}
 	}	

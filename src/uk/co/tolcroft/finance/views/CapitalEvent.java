@@ -97,10 +97,10 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 	/**
 	 * Format the value of a particular field as a table row
 	 * @param iField the field number
-	 * @param pObj the values to use
+	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, histObject pObj) {
+	public String formatField(int iField, HistoryValues<CapitalEvent> pValues) {
 		Attribute myAttr;
 
 		/* If we have a valid element */
@@ -408,7 +408,7 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 	}
 	
 	/* Attribute class */
-	private abstract class Attribute extends LinkObject<Attribute> {
+	private abstract class Attribute implements LinkObject<Attribute> {
 	    /**
 		 * Storage for the List Node
 		 */

@@ -71,10 +71,9 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
 		
 		/* Access the Binary values  */
 		byte[]	myKey			= loadBytes(3);
-		byte[]	myInitVector	= loadBytes(4);
 
 		/* Add the DataKey */
-		theList.addItem(myID, myControl, myKeyType, myKey, myInitVector);
+		theList.addItem(myID, myControl, myKeyType, myKey);
 	}
 
 	/**
@@ -88,7 +87,6 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
 		writeInteger(1, pItem.getControlKey().getId());	
 		writeInteger(2, pItem.getKeyType().getId());	
 		writeBytes(3, pItem.getSecurityKey());
-		writeBytes(4, pItem.getInitVector());
 	}
 
 	/**
@@ -103,7 +101,6 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
 		writeString(1, DataKey.fieldName(DataKey.FIELD_CONTROL));			
 		writeString(2, DataKey.fieldName(DataKey.FIELD_KEYTYPE));			
 		writeString(3, DataKey.fieldName(DataKey.FIELD_KEY));			
-		writeString(4, DataKey.fieldName(DataKey.FIELD_IV));			
 		return true;
 	}	
 
@@ -111,7 +108,7 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
 	 * PostProcess on write
 	 */
 	protected void postProcessOnWrite() throws Throwable {		
-		/* Set the five columns as the range */
-		nameRange(5);
+		/* Set the four columns as the range */
+		nameRange(4);
 	}
 }

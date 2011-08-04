@@ -21,16 +21,16 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	private int 		theAccountId	= -1;
 	
 	/* Access methods */
-	public  Values     	getObj()       	{ return (Values)super.getObj(); }	
-	public  Rate 		getRate()      	{ return getObj().getRateValue(); }
-	public  byte[] 		getRateBytes() 	{ return getObj().getRateBytes(); }
-	public  Rate 		getBonus()     	{ return getObj().getBonusValue(); }
-	public  byte[] 		getBonusBytes() { return getObj().getBonusBytes(); }
-	public  Date 		getDate()   	{ return getObj().getEndDate(); }
-	public  Date 		getEndDate()   	{ return getObj().getEndDate(); }
-	public  Account		getAccount()	{ return getObj().getAccount(); }
+	public  Values     	getValues()     { return (Values)super.getValues(); }	
+	public  Rate 		getRate()      	{ return getValues().getRateValue(); }
+	public  byte[] 		getRateBytes() 	{ return getValues().getRateBytes(); }
+	public  Rate 		getBonus()     	{ return getValues().getBonusValue(); }
+	public  byte[] 		getBonusBytes() { return getValues().getBonusBytes(); }
+	public  Date 		getDate()   	{ return getValues().getEndDate(); }
+	public  Date 		getEndDate()   	{ return getValues().getEndDate(); }
+	public  Account		getAccount()	{ return getValues().getAccount(); }
 	private void        setAccount(Account pAccount)   {
-		getObj().setAccount(pAccount); }
+		getValues().setAccount(pAccount); }
 
 	/* Linking methods */
 	public AcctRate     getBase() { return (AcctRate)super.getBase(); }
@@ -76,12 +76,12 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	/**
 	 * Format the value of a particular field as a table row
 	 * @param iField the field number
-	 * @param pObj the values to use
+	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, histObject pObj) {
+	public String formatField(int iField, HistoryValues<AcctRate> pValues) {
 		String 	myString = "";
-		Values 	myObj 	 = (Values)pObj;
+		Values 	myValues = (Values)pValues;
 		switch (iField) {
 			case FIELD_ACCOUNT:
 				if ((getAccount() == null) &&
@@ -91,16 +91,16 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 					myString += Account.format(getAccount()); 
 				break;
 			case FIELD_RATE:	
-				myString += Rate.format(myObj.getRateValue()); 
+				myString += Rate.format(myValues.getRateValue()); 
 				break;
 			case FIELD_BONUS:	
-				myString += Rate.format(myObj.getBonusValue()); 
+				myString += Rate.format(myValues.getBonusValue()); 
 				break;
 			case FIELD_ENDDATE:	
-				myString += Date.format(myObj.getEndDate()); 
+				myString += Date.format(myValues.getEndDate()); 
 				break;
 			default:
-				myString += super.formatField(iField, pObj);
+				myString += super.formatField(iField, pValues);
 				break;
 		}
 		return myString;
@@ -114,23 +114,30 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	protected AcctRate(List pList, AcctRate pPeriod) {
 		/* Set standard values */
 		super(pList, pPeriod.getId());
-		Values myObj = new Values(pPeriod.getObj());
-		setObj(myObj);
+		Values myValues = new Values(pPeriod.getValues());
+		setValues(myValues);
 		setControlKey(pPeriod.getControlKey());		
+		ListStyle myOldStyle = pPeriod.getList().getStyle();
 
-		/* Switch on the LinkStyle */
+		/* Switch on the ListStyle */
 		switch (pList.getStyle()) {
 			case EDIT:
-				if (pPeriod.getList().getStyle() != ListStyle.EDIT) {
+				/* If this is a view creation */
+				if (myOldStyle == ListStyle.CORE) {
+					/* Rate is based on the original element */
 					setBase(pPeriod);
-					pList.setNewId(this);		
+					pList.setNewId(this);				
 					break;
 				}
-				/* Fall through for duplicate item */
+				
+				/* Else this is a duplication so treat as new item */
+				setId(0);
+				pList.setNewId(this);				
+				break;
 			case CORE:
-				/* Create a new id for the item */
-				setId(0); 
-				pList.setNewId(this);		
+				/* Reset Id if this is an insert from a view */
+				if (myOldStyle == ListStyle.EDIT) setId(0);
+				pList.setNewId(this);				
 				break;
 			case UPDATE:
 				setBase(pPeriod);
@@ -142,8 +149,8 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	/* Standard constructor for a newly inserted rate */
 	public AcctRate(List pList) {
 		super(pList, 0);
-		Values myObj = new Values();
-		setObj(myObj);
+		Values myValues = new Values();
+		setValues(myValues);
 		setControlKey(pList.getData().getControl().getControlKey());
 		setAccount(pList.theAccount);
 		pList.setNewId(this);		
@@ -159,15 +166,15 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		super(pList, 0);
 		
 		/* Initialise the values */
-		Values myObj = new Values();
-		setObj(myObj);
+		Values myValues = new Values();
+		setValues(myValues);
 
 		/* Record the Id */
 		theAccountId = uAccountId;
 		
 		/* Look up the Account */
 		DataSet myData 	= pList.getData();
-		myObj.setAccount(myData.getAccounts().searchFor(uAccountId));
+		myValues.setAccount(myData.getAccounts().searchFor(uAccountId));
 		if (getAccount() == null) 
 			throw new Exception(ExceptionClass.DATA,
 								this,
@@ -175,11 +182,11 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 					
 		/* Record the date */
 		if (pEndDate != null)
-			myObj.setEndDate(new Date(pEndDate));
+			myValues.setEndDate(new Date(pEndDate));
 
 		/* Set the encrypted objects */
-		myObj.setRate(new RatePair(pRate));
-		myObj.setBonus((pBonus == null) ? null : new RatePair(pBonus));
+		myValues.setRate(new RatePair(pRate));
+		myValues.setBonus((pBonus == null) ? null : new RatePair(pBonus));
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -197,8 +204,8 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		super(pList, uId);
 		
 		/* Initialise the values */
-		Values myObj = new Values();
-		setObj(myObj);
+		Values myValues = new Values();
+		setValues(myValues);
 
 		/* Record the Id */
 		theAccountId = uAccountId;
@@ -208,7 +215,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		
 		/* Look up the Account */
 		DataSet myData 	= pList.getData();
-		myObj.setAccount(myData.getAccounts().searchFor(uAccountId));
+		myValues.setAccount(myData.getAccounts().searchFor(uAccountId));
 		if (getAccount() == null) 
 			throw new Exception(ExceptionClass.DATA,
 								this,
@@ -216,11 +223,11 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 					
 		/* Record the date */
 		if (pEndDate != null)
-			myObj.setEndDate(new Date(pEndDate));
+			myValues.setEndDate(new Date(pEndDate));
 
 		/* Set the encrypted objects */
-		myObj.setRate(new RatePair(pRate));
-		myObj.setBonus((pBonus == null) ? null : new RatePair(pBonus));
+		myValues.setRate(new RatePair(pRate));
+		myValues.setBonus((pBonus == null) ? null : new RatePair(pBonus));
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -247,7 +254,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		if (getId() != myThat.getId()) return false;
 		
 		/* Compare the changeable values */
-		return getObj().histEquals(myThat.getObj());
+		return getValues().histEquals(myThat.getValues());
 	}
 
 	/**
@@ -351,8 +358,8 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	 * @param pRate the rate 
 	 */
 	public void setRate(Rate pRate) throws Exception {
-		if (pRate != null) 	getObj().setRate(new RatePair(pRate));
-		else 				getObj().setRate(null);
+		if (pRate != null) 	getValues().setRate(new RatePair(pRate));
+		else 				getValues().setRate(null);
 	}
 
 	/**
@@ -360,8 +367,8 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	 * @param pBonus the rate 
 	 */
 	public void setBonus(Rate pBonus) throws Exception {
-		if (pBonus != null) getObj().setBonus(new RatePair(pBonus));
-		else 				getObj().setBonus(null);
+		if (pBonus != null) getValues().setBonus(new RatePair(pBonus));
+		else 				getValues().setBonus(null);
 	}
 
 	/**
@@ -370,7 +377,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	 * @param pDate the new date 
 	 */
 	public void setEndDate(Date pDate) {
-		getObj().setEndDate(new Date(pDate));
+		getValues().setEndDate(new Date(pDate));
 	}
 
 	/**
@@ -380,20 +387,20 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	 */
 	public boolean applyChanges(DataItem<?> pRate) {
 		AcctRate myRate 	=  (AcctRate)pRate;
-		Values	 myObj		= getObj();
-		Values	 myNew		= myRate.getObj();
+		Values	 myValues	= getValues();
+		Values	 myNew		= myRate.getValues();
 		boolean  bChanged	= false;
 
 		/* Store the current detail into history */
 		pushHistory();
 
 		/* Update the rate if required */
-		if (differs(myObj.getRate(), myNew.getRate())) 
-			myObj.setRate(myNew.getRate());
+		if (differs(myValues.getRate(), myNew.getRate())) 
+			myValues.setRate(myNew.getRate());
 
 		/* Update the bonus if required */
-		if (differs(myObj.getBonus(), myNew.getBonus())) 
-			myObj.setBonus(myNew.getBonus());
+		if (differs(myValues.getBonus(), myNew.getBonus())) 
+			myValues.setBonus(myNew.getBonus());
 
 		/* Update the date if required */
 		if (Date.differs(getEndDate(), myRate.getEndDate())) 
@@ -721,41 +728,32 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 
 		/* Constructor */
 		public Values() {}
-		public Values(Values pValues) {
-			theRate      = pValues.getRate();
-			theBonus     = pValues.getBonus();
-			theEndDate   = pValues.getEndDate();
-			theAccount   = pValues.getAccount();
-		}
+		public Values(Values pValues) { copyFrom(pValues); }
 
 		/* Check whether this object is equal to that passed */
-		public boolean histEquals(histObject pCompare) {
+		public boolean histEquals(HistoryValues<AcctRate> pCompare) {
 			Values myValues = (Values)pCompare;
-			return histEquals(myValues);
-		}
-		public boolean histEquals(Values pValues) {
-			if (differs(theRate,  pValues.theRate))    			 return false;
-			if (differs(theBonus, pValues.theBonus))   			 return false;
-			if (Date.differs(theEndDate, 	pValues.theEndDate)) return false;
-			if (Account.differs(theAccount, pValues.theAccount)) return false;
+			if (!super.histEquals(pCompare))					  	return false;
+			if (differs(theRate,  myValues.theRate))    			return false;
+			if (differs(theBonus, myValues.theBonus))   			return false;
+			if (Date.differs(theEndDate, 	myValues.theEndDate)) 	return false;
+			if (Account.differs(theAccount, myValues.theAccount)) 	return false;
 			return true;
 		}
 
 		/* Copy values */
-		public void    copyFrom(histObject pSource) {
-			Values myValues = (Values)pSource;
-			copyFrom(myValues);
-		}
-		public histObject copySelf() {
+		public HistoryValues<AcctRate> copySelf() {
 			return new Values(this);
 		}
-		public void    copyFrom(Values pValues) {
-			theRate      = pValues.getRate();
-			theBonus     = pValues.getBonus();
-			theEndDate   = pValues.getEndDate();
-			theAccount   = pValues.getAccount();
+		public void    copyFrom(HistoryValues<?> pSource) {
+			Values myValues = (Values)pSource;
+			super.copyFrom(myValues);
+			theRate      = myValues.getRate();
+			theBonus     = myValues.getBonus();
+			theEndDate   = myValues.getEndDate();
+			theAccount   = myValues.getAccount();
 		}
-		public boolean	fieldChanged(int fieldNo, histObject pOriginal) {
+		public boolean	fieldChanged(int fieldNo, HistoryValues<AcctRate> pOriginal) {
 			Values 		pValues = (Values)pOriginal;	
 			boolean		bResult = false;
 			switch (fieldNo) {
@@ -771,6 +769,9 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 				case FIELD_ACCOUNT:
 					bResult = (Account.differs(theAccount,   pValues.theAccount));
 					break;
+				default:
+					bResult = super.fieldChanged(fieldNo, pValues);
+					break;
 			}
 			return bResult;
 		}
@@ -782,6 +783,18 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 			/* Apply the encryption */
 			theRate.encryptPair();
 			if (theBonus != null) theBonus.encryptPair();
+		}		
+		
+		/**
+		 * Adopt encryption from base
+		 * @param pBase the Base values
+		 */
+		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {
+			Values myBase = (Values)pBase;
+
+			/* Apply the encryption */
+			theRate.encryptPair(myBase.getRate());
+			if (theBonus != null) theBonus.encryptPair(myBase.getBonus());
 		}		
 	}
 }

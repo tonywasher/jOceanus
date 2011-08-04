@@ -204,7 +204,7 @@ public class EventAnalysis {
 			if (!myCurr.relatesTo(myAccount)) continue;
 			
 			/* Add a statement line to the statement */
-			myLine = new Statement.Line(myList, myCurr, myAccount);
+			myLine = new Statement.Line(myList, myCurr);
 			myList.add(myLine);
 		}
 	
@@ -489,10 +489,10 @@ public class EventAnalysis {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
+		public String formatField(int iField, HistoryValues<AnalysisYear> pValues) {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_YEAR: 			

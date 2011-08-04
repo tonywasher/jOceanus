@@ -234,12 +234,12 @@ public class SpotPrices implements htmlDumpable {
 		/* Access methods */
 		public Date        	getDate()      { return theDate; }
 		public Account		getAccount()   { return theAccount; }
-		public Values      	getObj()       { return (Values)super.getObj(); }
-		public Price 		getPrice()     { return getPairValue(getObj().getPrice()); }
+		public Values      	getValues()    { return (Values)super.getValues(); }
+		public Price 		getPrice()     { return getPairValue(getValues().getPrice()); }
 		public Price 		getPrevPrice() { return thePrevPrice; }
 		public Date			getPrevDate()  { return thePrevDate; }
 
-		public PricePair	getPricePair() { return getObj().getPrice(); }
+		public PricePair	getPricePair() { return getValues().getPrice(); }
 		
 		/* Linking methods */
 		public AcctPrice	 getBase() { return (AcctPrice)super.getBase(); }
@@ -281,21 +281,21 @@ public class SpotPrices implements htmlDumpable {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
-			String 		myString = "";
-			Values 	myObj 	 = (Values)pObj;
+		public String formatField(int iField, HistoryValues<SpotPrice> pValues) {
+			String 	myString = "";
+			Values 	myValues = (Values)pValues;
 			switch (iField) {
 				case FIELD_ACCOUNT:	
 					myString += theAccount.getName(); 
 					break;
 				case FIELD_PRICE: 	
-					myString += Price.format(myObj.getPriceValue());	
+					myString += Price.format(myValues.getPriceValue());	
 					break;
 				default: 		
-					myString += super.formatField(iField, pObj); 
+					myString += super.formatField(iField, pValues); 
 					break;
 			}
 			return myString;
@@ -312,10 +312,10 @@ public class SpotPrices implements htmlDumpable {
 			theDate = pList.theDate;
 	
 			/* Variables */
-			Values 							myObj = new Values();
+			Values 	myValues = new Values();
 			
 			/* Store base values */
-			setObj(myObj);
+			setValues(myValues);
 			theAccount 		= pPrice.getAccount();
 			if (pLast != null) {
 				thePrevPrice 	= pLast.getPrice();
@@ -323,7 +323,7 @@ public class SpotPrices implements htmlDumpable {
 			}
 				
 			/* Set the price if it is not deleted */
-			if (!pPrice.isDeleted()) myObj.setPrice(new PricePair(pPrice.getPricePair()));
+			if (!pPrice.isDeleted()) myValues.setPrice(new PricePair(pPrice.getPricePair()));
 			
 			/* Link to base */
 			setBase(pPrice);
@@ -346,10 +346,10 @@ public class SpotPrices implements htmlDumpable {
 			theDate = pList.theDate;
 	
 			/* Variables */
-			Values 							myObj = new Values();
+			Values 	myValues = new Values();
 			
 			/* Store base values */
-			setObj(myObj);
+			setValues(myValues);
 			theAccount 		= pAccount;
 			if (pLast != null) {
 				thePrevPrice 	= pLast.getPrice();
@@ -404,8 +404,8 @@ public class SpotPrices implements htmlDumpable {
 		 * @param pPrice the new price 
 		 */
 		public void setPrice(Price pPrice) throws Exception {
-			if (pPrice != null) getObj().setPrice(new PricePair(pPrice));
-			else 				getObj().setPrice(null);
+			if (pPrice != null) getValues().setPrice(new PricePair(pPrice));
+			else 				getValues().setPrice(null);
 		}
 		
 		/* SpotValues */
@@ -422,37 +422,46 @@ public class SpotPrices implements htmlDumpable {
 
 			/* Constructor */
 			public Values() {}
-			public Values(Values pValues) {
-				thePrice     = pValues.getPrice();
-			}
+			public Values(Values 			pValues) { copyFrom(pValues); }
+			public Values(AcctPrice.Values 	pValues) { copyFrom(pValues); }
 			
 			/* Check whether this object is equal to that passed */
-			public boolean histEquals(histObject pCompare) {
+			public boolean histEquals(HistoryValues<SpotPrice> pCompare) {
 				Values myValues = (Values)pCompare;
-				return histEquals(myValues);
-			}
-			public boolean histEquals(Values pValues) {
-				if (differs(thePrice,     pValues.thePrice))      return false;
+				if (!super.histEquals(pCompare))				return false;
+				if (differs(thePrice,     myValues.thePrice))   return false;
 				return true;
 			}
 			
 			/* Copy values */
-			public void    copyFrom(histObject pSource) {
-				Values myValues = (Values)pSource;
-				copyFrom(myValues);
-			}
-			public histObject copySelf() {
+			public HistoryValues<SpotPrice> copySelf() {
 				return new Values(this);
 			}
-			public void    copyFrom(Values pValues) {
-				thePrice     = pValues.getPrice();
+			public void    copyFrom(HistoryValues<?> pSource) {
+				/* Handle a SpotPrice Values */
+				if (pSource instanceof Values) {
+					Values myValues = (Values)pSource;
+					super.copyFrom(myValues);
+					thePrice     = myValues.getPrice();
+				}
+
+				/* Handle an AcctPrice Values */
+				else if (pSource instanceof AcctPrice.Values) {
+					AcctPrice.Values myValues = (AcctPrice.Values)pSource;
+					super.setControl(myValues.getControl());
+					thePrice     = new PricePair(myValues.getPrice());
+				}
 			}
-			public boolean	fieldChanged(int fieldNo, histObject pOriginal) {
+			
+			public boolean	fieldChanged(int fieldNo, HistoryValues<SpotPrice> pOriginal) {
 				Values	pValues = (Values)pOriginal;
 				boolean		bResult = false;
 				switch (fieldNo) {
 					case SpotPrices.SpotPrice.FIELD_PRICE:
 						bResult = (differs(thePrice,  pValues.thePrice));
+						break;
+					default:
+						bResult = super.fieldChanged(fieldNo, pValues);
 						break;
 				}
 				return bResult;
@@ -464,6 +473,17 @@ public class SpotPrices implements htmlDumpable {
 			protected void applySecurity() throws Exception {
 				/* Apply the encryption */
 				thePrice.encryptPair();
+			}		
+			
+			/**
+			 * Adopt encryption from base
+			 * @param pBase the Base values
+			 */
+			protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {
+				Values myBase = (Values)pBase;
+
+				/* Apply the encryption */
+				thePrice.encryptPair(myBase.getPrice());
 			}		
 		}		
 	}

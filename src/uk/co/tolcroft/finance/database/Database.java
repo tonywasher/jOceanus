@@ -89,7 +89,7 @@ public class Database {
 	 * rolling back any outstanding transaction
 	 * @throws SQLException
 	 */
-	private void close() throws SQLException {
+	public void close() throws SQLException {
 		/* Roll-back any outstanding transaction */
 		theConn.rollback();
 		

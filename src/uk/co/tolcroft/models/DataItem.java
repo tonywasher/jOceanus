@@ -6,175 +6,126 @@ import uk.co.tolcroft.models.DataState;
 import uk.co.tolcroft.models.EditState;
 
 /**
- * Provides the abstract DataItem class as the basis for finance project items. The implementation of the 
- * {@link SortedList.linkObject} interface means that this object can only be held in one list at a time
+ * Provides the abstract DataItem class as the basis for data items. The implementation of the 
+ * {@link LinkObject} interface means that this object can only be held in one list at a time and is unique within that list
  * @see uk.co.tolcroft.models.DataList
  */
-public abstract class DataItem<T extends DataItem<T>> extends LinkObject<T> implements htmlDumpable {
-	/**
-	 * Interface for Value objects allowing history functions
-	 */
-	public static interface histObject {
-		/**
-		 * Is this object identical to the comparison object
-		 * @param pCompare the comparison object
-		 * @return <code>true</code> if the objects are equal <code>false</code> otherwise
-		 */
-		boolean    histEquals(histObject pCompare);
-		
-		/**
-		 * Initialises the object with values from another object
-		 * @param pSource the object to copy values from
-		 */
-		void       copyFrom(histObject pSource);
-		
-		/**
-		 * Provides a cloned object of its own values
-		 * @return the cloned object
-		 */
-		histObject copySelf();
-		
-		/**
-		 * Determines whether the indicated field has changed from the original
-		 * @param fieldNo the field to check
-		 * @param pOriginal the original values
-		 * @return <code>true</code> if the field has changed <code>false</code> otherwise
-		 */
-		boolean	   fieldChanged(int fieldNo, histObject pOriginal);
-	}
-	
-	/**
-	 * Interface for checking whether history objects are valid in a table view
-	 */
-	public static interface tableHistory {
-		/**
-		 * Is this object valid for this item in the table view
-		 * @param pItem the item to check
-		 * @param pObj the history values to check
-		 * @return <code>true</code> if the history object is valid <code>false</code> otherwise
-		 */
-		boolean    isValidObj(DataItem<?> pItem, histObject pObj);
-	}
-	
+public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
+																 htmlDumpable {
 	/**
 	 * The list to which this item belongs
 	 */
-	private DataList<T>			theList		= null;
+	private DataList<T>				theList		= null;
 	
 	/**
 	 * Self reference (built as cast during constructor)
 	 */
-	private T					theItem;
-	
-	/**
-	 * The changeable values for this item
-	 */
-	private histObject          theObj     	= null;
+	private T						theItem;
 	
 	/**
 	 * The Change state of this item {@link DataState}
 	 */
-    private DataState			theState	= DataState.NOSTATE;
+    private DataState				theState	= DataState.NOSTATE;
     
 	/**
 	 * The Edit state of this item {@link EditState}
 	 */
-    private EditState           theEdit		= EditState.CLEAN;
-
-    /**
-	 * The base item to which this item is linked. This will be <code>null</code> in CORE list
-	 * and for new items etc.
-	 */
-    private DataItem<?>        	theBase		= null;
+    private EditState           	theEdit		= EditState.CLEAN;
 
     /**
 	 * Is the item visible to standard searches
 	 */
-    private boolean             isDeleted	= false;
+    private boolean             	isDeleted	= false;
 
     /**
 	 * Is the item in the process of being changed
 	 */
-    private boolean             isChangeing	= false;
+    private boolean             	isChangeing	= false;
 
     /**
 	 * Is the item in the process of being restored
 	 */
-    private boolean             isRestoring	= false;
+    private boolean             	isRestoring	= false;
 
     /**
 	 * Storage for the List Node
 	 */
-    private LinkNode<T>			theLink		= null;
+    private LinkNode<T>				theLink		= null;
 
     /**
 	 * The id number of the item
 	 */
-	private int 	            theId 	   = 0;
+	private int 	            	theId 	   	= 0;
 
 	/**
 	 * The history control {@link historyCtl}
 	 */
-	private historyCtl          theHistory = null;
+	private HistoryControl<T>      	theHistory 	= null;
 
 	/**
 	 * The validation control {@link validationCtl}
 	 */
-	private validationCtl       theErrors  = null;
+	private ValidationControl<T>	theErrors  	= null;
 	
 	/**
 	 * Get the list control for this item
 	 * @return the list control
 	 */
-	public DataList<T>   		getList()  	{ return theList; }
+	public DataList<T>   			getList()  		{ return theList; }
 	
 	/**
 	 * Get the changeable values object for this item 
 	 * @return the object
 	 */
-	public histObject	getObj()		{ return theObj; }	
+	public HistoryValues<T>			getCurrentValues()		{ return theHistory.getCurrentValues(); }	
 
 	/**
 	 * Get the Id for this item
 	 * @return the Id
 	 */
-	public int			getId()        	{ return theId; }
+	public int						getId()     	{ return theId; }
 
 	/**
 	 * Get the EditState for this item
 	 * @return the EditState
 	 */
-	public EditState	getEditState()	{ return theEdit; }
+	public EditState				getEditState()	{ return theEdit; }
 
 	/**
 	 * Get the State for this item
 	 * @return the State
 	 */
-	public DataState	getState()     	{ return theState; }
+	public DataState				getState()     	{ return theState; }
 	
 	/**
 	 * Get the base item for this item
 	 * @return the Base item or <code>null</code>
 	 */
-	public DataItem<?>	getBase()      	{ return theBase; }
+	public DataItem<?>				getBase()      	{ return theHistory.getBase(); }
+
+	/**
+	 * Get the base item for this item
+	 * @return the Base item or <code>null</code>
+	 */
+	protected HistoryControl<T>		getHistory()	{ return theHistory; }
 
 	/**
 	 * Get the link node for this item
 	 * @return the Link node or <code>null</code>
 	 */
-	public LinkNode<T>	getLinkNode(SortedList<T> pList)	{ return theLink; }
+	public LinkNode<T>				getLinkNode(SortedList<T> pList)	{ return theLink; }
 
 	/**
 	 * Get the link node for this item
 	 * @return the Link node or <code>null</code>
 	 */
-	public void			setLinkNode(SortedList<T> l, LinkNode<T> o)	{ theLink = o; }
+	public void						setLinkNode(SortedList<T> l, LinkNode<T> o)	{ theLink = o; }
 
 	/**
 	 * Determine whether the item is visible to standard searches
 	 * @param isDeleted <code>true/false</code>
 	 */
-	private void		setDeleted(boolean bDeleted) {
+	private void					setDeleted(boolean bDeleted) {
 		isDeleted = bDeleted;
 		theList.setHidden(theItem, isDeleted);
 	}
@@ -183,7 +134,7 @@ public abstract class DataItem<T extends DataItem<T>> extends LinkObject<T> impl
 	 * Determine whether the item is in the process of being changed
 	 * @param isChangeing <code>true/false</code>
 	 */
-	protected void	setChangeing(boolean bChangeing) {
+	protected void					setChangeing(boolean bChangeing) {
 		isChangeing = bChangeing;
 	}
 
@@ -191,7 +142,7 @@ public abstract class DataItem<T extends DataItem<T>> extends LinkObject<T> impl
 	 * Determine whether the item is in the process of being restored
 	 * @param isRestoring <code>true/false</code>
 	 */
-	protected void	setRestoring(boolean bRestoring) {
+	protected void					setRestoring(boolean bRestoring) {
 		isRestoring = bRestoring;
 	}
 
@@ -199,74 +150,83 @@ public abstract class DataItem<T extends DataItem<T>> extends LinkObject<T> impl
 	 * Determine whether the item is visible to standard searches
 	 * @return <code>true/false</code>
 	 */
-	public void			setHidden()    	{ setDeleted(true); }
+	public void						setHidden()    	{ setDeleted(true); }
 
 	/**
 	 * Determine whether the item is visible to standard searches
 	 * @return <code>true/false</code>
 	 */
-	public boolean		isDeleted()    	{ return isDeleted; }
+	public boolean					isDeleted()    	{ return isDeleted; }
 
 	/**
 	 * Determine whether the item is in the process of being changed
 	 * @return <code>true/false</code>
 	 */
-	protected boolean	isChangeing()   { return isChangeing; }
+	protected boolean				isChangeing()   { return isChangeing; }
 
 	/**
 	 * Determine whether the item is in the process of being restored
 	 * @return <code>true/false</code>
 	 */
-	protected boolean	isRestoring()   { return isRestoring; }
+	protected boolean				isRestoring()   { return isRestoring; }
 
 	/**
 	 * Determine whether the item is visible to standard searches
 	 * @return <code>true/false</code>
 	 */
-	public boolean		isHidden()    	{ return isDeleted; }
+	public boolean					isHidden()    	{ return isDeleted; }
 
 	/**
 	 * Determine whether the underlying base item is deleted
 	 * @return <code>true/false</code>
 	 */
-	public boolean		isCoreDeleted() { return (theBase != null) &&
-											     (theBase.isDeleted); }
+	public boolean					isCoreDeleted() {
+		DataItem<?> myBase = getBase();
+		return (myBase != null) && (myBase.isDeleted);
+	}
+	
 	/**
 	 * Set the id of the item
 	 * @param id of the item
 	 */
-	public void			setId(int id) 	{ theId = id; }
+	public void						setId(int id) 	{ theId = id; }
 	
 	/**
 	 * Set the base item for this item
 	 * @param pBase the Base item
 	 */
-	public void			setBase(DataItem<?> pBase) { theBase = pBase; }
+	public void						setBase(DataItem<?> pBase) { theHistory.setBase(pBase); }
 	
 	/**
-	 * Set the changeable values object for this item
-	 * @param pObj the changeable object 
+	 * Set the changeable values for this item
+	 * @param pValues the changeable object 
 	 */
-	public void			setObj(histObject pObj)    { theObj  = pObj; }
+	public void						setValues(HistoryValues<T> pValues)    { theHistory.setValues(pValues); }
 	
 	/**
 	 * Determine whether the item is locked (overridden if required( 
 	 * @return <code>true/false</code>
 	 */
-	public boolean		isLocked() 	  	{ return false; }
+	public boolean					isLocked() 	  	{ return false; }
 
 	/**
 	 * Determine whether the list is locked (overridden if required( 
 	 * @return <code>true/false</code>
 	 */
-	public boolean		isListLocked() 	{ return false; }
+	public boolean					isListLocked() 	{ return false; }
 
+	/**
+	 * Obtain properly cast reference to self
+	 * @return self reference
+	 */
+	public T						getItem()		{ return theItem; }
+	
 	/**
 	 * Determine the field name for a particular field
 	 * This method is the underlying method called when the id is unknown 
 	 * @return the field name
 	 */
-	public static String	fieldName(int fieldId)	{
+	public static String			fieldName(int fieldId)	{
 		switch (fieldId) {
 			case FIELD_ID:	return NAME_ID;
 			default: 		return "Unknown";
@@ -276,10 +236,10 @@ public abstract class DataItem<T extends DataItem<T>> extends LinkObject<T> impl
 	/**
 	 * Format the value of a particular field as a table row
 	 * @param iField the field number
-	 * @param pObj the values to use
+	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, histObject pObj) {
+	public String 					formatField(int iField, HistoryValues<T> pValues) {
 		String 	myString = "";
 		switch (iField) {
 			case FIELD_ID: 		
@@ -294,13 +254,13 @@ public abstract class DataItem<T extends DataItem<T>> extends LinkObject<T> impl
 	 * This method is always overridden but is used to supply the default field name 
 	 * @return the field name
 	 */
-	public abstract String	getFieldName(int fieldId);
+	public abstract String			getFieldName(int fieldId);
 	
 	/**
 	 * Stub for extensions to add their own fields
 	 * @param pBuffer the string buffer 
 	 */
-	public void addHTMLFields(StringBuilder pBuffer) {}
+	public void 					addHTMLFields(StringBuilder pBuffer) {}
 
 	/**
 	 * Id for standard field
@@ -313,7 +273,7 @@ public abstract class DataItem<T extends DataItem<T>> extends LinkObject<T> impl
 	 * Format this item to a string
 	 * @return the formatted item
 	 */
-	public StringBuilder toHTMLString() {
+	public StringBuilder 			toHTMLString() {
 		StringBuilder	myString = new StringBuilder(2000);
 		int     iField;
 		int		iNumFields = numFields();
@@ -349,10 +309,10 @@ public abstract class DataItem<T extends DataItem<T>> extends LinkObject<T> impl
 			
 			/* Format the State and edit State */
 			myString.append("<tr><td>Index</td><td>");
-			myString.append(theLink.theIndex);
+			myString.append(theLink.getIndex(false));
 			myString.append("</td></tr>");
 			myString.append("<tr><td>HiddenIndex</td><td>");
-			myString.append(theLink.theHiddenIndex);
+			myString.append(theLink.getIndex(true));
 			myString.append("</td></tr>");
 			if (theLink.isHidden()) 
 				myString.append("<tr><td>Hidden</td><td>true</td></tr>");
@@ -364,6 +324,7 @@ public abstract class DataItem<T extends DataItem<T>> extends LinkObject<T> impl
 		myString.append("\">Values</th></tr>");
 		
 		/* Loop through the fields */
+		HistoryValues<T> myValues = theHistory.getCurrentValues();
 		for (iField = 0;
 			 iField < iNumFields;
 			 iField++) {
@@ -371,7 +332,7 @@ public abstract class DataItem<T extends DataItem<T>> extends LinkObject<T> impl
 			myString.append("<td>"); 
 			myString.append(getFieldName(iField)); 
 			myString.append("</td><td>"); 
-			myString.append(formatField(iField, theObj));
+			myString.append(formatField(iField, myValues));
 			myString.append("</td></tr>");
 		}
 
@@ -391,10 +352,10 @@ public abstract class DataItem<T extends DataItem<T>> extends LinkObject<T> impl
 		}
 		
 		/* If we have an underlying object */
-		if (theBase != null) {
+		if (getBase() != null) {
 			/* Format the Underlying object */
 			myString.append("<tr><th>Underlying</th><td colspan=\"2\">");
-			myString.append(theBase.toHTMLString());
+			myString.append(getBase().toHTMLString());
 			myString.append("</td></tr>");
 		}
 		
@@ -409,183 +370,131 @@ public abstract class DataItem<T extends DataItem<T>> extends LinkObject<T> impl
 	 * Obtain the type of the item
 	 * @return the type of the item
 	 */
-	abstract public String itemType();
+	abstract public String 			itemType();
 	
 	/**
 	 * Obtain the number of fields for an item
 	 * @return the number of fields
 	 */
-	public int	numFields() { return 0; }
+	public int						numFields() { return 0; }
 	
 	/**
 	 * Unlink the item from the list
 	 */
-	public void			unLink()     { theList.remove(this); }
+	public void						unLink()     { theList.remove(this); }
 	
 	/**
 	 * Determine whether the item has changes
 	 * @return <code>true/false</code>
 	 */
-	public boolean		hasHistory()    { return theHistory.hasHistory(); }
+	public boolean					hasHistory()    { return theHistory.hasHistory(); }
 	
 	/**
 	 * Clear the history for the item (leaving current values) 
 	 */
-	public void			clearHistory()  { theHistory.clearHistory(); }
+	public void						clearHistory()  { theHistory.clearHistory(); }
 	
 	/**
 	 * Reset the history for the item (restoring original values)
 	 */
-	public 	  void		resetHistory()  { 
-		histObject myObj = theHistory.resetHistory();
-		if (myObj != null) theObj = myObj;
-	}
+	public 	  void					resetHistory()  { theHistory.resetHistory(); }
 	
 	/**
 	 * Set Change history for an update list so that the first and only entry in the change
 	 * list is the original values of the base
 	 */
-	public 	  void		setHistory()  { 
-		DataItem<?> myItem = getBase();
-		histObject  myObj  = myItem.theHistory.getBase();
-		theHistory.setHistory(myObj);
-	}
+	public 	  void					setHistory()	{ theHistory.setHistory(); }
 	
 	/**
 	 * Return the base history object
 	 * @return the original values for this object
 	 */
-	public 	  histObject	getBaseObj()  { 
-		return theHistory.getBase();
-	}
+	public 	  HistoryValues<T>		getOriginalValues()  { return theHistory.getOriginalValues(); }
 	
 	/**
 	 * Check to see whether any changes were made. 
 	 * If no changes were made remove last saved history since it is not needed
 	 * @return <code>true</code> if changes were made, <code>false</code> otherwise
 	 */
-	public boolean		checkForHistory() {
-		return theHistory.maybePopHistory(theObj);	}
+	public boolean					checkForHistory() { return theHistory.maybePopHistory(false);	}
 	
 	/**
 	 * Push current values into history buffer ready for changes to be made
 	 */
-	public void			pushHistory() { 
-		theHistory.pushHistory(theObj.copySelf()); }
+	public void						pushHistory() {	theHistory.pushHistory(); }
 	
 	/**
 	 * Remove the last changes for the history buffer and restore values from it
 	 */
-	public void				popHistory() {
-		histObject myVals = theHistory.popTheHistory();
-		if (myVals != null) setObj(myVals);
-	}
+	public void						popHistory() { theHistory.popTheHistory();	}
 	
 	/**
 	 * Determine whether a particular field has changed in this edit view
 	 * @param fieldNo the field to test
 	 * @return <code>true/false</code>
 	 */
-	public boolean			fieldChanged(int fieldNo) {
-		return theHistory.fieldChanged(fieldNo, theObj);
-	}
+	public boolean					fieldChanged(int fieldNo) {	return theHistory.fieldChanged(fieldNo); }
 	
 	/**
 	 * Determine whether there is restore-able history for an item 
 	 * @param pTable the table to which data would be restored
 	 * @return <code>true/false</code>
 	 */
-	protected boolean		hasValidHistory(tableHistory pTable)    { 
-		return theHistory.hasValidHistory(pTable); }
+	protected boolean				hasValidHistory(HistoryCheck<T> pTable)    { return theHistory.hasValidHistory(pTable); }
 
 	/**
 	 * Determine whether there is further history on a CORE list item to peek 
 	 * @param pTable the table to which data would be restored
 	 * @return <code>true/false</code>
 	 */
-	public boolean			hasFurther(tableHistory pTable)    {
-		if (theBase == null) 
-			return false;
-		if (theState == DataState.CLEAN) 
-			return theBase.hasValidHistory(pTable);
-		if (theState == DataState.CHANGED)
-			return theBase.theHistory.hasValidFurther(theObj, pTable);
-		return false;
-	}
+	public boolean					hasFurther(HistoryCheck<T> pTable)    { return theHistory.hasFurther(pTable); }
 
 	/**
 	 * Determine whether there is previous history on a CORE list item to peek 
 	 * @return <code>true/false</code>
 	 */
-	public boolean			hasPrevious()    {
-		return ((theState == DataState.CHANGED) &&
-				(theBase!= null) &&
-				(theBase.theHistory.hasPrevious(theObj)));
-	}
+	public boolean					hasPrevious()   { return theHistory.hasPrevious(); }
 
 	/**
 	 * Restore values from a further history item beyond the current cursor 
 	 */
-	public void				peekFurther()    {
-		histObject myElement;
-		myElement = theBase.theHistory.peekFurther();
-		if (myElement != null) {
-			pushHistory();
-			theObj.copyFrom(myElement);
-			setState(DataState.CHANGED);
-		}
-	}
+	public void						peekFurther()   { theHistory.peekFurther(); }
 	
 	/**
 	 * Restore values from a previous history item beyond the current cursor 
 	 */
-	public void				peekPrevious()    {
-		histObject myElement;
-		myElement = theBase.theHistory.peekPrevious();
-		if (myElement != null) {
-			pushHistory();
-			theObj.copyFrom(myElement);
-			theHistory.maybePopHistory(theObj);
-		}
-		else {
-			/* Copy values back from base and set to clean*/
-			theObj.copyFrom(theBase.theObj);
-			theHistory.maybePopHistory(theObj);
-			if (!hasHistory()) setState(DataState.CLEAN);				
-		}
-	}
+	public void						peekPrevious()	{ theHistory.peekPrevious(); }
 	
 	/**
 	 * Determine whether the item has Errors
 	 * @return <code>true/false</code>
 	 */
-	public	  boolean		hasErrors()   { return (theEdit == EditState.ERROR); }
+	public	  boolean				hasErrors()   { return (theEdit == EditState.ERROR); }
 
 	/**
 	 * Determine whether the item has Changes
 	 * @return <code>true/false</code>
 	 */
-	public	  boolean		hasChanges()  { return (theEdit != EditState.CLEAN); }
+	public	  boolean				hasChanges()  { return (theEdit != EditState.CLEAN); }
 
 	/**
 	 * Determine whether the item is Valid
 	 * @return <code>true/false</code>
 	 */
-	public	  boolean		isValid()     { return ((theEdit == EditState.CLEAN) ||
-			                                        (theEdit == EditState.VALID)); }
+	public	  boolean				isValid()     { return ((theEdit == EditState.CLEAN) ||
+			                                        		(theEdit == EditState.VALID)); }
 
 	/**
 	 * Determine whether a particular field has Errors
 	 * @param iField the particular field
 	 * @return <code>true/false</code>
 	 */
-	public	  boolean		hasErrors(int iField) { 
-		return theErrors.hasErrors(iField); }
+	public	  boolean				hasErrors(int iField) {	return theErrors.hasErrors(iField); }
 
 	/**
 	 * Note that this item has been validated 
 	 */
-	public	  void			setValidEdit() {
+	public	  void					setValidEdit() {
 		switch (theList.getStyle()) {
 			case CORE:
 				if (theState == DataState.CLEAN) 
@@ -608,7 +517,7 @@ public abstract class DataItem<T extends DataItem<T>> extends LinkObject<T> impl
 	/**
 	 * Clear all errors for this item
 	 */
-	public	  void			clearErrors()  {
+	public	  void					clearErrors()  {
 		theEdit = EditState.CLEAN;
 		theErrors.clearErrors();
 	}
@@ -618,7 +527,7 @@ public abstract class DataItem<T extends DataItem<T>> extends LinkObject<T> impl
 	 * @param pError the error text
 	 * @param iField the associated field
 	 */
-	protected void			addError(String pError, int iField) {
+	protected void					addError(String pError, int iField) {
 		theEdit = EditState.ERROR;
 		theErrors.addError(pError, iField);	}
 
@@ -627,7 +536,7 @@ public abstract class DataItem<T extends DataItem<T>> extends LinkObject<T> impl
 	 * @param iField the associated field
 	 * @return the error text
 	 */
-	public 	  String		getFieldErrors(int iField) {
+	public 	  String				getFieldErrors(int iField) {
 		return theErrors.getFieldErrors(iField);	}
 
 	/**
@@ -635,14 +544,14 @@ public abstract class DataItem<T extends DataItem<T>> extends LinkObject<T> impl
 	 * @param iFields the set of fields
 	 * @return the error text
 	 */
-	public 	  String		getFieldErrors(int[] iFields) {
+	public 	  String				getFieldErrors(int[] iFields) {
 		return theErrors.getFieldErrors(iFields);	}
 	
 	/**
 	 * Get the first error element for an item
 	 * @return the first error (or <code>null</code>)
 	 */
-	public validationCtl.errorElement getFirstError() {
+	public ValidationControl<T>.errorElement getFirstError() {
 		return theErrors.getFirst();	}
 
 	/**
@@ -653,9 +562,9 @@ public abstract class DataItem<T extends DataItem<T>> extends LinkObject<T> impl
 	public DataItem(DataList<T> pList, int uId) {
 		theId      = uId;
 		theList    = pList;
-		theHistory = new historyCtl();
-		theErrors  = new validationCtl();
 		theItem	   = pList.getBaseClass().cast(this);
+		theHistory = new HistoryControl<T>(theItem);
+		theErrors  = new ValidationControl<T>(theItem);
 	}
 	
 	/**
@@ -663,7 +572,8 @@ public abstract class DataItem<T extends DataItem<T>> extends LinkObject<T> impl
 	 *  @return the underlying state
 	 */
 	protected DataState getBaseState() {
-		return (theBase == null) ? DataState.NOSTATE : theBase.getState();
+		DataItem<?> myBase = getBase();
+		return (myBase == null) ? DataState.NOSTATE : myBase.getState();
 	}
 
 	/**
@@ -906,572 +816,4 @@ public abstract class DataItem<T extends DataItem<T>> extends LinkObject<T> impl
 				break;
 		}
 	}
-	
-	/**
-	 * Provides the implementation of a history buffer for a DataItem
-	 * Each element represents a changed set of values and refers to a {@link finLink.histObject} object
-	 * which is the set of changeable values for the object. 
-	 * @see historyCtl.histElement
-	 */
-	private class historyCtl {
-		/**
-		 * The most recent change in the set of past values
-		 */
-		private histElement theTop    = null;
-		
-		/**
-		 * The original set of values if any changes have been made
-		 */
-		private histElement theBase   = null;
-		
-		/**
-		 * The restore cursor indicating where the restore cursor is in the set of changes
-		 */
-		private histElement theCursor = null;
-		
-		/**
-		 *  Get original values
-		 *  @return original values
-		 */
-		private histObject getBase() {
-			return (theBase != null) ? theBase.theObj : getObj();
-		}
-		
-		/**
-		 *  Push Item to the history
-		 *  @param pItem - item to add to the history
-		 */
-		private void pushHistory(histObject pItem) {
-			/* Create a new history element */
-			histElement myEl = new histElement(pItem);
-			
-			/* Add to the start of the list */
-			myEl.theNext = theTop;
-			if (theTop != null) theTop.thePrev = myEl;
-			if (theBase == null) theBase = myEl;
-			theTop       = myEl; 
-		}
-		
-		/**
-		 *  popItem from the history and remove from history
-		 *  @return last history item
-		 */
-		private histObject popTheHistory() {
-			histElement myItem;
-			
-			/* Remove top-most element from the list */
-			myItem = theTop;
-			
-			/* Reset the cursor */
-			theCursor = null;
-			
-			/* If there is an item return its object */
-			if (myItem != null) {
-				theTop = myItem.theNext;
-				if (theTop != null) theTop.thePrev = null;
-				else theBase = null;
-				return myItem.theObj;
-				
-			/* else return null */
-			} else return null;
-		}
-		
-		/**
-		 *  popItem from the history if equal to current
-		 *  @return <code>true/false</code> was history retained?
-		 */
-		private boolean maybePopHistory(histObject pCurr) {
-			/* Pop element if identical */
-			if (pCurr.histEquals(theTop.theObj)) {
-				popTheHistory();
-				return false;
-			}
-			return true;
-		}
-		
-		/**
-		 *  peek the next item from the history
-		 *  @return the next item
-		 */
-		private histObject peekFurther() {
-			/* If we have no cursor, point to start of history */
-			if (theCursor == null) {
-				theCursor = theTop;
-				return (theCursor == null) ? null : theCursor.theObj;
-			}
-			
-			/* Shift cursor */
-			if (theCursor.theNext != null) {
-				theCursor = theCursor.theNext;
-				return (theCursor == null) ? null : theCursor.theObj;
-			}
-			
-			/* No item to return */
-			return null;
-		}
-		
-		/**
-		 *  peek the previous item from the history
-		 *  @return the previous item
-		 */
-		private histObject peekPrevious() {
-			/* If we have a cursor return its previous value */
-			if (theCursor != null) {
-				theCursor = theCursor.thePrev;
-				return (theCursor == null) ? null : theCursor.theObj;
-			}
-			
-			/* No item to return */
-			return null;
-		}
-		
-		/**
-		 *  Is there any history
-		 *  @return whether there are entries in the history list
-		 */
-		private boolean hasHistory() {
-			return (theTop != null);
-		}
-		
-		/**
-		 *  Is there any valid history for this table
-		 *  @param pTable the table to test against
-		 *  @return whether the top entry in the the history list is valid for the table
-		 */
-		private boolean hasValidHistory(tableHistory pTable) {
-			histElement myObj = null;
-			
-			/* If we have potential valid history */
-			if (theTop != null)
-				myObj = theTop;
-			
-			/* Handle validity for table */
-			if ((myObj != null) &&
-			    (!pTable.isValidObj(theItem, myObj.theObj)))
-				myObj = null;
-			
-			/* Return details */
-			return (myObj != null);
-		}
-		
-		/**
-		 *  Is there any previous history from the cursor for this table 
-		 *  @param pObj the current values  
-		 *  @param pTable the table to test against
-		 *  @return whether there is further history
-		 */
-		private boolean hasValidFurther(histObject pObj, tableHistory pTable) {
-			histElement myObj = null;
-			
-			/* Reset the cursor if we are no longer using it */
-			if ((theCursor != null) && (!theCursor.theObj.histEquals(pObj)))
-				theCursor = null;
-		
-			/* Access potential further valid history from a valid cursor */
-			if ((theCursor != null) &&
-				(theCursor.theNext != null))
-				myObj = theCursor.theNext;
-			
-			/* Handle validity for table */
-			if ((myObj != null) &&
-				(!pTable.isValidObj(theItem, myObj.theObj)))
-				myObj = null;
-			
-			/* Return details */
-			return (myObj != null);
-		}
-		
-		/**
-		 *  Is there any previous history from the cursor 
-		 *  @return whether there are entries in the history list
-		 */
-		private boolean hasPrevious(histObject pObj) {
-			/* Reset the cursor if we are no longer using it */
-			if ((theCursor != null) && (!theCursor.theObj.histEquals(pObj)))
-				theCursor = null;
-		
-			/* We have previous peek-ability if we have a cursor */
-			return (theCursor != null);
-		}
-		
-		/**
-		 *  Clear history
-		 */
-		private void clearHistory() {
-			/* Remove all history */
-			while (theTop != null) popTheHistory();
-			theCursor = null;
-		}
-		
-		/**
-		 *  Reset history
-		 */
-		private histObject resetHistory() {
-			histObject myLast = null;
-			
-			/* Remove all history */
-			while (theTop != null) myLast = popTheHistory();
-			theCursor = null;
-			return myLast;
-		}
-		
-		/**
-		 *  Set history explicitly
-		 *  @param pObj the historic values
-		 */
-		private void setHistory(histObject pObj) {
-			/* Create a new history element */
-			histElement myEl = new histElement(pObj);
-			
-			/* Add to the end of the list */
-			myEl.thePrev = theBase;
-			if (theBase != null) theBase.theNext = myEl;
-			if (theTop == null)  theTop = myEl; 
-			theBase      = myEl;
-		}
-		
-		/**
-		 *  Determines whether a particular field has changed
-		 *  @param fieldNo the field identifier
-		 *  @param pCurrent the current set of values 
-		 */
-		private boolean fieldChanged(int fieldNo, histObject pCurrent) {
-			/* Handle case where there are no changes at all */
-			if (theBase == null) return false;
-			
-			/* Call the function from the interface */
-			return pCurrent.fieldChanged(fieldNo, theBase.theObj);
-		}
-		
-		/**
-		 * Format the historical changes in this list
-		 * @return the formatted changes
-		 */
-		public StringBuilder toHTMLString() {
-			histElement		myCurr;
-			StringBuilder	myString = new StringBuilder(1000);
-			
-			/* Loop through the elements */
-			for (myCurr  = theTop;
-				 myCurr != null;
-				 myCurr  = myCurr.theNext) {
-				/* Format the historical element */
-				myString.append(myCurr.toHTMLString());
-			}
-			
-			/* Return the formatted string */
-			return myString;
-		}
-		
-		/**
-		 * The history element class 
-		 */
-		private class histElement {
-			/**
-			 * The next element in the list
-			 */
-			private histElement theNext = null;
-			
-			/**
-			 * The previous element in the list
-			 */
-			private histElement thePrev = null;
-			
-			/**
-			 * The values referred to by this element
-			 */
-			private histObject  theObj  = null;
-			
-			/**
-			 * Constructor for element
-			 * @param pObj the values for this element
-			 */
-			public histElement(histObject pObj) {
-				theObj = pObj;
-			}
-			
-			/**
-			 * Format the changes represented by this element
-			 * @return the formatted changes
-			 */
-			public StringBuilder toHTMLString() {
-				histObject 		myObj;
-				int 			fieldId;
-				int				myCount;
-				StringBuilder	myString = new StringBuilder(100);
-				
-				/* Determine the previous that we will compare against */
-				myObj = (thePrev != null) ? thePrev.theObj : getObj();
-				
-				/* Loop through the fields */
-				for (fieldId = 0, myCount = 0;
-					 fieldId < numFields();
-					 fieldId++) {
-					/* If the field has changed */
-					if (theObj.fieldChanged(fieldId, myObj))
-						myCount++;
-				}
-				
-				/* Start the values section */
-				myString.append("<tr><th rowspan=\"");
-				myString.append(myCount+1);
-				myString.append("\">Changes</th></tr>");
-				
-				/* Loop through the fields */
-				for (fieldId = 0;
-					 fieldId < numFields();
-					 fieldId++) {
-					/* If the field has changed */
-					if (theObj.fieldChanged(fieldId, myObj)) {
-						/* Format the field */
-						myString.append("<tr><td>"); 
-						myString.append(getFieldName(fieldId)); 
-						myString.append("</td><td>"); 
-						myString.append(formatField(fieldId, theObj));
-						myString.append("</td></tr>");
-					}
-				}
-				
-				/* Return the formatted string */
-				return myString;
-			}
-		}
-	}
-	
-	/**
-	 * Provides the validation control for a finance object holding the list of errors for
-	 * an object.
-	 * @see finLink.validationCtl.errorElement
-	 */
-	public class validationCtl {
-		/**
-		 * The first error in the list
-		 */
-		private errorElement theTop  = null;
-
-		/**
-		 * The last error in the list
-		 */
-		private errorElement theEnd  = null;
-		
-		/**
-		 * The number of errors in this buffer
-		 */
-		private int			 theNumErrors = 0;
-		/**
-		 * Get the first error in the list
-		 * @return the first error or <code>null</code>
-		 */
-		private errorElement getFirst() { return theTop; }
-		
-		/**
-		 *  add error to the list 
-		 *  @param pText the text for the error
-		 *  @param iFieldId the field id for the error
-		 */
-		private void addError(String pText,
-				              int    iFieldId) {
-			/* Create a new error element */
-			errorElement myEl = new errorElement(pText, iFieldId);
-			
-			/* Add to the end of the list */
-			if (theEnd != null) theEnd.theNext = myEl; 
-			if (theTop == null) theTop = myEl;
-			theEnd = myEl;
-			
-			/* Increment the error count */
-			theNumErrors++;
-			
-			/* Note that the list has errors */
-			theList.setEditState(EditState.ERROR);
-		}
-		
-		/**
-		 *  Determine whether there are any errors for a particular field
-		 *  @param iField - the field number to check
-		 *  @return <code>true</code> if there are any errors <code>false</code> otherwise
-		 */
-		private boolean hasErrors(int iField) {
-			errorElement myCurr;
-			for (myCurr = theTop;
-			     myCurr != null;
-			     myCurr = myCurr.getNext()) {
-				if (myCurr.getField() == iField) return true;
-			}
-			return false;
-		}
-		
-		/**
-		 *  Get the first actual error for a particular field
-		 *  @param iField - the field number to check
-		 *  @return the error text
-		 */
-		private String getFieldErrors(int iField) {
-			errorElement 	myCurr;
-			String			myErrors = null;
-			
-			/* Loop through the errors */
-			for (myCurr = theTop;
-			     myCurr != null;
-			     myCurr = myCurr.getNext()) {
-				/* If the field matches */
-				if (myCurr.getField() == iField) {					
-					/* Add the error */
-					myErrors = addErrorText(myErrors, myCurr.getError());
-				}
-			}
-			return (myErrors == null) ? null : myErrors + "</html>";
-		}
-		
-		/**
-		 * Get the error text for fields outside a set of fields
-		 * @param iFields the set of fields
-		 * @return the error text
-		 */
-		private	String	getFieldErrors(int[] iFields) {
-			errorElement 	myCurr;
-			boolean 		bFound;
-			int 			myField;
-			String			myErrors = null;
-			
-			/* Loop through the errors */
-			for (myCurr = theTop;
-			     myCurr != null;
-			     myCurr = myCurr.getNext()) {
-				/* Assume that field is not in set */
-				myField	= myCurr.getField();
-				bFound 	= false;
-				
-				/* Search the field set */
-				for(int i : iFields) {
-					/* If we have found the field note it and break loop */
-					if (i == myField) { bFound = true; break; }
-				}
-				
-				/* Skip error if the field was found */
-				if (bFound) continue;
-				
-				/* Add the error */
-				myErrors = addErrorText(myErrors, myCurr.getError());
-			}
-			
-			/* Return errors */
-			return (myErrors == null) ? null : myErrors + "</html>";
-		}
-		
-		/**
-		 * Add error text
-		 * @param pCurrent existing error text
-		 * @param pError new error text
-		 */
-		private String addErrorText(String pCurrent, String pError) {
-			/* Return text if current is null */
-			if (pCurrent == null) return "<html>" + pError;
-			
-			/* return with error appended */
-			return pCurrent + "<br>" + pError;
-		}
-		
-		/**
-		 *  Clear errors
-		 */
-		private void clearErrors() {
-			/* Remove all errors */
-			theTop       = null;
-			theEnd       = null;
-			theNumErrors = 0;
-		}
-		
-		/**
-		 * Format the errors in this list
-		 * @return the formatted changes
-		 */
-		public StringBuilder toHTMLString() {
-			errorElement	myCurr;
-			StringBuilder	myString = new StringBuilder(1000);
-			
-			/* Start the values section */
-			myString.append("<tr><th rowspan=\"");
-			myString.append(theNumErrors+1);
-			myString.append("\">Errors</th></tr>");
-			
-			/* Loop through the elements */
-			for (myCurr  = theTop;
-				 myCurr != null;
-				 myCurr  = myCurr.theNext) {
-				/* Format the error element */
-				myString.append(myCurr.toHTMLString());
-			}
-			
-			/* Return the formatted string */
-			return myString;
-		}
-		
-		/**
-		 * represents an instance of an error for an object
-		 */
-		public class errorElement {
-			/**
-			 * The next error in the list
-			 */
-			private errorElement theNext   = null;
-			
-			/**
-			 * The text of the error
-			 */
-			private String       theError  = null;
-			
-			/**
-			 * The field id for the error
-			 */
-			private int          theField  = -1;
-			
-			/**
-			 * Get the text for the error
-			 * @return the text
-			 */
-			public String       getError() { return theError; }
-			
-			/**
-			 * Get the fieldId for the error
-			 * @return the fieldId
-			 */
-			public int          getField() { return theField; }
-			
-			/**
-			 * Get the next error
-			 * @return the next error (or <code>null</code>)
-			 */
-			public errorElement getNext()  { return theNext; }
-			
-			/**
-			 * Constructor for the error
-			 * @param pError the error text
-			 * @param iField the field id
-			 */
-			private errorElement(String pError,
-					             int    iField) {
-				theError = pError;
-				theField = iField;
-			}
-			
-			/**
-			 * Format the error represented by this element
-			 * @return the formatted changes
-			 */
-			public StringBuilder toHTMLString() {
-				StringBuilder	myString = new StringBuilder(100);
-				
-				/* Format the details */
-				myString.append("<tr><td>");
-				myString.append(fieldName(theField));
-				myString.append("</td><td>");
-				myString.append(theError);
-				myString.append("</td</tr>");
-				
-				/* Return the string */
-				return myString;
-			}
-		}
-	}	
 }

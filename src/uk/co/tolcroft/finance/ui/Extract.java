@@ -331,11 +331,15 @@ public class Extract extends FinanceTable<Event> {
 	/**
 	 * Check whether the restoration of the passed object is compatible with the current selection
 	 * @param pItem the current item
-	 * @param pObj the potential object for restoration
+	 * @param pValues the potential values for restoration
 	 */
-	public boolean isValidObj(DataItem<?>			pItem,
-							  DataItem.histObject  	pObj) {
-		Event.Values myEvent = (Event.Values) pObj;
+	public boolean isValidHistory(DataItem<Event>	pItem,
+							      HistoryValues<?> 	pValues) {
+		/* Reject if this is not an Event item */
+		if (!(pValues instanceof Event.Values)) return false;
+		
+		/* Access values */
+		Event.Values myEvent = (Event.Values) pValues;
 		
 		/* Check whether the date is in range */
 		if (theRange.compareTo(myEvent.getDate()) != 0)
@@ -469,9 +473,10 @@ public class Extract extends FinanceTable<Event> {
 							return ((myEvent.getTransType() != null) &&
 									(myEvent.getTransType().isTaxableGain()));
 						case COLUMN_TAXCRED:
-							return myEvent.needsTaxCredit();
+							return myEvent.needsTaxCredit(myEvent.getTransType(), 
+														  myEvent.getDebit());
 						case COLUMN_DILUTE:
-							return myEvent.needsDilution();
+							return myEvent.needsDilution(myEvent.getTransType());
 						default:	
 							return true;
 					}

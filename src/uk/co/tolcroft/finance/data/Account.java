@@ -75,26 +75,26 @@ public class Account extends EncryptedItem<Account> {
 	private boolean               isAliasedTo  = false;
 		
 	/* Access methods */
-	public  Values      getObj()       	{ return (Values)super.getObj(); }	
-	public  String      getName()      	{ return getPairValue(getObj().getName()); }
-	public  String      getDesc()      	{ return getPairValue(getObj().getDesc()); }
-	public  Account     getParent()    	{ return getObj().getParent(); }
+	public  Values      getValues()     { return (Values)super.getValues(); }	
+	public  String      getName()      	{ return getPairValue(getValues().getName()); }
+	public  String      getDesc()      	{ return getPairValue(getValues().getDesc()); }
+	public  Account     getParent()    	{ return getValues().getParent(); }
 	public  Integer		getParentId()  	{ return theParentId; }
-	public  Account     getAlias()    	{ return getObj().getAlias(); }
+	public  Account     getAlias()    	{ return getValues().getAlias(); }
 	public  Integer     getAliasId()  	{ return theAliasId; }
 	public  Event       getEarliest()  	{ return theEarliest; }
 	public  Event       getLatest()    	{ return theLatest; }
 	public  AcctPrice   getInitPrice()  { return theInitPrice; }
-	public  AccountType getActType()   	{ return getObj().getType(); }
+	public  AccountType getActType()   	{ return getValues().getType(); }
 	public  int         getOrder()     	{ return theOrder; }
-	public  Date        getMaturity()  	{ return getObj().getMaturity(); }
-	public  Date    	getClose()     	{ return getObj().getClose(); }
-	public  char[]    	getWebSite()	{ return getPairValue(getObj().getWebSite()); }
-	public  char[]    	getCustNo()		{ return getPairValue(getObj().getCustNo()); }
-	public  char[]    	getUserId()		{ return getPairValue(getObj().getUserId()); }
-	public  char[]    	getPassword()	{ return getPairValue(getObj().getPassword()); }
-	public  char[]    	getAccount()	{ return getPairValue(getObj().getAccount()); }
-	public  char[]    	getNotes()		{ return getPairValue(getObj().getNotes()); }
+	public  Date        getMaturity()  	{ return getValues().getMaturity(); }
+	public  Date    	getClose()     	{ return getValues().getClose(); }
+	public  char[]    	getWebSite()	{ return getPairValue(getValues().getWebSite()); }
+	public  char[]    	getCustNo()		{ return getPairValue(getValues().getCustNo()); }
+	public  char[]    	getUserId()		{ return getPairValue(getValues().getUserId()); }
+	public  char[]    	getPassword()	{ return getPairValue(getValues().getPassword()); }
+	public  char[]    	getAccount()	{ return getPairValue(getValues().getAccount()); }
+	public  char[]    	getNotes()		{ return getPairValue(getValues().getNotes()); }
 	public  boolean     isCloseable()  	{ return isCloseable; }
 	public  boolean     isParent()  	{ return isParent; }
 	public  boolean     isClosed()     	{ return (getClose() != null); }
@@ -113,14 +113,14 @@ public class Account extends EncryptedItem<Account> {
 	}
 		
 	/* Encrypted bytes access */
-	public  byte[]	getNameBytes()      { return getPairBytes(getObj().getName()); }
-	public  byte[]  getDescBytes()      { return getPairBytes(getObj().getDesc()); }
-	public  byte[]  getWebSiteBytes()	{ return getPairBytes(getObj().getWebSite()); }
-	public  byte[]  getCustNoBytes()	{ return getPairBytes(getObj().getCustNo()); }
-	public  byte[]  getUserIdBytes()	{ return getPairBytes(getObj().getUserId()); }
-	public  byte[]  getPasswordBytes()	{ return getPairBytes(getObj().getPassword()); }
-	public  byte[]  getAccountBytes()	{ return getPairBytes(getObj().getAccount()); }
-	public  byte[]  getNotesBytes()		{ return getPairBytes(getObj().getNotes()); }
+	public  byte[]	getNameBytes()      { return getPairBytes(getValues().getName()); }
+	public  byte[]  getDescBytes()      { return getPairBytes(getValues().getDesc()); }
+	public  byte[]  getWebSiteBytes()	{ return getPairBytes(getValues().getWebSite()); }
+	public  byte[]  getCustNoBytes()	{ return getPairBytes(getValues().getCustNo()); }
+	public  byte[]  getUserIdBytes()	{ return getPairBytes(getValues().getUserId()); }
+	public  byte[]  getPasswordBytes()	{ return getPairBytes(getValues().getPassword()); }
+	public  byte[]  getAccountBytes()	{ return getPairBytes(getValues().getAccount()); }
+	public  byte[]  getNotesBytes()		{ return getPairBytes(getValues().getNotes()); }
 	
 	/* Linking methods */
 	public Account     getBase() { return (Account)super.getBase(); }
@@ -185,18 +185,18 @@ public class Account extends EncryptedItem<Account> {
 	/**
 	 * Format the value of a particular field as a table row
 	 * @param iField the field number
-	 * @param pObj the values to use
+	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, histObject pObj) {
+	public String formatField(int iField, HistoryValues<Account> pValues) {
 		String	myString = "";
-		Values 	myObj 	 = (Values)pObj;
+		Values 	myValues = (Values)pValues;
 		switch (iField) {
 			case FIELD_NAME:	
-				myString += myObj.getNameValue(); 
+				myString += myValues.getNameValue(); 
 				break;
 			case FIELD_DESC:	
-				myString += myObj.getDescValue(); 
+				myString += myValues.getDescValue(); 
 				break;
 			case FIELD_TYPE:	
 				if ((getActType() == null) &&
@@ -206,45 +206,45 @@ public class Account extends EncryptedItem<Account> {
 					myString += AccountType.format(getActType()); 
 				break;
 			case FIELD_CLOSE:	
-				myString += Date.format(myObj.getClose()); 
+				myString += Date.format(myValues.getClose()); 
 				break;
 			case FIELD_MATURITY:	
-				myString += Date.format(myObj.getMaturity()); 
+				myString += Date.format(myValues.getMaturity()); 
 				break;
 			case FIELD_PARENT:	
-				if ((myObj.getParent() == null) &&
+				if ((myValues.getParent() == null) &&
 					(theParentId != null))
 					myString += "Id=" + theParentId;
 				else
-					myString += Account.format(myObj.getParent()); 
+					myString += Account.format(myValues.getParent()); 
 				break;
 			case FIELD_ALIAS:	
-				if ((myObj.getAlias() == null) &&
+				if ((myValues.getAlias() == null) &&
 					(theAliasId != null))
 					myString += "Id=" + theAliasId;
 				else
-					myString += Account.format(myObj.getAlias()); 
+					myString += Account.format(myValues.getAlias()); 
 				break;
 			case FIELD_WEBSITE:	
-				myString += getCharArrayPairString(myObj.getWebSite()); 
+				myString += getCharArrayPairString(myValues.getWebSite()); 
 				break;
 			case FIELD_CUSTNO:	
-				myString += getCharArrayPairString(myObj.getCustNo()); 
+				myString += getCharArrayPairString(myValues.getCustNo()); 
 				break;
 			case FIELD_USERID:	
-				myString += getCharArrayPairString(myObj.getUserId()); 
+				myString += getCharArrayPairString(myValues.getUserId()); 
 				break;
 			case FIELD_PASSWORD:	
-				myString += getCharArrayPairString(myObj.getPassword()); 
+				myString += getCharArrayPairString(myValues.getPassword()); 
 				break;
 			case FIELD_ACCOUNT:	
-				myString += getCharArrayPairString(myObj.getAccount()); 
+				myString += getCharArrayPairString(myValues.getAccount()); 
 				break;
 			case FIELD_NOTES:	
-				myString += getCharArrayPairString(myObj.getNotes()); 
+				myString += getCharArrayPairString(myValues.getNotes()); 
 				break;
 			default: 		
-				myString += super.formatField(iField, pObj); 
+				myString += super.formatField(iField, pValues); 
 				break;
 		}
 		return myString;
@@ -257,8 +257,8 @@ public class Account extends EncryptedItem<Account> {
 	public Account(List pList, Account pAccount) {
 		/* Set standard values */
 		super(pList, pAccount.getId());
-		Values myObj = new Values(pAccount.getObj());
-		setObj(myObj);
+		Values myValues = new Values(pAccount.getValues());
+		setValues(myValues);
 		setControlKey(pAccount.getControlKey());
 		theOrder     = pAccount.getOrder();
 		theEarliest  = pAccount.theEarliest;
@@ -270,16 +270,26 @@ public class Account extends EncryptedItem<Account> {
 		hasPatterns  = pAccount.hasPatterns;
 		hasRates     = pAccount.hasRates;
 		hasPrices    = pAccount.hasPrices;
-			
-		/* Switch on the LinkStyle */
+		ListStyle myOldStyle = pAccount.getList().getStyle();
+
+		/* Switch on the ListStyle */
 		switch (pList.getStyle()) {
-			case CORE:
-				/* Create a new id for the item */
-				setId(0); 
-				pList.setNewId(this);
-				break;
 			case EDIT:
-				setBase(pAccount);
+				/* If this is a view creation */
+				if (myOldStyle == ListStyle.CORE) {
+					/* Account is based on the original element */
+					setBase(pAccount);
+					pList.setNewId(this);				
+					break;
+				}
+				
+				/* Else this is a duplication so treat as new item */
+				setId(0);
+				pList.setNewId(this);				
+				break;
+			case CORE:
+				/* Reset Id if this is an insert from a view */
+				if (myOldStyle == ListStyle.EDIT) setId(0);
 				pList.setNewId(this);				
 				break;
 			case UPDATE:
@@ -330,8 +340,8 @@ public class Account extends EncryptedItem<Account> {
 		AccountType myActType;
 		
 		/* Initialise the object */
-		Values myObj	= new Values();
-		setObj(myObj);
+		Values myValues	= new Values();
+		setValues(myValues);
 		
 		/* Store the IDs */
 		theActTypeId = uAcTypeId;
@@ -348,26 +358,26 @@ public class Account extends EncryptedItem<Account> {
 			throw new Exception(ExceptionClass.DATA,
 		                        this,
 					            "Invalid Account Type Id");
-		myObj.setType(myActType);
+		myValues.setType(myActType);
 		theOrder    = myActType.getOrder();
 
 		/* Parse the maturity date if it exists */
 		if (pMaturity != null) 
-			myObj.setMaturity(new Date(pMaturity));
+			myValues.setMaturity(new Date(pMaturity));
 			
 		/* Parse the closed date if it exists */
 		if (pClose != null) 
-			myObj.setClose(new Date(pClose));
+			myValues.setClose(new Date(pClose));
 				
 		/* Record the encrypted values */
-		myObj.setName(new StringPair(pName));
-		myObj.setDesc((pDesc == null) ? null : new StringPair(pDesc));
-		myObj.setWebSite((pWebSite == null) ? null : new CharArrayPair(pWebSite));
-		myObj.setCustNo((pCustNo == null) ? null : new CharArrayPair(pCustNo));
-		myObj.setUserId((pUserId == null) ? null : new CharArrayPair(pUserId));
-		myObj.setPassword((pPassword == null) ? null : new CharArrayPair(pPassword));
-		myObj.setAccount((pAccount == null) ? null : new CharArrayPair(pAccount));
-		myObj.setNotes((pNotes == null) ? null : new CharArrayPair(pNotes));
+		myValues.setName(new StringPair(pName));
+		myValues.setDesc((pDesc == null) ? null : new StringPair(pDesc));
+		myValues.setWebSite((pWebSite == null) ? null : new CharArrayPair(pWebSite));
+		myValues.setCustNo((pCustNo == null) ? null : new CharArrayPair(pCustNo));
+		myValues.setUserId((pUserId == null) ? null : new CharArrayPair(pUserId));
+		myValues.setPassword((pPassword == null) ? null : new CharArrayPair(pPassword));
+		myValues.setAccount((pAccount == null) ? null : new CharArrayPair(pAccount));
+		myValues.setNotes((pNotes == null) ? null : new CharArrayPair(pNotes));
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -404,18 +414,18 @@ public class Account extends EncryptedItem<Account> {
 		AccountType myActType;
 		
 		/* Initialise the object */
-		Values myObj	= new Values();
-		setObj(myObj);
+		Values myValues	= new Values();
+		setValues(myValues);
 
 		/* Record the encrypted values */
-		myObj.setName(new StringPair(sName));
-		myObj.setDesc((pDesc == null) ? null : new StringPair(pDesc));
-		myObj.setWebSite((pWebSite == null) ? null : new CharArrayPair(pWebSite));
-		myObj.setCustNo((pCustNo == null) ? null : new CharArrayPair(pCustNo));
-		myObj.setUserId((pUserId == null) ? null : new CharArrayPair(pUserId));
-		myObj.setPassword((pPassword == null) ? null : new CharArrayPair(pPassword));
-		myObj.setAccount((pAccount == null) ? null : new CharArrayPair(pAccount));
-		myObj.setNotes((pNotes == null) ? null : new CharArrayPair(pNotes));
+		myValues.setName(new StringPair(sName));
+		myValues.setDesc((pDesc == null) ? null : new StringPair(pDesc));
+		myValues.setWebSite((pWebSite == null) ? null : new CharArrayPair(pWebSite));
+		myValues.setCustNo((pCustNo == null) ? null : new CharArrayPair(pCustNo));
+		myValues.setUserId((pUserId == null) ? null : new CharArrayPair(pUserId));
+		myValues.setPassword((pPassword == null) ? null : new CharArrayPair(pPassword));
+		myValues.setAccount((pAccount == null) ? null : new CharArrayPair(pAccount));
+		myValues.setNotes((pNotes == null) ? null : new CharArrayPair(pNotes));
 		
 		/* Store the IDs */
 		theActTypeId = uAcTypeId;
@@ -429,16 +439,16 @@ public class Account extends EncryptedItem<Account> {
 			throw new Exception(ExceptionClass.DATA,
 		                        this,
 					            "Invalid Account Type Id");
-		myObj.setType(myActType);
+		myValues.setType(myActType);
 		theOrder    = myActType.getOrder();
 
 		/* Parse the maturity date if it exists */
 		if (pMaturity != null) 
-			myObj.setMaturity(new Date(pMaturity));
+			myValues.setMaturity(new Date(pMaturity));
 			
 		/* Parse the closed date if it exists */
 		if (pClose != null) 
-			myObj.setClose(new Date(pClose));
+			myValues.setClose(new Date(pClose));
 				
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -447,8 +457,8 @@ public class Account extends EncryptedItem<Account> {
 	/* Standard constructor for a newly inserted account */
 	public Account(List pList) {
 		super(pList, 0);
-		Values theObj = new Values();
-		setObj(theObj);
+		Values myValues = new Values();
+		setValues(myValues);
 		setControlKey(pList.getData().getControl().getControlKey());
 		pList.setNewId(this);				
 	}
@@ -474,7 +484,7 @@ public class Account extends EncryptedItem<Account> {
 		if (getId() != myThat.getId()) return false;
 		
 		/* Compare the changeable values */
-		return getObj().histEquals(myThat.getObj());
+		return getValues().histEquals(myThat.getValues());
 	}
 
 	/**
@@ -909,8 +919,8 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pDesc the description 
 	 */
 	public void setDescription(String pDesc) throws Exception {
-		if (pDesc != null) getObj().setDesc(new StringPair(pDesc));
-		else 			   getObj().setDesc(null);
+		if (pDesc != null) getValues().setDesc(new StringPair(pDesc));
+		else 			   getValues().setDesc(null);
 	}
 	
 	/**
@@ -918,7 +928,7 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pDate the new date 
 	 */
 	public void setMaturity(Date pDate) {
-		getObj().setMaturity((pDate == null) ? null : new Date(pDate));
+		getValues().setMaturity((pDate == null) ? null : new Date(pDate));
 	}
 	
 	/**
@@ -926,7 +936,7 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pDate the new date 
 	 */
 	public void setClose(Date pDate) {
-		getObj().setClose((pDate == null) ? null : new Date(pDate));
+		getValues().setClose((pDate == null) ? null : new Date(pDate));
 	}
 	
 	/**
@@ -934,7 +944,7 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pParent the new parent 
 	 */
 	public void setParent(Account pParent) {
-		getObj().setParent(pParent);
+		getValues().setParent(pParent);
 	}
 	
 	/**
@@ -942,7 +952,7 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pAlias the new alias 
 	 */
 	public void setAlias(Account pAlias) {
-		getObj().setAlias(pAlias);
+		getValues().setAlias(pAlias);
 	}
 	
 	/**
@@ -950,8 +960,8 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pName the new name 
 	 */
 	public void setAccountName(String pName) throws Exception {
-		if (pName != null) getObj().setName(new StringPair(pName));
-		else 			   getObj().setName(null);
+		if (pName != null) getValues().setName(new StringPair(pName));
+		else 			   getValues().setName(null);
 	}
 	
 	/**
@@ -959,7 +969,7 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pType the new type 
 	 */
 	public void setActType(AccountType pType) {
-		getObj().setType(pType);
+		getValues().setType(pType);
 		theOrder    = pType.getOrder();
 	}
 	
@@ -968,8 +978,8 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pWebSite the new site 
 	 */
 	public void setWebSite(char[] pWebSite) throws Exception {
-		if (pWebSite != null) getObj().setWebSite(new CharArrayPair(pWebSite));
-		else 				  getObj().setWebSite(null);
+		if (pWebSite != null) getValues().setWebSite(new CharArrayPair(pWebSite));
+		else 				  getValues().setWebSite(null);
 	}
 	
 	/**
@@ -977,8 +987,8 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pCustNo the new number 
 	 */
 	public void setCustNo(char[] pCustNo) throws Exception {
-		if (pCustNo != null) getObj().setCustNo(new CharArrayPair(pCustNo));
-		else 				 getObj().setCustNo(null);
+		if (pCustNo != null) getValues().setCustNo(new CharArrayPair(pCustNo));
+		else 				 getValues().setCustNo(null);
 	}
 	
 	/**
@@ -986,8 +996,8 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pUserId the new id 
 	 */
 	public void setUserId(char[] pUserId) throws Exception {
-		if (pUserId != null) getObj().setUserId(new CharArrayPair(pUserId));
-		else 				 getObj().setUserId(null);
+		if (pUserId != null) getValues().setUserId(new CharArrayPair(pUserId));
+		else 				 getValues().setUserId(null);
 	}
 	
 	/**
@@ -995,8 +1005,8 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pPassword the new password 
 	 */
 	public void setPassword(char[] pPassword) throws Exception {
-		if (pPassword != null) getObj().setPassword(new CharArrayPair(pPassword));
-		else 				   getObj().setPassword(null);
+		if (pPassword != null) getValues().setPassword(new CharArrayPair(pPassword));
+		else 				   getValues().setPassword(null);
 	}
 	
 	/**
@@ -1004,8 +1014,8 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pAccount the new account 
 	 */
 	public void setAccount(char[] pAccount) throws Exception {
-		if (pAccount != null) getObj().setAccount(new CharArrayPair(pAccount));
-		else 				  getObj().setAccount(null);
+		if (pAccount != null) getValues().setAccount(new CharArrayPair(pAccount));
+		else 				  getValues().setAccount(null);
 	}
 	
 	/**
@@ -1013,8 +1023,8 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pNotes the new notes 
 	 */
 	public void setNotes(char[] pNotes) throws Exception {
-		if (pNotes != null) getObj().setNotes(new CharArrayPair(pNotes));
-		else 				getObj().setNotes(null);
+		if (pNotes != null) getValues().setNotes(new CharArrayPair(pNotes));
+		else 				getValues().setNotes(null);
 	}
 	
 	/**
@@ -1024,20 +1034,20 @@ public class Account extends EncryptedItem<Account> {
 	 */
 	public boolean applyChanges(DataItem<?> pAccount) {
 		Account myAccount 	= (Account)pAccount;
-		Values	myObj		= getObj();
-		Values	myNew		= myAccount.getObj();
+		Values	myValues	= getValues();
+		Values	myNew		= myAccount.getValues();
 		boolean bChanged	= false;
 		
 		/* Store the current detail into history */
 		pushHistory();
 		
 		/* Update the Name if required */
-		if (differs(myObj.getName(), myNew.getName()))  
-			myObj.setName(myNew.getName());
+		if (differs(myValues.getName(), myNew.getName()))  
+			myValues.setName(myNew.getName());
 			
 		/* Update the description if required */
-		if (differs(myObj.getDesc(), myNew.getDesc())) 
-			myObj.setDesc(myNew.getDesc());
+		if (differs(myValues.getDesc(), myNew.getDesc())) 
+			myValues.setDesc(myNew.getDesc());
 			
 		/* Update the account type if required */
 		if (AccountType.differs(getActType(), myAccount.getActType())) 
@@ -1060,28 +1070,28 @@ public class Account extends EncryptedItem<Account> {
 			setAlias(myAccount.getAlias());
 		
 		/* Update the WebSite if required */
-		if (differs(myObj.getWebSite(), myNew.getWebSite())) 
-			myObj.setWebSite(myNew.getWebSite());
+		if (differs(myValues.getWebSite(), myNew.getWebSite())) 
+			myValues.setWebSite(myNew.getWebSite());
 		
 		/* Update the customer number if required */
-		if (differs(myObj.getCustNo(), myNew.getCustNo())) 
-			myObj.setCustNo(myNew.getCustNo());
+		if (differs(myValues.getCustNo(), myNew.getCustNo())) 
+			myValues.setCustNo(myNew.getCustNo());
 		
 		/* Update the UserId if required */
-		if (differs(myObj.getUserId(), myNew.getUserId())) 
-			myObj.setUserId(myNew.getUserId());
+		if (differs(myValues.getUserId(), myNew.getUserId())) 
+			myValues.setUserId(myNew.getUserId());
 		
 		/* Update the Password if required */
-		if (differs(myObj.getPassword(), myNew.getPassword())) 
-			myObj.setPassword(myNew.getPassword());
+		if (differs(myValues.getPassword(), myNew.getPassword())) 
+			myValues.setPassword(myNew.getPassword());
 		
 		/* Update the account if required */
-		if (differs(myObj.getAccount(), myNew.getAccount())) 
-			myObj.setAccount(myNew.getAccount());
+		if (differs(myValues.getAccount(), myNew.getAccount())) 
+			myValues.setAccount(myNew.getAccount());
 		
 		/* Update the notes if required */
-		if (differs(myObj.getNotes(), myNew.getNotes())) 
-			myObj.setNotes(myNew.getNotes());
+		if (differs(myValues.getNotes(), myNew.getNotes())) 
+			myValues.setNotes(myNew.getNotes());
 		
 		/* Check for changes */
 		if (checkForHistory()) {
@@ -1650,68 +1660,50 @@ public class Account extends EncryptedItem<Account> {
 
 		/* Constructor */
 		public Values() {}
-		public Values(Values pValues) {
-			theName       = pValues.getName();
-			theDesc       = pValues.getDesc();
-			theType       = pValues.getType();
-			theMaturity   = pValues.getMaturity();
-			theClose      = pValues.getClose();
-			theParent     = pValues.getParent();
-			theAlias      = pValues.getAlias();
-			theWebSite 	  = pValues.getWebSite();
-			theCustNo 	  = pValues.getCustNo();
-			theUserId 	  = pValues.getUserId();
-			thePassword	  = pValues.getPassword();
-			theAccount	  = pValues.getAccount();
-			theNotes	  = pValues.getNotes();
-		}
+		public Values(Values pValues) { copyFrom(pValues); }
 		
 		/* Check whether this object is equal to that passed */
-		public boolean histEquals(histObject pCompare) {
+		public boolean histEquals(HistoryValues<Account> pCompare) {
 			Values myValues = (Values)pCompare;
-			return histEquals(myValues);
-		}
-		public boolean histEquals(Values pValues) {
-			if (differs(theName,			pValues.theName))     	return false;
-			if (differs(theDesc,			pValues.theDesc))     	return false;
-			if (AccountType.differs(theType,pValues.theType))     	return false;
-			if (Date.differs(theMaturity, 	pValues.theMaturity)) 	return false;
-			if (Date.differs(theClose,    	pValues.theClose))    	return false;
-			if (Account.differs(theParent,  pValues.theParent))   	return false;
-			if (Account.differs(theAlias,   pValues.theAlias))   	return false;
-			if (differs(theWebSite,			pValues.theWebSite)) 	return false;
-			if (differs(theCustNo,			pValues.theCustNo)) 	return false;
-			if (differs(theUserId,			pValues.theUserId)) 	return false;
-			if (differs(thePassword,		pValues.thePassword)) 	return false;
-			if (differs(theAccount,			pValues.theAccount)) 	return false;
-			if (differs(theNotes,			pValues.theNotes)) 		return false;
+			if (!super.histEquals(pCompare))					  	return false;
+			if (differs(theName,			myValues.theName))     	return false;
+			if (differs(theDesc,			myValues.theDesc))     	return false;
+			if (AccountType.differs(theType,myValues.theType))     	return false;
+			if (Date.differs(theMaturity, 	myValues.theMaturity)) 	return false;
+			if (Date.differs(theClose,    	myValues.theClose))    	return false;
+			if (Account.differs(theParent,  myValues.theParent))   	return false;
+			if (Account.differs(theAlias,   myValues.theAlias))   	return false;
+			if (differs(theWebSite,			myValues.theWebSite)) 	return false;
+			if (differs(theCustNo,			myValues.theCustNo)) 	return false;
+			if (differs(theUserId,			myValues.theUserId)) 	return false;
+			if (differs(thePassword,		myValues.thePassword)) 	return false;
+			if (differs(theAccount,			myValues.theAccount)) 	return false;
+			if (differs(theNotes,			myValues.theNotes)) 	return false;
 			return true;
 		}
 		
 		/* Copy values */
-		public void    copyFrom(histObject pSource) {
-			Values myValues = (Values)pSource;
-			copyFrom(myValues);
-		}
-		public histObject copySelf() {
+		public HistoryValues<Account> copySelf() {
 			return new Values(this);
 		}
-		public void    copyFrom(Values pValues) {
-			theName       = pValues.getName();
-			theDesc       = pValues.getDesc();
-			theType       = pValues.getType();
-			theMaturity   = pValues.getMaturity();
-			theClose      = pValues.getClose();
-			theParent     = pValues.getParent();
-			theAlias      = pValues.getAlias();
-			theWebSite 	  = pValues.getWebSite();
-			theCustNo 	  = pValues.getCustNo();
-			theUserId 	  = pValues.getUserId();
-			thePassword	  = pValues.getPassword();
-			theAccount	  = pValues.getAccount();
-			theNotes	  = pValues.getNotes();
+		public void    copyFrom(HistoryValues<?> pSource) {
+			Values myValues = (Values)pSource;
+			super.copyFrom(myValues);
+			theName       = myValues.getName();
+			theDesc       = myValues.getDesc();
+			theType       = myValues.getType();
+			theMaturity   = myValues.getMaturity();
+			theClose      = myValues.getClose();
+			theParent     = myValues.getParent();
+			theAlias      = myValues.getAlias();
+			theWebSite 	  = myValues.getWebSite();
+			theCustNo 	  = myValues.getCustNo();
+			theUserId 	  = myValues.getUserId();
+			thePassword	  = myValues.getPassword();
+			theAccount	  = myValues.getAccount();
+			theNotes	  = myValues.getNotes();
 		}
-		public boolean	fieldChanged(int fieldNo, histObject pOriginal) {
+		public boolean	fieldChanged(int fieldNo, HistoryValues<Account> pOriginal) {
 			Values 	pValues = (Values)pOriginal;
 			boolean			bResult = false;
 			switch (fieldNo) {
@@ -1754,6 +1746,9 @@ public class Account extends EncryptedItem<Account> {
 				case FIELD_NOTES:
 					bResult = (differs(theNotes,			pValues.theNotes));
 					break;
+				default:
+					bResult = super.fieldChanged(fieldNo, pValues);
+					break;
 			}
 			return bResult;
 		}
@@ -1771,6 +1766,24 @@ public class Account extends EncryptedItem<Account> {
 			if (thePassword != null) thePassword.encryptPair();
 			if (theAccount  != null) theAccount.encryptPair();
 			if (theNotes    != null) theNotes.encryptPair();
+		}		
+
+		/**
+		 * Adopt encryption from base
+		 * @param pBase the Base values
+		 */
+		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {
+			Values myBase = (Values)pBase;
+
+			/* Apply the encryption */
+			theName.encryptPair(myBase.theName);
+			if (theDesc     != null) theDesc.encryptPair(myBase.theDesc);
+			if (theWebSite  != null) theWebSite.encryptPair(myBase.theWebSite);
+			if (theCustNo   != null) theCustNo.encryptPair(myBase.theCustNo);
+			if (theUserId   != null) theUserId.encryptPair(myBase.theUserId);
+			if (thePassword != null) thePassword.encryptPair(myBase.thePassword);
+			if (theAccount  != null) theAccount.encryptPair(myBase.theAccount);
+			if (theNotes    != null) theNotes.encryptPair(myBase.theNotes);
 		}		
 	}
 }

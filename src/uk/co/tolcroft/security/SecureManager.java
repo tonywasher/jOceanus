@@ -91,6 +91,36 @@ public class SecureManager {
 	}	
 
 	/**
+	 *  Update the Security Control
+	 *  @param pControl the existing security control
+	 *  @param pSource the description of the secured resource
+	 *  @return was the password changed <code>true/false</code>
+	 */
+	public boolean updateSecurityControl(SecurityControl 	pControl,
+									     String 			pSource) throws Exception {
+		/* Create the title for the window */
+		String myTitle = "Enter New Password for " + pSource;
+			
+		/* Create a new password dialog */
+		PasswordDialog 	myPass 	= new PasswordDialog(theFrame,
+													 myTitle,
+													 true);
+			
+		/* Prompt for the password */
+		if (showDialog(myPass)) {
+			/* Access the password */
+			char[] myPassword = myPass.getPassword();
+
+			/* Update the password */
+			pControl.setNewPassword(myPassword);
+			return true;
+		}
+		
+		/* Return to caller */
+		return false;
+	}
+
+	/**
 	 *  Show the dialog under an invokeAndWait clause 
 	 *  @param pDialog the dialog to show
 	 */

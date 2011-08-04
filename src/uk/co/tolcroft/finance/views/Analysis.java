@@ -185,17 +185,17 @@ public class Analysis {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
+		public String formatField(int iField, HistoryValues<AnalysisBucket> pValues) {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_TYPE:		
 					myString += theBucketType;
 					break;
 				default: 			
-					myString += super.formatField(iField, pObj);
+					myString += super.formatField(iField, pValues);
 					break;
 			}
 			return myString;
@@ -630,17 +630,17 @@ public class Analysis {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
+		public String formatField(int iField, HistoryValues<AnalysisBucket> pValues) {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_ACCOUNT:		
 					myString += Account.format(theAccount);
 					break;
 				default:
-					myString += super.formatField(iField, pObj);
+					myString += super.formatField(iField, pValues);
 					break;
 			}
 			return myString;
@@ -760,17 +760,17 @@ public class Analysis {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
+		public String formatField(int iField, HistoryValues<AnalysisBucket> pValues) {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_ACCOUNTTYPE:		
 					myString += AccountType.format(theAccountType);
 					break;
 				default:
-					myString += super.formatField(iField, pObj);
+					myString += super.formatField(iField, pValues);
 					break;
 			}
 			return myString;
@@ -868,17 +868,17 @@ public class Analysis {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
+		public String formatField(int iField, HistoryValues<AnalysisBucket> pValues) {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_TRANSTYPE:		
 					myString += TransactionType.format(theTransType);
 					break;
 				default:
-					myString += super.formatField(iField, pObj);
+					myString += super.formatField(iField, pValues);
 					break;
 			}
 			return myString;
@@ -976,17 +976,17 @@ public class Analysis {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
+		public String formatField(int iField, HistoryValues<AnalysisBucket> pValues) {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_TAXTYPE:		
 					myString += TaxType.format(theTaxType);
 					break;
 				default:
-					myString += super.formatField(iField, pObj);
+					myString += super.formatField(iField, pValues);
 					break;
 			}
 			return myString;
@@ -1096,17 +1096,17 @@ public class Analysis {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
+		public String formatField(int iField, HistoryValues<AnalysisBucket> pValues) {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_VALUE:		
 					myString += Money.format(theValue);
 					break;
 				default:
-					myString += super.formatField(iField, pObj);
+					myString += super.formatField(iField, pValues);
 					break;
 			}
 			return myString;
@@ -1248,10 +1248,10 @@ public class Analysis {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
+		public String formatField(int iField, HistoryValues<AnalysisBucket> pValues) {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_RATE:		
@@ -1261,7 +1261,7 @@ public class Analysis {
 					myString += Date.format(theMaturity);
 					break;
 				default:
-					myString += super.formatField(iField, pObj);
+					myString += super.formatField(iField, pValues);
 					break;
 			}
 			return myString;
@@ -1407,17 +1407,17 @@ public class Analysis {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
+		public String formatField(int iField, HistoryValues<AnalysisBucket> pValues) {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_SPEND:		
 					myString += Money.format(theSpend);
 					break;
 				default:
-					myString += super.formatField(iField, pObj);
+					myString += super.formatField(iField, pValues);
 					break;
 			}
 			return myString;
@@ -1607,10 +1607,10 @@ public class Analysis {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
+		public String formatField(int iField, HistoryValues<AnalysisBucket> pValues) {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_UNITS:		
@@ -1638,7 +1638,7 @@ public class Analysis {
 					myString += Price.format(thePrice);
 					break;
 				default:
-					myString += super.formatField(iField, pObj);
+					myString += super.formatField(iField, pValues);
 					break;
 			}
 			return myString;
@@ -1860,10 +1860,10 @@ public class Analysis {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
+		public String formatField(int iField, HistoryValues<AnalysisBucket> pValues) {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_INCOME:		
@@ -1873,7 +1873,7 @@ public class Analysis {
 					myString += Money.format(theExpense);
 					break;
 				default:
-					myString += super.formatField(iField, pObj);
+					myString += super.formatField(iField, pValues);
 					break;
 			}
 			return myString;
@@ -2057,17 +2057,17 @@ public class Analysis {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
+		public String formatField(int iField, HistoryValues<AnalysisBucket> pValues) {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_VALUE:		
 					myString += Money.format(theValue);
 					break;
 				default:
-					myString += super.formatField(iField, pObj);
+					myString += super.formatField(iField, pValues);
 					break;
 			}
 			return myString;
@@ -2185,10 +2185,10 @@ public class Analysis {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
+		public String formatField(int iField, HistoryValues<AnalysisBucket> pValues) {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_VALUE:		
@@ -2198,7 +2198,7 @@ public class Analysis {
 					myString += Money.format(theProfit);
 					break;
 				default:
-					myString += super.formatField(iField, pObj);
+					myString += super.formatField(iField, pValues);
 					break;
 			}
 			return myString;
@@ -2335,10 +2335,10 @@ public class Analysis {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
+		public String formatField(int iField, HistoryValues<AnalysisBucket> pValues) {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_INCOME:		
@@ -2351,7 +2351,7 @@ public class Analysis {
 					myString += Money.format(theProfit);
 					break;
 				default:
-					myString += super.formatField(iField, pObj);
+					myString += super.formatField(iField, pValues);
 					break;
 			}
 			return myString;
@@ -2474,10 +2474,10 @@ public class Analysis {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
+		public String formatField(int iField, HistoryValues<AnalysisBucket> pValues) {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_COST:		
@@ -2493,7 +2493,7 @@ public class Analysis {
 					myString += Money.format(theProfit);
 					break;
 				default:
-					myString += super.formatField(iField, pObj);
+					myString += super.formatField(iField, pValues);
 					break;
 			}
 			return myString;
@@ -2625,10 +2625,10 @@ public class Analysis {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
+		public String formatField(int iField, HistoryValues<AnalysisBucket> pValues) {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_AMOUNT:		
@@ -2638,7 +2638,7 @@ public class Analysis {
 					myString += Money.format(theTaxCredit);
 					break;
 				default:
-					myString += super.formatField(iField, pObj);
+					myString += super.formatField(iField, pValues);
 					break;
 			}
 			return myString;
@@ -2767,17 +2767,17 @@ public class Analysis {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
+		public String formatField(int iField, HistoryValues<AnalysisBucket> pValues) {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_AMOUNT:		
 					myString += Money.format(theAmount);
 					break;
 				default:
-					myString += super.formatField(iField, pObj);
+					myString += super.formatField(iField, pValues);
 					break;
 			}
 			return myString;
@@ -2910,17 +2910,17 @@ public class Analysis {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
+		public String formatField(int iField, HistoryValues<AnalysisBucket> pValues) {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_AMOUNT:		
 					myString += Money.format(theAmount);
 					break;
 				default:
-					myString += super.formatField(iField, pObj);
+					myString += super.formatField(iField, pValues);
 					break;
 			}
 			return myString;
@@ -3061,10 +3061,10 @@ public class Analysis {
 		/**
 		 * Format the value of a particular field as a table row
 		 * @param iField the field number
-		 * @param pObj the values to use
+		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, histObject pObj) {
+		public String formatField(int iField, HistoryValues<AnalysisBucket> pValues) {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_AMOUNT:		
@@ -3077,7 +3077,7 @@ public class Analysis {
 					myString += Rate.format(theRate);
 					break;
 				default:
-					myString += super.formatField(iField, pObj);
+					myString += super.formatField(iField, pValues);
 					break;
 			}
 			return myString;

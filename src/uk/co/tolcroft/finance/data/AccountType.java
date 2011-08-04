@@ -49,7 +49,6 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 	private AccountType(List 	pList,
 			            String	sName) throws Exception {
 		super(pList, sName);
-		pList.setNewId(this);				
 	}
 	
 	/**
@@ -64,7 +63,6 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 			            String	pName,
 			            String	pDesc) throws Exception {
 		super(pList, uClassId, pName, pDesc);
-		pList.setNewId(this);				
 	}
 	
 	/**
@@ -83,7 +81,6 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 			            byte[]	pName,
 			            byte[]	pDesc) throws Exception {
 		super(pList, uId, uControlId, uClassId, pName, pDesc);
-		pList.setNewId(this);				
 	}
 	
 	/**

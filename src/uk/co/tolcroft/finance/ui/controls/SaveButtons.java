@@ -83,18 +83,15 @@ public class SaveButtons implements ActionListener {
 			switch (theParent.getEditState()) {
 				case CLEAN:
 					theOKButton.setEnabled(false);
-					//theValidButton.setEnabled(false);
 					theResetButton.setEnabled(false);
 					break;
 				case DIRTY:
 				case ERROR:
 					theOKButton.setEnabled(false);
-					//theValidButton.setEnabled(true);
 					theResetButton.setEnabled(true);
 					break;
 				case VALID:
 					theOKButton.setEnabled(true);
-					//theValidButton.setEnabled(false);
 					theResetButton.setEnabled(true);
 					break;
 			}
@@ -115,12 +112,6 @@ public class SaveButtons implements ActionListener {
 			/* Pass command to the table */
 			theParent.performCommand(financeCommand.RESETALL);
 		}
-		
-		/* If this event relates to the OK box */
-		//else if (evt.getSource() == (Object)theValidButton) {
-			/* Pass command to the table */
-			//theParent.performCommand(financeCommand.VALIDATEALL);
-		//}
 		
 		/* Set the lockDown Status */
 		setLockDown();

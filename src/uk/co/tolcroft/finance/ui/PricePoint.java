@@ -255,16 +255,30 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 	/**
 	 * Check whether the restoration of the passed object is compatible with the current selection
 	 * @param pItem the current item
-	 * @param pObj the potential object for restoration
+	 * @param pValues the potential values for restoration
 	 */
-	public boolean isValidObj(DataItem<?>			pItem,
-							  DataItem.histObject  	pObj) {
+	public boolean isValidHistory(DataItem<SpotPrices.SpotPrice>	pItem,
+							  	  HistoryValues<?>					pValues) {
 		SpotPrices.SpotPrice	mySpot  = (SpotPrices.SpotPrice) pItem;
-		AcctPrice.Values          	myPrice = (AcctPrice.Values) pObj;
 		
-		/* Check whether the date is the same */
-		if (Date.differs(mySpot.getDate(), myPrice.getDate()))
-			return false;
+		/* If this is an AcctPrice item */
+		if (pValues instanceof AcctPrice.Values) {
+			/* Access the values */
+			AcctPrice.Values	myPrice = (AcctPrice.Values) pValues;
+
+			/* Check whether the date is the same */
+			if (Date.differs(mySpot.getDate(), myPrice.getDate()))
+				return false;
+		}
+
+		/* else it is a SpotPrice item */
+		else if (pValues instanceof SpotPrices.SpotPrice.Values) {
+			/* Alway OK */
+			return true;
+		}
+
+		/* else unsupported values */
+		else return false;
 
 		/* Otherwise OK */
 		return true;

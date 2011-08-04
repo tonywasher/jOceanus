@@ -64,10 +64,10 @@ public class DilutionEvent extends DataItem<DilutionEvent> {
 	/**
 	 * Format the value of a particular field as a table row
 	 * @param iField the field number
-	 * @param pObj the values to use
+	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, histObject pObj) {
+	public String formatField(int iField, HistoryValues<DilutionEvent> pValues) {
 		String myString = ""; 
 		switch (iField) {
 			case FIELD_ACCOUNT:		

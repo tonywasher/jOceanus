@@ -10,6 +10,7 @@ import uk.co.tolcroft.models.DataItem;
 import uk.co.tolcroft.models.DataList;
 import uk.co.tolcroft.models.DataState;
 import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.HistoryValues;
 import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.security.AsymmetricKey;
@@ -55,11 +56,11 @@ public class ControlKey extends DataItem<ControlKey> {
 	
 	/* Access methods */
 	public  SecurityControl	getSecurityControl()	{ return theControl; }
-	public  String 			getSecurityKey()  		{ return getObj().getSecurityKey(); }
+	public  String 			getSecurityKey()  		{ return getValues().getSecurityKey(); }
 
 	/* Linking methods */
-	public ControlKey	getBase() { return (ControlKey)super.getBase(); }
-	public Values  		getObj()  { return (Values)super.getObj(); }	
+	public ControlKey	getBase() 	{ return (ControlKey)super.getBase(); }
+	public Values  		getValues() { return (Values)super.getCurrentValues(); }	
 	
 	/* Field IDs */
 	public static final int FIELD_KEY	   = DataItem.NUMFIELDS;
@@ -96,17 +97,18 @@ public class ControlKey extends DataItem<ControlKey> {
 	/**
 	 * Format the value of a particular field as a table row
 	 * @param iField the field number
-	 * @param pObj the values to use
+	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, histObject pObj) {
+	public String formatField(int iField, HistoryValues<ControlKey> pValues) {
+		Values	myValues = (Values)pValues;
 		String 	myString = "";
 		switch (iField) {
 			case FIELD_KEY:
-				myString += getSecurityKey(); 
+				myString += myValues.getSecurityKey(); 
 				break;
 			default: 		
-				myString += super.formatField(iField, pObj); 
+				myString += super.formatField(iField, pValues); 
 				break;
 		}
 		return myString;
@@ -119,8 +121,8 @@ public class ControlKey extends DataItem<ControlKey> {
 	protected ControlKey(List pList, ControlKey pKey) {
 		/* Set standard values */
 		super(pList, pKey.getId());
-		Values myObj = new Values(pKey.getObj());
-		setObj(myObj);
+		Values myValues = new Values(pKey.getValues());
+		setValues(myValues);
 		theControl		= pKey.getSecurityControl();
 		theRandom		= theControl.getRandom();
 
@@ -151,11 +153,11 @@ public class ControlKey extends DataItem<ControlKey> {
 				   	  String	pSecurityKey) throws Exception {
 		/* Initialise the item */
 		super(pList, uId);
-		Values myObj = new Values();
-		setObj(myObj);
+		Values myValues = new Values();
+		setValues(myValues);
 
 		/* Store the key */
-		myObj.setSecurityKey(pSecurityKey);
+		myValues.setSecurityKey(pSecurityKey);
 
 		/* Access the Security manager */
 		DataSet 		myData 		= pList.getData();
@@ -179,8 +181,8 @@ public class ControlKey extends DataItem<ControlKey> {
 	public ControlKey(List 	pList) throws Exception {
 		/* Initialise the item */
 		super(pList, 0);
-		Values myObj = new Values();
-		setObj(myObj);
+		Values myValues = new Values();
+		setValues(myValues);
 				
 		/* Access the Security manager */
 		DataSet 		myData 		= pList.getData();
@@ -189,7 +191,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		/* Obtain the required security control */
 		theControl = mySecurity.getSecurityControl(null, "Database");
 		theRandom  = theControl.getRandom();
-		myObj.setSecurityKey(theControl.getSecurityKey());
+		myValues.setSecurityKey(theControl.getSecurityKey());
 		
 		/* Create the DataKey Map */
 		theMap = new EnumMap<SymKeyType,DataKey>(SymKeyType.class);
@@ -221,7 +223,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		if (getId() != myThat.getId()) 		return false;
 		
 		/* Compare the changeable values */
-		return getObj().histEquals(myThat.getObj());
+		return getValues().histEquals(myThat.getValues());
 	}
 
 	/**
@@ -284,6 +286,29 @@ public class ControlKey extends DataItem<ControlKey> {
 		
 		/* Mark this control key as deleted */
 		setState(DataState.DELETED);
+	}
+	
+	/**
+	 * Update security control 
+	 */
+	protected void updateSecurityControl() throws Exception {
+		/* Store the current detail into history */
+		pushHistory();
+
+		/* Update the Security Control Key */
+		getValues().setSecurityKey(theControl.getSecurityKey());
+		
+		/* Loop through the SymKeyType values */
+		for (SymKeyType myType: SymKeyType.values()) {
+			/* Access the Data Key */
+			DataKey myKey = theMap.get(myType);
+			
+			/* Update the Security Control */
+			if (myKey != null) myKey.updateSecurityControl();
+		}
+		
+		/* Check for changes */
+		if (checkForHistory()) setState(DataState.CHANGED);
 	}
 	
 	/**
@@ -553,15 +578,17 @@ public class ControlKey extends DataItem<ControlKey> {
 
 		/**
 		 * Initialise Security from a DataBase for a SpreadSheet load
-		 * @param pControlKey the ControlKey to clone (or null)
+		 * @param pDatabase the DataSet for the Database
 		 */
-		protected void initialiseSecurity(ControlKey pControlKey) throws Exception {
-			ControlKey myKey;
-			
+		protected void initialiseSecurity(DataSet pDatabase) throws Exception {			
+			/* Access the active control key from the database */
+			ControlKey  myDatabaseKey	= pDatabase.getControlKey();
+			ControlKey 	myKey;
+
 			/* If we have an existing security key */
-			if (pControlKey != null) {
+			if (myDatabaseKey != null) {
 				/* Clone the Control Key and its DataKeys */
-				myKey = cloneControlKey(pControlKey);
+				myKey = cloneControlKey(myDatabaseKey);
 			}
 			
 			/* else create a new security set */
@@ -572,9 +599,6 @@ public class ControlKey extends DataItem<ControlKey> {
 			
 			/* Declare the Control Key */
 			theData.getControl().setControlKey(myKey);
-			
-			/* Ensure the encryption */
-			theData.ensureEncryption();
 		}
 		
 		/**
@@ -626,7 +650,7 @@ public class ControlKey extends DataItem<ControlKey> {
 	/**
 	 * Values for a static 
 	 */
-	public class Values implements histObject {
+	public class Values implements HistoryValues<ControlKey> {
 		private String			theSecurityKey	= null;
 		
 		/* Access methods */
@@ -637,32 +661,24 @@ public class ControlKey extends DataItem<ControlKey> {
 
 		/* Constructor */
 		public Values() {}
-		public Values(Values pValues) {
-			theSecurityKey	= pValues.getSecurityKey();
-		}
+		public Values(Values pValues) { copyFrom(pValues); }
 		
 		/* Check whether this object is equal to that passed */
-		public boolean histEquals(histObject pCompare) {
+		public boolean histEquals(HistoryValues<ControlKey> pCompare) {
 			Values myValues = (Values)pCompare;
-			return histEquals(myValues);
-		}
-		public boolean histEquals(Values pValues) {
-			if (Utils.differs(theSecurityKey,   pValues.theSecurityKey))   	return false;
+			if (Utils.differs(theSecurityKey,   myValues.theSecurityKey))   	return false;
 			return true;
 		}
 		
 		/* Copy values */
-		public void    copyFrom(histObject pSource) {
-			Values myValues = (Values)pSource;
-			copyFrom(myValues);
-		}
-		public histObject copySelf() {
+		public HistoryValues<ControlKey> copySelf() {
 			return new Values(this);
 		}
-		public void    copyFrom(Values pValues) {
-			theSecurityKey	= pValues.getSecurityKey();
+		public void    copyFrom(HistoryValues<?> pSource) {
+			Values myValues = (Values)pSource;
+			theSecurityKey	= myValues.getSecurityKey();
 		}
-		public boolean	fieldChanged(int fieldNo, histObject pOriginal) {
+		public boolean	fieldChanged(int fieldNo, HistoryValues<ControlKey> pOriginal) {
 			Values 	pValues = (Values)pOriginal;
 			boolean	bResult = false;
 			switch (fieldNo) {

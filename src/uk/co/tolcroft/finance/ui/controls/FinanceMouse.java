@@ -181,14 +181,14 @@ public abstract class FinanceMouse<T extends DataItem<T>> extends MouseAdapter
 		}
 		
 		/* Loop through the selected rows */
-		for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
+		for (T myRow : theTable.cacheSelectedRows()) {
 			/* Ignore locked rows */
 			if ((myRow == null) || (myRow.isLocked())) continue;
 			
 			/* If the row is Deleted */
 			if (myRow.isDeleted()) {
 				/* Note if we can recover a row */
-				if (theTable.isValidObj(myRow, myRow.getObj()))
+				if (theTable.isValidHistory(myRow, myRow.getCurrentValues()))
 					enableRecov	= true;
 				
 				/* Don't allow switching off of showDeleted */
@@ -263,7 +263,7 @@ public abstract class FinanceMouse<T extends DataItem<T>> extends MouseAdapter
 		if (theTable.isLocked()) return;
 		
 		/* Loop through the selected rows */
-		for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
+		for (T myRow : theTable.cacheSelectedRows()) {
 			if ((myRow == null) || (myRow.isLocked())) continue;
 			
 			/* Ignore deleted rows */
@@ -389,7 +389,7 @@ public abstract class FinanceMouse<T extends DataItem<T>> extends MouseAdapter
 		myModel = theTable.getTableModel();
 		
 		/* Loop through the selected rows */
-		for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
+		for (T myRow : theTable.cacheSelectedRows()) {
 			/* Ignore locked rows */
 			if ((myRow == null) || (myRow.isLocked())) continue;
 			

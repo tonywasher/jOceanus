@@ -374,28 +374,29 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 	/**
 	 * Check whether the restoration of the passed object is compatible with the current selection
 	 * @param pItem the current item
-	 * @param pObj the potential object for restoration
+	 * @param pValues the potential values for restoration
 	 */
-	public boolean isValidObj(DataItem<?>			pItem,
-			  				  DataItem.histObject  	pObj) {
+	public boolean isValidHistory(DataItem<Statement.Line>	pItem,
+			  				  	  HistoryValues<?> 			pValues) {
 		Statement.Line 			myLine;
 		Statement.Line.Values	myLineVals; 
-		Event		   			myEvent;
 		Event.Values    		myEventVals;
 		Date					myDate;
 		boolean					isCredit;
 		Account					myPartner;			
 		Account					mySelf;
 		
+		/* Access the element and the values */
+		myLine     = (Statement.Line)pItem;
+
 		/* If this is an Event item */
-		if (pItem instanceof Event) {
-			/* Access the element and the values */
-			myEvent     = (Event)pItem;
-			myEventVals = (Event.Values) pObj;
+		if (pValues instanceof Event.Values) {
+			/* Access the values */
+			myEventVals = (Event.Values) pValues;
 			
 			/* Access the values */
 			myDate    = myEventVals.getDate();
-			isCredit  = Account.differs(myEvent.getDebit(), theAccount);
+			isCredit  = Account.differs(myEventVals.getDebit(), theAccount);
 			myPartner = (isCredit) ? myEventVals.getDebit()
 								   : myEventVals.getCredit();
 			mySelf 	  = (isCredit) ? myEventVals.getCredit()
@@ -403,10 +404,9 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 		}
 		
 		/* else it is a line item */
-		else {
-			/* Access the element and the values */
-			myLine     = (Statement.Line)pItem;
-			myLineVals = (Statement.Line.Values) pObj;
+		else if (pValues instanceof Statement.Line.Values) {
+			/* Access the values */
+			myLineVals = (Statement.Line.Values) pValues;
 			
 			/* Access the values */
 			myDate    = myLineVals.getDate();
@@ -414,6 +414,9 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 			myPartner = myLineVals.getPartner();
 			mySelf	  = theAccount;
 		}
+		
+		/* else unsupported values */
+		else return false;
 		
 		/* Check whether the date is in range */
 		if (theRange.compareTo(myDate) != 0)

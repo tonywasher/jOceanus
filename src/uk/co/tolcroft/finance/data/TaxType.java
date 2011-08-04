@@ -56,7 +56,6 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 	private TaxType(List 	pList,
 			        String  sName) throws Exception {
 		super(pList, sName);
-		pList.setNewId(this);					
 	}
 	
 	/**
@@ -71,7 +70,6 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 			        String	pName,
 			        String	pDesc) throws Exception {
 		super(pList, uClassId, pName, pDesc);
-		pList.setNewId(this);				
 	}
 	
 	/**
@@ -90,7 +88,6 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 			      	byte[]	sName,
 			      	byte[]	pDesc) throws Exception {
 		super(pList, uId, uControlId, uClassId, sName, pDesc);
-		pList.setNewId(this);				
 	}
 
 	/**

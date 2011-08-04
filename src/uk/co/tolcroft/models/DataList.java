@@ -119,7 +119,7 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 				if ((pStyle == ListStyle.UPDATE) &&
 					(myItem.getState() == DataState.CHANGED)) {
 					/* Ensure that we record the correct history */
-					if (myItem.getObj() != null) myItem.setHistory();
+					if (myItem.getCurrentValues() != null) myItem.setHistory();
 				}
 			}
 		}
@@ -180,7 +180,7 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 					myNew.setState(DataState.CHANGED);
 					
 					/* Ensure that we record the correct history */
-					if (myNew.getObj() != null) myNew.setHistory();
+					if (myNew.getCurrentValues() != null) myNew.setHistory();
 				}
 					
 				/* Unlink the old item to improve search speed */
@@ -212,8 +212,8 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 	public void reBase(DataList<T> pBase) {
 		/* Local variables */
 		ListIterator 	myIterator;
-		DataItem<T>		myCurr;
-		DataItem<T>		myItem;
+		T				myCurr;
+		T				myItem;
 		DataList<T>		myBase;
 			
 		/* Create a clone of the base list */

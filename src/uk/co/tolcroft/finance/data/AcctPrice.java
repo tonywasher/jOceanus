@@ -8,7 +8,7 @@ import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
 
-public class AcctPrice extends EncryptedItem <AcctPrice> {
+public class AcctPrice extends EncryptedItem<AcctPrice> {
 	/**
 	 * The name of the object
 	 */
@@ -23,15 +23,15 @@ public class AcctPrice extends EncryptedItem <AcctPrice> {
 	private int		 	theAccountId	= -1;
 	
 	/* Access methods */
-	public  Values  		getObj()    	{ return (Values)super.getObj(); }
-	public  Price 			getPrice()  	{ return getPairValue(getObj().getPrice()); }
-	public  Date  			getDate()		{ return getObj().getDate(); }
-	public  Account			getAccount()	{ return getObj().getAccount(); }
+	public  Values  		getValues()    	{ return (Values)super.getValues(); }
+	public  Price 			getPrice()  	{ return getPairValue(getValues().getPrice()); }
+	public  Date  			getDate()		{ return getValues().getDate(); }
+	public  Account			getAccount()	{ return getValues().getAccount(); }
 	private void    		setAccount(Account pAccount)   {
-		getObj().setAccount(pAccount); }
+		getValues().setAccount(pAccount); }
 
-	public  byte[] 		getPriceBytes() 	{ return getObj().getPriceBytes(); }
-	public  PricePair	getPricePair()   	{ return getObj().getPrice(); }
+	public  byte[] 		getPriceBytes() 	{ return getValues().getPriceBytes(); }
+	public  PricePair	getPricePair()   	{ return getValues().getPrice(); }
 
 	/* Linking methods */
 	public AcctPrice     getBase() { return (AcctPrice)super.getBase(); }
@@ -75,12 +75,12 @@ public class AcctPrice extends EncryptedItem <AcctPrice> {
 	/**
 	 * Format the value of a particular field as a table row
 	 * @param iField the field number
-	 * @param pObj the values to use
+	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, histObject pObj) {
+	public String formatField(int iField, HistoryValues<AcctPrice> pValues) {
 		String 	myString = "";
-		Values 	myObj 	 = (Values)pObj;
+		Values 	myValues = (Values)pValues;
 		switch (iField) {
 			case FIELD_ACCOUNT:
 				if ((getAccount() == null) &&
@@ -93,10 +93,10 @@ public class AcctPrice extends EncryptedItem <AcctPrice> {
 				myString += Date.format(getDate()); 
 				break;
 			case FIELD_PRICE:	
-				myString += Price.format(myObj.getPriceValue()); 
+				myString += Price.format(myValues.getPriceValue()); 
 				break;
 			default: 		
-				myString += super.formatField(iField, pObj); 
+				myString += super.formatField(iField, pValues); 
 				break;
 		}
 		return myString;
@@ -110,23 +110,30 @@ public class AcctPrice extends EncryptedItem <AcctPrice> {
 	protected AcctPrice(List pList, AcctPrice pPrice) {
 		/* Set standard values */
 		super(pList, pPrice.getId());
-		Values myObj = new Values(pPrice.getObj());
-		setObj(myObj);
+		Values myValues = new Values(pPrice.getValues());
+		setValues(myValues);
 		setControlKey(pPrice.getControlKey());		
+		ListStyle myOldStyle = pPrice.getList().getStyle();
 
-		/* Switch on the LinkStyle */
+		/* Switch on the ListStyle */
 		switch (pList.getStyle()) {
 			case EDIT:
-				if (pPrice.getList().getStyle() != ListStyle.EDIT) {
+				/* If this is a view creation */
+				if (myOldStyle == ListStyle.CORE) {
+					/* Price is based on the original element */
 					setBase(pPrice);
-					pList.setNewId(this);
+					pList.setNewId(this);				
 					break;
 				}
-				/* Fall through for duplicate item */
+				
+				/* Else this is a duplication so treat as new item */
+				setId(0);
+				pList.setNewId(this);				
+				break;
 			case CORE:
-				/* Create a new id for the item */
-				setId(0); 
-				pList.setNewId(this);
+				/* Reset Id if this is an insert from a view */
+				if (myOldStyle == ListStyle.EDIT) setId(0);
+				pList.setNewId(this);				
 				break;
 			case UPDATE:
 				setBase(pPrice);
@@ -138,8 +145,8 @@ public class AcctPrice extends EncryptedItem <AcctPrice> {
 	/* Standard constructor for a newly inserted price */
 	private AcctPrice(List pList) {
 		super(pList, 0);
-		Values myObj = new Values();
-		setObj(myObj);
+		Values myValues = new Values();
+		setValues(myValues);
 		setControlKey(pList.getData().getControl().getControlKey());
 		pList.setNewId(this);
 	}
@@ -153,8 +160,8 @@ public class AcctPrice extends EncryptedItem <AcctPrice> {
 		super(pList, 0);
 		
 		/* Initialise the values */
-		Values myObj = new Values();
-		setObj(myObj);
+		Values myValues = new Values();
+		setValues(myValues);
 		
 		/* Record the Id */
 		theAccountId = uAccountId;
@@ -163,15 +170,15 @@ public class AcctPrice extends EncryptedItem <AcctPrice> {
 		DataSet myData 	= pList.getData();
 
 		/* Look up the Account */
-		myObj.setAccount(myData.getAccounts().searchFor(uAccountId));
+		myValues.setAccount(myData.getAccounts().searchFor(uAccountId));
 		if (getAccount() == null) 
 			throw new Exception(ExceptionClass.DATA,
 								this,
 								"Invalid Account Id");
 					
 		/* Record the date and price */
-		myObj.setDate(new Date(pDate));
-		myObj.setPrice(new PricePair(pPrice));
+		myValues.setDate(new Date(pDate));
+		myValues.setPrice(new PricePair(pPrice));
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -188,8 +195,8 @@ public class AcctPrice extends EncryptedItem <AcctPrice> {
 		super(pList, uId);
 		
 		/* Initialise the values */
-		Values myObj = new Values();
-		setObj(myObj);
+		Values myValues = new Values();
+		setValues(myValues);
 		
 		/* Record the Id */
 		theAccountId = uAccountId;
@@ -201,15 +208,15 @@ public class AcctPrice extends EncryptedItem <AcctPrice> {
 		DataSet myData 	= pList.getData();
 
 		/* Look up the Account */
-		myObj.setAccount(myData.getAccounts().searchFor(uAccountId));
+		myValues.setAccount(myData.getAccounts().searchFor(uAccountId));
 		if (getAccount() == null) 
 			throw new Exception(ExceptionClass.DATA,
 								this,
 								"Invalid Account Id");
 					
 		/* Record the date and price */
-		myObj.setDate(new Date(pDate));
-		myObj.setPrice(new PricePair(pPrice));
+		myValues.setDate(new Date(pDate));
+		myValues.setPrice(new PricePair(pPrice));
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -224,18 +231,18 @@ public class AcctPrice extends EncryptedItem <AcctPrice> {
 		super(pList, 0);
 		
 		/* Initialise the values */
-		Values myObj = new Values();
-		setObj(myObj);
+		Values myValues = new Values();
+		setValues(myValues);
 		
 		/* Record the Id */
 		theAccountId = pAccount.getId();
 		
 		/* Set the passed details */
-		myObj.setAccount(pAccount);
-		myObj.setDate(pDate);
+		myValues.setAccount(pAccount);
+		myValues.setDate(pDate);
 
 		/* Create the pair for the values */
-		myObj.setPrice(new PricePair(pPrice));
+		myValues.setPrice(new PricePair(pPrice));
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -262,7 +269,7 @@ public class AcctPrice extends EncryptedItem <AcctPrice> {
 		if (getId() != myThat.getId()) return false;
 		
 		/* Compare the changeable values */
-		return getObj().histEquals(myThat.getObj());
+		return getValues().histEquals(myThat.getValues());
 	}
 
 	/**
@@ -350,8 +357,8 @@ public class AcctPrice extends EncryptedItem <AcctPrice> {
 	 * @param pPrice the price 
 	 */
 	public void setPrice(Price pPrice) throws Exception {
-		if (pPrice != null) getObj().setPrice(new PricePair(pPrice));
-		else 				getObj().setPrice(null);
+		if (pPrice != null) getValues().setPrice(new PricePair(pPrice));
+		else 				getValues().setPrice(null);
 	}
 
 	/**
@@ -360,7 +367,7 @@ public class AcctPrice extends EncryptedItem <AcctPrice> {
 	 * @param pDate the new date 
 	 */
 	public void setDate(Date pDate) {
-		getObj().setDate((pDate == null) ? null : new Date(pDate));
+		getValues().setDate((pDate == null) ? null : new Date(pDate));
 	}
 
 	/**
@@ -387,16 +394,16 @@ public class AcctPrice extends EncryptedItem <AcctPrice> {
 	 * @return whether changes have been made
 	 */
 	private boolean applyChanges(AcctPrice pPrice) {
-		Values	  myObj		= getObj();
-		Values	  myNew		= pPrice.getObj();
+		Values	  myValues	= getValues();
+		Values	  myNew		= pPrice.getValues();
 		boolean   bChanged 	= false;
 		
 		/* Store the current detail into history */
 		pushHistory();
 		
 		/* Update the price if required */
-		if (differs(myObj.getPrice(), myNew.getPrice())) 
-			myObj.setPrice(myNew.getPrice());
+		if (differs(myValues.getPrice(), myNew.getPrice())) 
+			myValues.setPrice(myNew.getPrice());
 	
 		/* Update the date if required */
 		if (Date.differs(getDate(), pPrice.getDate())) 
@@ -420,8 +427,8 @@ public class AcctPrice extends EncryptedItem <AcctPrice> {
 	 */
 	private boolean applyChanges(SpotPrice pPrice) {			
 		boolean bChanged = false;
-		Values	  			myObj	= getObj();
-		SpotPrice.Values	myNew	= pPrice.getObj();
+		Values	  			myValues	= getValues();
+		SpotPrice.Values	myNew		= pPrice.getValues();
 		
 		/* If we are setting a null price */
 		if (myNew.getPrice() == null) {
@@ -435,8 +442,8 @@ public class AcctPrice extends EncryptedItem <AcctPrice> {
 			pushHistory();
 		
 			/* Update the price if required */
-			if (differs(myObj.getPrice(), myNew.getPrice())) 
-				myObj.setPrice(new PricePair(myNew.getPrice()));
+			if (differs(myValues.getPrice(), myNew.getPrice())) 
+				myValues.setPrice(new PricePair(myNew.getPrice()));
 	
 			/* Check for changes */
 			if (checkForHistory()) {
@@ -687,7 +694,7 @@ public class AcctPrice extends EncryptedItem <AcctPrice> {
 
 						/* Set the date and price */
 						myPrice.setDate(new Date(myDate));
-						myPrice.getObj().setPrice(myPrice.new PricePair(myPoint));
+						myPrice.getValues().setPrice(myPrice.new PricePair(myPoint));
 						myPrice.setAccount(mySpot.getAccount());
 
 						/* Add to the list and link backwards */
@@ -838,38 +845,30 @@ public class AcctPrice extends EncryptedItem <AcctPrice> {
 
 		/* Constructor */
 		public Values() {}
-		public Values(Values pValues) {
-			theDate      = pValues.getDate();
-			thePrice     = pValues.getPrice();
-			theAccount   = pValues.getAccount();
-		}
+		public Values(Values pValues) { copyFrom(pValues); }
 		
 		/* Check whether this object is equal to that passed */
-		public boolean histEquals(histObject pCompare) {
+		public boolean histEquals(HistoryValues<AcctPrice> pCompare) {
 			Values myValues = (Values)pCompare;
-			return histEquals(myValues);
-		}
-		public boolean histEquals(Values pValues) {
-			if (Date.differs(theDate,     	pValues.theDate))    return false;
-			if (differs(thePrice, 			pValues.thePrice))   return false;
-			if (Account.differs(theAccount, pValues.theAccount)) return false;
+			if (!super.histEquals(pCompare))					  return false;
+			if (Date.differs(theDate,     	myValues.theDate))    return false;
+			if (differs(thePrice, 			myValues.thePrice))   return false;
+			if (Account.differs(theAccount, myValues.theAccount)) return false;
 			return true;
 		}
 		
 		/* Copy values */
-		public void    copyFrom(histObject pSource) {
-			Values myValues = (Values)pSource;
-			copyFrom(myValues);
-		}
-		public histObject copySelf() {
+		public HistoryValues<AcctPrice> copySelf() {
 			return new Values(this);
 		}
-		public void    copyFrom(Values pValues) {
-			theDate      = pValues.getDate();
-			thePrice     = pValues.getPrice();
-			theAccount   = pValues.getAccount();
+		public void    copyFrom(HistoryValues<?> pSource) {
+			Values myValues = (Values)pSource;
+			super.copyFrom(myValues);
+			theDate      = myValues.getDate();
+			thePrice     = myValues.getPrice();
+			theAccount   = myValues.getAccount();
 		}
-		public boolean	fieldChanged(int fieldNo, histObject pOriginal) {
+		public boolean	fieldChanged(int fieldNo, HistoryValues<AcctPrice> pOriginal) {
 			Values 	pValues = (Values)pOriginal;
 			boolean	bResult = false;
 			switch (fieldNo) {
@@ -882,6 +881,9 @@ public class AcctPrice extends EncryptedItem <AcctPrice> {
 				case FIELD_ACCOUNT:
 					bResult = (Account.differs(theAccount,  pValues.theAccount));
 					break;
+				default:
+					bResult = super.fieldChanged(fieldNo, pValues);
+					break;
 			}
 			return bResult;
 		}
@@ -893,5 +895,16 @@ public class AcctPrice extends EncryptedItem <AcctPrice> {
 			/* Apply the encryption */
 			thePrice.encryptPair();
 		}		
+		
+		/**
+		 * Adopt encryption from base
+		 * @param pBase the Base values
+		 */
+		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {
+			Values myBase = (Values)pBase;
+
+			/* Apply the encryption */
+			thePrice.encryptPair(myBase.getPrice());
+		}
 	}		
 }

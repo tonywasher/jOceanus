@@ -2,7 +2,7 @@ package uk.co.tolcroft.models;
 
 /**
  * Extension of {@link java.util.List} that provides a sorted list implementation with the ability for objects to be hidden on the list.
- * Objects held in the list must implement the {@link SortedList.linkObject} interface. This requires the object to hold a link that 
+ * Objects held in the list must be extensions of the LinkObject class. This requires the object to hold a link that 
  * allows fast access to their position on the list, resulting in no need to search the list to find the object, and also automatic
  * knowledge of the index of an object. A reference to the list is also passed with the link node allowing the object to implement 
  * a store that allows it to reside in multiple lists. This parameter can be ignored which has the side-effect that objects 
@@ -49,15 +49,21 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 	private SortedList<T>	theList			= this;
 	
 	/**
-	 * Self reference
+	 * Class of the objects held in this list
 	 */
 	private Class<T>		theClass		= null;
 	
 	/**
-	 *  get the class of objects in this sorted list
+	 *  Obtain the class of objects in this sorted list
 	 *  @return should we skip hidden elements
 	 */
-	public Class<T> getBaseClass() { return theClass; }
+	public Class<T> 		getBaseClass() 	{ return theClass; }
+
+	/**
+	 *  get setting of option as to whether to skip hidden elements
+	 *  @return should we skip hidden elements
+	 */
+	public boolean 			getSkipHidden() { return doSkipHidden; }
 
 	/**
 	 *  Construct a list. Inserts search backwards from the end for the insert point
@@ -73,12 +79,6 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 		theClass		= pClass;
 	}
 		
-	/**
-	 *  get setting of option as to whether to skip hidden elements
-	 *  @return should we skip hidden elements
-	 */
-	public boolean getSkipHidden() { return doSkipHidden; }
-
 	/**
 	 *  Set option as to whether to skip hidden elements
 	 *  @param skipHidden - should we skip hidden elements
@@ -104,10 +104,14 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 		
 		/* Add in the appropriate fashion */
 		if (insertFromStart) 
-			addNodeFromStart(myNode);
+			myNode.addFromStart(theFirst, theLast);
 		else
-			addNodeFromEnd(myNode);
-				
+			myNode.addFromEnd(theFirst, theLast);
+						
+		/* Adjust first and last if necessary */
+		if (myNode.getPrev(false) == null) theFirst = myNode;
+		if (myNode.getNext(false) == null) theLast  = myNode;
+
 		/* Set the reference to this node in the item */
 		pItem.setLinkNode(this, myNode);
 		
@@ -119,198 +123,22 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 	}
 		
 	/**
-	 *  add Node to the list searching from the start
-	 *  @param pNode - node to add to the list
-	 */
-	private void addNodeFromStart(LinkNode<T> pNode) {
-		LinkNode<T>	myCurr;
-		boolean 	isVisible;
-		
-		/* Determine whether this item is hidden */
-		isVisible = !pNode.isHidden();
-		   
-	   	/* Loop through the current items */
-	    for(myCurr = theFirst;
-	        myCurr != null;
-	        myCurr = myCurr.theNext)
-		{
-		   	/* Break if we have found an element that should be later */
-		   	if (myCurr.compareTo(pNode) >= 0) break;
-		}
-		       
-		/* If we found an insert point */
-		if (myCurr != null) {
-		   	/* Set values for the new item */
-		    pNode.thePrev = myCurr.thePrev;
-		    pNode.theNext = myCurr;
-		
-		    /* Set new indices */
-		    pNode.theIndex 			= myCurr.theIndex;
-		    pNode.theHiddenIndex 	= myCurr.theHiddenIndex;
-		    if (myCurr.isHidden() == isVisible)
-		    	myCurr.theHiddenIndex += (isVisible) ? 1 : -1;
-		    
-		    /* Add to the list */
-		    myCurr.thePrev = pNode;
-		    if (pNode.thePrev != null)
-		      	pNode.thePrev.theNext = pNode;
-		    else 
-		      	theFirst = pNode;
-		    
-		    /* Loop through subsequent elements increasing the indices */
-		    while (myCurr != null) {
-		    	/* Increment indices */
-		    	myCurr.theIndex++;
-		    	if (isVisible) myCurr.theHiddenIndex++;
-		    	myCurr = myCurr.theNext;
-		    }
-		}
-		       	
-		/* else we need to add to the end of the list */
-		else {
-		  	/* Set values for the new item */
-		   	pNode.thePrev = theLast;
-		   	pNode.theNext = null;
-		    	
-		   	/* If this is the first item */
-		   	if (theLast == null) {
-		   		/* Set new indices */
-		   		pNode.theIndex 			= 0;
-		   		pNode.theHiddenIndex 	= (isVisible) ? 0 : -1;
-		    
-		   		/* Add to the list */
-		   		theLast  = pNode;   
-		   		theFirst = pNode;
-		   	}
-		   	
-		   	/* else we have a previous item */
-		   	else {
-		   		/* Set new indices */
-		   		pNode.theIndex 			= theLast.theIndex+1;
-		   		pNode.theHiddenIndex 	= (isVisible) ? theLast.theHiddenIndex+1
-		   											  : theLast.theHiddenIndex;
-		    
-		   		/* Add to the list */
-		   		theLast 			  = pNode;   
-		   		pNode.thePrev.theNext = pNode;
-		   	}
-		}
-	}
-		
-	/**
-	 *  add Node to the list searching from the end
-	 *  @param pNode - node to add to the list
-	 */
-	private void addNodeFromEnd(LinkNode<T> pNode) {
-		LinkNode<T>	myCurr;		   
-		boolean 	isVisible;
-		
-		/* Determine whether this item is hidden */
-		isVisible = !pNode.isHidden();
-		   
-	   	/* Loop backwards through the current items */
-	    for(myCurr = theLast;
-	        myCurr != null;
-	        myCurr = myCurr.thePrev)
-	    {
-	    	/* Break if we have found an element that should be earlier */
-	    	if (myCurr.compareTo(pNode) <= 0) break;
-	    }
-	       
-	    /* If we found an insert point */
-	    if (myCurr != null) {
-	    	/* Set values for the new item */
-	        pNode.theNext = myCurr.theNext;
-	        pNode.thePrev = myCurr;
-		    	    
-		    /* Set new indices */
-		    pNode.theIndex 			= myCurr.theIndex+1;
-		    pNode.theHiddenIndex 	= myCurr.theHiddenIndex+1;
-		    if (!isVisible) pNode.theHiddenIndex--;
-		    
-	        /* Add to the list */
-	        myCurr.theNext = pNode;
-	        if (pNode.theNext != null)
-	        	pNode.theNext.thePrev = pNode;
-	        else 
-	        	theLast = pNode;
-	    }
-		       	
-	    /* else we need to add to the beginning of the list */
-	    else {
-	   		/* Set values for the new item */
-	   		pNode.theNext = theFirst;
-	   		pNode.thePrev = null;
-    	
-	   		/* Set new indices */
-	   		pNode.theIndex 			= 0;
-	   		pNode.theHiddenIndex 	= (!isVisible) ? -1 : 0;
-	    
-		   	/* If this is the first item */
-		   	if (theFirst == null) {
-		   		/* Add to the list */
-		   		theLast  = pNode;   
-		   		theFirst = pNode;
-		   	}
-		   	
-		   	/* else we have a next item */
-		   	else {
-		   		/* Add to the list */
-		   		theFirst 				= pNode;   
-	   			pNode.theNext.thePrev 	= pNode;
-		   	}
-	    }
-	    
-        /* Loop through subsequent elements increasing the indices */
-        myCurr = pNode.theNext;
-	    while (myCurr != null) {
-	    	/* Increment indices */
-	    	myCurr.theIndex++;
-	    	if (isVisible) myCurr.theHiddenIndex++;
-	    	myCurr = myCurr.theNext;
-	    }
-	}
-		
-	/**
 	 *  Remove node from list
 	 *  @param pNode - node to remove from list
 	 */
-	private void removeNode(LinkNode<T> pNode) {
-		LinkNode<T>	myCurr;
-		boolean 	isVisible; 
-		
-		/* Determine whether this item is visible */
-		isVisible = !pNode.isHidden();
-		   
-		/* Adjust pointers to skip this element */
-		if (pNode.thePrev != null)
-			pNode.thePrev.theNext = pNode.theNext;
-		else 
-			theFirst = pNode.theNext;
-		
-		if (pNode.theNext != null)
-			pNode.theNext.thePrev = pNode.thePrev;
-		else
-			theLast = pNode.thePrev;
-				    
-        /* Loop through subsequent elements decreasing the indices */
-        myCurr = pNode.theNext;
-	    while (myCurr != null) {
-	    	/* Decrement indices */
-	    	myCurr.theIndex--;
-	    	if (isVisible) myCurr.theHiddenIndex--;
-	    	myCurr = myCurr.theNext;
-	    }
-	    
-	    /* Remove the node from the index map */
-	    theIndexMap.removeNode(pNode);
-	    
-		/* clean our links */
-		pNode.theNext = null;
-		pNode.thePrev = null;
-		
+	private void removeNode(LinkNode<T> pNode) {	    
 		/* Remove the reference to this node in the item */
 		pNode.getObject().setLinkNode(this, null);
+		
+		/* Adjust first and last indicators if required */
+		if (theFirst == pNode) theFirst = pNode.getNext(false);
+		if (theLast  == pNode) theLast  = pNode.getPrev(false);
+		
+        /* Remove the node from the list */
+        pNode.remove();
+
+        /* Remove the node from the index map */
+	    theIndexMap.removeNode(pNode);
 	}
 		
 	/**
@@ -320,7 +148,6 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 	 */
 	public void setHidden(T pItem, boolean isHidden) {
 		LinkNode<T>	myNode;
-		int			iAdjust;
 		
 		/* Reject if these object is null */
 		if (pItem == null) throw new java.lang.NullPointerException();
@@ -335,14 +162,6 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 		if (isHidden != myNode.isHidden()) {
 			/* set the hidden value */
 			myNode.setHidden(isHidden);
-
-			/* Loop through subsequent elements adjusting the indices */
-			iAdjust = (isHidden) ? -1 : 1;
-			while (myNode != null) {
-				/* Decrement indices */
-				myNode.theHiddenIndex += iAdjust;
-				myNode = myNode.theNext;
-			}			
 	    }
 	}
 		
@@ -352,20 +171,19 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 	public void clear() {
 		LinkNode<T> myNode;
 		
-		/* Remove the items */
-		while (theFirst != null) {
+		/* Remove the items in reverse order */
+		while (theLast != null) {
 			/* Access and unlink the node */
-			myNode 		= theFirst;
-			theFirst 	= myNode.theNext;
+			myNode 	= theLast;
+			theLast	= myNode.getNext(false);
 			
-			/* Remove links from node */
-			theFirst.getObject().setLinkNode(this, null);
-			myNode.theNext = null;
-			myNode.thePrev = null;
+			/* Remove links from node and list */
+			myNode.getObject().setLinkNode(this, null);
+			myNode.remove();
 		}
 		
-		/* Reset the last item and clear the map */
-		theLast = null;
+		/* Reset the first item and clear the map */
+		theFirst = null;
 		theIndexMap.clear();
 	}
 	
@@ -423,7 +241,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 	public ListIterator listIterator(int iIndex) {
 		int 			iCurr = 0;
 		ListIterator	myCurr;
-		Object			myObj;
+		T				myObj;
 		
 		/* Reject if the index is negative */
 		if (iIndex < 0) throw new java.lang.IndexOutOfBoundsException();
@@ -432,7 +250,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 		myCurr = new ListIterator();
 		
 		/* Loop through the elements */
-		while ((myObj = (T)myCurr.next()) != null) {
+		while ((myObj = myCurr.next()) != null) {
 			/* Break if we have found the item */
 			if (iCurr == iIndex) break;
 			
@@ -472,7 +290,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 		/* Loop through the list */
 		for (myCurr = theFirst, myOther = myThat.theFirst;
 		     (myCurr != null) || (myOther != null);
-		     myCurr = myCurr.theNext, myOther = myOther.theNext) {
+		     myCurr = myCurr.getNext(false), myOther = myOther.getNext(false)) {
 			/* If either entry is null then we differ */
 			if ((myCurr == null) || (myOther == null)) return false;
 			
@@ -511,7 +329,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 		/* If we have an element in the list */
 		if (theLast != null) {
 			/* Get the full index and add 1 */
-			iSize = 1 + theLast.theIndex;
+			iSize = 1 + theLast.getIndex(false);
 		}
 		
 		/* Return the count */
@@ -528,7 +346,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 		/* If we have an element in the list */
 		if (theLast != null) {
 			/* Get the hidden index and add 1 */
-			iSize = 1 + theLast.theHiddenIndex;
+			iSize = 1 + theLast.getIndex(false);
 		}
 		
 		/* Return the count */
@@ -899,7 +717,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 		if ((myFirst != null) && 
 			(myFirst.isHidden()) &&
 			(doSkipHidden)) 
-			myFirst = myFirst.getNext(doSkipHidden);
+			myFirst = myFirst.getNext(true);
 		
 		/* Return to caller */
 		return myFirst; 
@@ -919,7 +737,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 		if ((myLast != null) && 
 			(myLast.isHidden()) &&
 			(doSkipHidden)) 
-			myLast = myLast.getPrev(doSkipHidden);
+			myLast = myLast.getPrev(true);
 		
 		/* Return to caller */
 		return myLast; 
@@ -974,8 +792,9 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 			
 			/* Access the next node */
 			myNext = (theNodeBefore != null) 
-							? ((showAll) ? theNodeBefore.theNext : theNodeBefore.getNext(true))
-					   		: ((showAll) ? theFirst : getFirst());
+							? theNodeBefore.getNext(!showAll)
+					   		: ((showAll) ? theFirst 
+					   					 : getFirst());
 			
 			/* Return whether we have a next node */
 			return (myNext != null);
@@ -990,8 +809,9 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 			
 			/* Access the next node */
 			myPrev = (theNodeAfter != null) 
-							? ((showAll) ? theNodeAfter.thePrev : theNodeAfter.getPrev(true))
-							: ((showAll) ? theLast : getLast());
+							? theNodeAfter.getPrev(!showAll)
+							: ((showAll) ? theLast 
+										 : getLast());
 			
 			/* Return whether we have a previous node */
 			return (myPrev != null);
@@ -1006,8 +826,9 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 			
 			/* Access the next node */
 			myNext = (theNodeBefore != null) 
-							? ((showAll) ? theNodeBefore.theNext : theNodeBefore.getNext(true))
-					   		: ((showAll) ? theFirst : getFirst());
+							? theNodeBefore.getNext(!showAll)
+					   		: ((showAll) ? theFirst 
+					   					 : getFirst());
 			
 			/* Return the next object */
 			return (myNext == null) ? null : myNext.getObject();
@@ -1022,8 +843,9 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 			
 			/* Access the next node */
 			myPrev = (theNodeAfter != null) 
-							? ((showAll) ? theNodeAfter.thePrev : theNodeAfter.getPrev(true))
-							: ((showAll) ? theLast : getLast());
+							? theNodeAfter.getPrev(!showAll)
+							: ((showAll) ? theLast 
+										 : getLast());
 			
 			/* Return the previous object */
 			return (myPrev == null) ? null : myPrev.getObject();
@@ -1066,14 +888,15 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 			
 			/* Access the next node */
 			myNext = (theNodeBefore != null) 
-							? ((showAll) ? theNodeBefore.theNext : theNodeBefore.getNext(true))
-					   		: ((showAll) ? theFirst : getFirst());											 
+							? theNodeBefore.getNext(!showAll)
+					   		: ((showAll) ? theFirst 
+					   					 : getFirst());											 
 	
 			/* If we have a next then move the cursor */
 			if (myNext != null) {
 				/* Record the cursor */
 				theNodeBefore 	= myNext;
-				theNodeAfter  	= myNext.theNext;
+				theNodeAfter  	= myNext.getNext(false);
 				wasForward	  	= true;
 				canRemove		= true;
 			}
@@ -1091,13 +914,14 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 			
 			/* Access the previous node */
 			myPrev = (theNodeAfter != null) 
-							? ((showAll) ? theNodeAfter.thePrev : theNodeAfter.getPrev(true))
-							: ((showAll) ? theLast : getLast());
+							? theNodeAfter.getPrev(!showAll)
+							: ((showAll) ? theLast 
+										 : getLast());
 	
 			/* If we have a previous then move the cursor */
 			if (myPrev != null) {
 				/* Record the cursor */
-				theNodeBefore 	= myPrev.thePrev;
+				theNodeBefore 	= myPrev.getPrev(false);
 				theNodeAfter  	= myPrev;
 				wasForward	  	= false;
 				canRemove		= true;
@@ -1117,8 +941,9 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 			
 			/* Access the next node */
 			myNext = (theNodeBefore != null) 
-							? ((showAll) ? theNodeBefore.theNext : theNodeBefore.getNext(true))
-							: ((showAll) ? theFirst : getFirst());											 
+							? theNodeBefore.getNext(!showAll)
+							: ((showAll) ? theFirst 
+										 : getFirst());											 
 	
 			/* If we have a next then calculate its index */
 			if (myNext != null) iIndex = myNext.getIndex(!showAll);
@@ -1137,8 +962,9 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 			
 			/* Access the previous node */
 			myPrev = (theNodeAfter != null) 
-							? ((showAll) ? theNodeAfter.thePrev : theNodeAfter.getPrev(true))
-							: ((showAll) ? theLast : getLast());
+							? theNodeAfter.getPrev(!showAll)
+							: ((showAll) ? theLast 
+										 : getLast());
 	
 			/* If we have a previous then calculate its index */
 			if (myPrev != null) iIndex = myPrev.getIndex(!showAll);
@@ -1178,7 +1004,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 				removeNode(theNodeBefore);
 				
 				/* Record the new node before */
-				theNodeBefore = (theNodeAfter != null) ? theNodeAfter.thePrev
+				theNodeBefore = (theNodeAfter != null) ? theNodeAfter.getPrev(false)
 													   : theLast;
 			}
 			
@@ -1188,7 +1014,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 				removeNode(theNodeAfter);
 				
 				/* Record the new node after */
-				theNodeAfter = (theNodeBefore != null) ? theNodeBefore.theNext
+				theNodeAfter = (theNodeBefore != null) ? theNodeBefore.getNext(false)
 													   : theFirst;
 			}
 			
@@ -1212,18 +1038,18 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 				myItem = theNodeBefore.getObject();
 				
 				/* Record the new node before */
-				theNodeBefore = (theNodeAfter != null) ? theNodeAfter.thePrev
+				theNodeBefore = (theNodeAfter != null) ? theNodeAfter.getPrev(false)
 													   : theLast;
 			}
 			
 			/* else the last operation was backwards */
 			else {
 				/* Remove the item */
-				removeNode(theNodeAfter);
 				myItem = theNodeAfter.getObject();
+				removeNode(theNodeAfter);
 				
 				/* Record the new node after */
-				theNodeAfter = (theNodeBefore != null) ? theNodeBefore.theNext
+				theNodeAfter = (theNodeBefore != null) ? theNodeBefore.getNext(false)
 													   : theFirst;
 			}
 			
@@ -1279,7 +1105,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 			if (iMapIndex > theMapLength-1) return null;
 			
 			/* Access the start node for the search */
-			myNode = (LinkNode<T>)theMap[iMapIndex];
+			myNode = theMap[iMapIndex];
 			
 			/* Search for the correct node */
 			while (myNode != null) {
@@ -1287,7 +1113,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 				if (myNode.getIndex(doSkipHidden) == iIndex) break;
 				
 				/* Shift to next node */
-				myNode = myNode.theNext;
+				myNode = myNode.getNext(doSkipHidden);
 			}
 			
 			/* Return the correct node */
@@ -1305,7 +1131,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 			LinkNode<T>	myNode;
 			
 			/* Access the index of the node */
-			iIndex = pNode.theIndex;
+			iIndex = pNode.getIndex(false);
 			
 			/* Calculate the map index */
 			iMapIndex = iIndex / theGranularity;
@@ -1344,11 +1170,11 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 				if (myNode == null) break;
 				
 				/* Shift the index to the previous item */
-				theMap[iMapIndex] = myNode.thePrev;
+				theMap[iMapIndex] = myNode.getPrev(false);
 			}
 			
 			/* If the last node has been shifted and needs storing, then store it */
-			if ((pNode != theLast) && ((theLast.theIndex % theGranularity) == 0))
+			if ((pNode != theLast) && ((theLast.getIndex(false) % theGranularity) == 0))
 				insertNode(theLast);
 		}
 		
@@ -1362,7 +1188,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 			LinkNode<T>	myNode;
 			
 			/* Access the index of the node */
-			iIndex = pNode.theIndex;
+			iIndex = pNode.getIndex(false);
 			
 			/* Calculate the map index */
 			iMapIndex = iIndex / theGranularity;
@@ -1373,7 +1199,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 			/* If this is a mapped node */
 			if ((iIndex % theGranularity) == 0) {
 				/* Adjust this node explicitly */
-				theMap[iMapIndex] = pNode.theNext;
+				theMap[iMapIndex] = pNode.getNext(false);
 			}
 			
 			/* For all subsequent nodes */
@@ -1385,7 +1211,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 				if (myNode == null) break;
 				
 				/* Shift the index to the next item */
-				theMap[iMapIndex] = myNode.theNext;
+				theMap[iMapIndex] = myNode.getNext(false);
 			}
 		}
 		

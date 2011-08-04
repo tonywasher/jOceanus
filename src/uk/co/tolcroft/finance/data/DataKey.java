@@ -5,6 +5,7 @@ import uk.co.tolcroft.models.DataList;
 import uk.co.tolcroft.models.DataState;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.HistoryValues;
 import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.security.SecurityCipher;
 import uk.co.tolcroft.security.SecurityControl;
@@ -41,23 +42,21 @@ public class DataKey extends DataItem<DataKey> {
 	private int 			theKeyTypeId 	= -1;
 	
 	/* Access methods */
-	public  byte[] 			getSecurityKey()  	{ return getObj().getSecurityKey(); }
-	public  byte[] 			getInitVector()  	{ return getObj().getInitVector(); }
+	public  byte[] 			getSecurityKey()  	{ return getValues().getSecurityKey(); }
 	public  SecurityCipher	getCipher()  		{ return theCipher; }
 	public  SymKeyType		getKeyType()  		{ return theKeyType; }
 	public  ControlKey		getControlKey()		{ return theControl; }
 	protected SymmetricKey	getDataKey()		{ return theKey; }
 
 	/* Linking methods */
-	public DataKey	getBase() { return (DataKey)super.getBase(); }
-	public Values  	getObj()  { return (Values)super.getObj(); }	
+	public DataKey	getBase() 	{ return (DataKey)super.getBase(); }
+	public Values  	getValues() { return (Values)super.getCurrentValues(); }	
 	
 	/* Field IDs */
 	public static final int FIELD_CONTROL  = DataItem.NUMFIELDS;
 	public static final int FIELD_KEYTYPE  = DataItem.NUMFIELDS+1;
 	public static final int FIELD_KEY	   = DataItem.NUMFIELDS+2;
-	public static final int FIELD_IV	   = DataItem.NUMFIELDS+3;
-	public static final int NUMFIELDS	   = DataItem.NUMFIELDS+4; 
+	public static final int NUMFIELDS	   = DataItem.NUMFIELDS+3; 
 
 	/**
 	 * Obtain the type of the item
@@ -80,7 +79,6 @@ public class DataKey extends DataItem<DataKey> {
 			case FIELD_CONTROL:		return "ControlId";
 			case FIELD_KEYTYPE:		return "KeyType";
 			case FIELD_KEY:			return "DataKey";
-			case FIELD_IV:			return "InitVector";
 			default:		  		return DataItem.fieldName(iField);
 		}
 	}
@@ -93,10 +91,11 @@ public class DataKey extends DataItem<DataKey> {
 	/**
 	 * Format the value of a particular field as a table row
 	 * @param iField the field number
-	 * @param pObj the values to use
+	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, histObject pObj) {
+	public String formatField(int iField, HistoryValues<DataKey> pValues) {
+		Values	myValues = (Values)pValues;
 		String 	myString = "";
 		switch (iField) {
 			case FIELD_CONTROL: 		
@@ -106,13 +105,10 @@ public class DataKey extends DataItem<DataKey> {
 				myString += (theKeyType == null) ? ("Id=" + theKeyTypeId) : theKeyType.toString(); 
 				break;
 			case FIELD_KEY:
-				myString += Utils.HexStringFromBytes(getSecurityKey()); 
-				break;
-			case FIELD_IV:
-				myString += Utils.HexStringFromBytes(getInitVector()); 
+				myString += Utils.HexStringFromBytes(myValues.getSecurityKey()); 
 				break;
 			default: 		
-				myString += super.formatField(iField, pObj); 
+				myString += super.formatField(iField, pValues); 
 				break;
 		}
 		return myString;
@@ -126,8 +122,8 @@ public class DataKey extends DataItem<DataKey> {
 	protected DataKey(List pList, DataKey pKey) {
 		/* Set standard values */
 		super(pList, pKey.getId());
-		Values myObj = new Values(pKey.getObj());
-		setObj(myObj);
+		Values myValues = new Values(pKey.getValues());
+		setValues(myValues);
 		theControlId	= pKey.theControlId;
 		theControl		= pKey.getControlKey();
 		theCipher		= pKey.getCipher();
@@ -162,12 +158,11 @@ public class DataKey extends DataItem<DataKey> {
 				   int			uId,
 				   int			uControlId,
 				   int			uKeyTypeId,
-				   byte[]		pSecurityKey,
-				   byte[]		pInitVector) throws Exception {
+				   byte[]		pSecurityKey) throws Exception {
 		/* Initialise the item */
 		super(pList, uId);
-		Values myObj = new Values();
-		setObj(myObj);
+		Values myValues = new Values();
+		setValues(myValues);
 
 		/* Record the IDs */
 		theControlId	= uControlId;
@@ -189,8 +184,7 @@ public class DataKey extends DataItem<DataKey> {
 		}
 		
 		/* Store the keys */
-		myObj.setSecurityKey(pSecurityKey);
-		myObj.setInitVector(pInitVector);
+		myValues.setSecurityKey(pSecurityKey);
 
 		/* Access the Security key */
 		SecurityControl myControl = theControl.getSecurityControl();
@@ -217,8 +211,8 @@ public class DataKey extends DataItem<DataKey> {
 				   SymKeyType	pKeyType) throws Exception {
 		/* Initialise the item */
 		super(pList, 0);
-		Values myObj = new Values();
-		setObj(myObj);
+		Values myValues = new Values();
+		setValues(myValues);
 		
 		/* Store the key type and ControlKey */
 		theKeyType		= pKeyType;
@@ -233,13 +227,8 @@ public class DataKey extends DataItem<DataKey> {
 		theCipher = theKey.initCipher();
 		
 		/* Store its security key */
-		myObj.setSecurityKey(theKey.getSecurityKey());			
+		myValues.setSecurityKey(theKey.getSecurityKey());			
 	
-		/* Allocate the InitVector */
-		byte[] myVector = new byte[SymmetricKey.IVSIZE];
-		myControl.getRandom().nextBytes(myVector);
-		myObj.setInitVector(myVector);
-		
 		/* Register the DataKey */
 		theControl.registerDataKey(this);
 		
@@ -258,8 +247,8 @@ public class DataKey extends DataItem<DataKey> {
 				   DataKey		pDataKey) throws Exception {
 		/* Initialise the item */
 		super(pList, 0);
-		Values myObj = new Values();
-		setObj(myObj);
+		Values myValues = new Values();
+		setValues(myValues);
 		
 		/* Store the key type and ControlKey */
 		theKeyType		= pDataKey.getKeyType();
@@ -271,8 +260,7 @@ public class DataKey extends DataItem<DataKey> {
 		theCipher = pDataKey.getCipher();
 		
 		/* Store its security key */
-		myObj.setSecurityKey(theKey.getSecurityKey());			
-		myObj.setInitVector(pDataKey.getInitVector());			
+		myValues.setSecurityKey(theKey.getSecurityKey());			
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -301,7 +289,7 @@ public class DataKey extends DataItem<DataKey> {
 		if (ControlKey.differs(getControlKey(), myThat.getControlKey())) return false;
 		
 		/* Compare the changeable values */
-		return getObj().histEquals(myThat.getObj());
+		return getValues().histEquals(myThat.getValues());
 	}
 
 	/**
@@ -330,6 +318,21 @@ public class DataKey extends DataItem<DataKey> {
 		return 0;
 	}
 
+	/**
+	 * Update security control 
+	 */
+	protected void updateSecurityControl() throws Exception {
+		/* Store the current detail into history */
+		pushHistory();
+
+		/* Update the Security Control Key */
+		theKey.setSecurityControl(theControl.getSecurityControl());
+		getValues().setSecurityKey(theKey.getSecurityKey());			
+		
+		/* Check for changes */
+		if (checkForHistory()) setState(DataState.CHANGED);
+	}
+	
 	/**
 	 * DataKey List
 	 */
@@ -417,8 +420,7 @@ public class DataKey extends DataItem<DataKey> {
 		public DataKey addItem(int  	uId,
 							   int		uControlId,
 							   int		uKeyTypeId,
-	            			   byte[]	pSecurityKey,
-	            			   byte[]	pInitVector) throws Exception {
+	            			   byte[]	pSecurityKey) throws Exception {
 			DataKey     	myKey;
 			
 			/* Create the DataKey */
@@ -426,8 +428,7 @@ public class DataKey extends DataItem<DataKey> {
 								uId,
 								uControlId,
 								uKeyTypeId,
-							    pSecurityKey,
-							    pInitVector);
+							    pSecurityKey);
 			
 			/* Check that this KeyId has not been previously added */
 			if (!isIdUnique(uId)) 
@@ -484,58 +485,40 @@ public class DataKey extends DataItem<DataKey> {
 	/**
 	 * Values for a static 
 	 */
-	public class Values implements histObject {
+	public class Values implements HistoryValues<DataKey> {
 		private byte[]			theSecurityKey	= null;
-		private byte[]			theInitVector	= null;
 		
 		/* Access methods */
 		public  byte[] 			getSecurityKey()  	{ return theSecurityKey; }
-		public  byte[] 			getInitVector()  	{ return theInitVector; }
 		
 		public void setSecurityKey(byte[] pValue) {
 			theSecurityKey = pValue; }
-		public void setInitVector(byte[] pValue) {
-			theInitVector  = pValue; }
 
 		/* Constructor */
 		public Values() {}
-		public Values(Values pValues) {
-			theSecurityKey	= pValues.getSecurityKey();
-			theInitVector	= pValues.getInitVector();
-		}
+		public Values(Values pValues) { copyFrom(pValues); }
 		
 		/* Check whether this object is equal to that passed */
-		public boolean histEquals(histObject pCompare) {
+		public boolean histEquals(HistoryValues<DataKey> pCompare) {
 			Values myValues = (Values)pCompare;
-			return histEquals(myValues);
-		}
-		public boolean histEquals(Values pValues) {
-			if (Utils.differs(theSecurityKey,   pValues.theSecurityKey))   	return false;
-			if (Utils.differs(theInitVector,    pValues.theInitVector))   	return false;
+			if (Utils.differs(theSecurityKey,   myValues.theSecurityKey))   	return false;
 			return true;
 		}
 		
 		/* Copy values */
-		public void    copyFrom(histObject pSource) {
-			Values myValues = (Values)pSource;
-			copyFrom(myValues);
-		}
-		public histObject copySelf() {
+		public HistoryValues<DataKey> copySelf() {
 			return new Values(this);
 		}
-		public void    copyFrom(Values pValues) {
-			theSecurityKey	= pValues.getSecurityKey();
-			theInitVector	= pValues.getInitVector();
+		public void    copyFrom(HistoryValues<?> pSource) {
+			Values myValues = (Values)pSource;
+			theSecurityKey	= myValues.getSecurityKey();
 		}
-		public boolean	fieldChanged(int fieldNo, histObject pOriginal) {
+		public boolean	fieldChanged(int fieldNo, HistoryValues<DataKey> pOriginal) {
 			Values 	pValues = (Values)pOriginal;
 			boolean	bResult = false;
 			switch (fieldNo) {
 				case FIELD_KEY:
 					bResult = (Utils.differs(theSecurityKey,	pValues.theSecurityKey));
-					break;
-				case FIELD_IV:
-					bResult = (Utils.differs(theInitVector,		pValues.theInitVector));
 					break;
 			}
 			return bResult;

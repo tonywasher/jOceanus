@@ -15,11 +15,11 @@ public class ViewPrice extends DataItem<ViewPrice> {
 	private boolean	hasDilution	= false;
 	
 	/* Access methods */
-	public  Values  			getObj()    		{ return (Values)super.getObj(); }
-	public  Price 				getPrice()  		{ return getObj().getPrice(); }
-	public  Dilution			getDilution()  		{ return getObj().getDilution(); }
-	public  DilutedPrice 		getDilutedPrice()  	{ return getObj().getDilutedPrice(); }
-	public  Date  				getDate()			{ return getObj().getDate(); }
+	public  Values  			getValues()    		{ return (Values)super.getCurrentValues(); }
+	public  Price 				getPrice()  		{ return getValues().getPrice(); }
+	public  Dilution			getDilution()  		{ return getValues().getDilution(); }
+	public  DilutedPrice 		getDilutedPrice()  	{ return getValues().getDilutedPrice(); }
+	public  Date  				getDate()			{ return getValues().getDate(); }
 	public  Account				getAccount()		{ return theAccount; }
 	public  void	setAccount(Account pAccount)	{ theAccount = pAccount; }
 	
@@ -69,12 +69,12 @@ public class ViewPrice extends DataItem<ViewPrice> {
 	/**
 	 * Format the value of a particular field as a table row
 	 * @param iField the field number
-	 * @param pObj the values to use
+	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, histObject pObj) {
+	public String formatField(int iField, HistoryValues<ViewPrice> pValues) {
 		String 	myString = "";
-		Values 	myObj 	 = (Values)pObj;
+		Values 	myValues = (Values)pValues;
 		switch (iField) {
 			case FIELD_ACCOUNT:
 				myString += Account.format(getAccount()); 
@@ -83,16 +83,16 @@ public class ViewPrice extends DataItem<ViewPrice> {
 				myString += Date.format(getDate()); 
 				break;
 			case FIELD_PRICE:	
-				myString += Price.format(myObj.getPrice()); 
+				myString += Price.format(myValues.getPrice()); 
 				break;
 			case FIELD_DILUTION:	
 				myString += Dilution.format(getDilution()); 
 				break;
 			case FIELD_DILUTEDPRICE:	
-				myString += DilutedPrice.format(myObj.getDilutedPrice()); 
+				myString += DilutedPrice.format(myValues.getDilutedPrice()); 
 				break;
 			default: 		
-				myString += super.formatField(iField, pObj); 
+				myString += super.formatField(iField, pValues); 
 				break;
 		}
 		return myString;
@@ -107,28 +107,13 @@ public class ViewPrice extends DataItem<ViewPrice> {
 		/* Set standard values */
 		super(pList, pPrice.getId());
 		
-		/* Create the history object */
-		Values myObj = new Values();
-		setObj(myObj);
-		
 		/* Set standard values */
 		setAccount(pPrice.getAccount());
 		hasDilution = pList.hasDilutions();
-		myObj.setDate(pPrice.getDate());
-		myObj.setPrice(pPrice.getPrice());
-		
-		/* If we have dilutions */
-		if (hasDilution) {
-			/* Determine the dilution factor for the date */
-			Dilution myDilution = pList.getDilutions().getDilutionFactor(theAccount, getDate());
-			
-			/* If we have a dilution factor */
-			if (myDilution != null) {
-				/* Store dilution details */
-				myObj.setDilution(myDilution);
-				myObj.setDilutedPrice(getPrice().getDilutedPrice(myDilution));
-			}
-		}
+
+		/* Create the history object */
+		Values myValues = new Values(pPrice.getValues());
+		setValues(myValues);
 		
 		/* Finish off */
 		setBase(pPrice);
@@ -138,8 +123,8 @@ public class ViewPrice extends DataItem<ViewPrice> {
 	/* Standard constructor for a newly inserted price */
 	private ViewPrice(List pList) {
 		super(pList, 0);
-		Values myObj = new Values();
-		setObj(myObj);
+		Values myValues = new Values();
+		setValues(myValues);
 		setAccount(pList.theAccount);
 		hasDilution = pList.hasDilutions();
 		setState(DataState.NEW);
@@ -250,75 +235,19 @@ public class ViewPrice extends DataItem<ViewPrice> {
 	 * @param pPrice the price 
 	 */
 	public void setPrice(Price pPrice) {
-		getObj().setPrice((pPrice == null) ? null : new Price(pPrice));
-		
-		/* If we have dilutions and a valid date/price */
-		if ((getDate() != null) && (pPrice != null) && (hasDilution)) {
-			ViewPrice.List myList = (ViewPrice.List)getList();
-			
-			/* Determine the dilution factor for the date */
-			Dilution myDilution = myList.getDilutions().getDilutionFactor(theAccount, getDate());
-			
-			/* If we have a dilution factor */
-			if (myDilution != null) {
-				/* Store dilution details */
-				getObj().setDilution(myDilution);
-				getObj().setDilutedPrice(getPrice().getDilutedPrice(myDilution));
-			}
-			
-			/* else set null dilution */
-			else {
-				/* Store dilution details */
-				getObj().setDilution(null);
-				getObj().setDilutedPrice(null);				
-			}
-		}
-		
-		/* else set null dilution */
-		else {
-			/* Store dilution details */
-			getObj().setDilution(null);
-			getObj().setDilutedPrice(null);				
-		}
+		getValues().setPrice((pPrice == null) ? null : new Price(pPrice));
+		getValues().calculateDiluted();
 	}
 
-	/**s
+	/**
 	 * Set a new date 
 	 * 
 	 * @param pDate the new date 
 	 */
 	public void setDate(Date pDate) {
 		/* Store date */
-		getObj().setDate((pDate == null) ? null : new Date(pDate));
-		
-		/* If we have dilutions and a valid date/price */
-		if ((pDate != null) && (getPrice() != null) && (hasDilution)) {
-			ViewPrice.List myList = (ViewPrice.List)getList();
-			
-			/* Determine the dilution factor for the date */
-			Dilution myDilution = myList.getDilutions().getDilutionFactor(theAccount, getDate());
-			
-			/* If we have a dilution factor */
-			if (myDilution != null) {
-				/* Store dilution details */
-				getObj().setDilution(myDilution);
-				getObj().setDilutedPrice(getPrice().getDilutedPrice(myDilution));
-			}
-			
-			/* else set null dilution */
-			else {
-				/* Store dilution details */
-				getObj().setDilution(null);
-				getObj().setDilutedPrice(null);				
-			}
-		}
-		
-		/* else set null dilution */
-		else {
-			/* Store dilution details */
-			getObj().setDilution(null);
-			getObj().setDilutedPrice(null);				
-		}
+		getValues().setDate((pDate == null) ? null : new Date(pDate));
+		getValues().calculateDiluted();
 	}
 
 	/**
@@ -488,7 +417,7 @@ public class ViewPrice extends DataItem<ViewPrice> {
 	/**
 	 * Values for a view price 
 	 */
-	public class Values implements histObject {
+	public class Values implements HistoryValues<ViewPrice> {
 		private Date       			theDate      	= null;
 		private Price    			thePrice     	= null;
 		private Dilution			theDilution		= null;
@@ -511,41 +440,43 @@ public class ViewPrice extends DataItem<ViewPrice> {
 
 		/* Constructor */
 		public Values() {}
-		public Values(Values pValues) {
-			theDate      	= pValues.getDate();
-			thePrice     	= pValues.getPrice();
-			theDilution		= pValues.getDilution();
-			theDilutedPrice	= pValues.getDilutedPrice();
-		}
+		public Values(Values 			pValues) { copyFrom(pValues); }
+		public Values(AcctPrice.Values 	pValues) { copyFrom(pValues); }
 		
 		/* Check whether this object is equal to that passed */
-		public boolean histEquals(histObject pCompare) {
+		public boolean histEquals(HistoryValues<ViewPrice> pCompare) {
 			Values myValues = (Values)pCompare;
-			return histEquals(myValues);
-		}
-		public boolean histEquals(Values pValues) {
-			if (Date.differs(theDate,    				pValues.theDate))    		return false;
-			if (Price.differs(thePrice,   				pValues.thePrice))   		return false;
-			if (Dilution.differs(theDilution, 			pValues.theDilution)) 		return false;
-			if (DilutedPrice.differs(theDilutedPrice, 	pValues.theDilutedPrice))	return false;
+			if (Date.differs(theDate,    				myValues.theDate))    		return false;
+			if (Price.differs(thePrice,   				myValues.thePrice))   		return false;
+			if (Dilution.differs(theDilution, 			myValues.theDilution)) 		return false;
+			if (DilutedPrice.differs(theDilutedPrice, 	myValues.theDilutedPrice))	return false;
 			return true;
 		}
 		
 		/* Copy values */
-		public void    copyFrom(histObject pSource) {
-			Values myValues = (Values)pSource;
-			copyFrom(myValues);
-		}
-		public histObject copySelf() {
+		public HistoryValues<ViewPrice> copySelf() {
 			return new Values(this);
 		}
-		public void    copyFrom(Values pValues) {
-			theDate         = pValues.getDate();
-			thePrice        = pValues.getPrice();
-			theDilution		= pValues.getDilution();
-			theDilutedPrice	= pValues.getDilutedPrice();
+		public void    copyFrom(HistoryValues<?> pSource) {
+			/* Handle a ViewPrice Values */
+			if (pSource instanceof Values) {
+				Values myValues = (Values)pSource;
+				theDate         = myValues.getDate();
+				thePrice        = myValues.getPrice();
+				theDilution		= myValues.getDilution();
+				theDilutedPrice	= myValues.getDilutedPrice();
+			}
+			
+			/* Handle an AcctPrice Values */
+			else if (pSource instanceof AcctPrice.Values) {
+				AcctPrice.Values myValues = (AcctPrice.Values)pSource;
+				theDate         = myValues.getDate();
+				thePrice        = myValues.getPrice().getValue();
+				calculateDiluted();
+			}
 		}
-		public boolean	fieldChanged(int fieldNo, histObject pOriginal) {
+		
+		public boolean	fieldChanged(int fieldNo, HistoryValues<ViewPrice> pOriginal) {
 			Values 	pValues = (Values)pOriginal;
 			boolean	bResult = false;
 			switch (fieldNo) {
@@ -563,6 +494,31 @@ public class ViewPrice extends DataItem<ViewPrice> {
 					break;
 			}
 			return bResult;
+		}
+		
+		/**
+		 * Calculate Diluted values 
+		 */
+		protected void calculateDiluted() {
+			/* Access the list for the item */
+			ViewPrice.List myList = (ViewPrice.List)getList();
+				
+			/* Set null default dilution */
+			theDilution 	= null;
+			theDilutedPrice = null;				
+
+			/* If we have can look at dilutions */
+			if ((hasDilution) && (theDate != null) && (thePrice != null)) {
+				/* Determine the dilution factor for the date */
+				Dilution myDilution = myList.getDilutions().getDilutionFactor(theAccount, theDate);
+				
+				/* If we have a dilution factor */
+				if (myDilution != null) {
+					/* Store dilution details */
+					theDilution 	= myDilution;
+					theDilutedPrice = thePrice.getDilutedPrice(myDilution);
+				}
+			}
 		}
 	}		
 }

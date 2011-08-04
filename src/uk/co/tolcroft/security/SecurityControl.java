@@ -482,10 +482,10 @@ public class SecurityControl extends DataItem<SecurityControl> {
 	/**
 	 * Format the value of a particular field as a table row
 	 * @param iField the field number
-	 * @param pObj the values to use
+	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, histObject pObj) {
+	public String formatField(int iField, HistoryValues<SecurityControl> pValues) {
 		String myString = ""; 
 		switch (iField) {
 			case FIELD_INIT: 
@@ -540,8 +540,7 @@ public class SecurityControl extends DataItem<SecurityControl> {
 		
 		/* Access the object as a SecurityControl */
 		SecurityControl myThat = (SecurityControl)pThat;
-		
-		
+				
 		/* Compare the IDs */
 		int iDiff = (int)(getId() - myThat.getId());
 		if (iDiff < 0) return -1;

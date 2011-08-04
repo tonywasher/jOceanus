@@ -435,6 +435,206 @@ public class View {
 		}
 	}
 	
+	/* AccountType Extract Class */
+	public class ViewAccountTypes extends AccountType.List {
+		/* Access methods */
+		public AccountType.List getAccountTypes() { return this; }
+		
+		/* Constructor */
+		public ViewAccountTypes() {
+			/* Call super constructor */
+			super(theData.getAccountTypes(), ListStyle.EDIT);
+		}
+				
+		/** 
+		 * Prepare changes in an Account Type view back into the core data
+		 */
+		protected void prepareChanges() {
+			AccountType.List myBase;
+			
+			/* Access base details */
+			myBase     = theData.getAccountTypes();
+			
+			/* Prepare the changes */
+			myBase.prepareChanges(this);
+		}
+
+		/** 
+		 * Commit/RollBack changes in an AccountType view back into the core data
+		 * @param bCommit <code>true/false</code>
+		 */
+		protected void commitChanges(boolean bCommit) {
+			AccountType.List myBase;
+			
+			/* Access base details */
+			myBase     = theData.getAccountTypes();
+			
+			/* Commit /RollBack the changes */
+			if (bCommit)	myBase.commitChanges(this);
+			else			myBase.rollBackChanges(this);
+		}
+	}
+	
+	/* Transaction Type Extract Class */
+	public class ViewTransTypes extends TransactionType.List {
+		/* Access methods */
+		public TransactionType.List getTransTypes() { return this; }
+		
+		/* Constructor */
+		public ViewTransTypes() {
+			/* Call super constructor */
+			super(theData.getTransTypes(), ListStyle.EDIT);
+		}
+				
+		/** 
+		 * Prepare changes in a TransType view back into the core data
+		 */
+		protected void prepareChanges() {
+			TransactionType.List myBase;
+			
+			/* Access base details */
+			myBase     = theData.getTransTypes();
+			
+			/* Prepare the changes */
+			myBase.prepareChanges(this);
+		}
+
+		/** 
+		 * Commit/RollBack changes in a patterns view back into the core data
+		 * @param bCommit <code>true/false</code>
+		 */
+		protected void commitChanges(boolean bCommit) {
+			TransactionType.List myBase;
+			
+			/* Access base details */
+			myBase     = theData.getTransTypes();
+			
+			/* Commit /RollBack the changes */
+			if (bCommit)	myBase.commitChanges(this);
+			else			myBase.rollBackChanges(this);
+		}
+	}
+	
+	/* TaxType Extract Class */
+	public class ViewTaxTypes extends TaxType.List {
+		/* Access methods */
+		public TaxType.List getTaxTypes() { return this; }
+		
+		/* Constructor */
+		public ViewTaxTypes() {
+			/* Call super constructor */
+			super(theData.getTaxTypes(), ListStyle.EDIT);
+		}
+				
+		/** 
+		 * Prepare changes in a taxtype view back into the core data
+		 */
+		protected void prepareChanges() {
+			Frequency.List myBase;
+			
+			/* Access base details */
+			myBase     = theData.getFrequencys();
+			
+			/* Prepare the changes */
+			myBase.prepareChanges(this);
+		}
+
+		/** 
+		 * Commit/RollBack changes in a tax type view back into the core data
+		 * @param bCommit <code>true/false</code>
+		 */
+		protected void commitChanges(boolean bCommit) {
+			TaxType.List myBase;
+			
+			/* Access base details */
+			myBase     = theData.getTaxTypes();
+			
+			/* Commit /RollBack the changes */
+			if (bCommit)	myBase.commitChanges(this);
+			else			myBase.rollBackChanges(this);
+		}
+	}
+	
+	/* Frequency Extract Class */
+	public class ViewFrequencys extends Frequency.List {
+		/* Access methods */
+		public Frequency.List getFrequencys() { return this; }
+		
+		/* Constructor */
+		public ViewFrequencys() {
+			/* Call super constructor */
+			super(theData.getFrequencys(), ListStyle.EDIT);
+		}
+				
+		/** 
+		 * Prepare changes in a frequency view back into the core data
+		 */
+		protected void prepareChanges() {
+			Frequency.List myBase;
+			
+			/* Access base details */
+			myBase     = theData.getFrequencys();
+			
+			/* Prepare the changes */
+			myBase.prepareChanges(this);
+		}
+
+		/** 
+		 * Commit/RollBack changes in a frequency view back into the core data
+		 * @param bCommit <code>true/false</code>
+		 */
+		protected void commitChanges(boolean bCommit) {
+			Frequency.List myBase;
+			
+			/* Access base details */
+			myBase     = theData.getFrequencys();
+			
+			/* Commit /RollBack the changes */
+			if (bCommit)	myBase.commitChanges(this);
+			else			myBase.rollBackChanges(this);
+		}
+	}
+	
+	/* TaxRegime Extract Class */
+	public class ViewTaxRegimes extends TaxRegime.List {
+		/* Access methods */
+		public TaxRegime.List getTaxRegimes() { return this; }
+		
+		/* Constructor */
+		public ViewTaxRegimes() {
+			/* Call super constructor */
+			super(theData.getTaxRegimes(), ListStyle.EDIT);
+		}
+				
+		/** 
+		 * Prepare changes in a tax regime view back into the core data
+		 */
+		protected void prepareChanges() {
+			TaxRegime.List myBase;
+			
+			/* Access base details */
+			myBase     = theData.getTaxRegimes();
+			
+			/* Prepare the changes */
+			myBase.prepareChanges(this);
+		}
+
+		/** 
+		 * Commit/RollBack changes in a tax regime view back into the core data
+		 * @param bCommit <code>true/false</code>
+		 */
+		protected void commitChanges(boolean bCommit) {
+			TaxRegime.List myBase;
+			
+			/* Access base details */
+			myBase     = theData.getTaxRegimes();
+			
+			/* Commit /RollBack the changes */
+			if (bCommit)	myBase.commitChanges(this);
+			else			myBase.rollBackChanges(this);
+		}
+	}
+	
 	/* Event Extract Class */
 	public class ViewEvents extends Event.List {
 		/* Members */

@@ -304,14 +304,63 @@ public class DataSet implements htmlDumpable {
 	
 	/**
 	 * Initialise Security from database (if present) 
-	 * @param pDatabase the database data
+	 * @param pBase the database data
 	 */
-	public void initialiseSecurity(DataSet pDatabase) throws Exception {
-		/* Access the active control key from the database */
-		ControlKey  myKey	= pDatabase.getControlKey();
-
+	public void initialiseSecurity(DataSet pBase) throws Exception {
 		/* Initialise Security */
-		theControlKeys.initialiseSecurity(myKey);		
+		theControlKeys.initialiseSecurity(pBase);		
+
+		/* Access the control key */
+		ControlKey myControl = getControlKey();
+		
+		/* Ensure encryption of the spreadsheet load */
+		theActTypes.adoptSecurity(myControl, pBase.getAccountTypes());
+		theTransTypes.adoptSecurity(myControl, pBase.getTransTypes());
+		theTaxTypes.adoptSecurity(myControl, pBase.getTaxTypes());
+		theFrequencys.adoptSecurity(myControl, pBase.getFrequencys());
+		theTaxRegimes.adoptSecurity(myControl, pBase.getTaxRegimes());
+		theAccounts.adoptSecurity(myControl, pBase.getAccounts());
+		theRates.adoptSecurity(myControl, pBase.getRates());
+		thePrices.adoptSecurity(myControl, pBase.getPrices());
+		thePatterns.adoptSecurity(myControl, pBase.getPatterns());
+		theEvents.adoptSecurity(myControl, pBase.getEvents());
+	}
+	
+	/**
+	 * Renew Security 
+	 */
+	public void renewSecurity() throws Exception {
+		/* Create a new ControlKey */
+		ControlKey myKey = theControlKeys.addItem();
+				
+		/* Declare the New Control Key */
+		getControl().setControlKey(myKey);
+		
+		/* Update Security */
+		updateSecurity();
+	}
+	
+	/**
+	 * Update Security 
+	 */
+	public void updateSecurity() throws Exception {
+		/* Access the control key */
+		ControlKey myControl = getControlKey();
+		
+		/* Ensure encryption of the spreadsheet load */
+		theActTypes.updateSecurity(myControl);
+		theTransTypes.updateSecurity(myControl);
+		theTaxTypes.updateSecurity(myControl);
+		theFrequencys.updateSecurity(myControl);
+		theTaxRegimes.updateSecurity(myControl);
+		theAccounts.updateSecurity(myControl);
+		theRates.updateSecurity(myControl);
+		thePrices.updateSecurity(myControl);
+		thePatterns.updateSecurity(myControl);
+		theEvents.updateSecurity(myControl);
+		
+		/* Delete old ControlSets */
+		theControlKeys.purgeOldControlKeys();
 	}
 	
 	/**
@@ -327,36 +376,28 @@ public class DataSet implements htmlDumpable {
 	}
 	
 	/**
-	 * Set a new Security control. This is used when a new password has been applied to
-	 * the security control, in order to update the security key representations 
-	 * @param pControl the new control 
+	 * Update data with a new password
+	 * @param pSource the source of the data
+	 * @return was the password changed <code>true/false</code>
 	 */
-	public void setSecurityControl(SecurityControl pControl) throws Exception {
-		/* Ensure that we have a control element */
-		//ensureControl();
+	public boolean updateSecurityControl(String pSource) throws Exception {
+		/* Update the security control */
+		boolean isChanged = theSecurity.updateSecurityControl(getSecurityControl(), pSource);
 		
-		/* Set the control */
-		//theControl.getControlKey().setSecurityControl(pControl);		
+		/* If we changed the password */
+		if (isChanged) {
+			/* Update the control details */
+			getControlKey().updateSecurityControl();
+		}
+		
+		/* Return to the caller */
+		return isChanged;
 	}
 	
 	/**
-	 * Ensure encryption of clear text after load
+	 * Adopt Database security after clear text load
 	 */
-	public void ensureEncryption() throws Exception {
-		/* Access the control key */
-		ControlKey myControl = getControl().getControlKey();
-		
-		/* Ensure encryption of the spreadsheet load */
-		theActTypes.initialiseSecurity(myControl);
-		theTransTypes.initialiseSecurity(myControl);
-		theTaxTypes.initialiseSecurity(myControl);
-		theFrequencys.initialiseSecurity(myControl);
-		theTaxRegimes.initialiseSecurity(myControl);
-		theAccounts.initialiseSecurity(myControl);
-		theRates.initialiseSecurity(myControl);
-		thePrices.initialiseSecurity(myControl);
-		thePatterns.initialiseSecurity(myControl);
-		theEvents.initialiseSecurity(myControl);
+	public void adoptSecurity(DataSet pBase) throws Exception {
 	}
 	
 	/**

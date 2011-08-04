@@ -19,12 +19,12 @@ public class ControlData extends DataItem<ControlData> {
 	private int				theControlId = -1;
 	
 	/* Access methods */
-	public  int 			getDataVersion()  	{ return getObj().getDataVersion(); }
-	public  ControlKey		getControlKey()  	{ return getObj().getControlKey(); }
+	public  int 			getDataVersion()  	{ return getValues().getDataVersion(); }
+	public  ControlKey		getControlKey()  	{ return getValues().getControlKey(); }
 
 	/* Linking methods */
-	public ControlData	getBase() { return (ControlData)super.getBase(); }
-	public Values  		getObj()  { return (Values)super.getObj(); }	
+	public ControlData	getBase() 		{ return (ControlData)super.getBase(); }
+	public Values  		getValues()  	{ return (Values)super.getCurrentValues(); }	
 	
 	/* Field IDs */
 	public static final int FIELD_VERS	   = DataItem.NUMFIELDS;
@@ -63,35 +63,39 @@ public class ControlData extends DataItem<ControlData> {
 	/**
 	 * Format the value of a particular field as a table row
 	 * @param iField the field number
-	 * @param pObj the values to use
+	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, histObject pObj) {
+	public String formatField(int iField, HistoryValues<ControlData> pValues) {
+		Values myValues = (Values)pValues;
 		String 	myString = "";
 		switch (iField) {
 			case FIELD_VERS:
 				myString += getDataVersion(); 
 				break;
 			case FIELD_CONTROL:
-				myString += theControlId; 
+				if (myValues.getControlKey() != null)
+					myString += myValues.getControlKey().getId();
+				else 
+					myString += "Id=" + theControlId;					
 				break;
 			default: 		
-				myString += super.formatField(iField, pObj); 
+				myString += super.formatField(iField, pValues); 
 				break;
 		}
 		return myString;
 	}
 							
 	/**
- 	* Construct a copy of a Static
+ 	* Construct a copy of a ControlData
  	* 
- 	* @param pStatic The Static 
+ 	* @param pSource The source 
  	*/
-	protected ControlData(List pList, ControlData pStatic) {
+	protected ControlData(List pList, ControlData pSource) {
 		/* Set standard values */
-		super(pList, pStatic.getId());
-		Values myObj = new Values(pStatic.getObj());
-		setObj(myObj);
+		super(pList, pSource.getId());
+		Values myValues = new Values(pSource.getValues());
+		setValues(myValues);
 
 		/* Switch on the LinkStyle */
 		switch (pList.getStyle()) {
@@ -99,31 +103,31 @@ public class ControlData extends DataItem<ControlData> {
 				pList.setNewId(this);				
 				break;
 			case EDIT:
-				setBase(pStatic);
+				setBase(pSource);
 				setState(DataState.CLEAN);
 				break;
 			case UPDATE:
-				setBase(pStatic);
-				setState(pStatic.getState());
+				setBase(pSource);
+				setState(pSource.getState());
 				break;
 		}
 	}
 
 	/* Standard constructor */
 	private ControlData(List pList,
-				  	    int	uId,
+				  	    int	 uId,
 				  	    int  uVersion, 
-				  	    int	uControlId) throws Exception {
+				  	    int	 uControlId) throws Exception {
 		/* Initialise the item */
 		super(pList, uId);
-		Values myObj = new Values();
-		setObj(myObj);
+		Values myValues = new Values();
+		setValues(myValues);
 
 		/* Record the ID */
 		theControlId	= uControlId;
 
 		/* Record the values */
-		myObj.setDataVersion(uVersion);
+		myValues.setDataVersion(uVersion);
 		
 		/* Look up the ControlKey */
 		ControlKey myControl = pList.theData.getControlKeys().searchFor(uControlId);
@@ -131,7 +135,7 @@ public class ControlData extends DataItem<ControlData> {
 			throw new Exception(ExceptionClass.DATA,
 		                        this,
 					            "Invalid ControlKey Id");
-		myObj.setControlKey(myControl);
+		myValues.setControlKey(myControl);
 
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -142,11 +146,11 @@ public class ControlData extends DataItem<ControlData> {
 				  	    int	 uVersion) {
 		/* Initialise the item */
 		super(pList, 0);
-		Values myObj = new Values();
-		setObj(myObj);
+		Values myValues = new Values();
+		setValues(myValues);
 
 		/* Record the values */
-		myObj.setDataVersion(uVersion);
+		myValues.setDataVersion(uVersion);
 				
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -173,7 +177,7 @@ public class ControlData extends DataItem<ControlData> {
 		if (getId() != myThat.getId())	return false;
 		
 		/* Compare the changeable values */
-		return getObj().histEquals(myThat.getObj());
+		return getValues().histEquals(myThat.getValues());
 	}
 
 	/**
@@ -216,7 +220,7 @@ public class ControlData extends DataItem<ControlData> {
 		if (theControlId == -1) {
 			/* Store the control details and return */
 			theControlId	= pControl.getId();
-			getObj().setControlKey(pControl);
+			getValues().setControlKey(pControl);
 			return;
 		}
 		
@@ -225,7 +229,7 @@ public class ControlData extends DataItem<ControlData> {
 
 		/* Store the control details */
 		theControlId	= pControl.getId();
-		getObj().setControlKey(pControl);
+		getValues().setControlKey(pControl);
 
 		/* Check for changes */
 		if (checkForHistory()) setState(DataState.CHANGED);
@@ -365,7 +369,7 @@ public class ControlData extends DataItem<ControlData> {
 	/**
 	 * Values for a static 
 	 */
-	public class Values implements histObject {
+	public class Values implements HistoryValues<ControlData> {
 		private int 			theDataVersion	= -1;
 		private ControlKey		theControlKey	= null;
 		
@@ -380,35 +384,31 @@ public class ControlData extends DataItem<ControlData> {
 
 		/* Constructor */
 		public Values() {}
-		public Values(Values pValues) {
-			theDataVersion	= pValues.getDataVersion();
-			theControlKey	= pValues.getControlKey();
-		}
+		public Values(Values pValues) { copyFrom(pValues); }
 		
 		/* Check whether this object is equal to that passed */
-		public boolean histEquals(histObject pCompare) {
+		public boolean histEquals(HistoryValues<ControlData> pCompare) {
+			/* Make sure that the object is the same class */
+			if (pCompare.getClass() != this.getClass()) return false;
+			
+			/* Cast correctly */
 			Values myValues = (Values)pCompare;
-			return histEquals(myValues);
-		}
-		public boolean histEquals(Values pValues) {
-			if (theDataVersion != pValues.theDataVersion)   					return false;
-			if (ControlKey.differs(theControlKey,    pValues.theControlKey))   	return false;
+
+			if (theDataVersion != myValues.theDataVersion)   					return false;
+			if (ControlKey.differs(theControlKey,    myValues.theControlKey))   return false;
 			return true;
 		}
 		
 		/* Copy values */
-		public void    copyFrom(histObject pSource) {
-			Values myValues = (Values)pSource;
-			copyFrom(myValues);
-		}
-		public histObject copySelf() {
+		public HistoryValues<ControlData> copySelf() {
 			return new Values(this);
 		}
-		public void    copyFrom(Values pValues) {
-			theDataVersion	= pValues.getDataVersion();
-			theControlKey	= pValues.getControlKey();
+		public void    copyFrom(HistoryValues<?> pSource) {
+			Values myValues = (Values)pSource;
+			theDataVersion	= myValues.getDataVersion();
+			theControlKey	= myValues.getControlKey();
 		}
-		public boolean	fieldChanged(int fieldNo, histObject pOriginal) {
+		public boolean	fieldChanged(int fieldNo, HistoryValues<ControlData> pOriginal) {
 			Values 	pValues = (Values)pOriginal;
 			boolean	bResult = false;
 			switch (fieldNo) {

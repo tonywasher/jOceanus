@@ -29,7 +29,7 @@ import uk.co.tolcroft.models.*;
 
 public abstract class FinanceTable<T extends DataItem<T>> extends JTable 
 														  implements financePanel,
-																  	 DataItem.tableHistory {
+																  	 HistoryCheck<T> {
 	/* Members */
 	private static final long serialVersionUID = 1258025191244933784L;
 	private JTable				theRowHdrTable	= null;
@@ -65,7 +65,7 @@ public abstract class FinanceTable<T extends DataItem<T>> extends JTable
 	public void    		updateDebug()			    	{ }
 	public void    		setActive(boolean isActive)		{ isEnabled = isActive; }
 	public JComboBox 	getComboBox(int row, int col) 	{ return null; }
-	public boolean 		isValidObj(DataItem<?> pItem, DataItem.histObject  pObj) { return true; }
+	public boolean 		isValidHistory(DataItem<T> pItem, HistoryValues<?>  pValues) { return true; }
 	public DebugManager getDebugManager() 				{ return theMainTab.getDebugMgr(); }
 		
 	/* Abstract methods */
@@ -543,15 +543,15 @@ public abstract class FinanceTable<T extends DataItem<T>> extends JTable
 			myRowNo = myRow.indexOf();
 			if (hasHeader()) myRowNo++;
 
-			/* Clear errors and re-validate */
-			myRow.clearErrors();
-			myRow.resetHistory();
-			myRow.validate();
-				
 			/* Mark the row as clean */
 			myRow.setState(myRow.isCoreDeleted()
 					? DataState.RECOVERED
 					: DataState.CLEAN);
+
+			/* Clear errors and re-validate */
+			myRow.clearErrors();
+			myRow.resetHistory();	
+			myRow.validate();
 			
 			/* Determine new row # */
 			myNewRowNo = myRow.indexOf();
@@ -669,14 +669,14 @@ public abstract class FinanceTable<T extends DataItem<T>> extends JTable
 				/* Pop last value */
 				myRow.peekFurther();
 		
+				/* Set the new status */
+				myRow.setState(DataState.CHANGED);
+								
 				/* Resort the item */
 				theList.reSort(myRow);
 				myRow.clearErrors();
 				myRow.validate();
 
-				/* Set the new status */
-				myRow.setState(DataState.CHANGED);
-								
 				/* Determine new row # */
 				myNewRowNo = myRow.indexOf();
 				if (hasHeader()) myNewRowNo++;
@@ -732,12 +732,12 @@ public abstract class FinanceTable<T extends DataItem<T>> extends JTable
 				/* Resort the item */
 				theList.reSort(myRow);
 				myRow.clearErrors();
-				myRow.validate();
 
 				/* Set the new status */
 				if (myRow.hasHistory()) {
 					myRow.setState(DataState.CHANGED);
 				}
+				myRow.validate();
 
 				/* Determine new row # */
 				myNewRowNo = myRow.indexOf();

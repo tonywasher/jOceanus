@@ -38,7 +38,6 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
 		theTableDef.addReferenceColumn(DataKey.FIELD_CONTROL, DataKey.fieldName(DataKey.FIELD_CONTROL), TableControlKeys.TableName);
 		theTableDef.addIntegerColumn(DataKey.FIELD_KEYTYPE, DataKey.fieldName(DataKey.FIELD_KEYTYPE));
 		theTableDef.addBinaryColumn(DataKey.FIELD_KEY, DataKey.fieldName(DataKey.FIELD_KEY), DataKey.KEYLEN);
-		theTableDef.addBinaryColumn(DataKey.FIELD_IV, DataKey.fieldName(DataKey.FIELD_IV), DataKey.INITVLEN);
 	}
 	
 	/* PreProcess on Load */
@@ -56,16 +55,14 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
 		int				myControl;
 		int	  			myKeyType;
 		byte[]			myKey;
-		byte[]			myVector;
 		
 		/* Get the various fields */
 		myControl		= theTableDef.getIntegerValue(DataKey.FIELD_CONTROL);
 		myKeyType		= theTableDef.getIntegerValue(DataKey.FIELD_KEYTYPE);
 		myKey  			= theTableDef.getBinaryValue(DataKey.FIELD_KEY);
-		myVector		= theTableDef.getBinaryValue(DataKey.FIELD_IV);
 			
 		/* Add into the list */
-		theList.addItem(pId, myControl, myKeyType, myKey, myVector);
+		theList.addItem(pId, myControl, myKeyType, myKey);
 	}
 	
 	/* Set a field value */
@@ -75,7 +72,6 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
 			case DataKey.FIELD_CONTROL:	theTableDef.setIntegerValue(iField, pItem.getControlKey().getId());	break;
 			case DataKey.FIELD_KEYTYPE:	theTableDef.setIntegerValue(iField, pItem.getKeyType().getId());	break;
 			case DataKey.FIELD_KEY:		theTableDef.setBinaryValue(iField,  pItem.getSecurityKey());		break;
-			case DataKey.FIELD_IV:		theTableDef.setBinaryValue(iField,  pItem.getInitVector());			break;
 		}
 	}
 }

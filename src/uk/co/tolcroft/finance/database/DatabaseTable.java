@@ -9,7 +9,6 @@ import uk.co.tolcroft.finance.core.Threads.statusCtl;
 import uk.co.tolcroft.finance.data.DataSet;
 import uk.co.tolcroft.finance.database.TableDefinition.ColumnDefinition;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.DataItem.histObject;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
@@ -472,13 +471,13 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	
 	/* Update the rate */
 	private boolean updateItem(T	pItem) throws Exception {
-		histObject 	myCurr;
-		histObject 	myBase;
-		boolean		isUpdated = false;
+		HistoryValues<T> 	myCurr;
+		HistoryValues<T> 	myBase;
+		boolean				isUpdated = false;
 		
 		/* Access the object and base */
-		myCurr = pItem.getObj();
-		myBase = pItem.getBaseObj();
+		myCurr = pItem.getCurrentValues();
+		myBase = pItem.getOriginalValues();
 			
 		/* Protect the update */
 		try {			

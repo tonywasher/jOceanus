@@ -4,6 +4,7 @@ import uk.co.tolcroft.models.DataItem;
 import uk.co.tolcroft.models.DataList;
 import uk.co.tolcroft.models.DataState;
 import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.HistoryValues;
 import uk.co.tolcroft.models.Number;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.Utils;
@@ -45,11 +46,11 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 * Get the ControlKey for this item
 	 * @return the ControlKey
 	 */
-	public ControlKey		getControlKey()     { return getObj().getControl(); }
+	public ControlKey		getControlKey()     { return getValues().getControl(); }
 
 	/* Linking methods */
-	public EncryptedItem<?>.EncryptedValues  getObj()  { 
-		return (EncryptedItem<?>.EncryptedValues)super.getObj(); }
+	public EncryptedItem<?>.EncryptedValues  getValues()  { 
+		return (EncryptedItem<?>.EncryptedValues)super.getCurrentValues(); }
 	
 	/* Field IDs */
 	public static final int 	FIELD_CONTROL  	= DataItem.NUMFIELDS;
@@ -74,7 +75,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 * @param pObj the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, histObject pObj) {
+	public String formatField(int iField, HistoryValues<T> pObj) {
 		String 			myString = "";
 		EncryptedItem<?>.EncryptedValues myObj 	 = (EncryptedItem<?>.EncryptedValues)pObj;
 		switch (iField) {
@@ -104,8 +105,8 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 * @param pControlKey the Control Key
 	 */
 	protected void setControlKey(ControlKey pControlKey) {
-		EncryptedItem<?>.EncryptedValues myObj = getObj();
-		myObj.setControl(pControlKey);
+		EncryptedItem<?>.EncryptedValues myObj = getValues();
+		if (myObj != null) myObj.setControl(pControlKey);
 	}
 	
 	/**
@@ -148,15 +149,27 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 * Initialise security for all encrypted values
 	 * @param pControl the new Control Key 
 	 */	
-	private void initialiseSecurity(ControlKey pControl) throws Exception {
+	private void adoptSecurity(ControlKey pControl,
+							   T		  pBase) throws Exception {
 		/* Access the values */
-		EncryptedItem<?>.EncryptedValues myValues = getObj();
+		EncryptedItem<?>.EncryptedValues myValues = getValues();
 		
 		/* Set the Control Key */
 		setControlKey(pControl);
 		
-		/* Apply key to all elements */
-		myValues.applySecurity();
+		/* If we have the same control key */
+		if ((pBase != null) &&
+			(pControl.equals(pBase.getControlKey())))
+		{
+			/* Adopt the security */
+			myValues.adoptSecurity(pControl, pBase.getValues());
+		}
+		
+		/* else we need to initialise security */
+		else {
+			/* Apply key to all elements */
+			myValues.applySecurity();
+		}
 	}
 	
 	/**
@@ -165,7 +178,11 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 */	
 	private void updateSecurity(ControlKey pControl) throws Exception {
 		/* Access the values */
-		EncryptedItem<?>.EncryptedValues myValues = getObj();
+		EncryptedItem<?>.EncryptedValues myValues = getValues();
+
+		/* Ignore call if we have the same control key */
+		if (pControl.equals(getControlKey()))
+			return;
 		
 		/* Store the current detail into history */
 		pushHistory();
@@ -230,27 +247,6 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		}
 		
 		/**
-		 * Initialise Security for items in the list
-		 * @param pControl the control key to apply
-		 */
-		public void initialiseSecurity(ControlKey pControl) throws Exception {
-			ListIterator 	myIterator;
-			T				myCurr;
-			
-			/* Access the iterator */
-			myIterator = listIterator();
-			
-			/* Loop through the items */
-			while ((myCurr = myIterator.next()) != null) {
-				/* Ensure encryption of the item */
-				myCurr.initialiseSecurity(pControl);
-			}
-			
-			/* Return to caller */
-			return;
-		}	
-
-		/**
 		 * Update Security for items in the list
 		 * @param pControl the control key to apply
 		 */
@@ -271,6 +267,33 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			return;
 		}	
 
+		/**
+		 * Adopt security from underlying list.
+		 * If a match for the item is found in the underlying list, its security is adopted.
+		 * If no match is found then the security is initialised.
+		 * @param pControlKey the control key to initialise from
+		 * @param pBase The base list to adopt from 
+		 */
+		public void adoptSecurity(ControlKey 		pControl,
+								  EncryptedList<T> 	pBase) throws Exception {
+			/* Local variables */
+			ListIterator 	myIterator;
+			T				myCurr;
+			T				myItem;
+				
+			/* Create an iterator for our new list */
+			myIterator = listIterator(true);
+			
+			/* Loop through this list */
+			while ((myCurr = myIterator.next()) != null) {
+				/* Locate the item in the base list */
+				myItem = pBase.searchFor(myCurr.getId());
+					
+				/* Adopt the security if found */
+				myCurr.adoptSecurity(pControl, myItem);
+			}
+		}
+		
 		/* List Iterators */
 		public void setNewId(T pItem)	{ super.setNewId(pItem); }
 	}
@@ -278,14 +301,17 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	/**
 	 * Values for an EncryptedItem
 	 */
-	protected abstract class EncryptedValues implements histObject {
+	protected abstract class EncryptedValues implements HistoryValues<T> {
 		private ControlKey	theControl   = null;
 		
 		/* Access methods */
 		public ControlKey  	getControl()   	{ return theControl; }
 		
 		/* Value setting */
-		public void setControl(ControlKey pControl) { theControl = pControl; }
+		public void setControl(ControlKey pControl) { 
+			theControl   = pControl;
+			theControlId = (pControl == null) ? -1 : pControl.getId();
+		}
 
 		/* Constructor */
 		public EncryptedValues() {}
@@ -293,15 +319,19 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			theControl = pValues.getControl();
 		}
 		
-		public boolean histEquals(EncryptedValues pValues) {
-			if (ControlKey.differs(theControl,    pValues.theControl))    return false;
+		public boolean histEquals(HistoryValues<T> pValues) {
+			EncryptedValues myValues = (EncryptedValues)pValues;
+			if (ControlKey.differs(theControl,    myValues.theControl))    return false;
 			return true;
 		}
-		public void    copyFrom(EncryptedValues pValues) {
-			theControl = pValues.getControl();
+		public void    copyFrom(HistoryValues<?> pValues) {
+			if (pValues instanceof EncryptedItem.EncryptedValues) {
+				EncryptedItem<?>.EncryptedValues myValues = (EncryptedItem<?>.EncryptedValues)pValues;
+				theControl = myValues.getControl();
+			}
 		}
-		public boolean	fieldChanged(int fieldNo, histObject pOriginal) {
-			EncryptedItem<?>.EncryptedValues 	pValues = (EncryptedItem<?>.EncryptedValues)pOriginal;
+		public boolean	fieldChanged(int fieldNo, HistoryValues<T> pOriginal) {
+			EncryptedValues 	pValues = (EncryptedValues)pOriginal;
 			boolean	bResult = false;
 			switch (fieldNo) {
 				case FIELD_CONTROL:
@@ -313,6 +343,8 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 
 		/* Apply Security */
 		protected abstract void applySecurity() throws Exception;
+		protected abstract void adoptSecurity(ControlKey 		pControl,
+											  EncryptedValues	pBase) throws Exception;
 	}
 	
 	/**
@@ -529,6 +561,25 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			if (Utils.differs(getBytes(), myThat.getBytes())) return false;
 			return true;
 		}
+
+		/**
+		 * Encrypt a stringPair or borrow encrypted form from base
+		 * @param pBase the base encrypted pair
+		 */
+		public void encryptPair(EncryptedItem<?>.StringPair pBase) throws Exception {
+			/* If the raw format differs */
+			if ((pBase == null) ||
+				(Utils.differs(getString(), pBase.getString()))) {
+				/* Ignore the base and encrypt the string */
+				encryptPair();
+			}
+			
+			/* else we should adopt the previous encryption */
+			else {				
+				/* Store the bytes */
+				super.setBytes(pBase.getBytes());
+			}
+		}		
 	}
 	
 	/**
@@ -609,6 +660,25 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			if (Utils.differs(getBytes(), myThat.getBytes())) return false;
 			return true;
 		}
+
+		/**
+		 * Encrypt a charArrayPair or borrow encrypted form from base
+		 * @param pBase the base encrypted pair
+		 */
+		public void encryptPair(CharArrayPair pBase) throws Exception {
+			/* If the raw format differs */
+			if ((pBase == null) || 
+				(Utils.differs(getChars(), pBase.getChars()))) {
+				/* Ignore the base and encrypt the string */
+				encryptPair();
+			}
+			
+			/* else we should adopt the previous encryption */
+			else {				
+				/* Store the bytes */
+				super.setBytes(pBase.getBytes());
+			}
+		}		
 	}
 	
 	/**
@@ -624,7 +694,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * Access the Non-encrypted value
 		 * @return the non-encrypted value
 		 */
-		protected X			getValue() { return theValue; } 
+		public X			getValue() { return theValue; } 
 
 		/**
 		 * Constructor from a clear value

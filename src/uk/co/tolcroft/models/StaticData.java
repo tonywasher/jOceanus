@@ -1,7 +1,9 @@
 package uk.co.tolcroft.models;
 
+import uk.co.tolcroft.finance.data.ControlKey;
 import uk.co.tolcroft.finance.data.DataSet;
 import uk.co.tolcroft.finance.data.EncryptedItem;
+import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 public abstract class StaticData<T extends StaticData<T,E>,
@@ -77,7 +79,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	public int			getStaticClassId()	{ return theClassId; }
 	
 	/* Linking methods */
-	public StaticData<?,?>.Values  getObj()  { return (StaticData<?,?>.Values)super.getObj(); }	
+	public StaticData<?,?>.Values  getObj()  { return (StaticData<?,?>.Values)super.getValues(); }	
 
 	/* Field IDs */
 	public static final int FIELD_NAME     	= EncryptedItem.NUMFIELDS;
@@ -119,7 +121,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	 * @param pObj the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, histObject pObj) {
+	public String formatField(int iField, HistoryValues<T> pObj) {
 		String myString = ""; 
 		StaticData<?,?>.Values 	myObj 	 = (StaticData<?,?>.Values)pObj;
 		switch (iField) {
@@ -208,15 +210,40 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	protected StaticData(StaticList<T,E>	pList,
 			             StaticData<T,E>	pSource) { 
 		super(pList, pSource.getId());
-		Values myObj = new Values(pSource.getObj());
-		setObj(myObj);
+		Values myValues = new Values(pSource.getObj());
+		setValues(myValues);
 		setControlKey(pSource.getControlKey());		
 		theClass 		= pSource.theClass;
 		theEnumClass 	= pSource.theEnumClass;
 		theOrder 		= pSource.getOrder();
 		theClassId 		= pSource.getStaticClassId();
-		setBase(pSource);
-		setState(pSource.getState());
+		ListStyle myOldStyle = pSource.getList().getStyle();
+
+		/* Switch on the ListStyle */
+		switch (pList.getStyle()) {
+			case EDIT:
+				/* If this is a view creation */
+				if (myOldStyle == ListStyle.CORE) {
+					/* Static is based on the original element */
+					setBase(pSource);
+					pList.setNewId(getItem());				
+					break;
+				}
+				
+				/* Else this is a duplication so treat as new item */
+				setId(0);
+				pList.setNewId(getItem());				
+				break;
+			case CORE:
+				/* Reset Id if this is an insert from a view */
+				if (myOldStyle == ListStyle.EDIT) setId(0);
+				pList.setNewId(getItem());				
+				break;
+			case UPDATE:
+				setBase(pSource);
+				setState(pSource.getState());
+				break;
+		}
 	}
 	
 	/**
@@ -230,11 +257,14 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		super(pList, 0);
 		theEnumClass = pList.getEnumClass();
 		parseEnumValue(pValue);
-		Values myObj = new Values();
-		setObj(myObj);
+		Values myValues = new Values();
+		setValues(myValues);
 
 		/* Create the pair for the name */
-		myObj.setName(new StringPair(pValue));
+		myValues.setName(new StringPair(pValue));
+
+		/* Set the new Id */
+		pList.setNewId(getItem());					
 	}
 	
 	/**
@@ -251,12 +281,15 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		super(pList, 0);
 		theEnumClass = pList.getEnumClass();
 		parseEnumId(uClassId);
-		Values myObj = new Values();
-		setObj(myObj);
+		Values myValues = new Values();
+		setValues(myValues);
 				
 		/* Create the pairs for the name and description */
-		myObj.setName(new StringPair(pValue));
-		if (pDesc != null) myObj.setDesc(new StringPair(pDesc));
+		myValues.setName(new StringPair(pValue));
+		if (pDesc != null) myValues.setDesc(new StringPair(pDesc));
+
+		/* Set the new Id */
+		pList.setNewId(getItem());					
 	}
 	
 	/**
@@ -277,15 +310,18 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		super(pList, uId);
 		theEnumClass = pList.getEnumClass();
 		parseEnumId(uClassId);
-		Values myObj = new Values();
-		setObj(myObj);
+		Values myValues = new Values();
+		setValues(myValues);
 		
 		/* Store the controlId */
 		setControlKey(uControlId);
 		
 		/* Create the pairs for the name and description */
-		myObj.setName(new StringPair(pValue));
-		if (pDesc != null) myObj.setDesc(new StringPair(pDesc));
+		myValues.setName(new StringPair(pValue));
+		if (pDesc != null) myValues.setDesc(new StringPair(pDesc));
+
+		/* Set the new Id */
+		pList.setNewId(getItem());					
 	}
 	
 	/**
@@ -580,7 +616,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		}
 		
 		/* Check whether this object is equal to that passed */
-		public boolean histEquals(histObject pCompare) {
+		public boolean histEquals(HistoryValues<T> pCompare) {
 			/* Make sure that the object is the same class */
 			if (pCompare.getClass() != this.getClass()) return false;
 			
@@ -589,28 +625,28 @@ public abstract class StaticData<T extends StaticData<T,E>,
 			
 			/* Make sure that the object is the same enumeration class */
 			if (myValues.getEnumClass() != theEnumClass) return false;
-
-			/* Make the actual comparison */
-			return histEquals(myValues);
-		}
-		public boolean histEquals(Values pValues) {
-			if (differs(theName,    pValues.theName))    return false;
-			if (differs(theDesc,    pValues.theDesc))    return false;
+			
+			/* Compare the values */
+			if (!super.histEquals(pCompare))			return false;
+			if (differs(theName,    myValues.theName))  return false;
+			if (differs(theDesc,    myValues.theDesc))  return false;
 			return true;
 		}
 		
 		/* Copy values */
-		public void    copyFrom(histObject pSource) {
+		public HistoryValues<T> copySelf() {
+			return new Values(this);
+		}
+		public void    copyFrom(HistoryValues<?> pSource) {
 			StaticData<?,?>.Values myValues = (StaticData<?,?>.Values)pSource;
 			copyFrom(myValues);
 		}
-		public histObject copySelf() {
-			return new Values(this);
-		}
 		public void    copyFrom(Values pValues) {
+			super.copyFrom(pValues);
 			theName      = pValues.getName();
+			theDesc      = pValues.getDesc();
 		}
-		public boolean	fieldChanged(int fieldNo, histObject pOriginal) {
+		public boolean	fieldChanged(int fieldNo, HistoryValues<T> pOriginal) {
 			StaticData<?,?>.Values 	pValues = (StaticData<?,?>.Values)pOriginal;
 			boolean	bResult = false;
 			switch (fieldNo) {
@@ -619,6 +655,9 @@ public abstract class StaticData<T extends StaticData<T,E>,
 					break;
 				case FIELD_DESC:
 					bResult = (differs(theDesc,      pValues.theDesc));
+					break;
+				default:
+					bResult = super.fieldChanged(fieldNo, pOriginal);
 					break;
 			}
 			return bResult;
@@ -631,6 +670,18 @@ public abstract class StaticData<T extends StaticData<T,E>,
 			/* Apply the encryption */
 			theName.encryptPair();
 			if (theDesc != null) theDesc.encryptPair();
+		}		
+		
+		/**
+		 * Adopt encryption from base
+		 * @param pBase the Base values
+		 */
+		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {
+			StaticData<?,?>.Values myBase = (StaticData<?,?>.Values)pBase;
+			
+			/* Apply the encryption */
+			theName.encryptPair(myBase.getName());
+			if (theDesc != null) theDesc.encryptPair(myBase.getDesc());
 		}		
 	}
 }
