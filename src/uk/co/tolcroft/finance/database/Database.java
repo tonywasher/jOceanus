@@ -2,7 +2,6 @@ package uk.co.tolcroft.finance.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -77,37 +76,42 @@ public class Database {
 	 * RollBack and disconnect on termination
 	 */
 	protected void finalize() throws Throwable {
-		try {
-			if (theConn != null) close();
-		} finally {
-			super.finalize();
-		}	
+		close();
+		super.finalize();
 	}
 	
 	/**
 	 * Close the connection to the database 
 	 * rolling back any outstanding transaction
-	 * @throws SQLException
 	 */
-	public void close() throws SQLException {
-		/* Roll-back any outstanding transaction */
-		theConn.rollback();
-		
-		/* Create the iterator */
-		Iterator<DatabaseTable<?>> 	myIterator;
-		DatabaseTable<?>			myTable;
-		myIterator = theTables.iterator();
-		
-		/* Loop through the tables */
-		while (myIterator.hasNext()) {
-			myTable = myIterator.next();
-			
-			/* Close the Statement */
-			myTable.closeStmt();
-		}
+	protected void close() {
+		/* Ignore if no connection */
+		if (theConn != null) return;
 
-		/* Close the connection */
-		theConn.close();
+		/* Protect against exceptions */
+		try {
+			/* Roll-back any outstanding transaction */
+			theConn.rollback();
+		
+			/* Create the iterator */
+			Iterator<DatabaseTable<?>> 	myIterator;
+			DatabaseTable<?>			myTable;
+			myIterator = theTables.iterator();
+		
+			/* Loop through the tables */
+			while (myIterator.hasNext()) {
+				myTable = myIterator.next();
+			
+				/* Close the Statement */
+				myTable.closeStmt();
+			}
+
+			/* Close the connection */
+			theConn.close();
+		}
+		
+		/* Discard Exceptions */
+		catch (Throwable e) {}
 	}
 
 	/**
@@ -209,6 +213,7 @@ public class Database {
 			/* Commit the database */
 			try { theConn.commit(); }
 			catch (Throwable e) {
+				close();
 				throw new Exception(ExceptionClass.SQLSERVER,
 									"Failed to commit transction");				
 			}

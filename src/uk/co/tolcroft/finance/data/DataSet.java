@@ -487,6 +487,107 @@ public class DataSet implements htmlDumpable {
 		myDebug.setObject(pData);
 	}
 	
+	/**
+	 * Obtain DataList for an item type
+	 * @param pItemType the type of items
+	 * @return the list of items
+	 */
+	public DataList<?> getDataList(ItemType pItemType) {
+		/* Switch on item type */
+		switch(pItemType) {
+			case DATAKEY:		return theDataKeys;
+			case CONTROLKEY:	return theControlKeys;
+			case CONTROLDATA:	return theControlData;
+			case ACCOUNTTYPE:	return theActTypes;
+			case TRANSTYPE:		return theTransTypes;
+			case TAXTYPE:		return theTaxTypes;
+			case TAXREGIME:		return theTaxRegimes;
+			case FREQUENCY:		return theFrequencys;
+			case TAXYEAR:		return theTaxYears;
+			case ACCOUNT:		return theAccounts;
+			case RATE:			return theRates;
+			case PRICE:			return thePrices;
+			case PATTERN:		return thePatterns;
+			case EVENT:			return theEvents;
+			default:			return null;
+		}
+	}
+	
+	/** 
+	 * Enumeration of DataItems
+	 */
+	public static enum ItemType {
+		/**
+		 * DataKey
+		 */
+		DATAKEY,
+		
+		/**
+		 *  ControlKeys 
+		 */
+		CONTROLKEY,
+		
+		/**
+		 *  ControlData 
+		 */
+		CONTROLDATA,
+		
+		/**
+		 *  AccountTypes 
+		 */
+		ACCOUNTTYPE,
+		
+		/**
+		 *  TrabsactionTypes 
+		 */
+		TRANSTYPE,
+		
+		/**
+		 *  TaxTypes 
+		 */
+		TAXTYPE,
+		
+		/**
+		 *  TaxRegimes 
+		 */
+		TAXREGIME,
+		
+		/**
+		 *  Frequencies 
+		 */
+		FREQUENCY,
+		
+		/**
+		 *  TaxYear 
+		 */
+		TAXYEAR,
+		
+		/**
+		 *  Account 
+		 */
+		ACCOUNT,
+		
+		/**
+		 *  Price 
+		 */
+		PRICE,
+		
+		/**
+		 *  Rate 
+		 */
+		RATE,
+		
+		/**
+		 *  Pattern 
+		 */
+		PATTERN,
+		
+		/**
+		 * Event
+		 */
+		EVENT;
+	}	
+	
 	/** 
 	 * Enumeration of load states of data
 	 */

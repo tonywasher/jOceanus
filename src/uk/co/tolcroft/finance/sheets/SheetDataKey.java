@@ -86,7 +86,7 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
 		writeInteger(0, pItem.getId());
 		writeInteger(1, pItem.getControlKey().getId());	
 		writeInteger(2, pItem.getKeyType().getId());	
-		writeBytes(3, pItem.getSecurityKey());
+		writeBytes(3, pItem.getSecuredKeyDef());
 	}
 
 	/**

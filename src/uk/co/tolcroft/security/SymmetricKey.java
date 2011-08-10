@@ -2,7 +2,6 @@ package uk.co.tolcroft.security;
 
 import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
-import java.util.Arrays;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -11,12 +10,13 @@ import javax.crypto.spec.IvParameterSpec;
 
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.Utils;
 
 public class SymmetricKey {
 	/**
 	 * Encrypted ID Key Size
 	 */
-	public 	  final static int		IDSIZE   		= 1000;
+	public 	  final static int		IDSIZE   		= 256;
 	
 	/**
 	 * Initialisation Vector size 
@@ -26,27 +26,22 @@ public class SymmetricKey {
 	/**
 	 * The Secret Key 
 	 */
-	private SecretKey		theKey			= null;
+	private SecretKey		theKey				= null;
 	
 	/**
 	 * The Key Type 
 	 */
-	private SymKeyType		theKeyType		= null;
+	private SymKeyType		theKeyType			= null;
 	
 	/**
 	 * The secure random generator
 	 */
-	private SecureRandom	theRandom		= null;
+	private SecureRandom	theRandom			= null;
 
 	/**
-	 * The Security Control 
+	 * The Encoded KeyDef 
 	 */
-	private SecurityControl	theControl		= null;
-
-	/**
-	 * The Security Key 
-	 */
-	private byte[]			theSecurityKey	= null;
+	private byte[]			theEncodedKeyDef	= null;
 
 	/**
 	 * Obtain the secret key
@@ -58,7 +53,7 @@ public class SymmetricKey {
 	 * Obtain the secret key type
 	 * @return the secret key type
 	 */
-	protected SymKeyType getKeyType() 	{ return theKeyType; }
+	public SymKeyType getKeyType() 	{ return theKeyType; }
 
 	/**
 	 * Encryption length
@@ -71,64 +66,47 @@ public class SymmetricKey {
 	}
 	
 	/**
-	 * Constructor
+	 * Constructor for a new randomly generated key
 	 * @param pControl the security control 
 	 * @param pKeyType Symmetric KeyType
 	 * @param pRandom Secure Random byte generator
 	 */
-	protected SymmetricKey(SecurityControl	pControl,
-			 			   SymKeyType		pKeyType,
-						   SecureRandom		pRandom) throws Exception {
-		/* Store the Control, KeyType and the Secure Random instance */
-		theControl		= pControl;
+	public SymmetricKey(SymKeyType		pKeyType,
+						SecureRandom	pRandom) throws Exception {
+		/* Store the KeyType and the Secure Random instance */
 		theKeyType		= pKeyType;
 		theRandom 		= pRandom;
 		
 		/* Generate the new key */
-		theKey			= SymKeyGenerator.getInstance(theKeyType, theRandom);
+		theKey				= SymKeyGenerator.getInstance(theKeyType, theRandom);
+		theEncodedKeyDef	= theKey.getEncoded();
 	}
 	
 	/**
-	 * Constructor
-	 * @param pControl the security control 
+	 * Constructor for a decoded symmetric key
 	 * @param pKey Secret Key for algorithm
-	 * @param pWrappedKey Wrapped Key
 	 * @param pKeyType Symmetric KeyType
 	 * @param pRandom Secure Random byte generator
 	 */
-	protected SymmetricKey(SecurityControl	pControl,
-			 			   byte[]			pWrappedKey,
+	protected SymmetricKey(SecretKey		pKey,
 			   			   SymKeyType		pKeyType,
 						   SecureRandom		pRandom) throws Exception {
 		/* Store the Control, KeyType and the Secure Random instance */
-		theControl		= pControl;
-		theKeyType		= pKeyType;
-		theRandom 		= pRandom;
-		
-		/* Store the wrapped key */
-		theSecurityKey	= pWrappedKey;			
-
-		/* Obtain the unwrapped Secret Key */
-		theKey = theControl.unwrapSecretKey(pWrappedKey, pKeyType);
+		theKeyType			= pKeyType;
+		theRandom 			= pRandom;
+		theKey				= pKey;
+		theEncodedKeyDef	= theKey.getEncoded();
 	}
 	
 	/**
-	 * Constructor
-	 * @param pControl the security control 
-	 * @param pKey Secret Key for algorithm
-	 * @param pWrappedKey Wrapped Key
-	 * @param pKeyType Symmetric KeyType
-	 * @param pRandom Secure Random byte generator
+	 * Hash for the Symmetric Key
+	 * @return the hash value
 	 */
-	protected SymmetricKey(SecurityControl	pControl,
-			 			   SecretKey		pKey,
-			   			   SymKeyType		pKeyType,
-						   SecureRandom		pRandom) throws Exception {
-		/* Store the Control, KeyType and the Secure Random instance */
-		theControl		= pControl;
-		theKeyType		= pKeyType;
-		theRandom 		= pRandom;
-		theKey			= pKey;
+	public int hashCode() {
+		/* Calculate and return the hashCode for this symmetric key */
+		int hashCode = 19 * theEncodedKeyDef.hashCode();
+		hashCode += theKeyType.getId();
+		return hashCode;
 	}
 	
 	/**
@@ -137,9 +115,6 @@ public class SymmetricKey {
 	 * @return <code>true/false</code> 
 	 */
 	public boolean equals(Object pThat) {
-		byte[] myKey;
-		byte[] myThatKey;
-		
 		/* Handle the trivial cases */
 		if (this == pThat) return true;
 		if (pThat == null) return false;
@@ -153,58 +128,19 @@ public class SymmetricKey {
 		/* Not equal if different key-types */
 		if (myThat.theKeyType != theKeyType) return false;
 		
-		/* Protect against exceptions */
-		try {
-			/* Access the two security keys */
-			myKey 		= getSecurityKey();
-			myThatKey 	= myThat.getSecurityKey();
-		}
+		/* Ensure that the secret key is identical */
+		if (Utils.differs(myThat.theEncodedKeyDef, theEncodedKeyDef)) return false;
 		
-		/* Handle failure */
-		catch (Exception e) { return false; }
-		
-		/* Compare the two */
-		return Arrays.equals(myKey, myThatKey);
+		/* Identical if those tests succeed */
+		return true;
 	}
 	
 	/**
-	 * Obtain the SecurityKey
-	 * @return the Security Key 
+	 * Initialise data cipher for encryption/decryption
+	 * @return the Data Cipher
 	 */
-	public byte[] 	getSecurityKey() throws Exception {
-		/* If we do not know the security key */
-		if (theSecurityKey == null) {
-			/* Calculate it */
-			theSecurityKey = theControl.getWrappedKey(this);
-			
-			/* Keep a look out for the key being too large */
-			if (theSecurityKey.length > IDSIZE)
-				throw new Exception(ExceptionClass.CRYPTO,
-									"Security Key length too large: " + theSecurityKey.length);
-		}
-		
-		/* Return it */
-		return theSecurityKey; 
-	}
-	
-	/**
-	 * Transfer the symmetric key to a new controller
-	 * @param pControl the new control
-	 */
-	public void	setSecurityControl(SecurityControl pControl) {
-		/* Reset variables */
-		theControl = pControl;
-		theSecurityKey = null;
-	}
-	
-	/**
-	 * Initialise cipher for encryption with initialisation vector
-	 * @param pInitVector Initialisation vector for cipher
-	 * @return the Security Cipher
-	 */
-	public SecurityCipher initEncryption(byte[] pInitVector) throws Exception {
-		AlgorithmParameterSpec 	myParms;
-		Cipher					myCipher;
+	public DataCipher initDataCipher() throws Exception {
+		Cipher	myCipher;
 
 		/* Protect against exceptions */
 		try {
@@ -212,12 +148,8 @@ public class SymmetricKey {
 			myCipher = Cipher.getInstance(theKeyType.getCipher(), 
 										  SecurityControl.BCSIGN);
 			
-			/* Initialise the cipher using the password */
-			myParms = new IvParameterSpec(pInitVector);
-			myCipher.init(Cipher.ENCRYPT_MODE, theKey, myParms);
-			
-			/* Return the Security Cipher */
-			return new SecurityCipher(myCipher, pInitVector);
+			/* Return the Data Cipher */
+			return new DataCipher(myCipher, this);
 		}
 		
 		/* catch exceptions */
@@ -229,36 +161,10 @@ public class SymmetricKey {
 	}
 	
 	/**
-	 * Initialise cipher for encryption with initialisation vector
-	 * @param pInitVector Initialisation vector for cipher
-	 * @return the Security Cipher
+	 * Initialise stream cipher for encryption with random initialisation vector
+	 * @return the Stream Cipher
 	 */
-	public SecurityCipher initCipher() throws Exception {
-		Cipher					myCipher;
-
-		/* Protect against exceptions */
-		try {
-			/* Create a new cipher */
-			myCipher = Cipher.getInstance(theKeyType.getCipher(), 
-										  SecurityControl.BCSIGN);
-			
-			/* Return the Security Cipher */
-			return new SecurityCipher(myCipher, this);
-		}
-		
-		/* catch exceptions */
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
-								"Failed to initialise cipher",
-								e);
-		}
-	}
-	
-	/**
-	 * Initialise cipher for encryption with random initialisation vector
-	 * @return the Security Cipher
-	 */
-	public SecurityCipher initEncryption() throws Exception {
+	public StreamCipher initEncryptionStream() throws Exception {
 		Cipher	myCipher;
 
 		/* Protect against exceptions */
@@ -270,8 +176,8 @@ public class SymmetricKey {
 			/* Initialise the cipher generating a random Initialisation vector */
 			myCipher.init(Cipher.ENCRYPT_MODE, theKey, theRandom);
 			
-			/* Return the Security Cipher */
-			return new SecurityCipher(myCipher, myCipher.getIV());
+			/* Return the Stream Cipher */
+			return new StreamCipher(myCipher, myCipher.getIV());
 		}
 		
 		/* catch exceptions */
@@ -283,10 +189,11 @@ public class SymmetricKey {
 	}
 	
 	/**
-	 * Initialise cipher for decryption with initialisation vector
+	 * Initialise Stream cipher for decryption with initialisation vector
 	 * @param Initialisation vector for cipher
+	 * @return the Stream Cipher
 	 */
-	public SecurityCipher initDecryption(byte[] pInitVector) throws Exception {
+	public StreamCipher initDecryptionStream(byte[] pInitVector) throws Exception {
 		AlgorithmParameterSpec 	myParms;
 		Cipher					myCipher;
 
@@ -300,8 +207,8 @@ public class SymmetricKey {
 			myParms = new IvParameterSpec(pInitVector);
 			myCipher.init(Cipher.DECRYPT_MODE, theKey, myParms);
 			
-			/* Return the Security Cipher */
-			return new SecurityCipher(myCipher, pInitVector);
+			/* Return the Stream Cipher */
+			return new StreamCipher(myCipher, pInitVector);
 		}
 		
 		/* catch exceptions */
@@ -393,19 +300,22 @@ public class SymmetricKey {
 	 */
 	public static class KeyDef {
 		/* Members */
+		private SymKeyType	theType	= null;
 		private SecretKey 	theKey 	= null;
 		private byte[]		theIv	= null;
 		
 		/* Access methods */
+		public SymKeyType 	getType() 	{ return theType; }
 		public SecretKey 	getKey() 	{ return theKey; }
 		public byte[]		getIv()		{ return theIv; }
 		
 		/**
 		 * Constructor
 		 */
-		protected KeyDef(SecretKey pKey, byte[] pIv) {
-			theKey = pKey;
-			theIv  = pIv;
+		protected KeyDef(SymKeyType pType, SecretKey pKey, byte[] pIv) {
+			theType = pType;
+			theKey 	= pKey;
+			theIv  	= pIv;
 		}
 	}
 	

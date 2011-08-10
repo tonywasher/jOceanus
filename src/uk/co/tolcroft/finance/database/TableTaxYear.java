@@ -35,6 +35,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * @param pTableDef the table definition
 	 */
 	protected void defineTable(TableDefinition	pTableDef) {
+		super.defineTable(pTableDef);
 		theTableDef = pTableDef;
 		DateColumn myDateCol = theTableDef.addDateColumn(TaxYear.FIELD_YEAR, TaxYear.fieldName(TaxYear.FIELD_YEAR));
 		theTableDef.addReferenceColumn(TaxYear.FIELD_REGIME, TaxYear.fieldName(TaxYear.FIELD_REGIME), TableTaxRegime.TableName);
@@ -168,6 +169,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 			case TaxYear.FIELD_CAPALW:	theTableDef.setMoneyValue(iField, pItem.getCapitalAllow());			break;
 			case TaxYear.FIELD_CAPTAX:	theTableDef.setRateValue(iField, pItem.getCapTaxRate());			break;
 			case TaxYear.FIELD_HCPTAX:	theTableDef.setRateValue(iField, pItem.getHiCapTaxRate());			break;
+			default:					super.setFieldValue(pItem, iField);									break;
 		}
 	}
 }

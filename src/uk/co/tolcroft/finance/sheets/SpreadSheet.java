@@ -254,6 +254,7 @@ public class SpreadSheet {
 			String				mySecurityKey;
 			SecurityControl		myControl;
 			SecureManager		mySecurity;
+			SecuritySignature	mySignature;
 			
 			/* Protect the workbook retrieval */
 			try {
@@ -263,15 +264,16 @@ public class SpreadSheet {
 				/* Access the zip file */
 				myFile = new ZipFile.Input(pFile);
 					
-				/* Obtain the security key from the file */
+				/* Obtain the security signature from the file */
 				mySecurityKey = myFile.getSecurityKey();
+				mySignature	  = new SecuritySignature(mySecurityKey);
 
 				/* Access the Security manager */
 				myView 		= theThread.getView();
 				mySecurity 	= myView.getSecurity();
 					
 				/* Obtain the initialised security control */
-				myControl = mySecurity.getSecurityControl(mySecurityKey, pFile.getName());
+				myControl = mySecurity.getSecurityControl(mySignature, pFile.getName());
 					
 				/* Associate this control with the Zip file */
 				myFile.setSecurityControl(myControl);

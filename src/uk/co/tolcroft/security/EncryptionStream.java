@@ -25,9 +25,9 @@ public class EncryptionStream {
 		private boolean					isClosed 		= false;
 
 		/**
-		 * The Security Cipher
+		 * The Stream Cipher
 		 */
-		private SecurityCipher 			theCipher		= null;
+		private StreamCipher 			theCipher		= null;
 		
 		/**
 		 * The Wrapped Key 
@@ -74,13 +74,13 @@ public class EncryptionStream {
 				
 				/* Generate the Secret key and initialise for encryption */
 				myKey 		= pControl.getSymmetricKey(pKeyType);
-				theCipher 	= myKey.initEncryption();
+				theCipher 	= myKey.initEncryptionStream();
 				
 				/* Access the initialisation vector */
 				theInitVector	= theCipher.getInitVector();
 				
-				/* Access the wrapped key */
-				theWrappedKey 	= pControl.getWrappedKey(myKey);
+				/* Access the secured key definition */
+				theWrappedKey 	= pControl.getSecuredKeyDef(myKey);
 			}
 			
 			/* Catch exceptions */
@@ -105,7 +105,7 @@ public class EncryptionStream {
 				theStream 	= pStream;
 				
 				/* initialise for encryption */
-				theCipher 	= pKey.initEncryption();
+				theCipher 	= pKey.initEncryptionStream();
 				
 				/* Access the initialisation vector */
 				theInitVector	= theCipher.getInitVector();
@@ -241,9 +241,9 @@ public class EncryptionStream {
 		private boolean				isClosed 			= false;
 
 		/**
-		 * The Security Cipher
+		 * The Stream Cipher
 		 */
-		private SecurityCipher	 	theCipher			= null;
+		private StreamCipher	 	theCipher			= null;
 		
 		/**
 		 *  A buffer for single byte reads 
@@ -253,7 +253,7 @@ public class EncryptionStream {
 		/**
 		 * The buffer used for reading from input stream
 		 */
-		private byte[] 	 			theBuffer			= new byte[SecurityCipher.BUFSIZE];
+		private byte[] 	 			theBuffer			= new byte[StreamCipher.BUFSIZE];
 		
 		/**
 		 * The holding buffer for data that has been decrypted but not read
@@ -284,7 +284,7 @@ public class EncryptionStream {
 				myKey = pControl.getSymmetricKey(pSecretKey, pKeyType);
 
 				/* Initialise the decryption */
-				theCipher = myKey.initDecryption(pInitVector);
+				theCipher = myKey.initDecryptionStream(pInitVector);
 			}
 
 			/* Catch exceptions */
@@ -310,7 +310,7 @@ public class EncryptionStream {
 				theStream 	= pStream;
 
 				/* Initialise the decryption */
-				theCipher = pKey.initDecryption(pInitVector);
+				theCipher = pKey.initDecryptionStream(pInitVector);
 			}				
 			
 			/* Catch exceptions */

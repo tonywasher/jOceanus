@@ -13,7 +13,7 @@ public class ControlData extends DataItem<ControlData> {
 	/**
 	 * The name of the object
 	 */
-	public static final String listName = objName + "s";
+	public static final String listName = objName;
 
 	/* Local values */
 	private int				theControlId = -1;
@@ -157,9 +157,9 @@ public class ControlData extends DataItem<ControlData> {
 	}
 
 	/**
-	 * Compare this static to another to establish equality.
+	 * Compare this controlData to another to establish equality.
 	 * 
-	 * @param pThat The Static to compare to
+	 * @param pThat The controlData to compare to
 	 * @return <code>true</code> if the static is identical, <code>false</code> otherwise
 	 */
 	public boolean equals(Object pThat) {
@@ -167,10 +167,10 @@ public class ControlData extends DataItem<ControlData> {
 		if (this == pThat) return true;
 		if (pThat == null) return false;
 		
-		/* Make sure that the object is a Static */
+		/* Make sure that the object is a ControlData */
 		if (pThat.getClass() != this.getClass()) return false;
 		
-		/* Access the object as a Static */
+		/* Access the object as a ControlData */
 		ControlData myThat = (ControlData)pThat;
 		
 		/* Check for equality on id */
@@ -181,8 +181,8 @@ public class ControlData extends DataItem<ControlData> {
 	}
 
 	/**
-	 * Compare this static to another to establish sort order. 
-	 * @param pThat The Static to compare to
+	 * Compare this controlData to another to establish sort order. 
+	 * @param pThat The controlData to compare to
 	 * @return (-1,0,1) depending of whether this object is before, equal, 
 	 * 					or after the passed object in the sort order
 	 */
@@ -193,10 +193,10 @@ public class ControlData extends DataItem<ControlData> {
 		if (this == pThat) return 0;
 		if (pThat == null) return -1;
 		
-		/* Make sure that the object is a Static */
+		/* Make sure that the object is a ControlData */
 		if (pThat.getClass() != this.getClass()) return -1;
 		
-		/* Access the object as a Static */
+		/* Access the object as a ControlData */
 		ControlData myThat = (ControlData)pThat;
 
 		/* Compare the Versions */
@@ -255,7 +255,7 @@ public class ControlData extends DataItem<ControlData> {
 		}
 
 		/** 
-		 * Construct an empty generic static list
+		 * Construct an empty generic ControlData list
 	 	 * @param pData the DataSet for the list
 		 * @param pStyle the style of the list 
 		 */
@@ -265,8 +265,8 @@ public class ControlData extends DataItem<ControlData> {
 		}
 
 		/** 
-		 * Construct a generic Static list
-		 * @param pList the source static list 
+		 * Construct a generic ControlData list
+		 * @param pList the source ControlData list 
 		 * @param pStyle the style of the list 
 		 */
 		public List(List pList, ListStyle pStyle) { 
@@ -275,9 +275,9 @@ public class ControlData extends DataItem<ControlData> {
 		}
 
 		/** 
-		 * Construct a difference static list
-		 * @param pNew the new Static list 
-		 * @param pOld the old Static list 
+		 * Construct a difference ControlData list
+		 * @param pNew the new ControlData list 
+		 * @param pOld the old ControlData list 
 		 */
 		protected List(List pNew, List pOld) { 
 			super(pNew, pOld);
@@ -285,7 +285,7 @@ public class ControlData extends DataItem<ControlData> {
 		}
 
 		/** 
-		 * 	Clone a Price list
+		 * 	Clone a ControlData list
 		 * @return the cloned list
 		 */
 		protected List cloneIt() {return new List(this, ListStyle.CORE); }
@@ -296,9 +296,9 @@ public class ControlData extends DataItem<ControlData> {
 		 * @return the newly added item
 		 */
 		public ControlData addNewItem(DataItem<?> pItem) { 
-			ControlData myStatic = new ControlData(this, (ControlData)pItem);
-			add(myStatic);
-			return myStatic; 
+			ControlData myControl = new ControlData(this, (ControlData)pItem);
+			add(myControl);
+			return myControl; 
 		}
 
 		/**
@@ -315,59 +315,59 @@ public class ControlData extends DataItem<ControlData> {
 		public String itemType() { return listName; }
 
 		/**
-		 *  Add a Static item
+		 *  Add a ControlData item
 		 */
 		public void addItem(int  	uId,
 							int  	uVersion,
 							int		uControlId) throws Exception {
-			ControlData     	myStatic;
+			ControlData     	myControl;
 			
-			/* Create the static */
-			myStatic = new ControlData(this, 
-								  uId, 
-								  uVersion,
-								  uControlId);
+			/* Create the ControlData */
+			myControl = new ControlData(this, 
+								  		uId, 
+								  		uVersion,
+								  		uControlId);
 			
-			/* Check that this StaticId has not been previously added */
+			/* Check that this ControlId has not been previously added */
 			if (!isIdUnique(uId)) 
 				throw new Exception(ExceptionClass.DATA,
-									myStatic,
-									"Duplicate StaticId <" + uId + ">");
+									myControl,
+									"Duplicate ControlId <" + uId + ">");
 			 
 			/* Only one static is allowed */
 			if (theControl != null) 
 				throw new Exception(ExceptionClass.DATA,
-									myStatic,
+									myControl,
 									"Control record already exists");
 			 
 			/* Add to the list */
-			theControl = myStatic;
-			add(myStatic);
+			theControl = myControl;
+			add(myControl);
 		}			
 
 		/**
-		 *  Add a Static item (with no security as yet)
+		 *  Add a ControlData item (with no security as yet)
 		 */
 		public void addItem(int  			uVersion) throws Exception {
-			ControlData     	myStatic;
+			ControlData     	myControl;
 			
-			/* Create the static */
-			myStatic = new ControlData(this,  uVersion);
+			/* Create the ControlData */
+			myControl = new ControlData(this,  uVersion);
 			
 			/* Only one static is allowed */
 			if (theControl != null) 
 				throw new Exception(ExceptionClass.DATA,
-									myStatic,
+									myControl,
 									"Control record already exists");
 			 
 			/* Add to the list */
-			theControl = myStatic;
-			add(myStatic);
+			theControl = myControl;
+			add(myControl);
 		}			
 	}
 
 	/**
-	 * Values for a static 
+	 * Values for a controlData 
 	 */
 	public class Values implements HistoryValues<ControlData> {
 		private int 			theDataVersion	= -1;

@@ -316,8 +316,8 @@ public class Utils {
 
 	/**
 	 * build a byte array from a long
-	 * @param pBytes the eight byte array holding the long
-	 * @return the long value
+	 * @param pValue the long value to convert
+	 * @return the byte array
 	 */
 	public static byte[] BytesFromLong(long pValue) {
 		byte 	myByte;
@@ -326,6 +326,54 @@ public class Utils {
 
  		/* Loop through the bytes */
  		for (int i=8; i>0; i--) {
+			/* Access the next byte as an unsigned integer */
+			myByte = (byte)(myValue & 255);
+			myBytes[i-1] = myByte;
+			
+			/* Adjust value */
+			myValue /= 256;
+ 		}
+		
+ 		/* Return the value */
+ 		return myBytes;
+	}
+	
+	/**
+	 * parse a long from a byte array
+	 * @param pBytes the eight byte array holding the long
+	 * @return the long value
+	 */
+	public static int IntegerFromBytes(byte[] pBytes) {
+		int 	myByte;
+		int		myValue = 0;
+
+ 		/* Loop through the bytes */
+ 		for (int i=0; i<4; i++) {
+			/* Access the next byte as an unsigned integer */
+			myByte = pBytes[i];
+			myByte &= 255;
+
+			/* Add in to value */
+			myValue *= 256;
+			myValue += myByte;
+ 		}
+		
+ 		/* Return the value */
+ 		return myValue;
+	}
+
+	/**
+	 * build a byte array from an integer
+	 * @param pValue the integer value to convert
+	 * @return the byte array
+	 */
+	public static byte[] BytesFromInteger(int pValue) {
+		byte 	myByte;
+		byte[]	myBytes = new byte[4];
+		int		myValue = pValue;
+
+ 		/* Loop through the bytes */
+ 		for (int i=4; i>0; i--) {
 			/* Access the next byte as an unsigned integer */
 			myByte = (byte)(myValue & 255);
 			myBytes[i-1] = myByte;

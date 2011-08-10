@@ -65,7 +65,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 * define the table columns
 	 * @param pTableDef the Table definition
 	 */
-	protected abstract void defineTable(TableDefinition	pTableDef);
+	protected void defineTable(TableDefinition	pTableDef) {}
 
 	/**
 	 * Access the table name 
@@ -184,7 +184,13 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 * @param pItem the item to insert
 	 * @param iField the field id
 	 */
-	protected abstract void   	setFieldValue(T	pItem, int iField)	throws Exception;
+	/* Set a field value */
+	protected void setFieldValue(T pItem, int iField) throws Exception  {
+		/* Switch on field id */
+		switch (iField) {
+			case DataItem.FIELD_ID:	theTable.setIntegerValue(DataItem.FIELD_ID, pItem.getId());	break;
+		}
+	}
 	
 	/**
 	 * PreProcess on a load operation
@@ -331,9 +337,6 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 				/* Ignore non-new items */
 				if (myCurr.getState() != DataState.NEW) continue;
 				
-				/* set the id value */
-				theTable.setIntegerValue(DataItem.FIELD_ID, myCurr.getId());
-				
 				/* Loop through the columns */
 				for (ColumnDefinition myCol: theTable.getColumns()) {
 					/* Skip null columns */
@@ -341,9 +344,6 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 					
 					/* Access the column id */
 					int iField = myCol.getColumnId();
-					
-					/* Ignore ID column */
-					if (iField == DataItem.FIELD_ID) continue;
 					
 					/* Set the field value */
 					setFieldValue(myCurr, iField);
@@ -377,6 +377,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 		}
 		
 		catch (Throwable e) {
+			theDatabase.close();
 			throw new Exception(ExceptionClass.SQLSERVER,
 								myCurr,
 					            "Failed to insert " + getTableName(),
@@ -459,6 +460,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 		}
 	
 		catch (Throwable e) {
+			theDatabase.close();
 			throw new Exception(ExceptionClass.SQLSERVER,
 								myCurr,
 								"Failed to update " + getTableName(),
@@ -586,6 +588,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 		}
 	
 		catch (Throwable e) {
+			theDatabase.close();
 			throw new Exception(ExceptionClass.SQLSERVER,
 								myCurr,
 								"Failed to delete " + getTableName(),
@@ -617,6 +620,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 		}
 	
 		catch (Throwable e) {
+			theDatabase.close();
 			throw new Exception(ExceptionClass.SQLSERVER,
 								"Failed to create " + getTableName(),
 								e);
@@ -647,6 +651,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 		}
 	
 		catch (Throwable e) {
+			theDatabase.close();
 			throw new Exception(ExceptionClass.SQLSERVER,
 								"Failed to drop " + getTableName(),
 								e);
@@ -670,6 +675,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 		}
 	
 		catch (Throwable e) {
+			theDatabase.close();
 			throw new Exception(ExceptionClass.SQLSERVER,
 								"Failed to purge " + getTableName(),
 								e);

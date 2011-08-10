@@ -66,12 +66,15 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
 	protected void loadItem() throws Throwable {
 		/* Access the IDs */
 		int	myID 		= loadInteger(0);
+		int	myTypeID 	= loadInteger(1);
 		
-		/* Access the String values  */
-		String 	myControl		= loadString(1);
+		/* Access the binary values  */
+		byte[] 	myHash		= loadBytes(2);
+		byte[] 	myPublic	= loadBytes(3);
+		byte[] 	myPrivate	= loadBytes(4);
 
 		/* Add the Control */
-		theList.addItem(myID, myControl);
+		theList.addItem(myID, myTypeID, myHash, myPublic, myPrivate);
 	}
 
 	/**
@@ -82,7 +85,10 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
 	protected void insertItem(ControlKey	pItem) throws Throwable  {
 		/* Set the fields */
 		writeInteger(0, pItem.getId());
-		writeString(1, pItem.getSecurityKey());
+		writeInteger(1, pItem.getKeyType().getId());
+		writeBytes(2, pItem.getPasswordHash());
+		writeBytes(3, pItem.getPublicKey());
+		writeBytes(4, pItem.getPrivateKey());
 	}
 
 	/**
@@ -94,7 +100,10 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
 
 		/* Write titles */
 		writeString(0, ControlKey.fieldName(ControlKey.FIELD_ID));
-		writeString(1, ControlKey.fieldName(ControlKey.FIELD_KEY));			
+		writeString(1, ControlKey.fieldName(ControlKey.FIELD_KEYTYPE));			
+		writeString(2, ControlKey.fieldName(ControlKey.FIELD_PASSHASH));			
+		writeString(3, ControlKey.fieldName(ControlKey.FIELD_PUBLICKEY));			
+		writeString(4, ControlKey.fieldName(ControlKey.FIELD_PRIVATEKEY));			
 		return true;
 	}	
 

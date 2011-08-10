@@ -34,6 +34,7 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
 	 * @param pTableDef the table definition
 	 */
 	protected void defineTable(TableDefinition	pTableDef) {
+		super.defineTable(pTableDef);
 		theTableDef = pTableDef;
 		theTableDef.addReferenceColumn(DataKey.FIELD_CONTROL, DataKey.fieldName(DataKey.FIELD_CONTROL), TableControlKeys.TableName);
 		theTableDef.addIntegerColumn(DataKey.FIELD_KEYTYPE, DataKey.fieldName(DataKey.FIELD_KEYTYPE));
@@ -71,7 +72,8 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
 		switch (iField) {
 			case DataKey.FIELD_CONTROL:	theTableDef.setIntegerValue(iField, pItem.getControlKey().getId());	break;
 			case DataKey.FIELD_KEYTYPE:	theTableDef.setIntegerValue(iField, pItem.getKeyType().getId());	break;
-			case DataKey.FIELD_KEY:		theTableDef.setBinaryValue(iField,  pItem.getSecurityKey());		break;
+			case DataKey.FIELD_KEY:		theTableDef.setBinaryValue(iField,  pItem.getSecuredKeyDef());		break;
+			default:					super.setFieldValue(pItem, iField);									break;
 		}
 	}
 }

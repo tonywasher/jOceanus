@@ -2,8 +2,8 @@ package uk.co.tolcroft.security;
 
 import java.security.*;
 import java.security.spec.X509EncodedKeySpec;
-
-import javax.crypto.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -17,92 +17,74 @@ public class SecurityControl extends DataItem<SecurityControl> {
 	/**
 	 * The name of the object
 	 */
-	private static final String objName = "SecurityControl";
+	private static final String 		objName 				= "SecurityControl";
 
 	/**
 	 * Byte encoding
 	 */
-	public final static String 		ENCODING	= "UTF-8";
-	
-	/**
-	 * The public/private separator 
-	 */
-	protected final static char		KEYSEP 		= '!';
+	public final static String 			ENCODING				= "UTF-8";
 	
 	/**
 	 * The BouncyCastle signature 
 	 */
-	protected final static String	BCSIGN 		= "BC";
+	protected final static String		BCSIGN 					= "BC";
 	
 	/**
 	 * Have providers been added 
 	 */
-	protected static boolean		providersAdded	= false;
+	protected static boolean			providersAdded			= false;
 	
 	/**
 	 * The secure random generator
 	 */
-	private SecureRandom			theRandom		= null;
-	
-	/**
-	 * The control mode
-	 */
-	private ControlMode				theControlMode	= null;
+	private SecureRandom				theRandom				= null;
 	
 	/**
 	 * The password key 
 	 */
-	private AsymmetricKey			theAsymKey		= null;
+	private AsymmetricKey				theAsymKey				= null;
 
 	/**
 	 * The password key 
 	 */
-	private PasswordKey				thePassKey		= null;
+	private PasswordKey					thePassKey				= null;
 
 	/**
 	 * Is the security control initialised 
 	 */
-	private boolean					isInitialised	= false;
+	private boolean						isInitialised			= false;
 
 	/**
-	 * The Security Key 
+	 * The Signature 
 	 */
-	private String					theSecurityKey	= null;
+	private SecuritySignature			theSignature			= null;
 
 	/**
-	 * The public key
+	 * The Symmetric Key Map
 	 */
-	private X509EncodedKeySpec		thePublicKey	= null;
-
+	private Map<SymmetricKey, byte[]>	theKeyDefMap	= null;
+	
 	/* Access methods */
-	public 		boolean				isInitialised()		{ return isInitialised; }
-	public 		boolean				newPassword()		{ return (theSecurityKey == null); }
-	protected 	AsymmetricKey		getAsymKey()		{ return theAsymKey; }
-	protected 	PasswordKey			getPassKey()		{ return thePassKey; }
-	public 		ControlMode			getControlMode()	{ return theControlMode; }
-	public 		String				getSecurityKey()	{ return theSecurityKey; }
-	public 		X509EncodedKeySpec	getPublicKey()		{ return thePublicKey; }
-	public 		SecureRandom		getRandom()			{ return theRandom; }
+	public 		boolean				isInitialised()			{ return isInitialised; }
+	protected 	AsymmetricKey		getAsymKey()			{ return theAsymKey; }
+	protected 	PasswordKey			getPassKey()			{ return thePassKey; }
+	public 		SecuritySignature	getSignature()			{ return theSignature; }
+	public 		SecureRandom		getRandom()				{ return theRandom; }
 	
 	/**
 	 * Constructor
-	 * @param pSecurityKey the Encoded Security Bytes (or null if first initialisation)  
+	 * @param pSignature the Security Signature Bytes (or null if first initialisation)  
 	 */
-	private SecurityControl(List	pList,
-						    String	pSecurityKey) throws Exception {
+	private SecurityControl(List				pList,
+						    SecuritySignature	pSignature) throws Exception {
 		/* Call super-constructor */
 		super(pList, 0);
 		
-		/* Protect against exceptions */
-		try { 
-			/* Store the security key */
-			theSecurityKey = pSecurityKey;
-		}
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
-								"Failed to initialise security control",
-								e);
-		}
+		/* Store the security key */
+		theSignature = pSignature;
+
+		/* Create the SymmetricKeyDef Map */
+		theKeyDefMap = new HashMap<SymmetricKey, byte[]>();
 	}
 	
 	/**
@@ -117,20 +99,23 @@ public class SecurityControl extends DataItem<SecurityControl> {
 		theRandom 	= pSource.getRandom();
 
 		/* Generate a cloned password key */
-		thePassKey = new PasswordKey(pSource.getPassKey());
+		thePassKey  = new PasswordKey(pSource.getPassKey());
 		
-		/* Access the key mode */
-		theControlMode = thePassKey.getKeyMode();
+		/* Generate the new key mode */
+		AsymKeyType[] myType 	= AsymKeyType.getRandomTypes(1, theRandom);		
 		
 		/* Create the asymmetric key */
-		theAsymKey  = new AsymmetricKey(theControlMode.getAsymKeyType(),
-										theControlMode.getSymKeyType(),
-										thePassKey,
+		theAsymKey  = new AsymmetricKey(myType[0],
 										theRandom);			
 		
-		/* Access the security keys */
-		theSecurityKey = theAsymKey.getSecurityKey();
-		thePublicKey   = theAsymKey.getPublicKey();		
+		/* Create the signature */
+		theSignature = new SecuritySignature(thePassKey.getPasswordHash(),
+											 myType[0],
+											 theAsymKey.getPublicKey(),
+											 thePassKey.getSecuredPrivateKey(theAsymKey));
+		
+		/* Create the SymmetricKeyDef Map */
+		theKeyDefMap = new HashMap<SymmetricKey, byte[]>();
 		
 		/* Note that we are now initialised and add to the list */
 		isInitialised = true;
@@ -160,44 +145,38 @@ public class SecurityControl extends DataItem<SecurityControl> {
 			theRandom 	= new SecureRandom();
 
 			/* If the security key is currently null */
-			if (theSecurityKey == null) {
-				/* Generate the key mode */
-				theControlMode = ControlMode.getControlMode(theRandom);
-				
+			if (theSignature == null) {
 				/* Generate the password key */
 				thePassKey 	= new PasswordKey(pPassword,
-											  theControlMode,
 											  theRandom);
 							
+				/* Generate the new key mode */
+				AsymKeyType[] myType 	= AsymKeyType.getRandomTypes(1, theRandom);		
+				
 				/* Create the asymmetric key */
-				theAsymKey  = new AsymmetricKey(theControlMode.getAsymKeyType(),
-												theControlMode.getSymKeyType(),
-												thePassKey,
+				theAsymKey  = new AsymmetricKey(myType[0],
 												theRandom);			
 
-				/* Access the security keys */
-				theSecurityKey = theAsymKey.getSecurityKey();
-				thePublicKey   = theAsymKey.getPublicKey();
+				/* Create the signature */
+				theSignature = new SecuritySignature(thePassKey.getPasswordHash(),
+													 myType[0],
+													 theAsymKey.getPublicKey(),
+													 thePassKey.getSecuredPrivateKey(theAsymKey));
 			}
 			
 			/* Else we need to decode the keys */
 			else {
 				/* Rebuild the password key */
-				thePassKey 	= new PasswordKey(theSecurityKey,
+				thePassKey 	= new PasswordKey(theSignature.getPasswordHash(),
 											  pPassword,
 											  theRandom);
 				/* Access the control mode */
-				theControlMode = thePassKey.getKeyMode();
+				//theKeyType = thePassKey.getKeyMode().getAsymKeyType();
 				
 				/* Rebuild the asymmetric key */
-				theAsymKey  = new AsymmetricKey(theSecurityKey,
-												theControlMode.getAsymKeyType(),
-												theControlMode.getSymKeyType(),
-												thePassKey,
-												theRandom);
-
-				/* Access the public keys */
-				thePublicKey   = theAsymKey.getPublicKey();
+				theAsymKey  = thePassKey.getAsymmetricKey(theSignature.getSecuredKeyDef(),
+														  theSignature.getPublicKey(),
+														  theSignature.getKeyType());
 			}
 			
 			/* Note that we are now initialised */
@@ -224,14 +203,15 @@ public class SecurityControl extends DataItem<SecurityControl> {
 			throw new Exception(ExceptionClass.LOGIC,
 								"Security Control uninitialised");
 			
+		/* Clear the Symmetric KeyDef map */
+		theKeyDefMap.clear();
+		
 		/* Update the pass key with the new password */
 		thePassKey.setNewPassword(pPassword);
 		
-		/* Adjust the Asymmetric key */
-		theAsymKey.setPasswordKey(thePassKey);
-		
-		/* Access the security keys */
-		theSecurityKey = theAsymKey.getSecurityKey();
+		/* Access the updated key definitions */
+		theSignature.setSecuredKeyDef(thePassKey.getSecuredPrivateKey(theAsymKey));
+		theSignature.setPasswordHash(thePassKey.getPasswordHash());
 	}
 
 	/**
@@ -275,11 +255,9 @@ public class SecurityControl extends DataItem<SecurityControl> {
 	/**
 	 * Generate a new PasswordKey 
 	 * @param pPassword the password (cleared after usage)
-	 * @param pKeyMode the key mode
 	 * @return the Password key
 	 */
-	public PasswordKey	getPasswordKey(char[]		pPassword,
-									   ControlMode 	pKeyMode) throws Exception {
+	public PasswordKey	getPasswordKey(char[]		pPassword) throws Exception {
 		PasswordKey 	myPassKey;
 		
 		/* Handle not initialised */
@@ -288,7 +266,7 @@ public class SecurityControl extends DataItem<SecurityControl> {
 								"Security Control uninitialised");
 			
 		/* Generate the password key class */
-		myPassKey = new PasswordKey(pPassword, pKeyMode, theRandom);
+		myPassKey = new PasswordKey(pPassword, theRandom);
 		
 		/* Return the new key */
 		return myPassKey;
@@ -331,7 +309,7 @@ public class SecurityControl extends DataItem<SecurityControl> {
 								"Security Control uninitialised");
 			
 		/* Generate the asymmetric key class */
-		myAsymKey = new AsymmetricKey(pKeyType, theControlMode.getSymKeyType(), thePassKey, theRandom);
+		myAsymKey = new AsymmetricKey(pKeyType, theRandom);
 		
 		/* Return the new key */
 		return myAsymKey;
@@ -343,8 +321,9 @@ public class SecurityControl extends DataItem<SecurityControl> {
 	 * @param pKeyType the Asymmetric key type
 	 * @return the Asymmetric key
 	 */
-	public AsymmetricKey	getAsymmetricKey(String 		pSecurityKey,
-											 AsymKeyType	pKeyType) throws Exception {
+	public AsymmetricKey	getAsymmetricKey(byte[] 			pSecuredPrivateKey,
+											 X509EncodedKeySpec	pPublicKey,
+											 AsymKeyType		pKeyType) throws Exception {
 		AsymmetricKey 	myAsymKey;
 		
 		/* Handle not initialised */
@@ -353,7 +332,7 @@ public class SecurityControl extends DataItem<SecurityControl> {
 								"Security Control uninitialised");
 			
 		/* Generate the asymmetric key class */
-		myAsymKey = new AsymmetricKey(pSecurityKey, pKeyType, theControlMode.getSymKeyType(), thePassKey, theRandom);
+		myAsymKey = thePassKey.getAsymmetricKey(pSecuredPrivateKey, pPublicKey, pKeyType);
 		
 		/* Return the new key */
 		return myAsymKey;
@@ -372,82 +351,84 @@ public class SecurityControl extends DataItem<SecurityControl> {
 			throw new Exception(ExceptionClass.LOGIC,
 								"Security Control uninitialised");
 			
-		/* Generate the symmetric key class */
-		mySymKey = new SymmetricKey(this, pType, theRandom);
+		/* Generate the symmetric key */
+		mySymKey = new SymmetricKey(pType, theRandom);
 		
 		/* Return the new key */
 		return mySymKey;
 	}
 	
 	/**
-	 * Rebuild a SymmetricKey from wrapped key
-	 * @param pWrappedKey the wrapped key
+	 * Rebuild a SymmetricKey from secured key definition
+	 * @param pSecuredKeyDef the secured key definition
 	 * @param pType the Symmetric key type
 	 * @return the Symmetric key
 	 */
-	public SymmetricKey	getSymmetricKey(byte[] 		pWrappedKey,
+	public SymmetricKey	getSymmetricKey(byte[] 		pSecuredKeyDef,
 										SymKeyType	pType) throws Exception {
 		SymmetricKey 	mySymKey;
+		byte[]			myKeyDef;
 		
 		/* Handle not initialised */
 		if (!isInitialised)
 			throw new Exception(ExceptionClass.LOGIC,
 								"Security Control uninitialised");
 			
-		/* Build the symmetric key class */
-		mySymKey = new SymmetricKey(this, pWrappedKey, pType, theRandom);
+		/* Reverse the obscuring of the array */
+		myKeyDef = thePassKey.obscureArray(pSecuredKeyDef);
+	
+		/* Obtain the symmetric key via the Asymmetric key */
+		mySymKey = theAsymKey.getSymmetricKey(myKeyDef, pType);
+		
+		/* Add the key definition to the map */
+		theKeyDefMap.put(mySymKey, pSecuredKeyDef);
 		
 		/* Return the new key */
 		return mySymKey;
 	}
 	
 	/**
-	 * Obtain secret key from wrapped key
-	 * @param pWrappedKey the wrapped key
-	 * @param pKeyType the key type that is being unwrapped
-	 * @return the Secret key
+	 * Obtain the Secured Key Definition for a Symmetric Key
+	 * @param pKey the Symmetric Key to secure
+	 * @return the Secured Key Definition
 	 */
-	protected SecretKey	unwrapSecretKey(byte[]		pWrappedKey,
-										SymKeyType 	pKeyType) throws Exception {
-		/* Pass call to the Asymmetric Key */
-		return theAsymKey.unwrapSecretKey(pWrappedKey, pKeyType);
-	}
-	
-	/**
-	 * Wrap secret key
-	 * @param pKey the Key to wrap  
-	 * @return the wrapped secret key
-	 */
-	protected byte[] getWrappedKey(SymmetricKey pKey) throws Exception {
-		byte[] 				myWrappedKey;
+	public byte[] 	getSecuredKeyDef(SymmetricKey pKey) throws Exception {
+		byte[] myKeyDef;
 		
 		/* Handle not initialised */
 		if (!isInitialised)
 			throw new Exception(ExceptionClass.LOGIC,
 								"Security Control uninitialised");
 			
-		/* Protect against exceptions */
-		try {			
-			/* wrap the key */
-			myWrappedKey = theAsymKey.wrapSecretKey(pKey.getSecretKey(),
-													pKey.getKeyType());
-		}
+		/* Look for an entry in the map and return it if found */
+		myKeyDef = theKeyDefMap.get(pKey);
+		if (myKeyDef != null) return myKeyDef;
 		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
-								"Failed to wrap key",
-								e);
-		}
+		/* wrap the key definition */
+		myKeyDef = theAsymKey.getSecuredKeyDef(pKey);
+				
+		/* Obscure the key  definition */
+		myKeyDef = thePassKey.obscureArray(myKeyDef);
 		
-		/* Return to caller */
-		return myWrappedKey;
-	}	
-
+		/* Check whether the KeyDef is too large */
+		if (myKeyDef.length > SymmetricKey.IDSIZE)
+			throw new Exception(ExceptionClass.DATA,
+								"Secured KeyDefinition too large: " + myKeyDef.length);
+			
+		/* Add the key to the map */
+		theKeyDefMap.put(pKey, myKeyDef);
+		
+		/* Return it */
+		return myKeyDef; 
+	}
+	
 	/* Field IDs */
 	public static final int FIELD_INIT 		= 0;
-	public static final int FIELD_SECKEY	= 1;
-	public static final int FIELD_PUBKEY	= 2;
-	public static final int NUMFIELDS	    = 3;
+	public static final int FIELD_HASH		= 1;
+	public static final int FIELD_TYPE		= 2;
+	public static final int FIELD_PRVKEY	= 3;
+	public static final int FIELD_PUBKEY	= 4;
+	public static final int NUMFIELDS	    = 5;
 	
 	/**
 	 * Obtain the type of the item
@@ -468,7 +449,9 @@ public class SecurityControl extends DataItem<SecurityControl> {
 	public static String	fieldName(int iField) {
 		switch (iField) {
 			case FIELD_INIT: 		return "Initialised";
-			case FIELD_SECKEY: 		return "SecurityKey";
+			case FIELD_HASH: 		return "PasswordHash";
+			case FIELD_TYPE: 		return "KeyType";
+			case FIELD_PRVKEY: 		return "PrivateKey";
 			case FIELD_PUBKEY: 		return "PublicKey";
 			default:		  		return DataItem.fieldName(iField);
 		}
@@ -491,11 +474,17 @@ public class SecurityControl extends DataItem<SecurityControl> {
 			case FIELD_INIT: 
 				myString +=	(isInitialised() ? "true" : "false");
 				break;
-			case FIELD_SECKEY:
-				myString += theSecurityKey; 
+			case FIELD_HASH:
+				myString += (theSignature == null) ? null : Utils.HexStringFromBytes(theSignature.getPasswordHash()); 
+				break;
+			case FIELD_TYPE:
+				myString += (theSignature == null) ? null : theSignature.getKeyType().toString(); 
+				break;
+			case FIELD_PRVKEY:
+				myString += (theSignature == null) ? null : Utils.HexStringFromBytes(theSignature.getSecuredKeyDef()); 
 				break;
 			case FIELD_PUBKEY:
-				myString += thePublicKey; 
+				myString += (theSignature == null) ? null : Utils.HexStringFromBytes(theSignature.getEncodedPublicKey()); 
 				break;
 		}
 		return myString;
@@ -518,9 +507,13 @@ public class SecurityControl extends DataItem<SecurityControl> {
 		/* Access the object as a SecurityControl */
 		SecurityControl myControl = (SecurityControl)pThat;
 		
-		/* Check for equality */
-		if (getId() != myControl.getId()) 		return false;
-		return true;
+		/* Check for signature differences */
+		if (theSignature == null) {
+			return (myControl.theSignature == null);
+		}
+		else {
+			return theSignature.equals(myControl.theSignature);
+		}
 	}
 
 	/**
@@ -582,26 +575,29 @@ public class SecurityControl extends DataItem<SecurityControl> {
 		
 		/**
 		 * Access Security control
-		 * @param pSecurityKey the SecurityKey (or null)
+		 * @param pSignature the Signature (or null)
 		 */
-		public SecurityControl getSecurityControl(String pSecurityKey) throws Exception {
-			SecurityControl myControl;
+		public SecurityControl getSecurityControl(SecuritySignature pSignature) throws Exception {
+			SecurityControl myControl = null;
 			ListIterator	myIterator;
 			
 			/* Create an iterator */
 			myIterator = listIterator();
 			
-			/* Loop through the existing controls */
-			while ((myControl = myIterator.next()) != null) {
-				/* Break loop if we have found the control */
-				if (!Utils.differs(pSecurityKey, myControl.getSecurityKey()))
-					break;
+			/* If we have a signature */
+			if (pSignature != null) {
+				/* Loop through the existing controls */
+				while ((myControl = myIterator.next()) != null) {
+					/* Break loop if we have found the control */
+					if (pSignature.equals(myControl.getSignature()))
+						break;
+				}
 			}
 			
 			/* If we did not find it */
 			if (myControl == null) {
 				/* Create a new control and add it to the list */
-				myControl = new SecurityControl(this, pSecurityKey);
+				myControl = new SecurityControl(this, pSignature);
 				add(myControl);
 			}
 			

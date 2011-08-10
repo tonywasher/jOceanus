@@ -6,7 +6,7 @@ import uk.co.tolcroft.finance.database.TableDefinition.SortOrder;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.ListStyle;
 
-public class TableEvent extends DatabaseTable<Event> {
+public class TableEvent extends TableEncrypted<Event> {
 	/**
 	 * The name of the Events table
 	 */
@@ -35,8 +35,8 @@ public class TableEvent extends DatabaseTable<Event> {
 	 * @param pTableDef the table definition
 	 */
 	protected void defineTable(TableDefinition	pTableDef) {
+		super.defineTable(pTableDef);
 		theTableDef = pTableDef;
-		theTableDef.addReferenceColumn(EncryptedItem.FIELD_CONTROL, EncryptedItem.NAME_CTLID, TableControlKeys.TableName);
 		DateColumn myDateCol = theTableDef.addDateColumn(Event.FIELD_DATE, Event.fieldName(Event.FIELD_DATE));
 		theTableDef.addEncryptedColumn(Event.FIELD_DESC, Event.fieldName(Event.FIELD_DESC), Event.DESCLEN);
 		theTableDef.addEncryptedColumn(Event.FIELD_AMOUNT, Event.fieldName(Event.FIELD_AMOUNT), EncryptedItem.MONEYLEN);
@@ -61,8 +61,7 @@ public class TableEvent extends DatabaseTable<Event> {
 	}
 	
 	/* Load the event */
-	protected void loadItem(int pId) throws Exception {
-		int	    		myControlId;
+	protected void loadItem(int pId, int pControlId) throws Exception {
 		int  			myDebitId;
 		int  			myCreditId;
 		int  			myTranType;
@@ -75,7 +74,6 @@ public class TableEvent extends DatabaseTable<Event> {
 		java.util.Date  myDate;
 		
 		/* Get the various fields */
-		myControlId	= theTableDef.getIntegerValue(EncryptedItem.FIELD_CONTROL);
 		myDate 		= theTableDef.getDateValue(Event.FIELD_DATE);
 		myDesc    	= theTableDef.getBinaryValue(Event.FIELD_DESC);
 		myAmount    = theTableDef.getBinaryValue(Event.FIELD_AMOUNT);
@@ -89,7 +87,7 @@ public class TableEvent extends DatabaseTable<Event> {
 	
 		/* Add into the list */
 		theList.addItem(pId,
-						myControlId,
+						pControlId,
 			       	   	myDate,
 				        myDesc,
 				        myAmount,
@@ -106,7 +104,6 @@ public class TableEvent extends DatabaseTable<Event> {
 	protected void setFieldValue(Event	pItem, int iField) throws Exception  {
 		/* Switch on field id */
 		switch (iField) {
-			case EncryptedItem.FIELD_CONTROL: 	theTableDef.setIntegerValue(iField, pItem.getControlKey().getId());	break;
 			case Event.FIELD_DATE: 		theTableDef.setDateValue(Event.FIELD_DATE, pItem.getDate());					break;
 			case Event.FIELD_DESC:		theTableDef.setBinaryValue(Event.FIELD_DESC, pItem.getDescBytes());				break;
 			case Event.FIELD_AMOUNT:	theTableDef.setBinaryValue(Event.FIELD_AMOUNT, pItem.getAmountBytes());			break;
@@ -117,6 +114,7 @@ public class TableEvent extends DatabaseTable<Event> {
 			case Event.FIELD_TAXCREDIT:	theTableDef.setBinaryValue(Event.FIELD_TAXCREDIT, pItem.getTaxCredBytes());		break;
 			case Event.FIELD_DILUTION:	theTableDef.setBinaryValue(Event.FIELD_DILUTION, pItem.getDilutionBytes());		break;
 			case Event.FIELD_YEARS:		theTableDef.setIntegerValue(Event.FIELD_YEARS, pItem.getYears());				break;
+			default:					super.setFieldValue(pItem, iField);												break;
 		}
 	}
 }

@@ -5,32 +5,28 @@ import java.security.SecureRandom;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.Utils;
-import uk.co.tolcroft.security.AsymmetricKey.AsymKeyType;
 import uk.co.tolcroft.security.SecurityControl.DigestType;
 import uk.co.tolcroft.security.PasswordKey.PBEKeyType;
-import uk.co.tolcroft.security.SymmetricKey.SymKeyType;
 
-public class ControlMode {
+public class PBEKeyMode {
 	/**
 	 * The mode	
 	 */
-	private long		theMode		= 0;
+	private int		theMode		= 0;
 	
 	/**
-	 * The type locations (in units of 8-bit shifts)
+	 * The type locations (in units of 4-bit shifts)
 	 */
-	private final static int 		placeDIGEST1	= 2;
-	private final static int 		placeDIGEST2	= 3;
-	private final static int 		placePBEKEY		= 4;
-	private final static int 		placeASYMKEY	= 5;
-	private final static int 		placeSYMKEY		= 6;
+	private final static int 		placeDIGEST1	= 1;
+	private final static int 		placeDIGEST2	= 2;
+	private final static int 		placePBEKEY		= 3;
 	
 	/**
 	 * The iteration locations (in units of 4-bit shifts)
 	 */
-	private final static int 		placeITER1		= 1;
-	private final static int 		placeITER2		= 2;
-	private final static int 		placeITER3		= 3;
+	private final static int 		placeITER1		= 4;
+	private final static int 		placeITER2		= 5;
+	private final static int 		placeITER3		= 6;
 
 	/**
 	 * The Digest/Key types
@@ -38,8 +34,6 @@ public class ControlMode {
 	private DigestType	thePrimeDigest		= null;
 	private DigestType	theSecondDigest		= null;
 	private PBEKeyType	thePBEKeyType		= null;
-	private AsymKeyType	theAsymKeyType		= null;
-	private SymKeyType	theSymKeyType		= null;
 	private	int			theFirstIteration	= 1024;
 	private	int			theSecondIteration	= 1536;
 	private	int			theThirdIteration	= 2048;
@@ -47,13 +41,11 @@ public class ControlMode {
 	/* The iteration counts */
 	
 	/* Access methods */
-	protected	long	getMode() 			{ return theMode; }
-	protected	byte[]	getByteMode() 		{ return Utils.BytesFromLong(theMode); }
+	protected	int		getMode() 			{ return theMode; }
+	protected	byte[]	getByteMode() 		{ return Utils.BytesFromInteger(theMode); }
 	public	DigestType	getFirstDigest()	{ return thePrimeDigest; }
 	public	DigestType	getSecondDigest()	{ return theSecondDigest; }
 	public	PBEKeyType	getPBEKeyType()		{ return thePBEKeyType; }
-	public	AsymKeyType	getAsymKeyType()	{ return theAsymKeyType; }
-	public	SymKeyType	getSymKeyType()		{ return theSymKeyType; }
 	public	int			getFirstIterate()	{ return theFirstIteration; }
 	public	int			getSecondIterate()	{ return theSecondIteration; }
 	public	int			getThirdIterate()	{ return theThirdIteration; }
@@ -62,7 +54,7 @@ public class ControlMode {
 	 * Constructor from node
 	 * @param pMode the Control Mode
 	 */
-	protected ControlMode(long pMode) throws Exception {
+	protected PBEKeyMode(int pMode) throws Exception {
 		/* Not allowed unless version is zero */
 		if (getVersion(pMode) != 0)
 			throw new Exception(ExceptionClass.LOGIC,
@@ -82,18 +74,12 @@ public class ControlMode {
 
 		/* Set PBEKey value */
 		setPBEKeyType(PBEKeyType.fromId(getId(pMode, placePBEKEY)));
-
-		/* Set AsymKeyPBE value */
-		setAsymKeyType(AsymKeyType.fromId(getId(pMode, placeASYMKEY)));
-
-		/* Set SymKeyPBE value */
-		setSymKeyType(SymKeyType.fromId(getId(pMode, placeSYMKEY)));
 	}
 
 	/**
 	 * Standard constructor
 	 */
-	private ControlMode() {
+	private PBEKeyMode() {
 		setVersion(0);
 	}
 	
@@ -103,29 +89,20 @@ public class ControlMode {
 	 * @param pSecondDigest the second digest type
 	 * @param pPBEKeyType the PBE key type
 	 * @param pAsymKeyType the Asym Key type
-	 * @param pSymKeyType the Sym Key type
 	 * @param pRandom the random generator
 	 */
-	public static ControlMode getControlMode(DigestType		pFirstDigest,
-				   							 DigestType		pSecondDigest,
-				   							 PBEKeyType		pPBEKeyType,
-				   							 AsymKeyType	pAsymKeyType,
-				   							 SymKeyType		pSymKeyType,
-				   							 SecureRandom	pRandom) throws Exception {
+	public static PBEKeyMode getMode(DigestType		pFirstDigest,
+				   					 DigestType		pSecondDigest,
+				   					 PBEKeyType		pPBEKeyType,
+				   					 SecureRandom	pRandom) throws Exception {
 		/* Create a new PBEKeyMode */
-		ControlMode myMode = new ControlMode();
+		PBEKeyMode myMode = new PBEKeyMode();
 
 		/* Set digest options */
 		myMode.setDigestTypes(pFirstDigest, pSecondDigest);
 
 		/* Set PBE key option */
 		myMode.setPBEKeyType(pPBEKeyType);
-		
-		/* Set Asym key option */
-		myMode.setAsymKeyType(pAsymKeyType);
-		
-		/* Set Sym key option */
-		myMode.setSymKeyType(pSymKeyType);
 		
 		/* Set iterations */
 		myMode.setRandomIterations(pRandom);
@@ -135,30 +112,22 @@ public class ControlMode {
 	}
 	
 	/**
-	 * Construct a random ControlMode
+	 * Construct a random KeyMode
 	 * @param pRandom the random generator
 	 */
-	public static ControlMode getControlMode(SecureRandom pRandom) throws Exception {
+	public static PBEKeyMode getMode(SecureRandom pRandom) throws Exception {
 		/* Create a new PBEKeyMode */
-		ControlMode myMode = new ControlMode();
+		PBEKeyMode myMode = new PBEKeyMode();
 
 		/* Access a random set of SymKeyTypes and DigestTypes */
-		AsymKeyType[] myAsym 	= AsymKeyType.getRandomTypes(1, pRandom);		
 		PBEKeyType[]  myPBE 	= PBEKeyType.getRandomTypes(1, pRandom);		
 		DigestType[]  myDigest	= DigestType.getRandomTypes(2, pRandom);
-		SymKeyType[]  mySym 	= SymKeyType.getRandomTypes(1, pRandom);		
 		
 		/* Set digest options */
 		myMode.setDigestTypes(myDigest[0], myDigest[1]);
 
 		/* Set PBE key option */
 		myMode.setPBEKeyType(myPBE[0]);
-		
-		/* Set Asym key option */
-		myMode.setAsymKeyType(myAsym[0]);
-		
-		/* Set Sym key option */
-		myMode.setSymKeyType(mySym[0]);
 		
 		/* Set iterations */
 		myMode.setRandomIterations(pRandom);
@@ -190,14 +159,13 @@ public class ControlMode {
 			throw new Exception(ExceptionClass.LOGIC,
 								"Invalid iteration: " + iId);
 		
-		/* Access as a long value and shift up place nibbles */
-		long lId 	= iId;
-		long lMask	= 15;
-		while (iPlace-- > 0) { lId *= 16; lMask *= 16; }
+		/* Shift up place nibbles */
+		int  iMask	= 15;
+		while (iPlace-- > 0) { iId *= 16; iMask *= 16; }
 		
 		/* Add into the mode */
-		theMode &= ~lMask;
-		theMode |= lId;
+		theMode &= ~iMask;
+		theMode |= iId;
 	}
 	
 	/**
@@ -205,34 +173,33 @@ public class ControlMode {
 	 * @param pMode the mode
 	 * @param iPlace the place of the id
 	 */
-	private int getIteration(long pMode, int iPlace) {
-		/* Access as a long value and shift down place bytes */
-		long lId 	= pMode;
-		long lMask	= 15;
-		while (iPlace-- > 0) { lId /= 16; }
+	private int getIteration(int pMode, int iPlace) {
+		/* Shift down place nibbles */
+		int  iId 	= pMode;
+		int  iMask	= 15;
+		while (iPlace-- > 0) { iId /= 16; }
 		
 		/* Extract from the mode */
-		lId &= lMask;
-		return (int)lId;
+		iId &= iMask;
+		return iId;
 	}
 	
 	/**
 	 * Set id into mode
 	 */
 	private void setId(int iId, int iPlace) throws Exception {
-		/* Ensure that ordinal is store-able within a byte */
-		if ((iId < 1) || (iId > 255))
+		/* Ensure that ordinal is store-able within a nibble */
+		if ((iId < 1) || (iId > 15))
 			throw new Exception(ExceptionClass.LOGIC,
 								"Invalid id: " + iId);
 		
-		/* Access as a long value and shift up place bytes */
-		long lId 	= iId;
-		long lMask	= 255;
-		while (iPlace-- > 0) { lId *= 256; lMask *= 256; }
+		/* Shift up place bytes */
+		int iMask	= 15;
+		while (iPlace-- > 0) { iId *= 16; iMask *= 16; }
 		
 		/* Add into the mode */
-		theMode &= ~lMask;
-		theMode |= lId;
+		theMode &= ~iMask;
+		theMode |= iId;
 	}
 	
 	/**
@@ -240,41 +207,40 @@ public class ControlMode {
 	 * @param pMode the mode
 	 * @param iPlace the place of the id
 	 */
-	private int getId(long pMode, int iPlace) {
+	private int getId(int pMode, int iPlace) {
 		/* Access as a long value and shift down place bytes */
-		long lId 	= pMode;
-		long lMask	= 255;
-		while (iPlace-- > 0) { lId /= 256; }
+		int  iId 	= pMode;
+		int	 iMask	= 15;
+		while (iPlace-- > 0) { iId /= 16; }
 		
 		/* Extract from the mode */
-		lId &= lMask;
-		return (int)lId;
+		iId &= iMask;
+		return iId;
 	}
 	
 	/**
 	 * Set version into mode
 	 */
 	private void setVersion(int iVers) {
-		/* Access as a long value and shift up place bytes */
-		long lVers 	= iVers;
-		long lMask	= 15;
-		iVers &= lMask;
+		/* Shift up place bytes */
+		int iMask	 = 15;
+		iVers 		&= iMask;
 		
 		/* Add into the mode */
-		theMode &= ~lMask;
-		theMode |= lVers;
+		theMode &= ~iMask;
+		theMode |= iVers;
 	}
 	
 	/**
 	 * Obtain version from mode
 	 * @param pMode the mode
 	 */
-	private int getVersion(long pMode) {
+	private int getVersion(int pMode) {
 		/* Access as a long value and isolate */
-		long lVers	= pMode;
-		long lMask	= 15;
-		lVers &= lMask;
-		return (int)lVers;
+		int	iVers	= pMode;
+		int iMask	= 15;
+		iVers &= iMask;
+		return iVers;
 	}
 	
 	/**
@@ -323,29 +289,5 @@ public class ControlMode {
 
 		/* Set the value into the mode */
 		setId(pPBEKeyType.getId(), placePBEKEY);
-	}
-
-	/**
-	 * Set AsymKeyType type
-	 * @param pAsymKeyType the Asym key type
-	 */
-	private void setAsymKeyType(AsymKeyType pAsymKeyType) throws Exception {
-		/* Record the key type */
-		theAsymKeyType 	= pAsymKeyType;
-
-		/* Set the value into the mode */
-		setId(pAsymKeyType.getId(), placeASYMKEY);
-	}
-
-	/**
-	 * Set SymKeyType type
-	 * @param pSymKeyType the Sym key type
-	 */
-	private void setSymKeyType(SymKeyType pSymKeyType) throws Exception {
-		/* Record the key type */
-		theSymKeyType 	= pSymKeyType;
-
-		/* Set the value into the mode */
-		setId(pSymKeyType.getId(), placeSYMKEY);
 	}
 }

@@ -29,8 +29,8 @@ public class SecureManager {
 	 *  @param pSource the description of the secured resource
 	 *  @return the security control
 	 */
-	public SecurityControl getSecurityControl(String pKey,
-											  String pSource) throws Exception {
+	public SecurityControl getSecurityControl(SecuritySignature pKey,
+											  String 			pSource) throws Exception {
 		/* Access or create the required Security control */
 		SecurityControl myControl = theSecurity.getSecurityControl(pKey);
 

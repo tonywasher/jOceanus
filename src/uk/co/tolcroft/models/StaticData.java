@@ -502,9 +502,9 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	 	 * @param pList the source Data list 
 	 	 * @param pStyle the style of the list 
 	 	 */
-		public StaticList(Class<T> pClass, 
-						  StaticList<T,E> pList,
-						  ListStyle pStyle) { 
+		public StaticList(Class<T> 			pClass, 
+						  StaticList<T,E> 	pList,
+						  ListStyle 		pStyle) { 
 			super(pClass, pList, pStyle);
 		}
 

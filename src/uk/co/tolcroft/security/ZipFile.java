@@ -294,7 +294,7 @@ public class ZipFile {
 							AsymmetricKey myKey = theControl.getAsymKey();
 							
 							/* Declare the security control and encrypt the header */
-							theEntry.setExtra(theControl.getSecurityKey().getBytes(propEncoding));
+							theEntry.setExtra(theControl.getSignature().getSignature().getBytes(propEncoding));
 							myBytes = myKey.encryptString(myHeader, myKey);
 						}
 						
@@ -483,7 +483,7 @@ public class ZipFile {
 				/* If we have a security string */
 				if (theSecurityKey != null) {
 					/* Reject this is the wrong security control */
-					if (!pControl.getSecurityKey().equals(theSecurityKey))
+					if (!pControl.getSignature().getSignature().equals(theSecurityKey))
 						throw new Exception(ExceptionClass.LOGIC,
 			  								"Security control does not match ZipFile Security.");					
 			

@@ -14,8 +14,11 @@ import uk.co.tolcroft.models.HistoryValues;
 import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.security.AsymmetricKey;
+import uk.co.tolcroft.security.AsymmetricKey.AsymKeyType;
+import uk.co.tolcroft.security.PasswordKey;
 import uk.co.tolcroft.security.SecureManager;
 import uk.co.tolcroft.security.SecurityControl;
+import uk.co.tolcroft.security.SecuritySignature;
 import uk.co.tolcroft.security.SymmetricKey;
 import uk.co.tolcroft.security.SymmetricKey.SymKeyType;
 
@@ -36,9 +39,19 @@ public class ControlKey extends DataItem<ControlKey> {
 	public final static int NUMSTEPS	= 3;
 
 	/**
-	 * Control Key Length
+	 * PasswordHash Length
 	 */
-	public final static int CTLLEN 		= AsymmetricKey.IDSIZE;
+	public final static int HASHLEN 	= PasswordKey.HASHSIZE;
+
+	/**
+	 * PublicKey Length
+	 */
+	public final static int PUBLICLEN 	= AsymmetricKey.PUBLICSIZE;
+
+	/**
+	 * PrivateKey Length
+	 */
+	public final static int PRIVATELEN 	= AsymmetricKey.PRIVATESIZE;
 
 	/**
 	 * Control Key Length
@@ -51,20 +64,27 @@ public class ControlKey extends DataItem<ControlKey> {
 	private Map<SymKeyType, DataKey>	theMap	= null;
 	
 	/* Local values */
-	private SecurityControl	theControl	= null;
-	private SecureRandom	theRandom	= null;
+	private SecurityControl	theControl		= null;
+	private SecureRandom	theRandom		= null;
+	private int				theKeyTypeId	= -1;
 	
 	/* Access methods */
 	public  SecurityControl	getSecurityControl()	{ return theControl; }
-	public  String 			getSecurityKey()  		{ return getValues().getSecurityKey(); }
+	public  byte[] 			getPublicKey()  		{ return getValues().getPublicKey(); }
+	public  byte[] 			getPrivateKey()  		{ return getValues().getPrivateKey(); }
+	public  byte[] 			getPasswordHash()  		{ return getValues().getPasswordHash(); }
+	public  AsymKeyType		getKeyType()  			{ return getValues().getKeyType(); }
 
 	/* Linking methods */
 	public ControlKey	getBase() 	{ return (ControlKey)super.getBase(); }
 	public Values  		getValues() { return (Values)super.getCurrentValues(); }	
 	
 	/* Field IDs */
-	public static final int FIELD_KEY	   = DataItem.NUMFIELDS;
-	public static final int NUMFIELDS	   = DataItem.NUMFIELDS+1; 
+	public static final int FIELD_PUBLICKEY	   	= DataItem.NUMFIELDS;
+	public static final int FIELD_PRIVATEKEY   	= DataItem.NUMFIELDS+1;
+	public static final int FIELD_PASSHASH		= DataItem.NUMFIELDS+2;
+	public static final int FIELD_KEYTYPE  		= DataItem.NUMFIELDS+3;
+	public static final int NUMFIELDS	   		= DataItem.NUMFIELDS+4; 
 
 	/**
 	 * Obtain the type of the item
@@ -84,7 +104,10 @@ public class ControlKey extends DataItem<ControlKey> {
 	 */
 	public static String	fieldName(int iField) {
 		switch (iField) {
-			case FIELD_KEY:			return "ControlKey";
+			case FIELD_PUBLICKEY:	return "PublicKey";
+			case FIELD_PRIVATEKEY:	return "PrivateKey";
+			case FIELD_PASSHASH:	return "PasswordHash";
+			case FIELD_KEYTYPE:		return "KeyType";
 			default:		  		return DataItem.fieldName(iField);
 		}
 	}
@@ -104,8 +127,17 @@ public class ControlKey extends DataItem<ControlKey> {
 		Values	myValues = (Values)pValues;
 		String 	myString = "";
 		switch (iField) {
-			case FIELD_KEY:
-				myString += myValues.getSecurityKey(); 
+			case FIELD_PUBLICKEY:
+				myString += Utils.HexStringFromBytes(myValues.getPublicKey()); 
+				break;
+			case FIELD_PRIVATEKEY:
+				myString += Utils.HexStringFromBytes(myValues.getPrivateKey()); 
+				break;
+			case FIELD_PASSHASH:
+				myString += Utils.HexStringFromBytes(myValues.getPasswordHash()); 
+				break;
+			case FIELD_KEYTYPE:
+				myString += (getKeyType() == null) ? ("Id=" + theKeyTypeId) : getKeyType().toString(); 
 				break;
 			default: 		
 				myString += super.formatField(iField, pValues); 
@@ -146,25 +178,48 @@ public class ControlKey extends DataItem<ControlKey> {
 	 * Constructor for loading an encrypted ControlKey 
 	 * @param pList the list to which to add the key to 
 	 * @param uId the id of the ControlKey
-	 * @param pSecurityKey the encrypted string for the key
+	 * @param uKeyTypeId the id of the KeyType
+	 * @param pPasswordHash the passwordHash
+	 * @param pPublicKey the public KeyDef
+	 * @param pPrivateKey the encrypted private KeyDef
 	 */
 	public ControlKey(List     	pList,
 				   	  int		uId,
-				   	  String	pSecurityKey) throws Exception {
+				   	  int		uKeyTypeId,
+				   	  byte[]	pPasswordHash,
+				   	  byte[]	pPublicKey,
+				   	  byte[]	pPrivateKey) throws Exception {
 		/* Initialise the item */
 		super(pList, uId);
 		Values myValues = new Values();
 		setValues(myValues);
 
-		/* Store the key */
-		myValues.setSecurityKey(pSecurityKey);
+		/* Record the IDs */
+		theKeyTypeId	= uKeyTypeId;
 
+		/* Store the details */
+		myValues.setPublicKey(pPublicKey);
+		myValues.setPrivateKey(pPrivateKey);
+		myValues.setPasswordHash(pPasswordHash);
+
+		/* Determine the AsymKeyType */
+		try { myValues.setKeyType(AsymKeyType.fromId(uKeyTypeId)); }
+		catch (Exception e) {
+			throw new Exception(ExceptionClass.DATA,
+								this,
+	            				"Invalid KeyType Id " + uKeyTypeId);
+		}
+		
 		/* Access the Security manager */
-		DataSet 		myData 		= pList.getData();
-		SecureManager 	mySecurity 	= myData.getSecurity();
+		DataSet 			myData 		= pList.getData();
+		SecureManager 		mySecurity 	= myData.getSecurity();
+		SecuritySignature	mySignature	= new SecuritySignature(pPasswordHash,
+																getKeyType(),
+																pPublicKey,
+																pPrivateKey);
 		
 		/* Obtain the required security control */
-		theControl = mySecurity.getSecurityControl(pSecurityKey, "Database");
+		theControl = mySecurity.getSecurityControl(mySignature, "Database");
 		theRandom  = theControl.getRandom();
 		
 		/* Create the DataKey Map */
@@ -191,7 +246,13 @@ public class ControlKey extends DataItem<ControlKey> {
 		/* Obtain the required security control */
 		theControl = mySecurity.getSecurityControl(null, "Database");
 		theRandom  = theControl.getRandom();
-		myValues.setSecurityKey(theControl.getSecurityKey());
+		
+		/* Access and store the signature */
+		SecuritySignature mySign = theControl.getSignature();
+		myValues.setPublicKey(mySign.getEncodedPublicKey());
+		myValues.setPrivateKey(mySign.getSecuredKeyDef());
+		myValues.setPasswordHash(mySign.getPasswordHash());
+		myValues.setKeyType(mySign.getKeyType());
 		
 		/* Create the DataKey Map */
 		theMap = new EnumMap<SymKeyType,DataKey>(SymKeyType.class);
@@ -296,7 +357,12 @@ public class ControlKey extends DataItem<ControlKey> {
 		pushHistory();
 
 		/* Update the Security Control Key */
-		getValues().setSecurityKey(theControl.getSecurityKey());
+		Values 				myValues   	= getValues();
+		SecuritySignature 	mySign 		= theControl.getSignature(); 
+		myValues.setPublicKey(mySign.getEncodedPublicKey());
+		myValues.setPrivateKey(mySign.getSecuredKeyDef());
+		myValues.setPasswordHash(mySign.getPasswordHash());
+		myValues.setKeyType(mySign.getKeyType());
 		
 		/* Loop through the SymKeyType values */
 		for (SymKeyType myType: SymKeyType.values()) {
@@ -463,7 +529,7 @@ public class ControlKey extends DataItem<ControlKey> {
 	}
 	
 	/**
-	 * DataKey List
+	 * ControlKey List
 	 */
 	public static class List  extends DataList<ControlKey> {
 		/* Members */
@@ -471,7 +537,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		public 	DataSet 	getData()	{ return theData; }
 
 		/** 
-		 * Construct an empty CORE static list
+		 * Construct an empty CORE ControlKey list
 	 	 * @param pData the DataSet for the list
 		 */
 		protected List(DataSet pData) { 
@@ -480,7 +546,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		}
 
 		/** 
-		 * Construct an empty generic static list
+		 * Construct an empty generic ControlKey list
 	 	 * @param pData the DataSet for the list
 		 * @param pStyle the style of the list 
 		 */
@@ -490,8 +556,8 @@ public class ControlKey extends DataItem<ControlKey> {
 		}
 
 		/** 
-		 * Construct a generic Static list
-		 * @param pList the source static list 
+		 * Construct a generic ControlKey list
+		 * @param pList the source ControlKey list 
 		 * @param pStyle the style of the list 
 		 */
 		public List(List pList, ListStyle pStyle) { 
@@ -500,9 +566,9 @@ public class ControlKey extends DataItem<ControlKey> {
 		}
 
 		/** 
-		 * Construct a difference static list
-		 * @param pNew the new Static list 
-		 * @param pOld the old Static list 
+		 * Construct a difference ControlKey list
+		 * @param pNew the new ControlKey list 
+		 * @param pOld the old ControlKey list 
 		 */
 		protected List(List pNew, List pOld) { 
 			super(pNew, pOld);
@@ -510,7 +576,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		}
 
 		/** 
-		 * 	Clone a Price list
+		 * 	Clone a ControlKey list
 		 * @return the cloned list
 		 */
 		protected List cloneIt() {return new List(this, ListStyle.CORE); }
@@ -541,15 +607,26 @@ public class ControlKey extends DataItem<ControlKey> {
 
 		/**
 		 *  Add a ControlKey item from a Database/Backup
+		 * @param uId the id of the ControlKey
+		 * @param uKeyTypeId the id of the KeyType
+		 * @param pPasswordHash the passwordHash
+		 * @param pPublicKey the public KeyDef
+		 * @param pPrivateKey the encrypted private KeyDef
 		 */
 		public ControlKey addItem(int  		uId,
-							      String	pSecurityKey) throws Exception {
+			   	  				  int		uKeyTypeId,
+			   	  				  byte[]	pPasswordHash,
+			   	  				  byte[]	pPublicKey,
+			   	  				  byte[]	pPrivateKey) throws Exception {
 			ControlKey     	myKey;
 			
 			/* Create the ControlKey */
 			myKey = new ControlKey(this, 
 								   uId,
-							       pSecurityKey);
+								   uKeyTypeId,
+								   pPasswordHash,
+								   pPublicKey,
+							       pPrivateKey);
 			
 			/* Check that this KeyId has not been previously added */
 			if (!isIdUnique(uId)) 
@@ -624,7 +701,10 @@ public class ControlKey extends DataItem<ControlKey> {
 		private ControlKey cloneControlKey(ControlKey pControlKey) throws Exception {
 			/* Clone the control key */
 			ControlKey myControl = addItem(pControlKey.getId(),
-										   pControlKey.getSecurityKey());
+										   pControlKey.getKeyType().getId(),
+										   pControlKey.getPasswordHash(),
+										   pControlKey.getPublicKey(),
+										   pControlKey.getPrivateKey());
 			
 			/* Access the DataKey List */
 			DataKey.List myKeys = theData.getDataKeys();
@@ -648,16 +728,28 @@ public class ControlKey extends DataItem<ControlKey> {
 	}
 
 	/**
-	 * Values for a static 
+	 * Values for a ControlKey 
 	 */
 	public class Values implements HistoryValues<ControlKey> {
-		private String			theSecurityKey	= null;
+		private byte[]			thePublicKey	= null;
+		private byte[]			thePrivateKey	= null;
+		private byte[]			thePasswordHash	= null;
+		private AsymKeyType		theKeyType		= null;
 		
 		/* Access methods */
-		public  String 			getSecurityKey()  	{ return theSecurityKey; }
+		public  byte[] 			getPublicKey()  	{ return thePublicKey; }
+		public  byte[] 			getPrivateKey()  	{ return thePrivateKey; }
+		public  byte[] 			getPasswordHash()  	{ return thePasswordHash; }
+		public  AsymKeyType		getKeyType()  		{ return theKeyType; }
 		
-		public void setSecurityKey(String pValue) {
-			theSecurityKey = pValue; }
+		public void setPublicKey(byte[] pValue) {
+			thePublicKey 	= pValue; }
+		public void setPrivateKey(byte[] pValue) {
+			thePrivateKey 	= pValue; }
+		public void setPasswordHash(byte[] pValue) {
+			thePasswordHash = pValue; }
+		public void setKeyType(AsymKeyType pValue) {
+			theKeyType 		= pValue; }
 
 		/* Constructor */
 		public Values() {}
@@ -666,7 +758,10 @@ public class ControlKey extends DataItem<ControlKey> {
 		/* Check whether this object is equal to that passed */
 		public boolean histEquals(HistoryValues<ControlKey> pCompare) {
 			Values myValues = (Values)pCompare;
-			if (Utils.differs(theSecurityKey,   myValues.theSecurityKey))   	return false;
+			if (theKeyType != myValues.theKeyType)   						return false;
+			if (Utils.differs(thePublicKey,		myValues.thePublicKey))   	return false;
+			if (Utils.differs(thePrivateKey,	myValues.thePrivateKey))   	return false;
+			if (Utils.differs(thePasswordHash,	myValues.thePasswordHash))  return false;
 			return true;
 		}
 		
@@ -676,14 +771,26 @@ public class ControlKey extends DataItem<ControlKey> {
 		}
 		public void    copyFrom(HistoryValues<?> pSource) {
 			Values myValues = (Values)pSource;
-			theSecurityKey	= myValues.getSecurityKey();
+			thePublicKey	= myValues.getPublicKey();
+			thePrivateKey	= myValues.getPrivateKey();
+			thePasswordHash	= myValues.getPasswordHash();
+			theKeyType		= myValues.getKeyType();
 		}
 		public boolean	fieldChanged(int fieldNo, HistoryValues<ControlKey> pOriginal) {
 			Values 	pValues = (Values)pOriginal;
 			boolean	bResult = false;
 			switch (fieldNo) {
-				case FIELD_KEY:
-					bResult = (Utils.differs(theSecurityKey,	pValues.theSecurityKey));
+				case FIELD_PUBLICKEY:
+					bResult = (Utils.differs(thePublicKey,		pValues.thePublicKey));
+					break;
+				case FIELD_PRIVATEKEY:
+					bResult = (Utils.differs(thePrivateKey,		pValues.thePrivateKey));
+					break;
+				case FIELD_PASSHASH:
+					bResult = (Utils.differs(thePasswordHash,	pValues.thePasswordHash));
+					break;
+				case FIELD_KEYTYPE:
+					bResult = (theKeyType != pValues.theKeyType);
 					break;
 			}
 			return bResult;

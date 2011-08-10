@@ -4,7 +4,7 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.*;
 
-public class TableRate extends DatabaseTable<AcctRate> {
+public class TableRate extends TableEncrypted<AcctRate> {
 	/**
 	 * The name of the Rates table
 	 */
@@ -33,8 +33,8 @@ public class TableRate extends DatabaseTable<AcctRate> {
 	 * @param pTableDef the table definition
 	 */
 	protected void defineTable(TableDefinition	pTableDef) {
+		super.defineTable(pTableDef);
 		theTableDef = pTableDef;
-		theTableDef.addReferenceColumn(EncryptedItem.FIELD_CONTROL, EncryptedItem.NAME_CTLID, TableControlKeys.TableName);
 		theTableDef.addReferenceColumn(AcctRate.FIELD_ACCOUNT, AcctRate.fieldName(AcctRate.FIELD_ACCOUNT), TableAccount.TableName);
 		theTableDef.addEncryptedColumn(AcctRate.FIELD_RATE, AcctRate.fieldName(AcctRate.FIELD_RATE), EncryptedItem.RATELEN);
 		theTableDef.addNullEncryptedColumn(AcctRate.FIELD_BONUS, AcctRate.fieldName(AcctRate.FIELD_BONUS), EncryptedItem.RATELEN);
@@ -52,15 +52,13 @@ public class TableRate extends DatabaseTable<AcctRate> {
 	}
 	
 	/* Load the rate */
-	protected void loadItem(int pId) throws Exception {
-		int	    		myControlId;
+	protected void loadItem(int pId, int pControlId) throws Exception {
 		int	  			myAccountId;
 		byte[]			myRate;
 		byte[] 			myBonus;
 		java.util.Date  myEndDate;
 		
 		/* Get the various fields */
-		myControlId	= theTableDef.getIntegerValue(EncryptedItem.FIELD_CONTROL);
 		myAccountId = theTableDef.getIntegerValue(AcctRate.FIELD_ACCOUNT);
 		myRate 		= theTableDef.getBinaryValue(AcctRate.FIELD_RATE);
 		myBonus     = theTableDef.getBinaryValue(AcctRate.FIELD_BONUS);
@@ -68,7 +66,7 @@ public class TableRate extends DatabaseTable<AcctRate> {
 	
 		/* Add into the list */
 		theList.addItem(pId,
-						myControlId,
+						pControlId,
 			            myAccountId, 
 			            myRate,
 			            myEndDate, 
@@ -82,11 +80,11 @@ public class TableRate extends DatabaseTable<AcctRate> {
 	protected void setFieldValue(AcctRate	pItem, int iField) throws Exception  {
 		/* Switch on field id */
 		switch (iField) {
-			case EncryptedItem.FIELD_CONTROL: 	theTableDef.setIntegerValue(iField, pItem.getControlKey().getId());	break;
 			case AcctRate.FIELD_ACCOUNT:	theTableDef.setIntegerValue(iField, pItem.getAccount().getId());	break;
 			case AcctRate.FIELD_RATE:		theTableDef.setBinaryValue(iField, pItem.getRateBytes());			break;
 			case AcctRate.FIELD_BONUS:		theTableDef.setBinaryValue(iField, pItem.getBonusBytes());			break;
 			case AcctRate.FIELD_ENDDATE:	theTableDef.setDateValue(iField, pItem.getEndDate());				break;
+			default:						super.setFieldValue(pItem, iField);									break;
 		}
 	}	
 }

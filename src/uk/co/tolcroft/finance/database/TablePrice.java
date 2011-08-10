@@ -4,7 +4,7 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.*;
 
-public class TablePrice extends DatabaseTable<AcctPrice> {
+public class TablePrice extends TableEncrypted<AcctPrice> {
 	/**
 	 * The name of the Prices table
 	 */
@@ -33,8 +33,8 @@ public class TablePrice extends DatabaseTable<AcctPrice> {
 	 * @param pTableDef the table definition
 	 */
 	protected void defineTable(TableDefinition	pTableDef) {
+		super.defineTable(pTableDef);
 		theTableDef = pTableDef;
-		theTableDef.addReferenceColumn(EncryptedItem.FIELD_CONTROL, EncryptedItem.NAME_CTLID, TableControlKeys.TableName);
 		theTableDef.addReferenceColumn(AcctPrice.FIELD_ACCOUNT, AcctPrice.fieldName(AcctPrice.FIELD_ACCOUNT), TableAccount.TableName);
 		theTableDef.addDateColumn(AcctPrice.FIELD_DATE, AcctPrice.fieldName(AcctPrice.FIELD_DATE));
 		theTableDef.addEncryptedColumn(AcctPrice.FIELD_PRICE, AcctPrice.fieldName(AcctPrice.FIELD_PRICE), EncryptedItem.PRICELEN);
@@ -51,21 +51,19 @@ public class TablePrice extends DatabaseTable<AcctPrice> {
 	}
 	
 	/* Load the price */
-	protected void loadItem(int pId) throws Exception {
-		int	    		myControlId;
+	protected void loadItem(int pId, int pControlId) throws Exception {
 		int  			myAccountId;
 		byte[] 			myPrice;
 		java.util.Date  myDate;
 		
 		/* Get the various fields */
-		myControlId	= theTableDef.getIntegerValue(EncryptedItem.FIELD_CONTROL);
 		myAccountId = theTableDef.getIntegerValue(AcctPrice.FIELD_ACCOUNT);
 		myDate 		= theTableDef.getDateValue(AcctPrice.FIELD_DATE);
 		myPrice     = theTableDef.getBinaryValue(AcctPrice.FIELD_PRICE);
 	
 		/* Add into the list */
 		theList.addItem(pId,
-						myControlId,
+						pControlId,
 		           	    myDate,
 			            myAccountId, 
 			            myPrice);
@@ -78,10 +76,10 @@ public class TablePrice extends DatabaseTable<AcctPrice> {
 	protected void setFieldValue(AcctPrice	pItem, int iField) throws Exception  {
 		/* Switch on field id */
 		switch (iField) {
-			case EncryptedItem.FIELD_CONTROL: 	theTableDef.setIntegerValue(iField, pItem.getControlKey().getId());	break;
 			case AcctPrice.FIELD_ACCOUNT:	theTableDef.setIntegerValue(AcctPrice.FIELD_ACCOUNT, pItem.getAccount().getId());	break;
 			case AcctPrice.FIELD_DATE:		theTableDef.setDateValue(AcctPrice.FIELD_DATE, pItem.getDate());					break;
 			case AcctPrice.FIELD_PRICE:		theTableDef.setBinaryValue(AcctPrice.FIELD_PRICE, pItem.getPriceBytes());			break;
+			default:						super.setFieldValue(pItem, iField);													break;
 		}
 	}
 }

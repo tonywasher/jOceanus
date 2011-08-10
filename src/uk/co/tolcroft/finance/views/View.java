@@ -435,7 +435,7 @@ public class View {
 		}
 	}
 	
-	/* AccountType Extract Class */
+	/* Static Extract Class */
 	public class ViewAccountTypes extends AccountType.List {
 		/* Access methods */
 		public AccountType.List getAccountTypes() { return this; }

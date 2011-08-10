@@ -3,6 +3,7 @@ package uk.co.tolcroft.security;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.spec.ECGenParameterSpec;
@@ -17,6 +18,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.security.SymmetricKey.KeyDef;
 import uk.co.tolcroft.security.SymmetricKey.SymKeyType;
 
@@ -27,95 +29,89 @@ import uk.co.tolcroft.security.SymmetricKey.SymKeyType;
  */
 public class AsymmetricKey {
 	/**
-	 * Encrypted ID Key Size
-	 */
-	public 	  final static int		IDSIZE   		= 8000;
-	
-	/**
 	 * Initialisation Vector size 
 	 */
-	public    final static int		IVSIZE   		= 16;
+	public    final static int		IVSIZE   			= 16;
+	
+	/**
+	 * Encoded Size for Public Keys
+	 */
+	public static final int 		PUBLICSIZE	 		= 512;
+	
+	/**
+	 * Encrypted Size for Private Keys
+	 */
+	public static final int 		PRIVATESIZE	 		= 1024;
 	
 	/**
 	 * The Public/Private Key Pair
 	 */
-	private KeyPair					theKeyPair		= null;
+	private KeyPair					theKeyPair			= null;
 
 	/**
 	 * The Key Type 
 	 */
-	private AsymKeyType				theKeyType		= null;
+	private AsymKeyType				theKeyType			= null;
 	
-	/**
-	 * The SymKeyType
-	 */
-	private SymKeyType				theSymKeyType	= null;
-	
-	/**
-	 * The password key 
-	 */
-	private PasswordKey				thePassKey		= null;
-
 	/**
 	 * The secure random generator
 	 */
-	private SecureRandom			theRandom		= null;
+	private SecureRandom			theRandom			= null;
 
 	/**
 	 * The Key Agreement object
 	 */
-	private KeyAgreement			theKeyAgreement	= null;
+	private KeyAgreement			theKeyAgreement		= null;
 
 	/**
-	 * The Security Key 
+	 * The Encoded Public Key 
 	 */
-	private String					theSecurityKey	= null;
+	private byte[]					thePublicKeyDef		= null;
 
 	/**
-	 * The Public Key 
+	 * The Encoded Private Key 
 	 */
-	private X509EncodedKeySpec		thePublicKey	= null;
+	private byte[]					thePrivateKeyDef	= null;
 
 	/* Access methods */
 	public AsymKeyType	getKeyType()	{ return theKeyType; }
-	public SymKeyType	getSymKeyType()	{ return theSymKeyType; }
 	public boolean		isPublicOnly()	{ return (theKeyPair.getPrivate() == null); }
+	public PrivateKey	getPrivateKey()	{ return theKeyPair.getPrivate(); }
 	
 	/**
 	 * Constructor for new key
 	 * @param pKeyType the key type 
-	 * @param pSymKeyType the symmetric key type 
 	 * @param pPassKey the password key 
 	 * @param pRandom the secure random generator 
 	 */
-	protected  AsymmetricKey(AsymKeyType	pKeyType,
-			 				 SymKeyType		pSymKeyType,
-							 PasswordKey	pPassKey,
-							 SecureRandom	pRandom) throws Exception {
+	public AsymmetricKey(AsymKeyType	pKeyType,
+						 SecureRandom	pRandom) throws Exception {
 		/* Store the password key, key type and the secure random */
 		theKeyType		= pKeyType;
-		thePassKey		= pPassKey;
 		theRandom		= pRandom;
-		if (theKeyType.isElliptic())
-			theSymKeyType 	= pSymKeyType;
 		
 		/* Generate the new KeyPair */
 		theKeyPair	= AsymKeyPairGenerator.getInstance(theKeyType, theRandom);
+		
+		/* Access the encoded formats */
+		thePrivateKeyDef = theKeyPair.getPrivate().getEncoded();
+		thePublicKeyDef  = theKeyPair.getPublic().getEncoded();
+		
+		/* Check whether the PublicKey is too large */
+		if (thePublicKeyDef.length > PUBLICSIZE)
+			throw new Exception(ExceptionClass.DATA,
+								"PublicKey too large: " + thePublicKeyDef.length);			
 	}
 	
 	/**
 	 * Constructor from public KeySpec
 	 * @param pKeySpec the public KeySpec 
 	 * @param pKeyType the key type 
-	 * @param pSymKeyType the symmetric key type 
 	 */
-	protected  AsymmetricKey(X509EncodedKeySpec	pKeySpec,
-							 AsymKeyType		pKeyType,
-							 SymKeyType			pSymKeyType) throws Exception {
+	public AsymmetricKey(X509EncodedKeySpec	pKeySpec,
+						 AsymKeyType		pKeyType) throws Exception {
 		/* Store the key types */
 		theKeyType		= pKeyType;
-		if (theKeyType.isElliptic())
-			theSymKeyType 	= pSymKeyType;
 		
 		/* Protect against exceptions */
 		try {
@@ -123,6 +119,9 @@ public class AsymmetricKey {
 			KeyFactory myFactory = KeyFactory.getInstance(pKeyType.getAlgorithm(),
 				 										  SecurityControl.BCSIGN);	
 			theKeyPair = new KeyPair(myFactory.generatePublic(pKeySpec), null);
+
+			/* Access the encoded formats */
+			thePublicKeyDef  = theKeyPair.getPublic().getEncoded();
 		}
 		
 		catch (Throwable e) {
@@ -133,29 +132,50 @@ public class AsymmetricKey {
 	}
 	
 	/**
-	 * Constructor from X509EncodedKeySpec
-	 * @param pKeySpec the encoded public key 
+	 * Constructor from Security Signature
+	 * @param pSignature the signature 
 	 * @param pKeyType the key type 
-	 * @param pSymKeyType the symmetric key type 
 	 * @param pRandom the secure random generator 
 	 */
-	protected  AsymmetricKey(String			pSecurityKey,
-							 AsymKeyType	pKeyType,
-							 SymKeyType		pSymKeyType,
-			 				 PasswordKey	pPassKey,
-			 				 SecureRandom	pRandom) throws Exception {
+	protected  AsymmetricKey(PrivateKey			pPrivateKey,
+							 X509EncodedKeySpec	pPublicKey,
+							 AsymKeyType		pKeyType,
+			 				 SecureRandom		pRandom) throws Exception {
 		/* Store the password key, key type and the secure random */
 		theKeyType	= pKeyType;
-		thePassKey	= pPassKey;
 		theRandom	= pRandom;
 		
-		/* Obtain the unwrapped KeyPair */
-		theKeyPair = thePassKey.unwrapKeyPair(pSecurityKey, pKeyType);
+		/* Protect against exceptions */
+		try {
+			/* Obtain the public key */
+			KeyFactory myFactory = KeyFactory.getInstance(pKeyType.getAlgorithm(),
+			 										  	  SecurityControl.BCSIGN);	
+			theKeyPair = new KeyPair(myFactory.generatePublic(pPublicKey), pPrivateKey);
+		}
 		
-		/* Store the security key */
-		theSecurityKey = pSecurityKey;
-		if (theKeyType.isElliptic())
-			theSymKeyType 	= pSymKeyType;
+		catch (Throwable e) {
+			throw new Exception(ExceptionClass.CRYPTO,
+								"Unable to parse X509 KeySpec",
+								e);
+		}
+		
+		/* Access the encoded formats */
+		thePrivateKeyDef = theKeyPair.getPrivate().getEncoded();
+		thePublicKeyDef  = theKeyPair.getPublic().getEncoded();
+	}
+	
+	/**
+	 * Hash for the Asymmetric Key
+	 * @return the hash value
+	 */
+	public int hashCode() {
+		/* Calculate and return the hashCode for this asymmetric key */
+		int hashCode = 19 * thePublicKeyDef.hashCode();
+		if (thePrivateKeyDef != null)
+			hashCode += thePrivateKeyDef.hashCode();
+		hashCode *= 19;
+		hashCode += theKeyType.getId();
+		return hashCode;
 	}
 	
 	/**
@@ -164,9 +184,6 @@ public class AsymmetricKey {
 	 * @return <code>true/false</code> 
 	 */
 	public boolean equals(Object pThat) {
-		String myKey;
-		String myThatKey;
-		
 		/* Handle the trivial cases */
 		if (this == pThat) return true;
 		if (pThat == null) return false;
@@ -177,79 +194,38 @@ public class AsymmetricKey {
 		/* Access the target Key */
 		AsymmetricKey myThat = (AsymmetricKey)pThat;
 	
-		/* Protect against exceptions */
-		try {
-			/* Access the two security keys */
-			myKey 		= getSecurityKey();
-			myThatKey 	= myThat.getSecurityKey();
-		}
+		/* Not equal if different key-types */
+		if (myThat.theKeyType != theKeyType) return false;
 		
-		/* Handle failure */
-		catch (Exception e) { return false; }
+		/* Ensure that the private/public keys are identical */
+		if (Utils.differs(myThat.thePrivateKeyDef, thePrivateKeyDef)) 	return false;
+		if (Utils.differs(myThat.thePublicKeyDef, thePublicKeyDef)) 	return false;
 		
-		/* Compare the two */
-		return myKey.equals(myThatKey);
+		/* Identical if those tests succeed */
+		return true;
 	}
 
-	/**
-	 * Set new password key
-	 * @param pPassKey the password key
-	 */
-	public void	setPasswordKey(PasswordKey pPassKey) {
-		/* Access the relevant pass key */
-		thePassKey = pPassKey;
-		
-		/* Reset the Security key */
-		theSecurityKey 	= null;
-	}
-	
-	/**
-	 * Obtain the wrapped security key 
-	 * @return the Wrapped Public/Private pair
-	 */
-	public String		getSecurityKey() throws Exception {
-		/* If we do not know the security key */
-		if ((theSecurityKey == null)  && (!isPublicOnly())) {
-			/* Calculate it */
-			theSecurityKey = thePassKey.wrapKeyPair(theKeyPair, false);
-			
-			/* Keep a look out for the key being too large */
-			if (theSecurityKey.length() > IDSIZE)
-				throw new Exception(ExceptionClass.CRYPTO,
-									"Security Key length too large: " + theSecurityKey.length());
-		}
-		
-		/* Return it */
-		return theSecurityKey; 
-	}
-	
 	/**
 	 * Obtain the encoded public key 
 	 * @return the encoded public key
 	 */
 	public X509EncodedKeySpec getPublicKey() throws Exception {
-		/* If we do not know the public key */
-		if (thePublicKey == null) {
-			/* Calculate it */
-			thePublicKey = new X509EncodedKeySpec(theKeyPair.getPublic().getEncoded());
-		}
-		
-		/* Return it */
-		return thePublicKey; 
+		/* Return X509 format */
+		return new X509EncodedKeySpec(thePublicKeyDef); 
 	}
 	
 	/**
-	 * Obtain secret key from wrapped key
-	 * @param pWrappedKey the wrapped key
-	 * @param pKeyType the key type that is being unwrapped
-	 * @return the Secret key
+	 * Rebuild a SymmetricKey from secured key definition
+	 * @param pSecuredKeyDef the secured key definition
+	 * @param pKeyType the Symmetric key type
+	 * @return the Symmetric key
 	 */
-	protected SecretKey	unwrapSecretKey(byte[]		pWrappedKey,
-										SymKeyType 	pKeyType) throws Exception {
-		SecretKey	myKey;
-		KeyDef 		myKeyDef;
-		byte[]		myWrappedKey;
-		Cipher		myCipher;
+	public SymmetricKey	getSymmetricKey(byte[] 		pSecuredKeyDef,
+										SymKeyType	pKeyType) throws Exception {
+		SymmetricKey 	mySymKey;
+		SecretKey		myKey;
+		KeyDef 			myKeyDef;
+		Cipher			myCipher;
 		
 		/* Cannot unwrap unless we have the private key */
 		if (isPublicOnly())
@@ -258,9 +234,6 @@ public class AsymmetricKey {
 			
 		/* Protect against exceptions */
 		try {			
-			/* Reverse the obscuring of the array */
-			myWrappedKey = thePassKey.obscureArray(pWrappedKey);
-		
 			/* If we are elliptic */
 			if (theKeyType.isElliptic()) {
 				/* Access the internal secret key definition */
@@ -284,9 +257,12 @@ public class AsymmetricKey {
 			}
 			
 			/* unwrap the key */
-			myKey = (SecretKey)myCipher.unwrap(myWrappedKey, 
+			myKey = (SecretKey)myCipher.unwrap(pSecuredKeyDef, 
 										   	   pKeyType.getAlgorithm(),
 										   	   Cipher.SECRET_KEY);
+
+			/* Build the symmetric key */
+			mySymKey = new SymmetricKey(myKey, pKeyType, theRandom);
 		}
 		
 		catch (Exception e) { throw e; }
@@ -297,30 +273,29 @@ public class AsymmetricKey {
 		}
 		
 		/* Return the new key */
-		return myKey;
+		return mySymKey;
 	}
 	
 	/**
-	 * Wrap secret key
-	 * @param pKey the Key to wrap
-	 * @param pKeyType the KeyType of the key to wrap  
-	 * @return the wrapped secret key
+	 * Get the Secured Key Definition for a Symmetric Key
+	 * @param pKey the Symmetric Key to secure
+	 * @return the secured key definition
 	 */
-	protected byte[] wrapSecretKey(SecretKey 	pKey,
-								   SymKeyType	pKeyType) throws Exception {
-		byte[] 	myWrappedKey;
-		Cipher	myCipher;
-		KeyDef 	myKey;
+	public byte[] getSecuredKeyDef(SymmetricKey 	pKey) throws Exception {
+		byte[] 		myWrappedKey;
+		Cipher		myCipher;
+		KeyDef 		myKey;
+		SymKeyType	myKeyType = pKey.getKeyType();
 		
 		/* Protect against exceptions */
 		try {			
 			/* If we are elliptic */
 			if (theKeyType.isElliptic()) {
 				/* Access the internal secret key definition */
-				myKey = getSharedKeyDef(this, pKeyType);
+				myKey = getSharedKeyDef(this, myKeyType);
 
 				/* Initialise the cipher */
-				myCipher	= Cipher.getInstance(pKeyType.getAlgorithm(), 
+				myCipher	= Cipher.getInstance(myKeyType.getAlgorithm(), 
 												 SecurityControl.BCSIGN);
 				myCipher.init(Cipher.WRAP_MODE, 
 							  myKey.getKey(), 
@@ -337,10 +312,7 @@ public class AsymmetricKey {
 			}
 			
 			/* wrap the key */
-			myWrappedKey = myCipher.wrap(pKey);
-			
-			/* Obscure the array */
-			myWrappedKey = thePassKey.obscureArray(myWrappedKey);			
+			myWrappedKey = myCipher.wrap(pKey.getSecretKey());
 		}
 		
 		catch (Throwable e) {
@@ -391,19 +363,41 @@ public class AsymmetricKey {
 			/* Generate the secret  */
 			byte[] mySecret = theKeyAgreement.generateSecret();
 			
+			/* If we have not been told a KeyType */
+			if (pKeyType == null) {
+				/* Access the first byte of the secret */
+				byte myType = mySecret[0];
+				
+				/* Normalise it according to the number of SymKeyTypes */
+				myType %= SymKeyType.values().length;
+				myType += 1;
+				
+				/* Access the KeyType */
+				pKeyType = SymKeyType.fromId(myType);
+			}
+			
 			/* Determine the key length in bytes */
 			myKeyLen = pKeyType.getKeySize() / 8;
-			
+				
 			/* If the secret is not long enough */
 			if (mySecret.length < myKeyLen + pKeyType.getIvLen()) 
 				throw new Exception(ExceptionClass.CRYPTO,
 									"Shared secret is insufficient in length"); 
-			
+						
+			/* Adjust the secret according to the KeyType to ensure different results */
+			byte[] myNew = new byte[mySecret.length];
+			int    myIndex = 3*pKeyType.getId();
+			System.arraycopy(mySecret, myIndex, myNew, 0, mySecret.length-myIndex);
+			System.arraycopy(mySecret, 0, myNew, mySecret.length-myIndex, myIndex);
+			mySecret = myNew;
+				
 			/* Build the secret key specification */
 			myKey = new SecretKeySpec(Arrays.copyOf(mySecret, myKeyLen), pKeyType.getAlgorithm());
 
 			/* Build the definition */
-			myKeyDef = new KeyDef(myKey, Arrays.copyOfRange(mySecret, myKeyLen, myKeyLen+pKeyType.getIvLen()-1));
+			myKeyDef = new KeyDef(pKeyType, 
+								  myKey, 
+								  Arrays.copyOfRange(mySecret, myKeyLen, myKeyLen+pKeyType.getIvLen()));
 		}
 		
 		/* Handle exceptions */
@@ -546,28 +540,22 @@ public class AsymmetricKey {
 			throw new Exception(ExceptionClass.LOGIC,
 								"Asymmetric Encryption must be between similar partners");
 		
-		/* Target must be identical symmetric key type if elliptic */
-		if (theKeyType.isElliptic() &&
-			(pTarget.theSymKeyType != theSymKeyType)) 
-			throw new Exception(ExceptionClass.LOGIC,
-								"Asymmetric Elliptic Encryption must be between similar partners");
-		
 		/* Protect against exceptions */
 		try {
 			/* If we are elliptic */
 			if (theKeyType.isElliptic()) {
 				/* Access the internal secret key definition */
-				KeyDef myKey = getSharedKeyDef(pTarget, theSymKeyType);
+				KeyDef myKey = getSharedKeyDef(pTarget, null);
 
 				/* Initialise the cipher */
-				Cipher myCipher	= Cipher.getInstance(theSymKeyType.getAlgorithm(), 
+				Cipher myCipher	= Cipher.getInstance(myKey.getType().getAlgorithm(), 
 													 SecurityControl.BCSIGN);
 				myCipher.init(Cipher.ENCRYPT_MODE, 
 							  myKey.getKey(), 
 							  new IvParameterSpec(myKey.getIv()));
 			
 				/* Create a Security Cipher and encrypt the string */
-				SecurityCipher mySecCipher = new SecurityCipher(myCipher, myKey.getIv());
+				DataCipher mySecCipher = new DataCipher(myCipher);
 				return mySecCipher.encryptString(pString);
 			}
 		
@@ -678,28 +666,22 @@ public class AsymmetricKey {
 			throw new Exception(ExceptionClass.LOGIC,
 								"Asymmetric Encryption must be between similar partners");
 		
-		/* Source must be identical symmetric key type if elliptic */
-		if (theKeyType.isElliptic() &&
-			(pSource.theSymKeyType != theSymKeyType)) 
-			throw new Exception(ExceptionClass.LOGIC,
-								"Asymmetric Elliptic Encryption must be between similar partners");
-		
 		/* Protect against exceptions */
 		try {
 			/* If we are elliptic */
 			if (theKeyType.isElliptic()) {
 				/* Access the internal secret key definition */
-				KeyDef myKey = getSharedKeyDef(pSource, theSymKeyType);
+				KeyDef myKey = getSharedKeyDef(pSource, null);
 
 				/* Initialise the cipher */
-				Cipher myCipher	= Cipher.getInstance(theSymKeyType.getAlgorithm(), 
+				Cipher myCipher	= Cipher.getInstance(myKey.getType().getAlgorithm(), 
 													 SecurityControl.BCSIGN);
 				myCipher.init(Cipher.DECRYPT_MODE, 
 							  myKey.getKey(), 
 							  new IvParameterSpec(myKey.getIv()));
 			
 				/* Create a Security Cipher and encrypt the string */
-				SecurityCipher mySecCipher = new SecurityCipher(myCipher, myKey.getIv());
+				DataCipher mySecCipher = new DataCipher(myCipher);
 				return mySecCipher.decryptString(pBytes);
 			}
 		

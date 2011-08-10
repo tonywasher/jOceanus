@@ -3,8 +3,8 @@ package uk.co.tolcroft.security;
 import java.security.spec.AlgorithmParameterSpec;
 
 import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEParameterSpec;
 
 import org.bouncycastle.util.Arrays;
 
@@ -12,67 +12,50 @@ import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
-public class SecurityCipher {
-	/**
-	 * Buffer size for transfers
-	 */
-	protected final static int  BUFSIZE   		= 1024;	
-
+public class DataCipher {
 	/**
 	 * The cipher
 	 */
 	private Cipher 				theCipher 		= null;
 		
 	/**
-	 * The key
+	 * The SymmetricKey (if used)
 	 */
-	private SecretKey 			theKey 			= null;
+	private SymmetricKey 		theSymKey 		= null;
 		
 	/**
-	 * The transfer buffer
+	 * The PasswordKey (if used)
 	 */
-	private byte[]    			theBuffer		= null;
-	
-	/**
-	 * The initialisation vector
-	 */
-	private byte[]    			theInitVector	= null;
-	
-	/**
-	 * Obtain the output buffer
-	 * @return the output buffer
-	 */
-	public byte[] getBuffer() { return theBuffer; }
-	
+	private PasswordKey 		thePassKey 		= null;
+		
 	/**
 	 * Constructor
-	 * @param pCipher the cipher
-	 * @param pVector the initialisation vector
+	 * @param pCipher the initialised cipher
 	 */
-	protected SecurityCipher(Cipher pCipher,
-							 byte[]	pVector) {
+	protected DataCipher(Cipher 		pCipher) {
 		theCipher 		= pCipher;
-		theInitVector	= pVector;
-		theBuffer		= new byte[BUFSIZE];
 	}
 	
 	/**
 	 * Constructor
-	 * @param pCipher the cipher
-	 * @param pKey the Key
+	 * @param pCipher the uninitialised cipher
+	 * @param pKey the Symmetric Key
 	 */
-	protected SecurityCipher(Cipher 		pCipher,
-							 SymmetricKey 	pKey) {
+	protected DataCipher(Cipher 		pCipher,
+						 SymmetricKey 	pKey) {
 		theCipher 		= pCipher;
-		theKey			= pKey.getSecretKey();
+		theSymKey		= pKey;
 	}
 	
 	/**
-	 * Get Initialisation vector
-	 * @return the initialisation vector
+	 * Constructor
+	 * @param pCipher the uninitialised cipher
+	 * @param pKey the Password Key
 	 */
-	public byte[] getInitVector() {
-		return theInitVector;
+	protected DataCipher(Cipher 		pCipher,
+						 PasswordKey 	pKey) {
+		theCipher 		= pCipher;
+		thePassKey		= pKey;
 	}
 	
 	/**
@@ -84,14 +67,12 @@ public class SecurityCipher {
 	 */
 	public byte[] encryptBytes(byte[] pBytes,
 							   byte[] pVector) throws Exception {
-		AlgorithmParameterSpec 	myParms;
 		byte[]					myBytes;
 		
 		/* Protect against exceptions */
 		try {
-			/* Initialise the cipher using the password */
-			myParms = new IvParameterSpec(pVector);
-			theCipher.init(Cipher.ENCRYPT_MODE, theKey, myParms);
+			/* Initialise the cipher using the vector */
+			initialiseEncryption(pVector);
 			
 			/* Encrypt the byte array */
 			myBytes = theCipher.doFinal(pBytes);
@@ -115,14 +96,12 @@ public class SecurityCipher {
 	 */
 	public byte[] decryptBytes(byte[] pBytes,
 							   byte[] pVector) throws Exception {
-		AlgorithmParameterSpec 	myParms;
 		byte[]					myBytes;
 		
 		/* Protect against exceptions */
 		try {
-			/* Initialise the cipher using the password */
-			myParms = new IvParameterSpec(pVector);
-			theCipher.init(Cipher.DECRYPT_MODE, theKey, myParms);
+			/* Initialise the cipher using the vector */
+			initialiseDecryption(pVector);
 			
 			/* Encrypt the byte array */
 			myBytes = theCipher.doFinal(pBytes);
@@ -252,63 +231,48 @@ public class SecurityCipher {
 	}		
 
 	/**
-	 * Update Cipher
-	 * @param pBytes Bytes to update cipher with
-	 * @param pOffset offset within pBytes to read bytes from
-	 * @param pLength length of data to update with
-	 * @return number of bytes transferred to output buffer 
+	 * Initialise encryption
+	 * @param pVector initialisation vector
 	 */
-	public int update(byte[] pBytes, int pOffset, int pLength) throws Exception {
-		int iNumBytes;
-		
-		/* Protect against exceptions */
-		try {
-			/* Check how long a buffer we need */
-			iNumBytes = theCipher.getOutputSize(pLength);
-		
-			/* Extend the buffer if required */
-			if (iNumBytes > theBuffer.length)
-				theBuffer = new byte[iNumBytes];
-		
-			/* Update the data */
-			iNumBytes = theCipher.update(pBytes, pOffset, pLength, theBuffer);					
+	private void initialiseEncryption(byte[] pVector) throws Throwable {
+		PBEParameterSpec 		mySpec;
+		AlgorithmParameterSpec 	myParms;
+
+		/* If we have a symmetric key */
+		if (theSymKey != null) {
+			/* Initialise the cipher using the vector */
+			myParms = new IvParameterSpec(pVector);
+			theCipher.init(Cipher.ENCRYPT_MODE, theSymKey.getSecretKey(), myParms);
 		}
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
-								"Failed to update cipher",
-								e);
+
+		/* else if we have a password key */
+		else if (thePassKey != null) {
+			/* Initialise the cipher with the initialisation vector vector */
+			mySpec 		= new PBEParameterSpec(pVector, thePassKey.getKeyMode().getThirdIterate());
+			theCipher.init(Cipher.ENCRYPT_MODE, thePassKey.getSecretKey(), mySpec);
 		}
-		
-		/* Return to caller */
-		return iNumBytes;
-	}
-	
+	}			
+
 	/**
-	 * Finish Cipher encrypting/decrypting any data buffered within the cipher
-	 * @return number of bytes transferred to output buffer 
+	 * Initialise decryption
+	 * @param pVector initialisation vector
 	 */
-	public int finish() throws Exception {
-		int iNumBytes;
-		
-		/* Protect against exceptions */
-		try {
-			/* Check how long a buffer we need to handle buffered data*/
-			iNumBytes = theCipher.getOutputSize(0);
-		
-			/* Extend the buffer if required */
-			if (iNumBytes > theBuffer.length)
-				theBuffer = new byte[iNumBytes];
-		
-			/* Update the data */
-			iNumBytes = theCipher.doFinal(theBuffer, 0);
+	private void initialiseDecryption(byte[] pVector) throws Throwable {
+		PBEParameterSpec 		mySpec;
+		AlgorithmParameterSpec 	myParms;
+
+		/* If we have a symmetric key */
+		if (theSymKey != null) {
+			/* Initialise the cipher using the vector */
+			myParms = new IvParameterSpec(pVector);
+			theCipher.init(Cipher.DECRYPT_MODE, theSymKey.getSecretKey(), myParms);
 		}
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
-								"Failed to finish cipher operation",
-								e);
+
+		/* else if we have a password key */
+		else if (thePassKey != null) {
+			/* Initialise the cipher with the initialisation vector vector */
+			mySpec 		= new PBEParameterSpec(pVector, thePassKey.getKeyMode().getThirdIterate());
+			theCipher.init(Cipher.ENCRYPT_MODE, thePassKey.getSecretKey(), mySpec);						
 		}
-		
-		/* Return to caller */
-		return iNumBytes;
-	}
+	}			
 }

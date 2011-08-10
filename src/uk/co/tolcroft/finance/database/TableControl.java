@@ -33,6 +33,7 @@ public class TableControl extends DatabaseTable<ControlData> {
 	 * @param pTableDef the table definition
 	 */
 	protected void defineTable(TableDefinition	pTableDef) {
+		super.defineTable(pTableDef);
 		theTableDef = pTableDef;
 		theTableDef.addIntegerColumn(ControlData.FIELD_VERS, ControlData.fieldName(ControlData.FIELD_VERS));
 		theTableDef.addReferenceColumn(ControlData.FIELD_CONTROL, ControlData.fieldName(ControlData.FIELD_CONTROL), TableControlKeys.TableName);
@@ -67,6 +68,7 @@ public class TableControl extends DatabaseTable<ControlData> {
 		switch (iField) {
 			case ControlData.FIELD_VERS:	theTableDef.setIntegerValue(iField, pItem.getDataVersion());			break;
 			case ControlData.FIELD_CONTROL:	theTableDef.setIntegerValue(iField,  pItem.getControlKey().getId());	break;
+			default:						super.setFieldValue(pItem, iField);										break;
 		}
 	}
 }
