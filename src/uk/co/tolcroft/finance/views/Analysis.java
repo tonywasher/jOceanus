@@ -1268,6 +1268,11 @@ public class Analysis {
 		}
 		
 		/**
+		 * Determine the field name in a non-static fashion 
+		 */
+		public String getFieldName(int iField) { return fieldName(iField); }
+		
+		/**
 		 * record the rate of the account at a given date
 		 * @param pDate the date of valuation
 		 */
@@ -1422,6 +1427,11 @@ public class Analysis {
 			}
 			return myString;
 		}
+		
+		/**
+		 * Determine the field name in a non-static fashion 
+		 */
+		public String getFieldName(int iField) { return fieldName(iField); }
 		
 		/**
 		 * Create a Save Point 
@@ -1603,6 +1613,11 @@ public class Analysis {
 				default:		  		return ValueAccount.fieldName(iField);
 			}
 		}
+		
+		/**
+		 * Determine the field name in a non-static fashion 
+		 */
+		public String getFieldName(int iField) { return fieldName(iField); }
 		
 		/**
 		 * Format the value of a particular field as a table row

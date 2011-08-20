@@ -1,7 +1,6 @@
 package uk.co.tolcroft.finance.sheets;
 
 import jxl.*;
-import jxl.write.*;
 
 import java.util.Calendar;
 import uk.co.tolcroft.finance.core.Threads.*;
@@ -22,11 +21,6 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
 	 * Is the spreadsheet a backup spreadsheet or an edit-able one
 	 */
 	private boolean isBackup	= false;
-	
-	/**
-	 * Validation control for TaxRegimes
-	 */
-	private WritableCellFeatures theRegimeCtl	= null;
 	
 	/**
 	 * TaxYear data list
@@ -68,12 +62,6 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
 		/* Access the TaxYears list */
 		theList = pOutput.getData().getTaxYears();
 		setDataList(theList);
-		
-		/* If this is not a backup */
-		if (!isBackup) {
-			/* Obtain validation for the TaxRegimes */
-			theRegimeCtl 	= obtainCellValidation(SheetTaxRegime.TaxRegNames);
-		}
 	}
 	
 	/**
@@ -123,36 +111,40 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
 		
 		/* else this is a load from an edit-able spreadsheet */
 		else {
+			/* Access the ID */
+			int	myID 		= loadInteger(0);
+			
 			/* Access the Strings */
-			String myTaxRegime		= loadString(1);
+			String myTaxRegime		= loadString(2);
 		
 			/* Access the year */
-			java.util.Date 	myYear	= loadDate(0);
+			java.util.Date 	myYear	= loadDate(1);
 		
 			/* Access the binary values  */
-			String 	myAllowance	= loadString(2);
-			String	myLoAgeAllw	= loadString(3);
-			String	myHiAgeAllw	= loadString(4);
-			String	myCapAllow 	= loadString(5);
-			String	myRental 	= loadString(6);
-			String 	myAgeLimit	= loadString(7);
-			String	myLoBand	= loadString(8);
-			String	myBasicBand	= loadString(9);
-			String	myLoTax 	= loadString(10);
-			String	myBasicTax 	= loadString(11);
-			String 	myHiTax		= loadString(12);
-			String	myAddTax	= loadString(13);
-			String	myIntTax	= loadString(14);
-			String	myDivTax 	= loadString(15);
-			String	myHiDivTax 	= loadString(16);
-			String	myAddDivTax = loadString(17);
-			String	myCapTax 	= loadString(18);
-			String	myHiCapTax 	= loadString(19);
-			String	myAddLimit 	= loadString(20);
-			String	myAddBound 	= loadString(21);
+			String 	myAllowance	= loadString(3);
+			String	myLoAgeAllw	= loadString(4);
+			String	myHiAgeAllw	= loadString(5);
+			String	myCapAllow 	= loadString(6);
+			String	myRental 	= loadString(7);
+			String 	myAgeLimit	= loadString(8);
+			String	myLoBand	= loadString(9);
+			String	myBasicBand	= loadString(10);
+			String	myLoTax 	= loadString(11);
+			String	myBasicTax 	= loadString(12);
+			String 	myHiTax		= loadString(13);
+			String	myAddTax	= loadString(14);
+			String	myIntTax	= loadString(15);
+			String	myDivTax 	= loadString(16);
+			String	myHiDivTax 	= loadString(17);
+			String	myAddDivTax = loadString(18);
+			String	myCapTax 	= loadString(19);
+			String	myHiCapTax 	= loadString(20);
+			String	myAddLimit 	= loadString(21);
+			String	myAddBound 	= loadString(22);
 		
 			/* Add the Tax Year */
-			theList.addItem(myTaxRegime,
+			theList.addItem(myID,
+							myTaxRegime,
         		           	myYear,
         		           	myAllowance,
         		           	myRental,
@@ -215,28 +207,29 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
 		/* else we are creating an edit-able spreadsheet */
 		else {
 			/* Set the fields */
-			writeDate(0, pItem.getDate());
-			writeValidatedString(1, pItem.getTaxRegime().getName(), theRegimeCtl);				
-			writeNumber(2, pItem.getAllowance());
-			writeNumber(3, pItem.getLoAgeAllow());
-			writeNumber(4, pItem.getHiAgeAllow());
-			writeNumber(5, pItem.getCapitalAllow());
-			writeNumber(6, pItem.getRentalAllowance());
-			writeNumber(7, pItem.getAgeAllowLimit());
-			writeNumber(8, pItem.getLoBand());
-			writeNumber(9, pItem.getBasicBand());
-			writeNumber(10, pItem.getLoTaxRate());
-			writeNumber(11, pItem.getBasicTaxRate());
-			writeNumber(12, pItem.getHiTaxRate());
-			writeNumber(13, pItem.getAddTaxRate());
-			writeNumber(14, pItem.getIntTaxRate());
-			writeNumber(15, pItem.getDivTaxRate());
-			writeNumber(16, pItem.getHiDivTaxRate());
-			writeNumber(17, pItem.getAddDivTaxRate());
-			writeNumber(18, pItem.getCapTaxRate());
-			writeNumber(19, pItem.getHiCapTaxRate());
-			writeNumber(20, pItem.getAddAllowLimit());
-			writeNumber(21, pItem.getAddIncBound());
+			writeInteger(0, pItem.getId());
+			writeDate(1, pItem.getDate());
+			writeValidatedString(2, pItem.getTaxRegime().getName(), SheetTaxRegime.TaxRegNames);				
+			writeNumber(3, pItem.getAllowance());
+			writeNumber(4, pItem.getLoAgeAllow());
+			writeNumber(5, pItem.getHiAgeAllow());
+			writeNumber(6, pItem.getCapitalAllow());
+			writeNumber(7, pItem.getRentalAllowance());
+			writeNumber(8, pItem.getAgeAllowLimit());
+			writeNumber(9, pItem.getLoBand());
+			writeNumber(10, pItem.getBasicBand());
+			writeNumber(11, pItem.getLoTaxRate());
+			writeNumber(12, pItem.getBasicTaxRate());
+			writeNumber(13, pItem.getHiTaxRate());
+			writeNumber(14, pItem.getAddTaxRate());
+			writeNumber(15, pItem.getIntTaxRate());
+			writeNumber(16, pItem.getDivTaxRate());
+			writeNumber(17, pItem.getHiDivTaxRate());
+			writeNumber(18, pItem.getAddDivTaxRate());
+			writeNumber(19, pItem.getCapTaxRate());
+			writeNumber(20, pItem.getHiCapTaxRate());
+			writeNumber(21, pItem.getAddAllowLimit());
+			writeNumber(22, pItem.getAddIncBound());
 		}
 	}
 
@@ -248,28 +241,29 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
 		if (isBackup) return false;
 
 		/* Write titles */
-		writeString(0, TaxYear.fieldName(TaxYear.FIELD_YEAR));
-		writeString(1, TaxYear.fieldName(TaxYear.FIELD_REGIME));			
-		writeString(2, TaxYear.fieldName(TaxYear.FIELD_ALLOW));			
-		writeString(3, TaxYear.fieldName(TaxYear.FIELD_LOAGAL));			
-		writeString(4, TaxYear.fieldName(TaxYear.FIELD_HIAGAL));			
-		writeString(5, TaxYear.fieldName(TaxYear.FIELD_CAPALW));			
-		writeString(6, TaxYear.fieldName(TaxYear.FIELD_RENTAL));			
-		writeString(7, TaxYear.fieldName(TaxYear.FIELD_AGELMT));			
-		writeString(8, TaxYear.fieldName(TaxYear.FIELD_LOBAND));			
-		writeString(9, TaxYear.fieldName(TaxYear.FIELD_BSBAND));			
-		writeString(10, TaxYear.fieldName(TaxYear.FIELD_LOTAX));			
-		writeString(11, TaxYear.fieldName(TaxYear.FIELD_BASTAX));			
-		writeString(12, TaxYear.fieldName(TaxYear.FIELD_HITAX));			
-		writeString(13, TaxYear.fieldName(TaxYear.FIELD_ADDTAX));			
-		writeString(14, TaxYear.fieldName(TaxYear.FIELD_INTTAX));			
-		writeString(15, TaxYear.fieldName(TaxYear.FIELD_DIVTAX));			
-		writeString(16, TaxYear.fieldName(TaxYear.FIELD_HDVTAX));			
-		writeString(17, TaxYear.fieldName(TaxYear.FIELD_ADVTAX));			
-		writeString(18, TaxYear.fieldName(TaxYear.FIELD_CAPTAX));			
-		writeString(19, TaxYear.fieldName(TaxYear.FIELD_HCPTAX));			
-		writeString(20, TaxYear.fieldName(TaxYear.FIELD_ADDLMT));			
-		writeString(21, TaxYear.fieldName(TaxYear.FIELD_ADDBDY));			
+		writeString(0, TaxYear.fieldName(TaxYear.FIELD_ID));
+		writeString(1, TaxYear.fieldName(TaxYear.FIELD_YEAR));
+		writeString(2, TaxYear.fieldName(TaxYear.FIELD_REGIME));			
+		writeString(3, TaxYear.fieldName(TaxYear.FIELD_ALLOW));			
+		writeString(4, TaxYear.fieldName(TaxYear.FIELD_LOAGAL));			
+		writeString(5, TaxYear.fieldName(TaxYear.FIELD_HIAGAL));			
+		writeString(6, TaxYear.fieldName(TaxYear.FIELD_CAPALW));			
+		writeString(7, TaxYear.fieldName(TaxYear.FIELD_RENTAL));			
+		writeString(8, TaxYear.fieldName(TaxYear.FIELD_AGELMT));			
+		writeString(9, TaxYear.fieldName(TaxYear.FIELD_LOBAND));			
+		writeString(10, TaxYear.fieldName(TaxYear.FIELD_BSBAND));			
+		writeString(11, TaxYear.fieldName(TaxYear.FIELD_LOTAX));			
+		writeString(12, TaxYear.fieldName(TaxYear.FIELD_BASTAX));			
+		writeString(13, TaxYear.fieldName(TaxYear.FIELD_HITAX));			
+		writeString(14, TaxYear.fieldName(TaxYear.FIELD_ADDTAX));			
+		writeString(15, TaxYear.fieldName(TaxYear.FIELD_INTTAX));			
+		writeString(16, TaxYear.fieldName(TaxYear.FIELD_DIVTAX));			
+		writeString(17, TaxYear.fieldName(TaxYear.FIELD_HDVTAX));			
+		writeString(18, TaxYear.fieldName(TaxYear.FIELD_ADVTAX));			
+		writeString(19, TaxYear.fieldName(TaxYear.FIELD_CAPTAX));			
+		writeString(20, TaxYear.fieldName(TaxYear.FIELD_HCPTAX));			
+		writeString(21, TaxYear.fieldName(TaxYear.FIELD_ADDLMT));			
+		writeString(22, TaxYear.fieldName(TaxYear.FIELD_ADDBDY));			
 		return true;
 	}	
 
@@ -279,7 +273,7 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
 	protected void postProcessOnWrite() throws Throwable {		
 		/* If we are creating a backup */
 		if (isBackup) {
-			/* Set the fourteen columns as the range */
+			/* Set the twenty-three columns as the range */
 			nameRange(23);
 			setRateColumn(11);
 			setRateColumn(12);
@@ -295,15 +289,17 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
 
 		/* else this is an edit-able spreadsheet */
 		else {
-			/* Set the thirteen columns as the range */
-			nameRange(22);
+			/* Set the twenty-three columns as the range */
+			nameRange(23);
+
+			/* Set the Id column as hidden */
+			setHiddenColumn(0);
 
 			/* Set the String column width */
-			setColumnWidth(1, StaticClass.NAMELEN);
+			setColumnWidth(2, StaticClass.NAMELEN);
 			
 			/* Set Number columns */
-			setDateColumn(0);
-			setMoneyColumn(2);
+			setDateColumn(1);
 			setMoneyColumn(3);
 			setMoneyColumn(4);
 			setMoneyColumn(5);
@@ -311,9 +307,9 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
 			setMoneyColumn(7);
 			setMoneyColumn(8);
 			setMoneyColumn(9);
-			setMoneyColumn(20);
+			setMoneyColumn(10);
 			setMoneyColumn(21);
-			setRateColumn(10);
+			setMoneyColumn(22);
 			setRateColumn(11);
 			setRateColumn(12);
 			setRateColumn(13);
@@ -323,6 +319,7 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
 			setRateColumn(17);
 			setRateColumn(18);
 			setRateColumn(19);
+			setRateColumn(20);
 		}
 	}
 
@@ -477,7 +474,8 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
 					}
 			    
 					/* Add the Tax Year */
-					myList.addItem(myTaxRegime,
+					myList.addItem(0,
+								   myTaxRegime,
 		        		           myYear.getTime(),
 		    	   				   myAllowance,
 		    	   				   myRentalAllow,

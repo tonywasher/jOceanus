@@ -19,9 +19,6 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	 */
 	public static final String listName = objName + "s";
 
-	/* Local values */
-	private int		 	theAccountId	= -1;
-	
 	/* Access methods */
 	public  Values  		getValues()    	{ return (Values)super.getValues(); }
 	public  Price 			getPrice()  	{ return getPairValue(getValues().getPrice()); }
@@ -83,11 +80,11 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		Values 	myValues = (Values)pValues;
 		switch (iField) {
 			case FIELD_ACCOUNT:
-				if ((getAccount() == null) &&
-					(theAccountId != -1))
-					myString += "Id=" + theAccountId;
+				if ((myValues.getAccount() == null) &&
+					(myValues.getAccountId() != -1))
+					myString += "Id=" + myValues.getAccountId();
 				else
-					myString += Account.format(getAccount()); 
+					myString += Account.format(myValues.getAccount()); 
 				break;
 			case FIELD_DATE:	
 				myString += Date.format(getDate()); 
@@ -153,28 +150,30 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 
 	/* Standard constructor */
 	private AcctPrice(List       		pList,
+					  int				uId,
 			      	  int 		    	uAccountId,
 			      	  java.util.Date 	pDate, 
 			      	  String 			pPrice) throws Exception {
 		/* Initialise the item */
-		super(pList, 0);
+		super(pList, uId);
 		
 		/* Initialise the values */
 		Values myValues = new Values();
 		setValues(myValues);
 		
 		/* Record the Id */
-		theAccountId = uAccountId;
+		myValues.setAccountId(uAccountId);
 		
 		/* Access the DataSet */
 		DataSet myData 	= pList.getData();
 
 		/* Look up the Account */
-		myValues.setAccount(myData.getAccounts().searchFor(uAccountId));
-		if (getAccount() == null) 
+		Account myAccount = myData.getAccounts().searchFor(uAccountId);
+		if (myAccount == null) 
 			throw new Exception(ExceptionClass.DATA,
 								this,
 								"Invalid Account Id");
+		myValues.setAccount(myAccount);
 					
 		/* Record the date and price */
 		myValues.setDate(new Date(pDate));
@@ -199,7 +198,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		setValues(myValues);
 		
 		/* Record the Id */
-		theAccountId = uAccountId;
+		myValues.setAccountId(uAccountId);
 		
 		/* Store the controlId */
 		setControlKey(uControlId);
@@ -208,11 +207,12 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		DataSet myData 	= pList.getData();
 
 		/* Look up the Account */
-		myValues.setAccount(myData.getAccounts().searchFor(uAccountId));
-		if (getAccount() == null) 
+		Account myAccount = myData.getAccounts().searchFor(uAccountId);
+		if (myAccount == null) 
 			throw new Exception(ExceptionClass.DATA,
 								this,
 								"Invalid Account Id");
+		myValues.setAccount(myAccount);
 					
 		/* Record the date and price */
 		myValues.setDate(new Date(pDate));
@@ -233,9 +233,6 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		/* Initialise the values */
 		Values myValues = new Values();
 		setValues(myValues);
-		
-		/* Record the Id */
-		theAccountId = pAccount.getId();
 		
 		/* Set the passed details */
 		myValues.setAccount(pAccount);
@@ -712,7 +709,8 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		/**
 		 *  Add a Price
 		 */
-		public void addItem(java.util.Date  pDate,
+		public void addItem(int				uId,
+							java.util.Date  pDate,
 	            			String   		pAccount,
 				            String   		pPrice) throws Exception {
 			Account     	myAccount;
@@ -731,7 +729,8 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			                        pAccount + "]");
 									
 			/* Add the price */
-			addItem(pDate,
+			addItem(uId,
+					pDate,
 					myAccount.getId(),
 					pPrice);
 		}
@@ -739,14 +738,21 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		/**
 		 *  Allow a price to be added
 		 */
-		public void addItem(java.util.Date  pDate,
+		public void addItem(int				uId,
+							java.util.Date  pDate,
 				            int     		uAccountId,
 				            String   		pPrice) throws Exception {
 			AcctPrice     	myPrice;
 			
 			/* Create the price and PricePoint */
-			myPrice = new AcctPrice(this, uAccountId, pDate, pPrice);
+			myPrice = new AcctPrice(this, uId, uAccountId, pDate, pPrice);
 			
+			/* Check that this PriceId has not been previously added */
+			if (!isIdUnique(myPrice.getId())) 
+				throw new Exception(ExceptionClass.DATA,
+									myPrice,
+									"Duplicate PriceId <" + myPrice.getId() + ">");
+			 
 			/* Validate the price */
 			myPrice.validate();
 
@@ -827,11 +833,13 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		private Date    	theDate      = null;
 		private PricePair   thePrice     = null;
 		private Account 	theAccount   = null;
+		private Integer	 	theAccountId = null;	
 		
 		/* Access methods */
 		public Date     	getDate()      { return theDate; }
 		public PricePair	getPrice()     { return thePrice; }
 		public Account		getAccount()   { return theAccount; }
+		private Integer		getAccountId() { return theAccountId; }
 		
 		public Price  		getPriceValue() { return getPairValue(thePrice); }
 		public byte[]  		getPriceBytes() { return getPairBytes(thePrice); }
@@ -841,7 +849,10 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		public void setPrice(PricePair pPrice) {
 			thePrice     = pPrice; }
 		public void setAccount(Account pAccount) {
-			theAccount   = pAccount; }
+			theAccount   = pAccount; 
+			theAccountId = (pAccount == null) ? null : pAccount.getId(); }
+		private void setAccountId(Integer pAccountId) {
+			theAccountId   = pAccountId; } 
 
 		/* Constructor */
 		public Values() {}
@@ -850,10 +861,11 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		/* Check whether this object is equal to that passed */
 		public boolean histEquals(HistoryValues<AcctPrice> pCompare) {
 			Values myValues = (Values)pCompare;
-			if (!super.histEquals(pCompare))					  return false;
-			if (Date.differs(theDate,     	myValues.theDate))    return false;
-			if (differs(thePrice, 			myValues.thePrice))   return false;
-			if (Account.differs(theAccount, myValues.theAccount)) return false;
+			if (!super.histEquals(pCompare))					    return false;
+			if (Date.differs(theDate,     	myValues.theDate))      return false;
+			if (differs(thePrice, 			myValues.thePrice))     return false;
+			if (Account.differs(theAccount, myValues.theAccount))   return false;
+			if (Utils.differs(theAccountId, myValues.theAccountId)) return false;
 			return true;
 		}
 		
@@ -867,6 +879,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			theDate      = myValues.getDate();
 			thePrice     = myValues.getPrice();
 			theAccount   = myValues.getAccount();
+			theAccountId = myValues.getAccountId();
 		}
 		public boolean	fieldChanged(int fieldNo, HistoryValues<AcctPrice> pOriginal) {
 			Values 	pValues = (Values)pOriginal;

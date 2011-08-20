@@ -1,7 +1,11 @@
 package uk.co.tolcroft.models;
 
+import uk.co.tolcroft.help.DebugManager;
+import uk.co.tolcroft.help.DebugObject;
+import uk.co.tolcroft.help.DebugManager.DebugEntry;
+
 public class Exception 	extends java.lang.Exception
-						implements htmlDumpable {
+						implements DebugObject {
 	/**
 	 * Required serialisation field
 	 */
@@ -15,7 +19,7 @@ public class Exception 	extends java.lang.Exception
     /**
      * The associated object
      */
-    private htmlDumpable   theObject   = null;
+    private DebugObject   theObject   = null;
     
     /**
      * Get the class of the exception 
@@ -58,7 +62,7 @@ public class Exception 	extends java.lang.Exception
 	 * @param s the description of the exception
 	 */
 	public Exception(ExceptionClass ec,
-			         htmlDumpable   o,
+			         DebugObject   o,
 			         String         s) {
 		super(s);
 		theClass    = ec;
@@ -74,7 +78,7 @@ public class Exception 	extends java.lang.Exception
 	 * @param c	the underlying exception
 	 */
 	public Exception(ExceptionClass ec,
-			         htmlDumpable   o,
+			         DebugObject   o,
 			         String         s,
 			         Throwable		c) {
 		super(s, c);
@@ -91,7 +95,7 @@ public class Exception 	extends java.lang.Exception
 		StringBuilder		myDetail	 = new StringBuilder(10000);	
 		StackTraceElement[] myTrace      = null;
 		Throwable			myException  = this;
-		StringBuilder		myObj	 	 = new StringBuilder(10000);
+		Throwable			myNext  	 = this;
 		int					myNumDetail  = 2;
 		
 		/* Initialise the string with an item name */
@@ -112,13 +116,6 @@ public class Exception 	extends java.lang.Exception
 				myDetail.append("<tr><td>Class</td><td>");
 				myDetail.append(myExc.theClass);
 				myDetail.append("</td></tr>");
-
-				/* If there is an associated object */
-				if (myExc.theObject != null) {
-					/* Format the object */
-					myObj.append("<p>");
-					myObj.append(myExc.theObject.toHTMLString());
-				}
 			}
 			
 			/* else this is a java exception */
@@ -136,8 +133,12 @@ public class Exception 	extends java.lang.Exception
 			myNumDetail+=2;
 			
 			/* Access the stack trace and the next cause */
-			myTrace 	= myException.getStackTrace();
-			myException	= myException.getCause();
+			myTrace = myException.getStackTrace();
+			myNext	= myException.getCause();
+			
+			/* Break loop if at first level with an Exception cause else continue down chain */
+			if ((myException == this) && (myNext instanceof Exception)) break;
+			myException = myNext;
 		}
 		
 		/* Add the details */
@@ -146,9 +147,6 @@ public class Exception 	extends java.lang.Exception
 		myString.append("\">Detail</th></tr>");
 		myString.append(myDetail);
 		myString.append("</tbody></table>");
-		
-		/* Add any objects */
-		myString.append(myObj);
 		
 		/* If there is a stack trace */
 		if (myTrace != null) {
@@ -169,6 +167,30 @@ public class Exception 	extends java.lang.Exception
 		}
 		
 		return myString;
+	}
+	
+	/**
+	 * Add child entries for the debug object
+	 * @param pManager the debug manager
+	 * @param pParent the parent debug entry
+	 */
+	public void addChildEntries(DebugManager 	pManager,
+								DebugEntry		pParent) { 
+		/* Access the cause */
+		Throwable 	myCause = getCause();
+
+		/* If we have an underlying cause */
+		if ((myCause != null) &&
+			(myCause instanceof Exception)) {
+			/* Add caused by child */
+			pManager.addChildEntry(pParent, "CausedBy", (Exception)myCause);
+		}
+		
+		/* If we have an object */
+		if (theObject != null) {
+			/* Add caused by child */
+			pManager.addChildEntry(pParent, "Object", theObject);
+		}
 	}
 	
 	/**

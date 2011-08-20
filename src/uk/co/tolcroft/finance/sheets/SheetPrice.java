@@ -1,7 +1,6 @@
 package uk.co.tolcroft.finance.sheets;
 
 import jxl.*;
-import jxl.write.WritableCellFeatures;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
@@ -26,11 +25,6 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 	 * Is the spreadsheet a backup spreadsheet or an edit-able one
 	 */
 	private boolean isBackup	= false;
-	
-	/**
-	 * Validation control for Account Name
-	 */
-	private WritableCellFeatures theAccountCtl	= null;
 	
 	/**
 	 * Prices data list
@@ -66,9 +60,6 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 		/* Access the Prices list */
 		theList = pOutput.getData().getPrices();
 		setDataList(theList);
-		
-		/* Obtain validation for the Account Name */
-		theAccountCtl = obtainCellValidation(SheetAccount.AccountNames);
 	}
 	
 	/**
@@ -93,14 +84,15 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 		/* else this is a load from an edit-able spreadsheet */
 		else {
 			/* Access the Account */
-			String myAccount	= loadString(0);
+			int myID 			= loadInteger(0);
+			String myAccount	= loadString(1);
 		
 			/* Access the name and description bytes */
-			java.util.Date	myDate 	= loadDate(1);
-			String			myPrice	= loadString(2);
+			java.util.Date	myDate 	= loadDate(2);
+			String			myPrice	= loadString(3);
 		
 			/* Load the item */
-			theList.addItem(myDate, myAccount, myPrice);
+			theList.addItem(myID, myDate, myAccount, myPrice);
 		}
 	}
 
@@ -123,9 +115,10 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 		/* else we are creating an edit-able spreadsheet */
 		else {
 			/* Set the fields */
-			writeValidatedString(0, pItem.getAccount().getName(), theAccountCtl);				
-			writeDate(1, pItem.getDate());
-			writeNumber(2, pItem.getPrice());			
+			writeInteger(0, pItem.getId());
+			writeValidatedString(1, pItem.getAccount().getName(), SheetAccount.AccountNames);				
+			writeDate(2, pItem.getDate());
+			writeNumber(3, pItem.getPrice());			
 		}
 	}
 
@@ -137,9 +130,10 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 		if (isBackup) return false;
 
 		/* Write titles */
-		writeString(0, AcctPrice.fieldName(AcctPrice.FIELD_ACCOUNT));
-		writeString(1, AcctPrice.fieldName(AcctPrice.FIELD_DATE));
-		writeString(2, AcctPrice.fieldName(AcctPrice.FIELD_PRICE));			
+		writeString(0, AcctPrice.fieldName(AcctPrice.FIELD_ID));
+		writeString(1, AcctPrice.fieldName(AcctPrice.FIELD_ACCOUNT));
+		writeString(2, AcctPrice.fieldName(AcctPrice.FIELD_DATE));
+		writeString(3, AcctPrice.fieldName(AcctPrice.FIELD_PRICE));			
 		return true;
 	}	
 
@@ -155,15 +149,18 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 
 		/* else this is an edit-able spreadsheet */
 		else {
-			/* Set the three columns as the range */
-			nameRange(3);
+			/* Set the four columns as the range */
+			nameRange(4);
 
+			/* Hide the ID Column */
+			setHiddenColumn(0);
+			
 			/* Set the Account column width */
-			setColumnWidth(0, Account.NAMELEN);
+			setColumnWidth(1, Account.NAMELEN);
 			
 			/* Set Price and Date columns */
-			setDateColumn(1);
-			setPriceColumn(2);
+			setDateColumn(2);
+			setPriceColumn(3);
 		}
 	}
 	

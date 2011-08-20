@@ -2,11 +2,14 @@ package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.EncryptedItem.EncryptedList;
+import uk.co.tolcroft.help.DebugManager;
+import uk.co.tolcroft.help.DebugObject;
+import uk.co.tolcroft.help.DebugManager.DebugEntry;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Number.*;
 
-public class SpotPrices implements htmlDumpable {
+public class SpotPrices implements DebugObject {
 	/**
 	 * The name of the object
 	 */
@@ -58,10 +61,42 @@ public class SpotPrices implements htmlDumpable {
 	}
 	
 	/**
-	 * The toHTMLString method just maps to that of the prices 
+	 * Create a string form of the object suitable for inclusion in an HTML document
+	 * @return the formatted string
 	 */
-	public StringBuilder toHTMLString() { return thePrices.toHTMLString(); }		
+	public StringBuilder toHTMLString() { 
+		/* Local variables */
+		StringBuilder	myString = new StringBuilder(10000);
 
+		/* Start the Fields section */
+		myString.append("<tr><th rowspan=\"4\">Fields</th></tr>");
+			
+		/* Format the range */
+		myString.append("<tr><td>Date</td><td>"); 
+		myString.append(Date.format(theDate)); 
+		myString.append("</td></tr>");
+		myString.append("<tr><td>Next</td><td>"); 
+		myString.append(Date.format(theNext)); 
+		myString.append("</td></tr>");
+		myString.append("<tr><td>Previous</td><td>"); 
+		myString.append(Date.format(thePrev)); 
+		myString.append("</td></tr>");
+
+		/* Return the Data */
+		return myString;
+	}		
+	
+	/**
+	 * Add child entries for the debug object
+	 * @param pManager the debug manager
+	 * @param pParent the parent debug entry
+	 */
+	public void addChildEntries(DebugManager 	pManager,
+								DebugEntry		pParent) {
+		/* Add lines child */
+		pManager.addChildEntry(pParent, "Prices", thePrices);		
+	}
+	
 	/* The List class */
 	public class List extends EncryptedList<SpotPrice> {
 		/* Members */
@@ -208,19 +243,6 @@ public class SpotPrices implements htmlDumpable {
 		 * @param pBuffer the string buffer 
 		 */
 		public void addHTMLFields(StringBuilder pBuffer) {
-			/* Start the Fields section */
-			pBuffer.append("<tr><th rowspan=\"4\">Fields</th></tr>");
-				
-			/* Format the range */
-			pBuffer.append("<tr><td>Date</td><td>"); 
-			pBuffer.append(Date.format(theDate)); 
-			pBuffer.append("</td></tr>");
-			pBuffer.append("<tr><td>Next</td><td>"); 
-			pBuffer.append(Date.format(theNext)); 
-			pBuffer.append("</td></tr>");
-			pBuffer.append("<tr><td>Previous</td><td>"); 
-			pBuffer.append(Date.format(thePrev)); 
-			pBuffer.append("</td></tr>");
 		}		
 	}
 			

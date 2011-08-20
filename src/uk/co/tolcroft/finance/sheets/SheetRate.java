@@ -1,7 +1,6 @@
 package uk.co.tolcroft.finance.sheets;
 
 import jxl.*;
-import jxl.write.WritableCellFeatures;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
@@ -20,11 +19,6 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 	 * Is the spreadsheet a backup spreadsheet or an edit-able one
 	 */
 	private boolean isBackup	= false;
-	
-	/**
-	 * Validation control for Account Name
-	 */
-	private WritableCellFeatures theAccountCtl	= null;
 	
 	/**
 	 * Rates data list
@@ -60,9 +54,6 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 		/* Access the Rates list */
 		theList = pOutput.getData().getRates();
 		setDataList(theList);
-		
-		/* Obtain validation for the Account Name */
-		theAccountCtl = obtainCellValidation(SheetAccount.AccountNames);
 	}
 	
 	/**
@@ -88,15 +79,16 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 		/* else this is a load from an edit-able spreadsheet */
 		else {
 			/* Access the account */
-			String myAccount	= loadString(0);
+			int	myID 		= loadInteger(0);
+			String myAccount	= loadString(1);
 		
 			/* Access the name and description bytes */
-			String 			myRate 		= loadString(1);
-			String 			myBonus		= loadString(2);
-			java.util.Date	myEndDate	= loadDate(3);
+			String 			myRate 		= loadString(2);
+			String 			myBonus		= loadString(3);
+			java.util.Date	myEndDate	= loadDate(4);
 		
 			/* Load the item */
-			theList.addItem(myAccount, myRate, myEndDate, myBonus);
+			theList.addItem(myID, myAccount, myRate, myEndDate, myBonus);
 		}
 	}
 
@@ -120,10 +112,11 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 		/* else we are creating an edit-able spreadsheet */
 		else {
 			/* Set the fields */
-			writeValidatedString(0, pItem.getAccount().getName(), theAccountCtl);				
-			writeNumber(1, pItem.getRate());
-			writeNumber(2, pItem.getBonus());			
-			writeDate(3, pItem.getEndDate());			
+			writeInteger(0, pItem.getId());
+			writeValidatedString(1, pItem.getAccount().getName(), SheetAccount.AccountNames);				
+			writeNumber(2, pItem.getRate());
+			writeNumber(3, pItem.getBonus());			
+			writeDate(4, pItem.getEndDate());			
 		}
 	}
 
@@ -135,10 +128,11 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 		if (isBackup) return false;
 
 		/* Write titles */
-		writeString(0, AcctRate.fieldName(AcctRate.FIELD_ACCOUNT));
-		writeString(1, AcctRate.fieldName(AcctRate.FIELD_RATE));
-		writeString(2, AcctRate.fieldName(AcctRate.FIELD_BONUS));			
-		writeString(3, AcctRate.fieldName(AcctRate.FIELD_ENDDATE));			
+		writeString(0, AcctRate.fieldName(AcctRate.FIELD_ID));
+		writeString(1, AcctRate.fieldName(AcctRate.FIELD_ACCOUNT));
+		writeString(2, AcctRate.fieldName(AcctRate.FIELD_RATE));
+		writeString(3, AcctRate.fieldName(AcctRate.FIELD_BONUS));			
+		writeString(4, AcctRate.fieldName(AcctRate.FIELD_ENDDATE));			
 		return true;
 	}	
 
@@ -154,16 +148,19 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 
 		/* else this is an edit-able spreadsheet */
 		else {
-			/* Set the four columns as the range */
-			nameRange(4);
+			/* Set the five columns as the range */
+			nameRange(5);
 
+			/* Hide the ID column */
+			setHiddenColumn(0);
+			
 			/* Set the Account column width */
-			setColumnWidth(0, Account.NAMELEN);
+			setColumnWidth(1, Account.NAMELEN);
 			
 			/* Set Rate and Date columns */
-			setRateColumn(1);
 			setRateColumn(2);
-			setDateColumn(3);
+			setRateColumn(3);
+			setDateColumn(4);
 		}
 	}
 	
@@ -251,7 +248,8 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 					}
 				
 					/* Add the value into the finance tables */
-					myList.addItem(myAccount,
+					myList.addItem(0,
+								   myAccount,
 					               myRate,
 					               myExpiry,
 					               myBonus);

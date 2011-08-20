@@ -3,12 +3,15 @@ package uk.co.tolcroft.finance.views;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.EncryptedItem.EncryptedList;
 import uk.co.tolcroft.finance.views.Analysis.*;
+import uk.co.tolcroft.help.DebugManager;
+import uk.co.tolcroft.help.DebugObject;
+import uk.co.tolcroft.help.DebugManager.DebugEntry;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.*;
 import uk.co.tolcroft.models.Number.*;
 
-public class Statement implements htmlDumpable {
+public class Statement implements DebugObject {
 	/* Members */
 	private View      		theView      	= null;
 	private Account      	theAccount      = null;
@@ -44,8 +47,7 @@ public class Statement implements htmlDumpable {
 		theLines   = new List(this);
 		
 		/* Create an analysis for this statement */
-		theAnalysis = new EventAnalysis(theView.getDebugMgr(),
-										theView.getData(), 
+		theAnalysis = new EventAnalysis(theView.getData(), 
 										this);
 	}
 
@@ -138,16 +140,69 @@ public class Statement implements htmlDumpable {
 		myData	= theView.getData();
 		myBase  = myData.getEvents();
 		
-		/* Commit /RollBack the changes */
+		/* Commit/RollBack the changes */
 		if (bCommit)	myBase.commitChanges(theLines);
 		else			myBase.rollBackChanges(theLines);
 	}
 	
 	/**
-	 * The toHTMLString method just maps to that of the lines 
+	 * Create a string form of the object suitable for inclusion in an HTML document
+	 * @return the formatted string
 	 */
-	public StringBuilder toHTMLString() { return theLines.toHTMLString(); }		
+	public StringBuilder toHTMLString() { 
+		/* Local variables */
+		StringBuilder	myString = new StringBuilder(10000);
 
+		/* Format the table headers */
+		myString.append("<table border=\"1\" width=\"90%\" align=\"center\">");
+		myString.append("<thead><th>Statement</th>");
+		myString.append("<th>Property</th><th>Value</th></thead><tbody>");
+			
+		/* Start the Fields section */
+		myString.append("<tr><th rowspan=\"7\">Fields</th></tr>");
+			
+		/* Format the balances */
+		myString.append("<tr><td>Account</td><td>"); 
+		myString.append(Account.format(theAccount)); 
+		myString.append("</td></tr>");
+		
+		/* Format the range */
+		myString.append("<tr><td>Range</td><td>"); 
+		myString.append(Date.Range.format(theRange)); 
+		myString.append("</td></tr>");
+		
+		/* Format the balances */
+		myString.append("<tr><td>StartBalance</td><td>"); 
+		myString.append(Money.format(theStartBalance)); 
+		myString.append("</td></tr>"); 
+		myString.append("<tr><td>EndBalance</td><td>"); 
+		myString.append(Money.format(theEndBalance)); 
+		myString.append("</td></tr>"); 
+		myString.append("<tr><td>StartUnits</td><td>"); 
+		myString.append(Units.format(theStartUnits)); 
+		myString.append("</td></tr>"); 
+		myString.append("<tr><td>EndUnits</td><td>"); 
+		myString.append(Units.format(theEndUnits)); 
+		myString.append("</td></tr>"); 
+
+		/* Return the Data */
+		return myString;
+	}		
+	
+	/**
+	 * Add child entries for the debug object
+	 * @param pManager the debug manager
+	 * @param pParent the parent debug entry
+	 */
+	public void addChildEntries(DebugManager 	pManager,
+								DebugEntry		pParent) { 
+		/* Add lines child */
+		pManager.addChildEntry(pParent, "Lines", theLines);
+
+		/* Add analysis child */
+		pManager.addChildEntry(pParent, "Analysis", theAnalysis);
+	}
+	
 	/* The List class */
 	public class List extends EncryptedList<Line> {
 		private Statement theStatement = null;
@@ -192,39 +247,6 @@ public class Statement implements htmlDumpable {
 		 * @return the type of the item
 		 */
 		public String itemType() { return "StatementLine"; }
-		
-		/**
-		 * Add additional fields to HTML String
-		 * @param pBuffer the string buffer 
-		 */
-		public void addHTMLFields(StringBuilder pBuffer) {
-			/* Start the Fields section */
-			pBuffer.append("<tr><th rowspan=\"7\">Fields</th></tr>");
-				
-			/* Format the balances */
-			pBuffer.append("<tr><td>Account</td><td>"); 
-			pBuffer.append(Account.format(theAccount)); 
-			pBuffer.append("</td></tr>");
-			
-			/* Format the range */
-			pBuffer.append("<tr><td>Range</td><td>"); 
-			pBuffer.append(Date.Range.format(theRange)); 
-			pBuffer.append("</td></tr>");
-			
-			/* Format the balances */
-			pBuffer.append("<tr><td>StartBalance</td><td>"); 
-			pBuffer.append(Money.format(theStartBalance)); 
-			pBuffer.append("</td></tr>"); 
-			pBuffer.append("<tr><td>EndBalance</td><td>"); 
-			pBuffer.append(Money.format(theEndBalance)); 
-			pBuffer.append("</td></tr>"); 
-			pBuffer.append("<tr><td>StartUnits</td><td>"); 
-			pBuffer.append(Units.format(theStartUnits)); 
-			pBuffer.append("</td></tr>"); 
-			pBuffer.append("<tr><td>EndUnits</td><td>"); 
-			pBuffer.append(Units.format(theEndUnits)); 
-			pBuffer.append("</td></tr>"); 
-		}
 		
 		/** 
 		 * Validate a statement

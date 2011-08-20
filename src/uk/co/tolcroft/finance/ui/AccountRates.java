@@ -8,9 +8,10 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
 import uk.co.tolcroft.finance.ui.controls.*;
-import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.help.DebugManager;
+import uk.co.tolcroft.help.DebugManager.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;

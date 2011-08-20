@@ -1,7 +1,6 @@
 package uk.co.tolcroft.finance.sheets;
 
 import jxl.*;
-import jxl.write.WritableCellFeatures;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
@@ -20,21 +19,6 @@ public class SheetPattern extends SheetDataItem<Pattern> {
 	 * Is the spreadsheet a backup spreadsheet or an edit-able one
 	 */
 	private boolean isBackup	= false;
-	
-	/**
-	 * Validation control for Account Name
-	 */
-	private WritableCellFeatures theAccountCtl	= null;
-	
-	/**
-	 * Validation control for Transaction Type
-	 */
-	private WritableCellFeatures theTransCtl	= null;
-	
-	/**
-	 * Validation control for Frequency
-	 */
-	private WritableCellFeatures theFreqCtl		= null;
 	
 	/**
 	 * Patterns data list
@@ -76,19 +60,7 @@ public class SheetPattern extends SheetDataItem<Pattern> {
 				
 		/* Access the Patterns list */
 		theList = pOutput.getData().getPatterns();
-		setDataList(theList);
-		
-		/* If this is not a backup */
-		if (!isBackup) {
-			/* Obtain validation for the Account Name */
-			theAccountCtl 	= obtainCellValidation(SheetAccount.AccountNames);
-
-			/* Obtain validation for the Transaction Types */
-			theTransCtl 	= obtainCellValidation(SheetTransactionType.TranTypeNames);
-			
-			/* Obtain validation for the Frequencies */
-			theFreqCtl 		= obtainCellValidation(SheetFrequency.FrequencyNames);
-		}
+		setDataList(theList);		
 	}
 	
 	/**
@@ -121,21 +93,22 @@ public class SheetPattern extends SheetDataItem<Pattern> {
 		/* else this is a load from an edit-able spreadsheet */
 		else {
 			/* Access the Account */
-			String myAccount	= loadString(0);
-			String myPartner	= loadString(5);
-			String myTransType	= loadString(6);
-			String myFrequency	= loadString(7);
+			int	   myID 		= loadInteger(0);
+			String myAccount	= loadString(1);
+			String myPartner	= loadString(6);
+			String myTransType	= loadString(7);
+			String myFrequency	= loadString(8);
 		
 			/* Access the name and description bytes */
-			java.util.Date 	myDate 		= loadDate(1);
-			Boolean 		isCredit	= loadBoolean(3);
+			java.util.Date 	myDate 		= loadDate(2);
+			Boolean 		isCredit	= loadBoolean(4);
 		
 			/* Access the binary values  */
-			String 	myDesc 		= loadString(2);
-			String	myAmount 	= loadString(4);
+			String 	myDesc 		= loadString(3);
+			String	myAmount 	= loadString(5);
 		
 			/* Load the item */
-			theList.addItem(myDate, myDesc, myAmount, myAccount, myPartner, myTransType, myFrequency, isCredit);
+			theList.addItem(myID, myDate, myDesc, myAmount, myAccount, myPartner, myTransType, myFrequency, isCredit);
 		}
 	}
 
@@ -163,14 +136,15 @@ public class SheetPattern extends SheetDataItem<Pattern> {
 		/* else we are creating an edit-able spreadsheet */
 		else {
 			/* Set the fields */
-			writeValidatedString(0, pItem.getAccount().getName(), theAccountCtl);				
-			writeValidatedString(5, pItem.getPartner().getName(), theAccountCtl);				
-			writeValidatedString(6, pItem.getTransType().getName(), theTransCtl);				
-			writeValidatedString(7, pItem.getFrequency().getName(), theFreqCtl);				
-			writeDate(1, pItem.getDate());
-			writeBoolean(3, pItem.isCredit());			
-			writeString(2, pItem.getDesc());			
-			writeNumber(4, pItem.getAmount());			
+			writeInteger(0, pItem.getId());
+			writeValidatedString(1, pItem.getAccount().getName(), SheetAccount.AccountNames);				
+			writeValidatedString(6, pItem.getPartner().getName(), SheetAccount.AccountNames);				
+			writeValidatedString(7, pItem.getTransType().getName(), SheetTransactionType.TranTypeNames);				
+			writeValidatedString(8, pItem.getFrequency().getName(), SheetFrequency.FrequencyNames);				
+			writeDate(2, pItem.getDate());
+			writeBoolean(4, pItem.isCredit());			
+			writeString(3, pItem.getDesc());			
+			writeNumber(5, pItem.getAmount());			
 		}
 	}
 
@@ -182,14 +156,15 @@ public class SheetPattern extends SheetDataItem<Pattern> {
 		if (isBackup) return false;
 
 		/* Write titles */
-		writeString(0, Pattern.fieldName(Pattern.FIELD_ACCOUNT));
-		writeString(1, Pattern.fieldName(Pattern.FIELD_DATE));
-		writeString(2, Pattern.fieldName(Pattern.FIELD_DESC));			
-		writeString(3, Pattern.fieldName(Pattern.FIELD_CREDIT));			
-		writeString(4, Pattern.fieldName(Pattern.FIELD_AMOUNT));			
-		writeString(5, Pattern.fieldName(Pattern.FIELD_PARTNER));			
-		writeString(6, Pattern.fieldName(Pattern.FIELD_TRNTYP));			
-		writeString(7, Pattern.fieldName(Pattern.FIELD_FREQ));			
+		writeString(0, Pattern.fieldName(Pattern.FIELD_ID));
+		writeString(1, Pattern.fieldName(Pattern.FIELD_ACCOUNT));
+		writeString(2, Pattern.fieldName(Pattern.FIELD_DATE));
+		writeString(3, Pattern.fieldName(Pattern.FIELD_DESC));			
+		writeString(4, Pattern.fieldName(Pattern.FIELD_CREDIT));			
+		writeString(5, Pattern.fieldName(Pattern.FIELD_AMOUNT));			
+		writeString(6, Pattern.fieldName(Pattern.FIELD_PARTNER));			
+		writeString(7, Pattern.fieldName(Pattern.FIELD_TRNTYP));			
+		writeString(8, Pattern.fieldName(Pattern.FIELD_FREQ));			
 		return true;
 	}	
 
@@ -205,20 +180,23 @@ public class SheetPattern extends SheetDataItem<Pattern> {
 
 		/* else this is an edit-able spreadsheet */
 		else {
-			/* Set the eight columns as the range */
-			nameRange(8);
+			/* Set the nine columns as the range */
+			nameRange(9);
 
+			/* Hide the ID column */
+			setHiddenColumn(0);
+			
 			/* Set the Account column width */
-			setColumnWidth(0, Account.NAMELEN);
-			setColumnWidth(2, Pattern.DESCLEN);
-			setColumnWidth(5, Account.NAMELEN);
-			setColumnWidth(6, StaticClass.NAMELEN);
+			setColumnWidth(1, Account.NAMELEN);
+			setColumnWidth(3, Pattern.DESCLEN);
+			setColumnWidth(6, Account.NAMELEN);
 			setColumnWidth(7, StaticClass.NAMELEN);
+			setColumnWidth(8, StaticClass.NAMELEN);
 			
 			/* Set Number columns */
-			setDateColumn(1);
-			setBooleanColumn(3);
-			setMoneyColumn(4);
+			setDateColumn(2);
+			setBooleanColumn(4);
+			setMoneyColumn(5);
 		}
 	}
 
@@ -311,7 +289,8 @@ public class SheetPattern extends SheetDataItem<Pattern> {
 					isCredit 	= myBoolCell.getValue();
 				
 					/* Add the value into the finance tables */
-					myList.addItem(myDate,
+					myList.addItem(0,
+								   myDate,
 					               myDesc,
 					               myAmount,
 					               myAccount,

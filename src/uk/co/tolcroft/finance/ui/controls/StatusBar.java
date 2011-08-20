@@ -12,8 +12,7 @@ import javax.swing.LayoutStyle;
 import javax.swing.Timer;
 
 import uk.co.tolcroft.finance.ui.*;
-import uk.co.tolcroft.finance.views.DebugManager;
-import uk.co.tolcroft.finance.views.DebugManager.DebugEntry;
+import uk.co.tolcroft.help.DebugManager.DebugEntry;
 import uk.co.tolcroft.models.Exception;
 
 public class StatusBar implements ActionListener {
@@ -30,7 +29,6 @@ public class StatusBar implements ActionListener {
 	private MainTab					theControl		= null;
 	private Exception				theError		= null;
 	private Timer					theTimer		= null;
-    private DebugManager			theDebugMgr		= null;
     private DebugEntry				theDebug		= null;
 	
 	/* Access methods */
@@ -45,9 +43,8 @@ public class StatusBar implements ActionListener {
 		/* Record passed parameters */
 		theControl = pControl;
 		
-		/* Store access to the Debug Manager */
-		theDebugMgr = theControl.getDebugMgr();
-		theDebug	= theDebugMgr.getError();
+		/* Store access to the Debug Entryr */
+		theDebug	= theControl.getView().getErrorEntry();
 		
 		/* Create the boxes */
 		theCancel      = new JButton("Cancel");

@@ -270,15 +270,17 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	/**
 	 * Clear Text constructor
 	 * @param pList The list to associate the Static Data with
+	 * @param uId the id of the new item
 	 * @param uClassId the class id of the new item
 	 * @param pValue the encrypted name of the new item
 	 * @param pDesc the encrypted description of the new item
 	 */
-	protected StaticData(StaticList<T,E> 	pList, 
+	protected StaticData(StaticList<T,E> 	pList,
+						 int				uId,
 					  	 int 				uClassId,
 					  	 String				pValue,
 					  	 String				pDesc) throws Exception {
-		super(pList, 0);
+		super(pList, uId);
 		theEnumClass = pList.getEnumClass();
 		parseEnumId(uClassId);
 		Values myValues = new Values();

@@ -1,7 +1,6 @@
 package uk.co.tolcroft.finance.sheets;
 
 import jxl.*;
-import jxl.write.*;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
@@ -25,11 +24,6 @@ public class SheetAccount extends SheetDataItem<Account> {
 	 * Is the spreadsheet a backup spreadsheet or an edit-able one
 	 */
 	private boolean isBackup	= false;
-	
-	/**
-	 * Validation control for Account Type
-	 */
-	private WritableCellFeatures theTypeCtl	= null;
 	
 	/**
 	 * Account data list
@@ -66,12 +60,6 @@ public class SheetAccount extends SheetDataItem<Account> {
 		/* Access the Accounts list */
 		theList = pOutput.getData().getAccounts();
 		setDataList(theList);
-		
-		/* If this is not a backup */
-		if (!isBackup) {
-			/* Obtain validation for the Account Name */
-			theTypeCtl 	= obtainCellValidation(SheetAccountType.ActTypeNames);
-		}
 	}
 	
 	/**
@@ -111,26 +99,27 @@ public class SheetAccount extends SheetDataItem<Account> {
 		/* else this is a load from an edit-able spreadsheet */
 		else {
 			/* Access the Account */
-			String myName		= loadString(0);
-			String myActType	= loadString(1);
-			String myDesc		= loadString(2);
-			String myParent		= loadString(3);
-			String myAlias		= loadString(4);
+			int	   myID 		= loadInteger(0);
+			String myName		= loadString(1);
+			String myActType	= loadString(2);
+			String myDesc		= loadString(3);
+			String myParent		= loadString(4);
+			String myAlias		= loadString(5);
 		
 			/* Access the date and name and description bytes */
-			java.util.Date 	myClose		= loadDate(5);
-			java.util.Date 	myMaturity 	= loadDate(6);
+			java.util.Date 	myClose		= loadDate(6);
+			java.util.Date 	myMaturity 	= loadDate(7);
 		
 			/* Access the binary values  */
-			char[] 	myWebSite 	= loadChars(7);
-			char[]	myCustNo 	= loadChars(8);
-			char[]	myUserId 	= loadChars(9);
-			char[]	myPassword	= loadChars(10);
-			char[]	myAccount	= loadChars(11);
-			char[]	myNotes		= loadChars(12);
+			char[] 	myWebSite 	= loadChars(8);
+			char[]	myCustNo 	= loadChars(9);
+			char[]	myUserId 	= loadChars(10);
+			char[]	myPassword	= loadChars(11);
+			char[]	myAccount	= loadChars(12);
+			char[]	myNotes		= loadChars(13);
 		
 			/* Load the item */
-			theList.addItem(myName, myActType, myDesc, myMaturity, myClose, 
+			theList.addItem(myID, myName, myActType, myDesc, myMaturity, myClose, 
 							myParent, myAlias, myWebSite, myCustNo,
 							myUserId, myPassword, myAccount, myNotes);
 		}
@@ -167,21 +156,22 @@ public class SheetAccount extends SheetDataItem<Account> {
 		/* else we are creating an edit-able spreadsheet */
 		else {
 			/* Set the fields */
-			writeString(0, pItem.getName());			
-			writeValidatedString(1, pItem.getActType().getName(), theTypeCtl);				
-			writeString(2, pItem.getDesc());
+			writeInteger(0, pItem.getId());
+			writeString(1, pItem.getName());			
+			writeValidatedString(2, pItem.getActType().getName(), SheetAccountType.ActTypeNames);				
+			writeString(3, pItem.getDesc());
 			if (pItem.getParent() != null)
-				writeString(3, pItem.getParent().getName());				
+				writeString(4, pItem.getParent().getName());				
 			if (pItem.getAlias() != null)
-				writeString(4, pItem.getAlias().getName());				
-			writeDate(5, pItem.getClose());			
-			writeDate(6, pItem.getMaturity());			
-			writeChars(7, pItem.getWebSite());			
-			writeChars(8, pItem.getCustNo());			
-			writeChars(9, pItem.getUserId());			
-			writeChars(10, pItem.getPassword());			
-			writeChars(11, pItem.getAccount());			
-			writeChars(12, pItem.getNotes());			
+				writeString(5, pItem.getAlias().getName());				
+			writeDate(6, pItem.getClose());			
+			writeDate(7, pItem.getMaturity());			
+			writeChars(8, pItem.getWebSite());			
+			writeChars(9, pItem.getCustNo());			
+			writeChars(10, pItem.getUserId());			
+			writeChars(11, pItem.getPassword());			
+			writeChars(12, pItem.getAccount());			
+			writeChars(13, pItem.getNotes());			
 		}
 	}
 
@@ -193,19 +183,20 @@ public class SheetAccount extends SheetDataItem<Account> {
 		if (isBackup) return false;
 
 		/* Write titles */
-		writeString(0, Account.fieldName(Account.FIELD_NAME));
-		writeString(1, Account.fieldName(Account.FIELD_TYPE));			
-		writeString(2, Account.fieldName(Account.FIELD_DESC));			
-		writeString(3, Account.fieldName(Account.FIELD_PARENT));			
-		writeString(4, Account.fieldName(Account.FIELD_ALIAS));			
-		writeString(5, Account.fieldName(Account.FIELD_CLOSE));			
-		writeString(6, Account.fieldName(Account.FIELD_MATURITY));			
-		writeString(7, Account.fieldName(Account.FIELD_WEBSITE));			
-		writeString(8, Account.fieldName(Account.FIELD_CUSTNO));			
-		writeString(9, Account.fieldName(Account.FIELD_USERID));			
-		writeString(10, Account.fieldName(Account.FIELD_PASSWORD));			
-		writeString(11, Account.fieldName(Account.FIELD_ACCOUNT));			
-		writeString(12, Account.fieldName(Account.FIELD_NOTES));			
+		writeString(0, Account.fieldName(Account.FIELD_ID));
+		writeString(1, Account.fieldName(Account.FIELD_NAME));
+		writeString(2, Account.fieldName(Account.FIELD_TYPE));			
+		writeString(3, Account.fieldName(Account.FIELD_DESC));			
+		writeString(4, Account.fieldName(Account.FIELD_PARENT));			
+		writeString(5, Account.fieldName(Account.FIELD_ALIAS));			
+		writeString(6, Account.fieldName(Account.FIELD_CLOSE));			
+		writeString(7, Account.fieldName(Account.FIELD_MATURITY));			
+		writeString(8, Account.fieldName(Account.FIELD_WEBSITE));			
+		writeString(9, Account.fieldName(Account.FIELD_CUSTNO));			
+		writeString(10, Account.fieldName(Account.FIELD_USERID));			
+		writeString(11, Account.fieldName(Account.FIELD_PASSWORD));			
+		writeString(12, Account.fieldName(Account.FIELD_ACCOUNT));			
+		writeString(13, Account.fieldName(Account.FIELD_NOTES));			
 		return true;
 	}	
 
@@ -221,22 +212,25 @@ public class SheetAccount extends SheetDataItem<Account> {
 
 		/* else this is an edit-able spreadsheet */
 		else {
-			/* Set the thirteen columns as the range */
-			nameRange(13);
+			/* Set the fourteen columns as the range */
+			nameRange(14);
+
+			/* Set the Id column as hidden */
+			setHiddenColumn(0);
 
 			/* Set the name column width and range */
-			nameColumnRange(0, AccountNames);
+			nameColumnRange(1, AccountNames);
 			
 			/* Set the Account column width */
-			setColumnWidth(0, Account.NAMELEN);
-			setColumnWidth(1, StaticClass.NAMELEN);
-			setColumnWidth(2, Account.DESCLEN);
-			setColumnWidth(3, Account.NAMELEN);
+			setColumnWidth(1, Account.NAMELEN);
+			setColumnWidth(2, StaticClass.NAMELEN);
+			setColumnWidth(3, Account.DESCLEN);
 			setColumnWidth(4, Account.NAMELEN);
+			setColumnWidth(5, Account.NAMELEN);
 			
-			/* Set Number columns */
-			setDateColumn(5);
+			/* Set Date columns */
 			setDateColumn(6);
+			setDateColumn(7);
 		}
 	}
 
@@ -338,7 +332,8 @@ public class SheetAccount extends SheetDataItem<Account> {
 					}
 				
 					/* Add the value into the finance tables */
-					myList.addItem(myAccount,
+					myList.addItem(0,
+								   myAccount,
 						           myAcType,
 						           null,
 						           myMaturity,

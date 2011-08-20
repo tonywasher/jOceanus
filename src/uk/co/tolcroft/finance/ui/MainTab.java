@@ -60,6 +60,8 @@ public class MainTab implements ActionListener,
 	private JMenuItem		theSaveDBase	= null;
 	private JMenuItem		theWriteBackup	= null;
 	private JMenuItem		theLoadBackup	= null;
+	private JMenuItem		theWriteExtract	= null;
+	private JMenuItem		theLoadExtract	= null;
 	private JMenuItem		theShowDebug	= null;
 	private JMenuItem		theHelpMgr		= null;
 	private ThreadControl	theThread		= null;
@@ -220,6 +222,12 @@ public class MainTab implements ActionListener,
 		theLoadBackup = new JMenuItem("Restore from Backup");
 		theLoadBackup.addActionListener(this);
 		theBackupMenu.add(theLoadBackup);
+		theWriteExtract = new JMenuItem("Create Extract");
+		theWriteExtract.addActionListener(this);
+		theBackupMenu.add(theWriteExtract);
+		theLoadExtract = new JMenuItem("Load from Extract");
+		theLoadExtract.addActionListener(this);
+		theBackupMenu.add(theLoadExtract);
 		theHelpMgr = new JMenuItem("Help");
 		theHelpMgr.addActionListener(this);
 		theHelpMenu.add(theHelpMgr);
@@ -322,6 +330,12 @@ public class MainTab implements ActionListener,
 			writeBackup();
 		}
 		
+		/* If this event relates to the Write Extract item */
+		if (evt.getSource() == (Object)theWriteExtract) {
+			/* Start a write extract operation */
+			writeExtract();
+		}
+		
 		/* If this event relates to the Save Database item */
 		if (evt.getSource() == (Object)theSaveDBase) {
 			/* Start a store database operation */
@@ -356,6 +370,12 @@ public class MainTab implements ActionListener,
 		if (evt.getSource() == (Object)theLoadBackup) {
 			/* Start a restore backup operation */
 			restoreBackup();
+		}		
+		
+		/* If this event relates to the Load extract item */
+		if (evt.getSource() == (Object)theLoadExtract) {
+			/* Start a load backup operation */
+			loadExtract();
 		}		
 		
 		/* If this event relates to the Display Debug item */
@@ -455,6 +475,32 @@ public class MainTab implements ActionListener,
 
 		/* Create the worker thread */
 		myThread = new restoreBackup(theView, this);
+		theThread = myThread;
+
+		/* Execute it and lock tabs */
+		theExecutor.execute(myThread);	
+		setVisibleTabs();
+	}
+	
+	/* Write Extract */
+	public void writeExtract() {
+		writeExtract myThread;
+		
+		/* Create the worker thread */
+		myThread = new writeExtract(theView, this);
+		theThread = myThread;
+		
+		/* Execute it and lock tabs */
+		theExecutor.execute(myThread);	
+		setVisibleTabs();
+	}
+	
+	/* Load Extract */
+	public void loadExtract() {
+		loadExtract myThread;
+
+		/* Create the worker thread */
+		myThread = new loadExtract(theView, this);
 		theThread = myThread;
 
 		/* Execute it and lock tabs */

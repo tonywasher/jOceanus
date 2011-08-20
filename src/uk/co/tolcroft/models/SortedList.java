@@ -512,6 +512,34 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 	}
 	
 	/**
+	 * Peek at the first item
+	 * @return the first item or <code>null</code>
+	 */
+	protected T peekFirst() {
+		LinkNode<T> myNode;
+		
+		/* Access the first item  */
+		myNode = getFirst();
+		
+		/* Return the next object */
+		return (myNode == null) ? null : myNode.getObject();
+	}
+
+	/**
+	 * Peek at the first item
+	 * @return the first item or <code>null</code>
+	 */
+	protected T peekLast() {
+		LinkNode<T> myNode;
+		
+		/* Access the last item  */
+		myNode = getLast();
+		
+		/* Return the next object */
+		return (myNode == null) ? null : myNode.getObject();
+	}
+
+	/**
 	 * Peek at the next item
 	 * @param pItem the item from which to find the next item
 	 * @return the next item or <code>null</code>

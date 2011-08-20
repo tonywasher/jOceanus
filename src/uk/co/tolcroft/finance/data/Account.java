@@ -59,10 +59,6 @@ public class Account extends EncryptedItem<Account> {
 	public final static int NOTELEN 		= 500;
 
 	/* Members */
-	private int                   theOrder     = -1;
-	private Integer				  theParentId  = null;
-	private Integer				  theAliasId   = null;
-	private int 				  theActTypeId = -1;
 	private Event                 theEarliest  = null;
 	private Event                 theLatest    = null;
 	private AcctPrice             theInitPrice = null;
@@ -79,14 +75,14 @@ public class Account extends EncryptedItem<Account> {
 	public  String      getName()      	{ return getPairValue(getValues().getName()); }
 	public  String      getDesc()      	{ return getPairValue(getValues().getDesc()); }
 	public  Account     getParent()    	{ return getValues().getParent(); }
-	public  Integer		getParentId()  	{ return theParentId; }
+	public  Integer		getParentId()  	{ return getValues().getParentId(); }
 	public  Account     getAlias()    	{ return getValues().getAlias(); }
-	public  Integer     getAliasId()  	{ return theAliasId; }
+	public  Integer     getAliasId()  	{ return getValues().getAliasId(); }
 	public  Event       getEarliest()  	{ return theEarliest; }
 	public  Event       getLatest()    	{ return theLatest; }
 	public  AcctPrice   getInitPrice()  { return theInitPrice; }
 	public  AccountType getActType()   	{ return getValues().getType(); }
-	public  int         getOrder()     	{ return theOrder; }
+	public  int         getOrder()     	{ return getValues().getOrder(); }
 	public  Date        getMaturity()  	{ return getValues().getMaturity(); }
 	public  Date    	getClose()     	{ return getValues().getClose(); }
 	public  char[]    	getWebSite()	{ return getPairValue(getValues().getWebSite()); }
@@ -98,7 +94,7 @@ public class Account extends EncryptedItem<Account> {
 	public  boolean     isCloseable()  	{ return isCloseable; }
 	public  boolean     isParent()  	{ return isParent; }
 	public  boolean     isClosed()     	{ return (getClose() != null); }
-	public  boolean     isAlias()     	{ return (getAlias() != null); }
+	public  boolean     isAlias()     	{ return (getAliasId() != null); }
 	public  boolean     isAliasedTo()  	{ return isAliasedTo; }
 	public  boolean     isDeletable()  	{ 
 		return ((theLatest == null) && 
@@ -199,9 +195,9 @@ public class Account extends EncryptedItem<Account> {
 				myString += myValues.getDescValue(); 
 				break;
 			case FIELD_TYPE:	
-				if ((getActType() == null) &&
-					(theActTypeId != -1))
-					myString += "Id=" + theActTypeId;
+				if ((myValues.getType() == null) &&
+					(myValues.getActTypeId() != null))
+					myString += "Id=" + myValues.getActTypeId();
 				else
 					myString += AccountType.format(getActType()); 
 				break;
@@ -213,15 +209,15 @@ public class Account extends EncryptedItem<Account> {
 				break;
 			case FIELD_PARENT:	
 				if ((myValues.getParent() == null) &&
-					(theParentId != null))
-					myString += "Id=" + theParentId;
+					(myValues.getParentId() != null))
+					myString += "Id=" + myValues.getParentId();
 				else
 					myString += Account.format(myValues.getParent()); 
 				break;
 			case FIELD_ALIAS:	
 				if ((myValues.getAlias() == null) &&
-					(theAliasId != null))
-					myString += "Id=" + theAliasId;
+					(myValues.getAliasId() != null))
+					myString += "Id=" + myValues.getAliasId();
 				else
 					myString += Account.format(myValues.getAlias()); 
 				break;
@@ -260,7 +256,6 @@ public class Account extends EncryptedItem<Account> {
 		Values myValues = new Values(pAccount.getValues());
 		setValues(myValues);
 		setControlKey(pAccount.getControlKey());
-		theOrder     = pAccount.getOrder();
 		theEarliest  = pAccount.theEarliest;
 		theLatest    = pAccount.theLatest;
 		isCloseable  = pAccount.isCloseable();
@@ -344,9 +339,9 @@ public class Account extends EncryptedItem<Account> {
 		setValues(myValues);
 		
 		/* Store the IDs */
-		theActTypeId = uAcTypeId;
-		theParentId  = pParentId;
-		theAliasId   = pAliasId;
+		myValues.setActTypeId(uAcTypeId);
+		myValues.setParentId(pParentId);
+		myValues.setAliasId(pAliasId);
 		
 		/* Set ControlId */
 		setControlKey(uControlId);
@@ -359,7 +354,6 @@ public class Account extends EncryptedItem<Account> {
 		                        this,
 					            "Invalid Account Type Id");
 		myValues.setType(myActType);
-		theOrder    = myActType.getOrder();
 
 		/* Parse the maturity date if it exists */
 		if (pMaturity != null) 
@@ -394,6 +388,7 @@ public class Account extends EncryptedItem<Account> {
 	 * @param uAliasId the Alias id (or -1 if no parent)
 	 */
 	private Account(List    		pList,
+					int				uId,
 					String         	sName, 
 					int				uAcTypeId,
 					String			pDesc,
@@ -408,7 +403,7 @@ public class Account extends EncryptedItem<Account> {
 			        char[]			pAccount,
 			        char[]			pNotes) throws Exception {
 		/* Initialise the item */
-		super(pList, 0);
+		super(pList, uId);
 		
 		/* Local Variable */
 		AccountType myActType;
@@ -428,9 +423,9 @@ public class Account extends EncryptedItem<Account> {
 		myValues.setNotes((pNotes == null) ? null : new CharArrayPair(pNotes));
 		
 		/* Store the IDs */
-		theActTypeId = uAcTypeId;
-		theParentId  = pParentId;
-		theAliasId   = pAliasId;
+		myValues.setActTypeId(uAcTypeId);
+		myValues.setParentId(pParentId);
+		myValues.setAliasId(pAliasId);
 		
 		/* Look up the Account Type */
 		DataSet	myData 	= pList.getData();
@@ -440,7 +435,6 @@ public class Account extends EncryptedItem<Account> {
 		                        this,
 					            "Invalid Account Type Id");
 		myValues.setType(myActType);
-		theOrder    = myActType.getOrder();
 
 		/* Parse the maturity date if it exists */
 		if (pMaturity != null) 
@@ -495,7 +489,6 @@ public class Account extends EncryptedItem<Account> {
 	 */
 	public int compareTo(Object pThat) {
 		long result;
-		ListStyle myStyle;
 
 		/* Handle the trivial cases */
 		if (this == pThat) return 0;
@@ -507,29 +500,23 @@ public class Account extends EncryptedItem<Account> {
 		/* Access the object as an Account */
 		Account myThat = (Account)pThat;
 		
-		/* Access the list style */
-		myStyle = getList().getStyle();
-		
-		/* If this is in an update view we need to do some special ordering to handle alias and parent dependencies */
-		if (myStyle == ListStyle.UPDATE) {
-			/* If we are comparing child with parent */
-			if (isChild() != myThat.isChild()) {
-				/* List children after parents */
-				if (isChild()) 	return 1;
-				else			return -1;
-			}
+		/* If we are comparing owner with non-owner */
+		if (isOwner() != myThat.isOwner()) {
+			/* List owners first */
+			if (isOwner()) 	return -1;
+			else			return 1;
+		}
 			
-			/* If we are comparing alias with non-alias */
-			if (isAlias() != myThat.isAlias()) {
-				/* List alias after non-alias */
-				if (isAlias()) 	return 1;
-				else			return -1;
-			}
+		/* If we are comparing alias with non-alias */
+		if (isAlias() != myThat.isAlias()) {
+			/* List alias after non-alias */
+			if (isAlias()) 	return 1;
+			else			return -1;
 		}
 		
 		/* If the order differs */
-		if (theOrder < myThat.theOrder) return -1;
-		if (theOrder > myThat.theOrder) return  1;
+		if (getOrder() < myThat.getOrder()) return -1;
+		if (getOrder() > myThat.getOrder()) return  1;
 		
 		/* If the names differ */
 		if (getName() != myThat.getName()) {
@@ -970,7 +957,6 @@ public class Account extends EncryptedItem<Account> {
 	 */
 	public void setActType(AccountType pType) {
 		getValues().setType(pType);
-		theOrder    = pType.getOrder();
 	}
 	
 	/**
@@ -1372,7 +1358,8 @@ public class Account extends EncryptedItem<Account> {
 		 * @param pAlias the Name of the alias account (or null)
 		 * @throws Exception on error
 		 */ 
-		public void addItem(String   		pName,
+		public void addItem(int				uId,
+							String   		pName,
 				            String   		pAcType,
 				            String			pDesc,
 				            java.util.Date  pMaturity,
@@ -1430,6 +1417,7 @@ public class Account extends EncryptedItem<Account> {
 			
 			/* Create the new account */
 			myAccount = new Account(this,
+									uId,
 					                pName, 
 					                myActType.getId(),
 					                pDesc,
@@ -1582,6 +1570,10 @@ public class Account extends EncryptedItem<Account> {
 	 * Values for account
 	 */
 	public class Values extends EncryptedValues {
+		private Integer         theOrder     	= -1;
+		private Integer			theParentId  	= null;
+		private Integer			theAliasId   	= null;
+		private Integer		    theActTypeId 	= null;
 		private StringPair  	theName     	= null;
 		private StringPair  	theDesc     	= null;
 		private AccountType		theType			= null;
@@ -1610,6 +1602,10 @@ public class Account extends EncryptedItem<Account> {
 		public CharArrayPair	getPassword()	{ return thePassword; }
 		public CharArrayPair	getAccount()	{ return theAccount; }
 		public CharArrayPair	getNotes()		{ return theNotes; }
+		private Integer			getOrder()   	{ return theOrder; }
+		private Integer			getActTypeId()  { return theActTypeId; }
+		private Integer			getParentId()   { return theParentId; }
+		private Integer			getAliasId()    { return theAliasId; }
 
 		/* Encrypted value access */
 		public  String	getNameValue()      { return getPairValue(getName()); }
@@ -1636,15 +1632,25 @@ public class Account extends EncryptedItem<Account> {
 		public void setDesc(StringPair pDesc) {
 			theDesc      = pDesc; }
 		public void setType(AccountType pType) {
-			theType      = pType; }
+			theType      = pType; 
+			theActTypeId = (pType == null) ? null : pType.getId(); 
+			theOrder     = (pType == null) ? null : pType.getOrder(); }
+		private void setActTypeId(int uActTypeId) {
+			theActTypeId = uActTypeId; }
 		public void setMaturity(Date pMaturity) {
 			theMaturity  = pMaturity; }
 		public void setClose(Date pClose) {
 			theClose     = pClose; }
 		public void setParent(Account pParent) {
-			theParent    = pParent; }
+			theParent    = pParent; 
+			theParentId  = (pParent == null) ? null : pParent.getId(); }
 		public void setAlias(Account pAlias) {
-			theAlias     = pAlias; }
+			theAlias     = pAlias; 
+			theAliasId   = (pAlias == null) ? null : pAlias.getId(); }
+		private void setParentId(Integer uParentId) {
+			theParentId	 = uParentId; }
+		private void setAliasId(Integer uAliasId) {
+			theAliasId	 = uAliasId; }
 		public void setWebSite(CharArrayPair pWebSite) {
 			theWebSite		= pWebSite; }
 		public void setCustNo(CharArrayPair pCustNo) {
@@ -1669,10 +1675,14 @@ public class Account extends EncryptedItem<Account> {
 			if (differs(theName,			myValues.theName))     	return false;
 			if (differs(theDesc,			myValues.theDesc))     	return false;
 			if (AccountType.differs(theType,myValues.theType))     	return false;
+			if (Utils.differs(theActTypeId, myValues.theActTypeId)) return false;
+			if (Utils.differs(theOrder,     myValues.theOrder))     return false;
 			if (Date.differs(theMaturity, 	myValues.theMaturity)) 	return false;
 			if (Date.differs(theClose,    	myValues.theClose))    	return false;
 			if (Account.differs(theParent,  myValues.theParent))   	return false;
 			if (Account.differs(theAlias,   myValues.theAlias))   	return false;
+			if (Utils.differs(theParentId,  myValues.theParentId))  return false;
+			if (Utils.differs(theAliasId,   myValues.theAliasId))   return false;
 			if (differs(theWebSite,			myValues.theWebSite)) 	return false;
 			if (differs(theCustNo,			myValues.theCustNo)) 	return false;
 			if (differs(theUserId,			myValues.theUserId)) 	return false;
@@ -1692,10 +1702,14 @@ public class Account extends EncryptedItem<Account> {
 			theName       = myValues.getName();
 			theDesc       = myValues.getDesc();
 			theType       = myValues.getType();
+			theActTypeId  = myValues.getActTypeId();
+			theOrder      = myValues.getOrder();
 			theMaturity   = myValues.getMaturity();
 			theClose      = myValues.getClose();
 			theParent     = myValues.getParent();
 			theAlias      = myValues.getAlias();
+			theParentId   = myValues.getParentId();
+			theAliasId    = myValues.getAliasId();
 			theWebSite 	  = myValues.getWebSite();
 			theCustNo 	  = myValues.getCustNo();
 			theUserId 	  = myValues.getUserId();

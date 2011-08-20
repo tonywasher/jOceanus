@@ -61,15 +61,17 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 	/**
 	 * Construct a standard tax type on load
 	 * @param pList	The list to associate the Tax Type with
+	 * @param uId   ID of TaxType
 	 * @param uClassId the class id of the new item
 	 * @param pName Name of Tax Type
 	 * @param pDesc Description of Tax Type
 	 */
 	private TaxType(List 	pList,
+					int		uId,
 			        int		uClassId,
 			        String	pName,
 			        String	pDesc) throws Exception {
-		super(pList, uClassId, pName, pDesc);
+		super(pList, uId, uClassId, pName, pDesc);
 	}
 	
 	/**
@@ -207,18 +209,26 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 
 		/**
 		 * Add a TaxType to the list
+		 * @param uId   ID of TaxType
 		 * @param uClassId the ClassId of the tax type
 		 * @param pTaxType the Name of the tax type
 		 * @param pDesc the Description of the tax type
 		 */ 
-		public void addItem(int	   uClassId,
+		public void addItem(int    uId,
+							int	   uClassId,
 				            String pTaxType,
 				            String pDesc) throws Exception {
 			TaxType myTaxType;
 				
 			/* Create a new Tax Type */
-			myTaxType = new TaxType(this, uClassId, pTaxType, pDesc);
+			myTaxType = new TaxType(this, uId, uClassId, pTaxType, pDesc);
 				
+			/* Check that this TaxTypeId has not been previously added */
+			if (!isIdUnique(myTaxType.getId())) 
+				throw new Exception(ExceptionClass.DATA,
+	  					  			myTaxType,
+			  			            "Duplicate TaxTypeId");
+				 
 			/* Check that this TaxType has not been previously added */
 			if (searchFor(myTaxType.getName()) != null) 
 				throw new Exception(ExceptionClass.DATA,

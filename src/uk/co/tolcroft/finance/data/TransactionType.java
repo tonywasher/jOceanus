@@ -55,15 +55,17 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 	/**
 	 * Construct a standard transaction type on load
 	 * @param pList	The list to associate the Transaction Type with
+	 * @param uId   ID of Transaction Type
 	 * @param uClassId the class id of the new item
 	 * @param pName Name of Transaction Type
 	 * @param pDesc Description of Transaction Type
 	 */
 	private TransactionType(List 	pList,
+							int		uId,
 			         		int		uClassId,
 			         		String	pName,
 			         		String	pDesc) throws Exception {
-		super(pList, uClassId, pName, pDesc);
+		super(pList, uId, uClassId, pName, pDesc);
 	}
 	
 	/**
@@ -478,17 +480,19 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 
 		/**
 		 * Add a TransactionType to the list
+		 * @param uId   ID of Transaction Type
 		 * @param uClassId the ClassId of the transaction type
 		 * @param pTranType the Name of the transaction type
 		 * @param pDesc the Description of the transaction type
 		 */ 
-		public void addItem(int	   uClassId,
+		public void addItem(int	   uId,
+							int	   uClassId,
 				            String pTranType,
 				            String pDesc) throws Exception {
 			TransactionType myTranType;
 				
 			/* Create a new Transaction Type */
-			myTranType = new TransactionType(this, uClassId, pTranType, pDesc);
+			myTranType = new TransactionType(this, uId, uClassId, pTranType, pDesc);
 				
 			/* Check that this TransactionType has not been previously added */
 			if (searchFor(myTranType.getName()) != null) 

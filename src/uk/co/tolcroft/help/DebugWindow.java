@@ -1,9 +1,8 @@
-package uk.co.tolcroft.finance.ui;
+package uk.co.tolcroft.help;
 
 import java.awt.Dimension;
 
 import javax.swing.GroupLayout;
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -11,16 +10,11 @@ import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.text.Document;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.StyleSheet;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import uk.co.tolcroft.finance.views.DebugManager.*;
-import uk.co.tolcroft.finance.views.*;
-import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.help.DebugManager.*;
 
 public class DebugWindow extends JFrame implements TreeSelectionListener {
 	private static final long serialVersionUID = 3055614623371854422L;
@@ -28,17 +22,14 @@ public class DebugWindow extends JFrame implements TreeSelectionListener {
 	/* Properties */
 	private DebugManager	theDebugMgr		= null;
 	private JTree			theTree			= null;
-	private JEditorPane     theEditor     	= null;
+	//private JEditorPane     theEditor     	= null;
+	private DebugItem		theItemPane		= null;
 			
 	/* Constructor */
 	public DebugWindow(JFrame 		pParent,
 					   DebugManager	pManager) {
 		JSplitPane	  mySplit;
-		JScrollPane   myDocScroll;
 		JScrollPane   myTreeScroll;
-		HTMLEditorKit myKit;
-		StyleSheet    myStyle;
-		Document      myDoc;
 			
 		/* Store the parameters */
 		theDebugMgr	= pManager;
@@ -50,27 +41,6 @@ public class DebugWindow extends JFrame implements TreeSelectionListener {
 		/* Set the title */
 		setTitle(theDebugMgr.getTitle());
 		
-		/* Create the editor pane as non-editable */
-		theEditor = new JEditorPane();
-		theEditor.setEditable(false);
-			
-		/* Add an editor kit to the editor */
-		myKit = new HTMLEditorKit();
-		theEditor.setEditorKit(myKit);
-			
-		/* Create a scroll-pane for the editor */
-		myDocScroll = new JScrollPane(theEditor);
-		
-		/* Create the style-sheet for the window */
-		myStyle = myKit.getStyleSheet();
-		myStyle.addRule("body { color:#000; font-family:times; margins; 4px; }");
-		myStyle.addRule("h1 { color: black; }");
-		myStyle.addRule("h2 { color: black; }");
-			
-		/* Create the document for the window */
-		myDoc = myKit.createDefaultDocument();
-		theEditor.setDocument(myDoc);
-			
 		/* Make sure that we have single selection model */
 		theTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		
@@ -82,16 +52,18 @@ public class DebugWindow extends JFrame implements TreeSelectionListener {
 		
 		/* Access the initial id */
 		DebugEntry	myEntry = theDebugMgr.getFocus();
-		displayDebug(myEntry);
 
 		/* Add the listener for the tree */
 		theTree.addTreeSelectionListener(this);
 
 		/* Create a scroll-pane for the tree */
 		myTreeScroll = new JScrollPane(theTree);
+
+		/* Create the item panel */
+		theItemPane = new DebugItem();
 		
 		/* Create the split pane */
-		mySplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myTreeScroll, myDocScroll);
+		mySplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myTreeScroll, theItemPane.getPanel());
 		mySplit.setOneTouchExpandable(true);
 		mySplit.setPreferredSize(new Dimension(900, 600));
 
@@ -119,6 +91,7 @@ public class DebugWindow extends JFrame implements TreeSelectionListener {
 		
 		/* Set the relative location */
 		setLocationRelativeTo(pParent);
+		displayDebug(myEntry);
 	}
 		
 	/* display the dialog */
@@ -127,31 +100,17 @@ public class DebugWindow extends JFrame implements TreeSelectionListener {
 		setVisible(true);		
 	}
 	
-	/* Build Report */
-	public void displayDebug(DebugEntry pEntry) {
-		htmlDumpable pObject = pEntry.getObject();
-		
-		/* Ignore if no debug object */
-		if (pObject == null) return;
-		
-		/* Build the HTML page */
-		String	myText = "<html><body>";
-
-		/* Convert the object to an HTML string */
-		myText += pObject.toHTMLString();
-		myText += "</body></html>";
-		
-		/* Set the report text */
-		theEditor.setText(myText);
-		theEditor.setCaretPosition(0);
-		theEditor.requestFocusInWindow();
-		
+	/* Display the debug */
+	protected void displayDebug(DebugEntry pEntry) {
 		/* Sort out the tree */
 		TreePath myPath = pEntry.getPath();
 		theTree.setSelectionPath(myPath);
 		theTree.scrollPathToVisible(myPath);
-	}		
-
+		
+		/* display the debug in the panel */
+		theItemPane.displayDebug(pEntry);
+	}
+	
 	/* Handle tree selection */
 	public void valueChanged(TreeSelectionEvent e) {
 		DefaultMutableTreeNode myNode = 
@@ -166,5 +125,4 @@ public class DebugWindow extends JFrame implements TreeSelectionListener {
 		/* display the node */
 		displayDebug(myDebug);
 	}
-	
 }

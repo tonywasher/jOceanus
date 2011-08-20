@@ -1,12 +1,9 @@
-package uk.co.tolcroft.finance.views;
+package uk.co.tolcroft.help;
 
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-
-import uk.co.tolcroft.finance.ui.*;
-import uk.co.tolcroft.models.htmlDumpable;
 
 public class DebugManager {
 	/* Members */
@@ -14,25 +11,12 @@ public class DebugManager {
 	private DebugEntry				theRoot		= null;
 	private DebugEntry				theFocus	= null;
 	private String					theTitle	= "Debug Manager";
-	private DebugEntry				theError	= null;
-	private DebugEntry				theViews	= null;
-	private DebugEntry				theData		= null;
-	private DebugEntry				theUpdates	= null;
-	private DebugEntry				theAnalysis	= null;
-	private DebugEntry				theInstant	= null;
-	private DebugEntry				theAccount	= null;
 	private DebugWindow				theWindow	= null;
+	private DebugManager			theManager	= this;
 
 	/* Access methods */
 	public TreeModel	getModel()		{ return theModel; }
 	public String		getTitle()		{ return theTitle; }
-	public DebugEntry	getError()		{ return theError; }
-	public DebugEntry	getViews()		{ return theViews; }
-	public DebugEntry	getData()		{ return theData; }
-	public DebugEntry	getUpdates()	{ return theUpdates; }
-	public DebugEntry	getAnalysis()	{ return theAnalysis; }
-	public DebugEntry	getInstant()	{ return theInstant; }
-	public DebugEntry	getAccount()	{ return theAccount; }
 	public DebugEntry	getFocus()		{ return theFocus; }
 	
 	/**
@@ -45,28 +29,6 @@ public class DebugManager {
 		
 		/* Create the tree model */
 		theModel = new DefaultTreeModel(theRoot.getNode());
-		
-		/* Create the default entries */
-		theViews 	= new DebugEntry("EditViews");
-		theData 	= new DebugEntry("Data");
-		theUpdates 	= new DebugEntry("Updates");
-		theAnalysis	= new DebugEntry("Analysis");
-		theInstant	= new DebugEntry("InstantAnalysis");
-		theAccount	= new DebugEntry("AccountAnalysis");
-		theError	= new DebugEntry("Error");
-		
-		/* Add them to the root */
-		theViews.addAsRootChild();
-		theData.addAsRootChild();
-		theUpdates.addAsRootChild();
-		theAnalysis.addAsRootChild();
-		theAccount.addAsRootChild();
-		theInstant.addAsRootChild();
-		theError.addAsRootChild();
-		
-		/* Hide the instant/error view */
-		theInstant.hideEntry();
-		theError.hideEntry();
 	}
 	
 	/**
@@ -78,22 +40,39 @@ public class DebugManager {
 		theWindow = pWindow;
 	}
 	
+	/**
+	 * Create a child entry for parent
+	 * @param pParent the parent to add to
+	 * @param the name of the new entry
+	 * @return the new child entry
+	 */
+	public DebugEntry addChildEntry(DebugEntry	pParent,
+							   		String		pName,
+							   		DebugObject	pObject) {
+		DebugEntry myEntry = new DebugEntry(pName);
+		myEntry.addAsChildOf(pParent);
+		myEntry.setObject(pObject);
+		return myEntry;
+	}	
+
 	/* The Debug Entry class */
 	public class DebugEntry {
 		/* Members */
 		private	String					theName		= null;
-		private htmlDumpable			theObject	= null;
+		private DebugObject				theObject	= null;
 		private DefaultMutableTreeNode	theNode		= null;
 		private DefaultMutableTreeNode	theParent	= null;
 		private TreePath				thePath		= null;
 		private boolean					isVisible	= false;
+		private boolean					hasChildren	= false;
 		
 		/* Access methods */
-		public String					getName() 	{ return theName; }
-		public htmlDumpable				getObject()	{ return theObject; }
-		public DefaultMutableTreeNode	getNode()	{ return theNode; }
-		public TreePath					getPath()	{ return thePath; }
-		public boolean					isVisible()	{ return isVisible; }
+		public String					getName() 		{ return theName; }
+		public DebugObject				getObject()		{ return theObject; }
+		public DefaultMutableTreeNode	getNode()		{ return theNode; }
+		public TreePath					getPath()		{ return thePath; }
+		public boolean					isVisible()		{ return isVisible; }
+		public boolean					hasChildren()	{ return hasChildren; }
 		
 		/**
 		 * Constructor
@@ -121,6 +100,9 @@ public class DebugManager {
 			
 			/* Note that we are visible */
 			isVisible = true;
+			
+			/* Note that parent has Children */
+			pParent.hasChildren = true;
 		}
 		
 		/**
@@ -137,12 +119,15 @@ public class DebugManager {
 			
 			/* Note that we are visible */
 			isVisible = true;
+			
+			/* Note that parent has Children */
+			pParent.hasChildren = true;
 		}
 		
 		/**
 		 * Add as a root child into the tree
 		 */
-		private void addAsRootChild() {
+		public void addAsRootChild() {
 			/* Add as child of root node */
 			theParent 	= theRoot.getNode();
 			theParent.add(theNode);
@@ -219,12 +204,21 @@ public class DebugManager {
 		 * Set the object referred to by the entry
 		 * @param pObject the new object
 		 */
-		public void setObject(htmlDumpable pObject) {
+		public void setObject(DebugObject pObject) {
 			/* Set the new object */
 			theObject = pObject;
 			
 			/* Note that this entry has changed */
 			if (isVisible) theModel.nodeChanged(theNode);
+			
+			/* Remove all the children */
+			removeChildren();
+				
+			/* Return if the entry is null */
+			if (pObject == null) return;
+			
+			/* Add all the children */
+			pObject.addChildEntries(theManager, this);
 		}
 
 		/**
@@ -232,16 +226,13 @@ public class DebugManager {
 		 * @param pObject the new object
 		 */
 		public void setChanged() {
-			/* If this entry has an object */
-			if (theObject != null) {
-				/* Note that this object has changed */
-				if (isVisible) theModel.nodeChanged(theNode);
-			}
-			
-			/* else its the children that have changed */
-			else {
-				/* Note that this entry has changed */
-				if (isVisible) theModel.nodeStructureChanged(theNode);				
+			/* If the node is visible */
+			if (isVisible) {
+				/* Note the object has changed if it exists */
+				if (theObject != null)  theModel.nodeChanged(theNode);
+
+				/* Note that any children have changed */
+				theModel.nodeStructureChanged(theNode);				
 			}
 		}
 
@@ -251,7 +242,8 @@ public class DebugManager {
 		 */
 		public void removeChildren() {
 			/* Remove all the children */
-			theNode.removeAllChildren();				
+			theNode.removeAllChildren();
+			hasChildren = false;
 		}
 	}
 }

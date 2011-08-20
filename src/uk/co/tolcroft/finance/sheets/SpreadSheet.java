@@ -116,9 +116,9 @@ public class SpreadSheet {
 	 *  @param pData Data to write out
 	 *  @param pFile the extract file to write to
 	 */
-	public static void createEditable(statusCtl pThread,
-							 		  DataSet	pData,
-							 		  File 		pFile) throws Exception {
+	public static void createExtract(statusCtl pThread,
+							 		 DataSet	pData,
+							 		 File 		pFile) throws Exception {
 		/* Create an output sheet object */
 		OutputSheet mySheet = new OutputSheet(pThread);
 			
@@ -581,9 +581,6 @@ public class SpreadSheet {
 				/* The Target file has ".xls" appended */
 				myTgtFile 	= new File(pFile.getPath() + ".xls");
 
-				/* The Target file is the named file */
-				myTgtFile = pFile;
-					
 				/* Create an output stream to the file */
 				myOutFile = new FileOutputStream(myTgtFile);
 				myStream  = new BufferedOutputStream(myOutFile);
@@ -613,7 +610,7 @@ public class SpreadSheet {
 				
 				/* Report the error */
 				throw new Exception(ExceptionClass.EXCEL, 
-						  			"Failed to create Editable Workbook: " + pFile.getName(),
+						  			"Failed to create Editable Workbook: " + myTgtFile.getName(),
 						  			e);				
 			}
 		}

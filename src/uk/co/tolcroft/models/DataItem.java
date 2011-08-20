@@ -1,5 +1,8 @@
 package uk.co.tolcroft.models;
 
+import uk.co.tolcroft.help.DebugManager;
+import uk.co.tolcroft.help.DebugManager.DebugEntry;
+import uk.co.tolcroft.help.DebugObject;
 import uk.co.tolcroft.models.DataList;
 import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.DataState;
@@ -11,7 +14,7 @@ import uk.co.tolcroft.models.EditState;
  * @see uk.co.tolcroft.models.DataList
  */
 public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
-																 htmlDumpable {
+																 DebugObject {
 	/**
 	 * The list to which this item belongs
 	 */
@@ -366,6 +369,14 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 		return myString;
 	}
 	
+	/**
+	 * Add child entries for the debug object
+	 * @param pManager the debug manager
+	 * @param pParent the parent debug entry
+	 */
+	public void addChildEntries(DebugManager 	pManager,
+								DebugEntry		pParent) { }	
+
 	/**
 	 * Obtain the type of the item
 	 * @return the type of the item

@@ -55,15 +55,17 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 	/**
 	 * Construct a tax regime on load
 	 * @param pList	The list to associate the TaxRegime with
+	 * @param uId the id of the new item
 	 * @param uClassId the class id of the new item
 	 * @param pName Name of Tax Regime
 	 * @param pDesc Description of Tax Regime
 	 */
 	private TaxRegime(List 		pList,
+					  int		uId,
 			          int		uClassId,
 			          String	pName,
 			          String	pDesc) throws Exception {
-		super(pList, uClassId, pName, pDesc);
+		super(pList, uId, uClassId, pName, pDesc);
 	}
 	
 	/**
@@ -203,18 +205,26 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 
 		/**
 		 * Add a TaxRegime to the list
+		 * @param uId the id of the new item
 		 * @param uClassId the ClassId of the tax regime
 		 * @param pTaxRegimeActType the Name of the tax regime
 		 * @param pDesc the Description of the tax regime
 		 */ 
-		public void addItem(int	   uClassId,
+		public void addItem(int	   uId,
+							int	   uClassId,
 				            String pTaxRegime,
 				            String pDesc) throws Exception {
 			TaxRegime myTaxReg;
 				
 			/* Create a new Tax Regime */
-			myTaxReg = new TaxRegime(this, uClassId, pTaxRegime, pDesc);
+			myTaxReg = new TaxRegime(this, uId, uClassId, pTaxRegime, pDesc);
 				
+			/* Check that this TaxRegimeId has not been previously added */
+			if (!isIdUnique(myTaxReg.getId())) 
+				throw new Exception(ExceptionClass.DATA,
+	  					  			myTaxReg,
+			  			            "Duplicate TaxRegimeId");
+				 
 			/* Check that this Regime has not been previously added */
 			if (searchFor(myTaxReg.getName()) != null) 
 				throw new Exception(ExceptionClass.DATA,

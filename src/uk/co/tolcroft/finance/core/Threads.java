@@ -239,7 +239,7 @@ public class Threads {
 						theStatusBar.setFailure(myOp, theError);
 				}
 
-				/* Report the cancellation */
+				/* Else we were cancelled */
 				else theStatusBar.setFailure(myOp, theError);
 			}	 	
 			catch (Throwable e) {
@@ -593,7 +593,6 @@ public class Threads {
 		private StatusBar   	theStatusBar 	= null;
 		private statusCtl		theStatus    	= null;
 		private Properties		theProperties	= null;
-		private DebugManager	theDebugMgr		= null;
 		private Exception 		theError 	 	= null;
 
 		/* Access methods */
@@ -605,7 +604,6 @@ public class Threads {
 			theView   		= pView;
 			theWindow 		= pWindow;
 			theProperties 	= theWindow.getProperties();
-			theDebugMgr		= theWindow.getDebugMgr();
 
 			/* Access the Status Bar */
 			theStatusBar = theWindow.getStatusBar();
@@ -632,6 +630,13 @@ public class Threads {
 				ArchiveLoad myDialog = new ArchiveLoad(theWindow);
 				myDialog.selectFile();
 				myFile = myDialog.getSelectedFile();
+			
+				/* If we did not select a file */
+				if (myFile == null) {
+					/* Throw cancelled exception */
+					throw new Exception(ExceptionClass.EXCEL,
+										"Operation Cancelled");					
+				}
 				
 				/* Load workbook */
 				myData   = SpreadSheet.loadArchive(theStatus, myFile);
@@ -652,7 +657,7 @@ public class Threads {
 				myData.initialiseSecurity(myStore);
 				
 				/* Analyse the Data to ensure that close dates are updated */
-				myData.analyseData(theDebugMgr);
+				myData.analyseData(theView);
 				
 				/* Re-base the loaded spreadsheet onto the database image */
 				myData.reBase(myStore);
@@ -776,6 +781,13 @@ public class Threads {
 				myDialog.selectFile();
 				myFile = myDialog.getSelectedFile();
 				
+				/* If we did not select a file */
+				if (myFile == null) {
+					/* Throw cancelled exception */
+					throw new Exception(ExceptionClass.EXCEL,
+										"Operation Cancelled");					
+				}
+				
 				/* Load workbook */
 				myData   = SpreadSheet.loadBackup(theStatus, 
 												  myFile);
@@ -870,7 +882,308 @@ public class Threads {
 			super.publish(pStatus);
 		}
 	}
+	
+	public static class loadExtract extends SwingWorker <DataSet, ThreadStatus> 
+	  								implements ThreadControl {
+		/* Properties */
+		private View      	theView      	= null;
+		private MainTab     theWindow    	= null;
+		private StatusBar   theStatusBar 	= null;
+		private statusCtl	theStatus    	= null;
+		private Exception	theError 	 	= null;
 
+		/* Access methods */
+		public Exception 	getError() 			{ return theError; }
+
+		/* Constructor (Event Thread)*/
+		public loadExtract(View pView, MainTab pWindow) {
+			/* Store passed parameters */
+			theView   		= pView;
+			theWindow 		= pWindow;
+
+			/* Access the Status Bar */
+			theStatusBar = theWindow.getStatusBar();
+
+			/* Create the status */
+			theStatus = new statusCtl(this, theWindow.getProperties(), pView);
+
+			/* Initialise the status window */
+			theStatusBar.setOperation("Loading Extract");
+			theStatusBar.setStage("", 0, 100); 
+			theStatusBar.setSteps(0, 100);
+			theStatusBar.getProgressPanel().setVisible(true);
+		}
+
+		/* Background task (Worker Thread)*/
+		public DataSet doInBackground() {
+			DataSet						myData	  = null;
+			DataSet						myStore;
+			Database					myDatabase;
+			File						myFile;
+
+			try {
+				/* Determine the name of the file to load */
+				BackupLoad myDialog = new BackupLoad(theWindow);
+				myDialog.selectFile();
+				myFile = myDialog.getSelectedFile();
+				
+				/* If we did not select a file */
+				if (myFile == null) {
+					/* Throw cancelled exception */
+					throw new Exception(ExceptionClass.EXCEL,
+										"Operation Cancelled");					
+				}
+				
+				/* Load workbook */
+				myData   = SpreadSheet.loadExtract(theStatus, 
+												   myFile);
+
+				/* Re-initialise the status window */
+				theStatusBar.setOperation("Accessing Data Store");
+				theStatusBar.setStage("", 0, 100); 
+				theStatusBar.setSteps(0, 100);
+				theStatusBar.getProgressPanel().setVisible(true);
+
+				/* Create interface */
+				myDatabase = new Database(theWindow.getProperties());
+
+				/* Load underlying database */
+				myStore	= myDatabase.loadDatabase(theStatus);
+
+				/* Initialise the security, either from database or with a new security control */
+				myData.initialiseSecurity(myStore);
+				
+				/* Analyse the Data to ensure that close dates are updated */
+				myData.analyseData(theView);
+				
+				/* Re-base the loaded backup onto the database image */
+				myData.reBase(myStore);
+			}	
+
+			/* Catch any exceptions */
+			catch (Exception e) {
+				/* Report the failure */
+				theError = e;
+				return null;
+			}	
+
+			/* Catch any exceptions */
+			catch (Throwable e) {
+				/* Report the failure */
+				theError = new Exception(ExceptionClass.DATA,
+										 "Failed to restore backup",
+										 e);
+				return null;
+			}	
+
+			/* Return the new Data */
+			return myData;
+		}
+
+		/* Completion task (Event Thread)*/
+		public void done() {
+			DataSet myData;
+			String  myOp = "Backup restoration";
+
+			try {
+				/* If we are not cancelled */
+				if (!isCancelled()) {
+					/* Get the newly loaded data */
+					myData = get();
+
+					/* If we have new data */
+					if (myData != null) {
+						/* Activate the data and obtain any error */
+						theView.setData(myData);
+						theError = theView.getError();
+					}
+					
+					/* Set success/failure */
+					if (theError == null)
+						theStatusBar.setSuccess(myOp);
+					else
+						theStatusBar.setFailure(myOp, theError);
+				}
+
+				/* Report the cancellation */
+				else theStatusBar.setFailure(myOp, theError);
+			} 
+			catch (Throwable e) {
+				theError = new Exception(ExceptionClass.DATA,
+										 "Failed to obtain and activate new data",
+										 e);				
+				theStatusBar.setFailure(myOp, theError);
+			}
+		}		
+
+		/* Process task (Event Thread)*/
+		protected void process(List<ThreadStatus> pStatus) {
+			/* Access the latest status */
+			ThreadStatus myStatus = pStatus.get(pStatus.size() - 1);
+
+			/* Update the status window */
+			theStatusBar.setStage(myStatus.getStage(), 
+								  myStatus.getStagesDone(),
+								  myStatus.getNumStages());
+			theStatusBar.setSteps(myStatus.getStepsDone(),
+								  myStatus.getNumSteps());
+		}
+
+		/* Publish */
+		public void publish(ThreadStatus pStatus) {
+			super.publish(pStatus);
+		}
+	}
+
+	public static class writeExtract extends SwingWorker <Void, ThreadStatus> 
+									 implements ThreadControl {
+		/* Properties */
+		private View      	theView      	= null;
+		private MainTab    	theWindow    	= null;
+		private StatusBar   theStatusBar 	= null;
+		private statusCtl	theStatus    	= null;
+		private Exception 	theError 	 	= null;
+
+		/* Access methods */
+		public Exception 	getError() 			{ return theError; }
+
+		/* Constructor (Event Thread)*/
+		public writeExtract(View pView, MainTab pWindow) {
+			/* Store passed parameters */
+			theView       = pView;
+			theWindow     = pWindow;
+
+			/* Access the Status Bar */
+			theStatusBar = theWindow.getStatusBar();
+
+			/* Create the status */
+			theStatus = new statusCtl(this, theWindow.getProperties(), pView);
+
+			/* Initialise the status window */
+			theStatusBar.setOperation("Writing Extract");
+			theStatusBar.setStage("", 0, 100); 
+			theStatusBar.setSteps(0, 100);
+			theStatusBar.getProgressPanel().setVisible(true);
+		}
+
+		/* Background task (Worker Thread)*/
+		public Void doInBackground() {
+			DataSet		myData	  = null;
+			DataSet		myDiff	  = null;
+			boolean		doDelete  = false;
+			File		myFile	  = null;
+
+			try {
+				/* Determine the name of the file to build */
+				BackupCreate myDialog = new BackupCreate(theWindow);
+				myDialog.selectFile();
+				myFile = myDialog.getSelectedFile();
+
+				/* If we did not select a file */
+				if (myFile == null) {
+					/* Throw cancelled exception */
+					throw new Exception(ExceptionClass.EXCEL,
+										"Operation Cancelled");					
+				}
+
+				/* Create backup */
+				SpreadSheet.createExtract(theStatus, 
+										  theView.getData(), 
+										  myFile);
+
+				/* File created, so delete on error */
+				doDelete = true;
+
+				/* Re-initialise the status window */
+				theStatusBar.setOperation("Verifying Extract");
+				theStatusBar.setStage("", 0, 100); 
+				theStatusBar.setSteps(0, 100);
+				theStatusBar.getProgressPanel().setVisible(true);
+
+				/* .xls will have been added to the file */
+				myFile 	= new File(myFile.getPath() + ".xls");
+
+				/* Load workbook */
+				myData   = SpreadSheet.loadExtract(theStatus, 
+												   myFile);
+
+				/* Initialise the security, from the original data */
+				myData.initialiseSecurity(theView.getData());
+				
+				/* Analyse the Data to ensure that close dates are updated */
+				myData.analyseData(theView);
+				
+				/* Create a difference set between the two data copies */
+				myDiff = new DataSet(myData, theView.getData());
+
+				/* If the difference set is non-empty */
+				if (!myDiff.isEmpty()) {
+					/* Throw an exception */
+					throw new Exception(ExceptionClass.DATA,
+										myDiff,
+										"Extract is inconsistent");
+				}
+			}	
+
+			/* Catch any exceptions */
+			catch (Exception e) {
+				/* Delete the file */
+				if (doDelete) myFile.delete();
+
+				/* Report the failure */
+				theError = e;
+				return null;
+			}	
+
+			/* Catch any exceptions */
+			catch (Throwable e) {
+				/* Delete the file */
+				if (doDelete) myFile.delete();
+
+				/* Report the failure */
+				theError = new Exception(ExceptionClass.DATA,
+										 "Failed to validate extract",
+										 e);
+				return null;
+			}	
+
+			/* Return nothing */
+			return null;
+		}
+
+		/* Completion task (Event Thread)*/
+		public void done() {
+			String  myOp = "Extract creation";
+
+			/* If we are not cancelled and have no error */
+			if ((!isCancelled()) && (theError == null)) {
+				/* Set success */
+				theStatusBar.setSuccess(myOp);
+			}
+
+			/* Else report the cancellation/failure */
+			else theStatusBar.setFailure(myOp, theError);
+		}		
+
+		/* Process task (Event Thread)*/
+		protected void process(List<ThreadStatus> pStatus) {
+			/* Access the latest status */
+			ThreadStatus myStatus = pStatus.get(pStatus.size() - 1);
+
+			/* Update the status window */
+			theStatusBar.setStage(myStatus.getStage(), 
+								  myStatus.getStagesDone(),
+								  myStatus.getNumStages());
+			theStatusBar.setSteps(myStatus.getStepsDone(),
+								  myStatus.getNumSteps());
+		}
+
+		/* Publish */
+		public void publish(ThreadStatus pStatus) {
+			super.publish(pStatus);
+		}
+	}
+	
 	public static class writeBackup extends SwingWorker <Void, ThreadStatus> 
 									implements ThreadControl {
 		/* Properties */
@@ -907,14 +1220,21 @@ public class Threads {
 			DataSet		myData	  = null;
 			DataSet		myDiff	  = null;
 			boolean		doDelete  = false;
-			File		myFile;
+			File		myFile	  = null;
 
-			/* Determine the name of the file to build */
-			BackupCreate myDialog = new BackupCreate(theWindow);
-			myDialog.selectFile();
-			myFile = myDialog.getSelectedFile();
-			
 			try {
+				/* Determine the name of the file to build */
+				BackupCreate myDialog = new BackupCreate(theWindow);
+				myDialog.selectFile();
+				myFile = myDialog.getSelectedFile();
+				
+				/* If we did not select a file */
+				if (myFile == null) {
+					/* Throw cancelled exception */
+					throw new Exception(ExceptionClass.EXCEL,
+										"Operation Cancelled");					
+				}
+				
 				/* Create backup */
 				SpreadSheet.createBackup(theStatus, 
 										 theView.getData(), 

@@ -18,9 +18,10 @@ import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.finance.ui.controls.ReportSelect.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.views.EventAnalysis.AnalysisYear;
 import uk.co.tolcroft.finance.views.*;
+import uk.co.tolcroft.help.DebugManager;
+import uk.co.tolcroft.help.DebugManager.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
@@ -41,6 +42,8 @@ public class ReportTab implements HyperlinkListener,
 	private EventAnalysis		theAnalysis	  	= null;
 	private Properties			theProperties 	= null;
 	private DebugEntry			theDebugReport	= null;
+	private DebugEntry			theSpotEntry	= null;
+
 	private ErrorPanel			theError		= null;
 	
 	/* Access methods */
@@ -71,9 +74,12 @@ public class ReportTab implements HyperlinkListener,
 		
 		/* Create the top level debug entry for this view  */
 		DebugManager myDebugMgr = theView.getDebugMgr();
-		mySection = myDebugMgr.getViews();
-        theDebugReport = myDebugMgr.new DebugEntry("Report");
+		mySection = theView.getViewsEntry();
+        theDebugReport 	= myDebugMgr.new DebugEntry("Report");
+		theSpotEntry	= myDebugMgr.new DebugEntry("SpotAnalysis");
         theDebugReport.addAsChildOf(mySection);
+        theSpotEntry.addAsChildOf(theDebugReport);
+		theSpotEntry.hideEntry();
 		
 		/* Create the editor pane as non-editable */
 		theEditor = new JEditorPane();
@@ -136,7 +142,7 @@ public class ReportTab implements HyperlinkListener,
 	 */
 	public void refreshData() throws Exception {		
 		/* Hide the instant debug since it is now invalid */
-		theView.getDebugMgr().getInstant().hideEntry();
+		theSpotEntry.hideEntry();
 
 		/* Refresh the data */
 		theAnalysis	= theView.getAnalysis();
@@ -209,8 +215,6 @@ public class ReportTab implements HyperlinkListener,
 		AnalysisYear    myYear;
 		EventAnalysis	mySnapshot;
 		AnalysisReport	myReport;
-		DebugManager	myDebugMgr;
-		DebugEntry		myDebug;
 		String          myText = "";
 		
 		/* Access the values from the selection */
@@ -223,10 +227,6 @@ public class ReportTab implements HyperlinkListener,
 		
 		/* Skip if year is null */
 		if (theYear == null) return;
-		
-		/* Access debug manager */
-		myDebugMgr = theView.getDebugMgr();
-		myDebug	   = myDebugMgr.getInstant();
 		
 		/* Switch on report type */
 		switch (theReportType) {
@@ -255,23 +255,21 @@ public class ReportTab implements HyperlinkListener,
 				break;
 				
 			case INSTANT:
-				mySnapshot 	= new EventAnalysis(myDebugMgr,
-												theView.getData(),
+				mySnapshot 	= new EventAnalysis(theView.getData(),
 												theDate);
 				myReport   	= new AnalysisReport(mySnapshot);
 				myText     	= myReport.getInstantReport();
-				myDebug.setObject(mySnapshot.getAnalysis().getList());
-				myDebug.showEntry();
+				theSpotEntry.setObject(mySnapshot);
+				theSpotEntry.showEntry();
 				break;
 				
 			case MARKET:
-				mySnapshot 	= new EventAnalysis(myDebugMgr,
-												theView.getData(),
+				mySnapshot 	= new EventAnalysis(theView.getData(),
 												theDate);
 				myReport   	= new AnalysisReport(mySnapshot);
 				myText     	= myReport.getMarketReport();
-				myDebug.setObject(mySnapshot.getAnalysis().getList());
-				myDebug.showEntry();
+				theSpotEntry.setObject(mySnapshot);
+				theSpotEntry.showEntry();
 				break;
 		}
 

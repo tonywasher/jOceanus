@@ -1,11 +1,15 @@
 package uk.co.tolcroft.models;
 
+import uk.co.tolcroft.help.DebugManager;
+import uk.co.tolcroft.help.DebugObject;
+import uk.co.tolcroft.help.DebugManager.DebugEntry;
+
 /**
  * Generic implementation of a DataList for DataItems Stack
  * @author Tony Washer
  */
 public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T> 
-												   		implements htmlDumpable {
+												   		implements DebugObject {
 	/**
 	 * The style of the list
 	 */
@@ -419,8 +423,6 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 	 */
 	public StringBuilder toHTMLString() {
 		/* Local variables */
-		ListIterator 	myIterator;
-		T 				myCurr;	
 		StringBuilder	myString = new StringBuilder(10000);
 		boolean			showDeleted;
 			
@@ -436,9 +438,14 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 			
 		/* Start the status section */
 		myString.append("<tr><th rowspan=\"");
-		myString.append((showDeleted) ? 4 : 3);
+		myString.append((showDeleted) ? 5 : 4);
 		myString.append("\">Status</th></tr>");
 			
+		/* Format the listSize */
+		myString.append("<tr><td>ListSize</td><td>"); 
+		myString.append(sizeAll()); 
+		myString.append("</td></tr>"); 
+
 		/* Format the listStyle and editState */
 		myString.append("<tr><td>ListStyle</td><td>"); 
 		myString.append(theStyle); 
@@ -450,20 +457,18 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 		addHTMLFields(myString);
 		myString.append("</tbody></table>"); 
 			
-		/* Create an iterator for the source base list */
-		myIterator = listIterator(true);
-		
-		/* Loop through the list */
-		while ((myCurr = myIterator.next()) != null) {
-			/* Format the Item */
-			myString.append("<p>");
-			myString.append(myCurr.toHTMLString());
-		}
-			
 		/* Return the string */
 		return myString;
 	}
 		
+	/**
+	 * Add child entries for the debug object
+	 * @param pManager the debug manager
+	 * @param pParent the parent debug entry
+	 */
+	public void addChildEntries(DebugManager 	pManager,
+								DebugEntry		pParent) { }	
+
 	/**
 	 * Set the EditState for the list (forcible on error/change)
 	 * @param pState the new {@link EditState} (only ERROR/DIRTY)

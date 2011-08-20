@@ -59,10 +59,11 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 	 * @param pDesc Description of Account Type
 	 */
 	private AccountType(List 	pList,
+						int		uId,
 			            int		uClassId,
 			            String	pName,
 			            String	pDesc) throws Exception {
-		super(pList, uClassId, pName, pDesc);
+		super(pList, uId, uClassId, pName, pDesc);
 	}
 	
 	/**
@@ -527,14 +528,21 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 		 * @param pActType the Name of the account type
 		 * @param pDesc the Description of the account type
 		 */ 
-		public void addItem(int	   uClassId,
+		public void addItem(int	   uId,
+							int	   uClassId,
 				            String pActType,
 				            String pDesc) throws Exception {
 			AccountType myActType;
 				
 			/* Create a new Account Type */
-			myActType = new AccountType(this, uClassId, pActType, pDesc);
+			myActType = new AccountType(this, uId, uClassId, pActType, pDesc);
 				
+			/* Check that this AccountTypeId has not been previously added */
+			if (!isIdUnique(myActType.getId())) 
+				throw new Exception(ExceptionClass.DATA,
+	                      			myActType,
+			  			            "Duplicate AccountTypeId");
+				 
 			/* Check that this AccountType has not been previously added */
 			if (searchFor(myActType.getName()) != null) 
 				throw new Exception(ExceptionClass.DATA,

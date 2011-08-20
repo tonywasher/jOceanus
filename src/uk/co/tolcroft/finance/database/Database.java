@@ -266,13 +266,13 @@ public class Database {
 		
 		/* Create the iterator */
 		ListIterator<DatabaseTable<?>> 	myIterator;
-		DatabaseTable<?>			myTable;
-		myIterator = theTables.listIterator();
+		DatabaseTable<?>				myTable;
+		myIterator = theTables.listIterator(theTables.size());
 		
 		/* Loop through the tables to the end of the list */
-		while (myIterator.hasNext()) {
-			myTable = myIterator.next();
-		}
+		//while (myIterator.hasNext()) {
+		//	myTable = myIterator.next();
+		//}
 		
 		/* Loop through the tables in reverse order */
 		while (myIterator.hasPrevious()) {
@@ -298,13 +298,13 @@ public class Database {
 		
 		/* Create the iterator */
 		ListIterator<DatabaseTable<?>> 	myIterator;
-		DatabaseTable<?>			myTable;
-		myIterator = theTables.listIterator();
+		DatabaseTable<?>				myTable;
+		myIterator = theTables.listIterator(theTables.size());
 		
 		/* Loop through the tables to the end of the list */
-		while (myIterator.hasNext()) {
-			myTable = myIterator.next();
-		}
+		//while (myIterator.hasNext()) {
+		//	myTable = myIterator.next();
+		//}
 		
 		/* Loop through the tables in reverse order */
 		while (myIterator.hasPrevious()) {

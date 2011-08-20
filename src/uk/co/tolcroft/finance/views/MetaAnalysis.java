@@ -3,7 +3,6 @@ package uk.co.tolcroft.finance.views;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.finance.views.Analysis.*;
-import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 
@@ -93,7 +92,7 @@ public class MetaAnalysis {
 					/* Access the Asset account */
 					myAsset = (AssetAccount)myCurr;
 			
-					/* Value the asset and calculate */
+					/* Value the asset */
 					myAsset.valueAsset(theDate);
 			
 					/* Process the market movement */
@@ -298,41 +297,6 @@ public class MetaAnalysis {
 
 		/* Set the state to totalled */
 		theAnalysis.setState(AnalysisState.TOTALLED);
-	}
-	
-	/**
-	 * Annotate Capital events debug 
-	 * @param the Debug manager
-	 */
-	protected DebugEntry annotateCapitalDebug(DebugManager 	pDebugMgr) {
-		DataList<AnalysisBucket>.ListIterator 	myIterator;
-		AnalysisBucket							myCurr;
-		AssetAccount							myAsset;
-		DebugEntry								myMaster;
-		DebugEntry								myDebug;
-
-		/* Create the debug entry for the capital events */
-		myMaster = pDebugMgr.new DebugEntry("CapitalEvents");
-
-		/* Access the iterator */
-		myIterator = theList.listIterator();
-		
-		/* Loop through the buckets */
-		while ((myCurr = myIterator.next()) != null) {
-			/* Ignore if this is not an asset detail */
-			if (myCurr.getBucketType() != BucketType.ASSETDETAIL) continue;
-
-			/* Access the Asset Detail */
-			myAsset = (AssetAccount)myCurr;
-			
-			/* Create the debug entry for the capital events */
-			myDebug = pDebugMgr.new DebugEntry(myAsset.getAccount().getName());
-			myDebug.setObject(myAsset.getCapitalEvents());
-			myDebug.addAsChildOf(myMaster);
-		}
-		
-		/* Return the debug entry */
-		return myMaster;
 	}
 	
 	/**

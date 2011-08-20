@@ -16,9 +16,6 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	 * The name of the object
 	 */
 	public static final String listName = objName + "s";
-
-	/* Local values */
-	private int 		theAccountId	= -1;
 	
 	/* Access methods */
 	public  Values     	getValues()     { return (Values)super.getValues(); }	
@@ -84,11 +81,11 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		Values 	myValues = (Values)pValues;
 		switch (iField) {
 			case FIELD_ACCOUNT:
-				if ((getAccount() == null) &&
-					(theAccountId != -1))
-					myString += "Id=" + theAccountId;
+				if ((myValues.getAccount() == null) &&
+					(myValues.getAccountId() != null))
+					myString += "Id=" + myValues.getAccountId();
 				else
-					myString += Account.format(getAccount()); 
+					myString += Account.format(myValues.getAccount()); 
 				break;
 			case FIELD_RATE:	
 				myString += Rate.format(myValues.getRateValue()); 
@@ -158,27 +155,29 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 
 	/* Standard constructor */
 	private AcctRate(List       	pList,
+					 int			uId,
 				     int 		   	uAccountId,
 				     java.util.Date	pEndDate, 
 				     String		   	pRate,
 				     String		   	pBonus) throws Exception {
 		/* Initialise the item */
-		super(pList, 0);
+		super(pList, uId);
 		
 		/* Initialise the values */
 		Values myValues = new Values();
 		setValues(myValues);
 
 		/* Record the Id */
-		theAccountId = uAccountId;
+		myValues.setAccountId(uAccountId);
 		
 		/* Look up the Account */
-		DataSet myData 	= pList.getData();
-		myValues.setAccount(myData.getAccounts().searchFor(uAccountId));
-		if (getAccount() == null) 
+		DataSet myData 		= pList.getData();
+		Account myAccount 	= myData.getAccounts().searchFor(uAccountId);
+		if (myAccount == null) 
 			throw new Exception(ExceptionClass.DATA,
 								this,
 								"Invalid Account Id");
+		myValues.setAccount(myAccount);
 					
 		/* Record the date */
 		if (pEndDate != null)
@@ -208,18 +207,19 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		setValues(myValues);
 
 		/* Record the Id */
-		theAccountId = uAccountId;
+		myValues.setAccountId(uAccountId);
 		
 		/* Store the controlId */
 		setControlKey(uControlId);
 		
 		/* Look up the Account */
-		DataSet myData 	= pList.getData();
-		myValues.setAccount(myData.getAccounts().searchFor(uAccountId));
-		if (getAccount() == null) 
+		DataSet myData 		= pList.getData();
+		Account myAccount 	= myData.getAccounts().searchFor(uAccountId);
+		if (myAccount == null) 
 			throw new Exception(ExceptionClass.DATA,
 								this,
 								"Invalid Account Id");
+		myValues.setAccount(myAccount);
 					
 		/* Record the date */
 		if (pEndDate != null)
@@ -613,7 +613,8 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		/**
 		 *  Allow a rate to be added 
 		 */
-		public void addItem(String   		pAccount,
+		public void addItem(int				uId,
+							String   		pAccount,
 	            			String   		pRate,
 	            			java.util.Date  pDate,
 				            String   		pBonus) throws Exception {
@@ -633,7 +634,8 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 			                        pAccount + "]");
 				
 			/* Add the rate */
-			addItem(myAccount.getId(),
+			addItem(uId,
+					myAccount.getId(),
 					pRate,
 					pDate,
 					pBonus);
@@ -642,16 +644,23 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		/**
 		 *  Allow a rate to be added
 		 */
-		public void addItem(int  	 		uAccountId,
+		public void addItem(int				uId,
+							int  	 		uAccountId,
 	            			String   		pRate,
 	            			java.util.Date  pDate,
 				            String   		pBonus) throws Exception {
 			AcctRate     	myRate;
 			
 			/* Create the period */
-			myRate    = new AcctRate(this, uAccountId,
+			myRate    = new AcctRate(this, uId, uAccountId,
 					                 pDate, pRate, pBonus);
 				
+			/* Check that this RateId has not been previously added */
+			if (!isIdUnique(myRate.getId())) 
+				throw new Exception(ExceptionClass.DATA,
+						            myRate,
+			  			            "Duplicate RateId");
+			 
 			/* Validate the rate */
 			myRate.validate();
 
@@ -706,12 +715,14 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		private RatePair	theBonus     = null;
 		private Date       	theEndDate   = null;
 		private Account    	theAccount   = null;
+		private Integer		theAccountId = null;
 
 		/* Access methods */
 		public RatePair		getRate()       { return theRate; }
 		public RatePair		getBonus()      { return theBonus; }
 		public Date       	getEndDate()    { return theEndDate; }
 		public Account		getAccount()    { return theAccount; }
+		private Integer		getAccountId()  { return theAccountId; }
 		public Rate  		getRateValue()  { return getPairValue(theRate); }
 		public Rate  		getBonusValue() { return getPairValue(theBonus); }
 		public byte[]  		getRateBytes()  { return getPairBytes(theRate); }
@@ -724,7 +735,10 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		public void setEndDate(Date pEndDate) {
 			theEndDate   = pEndDate; }
 		public void setAccount(Account pAccount) {
-			theAccount   = pAccount; }
+			theAccount   = pAccount; 
+			theAccountId = (pAccount == null) ? null : pAccount.getId(); }
+		private void setAccountId(Integer pAccountId) {
+			theAccountId   = pAccountId; } 
 
 		/* Constructor */
 		public Values() {}
@@ -738,6 +752,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 			if (differs(theBonus, myValues.theBonus))   			return false;
 			if (Date.differs(theEndDate, 	myValues.theEndDate)) 	return false;
 			if (Account.differs(theAccount, myValues.theAccount)) 	return false;
+			if (Utils.differs(theAccountId, myValues.theAccountId)) return false;
 			return true;
 		}
 
@@ -752,6 +767,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 			theBonus     = myValues.getBonus();
 			theEndDate   = myValues.getEndDate();
 			theAccount   = myValues.getAccount();
+			theAccountId = myValues.getAccountId();
 		}
 		public boolean	fieldChanged(int fieldNo, HistoryValues<AcctRate> pOriginal) {
 			Values 		pValues = (Values)pOriginal;	

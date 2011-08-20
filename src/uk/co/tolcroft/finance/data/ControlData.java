@@ -143,9 +143,10 @@ public class ControlData extends DataItem<ControlData> {
 
 	/* Limited (no security) constructor */
 	private ControlData(List pList,
+						int	 uId,
 				  	    int	 uVersion) {
 		/* Initialise the item */
-		super(pList, 0);
+		super(pList, uId);
 		Values myValues = new Values();
 		setValues(myValues);
 
@@ -348,11 +349,12 @@ public class ControlData extends DataItem<ControlData> {
 		/**
 		 *  Add a ControlData item (with no security as yet)
 		 */
-		public void addItem(int  			uVersion) throws Exception {
+		public void addItem(int		uId,
+							int  	uVersion) throws Exception {
 			ControlData     	myControl;
 			
 			/* Create the ControlData */
-			myControl = new ControlData(this,  uVersion);
+			myControl = new ControlData(this,  uId, uVersion);
 			
 			/* Only one static is allowed */
 			if (theControl != null) 

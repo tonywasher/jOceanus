@@ -1,8 +1,9 @@
 package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.ui.*;
-import uk.co.tolcroft.finance.views.DebugManager.DebugEntry;
 import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.help.DebugManager;
+import uk.co.tolcroft.help.DebugManager.DebugEntry;
 import uk.co.tolcroft.security.SecureManager;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
@@ -11,24 +12,32 @@ import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 public class View {
 	/* Members */
-	private DataSet     			theData  		= null;
-	private Date.Range  			theRange 		= null;
-	private MainTab					theCtl 	 		= null;
-    private EventAnalysis			theAnalysis		= null;
-    private DilutionEvent.List		theDilutions	= null;
-    private Exception				theError		= null;
-    private SecureManager			theSecurity		= null;
-    private DebugManager			theDebugMgr		= null;
+	private DataSet     			theData  			= null;
+	private Date.Range  			theRange 			= null;
+	private MainTab					theCtl 	 			= null;
+    private EventAnalysis			theAnalysis			= null;
+    private DilutionEvent.List		theDilutions		= null;
+    private Exception				theError			= null;
+    private SecureManager			theSecurity			= null;
+    private DebugManager			theDebugMgr			= null;
+	private DebugEntry				theViewsEntry		= null;
+	private DebugEntry				theDataEntry		= null;
+	private DebugEntry				theUpdatesEntry		= null;
+	private DebugEntry				theAnalysisEntry	= null;
+	private DebugEntry				theErrorEntry		= null;
     
 	/* Access methods */
-	public DataSet 				getData() 		{ return theData; }
-	public MainTab				getControl()	{ return theCtl; }
-	public Date.Range			getRange()		{ return theRange; }
-	public EventAnalysis    	getAnalysis()	{ return theAnalysis; }
-	public DilutionEvent.List   getDilutions()	{ return theDilutions; }
-	public Exception			getError()		{ return theError; }
-	public SecureManager		getSecurity() 	{ return theSecurity; }
-	public DebugManager			getDebugMgr() 	{ return theDebugMgr; }
+	public DataSet 				getData() 			{ return theData; }
+	public MainTab				getControl()		{ return theCtl; }
+	public Date.Range			getRange()			{ return theRange; }
+	public EventAnalysis    	getAnalysis()		{ return theAnalysis; }
+	public DilutionEvent.List   getDilutions()		{ return theDilutions; }
+	public Exception			getError()			{ return theError; }
+	public SecureManager		getSecurity() 		{ return theSecurity; }
+	public DebugManager			getDebugMgr() 		{ return theDebugMgr; }
+	public DebugEntry			getViewsEntry()		{ return theViewsEntry; }
+	public DebugEntry			getAnalysisEntry()	{ return theAnalysisEntry; }
+	public DebugEntry			getErrorEntry()		{ return theErrorEntry; }
 	
  	/* Constructor */
 	public View(MainTab pCtl) {
@@ -37,6 +46,19 @@ public class View {
 		
 		/* Store access to the Debug Manager */
 		theDebugMgr = pCtl.getDebugMgr();
+
+		/* Create Debug Entries and and as Children */
+		theViewsEntry 		= theDebugMgr.new DebugEntry("DataViews");
+		theDataEntry 		= theDebugMgr.new DebugEntry("UnderlyingData");
+		theUpdatesEntry		= theDebugMgr.new DebugEntry("DataUpdates");
+		theAnalysisEntry	= theDebugMgr.new DebugEntry("Analysis");
+		theErrorEntry		= theDebugMgr.new DebugEntry("Error");
+		theViewsEntry.addAsRootChild();
+		theAnalysisEntry.addAsRootChild();
+		theDataEntry.addAsChildOf(theViewsEntry);
+		theUpdatesEntry.addAsChildOf(theViewsEntry);
+		theErrorEntry.addAsRootChild();
+		theErrorEntry.hideEntry();
 		
 		/* Create a new security manager */
 		theSecurity = new SecureManager(pCtl.getFrame());
@@ -76,19 +98,17 @@ public class View {
 		/* Protect against exceptions */
 		try {
 			/* Adjust the data debug view */
-			DebugEntry myDebug = theDebugMgr.getData();
-			theData.addDebugEntries(theDebugMgr, myDebug);
+			theDataEntry.setObject(theData);
 			
 			/* Analyse the data */
-			theAnalysis = theData.analyseData(theDebugMgr);
+			theAnalysis = theData.analyseData(this);
 		
 			/* Access the dilutions */
 			theDilutions = theAnalysis.getDilutions();
 
 			/* Adjust the updates debug view */
-			myDebug = theDebugMgr.getUpdates();
 			DataSet myUpdates = new DataSet(theData);
-			myUpdates.addDebugEntries(theDebugMgr, myDebug);
+			theUpdatesEntry.setObject(myUpdates);
 		}
 		
 		/* Catch any exceptions */

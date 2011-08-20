@@ -54,15 +54,17 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 	/**
 	 * Construct a standard frequency on load
 	 * @param pList	The list to associate the Frequency with
+	 * @param uId   ID of Frequency
 	 * @param uClassId the class id of the new item
 	 * @param pName Name of Frequency
 	 * @param pDesc Description of Frequency
 	 */
 	private Frequency(List 		pList,
+					  int		uId,
 			          int		uClassId,
 			          String	pName,
 			          String	pDesc) throws Exception {
-		super(pList, uClassId, pName, pDesc);
+		super(pList, uId, uClassId, pName, pDesc);
 	}
 	
 	/**
@@ -169,18 +171,26 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 		
 		/**
 		 * Add a Frequency to the list
+		 * @param uId   ID of Frequency
 		 * @param uClassId the ClassId of the frequency
 		 * @param pFrequency the Name of the frequency
 		 * @param pDesc the Description of the frequency
 		 */ 
-		public void addItem(int	   uClassId,
+		public void addItem(int	   uId,
+							int	   uClassId,
 				            String pFrequency,
 				            String pDesc) throws Exception {
 			Frequency myFreq;
 				
 			/* Create a new Frequency */
-			myFreq = new Frequency(this, uClassId, pFrequency, pDesc);
+			myFreq = new Frequency(this, uId, uClassId, pFrequency, pDesc);
 				
+			/* Check that this FrequencyId has not been previously added */
+			if (!isIdUnique(myFreq.getId())) 
+				throw new Exception(ExceptionClass.DATA,
+	  					  			myFreq,
+			  			            "Duplicate FrequencyId");
+				 
 			/* Check that this Frequency has not been previously added */
 			if (searchFor(myFreq.getName()) != null) 
 				throw new Exception(ExceptionClass.DATA,

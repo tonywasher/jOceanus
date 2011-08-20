@@ -23,11 +23,6 @@ public class Event extends EncryptedItem<Event> {
 	 * Event Description length
 	 */
 	public final static int DESCLEN 		= 50;
-
-	/* Local IDs for use in loading */
-	private int					theDebitId	= -1;
-	private int					theCreditId	= -1;
-	private int					theTransId	= -1;
 	
 	/* Access methods */
 	public  Values         	getValues()    { return (Values)super.getValues(); }	
@@ -120,22 +115,22 @@ public class Event extends EncryptedItem<Event> {
 				break;
 			case FIELD_TRNTYP: 	
 				if ((myValues.getTransType() == null) &&
-					(theTransId != -1))
-					myString += "Id=" + theTransId;
+					(myValues.getTransId() != null))
+					myString += "Id=" + myValues.getTransId();
 				else
 					myString += TransactionType.format(myValues.getTransType());	
 				break;
 			case FIELD_DEBIT:
 				if ((myValues.getDebit() == null) &&
-					(theDebitId != -1))
-					myString += "Id=" + theDebitId;
+					(myValues.getDebitId() != null))
+					myString += "Id=" + myValues.getDebitId();
 				else
 					myString += Account.format(myValues.getDebit()); 
 				break;
 			case FIELD_CREDIT:	
 				if ((myValues.getCredit() == null) &&
-					(theCreditId != -1))
-					myString += "Id=" + theCreditId;
+					(myValues.getCreditId() != null))
+					myString += "Id=" + myValues.getCreditId();
 				else
 					myString += Account.format(myValues.getCredit()); 
 				break;
@@ -274,9 +269,9 @@ public class Event extends EncryptedItem<Event> {
 		setValues(myValues);
 
 		/* Store the IDs that we will look up */
-		theDebitId  = uDebit;
-		theCreditId = uCredit;
-		theTransId	= uTransType;
+		myValues.setDebitId(uDebit);
+		myValues.setCreditId(uCredit);
+		myValues.setTransId(uTransType);
 		setControlKey(uControlId);
 		
 		/* Create the date */
@@ -322,6 +317,7 @@ public class Event extends EncryptedItem<Event> {
 	
 	/* Standard constructor */
 	private Event(List      		pList,
+				  int				uId,
 		          java.util.Date 	pDate,
 		          String         	pDesc,
 		          Account          	pDebit,
@@ -333,7 +329,7 @@ public class Event extends EncryptedItem<Event> {
 		          String			pDilution,
 		          Integer			pYears) throws Exception {
 		/* Initialise item */
-		super(pList, 0);
+		super(pList, uId);
 		
 		/* Create a new EventValues object */
 		Values myValues = new Values();
@@ -1378,7 +1374,8 @@ public class Event extends EncryptedItem<Event> {
 		/**
 		 *  Allow an event to be added
 		 */
-		public void addItem(java.util.Date	pDate,
+		public void addItem(int				uId,
+							java.util.Date	pDate,
 				            String   		pDesc,
 				            String   		pAmount,
 				            String   		pDebit,
@@ -1424,7 +1421,7 @@ public class Event extends EncryptedItem<Event> {
 			                        "] has invalid Debit account [" + pDebit + "]");
 			
 			/* Create the new Event */
-			myEvent = new Event(this, pDate, pDesc,
+			myEvent = new Event(this, uId, pDate, pDesc,
 					            myDebit, myCredit, myTransType, 
 					            pAmount, pUnits, pTaxCredit,
 					            pDilution, pYears);
@@ -1499,6 +1496,9 @@ public class Event extends EncryptedItem<Event> {
 		private MoneyPair  		theTaxCredit = null;
 		private Integer         theYears     = null;
 		private DilutionPair	theDilution  = null;
+		private Integer			theDebitId	 = null;
+		private Integer			theCreditId	 = null;
+		private Integer			theTransId	 = null;
 		
 		/* Access methods */
 		public Date       		getDate()      { return theDate; }
@@ -1511,6 +1511,9 @@ public class Event extends EncryptedItem<Event> {
 		public MoneyPair  		getTaxCredit() { return theTaxCredit; }
 		public Integer          getYears()     { return theYears; }
 		public DilutionPair     getDilution()  { return theDilution; }
+		private Integer         getDebitId()   { return theDebitId; }
+		private Integer         getCreditId()  { return theCreditId; }
+		private Integer         getTransId()   { return theTransId; }
 		
 		/* Encrypted value access */
 		public  Money		getAmountValue()    { return getPairValue(getAmount()); }
@@ -1533,19 +1536,28 @@ public class Event extends EncryptedItem<Event> {
 		public void setAmount(MoneyPair pAmount) {
 			theAmount    = pAmount; }
 		public void setDebit(Account pDebit) {
-			theDebit     = pDebit; }
+			theDebit     = pDebit; 
+			theDebitId   = (pDebit == null) ? null : pDebit.getId(); }
 		public void setCredit(Account pCredit) {
-			theCredit    = pCredit; }
+			theCredit    = pCredit; 
+			theCreditId  = (pCredit == null) ? null : pCredit.getId(); }
 		public void setUnits(UnitsPair pUnits) {
 			theUnits     = pUnits; }
 		public void setTransType(TransactionType pTransType) {
-			theTransType = pTransType; }
+			theTransType = pTransType; 
+			theTransId   = (pTransType == null) ? null : pTransType.getId(); }
 		public void setTaxCredit(MoneyPair pTaxCredit) {
 			theTaxCredit = pTaxCredit; }
 		public void setYears(Integer iYears) {
 			theYears     = iYears; }
 		public void setDilution(DilutionPair pDilution) {
 			theDilution  = pDilution; }
+		private void setDebitId(Integer pDebitId) {
+			theDebitId   = pDebitId; } 
+		private void setCreditId(Integer pCreditId) {
+			theCreditId  = pCreditId; } 
+		private void setTransId(Integer pTransId) {
+			theTransId   = pTransId; } 
 
 		/* Constructor */
 		public Values() {}
@@ -1567,6 +1579,9 @@ public class Event extends EncryptedItem<Event> {
 			if (differs(theTaxCredit,					myValues.theTaxCredit)) return false;
 			if (Utils.differs(theYears,     			myValues.theYears))	    return false;
 			if (differs(theDilution,					myValues.theDilution))  return false;
+			if (Utils.differs(theDebitId,				myValues.theDebitId))   return false;
+			if (Utils.differs(theCreditId,				myValues.theCreditId))  return false;
+			if (Utils.differs(theTransId,				myValues.theTransId))   return false;
 			return true;
 		}
 		
@@ -1589,6 +1604,9 @@ public class Event extends EncryptedItem<Event> {
 				theTaxCredit = myValues.getTaxCredit();
 				theYears     = myValues.getYears();
 				theDilution  = myValues.getDilution();
+				theDebitId   = myValues.getDebitId();
+				theCreditId  = myValues.getCreditId();
+				theTransId   = myValues.getTransId();
 			}
 
 			/* Handle a Pattern Values */

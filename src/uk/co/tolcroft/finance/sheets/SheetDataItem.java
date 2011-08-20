@@ -305,7 +305,7 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
 	 * @param pList the validation list
 	 * @return the cell features
 	 */
-	protected WritableCellFeatures obtainCellValidation(String pList) {
+	private WritableCellFeatures obtainCellValidation(String pList) {
 		/* Set the validation list for the cell */
 		WritableCellFeatures myFeatures = new WritableCellFeatures();
 		myFeatures.setDataValidationRange(pList);
@@ -317,8 +317,22 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
 	 */
 	protected void freezeTitles() {
 		/* Freeze the top row */
-		SheetSettings mySettings = new SheetSettings(theWriteSheet);
-		mySettings.setHorizontalFreeze(theBaseRow);
+		SheetSettings mySettings = theWriteSheet.getSettings();
+		mySettings.setHorizontalFreeze(theBaseCol+2);
+		mySettings.setVerticalFreeze(theBaseRow);
+	}
+	
+	/**
+	 * Set Hidden column
+	 * @param pOffset the offset of the column 
+	 */
+	protected void setHiddenColumn(int pOffset) {
+		/* Create the CellView */
+		CellView myView = new CellView();
+		myView.setHidden(true);
+
+		/* Apply to the sheet */
+		theWriteSheet.setColumnView(theBaseCol+pOffset, myView);
 	}
 	
 	/**
@@ -640,14 +654,16 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
 	 * @param pValue the string
 	 * @param pFeatures the cell features
 	 */
-	protected void writeValidatedString(int pOffset, String pValue, WritableCellFeatures pFeatures) throws Throwable {
-		jxl.write.Label myCell;
+	protected void writeValidatedString(int pOffset, String pValue, String pRange) throws Throwable {
+		jxl.write.Label 		myCell;
+		WritableCellFeatures	myFeatures;
 		
 		/* If we have non-null value */
 		if (pValue != null) {
 			/* Create the cell and add to the sheet */
-			myCell = new jxl.write.Label(theBaseCol+pOffset, theCurrRow, pValue); 
-			myCell.setCellFeatures(pFeatures);
+			myCell = new jxl.write.Label(theBaseCol+pOffset, theCurrRow, pValue);
+			myFeatures = obtainCellValidation(pRange);
+			myCell.setCellFeatures(myFeatures);
 			theWriteSheet.addCell(myCell);
 		}
 	}

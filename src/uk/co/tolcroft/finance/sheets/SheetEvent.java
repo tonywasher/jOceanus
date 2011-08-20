@@ -1,7 +1,6 @@
 package uk.co.tolcroft.finance.sheets;
 
 import jxl.*;
-import jxl.write.*;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
@@ -20,16 +19,6 @@ public class SheetEvent extends SheetDataItem<Event> {
 	 * Is the spreadsheet a backup spreadsheet or an edit-able one
 	 */
 	private boolean isBackup	= false;
-	
-	/**
-	 * Validation control for Account Name
-	 */
-	private WritableCellFeatures theAccountCtl	= null;
-	
-	/**
-	 * Validation control for Transaction Type
-	 */
-	private WritableCellFeatures theTransCtl	= null;
 	
 	/**
 	 * Events data list
@@ -65,16 +54,7 @@ public class SheetEvent extends SheetDataItem<Event> {
 				
 		/* Access the Patterns list */
 		theList = pOutput.getData().getEvents();
-		setDataList(theList);
-		
-		/* If this is not a backup */
-		if (!isBackup) {
-			/* Obtain validation for the Account Name */
-			theAccountCtl 	= obtainCellValidation(SheetAccount.AccountNames);
-
-			/* Obtain validation for the Transaction Types */
-			theTransCtl 	= obtainCellValidation(SheetTransactionType.TranTypeNames);
-		}
+		setDataList(theList);		
 	}
 	
 	/**
@@ -109,23 +89,24 @@ public class SheetEvent extends SheetDataItem<Event> {
 		/* else this is a load from an edit-able spreadsheet */
 		else {
 			/* Access the Account */
-			String myDebit		= loadString(3);
-			String myCredit		= loadString(4);
-			String myTransType	= loadString(7);
+			int	   myID 		= loadInteger(0);
+			String myDebit		= loadString(4);
+			String myCredit		= loadString(5);
+			String myTransType	= loadString(8);
 		
 			/* Access the date and name and description bytes */
-			java.util.Date 	myDate 	= loadDate(0);
-			Integer			myYears	= loadInteger(9);
+			java.util.Date 	myDate 	= loadDate(1);
+			Integer			myYears	= loadInteger(10);
 		
 			/* Access the binary values  */
-			String 	myDesc 		= loadString(1);
-			String	myAmount 	= loadString(2);
-			String	myUnits 	= loadString(5);
-			String	myTaxCredit	= loadString(8);
-			String	myDilution	= loadString(6);
+			String 	myDesc 		= loadString(2);
+			String	myAmount 	= loadString(3);
+			String	myUnits 	= loadString(6);
+			String	myTaxCredit	= loadString(9);
+			String	myDilution	= loadString(7);
 		
 			/* Load the item */
-			theList.addItem(myDate, myDesc, myAmount, myDebit, myCredit, myUnits, myTransType, myTaxCredit, myDilution, myYears);
+			theList.addItem(myID, myDate, myDesc, myAmount, myDebit, myCredit, myUnits, myTransType, myTaxCredit, myDilution, myYears);
 		}
 	}
 
@@ -155,16 +136,17 @@ public class SheetEvent extends SheetDataItem<Event> {
 		/* else we are creating an edit-able spreadsheet */
 		else {
 			/* Set the fields */
-			writeDate(0, pItem.getDate());
-			writeString(1, pItem.getDesc());			
-			writeNumber(2, pItem.getAmount());			
-			writeValidatedString(3, pItem.getDebit().getName(), theAccountCtl);				
-			writeValidatedString(4, pItem.getCredit().getName(), theAccountCtl);				
-			writeNumber(5, pItem.getUnits());			
-			writeNumber(6, pItem.getDilution());			
-			writeValidatedString(7, pItem.getTransType().getName(), theTransCtl);				
-			writeNumber(8, pItem.getTaxCredit());				
-			writeInteger(9, pItem.getYears());			
+			writeInteger(0, pItem.getId());
+			writeDate(1, pItem.getDate());
+			writeString(2, pItem.getDesc());			
+			writeNumber(3, pItem.getAmount());			
+			writeValidatedString(4, pItem.getDebit().getName(), SheetAccount.AccountNames);				
+			writeValidatedString(5, pItem.getCredit().getName(), SheetAccount.AccountNames);				
+			writeNumber(6, pItem.getUnits());			
+			writeNumber(7, pItem.getDilution());			
+			writeValidatedString(8, pItem.getTransType().getName(), SheetTransactionType.TranTypeNames);				
+			writeNumber(9, pItem.getTaxCredit());				
+			writeInteger(10, pItem.getYears());			
 		}
 	}
 
@@ -176,16 +158,17 @@ public class SheetEvent extends SheetDataItem<Event> {
 		if (isBackup) return false;
 
 		/* Write titles */
-		writeString(0, Event.fieldName(Event.FIELD_DATE));
-		writeString(1, Event.fieldName(Event.FIELD_DESC));			
-		writeString(2, Event.fieldName(Event.FIELD_AMOUNT));			
-		writeString(3, Event.fieldName(Event.FIELD_DEBIT));			
-		writeString(4, Event.fieldName(Event.FIELD_CREDIT));			
-		writeString(5, Event.fieldName(Event.FIELD_UNITS));			
-		writeString(6, Event.fieldName(Event.FIELD_DILUTION));			
-		writeString(7, Event.fieldName(Event.FIELD_TRNTYP));			
-		writeString(8, Event.fieldName(Event.FIELD_TAXCREDIT));			
-		writeString(9, Event.fieldName(Event.FIELD_YEARS));			
+		writeString(0, Event.fieldName(Event.FIELD_ID));
+		writeString(1, Event.fieldName(Event.FIELD_DATE));
+		writeString(2, Event.fieldName(Event.FIELD_DESC));			
+		writeString(3, Event.fieldName(Event.FIELD_AMOUNT));			
+		writeString(4, Event.fieldName(Event.FIELD_DEBIT));			
+		writeString(5, Event.fieldName(Event.FIELD_CREDIT));			
+		writeString(6, Event.fieldName(Event.FIELD_UNITS));			
+		writeString(7, Event.fieldName(Event.FIELD_DILUTION));			
+		writeString(8, Event.fieldName(Event.FIELD_TRNTYP));			
+		writeString(9, Event.fieldName(Event.FIELD_TAXCREDIT));			
+		writeString(10, Event.fieldName(Event.FIELD_YEARS));			
 		return true;
 	}	
 
@@ -201,22 +184,25 @@ public class SheetEvent extends SheetDataItem<Event> {
 
 		/* else this is an edit-able spreadsheet */
 		else {
-			/* Set the ten columns as the range */
-			nameRange(10);
+			/* Set the eleven columns as the range */
+			nameRange(11);
 
+			/* Hide the ID column */
+			setHiddenColumn(0);
+			
 			/* Set the Account column width */
-			setColumnWidth(1, Event.DESCLEN);
-			setColumnWidth(3, Account.NAMELEN);
+			setColumnWidth(2, Event.DESCLEN);
 			setColumnWidth(4, Account.NAMELEN);
-			setColumnWidth(7, StaticClass.NAMELEN);
-			setColumnWidth(9, 8);
+			setColumnWidth(5, Account.NAMELEN);
+			setColumnWidth(8, StaticClass.NAMELEN);
+			setColumnWidth(10, 8);
 			
 			/* Set Number columns */
-			setDateColumn(0);
-			setMoneyColumn(2);
-			setUnitsColumn(5);
-			setDilutionColumn(6);
-			setMoneyColumn(8);
+			setDateColumn(1);
+			setMoneyColumn(3);
+			setUnitsColumn(6);
+			setDilutionColumn(7);
+			setMoneyColumn(9);
 		}
 	}
 
@@ -337,7 +323,8 @@ public class SheetEvent extends SheetDataItem<Event> {
 						}
 
 						/* Add the event */
-						myList.addItem(myDate,
+						myList.addItem(0,
+									   myDate,
 						               myDesc,
 						               myAmount,
 						               myDebit,

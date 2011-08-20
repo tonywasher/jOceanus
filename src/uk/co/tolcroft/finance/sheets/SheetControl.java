@@ -82,10 +82,11 @@ public class SheetControl extends SheetDataItem<ControlData> {
 		/* else this is plain text */
 		else {
 			/* Access the Version */
-			int	myVersion	= loadInteger(0);
+			int	myID 		= loadInteger(0);
+			int	myVersion	= loadInteger(1);
 
 			/* Add the Control */
-			theList.addItem(myVersion);			
+			theList.addItem(myID, myVersion);			
 		}
 	}
 
@@ -104,7 +105,10 @@ public class SheetControl extends SheetDataItem<ControlData> {
 		}
 		
 		/* else just write the data version */
-		else writeInteger(0, pItem.getDataVersion());
+		else {
+			writeInteger(0, pItem.getId());
+			writeInteger(1, pItem.getDataVersion());
+		}
 	}
 
 	/**
@@ -115,7 +119,8 @@ public class SheetControl extends SheetDataItem<ControlData> {
 		if (isBackup) return false;
 
 		/* Write titles */
-		writeString(0, ControlData.fieldName(ControlData.FIELD_VERS));			
+		writeString(0, ControlData.fieldName(ControlData.FIELD_ID));			
+		writeString(1, ControlData.fieldName(ControlData.FIELD_VERS));			
 		return true;
 	}	
 
@@ -131,9 +136,14 @@ public class SheetControl extends SheetDataItem<ControlData> {
 		
 		/* else */
 		else {
-			/* Set the one column as the range */
-			nameRange(1);
-			setColumnWidth(0, 8);
+			/* Set the two columns as the range */
+			nameRange(2);
+
+			/* Set the Id column as hidden */
+			setHiddenColumn(0);
+
+			/* Set the Version column width */
+			setColumnWidth(1, 8);
 		}
 	}
 
@@ -199,7 +209,7 @@ public class SheetControl extends SheetDataItem<ControlData> {
 			myStatic = pData.getControlData();
 		
 			/* Add the value into the finance tables (with no security as yet) */
-			myStatic.addItem(Properties.CURRENTVERSION);
+			myStatic.addItem(0, Properties.CURRENTVERSION);
 		}
 
 		/* Calculate the number of stages */

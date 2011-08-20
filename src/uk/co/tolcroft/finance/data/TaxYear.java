@@ -23,7 +23,6 @@ public class TaxYear extends DataItem<TaxYear> {
 	public static final String listName = objName + "s";
 
 	/* Members */
-	private int		theRegimeId		= -1;
 	private boolean	isActive		= false;
 
 	/* Access methods */
@@ -145,8 +144,8 @@ public class TaxYear extends DataItem<TaxYear> {
 		switch (iField) {
 			case FIELD_REGIME:
 				if ((myValues.getTaxRegime() == null) &&
-					(theRegimeId != -1))
-					myString += "Id=" + theRegimeId;
+					(myValues.getTaxRegimeId() != null))
+					myString += "Id=" + myValues.getTaxRegimeId();
 				else
 					myString += TaxRegime.format(myValues.getTaxRegime()); 
 				break;
@@ -296,7 +295,7 @@ public class TaxYear extends DataItem<TaxYear> {
 		setValues(myValues);
 
 		/* Record the Id */
-		theRegimeId = uRegimeId;
+		myValues.setTaxRegimeId(uRegimeId);
 		myValues.setYear(new Date(pDate));
 		
 		/* Look up the Regime */
@@ -1193,7 +1192,8 @@ public class TaxYear extends DataItem<TaxYear> {
 		}
 		
 		/* Allow a tax parameter to be added */
-		public void addItem(String  		pRegime,
+		public void addItem(int				uId,
+							String  		pRegime,
 				            java.util.Date  pDate,
 				            String  		pAllowance,
 				            String  		pRentalAllow,
@@ -1227,7 +1227,7 @@ public class TaxYear extends DataItem<TaxYear> {
 			                        "> has invalid TaxRegime <" + pRegime + ">");
 			
 			/* Create the tax year */
-			addItem(0,
+			addItem(uId,
 					myTaxRegime.getId(),
 					pDate,
 					pAllowance,
@@ -1336,6 +1336,7 @@ public class TaxYear extends DataItem<TaxYear> {
 	 */
 	public class Values implements HistoryValues<TaxYear> {
 		private Date 		theYear	 		 = null;
+		private Integer		theTaxRegimeId	 = null;
 		private TaxRegime 	theTaxRegime	 = null;
 		private Money 		theAllowance     = null;
 		private Money 		theRentalAllow   = null;
@@ -1360,6 +1361,7 @@ public class TaxYear extends DataItem<TaxYear> {
 		
 		/* Access methods */
 		public Date 		getYear()			{ return theYear; }
+		private Integer		getTaxRegimeId()	{ return theTaxRegimeId; }
 		public TaxRegime 	getTaxRegime()		{ return theTaxRegime; }
 		public Money 		getAllowance()		{ return theAllowance; }
 		public Money		getRentalAllow()  	{ return theRentalAllow; }
@@ -1384,8 +1386,11 @@ public class TaxYear extends DataItem<TaxYear> {
 		
 		public void setYear(Date pYear) {
 			theYear   		= pYear; }
+		private void setTaxRegimeId(int uTaxRegimeId) {
+			theTaxRegimeId	= uTaxRegimeId; }
 		public void setTaxRegime(TaxRegime pTaxRegime) {
-			theTaxRegime    = pTaxRegime; }
+			theTaxRegime    = pTaxRegime;
+			theTaxRegimeId	= (pTaxRegime == null) ? null : pTaxRegime.getId(); }
 		public void setAllowance(Money pAllowance) {
 			theAllowance    = pAllowance; }
 		public void setRentalAllow(Money pAllowance) {
@@ -1436,6 +1441,7 @@ public class TaxYear extends DataItem<TaxYear> {
 			/* Access as correct class and check parameters */
 			Values myValues = (Values)pCompare;
 			if (Date.differs(theYear,     			myValues.theYear))     	    return false;
+			if (Utils.differs(theTaxRegimeId,       myValues.theTaxRegimeId))   return false;
 			if (TaxRegime.differs(theTaxRegime,     myValues.theTaxRegime))     return false;
 			if (Money.differs(theAllowance,     	myValues.theAllowance))     return false;
 			if (Money.differs(theRentalAllow,   	myValues.theRentalAllow))   return false;
@@ -1467,6 +1473,7 @@ public class TaxYear extends DataItem<TaxYear> {
 		public void    copyFrom(HistoryValues<?> pSource) {
 			Values myValues = (Values)pSource;
 			theYear    		 = myValues.getYear();
+			theTaxRegimeId   = myValues.getTaxRegimeId();
 			theTaxRegime     = myValues.getTaxRegime();
 			theAllowance     = myValues.getAllowance();
 			theRentalAllow   = myValues.getRentalAllow();

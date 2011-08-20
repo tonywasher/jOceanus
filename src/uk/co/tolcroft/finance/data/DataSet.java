@@ -1,13 +1,15 @@
 package uk.co.tolcroft.finance.data;
 
 import uk.co.tolcroft.finance.views.*;
-import uk.co.tolcroft.finance.views.DebugManager.DebugEntry;
+import uk.co.tolcroft.help.DebugManager;
+import uk.co.tolcroft.help.DebugObject;
+import uk.co.tolcroft.help.DebugManager.DebugEntry;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.security.*;
 
-public class DataSet implements htmlDumpable {
+public class DataSet implements DebugObject {
 	private SecureManager			theSecurity   	= null;
 	private ControlKey.List			theControlKeys  = null;
 	private DataKey.List			theDataKeys		= null;
@@ -192,30 +194,44 @@ public class DataSet implements htmlDumpable {
 	 * Provide a string representation of this object
 	 * @return formatted string
 	 */
-	public StringBuilder toHTMLString() {
-		/* Local variables */
-		StringBuilder myString = new StringBuilder(10000);
-		
-		/* Format the individual parts */
-		myString.append(theControlKeys.toHTMLString());
-		myString.append(theDataKeys.toHTMLString());
-		myString.append(theControlData.toHTMLString());
-		myString.append(theActTypes.toHTMLString());
-		myString.append(theTransTypes.toHTMLString());
-		myString.append(theTaxTypes.toHTMLString());
-		myString.append(theTaxRegimes.toHTMLString());
-		myString.append(theFrequencys.toHTMLString());
-		myString.append(theTaxYears.toHTMLString());
-		myString.append(theAccounts.toHTMLString());
-		myString.append(theRates.toHTMLString());
-		myString.append(thePrices.toHTMLString());
-		myString.append(thePatterns.toHTMLString());
-		myString.append(theEvents.toHTMLString());
-		
-		/* Return the string */
-		return myString;
-	}
+	public StringBuilder toHTMLString() { return null; }
 	
+	/**
+	 * Add child entries for the debug object
+	 * @param pManager the debug manager
+	 * @param pParent the parent debug entry
+	 */
+	public void addChildEntries(DebugManager 	pManager,
+								DebugEntry		pParent) { 
+		/* Add the lists */
+		addChildEntry(pManager, pParent, theControlKeys);
+		addChildEntry(pManager, pParent, theDataKeys);
+		addChildEntry(pManager, pParent, theControlData);
+		addChildEntry(pManager, pParent, theActTypes);
+		addChildEntry(pManager, pParent, theTransTypes);
+		addChildEntry(pManager, pParent, theTaxTypes);
+		addChildEntry(pManager, pParent, theTaxRegimes);
+		addChildEntry(pManager, pParent, theFrequencys);
+		addChildEntry(pManager, pParent, theTaxYears);
+		addChildEntry(pManager, pParent, theAccounts);
+		addChildEntry(pManager, pParent, theRates);
+		addChildEntry(pManager, pParent, thePrices);
+		addChildEntry(pManager, pParent, thePatterns);
+		addChildEntry(pManager, pParent, theEvents);
+	}	
+
+	/**
+	 * Add child entry for the list)
+	 * @return the first dump-able child object
+	 */
+	private void addChildEntry(DebugManager 	pManager,
+							   DebugEntry		pParent,
+							   DataList<?>		pList) {
+		if ((pList.getStyle() != ListStyle.DIFFER) ||
+			(pList.sizeAll() > 0))
+			pManager.addChildEntry(pParent, pList.itemType(), pList);
+	}	
+
 	/**
 	 * Determine whether a DataSet has entries
 	 * @return <code>true</code> if the DataSet has entries
@@ -395,17 +411,11 @@ public class DataSet implements htmlDumpable {
 	}
 	
 	/**
-	 * Adopt Database security after clear text load
-	 */
-	public void adoptSecurity(DataSet pBase) throws Exception {
-	}
-	
-	/**
 	 * Analyse the data
-	 * @param pDebugMgr the debug manager
+	 * @param pView the data view
 	 * @return the full analysis of the data
 	 */
-	public EventAnalysis analyseData(DebugManager pDebugMgr) throws Exception {
+	public EventAnalysis analyseData(View			pView) throws Exception {
 		EventAnalysis		myAnalysis;
 		MetaAnalysis 		myMetaAnalysis;
 						
@@ -418,7 +428,7 @@ public class DataSet implements htmlDumpable {
 		theTaxYears.reset();
 		
 		/* Create the analysis */
-		myAnalysis = new EventAnalysis(pDebugMgr, this);
+		myAnalysis = new EventAnalysis(pView, this);
 
 		/* Note active rates */
 		theRates.markActiveRates();
@@ -445,48 +455,6 @@ public class DataSet implements htmlDumpable {
 		/* Return the analysis */
 		return myAnalysis;
 	}
-
-	/**
-	 * Add Debug entries
-	 * @param pDebugMgr the Debug Manager
-	 * @param pDebug the debug entry to register under
-	 */
-	public void addDebugEntries(DebugManager 	pDebugMgr,
-							    DebugEntry 		pDebug) {
-		/* Remove Existing entries */
-		pDebug.removeChildren();
-
-		/* Add entries for each data list  */
-		addDebugEntry(pDebugMgr, pDebug,  theControlKeys);
-		addDebugEntry(pDebugMgr, pDebug,  theDataKeys);
-		addDebugEntry(pDebugMgr, pDebug,  theControlData);
-		addDebugEntry(pDebugMgr, pDebug,  theActTypes);
-		addDebugEntry(pDebugMgr, pDebug,  theTransTypes);
-		addDebugEntry(pDebugMgr, pDebug,  theTaxTypes);
-		addDebugEntry(pDebugMgr, pDebug,  theTaxRegimes);
-		addDebugEntry(pDebugMgr, pDebug,  theFrequencys);
-		addDebugEntry(pDebugMgr, pDebug,  theTaxYears);
-		addDebugEntry(pDebugMgr, pDebug,  theAccounts);
-		addDebugEntry(pDebugMgr, pDebug,  theRates);
-		addDebugEntry(pDebugMgr, pDebug,  thePrices);
-		addDebugEntry(pDebugMgr, pDebug,  thePatterns);
-		addDebugEntry(pDebugMgr, pDebug,  theEvents);
-	}
-	
-	/**
-	 * Add Debug entries
-	 * @param pDebugMgr the Debug Manager
-	 * @param pDebug the debug entry to register under
-	 */
-	private void addDebugEntry(DebugManager 	pDebugMgr,
-							   DebugEntry 	pDebug,
-							   DataList<?>	pData) {
-		/* Create the debug entry for this datalist and add it as a child of the main entry  */
-		DebugEntry myDebug = pDebugMgr.new DebugEntry(pData.itemType());
-		myDebug.addAsChildOf(pDebug);
-		myDebug.setObject(pData);
-	}
-	
 	/**
 	 * Obtain DataList for an item type
 	 * @param pItemType the type of items
@@ -495,20 +463,20 @@ public class DataSet implements htmlDumpable {
 	public DataList<?> getDataList(ItemType pItemType) {
 		/* Switch on item type */
 		switch(pItemType) {
-			case DATAKEY:		return theDataKeys;
-			case CONTROLKEY:	return theControlKeys;
-			case CONTROLDATA:	return theControlData;
-			case ACCOUNTTYPE:	return theActTypes;
-			case TRANSTYPE:		return theTransTypes;
-			case TAXTYPE:		return theTaxTypes;
-			case TAXREGIME:		return theTaxRegimes;
-			case FREQUENCY:		return theFrequencys;
-			case TAXYEAR:		return theTaxYears;
-			case ACCOUNT:		return theAccounts;
-			case RATE:			return theRates;
-			case PRICE:			return thePrices;
-			case PATTERN:		return thePatterns;
-			case EVENT:			return theEvents;
+			case DataKey:		return theDataKeys;
+			case ControlKey:	return theControlKeys;
+			case ControlData:	return theControlData;
+			case AccountType:	return theActTypes;
+			case TransType:		return theTransTypes;
+			case TaxType:		return theTaxTypes;
+			case TaxRegime:		return theTaxRegimes;
+			case Frequency:		return theFrequencys;
+			case TaxYear:		return theTaxYears;
+			case Account:		return theAccounts;
+			case Rate:			return theRates;
+			case Price:			return thePrices;
+			case Pattern:		return thePatterns;
+			case Event:			return theEvents;
 			default:			return null;
 		}
 	}
@@ -520,72 +488,72 @@ public class DataSet implements htmlDumpable {
 		/**
 		 * DataKey
 		 */
-		DATAKEY,
+		DataKey,
 		
 		/**
 		 *  ControlKeys 
 		 */
-		CONTROLKEY,
+		ControlKey,
 		
 		/**
 		 *  ControlData 
 		 */
-		CONTROLDATA,
+		ControlData,
 		
 		/**
 		 *  AccountTypes 
 		 */
-		ACCOUNTTYPE,
+		AccountType,
 		
 		/**
 		 *  TrabsactionTypes 
 		 */
-		TRANSTYPE,
+		TransType,
 		
 		/**
 		 *  TaxTypes 
 		 */
-		TAXTYPE,
+		TaxType,
 		
 		/**
 		 *  TaxRegimes 
 		 */
-		TAXREGIME,
+		TaxRegime,
 		
 		/**
 		 *  Frequencies 
 		 */
-		FREQUENCY,
+		Frequency,
 		
 		/**
 		 *  TaxYear 
 		 */
-		TAXYEAR,
+		TaxYear,
 		
 		/**
 		 *  Account 
 		 */
-		ACCOUNT,
+		Account,
 		
 		/**
 		 *  Price 
 		 */
-		PRICE,
+		Price,
 		
 		/**
 		 *  Rate 
 		 */
-		RATE,
+		Rate,
 		
 		/**
 		 *  Pattern 
 		 */
-		PATTERN,
+		Pattern,
 		
 		/**
 		 * Event
 		 */
-		EVENT;
+		Event;
 	}	
 	
 	/** 

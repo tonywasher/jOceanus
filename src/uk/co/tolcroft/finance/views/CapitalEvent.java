@@ -400,8 +400,8 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 			/* Start the Fields section */
 			pBuffer.append("<tr><th rowspan=\"2\">Fields</th></tr>");
 				
-			/* Format the date and account */
-			pBuffer.append("<tr><td>State</td><td>"); 
+			/* Format the account */
+			pBuffer.append("<tr><td>Account</td><td>"); 
 			pBuffer.append(Account.format(theAccount)); 
 			pBuffer.append("</td></tr>"); 
 		}

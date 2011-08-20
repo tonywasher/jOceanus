@@ -11,7 +11,7 @@ public abstract class SheetStaticData <T extends StaticData<T,?>> extends SheetD
 
 	/* Load the Static Data */
 	protected  abstract void loadEncryptedItem(int pId, int pControlId, int pClassId, byte[] pName, byte[] pDesc) throws Exception;
-	protected  abstract void loadClearTextItem(int pClassId, String pName, String pDesc) throws Exception;
+	protected  abstract void loadClearTextItem(int pId, int pClassId, String pName, String pDesc) throws Exception;
 
 	/**
 	 * Is the spreadsheet a backup spreadsheet or an edit-able one
@@ -78,14 +78,15 @@ public abstract class SheetStaticData <T extends StaticData<T,?>> extends SheetD
 		/* else this is a load from an edit-able spreadsheet */
 		else {
 			/* Access the IDs */
-			int myClassId	= loadInteger(0);
+			int myID 		= loadInteger(0);
+			int myClassId	= loadInteger(1);
 		
 			/* Access the name and description bytes */
-			String myName 	= loadString(1);
-			String myDesc 	= loadString(2);
+			String myName 	= loadString(2);
+			String myDesc 	= loadString(3);
 		
 			/* Load the item */
-			loadClearTextItem(myClassId, myName, myDesc);
+			loadClearTextItem(myID, myClassId, myName, myDesc);
 		}
 	}
 
@@ -108,9 +109,10 @@ public abstract class SheetStaticData <T extends StaticData<T,?>> extends SheetD
 		/* else we are creating an edit-able spreadsheet */
 		else {
 			/* Set the fields */
-			writeInteger(0, pItem.getStaticClassId());				
-			writeString(1, pItem.getName());
-			writeString(2, pItem.getDesc());			
+			writeInteger(0, pItem.getId());
+			writeInteger(1, pItem.getStaticClassId());				
+			writeString(2, pItem.getName());
+			writeString(3, pItem.getDesc());			
 		}
 	}
 
@@ -122,9 +124,10 @@ public abstract class SheetStaticData <T extends StaticData<T,?>> extends SheetD
 		if (isBackup) return false;
 
 		/* Write titles */
-		writeString(0, StaticData.fieldName(StaticData.FIELD_CLASSID));
-		writeString(1, StaticData.fieldName(StaticData.FIELD_NAME));
-		writeString(2, StaticData.fieldName(StaticData.FIELD_DESC));			
+		writeString(0, StaticData.fieldName(StaticData.FIELD_ID));
+		writeString(1, StaticData.fieldName(StaticData.FIELD_CLASSID));
+		writeString(2, StaticData.fieldName(StaticData.FIELD_NAME));
+		writeString(3, StaticData.fieldName(StaticData.FIELD_DESC));			
 		return true;
 	}	
 
@@ -140,15 +143,18 @@ public abstract class SheetStaticData <T extends StaticData<T,?>> extends SheetD
 
 		/* else this is an edit-able spreadsheet */
 		else {
-			/* Set the three columns as the range */
-			nameRange(3);
+			/* Set the four columns as the range */
+			nameRange(4);
+
+			/* Set the Id column as hidden */
+			setHiddenColumn(0);
 
 			/* Set the name column width and range */
-			nameColumnRange(1, theNames);
-			setColumnWidth(1, StaticClass.NAMELEN);
+			nameColumnRange(2, theNames);
+			setColumnWidth(2, StaticClass.NAMELEN);
 			
-			/* Set column 2 width */
-			setColumnWidth(2, StaticClass.DESCLEN);
+			/* Set description column width */
+			setColumnWidth(3, StaticClass.DESCLEN);
 		}
 	}	
 }

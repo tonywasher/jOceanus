@@ -1,7 +1,7 @@
 package uk.co.tolcroft.finance.ui.controls;
 
-import uk.co.tolcroft.finance.views.DebugManager;
-import uk.co.tolcroft.finance.views.DebugManager.*;
+import uk.co.tolcroft.help.DebugManager;
+import uk.co.tolcroft.help.DebugManager.*;
 import uk.co.tolcroft.models.EditState;
 
 public class FinanceInterfaces {

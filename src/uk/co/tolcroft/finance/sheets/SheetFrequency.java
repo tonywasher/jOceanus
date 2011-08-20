@@ -61,9 +61,9 @@ public class SheetFrequency extends SheetStaticData<Frequency> {
 	/**
 	 * Load clear text 
 	 */
-	protected void loadClearTextItem(int pClassId, String pName, String pDesc) throws Exception {
+	protected void loadClearTextItem(int pId, int pClassId, String pName, String pDesc) throws Exception {
 		/* Create the item */
-		theList.addItem(pClassId, pName, pDesc);		
+		theList.addItem(pId, pClassId, pName, pDesc);		
 	}
 	
 	/**

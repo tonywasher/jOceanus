@@ -1,16 +1,18 @@
 package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.views.Analysis.*;
-import uk.co.tolcroft.finance.views.DebugManager.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.StaticClass.*;
+import uk.co.tolcroft.help.DebugManager;
+import uk.co.tolcroft.help.DebugObject;
+import uk.co.tolcroft.help.DebugManager.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.Exception;
 
-public class EventAnalysis {
+public class EventAnalysis implements DebugObject {
 	/**
 	 * The Amount Tax threshold for "small" transactions (£3000)
 	 */
@@ -23,7 +25,6 @@ public class EventAnalysis {
 	
 	/* Members */
 	private DataSet				theData			= null;
-	private DebugManager		theDebugMgr		= null;
 	private Analysis			theAnalysis		= null;
 	private MetaAnalysis		theMetaAnalysis	= null;
 	private List				theYears		= null;
@@ -42,31 +43,20 @@ public class EventAnalysis {
 	
 	/**
 	 * Constructor for a dated analysis
-	 * @param pDebugMgr the debug manager
 	 * @param pData	the data to analyse events for
 	 * @param pDate	the Date for the analysis
 	 */
-	public EventAnalysis(DebugManager	pDebugMgr,
-			 			 DataSet		pData,
+	public EventAnalysis(DataSet		pData,
 						 Date	 		pDate) throws Exception {
 		DataList<Event>.ListIterator 	myIterator;
 		Event.List					 	myEvents;
 		Event 							myCurr;
 		int   							myResult;
-		DebugEntry						mySection;
-		DebugEntry						myDebug;
 		
 		/* Store the parameters */
 		theData 	= pData;
 		theDate		= pDate;
 		
-		/* Access the debug manager */
-		theDebugMgr = pDebugMgr;
-		
-		/* Access the top-level debug entry for this analysis  */
-		mySection = theDebugMgr.getInstant();
-		mySection.removeChildren();
-
 		/* Create the analysis */
 		theAnalysis = new Analysis(theData,
 								   theDate);
@@ -101,29 +91,14 @@ public class EventAnalysis {
 
 		/* produce totals */
 		theMetaAnalysis.produceTotals();
-
-		/* Create the debug entry for this analysis and add it as a child of the main entry  */
-		myDebug = theDebugMgr.new DebugEntry("Totals");
-		myDebug.addAsChildOf(mySection);
-		myDebug.setObject(theAnalysis.getList());
-
-		/* Create the debug entry for the capital events and add as a child of the main entry */
-		myDebug = theMetaAnalysis.annotateCapitalDebug(theDebugMgr);
-		myDebug.addAsChildOf(mySection);
-		
-		/* Show the section */
-		mySection.showEntry();
-		mySection.setChanged();
 	}
 	
 	/**
 	 * Constructor for a statement analysis
-	 * @param pDebugMgr the debug manager
 	 * @param pData	the data to analyse events for
 	 * @param pStatement the statement to prepare
 	 */
-	public EventAnalysis(DebugManager	pDebugMgr,
-						 DataSet		pData,
+	public EventAnalysis(DataSet		pData,
 						 Statement 		pStatement)  throws Exception {
 		DataList<Event>.ListIterator 	myIterator;
 		Event.List					 	myEvents;
@@ -132,8 +107,6 @@ public class EventAnalysis {
 		Account							myAccount;
 		Statement.Line					myLine;
 		Statement.List					myList;
-		DebugEntry						mySection;
-		DebugEntry						myDebug;
 		int   							myResult;
 
 		/* Access key points of the statement */
@@ -145,13 +118,6 @@ public class EventAnalysis {
 		theData 	= pData;
 		theDate		= myRange.getStart();
 		
-		/* Access the debug manager */
-		theDebugMgr = pDebugMgr;
-		
-		/* Access the top-level debug entry for this analysis  */
-		mySection = theDebugMgr.getAccount();
-		mySection.removeChildren();
-
 		/* Create the analysis */
 		theAnalysis = new Analysis(theData,
 								   myAccount,
@@ -210,22 +176,6 @@ public class EventAnalysis {
 	
 		/* Reset the statement balances */
 		resetStatementBalance(pStatement);
-		
-		/* Create the debug entry for this analysis and add it as a child of the main entry  */
-		myDebug = theDebugMgr.new DebugEntry("Totals");
-		myDebug.addAsChildOf(mySection);
-		myDebug.setObject(theAccount);
-
-		/* If the account is an asset */
-		if (theAccount instanceof AssetAccount) {
-			/* Create the debug entry for the capital events and add as a child of the main entry */
-			myDebug = theDebugMgr.new DebugEntry("CapitalEvents");
-			myDebug.addAsChildOf(mySection);
-			myDebug.setObject(((AssetAccount)theAccount).getCapitalEvents());
-		}
-
-		/* Update display */
-		mySection.setChanged();
 	}
 	
  	/**
@@ -279,11 +229,11 @@ public class EventAnalysis {
 	
 	/**
 	 * Constructor for a full year set of accounts
-	 * @param pDebugMgr the debug manager
-	 * @param pData	the data to analyse events for
+	 * @param pView the Data view
+	 * @param pData the Data to analyse
 	 */
-	public EventAnalysis(DebugManager	pDebugMgr,
-			 			 DataSet		pData) throws Exception {
+	public EventAnalysis(View		pView,
+						 DataSet	pData) throws Exception {
 		Event           				myCurr;
 		DataList<Event>.ListIterator	myIterator;
 		int             				myResult	= -1;
@@ -292,18 +242,17 @@ public class EventAnalysis {
 		TaxYear.List					myList;
 		AnalysisYear					myYear;
 		Account							myAccount;
+		Account 						myTaxMan;
 		DebugEntry						mySection;
-		DebugEntry						myDebug;
 
 		/* Store the parameters */
 		theData 	= pData;
 		
-		/* Access the debug manager */
-		theDebugMgr = pDebugMgr;
+		/* Access the TaxMan account */
+		myTaxMan 	= theData.getAccounts().getTaxMan();
 		
-		/* Create the top level debug entry for this analysis  */
-		mySection = theDebugMgr.getAnalysis();
-		mySection.removeChildren();
+		/* Access the top level debug entry for this analysis  */
+		mySection = pView.getAnalysisEntry();
 
 		/* Create a list of AnalysisYears */
 		theYears = new List(this);
@@ -314,10 +263,6 @@ public class EventAnalysis {
 		/* Access the tax years list */
 		myList = theData.getTaxYears();
 		
-		/* Add the Yearly totals as a child of the main entry */
-		myDebug = theYears.getDebugEntry();
-		myDebug.addAsChildOf(mySection);
-				
 		/* Access the Event iterator */
 		myIterator = theData.getEvents().listIterator();
 		
@@ -336,7 +281,7 @@ public class EventAnalysis {
 				myDate = myTax.getDate();
 		
 				/* If we have an existing meta analysis year */
-				if (theAnalysis != null) {
+				if (theMetaAnalysis != null) {
 					/* Value priced assets */
 					theMetaAnalysis.valueAssets();
 				}
@@ -346,8 +291,7 @@ public class EventAnalysis {
 				theAnalysis 	= myYear.getAnalysis();
 				theMetaAnalysis = myYear.getMetaAnalysis();
 
-				/* Access the TaxMan account and Tax Credit transaction */
-				Account 	myTaxMan 	= theData.getAccounts().getTaxMan();
+				/* Access the TaxMan account bucket and Tax Credit transaction */
 				BucketList	myBuckets	= theAnalysis.getList();
 				theTaxMan 	= (ExternalAccount)myBuckets.getAccountDetail(myTaxMan);
 				theTaxPaid 	= myBuckets.getTransDetail(TransClass.TAXCREDIT);
@@ -375,20 +319,57 @@ public class EventAnalysis {
 		/* Value priced assets of the most recent set */
 		if (theMetaAnalysis != null) theMetaAnalysis.valueAssets();
 
-		/* If we have any entries */
-		if (theMetaAnalysis != null) {
-			/* Create the debug entry for the capital events and add as a child of the main entry */
-			myDebug = theMetaAnalysis.annotateCapitalDebug(theDebugMgr);
-			myDebug.addAsChildOf(mySection);
-		
-			/* Create the debug entry for the dilutions and add it as a child of the main entry */
-			myDebug = theDebugMgr.new DebugEntry("Dilutions");
-			myDebug.addAsChildOf(mySection);
-			myDebug.setObject(theDilutions);
+		/* Update analysis object */
+		mySection.setObject(this);
+	}
+	
+	/**
+	 * Create a string form of the object suitable for inclusion in an HTML document
+	 * @return the formatted string
+	 */
+	public StringBuilder toHTMLString() { return null; }	
+
+	/**
+	 * Add child entries for the debug object
+	 * @param pManager the debug manager
+	 * @param pParent the parent debug entry
+	 */
+	public void addChildEntries(DebugManager 	pManager,
+								DebugEntry		pParent) { 
+		/* If this is a full year analysis */
+		if (theYears != null) {
+			/* Add Years child */
+			pManager.addChildEntry(pParent, "AnnualTotals", theYears);
+
+			/* Add the Capital Events */
+			if (theAnalysis != null)
+				pManager.addChildEntry(pParent, "CapitalEvents", new AccountsCapital(theAnalysis.getList()));			
+
+			/* Add Dilutions child */
+			pManager.addChildEntry(pParent, "Dilutions", theDilutions);
 		}
 
-		/* Update display */
-		mySection.setChanged();
+		/* If this is an account analysis */
+		else if (theAccount != null) {
+			/* Add Initial child */
+			pManager.addChildEntry(pParent, "InitialTotals", theAccount);
+
+			/* If this is an asset account */
+			if (theAccount instanceof AssetAccount) {
+				/* Add the Capital Events */
+				CapitalEvent.List myList = ((AssetAccount)theAccount).getCapitalEvents();
+				pManager.addChildEntry(pParent, myList.itemType(), myList);
+			}
+		}
+		
+		/* else this is an instant analysis */
+		else  {
+			/* Add Totals child */
+			pManager.addChildEntry(pParent, "Totals", theAnalysis.getList());			
+
+			/* Add the Capital Events */
+			pManager.addChildEntry(pParent, "CapitalEvents", new AccountsCapital(theAnalysis.getList()));			
+		}
 	}
 	
 	/* Public class for analysis year */
@@ -405,7 +386,6 @@ public class EventAnalysis {
 		private DebugEntry		theListDebug	= null;
 		private DebugEntry		theChargeDebug	= null;
 		private DataSet			theData			= null;
-		private DebugManager	theDebugMgr		= null;
 
 		/* Access methods */
 		public 	Date			getDate()			{ return theYear.getDate(); }
@@ -422,11 +402,7 @@ public class EventAnalysis {
 			/* Call super-constructor */
 			super(pList, 0);
 			theData		= pList.theEvents.theData;
-			theDebugMgr	= pList.theEvents.theDebugMgr;
-			
-			/* Debug entry */
-			DebugEntry myDebug;
-			
+
 			/* Store tax year */
 			theYear = pYear;
 			
@@ -435,23 +411,6 @@ public class EventAnalysis {
 			
 			/* Create associated MetaAnalyser */
 			theMetaAnalysis = new MetaAnalysis(theAnalysis);
-
-			/* Create the top level debug entry for this year and add it as a child of the list  */
-			myDebug = theDebugMgr.new DebugEntry(Integer.toString(theYear.getDate().getYear()));
-			myDebug.addAsFirstChildOf(pList.getDebugEntry());
-
-			/* Create the buckets debug entry for this year and add it as a child of the year  */
-			theListDebug = theDebugMgr.new DebugEntry("Totals");
-			theListDebug.addAsChildOf(myDebug);
-			theListDebug.setObject(theAnalysis.getList());
-
-			/* Create the charges debug entry for this year and add it as a child of the year  */
-			theChargeDebug = theDebugMgr.new DebugEntry("Charges");
-			theChargeDebug.addAsChildOf(myDebug);
-			theChargeDebug.setObject(theAnalysis.getCharges());
-			
-			/* Hide the charges */
-			theChargeDebug.hideEntry();
 		}
 		
 		/* Field IDs */
@@ -581,20 +540,29 @@ public class EventAnalysis {
 				theChargeDebug.showEntry();
 			}
 		}
+		
+		/**
+		 * Add child entries for the debug object
+		 * @param pManager the debug manager
+		 * @param pParent the parent debug entry
+		 */
+		public void addChildEntries(DebugManager 	pManager,
+									DebugEntry		pParent) { 
+			/* Add Totals child */
+			theListDebug = pManager.addChildEntry(pParent, "Totals", theAnalysis.getList());			
+
+			/* Add chargeable events child as hidden entry */
+			ChargeableEvent.List myCharges = theAnalysis.getCharges();
+			theChargeDebug = pManager.addChildEntry(pParent, myCharges.itemType(), myCharges);			
+			theChargeDebug.hideEntry();
+		}
 	}
 	
 	/* the list class */
 	public class List extends DataList<AnalysisYear> {
 		/* Members */
-		private DebugEntry		theDebug		= null;
 		private EventAnalysis	theEvents		= null;
 
-		/**
-		 * Access the debug entry for this list 
-		 * @return the debug entry 
-		 */
-		private DebugEntry getDebugEntry() { return theDebug; }
-		
 		/**
 		 * Construct a top-level List
 		 */
@@ -602,9 +570,6 @@ public class EventAnalysis {
 			/* Call super constructor */
 			super(AnalysisYear.class, ListStyle.VIEW, false);
 			theEvents = pEvents;
-			
-			/* Create debug entry for this list */
-			theDebug = theDebugMgr.new DebugEntry("AnnualTotals");
 		}
 
 		/** 
@@ -669,6 +634,23 @@ public class EventAnalysis {
 			/* Return to caller */
 			return myCurr;
 		}		
+		
+		/**
+		 * Add child entries for the debug object
+		 * @param pManager the debug manager
+		 * @param pParent the parent debug entry
+		 */
+		public void addChildEntries(DebugManager 	pManager,
+									DebugEntry		pParent) { 
+			ListIterator 	myIterator = listIterator();
+			AnalysisYear	myYear;
+			
+			/* Loop through the years */
+			while ((myYear = myIterator.previous()) != null) {
+				/* Add child */
+				pManager.addChildEntry(pParent, Integer.toString(myYear.getDate().getYear()), myYear);
+			}
+		}
 	}
 	
 	/**
@@ -1489,7 +1471,7 @@ public class EventAnalysis {
 
 			/* Record the current/delta cost */
 			myEvent.addAttribute(CapitalEvent.capitalInitialGains, myAsset.getGains());
-			myEvent.addAttribute(CapitalEvent.capitalDeltaCost, myDeltaGains);
+			myEvent.addAttribute(CapitalEvent.capitalDeltaGains, myDeltaGains);
 
 			/* Adjust the gained */
 			myAsset.getGained().addAmount(myDeltaGains);
@@ -1635,4 +1617,56 @@ public class EventAnalysis {
 		TransDetail myTranBucket = myBuckets.getTransDetail(myTrans);
 		myTranBucket.adjustAmount(pEvent);
 	}	
+	
+	/**
+	 * Private Capital Event Reporting class
+	 */
+	private class AccountsCapital implements DebugObject {
+		/**
+		 * The Bucket list to extract Capital Event lists from
+		 */
+		private Analysis.BucketList		theList				= null;
+		
+		/**
+		 * Constructor
+		 */
+		private AccountsCapital(Analysis.BucketList pBuckets) {
+			theList = pBuckets;
+		}
+		
+		/**
+		 * Create a string form of the object suitable for inclusion in an HTML document
+		 * @return the formatted string
+		 */
+		public StringBuilder toHTMLString() { return null; }	
+
+		/**
+		 * Add child entries for the debug object
+		 * @param pManager the debug manager
+		 * @param pParent the parent debug entry
+		 */
+		public void addChildEntries(DebugManager 	pManager,
+									DebugEntry		pParent) {
+			DataList<AnalysisBucket>.ListIterator 	myIterator;
+			AnalysisBucket							myCurr;
+			AssetAccount							myAsset;
+
+			/* Access the iterator */
+			myIterator = theList.listIterator();
+			
+			/* Loop through the buckets */
+			while ((myCurr = myIterator.next()) != null) {
+				/* Ignore if this is not an asset detail */
+				if (myCurr.getBucketType() != BucketType.ASSETDETAIL) continue;
+
+				/* Access the Asset Detail */
+				myAsset = (AssetAccount)myCurr;
+				
+				/* Add Capital child */
+				pManager.addChildEntry(pParent, 
+									   myAsset.getAccount().getName(),
+									   myAsset.getCapitalEvents());
+			}
+		}
+	}
 }
