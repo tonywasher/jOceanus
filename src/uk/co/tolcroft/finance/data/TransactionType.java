@@ -1,9 +1,10 @@
 package uk.co.tolcroft.finance.data;
 
 import uk.co.tolcroft.finance.data.StaticClass.TransClass;
-import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.StaticData;
 
 public class TransactionType extends StaticData<TransactionType, TransClass> {
 	/**
@@ -404,7 +405,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 	 	 * Construct an empty CORE transaction type list
 	 	 * @param pData the DataSet for the list
 	 	 */
-		protected List(DataSet pData) { 
+		protected List(FinanceData pData) { 
 			super(TransactionType.class, pData, ListStyle.CORE);
 		}
 

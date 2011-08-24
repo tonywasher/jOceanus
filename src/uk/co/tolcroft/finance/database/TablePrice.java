@@ -2,7 +2,11 @@ package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.DataList.*;
+import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.data.EncryptedItem;
+import uk.co.tolcroft.models.database.Database;
+import uk.co.tolcroft.models.database.TableDefinition;
+import uk.co.tolcroft.models.database.TableEncrypted;
 
 public class TablePrice extends TableEncrypted<AcctPrice> {
 	/**
@@ -24,7 +28,7 @@ public class TablePrice extends TableEncrypted<AcctPrice> {
 	 * Constructor
 	 * @param pDatabase the database control
 	 */
-	protected TablePrice(Database 	pDatabase) {
+	protected TablePrice(Database<?> 	pDatabase) {
 		super(pDatabase, TableName);
 	}
 	
@@ -40,16 +44,13 @@ public class TablePrice extends TableEncrypted<AcctPrice> {
 		theTableDef.addEncryptedColumn(AcctPrice.FIELD_PRICE, AcctPrice.fieldName(AcctPrice.FIELD_PRICE), EncryptedItem.PRICELEN);
 	}
 	
-	/* PreProcess on Load */
-	protected void preProcessOnLoad(DataSet pData) {
-		theList = pData.getPrices();
+	/* Declare DataSet */
+	protected void declareData(DataSet<?> pData) {
+		FinanceData myData = (FinanceData)pData;
+		theList = myData.getPrices();
+		setList(theList);
 	}
-	
-	/* Get the List for the table for updates */
-	protected AcctPrice.List  getUpdateList(DataSet pData) {
-		return new AcctPrice.List(pData.getPrices(), ListStyle.UPDATE);
-	}
-	
+
 	/* Load the price */
 	protected void loadItem(int pId, int pControlId) throws Exception {
 		int  			myAccountId;

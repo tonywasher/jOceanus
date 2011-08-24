@@ -14,12 +14,13 @@ import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.help.DebugManager;
 import uk.co.tolcroft.help.DebugManager.*;
-import uk.co.tolcroft.models.DataItem;
 import uk.co.tolcroft.models.Date;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.Number.*;
-import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.HistoryValues;
 
 public class Extract extends FinanceTable<Event> {
 	/* Members */
@@ -219,7 +220,7 @@ public class Extract extends FinanceTable<Event> {
 	 * Refresh views/controls after a load/update of underlying data
 	 */
 	public void refreshData() throws Exception {
-		DataSet 		myData;
+		FinanceData	myData;
 		
 		/* Access data */
 		myData = theView.getData();

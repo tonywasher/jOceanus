@@ -2,7 +2,9 @@ package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.DataList.*;
+import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.database.Database;
+import uk.co.tolcroft.models.database.TableStaticData;
 
 public class TableTransactionType extends TableStaticData<TransactionType> {
 	/**
@@ -25,20 +27,17 @@ public class TableTransactionType extends TableStaticData<TransactionType> {
 	 * Constructor
 	 * @param pDatabase the database control
 	 */
-	protected TableTransactionType(Database 	pDatabase) { 
+	protected TableTransactionType(Database<?> 	pDatabase) { 
 		super(pDatabase, TableName); 
 	}
 	
-	/* PreProcess on Load */
-	protected void preProcessOnLoad(DataSet pData) {
-		theList = pData.getTransTypes();
+	/* Declare DataSet */
+	protected void declareData(DataSet<?> pData) {
+		FinanceData myData = (FinanceData)pData;
+		theList = myData.getTransTypes();
+		setList(theList);
 	}
-	
-	/* Get the List for the table for updates */
-	protected TransactionType.List  getUpdateList(DataSet pData) {
-		return new TransactionType.List(pData.getTransTypes(), ListStyle.UPDATE);
-	}
-	
+
 	/* Load the transaction type */
 	protected void loadTheItem(int pId, int pControlId, int pClassId, byte[] pTrans, byte[] pDesc) throws Exception {
 		/* Add into the list */

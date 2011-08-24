@@ -2,7 +2,7 @@ package uk.co.tolcroft.finance.data;
 
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
-import uk.co.tolcroft.models.StaticData.*;
+import uk.co.tolcroft.models.data.StaticData.*;
 
 public class StaticClass {
 	/**

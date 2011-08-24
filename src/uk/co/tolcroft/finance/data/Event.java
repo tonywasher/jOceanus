@@ -3,10 +3,15 @@ package uk.co.tolcroft.finance.data;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.views.Statement.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.data.ControlKey;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.EncryptedItem;
+import uk.co.tolcroft.models.data.HistoryValues;
+import uk.co.tolcroft.models.data.DataList.ListStyle;
 
 public class Event extends EncryptedItem<Event> {
 	/**
@@ -261,7 +266,7 @@ public class Event extends EncryptedItem<Event> {
 		Account.List	myAccounts;
 		
 		/* Access account list */
-		DataSet	myData 	= pList.getData();
+		FinanceData	myData 	= pList.getData();
 		myAccounts = myData.getAccounts();
 		
 		/* Create a new EventValues object */
@@ -614,7 +619,7 @@ public class Event extends EncryptedItem<Event> {
 	 */
 	public void validate() {
 		List 			myList		= (List)getList();
-		DataSet			mySet 		= myList.getData();
+		FinanceData		mySet 		= myList.getData();
 		Date 			myDate		= getDate();
 		String			myDesc		= getDesc();
 		Account			myDebit		= getDebit();
@@ -1016,7 +1021,7 @@ public class Event extends EncryptedItem<Event> {
 	 * @return the calculated tax credit
 	 */
 	public Money calculateTaxCredit() {
-		DataSet			myData	= ((List)getList()).getData(); 
+		FinanceData		myData	= ((List)getList()).getData(); 
 		TaxYear.List 	myList  = myData.getTaxYears(); 
 		TaxYear 		myTax;
 		Rate			myRate;
@@ -1291,15 +1296,19 @@ public class Event extends EncryptedItem<Event> {
 		/* Return to caller */
 		return bChanged;
 	}
+
 	/**
 	 *  List class for Events 
 	 */
 	public static class List extends EncryptedList<Event> {
+		/* Access DataSet correctly */
+		public FinanceData getData() { return (FinanceData) super.getData(); }
+		
 		/** 
 	 	 * Construct an empty CORE event list
 	 	 * @param pData the DataSet for the list
 	 	 */
-		protected List(DataSet pData) { 
+		protected List(FinanceData pData) { 
 			super(Event.class, pData);
 		}
 
@@ -1307,7 +1316,7 @@ public class Event extends EncryptedItem<Event> {
 	 	 * Construct an empty generic event list
 	 	 * @param pData the DataSet for the list
 	 	 */
-		public List(DataSet pData, ListStyle pStyle) { 
+		public List(FinanceData pData, ListStyle pStyle) { 
 			super(Event.class, pData, pStyle);
 		}
 
@@ -1385,7 +1394,7 @@ public class Event extends EncryptedItem<Event> {
 				            String   		pTaxCredit,
 				            String			pDilution,
 				            Integer   		pYears) throws Exception {
-			DataSet			myData;
+			FinanceData		myData;
 			Account.List	myAccounts;
 			Account         myDebit;
 			Account         myCredit;

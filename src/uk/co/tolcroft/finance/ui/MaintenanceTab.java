@@ -15,8 +15,9 @@ import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.help.DebugManager;
 import uk.co.tolcroft.help.DebugManager.*;
-import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataState;
 
 public class MaintenanceTab implements ChangeListener {
 	/* properties */

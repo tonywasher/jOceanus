@@ -3,11 +3,10 @@ package uk.co.tolcroft.finance.sheets;
 import jxl.*;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.OutputSheet;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.SheetType;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.sheets.SheetDataItem;
+import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 
 public class SheetRate extends SheetDataItem<AcctRate> {
 	/**
@@ -27,32 +26,32 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 
 	/**
 	 * Constructor for loading a spreadsheet
-	 * @param pInput the input spreadsheet
+	 * @param pReader the spreadsheet reader
 	 */
-	protected SheetRate(InputSheet	pInput) {
+	protected SheetRate(FinanceReader	pReader) {
 		/* Call super constructor */
-		super(pInput, Rates);
+		super(pReader, Rates);
 		
 		/* Note whether this is a backup */
-		isBackup = (pInput.getType() == SheetType.BACKUP);
+		isBackup = (pReader.getType() == SheetType.BACKUP);
 		
 		/* Access the Rates list */
-		theList = pInput.getData().getRates();
+		theList = pReader.getData().getRates();
 	}
 
 	/**
 	 *  Constructor for creating a spreadsheet
-	 *  @param pOutput the output spreadsheet
+	 *  @param pWriter the spreadsheet writer
 	 */
-	protected SheetRate(OutputSheet	pOutput) {
+	protected SheetRate(FinanceWriter	pWriter) {
 		/* Call super constructor */
-		super(pOutput, Rates);
+		super(pWriter, Rates);
 		
 		/* Note whether this is a backup */
-		isBackup = (pOutput.getType() == SheetType.BACKUP);
+		isBackup = (pWriter.getType() == SheetType.BACKUP);
 				
 		/* Access the Rates list */
-		theList = pOutput.getData().getRates();
+		theList = pWriter.getData().getRates();
 		setDataList(theList);
 	}
 	
@@ -171,9 +170,9 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 	 *  @param pData the data set to load into
 	 *  @return continue to load <code>true/false</code> 
 	 */
-	protected static boolean loadArchive(statusCtl 	pThread,
-										 Workbook	pWorkbook,
-							   	  		 DataSet	pData) throws Exception {
+	protected static boolean loadArchive(statusCtl 		pThread,
+										 Workbook		pWorkbook,
+							   	  		 FinanceData	pData) throws Exception {
 		/* Local variables */
 		AcctRate.List	myList;
 		Range[]   		myRange;

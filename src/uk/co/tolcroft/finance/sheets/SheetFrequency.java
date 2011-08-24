@@ -3,10 +3,9 @@ package uk.co.tolcroft.finance.sheets;
 import jxl.*;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.OutputSheet;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.sheets.SheetStaticData;
 
 public class SheetFrequency extends SheetStaticData<Frequency> {
 
@@ -27,26 +26,26 @@ public class SheetFrequency extends SheetStaticData<Frequency> {
 
 	/**
 	 * Constructor for loading a spreadsheet
-	 * @param pOutput the output spreadsheet
+	 * @param pReader the spreadsheet reader
 	 */
-	protected SheetFrequency(InputSheet pInput) {
+	protected SheetFrequency(FinanceReader pReader) {
 		/* Call super-constructor */
-		super(pInput, Frequencies);
+		super(pReader, Frequencies);
 				
 		/* Access the Frequency list */
-		theList = pInput.getData().getFrequencys();
+		theList = pReader.getData().getFrequencys();
 	}
 
 	/**
 	 * Constructor for creating a spreadsheet
-	 * @param pOutput the output spreadsheet
+	 * @param pWriter the spreadsheet writer
 	 */
-	protected SheetFrequency(OutputSheet pOutput) {
+	protected SheetFrequency(FinanceWriter pWriter) {
 		/* Call super-constructor */
-		super(pOutput, Frequencies, FrequencyNames);
+		super(pWriter, Frequencies, FrequencyNames);
 				
 		/* Access the Frequency list */
-		theList = pOutput.getData().getFrequencys();
+		theList = pWriter.getData().getFrequencys();
 		setDataList(theList);
 	}
 
@@ -73,9 +72,9 @@ public class SheetFrequency extends SheetStaticData<Frequency> {
 	 *  @param pData the data set to load into
 	 *  @return continue to load <code>true/false</code> 
 	 */
-	protected static boolean loadArchive(statusCtl 	pThread,
-										 Workbook	pWorkbook,
-							   	  		 DataSet	pData) throws Exception {
+	protected static boolean loadArchive(statusCtl 		pThread,
+										 Workbook		pWorkbook,
+							   	  		 FinanceData	pData) throws Exception {
 		/* Local variables */
 		Frequency.List 	myList;
 		Range[] 		myRange;

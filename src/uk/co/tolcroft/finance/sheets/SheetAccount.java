@@ -3,11 +3,10 @@ package uk.co.tolcroft.finance.sheets;
 import jxl.*;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.OutputSheet;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.SheetType;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.sheets.SheetDataItem;
+import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 
 public class SheetAccount extends SheetDataItem<Account> {
 	/**
@@ -34,31 +33,31 @@ public class SheetAccount extends SheetDataItem<Account> {
 	 * Constructor for loading a spreadsheet
 	 * @param pInput the input spreadsheet
 	 */
-	protected SheetAccount(InputSheet	pInput) {
+	protected SheetAccount(FinanceReader	pReader) {
 		/* Call super constructor */
-		super(pInput, Accounts);
+		super(pReader, Accounts);
 		
 		/* Note whether this is a backup */
-		isBackup = (pInput.getType() == SheetType.BACKUP);
+		isBackup = (pReader.getType() == SheetType.BACKUP);
 				
 		/* Access the Lists */
-		DataSet myData = pInput.getData();
-		theList 	= myData.getAccounts();
+		FinanceData myData = pReader.getData();
+		theList = myData.getAccounts();
 	}
 
 	/**
 	 *  Constructor for creating a spreadsheet
-	 *  @param pOutput the output spreadsheet
+	 *  @param pWriter the spreadsheet writer
 	 */
-	protected SheetAccount(OutputSheet	pOutput) {
+	protected SheetAccount(FinanceWriter	pWriter) {
 		/* Call super constructor */
-		super(pOutput, Accounts);
+		super(pWriter, Accounts);
 		
 		/* Note whether this is a backup */
-		isBackup = (pOutput.getType() == SheetType.BACKUP);
+		isBackup = (pWriter.getType() == SheetType.BACKUP);
 				
 		/* Access the Accounts list */
-		theList = pOutput.getData().getAccounts();
+		theList = pWriter.getData().getAccounts();
 		setDataList(theList);
 	}
 	
@@ -241,9 +240,9 @@ public class SheetAccount extends SheetDataItem<Account> {
 	 *  @param pData the data set to load into
 	 *  @return continue to load <code>true/false</code> 
 	 */
-	protected static boolean loadArchive(statusCtl 	pThread,
-										 Workbook	pWorkbook,
-							   	  		 DataSet	pData) throws Exception {
+	protected static boolean loadArchive(statusCtl 		pThread,
+										 Workbook		pWorkbook,
+							   	  		 FinanceData	pData) throws Exception {
 		/* Local variables */
 		Account.List 	myList;
 		Range[]   		myRange;

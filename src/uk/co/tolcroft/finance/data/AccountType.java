@@ -1,9 +1,10 @@
 package uk.co.tolcroft.finance.data;
 
 import uk.co.tolcroft.finance.data.StaticClass.AccountClass;
-import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.StaticData;
 
 public class AccountType extends StaticData<AccountType, AccountClass> {
 	/**
@@ -447,7 +448,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 	 	 * Construct an empty CORE account type list
 	 	 * @param pData the DataSet for the list
 	 	 */
-		protected List(DataSet pData) { 
+		protected List(FinanceData pData) { 
 			super(AccountType.class, pData, ListStyle.CORE);
 		}
 

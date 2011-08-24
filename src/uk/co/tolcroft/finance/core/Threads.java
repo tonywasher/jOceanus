@@ -153,7 +153,7 @@ public class Threads {
 		}
 	}
 	
-	public static class loadDatabase extends SwingWorker <DataSet, ThreadStatus> 
+	public static class loadDatabase extends SwingWorker <FinanceData, ThreadStatus> 
 	 								 implements ThreadControl {
 		/* Properties */
 		private View		theView      = null;
@@ -182,13 +182,14 @@ public class Threads {
 		}
 
 		/* Background task (Worker Thread)*/
-		public DataSet doInBackground() {
-			DataSet		myData	   	= null;
-			Database	myDatabase	= null;
+		public FinanceData doInBackground() {
+			FinanceData		myData	   	= null;
+			FinanceDatabase	myDatabase	= null;
 
 			try {
 				/* Create interface */
-				myDatabase = new Database(theWindow.getProperties());
+				myDatabase = new FinanceDatabase(theWindow.getProperties(),
+												 theView.getSecurity());
 
 				/* Load database */
 				myData    = myDatabase.loadDatabase(theStatus);
@@ -215,8 +216,8 @@ public class Threads {
 
 		/* Completion task (Event Thread)*/
 		public void done() {
-			DataSet myData;
-			String  myOp = "DataBase load";
+			FinanceData myData;
+			String  	myOp = "DataBase load";
 
 			try {
 				/* If we are not cancelled */
@@ -300,13 +301,14 @@ public class Threads {
 
 		/* Background task (Worker Thread)*/
 		public Void doInBackground() {
-			Database	myDatabase	= null;
-			DataSet		myData;
-			DataSet		myDiff;
+			FinanceDatabase	myDatabase	= null;
+			FinanceData		myData;
+			FinanceData		myDiff;
 
 			try {
 				/* Create interface */
-				myDatabase = new Database(theWindow.getProperties());
+				myDatabase = new FinanceDatabase(theWindow.getProperties(),
+												 theView.getUpdates());
 
 				/* Store database */
 				myDatabase.updateDatabase(theStatus, theView.getData());
@@ -318,10 +320,10 @@ public class Threads {
 				theStatusBar.getProgressPanel().setVisible(true);
 
 				/* Load database */
-				myData   = myDatabase.loadDatabase(theStatus);
+				myData	= myDatabase.loadDatabase(theStatus);
 
 				/* Create a difference set between the two data copies */
-				myDiff = new DataSet(myData, theView.getData());
+				myDiff 	= myData.getDifferenceSet(theView.getData());
 
 				/* If the difference set is non-empty */
 				if (!myDiff.isEmpty()) {
@@ -414,20 +416,20 @@ public class Threads {
 
 		/* Background task (Worker Thread)*/
 		public Void doInBackground() {
-			Database		myDatabase	= null;
-			DataSet			myData;
-			DataSet			myNull;
+			FinanceDatabase	myDatabase	= null;
+			FinanceData		myData;
+			FinanceData		myNull;
 			SecureManager	myManager	= null;
 
 			try {
 				/* Create interface */
-				myDatabase = new Database(theWindow.getProperties());
+				myDatabase = new FinanceDatabase(theWindow.getProperties());
 
 				/* Load database */
 				myDatabase.createTables(theStatus);
 
 				/* Re-base this set on a null set */
-				myNull = new DataSet(myManager);
+				myNull = new FinanceData(myManager);
 				myData = theView.getData();
 				myData.reBase(myNull);
 			}	
@@ -514,21 +516,21 @@ public class Threads {
 
 		/* Background task (Worker Thread)*/
 		public Void doInBackground() {
-			Database		myDatabase	= null;
-			DataSet			myData;
-			DataSet			myNull;
+			FinanceDatabase	myDatabase	= null;
+			FinanceData		myData;
+			FinanceData		myNull;
 			SecureManager 	myManager = null;
 
 			try {
 				
 				/* Create interface */
-				myDatabase = new Database(theWindow.getProperties());
+				myDatabase = new FinanceDatabase(theWindow.getProperties());
 
 				/* Load database */
 				myDatabase.purgeTables(theStatus);
 
 				/* Re-base this set on a null set */
-				myNull = new DataSet(myManager);
+				myNull = new FinanceData(myManager);
 				myData = theView.getData();
 				myData.reBase(myNull);
 			}	
@@ -585,7 +587,7 @@ public class Threads {
 		}
 	}
 
-	public static class loadSpreadsheet extends SwingWorker <DataSet, ThreadStatus> 
+	public static class loadSpreadsheet extends SwingWorker <FinanceData, ThreadStatus> 
 										implements ThreadControl {
 		/* Properties */
 		private View      		theView      	= null;
@@ -619,10 +621,10 @@ public class Threads {
 		}
 
 		/* Background task (Worker Thread)*/
-		public DataSet doInBackground() {
-			DataSet    		myData   = null;
-			DataSet			myStore;
-			Database		myDatabase;
+		public FinanceData doInBackground() {
+			FinanceData		myData   = null;
+			FinanceData		myStore;
+			FinanceDatabase	myDatabase;
 			File			myFile;
 
 			try {
@@ -639,7 +641,7 @@ public class Threads {
 				}
 				
 				/* Load workbook */
-				myData   = SpreadSheet.loadArchive(theStatus, myFile);
+				myData   = FinanceSheet.loadArchive(theStatus, myFile);
 
 				/* Re-initialise the status window */
 				theStatusBar.setOperation("Accessing Data Store");
@@ -648,7 +650,8 @@ public class Threads {
 				theStatusBar.getProgressPanel().setVisible(true);
 
 				/* Create interface */
-				myDatabase = new Database(theWindow.getProperties());
+				myDatabase = new FinanceDatabase(theWindow.getProperties(),
+												 theView.getSecurity());
 
 				/* Load underlying database */
 				myStore	= myDatabase.loadDatabase(theStatus);
@@ -684,7 +687,7 @@ public class Threads {
 
 		/* Completion task (Event Thread)*/
 		public void done() {
-			DataSet myData;
+			FinanceData myData;
 			String  myOp = "Spreadsheet load";
 
 			try {
@@ -737,7 +740,7 @@ public class Threads {
 		}
 	}
 	
-	public static class restoreBackup extends SwingWorker <DataSet, ThreadStatus> 
+	public static class restoreBackup extends SwingWorker <FinanceData, ThreadStatus> 
 	  								  implements ThreadControl {
 		/* Properties */
 		private View      	theView      	= null;
@@ -769,10 +772,11 @@ public class Threads {
 		}
 
 		/* Background task (Worker Thread)*/
-		public DataSet doInBackground() {
-			DataSet						myData	  = null;
-			DataSet						myStore;
-			Database					myDatabase;
+		public FinanceData doInBackground() {
+			FinanceData					myData	  = null;
+			FinanceData					myStore;
+			FinanceDatabase				myDatabase;
+			FinanceSheet				mySheet;
 			File						myFile;
 
 			try {
@@ -789,8 +793,9 @@ public class Threads {
 				}
 				
 				/* Load workbook */
-				myData   = SpreadSheet.loadBackup(theStatus, 
-												  myFile);
+				mySheet	 = new FinanceSheet();
+				myData   = mySheet.loadBackup(theStatus, 
+											  myFile);
 
 				/* Re-initialise the status window */
 				theStatusBar.setOperation("Accessing Data Store");
@@ -799,7 +804,8 @@ public class Threads {
 				theStatusBar.getProgressPanel().setVisible(true);
 
 				/* Create interface */
-				myDatabase = new Database(theWindow.getProperties());
+				myDatabase = new FinanceDatabase(theWindow.getProperties(),
+						 						 theView.getSecurity());
 
 				/* Load underlying database */
 				myStore	= myDatabase.loadDatabase(theStatus);
@@ -830,8 +836,8 @@ public class Threads {
 
 		/* Completion task (Event Thread)*/
 		public void done() {
-			DataSet myData;
-			String  myOp = "Backup restoration";
+			FinanceData	myData;
+			String  	myOp = "Backup restoration";
 
 			try {
 				/* If we are not cancelled */
@@ -883,7 +889,7 @@ public class Threads {
 		}
 	}
 	
-	public static class loadExtract extends SwingWorker <DataSet, ThreadStatus> 
+	public static class loadExtract extends SwingWorker <FinanceData, ThreadStatus> 
 	  								implements ThreadControl {
 		/* Properties */
 		private View      	theView      	= null;
@@ -915,10 +921,11 @@ public class Threads {
 		}
 
 		/* Background task (Worker Thread)*/
-		public DataSet doInBackground() {
-			DataSet						myData	  = null;
-			DataSet						myStore;
-			Database					myDatabase;
+		public FinanceData doInBackground() {
+			FinanceData					myData	  = null;
+			FinanceData					myStore;
+			FinanceDatabase				myDatabase;
+			FinanceSheet				mySheet;
 			File						myFile;
 
 			try {
@@ -935,8 +942,9 @@ public class Threads {
 				}
 				
 				/* Load workbook */
-				myData   = SpreadSheet.loadExtract(theStatus, 
-												   myFile);
+				mySheet	 = new FinanceSheet();
+				myData   = mySheet.loadExtract(theStatus, 
+											   myFile);
 
 				/* Re-initialise the status window */
 				theStatusBar.setOperation("Accessing Data Store");
@@ -945,7 +953,8 @@ public class Threads {
 				theStatusBar.getProgressPanel().setVisible(true);
 
 				/* Create interface */
-				myDatabase = new Database(theWindow.getProperties());
+				myDatabase = new FinanceDatabase(theWindow.getProperties(),
+						 						 theView.getSecurity());
 
 				/* Load underlying database */
 				myStore	= myDatabase.loadDatabase(theStatus);
@@ -982,8 +991,8 @@ public class Threads {
 
 		/* Completion task (Event Thread)*/
 		public void done() {
-			DataSet myData;
-			String  myOp = "Backup restoration";
+			FinanceData	myData;
+			String  	myOp = "Backup restoration";
 
 			try {
 				/* If we are not cancelled */
@@ -1068,10 +1077,11 @@ public class Threads {
 
 		/* Background task (Worker Thread)*/
 		public Void doInBackground() {
-			DataSet		myData	  = null;
-			DataSet		myDiff	  = null;
-			boolean		doDelete  = false;
-			File		myFile	  = null;
+			FinanceData		myData	  	= null;
+			FinanceData		myDiff	  	= null;
+			FinanceSheet	mySheet		= null;
+			boolean			doDelete  	= false;
+			File			myFile	  	= null;
 
 			try {
 				/* Determine the name of the file to build */
@@ -1087,9 +1097,10 @@ public class Threads {
 				}
 
 				/* Create backup */
-				SpreadSheet.createExtract(theStatus, 
-										  theView.getData(), 
-										  myFile);
+				mySheet = new FinanceSheet();
+				mySheet.createExtract(theStatus, 
+									  theView.getData(), 
+									  myFile);
 
 				/* File created, so delete on error */
 				doDelete = true;
@@ -1104,8 +1115,8 @@ public class Threads {
 				myFile 	= new File(myFile.getPath() + ".xls");
 
 				/* Load workbook */
-				myData   = SpreadSheet.loadExtract(theStatus, 
-												   myFile);
+				myData   = mySheet.loadExtract(theStatus, 
+											   myFile);
 
 				/* Initialise the security, from the original data */
 				myData.initialiseSecurity(theView.getData());
@@ -1114,7 +1125,7 @@ public class Threads {
 				myData.analyseData(theView);
 				
 				/* Create a difference set between the two data copies */
-				myDiff = new DataSet(myData, theView.getData());
+				myDiff = myData.getDifferenceSet(theView.getData());
 
 				/* If the difference set is non-empty */
 				if (!myDiff.isEmpty()) {
@@ -1217,10 +1228,11 @@ public class Threads {
 
 		/* Background task (Worker Thread)*/
 		public Void doInBackground() {
-			DataSet		myData	  = null;
-			DataSet		myDiff	  = null;
-			boolean		doDelete  = false;
-			File		myFile	  = null;
+			FinanceData		myData		= null;
+			FinanceData		myDiff		= null;
+			FinanceSheet	mySheet		= null;
+			boolean			doDelete	= false;
+			File			myFile		= null;
 
 			try {
 				/* Determine the name of the file to build */
@@ -1236,9 +1248,10 @@ public class Threads {
 				}
 				
 				/* Create backup */
-				SpreadSheet.createBackup(theStatus, 
-										 theView.getData(), 
-										 myFile);
+				mySheet = new FinanceSheet();
+				mySheet.createBackup(theStatus, 
+									 theView.getData(), 
+									 myFile);
 
 				/* File created, so delete on error */
 				doDelete = true;
@@ -1253,11 +1266,11 @@ public class Threads {
 				myFile 	= new File(myFile.getPath() + ".zip");
 				
 				/* Load workbook */
-				myData   = SpreadSheet.loadBackup(theStatus, 
-												  myFile);
+				myData   = mySheet.loadBackup(theStatus, 
+											  myFile);
 
 				/* Create a difference set between the two data copies */
-				myDiff = new DataSet(myData, theView.getData());
+				myDiff = myData.getDifferenceSet(theView.getData());
 
 				/* If the difference set is non-empty */
 				if (!myDiff.isEmpty()) {

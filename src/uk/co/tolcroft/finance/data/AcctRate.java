@@ -2,9 +2,14 @@ package uk.co.tolcroft.finance.data;
 
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.data.ControlKey;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.EncryptedItem;
+import uk.co.tolcroft.models.data.HistoryValues;
+import uk.co.tolcroft.models.data.DataList.ListStyle;
 
 public class AcctRate extends EncryptedItem<AcctRate> {
 	/**
@@ -171,8 +176,8 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		myValues.setAccountId(uAccountId);
 		
 		/* Look up the Account */
-		DataSet myData 		= pList.getData();
-		Account myAccount 	= myData.getAccounts().searchFor(uAccountId);
+		FinanceData myData 		= pList.getData();
+		Account 	myAccount 	= myData.getAccounts().searchFor(uAccountId);
 		if (myAccount == null) 
 			throw new Exception(ExceptionClass.DATA,
 								this,
@@ -213,7 +218,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		setControlKey(uControlId);
 		
 		/* Look up the Account */
-		DataSet myData 		= pList.getData();
+		FinanceData myData	= pList.getData();
 		Account myAccount 	= myData.getAccounts().searchFor(uAccountId);
 		if (myAccount == null) 
 			throw new Exception(ExceptionClass.DATA,
@@ -305,7 +310,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		AcctRate 	myCurr;
 		Date 		myDate = getEndDate();
 		List 		myList = (List)getList();
-		DataSet		mySet  = myList.getData();
+		FinanceData	mySet  = myList.getData();
 
 		/* If the date is null then we must be the last element for the account */
 		if ((myDate == null) || (myDate.isNull())) {
@@ -421,11 +426,14 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		/* Members */
 		private Account	theAccount	= null;
 
+		/* Access DataSet correctly */
+		public FinanceData getData() { return (FinanceData) super.getData(); }
+		
 		/** 
 		 * Construct an empty CORE rate list
 	 	 * @param pData the DataSet for the list
 		 */
-		protected List(DataSet pData) { 
+		protected List(FinanceData pData) { 
 			super(AcctRate.class, pData);
 		}
 
@@ -434,7 +442,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	 	 * @param pData the DataSet for the list
 		 * @param pStyle the style of the list 
 		 */
-		protected List(DataSet pData, ListStyle pStyle) { 
+		protected List(FinanceData pData, ListStyle pStyle) { 
 			super(AcctRate.class, pData, pStyle);
 		}
 

@@ -4,10 +4,14 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.HistoryValues;
 
 public class Analysis {
 	/* Members */
-	private DataSet 				theData 			= null;
+	private FinanceData				theData 			= null;
 	private AnalysisState			theAnalysisState	= AnalysisState.RAW;
 	private BucketList				theList				= null;
 	private ChargeableEvent.List	theCharges			= null;
@@ -19,7 +23,7 @@ public class Analysis {
 	private int						theAge				= 0;
 
 	/* Access methods */
-	public DataSet				getData() 			{ return theData; }
+	public FinanceData			getData() 			{ return theData; }
 	public AnalysisState		getState() 			{ return theAnalysisState; }
 	public BucketList 			getList() 			{ return theList; }
 	public TaxYear 				getTaxYear() 		{ return theYear; }
@@ -41,8 +45,8 @@ public class Analysis {
 	 * @param pData	the data to analyse events for
 	 * @param pDate	the Date for the analysis
 	 */
-	public Analysis(DataSet pData,
-					Date	pDate) {
+	public Analysis(FinanceData	pData,
+					Date		pDate) {
 		/* Store the data */
 		theData = pData;
 		theDate	= pDate;
@@ -58,9 +62,9 @@ public class Analysis {
 	 * @param pAccount the account to analyse
 	 * @param pDate	the Date for the analysis
 	 */
-	public Analysis(DataSet pData,
-					Account	pAccount,
-					Date	pDate) {
+	public Analysis(FinanceData pData,
+					Account		pAccount,
+					Date		pDate) {
 		/* Store the data */
 		theData 	= pData;
 		theDate		= pDate;
@@ -77,7 +81,7 @@ public class Analysis {
 	 * @param pYear the year to analyse
 	 * @param pAnalysis the previous year analysis (if present)
 	 */
-	public Analysis(DataSet 	pData,
+	public Analysis(FinanceData	pData,
 					TaxYear 	pYear,
 					Analysis	pAnalysis) {
 		/* Local variables */
@@ -146,12 +150,12 @@ public class Analysis {
 	protected static abstract class AnalysisBucket extends DataItem<AnalysisBucket> {
 		/* Members */
 		private BucketType	theBucketType = null;
-		private DataSet		theData		  = null;
+		private FinanceData	theData		  = null;
 		private Date		theDate		  = null;
 	
 		/* Access methods */
 		public 		BucketType 	getBucketType() { return theBucketType; }
-		protected 	DataSet 	getData()		{ return theData; }
+		protected 	FinanceData getData()		{ return theData; }
 		protected 	Date 		getDate()		{ return theDate; }
 
 		/* Constructor */

@@ -40,7 +40,7 @@ public class LinkNode<T extends LinkObject<T>> {
 	 * Is the Node hidden
 	 * @return <code>true/false</code>
 	 */
-	protected boolean 		isHidden() 	{ return isHidden; }
+	public boolean 			isHidden() 	{ return isHidden; }
 	
 	/**
 	 * Get object
@@ -293,7 +293,7 @@ public class LinkNode<T extends LinkObject<T>> {
 	 * @param doSkipHidden skip hidden items
 	 * @return the relevant index of the item
 	 */
-	protected int getIndex(boolean doSkipHidden) { 			
+	public int getIndex(boolean doSkipHidden) { 			
 		/* Return the relevant index */
 		return (doSkipHidden) ? theHiddenIndex : theIndex; 
 	}

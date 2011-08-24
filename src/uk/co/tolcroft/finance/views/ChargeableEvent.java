@@ -3,6 +3,10 @@ package uk.co.tolcroft.finance.views;
 import uk.co.tolcroft.finance.data.Event;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.HistoryValues;
 
 public class ChargeableEvent extends DataItem<ChargeableEvent> {
 	/**

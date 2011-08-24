@@ -3,12 +3,11 @@ package uk.co.tolcroft.finance.sheets;
 import jxl.*;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.OutputSheet;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.SheetType;
 import uk.co.tolcroft.finance.views.DilutionEvent;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.sheets.SheetDataItem;
+import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 
 public class SheetPrice extends SheetDataItem<AcctPrice> {
 	/**
@@ -33,32 +32,32 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 
 	/**
 	 * Constructor for loading a spreadsheet
-	 * @param pInput the input spreadsheet
+	 * @param pReader the spreadsheet reader
 	 */
-	protected SheetPrice(InputSheet	pInput) {
+	protected SheetPrice(FinanceReader	pReader) {
 		/* Call super constructor */
-		super(pInput, Prices);
+		super(pReader, Prices);
 		
 		/* Note whether this is a backup */
-		isBackup = (pInput.getType() == SheetType.BACKUP);
+		isBackup = (pReader.getType() == SheetType.BACKUP);
 		
 		/* Access the Prices list */
-		theList = pInput.getData().getPrices();
+		theList = pReader.getData().getPrices();
 	}
 
 	/**
 	 *  Constructor for creating a spreadsheet
-	 *  @param pOutput the output spreadsheet
+	 *  @param pWriter the spreadsheet writer
 	 */
-	protected SheetPrice(OutputSheet	pOutput) {
+	protected SheetPrice(FinanceWriter	pWriter) {
 		/* Call super constructor */
-		super(pOutput, Prices);
+		super(pWriter, Prices);
 		
 		/* Note whether this is a backup */
-		isBackup = (pOutput.getType() == SheetType.BACKUP);
+		isBackup = (pWriter.getType() == SheetType.BACKUP);
 				
 		/* Access the Prices list */
-		theList = pOutput.getData().getPrices();
+		theList = pWriter.getData().getPrices();
 		setDataList(theList);
 	}
 	
@@ -174,7 +173,7 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 	 */
 	protected static boolean loadArchive(statusCtl 			pThread,
 										 Workbook			pWorkbook,
-							   	  		 DataSet			pData,
+							   	  		 FinanceData		pData,
 							   	  		 DilutionEvent.List pDilution) throws Exception {
 		/* Local variables */
 		Range[]   		myRange;

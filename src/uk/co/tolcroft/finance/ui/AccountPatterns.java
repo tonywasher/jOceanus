@@ -10,6 +10,8 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.help.DebugManager;
 import uk.co.tolcroft.help.DebugManager.*;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
@@ -136,7 +138,7 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 	 * Refresh views/controls after a load/update of underlying data
 	 */
 	public void refreshData() {
-		DataSet		myData;
+		FinanceData	myData;
 		Frequency   myFreq;
 		
 		DataList<Frequency>.ListIterator myIterator;

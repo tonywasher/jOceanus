@@ -19,10 +19,12 @@ import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.help.DebugManager;
 import uk.co.tolcroft.help.DebugManager.*;
-import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.EditState;
 
 public class MaintTaxYear implements ActionListener,
 									 ItemListener,
@@ -711,7 +713,7 @@ public class MaintTaxYear implements ActionListener,
 	
 	/* refreshData */
 	public void refreshData() {
-		DataSet		myData;
+		FinanceData	myData;
 		TaxRegime	myRegime;
 
 		DataList<TaxRegime>.ListIterator	myRegIterator;

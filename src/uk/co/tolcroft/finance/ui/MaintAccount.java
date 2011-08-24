@@ -28,6 +28,9 @@ import uk.co.tolcroft.help.DebugManager.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.EditState;
 
 public class MaintAccount implements ActionListener,
 									 ItemListener,
@@ -553,7 +556,7 @@ public class MaintAccount implements ActionListener,
 		
 	/* refreshData */
 	public void refreshData() {
-		DataSet			myData;
+		FinanceData	myData;
 		AccountType 	myType;
 	
 		DataList<AccountType>.ListIterator 	myTypeIterator;

@@ -7,9 +7,12 @@ import uk.co.tolcroft.help.DebugManager;
 import uk.co.tolcroft.help.DebugObject;
 import uk.co.tolcroft.help.DebugManager.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.HistoryValues;
+import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception;
 
 public class EventAnalysis implements DebugObject {
@@ -24,7 +27,7 @@ public class EventAnalysis implements DebugObject {
 	private final static Rate rateLimit 	= new Rate(Rate.convertToValue(5));
 	
 	/* Members */
-	private DataSet				theData			= null;
+	private FinanceData			theData			= null;
 	private Analysis			theAnalysis		= null;
 	private MetaAnalysis		theMetaAnalysis	= null;
 	private List				theYears		= null;
@@ -46,7 +49,7 @@ public class EventAnalysis implements DebugObject {
 	 * @param pData	the data to analyse events for
 	 * @param pDate	the Date for the analysis
 	 */
-	public EventAnalysis(DataSet		pData,
+	public EventAnalysis(FinanceData	pData,
 						 Date	 		pDate) throws Exception {
 		DataList<Event>.ListIterator 	myIterator;
 		Event.List					 	myEvents;
@@ -98,7 +101,7 @@ public class EventAnalysis implements DebugObject {
 	 * @param pData	the data to analyse events for
 	 * @param pStatement the statement to prepare
 	 */
-	public EventAnalysis(DataSet		pData,
+	public EventAnalysis(FinanceData	pData,
 						 Statement 		pStatement)  throws Exception {
 		DataList<Event>.ListIterator 	myIterator;
 		Event.List					 	myEvents;
@@ -232,8 +235,8 @@ public class EventAnalysis implements DebugObject {
 	 * @param pView the Data view
 	 * @param pData the Data to analyse
 	 */
-	public EventAnalysis(View		pView,
-						 DataSet	pData) throws Exception {
+	public EventAnalysis(View			pView,
+						 FinanceData	pData) throws Exception {
 		Event           				myCurr;
 		DataList<Event>.ListIterator	myIterator;
 		int             				myResult	= -1;
@@ -385,7 +388,7 @@ public class EventAnalysis implements DebugObject {
 		private TaxYear			theYear			= null;
 		private DebugEntry		theListDebug	= null;
 		private DebugEntry		theChargeDebug	= null;
-		private DataSet			theData			= null;
+		private FinanceData		theData			= null;
 
 		/* Access methods */
 		public 	Date			getDate()			{ return theYear.getDate(); }

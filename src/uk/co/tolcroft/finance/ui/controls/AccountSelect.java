@@ -13,7 +13,7 @@ import javax.swing.LayoutStyle;
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.*;
-import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.data.DataList;
 
 public class AccountSelect implements ItemListener {
 	/* Members */
@@ -188,7 +188,7 @@ public class AccountSelect implements ItemListener {
 	 *  build the account types
 	 */
 	private void buildAccountTypes() {
-		DataSet		myData;
+		FinanceData	myData;
 		AccountType myType  = null;
 		AccountType myFirst = null;
 		Account		myAccount;

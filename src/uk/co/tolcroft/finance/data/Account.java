@@ -1,11 +1,17 @@
 package uk.co.tolcroft.finance.data;
 
+import uk.co.tolcroft.finance.data.FinanceData.LoadState;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
-import uk.co.tolcroft.finance.data.DataSet.*;
+import uk.co.tolcroft.models.data.ControlKey;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.EncryptedItem;
+import uk.co.tolcroft.models.data.HistoryValues;
+import uk.co.tolcroft.models.data.DataList.ListStyle;
 
 public class Account extends EncryptedItem<Account> {
 	/**
@@ -347,7 +353,7 @@ public class Account extends EncryptedItem<Account> {
 		setControlKey(uControlId);
 		
 		/* Look up the Account Type */
-		DataSet	myData 	= pList.getData();
+		FinanceData	myData 	= pList.getData();
 		myActType = myData.getAccountTypes().searchFor(uAcTypeId);
 		if (myActType == null) 
 			throw new Exception(ExceptionClass.DATA,
@@ -428,7 +434,7 @@ public class Account extends EncryptedItem<Account> {
 		myValues.setAliasId(pAliasId);
 		
 		/* Look up the Account Type */
-		DataSet	myData 	= pList.getData();
+		FinanceData	myData 	= pList.getData();
 		myActType = myData.getAccountTypes().searchFor(uAcTypeId);
 		if (myActType == null) 
 			throw new Exception(ExceptionClass.DATA,
@@ -567,7 +573,7 @@ public class Account extends EncryptedItem<Account> {
 		boolean 		isValid;
 		AccountType 	myType = getActType();
 		List 			myList = (List)getList();
-		DataSet			mySet  = myList.getData();
+		FinanceData		mySet  = myList.getData();
 		
 		/* Name must be non-null */
 		if (getName() == null) {
@@ -745,7 +751,7 @@ public class Account extends EncryptedItem<Account> {
 		Money 							myAmount;
 		Money 							myValue;
 		List 							myList = (List)getList();
-		DataSet							mySet  = myList.getData();
+		FinanceData						mySet  = myList.getData();
 		
 		/* Initialise money */
 		myValue = new Money(0);
@@ -1118,11 +1124,14 @@ public class Account extends EncryptedItem<Account> {
 	 * AccountList class
 	 */
 	public static class List  extends EncryptedList<Account> {			
+		/* Access DataSet correctly */
+		public FinanceData getData() { return (FinanceData) super.getData(); }
+		
 		/** 
 	 	 * Construct an empty CORE account list
 	 	 * @param pData the DataSet for the list
 	 	 */
-		protected List(DataSet pData) { 
+		protected List(FinanceData pData) { 
 			super(Account.class, pData);
 		}
 
@@ -1131,7 +1140,7 @@ public class Account extends EncryptedItem<Account> {
 	 	 * @param pData the DataSet for the list
 	 	 * @param pStyle the style of the list 
 	 	 */
-		public List(DataSet pData, ListStyle pStyle) { 
+		public List(FinanceData pData, ListStyle pStyle) { 
 			super(Account.class, pData, pStyle);
 		}
 
@@ -1518,7 +1527,7 @@ public class Account extends EncryptedItem<Account> {
 		public void validateLoadedAccounts() throws Exception {
 			ListIterator myIterator;
 			Account      myCurr;
-			DataSet		 myData = getData();
+			FinanceData	 myData = getData();
 		
 			/* Mark active rates */
 			myData.getRates().markActiveRates();

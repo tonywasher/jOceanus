@@ -4,6 +4,10 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.HistoryValues;
 
 public class CapitalEvent extends DataItem<CapitalEvent> {
 	/**
@@ -271,19 +275,19 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 	/* The List of capital events */
 	public static class List extends DataList<CapitalEvent> {
 		/* Members */
-		private DataSet			theData			= null;
+		private FinanceData		theData			= null;
 		private Account			theAccount		= null;
 	
 		/* Access methods */
-		public DataSet			getData()		{ return theData; }
+		public FinanceData		getData()		{ return theData; }
 
 		/** 
 	 	 * Construct an empty Capital event list
-	 	 * @param pData the Dataset
+	 	 * @param pData the DataSet
 	 	 * @param pAccount the Account for the list
 	 	 */
-		protected List(DataSet 	pData,
-					   Account	pAccount) { 
+		protected List(FinanceData	pData,
+					   Account		pAccount) { 
 			super(CapitalEvent.class, ListStyle.VIEW, false);
 			
 			/* Store the data */

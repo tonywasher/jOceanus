@@ -5,6 +5,9 @@ import java.io.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.HistoryValues;
 
 /**
  *  Help Page class. This class maps between the name of a help page and the html that the name represents.

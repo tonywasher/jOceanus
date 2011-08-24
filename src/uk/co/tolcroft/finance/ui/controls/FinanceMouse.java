@@ -11,7 +11,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.table.AbstractTableModel;
 
-import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.EditState;
 
 public abstract class FinanceMouse<T extends DataItem<T>> extends MouseAdapter
 													      implements ActionListener {

@@ -2,7 +2,11 @@ package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.DataList.ListStyle;
+import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.data.EncryptedItem;
+import uk.co.tolcroft.models.database.Database;
+import uk.co.tolcroft.models.database.TableDefinition;
+import uk.co.tolcroft.models.database.TableEncrypted;
 
 public class TablePattern extends TableEncrypted<Pattern> {
 	/**
@@ -21,10 +25,15 @@ public class TablePattern extends TableEncrypted<Pattern> {
 	private Pattern.List	theList 			= null;
 
 	/**
+	 * The accounts list
+	 */
+	private Account.List	theAccounts			= null;
+
+	/**
 	 * Constructor
 	 * @param pDatabase the database control
 	 */
-	protected TablePattern(Database	pDatabase) {
+	protected TablePattern(Database<?>	pDatabase) {
 		super(pDatabase, TableName);
 	}
 	
@@ -45,22 +54,19 @@ public class TablePattern extends TableEncrypted<Pattern> {
 		theTableDef.addReferenceColumn(Pattern.FIELD_FREQ, Pattern.fieldName(Pattern.FIELD_FREQ), TableFrequency.TableName);
 	}
 	
-	/* PreProcess on Load */
-	protected void preProcessOnLoad(DataSet pData) {
-		theList = pData.getPatterns();
+	/* Declare DataSet */
+	protected void declareData(DataSet<?> pData) {
+		FinanceData myData = (FinanceData)pData;
+		theList 	= myData.getPatterns();
+		theAccounts = myData.getAccounts();
+		setList(theList);
 	}
-	
-	/* Get the List for the table for updates */
-	protected Pattern.List  getUpdateList(DataSet pData) {
-		return new Pattern.List(pData.getPatterns(), ListStyle.UPDATE);
-	}
-	
+
 	/**
 	 * postProcess on Load
 	 */
-	protected void postProcessOnLoad(DataSet pData) throws Exception {
-		Account.List myAccounts = pData.getAccounts();
-		myAccounts.validateLoadedAccounts();
+	protected void postProcessOnLoad() throws Exception {
+		theAccounts.validateLoadedAccounts();
 	}
 	
 	/* Load the pattern */

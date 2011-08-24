@@ -4,7 +4,7 @@ import javax.swing.JComboBox;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.*;
-import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.data.DataList;
 
 public class ComboSelect {
 	/**
@@ -15,7 +15,7 @@ public class ComboSelect {
 	/**
 	 * The DataSet
 	 */
-	private DataSet		theData			= null;
+	private FinanceData	theData			= null;
 	
 	/**
 	 * Constructor

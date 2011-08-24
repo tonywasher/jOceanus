@@ -21,6 +21,7 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.EventAnalysis.AnalysisYear;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.data.DataList;
 
 public class ReportSelect implements	ActionListener,
 										ItemListener,
@@ -150,7 +151,7 @@ public class ReportSelect implements	ActionListener,
 	
 	/* refresh data */
 	public void refreshData(EventAnalysis pAnalysis) {
-		DataSet			myData;
+		FinanceData		myData;
 		AnalysisYear  	myYear;
 		Date.Range  	myRange;
 		TaxYear 		myTaxYear = theState.getYear();

@@ -3,9 +3,13 @@ package uk.co.tolcroft.finance.data;
 import java.util.Calendar;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.HistoryValues;
+import uk.co.tolcroft.models.data.DataList.ListStyle;
 
 /**
  * Tax Year Class representing taxation parameters for a tax year
@@ -976,14 +980,14 @@ public class TaxYear extends DataItem<TaxYear> {
 
 	/* The Tax Year List class */
 	public static class List extends DataList<TaxYear> {		
-		private DataSet	theData			= null;
-		public 	DataSet getData()		{ return theData; }
+		private FinanceData	theData			= null;
+		public 	FinanceData getData()		{ return theData; }
 
 		/** 
 	 	 * Construct an empty CORE TaxYear list
 	 	 * @param pData the DataSet for the list
 	 	 */
-		protected List(DataSet pData) { 
+		protected List(FinanceData pData) { 
 			super(TaxYear.class, ListStyle.CORE, false);
 			theData = pData;
 		}
@@ -993,7 +997,7 @@ public class TaxYear extends DataItem<TaxYear> {
 	 	 * @param pData the DataSet for the list
 	 	 * @param pStyle the style of the list 
 	 	 */
-		public List(DataSet pData, ListStyle pStyle) { 
+		public List(FinanceData pData, ListStyle pStyle) { 
 			super(TaxYear.class, pStyle, false);
 			theData = pData;
 		}

@@ -3,11 +3,10 @@ package uk.co.tolcroft.finance.sheets;
 import jxl.*;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.OutputSheet;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.SheetType;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.sheets.SheetDataItem;
+import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 
 public class SheetPattern extends SheetDataItem<Pattern> {
 	/**
@@ -32,34 +31,34 @@ public class SheetPattern extends SheetDataItem<Pattern> {
 
 	/**
 	 * Constructor for loading a spreadsheet
-	 * @param pInput the input spreadsheet
+	 * @param pReader the spreadsheet reader
 	 */
-	protected SheetPattern(InputSheet	pInput) {
+	protected SheetPattern(FinanceReader	pReader) {
 		/* Call super constructor */
-		super(pInput, Patterns);
+		super(pReader, Patterns);
 		
 		/* Note whether this is a backup */
-		isBackup = (pInput.getType() == SheetType.BACKUP);
+		isBackup = (pReader.getType() == SheetType.BACKUP);
 		
 		/* Access the Lists */
-		DataSet myData = pInput.getData();
+		FinanceData myData = pReader.getData();
 		theAccounts = myData.getAccounts();
 		theList 	= myData.getPatterns();
 	}
 
 	/**
 	 *  Constructor for creating a spreadsheet
-	 *  @param pOutput the output spreadsheet
+	 *  @param pWriter the spreadsheet writer
 	 */
-	protected SheetPattern(OutputSheet	pOutput) {
+	protected SheetPattern(FinanceWriter	pWriter) {
 		/* Call super constructor */
-		super(pOutput, Patterns);
+		super(pWriter, Patterns);
 		
 		/* Note whether this is a backup */
-		isBackup = (pOutput.getType() == SheetType.BACKUP);
+		isBackup = (pWriter.getType() == SheetType.BACKUP);
 				
 		/* Access the Patterns list */
-		theList = pOutput.getData().getPatterns();
+		theList = pWriter.getData().getPatterns();
 		setDataList(theList);		
 	}
 	
@@ -214,9 +213,9 @@ public class SheetPattern extends SheetDataItem<Pattern> {
 	 *  @param pData the data set to load into
 	 *  @return continue to load <code>true/false</code> 
 	 */
-	protected static boolean loadArchive(statusCtl 	pThread,
-										 Workbook	pWorkbook,
-							   	  		 DataSet	pData) throws Exception {
+	protected static boolean loadArchive(statusCtl 		pThread,
+										 Workbook		pWorkbook,
+							   	  		 FinanceData	pData) throws Exception {
 		/* Local variables */
 		Pattern.List		myList;
 		Range[]   			myRange;

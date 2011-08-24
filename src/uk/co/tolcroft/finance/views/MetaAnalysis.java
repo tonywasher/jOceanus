@@ -5,6 +5,7 @@ import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.finance.views.Analysis.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.data.DataList;
 
 public class MetaAnalysis {
 	/* Members */
@@ -51,7 +52,7 @@ public class MetaAnalysis {
 		AnalysisState							myState;
 		AssetAccount							myAsset;
 		MoneyAccount							myMoney;
-		DataSet									myData;
+		FinanceData								myData;
 		Account.List							myAccounts;
 
 		/* Access the state of the analysis */

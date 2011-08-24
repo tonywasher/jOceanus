@@ -1,9 +1,11 @@
 package uk.co.tolcroft.finance.database;
 
-import uk.co.tolcroft.finance.data.DataSet;
+import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.Frequency;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.DataList.ListStyle;
+import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.database.Database;
+import uk.co.tolcroft.models.database.TableStaticData;
 
 public class TableFrequency extends TableStaticData<Frequency> {
 	/**
@@ -26,19 +28,16 @@ public class TableFrequency extends TableStaticData<Frequency> {
 	 * Constructor
 	 * @param pDatabase the database control
 	 */
-	protected TableFrequency(Database 	pDatabase) { 
+	protected TableFrequency(Database<?> 	pDatabase) { 
 		super(pDatabase, TableName); 
 	}
 	
-	/* PreProcess on Load */
-	protected void preProcessOnLoad(DataSet pData) {
-		theList = pData.getFrequencys();
+	/* Declare DataSet */
+	protected void declareData(DataSet<?> pData) {
+		FinanceData myData = (FinanceData)pData;
+		theList = myData.getFrequencys();
+		setList(theList);
 	}
-	
-	/* Get the List for the table for updates */
-	protected Frequency.List  getUpdateList(DataSet pData) {
-		return new Frequency.List(pData.getFrequencys(), ListStyle.UPDATE);
-	}	
 
 	/* Load the frequency */
 	protected void loadTheItem(int pId, int pControlId, int pClassId, byte[] pFreq, byte[] pDesc) throws Exception {

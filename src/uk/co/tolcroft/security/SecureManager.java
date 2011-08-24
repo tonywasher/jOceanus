@@ -5,9 +5,9 @@ import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import uk.co.tolcroft.models.DataList;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.data.DataList;
 
 public class SecureManager {
 	/* Members */

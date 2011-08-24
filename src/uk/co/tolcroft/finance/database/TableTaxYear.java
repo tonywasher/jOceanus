@@ -1,10 +1,13 @@
 package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.database.TableDefinition.DateColumn;
-import uk.co.tolcroft.finance.database.TableDefinition.SortOrder;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.DataList.*;
+import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.database.Database;
+import uk.co.tolcroft.models.database.DatabaseTable;
+import uk.co.tolcroft.models.database.TableDefinition;
+import uk.co.tolcroft.models.database.TableDefinition.ColumnDefinition;
+import uk.co.tolcroft.models.database.TableDefinition.SortOrder;
 
 public class TableTaxYear extends DatabaseTable<TaxYear> {
 	/**
@@ -23,10 +26,15 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	private TaxYear.List	theList 			= null;
 
 	/**
+	 * The DataSet
+	 */
+	private FinanceData		theData 			= null;
+
+	/**
 	 * Constructor
 	 * @param pDatabase the database control
 	 */
-	protected TableTaxYear(Database	pDatabase) {
+	protected TableTaxYear(Database<?>	pDatabase) {
 		super(pDatabase, TableName);
 	}
 	
@@ -37,7 +45,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	protected void defineTable(TableDefinition	pTableDef) {
 		super.defineTable(pTableDef);
 		theTableDef = pTableDef;
-		DateColumn myDateCol = theTableDef.addDateColumn(TaxYear.FIELD_YEAR, TaxYear.fieldName(TaxYear.FIELD_YEAR));
+		ColumnDefinition myDateCol = theTableDef.addDateColumn(TaxYear.FIELD_YEAR, TaxYear.fieldName(TaxYear.FIELD_YEAR));
 		theTableDef.addReferenceColumn(TaxYear.FIELD_REGIME, TaxYear.fieldName(TaxYear.FIELD_REGIME), TableTaxRegime.TableName);
 		theTableDef.addMoneyColumn(TaxYear.FIELD_ALLOW, TaxYear.fieldName(TaxYear.FIELD_ALLOW));
 		theTableDef.addMoneyColumn(TaxYear.FIELD_RENTAL, TaxYear.fieldName(TaxYear.FIELD_RENTAL));
@@ -62,21 +70,19 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 		myDateCol.setSortOrder(SortOrder.ASCENDING);
 	}
 	
-	/* PreProcess on Load */
-	protected void preProcessOnLoad(DataSet pData) {
-		theList = pData.getTaxYears();
-	}
-	
-	/* Get the List for the table for updates */
-	protected TaxYear.List  getUpdateList(DataSet pData) {
-		return new TaxYear.List(pData.getTaxYears(), ListStyle.UPDATE);
+	/* Declare DataSet */
+	protected void declareData(DataSet<?> pData) {
+		FinanceData myData = (FinanceData)pData;
+		theData = myData;
+		theList = myData.getTaxYears();
+		setList(theList);
 	}
 
 	/**
 	 * postProcess on Load
 	 */
-	protected void postProcessOnLoad(DataSet pData) throws Exception {
-		pData.calculateDateRange();
+	protected void postProcessOnLoad() throws Exception {
+		theData.calculateDateRange();
 	}
 	
 	/* Load the tax year */

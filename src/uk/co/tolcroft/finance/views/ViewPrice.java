@@ -3,6 +3,10 @@ package uk.co.tolcroft.finance.views;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.HistoryValues;
 
 public class ViewPrice extends DataItem<ViewPrice> {
 	/**
@@ -196,9 +200,9 @@ public class ViewPrice extends DataItem<ViewPrice> {
 	 * 
 	 */
 	public void validate() {
-		Date 	myDate = getDate();
-		List 	myList = (List)getList();
-		DataSet	mySet  = myList.theData;
+		Date 		myDate = getDate();
+		List 		myList = (List)getList();
+		FinanceData	mySet  = myList.theData;
 			
 		/* The date must be non-null */
 		if ((myDate == null) || (myDate.isNull())) {
@@ -256,12 +260,12 @@ public class ViewPrice extends DataItem<ViewPrice> {
 	public static class List  extends DataList<ViewPrice> {
 		/* Members */
 		private Account				theAccount		= null;
-		private DataSet				theData			= null;
+		private FinanceData			theData			= null;
 		private DilutionEvent.List	theDilutions 	= null;
 		private boolean				hasDilutions	= false;
 		
 		/* Access methods */
-		public 	DataSet 			getData()		{ return theData; }
+		public 	FinanceData			getData()		{ return theData; }
 		private	DilutionEvent.List	getDilutions()	{ return theDilutions; }
 		public	boolean				hasDilutions()	{ return hasDilutions; }
 

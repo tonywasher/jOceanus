@@ -1,10 +1,16 @@
 package uk.co.tolcroft.finance.data;
 
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.DataList.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.data.ControlKey;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.EncryptedItem;
+import uk.co.tolcroft.models.data.HistoryValues;
+import uk.co.tolcroft.models.data.ValidationControl;
+import uk.co.tolcroft.models.data.DataList.*;
 import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.finance.views.*;
 
@@ -208,7 +214,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 		super(pList, 0);
 		Values 					myValues	= new Values();
 		Statement.Line.Values	myNew		= pLine.getValues();
-		DataSet					myData		= pList.getData();
+		FinanceData				myData		= pList.getData();
 		setValues(myValues);
 		setControlKey(pLine.getControlKey());		
 		
@@ -266,7 +272,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 		setControlKey(uControlId);
 		
 		/* Access the accounts */
-		DataSet	myData 	= pList.getData();
+		FinanceData	myData 	= pList.getData();
 		myAccounts = myData.getAccounts();
 		
 		/* Look up the Account */
@@ -725,11 +731,14 @@ public class Pattern extends EncryptedItem<Pattern> {
 		/* Local values */
 		private Account	theAccount	= null;
 		
+		/* Access DataSet correctly */
+		public FinanceData getData() { return (FinanceData) super.getData(); }
+		
 	 	/** 
 	 	 * Construct an empty CORE pattern list
 	 	 * @param pData the DataSet for the list
 	 	 */
-		protected List(DataSet pData) { 
+		protected List(FinanceData pData) { 
 			super(Pattern.class, pData);
 		}
 
@@ -738,7 +747,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 	 	 * @param pData the DataSet for the list
 	 	 * @param pStyle the style of the list 
 	 	 */
-		protected List(DataSet pData, ListStyle pStyle) { 
+		protected List(FinanceData pData, ListStyle pStyle) { 
 			super(Pattern.class, pData, pStyle);
 		}
 
@@ -898,7 +907,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 			TransactionType    		myTransType;
 			Frequency    			myFrequency;
 			Pattern					myPattern;
-			DataSet					myData;
+			FinanceData				myData;
 			
 			/* Access the Lists */
 			myData			= getData();
@@ -1116,7 +1125,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 			
 			/* Handle a Line Values */
 			else if (pSource instanceof Statement.Line.Values) {
-				DataSet					myData	 = ((List)getList()).getData();
+				FinanceData				myData	 = ((List)getList()).getData();
 				Statement.Line.Values 	myValues = (Statement.Line.Values)pSource;
 				super.copyFrom(myValues);
 				

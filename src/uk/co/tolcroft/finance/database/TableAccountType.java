@@ -2,7 +2,9 @@ package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.DataList.*;
+import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.database.Database;
+import uk.co.tolcroft.models.database.TableStaticData;
 
 public class TableAccountType extends TableStaticData<AccountType> {
 	/**
@@ -25,20 +27,17 @@ public class TableAccountType extends TableStaticData<AccountType> {
 	 * Constructors
 	 * @param pDatabase the database control
 	 */
-	protected TableAccountType(Database	pDatabase) {
+	protected TableAccountType(Database<FinanceData>	pDatabase) {
 		super(pDatabase, TableName);
 	}
 	
-	/* PreProcess on Load */
-	protected void preProcessOnLoad(DataSet pData) {
-		theList = pData.getAccountTypes();
+	/* Declare DataSet */
+	protected void declareData(DataSet<?> pData) {
+		FinanceData myData = (FinanceData)pData;
+		theList = myData.getAccountTypes();
+		setList(theList);
 	}
-	
-	/* Get the List for the table for updates */
-	protected AccountType.List  getUpdateList(DataSet pData) {
-		return new AccountType.List(pData.getAccountTypes(), ListStyle.UPDATE);
-	}
-	
+
 	/* Load the account type */
 	protected void loadTheItem(int pId, int pControlId, int pClassId, byte[] pType, byte[] pDesc) throws Exception {
 		/* Add into the list */

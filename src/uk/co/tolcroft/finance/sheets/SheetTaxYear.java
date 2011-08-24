@@ -5,62 +5,62 @@ import jxl.*;
 import java.util.Calendar;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.OutputSheet;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.SheetType;
+import uk.co.tolcroft.finance.sheets.FinanceSheet.YearRange;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.sheets.SheetDataItem;
+import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 
 public class SheetTaxYear extends SheetDataItem<TaxYear> {
 	/**
 	 * NamedArea for TaxYears
 	 */
-	private static final String TaxYears 	   = "TaxParameters";
+	private static final String TaxYears 	   	= "TaxParameters";
 	
 	/**
 	 * Is the spreadsheet a backup spreadsheet or an edit-able one
 	 */
-	private boolean isBackup	= false;
+	private boolean 			isBackup		= false;
 	
 	/**
 	 * TaxYear data list
 	 */
-	private TaxYear.List theList				= null;
+	private TaxYear.List 		theList			= null;
 
 	/**
 	 * DataSet
 	 */
-	private DataSet theData						= null;
+	private FinanceData			theData			= null;
 
 	/**
 	 * Constructor for loading a spreadsheet
-	 * @param pInput the input spreadsheet
+	 * @param pReader the spreadsheet reader
 	 */
-	protected SheetTaxYear(InputSheet	pInput) {
+	protected SheetTaxYear(FinanceReader	pReader) {
 		/* Call super constructor */
-		super(pInput, TaxYears);
+		super(pReader, TaxYears);
 		
 		/* Note whether this is a backup */
-		isBackup = (pInput.getType() == SheetType.BACKUP);
+		isBackup = (pReader.getType() == SheetType.BACKUP);
 				
 		/* Access the Lists */
-		theData	= pInput.getData();
+		theData	= pReader.getData();
 		theList = theData.getTaxYears();
 	}
 
 	/**
 	 *  Constructor for creating a spreadsheet
-	 *  @param pOutput the output spreadsheet
+	 *  @param pWriter the spreadsheet writer
 	 */
-	protected SheetTaxYear(OutputSheet	pOutput) {
+	protected SheetTaxYear(FinanceWriter	pWriter) {
 		/* Call super constructor */
-		super(pOutput, TaxYears);
+		super(pWriter, TaxYears);
 		
 		/* Note whether this is a backup */
-		isBackup = (pOutput.getType() == SheetType.BACKUP);
+		isBackup = (pWriter.getType() == SheetType.BACKUP);
 				
 		/* Access the TaxYears list */
-		theList = pOutput.getData().getTaxYears();
+		theList = pWriter.getData().getTaxYears();
 		setDataList(theList);
 	}
 	
@@ -338,10 +338,10 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
 	 *  @param pRange the range of tax years
 	 *  @return continue to load <code>true/false</code> 
 	 */
-	protected static boolean loadArchive(statusCtl 				pThread,
-										 Workbook				pWorkbook,
-							   	  		 DataSet				pData,
-							   	  		 SheetControl.YearRange	pRange) throws Exception {
+	protected static boolean loadArchive(statusCtl 		pThread,
+										 Workbook		pWorkbook,
+							   	  		 FinanceData	pData,
+							   	  		 YearRange		pRange) throws Exception {
 		/* Local variables */
 		TaxYear.List	myList;
 		Range[]   		myRange;

@@ -16,9 +16,9 @@ import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.help.DebugManager;
 import uk.co.tolcroft.help.DebugManager.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.DataList.*;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.data.EditState;
+import uk.co.tolcroft.models.data.DataList.*;
 
 public class AccountTab implements financePanel,
 								   ChangeListener {
@@ -384,7 +384,7 @@ public class AccountTab implements financePanel,
 	 * @param pAccount the account to select
 	 */
 	public void setSelection(Account pAccount) throws Exception {
-		DataSet myData = theView.getData();
+		FinanceData myData = theView.getData();
 		
 		/* Release old list */
 		if (theAcList != null) theAcList.clear();

@@ -1,8 +1,9 @@
 package uk.co.tolcroft.finance.data;
 
-import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.finance.data.StaticClass.TaxRegClass;
 
 public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
@@ -130,7 +131,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 	 	 * Construct an empty CORE tax regime list
 	 	 * @param pData the DataSet for the list
 	 	 */
-		protected List(DataSet pData) { 
+		protected List(FinanceData pData) { 
 			super(TaxRegime.class, pData, ListStyle.CORE); }
 
 		/** 

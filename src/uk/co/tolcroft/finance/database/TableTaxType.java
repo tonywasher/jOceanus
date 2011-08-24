@@ -2,7 +2,9 @@ package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.DataList.*;
+import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.database.Database;
+import uk.co.tolcroft.models.database.TableStaticData;
 
 public class TableTaxType extends TableStaticData<TaxType> {
 	/**
@@ -25,20 +27,17 @@ public class TableTaxType extends TableStaticData<TaxType> {
 	 * Constructor
 	 * @param pDatabase the database control
 	 */
-	protected TableTaxType(Database 	pDatabase) {
+	protected TableTaxType(Database<?> 	pDatabase) {
 		super(pDatabase, theTabName);
 	}
 	
-	/* PreProcess on Load */
-	protected void preProcessOnLoad(DataSet pData) {
-		theList = pData.getTaxTypes();
+	/* Declare DataSet */
+	protected void declareData(DataSet<?> pData) {
+		FinanceData myData = (FinanceData)pData;
+		theList = myData.getTaxTypes();
+		setList(theList);
 	}
-		
-	/* Get the List for the table for updates */
-	protected TaxType.List  getUpdateList(DataSet pData) {
-		return new TaxType.List(pData.getTaxTypes(), ListStyle.UPDATE);
-	}
-	
+
 	/* Load the tax type */
 	protected void loadTheItem(int pId, int pControlId, int pClassId, byte[] pType, byte[] pDesc) throws Exception {
 		/* Add into the list */

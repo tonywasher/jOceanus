@@ -2,7 +2,10 @@ package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.DataList.*;
+import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.database.Database;
+import uk.co.tolcroft.models.database.TableDefinition;
+import uk.co.tolcroft.models.database.TableEncrypted;
 
 public class TableAccount extends TableEncrypted<Account> {
 	/**
@@ -24,7 +27,7 @@ public class TableAccount extends TableEncrypted<Account> {
 	 * Constructor
 	 * @param pDatabase the database control
 	 */
-	protected TableAccount(Database 	pDatabase) {
+	protected TableAccount(Database<FinanceData> 	pDatabase) {
 		super(pDatabase, TableName);
 	}
 	
@@ -50,16 +53,13 @@ public class TableAccount extends TableEncrypted<Account> {
 		theTableDef.addNullEncryptedColumn(Account.FIELD_NOTES, Account.fieldName(Account.FIELD_NOTES), Account.NOTELEN);
 	}
 	
-	/* PreProcess on Load */
-	protected void preProcessOnLoad(DataSet pData) {
-		theList = pData.getAccounts();
+	/* Declare DataSet */
+	protected void declareData(DataSet<?> pData) {
+		FinanceData myData = (FinanceData)pData;
+		theList = myData.getAccounts();
+		setList(theList);
 	}
-	
-	/* Get the List for the table for updates */
-	protected Account.List  getUpdateList(DataSet pData) {
-		return new Account.List(pData.getAccounts(), ListStyle.UPDATE);
-	}
-	
+
 	/* Load the account */
 	protected void loadItem(int pId, int pControlId) throws Exception {
 		byte[]  		myName;

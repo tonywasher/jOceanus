@@ -10,11 +10,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
-import uk.co.tolcroft.finance.data.DataSet;
+import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.TaxYear;
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.finance.views.*;
-import uk.co.tolcroft.models.DataList;
+import uk.co.tolcroft.models.data.DataList;
 
 public class TaxYearSelect implements ItemListener {
 	/* Members */
@@ -110,7 +110,7 @@ public class TaxYearSelect implements ItemListener {
 
 	/* refreshData */
 	public void refreshData() {
-		DataSet		myData;
+		FinanceData	myData;
 		TaxYear  	myYear;
 		TaxYear		myFirst;
 

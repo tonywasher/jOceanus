@@ -3,11 +3,11 @@ package uk.co.tolcroft.finance.sheets;
 import jxl.*;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.OutputSheet;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.SheetType;
+import uk.co.tolcroft.finance.sheets.FinanceSheet.YearRange;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.sheets.SheetDataItem;
+import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 
 public class SheetEvent extends SheetDataItem<Event> { 
 	/**
@@ -27,33 +27,33 @@ public class SheetEvent extends SheetDataItem<Event> {
 
 	/**
 	 * Constructor for loading a spreadsheet
-	 * @param pInput the input spreadsheet
+	 * @param pReader the spreadsheet reader
 	 */
-	protected SheetEvent(InputSheet	pInput) {
+	protected SheetEvent(FinanceReader	pReader) {
 		/* Call super constructor */
-		super(pInput, Events);
+		super(pReader, Events);
 		
 		/* Note whether this is a backup */
-		isBackup = (pInput.getType() == SheetType.BACKUP);
+		isBackup = (pReader.getType() == SheetType.BACKUP);
 		
 		/* Access the Lists */
-		DataSet myData = pInput.getData();
+		FinanceData myData = pReader.getData();
 		theList 	= myData.getEvents();
 	}
 
 	/**
 	 *  Constructor for creating a spreadsheet
-	 *  @param pOutput the output spreadsheet
+	 *  @param pWriter the spreadsheet writer
 	 */
-	protected SheetEvent(OutputSheet	pOutput) {
+	protected SheetEvent(FinanceWriter	pWriter) {
 		/* Call super constructor */
-		super(pOutput, Events);
+		super(pWriter, Events);
 		
 		/* Note whether this is a backup */
-		isBackup = (pOutput.getType() == SheetType.BACKUP);
+		isBackup = (pWriter.getType() == SheetType.BACKUP);
 				
-		/* Access the Patterns list */
-		theList = pOutput.getData().getEvents();
+		/* Access the Events list */
+		theList = pWriter.getData().getEvents();
 		setDataList(theList);		
 	}
 	
@@ -214,10 +214,10 @@ public class SheetEvent extends SheetDataItem<Event> {
 	 *  @param pRange the range of tax years
 	 *  @return continue to load <code>true/false</code> 
 	 */
-	protected static boolean loadArchive(statusCtl 				pThread,
-										 Workbook				pWorkbook,
-							   	  		 DataSet				pData,
-							   	  		 SheetControl.YearRange	pRange) throws Exception {
+	protected static boolean loadArchive(statusCtl 		pThread,
+										 Workbook		pWorkbook,
+							   	  		 FinanceData	pData,
+							   	  		 YearRange		pRange) throws Exception {
 		/* Local variables */
 		Event.List		myList;
 		String    		myName;

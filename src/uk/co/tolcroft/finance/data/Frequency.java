@@ -1,8 +1,9 @@
 package uk.co.tolcroft.finance.data;
 
-import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.finance.data.StaticClass.FreqClass;
 
 public class Frequency extends StaticData<Frequency, FreqClass> {
@@ -95,7 +96,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 	 	 * Construct an empty CORE frequency list
 	 	 * @param pData the DataSet for the list
 	 	 */
-		protected List(DataSet pData) { 
+		protected List(FinanceData pData) { 
 			super(Frequency.class, pData, ListStyle.CORE); }
 		
 		/** 

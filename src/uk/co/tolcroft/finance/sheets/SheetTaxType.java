@@ -3,10 +3,9 @@ package uk.co.tolcroft.finance.sheets;
 import jxl.*;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.OutputSheet;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.sheets.SheetStaticData;
 
 public class SheetTaxType extends SheetStaticData<TaxType> {
 	/**
@@ -26,26 +25,26 @@ public class SheetTaxType extends SheetStaticData<TaxType> {
 
 	/**
 	 * Constructor for loading a spreadsheet
-	 * @param pOutput the output spreadsheet
+	 * @param pReader the spreadsheet reader
 	 */
-	protected SheetTaxType(InputSheet pInput) {
+	protected SheetTaxType(FinanceReader pReader) {
 		/* Call super-constructor */
-		super(pInput, TaxClasses);
+		super(pReader, TaxClasses);
 				
 		/* Access the Tax Type list */
-		theList = pInput.getData().getTaxTypes();
+		theList = pReader.getData().getTaxTypes();
 	}
 
 	/**
 	 * Constructor for creating a spreadsheet
-	 * @param pOutput the output spreadsheet
+	 * @param pWriter the spreadsheet writer
 	 */
-	protected SheetTaxType(OutputSheet pOutput) {
+	protected SheetTaxType(FinanceWriter pWriter) {
 		/* Call super-constructor */
-		super(pOutput, TaxClasses, TaxTypeNames);
+		super(pWriter, TaxClasses, TaxTypeNames);
 				
 		/* Access the Tax Type list */
-		theList = pOutput.getData().getTaxTypes();
+		theList = pWriter.getData().getTaxTypes();
 		setDataList(theList);
 	}
 
@@ -72,9 +71,9 @@ public class SheetTaxType extends SheetStaticData<TaxType> {
 	 *  @param pData the data set to load into
 	 *  @return continue to load <code>true/false</code> 
 	 */
-	protected static boolean loadArchive(statusCtl 	pThread,
-										 Workbook	pWorkbook,
-							   	  		 DataSet	pData) throws Exception {
+	protected static boolean loadArchive(statusCtl 		pThread,
+										 Workbook		pWorkbook,
+							   	  		 FinanceData	pData) throws Exception {
 		/* Local variables */
 		TaxType.List	myList;
 		Range[] 		myRange;

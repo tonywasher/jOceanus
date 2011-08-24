@@ -1,12 +1,14 @@
 package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.DataItem;
-import uk.co.tolcroft.models.DataState;
 import uk.co.tolcroft.models.Date;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.*;
 
 public class DilutionEvent extends DataItem<DilutionEvent> {
@@ -211,13 +213,13 @@ public class DilutionEvent extends DataItem<DilutionEvent> {
 	 */
 	public static class List extends DataList<DilutionEvent> {
 		/* Members */
-		DataSet theData = null;
+		FinanceData theData = null;
 		
 		/**
 		 * Constructor
 		 * @param pData the DataSet
 		 */
-		public List(DataSet pData) {
+		public List(FinanceData pData) {
 			super(DilutionEvent.class, ListStyle.VIEW, false);
 			theData = pData;
 		}

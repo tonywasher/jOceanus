@@ -1,15 +1,20 @@
 package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.data.EncryptedItem.EncryptedList;
 import uk.co.tolcroft.finance.views.Analysis.*;
 import uk.co.tolcroft.help.DebugManager;
 import uk.co.tolcroft.help.DebugObject;
 import uk.co.tolcroft.help.DebugManager.DebugEntry;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.DataList.*;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.data.ControlKey;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.EncryptedItem;
+import uk.co.tolcroft.models.data.HistoryValues;
+import uk.co.tolcroft.models.data.ValidationControl;
+import uk.co.tolcroft.models.data.DataList.*;
+import uk.co.tolcroft.models.data.EncryptedItem.EncryptedList;
 
 public class Statement implements DebugObject {
 	/* Members */
@@ -118,7 +123,7 @@ public class Statement implements DebugObject {
 	 */
 	protected void prepareChanges() {
 		Event.List  myBase;
-		DataSet		myData;
+		FinanceData	myData;
 		
 		/* Access base details */
 		myData	= theView.getData();
@@ -134,7 +139,7 @@ public class Statement implements DebugObject {
 	 */
 	protected void commitChanges(boolean bCommit) {
 		Event.List  myBase;
-		DataSet		myData;
+		FinanceData	myData;
 		
 		/* Access base details */
 		myData	= theView.getData();
@@ -255,7 +260,7 @@ public class Statement implements DebugObject {
 			Line        	myCurr;
 			Event.List  	myList;
 			ListIterator	myIterator;
-			DataSet			myData;
+			FinanceData		myData;
 			
 			/* Clear the errors */
 			clearErrors();
@@ -451,7 +456,7 @@ public class Statement implements DebugObject {
 			Event        							myEvent;
 			ValidationControl<Event>.errorElement 	myError;
 			int          							iField;
-			DataSet		 							myData;
+			FinanceData	 							myData;
 		
 			/* Access DataSet */
 			myData = getView().getData();
@@ -533,7 +538,7 @@ public class Statement implements DebugObject {
 		public Money calculateTaxCredit() {
 			Event        myEvent;
 			Event.List   myList;
-			DataSet		 myData;
+			FinanceData	 myData;
 		
 			/* Access DataSet */
 			myData = getView().getData();

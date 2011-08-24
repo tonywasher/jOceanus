@@ -18,8 +18,8 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
 import uk.co.tolcroft.help.DebugManager.DebugEntry;
-import uk.co.tolcroft.models.DataItem;
-import uk.co.tolcroft.models.DataList;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
 
 public class DebugItem implements ActionListener,
 								  ItemListener {

@@ -3,10 +3,9 @@ package uk.co.tolcroft.finance.sheets;
 import jxl.*;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.OutputSheet;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.sheets.SheetStaticData;
 
 public class SheetTransactionType extends SheetStaticData<TransactionType> {
 
@@ -32,26 +31,26 @@ public class SheetTransactionType extends SheetStaticData<TransactionType> {
 
 	/**
 	 * Constructor for loading a spreadsheet
-	 * @param pOutput the output spreadsheet
+	 * @param pReader the spreadsheet reader
 	 */
-	protected SheetTransactionType(InputSheet pInput) {
+	protected SheetTransactionType(FinanceReader pReader) {
 		/* Call super-constructor */
-		super(pInput, TransTypes);
+		super(pReader, TransTypes);
 				
 		/* Access the Transaction Type list */
-		theList = pInput.getData().getTransTypes();
+		theList = pReader.getData().getTransTypes();
 	}
 
 	/**
 	 * Constructor for creating a spreadsheet
-	 * @param pOutput the output spreadsheet
+	 * @param pWriter the spreadsheet writer
 	 */
-	protected SheetTransactionType(OutputSheet pOutput) {
+	protected SheetTransactionType(FinanceWriter pWriter) {
 		/* Call super-constructor */
-		super(pOutput, TransTypes, TranTypeNames);
+		super(pWriter, TransTypes, TranTypeNames);
 				
 		/* Access the Transaction Type list */
-		theList = pOutput.getData().getTransTypes();
+		theList = pWriter.getData().getTransTypes();
 		setDataList(theList);
 	}
 
@@ -78,9 +77,9 @@ public class SheetTransactionType extends SheetStaticData<TransactionType> {
 	 *  @param pData the data set to load into
 	 *  @return continue to load <code>true/false</code> 
 	 */
-	protected static boolean loadArchive(statusCtl 	pThread,
-			 					  		 Workbook	pWorkbook,
-			 					  		 DataSet	pData) throws Exception {
+	protected static boolean loadArchive(statusCtl 		pThread,
+			 					  		 Workbook		pWorkbook,
+			 					  		 FinanceData	pData) throws Exception {
 		/* Local variables */
 		TransactionType.List 	myList;
 		Range[] 				myRange;

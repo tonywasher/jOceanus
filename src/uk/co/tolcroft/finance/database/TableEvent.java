@@ -1,10 +1,14 @@
 package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.database.TableDefinition.DateColumn;
-import uk.co.tolcroft.finance.database.TableDefinition.SortOrder;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.DataList.ListStyle;
+import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.data.EncryptedItem;
+import uk.co.tolcroft.models.database.Database;
+import uk.co.tolcroft.models.database.TableDefinition;
+import uk.co.tolcroft.models.database.TableDefinition.ColumnDefinition;
+import uk.co.tolcroft.models.database.TableEncrypted;
+import uk.co.tolcroft.models.database.TableDefinition.SortOrder;
 
 public class TableEvent extends TableEncrypted<Event> {
 	/**
@@ -26,7 +30,7 @@ public class TableEvent extends TableEncrypted<Event> {
 	 * Constructor
 	 * @param pDatabase the database control
 	 */
-	protected TableEvent(Database 	pDatabase) {
+	protected TableEvent(Database<?> 	pDatabase) {
 		super(pDatabase, TableName);
 	}
 	
@@ -37,7 +41,7 @@ public class TableEvent extends TableEncrypted<Event> {
 	protected void defineTable(TableDefinition	pTableDef) {
 		super.defineTable(pTableDef);
 		theTableDef = pTableDef;
-		DateColumn myDateCol = theTableDef.addDateColumn(Event.FIELD_DATE, Event.fieldName(Event.FIELD_DATE));
+		ColumnDefinition myDateCol = theTableDef.addDateColumn(Event.FIELD_DATE, Event.fieldName(Event.FIELD_DATE));
 		theTableDef.addEncryptedColumn(Event.FIELD_DESC, Event.fieldName(Event.FIELD_DESC), Event.DESCLEN);
 		theTableDef.addEncryptedColumn(Event.FIELD_AMOUNT, Event.fieldName(Event.FIELD_AMOUNT), EncryptedItem.MONEYLEN);
 		theTableDef.addReferenceColumn(Event.FIELD_DEBIT, Event.fieldName(Event.FIELD_DEBIT), TableAccount.TableName);
@@ -50,16 +54,13 @@ public class TableEvent extends TableEncrypted<Event> {
 		myDateCol.setSortOrder(SortOrder.ASCENDING);
 	}
 	
-	/* PreProcess on Load */
-	protected void preProcessOnLoad(DataSet pData) {
-		theList = pData.getEvents();
+	/* Declare DataSet */
+	protected void declareData(DataSet<?> pData) {
+		FinanceData myData = (FinanceData)pData;
+		theList = myData.getEvents();
+		setList(theList);
 	}
-		
-	/* Get the List for the table for updates */
-	protected Event.List  getUpdateList(DataSet pData) {
-		return new Event.List(pData.getEvents(), ListStyle.UPDATE);
-	}
-	
+
 	/* Load the event */
 	protected void loadItem(int pId, int pControlId) throws Exception {
 		int  			myDebitId;

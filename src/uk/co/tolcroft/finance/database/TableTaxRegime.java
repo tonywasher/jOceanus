@@ -2,7 +2,9 @@ package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.DataList.*;
+import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.database.Database;
+import uk.co.tolcroft.models.database.TableStaticData;
 
 public class TableTaxRegime extends TableStaticData<TaxRegime> {
 	/**
@@ -25,19 +27,17 @@ public class TableTaxRegime extends TableStaticData<TaxRegime> {
 	 * Constructor
 	 * @param pDatabase the database control
 	 */
-	protected TableTaxRegime(Database 	pDatabase) {
+	protected TableTaxRegime(Database<?> 	pDatabase) {
 		super(pDatabase, TableName);
 	}
 	
-	/* PreProcess on Load */
-	protected void preProcessOnLoad(DataSet pData) {
-		theList = pData.getTaxRegimes();
+	/* Declare DataSet */
+	protected void declareData(DataSet<?> pData) {
+		FinanceData myData = (FinanceData)pData;
+		theList = myData.getTaxRegimes();
+		setList(theList);
 	}
-	
-	/* Get the List for the table for updates */
-	protected TaxRegime.List  getUpdateList(DataSet pData) {
-		return new TaxRegime.List(pData.getTaxRegimes(), ListStyle.UPDATE);
-	}
+
 	
 	/* Load the tax regime */
 	protected void loadTheItem(int pId, int pControlId, int pClassId, byte[] pRegime, byte[] pDesc) throws Exception {

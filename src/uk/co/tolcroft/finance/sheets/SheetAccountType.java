@@ -3,10 +3,9 @@ package uk.co.tolcroft.finance.sheets;
 import jxl.*;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.OutputSheet;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.sheets.SheetStaticData;
 
 public class SheetAccountType extends SheetStaticData<AccountType> {
 	/**
@@ -26,26 +25,26 @@ public class SheetAccountType extends SheetStaticData<AccountType> {
 
 	/**
 	 * Constructor for loading a spreadsheet
-	 * @param pOutput the output spreadsheet
+	 * @param pReader the spreadsheet reader
 	 */
-	protected SheetAccountType(InputSheet pInput) {
+	protected SheetAccountType(FinanceReader pReader) {
 		/* Call super-constructor */
-		super(pInput, AccountTypes);
+		super(pReader, AccountTypes);
 				
 		/* Access the Account Type list */
-		theList = pInput.getData().getAccountTypes();
+		theList = pReader.getData().getAccountTypes();
 	}
 
 	/**
 	 * Constructor for creating a spreadsheet
-	 * @param pOutput the output spreadsheet
+	 * @param pWriter the spreadsheet writer
 	 */
-	protected SheetAccountType(OutputSheet pOutput) {
+	protected SheetAccountType(FinanceWriter pWriter) {
 		/* Call super-constructor */
-		super(pOutput, AccountTypes, ActTypeNames);
+		super(pWriter, AccountTypes, ActTypeNames);
 				
 		/* Access the Account Type list */
-		theList = pOutput.getData().getAccountTypes();
+		theList = pWriter.getData().getAccountTypes();
 		setDataList(theList);
 	}
 
@@ -77,9 +76,9 @@ public class SheetAccountType extends SheetStaticData<AccountType> {
 	 *  @param pData the data set to load into
 	 *  @return continue to load <code>true/false</code> 
 	 */
-	protected static boolean loadArchive(statusCtl 	pThread,
-										 Workbook	pWorkbook,
-							   	  		 DataSet	pData) throws Exception {
+	protected static boolean loadArchive(statusCtl 		pThread,
+										 Workbook		pWorkbook,
+							   	  		 FinanceData	pData) throws Exception {
 		/* Local variables */
 		AccountType.List 	myList;
 		Range[] 			myRange;

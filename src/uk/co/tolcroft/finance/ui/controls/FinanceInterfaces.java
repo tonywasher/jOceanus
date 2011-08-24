@@ -2,7 +2,7 @@ package uk.co.tolcroft.finance.ui.controls;
 
 import uk.co.tolcroft.help.DebugManager;
 import uk.co.tolcroft.help.DebugManager.*;
-import uk.co.tolcroft.models.EditState;
+import uk.co.tolcroft.models.data.EditState;
 
 public class FinanceInterfaces {
 	public enum financeCommand {

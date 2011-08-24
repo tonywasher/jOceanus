@@ -2,7 +2,7 @@ package uk.co.tolcroft.finance.sheets;
 
 import jxl.*;
 import uk.co.tolcroft.finance.core.Threads.statusCtl;
-import uk.co.tolcroft.finance.data.*;
+import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.DilutionEvent;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
@@ -23,7 +23,7 @@ public class SheetDilution {
 	 */
 	protected static boolean loadArchive(statusCtl 			pThread,
 										 Workbook			pWorkbook,
-							   	  		 DataSet			pData,
+							   	  		 FinanceData		pData,
 							   	  		 DilutionEvent.List pList) throws Exception {
 		/* Local variables */
 		Range[]   		myRange;

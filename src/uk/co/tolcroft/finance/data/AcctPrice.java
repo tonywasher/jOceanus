@@ -4,9 +4,15 @@ import uk.co.tolcroft.finance.views.SpotPrices;
 import uk.co.tolcroft.finance.views.SpotPrices.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.DataList.ListStyle;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.data.ControlKey;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.EncryptedItem;
+import uk.co.tolcroft.models.data.HistoryValues;
+import uk.co.tolcroft.models.data.DataList.ListStyle;
 
 public class AcctPrice extends EncryptedItem<AcctPrice> {
 	/**
@@ -165,7 +171,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		myValues.setAccountId(uAccountId);
 		
 		/* Access the DataSet */
-		DataSet myData 	= pList.getData();
+		FinanceData myData 	= pList.getData();
 
 		/* Look up the Account */
 		Account myAccount = myData.getAccounts().searchFor(uAccountId);
@@ -204,7 +210,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		setControlKey(uControlId);
 		
 		/* Access the DataSet */
-		DataSet myData 	= pList.getData();
+		FinanceData myData 	= pList.getData();
 
 		/* Look up the Account */
 		Account myAccount = myData.getAccounts().searchFor(uAccountId);
@@ -315,9 +321,9 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	 * 
 	 */
 	public void validate() {
-		Date 	myDate = getDate();
-		List 	myList = (List)getList();
-		DataSet	mySet  = myList.getData();
+		Date 		myDate = getDate();
+		List 		myList = (List)getList();
+		FinanceData	mySet  = myList.getData();
 			
 		/* The date must be non-null */
 		if ((myDate == null) || (myDate.isNull())) {
@@ -461,11 +467,14 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		/* Members */
 		private Account	theAccount	= null;
 
+		/* Access DataSet correctly */
+		public FinanceData getData() { return (FinanceData) super.getData(); }
+		
 		/** 
 		 * Construct an empty CORE price list
 	 	 * @param pData the DataSet for the list
 		 */
-		protected List(DataSet pData) { 
+		protected List(FinanceData pData) { 
 			super(AcctPrice.class, pData);
 		}
 
@@ -474,7 +483,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	 	 * @param pData the DataSet for the list
 		 * @param pStyle the style of the list 
 		 */
-		public List(DataSet pData, ListStyle pStyle) {
+		public List(FinanceData pData, ListStyle pStyle) {
 			super(AcctPrice.class, pData, pStyle);
 		}
 

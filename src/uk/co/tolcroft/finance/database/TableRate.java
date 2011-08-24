@@ -2,7 +2,11 @@ package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.DataList.*;
+import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.data.EncryptedItem;
+import uk.co.tolcroft.models.database.Database;
+import uk.co.tolcroft.models.database.TableDefinition;
+import uk.co.tolcroft.models.database.TableEncrypted;
 
 public class TableRate extends TableEncrypted<AcctRate> {
 	/**
@@ -24,7 +28,7 @@ public class TableRate extends TableEncrypted<AcctRate> {
 	 * Constructor
 	 * @param pDatabase the database control
 	 */
-	protected TableRate(Database	pDatabase) {
+	protected TableRate(Database<?>	pDatabase) {
 		super(pDatabase, TableName);
 	}
 	
@@ -41,16 +45,13 @@ public class TableRate extends TableEncrypted<AcctRate> {
 		theTableDef.addNullDateColumn(AcctRate.FIELD_ENDDATE, AcctRate.fieldName(AcctRate.FIELD_ENDDATE));
 	}
 	
-	/* PreProcess on Load */
-	protected void preProcessOnLoad(DataSet pData) {
-		theList = pData.getRates();
+	/* Declare DataSet */
+	protected void declareData(DataSet<?> pData) {
+		FinanceData myData = (FinanceData)pData;
+		theList = myData.getRates();
+		setList(theList);
 	}
-	
-	/* Get the List for the table for updates */
-	protected AcctRate.List  getUpdateList(DataSet pData) {
-		return new AcctRate.List(pData.getRates(), ListStyle.UPDATE);
-	}
-	
+
 	/* Load the rate */
 	protected void loadItem(int pId, int pControlId) throws Exception {
 		int	  			myAccountId;

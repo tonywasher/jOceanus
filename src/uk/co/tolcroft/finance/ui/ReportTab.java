@@ -25,6 +25,7 @@ import uk.co.tolcroft.help.DebugManager.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.data.EditState;
 
 /* Report Tab */
 public class ReportTab implements HyperlinkListener,

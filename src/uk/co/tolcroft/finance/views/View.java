@@ -7,12 +7,15 @@ import uk.co.tolcroft.help.DebugManager.DebugEntry;
 import uk.co.tolcroft.security.SecureManager;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 public class View {
 	/* Members */
-	private DataSet     			theData  			= null;
+	private FinanceData    			theData  			= null;
+	private FinanceData    			theUpdates 			= null;
 	private Date.Range  			theRange 			= null;
 	private MainTab					theCtl 	 			= null;
     private EventAnalysis			theAnalysis			= null;
@@ -27,7 +30,8 @@ public class View {
 	private DebugEntry				theErrorEntry		= null;
     
 	/* Access methods */
-	public DataSet 				getData() 			{ return theData; }
+	public FinanceData			getData() 			{ return theData; }
+	public FinanceData			getUpdates() 		{ return theUpdates; }
 	public MainTab				getControl()		{ return theCtl; }
 	public Date.Range			getRange()			{ return theRange; }
 	public EventAnalysis    	getAnalysis()		{ return theAnalysis; }
@@ -64,7 +68,7 @@ public class View {
 		theSecurity = new SecureManager(pCtl.getFrame());
 		
 		/* Create an empty data set */
-		theData = new DataSet(theSecurity);
+		theData = new FinanceData(theSecurity);
 		theData.calculateDateRange();
 		analyseData(false);
 	}
@@ -73,7 +77,7 @@ public class View {
 	 * Update the data for a view
 	 * @param pData the new data set
 	 */ 
-	public void setData(DataSet pData) {
+	public void setData(FinanceData pData) {
 		/* Record the data */
 		theData = pData;
 		
@@ -107,8 +111,8 @@ public class View {
 			theDilutions = theAnalysis.getDilutions();
 
 			/* Adjust the updates debug view */
-			DataSet myUpdates = new DataSet(theData);
-			theUpdatesEntry.setObject(myUpdates);
+			theUpdates = theData.getUpdateSet();
+			theUpdatesEntry.setObject(theUpdates);
 		}
 		
 		/* Catch any exceptions */

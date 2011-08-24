@@ -3,10 +3,9 @@ package uk.co.tolcroft.finance.sheets;
 import jxl.*;
 import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.InputSheet;
-import uk.co.tolcroft.finance.sheets.SpreadSheet.OutputSheet;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.sheets.SheetStaticData;
 
 public class SheetTaxRegime extends SheetStaticData<TaxRegime> {
 
@@ -27,26 +26,26 @@ public class SheetTaxRegime extends SheetStaticData<TaxRegime> {
 
 	/**
 	 * Constructor for loading a spreadsheet
-	 * @param pOutput the output spreadsheet
+	 * @param pReader the spreadsheet reader
 	 */
-	protected SheetTaxRegime(InputSheet pInput) {
+	protected SheetTaxRegime(FinanceReader pReader) {
 		/* Call super-constructor */
-		super(pInput, TaxRegimes);
+		super(pReader, TaxRegimes);
 				
 		/* Access the TaxRegime list */
-		theList = pInput.getData().getTaxRegimes();
+		theList = pReader.getData().getTaxRegimes();
 	}
 
 	/**
 	 * Constructor for creating a spreadsheet
-	 * @param pOutput the output spreadsheet
+	 * @param pWriter the spreadsheet writer
 	 */
-	protected SheetTaxRegime(OutputSheet pOutput) {
+	protected SheetTaxRegime(FinanceWriter pWriter) {
 		/* Call super-constructor */
-		super(pOutput, TaxRegimes, TaxRegNames);
+		super(pWriter, TaxRegimes, TaxRegNames);
 				
 		/* Access the TaxRegime list */
-		theList = pOutput.getData().getTaxRegimes();
+		theList = pWriter.getData().getTaxRegimes();
 		setDataList(theList);
 	}
 
@@ -73,9 +72,9 @@ public class SheetTaxRegime extends SheetStaticData<TaxRegime> {
 	 *  @param pData the data set to load into
 	 *  @return continue to load <code>true/false</code> 
 	 */
-	protected static boolean loadArchive(statusCtl 	pThread,
-										 Workbook	pWorkbook,
-							   	  		 DataSet	pData) throws Exception {
+	protected static boolean loadArchive(statusCtl 		pThread,
+										 Workbook		pWorkbook,
+							   	  		 FinanceData	pData) throws Exception {
 		/* Local variables */
 		TaxRegime.List 	myList;
 		Range[] 		myRange;

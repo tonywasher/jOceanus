@@ -16,11 +16,12 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.help.DebugManager;
 import uk.co.tolcroft.help.DebugManager.*;
 import uk.co.tolcroft.models.Number.*;
-import uk.co.tolcroft.models.DataItem;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.Date;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
-import uk.co.tolcroft.models.*;
 
 public class AccountStatement extends FinanceTable<Statement.Line> {
 	/* Members */
@@ -256,7 +257,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 	 * Refresh views/controls after a load/update of underlying data
 	 */
 	public void refreshData() {
-		DataSet myData;
+		FinanceData	myData;
 		
 		/* Access the data */
 		myData = theView.getData();
