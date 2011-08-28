@@ -1,12 +1,13 @@
 package uk.co.tolcroft.finance.sheets;
 
 import jxl.*;
-import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.sheets.SheetDataItem;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
+import uk.co.tolcroft.models.threads.ThreadStatus;
 
 public class SheetPattern extends SheetDataItem<Pattern> {
 	/**
@@ -189,8 +190,8 @@ public class SheetPattern extends SheetDataItem<Pattern> {
 			setColumnWidth(1, Account.NAMELEN);
 			setColumnWidth(3, Pattern.DESCLEN);
 			setColumnWidth(6, Account.NAMELEN);
-			setColumnWidth(7, StaticClass.NAMELEN);
-			setColumnWidth(8, StaticClass.NAMELEN);
+			setColumnWidth(7, StaticData.NAMELEN);
+			setColumnWidth(8, StaticData.NAMELEN);
 			
 			/* Set Number columns */
 			setDateColumn(2);
@@ -213,9 +214,9 @@ public class SheetPattern extends SheetDataItem<Pattern> {
 	 *  @param pData the data set to load into
 	 *  @return continue to load <code>true/false</code> 
 	 */
-	protected static boolean loadArchive(statusCtl 		pThread,
-										 Workbook		pWorkbook,
-							   	  		 FinanceData	pData) throws Exception {
+	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
+										 Workbook					pWorkbook,
+							   	  		 FinanceData				pData) throws Exception {
 		/* Local variables */
 		Pattern.List		myList;
 		Range[]   			myRange;

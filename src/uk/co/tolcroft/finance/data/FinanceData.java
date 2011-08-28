@@ -2,13 +2,14 @@ package uk.co.tolcroft.finance.data;
 
 import uk.co.tolcroft.finance.views.EventAnalysis;
 import uk.co.tolcroft.finance.views.MetaAnalysis;
-import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.Date;
 import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
-import uk.co.tolcroft.security.SecureManager;
+import uk.co.tolcroft.models.security.SecureManager;
+import uk.co.tolcroft.models.threads.DataControl;
 
 public class FinanceData extends DataSet<ItemType> {
 	/* Members */
@@ -24,6 +25,7 @@ public class FinanceData extends DataSet<ItemType> {
     private Pattern.List			thePatterns   	= null; 
 	private Event.List				theEvents     	= null;
     private Date.Range				theDateRange  	= null;
+    private EventAnalysis			theAnalysis		= null;
     private LoadState				theLoadState  	= LoadState.INITIAL;
 
     /* Access Methods */
@@ -39,6 +41,7 @@ public class FinanceData extends DataSet<ItemType> {
 	public Pattern.List 		getPatterns()  		{ return thePatterns; }
 	public Event.List 			getEvents()  		{ return theEvents; }
 	public Date.Range 			getDateRange()  	{ return theDateRange; }
+	public EventAnalysis		getAnalysis()  		{ return theAnalysis; }
 	public LoadState 			getLoadState()  	{ return theLoadState; }
 
 	/**
@@ -111,27 +114,35 @@ public class FinanceData extends DataSet<ItemType> {
 	 * Items that are in both list but differ will be viewed as changed 
 	 * @param pOld The DataSet to compare to 
 	 */
-	public FinanceData getDifferenceSet(FinanceData pOld) {
+	public DataSet<?> getDifferenceSet(DataSet<?> pOld) throws Exception {
+		/* Make sure that the DataSet if the same type */
+		if (!(pOld instanceof FinanceData)) 
+			throw new Exception(ExceptionClass.LOGIC,
+								"Invalid DataSet type");
+		
+		/* Cast correctly */
+		FinanceData myOld = (FinanceData)pOld;
+		
 		/* Build an empty DataSet */
 		FinanceData myDiffers = new FinanceData(this);
 		
 		/* Obtain underlying differences */
-		getDifferenceSet(myDiffers, pOld);
-		
+		getDifferenceSet(myDiffers, myOld);
+				
 		/* Build the static differences */
-		myDiffers.theActTypes  	= new AccountType.List(theActTypes, 		pOld.getAccountTypes());
-		myDiffers.theTransTypes = new TransactionType.List(theTransTypes, 	pOld.getTransTypes());
-		myDiffers.theTaxTypes	= new TaxType.List(theTaxTypes, 			pOld.getTaxTypes());
-		myDiffers.theTaxRegimes	= new TaxRegime.List(theTaxRegimes, 		pOld.getTaxRegimes());
-		myDiffers.theFrequencys	= new Frequency.List(theFrequencys, 		pOld.getFrequencys());
+		myDiffers.theActTypes  	= new AccountType.List(theActTypes, 		myOld.getAccountTypes());
+		myDiffers.theTransTypes = new TransactionType.List(theTransTypes, 	myOld.getTransTypes());
+		myDiffers.theTaxTypes	= new TaxType.List(theTaxTypes, 			myOld.getTaxTypes());
+		myDiffers.theTaxRegimes	= new TaxRegime.List(theTaxRegimes, 		myOld.getTaxRegimes());
+		myDiffers.theFrequencys	= new Frequency.List(theFrequencys, 		myOld.getFrequencys());
 
 		/* Build the data differences */
-		myDiffers.theTaxYears  	= new TaxYear.List(theTaxYears, pOld.getTaxYears());
-		myDiffers.theAccounts  	= new Account.List(theAccounts, pOld.getAccounts());
-		myDiffers.theRates	  	= new AcctRate.List(theRates, 	pOld.getRates());
-		myDiffers.thePrices	  	= new AcctPrice.List(thePrices, pOld.getPrices());
-		myDiffers.thePatterns  	= new Pattern.List(thePatterns, pOld.getPatterns());
-		myDiffers.theEvents	  	= new Event.List(theEvents, 	pOld.getEvents());
+		myDiffers.theTaxYears  	= new TaxYear.List(theTaxYears, myOld.getTaxYears());
+		myDiffers.theAccounts  	= new Account.List(theAccounts, myOld.getAccounts());
+		myDiffers.theRates	  	= new AcctRate.List(theRates, 	myOld.getRates());
+		myDiffers.thePrices	  	= new AcctPrice.List(thePrices, myOld.getPrices());
+		myDiffers.thePatterns  	= new Pattern.List(thePatterns, myOld.getPatterns());
+		myDiffers.theEvents	  	= new Event.List(theEvents, 	myOld.getEvents());
 
 		/* Declare the lists */
 		myDiffers.declareLists();
@@ -144,24 +155,32 @@ public class FinanceData extends DataSet<ItemType> {
 	 * ReBase this data set against an earlier version.
 	 * @param pOld The old data to reBase against 
 	 */
-	public void reBase(FinanceData pOld) {
+	public void reBase(DataSet<?> pOld) throws Exception {
+		/* Make sure that the DataSet if the same type */
+		if (!(pOld instanceof FinanceData)) 
+			throw new Exception(ExceptionClass.LOGIC,
+								"Invalid DataSet type");
+		
+		/* Cast correctly */
+		FinanceData myOld = (FinanceData)pOld;
+		
 		/* Call super-class */
-		super.reBase(pOld);
+		super.reBase(myOld);
 		
 		/* ReBase the static items */
-		theActTypes.reBase(pOld.getAccountTypes());
-		theTransTypes.reBase(pOld.getTransTypes());
-		theTaxTypes.reBase(pOld.getTaxTypes());
-		theTaxRegimes.reBase(pOld.getTaxRegimes());
-		theFrequencys.reBase(pOld.getFrequencys());
+		theActTypes.reBase(myOld.getAccountTypes());
+		theTransTypes.reBase(myOld.getTransTypes());
+		theTaxTypes.reBase(myOld.getTaxTypes());
+		theTaxRegimes.reBase(myOld.getTaxRegimes());
+		theFrequencys.reBase(myOld.getFrequencys());
 
 		/* ReBase the data items */
-		theTaxYears.reBase(pOld.getTaxYears());
-		theAccounts.reBase(pOld.getAccounts());
-		theRates.reBase(pOld.getRates());
-		thePrices.reBase(pOld.getPrices());
-		thePatterns.reBase(pOld.getPatterns());
-		theEvents.reBase(pOld.getEvents());
+		theTaxYears.reBase(myOld.getTaxYears());
+		theAccounts.reBase(myOld.getAccounts());
+		theRates.reBase(myOld.getRates());
+		thePrices.reBase(myOld.getPrices());
+		thePatterns.reBase(myOld.getPatterns());
+		theEvents.reBase(myOld.getEvents());
 	}
 	
 	/**
@@ -191,11 +210,9 @@ public class FinanceData extends DataSet<ItemType> {
 	
 	/**
 	 * Analyse the data
-	 * @param pView the data view
-	 * @return the full analysis of the data
+	 * @param pControl the data view
 	 */
-	public EventAnalysis analyseData(View			pView) throws Exception {
-		EventAnalysis		myAnalysis;
+	public void analyseData(DataControl<?>	pControl) throws Exception {
 		MetaAnalysis 		myMetaAnalysis;
 						
 		/* Update INITIAL Load status */
@@ -207,7 +224,7 @@ public class FinanceData extends DataSet<ItemType> {
 		theTaxYears.reset();
 		
 		/* Create the analysis */
-		myAnalysis = new EventAnalysis(pView, this);
+		theAnalysis = new EventAnalysis(pControl, this);
 
 		/* Note active rates */
 		theRates.markActiveRates();
@@ -219,7 +236,7 @@ public class FinanceData extends DataSet<ItemType> {
 		thePatterns.markActivePatterns();
 		
 		/* Access the most recent metaAnalysis */
-		myMetaAnalysis = myAnalysis.getMetaAnalysis();
+		myMetaAnalysis = theAnalysis.getMetaAnalysis();
 		
 		/* Note active accounts by asset */
 		if (myMetaAnalysis != null)
@@ -230,9 +247,6 @@ public class FinanceData extends DataSet<ItemType> {
 		
 		/* Note that we are now fully loaded */
 		theLoadState = LoadState.LOADED;
-		
-		/* Return the analysis */
-		return myAnalysis;
 	}
 	
 	
@@ -241,9 +255,9 @@ public class FinanceData extends DataSet<ItemType> {
 	 * @param pItemType the type of items
 	 * @return the list of items
 	 */
-	public DataList<?> getDataList(ItemType pItemType) {
+	public DataList<?> getDataList(Enum<?> pItemType) {
 		/* Switch on item type */
-		switch(pItemType) {
+		switch((ItemType)pItemType) {
 			case AccountType:	return theActTypes;
 			case TransType:		return theTransTypes;
 			case TaxType:		return theTaxTypes;

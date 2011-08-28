@@ -13,12 +13,12 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
-import uk.co.tolcroft.help.DebugManager;
-import uk.co.tolcroft.help.DebugManager.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.data.DataList.*;
+import uk.co.tolcroft.models.help.DebugManager;
+import uk.co.tolcroft.models.help.DebugManager.*;
 
 public class AccountTab implements financePanel,
 								   ChangeListener {
@@ -75,7 +75,7 @@ public class AccountTab implements financePanel,
 		
 		/* Create the top level debug entry for this view  */
 		DebugManager myDebugMgr = theView.getDebugMgr();
-		mySection = theView.getViewsEntry();
+		mySection = theView.getDebugEntry(View.DebugViews);
         theDebugEntry = myDebugMgr.new DebugEntry("Account");
         theDebugEntry.addAsChildOf(mySection);
 		

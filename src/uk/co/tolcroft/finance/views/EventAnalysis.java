@@ -3,9 +3,6 @@ package uk.co.tolcroft.finance.views;
 import uk.co.tolcroft.finance.views.Analysis.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.StaticClass.*;
-import uk.co.tolcroft.help.DebugManager;
-import uk.co.tolcroft.help.DebugObject;
-import uk.co.tolcroft.help.DebugManager.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.Number.*;
@@ -13,6 +10,10 @@ import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
+import uk.co.tolcroft.models.help.DebugManager;
+import uk.co.tolcroft.models.help.DebugObject;
+import uk.co.tolcroft.models.help.DebugManager.*;
+import uk.co.tolcroft.models.threads.DataControl;
 import uk.co.tolcroft.models.Exception;
 
 public class EventAnalysis implements DebugObject {
@@ -235,7 +236,7 @@ public class EventAnalysis implements DebugObject {
 	 * @param pView the Data view
 	 * @param pData the Data to analyse
 	 */
-	public EventAnalysis(View			pView,
+	public EventAnalysis(DataControl<?>	pView,
 						 FinanceData	pData) throws Exception {
 		Event           				myCurr;
 		DataList<Event>.ListIterator	myIterator;
@@ -255,7 +256,7 @@ public class EventAnalysis implements DebugObject {
 		myTaxMan 	= theData.getAccounts().getTaxMan();
 		
 		/* Access the top level debug entry for this analysis  */
-		mySection = pView.getAnalysisEntry();
+		mySection = pView.getDebugEntry(View.DebugAnalysis);
 
 		/* Create a list of AnalysisYears */
 		theYears = new List(this);

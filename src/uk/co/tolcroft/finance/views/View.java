@@ -1,47 +1,32 @@
 package uk.co.tolcroft.finance.views;
 
+import uk.co.tolcroft.finance.sheets.FinanceSheet;
 import uk.co.tolcroft.finance.ui.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.help.DebugManager;
-import uk.co.tolcroft.help.DebugManager.DebugEntry;
-import uk.co.tolcroft.security.SecureManager;
+import uk.co.tolcroft.finance.database.FinanceDatabase;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.database.Database;
+import uk.co.tolcroft.models.sheets.SpreadSheet;
+import uk.co.tolcroft.models.threads.DataControl;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
-public class View {
+public class View extends DataControl<FinanceData> {
 	/* Members */
-	private FinanceData    			theData  			= null;
-	private FinanceData    			theUpdates 			= null;
+	private FinanceData  			theData 			= null;
 	private Date.Range  			theRange 			= null;
 	private MainTab					theCtl 	 			= null;
     private EventAnalysis			theAnalysis			= null;
     private DilutionEvent.List		theDilutions		= null;
-    private Exception				theError			= null;
-    private SecureManager			theSecurity			= null;
-    private DebugManager			theDebugMgr			= null;
-	private DebugEntry				theViewsEntry		= null;
-	private DebugEntry				theDataEntry		= null;
-	private DebugEntry				theUpdatesEntry		= null;
-	private DebugEntry				theAnalysisEntry	= null;
-	private DebugEntry				theErrorEntry		= null;
     
 	/* Access methods */
-	public FinanceData			getData() 			{ return theData; }
-	public FinanceData			getUpdates() 		{ return theUpdates; }
 	public MainTab				getControl()		{ return theCtl; }
 	public Date.Range			getRange()			{ return theRange; }
 	public EventAnalysis    	getAnalysis()		{ return theAnalysis; }
 	public DilutionEvent.List   getDilutions()		{ return theDilutions; }
-	public Exception			getError()			{ return theError; }
-	public SecureManager		getSecurity() 		{ return theSecurity; }
-	public DebugManager			getDebugMgr() 		{ return theDebugMgr; }
-	public DebugEntry			getViewsEntry()		{ return theViewsEntry; }
-	public DebugEntry			getAnalysisEntry()	{ return theAnalysisEntry; }
-	public DebugEntry			getErrorEntry()		{ return theErrorEntry; }
 	
  	/* Constructor */
 	public View(MainTab pCtl) {
@@ -49,28 +34,35 @@ public class View {
 		theCtl	= pCtl;
 		
 		/* Store access to the Debug Manager */
-		theDebugMgr = pCtl.getDebugMgr();
+		setDebugMgr(pCtl.getDebugMgr());
 
-		/* Create Debug Entries and and as Children */
-		theViewsEntry 		= theDebugMgr.new DebugEntry("DataViews");
-		theDataEntry 		= theDebugMgr.new DebugEntry("UnderlyingData");
-		theUpdatesEntry		= theDebugMgr.new DebugEntry("DataUpdates");
-		theAnalysisEntry	= theDebugMgr.new DebugEntry("Analysis");
-		theErrorEntry		= theDebugMgr.new DebugEntry("Error");
-		theViewsEntry.addAsRootChild();
-		theAnalysisEntry.addAsRootChild();
-		theDataEntry.addAsChildOf(theViewsEntry);
-		theUpdatesEntry.addAsChildOf(theViewsEntry);
-		theErrorEntry.addAsRootChild();
-		theErrorEntry.hideEntry();
-		
-		/* Create a new security manager */
-		theSecurity = new SecureManager(pCtl.getFrame());
-		
 		/* Create an empty data set */
-		theData = new FinanceData(theSecurity);
-		theData.calculateDateRange();
-		analyseData(false);
+		setData(getNewData());
+	}
+	
+	/**
+	 * Obtain a new DataSet
+	 * @return new DataSet
+	 */
+	public FinanceData getNewData() {
+		return new FinanceData(getSecurity());
+	}
+	
+	/**
+	 * Obtain a Database interface
+	 * @return new Database object
+	 */
+	public Database<FinanceData> getDatabase() throws Exception {
+		return new FinanceDatabase(getProperties(),
+								   getSecurity());
+	}
+	
+	/**
+	 * Obtain a Database interface
+	 * @return new DataSet
+	 */
+	public SpreadSheet<FinanceData> getSpreadSheet() {
+		return new FinanceSheet();
 	}
 	
 	/**
@@ -79,7 +71,11 @@ public class View {
 	 */ 
 	public void setData(FinanceData pData) {
 		/* Record the data */
+		super.setData(pData);
 		theData = pData;
+		
+		/* Calculate the Data Range */
+		pData.calculateDateRange();
 		
 		/* Analyse the data */
 		analyseData(false);
@@ -94,43 +90,40 @@ public class View {
 	 */ 
 	protected boolean analyseData(boolean bPreserve) {
 		/* Clear the error */
-		if (!bPreserve) theError = null;
+		if (!bPreserve) setError(null);
 		
 		/* Access the range */
 		theRange = theData.getDateRange();
 
 		/* Protect against exceptions */
 		try {
-			/* Adjust the data debug view */
-			theDataEntry.setObject(theData);
-			
 			/* Analyse the data */
-			theAnalysis = theData.analyseData(this);
+			theData.analyseData(this);
+			theAnalysis = theData.getAnalysis();
 		
 			/* Access the dilutions */
 			theDilutions = theAnalysis.getDilutions();
 
 			/* Adjust the updates debug view */
-			theUpdates = theData.getUpdateSet();
-			theUpdatesEntry.setObject(theUpdates);
+			setUpdates(theData.getUpdateSet());
 		}
 		
 		/* Catch any exceptions */
 		catch (Exception e) {
-			if (!bPreserve) theError = e;
+			if (!bPreserve) setError(e);
 		}	
 
 		/* Catch any exceptions */
 		catch (Throwable e) {
 			/* Report the failure */
 			if (!bPreserve)
-				theError = new Exception(ExceptionClass.DATA,
-								     	 "Failed to analyse data",
-								     	 e);
+				setError(new Exception(ExceptionClass.DATA,
+								       "Failed to analyse data",
+								       e));
 		}	
 		
 		/* Return whether there was success */
-		return (theError == null);
+		return (getError() == null);
 	}
 	
 	/**
@@ -145,15 +138,15 @@ public class View {
 
 		/* Catch any exceptions */
 		catch (Exception e) {
-			theError = e;
+			setError(e);
 		}	
 
 		/* Catch any exceptions */
 		catch (Throwable e) {
 			/* Report the failure */
-			theError = new Exception(ExceptionClass.DATA,
-								     "Failed refresh window",
-								     e);
+			setError(new Exception(ExceptionClass.DATA,
+								   "Failed refresh window",
+								   e));
 		}	
 	}
 	

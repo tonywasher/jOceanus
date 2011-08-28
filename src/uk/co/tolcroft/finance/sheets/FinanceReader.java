@@ -1,23 +1,23 @@
 package uk.co.tolcroft.finance.sheets;
 
-import uk.co.tolcroft.finance.core.Threads.statusCtl;
 import uk.co.tolcroft.finance.data.FinanceData;
-import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.sheets.SheetReader;
+import uk.co.tolcroft.models.threads.DataControl;
+import uk.co.tolcroft.models.threads.ThreadStatus;
 
 public class FinanceReader extends SheetReader<FinanceData> {
 	/**
 	 * Thread control
 	 */
-	private statusCtl				theThread	= null;
+	private ThreadStatus<FinanceData>	theThread	= null;
 	
 	/**
 	 * Constructor
 	 * @param pThread the Thread control
 	 */
-	public FinanceReader(statusCtl pThread) { 
+	public FinanceReader(ThreadStatus<FinanceData> pThread) { 
 		/* Call super-constructor */
-		super( pThread);
+		super(pThread);
 		
 		/* Store the thread */
 		theThread = pThread;
@@ -46,7 +46,7 @@ public class FinanceReader extends SheetReader<FinanceData> {
 	 */
 	protected FinanceData newDataSet() {
 		/* Create the new DataSet */
-		View myView = theThread.getView();
-		return new FinanceData(myView.getSecurity());
+		DataControl<FinanceData> myControl = theThread.getControl();
+		return myControl.getNewData();
 	}
 }

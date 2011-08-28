@@ -20,12 +20,12 @@ import uk.co.tolcroft.finance.ui.controls.ReportSelect.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.EventAnalysis.AnalysisYear;
 import uk.co.tolcroft.finance.views.*;
-import uk.co.tolcroft.help.DebugManager;
-import uk.co.tolcroft.help.DebugManager.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.EditState;
+import uk.co.tolcroft.models.help.DebugManager;
+import uk.co.tolcroft.models.help.DebugManager.*;
 
 /* Report Tab */
 public class ReportTab implements HyperlinkListener,
@@ -75,7 +75,7 @@ public class ReportTab implements HyperlinkListener,
 		
 		/* Create the top level debug entry for this view  */
 		DebugManager myDebugMgr = theView.getDebugMgr();
-		mySection = theView.getViewsEntry();
+		mySection = theView.getDebugEntry(View.DebugViews);
         theDebugReport 	= myDebugMgr.new DebugEntry("Report");
 		theSpotEntry	= myDebugMgr.new DebugEntry("SpotAnalysis");
         theDebugReport.addAsChildOf(mySection);

@@ -1,11 +1,11 @@
 package uk.co.tolcroft.finance.sheets;
 
 import jxl.*;
-import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.sheets.SheetStaticData;
+import uk.co.tolcroft.models.threads.ThreadStatus;
 
 public class SheetTaxType extends SheetStaticData<TaxType> {
 	/**
@@ -71,9 +71,9 @@ public class SheetTaxType extends SheetStaticData<TaxType> {
 	 *  @param pData the data set to load into
 	 *  @return continue to load <code>true/false</code> 
 	 */
-	protected static boolean loadArchive(statusCtl 		pThread,
-										 Workbook		pWorkbook,
-							   	  		 FinanceData	pData) throws Exception {
+	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
+										 Workbook					pWorkbook,
+							   	  		 FinanceData				pData) throws Exception {
 		/* Local variables */
 		TaxType.List	myList;
 		Range[] 		myRange;

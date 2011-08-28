@@ -6,16 +6,6 @@ import uk.co.tolcroft.models.data.StaticData.*;
 
 public class StaticClass {
 	/**
-	 * StaticData Name length
-	 */
-	public final static int NAMELEN = 50;
-
-	/**
-	 * StaticData Description length
-	 */
-	public final static int DESCLEN = 100;
-
-	/**
 	 * Enumeration of Account Type Classes. 
 	 */
 	public enum AccountClass implements StaticInterface {

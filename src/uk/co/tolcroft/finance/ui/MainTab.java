@@ -22,53 +22,57 @@ import javax.swing.LayoutStyle;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
+import uk.co.tolcroft.finance.core.LoadArchive;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.help.*;
-import uk.co.tolcroft.help.*;
 import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.help.DebugManager;
+import uk.co.tolcroft.models.help.DebugWindow;
+import uk.co.tolcroft.models.help.HelpWindow;
+import uk.co.tolcroft.models.threads.*;
+import uk.co.tolcroft.models.ui.StatusBar;
 
 public class MainTab implements ActionListener,
 								ChangeListener,
 								WindowListener {
-	private View      		theView         = null;
-	private Properties	  	theProperties	= null;
-	private JFrame          theFrame  		= null;
-	private JPanel          thePanel 		= null;
-	private JTabbedPane     theTabs  		= null;
-	private Extract      	theExtract      = null;
-	private AccountTab    	theAccountCtl	= null;
-	private ReportTab		theReportTab	= null;
-	private PricePoint	  	theSpotView		= null;
-	private MaintenanceTab	theMaint		= null;
-	private	Font 			theStdFont 		= null;
-	private	Font 			theNumFont 		= null;
-	private	Font 			theChgFont 		= null;
-	private	Font 			theChgNumFont 	= null;
-	private StatusBar 		theStatusBar    = null;
-	private ComboSelect     theComboList    = null;	
-	private JMenuBar		theMainMenu		= null;
-	private JMenu			theDataMenu		= null;
-	private JMenu			theBackupMenu	= null;
-	private JMenu			theHelpMenu		= null;
-	private JMenuItem		theLoadSheet	= null;
-	private JMenuItem		theCreateDBase	= null;
-	private JMenuItem		thePurgeDBase	= null;
-	private JMenuItem		theLoadDBase	= null;
-	private JMenuItem		theSaveDBase	= null;
-	private JMenuItem		theWriteBackup	= null;
-	private JMenuItem		theLoadBackup	= null;
-	private JMenuItem		theWriteExtract	= null;
-	private JMenuItem		theLoadExtract	= null;
-	private JMenuItem		theShowDebug	= null;
-	private JMenuItem		theHelpMgr		= null;
-	private ThreadControl	theThread		= null;
-	private ExecutorService theExecutor		= null;
-	private HelpWindow		theHelpWdw		= null;
-	private DebugManager	theDebugMgr		= null;
-	private DebugWindow		theDebugWdw		= null;
+	private View      			theView         = null;
+	private Properties	  		theProperties	= null;
+	private JFrame          	theFrame  		= null;
+	private JPanel          	thePanel 		= null;
+	private JTabbedPane     	theTabs  		= null;
+	private Extract      		theExtract      = null;
+	private AccountTab    		theAccountCtl	= null;
+	private ReportTab			theReportTab	= null;
+	private PricePoint	  		theSpotView		= null;
+	private MaintenanceTab		theMaint		= null;
+	private	Font 				theStdFont 		= null;
+	private	Font 				theNumFont 		= null;
+	private	Font 				theChgFont 		= null;
+	private	Font 				theChgNumFont 	= null;
+	private StatusBar 			theStatusBar    = null;
+	private ComboSelect     	theComboList    = null;	
+	private JMenuBar			theMainMenu		= null;
+	private JMenu				theDataMenu		= null;
+	private JMenu				theBackupMenu	= null;
+	private JMenu				theHelpMenu		= null;
+	private JMenuItem			theLoadSheet	= null;
+	private JMenuItem			theCreateDBase	= null;
+	private JMenuItem			thePurgeDBase	= null;
+	private JMenuItem			theLoadDBase	= null;
+	private JMenuItem			theSaveDBase	= null;
+	private JMenuItem			theWriteBackup	= null;
+	private JMenuItem			theLoadBackup	= null;
+	private JMenuItem			theWriteExtract	= null;
+	private JMenuItem			theLoadExtract	= null;
+	private JMenuItem			theShowDebug	= null;
+	private JMenuItem			theHelpMgr		= null;
+	private WorkerThread<?>		theThread		= null;
+	private ExecutorService 	theExecutor		= null;
+	private HelpWindow			theHelpWdw		= null;
+	private DebugManager		theDebugMgr		= null;
+	private DebugWindow			theDebugWdw		= null;
 	
 	/* Access methods */
 	public 		View			getView()  		{ return theView; }
@@ -106,9 +110,10 @@ public class MainTab implements ActionListener,
 		
 		/* Create the view */
 		theView       = new View(this);
-		
+
 		/* Access properties */
 		theProperties = new Properties();
+		theView.setProperties(theProperties);
 		
 		/* Create the Executor service */
 		theExecutor = Executors.newSingleThreadExecutor();
@@ -152,6 +157,7 @@ public class MainTab implements ActionListener,
 		myProgress.setVisible(false);
 		myStatus     = theStatusBar.getStatusPanel();
 		myStatus.setVisible(false);
+		theView.setStatusBar(theStatusBar);
 		
 		/* Create the panel */
 		thePanel = new JPanel();
@@ -249,6 +255,7 @@ public class MainTab implements ActionListener,
 		/* Add a window listener */
 		theFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		theFrame.addWindowListener(this);
+		theView.setFrame(theFrame);
 
 		/* Load data from the database */
 		loadDatabase();
@@ -393,10 +400,10 @@ public class MainTab implements ActionListener,
 	
 	/* Load Spreadsheet */
 	public void loadSpreadsheet() {
-		loadSpreadsheet myThread;
+		LoadArchive	myThread;
 
 		/* Create the worker thread */
-		myThread = new loadSpreadsheet(theView, this);
+		myThread = new LoadArchive(theView);
 		theThread = myThread;
 
 		/* Execute it and lock tabs */
@@ -406,10 +413,10 @@ public class MainTab implements ActionListener,
 	
 	/* Load Database */
 	public void loadDatabase() {
-		loadDatabase myThread;
+		LoadDatabase<FinanceData> myThread;
 
 		/* Create the worker thread */
-		myThread = new loadDatabase(theView, this);
+		myThread = new LoadDatabase<FinanceData>(theView);
 		theThread = myThread;
 
 		/* Execute it and lock tabs */
@@ -419,10 +426,10 @@ public class MainTab implements ActionListener,
 	
 	/* Store Database */
 	public void storeDatabase() {
-		storeDatabase myThread;
+		StoreDatabase<FinanceData> myThread;
 
 		/* Create the worker thread */
-		myThread = new storeDatabase(theView, this);
+		myThread = new StoreDatabase<FinanceData>(theView);
 		theThread = myThread;
 
 		/* Execute it and lock tabs */
@@ -432,10 +439,10 @@ public class MainTab implements ActionListener,
 	
 	/* Create Database */
 	public void createDatabase() {
-		createDatabase myThread;
+		CreateDatabase<FinanceData> myThread;
 
 		/* Create the worker thread */
-		myThread = new createDatabase(theView, this);
+		myThread = new CreateDatabase<FinanceData>(theView);
 		theThread = myThread;
 
 		/* Execute it and lock tabs */
@@ -445,10 +452,10 @@ public class MainTab implements ActionListener,
 	
 	/* Purge Database */
 	public void purgeDatabase() {
-		purgeDatabase myThread;
+		PurgeDatabase<FinanceData> myThread;
 		
 		/* Create the worker thread */
-		myThread = new purgeDatabase(theView, this);
+		myThread = new PurgeDatabase<FinanceData>(theView);
 		theThread = myThread;
 
 		/* Execute it and lock tabs */
@@ -458,10 +465,10 @@ public class MainTab implements ActionListener,
 	
 	/* Write Backup */
 	public void writeBackup() {
-		writeBackup myThread;
+		CreateBackup<FinanceData> myThread;
 		
 		/* Create the worker thread */
-		myThread = new writeBackup(theView, this);
+		myThread = new CreateBackup<FinanceData>(theView);
 		theThread = myThread;
 		
 		/* Execute it and lock tabs */
@@ -471,10 +478,10 @@ public class MainTab implements ActionListener,
 	
 	/* Restore Backup */
 	public void restoreBackup() {
-		restoreBackup myThread;
+		LoadBackup<FinanceData> myThread;
 
 		/* Create the worker thread */
-		myThread = new restoreBackup(theView, this);
+		myThread = new LoadBackup<FinanceData>(theView);
 		theThread = myThread;
 
 		/* Execute it and lock tabs */
@@ -484,10 +491,10 @@ public class MainTab implements ActionListener,
 	
 	/* Write Extract */
 	public void writeExtract() {
-		writeExtract myThread;
+		CreateExtract<FinanceData> myThread;
 		
 		/* Create the worker thread */
-		myThread = new writeExtract(theView, this);
+		myThread = new CreateExtract<FinanceData>(theView);
 		theThread = myThread;
 		
 		/* Execute it and lock tabs */
@@ -497,10 +504,10 @@ public class MainTab implements ActionListener,
 	
 	/* Load Extract */
 	public void loadExtract() {
-		loadExtract myThread;
+		LoadExtract<FinanceData> myThread;
 
 		/* Create the worker thread */
-		myThread = new loadExtract(theView, this);
+		myThread = new LoadExtract<FinanceData>(theView);
 		theThread = myThread;
 
 		/* Execute it and lock tabs */

@@ -1,13 +1,13 @@
 package uk.co.tolcroft.finance.sheets;
 
 import jxl.*;
-import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.DilutionEvent;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.sheets.SheetDataItem;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
+import uk.co.tolcroft.models.threads.ThreadStatus;
 
 public class SheetPrice extends SheetDataItem<AcctPrice> {
 	/**
@@ -171,10 +171,10 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 	 *  @param pDilution the dilution events to modify the prices with
 	 *  @return continue to load <code>true/false</code> 
 	 */
-	protected static boolean loadArchive(statusCtl 			pThread,
-										 Workbook			pWorkbook,
-							   	  		 FinanceData		pData,
-							   	  		 DilutionEvent.List pDilution) throws Exception {
+	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
+										 Workbook					pWorkbook,
+							   	  		 FinanceData				pData,
+							   	  		 DilutionEvent.List 		pDilution) throws Exception {
 		/* Local variables */
 		Range[]   		myRange;
 		Sheet     		mySheet;

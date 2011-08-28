@@ -3,13 +3,14 @@ package uk.co.tolcroft.finance.sheets;
 import jxl.*;
 
 import java.util.Calendar;
-import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.sheets.FinanceSheet.YearRange;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.sheets.SheetDataItem;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
+import uk.co.tolcroft.models.threads.ThreadStatus;
 
 public class SheetTaxYear extends SheetDataItem<TaxYear> {
 	/**
@@ -296,7 +297,7 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
 			setHiddenColumn(0);
 
 			/* Set the String column width */
-			setColumnWidth(2, StaticClass.NAMELEN);
+			setColumnWidth(2, StaticData.NAMELEN);
 			
 			/* Set Number columns */
 			setDateColumn(1);
@@ -338,10 +339,10 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
 	 *  @param pRange the range of tax years
 	 *  @return continue to load <code>true/false</code> 
 	 */
-	protected static boolean loadArchive(statusCtl 		pThread,
-										 Workbook		pWorkbook,
-							   	  		 FinanceData	pData,
-							   	  		 YearRange		pRange) throws Exception {
+	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
+										 Workbook					pWorkbook,
+							   	  		 FinanceData				pData,
+							   	  		 YearRange					pRange) throws Exception {
 		/* Local variables */
 		TaxYear.List	myList;
 		Range[]   		myRange;

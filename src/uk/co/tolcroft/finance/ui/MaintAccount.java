@@ -23,14 +23,15 @@ import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.help.DebugManager;
-import uk.co.tolcroft.help.DebugManager.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
+import uk.co.tolcroft.models.data.StaticData;
+import uk.co.tolcroft.models.help.DebugManager;
+import uk.co.tolcroft.models.help.DebugManager.*;
 
 public class MaintAccount implements ActionListener,
 									 ItemListener,
@@ -161,7 +162,7 @@ public class MaintAccount implements ActionListener,
 		theAliasBox.setPrototypeDisplayValue(myDefValue);
 		
 		/* Dimension the account type box correctly */
-		myDefChars = new char[StaticClass.NAMELEN];
+		myDefChars = new char[StaticData.NAMELEN];
 		Arrays.fill(myDefChars, 'X');
 		myDefValue = new String(myDefChars);
 		theTypesBox.setPrototypeDisplayValue(myDefValue);

@@ -13,11 +13,11 @@ import javax.swing.event.ChangeListener;
 
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.help.DebugManager;
-import uk.co.tolcroft.help.DebugManager.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.help.DebugManager;
+import uk.co.tolcroft.models.help.DebugManager.*;
 
 public class MaintenanceTab implements ChangeListener {
 	/* properties */
@@ -58,7 +58,7 @@ public class MaintenanceTab implements ChangeListener {
 		
 		/* Create the top level debug entry for this view  */
 		DebugManager myDebugMgr = theView.getDebugMgr();
-		DebugEntry   mySection  = theView.getViewsEntry();
+		DebugEntry   mySection  = theView.getDebugEntry(View.DebugViews);
         theDebugEntry = myDebugMgr.new DebugEntry("Maintenance");
         theDebugEntry.addAsChildOf(mySection);
 		

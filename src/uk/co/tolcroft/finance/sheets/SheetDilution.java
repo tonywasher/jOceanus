@@ -1,11 +1,11 @@
 package uk.co.tolcroft.finance.sheets;
 
 import jxl.*;
-import uk.co.tolcroft.finance.core.Threads.statusCtl;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.DilutionEvent;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.threads.ThreadStatus;
 
 public class SheetDilution {
 	/**
@@ -21,10 +21,10 @@ public class SheetDilution {
 	 *  @param pList the dilution list to load into
 	 *  @return continue to load <code>true/false</code> 
 	 */
-	protected static boolean loadArchive(statusCtl 			pThread,
-										 Workbook			pWorkbook,
-							   	  		 FinanceData		pData,
-							   	  		 DilutionEvent.List pList) throws Exception {
+	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
+										 Workbook					pWorkbook,
+							   	  		 FinanceData				pData,
+							   	  		 DilutionEvent.List 		pList) throws Exception {
 		/* Local variables */
 		Range[]   		myRange;
 		Sheet     		mySheet;

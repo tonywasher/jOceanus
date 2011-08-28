@@ -11,13 +11,15 @@ import javax.swing.JPopupMenu;
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.help.DebugManager;
-import uk.co.tolcroft.help.DebugManager.*;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.HistoryValues;
+import uk.co.tolcroft.models.help.DebugManager;
+import uk.co.tolcroft.models.help.DebugManager.*;
+import uk.co.tolcroft.models.ui.Editor;
+import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 
@@ -75,7 +77,7 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 
 		/* Create the top level debug entry for this view  */
 		DebugManager myDebugMgr = theView.getDebugMgr();
-		mySection = theView.getViewsEntry();
+		mySection = theView.getDebugEntry(View.DebugViews);
         theDebugPrice = myDebugMgr.new DebugEntry("SpotPrices");
         theDebugPrice.addAsChildOf(mySection);
 		

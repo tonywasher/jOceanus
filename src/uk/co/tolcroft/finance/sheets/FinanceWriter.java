@@ -1,15 +1,15 @@
 package uk.co.tolcroft.finance.sheets;
 
-import uk.co.tolcroft.finance.core.Threads.statusCtl;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.models.sheets.SheetWriter;
+import uk.co.tolcroft.models.threads.ThreadStatus;
 
 public class FinanceWriter  extends SheetWriter<FinanceData>{
 	/**
 	 * Constructor
 	 * @param pThread the Thread control
 	 */
-	public FinanceWriter(statusCtl pThread) { 
+	public FinanceWriter(ThreadStatus<FinanceData> pThread) { 
 		/* Call super-constructor */
 		super( pThread);
 	}

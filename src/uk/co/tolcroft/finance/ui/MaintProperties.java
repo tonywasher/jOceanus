@@ -18,11 +18,11 @@ import javax.swing.SpinnerDateModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import uk.co.tolcroft.finance.ui.controls.FileSelector.*;
 import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ui.FileSelector.*;
 
 public class MaintProperties implements ActionListener,
 										ItemListener,
@@ -378,7 +378,7 @@ public class MaintProperties implements ActionListener,
 		/* If this event relates to the Base Select button */
 		else if (evt.getSource() == (Object)theBaseSel) {
 			/* Create the and run the dialog */
-			ArchiveLoad myDialog = new ArchiveLoad(theParent.getTopWindow());
+			ArchiveLoad myDialog = new ArchiveLoad(theView);
 			myDialog.selectFile();
 			File myFile = myDialog.getSelectedFile();
 			if (myFile != null)
@@ -391,7 +391,7 @@ public class MaintProperties implements ActionListener,
 		/* If this event relates to the Repo Select button */
 		else if (evt.getSource() == (Object)theRepoSel) {
 			/* Create the and run the dialog */
-			BackupDirectory myDialog = new BackupDirectory(theParent.getTopWindow());
+			BackupDirectory myDialog = new BackupDirectory(theView);
 			myDialog.selectFile();
 			File myFile = myDialog.getSelectedFile();
 			if (myFile != null)
@@ -404,7 +404,7 @@ public class MaintProperties implements ActionListener,
 		/* If this event relates to the Backup Select button */
 		else if (evt.getSource() == (Object)theBackupSel) {
 			/* Create the and run the dialog */
-			BackupDirectory myDialog = new BackupDirectory(theParent.getTopWindow());
+			BackupDirectory myDialog = new BackupDirectory(theView);
 			myDialog.selectFile();
 			File myFile = myDialog.getSelectedFile();
 			if (myFile != null)

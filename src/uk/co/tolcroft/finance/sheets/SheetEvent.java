@@ -1,13 +1,14 @@
 package uk.co.tolcroft.finance.sheets;
 
 import jxl.*;
-import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.sheets.FinanceSheet.YearRange;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.sheets.SheetDataItem;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
+import uk.co.tolcroft.models.threads.ThreadStatus;
 
 public class SheetEvent extends SheetDataItem<Event> { 
 	/**
@@ -194,7 +195,7 @@ public class SheetEvent extends SheetDataItem<Event> {
 			setColumnWidth(2, Event.DESCLEN);
 			setColumnWidth(4, Account.NAMELEN);
 			setColumnWidth(5, Account.NAMELEN);
-			setColumnWidth(8, StaticClass.NAMELEN);
+			setColumnWidth(8, StaticData.NAMELEN);
 			setColumnWidth(10, 8);
 			
 			/* Set Number columns */
@@ -214,10 +215,10 @@ public class SheetEvent extends SheetDataItem<Event> {
 	 *  @param pRange the range of tax years
 	 *  @return continue to load <code>true/false</code> 
 	 */
-	protected static boolean loadArchive(statusCtl 		pThread,
-										 Workbook		pWorkbook,
-							   	  		 FinanceData	pData,
-							   	  		 YearRange		pRange) throws Exception {
+	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
+										 Workbook					pWorkbook,
+							   	  		 FinanceData				pData,
+							   	  		 YearRange					pRange) throws Exception {
 		/* Local variables */
 		Event.List		myList;
 		String    		myName;

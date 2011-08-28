@@ -1,9 +1,6 @@
 package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.help.DebugManager;
-import uk.co.tolcroft.help.DebugObject;
-import uk.co.tolcroft.help.DebugManager.DebugEntry;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Number.*;
@@ -15,6 +12,9 @@ import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.EncryptedItem.EncryptedList;
+import uk.co.tolcroft.models.help.DebugManager;
+import uk.co.tolcroft.models.help.DebugObject;
+import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
 
 public class SpotPrices implements DebugObject {
 	/**

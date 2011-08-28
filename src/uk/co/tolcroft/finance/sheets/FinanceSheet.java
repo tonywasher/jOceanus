@@ -10,17 +10,17 @@ import jxl.Range;
 import jxl.Sheet;
 import jxl.Workbook;
 
-import uk.co.tolcroft.finance.core.Threads.statusCtl;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.Properties;
 import uk.co.tolcroft.finance.views.DilutionEvent;
-import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.ControlData;
 import uk.co.tolcroft.models.sheets.SheetReader;
 import uk.co.tolcroft.models.sheets.SheetWriter;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
+import uk.co.tolcroft.models.threads.DataControl;
+import uk.co.tolcroft.models.threads.ThreadStatus;
 
 public class FinanceSheet extends SpreadSheet<FinanceData> {
 	/**
@@ -28,7 +28,7 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
 	 *  @param pThread Thread Control for task
 	 *  @return the sheet reader
 	 */
-	protected SheetReader<FinanceData> getSheetReader(statusCtl pThread) {
+	protected SheetReader<FinanceData> getSheetReader(ThreadStatus<FinanceData> pThread) {
 		/* Create a Finance Reader object and return it */
 		return new FinanceReader(pThread);
 	}
@@ -38,7 +38,7 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
 	 *  @param pThread Thread Control for task
 	 *  @return the sheet writer
 	 */
-	protected SheetWriter<FinanceData> getSheetWriter(statusCtl pThread) {
+	protected SheetWriter<FinanceData> getSheetWriter(ThreadStatus<FinanceData> pThread) {
 		/* Create a Finance Writer object and return it */
 		return new FinanceWriter(pThread);
 	}
@@ -68,10 +68,10 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
 	 *  @param pRange the range of tax years
 	 *  @return continue to load <code>true/false</code> 
 	 */
-	protected static boolean loadArchive(statusCtl 		pThread,
-			 					  		 Workbook		pWorkbook,
-			 					  		 FinanceData	pData,
-			 					  		 YearRange		pRange) throws Exception {
+	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
+			 					  		 Workbook					pWorkbook,
+			 					  		 FinanceData				pData,
+			 					  		 YearRange					pRange) throws Exception {
 		/* Local variables */
 		Range[] 		myRange;
 		Sheet   		mySheet;
@@ -121,8 +121,8 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
 	 *  @param pFile the archive file to load from
 	 *  @return the newly loaded data
 	 */
-	public static FinanceData loadArchive(statusCtl pThread,
-	  		 				   	   		  File 	 	pFile) throws Exception {
+	public static FinanceData loadArchive(ThreadStatus<FinanceData>	pThread,
+	  		 				   	   		  File 	 					pFile) throws Exception {
 		InputStream 		myStream  	= null;
 		FileInputStream     myInFile  	= null;
 		FinanceData			myData;
@@ -157,20 +157,20 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
 	 *  @param pStream Input stream to load from
 	 *  @return the newly loaded data
 	 */
-	private static FinanceData loadArchiveStream(statusCtl 		pThread,
-			 						  	  		 InputStream	pStream) throws Exception {
-		boolean             	bContinue;
-		Workbook        		myWorkbook 	= null;
-		FinanceData				myData		= null;
-		View					myView		= null;
-		YearRange				myRange 	= null;
-		DilutionEvent.List		myDilution	= null;
+	private static FinanceData loadArchiveStream(ThreadStatus<FinanceData>	pThread,
+			 						  	  		 InputStream				pStream) throws Exception {
+		boolean             		bContinue;
+		Workbook        			myWorkbook 	= null;
+		FinanceData					myData		= null;
+		DataControl<FinanceData>	myControl	= null;
+		YearRange					myRange 	= null;
+		DilutionEvent.List			myDilution	= null;
 		
 		/* Protect the workbook retrieval */
 		try {
 			/* Create the Data */
-			myView = pThread.getView();
-			myData = new FinanceData(myView.getSecurity());
+			myControl = pThread.getControl();
+			myData 	  = myControl.getNewData();
 			
 			/* Access the workbook from the stream */
 			myWorkbook = Workbook.getWorkbook(pStream);
