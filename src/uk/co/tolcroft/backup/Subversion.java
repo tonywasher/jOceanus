@@ -13,9 +13,9 @@ import org.tmatesoft.svn.core.wc.admin.SVNLookClient;
 
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
-import uk.co.tolcroft.security.SecurityControl;
-import uk.co.tolcroft.security.ZipEntryMode;
-import uk.co.tolcroft.security.ZipFile;
+import uk.co.tolcroft.models.security.SecurityControl;
+import uk.co.tolcroft.models.security.ZipEntryMode;
+import uk.co.tolcroft.models.security.ZipFile;
 
 public class Subversion {
 	SVNClientManager	theManager = null;
