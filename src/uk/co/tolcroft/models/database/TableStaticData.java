@@ -1,6 +1,5 @@
 package uk.co.tolcroft.models.database;
 
-import uk.co.tolcroft.finance.data.StaticClass;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.data.StaticData;
 
@@ -27,8 +26,8 @@ public abstract class TableStaticData<T extends StaticData<T,?>> extends TableEn
 		super.defineTable(pTableDef);
 		theTableDef = pTableDef;
 		theTableDef.addIntegerColumn(StaticData.FIELD_CLASSID, StaticData.fieldName(StaticData.FIELD_CLASSID));
-		theTableDef.addEncryptedColumn(StaticData.FIELD_NAME, getDataName(), StaticClass.NAMELEN);
-		theTableDef.addNullEncryptedColumn(StaticData.FIELD_DESC, StaticData.fieldName(StaticData.FIELD_DESC), StaticClass.DESCLEN);
+		theTableDef.addEncryptedColumn(StaticData.FIELD_NAME, getDataName(), StaticData.NAMELEN);
+		theTableDef.addNullEncryptedColumn(StaticData.FIELD_DESC, StaticData.fieldName(StaticData.FIELD_DESC), StaticData.DESCLEN);
 	}
 	
 	/* Load the Static Data */

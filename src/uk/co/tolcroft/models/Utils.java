@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
-import uk.co.tolcroft.security.SecurityControl;
+import uk.co.tolcroft.models.security.SecurityControl;
 
 public class Utils {
 	/**

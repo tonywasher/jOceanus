@@ -1,8 +1,8 @@
 package uk.co.tolcroft.models;
 
-import uk.co.tolcroft.help.DebugManager;
-import uk.co.tolcroft.help.DebugObject;
-import uk.co.tolcroft.help.DebugManager.DebugEntry;
+import uk.co.tolcroft.models.help.DebugManager;
+import uk.co.tolcroft.models.help.DebugObject;
+import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
 
 public class Exception 	extends java.lang.Exception
 						implements DebugObject {

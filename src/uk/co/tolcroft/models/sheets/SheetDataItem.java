@@ -15,19 +15,19 @@ import jxl.write.WritableCellFormat;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WritableCellFeatures;
-import uk.co.tolcroft.finance.core.Threads.statusCtl;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.Number;
 
 public abstract class SheetDataItem<T extends DataItem<T>> {
 	/**
 	 * The thread control
 	 */
-	private statusCtl 			theThread 		= null;
+	private ThreadStatus<?>		theThread 		= null;
 	
 	/**
 	 * The input sheet

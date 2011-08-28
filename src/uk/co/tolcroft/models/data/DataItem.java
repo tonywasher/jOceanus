@@ -1,9 +1,9 @@
 package uk.co.tolcroft.models.data;
 
-import uk.co.tolcroft.help.DebugManager;
-import uk.co.tolcroft.help.DebugManager.DebugEntry;
-import uk.co.tolcroft.help.DebugObject;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
+import uk.co.tolcroft.models.help.DebugManager;
+import uk.co.tolcroft.models.help.DebugObject;
+import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
 import uk.co.tolcroft.models.LinkNode;
 import uk.co.tolcroft.models.LinkObject;
 import uk.co.tolcroft.models.SortedList;

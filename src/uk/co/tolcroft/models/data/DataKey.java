@@ -2,11 +2,11 @@ package uk.co.tolcroft.models.data;
 
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.security.DataCipher;
+import uk.co.tolcroft.models.security.SecurityControl;
+import uk.co.tolcroft.models.security.SymmetricKey;
+import uk.co.tolcroft.models.security.SymmetricKey.SymKeyType;
 import uk.co.tolcroft.models.Utils;
-import uk.co.tolcroft.security.DataCipher;
-import uk.co.tolcroft.security.SecurityControl;
-import uk.co.tolcroft.security.SymmetricKey;
-import uk.co.tolcroft.security.SymmetricKey.SymKeyType;
 
 public class DataKey extends DataItem<DataKey> {
 	/**
@@ -426,7 +426,7 @@ public class DataKey extends DataItem<DataKey> {
 			if (!isIdUnique(uId)) 
 				throw new Exception(ExceptionClass.DATA,
 									myKey,
-									"Duplicate DataKeyId <" + uId + ">");
+									"Duplicate DataKeyId (" + uId + ")");
 			 
 			/* Add to the list */
 			add(myKey);

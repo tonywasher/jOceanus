@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import uk.co.tolcroft.finance.core.Threads.statusCtl;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.DataItem;
@@ -14,6 +13,7 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.database.TableDefinition.ColumnDefinition;
+import uk.co.tolcroft.models.threads.ThreadStatus;
 
 public abstract class DatabaseTable<T extends DataItem<T>> {
 	/**
@@ -211,8 +211,8 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 * @param pData the data
 	 * @return Continue <code>true/false</code>
 	 */
-	protected boolean loadItems(statusCtl 	pThread,
-								DataSet<?>	pData) throws Exception {
+	protected boolean loadItems(ThreadStatus<?> pThread,
+								DataSet<?>		pData) throws Exception {
 		boolean bContinue = true;
 		String	myQuery;
 		int		mySteps;
@@ -223,6 +223,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 
 		/* Access reporting steps */
 		mySteps = pThread.getReportingSteps();
+
+		/* Declare the Data */
+		declareData(pData);
 		
 		/* Protect the load */
 		try {
@@ -298,9 +301,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 * @param pData the data
 	 * @return Continue <code>true/false</code>
 	 */
-	protected boolean insertItems(statusCtl 	pThread,
-								  DataSet<?>	pData,
-								  BatchControl	pBatch) throws Exception {
+	protected boolean insertItems(ThreadStatus<?> 	pThread,
+								  DataSet<?>		pData,
+								  BatchControl		pBatch) throws Exception {
 		DataList<T>.ListIterator	myIterator;
 		T							myCurr    = null;
 		int     					myCount   = 0;
@@ -313,6 +316,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 		
 		/* Access reporting steps */
 		mySteps = pThread.getReportingSteps();
+		
+		/* Declare the Data */
+		declareData(pData);
 		
 		/* Protect the insert */
 		try {
@@ -390,8 +396,8 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 * @param pThread the thread control
 	 * @return Continue <code>true/false</code>
 	 */
-	protected boolean updateItems(statusCtl 	pThread,
-			  					  BatchControl	pBatch) throws Exception {
+	protected boolean updateItems(ThreadStatus<?> 	pThread,
+			  					  BatchControl		pBatch) throws Exception {
 		DataList<T>.ListIterator	myIterator;
 		T							myCurr    = null;
 		int     					myCount   = 0;
@@ -516,8 +522,8 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 * @param pThread the thread control
 	 * @return Continue <code>true/false</code>
 	 */
-	protected boolean deleteItems(statusCtl 	pThread,
-			  					  BatchControl	pBatch) throws Exception {
+	protected boolean deleteItems(ThreadStatus<?> 	pThread,
+			  					  BatchControl		pBatch) throws Exception {
 		DataList<T>.ListIterator	myIterator;
 		T							myCurr    = null;
 		int     					myCount   = 0;

@@ -3,13 +3,15 @@ package uk.co.tolcroft.models.data;
 import java.util.EnumMap;
 import java.util.Map;
 
-import uk.co.tolcroft.help.DebugManager;
-import uk.co.tolcroft.help.DebugObject;
-import uk.co.tolcroft.help.DebugManager.DebugEntry;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.data.EncryptedItem.EncryptedList;
-import uk.co.tolcroft.security.*;
+import uk.co.tolcroft.models.help.DebugManager;
+import uk.co.tolcroft.models.help.DebugObject;
+import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
+import uk.co.tolcroft.models.security.SecureManager;
+import uk.co.tolcroft.models.security.SecurityControl;
+import uk.co.tolcroft.models.threads.DataControl;
 
 public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 	private SecureManager			theSecurity   	= null;
@@ -80,10 +82,21 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 	 * Items that are in the new list, but not in the old list will be viewed as inserted.
 	 * Items that are in the old list but not in the new list will be viewed as deleted.
 	 * Items that are in both list but differ will be viewed as changed 
+	 * @param pOld The old list to extract from 
+	 */
+	public abstract DataSet<?> getDifferenceSet(DataSet<?> pOld) throws Exception;
+
+	/**
+	 * Construct a difference extract between two DataSets.
+	 * The difference extract will only contain items that differ between the two DataSets.
+	 * Items that are in the new list, but not in the old list will be viewed as inserted.
+	 * Items that are in the old list but not in the new list will be viewed as deleted.
+	 * Items that are in both list but differ will be viewed as changed 
 	 * @param pNew The new list to extract from 
 	 * @param pOld The old list to extract from 
 	 */
-	protected void getDifferenceSet(DataSet<T> pDifferences, DataSet<T> pOld) {
+	protected void getDifferenceSet(DataSet<T> pDifferences, 
+									DataSet<T> pOld) throws Exception {
 		/* Build the security differences */
 		pDifferences.theControlKeys = new ControlKey.List(theControlKeys, 	pOld.getControlKeys());
 		pDifferences.theDataKeys	= new DataKey.List(theDataKeys, 		pOld.getDataKeys());
@@ -94,7 +107,7 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 	 * ReBase this data set against an earlier version.
 	 * @param pOld The old data to reBase against 
 	 */
-	public void reBase(DataSet<T> pOld) {
+	public void reBase(DataSet<?> pOld) throws Exception {
 		/* ReBase the security items */
 		theControlKeys.reBase(pOld.getControlKeys());
 		theDataKeys.reBase(pOld.getDataKeys());
@@ -116,8 +129,14 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 	 * @param pItemType the type of items
 	 * @return the list of items
 	 */
-	abstract public DataList<?> getDataList(T pItemType);
+	abstract public DataList<?> getDataList(Enum<?> pItemType);
 	
+	/**
+	 * Analyse the DataSet
+	 * @param pControl The DataControl 
+	 */
+	public abstract void analyseData(DataControl<?> pControl) throws Exception;
+
 	/**
 	 * Compare this data-set to another to establish equality.
 	 * 
@@ -280,7 +299,7 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 	 * Initialise Security from database (if present) 
 	 * @param pBase the database data
 	 */
-	public void initialiseSecurity(DataSet<T> pBase) throws Exception {
+	public void initialiseSecurity(DataSet<?> pBase) throws Exception {
 		/* Initialise Security */
 		theControlKeys.initialiseSecurity(pBase);		
 
@@ -288,15 +307,16 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 		ControlKey myControl = getControlKey();
 		
 		/* Loop through the Enum values */
-		for (T myType: theClass.getEnumConstants()) {
+		for (Enum<?> myType: theClass.getEnumConstants()) {
 			/* Access the lists */
 			DataList<?> myList = theMap.get(myType);
+			DataList<?> myBase = pBase.getDataList(myType);
 			
 			/* If the list is an encrypted list */
 			if (myList instanceof EncryptedList) {
 				/* Adopt the security */
 				EncryptedList<?> myEncrypted = (EncryptedList<?>)myList;
-				myEncrypted.adoptSecurity(myControl, (EncryptedList<?>) pBase.getDataList(myType));
+				myEncrypted.adoptSecurity(myControl, (EncryptedList<?>) myBase);
 			}
 		}
 	}

@@ -332,7 +332,7 @@ public class ControlData extends DataItem<ControlData> {
 			if (!isIdUnique(uId)) 
 				throw new Exception(ExceptionClass.DATA,
 									myControl,
-									"Duplicate ControlId <" + uId + ">");
+									"Duplicate ControlId (" + uId + ")");
 			 
 			/* Only one static is allowed */
 			if (theControl != null) 

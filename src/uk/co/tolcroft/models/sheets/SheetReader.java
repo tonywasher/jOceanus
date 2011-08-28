@@ -9,22 +9,22 @@ import java.util.Iterator;
 import java.util.List;
 
 import jxl.Workbook;
-import uk.co.tolcroft.finance.core.Threads.statusCtl;
-import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.security.SecureManager;
+import uk.co.tolcroft.models.security.SecurityControl;
+import uk.co.tolcroft.models.security.SecuritySignature;
+import uk.co.tolcroft.models.security.ZipFile;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
-import uk.co.tolcroft.security.SecureManager;
-import uk.co.tolcroft.security.SecurityControl;
-import uk.co.tolcroft.security.SecuritySignature;
-import uk.co.tolcroft.security.ZipFile;
+import uk.co.tolcroft.models.threads.DataControl;
+import uk.co.tolcroft.models.threads.ThreadStatus;
 
 public abstract class SheetReader<T extends DataSet<?>> {
 	/**
 	 * Thread control
 	 */
-	private statusCtl				theThread	= null;
+	private ThreadStatus<T>			theThread	= null;
 	
 	/**
 	 * Spreadsheet
@@ -47,7 +47,7 @@ public abstract class SheetReader<T extends DataSet<?>> {
 	private SheetType				theType		= null;
 	
 	/* Access methods */
-	protected statusCtl				getThread()		{ return theThread; }
+	protected ThreadStatus<T>		getThread()		{ return theThread; }
 	protected Workbook				getWorkBook()	{ return theWorkBook; }
 	public	  T						getData()		{ return theData; }
 	public 	  SheetType				getType()		{ return theType; }
@@ -56,7 +56,7 @@ public abstract class SheetReader<T extends DataSet<?>> {
 	 * Constructor
 	 * @param pThread the Thread control
 	 */
-	public SheetReader(statusCtl pThread) { theThread = pThread; }
+	public SheetReader(ThreadStatus<T> pThread) { theThread = pThread; }
 
 	/**
 	 * Add Sheet to list
@@ -73,9 +73,9 @@ public abstract class SheetReader<T extends DataSet<?>> {
 	public T	loadBackup(File 		pFile) throws Exception {
 		InputStream 		myStream  	= null;
 		ZipFile.Input 		myFile		= null;
-		View				myView;
+		DataControl<T>		myControl;
 		String				mySecurityKey;
-		SecurityControl		myControl;
+		SecurityControl		mySecControl;
 		SecureManager		mySecurity;
 		SecuritySignature	mySignature;
 		
@@ -92,14 +92,14 @@ public abstract class SheetReader<T extends DataSet<?>> {
 			mySignature	  = new SecuritySignature(mySecurityKey);
 
 			/* Access the Security manager */
-			myView 		= theThread.getView();
-			mySecurity 	= myView.getSecurity();
+			myControl	= theThread.getControl();
+			mySecurity 	= myControl.getSecurity();
 				
 			/* Obtain the initialised security control */
-			myControl = mySecurity.getSecurityControl(mySignature, pFile.getName());
+			mySecControl = mySecurity.getSecurityControl(mySignature, pFile.getName());
 				
 			/* Associate this control with the Zip file */
-			myFile.setSecurityControl(myControl);
+			myFile.setSecurityControl(mySecControl);
 				
 			/* Access the input stream for the first file */
 			myStream = myFile.getInputStream(myFile.getFiles());

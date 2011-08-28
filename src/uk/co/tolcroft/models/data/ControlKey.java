@@ -9,14 +9,14 @@ import java.util.Map;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
-import uk.co.tolcroft.security.AsymmetricKey;
-import uk.co.tolcroft.security.AsymmetricKey.AsymKeyType;
-import uk.co.tolcroft.security.PasswordKey;
-import uk.co.tolcroft.security.SecureManager;
-import uk.co.tolcroft.security.SecurityControl;
-import uk.co.tolcroft.security.SecuritySignature;
-import uk.co.tolcroft.security.SymmetricKey;
-import uk.co.tolcroft.security.SymmetricKey.SymKeyType;
+import uk.co.tolcroft.models.security.AsymmetricKey;
+import uk.co.tolcroft.models.security.PasswordKey;
+import uk.co.tolcroft.models.security.SecureManager;
+import uk.co.tolcroft.models.security.SecurityControl;
+import uk.co.tolcroft.models.security.SecuritySignature;
+import uk.co.tolcroft.models.security.SymmetricKey;
+import uk.co.tolcroft.models.security.AsymmetricKey.AsymKeyType;
+import uk.co.tolcroft.models.security.SymmetricKey.SymKeyType;
 
 public class ControlKey extends DataItem<ControlKey> {
 	/**
@@ -628,7 +628,7 @@ public class ControlKey extends DataItem<ControlKey> {
 			if (!isIdUnique(uId)) 
 				throw new Exception(ExceptionClass.DATA,
 									myKey,
-									"Duplicate ControlKeyId <" + uId + ">");
+									"Duplicate ControlKeyId (" + uId + ")");
 			 
 			/* Add to the list */
 			add(myKey);

@@ -3,9 +3,9 @@ package uk.co.tolcroft.models.data;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Number;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.security.SecurityControl;
 import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
-import uk.co.tolcroft.security.SecurityControl;
 
 public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem<T> {
 	/**
@@ -287,13 +287,12 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			while ((myCurr = myIterator.next()) != null) {
 				/* Locate the item in the base list */
 				myBase = pBase.searchFor(myCurr.getId());
-				if (myBase == null) continue;
 				
 				/* Cast the items correctly */
-				mySource = myClass.cast(myBase);
+				mySource = (myBase == null) ? null : myClass.cast(myBase);
 				myTarget = myClass.cast(myCurr);
 				
-				/* Adopt the security if found */
+				/* Adopt/initialise the security */
 				myTarget.adoptSecurity(pControl, mySource);
 			}
 		}

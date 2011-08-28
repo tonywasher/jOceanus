@@ -2,9 +2,9 @@ package uk.co.tolcroft.models.sheets;
 
 import java.io.File;
 
-import uk.co.tolcroft.finance.core.Threads.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.threads.ThreadStatus;
 
 public abstract class SpreadSheet<T extends DataSet<?>> {
 	/**
@@ -12,14 +12,14 @@ public abstract class SpreadSheet<T extends DataSet<?>> {
 	 *  @param pThread Thread Control for task
 	 *  @return the sheet reader
 	 */
-	protected abstract SheetReader<T> getSheetReader(statusCtl pThread);
+	protected abstract SheetReader<T> getSheetReader(ThreadStatus<T> pThread);
 	
 	/**
 	 *  Obtain a sheet writer
 	 *  @param pThread Thread Control for task
 	 *  @return the sheet writer
 	 */
-	protected abstract SheetWriter<T> getSheetWriter(statusCtl pThread);
+	protected abstract SheetWriter<T> getSheetWriter(ThreadStatus<T> pThread);
 	
 	/**
 	 *  Load a Backup Workbook
@@ -27,8 +27,8 @@ public abstract class SpreadSheet<T extends DataSet<?>> {
 	 *  @param pFile the backup file to load from
 	 *  @return the newly loaded data
 	 */
-	public T loadBackup(statusCtl 	pThread,
-	  		 			File 		pFile) throws Exception {
+	public T loadBackup(ThreadStatus<T> pThread,
+	  		 			File 			pFile) throws Exception {
 		/* Create a sheet reader object */
 		SheetReader<T> myReader = getSheetReader(pThread);
 			
@@ -45,9 +45,9 @@ public abstract class SpreadSheet<T extends DataSet<?>> {
 	 *  @param pData Data to write out
 	 *  @param pFile the backup file to write to
 	 */
-	public void createBackup(statusCtl 	pThread,
-							 T			pData,
-							 File 		pFile) throws Exception {
+	public void createBackup(ThreadStatus<T> 	pThread,
+							 T					pData,
+							 File 				pFile) throws Exception {
 		/* Create a sheet writer object */
 		SheetWriter<T> myWriter = getSheetWriter(pThread);
 			
@@ -61,8 +61,8 @@ public abstract class SpreadSheet<T extends DataSet<?>> {
 	 *  @param pFile the extract file to load from
 	 *  @return the newly loaded data
 	 */
-	public T loadExtract(statusCtl pThread,
-	  		 				  	   File 		pFile) throws Exception {
+	public T loadExtract(ThreadStatus<T>	pThread,
+	  		 			 File 				pFile) throws Exception {
 		/* Create a Sheet Reader object */
 		SheetReader<T> myReader = getSheetReader(pThread);
 			
@@ -79,9 +79,9 @@ public abstract class SpreadSheet<T extends DataSet<?>> {
 	 *  @param pData Data to write out
 	 *  @param pFile the extract file to write to
 	 */
-	public void createExtract(statusCtl 	pThread,
-							  T				pData,
-							  File 			pFile) throws Exception {
+	public void createExtract(ThreadStatus<T> 	pThread,
+							  T					pData,
+							  File 				pFile) throws Exception {
 		/* Create a SheetWriter object */
 		SheetWriter<T> myWriter = getSheetWriter(pThread);
 			

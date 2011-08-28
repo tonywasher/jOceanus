@@ -10,20 +10,20 @@ import java.util.List;
 
 import jxl.Workbook;
 import jxl.write.WritableWorkbook;
-import uk.co.tolcroft.finance.core.Threads.statusCtl;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.security.SecurityControl;
+import uk.co.tolcroft.models.security.ZipEntryMode;
+import uk.co.tolcroft.models.security.ZipFile;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
-import uk.co.tolcroft.security.SecurityControl;
-import uk.co.tolcroft.security.ZipEntryMode;
-import uk.co.tolcroft.security.ZipFile;
+import uk.co.tolcroft.models.threads.ThreadStatus;
 
 public abstract class SheetWriter<T extends DataSet<?>> {
 	/**
 	 * Thread control
 	 */
-	private statusCtl				theThread	= null;
+	private ThreadStatus<T>			theThread	= null;
 	
 	/**
 	 * Writable spreadsheet
@@ -46,7 +46,7 @@ public abstract class SheetWriter<T extends DataSet<?>> {
 	private SheetType				theType		= null;
 	
 	/* Access methods */
-	protected statusCtl			getThread()		{ return theThread; }
+	protected ThreadStatus<T>	getThread()		{ return theThread; }
 	protected WritableWorkbook	getWorkBook()	{ return theWorkBook; }
 	public 	  T					getData()		{ return theData; }
 	public 	  SheetType			getType()		{ return theType; }
@@ -55,7 +55,7 @@ public abstract class SheetWriter<T extends DataSet<?>> {
 	 * Constructor
 	 * @param pThread the Thread control
 	 */
-	protected SheetWriter(statusCtl pThread) { theThread = pThread; }
+	protected SheetWriter(ThreadStatus<T> pThread) { theThread = pThread; }
 	
 	/**
 	 * Add Sheet to list

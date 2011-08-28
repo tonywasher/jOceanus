@@ -7,11 +7,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import uk.co.tolcroft.finance.core.Threads.statusCtl;
 import uk.co.tolcroft.finance.data.Properties;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.threads.DataControl;
+import uk.co.tolcroft.models.threads.ThreadStatus;
 
 public abstract class Database<T extends DataSet<?>> {
 	/**
@@ -23,11 +24,6 @@ public abstract class Database<T extends DataSet<?>> {
 	 * Database connection
 	 */
 	private Connection          	theConn         = null;
-	
-	/**
-	 * DataSet
-	 */
-	private T          				theDataSet      = null;
 	
 	/**
 	 * List of Database tables
@@ -117,37 +113,19 @@ public abstract class Database<T extends DataSet<?>> {
 	}
 
 	/**
-	 * Record the DataSet 
-	 * @param pDataSet the DataSet
-	 */
-	protected void			declareData(T pDataSet) 	{
-		/* Record the DataSet */
-		theDataSet = pDataSet;
-		
-		/* Create the iterator */
-		Iterator<DatabaseTable<?>> 	myIterator;
-		DatabaseTable<?>			myTable;
-		myIterator = theTables.iterator();
-		
-		/* Loop through the tables */
-		while (myIterator.hasNext()) {
-			myTable = myIterator.next();
-			
-			/* Declare the data */
-			myTable.declareData(theDataSet);
-		}
-	}
-	
-	/**
 	 * Load data from the database 
 	 * @param pThread the thread control
 	 * @return the new DataSet
 	 */
-	public T loadDatabase(statusCtl 	pThread) throws Exception {
+	public T loadDatabase(ThreadStatus<T> 	pThread) throws Exception {
 		boolean bContinue 	= true;
 		
 		/* Set the number of stages */
 		if (!pThread.setNumStages(1+theTables.size())) return null;
+		
+		/* Create an empty DataSet */
+		DataControl<T> 	myView = pThread.getControl();
+		T				myData = myView.getNewData();
 		
 		/* Create the iterator */
 		Iterator<DatabaseTable<?>> 	myIterator;
@@ -160,7 +138,7 @@ public abstract class Database<T extends DataSet<?>> {
 			myTable = myIterator.next();
 			
 			/* Load the items */
-			bContinue = myTable.loadItems(pThread, theDataSet);
+			bContinue = myTable.loadItems(pThread, myData);
 		}
 		
 		/* analyse the data */
@@ -172,7 +150,7 @@ public abstract class Database<T extends DataSet<?>> {
 								"Operation Cancelled");
 		
 		/* Return the data */
-		return (bContinue) ? theDataSet : null;
+		return (bContinue) ? myData : null;
 	}
 	
 	/**
@@ -180,8 +158,8 @@ public abstract class Database<T extends DataSet<?>> {
 	 * @param pThread the thread control
 	 * @param pData the data
 	 */
-	public void updateDatabase(statusCtl 	pThread,
-							   T 			pData) throws Exception {
+	public void updateDatabase(ThreadStatus<T>	pThread,
+							   T 				pData) throws Exception {
 		boolean 		bContinue 	= true;
 		BatchControl	myBatch		= new BatchControl();
 		
@@ -249,7 +227,7 @@ public abstract class Database<T extends DataSet<?>> {
 	 * @param pThread the thread control
 	 * @return Continue <code>true/false</code>
 	 */
-	public void createTables(statusCtl 	pThread) throws Exception {
+	public void createTables(ThreadStatus<T>	pThread) throws Exception {
 		/* Drop any existing tables */
 		dropTables(pThread);
 		
@@ -275,7 +253,7 @@ public abstract class Database<T extends DataSet<?>> {
 	 * @param pThread the thread control
 	 * @return Continue <code>true/false</code>
 	 */
-	private void dropTables(statusCtl 	pThread) throws Exception {
+	private void dropTables(ThreadStatus<T>	pThread) throws Exception {
 		
 		/* Set the number of stages */
 		if (!pThread.setNumStages(1)) return;
@@ -284,11 +262,6 @@ public abstract class Database<T extends DataSet<?>> {
 		ListIterator<DatabaseTable<?>> 	myIterator;
 		DatabaseTable<?>				myTable;
 		myIterator = theTables.listIterator(theTables.size());
-		
-		/* Loop through the tables to the end of the list */
-		//while (myIterator.hasNext()) {
-		//	myTable = myIterator.next();
-		//}
 		
 		/* Loop through the tables in reverse order */
 		while (myIterator.hasPrevious()) {
@@ -307,7 +280,7 @@ public abstract class Database<T extends DataSet<?>> {
 	 * @param pThread the thread control
 	 * @return Continue <code>true/false</code>
 	 */
-	public void purgeTables(statusCtl 	pThread) throws Exception {
+	public void purgeTables(ThreadStatus<T>	pThread) throws Exception {
 		
 		/* Set the number of stages */
 		if (!pThread.setNumStages(1)) return;
@@ -316,11 +289,6 @@ public abstract class Database<T extends DataSet<?>> {
 		ListIterator<DatabaseTable<?>> 	myIterator;
 		DatabaseTable<?>				myTable;
 		myIterator = theTables.listIterator(theTables.size());
-		
-		/* Loop through the tables to the end of the list */
-		//while (myIterator.hasNext()) {
-		//	myTable = myIterator.next();
-		//}
 		
 		/* Loop through the tables in reverse order */
 		while (myIterator.hasPrevious()) {

@@ -15,6 +15,16 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	}
 	
 	/**
+	 * StaticData Name length
+	 */
+	public final static int NAMELEN = 50;
+
+	/**
+	 * StaticData Description length
+	 */
+	public final static int DESCLEN = 100;
+
+	/**
 	 * The Enum class of the Static Data
 	 */
 	private Class<E>		theEnumClass 	= null;

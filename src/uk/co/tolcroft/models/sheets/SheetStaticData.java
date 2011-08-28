@@ -1,6 +1,5 @@
 package uk.co.tolcroft.models.sheets;
 
-import uk.co.tolcroft.finance.data.StaticClass;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
@@ -149,10 +148,10 @@ public abstract class SheetStaticData <T extends StaticData<T,?>> extends SheetD
 
 			/* Set the name column width and range */
 			nameColumnRange(2, theNames);
-			setColumnWidth(2, StaticClass.NAMELEN);
+			setColumnWidth(2, StaticData.NAMELEN);
 			
 			/* Set description column width */
-			setColumnWidth(3, StaticClass.DESCLEN);
+			setColumnWidth(3, StaticData.DESCLEN);
 		}
 	}	
 }

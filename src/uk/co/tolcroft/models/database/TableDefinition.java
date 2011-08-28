@@ -15,7 +15,7 @@ import uk.co.tolcroft.models.Number.Money;
 import uk.co.tolcroft.models.Number.Rate;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.security.SymmetricKey;
+import uk.co.tolcroft.models.security.SymmetricKey;
 
 public class TableDefinition {
 	/**
