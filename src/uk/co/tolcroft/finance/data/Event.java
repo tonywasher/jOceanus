@@ -8,6 +8,7 @@ import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
@@ -1320,30 +1321,51 @@ public class Event extends EncryptedItem<Event> {
 			super(Event.class, pData, pStyle);
 		}
 
-		/** 
-	 	 * Construct a generic event list
-	 	 * @param pList the source event list 
-	 	 * @param pStyle the style of the list 
-	 	 */
-		public List(List pList, ListStyle pStyle) {
-			super(Event.class, pList, pStyle);
+
+		/**
+		 * Constructor for a cloned List
+		 * @param pSource the source List
+		 */
+		private List(List pSource) { 
+			super(pSource);
+		}
+		
+		/**
+		 * Construct an update extract for the List.
+		 * @return the update Extract
+		 */
+		private List getExtractList(ListStyle pStyle) {
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			
+			/* Obtain underlying updates */
+			populateList(pStyle);
+			
+			/* Return the list */
+			return myList;
 		}
 
+		/* Obtain extract lists. */
+		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
+		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
+		public List getClonedList() { return getExtractList(ListStyle.CORE); }
+
 		/** 
-	 	 * Construct a difference event list
-	 	 * @param pNew the new Event list 
-	 	 * @param pOld the old Event list 
-	 	 */
-		protected List(List pNew, List pOld) { 
-			super(pNew, pOld);
+		 * Construct a difference Event list
+		 * @param pNew the new Event list 
+		 * @param pOld the old Event list 
+		 */
+		protected List getDifferences(DataList<Event> pOld) { 
+			/* Build an empty Difference List */
+			List myList = new List(this);
+			
+			/* Calculate the differences */
+			myList.getDifferenceList(this, pOld);
+			
+			/* Return the list */
+			return myList;
 		}
-	
-		/** 
-	 	 * Clone an Event list
-	 	 * @return the cloned list
-	 	 */
-		protected List cloneIt() { return new List(this, ListStyle.DIFFER); }
-		
+
 		/**
 		 * Add a new item to the list
 		 * @param pItem the item to add

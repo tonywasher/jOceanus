@@ -7,6 +7,7 @@ import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.ui.FileSelector.BackupCreate;
+import uk.co.tolcroft.models.views.DataControl;
 
 public class CreateExtract<T extends DataSet<?>> extends WorkerThread<Void> {
 	/* Task description */

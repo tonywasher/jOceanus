@@ -1140,34 +1140,54 @@ public class Account extends EncryptedItem<Account> {
 	 	 * @param pData the DataSet for the list
 	 	 * @param pStyle the style of the list 
 	 	 */
-		public List(FinanceData pData, ListStyle pStyle) { 
-			super(Account.class, pData, pStyle);
-		}
+		//public List(FinanceData pData, ListStyle pStyle) { 
+		//	super(Account.class, pData, pStyle);
+		//}
 
-		/** 
-	 	 * Construct a generic account list
-	 	 * @param pList the source account list 
-	 	 * @param pStyle the style of the list 
-	 	 */
-		public List(List pList, ListStyle pStyle) { 
-			super(Account.class, pList, pStyle);
-		}
-
-		/** 
-	 	 * Construct a difference account list
-	 	 * @param pNew the new Account list 
-	 	 * @param pOld the old Account list 
-	 	 */
-		protected List(List pNew, List pOld) { 
-			super(pNew, pOld);
+		/**
+		 * Constructor for a cloned List
+		 * @param pSource the source List
+		 */
+		private List(List pSource) { 
+			super(pSource);
 		}
 		
+		/**
+		 * Construct an update extract for the List.
+		 * @return the update Extract
+		 */
+		private List getExtractList(ListStyle pStyle) {
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			
+			/* Obtain underlying updates */
+			populateList(pStyle);
+			
+			/* Return the list */
+			return myList;
+		}
+
+		/* Obtain extract lists. */
+		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
+		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
+		public List getClonedList() { return getExtractList(ListStyle.CORE); }
+
 		/** 
-	 	 * Clone an Account list
-	 	 * @return the cloned list
-	 	 */
-		protected List cloneIt() { return new List(this, ListStyle.DIFFER); }
-		
+		 * Construct a difference Account list
+		 * @param pNew the new Account list 
+		 * @param pOld the old Account list 
+		 */
+		protected List getDifferences(DataList<Account> pOld) { 
+			/* Build an empty Difference List */
+			List myList = new List(this);
+			
+			/* Calculate the differences */
+			myList.getDifferenceList(this, pOld);
+			
+			/* Return the list */
+			return myList;
+		}
+
 		/**
 		 * Add a new item to the list
 		 * @param pAccount item

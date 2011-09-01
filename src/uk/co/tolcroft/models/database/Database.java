@@ -7,12 +7,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import uk.co.tolcroft.finance.data.Properties;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.threads.DataControl;
+import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.threads.ThreadStatus;
+import uk.co.tolcroft.models.views.DataControl;
 
 public abstract class Database<T extends DataSet<?>> {
 	/**

@@ -28,6 +28,7 @@ import uk.co.tolcroft.finance.core.LoadArchive;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.help.*;
 import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugWindow;
 import uk.co.tolcroft.models.help.HelpWindow;
@@ -646,9 +647,10 @@ public class MainTab implements ActionListener,
 		
 		/* Access the Report panel */
 		iIndex = theTabs.indexOfTab(titleReport);
+		showTab = (!hasWorker && !hasUpdates); 
 		
 		/* Enable/Disable the reports tab */
-		if (iIndex != -1) theTabs.setEnabledAt(iIndex, !hasUpdates);		
+		if (iIndex != -1) theTabs.setEnabledAt(iIndex, showTab);		
 		
 		/* Access the SpotView panel and determine its status */
 		iIndex = theTabs.indexOfTab(titleSpotView);

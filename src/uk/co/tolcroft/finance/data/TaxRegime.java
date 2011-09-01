@@ -3,6 +3,7 @@ package uk.co.tolcroft.finance.data;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.finance.data.StaticClass.TaxRegClass;
 
@@ -134,26 +135,50 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 		protected List(FinanceData pData) { 
 			super(TaxRegime.class, pData, ListStyle.CORE); }
 
-		/** 
-	 	 * Construct a generic tax regime list
-	 	 * @param pList the source Tax Regime list 
-	 	 * @param pStyle the style of the list 
-	 	 */
-		public List(List pList, ListStyle pStyle) { super(TaxRegime.class, pList, pStyle); }
+		/**
+		 * Constructor for a cloned List
+		 * @param pSource the source List
+		 */
+		private List(List pSource) { 
+			super(pSource);
+		}
+		
+		/**
+		 * Construct an update extract for the List.
+		 * @return the update Extract
+		 */
+		private List getExtractList(ListStyle pStyle) {
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			
+			/* Obtain underlying updates */
+			populateList(pStyle);
+			
+			/* Return the list */
+			return myList;
+		}
+
+		/* Obtain extract lists. */
+		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
+		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
+		public List getClonedList() { return getExtractList(ListStyle.CORE); }
 
 		/** 
-	 	 * Construct a difference tax regime list
-	 	 * @param pNew the new TaxRegime list 
-	 	 * @param pOld the old TaxRegime list 
-	 	 */
-		protected List(List pNew, List pOld) { super(pNew, pOld); }
-		
-		/** 
-	 	 * Clone a TaxRegime list
-	 	 * @return the cloned list
-	 	 */
-		protected List cloneIt() { return new List(this, ListStyle.CORE); }
-		
+		 * Construct a difference ControlData list
+		 * @param pNew the new ControlData list 
+		 * @param pOld the old ControlData list 
+		 */
+		protected List getDifferences(DataList<TaxRegime> pOld) { 
+			/* Build an empty Difference List */
+			List myList = new List(this);
+			
+			/* Calculate the differences */
+			myList.getDifferenceList(this, pOld);
+			
+			/* Return the list */
+			return myList;
+		}
+
 		/**
 		 * Add a new item to the list
 		 * @param pItem item to be added

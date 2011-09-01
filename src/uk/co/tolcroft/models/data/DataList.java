@@ -27,10 +27,21 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 	private	IdManager<T>	theMgr	  	= null;
 		
 	/**
+	 * The base list (for extracts) 
+	 */
+	private	DataList<?>		theBase	  	= null;
+		
+	/**
 	 * Get the style of the list
 	 * @return the list style
 	 */
 	public 	ListStyle		getStyle()	{ return theStyle; }
+
+	/**
+	 * Get the style of the list
+	 * @return the list style
+	 */
+	protected 	void		setStyle(ListStyle pStyle)	{ theStyle = pStyle; }
 
 	/**
 	 * Get the EditState of the list
@@ -77,7 +88,8 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 
 	/**
 	 * Construct a new object
-	 * @param pStyle the new {@link finLink.itemCtl.ListStyle}
+	 * @param pClass the class of the underlying object
+	 * @param pStyle the new {@link ListStyle}
 	 * @param fromStart - should inserts be attempted from start/end of list
 	 */
 	protected DataList(Class<T>	 pClass,
@@ -89,17 +101,47 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 	}
 		
 	/**
-	 * Construct an update/edit/core extract of an itemCtl list
-	 * @param pList      The list to extract from
-	 * @param pStyle	 the Style of the list  
+	 * Construct a clone object
+	 * @param pSource the list to clone
 	 */
-	protected DataList(Class<T>	 	pClass,
-			   		   DataList<?> 	pList,
-			   		   ListStyle 	pStyle) {
-		/* Make this list the correct style */
-		super(pClass, false);
-		theStyle = pStyle;
+	protected DataList(DataList<T>	 pSource) {
+		super(pSource.getBaseClass(), false);
+		theStyle = ListStyle.VIEW;
 		theMgr	 = new IdManager<T>();
+		theBase  = pSource;
+	}
+		
+	/**
+	 * Construct an update extract for a DataList.
+	 * @return the update extract (or null if not core data list) 
+	 */
+	abstract protected DataList<T> getUpdateList();
+	
+	/**
+	 * Construct an edit extract for a DataList.
+	 * @return the edit extract (or null if not edit-able list) 
+	 */
+	abstract protected DataList<T> getEditList();
+	
+	/**
+	 * Obtain a clone of the list
+	 * @return the clone of  the list
+	 */
+	abstract protected DataList<T> getClonedList();
+		
+	/**
+	 * Construct an difference extract for a DataList.
+	 * @return the difference extract (or null if not differ-able list) 
+	 */
+	abstract protected DataList<T> getDifferences(DataList<T> pOld);
+	
+	/**
+	 * Populate an Extract List
+	 * @param pStyle the Style of the extract 
+	 */
+	protected void populateList(ListStyle pStyle) {
+		/* Make this list the correct style */
+		theStyle = pStyle;
 			
 		/* Local variables */
 		DataList<?>.ListIterator 	myIterator;
@@ -110,7 +152,7 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 		if (pStyle == ListStyle.UPDATE) setShowDeleted(true);
 			
 		/* Create an iterator for all items in the source list */
-		myIterator = pList.listIterator(true);
+		myIterator = theBase.listIterator(true);
 		
 		/* Loop through the list */
 		while ((myCurr = myIterator.next()) != null)  { 
@@ -124,7 +166,8 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 				if ((pStyle == ListStyle.UPDATE) &&
 					(myItem.getState() == DataState.CHANGED)) {
 					/* Ensure that we record the correct history */
-					if (myItem.getCurrentValues() != null) myItem.setHistory();
+					if (myItem.getCurrentValues() != null)
+						myItem.setHistory();
 				}
 			}
 		}
@@ -136,15 +179,12 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 	 * Items that are in the new list, but not in the old list will be viewed as inserted.
 	 * Items that are in the old list but not in the new list will be viewed as deleted.
 	 * Items that are in both list but differ will be viewed as changed 
-	 * 
-	 * @param pNew The new list to extract from 
-	 * @param pOld The old list to extract from 
+	 * @param pNew The new list to compare 
+	 * @param pOld The old list to compare 
 	 */
-	protected DataList(DataList<T> pNew, DataList<T> pOld) {
+	protected void getDifferenceList(DataList<T> pNew, DataList<T> pOld) {
 		/* Make this list the correct style */
-		super(pNew.getBaseClass(), false);
 		theStyle = ListStyle.DIFFER;
-		theMgr	 = new IdManager<T>();
 			
 		/* Local variables */
 		ListIterator 	myIterator;
@@ -154,7 +194,7 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 		DataList<T>		myOld;
 			
 		/* Create a clone of the old list */
-		myOld = pOld.cloneIt();
+		myOld = pOld.getClonedList();
 			
 		/* Note that this list should show deleted items */
 		setShowDeleted(true);
@@ -222,7 +262,7 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 		DataList<T>		myBase;
 			
 		/* Create a clone of the base list */
-		myBase = pBase.cloneIt();
+		myBase = pBase.getClonedList();
 			
 		/* Create an iterator for our new list */
 		myIterator = listIterator(true);
@@ -400,12 +440,6 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 		theMgr.setNewId(pItem);		
 	}
 	
-	/**
-	 * Obtain a clone of the list
-	 * @return the clone of  the list
-	 */
-	abstract protected DataList<T> cloneIt();
-		
 	/**
 	 * Obtain the type of the list
 	 * @return the type of the list
@@ -658,18 +692,18 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 			}
 		}
 	}
-		
+
 	/** 
 	 * Prepare changes in an edit view back into the core data
 	 * @param pChanges - edit view with changes to apply
 	 */
-	public void prepareChanges(DataList<?> pChanges) {
-		DataList<?>.ListIterator 	myIterator;
-		DataItem<T>					myCurr;
-		DataItem<?>					myBase;
+	public void prepareChanges() {
+		ListIterator 	myIterator;
+		DataItem<T>		myCurr;
+		DataItem<?>		myBase;
 			
 		/* Create an iterator for the changes list */
-		myIterator = pChanges.listIterator(true);
+		myIterator = listIterator(true);
 			
 		/* Loop through the elements */
 		while ((myCurr = myIterator.next()) != null) {		
@@ -683,7 +717,7 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 				/* If this is a new item, add it to the list */
 				case NEW:
 					/* Link this item to the new item */
-					myCurr.setBase(addNewItem(myCurr));
+					myCurr.setBase(theBase.addNewItem(myCurr));
 					break;
 						
 				/* If this is a deleted or deleted-changed item */
@@ -719,7 +753,7 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 					myBase.setState(DataState.CHANGED);
 						
 					/* Re-sort the item */
-					reSort(getBaseClass().cast(myBase));
+					theBase.reSort(myBase);
 					break;
 			}
 		}
@@ -727,15 +761,14 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 		
 	/** 
 	 * RollBack changes in an edit view that have been applied to core data
-	 * @param pChanges - edit view with changes that have been applied
 	 */
-	public void rollBackChanges(DataList<? extends DataItem<?>> pChanges) {
-		DataList<? extends DataItem<?>>.ListIterator 	myIterator;
-		DataItem<?>										myCurr;
-		DataItem<?>										myBase;
+	public void rollBackChanges() {
+		ListIterator 	myIterator;
+		DataItem<T>		myCurr;
+		DataItem<?>		myBase;
 			
-		/* Create an iterator for the changes list */
-		myIterator = pChanges.listIterator(true);
+		/* Create an iterator for this list */
+		myIterator = listIterator(true);
 			
 		/* Loop through the elements */
 		while ((myCurr = myIterator.next()) != null) {		
@@ -749,7 +782,7 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 				/* If this is a new item, remove the base item */
 				case NEW:
 					/* Remove the base item and its reference */
-					remove(myCurr.getBase());	
+					theBase.remove(myCurr.getBase());	
 					myCurr.setBase(null);
 					break;
 						
@@ -792,7 +825,7 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 					}
 						
 					/* Re-sort the item */
-					reSort(getBaseClass().cast(myBase));
+					theBase.reSort(myBase);
 					break;
 			}
 		}
@@ -800,14 +833,13 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 		
 	/** 
 	 * Commit changes in an edit view that have been applied to the core data
-	 * @param pChanges - edit view with changes that have been applied
 	 */
-	public void commitChanges(DataList<? extends DataItem<?>> pChanges) {
-		DataList<? extends DataItem<?>>.ListIterator 	myIterator;
-		DataItem<?>									myCurr;
+	public void commitChanges() {
+		ListIterator 	myIterator;
+		DataItem<T>		myCurr;
 			
-		/* Create an iterator for the changes list */
-		myIterator = pChanges.listIterator(true);
+		/* Create an iterator for this list */
+		myIterator = listIterator(true);
 			
 		/* Loop through the elements */
 		while ((myCurr = myIterator.next()) != null) {		

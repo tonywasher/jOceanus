@@ -3,6 +3,7 @@ package uk.co.tolcroft.finance.data;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.finance.data.StaticClass.FreqClass;
 
@@ -99,26 +100,50 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 		protected List(FinanceData pData) { 
 			super(Frequency.class, pData, ListStyle.CORE); }
 		
-		/** 
-	 	 * Construct a generic frequency data list
-	 	 * @param pList the source Frequency list 
-	 	 * @param pStyle the style of the list 
-	 	 */
-		public List(List pList, ListStyle pStyle) { super(Frequency.class, pList, pStyle); }
+		/**
+		 * Constructor for a cloned List
+		 * @param pSource the source List
+		 */
+		private List(List pSource) { 
+			super(pSource);
+		}
+		
+		/**
+		 * Construct an update extract for the List.
+		 * @return the update Extract
+		 */
+		private List getExtractList(ListStyle pStyle) {
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			
+			/* Obtain underlying updates */
+			populateList(pStyle);
+			
+			/* Return the list */
+			return myList;
+		}
+
+		/* Obtain extract lists. */
+		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
+		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
+		public List getClonedList() { return getExtractList(ListStyle.CORE); }
 
 		/** 
-	 	 * Construct a difference static data list
-	 	 * @param pNew the new static data list 
-	 	 * @param pOld the old static data list 
-	 	 */
-		protected List(List pNew, List pOld) { super(pNew, pOld); }
-		
-		/** 
-	 	 * Clone a Frequency list
-	 	 * @return the cloned list
-	 	 */
-		protected List cloneIt() { return new List(this, ListStyle.CORE); }
-		
+		 * Construct a difference ControlData list
+		 * @param pNew the new ControlData list 
+		 * @param pOld the old ControlData list 
+		 */
+		protected List getDifferences(DataList<Frequency> pOld) { 
+			/* Build an empty Difference List */
+			List myList = new List(this);
+			
+			/* Calculate the differences */
+			myList.getDifferenceList(this, pOld);
+			
+			/* Return the list */
+			return myList;
+		}
+
 		/**
 		 * Obtain the type of the item
 		 * @return the type of the item

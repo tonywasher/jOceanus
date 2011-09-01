@@ -507,26 +507,14 @@ public abstract class StaticData<T extends StaticData<T,E>,
 			super(pClass, pData, pStyle);
 		}
 
-		/** 
-	 	 * Construct a generic static data list
-	 	 * @param pList the source Data list 
-	 	 * @param pStyle the style of the list 
-	 	 */
-		public StaticList(Class<T> 			pClass, 
-						  StaticList<T,E> 	pList,
-						  ListStyle 		pStyle) { 
-			super(pClass, pList, pStyle);
+		/**
+		 * Constructor for a cloned List
+		 * @param pSource the source List
+		 */
+		protected StaticList(StaticList<T, E> pSource) { 
+			super(pSource);
 		}
-
-		/** 
-	 	 * Construct a difference static data list
-	 	 * @param pNew the new static data list 
-	 	 * @param pOld the old static data list 
-	 	 */
-		protected StaticList(StaticList<T,E> pNew, StaticList<T,E> pOld) { 
-			super(pNew, pOld);
-		}
-				
+		
 		/* List Iterators */
 		public void setNewId(T pItem)	{ super.setNewId(pItem); }
 		

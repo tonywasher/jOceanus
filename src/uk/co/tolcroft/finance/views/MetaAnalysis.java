@@ -6,6 +6,7 @@ import uk.co.tolcroft.finance.views.Analysis.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.Properties;
 
 public class MetaAnalysis {
 	/* Members */

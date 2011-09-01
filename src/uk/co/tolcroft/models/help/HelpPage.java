@@ -193,12 +193,12 @@ public class HelpPage extends DataItem<HelpPage> {
 		 */
 		public String itemType() {	return itemType; }
 
-		/** 
-	 	 * Clone a HelpPage list
-	 	 * @return the cloned list
-	 	 */
-		protected List cloneIt() { return null; }
-		
+		/* Obtain extract lists. (not supported) */
+		public List getUpdateList() { return null; }
+		public List getEditList() 	{ return null; }
+		public List getClonedList() { return null; }
+		public List getDifferences(DataList<HelpPage> pOld) { return null; }
+
 		/**
 		 * Add a new item to the list
 		 * 

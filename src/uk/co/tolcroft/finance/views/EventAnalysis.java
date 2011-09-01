@@ -9,11 +9,12 @@ import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.HistoryValues;
+import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugObject;
 import uk.co.tolcroft.models.help.DebugManager.*;
-import uk.co.tolcroft.models.threads.DataControl;
+import uk.co.tolcroft.models.views.DataControl;
 import uk.co.tolcroft.models.Exception;
 
 public class EventAnalysis implements DebugObject {
@@ -576,12 +577,12 @@ public class EventAnalysis implements DebugObject {
 			theEvents = pEvents;
 		}
 
-		/** 
-	 	 * Clone a Bucket list
-	 	 * @return the cloned list
-	 	 */
-		protected List cloneIt() { return null; }
-		
+		/* Obtain extract lists. */
+		public List getUpdateList() { return null; }
+		public List getEditList() 	{ return null; }
+		public List getClonedList() { return null; }
+		public List getDifferences(DataList<AnalysisYear> pOld) { return null; }
+
 		/**
 		 * Add a new item to the list
 		 * @param pItem the item to add

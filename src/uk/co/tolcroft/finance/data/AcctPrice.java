@@ -467,8 +467,9 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		/* Members */
 		private Account	theAccount	= null;
 
-		/* Access DataSet correctly */
-		public FinanceData getData() { return (FinanceData) super.getData(); }
+		/* Access Extra Variables correctly */
+		public FinanceData 	getData() 		{ return (FinanceData) super.getData(); }
+		public Account 		getAccount() 	{ return theAccount; }
 		
 		/** 
 		 * Construct an empty CORE price list
@@ -483,38 +484,64 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	 	 * @param pData the DataSet for the list
 		 * @param pStyle the style of the list 
 		 */
-		public List(FinanceData pData, ListStyle pStyle) {
-			super(AcctPrice.class, pData, pStyle);
-		}
+		//public List(FinanceData pData, ListStyle pStyle) {
+		//	super(AcctPrice.class, pData, pStyle);
+		//}
 
-		/** 
-		 * Construct a generic Price list
-		 * @param pList the source price list 
-		 * @param pStyle the style of the list 
+		/**
+		 * Constructor for a cloned List
+		 * @param pSource the source List
 		 */
-		public List(List pList, ListStyle pStyle) { 
-			super(AcctPrice.class, pList, pStyle);
+		private List(List pSource) { 
+			super(pSource);
+		}
+		
+		/**
+		 * Construct an update extract for the List.
+		 * @return the update Extract
+		 */
+		private List getExtractList(ListStyle pStyle) {
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			
+			/* Obtain underlying updates */
+			populateList(pStyle);
+			
+			/* Return the list */
+			return myList;
 		}
 
+		/* Obtain extract lists. */
+		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
+		public List getEditList() 	{ return null; }
+		public List getClonedList() { return getExtractList(ListStyle.CORE); }
+
 		/** 
-		 * Construct a difference price list
+		 * Construct a difference Price list
 		 * @param pNew the new Price list 
 		 * @param pOld the old Price list 
 		 */
-		protected List(List pNew, List pOld) { 
-			super(pNew, pOld);
+		protected List getDifferences(DataList<AcctPrice> pOld) { 
+			/* Build an empty Difference List */
+			List myList = new List(this);
+			
+			/* Calculate the differences */
+			myList.getDifferenceList(this, pOld);
+			
+			/* Return the list */
+			return myList;
 		}
 
 		/**
 		 * Construct an edit extract of a Price list
-		 * 
-		 * @param pList      The list to extract from
-		 * @param pAccount	 The account to extract rates for 
+		 * @param pAccount	 The account to extract prices for 
 		 */
-		public List(List 	pList,
-					Account pAccount) {
+		public List getEditList(Account pAccount) {
+			/* Build an empty Update */
+			List myList = new List(this);
+			
 			/* Make this list the correct style */
-			super(AcctPrice.class, pList.getData(), ListStyle.EDIT);
+			myList.setStyle(ListStyle.EDIT);
 
 			/* Local variables */
 			AcctPrice 			myCurr;
@@ -526,27 +553,24 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 				pAccount = pAccount.getAlias();
 			
 			/* Store the account */
-			theAccount = pAccount;
+			myList.theAccount = pAccount;
 
 			/* Access the list iterator */
-			myIterator = pList.listIterator(true);
+			myIterator = listIterator(true);
 			
 			/* Loop through the list */
 			while ((myCurr = myIterator.next()) != null) {
 				/* If this item belongs to the account */
 				if (!Account.differs(myCurr.getAccount(), pAccount)) {
 					/* Copy the item */
-					myItem = new AcctPrice(this, myCurr);
-					add(myItem);
+					myItem = new AcctPrice(myList, myCurr);
+					myList.add(myItem);
 				}
 			}
+			
+			/* Return the List */
+			return myList;
 		}
-
-		/** 
-		 * 	Clone a Price list
-		 * @return the cloned list
-		 */
-		protected List cloneIt() {return new List(this, ListStyle.DIFFER); }
 
 		/* Is this list locked */
 		public boolean isLocked() { return ((theAccount != null) && (theAccount.isLocked())); }
@@ -615,7 +639,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		 *   @return The relevant Price record 
 		 */
 		public AcctPrice getLatestPrice(Account pAccount,
-									Date 	pDate) {
+										Date 	pDate) {
 			ListIterator 	myIterator;
 			AcctPrice 			myPrice = null;
 			AcctPrice 			myCurr;

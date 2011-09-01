@@ -1,6 +1,10 @@
-package uk.co.tolcroft.finance.views;
+package uk.co.tolcroft.models.views;
 
+import uk.co.tolcroft.finance.views.Statement;
+import uk.co.tolcroft.finance.views.View;
+import uk.co.tolcroft.finance.views.ViewPrice;
 import uk.co.tolcroft.finance.views.View.*;
+import uk.co.tolcroft.finance.views.ViewPrice.List;
 
 public class AccountSet {
 	/* Members */

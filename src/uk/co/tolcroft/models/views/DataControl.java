@@ -1,11 +1,11 @@
-package uk.co.tolcroft.models.threads;
+package uk.co.tolcroft.models.views;
 
 import java.util.HashMap;
 
 import javax.swing.JFrame;
 
-import uk.co.tolcroft.finance.data.Properties;
 import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;

@@ -8,6 +8,7 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.ui.FileSelector.BackupLoad;
+import uk.co.tolcroft.models.views.DataControl;
 
 public class LoadExtract<T extends DataSet<?>> extends LoaderThread<T> {
 	/* Task description */

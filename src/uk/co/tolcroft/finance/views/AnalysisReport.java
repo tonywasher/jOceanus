@@ -7,6 +7,7 @@ import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.Properties;
 
 public class AnalysisReport {
 	/* Properties */

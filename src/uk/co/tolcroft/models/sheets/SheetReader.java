@@ -17,8 +17,8 @@ import uk.co.tolcroft.models.security.SecurityControl;
 import uk.co.tolcroft.models.security.SecuritySignature;
 import uk.co.tolcroft.models.security.ZipFile;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
-import uk.co.tolcroft.models.threads.DataControl;
 import uk.co.tolcroft.models.threads.ThreadStatus;
+import uk.co.tolcroft.models.views.DataControl;
 
 public abstract class SheetReader<T extends DataSet<?>> {
 	/**

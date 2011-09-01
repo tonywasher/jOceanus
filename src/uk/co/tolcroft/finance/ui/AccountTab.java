@@ -19,6 +19,7 @@ import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.data.DataList.*;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
+import uk.co.tolcroft.models.views.AccountSet;
 
 public class AccountTab implements financePanel,
 								   ChangeListener {

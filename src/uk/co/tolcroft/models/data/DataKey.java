@@ -352,31 +352,50 @@ public class DataKey extends DataItem<DataKey> {
 			theData = pData;
 		}
 
-		/** 
-		 * Construct a generic DataKey list
-		 * @param pList the source DataKey list 
-		 * @param pStyle the style of the list 
+		/**
+		 * Constructor for a cloned List
+		 * @param pSource the source List
 		 */
-		public List(List pList, ListStyle pStyle) { 
-			super(DataKey.class, pList, pStyle);
-			theData = pList.theData;
+		private List(List pSource) { 
+			super(pSource);
+			theData = pSource.theData;
+		}
+		
+		/**
+		 * Construct an update extract for the List.
+		 * @return the update Extract
+		 */
+		private List getExtractList(ListStyle pStyle) {
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			
+			/* Obtain underlying updates */
+			populateList(pStyle);
+			
+			/* Return the list */
+			return myList;
 		}
 
-		/** 
-		 * Construct a difference DataKey list
-		 * @param pNew the new DataKey list 
-		 * @param pOld the old DataKey list 
-		 */
-		protected List(List pNew, List pOld) { 
-			super(pNew, pOld);
-			theData = pNew.theData;
-		}
+		/* Obtain extract lists. */
+		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
+		public List getEditList() 	{ return null; }
+		public List getClonedList() { return getExtractList(ListStyle.CORE); }
 
 		/** 
-		 * 	Clone a DataKey list
-		 * @return the cloned list
+		 * Construct a difference ControlData list
+		 * @param pNew the new ControlData list 
+		 * @param pOld the old ControlData list 
 		 */
-		protected List cloneIt() {return new List(this, ListStyle.CORE); }
+		protected List getDifferences(DataList<DataKey> pOld) { 
+			/* Build an empty Difference List */
+			List myList = new List(this);
+			
+			/* Calculate the differences */
+			myList.getDifferenceList(this, pOld);
+			
+			/* Return the list */
+			return myList;
+		}
 
 		/**
 		 * Add a new item to the core list

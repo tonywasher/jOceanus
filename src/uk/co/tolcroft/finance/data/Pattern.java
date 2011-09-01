@@ -6,6 +6,7 @@ import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
@@ -731,8 +732,9 @@ public class Pattern extends EncryptedItem<Pattern> {
 		/* Local values */
 		private Account	theAccount	= null;
 		
-		/* Access DataSet correctly */
-		public FinanceData getData() { return (FinanceData) super.getData(); }
+		/* Access Extra Variables correctly */
+		public FinanceData 	getData() 		{ return (FinanceData) super.getData(); }
+		public Account 		getAccount() 	{ return theAccount; }
 		
 	 	/** 
 	 	 * Construct an empty CORE pattern list
@@ -747,67 +749,91 @@ public class Pattern extends EncryptedItem<Pattern> {
 	 	 * @param pData the DataSet for the list
 	 	 * @param pStyle the style of the list 
 	 	 */
-		protected List(FinanceData pData, ListStyle pStyle) { 
-			super(Pattern.class, pData, pStyle);
-		}
+		//protected List(FinanceData pData, ListStyle pStyle) { 
+		//	super(Pattern.class, pData, pStyle);
+		//}
 
-		/** 
-	 	 * Construct a generic pattern list
-	 	 * @param pList the source pattern list 
-	 	 * @param pStyle the style of the list 
-	 	 */
-		public List(List pList, ListStyle pStyle) { 
-			super(Pattern.class, pList, pStyle);
-		}
 
-		/** 
-	 	 * Construct a difference pattern list
-	 	 * @param pNew the new Pattern list 
-	 	 * @param pOld the old Pattern list 
-	 	 */
-		protected List(List pNew, List pOld) { 
-			super(pNew, pOld);
+		/**
+		 * Constructor for a cloned List
+		 * @param pSource the source List
+		 */
+		private List(List pSource) { 
+			super(pSource);
 		}
 		
 		/**
+		 * Construct an update extract for the List.
+		 * @return the update Extract
+		 */
+		private List getExtractList(ListStyle pStyle) {
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			
+			/* Obtain underlying updates */
+			populateList(pStyle);
+			
+			/* Return the list */
+			return myList;
+		}
+
+		/* Obtain extract lists. */
+		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
+		public List getEditList() 	{ return null; }
+		public List getClonedList() { return getExtractList(ListStyle.CORE); }
+
+		/** 
+		 * Construct a difference ControlData list
+		 * @param pNew the new ControlData list 
+		 * @param pOld the old ControlData list 
+		 */
+		protected List getDifferences(DataList<Pattern> pOld) { 
+			/* Build an empty Difference List */
+			List myList = new List(this);
+			
+			/* Calculate the differences */
+			myList.getDifferenceList(this, pOld);
+			
+			/* Return the list */
+			return myList;
+		}
+
+		/**
 		 * Construct an edit extract of a Pattern list
-		 * 
-		 * @param pList      The list to extract from
 		 * @param pAccount	 The account to extract patterns for 
 		 */
-		public List(List 	pList,
-					Account pAccount) {
-			/* Make this list the correct style */
-			super(Pattern.class, pList.getData(), ListStyle.EDIT);
+		public List getEditList(Account pAccount) {
+			/* Build an empty Update */
+			List myList = new List(this);
 			
+			/* Make this list the correct style */
+			myList.setStyle(ListStyle.EDIT);
+
 			/* Local variables */
 			Pattern 		myCurr;
 			Pattern 		myItem;
 			ListIterator 	myIterator;
 			
 			/* Store the account */
-			theAccount = pAccount;
+			myList.theAccount = pAccount;
 			
 			/* Access the list iterator */
-			myIterator = pList.listIterator(true);
+			myIterator = listIterator(true);
 			
 			/* Loop through the Prices */
 			while ((myCurr = myIterator.next()) != null) {
 				/* If this item belongs to the account */
 				if (!Account.differs(myCurr.getAccount(), pAccount)) {
 					/* Copy the item */
-					myItem = new Pattern(this, myCurr);
-					add(myItem);
+					myItem = new Pattern(myList, myCurr);
+					myList.add(myItem);
 				}
 			}
+			
+			/* Return the List */
+			return myList;
 		}
 	
-		/** 
-	 	 * Clone a Pattern list
-	 	 * @return the cloned list
-	 	 */
-		protected List cloneIt() { return new List(this, ListStyle.DIFFER); }
-		
 		/* Is this list locked */
 		public boolean isLocked() { return (theAccount != null) && (theAccount.isLocked()); }
 		

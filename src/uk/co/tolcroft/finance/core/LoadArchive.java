@@ -7,10 +7,10 @@ import uk.co.tolcroft.finance.sheets.FinanceSheet;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.database.Database;
-import uk.co.tolcroft.models.threads.DataControl;
 import uk.co.tolcroft.models.threads.LoaderThread;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.ui.FileSelector.ArchiveLoad;
+import uk.co.tolcroft.models.views.DataControl;
 
 public class LoadArchive extends LoaderThread<FinanceData> {
 	/* Task description */

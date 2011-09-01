@@ -3,6 +3,7 @@ package uk.co.tolcroft.models.threads;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.views.DataControl;
 
 public abstract class LoaderThread<T extends DataSet<?>> extends WorkerThread<T> { 
 	private DataControl<T>	theControl	= null;

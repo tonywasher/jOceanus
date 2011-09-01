@@ -6,6 +6,7 @@ import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
@@ -426,8 +427,9 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		/* Members */
 		private Account	theAccount	= null;
 
-		/* Access DataSet correctly */
-		public FinanceData getData() { return (FinanceData) super.getData(); }
+		/* Access Extra Variables correctly */
+		public FinanceData 	getData() 		{ return (FinanceData) super.getData(); }
+		public Account 		getAccount() 	{ return theAccount; }
 		
 		/** 
 		 * Construct an empty CORE rate list
@@ -442,38 +444,64 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	 	 * @param pData the DataSet for the list
 		 * @param pStyle the style of the list 
 		 */
-		protected List(FinanceData pData, ListStyle pStyle) { 
-			super(AcctRate.class, pData, pStyle);
-		}
+		//protected List(FinanceData pData, ListStyle pStyle) { 
+		//	super(AcctRate.class, pData, pStyle);
+		//}
 
-		/** 
-		 * Construct a generic rate list
-		 * @param pList the source rate list 
-		 * @param pStyle the style of the list 
+		/**
+		 * Constructor for a cloned List
+		 * @param pSource the source List
 		 */
-		public List(List pList, ListStyle pStyle) {
-			super(AcctRate.class, pList, pStyle);
+		private List(List pSource) { 
+			super(pSource);
+		}
+		
+		/**
+		 * Construct an update extract for the List.
+		 * @return the update Extract
+		 */
+		private List getExtractList(ListStyle pStyle) {
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			
+			/* Obtain underlying updates */
+			populateList(pStyle);
+			
+			/* Return the list */
+			return myList;
 		}
 
+		/* Obtain extract lists. */
+		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
+		public List getEditList() 	{ return null; }
+		public List getClonedList() { return getExtractList(ListStyle.CORE); }
+
 		/** 
-		 * Construct a difference rate list
+		 * Construct a difference Rate list
 		 * @param pNew the new Rate list 
 		 * @param pOld the old Rate list 
 		 */
-		protected List(List pNew, List pOld) { 
-			super(pNew, pOld);
+		protected List getDifferences(DataList<AcctRate> pOld) { 
+			/* Build an empty Difference List */
+			List myList = new List(this);
+			
+			/* Calculate the differences */
+			myList.getDifferenceList(this, pOld);
+			
+			/* Return the list */
+			return myList;
 		}
 
 		/**
 		 * Construct an edit extract of a Rate list
-		 * 
-		 * @param pList      The list to extract from
 		 * @param pAccount	 The account to extract rates for 
 		 */
-		public List(List 	pList,
-				  	Account pAccount) {
+		public List getEditList(Account pAccount) {
+			/* Build an empty Update */
+			List myList = new List(this);
+			
 			/* Make this list the correct style */
-			super(AcctRate.class, pList.getData(), ListStyle.EDIT);
+			myList.setStyle(ListStyle.EDIT);
 
 			/* Local variables */
 			ListIterator 	myIterator;
@@ -481,27 +509,24 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 			AcctRate 			myItem;
 
 			/* Store the account */
-			theAccount = pAccount;
+			myList.theAccount = pAccount;
 
 			/* Access the list iterator */
-			myIterator = pList.listIterator(true);
+			myIterator = listIterator(true);
 			
 			/* Loop through the list */
 			while ((myCurr = myIterator.next()) != null) {
 				/* If this item belongs to the account */
 				if (!Account.differs(myCurr.getAccount(), pAccount)) {
 					/* Copy the item */
-					myItem = new AcctRate(this, myCurr);
-					add(myItem);
+					myItem = new AcctRate(myList, myCurr);
+					myList.add(myItem);
 				}
 			}
+			
+			/* Return the List */
+			return myList;
 		}
-
-		/** 
-		 * Clone a Rate list
-		 * @return the cloned list
-		 */
-		protected List cloneIt() { return new List(this, ListStyle.DIFFER); }
 
 		/* Is this list locked */
 		public boolean isLocked() { return ((theAccount != null) && (theAccount.isLocked())); }

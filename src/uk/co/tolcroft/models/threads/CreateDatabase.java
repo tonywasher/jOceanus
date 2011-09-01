@@ -2,6 +2,7 @@ package uk.co.tolcroft.models.threads;
 
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
+import uk.co.tolcroft.models.views.DataControl;
 
 public class CreateDatabase<T extends DataSet<?>> 	extends WorkerThread<Void> {
 	/* Task description */

@@ -8,8 +8,8 @@ import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.*;
 
-import uk.co.tolcroft.finance.data.Properties;
-import uk.co.tolcroft.models.threads.DataControl;
+import uk.co.tolcroft.models.data.Properties;
+import uk.co.tolcroft.models.views.DataControl;
 
 public class FileSelector {
 	/**

@@ -4,6 +4,7 @@ import uk.co.tolcroft.finance.data.StaticClass.TransClass;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.StaticData;
 
 public class TransactionType extends StaticData<TransactionType, TransClass> {
@@ -409,26 +410,50 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 			super(TransactionType.class, pData, ListStyle.CORE);
 		}
 
-		/** 
-	 	 * Construct a generic transtype list
-	 	 * @param pList the source transtype list 
-	 	 * @param pStyle the style of the list 
-	 	 */
-		public List(List pList, ListStyle pStyle) {	super(TransactionType.class, pList, pStyle); }
+		/**
+		 * Constructor for a cloned List
+		 * @param pSource the source List
+		 */
+		private List(List pSource) { 
+			super(pSource);
+		}
+		
+		/**
+		 * Construct an update extract for the List.
+		 * @return the update Extract
+		 */
+		private List getExtractList(ListStyle pStyle) {
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			
+			/* Obtain underlying updates */
+			populateList(pStyle);
+			
+			/* Return the list */
+			return myList;
+		}
+
+		/* Obtain extract lists. */
+		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
+		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
+		public List getClonedList() { return getExtractList(ListStyle.CORE); }
 
 		/** 
-	 	 * Construct a difference transtype list
-	 	 * @param pNew the new TransType list 
-	 	 * @param pOld the old TransType list 
-	 	 */
-		protected List(List pNew, List pOld) { super(pNew, pOld); }
-	
-		/** 
-	 	 * Clone a TransType list
-	 	 * @return the cloned list
-	 	 */
-		protected List cloneIt() { return new List(this, ListStyle.CORE); }
-		
+		 * Construct a difference ControlData list
+		 * @param pNew the new ControlData list 
+		 * @param pOld the old ControlData list 
+		 */
+		protected List getDifferences(DataList<TransactionType> pOld) { 
+			/* Build an empty Difference List */
+			List myList = new List(this);
+			
+			/* Calculate the differences */
+			myList.getDifferenceList(this, pOld);
+			
+			/* Return the list */
+			return myList;
+		}
+
 		/**
 		 * Add a new item to the list
 		 * @param pItem item to be added

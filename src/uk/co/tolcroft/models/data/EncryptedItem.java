@@ -221,25 +221,13 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			theData = pData;
 		}
 
-		/** 
-	 	 * Construct a generic account list
-	 	 * @param the class of items in the list 
-	 	 * @param pList the source account list 
-	 	 * @param pStyle the style of the list 
-	 	 */
-		public EncryptedList(Class<T> pClass, EncryptedList<T> pList, ListStyle pStyle) { 
-			super(pClass, pList, pStyle);
-			theData = pList.getData();
-		}
-
-		/** 
-	 	 * Construct a difference account list
-	 	 * @param pNew the new Account list 
-	 	 * @param pOld the old Account list 
-	 	 */
-		protected EncryptedList(EncryptedList<T> pNew, EncryptedList<T> pOld) { 
-			super(pNew, pOld);
-			theData = pNew.getData();
+		/**
+		 * Constructor for a cloned List
+		 * @param pSource the source List
+		 */
+		protected EncryptedList(EncryptedList<T> pSource) { 
+			super(pSource);
+			theData = pSource.theData;
 		}
 		
 		/**

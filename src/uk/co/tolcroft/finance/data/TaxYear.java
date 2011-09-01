@@ -997,37 +997,56 @@ public class TaxYear extends DataItem<TaxYear> {
 	 	 * @param pData the DataSet for the list
 	 	 * @param pStyle the style of the list 
 	 	 */
-		public List(FinanceData pData, ListStyle pStyle) { 
-			super(TaxYear.class, pStyle, false);
-			theData = pData;
-		}
+		//public List(FinanceData pData, ListStyle pStyle) { 
+		//	super(TaxYear.class, pStyle, false);
+		//	theData = pData;
+		//}
 
-		/** 
-	 	 * Construct a generic TaxYear list
-	 	 * @param pList the source TaxYear list 
-	 	 * @param pStyle the style of the list 
-	 	 */
-		public List(List pList, ListStyle pStyle) { 
-			super(TaxYear.class, pList, pStyle);
-			theData = pList.getData();
+		/**
+		 * Constructor for a cloned List
+		 * @param pSource the source List
+		 */
+		private List(List pSource) { 
+			super(pSource);
+			theData = pSource.theData;
 		}
-
-		/** 
-	 	 * Construct a difference TaxYear list
-	 	 * @param pNew the new TaxYear list 
-	 	 * @param pOld the old TaxYear list 
-	 	 */
-		protected List(List pNew, List pOld) { 
-			super(pNew, pOld);
-			theData = pNew.getData();
-		}
-	
-		/** 
-	 	 * Clone a TaxYear list
-	 	 * @return the cloned list
-	 	 */
-		protected List cloneIt() { return new List(this, ListStyle.DIFFER); }
 		
+		/**
+		 * Construct an update extract for the List.
+		 * @return the update Extract
+		 */
+		private List getExtractList(ListStyle pStyle) {
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			
+			/* Obtain underlying updates */
+			populateList(pStyle);
+			
+			/* Return the list */
+			return myList;
+		}
+
+		/* Obtain extract lists. */
+		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
+		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
+		public List getClonedList() { return getExtractList(ListStyle.CORE); }
+
+		/** 
+		 * Construct a difference ControlData list
+		 * @param pNew the new ControlData list 
+		 * @param pOld the old ControlData list 
+		 */
+		protected List getDifferences(DataList<TaxYear> pOld) { 
+			/* Build an empty Difference List */
+			List myList = new List(this);
+			
+			/* Calculate the differences */
+			myList.getDifferenceList(this, pOld);
+			
+			/* Return the list */
+			return myList;
+		}
+
 		/**
 		 * Add a new item to the core list
 		 * @param pTaxYear item

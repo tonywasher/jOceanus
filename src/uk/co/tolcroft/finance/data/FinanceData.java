@@ -7,9 +7,8 @@ import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.security.SecureManager;
-import uk.co.tolcroft.models.threads.DataControl;
+import uk.co.tolcroft.models.views.DataControl;
 
 public class FinanceData extends DataSet<ItemType> {
 	/* Members */
@@ -85,19 +84,19 @@ public class FinanceData extends DataSet<ItemType> {
 		getUpdateSet(myExtract);
 		
 		/* Build the static extract */
-		myExtract.theActTypes   = new AccountType.List(theActTypes, 		ListStyle.UPDATE);
-		myExtract.theTransTypes = new TransactionType.List(theTransTypes, 	ListStyle.UPDATE);
-		myExtract.theTaxTypes   = new TaxType.List(theTaxTypes, 			ListStyle.UPDATE);
-		myExtract.theTaxRegimes = new TaxRegime.List(theTaxRegimes, 		ListStyle.UPDATE);
-		myExtract.theFrequencys = new Frequency.List(theFrequencys, 		ListStyle.UPDATE);
+		myExtract.theActTypes   = theActTypes.getUpdateList();
+		myExtract.theTransTypes = theTransTypes.getUpdateList();
+		myExtract.theTaxTypes   = theTaxTypes.getUpdateList();
+		myExtract.theTaxRegimes = theTaxRegimes.getUpdateList();
+		myExtract.theFrequencys = theFrequencys.getUpdateList();
 		
 		/* Build the data extract */
-		myExtract.theTaxYears   = new TaxYear.List(theTaxYears, ListStyle.UPDATE);
-		myExtract.theAccounts   = new Account.List(theAccounts, ListStyle.UPDATE);
-		myExtract.theRates      = new AcctRate.List(theRates, 	ListStyle.UPDATE);
-		myExtract.thePrices     = new AcctPrice.List(thePrices, ListStyle.UPDATE);
-		myExtract.thePatterns   = new Pattern.List(thePatterns, ListStyle.UPDATE);
-		myExtract.theEvents     = new Event.List(theEvents, 	ListStyle.UPDATE);
+		myExtract.theTaxYears   = theTaxYears.getUpdateList();
+		myExtract.theAccounts   = theAccounts.getUpdateList();
+		myExtract.theRates      = theRates.getUpdateList();
+		myExtract.thePrices     = thePrices.getUpdateList();
+		myExtract.thePatterns   = thePatterns.getUpdateList();
+		myExtract.theEvents     = theEvents.getUpdateList();
 
 		/* Declare the lists */
 		myExtract.declareLists();
@@ -109,9 +108,9 @@ public class FinanceData extends DataSet<ItemType> {
 	/**
 	 * Construct a difference extract between two DataSets.
 	 * The difference extract will only contain items that differ between the two DataSets.
-	 * Items that are in the new list, but not in the old list will be viewed as inserted.
-	 * Items that are in the old list but not in the new list will be viewed as deleted.
-	 * Items that are in both list but differ will be viewed as changed 
+	 * Items that are in this list, but not in the old list will be viewed as inserted.
+	 * Items that are in the old list but not in this list will be viewed as deleted.
+	 * Items that are in both lists but differ will be viewed as changed 
 	 * @param pOld The DataSet to compare to 
 	 */
 	public DataSet<?> getDifferenceSet(DataSet<?> pOld) throws Exception {
@@ -127,22 +126,22 @@ public class FinanceData extends DataSet<ItemType> {
 		FinanceData myDiffers = new FinanceData(this);
 		
 		/* Obtain underlying differences */
-		getDifferenceSet(myDiffers, myOld);
+		myDiffers.getDifferenceSet(this, myOld);
 				
 		/* Build the static differences */
-		myDiffers.theActTypes  	= new AccountType.List(theActTypes, 		myOld.getAccountTypes());
-		myDiffers.theTransTypes = new TransactionType.List(theTransTypes, 	myOld.getTransTypes());
-		myDiffers.theTaxTypes	= new TaxType.List(theTaxTypes, 			myOld.getTaxTypes());
-		myDiffers.theTaxRegimes	= new TaxRegime.List(theTaxRegimes, 		myOld.getTaxRegimes());
-		myDiffers.theFrequencys	= new Frequency.List(theFrequencys, 		myOld.getFrequencys());
+		myDiffers.theActTypes  	= theActTypes.getDifferences(myOld.getAccountTypes());
+		myDiffers.theTransTypes = theTransTypes.getDifferences(myOld.getTransTypes());
+		myDiffers.theTaxTypes	= theTaxTypes.getDifferences(myOld.getTaxTypes());
+		myDiffers.theTaxRegimes	= theTaxRegimes.getDifferences(myOld.getTaxRegimes());
+		myDiffers.theFrequencys	= theFrequencys.getDifferences(myOld.getFrequencys());
 
 		/* Build the data differences */
-		myDiffers.theTaxYears  	= new TaxYear.List(theTaxYears, myOld.getTaxYears());
-		myDiffers.theAccounts  	= new Account.List(theAccounts, myOld.getAccounts());
-		myDiffers.theRates	  	= new AcctRate.List(theRates, 	myOld.getRates());
-		myDiffers.thePrices	  	= new AcctPrice.List(thePrices, myOld.getPrices());
-		myDiffers.thePatterns  	= new Pattern.List(thePatterns, myOld.getPatterns());
-		myDiffers.theEvents	  	= new Event.List(theEvents, 	myOld.getEvents());
+		myDiffers.theTaxYears  	= theTaxYears.getDifferences(myOld.getTaxYears());
+		myDiffers.theAccounts  	= theAccounts.getDifferences(myOld.getAccounts());
+		myDiffers.theRates	  	= theRates.getDifferences(myOld.getRates());
+		myDiffers.thePrices	  	= thePrices.getDifferences(myOld.getPrices());
+		myDiffers.thePatterns  	= thePatterns.getDifferences(myOld.getPatterns());
+		myDiffers.theEvents	  	= theEvents.getDifferences(myOld.getEvents());
 
 		/* Declare the lists */
 		myDiffers.declareLists();

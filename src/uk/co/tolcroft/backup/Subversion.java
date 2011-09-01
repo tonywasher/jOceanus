@@ -40,8 +40,8 @@ public class Subversion {
 	 * @param the input stream
 	 */
 	public void loadRepository(File 		pRepository,
-								InputStream	pStream) throws SVNException {
-		/* Dump the data to the output stream */
+							   InputStream	pStream) throws SVNException {
+		/* Read the data from the input stream */
 		theAdminClient.doLoad(pRepository, 
 							  pStream);
 

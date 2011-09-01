@@ -8,9 +8,10 @@ import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
-import uk.co.tolcroft.models.threads.DataControl;
+import uk.co.tolcroft.models.views.DataControl;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
@@ -199,13 +200,8 @@ public class View extends DataControl<FinanceData> {
 		 * Apply changes in an TaxParams view back into the core data
 		 */
 		public void applyChanges() {
-			TaxYear.List myBase;
-			
-			/* Access base details */
-			myBase = theData.getTaxYears();
-			
 			/* Prepare the changes from this list */
-			myBase.prepareChanges(this);
+			prepareChanges();
 			
 			/* Update Range details */
 			theData.calculateDateRange();
@@ -216,7 +212,7 @@ public class View extends DataControl<FinanceData> {
 			/* If we were successful */
 			if (bSuccess) {
 				/* Commit the changes */
-				myBase.commitChanges(this);
+				commitChanges();
 
 				/* Refresh windows */
 				refreshWindow();
@@ -225,7 +221,7 @@ public class View extends DataControl<FinanceData> {
 			/* else we failed */
 			else {
 				/* Rollback the changes */ 
-				myBase.rollBackChanges(this);
+				rollBackChanges();
 				
 				/* Update Range details */
 				theData.calculateDateRange();
@@ -291,16 +287,9 @@ public class View extends DataControl<FinanceData> {
 		 * Apply changes in an Account view back into the core data
 		 */
 		public void applyChanges() {
-			Account.List myBase;
-			AcctPrice.List myPrices;
-			
-			/* Access base details */
-			myBase     	= theData.getAccounts();
-			myPrices	= theData.getPrices();
-			
 			/* Apply the changes */
-			myBase.prepareChanges(this);
-			if (thePrices != null) myPrices.prepareChanges(thePrices); 
+			prepareChanges();
+			if (thePrices != null) thePrices.prepareChanges(); 
 				
 			/* analyse the data */
 			boolean bSuccess = analyseData(false); 
@@ -308,8 +297,8 @@ public class View extends DataControl<FinanceData> {
 			/* If we were successful */
 			if (bSuccess) {
 				/* Commit the changes */
-				myBase.commitChanges(this);
-				if (thePrices != null) myPrices.commitChanges(thePrices); 
+				commitChanges();
+				if (thePrices != null) thePrices.commitChanges(); 
 
 				/* Refresh windows */
 				refreshWindow();
@@ -318,8 +307,8 @@ public class View extends DataControl<FinanceData> {
 			/* else we failed */
 			else {
 				/* Rollback the changes */ 
-				if (thePrices != null) myPrices.rollBackChanges(thePrices); 
-				myBase.rollBackChanges(this);
+				if (thePrices != null) thePrices.rollBackChanges(); 
+				rollBackChanges();
 				
 				/* Re-analyse the data */
 				analyseData(true);
@@ -350,31 +339,13 @@ public class View extends DataControl<FinanceData> {
 		}
 				
 		/** 
-		 * Prepare changes in a Rates view back into the core data
-		 */
-		protected void prepareChanges() {
-			AcctRate.List myBase;
-			
-			/* Access base details */
-			myBase     = theData.getRates();
-			
-			/* Apply the changes */
-			myBase.prepareChanges(this);
-		}
-
-		/** 
 		 * Commit/RollBack changes in a patterns view back into the core data
 		 * @param bCommit <code>true/false</code>
 		 */
 		protected void commitChanges(boolean bCommit) {
-			AcctRate.List myBase;
-			
-			/* Access base details */
-			myBase     = theData.getRates();
-			
 			/* Commit /RollBack the changes */
-			if (bCommit)	myBase.commitChanges(this);
-			else			myBase.rollBackChanges(this);
+			if (bCommit)	commitChanges();
+			else			rollBackChanges();
 		}
 
 		/**
@@ -410,31 +381,13 @@ public class View extends DataControl<FinanceData> {
 		}
 				
 		/** 
-		 * Prepare changes in a patterns view back into the core data
-		 */
-		protected void prepareChanges() {
-			Pattern.List myBase;
-			
-			/* Access base details */
-			myBase     = theData.getPatterns();
-			
-			/* Prepare the changes */
-			myBase.prepareChanges(this);
-		}
-
-		/** 
 		 * Commit/RollBack changes in a patterns view back into the core data
 		 * @param bCommit <code>true/false</code>
 		 */
 		protected void commitChanges(boolean bCommit) {
-			Pattern.List myBase;
-			
-			/* Access base details */
-			myBase     = theData.getPatterns();
-			
 			/* Commit /RollBack the changes */
-			if (bCommit)	myBase.commitChanges(this);
-			else			myBase.rollBackChanges(this);
+			if (bCommit)	commitChanges();
+			else			rollBackChanges();
 		}
 
 		/**
@@ -449,206 +402,6 @@ public class View extends DataControl<FinanceData> {
 			pBuffer.append("<tr><td>Account</td><td>"); 
 			pBuffer.append(Account.format(theAccount)); 
 			pBuffer.append("</td></tr>");
-		}
-	}
-	
-	/* Static Extract Class */
-	public class ViewAccountTypes extends AccountType.List {
-		/* Access methods */
-		public AccountType.List getAccountTypes() { return this; }
-		
-		/* Constructor */
-		public ViewAccountTypes() {
-			/* Call super constructor */
-			super(theData.getAccountTypes(), ListStyle.EDIT);
-		}
-				
-		/** 
-		 * Prepare changes in an Account Type view back into the core data
-		 */
-		protected void prepareChanges() {
-			AccountType.List myBase;
-			
-			/* Access base details */
-			myBase     = theData.getAccountTypes();
-			
-			/* Prepare the changes */
-			myBase.prepareChanges(this);
-		}
-
-		/** 
-		 * Commit/RollBack changes in an AccountType view back into the core data
-		 * @param bCommit <code>true/false</code>
-		 */
-		protected void commitChanges(boolean bCommit) {
-			AccountType.List myBase;
-			
-			/* Access base details */
-			myBase     = theData.getAccountTypes();
-			
-			/* Commit /RollBack the changes */
-			if (bCommit)	myBase.commitChanges(this);
-			else			myBase.rollBackChanges(this);
-		}
-	}
-	
-	/* Transaction Type Extract Class */
-	public class ViewTransTypes extends TransactionType.List {
-		/* Access methods */
-		public TransactionType.List getTransTypes() { return this; }
-		
-		/* Constructor */
-		public ViewTransTypes() {
-			/* Call super constructor */
-			super(theData.getTransTypes(), ListStyle.EDIT);
-		}
-				
-		/** 
-		 * Prepare changes in a TransType view back into the core data
-		 */
-		protected void prepareChanges() {
-			TransactionType.List myBase;
-			
-			/* Access base details */
-			myBase     = theData.getTransTypes();
-			
-			/* Prepare the changes */
-			myBase.prepareChanges(this);
-		}
-
-		/** 
-		 * Commit/RollBack changes in a patterns view back into the core data
-		 * @param bCommit <code>true/false</code>
-		 */
-		protected void commitChanges(boolean bCommit) {
-			TransactionType.List myBase;
-			
-			/* Access base details */
-			myBase     = theData.getTransTypes();
-			
-			/* Commit /RollBack the changes */
-			if (bCommit)	myBase.commitChanges(this);
-			else			myBase.rollBackChanges(this);
-		}
-	}
-	
-	/* TaxType Extract Class */
-	public class ViewTaxTypes extends TaxType.List {
-		/* Access methods */
-		public TaxType.List getTaxTypes() { return this; }
-		
-		/* Constructor */
-		public ViewTaxTypes() {
-			/* Call super constructor */
-			super(theData.getTaxTypes(), ListStyle.EDIT);
-		}
-				
-		/** 
-		 * Prepare changes in a taxtype view back into the core data
-		 */
-		protected void prepareChanges() {
-			Frequency.List myBase;
-			
-			/* Access base details */
-			myBase     = theData.getFrequencys();
-			
-			/* Prepare the changes */
-			myBase.prepareChanges(this);
-		}
-
-		/** 
-		 * Commit/RollBack changes in a tax type view back into the core data
-		 * @param bCommit <code>true/false</code>
-		 */
-		protected void commitChanges(boolean bCommit) {
-			TaxType.List myBase;
-			
-			/* Access base details */
-			myBase     = theData.getTaxTypes();
-			
-			/* Commit /RollBack the changes */
-			if (bCommit)	myBase.commitChanges(this);
-			else			myBase.rollBackChanges(this);
-		}
-	}
-	
-	/* Frequency Extract Class */
-	public class ViewFrequencys extends Frequency.List {
-		/* Access methods */
-		public Frequency.List getFrequencys() { return this; }
-		
-		/* Constructor */
-		public ViewFrequencys() {
-			/* Call super constructor */
-			super(theData.getFrequencys(), ListStyle.EDIT);
-		}
-				
-		/** 
-		 * Prepare changes in a frequency view back into the core data
-		 */
-		protected void prepareChanges() {
-			Frequency.List myBase;
-			
-			/* Access base details */
-			myBase     = theData.getFrequencys();
-			
-			/* Prepare the changes */
-			myBase.prepareChanges(this);
-		}
-
-		/** 
-		 * Commit/RollBack changes in a frequency view back into the core data
-		 * @param bCommit <code>true/false</code>
-		 */
-		protected void commitChanges(boolean bCommit) {
-			Frequency.List myBase;
-			
-			/* Access base details */
-			myBase     = theData.getFrequencys();
-			
-			/* Commit /RollBack the changes */
-			if (bCommit)	myBase.commitChanges(this);
-			else			myBase.rollBackChanges(this);
-		}
-	}
-	
-	/* TaxRegime Extract Class */
-	public class ViewTaxRegimes extends TaxRegime.List {
-		/* Access methods */
-		public TaxRegime.List getTaxRegimes() { return this; }
-		
-		/* Constructor */
-		public ViewTaxRegimes() {
-			/* Call super constructor */
-			super(theData.getTaxRegimes(), ListStyle.EDIT);
-		}
-				
-		/** 
-		 * Prepare changes in a tax regime view back into the core data
-		 */
-		protected void prepareChanges() {
-			TaxRegime.List myBase;
-			
-			/* Access base details */
-			myBase     = theData.getTaxRegimes();
-			
-			/* Prepare the changes */
-			myBase.prepareChanges(this);
-		}
-
-		/** 
-		 * Commit/RollBack changes in a tax regime view back into the core data
-		 * @param bCommit <code>true/false</code>
-		 */
-		protected void commitChanges(boolean bCommit) {
-			TaxRegime.List myBase;
-			
-			/* Access base details */
-			myBase     = theData.getTaxRegimes();
-			
-			/* Commit /RollBack the changes */
-			if (bCommit)	myBase.commitChanges(this);
-			else			myBase.rollBackChanges(this);
 		}
 	}
 	
@@ -767,13 +520,8 @@ public class View extends DataControl<FinanceData> {
 		 * Apply changes in an EventExtract view back into the core data
 		 */
 		public void applyChanges() {
-			Event.List myBase;
-			
-			/* Access base details */
-			myBase = getData().getEvents();
-			
 			/* Apply the changes from this list */
-			myBase.prepareChanges(this);
+			prepareChanges();
 			
 			/* analyse the data */
 			boolean bSuccess = analyseData(false);
@@ -781,7 +529,7 @@ public class View extends DataControl<FinanceData> {
 			/* If we were successful */
 			if (bSuccess) {
 				/* Commit the changes */
-				myBase.commitChanges(this);
+				commitChanges();
 
 				/* Refresh windows */
 				refreshWindow();
@@ -790,7 +538,7 @@ public class View extends DataControl<FinanceData> {
 			/* else we failed */
 			else {
 				/* Rollback the changes */ 
-				myBase.rollBackChanges(this);
+				rollBackChanges();
 				
 				/* Re-analyse the data */
 				analyseData(true);

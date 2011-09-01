@@ -224,12 +224,12 @@ public class DilutionEvent extends DataItem<DilutionEvent> {
 			theData = pData;
 		}
 		
-		/** 
-	 	 * Clone a Dilution Event list
-	 	 * @return the cloned list
-	 	 */
-		protected List cloneIt() { return null; }
-		
+		/* Obtain extract lists. */
+		public List getUpdateList() { return null; }
+		public List getEditList() 	{ return null; }
+		public List getClonedList() { return null; }
+		public List getDifferences(DataList<DilutionEvent> pOld) { return null; }
+
 		/**
 		 * Add a new item to the list
 		 * @param pItem the item to add

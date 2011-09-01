@@ -264,31 +264,50 @@ public class ControlData extends DataItem<ControlData> {
 			theData = pData;
 		}
 
-		/** 
-		 * Construct a generic ControlData list
-		 * @param pList the source ControlData list 
-		 * @param pStyle the style of the list 
+		/**
+		 * Constructor for a cloned List
+		 * @param pSource the source List
 		 */
-		public List(List pList, ListStyle pStyle) { 
-			super(ControlData.class, pList, pStyle);
-			theData = pList.theData;
+		private List(List pSource) { 
+			super(pSource);
+			theData = pSource.theData;
 		}
+		
+		/**
+		 * Construct an update extract for the List.
+		 * @return the update Extract
+		 */
+		private List getExtractList(ListStyle pStyle) {
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			
+			/* Obtain underlying updates */
+			populateList(pStyle);
+			
+			/* Return the list */
+			return myList;
+		}
+
+		/* Obtain extract lists. */
+		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
+		public List getEditList() 	{ return null; }
+		public List getClonedList() { return getExtractList(ListStyle.CORE); }
 
 		/** 
 		 * Construct a difference ControlData list
 		 * @param pNew the new ControlData list 
 		 * @param pOld the old ControlData list 
 		 */
-		protected List(List pNew, List pOld) { 
-			super(pNew, pOld);
-			theData = pNew.theData;
+		protected List getDifferences(DataList<ControlData> pOld) { 
+			/* Build an empty Difference List */
+			List myList = new List(this);
+			
+			/* Calculate the differences */
+			myList.getDifferenceList(this, pOld);
+			
+			/* Return the list */
+			return myList;
 		}
-
-		/** 
-		 * 	Clone a ControlData list
-		 * @return the cloned list
-		 */
-		protected List cloneIt() {return new List(this, ListStyle.CORE); }
 
 		/**
 		 * Add a new item to the core list

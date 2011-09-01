@@ -282,12 +282,12 @@ public class Analysis {
 			theAnalysis = pAnalysis;
 		}
 
-		/** 
-	 	 * Clone a Bucket list
-	 	 * @return the cloned list
-	 	 */
-		protected BucketList cloneIt() { return null; }
-		
+		/* Obtain extract lists. */
+		public BucketList getUpdateList() { return null; }
+		public BucketList getEditList() 	{ return null; }
+		public BucketList getClonedList() { return null; }
+		public BucketList getDifferences(DataList<AnalysisBucket> pOld) { return null; }
+
 		/**
 		 * Add a new item to the list
 		 * @param pItem the item to add

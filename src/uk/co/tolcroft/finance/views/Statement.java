@@ -7,6 +7,7 @@ import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.ValidationControl;
@@ -122,15 +123,8 @@ public class Statement implements DebugObject {
 	 * Prepare changes in a statement back into the underlying finance objects
 	 */
 	protected void prepareChanges() {
-		Event.List  myBase;
-		FinanceData	myData;
-		
-		/* Access base details */
-		myData	= theView.getData();
-		myBase  = myData.getEvents();
-		
-		/* Apply the changes from this list */
-		myBase.prepareChanges(theLines);
+		/* Prepare the changes from this list */
+		theLines.prepareChanges();
 	}
 	
 	/** 
@@ -138,16 +132,9 @@ public class Statement implements DebugObject {
 	 * @param bCommit <code>true/false</code>
 	 */
 	protected void commitChanges(boolean bCommit) {
-		Event.List  myBase;
-		FinanceData	myData;
-		
-		/* Access base details */
-		myData	= theView.getData();
-		myBase  = myData.getEvents();
-		
 		/* Commit/RollBack the changes */
-		if (bCommit)	myBase.commitChanges(theLines);
-		else			myBase.rollBackChanges(theLines);
+		if (bCommit)	theLines.commitChanges();
+		else			theLines.rollBackChanges();
 	}
 	
 	/**
@@ -218,12 +205,12 @@ public class Statement implements DebugObject {
 			theStatement = pStatement;
 		}
 		
-		/** 
-	 	 * Clone a StatementLine list (never used)
-	 	 * @return <code>null</code>
-	 	 */
-		protected List cloneIt() { return null; }
-		
+		/* Obtain extract lists. */
+		public List getUpdateList() { return null; }
+		public List getEditList() 	{ return null; }
+		public List getClonedList() { return null; }
+		public List getDifferences(DataList<Line> pOld) { return null; }
+
 		/* Is this list locked */
 		public boolean isLocked() { return theAccount.isLocked(); }
 		

@@ -11,16 +11,16 @@ import jxl.Sheet;
 import jxl.Workbook;
 
 import uk.co.tolcroft.finance.data.FinanceData;
-import uk.co.tolcroft.finance.data.Properties;
 import uk.co.tolcroft.finance.views.DilutionEvent;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.ControlData;
+import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.sheets.SheetReader;
 import uk.co.tolcroft.models.sheets.SheetWriter;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
-import uk.co.tolcroft.models.threads.DataControl;
 import uk.co.tolcroft.models.threads.ThreadStatus;
+import uk.co.tolcroft.models.views.DataControl;
 
 public class FinanceSheet extends SpreadSheet<FinanceData> {
 	/**

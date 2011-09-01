@@ -433,12 +433,15 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 	 * re-sort the specified item by removing it from the list and re-adding it
 	 * @param o the item to resort
 	 */
-	public void reSort(T o) {
+	public void reSort(Object o) {
+		/* Cast the object correctly */
+		T myObject = theClass.cast(o);
+		
 		/* Remove the object from the list */
-		remove(o);
+		remove(myObject);
 		
 		/* Add the item back into the list */
-		add(o);		
+		add(myObject);		
 	}
 	
 	/**

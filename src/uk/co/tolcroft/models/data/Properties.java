@@ -1,4 +1,4 @@
-package uk.co.tolcroft.finance.data;
+package uk.co.tolcroft.models.data;
 
 import java.text.SimpleDateFormat;
 import java.util.prefs.Preferences;

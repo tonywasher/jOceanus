@@ -551,12 +551,12 @@ public class SecurityControl extends DataItem<SecurityControl> {
 		 */
 		public List() { super(SecurityControl.class, ListStyle.VIEW, false); }
 
-		/** 
-	 	 * Clone a Bucket list
-	 	 * @return the cloned list
-	 	 */
-		protected List cloneIt() { return null; }
-		
+		/* Obtain extract lists. (not supported) */
+		public List getUpdateList() { return null; }
+		public List getEditList() 	{ return null; }
+		public List getClonedList() { return null; }
+		public List getDifferences(DataList<SecurityControl> pOld) { return null; }
+
 		/**
 		 * Add a new item to the list
 		 * @param pItem the item to add

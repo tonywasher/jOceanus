@@ -1,7 +1,8 @@
 package uk.co.tolcroft.models.threads;
 
-import uk.co.tolcroft.finance.data.Properties;
 import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.data.Properties;
+import uk.co.tolcroft.models.views.DataControl;
 
 public class ThreadStatus<T extends DataSet<?>> implements StatusControl {
 	/* Status Data regarding a thread */

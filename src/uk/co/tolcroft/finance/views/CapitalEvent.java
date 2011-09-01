@@ -295,12 +295,12 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 			theAccount		= pAccount;
 		}
 
-		/** 
-	 	 * Clone a Capital Event list
-	 	 * @return the cloned list
-	 	 */
-		protected List cloneIt() { return null; }
-		
+		/* Obtain extract lists. */
+		public List getUpdateList() { return null; }
+		public List getEditList() 	{ return null; }
+		public List getClonedList() { return null; }
+		public List getDifferences(DataList<CapitalEvent> pOld) { return null; }
+
 		/**
 		 * Add a new item to the list
 		 * @param pItem the item to add

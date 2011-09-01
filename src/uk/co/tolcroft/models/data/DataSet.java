@@ -11,7 +11,7 @@ import uk.co.tolcroft.models.help.DebugObject;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
 import uk.co.tolcroft.models.security.SecureManager;
 import uk.co.tolcroft.models.security.SecurityControl;
-import uk.co.tolcroft.models.threads.DataControl;
+import uk.co.tolcroft.models.views.DataControl;
 
 public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 	private SecureManager			theSecurity   	= null;
@@ -71,9 +71,9 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 	 */
 	protected void getUpdateSet(DataSet<T> 	pExtract) {
 		/* Build the static differences */
-		pExtract.theControlKeys = new ControlKey.List(theControlKeys, 	ListStyle.UPDATE);
-		pExtract.theDataKeys   	= new DataKey.List(theDataKeys, 		ListStyle.UPDATE);
-		pExtract.theControlData = new ControlData.List(theControlData, 	ListStyle.UPDATE);
+		pExtract.theControlKeys = theControlKeys.getUpdateList();
+		pExtract.theDataKeys   	= theDataKeys.getUpdateList();
+		pExtract.theControlData = theControlData.getUpdateList();
 	}
 	
 	/**
@@ -92,15 +92,15 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 	 * Items that are in the new list, but not in the old list will be viewed as inserted.
 	 * Items that are in the old list but not in the new list will be viewed as deleted.
 	 * Items that are in both list but differ will be viewed as changed 
-	 * @param pNew The new list to extract from 
-	 * @param pOld The old list to extract from 
+	 * @param pNew The new list to compare 
+	 * @param pOld The old list to compare 
 	 */
-	protected void getDifferenceSet(DataSet<T> pDifferences, 
+	protected void getDifferenceSet(DataSet<T> pNew, 
 									DataSet<T> pOld) throws Exception {
 		/* Build the security differences */
-		pDifferences.theControlKeys = new ControlKey.List(theControlKeys, 	pOld.getControlKeys());
-		pDifferences.theDataKeys	= new DataKey.List(theDataKeys, 		pOld.getDataKeys());
-		pDifferences.theControlData	= new ControlData.List(theControlData, 	pOld.getControlData());
+		theControlKeys 	= pNew.getControlKeys().getDifferences(pOld.getControlKeys());
+		theDataKeys		= pNew.getDataKeys().getDifferences(pOld.getDataKeys());
+		theControlData	= pNew.getControlData().getDifferences(pOld.getControlData());
 	}
 	
 	/**

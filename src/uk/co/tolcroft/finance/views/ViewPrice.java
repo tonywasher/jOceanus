@@ -315,11 +315,11 @@ public class ViewPrice extends DataItem<ViewPrice> {
 			}
 		}
 
-		/** 
-		 * 	Clone a Price list
-		 * @return the cloned list
-		 */
-		protected List cloneIt() { return null; }
+		/* Obtain extract lists. */
+		public List getUpdateList() { return null; }
+		public List getEditList() 	{ return null; }
+		public List getClonedList() { return null; }
+		public List getDifferences(DataList<ViewPrice> pOld) { return null; }
 
 		/* Is this list locked */
 		public boolean isLocked() { return ((theAccount != null) && (theAccount.isLocked())); }
@@ -376,31 +376,13 @@ public class ViewPrice extends DataItem<ViewPrice> {
 		}
 
 		/** 
-		 * Prepare changes in a Prices view back into the core data
-		 */
-		protected void prepareChanges() {
-			AcctPrice.List myBase;
-			
-			/* Access base details */
-			myBase     = theData.getPrices();
-			
-			/* Apply the changes */
-			myBase.prepareChanges(this);
-		}
-
-		/** 
 		 * Commit/RollBack changes in a Prices view back into the core data
 		 * @param bCommit <code>true/false</code>
 		 */
 		protected void commitChanges(boolean bCommit) {
-			AcctPrice.List myBase;
-			
-			/* Access base details */
-			myBase     = theData.getPrices();
-			
 			/* Commit /RollBack the changes */
-			if (bCommit)	myBase.commitChanges(this);
-			else			myBase.rollBackChanges(this);
+			if (bCommit)	commitChanges();
+			else			rollBackChanges();
 		}
 
 		/**

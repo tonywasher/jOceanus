@@ -1,8 +1,8 @@
 package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.FinanceData;
-import uk.co.tolcroft.finance.data.Properties;
 import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.security.SecureManager;
 

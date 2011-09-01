@@ -198,12 +198,12 @@ public class SpotPrices implements DebugObject {
 			}
 		}
 		
-		/** 
-	 	 * Clone a SpotView list (never used)
-	 	 * @return <code>null</code>
-	 	 */
-		protected List cloneIt() { return null; }
-		
+		/* Obtain extract lists. */
+		public List getUpdateList() { return null; }
+		public List getEditList() 	{ return null; }
+		public List getClonedList() { return null; }
+		public List getDifferences(DataList<SpotPrice> pOld) { return null; }
+
 		/* Is this list locked */
 		public boolean isLocked() { return false; }
 		

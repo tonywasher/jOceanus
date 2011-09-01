@@ -214,11 +214,12 @@ public class ChargeableEvent extends DataItem<ChargeableEvent> {
 		public List() { super(ChargeableEvent.class, ListStyle.VIEW, false); }
 		
 		/** 
-	 	 * Clone a Chargeable Event list
-	 	 * @return the cloned list
-	 	 */
-		protected List cloneIt() { return null; }
-		
+		/* Obtain extract lists. */
+		public List getUpdateList() { return null; }
+		public List getEditList() 	{ return null; }
+		public List getClonedList() { return null; }
+		public List getDifferences(DataList<ChargeableEvent> pOld) { return null; }
+
 		/**
 		 * Add a new item to the list
 		 * @param pItem the item to add

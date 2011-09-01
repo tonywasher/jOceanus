@@ -2,8 +2,8 @@ package uk.co.tolcroft.finance.sheets;
 
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.models.sheets.SheetReader;
-import uk.co.tolcroft.models.threads.DataControl;
 import uk.co.tolcroft.models.threads.ThreadStatus;
+import uk.co.tolcroft.models.views.DataControl;
 
 public class FinanceReader extends SheetReader<FinanceData> {
 	/**
