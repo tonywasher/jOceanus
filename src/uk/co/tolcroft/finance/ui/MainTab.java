@@ -33,6 +33,7 @@ import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugWindow;
 import uk.co.tolcroft.models.help.HelpWindow;
 import uk.co.tolcroft.models.threads.*;
+import uk.co.tolcroft.models.ui.DateRange;
 import uk.co.tolcroft.models.ui.StatusBar;
 
 public class MainTab implements ActionListener,

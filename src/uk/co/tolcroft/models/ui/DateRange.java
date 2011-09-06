@@ -1,4 +1,4 @@
-package uk.co.tolcroft.finance.ui.controls;
+package uk.co.tolcroft.models.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,8 +16,8 @@ import javax.swing.SpinnerDateModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.ui.FinanceInterfaces.*;
 
 public class DateRange  implements 	ItemListener,
 									ActionListener,

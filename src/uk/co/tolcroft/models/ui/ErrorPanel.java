@@ -1,4 +1,4 @@
-package uk.co.tolcroft.finance.ui.controls;
+package uk.co.tolcroft.models.ui;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -10,10 +10,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
-import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.financePanel;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
+import uk.co.tolcroft.models.ui.FinanceInterfaces.financePanel;
 
 public class ErrorPanel implements ActionListener {
 	/* Members */

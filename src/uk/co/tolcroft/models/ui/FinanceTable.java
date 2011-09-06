@@ -1,4 +1,4 @@
-package uk.co.tolcroft.finance.ui.controls;
+package uk.co.tolcroft.models.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -23,7 +23,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import uk.co.tolcroft.finance.ui.MainTab;
-import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataState;
@@ -31,8 +30,7 @@ import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.data.HistoryCheck;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.help.DebugManager;
-import uk.co.tolcroft.models.ui.RenderData;
-import uk.co.tolcroft.models.ui.Renderer;
+import uk.co.tolcroft.models.ui.FinanceInterfaces.*;
 
 public abstract class FinanceTable<T extends DataItem<T>> extends JTable 
 														  implements financePanel,

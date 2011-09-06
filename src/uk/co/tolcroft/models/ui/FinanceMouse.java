@@ -1,4 +1,4 @@
-package uk.co.tolcroft.finance.ui.controls;
+package uk.co.tolcroft.models.ui;
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;

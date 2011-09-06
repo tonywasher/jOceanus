@@ -1,4 +1,4 @@
-package uk.co.tolcroft.finance.ui.controls;
+package uk.co.tolcroft.models.ui;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;

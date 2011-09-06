@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.financePanel;
+import uk.co.tolcroft.models.ui.FinanceInterfaces.financePanel;
 
 public class StatementSelect implements	ItemListener {
 	/* Members */

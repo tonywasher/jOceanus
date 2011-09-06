@@ -1,4 +1,4 @@
-package uk.co.tolcroft.finance.ui.controls;
+package uk.co.tolcroft.models.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,7 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
-import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
+import uk.co.tolcroft.models.ui.FinanceInterfaces.*;
 
 public class SaveButtons implements ActionListener {
 	/* Members */

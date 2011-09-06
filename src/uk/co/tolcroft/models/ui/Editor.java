@@ -11,7 +11,6 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.table.TableCellEditor;
 
-import uk.co.tolcroft.finance.ui.controls.FinanceTable;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 

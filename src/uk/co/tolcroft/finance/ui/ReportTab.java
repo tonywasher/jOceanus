@@ -15,7 +15,6 @@ import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
 
 import uk.co.tolcroft.finance.ui.controls.*;
-import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.finance.ui.controls.ReportSelect.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.EventAnalysis.AnalysisYear;
@@ -27,6 +26,8 @@ import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
+import uk.co.tolcroft.models.ui.ErrorPanel;
+import uk.co.tolcroft.models.ui.FinanceInterfaces.*;
 
 /* Report Tab */
 public class ReportTab implements HyperlinkListener,

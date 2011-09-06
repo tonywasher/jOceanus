@@ -10,10 +10,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
-import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.ui.FinanceInterfaces.*;
 
 public class AccountSelect implements ItemListener {
 	/* Members */

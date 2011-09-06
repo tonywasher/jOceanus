@@ -4,7 +4,6 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import uk.co.tolcroft.finance.ui.controls.FinanceTable;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 

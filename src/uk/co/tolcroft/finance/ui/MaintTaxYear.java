@@ -14,7 +14,6 @@ import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 
 import uk.co.tolcroft.finance.ui.controls.*;
-import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
@@ -25,6 +24,9 @@ import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
+import uk.co.tolcroft.models.ui.ErrorPanel;
+import uk.co.tolcroft.models.ui.SaveButtons;
+import uk.co.tolcroft.models.ui.FinanceInterfaces.*;
 import uk.co.tolcroft.models.views.ViewList;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 

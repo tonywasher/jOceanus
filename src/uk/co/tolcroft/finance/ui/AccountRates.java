@@ -7,7 +7,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
-import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Number.*;
@@ -16,6 +15,9 @@ import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.Editor;
+import uk.co.tolcroft.models.ui.ErrorPanel;
+import uk.co.tolcroft.models.ui.FinanceMouse;
+import uk.co.tolcroft.models.ui.FinanceTable;
 import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 import uk.co.tolcroft.models.*;

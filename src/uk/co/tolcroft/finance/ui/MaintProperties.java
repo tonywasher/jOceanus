@@ -18,11 +18,11 @@ import javax.swing.SpinnerDateModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.ui.FileSelector.*;
+import uk.co.tolcroft.models.ui.FinanceInterfaces.*;
 
 public class MaintProperties implements ActionListener,
 										ItemListener,
