@@ -32,6 +32,8 @@ import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
+import uk.co.tolcroft.models.views.ViewList;
+import uk.co.tolcroft.models.views.ViewList.ListClass;
 
 public class MaintAccount implements ActionListener,
 									 ItemListener,
@@ -71,7 +73,7 @@ public class MaintAccount implements ActionListener,
 	private JButton				theUndoButton	= null;
 	private Account				theAccount		= null;
 	private Account.List		theAccounts		= null;
-	private View.ViewAccount	theActView		= null;
+	private Account.List		theActView		= null;
 	private AccountType.List	theAcTypList	= null;
 	private DebugEntry			theDebugEntry	= null;
 	private ErrorPanel			theError		= null;
@@ -81,6 +83,8 @@ public class MaintAccount implements ActionListener,
 	private boolean				parPopulated	= false;
 	private boolean				alsPopulated	= false;
 	private View				theView			= null;
+	private ViewList			theViewSet		= null;
+	private ListClass			theViewList		= null;
 	
 	/* Access methods */
 	public JPanel       getPanel()       { return thePanel; }
@@ -111,6 +115,10 @@ public class MaintAccount implements ActionListener,
 		/* Access the view */
 		theView 	= pParent.getView();
 				
+		/* Build the View set and List */
+		theViewSet	= new ViewList(theView);
+		theViewList = theViewSet.registerClass(TaxYear.class);
+
 		/* Create the labels */
 		myName 	 	= new JLabel("Name:");
 		myDesc 	 	= new JLabel("Description:");
@@ -551,7 +559,7 @@ public class MaintAccount implements ActionListener,
 		validate();
 		if (!hasErrors()) {
 			/* Save details for the account */
-			if (theActView != null)	theActView.applyChanges();
+			theViewSet.applyChanges();
 		}
 	}
 		
@@ -681,11 +689,14 @@ public class MaintAccount implements ActionListener,
 		/* If we have a selected account */
 		if (pAccount != null) {
 			/* Create the view of the account */
-			theActView = theView.new ViewAccount(pAccount);	
+			theActView = theAccounts.getEditList();	
 			
 			/* Access the account */
-			theAccount = theActView.getAccount();
+			theAccount = theActView.searchFor(pAccount.getName());
 		}
+		
+		/* Set ViewList */
+		theViewList.setDataList(theActView);
 		
 		/* notify changes */
 		notifyChanges();
@@ -1016,11 +1027,13 @@ public class MaintAccount implements ActionListener,
 	/* New Account */
 	private void newAccount() {
 		/* Create a account View for an empty account */
-		theActView = theView.new ViewAccount(theSelect.getType());
-		theDebugEntry.setObject(theActView);
+		theActView = theAccounts.getEditList(theSelect.getType());
 	
 		/* Access the account */
 		theAccount = theActView.getAccount();			
+		
+		/* Set ViewList */
+		theViewList.setDataList(theActView);
 		
 		/* Notify changes */
 		notifyChanges();

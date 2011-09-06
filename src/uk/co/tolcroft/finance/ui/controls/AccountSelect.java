@@ -227,8 +227,39 @@ public class AccountSelect implements ItemListener {
 		/* Access the iterator */
 		myIterator = theAccounts.listIterator(true);
 		
-		/* Loop through the accounts */
+		/* Loop through the non-owner accounts */
 		while ((myAccount = myIterator.next()) != null) {
+			/* Skip owner items */
+			if (myAccount.isOwner()) continue;
+			
+			/* Skip deleted items */
+			if ((!doShowDeleted) &&
+				(myAccount.isDeleted())) continue;
+			
+			/* Skip closed items if required */
+			if ((!doShowClosed) && 
+				(myAccount.isClosed())) continue;
+			
+			/* If the type of this account is new */
+			if (AccountType.differs(myType, myAccount.getActType())) {
+				/* Note the type */
+				myType = myAccount.getActType();
+				if (myFirst == null) myFirst = myType;
+			
+				/* Add the item to the list */
+				theTypesBox.addItem(myType.getName());
+				typesPopulated = true;
+			}
+		}
+		
+		/* Access the iterator */
+		myIterator = theAccounts.listIterator(true);
+		
+		/* Loop through the owner accounts */
+		while ((myAccount = myIterator.next()) != null) {
+			/* Skip child items */
+			if (!myAccount.isOwner()) continue;
+			
 			/* Skip deleted items */
 			if ((!doShowDeleted) &&
 				(myAccount.isDeleted())) continue;

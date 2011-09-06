@@ -1302,6 +1302,9 @@ public class Event extends EncryptedItem<Event> {
 	 *  List class for Events 
 	 */
 	public static class List extends EncryptedList<Event> {
+		/* Members */
+		private Date.Range  theRange   = null;
+
 		/* Access DataSet correctly */
 		public FinanceData getData() { return (FinanceData) super.getData(); }
 		
@@ -1312,15 +1315,6 @@ public class Event extends EncryptedItem<Event> {
 		protected List(FinanceData pData) { 
 			super(Event.class, pData);
 		}
-
-		/** 
-	 	 * Construct an empty generic event list
-	 	 * @param pData the DataSet for the list
-	 	 */
-		public List(FinanceData pData, ListStyle pStyle) { 
-			super(Event.class, pData, pStyle);
-		}
-
 
 		/**
 		 * Constructor for a cloned List
@@ -1339,7 +1333,7 @@ public class Event extends EncryptedItem<Event> {
 			List myList = new List(this);
 			
 			/* Obtain underlying updates */
-			populateList(pStyle);
+			myList.populateList(pStyle);
 			
 			/* Return the list */
 			return myList;
@@ -1366,6 +1360,139 @@ public class Event extends EncryptedItem<Event> {
 			return myList;
 		}
 
+	 	/**
+	 	 *  Get an EditList for a range
+	 	 */
+		public List getViewList() {
+			/* Build an empty List */
+			List myList = new List(this);
+			
+			/* Make this list the correct style */
+			myList.setStyle(ListStyle.VIEW);
+
+			/* Return it */
+			return myList;
+		}
+		
+	 	/**
+	 	 *  Get an EditList for a range
+	 	 *  @param pRange the range
+	 	 */
+		public List getEditList(Date.Range pRange) {
+			/* Build an empty List */
+			List myList = new List(this);
+			
+			/* Make this list the correct style */
+			myList.setStyle(ListStyle.EDIT);
+
+			/* local variable */
+			DataList<Event>.ListIterator 	myIterator;
+			Event      						myCurr;
+			Event      						myEvent;
+			int       						myResult;
+			
+			/* Record range and initialise the list */
+			myList.theRange   = pRange;
+			
+			/* Loop through the Events extracting relevant elements */
+			myIterator 	= listIterator(true);
+			while ((myCurr = myIterator.next()) != null) {
+				/* Check the range */
+				myResult = pRange.compareTo(myCurr.getDate());
+				
+				/* Handle out of range */
+				if (myResult ==  1) continue;
+				if (myResult == -1) break;
+				
+				/* Build the new linked event and add it to the extract */
+				myEvent = new Event(myList, myCurr);
+				myList.add(myEvent);
+			}
+			
+			/* Return the List */
+			return myList;
+		}
+
+	 	/**
+	 	 *  Get an EditList for a new TaxYear
+	 	 *  @param pTaxYear the new TaxYear
+	 	 */
+		public List getEditList(TaxYear pTaxYear) throws Exception {
+			/* Build an empty List */
+			List myList = new List(this);
+			
+			/* Make this list the correct style */
+			myList.setStyle(ListStyle.EDIT);
+
+			/* Local variables */
+			DataList<Pattern>.ListIterator 	myIterator;
+			Pattern.List 					myPatterns;
+			Pattern     					myCurr;
+			Event       					myEvent;
+			Date 							myDate;
+			
+			/* Record range and initialise the list */
+			theRange   = pTaxYear.getRange();
+			
+			/* Access the underlying data */
+			myPatterns 	= getData().getPatterns();
+			myIterator 	= myPatterns.listIterator();
+
+			/* Loop through the Patterns */
+			while ((myCurr = myIterator.next()) != null) {
+				/* Access a copy of the base date */
+				myDate = new Date(myCurr.getDate());
+					
+				/* Loop while we have an event to add */
+				while ((myEvent = myCurr.nextEvent(myList,
+												   pTaxYear, 
+												   myDate)) != null) {
+					/* Add it to the extract */
+					myList.add(myEvent);
+				}
+			}
+			
+			/* Return the List */
+			return myList;
+		}
+
+		/**
+		 * Add additional fields to HTML String
+		 * @param pBuffer the string buffer 
+		 */
+		public void addHTMLFields(StringBuilder pBuffer) {
+			/* If we have a Range */
+			if (theRange != null) {
+				/* Start the Fields section */
+				pBuffer.append("<tr><th rowspan=\"2\">Fields</th></tr>");
+
+				/* Format the range */
+				pBuffer.append("<tr><td>Range</td><td>"); 
+				pBuffer.append(Date.Range.format(theRange)); 
+				pBuffer.append("</td></tr>");
+			}
+		}
+		
+		/** 
+		 * Validate an extract
+		 */
+		public void validate() {
+			DataList<Event>.ListIterator 	myIterator;
+			Event 							myCurr;
+
+			/* Clear the errors */
+			clearErrors();
+			
+			/* Access the underlying data */
+			myIterator 	= listIterator();
+			
+			/* Loop through the lines */
+			while ((myCurr = myIterator.next()) != null) {
+				/* Validate it */
+				myCurr.validate();
+			}
+		}
+		
 		/**
 		 * Add a new item to the list
 		 * @param pItem the item to add

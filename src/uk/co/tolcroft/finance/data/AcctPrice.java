@@ -479,15 +479,6 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			super(AcctPrice.class, pData);
 		}
 
-		/** 
-		 * Construct an empty generic price list
-	 	 * @param pData the DataSet for the list
-		 * @param pStyle the style of the list 
-		 */
-		//public List(FinanceData pData, ListStyle pStyle) {
-		//	super(AcctPrice.class, pData, pStyle);
-		//}
-
 		/**
 		 * Constructor for a cloned List
 		 * @param pSource the source List
@@ -505,7 +496,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			List myList = new List(this);
 			
 			/* Obtain underlying updates */
-			populateList(pStyle);
+			myList.populateList(pStyle);
 			
 			/* Return the list */
 			return myList;
@@ -533,8 +524,8 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		}
 
 		/**
-		 * Construct an edit extract of a Price list
-		 * @param pAccount	 The account to extract prices for 
+		 * Construct an edit extract of a Pattern list
+		 * @param pAccount	 The account to extract patterns for 
 		 */
 		public List getEditList(Account pAccount) {
 			/* Build an empty Update */
@@ -544,37 +535,34 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			myList.setStyle(ListStyle.EDIT);
 
 			/* Local variables */
-			AcctPrice 			myCurr;
-			AcctPrice 			myItem;
+			AcctPrice 		myCurr;
+			AcctPrice 		myItem;
 			ListIterator 	myIterator;
-
-			/* Skip to alias if required */
-			if ((pAccount != null) && (pAccount.getAlias() != null))
-				pAccount = pAccount.getAlias();
 			
 			/* Store the account */
 			myList.theAccount = pAccount;
-
+			
 			/* Access the list iterator */
 			myIterator = listIterator(true);
 			
-			/* Loop through the list */
+			/* Loop through the Prices */
 			while ((myCurr = myIterator.next()) != null) {
-				/* If this item belongs to the account */
-				if (!Account.differs(myCurr.getAccount(), pAccount)) {
-					/* Copy the item */
-					myItem = new AcctPrice(myList, myCurr);
-					myList.add(myItem);
-				}
+				/* Check the account */
+				int myResult = pAccount.compareTo(myCurr.getAccount());
+				
+				/* Handle differing accounts */
+				if (myResult ==  1) continue;
+				if (myResult == -1) break;
+				
+				/* Copy the item */
+				myItem = new AcctPrice(myList, myCurr);
+				myList.add(myItem);
 			}
 			
 			/* Return the List */
 			return myList;
 		}
-
-		/* Is this list locked */
-		public boolean isLocked() { return ((theAccount != null) && (theAccount.isLocked())); }
-
+	
 		/**
 		 * Add a new item to the core list
 		 * 

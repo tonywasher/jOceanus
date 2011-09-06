@@ -25,6 +25,8 @@ import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
+import uk.co.tolcroft.models.views.ViewList;
+import uk.co.tolcroft.models.views.ViewList.ListClass;
 
 public class MaintTaxYear implements ActionListener,
 									 ItemListener,
@@ -64,19 +66,20 @@ public class MaintTaxYear implements ActionListener,
 	private JTextField			theAddDivTaxRate	= null;
 	private JTextField			theCapTaxRate		= null;
 	private JTextField			theHiCapTaxRate		= null;
-	private JButton				theInsButton		= null;
 	private JButton				theDelButton		= null;
 	private JButton				theUndoButton		= null;
 	private TaxYear				theTaxYear			= null;
+	private TaxYear.List		theTaxView			= null;
 	private TaxYear.List		theTaxYears			= null;
 	private TaxRegime.List		theTaxRegimes		= null;
-	private View.ViewTaxYear	theTaxView			= null;
 	private DebugEntry			theDebugEntry		= null;
 	private ErrorPanel			theError			= null;
 	private boolean				refreshingData		= false;
 	private boolean				regimesPopulated	= false;
 	private boolean				doShowDeleted		= false;
 	private View				theView				= null;
+	private ViewList			theViewSet			= null;
+	private ListClass			theViewList			= null;
 	
 	/* Access methods */
 	public JPanel   getPanel()      { return thePanel; }
@@ -117,6 +120,10 @@ public class MaintTaxYear implements ActionListener,
 		/* Access the view */
 		theView 	= pParent.getView();
 		
+		/* Build the View set and List */
+		theViewSet	= new ViewList(theView);
+		theViewList = theViewSet.registerClass(TaxYear.class);
+
 		/* Create the labels */
 		myYear 	 		= new JLabel("Year:");
 		myRegime		= new JLabel("Tax Regime:");
@@ -193,7 +200,6 @@ public class MaintTaxYear implements ActionListener,
 		theHiCapTaxRate.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
 		
 		/* Create the buttons */
-		theInsButton  = new JButton("New");
 		theDelButton  = new JButton();
 		theUndoButton = new JButton("Undo");
 		
@@ -219,7 +225,6 @@ public class MaintTaxYear implements ActionListener,
 		theAddDivTaxRate.addActionListener(this);
 		theCapTaxRate.addActionListener(this);
 		theHiCapTaxRate.addActionListener(this);
-		theInsButton.addActionListener(this);
 		theDelButton.addActionListener(this);
 		theUndoButton.addActionListener(this);
 
@@ -247,16 +252,13 @@ public class MaintTaxYear implements ActionListener,
         myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
         	.addGroup(myLayout.createSequentialGroup()
         		.addContainerGap()
-                .addComponent(theInsButton)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(theUndoButton)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(theDelButton)
                 .addContainerGap())
         );
         myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(theInsButton)
-            .addComponent(theUndoButton)
+             .addComponent(theUndoButton)
             .addComponent(theDelButton)
         );
             
@@ -657,12 +659,6 @@ public class MaintTaxYear implements ActionListener,
 		/* Recalculate edit state */
 		theTaxView.findEditState();
 		
-		/* if this is a new Tax Year */
-		if (theTaxYear.getState() == DataState.NEW) {
-			/* Delete the new tax year */
-			delNewTaxYear();
-		}
-		
 		/* Notify changes */
 		notifyChanges();
 		updateDebug();
@@ -681,7 +677,7 @@ public class MaintTaxYear implements ActionListener,
 		validate();
 		if (!hasErrors()) {
 			/* Save details for the tax year */
-			if (theTaxView != null)	theTaxView.applyChanges();
+			theViewSet.applyChanges();
 		}
 	}
 		
@@ -758,8 +754,8 @@ public class MaintTaxYear implements ActionListener,
 	/* Set Selection */
 	public void setSelection(TaxYear pTaxYear) {
 		/* Reset controls */
-		theTaxView = null;
-		theTaxYear = null;
+		theTaxView	= null;
+		theTaxYear 	= null;
 		
 		/* If we have a selected tax year */
 		if (pTaxYear != null) {
@@ -770,11 +766,14 @@ public class MaintTaxYear implements ActionListener,
 			}
 			
 			/* Create the view of the tax year */
-			theTaxView = theView.new ViewTaxYear(pTaxYear);
+			theTaxView = theTaxYears.getEditList(pTaxYear);
 		
 			/* Access the tax year */
-			theTaxYear = theTaxView.getTaxYear();
+			theTaxYear = theTaxView.searchFor(pTaxYear.getDate());
 		}
+		
+		/* Store list */
+		theViewList.setDataList(theTaxView);
 		
 		/* notify changes */
 		notifyChanges();
@@ -784,7 +783,6 @@ public class MaintTaxYear implements ActionListener,
 	/* Show the tax year */
 	private void showTaxYear() {
 		TaxRegime 	myRegime;
-		DataList<TaxYear>.ListIterator myIterator;
 		
 		/* If we have an active year */
 		if (theTaxYear != null) {
@@ -932,9 +930,6 @@ public class MaintTaxYear implements ActionListener,
 			theDelButton.setText(theTaxYear.isDeleted() ? "Recover" : "Delete");
 			
 			/* Enable buttons */
-			myIterator = theTaxYears.listIterator(true);
-			theInsButton.setEnabled(!theTaxYear.hasChanges() &&
-									myIterator.peekLast().isActive());
 			theUndoButton.setEnabled(theTaxYear.hasChanges());
 		}
 		
@@ -988,7 +983,6 @@ public class MaintTaxYear implements ActionListener,
 			
 			/* Handle buttons */
 			theUndoButton.setEnabled(false);
-			theInsButton.setEnabled(false);
 			theDelButton.setVisible(false);
 		}
 	}
@@ -1201,12 +1195,6 @@ public class MaintTaxYear implements ActionListener,
 			notifyChanges();
 			updateDebug();
 		}
-		
-		/* else if this is a new tax year */
-		else if (theTaxYear.getState() == DataState.NEW) {
-			/* Delete the new tax year */
-			delNewTaxYear();
-		}
 	}
 	
 	/* ItemStateChanged listener event */
@@ -1257,63 +1245,10 @@ public class MaintTaxYear implements ActionListener,
 		}
 	}
 
-	/* Delete New Account */
-	private void delNewTaxYear() {
-		DataList<TaxYear>.ListIterator myIterator;
-		
-		/* Access the iterator */
-		myIterator = theTaxYears.listIterator();
-		
-		/* Select the last tax year */
-		setSelection(myIterator.peekLast());
-	}
-	
-	/* New Account */
-	private void newTaxYear() {
-		/* Create a tax view for a new tax year */
-		theTaxView = theView.new ViewTaxYear();
-		theDebugEntry.setObject(theTaxView);
-	
-		/* Access the account */
-		theTaxYear = theTaxView.getTaxYear();			
-		
-		/* Notify changes */
-		notifyChanges();
-		updateDebug();
-	}
-	
 	/* ActionPerformed listener event */
 	public void actionPerformed(ActionEvent evt) {			
-		/* If this event relates to the new button */
-		if (evt.getSource() == (Object)theInsButton) {
-			/* Create the new tax year */
-			newTaxYear();
-			return;
-		}
-		
-		/* If this event relates to the delete button */
-		else if (evt.getSource() == (Object)theDelButton) {
-			/* else if this is a new account */
-			if (theTaxYear.getState() == DataState.NEW) {
-				/* Delete the new tax year */
-				delNewTaxYear();
-			}
-			
-			/* Else we should just delete/recover the year */
-			else {
-				/* Set the appropriate state */
-				theTaxYear.setState(theTaxYear.isDeleted() ? DataState.RECOVERED
-														   : DataState.DELETED);
-				
-				/* Notify changes */
-				notifyChanges();
-				updateDebug();
-			}
-			return;
-		}
-		
 		/* If this event relates to the undo button */
-		else if (evt.getSource() == (Object)theUndoButton) {
+		if (evt.getSource() == (Object)theUndoButton) {
 			/* Undo the changes */
 			undoChanges();
 			return;

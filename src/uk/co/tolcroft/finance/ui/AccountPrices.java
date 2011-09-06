@@ -12,7 +12,7 @@ import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.Editor;
 import uk.co.tolcroft.models.ui.Renderer;
-import uk.co.tolcroft.models.views.AccountSet;
+import uk.co.tolcroft.models.views.ViewList.ListClass;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
@@ -28,7 +28,7 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 	private AccountTab					theParent   		= null;
 	private Date.Range					theRange			= null;
 	private Account             		theAccount  		= null;
-	private AccountSet					theViewSet			= null;
+	private ListClass					theViewList			= null;
 	private AccountPrices				theTable	    	= this;
 	private pricesMouse					theMouse			= null;
 	private pricesColumnModel			theColumns			= null;
@@ -69,9 +69,9 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 		GroupLayout		 	       	myLayout;
 			
 		/* Store details about the parent */
-		theParent  = pParent;
-		theView    = pParent.getView();
-		theViewSet = pParent.getViewSet();
+		theParent  	= pParent;
+		theView    	= pParent.getView();
+		theViewList = pParent.getViewSet().registerClass(ViewPrice.class);
 
 		/* Create the model and declare it to our superclass */
 		theModel  = new PricesModel();
@@ -173,11 +173,20 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 	 * @param pAccount the Account for the extract
 	 */
 	public void setSelection(Account pAccount) throws Exception {
-		theAccount = pAccount;
-		thePrices  = new ViewPrice.List(theView, pAccount);
+		/* Record the account */
+		theAccount 	= pAccount;
+		thePrices 	= null;
+		
+		/* If we have an account */
+		if (theAccount != null) {
+			/* Obtain the Prices extract */
+			thePrices  = new ViewPrice.List(theView, pAccount);
+		}
+		
+		/* Declare the list */
 		theColumns.setColumnSelection();
 		super.setList(thePrices);
-		theViewSet.setPrices(thePrices);
+		theViewList.setDataList(thePrices);
 	}
 		
 	/* Prices table model */

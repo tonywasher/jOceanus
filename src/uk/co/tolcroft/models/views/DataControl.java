@@ -206,4 +206,15 @@ public abstract class DataControl<T extends DataSet<?>> {
 	 * @return dataSet object
 	 */
 	public abstract T				getNewData();
+	
+	/**
+	 * Refresh the Windows 
+	 */
+	protected abstract void refreshWindow();
+
+	/**
+	 * Analyse the data in the view
+	 * @param bPreserve preserve any error
+	 */ 
+	protected abstract boolean analyseData(boolean bPreserve);
 }

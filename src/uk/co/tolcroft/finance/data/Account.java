@@ -555,7 +555,7 @@ public class Account extends EncryptedItem<Account> {
 	protected boolean isCash()      { return getActType().isCash(); }
 	protected boolean isWriteOff()  { return getActType().isWriteOff(); }
 	protected boolean isEndowment() { return getActType().isEndowment(); }
-	protected boolean isOwner()   { return getActType().isOwner(); }
+	public  boolean isOwner()   { return getActType().isOwner(); }
 	public	boolean isTaxFree()   { return getActType().isTaxFree(); }
 	public	boolean isUnitTrust() { return getActType().isUnitTrust(); }
 	public	boolean isDebt()      { return getActType().isDebt(); }
@@ -1123,9 +1123,13 @@ public class Account extends EncryptedItem<Account> {
 	/**
 	 * AccountList class
 	 */
-	public static class List  extends EncryptedList<Account> {			
+	public static class List  extends EncryptedList<Account> {
+		/* Properties */
+		private Account 	theAccount	= null;
+		
 		/* Access DataSet correctly */
-		public FinanceData getData() { return (FinanceData) super.getData(); }
+		public FinanceData 	getData() 		{ return (FinanceData) super.getData(); }
+		public Account		getAccount() 	{ return theAccount; }
 		
 		/** 
 	 	 * Construct an empty CORE account list
@@ -1134,15 +1138,6 @@ public class Account extends EncryptedItem<Account> {
 		protected List(FinanceData pData) { 
 			super(Account.class, pData);
 		}
-
-		/** 
-	 	 * Construct a generic account list
-	 	 * @param pData the DataSet for the list
-	 	 * @param pStyle the style of the list 
-	 	 */
-		//public List(FinanceData pData, ListStyle pStyle) { 
-		//	super(Account.class, pData, pStyle);
-		//}
 
 		/**
 		 * Constructor for a cloned List
@@ -1161,7 +1156,7 @@ public class Account extends EncryptedItem<Account> {
 			List myList = new List(this);
 			
 			/* Obtain underlying updates */
-			populateList(pStyle);
+			myList.populateList(pStyle);
 			
 			/* Return the list */
 			return myList;
@@ -1188,6 +1183,45 @@ public class Account extends EncryptedItem<Account> {
 			return myList;
 		}
 
+		/**
+		 * Construct an edit extract for an Account.
+		 * @return the edit Extract
+		 */
+		public List getEditList(Account pAccount) {
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			
+			/* Set the correct style */
+			myList.setStyle(ListStyle.EDIT);
+			
+			/* Create a new account based on the passed account */
+			myList.theAccount = new Account(myList, pAccount);
+			myList.add(myList.theAccount);
+			
+			/* Return the List */
+			return myList;
+		}
+		
+		/**
+		 * Construct an edit extract for an Account.
+		 * @return the edit Extract
+		 */
+		public List getEditList(AccountType pType) {
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			
+			/* Set the correct style */
+			myList.setStyle(ListStyle.EDIT);
+			
+			/* Create a new account */
+			myList.theAccount = new Account(myList);
+			myList.theAccount.setActType(pType);
+			myList.add(myList.theAccount);
+			
+			/* Return the List */
+			return myList;
+		}
+		
 		/**
 		 * Add a new item to the list
 		 * @param pAccount item

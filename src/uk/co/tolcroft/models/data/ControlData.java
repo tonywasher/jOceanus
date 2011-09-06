@@ -282,7 +282,7 @@ public class ControlData extends DataItem<ControlData> {
 			List myList = new List(this);
 			
 			/* Obtain underlying updates */
-			populateList(pStyle);
+			myList.populateList(pStyle);
 			
 			/* Return the list */
 			return myList;

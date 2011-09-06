@@ -17,7 +17,7 @@ import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.Editor;
 import uk.co.tolcroft.models.ui.Renderer;
-import uk.co.tolcroft.models.views.AccountSet;
+import uk.co.tolcroft.models.views.ViewList.ListClass;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
@@ -36,8 +36,7 @@ public class AccountRates extends FinanceTable<AcctRate> {
 	private AccountTab				theParent   	= null;
 	private Date.Range				theRange		= null;
 	private Account                 theAccount  	= null;
-	private AccountSet				theViewSet		= null;
-	private View.ViewRates			theExtract		= null;
+	private ListClass				theViewList		= null;
 	private DebugEntry				theDebugEntry	= null;
 	private ErrorPanel				theError		= null;
 		
@@ -70,9 +69,9 @@ public class AccountRates extends FinanceTable<AcctRate> {
 		GroupLayout		 	myLayout;
 		
 		/* Store details about the parent */
-		theParent  = pParent;
-		theView    = pParent.getView();
-		theViewSet = pParent.getViewSet();
+		theParent  	= pParent;
+		theView    	= pParent.getView();
+		theViewList = pParent.getViewSet().registerClass(AcctRate.class);
 
 		/* Create the table model and declare it to our superclass */
 		theModel  = new RatesModel();
@@ -155,7 +154,7 @@ public class AccountRates extends FinanceTable<AcctRate> {
 	 * Update Debug view 
 	 */
 	public void updateDebug() {			
-		theDebugEntry.setObject(theExtract);
+		theDebugEntry.setObject(theRates);
 	}
 		
 	/**
@@ -175,11 +174,21 @@ public class AccountRates extends FinanceTable<AcctRate> {
 	 * @param pAccount the Account for the extract
 	 */
 	public void setSelection(Account pAccount) throws Exception {
-		theExtract = theView.new ViewRates(pAccount);
-		theAccount = pAccount;
-		theRates   = theExtract.getRates();
+		/* Record the account */
+		theAccount 	= pAccount;
+		theRates 	= null;
+		
+		/* If we have an account */
+		if (theAccount != null) {
+			/* Get the Rates edit list */
+			FinanceData 	myData 	= theView.getData();
+			AcctRate.List	myRates = myData.getRates();
+			theRates	= myRates.getEditList(pAccount);
+		}
+		
+		/* Declare the list to the underlying table and ViewList */
 		setList(theRates);
-		theViewSet.setRates(theExtract);
+		theViewList.setDataList(theRates);
 	}
 		
 	/* Rates table model */

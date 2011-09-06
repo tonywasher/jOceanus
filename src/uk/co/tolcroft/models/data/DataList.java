@@ -87,6 +87,12 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 	public	void			setShowDeleted(boolean bShow) { setSkipHidden(!bShow); }
 
 	/**
+	 * Set the base DataList
+	 * @param pBase the list that this list is based upon
+	 */
+	protected	void		setBase(DataList<?> pBase) { theBase = pBase; }
+
+	/**
 	 * Construct a new object
 	 * @param pClass the class of the underlying object
 	 * @param pStyle the new {@link ListStyle}
@@ -909,11 +915,6 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 		 * Partial extract of the data for the purposes of editing
 		 */
 		EDIT,
-			
-		/**
-		 * Special editing view for SpotPrices
-		 */
-		SPOT,
 			
 		/**
 		 * List of changes to be applied to database

@@ -427,7 +427,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 			List myList = new List(this);
 			
 			/* Obtain underlying updates */
-			populateList(pStyle);
+			myList.populateList(pStyle);
 			
 			/* Return the list */
 			return myList;

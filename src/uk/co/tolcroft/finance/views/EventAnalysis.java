@@ -10,7 +10,6 @@ import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.Properties;
-import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugObject;
 import uk.co.tolcroft.models.help.DebugManager.*;
@@ -206,7 +205,7 @@ public class EventAnalysis implements DebugObject {
 		theAccount.restoreSavePoint();
 		
 		/* Create a new Event list */
-		myList = new Event.List(theData, ListStyle.VIEW);
+		myList = theData.getEvents().getViewList();
 	
 		/* Loop through the lines adjusting the balance */
 		while ((myLine = myIterator.next()) != null) {

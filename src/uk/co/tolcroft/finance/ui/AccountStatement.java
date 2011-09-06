@@ -21,7 +21,7 @@ import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.Editor;
 import uk.co.tolcroft.models.ui.Renderer;
-import uk.co.tolcroft.models.views.AccountSet;
+import uk.co.tolcroft.models.views.ViewList.ListClass;
 import uk.co.tolcroft.models.Date;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
@@ -33,7 +33,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 	private View					theView				= null;
 	private StatementModel			theModel			= null;
 	private Account					theAccount   		= null;
-	private AccountSet				theViewSet			= null;
+	private ListClass				theViewList			= null;
 	private Statement            	theStatement 		= null;
 	private Statement.List  	 	theLines 	 		= null;
 	private Account.List			theAccounts			= null;
@@ -98,7 +98,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 		/* Store passed details */
 		theParent    = pParent;
 		theView   	 = pParent.getView();
-		theViewSet	 = pParent.getViewSet();
+		theViewList	 = pParent.getViewSet().registerClass(Statement.Line.class);
 		theTopWindow = pParent.getTopWindow();
 
 		/* Create the model and declare it to our superclass */
@@ -285,6 +285,8 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 	 * @param pAccount the Account for the extract
 	 */
 	public void setSelection(Account pAccount) throws Exception {
+		theStatement = null;
+		theLines     = null;
 		theRange     = theSelect.getRange();
 		theColumns.setDateEditorRange(theRange);
 		theAccount   = pAccount;
@@ -294,13 +296,9 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 			theStatement = new Statement(theView, pAccount, theRange);
 			theLines     = theStatement.getLines();
 		}
-		else {
-			theStatement = null;
-			theLines     = null;
-		}
 		theColumns.setColumns();
 		super.setList(theLines);
-		theViewSet.setStatement(theStatement);
+		theViewList.setDataList(theLines);
 		theSelect.setLockDown();
 		theStateBox.setLockDown();
 	}
@@ -326,13 +324,11 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 	 * @param pRange the Date range for the extract
 	 */
 	public void setSelection(Date.Range pRange) throws Exception {
+		theStatement = null;
+		theLines     = null;
 		if (theAccount != null) {
 			theStatement = new Statement(theView, theAccount, pRange);
 			theLines     = theStatement.getLines();
-		}
-		else {
-			theStatement = null;
-			theLines     = null;
 		}
 		theRange = pRange;
 		theColumns.setDateEditorRange(theRange);
@@ -340,7 +336,7 @@ public class AccountStatement extends FinanceTable<Statement.Line> {
 		theStateType = theStateBox.getStatementType();
 		theColumns.setColumns();
 		super.setList(theLines);
-		theViewSet.setStatement(theStatement);
+		theViewList.setDataList(theLines);
 		theSelect.setLockDown();
 		theStateBox.setLockDown();
 	}

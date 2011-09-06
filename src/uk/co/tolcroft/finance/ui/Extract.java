@@ -23,14 +23,17 @@ import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.Editor;
 import uk.co.tolcroft.models.ui.Renderer;
+import uk.co.tolcroft.models.views.ViewList;
+import uk.co.tolcroft.models.views.ViewList.ListClass;
 
 public class Extract extends FinanceTable<Event> {
 	/* Members */
 	private static final long serialVersionUID = -5531752729052421790L;
 
 	private View					theView				= null;
+	private ViewList				theViewSet			= null;
+	private ListClass				theViewList			= null;
 	private ExtractModel			theModel			= null;
-	private View.ViewEvents         theExtract   		= null;
 	private Event.List  	        theEvents	 		= null;
 	private Account.List			theAccounts			= null;
 	private TransactionType.List	theTransTypes		= null;
@@ -92,6 +95,10 @@ public class Extract extends FinanceTable<Event> {
 		/* Record the passed details */
 		theParent = pParent;
 		theView   = pParent.getView();
+
+		/* Build the View set and List */
+		theViewSet	= new ViewList(theView);
+		theViewList = theViewSet.registerClass(Event.class);
 
 		/* Create the top level debug entry for this view  */
 		DebugManager myDebugMgr = theView.getDebugMgr();
@@ -158,9 +165,9 @@ public class Extract extends FinanceTable<Event> {
 	 * Save changes from the view into the underlying data
 	 */
 	public void saveData() {
-		if (theExtract != null) {
+		if (theEvents != null) {
 			super.validateAll();
-			if (!hasErrors()) theExtract.applyChanges();
+			if (!hasErrors()) theViewSet.applyChanges();
 		}
 	}
 		
@@ -168,7 +175,7 @@ public class Extract extends FinanceTable<Event> {
 	 * Update Debug view 
 	 */
 	public void updateDebug() {			
-		theDebugExtract.setObject(theExtract);
+		theDebugExtract.setObject(theEvents);
 	}
 		
 	/**
@@ -266,16 +273,17 @@ public class Extract extends FinanceTable<Event> {
 	 */
 	public void setSelection(Date.Range pRange) throws Exception {
 		theRange   = pRange;
+		theEvents  = null;				
 		if (theRange != null) {
+			/* Get the Rates edit list */
+			FinanceData myData 		= theView.getData();
+			Event.List	myEvents	= myData.getEvents();
+			theEvents	= myEvents.getEditList(pRange);
+			
 			theColumns.setDateEditorRange(theRange);
-			theExtract = theView.new ViewEvents(pRange);
-			theEvents  = theExtract.getEvents();
-		}
-		else {
-			theExtract = null;
-			theEvents  = null;				
 		}
 		setList(theEvents);
+		theViewList.setDataList(theEvents);
 		theTabButs.setLockDown();
 		theSelect.setLockDown();
 		theParent.setVisibleTabs();

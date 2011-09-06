@@ -18,12 +18,14 @@ import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
 import uk.co.tolcroft.models.ui.Renderer;
+import uk.co.tolcroft.models.views.ViewList;
+import uk.co.tolcroft.models.views.ViewList.ListClass;
 
 public class MaintNewYear extends FinanceTable<Event> implements ActionListener {
 	private static final long serialVersionUID = 7406051901546832781L;
 	
 	private View				theView				= null;
-	private View.ViewEvents     theExtract			= null;
+	private TaxYear.List	    theTaxYears			= null;
 	private Event.List	        theEvents			= null;
 	private MaintenanceTab		theParent			= null;
 	private JPanel				thePanel			= null;
@@ -32,6 +34,10 @@ public class MaintNewYear extends FinanceTable<Event> implements ActionListener 
 	private patternYearModel	theModel			= null;
 	private JButton				thePattern			= null;
 	private DebugEntry			theDebugYear		= null;
+	private DebugEntry			theDebugEvents		= null;
+	private ViewList			theViewSet			= null;
+	private ListClass			theYearView			= null;
+	private ListClass			theEventView		= null;
 
 	/* Access methods */
 	public JPanel  getPanel()			{ return thePanel; }
@@ -71,6 +77,11 @@ public class MaintNewYear extends FinanceTable<Event> implements ActionListener 
 		theParent = pParent;
 		theView	  = pParent.getView();
 		
+		/* Build the View set and List */
+		theViewSet		= new ViewList(theView);
+		theYearView		= theViewSet.registerClass(TaxYear.class);
+		theEventView	= theViewSet.registerClass(Event.class);
+
 		/* Set the table model */
 		theModel  = new patternYearModel();
 			
@@ -118,8 +129,12 @@ public class MaintNewYear extends FinanceTable<Event> implements ActionListener 
 
         /* Create the debug entry, attach to MaintenanceDebug entry */
         DebugManager myDebugMgr	= theView.getDebugMgr();
-        theDebugYear = myDebugMgr.new DebugEntry("NewYear");
-        theDebugYear.addAsChildOf(pParent.getDebugEntry());
+        DebugEntry myEntry = myDebugMgr.new DebugEntry("NewYear");
+        myEntry.addAsChildOf(pParent.getDebugEntry());
+        theDebugYear = myDebugMgr.new DebugEntry("Year");
+        theDebugYear.addAsChildOf(myEntry);
+        theDebugEvents = myDebugMgr.new DebugEntry("Events");
+        theDebugEvents.addAsChildOf(myEntry);
 	}
 		
 	/* Stubs */
@@ -149,20 +164,22 @@ public class MaintNewYear extends FinanceTable<Event> implements ActionListener 
 	 * Set Selection
 	 */
 	public void setSelection() throws Exception {
+		theTaxYears	= null;
+		theEvents  	= null;			
+		thePattern.setVisible(false);
 		if (theYear != null) {
-			theExtract = theView.new ViewEvents(theYear);
-			theEvents  = theExtract.getEvents();
-			setList(theEvents);
+			FinanceData myData = theView.getData();
+			theTaxYears	= myData.getTaxYears().getNewEditList();
+			theEvents	= myData.getEvents().getEditList(theYear);
 			thePattern.setVisible(true);
 			thePattern.setEnabled(!theYear.isActive() &&
 								  !theEvents.isEmpty());
 		}
-		else {
-			theExtract = null;
-			theEvents  = null;			
-			thePattern.setVisible(false);
-		}
-		theDebugYear.setObject(theExtract);
+		setList(theEvents);
+		theYearView.setDataList(theTaxYears);
+		theEventView.setDataList(theEvents);
+		theDebugYear.setObject(theTaxYears);
+		theDebugEvents.setObject(theEvents);
 		theParent.setVisibleTabs();
 	}
 		
@@ -174,7 +191,7 @@ public class MaintNewYear extends FinanceTable<Event> implements ActionListener 
 		/* If this event relates to the pattern button */
 		if (evt.getSource() == (Object)thePattern) {
 			/* Apply the extract changes */
-			theExtract.applyChanges();
+			theViewSet.applyChanges();
 		}
 	}
 	

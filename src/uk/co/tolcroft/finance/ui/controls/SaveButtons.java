@@ -15,7 +15,6 @@ public class SaveButtons implements ActionListener {
 	private JPanel					thePanel		= null;
 	private financePanel			theParent		= null;
 	private JButton               	theOKButton 	= null;
-	//private JButton               	theValidButton	= null;
 	private JButton                 theResetButton  = null;
 	
 	/* Access methods */
@@ -27,7 +26,6 @@ public class SaveButtons implements ActionListener {
 		
 		/* Create the boxes */
 		theOKButton    = new JButton("OK");
-		//theValidButton = new JButton("Validate");
 		theResetButton = new JButton("Reset");
 		theParent	   = pParent;
 		
@@ -52,8 +50,6 @@ public class SaveButtons implements ActionListener {
 	                .addContainerGap()
 	        		.addComponent(theOKButton)
 	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-	                //.addComponent(theValidButton)
-	                //.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                .addComponent(theResetButton)
 	                .addContainerGap())
 	    );
@@ -62,7 +58,6 @@ public class SaveButtons implements ActionListener {
 		        	.addGroup(panelLayout.createSequentialGroup()
 		                .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
 		                	.addComponent(theOKButton, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-		                    //.addComponent(theValidButton, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 		                    .addComponent(theResetButton, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
 	    );
 
@@ -75,7 +70,6 @@ public class SaveButtons implements ActionListener {
 		/* If the table is locked clear the buttons */
 		if (theParent.isLocked()) {
 			theOKButton.setEnabled(false);
-			//theValidButton.setEnabled(false);
 			theResetButton.setEnabled(false);
 			
 		/* Else look at the edit state */

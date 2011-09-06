@@ -152,7 +152,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 			List myList = new List(this);
 			
 			/* Obtain underlying updates */
-			populateList(pStyle);
+			myList.populateList(pStyle);
 			
 			/* Return the list */
 			return myList;

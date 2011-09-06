@@ -452,7 +452,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 		
 		/* Create a new Event list */
 		if (pList == null)
-			pList = new Event.List(myList.getData(), ListStyle.VIEW);
+			pList = myList.getData().getEvents().getViewList();
 		
 		/* Create a new event based on this line */
 		try { myEvent = new Event(pList, this); }
@@ -744,16 +744,6 @@ public class Pattern extends EncryptedItem<Pattern> {
 			super(Pattern.class, pData);
 		}
 
-		/** 
-	 	 * Construct an empty generic pattern list
-	 	 * @param pData the DataSet for the list
-	 	 * @param pStyle the style of the list 
-	 	 */
-		//protected List(FinanceData pData, ListStyle pStyle) { 
-		//	super(Pattern.class, pData, pStyle);
-		//}
-
-
 		/**
 		 * Constructor for a cloned List
 		 * @param pSource the source List
@@ -771,7 +761,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 			List myList = new List(this);
 			
 			/* Obtain underlying updates */
-			populateList(pStyle);
+			myList.populateList(pStyle);
 			
 			/* Return the list */
 			return myList;
@@ -822,18 +812,39 @@ public class Pattern extends EncryptedItem<Pattern> {
 			
 			/* Loop through the Prices */
 			while ((myCurr = myIterator.next()) != null) {
-				/* If this item belongs to the account */
-				if (!Account.differs(myCurr.getAccount(), pAccount)) {
-					/* Copy the item */
-					myItem = new Pattern(myList, myCurr);
-					myList.add(myItem);
-				}
+				/* Check the account */
+				int myResult = pAccount.compareTo(myCurr.getAccount());
+				
+				/* Handle differing accounts */
+				if (myResult ==  1) continue;
+				if (myResult == -1) break;
+				
+				/* Copy the item */
+				myItem = new Pattern(myList, myCurr);
+				myList.add(myItem);
 			}
 			
 			/* Return the List */
 			return myList;
 		}
 	
+		/**
+		 * Add additional fields to HTML String
+		 * @param pBuffer the string buffer 
+		 */
+		public void addHTMLFields(StringBuilder pBuffer) {
+			/* If this is an account extract */
+			if (theAccount != null) {
+				/* Start the Fields section */
+				pBuffer.append("<tr><th rowspan=\"2\">Fields</th></tr>");
+
+				/* Format the account */
+				pBuffer.append("<tr><td>Account</td><td>"); 
+				pBuffer.append(Account.format(theAccount)); 
+				pBuffer.append("</td></tr>");
+			}
+		}
+		
 		/* Is this list locked */
 		public boolean isLocked() { return (theAccount != null) && (theAccount.isLocked()); }
 		
@@ -878,7 +889,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 			clearErrors();
 			
 			/* Create a new Event list */
-			myEvents = new Event.List(getData(), ListStyle.VIEW);
+			myEvents = getData().getEvents().getViewList();
 			
 			/* Create an iterator */
 			myIterator = listIterator();

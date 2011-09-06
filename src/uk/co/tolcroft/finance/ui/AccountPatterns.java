@@ -14,7 +14,7 @@ import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.Editor;
 import uk.co.tolcroft.models.ui.Renderer;
-import uk.co.tolcroft.models.views.AccountSet;
+import uk.co.tolcroft.models.views.ViewList.ListClass;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
@@ -36,8 +36,7 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 	private patternColumnModel		theColumns			= null;
 	private AccountTab				theParent   		= null;
 	private Account                 theAccount  		= null;
-	private AccountSet				theViewSet			= null;
-	private View.ViewPatterns		theExtract			= null;
+	private ListClass				theViewList			= null;
 	private ComboSelect				theComboList    	= null;
 	private DebugEntry				theDebugEntry		= null;
 	private ErrorPanel				theError			= null;
@@ -81,9 +80,9 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 		GroupLayout		 	myLayout;
 			
 		/* Store details about the parent */
-		theParent  = pParent;
-		theView    = pParent.getView();
-		theViewSet = pParent.getViewSet();
+		theParent  	= pParent;
+		theView    	= pParent.getView();
+		theViewList = pParent.getViewSet().registerClass(Pattern.class);
 
 		/* Create the model and declare it to our superclass */
 		theModel  = new PatternsModel();
@@ -179,7 +178,7 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 	 * Update Debug view 
 	 */
 	public void updateDebug() {			
-		theDebugEntry.setObject(theExtract);
+		theDebugEntry.setObject(thePatterns);
 	}
 		
 	/**
@@ -216,11 +215,21 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 	 * @param pAccount the Account for the extract
 	 */
 	public void setSelection(Account pAccount) throws Exception {
-		theExtract  = theView.new ViewPatterns(pAccount);
-		theAccount  = pAccount;
-		thePatterns = theExtract.getPatterns();
+		/* Record the account */
+		theAccount 	= pAccount;
+		thePatterns = null;
+		
+		/* If we have an account */
+		if (theAccount != null) {
+			/* Get the Patterns edit list */
+			FinanceData 	myData 		= theView.getData();
+			Pattern.List	myPatterns	= myData.getPatterns();
+			thePatterns	= myPatterns.getEditList(pAccount);
+		}
+		
+		/* Declare the list to the underlying table and view list */
 		super.setList(thePatterns);
-		theViewSet.setPatterns(theExtract);
+		theViewList.setDataList(thePatterns);
 	}
 		
 	/**

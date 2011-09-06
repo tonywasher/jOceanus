@@ -150,6 +150,22 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	}
 
 	/**
+	 * Set the Data State
+	 * @param pState the Data Status
+	 */
+	protected void					setDataState(DataState pState) {
+		theState = pState;
+	}
+
+	/**
+	 * Set the Edit State
+	 * @param pState the Edit Status
+	 */
+	protected void					setEditState(EditState pState) {
+		theEdit = pState;
+	}
+
+	/**
 	 * Determine whether the item is visible to standard searches
 	 * @return <code>true/false</code>
 	 */
@@ -705,10 +721,6 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	 * 			- DELNEW -> NEW (changes copied down)
 	 * 			- DELCHG -> CHANGED (changes copied down)
 	 * 			- DELETED -> CHANGED (changes copied down) 
-	 *
-	 * A Spot list has some minor changes to the algorithm in that there are 
-	 * no NEW or DELETED states, leaving just CLEAN and CHANGED. The isDeleted
-	 * flags is changed in usage to an isVisible flag
 	 */
 	
 	/**
@@ -716,23 +728,6 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	 * @param newState the new state to set
 	 */
 	public void setState(DataState newState) {
-		/* If this is a Spot list */
-		if (theList.getStyle() == ListStyle.SPOT) {
-			/* Handle as special case */
-			switch (newState) {
-				case CLEAN:
-					theState  = newState;
-					theEdit   = EditState.CLEAN;
-					break;
-				case CHANGED:
-					theState  = newState;
-					theEdit   = EditState.DIRTY;
-					break;
-			}
-			/* Return having completed processing */
-			return;
-		}
-		
 		/* Police the action */
 		switch (newState) {
 			case NEW:

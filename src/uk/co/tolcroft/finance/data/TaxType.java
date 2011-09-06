@@ -156,7 +156,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 			List myList = new List(this);
 			
 			/* Obtain underlying updates */
-			populateList(pStyle);
+			myList.populateList(pStyle);
 			
 			/* Return the list */
 			return myList;

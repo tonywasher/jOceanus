@@ -11,7 +11,6 @@ import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.ValidationControl;
-import uk.co.tolcroft.models.data.DataList.*;
 import uk.co.tolcroft.models.data.EncryptedItem.EncryptedList;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugObject;
@@ -203,6 +202,7 @@ public class Statement implements DebugObject {
 		public List(Statement pStatement) { 
 			super(Line.class, theView.getData(), ListStyle.EDIT);
 			theStatement = pStatement;
+			setBase(theView.getData().getEvents());
 		}
 		
 		/* Obtain extract lists. */
@@ -254,7 +254,7 @@ public class Statement implements DebugObject {
 			
 			/* Create an event list */
 			myData = theView.getData();
-			myList = new Event.List(myData, ListStyle.VIEW);
+			myList = myData.getEvents().getViewList();
 			
 			/* Create the iterator */
 			myIterator = listIterator();
@@ -450,7 +450,7 @@ public class Statement implements DebugObject {
 			
 			/* Create a new Event list */
 			if (pList == null)
-				pList = new Event.List(myData, ListStyle.VIEW);
+				pList = myData.getEvents().getViewList();
 		
 			/* Create a new event based on this line */
 			myEvent = new Event(pList, this);
@@ -531,7 +531,7 @@ public class Statement implements DebugObject {
 			myData = getView().getData();
 			
 			/* Create a new Event list */
-			myList = new Event.List(myData, ListStyle.VIEW);
+			myList = myData.getEvents().getViewList();
 		
 			/* Create a new event based on this line */
 			myEvent = new Event(myList, this);

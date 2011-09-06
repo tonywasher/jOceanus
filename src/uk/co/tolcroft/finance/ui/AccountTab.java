@@ -16,10 +16,9 @@ import uk.co.tolcroft.finance.ui.controls.FinanceInterfaces.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.EditState;
-import uk.co.tolcroft.models.data.DataList.*;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
-import uk.co.tolcroft.models.views.AccountSet;
+import uk.co.tolcroft.models.views.ViewList;
 
 public class AccountTab implements financePanel,
 								   ChangeListener {
@@ -35,7 +34,7 @@ public class AccountTab implements financePanel,
 	private AccountPatterns		thePatterns  	= null;
 	private AccountPrices		thePrices    	= null;
 	private AccountRates		theRates     	= null;
-	private AccountSet			theViewSet		= null;
+	private ViewList			theViewSet		= null;
 	private Account				theAccount   	= null;
 	private Account.List		theAcList	 	= null;
 	private SaveButtons  		theTabButs   	= null;
@@ -48,7 +47,7 @@ public class AccountTab implements financePanel,
 	public JPanel  		getPanel()   			  { return thePanel; }
 	public int  		getFieldForCol(int col)   { return -1; }
 	public ComboSelect	getComboList()			  { return theParent.getComboList(); }
-	public AccountSet	getViewSet()			  { return theViewSet; }
+	public ViewList	getViewSet()			  { return theViewSet; }
 	public DebugEntry	getDebugEntry()			  { return theDebugEntry; }
 	public DebugManager getDebugManager() 		  { return theParent.getDebugMgr(); }
 	public void 		printIt()				  { }
@@ -71,8 +70,8 @@ public class AccountTab implements financePanel,
 		theParent 	= pParent;
 		theView   	= pParent.getView();
 		
-		/* Build the Account set */
-		theViewSet	= new AccountSet(theView);
+		/* Build the View set */
+		theViewSet	= new ViewList(theView);
 		
 		/* Create the top level debug entry for this view  */
 		DebugManager myDebugMgr = theView.getDebugMgr();
@@ -397,10 +396,10 @@ public class AccountTab implements financePanel,
 		/* If we have a selected account */
 		if (pAccount != null) {
 			/* Create the edit account list */
-			theAcList = new Account.List(myData, ListStyle.EDIT);
+			theAcList = myData.getAccounts().getEditList(pAccount);
 		
-			/* Create an edit copy of the account */
-			theAccount = new Account(theAcList, pAccount);
+			/* Access the account */
+			theAccount = theAcList.getAccount();
 		}
 		
 		/* Alert the different tables to the change */

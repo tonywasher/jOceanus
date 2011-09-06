@@ -1,6 +1,7 @@
 package uk.co.tolcroft.finance.data;
 
 import java.util.Calendar;
+
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
@@ -992,16 +993,6 @@ public class TaxYear extends DataItem<TaxYear> {
 			theData = pData;
 		}
 
-		/** 
-	 	 * Construct an empty generic TaxYear list
-	 	 * @param pData the DataSet for the list
-	 	 * @param pStyle the style of the list 
-	 	 */
-		//public List(FinanceData pData, ListStyle pStyle) { 
-		//	super(TaxYear.class, pStyle, false);
-		//	theData = pData;
-		//}
-
 		/**
 		 * Constructor for a cloned List
 		 * @param pSource the source List
@@ -1020,7 +1011,7 @@ public class TaxYear extends DataItem<TaxYear> {
 			List myList = new List(this);
 			
 			/* Obtain underlying updates */
-			populateList(pStyle);
+			myList.populateList(pStyle);
 			
 			/* Return the list */
 			return myList;
@@ -1028,7 +1019,7 @@ public class TaxYear extends DataItem<TaxYear> {
 
 		/* Obtain extract lists. */
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
-		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
+		public List getEditList() 	{ return null; }
 		public List getClonedList() { return getExtractList(ListStyle.CORE); }
 
 		/** 
@@ -1047,6 +1038,58 @@ public class TaxYear extends DataItem<TaxYear> {
 			return myList;
 		}
 
+		/**
+		 * Construct an edit extract for a TaxYear.
+		 * @return the edit Extract
+		 */
+		public List getEditList(TaxYear pTaxYear) {
+			/* Build an empty List */
+			List myList = new List(this);
+			
+			/* Make this list the correct style */
+			myList.setStyle(ListStyle.EDIT);
+			
+			/* Create a new tax year based on the passed tax year */
+			TaxYear myYear = new TaxYear(myList, pTaxYear);
+			myList.add(myYear);
+			
+			/* Return the List */
+			return myList;
+		}
+		
+		/* Constructor */
+		public List getNewEditList() {
+			/* Build an empty List */
+			List myList = new List(this);
+			
+			/* Make this list the correct style */
+			myList.setStyle(ListStyle.EDIT);
+			
+			/* Local Variables */
+			TaxYear.List 					myTaxYears;
+			TaxYear    						myBase;
+			DataList<TaxYear>.ListIterator 	myIterator;
+			
+			/* Access the existing tax years */
+			myTaxYears = theData.getTaxYears();
+			myIterator = myTaxYears.listIterator(true);
+			
+			/* Create a new tax year for the list */
+			myBase = myIterator.peekLast();
+			TaxYear myYear = new TaxYear(myList, myBase);
+			myYear.setBase(null);
+			myYear.setState(DataState.NEW);
+			myYear.setId(0);
+						
+			/* Adjust the year and add to list */
+			myYear.setDate(new Date(myBase.getDate()));
+			myYear.getDate().adjustYear(1);
+			myList.add(myYear);
+			
+			/* Return the List */
+			return myList;
+		}
+				
 		/**
 		 * Add a new item to the core list
 		 * @param pTaxYear item

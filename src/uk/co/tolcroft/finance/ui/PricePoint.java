@@ -10,6 +10,7 @@ import javax.swing.JPopupMenu;
 
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
+import uk.co.tolcroft.finance.views.SpotPrices.SpotPrice;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.Number.*;
@@ -20,6 +21,8 @@ import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.Editor;
 import uk.co.tolcroft.models.ui.Renderer;
+import uk.co.tolcroft.models.views.ViewList;
+import uk.co.tolcroft.models.views.ViewList.ListClass;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 
@@ -28,6 +31,8 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 	private static final long serialVersionUID = 5826211763056873599L;
 	
 	private View					theView				= null;
+	private ViewList				theViewSet			= null;
+	private ListClass				theViewList			= null;
 	private spotViewModel			theModel			= null;
 	private SpotPrices             	theSnapshot			= null;
 	private SpotPrices.List        	thePrices			= null;
@@ -75,6 +80,10 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 		theParent = pParent;
 		theView   = pParent.getView();
 
+		/* Build the View set */
+		theViewSet	= new ViewList(theView);
+		theViewList	= theViewSet.registerClass(SpotPrice.class);
+		
 		/* Create the top level debug entry for this view  */
 		DebugManager myDebugMgr = theView.getDebugMgr();
 		mySection = theView.getDebugEntry(View.DebugViews);
@@ -142,7 +151,7 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 	public void saveData() {
 		if (theSnapshot != null) {
 			validateAll();
-			if (!hasErrors()) theSnapshot.applyChanges();
+			if (!hasErrors()) theViewSet.applyChanges();
 		}
 	}
 		
@@ -253,6 +262,7 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 			theSelect.setAdjacent(null, null);
 		}
 		setList(thePrices);
+		theViewList.setDataList(thePrices);
 		theTabButs.setLockDown();
 		theSelect.setLockDown();
 		theParent.setVisibleTabs();

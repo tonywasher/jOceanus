@@ -117,7 +117,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 			List myList = new List(this);
 			
 			/* Obtain underlying updates */
-			populateList(pStyle);
+			myList.populateList(pStyle);
 			
 			/* Return the list */
 			return myList;

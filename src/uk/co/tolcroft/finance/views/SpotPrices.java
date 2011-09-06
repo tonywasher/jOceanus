@@ -45,36 +45,18 @@ public class SpotPrices implements DebugObject {
 		thePrices  	= new List(this);
 	}
 	
-	/** 
-	 * Apply changes in a statement back into the underlying finance objects
-	 */
-	public void applyChanges() {
-		AcctPrice.List  myBase;
-		FinanceData		myData;
-
-		
-		/* Access base details */
-		myData	= theView.getData();
-		myBase  = myData.getPrices();
-		
-		/* Apply the changes from this list */
-		myBase.applyChanges(this);
-		
-		/* Analyse the data */
-		theView.analyseData(false);
-		
-		/* Refresh windows */
-		theView.refreshWindow();
-	}
-	
 	/**
 	 * Create a string form of the object suitable for inclusion in an HTML document
 	 * @return the formatted string
 	 */
-	public StringBuilder toHTMLString() { 
-		/* Local variables */
+	public StringBuilder toHTMLString() {
 		StringBuilder	myString = new StringBuilder(10000);
-
+			
+		/* Format the table headers */
+		myString.append("<table border=\"1\" width=\"90%\" align=\"center\">");
+		myString.append("<thead><th>SpotPrices</th>");
+		myString.append("<th>Property</th><th>Value</th></thead><tbody>");
+			
 		/* Start the Fields section */
 		myString.append("<tr><th rowspan=\"4\">Fields</th></tr>");
 			
@@ -88,8 +70,9 @@ public class SpotPrices implements DebugObject {
 		myString.append("<tr><td>Previous</td><td>"); 
 		myString.append(Date.format(thePrev)); 
 		myString.append("</td></tr>");
+		myString.append("</tbody></table>"); 
 
-		/* Return the Data */
+		/* Return the data */
 		return myString;
 	}		
 	
@@ -111,27 +94,30 @@ public class SpotPrices implements DebugObject {
 		
 		/* Constructors */
 		public List(SpotPrices pPrices) { 
-			super(SpotPrice.class, theView.getData(), ListStyle.SPOT);
+			super(SpotPrice.class, theView.getData(), ListStyle.EDIT);
 			theDate   = pPrices.theDate;
 			
 			/* Declare variables */
-			FinanceData	myData;
-			AcctPrice 	myCurr;
-			AcctPrice 	myLast;
-			int			iDiff;
-			boolean		isNew;
-			boolean		isSet;
-			Account 	myAcct;
-			SpotPrice 	myPrice;
+			FinanceData		myData;
+			AcctPrice 		myCurr;
+			AcctPrice 		myLast;
+			AcctPrice.List	myPrices;
+			int				iDiff;
+			boolean			isNew;
+			boolean			isSet;
+			Account 		myAcct;
+			SpotPrice 		myPrice;
 			
 			DataList<AcctPrice>.ListIterator myIterator;
 			
 			/* Access the iterator */
 			myData 		= theView.getData();
-			myIterator 	= myData.getPrices().listIterator(true);
+			myPrices	= myData.getPrices();
+			myIterator 	= myPrices.listIterator(true);
 			myLast		= null;
 			myAcct		= null;
 			isSet		= false;
+			setBase(myPrices);
 			
 			/* Loop through the prices looking for this price */
 			while ((myCurr = myIterator.next()) != null) {
@@ -146,6 +132,9 @@ public class SpotPrices implements DebugObject {
 						/* Create the new spot price and add it to the list */
 						myPrice = new SpotPrice(this, myAcct, myLast);
 						add(myPrice);
+
+						/* Note if the account is closed */
+						if (myAcct.isClosed()) myPrice.setHidden();
 					}
 					
 					/* Record the account and note that we have no last value */
@@ -171,6 +160,9 @@ public class SpotPrices implements DebugObject {
 					myPrice = new SpotPrice(this, myCurr, myLast);
 					add(myPrice);
 					isSet 	= true;
+
+					/* Note if the account is closed */
+					if (myAcct.isClosed()) myPrice.setHidden();
 				}
 				
 				/* If this is past the required date */
@@ -181,6 +173,9 @@ public class SpotPrices implements DebugObject {
 						myPrice = new SpotPrice(this, myAcct, myLast);
 						add(myPrice);
 						isSet = true;
+
+						/* Note if the account is closed */
+						if (myAcct.isClosed()) myPrice.setHidden();
 					}
 					
 					/* Record nearest subsequent price point */
@@ -237,19 +232,9 @@ public class SpotPrices implements DebugObject {
 			
 			/* Loop through the list */
 			while ((myCurr = myIterator.next()) != null) {
-				/* Item is always valid */
-				myCurr.setValidEdit();
+				/* Validate the item */
+				myCurr.validate();
 			}
-			
-			/* Set the valid indication */
-			setEditState(EditState.VALID);	
-		}
-		
-		/**
-		 * Add additional fields to HTML String
-		 * @param pBuffer the string buffer 
-		 */
-		public void addHTMLFields(StringBuilder pBuffer) {
 		}		
 	}
 			
@@ -358,10 +343,7 @@ public class SpotPrices implements DebugObject {
 			setBase(pPrice);
 			
 			/* Set the state */
-			setState(DataState.CLEAN);
-			
-			/* Note if the account is closed */
-			if (theAccount.isClosed()) setHidden();
+			setState(DataState.CLEAN);			
 		}
 
 		/**
@@ -387,16 +369,43 @@ public class SpotPrices implements DebugObject {
 			
 			/* Set the state */
 			setState(DataState.CLEAN);
-			
-			/* Note if the account is closed */
-			if (theAccount.isClosed()) setHidden();
 		}
 					
 		/**
 		 * Validate the line
 		 */
-		public void validate() { }
+		public void validate() {
+			setValidEdit();
+		}
 
+		/**
+		 * Note that this item has been validated 
+		 */
+		public	  void					setValidEdit() {
+			setEditState((hasHistory()) ? EditState.VALID : EditState.CLEAN);
+		}
+
+		/**
+		 * Set the state of the item
+		 * A Spot list has some minor changes to the algorithm in that there are 
+		 * no NEW or DELETED states, leaving just CLEAN and CHANGED. The isDeleted
+		 * flags is changed in usage to an isVisible flag
+		 * @param newState the new state to set
+		 */
+		public void setState(DataState newState) {
+			/* Handle as special case */
+			switch (newState) {
+				case CLEAN:
+					setDataState(newState);
+					setEditState(EditState.CLEAN);
+					break;
+				case CHANGED:
+					setDataState(newState);
+					setEditState(EditState.DIRTY);
+					break;
+			}
+		}
+		
 		/**
 		 * Compare the price
 		 */

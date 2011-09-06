@@ -293,6 +293,7 @@ public class ViewPrice extends DataItem<ViewPrice> {
 			
 			/* Access the base prices */
 			myPrices = theData.getPrices();
+			setBase(myPrices);
 			
 			/* Store the account */
 			theAccount = pAccount;
@@ -306,12 +307,16 @@ public class ViewPrice extends DataItem<ViewPrice> {
 			
 			/* Loop through the list */
 			while ((myCurr = myIterator.next()) != null) {
-				/* If this item belongs to the account */
-				if (!Account.differs(myCurr.getAccount(), pAccount)) {
-					/* Copy the item */
-					myItem = new ViewPrice(this, myCurr);
-					add(myItem);
-				}
+				/* Check the account */
+				int myResult = pAccount.compareTo(myCurr.getAccount());
+				
+				/* Handle differing accounts */
+				if (myResult ==  1) continue;
+				if (myResult == -1) break;
+				
+				/* Copy the item */
+				myItem = new ViewPrice(this, myCurr);
+				add(myItem);
 			}
 		}
 
@@ -373,16 +378,6 @@ public class ViewPrice extends DataItem<ViewPrice> {
 
 			/* return to caller */
 			return iCount;
-		}
-
-		/** 
-		 * Commit/RollBack changes in a Prices view back into the core data
-		 * @param bCommit <code>true/false</code>
-		 */
-		protected void commitChanges(boolean bCommit) {
-			/* Commit /RollBack the changes */
-			if (bCommit)	commitChanges();
-			else			rollBackChanges();
 		}
 
 		/**

@@ -470,7 +470,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 			List myList = new List(this);
 			
 			/* Obtain underlying updates */
-			populateList(pStyle);
+			myList.populateList(pStyle);
 			
 			/* Return the list */
 			return myList;
