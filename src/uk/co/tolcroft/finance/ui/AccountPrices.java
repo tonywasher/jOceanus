@@ -11,15 +11,15 @@ import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.Editor;
 import uk.co.tolcroft.models.ui.ErrorPanel;
-import uk.co.tolcroft.models.ui.FinanceMouse;
-import uk.co.tolcroft.models.ui.FinanceTable;
+import uk.co.tolcroft.models.ui.StdMouse;
+import uk.co.tolcroft.models.ui.StdTable;
 import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
-public class AccountPrices extends FinanceTable<ViewPrice> {
+public class AccountPrices extends StdTable<ViewPrice> {
 	/* Members */
 	private static final long serialVersionUID 		= 1035380774297559650L;
 
@@ -191,6 +191,29 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 		theViewList.setDataList(thePrices);
 	}
 		
+	/**
+	 * Check whether a row is deletable
+	 * @param pRow the row 
+	 * @return is the row deletable
+	 */
+	protected boolean isRowDeletable(ViewPrice pRow) {
+		/* If the row is not deleted */
+		if (!pRow.isDeleted()) {
+			/* we can delete if the list size is greater than one */
+			if (thePrices.sizeNormal() > 1) return true;
+		}
+		
+		/* Not Deletable */
+		return false;
+	}
+	
+	/**
+	 * Check whether we duplicate a row 
+	 * @param pRow the row 
+	 * @return false
+	 */
+	protected boolean isRowDuplicatable(ViewPrice pRow) { return false; }
+	
 	/* Prices table model */
 	public class PricesModel extends DataTableModel {
 		private static final long serialVersionUID = -2613779599240142148L;
@@ -366,7 +389,7 @@ public class AccountPrices extends FinanceTable<ViewPrice> {
 	/**
 	 *  Prices mouse listener
 	 */
-	private class pricesMouse extends FinanceMouse<ViewPrice> {
+	private class pricesMouse extends StdMouse<ViewPrice> {
 		/**
 		 * Constructor
 		 */

@@ -1,12 +1,9 @@
 package uk.co.tolcroft.finance.ui;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
 
 import javax.swing.GroupLayout;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
@@ -21,8 +18,8 @@ import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.Editor;
 import uk.co.tolcroft.models.ui.ErrorPanel;
-import uk.co.tolcroft.models.ui.FinanceMouse;
-import uk.co.tolcroft.models.ui.FinanceTable;
+import uk.co.tolcroft.models.ui.StdMouse;
+import uk.co.tolcroft.models.ui.StdTable;
 import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.ui.SaveButtons;
 import uk.co.tolcroft.models.views.ViewList;
@@ -30,7 +27,7 @@ import uk.co.tolcroft.models.views.ViewList.ListClass;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 
-public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
+public class PricePoint extends StdTable<SpotPrices.SpotPrice> {
 	/* Members */
 	private static final long serialVersionUID = 5826211763056873599L;
 	
@@ -293,7 +290,7 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 
 		/* else it is a SpotPrice item */
 		else if (pValues instanceof SpotPrices.SpotPrice.Values) {
-			/* Alway OK */
+			/* Always OK */
 			return true;
 		}
 
@@ -304,6 +301,75 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 		return true;
 	}
 		
+	/**
+	 * Check whether insert is allowed for this table
+	 * @return insert allowed (true/false)
+	 */
+	protected boolean insertAllowed() { return false; }
+	
+	/**
+	 * Check whether a row is deletable
+	 * @param pRow the row 
+	 * @return is the row deletable
+	 */
+	protected boolean isRowDeletable(SpotPrice pRow) {
+		/* Switch on the Data State */
+		switch (pRow.getState()) {
+			case CLEAN:
+				if (pRow.getBase().isDeleted()) return false;
+			case NEW:
+			case CHANGED:
+			case RECOVERED:
+				return true;
+		}
+		
+		/* Not Deletable */
+		return false;
+	}
+	
+	/**
+	 * Check whether a row is recoverable
+	 * @param pRow the row 
+	 * @return is the row recoverable
+	 */
+	protected boolean isRowRecoverable(SpotPrice pRow) {
+		/* Switch on the Data State */
+		switch (pRow.getState()) {
+			/* Recoverable if there are changes */
+			case DELNEW:
+				return (pRow.hasHistory());
+			/* Recoverable if date is the same */
+			case DELETED:
+				return (!pRow.getDate().equals(theDate));
+			/* DELCHG must be recoverable */
+			case DELCHG:
+				return true;
+		}
+		
+		/* Not Recoverable */
+		return false;
+	}
+	
+	/**
+	 * Check whether we duplicate a row 
+	 * @param pRow the row 
+	 * @return false
+	 */
+	protected boolean isRowDuplicatable(SpotPrice pRow) { return false; }
+	
+	/**
+	 * Check whether we should hide deleted rows 
+	 * @return false
+	 */
+	protected boolean hideDeletedRows() { return false; }
+
+	/**
+	 * Check whether we duplicate a row 
+	 * @param pRow the row 
+	 * @return true
+	 */
+	protected boolean disableShowDeleted(SpotPrice pRow) { return true; }
+	
 	/* SpotView table model */
 	public class spotViewModel extends DataTableModel {
 		private static final long serialVersionUID = 2520681944053000625L;
@@ -358,8 +424,8 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 		public int getFieldForCell(int pRow, int pCol) {
 			/* Switch on column */
 			switch (pCol) {
-				case COLUMN_ASSET: 		return AcctPrice.FIELD_ACCOUNT;
-				case COLUMN_PRICE:		return AcctPrice.FIELD_PRICE;
+				case COLUMN_ASSET: 		return SpotPrice.FIELD_ACCOUNT;
+				case COLUMN_PRICE:		return SpotPrice.FIELD_PRICE;
 				default: 				return -1;
 			}
 		}
@@ -481,95 +547,13 @@ public class PricePoint extends FinanceTable<SpotPrices.SpotPrice> {
 	/**
 	 *  SpotView mouse listener
 	 */
-	private class spotViewMouse extends FinanceMouse<SpotPrices.SpotPrice> {
-			
-		/* Pop-up Menu items */
-		private static final String popupSetNull = "Set Null Price";
-			
+	private class spotViewMouse extends StdMouse<SpotPrices.SpotPrice> {
 		/**
 		 * Constructor
 		 */
 		private spotViewMouse() {
 			/* Call super-constructor */
 			super(theTable);
-		}
-		
-		/**
-		 * Disable Add Insert/Delete commands to menu
-		 * @param pMenu the menu to add to
-		 */
-		protected void addInsertDelete(JPopupMenu pMenu) {}
-		
-		/**
-		 * Add Null commands to menu
-		 * @param pMenu the menu to add to
-		 */
-		protected void addNullCommands(JPopupMenu pMenu) {
-			JMenuItem 				myItem;
-			SpotPrices.SpotPrice	myPrice;
-			boolean					enableNullPrice	= false;
-			
-			/* Nothing to do if the table is locked */
-			if (theTable.isLocked()) return;
-			
-			/* Loop through the selected rows */
-			for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
-				/* Ignore locked rows */
-				if ((myRow == null) || (myRow.isLocked())) continue;
-				
-				/* Ignore deleted rows */
-				if (myRow.isDeleted()) continue;
-				
-				/* Access as Price */
-				myPrice = (SpotPrices.SpotPrice)myRow;
-				
-				/* Enable null Price if we have price */
-				if (myPrice.getPrice() != null)	enableNullPrice	= true;
-			}	
-
-			/* If there is something to add and there are already items in the menu */
-			if ((enableNullPrice) &&
-			    (pMenu.getComponentCount() > 0)) {
-				/* Add a separator */
-				pMenu.addSeparator();
-			}
-			
-			/* If we can set null price */
-			if (enableNullPrice) {
-				/* Add the undo change choice */
-				myItem = new JMenuItem(popupSetNull);
-				myItem.setActionCommand(popupSetNull);
-				myItem.addActionListener(this);
-				pMenu.add(myItem);			
-			}
-		}
-		
-		/**
-		 * Perform actions for controls/pop-ups on this table
-		 * @param evt the event
-		 */
-		public void actionPerformed(ActionEvent evt) {
-			String myCmd = evt.getActionCommand();
-			
-			/* Cancel any editing */
-			theTable.cancelEditing();
-			
-			/* If this is a set null units command */
-			if (myCmd.equals(popupSetNull)) {
-				/* Set Price column to null */
-				setColumnToNull(COLUMN_PRICE);
-			}
-			
-			/* else we do not recognise the action */
-			else {
-				/* Pass it to the superclass */
-				super.actionPerformed(evt);
-				return;
-			}
-			
-			/* Notify of any changes */
-			notifyChanges();
-			updateDebug();
 		}		
 	}
 

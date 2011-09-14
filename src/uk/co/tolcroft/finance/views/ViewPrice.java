@@ -2,13 +2,16 @@ package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
 
-public class ViewPrice extends DataItem<ViewPrice> {
+public class ViewPrice extends EncryptedItem<ViewPrice> {
 	/**
 	 * The name of the object
 	 */
@@ -19,8 +22,8 @@ public class ViewPrice extends DataItem<ViewPrice> {
 	private boolean	hasDilution	= false;
 	
 	/* Access methods */
-	public  Values  			getValues()    		{ return (Values)super.getCurrentValues(); }
-	public  Price 				getPrice()  		{ return getValues().getPrice(); }
+	public  Values  			getValues()    		{ return (Values)super.getValues(); }
+	public  Price 				getPrice()  		{ return getValues().getPriceValue(); }
 	public  Dilution			getDilution()  		{ return getValues().getDilution(); }
 	public  DilutedPrice 		getDilutedPrice()  	{ return getValues().getDilutedPrice(); }
 	public  Date  				getDate()			{ return getValues().getDate(); }
@@ -31,12 +34,12 @@ public class ViewPrice extends DataItem<ViewPrice> {
 	public AcctPrice     getBase() { return (AcctPrice)super.getBase(); }
 	
 	/* Field IDs */
-	public static final int FIELD_ACCOUNT  		= DataItem.NUMFIELDS;
-	public static final int FIELD_DATE     		= DataItem.NUMFIELDS+1;
-	public static final int FIELD_PRICE    		= DataItem.NUMFIELDS+2;
-	public static final int FIELD_DILUTION 		= DataItem.NUMFIELDS+3;
-	public static final int FIELD_DILUTEDPRICE 	= DataItem.NUMFIELDS+4;
-	public static final int NUMFIELDS	   		= DataItem.NUMFIELDS+5;
+	public static final int FIELD_ACCOUNT  		= EncryptedItem.NUMFIELDS;
+	public static final int FIELD_DATE     		= EncryptedItem.NUMFIELDS+1;
+	public static final int FIELD_PRICE    		= EncryptedItem.NUMFIELDS+2;
+	public static final int FIELD_DILUTION 		= EncryptedItem.NUMFIELDS+3;
+	public static final int FIELD_DILUTEDPRICE 	= EncryptedItem.NUMFIELDS+4;
+	public static final int NUMFIELDS	   		= EncryptedItem.NUMFIELDS+5;
 
 	/**
 	 * Obtain the type of the item
@@ -61,7 +64,7 @@ public class ViewPrice extends DataItem<ViewPrice> {
 			case FIELD_PRICE:			return "Price";
 			case FIELD_DILUTION:		return "Dilution";
 			case FIELD_DILUTEDPRICE:	return "DilutedPrice";
-			default:		  			return DataItem.fieldName(iField);
+			default:		  			return EncryptedItem.fieldName(iField);
 		}
 	}
 				
@@ -87,7 +90,7 @@ public class ViewPrice extends DataItem<ViewPrice> {
 				myString += Date.format(getDate()); 
 				break;
 			case FIELD_PRICE:	
-				myString += Price.format(myValues.getPrice()); 
+				myString += Price.format(myValues.getPriceValue()); 
 				break;
 			case FIELD_DILUTION:	
 				myString += Dilution.format(getDilution()); 
@@ -129,6 +132,7 @@ public class ViewPrice extends DataItem<ViewPrice> {
 		super(pList, 0);
 		Values myValues = new Values();
 		setValues(myValues);
+		setControlKey(pList.getControlKey());
 		setAccount(pList.theAccount);
 		hasDilution = pList.hasDilutions();
 		setState(DataState.NEW);
@@ -238,9 +242,9 @@ public class ViewPrice extends DataItem<ViewPrice> {
 	 * 
 	 * @param pPrice the price 
 	 */
-	public void setPrice(Price pPrice) {
-		getValues().setPrice((pPrice == null) ? null : new Price(pPrice));
-		getValues().calculateDiluted();
+	public void setPrice(Price pPrice) throws Exception {
+		if (pPrice != null) getValues().setPrice(new PricePair(pPrice));
+		else 				getValues().setPrice(null);
 	}
 
 	/**
@@ -257,7 +261,7 @@ public class ViewPrice extends DataItem<ViewPrice> {
 	/**
 	 * Price List
 	 */
-	public static class List  extends DataList<ViewPrice> {
+	public static class List  extends EncryptedList<ViewPrice> {
 		/* Members */
 		private Account				theAccount		= null;
 		private FinanceData			theData			= null;
@@ -278,7 +282,7 @@ public class ViewPrice extends DataItem<ViewPrice> {
 		public List(View				pView,
 					Account 			pAccount) {
 			/* Make this list the correct style */
-			super(ViewPrice.class, ListStyle.EDIT, false);
+			super(ViewPrice.class, pView.getData(), ListStyle.EDIT);
 			theData = pView.getData();
 
 			/* Local variables */
@@ -337,10 +341,9 @@ public class ViewPrice extends DataItem<ViewPrice> {
 		
 		/**
 		 * Add a new item to the edit list
-		 * @param isCredit - ignored
 		 * @return the newly added item
 		 */
-		public ViewPrice addNewItem(boolean isCredit) {
+		public ViewPrice addNewItem() {
 			ViewPrice myPrice = new ViewPrice(this);
 			myPrice.setAccount(theAccount);
 			add(myPrice);
@@ -398,21 +401,24 @@ public class ViewPrice extends DataItem<ViewPrice> {
 	/**
 	 * Values for a view price 
 	 */
-	public class Values implements HistoryValues<ViewPrice> {
+	public class Values extends EncryptedValues {
 		private Date       			theDate      	= null;
-		private Price    			thePrice     	= null;
+		private PricePair  			thePrice     	= null;
 		private Dilution			theDilution		= null;
 		private DilutedPrice		theDilutedPrice = null;
 		
 		/* Access methods */
+		public Account				getAccount()    	{ return theAccount; }
 		public Date       			getDate()      		{ return theDate; }
-		public Price				getPrice()     		{ return thePrice; }
+		public PricePair			getPrice()     		{ return thePrice; }
 		public Dilution				getDilution()   	{ return theDilution; }
 		public DilutedPrice			getDilutedPrice()   { return theDilutedPrice; }
+		public Price  				getPriceValue() 	{ return getPairValue(thePrice); }
+		public byte[]  				getPriceBytes() 	{ return getPairBytes(thePrice); }
 		
 		public void setDate(Date pDate) {
 			theDate      	= pDate; }
-		public void setPrice(Price pPrice) {
+		public void setPrice(PricePair pPrice) {
 			thePrice     	= pPrice; }
 		public void setDilution(Dilution pDilution) {
 			theDilution  	= pDilution; }
@@ -428,7 +434,7 @@ public class ViewPrice extends DataItem<ViewPrice> {
 		public boolean histEquals(HistoryValues<ViewPrice> pCompare) {
 			Values myValues = (Values)pCompare;
 			if (Date.differs(theDate,    				myValues.theDate))    		return false;
-			if (Price.differs(thePrice,   				myValues.thePrice))   		return false;
+			if (differs(thePrice,   					myValues.thePrice))   		return false;
 			if (Dilution.differs(theDilution, 			myValues.theDilution)) 		return false;
 			if (DilutedPrice.differs(theDilutedPrice, 	myValues.theDilutedPrice))	return false;
 			return true;
@@ -442,6 +448,7 @@ public class ViewPrice extends DataItem<ViewPrice> {
 			/* Handle a ViewPrice Values */
 			if (pSource instanceof Values) {
 				Values myValues = (Values)pSource;
+				super.copyFrom(myValues);
 				theDate         = myValues.getDate();
 				thePrice        = myValues.getPrice();
 				theDilution		= myValues.getDilution();
@@ -451,8 +458,9 @@ public class ViewPrice extends DataItem<ViewPrice> {
 			/* Handle an AcctPrice Values */
 			else if (pSource instanceof AcctPrice.Values) {
 				AcctPrice.Values myValues = (AcctPrice.Values)pSource;
+				super.copyFrom(myValues);
 				theDate         = myValues.getDate();
-				thePrice        = myValues.getPrice().getValue();
+				thePrice        = new PricePair(myValues.getPrice());
 				calculateDiluted();
 			}
 		}
@@ -465,7 +473,7 @@ public class ViewPrice extends DataItem<ViewPrice> {
 					bResult = (Date.differs(theDate,      		pValues.theDate));
 					break;
 				case FIELD_PRICE:
-					bResult = (Price.differs(thePrice,    		pValues.thePrice));
+					bResult = (differs(thePrice,	    		pValues.thePrice));
 					break;
 				case FIELD_DILUTION:
 					bResult = (Dilution.differs(theDilution,   	pValues.theDilution));
@@ -497,9 +505,28 @@ public class ViewPrice extends DataItem<ViewPrice> {
 				if (myDilution != null) {
 					/* Store dilution details */
 					theDilution 	= myDilution;
-					theDilutedPrice = thePrice.getDilutedPrice(myDilution);
+					theDilutedPrice = thePrice.getValue().getDilutedPrice(myDilution);
 				}
 			}
 		}
+
+		/**
+		 * Ensure encryption after security change
+		 */
+		protected void applySecurity() throws Exception {
+			/* Apply the encryption */
+			thePrice.encryptPair();
+		}		
+		
+		/**
+		 * Adopt encryption from base
+		 * @param pBase the Base values
+		 */
+		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {
+			Values myBase = (Values)pBase;
+
+			/* Apply the encryption */
+			thePrice.encryptPair(myBase.getPrice());
+		}		
 	}		
 }

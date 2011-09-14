@@ -609,10 +609,9 @@ public class ControlKey extends DataItem<ControlKey> {
 
 		/**
 		 * Add a new item to the edit list
-		 * @param isCredit - ignored
 		 * @return the newly added item
 		 */
-		public ControlKey addNewItem(boolean isCredit) { return null; }
+		public ControlKey addNewItem() { return null; }
 
 		/**
 		 * 	Obtain the type of the item

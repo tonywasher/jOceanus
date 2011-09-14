@@ -165,7 +165,6 @@ public class Pattern extends EncryptedItem<Pattern> {
 		super(pList, pPattern.getId());
 		Values myValues	= new Values(pPattern.getValues());
 		setValues(myValues);
-		setControlKey(pPattern.getControlKey());
 		ListStyle myOldStyle = pPattern.getList().getStyle();
 
 		/* Switch on the ListStyle */
@@ -199,13 +198,11 @@ public class Pattern extends EncryptedItem<Pattern> {
 	public boolean isLocked() { return getAccount().isLocked(); }
 	
 	/* Standard constructor for a newly inserted pattern */
-	public Pattern(List    	pList,
-				   boolean	isCredit) {
+	public Pattern(List    	pList) {
 		super(pList, 0);
 		Values myValues 	= new Values();
 		setValues(myValues);
-		myValues.setIsCredit(isCredit);
-		setControlKey(pList.getData().getControl().getControlKey());
+		setControlKey(pList.getControlKey());
 		pList.setNewId(this);		
 	}
 
@@ -213,21 +210,12 @@ public class Pattern extends EncryptedItem<Pattern> {
 	public Pattern(List pList, Statement.Line pLine) {
 		/* Set standard values */
 		super(pList, 0);
-		Values 					myValues	= new Values();
-		Statement.Line.Values	myNew		= pLine.getValues();
+		setControlKey(pList.getControlKey());
+		Values 					myValues	= new Values(pLine.getValues());
 		FinanceData				myData		= pList.getData();
+
 		setValues(myValues);
-		setControlKey(pLine.getControlKey());		
-		
-		myValues.setDate(new Date(pLine.getDate()));
-		myValues.setDesc(new StringPair(myNew.getDesc()));
-		myValues.setTransType(pLine.getTransType());
-		myValues.setAmount(new MoneyPair(myNew.getAmount()));
-		myValues.setPartner(pLine.getPartner());
-		myValues.setFrequency(myData.getFrequencys().searchFor(FreqClass.ANNUALLY));
-		myValues.setAccount(pLine.getAccount());
-		myValues.setIsCredit(pLine.isCredit());
-		setState(DataState.NEW);
+		pList.setNewId(this);		
 		
 		/* Adjust the date so that it is in the 2000 tax year */
 		TaxYear.List  myYears = myData.getTaxYears();
@@ -680,6 +668,15 @@ public class Pattern extends EncryptedItem<Pattern> {
 	}
 
 	/**
+	 * Set a new isCredit indication 
+	 * 
+	 * @param isCredit
+	 */
+	public void setIsCredit(boolean isCredit) {
+		getValues().setIsCredit(isCredit);
+	}
+	
+	/**
 	 * Update Pattern from a pattern extract  
 	 * @param pPattern the pattern extract
 	 * @return whether changes have been made 
@@ -716,6 +713,10 @@ public class Pattern extends EncryptedItem<Pattern> {
 		/* Update the date if required */
 		if (Date.differs(getDate(), myPattern.getDate())) 
 			setDate(myPattern.getDate());
+		
+		/* Update the isCredit if required */
+		if (isCredit() != myPattern.isCredit()) 
+			setIsCredit(myPattern.isCredit());
 		
 		/* Check for changes */
 		if (checkForHistory()) {
@@ -861,11 +862,10 @@ public class Pattern extends EncryptedItem<Pattern> {
 	
 		/**
 		 * Add a new item to the edit list
-		 * @param isCredit - is this a credit item
 		 * @return the newly added item
 		 */
-		public Pattern addNewItem(boolean isCredit) {
-			Pattern myPattern = new Pattern(this, isCredit);
+		public Pattern addNewItem() {
+			Pattern myPattern = new Pattern(this);
 			myPattern.setAccount(theAccount);
 			add(myPattern);
 			return myPattern;

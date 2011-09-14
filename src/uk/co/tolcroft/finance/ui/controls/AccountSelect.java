@@ -13,12 +13,12 @@ import javax.swing.LayoutStyle;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.ui.FinanceInterfaces.*;
+import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
 public class AccountSelect implements ItemListener {
 	/* Members */
 	private JPanel				thePanel		= null;
-	private financePanel		theParent		= null;
+	private stdPanel		theParent		= null;
 	private View				theView			= null;
 	private JComboBox           theTypesBox 	= null;
 	private JComboBox           theAccountBox	= null;
@@ -43,7 +43,7 @@ public class AccountSelect implements ItemListener {
 				
 	/* Constructor */
 	public AccountSelect(View      		pView, 
-						 financePanel 	pParent,
+						 stdPanel 	pParent,
 						 boolean	    showDeleted) {
 		
 		/* Store table and view details */

@@ -16,15 +16,15 @@ import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.Editor;
 import uk.co.tolcroft.models.ui.ErrorPanel;
-import uk.co.tolcroft.models.ui.FinanceMouse;
-import uk.co.tolcroft.models.ui.FinanceTable;
+import uk.co.tolcroft.models.ui.StdMouse;
+import uk.co.tolcroft.models.ui.StdTable;
 import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
-public class AccountRates extends FinanceTable<AcctRate> {
+public class AccountRates extends StdTable<AcctRate> {
 	/* Members */
 	private static final long serialVersionUID = 36193763696660335L;
 	
@@ -364,7 +364,7 @@ public class AccountRates extends FinanceTable<AcctRate> {
 	/**
 	 *  Rates mouse listener
 	 */
-	private class ratesMouse extends FinanceMouse<AcctRate> {
+	private class ratesMouse extends StdMouse<AcctRate> {
 			
 		/* Pop-up Menu items */
 		private static final String popupSetNullDate  = "Set Null Date";

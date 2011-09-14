@@ -225,11 +225,10 @@ public class Statement implements DebugObject {
 		
 		/**
 		 * Add a new item to the edit list
-		 * @param isCredit - is this a credit item
 		 * @return the newly added item
 		 */
-		public Line addNewItem(boolean isCredit) {
-			Line myLine = new Line(this, isCredit);
+		public Line addNewItem() {
+			Line myLine = new Line(this);
 			add(myLine);
 			return myLine;
 		}
@@ -413,13 +412,12 @@ public class Statement implements DebugObject {
 		}
 
 		/* Standard constructor for a newly inserted line */
-		public Line(List           pList, 
-				    boolean        isCredit) {
+		public Line(List           pList) {
 			super(pList, 0);
 			theStatement = pList.theStatement;
 			Values myValues = new Values();
 			setValues(myValues);
-			myValues.setIsCredit(isCredit);
+			setControlKey(pList.getControlKey());
 			pList.setNewId(this);				
 		}
 
@@ -691,6 +689,15 @@ public class Statement implements DebugObject {
 		 */
 		public void setDate(Date pDate) {
 			getValues().setDate((pDate == null) ? null : new Date(pDate));
+		}
+		
+		/**
+		 * Set a new isCredit indication 
+		 * 
+		 * @param isCredit
+		 */
+		public void setIsCredit(boolean isCredit) {
+			getValues().setIsCredit(isCredit);
 		}
 		
 		/**

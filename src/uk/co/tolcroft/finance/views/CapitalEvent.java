@@ -311,9 +311,8 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 	
 		/**
 		 * Add a new item to the edit list
-		 * @param isCredit - ignored
 		 */
-		public CapitalEvent addNewItem(boolean isCredit) { return null; }
+		public CapitalEvent addNewItem() { return null; }
 	
 		/**
 		 * Obtain the type of the item

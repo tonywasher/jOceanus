@@ -163,10 +163,9 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 	
 		/**
 		 * Create a new empty element in the edit list (null-operation)
-		 * @param isCredit - is the item a credit or debit
 		 * @return the newly added item
 		 */
-		public Frequency addNewItem(boolean isCredit) { return null; }			
+		public Frequency addNewItem() { return null; }			
 		
 		/**
 		 * Add a Frequency

@@ -196,10 +196,9 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 	
 		/**
 		 * Create a new empty element in the edit list (null-operation)
-		 * @param isCredit - is the item a credit or debit
 		 * @return the newly added item
 		 */
-		public TaxType addNewItem(boolean isCredit) { return null; }
+		public TaxType addNewItem() { return null; }
 			
 		/**
 		 * Obtain the type of the item

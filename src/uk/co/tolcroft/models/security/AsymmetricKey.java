@@ -41,7 +41,7 @@ public class AsymmetricKey {
 	/**
 	 * Encrypted Size for Private Keys
 	 */
-	public static final int 		PRIVATESIZE	 		= 1024;
+	public static final int 		PRIVATESIZE	 		= 1280;
 	
 	/**
 	 * The Public/Private Key Pair

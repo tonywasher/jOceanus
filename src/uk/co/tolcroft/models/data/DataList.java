@@ -516,10 +516,15 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 	 */
 	public	  void           setEditState(EditState pState) {
 		switch (pState) {
-			case ERROR: theEdit = pState; break;
-			case DIRTY: if (theEdit != EditState.ERROR)
-							theEdit = pState;
-						break;
+			case CLEAN: 
+			case VALID: 
+			case ERROR: 
+				theEdit = pState;
+				break;
+			case DIRTY: 
+				if (theEdit != EditState.ERROR)
+					theEdit = pState;
+					break;
 		}
 	}
 		
@@ -654,9 +659,8 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 		
 	/**
 	 * Create a new empty element in the edit list (to be over-written)
-	 * @param isCredit - is the item a credit or debit
 	 */
-	public abstract T addNewItem(boolean isCredit);
+	public abstract T addNewItem();
 		
 	/** 
 	 * Reset changes in an edit view

@@ -4,18 +4,18 @@ import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 
-public class FinanceInterfaces {
-	public enum financeCommand {
+public class StdInterfaces {
+	public enum stdCommand {
 		OK,
 		RESETALL;
 	}
 
-	public interface financePanel {
+	public interface stdPanel {
 		public	void			notifySelection(Object o);
 		public	boolean			hasUpdates();
 		public	void			printIt();
 		public	boolean			isLocked();
-		public	void			performCommand(financeCommand pCmd);
+		public	void			performCommand(stdCommand pCmd);
 		public	EditState		getEditState();
 		public  DebugManager	getDebugManager();
 		public  DebugEntry		getDebugEntry();

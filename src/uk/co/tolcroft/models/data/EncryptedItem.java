@@ -199,6 +199,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	public abstract static class EncryptedList<T extends EncryptedItem<T>>  extends DataList<T> {
 		private DataSet<?>	theData			= null;
 		public 	DataSet<?>	getData()		{ return theData; }
+		public 	ControlKey	getControlKey()	{ return theData.getControl().getControlKey(); }
 
 		/** 
 	 	 * Construct an empty CORE encrypted list

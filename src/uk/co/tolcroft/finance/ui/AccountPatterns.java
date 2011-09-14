@@ -1,28 +1,34 @@
 package uk.co.tolcroft.finance.ui;
 
+import java.awt.event.ActionEvent;
+
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.table.AbstractTableModel;
 
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.Editor;
 import uk.co.tolcroft.models.ui.ErrorPanel;
-import uk.co.tolcroft.models.ui.FinanceMouse;
-import uk.co.tolcroft.models.ui.FinanceTable;
+import uk.co.tolcroft.models.ui.StdMouse;
+import uk.co.tolcroft.models.ui.StdTable;
 import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
-public class AccountPatterns extends FinanceTable<Pattern> {
+public class AccountPatterns extends StdTable<Pattern> {
 	/* Members */
 	private static final long serialVersionUID = 1968946370981616222L;
 
@@ -47,7 +53,6 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 
 	/* Access methods */
 	public JPanel  getPanel()			{ return thePanel; }
-	public boolean hasCreditChoice() 	{ return true; }
 	public boolean hasHeader()			{ return false; }
 	
 	/* Access the debug entry */
@@ -536,14 +541,143 @@ public class AccountPatterns extends FinanceTable<Pattern> {
 	/**
 	 *  Pattern mouse listener
 	 */
-	private class patternMouse extends FinanceMouse<Pattern> {
+	private class patternMouse extends StdMouse<Pattern> {
+		
+		/* Pop-up Menu items */
+		private static final String popupCredit  		= "Set As Credit";
+		private static final String popupDebit  		= "Set As Debit";
+
 		/**
 		 * Constructor
 		 */
 		private patternMouse() {
 			/* Call super-constructor */
 			super(theTable);
-		}		
+		}
+		
+		/**
+		 * Add Special commands to menu
+		 * @param pMenu the menu to add to
+		 */
+		protected void addSpecialCommands(JPopupMenu pMenu) {
+			JMenuItem 		myItem;
+			Statement.Line	myLine;
+			boolean			enableCredit 		= false;
+			boolean			enableDebit 		= false;
+			
+			/* Nothing to do if the table is locked */
+			if (theTable.isLocked()) return;
+			
+			/* Loop through the selected rows */
+			for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
+				/* Ignore locked rows */
+				if ((myRow == null) || (myRow.isLocked())) continue;
+				
+				/* Ignore deleted rows */
+				if (myRow.isDeleted()) continue;
+				
+				/* Access as line */
+				myLine = (Statement.Line)myRow;
+				
+				/* Enable Debit if we have credit */
+				if (myLine.isCredit())
+					enableDebit		= true;
+				
+				/* Enable Credit otherwise */
+				else enableCredit	= true;
+			}	
+
+			/* If there is something to add and there are already items in the menu */
+			if ((enableCredit || enableDebit) &&
+			    (pMenu.getComponentCount() > 0)) {
+				/* Add a separator */
+				pMenu.addSeparator();
+			}
+			
+			/* If we can set credit */
+			if (enableCredit) {
+				/* Add the credit choice */
+				myItem = new JMenuItem(popupCredit);
+				myItem.setActionCommand(popupCredit);
+				myItem.addActionListener(this);
+				pMenu.add(myItem);			
+			}
+
+			/* If we can set debit */
+			if (enableDebit) {
+				/* Add the debit choice */
+				myItem = new JMenuItem(popupDebit);
+				myItem.setActionCommand(popupDebit);
+				myItem.addActionListener(this);
+				pMenu.add(myItem);			
+			}
+		}
+
+		/**
+		 * Set the specified column to credit/debit
+		 * @param isCredit set to Credit or else Debit
+		 */
+		protected void setIsCredit(boolean isCredit) {
+			AbstractTableModel	myModel;
+			int					row;
+
+			/* Access the table model */
+			myModel = theTable.getTableModel();
+			
+			/* Loop through the selected rows */
+			for (Pattern myRow : theTable.cacheSelectedRows()) {
+				/* Ignore locked rows */
+				if ((myRow == null) || (myRow.isLocked())) continue;
+				
+				/* Ignore deleted rows */
+				if (myRow.isDeleted()) continue;
+
+				/* Determine row */
+				row = myRow.indexOf();
+				//if (theTable.hasHeader()) row--;
+				
+				/* Ignore rows that are already correct */
+				if (myRow.isCredit() != isCredit) continue;
+				
+				/* set the credit value */
+				myRow.setIsCredit(isCredit);
+				myModel.fireTableRowsUpdated(row, row);
+			}
+		}
+		
+		/**
+		 * Perform actions for controls/pop-ups on this table
+		 * @param evt the event
+		 */
+		public void actionPerformed(ActionEvent evt) {
+			String myCmd = evt.getActionCommand();
+			
+			/* Cancel any editing */
+			theTable.cancelEditing();
+			
+			/* If this is a credit command */
+			if (myCmd.equals(popupCredit)) {
+				/* Set Credit indication */
+				setIsCredit(true); 
+			}
+			
+			/* If this is a debit command */
+			else if (myCmd.equals(popupDebit)) {
+				/* Set Debit indication */
+				setIsCredit(false); 
+			}			
+			
+			/* else we do not recognise the action */
+			else {
+				/* Pass it to the superclass */
+				super.actionPerformed(evt);
+				return;
+			}
+			
+			/* Notify of any changes */
+			notifyChanges();
+			updateDebug();
+		}
 	}		
 
 	/**

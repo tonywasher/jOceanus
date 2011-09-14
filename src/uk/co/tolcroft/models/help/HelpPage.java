@@ -209,9 +209,8 @@ public class HelpPage extends DataItem<HelpPage> {
 	
 		/**
 		 * Add a new item to the edit list
-		 * @param isCredit - ignored
 		 */
-		public HelpPage addNewItem(boolean isCredit) { return null; }
+		public HelpPage addNewItem() { return null; }
 		
 		/**
 		 * Add a help page to the list

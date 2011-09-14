@@ -108,7 +108,7 @@ public class Editor {
 													  boolean isSelected,
 													  int     row,
 													  int     col) {
-			FinanceTable<?> myTable = (FinanceTable<?>)table;
+			StdTable<?> myTable = (StdTable<?>)table;
 			theCombo = myTable.getComboBox(row, col);
 			theCombo.setSelectedItem((java.lang.String)value);
 			return theCombo;

@@ -27,11 +27,11 @@ import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.ErrorPanel;
-import uk.co.tolcroft.models.ui.FinanceInterfaces.*;
+import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
 /* Report Tab */
 public class ReportTab implements HyperlinkListener,
-								  financePanel {
+								  stdPanel {
 	/* Properties */
 	private View 				theView 	  	= null;
 	private MainTab				theParent		= null;
@@ -54,7 +54,7 @@ public class ReportTab implements HyperlinkListener,
 	public boolean      hasUpdates()     { return false; }
 	public boolean      isLocked()     	 { return false; }
 	public EditState    getEditState()   { return EditState.CLEAN; }
-	public void      	performCommand(financeCommand pCmd) { }
+	public void      	performCommand(stdCommand pCmd) { }
 	
 	/* Access the debug entry */
 	public DebugEntry 	getDebugEntry()		{ return theDebugReport; }

@@ -26,13 +26,13 @@ import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.ErrorPanel;
 import uk.co.tolcroft.models.ui.SaveButtons;
-import uk.co.tolcroft.models.ui.FinanceInterfaces.*;
+import uk.co.tolcroft.models.ui.StdInterfaces.*;
 import uk.co.tolcroft.models.views.ViewList;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 
 public class MaintTaxYear implements ActionListener,
 									 ItemListener,
-									 financePanel {
+									 stdPanel {
 	/* Properties */
 	private MaintenanceTab		theParent			= null;
 	private JPanel          	thePanel			= null;
@@ -610,7 +610,7 @@ public class MaintTaxYear implements ActionListener,
 	public void printIt() {}
 	
 	/* performCommand */
-	public void performCommand(financeCommand pCmd) {
+	public void performCommand(stdCommand pCmd) {
 		/* Switch on command */
 		switch (pCmd) {
 			case OK:

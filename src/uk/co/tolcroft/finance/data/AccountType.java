@@ -511,10 +511,9 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 	
 		/**
 		 * Create a new empty element in the edit list (null-operation)
-		 * @param isCredit - is the item a credit or debit
 		 * @return the newly added item
 		 */
-		public AccountType addNewItem(boolean isCredit) { return null; }
+		public AccountType addNewItem() { return null; }
 			
 		/**
 		 * Obtain the type of the item

@@ -566,9 +566,8 @@ public class SecurityControl extends DataItem<SecurityControl> {
 	
 		/**
 		 * Add a new item to the edit list
-		 * @param isCredit - ignored
 		 */
-		public SecurityControl addNewItem(boolean isCredit) { return null; }
+		public SecurityControl addNewItem() { return null; }
 	
 		/**
 		 * Obtain the type of the item

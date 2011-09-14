@@ -33,14 +33,14 @@ import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.ErrorPanel;
 import uk.co.tolcroft.models.ui.SaveButtons;
-import uk.co.tolcroft.models.ui.FinanceInterfaces.*;
+import uk.co.tolcroft.models.ui.StdInterfaces.*;
 import uk.co.tolcroft.models.views.ViewList;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 
 public class MaintAccount implements ActionListener,
 									 ItemListener,
 									 ChangeListener,
-									 financePanel {
+									 stdPanel {
 	/* Properties */
 	private MaintenanceTab		theParent		= null;
 	private JPanel              thePanel		= null;
@@ -492,7 +492,7 @@ public class MaintAccount implements ActionListener,
 	}
 	
 	/* performCommand */
-	public void performCommand(financeCommand pCmd) {
+	public void performCommand(stdCommand pCmd) {
 		/* Switch on command */
 		switch (pCmd) {
 			case OK:

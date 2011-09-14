@@ -17,14 +17,14 @@ import javax.swing.event.ChangeListener;
 
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.ui.FinanceInterfaces.*;
+import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
 public class SpotSelect implements ItemListener,
 								   ActionListener,
 								   ChangeListener {
 	/* Members */
 	private JPanel					thePanel		= null;
-	private financePanel  			theParent		= null;
+	private stdPanel  			theParent		= null;
 	private View					theView			= null;
 	private SpinnerDateModel        theModel        = null;
 	private JSpinner                theDateBox      = null;
@@ -41,7 +41,7 @@ public class SpotSelect implements ItemListener,
 	public boolean	getShowClosed() { return doShowClosed; }
 				
 	/* Constructor */
-	public SpotSelect(View pView, financePanel pTable) {
+	public SpotSelect(View pView, stdPanel pTable) {
 		
 		/* Store table and view details */
 		theView 	  = pView;

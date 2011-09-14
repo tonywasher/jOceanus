@@ -297,10 +297,9 @@ public class Analysis {
 	
 		/**
 		 * Add a new item to the edit list
-		 * @param isCredit - ignored
 		 * @return the newly added item
 		 */
-		public AnalysisBucket addNewItem(boolean isCredit) { return null; }
+		public AnalysisBucket addNewItem() { return null; }
 	
 		/**
 		 * Obtain the type of the item

@@ -14,12 +14,12 @@ import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.TaxYear;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.ui.FinanceInterfaces.*;
+import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
 public class TaxYearSelect implements ItemListener {
 	/* Members */
 	private JPanel			thePanel		= null;
-	private financePanel	theParent		= null;
+	private stdPanel	theParent		= null;
 	private View			theView			= null;
 	private JComboBox		theYearsBox		= null;
 	private JCheckBox		theShowDeleted	= null;
@@ -35,7 +35,7 @@ public class TaxYearSelect implements ItemListener {
 	public boolean	doShowDeleted()	{ return theState.doShowDeleted(); }
 	
 	/* Constructor */
-	public TaxYearSelect(View pView, financePanel pMaint) {
+	public TaxYearSelect(View pView, stdPanel pMaint) {
 		JLabel mySelect;
 		
 		/* Store table and view details */

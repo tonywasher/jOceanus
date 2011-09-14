@@ -114,7 +114,7 @@ public class LinkNode<T extends LinkObject<T>> {
 		    
 		    /* If hidden status differs, adjust hidden index */
 		    if (myCurr.isHidden == isVisible)
-		    	myCurr.theHiddenIndex += (isVisible) ? 1 : -1;
+		    	theHiddenIndex += (isVisible) ? 1 : -1;
 		    
 		    /* Add to the list */
 		    myCurr.thePrev = this;

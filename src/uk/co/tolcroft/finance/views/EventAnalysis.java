@@ -591,10 +591,9 @@ public class EventAnalysis implements DebugObject {
 	
 		/**
 		 * Add a new item to the edit list
-		 * @param isCredit - ignored
 		 * @return the newly added item
 		 */
-		public AnalysisYear addNewItem(boolean isCredit) { return null; }
+		public AnalysisYear addNewItem() { return null; }
 	
 		/**
 		 * Obtain the type of the item

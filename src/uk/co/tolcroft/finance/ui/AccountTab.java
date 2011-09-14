@@ -20,10 +20,10 @@ import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.DateRange;
 import uk.co.tolcroft.models.ui.ErrorPanel;
 import uk.co.tolcroft.models.ui.SaveButtons;
-import uk.co.tolcroft.models.ui.FinanceInterfaces.*;
+import uk.co.tolcroft.models.ui.StdInterfaces.*;
 import uk.co.tolcroft.models.views.ViewList;
 
-public class AccountTab implements financePanel,
+public class AccountTab implements stdPanel,
 								   ChangeListener {
 	/* Members */
 	private static final long serialVersionUID  = 7682053546233794088L;
@@ -261,7 +261,7 @@ public class AccountTab implements financePanel,
 	 * Perform a command
 	 * @param pCmd the command to perform
 	 */
-	public void performCommand(financeCommand pCmd) {
+	public void performCommand(stdCommand pCmd) {
 		/* Cancel any editing */
 		cancelEditing();
 			

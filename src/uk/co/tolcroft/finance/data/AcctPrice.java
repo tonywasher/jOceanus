@@ -1,6 +1,7 @@
 package uk.co.tolcroft.finance.data;
 
 import uk.co.tolcroft.finance.views.SpotPrices;
+import uk.co.tolcroft.finance.views.ViewPrice;
 import uk.co.tolcroft.finance.views.SpotPrices.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
@@ -115,7 +116,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		super(pList, pPrice.getId());
 		Values myValues = new Values(pPrice.getValues());
 		setValues(myValues);
-		setControlKey(pPrice.getControlKey());		
+		//setControlKey(pPrice.getControlKey());
 		ListStyle myOldStyle = pPrice.getList().getStyle();
 
 		/* Switch on the ListStyle */
@@ -145,12 +146,44 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		}
 	}
 
+	/**
+	 * Construct a new price from a ViewPrice
+	 * @param pPrice the price to copy 
+	 */
+	private AcctPrice(List   	pList,
+		         	  ViewPrice	pPrice) {
+	
+		/* Set standard values */
+		super(pList, 0);
+		Values 	myValues 	= new Values(pPrice.getValues());
+		setValues(myValues);
+			
+		/* Allocate the id */
+		pList.setNewId(this);				
+	}
+	
+	/**
+	 * Construct a new price from a SpotPrice
+	 * @param pPrice the price to copy 
+	 */
+	private AcctPrice(List   	pList,
+		         	  SpotPrice	pPrice) {
+	
+		/* Set standard values */
+		super(pList, 0);
+		Values 	myValues 	= new Values(pPrice.getValues());
+		setValues(myValues);
+			
+		/* Allocate the id */
+		pList.setNewId(this);				
+	}
+	
 	/* Standard constructor for a newly inserted price */
 	private AcctPrice(List pList) {
 		super(pList, 0);
 		Values myValues = new Values();
 		setValues(myValues);
-		setControlKey(pList.getData().getControl().getControlKey());
+		setControlKey(pList.getControlKey());
 		pList.setNewId(this);
 	}
 
@@ -570,17 +603,29 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		 * @return the newly added item
 		 */
 		public AcctPrice addNewItem(DataItem<?> pPrice) {
-			AcctPrice myPrice = new AcctPrice(this, (AcctPrice)pPrice);
-			add(myPrice);
-			return myPrice;
+			if (pPrice instanceof AcctPrice) {
+				AcctPrice myPrice = new AcctPrice(this, (AcctPrice)pPrice);
+				add(myPrice);
+				return myPrice;
+			}
+			else if (pPrice instanceof SpotPrice) {
+				AcctPrice myPrice = new AcctPrice(this, (SpotPrice)pPrice);
+				add(myPrice);
+				return myPrice;
+			}
+			else if (pPrice instanceof ViewPrice) {
+				AcctPrice myPrice = new AcctPrice(this, (ViewPrice)pPrice);
+				add(myPrice);
+				return myPrice;
+			}
+			else return null;
 		}
 
 		/**
 		 * Add a new item to the edit list
-		 * @param isCredit - ignored
 		 * @return the newly added item
 		 */
-		public AcctPrice addNewItem(boolean	isCredit) {
+		public AcctPrice addNewItem() {
 			AcctPrice myPrice = new AcctPrice(this);
 			myPrice.setAccount(theAccount);
 			add(myPrice);
@@ -877,7 +922,9 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 
 		/* Constructor */
 		public Values() {}
-		public Values(Values pValues) { copyFrom(pValues); }
+		public Values(Values 			pValues) { copyFrom(pValues); }
+		public Values(ViewPrice.Values 	pValues) { copyFrom(pValues); }
+		public Values(SpotPrice.Values 	pValues) { copyFrom(pValues); }
 		
 		/* Check whether this object is equal to that passed */
 		public boolean histEquals(HistoryValues<AcctPrice> pCompare) {
@@ -895,12 +942,35 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			return new Values(this);
 		}
 		public void    copyFrom(HistoryValues<?> pSource) {
-			Values myValues = (Values)pSource;
-			super.copyFrom(myValues);
-			theDate      = myValues.getDate();
-			thePrice     = myValues.getPrice();
-			theAccount   = myValues.getAccount();
-			theAccountId = myValues.getAccountId();
+			/* Handle a Price Values */
+			if (pSource instanceof Values) {
+				Values myValues = (Values)pSource;
+				super.copyFrom(myValues);
+				theDate      = myValues.getDate();
+				thePrice     = myValues.getPrice();
+				theAccount   = myValues.getAccount();
+				theAccountId = myValues.getAccountId();
+			}
+			
+			/* Handle a SpotPrice Values */
+			else if (pSource instanceof SpotPrice.Values) {
+				SpotPrice.Values 	myValues = (SpotPrice.Values)pSource;
+				super.copyFrom(myValues);
+				theDate      = myValues.getDate();
+				thePrice     = new PricePair(myValues.getPrice());
+				theAccount   = myValues.getAccount();
+				theAccountId = theAccount.getId();
+			}
+			
+			/* Handle a ViewPrice Values */
+			else if (pSource instanceof ViewPrice.Values) {
+				ViewPrice.Values 	myValues = (ViewPrice.Values)pSource;
+				super.copyFrom(myValues);
+				theDate      = myValues.getDate();
+				thePrice     = new PricePair(myValues.getPrice());
+				theAccount   = myValues.getAccount();
+				theAccountId = theAccount.getId();
+			}
 		}
 		public boolean	fieldChanged(int fieldNo, HistoryValues<AcctPrice> pOriginal) {
 			Values 	pValues = (Values)pOriginal;

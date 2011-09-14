@@ -261,7 +261,6 @@ public class Account extends EncryptedItem<Account> {
 		super(pList, pAccount.getId());
 		Values myValues = new Values(pAccount.getValues());
 		setValues(myValues);
-		setControlKey(pAccount.getControlKey());
 		theEarliest  = pAccount.theEarliest;
 		theLatest    = pAccount.theLatest;
 		isCloseable  = pAccount.isCloseable();
@@ -459,7 +458,7 @@ public class Account extends EncryptedItem<Account> {
 		super(pList, 0);
 		Values myValues = new Values();
 		setValues(myValues);
-		setControlKey(pList.getData().getControl().getControlKey());
+		setControlKey(pList.getControlKey());
 		pList.setNewId(this);				
 	}
 
@@ -1235,10 +1234,9 @@ public class Account extends EncryptedItem<Account> {
 	
 		/**
 		 * Create a new empty element in the edit list (null-operation)
-		 * @param isCredit - is the item a credit or debit
 		 * @return the newly added item
 		 */
-		public Account addNewItem(boolean isCredit) { return null; }
+		public Account addNewItem() { return null; }
 			
 		/**
 		 * Obtain the type of the item

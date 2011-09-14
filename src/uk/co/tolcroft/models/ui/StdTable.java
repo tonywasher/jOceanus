@@ -30,10 +30,10 @@ import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.data.HistoryCheck;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.help.DebugManager;
-import uk.co.tolcroft.models.ui.FinanceInterfaces.*;
+import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
-public abstract class FinanceTable<T extends DataItem<T>> extends JTable 
-														  implements financePanel,
+public abstract class StdTable<T extends DataItem<T>> extends JTable 
+														  implements stdPanel,
 																  	 HistoryCheck<T> {
 	/* Members */
 	private static final long serialVersionUID = 1258025191244933784L;
@@ -52,8 +52,6 @@ public abstract class FinanceTable<T extends DataItem<T>> extends JTable
 
 	/* Access methods */
 	public boolean 	hasHeader() 		{ return false; }
-	public boolean 	hasCreditChoice() 	{ return false; }
-	public boolean 	needsMembers()		{ return false; }
 	public boolean 	hasUpdates() 		{ return (theList != null) &&
 												 theList.hasUpdates(); }
 	public boolean 	hasErrors()  		{ return (theList != null) &&
@@ -81,7 +79,7 @@ public abstract class FinanceTable<T extends DataItem<T>> extends JTable
 	 * Constructor
 	 * @param pMainTab the main window
 	 */
-	public FinanceTable(MainTab pMainTab) {
+	public StdTable(MainTab pMainTab) {
 		/* Store parameters */
 		theMainTab 		= pMainTab;
 		theRowHdrModel  = new rowTableModel();
@@ -346,15 +344,21 @@ public abstract class FinanceTable<T extends DataItem<T>> extends JTable
 	}
 	
 	/**
+	 * Check whether insert is allowed for this table
+	 * @return insert allowed (true/false)
+	 */
+	protected boolean insertAllowed() { return true; }
+	
+	/**
 	 * Insert an item 
 	 * @param isCredit is this a credit item
 	 */
-	protected void insertRow(boolean isCredit) {		
+	protected void insertRow() {		
 		int 	myRowNo;
 		T		myItem;
 		  
 		/* Create the new Item */
-		myItem = theList.addNewItem(isCredit);
+		myItem = theList.addNewItem();
 		
 		/* Determine the row # allowing for header */
 		myRowNo = myItem.indexOf();
@@ -369,14 +373,44 @@ public abstract class FinanceTable<T extends DataItem<T>> extends JTable
 		/* Shift display to line */
 		selectRowWithScroll(myRowNo);
 	}
+
+	/**
+	 * Check whether a row is deletable
+	 * @param pRow the row 
+	 * @return is the row deletable
+	 */
+	protected boolean isRowDeletable(T pRow) {
+		/* Not deletable if already deleted */
+		if (pRow.isDeleted()) return false;				
+		
+		/* Deletable */
+		return true;
+	}
+	
+	/**
+	 * Check whether we should hide deleted rows 
+	 * @return hide deleted rows (true/false)
+	 */
+	protected boolean hideDeletedRows() { return !doShowDel; }
+	
+	/**
+	 * Check whether showDeleted should be disabled 
+	 * @param pRow the row 
+	 * @return disable show deleted
+	 */
+	protected boolean disableShowDeleted(T pRow) {
+		/* Is it deleted */
+		return pRow.isDeleted();
+	}
 	
 	/**
 	 * Delete the selected items
 	 */
 	protected void deleteRows() {
-		T[]	myRows;
-		T	myRow;
-		int	myRowNo;
+		T[]		myRows;
+		T		myRow;
+		int		myRowNo;
+		boolean	hideDeleted = hideDeletedRows();
 		
 		/* Access the selected rows */
 		myRows = cacheSelectedRows();
@@ -386,8 +420,11 @@ public abstract class FinanceTable<T extends DataItem<T>> extends JTable
 			/* Access the row */
 			myRow = myRows[i];
 			
-			/* Ignore null/deleted entries */
-			if ((myRow == null) || (myRow.isDeleted())) continue;				
+			/* Ignore locked rows */
+			if ((myRow == null) || (myRow.isLocked())) continue;
+			
+			/* Ignore non-Deletable entries */
+			if (!isRowDeletable(myRow)) continue;				
 
 			/* Access the row # and adjust for header */
 			myRowNo = myRow.indexOf();
@@ -397,7 +434,7 @@ public abstract class FinanceTable<T extends DataItem<T>> extends JTable
 			myRow.setState(DataState.DELETED);
 
 			/* If we are showing deleted items */
-			if (doShowDel) {
+			if (!hideDeleted) {
 				/* Notify of the update of the row */
 				theModel.fireUpdateRowEvents(myRowNo);
 			}
@@ -415,6 +452,19 @@ public abstract class FinanceTable<T extends DataItem<T>> extends JTable
 	}
 		
 	/**
+	 * Check whether a row is duplicatable
+	 * @param pRow the row 
+	 * @return is the row duplicatable
+	 */
+	protected boolean isRowDuplicatable(T pRow) {
+		/* Not duplicatable if already deleted */
+		if (pRow.isDeleted()) return false;				
+		
+		/* Duplicatable */
+		return true;
+	}
+	
+	/**
 	 * Duplicate the selected items
 	 */
 	protected void duplicateRows() {
@@ -431,8 +481,11 @@ public abstract class FinanceTable<T extends DataItem<T>> extends JTable
 			/* Access the row */
 			myRow = myRows[i];
 			
-			/* Ignore null/deleted entries */
-			if ((myRow == null) || (myRow.isDeleted())) continue;				
+			/* Ignore locked rows */
+			if ((myRow == null) || (myRow.isLocked())) continue;
+			
+			/* Ignore non-Duplicatable entries */
+			if (!isRowDuplicatable(myRow)) continue;				
 
 			/* Access the row # and adjust for header */
 			myRowNo = myRow.indexOf();
@@ -457,6 +510,23 @@ public abstract class FinanceTable<T extends DataItem<T>> extends JTable
 	}
 		
 	/**
+	 * Check whether a row is recoverable
+	 * @param pRow the row 
+	 * @return is the row recoverable
+	 */
+	protected boolean isRowRecoverable(T pRow) {
+		/* Must be deleted to be recoverable */
+		if (!pRow.isDeleted()) return false;
+		
+		/* The current values must be valid */
+		if (isValidHistory(pRow, pRow.getCurrentValues()))
+			return true;
+		
+		/* Not recoverable */
+		return true;
+	}
+	
+	/**
 	 * Recover the selected items
 	 */
 	protected void recoverRows() {		
@@ -472,8 +542,11 @@ public abstract class FinanceTable<T extends DataItem<T>> extends JTable
 			/* Access the row */
 			myRow = myRows[i];
 			
-			/* Ignore null/non-deleted entries */
-			if ((myRow == null) || (!myRow.isDeleted())) continue;				
+			/* Ignore locked rows */
+			if ((myRow == null) || (myRow.isLocked())) continue;
+			
+			/* Ignore non-Recoverable entries */
+			if (!isRowRecoverable(myRow)) continue;				
 
 			/* Access the row # and adjust for header */
 			myRowNo = myRow.indexOf();
@@ -508,10 +581,17 @@ public abstract class FinanceTable<T extends DataItem<T>> extends JTable
 			/* Access the row */
 			myRow = myRows[i];
 			
-			/* Ignore null/deleted entries */
-			if ((myRow == null) || (myRow.isDeleted())) continue;				
+			/* Ignore locked rows */
+			if ((myRow == null) || (myRow.isLocked())) continue;
+			
+			/* Ignore deleted rows */
+			if (myRow.isDeleted()) continue;
+			
+			/* Skip if validation not required */
+		  	if ((!myRow.hasHistory()) || 
+		  		(myRow.getEditState() == EditState.VALID)) continue;
 
-			/* Access the row # and adjust for header */
+		  		/* Access the row # and adjust for header */
 			myRowNo = myRow.indexOf();
 			if (hasHeader()) myRowNo++;
 
@@ -541,9 +621,15 @@ public abstract class FinanceTable<T extends DataItem<T>> extends JTable
 			/* Access the row */
 			myRow = myRows[i];
 			
-			/* Ignore null entries */
-			if (myRow == null) continue;				
-
+			/* Ignore locked rows */
+			if ((myRow == null) || (myRow.isLocked())) continue;
+			
+			/* Ignore deleted rows */
+			if (myRow.isDeleted()) continue;
+			
+			/* Skip if reset not required */
+		  	if (!myRow.hasHistory()) continue;
+		  	
 			/* Access the row # adjust for header */
 			myRowNo = myRow.indexOf();
 			if (hasHeader()) myRowNo++;
@@ -597,47 +683,50 @@ public abstract class FinanceTable<T extends DataItem<T>> extends JTable
 			/* Access the row */
 			myRow = myRows[i];
 			
-			/* Ignore null entries */
-			if (myRow == null) continue;				
-
+			/* Ignore locked rows */
+			if ((myRow == null) || (myRow.isLocked())) continue;
+			
+			/* Ignore deleted rows */
+			if (myRow.isDeleted()) continue;
+			
+			/* Skip if undo not required */
+		  	if (!myRow.hasHistory()) continue;
+		  	
 			/* Access the row # and adjust for header */
 			myRowNo = myRow.indexOf();
 			if (hasHeader()) myRowNo++;
 
-			/* If the row has changes */
-			if (myRow.hasHistory()) {
-				/* Pop last value */
-				myRow.popHistory();
+			/* Pop last value */
+			myRow.popHistory();
 			
-				/* Resort the item */
-				theList.reSort(myRow);
-				myRow.clearErrors();
-				myRow.validate();
+			/* Resort the item */
+			theList.reSort(myRow);
+			myRow.clearErrors();
+			myRow.validate();
 			
-				/* If the item is now clean */
-				if (!myRow.hasHistory()) {
-					/* Set the new status */
-					myRow.setState(myRow.isCoreDeleted()
-									? DataState.RECOVERED
-									: DataState.CLEAN);
-				}
+			/* If the item is now clean */
+			if (!myRow.hasHistory()) {
+				/* Set the new status */
+				myRow.setState(myRow.isCoreDeleted()
+								? DataState.RECOVERED
+								: DataState.CLEAN);
+			}
 			
-				/* Determine new row # */
-				myNewRowNo = myRow.indexOf();
-				if (hasHeader()) myNewRowNo++;
+			/* Determine new row # */
+			myNewRowNo = myRow.indexOf();
+			if (hasHeader()) myNewRowNo++;
 				
-				/* If the row # has changed */
-				if (myRowNo != myNewRowNo) {
-					/* Report the deletion and insertion */
-					theModel.fireMoveRowEvents(myRowNo, myNewRowNo);					
-					addRowSelectionInterval(myNewRowNo, myNewRowNo);
-				}
+			/* If the row # has changed */
+			if (myRowNo != myNewRowNo) {
+				/* Report the deletion and insertion */
+				theModel.fireMoveRowEvents(myRowNo, myNewRowNo);					
+				addRowSelectionInterval(myNewRowNo, myNewRowNo);
+			}
 				
-				/* else the row has just been updated */
-				else {
-					/* Report the update */
-					theModel.fireUpdateRowEvents(myRowNo);
-				}
+			/* else the row has just been updated */
+			else {
+				/* Report the update */
+				theModel.fireUpdateRowEvents(myRowNo);
 			}
 		}
 			
@@ -662,42 +751,45 @@ public abstract class FinanceTable<T extends DataItem<T>> extends JTable
 			/* Access the row */
 			myRow = myRows[i];
 			
-			/* Ignore null entries */
-			if (myRow == null) continue;				
-
+			/* Ignore locked rows */
+			if ((myRow == null) || (myRow.isLocked())) continue;
+			
+			/* Ignore deleted rows */
+			if (myRow.isDeleted()) continue;
+			
+			/* Skip if restore not required */
+		  	if (!myRow.hasFurther(this)) continue;
+		  	
 			/* Access the row # and adjust for header */
 			myRowNo = myRow.indexOf();
 			if (hasHeader()) myRowNo++;
 
-			/* If the row has changes */
-			if (myRow.hasFurther(this)) {
-				/* Pop last value */
-				myRow.peekFurther();
+			/* Pop last value */
+			myRow.peekFurther();
 		
-				/* Set the new status */
-				myRow.setState(DataState.CHANGED);
+			/* Set the new status */
+			myRow.setState(DataState.CHANGED);
 								
-				/* Resort the item */
-				theList.reSort(myRow);
-				myRow.clearErrors();
-				myRow.validate();
+			/* Resort the item */
+			theList.reSort(myRow);
+			myRow.clearErrors();
+			myRow.validate();
 
-				/* Determine new row # */
-				myNewRowNo = myRow.indexOf();
-				if (hasHeader()) myNewRowNo++;
+			/* Determine new row # */
+			myNewRowNo = myRow.indexOf();
+			if (hasHeader()) myNewRowNo++;
 				
-				/* If the row # has changed */
-				if (myRowNo != myNewRowNo) {
-					/* Report the deletion and insertion */
-					theModel.fireMoveRowEvents(myRowNo, myNewRowNo);					
-					addRowSelectionInterval(myNewRowNo, myNewRowNo);
-				}
+			/* If the row # has changed */
+			if (myRowNo != myNewRowNo) {
+				/* Report the deletion and insertion */
+				theModel.fireMoveRowEvents(myRowNo, myNewRowNo);					
+				addRowSelectionInterval(myNewRowNo, myNewRowNo);
+			}
 				
-				/* else the row has just been updated */
-				else {
-					/* Report the update */
-					theModel.fireUpdateRowEvents(myRowNo);
-				}
+			/* else the row has just been updated */
+			else {
+				/* Report the update */
+				theModel.fireUpdateRowEvents(myRowNo);
 			}
 		}
 
@@ -722,45 +814,48 @@ public abstract class FinanceTable<T extends DataItem<T>> extends JTable
 			/* Access the row */
 			myRow = myRows[i];
 			
-			/* Ignore null entries */
-			if (myRow == null) continue;				
-
+			/* Ignore locked rows */
+			if ((myRow == null) || (myRow.isLocked())) continue;
+			
+			/* Ignore deleted rows */
+			if (myRow.isDeleted()) continue;
+			
+			/* Skip if restore not required */
+		  	if (!myRow.hasPrevious()) continue;
+		  	
 			/* Access the row # and adjust for header */
 			myRowNo = myRow.indexOf();
 			if (hasHeader()) myRowNo++;
 
-			/* If the row has changes */
-			if (myRow.hasPrevious()) {
-				/* Pop last value */
-				myRow.peekPrevious();
+			/* Pop last value */
+			myRow.peekPrevious();
 		
-				/* Resort the item */
-				theList.reSort(myRow);
-				myRow.clearErrors();
+			/* Resort the item */
+			theList.reSort(myRow);
+			myRow.clearErrors();
 
-				/* Set the new status */
-				if (myRow.hasHistory()) {
-					myRow.setState(DataState.CHANGED);
-				}
-				myRow.validate();
+			/* Set the new status */
+			if (myRow.hasHistory()) {
+				myRow.setState(DataState.CHANGED);
+			}
+			myRow.validate();
 
-				/* Determine new row # */
-				myNewRowNo = myRow.indexOf();
-				if (hasHeader()) myNewRowNo++;
+			/* Determine new row # */
+			myNewRowNo = myRow.indexOf();
+			if (hasHeader()) myNewRowNo++;
 				
-				/* If the row # has changed */
-				if (myRowNo != myNewRowNo) {
-					/* Report the deletion and insertion */
-					theModel.fireMoveRowEvents(myRowNo, myNewRowNo);					
-					addRowSelectionInterval(myNewRowNo, myNewRowNo);
-				}
+			/* If the row # has changed */
+			if (myRowNo != myNewRowNo) {
+				/* Report the deletion and insertion */
+				theModel.fireMoveRowEvents(myRowNo, myNewRowNo);					
+				addRowSelectionInterval(myNewRowNo, myNewRowNo);
+			}
 				
-				/* else the row has just been updated */
-				else {
-					/* Report the update */
-					theModel.fireUpdateRowEvents(myRowNo);
-				}
-			}				
+			/* else the row has just been updated */
+			else {
+				/* Report the update */
+				theModel.fireUpdateRowEvents(myRowNo);
+			}
 		}
 
 		/* Recalculate the table if required */
@@ -770,7 +865,7 @@ public abstract class FinanceTable<T extends DataItem<T>> extends JTable
 	/**
 	 * Perform command function
 	 */
-	public void performCommand(financeCommand pCmd) {
+	public void performCommand(stdCommand pCmd) {
 			
 		/* Cancel any editing */
 		if (isEditing()) cellEditor.cancelCellEditing();

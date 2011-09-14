@@ -17,13 +17,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.ui.FinanceInterfaces.*;
+import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
 public class DateRange  implements 	ItemListener,
 									ActionListener,
 									ChangeListener{
 	/* Members */
-	private financePanel		theParent  	   = null;
+	private stdPanel		theParent  	   = null;
 	private SpinnerDateModel    theModel       = null;
 	private JSpinner            theStartBox    = null;
 	private JComboBox           thePeriodBox   = null;
@@ -50,7 +50,7 @@ public class DateRange  implements 	ItemListener,
 	private static final String Unlimited   = "Unlimited";
 
 	/* Constructor */
-	public DateRange(financePanel pParent) {
+	public DateRange(stdPanel pParent) {
 		
 		/* Create the DateSpinner Model */
 		theModel 	= new SpinnerDateModel();

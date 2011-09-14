@@ -8,12 +8,12 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
-import uk.co.tolcroft.models.ui.FinanceInterfaces.*;
+import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
 public class SaveButtons implements ActionListener {
 	/* Members */
 	private JPanel					thePanel		= null;
-	private financePanel			theParent		= null;
+	private stdPanel			theParent		= null;
 	private JButton               	theOKButton 	= null;
 	private JButton                 theResetButton  = null;
 	
@@ -21,7 +21,7 @@ public class SaveButtons implements ActionListener {
 	public	JPanel           	   	getPanel()      { return thePanel; }
 				
 	/* Constructor */
-	public SaveButtons(financePanel pParent) {
+	public SaveButtons(stdPanel pParent) {
 		GroupLayout panelLayout;
 		
 		/* Create the boxes */
@@ -98,13 +98,13 @@ public class SaveButtons implements ActionListener {
 		/* If this event relates to the OK box */
 		if (evt.getSource() == (Object)theOKButton) {
 			/* Pass command to the table */
-			theParent.performCommand(financeCommand.OK);
+			theParent.performCommand(stdCommand.OK);
 		}
 		
 		/* If this event relates to the Reset box */
 		else if (evt.getSource() == (Object)theResetButton) {
 			/* Pass command to the table */
-			theParent.performCommand(financeCommand.RESETALL);
+			theParent.performCommand(stdCommand.RESETALL);
 		}
 		
 		/* Set the lockDown Status */

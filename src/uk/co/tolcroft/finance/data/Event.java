@@ -171,7 +171,6 @@ public class Event extends EncryptedItem<Event> {
 		/* Set standard values */
 		super(pList, pEvent.getId()); 
 		setValues(new Values(pEvent.getValues()));
-		setControlKey(pEvent.getControlKey());
 		ListStyle myOldStyle = pEvent.getList().getStyle();
 
 		/* Switch on the ListStyle */
@@ -211,7 +210,7 @@ public class Event extends EncryptedItem<Event> {
 	
 		/* Set standard values */
 		super(pList, 0);
-		Values 					myValues 	= new Values(pLine.getValues());
+		Values	myValues 	= new Values(pLine.getValues());
 		setValues(myValues);
 			
 		/* Allocate the id */
@@ -228,7 +227,7 @@ public class Event extends EncryptedItem<Event> {
 		            Pattern pLine) throws Exception {
 		/* Set standard values */
 		super(pList, 0);
-		Values 			myValues	= new Values(pLine.getValues());
+		Values	myValues	= new Values(pLine.getValues());
 		setValues(myValues);
 
 		/* Allocate the id */
@@ -240,7 +239,7 @@ public class Event extends EncryptedItem<Event> {
 		super(pList, 0);
 		Values myValues = new Values();
 		setValues(myValues);
-		setControlKey(pList.getData().getControl().getControlKey());
+		setControlKey(pList.getControlKey());
 		pList.setNewId(this);				
 	}
 
@@ -1514,10 +1513,9 @@ public class Event extends EncryptedItem<Event> {
 	
 		/**
 		 * Add a new item to the edit list
-		 * @param isCredit - ignored
 		 * @return the newly added item
 		 */
-		public Event addNewItem(boolean isCredit) {
+		public Event addNewItem() {
 			Event myEvent = new Event(this);
 			add(myEvent);
 			return myEvent;

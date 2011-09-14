@@ -10,12 +10,12 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.ui.FinanceInterfaces.financePanel;
+import uk.co.tolcroft.models.ui.StdInterfaces.stdPanel;
 
 public class StatementSelect implements	ItemListener {
 	/* Members */
 	private JPanel				thePanel		= null;
-	private financePanel		theParent		= null;
+	private stdPanel		theParent		= null;
 	private JComboBox           theStateBox 	= null;
 	private JLabel				theStateLabel	= null;
 	private StatementType		theType			= null;
@@ -32,7 +32,7 @@ public class StatementSelect implements	ItemListener {
 	private static final String Units		= "Units";
 
 	/* Constructor */
-	public StatementSelect(financePanel pParent) {
+	public StatementSelect(stdPanel pParent) {
 		
 		/* Store table and view details */
 		theParent	  = pParent;

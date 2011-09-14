@@ -210,9 +210,8 @@ public class SpotPrices implements DebugObject {
 		
 		/**
 		 * Add a new item to the edit list
-		 * @param isCredit - ignored
 		 */
-		public SpotPrice addNewItem(boolean isCredit) { return null; }
+		public SpotPrice addNewItem() { return null; }
 	
 		/**
 		 * Obtain the type of the item
@@ -224,8 +223,8 @@ public class SpotPrices implements DebugObject {
 		 * Validate a spot price list
 		 */
 		public void validate() {
-			DataList<SpotPrice>.ListIterator	myIterator;
-			SpotPrice 							myCurr;
+			ListIterator	myIterator;
+			SpotPrice 		myCurr;
 			
 			/* Access the iterator */
 			myIterator = listIterator();
@@ -235,7 +234,106 @@ public class SpotPrices implements DebugObject {
 				/* Validate the item */
 				myCurr.validate();
 			}
-		}		
+		}	
+		
+		/**
+		 * Calculate the Edit State for the list
+		 */
+		public void findEditState() {
+			ListIterator	myIterator;
+			SpotPrice 		myCurr;
+			EditState		myEdit;
+			
+			/* Access the iterator */
+			myIterator 	= listIterator();
+			myEdit		= EditState.CLEAN;
+			
+			/* Loop through the list */
+			while ((myCurr = myIterator.next()) != null) {
+				/* Switch on new state */
+				switch (myCurr.getState()) {
+					case CLEAN:
+					case DELNEW:
+						break;
+					case NEW:
+					case DELETED:
+					case DELCHG:
+					case CHANGED:
+					case RECOVERED:
+						myEdit = EditState.VALID;
+						break;
+				}
+			}
+			
+			/* Set the Edit State */
+			setEditState(myEdit);
+		}
+
+		/**
+		 * Does the list have updates
+		 */
+		public boolean hasUpdates() {
+			ListIterator	myIterator;
+			SpotPrice 		myCurr;
+			
+			/* Access the iterator */
+			myIterator 	= listIterator();
+			
+			/* Loop through the list */
+			while ((myCurr = myIterator.next()) != null) {
+				/* Switch on state */
+				switch (myCurr.getState()) {
+					case CLEAN:
+					case DELNEW:
+						break;
+					case DELETED:
+					case DELCHG:
+					case CHANGED:
+					case RECOVERED:
+						return true;
+				}
+			}
+			
+			/* Return no updates */
+			return false;
+		}
+
+		/** 
+		 * Reset changes in an edit view
+		 */
+		public void resetChanges() {
+			ListIterator 	myIterator;
+			SpotPrice		myCurr;
+				
+			/* Create an iterator for the list */
+			myIterator = listIterator(true);
+				
+			/* Loop through the elements */
+			while ((myCurr = myIterator.next()) != null) {		
+				/* Switch on the state */
+				switch (myCurr.getState()) {
+					/* If this is a clean item, just ignore */
+					case CLEAN:
+					case DELNEW:
+						break;
+							
+					/* If this is a changed or DELCHG item */
+					case NEW:
+					case CHANGED:
+					case DELCHG:
+						/* Clear changes and fall through */
+						myCurr.resetHistory();
+
+					/* If this is a deleted or recovered item */
+					case DELETED:
+					case RECOVERED:				
+						/* Clear errors and mark the item as clean */
+						myCurr.clearErrors();
+						myCurr.setState(DataState.CLEAN);
+						break;
+				}
+			}
+		}
 	}
 			
 	public static class SpotPrice 	extends EncryptedItem<SpotPrice>  {
@@ -249,7 +347,6 @@ public class SpotPrices implements DebugObject {
 		public Date        	getDate()      { return theDate; }
 		public Account		getAccount()   { return theAccount; }
 		public Values      	getValues()    { return (Values)super.getValues(); }
-		public Price 		getPrice()     { return getPairValue(getValues().getPrice()); }
 		public Price 		getPrevPrice() { return thePrevPrice; }
 		public Date			getPrevDate()  { return thePrevDate; }
 
@@ -322,7 +419,7 @@ public class SpotPrices implements DebugObject {
 		 *  @param pLast the last price for the account
 		 */
 		public SpotPrice(List pList, AcctPrice pPrice, AcctPrice pLast) {
-			super(pList, 0);
+			super(pList, pPrice.getId());
 			theDate = pList.theDate;
 	
 			/* Variables */
@@ -330,14 +427,15 @@ public class SpotPrices implements DebugObject {
 			
 			/* Store base values */
 			setValues(myValues);
+			setControlKey(pList.getControlKey());
 			theAccount 		= pPrice.getAccount();
 			if (pLast != null) {
 				thePrevPrice 	= pLast.getPrice();
 				thePrevDate 	= pLast.getDate();
 			}
 				
-			/* Set the price if it is not deleted */
-			if (!pPrice.isDeleted()) myValues.setPrice(new PricePair(pPrice.getPricePair()));
+			/* Set the price */
+			myValues.setPrice(new PricePair(pPrice.getPricePair()));
 			
 			/* Link to base */
 			setBase(pPrice);
@@ -361,6 +459,7 @@ public class SpotPrices implements DebugObject {
 			
 			/* Store base values */
 			setValues(myValues);
+			setControlKey(pList.getControlKey());
 			theAccount 		= pAccount;
 			if (pLast != null) {
 				thePrevPrice 	= pLast.getPrice();
@@ -378,6 +477,9 @@ public class SpotPrices implements DebugObject {
 			setValidEdit();
 		}
 
+		/* Is this row locked */
+		public boolean isLocked() { return isHidden(); }
+		
 		/**
 		 * Note that this item has been validated 
 		 */
@@ -392,15 +494,67 @@ public class SpotPrices implements DebugObject {
 		 * flags is changed in usage to an isVisible flag
 		 * @param newState the new state to set
 		 */
+		public Price getPrice() {
+			/* Switch on state */
+			switch (getState()) {
+				case NEW:
+				case CHANGED:
+				case RECOVERED:
+					return getPairValue(getValues().getPrice());
+				case CLEAN:
+					return (getBase().isDeleted()) ? null : getPairValue(getValues().getPrice());
+				default:
+					return null;
+			}
+		}
+		
+		/**
+		 * Set the state of the item
+		 * A Spot list has some minor changes to the algorithm in that there are 
+		 * no NEW or DELETED states, leaving just CLEAN and CHANGED. The isDeleted
+		 * flags is changed in usage to an isVisible flag
+		 * @param newState the new state to set
+		 */
 		public void setState(DataState newState) {
-			/* Handle as special case */
+			/* Switch on new state */
 			switch (newState) {
 				case CLEAN:
-					setDataState(newState);
+					setDataState((getBase()==null) ? DataState.DELNEW : newState);
 					setEditState(EditState.CLEAN);
 					break;
 				case CHANGED:
-					setDataState(newState);
+					setDataState((getBase()==null) ? DataState.NEW : newState);
+					setEditState(EditState.DIRTY);
+					break;
+				case DELETED:
+					switch (getState()) {
+						case NEW:
+							setDataState(DataState.DELNEW);
+							break;
+						case CHANGED:
+							setDataState(DataState.DELCHG);
+							break;
+						default:
+							setDataState(DataState.DELETED);
+							break;
+					}
+					setEditState(EditState.DIRTY);
+					break;
+				case RECOVERED:
+					switch (getState()) {
+						case DELNEW:
+							setDataState(DataState.NEW);
+							break;
+						case DELCHG:
+							setDataState(DataState.CHANGED);
+							break;
+						case DELETED:
+							setDataState(DataState.CLEAN);
+							break;
+						default:
+							setDataState(DataState.RECOVERED);
+							break;
+					}
 					setEditState(EditState.DIRTY);
 					break;
 			}
@@ -451,7 +605,9 @@ public class SpotPrices implements DebugObject {
 			private PricePair	thePrice	= null;
 			
 			/* Access methods */
-			public PricePair	getPrice()     { return thePrice; }
+			public Date			getDate()     	{ return theDate; }
+			public Account		getAccount()    { return theAccount; }
+			public PricePair	getPrice()     	{ return thePrice; }
 			public Price  		getPriceValue() { return getPairValue(thePrice); }
 			public byte[]  		getPriceBytes() { return getPairBytes(thePrice); }
 			
@@ -486,7 +642,7 @@ public class SpotPrices implements DebugObject {
 				/* Handle an AcctPrice Values */
 				else if (pSource instanceof AcctPrice.Values) {
 					AcctPrice.Values myValues = (AcctPrice.Values)pSource;
-					super.setControl(myValues.getControl());
+					super.copyFrom(myValues);
 					thePrice     = new PricePair(myValues.getPrice());
 				}
 			}

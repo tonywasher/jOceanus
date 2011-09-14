@@ -14,10 +14,10 @@ import javax.swing.table.AbstractTableModel;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.EditState;
 
-public abstract class FinanceMouse<T extends DataItem<T>> extends MouseAdapter
+public abstract class StdMouse<T extends DataItem<T>> extends MouseAdapter
 													      implements ActionListener {
 	/* Members */
-	private FinanceTable<T> 	theTable 		= null;
+	private StdTable<T> 		theTable 		= null;
 	private boolean				doShowDeleted	= false;
 	private int					theRow			= -1;
 	private int					theCol			= -1;
@@ -29,24 +29,22 @@ public abstract class FinanceMouse<T extends DataItem<T>> extends MouseAdapter
 	protected boolean	isHeader()		{ return isHeader; }
 	
 	/* Pop-up Menu items */
-	private static final String popupInsertCredit  = "Insert Credit";
-	private static final String popupInsertDebit   = "Insert Debit";
-	private static final String popupInsertItem    = "Insert Item";
-	private static final String popupDeleteItems   = "Delete Item(s)";
-	private static final String popupDuplItems     = "Duplicate Item(s)";
-	private static final String popupRecoverItems  = "Recover Item(s)";
-	private static final String popupShowDeleted   = "Show Deleted";
-	private static final String popupUndoChange    = "Undo";
-	private static final String popupValidate      = "Validate Item(s)";
-	private static final String popupResetItems    = "Reset Item(s)";
-	private static final String popupNextHistory   = "Next History";
-	private static final String popupPrevHistory   = "Previous History";
+	private static final 	String popupInsertItem    = "Insert Item";
+	private static final 	String popupDeleteItems   = "Delete Item(s)";
+	private static final 	String popupDuplItems     = "Duplicate Item(s)";
+	private static final 	String popupRecoverItems  = "Recover Item(s)";
+	private static final 	String popupShowDeleted   = "Show Deleted";
+	private static final 	String popupUndoChange    = "Undo";
+	private static final 	String popupValidate      = "Validate Item(s)";
+	private static final 	String popupResetItems    = "Reset Item(s)";
+	private static final 	String popupNextHistory   = "Next History";
+	private static final 	String popupPrevHistory   = "Previous History";
 
 	/**
 	 * Constructor
 	 * @param pTable the table
 	 */
-	public FinanceMouse(FinanceTable<T> pTable) {
+	public StdMouse(StdTable<T> pTable) {
 		/* Store parameters */
 		theTable = pTable;
 		
@@ -145,68 +143,45 @@ public abstract class FinanceMouse<T extends DataItem<T>> extends MouseAdapter
 	protected void addInsertDelete(JPopupMenu pMenu) {
 		JMenuItem 			myItem;
 		JCheckBoxMenuItem	myCheckBox;
+		boolean				enableIns	= false;
 		boolean				enableRecov = false;
 		boolean				enableDel	= false;
 		boolean				enableShow	= true;
-		boolean				enableDupl	= true;
+		boolean				enableDupl	= false;
 		
 		/* Nothing to do if the table is locked */
 		if (theTable.isLocked()) return;
 		
-		/* Add separator if there are already items in menu */
-		if (pMenu.getComponentCount() > 0)
-			pMenu.addSeparator();
+		/* Determine whether insert is allowed */
+		enableIns = theTable.insertAllowed();
 		
-		/* If the table has a credit choice */
-		if (theTable.hasCreditChoice()) {
-			/* Add the insert Credit choice */
-			myItem = new JMenuItem(popupInsertCredit);
-			myItem.setActionCommand(popupInsertCredit);
-			myItem.addActionListener(this);
-			pMenu.add(myItem);
+		/* Loop through the selected rows */
+		for (T myRow : theTable.cacheSelectedRows()) {
+			/* Ignore locked rows */
+			if ((myRow == null) || (myRow.isLocked())) continue;
 
-			/* Add the insert Debit choice */
-			myItem = new JMenuItem(popupInsertDebit);
-			myItem.setActionCommand(popupInsertDebit);
-			myItem.addActionListener(this);
-			pMenu.add(myItem);
+			/* Determine actions for row */
+			enableDel 	|= theTable.isRowDeletable(myRow);
+			enableDupl	|= theTable.isRowDuplicatable(myRow);
+			enableShow	&= !theTable.disableShowDeleted(myRow);
+			enableRecov	|= theTable.isRowRecoverable(myRow);
+		}			
+		
+		/* If there is something to add and there are already items in the menu */
+		if ((enableIns || enableDel || enableDupl || enableShow || enableRecov) &&
+		    (pMenu.getComponentCount() > 0)) {
+			/* Add a separator */
+			pMenu.addSeparator();
 		}
 		
-		/* else it just uses insert item */
-		else {
+		/* If we can insert a row */
+		if (enableIns) {
 			/* Add the insert item choice */
 			myItem = new JMenuItem(popupInsertItem);
 			myItem.setActionCommand(popupInsertItem);
 			myItem.addActionListener(this);
 			pMenu.add(myItem);
 		}
-		
-		/* Loop through the selected rows */
-		for (T myRow : theTable.cacheSelectedRows()) {
-			/* Ignore locked rows */
-			if ((myRow == null) || (myRow.isLocked())) continue;
-			
-			/* If the row is Deleted */
-			if (myRow.isDeleted()) {
-				/* Note if we can recover a row */
-				if (theTable.isValidHistory(myRow, myRow.getCurrentValues()))
-					enableRecov	= true;
-				
-				/* Don't allow switching off of showDeleted */
-				enableShow  = false;
-			}
-			
-			/* else row is not deleted */
-			else {
-				/* If we can delete this element */
-				if ((!theTable.needsMembers()) || 
-					(theTable.getList().sizeNormal() > 1))
-					enableDel	= true;
-				
-				/* Say that we can duplicate the item */
-				enableDupl = true;
-			}
-		}			
 		
 		/* If we can duplicate a row */
 		if (enableDupl) {
@@ -265,6 +240,7 @@ public abstract class FinanceMouse<T extends DataItem<T>> extends MouseAdapter
 		
 		/* Loop through the selected rows */
 		for (T myRow : theTable.cacheSelectedRows()) {
+			/* Ignore locked rows */
 			if ((myRow == null) || (myRow.isLocked())) continue;
 			
 			/* Ignore deleted rows */
@@ -290,7 +266,7 @@ public abstract class FinanceMouse<T extends DataItem<T>> extends MouseAdapter
 			
 			/* else this is the first selection */
 			else {
-				/* Determine whether we can undo*/
+				/* Determine whether we can undo */
 				if (myRow.hasHistory())	enableUndo = true;
 
 				/* Determine whether the row has further history */
@@ -424,19 +400,7 @@ public abstract class FinanceMouse<T extends DataItem<T>> extends MouseAdapter
 		/* If this is a generic insert item command */
 		if (myCmd.equals(popupInsertItem)) {
 			/* Insert a row into the table */
-			theTable.insertRow(false);			
-		}
-		
-		/* if this is an insert credit command */
-		else if (myCmd.equals(popupInsertCredit)) {
-			/* Insert a credit row into the table */
-			theTable.insertRow(true);						
-		}
-		
-		/* if this is an insert debit command */
-		else if (myCmd.equals(popupInsertDebit)) {
-			/* Insert a debit row into the table */
-			theTable.insertRow(false);						
+			theTable.insertRow();			
 		}
 		
 		/* if this is a duplicate command */

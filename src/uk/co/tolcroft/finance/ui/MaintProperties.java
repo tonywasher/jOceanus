@@ -22,7 +22,7 @@ import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.ui.FileSelector.*;
-import uk.co.tolcroft.models.ui.FinanceInterfaces.*;
+import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
 public class MaintProperties implements ActionListener,
 										ItemListener,
@@ -240,7 +240,7 @@ public class MaintProperties implements ActionListener,
 	}
 	
 	/* performCommand */
-	public void performCommand(financeCommand pCmd) {
+	public void performCommand(stdCommand pCmd) {
 		/* Switch on command */
 		switch (pCmd) {
 			case OK:
@@ -366,13 +366,13 @@ public class MaintProperties implements ActionListener,
 		/* If this event relates to the OK button */
 		if (evt.getSource() == (Object)theOKButton) {
 			/* Perform the command */
-			performCommand(financeCommand.OK);
+			performCommand(stdCommand.OK);
 		}
 		
 		/* If this event relates to the reset button */
 		else if (evt.getSource() == (Object)theResetButton) {
 			/* Perform the command */
-			performCommand(financeCommand.RESETALL);
+			performCommand(stdCommand.RESETALL);
 		}
 		
 		/* If this event relates to the Base Select button */

@@ -21,14 +21,14 @@ import uk.co.tolcroft.finance.views.EventAnalysis.AnalysisYear;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.ui.FinanceInterfaces.*;
+import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
 public class ReportSelect implements	ActionListener,
 										ItemListener,
 										ChangeListener {
 	/* Members */
 	private JPanel				thePanel		= null;
-	private financePanel		theParent		= null;
+	private stdPanel		theParent		= null;
 	private View				theView			= null;
 	private SpinnerDateModel    theModel        = null;
 	private JSpinner            theDateBox      = null;
@@ -59,7 +59,7 @@ public class ReportSelect implements	ActionListener,
 	private static final String Market    	= "Market";
 
 	/* Constructor */
-	public ReportSelect(View pView, financePanel pReport) {
+	public ReportSelect(View pView, stdPanel pReport) {
 		
 		/* Store table and view details */
 		theView 	  = pView;

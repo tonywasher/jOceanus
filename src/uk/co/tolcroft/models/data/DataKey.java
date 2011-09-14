@@ -410,10 +410,9 @@ public class DataKey extends DataItem<DataKey> {
 
 		/**
 		 * Add a new item to the edit list
-		 * @param isCredit - ignored
 		 * @return the newly added item
 		 */
-		public DataKey addNewItem(boolean isCredit) { return null; }
+		public DataKey addNewItem() { return null; }
 
 		/**
 		 * 	Obtain the type of the item

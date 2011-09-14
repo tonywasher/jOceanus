@@ -13,11 +13,11 @@ import javax.swing.LayoutStyle;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
-import uk.co.tolcroft.models.ui.FinanceInterfaces.financePanel;
+import uk.co.tolcroft.models.ui.StdInterfaces.stdPanel;
 
 public class ErrorPanel implements ActionListener {
 	/* Members */
-	private financePanel		theParent			= null;
+	private stdPanel		theParent			= null;
 	private JPanel				thePanel			= null;
 	private JLabel				theErrorField		= null;
 	private JButton 			theClearButton		= null;
@@ -30,7 +30,7 @@ public class ErrorPanel implements ActionListener {
 	/**
 	 * Constructor
 	 */
-	public ErrorPanel(financePanel pParent) {
+	public ErrorPanel(stdPanel pParent) {
 		/* Store parent */
 		theParent = pParent;
 		

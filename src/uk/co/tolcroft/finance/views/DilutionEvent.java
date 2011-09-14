@@ -240,10 +240,9 @@ public class DilutionEvent extends DataItem<DilutionEvent> {
 	
 		/**
 		 * Add a new item to the edit list
-		 * @param isCredit - ignored
 		 * @return the newly added item
 		 */
-		public DilutionEvent addNewItem(boolean isCredit) { return null; }
+		public DilutionEvent addNewItem() { return null; }
 	
 		/**
 		 * Obtain the type of the item

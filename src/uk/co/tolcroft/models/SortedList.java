@@ -368,7 +368,8 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 		myNode = theIndexMap.getNodeAtIndex(iIndex);
 		
 		/* Note if we did not find the item */
-		if (myNode == null) throw new java.lang.IndexOutOfBoundsException();
+		if (myNode == null)
+			throw new java.lang.IndexOutOfBoundsException();
 		
 		/* Return the item */
 		return myNode.getObject();

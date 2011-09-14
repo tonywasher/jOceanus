@@ -1103,10 +1103,9 @@ public class TaxYear extends DataItem<TaxYear> {
 	
 		/**
 		 * Create a new empty element in the edit list (null-operation)
-		 * @param isCredit - is the item a credit or debit
 		 * @return the newly added item
 		 */
-		public TaxYear addNewItem(boolean isCredit) { return null; }
+		public TaxYear addNewItem() { return null; }
 			
 		/**
 		 * Obtain the type of the item

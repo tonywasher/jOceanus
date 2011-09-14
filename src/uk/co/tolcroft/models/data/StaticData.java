@@ -220,7 +220,6 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		super(pList, pSource.getId());
 		Values myValues = new Values(pSource.getObj());
 		setValues(myValues);
-		setControlKey(pSource.getControlKey());		
 		theClass 		= pSource.theClass;
 		theEnumClass 	= pSource.theEnumClass;
 		theOrder 		= pSource.getOrder();
@@ -607,11 +606,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 
 		/* Constructor */
 		public Values() {}
-		public Values(StaticData<?,?>.Values pValues) {
-			theName      = new StringPair(pValues.getName());
-			if (pValues.getDesc() != null)
-				theDesc  = new StringPair(pValues.getDesc());
-		}
+		public Values(StaticData<?,?>.Values pValues) { copyFrom(pValues); }
 		
 		/* Check whether this object is equal to that passed */
 		public boolean histEquals(HistoryValues<T> pCompare) {
@@ -639,10 +634,12 @@ public abstract class StaticData<T extends StaticData<T,E>,
 			StaticData<?,?>.Values myValues = (StaticData<?,?>.Values)pSource;
 			copyFrom(myValues);
 		}
-		public void    copyFrom(Values pValues) {
+		public void    copyFrom(StaticData<?,?>.Values pValues) {
 			super.copyFrom(pValues);
-			theName      = pValues.getName();
-			theDesc      = pValues.getDesc();
+			theName      = new StringPair(pValues.getName());
+			theDesc      = (pValues.getDesc() != null)
+								? new StringPair(pValues.getDesc())
+								: null;
 		}
 		public boolean	fieldChanged(int fieldNo, HistoryValues<T> pOriginal) {
 			StaticData<?,?>.Values 	pValues = (StaticData<?,?>.Values)pOriginal;

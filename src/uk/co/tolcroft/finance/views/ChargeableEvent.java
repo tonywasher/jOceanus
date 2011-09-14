@@ -230,10 +230,9 @@ public class ChargeableEvent extends DataItem<ChargeableEvent> {
 	
 		/**
 		 * Add a new item to the edit list
-		 * @param isCredit - ignored
 		 * @return the newly added item
 		 */
-		public ChargeableEvent addNewItem(boolean isCredit) { return null; }
+		public ChargeableEvent addNewItem() { return null; }
 	
 		/**
 		 * Obtain the type of the item

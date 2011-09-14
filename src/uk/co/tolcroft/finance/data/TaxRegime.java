@@ -192,10 +192,9 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 	
 		/**
 		 * Create a new empty element in the edit list (null-operation)
-		 * @param isCredit - is the item a credit or debit
 		 * @return the newly added item
 		 */
-		public TaxRegime addNewItem(boolean isCredit) { return null; }
+		public TaxRegime addNewItem() { return null; }
 			
 		/**
 		 * Obtain the type of the item

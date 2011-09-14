@@ -24,14 +24,14 @@ import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.DateRange;
 import uk.co.tolcroft.models.ui.Editor;
 import uk.co.tolcroft.models.ui.ErrorPanel;
-import uk.co.tolcroft.models.ui.FinanceMouse;
-import uk.co.tolcroft.models.ui.FinanceTable;
+import uk.co.tolcroft.models.ui.StdMouse;
+import uk.co.tolcroft.models.ui.StdTable;
 import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.ui.SaveButtons;
 import uk.co.tolcroft.models.views.ViewList;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 
-public class Extract extends FinanceTable<Event> {
+public class Extract extends StdTable<Event> {
 	/* Members */
 	private static final long serialVersionUID = -5531752729052421790L;
 
@@ -675,7 +675,7 @@ public class Extract extends FinanceTable<Event> {
 	/**
 	 *  Extract mouse listener
 	 */
-	private class extractMouse extends FinanceMouse<Event> {
+	private class extractMouse extends StdMouse<Event> {
 			
 		/* Pop-up Menu items */
 		private static final String popupView    		= "View Account";

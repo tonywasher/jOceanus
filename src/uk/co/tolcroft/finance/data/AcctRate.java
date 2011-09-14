@@ -154,7 +154,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		super(pList, 0);
 		Values myValues = new Values();
 		setValues(myValues);
-		setControlKey(pList.getData().getControl().getControlKey());
+		setControlKey(pList.getControlKey());
 		setAccount(pList.theAccount);
 		pList.setNewId(this);		
 	}
@@ -558,10 +558,8 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 
 		/**
 		 * Add a new item to the edit list
-		 *
-		 * @param isCredit - ignored
 		 */
-		public AcctRate addNewItem(boolean isCredit) {
+		public AcctRate addNewItem() {
 			AcctRate myRate = new AcctRate(this);
 			myRate.setAccount(theAccount);
 			add(myRate);

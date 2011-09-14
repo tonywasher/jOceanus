@@ -15,13 +15,13 @@ import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
-import uk.co.tolcroft.models.ui.FinanceTable;
+import uk.co.tolcroft.models.ui.StdTable;
 import uk.co.tolcroft.models.ui.Renderer;
-import uk.co.tolcroft.models.ui.FinanceInterfaces.*;
+import uk.co.tolcroft.models.ui.StdInterfaces.*;
 import uk.co.tolcroft.models.views.ViewList;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 
-public class MaintNewYear extends FinanceTable<Event> implements ActionListener {
+public class MaintNewYear extends StdTable<Event> implements ActionListener {
 	private static final long serialVersionUID = 7406051901546832781L;
 	
 	private View				theView				= null;
@@ -143,7 +143,7 @@ public class MaintNewYear extends FinanceTable<Event> implements ActionListener 
 	public boolean hasUpdates() { return false; }
 	public boolean isLocked() { return false; }
 	public EditState getEditState() { return EditState.CLEAN; }
-	public void performCommand(financeCommand pCmd) {}
+	public void performCommand(stdCommand pCmd) {}
 	public void notifySelection(Object pObj) {}
 	public void lockOnError(boolean isError) {}
 		
