@@ -9,7 +9,7 @@ import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
@@ -134,6 +134,9 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 				setId(0);
 				pList.setNewId(this);				
 				break;
+			case CLONE:
+				isolateCopy(pList.getData());
+			case COPY:
 			case CORE:
 				/* Reset Id if this is an insert from a view */
 				if (myOldStyle == ListStyle.EDIT) setId(0);
@@ -350,6 +353,24 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	}
 	
 	/**
+	 * Isolate Data Copy
+	 * @param pData the DataSet
+	 */
+	protected void isolateCopy(FinanceData pData) {
+		/* Update the Encryption details */
+		super.isolateCopy(pData);
+		
+		/* Access Accounts */
+		Account.List myAccounts = pData.getAccounts();
+		
+		/* Update to use the local copy of the Accounts */
+		Values 	myValues   	= getValues();
+		Account	myAct		= myValues.getAccount();
+		Account	myNewAct 	= myAccounts.searchFor(myAct.getId());
+		myValues.setAccount(myNewAct);
+	}
+
+	/**
 	 * Validate the price
 	 * 
 	 */
@@ -438,11 +459,11 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		pushHistory();
 		
 		/* Update the price if required */
-		if (differs(myValues.getPrice(), myNew.getPrice())) 
+		if (differs(myValues.getPrice(), myNew.getPrice()).isDifferent()) 
 			myValues.setPrice(myNew.getPrice());
 	
 		/* Update the date if required */
-		if (Date.differs(getDate(), pPrice.getDate())) 
+		if (Date.differs(getDate(), pPrice.getDate()).isDifferent()) 
 			setDate(pPrice.getDate());
 		
 		/* Check for changes */
@@ -478,7 +499,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			pushHistory();
 		
 			/* Update the price if required */
-			if (differs(myValues.getPrice(), myNew.getPrice())) 
+			if (differs(myValues.getPrice(), myNew.getPrice()).isDifferent()) 
 				myValues.setPrice(new PricePair(myNew.getPrice()));
 	
 			/* Check for changes */
@@ -496,7 +517,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	/**
 	 * Price List
 	 */
-	public static class List  extends EncryptedList<AcctPrice> {
+	public static class List  extends EncryptedList<List, AcctPrice> {
 		/* Members */
 		private Account	theAccount	= null;
 
@@ -509,7 +530,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	 	 * @param pData the DataSet for the list
 		 */
 		protected List(FinanceData pData) { 
-			super(AcctPrice.class, pData);
+			super(List.class, AcctPrice.class, pData);
 		}
 
 		/**
@@ -538,14 +559,26 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		/* Obtain extract lists. */
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return null; }
-		public List getClonedList() { return getExtractList(ListStyle.CORE); }
+		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
+		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			myList.setData(pDataSet);
+			
+			/* Obtain underlying clones */
+			myList.populateList(ListStyle.CLONE);
+			myList.setStyle(ListStyle.CORE);
+			
+			/* Return the list */
+			return myList;
+		}
 
 		/** 
 		 * Construct a difference Price list
 		 * @param pNew the new Price list 
 		 * @param pOld the old Price list 
 		 */
-		protected List getDifferences(DataList<AcctPrice> pOld) { 
+		protected List getDifferences(List pOld) { 
 			/* Build an empty Difference List */
 			List myList = new List(this);
 			
@@ -687,7 +720,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			/* Loop through the Prices */
 			while ((myCurr = myIterator.next()) != null) {
 				/* Skip records that do not belong to this account */
-				if (Account.differs(myCurr.getAccount(), pAccount))
+				if (Account.differs(myCurr.getAccount(), pAccount).isDifferent())
 					continue;
 
 				/* break loop if we have passed the date */
@@ -722,12 +755,12 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		 * Apply changes from a Spot Price list
 		 */
 		public void applyChanges(SpotPrices pPrices) {
-			DataList<SpotPrice>.ListIterator	myIterator;
-			SpotPrices.List 	 				myList;
-			SpotPrice 							mySpot;
-			Date								myDate;
-			EncryptedItem<?>.PricePair			myPoint;
-			AcctPrice							myPrice;
+			SpotPrices.List.ListIterator	myIterator;
+			SpotPrices.List 	 			myList;
+			SpotPrice 						mySpot;
+			Date							myDate;
+			EncryptedItem<?>.PricePair		myPoint;
+			AcctPrice						myPrice;
 
 			/* Access details */
 			myDate = pPrices.getDate();
@@ -929,11 +962,11 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		/* Check whether this object is equal to that passed */
 		public boolean histEquals(HistoryValues<AcctPrice> pCompare) {
 			Values myValues = (Values)pCompare;
-			if (!super.histEquals(pCompare))					    return false;
-			if (Date.differs(theDate,     	myValues.theDate))      return false;
-			if (differs(thePrice, 			myValues.thePrice))     return false;
-			if (Account.differs(theAccount, myValues.theAccount))   return false;
-			if (Utils.differs(theAccountId, myValues.theAccountId)) return false;
+			if (!super.histEquals(pCompare))					    			  return false;
+			if (Date.differs(theDate,     	myValues.theDate).isDifferent())      return false;
+			if (differs(thePrice, 			myValues.thePrice).isDifferent())     return false;
+			if (Account.differs(theAccount, myValues.theAccount).isDifferent())   return false;
+			if (Utils.differs(theAccountId, myValues.theAccountId).isDifferent()) return false;
 			return true;
 		}
 		
@@ -972,9 +1005,9 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 				theAccountId = theAccount.getId();
 			}
 		}
-		public boolean	fieldChanged(int fieldNo, HistoryValues<AcctPrice> pOriginal) {
-			Values 	pValues = (Values)pOriginal;
-			boolean	bResult = false;
+		public Difference	fieldChanged(int fieldNo, HistoryValues<AcctPrice> pOriginal) {
+			Values 		pValues = (Values)pOriginal;
+			Difference	bResult = Difference.Identical;
 			switch (fieldNo) {
 				case FIELD_DATE:
 					bResult = (Date.differs(theDate,     	pValues.theDate));

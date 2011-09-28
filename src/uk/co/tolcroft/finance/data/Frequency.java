@@ -3,7 +3,7 @@ package uk.co.tolcroft.finance.data;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.finance.data.StaticClass.FreqClass;
 
@@ -90,7 +90,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 	/**
 	 * Represents a list of {@link Frequency} objects. 
 	 */
-	public static class List  extends StaticList<Frequency, FreqClass> {
+	public static class List  extends StaticList<List, Frequency, FreqClass> {
 		protected Class<FreqClass> getEnumClass() { return FreqClass.class; }
 
 		/** 
@@ -98,7 +98,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 	 	 * @param pData the DataSet for the list
 	 	 */
 		protected List(FinanceData pData) { 
-			super(Frequency.class, pData, ListStyle.CORE); }
+			super(List.class, Frequency.class, pData, ListStyle.CORE); }
 		
 		/**
 		 * Constructor for a cloned List
@@ -126,14 +126,26 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 		/* Obtain extract lists. */
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
-		public List getClonedList() { return getExtractList(ListStyle.CORE); }
+		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
+		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			myList.setData(pDataSet);
+			
+			/* Obtain underlying clones */
+			myList.populateList(ListStyle.CLONE);
+			myList.setStyle(ListStyle.CORE);
+			
+			/* Return the list */
+			return myList;
+		}
 
 		/** 
 		 * Construct a difference ControlData list
 		 * @param pNew the new ControlData list 
 		 * @param pOld the old ControlData list 
 		 */
-		protected List getDifferences(DataList<Frequency> pOld) { 
+		protected List getDifferences(List pOld) { 
 			/* Build an empty Difference List */
 			List myList = new List(this);
 			

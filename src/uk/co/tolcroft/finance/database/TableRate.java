@@ -46,7 +46,7 @@ public class TableRate extends TableEncrypted<AcctRate> {
 	}
 	
 	/* Declare DataSet */
-	protected void declareData(DataSet<?> pData) {
+	protected void declareData(DataSet<?,?> pData) {
 		FinanceData myData = (FinanceData)pData;
 		theList = myData.getRates();
 		setList(theList);

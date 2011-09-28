@@ -23,7 +23,7 @@ public class DateRange  implements 	ItemListener,
 									ActionListener,
 									ChangeListener{
 	/* Members */
-	private stdPanel		theParent  	   = null;
+	private stdPanel			theParent  	   = null;
 	private SpinnerDateModel    theModel       = null;
 	private JSpinner            theStartBox    = null;
 	private JComboBox           thePeriodBox   = null;
@@ -376,7 +376,7 @@ public class DateRange  implements 	ItemListener,
 				isNextOK = false;
 				
 				/* Previous is only allowed if we are later than the first date */
-				isPrevOK = (Date.differs(theStartDate, theFirstDate));
+				isPrevOK = (Date.differs(theStartDate, theFirstDate).isDifferent());
 			}
 			
 			/* else we have to calculate the date */

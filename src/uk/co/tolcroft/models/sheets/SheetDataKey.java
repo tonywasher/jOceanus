@@ -23,7 +23,7 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
 	/**
 	 * DataSet
 	 */
-	private DataSet<?> 			theData			= null;
+	private DataSet<?,?> 			theData			= null;
 
 	/**
 	 * Constructor for loading a spreadsheet

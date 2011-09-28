@@ -261,7 +261,7 @@ public class MaintProperties implements ActionListener,
 		showProperties();
 		
 		/* Adjust visible tabs */
-		theParent.setVisibleTabs();
+		theParent.setVisibility();
 	}
 	
 	/* refreshData */

@@ -1,5 +1,6 @@
 package uk.co.tolcroft.models.ui;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -11,10 +12,9 @@ import javax.swing.JProgressBar;
 import javax.swing.LayoutStyle;
 import javax.swing.Timer;
 
-import uk.co.tolcroft.finance.ui.*;
-import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
+import uk.co.tolcroft.models.views.DataControl;
 
 public class StatusBar implements ActionListener {
 	/* Members */
@@ -27,7 +27,7 @@ public class StatusBar implements ActionListener {
 	private JLabel               	theStageLabel	= null;
 	private JLabel                  theOpnLabel  	= null;
 	private JLabel                  theStatusLabel  = null;
-	private MainTab					theControl		= null;
+	private MainWindow<?>			theControl		= null;
 	private Exception				theError		= null;
 	private Timer					theTimer		= null;
     private DebugEntry				theDebug		= null;
@@ -38,14 +38,14 @@ public class StatusBar implements ActionListener {
 	public  Exception	   			getError()			{ return theError; }
 				
 	/* Constructor */
-	public StatusBar(MainTab pControl) {
+	public StatusBar(MainWindow<?> pControl) {
 		GroupLayout panelLayout;
 	
 		/* Record passed parameters */
 		theControl 	= pControl;
 		
 		/* Store access to the Debug Entry */
-		theDebug	= theControl.getView().getDebugEntry(View.DebugError);
+		theDebug	= theControl.getView().getDebugEntry(DataControl.DebugError);
 		
 		/* Create the boxes */
 		theCancel      = new JButton("Cancel");
@@ -55,6 +55,10 @@ public class StatusBar implements ActionListener {
 		theStatusLabel = new JLabel();
 		theStages	   = new JProgressBar();
 		theSteps	   = new JProgressBar();
+
+		/* Set backgrounds */
+		theStages.setForeground(Color.green);
+		theSteps.setForeground(Color.green);
 		
 		/* Initialise progress bars */
 		theStages.setMaximum(100);

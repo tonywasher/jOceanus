@@ -7,6 +7,7 @@ import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.HistoryValues;
 
 /**
@@ -148,8 +149,8 @@ public class HelpPage extends DataItem<HelpPage> {
 		HelpPage myPage = (HelpPage)pThat;
 		
 		/* Check for equality */
-		if (Utils.differs(getName(),    myPage.getName())) 		return false;
-		if (Utils.differs(getHtml(),	myPage.getHtml())) 		return false;
+		if (Utils.differs(getName(),    myPage.getName()).isDifferent())	return false;
+		if (Utils.differs(getHtml(),	myPage.getHtml()).isDifferent()) 	return false;
 		return true;
 	}
 
@@ -181,11 +182,11 @@ public class HelpPage extends DataItem<HelpPage> {
 	}
 	
 	/* List class */
-	public static class List extends DataList<HelpPage> {
+	public static class List extends DataList<List, HelpPage> {
 		/**
 		 * Construct a top-level List
 		 */
-		public List() { super(HelpPage.class, ListStyle.VIEW, false); }
+		public List() { super(List.class, HelpPage.class, ListStyle.VIEW, false); }
 
 		/**
 		 * Return the item type
@@ -196,8 +197,9 @@ public class HelpPage extends DataItem<HelpPage> {
 		/* Obtain extract lists. (not supported) */
 		public List getUpdateList() { return null; }
 		public List getEditList() 	{ return null; }
-		public List getClonedList() { return null; }
-		public List getDifferences(DataList<HelpPage> pOld) { return null; }
+		public List getShallowCopy() { return null; }
+		public List getDeepCopy(DataSet<?,?> pData) { return null; }
+		public List getDifferences(List pOld) { return null; }
 
 		/**
 		 * Add a new item to the list

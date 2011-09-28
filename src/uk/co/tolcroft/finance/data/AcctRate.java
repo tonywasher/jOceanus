@@ -6,7 +6,7 @@ import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
@@ -137,6 +137,9 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 				setId(0);
 				pList.setNewId(this);				
 				break;
+			case CLONE:
+				isolateCopy(pList.getData());
+			case COPY:
 			case CORE:
 				/* Reset Id if this is an insert from a view */
 				if (myOldStyle == ListStyle.EDIT) setId(0);
@@ -305,6 +308,24 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	}
 
 	/**
+	 * Isolate Data Copy
+	 * @param pData the DataSet
+	 */
+	protected void isolateCopy(FinanceData pData) {
+		/* Update the Encryption details */
+		super.isolateCopy(pData);
+		
+		/* Access Accounts */
+		Account.List myAccounts = pData.getAccounts();
+		
+		/* Update to use the local copy of the Accounts */
+		Values 	myValues   	= getValues();
+		Account	myAct		= myValues.getAccount();
+		Account	myNewAct 	= myAccounts.searchFor(myAct.getId());
+		myValues.setAccount(myNewAct);
+	}
+
+	/**
 	 * Validate the rate
 	 */
 	public void validate() {
@@ -320,7 +341,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 			
 			/* Ignore if this item doesn't belong to the account */
 			if ((myCurr != null) &&
-			    (!Account.differs(myCurr.getAccount(), getAccount())))
+			    (!Account.differs(myCurr.getAccount(), getAccount()).isDifferent()))
 				myCurr = null;
 
 			/* If we have a later element then error */
@@ -401,15 +422,15 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		pushHistory();
 
 		/* Update the rate if required */
-		if (differs(myValues.getRate(), myNew.getRate())) 
+		if (differs(myValues.getRate(), myNew.getRate()).isDifferent()) 
 			myValues.setRate(myNew.getRate());
 
 		/* Update the bonus if required */
-		if (differs(myValues.getBonus(), myNew.getBonus())) 
+		if (differs(myValues.getBonus(), myNew.getBonus()).isDifferent()) 
 			myValues.setBonus(myNew.getBonus());
 
 		/* Update the date if required */
-		if (Date.differs(getEndDate(), myRate.getEndDate())) 
+		if (Date.differs(getEndDate(), myRate.getEndDate()).isDifferent()) 
 			setEndDate(myRate.getEndDate());
 
 		/* Check for changes */
@@ -423,7 +444,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		return bChanged;
 	}
 	
-	public static class List  	extends EncryptedList<AcctRate> {
+	public static class List  	extends EncryptedList<List, AcctRate> {
 		/* Members */
 		private Account	theAccount	= null;
 
@@ -436,7 +457,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	 	 * @param pData the DataSet for the list
 		 */
 		protected List(FinanceData pData) { 
-			super(AcctRate.class, pData);
+			super(List.class, AcctRate.class, pData);
 		}
 
 		/**
@@ -465,14 +486,26 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		/* Obtain extract lists. */
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return null; }
-		public List getClonedList() { return getExtractList(ListStyle.CORE); }
+		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
+		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			myList.setData(pDataSet);
+			
+			/* Obtain underlying clones */
+			myList.populateList(ListStyle.CLONE);
+			myList.setStyle(ListStyle.CORE);
+			
+			/* Return the list */
+			return myList;
+		}
 
 		/** 
 		 * Construct a difference Rate list
 		 * @param pNew the new Rate list 
 		 * @param pOld the old Rate list 
 		 */
-		protected List getDifferences(DataList<AcctRate> pOld) { 
+		protected List getDifferences(List pOld) { 
 			/* Build an empty Difference List */
 			List myList = new List(this);
 			
@@ -635,7 +668,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 			/* Loop through the Rates */
 			while ((myCurr = myIterator.next()) != null) {
 				/* Skip records that do not belong to this account */
-				if (Account.differs(myCurr.getAccount(), pAccount))
+				if (Account.differs(myCurr.getAccount(), pAccount).isDifferent())
 					continue;
 
 				/* Access the date */
@@ -791,12 +824,12 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		/* Check whether this object is equal to that passed */
 		public boolean histEquals(HistoryValues<AcctRate> pCompare) {
 			Values myValues = (Values)pCompare;
-			if (!super.histEquals(pCompare))					  	return false;
-			if (differs(theRate,  myValues.theRate))    			return false;
-			if (differs(theBonus, myValues.theBonus))   			return false;
-			if (Date.differs(theEndDate, 	myValues.theEndDate)) 	return false;
-			if (Account.differs(theAccount, myValues.theAccount)) 	return false;
-			if (Utils.differs(theAccountId, myValues.theAccountId)) return false;
+			if (!super.histEquals(pCompare))					  					return false;
+			if (differs(theRate,  myValues.theRate).isDifferent())    				return false;
+			if (differs(theBonus, myValues.theBonus).isDifferent())   				return false;
+			if (Date.differs(theEndDate, 	myValues.theEndDate).isDifferent()) 	return false;
+			if (Account.differs(theAccount, myValues.theAccount).isDifferent()) 	return false;
+			if (Utils.differs(theAccountId, myValues.theAccountId).isDifferent()) 	return false;
 			return true;
 		}
 
@@ -813,9 +846,9 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 			theAccount   = myValues.getAccount();
 			theAccountId = myValues.getAccountId();
 		}
-		public boolean	fieldChanged(int fieldNo, HistoryValues<AcctRate> pOriginal) {
+		public Difference	fieldChanged(int fieldNo, HistoryValues<AcctRate> pOriginal) {
 			Values 		pValues = (Values)pOriginal;	
-			boolean		bResult = false;
+			Difference	bResult = Difference.Identical;
 			switch (fieldNo) {
 				case FIELD_RATE:
 					bResult = (differs(theRate,    pValues.theRate));

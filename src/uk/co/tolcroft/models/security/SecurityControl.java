@@ -12,6 +12,7 @@ import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.security.AsymmetricKey.AsymKeyType;
 import uk.co.tolcroft.models.security.SymmetricKey.SymKeyType;
@@ -195,28 +196,6 @@ public class SecurityControl extends DataItem<SecurityControl> {
 		}
 	}
 	
-	/**
-	 * Seed the password key with the password
-	 * @param pPassword the password (cleared after usage)
-	 */
-	public void setNewPassword(char[] pPassword) throws WrongPasswordException,
-														Exception {
-		/* Handle not initialised */
-		if (!isInitialised)
-			throw new Exception(ExceptionClass.LOGIC,
-								"Security Control uninitialised");
-			
-		/* Clear the Symmetric KeyDef map */
-		theKeyDefMap.clear();
-		
-		/* Update the pass key with the new password */
-		thePassKey.setNewPassword(pPassword);
-		
-		/* Access the updated key definitions */
-		theSignature.setSecuredKeyDef(thePassKey.getSecuredPrivateKey(theAsymKey));
-		theSignature.setPasswordHash(thePassKey.getPasswordHash());
-	}
-
 	/**
 	 * ReSeed the random number generator
 	 */
@@ -545,17 +524,18 @@ public class SecurityControl extends DataItem<SecurityControl> {
 	}
 	
 	/* List of SecurityControls */
-	public static class List extends DataList<SecurityControl> {
+	public static class List extends DataList<List, SecurityControl> {
 		/**
 		 * Construct a top-level List
 		 */
-		public List() { super(SecurityControl.class, ListStyle.VIEW, false); }
+		public List() { super(List.class, SecurityControl.class, ListStyle.VIEW, false); }
 
 		/* Obtain extract lists. (not supported) */
 		public List getUpdateList() { return null; }
 		public List getEditList() 	{ return null; }
-		public List getClonedList() { return null; }
-		public List getDifferences(DataList<SecurityControl> pOld) { return null; }
+		public List getShallowCopy() { return null; }
+		public List getDeepCopy(DataSet<?,?> pData) { return null; }
+		public List getDifferences(List pOld) { return null; }
 
 		/**
 		 * Add a new item to the list
@@ -602,6 +582,21 @@ public class SecurityControl extends DataItem<SecurityControl> {
 				myControl = new SecurityControl(this, pSignature);
 				add(myControl);
 			}
+			
+			/* Return to caller */
+			return myControl;
+		}
+
+		/**
+		 * Clone Security control
+		 * @param pControl the existing control
+		 */
+		protected SecurityControl cloneSecurityControl(SecurityControl pControl) throws Exception {
+			SecurityControl myControl = null;
+
+			/* Create a new control and add it to the list */
+			myControl = new SecurityControl(pControl);
+			add(myControl);
 			
 			/* Return to caller */
 			return myControl;

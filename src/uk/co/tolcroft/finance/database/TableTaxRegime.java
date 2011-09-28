@@ -32,7 +32,7 @@ public class TableTaxRegime extends TableStaticData<TaxRegime> {
 	}
 	
 	/* Declare DataSet */
-	protected void declareData(DataSet<?> pData) {
+	protected void declareData(DataSet<?,?> pData) {
 		FinanceData myData = (FinanceData)pData;
 		theList = myData.getTaxRegimes();
 		setList(theList);

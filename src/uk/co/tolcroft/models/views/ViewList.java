@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.EditState;
 
 public class ViewList {
 	/* Members */
@@ -87,7 +88,7 @@ public class ViewList {
 	private void prepareChanges() {
 		Iterator<ListClass>	myIterator;
 		ListClass			myList;
-		DataList<?>			myDataList;
+		DataList<?,?>		myDataList;
 		
 		/* Loop through the items in the list */
 		myIterator = theList.iterator();
@@ -108,7 +109,7 @@ public class ViewList {
 	private void commitChanges() {
 		Iterator<ListClass>	myIterator;
 		ListClass			myList;
-		DataList<?>			myDataList;
+		DataList<?,?>		myDataList;
 		
 		/* Loop through the items in the list */
 		myIterator = theList.iterator();
@@ -129,7 +130,7 @@ public class ViewList {
 	private void rollBackChanges() {
 		ListIterator<ListClass>	myIterator;
 		ListClass				myList;
-		DataList<?>				myDataList;
+		DataList<?,?>			myDataList;
 		
 		/* Loop backwards through the items in the list */
 		myIterator = theList.listIterator(theList.size());
@@ -145,18 +146,94 @@ public class ViewList {
 	}
 	
 	/**
+	 * Has this ViewList got updates
+	 */
+	public boolean hasUpdates() {
+		ListIterator<ListClass>	myIterator;
+		ListClass				myList;
+		DataList<?,?>			myDataList;
+		
+		/* Loop through the items in the list */
+		myIterator = theList.listIterator();
+		while (myIterator.hasNext()) {
+			/* Access list */
+			myList 		= myIterator.next();
+			myDataList 	= myList.theDataList;
+			
+			/* Determine whether there are updates */
+			if ((myDataList != null) &&
+				(myDataList.hasUpdates()))
+				return true;
+		}
+		
+		/* Return to caller */
+		return false;
+	}
+		
+	/**
+	 * Has this ViewList got errors
+	 */
+	public boolean hasErrors() {
+		ListIterator<ListClass>	myIterator;
+		ListClass				myList;
+		DataList<?,?>			myDataList;
+		
+		/* Loop through the items in the list */
+		myIterator = theList.listIterator();
+		while (myIterator.hasNext()) {
+			/* Access list */
+			myList 		= myIterator.next();
+			myDataList 	= myList.theDataList;
+			
+			/* Determine whether there are errors */
+			if ((myDataList != null) &&
+				(myDataList.hasErrors()))
+				return true;
+		}
+		
+		/* Return to caller */
+		return false;
+	}
+		
+	/**
+	 * Get the edit state of this set of tables
+	 * @return the edit state
+	 */
+	public EditState getEditState() {
+		EditState 				myState = EditState.CLEAN;
+		ListIterator<ListClass>	myIterator;
+		ListClass				myList;
+		DataList<?,?>			myDataList;
+		
+		/* Loop through the items in the list */
+		myIterator = theList.listIterator();
+		while (myIterator.hasNext()) {
+			/* Access list */
+			myList 		= myIterator.next();
+			myDataList 	= myList.theDataList;
+
+			/* Combine states if list exists */
+			if (myDataList != null)
+				myState = myState.combineState(myDataList.getEditState());
+		}
+
+		/* Return the state */
+		return myState;
+	}
+		
+	/**
 	 * DataList items 
 	 */
 	public class ListClass {
 		/* properties */
-		private Class<?>	theClass 	= null;
-		private DataList<?>	theDataList	= null;
+		private Class<?>		theClass 	= null;
+		private DataList<?,?>	theDataList	= null;
 		
 		/**
 		 * Set the Data list 
 		 * @param pDataList the DataList
 		 */
-		public void setDataList(DataList<?> pDataList) {
+		public void setDataList(DataList<?,?> pDataList) {
 			theDataList = pDataList;
 		}
 		

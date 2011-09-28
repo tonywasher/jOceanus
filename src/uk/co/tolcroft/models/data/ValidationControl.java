@@ -5,27 +5,27 @@ public class ValidationControl<T extends DataItem<T>> {
 	/**
 	 * The item to which this Validation Control belongs
 	 */
-	private T			 theItem = null;
+	private T			 	theItem = null;
 
 	/**
 	 * The item to which this Validation Control belongs
 	 */
-	private DataList<T>	 theList = null;
+	private DataList<?,T>	theList = null;
 
 	/**
 	 * The first error in the list
 	 */
-	private errorElement theTop  = null;
+	private errorElement 	theTop  = null;
 
 	/**
 	 * The last error in the list
 	 */
-	private errorElement theEnd  = null;
+	private errorElement 	theEnd  = null;
 	
 	/**
 	 * The number of errors in this buffer
 	 */
-	private int			 theNumErrors = 0;
+	private int			 	theNumErrors = 0;
 	
 	/**
 	 * Constructor

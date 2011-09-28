@@ -4,6 +4,7 @@ import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugObject;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
+import uk.co.tolcroft.models.Difference;
 import uk.co.tolcroft.models.LinkNode;
 import uk.co.tolcroft.models.LinkObject;
 import uk.co.tolcroft.models.SortedList;
@@ -18,7 +19,7 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	/**
 	 * The list to which this item belongs
 	 */
-	private DataList<T>				theList		= null;
+	private DataList<?,T>			theList		= null;
 	
 	/**
 	 * Self reference (built as cast during constructor)
@@ -74,7 +75,7 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	 * Get the list control for this item
 	 * @return the list control
 	 */
-	public DataList<T>   			getList()  		{ return theList; }
+	public DataList<?,T>   			getList()  		{ return theList; }
 	
 	/**
 	 * Get the changeable values object for this item 
@@ -460,7 +461,7 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	 * @param fieldNo the field to test
 	 * @return <code>true/false</code>
 	 */
-	public boolean					fieldChanged(int fieldNo) {	return theHistory.fieldChanged(fieldNo); }
+	public Difference				fieldChanged(int fieldNo) {	return theHistory.fieldChanged(fieldNo); }
 	
 	/**
 	 * Determine whether there is restore-able history for an item 
@@ -582,11 +583,58 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 		return theErrors.getFirst();	}
 
 	/**
+	 * Determine whether two DataItem objects differ.
+	 * @param pCurr The current data 
+	 * @param pNew The new Data
+	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
+	 */	
+	public static Difference differs(DataItem<?> pCurr, DataItem<?> pNew) {
+		/* Handle case where current value is null */
+		if  (pCurr == null) return (pNew != null) ? Difference.Different 
+												  : Difference.Identical;
+		
+		/* Handle case where new value is null */
+		if  (pNew == null) return Difference.Different;
+		
+		/* Handle case where class differs */
+		if  (pCurr.getClass() != pNew.getClass()) return Difference.Different;
+		
+		/* Compare the two objects */
+		return pCurr.differences(pNew);
+	}
+
+	/**
+	 * Determine whether two DataItem objects differ. 
+	 * @param pNew The new Data
+	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
+	 */	
+	private Difference differences(DataItem<?> pNew) {
+		/* Access the Number of fields */
+		int			iNumFields 	= numFields();
+		Difference 	myDiff		= Difference.Identical;
+		T			myThat		= getList().getBaseClass().cast(pNew);
+		
+		/* Access the Values */
+		HistoryValues<T> myCurr = getCurrentValues();
+		HistoryValues<T> myNew	= myThat.getCurrentValues();
+		
+		/* Loop through the fields */
+		for (int i=0; i<iNumFields; i++) {
+			/* Check for differences */
+			Difference myTest = myCurr.fieldChanged(i, myNew);
+			myDiff = myDiff.combine(myTest);
+		}
+		
+		/* Return difference */
+		return myDiff;
+	}
+
+	/**
 	 * Construct a new item
 	 * @param pCtl the list that this item is associated with
 	 * @param uId the Id of the new item (or 0 if not yet known)
 	 */
-	public DataItem(DataList<T> pList, int uId) {
+	public DataItem(DataList<?,T> pList, int uId) {
 		theId      = uId;
 		theList    = pList;
 		theItem	   = pList.getBaseClass().cast(this);

@@ -1,11 +1,9 @@
 package uk.co.tolcroft.finance.ui;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 
 import javax.swing.GroupLayout;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
@@ -14,8 +12,6 @@ import javax.swing.event.ChangeListener;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 
@@ -30,10 +26,6 @@ public class MaintenanceTab implements ChangeListener {
 	private MaintProperties		theProperties	= null;
 	private MaintNewYear  		thePatternYear	= null;
 	private DebugEntry			theDebugEntry	= null;
-	private Font		        theStdFont    	= null;
-	private Font		        theChgFont    	= null;
-	private Font				theNumFont		= null;
-	private Font				theChgNumFont	= null;
 
 	/* Access methods */
 	protected JPanel    getPanel()		{ return thePanel; }
@@ -61,12 +53,6 @@ public class MaintenanceTab implements ChangeListener {
 		DebugEntry   mySection  = theView.getDebugEntry(View.DebugViews);
         theDebugEntry = myDebugMgr.new DebugEntry("Maintenance");
         theDebugEntry.addAsChildOf(mySection);
-		
-		/* Access the fonts */
-		theStdFont    = theParent.getFont(false, false);
-		theChgFont    = theParent.getFont(false, true);
-		theNumFont    = theParent.getFont(true, false);
-		theChgNumFont = theParent.getFont(true, true);
 		
 		/* Create the Tabbed Pane */
 		theTabs = new JTabbedPane();
@@ -151,8 +137,8 @@ public class MaintenanceTab implements ChangeListener {
 		theTabs.setSelectedIndex(iIndex);
 	}
 	
-	/* Set visible tabs */
-	protected void setVisibleTabs() {
+	/* Set visibility */
+	protected void setVisibility() {
 		int         iIndex;
 		boolean     hasUpdates;
 		
@@ -188,61 +174,7 @@ public class MaintenanceTab implements ChangeListener {
 			theTabs.setEnabledAt(iIndex, !hasUpdates);
 		
 		/* Update the top level tabs */
-		theParent.setVisibleTabs();
-	}
-	
-	/**
-	 * Format the component for the field
-	 * @param pComp the component
-	 * @param iField the field number
-	 * @param pItem the data item
-	 * @param isNumeric is the field numeric
-	 * @param isNull is the field null
-	 */
-	protected void formatComponent(JComponent	pComp,
-								   int			iField,
-								   DataItem<?>	pItem,
-							   	   boolean 		isNumeric,
-							   	   boolean		isNull) {
-		boolean 	isChanged;
-		boolean 	isError;
-		boolean 	isFlipped;
-		DataState 	myState;
-		Font		myFont;
-		Color		myBack;
-		Color		myFore;
-		String		myTip = null;
-		
-		/* Access the data state */
-		myState = pItem.getState();
-		
-		/* Determine the standard colour */
-		myFore = Color.black;
-		myBack = Color.white;
-		if (myState == DataState.DELETED)
-			myFore = Color.lightGray;
-		else if (myState == DataState.NEW)
-			myFore = Color.blue;
-		else if (myState == DataState.RECOVERED)
-			myFore = Color.darkGray;
-		
-		/* Determine the render information */
-		isChanged 	= pItem.fieldChanged(iField);
-		myFont 		= (isChanged) ? (isNumeric ? theChgNumFont : theChgFont) 
-								  : (isNumeric ? theNumFont : theStdFont);
-		if (isError = pItem.hasErrors(iField)) 
-			myTip  = pItem.getFieldErrors(iField);
-		myFore	= ((isError) ? Color.red  
-				 			 : (isChanged)	? Color.magenta
-				 							: myFore);
-		
-		/* Determine whether to flip foreground and background */
-		isFlipped = ((isError) && (isNull));
-		
-		pComp.setForeground((isFlipped) ? myBack : myFore);
-		pComp.setBackground((isFlipped) ? myFore : myBack);
-		pComp.setToolTipText(myTip);
-		pComp.setFont(myFont);
+		theParent.setVisibility();
 	}
 	
 	/* Change listener */

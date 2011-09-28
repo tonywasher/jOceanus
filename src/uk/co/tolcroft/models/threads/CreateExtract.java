@@ -9,7 +9,7 @@ import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.ui.FileSelector.BackupCreate;
 import uk.co.tolcroft.models.views.DataControl;
 
-public class CreateExtract<T extends DataSet<?>> extends WorkerThread<Void> {
+public class CreateExtract<T extends DataSet<T,?>> extends WorkerThread<Void> {
 	/* Task description */
 	private static String  	theTask		= "Extract Creation";
 
@@ -35,7 +35,7 @@ public class CreateExtract<T extends DataSet<?>> extends WorkerThread<Void> {
 	/* Background task (Worker Thread)*/
 	public Void performTask() throws Throwable {
 		T				myData	  	= null;
-		DataSet<?>		myDiff	  	= null;
+		DataSet<T,?>	myDiff	  	= null;
 		SpreadSheet<T>	mySheet		= null;
 		boolean			doDelete  	= false;
 		File			myFile	  	= null;
@@ -64,7 +64,7 @@ public class CreateExtract<T extends DataSet<?>> extends WorkerThread<Void> {
 			doDelete = true;
 
 			/* Re-initialise the status window */
-			initStatusBar("Verifying Extract");
+			initStatusBar("Reading Extract");
 		
 			/* .xls will have been added to the file */
 			myFile 	= new File(myFile.getPath() + ".xls");
@@ -73,9 +73,15 @@ public class CreateExtract<T extends DataSet<?>> extends WorkerThread<Void> {
 			myData   = mySheet.loadExtract(theStatus, 
 										   myFile);
 
+			/* Re-initialise the status window */
+			initStatusBar("Re-applying Security");
+		
 			/* Initialise the security, from the original data */
-			myData.initialiseSecurity(theControl.getData());
+			myData.initialiseSecurity(theStatus, theControl.getData());
 			
+			/* Re-initialise the status window */
+			initStatusBar("Verifying Extract");
+		
 			/* Analyse the Data to ensure that close dates are updated */
 			myData.analyseData(theControl);
 			

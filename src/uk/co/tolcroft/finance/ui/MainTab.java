@@ -1,24 +1,12 @@
 package uk.co.tolcroft.finance.ui;
 
-import java.util.concurrent.*;
-
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
-import javax.swing.Box;
-import javax.swing.GroupLayout;
-import javax.swing.JFrame;
+import javax.swing.JComponent;
 import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.LayoutStyle;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -26,75 +14,27 @@ import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.core.LoadArchive;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.finance.help.*;
+import uk.co.tolcroft.finance.help.FinanceHelp;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.data.Properties;
-import uk.co.tolcroft.models.help.DebugManager;
-import uk.co.tolcroft.models.help.DebugWindow;
-import uk.co.tolcroft.models.help.HelpWindow;
-import uk.co.tolcroft.models.threads.*;
+import uk.co.tolcroft.models.help.HelpModule;
 import uk.co.tolcroft.models.ui.DateRange;
-import uk.co.tolcroft.models.ui.StatusBar;
+import uk.co.tolcroft.models.ui.MainWindow;
 
-public class MainTab implements ActionListener,
-								ChangeListener,
-								WindowListener {
+public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
 	private View      			theView         = null;
-	private Properties	  		theProperties	= null;
-	private JFrame          	theFrame  		= null;
-	private JPanel          	thePanel 		= null;
 	private JTabbedPane     	theTabs  		= null;
 	private Extract      		theExtract      = null;
 	private AccountTab    		theAccountCtl	= null;
 	private ReportTab			theReportTab	= null;
 	private PricePoint	  		theSpotView		= null;
 	private MaintenanceTab		theMaint		= null;
-	private	Font 				theStdFont 		= null;
-	private	Font 				theNumFont 		= null;
-	private	Font 				theChgFont 		= null;
-	private	Font 				theChgNumFont 	= null;
-	private StatusBar 			theStatusBar    = null;
 	private ComboSelect     	theComboList    = null;	
-	private JMenuBar			theMainMenu		= null;
-	private JMenu				theDataMenu		= null;
-	private JMenu				theBackupMenu	= null;
-	private JMenu				theHelpMenu		= null;
 	private JMenuItem			theLoadSheet	= null;
-	private JMenuItem			theCreateDBase	= null;
-	private JMenuItem			thePurgeDBase	= null;
-	private JMenuItem			theLoadDBase	= null;
-	private JMenuItem			theSaveDBase	= null;
-	private JMenuItem			theWriteBackup	= null;
-	private JMenuItem			theLoadBackup	= null;
-	private JMenuItem			theWriteExtract	= null;
-	private JMenuItem			theLoadExtract	= null;
-	private JMenuItem			theShowDebug	= null;
-	private JMenuItem			theHelpMgr		= null;
-	private WorkerThread<?>		theThread		= null;
-	private ExecutorService 	theExecutor		= null;
-	private HelpWindow			theHelpWdw		= null;
-	private DebugManager		theDebugMgr		= null;
-	private DebugWindow			theDebugWdw		= null;
 	
 	/* Access methods */
-	public 		View			getView()  		{ return theView; }
-	public 		Properties		getProperties() { return theProperties; }
-	public 		JFrame      	getFrame()      { return theFrame; }
-	public 		JPanel      	getPanel()      { return thePanel; }
-	public 		StatusBar   	getStatusBar()  { return theStatusBar; }
-	public 		DebugManager  	getDebugMgr()  	{ return theDebugMgr; }
+	public 		View			getView() 		{ return theView; }
 	protected 	ComboSelect		getComboList()	{ return theComboList; }
 
-	/* Get explicit font */
-	public Font getFont(boolean	isNumeric,
-					  	boolean	isChanged) {
-		/* Return the appropriate font */
-		if (isNumeric)
-			return (isChanged) ? theChgNumFont 	: theNumFont;
-		else
-			return (isChanged) ? theChgFont 	: theStdFont;
-	}
-	
 	/* Tab headers */
 	private static final String titleExtract   	= "Extract";
 	private static final String titleAccount   	= "Account";
@@ -102,30 +42,35 @@ public class MainTab implements ActionListener,
 	private static final String titleSpotView  	= "SpotPrices";
 	private static final String titleMaint  	= "Maintenance";
 		
+	/**
+	 * Obtain the frame name
+	 * @return the frame name
+	 */
+	protected String getFrameName()	{ return "Finance"; }
+	
+	/**
+	 * Obtain the Help Module
+	 * @return the help module
+	 */
+	protected HelpModule getHelpModule() throws Exception { return new FinanceHelp(); }
+	
 	/* Constructor */
 	public MainTab() throws Exception {
-		JPanel  myProgress;
-		JPanel  myStatus;
-		
-		/* Create the debug manager */
-		theDebugMgr	  = new DebugManager();
-		
 		/* Create the view */
 		theView       = new View(this);
+		
+		/* Build the main window */
+		buildMainWindow(theView);
 
-		/* Access properties */
-		theProperties = new Properties();
-		theView.setProperties(theProperties);
+		/* Initialise the data */
+		refreshData();
+	}		
 		
-		/* Create the Executor service */
-		theExecutor = Executors.newSingleThreadExecutor();
-		
-		/* Create standard font selections */
-		theStdFont    = new Font("Arial", Font.PLAIN, 12);
-		theNumFont    = new Font("Courier", Font.PLAIN, 12);
-		theChgFont    = new Font("Arial", Font.ITALIC, 12);
-		theChgNumFont = new Font("Courier", Font.ITALIC, 12);
-			
+	/**
+	 * Build the main panel
+	 * @return the main panel
+	 */
+	protected JComponent buildMainPanel() {
 		/* Create the Tabbed Pane */
 		theTabs = new JTabbedPane();
 			
@@ -153,172 +98,24 @@ public class MainTab implements ActionListener,
 		theTabs.addChangeListener(this);
 		determineFocus();
 		
-		/* Create the new status bar */
-		theStatusBar = new StatusBar(this);
-		myProgress   = theStatusBar.getProgressPanel();
-		myProgress.setVisible(false);
-		myStatus     = theStatusBar.getStatusPanel();
-		myStatus.setVisible(false);
-		theView.setStatusBar(theStatusBar);
-		
-		/* Create the panel */
-		thePanel = new JPanel();
-		
-		/* Create the layout for the panel */
-	    GroupLayout myLayout = new GroupLayout(thePanel);
-	    thePanel.setLayout(myLayout);
-		    
-	    /* Set the layout */
-	    myLayout.setHorizontalGroup(
-	    	myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-	        	.addGroup(myLayout.createSequentialGroup()
-	        		.addContainerGap()
-	                .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
-	                    .addComponent(theTabs, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-	                    .addComponent(myProgress, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-	                    .addComponent(myStatus, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-	                .addContainerGap())
-	    );
-        myLayout.setVerticalGroup(
-        	myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-	        	.addGroup(GroupLayout.Alignment.TRAILING, myLayout.createSequentialGroup()
-	                .addComponent(myStatus)
-	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-	                .addComponent(myProgress)
-	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-	                .addComponent(theTabs)
-	                .addContainerGap())
-	    );
-
-        /* Create the frame */
-		theFrame = new JFrame("Finance");
-		
-		/* Attach the panel to the frame */
-		thePanel.setOpaque(true);
-		theFrame.setContentPane(thePanel);
-		
-		/* Create the menu bar */
-		theMainMenu   = new JMenuBar();
-		theDataMenu   = new JMenu("Data");
-		theMainMenu.add(theDataMenu);
-		theBackupMenu = new JMenu("Backup");
-		theMainMenu.add(theBackupMenu);
-		theMainMenu.add(Box.createHorizontalGlue());
-		theHelpMenu = new JMenu("Help");
-		theMainMenu.add(theHelpMenu);
-		theFrame.setJMenuBar(theMainMenu);
-		
+		/* Return the panel */
+		return theTabs;		
+	}
+	
+	/**
+	 * Add Data Menu items 
+	 * @param pMenu the menu
+	 */
+	protected void addDataMenuItems(JMenu pMenu) {
 		/* Create the file menu items */
 		theLoadSheet = new JMenuItem("Load Spreadsheet");
 		theLoadSheet.addActionListener(this);
-		theDataMenu.add(theLoadSheet);
-		theLoadDBase = new JMenuItem("Load Database");
-		theLoadDBase.addActionListener(this);
-		theDataMenu.add(theLoadDBase);
-		theSaveDBase = new JMenuItem("Store to Database");
-		theSaveDBase.addActionListener(this);
-		theDataMenu.add(theSaveDBase);
-		theCreateDBase = new JMenuItem("Create Database Tables");
-		theCreateDBase.addActionListener(this);
-		theDataMenu.add(theCreateDBase);
-		thePurgeDBase = new JMenuItem("Purge Database");
-		thePurgeDBase.addActionListener(this);
-		theDataMenu.add(thePurgeDBase);
-		theWriteBackup = new JMenuItem("Create Backup");
-		theWriteBackup.addActionListener(this);
-		theBackupMenu.add(theWriteBackup);
-		theLoadBackup = new JMenuItem("Restore from Backup");
-		theLoadBackup.addActionListener(this);
-		theBackupMenu.add(theLoadBackup);
-		theWriteExtract = new JMenuItem("Create Extract");
-		theWriteExtract.addActionListener(this);
-		theBackupMenu.add(theWriteExtract);
-		theLoadExtract = new JMenuItem("Load from Extract");
-		theLoadExtract.addActionListener(this);
-		theBackupMenu.add(theLoadExtract);
-		theHelpMgr = new JMenuItem("Help");
-		theHelpMgr.addActionListener(this);
-		theHelpMenu.add(theHelpMgr);
-		theShowDebug = new JMenuItem("Debug");
-		theShowDebug.addActionListener(this);
-		theHelpMenu.add(theShowDebug);
+		pMenu.add(theLoadSheet);
 		
-		/* Initialise the data */
-		refreshData();
-	}		
-		
-	/* Make the frame */
-	public void makeFrame() throws Exception {
-		/* Show the frame */
-		theFrame.pack();
-		theFrame.setLocationRelativeTo(null);
-		theFrame.setVisible(true);
-		
-		/* Add a window listener */
-		theFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		theFrame.addWindowListener(this);
-		theView.setFrame(theFrame);
-
-		/* Load data from the database */
-		loadDatabase();
+		/* Pass call on */
+		super.addDataMenuItems(pMenu);
 	}
 	
-	public void windowClosed(WindowEvent e) {}
-	public void windowOpened(WindowEvent e) {}
-	public void windowIconified(WindowEvent e) {}
-	public void windowDeiconified(WindowEvent e) {}
-	public void windowActivated(WindowEvent e) {}
-	public void windowDeactivated(WindowEvent e) {}
-	
-	public void windowClosing(WindowEvent e) {
-		/* If this is the frame that is closing down */
-		if (e.getSource() == theFrame) {
-			/* If we have updates or changes */
-			if ((hasUpdates()) || (hasChanges())) {
-				/* Ask whether to continue */
-				int myOption = JOptionPane.showConfirmDialog(theFrame,
-														     "Discard unsaved data changes?",
-														     "Confirm Close",
-														     JOptionPane.YES_NO_OPTION);
-			
-				/* Ignore if no was responded */
-				if (myOption != JOptionPane.YES_OPTION) return;
-			}		
-		
-			/* terminate the executor */
-			theExecutor.shutdown();
-		
-			/* Dispose of the debug/help Windows if they exist */
-			if (theDebugWdw != null) theDebugWdw.dispose();
-			if (theHelpWdw  != null) theHelpWdw.dispose();
-
-			/* Dispose of the frame */
-			theFrame.dispose();
-			
-			/* Exit the application */
-			System.exit(0);
-		}
-		
-		/* else if this is the Debug Window shutting down */
-		else if (e.getSource() == theDebugWdw) {
-			/* Re-enable the help menu item */
-			theShowDebug.setEnabled(true);
-			theDebugWdw.dispose();
-			theDebugWdw = null;
-			
-			/* Notify debug manager */
-			theDebugMgr.declareWindow(null);
-		}
-
-		/* else if this is the Help Window shutting down */
-		else if (e.getSource() == theHelpWdw) {
-			/* Re-enable the help menu item */
-			theHelpMgr.setEnabled(true);
-			theHelpWdw.dispose();
-			theHelpWdw = null;
-		}
-	}
-
 	public boolean hasUpdates() {
 		/* Determine whether we have edit session updates */
 		return theExtract.hasUpdates()    ||
@@ -327,77 +124,15 @@ public class MainTab implements ActionListener,
 		   	   theMaint.hasUpdates();		
 	}
 
-	public boolean hasChanges() {
-		/* Determine whether we have core level changes */
-		return theView.getData().hasUpdates();
-	}
-
 	public void actionPerformed(ActionEvent evt) {
-		/* If this event relates to the Write Backup item */
-		if (evt.getSource() == (Object)theWriteBackup) {
-			/* Start a write backup operation */
-			writeBackup();
-		}
-		
-		/* If this event relates to the Write Extract item */
-		if (evt.getSource() == (Object)theWriteExtract) {
-			/* Start a write extract operation */
-			writeExtract();
-		}
-		
-		/* If this event relates to the Save Database item */
-		if (evt.getSource() == (Object)theSaveDBase) {
-			/* Start a store database operation */
-			storeDatabase();
-		}		
-		
-		/* If this event relates to the Load Database item */
-		if (evt.getSource() == (Object)theLoadDBase) {
-			/* Start a load database operation */
-			loadDatabase();
-		}		
-		
-		/* If this event relates to the Create Database item */
-		if (evt.getSource() == (Object)theCreateDBase) {
-			/* Start a load database operation */
-			createDatabase();
-		}		
-		
-		/* If this event relates to the Purge Database item */
-		if (evt.getSource() == (Object)thePurgeDBase) {
-			/* Start a load database operation */
-			purgeDatabase();
-		}		
-		
 		/* If this event relates to the Load spreadsheet item */
 		if (evt.getSource() == (Object)theLoadSheet) {
 			/* Start a write backup operation */
 			loadSpreadsheet();
 		}		
 		
-		/* If this event relates to the Load backup item */
-		if (evt.getSource() == (Object)theLoadBackup) {
-			/* Start a restore backup operation */
-			restoreBackup();
-		}		
-		
-		/* If this event relates to the Load extract item */
-		if (evt.getSource() == (Object)theLoadExtract) {
-			/* Start a load backup operation */
-			loadExtract();
-		}		
-		
-		/* If this event relates to the Display Debug item */
-		if (evt.getSource() == (Object)theShowDebug) {
-			/* Open the debug window */
-			displayDebug();
-		}		
-		
-		/* If this event relates to the Display Help item */
-		if (evt.getSource() == (Object)theHelpMgr) {
-			/* Open the help window */
-			displayHelp();
-		}		
+		/* else pass the event on */
+		else super.actionPerformed(evt);
 	}
 	
 	/* Load Spreadsheet */
@@ -406,164 +141,9 @@ public class MainTab implements ActionListener,
 
 		/* Create the worker thread */
 		myThread = new LoadArchive(theView);
-		theThread = myThread;
-
-		/* Execute it and lock tabs */
-		theExecutor.execute(myThread);	
-		setVisibleTabs();
+		startThread(myThread);
 	}
 	
-	/* Load Database */
-	public void loadDatabase() {
-		LoadDatabase<FinanceData> myThread;
-
-		/* Create the worker thread */
-		myThread = new LoadDatabase<FinanceData>(theView);
-		theThread = myThread;
-
-		/* Execute it and lock tabs */
-		theExecutor.execute(myThread);	
-		setVisibleTabs();
-	}
-	
-	/* Store Database */
-	public void storeDatabase() {
-		StoreDatabase<FinanceData> myThread;
-
-		/* Create the worker thread */
-		myThread = new StoreDatabase<FinanceData>(theView);
-		theThread = myThread;
-
-		/* Execute it and lock tabs */
-		theExecutor.execute(myThread);	
-		setVisibleTabs();
-	}
-	
-	/* Create Database */
-	public void createDatabase() {
-		CreateDatabase<FinanceData> myThread;
-
-		/* Create the worker thread */
-		myThread = new CreateDatabase<FinanceData>(theView);
-		theThread = myThread;
-
-		/* Execute it and lock tabs */
-		theExecutor.execute(myThread);	
-		setVisibleTabs();
-	}
-	
-	/* Purge Database */
-	public void purgeDatabase() {
-		PurgeDatabase<FinanceData> myThread;
-		
-		/* Create the worker thread */
-		myThread = new PurgeDatabase<FinanceData>(theView);
-		theThread = myThread;
-
-		/* Execute it and lock tabs */
-		theExecutor.execute(myThread);	
-		setVisibleTabs();
-	}
-	
-	/* Write Backup */
-	public void writeBackup() {
-		CreateBackup<FinanceData> myThread;
-		
-		/* Create the worker thread */
-		myThread = new CreateBackup<FinanceData>(theView);
-		theThread = myThread;
-		
-		/* Execute it and lock tabs */
-		theExecutor.execute(myThread);	
-		setVisibleTabs();
-	}
-	
-	/* Restore Backup */
-	public void restoreBackup() {
-		LoadBackup<FinanceData> myThread;
-
-		/* Create the worker thread */
-		myThread = new LoadBackup<FinanceData>(theView);
-		theThread = myThread;
-
-		/* Execute it and lock tabs */
-		theExecutor.execute(myThread);	
-		setVisibleTabs();
-	}
-	
-	/* Write Extract */
-	public void writeExtract() {
-		CreateExtract<FinanceData> myThread;
-		
-		/* Create the worker thread */
-		myThread = new CreateExtract<FinanceData>(theView);
-		theThread = myThread;
-		
-		/* Execute it and lock tabs */
-		theExecutor.execute(myThread);	
-		setVisibleTabs();
-	}
-	
-	/* Load Extract */
-	public void loadExtract() {
-		LoadExtract<FinanceData> myThread;
-
-		/* Create the worker thread */
-		myThread = new LoadExtract<FinanceData>(theView);
-		theThread = myThread;
-
-		/* Execute it and lock tabs */
-		theExecutor.execute(myThread);	
-		setVisibleTabs();
-	}
-	
-	/* Display Debug */
-	public void displayDebug() {
-		try { 
-			/* Create the debug window */
-			theDebugWdw = new DebugWindow(theFrame, theDebugMgr);
-			
-			/* Listen for its closure */
-			theDebugWdw.addWindowListener(this);
-			
-			/* Disable the menu item */
-			theShowDebug.setEnabled(false);
-			
-			/* Display it */
-			theDebugWdw.showDialog();
-		}
-		catch (Throwable e) {}
-	}
-	
-	/* Display Help */
-	public void displayHelp() {
-		try { 
-			/* Create the help window */
-			theHelpWdw = new HelpWindow(theFrame, new FinanceHelp());
-			
-			/* Listen for its closure */
-			theHelpWdw.addWindowListener(this);
-			
-			/* Disable the menu item */
-			theHelpMgr.setEnabled(false);
-			
-			/* Display it */
-			theHelpWdw.showDialog();
-		}
-		catch (Throwable e) {}
-	}
-	
-	/* Finish Thread */
-	public void finishThread() {
-		theThread = null;
-		setVisibleTabs();
-	}
-	
-	/* Handle cancel command */
-	public void performCancel() {
-		if (theThread != null) theThread.cancel(false);
-	}
-
 	/* Select an explicit account and period */
 	public void selectAccount(Account  	pAccount,
 							  DateRange pSource) {
@@ -614,23 +194,24 @@ public class MainTab implements ActionListener,
 		theMaint.refreshData();
 			
 		/* Sort out visible tabs */
-		setVisibleTabs();
+		setVisibility();
 	}
 
-	/* Set visible tabs */
-	public void setVisibleTabs() {
+	/* Set visibility */
+	public void setVisibility() {
 		int         iIndex;
 		boolean     hasUpdates;
-		boolean		hasChanges;
 		boolean		hasWorker;
 		boolean		showTab;
+
+		/* Sort out underlying visibility */
+		super.setVisibility();
 		
 		/* Determine whether we have any updates */
 		hasUpdates = hasUpdates();
-		hasChanges = hasChanges();
 		
 		/* Note whether we have a worker thread */
-		hasWorker = (theThread != null);
+		hasWorker = hasWorker();
 		
 		/* Access the Extract panel and determine its status */
 		iIndex  = theTabs.indexOfTab(titleExtract);
@@ -667,23 +248,8 @@ public class MainTab implements ActionListener,
 		/* Enable/Disable the maintenance tab */
 		if (iIndex != -1) theTabs.setEnabledAt(iIndex, showTab);
 		
-		/* Disable menus if we have a worker thread */
-		theDataMenu.setEnabled(!hasWorker);
-		theBackupMenu.setEnabled(!hasWorker);
-		
-		/* Enable/Disable the debug menu item */
-		theShowDebug.setVisible(theProperties.doShowDebug());
-		
-		/* If we have changes disable the create backup option */
-		theWriteBackup.setEnabled(!hasChanges && !hasUpdates);
-
 		/* If we have updates disable the load backup/database option */
-		theLoadBackup.setEnabled(!hasUpdates);
-		theLoadDBase.setEnabled(!hasUpdates);
 		theLoadSheet.setEnabled(!hasUpdates);
-
-		/* If we have updates or no changes disable the save database */
-		theSaveDBase.setEnabled(!hasUpdates && hasChanges);
 	}
 	
 	/* Change listener */

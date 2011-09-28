@@ -348,16 +348,22 @@ public abstract class Number {
 	public abstract String format(boolean bPretty);
 	
 	/**
-	 * Determine whether two Number objects differ.
-	 * 
+	 * Determine whether two Number objects differ. 
 	 * @param pCurr The current Number 
 	 * @param pNew The new Number
 	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
 	 */	
-	public static boolean differs(Number pCurr, Number pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
+	public static Difference differs(Number pCurr, Number pNew) {
+		/* Handle case where current value is null */
+		if  (pCurr == null) return (pNew != null) ? Difference.Different 
+												  : Difference.Identical;
+		
+		/* Handle case where new value is null */
+		if  (pNew == null) return Difference.Different;
+		
+		/* Handle Standard cases */
+		return (pCurr.compareTo(pNew) != 0) ? Difference.Different
+											: Difference.Identical;
 	}
 
 	/**
@@ -490,8 +496,7 @@ public abstract class Number {
 			
 			/* return the double value */
 			return Double.parseDouble(myString);
-		}
-		
+		}		
 	}
 	
 	/**

@@ -13,6 +13,20 @@ public class IdManager<T extends DataItem<T>> {
 	private idMap	theMap		= new idMap();
 	
 	/**
+	 * Get Max Id
+	 * @return the Maximum Id
+	 */
+	protected	int	getMaxId() { return theMaxId; }
+	
+	/**
+	 * Set Max Id
+	 * @param uMaxId the Maximum Id
+	 */
+	protected	void	setMaxId(int uMaxId) {
+		if (uMaxId > theMaxId) theMaxId = uMaxId;
+	}
+	
+	/**
 	 * Is the Id unique in this list
 	 * @param uId the Id to check
 	 * @return Whether the id is unique <code>true/false</code>

@@ -6,7 +6,7 @@ import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.data.EncryptedItem;
@@ -88,13 +88,13 @@ public class SpotPrices implements DebugObject {
 	}
 	
 	/* The List class */
-	public class List extends EncryptedList<SpotPrice> {
+	public class List extends EncryptedList<List, SpotPrice> {
 		/* Members */
 		private Date 		theDate 	= null;
 		
 		/* Constructors */
 		public List(SpotPrices pPrices) { 
-			super(SpotPrice.class, theView.getData(), ListStyle.EDIT);
+			super(List.class, SpotPrice.class, theView.getData(), ListStyle.EDIT);
 			theDate   = pPrices.theDate;
 			
 			/* Declare variables */
@@ -108,7 +108,7 @@ public class SpotPrices implements DebugObject {
 			Account 		myAcct;
 			SpotPrice 		myPrice;
 			
-			DataList<AcctPrice>.ListIterator myIterator;
+			AcctPrice.List.ListIterator myIterator;
 			
 			/* Access the iterator */
 			myData 		= theView.getData();
@@ -123,7 +123,7 @@ public class SpotPrices implements DebugObject {
 			while ((myCurr = myIterator.next()) != null) {
 				/* Test the date and account */
 				iDiff 	= theDate.compareTo(myCurr.getDate()); 
-				isNew	= Account.differs(myAcct, myCurr.getAccount());
+				isNew	= Account.differs(myAcct, myCurr.getAccount()).isDifferent();
 				
 				/* If this is a new account */
 				if (isNew) {
@@ -196,8 +196,9 @@ public class SpotPrices implements DebugObject {
 		/* Obtain extract lists. */
 		public List getUpdateList() { return null; }
 		public List getEditList() 	{ return null; }
-		public List getClonedList() { return null; }
-		public List getDifferences(DataList<SpotPrice> pOld) { return null; }
+		public List getShallowCopy() { return null; }
+		public List getDeepCopy(DataSet<?,?> pData) { return null; }
+		public List getDifferences(List pOld) { return null; }
 
 		/* Is this list locked */
 		public boolean isLocked() { return false; }
@@ -622,8 +623,8 @@ public class SpotPrices implements DebugObject {
 			/* Check whether this object is equal to that passed */
 			public boolean histEquals(HistoryValues<SpotPrice> pCompare) {
 				Values myValues = (Values)pCompare;
-				if (!super.histEquals(pCompare))				return false;
-				if (differs(thePrice,     myValues.thePrice))   return false;
+				if (!super.histEquals(pCompare))							return false;
+				if (differs(thePrice,     myValues.thePrice).isDifferent()) return false;
 				return true;
 			}
 			
@@ -647,9 +648,9 @@ public class SpotPrices implements DebugObject {
 				}
 			}
 			
-			public boolean	fieldChanged(int fieldNo, HistoryValues<SpotPrice> pOriginal) {
-				Values	pValues = (Values)pOriginal;
-				boolean		bResult = false;
+			public Difference	fieldChanged(int fieldNo, HistoryValues<SpotPrice> pOriginal) {
+				Values		pValues = (Values)pOriginal;
+				Difference	bResult = Difference.Identical;
 				switch (fieldNo) {
 					case SpotPrices.SpotPrice.FIELD_PRICE:
 						bResult = (differs(thePrice,  pValues.thePrice));

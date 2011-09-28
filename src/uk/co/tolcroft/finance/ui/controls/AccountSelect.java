@@ -12,7 +12,6 @@ import javax.swing.LayoutStyle;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.*;
-import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
 public class AccountSelect implements ItemListener {
@@ -195,7 +194,7 @@ public class AccountSelect implements ItemListener {
 		boolean		doShowDeleted;
 		boolean		doShowClosed;
 		
-		DataList<Account>.ListIterator	myIterator;
+		Account.List.ListIterator	myIterator;
 		
 		/* Access the data */
 		myData = theView.getData();
@@ -241,7 +240,7 @@ public class AccountSelect implements ItemListener {
 				(myAccount.isClosed())) continue;
 			
 			/* If the type of this account is new */
-			if (AccountType.differs(myType, myAccount.getActType())) {
+			if (AccountType.differs(myType, myAccount.getActType()).isDifferent()) {
 				/* Note the type */
 				myType = myAccount.getActType();
 				if (myFirst == null) myFirst = myType;
@@ -269,7 +268,7 @@ public class AccountSelect implements ItemListener {
 				(myAccount.isClosed())) continue;
 			
 			/* If the type of this account is new */
-			if (AccountType.differs(myType, myAccount.getActType())) {
+			if (AccountType.differs(myType, myAccount.getActType()).isDifferent()) {
 				/* Note the type */
 				myType = myAccount.getActType();
 				if (myFirst == null) myFirst = myType;
@@ -309,7 +308,7 @@ public class AccountSelect implements ItemListener {
 		boolean		doShowClosed;
 		AccountType	myType;
 		
-		DataList<Account>.ListIterator	myIterator;
+		Account.List.ListIterator	myIterator;
 		
 		/* Access current values */
 		doShowDeleted = doShowDeleted();
@@ -390,7 +389,7 @@ public class AccountSelect implements ItemListener {
 		refreshingData = false;
 		
 		/* Return whether we have changed selection */
-		return Account.differs(getSelected(), myOld);
+		return Account.differs(getSelected(), myOld).isDifferent();
 	}
 	
 	/**

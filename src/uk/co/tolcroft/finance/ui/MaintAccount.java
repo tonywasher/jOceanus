@@ -25,13 +25,13 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
-import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.ErrorPanel;
+import uk.co.tolcroft.models.ui.RenderData;
 import uk.co.tolcroft.models.ui.SaveButtons;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 import uk.co.tolcroft.models.views.ViewList;
@@ -515,7 +515,7 @@ public class MaintAccount implements ActionListener,
 		showAccount();
 		
 		/* Adjust visible tabs */
-		theParent.setVisibleTabs();
+		theParent.setVisibility();
 	}	
 		
  	/**
@@ -570,7 +570,7 @@ public class MaintAccount implements ActionListener,
 		FinanceData	myData;
 		AccountType 	myType;
 	
-		DataList<AccountType>.ListIterator 	myTypeIterator;
+		AccountType.List.ListIterator 	myTypeIterator;
 		
 		/* Access the data */
 		myData = theView.getData();
@@ -620,9 +620,9 @@ public class MaintAccount implements ActionListener,
 	
 	/* refreshParents */
 	private void refreshParents() {
-		Account	  	  	myAcct;
-		AccountType		myType;
-		DataList<Account>.ListIterator		myActIterator;
+		Account	  	  				myAcct;
+		AccountType					myType;
+		Account.List.ListIterator	myActIterator;
 		
 		/* Note that we are refreshing data */
 		refreshingData = true;
@@ -724,55 +724,55 @@ public class MaintAccount implements ActionListener,
 			theName.setText(theAccount.getName() != null ? 
 								theAccount.getName() : "");
 			theName.setEnabled(!isClosed && !theAccount.isDeleted());
-			theParent.formatComponent(theName, Account.FIELD_NAME, theAccount, false, (theAccount.getName() == null));
+			RenderData.formatComponent(theName, Account.FIELD_NAME, theAccount, false, (theAccount.getName() == null));
 		
 			/* Set the description */
 			theDesc.setText(theAccount.getDesc() != null ? 
 								theAccount.getDesc() : "");
 			theDesc.setEnabled(!isClosed && !theAccount.isDeleted());
-			theParent.formatComponent(theDesc, Account.FIELD_DESC, theAccount, false, (theAccount.getDesc() == null));
+			RenderData.formatComponent(theDesc, Account.FIELD_DESC, theAccount, false, (theAccount.getDesc() == null));
 		
 			/* Set the WebSite */
 			theWebSite.setText(theAccount.getWebSite() != null ? 
 							   new String(theAccount.getWebSite()) : "");
 			theWebSite.setEnabled(!isClosed && !theAccount.isDeleted());
-			theParent.formatComponent(theWebSite, Account.FIELD_WEBSITE, theAccount, false, (theAccount.getWebSite() == null));
+			RenderData.formatComponent(theWebSite, Account.FIELD_WEBSITE, theAccount, false, (theAccount.getWebSite() == null));
 		
 			/* Set the CustNo */
 			theCustNo.setText(theAccount.getCustNo() != null ? 
 							  new String(theAccount.getCustNo()) : "");
 			theCustNo.setEnabled(!isClosed && !theAccount.isDeleted());
-			theParent.formatComponent(theCustNo, Account.FIELD_CUSTNO, theAccount, false, (theAccount.getCustNo() == null));
+			RenderData.formatComponent(theCustNo, Account.FIELD_CUSTNO, theAccount, false, (theAccount.getCustNo() == null));
 		
 			/* Set the UserId */
 			theUserId.setText(theAccount.getUserId() != null ? 
 							  new String(theAccount.getUserId()) : "");
 			theUserId.setEnabled(!isClosed && !theAccount.isDeleted());
-			theParent.formatComponent(theUserId, Account.FIELD_USERID, theAccount, false, (theAccount.getUserId() == null));
+			RenderData.formatComponent(theUserId, Account.FIELD_USERID, theAccount, false, (theAccount.getUserId() == null));
 		
 			/* Set the Password */
 			thePassword.setText(theAccount.getPassword() != null ? 
 							    new String(theAccount.getPassword()) : "");
 			thePassword.setEnabled(!isClosed && !theAccount.isDeleted());
-			theParent.formatComponent(thePassword, Account.FIELD_PASSWORD, theAccount, false, (theAccount.getPassword() == null));
+			RenderData.formatComponent(thePassword, Account.FIELD_PASSWORD, theAccount, false, (theAccount.getPassword() == null));
 		
 			/* Set the WebSite */
 			theActDetail.setText(theAccount.getAccount() != null ? 
 							     new String(theAccount.getAccount()) : "");
 			theActDetail.setEnabled(!isClosed && !theAccount.isDeleted());
-			theParent.formatComponent(theActDetail, Account.FIELD_ACCOUNT, theAccount, false, (theAccount.getAccount() == null));
+			RenderData.formatComponent(theActDetail, Account.FIELD_ACCOUNT, theAccount, false, (theAccount.getAccount() == null));
 		
 			/* Set the Notes */
 			theNotes.setText(theAccount.getNotes() != null ? 
 							   new String(theAccount.getNotes()) : "");
 			theNotes.setEnabled(!isClosed && !theAccount.isDeleted());
-			theParent.formatComponent(theNotes, Account.FIELD_NOTES, theAccount, false, (theAccount.getNotes() == null));
+			RenderData.formatComponent(theNotes, Account.FIELD_NOTES, theAccount, false, (theAccount.getNotes() == null));
 		
 			/* Set the type */
 			theTypesBox.setSelectedItem(myType.getName());
 			theTypesBox.setVisible(theAccount.isDeletable() && (theAccount.getState() == DataState.NEW));
 			theTypLabel.setVisible(theAccount.isDeletable() && (theAccount.getState() == DataState.NEW));
-			theParent.formatComponent(theTypesBox, Account.FIELD_TYPE, theAccount, false, false);
+			RenderData.formatComponent(theTypesBox, Account.FIELD_TYPE, theAccount, false, false);
 		
 			/* Handle maturity */
 			if (myType.isBond()) {
@@ -780,7 +780,7 @@ public class MaintAccount implements ActionListener,
 				theSpinner.setVisible(true);
 				theMatLabel.setVisible(true);
 				theSpinner.setEnabled(!isClosed);
-				theParent.formatComponent(theSpinner, Account.FIELD_MATURITY, theAccount, false, false);
+				RenderData.formatComponent(theSpinner, Account.FIELD_MATURITY, theAccount, false, false);
 			}
 			else {
 				theSpinner.setVisible(false);
@@ -795,8 +795,8 @@ public class MaintAccount implements ActionListener,
 					theParentBox.setSelectedItem(null);
 				theParentBox.setVisible(true);
 				theParLabel.setVisible(true);
-				theParent.formatComponent(theParentBox, Account.FIELD_PARENT, theAccount, 
-										  false, (theAccount.getParent() == null));
+				RenderData.formatComponent(theParentBox, Account.FIELD_PARENT, theAccount, 
+										   false, (theAccount.getParent() == null));
 			}
 			else {
 				theParentBox.setVisible(false);
@@ -814,8 +814,8 @@ public class MaintAccount implements ActionListener,
 				}
 				
 				/* Create an account iterator */
-				DataList<Account>.ListIterator  myActIterator = theAccounts.listIterator();
-				Account							myAcct;
+				Account.List.ListIterator  	myActIterator = theAccounts.listIterator();
+				Account						myAcct;
 				
 				/* Add the Account values to the parents box */
 				while ((myAcct  = myActIterator.next()) != null) {
@@ -846,8 +846,8 @@ public class MaintAccount implements ActionListener,
 					theAliasBox.setSelectedItem(null);
 				theAliasBox.setVisible(true);
 				theAlsLabel.setVisible(true);
-				theParent.formatComponent(theAliasBox, Account.FIELD_ALIAS, theAccount, 
-										  false, (theAccount.getAlias() == null));
+				RenderData.formatComponent(theAliasBox, Account.FIELD_ALIAS, theAccount, 
+										   false, (theAccount.getAlias() == null));
 			}
 			else {
 				theAliasBox.setVisible(false);

@@ -354,31 +354,31 @@ public class View extends DataControl<FinanceData> {
 		 */
 		public void applyChanges() throws Exception {
 			/* Update the DBDriver if required */
-			if (Utils.differs(getDBDriver(), theProperties.getDBDriver()))  
+			if (Utils.differs(getDBDriver(), theProperties.getDBDriver()).isDifferent())  
 				theProperties.setDBDriver(getDBDriver());
 				
 			/* Update the DBConnection if required */
-			if (Utils.differs(getDBConnection(), theProperties.getDBConnection()))  
+			if (Utils.differs(getDBConnection(), theProperties.getDBConnection()).isDifferent())  
 				theProperties.setDBConnection(getDBConnection());
 				
 			/* Update the BaseSpreadSheet if required */
-			if (Utils.differs(getBaseSpreadSheet(), theProperties.getBaseSpreadSheet()))  
+			if (Utils.differs(getBaseSpreadSheet(), theProperties.getBaseSpreadSheet()).isDifferent())  
 				theProperties.setBaseSpreadSheet(getBaseSpreadSheet());
 				
 			/* Update the BackupDirectory if required */
-			if (Utils.differs(getBackupDir(), theProperties.getBackupDir()))  
+			if (Utils.differs(getBackupDir(), theProperties.getBackupDir()).isDifferent())  
 				theProperties.setBackupDir(getBackupDir());
 				
 			/* Update the RepoDirectory if required */
-			if (Utils.differs(getRepoDir(), theProperties.getRepoDir()))  
+			if (Utils.differs(getRepoDir(), theProperties.getRepoDir()).isDifferent())  
 				theProperties.setRepoDir(getRepoDir());
 				
 			/* Update the BackupPrefix if required */
-			if (Utils.differs(getBackupPrefix(), theProperties.getBackupPrefix()))  
+			if (Utils.differs(getBackupPrefix(), theProperties.getBackupPrefix()).isDifferent())  
 				theProperties.setBackupPrefix(getBackupPrefix());
 				
 			/* Update the BirthDate if required */
-			if (Date.differs(getBirthDate(), theProperties.getBirthDate()))  
+			if (Date.differs(getBirthDate(), theProperties.getBirthDate()).isDifferent())  
 				theProperties.setBirthDate(getBirthDate());
 				
 			/* Update the doShowDebug flag if required */
@@ -395,13 +395,13 @@ public class View extends DataControl<FinanceData> {
 		 */
 		public void checkChanges() {
 			/* Note if any field has changed */
-			hasChanges = ((Utils.differs(getDBDriver(), theProperties.getDBDriver()))               ||  
-						  (Utils.differs(getDBConnection(), theProperties.getDBConnection()))       ||  
-						  (Utils.differs(getBaseSpreadSheet(), theProperties.getBaseSpreadSheet())) ||  
-						  (Utils.differs(getBackupDir(), theProperties.getBackupDir())) 			||  
-						  (Utils.differs(getRepoDir(), theProperties.getRepoDir())) 				||  
-						  (Utils.differs(getBackupPrefix(), theProperties.getBackupPrefix()))       ||  
-						  (Date.differs(getBirthDate(), theProperties.getBirthDate()))				||  
+			hasChanges = ((Utils.differs(getDBDriver(), theProperties.getDBDriver()).isDifferent())               ||  
+						  (Utils.differs(getDBConnection(), theProperties.getDBConnection()).isDifferent())       ||  
+						  (Utils.differs(getBaseSpreadSheet(), theProperties.getBaseSpreadSheet()).isDifferent()) ||  
+						  (Utils.differs(getBackupDir(), theProperties.getBackupDir()).isDifferent()) 			  ||  
+						  (Utils.differs(getRepoDir(), theProperties.getRepoDir()).isDifferent()) 				  ||  
+						  (Utils.differs(getBackupPrefix(), theProperties.getBackupPrefix()).isDifferent())       ||  
+						  (Date.differs(getBirthDate(), theProperties.getBirthDate()).isDifferent())			  ||  
 						  (doShowDebug != theProperties.doShowDebug()));  
 		}		
 	}

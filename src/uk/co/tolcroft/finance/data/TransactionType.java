@@ -4,7 +4,7 @@ import uk.co.tolcroft.finance.data.StaticClass.TransClass;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
 
 public class TransactionType extends StaticData<TransactionType, TransClass> {
@@ -399,7 +399,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 	/**
 	 * Represents a list of {@link TransType} objects. 
 	 */
-	public static class List extends StaticList<TransactionType, TransClass> {
+	public static class List extends StaticList<List, TransactionType, TransClass> {
 		protected Class<TransClass> getEnumClass() { return TransClass.class; }
 
 		/** 
@@ -407,7 +407,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 	 	 * @param pData the DataSet for the list
 	 	 */
 		protected List(FinanceData pData) { 
-			super(TransactionType.class, pData, ListStyle.CORE);
+			super(List.class, TransactionType.class, pData, ListStyle.CORE);
 		}
 
 		/**
@@ -436,14 +436,26 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 		/* Obtain extract lists. */
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
-		public List getClonedList() { return getExtractList(ListStyle.CORE); }
+		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
+		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			myList.setData(pDataSet);
+			
+			/* Obtain underlying clones */
+			myList.populateList(ListStyle.CLONE);
+			myList.setStyle(ListStyle.CORE);
+			
+			/* Return the list */
+			return myList;
+		}
 
 		/** 
 		 * Construct a difference ControlData list
 		 * @param pNew the new ControlData list 
 		 * @param pOld the old ControlData list 
 		 */
-		protected List getDifferences(DataList<TransactionType> pOld) { 
+		protected List getDifferences(List pOld) { 
 			/* Build an empty Difference List */
 			List myList = new List(this);
 			

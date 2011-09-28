@@ -28,9 +28,9 @@ public class DebugItem implements ActionListener,
 	 */
 	private JPanel						thePanel		= null;
 	private JPanel						theListPanel	= null;
-	private DataList<?>					theList 		= null;
+	private DataList<?,?>				theList 		= null;
 	private DataItem<?>					theItem 		= null;
-	private DataList<?>.ListIterator	theIterator		= null;
+	private DataList<?,?>.ListIterator	theIterator		= null;
 	private DebugObject					theObject		= null;
 	private	JButton						theNext			= null;
 	private	JButton						theNextTen		= null;
@@ -189,7 +189,7 @@ public class DebugItem implements ActionListener,
 			theListPanel.setVisible(true);
 
 			/* Declare the list to the list window */
-			DataList<?> myList = (DataList<?>) theObject;
+			DataList<?,?> myList = (DataList<?,?>) theObject;
 			setList(myList);
 		}
 			
@@ -229,7 +229,7 @@ public class DebugItem implements ActionListener,
 	/**
 	 * Set List
 	 */
-	private void setList(DataList<?> pList) {
+	private void setList(DataList<?,?> pList) {
 		/* Record list */
 		theList 	= pList;
 		

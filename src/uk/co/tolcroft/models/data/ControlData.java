@@ -1,5 +1,6 @@
 package uk.co.tolcroft.models.data;
 
+import uk.co.tolcroft.models.Difference;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 
@@ -86,10 +87,9 @@ public class ControlData extends DataItem<ControlData> {
 	}
 							
 	/**
- 	* Construct a copy of a ControlData
- 	* 
- 	* @param pSource The source 
- 	*/
+ 	 * Construct a copy of a ControlData 
+ 	 * @param pSource The source 
+ 	 */
 	protected ControlData(List pList, ControlData pSource) {
 		/* Set standard values */
 		super(pList, pSource.getId());
@@ -98,7 +98,10 @@ public class ControlData extends DataItem<ControlData> {
 
 		/* Switch on the LinkStyle */
 		switch (pList.getStyle()) {
+			case CLONE:
+				isolateCopy(pList.getData());
 			case CORE:
+			case COPY:
 				pList.setNewId(this);				
 				break;
 			case EDIT:
@@ -212,6 +215,20 @@ public class ControlData extends DataItem<ControlData> {
 	}
 
 	/**
+	 * Isolate Data Copy
+	 * @param pData the DataSet
+	 */
+	private void isolateCopy(DataSet<?,?> pData) {
+		ControlKey.List myKeys = pData.getControlKeys();
+		
+		/* Update to use the local copy of the ControlKeys */
+		Values 		myValues   	= getValues();
+		ControlKey 	myKey 		= myValues.getControlKey();
+		ControlKey 	myNewKey 	= myKeys.searchFor(myKey.getId());
+		myValues.setControlKey(myNewKey);
+	}
+
+	/**
 	 * Set a new ControlKey 
 	 * @param pControl the new control key 
 	 */
@@ -238,19 +255,19 @@ public class ControlData extends DataItem<ControlData> {
 	/**
 	 * Static List
 	 */
-	public static class List  extends DataList<ControlData> {
+	public static class List  extends DataList<List, ControlData> {
 		/* Members */
-		private DataSet<?>	theData			= null;
-		public 	DataSet<?> 	getData()		{ return theData; }
-		private ControlData	theControl		= null;
-		public 	ControlData	getControl()	{ return theControl; }
+		private DataSet<?,?>	theData			= null;
+		public 	DataSet<?,?> 	getData()		{ return theData; }
+		private ControlData		theControl		= null;
+		public 	ControlData		getControl()	{ return theControl; }
 		
 		/** 
 		 * Construct an empty CORE static list
 	 	 * @param pData the DataSet for the list
 		 */
-		protected List(DataSet<?> pData) { 
-			super(ControlData.class, ListStyle.CORE, false);
+		protected List(DataSet<?,?> pData) { 
+			super(List.class, ControlData.class, ListStyle.CORE, false);
 			theData = pData;
 		}
 
@@ -259,8 +276,8 @@ public class ControlData extends DataItem<ControlData> {
 	 	 * @param pData the DataSet for the list
 		 * @param pStyle the style of the list 
 		 */
-		protected List(DataSet<?> pData, ListStyle pStyle) {
-			super(ControlData.class, pStyle, false);
+		protected List(DataSet<?,?> pData, ListStyle pStyle) {
+			super(List.class, ControlData.class, pStyle, false);
 			theData = pData;
 		}
 
@@ -291,14 +308,26 @@ public class ControlData extends DataItem<ControlData> {
 		/* Obtain extract lists. */
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return null; }
-		public List getClonedList() { return getExtractList(ListStyle.CORE); }
+		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
+		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			myList.theData = pDataSet;
+			
+			/* Obtain underlying clones */
+			myList.populateList(ListStyle.CLONE);
+			myList.setStyle(ListStyle.CORE);
+			
+			/* Return the list */
+			return myList;
+		}
 
 		/** 
 		 * Construct a difference ControlData list
 		 * @param pNew the new ControlData list 
 		 * @param pOld the old ControlData list 
 		 */
-		protected List getDifferences(DataList<ControlData> pOld) { 
+		protected List getDifferences(List pOld) { 
 			/* Build an empty Difference List */
 			List myList = new List(this);
 			
@@ -317,6 +346,7 @@ public class ControlData extends DataItem<ControlData> {
 		public ControlData addNewItem(DataItem<?> pItem) { 
 			ControlData myControl = new ControlData(this, (ControlData)pItem);
 			add(myControl);
+			theControl = myControl;
 			return myControl; 
 		}
 
@@ -399,7 +429,9 @@ public class ControlData extends DataItem<ControlData> {
 		public void setDataVersion(int pValue) {
 			theDataVersion = pValue; }
 		public void setControlKey(ControlKey pValue) {
-			theControlKey  = pValue; }
+			theControlKey  = pValue;
+			theControlId = (theControlKey == null) ? -1 : theControlKey.getId();
+		}
 
 		/* Constructor */
 		public Values() {}
@@ -413,8 +445,8 @@ public class ControlData extends DataItem<ControlData> {
 			/* Cast correctly */
 			Values myValues = (Values)pCompare;
 
-			if (theDataVersion != myValues.theDataVersion)   					return false;
-			if (ControlKey.differs(theControlKey,    myValues.theControlKey))   return false;
+			if (theDataVersion != myValues.theDataVersion)   								return false;
+			if (ControlKey.differs(theControlKey,    myValues.theControlKey).isDifferent()) return false;
 			return true;
 		}
 		
@@ -426,13 +458,15 @@ public class ControlData extends DataItem<ControlData> {
 			Values myValues = (Values)pSource;
 			theDataVersion	= myValues.getDataVersion();
 			theControlKey	= myValues.getControlKey();
+			theControlId 	= (theControlKey == null) ? -1 : theControlKey.getId();
 		}
-		public boolean	fieldChanged(int fieldNo, HistoryValues<ControlData> pOriginal) {
+		public Difference	fieldChanged(int fieldNo, HistoryValues<ControlData> pOriginal) {
 			Values 	pValues = (Values)pOriginal;
-			boolean	bResult = false;
+			Difference	bResult = Difference.Identical;
 			switch (fieldNo) {
 				case FIELD_VERS:
-					bResult = (theDataVersion != pValues.theDataVersion);
+					bResult = (theDataVersion != pValues.theDataVersion) ? Difference.Different
+							 											 : Difference.Identical;
 					break;
 				case FIELD_CONTROL:
 					bResult = (ControlKey.differs(theControlKey,		pValues.theControlKey));

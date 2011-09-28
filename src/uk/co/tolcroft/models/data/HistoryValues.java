@@ -1,5 +1,7 @@
 package uk.co.tolcroft.models.data;
 
+import uk.co.tolcroft.models.Difference;
+
 
 public interface HistoryValues<T extends DataItem<T>> {
 	/**
@@ -27,5 +29,5 @@ public interface HistoryValues<T extends DataItem<T>> {
 	 * @param pOriginal the original values
 	 * @return <code>true</code> if the field has changed <code>false</code> otherwise
 	 */
-	boolean	   fieldChanged(int fieldNo, HistoryValues<T> pOriginal);
+	Difference	fieldChanged(int fieldNo, HistoryValues<T> pOriginal);
 }

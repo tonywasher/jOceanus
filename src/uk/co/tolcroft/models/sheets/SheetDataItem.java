@@ -47,7 +47,7 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
 	/**
 	 * The DataList
 	 */
-	private DataList<T> 		theList			= null;
+	private DataList<?,T> 		theList			= null;
 	
 	/**
 	 * The name of the related range
@@ -109,7 +109,7 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
 	 * Set the DataList
 	 *  @param pList the Data list
 	 */
-	protected void setDataList(DataList<T> pList) {
+	protected void setDataList(DataList<?,T> pList) {
 		/* Store parameters */
 		theList	= pList;
 	}
@@ -190,7 +190,7 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
 	 *  @return continue to write <code>true/false</code> 
 	 */
 	protected boolean writeSpreadSheet() throws Exception {
-		DataList<T>.ListIterator	myIterator;
+		DataList<?,T>.ListIterator	myIterator;
 		T							myCurr;
 		int							myCount;
 		int							myTotal;

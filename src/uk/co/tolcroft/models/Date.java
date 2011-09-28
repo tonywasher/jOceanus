@@ -257,10 +257,17 @@ public class Date {
 	 * @param pNew The new Date
 	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
 	 */	
-	public static boolean differs(Date pCurr, Date pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
+	public static Difference differs(Date pCurr, Date pNew) {
+		/* Handle case where current value is null */
+		if  (pCurr == null) return (pNew != null) ? Difference.Different 
+												  : Difference.Identical;
+		
+		/* Handle case where new value is null */
+		if  (pNew == null) return Difference.Different;
+		
+		/* Handle Standard cases */
+		return (pCurr.compareTo(pNew) != 0) ? Difference.Different
+											: Difference.Identical;
 	}
 
 	/**

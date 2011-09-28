@@ -13,13 +13,14 @@ import jxl.write.WritableWorkbook;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.security.SecureManager;
 import uk.co.tolcroft.models.security.SecurityControl;
 import uk.co.tolcroft.models.security.ZipEntryMode;
 import uk.co.tolcroft.models.security.ZipFile;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 
-public abstract class SheetWriter<T extends DataSet<?>> {
+public abstract class SheetWriter<T extends DataSet<T,?>> {
 	/**
 	 * Thread control
 	 */
@@ -88,7 +89,9 @@ public abstract class SheetWriter<T extends DataSet<?>> {
 			myTgtFile 	= new File(pFile.getPath() + ".zip");
 
 			/* Create a clone of the security control */
-			myControl	= new SecurityControl(pData.getSecurityControl());
+			SecureManager 	mySecure	= pData.getSecurity();
+			SecurityControl	myBase		= pData.getSecurityControl();
+			myControl	= mySecure.cloneSecurityControl(myBase);
 				
 			/* Create the new output Zip file */
 			myZipFile 	= new ZipFile.Output(myControl,

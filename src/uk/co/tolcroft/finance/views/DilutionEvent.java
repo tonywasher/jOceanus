@@ -7,6 +7,7 @@ import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.*;
@@ -103,9 +104,9 @@ public class DilutionEvent extends DataItem<DilutionEvent> {
 		DilutionEvent myEvent = (DilutionEvent)pThat;
 		
 		/* Check for equality */
-		if (Date.differs(getDate(),      	myEvent.getDate())) 		return false;
-		if (Account.differs(getAccount(),  	myEvent.getAccount())) 		return false;
-		if (Dilution.differs(getDilution(),	myEvent.getDilution()))		return false;
+		if (Date.differs(getDate(),      	myEvent.getDate()).isDifferent()) 		return false;
+		if (Account.differs(getAccount(),  	myEvent.getAccount()).isDifferent()) 	return false;
+		if (Dilution.differs(getDilution(),	myEvent.getDilution()).isDifferent())	return false;
 		return getBase().equals(myEvent.getBase());
 	}
 
@@ -211,7 +212,7 @@ public class DilutionEvent extends DataItem<DilutionEvent> {
 	/**
 	 * List of DilutionEvents
 	 */
-	public static class List extends DataList<DilutionEvent> {
+	public static class List extends DataList<List, DilutionEvent> {
 		/* Members */
 		FinanceData theData = null;
 		
@@ -220,15 +221,16 @@ public class DilutionEvent extends DataItem<DilutionEvent> {
 		 * @param pData the DataSet
 		 */
 		public List(FinanceData pData) {
-			super(DilutionEvent.class, ListStyle.VIEW, false);
+			super(List.class, DilutionEvent.class, ListStyle.VIEW, false);
 			theData = pData;
 		}
 		
 		/* Obtain extract lists. */
 		public List getUpdateList() { return null; }
 		public List getEditList() 	{ return null; }
-		public List getClonedList() { return null; }
-		public List getDifferences(DataList<DilutionEvent> pOld) { return null; }
+		public List getShallowCopy() { return null; }
+		public List getDeepCopy(DataSet<?,?> pData) { return null; }
+		public List getDifferences(List pOld) { return null; }
 
 		/**
 		 * Add a new item to the list
@@ -321,7 +323,7 @@ public class DilutionEvent extends DataItem<DilutionEvent> {
 			/* Loop through the items */
 			while ((myEvent = myIterator.next()) != null) {
 				/* If the event is for this account */
-				if (!Account.differs(pAccount, myEvent.getAccount())) {
+				if (!Account.differs(pAccount, myEvent.getAccount()).isDifferent()) {
 					/* Set result and break loop */
 					myResult = true;
 					break;
@@ -349,7 +351,7 @@ public class DilutionEvent extends DataItem<DilutionEvent> {
 			/* Loop through the items */
 			while ((myEvent = myIterator.next()) != null) {
 				/* If the event is for this account */
-				if (!Account.differs(pAccount, myEvent.getAccount())) {
+				if (!Account.differs(pAccount, myEvent.getAccount()).isDifferent()) {
 					/* If the dilution date is later */
 					if (pDate.compareTo(myEvent.getDate()) < 0) {
 						/* add in the dilution factor */

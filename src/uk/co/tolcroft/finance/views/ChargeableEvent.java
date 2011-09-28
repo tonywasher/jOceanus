@@ -5,6 +5,7 @@ import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.HistoryValues;
 
@@ -158,8 +159,8 @@ public class ChargeableEvent extends DataItem<ChargeableEvent> {
 		ChargeableEvent myEvent = (ChargeableEvent)pThat;
 		
 		/* Check for equality */
-		if (Money.differs(getSlice(),      	myEvent.getSlice())) 		return false;
-		if (Money.differs(getTaxation(),   	myEvent.getTaxation()))		return false;
+		if (Money.differs(getSlice(),      	myEvent.getSlice()).isDifferent()) 		return false;
+		if (Money.differs(getTaxation(),   	myEvent.getTaxation()).isDifferent())	return false;
 		return getBase().equals(myEvent.getBase());
 	}
 
@@ -207,18 +208,19 @@ public class ChargeableEvent extends DataItem<ChargeableEvent> {
 	/**
 	 * List of ChargeableEvents
 	 */
-	public static class List extends DataList<ChargeableEvent> {
+	public static class List extends DataList<List, ChargeableEvent> {
 		/**
 		 * Constructor
 		 */
-		public List() { super(ChargeableEvent.class, ListStyle.VIEW, false); }
+		public List() { super(List.class, ChargeableEvent.class, ListStyle.VIEW, false); }
 		
 		/** 
 		/* Obtain extract lists. */
 		public List getUpdateList() { return null; }
 		public List getEditList() 	{ return null; }
-		public List getClonedList() { return null; }
-		public List getDifferences(DataList<ChargeableEvent> pOld) { return null; }
+		public List getShallowCopy() { return null; }
+		public List getDeepCopy(DataSet<?,?> pData) { return null; }
+		public List getDifferences(List pOld) { return null; }
 
 		/**
 		 * Add a new item to the list

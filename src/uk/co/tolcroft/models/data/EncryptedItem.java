@@ -1,9 +1,11 @@
 package uk.co.tolcroft.models.data;
 
+import uk.co.tolcroft.models.Difference;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Number;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.security.SecurityControl;
+import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
@@ -92,7 +94,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 * @param pCtl the list that this item is associated with
 	 * @param uId the Id of the new item (or 0 if not yet known)
 	 */
-	public EncryptedItem(EncryptedList<T> pList, int uId) {
+	public EncryptedItem(EncryptedList<?,T> pList, int uId) {
 		super(pList, uId);
 	}
 
@@ -114,7 +116,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		theControlId = uControlId;
 
 		/* Look up the Control keys */
-		DataSet<?>		myData = ((EncryptedList<?>)getList()).getData();
+		DataSet<?,?>	myData = ((EncryptedList<?,?>)getList()).getData();
 		ControlKey.List myKeys = myData.getControlKeys();
 			
 		/* Look up the ControlKey */
@@ -134,13 +136,33 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 * @param pNew The new Pair
 	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
 	 */	
-	public static boolean differs(EncryptedItem<?>.ValuePair pCurr, 
-								  EncryptedItem<?>.ValuePair pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (!pCurr.equals(pNew)))));
+	public static Difference differs(EncryptedItem<?>.ValuePair pCurr, 
+								  	 EncryptedItem<?>.ValuePair pNew) {
+		/* Handle case where current value is null */
+		if  (pCurr == null) return (pNew != null) ? Difference.Different 
+												  : Difference.Identical;
+		
+		/* Handle case where new value is null */
+		if  (pNew == null) return Difference.Different;
+		
+		/* Handle Standard cases */
+		return pCurr.differs(pNew);
 	}
 	
+	/**
+	 * Isolate Data Copy
+	 * @param pData the DataSet
+	 */
+	protected void isolateCopy(DataSet<?,?> pData) {
+		ControlKey.List myKeys = pData.getControlKeys();
+		
+		/* Update to use the local copy of the ControlKeys */
+		EncryptedItem<?>.EncryptedValues	myValues   	= getValues();
+		ControlKey 	myKey 		= myValues.getControl();
+		ControlKey 	myNewKey 	= myKeys.searchFor(myKey.getId());
+		myValues.setControl(myNewKey);
+	}
+
 	/**
 	 * Initialise security for all encrypted values
 	 * @param pControl the new Control Key 
@@ -196,29 +218,38 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	/**
 	 * Encrypted DataList
 	 */
-	public abstract static class EncryptedList<T extends EncryptedItem<T>>  extends DataList<T> {
-		private DataSet<?>	theData			= null;
-		public 	DataSet<?>	getData()		{ return theData; }
-		public 	ControlKey	getControlKey()	{ return theData.getControl().getControlKey(); }
+	public abstract static class EncryptedList<L extends EncryptedList<L,T>,
+											   T extends EncryptedItem<T>>  extends DataList<L,T> {
+		private DataSet<?,?>	theData			= null;
+		public 	DataSet<?,?>	getData()		{ return theData; }
+		protected 	void		setData(DataSet<?,?> pData)		{ theData = pData; }
+		public 	ControlKey		getControlKey()	{ return theData.getControl().getControlKey(); }
 
 		/** 
 	 	 * Construct an empty CORE encrypted list
-	 	 * @param the class of items in the list 
+	 	 * @param pClass the class
+	 	 * @param pBaseClass the class of the underlying object
 	 	 * @param pData the DataSet for the list
 	 	 */
-		protected EncryptedList(Class<T> pClass, DataSet<?> pData) { 
-			super(pClass, ListStyle.CORE, true);
+		protected EncryptedList(Class<L>		pClass,
+								Class<T> 		pBaseClass,
+								DataSet<?,?> 	pData) { 
+			super(pClass, pBaseClass, ListStyle.CORE, true);
 			theData = pData;
 		}
 
 		/** 
 	 	 * Construct a generic encrypted list
-	 	 * @param the class of items in the list 
+	 	 * @param pClass the class
+	 	 * @param pBaseClass the class of the underlying object
 	 	 * @param pData the DataSet for the list
 	 	 * @param pStyle the style of the list 
 	 	 */
-		public EncryptedList(Class<T> pClass, DataSet<?> pData, ListStyle pStyle) { 
-			super(pClass, pStyle, true);
+		public EncryptedList(Class<L>		pClass,
+							 Class<T> 		pBaseClass,
+							 DataSet<?,?> 	pData,
+							 ListStyle 		pStyle) { 
+			super(pClass, pBaseClass, pStyle, true);
 			theData = pData;
 		}
 
@@ -226,18 +257,32 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * Constructor for a cloned List
 		 * @param pSource the source List
 		 */
-		protected EncryptedList(EncryptedList<T> pSource) { 
+		protected EncryptedList(L pSource) { 
 			super(pSource);
 			theData = pSource.theData;
 		}
 		
 		/**
 		 * Update Security for items in the list
+		 * @param pThread the thread status
 		 * @param pControl the control key to apply
+		 * @return Continue <code>true/false</code>
 		 */
-		public void updateSecurity(ControlKey pControl) throws Exception {
+		public boolean updateSecurity(ThreadStatus<?>	pThread,
+			   	  					  ControlKey 		pControl) throws Exception {
 			ListIterator 	myIterator;
 			T				myCurr;
+			int				mySteps;
+			int				myCount = 0;
+			
+			/* Declare the new stage */
+			if (!pThread.setNewStage(itemType())) return false;
+
+			/* Access reporting steps */
+			mySteps = pThread.getReportingSteps();
+
+			/* Count the Number of items */
+			if (!pThread.setNumSteps(sizeAll())) return false;
 			
 			/* Access the iterator */
 			myIterator = listIterator();
@@ -246,21 +291,29 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			while ((myCurr = myIterator.next()) != null) {
 				/* Ensure encryption of the item */
 				myCurr.updateSecurity(pControl);
+				
+				/* Report the progress */
+				myCount++;
+				if ((myCount % mySteps) == 0) 
+					if (!pThread.setStepsDone(myCount)) return false;
 			}
 			
 			/* Return to caller */
-			return;
+			return true;
 		}	
 
 		/**
 		 * Adopt security from underlying list.
 		 * If a match for the item is found in the underlying list, its security is adopted.
 		 * If no match is found then the security is initialised.
+		 * @param pThread the thread status
 		 * @param pControlKey the control key to initialise from
 		 * @param pBase The base list to adopt from 
+		 * @return Continue <code>true/false</code>
 		 */
-		protected void adoptSecurity(ControlKey 		pControl,
-								     EncryptedList<?> 	pBase) throws Exception {
+		protected boolean adoptSecurity(ThreadStatus<?>		pThread,
+			   	  						ControlKey 			pControl,
+								     	EncryptedList<?,?> 	pBase) throws Exception {
 			/* Local variables */
 			ListIterator 		myIterator;
 			EncryptedItem<?>	myCurr;
@@ -268,7 +321,18 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			T					mySource;
 			T					myTarget;
 			Class<T>			myClass	= getBaseClass();
-				
+			int					mySteps;
+			int					myCount = 0;
+			
+			/* Declare the new stage */
+			if (!pThread.setNewStage(itemType())) return false;
+
+			/* Access reporting steps */
+			mySteps = pThread.getReportingSteps();
+
+			/* Count the Number of items */
+			if (!pThread.setNumSteps(sizeAll())) return false;
+			
 			/* Create an iterator for our new list */
 			myIterator = listIterator(true);
 			
@@ -283,7 +347,15 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 				
 				/* Adopt/initialise the security */
 				myTarget.adoptSecurity(pControl, mySource);
+				
+				/* Report the progress */
+				myCount++;
+				if ((myCount % mySteps) == 0) 
+					if (!pThread.setStepsDone(myCount)) return false;
 			}
+			
+			/* Return to caller */
+			return true;
 		}
 		
 		/* List Iterators */
@@ -309,11 +381,12 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		public EncryptedValues() {}
 		public EncryptedValues(EncryptedValues pValues) {
 			theControl = pValues.getControl();
+			theControlId = (theControl == null) ? -1 : theControl.getId();
 		}
 		
 		public boolean histEquals(HistoryValues<T> pValues) {
 			EncryptedValues myValues = (EncryptedValues)pValues;
-			if (ControlKey.differs(theControl,    myValues.theControl))    return false;
+			if (ControlKey.differs(theControl,    myValues.theControl).isDifferent())    return false;
 			return true;
 		}
 		public void    copyFrom(HistoryValues<?> pValues) {
@@ -322,9 +395,9 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 				theControl = myValues.getControl();
 			}
 		}
-		public boolean	fieldChanged(int fieldNo, HistoryValues<T> pOriginal) {
+		public Difference	fieldChanged(int fieldNo, HistoryValues<T> pOriginal) {
 			EncryptedValues 	pValues = (EncryptedValues)pOriginal;
-			boolean	bResult = false;
+			Difference	bResult = Difference.Identical;
 			switch (fieldNo) {
 				case FIELD_CONTROL:
 					bResult = (ControlKey.differs(theControl,      pValues.theControl));
@@ -359,6 +432,12 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * @param pBytes the encrypted value
 		 */
 		private void setBytes(byte[] pBytes) { theBytes = pBytes; }
+		
+		/**
+		 * Compare to another ValuePair
+		 * @param pPair the other pair
+		 */
+		protected abstract Difference	differs(ValuePair pNew);
 		
 		/**
 		 * Set the encrypted bytes
@@ -497,6 +576,29 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		} 
 
 		/**
+		 * Compare to another ValuePair
+		 * @param pPair the other pair
+		 */
+		protected Difference	differs(ValuePair pNew) {
+			/* Reject if wrong class */
+			if (!(pNew instanceof EncryptedItem<?>.StringPair)) return Difference.Different;
+			
+			/* Access as correct class */
+			EncryptedItem<?>.StringPair myPair = (EncryptedItem<?>.StringPair)pNew;
+			
+			/* Compare String value */
+			if (Utils.differs(theString, myPair.theString).isDifferent())
+				return Difference.Different;
+
+			/* Compare Bytes value */
+			if (Utils.differs(getBytes(), myPair.getBytes()).isDifferent())
+				return Difference.Security;
+			
+			/* Item is the Same */
+			return Difference.Identical;
+		}
+		
+		/**
 		 * Get bytes for Encryption
 		 * @return the bytes to be encrypted
 		 */
@@ -549,8 +651,8 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			EncryptedItem<?>.StringPair myThat = (EncryptedItem<?>.StringPair)pThat;
 			
 			/* Check differences */
-			if (Utils.differs(getString(), myThat.getString())) return false;
-			if (Utils.differs(getBytes(), myThat.getBytes())) return false;
+			if (Utils.differs(getString(), myThat.getString()).isDifferent()) return false;
+			if (Utils.differs(getBytes(), myThat.getBytes()).isDifferent()) return false;
 			return true;
 		}
 
@@ -561,7 +663,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		public void encryptPair(EncryptedItem<?>.StringPair pBase) throws Exception {
 			/* If the raw format differs */
 			if ((pBase == null) ||
-				(Utils.differs(getString(), pBase.getString()))) {
+				(Utils.differs(getString(), pBase.getString()).isDifferent())) {
 				/* Ignore the base and encrypt the string */
 				encryptPair();
 			}
@@ -614,6 +716,29 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		} 
 
 		/**
+		 * Compare to another ValuePair
+		 * @param pPair the other pair
+		 */
+		protected Difference	differs(ValuePair pNew) {
+			/* Reject if wrong class */
+			if (!(pNew instanceof EncryptedItem<?>.CharArrayPair)) return Difference.Different;
+			
+			/* Access as correct class */
+			EncryptedItem<?>.CharArrayPair myPair = (EncryptedItem<?>.CharArrayPair)pNew;
+			
+			/* Compare String value */
+			if (Utils.differs(theChars, myPair.theChars).isDifferent())
+				return Difference.Different;
+
+			/* Compare Bytes value */
+			if (Utils.differs(getBytes(), myPair.getBytes()).isDifferent())
+				return Difference.Security;
+			
+			/* Item is the Same */
+			return Difference.Identical;
+		}
+		
+		/**
 		 * Get bytes for Encryption
 		 * @return the bytes to be encrypted
 		 */
@@ -648,8 +773,8 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			EncryptedItem<?>.CharArrayPair myThat = (EncryptedItem<?>.CharArrayPair)pThat;
 			
 			/* Check differences */
-			if (Utils.differs(getChars(), myThat.getChars())) return false;
-			if (Utils.differs(getBytes(), myThat.getBytes())) return false;
+			if (Utils.differs(getChars(), myThat.getChars()).isDifferent()) return false;
+			if (Utils.differs(getBytes(), myThat.getBytes()).isDifferent()) return false;
 			return true;
 		}
 
@@ -660,7 +785,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		public void encryptPair(CharArrayPair pBase) throws Exception {
 			/* If the raw format differs */
 			if ((pBase == null) || 
-				(Utils.differs(getChars(), pBase.getChars()))) {
+				(Utils.differs(getChars(), pBase.getChars()).isDifferent())) {
 				/* Ignore the base and encrypt the string */
 				encryptPair();
 			}
@@ -769,8 +894,8 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			EncryptedItem<?>.NumberPair<?> myThat = (EncryptedItem<?>.NumberPair<?>)pThat;
 			
 			/* Check differences */
-			if (Number.differs(getValue(), myThat.getValue())) return false;
-			if (Utils.differs(getBytes(), myThat.getBytes())) return false;
+			if (Number.differs(getValue(), myThat.getValue()).isDifferent()) return false;
+			if (Utils.differs(getBytes(), myThat.getBytes()).isDifferent()) return false;
 			return true;
 		}
 	}

@@ -1,5 +1,6 @@
 package uk.co.tolcroft.models.data;
 
+import uk.co.tolcroft.models.Difference;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
@@ -215,7 +216,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	 * @param pList	The list to associate the Static Data with
 	 * @param pSource The static data to copy 
 	 */
-	protected StaticData(StaticList<T,E>	pList,
+	protected StaticData(StaticList<?,T,E>	pList,
 			             StaticData<T,E>	pSource) { 
 		super(pList, pSource.getId());
 		Values myValues = new Values(pSource.getObj());
@@ -241,6 +242,9 @@ public abstract class StaticData<T extends StaticData<T,E>,
 				setId(0);
 				pList.setNewId(getItem());				
 				break;
+			case CLONE:
+				isolateCopy(pList.getData());
+			case COPY:
 			case CORE:
 				/* Reset Id if this is an insert from a view */
 				if (myOldStyle == ListStyle.EDIT) setId(0);
@@ -259,7 +263,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	 * @param uId the id of the new item
 	 * @param pValue the name of the new item
 	 */
-	protected StaticData(StaticList<T,E> 	pList, 
+	protected StaticData(StaticList<?,T,E> 	pList, 
 					  	 String				pValue) throws Exception {
 		super(pList, 0);
 		theEnumClass = pList.getEnumClass();
@@ -282,7 +286,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	 * @param pValue the encrypted name of the new item
 	 * @param pDesc the encrypted description of the new item
 	 */
-	protected StaticData(StaticList<T,E> 	pList,
+	protected StaticData(StaticList<?,T,E> 	pList,
 						 int				uId,
 					  	 int 				uClassId,
 					  	 String				pValue,
@@ -310,7 +314,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	 * @param pValue the encrypted name of the new item
 	 * @param pDesc the encrypted description of the new item
 	 */
-	protected StaticData(StaticList<T,E> 	pList, 
+	protected StaticData(StaticList<?,T,E> 	pList, 
 					  	 int 				uId,
 					  	 int 				uControlId,
 					  	 int 				uClassId,
@@ -421,18 +425,6 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	}
 	
 	/**
-	 * Determine whether two StaticData objects differ.
-	 * @param pCurr The current data 
-	 * @param pNew The new Data
-	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-	 */	
-	public static boolean differs(StaticData<?,?> pCurr, StaticData<?,?> pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (!pCurr.equals(pNew)))));
-	}
-
-	/**
 	 * Set a new name 
 	 * @param pName the name 
 	 */
@@ -466,11 +458,11 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		pushHistory();
 
 		/* Update the name if required */
-		if (differs(myObj.getName(), myNew.getName())) 
+		if (differs(myObj.getName(), myNew.getName()).isDifferent()) 
 			myObj.setName(myNew.getName());
 
 		/* Update the description if required */
-		if (differs(myObj.getDesc(), myNew.getDesc())) 
+		if (differs(myObj.getDesc(), myNew.getDesc()).isDifferent()) 
 			myObj.setDesc(myNew.getDesc());
 
 		/* Check for changes */
@@ -487,7 +479,9 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	/**
 	 * Represents a list of StaticData objects. 
 	 */
-	public abstract static class StaticList<T extends StaticData<T, E>, E extends Enum<E>>  extends EncryptedList<T> {
+	public abstract static class StaticList<L extends StaticList<L,T,E>,
+											T extends StaticData<T, E>, 
+											E extends Enum<E>>  extends EncryptedList<L,T> {
 		/**
 		 * Obtain the enumClass
 		 * @return the enumClass
@@ -496,21 +490,23 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		
 		/** 
 	 	 * Construct a generic static data list
-	 	 * @param enumClass the static class of the items
+	 	 * @param pClass the class
+	 	 * @param pBaseClass the class of the underlying object
 	 	 * @param pPairs the encrypted pair control  
 	 	 * @param pStyle the style of the list 
 	 	 */
-		public StaticList(Class<T>		pClass,
-						  DataSet<?>	pData,
+		public StaticList(Class<L>		pClass,
+						  Class<T>		pBaseClass,
+						  DataSet<?,?>	pData,
 						  ListStyle 	pStyle) { 
-			super(pClass, pData, pStyle);
+			super(pClass, pBaseClass, pData, pStyle);
 		}
 
 		/**
 		 * Constructor for a cloned List
 		 * @param pSource the source List
 		 */
-		protected StaticList(StaticList<T, E> pSource) { 
+		protected StaticList(L pSource) { 
 			super(pSource);
 		}
 		
@@ -620,9 +616,9 @@ public abstract class StaticData<T extends StaticData<T,E>,
 			if (myValues.getEnumClass() != theEnumClass) return false;
 			
 			/* Compare the values */
-			if (!super.histEquals(pCompare))			return false;
-			if (differs(theName,    myValues.theName))  return false;
-			if (differs(theDesc,    myValues.theDesc))  return false;
+			if (!super.histEquals(pCompare))							return false;
+			if (differs(theName,    myValues.theName).isDifferent())  	return false;
+			if (differs(theDesc,    myValues.theDesc).isDifferent())  	return false;
 			return true;
 		}
 		
@@ -641,9 +637,9 @@ public abstract class StaticData<T extends StaticData<T,E>,
 								? new StringPair(pValues.getDesc())
 								: null;
 		}
-		public boolean	fieldChanged(int fieldNo, HistoryValues<T> pOriginal) {
+		public Difference	fieldChanged(int fieldNo, HistoryValues<T> pOriginal) {
 			StaticData<?,?>.Values 	pValues = (StaticData<?,?>.Values)pOriginal;
-			boolean	bResult = false;
+			Difference	bResult = Difference.Identical;
 			switch (fieldNo) {
 				case FIELD_NAME:
 					bResult = (differs(theName,      pValues.theName));

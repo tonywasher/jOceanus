@@ -5,7 +5,6 @@ import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.finance.views.Analysis.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
-import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.Properties;
 
 public class MetaAnalysis {
@@ -48,13 +47,13 @@ public class MetaAnalysis {
 	 * Value the priced assets 
 	 */
 	protected void valueAssets() {
-		DataList<AnalysisBucket>.ListIterator 	myIterator;
-		AnalysisBucket							myCurr;
-		AnalysisState							myState;
-		AssetAccount							myAsset;
-		MoneyAccount							myMoney;
-		FinanceData								myData;
-		Account.List							myAccounts;
+		BucketList.ListIterator myIterator;
+		AnalysisBucket			myCurr;
+		AnalysisState			myState;
+		AssetAccount			myAsset;
+		MoneyAccount			myMoney;
+		FinanceData				myData;
+		Account.List			myAccounts;
 
 		/* Access the state of the analysis */
 		myState = theAnalysis.getState();
@@ -208,9 +207,9 @@ public class MetaAnalysis {
 	 * Produce totals 
 	 */
 	protected void produceTotals() {
-		DataList<AnalysisBucket>.ListIterator 	myIterator;
-		AnalysisBucket							myCurr;
-		AnalysisState							myState;
+		BucketList.ListIterator myIterator;
+		AnalysisBucket			myCurr;
+		AnalysisState			myState;
 
 		/* Access the state of the analysis */
 		myState = theAnalysis.getState();
@@ -397,12 +396,12 @@ public class MetaAnalysis {
 	 * Mark active accounts
 	 */
 	public void markActiveAccounts() {
-		DataList<AnalysisBucket>.ListIterator	myIterator;
-		Account     							myAccount;
-		AnalysisBucket 							myCurr;
-		MoneyAccount							myMoney;
-		DebtAccount								myDebt;
-		AssetAccount							myAsset;
+		BucketList.ListIterator	myIterator;
+		Account     			myAccount;
+		AnalysisBucket 			myCurr;
+		MoneyAccount			myMoney;
+		DebtAccount				myDebt;
+		AssetAccount			myAsset;
 	
 		/* Access the iterator */
 		myIterator = theList.listIterator();

@@ -55,7 +55,7 @@ public class TableEvent extends TableEncrypted<Event> {
 	}
 	
 	/* Declare DataSet */
-	protected void declareData(DataSet<?> pData) {
+	protected void declareData(DataSet<?,?> pData) {
 		FinanceData myData = (FinanceData)pData;
 		theList = myData.getEvents();
 		setList(theList);

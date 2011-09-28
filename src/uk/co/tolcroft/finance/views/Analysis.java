@@ -6,6 +6,7 @@ import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.HistoryValues;
 
@@ -85,13 +86,13 @@ public class Analysis {
 					TaxYear 	pYear,
 					Analysis	pAnalysis) {
 		/* Local variables */
-		DataList<AnalysisBucket>.ListIterator 	myIterator;
-		AnalysisBucket							myCurr;
-		AssetAccount							myAsset;
-		DebtAccount								myDebt;
-		MoneyAccount							myMoney;
-		ExternalAccount							myExternal;
-		TransDetail								myTrans;
+		BucketList.ListIterator myIterator;
+		AnalysisBucket			myCurr;
+		AssetAccount			myAsset;
+		DebtAccount				myDebt;
+		MoneyAccount			myMoney;
+		ExternalAccount			myExternal;
+		TransDetail				myTrans;
 		
 		/* Store the data */
 		theData = pData;
@@ -265,7 +266,7 @@ public class Analysis {
 	}
 	
 	/* The List class */
-	public class BucketList extends DataList<AnalysisBucket> {
+	public class BucketList extends DataList<BucketList, AnalysisBucket> {
 		/* Members */
 		private Analysis theAnalysis	= null;
 		
@@ -278,15 +279,16 @@ public class Analysis {
 		 * Construct a top-level List
 		 */
 		public BucketList(Analysis pAnalysis) { 
-			super(AnalysisBucket.class, ListStyle.VIEW, false);
+			super(BucketList.class, AnalysisBucket.class, ListStyle.VIEW, false);
 			theAnalysis = pAnalysis;
 		}
 
 		/* Obtain extract lists. */
 		public BucketList getUpdateList() { return null; }
 		public BucketList getEditList() 	{ return null; }
-		public BucketList getClonedList() { return null; }
-		public BucketList getDifferences(DataList<AnalysisBucket> pOld) { return null; }
+		public BucketList getShallowCopy() { return null; }
+		public BucketList getDeepCopy(DataSet<?,?> pData) { return null; }
+		public BucketList getDifferences(BucketList pOld) { return null; }
 
 		/**
 		 * Add a new item to the list
@@ -667,7 +669,7 @@ public class Analysis {
 			ActDetail myThat = (ActDetail)pThat;
 			
 			/* Check for equality */
-			if (Account.differs(getAccount(), myThat.getAccount()))	return false;
+			if (Account.differs(getAccount(), myThat.getAccount()).isDifferent())	return false;
 			return true;
 		}
 
@@ -797,7 +799,7 @@ public class Analysis {
 			ActType myThat = (ActType)pThat;
 			
 			/* Check for equality */
-			if (AccountType.differs(getAccountType(), myThat.getAccountType()))	return false;
+			if (AccountType.differs(getAccountType(), myThat.getAccountType()).isDifferent())	return false;
 			return true;
 		}
 
@@ -905,7 +907,7 @@ public class Analysis {
 			TransType myThat = (TransType)pThat;
 			
 			/* Check for equality */
-			if (TransactionType.differs(getTransType(), myThat.getTransType()))	return false;
+			if (TransactionType.differs(getTransType(), myThat.getTransType()).isDifferent())	return false;
 			return true;
 		}
 
@@ -1013,7 +1015,7 @@ public class Analysis {
 			Tax myThat = (Tax)pThat;
 			
 			/* Check for equality */
-			if (TaxType.differs(getTaxType(), myThat.getTaxType()))	return false;
+			if (TaxType.differs(getTaxType(), myThat.getTaxType()).isDifferent())	return false;
 			return true;
 		}
 

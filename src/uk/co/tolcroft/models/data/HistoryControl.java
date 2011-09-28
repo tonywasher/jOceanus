@@ -1,5 +1,7 @@
 package uk.co.tolcroft.models.data;
 
+import uk.co.tolcroft.models.Difference;
+
 
 /**
  * Provides the implementation of a history buffer for a DataItem
@@ -362,9 +364,9 @@ public class HistoryControl<T extends DataItem<T>> {
 	 *  Determines whether a particular field has changed
 	 *  @param fieldNo the field identifier
 	 */
-	protected boolean fieldChanged(int fieldNo) {
+	protected Difference fieldChanged(int fieldNo) {
 		/* Handle case where there are no changes at all */
-		if (theOriginal == null) return false;
+		if (theOriginal == null) return Difference.Identical;
 		
 		/* Call the function from the interface */
 		return theCurr.fieldChanged(fieldNo, theOriginal.theSnapShot);
@@ -435,7 +437,7 @@ public class HistoryControl<T extends DataItem<T>> {
 				 fieldId < theItem.numFields();
 				 fieldId++) {
 				/* Note if the field has changed */
-				if (theSnapShot.fieldChanged(fieldId, myObj))
+				if (theSnapShot.fieldChanged(fieldId, myObj).isDifferent())
 					myCount++;
 			}
 			
@@ -448,12 +450,17 @@ public class HistoryControl<T extends DataItem<T>> {
 			for (fieldId = 0;
 				 fieldId < theItem.numFields();
 				 fieldId++) {
+				/* Check for the change */
+				Difference myDiff = theSnapShot.fieldChanged(fieldId, myObj);
+				
 				/* If the field has changed */
-				if (theSnapShot.fieldChanged(fieldId, myObj)) {
+				if (myDiff.isDifferent()) {
 					/* Format the field */
 					myString.append("<tr><td>"); 
 					myString.append(theItem.getFieldName(fieldId)); 
-					myString.append("</td><td>"); 
+					myString.append("</td><td color=\""); 
+					myString.append(myDiff.isSecurityChanged() ? "red" : "blue"); 
+					myString.append("\">"); 
 					myString.append(theItem.formatField(fieldId, theSnapShot));
 					myString.append("</td></tr>");
 				}

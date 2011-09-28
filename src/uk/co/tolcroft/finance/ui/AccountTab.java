@@ -173,88 +173,25 @@ public class AccountTab implements stdPanel,
 	 * Has this set of tables got updates
 	 */
 	public boolean hasUpdates() {
-		boolean hasUpdates = false;
-		
-		/* Determine whether we have updates */
-		hasUpdates = theStatement.hasUpdates();
-        if (!hasUpdates) hasUpdates = thePatterns.hasUpdates();
-        if (!hasUpdates) hasUpdates = theRates.hasUpdates();
-        if (!hasUpdates) hasUpdates = thePrices.hasUpdates();
-			
 		/* Return to caller */
-		return hasUpdates;
+		return theViewSet.hasUpdates();
 	}
 		
 	/**
 	 * Has this set of tables got errors
 	 */
 	public boolean hasErrors() {
-		boolean hasErrors = false;
-		
-		/* Determine whether we have updates */
-		hasErrors = theStatement.hasErrors() ||
-					thePatterns.hasErrors()  ||
-					theRates.hasErrors()     ||
-					thePrices.hasErrors();
-			
 		/* Return to caller */
-		return hasErrors;
+		return theViewSet.hasErrors();
 	}
 		
-	/**
-	 * Determine the precedence for a {@link EditState} value.
-	 * 
-	 * @param pTest The EditState 
-	 * @return the precedence 
-	 */	
-	private static int editOrder(EditState pTest) {
-		switch (pTest) {
-			case ERROR: return 3;
-			case DIRTY: return 2;
-			case VALID: return 1;
-			default:    return 0;
-		}
-	}
-
-	/**
-	 * Combine two EditState values into a single value, using the value of greater precedence.
-	 * 
-	 * @param pThis The First EditState 
-	 * @param pThat The Second EditState 
-	 * @return the combined EditState 
-	 */	
-	static EditState editCombine(EditState pThis, EditState pThat) {
-		if (editOrder(pThis) > editOrder(pThat))
-			return(pThis);
-		else 
-			return(pThat);
-	}
-	
 	/**
 	 * Get the edit state of this set of tables
 	 * @return the edit state
 	 */
 	public EditState getEditState() {
-		EditState myState;
-		EditState myNewState;
-
-		/* Access the State of the Statement */
-		myState = theStatement.getEditState();
-		
-		/* Access and combine the State of the Patterns */
-		myNewState = thePatterns.getEditState();
-		myState    = editCombine(myState, myNewState);
-		
-		/* Access and combine the State of the Rates */
-		myNewState = theRates.getEditState();
-		myState    = editCombine(myState, myNewState);
-		
-		/* Access and combine the State of the Prices */
-		myNewState = thePrices.getEditState();
-		myState    = editCombine(myState, myNewState);
-		
-		/* Return the state */
-		return myState;
+		/* Return to caller */
+		return theViewSet.getEditState();
 	}
 		
 	/**
@@ -538,7 +475,7 @@ public class AccountTab implements stdPanel,
 		}
 		
 		/* Update the top level tabs */
-		theParent.setVisibleTabs();
+		theParent.setVisibility();
 	}
 	
 	/**

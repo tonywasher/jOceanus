@@ -6,6 +6,7 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import uk.co.tolcroft.models.Difference;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
@@ -60,16 +61,15 @@ public class ControlKey extends DataItem<ControlKey> {
 	private Map<SymKeyType, DataKey>	theMap	= null;
 	
 	/* Local values */
-	private SecurityControl	theControl		= null;
-	private SecureRandom	theRandom		= null;
 	private int				theKeyTypeId	= -1;
 	
 	/* Access methods */
-	public  SecurityControl	getSecurityControl()	{ return theControl; }
+	public  SecurityControl	getSecurityControl()	{ return getValues().getSecurityControl(); }
 	public  byte[] 			getPublicKey()  		{ return getValues().getPublicKey(); }
 	public  byte[] 			getPrivateKey()  		{ return getValues().getPrivateKey(); }
 	public  byte[] 			getPasswordHash()  		{ return getValues().getPasswordHash(); }
 	public  AsymKeyType		getKeyType()  			{ return getValues().getKeyType(); }
+	private SecureRandom	getRandom()  			{ return getValues().getRandom(); }
 
 	/* Linking methods */
 	public ControlKey	getBase() 	{ return (ControlKey)super.getBase(); }
@@ -151,11 +151,12 @@ public class ControlKey extends DataItem<ControlKey> {
 		super(pList, pKey.getId());
 		Values myValues = new Values(pKey.getValues());
 		setValues(myValues);
-		theControl		= pKey.getSecurityControl();
-		theRandom		= theControl.getRandom();
 
 		/* Switch on the LinkStyle */
 		switch (pList.getStyle()) {
+			case CLONE:
+				theMap = new EnumMap<SymKeyType,DataKey>(SymKeyType.class);
+			case COPY:
 			case CORE:
 				pList.setNewId(this);				
 				break;
@@ -207,7 +208,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		}
 		
 		/* Access the Security manager */
-		DataSet<?> 			myData 		= pList.getData();
+		DataSet<?,?>		myData 		= pList.getData();
 		SecureManager 		mySecurity 	= myData.getSecurity();
 		SecuritySignature	mySignature	= new SecuritySignature(pPasswordHash,
 																getKeyType(),
@@ -215,8 +216,7 @@ public class ControlKey extends DataItem<ControlKey> {
 																pPrivateKey);
 		
 		/* Obtain the required security control */
-		theControl = mySecurity.getSecurityControl(mySignature, "Database");
-		theRandom  = theControl.getRandom();
+		myValues.setSecurityControl(mySecurity.getSecurityControl(mySignature, "Database"));
 		
 		/* Create the DataKey Map */
 		theMap = new EnumMap<SymKeyType,DataKey>(SymKeyType.class);
@@ -236,15 +236,14 @@ public class ControlKey extends DataItem<ControlKey> {
 		setValues(myValues);
 				
 		/* Access the Security manager */
-		DataSet<?> 		myData 		= pList.getData();
+		DataSet<?,?>	myData 		= pList.getData();
 		SecureManager 	mySecurity 	= myData.getSecurity();
 		
 		/* Obtain the required security control */
-		theControl = mySecurity.getSecurityControl(null, "Database");
-		theRandom  = theControl.getRandom();
+		myValues.setSecurityControl(mySecurity.getSecurityControl(null, "Database"));
 		
 		/* Access and store the signature */
-		SecuritySignature mySign = theControl.getSignature();
+		SecuritySignature mySign = getSecurityControl().getSignature();
 		myValues.setPublicKey(mySign.getEncodedPublicKey());
 		myValues.setPrivateKey(mySign.getSecuredKeyDef());
 		myValues.setPasswordHash(mySign.getPasswordHash());
@@ -258,6 +257,44 @@ public class ControlKey extends DataItem<ControlKey> {
 				
 		/* Allocate the DataKeys */
 		allocateDataKeys(pList.getData());
+	}
+
+	/**
+	 * Constructor for a new ControlKey. This will create a set of DataKeys 
+	 * @param pList the list to which to add the key to 
+	 */
+	public ControlKey(ControlKey 	pKey) throws Exception {
+		/* Initialise the item */
+		super(pKey.getList(), 0);
+		Values myValues = new Values();
+		setValues(myValues);
+				
+		/* Access the Security manager */
+		List			myList		= (List)pKey.getList();
+		DataSet<?,?>	myData 		= myList.getData();
+		SecureManager 	mySecure	= myData.getSecurity();
+		
+		/* Create a clone of the security control */
+		SecurityControl myControl	= mySecure.cloneSecurityControl(myData.getSecurityControl());
+			
+		/* Obtain the required security control */
+		myValues.setSecurityControl(myControl);
+		
+		/* Access and store the signature */
+		SecuritySignature mySign = myControl.getSignature();
+		myValues.setPublicKey(mySign.getEncodedPublicKey());
+		myValues.setPrivateKey(mySign.getSecuredKeyDef());
+		myValues.setPasswordHash(mySign.getPasswordHash());
+		myValues.setKeyType(mySign.getKeyType());
+		
+		/* Create the DataKey Map */
+		theMap = new EnumMap<SymKeyType,DataKey>(SymKeyType.class);
+		
+		/* Allocate the id */
+		myList.setNewId(this);
+				
+		/* Allocate the DataKeys */
+		allocateDataKeys(myData);
 	}
 
 	/**
@@ -313,7 +350,7 @@ public class ControlKey extends DataItem<ControlKey> {
 	 * Allocate a new set of DataKeys 
 	 * @param pData the DataSet
 	 */
-	private void allocateDataKeys(DataSet<?> pData) throws Exception {
+	private void allocateDataKeys(DataSet<?,?> pData) throws Exception {
 		/* Access the DataKey List */
 		DataKey.List myKeys = pData.getDataKeys();
 		
@@ -347,14 +384,16 @@ public class ControlKey extends DataItem<ControlKey> {
 	
 	/**
 	 * Update security control 
+	 * @param pControl the new security control
 	 */
-	protected void updateSecurityControl() throws Exception {
+	protected void updateSecurityControl(SecurityControl pControl) throws Exception {
 		/* Store the current detail into history */
 		pushHistory();
 
 		/* Update the Security Control Key */
 		Values 				myValues   	= getValues();
-		SecuritySignature 	mySign 		= theControl.getSignature(); 
+		SecuritySignature 	mySign 		= pControl.getSignature(); 
+		myValues.setSecurityControl(pControl);
 		myValues.setPublicKey(mySign.getEncodedPublicKey());
 		myValues.setPrivateKey(mySign.getSecuredKeyDef());
 		myValues.setPasswordHash(mySign.getPasswordHash());
@@ -377,7 +416,7 @@ public class ControlKey extends DataItem<ControlKey> {
 	 * Register DataKey 
 	 * @param pKey the DataKey to register
 	 */
-	protected void registerDataKey(DataKey pKey) throws Exception {
+	protected void registerDataKey(DataKey pKey) {
 		/* Store the DataKey into the map */
 		theMap.put(pKey.getKeyType(), pKey);
 	}
@@ -389,11 +428,12 @@ public class ControlKey extends DataItem<ControlKey> {
 	 */
 	protected byte[] encryptBytes(byte[] pBytes) throws Exception {
 		/* Allocate a new initialisation vector */
-		byte[] myVector = new byte[SymmetricKey.IVSIZE];
-		theRandom.nextBytes(myVector);
+		byte[] 			myVector = new byte[SymmetricKey.IVSIZE];
+		SecureRandom	myRandom = getRandom();
+		myRandom.nextBytes(myVector);
 		
 		/* Determine the SymKeyTypes to use */
-		SymKeyType[] myKeyTypes = SymKeyType.getRandomTypes(NUMSTEPS, theRandom);
+		SymKeyType[] myKeyTypes = SymKeyType.getRandomTypes(NUMSTEPS, myRandom);
 		
 		/* Encode the array */
 		byte[] myKeyBytes = encodeSymKeyTypes(myKeyTypes);
@@ -518,26 +558,33 @@ public class ControlKey extends DataItem<ControlKey> {
 	 * @param pNew The new ControlKey
 	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
 	 */	
-	public static boolean differs(ControlKey pCurr, ControlKey pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
+	public static Difference differs(ControlKey pCurr, ControlKey pNew) {
+		/* Handle case where current value is null */
+		if  (pCurr == null) return (pNew != null) ? Difference.Different 
+												  : Difference.Identical;
+		
+		/* Handle case where new value is null */
+		if  (pNew == null) return Difference.Different;
+		
+		/* Handle Standard cases */
+		return (pCurr.compareTo(pNew) != 0) ? Difference.Different
+											: Difference.Identical;
 	}
 	
 	/**
 	 * ControlKey List
 	 */
-	public static class List  extends DataList<ControlKey> {
+	public static class List  extends DataList<List, ControlKey> {
 		/* Members */
-		private DataSet<?>	theData		= null;
-		public 	DataSet<?> 	getData()	{ return theData; }
+		private DataSet<?,?>	theData		= null;
+		public 	DataSet<?,?> 	getData()	{ return theData; }
 
 		/** 
 		 * Construct an empty CORE ControlKey list
 	 	 * @param pData the DataSet for the list
 		 */
-		protected List(DataSet<?> pData) { 
-			super(ControlKey.class, ListStyle.CORE, false);
+		protected List(DataSet<?,?> pData) { 
+			super(List.class, ControlKey.class, ListStyle.CORE, false);
 			theData = pData;
 		}
 
@@ -546,8 +593,8 @@ public class ControlKey extends DataItem<ControlKey> {
 	 	 * @param pData the DataSet for the list
 		 * @param pStyle the style of the list 
 		 */
-		protected List(DataSet<?> pData, ListStyle pStyle) {
-			super(ControlKey.class, pStyle, false);
+		protected List(DataSet<?,?> pData, ListStyle pStyle) {
+			super(List.class, ControlKey.class, pStyle, false);
 			theData = pData;
 		}
 
@@ -576,16 +623,28 @@ public class ControlKey extends DataItem<ControlKey> {
 		}
 
 		/* Obtain extract lists. */
-		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
-		public List getEditList() 	{ return null; }
-		public List getClonedList() { return getExtractList(ListStyle.CORE); }
+		public List getUpdateList() 	{ return getExtractList(ListStyle.UPDATE); }
+		public List getEditList() 		{ return null; }
+		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
+		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			myList.theData = pDataSet;
+			
+			/* Obtain underlying clones */
+			myList.populateList(ListStyle.CLONE);
+			myList.setStyle(ListStyle.CORE);
+			
+			/* Return the list */
+			return myList;
+		}
 
 		/** 
 		 * Construct a difference ControlData list
 		 * @param pNew the new ControlData list 
 		 * @param pOld the old ControlData list 
 		 */
-		protected List getDifferences(DataList<ControlKey> pOld) { 
+		protected List getDifferences(List pOld) { 
 			/* Build an empty Difference List */
 			List myList = new List(this);
 			
@@ -668,10 +727,29 @@ public class ControlKey extends DataItem<ControlKey> {
 		}			
 
 		/**
+		 *  Add a cloned ControlKey (with associated DataKeys)
+		 */
+		public ControlKey addItem(ControlKey pSource) throws Exception {
+			ControlKey     	myKey;
+			
+			/* Check that we are the same list */
+			if (pSource.getList() != this)
+				throw new Exception(ExceptionClass.LOGIC,
+									"Invalid clone operation");
+			
+			/* Create the key */
+			myKey = new ControlKey(pSource);
+			
+			/* Add to the list */
+			add(myKey);
+			return myKey;
+		}			
+
+		/**
 		 * Initialise Security from a DataBase for a SpreadSheet load
 		 * @param pDatabase the DataSet for the Database
 		 */
-		protected void initialiseSecurity(DataSet<?> pDatabase) throws Exception {			
+		protected void initialiseSecurity(DataSet<?,?> pDatabase) throws Exception {			
 			/* Access the active control key from the database */
 			ControlKey  myDatabaseKey	= pDatabase.getControlKey();
 			ControlKey 	myKey;
@@ -749,12 +827,15 @@ public class ControlKey extends DataItem<ControlKey> {
 		private byte[]			thePrivateKey	= null;
 		private byte[]			thePasswordHash	= null;
 		private AsymKeyType		theKeyType		= null;
+		private SecurityControl	theControl		= null;
 		
 		/* Access methods */
-		public  byte[] 			getPublicKey()  	{ return thePublicKey; }
-		public  byte[] 			getPrivateKey()  	{ return thePrivateKey; }
-		public  byte[] 			getPasswordHash()  	{ return thePasswordHash; }
-		public  AsymKeyType		getKeyType()  		{ return theKeyType; }
+		public  byte[] 			getPublicKey()  		{ return thePublicKey; }
+		public  byte[] 			getPrivateKey()  		{ return thePrivateKey; }
+		public  byte[] 			getPasswordHash()  		{ return thePasswordHash; }
+		public  AsymKeyType		getKeyType()  			{ return theKeyType; }
+		public  SecurityControl	getSecurityControl()	{ return theControl; }
+		public  SecureRandom	getRandom()				{ return (theControl == null) ? null : theControl.getRandom(); }
 		
 		public void setPublicKey(byte[] pValue) {
 			thePublicKey 	= pValue; }
@@ -764,6 +845,8 @@ public class ControlKey extends DataItem<ControlKey> {
 			thePasswordHash = pValue; }
 		public void setKeyType(AsymKeyType pValue) {
 			theKeyType 		= pValue; }
+		public void setSecurityControl(SecurityControl pControl) {
+			theControl 		= pControl; }
 
 		/* Constructor */
 		public Values() {}
@@ -772,10 +855,10 @@ public class ControlKey extends DataItem<ControlKey> {
 		/* Check whether this object is equal to that passed */
 		public boolean histEquals(HistoryValues<ControlKey> pCompare) {
 			Values myValues = (Values)pCompare;
-			if (theKeyType != myValues.theKeyType)   						return false;
-			if (Utils.differs(thePublicKey,		myValues.thePublicKey))   	return false;
-			if (Utils.differs(thePrivateKey,	myValues.thePrivateKey))   	return false;
-			if (Utils.differs(thePasswordHash,	myValues.thePasswordHash))  return false;
+			if (theKeyType != myValues.theKeyType)   										return false;
+			if (Utils.differs(thePublicKey,		myValues.thePublicKey).isDifferent())   	return false;
+			if (Utils.differs(thePrivateKey,	myValues.thePrivateKey).isDifferent())   	return false;
+			if (Utils.differs(thePasswordHash,	myValues.thePasswordHash).isDifferent())	return false;
 			return true;
 		}
 		
@@ -785,14 +868,15 @@ public class ControlKey extends DataItem<ControlKey> {
 		}
 		public void    copyFrom(HistoryValues<?> pSource) {
 			Values myValues = (Values)pSource;
+			theControl		= myValues.getSecurityControl();
 			thePublicKey	= myValues.getPublicKey();
 			thePrivateKey	= myValues.getPrivateKey();
 			thePasswordHash	= myValues.getPasswordHash();
 			theKeyType		= myValues.getKeyType();
 		}
-		public boolean	fieldChanged(int fieldNo, HistoryValues<ControlKey> pOriginal) {
+		public Difference	fieldChanged(int fieldNo, HistoryValues<ControlKey> pOriginal) {
 			Values 	pValues = (Values)pOriginal;
-			boolean	bResult = false;
+			Difference	bResult = Difference.Identical;
 			switch (fieldNo) {
 				case FIELD_PUBLICKEY:
 					bResult = (Utils.differs(thePublicKey,		pValues.thePublicKey));
@@ -804,7 +888,8 @@ public class ControlKey extends DataItem<ControlKey> {
 					bResult = (Utils.differs(thePasswordHash,	pValues.thePasswordHash));
 					break;
 				case FIELD_KEYTYPE:
-					bResult = (theKeyType != pValues.theKeyType);
+					bResult = (theKeyType != pValues.theKeyType) ? Difference.Different
+																 : Difference.Identical;
 					break;
 			}
 			return bResult;

@@ -6,7 +6,7 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.views.DataControl;
 
-public class StoreDatabase<T extends DataSet<?>>	extends WorkerThread<Void> {
+public class StoreDatabase<T extends DataSet<T,?>>	extends WorkerThread<Void> {
 	/* Task description */
 	private static String  	theTask		= "DataBase Store";
 
@@ -31,9 +31,9 @@ public class StoreDatabase<T extends DataSet<?>>	extends WorkerThread<Void> {
 
 	/* Background task (Worker Thread)*/
 	public Void performTask() throws Throwable {
-		Database<T>	myDatabase	= null;
-		T			myData;
-		DataSet<?>	myDiff;
+		Database<T>		myDatabase	= null;
+		T				myData;
+		DataSet<T,?>	myDiff;
 
 		/* Create interface */
 		myDatabase = theControl.getDatabase();

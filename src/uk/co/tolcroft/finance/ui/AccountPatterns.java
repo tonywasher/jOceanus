@@ -14,7 +14,6 @@ import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
@@ -151,7 +150,7 @@ public class AccountPatterns extends StdTable<Pattern> {
 		FinanceData	myData;
 		Frequency   myFreq;
 		
-		DataList<Frequency>.ListIterator myIterator;
+		Frequency.List.ListIterator myIterator;
 		
 		/* Access the data */
 		myData = theView.getData();

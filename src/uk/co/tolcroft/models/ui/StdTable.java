@@ -1,8 +1,6 @@
 package uk.co.tolcroft.models.ui;
 
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseListener;
@@ -17,12 +15,10 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import uk.co.tolcroft.finance.ui.MainTab;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataState;
@@ -40,15 +36,11 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 	private JTable				theRowHdrTable	= null;
 	private DataTableModel  	theModel     	= null;
 	private rowTableModel		theRowHdrModel  = null;
-	private DataList<T>	        theList	  		= null;
+	private DataList<?,T>        theList	  		= null;
 	private JScrollPane			theScroll		= null;
 	private boolean             doShowDel    	= false;
 	private boolean             isEnabled    	= false;
-	private Font		      	theStdFont    	= null;
-	private Font		  		theNumFont    	= null;
-	private Font		      	theChgFont	    = null;
-	private Font		      	theChgNumFont	= null;
-	private MainTab				theMainTab		= null;
+	private MainWindow<?>		theMainWindow	= null;
 
 	/* Access methods */
 	public boolean 	hasHeader() 		{ return false; }
@@ -62,14 +54,14 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 		
 	public AbstractTableModel getTableModel() 			{ return theModel; }
 
-	public DataList<T> 	getList() 						{ return theList; }
-	public JScrollPane 	getScrollPane()					{ return theScroll; }
-	public void    		notifySelection(Object obj)    	{ }
-	public void    		updateDebug()			    	{ }
-	public void    		setActive(boolean isActive)		{ isEnabled = isActive; }
-	public JComboBox 	getComboBox(int row, int col) 	{ return null; }
-	public boolean 		isValidHistory(DataItem<T> pItem, HistoryValues<?>  pValues) { return true; }
-	public DebugManager getDebugManager() 				{ return theMainTab.getDebugMgr(); }
+	public DataList<?,T> 	getList() 						{ return theList; }
+	public JScrollPane 		getScrollPane()					{ return theScroll; }
+	public void    			notifySelection(Object obj)    	{ }
+	public void    			updateDebug()			    	{ }
+	public void    			setActive(boolean isActive)		{ isEnabled = isActive; }
+	public JComboBox 		getComboBox(int row, int col) 	{ return null; }
+	public boolean 			isValidHistory(DataItem<T> pItem, HistoryValues<?>  pValues) { return true; }
+	public DebugManager 	getDebugManager() 				{ return theMainWindow.getDebugMgr(); }
 		
 	/* Abstract methods */
 	public abstract void 	notifyChanges();
@@ -77,21 +69,15 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 
 	/**
 	 * Constructor
-	 * @param pMainTab the main window
+	 * @param pMainWindow the main window
 	 */
-	public StdTable(MainTab pMainTab) {
+	public StdTable(MainWindow<?> pMainWindow) {
 		/* Store parameters */
-		theMainTab 		= pMainTab;
+		theMainWindow	= pMainWindow;
 		theRowHdrModel  = new rowTableModel();
 		
 		/* Set the selection mode */
 		setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		
-		/* Access the standard fonts */
-		theStdFont 		= pMainTab.getFont(false, false);
-		theChgFont 		= pMainTab.getFont(false, true);
-		theNumFont 		= pMainTab.getFont(true, false);
-		theChgNumFont 	= pMainTab.getFont(true, true);
 	}
 	
 	/**
@@ -151,7 +137,7 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 	 * Set the list for the table
 	 * @param pList the list
 	 */
-	public void setList(DataList<T> pList) {
+	public void setList(DataList<?,T> pList) {
 		int myZeroRow = hasHeader() ? 1 : 0;
 		
 		/* Store list and select correct mode */
@@ -932,15 +918,10 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 		@SuppressWarnings("unchecked")
 		public void getRenderData(RenderData pData) {
 			T				myRow;
-			String     		myTip = null;
 			int				iRow;
 			int				myIndex;
 			int[]       	iFields;
-			Color			myFore;
-			Color			myBack;
-			Font			myFont;
 			DataColumnModel myColModel;
-			boolean 		isChanged = false;
 			
 			/* If we have a header decrement the index */
 			iRow = pData.getRow();
@@ -948,10 +929,7 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 			if (hasHeader()) myIndex--;
 			
 			/* Obtain defaults from table header */
-			JTableHeader myHeader = getTableHeader();
-			myBack = myHeader.getBackground();
-			myFore = myHeader.getForeground();
-			myFont = myHeader.getFont();
+			pData.initFromHeader(getTableHeader());
 
 			/* If this is a data row */
 			if (myIndex >= 0) {
@@ -961,30 +939,8 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 				iFields 	= myColModel.getColumnFields();
 				
 				/* Has the row changed */
-				isChanged = myRow.hasHistory();
-				
-				/* Determine the colour */
-				if (myRow.isDeleted()) {
-					myFore = Color.lightGray;
-				}
-				else if (myRow.hasErrors()) {
-					myFore = Color.black;
-					myBack = Color.red;
-					myTip  = myRow.getFieldErrors(iFields);
-				}
-				else if (isChanged)
-					myFore = Color.magenta;
-				else if (myRow.getState() == DataState.NEW)
-					myFore = Color.blue;
-				else if (myRow.getState() == DataState.RECOVERED)
-					myFore = Color.darkGray;
+				pData.processRowHeader(myRow, iFields);
 			}
-				
-			/* Set the data */
-			pData.setData(myFore, myBack, myFont, myTip);
-				
-			/* return to the caller */
-			return;
 		}		
 	}
 	
@@ -1084,24 +1040,15 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 		 */
 		public void getRenderData(RenderData pData) {
 			T			myRow;
-			String     	myTip = null;
 			int			iRow;
 			int			myIndex;
 			int         iField;
-			Color		myFore;
-			Color		myBack;
-			Font		myFont;
-			boolean 	isChanged = false;
 			
 			/* If we have a header decrement the index */
 			iRow = pData.getRow();
 			myIndex = iRow;
 			if (hasHeader()) myIndex--;
 			
-			/* Default is black on white */
-			myBack = Color.white;
-			myFore = Color.black;
-
 			/* If this is a data row */
 			if (myIndex >= 0) {
 				/* Access the row */
@@ -1109,42 +1056,8 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 				iField = getFieldForCell(iRow, pData.getCol());
 				
 				/* Has the field changed */
-				isChanged = myRow.fieldChanged(iField);
-				
-				/* Determine the colour */
-				if (myRow.isDeleted()) {
-					myFore = Color.lightGray;
-				}
-				else if ((myRow.hasErrors()) &&
-						 (myRow.hasErrors(iField))) {
-					myFore = Color.red;
-					myTip = myRow.getFieldErrors(iField);
-				}
-				else if (isChanged)
-					myFore = Color.magenta;
-				else if (myRow.getState() == DataState.NEW)
-					myFore = Color.blue;
-				else if (myRow.getState() == DataState.RECOVERED)
-					myFore = Color.darkGray;
+				pData.processTableRow(myRow, iField);
 			}
-				
-			/* For selected items flip the foreground/background */
-			if (pData.isSelected()){
-				Color myTemp = myFore;
-				myFore = myBack;
-				myBack = myTemp;
-			}
-				
-			/* Select the font */
-			if (pData.isFixed())
-				myFont = isChanged	? theChgNumFont 
-									: theNumFont;
-			else
-				myFont = isChanged	? theChgFont 
-									: theStdFont;
-			
-			/* Set the data */
-			pData.setData(myFore, myBack, myFont, myTip);
 				
 			/* return to the caller */
 			return;

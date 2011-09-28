@@ -39,7 +39,8 @@ public class SecureManager {
 		SecurityControl myControl = theSecurity.getSecurityControl(pKey);
 
 		/* If it is not initialised try known passwords */
-		if (!myControl.isInitialised()) 
+		if ((pKey != null) &&
+			(!myControl.isInitialised())) 
 			attemptKnownPasswords(myControl);
 		
 		/* If the security control is not initialised */
@@ -84,10 +85,16 @@ public class SecureManager {
 				}
 			}
 			
-			/* Throw an exception if we did not get a password */
-			if (!isPasswordOk)
+			/* If we did not get a password */
+			if (!isPasswordOk) {
+				/* Remove control if it is not initialised */
+				if (!myControl.isInitialised())
+					theSecurity.remove(myControl);
+				
+				/* Throw an exception */
 				throw new Exception(ExceptionClass.DATA,
 									"Invalid Password");
+			}
 		}
 		
 		/* Return the control */
@@ -95,34 +102,17 @@ public class SecureManager {
 	}	
 
 	/**
-	 *  Update the Security Control
-	 *  @param pControl the existing security control
-	 *  @param pSource the description of the secured resource
-	 *  @return was the password changed <code>true/false</code>
+	 *  Clone the existing Security Control
+	 *  @param pControl the control
+	 *  @return the cloned security control
 	 */
-	public boolean updateSecurityControl(SecurityControl 	pControl,
-									     String 			pSource) throws Exception {
-		/* Create the title for the window */
-		String myTitle = "Enter New Password for " + pSource;
-			
-		/* Create a new password dialog */
-		PasswordDialog 	myPass 	= new PasswordDialog(theFrame,
-													 myTitle,
-													 true);
-			
-		/* Prompt for the password */
-		if (showDialog(myPass)) {
-			/* Access the password */
-			char[] myPassword = myPass.getPassword();
-
-			/* Update the password */
-			pControl.setNewPassword(myPassword);
-			return true;
-		}
+	public SecurityControl cloneSecurityControl(SecurityControl pControl) throws Exception {
+		/* Access or create the required Security control */
+		SecurityControl myControl = theSecurity.cloneSecurityControl(pControl);
 		
-		/* Return to caller */
-		return false;
-	}
+		/* Return the control */
+		return myControl;
+	}	
 
 	/**
 	 *  Show the dialog under an invokeAndWait clause 
@@ -159,9 +149,9 @@ public class SecureManager {
 	 * @param pControl the control to attempt
 	 */
 	private void attemptKnownPasswords(SecurityControl pControl) {
-		DataList<SecurityControl>.ListIterator 	myIterator;
-		SecurityControl							myCurr;
-		PasswordKey								myPassKey;
+		DataList<?,SecurityControl>.ListIterator 	myIterator;
+		SecurityControl								myCurr;
+		PasswordKey									myPassKey;
 		
 		/* Access the iterator */
 		myIterator = theSecurity.listIterator();

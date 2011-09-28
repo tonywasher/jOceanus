@@ -190,7 +190,7 @@ public class PricePoint extends StdTable<SpotPrices.SpotPrice> {
 				setShowDeleted(theSelect.getShowClosed());
 			
 			/* Set the new date */
-			if (Date.differs(theDate, theSelect.getDate())) {
+			if (Date.differs(theDate, theSelect.getDate()).isDifferent()) {
 				/* Protect against exceptions */
 				try {
 					setSelection(theSelect.getDate());
@@ -242,7 +242,7 @@ public class PricePoint extends StdTable<SpotPrices.SpotPrice> {
 		theSelect.setLockDown();
 		
 		/* Update the top level tabs */
-		theParent.setVisibleTabs();
+		theParent.setVisibility();
 	}
 		
 	/**
@@ -266,7 +266,7 @@ public class PricePoint extends StdTable<SpotPrices.SpotPrice> {
 		theViewList.setDataList(thePrices);
 		theTabButs.setLockDown();
 		theSelect.setLockDown();
-		theParent.setVisibleTabs();
+		theParent.setVisibility();
 	}
 		
 	/**
@@ -284,7 +284,7 @@ public class PricePoint extends StdTable<SpotPrices.SpotPrice> {
 			AcctPrice.Values	myPrice = (AcctPrice.Values) pValues;
 
 			/* Check whether the date is the same */
-			if (Date.differs(mySpot.getDate(), myPrice.getDate()))
+			if (Date.differs(mySpot.getDate(), myPrice.getDate()).isDifferent())
 				return false;
 		}
 

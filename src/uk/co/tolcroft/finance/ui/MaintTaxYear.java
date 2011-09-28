@@ -19,12 +19,12 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.Number.*;
-import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.ErrorPanel;
+import uk.co.tolcroft.models.ui.RenderData;
 import uk.co.tolcroft.models.ui.SaveButtons;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 import uk.co.tolcroft.models.views.ViewList;
@@ -633,7 +633,7 @@ public class MaintTaxYear implements ActionListener,
 		showTaxYear();
 		
 		/* Adjust visible tabs */
-		theParent.setVisibleTabs();
+		theParent.setVisibility();
 	}	
 		
 	/* Note that there has been a selection change */
@@ -714,7 +714,7 @@ public class MaintTaxYear implements ActionListener,
 		FinanceData	myData;
 		TaxRegime	myRegime;
 
-		DataList<TaxRegime>.ListIterator	myRegIterator;
+		TaxRegime.List.ListIterator	myRegIterator;
 		
 		/* Access the data */
 		myData = theView.getData();
@@ -803,32 +803,32 @@ public class MaintTaxYear implements ActionListener,
 			/* Set the Allowance */
 			theAllowance.setText(theTaxYear.getAllowance().format(true));
 			theAllowance.setEnabled(!theTaxYear.isDeleted());
-			theParent.formatComponent(theAllowance, TaxYear.FIELD_ALLOW, theTaxYear, true, false);
+			RenderData.formatComponent(theAllowance, TaxYear.FIELD_ALLOW, theTaxYear, true, false);
 
 			/* Set the LoAge Allowance */
 			theLoAgeAllow.setText(theTaxYear.getLoAgeAllow().format(true));
 			theLoAgeAllow.setEnabled(!theTaxYear.isDeleted());
-			theParent.formatComponent(theLoAgeAllow, TaxYear.FIELD_LOAGAL, theTaxYear, true, false);
+			RenderData.formatComponent(theLoAgeAllow, TaxYear.FIELD_LOAGAL, theTaxYear, true, false);
 		
 			/* Set the HiAge Allowance */
 			theHiAgeAllow.setText(theTaxYear.getHiAgeAllow().format(true));
 			theHiAgeAllow.setEnabled(!theTaxYear.isDeleted());
-			theParent.formatComponent(theHiAgeAllow, TaxYear.FIELD_HIAGAL, theTaxYear, true, false);
+			RenderData.formatComponent(theHiAgeAllow, TaxYear.FIELD_HIAGAL, theTaxYear, true, false);
 		
 			/* Set the Capital Allowance */
 			theCapitalAllow.setText(theTaxYear.getCapitalAllow().format(true));
 			theCapitalAllow.setEnabled(!theTaxYear.isDeleted());
-			theParent.formatComponent(theCapitalAllow, TaxYear.FIELD_CAPALW, theTaxYear, true, false);
+			RenderData.formatComponent(theCapitalAllow, TaxYear.FIELD_CAPALW, theTaxYear, true, false);
 		
 			/* Set the Rental Allowance */
 			theRental.setText(theTaxYear.getRentalAllowance().format(true));
 			theRental.setEnabled(!theTaxYear.isDeleted());
-			theParent.formatComponent(theRental, TaxYear.FIELD_RENTAL, theTaxYear, true, false);
+			RenderData.formatComponent(theRental, TaxYear.FIELD_RENTAL, theTaxYear, true, false);
 		
 			/* Set the Age Allowance Limit */
 			theAgeAllowLimit.setText(theTaxYear.getAgeAllowLimit().format(true));
 			theAgeAllowLimit.setEnabled(!theTaxYear.isDeleted());
-			theParent.formatComponent(theAgeAllowLimit, TaxYear.FIELD_AGELMT, theTaxYear, true, false);
+			RenderData.formatComponent(theAgeAllowLimit, TaxYear.FIELD_AGELMT, theTaxYear, true, false);
 		
 			/* Set the Additional Allowance Limit */
 			theAddAllowLimit.setText((theTaxYear.hasAdditionalTaxBand() &&
@@ -836,8 +836,8 @@ public class MaintTaxYear implements ActionListener,
 										? theTaxYear.getAddAllowLimit().format(true)
 										: "");
 			theAddAllowLimit.setEnabled(!theTaxYear.isDeleted() && theTaxYear.hasAdditionalTaxBand());
-			theParent.formatComponent(theAddAllowLimit, TaxYear.FIELD_ADDLMT, theTaxYear,
-									  true, (theTaxYear.getAddAllowLimit() == null));
+			RenderData.formatComponent(theAddAllowLimit, TaxYear.FIELD_ADDLMT, theTaxYear,
+									   true, (theTaxYear.getAddAllowLimit() == null));
 		
 			/* Set the Additional Income Boundary */
 			theAddIncomeBndry.setText((theTaxYear.hasAdditionalTaxBand() &&
@@ -845,48 +845,48 @@ public class MaintTaxYear implements ActionListener,
 											? theTaxYear.getAddIncBound().format(true)
 											: "");
 			theAddIncomeBndry.setEnabled(!theTaxYear.isDeleted()  && theTaxYear.hasAdditionalTaxBand());
-			theParent.formatComponent(theAddIncomeBndry, TaxYear.FIELD_ADDBDY, theTaxYear, 
-									  true, (theTaxYear.getAddAllowLimit() == null));
+			RenderData.formatComponent(theAddIncomeBndry, TaxYear.FIELD_ADDBDY, theTaxYear, 
+									   true, (theTaxYear.getAddAllowLimit() == null));
 		
 			/* Set the Low Tax Band */
 			theLoTaxBand.setText(theTaxYear.getLoBand().format(true));
 			theLoTaxBand.setEnabled(!theTaxYear.isDeleted());
-			theParent.formatComponent(theLoTaxBand, TaxYear.FIELD_LOBAND, theTaxYear, true, false);
+			RenderData.formatComponent(theLoTaxBand, TaxYear.FIELD_LOBAND, theTaxYear, true, false);
 		
 			/* Set the Basic Tax Band */
 			theBasicTaxBand.setText(theTaxYear.getBasicBand().format(true));
 			theBasicTaxBand.setEnabled(!theTaxYear.isDeleted());
-			theParent.formatComponent(theBasicTaxBand, TaxYear.FIELD_BSBAND, theTaxYear, true, false);
+			RenderData.formatComponent(theBasicTaxBand, TaxYear.FIELD_BSBAND, theTaxYear, true, false);
 		
 			/* Set the Low Tax Rate */
 			theLoTaxRate.setText(theTaxYear.getLoTaxRate().format(true));
 			theLoTaxRate.setEnabled(!theTaxYear.isDeleted());
-			theParent.formatComponent(theLoTaxRate, TaxYear.FIELD_LOTAX, theTaxYear, true, false);
+			RenderData.formatComponent(theLoTaxRate, TaxYear.FIELD_LOTAX, theTaxYear, true, false);
 		
 			/* Set the Basic Tax Rate */
 			theBasicTaxRate.setText(theTaxYear.getBasicTaxRate().format(true));
 			theBasicTaxRate.setEnabled(!theTaxYear.isDeleted());
-			theParent.formatComponent(theBasicTaxRate, TaxYear.FIELD_BASTAX, theTaxYear, true, false);
+			RenderData.formatComponent(theBasicTaxRate, TaxYear.FIELD_BASTAX, theTaxYear, true, false);
 		
 			/* Set the High Tax Rate */
 			theHiTaxRate.setText(theTaxYear.getHiTaxRate().format(true));
 			theHiTaxRate.setEnabled(!theTaxYear.isDeleted());
-			theParent.formatComponent(theHiTaxRate, TaxYear.FIELD_HITAX, theTaxYear, true, false);
+			RenderData.formatComponent(theHiTaxRate, TaxYear.FIELD_HITAX, theTaxYear, true, false);
 						
 			/* Set the Interest Tax Rate */
 			theIntTaxRate.setText(theTaxYear.getIntTaxRate().format(true));
 			theIntTaxRate.setEnabled(!theTaxYear.isDeleted());
-			theParent.formatComponent(theIntTaxRate, TaxYear.FIELD_INTTAX, theTaxYear, true, false);
+			RenderData.formatComponent(theIntTaxRate, TaxYear.FIELD_INTTAX, theTaxYear, true, false);
 		
 			/* Set the Dividend Tax Rate */
 			theDivTaxRate.setText(theTaxYear.getDivTaxRate().format(true));
 			theDivTaxRate.setEnabled(!theTaxYear.isDeleted());
-			theParent.formatComponent(theDivTaxRate, TaxYear.FIELD_DIVTAX, theTaxYear, true, false);
+			RenderData.formatComponent(theDivTaxRate, TaxYear.FIELD_DIVTAX, theTaxYear, true, false);
 		
 			/* Set the High Dividend Tax Rate */
 			theHiDivTaxRate.setText(theTaxYear.getHiDivTaxRate().format(true));
 			theHiDivTaxRate.setEnabled(!theTaxYear.isDeleted());
-			theParent.formatComponent(theHiDivTaxRate, TaxYear.FIELD_HDVTAX, theTaxYear, true, false);
+			RenderData.formatComponent(theHiDivTaxRate, TaxYear.FIELD_HDVTAX, theTaxYear, true, false);
 		
 			/* Set the Additional Tax Rate */
 			theAddTaxRate.setText((theTaxYear.hasAdditionalTaxBand() &&
@@ -894,8 +894,8 @@ public class MaintTaxYear implements ActionListener,
 										? theTaxYear.getAddTaxRate().format(true)
 										: "");
 			theAddTaxRate.setEnabled(!theTaxYear.isDeleted() && theTaxYear.hasAdditionalTaxBand());
-			theParent.formatComponent(theAddTaxRate, TaxYear.FIELD_ADDTAX, theTaxYear, 
-									  true, (theTaxYear.getAddTaxRate() == null));
+			RenderData.formatComponent(theAddTaxRate, TaxYear.FIELD_ADDTAX, theTaxYear, 
+									   true, (theTaxYear.getAddTaxRate() == null));
 		
 			/* Set the Additional Dividend Tax Rate */
 			theAddDivTaxRate.setText((theTaxYear.hasAdditionalTaxBand() &&
@@ -903,8 +903,8 @@ public class MaintTaxYear implements ActionListener,
 										? theTaxYear.getAddDivTaxRate().format(true)
 										: "");
 			theAddDivTaxRate.setEnabled(!theTaxYear.isDeleted() && theTaxYear.hasAdditionalTaxBand());
-			theParent.formatComponent(theAddDivTaxRate, TaxYear.FIELD_ADVTAX, theTaxYear, 
-									  true, (theTaxYear.getAddDivTaxRate() == null));
+			RenderData.formatComponent(theAddDivTaxRate, TaxYear.FIELD_ADVTAX, theTaxYear, 
+									   true, (theTaxYear.getAddDivTaxRate() == null));
 		
 			/* Set the Capital Tax Rate */
 			theCapTaxRate.setText((!theTaxYear.hasCapitalGainsAsIncome()  &&
@@ -912,8 +912,8 @@ public class MaintTaxYear implements ActionListener,
 										? theTaxYear.getCapTaxRate().format(true)
 										: "");
 			theCapTaxRate.setEnabled(!theTaxYear.isDeleted() && !theTaxYear.hasCapitalGainsAsIncome());
-			theParent.formatComponent(theCapTaxRate, TaxYear.FIELD_CAPTAX, theTaxYear, 
-									  true, (theTaxYear.getCapTaxRate() == null));
+			RenderData.formatComponent(theCapTaxRate, TaxYear.FIELD_CAPTAX, theTaxYear, 
+									   true, (theTaxYear.getCapTaxRate() == null));
 		
 			/* Set the High Capital Tax Rate */
 			theHiCapTaxRate.setText((!theTaxYear.hasCapitalGainsAsIncome() &&
@@ -921,8 +921,8 @@ public class MaintTaxYear implements ActionListener,
 										? theTaxYear.getHiCapTaxRate().format(true)
 										: null);
 			theHiCapTaxRate.setEnabled(!theTaxYear.isDeleted() && !theTaxYear.hasCapitalGainsAsIncome());
-			theParent.formatComponent(theHiCapTaxRate, TaxYear.FIELD_HCPTAX, theTaxYear, 
-									  true, (theTaxYear.getHiCapTaxRate() == null));
+			RenderData.formatComponent(theHiCapTaxRate, TaxYear.FIELD_HCPTAX, theTaxYear, 
+									   true, (theTaxYear.getHiCapTaxRate() == null));
 		
 			/* Make sure buttons are visible */
 			theDelButton.setVisible(theTaxYear.isDeleted() || 

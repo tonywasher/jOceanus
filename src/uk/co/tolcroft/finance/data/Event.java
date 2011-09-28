@@ -8,7 +8,7 @@ import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
@@ -188,6 +188,9 @@ public class Event extends EncryptedItem<Event> {
 				setId(0);
 				pList.setNewId(this);				
 				break;
+			case CLONE:
+				isolateCopy(pList.getData());
+			case COPY:
 			case CORE:
 				/* Reset Id if this is an insert from a view */
 				if (myOldStyle == ListStyle.EDIT) setId(0);
@@ -441,6 +444,35 @@ public class Event extends EncryptedItem<Event> {
 	}
 
 	/**
+	 * Isolate Data Copy
+	 * @param pData the DataSet
+	 */
+	protected void isolateCopy(FinanceData pData) {
+		/* Update the Encryption details */
+		super.isolateCopy(pData);
+		
+		/* Access Lists */
+		Account.List 			myAccounts 		= pData.getAccounts();
+		TransactionType.List 	myTranTypes		= pData.getTransTypes();
+		
+		/* Update credit to use the local copy of the Accounts */
+		Values 	myValues   	= getValues();
+		Account	myAct		= myValues.getCredit();
+		Account	myNewAct 	= myAccounts.searchFor(myAct.getId());
+		myValues.setCredit(myNewAct);
+
+		/* Update debit to use the local copy of the Accounts */
+		myAct		= myValues.getDebit();
+		myNewAct 	= myAccounts.searchFor(myAct.getId());
+		myValues.setDebit(myNewAct);
+
+		/* Update transtype to use the local copy */
+		TransactionType	myTran		= myValues.getTransType();
+		TransactionType	myNewTran 	= myTranTypes.searchFor(myTran.getId());
+		myValues.setTransType(myNewTran);
+	}
+
+	/**
 	 * Determines whether an event can be valid
 	 * 
 	 * @param pTrans The transaction type of the event
@@ -577,7 +609,7 @@ public class Event extends EncryptedItem<Event> {
 		boolean myResult;
 		
 		/* Generally we must not be recursive */
-		myResult = Account.differs(pDebit, pCredit);
+		myResult = Account.differs(pDebit, pCredit).isDifferent();
 		
 		/* Switch on the TransType */
 		switch (pTrans.getTranClass()) {
@@ -602,11 +634,11 @@ public class Event extends EncryptedItem<Event> {
 			/* Debt Interest and Rental Income must come from the owner of the debt */
 			case RENTALINCOME:
 			case DEBTINTEREST:
-				myResult = !Account.differs(pDebit, pCredit.getParent());
+				myResult = !Account.differs(pDebit, pCredit.getParent()).isDifferent();
 				break;
 			/* Mortgage payment must be to the owner of the mortgage */
 			case MORTGAGE:
-				myResult = !Account.differs(pCredit, pDebit.getParent());
+				myResult = !Account.differs(pCredit, pDebit.getParent()).isDifferent();
 				break;
 		}
 		
@@ -698,7 +730,7 @@ public class Event extends EncryptedItem<Event> {
 		
 		/* Check for valid priced debit account */
 		if ((myDebit != null) && (myDebit.isPriced()) &&
-			(Account.differs(myCredit, myDebit))) {
+			(Account.differs(myCredit, myDebit).isDifferent())) {
 			/* If the date of this event is prior to the first price */
 			if ((myDebit.getInitPrice() != null) &&
 			    (getDate().compareTo(myDebit.getInitPrice().getDate()) < 0))
@@ -732,7 +764,7 @@ public class Event extends EncryptedItem<Event> {
 					/* Dividend between priced requires identical credit/debit */
 					if ((myTransType != null) &&
 						(myTransType.isDividend()) &&
-						(Account.differs(myCredit, myDebit))) {
+						(Account.differs(myCredit, myDebit).isDifferent())) {
 						addError("Unit Dividends between assets must be between same asset", 
 								 FIELD_UNITS);
 					}
@@ -1180,45 +1212,45 @@ public class Event extends EncryptedItem<Event> {
 		pushHistory();
 		
 		/* Update the date if required */
-		if (Date.differs(getDate(), pLine.getDate())) 
+		if (Date.differs(getDate(), pLine.getDate()).isDifferent()) 
 			setDate(pLine.getDate());
 	
 		/* Update the description if required */
-		if (differs(myValues.getDesc(), myNew.getDesc()))
+		if (differs(myValues.getDesc(), myNew.getDesc()).isDifferent())
 			myValues.setDesc(new StringPair(myNew.getDesc()));
 		
 		/* Update the amount if required */
-		if (differs(myValues.getAmount(), myNew.getAmount())) 
+		if (differs(myValues.getAmount(), myNew.getAmount()).isDifferent()) 
 			myValues.setAmount(new MoneyPair(myNew.getAmount()));
 		
 		/* Update the units if required */
-		if (differs(myValues.getUnits(), myNew.getUnits())) 
+		if (differs(myValues.getUnits(), myNew.getUnits()).isDifferent()) 
 			myValues.setUnits((myNew.getUnits() == null) ? null : new UnitsPair(myNew.getUnits()));
 	
 		/* Update the tranType if required */
-		if (TransactionType.differs(getTransType(), pLine.getTransType())) 
+		if (TransactionType.differs(getTransType(), pLine.getTransType()).isDifferent()) 
 			setTransType(pLine.getTransType());
 	
 		/* Update the tax credit if required */
-		if (differs(myValues.getTaxCredit(), myNew.getTaxCredit())) 
+		if (differs(myValues.getTaxCredit(), myNew.getTaxCredit()).isDifferent()) 
 			myValues.setTaxCredit((myNew.getTaxCredit() == null) ? null : new MoneyPair(myNew.getTaxCredit()));
 	
 		/* Update the years if required */
-		if (Utils.differs(getYears(), pLine.getYears())) 
+		if (Utils.differs(getYears(), pLine.getYears()).isDifferent()) 
 			setYears(pLine.getYears());
 		
 		/* Update the dilution if required */
-		if (differs(myValues.getDilution(), myNew.getDilution())) 
+		if (differs(myValues.getDilution(), myNew.getDilution()).isDifferent()) 
 			myValues.setDilution((myNew.getDilution() == null) ? null : new DilutionPair(myNew.getDilution()));
 				
 		/* If this is a credit */
 		if (pLine.isCredit()) {			
 			/* Update the debit if required */
-			if (Account.differs(getDebit(), pLine.getPartner())) 
+			if (Account.differs(getDebit(), pLine.getPartner()).isDifferent()) 
 				setDebit(pLine.getPartner());
 		} else {
 			/* Update the credit if required */
-			if (Account.differs(getCredit(), pLine.getPartner())) 
+			if (Account.differs(getCredit(), pLine.getPartner()).isDifferent()) 
 				setCredit(pLine.getPartner());
 		}
 		
@@ -1247,43 +1279,43 @@ public class Event extends EncryptedItem<Event> {
 		pushHistory();
 		
 		/* Update the date if required */
-		if (Date.differs(getDate(), pEvent.getDate())) 
+		if (Date.differs(getDate(), pEvent.getDate()).isDifferent()) 
 			setDate(pEvent.getDate());
 	
 		/* Update the description if required */
-		if (differs(myValues.getDesc(), myNew.getDesc())) 
+		if (differs(myValues.getDesc(), myNew.getDesc()).isDifferent()) 
 			myValues.setDesc(myNew.getDesc());
 		
 		/* Update the amount if required */
-		if (differs(myValues.getAmount(), myNew.getAmount())) 
+		if (differs(myValues.getAmount(), myNew.getAmount()).isDifferent()) 
 			myValues.setAmount(myNew.getAmount());
 		
 		/* Update the units if required */
-		if (differs(myValues.getUnits(), myNew.getUnits())) 
+		if (differs(myValues.getUnits(), myNew.getUnits()).isDifferent()) 
 			myValues.setUnits(myNew.getUnits());
 				
 		/* Update the tranType if required */
-		if (TransactionType.differs(getTransType(), pEvent.getTransType())) 
+		if (TransactionType.differs(getTransType(), pEvent.getTransType()).isDifferent()) 
 			setTransType(pEvent.getTransType());
 	
 		/* Update the debit if required */
-		if (Account.differs(getDebit(), pEvent.getDebit())) 
+		if (Account.differs(getDebit(), pEvent.getDebit()).isDifferent()) 
 			setDebit(pEvent.getDebit());
 	
 		/* Update the credit if required */
-		if (Account.differs(getCredit(), pEvent.getCredit())) 
+		if (Account.differs(getCredit(), pEvent.getCredit()).isDifferent()) 
 			setCredit(pEvent.getCredit());		
 		
 		/* Update the tax credit if required */
-		if (differs(myValues.getTaxCredit(), myNew.getTaxCredit())) 
+		if (differs(myValues.getTaxCredit(), myNew.getTaxCredit()).isDifferent()) 
 			myValues.setTaxCredit(myNew.getTaxCredit());
 	
 		/* Update the dilution if required */
-		if (differs(myValues.getDilution(), myNew.getDilution())) 
+		if (differs(myValues.getDilution(), myNew.getDilution()).isDifferent()) 
 			myValues.setDilution(myNew.getDilution());
 				
 		/* Update the years if required */
-		if (Utils.differs(getYears(), pEvent.getYears())) 
+		if (Utils.differs(getYears(), pEvent.getYears()).isDifferent()) 
 			setYears(pEvent.getYears());
 		
 		/* Check for changes */
@@ -1300,7 +1332,7 @@ public class Event extends EncryptedItem<Event> {
 	/**
 	 *  List class for Events 
 	 */
-	public static class List extends EncryptedList<Event> {
+	public static class List extends EncryptedList<List, Event> {
 		/* Members */
 		private Date.Range  theRange   = null;
 
@@ -1312,7 +1344,7 @@ public class Event extends EncryptedItem<Event> {
 	 	 * @param pData the DataSet for the list
 	 	 */
 		protected List(FinanceData pData) { 
-			super(Event.class, pData);
+			super(List.class, Event.class, pData);
 		}
 
 		/**
@@ -1341,14 +1373,26 @@ public class Event extends EncryptedItem<Event> {
 		/* Obtain extract lists. */
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
-		public List getClonedList() { return getExtractList(ListStyle.CORE); }
+		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
+		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			myList.setData(pDataSet);
+			
+			/* Obtain underlying clones */
+			myList.populateList(ListStyle.CLONE);
+			myList.setStyle(ListStyle.CORE);
+			
+			/* Return the list */
+			return myList;
+		}
 
 		/** 
 		 * Construct a difference Event list
 		 * @param pNew the new Event list 
 		 * @param pOld the old Event list 
 		 */
-		protected List getDifferences(DataList<Event> pOld) { 
+		protected List getDifferences(List pOld) { 
 			/* Build an empty Difference List */
 			List myList = new List(this);
 			
@@ -1385,10 +1429,10 @@ public class Event extends EncryptedItem<Event> {
 			myList.setStyle(ListStyle.EDIT);
 
 			/* local variable */
-			DataList<Event>.ListIterator 	myIterator;
-			Event      						myCurr;
-			Event      						myEvent;
-			int       						myResult;
+			Event.List.ListIterator 	myIterator;
+			Event      					myCurr;
+			Event      					myEvent;
+			int       					myResult;
 			
 			/* Record range and initialise the list */
 			myList.theRange   = pRange;
@@ -1424,11 +1468,11 @@ public class Event extends EncryptedItem<Event> {
 			myList.setStyle(ListStyle.EDIT);
 
 			/* Local variables */
-			DataList<Pattern>.ListIterator 	myIterator;
-			Pattern.List 					myPatterns;
-			Pattern     					myCurr;
-			Event       					myEvent;
-			Date 							myDate;
+			Pattern.List.ListIterator 	myIterator;
+			Pattern.List 				myPatterns;
+			Pattern     				myCurr;
+			Event       				myEvent;
+			Date 						myDate;
 			
 			/* Record range and initialise the list */
 			theRange   = pTaxYear.getRange();
@@ -1476,8 +1520,8 @@ public class Event extends EncryptedItem<Event> {
 		 * Validate an extract
 		 */
 		public void validate() {
-			DataList<Event>.ListIterator 	myIterator;
-			Event 							myCurr;
+			Event.List.ListIterator 	myIterator;
+			Event 						myCurr;
 
 			/* Clear the errors */
 			clearErrors();
@@ -1724,20 +1768,20 @@ public class Event extends EncryptedItem<Event> {
 		/* Check whether this object is equal to that passed */
 		public boolean histEquals(HistoryValues<Event> pCompare) {
 			Values myValues = (Values)pCompare;
-			if (!super.histEquals(pCompare))					  				return false;
-			if (Date.differs(theDate,      				myValues.theDate))      return false;
-			if (differs(theDesc, 						myValues.theDesc))      return false;
-			if (differs(theAmount,    					myValues.theAmount))    return false;
-			if (differs(theUnits,     					myValues.theUnits))     return false;
-			if (Account.differs(theDebit,    			myValues.theDebit))     return false;
-			if (Account.differs(theCredit,    			myValues.theCredit))    return false;
-			if (TransactionType.differs(theTransType, 	myValues.theTransType)) return false;
-			if (differs(theTaxCredit,					myValues.theTaxCredit)) return false;
-			if (Utils.differs(theYears,     			myValues.theYears))	    return false;
-			if (differs(theDilution,					myValues.theDilution))  return false;
-			if (Utils.differs(theDebitId,				myValues.theDebitId))   return false;
-			if (Utils.differs(theCreditId,				myValues.theCreditId))  return false;
-			if (Utils.differs(theTransId,				myValues.theTransId))   return false;
+			if (!super.histEquals(pCompare))					  							  return false;
+			if (Date.differs(theDate,      				myValues.theDate).isDifferent())      return false;
+			if (differs(theDesc, 						myValues.theDesc).isDifferent())      return false;
+			if (differs(theAmount,    					myValues.theAmount).isDifferent())    return false;
+			if (differs(theUnits,     					myValues.theUnits).isDifferent())     return false;
+			if (Account.differs(theDebit,    			myValues.theDebit).isDifferent())     return false;
+			if (Account.differs(theCredit,    			myValues.theCredit).isDifferent())    return false;
+			if (TransactionType.differs(theTransType, 	myValues.theTransType).isDifferent()) return false;
+			if (differs(theTaxCredit,					myValues.theTaxCredit).isDifferent()) return false;
+			if (Utils.differs(theYears,     			myValues.theYears).isDifferent())	  return false;
+			if (differs(theDilution,					myValues.theDilution).isDifferent())  return false;
+			if (Utils.differs(theDebitId,				myValues.theDebitId).isDifferent())   return false;
+			if (Utils.differs(theCreditId,				myValues.theCreditId).isDifferent())  return false;
+			if (Utils.differs(theTransId,				myValues.theTransId).isDifferent())   return false;
 			return true;
 		}
 		
@@ -1843,9 +1887,9 @@ public class Event extends EncryptedItem<Event> {
 			}
 		}
 		
-		public boolean	fieldChanged(int fieldNo, HistoryValues<Event> pOriginal) {
-			Values 	pValues = (Values)pOriginal;
-			boolean			bResult = false;
+		public Difference	fieldChanged(int fieldNo, HistoryValues<Event> pOriginal) {
+			Values 		pValues = (Values)pOriginal;
+			Difference	bResult = Difference.Identical;
 			switch (fieldNo) {
 				case FIELD_DATE:
 					bResult = (Date.differs(theDate,		      	pValues.theDate));

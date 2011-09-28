@@ -198,8 +198,8 @@ public class AsymmetricKey {
 		if (myThat.theKeyType != theKeyType) return false;
 		
 		/* Ensure that the private/public keys are identical */
-		if (Utils.differs(myThat.thePrivateKeyDef, thePrivateKeyDef)) 	return false;
-		if (Utils.differs(myThat.thePublicKeyDef, thePublicKeyDef)) 	return false;
+		if (Utils.differs(myThat.thePrivateKeyDef, thePrivateKeyDef).isDifferent()) return false;
+		if (Utils.differs(myThat.thePublicKeyDef, thePublicKeyDef).isDifferent()) 	return false;
 		
 		/* Identical if those tests succeed */
 		return true;

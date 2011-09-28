@@ -174,9 +174,9 @@ public class SecuritySignature {
 		if (myThat.theKeyType != theKeyType) return false;
 		
 		/* Ensure that the private/public keys and password are identical */
-		if (Utils.differs(myThat.thePasswordHash,     thePasswordHash)) 	return false;
-		if (Utils.differs(myThat.theSecuredKeyDef,    theSecuredKeyDef)) 	return false;
-		if (Utils.differs(myThat.theEncodedPublicKey, theEncodedPublicKey)) return false;
+		if (Utils.differs(myThat.thePasswordHash,     thePasswordHash).isDifferent()) 	return false;
+		if (Utils.differs(myThat.theSecuredKeyDef,    theSecuredKeyDef).isDifferent()) 	return false;
+		if (Utils.differs(myThat.theEncodedPublicKey, theEncodedPublicKey).isDifferent()) return false;
 		
 		/* Identical if those tests succeed */
 		return true;

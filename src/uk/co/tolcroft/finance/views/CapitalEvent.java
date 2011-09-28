@@ -6,6 +6,7 @@ import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.HistoryValues;
 
@@ -236,6 +237,7 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 		theAttributes.add(myAttr);
 	}
 	
+
 	/**
 	 * Add Units Attribute
 	 * @param pName the name of the attribute 
@@ -273,7 +275,7 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 	}
 	
 	/* The List of capital events */
-	public static class List extends DataList<CapitalEvent> {
+	public static class List extends DataList<List, CapitalEvent> {
 		/* Members */
 		private FinanceData		theData			= null;
 		private Account			theAccount		= null;
@@ -288,7 +290,7 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 	 	 */
 		protected List(FinanceData	pData,
 					   Account		pAccount) { 
-			super(CapitalEvent.class, ListStyle.VIEW, false);
+			super(List.class, CapitalEvent.class, ListStyle.VIEW, false);
 			
 			/* Store the data */
 			theData			= pData;
@@ -298,8 +300,9 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 		/* Obtain extract lists. */
 		public List getUpdateList() { return null; }
 		public List getEditList() 	{ return null; }
-		public List getClonedList() { return null; }
-		public List getDifferences(DataList<CapitalEvent> pOld) { return null; }
+		public List getShallowCopy() { return null; }
+		public List getDeepCopy(DataSet<?,?> pData) { return null; }
+		public List getDifferences(List pOld) { return null; }
 
 		/**
 		 * Add a new item to the list

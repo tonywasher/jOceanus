@@ -6,7 +6,7 @@ import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
@@ -182,6 +182,9 @@ public class Pattern extends EncryptedItem<Pattern> {
 				setId(0);
 				pList.setNewId(this);				
 				break;
+			case CLONE:
+				isolateCopy(pList.getData());
+			case COPY:
 			case CORE:
 				/* Reset Id if this is an insert from a view */
 				if (myOldStyle == ListStyle.EDIT) setId(0);
@@ -428,6 +431,41 @@ public class Pattern extends EncryptedItem<Pattern> {
 		return 0;
 	}
 	
+	/**
+	 * Isolate Data Copy
+	 * @param pData the DataSet
+	 */
+	protected void isolateCopy(FinanceData pData) {
+		/* Update the Encryption details */
+		super.isolateCopy(pData);
+		
+		/* Access Lists */
+		Account.List 			myAccounts 		= pData.getAccounts();
+		Frequency.List 			myFrequencys	= pData.getFrequencys();
+		TransactionType.List 	myTranTypes		= pData.getTransTypes();
+		
+		/* Update to use the local copy of the Accounts */
+		Values 	myValues   	= getValues();
+		Account	myAct		= myValues.getAccount();
+		Account	myNewAct 	= myAccounts.searchFor(myAct.getId());
+		myValues.setAccount(myNewAct);
+
+		/* Update partner to use the local copy of the Accounts */
+		myAct		= myValues.getPartner();
+		myNewAct 	= myAccounts.searchFor(myAct.getId());
+		myValues.setPartner(myNewAct);
+
+		/* Update frequency to use the local copy */
+		Frequency	myFreq		= myValues.getFrequency();
+		Frequency	myNewFreq 	= myFrequencys.searchFor(myFreq.getId());
+		myValues.setFrequency(myNewFreq);
+
+		/* Update transtype to use the local copy */
+		TransactionType	myTran		= myValues.getTransType();
+		TransactionType	myNewTran 	= myTranTypes.searchFor(myTran.getId());
+		myValues.setTransType(myNewTran);
+	}
+
 	/**
 	 * Validate the pattern
 	 */
@@ -691,27 +729,27 @@ public class Pattern extends EncryptedItem<Pattern> {
 		pushHistory();
 		
 		/* Update the partner if required */
-		if (Account.differs(getPartner(), myPattern.getPartner())) 
+		if (Account.differs(getPartner(), myPattern.getPartner()).isDifferent()) 
 			setPartner(myPattern.getPartner());
 	
 		/* Update the transtype if required */
-		if (TransactionType.differs(getTransType(), myPattern.getTransType())) 
+		if (TransactionType.differs(getTransType(), myPattern.getTransType()).isDifferent()) 
 			setTransType(myPattern.getTransType());
 	
 		/* Update the frequency if required */
-		if (Frequency.differs(getFrequency(), myPattern.getFrequency())) 
+		if (Frequency.differs(getFrequency(), myPattern.getFrequency()).isDifferent()) 
 			setFrequency(myPattern.getFrequency());
 	
 		/* Update the description if required */
-		if (differs(myValues.getDesc(), myNew.getDesc())) 
+		if (differs(myValues.getDesc(), myNew.getDesc()).isDifferent()) 
 			myValues.setDesc(myNew.getDesc());
 	
 		/* Update the amount if required */
-		if (differs(myValues.getAmount(), myNew.getAmount())) 
+		if (differs(myValues.getAmount(), myNew.getAmount()).isDifferent()) 
 			myValues.setAmount(myNew.getAmount());
 		
 		/* Update the date if required */
-		if (Date.differs(getDate(), myPattern.getDate())) 
+		if (Date.differs(getDate(), myPattern.getDate()).isDifferent()) 
 			setDate(myPattern.getDate());
 		
 		/* Update the isCredit if required */
@@ -729,7 +767,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 		return bChanged;
 	}
 	
-	public static class List extends EncryptedList<Pattern> {
+	public static class List extends EncryptedList<List, Pattern> {
 		/* Local values */
 		private Account	theAccount	= null;
 		
@@ -742,7 +780,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 	 	 * @param pData the DataSet for the list
 	 	 */
 		protected List(FinanceData pData) { 
-			super(Pattern.class, pData);
+			super(List.class, Pattern.class, pData);
 		}
 
 		/**
@@ -771,14 +809,26 @@ public class Pattern extends EncryptedItem<Pattern> {
 		/* Obtain extract lists. */
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return null; }
-		public List getClonedList() { return getExtractList(ListStyle.CORE); }
+		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
+		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			myList.setData(pDataSet);
+			
+			/* Obtain underlying clones */
+			myList.populateList(ListStyle.CLONE);
+			myList.setStyle(ListStyle.CORE);
+			
+			/* Return the list */
+			return myList;
+		}
 
 		/** 
 		 * Construct a difference ControlData list
 		 * @param pNew the new ControlData list 
 		 * @param pOld the old ControlData list 
 		 */
-		protected List getDifferences(DataList<Pattern> pOld) { 
+		protected List getDifferences(List pOld) { 
 			/* Build an empty Difference List */
 			List myList = new List(this);
 			
@@ -1121,19 +1171,19 @@ public class Pattern extends EncryptedItem<Pattern> {
 		/* Check whether this object is equal to that passed */
 		public boolean histEquals(HistoryValues<Pattern> pCompare) {
 			Values myValues = (Values)pCompare;
-			if (!super.histEquals(pCompare))					  				return false;
-			if (Date.differs(theDate,    				myValues.theDate))      return false;
-			if (differs(theDesc,   						myValues.theDesc))      return false;
-			if (differs(theAmount, 						myValues.theAmount))    return false;
-			if (Account.differs(thePartner, 			myValues.thePartner))   return false;
-			if (Frequency.differs(theFrequency, 		myValues.theFrequency))	return false;
-			if (TransactionType.differs(theTransType,	myValues.theTransType)) return false;
-			if (Account.differs(theAccount, 			myValues.theAccount))	return false;
-			if (isCredit != myValues.isCredit) 	   							   	return false;
-			if (Utils.differs(theAccountId, 			myValues.theAccountId))	return false;
-			if (Utils.differs(thePartnerId, 			myValues.thePartnerId))	return false;
-			if (Utils.differs(theTransId, 				myValues.theTransId))	return false;
-			if (Utils.differs(theFreqId, 				myValues.theFreqId))	return false;
+			if (!super.histEquals(pCompare))					  								return false;
+			if (Date.differs(theDate,    				myValues.theDate).isDifferent())      	return false;
+			if (differs(theDesc,   						myValues.theDesc).isDifferent())      	return false;
+			if (differs(theAmount, 						myValues.theAmount).isDifferent())    	return false;
+			if (Account.differs(thePartner, 			myValues.thePartner).isDifferent())   	return false;
+			if (Frequency.differs(theFrequency, 		myValues.theFrequency).isDifferent())	return false;
+			if (TransactionType.differs(theTransType,	myValues.theTransType).isDifferent()) 	return false;
+			if (Account.differs(theAccount, 			myValues.theAccount).isDifferent())		return false;
+			if (isCredit != myValues.isCredit) 	   							   					return false;
+			if (Utils.differs(theAccountId, 			myValues.theAccountId).isDifferent())	return false;
+			if (Utils.differs(thePartnerId, 			myValues.thePartnerId).isDifferent())	return false;
+			if (Utils.differs(theTransId, 				myValues.theTransId).isDifferent())		return false;
+			if (Utils.differs(theFreqId, 				myValues.theFreqId).isDifferent())		return false;
 			return true;
 		}
 		
@@ -1177,9 +1227,9 @@ public class Pattern extends EncryptedItem<Pattern> {
 			}
 		}
 		
-		public boolean	fieldChanged(int fieldNo, HistoryValues<Pattern> pOriginal) {
+		public Difference	fieldChanged(int fieldNo, HistoryValues<Pattern> pOriginal) {
 			Values 	pValues = (Values)pOriginal;
-			boolean	bResult = false;
+			Difference	bResult = Difference.Identical;
 			switch (fieldNo) {
 				case FIELD_DATE:
 					bResult = (Date.differs(theDate,       			pValues.theDate));
@@ -1203,7 +1253,8 @@ public class Pattern extends EncryptedItem<Pattern> {
 					bResult = (Account.differs(theAccount,   		pValues.theAccount));
 					break;
 				case FIELD_CREDIT:
-					bResult = (isCredit != pValues.isCredit);
+					bResult = ((isCredit != pValues.isCredit) ? Difference.Different
+															  : Difference.Identical);
 					break;
 				default:
 					bResult = super.fieldChanged(fieldNo, pValues);

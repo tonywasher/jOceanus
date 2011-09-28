@@ -401,7 +401,7 @@ public class AccountStatement extends StdTable<Statement.Line> {
 			
 			/* Access the values */
 			myDate    = myEventVals.getDate();
-			isCredit  = Account.differs(myEventVals.getDebit(), theAccount);
+			isCredit  = Account.differs(myEventVals.getDebit(), theAccount).isDifferent();
 			myPartner = (isCredit) ? myEventVals.getDebit()
 								   : myEventVals.getCredit();
 			mySelf 	  = (isCredit) ? myEventVals.getCredit()
@@ -433,7 +433,7 @@ public class AccountStatement extends StdTable<Statement.Line> {
 			return false;
 		
 		/* Check that line is still related */
-		if (Account.differs(mySelf, theAccount)) 
+		if (Account.differs(mySelf, theAccount).isDifferent()) 
 			return false;
 		
 		/* Otherwise OK */
@@ -622,7 +622,7 @@ public class AccountStatement extends StdTable<Statement.Line> {
 					break;
 				case COLUMN_BALANCE:
 					if ((myNext != null) && 
-						(!Date.differs(myNext.getDate(), myLine.getDate())))
+						(!Date.differs(myNext.getDate(), myLine.getDate()).isDifferent()))
 						o = null;
 					else o = (theStateType == StatementType.UNITS)
 									? myLine.getBalanceUnits() 
@@ -1024,7 +1024,7 @@ public class AccountStatement extends StdTable<Statement.Line> {
 				myAccount = myLine.getPartner();
 			
 				/* If we have a different account then we can navigate */ 
-				if (Account.differs(myAccount, theAccount)) enablePartner = true;
+				if (Account.differs(myAccount, theAccount).isDifferent()) enablePartner = true;
 			}
 			
 			/* If there is something to add and there are already items in the menu */

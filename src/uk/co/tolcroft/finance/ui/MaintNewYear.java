@@ -11,7 +11,6 @@ import javax.swing.JPanel;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
@@ -153,7 +152,7 @@ public class MaintNewYear extends StdTable<Event> implements ActionListener {
 	public void refreshData() throws Exception {
 		FinanceData		myData = theView.getData();
 		TaxYear.List 	myList = myData.getTaxYears();
-		DataList<TaxYear>.ListIterator myIterator;
+		TaxYear.List.ListIterator myIterator;
 		
 		myIterator 	= myList.listIterator();
 		theYear 	= myIterator.peekLast();
@@ -180,7 +179,7 @@ public class MaintNewYear extends StdTable<Event> implements ActionListener {
 		theEventView.setDataList(theEvents);
 		theDebugYear.setObject(theTaxYears);
 		theDebugEvents.setObject(theEvents);
-		theParent.setVisibleTabs();
+		theParent.setVisibility();
 	}
 		
 	/**

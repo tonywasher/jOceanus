@@ -4,7 +4,7 @@ import uk.co.tolcroft.finance.data.StaticClass.AccountClass;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
 
 public class AccountType extends StaticData<AccountType, AccountClass> {
@@ -442,7 +442,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 	/**
 	 * Represents a list of {@link AccountType} objects. 
 	 */
-	public static class List extends StaticList<AccountType, AccountClass> {
+	public static class List extends StaticList<List, AccountType, AccountClass> {
 		protected Class<AccountClass> getEnumClass() { return AccountClass.class; }
 		
 	 	/** 
@@ -450,7 +450,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 	 	 * @param pData the DataSet for the list
 	 	 */
 		protected List(FinanceData pData) { 
-			super(AccountType.class, pData, ListStyle.CORE);
+			super(List.class, AccountType.class, pData, ListStyle.CORE);
 		}
 
 		/**
@@ -479,14 +479,26 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 		/* Obtain extract lists. */
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
-		public List getClonedList() { return getExtractList(ListStyle.CORE); }
+		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
+		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			myList.setData(pDataSet);
+			
+			/* Obtain underlying clones */
+			myList.populateList(ListStyle.CLONE);
+			myList.setStyle(ListStyle.CORE);
+			
+			/* Return the list */
+			return myList;
+		}
 
 		/** 
 		 * Construct a difference AccountType list
 		 * @param pNew the new AccountType list 
 		 * @param pOld the old AccountType list 
 		 */
-		protected List getDifferences(DataList<AccountType> pOld) { 
+		protected List getDifferences(List pOld) { 
 			/* Build an empty Difference List */
 			List myList = new List(this);
 			

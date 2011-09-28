@@ -13,54 +13,78 @@ import uk.co.tolcroft.models.security.SecurityControl;
 public class Utils {
 	/**
 	 * Determine whether two String objects differ.
-	 * 
 	 * @param pCurr The current string 
 	 * @param pNew The new string
 	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
 	 */	
-	public static boolean differs(String pCurr, String pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
+	public static Difference differs(String pCurr, String pNew) {
+		/* Handle case where current value is null */
+		if  (pCurr == null) return (pNew != null) ? Difference.Different 
+												  : Difference.Identical;
+		
+		/* Handle case where new value is null */
+		if  (pNew == null) return Difference.Different;
+		
+		/* Handle Standard cases */
+		return (pCurr.compareTo(pNew) != 0) ? Difference.Different
+											: Difference.Identical;
 	}
 
 	/**
 	 * Determine whether two Integer objects differ.
-	 * 
 	 * @param pCurr The current integer 
 	 * @param pNew The new integer
 	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
 	 */	
-	public static boolean differs(Integer pCurr, Integer pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
+	public static Difference differs(Integer pCurr, Integer pNew) {
+		/* Handle case where current value is null */
+		if  (pCurr == null) return (pNew != null) ? Difference.Different 
+												  : Difference.Identical;
+		
+		/* Handle case where new value is null */
+		if  (pNew == null) return Difference.Different;
+		
+		/* Handle Standard cases */
+		return (pCurr.compareTo(pNew) != 0) ? Difference.Different
+											: Difference.Identical;
 	}
 
 	/**
 	 * Determine whether two char array objects differ.
-	 * 
 	 * @param pCurr The current array 
 	 * @param pNew The new array
 	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
 	 */	
-	public static boolean differs(char[] pCurr, char[] pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (!Arrays.equals(pCurr, pNew)))));
+	public static Difference differs(char[] pCurr, char[] pNew) {
+		/* Handle case where current value is null */
+		if  (pCurr == null) return (pNew != null) ? Difference.Different 
+												  : Difference.Identical;
+		
+		/* Handle case where new value is null */
+		if  (pNew == null) return Difference.Different;
+		
+		/* Handle Standard cases */
+		return (!Arrays.equals(pCurr, pNew)) ? Difference.Different
+											 : Difference.Identical;
 	}
 	
 	/**
-	 * Determine whether two byte array objects differ.
-	 * 
+	 * Determine whether two byte array objects differ. 
 	 * @param pCurr The current array 
 	 * @param pNew The new array
 	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
 	 */	
-	public static boolean differs(byte[] pCurr, byte[] pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (!Arrays.equals(pCurr, pNew)))));
+	public static Difference differs(byte[] pCurr, byte[] pNew) {
+		/* Handle case where current value is null */
+		if  (pCurr == null) return (pNew != null) ? Difference.Different 
+												  : Difference.Identical;
+		
+		/* Handle case where new value is null */
+		if  (pNew == null) return Difference.Different;
+		
+		/* Handle Standard cases */
+		return (!Arrays.equals(pCurr, pNew)) ? Difference.Different
+											 : Difference.Identical;
 	}
 	
 	/**

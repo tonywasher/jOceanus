@@ -42,7 +42,7 @@ public class TableControlKeys extends DatabaseTable<ControlKey> {
 	}
 	
 	/* Declare DataSet */
-	protected void declareData(DataSet<?> pData) {
+	protected void declareData(DataSet<?,?> pData) {
 		theList = pData.getControlKeys();
 		setList(theList);
 	}

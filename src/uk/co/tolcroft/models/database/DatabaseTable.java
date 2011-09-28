@@ -34,7 +34,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	/**
 	 * The list of items for this table
 	 */
-	private DataList<T>				theList  		= null;
+	private DataList<?,T>			theList  		= null;
 	
 	/**
 	 * The prepared statement
@@ -169,19 +169,19 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 * Declare DataSet
 	 * @param pData the Data set
 	 */
-	protected abstract void declareData(DataSet<?> pData);
+	protected abstract void declareData(DataSet<?,?> pData);
 	
 	/**
 	 * Set the list of items
 	 * @param pList the list of items
 	 */
-	protected void	setList(DataList<T> pList) { theList = pList; }
+	protected void	setList(DataList<?,T> pList) { theList = pList; }
 	
 	/**
 	 * Obtain the list of items
 	 * @return the list of items
 	 */
-	protected DataList<T>	getList() { return theList; }
+	protected DataList<?,T>	getList() { return theList; }
 	
 	/**
 	 * Load an individual item from the result set 
@@ -212,7 +212,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 * @return Continue <code>true/false</code>
 	 */
 	protected boolean loadItems(ThreadStatus<?> pThread,
-								DataSet<?>		pData) throws Exception {
+								DataSet<?,?>	pData) throws Exception {
 		boolean bContinue = true;
 		String	myQuery;
 		int		mySteps;
@@ -275,7 +275,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 * @return the count of items
 	 */
 	private int countStateItems(DataState pState) {
-		DataList<T>.ListIterator	myIterator;
+		DataList<?,T>.ListIterator	myIterator;
 		T							myCurr;
 		int 						iCount = 0;
 		
@@ -302,9 +302,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 * @return Continue <code>true/false</code>
 	 */
 	protected boolean insertItems(ThreadStatus<?> 	pThread,
-								  DataSet<?>		pData,
+								  DataSet<?,?>		pData,
 								  BatchControl		pBatch) throws Exception {
-		DataList<T>.ListIterator	myIterator;
+		DataList<?,T>.ListIterator	myIterator;
 		T							myCurr    = null;
 		int     					myCount   = 0;
 		int							mySteps;
@@ -398,7 +398,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 */
 	protected boolean updateItems(ThreadStatus<?> 	pThread,
 			  					  BatchControl		pBatch) throws Exception {
-		DataList<T>.ListIterator	myIterator;
+		DataList<?,T>.ListIterator	myIterator;
 		T							myCurr    = null;
 		int     					myCount   = 0;
 		int							mySteps;
@@ -498,7 +498,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 				if (iField == DataItem.FIELD_ID) continue;
 				
 				/* If the field has changed */
-				if (myCurr.fieldChanged(iField, myBase)) {
+				if (myCurr.fieldChanged(iField, myBase).isDifferent()) {
 					/* Record the change */
 					isUpdated = true;
 					setFieldValue(pItem, iField);
@@ -524,7 +524,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 */
 	protected boolean deleteItems(ThreadStatus<?> 	pThread,
 			  					  BatchControl		pBatch) throws Exception {
-		DataList<T>.ListIterator	myIterator;
+		DataList<?,T>.ListIterator	myIterator;
 		T							myCurr    = null;
 		int     					myCount   = 0;
 		int							mySteps;

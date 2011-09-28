@@ -4,7 +4,7 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.views.DataControl;
 
-public class LoadDatabase<T extends DataSet<?>> extends LoaderThread<T> {
+public class LoadDatabase<T extends DataSet<T,?>> extends LoaderThread<T> {
 	/* Task description */
 	private static String  	theTask		= "DataBase Load";
 

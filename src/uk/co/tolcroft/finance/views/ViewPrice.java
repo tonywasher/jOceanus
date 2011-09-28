@@ -6,7 +6,7 @@ import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
@@ -157,8 +157,8 @@ public class ViewPrice extends EncryptedItem<ViewPrice> {
 		
 		/* Check for equality */
 		if (getId() != myPrice.getId()) return false;
-		if (Date.differs(getDate(),     myPrice.getDate())) 	return false;
-		if (Price.differs(getPrice(),   myPrice.getPrice())) 	return false;
+		if (Date.differs(getDate(),     myPrice.getDate()).isDifferent()) 	return false;
+		if (Price.differs(getPrice(),   myPrice.getPrice()).isDifferent()) 	return false;
 		return true;
 	}
 
@@ -261,7 +261,7 @@ public class ViewPrice extends EncryptedItem<ViewPrice> {
 	/**
 	 * Price List
 	 */
-	public static class List  extends EncryptedList<ViewPrice> {
+	public static class List  extends EncryptedList<List, ViewPrice> {
 		/* Members */
 		private Account				theAccount		= null;
 		private FinanceData			theData			= null;
@@ -282,14 +282,14 @@ public class ViewPrice extends EncryptedItem<ViewPrice> {
 		public List(View				pView,
 					Account 			pAccount) {
 			/* Make this list the correct style */
-			super(ViewPrice.class, pView.getData(), ListStyle.EDIT);
+			super(List.class, ViewPrice.class, pView.getData(), ListStyle.EDIT);
 			theData = pView.getData();
 
 			/* Local variables */
-			AcctPrice.List						myPrices;
-			AcctPrice 							myCurr;
-			ViewPrice 							myItem;
-			DataList<AcctPrice>.ListIterator 	myIterator;
+			AcctPrice.List				myPrices;
+			AcctPrice 					myCurr;
+			ViewPrice 					myItem;
+			AcctPrice.List.ListIterator myIterator;
 
 			/* Skip to alias if required */
 			if ((pAccount != null) && (pAccount.getAlias() != null))
@@ -327,8 +327,9 @@ public class ViewPrice extends EncryptedItem<ViewPrice> {
 		/* Obtain extract lists. */
 		public List getUpdateList() { return null; }
 		public List getEditList() 	{ return null; }
-		public List getClonedList() { return null; }
-		public List getDifferences(DataList<ViewPrice> pOld) { return null; }
+		public List getShallowCopy() { return null; }
+		public List getDeepCopy(DataSet<?,?> pData) { return null; }
+		public List getDifferences(List pOld) { return null; }
 
 		/* Is this list locked */
 		public boolean isLocked() { return ((theAccount != null) && (theAccount.isLocked())); }
@@ -433,10 +434,10 @@ public class ViewPrice extends EncryptedItem<ViewPrice> {
 		/* Check whether this object is equal to that passed */
 		public boolean histEquals(HistoryValues<ViewPrice> pCompare) {
 			Values myValues = (Values)pCompare;
-			if (Date.differs(theDate,    				myValues.theDate))    		return false;
-			if (differs(thePrice,   					myValues.thePrice))   		return false;
-			if (Dilution.differs(theDilution, 			myValues.theDilution)) 		return false;
-			if (DilutedPrice.differs(theDilutedPrice, 	myValues.theDilutedPrice))	return false;
+			if (Date.differs(theDate,    				myValues.theDate).isDifferent())    		return false;
+			if (differs(thePrice,   					myValues.thePrice).isDifferent())   		return false;
+			if (Dilution.differs(theDilution, 			myValues.theDilution).isDifferent()) 		return false;
+			if (DilutedPrice.differs(theDilutedPrice, 	myValues.theDilutedPrice).isDifferent())	return false;
 			return true;
 		}
 		
@@ -465,9 +466,9 @@ public class ViewPrice extends EncryptedItem<ViewPrice> {
 			}
 		}
 		
-		public boolean	fieldChanged(int fieldNo, HistoryValues<ViewPrice> pOriginal) {
-			Values 	pValues = (Values)pOriginal;
-			boolean	bResult = false;
+		public Difference	fieldChanged(int fieldNo, HistoryValues<ViewPrice> pOriginal) {
+			Values 		pValues = (Values)pOriginal;
+			Difference	bResult = Difference.Identical;
 			switch (fieldNo) {
 				case FIELD_DATE:
 					bResult = (Date.differs(theDate,      		pValues.theDate));

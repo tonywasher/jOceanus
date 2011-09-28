@@ -7,7 +7,7 @@ import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
@@ -263,6 +263,7 @@ public class Account extends EncryptedItem<Account> {
 		setValues(myValues);
 		theEarliest  = pAccount.theEarliest;
 		theLatest    = pAccount.theLatest;
+		theInitPrice = pAccount.theInitPrice;
 		isCloseable  = pAccount.isCloseable();
 		isAliasedTo  = pAccount.isAliasedTo();
 		isParent     = pAccount.isParent();
@@ -287,6 +288,9 @@ public class Account extends EncryptedItem<Account> {
 				setId(0);
 				pList.setNewId(this);				
 				break;
+			case CLONE:
+				isolateCopy(pList.getData());
+			case COPY:
 			case CORE:
 				/* Reset Id if this is an insert from a view */
 				if (myOldStyle == ListStyle.EDIT) setId(0);
@@ -542,6 +546,43 @@ public class Account extends EncryptedItem<Account> {
 		else return 1;
 	}
 		
+	/**
+	 * Isolate Data Copy
+	 * @param pData the DataSet
+	 */
+	protected void isolateCopy(FinanceData pData) {
+		/* Update the Encryption details */
+		super.isolateCopy(pData);
+		
+		/* Access Account types */
+		AccountType.List myTypes = pData.getAccountTypes();
+		
+		/* Update to use the local copy of the AccountTypes */
+		Values 		myValues   	= getValues();
+		AccountType	myType		= myValues.getType();
+		AccountType	myNewType 	= myTypes.searchFor(myType.getId());
+		myValues.setType(myNewType);
+
+		/* Access Accounts */
+		Account.List 	myList 	= pData.getAccounts();
+		
+		/* If we have a parent */
+		Account			myAct	= getParent();
+		if (myAct != null) {
+			/* Update it */
+			Account	myNewAct 	= myList.searchFor(myAct.getId());
+			myValues.setParent(myNewAct);
+		}
+		
+		/* If we have an alias */
+		myAct	= getAlias();
+		if (myAct != null) {
+			/* Update it */
+			Account	myNewAct 	= myList.searchFor(myAct.getId());
+			myValues.setAlias(myNewAct);
+		}
+	}
+
 	/* Account flags */
 	public 	boolean isPriced()    { return getActType().isPriced(); }
 	protected boolean isMarket()    { return getActType().isMarket(); }
@@ -652,11 +693,11 @@ public class Account extends EncryptedItem<Account> {
 		/* If we have an alias */
 		if (getAlias() != null) {
 			/* Cannot alias to self */
-			if (!Account.differs(this, getAlias()))
+			if (!Account.differs(this, getAlias()).isDifferent())
 				addError("Cannot alias to self", FIELD_ALIAS);
 
 			/* Cannot alias to same type */
-			else if (!AccountType.differs(myType, getAlias().getActType()))
+			else if (!AccountType.differs(myType, getAlias().getActType()).isDifferent())
 				addError("Cannot alias to same account type", FIELD_ALIAS);
 
 			/* Must be alias type */
@@ -745,7 +786,7 @@ public class Account extends EncryptedItem<Account> {
 	public Money getValue(Date pDate) {
 		Event   						myCurr;
 		Event.List						myEvents;
-		DataList<Event>.ListIterator 	myIterator;
+		Event.List.ListIterator 	myIterator;
 		int     						myResult;
 		Money 							myAmount;
 		Money 							myValue;
@@ -1033,55 +1074,55 @@ public class Account extends EncryptedItem<Account> {
 		pushHistory();
 		
 		/* Update the Name if required */
-		if (differs(myValues.getName(), myNew.getName()))  
+		if (differs(myValues.getName(), myNew.getName()).isDifferent())  
 			myValues.setName(myNew.getName());
 			
 		/* Update the description if required */
-		if (differs(myValues.getDesc(), myNew.getDesc())) 
+		if (differs(myValues.getDesc(), myNew.getDesc()).isDifferent()) 
 			myValues.setDesc(myNew.getDesc());
 			
 		/* Update the account type if required */
-		if (AccountType.differs(getActType(), myAccount.getActType())) 
+		if (AccountType.differs(getActType(), myAccount.getActType()).isDifferent()) 
 			setActType(myAccount.getActType());
 			
 		/* Update the maturity if required */
-		if (Date.differs(getMaturity(), myAccount.getMaturity())) 
+		if (Date.differs(getMaturity(), myAccount.getMaturity()).isDifferent()) 
 			setMaturity(myAccount.getMaturity());
 		
 		/* Update the close if required */
-		if (Date.differs(getClose(), myAccount.getClose())) 
+		if (Date.differs(getClose(), myAccount.getClose()).isDifferent()) 
 			setClose(myAccount.getClose());
 		
 		/* Update the parent if required */
-		if (Account.differs(getParent(), myAccount.getParent())) 
+		if (Account.differs(getParent(), myAccount.getParent()).isDifferent()) 
 			setParent(myAccount.getParent());
 		
 		/* Update the alias if required */
-		if (Account.differs(getAlias(), myAccount.getAlias())) 
+		if (Account.differs(getAlias(), myAccount.getAlias()).isDifferent()) 
 			setAlias(myAccount.getAlias());
 		
 		/* Update the WebSite if required */
-		if (differs(myValues.getWebSite(), myNew.getWebSite())) 
+		if (differs(myValues.getWebSite(), myNew.getWebSite()).isDifferent()) 
 			myValues.setWebSite(myNew.getWebSite());
 		
 		/* Update the customer number if required */
-		if (differs(myValues.getCustNo(), myNew.getCustNo())) 
+		if (differs(myValues.getCustNo(), myNew.getCustNo()).isDifferent()) 
 			myValues.setCustNo(myNew.getCustNo());
 		
 		/* Update the UserId if required */
-		if (differs(myValues.getUserId(), myNew.getUserId())) 
+		if (differs(myValues.getUserId(), myNew.getUserId()).isDifferent()) 
 			myValues.setUserId(myNew.getUserId());
 		
 		/* Update the Password if required */
-		if (differs(myValues.getPassword(), myNew.getPassword())) 
+		if (differs(myValues.getPassword(), myNew.getPassword()).isDifferent()) 
 			myValues.setPassword(myNew.getPassword());
 		
 		/* Update the account if required */
-		if (differs(myValues.getAccount(), myNew.getAccount())) 
+		if (differs(myValues.getAccount(), myNew.getAccount()).isDifferent()) 
 			myValues.setAccount(myNew.getAccount());
 		
 		/* Update the notes if required */
-		if (differs(myValues.getNotes(), myNew.getNotes())) 
+		if (differs(myValues.getNotes(), myNew.getNotes()).isDifferent()) 
 			myValues.setNotes(myNew.getNotes());
 		
 		/* Check for changes */
@@ -1108,21 +1149,9 @@ public class Account extends EncryptedItem<Account> {
 	}
 
 	/**
-	 * Determine whether two {@link account} objects differ.
-	 * @param pCurr The current Account 
-	 * @param pNew The new Account
-	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
-	 */	
-	public static boolean differs(Account pCurr, Account pNew) {
-		return (((pCurr == null) && (pNew != null)) ||
-				((pCurr != null) && 
-				 ((pNew == null) || (pCurr.compareTo(pNew) != 0))));
-	}
-	
-	/**
 	 * AccountList class
 	 */
-	public static class List  extends EncryptedList<Account> {
+	public static class List  extends EncryptedList<List, Account> {
 		/* Properties */
 		private Account 	theAccount	= null;
 		
@@ -1135,7 +1164,7 @@ public class Account extends EncryptedItem<Account> {
 	 	 * @param pData the DataSet for the list
 	 	 */
 		protected List(FinanceData pData) { 
-			super(Account.class, pData);
+			super(List.class, Account.class, pData);
 		}
 
 		/**
@@ -1164,14 +1193,26 @@ public class Account extends EncryptedItem<Account> {
 		/* Obtain extract lists. */
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
-		public List getClonedList() { return getExtractList(ListStyle.CORE); }
+		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
+		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			myList.setData(pDataSet);
+			
+			/* Obtain underlying clones */
+			myList.populateList(ListStyle.CLONE);
+			myList.setStyle(ListStyle.CORE);
+			
+			/* Return the list */
+			return myList;
+		}
 
 		/** 
 		 * Construct a difference Account list
 		 * @param pNew the new Account list 
 		 * @param pOld the old Account list 
 		 */
-		protected List getDifferences(DataList<Account> pOld) { 
+		protected List getDifferences(List pOld) { 
 			/* Build an empty Difference List */
 			List myList = new List(this);
 			
@@ -1732,24 +1773,24 @@ public class Account extends EncryptedItem<Account> {
 		/* Check whether this object is equal to that passed */
 		public boolean histEquals(HistoryValues<Account> pCompare) {
 			Values myValues = (Values)pCompare;
-			if (!super.histEquals(pCompare))					  	return false;
-			if (differs(theName,			myValues.theName))     	return false;
-			if (differs(theDesc,			myValues.theDesc))     	return false;
-			if (AccountType.differs(theType,myValues.theType))     	return false;
-			if (Utils.differs(theActTypeId, myValues.theActTypeId)) return false;
-			if (Utils.differs(theOrder,     myValues.theOrder))     return false;
-			if (Date.differs(theMaturity, 	myValues.theMaturity)) 	return false;
-			if (Date.differs(theClose,    	myValues.theClose))    	return false;
-			if (Account.differs(theParent,  myValues.theParent))   	return false;
-			if (Account.differs(theAlias,   myValues.theAlias))   	return false;
-			if (Utils.differs(theParentId,  myValues.theParentId))  return false;
-			if (Utils.differs(theAliasId,   myValues.theAliasId))   return false;
-			if (differs(theWebSite,			myValues.theWebSite)) 	return false;
-			if (differs(theCustNo,			myValues.theCustNo)) 	return false;
-			if (differs(theUserId,			myValues.theUserId)) 	return false;
-			if (differs(thePassword,		myValues.thePassword)) 	return false;
-			if (differs(theAccount,			myValues.theAccount)) 	return false;
-			if (differs(theNotes,			myValues.theNotes)) 	return false;
+			if (!super.histEquals(pCompare))					  					return false;
+			if (differs(theName,			myValues.theName).isDifferent())     	return false;
+			if (differs(theDesc,			myValues.theDesc).isDifferent())     	return false;
+			if (AccountType.differs(theType,myValues.theType).isDifferent())     	return false;
+			if (Utils.differs(theActTypeId, myValues.theActTypeId).isDifferent()) 	return false;
+			if (Utils.differs(theOrder,     myValues.theOrder).isDifferent())     	return false;
+			if (Date.differs(theMaturity, 	myValues.theMaturity).isDifferent()) 	return false;
+			if (Date.differs(theClose,    	myValues.theClose).isDifferent())    	return false;
+			if (Account.differs(theParent,  myValues.theParent).isDifferent())   	return false;
+			if (Account.differs(theAlias,   myValues.theAlias).isDifferent())   	return false;
+			if (Utils.differs(theParentId,  myValues.theParentId).isDifferent())  	return false;
+			if (Utils.differs(theAliasId,   myValues.theAliasId).isDifferent())   	return false;
+			if (differs(theWebSite,			myValues.theWebSite).isDifferent()) 	return false;
+			if (differs(theCustNo,			myValues.theCustNo).isDifferent()) 		return false;
+			if (differs(theUserId,			myValues.theUserId).isDifferent()) 		return false;
+			if (differs(thePassword,		myValues.thePassword).isDifferent()) 	return false;
+			if (differs(theAccount,			myValues.theAccount).isDifferent()) 	return false;
+			if (differs(theNotes,			myValues.theNotes).isDifferent()) 		return false;
 			return true;
 		}
 		
@@ -1778,9 +1819,9 @@ public class Account extends EncryptedItem<Account> {
 			theAccount	  = myValues.getAccount();
 			theNotes	  = myValues.getNotes();
 		}
-		public boolean	fieldChanged(int fieldNo, HistoryValues<Account> pOriginal) {
+		public Difference	fieldChanged(int fieldNo, HistoryValues<Account> pOriginal) {
 			Values 	pValues = (Values)pOriginal;
-			boolean			bResult = false;
+			Difference		bResult = Difference.Identical;
 			switch (fieldNo) {
 				case FIELD_NAME:
 					bResult = (differs(theName,   			pValues.theName));

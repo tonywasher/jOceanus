@@ -269,7 +269,7 @@ public class Extract extends StdTable<Event> {
 		theSelect.setLockDown();
 		
 		/* Update the top level tabs */
-		theParent.setVisibleTabs();
+		theParent.setVisibility();
 	}
 		
 	/**
@@ -291,7 +291,7 @@ public class Extract extends StdTable<Event> {
 		theViewList.setDataList(theEvents);
 		theTabButs.setLockDown();
 		theSelect.setLockDown();
-		theParent.setVisibleTabs();
+		theParent.setVisibility();
 	}
 		
 	/**

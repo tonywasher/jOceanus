@@ -3,7 +3,7 @@ package uk.co.tolcroft.finance.data;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.finance.data.StaticClass.TaxClass;
 
@@ -129,7 +129,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 	/**
 	 * Represents a list of {@link TaxType} objects. 
 	 */
-	public static class List extends StaticList<TaxType, TaxClass> {
+	public static class List extends StaticList<List, TaxType, TaxClass> {
 		protected Class<TaxClass> getEnumClass() { return TaxClass.class; }
 
 		/** 
@@ -137,7 +137,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 	 	 * @param pData the DataSet for the list
 	 	 */
 		protected List(FinanceData pData) { 
-			super(TaxType.class, pData, ListStyle.CORE); }
+			super(List.class, TaxType.class, pData, ListStyle.CORE); }
 
 		/**
 		 * Constructor for a cloned List
@@ -165,14 +165,26 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 		/* Obtain extract lists. */
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
-		public List getClonedList() { return getExtractList(ListStyle.CORE); }
+		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
+		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+			/* Build an empty Extract List */
+			List myList = new List(this);
+			myList.setData(pDataSet);
+			
+			/* Obtain underlying clones */
+			myList.populateList(ListStyle.CLONE);
+			myList.setStyle(ListStyle.CORE);
+			
+			/* Return the list */
+			return myList;
+		}
 
 		/** 
 		 * Construct a difference ControlData list
 		 * @param pNew the new ControlData list 
 		 * @param pOld the old ControlData list 
 		 */
-		protected List getDifferences(DataList<TaxType> pOld) { 
+		protected List getDifferences(List pOld) { 
 			/* Build an empty Difference List */
 			List myList = new List(this);
 			

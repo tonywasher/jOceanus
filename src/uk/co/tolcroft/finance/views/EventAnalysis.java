@@ -8,6 +8,7 @@ import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.help.DebugManager;
@@ -52,10 +53,10 @@ public class EventAnalysis implements DebugObject {
 	 */
 	public EventAnalysis(FinanceData	pData,
 						 Date	 		pDate) throws Exception {
-		DataList<Event>.ListIterator 	myIterator;
-		Event.List					 	myEvents;
-		Event 							myCurr;
-		int   							myResult;
+		Event.List.ListIterator 	myIterator;
+		Event.List				 	myEvents;
+		Event 						myCurr;
+		int   						myResult;
 		
 		/* Store the parameters */
 		theData 	= pData;
@@ -104,14 +105,14 @@ public class EventAnalysis implements DebugObject {
 	 */
 	public EventAnalysis(FinanceData	pData,
 						 Statement 		pStatement)  throws Exception {
-		DataList<Event>.ListIterator 	myIterator;
-		Event.List					 	myEvents;
-		Event 							myCurr;
-		Date.Range						myRange;
-		Account							myAccount;
-		Statement.Line					myLine;
-		Statement.List					myList;
-		int   							myResult;
+		Event.List.ListIterator 	myIterator;
+		Event.List					myEvents;
+		Event 						myCurr;
+		Date.Range					myRange;
+		Account						myAccount;
+		Statement.Line				myLine;
+		Statement.List				myList;
+		int   						myResult;
 
 		/* Access key points of the statement */
 		myRange		= pStatement.getDateRange();
@@ -191,8 +192,7 @@ public class EventAnalysis implements DebugObject {
 		Statement.List				myLines;
 		Event.List					myList;
 		Event						myEvent;
-		
-		DataList<Statement.Line>.ListIterator	myIterator;
+		Statement.List.ListIterator	myIterator;
 
 		/* Access the iterator */
 		myLines		= pStatement.getLines();
@@ -238,16 +238,16 @@ public class EventAnalysis implements DebugObject {
 	 */
 	public EventAnalysis(DataControl<?>	pView,
 						 FinanceData	pData) throws Exception {
-		Event           				myCurr;
-		DataList<Event>.ListIterator	myIterator;
-		int             				myResult	= -1;
-		TaxYear         				myTax  		= null;
-		Date   							myDate 		= null;
-		TaxYear.List					myList;
-		AnalysisYear					myYear;
-		Account							myAccount;
-		Account 						myTaxMan;
-		DebugEntry						mySection;
+		Event           		myCurr;
+		Event.List.ListIterator	myIterator;
+		int             		myResult	= -1;
+		TaxYear         		myTax  		= null;
+		Date   					myDate 		= null;
+		TaxYear.List			myList;
+		AnalysisYear			myYear;
+		Account					myAccount;
+		Account 				myTaxMan;
+		DebugEntry				mySection;
 
 		/* Store the parameters */
 		theData 	= pData;
@@ -483,7 +483,7 @@ public class EventAnalysis implements DebugObject {
 			AnalysisYear myThat = (AnalysisYear)pThat;
 		
 			/* Check for equality */
-			if (Date.differs(getDate(), myThat.getDate())) 	return false;
+			if (Date.differs(getDate(), myThat.getDate()).isDifferent()) 	return false;
 			return true;
 		}
 
@@ -563,7 +563,7 @@ public class EventAnalysis implements DebugObject {
 	}
 	
 	/* the list class */
-	public class List extends DataList<AnalysisYear> {
+	public class List extends DataList<List, AnalysisYear> {
 		/* Members */
 		private EventAnalysis	theEvents		= null;
 
@@ -572,15 +572,16 @@ public class EventAnalysis implements DebugObject {
 		 */
 		public List(EventAnalysis pEvents) {
 			/* Call super constructor */
-			super(AnalysisYear.class, ListStyle.VIEW, false);
+			super(List.class, AnalysisYear.class, ListStyle.VIEW, false);
 			theEvents = pEvents;
 		}
 
 		/* Obtain extract lists. */
 		public List getUpdateList() { return null; }
 		public List getEditList() 	{ return null; }
-		public List getClonedList() { return null; }
-		public List getDifferences(DataList<AnalysisYear> pOld) { return null; }
+		public List getShallowCopy() { return null; }
+		public List getDeepCopy(DataSet<?,?> pData) { return null; }
+		public List getDifferences(List pOld) { return null; }
 
 		/**
 		 * Add a new item to the list
@@ -1650,9 +1651,9 @@ public class EventAnalysis implements DebugObject {
 		 */
 		public void addChildEntries(DebugManager 	pManager,
 									DebugEntry		pParent) {
-			DataList<AnalysisBucket>.ListIterator 	myIterator;
-			AnalysisBucket							myCurr;
-			AssetAccount							myAsset;
+			BucketList.ListIterator myIterator;
+			AnalysisBucket			myCurr;
+			AssetAccount			myAsset;
 
 			/* Access the iterator */
 			myIterator = theList.listIterator();

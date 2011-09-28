@@ -4,7 +4,6 @@ import javax.swing.JComboBox;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.*;
-import uk.co.tolcroft.models.data.DataList;
 
 public class ComboSelect {
 	/**
@@ -29,9 +28,9 @@ public class ComboSelect {
 		theTranTypeBox = new JComboBox();
 
 		/* Access the transaction types */
-		TransactionType.List					myList = theData.getTransTypes();
-		TransactionType							myTrans;
-		DataList<TransactionType>.ListIterator  myIterator;
+		TransactionType.List				myList = theData.getTransTypes();
+		TransactionType						myTrans;
+		TransactionType.List.ListIterator  	myIterator;
 		
 		/* Create the iterator */
 		myIterator = myList.listIterator();
@@ -65,7 +64,7 @@ public class ComboSelect {
 		TransactionType			myTrans;
 		JComboBox				myCombo;
 		
-		DataList<TransactionType>.ListIterator myIterator;
+		TransactionType.List.ListIterator myIterator;
 		
 		/* Create the iterator */
 		myIterator = myList.listIterator();
@@ -99,7 +98,7 @@ public class ComboSelect {
 		TransactionType			myTrans;
 		JComboBox				myCombo;
 		
-		DataList<TransactionType>.ListIterator myIterator;
+		TransactionType.List.ListIterator myIterator;
 		
 		/* Create the iterator */
 		myIterator = myList.listIterator();
@@ -135,7 +134,7 @@ public class ComboSelect {
 		boolean			isValid		= false;
 		JComboBox		myCombo;
 		
-		DataList<Account>.ListIterator myIterator;
+		Account.List.ListIterator myIterator;
 		
 		/* Access the iterator */
 		myIterator = myList.listIterator();
@@ -146,7 +145,7 @@ public class ComboSelect {
 		/* Loop through the accounts */
 		while ((myAccount = myIterator.next()) != null) {
 			/* If the type of this account is new */
-			if (AccountType.differs(myType, myAccount.getActType())) {
+			if (AccountType.differs(myType, myAccount.getActType()).isDifferent()) {
 				/* Note the type */
 				myType = myAccount.getActType();
 
@@ -181,7 +180,7 @@ public class ComboSelect {
 		boolean			isValid		= false;
 		JComboBox		myCombo;
 		
-		DataList<Account>.ListIterator myIterator;
+		Account.List.ListIterator myIterator;
 		
 		/* Access the iterator */
 		myIterator = myList.listIterator();
@@ -192,7 +191,7 @@ public class ComboSelect {
 		/* Loop through the accounts */
 		while ((myAccount = myIterator.next()) != null) {
 			/* If the type of this account is new */
-			if (AccountType.differs(myType, myAccount.getActType())) {
+			if (AccountType.differs(myType, myAccount.getActType()).isDifferent()) {
 				/* Note the type */
 				myType = myAccount.getActType();
 
@@ -207,7 +206,7 @@ public class ComboSelect {
 			if (myAccount.isClosed()) continue;
 
 			/* If the account is identical to the selected account */
-			if (!Account.differs(myAccount, pDebit)) {
+			if (!Account.differs(myAccount, pDebit).isDifferent()) {
 				/* If this combination is allowed */
 				if (Event.isValidEvent(pType, pDebit, myAccount)) {
 					/* Add to beginning of list */
@@ -242,7 +241,7 @@ public class ComboSelect {
 		boolean			isValid		= false;
 		JComboBox		myCombo;
 		
-		DataList<Account>.ListIterator myIterator;
+		Account.List.ListIterator myIterator;
 		
 		/* Access the iterator */
 		myIterator = myList.listIterator();
@@ -253,7 +252,7 @@ public class ComboSelect {
 		/* Loop through the accounts */
 		while ((myAccount = myIterator.next()) != null) {
 			/* If the type of this account is new */
-			if (AccountType.differs(myType, myAccount.getActType())) {
+			if (AccountType.differs(myType, myAccount.getActType()).isDifferent()) {
 				/* Note the type */
 				myType = myAccount.getActType();
 
@@ -268,7 +267,7 @@ public class ComboSelect {
 			if (myAccount.isClosed()) continue;
 
 			/* If the account is identical to the selected account */
-			if (!Account.differs(myAccount, pCredit)) {
+			if (!Account.differs(myAccount, pCredit).isDifferent()) {
 				/* If this combination is allowed */
 				if (Event.isValidEvent(pType, myAccount, pCredit)) {
 					/* Add to beginning of list */

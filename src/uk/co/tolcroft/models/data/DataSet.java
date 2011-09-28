@@ -11,22 +11,25 @@ import uk.co.tolcroft.models.help.DebugObject;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
 import uk.co.tolcroft.models.security.SecureManager;
 import uk.co.tolcroft.models.security.SecurityControl;
+import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.views.DataControl;
 
-public abstract class DataSet<T extends Enum<T>> implements DebugObject {
+public abstract class DataSet<T extends DataSet<T, E>,
+							  E extends Enum<E>> 		implements DebugObject {
 	private SecureManager			theSecurity   	= null;
 	private ControlKey.List			theControlKeys  = null;
 	private DataKey.List			theDataKeys		= null;
 	private ControlData.List		theControlData 	= null;
-	private Class<T>				theClass 		= null;
-
+	private Class<E>				theClass 		= null;
+	private int						theNumEncrypted	= 0;
+	
 	/**
 	 * The DataList Map
 	 */
-	private Map<T, DataList<?>>		theMap			= null;
+	private Map<E, DataList<?,?>>	theMap			= null;
 
     /* Access methods */
-	protected SecureManager		getSecurity() 		{ return theSecurity; }
+	public SecureManager		getSecurity() 		{ return theSecurity; }
 	public ControlKey.List 		getControlKeys() 	{ return theControlKeys; }
 	public DataKey.List 		getDataKeys() 		{ return theDataKeys; }
 	public ControlData.List 	getControlData() 	{ return theControlData; }
@@ -37,7 +40,7 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 	 *  @param pClass the class of the item types
 	 */ 
 	protected DataSet(SecureManager 	pSecurity,
-				   	  Class<T>			pClass) {
+				   	  Class<E>			pClass) {
 		/* Store the security manager and class */
 		theSecurity   	= pSecurity;
 		theClass		= pClass;
@@ -48,28 +51,44 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 		theControlData 	= new ControlData.List(this);
 		
 		/* Create the map of additional lists */
-		theMap			= new EnumMap<T, DataList<?>>(pClass);
+		theMap			= new EnumMap<E, DataList<?,?>>(pClass);
 	}
 	
 	/**
 	 * Constructor for a cloned DataSet
 	 * @param pSource the source DataSet
 	 */
-	protected DataSet(DataSet<T> pSource) {
+	protected DataSet(DataSet<T,E> pSource) {
 		/* Store the security manager and class */
 		theSecurity   	= pSource.theSecurity;
 		theClass		= pSource.theClass;
 		
 		/* Create the map of additional lists */
-		theMap			= new EnumMap<T, DataList<?>>(theClass);		
+		theMap			= new EnumMap<E, DataList<?,?>>(theClass);		
+	}
+	
+	/**
+	 * Construct a Deep Copy for for a DataSet.
+	 * @param pSource the source DataSet
+	 */
+	public abstract T	getDeepCopy();
+
+	/**
+	 * Construct a Deep Copy for a DataSet.
+	 * @param pSource the source DataSet
+	 */
+	protected void	getDeepCopy(DataSet<T,E> pSource) {
+		/* Deep Copy the Security items */
+		theControlKeys 	= pSource.getControlKeys().getDeepCopy(this);
+		theDataKeys		= pSource.getDataKeys().getDeepCopy(this);
+		theControlData	= pSource.getControlData().getDeepCopy(this);
 	}
 	
 	/**
 	 * Construct an update extract for a DataSet.
 	 * @param pExtract the extract to build 
-	 * @return the update DataSet 
 	 */
-	protected void getUpdateSet(DataSet<T> 	pExtract) {
+	protected void getUpdateSet(T	pExtract) {
 		/* Build the static differences */
 		pExtract.theControlKeys = theControlKeys.getUpdateList();
 		pExtract.theDataKeys   	= theDataKeys.getUpdateList();
@@ -84,7 +103,7 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 	 * Items that are in both list but differ will be viewed as changed 
 	 * @param pOld The old list to extract from 
 	 */
-	public abstract DataSet<?> getDifferenceSet(DataSet<?> pOld) throws Exception;
+	public abstract T getDifferenceSet(T pOld) throws Exception;
 
 	/**
 	 * Construct a difference extract between two DataSets.
@@ -95,8 +114,8 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 	 * @param pNew The new list to compare 
 	 * @param pOld The old list to compare 
 	 */
-	protected void getDifferenceSet(DataSet<T> pNew, 
-									DataSet<T> pOld) throws Exception {
+	protected void getDifferenceSet(T pNew, 
+									T pOld) throws Exception {
 		/* Build the security differences */
 		theControlKeys 	= pNew.getControlKeys().getDifferences(pOld.getControlKeys());
 		theDataKeys		= pNew.getDataKeys().getDifferences(pOld.getDataKeys());
@@ -107,7 +126,7 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 	 * ReBase this data set against an earlier version.
 	 * @param pOld The old data to reBase against 
 	 */
-	public void reBase(DataSet<?> pOld) throws Exception {
+	public void reBase(T pOld) throws Exception {
 		/* ReBase the security items */
 		theControlKeys.reBase(pOld.getControlKeys());
 		theDataKeys.reBase(pOld.getDataKeys());
@@ -119,9 +138,12 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 	 * @param pItemType the type of the item to add
 	 * @param pList the list to add
 	 */
-	protected void addList(T pItemType, DataList<?> pList) {
+	protected void addList(E pItemType, DataList<?,?> pList) {
 		/* Add the list to the map */
 		theMap.put(pItemType, pList);
+		
+		/* Note if the list is an encrypted list */
+		if (pList instanceof EncryptedList) theNumEncrypted++;
 	}
 	
 	/**
@@ -129,7 +151,7 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 	 * @param pItemType the type of items
 	 * @return the list of items
 	 */
-	abstract public DataList<?> getDataList(Enum<?> pItemType);
+	abstract public DataList<?,?> getDataList(Enum<?> pItemType);
 	
 	/**
 	 * Analyse the DataSet
@@ -153,7 +175,7 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 		if (pThat.getClass() != this.getClass()) return false;
 		
 		/* Access the object as a DataSet */
-		DataSet<?> myThat = (DataSet<?>)pThat;
+		DataSet<?,?> myThat = (DataSet<?,?>)pThat;
 		
 		/* Compare class */
 		if (theClass != myThat.theClass) return false;
@@ -164,10 +186,10 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 		if (!theControlData.equals(myThat.getControlData())) return false;
 		
 		/* Loop through the Enum values */
-		for (T myType: theClass.getEnumConstants()) {
+		for (E myType: theClass.getEnumConstants()) {
 			/* Access the lists */
-			DataList<?> myThisList = theMap.get(myType);
-			DataList<?> myThatList = myThat.theMap.get(myType);
+			DataList<?,?> myThisList = theMap.get(myType);
+			DataList<?,?> myThatList = myThat.theMap.get(myType);
 			
 			/* Handle trivial cases */
 			if (myThisList == myThatList) 	continue;
@@ -200,9 +222,9 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 		addChildEntry(pManager, pParent, theControlData);
 		
 		/* Loop through the Enum values */
-		for (T myType: theClass.getEnumConstants()) {
+		for (E myType: theClass.getEnumConstants()) {
 			/* Access the lists */
-			DataList<?> myList = theMap.get(myType);
+			DataList<?,?> myList = theMap.get(myType);
 			
 			/* Add the child entry */
 			addChildEntry(pManager, pParent, myList);
@@ -215,7 +237,7 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 	 */
 	private void addChildEntry(DebugManager 	pManager,
 							   DebugEntry		pParent,
-							   DataList<?>		pList) {
+							   DataList<?,?>	pList) {
 		/* Don't add difference/update lists that are empty */
 		if (((pList.getStyle() != ListStyle.DIFFER) &&
 		     (pList.getStyle() != ListStyle.UPDATE)) ||
@@ -235,9 +257,9 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 			return false;
 
 		/* Loop through the Enum values */
-		for (T myType: theClass.getEnumConstants()) {
+		for (E myType: theClass.getEnumConstants()) {
 			/* Access the lists */
-			DataList<?> myList = theMap.get(myType);
+			DataList<?,?> myList = theMap.get(myType);
 			
 			/* Determine whether the list is empty */
 			if (!myList.isEmpty()) return false;
@@ -258,9 +280,9 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 		if (theControlData.hasUpdates()) return true;
 		
 		/* Loop through the Enum values */
-		for (T myType: theClass.getEnumConstants()) {
+		for (E myType: theClass.getEnumConstants()) {
 			/* Access the lists */
-			DataList<?> myList = theMap.get(myType);
+			DataList<?,?> myList = theMap.get(myType);
 			
 			/* Determine whether the list has updates */
 			if (myList.hasUpdates()) return true;
@@ -297,9 +319,15 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 	
 	/**
 	 * Initialise Security from database (if present) 
+	 * @param pThread the thread status
 	 * @param pBase the database data
+	 * @return Continue <code>true/false</code>
 	 */
-	public void initialiseSecurity(DataSet<?> pBase) throws Exception {
+	public boolean initialiseSecurity(ThreadStatus<T>	pThread,
+								   	  T					pBase) throws Exception {
+		/* Set the number of stages */
+		if (!pThread.setNumStages(1+theNumEncrypted)) return false;
+		
 		/* Initialise Security */
 		theControlKeys.initialiseSecurity(pBase);		
 
@@ -309,54 +337,72 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 		/* Loop through the Enum values */
 		for (Enum<?> myType: theClass.getEnumConstants()) {
 			/* Access the lists */
-			DataList<?> myList = theMap.get(myType);
-			DataList<?> myBase = pBase.getDataList(myType);
+			DataList<?,?> myList = theMap.get(myType);
+			DataList<?,?> myBase = pBase.getDataList(myType);
 			
 			/* If the list is an encrypted list */
 			if (myList instanceof EncryptedList) {
 				/* Adopt the security */
-				EncryptedList<?> myEncrypted = (EncryptedList<?>)myList;
-				myEncrypted.adoptSecurity(myControl, (EncryptedList<?>) myBase);
+				EncryptedList<?,?> myEncrypted = (EncryptedList<?,?>)myList;
+				if (!myEncrypted.adoptSecurity(pThread, myControl, (EncryptedList<?,?>) myBase))
+					return false;
 			}
 		}
+		
+		/* Return success */
+		return true;
 	}
 	
 	/**
 	 * Renew Security 
+	 * @param pThread the thread status
+	 * @return Continue <code>true/false</code>
 	 */
-	public void renewSecurity() throws Exception {
-		/* Create a new ControlKey */
-		ControlKey myKey = theControlKeys.addItem();
+	public boolean renewSecurity(ThreadStatus<T>	pThread) throws Exception {
+		/* Access ControlData */
+		ControlData myControl = getControl();
+		
+		/* Clone the control key */
+		ControlKey myKey = theControlKeys.addItem(myControl.getControlKey());
 				
 		/* Declare the New Control Key */
-		getControl().setControlKey(myKey);
+		myControl.setControlKey(myKey);
 		
 		/* Update Security */
-		updateSecurity();
+		return updateSecurity(pThread);
 	}
 	
 	/**
 	 * Update Security 
+	 * @param pThread the thread status
+	 * @return Continue <code>true/false</code>
 	 */
-	public void updateSecurity() throws Exception {
+	public boolean updateSecurity(ThreadStatus<T>	pThread) throws Exception {
 		/* Access the control key */
 		ControlKey myControl = getControlKey();
 		
+		/* Set the number of stages */
+		if (!pThread.setNumStages(1+theNumEncrypted)) return false;
+		
 		/* Loop through the Enum values */
-		for (T myType: theClass.getEnumConstants()) {
+		for (E myType: theClass.getEnumConstants()) {
 			/* Access the lists */
-			DataList<?> myList = theMap.get(myType);
+			DataList<?,?> myList = theMap.get(myType);
 			
 			/* If the list is an encrypted list */
 			if (myList instanceof EncryptedList) {
 				/* Update the security */
-				EncryptedList<?> myEncrypted = (EncryptedList<?>)myList;
-				myEncrypted.updateSecurity(myControl);
+				EncryptedList<?,?> myEncrypted = (EncryptedList<?,?>)myList;
+				if (!myEncrypted.updateSecurity(pThread, myControl))
+					return false;
 			}
 		}
 		
 		/* Delete old ControlSets */
 		theControlKeys.purgeOldControlKeys();
+		
+		/* Return success */
+		return true;
 	}
 	
 	/**
@@ -373,20 +419,15 @@ public abstract class DataSet<T extends Enum<T>> implements DebugObject {
 	
 	/**
 	 * Update data with a new password
+	 * @param pThread the thread status
 	 * @param pSource the source of the data
-	 * @return was the password changed <code>true/false</code>
 	 */
-	public boolean updateSecurityControl(String pSource) throws Exception {
-		/* Update the security control */
-		boolean isChanged = theSecurity.updateSecurityControl(getSecurityControl(), pSource);
+	public void updateSecurityControl(ThreadStatus<T>	pThread,
+									  String 			pSource) throws Exception {
+		/* Obtain a new security control */
+		SecurityControl myControl = theSecurity.getSecurityControl(null, pSource);
 		
-		/* If we changed the password */
-		if (isChanged) {
-			/* Update the control details */
-			getControlKey().updateSecurityControl();
-		}
-		
-		/* Return to the caller */
-		return isChanged;
+		/* Update the control details */
+		getControlKey().updateSecurityControl(myControl);
 	}
 }

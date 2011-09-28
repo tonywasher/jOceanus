@@ -148,7 +148,7 @@ public class BatchControl {
 		 * @param pState the state of the items to update
 		 */
 		private void commitBatch() {
-			DataList<?>.ListIterator	myIterator;
+			DataList<?,?>.ListIterator	myIterator;
 			DataItem<?>					myCurr;
 			DataItem<?>					myBase;
 			

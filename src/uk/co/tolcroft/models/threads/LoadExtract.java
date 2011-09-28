@@ -10,7 +10,7 @@ import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.ui.FileSelector.BackupLoad;
 import uk.co.tolcroft.models.views.DataControl;
 
-public class LoadExtract<T extends DataSet<?>> extends LoaderThread<T> {
+public class LoadExtract<T extends DataSet<T,?>> extends LoaderThread<T> {
 	/* Task description */
 	private static String  	theTask		= "Extract Load";
 
@@ -67,9 +67,15 @@ public class LoadExtract<T extends DataSet<?>> extends LoaderThread<T> {
 		/* Load underlying database */
 		myStore	= myDatabase.loadDatabase(theStatus);
 
+		/* Re-initialise the status window */
+		initStatusBar("Re-applying Security");
+	
 		/* Initialise the security, either from database or with a new security control */
-		myData.initialiseSecurity(myStore);
+		myData.initialiseSecurity(theStatus, myStore);
 			
+		/* Re-initialise the status window */
+		initStatusBar("Analysing Data");
+	
 		/* Analyse the Data to ensure that close dates are updated */
 		myData.analyseData(theControl);
 			

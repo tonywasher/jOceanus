@@ -66,9 +66,15 @@ public class LoadArchive extends LoaderThread<FinanceData> {
 		/* Load underlying database */
 		myStore	= myDatabase.loadDatabase(theStatus);
 
+		/* Re-initialise the status window */
+		initStatusBar("Applying Security");
+	
 		/* Initialise the security, either from database or with a new security control */
-		myData.initialiseSecurity(myStore);
+		myData.initialiseSecurity(theStatus, myStore);
 			
+		/* Re-initialise the status window */
+		initStatusBar("Analysing Data");
+	
 		/* Analyse the Data to ensure that close dates are updated */
 		myData.analyseData(theControl);
 			

@@ -129,10 +129,7 @@ public class SymmetricKey {
 		if (myThat.theKeyType != theKeyType) return false;
 		
 		/* Ensure that the secret key is identical */
-		if (Utils.differs(myThat.theEncodedKeyDef, theEncodedKeyDef)) return false;
-		
-		/* Identical if those tests succeed */
-		return true;
+		return Utils.differs(myThat.theEncodedKeyDef, theEncodedKeyDef).isIdentical();
 	}
 	
 	/**

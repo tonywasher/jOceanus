@@ -9,7 +9,8 @@ import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
  * Generic implementation of a DataList for DataItems Stack
  * @author Tony Washer
  */
-public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T> 
+public abstract class DataList<L extends DataList<L,T>,
+							   T extends DataItem<T>> 	extends SortedList<T> 
 												   		implements DebugObject {
 	/**
 	 * The style of the list
@@ -27,9 +28,19 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 	private	IdManager<T>	theMgr	  	= null;
 		
 	/**
+	 * The class 
+	 */
+	private	Class<L>		theClass  	= null;
+		
+	/**
+	 * The class 
+	 */
+	private	L				theList  	= null;
+		
+	/**
 	 * The base list (for extracts) 
 	 */
-	private	DataList<?>		theBase	  	= null;
+	private	DataList<?,?>	theBase	  	= null;
 		
 	/**
 	 * Get the style of the list
@@ -90,18 +101,40 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 	 * Set the base DataList
 	 * @param pBase the list that this list is based upon
 	 */
-	protected	void		setBase(DataList<?> pBase) { theBase = pBase; }
+	protected	void		setBase(DataList<?,?> pBase) { theBase = pBase; }
 
 	/**
+	 * Get List
+	 * @return the List
+	 */
+	public		L			getList() 	{ return theList; }
+	
+	/**
+	 * Get Max Id
+	 * @return the Maximum Id
+	 */
+	public		int			getMaxId() 	{ return theMgr.getMaxId(); }
+	
+	/**
+	 * Set Max Id
+	 * @param uMaxId the Maximum Id
+	 */
+	public		void		setMaxId(int uMaxId) { theMgr.setMaxId(uMaxId); }
+	
+	/**
 	 * Construct a new object
-	 * @param pClass the class of the underlying object
+	 * @param pClass the class
+	 * @param pBaseClass the class of the underlying object
 	 * @param pStyle the new {@link ListStyle}
 	 * @param fromStart - should inserts be attempted from start/end of list
 	 */
-	protected DataList(Class<T>	 pClass,
-					   ListStyle pStyle,
-			           boolean   fromStart) {
-		super(pClass, fromStart);
+	protected DataList(Class<L>		pClass,
+					   Class<T>	 	pBaseClass,
+					   ListStyle 	pStyle,
+			           boolean   	fromStart) {
+		super(pBaseClass, fromStart);
+		theClass = pClass;
+		theList	 = pClass.cast(this);
 		theStyle = pStyle;
 		theMgr	 = new IdManager<T>();
 	}
@@ -110,9 +143,11 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 	 * Construct a clone object
 	 * @param pSource the list to clone
 	 */
-	protected DataList(DataList<T>	 pSource) {
+	protected DataList(L pSource) {
 		super(pSource.getBaseClass(), false);
 		theStyle = ListStyle.VIEW;
+		theClass = pSource.theClass;
+		theList	 = theClass.cast(this);
 		theMgr	 = new IdManager<T>();
 		theBase  = pSource;
 	}
@@ -121,25 +156,31 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 	 * Construct an update extract for a DataList.
 	 * @return the update extract (or null if not core data list) 
 	 */
-	abstract protected DataList<T> getUpdateList();
+	abstract protected L getUpdateList();
 	
 	/**
 	 * Construct an edit extract for a DataList.
 	 * @return the edit extract (or null if not edit-able list) 
 	 */
-	abstract protected DataList<T> getEditList();
+	abstract protected L getEditList();
 	
 	/**
 	 * Obtain a clone of the list
 	 * @return the clone of  the list
 	 */
-	abstract protected DataList<T> getClonedList();
+	abstract protected L getDeepCopy(DataSet<?,?> pDataSet);
+		
+	/**
+	 * Obtain a copy of the list
+	 * @return the copy of  the list
+	 */
+	abstract protected L getShallowCopy();
 		
 	/**
 	 * Construct an difference extract for a DataList.
 	 * @return the difference extract (or null if not differ-able list) 
 	 */
-	abstract protected DataList<T> getDifferences(DataList<T> pOld);
+	abstract protected L getDifferences(L pOld);
 	
 	/**
 	 * Populate an Extract List
@@ -150,7 +191,7 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 		theStyle = pStyle;
 			
 		/* Local variables */
-		DataList<?>.ListIterator 	myIterator;
+		DataList<?,?>.ListIterator 	myIterator;
 		DataItem<?>					myCurr;
 		DataItem<T>					myItem;
 			
@@ -162,21 +203,25 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 		
 		/* Loop through the list */
 		while ((myCurr = myIterator.next()) != null)  { 
-			/* If this item is not CLEAN or this is not an update extract */
-			if ((pStyle != ListStyle.UPDATE) ||
-			    (myCurr.getState() != DataState.CLEAN)) {
-				/* Copy the item */
-				myItem = addNewItem(myCurr);
+			/* Ignore this item for UPDATE lists if it is clean */
+			if ((pStyle == ListStyle.UPDATE) &&
+			    (myCurr.getState() == DataState.CLEAN))
+				continue;
+			
+			/* Copy the item */
+			myItem = addNewItem(myCurr);
 					
-				/* If the item is a changed object */
-				if ((pStyle == ListStyle.UPDATE) &&
-					(myItem.getState() == DataState.CHANGED)) {
-					/* Ensure that we record the correct history */
-					if (myItem.getCurrentValues() != null)
-						myItem.setHistory();
-				}
+			/* If the item is a changed object */
+			if ((pStyle == ListStyle.UPDATE) &&
+				(myItem.getState() == DataState.CHANGED)) {
+				/* Ensure that we record the correct history */
+				if (myItem.getCurrentValues() != null)
+					myItem.setHistory();
 			}
 		}
+		
+		/* For Clone lists remove base reference */
+		if (theStyle == ListStyle.CLONE) theBase = null;
 	}
 	
 	/**
@@ -188,7 +233,7 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 	 * @param pNew The new list to compare 
 	 * @param pOld The old list to compare 
 	 */
-	protected void getDifferenceList(DataList<T> pNew, DataList<T> pOld) {
+	protected void getDifferenceList(L pNew, L pOld) {
 		/* Make this list the correct style */
 		theStyle = ListStyle.DIFFER;
 			
@@ -197,10 +242,10 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 		DataItem<T>		myCurr;
 		DataItem<T>		myItem;
 		DataItem<T>		myNew;
-		DataList<T>		myOld;
+		L				myOld;
 			
-		/* Create a clone of the old list */
-		myOld = pOld.getClonedList();
+		/* Create a shallow copy of the old list */
+		myOld = pOld.getShallowCopy();
 			
 		/* Note that this list should show deleted items */
 		setShowDeleted(true);
@@ -260,15 +305,15 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 	 * 
 	 * @param pBase The base list to re-base on 
 	 */
-	public void reBase(DataList<T> pBase) {
+	public void reBase(L pBase) {
 		/* Local variables */
 		ListIterator 	myIterator;
 		T				myCurr;
 		T				myItem;
-		DataList<T>		myBase;
+		L				myBase;
 			
-		/* Create a clone of the base list */
-		myBase = pBase.getClonedList();
+		/* Create a shallow copy of the base list */
+		myBase = pBase.getShallowCopy();
 			
 		/* Create an iterator for our new list */
 		myIterator = listIterator(true);
@@ -914,6 +959,16 @@ public abstract class DataList<T extends DataItem<T>> 	extends SortedList<T>
 		 * Core list holding the true version of the data
 		 */
 		CORE,
+			
+		/**
+		 * Deep Copy clone for security updates
+		 */
+		CLONE,
+			
+		/**
+		 * Shallow Copy list for comparison purposes
+		 */
+		COPY,
 			
 		/**
 		 * Partial extract of the data for the purposes of editing

@@ -206,7 +206,7 @@ public class PasswordKey {
 		if (myThat.theKeyType != theKeyType) return false;
 		
 		/* Compare the two */
-		return !Utils.differs(theSaltAndHash, myThat.theSaltAndHash);
+		return Utils.differs(theSaltAndHash, myThat.theSaltAndHash).isIdentical();
 	}
 	
 	/**
@@ -221,22 +221,6 @@ public class PasswordKey {
 		
 		/* Convert to PBEKeyMode */
 		theKeyMode = new PBEKeyMode(myValue); 
-	}
-	
-	/**
-	 * Seed the password key with the password
-	 * @param pPassword the password (cleared after usage)
-	 */
-	public void setNewPassword(char[] pPassword) throws WrongPasswordException,
-														Exception {
-		/* Clear the salt and hash */
-		theSaltAndHash = null;
-		
-		/* Create a random KeyMode */
-		theKeyMode = PBEKeyMode.getMode(theRandom);
-		
-		/* Reset the password */
-		setPassword(pPassword);
 	}
 	
 	/**

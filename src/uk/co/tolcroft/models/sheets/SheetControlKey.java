@@ -23,7 +23,7 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
 	/**
 	 * DataSet
 	 */
-	private DataSet<?> 			theData			= null;
+	private DataSet<?,?> 			theData			= null;
 
 	/**
 	 * Constructor for loading a spreadsheet

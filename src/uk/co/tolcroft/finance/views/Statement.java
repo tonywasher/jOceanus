@@ -7,7 +7,7 @@ import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Number.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.ValidationControl;
@@ -195,12 +195,12 @@ public class Statement implements DebugObject {
 	}
 	
 	/* The List class */
-	public class List extends EncryptedList<Line> {
+	public class List extends EncryptedList<List, Line> {
 		private Statement theStatement = null;
 		
 		/* Constructors */
 		public List(Statement pStatement) { 
-			super(Line.class, theView.getData(), ListStyle.EDIT);
+			super(List.class, Line.class, theView.getData(), ListStyle.EDIT);
 			theStatement = pStatement;
 			setBase(theView.getData().getEvents());
 		}
@@ -208,8 +208,9 @@ public class Statement implements DebugObject {
 		/* Obtain extract lists. */
 		public List getUpdateList() { return null; }
 		public List getEditList() 	{ return null; }
-		public List getClonedList() { return null; }
-		public List getDifferences(DataList<Line> pOld) { return null; }
+		public List getShallowCopy() { return null; }
+		public List getDeepCopy(DataSet<?,?> pData) { return null; }
+		public List getDifferences(List pOld) { return null; }
 
 		/* Is this list locked */
 		public boolean isLocked() { return theAccount.isLocked(); }
@@ -764,17 +765,17 @@ public class Statement implements DebugObject {
 			/* Check whether this object is equal to that passed */
 			public boolean histEquals(HistoryValues<Line> pCompare) {
 				Values myValues = (Values)pCompare;
-				if (!super.histEquals(pCompare))					  				return false;
-				if (isCredit != myValues.isCredit)      							return false;
-				if (Date.differs(theDate,      				myValues.theDate))      return false;
-				if (differs(theDesc,      					myValues.theDesc))      return false;
-				if (differs(theAmount,    					myValues.theAmount))    return false;
-				if (differs(theUnits,     					myValues.theUnits))     return false;
-				if (Account.differs(thePartner,   			myValues.thePartner))   return false;
-				if (differs(theDilution,					myValues.theDilution))  return false;
-				if (differs(theTaxCredit, 					myValues.theTaxCredit)) return false;
-				if (Utils.differs(theYears,     			myValues.theYears))     return false;
-				if (TransactionType.differs(theTransType,	myValues.theTransType)) return false;
+				if (!super.histEquals(pCompare))					  							  return false;
+				if (isCredit != myValues.isCredit)      										  return false;
+				if (Date.differs(theDate,      				myValues.theDate).isDifferent())      return false;
+				if (differs(theDesc,      					myValues.theDesc).isDifferent())      return false;
+				if (differs(theAmount,    					myValues.theAmount).isDifferent())    return false;
+				if (differs(theUnits,     					myValues.theUnits).isDifferent())     return false;
+				if (Account.differs(thePartner,   			myValues.thePartner).isDifferent())   return false;
+				if (differs(theDilution,					myValues.theDilution).isDifferent())  return false;
+				if (differs(theTaxCredit, 					myValues.theTaxCredit).isDifferent()) return false;
+				if (Utils.differs(theYears,     			myValues.theYears).isDifferent())     return false;
+				if (TransactionType.differs(theTransType,	myValues.theTransType).isDifferent()) return false;
 				return true;
 			}
 			
@@ -829,12 +830,13 @@ public class Statement implements DebugObject {
 				}
 			}
 			
-			public boolean	fieldChanged(int fieldNo, HistoryValues<Line> pOriginal) {
-				Values	pValues = (Values)pOriginal;
-				boolean	bResult = false;
+			public Difference	fieldChanged(int fieldNo, HistoryValues<Line> pOriginal) {
+				Values		pValues = (Values)pOriginal;
+				Difference	bResult = Difference.Identical;
 				switch (fieldNo) {
 					case Statement.Line.FIELD_CREDIT:
-						bResult = (isCredit != pValues.isCredit);
+						bResult = (isCredit != pValues.isCredit) ? Difference.Different 
+																 : Difference.Identical;
 						break;
 					case Statement.Line.FIELD_DATE:
 						bResult = (Date.differs(theDate,       			pValues.theDate));

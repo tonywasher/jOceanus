@@ -10,7 +10,7 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.security.SecureManager;
 import uk.co.tolcroft.models.views.DataControl;
 
-public class FinanceData extends DataSet<ItemType> {
+public class FinanceData extends DataSet<FinanceData, ItemType> {
 	/* Members */
 	private AccountType.List		theActTypes   	= null;
 	private TransactionType.List	theTransTypes 	= null;
@@ -106,6 +106,38 @@ public class FinanceData extends DataSet<ItemType> {
 	}
 	
 	/**
+	 * Construct a Deep Copy for a DataSet.
+	 */
+	public FinanceData	getDeepCopy() {
+		/* Build an empty DataSet */
+		FinanceData myExtract = new FinanceData(this);
+		
+		/* Obtain underlying updates */
+		myExtract.getDeepCopy(this);
+		
+		/* Build the static extract */
+		myExtract.theActTypes   = theActTypes.getDeepCopy(this);
+		myExtract.theTransTypes = theTransTypes.getDeepCopy(this);
+		myExtract.theTaxTypes   = theTaxTypes.getDeepCopy(this);
+		myExtract.theTaxRegimes = theTaxRegimes.getDeepCopy(this);
+		myExtract.theFrequencys = theFrequencys.getDeepCopy(this);
+		
+		/* Build the data extract */
+		myExtract.theTaxYears   = theTaxYears.getDeepCopy(this);
+		myExtract.theAccounts   = theAccounts.getDeepCopy(this);
+		myExtract.theRates      = theRates.getDeepCopy(this);
+		myExtract.thePrices     = thePrices.getDeepCopy(this);
+		myExtract.thePatterns   = thePatterns.getDeepCopy(this);
+		myExtract.theEvents     = theEvents.getDeepCopy(this);
+
+		/* Declare the lists */
+		myExtract.declareLists();
+		
+		/* Return the extract */
+		return myExtract;		
+	}
+	
+	/**
 	 * Construct a difference extract between two DataSets.
 	 * The difference extract will only contain items that differ between the two DataSets.
 	 * Items that are in this list, but not in the old list will be viewed as inserted.
@@ -113,7 +145,7 @@ public class FinanceData extends DataSet<ItemType> {
 	 * Items that are in both lists but differ will be viewed as changed 
 	 * @param pOld The DataSet to compare to 
 	 */
-	public DataSet<?> getDifferenceSet(DataSet<?> pOld) throws Exception {
+	public FinanceData getDifferenceSet(FinanceData pOld) throws Exception {
 		/* Make sure that the DataSet if the same type */
 		if (!(pOld instanceof FinanceData)) 
 			throw new Exception(ExceptionClass.LOGIC,
@@ -154,7 +186,7 @@ public class FinanceData extends DataSet<ItemType> {
 	 * ReBase this data set against an earlier version.
 	 * @param pOld The old data to reBase against 
 	 */
-	public void reBase(DataSet<?> pOld) throws Exception {
+	public void reBase(FinanceData pOld) throws Exception {
 		/* Make sure that the DataSet if the same type */
 		if (!(pOld instanceof FinanceData)) 
 			throw new Exception(ExceptionClass.LOGIC,
@@ -254,7 +286,7 @@ public class FinanceData extends DataSet<ItemType> {
 	 * @param pItemType the type of items
 	 * @return the list of items
 	 */
-	public DataList<?> getDataList(Enum<?> pItemType) {
+	public DataList<?,?> getDataList(Enum<?> pItemType) {
 		/* Switch on item type */
 		switch((ItemType)pItemType) {
 			case AccountType:	return theActTypes;
