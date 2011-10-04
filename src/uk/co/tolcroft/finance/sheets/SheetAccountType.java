@@ -56,17 +56,17 @@ public class SheetAccountType extends SheetStaticData<AccountType> {
 	/**
 	 * Load encrypted 
 	 */
-	protected void loadEncryptedItem(int pId, int pControlId, int pClassId, byte[] pName, byte[] pDesc) throws Exception {
+	protected void loadEncryptedItem(int pId, int pControlId, boolean isEnabled, byte[] pName, byte[] pDesc) throws Exception {
 		/* Create the item */
-		theList.addItem(pId, pControlId, pClassId, pName, pDesc);		
+		theList.addItem(pId, pControlId, isEnabled, pName, pDesc);		
 	}
 
 	/**
 	 * Load clear text 
 	 */
-	protected void loadClearTextItem(int uId, int pClassId, String pName, String pDesc) throws Exception {
+	protected void loadClearTextItem(int uId, boolean isEnabled, String pName, String pDesc) throws Exception {
 		/* Create the item */
-		theList.addItem(uId, pClassId, pName, pDesc);		
+		theList.addItem(uId, isEnabled, pName, pDesc);		
 	}
 	
 	/**

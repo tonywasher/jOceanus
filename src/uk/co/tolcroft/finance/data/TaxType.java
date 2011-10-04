@@ -64,16 +64,16 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 	 * Construct a standard tax type on load
 	 * @param pList	The list to associate the Tax Type with
 	 * @param uId   ID of TaxType
-	 * @param uClassId the class id of the new item
+	 * @param isEnabled is the TaxType enabled
 	 * @param pName Name of Tax Type
 	 * @param pDesc Description of Tax Type
 	 */
 	private TaxType(List 	pList,
 					int		uId,
-			        int		uClassId,
+			        boolean	isEnabled,
 			        String	pName,
 			        String	pDesc) throws Exception {
-		super(pList, uId, uClassId, pName, pDesc);
+		super(pList, uId, isEnabled, pName, pDesc);
 	}
 	
 	/**
@@ -81,17 +81,17 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 	 * @param pList	The list to associate the TaxType with
 	 * @param uId   ID of TaxType
 	 * @param uControlId the control id of the new item
-	 * @param uClassId the class id of the new item
+	 * @param isEnabled is the TaxType enabled
 	 * @param sName Encrypted Name of TaxType
 	 * @param pDesc Encrypted Description of TaxType
 	 */
 	private TaxType(List 	pList,
 			      	int		uId,
 			      	int		uControlId,
-			      	int		uClassId,
+			      	boolean	isEnabled,
 			      	byte[]	sName,
 			      	byte[]	pDesc) throws Exception {
-		super(pList, uId, uControlId, uClassId, sName, pDesc);
+		super(pList, uId, uControlId, isEnabled, sName, pDesc);
 	}
 
 	/**
@@ -228,17 +228,17 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 			/* Create a new Tax Type */
 			myTaxType = new TaxType(this, pTaxType);
 			
+			/* Check that this TaxTypeId has not been previously added */
+			if (!isIdUnique(myTaxType.getId())) 
+				throw new Exception(ExceptionClass.DATA,
+	  					  			myTaxType,
+			  			            "Duplicate TaxTypeId");
+				 
 			/* Check that this TaxType has not been previously added */
 			if (searchFor(pTaxType) != null) 
 				throw new Exception(ExceptionClass.DATA,
 	  					  			myTaxType,
 			                        "Duplicate Tax Type");
-				
-			/* Check that this ClassId has not been previously added */
-			if (searchForEnum(myTaxType.getStaticClassId()) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	  					  			myTaxType,
-			                        "Duplicate TaxClass");
 				
 			/* Add the Tax Type to the list */
 			add(myTaxType);
@@ -247,18 +247,18 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 		/**
 		 * Add a TaxType to the list
 		 * @param uId   ID of TaxType
-		 * @param uClassId the ClassId of the tax type
+		 * @param isEnabled is the TaxType enabled
 		 * @param pTaxType the Name of the tax type
 		 * @param pDesc the Description of the tax type
 		 */ 
-		public void addItem(int    uId,
-							int	   uClassId,
-				            String pTaxType,
-				            String pDesc) throws Exception {
+		public void addItem(int    	uId,
+							boolean	isEnabled,
+				            String 	pTaxType,
+				            String 	pDesc) throws Exception {
 			TaxType myTaxType;
 				
 			/* Create a new Tax Type */
-			myTaxType = new TaxType(this, uId, uClassId, pTaxType, pDesc);
+			myTaxType = new TaxType(this, uId, isEnabled, pTaxType, pDesc);
 				
 			/* Check that this TaxTypeId has not been previously added */
 			if (!isIdUnique(myTaxType.getId())) 
@@ -272,12 +272,6 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 	   					  			myTaxType,
 			  			            "Duplicate Tax Type");
 				 
-			/* Check that this ClassId has not been previously added */
-			if (searchForEnum(uClassId) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	  					  			myTaxType,
-			                        "Duplicate TaxClass");
-				
 			/* Add the Tax Type to the list */
 			add(myTaxType);
 		}	
@@ -286,19 +280,19 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 		 * Add a TaxType
 		 * @param uId the Id of the tax type
 		 * @param uControlId the control id of the new item
-		 * @param uClassId the ClassId of the tax type
+		 * @param isEnabled is the TaxType enabled
 		 * @param pTaxType the Encrypted Name of the tax type
 		 * @param pDesc the Encrypted Description of the tax type
 		 */ 
 		public void addItem(int		uId,
 							int		uControlId,
-							int		uClassId,
+							boolean	isEnabled,
 				            byte[] 	pTaxType,
 				            byte[]	pDesc) throws Exception {
 			TaxType      myTaxType;
 			
 			/* Create a new Tax Type */
-			myTaxType = new TaxType(this, uId, uControlId, uClassId, pTaxType, pDesc);
+			myTaxType = new TaxType(this, uId, uControlId, isEnabled, pTaxType, pDesc);
 			
 			/* Check that this TaxTypeId has not been previously added */
 			if (!isIdUnique(uId)) 
@@ -311,12 +305,6 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 				throw new Exception(ExceptionClass.DATA,
 	  					  			myTaxType,
 			                        "Duplicate Tax Type");
-				
-			/* Check that this ClassId has not been previously added */
-			if (searchForEnum(uClassId) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	  					  			myTaxType,
-			                        "Duplicate TaxClass");
 				
 			/* Add the Tax Type to the list */
 			add(myTaxType);

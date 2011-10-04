@@ -7,8 +7,8 @@ import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 public abstract class SheetStaticData <T extends StaticData<T,?>> extends SheetDataItem<T> {
 
 	/* Load the Static Data */
-	protected  abstract void loadEncryptedItem(int pId, int pControlId, int pClassId, byte[] pName, byte[] pDesc) throws Exception;
-	protected  abstract void loadClearTextItem(int pId, int pClassId, String pName, String pDesc) throws Exception;
+	protected  abstract void loadEncryptedItem(int pId, int pControlId, boolean isEnabled, byte[] pName, byte[] pDesc) throws Exception;
+	protected  abstract void loadClearTextItem(int pId, boolean isEnabled, String pName, String pDesc) throws Exception;
 
 	/**
 	 * Is the spreadsheet a backup spreadsheet or an edit-able one
@@ -60,30 +60,30 @@ public abstract class SheetStaticData <T extends StaticData<T,?>> extends SheetD
 		/* If this is a backup load */
 		if (isBackup) {
 			/* Access the IDs */
-			int myID 		= loadInteger(0);
-			int myControlId	= loadInteger(1);
-			int myClassId	= loadInteger(2);
+			int myID 			= loadInteger(0);
+			int myControlId		= loadInteger(1);
+			boolean myEnabled	= loadBoolean(2);
 		
 			/* Access the name and description bytes */
 			byte[] myNameBytes = loadBytes(3);
 			byte[] myDescBytes = loadBytes(4);
 		
 			/* Load the item */
-			loadEncryptedItem(myID, myControlId, myClassId, myNameBytes, myDescBytes);
+			loadEncryptedItem(myID, myControlId, myEnabled, myNameBytes, myDescBytes);
 		}
 		
 		/* else this is a load from an edit-able spreadsheet */
 		else {
 			/* Access the IDs */
-			int myID 		= loadInteger(0);
-			int myClassId	= loadInteger(1);
+			int myID 			= loadInteger(0);
+			boolean myEnabled	= loadBoolean(1);
 		
 			/* Access the name and description bytes */
 			String myName 	= loadString(2);
 			String myDesc 	= loadString(3);
 		
 			/* Load the item */
-			loadClearTextItem(myID, myClassId, myName, myDesc);
+			loadClearTextItem(myID, myEnabled, myName, myDesc);
 		}
 	}
 
@@ -98,7 +98,7 @@ public abstract class SheetStaticData <T extends StaticData<T,?>> extends SheetD
 			/* Set the fields */
 			writeInteger(0, pItem.getId());
 			writeInteger(1, pItem.getControlKey().getId());				
-			writeInteger(2, pItem.getStaticClassId());				
+			writeBoolean(2, pItem.getEnabled());				
 			writeBytes(3, pItem.getNameBytes());
 			writeBytes(4, pItem.getDescBytes());
 		}
@@ -107,7 +107,7 @@ public abstract class SheetStaticData <T extends StaticData<T,?>> extends SheetD
 		else {
 			/* Set the fields */
 			writeInteger(0, pItem.getId());
-			writeInteger(1, pItem.getStaticClassId());				
+			writeBoolean(1, pItem.getEnabled());				
 			writeString(2, pItem.getName());
 			writeString(3, pItem.getDesc());			
 		}
@@ -122,7 +122,7 @@ public abstract class SheetStaticData <T extends StaticData<T,?>> extends SheetD
 
 		/* Write titles */
 		writeString(0, StaticData.fieldName(StaticData.FIELD_ID));
-		writeString(1, StaticData.fieldName(StaticData.FIELD_CLASSID));
+		writeString(1, StaticData.fieldName(StaticData.FIELD_ENABLED));
 		writeString(2, StaticData.fieldName(StaticData.FIELD_NAME));
 		writeString(3, StaticData.fieldName(StaticData.FIELD_DESC));			
 		return true;

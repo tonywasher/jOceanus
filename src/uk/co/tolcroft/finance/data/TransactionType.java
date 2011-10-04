@@ -58,16 +58,16 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 	 * Construct a standard transaction type on load
 	 * @param pList	The list to associate the Transaction Type with
 	 * @param uId   ID of Transaction Type
-	 * @param uClassId the class id of the new item
+	 * @param isEnabled is the TransType enabled
 	 * @param pName Name of Transaction Type
 	 * @param pDesc Description of Transaction Type
 	 */
 	private TransactionType(List 	pList,
 							int		uId,
-			         		int		uClassId,
+			         		boolean	isEnabled,
 			         		String	pName,
 			         		String	pDesc) throws Exception {
-		super(pList, uId, uClassId, pName, pDesc);
+		super(pList, uId, isEnabled, pName, pDesc);
 	}
 	
 	/**
@@ -75,17 +75,17 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 	 * @param pList	The list to associate the Transaction Type with
 	 * @param uId   ID of Transaction Type
 	 * @param uControlId the control id of the new item
-	 * @param uClassId the class id of the new item
+	 * @param isEnabled is the TransType enabled
 	 * @param pName Encrypted Name of Transaction Type
 	 * @param pDesc Encrypted Description of Transaction Type
 	 */
 	private TransactionType(List 	pList,
                        		int		uId,
                        		int		uControlId,
-    			            int		uClassId,
+    			            boolean	isEnabled,
     			            byte[]	pName,
     			            byte[]	pDesc) throws Exception {
-		super(pList, uId, uControlId, uClassId, pName, pDesc);
+		super(pList, uId, uControlId, isEnabled, pName, pDesc);
 	}
 
 	/**
@@ -499,17 +499,17 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 			/* Create a new Transaction Type */
 			myTransType = new TransactionType(this, pTransType);
 			
+			/* Check that this TransTypeId has not been previously added */
+			if (!isIdUnique(myTransType.getId())) 
+				throw new Exception(ExceptionClass.DATA,
+	  					  			myTransType,
+			  			            "Duplicate TranTypeId");
+				 
 			/* Check that this TransactionType has not been previously added */
 			if (searchFor(pTransType) != null) 
 				throw new Exception(ExceptionClass.DATA,
 	  					  			myTransType,
 			                        "Duplicate Transaction Type");
-				
-			/* Check that this ClassId has not been previously added */
-			if (searchForEnum(myTransType.getStaticClassId()) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	  					  			myTransType,
-			                        "Duplicate TransactionClass");
 				
 			/* Add the Transaction Type to the list */
 			add(myTransType);		
@@ -518,31 +518,31 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 		/**
 		 * Add a TransactionType to the list
 		 * @param uId   ID of Transaction Type
-		 * @param uClassId the ClassId of the transaction type
+		 * @param isEnabled is the TransType enabled
 		 * @param pTranType the Name of the transaction type
 		 * @param pDesc the Description of the transaction type
 		 */ 
-		public void addItem(int	   uId,
-							int	   uClassId,
-				            String pTranType,
-				            String pDesc) throws Exception {
+		public void addItem(int	   	uId,
+							boolean	isEnabled,
+				            String 	pTranType,
+				            String 	pDesc) throws Exception {
 			TransactionType myTranType;
 				
 			/* Create a new Transaction Type */
-			myTranType = new TransactionType(this, uId, uClassId, pTranType, pDesc);
+			myTranType = new TransactionType(this, uId, isEnabled, pTranType, pDesc);
 				
+			/* Check that this TransTypeId has not been previously added */
+			if (!isIdUnique(myTranType.getId())) 
+				throw new Exception(ExceptionClass.DATA,
+	  					  			myTranType,
+			  			            "Duplicate TranTypeId");
+				 
 			/* Check that this TransactionType has not been previously added */
 			if (searchFor(myTranType.getName()) != null) 
 				throw new Exception(ExceptionClass.DATA,
 	   					  			myTranType,
 			  			            "Duplicate Transaction Type");
 				 
-			/* Check that this ClassId has not been previously added */
-			if (searchForEnum(uClassId) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	  					  			myTranType,
-			                        "Duplicate TransactionClass");
-				
 			/* Add the Transaction Type to the list */
 			add(myTranType);
 		}	
@@ -551,19 +551,19 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 		 * Add a TransactionType
 		 * @param uId the Id of the transaction type
 		 * @param uControlId the control id of the new item
-		 * @param uClassId the ClassId of the transaction type
+		 * @param isEnabled is the TransType enabled
 		 * @param pTransType the Encrypted Name of the transaction type
 		 * @param pDesc the Encrypted Description of the transaction type
 		 */ 
-		public void addItem(int    uId,
-							int	   uControlId,
-							int	   uClassId,
-				            byte[] pTransType,
-				            byte[] pDesc) throws Exception {
+		public void addItem(int    	uId,
+							int	   	uControlId,
+							boolean	isEnabled,
+				            byte[] 	pTransType,
+				            byte[] 	pDesc) throws Exception {
 			TransactionType     myTransType;
 			
 			/* Create a new Transaction Type */
-			myTransType = new TransactionType(this, uId, uControlId, uClassId, pTransType, pDesc);
+			myTransType = new TransactionType(this, uId, uControlId, isEnabled, pTransType, pDesc);
 			
 			/* Check that this TransTypeId has not been previously added */
 			if (!isIdUnique(uId)) 
@@ -576,12 +576,6 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 				throw new Exception(ExceptionClass.DATA,
 	  					  			myTransType,
 			                        "Duplicate Transaction Type");
-				
-			/* Check that this ClassId has not been previously added */
-			if (searchForEnum(uClassId) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	  					  			myTransType,
-			                        "Duplicate TransactionClass");
 				
 			/* Add the Transaction Type to the list */
 			add(myTransType);		

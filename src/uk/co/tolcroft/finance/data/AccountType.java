@@ -56,16 +56,16 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 	/**
 	 * Construct a standard account type on load
 	 * @param pList	The list to associate the Account Type with
-	 * @param uClassId the class id of the new item
+	 * @param isEnabled is the account type enabled
 	 * @param pName Name of Account Type
 	 * @param pDesc Description of Account Type
 	 */
 	private AccountType(List 	pList,
 						int		uId,
-			            int		uClassId,
+			            boolean	isEnabled,
 			            String	pName,
 			            String	pDesc) throws Exception {
-		super(pList, uId, uClassId, pName, pDesc);
+		super(pList, uId, isEnabled, pName, pDesc);
 	}
 	
 	/**
@@ -73,17 +73,17 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 	 * @param pList	The list to associate the Account Type with
 	 * @param uId   ID of Account Type
 	 * @param uControlId the control id of the new item
-	 * @param uClassId the class id of the new item
+	 * @param isEnabled is the account type enabled
 	 * @param pName Encrypted Name of Account Type
 	 * @param pDesc Encrypted Description of Account Type
 	 */
 	private AccountType(List 	pList,
 			            int		uId,
 			            int		uControlId,
-			            int		uClassId,
+			            boolean	isEnabled,
 			            byte[]	pName,
 			            byte[]	pDesc) throws Exception {
-		super(pList, uId, uControlId, uClassId, pName, pDesc);
+		super(pList, uId, uControlId, isEnabled, pName, pDesc);
 	}
 	
 	/**
@@ -549,12 +549,12 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 	   					  			myActType,
 			  			            "Duplicate Account Type");
 				 
-			/* Check that this ClassId has not been previously added */
-			if (searchForEnum(myActType.getStaticClassId()) != null) 
+			/* Check that this AccountTypeId has not been previously added */
+			if (!isIdUnique(myActType.getId())) 
 				throw new Exception(ExceptionClass.DATA,
-	  					  			myActType,
-			                        "Duplicate AccountClass");
-				
+	                      			myActType,
+			  			            "Duplicate AccountTypeId");
+				 
 			/* Add the Account Type to the list */
 			add(myActType);
 		}	
@@ -565,14 +565,14 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 		 * @param pActType the Name of the account type
 		 * @param pDesc the Description of the account type
 		 */ 
-		public void addItem(int	   uId,
-							int	   uClassId,
-				            String pActType,
-				            String pDesc) throws Exception {
+		public void addItem(int	  	uId,
+							boolean	isEnabled,
+				            String 	pActType,
+				            String 	pDesc) throws Exception {
 			AccountType myActType;
 				
 			/* Create a new Account Type */
-			myActType = new AccountType(this, uId, uClassId, pActType, pDesc);
+			myActType = new AccountType(this, uId, isEnabled, pActType, pDesc);
 				
 			/* Check that this AccountTypeId has not been previously added */
 			if (!isIdUnique(myActType.getId())) 
@@ -586,12 +586,6 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 	   					  			myActType,
 			  			            "Duplicate Account Type");
 				 
-			/* Check that this ClassId has not been previously added */
-			if (searchForEnum(uClassId) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	  					  			myActType,
-			                        "Duplicate AccountClass");
-				
 			/* Add the Account Type to the list */
 			add(myActType);
 		}	
@@ -600,19 +594,19 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 		 * Add an AccountType to the list
 		 * @param uId the Id of the account type
 		 * @param uControlId the control id of the new item
-		 * @param uClassId the ClassId of the account type
+		 * @param isEnabled is the account type enabled
 		 * @param pActType the encrypted Name of the account type
 		 * @param pDesc the Encrypted Description of the account type
 		 */ 
-		public void addItem(int    uId,
-							int	   uControlId,
-							int	   uClassId,
-				            byte[] pActType,
-				            byte[] pDesc) throws Exception {
+		public void addItem(int    	uId,
+							int	   	uControlId,
+							boolean	isEnabled,
+				            byte[] 	pActType,
+				            byte[] 	pDesc) throws Exception {
 			AccountType myActType;
 				
 			/* Create a new Account Type */
-			myActType = new AccountType(this, uId, uControlId, uClassId, pActType, pDesc);
+			myActType = new AccountType(this, uId, uControlId, isEnabled, pActType, pDesc);
 				
 			/* Check that this AccountTypeId has not been previously added */
 			if (!isIdUnique(uId)) 
@@ -625,13 +619,6 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 				throw new Exception(ExceptionClass.DATA,
 	   					  			myActType,
 			  			            "Duplicate Account Type");
-				 
-			/* Check that this ClassId has not been previously added */
-			if (searchForEnum(uClassId) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	  					  			myActType,
-			                        "Duplicate AccountClass");
-				
 			/* Add the Account Type to the list */
 			add(myActType);
 		}

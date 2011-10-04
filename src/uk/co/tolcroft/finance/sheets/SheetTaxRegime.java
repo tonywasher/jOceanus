@@ -52,17 +52,17 @@ public class SheetTaxRegime extends SheetStaticData<TaxRegime> {
 	/**
 	 * Load encrypted 
 	 */
-	protected void loadEncryptedItem(int pId, int pControlId, int pClassId, byte[] pName, byte[] pDesc) throws Exception {
+	protected void loadEncryptedItem(int pId, int pControlId, boolean isEnabled, byte[] pName, byte[] pDesc) throws Exception {
 		/* Create the item */
-		theList.addItem(pId, pControlId, pClassId, pName, pDesc);		
+		theList.addItem(pId, pControlId, isEnabled, pName, pDesc);		
 	}
 
 	/**
 	 * Load clear text 
 	 */
-	protected void loadClearTextItem(int pId, int pClassId, String pName, String pDesc) throws Exception {
+	protected void loadClearTextItem(int pId, boolean isEnabled, String pName, String pDesc) throws Exception {
 		/* Create the item */
-		theList.addItem(pId, pClassId, pName, pDesc);		
+		theList.addItem(pId, isEnabled, pName, pDesc);		
 	}
 	
 	/**

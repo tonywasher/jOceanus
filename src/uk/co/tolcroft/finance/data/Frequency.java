@@ -57,16 +57,16 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 	 * Construct a standard frequency on load
 	 * @param pList	The list to associate the Frequency with
 	 * @param uId   ID of Frequency
-	 * @param uClassId the class id of the new item
+	 * @param isEnabled is the frequency enabled
 	 * @param pName Name of Frequency
 	 * @param pDesc Description of Frequency
 	 */
 	private Frequency(List 		pList,
 					  int		uId,
-			          int		uClassId,
+			          boolean	isEnabled,
 			          String	pName,
 			          String	pDesc) throws Exception {
-		super(pList, uId, uClassId, pName, pDesc);
+		super(pList, uId, isEnabled, pName, pDesc);
 	}
 	
 	/**
@@ -74,17 +74,17 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 	 * @param pList	The list to associate the Frequency with
 	 * @param uId   ID of Frequency
 	 * @param uControlId the control id of the new item
-	 * @param uClassId the class id of the new item
+	 * @param isEnabled is the frequency enabled
 	 * @param pName Encrypted Name of Frequency
 	 * @param pDesc Encrypted Description of TaxRegime
 	 */
 	private Frequency(List 		pList,
 			      	  int		uId,
 			      	  int		uControlId,
-			      	  int		uClassId,
+			      	  boolean	isEnabled,
 			      	  byte[]	pName,
 			      	  byte[]	pDesc) throws Exception {
-		super(pList, uId, uControlId, uClassId, pName, pDesc);
+		super(pList, uId, uControlId, isEnabled, pName, pDesc);
 	}
 
 	/**
@@ -190,17 +190,17 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 			/* Create a new Frequency */
 			myFrequency = new Frequency(this, pFrequency);
 				
+			/* Check that this FrequencyId has not been previously added */
+			if (!isIdUnique(myFrequency.getId())) 
+				throw new Exception(ExceptionClass.DATA,
+	  					  			myFrequency,
+			  			            "Duplicate FrequencyId");
+				 
 			/* Check that this Frequency has not been previously added */
 			if (searchFor(pFrequency) != null) 
 				throw new Exception(ExceptionClass.DATA,
 	  					  			myFrequency,
 			                        "Duplicate Frequency");
-				
-			/* Check that this ClassId has not been previously added */
-			if (searchForEnum(myFrequency.getStaticClassId()) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	  					  			myFrequency,
-			                        "Duplicate FrequencyClass");
 				
 			/* Add the Frequency to the list */
 			add(myFrequency);		
@@ -209,18 +209,18 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 		/**
 		 * Add a Frequency to the list
 		 * @param uId   ID of Frequency
-		 * @param uClassId the ClassId of the frequency
+		 * @param isEnabled is the frequency enabled
 		 * @param pFrequency the Name of the frequency
 		 * @param pDesc the Description of the frequency
 		 */ 
-		public void addItem(int	   uId,
-							int	   uClassId,
-				            String pFrequency,
-				            String pDesc) throws Exception {
+		public void addItem(int	   	uId,
+							boolean	isEnabled,
+				            String 	pFrequency,
+				            String 	pDesc) throws Exception {
 			Frequency myFreq;
 				
 			/* Create a new Frequency */
-			myFreq = new Frequency(this, uId, uClassId, pFrequency, pDesc);
+			myFreq = new Frequency(this, uId, isEnabled, pFrequency, pDesc);
 				
 			/* Check that this FrequencyId has not been previously added */
 			if (!isIdUnique(myFreq.getId())) 
@@ -234,12 +234,6 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 	   					  			myFreq,
 			  			            "Duplicate Frequency");
 				 
-			/* Check that this ClassId has not been previously added */
-			if (searchForEnum(uClassId) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	  					  			myFreq,
-			                        "Duplicate FrequencyClass");
-				
 			/* Add the Frequency to the list */
 			add(myFreq);
 		}	
@@ -248,20 +242,20 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 		 * Add a Frequency
 		 * @param uId the Id of the frequency
 		 * @param uControlId the control id of the new item
-		 * @param uClassId the ClassId of the frequency
+		 * @param isEnabled is the frequency enabled
 		 * @param pFrequency the Encrypted Name of the frequency
 		 * @param pDesc the Encrypted Description of the frequency
 		 * @throws Exception on error
 		 */ 
 		public void addItem(int		uId,
 							int		uControlId,
-							int		uClassId,
+							boolean	isEnabled,
 				            byte[] 	pFrequency,
 				            byte[]	pDesc) throws Exception {
 			Frequency myFrequency;
 			
 			/* Create a new Frequency */
-			myFrequency = new Frequency(this, uId, uControlId, uClassId, pFrequency, pDesc);
+			myFrequency = new Frequency(this, uId, uControlId, isEnabled, pFrequency, pDesc);
 				
 			/* Check that this FrequencyId has not been previously added */
 			if (!isIdUnique(uId)) 
@@ -274,12 +268,6 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 				throw new Exception(ExceptionClass.DATA,
 	  					  			myFrequency,
 			                        "Duplicate Frequency");
-				
-			/* Check that this ClassId has not been previously added */
-			if (searchForEnum(uClassId) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	  					  			myFrequency,
-			                        "Duplicate FrequencyClass");
 				
 			/* Add the Frequency to the list */
 			add(myFrequency);		

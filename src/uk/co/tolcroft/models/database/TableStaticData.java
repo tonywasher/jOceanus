@@ -25,30 +25,30 @@ public abstract class TableStaticData<T extends StaticData<T,?>> extends TableEn
 	protected void defineTable(TableDefinition	pTableDef) {
 		super.defineTable(pTableDef);
 		theTableDef = pTableDef;
-		theTableDef.addIntegerColumn(StaticData.FIELD_CLASSID, StaticData.fieldName(StaticData.FIELD_CLASSID));
+		theTableDef.addBooleanColumn(StaticData.FIELD_ENABLED, StaticData.fieldName(StaticData.FIELD_ENABLED));
 		theTableDef.addEncryptedColumn(StaticData.FIELD_NAME, getDataName(), StaticData.NAMELEN);
 		theTableDef.addNullEncryptedColumn(StaticData.FIELD_DESC, StaticData.fieldName(StaticData.FIELD_DESC), StaticData.DESCLEN);
 	}
 	
 	/* Load the Static Data */
-	protected  abstract void loadTheItem(int pId, int pControlId, int pClassId, byte[] pName, byte[] pDesc) throws Exception;
+	protected  abstract void loadTheItem(int pId, int pControlId, boolean isEnabled, byte[] pName, byte[] pDesc) throws Exception;
 	
 	/* Name the data column */
 	protected  abstract String getDataName();
 	
 	/* Load the static data */
 	protected void loadItem(int pId, int pControlId) throws Exception {
-		int	    						myClassId;
-		byte[]  						myType;
-		byte[]  						myDesc;
+		boolean	myEnabled;
+		byte[] 	myType;
+		byte[] 	myDesc;
 		
 		/* Get the various fields */
-		myClassId	= theTableDef.getIntegerValue(StaticData.FIELD_CLASSID);
+		myEnabled	= theTableDef.getBooleanValue(StaticData.FIELD_ENABLED);
 		myType 		= theTableDef.getBinaryValue(StaticData.FIELD_NAME);
 		myDesc 		= theTableDef.getBinaryValue(StaticData.FIELD_DESC);
 			
 		/* Add into the list */
-		loadTheItem(pId, pControlId, myClassId, myType, myDesc);
+		loadTheItem(pId, pControlId, myEnabled, myType, myDesc);
 		
 		/* Return to caller */
 		return;
@@ -58,10 +58,10 @@ public abstract class TableStaticData<T extends StaticData<T,?>> extends TableEn
 	protected void setFieldValue(T	pItem, int iField) throws Exception  {
 		/* Switch on field id */
 		switch (iField) {
-			case StaticData.FIELD_CLASSID: 	theTableDef.setIntegerValue(iField, pItem.getStaticClassId());	break;
-			case StaticData.FIELD_NAME: 	theTableDef.setBinaryValue(iField,  pItem.getNameBytes());		break;
-			case StaticData.FIELD_DESC: 	theTableDef.setBinaryValue(iField, pItem.getDescBytes());		break;
-			default:						super.setFieldValue(pItem, iField);								break;
+			case StaticData.FIELD_ENABLED: 	theTableDef.setBooleanValue(iField, pItem.getEnabled());	break;
+			case StaticData.FIELD_NAME: 	theTableDef.setBinaryValue(iField,  pItem.getNameBytes());	break;
+			case StaticData.FIELD_DESC: 	theTableDef.setBinaryValue(iField, pItem.getDescBytes());	break;
+			default:						super.setFieldValue(pItem, iField);							break;
 		}
 	}
 }

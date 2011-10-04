@@ -40,8 +40,8 @@ public class TableFrequency extends TableStaticData<Frequency> {
 	}
 
 	/* Load the frequency */
-	protected void loadTheItem(int pId, int pControlId, int pClassId, byte[] pFreq, byte[] pDesc) throws Exception {
+	protected void loadTheItem(int pId, int pControlId, boolean isEnabled, byte[] pFreq, byte[] pDesc) throws Exception {
 		/* Add into the list */
-		theList.addItem(pId, pControlId, pClassId, pFreq, pDesc);
+		theList.addItem(pId, pControlId, isEnabled, pFreq, pDesc);
 	}
 }

@@ -39,8 +39,8 @@ public class TableAccountType extends TableStaticData<AccountType> {
 	}
 
 	/* Load the account type */
-	protected void loadTheItem(int pId, int pControlId, int pClassId, byte[] pType, byte[] pDesc) throws Exception {
+	protected void loadTheItem(int pId, int pControlId, boolean isEnabled, byte[] pType, byte[] pDesc) throws Exception {
 		/* Add into the list */
-		theList.addItem(pId, pControlId, pClassId, pType, pDesc);
+		theList.addItem(pId, pControlId, isEnabled, pType, pDesc);
 	}
 }

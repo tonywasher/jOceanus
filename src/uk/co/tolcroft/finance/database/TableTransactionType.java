@@ -39,8 +39,8 @@ public class TableTransactionType extends TableStaticData<TransactionType> {
 	}
 
 	/* Load the transaction type */
-	protected void loadTheItem(int pId, int pControlId, int pClassId, byte[] pTrans, byte[] pDesc) throws Exception {
+	protected void loadTheItem(int pId, int pControlId, boolean isEnabled, byte[] pTrans, byte[] pDesc) throws Exception {
 		/* Add into the list */
-		theList.addItem(pId, pControlId, pClassId, pTrans, pDesc);
+		theList.addItem(pId, pControlId, isEnabled, pTrans, pDesc);
 	}
 }
