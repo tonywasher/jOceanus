@@ -7,10 +7,11 @@ import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
  */
 public interface DebugObject {
 	/**
-	 * Create a string form of the object suitable for inclusion in an HTML document
+	 * Create a string form of the object suitable for inclusion in an Debug output document
+	 * @param pDetail the Debug detail
 	 * @return the formatted string
 	 */
-	public StringBuilder toHTMLString();	
+	public StringBuilder buildDebugDetail(DebugDetail pDetail);	
 
 	/**
 	 * Add child entries for the debug object

@@ -11,6 +11,7 @@ import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.Properties;
+import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugObject;
 import uk.co.tolcroft.models.help.DebugManager.*;
@@ -331,7 +332,7 @@ public class EventAnalysis implements DebugObject {
 	 * Create a string form of the object suitable for inclusion in an HTML document
 	 * @return the formatted string
 	 */
-	public StringBuilder toHTMLString() { return null; }	
+	public StringBuilder buildDebugDetail(DebugDetail pDetail) { return null; }	
 
 	/**
 	 * Add child entries for the debug object
@@ -451,11 +452,12 @@ public class EventAnalysis implements DebugObject {
 		
 		/**
 		 * Format the value of a particular field as a table row
+		 * @param pDetail the debug detail
 		 * @param iField the field number
 		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, HistoryValues<AnalysisYear> pValues) {
+		public String formatField(DebugDetail pDetail, int iField, HistoryValues<AnalysisYear> pValues) {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_YEAR: 			
@@ -1642,7 +1644,7 @@ public class EventAnalysis implements DebugObject {
 		 * Create a string form of the object suitable for inclusion in an HTML document
 		 * @return the formatted string
 		 */
-		public StringBuilder toHTMLString() { return null; }	
+		public StringBuilder buildDebugDetail(DebugDetail pDetail) { return null; }	
 
 		/**
 		 * Add child entries for the debug object

@@ -1,6 +1,7 @@
 package uk.co.tolcroft.models.data;
 
 import uk.co.tolcroft.models.data.DataList.ListStyle;
+import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugObject;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
@@ -106,6 +107,12 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	 * @return the Base item or <code>null</code>
 	 */
 	public DataItem<?>				getBase()      	{ return theHistory.getBase(); }
+
+	/**
+	 * Get the Generation
+	 * @return the Generation
+	 */
+	public int		getGeneration()	{ return theList.getGeneration(); }
 
 	/**
 	 * Get the base item for this item
@@ -255,11 +262,14 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	
 	/**
 	 * Format the value of a particular field as a table row
+	 * @param pDetail the debug detail
 	 * @param iField the field number
 	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String 					formatField(int iField, HistoryValues<T> pValues) {
+	public String 					formatField(DebugDetail 		pDetail, 
+												int 				iField, 
+												HistoryValues<T> 	pValues) {
 		String 	myString = "";
 		switch (iField) {
 			case FIELD_ID: 		
@@ -291,9 +301,10 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	
 	/**
 	 * Format this item to a string
+	 * @param pDetail the Debug Detail
 	 * @return the formatted item
 	 */
-	public StringBuilder 			toHTMLString() {
+	public StringBuilder 			buildDebugDetail(DebugDetail pDetail) {
 		StringBuilder	myString = new StringBuilder(2000);
 		int     iField;
 		int		iNumFields = numFields();
@@ -307,10 +318,13 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 		
 		/* Start the status section */
 		myString.append("<tr><th rowspan=\"");
-		myString.append((isDeleted) ? 4 : 3);
+		myString.append((isDeleted) ? 5 : 4);
 		myString.append("\">Status</th></tr>");
 		
 		/* Format the State and edit State */
+		myString.append("<tr><td>Generation</td><td>");
+		myString.append(getGeneration());
+		myString.append("</td></tr>");
 		myString.append("<tr><td>State</td><td>");
 		myString.append(theState);
 		myString.append("</td></tr>");
@@ -352,7 +366,7 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 			myString.append("<td>"); 
 			myString.append(getFieldName(iField)); 
 			myString.append("</td><td>"); 
-			myString.append(formatField(iField, myValues));
+			myString.append(formatField(pDetail, iField, myValues));
 			myString.append("</td></tr>");
 		}
 
@@ -362,20 +376,20 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 		/* If errors exist */
 		if (hasErrors()) {
 			/* Add details of the errors */
-			myString.append(theErrors.toHTMLString());
+			myString.append(theErrors.buildDebugDetail());
 		}
 		
 		/* If changes exist */
 		if (hasHistory()) {
 			/* Add details of the errors */
-			myString.append(theHistory.toHTMLString());
+			myString.append(theHistory.buildDebugDetail(pDetail));
 		}
 		
 		/* If we have an underlying object */
 		if (getBase() != null) {
 			/* Format the Underlying object */
 			myString.append("<tr><th>Underlying</th><td colspan=\"2\">");
-			myString.append(getBase().toHTMLString());
+			myString.append(pDetail.addDebugLink(getBase(), getBase().itemType()));
 			myString.append("</td></tr>");
 		}
 		

@@ -12,6 +12,7 @@ import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.EncryptedItem.EncryptedList;
+import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugObject;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
@@ -47,9 +48,10 @@ public class SpotPrices implements DebugObject {
 	
 	/**
 	 * Create a string form of the object suitable for inclusion in an HTML document
+	 * @param pDetail the debug detail
 	 * @return the formatted string
 	 */
-	public StringBuilder toHTMLString() {
+	public StringBuilder buildDebugDetail(DebugDetail pDetail) {
 		StringBuilder	myString = new StringBuilder(10000);
 			
 		/* Format the table headers */
@@ -392,22 +394,24 @@ public class SpotPrices implements DebugObject {
 		
 		/**
 		 * Format the value of a particular field as a table row
+		 * @param pDetail the debug detail
 		 * @param iField the field number
 		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, HistoryValues<SpotPrice> pValues) {
+		public String formatField(DebugDetail pDetail, int iField, HistoryValues<SpotPrice> pValues) {
 			String 	myString = "";
 			Values 	myValues = (Values)pValues;
 			switch (iField) {
 				case FIELD_ACCOUNT:	
 					myString += theAccount.getName(); 
+					myString = pDetail.addDebugLink(theAccount, myString);
 					break;
 				case FIELD_PRICE: 	
 					myString += Price.format(myValues.getPriceValue());	
 					break;
 				default: 		
-					myString += super.formatField(iField, pValues); 
+					myString += super.formatField(pDetail, iField, pValues); 
 					break;
 			}
 			return myString;

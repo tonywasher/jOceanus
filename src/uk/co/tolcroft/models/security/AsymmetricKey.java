@@ -366,7 +366,7 @@ public class AsymmetricKey {
 			/* If we have not been told a KeyType */
 			if (pKeyType == null) {
 				/* Access the first byte of the secret */
-				byte myType = mySecret[0];
+				int myType = (mySecret[0] & 0xff);
 				
 				/* Normalise it according to the number of SymKeyTypes */
 				myType %= SymKeyType.values().length;

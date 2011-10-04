@@ -22,7 +22,6 @@ public class DebugWindow extends JFrame implements TreeSelectionListener {
 	/* Properties */
 	private DebugManager	theDebugMgr		= null;
 	private JTree			theTree			= null;
-	//private JEditorPane     theEditor     	= null;
 	private DebugItem		theItemPane		= null;
 			
 	/* Constructor */

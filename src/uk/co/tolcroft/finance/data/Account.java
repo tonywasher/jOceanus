@@ -12,6 +12,7 @@ import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
+import uk.co.tolcroft.models.help.DebugDetail;
 
 public class Account extends EncryptedItem<Account> {
 	/**
@@ -186,11 +187,12 @@ public class Account extends EncryptedItem<Account> {
 	
 	/**
 	 * Format the value of a particular field as a table row
+	 * @param pDetail the debug detail
 	 * @param iField the field number
 	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, HistoryValues<Account> pValues) {
+	public String formatField(DebugDetail pDetail, int iField, HistoryValues<Account> pValues) {
 		String	myString = "";
 		Values 	myValues = (Values)pValues;
 		switch (iField) {
@@ -206,6 +208,7 @@ public class Account extends EncryptedItem<Account> {
 					myString += "Id=" + myValues.getActTypeId();
 				else
 					myString += AccountType.format(getActType()); 
+				myString = pDetail.addDebugLink(myValues.getType(), myString);
 				break;
 			case FIELD_CLOSE:	
 				myString += Date.format(myValues.getClose()); 
@@ -219,6 +222,7 @@ public class Account extends EncryptedItem<Account> {
 					myString += "Id=" + myValues.getParentId();
 				else
 					myString += Account.format(myValues.getParent()); 
+				myString = pDetail.addDebugLink(myValues.getParent(), myString);
 				break;
 			case FIELD_ALIAS:	
 				if ((myValues.getAlias() == null) &&
@@ -226,6 +230,7 @@ public class Account extends EncryptedItem<Account> {
 					myString += "Id=" + myValues.getAliasId();
 				else
 					myString += Account.format(myValues.getAlias()); 
+				myString = pDetail.addDebugLink(myValues.getAlias(), myString);
 				break;
 			case FIELD_WEBSITE:	
 				myString += getCharArrayPairString(myValues.getWebSite()); 
@@ -246,7 +251,7 @@ public class Account extends EncryptedItem<Account> {
 				myString += getCharArrayPairString(myValues.getNotes()); 
 				break;
 			default: 		
-				myString += super.formatField(iField, pValues); 
+				myString += super.formatField(pDetail, iField, pValues); 
 				break;
 		}
 		return myString;
@@ -289,7 +294,7 @@ public class Account extends EncryptedItem<Account> {
 				pList.setNewId(this);				
 				break;
 			case CLONE:
-				isolateCopy(pList.getData());
+				isolateCopy(pList, pList.getData());
 			case COPY:
 			case CORE:
 				/* Reset Id if this is an insert from a view */
@@ -550,7 +555,7 @@ public class Account extends EncryptedItem<Account> {
 	 * Isolate Data Copy
 	 * @param pData the DataSet
 	 */
-	protected void isolateCopy(FinanceData pData) {
+	protected void isolateCopy(List pList, FinanceData pData) {
 		/* Update the Encryption details */
 		super.isolateCopy(pData);
 		
@@ -563,14 +568,11 @@ public class Account extends EncryptedItem<Account> {
 		AccountType	myNewType 	= myTypes.searchFor(myType.getId());
 		myValues.setType(myNewType);
 
-		/* Access Accounts */
-		Account.List 	myList 	= pData.getAccounts();
-		
 		/* If we have a parent */
 		Account			myAct	= getParent();
 		if (myAct != null) {
 			/* Update it */
-			Account	myNewAct 	= myList.searchFor(myAct.getId());
+			Account	myNewAct 	= pList.searchFor(myAct.getId());
 			myValues.setParent(myNewAct);
 		}
 		
@@ -578,7 +580,7 @@ public class Account extends EncryptedItem<Account> {
 		myAct	= getAlias();
 		if (myAct != null) {
 			/* Update it */
-			Account	myNewAct 	= myList.searchFor(myAct.getId());
+			Account	myNewAct 	= pList.searchFor(myAct.getId());
 			myValues.setAlias(myNewAct);
 		}
 	}
@@ -1801,8 +1803,8 @@ public class Account extends EncryptedItem<Account> {
 		public void    copyFrom(HistoryValues<?> pSource) {
 			Values myValues = (Values)pSource;
 			super.copyFrom(myValues);
-			theName       = myValues.getName();
-			theDesc       = myValues.getDesc();
+			theName       = new StringPair(myValues.getName());
+			theDesc       = (myValues.getDesc() != null)	? new StringPair(myValues.getDesc()) : null;
 			theType       = myValues.getType();
 			theActTypeId  = myValues.getActTypeId();
 			theOrder      = myValues.getOrder();
@@ -1812,12 +1814,12 @@ public class Account extends EncryptedItem<Account> {
 			theAlias      = myValues.getAlias();
 			theParentId   = myValues.getParentId();
 			theAliasId    = myValues.getAliasId();
-			theWebSite 	  = myValues.getWebSite();
-			theCustNo 	  = myValues.getCustNo();
-			theUserId 	  = myValues.getUserId();
-			thePassword	  = myValues.getPassword();
-			theAccount	  = myValues.getAccount();
-			theNotes	  = myValues.getNotes();
+			theWebSite 	  = (myValues.getWebSite() != null)		? new CharArrayPair(myValues.getWebSite()) : null;
+			theCustNo 	  = (myValues.getCustNo() != null)		? new CharArrayPair(myValues.getCustNo()) : null;
+			theUserId 	  = (myValues.getUserId() != null)		? new CharArrayPair(myValues.getUserId()) : null;
+			thePassword	  = (myValues.getPassword() != null)	? new CharArrayPair(myValues.getPassword()) : null;
+			theAccount	  = (myValues.getAccount() != null)		? new CharArrayPair(myValues.getAccount()) : null;
+			theNotes	  = (myValues.getNotes() != null)		? new CharArrayPair(myValues.getNotes()) : null;
 		}
 		public Difference	fieldChanged(int fieldNo, HistoryValues<Account> pOriginal) {
 			Values 	pValues = (Values)pOriginal;

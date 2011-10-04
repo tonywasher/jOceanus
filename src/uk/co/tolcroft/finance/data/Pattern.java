@@ -12,6 +12,7 @@ import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.ValidationControl;
 import uk.co.tolcroft.models.data.DataList.*;
+import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.finance.views.*;
 
@@ -100,11 +101,12 @@ public class Pattern extends EncryptedItem<Pattern> {
 	
 	/**
 	 * Format the value of a particular field as a table row
+	 * @param pDetail the debug detail
 	 * @param iField the field number
 	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, HistoryValues<Pattern> pValues) {
+	public String formatField(DebugDetail pDetail, int iField, HistoryValues<Pattern> pValues) {
 		String 	myString = "";
 		Values 	myValues  = (Values)pValues;
 		switch (iField) {
@@ -114,6 +116,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 					myString += "Id=" + myValues.getAccountId();
 				else
 					myString += Account.format(myValues.getAccount()); 
+				myString = pDetail.addDebugLink(myValues.getAccount(), myString);
 				break;
 			case FIELD_DATE:	
 				myString += Date.format(myValues.getDate()); 
@@ -127,6 +130,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 					myString += "Id=" + myValues.getPartnerId();
 				else
 					myString += Account.format(myValues.getPartner()); 
+				myString = pDetail.addDebugLink(myValues.getPartner(), myString);
 				break;
 			case FIELD_TRNTYP:	
 				if ((myValues.getTransType() == null) &&
@@ -134,6 +138,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 					myString += "Id=" + myValues.getTransId();
 				else
 					myString += TransactionType.format(myValues.getTransType()); 
+				myString = pDetail.addDebugLink(myValues.getTransType(), myString);
 				break;
 			case FIELD_AMOUNT:	
 				myString += Money.format(myValues.getAmountValue()); 
@@ -144,12 +149,13 @@ public class Pattern extends EncryptedItem<Pattern> {
 					myString += "Id=" + myValues.getFreqId();
 				else
 					myString += Frequency.format(myValues.getFrequency()); 
+				myString = pDetail.addDebugLink(myValues.getFrequency(), myString);
 				break;
 			case FIELD_CREDIT: 
 				myString +=	(isCredit() ? "true" : "false");
 				break;
 			default: 		
-				myString += super.formatField(iField, pValues); 
+				myString += super.formatField(pDetail, iField, pValues); 
 				break;
 		}
 		return myString;
@@ -1197,8 +1203,8 @@ public class Pattern extends EncryptedItem<Pattern> {
 				Values myValues = (Values)pSource;
 				super.copyFrom(myValues);
 				theDate      = myValues.getDate();
-				theDesc      = myValues.getDesc();
-				theAmount    = myValues.getAmount();
+				theDesc      = new StringPair(myValues.getDesc());
+				theAmount    = new MoneyPair(myValues.getAmount());
 				thePartner   = myValues.getPartner();
 				theFrequency = myValues.getFrequency();
 				theTransType = myValues.getTransType();

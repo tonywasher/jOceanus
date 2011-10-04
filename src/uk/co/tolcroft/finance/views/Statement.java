@@ -12,6 +12,7 @@ import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.ValidationControl;
 import uk.co.tolcroft.models.data.EncryptedItem.EncryptedList;
+import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugObject;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
@@ -138,9 +139,10 @@ public class Statement implements DebugObject {
 	
 	/**
 	 * Create a string form of the object suitable for inclusion in an HTML document
+	 * @param pDetail the debug detail
 	 * @return the formatted string
 	 */
-	public StringBuilder toHTMLString() { 
+	public StringBuilder buildDebugDetail(DebugDetail pDetail) { 
 		/* Local variables */
 		StringBuilder	myString = new StringBuilder(10000);
 
@@ -351,16 +353,18 @@ public class Statement implements DebugObject {
 		
 		/**
 		 * Format the value of a particular field as a table row
+		 * @param pDetail the debug detail
 		 * @param iField the field number
 		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(int iField, HistoryValues<Line> pValues) {
+		public String formatField(DebugDetail pDetail, int iField, HistoryValues<Line> pValues) {
 			String 	myString = "";
 			Values 	myValues = (Values)pValues;
 			switch (iField) {
 				case FIELD_ACCOUNT:	
 					myString += Account.format(getAccount()); 
+					myString = pDetail.addDebugLink(getAccount(), myString);
 					break;
 				case FIELD_DATE:	
 					myString += Date.format(myValues.getDate()); 
@@ -370,9 +374,11 @@ public class Statement implements DebugObject {
 					break;
 				case FIELD_TRNTYP: 	
 					myString += TransactionType.format(myValues.getTransType());	
+					myString = pDetail.addDebugLink(getTransType(), myString);
 					break;
 				case FIELD_PARTNER:	
 					myString += Account.format(myValues.getPartner()); 
+					myString = pDetail.addDebugLink(getPartner(), myString);
 					break;
 				case FIELD_AMOUNT: 	
 					myString += Money.format(myValues.getAmountValue());	
@@ -393,7 +399,7 @@ public class Statement implements DebugObject {
 					myString += Dilution.format(myValues.getDilutionValue()); 
 					break;
 				default: 		
-					myString += super.formatField(iField, pValues); 
+					myString += super.formatField(pDetail, iField, pValues); 
 					break;
 			}
 			return myString;

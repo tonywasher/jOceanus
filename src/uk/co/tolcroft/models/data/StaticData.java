@@ -4,6 +4,7 @@ import uk.co.tolcroft.models.Difference;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
+import uk.co.tolcroft.models.help.DebugDetail;
 
 public abstract class StaticData<T extends StaticData<T,E>,
 								 E extends Enum<E>> extends EncryptedItem<T> {
@@ -126,11 +127,12 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	
 	/**
 	 * Format the value of a particular field as a table row
+	 * @param pDetail the debug detail
 	 * @param iField the field number
 	 * @param pObj the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, HistoryValues<T> pObj) {
+	public String formatField(DebugDetail pDetail, int iField, HistoryValues<T> pObj) {
 		String myString = ""; 
 		StaticData<?,?>.Values 	myObj 	 = (StaticData<?,?>.Values)pObj;
 		switch (iField) {
@@ -139,7 +141,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 			case FIELD_ORDER: 	myString += getOrder();	break;
 			case FIELD_CLASS: 	myString += theClass;	break;
 			case FIELD_CLASSID: myString += theClassId;	break;
-			default:			myString += super.formatField(iField, pObj); break;
+			default:			myString += super.formatField(pDetail, iField, pObj); break;
 		}
 		return myString;
 	}

@@ -8,6 +8,7 @@ import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.HistoryValues;
+import uk.co.tolcroft.models.help.DebugDetail;
 
 public class ChargeableEvent extends DataItem<ChargeableEvent> {
 	/**
@@ -124,11 +125,12 @@ public class ChargeableEvent extends DataItem<ChargeableEvent> {
 	
 	/**
 	 * Format the value of a particular field as a table row
+	 * @param pDetail the debug detail
 	 * @param iField the field number
 	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, HistoryValues<ChargeableEvent> pValues) {
+	public String formatField(DebugDetail pDetail, int iField, HistoryValues<ChargeableEvent> pValues) {
 		String myString = ""; 
 		switch (iField) {
 			case FIELD_SLICE:		

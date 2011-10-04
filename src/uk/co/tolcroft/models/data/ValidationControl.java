@@ -165,7 +165,7 @@ public class ValidationControl<T extends DataItem<T>> {
 	 * Format the errors in this list
 	 * @return the formatted changes
 	 */
-	protected StringBuilder toHTMLString() {
+	protected StringBuilder buildDebugDetail() {
 		errorElement	myCurr;
 		StringBuilder	myString = new StringBuilder(1000);
 		
@@ -179,7 +179,7 @@ public class ValidationControl<T extends DataItem<T>> {
 			 myCurr != null;
 			 myCurr  = myCurr.theNext) {
 			/* Format the error element */
-			myString.append(myCurr.toHTMLString());
+			myString.append(myCurr.buildDebugDetail());
 		}
 		
 		/* Return the formatted string */
@@ -238,7 +238,7 @@ public class ValidationControl<T extends DataItem<T>> {
 		 * Format the error represented by this element
 		 * @return the formatted changes
 		 */
-		public StringBuilder toHTMLString() {
+		public StringBuilder buildDebugDetail() {
 			StringBuilder	myString = new StringBuilder(100);
 			
 			/* Format the details */

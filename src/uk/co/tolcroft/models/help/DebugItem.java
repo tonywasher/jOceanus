@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.net.URL;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -13,15 +14,20 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.LayoutStyle;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.text.Document;
+import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
 
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
 
-public class DebugItem implements ActionListener,
+public class DebugItem implements HyperlinkListener,
+								  ActionListener,
 								  ItemListener {
 	/**
 	 * The members 
@@ -32,6 +38,7 @@ public class DebugItem implements ActionListener,
 	private DataItem<?>					theItem 		= null;
 	private DataList<?,?>.ListIterator	theIterator		= null;
 	private DebugObject					theObject		= null;
+	private DebugDetail					theDetail		= null;
 	private	JButton						theNext			= null;
 	private	JButton						theNextTen		= null;
 	private	JButton						theNextHun		= null;
@@ -76,6 +83,7 @@ public class DebugItem implements ActionListener,
 		/* Create the editor pane as non-editable */
 		theEditor = new JEditorPane();
 		theEditor.setEditable(false);
+		theEditor.addHyperlinkListener(this);
 			
 		/* Add an editor kit to the editor */
 		myKit = new HTMLEditorKit();
@@ -199,24 +207,32 @@ public class DebugItem implements ActionListener,
 			theListPanel.setVisible(false);
 			
 			/* Display the object */
-			displayObject(theObject);
+			displayDetail(new DebugDetail(theObject));
 		}
 	}		
 
 	/* Display debug object */
-	private void displayObject(DebugObject pObject) {
-		StringBuilder	myValue;
+	private void displayDetail(DebugDetail pDetail) {
+		StringBuilder	myValue = null;
+		StringBuilder	myLinks = null;
 
-		/* Set default value */
-		myValue = null;
+		/* Store the detail */
+		theDetail = pDetail;
+		
+		/* If we have a DebugDetail */
+		if (pDetail != null) {
+			/* Access Debug Detail */
+			myValue = pDetail.getDebugDetail();
 			
-		/* Ignore if no debug object */
-		if (pObject != null) myValue = pObject.toHTMLString();
+			/* Access history links */
+			myLinks = pDetail.getHistoryLinks();
+		}
 			
 		/* Build the HTML page */
 		String	myText = "<html><body>";
 
 		/* Add the value to the output */
+		if (myLinks != null) myText += myLinks;
 		if (myValue != null) myText += myValue;
 		myText += "</body></html>";
 			
@@ -289,7 +305,7 @@ public class DebugItem implements ActionListener,
 		theToggle.setText("Show header");
 
 		/* Display the item */
-		displayObject(theItem);
+		displayDetail(new DebugDetail(theItem));
 	}
 
 	/**
@@ -311,9 +327,40 @@ public class DebugItem implements ActionListener,
 		theToggle.setText("Show items");
 
 		/* Display the header */
-		displayObject(theObject);
+		displayDetail(new DebugDetail(theObject));
 	}
 
+	/**
+	 * Perform the requested action 
+	 * @param pEvent the event
+	 */
+	public void hyperlinkUpdate(HyperlinkEvent pEvent){
+		/* If this is an activated event */
+		if (pEvent.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+			if (pEvent instanceof HTMLFrameHyperlinkEvent) {
+				HTMLFrameHyperlinkEvent evt = (HTMLFrameHyperlinkEvent) pEvent;
+				HTMLDocument doc = (HTMLDocument)theEditor.getDocument();
+				doc.processHTMLFrameHyperlinkEvent(evt);
+			}
+			else {
+				try {
+					URL    url  = pEvent.getURL();
+					String desc = pEvent.getDescription();
+					if (url == null) {
+						/* Access the referenced link */
+						DebugDetail myDetail = theDetail.getDebugLink(desc);
+						
+						/* Shift to this link */
+						if (myDetail != null) 
+							displayDetail(myDetail);
+					}
+					else theEditor.setPage(pEvent.getURL());
+				}
+				catch (Throwable e) {}
+			}
+		}
+	}
+	
 	/**
 	 * Perform the requested action 
 	 * @param pEvent the event

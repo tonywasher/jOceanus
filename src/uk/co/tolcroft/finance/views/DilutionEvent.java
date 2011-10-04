@@ -10,6 +10,7 @@ import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.HistoryValues;
+import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.*;
 
 public class DilutionEvent extends DataItem<DilutionEvent> {
@@ -66,15 +67,17 @@ public class DilutionEvent extends DataItem<DilutionEvent> {
 	
 	/**
 	 * Format the value of a particular field as a table row
+	 * @param pDetail the debug detail
 	 * @param iField the field number
 	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, HistoryValues<DilutionEvent> pValues) {
+	public String formatField(DebugDetail pDetail, int iField, HistoryValues<DilutionEvent> pValues) {
 		String myString = ""; 
 		switch (iField) {
 			case FIELD_ACCOUNT:		
 				myString += Account.format(theAccount);
+				myString = pDetail.addDebugLink(theAccount, myString);
 				break;
 			case FIELD_DATE: 		
 				myString += Date.format(theDate);

@@ -116,19 +116,19 @@ public class FinanceData extends DataSet<FinanceData, ItemType> {
 		myExtract.getDeepCopy(this);
 		
 		/* Build the static extract */
-		myExtract.theActTypes   = theActTypes.getDeepCopy(this);
-		myExtract.theTransTypes = theTransTypes.getDeepCopy(this);
-		myExtract.theTaxTypes   = theTaxTypes.getDeepCopy(this);
-		myExtract.theTaxRegimes = theTaxRegimes.getDeepCopy(this);
-		myExtract.theFrequencys = theFrequencys.getDeepCopy(this);
+		myExtract.theActTypes   = theActTypes.getDeepCopy(myExtract);
+		myExtract.theTransTypes = theTransTypes.getDeepCopy(myExtract);
+		myExtract.theTaxTypes   = theTaxTypes.getDeepCopy(myExtract);
+		myExtract.theTaxRegimes = theTaxRegimes.getDeepCopy(myExtract);
+		myExtract.theFrequencys = theFrequencys.getDeepCopy(myExtract);
 		
 		/* Build the data extract */
-		myExtract.theTaxYears   = theTaxYears.getDeepCopy(this);
-		myExtract.theAccounts   = theAccounts.getDeepCopy(this);
-		myExtract.theRates      = theRates.getDeepCopy(this);
-		myExtract.thePrices     = thePrices.getDeepCopy(this);
-		myExtract.thePatterns   = thePatterns.getDeepCopy(this);
-		myExtract.theEvents     = theEvents.getDeepCopy(this);
+		myExtract.theTaxYears   = theTaxYears.getDeepCopy(myExtract);
+		myExtract.theAccounts   = theAccounts.getDeepCopy(myExtract);
+		myExtract.theRates      = theRates.getDeepCopy(myExtract);
+		myExtract.thePrices     = thePrices.getDeepCopy(myExtract);
+		myExtract.thePatterns   = thePatterns.getDeepCopy(myExtract);
+		myExtract.theEvents     = theEvents.getDeepCopy(myExtract);
 
 		/* Declare the lists */
 		myExtract.declareLists();

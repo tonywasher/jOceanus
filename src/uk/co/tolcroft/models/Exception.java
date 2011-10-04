@@ -1,5 +1,6 @@
 package uk.co.tolcroft.models;
 
+import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugObject;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
@@ -88,9 +89,10 @@ public class Exception 	extends java.lang.Exception
 	
 	/**
 	 * Format the exception
+	 * @param pDetail the Debug Detail
 	 * @return the formatted string
 	 */
-	public StringBuilder toHTMLString() {
+	public StringBuilder buildDebugDetail(DebugDetail pDetail) {
 		StringBuilder		myString     = new StringBuilder(10000);
 		StringBuilder		myDetail	 = new StringBuilder(10000);	
 		StackTraceElement[] myTrace      = null;

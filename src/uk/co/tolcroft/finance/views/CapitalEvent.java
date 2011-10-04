@@ -9,6 +9,7 @@ import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.HistoryValues;
+import uk.co.tolcroft.models.help.DebugDetail;
 
 public class CapitalEvent extends DataItem<CapitalEvent> {
 	/**
@@ -101,11 +102,12 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 	
 	/**
 	 * Format the value of a particular field as a table row
+	 * @param pDetail the debug detail
 	 * @param iField the field number
 	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, HistoryValues<CapitalEvent> pValues) {
+	public String formatField(DebugDetail pDetail, int iField, HistoryValues<CapitalEvent> pValues) {
 		Attribute myAttr;
 
 		/* If we have a valid element */

@@ -10,6 +10,7 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
+import uk.co.tolcroft.models.help.DebugDetail;
 
 public class ViewPrice extends EncryptedItem<ViewPrice> {
 	/**
@@ -75,16 +76,18 @@ public class ViewPrice extends EncryptedItem<ViewPrice> {
 	
 	/**
 	 * Format the value of a particular field as a table row
+	 * @param pDetail the debug detail
 	 * @param iField the field number
 	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, HistoryValues<ViewPrice> pValues) {
+	public String formatField(DebugDetail pDetail, int iField, HistoryValues<ViewPrice> pValues) {
 		String 	myString = "";
 		Values 	myValues = (Values)pValues;
 		switch (iField) {
 			case FIELD_ACCOUNT:
 				myString += Account.format(getAccount()); 
+				myString = pDetail.addDebugLink(getAccount(), myString);
 				break;
 			case FIELD_DATE:	
 				myString += Date.format(getDate()); 
@@ -99,7 +102,7 @@ public class ViewPrice extends EncryptedItem<ViewPrice> {
 				myString += DilutedPrice.format(myValues.getDilutedPrice()); 
 				break;
 			default: 		
-				myString += super.formatField(iField, pValues); 
+				myString += super.formatField(pDetail, iField, pValues); 
 				break;
 		}
 		return myString;

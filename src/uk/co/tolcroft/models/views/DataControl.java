@@ -50,6 +50,12 @@ public abstract class DataControl<T extends DataSet<T,?>> {
 	 * @param pData the new DataSet
 	 */
 	public void			setData(T pData)	{
+		/* If we already have data */
+		if (theData != null) {
+			/* Bump the generation */
+			pData.setGeneration(theData.getGeneration()+1);
+		}
+		
 		/* Store the data */
 		theData  = pData;
 		

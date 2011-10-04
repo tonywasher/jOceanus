@@ -13,6 +13,7 @@ import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
+import uk.co.tolcroft.models.help.DebugDetail;
 
 public class Event extends EncryptedItem<Event> {
 	/**
@@ -105,11 +106,12 @@ public class Event extends EncryptedItem<Event> {
 	
 	/**
 	 * Format the value of a particular field as a table row
+	 * @param pDetail the debug detail
 	 * @param iField the field number
 	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, HistoryValues<Event> pValues) {
+	public String formatField(DebugDetail pDetail, int iField, HistoryValues<Event> pValues) {
 		String 	myString = "";
 		Values 	myValues = (Values)pValues;
 		switch (iField) {
@@ -125,6 +127,7 @@ public class Event extends EncryptedItem<Event> {
 					myString += "Id=" + myValues.getTransId();
 				else
 					myString += TransactionType.format(myValues.getTransType());	
+				myString = pDetail.addDebugLink(myValues.getTransType(), myString);
 				break;
 			case FIELD_DEBIT:
 				if ((myValues.getDebit() == null) &&
@@ -132,6 +135,7 @@ public class Event extends EncryptedItem<Event> {
 					myString += "Id=" + myValues.getDebitId();
 				else
 					myString += Account.format(myValues.getDebit()); 
+				myString = pDetail.addDebugLink(myValues.getDebit(), myString);
 				break;
 			case FIELD_CREDIT:	
 				if ((myValues.getCredit() == null) &&
@@ -139,6 +143,7 @@ public class Event extends EncryptedItem<Event> {
 					myString += "Id=" + myValues.getCreditId();
 				else
 					myString += Account.format(myValues.getCredit()); 
+				myString = pDetail.addDebugLink(myValues.getCredit(), myString);
 				break;
 			case FIELD_AMOUNT: 	
 				myString += Money.format(myValues.getAmountValue());	
@@ -156,7 +161,7 @@ public class Event extends EncryptedItem<Event> {
 				myString += Dilution.format(myValues.getDilutionValue()); 
 				break;
 			default: 		
-				myString += super.formatField(iField, pValues); 
+				myString += super.formatField(pDetail, iField, pValues); 
 				break;
 		}
 		return myString;
@@ -1795,15 +1800,15 @@ public class Event extends EncryptedItem<Event> {
 				Values myValues = (Values)pSource;
 				super.copyFrom(myValues);
 				theDate      = myValues.getDate();
-				theDesc      = myValues.getDesc();
-				theAmount    = myValues.getAmount();
+				theDesc      = new StringPair(myValues.getDesc());
+				theAmount    = new MoneyPair(myValues.getAmount());
 				theDebit     = myValues.getDebit();
 				theCredit    = myValues.getCredit();
-				theUnits     = myValues.getUnits();
+				theUnits     = (myValues.getUnits() != null)		? new UnitsPair(myValues.getUnits()) : null;;
 				theTransType = myValues.getTransType();
-				theTaxCredit = myValues.getTaxCredit();
+				theTaxCredit = (myValues.getTaxCredit() != null)	? new MoneyPair(myValues.getTaxCredit()) : null;;
 				theYears     = myValues.getYears();
-				theDilution  = myValues.getDilution();
+				theDilution  = (myValues.getDilution() != null)		? new DilutionPair(myValues.getDilution()) : null;;
 				theDebitId   = myValues.getDebitId();
 				theCreditId  = myValues.getCreditId();
 				theTransId   = myValues.getTransId();

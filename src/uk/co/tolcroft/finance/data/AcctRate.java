@@ -11,6 +11,7 @@ import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
+import uk.co.tolcroft.models.help.DebugDetail;
 
 public class AcctRate extends EncryptedItem<AcctRate> {
 	/**
@@ -78,11 +79,12 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	
 	/**
 	 * Format the value of a particular field as a table row
+	 * @param pDetail the debug detail
 	 * @param iField the field number
 	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, HistoryValues<AcctRate> pValues) {
+	public String formatField(DebugDetail pDetail, int iField, HistoryValues<AcctRate> pValues) {
 		String 	myString = "";
 		Values 	myValues = (Values)pValues;
 		switch (iField) {
@@ -92,6 +94,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 					myString += "Id=" + myValues.getAccountId();
 				else
 					myString += Account.format(myValues.getAccount()); 
+				myString = pDetail.addDebugLink(myValues.getAccount(), myString);
 				break;
 			case FIELD_RATE:	
 				myString += Rate.format(myValues.getRateValue()); 
@@ -103,7 +106,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 				myString += Date.format(myValues.getEndDate()); 
 				break;
 			default:
-				myString += super.formatField(iField, pValues);
+				myString += super.formatField(pDetail, iField, pValues);
 				break;
 		}
 		return myString;
@@ -840,8 +843,8 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		public void    copyFrom(HistoryValues<?> pSource) {
 			Values myValues = (Values)pSource;
 			super.copyFrom(myValues);
-			theRate      = myValues.getRate();
-			theBonus     = myValues.getBonus();
+			theRate      = new RatePair(myValues.getRate());
+			theBonus     = (myValues.getBonus() != null)	? new RatePair(myValues.getBonus()) : null;
 			theEndDate   = myValues.getEndDate();
 			theAccount   = myValues.getAccount();
 			theAccountId = myValues.getAccountId();

@@ -10,6 +10,7 @@ import uk.co.tolcroft.models.Difference;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.security.AsymmetricKey;
 import uk.co.tolcroft.models.security.PasswordKey;
 import uk.co.tolcroft.models.security.SecureManager;
@@ -115,11 +116,12 @@ public class ControlKey extends DataItem<ControlKey> {
 	
 	/**
 	 * Format the value of a particular field as a table row
+	 * @param pDetail the debug detail
 	 * @param iField the field number
 	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, HistoryValues<ControlKey> pValues) {
+	public String formatField(DebugDetail pDetail, int iField, HistoryValues<ControlKey> pValues) {
 		Values	myValues = (Values)pValues;
 		String 	myString = "";
 		switch (iField) {
@@ -136,7 +138,7 @@ public class ControlKey extends DataItem<ControlKey> {
 				myString += (getKeyType() == null) ? ("Id=" + theKeyTypeId) : getKeyType().toString(); 
 				break;
 			default: 		
-				myString += super.formatField(iField, pValues); 
+				myString += super.formatField(pDetail, iField, pValues); 
 				break;
 		}
 		return myString;

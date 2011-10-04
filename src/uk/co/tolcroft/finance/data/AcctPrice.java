@@ -14,6 +14,7 @@ import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
+import uk.co.tolcroft.models.help.DebugDetail;
 
 public class AcctPrice extends EncryptedItem<AcctPrice> {
 	/**
@@ -78,11 +79,12 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	
 	/**
 	 * Format the value of a particular field as a table row
+	 * @param pDetail the debug detail
 	 * @param iField the field number
 	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, HistoryValues<AcctPrice> pValues) {
+	public String formatField(DebugDetail pDetail, int iField, HistoryValues<AcctPrice> pValues) {
 		String 	myString = "";
 		Values 	myValues = (Values)pValues;
 		switch (iField) {
@@ -92,6 +94,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 					myString += "Id=" + myValues.getAccountId();
 				else
 					myString += Account.format(myValues.getAccount()); 
+				myString = pDetail.addDebugLink(myValues.getAccount(), myString);
 				break;
 			case FIELD_DATE:	
 				myString += Date.format(getDate()); 
@@ -100,7 +103,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 				myString += Price.format(myValues.getPriceValue()); 
 				break;
 			default: 		
-				myString += super.formatField(iField, pValues); 
+				myString += super.formatField(pDetail, iField, pValues); 
 				break;
 		}
 		return myString;
@@ -116,7 +119,6 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		super(pList, pPrice.getId());
 		Values myValues = new Values(pPrice.getValues());
 		setValues(myValues);
-		//setControlKey(pPrice.getControlKey());
 		ListStyle myOldStyle = pPrice.getList().getStyle();
 
 		/* Switch on the ListStyle */
@@ -980,7 +982,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 				Values myValues = (Values)pSource;
 				super.copyFrom(myValues);
 				theDate      = myValues.getDate();
-				thePrice     = myValues.getPrice();
+				thePrice     = new PricePair(myValues.getPrice());
 				theAccount   = myValues.getAccount();
 				theAccountId = myValues.getAccountId();
 			}

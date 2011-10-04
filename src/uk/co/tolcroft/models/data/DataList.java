@@ -1,6 +1,7 @@
 package uk.co.tolcroft.models.data;
 
 import uk.co.tolcroft.models.SortedList;
+import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugObject;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
@@ -15,32 +16,37 @@ public abstract class DataList<L extends DataList<L,T>,
 	/**
 	 * The style of the list
 	 */
-	private ListStyle 		theStyle    = ListStyle.CORE;
+	private ListStyle 		theStyle    	= ListStyle.CORE;
 
 	/**
 	 * The edit state of the list
 	 */
-	private EditState 		theEdit	  	= EditState.CLEAN;
+	private EditState 		theEdit	  		= EditState.CLEAN;
 		
 	/**
 	 * The id manager 
 	 */
-	private	IdManager<T>	theMgr	  	= null;
+	private	IdManager<T>	theMgr	  		= null;
 		
 	/**
 	 * The class 
 	 */
-	private	Class<L>		theClass  	= null;
+	private	Class<L>		theClass  		= null;
 		
 	/**
 	 * The class 
 	 */
-	private	L				theList  	= null;
+	private	L				theList  		= null;
 		
 	/**
 	 * The base list (for extracts) 
 	 */
-	private	DataList<?,?>	theBase	  	= null;
+	private	DataList<?,?>	theBase	  		= null;
+		
+	/**
+	 * The generation 
+	 */
+	private	int				theGeneration  	= 0;
 		
 	/**
 	 * Get the style of the list
@@ -58,7 +64,19 @@ public abstract class DataList<L extends DataList<L,T>,
 	 * Get the EditState of the list
 	 * @return the Edit State
 	 */
-	public  EditState		getEditState(){ return theEdit; }
+	public  EditState		getEditState() { return theEdit; }
+
+	/**
+	 * Get the Generation of the list
+	 * @return the Generation
+	 */
+	public  int				getGeneration() { return theGeneration; }
+
+	/**
+	 * Get the Generation of the list
+	 * @return the Generation
+	 */
+	protected void			setGeneration(int pGeneration) { theGeneration = pGeneration; }
 
 	/**
 	 * Determine whether the list got any errors
@@ -145,11 +163,12 @@ public abstract class DataList<L extends DataList<L,T>,
 	 */
 	protected DataList(L pSource) {
 		super(pSource.getBaseClass(), false);
-		theStyle = ListStyle.VIEW;
-		theClass = pSource.theClass;
-		theList	 = theClass.cast(this);
-		theMgr	 = new IdManager<T>();
-		theBase  = pSource;
+		theStyle 		= ListStyle.VIEW;
+		theClass 		= pSource.theClass;
+		theList	 		= theClass.cast(this);
+		theMgr	 		= new IdManager<T>();
+		theBase  		= pSource;
+		theGeneration 	= pSource.getGeneration();
 	}
 		
 	/**
@@ -505,9 +524,10 @@ public abstract class DataList<L extends DataList<L,T>,
 	
 	/**
 	 * Provide a string representation of this object
+	 * @param pDetail the Debug Detail
 	 * @return formatted string
 	 */
-	public StringBuilder toHTMLString() {
+	public StringBuilder buildDebugDetail(DebugDetail pDetail) {
 		/* Local variables */
 		StringBuilder	myString = new StringBuilder(10000);
 		boolean			showDeleted;
@@ -524,10 +544,13 @@ public abstract class DataList<L extends DataList<L,T>,
 			
 		/* Start the status section */
 		myString.append("<tr><th rowspan=\"");
-		myString.append((showDeleted) ? 5 : 4);
+		myString.append((showDeleted) ? 6 : 5);
 		myString.append("\">Status</th></tr>");
 			
 		/* Format the listSize */
+		myString.append("<tr><td>Generation</td><td>");
+		myString.append(getGeneration());
+		myString.append("</td></tr>");
 		myString.append("<tr><td>ListSize</td><td>"); 
 		myString.append(sizeAll()); 
 		myString.append("</td></tr>"); 

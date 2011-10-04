@@ -12,6 +12,7 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
+import uk.co.tolcroft.models.help.DebugDetail;
 
 /**
  * Tax Year Class representing taxation parameters for a tax year
@@ -140,11 +141,12 @@ public class TaxYear extends DataItem<TaxYear> {
 	
 	/**
 	 * Format the value of a particular field as a table row
+	 * @param pDetail the debug detail
 	 * @param iField the field number
 	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, HistoryValues<TaxYear> pValues) {
+	public String formatField(DebugDetail pDetail, int iField, HistoryValues<TaxYear> pValues) {
 		String 	myString = "";
 		Values 	myValues = (Values)pValues;
 		switch (iField) {
@@ -154,6 +156,7 @@ public class TaxYear extends DataItem<TaxYear> {
 					myString += "Id=" + myValues.getTaxRegimeId();
 				else
 					myString += TaxRegime.format(myValues.getTaxRegime()); 
+				myString = pDetail.addDebugLink(myValues.getTaxRegime(), myString);
 				break;
 			case FIELD_YEAR:	
 				myString += Date.format(getDate()); 
@@ -219,7 +222,7 @@ public class TaxYear extends DataItem<TaxYear> {
 				myString += Rate.format(myValues.getHiCapTaxRate());	
 				break;
 			default: 		
-				myString += super.formatField(iField, pValues); 
+				myString += super.formatField(pDetail, iField, pValues); 
 				break;
 		}
 		return myString;

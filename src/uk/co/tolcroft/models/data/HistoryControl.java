@@ -1,6 +1,7 @@
 package uk.co.tolcroft.models.data;
 
 import uk.co.tolcroft.models.Difference;
+import uk.co.tolcroft.models.help.DebugDetail;
 
 
 /**
@@ -374,9 +375,10 @@ public class HistoryControl<T extends DataItem<T>> {
 	
 	/**
 	 * Format the historical changes in this list
+	 * @param pDetail the Debug Detail
 	 * @return the formatted changes
 	 */
-	public StringBuilder toHTMLString() {
+	public StringBuilder buildDebugDetail(DebugDetail pDetail) {
 		histElement		myCurr;
 		StringBuilder	myString = new StringBuilder(1000);
 		
@@ -385,7 +387,7 @@ public class HistoryControl<T extends DataItem<T>> {
 			 myCurr != null;
 			 myCurr  = myCurr.theNext) {
 			/* Format the historical element */
-			myString.append(myCurr.toHTMLString());
+			myString.append(myCurr.buildDebugDetail(pDetail));
 		}
 		
 		/* Return the formatted string */
@@ -421,9 +423,10 @@ public class HistoryControl<T extends DataItem<T>> {
 		
 		/**
 		 * Format the changes represented by this element
+		 * @param pDetail the Debug Detail
 		 * @return the formatted changes
 		 */
-		public StringBuilder toHTMLString() {
+		public StringBuilder buildDebugDetail(DebugDetail pDetail) {
 			HistoryValues<T> 	myObj;
 			int 				fieldId;
 			int					myCount;
@@ -456,12 +459,12 @@ public class HistoryControl<T extends DataItem<T>> {
 				/* If the field has changed */
 				if (myDiff.isDifferent()) {
 					/* Format the field */
-					myString.append("<tr><td>"); 
-					myString.append(theItem.getFieldName(fieldId)); 
-					myString.append("</td><td color=\""); 
-					myString.append(myDiff.isSecurityChanged() ? "red" : "blue"); 
+					myString.append("<tr><td color=\""); 
+					myString.append(myDiff.isSecurityChanged() ? "blue" : "red"); 
 					myString.append("\">"); 
-					myString.append(theItem.formatField(fieldId, theSnapShot));
+					myString.append(theItem.getFieldName(fieldId)); 
+					myString.append("</td><td>"); 
+					myString.append(theItem.formatField(pDetail, fieldId, theSnapShot));
 					myString.append("</td></tr>");
 				}
 			}

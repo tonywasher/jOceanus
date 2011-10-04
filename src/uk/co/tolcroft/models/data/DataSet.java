@@ -6,6 +6,7 @@ import java.util.Map;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.data.EncryptedItem.EncryptedList;
+import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugObject;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
@@ -22,6 +23,7 @@ public abstract class DataSet<T extends DataSet<T, E>,
 	private ControlData.List		theControlData 	= null;
 	private Class<E>				theClass 		= null;
 	private int						theNumEncrypted	= 0;
+	private int						theGeneration	= 0;
 	
 	/**
 	 * The DataList Map
@@ -33,6 +35,7 @@ public abstract class DataSet<T extends DataSet<T, E>,
 	public ControlKey.List 		getControlKeys() 	{ return theControlKeys; }
 	public DataKey.List 		getDataKeys() 		{ return theDataKeys; }
 	public ControlData.List 	getControlData() 	{ return theControlData; }
+	public int 					getGeneration() 	{ return theGeneration; }
 
 	/**
 	 *  Constructor for new empty DataSet
@@ -154,6 +157,29 @@ public abstract class DataSet<T extends DataSet<T, E>,
 	abstract public DataList<?,?> getDataList(Enum<?> pItemType);
 	
 	/**
+	 * Set Generation
+	 * @param pGeneration the generation
+	 */
+	public void setGeneration(int pGeneration) {
+		/* Record the generation */
+		theGeneration = pGeneration;
+		
+		/* Set the security lists */
+		theControlKeys.setGeneration(pGeneration);
+		theDataKeys.setGeneration(pGeneration);
+		theControlData.setGeneration(pGeneration);
+		
+		/* Loop through the Enum values */
+		for (E myType: theClass.getEnumConstants()) {
+			/* Access the lists */
+			DataList<?,?> myList = theMap.get(myType);
+			
+			/* Set the Generation */
+			myList.setGeneration(pGeneration);
+		}
+	}
+	
+	/**
 	 * Analyse the DataSet
 	 * @param pControl The DataControl 
 	 */
@@ -205,9 +231,10 @@ public abstract class DataSet<T extends DataSet<T, E>,
 
 	/**
 	 * Provide a string representation of this object
+	 * @param pDetail the debug detail
 	 * @return formatted string
 	 */
-	public StringBuilder toHTMLString() { return null; }
+	public StringBuilder buildDebugDetail(DebugDetail pDetail) { return null; }
 	
 	/**
 	 * Add child entries for the debug object

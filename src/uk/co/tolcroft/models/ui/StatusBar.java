@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.LayoutStyle;
 import javax.swing.Timer;
+import javax.swing.plaf.ProgressBarUI;
+import javax.swing.plaf.basic.BasicProgressBarUI;
 
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
@@ -39,7 +41,8 @@ public class StatusBar implements ActionListener {
 				
 	/* Constructor */
 	public StatusBar(MainWindow<?> pControl) {
-		GroupLayout panelLayout;
+		GroupLayout 	panelLayout;
+		ProgressBarUI	myUI;
 	
 		/* Record passed parameters */
 		theControl 	= pControl;
@@ -56,9 +59,16 @@ public class StatusBar implements ActionListener {
 		theStages	   = new JProgressBar();
 		theSteps	   = new JProgressBar();
 
+		/* Create look/feel for progress bars */
+		myUI = new BasicProgressBarUI() { protected Color getSelectionBackground()  { return Color.black; } 
+										  protected Color getSelectionForeground()  { return Color.black; } 
+										};
+		
 		/* Set backgrounds */
 		theStages.setForeground(Color.green);
 		theSteps.setForeground(Color.green);
+		theSteps.setUI(myUI);
+		theStages.setUI(myUI);
 		
 		/* Initialise progress bars */
 		theStages.setMaximum(100);

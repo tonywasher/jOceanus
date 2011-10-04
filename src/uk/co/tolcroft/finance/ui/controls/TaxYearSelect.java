@@ -18,7 +18,7 @@ import uk.co.tolcroft.models.ui.StdInterfaces.*;
 public class TaxYearSelect implements ItemListener {
 	/* Members */
 	private JPanel			thePanel		= null;
-	private stdPanel	theParent		= null;
+	private stdPanel		theParent		= null;
 	private View			theView			= null;
 	private JComboBox		theYearsBox		= null;
 	private JCheckBox		theShowDeleted	= null;

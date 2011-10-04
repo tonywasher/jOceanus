@@ -3,6 +3,7 @@ package uk.co.tolcroft.models.data;
 import uk.co.tolcroft.models.Difference;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.security.DataCipher;
 import uk.co.tolcroft.models.security.SecurityControl;
 import uk.co.tolcroft.models.security.SymmetricKey;
@@ -80,19 +81,19 @@ public class DataKey extends DataItem<DataKey> {
 	
 	/**
 	 * Format the value of a particular field as a table row
+	 * @param pDetail the debug detail
 	 * @param iField the field number
 	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, HistoryValues<DataKey> pValues) {
+	public String formatField(DebugDetail pDetail, int iField, HistoryValues<DataKey> pValues) {
 		Values	myValues = (Values)pValues;
 		String 	myString = "";
 		switch (iField) {
 			case FIELD_CONTROL: 		
+				myString = "Id=" + theControlId;					
 				if (myValues.getControlKey() != null)
-					myString += myValues.getControlKey().getId();
-				else 
-					myString += "Id=" + theControlId;					
+					myString = pDetail.addDebugLink(myValues.getControlKey(), myString);
 				break;
 			case FIELD_KEYTYPE: 		
 				myString += (getKeyType() == null) ? ("Id=" + theKeyTypeId) : getKeyType().toString(); 
@@ -101,7 +102,7 @@ public class DataKey extends DataItem<DataKey> {
 				myString += Utils.HexStringFromBytes(myValues.getSecuredKeyDef()); 
 				break;
 			default: 		
-				myString += super.formatField(iField, pValues); 
+				myString += super.formatField(pDetail, iField, pValues); 
 				break;
 		}
 		return myString;

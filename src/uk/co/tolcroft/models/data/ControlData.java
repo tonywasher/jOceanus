@@ -3,6 +3,7 @@ package uk.co.tolcroft.models.data;
 import uk.co.tolcroft.models.Difference;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.help.DebugDetail;
 
 public class ControlData extends DataItem<ControlData> {
 	/**
@@ -62,11 +63,12 @@ public class ControlData extends DataItem<ControlData> {
 	
 	/**
 	 * Format the value of a particular field as a table row
+	 * @param pDetail the debug detail
 	 * @param iField the field number
 	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, HistoryValues<ControlData> pValues) {
+	public String formatField(DebugDetail pDetail, int iField, HistoryValues<ControlData> pValues) {
 		Values myValues = (Values)pValues;
 		String 	myString = "";
 		switch (iField) {
@@ -74,13 +76,12 @@ public class ControlData extends DataItem<ControlData> {
 				myString += getDataVersion(); 
 				break;
 			case FIELD_CONTROL:
+				myString = "Id=" + theControlId;					
 				if (myValues.getControlKey() != null)
-					myString += myValues.getControlKey().getId();
-				else 
-					myString += "Id=" + theControlId;					
+					myString = pDetail.addDebugLink(myValues.getControlKey(), myString);
 				break;
 			default: 		
-				myString += super.formatField(iField, pValues); 
+				myString += super.formatField(pDetail, iField, pValues); 
 				break;
 		}
 		return myString;

@@ -4,6 +4,7 @@ import uk.co.tolcroft.models.Difference;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Number;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.security.SecurityControl;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.Utils;
@@ -13,7 +14,12 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	/**
 	 * The Id of the Control Key
 	 */
-	private int			theControlId	= -1;
+	private int			theControlId		= -1;
+	
+	/**
+	 * The Basic Control Key
+	 */
+	private ControlKey	theBaseKey			= null;
 	
 	/**
 	 * Encrypted Money length
@@ -44,7 +50,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 * Get the ControlKey for this item
 	 * @return the ControlKey
 	 */
-	public ControlKey		getControlKey()     { return getValues().getControl(); }
+	public ControlKey		getControlKey()     { return (getValues() == null) ? theBaseKey : getValues().getControl(); }
 
 	/* Linking methods */
 	public EncryptedItem<?>.EncryptedValues  getValues()  { 
@@ -69,21 +75,24 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	
 	/**
 	 * Format the value of a particular field as a table row
+	 * @param pDetail the debug detail
 	 * @param iField the field number
 	 * @param pObj the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(int iField, HistoryValues<T> pObj) {
+	public String formatField(DebugDetail pDetail, int iField, HistoryValues<T> pObj) {
 		String 			myString = "";
 		EncryptedItem<?>.EncryptedValues myObj 	 = (EncryptedItem<?>.EncryptedValues)pObj;
 		switch (iField) {
 			case FIELD_CONTROL:
-				myString += (myObj.getControl() == null) 
-								? "Id=" + theControlId
-								: "Id=" + myObj.getControl().getId(); 
+				if (myObj.getControl() != null) {
+					myString = "Id=" + myObj.getControl().getId();					
+					myString = pDetail.addDebugLink(myObj.getControl(), myString);
+				}
+				else myString = "Id=" + theControlId;					
 				break;
 			default:	
-				myString = super.formatField(iField, pObj);
+				myString = super.formatField(pDetail, iField, pObj);
 				break;
 		}
 		return myString;
@@ -379,10 +388,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 
 		/* Constructor */
 		public EncryptedValues() {}
-		public EncryptedValues(EncryptedValues pValues) {
-			theControl = pValues.getControl();
-			theControlId = (theControl == null) ? -1 : theControl.getId();
-		}
+		public EncryptedValues(EncryptedValues pValues) { copyFrom(pValues); }
 		
 		public boolean histEquals(HistoryValues<T> pValues) {
 			EncryptedValues myValues = (EncryptedValues)pValues;
@@ -392,7 +398,9 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		public void    copyFrom(HistoryValues<?> pValues) {
 			if (pValues instanceof EncryptedItem.EncryptedValues) {
 				EncryptedItem<?>.EncryptedValues myValues = (EncryptedItem<?>.EncryptedValues)pValues;
-				theControl = myValues.getControl();
+				theControl 		= myValues.getControl();
+				theControlId 	= (theControl == null) ? -1 : theControl.getId();
+				if (theBaseKey == null) theBaseKey = theControl;
 			}
 		}
 		public Difference	fieldChanged(int fieldNo, HistoryValues<T> pOriginal) {
@@ -716,6 +724,18 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		} 
 
 		/**
+		 * Constructor from a String Pair
+		 * @param pPair the String pair
+		 */
+		public CharArrayPair(EncryptedItem<?>.CharArrayPair pPair) { 
+			/* Store the chars value */
+			theChars = pPair.getChars();
+			
+			/* Store the bytes */
+			super.setBytes(pPair.getBytes());
+		} 
+
+		/**
 		 * Compare to another ValuePair
 		 * @param pPair the other pair
 		 */
@@ -936,6 +956,8 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		public RatePair(Rate   pValue) throws Exception	{ super(pValue); }
 		public RatePair(String pValue) throws Exception { super(pValue); }
 		public RatePair(byte[] pValue) throws Exception { super(pValue); }
+
+		public RatePair(EncryptedItem<?>.RatePair pValue) { super(pValue); }
 
 		/* Parse a rate value */
 		protected Rate parseValue(String pValue) throws Exception {
