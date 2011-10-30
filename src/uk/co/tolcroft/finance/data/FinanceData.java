@@ -5,12 +5,11 @@ import uk.co.tolcroft.finance.views.MetaAnalysis;
 import uk.co.tolcroft.models.Date;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
-import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.security.SecureManager;
 import uk.co.tolcroft.models.views.DataControl;
 
-public class FinanceData extends DataSet<FinanceData, ItemType> {
+public class FinanceData extends DataSet<FinanceData> {
 	/* Members */
 	private AccountType.List		theActTypes   	= null;
 	private TransactionType.List	theTransTypes 	= null;
@@ -48,7 +47,7 @@ public class FinanceData extends DataSet<FinanceData, ItemType> {
 	 */ 
 	public FinanceData(SecureManager pSecurity) {
 		/* Call Super-constructor */
-		super(pSecurity, ItemType.class);
+		super(pSecurity);
 		
 		/* Create the empty lists */
 		theActTypes    = new AccountType.List(this);
@@ -219,17 +218,17 @@ public class FinanceData extends DataSet<FinanceData, ItemType> {
 	 */
 	private void declareLists() {
 		/* Declare the lists */
-		addList(ItemType.AccountType, 	theActTypes);
-		addList(ItemType.TransType, 	theTransTypes);
-		addList(ItemType.TaxType, 		theTaxTypes);
-		addList(ItemType.TaxRegime, 	theTaxRegimes);
-		addList(ItemType.Frequency,		theFrequencys);
-		addList(ItemType.TaxYear,		theTaxYears);
-		addList(ItemType.Account,		theAccounts);
-		addList(ItemType.Rate,			theRates);
-		addList(ItemType.Price,			thePrices);
-		addList(ItemType.Pattern,		thePatterns);
-		addList(ItemType.Event,			theEvents);		
+		addList(theActTypes);
+		addList(theTransTypes);
+		addList(theTaxTypes);
+		addList(theTaxRegimes);
+		addList(theFrequencys);
+		addList(theTaxYears);
+		addList(theAccounts);
+		addList(theRates);
+		addList(thePrices);
+		addList(thePatterns);
+		addList(theEvents);		
 	}
 
 	/**
@@ -250,21 +249,30 @@ public class FinanceData extends DataSet<FinanceData, ItemType> {
 		if (theLoadState == LoadState.INITIAL)
 			theLoadState = LoadState.FINAL;
 		
+		/* Reset the flags on static data (ignoring TaxTypes) */
+		theActTypes.clearActive();
+		theTransTypes.clearActive();
+		theTaxRegimes.clearActive();
+		theFrequencys.clearActive();
+		
 		/* Reset the flags on the accounts and tax years */
-		theAccounts.reset();
-		theTaxYears.reset();
+		theAccounts.clearActive();
+		theTaxYears.clearActive();
+		
+		/* Note active items referenced by tax years */
+		theTaxYears.markActiveItems();
 		
 		/* Create the analysis */
 		theAnalysis = new EventAnalysis(pControl, this);
 
-		/* Note active rates */
-		theRates.markActiveRates();
+		/* Note active items referenced by rates */
+		theRates.markActiveItems();
 		
-		/* Note active prices */
-		thePrices.markActivePrices();
+		/* Note active items referenced by prices */
+		thePrices.markActiveItems();
 		
-		/* Note active patterns */
-		thePatterns.markActivePatterns();
+		/* Mark active items referenced by patterns */
+		thePatterns.markActiveItems();
 		
 		/* Access the most recent metaAnalysis */
 		myMetaAnalysis = theAnalysis.getMetaAnalysis();
@@ -274,35 +282,12 @@ public class FinanceData extends DataSet<FinanceData, ItemType> {
 			myMetaAnalysis.markActiveAccounts();
 		
 		/* Note active accounts */
-		theAccounts.markActiveAccounts();
+		theAccounts.markActiveItems();
 		
 		/* Note that we are now fully loaded */
 		theLoadState = LoadState.LOADED;
 	}
 	
-	
-	/**
-	 * Obtain DataList for an item type
-	 * @param pItemType the type of items
-	 * @return the list of items
-	 */
-	public DataList<?,?> getDataList(Enum<?> pItemType) {
-		/* Switch on item type */
-		switch((ItemType)pItemType) {
-			case AccountType:	return theActTypes;
-			case TransType:		return theTransTypes;
-			case TaxType:		return theTaxTypes;
-			case TaxRegime:		return theTaxRegimes;
-			case Frequency:		return theFrequencys;
-			case TaxYear:		return theTaxYears;
-			case Account:		return theAccounts;
-			case Rate:			return theRates;
-			case Price:			return thePrices;
-			case Pattern:		return thePatterns;
-			case Event:			return theEvents;
-			default:			return null;
-		}
-	}
 	
 	/** 
 	 * Enumeration of load states of data

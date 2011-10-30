@@ -5,7 +5,6 @@ import java.util.Arrays;
 import javax.crypto.*;
 
 import java.security.*;
-import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
@@ -39,16 +38,6 @@ public class PasswordKey {
 	public static final int 	HASHSIZE	 		= 100;
 	
 	/**
-	 * Secret key 
-	 */
-	private SecretKey 			thePassKey			= null;
-	
-	/**
-	 * Key Type 
-	 */
-	private PBEKeyType			theKeyType			= null;
-	
-	/**
 	 * Key Mode 
 	 */
 	private PBEKeyMode			theKeyMode			= null;
@@ -69,19 +58,24 @@ public class PasswordKey {
 	private byte[] 				theKeyHash			= null;
 
 	/**
-	 * Password hash 
+	 * SecretKey 
 	 */
-	private byte[] 				thePasswordHash		= null;
+	private SecretKey			thePassKey			= null;
 
 	/**
-	 * Obscure hash 
+	 * Secret hash 
 	 */
-	private byte[] 				theObscureHash		= null;
+	private byte[] 				theSecretHash		= null;
 
 	/**
 	 * Encrypted password 
 	 */
 	private byte[] 				thePassword			= null;
+
+	/**
+	 * CipherSet 
+	 */
+	private CipherSet			theCipherSet		= null;
 
 	/**
 	 * Obtain the SecurityKey
@@ -96,12 +90,6 @@ public class PasswordKey {
 	protected 	PBEKeyMode		getKeyMode()		{ return theKeyMode; }
 	
 	/**
-	 * Obtain the SecretKey
-	 * @return the SecretKey 
-	 */
-	protected 	SecretKey		getSecretKey()		{ return thePassKey; }
-	
-	/**
 	 * Constructor for a completely new password key 
 	 * @param pPassword the password (cleared after usage)
 	 * @param pRandom Secure Random byte generator
@@ -110,11 +98,10 @@ public class PasswordKey {
 						  SecureRandom		pRandom) throws WrongPasswordException,
 						  									Exception {
 		/* Create a random ControlMode */
-		theKeyMode = PBEKeyMode.getMode(pRandom);
+		theKeyMode 	= PBEKeyMode.getMode(pRandom);
 		
-		/* Store the key type and secure random generator */
-		theKeyType		= theKeyMode.getPBEKeyType();
-		theRandom		= pRandom;
+		/* Store the secure random generator */
+		theRandom	= pRandom;
 		
 		/* Validate the password */
 		setPassword(pPassword);
@@ -130,12 +117,11 @@ public class PasswordKey {
 						  char[] 			pPassword,
 						  SecureRandom		pRandom) throws WrongPasswordException,
 						  									Exception {
-		/* Store the salt and has and extract the mode */
+		/* Store the salt and hash and extract the mode */
 		theSaltAndHash 	= pSaltAndHash;
 		extractMode();
 		
-		/* Store the key and hash types and secure random generator */
-		theKeyType		= theKeyMode.getPBEKeyType();
+		/* Store the secure random generator */
 		theRandom		= pRandom;
 		
 		/* Validate the password */
@@ -150,10 +136,10 @@ public class PasswordKey {
 		char[] 		myPassword = null;
 		
 		/* Build the encryption cipher */
-		DataCipher myCipher = pSource.initDataCipher(Cipher.DECRYPT_MODE);
+		CipherSet mySet = pSource.theCipherSet;
 		
 		/* Access the original password */
-		myPassword = myCipher.decryptChars(pSource.thePassword);
+		myPassword = mySet.decryptChars(pSource.thePassword);
 		
 		/* Protect against exceptions */
 		try {
@@ -162,9 +148,6 @@ public class PasswordKey {
 			
 			/* Create a random ControlMode */
 			theKeyMode = PBEKeyMode.getMode(theRandom);
-			
-			/* Store the key type */
-			theKeyType		= theKeyMode.getPBEKeyType();
 			
 			/* Validate the password */
 			setPassword(myPassword);
@@ -180,9 +163,8 @@ public class PasswordKey {
 	 * @return the hash value
 	 */
 	public int hashCode() {
-		/* Calculate and return the hashCode for this symmetric key */
-		int hashCode = 19 * theSaltAndHash.hashCode();
-		hashCode += theKeyType.getId();
+		/* Calculate and return the hashCode for this password key */
+		int hashCode = theSaltAndHash.hashCode();
 		return hashCode;
 	}
 	
@@ -202,9 +184,6 @@ public class PasswordKey {
 		/* Access the target Key */
 		PasswordKey myThat = (PasswordKey)pThat;
 	
-		/* Not equal if different key-types */
-		if (myThat.theKeyType != theKeyType) return false;
-		
 		/* Compare the two */
 		return Utils.differs(theSaltAndHash, myThat.theSaltAndHash).isIdentical();
 	}
@@ -265,19 +244,38 @@ public class PasswordKey {
 				theSaltAndHash = mySaltAndHash;
 			}
 			
-			/* Generate the key */
-			thePassKey 		= PBEKeyFactory.getInstance(theKeyType,
-														theKeyMode.getSecondIterate(), 
-														theKeyHash, 
-														pPassword);
+			/* Access the Key Type */
+			PBEKeyType myType = theKeyMode.getPBEKeyType();
+
+			/* Generate the Key */
+			thePassKey	= PBEKeyFactory.getInstance(myType,
+													theKeyMode.getSecondIterate(), 
+													theKeyHash, 
+													pPassword);
+			
+			/* Create a new cipher */
+			Cipher myCipher = Cipher.getInstance(myType.getAlgorithm(), 
+					  					  		 SecurityControl.BCSIGN);
+			
+			/* Initialise the cipher using the KeyHash */
+			PBEParameterSpec mySpec	= new PBEParameterSpec(theKeyHash, theKeyMode.getThirdIterate());
+			myCipher.init(Cipher.ENCRYPT_MODE, thePassKey, mySpec);
+
+			/* Encrypt the Secret Hash */
+			theSecretHash = myCipher.doFinal(theSecretHash);
+			
+			/* Create the Cipher Set */
+			theCipherSet = new CipherSet(theRandom, CipherSet.DEFSTEPS);
+			theCipherSet.buildCiphers(theSecretHash);
 			
 			/* Encrypt the password */
-			encryptPassword(pPassword);
+			thePassword = theCipherSet.encryptChars(pPassword);
 			
 			/* Clear out the password */
 			Arrays.fill(pPassword, (char) 0);
 		}
 		catch (WrongPasswordException e) { throw e; }
+		catch (Exception e) { throw e; }
 		catch (Throwable e) {
 			throw new Exception(ExceptionClass.CRYPTO,
 								"Failed to initialise using password",
@@ -297,79 +295,91 @@ public class PasswordKey {
 	private byte[] generateSaltAndHash(byte[] pSalt, char[] pPassword) throws Exception {
 		byte[] 			mySaltAndHash;
 		byte[] 			myMainHash;
-		byte[] 			myAltHash;
-		byte[] 			myPartialHash		= null;
-		byte[] 			myPartialAltHash	= null;
+		byte[] 			mySecondHash;
+		byte[] 			myThirdHash;
 		byte[]			mySeed = { 'T', 'o', 'L', 'C', 'r', '0', 'F', 't' };
 		MessageDigest 	myMainDigest;
-		MessageDigest 	myAltDigest;
+		MessageDigest 	mySecondDigest;
+		MessageDigest 	myThirdDigest;
 		int				iFirst  = theKeyMode.getFirstIterate();
 		int				iSecond = theKeyMode.getSecondIterate();
 		int				iThird  = theKeyMode.getThirdIterate();
 		
 		/* Protect against exceptions */
 		try {
-			/* Create the two digests */
-			myMainDigest = MessageDigest.getInstance(theKeyMode.getFirstDigest().getAlgorithm()); 
-			myAltDigest  = MessageDigest.getInstance(theKeyMode.getSecondDigest().getAlgorithm()); 
+			/* Create the digests */
+			myMainDigest 	= MessageDigest.getInstance(theKeyMode.getFirstDigest().getAlgorithm()); 
+			mySecondDigest  = MessageDigest.getInstance(theKeyMode.getSecondDigest().getAlgorithm()); 
+			myThirdDigest  	= MessageDigest.getInstance(theKeyMode.getThirdDigest().getAlgorithm()); 
 				
 			/* Initialise the hash value as the UTF-8 version of the password */
-			myMainHash = Utils.charToByteArray(pPassword);
-			myAltHash  = Arrays.copyOf(myMainHash, myMainHash.length);
+			myMainHash 		= Utils.charToByteArray(pPassword);
+			mySecondHash	= Arrays.copyOf(myMainHash, myMainHash.length);
+			myThirdHash		= Arrays.copyOf(myMainHash, myMainHash.length);
 			
 			/* Initialise the digests with the salt and fixed seed */
 			myMainDigest.update(pSalt);
 			myMainDigest.update(mySeed);
-			myAltDigest.update(pSalt);
-			myAltDigest.update(mySeed);
+			mySecondDigest.update(pSalt);
+			mySecondDigest.update(mySeed);
+			myThirdDigest.update(pSalt);
+			myThirdDigest.update(mySeed);
 			
 			/* Loop through the iterations */
 			for (int i=0; i < iThird; i++) {
-				/* If we have hit the partial iteration point */
-				if (i == iSecond) {
-					/* Store the partial hashes */
-					myPartialHash 		= Arrays.copyOf(myAltHash, myAltHash.length);
-					myPartialAltHash	= Arrays.copyOf(myMainHash, myMainHash.length);
-				}
+				/* Note the final pass */
+				int		iPass		= i+1;
+				byte	iCounter	= (byte)(i % 256);
+				boolean bFinalPass 	= (iPass == iThird);
 				
 				/* Update the main digest and calculate it */
 				myMainDigest.update(myMainHash);
 				myMainDigest.update(pSalt);
 				myMainDigest.update(mySeed);
-				myMainDigest.update((byte)(i % 256));
-				myMainHash = myMainDigest.digest();
+				myMainDigest.update(iCounter);
 				
-				/* Reset the main digest skipping every third time */
-				if (((i+1) % 3) != 0) myMainDigest.reset();
+				/* Recalculate the hash skipping every third time */
+				if ((bFinalPass) || ((iPass % 3) != 0))
+					myMainHash = myMainDigest.digest();
 				
-				/* Update the digest and calculate it */
-				myAltDigest.update(myAltHash);
-				myAltDigest.update(pSalt);
-				myAltDigest.update(mySeed);
-				myAltDigest.update((byte)(i % 256));
-				myAltHash = myAltDigest.digest();
+				/* Update the second digest and calculate it */
+				mySecondDigest.update(mySecondHash);
+				mySecondDigest.update(pSalt);
+				mySecondDigest.update(mySeed);
+				mySecondDigest.update(iCounter);
 				
-				/* Reset the alternate digest skipping every fifth time */
-				if (((i+1) % 5) != 0) myAltDigest.reset();
+				/* Recalculate the hash skipping every fifth time */
+				if ((bFinalPass) || ((iPass % 5) != 0))
+					mySecondHash = mySecondDigest.digest();
 				
-				/* If we have hit the switch iteration */
-				if (i == iFirst) {
-					/* Switch the hash values */
-					byte[] myTemp = myAltHash;
-					myAltHash  = myMainHash;
-					myMainHash = myTemp;
+				/* Update the third digest and calculate it */
+				myThirdDigest.update(myThirdHash);
+				myThirdDigest.update(pSalt);
+				myThirdDigest.update(mySeed);
+				myThirdDigest.update(iCounter);
+				
+				/* Recalculate the hash skipping every seventh time */
+				if ((bFinalPass) || ((iPass % 7) != 0))
+					myThirdHash = myThirdDigest.digest();
+				
+				/* If we have hit a switch iteration */
+				if ((iPass == iFirst) || (iPass == iSecond)) {
+					/* Save the hash values */
+					byte[] mySecond = mySecondHash;
+					byte[] myThird 	= myThirdHash;
+					
+					/* Cycle the hashes */
+					mySecondHash	= myMainHash;
+					myThirdHash		= mySecond;
+					myMainHash		= myThird;
 				}
 			}
 			
 			/* Combine the hashes as required */
-			byte[] myExternalHash 	= combineHashes(myMainHash, myAltHash);
-			theKeyHash				= combineHashes(myMainHash, myPartialAltHash);
-			thePasswordHash			= combineHashes(myAltHash, 	myPartialHash);
-			theObscureHash			= combineHashes(myPartialAltHash, 	myPartialHash);
+			byte[] myExternalHash 	= combineHashes(myMainHash, 	mySecondHash);
+			theKeyHash				= combineHashes(myMainHash, 	myThirdHash);
+			theSecretHash			= combineHashes(mySecondHash, 	myThirdHash);
 			
-			/* Obscure the hash arrays */
-			myExternalHash = obscureArray(myExternalHash);
-
 			/* Combine the salt and hash */
 			mySaltAndHash = new byte[pSalt.length+MODELENGTH+myExternalHash.length];
 			System.arraycopy(theKeyMode.getByteMode(), 0, mySaltAndHash, 0, MODELENGTH);
@@ -398,48 +408,9 @@ public class PasswordKey {
 	 * @return the secured key
 	 */
 	public byte[] getSecuredPrivateKey(AsymmetricKey pKey) throws Exception {
-		byte[] 				mySalt;
-		byte[] 				myKeyEnc;
-		byte[] 				myKeyDef;
-		PBEParameterSpec 	mySpec;
-		Cipher				myCipher;
+		/* Return the Secured Key */
+		byte[] myKeyDef = theCipherSet.wrapKey(pKey);
 		
-		/* Return null if there is no PrivateKey */
-		PrivateKey			myPrivate = pKey.getPrivateKey();
-		if (myPrivate == null) return null;
-		
-		/* Protect against exceptions */
-		try {
-			/* Create a cipher */
-			myCipher	= Cipher.getInstance(theKeyType.getAlgorithm(),
-					 						 SecurityControl.BCSIGN);
-			
-			/* Create the new salt */
-			mySalt = new byte[SALTLENGTH];
-			theRandom.nextBytes(mySalt);
-			
-			/* Initialise the cipher */
-			mySpec 		= new PBEParameterSpec(mySalt, theKeyMode.getThirdIterate());
-			myCipher.init(Cipher.WRAP_MODE, thePassKey, mySpec);
-		
-			/* wrap the private key */
-			myKeyEnc = myCipher.wrap(myPrivate);
-
-			/* Combine the salt and wrapped key */
-			myKeyDef = new byte[mySalt.length+ myKeyEnc.length];
-			System.arraycopy(mySalt, 0, myKeyDef, 0, mySalt.length);
-			System.arraycopy(myKeyEnc, 0, myKeyDef, mySalt.length, myKeyEnc.length);
-
-			/* Obscure the array */
-			myKeyDef = obscureArray(myKeyDef);
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
-								"Failed to wrap key",
-								e);
-		}
-				
 		/* Check whether the SecuredKey is too large */
 		if (myKeyDef.length > AsymmetricKey.PRIVATESIZE)
 			throw new Exception(ExceptionClass.DATA,
@@ -454,88 +425,13 @@ public class PasswordKey {
 	 * @param pSecurityKey the Security Key  
 	 * @param pKeyType	the key type
 	 */
-	public AsymmetricKey getAsymmetricKey(byte[] 				pSecuredPrivateKeyDef,
-										  X509EncodedKeySpec	pPublicKey,
-										  AsymKeyType			pKeyType) throws Exception {
-		byte[] 				mySalt;
-		byte[] 				myKeyEnc;
-		PBEParameterSpec 	mySpec;
-		PrivateKey			myPrivateKey = null;
-		Cipher				myCipher;
-		AsymmetricKey		myKey;
-				
-		/* Protect against exceptions */
-		try {
-			/* Reverse the obscuring of the array */
-			pSecuredPrivateKeyDef = obscureArray(pSecuredPrivateKeyDef);
-			
-			/* Create a cipher */
-			myCipher	= Cipher.getInstance(theKeyType.getAlgorithm(),
-					 						 SecurityControl.BCSIGN);
-			
-			/* Pick out the salt and key from the array */
-			mySalt 		= Arrays.copyOf(pSecuredPrivateKeyDef, SALTLENGTH);
-			myKeyEnc	= Arrays.copyOfRange(pSecuredPrivateKeyDef, SALTLENGTH, pSecuredPrivateKeyDef.length);
-			
-			/* Initialise the cipher */
-			mySpec 		= new PBEParameterSpec(mySalt, theKeyMode.getThirdIterate());
-			myCipher.init(Cipher.UNWRAP_MODE, thePassKey, mySpec);
-		
-			/* unwrap the private key */
-			myPrivateKey = (PrivateKey)myCipher.unwrap(myKeyEnc, pKeyType.getAlgorithm(), Cipher.PRIVATE_KEY);
-		}
-		
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
-								"Failed to unwrap key pair",
-								e);
-		}
-		
-		/* Create the Asymmetric Key */
-		myKey		= new AsymmetricKey(myPrivateKey,
-										pPublicKey,
-										pKeyType,
-										theRandom);
-
-		/* Return to caller */
-		return myKey;
+	public AsymmetricKey getAsymmetricKey(byte[] 		pSecuredPrivateKeyDef,
+										  byte[]		pPublicKey,
+										  AsymKeyType	pKeyType) throws Exception {
+		/* unWrap the Asymmetric Key */
+		return theCipherSet.unWrapKey(pSecuredPrivateKeyDef, pPublicKey, pKeyType);
 	}
 	
-	/**
-	 * Simple function to obscure a byte array.
-	 * Since it uses XOR functionality, repeating the call reverses the previous call
-	 * @param pArray the array to obscure/clear
-	 * @return the obscured or clear array
-	 * @throws Exception 
-	 */
-	protected byte[] obscureArray(byte[] pArray) throws Exception {
-		byte[] 			myArray;
-		int	   			myLen;
-		int	   			i;
-		
-		/* If password has not been set */
-		if (theObscureHash == null) {
-			/* Throw an exception */
-			throw new Exception(ExceptionClass.LOGIC,
-								"Password not set");
-		}
-		
-		/* Allocate the new array as a copy of the input */
-		myArray = Arrays.copyOf(pArray, pArray.length);
-		
-		/* Determine length of operation */
-		myLen = theObscureHash.length;
-		
-		/* Loop through the array bytes */
-		for (i=0; i<pArray.length; i++) {
-			/* Obscure the byte */
-			myArray[i] ^= theObscureHash[i % myLen];
-		}
-					
-		/* return the array */
-		return myArray;
-	}	
-
 	/**
 	 * Simple function to combine hashes. Hashes are simply XORed together.
 	 * @param pFirst the first Hash
@@ -572,113 +468,6 @@ public class PasswordKey {
 	}	
 
 	/**
-	 * Initialise data cipher for encryption/decryption
-	 * @param iMode encryption/decryption mode
-	 * @return the Data Cipher
-	 */
-	public DataCipher initDataCipher(int iMode) throws Exception {
-		PBEParameterSpec 	mySpec;
-		Cipher				myCipher;
-
-		/* Protect against exceptions */
-		try {
-			/* Create a new cipher */
-			myCipher = Cipher.getInstance(theKeyType.getAlgorithm(), 
-										  SecurityControl.BCSIGN);
-			
-			/* Initialise the cipher using the password */
-			mySpec 		= new PBEParameterSpec(thePasswordHash, theKeyMode.getThirdIterate());
-			myCipher.init(iMode, thePassKey, mySpec);
-
-			/* Return the Data Cipher */
-			return new DataCipher(myCipher, this);
-		}
-		
-		/* catch exceptions */
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
-								"Failed to initialise cipher",
-								e);
-		}
-	}
-	
-	/**
-	 * Initialise stream cipher for encryption with random initialisation vector
-	 */
-	public StreamCipher initEncryptionStream() throws Exception {
-		PBEParameterSpec 	mySpec;
-		Cipher				myCipher;
-		byte[]				myInitVector;
-
-		/* Protect against exceptions */
-		try {
-			/* Create a new cipher */
-			myCipher = Cipher.getInstance(theKeyType.getAlgorithm(), 
-					  					  SecurityControl.BCSIGN);
-			
-			/* Create the new salt */
-			myInitVector = new byte[SALTLENGTH];
-			theRandom.nextBytes(myInitVector);
-			
-			/* Initialise the cipher generating a random Initialisation vector */
-			mySpec 		= new PBEParameterSpec(myInitVector, theKeyMode.getThirdIterate());
-			myCipher.init(Cipher.ENCRYPT_MODE, thePassKey, mySpec);
-			
-			/* Return the Stream Cipher */
-			return new StreamCipher(myCipher, myInitVector);
-		}
-		
-		/* catch exceptions */
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
-								"Failed to initialise cipher",
-								e);
-		}
-	}
-	
-	/**
-	 * Initialise stream cipher for decryption with initialisation vector
-	 * @param Initialisation vector for cipher
-	 */
-	public StreamCipher initDecryptionStream(byte[] pInitVector) throws Exception {
-		PBEParameterSpec 	mySpec;
-		Cipher				myCipher;
-
-		/* Protect against exceptions */
-		try {
-			/* Create a new cipher */
-			myCipher = Cipher.getInstance(theKeyType.getAlgorithm(),
-					  					  SecurityControl.BCSIGN);
-			
-			/* Initialise the cipher using the password */
-			mySpec 		= new PBEParameterSpec(pInitVector, theKeyMode.getThirdIterate());
-			myCipher.init(Cipher.DECRYPT_MODE, thePassKey, mySpec);
-
-			/* Return the Stream Cipher */
-			return new StreamCipher(myCipher, pInitVector);
-		}
-		
-		/* catch exceptions */
-		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
-								"Failed to initialise cipher",
-								e);
-		}
-	}
-	
-	/**
-	 * Record the encrypted password 
-	 * @param pPassword the password
-	 */
-	private void encryptPassword(char[] pPassword) throws Exception {
-		/* Build the encryption cipher */
-		DataCipher myCipher = initDataCipher(Cipher.ENCRYPT_MODE);
-		
-		/* Encrypt the password characters */
-		thePassword = myCipher.encryptChars(pPassword);
-	}
-	
-	/**
 	 * Attempt the cached password against the passed control
 	 * @param pControl the security control to test against
 	 * @return the cloned key
@@ -688,11 +477,8 @@ public class PasswordKey {
 
 		/* Protect against exceptions */
 		try {
-			/* Build the encryption cipher */
-			DataCipher myCipher = initDataCipher(Cipher.DECRYPT_MODE);
-		
 			/* Access the original password */
-			myPassword = myCipher.decryptChars(thePassword);
+			myPassword = theCipherSet.decryptChars(thePassword);
 			
 			/* Try to initialise the control */
 			pControl.initControl(myPassword);

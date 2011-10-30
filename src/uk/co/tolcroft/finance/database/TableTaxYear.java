@@ -71,7 +71,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	}
 	
 	/* Declare DataSet */
-	protected void declareData(DataSet<?,?> pData) {
+	protected void declareData(DataSet<?> pData) {
 		FinanceData myData = (FinanceData)pData;
 		theData = myData;
 		theList = myData.getTaxYears();

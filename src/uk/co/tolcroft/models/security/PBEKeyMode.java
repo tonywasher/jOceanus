@@ -19,20 +19,22 @@ public class PBEKeyMode {
 	 */
 	private final static int 		placeDIGEST1	= 1;
 	private final static int 		placeDIGEST2	= 2;
-	private final static int 		placePBEKEY		= 3;
+	private final static int 		placeDIGEST3	= 3;
+	private final static int 		placePBEKEY		= 4;
 	
 	/**
 	 * The iteration locations (in units of 4-bit shifts)
 	 */
-	private final static int 		placeITER1		= 4;
-	private final static int 		placeITER2		= 5;
-	private final static int 		placeITER3		= 6;
+	private final static int 		placeITER1		= 5;
+	private final static int 		placeITER2		= 6;
+	private final static int 		placeITER3		= 7;
 
 	/**
 	 * The Digest/Key types
 	 */
 	private DigestType	thePrimeDigest		= null;
 	private DigestType	theSecondDigest		= null;
+	private DigestType	theThirdDigest		= null;
 	private PBEKeyType	thePBEKeyType		= null;
 	private	int			theFirstIteration	= 1024;
 	private	int			theSecondIteration	= 1536;
@@ -45,6 +47,7 @@ public class PBEKeyMode {
 	protected	byte[]	getByteMode() 		{ return Utils.BytesFromInteger(theMode); }
 	public	DigestType	getFirstDigest()	{ return thePrimeDigest; }
 	public	DigestType	getSecondDigest()	{ return theSecondDigest; }
+	public	DigestType	getThirdDigest()	{ return theThirdDigest; }
 	public	PBEKeyType	getPBEKeyType()		{ return thePBEKeyType; }
 	public	int			getFirstIterate()	{ return theFirstIteration; }
 	public	int			getSecondIterate()	{ return theSecondIteration; }
@@ -70,7 +73,8 @@ public class PBEKeyMode {
 
 		/* Set Digest values */
 		setDigestTypes(DigestType.fromId(getId(pMode, placeDIGEST1)),
-					   DigestType.fromId(getId(pMode, placeDIGEST2)));
+					   DigestType.fromId(getId(pMode, placeDIGEST2)),
+		   			   DigestType.fromId(getId(pMode, placeDIGEST3)));
 
 		/* Set PBEKey value */
 		setPBEKeyType(PBEKeyType.fromId(getId(pMode, placePBEKEY)));
@@ -87,19 +91,21 @@ public class PBEKeyMode {
 	 * Construct a ControlMode
 	 * @param pFirstDigest the first digest type
 	 * @param pSecondDigest the second digest type
+	 * @param pThirdDigest the second digest type
 	 * @param pPBEKeyType the PBE key type
 	 * @param pAsymKeyType the Asym Key type
 	 * @param pRandom the random generator
 	 */
 	public static PBEKeyMode getMode(DigestType		pFirstDigest,
 				   					 DigestType		pSecondDigest,
+				   					 DigestType		pThirdDigest,
 				   					 PBEKeyType		pPBEKeyType,
 				   					 SecureRandom	pRandom) throws Exception {
 		/* Create a new PBEKeyMode */
 		PBEKeyMode myMode = new PBEKeyMode();
 
 		/* Set digest options */
-		myMode.setDigestTypes(pFirstDigest, pSecondDigest);
+		myMode.setDigestTypes(pFirstDigest, pSecondDigest, pThirdDigest);
 
 		/* Set PBE key option */
 		myMode.setPBEKeyType(pPBEKeyType);
@@ -121,10 +127,10 @@ public class PBEKeyMode {
 
 		/* Access a random set of SymKeyTypes and DigestTypes */
 		PBEKeyType[]  myPBE 	= PBEKeyType.getRandomTypes(1, pRandom);		
-		DigestType[]  myDigest	= DigestType.getRandomTypes(2, pRandom);
+		DigestType[]  myDigest	= DigestType.getRandomTypes(3, pRandom);
 		
 		/* Set digest options */
-		myMode.setDigestTypes(myDigest[0], myDigest[1]);
+		myMode.setDigestTypes(myDigest[0], myDigest[1], myDigest[2]);
 
 		/* Set PBE key option */
 		myMode.setPBEKeyType(myPBE[0]);
@@ -267,16 +273,20 @@ public class PBEKeyMode {
 	 * Set Digest types
 	 * @param pFirstDigest the first digest type
 	 * @param pSecondDigest the second digest type
+	 * @param pThirdDigest the third digest type
 	 */
 	private void setDigestTypes(DigestType pFirstDigest,
-								DigestType pSecondDigest) throws Exception {
+								DigestType pSecondDigest,
+								DigestType pThirdDigest) throws Exception {
 		/* Record the digests */
 		thePrimeDigest 	= pFirstDigest;
 		theSecondDigest = pSecondDigest;
+		theThirdDigest  = pThirdDigest;
 
 		/* Set the values into the mode */
 		setId(pFirstDigest.getId(), placeDIGEST1);
 		setId(pSecondDigest.getId(), placeDIGEST2);
+		setId(pThirdDigest.getId(), placeDIGEST3);
 	}
 
 	/**

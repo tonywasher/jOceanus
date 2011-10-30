@@ -22,22 +22,16 @@ public class DataKey extends DataItem<DataKey> {
 	public static final String listName = objName + "s";
 
 	/**
-	 * Symmetric Key Length
+	 * Encrypted Symmetric Key Length
 	 */
 	public final static int KEYLEN 		= SymmetricKey.IDSIZE;
 
-	/* Local values */
-	private DataCipher		theCipher		= null;
-	private SymmetricKey	theKey			= null;
-	private int 			theControlId 	= -1;
-	private int 			theKeyTypeId 	= -1;
-	
 	/* Access methods */
 	public  byte[] 			getSecuredKeyDef()  { return getValues().getSecuredKeyDef(); }
-	public  DataCipher		getCipher()  		{ return theCipher; }
+	public  DataCipher		getCipher()  		{ return getValues().getCipher(); }
 	public  SymKeyType		getKeyType()  		{ return getValues().getKeyType(); }
 	public  ControlKey		getControlKey()		{ return getValues().getControlKey(); }
-	protected SymmetricKey	getDataKey()		{ return theKey; }
+	protected SymmetricKey	getDataKey()		{ return getValues().getKey(); }
 
 	/* Linking methods */
 	public DataKey	getBase() 	{ return (DataKey)super.getBase(); }
@@ -91,12 +85,13 @@ public class DataKey extends DataItem<DataKey> {
 		String 	myString = "";
 		switch (iField) {
 			case FIELD_CONTROL: 		
-				myString = "Id=" + theControlId;					
+				myString = "Id=" + myValues.theControlId;					
 				if (myValues.getControlKey() != null)
 					myString = pDetail.addDebugLink(myValues.getControlKey(), myString);
 				break;
 			case FIELD_KEYTYPE: 		
-				myString += (getKeyType() == null) ? ("Id=" + theKeyTypeId) : getKeyType().toString(); 
+				myString += (myValues.getKeyType() == null) ? ("Id=" + myValues.theKeyTypeId)  
+															: myValues.getKeyType().toString(); 
 				break;
 			case FIELD_KEY:
 				myString += Utils.HexStringFromBytes(myValues.getSecuredKeyDef()); 
@@ -109,6 +104,12 @@ public class DataKey extends DataItem<DataKey> {
 	}
 							
 	/**
+	 * Get an initial set of values 
+	 * @return an initial set of values 
+	 */
+	protected HistoryValues<DataKey> getNewValues() { return new Values(); }
+	
+	/**
  	 * Construct a copy of a DataKey
 	 * @param pList the list to add to
  	 * @param pKey The Key to copy 
@@ -116,11 +117,8 @@ public class DataKey extends DataItem<DataKey> {
 	protected DataKey(List pList, DataKey pKey) {
 		/* Set standard values */
 		super(pList, pKey.getId());
-		Values myValues = new Values(pKey.getValues());
-		setValues(myValues);
-		theControlId	= pKey.theControlId;
-		theCipher		= pKey.getCipher();
-		theKey			= pKey.getDataKey();
+		Values myValues = getValues();
+		myValues.copyFrom(pKey.getValues());
 
 		/* Switch on the LinkStyle */
 		switch (pList.getStyle()) {
@@ -149,27 +147,20 @@ public class DataKey extends DataItem<DataKey> {
  	 * @param uKeyTypeId the id of the KeyType
 	 * @param pSecurityKey the encrypted symmetric key
 	 */
-	public DataKey(List     	pList,
-				   int			uId,
-				   int			uControlId,
-				   int			uKeyTypeId,
-				   byte[]		pSecurityKey) throws Exception {
+	private DataKey(List     	pList,
+				    int			uId,
+				    int			uControlId,
+				    int			uKeyTypeId,
+				    byte[]		pSecurityKey) throws Exception {
 		/* Initialise the item */
 		super(pList, uId);
-		Values myValues = new Values();
-		setValues(myValues);
+		Values myValues = getValues();
 
 		/* Record the IDs */
-		theControlId	= uControlId;
-		theKeyTypeId	= uKeyTypeId;
+		myValues.setControlId(uControlId);
+		myValues.setKeyTypeId(uKeyTypeId);
+		myValues.setSecuredKeyDef(pSecurityKey);
 
-		/* Look up the ControlKey */
-		ControlKey myControlKey = pList.theData.getControlKeys().searchFor(uControlId);
-		if (myControlKey == null) 
-			throw new Exception(ExceptionClass.DATA,
-		                        this,
-					            "Invalid ControlKey Id");
-		
 		/* Determine the SymKeyType */
 		try { myValues.setKeyType(SymKeyType.fromId(uKeyTypeId)); }
 		catch (Exception e) {
@@ -178,17 +169,24 @@ public class DataKey extends DataItem<DataKey> {
 	            				"Invalid KeyType Id " + uKeyTypeId);
 		}
 		
+		/* Look up the ControlKey */
+		ControlKey myControlKey = pList.theData.getControlKeys().searchFor(uControlId);
+		if (myControlKey == null) 
+			throw new Exception(ExceptionClass.DATA,
+		                        this,
+					            "Invalid ControlKey Id");
+		
 		/* Store the keys */
 		myValues.setControlKey(myControlKey);
-		myValues.setSecuredKeyDef(pSecurityKey);
 
 		/* Create the Symmetric Key from the wrapped data */
 		SecurityControl myControl = myControlKey.getSecurityControl();
-		theKey	   = myControl.getSymmetricKey(pSecurityKey, getKeyType()); 
+		SymmetricKey myKey = myControl.getSymmetricKey(pSecurityKey, getKeyType());
+		myValues.setKey(myKey);
 		myValues.setSecurityControl(myControl);
 		
 		/* Access the Cipher */
-		theCipher = theKey.initDataCipher();
+		myValues.setCipher(myKey.initDataCipher());
 		
 		/* Register the DataKey */
 		myControlKey.registerDataKey(this);
@@ -203,29 +201,28 @@ public class DataKey extends DataItem<DataKey> {
 	 * @param pControlKey the ControlKey to which this key belongs
 	 * @param pKeyType the Key type of the new key
 	 */
-	public DataKey(List 		pList,
-				   ControlKey 	pControlKey,
-				   SymKeyType	pKeyType) throws Exception {
+	private DataKey(List 		pList,
+				    ControlKey 	pControlKey,
+				    SymKeyType	pKeyType) throws Exception {
 		/* Initialise the item */
 		super(pList, 0);
-		Values myValues = new Values();
-		setValues(myValues);
+		Values myValues = getValues();
 		
-		/* Store the Control Details */
-		theControlId	= pControlKey.getId();
+		/* Store the Details */
+		myValues.setControlKey(pControlKey);
+		myValues.setKeyType(pKeyType);
 		
 		/* Create the new key */
 		SecurityControl myControl = pControlKey.getSecurityControl();
-		theKey	   = myControl.getSymmetricKey(pKeyType);
+		SymmetricKey myKey  = myControl.getSymmetricKey(pKeyType);
+		myValues.setKey(myKey);
 		
 		/* Access the Cipher */
-		theCipher = theKey.initDataCipher();
+		myValues.setCipher(myKey.initDataCipher());
 		
 		/* Store its secured keyDef */
 		myValues.setSecurityControl(myControl);
-		myValues.setControlKey(pControlKey);
-		myValues.setKeyType(pKeyType);
-		myValues.setSecuredKeyDef(myControl.getSecuredKeyDef(theKey));			
+		myValues.setSecuredKeyDef(myControl.getSecuredKeyDef(myKey));			
 	
 		/* Register the DataKey */
 		pControlKey.registerDataKey(this);
@@ -240,29 +237,27 @@ public class DataKey extends DataItem<DataKey> {
 	 * @param pControlKey the ControlKey to which this key belongs
 	 * @param pDataKey the DataKey to clone
 	 */
-	public DataKey(List 		pList,
-				   ControlKey 	pControlKey,
-				   DataKey		pDataKey) throws Exception {
+	private DataKey(List 		pList,
+				    ControlKey 	pControlKey,
+				    DataKey		pDataKey) throws Exception {
 		/* Initialise the item */
 		super(pList, 0);
-		Values myValues = new Values();
-		setValues(myValues);
+		Values myValues = getValues();
 		
 		/* Store the Control details */
-		theControlId	= pControlKey.getId();
+		myValues.setControlKey(pControlKey);
 		
 		/* Copy the key details */
-		theKey	  = pDataKey.getDataKey();
-		theCipher = pDataKey.getCipher();
+		myValues.setKey(pDataKey.getDataKey());
+		myValues.setCipher(pDataKey.getCipher());
 		
 		/* Access Security Control */
 		SecurityControl myControl = pControlKey.getSecurityControl();
 
 		/* Store its secured keyDef */
 		myValues.setSecurityControl(myControl);
-		myValues.setControlKey(pDataKey.getControlKey());
 		myValues.setKeyType(pDataKey.getKeyType());
-		myValues.setSecuredKeyDef(myControl.getSecuredKeyDef(theKey));			
+		myValues.setSecuredKeyDef(myControl.getSecuredKeyDef(myValues.getKey()));			
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -322,7 +317,7 @@ public class DataKey extends DataItem<DataKey> {
 	 * Isolate Data Copy
 	 * @param pData the DataSet
 	 */
-	private void isolateCopy(DataSet<?,?> pData) {
+	private void isolateCopy(DataSet<?> pData) {
 		ControlKey.List myKeys = pData.getControlKeys();
 		
 		/* Update to use the local copy of the ControlKeys */
@@ -347,7 +342,7 @@ public class DataKey extends DataItem<DataKey> {
 		ControlKey		myControlKey	= getControlKey();
 		SecurityControl	myControl		= myControlKey.getSecurityControl();
 		myValues.setSecurityControl(myControl);
-		myValues.setSecuredKeyDef(myControl.getSecuredKeyDef(theKey));			
+		myValues.setSecuredKeyDef(myControl.getSecuredKeyDef(myValues.getKey()));			
 		
 		/* Check for changes */
 		if (checkForHistory()) setState(DataState.CHANGED);
@@ -358,14 +353,14 @@ public class DataKey extends DataItem<DataKey> {
 	 */
 	public static class List  extends DataList<List, DataKey> {
 		/* Members */
-		private DataSet<?,?>	theData		= null;
-		public 	DataSet<?,?> 	getData()	{ return theData; }
+		private DataSet<?>	theData		= null;
+		public 	DataSet<?> 	getData()	{ return theData; }
 
 		/** 
 		 * Construct an empty CORE DataKey list
 	 	 * @param pData the DataSet for the list
 		 */
-		protected List(DataSet<?,?> pData) { 
+		protected List(DataSet<?> pData) { 
 			super(List.class, DataKey.class, ListStyle.CORE, false);
 			theData = pData;
 		}
@@ -375,7 +370,7 @@ public class DataKey extends DataItem<DataKey> {
 	 	 * @param pData the DataSet for the list
 		 * @param pStyle the style of the list 
 		 */
-		protected List(DataSet<?,?> pData, ListStyle pStyle) {
+		protected List(DataSet<?> pData, ListStyle pStyle) {
 			super(List.class, DataKey.class, pStyle, false);
 			theData = pData;
 		}
@@ -408,7 +403,7 @@ public class DataKey extends DataItem<DataKey> {
 		public List getUpdateList() 	{ return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 		{ return null; }
 		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
-		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+		public List getDeepCopy(DataSet<?> pDataSet)	{ 
 			/* Build an empty Extract List */
 			List myList = new List(this);
 			myList.theData = pDataSet;
@@ -540,21 +535,39 @@ public class DataKey extends DataItem<DataKey> {
 		private ControlKey		theControlKey		= null;
 		private byte[]			theSecuredKeyDef	= null;
 		private SymKeyType		theKeyType			= null;
+		private int 			theControlId 		= -1;
+		private int 			theKeyTypeId 		= -1;
+		private DataCipher		theCipher			= null;
+		private SymmetricKey	theKey				= null;
 		
 		/* Access methods */
 		public  SecurityControl	getSecurityControl()	{ return theControl; }
 		public  ControlKey		getControlKey()  		{ return theControlKey; }
 		public  byte[] 			getSecuredKeyDef()  	{ return theSecuredKeyDef; }
 		public  SymKeyType		getKeyType()  			{ return theKeyType; }
+		public  int				getControlId()  		{ return theControlId; }
+		public  int				getKeyTypeId()  		{ return theKeyTypeId; }
+		public  DataCipher		getCipher()  			{ return theCipher; }
+		public  SymmetricKey	getKey()  				{ return theKey; }
 		
-		public void setSecurityControl(SecurityControl pControl) {
+		private void setSecurityControl(SecurityControl pControl) {
 			theControl			= pControl; }
-		public void setControlKey(ControlKey pValue) {
-			theControlKey		= pValue; }
-		public void setSecuredKeyDef(byte[] pValue) {
+		private void setControlKey(ControlKey pValue) {
+			theControlKey		= pValue; 
+			theControlId 		= (pValue == null) ? -1 : pValue.getId(); }
+		private void setSecuredKeyDef(byte[] pValue) {
 			theSecuredKeyDef	= pValue; }
-		public void setKeyType(SymKeyType pValue) {
-			theKeyType			= pValue; }
+		private void setKeyType(SymKeyType pValue) {
+			theKeyType			= pValue; 
+			theKeyTypeId 		= (pValue == null) ? -1 : pValue.getId(); }
+		private void setKeyTypeId(int pValue) {
+			theKeyTypeId		= pValue; }
+		private void setControlId(int pValue) {
+			theControlId		= pValue; }
+		private void setCipher(DataCipher pValue) {
+			theCipher			= pValue; }
+		private void setKey(SymmetricKey pValue) {
+			theKey				= pValue; }
 
 		/* Constructor */
 		public Values() {}
@@ -579,6 +592,10 @@ public class DataKey extends DataItem<DataKey> {
 			theControlKey		= myValues.getControlKey();
 			theSecuredKeyDef	= myValues.getSecuredKeyDef();
 			theKeyType			= myValues.getKeyType();
+			theKeyTypeId		= myValues.getKeyTypeId();
+			theControlId		= myValues.getControlId();
+			theCipher			= myValues.getCipher();
+			theKey				= myValues.getKey();
 		}
 		public Difference	fieldChanged(int fieldNo, HistoryValues<DataKey> pOriginal) {
 			Values 	pValues = (Values)pOriginal;

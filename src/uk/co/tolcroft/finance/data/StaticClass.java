@@ -490,7 +490,7 @@ public class StaticClass {
 				case UNITTRUSTDIVIDEND:	return 33;
 				case TAXFREEINTEREST:	return 34;
 				case TAXFREEDIVIDEND:	return 35;
-				case CAPITALGAIN:		return 35;
+				case CAPITALGAIN:		return 36;
 				case CAPITALLOSS: 	
 				default:				return 37;
 			}

@@ -51,17 +51,17 @@ public class SheetTaxType extends SheetStaticData<TaxType> {
 	/**
 	 * Load encrypted 
 	 */
-	protected void loadEncryptedItem(int pId, int pControlId, boolean isEnabled, byte[] pName, byte[] pDesc) throws Exception {
+	protected void loadEncryptedItem(int pId, int pControlId, boolean isEnabled, int iOrder, byte[] pName, byte[] pDesc) throws Exception {
 		/* Create the item */
-		theList.addItem(pId, pControlId, isEnabled, pName, pDesc);		
+		theList.addItem(pId, pControlId, isEnabled, iOrder, pName, pDesc);		
 	}
 
 	/**
 	 * Load clear text 
 	 */
-	protected void loadClearTextItem(int pId, boolean isEnabled, String pName, String pDesc) throws Exception {
+	protected void loadClearTextItem(int pId, boolean isEnabled, int iOrder, String pName, String pDesc) throws Exception {
 		/* Create the item */
-		theList.addItem(pId, isEnabled, pName, pDesc);		
+		theList.addItem(pId, isEnabled, iOrder, pName, pDesc);		
 	}
 	
 	/**

@@ -109,6 +109,12 @@ public class ViewPrice extends EncryptedItem<ViewPrice> {
 	}
 							
 	/**
+	 * Get an initial set of values 
+	 * @return an initial set of values 
+	 */
+	protected HistoryValues<ViewPrice> getNewValues() { return new Values(); }
+	
+	/**
  	* Construct a copy of a Price
  	* 
  	* @param pPrice The Price 
@@ -122,8 +128,8 @@ public class ViewPrice extends EncryptedItem<ViewPrice> {
 		hasDilution = pList.hasDilutions();
 
 		/* Create the history object */
-		Values myValues = new Values(pPrice.getValues());
-		setValues(myValues);
+		Values myValues = getValues();
+		myValues.copyFrom(pPrice.getValues());
 		
 		/* Finish off */
 		setBase(pPrice);
@@ -133,8 +139,6 @@ public class ViewPrice extends EncryptedItem<ViewPrice> {
 	/* Standard constructor for a newly inserted price */
 	private ViewPrice(List pList) {
 		super(pList, 0);
-		Values myValues = new Values();
-		setValues(myValues);
 		setControlKey(pList.getControlKey());
 		setAccount(pList.theAccount);
 		hasDilution = pList.hasDilutions();
@@ -331,7 +335,7 @@ public class ViewPrice extends EncryptedItem<ViewPrice> {
 		public List getUpdateList() { return null; }
 		public List getEditList() 	{ return null; }
 		public List getShallowCopy() { return null; }
-		public List getDeepCopy(DataSet<?,?> pData) { return null; }
+		public List getDeepCopy(DataSet<?> pData) { return null; }
 		public List getDifferences(List pOld) { return null; }
 
 		/* Is this list locked */
@@ -515,22 +519,19 @@ public class ViewPrice extends EncryptedItem<ViewPrice> {
 		}
 
 		/**
-		 * Ensure encryption after security change
+		 * Update encryption after security change
 		 */
-		protected void applySecurity() throws Exception {
-			/* Apply the encryption */
-			thePrice.encryptPair();
-		}		
+		protected void updateSecurity() throws Exception {}
+		
+		/**
+		 * Appy encryption after non-encrypted load
+		 */
+		protected void applySecurity() throws Exception {}
 		
 		/**
 		 * Adopt encryption from base
 		 * @param pBase the Base values
 		 */
-		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {
-			Values myBase = (Values)pBase;
-
-			/* Apply the encryption */
-			thePrice.encryptPair(myBase.getPrice());
-		}		
+		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {}
 	}		
 }

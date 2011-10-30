@@ -175,6 +175,9 @@ public class AccountPatterns extends StdTable<Pattern> {
 		
 		/* Add the Frequency values to the frequencies box */
 		while ((myFreq  = myIterator.next()) != null) {
+			/* Ignore the frequency if it is not enabled */
+			if (!myFreq.getEnabled()) continue;
+			
 			/* Add the item to the list */
 			theFreqBox.addItem(myFreq.getName());
 			freqsPopulated = true;
@@ -559,10 +562,10 @@ public class AccountPatterns extends StdTable<Pattern> {
 		 * @param pMenu the menu to add to
 		 */
 		protected void addSpecialCommands(JPopupMenu pMenu) {
-			JMenuItem 		myItem;
-			Statement.Line	myLine;
-			boolean			enableCredit 		= false;
-			boolean			enableDebit 		= false;
+			JMenuItem 	myItem;
+			Pattern		myLine;
+			boolean		enableCredit 		= false;
+			boolean		enableDebit 		= false;
 			
 			/* Nothing to do if the table is locked */
 			if (theTable.isLocked()) return;
@@ -576,7 +579,7 @@ public class AccountPatterns extends StdTable<Pattern> {
 				if (myRow.isDeleted()) continue;
 				
 				/* Access as line */
-				myLine = (Statement.Line)myRow;
+				myLine = (Pattern)myRow;
 				
 				/* Enable Debit if we have credit */
 				if (myLine.isCredit())
@@ -618,13 +621,14 @@ public class AccountPatterns extends StdTable<Pattern> {
 		 */
 		protected void setIsCredit(boolean isCredit) {
 			AbstractTableModel	myModel;
+			Pattern				myPattern;
 			int					row;
 
 			/* Access the table model */
 			myModel = theTable.getTableModel();
 			
 			/* Loop through the selected rows */
-			for (Pattern myRow : theTable.cacheSelectedRows()) {
+			for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
 				/* Ignore locked rows */
 				if ((myRow == null) || (myRow.isLocked())) continue;
 				
@@ -633,13 +637,13 @@ public class AccountPatterns extends StdTable<Pattern> {
 
 				/* Determine row */
 				row = myRow.indexOf();
-				//if (theTable.hasHeader()) row--;
+				myPattern = (Pattern)myRow;
 				
 				/* Ignore rows that are already correct */
-				if (myRow.isCredit() != isCredit) continue;
+				if (myPattern.isCredit() == isCredit) continue;
 				
 				/* set the credit value */
-				myRow.setIsCredit(isCredit);
+				myPattern.setIsCredit(isCredit);
 				myModel.fireTableRowsUpdated(row, row);
 			}
 		}

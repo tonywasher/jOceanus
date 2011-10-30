@@ -59,15 +59,17 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 	 * @param pList	The list to associate the TaxRegime with
 	 * @param uId the id of the new item
 	 * @param isEnabled is the regime enabled
+	 * @param uOrder the sort order
 	 * @param pName Name of Tax Regime
 	 * @param pDesc Description of Tax Regime
 	 */
 	private TaxRegime(List 		pList,
 					  int		uId,
 			          boolean	isEnabled,
+			          int		uOrder, 
 			          String	pName,
 			          String	pDesc) throws Exception {
-		super(pList, uId, isEnabled, pName, pDesc);
+		super(pList, uId, isEnabled, uOrder , pName, pDesc);
 	}
 	
 	/**
@@ -76,6 +78,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 	 * @param uId   ID of TaxRegime
 	 * @param uControlId the control id of the new item
 	 * @param isEnabled is the regime enabled
+	 * @param uOrder the sort order
 	 * @param pName Encrypted Name of TaxRegime
 	 * @param pDesc Encrypted Description of TaxRegime
 	 */
@@ -83,9 +86,10 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 			      	  int		uId,
 			      	  int		uControlId,
 			      	  boolean	isEnabled,
+			      	  int		uOrder, 
 			      	  byte[]	pName,
 			      	  byte[]	pDesc) throws Exception {
-		super(pList, uId, uControlId, isEnabled, pName, pDesc);
+		super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
 	}
 
 	/**
@@ -162,7 +166,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
 		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
-		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+		public List getDeepCopy(DataSet<?> pDataSet)	{ 
 			/* Build an empty Extract List */
 			List myList = new List(this);
 			myList.setData(pDataSet);
@@ -244,17 +248,19 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 		 * Add a TaxRegime to the list
 		 * @param uId the id of the new item
 		 * @param isEnabled is the regime enabled
+		 * @param uOrder the sort order
 		 * @param pTaxRegime the Name of the tax regime
 		 * @param pDesc the Description of the tax regime
 		 */ 
 		public void addItem(int	   	uId,
 							boolean	isEnabled,
+							int		uOrder,
 				            String 	pTaxRegime,
 				            String 	pDesc) throws Exception {
 			TaxRegime myTaxReg;
 				
 			/* Create a new Tax Regime */
-			myTaxReg = new TaxRegime(this, uId, isEnabled, pTaxRegime, pDesc);
+			myTaxReg = new TaxRegime(this, uId, isEnabled, uOrder, pTaxRegime, pDesc);
 				
 			/* Check that this TaxRegimeId has not been previously added */
 			if (!isIdUnique(myTaxReg.getId())) 
@@ -262,14 +268,17 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 	  					  			myTaxReg,
 			  			            "Duplicate TaxRegimeId");
 				 
-			/* Check that this Regime has not been previously added */
-			if (searchFor(myTaxReg.getName()) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	   					  			myTaxReg,
-			  			            "Duplicate Tax Regime");
-				
 			/* Add the Tax Regime to the list */
 			add(myTaxReg);
+				
+			/* Validate the TaxRegime */
+			myTaxReg.validate();
+
+			/* Handle validation failure */
+			if (myTaxReg.hasErrors()) 
+				throw new Exception(ExceptionClass.VALIDATE,
+									myTaxReg,
+									"Failed validation");
 		}	
 
 		/**
@@ -277,33 +286,38 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 		 * @param uId the Id of the tax regime
 		 * @param uControlId the control id of the new item
 		 * @param isEnabled is the regime enabled
+		 * @param uOrder the sort order
 		 * @param pTaxRegime the Encrypted Name of the tax regime
 		 * @param pDesc the Encrypted Description of the tax regime
 		 */ 
 		public void addItem(int    	uId,
 							int	   	uControlId,
 							boolean	isEnabled,
+							int		uOrder,
 				            byte[] 	pTaxRegime,
 				            byte[] 	pDesc) throws Exception {
-			TaxRegime     myTaxRegime;
+			TaxRegime     myTaxReg;
 			
 			/* Create a new tax regime */
-			myTaxRegime = new TaxRegime(this, uId, uControlId, isEnabled, pTaxRegime, pDesc);
+			myTaxReg = new TaxRegime(this, uId, uControlId, isEnabled, uOrder, pTaxRegime, pDesc);
 				
 			/* Check that this TaxRegimeId has not been previously added */
 			if (!isIdUnique(uId)) 
 				throw new Exception(ExceptionClass.DATA,
-	  					  			myTaxRegime,
+	  					  			myTaxReg,
 			  			            "Duplicate TaxRegimeId");
 				 
-			/* Check that this TaxRegime has not been previously added */
-			if (searchFor(myTaxRegime.getName()) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	  					  			myTaxRegime,
-			                        "Duplicate TaxRegime");
-				
 			/* Add the TaxRegime to the list */
-			add(myTaxRegime);		
+			add(myTaxReg);		
+				
+			/* Validate the TaxRegime */
+			myTaxReg.validate();
+
+			/* Handle validation failure */
+			if (myTaxReg.hasErrors()) 
+				throw new Exception(ExceptionClass.VALIDATE,
+									myTaxReg,
+									"Failed validation");
 		}			
 	}
 }

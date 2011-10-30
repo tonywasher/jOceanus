@@ -1,7 +1,5 @@
 package uk.co.tolcroft.models.security;
 
-import java.security.spec.X509EncodedKeySpec;
-
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.security.AsymmetricKey.AsymKeyType;
@@ -26,12 +24,7 @@ public class SecuritySignature {
 	/**
 	 * The public key
 	 */
-	private X509EncodedKeySpec			thePublicKey			= null;
-
-	/**
-	 * The encoded public key
-	 */
-	private byte[]						theEncodedPublicKey		= null;
+	private byte[]						thePublicKey			= null;
 
 	/**
 	 * The secured private key
@@ -41,8 +34,7 @@ public class SecuritySignature {
 	/* Access methods */
 	public byte[]				getPasswordHash()		{ return thePasswordHash; }
 	public AsymKeyType			getKeyType()			{ return theKeyType; }
-	public X509EncodedKeySpec	getPublicKey()			{ return thePublicKey; }
-	public byte[]				getEncodedPublicKey()	{ return theEncodedPublicKey; }
+	public byte[]				getPublicKey()			{ return thePublicKey; }
 	public byte[]				getSecuredKeyDef()		{ return theSecuredKeyDef; }
 	
 	protected void setPasswordHash(byte[] pHash)		{ thePasswordHash = pHash; }
@@ -57,37 +49,13 @@ public class SecuritySignature {
 	 */
 	public SecuritySignature(byte[] 			pPasswordHash,
 							 AsymKeyType 		pKeyType,
-							 X509EncodedKeySpec pPublicKey,
+							 byte[]				pPublicKey,
 							 byte[]				pSecuredKeyDef) {
 		/* Store the values */
 		thePasswordHash 	= pPasswordHash;
 		theKeyType			= pKeyType;
 		thePublicKey		= pPublicKey;
 		theSecuredKeyDef	= pSecuredKeyDef;
-		
-		/* Obtain the encoded public key */
-		theEncodedPublicKey = pPublicKey.getEncoded();
-	}
-	
-	/**
-	 * Constructor
-	 * @param pPasswordHash the password hash
-	 * @param pKeyType the Asymmetric Key type
-	 * @param pPublicKey the public key (in Encoded format)
-	 * @param pSecuredKeyDef the secured private key
-	 */
-	public SecuritySignature(byte[] 			pPasswordHash,
-							 AsymKeyType 		pKeyType,
-							 byte[] 			pPublicKey,
-							 byte[]				pSecuredKeyDef) {
-		/* Store the values */
-		thePasswordHash 	= pPasswordHash;
-		theKeyType			= pKeyType;
-		theEncodedPublicKey	= pPublicKey;
-		theSecuredKeyDef	= pSecuredKeyDef;
-		
-		/* Obtain the X509 encoded public key */
-		thePublicKey 		= new X509EncodedKeySpec(pPublicKey);
 	}
 	
 	/**
@@ -105,12 +73,9 @@ public class SecuritySignature {
 		
 		/* Store the values */
 		thePasswordHash 	= Utils.BytesFromHexString(myTokens[0]);
-		theEncodedPublicKey	= Utils.BytesFromHexString(myTokens[1]);
+		thePublicKey		= Utils.BytesFromHexString(myTokens[1]);
 		theSecuredKeyDef	= Utils.BytesFromHexString(myTokens[2]);
 		theKeyType			= AsymKeyType.fromId(Integer.parseInt(myTokens[3]));
-		
-		/* Obtain the X509 encoded public key */
-		thePublicKey 		= new X509EncodedKeySpec(theEncodedPublicKey);
 	}
 	
 	/**
@@ -125,7 +90,7 @@ public class SecuritySignature {
 		myBuilder.append(KEYSEP);
 
 		/* Add the Public Key */
-		myBuilder.append(Utils.HexStringFromBytes(theEncodedPublicKey));
+		myBuilder.append(Utils.HexStringFromBytes(thePublicKey));
 		myBuilder.append(KEYSEP);
 
 		/* Add the PrivateKey */
@@ -145,7 +110,7 @@ public class SecuritySignature {
 	 */
 	public int hashCode() {
 		/* Calculate and return the hashCode for this signature */
-		int hashCode = 19 * theEncodedPublicKey.hashCode();
+		int hashCode = 19 * thePublicKey.hashCode();
 		hashCode += theSecuredKeyDef.hashCode();
 		hashCode *= 19;
 		hashCode += thePasswordHash.hashCode();
@@ -174,9 +139,9 @@ public class SecuritySignature {
 		if (myThat.theKeyType != theKeyType) return false;
 		
 		/* Ensure that the private/public keys and password are identical */
-		if (Utils.differs(myThat.thePasswordHash,     thePasswordHash).isDifferent()) 	return false;
-		if (Utils.differs(myThat.theSecuredKeyDef,    theSecuredKeyDef).isDifferent()) 	return false;
-		if (Utils.differs(myThat.theEncodedPublicKey, theEncodedPublicKey).isDifferent()) return false;
+		if (Utils.differs(myThat.thePasswordHash,   thePasswordHash).isDifferent()) 	return false;
+		if (Utils.differs(myThat.theSecuredKeyDef,  theSecuredKeyDef).isDifferent()) 	return false;
+		if (Utils.differs(myThat.thePublicKey, 		thePublicKey).isDifferent()) 		return false;
 		
 		/* Identical if those tests succeed */
 		return true;

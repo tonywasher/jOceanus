@@ -375,7 +375,7 @@ public abstract class StdMouse<T extends DataItem<T>> extends MouseAdapter
 
 			/* Determine row */
 			row = myRow.indexOf();
-			if (theTable.hasHeader()) row--;
+			if (theTable.hasHeader()) row++;
 			
 			/* Ignore null rows */
 			if (myModel.getValueAt(row, col) == null) continue;

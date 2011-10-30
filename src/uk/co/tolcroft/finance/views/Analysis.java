@@ -160,6 +160,11 @@ public class Analysis {
 		protected 	FinanceData getData()		{ return theData; }
 		protected 	Date 		getDate()		{ return theDate; }
 
+		/**
+		 * Build History (no history)
+		 */
+		protected void buildHistory() {}
+
 		/* Constructor */
 		public AnalysisBucket(BucketList   	pList,
 							  BucketType	pType,
@@ -259,7 +264,7 @@ public class Analysis {
 		/**
 		 * is the bucket active (i.e. should it be copied)
 		 */
-		protected abstract boolean isActive();
+		//protected abstract boolean isActive();
 		
 		/**
 		 * is the bucket relevant (i.e. should it be reported)
@@ -289,7 +294,7 @@ public class Analysis {
 		public BucketList getUpdateList() { return null; }
 		public BucketList getEditList() 	{ return null; }
 		public BucketList getShallowCopy() { return null; }
-		public BucketList getDeepCopy(DataSet<?,?> pData) { return null; }
+		public BucketList getDeepCopy(DataSet<?> pData) { return null; }
 		public BucketList getDifferences(BucketList pOld) { return null; }
 
 		/**
@@ -1131,7 +1136,7 @@ public class Analysis {
 		/**
 		 * is the bucket active (i.e. should it be copied)
 		 */
-		protected boolean isActive() {
+		public boolean isActive() {
 			/* Copy if the value is non-zero */
 			return theValue.isNonZero();
 		}
@@ -1681,7 +1686,7 @@ public class Analysis {
 		/**
 		 * is the bucket active (i.e. should it be copied)
 		 */
-		protected boolean isActive() {
+		public boolean isActive() {
 			/* Copy if the units is non-zero */
 			return theUnits.isNonZero();
 		}
@@ -1917,7 +1922,7 @@ public class Analysis {
 		/**
 		 * is the bucket active (i.e. should it be copied)
 		 */
-		protected boolean isActive() {
+		public boolean isActive() {
 			/* Copy if the income or expense is non-zero */
 			return (theIncome.isNonZero() || theExpense.isNonZero());
 		}
@@ -2112,7 +2117,7 @@ public class Analysis {
 		/**
 		 * is the bucket active (i.e. should it be copied)
 		 */
-		protected boolean isActive() {	return false; }
+		public boolean isActive() {	return false; }
 
 		/**
 		 * is the bucket relevant (i.e. should it be reported)
@@ -2244,7 +2249,7 @@ public class Analysis {
 		/**
 		 * is the bucket active (i.e. should it be copied)
 		 */
-		protected boolean isActive() {	return false; }
+		public boolean isActive() {	return false; }
 
 		/**
 		 * is the bucket relevant (i.e. should it be reported)
@@ -2398,7 +2403,7 @@ public class Analysis {
 		/**
 		 * is the bucket active (i.e. should it be copied)
 		 */
-		protected boolean isActive() {	return false; }
+		public boolean isActive() {	return false; }
 
 		/**
 		 * is the bucket relevant (i.e. should it be reported)
@@ -2541,7 +2546,7 @@ public class Analysis {
 		/**
 		 * is the bucket active (i.e. should it be copied)
 		 */
-		protected boolean isActive() {	return false; }
+		public boolean isActive() {	return false; }
 
 		/**
 		 * is the bucket relevant (i.e. should it be reported)
@@ -2687,7 +2692,7 @@ public class Analysis {
 		/**
 		 * is the bucket active (i.e. should it be copied)
 		 */
-		protected boolean isActive() {
+		public boolean isActive() {
 			/* Copy if the amount is non-zero */
 			return theAmount.isNonZero();
 		}
@@ -2827,7 +2832,7 @@ public class Analysis {
 		/**
 		 * is the bucket active (i.e. should it be copied)
 		 */
-		protected boolean isActive() {	return false; }
+		public boolean isActive() {	return false; }
 
 		/**
 		 * is the bucket relevant (i.e. should it be reported)
@@ -2971,7 +2976,7 @@ public class Analysis {
 		/**
 		 * is the bucket active (i.e. should it be copied)
 		 */
-		protected boolean isActive() {	return false; }
+		public boolean isActive() {	return false; }
 
 		/**
 		 * is the bucket relevant (i.e. should it be reported)
@@ -3129,7 +3134,7 @@ public class Analysis {
 		/**
 		 * is the bucket active (i.e. should it be copied)
 		 */
-		protected boolean isActive() {	return false; }
+		public boolean isActive() {	return false; }
 
 		/**
 		 * is the bucket relevant (i.e. should it be reported)

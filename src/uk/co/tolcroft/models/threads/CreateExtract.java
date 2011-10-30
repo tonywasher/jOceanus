@@ -9,7 +9,7 @@ import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.ui.FileSelector.BackupCreate;
 import uk.co.tolcroft.models.views.DataControl;
 
-public class CreateExtract<T extends DataSet<T,?>> extends WorkerThread<Void> {
+public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
 	/* Task description */
 	private static String  	theTask		= "Extract Creation";
 
@@ -35,7 +35,7 @@ public class CreateExtract<T extends DataSet<T,?>> extends WorkerThread<Void> {
 	/* Background task (Worker Thread)*/
 	public Void performTask() throws Throwable {
 		T				myData	  	= null;
-		DataSet<T,?>	myDiff	  	= null;
+		DataSet<T>		myDiff	  	= null;
 		SpreadSheet<T>	mySheet		= null;
 		boolean			doDelete  	= false;
 		File			myFile	  	= null;

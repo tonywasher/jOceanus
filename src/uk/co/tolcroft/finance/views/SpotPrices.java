@@ -199,7 +199,7 @@ public class SpotPrices implements DebugObject {
 		public List getUpdateList() { return null; }
 		public List getEditList() 	{ return null; }
 		public List getShallowCopy() { return null; }
-		public List getDeepCopy(DataSet<?,?> pData) { return null; }
+		public List getDeepCopy(DataSet<?> pData) { return null; }
 		public List getDifferences(List pOld) { return null; }
 
 		/* Is this list locked */
@@ -418,6 +418,12 @@ public class SpotPrices implements DebugObject {
 		}
 					
 		/**
+		 * Get an initial set of values 
+		 * @return an initial set of values 
+		 */
+		protected HistoryValues<SpotPrice> getNewValues() { return new Values(); }
+		
+		/**
 		 *  Constructor for a new SpotPrice 
 		 *  @param pList the Spot Price List
 		 *  @param pPrice the price for the date
@@ -428,10 +434,9 @@ public class SpotPrices implements DebugObject {
 			theDate = pList.theDate;
 	
 			/* Variables */
-			Values 	myValues = new Values();
+			Values 	myValues = getValues();
 			
 			/* Store base values */
-			setValues(myValues);
 			setControlKey(pList.getControlKey());
 			theAccount 		= pPrice.getAccount();
 			if (pLast != null) {
@@ -459,11 +464,7 @@ public class SpotPrices implements DebugObject {
 			super(pList, 0);
 			theDate = pList.theDate;
 	
-			/* Variables */
-			Values 	myValues = new Values();
-			
 			/* Store base values */
-			setValues(myValues);
 			setControlKey(pList.getControlKey());
 			theAccount 		= pAccount;
 			if (pLast != null) {
@@ -667,23 +668,20 @@ public class SpotPrices implements DebugObject {
 			}
 
 			/**
-			 * Ensure encryption after security change
+			 * Update encryption after security change
 			 */
-			protected void applySecurity() throws Exception {
-				/* Apply the encryption */
-				thePrice.encryptPair();
-			}		
+			protected void updateSecurity() throws Exception {}
+			
+			/**
+			 * Apply encryption after non-encrypted load
+			 */
+			protected void applySecurity() throws Exception {}
 			
 			/**
 			 * Adopt encryption from base
 			 * @param pBase the Base values
 			 */
-			protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {
-				Values myBase = (Values)pBase;
-
-				/* Apply the encryption */
-				thePrice.encryptPair(myBase.getPrice());
-			}		
+			protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {}
 		}		
 	}
 }

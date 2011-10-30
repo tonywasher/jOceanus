@@ -490,10 +490,10 @@ public class Extract extends StdTable<Event> {
 							return ((myEvent.getTransType() != null) &&
 									(myEvent.getTransType().isTaxableGain()));
 						case COLUMN_TAXCRED:
-							return myEvent.needsTaxCredit(myEvent.getTransType(), 
-														  myEvent.getDebit());
+							return Event.needsTaxCredit(myEvent.getTransType(), 
+														myEvent.getDebit());
 						case COLUMN_DILUTE:
-							return myEvent.needsDilution(myEvent.getTransType());
+							return Event.needsDilution(myEvent.getTransType());
 						default:	
 							return true;
 					}
@@ -574,6 +574,10 @@ public class Extract extends StdTable<Event> {
 			/* Push history */
 			myEvent.pushHistory();
 
+			/* Determine whether the line needs a tax credit */
+			boolean needsTaxCredit = Event.needsTaxCredit(myEvent.getTransType(),
+														  myEvent.getDebit());
+			
 			/* Protect against Exceptions */
 			try {
 				/* Store the appropriate value */
@@ -585,10 +589,19 @@ public class Extract extends StdTable<Event> {
 						myEvent.setDescription((String)obj);            
 						break;
 					case COLUMN_TRANTYP:  
-						myEvent.setTransType(theTransTypes.searchFor((String)obj));    
+						myEvent.setTransType(theTransTypes.searchFor((String)obj));
+						/* If the need for a tax credit has changed */
+						if (needsTaxCredit != Event.needsTaxCredit(myEvent.getTransType(),
+														  		   myEvent.getDebit())) {
+							/* Determine new Tax Credit */
+							if (needsTaxCredit) myEvent.setTaxCredit(null);
+							else myEvent.setTaxCredit(myEvent.calculateTaxCredit());
+						}
 						break;
 					case COLUMN_AMOUNT:
 						myEvent.setAmount((Money)obj); 
+						/* Determine new Tax Credit if required */
+						if (needsTaxCredit) myEvent.setTaxCredit(myEvent.calculateTaxCredit());
 						break;
 					case COLUMN_DILUTE:
 						myEvent.setDilution((Dilution)obj); 
@@ -630,10 +643,10 @@ public class Extract extends StdTable<Event> {
 			/* Check for changes */
 			if (myEvent.checkForHistory()) {
 				/* Note that the item has changed */
+				myEvent.clearErrors();
 				myEvent.setState(DataState.CHANGED);
 
 				/* Validate the item and update the edit state */
-				myEvent.clearErrors();
 				myEvent.validate();
 				theEvents.findEditState();
 			

@@ -27,20 +27,10 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	public final static int DESCLEN = 100;
 
 	/**
-	 * The Enum class of the Static Data
+	 *  The Enum class of this data type
 	 */
-	private Class<E>		theEnumClass 	= null;
+	private Class<E>	theEnumClass 	= null;
 
-	/**
-	 * The instance enum of the Static Data
-	 */
-	private E				theClass 		= null;
-
-	/**
-	 * The sort order of the Static Data
-	 */
-	private int     		theOrder		= -1;
-	
 	/**
 	 * Return the name of the Static Data
 	 * @return the name
@@ -69,13 +59,13 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	 * Return the sort order of the Static Data
 	 * @return the order
 	 */
-	public int			getOrder()			{ return theOrder; }
+	public int			getOrder()		{ return getObj().getOrder(); }
 
 	/**
 	 * Return the Static class of the Static Data
 	 * @return the class
 	 */
-	protected E			getStaticClass()	{ return theClass; }
+	public E			getStaticClass()	{ return (E)getObj().getStaticClass(); }
 	
 	/**
 	 * Is the Static item enabled
@@ -92,7 +82,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	public static final int FIELD_ENABLED	= EncryptedItem.NUMFIELDS+2;
 	public static final int FIELD_ORDER    	= EncryptedItem.NUMFIELDS+3;
 	public static final int FIELD_CLASS    	= EncryptedItem.NUMFIELDS+4;
-	public static final int NUMFIELDS	   	= EncryptedItem.NUMFIELDS+6;
+	public static final int NUMFIELDS	   	= EncryptedItem.NUMFIELDS+5;
 	
 	/**
 	 * Obtain the number of fields for an item
@@ -109,7 +99,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 			case FIELD_NAME:    return "Name";
 			case FIELD_DESC:    return "Description";
 			case FIELD_ENABLED:	return "isEnabled";
-			case FIELD_ORDER:  	return "Order";
+			case FIELD_ORDER:  	return "SortOrder";
 			case FIELD_CLASS:   return "Class";
 			default:		    return EncryptedItem.fieldName(iField);
 		}
@@ -134,8 +124,8 @@ public abstract class StaticData<T extends StaticData<T,E>,
 			case FIELD_NAME:	myString += myObj.getNameValue(); 	break;
 			case FIELD_DESC:	myString += myObj.getDescValue(); 	break;
 			case FIELD_ENABLED:	myString += myObj.getEnabled() ? true : false; 	break;
-			case FIELD_ORDER: 	myString += getOrder();	break;
-			case FIELD_CLASS: 	myString += theClass;	break;
+			case FIELD_ORDER: 	myString += myObj.getOrder();	break;
+			case FIELD_CLASS: 	myString += myObj.getStaticClass();	break;
 			default:			myString += super.formatField(pDetail, iField, pObj); break;
 		}
 		return myString;
@@ -193,8 +183,8 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		if (myThat.theEnumClass != this.theEnumClass) return -1;
 		
 		/* Compare on order */
-		if (theOrder < myThat.theOrder) return -1;
-		if (theOrder > myThat.theOrder) return  1;
+		if (getOrder() < myThat.getOrder()) return -1;
+		if (getOrder() > myThat.getOrder()) return  1;
 
 		/* Compare on name */
 		result = getName().compareTo(myThat.getName());
@@ -209,6 +199,48 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	}
 
 	/**
+	 *  Validate the element
+	 */
+	public void validate() {
+		StaticList<?,?,?>	myList = (StaticList<?,?,?>)getList();
+
+		/* Name must be non-null */
+		if (getName() == null) {
+			addError("Name must be non-null", FIELD_NAME);
+	    }
+		
+		/* Check that the name is unique */
+		else { 
+			/* The description must not be too long */
+			if (getName().length() > NAMELEN) {
+				addError("Name is too long", FIELD_NAME);
+			}
+				
+			if (myList.countInstances(getName()) > 1) {
+				addError("Name must be unique", FIELD_NAME);
+			}
+	    }
+		
+		/* The order must not be negative */
+		if (getOrder() < 0) {
+			addError("Order is negative", FIELD_ORDER);
+		}
+			
+		if (myList.countInstances(getOrder()) > 1) {
+			addError("Order must be unique", FIELD_ORDER);
+		}
+				
+		/* Set validation flag */
+		if (!hasErrors()) setValidEdit();
+	}
+	
+	/**
+	 * Get an initial set of values 
+	 * @return an initial set of values 
+	 */
+	protected HistoryValues<T> getNewValues() { return new Values(); }
+	
+	/**
 	 * Construct a copy of a Static data.
 	 * @param pList	The list to associate the Static Data with
 	 * @param pSource The static data to copy 
@@ -216,11 +248,9 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	protected StaticData(StaticList<?,T,E>	pList,
 			             StaticData<T,E>	pSource) { 
 		super(pList, pSource.getId());
-		Values myValues = new Values(pSource.getObj());
-		setValues(myValues);
-		theClass 		= pSource.theClass;
 		theEnumClass 	= pSource.theEnumClass;
-		theOrder 		= pSource.getOrder();
+		StaticData<?,?>.Values myValues = getObj();
+		myValues.copyFrom(pSource.getObj());
 		ListStyle myOldStyle = pSource.getList().getStyle();
 
 		/* Switch on the ListStyle */
@@ -230,6 +260,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 				if (myOldStyle == ListStyle.CORE) {
 					/* Static is based on the original element */
 					setBase(pSource);
+					copyFlags(pSource.getItem());
 					pList.setNewId(getItem());				
 					break;
 				}
@@ -239,7 +270,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 				pList.setNewId(getItem());				
 				break;
 			case CLONE:
-				isolateCopy(pList.getData());
+				reBuildLinks(pList.getData());
 			case COPY:
 			case CORE:
 				/* Reset Id if this is an insert from a view */
@@ -263,9 +294,8 @@ public abstract class StaticData<T extends StaticData<T,E>,
 					  	 String				pValue) throws Exception {
 		super(pList, 0);
 		theEnumClass = pList.getEnumClass();
+		StaticData<?,?>.Values myValues = getObj();
 		parseEnumValue(pValue);
-		Values myValues = new Values();
-		setValues(myValues);
 
 		/* Create the pair for the name */
 		myValues.setName(new StringPair(pValue));
@@ -279,22 +309,24 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	 * @param pList The list to associate the Static Data with
 	 * @param uId the id of the new item
 	 * @param isEnabled is the account type enabled
-	 * @param pValue the encrypted name of the new item
-	 * @param pDesc the encrypted description of the new item
+	 * @param uOrder the sort order
+	 * @param pValue the name of the new item
+	 * @param pDesc the description of the new item
 	 */
 	protected StaticData(StaticList<?,T,E> 	pList,
 						 int				uId,
 					  	 boolean			isEnabled,
+					  	 int				uOrder,
 					  	 String				pValue,
 					  	 String				pDesc) throws Exception {
 		super(pList, uId);
 		theEnumClass = pList.getEnumClass();
+		StaticData<?,?>.Values myValues = getObj();
 		parseEnumId(uId);
-		Values myValues = new Values();
-		setValues(myValues);
 				
 		/* Set enabled flag */
 		myValues.setEnabled(isEnabled);
+		myValues.setOrder(uOrder);
 		
 		/* Create the pairs for the name and description */
 		myValues.setName(new StringPair(pValue));
@@ -310,6 +342,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	 * @param uId the id of the new item
 	 * @param uControlId the control id of the new item
 	 * @param isEnabled is the account type enabled
+	 * @param uOrder the sort order
 	 * @param pValue the encrypted name of the new item
 	 * @param pDesc the encrypted description of the new item
 	 */
@@ -317,19 +350,20 @@ public abstract class StaticData<T extends StaticData<T,E>,
 					  	 int 				uId,
 					  	 int 				uControlId,
 					  	 boolean			isEnabled,
+					  	 int				uOrder,
 					  	 byte[]				pValue,
 					  	 byte[]				pDesc) throws Exception {
 		super(pList, uId);
 		theEnumClass = pList.getEnumClass();
+		StaticData<?,?>.Values myValues = getObj();
 		parseEnumId(uId);
-		Values myValues = new Values();
-		setValues(myValues);
 		
 		/* Store the controlId */
 		setControlKey(uControlId);
 
 		/* Set enabled flag */
 		myValues.setEnabled(isEnabled);
+		myValues.setOrder(uOrder);
 		
 		/* Create the pairs for the name and description */
 		myValues.setName(new StringPair(pValue));
@@ -344,29 +378,30 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	 * @param pValue
 	 */
 	private void parseEnumValue(String pValue) throws Exception {
-		StaticInterface myIFace 	= null;
-		E[] 			myValues 	= theEnumClass.getEnumConstants();
+		StaticInterface myIFace 		= null;
+		E[] 			myEnums 		= theEnumClass.getEnumConstants();
+		StaticData<?,?>.Values myValues	= getObj();
 		
 		/* Loop through the enum constants */
-		for (E myValue: myValues) {
+		for (E myValue: myEnums) {
 			/* If this is the desired value */
 			if (myValue.toString().equalsIgnoreCase(pValue)) {
 				/* Store the class */
-				theClass = myValue;
+				myValues.setStaticClass(myValue);
 				
 				/* If the enum is of the desired type */
-				if (theClass instanceof StaticInterface) {
+				if (myValue instanceof StaticInterface) {
 					/* Access classId and order */
 					myIFace		= (StaticInterface) myValue;
 					setId(myIFace.getClassId());
-					theOrder	= myIFace.getOrder();
+					myValues.setOrder(myIFace.getOrder());
 				}
 				break;
 			}
 		}
 		
 		/* Reject if we didn't find the class */
-		if (theClass == null) 
+		if (getStaticClass() == null) 
 			throw new Exception(ExceptionClass.DATA,
 							    "Invalid value for " + theEnumClass.getSimpleName() +
 								": " + pValue);
@@ -383,11 +418,12 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	 * @param pId
 	 */
 	private void parseEnumId(int pId) throws Exception {
-		StaticInterface myIFace 	= null;
-		E[] 			myValues 	= (E[])theEnumClass.getEnumConstants();
+		StaticInterface myIFace 		= null;
+		E[] 			myEnums 		= (E[])theEnumClass.getEnumConstants();
+		StaticData<?,?>.Values myValues	= getObj();
 		
 		/* Loop through the enum constants */
-		for (E myValue: myValues) {
+		for (E myValue: myEnums) {
 			/* Ensure that the class is of the right type */
 			if (!(myValue instanceof StaticInterface)) 
 				throw new Exception(ExceptionClass.DATA,
@@ -400,14 +436,13 @@ public abstract class StaticData<T extends StaticData<T,E>,
 			/* If this is the desired value */
 			if (myIFace.getClassId() == pId) {
 				/* Store the class and details */
-				theClass 	= myValue;
-				theOrder	= myIFace.getOrder();
+				myValues.setStaticClass(myValue);
 				break;
 			}
 		}
 		
 		/* Reject if we didn't find the class */
-		if (theClass == null) 
+		if (getStaticClass() == null) 
 			throw new Exception(ExceptionClass.DATA,
 							    "Invalid id for " + theEnumClass.getSimpleName() +
 								": " + pId);		
@@ -446,11 +481,20 @@ public abstract class StaticData<T extends StaticData<T,E>,
 
 	/**
 	 * Set Enabled indicator
-	 * @param pDesc the description 
+	 * @param isEnabled  
 	 */
-	public void setEnabled(boolean isEnabled) throws Exception {
+	public void setEnabled(boolean isEnabled) {
 		/* Set the appropriate value */
 		getObj().setEnabled(isEnabled);
+	}
+
+	/**
+	 * Set Order indicator
+	 * @param iOrder the order 
+	 */
+	public void setOrder(int iOrder) {
+		/* Set the appropriate value */
+		getObj().setOrder(iOrder);
 	}
 
 	/**
@@ -478,6 +522,10 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		/* Update the enabled indication if required */
 		if (myObj.getEnabled() != myNew.getEnabled()) 
 			myObj.setEnabled(myNew.getEnabled());
+
+		/* Update the order indication if required */
+		if (myObj.getOrder() != myNew.getOrder()) 
+			myObj.setOrder(myNew.getOrder());
 
 		/* Check for changes */
 		if (checkForHistory()) {
@@ -511,7 +559,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	 	 */
 		public StaticList(Class<L>		pClass,
 						  Class<T>		pBaseClass,
-						  DataSet<?,?>	pData,
+						  DataSet<?>	pData,
 						  ListStyle 	pStyle) { 
 			super(pClass, pBaseClass, pData, pStyle);
 		}
@@ -541,7 +589,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 			
 			/* Loop through the items to find the entry */
 			while ((myCurr = myIterator.next()) != null) {
-				if (myCurr.theClass == eClass) break;
+				if (myCurr.getStaticClass() == eClass) break;
 			}
 			
 			/* Return to caller */
@@ -571,30 +619,82 @@ public abstract class StaticData<T extends StaticData<T,E>,
 			/* Return to caller */
 			return myCurr;
 		}		
+
+		/**
+		 * Count the instances of a string
+		 * @param pName the string to check for
+		 * @return The # of instances of the name
+		 */
+		protected int countInstances(String pName) {
+			ListIterator 	myIterator;
+			T 				myCurr;
+			int     		iDiff;
+			int     		iCount = 0;
+			
+			/* Access the iterator */
+			myIterator = listIterator(true);
+			
+			/* Loop through the items to find the entry */
+			while ((myCurr = myIterator.next()) != null) {
+				iDiff = pName.compareTo(myCurr.getName());
+				if (iDiff == 0) iCount++;
+			}
+			
+			/* Return to caller */
+			return iCount;
+		}	
+
+		/**
+		 * Count the instances of an Order
+		 * @param iOrder the order to check for
+		 * @return The # of instances of the order
+		 */
+		protected int countInstances(int iOrder) {
+			ListIterator 	myIterator;
+			T 				myCurr;
+			int     		iCount = 0;
+			
+			/* Access the iterator */
+			myIterator = listIterator(true);
+			
+			/* Loop through the items to find the entry */
+			while ((myCurr = myIterator.next()) != null) {
+				if (iOrder == myCurr.getOrder()) iCount++;
+			}
+			
+			/* Return to caller */
+			return iCount;
+		}	
 	}
 	
 	/**
 	 * Values for a static data
 	 */
 	public class Values extends EncryptedValues {
-		private StringPair	theName     = null;
-		private StringPair	theDesc     = null;
-		private boolean    	isEnabled	= true;
+		private StringPair	theName     	= null;
+		private StringPair	theDesc     	= null;
+		private boolean    	isEnabled		= true;
+		private E			theClass 		= null;
+		private int     	theOrder		= -1;
 		
 		/* Access methods */
 		public StringPair  	getName()      	{ return theName; }
 		public StringPair  	getDesc()      	{ return theDesc; }
 		public boolean  	getEnabled()    { return isEnabled; }
 		private	Class<E>   	getEnumClass()	{ return theEnumClass; }
+		private	E   		getStaticClass(){ return theClass; }
+		private	int 		getOrder()		{ return theOrder; }
 		public String  		getNameValue()  { return getPairValue(theName); }
 		public String  		getDescValue()  { return getPairValue(theDesc); }
 		public byte[]  		getNameBytes()  { return getPairBytes(theName); }
 		public byte[]  		getDescBytes()  { return getPairBytes(theDesc); }
 		
 		/* Value setting */
-		public void setName(StringPair pName) 		{ theName = pName; }
-		public void setDesc(StringPair pDesc) 		{ theDesc = pDesc; }
-		public void setEnabled(boolean isEnabled) 	{ this.isEnabled = isEnabled; }
+		private void setName(StringPair pName) 		{ theName = pName; }
+		private void setDesc(StringPair pDesc) 		{ theDesc = pDesc; }
+		private void setEnabled(boolean isEnabled) 	{ this.isEnabled = isEnabled; }
+		private void setStaticClass(Enum<?> pClass) { theClass = theEnumClass.cast(pClass); }
+		private void setOrder(int pOrder) 			{ theOrder = pOrder; }
 
 		/* Constructor */
 		public Values() {}
@@ -614,6 +714,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 			/* Compare the values */
 			if (!super.histEquals(pCompare))							return false;
 			if (isEnabled != myValues.isEnabled)  						return false;
+			if (theOrder  != myValues.theOrder)  						return false;
 			if (differs(theName,    myValues.theName).isDifferent())  	return false;
 			if (differs(theDesc,    myValues.theDesc).isDifferent())  	return false;
 			return true;
@@ -629,11 +730,13 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		}
 		public void    copyFrom(StaticData<?,?>.Values pValues) {
 			super.copyFrom(pValues);
-			isEnabled	= pValues.getEnabled();
-			theName     = new StringPair(pValues.getName());
-			theDesc     = (pValues.getDesc() != null)
-								? new StringPair(pValues.getDesc())
-								: null;
+			theClass		= (E)pValues.getStaticClass();
+			theOrder		= pValues.getOrder();
+			isEnabled		= pValues.getEnabled();
+			theName     	= new StringPair(pValues.getName());
+			theDesc     	= (pValues.getDesc() != null)
+									? new StringPair(pValues.getDesc())
+									: null;
 		}
 		public Difference	fieldChanged(int fieldNo, HistoryValues<T> pOriginal) {
 			StaticData<?,?>.Values 	pValues = (StaticData<?,?>.Values)pOriginal;
@@ -649,6 +752,10 @@ public abstract class StaticData<T extends StaticData<T,E>,
 					bResult = (isEnabled != pValues.isEnabled) ? Difference.Different
 															   : Difference.Identical;
 					break;
+				case FIELD_ORDER:
+					bResult = (theOrder  != pValues.theOrder)  ? Difference.Different
+															   : Difference.Identical;
+					break;
 				default:
 					bResult = super.fieldChanged(fieldNo, pOriginal);
 					break;
@@ -657,7 +764,16 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		}
 
 		/**
-		 * Ensure encryption after security change
+		 * Update encryption after security change
+		 */
+		protected void updateSecurity() throws Exception {
+			/* Update the encryption */
+			theName = new StringPair(theName.getString());
+			if (theDesc != null) theDesc = new StringPair(theDesc.getString());
+		}		
+		
+		/**
+		 * Apply encryption after non-encrypted load
 		 */
 		protected void applySecurity() throws Exception {
 			/* Apply the encryption */

@@ -13,8 +13,8 @@ import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.Number.Money;
 import uk.co.tolcroft.models.Number.Rate;
-import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.security.CipherSet;
 import uk.co.tolcroft.models.security.SymmetricKey;
 
 public class TableDefinition {
@@ -262,7 +262,7 @@ public class TableDefinition {
 		/* Create the new binary column */
 		BinaryColumn myColumn = new BinaryColumn(pId, pName, 
 												 SymmetricKey.IVSIZE 
-												 	+ ControlKey.KEYIDLEN 
+												 	+ CipherSet.KEYIDLEN 
 												 	+ SymmetricKey.getEncryptionLength(2*pLength));
 		
 		/* Add it to the list and return it */

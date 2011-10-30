@@ -149,6 +149,11 @@ public class DilutionEvent extends DataItem<DilutionEvent> {
 	}
 	
 	/**
+	 * Build History (no history)
+	 */
+	protected void buildHistory() {}
+
+	/**
 	 * Create a dilution event from an event
 	 * @param pList the list
 	 * @param pEvent the underlying event
@@ -232,7 +237,7 @@ public class DilutionEvent extends DataItem<DilutionEvent> {
 		public List getUpdateList() { return null; }
 		public List getEditList() 	{ return null; }
 		public List getShallowCopy() { return null; }
-		public List getDeepCopy(DataSet<?,?> pData) { return null; }
+		public List getDeepCopy(DataSet<?> pData) { return null; }
 		public List getDifferences(List pOld) { return null; }
 
 		/**

@@ -29,9 +29,6 @@ public class TaxYear extends DataItem<TaxYear> {
 	 */
 	public static final String listName = objName + "s";
 
-	/* Members */
-	private boolean	isActive		= false;
-
 	/* Access methods */
 	public  Date  		getDate()         			{ return getValues().getYear(); }	
 	public  Values   	getValues()          		{ return (Values)super.getCurrentValues(); }	
@@ -56,7 +53,6 @@ public class TaxYear extends DataItem<TaxYear> {
 	public  Rate 		getAddDivTaxRate()			{ return getValues().getAddDivTaxRate(); }
 	public  Rate 		getCapTaxRate()   			{ return getValues().getCapTaxRate(); }
 	public  Rate 		getHiCapTaxRate() 			{ return getValues().getHiCapTaxRate(); }
-	public  boolean		isActive() 	  	  			{ return isActive; }
 	public  boolean     hasLoSalaryBand() 			{ return getTaxRegime().hasLoSalaryBand(); }
 	public  boolean     hasAdditionalTaxBand() 		{ return getTaxRegime().hasAdditionalTaxBand(); }
 	public  boolean     hasCapitalGainsAsIncome() 	{ return getTaxRegime().hasCapitalGainsAsIncome(); }
@@ -229,6 +225,12 @@ public class TaxYear extends DataItem<TaxYear> {
 	}
 							
 	/**
+	 * Get an initial set of values 
+	 * @return an initial set of values 
+	 */
+	protected HistoryValues<TaxYear> getNewValues() { return new Values(); }
+	
+	/**
 	 * Construct a copy of a TaxYear
 	 * 
 	 * @param pList The List to build into 
@@ -236,9 +238,8 @@ public class TaxYear extends DataItem<TaxYear> {
 	 */
 	public TaxYear(List pList, TaxYear pTaxYear) { 
 		super(pList, pTaxYear.getId());
-		isActive = pTaxYear.isActive();
-		Values myValues  = new Values(pTaxYear.getValues());
-		setValues(myValues);
+		Values myValues  = getValues();
+		myValues.copyFrom(pTaxYear.getValues());
 		ListStyle myOldStyle = pTaxYear.getList().getStyle();
 
 		/* Switch on the ListStyle */
@@ -248,6 +249,7 @@ public class TaxYear extends DataItem<TaxYear> {
 				if (myOldStyle == ListStyle.CORE) {
 					/* TaxYear is based on the original element */
 					setBase(pTaxYear);
+					copyFlags(pTaxYear);
 					pList.setNewId(this);				
 					break;
 				}
@@ -257,7 +259,7 @@ public class TaxYear extends DataItem<TaxYear> {
 				pList.setNewId(this);				
 				break;
 			case CLONE:
-				isolateCopy(pList.getData());
+				reBuildLinks(pList.getData());
 			case COPY:
 			case CORE:
 				/* Reset Id if this is an insert from a view */
@@ -303,8 +305,7 @@ public class TaxYear extends DataItem<TaxYear> {
 		TaxRegime myRegime;
 		
 		/* Initialise values */
-		Values myValues 	= new Values();
-		setValues(myValues);
+		Values myValues  = getValues();
 
 		/* Record the Id */
 		myValues.setTaxRegimeId(uRegimeId);
@@ -461,8 +462,6 @@ public class TaxYear extends DataItem<TaxYear> {
 	/* Standard constructor for a newly inserted account */
 	public TaxYear(List pList) {
 		super(pList, 0);
-		Values myValues = new Values();
-		setValues(myValues);
 		setState(DataState.NEW);
 	}
 
@@ -525,10 +524,10 @@ public class TaxYear extends DataItem<TaxYear> {
 	}
 
 	/**
-	 * Isolate Data Copy
+	 * Rebuild Links to partner data
 	 * @param pData the DataSet
 	 */
-	private void isolateCopy(FinanceData pData) {
+	private void reBuildLinks(FinanceData pData) {
 		TaxRegime.List myRegimes = pData.getTaxRegimes();
 		
 		/* Update to use the local copy of the TaxRegimes */
@@ -570,6 +569,8 @@ public class TaxYear extends DataItem<TaxYear> {
 		/* TaxRegime must be non-null */
 		if (getTaxRegime() == null) 
 			addError("TaxRegime must be non-null", FIELD_REGIME);
+		else if (!getTaxRegime().getEnabled()) 
+			addError("TaxRegime must be enabled", FIELD_REGIME);
 			
 		/* The allowance must be non-null */
 		if ((getAllowance() == null) || (!getAllowance().isPositive()))
@@ -891,13 +892,6 @@ public class TaxYear extends DataItem<TaxYear> {
 	}
 	
 	/**
-	 * Mark the tax year as active 
-	 */
-	public void setActive() {
-		isActive = true;
-	}
-	
-	/**
 	 * Update taxYear from a taxYear extract 
 	 * @param pTaxYear the changed taxYear 
 	 * @return whether changes have been made
@@ -1042,7 +1036,7 @@ public class TaxYear extends DataItem<TaxYear> {
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return null; }
 		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
-		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+		public List getDeepCopy(DataSet<?> pDataSet)	{ 
 			/* Build an empty Extract List */
 			List myList = new List(this);
 			myList.theData = (FinanceData)pDataSet;
@@ -1229,23 +1223,6 @@ public class TaxYear extends DataItem<TaxYear> {
 		}	
 		
 		/**
-		 * Reset the active flags after changes to events
-		 */
-		public void reset() {
-			ListIterator 	myIterator;
-			TaxYear 		myCurr;
-			
-			/* Access the iterator */
-			myIterator = listIterator(true);
-			
-			/* Loop through the items to find the entry */
-			while ((myCurr = myIterator.next()) != null) {
-				/* Clear the flags */
-				myCurr.isActive = false;
-			}
-		}
-		
-		/**
 		 * Extract the date range represented by the tax years
 		 * 
 		 * @return the range of tax years
@@ -1289,6 +1266,23 @@ public class TaxYear extends DataItem<TaxYear> {
 			return myRange;
 		}
 		
+		/**
+		 *  Mark active prices
+		 */
+		protected void markActiveItems () {
+			ListIterator 	myIterator;
+			TaxYear 		myCurr;
+
+			/* Access the list iterator */
+			myIterator = listIterator();
+			
+			/* Loop through the Prices */
+			while ((myCurr = myIterator.next()) != null) {
+				/* mark the tax regime referred to */
+				myCurr.getTaxRegime().touchItem(myCurr); 
+			}
+		}
+
 		/* Allow a tax parameter to be added */
 		public void addItem(int				uId,
 							String  		pRegime,

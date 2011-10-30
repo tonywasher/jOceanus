@@ -6,7 +6,7 @@ import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 
-public abstract class SpreadSheet<T extends DataSet<T,?>> {
+public abstract class SpreadSheet<T extends DataSet<T>> {
 	/**
 	 *  Obtain a sheet reader
 	 *  @param pThread Thread Control for task

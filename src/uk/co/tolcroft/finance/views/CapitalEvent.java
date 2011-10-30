@@ -127,6 +127,11 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 	}
 
 	/**
+	 * Build History (no history)
+	 */
+	protected void buildHistory() {}
+
+	/**
 	 * Constructor
 	 * @param pList the list to belong to
 	 * @param pEvent the underlying event
@@ -303,7 +308,7 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 		public List getUpdateList() { return null; }
 		public List getEditList() 	{ return null; }
 		public List getShallowCopy() { return null; }
-		public List getDeepCopy(DataSet<?,?> pData) { return null; }
+		public List getDeepCopy(DataSet<?> pData) { return null; }
 		public List getDifferences(List pOld) { return null; }
 
 		/**

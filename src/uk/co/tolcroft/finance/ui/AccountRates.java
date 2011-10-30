@@ -321,10 +321,10 @@ public class AccountRates extends StdTable<AcctRate> {
 			/* reset history if no change */
 			if (myRate.checkForHistory()) {
 				/* Set changed status */
+				myRate.clearErrors();
 				myRate.setState(DataState.CHANGED);
 
 				/* Validate the item and update the edit state */
-				myRate.clearErrors();
 				myRate.validate();
 				theRates.findEditState();
 				

@@ -680,6 +680,11 @@ public class AccountStatement extends StdTable<Statement.Line> {
 			/* Push history */
 			myLine.pushHistory();
 
+			/* Determine whether the line needs a tax credit */
+			boolean needsTaxCredit = Event.needsTaxCredit(myLine.getTransType(),
+														  myLine.isCredit() ? myLine.getPartner()
+																  			: myLine.getAccount());
+			
 			/* Protect against exceptions */
 			try {
 				/* Store the appropriate value */
@@ -692,13 +697,23 @@ public class AccountStatement extends StdTable<Statement.Line> {
 						break;
 					case COLUMN_TRANTYP:  
 						myLine.setTransType(theTransTypes.searchFor((String)obj));    
+						/* If the need for a tax credit has changed */
+						if (needsTaxCredit != Event.needsTaxCredit(myLine.getTransType(),
+																   myLine.isCredit() ? myLine.getPartner()
+																		   			 : myLine.getAccount())) {
+							/* Determine new Tax Credit */
+							if (needsTaxCredit) myLine.setTaxCredit(null);
+							else myLine.setTaxCredit(myLine.calculateTaxCredit());
+						}
 						break;
 					case COLUMN_CREDIT:
 					case COLUMN_DEBIT:
 						if (theStateType == StatementType.UNITS)
 							myLine.setUnits((Units)obj);
-						else
-							myLine.setAmount((Money)obj); 
+						else {
+							myLine.setAmount((Money)obj);
+							if (needsTaxCredit) myLine.setTaxCredit(myLine.calculateTaxCredit());
+						}
 						calculateTable();
 						break;
 					case COLUMN_PARTNER:
@@ -735,10 +750,10 @@ public class AccountStatement extends StdTable<Statement.Line> {
 			/* Check for changes */
 			if (myLine.checkForHistory()) {
 				/* Note that the item has changed */
+				myLine.clearErrors();
 				myLine.setState(DataState.CHANGED);
 
 				/* Validate the item and update the edit state */
-				myLine.clearErrors();
 				myLine.validate();
 				theLines.findEditState();
 			
@@ -1024,7 +1039,9 @@ public class AccountStatement extends StdTable<Statement.Line> {
 				myAccount = myLine.getPartner();
 			
 				/* If we have a different account then we can navigate */ 
-				if (Account.differs(myAccount, theAccount).isDifferent()) enablePartner = true;
+				if ((Account.differs(myAccount, theAccount).isDifferent()) &&
+					(myAccount != null))
+					enablePartner = true;
 			}
 			
 			/* If there is something to add and there are already items in the menu */
@@ -1085,13 +1102,14 @@ public class AccountStatement extends StdTable<Statement.Line> {
 		 */
 		protected void setIsCredit(boolean isCredit) {
 			AbstractTableModel	myModel;
+			Statement.Line		myLine;
 			int					row;
 
 			/* Access the table model */
 			myModel = theTable.getTableModel();
 			
 			/* Loop through the selected rows */
-			for (Statement.Line myRow : theTable.cacheSelectedRows()) {
+			for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
 				/* Ignore locked rows */
 				if ((myRow == null) || (myRow.isLocked())) continue;
 				
@@ -1099,13 +1117,16 @@ public class AccountStatement extends StdTable<Statement.Line> {
 				if (myRow.isDeleted()) continue;
 
 				/* Determine row */
-				row = myRow.indexOf() - 1;
+				row = myRow.indexOf() + 1;
+				
+				/* Cast to Statement Line */
+				myLine = (Statement.Line)myRow;
 				
 				/* Ignore rows that are already correct */
-				if (myRow.isCredit() != isCredit) continue;
+				if (myLine.isCredit() == isCredit) continue;
 				
 				/* set the credit value */
-				myRow.setIsCredit(isCredit);
+				myLine.setIsCredit(isCredit);
 				myModel.fireTableRowsUpdated(row, row);
 			}
 			

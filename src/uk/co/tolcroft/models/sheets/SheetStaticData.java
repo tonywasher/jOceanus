@@ -7,8 +7,8 @@ import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 public abstract class SheetStaticData <T extends StaticData<T,?>> extends SheetDataItem<T> {
 
 	/* Load the Static Data */
-	protected  abstract void loadEncryptedItem(int pId, int pControlId, boolean isEnabled, byte[] pName, byte[] pDesc) throws Exception;
-	protected  abstract void loadClearTextItem(int pId, boolean isEnabled, String pName, String pDesc) throws Exception;
+	protected  abstract void loadEncryptedItem(int pId, int pControlId, boolean isEnabled, int iOrder, byte[] pName, byte[] pDesc) throws Exception;
+	protected  abstract void loadClearTextItem(int pId, boolean isEnabled, int iOrder, String pName, String pDesc) throws Exception;
 
 	/**
 	 * Is the spreadsheet a backup spreadsheet or an edit-able one
@@ -62,28 +62,30 @@ public abstract class SheetStaticData <T extends StaticData<T,?>> extends SheetD
 			/* Access the IDs */
 			int myID 			= loadInteger(0);
 			int myControlId		= loadInteger(1);
-			boolean myEnabled	= loadBoolean(2);
+			int myOrder			= loadInteger(2);
+			boolean myEnabled	= loadBoolean(3);
 		
 			/* Access the name and description bytes */
-			byte[] myNameBytes = loadBytes(3);
-			byte[] myDescBytes = loadBytes(4);
+			byte[] myNameBytes = loadBytes(4);
+			byte[] myDescBytes = loadBytes(5);
 		
 			/* Load the item */
-			loadEncryptedItem(myID, myControlId, myEnabled, myNameBytes, myDescBytes);
+			loadEncryptedItem(myID, myControlId, myEnabled, myOrder, myNameBytes, myDescBytes);
 		}
 		
 		/* else this is a load from an edit-able spreadsheet */
 		else {
 			/* Access the IDs */
 			int myID 			= loadInteger(0);
-			boolean myEnabled	= loadBoolean(1);
+			int myOrder			= loadInteger(1);
+			boolean myEnabled	= loadBoolean(2);
 		
 			/* Access the name and description bytes */
-			String myName 	= loadString(2);
-			String myDesc 	= loadString(3);
+			String myName 	= loadString(3);
+			String myDesc 	= loadString(4);
 		
 			/* Load the item */
-			loadClearTextItem(myID, myEnabled, myName, myDesc);
+			loadClearTextItem(myID, myEnabled, myOrder, myName, myDesc);
 		}
 	}
 
@@ -98,18 +100,20 @@ public abstract class SheetStaticData <T extends StaticData<T,?>> extends SheetD
 			/* Set the fields */
 			writeInteger(0, pItem.getId());
 			writeInteger(1, pItem.getControlKey().getId());				
-			writeBoolean(2, pItem.getEnabled());				
-			writeBytes(3, pItem.getNameBytes());
-			writeBytes(4, pItem.getDescBytes());
+			writeInteger(2, pItem.getOrder());				
+			writeBoolean(3, pItem.getEnabled());				
+			writeBytes(4, pItem.getNameBytes());
+			writeBytes(5, pItem.getDescBytes());
 		}
 
 		/* else we are creating an edit-able spreadsheet */
 		else {
 			/* Set the fields */
 			writeInteger(0, pItem.getId());
-			writeBoolean(1, pItem.getEnabled());				
-			writeString(2, pItem.getName());
-			writeString(3, pItem.getDesc());			
+			writeInteger(1, pItem.getOrder());				
+			writeBoolean(2, pItem.getEnabled());				
+			writeString(3, pItem.getName());
+			writeString(4, pItem.getDesc());			
 		}
 	}
 
@@ -122,9 +126,10 @@ public abstract class SheetStaticData <T extends StaticData<T,?>> extends SheetD
 
 		/* Write titles */
 		writeString(0, StaticData.fieldName(StaticData.FIELD_ID));
-		writeString(1, StaticData.fieldName(StaticData.FIELD_ENABLED));
-		writeString(2, StaticData.fieldName(StaticData.FIELD_NAME));
-		writeString(3, StaticData.fieldName(StaticData.FIELD_DESC));			
+		writeString(1, StaticData.fieldName(StaticData.FIELD_ORDER));
+		writeString(2, StaticData.fieldName(StaticData.FIELD_ENABLED));
+		writeString(3, StaticData.fieldName(StaticData.FIELD_NAME));
+		writeString(4, StaticData.fieldName(StaticData.FIELD_DESC));			
 		return true;
 	}	
 
@@ -134,24 +139,24 @@ public abstract class SheetStaticData <T extends StaticData<T,?>> extends SheetD
 	protected void postProcessOnWrite() throws Throwable {		
 		/* If we are creating a backup */
 		if (isBackup) {
-			/* Set the five columns as the range */
-			nameRange(5);
+			/* Set the six columns as the range */
+			nameRange(6);
 		}
 
 		/* else this is an edit-able spreadsheet */
 		else {
-			/* Set the four columns as the range */
-			nameRange(4);
+			/* Set the five columns as the range */
+			nameRange(5);
 
 			/* Set the Id column as hidden */
 			setHiddenColumn(0);
 
 			/* Set the name column width and range */
-			nameColumnRange(2, theNames);
-			setColumnWidth(2, StaticData.NAMELEN);
+			nameColumnRange(3, theNames);
+			setColumnWidth(3, StaticData.NAMELEN);
 			
 			/* Set description column width */
-			setColumnWidth(3, StaticData.DESCLEN);
+			setColumnWidth(4, StaticData.DESCLEN);
 		}
 	}	
 }

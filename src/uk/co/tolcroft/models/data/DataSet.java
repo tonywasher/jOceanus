@@ -1,7 +1,8 @@
 package uk.co.tolcroft.models.data;
 
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
@@ -15,20 +16,18 @@ import uk.co.tolcroft.models.security.SecurityControl;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.views.DataControl;
 
-public abstract class DataSet<T extends DataSet<T, E>,
-							  E extends Enum<E>> 		implements DebugObject {
+public abstract class DataSet<T extends DataSet<T>> 		implements DebugObject {
 	private SecureManager			theSecurity   	= null;
 	private ControlKey.List			theControlKeys  = null;
 	private DataKey.List			theDataKeys		= null;
 	private ControlData.List		theControlData 	= null;
-	private Class<E>				theClass 		= null;
 	private int						theNumEncrypted	= 0;
 	private int						theGeneration	= 0;
 	
 	/**
-	 * The DataList Map
+	 * The DataList Array
 	 */
-	private Map<E, DataList<?,?>>	theMap			= null;
+	private List<DataList<?,?>>		theList			= null;
 
     /* Access methods */
 	public SecureManager		getSecurity() 		{ return theSecurity; }
@@ -40,34 +39,30 @@ public abstract class DataSet<T extends DataSet<T, E>,
 	/**
 	 *  Constructor for new empty DataSet
 	 *  @param pSecurity the secure manager
-	 *  @param pClass the class of the item types
 	 */ 
-	protected DataSet(SecureManager 	pSecurity,
-				   	  Class<E>			pClass) {
+	protected DataSet(SecureManager 	pSecurity) {
 		/* Store the security manager and class */
 		theSecurity   	= pSecurity;
-		theClass		= pClass;
 		
 		/* Create the empty security lists */
 		theControlKeys 	= new ControlKey.List(this);
 		theDataKeys    	= new DataKey.List(this);
 		theControlData 	= new ControlData.List(this);
 		
-		/* Create the map of additional lists */
-		theMap			= new EnumMap<E, DataList<?,?>>(pClass);
+		/* Create the list of additional DataLists */
+		theList			= new ArrayList<DataList<?,?>>();
 	}
 	
 	/**
 	 * Constructor for a cloned DataSet
 	 * @param pSource the source DataSet
 	 */
-	protected DataSet(DataSet<T,E> pSource) {
+	protected DataSet(DataSet<T> pSource) {
 		/* Store the security manager and class */
 		theSecurity   	= pSource.theSecurity;
-		theClass		= pSource.theClass;
 		
 		/* Create the map of additional lists */
-		theMap			= new EnumMap<E, DataList<?,?>>(theClass);		
+		theList			= new ArrayList<DataList<?,?>>();
 	}
 	
 	/**
@@ -80,7 +75,7 @@ public abstract class DataSet<T extends DataSet<T, E>,
 	 * Construct a Deep Copy for a DataSet.
 	 * @param pSource the source DataSet
 	 */
-	protected void	getDeepCopy(DataSet<T,E> pSource) {
+	protected void	getDeepCopy(DataSet<T> pSource) {
 		/* Deep Copy the Security items */
 		theControlKeys 	= pSource.getControlKeys().getDeepCopy(this);
 		theDataKeys		= pSource.getDataKeys().getDeepCopy(this);
@@ -141,9 +136,9 @@ public abstract class DataSet<T extends DataSet<T, E>,
 	 * @param pItemType the type of the item to add
 	 * @param pList the list to add
 	 */
-	protected void addList(E pItemType, DataList<?,?> pList) {
-		/* Add the list to the map */
-		theMap.put(pItemType, pList);
+	protected void addList(DataList<?,?> pList) {
+		/* Add the DataList to the list */
+		theList.add(pList);
 		
 		/* Note if the list is an encrypted list */
 		if (pList instanceof EncryptedList) theNumEncrypted++;
@@ -154,7 +149,34 @@ public abstract class DataSet<T extends DataSet<T, E>,
 	 * @param pItemType the type of items
 	 * @return the list of items
 	 */
-	abstract public DataList<?,?> getDataList(Enum<?> pItemType);
+	public <L extends DataList<L,D>, D extends DataItem<D>> 
+		   L getDataList(Class<L> pItemType) {
+		/* Access the class */
+		DataList<?,?> myList = getDataListForClass(pItemType);
+		
+		/* Cast correctly */
+		return (myList == null) ? null : pItemType.cast(myList);
+	}
+	
+	/**
+	 * Obtain DataList for an item type
+	 * @param pItemType the type of items
+	 * @return the list of items
+	 */
+	private DataList<?,?> getDataListForClass(Class<?> pItemType) {
+		/* Create the iterator */
+		ListIterator<DataList<?,?>> myIterator = theList.listIterator();
+		
+		/* Loop through the list */
+		while (myIterator.hasNext()) {
+			/* Return list if it is requested one */
+			DataList<?,?> myList = myIterator.next();
+			if (pItemType == myList.getClass()) return myList;
+		}
+		
+		/* Return not found */
+		return null;
+	}
 	
 	/**
 	 * Set Generation
@@ -169,11 +191,8 @@ public abstract class DataSet<T extends DataSet<T, E>,
 		theDataKeys.setGeneration(pGeneration);
 		theControlData.setGeneration(pGeneration);
 		
-		/* Loop through the Enum values */
-		for (E myType: theClass.getEnumConstants()) {
-			/* Access the lists */
-			DataList<?,?> myList = theMap.get(myType);
-			
+		/* Loop through the List values */
+		for (DataList<?,?> myList: theList) {
 			/* Set the Generation */
 			myList.setGeneration(pGeneration);
 		}
@@ -201,25 +220,20 @@ public abstract class DataSet<T extends DataSet<T, E>,
 		if (pThat.getClass() != this.getClass()) return false;
 		
 		/* Access the object as a DataSet */
-		DataSet<?,?> myThat = (DataSet<?,?>)pThat;
-		
-		/* Compare class */
-		if (theClass != myThat.theClass) return false;
+		DataSet<?> myThat = (DataSet<?>)pThat;
 		
 		/* Compare security data */
 		if (!theControlKeys.equals(myThat.getControlKeys())) return false;
 		if (!theDataKeys.equals(myThat.getDataKeys())) return false;
 		if (!theControlData.equals(myThat.getControlData())) return false;
 		
-		/* Loop through the Enum values */
-		for (E myType: theClass.getEnumConstants()) {
-			/* Access the lists */
-			DataList<?,?> myThisList = theMap.get(myType);
-			DataList<?,?> myThatList = myThat.theMap.get(myType);
+		/* Loop through the List values */
+		for (DataList<?,?> myThisList: theList) {
+			/* Access equivalent list */
+			DataList<?,?> myThatList = myThat.getDataListForClass(myThisList.getClass());
 			
 			/* Handle trivial cases */
 			if (myThisList == myThatList) 	continue;
-			if (myThisList == null)	 		return false;
 			
 			/* Compare list */
 			if (!myThisList.equals(myThatList)) return false;
@@ -248,11 +262,8 @@ public abstract class DataSet<T extends DataSet<T, E>,
 		addChildEntry(pManager, pParent, theDataKeys);
 		addChildEntry(pManager, pParent, theControlData);
 		
-		/* Loop through the Enum values */
-		for (E myType: theClass.getEnumConstants()) {
-			/* Access the lists */
-			DataList<?,?> myList = theMap.get(myType);
-			
+		/* Loop through the List values */
+		for (DataList<?,?> myList: theList) {
 			/* Add the child entry */
 			addChildEntry(pManager, pParent, myList);
 		}
@@ -283,11 +294,8 @@ public abstract class DataSet<T extends DataSet<T, E>,
 			!theControlData.isEmpty())
 			return false;
 
-		/* Loop through the Enum values */
-		for (E myType: theClass.getEnumConstants()) {
-			/* Access the lists */
-			DataList<?,?> myList = theMap.get(myType);
-			
+		/* Loop through the List values */
+		for (DataList<?,?> myList: theList) {
 			/* Determine whether the list is empty */
 			if (!myList.isEmpty()) return false;
 		}
@@ -306,11 +314,8 @@ public abstract class DataSet<T extends DataSet<T, E>,
 		if (theDataKeys.hasUpdates()) return true;
 		if (theControlData.hasUpdates()) return true;
 		
-		/* Loop through the Enum values */
-		for (E myType: theClass.getEnumConstants()) {
-			/* Access the lists */
-			DataList<?,?> myList = theMap.get(myType);
-			
+		/* Loop through the List values */
+		for (DataList<?,?> myList: theList) {
 			/* Determine whether the list has updates */
 			if (myList.hasUpdates()) return true;
 		}
@@ -361,11 +366,10 @@ public abstract class DataSet<T extends DataSet<T, E>,
 		/* Access the control key */
 		ControlKey myControl = getControlKey();
 		
-		/* Loop through the Enum values */
-		for (Enum<?> myType: theClass.getEnumConstants()) {
-			/* Access the lists */
-			DataList<?,?> myList = theMap.get(myType);
-			DataList<?,?> myBase = pBase.getDataList(myType);
+		/* Loop through the List values */
+		for (DataList<?,?> myList: theList) {
+			/* Access equivalent base list */
+			DataList<?,?> myBase = pBase.getDataListForClass(myList.getClass());
 			
 			/* If the list is an encrypted list */
 			if (myList instanceof EncryptedList) {
@@ -411,11 +415,8 @@ public abstract class DataSet<T extends DataSet<T, E>,
 		/* Set the number of stages */
 		if (!pThread.setNumStages(1+theNumEncrypted)) return false;
 		
-		/* Loop through the Enum values */
-		for (E myType: theClass.getEnumConstants()) {
-			/* Access the lists */
-			DataList<?,?> myList = theMap.get(myType);
-			
+		/* Loop through the List values */
+		for (DataList<?,?> myList: theList) {
 			/* If the list is an encrypted list */
 			if (myList instanceof EncryptedList) {
 				/* Update the security */

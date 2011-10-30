@@ -162,6 +162,12 @@ public class Pattern extends EncryptedItem<Pattern> {
 	}
 							
 	/**
+	 * Get an initial set of values 
+	 * @return an initial set of values 
+	 */
+	protected HistoryValues<Pattern> getNewValues() { return new Values(); }
+	
+	/**
 	 * Construct a copy of a Pattern
 	 * 
 	 * @param pPattern The Pattern 
@@ -169,8 +175,8 @@ public class Pattern extends EncryptedItem<Pattern> {
 	protected Pattern(List pList, Pattern pPattern) {
 		/* Set standard values */
 		super(pList, pPattern.getId());
-		Values myValues	= new Values(pPattern.getValues());
-		setValues(myValues);
+		Values myValues	= getValues();
+		myValues.copyFrom(pPattern.getValues());
 		ListStyle myOldStyle = pPattern.getList().getStyle();
 
 		/* Switch on the ListStyle */
@@ -189,7 +195,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 				pList.setNewId(this);				
 				break;
 			case CLONE:
-				isolateCopy(pList.getData());
+				reBuildLinks(pList.getData());
 			case COPY:
 			case CORE:
 				/* Reset Id if this is an insert from a view */
@@ -209,8 +215,6 @@ public class Pattern extends EncryptedItem<Pattern> {
 	/* Standard constructor for a newly inserted pattern */
 	public Pattern(List    	pList) {
 		super(pList, 0);
-		Values myValues 	= new Values();
-		setValues(myValues);
 		setControlKey(pList.getControlKey());
 		pList.setNewId(this);		
 	}
@@ -219,11 +223,10 @@ public class Pattern extends EncryptedItem<Pattern> {
 	public Pattern(List pList, Statement.Line pLine) {
 		/* Set standard values */
 		super(pList, 0);
-		setControlKey(pList.getControlKey());
-		Values 					myValues	= new Values(pLine.getValues());
+		Values 					myValues	= getValues();
 		FinanceData				myData		= pList.getData();
 
-		setValues(myValues);
+		myValues.copyFrom(pLine.getValues());
 		pList.setNewId(this);		
 		
 		/* Adjust the date so that it is in the 2000 tax year */
@@ -257,8 +260,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 		Frequency 		myFreq;
 		
 		/* Initialise values */
-		Values myValues = new Values();
-		setValues(myValues);
+		Values myValues = getValues();
 		
 		/* Record the IDs */
 		myValues.setAccountId(uAccountId);
@@ -332,8 +334,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 		super(pList, uId);
 		
 		/* Initialise values */
-		Values myValues = new Values();
-		setValues(myValues);
+		Values myValues = getValues();
 
 		/* Record the encrypted values */
 		myValues.setDesc(new StringPair(pDesc));
@@ -438,12 +439,12 @@ public class Pattern extends EncryptedItem<Pattern> {
 	}
 	
 	/**
-	 * Isolate Data Copy
+	 * Rebuild Links to partner data
 	 * @param pData the DataSet
 	 */
-	protected void isolateCopy(FinanceData pData) {
+	protected void reBuildLinks(FinanceData pData) {
 		/* Update the Encryption details */
-		super.isolateCopy(pData);
+		super.reBuildLinks(pData);
 		
 		/* Access Lists */
 		Account.List 			myAccounts 		= pData.getAccounts();
@@ -530,6 +531,8 @@ public class Pattern extends EncryptedItem<Pattern> {
 		/* Check that frequency is non-null */
 		if (getFrequency() == null) 
 			addError("Frequency must be non-null", Pattern.FIELD_FREQ);
+		else if (!getFrequency().getEnabled()) 
+			addError("Frequency must be enabled", FIELD_FREQ);
 		
 		/* Set validation flag */
 		if (!hasErrors()) setValidEdit();
@@ -816,7 +819,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return null; }
 		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
-		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+		public List getDeepCopy(DataSet<?> pDataSet)	{ 
 			/* Build an empty Extract List */
 			List myList = new List(this);
 			myList.setData(pDataSet);
@@ -961,9 +964,9 @@ public class Pattern extends EncryptedItem<Pattern> {
 		}
 		
 		/**
-		 * Update account details after data update
+		 * Mark Active items
 		 */
-		public void markActivePatterns() {
+		public void markActiveItems() {
 			ListIterator 	myIterator;
 			Pattern 		myCurr;
 					
@@ -973,10 +976,16 @@ public class Pattern extends EncryptedItem<Pattern> {
 			/* Loop through the Prices */
 			while ((myCurr = myIterator.next()) != null) {
 				/* Touch the patterned account */
-				myCurr.getAccount().touchPattern();			
+				myCurr.getAccount().touchItem(myCurr);			
 				
 				/* Touch the patterned partner */
-				myCurr.getPartner().touchPartner();			
+				myCurr.getPartner().touchItem(myCurr);			
+				
+				/* Touch the patterned frequency */
+				myCurr.getFrequency().touchItem(myCurr);			
+				
+				/* Touch the patterned transaction type */
+				myCurr.getTransType().touchItem(myCurr);			
 			}			 
 		}
 		
@@ -1203,8 +1212,8 @@ public class Pattern extends EncryptedItem<Pattern> {
 				Values myValues = (Values)pSource;
 				super.copyFrom(myValues);
 				theDate      = myValues.getDate();
-				theDesc      = new StringPair(myValues.getDesc());
-				theAmount    = new MoneyPair(myValues.getAmount());
+				theDesc      = myValues.getDesc();
+				theAmount    = myValues.getAmount();
 				thePartner   = myValues.getPartner();
 				theFrequency = myValues.getFrequency();
 				theTransType = myValues.getTransType();
@@ -1270,12 +1279,21 @@ public class Pattern extends EncryptedItem<Pattern> {
 		}
 
 		/**
-		 * Ensure encryption after security change
+		 * Update encryption after security change
+		 */
+		protected void updateSecurity() throws Exception {
+			/* Update the encryption */
+			theDesc 	= new StringPair(theDesc.getString());
+			theAmount	= new MoneyPair(theAmount.getValue());
+		}		
+		
+		/**
+		 * Ensure encryption after non-encrypted load
 		 */
 		protected void applySecurity() throws Exception {
 			/* Apply the encryption */
-			theDesc.encryptPair();
-			theAmount.encryptPair();
+			theDesc.encryptPair(null);
+			theAmount.encryptPair(null);
 		}		
 		
 		/**

@@ -20,7 +20,7 @@ import uk.co.tolcroft.models.security.ZipFile;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 
-public abstract class SheetWriter<T extends DataSet<T,?>> {
+public abstract class SheetWriter<T extends DataSet<T>> {
 	/**
 	 * Thread control
 	 */

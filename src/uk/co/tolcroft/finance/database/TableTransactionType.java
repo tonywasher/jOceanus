@@ -32,15 +32,15 @@ public class TableTransactionType extends TableStaticData<TransactionType> {
 	}
 	
 	/* Declare DataSet */
-	protected void declareData(DataSet<?,?> pData) {
+	protected void declareData(DataSet<?> pData) {
 		FinanceData myData = (FinanceData)pData;
 		theList = myData.getTransTypes();
 		setList(theList);
 	}
 
 	/* Load the transaction type */
-	protected void loadTheItem(int pId, int pControlId, boolean isEnabled, byte[] pTrans, byte[] pDesc) throws Exception {
+	protected void loadTheItem(int pId, int pControlId, boolean isEnabled, int iOrder, byte[] pTrans, byte[] pDesc) throws Exception {
 		/* Add into the list */
-		theList.addItem(pId, pControlId, isEnabled, pTrans, pDesc);
+		theList.addItem(pId, pControlId, isEnabled, iOrder, pTrans, pDesc);
 	}
 }

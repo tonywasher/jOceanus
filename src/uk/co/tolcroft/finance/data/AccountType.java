@@ -57,15 +57,17 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 	 * Construct a standard account type on load
 	 * @param pList	The list to associate the Account Type with
 	 * @param isEnabled is the account type enabled
+	 * @param uOrder the sort order
 	 * @param pName Name of Account Type
 	 * @param pDesc Description of Account Type
 	 */
 	private AccountType(List 	pList,
 						int		uId,
 			            boolean	isEnabled,
+			            int		uOrder,
 			            String	pName,
 			            String	pDesc) throws Exception {
-		super(pList, uId, isEnabled, pName, pDesc);
+		super(pList, uId, isEnabled, uOrder, pName, pDesc);
 	}
 	
 	/**
@@ -74,6 +76,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 	 * @param uId   ID of Account Type
 	 * @param uControlId the control id of the new item
 	 * @param isEnabled is the account type enabled
+	 * @param uOrder the sort order
 	 * @param pName Encrypted Name of Account Type
 	 * @param pDesc Encrypted Description of Account Type
 	 */
@@ -81,9 +84,10 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 			            int		uId,
 			            int		uControlId,
 			            boolean	isEnabled,
+			            int		uOrder,
 			            byte[]	pName,
 			            byte[]	pDesc) throws Exception {
-		super(pList, uId, uControlId, isEnabled, pName, pDesc);
+		super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
 	}
 	
 	/**
@@ -480,7 +484,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
 		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
-		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+		public List getDeepCopy(DataSet<?> pDataSet)	{ 
 			/* Build an empty Extract List */
 			List myList = new List(this);
 			myList.setData(pDataSet);
@@ -511,7 +515,6 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 
 		/**
 		 * Add a new item to the list
-		 * 
 		 * @param pItem item to be added
 		 * @return the newly added item
 		 */
@@ -561,18 +564,21 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 
 		/**
 		 * Add an AccountType to the list
-		 * @param uClassId the ClassId of the account type
+		 * @param uId the Id of the account type
+		 * @param isEnabled is the account type enabled
+		 * @param uOrder the sort order
 		 * @param pActType the Name of the account type
 		 * @param pDesc the Description of the account type
 		 */ 
 		public void addItem(int	  	uId,
 							boolean	isEnabled,
+							int		uOrder,
 				            String 	pActType,
 				            String 	pDesc) throws Exception {
 			AccountType myActType;
 				
 			/* Create a new Account Type */
-			myActType = new AccountType(this, uId, isEnabled, pActType, pDesc);
+			myActType = new AccountType(this, uId, isEnabled, uOrder, pActType, pDesc);
 				
 			/* Check that this AccountTypeId has not been previously added */
 			if (!isIdUnique(myActType.getId())) 
@@ -580,14 +586,17 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 	                      			myActType,
 			  			            "Duplicate AccountTypeId");
 				 
-			/* Check that this AccountType has not been previously added */
-			if (searchFor(myActType.getName()) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	   					  			myActType,
-			  			            "Duplicate Account Type");
-				 
 			/* Add the Account Type to the list */
 			add(myActType);
+				 
+			/* Validate the AccountType */
+			myActType.validate();
+
+			/* Handle validation failure */
+			if (myActType.hasErrors()) 
+				throw new Exception(ExceptionClass.VALIDATE,
+									myActType,
+									"Failed validation");
 		}	
 
 		/**
@@ -595,18 +604,20 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 		 * @param uId the Id of the account type
 		 * @param uControlId the control id of the new item
 		 * @param isEnabled is the account type enabled
+		 * @param uOrder the sort order
 		 * @param pActType the encrypted Name of the account type
 		 * @param pDesc the Encrypted Description of the account type
 		 */ 
 		public void addItem(int    	uId,
 							int	   	uControlId,
 							boolean	isEnabled,
+							int		uOrder,
 				            byte[] 	pActType,
 				            byte[] 	pDesc) throws Exception {
 			AccountType myActType;
 				
 			/* Create a new Account Type */
-			myActType = new AccountType(this, uId, uControlId, isEnabled, pActType, pDesc);
+			myActType = new AccountType(this, uId, uControlId, isEnabled, uOrder, pActType, pDesc);
 				
 			/* Check that this AccountTypeId has not been previously added */
 			if (!isIdUnique(uId)) 
@@ -614,13 +625,17 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 	                      			myActType,
 			  			            "Duplicate AccountTypeId");
 				 
-			/* Check that this AccountType has not been previously added */
-			if (searchFor(myActType.getName()) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	   					  			myActType,
-			  			            "Duplicate Account Type");
 			/* Add the Account Type to the list */
 			add(myActType);
+			
+			/* Validate the AccountType */
+			myActType.validate();
+
+			/* Handle validation failure */
+			if (myActType.hasErrors()) 
+				throw new Exception(ExceptionClass.VALIDATE,
+									myActType,
+									"Failed validation");
 		}
 	}	
 }

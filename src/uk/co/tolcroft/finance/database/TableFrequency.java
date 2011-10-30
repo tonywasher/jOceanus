@@ -33,15 +33,15 @@ public class TableFrequency extends TableStaticData<Frequency> {
 	}
 	
 	/* Declare DataSet */
-	protected void declareData(DataSet<?,?> pData) {
+	protected void declareData(DataSet<?> pData) {
 		FinanceData myData = (FinanceData)pData;
 		theList = myData.getFrequencys();
 		setList(theList);
 	}
 
 	/* Load the frequency */
-	protected void loadTheItem(int pId, int pControlId, boolean isEnabled, byte[] pFreq, byte[] pDesc) throws Exception {
+	protected void loadTheItem(int pId, int pControlId, boolean isEnabled, int iOrder, byte[] pFreq, byte[] pDesc) throws Exception {
 		/* Add into the list */
-		theList.addItem(pId, pControlId, isEnabled, pFreq, pDesc);
+		theList.addItem(pId, pControlId, isEnabled, iOrder, pFreq, pDesc);
 	}
 }

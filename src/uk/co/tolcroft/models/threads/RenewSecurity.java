@@ -3,7 +3,7 @@ package uk.co.tolcroft.models.threads;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.views.DataControl;
 
-public class RenewSecurity<T extends DataSet<T,?>> extends LoaderThread<T> {
+public class RenewSecurity<T extends DataSet<T>> extends LoaderThread<T> {
 	/* Task description */
 	private static String  	theTask		= "ReNew Security";
 

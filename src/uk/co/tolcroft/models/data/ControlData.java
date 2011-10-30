@@ -16,9 +16,6 @@ public class ControlData extends DataItem<ControlData> {
 	 */
 	public static final String listName = objName;
 
-	/* Local values */
-	private int				theControlId = -1;
-	
 	/* Access methods */
 	public  int 			getDataVersion()  	{ return getValues().getDataVersion(); }
 	public  ControlKey		getControlKey()  	{ return getValues().getControlKey(); }
@@ -73,10 +70,10 @@ public class ControlData extends DataItem<ControlData> {
 		String 	myString = "";
 		switch (iField) {
 			case FIELD_VERS:
-				myString += getDataVersion(); 
+				myString += myValues.getDataVersion(); 
 				break;
 			case FIELD_CONTROL:
-				myString = "Id=" + theControlId;					
+				myString = "Id=" + myValues.getControlId();					
 				if (myValues.getControlKey() != null)
 					myString = pDetail.addDebugLink(myValues.getControlKey(), myString);
 				break;
@@ -88,14 +85,20 @@ public class ControlData extends DataItem<ControlData> {
 	}
 							
 	/**
+	 * Get an initial set of values 
+	 * @return an initial set of values 
+	 */
+	protected HistoryValues<ControlData> getNewValues() { return new Values(); }
+	
+	/**
  	 * Construct a copy of a ControlData 
  	 * @param pSource The source 
  	 */
 	protected ControlData(List pList, ControlData pSource) {
 		/* Set standard values */
 		super(pList, pSource.getId());
-		Values myValues = new Values(pSource.getValues());
-		setValues(myValues);
+		Values myValues = getValues();
+		myValues.copyFrom(pSource.getValues());
 
 		/* Switch on the LinkStyle */
 		switch (pList.getStyle()) {
@@ -123,14 +126,11 @@ public class ControlData extends DataItem<ControlData> {
 				  	    int	 uControlId) throws Exception {
 		/* Initialise the item */
 		super(pList, uId);
-		Values myValues = new Values();
-		setValues(myValues);
-
-		/* Record the ID */
-		theControlId	= uControlId;
+		Values myValues = getValues();
 
 		/* Record the values */
 		myValues.setDataVersion(uVersion);
+		myValues.setControlId(uControlId);
 		
 		/* Look up the ControlKey */
 		ControlKey myControl = pList.theData.getControlKeys().searchFor(uControlId);
@@ -150,8 +150,7 @@ public class ControlData extends DataItem<ControlData> {
 				  	    int	 uVersion) {
 		/* Initialise the item */
 		super(pList, uId);
-		Values myValues = new Values();
-		setValues(myValues);
+		Values myValues = getValues();
 
 		/* Record the values */
 		myValues.setDataVersion(uVersion);
@@ -219,7 +218,7 @@ public class ControlData extends DataItem<ControlData> {
 	 * Isolate Data Copy
 	 * @param pData the DataSet
 	 */
-	private void isolateCopy(DataSet<?,?> pData) {
+	private void isolateCopy(DataSet<?> pData) {
 		ControlKey.List myKeys = pData.getControlKeys();
 		
 		/* Update to use the local copy of the ControlKeys */
@@ -235,10 +234,11 @@ public class ControlData extends DataItem<ControlData> {
 	 */
 	protected void setControlKey(ControlKey pControl) throws Exception {
 		/* If we do not have a control Key */
-		if (theControlId == -1) {
+		Values myValues = getValues();
+
+		if (myValues.getControlId() == -1) {
 			/* Store the control details and return */
-			theControlId	= pControl.getId();
-			getValues().setControlKey(pControl);
+			myValues.setControlKey(pControl);
 			return;
 		}
 		
@@ -246,8 +246,7 @@ public class ControlData extends DataItem<ControlData> {
 		pushHistory();
 
 		/* Store the control details */
-		theControlId	= pControl.getId();
-		getValues().setControlKey(pControl);
+		myValues.setControlKey(pControl);
 
 		/* Check for changes */
 		if (checkForHistory()) setState(DataState.CHANGED);
@@ -258,8 +257,8 @@ public class ControlData extends DataItem<ControlData> {
 	 */
 	public static class List  extends DataList<List, ControlData> {
 		/* Members */
-		private DataSet<?,?>	theData			= null;
-		public 	DataSet<?,?> 	getData()		{ return theData; }
+		private DataSet<?>		theData			= null;
+		public 	DataSet<?> 		getData()		{ return theData; }
 		private ControlData		theControl		= null;
 		public 	ControlData		getControl()	{ return theControl; }
 		
@@ -267,7 +266,7 @@ public class ControlData extends DataItem<ControlData> {
 		 * Construct an empty CORE static list
 	 	 * @param pData the DataSet for the list
 		 */
-		protected List(DataSet<?,?> pData) { 
+		protected List(DataSet<?> pData) { 
 			super(List.class, ControlData.class, ListStyle.CORE, false);
 			theData = pData;
 		}
@@ -277,7 +276,7 @@ public class ControlData extends DataItem<ControlData> {
 	 	 * @param pData the DataSet for the list
 		 * @param pStyle the style of the list 
 		 */
-		protected List(DataSet<?,?> pData, ListStyle pStyle) {
+		protected List(DataSet<?> pData, ListStyle pStyle) {
 			super(List.class, ControlData.class, pStyle, false);
 			theData = pData;
 		}
@@ -310,7 +309,7 @@ public class ControlData extends DataItem<ControlData> {
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return null; }
 		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
-		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+		public List getDeepCopy(DataSet<?> pDataSet)	{ 
 			/* Build an empty Extract List */
 			List myList = new List(this);
 			myList.theData = pDataSet;
@@ -422,17 +421,21 @@ public class ControlData extends DataItem<ControlData> {
 	public class Values implements HistoryValues<ControlData> {
 		private int 			theDataVersion	= -1;
 		private ControlKey		theControlKey	= null;
+		private int 			theControlId 	= -1;
 		
 		/* Access methods */
 		public  int 			getDataVersion()  	{ return theDataVersion; }
 		public  ControlKey		getControlKey()  	{ return theControlKey; }
+		public  int				getControlId()  	{ return theControlId; }
 		
-		public void setDataVersion(int pValue) {
+		private void setDataVersion(int pValue) {
 			theDataVersion = pValue; }
-		public void setControlKey(ControlKey pValue) {
+		private void setControlKey(ControlKey pValue) {
 			theControlKey  = pValue;
 			theControlId = (theControlKey == null) ? -1 : theControlKey.getId();
 		}
+		private void setControlId(int pValue) {
+			theControlId		= pValue; }
 
 		/* Constructor */
 		public Values() {}
@@ -459,7 +462,7 @@ public class ControlData extends DataItem<ControlData> {
 			Values myValues = (Values)pSource;
 			theDataVersion	= myValues.getDataVersion();
 			theControlKey	= myValues.getControlKey();
-			theControlId 	= (theControlKey == null) ? -1 : theControlKey.getId();
+			theControlId 	= myValues.getControlId();
 		}
 		public Difference	fieldChanged(int fieldNo, HistoryValues<ControlData> pOriginal) {
 			Values 	pValues = (Values)pOriginal;

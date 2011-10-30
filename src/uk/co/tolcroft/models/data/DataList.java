@@ -181,13 +181,13 @@ public abstract class DataList<L extends DataList<L,T>,
 	 * Construct an edit extract for a DataList.
 	 * @return the edit extract (or null if not edit-able list) 
 	 */
-	abstract protected L getEditList();
+	abstract public L getEditList();
 	
 	/**
 	 * Obtain a clone of the list
 	 * @return the clone of  the list
 	 */
-	abstract protected L getDeepCopy(DataSet<?,?> pDataSet);
+	abstract protected L getDeepCopy(DataSet<?> pDataSet);
 		
 	/**
 	 * Obtain a copy of the list
@@ -650,7 +650,7 @@ public abstract class DataList<L extends DataList<L,T>,
 	}
 		
 	/**
-	 * Validate the events
+	 * Validate the data items
 	 */
 	public void validate() {
 		ListIterator 	myIterator;
@@ -716,6 +716,22 @@ public abstract class DataList<L extends DataList<L,T>,
 		/* Loop through items clearing validation errors */
 		while ((myCurr = myIterator.next()) != null) {
 			myCurr.clearErrors();
+		}
+	}
+		
+	/**
+	 *  Reset active
+	 */
+	public void clearActive() {
+		ListIterator 	myIterator;
+		T 				myCurr;
+			
+		/* Create an iterator for the list */
+		myIterator = listIterator(true);
+		
+		/* Loop through items clearing active flag */
+		while ((myCurr = myIterator.next()) != null) {
+			myCurr.clearActive();
 		}
 	}
 		

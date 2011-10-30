@@ -597,8 +597,11 @@ public class MaintAccount implements ActionListener,
 		
 		/* Add the AccountType values to the types box */
 		while ((myType  = myTypeIterator.next()) != null) {
-			/* Ignore the account if it is reserved */
+			/* Ignore the type if it is reserved */
 			if (myType.isReserved()) continue;
+			
+			/* Ignore the type if it is not enabled */
+			if (!myType.getEnabled()) continue;
 			
 			/* Add the item to the list */
 			theTypesBox.addItem(myType.getName());

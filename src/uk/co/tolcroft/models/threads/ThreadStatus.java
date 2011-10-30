@@ -4,7 +4,7 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.views.DataControl;
 
-public class ThreadStatus<T extends DataSet<T,?>> implements StatusControl {
+public class ThreadStatus<T extends DataSet<T>> implements StatusControl {
 	/* Status Data regarding a thread */
 	protected static class StatusData {
 		/* Properties */

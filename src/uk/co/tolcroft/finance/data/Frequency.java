@@ -58,15 +58,17 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 	 * @param pList	The list to associate the Frequency with
 	 * @param uId   ID of Frequency
 	 * @param isEnabled is the frequency enabled
+	 * @param uOrder the sort order
 	 * @param pName Name of Frequency
 	 * @param pDesc Description of Frequency
 	 */
 	private Frequency(List 		pList,
 					  int		uId,
 			          boolean	isEnabled,
+			          int		uOrder,
 			          String	pName,
 			          String	pDesc) throws Exception {
-		super(pList, uId, isEnabled, pName, pDesc);
+		super(pList, uId, isEnabled, uOrder, pName, pDesc);
 	}
 	
 	/**
@@ -75,6 +77,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 	 * @param uId   ID of Frequency
 	 * @param uControlId the control id of the new item
 	 * @param isEnabled is the frequency enabled
+	 * @param uOrder the sort order
 	 * @param pName Encrypted Name of Frequency
 	 * @param pDesc Encrypted Description of TaxRegime
 	 */
@@ -82,9 +85,10 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 			      	  int		uId,
 			      	  int		uControlId,
 			      	  boolean	isEnabled,
+			      	  int		uOrder,
 			      	  byte[]	pName,
 			      	  byte[]	pDesc) throws Exception {
-		super(pList, uId, uControlId, isEnabled, pName, pDesc);
+		super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
 	}
 
 	/**
@@ -127,7 +131,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
 		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
-		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+		public List getDeepCopy(DataSet<?> pDataSet)	{ 
 			/* Build an empty Extract List */
 			List myList = new List(this);
 			myList.setData(pDataSet);
@@ -210,17 +214,19 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 		 * Add a Frequency to the list
 		 * @param uId   ID of Frequency
 		 * @param isEnabled is the frequency enabled
+		 * @param uOrder the sort order
 		 * @param pFrequency the Name of the frequency
 		 * @param pDesc the Description of the frequency
 		 */ 
 		public void addItem(int	   	uId,
 							boolean	isEnabled,
+							int		uOrder,
 				            String 	pFrequency,
 				            String 	pDesc) throws Exception {
 			Frequency myFreq;
 				
 			/* Create a new Frequency */
-			myFreq = new Frequency(this, uId, isEnabled, pFrequency, pDesc);
+			myFreq = new Frequency(this, uId, isEnabled, uOrder, pFrequency, pDesc);
 				
 			/* Check that this FrequencyId has not been previously added */
 			if (!isIdUnique(myFreq.getId())) 
@@ -228,14 +234,17 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 	  					  			myFreq,
 			  			            "Duplicate FrequencyId");
 				 
-			/* Check that this Frequency has not been previously added */
-			if (searchFor(myFreq.getName()) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	   					  			myFreq,
-			  			            "Duplicate Frequency");
-				 
 			/* Add the Frequency to the list */
 			add(myFreq);
+			
+			/* Validate the Frequency */
+			myFreq.validate();
+
+			/* Handle validation failure */
+			if (myFreq.hasErrors()) 
+				throw new Exception(ExceptionClass.VALIDATE,
+									myFreq,
+									"Failed validation");
 		}	
 
 		/**
@@ -243,6 +252,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 		 * @param uId the Id of the frequency
 		 * @param uControlId the control id of the new item
 		 * @param isEnabled is the frequency enabled
+		 * @param uOrder the sort order
 		 * @param pFrequency the Encrypted Name of the frequency
 		 * @param pDesc the Encrypted Description of the frequency
 		 * @throws Exception on error
@@ -250,27 +260,31 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 		public void addItem(int		uId,
 							int		uControlId,
 							boolean	isEnabled,
+							int		uOrder,
 				            byte[] 	pFrequency,
 				            byte[]	pDesc) throws Exception {
-			Frequency myFrequency;
+			Frequency myFreq;
 			
 			/* Create a new Frequency */
-			myFrequency = new Frequency(this, uId, uControlId, isEnabled, pFrequency, pDesc);
+			myFreq = new Frequency(this, uId, uControlId, isEnabled, uOrder, pFrequency, pDesc);
 				
 			/* Check that this FrequencyId has not been previously added */
 			if (!isIdUnique(uId)) 
 				throw new Exception(ExceptionClass.DATA,
-	  					  			myFrequency,
+	  					  			myFreq,
 			  			            "Duplicate FrequencyId");
 				 
-			/* Check that this Frequency has not been previously added */
-			if (searchFor(myFrequency.getName()) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	  					  			myFrequency,
-			                        "Duplicate Frequency");
-				
 			/* Add the Frequency to the list */
-			add(myFrequency);		
+			add(myFreq);		
+				
+			/* Validate the Frequency */
+			myFreq.validate();
+
+			/* Handle validation failure */
+			if (myFreq.hasErrors()) 
+				throw new Exception(ExceptionClass.VALIDATE,
+									myFreq,
+									"Failed validation");
 		}		
 	}
 }

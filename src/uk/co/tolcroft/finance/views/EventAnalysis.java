@@ -247,6 +247,7 @@ public class EventAnalysis implements DebugObject {
 		TaxYear.List			myList;
 		AnalysisYear			myYear;
 		Account					myAccount;
+		TransactionType			myTransType;
 		Account 				myTaxMan;
 		DebugEntry				mySection;
 
@@ -304,12 +305,16 @@ public class EventAnalysis implements DebugObject {
 						
 			/* Touch credit account */
 			myAccount = myCurr.getCredit();
-			myAccount.touchAccount(myCurr);
+			myAccount.touchItem(myCurr);
 			
 			/* Touch debit accounts */
 			myAccount = myCurr.getDebit();
-			myAccount.touchAccount(myCurr);
+			myAccount.touchItem(myCurr);
 
+			/* Touch Transaction Type */
+			myTransType = myCurr.getTransType();
+			myTransType.touchItem(myCurr);
+			
 			/* If the event has a dilution factor */
 			if (myCurr.getDilution() != null) {
 				/* Add to the dilution event list */
@@ -318,7 +323,7 @@ public class EventAnalysis implements DebugObject {
 
 			/* Process the event in the report set */
 			processEvent(myCurr);
-			myTax.setActive();
+			myTax.touchItem(myCurr);
 		}
 		
 		/* Value priced assets of the most recent set */
@@ -397,6 +402,11 @@ public class EventAnalysis implements DebugObject {
 		public 	TaxYear			getTaxYear()		{ return theYear; }
 		public 	Analysis		getAnalysis()		{ return theAnalysis; }
 		public 	MetaAnalysis	getMetaAnalysis()	{ return theMetaAnalysis; }
+
+		/**
+		 * Build History (no history)
+		 */
+		protected void buildHistory() {}
 
 		/** 
 		 * Constructor for the Analysis Year
@@ -582,7 +592,7 @@ public class EventAnalysis implements DebugObject {
 		public List getUpdateList() { return null; }
 		public List getEditList() 	{ return null; }
 		public List getShallowCopy() { return null; }
-		public List getDeepCopy(DataSet<?,?> pData) { return null; }
+		public List getDeepCopy(DataSet<?> pData) { return null; }
 		public List getDifferences(List pOld) { return null; }
 
 		/**

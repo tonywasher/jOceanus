@@ -41,7 +41,7 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
 	}
 	
 	/* Declare DataSet */
-	protected void declareData(DataSet<?,?> pData) {
+	protected void declareData(DataSet<?> pData) {
 		theList = pData.getDataKeys();
 		setList(theList);
 	}

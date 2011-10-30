@@ -54,7 +54,7 @@ public class TableAccount extends TableEncrypted<Account> {
 	}
 	
 	/* Declare DataSet */
-	protected void declareData(DataSet<?,?> pData) {
+	protected void declareData(DataSet<?> pData) {
 		FinanceData myData = (FinanceData)pData;
 		theList = myData.getAccounts();
 		setList(theList);

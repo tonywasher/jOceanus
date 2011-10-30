@@ -23,7 +23,7 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
 	/**
 	 * DataSet
 	 */
-	private DataSet<?,?> 			theData			= null;
+	private DataSet<?> 			theData			= null;
 
 	/**
 	 * Constructor for loading a spreadsheet
@@ -64,14 +64,15 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
 		/* Access the IDs */
 		int	myID 		= loadInteger(0);
 		int	myTypeID 	= loadInteger(1);
+		int	mySteps 	= loadInteger(2);
 		
 		/* Access the binary values  */
-		byte[] 	myHash		= loadBytes(2);
-		byte[] 	myPublic	= loadBytes(3);
-		byte[] 	myPrivate	= loadBytes(4);
+		byte[] 	myHash		= loadBytes(3);
+		byte[] 	myPublic	= loadBytes(4);
+		byte[] 	myPrivate	= loadBytes(5);
 
 		/* Add the Control */
-		theList.addItem(myID, myTypeID, myHash, myPublic, myPrivate);
+		theList.addItem(myID, myTypeID, mySteps, myHash, myPublic, myPrivate);
 	}
 
 	/**
@@ -83,9 +84,10 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
 		/* Set the fields */
 		writeInteger(0, pItem.getId());
 		writeInteger(1, pItem.getKeyType().getId());
-		writeBytes(2, pItem.getPasswordHash());
-		writeBytes(3, pItem.getPublicKey());
-		writeBytes(4, pItem.getPrivateKey());
+		writeInteger(2, pItem.getNumSteps());
+		writeBytes(3, pItem.getPasswordHash());
+		writeBytes(4, pItem.getPublicKey());
+		writeBytes(5, pItem.getPrivateKey());
 	}
 
 	/**
@@ -98,9 +100,10 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
 		/* Write titles */
 		writeString(0, ControlKey.fieldName(ControlKey.FIELD_ID));
 		writeString(1, ControlKey.fieldName(ControlKey.FIELD_KEYTYPE));			
-		writeString(2, ControlKey.fieldName(ControlKey.FIELD_PASSHASH));			
-		writeString(3, ControlKey.fieldName(ControlKey.FIELD_PUBLICKEY));			
-		writeString(4, ControlKey.fieldName(ControlKey.FIELD_PRIVATEKEY));			
+		writeString(2, ControlKey.fieldName(ControlKey.FIELD_NUMSTEPS));			
+		writeString(3, ControlKey.fieldName(ControlKey.FIELD_PASSHASH));			
+		writeString(4, ControlKey.fieldName(ControlKey.FIELD_PUBLICKEY));			
+		writeString(5, ControlKey.fieldName(ControlKey.FIELD_PRIVATEKEY));			
 		return true;
 	}	
 
@@ -108,7 +111,7 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
 	 * PostProcess on write
 	 */
 	protected void postProcessOnWrite() throws Throwable {		
-		/* Set the two columns as the range */
-		nameRange(2);
+		/* Set the six columns as the range */
+		nameRange(6);
 	}
 }

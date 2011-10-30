@@ -24,6 +24,11 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 	 */
 	public TransClass 	getTranClass()         { return super.getStaticClass(); }
 
+	/**
+	 * Hidden transaction types are always active
+	 */
+	public boolean		isActive()        		 { return super.isActive() || isHiddenType(); }
+
 	/* Linking methods */
 	public TransactionType 	getBase() { return (TransactionType)super.getBase(); }
 
@@ -59,15 +64,17 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 	 * @param pList	The list to associate the Transaction Type with
 	 * @param uId   ID of Transaction Type
 	 * @param isEnabled is the TransType enabled
+	 * @param uOrder the sort order
 	 * @param pName Name of Transaction Type
 	 * @param pDesc Description of Transaction Type
 	 */
 	private TransactionType(List 	pList,
 							int		uId,
 			         		boolean	isEnabled,
+			         		int		uOrder,
 			         		String	pName,
 			         		String	pDesc) throws Exception {
-		super(pList, uId, isEnabled, pName, pDesc);
+		super(pList, uId, isEnabled, uOrder, pName, pDesc);
 	}
 	
 	/**
@@ -76,6 +83,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 	 * @param uId   ID of Transaction Type
 	 * @param uControlId the control id of the new item
 	 * @param isEnabled is the TransType enabled
+	 * @param uOrder the sort order
 	 * @param pName Encrypted Name of Transaction Type
 	 * @param pDesc Encrypted Description of Transaction Type
 	 */
@@ -83,9 +91,10 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
                        		int		uId,
                        		int		uControlId,
     			            boolean	isEnabled,
+    			            int		uOrder,	
     			            byte[]	pName,
     			            byte[]	pDesc) throws Exception {
-		super(pList, uId, uControlId, isEnabled, pName, pDesc);
+		super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
 	}
 
 	/**
@@ -437,7 +446,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
 		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
-		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+		public List getDeepCopy(DataSet<?> pDataSet)	{ 
 			/* Build an empty Extract List */
 			List myList = new List(this);
 			myList.setData(pDataSet);
@@ -519,32 +528,37 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 		 * Add a TransactionType to the list
 		 * @param uId   ID of Transaction Type
 		 * @param isEnabled is the TransType enabled
+		 * @param uOrder the sort order
 		 * @param pTranType the Name of the transaction type
 		 * @param pDesc the Description of the transaction type
 		 */ 
 		public void addItem(int	   	uId,
 							boolean	isEnabled,
+							int		uOrder,
 				            String 	pTranType,
 				            String 	pDesc) throws Exception {
-			TransactionType myTranType;
+			TransactionType myTransType;
 				
 			/* Create a new Transaction Type */
-			myTranType = new TransactionType(this, uId, isEnabled, pTranType, pDesc);
+			myTransType = new TransactionType(this, uId, isEnabled, uOrder, pTranType, pDesc);
 				
 			/* Check that this TransTypeId has not been previously added */
-			if (!isIdUnique(myTranType.getId())) 
+			if (!isIdUnique(myTransType.getId())) 
 				throw new Exception(ExceptionClass.DATA,
-	  					  			myTranType,
+	  					  			myTransType,
 			  			            "Duplicate TranTypeId");
 				 
-			/* Check that this TransactionType has not been previously added */
-			if (searchFor(myTranType.getName()) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	   					  			myTranType,
-			  			            "Duplicate Transaction Type");
-				 
 			/* Add the Transaction Type to the list */
-			add(myTranType);
+			add(myTransType);
+
+			/* Validate the TransType */
+			myTransType.validate();
+
+			/* Handle validation failure */
+			if (myTransType.hasErrors()) 
+				throw new Exception(ExceptionClass.VALIDATE,
+									myTransType,
+									"Failed validation");		
 		}	
 
 		/**
@@ -552,33 +566,38 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 		 * @param uId the Id of the transaction type
 		 * @param uControlId the control id of the new item
 		 * @param isEnabled is the TransType enabled
+		 * @param uOrder the sort order
 		 * @param pTransType the Encrypted Name of the transaction type
 		 * @param pDesc the Encrypted Description of the transaction type
 		 */ 
 		public void addItem(int    	uId,
 							int	   	uControlId,
 							boolean	isEnabled,
+							int		uOrder,
 				            byte[] 	pTransType,
 				            byte[] 	pDesc) throws Exception {
 			TransactionType     myTransType;
 			
 			/* Create a new Transaction Type */
-			myTransType = new TransactionType(this, uId, uControlId, isEnabled, pTransType, pDesc);
+			myTransType = new TransactionType(this, uId, uControlId, isEnabled, uOrder, pTransType, pDesc);
 			
 			/* Check that this TransTypeId has not been previously added */
 			if (!isIdUnique(uId)) 
 				throw new Exception(ExceptionClass.DATA,
 	   					  			myTransType,
 			  			            "Duplicate TransTypeId");
-				 
-			/* Check that this TransactionType has not been previously added */
-			if (searchFor(myTransType.getName()) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	  					  			myTransType,
-			                        "Duplicate Transaction Type");
-				
+
 			/* Add the Transaction Type to the list */
 			add(myTransType);		
+
+			/* Validate the TransType */
+			myTransType.validate();
+
+			/* Handle validation failure */
+			if (myTransType.hasErrors()) 
+				throw new Exception(ExceptionClass.VALIDATE,
+									myTransType,
+									"Failed validation");		
 		}			
 	}
 }

@@ -32,7 +32,7 @@ public class TableTaxRegime extends TableStaticData<TaxRegime> {
 	}
 	
 	/* Declare DataSet */
-	protected void declareData(DataSet<?,?> pData) {
+	protected void declareData(DataSet<?> pData) {
 		FinanceData myData = (FinanceData)pData;
 		theList = myData.getTaxRegimes();
 		setList(theList);
@@ -40,8 +40,8 @@ public class TableTaxRegime extends TableStaticData<TaxRegime> {
 
 	
 	/* Load the tax regime */
-	protected void loadTheItem(int pId, int pControlId, boolean isEnabled, byte[] pRegime, byte[] pDesc) throws Exception {
+	protected void loadTheItem(int pId, int pControlId, boolean isEnabled, int iOrder, byte[] pRegime, byte[] pDesc) throws Exception {
 		/* Add into the list */
-		theList.addItem(pId, pControlId, isEnabled, pRegime, pDesc);
+		theList.addItem(pId, pControlId, isEnabled, iOrder, pRegime, pDesc);
 	}	
 }

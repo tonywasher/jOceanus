@@ -10,7 +10,7 @@ import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.ui.FileSelector.BackupLoad;
 import uk.co.tolcroft.models.views.DataControl;
 
-public class LoadBackup<T extends DataSet<T,?>> extends LoaderThread<T> {
+public class LoadBackup<T extends DataSet<T>> extends LoaderThread<T> {
 	/* Task description */
 	private static String  	theTask		= "Backup Restoration";
 

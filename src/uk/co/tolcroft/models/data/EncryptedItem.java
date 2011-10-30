@@ -12,16 +12,6 @@ import uk.co.tolcroft.models.Exception.ExceptionClass;
 
 public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem<T> {
 	/**
-	 * The Id of the Control Key
-	 */
-	private int			theControlId		= -1;
-	
-	/**
-	 * The Basic Control Key
-	 */
-	private ControlKey	theBaseKey			= null;
-	
-	/**
 	 * Encrypted Money length
 	 */
 	public final static int MONEYLEN 		= 10;
@@ -50,7 +40,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 * Get the ControlKey for this item
 	 * @return the ControlKey
 	 */
-	public ControlKey		getControlKey()     { return (getValues() == null) ? theBaseKey : getValues().getControl(); }
+	public ControlKey		getControlKey()     { return getValues().getControl(); }
 
 	/* Linking methods */
 	public EncryptedItem<?>.EncryptedValues  getValues()  { 
@@ -86,10 +76,10 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		switch (iField) {
 			case FIELD_CONTROL:
 				if (myObj.getControl() != null) {
-					myString = "Id=" + myObj.getControl().getId();					
+					myString = "Id=" + myObj.getControlId();					
 					myString = pDetail.addDebugLink(myObj.getControl(), myString);
 				}
-				else myString = "Id=" + theControlId;					
+				else myString = "Id=" + myObj.getControlId();					
 				break;
 			default:	
 				myString = super.formatField(pDetail, iField, pObj);
@@ -122,14 +112,15 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 */
 	protected void setControlKey(int uControlId) throws Exception {
 		/* Store the id */
-		theControlId = uControlId;
+		EncryptedItem<?>.EncryptedValues myObj = getValues();
+		myObj.setControlId(uControlId);
 
 		/* Look up the Control keys */
-		DataSet<?,?>	myData = ((EncryptedList<?,?>)getList()).getData();
+		DataSet<?>		myData = ((EncryptedList<?,?>)getList()).getData();
 		ControlKey.List myKeys = myData.getControlKeys();
 			
 		/* Look up the ControlKey */
-		ControlKey myControl = myKeys.searchFor(theControlId);
+		ControlKey myControl = myKeys.searchFor(uControlId);
 		if (myControl == null) 
 			throw new Exception(ExceptionClass.DATA,
 								this,
@@ -159,10 +150,10 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	}
 	
 	/**
-	 * Isolate Data Copy
+	 * Rebuild Links to partner data
 	 * @param pData the DataSet
 	 */
-	protected void isolateCopy(DataSet<?,?> pData) {
+	protected void reBuildLinks(DataSet<?> pData) {
 		ControlKey.List myKeys = pData.getControlKeys();
 		
 		/* Update to use the local copy of the ControlKeys */
@@ -217,8 +208,8 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		/* Set the Control Key */
 		setControlKey(pControl);
 		
-		/* Apply key to all elements */
-		myValues.applySecurity();
+		/* Update all elements */
+		myValues.updateSecurity();
 
 		/* Check for changes */
 		if (checkForHistory()) setState(DataState.CHANGED);
@@ -229,9 +220,9 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 */
 	public abstract static class EncryptedList<L extends EncryptedList<L,T>,
 											   T extends EncryptedItem<T>>  extends DataList<L,T> {
-		private DataSet<?,?>	theData			= null;
-		public 	DataSet<?,?>	getData()		{ return theData; }
-		protected 	void		setData(DataSet<?,?> pData)		{ theData = pData; }
+		private DataSet<?>		theData			= null;
+		public 	DataSet<?>		getData()		{ return theData; }
+		protected 	void		setData(DataSet<?> pData)		{ theData = pData; }
 		public 	ControlKey		getControlKey()	{ return theData.getControl().getControlKey(); }
 
 		/** 
@@ -240,9 +231,9 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 	 * @param pBaseClass the class of the underlying object
 	 	 * @param pData the DataSet for the list
 	 	 */
-		protected EncryptedList(Class<L>		pClass,
-								Class<T> 		pBaseClass,
-								DataSet<?,?> 	pData) { 
+		protected EncryptedList(Class<L>	pClass,
+								Class<T> 	pBaseClass,
+								DataSet<?> 	pData) { 
 			super(pClass, pBaseClass, ListStyle.CORE, true);
 			theData = pData;
 		}
@@ -256,7 +247,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 	 */
 		public EncryptedList(Class<L>		pClass,
 							 Class<T> 		pBaseClass,
-							 DataSet<?,?> 	pData,
+							 DataSet<?> 	pData,
 							 ListStyle 		pStyle) { 
 			super(pClass, pBaseClass, pStyle, true);
 			theData = pData;
@@ -376,15 +367,19 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 */
 	protected abstract class EncryptedValues implements HistoryValues<T> {
 		private ControlKey	theControl   = null;
+		private int			theControlId = -1;
 		
 		/* Access methods */
 		public ControlKey  	getControl()   	{ return theControl; }
+		public int			getControlId()  { return theControlId; }
 		
 		/* Value setting */
-		public void setControl(ControlKey pControl) { 
+		private void setControl(ControlKey pControl) { 
 			theControl   = pControl;
 			theControlId = (pControl == null) ? -1 : pControl.getId();
 		}
+		private void setControlId(int pValue) {
+			theControlId		= pValue; }
 
 		/* Constructor */
 		public EncryptedValues() {}
@@ -400,7 +395,6 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 				EncryptedItem<?>.EncryptedValues myValues = (EncryptedItem<?>.EncryptedValues)pValues;
 				theControl 		= myValues.getControl();
 				theControlId 	= (theControl == null) ? -1 : theControl.getId();
-				if (theBaseKey == null) theBaseKey = theControl;
 			}
 		}
 		public Difference	fieldChanged(int fieldNo, HistoryValues<T> pOriginal) {
@@ -416,6 +410,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 
 		/* Apply Security */
 		protected abstract void applySecurity() throws Exception;
+		protected abstract void updateSecurity() throws Exception;
 		protected abstract void adoptSecurity(ControlKey 		pControl,
 											  EncryptedValues	pBase) throws Exception;
 	}
@@ -468,7 +463,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		/**
 		 * Encrypt a valuePair
 		 */
-		public void encryptPair() throws Exception {
+		protected void encryptPair() throws Exception {
 			ControlKey myControl = getControlKey();
 			
 			/* Reject if encryption is not initialised */
@@ -556,7 +551,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			theString = pValue;
 			
 			/* Encrypt immediately if possible */
-			if (theControlId != -1) encryptPair();
+			if (getControlKey() != null) encryptPair();
 		} 
 
 		/**
@@ -632,7 +627,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			/* Protect against exceptions */
 			try {
 				/* Convert the byte array to a string */
-				setString(new String(pValue , SecurityControl.ENCODING));
+				setString(new String(pValue, SecurityControl.ENCODING));
 			}
 			
 			/* Catch Exceptions */
@@ -708,7 +703,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			theChars = pValue;
 			
 			/* Encrypt immediately if possible */
-			if (theControlId != -1) encryptPair();
+			if (getControlKey() != null) encryptPair();
 		} 
 
 		/**

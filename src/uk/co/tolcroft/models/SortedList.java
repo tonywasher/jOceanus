@@ -130,15 +130,15 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 		/* Remove the reference to this node in the item */
 		pNode.getObject().setLinkNode(this, null);
 		
-		/* Adjust first and last indicators if required */
+        /* Remove the node from the index map */
+	    theIndexMap.removeNode(pNode);
+
+	    /* Adjust first and last indicators if required */
 		if (theFirst == pNode) theFirst = pNode.getNext(false);
 		if (theLast  == pNode) theLast  = pNode.getPrev(false);
 		
         /* Remove the node from the list */
         pNode.remove();
-
-        /* Remove the node from the index map */
-	    theIndexMap.removeNode(pNode);
 	}
 		
 	/**

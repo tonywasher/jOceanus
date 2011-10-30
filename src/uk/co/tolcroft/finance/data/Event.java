@@ -168,14 +168,21 @@ public class Event extends EncryptedItem<Event> {
 	}
 							
 	/**
+	 * Get an initial set of values 
+	 * @return an initial set of values 
+	 */
+	protected HistoryValues<Event> getNewValues() { return new Values(); }
+	
+	/**
 	 * Construct a copy of an Event
 	 * 
 	 * @param pEvent The Event to copy 
 	 */
 	public Event(List pList, Event pEvent) {		
 		/* Set standard values */
-		super(pList, pEvent.getId()); 
-		setValues(new Values(pEvent.getValues()));
+		super(pList, pEvent.getId());
+		Values myValues = getValues();
+		myValues.copyFrom(pEvent.getValues());
 		ListStyle myOldStyle = pEvent.getList().getStyle();
 
 		/* Switch on the ListStyle */
@@ -194,7 +201,7 @@ public class Event extends EncryptedItem<Event> {
 				pList.setNewId(this);				
 				break;
 			case CLONE:
-				isolateCopy(pList.getData());
+				reBuildLinks(pList.getData());
 			case COPY:
 			case CORE:
 				/* Reset Id if this is an insert from a view */
@@ -218,8 +225,8 @@ public class Event extends EncryptedItem<Event> {
 	
 		/* Set standard values */
 		super(pList, 0);
-		Values	myValues 	= new Values(pLine.getValues());
-		setValues(myValues);
+		Values myValues = getValues();
+		myValues.copyFrom(pLine.getValues());
 			
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -235,8 +242,8 @@ public class Event extends EncryptedItem<Event> {
 		            Pattern pLine) throws Exception {
 		/* Set standard values */
 		super(pList, 0);
-		Values	myValues	= new Values(pLine.getValues());
-		setValues(myValues);
+		Values myValues = getValues();
+		myValues.copyFrom(pLine.getValues());
 
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -245,8 +252,6 @@ public class Event extends EncryptedItem<Event> {
 	/* Standard constructor for a newly inserted event */
 	public Event(List pList) {
 		super(pList, 0);
-		Values myValues = new Values();
-		setValues(myValues);
 		setControlKey(pList.getControlKey());
 		pList.setNewId(this);				
 	}
@@ -278,8 +283,7 @@ public class Event extends EncryptedItem<Event> {
 		myAccounts = myData.getAccounts();
 		
 		/* Create a new EventValues object */
-		Values myValues = new Values();
-		setValues(myValues);
+		Values myValues = getValues();
 
 		/* Store the IDs that we will look up */
 		myValues.setDebitId(uDebit);
@@ -345,8 +349,7 @@ public class Event extends EncryptedItem<Event> {
 		super(pList, uId);
 		
 		/* Create a new EventValues object */
-		Values myValues = new Values();
-		setValues(myValues);
+		Values myValues = getValues();
 
 		/* Record the encrypted values */
 		myValues.setDesc(new StringPair(pDesc));
@@ -449,12 +452,12 @@ public class Event extends EncryptedItem<Event> {
 	}
 
 	/**
-	 * Isolate Data Copy
+	 * Rebuild Links to partner data
 	 * @param pData the DataSet
 	 */
-	protected void isolateCopy(FinanceData pData) {
+	protected void reBuildLinks(FinanceData pData) {
 		/* Update the Encryption details */
-		super.isolateCopy(pData);
+		super.reBuildLinks(pData);
 		
 		/* Access Lists */
 		Account.List 			myAccounts 		= pData.getAccounts();
@@ -692,6 +695,8 @@ public class Event extends EncryptedItem<Event> {
 		if (myTransType == null) {
 			addError("TransType must be non-null", FIELD_TRNTYP);
 		}
+		else if (!myTransType.getEnabled()) 
+			addError("TransType must be enabled", FIELD_TRNTYP);
 			
 		/* The description must be non-null */
 		if (myDesc == null) {
@@ -1003,8 +1008,8 @@ public class Event extends EncryptedItem<Event> {
 	 * 
 	 * @return needs tax credit true/false 
 	 */
-	public boolean needsTaxCredit(TransactionType pTrans,
-								  Account		  pDebit) {
+	public static boolean needsTaxCredit(TransactionType 	pTrans,
+								  		 Account		  	pDebit) {
 		boolean myResult = false;
 	
 		/* Handle null transtype */
@@ -1033,7 +1038,7 @@ public class Event extends EncryptedItem<Event> {
 	 * 
 	 * @return needs dilution factor true/false 
 	 */
-	public boolean needsDilution(TransactionType pTrans) {
+	public static boolean needsDilution(TransactionType pTrans) {
 		boolean myResult = false;
 	
 		/* Handle null transtype */
@@ -1162,8 +1167,8 @@ public class Event extends EncryptedItem<Event> {
 	 * @param pAmount the tax credit amount 
 	 */
 	public void setTaxCredit(Money pAmount) throws Exception {
-		if (pAmount != null) getValues().setAmount(new MoneyPair(pAmount));
-		else 				 getValues().setAmount(null);
+		if (pAmount != null) getValues().setTaxCredit(new MoneyPair(pAmount));
+		else 				 getValues().setTaxCredit(null);
 	}
 	
 	/**
@@ -1376,10 +1381,10 @@ public class Event extends EncryptedItem<Event> {
 		}
 
 		/* Obtain extract lists. */
-		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
-		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
+		public List getUpdateList() 	{ return getExtractList(ListStyle.UPDATE); }
+		public List getEditList() 		{ return getExtractList(ListStyle.EDIT); }
 		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
-		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+		public List getDeepCopy(DataSet<?> pDataSet)	{ 
 			/* Build an empty Extract List */
 			List myList = new List(this);
 			myList.setData(pDataSet);
@@ -1480,7 +1485,7 @@ public class Event extends EncryptedItem<Event> {
 			Date 						myDate;
 			
 			/* Record range and initialise the list */
-			theRange   = pTaxYear.getRange();
+			myList.theRange   = pTaxYear.getRange();
 			
 			/* Access the underlying data */
 			myPatterns 	= getData().getPatterns();
@@ -1565,7 +1570,16 @@ public class Event extends EncryptedItem<Event> {
 		 * @return the newly added item
 		 */
 		public Event addNewItem() {
+			/* Create a new Event */
 			Event myEvent = new Event(this);
+			
+			/* Set the Date as the start of the range */
+			myEvent.setDate(theRange.getStart());
+			
+			/* Add zero amount */
+			try { myEvent.setAmount(new Money(0)); } catch (Throwable e) {}
+			
+			/* Add to list and return */
 			add(myEvent);
 			return myEvent;
 		}
@@ -1578,7 +1592,7 @@ public class Event extends EncryptedItem<Event> {
 		
 		/**
 		 *  Allow an event to be added
-		 */
+		 */ 
 		public void addItem(int				uId,
 							java.util.Date	pDate,
 				            String   		pDesc,
@@ -1800,15 +1814,15 @@ public class Event extends EncryptedItem<Event> {
 				Values myValues = (Values)pSource;
 				super.copyFrom(myValues);
 				theDate      = myValues.getDate();
-				theDesc      = new StringPair(myValues.getDesc());
-				theAmount    = new MoneyPair(myValues.getAmount());
+				theDesc      = myValues.getDesc();
+				theAmount    = myValues.getAmount();
 				theDebit     = myValues.getDebit();
 				theCredit    = myValues.getCredit();
-				theUnits     = (myValues.getUnits() != null)		? new UnitsPair(myValues.getUnits()) : null;;
+				theUnits     = myValues.getUnits();
 				theTransType = myValues.getTransType();
-				theTaxCredit = (myValues.getTaxCredit() != null)	? new MoneyPair(myValues.getTaxCredit()) : null;;
+				theTaxCredit = myValues.getTaxCredit();
 				theYears     = myValues.getYears();
-				theDilution  = (myValues.getDilution() != null)		? new DilutionPair(myValues.getDilution()) : null;;
+				theDilution  = myValues.getDilution();
 				theDebitId   = myValues.getDebitId();
 				theCreditId  = myValues.getCreditId();
 				theTransId   = myValues.getTransId();
@@ -1819,12 +1833,11 @@ public class Event extends EncryptedItem<Event> {
 				Pattern.Values 	myValues = (Pattern.Values)pSource;
 				super.copyFrom(myValues);
 				theDate 	 = myValues.getDate();
-				theDesc 	 = new StringPair(myValues.getDesc());
-				theAmount 	 = new MoneyPair(myValues.getAmount());
 				theTransType = myValues.getTransType();
-				theUnits 	 = null;
-				theYears 	 = null;
-				theDilution  = null;
+				if (myValues.getDesc() != null)
+					theDesc      = new StringPair(myValues.getDesc());
+				if (myValues.getAmount() != null)
+					theAmount    = new MoneyPair(myValues.getAmount());
 			
 				/* If this is a credit */
 				if (myValues.isCredit()) {
@@ -1864,13 +1877,12 @@ public class Event extends EncryptedItem<Event> {
 				Statement.Line.Values	myValues = (Statement.Line.Values) pSource;
 				super.copyFrom(myValues);
 				theDate      = myValues.getDate();
-				theDesc      = new StringPair(myValues.getDesc());
-				theAmount    = new MoneyPair(myValues.getAmount());
 				theTransType = myValues.getTransType();
 				theYears     = myValues.getYears();
-				theUnits     = null;
-				theDilution  = null;
-				theTaxCredit = null;
+				if (myValues.getDesc() != null)
+					theDesc      = new StringPair(myValues.getDesc());
+				if (myValues.getAmount() != null)
+					theAmount    = new MoneyPair(myValues.getAmount());
 				if (myValues.getUnits() != null)
 					theUnits     = new UnitsPair(myValues.getUnits());
 				if (myValues.getDilution() != null)
@@ -1934,15 +1946,27 @@ public class Event extends EncryptedItem<Event> {
 		}
 
 		/**
-		 * Ensure encryption after security change
+		 * Update encryption after security change
+		 */
+		protected void updateSecurity() throws Exception {
+			/* Update the encryption */
+			theDesc		= new StringPair(theDesc.getString());
+			theAmount 	= new MoneyPair(theAmount.getValue());
+			if (theUnits     != null) theUnits 		= new UnitsPair(theUnits.getValue());
+			if (theTaxCredit != null) theTaxCredit 	= new MoneyPair(theTaxCredit.getValue());
+			if (theDilution  != null) theDilution	= new DilutionPair(theDilution.getValue());
+		}		
+		
+		/**
+		 * Apply encryption after non-encrypted load
 		 */
 		protected void applySecurity() throws Exception {
 			/* Apply the encryption */
-			theDesc.encryptPair();
-			theAmount.encryptPair();
-			if (theUnits     != null) theUnits.encryptPair();
-			if (theTaxCredit != null) theTaxCredit.encryptPair();
-			if (theDilution  != null) theDilution.encryptPair();
+			theDesc.encryptPair(null);
+			theAmount.encryptPair(null);
+			if (theUnits     != null) theUnits.encryptPair(null);
+			if (theTaxCredit != null) theTaxCredit.encryptPair(null);
+			if (theDilution  != null) theDilution.encryptPair(null);
 		}		
 		
 		/**

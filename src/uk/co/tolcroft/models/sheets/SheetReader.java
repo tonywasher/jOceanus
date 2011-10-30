@@ -20,7 +20,7 @@ import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.views.DataControl;
 
-public abstract class SheetReader<T extends DataSet<T,?>> {
+public abstract class SheetReader<T extends DataSet<T>> {
 	/**
 	 * Thread control
 	 */

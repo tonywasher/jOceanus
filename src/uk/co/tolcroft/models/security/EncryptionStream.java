@@ -92,34 +92,6 @@ public class EncryptionStream {
 		}
 		
 		/**
-		 * Construct a password key encryption output stream
-		 * @param pKey the password key
-		 * @param pStream the stream to encrypt to
-		 */
-		public Output(PasswordKey			pKey,
-				 	  java.io.OutputStream 	pStream) throws Exception {
-			
-			/* Protect against exceptions */
-			try {
-				/* record the output stream */
-				theStream 	= pStream;
-				
-				/* initialise for encryption */
-				theCipher 	= pKey.initEncryptionStream();
-				
-				/* Access the initialisation vector */
-				theInitVector	= theCipher.getInitVector();
-			}
-			
-			/* Catch exceptions */
-			catch (Throwable e) {
-				throw new Exception(ExceptionClass.CRYPTO,
-									"Exception creating encryption output stream",
-									e);
-			}			
-		}
-		
-		/**
 		 * Close the output stream
 		 * @throws IOException
 		 */
@@ -291,32 +263,6 @@ public class EncryptionStream {
 			catch (Exception e) {
 				throw new Exception(ExceptionClass.CRYPTO,
 									"Exception deciphering secret key",
-									e);
-			}
-		}
-		
-		/**
-		 * Construct the password key decryption input stream
-		 * @param pKey the password key
-		 * @param pInitVector the initialisation vector
-		 * @param pStream the stream to decrypt from
-		 */
-		public Input(PasswordKey			pKey,
-					 byte[]					pInitVector,
-					 java.io.InputStream 	pStream) throws Exception {
-			/* Protect from exceptions */
-			try {
-				/* record the input stream */
-				theStream 	= pStream;
-
-				/* Initialise the decryption */
-				theCipher = pKey.initDecryptionStream(pInitVector);
-			}				
-			
-			/* Catch exceptions */
-			catch (Exception e) {
-				throw new Exception(ExceptionClass.CRYPTO,
-									"Exception initialising password decryption",
 									e);
 			}
 		}

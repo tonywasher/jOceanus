@@ -169,7 +169,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 * Declare DataSet
 	 * @param pData the Data set
 	 */
-	protected abstract void declareData(DataSet<?,?> pData);
+	protected abstract void declareData(DataSet<?> pData);
 	
 	/**
 	 * Set the list of items
@@ -212,7 +212,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 * @return Continue <code>true/false</code>
 	 */
 	protected boolean loadItems(ThreadStatus<?> pThread,
-								DataSet<?,?>	pData) throws Exception {
+								DataSet<?>		pData) throws Exception {
 		boolean bContinue = true;
 		String	myQuery;
 		int		mySteps;
@@ -302,7 +302,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 * @return Continue <code>true/false</code>
 	 */
 	protected boolean insertItems(ThreadStatus<?> 	pThread,
-								  DataSet<?,?>		pData,
+								  DataSet<?>		pData,
 								  BatchControl		pBatch) throws Exception {
 		DataList<?,T>.ListIterator	myIterator;
 		T							myCurr    = null;

@@ -27,6 +27,9 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 	/* Linking methods */
 	public TaxType getBase() { return (TaxType)super.getBase(); }
 
+	/* Override the isActive method */
+	public boolean isActive() { return true; }
+
 	/**
 	 * Obtain the type of the item
 	 * @return the type of the item
@@ -65,15 +68,17 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 	 * @param pList	The list to associate the Tax Type with
 	 * @param uId   ID of TaxType
 	 * @param isEnabled is the TaxType enabled
+	 * @param uOrder the sort order
 	 * @param pName Name of Tax Type
 	 * @param pDesc Description of Tax Type
 	 */
 	private TaxType(List 	pList,
 					int		uId,
 			        boolean	isEnabled,
+			        int		uOrder, 
 			        String	pName,
 			        String	pDesc) throws Exception {
-		super(pList, uId, isEnabled, pName, pDesc);
+		super(pList, uId, isEnabled, uOrder, pName, pDesc);
 	}
 	
 	/**
@@ -82,6 +87,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 	 * @param uId   ID of TaxType
 	 * @param uControlId the control id of the new item
 	 * @param isEnabled is the TaxType enabled
+	 * @param uOrder the sort order
 	 * @param sName Encrypted Name of TaxType
 	 * @param pDesc Encrypted Description of TaxType
 	 */
@@ -89,9 +95,10 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 			      	int		uId,
 			      	int		uControlId,
 			      	boolean	isEnabled,
+			      	int		uOrder, 
 			      	byte[]	sName,
 			      	byte[]	pDesc) throws Exception {
-		super(pList, uId, uControlId, isEnabled, sName, pDesc);
+		super(pList, uId, uControlId, isEnabled, uOrder, sName, pDesc);
 	}
 
 	/**
@@ -166,7 +173,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
 		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
-		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+		public List getDeepCopy(DataSet<?> pDataSet)	{ 
 			/* Build an empty Extract List */
 			List myList = new List(this);
 			myList.setData(pDataSet);
@@ -248,17 +255,19 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 		 * Add a TaxType to the list
 		 * @param uId   ID of TaxType
 		 * @param isEnabled is the TaxType enabled
+		 * @param uOrder the sort order
 		 * @param pTaxType the Name of the tax type
 		 * @param pDesc the Description of the tax type
 		 */ 
 		public void addItem(int    	uId,
 							boolean	isEnabled,
-				            String 	pTaxType,
+							int		uOrder, 	
+							String 	pTaxType,
 				            String 	pDesc) throws Exception {
 			TaxType myTaxType;
 				
 			/* Create a new Tax Type */
-			myTaxType = new TaxType(this, uId, isEnabled, pTaxType, pDesc);
+			myTaxType = new TaxType(this, uId, isEnabled, uOrder, pTaxType, pDesc);
 				
 			/* Check that this TaxTypeId has not been previously added */
 			if (!isIdUnique(myTaxType.getId())) 
@@ -266,14 +275,17 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 	  					  			myTaxType,
 			  			            "Duplicate TaxTypeId");
 				 
-			/* Check that this TaxType has not been previously added */
-			if (searchFor(myTaxType.getName()) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	   					  			myTaxType,
-			  			            "Duplicate Tax Type");
-				 
 			/* Add the Tax Type to the list */
 			add(myTaxType);
+				 
+			/* Validate the TaxType */
+			myTaxType.validate();
+
+			/* Handle validation failure */
+			if (myTaxType.hasErrors()) 
+				throw new Exception(ExceptionClass.VALIDATE,
+									myTaxType,
+									"Failed validation");
 		}	
 
 		/**
@@ -281,18 +293,20 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 		 * @param uId the Id of the tax type
 		 * @param uControlId the control id of the new item
 		 * @param isEnabled is the TaxType enabled
+		 * @param uOrder the sort order
 		 * @param pTaxType the Encrypted Name of the tax type
 		 * @param pDesc the Encrypted Description of the tax type
 		 */ 
 		public void addItem(int		uId,
 							int		uControlId,
 							boolean	isEnabled,
+							int		uOrder, 
 				            byte[] 	pTaxType,
 				            byte[]	pDesc) throws Exception {
 			TaxType      myTaxType;
 			
 			/* Create a new Tax Type */
-			myTaxType = new TaxType(this, uId, uControlId, isEnabled, pTaxType, pDesc);
+			myTaxType = new TaxType(this, uId, uControlId, isEnabled, uOrder, pTaxType, pDesc);
 			
 			/* Check that this TaxTypeId has not been previously added */
 			if (!isIdUnique(uId)) 
@@ -300,14 +314,17 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 	  					  			myTaxType,
 			  			            "Duplicate TaxTypeId");
 				 
-			/* Check that this TaxType has not been previously added */
-			if (searchFor(myTaxType.getName()) != null) 
-				throw new Exception(ExceptionClass.DATA,
-	  					  			myTaxType,
-			                        "Duplicate Tax Type");
-				
 			/* Add the Tax Type to the list */
 			add(myTaxType);
+
+			/* Validate the TaxType */
+			myTaxType.validate();
+
+			/* Handle validation failure */
+			if (myTaxType.hasErrors()) 
+				throw new Exception(ExceptionClass.VALIDATE,
+									myTaxType,
+									"Failed validation");		
 		}			
 	}		
 }

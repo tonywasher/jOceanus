@@ -25,6 +25,7 @@ public class MaintenanceTab implements ChangeListener {
 	private MaintTaxYear		theTaxYearTab	= null;
 	private MaintProperties		theProperties	= null;
 	private MaintNewYear  		thePatternYear	= null;
+	private MaintStatic  		theStatic		= null;
 	private DebugEntry			theDebugEntry	= null;
 
 	/* Access methods */
@@ -41,6 +42,7 @@ public class MaintenanceTab implements ChangeListener {
 	private static final String titleTaxYear  	= "TaxYears";
 	private static final String titleProperties	= "Properties";
 	private static final String titlePattern  	= "PatternYear";
+	private static final String titleStatic  	= "Static";
 	
 	/* Constructor */
 	public MaintenanceTab(MainTab pTop) {
@@ -74,6 +76,10 @@ public class MaintenanceTab implements ChangeListener {
 		thePatternYear = new MaintNewYear(this);
 		theTabs.addTab(titlePattern, thePatternYear.getPanel());
 		
+		/* Create the Static Tab */
+		theStatic = new MaintStatic(this);
+		theTabs.addTab(titleStatic, theStatic.getPanel());
+		
 		/* Create the panel */
 		thePanel = new JPanel();
 		
@@ -104,6 +110,7 @@ public class MaintenanceTab implements ChangeListener {
 		theTaxYearTab.refreshData();
 		theProperties.refreshData();
 		thePatternYear.refreshData();
+		theStatic.refreshData();
 	}
 	
 	/* Has this set of tables got updates */
@@ -114,6 +121,7 @@ public class MaintenanceTab implements ChangeListener {
 		hasUpdates = theAccountTab.hasUpdates();
         if (!hasUpdates) hasUpdates = theTaxYearTab.hasUpdates();
         if (!hasUpdates) hasUpdates = theProperties.hasUpdates();
+        if (!hasUpdates) hasUpdates = theStatic.hasUpdates();
  			
 		/* Return to caller */
 		return hasUpdates;
@@ -143,7 +151,7 @@ public class MaintenanceTab implements ChangeListener {
 		boolean     hasUpdates;
 		
 		/* Determine whether we have any updates */
-		hasUpdates = theAccountTab.hasUpdates();
+		hasUpdates = hasUpdates();
 		
 		/* Access the Accounts index */
 		iIndex = theTabs.indexOfTab(titleAccounts);
@@ -172,6 +180,13 @@ public class MaintenanceTab implements ChangeListener {
 		/* Enable/Disable the patternYear tab */
 		if (iIndex != -1) 
 			theTabs.setEnabledAt(iIndex, !hasUpdates);
+		
+		/* Access the Static panel */
+		iIndex = theTabs.indexOfTab(titleStatic);
+		
+		/* Enable/Disable the static tab */
+		if (iIndex != -1) 
+			theTabs.setEnabledAt(iIndex, !hasUpdates  || theStatic.hasUpdates());
 		
 		/* Update the top level tabs */
 		theParent.setVisibility();
@@ -208,6 +223,12 @@ public class MaintenanceTab implements ChangeListener {
 			/* Set the debug focus */
 			thePatternYear.getDebugEntry().setFocus();
 			thePatternYear.requestFocusInWindow();
+		}
+
+		/* If the selected component is Static */
+		else if (myComponent == (Component)theStatic.getPanel()) {
+			/* Set the debug focus */
+			theStatic.getDebugEntry().setFocus();			
 		}
 	}
 }

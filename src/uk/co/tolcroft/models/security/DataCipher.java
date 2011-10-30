@@ -4,13 +4,13 @@ import java.security.spec.AlgorithmParameterSpec;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.PBEParameterSpec;
 
 import org.bouncycastle.util.Arrays;
 
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.security.SymmetricKey.SymKeyType;
 
 public class DataCipher {
 	/**
@@ -24,10 +24,10 @@ public class DataCipher {
 	private SymmetricKey 		theSymKey 		= null;
 		
 	/**
-	 * The PasswordKey (if used)
+	 * Get Symmetric Key Type
 	 */
-	private PasswordKey 		thePassKey 		= null;
-		
+	protected SymKeyType getSymKeyType() { return (theSymKey == null) ? null : theSymKey.getKeyType(); }
+	
 	/**
 	 * Constructor
 	 * @param pCipher the initialised cipher
@@ -45,17 +45,6 @@ public class DataCipher {
 						 SymmetricKey 	pKey) {
 		theCipher 		= pCipher;
 		theSymKey		= pKey;
-	}
-	
-	/**
-	 * Constructor
-	 * @param pCipher the uninitialised cipher
-	 * @param pKey the Password Key
-	 */
-	protected DataCipher(Cipher 		pCipher,
-						 PasswordKey 	pKey) {
-		theCipher 		= pCipher;
-		thePassKey		= pKey;
 	}
 	
 	/**
@@ -235,7 +224,6 @@ public class DataCipher {
 	 * @param pVector initialisation vector
 	 */
 	private void initialiseEncryption(byte[] pVector) throws Throwable {
-		PBEParameterSpec 		mySpec;
 		AlgorithmParameterSpec 	myParms;
 
 		/* If we have a symmetric key */
@@ -244,13 +232,6 @@ public class DataCipher {
 			myParms = new IvParameterSpec(pVector);
 			theCipher.init(Cipher.ENCRYPT_MODE, theSymKey.getSecretKey(), myParms);
 		}
-
-		/* else if we have a password key */
-		else if (thePassKey != null) {
-			/* Initialise the cipher with the initialisation vector vector */
-			mySpec 		= new PBEParameterSpec(pVector, thePassKey.getKeyMode().getThirdIterate());
-			theCipher.init(Cipher.ENCRYPT_MODE, thePassKey.getSecretKey(), mySpec);
-		}
 	}			
 
 	/**
@@ -258,7 +239,6 @@ public class DataCipher {
 	 * @param pVector initialisation vector
 	 */
 	private void initialiseDecryption(byte[] pVector) throws Throwable {
-		PBEParameterSpec 		mySpec;
 		AlgorithmParameterSpec 	myParms;
 
 		/* If we have a symmetric key */
@@ -266,13 +246,6 @@ public class DataCipher {
 			/* Initialise the cipher using the vector */
 			myParms = new IvParameterSpec(pVector);
 			theCipher.init(Cipher.DECRYPT_MODE, theSymKey.getSecretKey(), myParms);
-		}
-
-		/* else if we have a password key */
-		else if (thePassKey != null) {
-			/* Initialise the cipher with the initialisation vector vector */
-			mySpec 		= new PBEParameterSpec(pVector, thePassKey.getKeyMode().getThirdIterate());
-			theCipher.init(Cipher.ENCRYPT_MODE, thePassKey.getSecretKey(), mySpec);						
 		}
 	}			
 }

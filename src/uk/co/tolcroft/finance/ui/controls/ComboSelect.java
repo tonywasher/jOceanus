@@ -40,6 +40,9 @@ public class ComboSelect {
 			/* Skip hidden values */
 			if (myTrans.isHiddenType()) continue;
 			
+			/* Skip disabled values */
+			if (!myTrans.getEnabled()) continue;
+			
 			/* Add the item to the list */
 			theTranTypeBox.addItem(myTrans.getName());
 		}
@@ -77,6 +80,9 @@ public class ComboSelect {
 			/* Skip hidden values */
 			if (myTrans.isHiddenType()) continue;
 			
+			/* Skip disabled values */
+			if (!myTrans.getEnabled()) continue;
+			
 			/* If this is OK for a credit to this account type */
 			if (Event.isValidEvent(myTrans, pType, true)) {
 				/* Add the item to the list */
@@ -110,6 +116,9 @@ public class ComboSelect {
 		while ((myTrans = myIterator.next()) != null) {
 			/* Skip hidden values */
 			if (myTrans.isHiddenType()) continue;
+			
+			/* Skip disabled values */
+			if (!myTrans.getEnabled()) continue;
 			
 			/* If this is OK for a debit from this account type */
 			if (Event.isValidEvent(myTrans, pType, false)) {

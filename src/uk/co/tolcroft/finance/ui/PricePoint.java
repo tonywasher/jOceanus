@@ -527,10 +527,10 @@ public class PricePoint extends StdTable<SpotPrices.SpotPrice> {
 			/* Check for changes */
 			if (mySpot.checkForHistory()) {
 				/* Note that the item has changed */
+				mySpot.clearErrors();
 				mySpot.setState(DataState.CHANGED);
 
 				/* Validate the item and update the edit state */
-				mySpot.clearErrors();
 				mySpot.validate();
 				thePrices.findEditState();
 			

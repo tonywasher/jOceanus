@@ -347,10 +347,10 @@ public class AccountPrices extends StdTable<ViewPrice> {
 			/* If we have changes */
 			if (myPrice.checkForHistory()) {
 				/* Set new state */
+				myPrice.clearErrors();
 				myPrice.setState(DataState.CHANGED);
 				
 				/* Validate the item and update the edit state */
-				myPrice.clearErrors();
 				myPrice.validate();
 				thePrices.findEditState();
 				

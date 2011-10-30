@@ -741,6 +741,9 @@ public class MaintTaxYear implements ActionListener,
 		
 		/* Add the Tax Regimes to the regimes box */
 		while ((myRegime  = myRegIterator.next()) != null) {
+			/* Skip regime if not enabled */
+			if (!myRegime.getEnabled()) continue;
+			
 			/* Add the item to the list */
 			theRegimesBox.addItem(myRegime.getName());
 			regimesPopulated = true;

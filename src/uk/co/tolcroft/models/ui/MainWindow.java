@@ -38,8 +38,8 @@ import uk.co.tolcroft.models.threads.UpdatePassword;
 import uk.co.tolcroft.models.threads.WorkerThread;
 import uk.co.tolcroft.models.views.DataControl;
 
-public abstract class MainWindow<T extends DataSet<T,?>> implements ActionListener,
-																	WindowListener {
+public abstract class MainWindow<T extends DataSet<T>> implements ActionListener,
+																  WindowListener {
 	private	DataControl<T>		theView			= null;
 	private Properties	  		theProperties	= null;
 	private JFrame          	theFrame  		= null;

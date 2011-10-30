@@ -14,7 +14,7 @@ import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.views.DataControl;
 
-public abstract class Database<T extends DataSet<T,?>> {
+public abstract class Database<T extends DataSet<T>> {
 	/**
 	 * Properties for application
 	 */

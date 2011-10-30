@@ -14,7 +14,7 @@ import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.ui.StatusBar;
 import uk.co.tolcroft.models.Exception;
 
-public abstract class DataControl<T extends DataSet<T,?>> {
+public abstract class DataControl<T extends DataSet<T>> {
 	/* Debug Names */
 	public static final String DebugViews		= "DataViews";
 	public static final String DebugData		= "UnderlyingData";

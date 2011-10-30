@@ -73,6 +73,11 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	private ValidationControl<T>	theErrors  	= null;
 	
 	/**
+	 * Is the item active 
+	 */
+	private	boolean					isActive	= false;
+		
+	/**
 	 * Get the list control for this item
 	 * @return the list control
 	 */
@@ -225,12 +230,6 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	public void						setBase(DataItem<?> pBase) { theHistory.setBase(pBase); }
 	
 	/**
-	 * Set the changeable values for this item
-	 * @param pValues the changeable object 
-	 */
-	public void						setValues(HistoryValues<T> pValues)    { theHistory.setValues(pValues); }
-	
-	/**
 	 * Determine whether the item is locked (overridden if required( 
 	 * @return <code>true/false</code>
 	 */
@@ -242,6 +241,23 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	 */
 	public boolean					isListLocked() 	{ return false; }
 
+	/**
+	 * Is the Item Active
+	 * @return <code>true/false</code>
+	 */
+	public		boolean		isActive() { return isActive; }
+	
+	/**
+	 * Clear the Item Active flag
+	 */
+	protected	void		clearActive() { isActive = false; }
+	
+	/**
+	 * Touch the item
+	 * @param pObject object that references the item
+	 */
+	public		void		touchItem(DataItem<?> pObject) { isActive = true; }
+	
 	/**
 	 * Obtain properly cast reference to self
 	 * @return self reference
@@ -255,8 +271,9 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	 */
 	public static String			fieldName(int fieldId)	{
 		switch (fieldId) {
-			case FIELD_ID:	return NAME_ID;
-			default: 		return "Unknown";
+			case FIELD_ID:		return NAME_ID;
+			case FIELD_ACTIVE:	return "IsActive";
+			default: 			return "Unknown";
 		}
 	}
 	
@@ -274,6 +291,9 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 		switch (iField) {
 			case FIELD_ID: 		
 				myString += getId(); 
+				break;
+			case FIELD_ACTIVE: 		
+				myString += isActive() ? true : false; 
 				break;
 		}
 		return myString;
@@ -295,9 +315,10 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	/**
 	 * Id for standard field
 	 */
-	public static final int 	FIELD_ID	= 0;
-	public static final int 	NUMFIELDS	= FIELD_ID+1; 
-	public static final String	NAME_ID		= "Id";
+	public static final int 	FIELD_ID		= 0;
+	public static final int 	FIELD_ACTIVE	= 1;
+	public static final int 	NUMFIELDS		= FIELD_ACTIVE+1; 
+	public static final String	NAME_ID			= "Id";
 	
 	/**
 	 * Format this item to a string
@@ -429,7 +450,8 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	 * Determine whether the item has changes
 	 * @return <code>true/false</code>
 	 */
-	public boolean					hasHistory()    { return theHistory.hasHistory(); }
+	public boolean					hasHistory()    { return (theHistory != null) &&
+															 (theHistory.hasHistory()); }
 	
 	/**
 	 * Clear the history for the item (leaving current values) 
@@ -644,6 +666,29 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	}
 
 	/**
+	 * Build History
+	 */
+	protected void buildHistory() {
+		/* Create history and validation control */ 
+		theErrors  = new ValidationControl<T>(theItem);
+		
+		/* Build an initial set of values */
+		theHistory.setValues(getNewValues());
+	}
+	
+	/**
+	 * Get an initial set of values 
+	 * @return an initial set of values 
+	 */
+	protected HistoryValues<T> getNewValues() { return null; }
+	
+	/**
+	 * Copy flags 
+	 * @param pItem the original item 
+	 */
+	protected void copyFlags(T pItem) { isActive = pItem.isActive; }
+	
+	/**
 	 * Construct a new item
 	 * @param pCtl the list that this item is associated with
 	 * @param uId the Id of the new item (or 0 if not yet known)
@@ -653,7 +698,7 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 		theList    = pList;
 		theItem	   = pList.getBaseClass().cast(this);
 		theHistory = new HistoryControl<T>(theItem);
-		theErrors  = new ValidationControl<T>(theItem);
+		buildHistory();
 	}
 	
 	/**
@@ -684,9 +729,12 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	
 	/**
 	 *  Validate the element
-	 *  Overwritten by objects that have changes
+	 *  Dirty items become valid
 	 */
-	public void validate() {};
+	public void validate() { 
+		if (getEditState() == EditState.DIRTY)
+			setEditState(EditState.VALID);
+	}
 	
 	/**
 	 *  Test an element for equality

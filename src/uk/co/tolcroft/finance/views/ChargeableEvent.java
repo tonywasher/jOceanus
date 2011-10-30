@@ -66,6 +66,11 @@ public class ChargeableEvent extends DataItem<ChargeableEvent> {
 	public Integer			getYears()		{ return getBase().getYears(); }
 
 	/**
+	 * Build History (no history)
+	 */
+	protected void buildHistory() {}
+
+	/**
 	 * Constructor
 	 * @param pList the list
 	 * @param pEvent the Event
@@ -221,7 +226,7 @@ public class ChargeableEvent extends DataItem<ChargeableEvent> {
 		public List getUpdateList() { return null; }
 		public List getEditList() 	{ return null; }
 		public List getShallowCopy() { return null; }
-		public List getDeepCopy(DataSet<?,?> pData) { return null; }
+		public List getDeepCopy(DataSet<?> pData) { return null; }
 		public List getDifferences(List pOld) { return null; }
 
 		/**

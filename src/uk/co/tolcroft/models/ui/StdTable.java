@@ -36,7 +36,7 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 	private JTable				theRowHdrTable	= null;
 	private DataTableModel  	theModel     	= null;
 	private rowTableModel		theRowHdrModel  = null;
-	private DataList<?,T>        theList	  		= null;
+	private DataList<?,T>       theList	  		= null;
 	private JScrollPane			theScroll		= null;
 	private boolean             doShowDel    	= false;
 	private boolean             isEnabled    	= false;

@@ -110,6 +110,12 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	}
 							
 	/**
+	 * Get an initial set of values 
+	 * @return an initial set of values 
+	 */
+	protected HistoryValues<AcctPrice> getNewValues() { return new Values(); }
+	
+	/**
  	* Construct a copy of a Price
  	* 
  	* @param pPrice The Price 
@@ -117,8 +123,8 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	protected AcctPrice(List pList, AcctPrice pPrice) {
 		/* Set standard values */
 		super(pList, pPrice.getId());
-		Values myValues = new Values(pPrice.getValues());
-		setValues(myValues);
+		Values myValues = getValues();
+		myValues.copyFrom(pPrice.getValues());
 		ListStyle myOldStyle = pPrice.getList().getStyle();
 
 		/* Switch on the ListStyle */
@@ -137,11 +143,17 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 				pList.setNewId(this);				
 				break;
 			case CLONE:
-				isolateCopy(pList.getData());
+				reBuildLinks(pList.getData());
 			case COPY:
 			case CORE:
-				/* Reset Id if this is an insert from a view */
-				if (myOldStyle == ListStyle.EDIT) setId(0);
+				/* If this is an insert from a view */
+				if (myOldStyle == ListStyle.EDIT) {
+					/* Generate new id */
+					setId(0);
+					
+					/* Rebuild links */
+					reBuildLinks(pList.getData());
+				}
 				pList.setNewId(this);				
 				break;
 			case UPDATE:
@@ -160,8 +172,8 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	
 		/* Set standard values */
 		super(pList, 0);
-		Values 	myValues 	= new Values(pPrice.getValues());
-		setValues(myValues);
+		Values myValues = getValues();
+		myValues.copyFrom(pPrice.getValues());
 			
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -176,8 +188,8 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	
 		/* Set standard values */
 		super(pList, 0);
-		Values 	myValues 	= new Values(pPrice.getValues());
-		setValues(myValues);
+		Values myValues = getValues();
+		myValues.copyFrom(pPrice.getValues());
 			
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -186,8 +198,6 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	/* Standard constructor for a newly inserted price */
 	private AcctPrice(List pList) {
 		super(pList, 0);
-		Values myValues = new Values();
-		setValues(myValues);
 		setControlKey(pList.getControlKey());
 		pList.setNewId(this);
 	}
@@ -202,8 +212,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		super(pList, uId);
 		
 		/* Initialise the values */
-		Values myValues = new Values();
-		setValues(myValues);
+		Values myValues = getValues();
 		
 		/* Record the Id */
 		myValues.setAccountId(uAccountId);
@@ -238,8 +247,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		super(pList, uId);
 		
 		/* Initialise the values */
-		Values myValues = new Values();
-		setValues(myValues);
+		Values myValues = getValues();
 		
 		/* Record the Id */
 		myValues.setAccountId(uAccountId);
@@ -275,8 +283,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		super(pList, 0);
 		
 		/* Initialise the values */
-		Values myValues = new Values();
-		setValues(myValues);
+		Values myValues = getValues();
 		
 		/* Set the passed details */
 		myValues.setAccount(pAccount);
@@ -355,20 +362,20 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	}
 	
 	/**
-	 * Isolate Data Copy
+	 * Rebuild Links to partner data
 	 * @param pData the DataSet
 	 */
-	protected void isolateCopy(FinanceData pData) {
+	protected void reBuildLinks(FinanceData pData) {
 		/* Update the Encryption details */
-		super.isolateCopy(pData);
+		super.reBuildLinks(pData);
 		
 		/* Access Accounts */
 		Account.List myAccounts = pData.getAccounts();
 		
-		/* Update to use the local copy of the Accounts */
+		/* Update to use the local copy of the Accounts (use name rather than id) */
 		Values 	myValues   	= getValues();
 		Account	myAct		= myValues.getAccount();
-		Account	myNewAct 	= myAccounts.searchFor(myAct.getId());
+		Account	myNewAct 	= myAccounts.searchFor(myAct.getName());
 		myValues.setAccount(myNewAct);
 	}
 
@@ -562,7 +569,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return null; }
 		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
-		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+		public List getDeepCopy(DataSet<?> pDataSet)	{ 
 			/* Build an empty Extract List */
 			List myList = new List(this);
 			myList.setData(pDataSet);
@@ -739,17 +746,17 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		/**
 		 *  Mark active prices
 		 */
-		protected void markActivePrices () {
+		protected void markActiveItems () {
 			ListIterator 	myIterator;
-			AcctPrice 			myCurr;
+			AcctPrice 		myCurr;
 
 			/* Access the list iterator */
-			myIterator = listIterator(true);
+			myIterator = listIterator();
 			
 			/* Loop through the Prices */
 			while ((myCurr = myIterator.next()) != null) {
 				/* mark the account referred to */
-				myCurr.getAccount().touchPrice(myCurr); 
+				myCurr.getAccount().touchItem(myCurr); 
 			}
 		}
 
@@ -982,7 +989,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 				Values myValues = (Values)pSource;
 				super.copyFrom(myValues);
 				theDate      = myValues.getDate();
-				thePrice     = new PricePair(myValues.getPrice());
+				thePrice     = myValues.getPrice();
 				theAccount   = myValues.getAccount();
 				theAccountId = myValues.getAccountId();
 			}
@@ -1028,11 +1035,19 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		}
 
 		/**
+		 * Update encryption after security change
+		 */
+		protected void updateSecurity() throws Exception {
+			/* Update the encryption */
+			thePrice	= new PricePair(thePrice.getValue());
+		}		
+		
+		/**
 		 * Ensure encryption after security change
 		 */
 		protected void applySecurity() throws Exception {
 			/* Apply the encryption */
-			thePrice.encryptPair();
+			thePrice.encryptPair(null);
 		}		
 		
 		/**

@@ -4,7 +4,7 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.views.DataControl;
 
-public class PurgeDatabase<T extends DataSet<T,?>> extends WorkerThread<Void> {
+public class PurgeDatabase<T extends DataSet<T>> extends WorkerThread<Void> {
 	/* Task description */
 	private static String  	theTask		= "DataBase Purge";
 

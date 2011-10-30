@@ -143,7 +143,17 @@ public class Account extends EncryptedItem<Account> {
 	public static final int FIELD_PASSWORD = EncryptedItem.NUMFIELDS+10;
 	public static final int FIELD_ACCOUNT  = EncryptedItem.NUMFIELDS+11;
 	public static final int FIELD_NOTES    = EncryptedItem.NUMFIELDS+12;
-	public static final int NUMFIELDS	   = EncryptedItem.NUMFIELDS+13;
+	public static final int FIELD_EVTFIRST = EncryptedItem.NUMFIELDS+13;
+	public static final int FIELD_EVTLAST  = EncryptedItem.NUMFIELDS+14;
+	public static final int FIELD_INITPRC  = EncryptedItem.NUMFIELDS+15;
+	public static final int FIELD_HASRATES = EncryptedItem.NUMFIELDS+16;
+	public static final int FIELD_HASPRICE = EncryptedItem.NUMFIELDS+17;
+	public static final int FIELD_HASPATT  = EncryptedItem.NUMFIELDS+18;
+	public static final int FIELD_ISPATT   = EncryptedItem.NUMFIELDS+19;
+	public static final int FIELD_ISPARENT = EncryptedItem.NUMFIELDS+20;
+	public static final int FIELD_ISALIASD = EncryptedItem.NUMFIELDS+21;
+	public static final int FIELD_ISCLSABL = EncryptedItem.NUMFIELDS+22;
+	public static final int NUMFIELDS	   = EncryptedItem.NUMFIELDS+23;
 	
 	/**
 	 * Obtain the type of the item
@@ -176,6 +186,16 @@ public class Account extends EncryptedItem<Account> {
 			case FIELD_PASSWORD:	return "Password";
 			case FIELD_ACCOUNT:		return "Account";
 			case FIELD_NOTES:		return "Notes";
+			case FIELD_EVTFIRST:	return "FirstEvent";
+			case FIELD_EVTLAST:		return "LastEvent";
+			case FIELD_INITPRC:		return "InitialPrice";
+			case FIELD_HASRATES:	return "HasRates";
+			case FIELD_HASPRICE:	return "HasPrices";
+			case FIELD_HASPATT:		return "HasPatterns";
+			case FIELD_ISPATT:		return "IsPatterned";
+			case FIELD_ISCLSABL:	return "IsCloseable";
+			case FIELD_ISPARENT:	return "IsParent";
+			case FIELD_ISALIASD:	return "IsAliased";
 			default:		  		return EncryptedItem.fieldName(iField);
 		}
 	}
@@ -250,6 +270,42 @@ public class Account extends EncryptedItem<Account> {
 			case FIELD_NOTES:	
 				myString += getCharArrayPairString(myValues.getNotes()); 
 				break;
+			case FIELD_EVTFIRST:	
+				myString += null;
+				if (theEarliest != null) 
+					myString = pDetail.addDebugLink(theEarliest, Date.format(theEarliest.getDate())); 
+				break;
+			case FIELD_EVTLAST:	
+				myString += null;
+				if (theLatest != null) 
+					myString = pDetail.addDebugLink(theLatest, Date.format(theLatest.getDate())); 
+				break;
+			case FIELD_INITPRC:
+				myString += null;
+				if (theInitPrice != null) 
+					myString = pDetail.addDebugLink(theInitPrice, Price.format(theInitPrice.getPrice())); 
+				break;
+			case FIELD_HASPATT:	
+				myString += hasPatterns ? true : false; 
+				break;
+			case FIELD_HASRATES:	
+				myString += hasRates ? true : false; 
+				break;
+			case FIELD_HASPRICE:	
+				myString += hasPrices ? true : false; 
+				break;
+			case FIELD_ISPATT:	
+				myString += isPatterned ? true : false; 
+				break;
+			case FIELD_ISCLSABL:	
+				myString += isCloseable ? true : false; 
+				break;
+			case FIELD_ISALIASD:	
+				myString += isAliasedTo ? true : false; 
+				break;
+			case FIELD_ISPARENT:	
+				myString += isParent ? true : false; 
+				break;
 			default: 		
 				myString += super.formatField(pDetail, iField, pValues); 
 				break;
@@ -258,24 +314,41 @@ public class Account extends EncryptedItem<Account> {
 	}
 							
 	/**
+	 * Get an initial set of values 
+	 * @return an initial set of values 
+	 */
+	protected HistoryValues<Account> getNewValues() { return new Values(); }
+	
+	/**
+	 * Copy flags 
+	 * @param pItem the original item 
+	 */
+	protected void copyFlags(Account pItem) {
+		/* Copy Main flags */
+		super.copyFlags(pItem);
+		
+		/* Copy Remaining flags */
+		theEarliest  = pItem.theEarliest;
+		theLatest    = pItem.theLatest;
+		theInitPrice = pItem.theInitPrice;
+		isCloseable  = pItem.isCloseable();
+		isAliasedTo  = pItem.isAliasedTo();
+		isParent     = pItem.isParent();
+		isPatterned  = pItem.isPatterned;
+		hasPatterns  = pItem.hasPatterns;
+		hasRates     = pItem.hasRates;
+		hasPrices    = pItem.hasPrices;
+	}
+	
+	/**
 	 * Construct a copy of an Account
 	 * @param pAccount The Account to copy 
 	 */
 	public Account(List pList, Account pAccount) {
 		/* Set standard values */
 		super(pList, pAccount.getId());
-		Values myValues = new Values(pAccount.getValues());
-		setValues(myValues);
-		theEarliest  = pAccount.theEarliest;
-		theLatest    = pAccount.theLatest;
-		theInitPrice = pAccount.theInitPrice;
-		isCloseable  = pAccount.isCloseable();
-		isAliasedTo  = pAccount.isAliasedTo();
-		isParent     = pAccount.isParent();
-		isPatterned  = pAccount.isPatterned;
-		hasPatterns  = pAccount.hasPatterns;
-		hasRates     = pAccount.hasRates;
-		hasPrices    = pAccount.hasPrices;
+		Values myValues = getValues();
+		myValues.copyFrom(pAccount.getValues());
 		ListStyle myOldStyle = pAccount.getList().getStyle();
 
 		/* Switch on the ListStyle */
@@ -285,6 +358,7 @@ public class Account extends EncryptedItem<Account> {
 				if (myOldStyle == ListStyle.CORE) {
 					/* Account is based on the original element */
 					setBase(pAccount);
+					copyFlags(pAccount);
 					pList.setNewId(this);				
 					break;
 				}
@@ -294,7 +368,7 @@ public class Account extends EncryptedItem<Account> {
 				pList.setNewId(this);				
 				break;
 			case CLONE:
-				isolateCopy(pList, pList.getData());
+				reBuildLinks(pList, pList.getData());
 			case COPY:
 			case CORE:
 				/* Reset Id if this is an insert from a view */
@@ -349,8 +423,7 @@ public class Account extends EncryptedItem<Account> {
 		AccountType myActType;
 		
 		/* Initialise the object */
-		Values myValues	= new Values();
-		setValues(myValues);
+		Values myValues	= getValues();
 		
 		/* Store the IDs */
 		myValues.setActTypeId(uAcTypeId);
@@ -423,8 +496,7 @@ public class Account extends EncryptedItem<Account> {
 		AccountType myActType;
 		
 		/* Initialise the object */
-		Values myValues	= new Values();
-		setValues(myValues);
+		Values myValues	= getValues();
 
 		/* Record the encrypted values */
 		myValues.setName(new StringPair(sName));
@@ -465,8 +537,6 @@ public class Account extends EncryptedItem<Account> {
 	/* Standard constructor for a newly inserted account */
 	public Account(List pList) {
 		super(pList, 0);
-		Values myValues = new Values();
-		setValues(myValues);
 		setControlKey(pList.getControlKey());
 		pList.setNewId(this);				
 	}
@@ -552,12 +622,12 @@ public class Account extends EncryptedItem<Account> {
 	}
 		
 	/**
-	 * Isolate Data Copy
+	 * Rebuild Links to partner data
 	 * @param pData the DataSet
 	 */
-	protected void isolateCopy(List pList, FinanceData pData) {
+	protected void reBuildLinks(List pList, FinanceData pData) {
 		/* Update the Encryption details */
-		super.isolateCopy(pData);
+		super.reBuildLinks(pData);
 		
 		/* Access Account types */
 		AccountType.List myTypes = pData.getAccountTypes();
@@ -617,6 +687,12 @@ public class Account extends EncryptedItem<Account> {
 		List 			myList = (List)getList();
 		FinanceData		mySet  = myList.getData();
 		
+		/* AccountType must be non-null */
+		if (myType == null) 
+			addError("AccountType must be non-null", FIELD_TYPE);
+		else if (!myType.getEnabled()) 
+			addError("AccountType must be enabled", FIELD_TYPE);
+			
 		/* Name must be non-null */
 		if (getName() == null) {
 			addError("Name must be non-null", FIELD_NAME);
@@ -829,9 +905,11 @@ public class Account extends EncryptedItem<Account> {
 	}
 		
 	/**
-	 * Reset the account flags after changes to events
+	 * Clear the active account flags
 	 */
-	public void reset() {
+	public void clearActive() {
+		super.clearActive();
+
 		/* Reset flags */
 		isCloseable   = true;
 		theEarliest   = null;
@@ -846,66 +924,59 @@ public class Account extends EncryptedItem<Account> {
 	}
 	
 	/**
-	 * Touch an account with an event
+	 * Touch an account
 	 */
-	public void touchAccount(Event pEvent) {
-		/* Record the event */
-		if (theEarliest == null) theEarliest = pEvent;
-		theLatest = pEvent;
+	public void touchItem(DataItem<?> pObject) {
+		/* Note that the account is Active */
+		super.touchItem(pObject);
 		
-		/* If we have a parent, touch it */
-		if (getParent() != null) 
-			getParent().touchAccount(pEvent);
-	}
+		/* If we are being touched by an event */
+		if (pObject instanceof Event) {
+			/* Access as event */
+			Event myEvent = (Event)pObject;
+			
+			/* Note flags */
+			/* Record the event */
+			if (theEarliest == null) theEarliest = myEvent;
+			theLatest = myEvent;
+			
+			/* If we have a parent, touch it */
+			if (getParent() != null) 
+				getParent().touchItem(pObject);
+		}
+		
+		/* If we are being touched by a rate */
+		if (pObject instanceof AcctRate) {
+			/* Note flags */
+			hasRates = true;
+		}
+		
+		/* If we are being touched by a price */
+		else if (pObject instanceof AcctPrice) {
+			/* Note flags */
+			hasPrices = true;
+			if (theInitPrice == null) theInitPrice = (AcctPrice)pObject;
+		}
+		
+		/* If we are being touched by a pattern */
+		else if (pObject instanceof Pattern) {
+			/* Access as pattern */
+			Pattern myPattern = (Pattern)pObject;
+			
+			/* Note flags */
+			if (differs(myPattern.getAccount(), this).isIdentical()) hasPatterns = true;
+			if (differs(myPattern.getPartner(), this).isIdentical()) isPatterned = true;
+		}
 
-	/**
-	 * Touch an account with a rate
-	 */
-	protected void touchRate() {
-		/* Record the rate */
-		hasRates = true;
-	}
-		
-	/**
-	 * Touch an account with a price
-	 * @param pPrice the price
-	 */
-	public void touchPrice(AcctPrice pPrice) {
-		/* Record the price */
-		hasPrices = true;
-		if (theInitPrice == null) theInitPrice = pPrice;
-	}
-		
-	/**
-	 * Touch an account with a pattern
-	 */
-	protected void touchPattern() {
-		/* Record the pattern */
-		hasPatterns = true;
-	}
-		
-	/**
-	 * Touch an account with a pattern
-	 */
-	public void touchPartner() {
-		/* Record the pattern */
-		isPatterned = true;
-	}
-		
-	/**
-	 * Touch an account with a parent
-	 */
-	public void touchParent() {
-		/* Record the parent */
-		isParent = true;
-	}
-		
-	/**
-	 * Touch an account with an alias
-	 */
-	public void touchAlias() {
-		/* Record the alias */
-		isAliasedTo = true;
+		/* If we are being touched by another account */
+		else if (pObject instanceof Account) {
+			/* Access as account */
+			Account myAccount = (Account)pObject;
+			
+			/* Note flags */
+			if (differs(myAccount.getParent(), this).isIdentical()) isParent 	= true;
+			if (differs(myAccount.getAlias(), this).isIdentical())  isAliasedTo = true;
+		}
 	}
 		
 	/**
@@ -1196,7 +1267,7 @@ public class Account extends EncryptedItem<Account> {
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
 		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
-		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+		public List getDeepCopy(DataSet<?> pDataSet)	{ 
 			/* Build an empty Extract List */
 			List myList = new List(this);
 			myList.setData(pDataSet);
@@ -1288,28 +1359,12 @@ public class Account extends EncryptedItem<Account> {
 		public String itemType() { return listName; }
 				
 		/**
-		 * Reset the account flags after changes to events
-		 */
-		public void reset() {
-			ListIterator 	myIterator;
-			Account 		myCurr;
-			
-			/* Access the iterator */
-			myIterator = listIterator(true);
-			
-			/* Loop through the items to find the entry */
-			while ((myCurr = myIterator.next()) != null) {
-				/* Clear the flags */
-				myCurr.reset();
-			}
-		}
-		
-		/**
 		 * Update account details after data update
 		 */
-		public void markActiveAccounts() throws Exception {
+		public void markActiveItems() throws Exception {
 			ListIterator 	myIterator;
 			Account 		myCurr;
+			AccountType		myType;
 					
 			/* Access the iterator */
 			myIterator = listIterator();
@@ -1318,17 +1373,21 @@ public class Account extends EncryptedItem<Account> {
 			while ((myCurr = myIterator.next()) != null) {				
 				/* If we have a parent, mark the parent */
 				if (myCurr.getParent() != null) {
-					myCurr.getParent().touchParent();
+					myCurr.getParent().touchItem(myCurr);
 					if (!myCurr.isClosed())
 						myCurr.getParent().setNonCloseable();
 				}
 				
 				/* If we have an alias, mark the alias */
 				if (myCurr.getAlias() != null) {
-					myCurr.getAlias().touchAlias();
+					myCurr.getAlias().touchItem(myCurr);
 					if (!myCurr.isClosed())
 						myCurr.getAlias().setNonCloseable();
 				}
+				
+				/* Mark the AccountType */
+				myType = myCurr.getActType();
+				myType.touchItem(myCurr);
 				
 				/* If we are a child and have no latest event, then we are not close-able */
 				if ((myCurr.isChild()) && (myCurr.getLatest() == null)) {
@@ -1622,16 +1681,17 @@ public class Account extends EncryptedItem<Account> {
 		public void validateLoadedAccounts() throws Exception {
 			ListIterator myIterator;
 			Account      myCurr;
+			AccountType	 myType;
 			FinanceData	 myData = getData();
 		
-			/* Mark active rates */
-			myData.getRates().markActiveRates();
+			/* Mark active items referenced by rates */
+			myData.getRates().markActiveItems();
 			
-			/* Mark active prices */
-			myData.getPrices().markActivePrices();
+			/* Mark active items referenced by prices */
+			myData.getPrices().markActiveItems();
 			
-			/* Mark active patterns */
-			myData.getPatterns().markActivePatterns();
+			/* Mark active items referenced by patterns */
+			myData.getPatterns().markActiveItems();
 			
 			/* Access the iterator */
 			myIterator = listIterator(true);
@@ -1642,15 +1702,19 @@ public class Account extends EncryptedItem<Account> {
 				if (myCurr.getParentId() != null) {
 					/* Set the parent */
 					myCurr.setParent(searchFor(myCurr.getParentId()));
-					myCurr.getParent().touchParent();
+					myCurr.getParent().touchItem(myCurr);
 				}
 					
 				/* If the account has an alias Id */
 				if (myCurr.getAliasId() != null) {
 					/* Set the alias */
 					myCurr.setAlias(searchFor(myCurr.getAliasId()));
-					myCurr.getAlias().touchAlias();
+					myCurr.getAlias().touchItem(myCurr);
 				}
+
+				/* Mark the AccountType */
+				myType = myCurr.getActType();
+				myType.touchItem(myCurr);
 			}
 
 			/* Create another iterator */
@@ -1803,8 +1867,8 @@ public class Account extends EncryptedItem<Account> {
 		public void    copyFrom(HistoryValues<?> pSource) {
 			Values myValues = (Values)pSource;
 			super.copyFrom(myValues);
-			theName       = new StringPair(myValues.getName());
-			theDesc       = (myValues.getDesc() != null)	? new StringPair(myValues.getDesc()) : null;
+			theName       = myValues.getName();
+			theDesc       = myValues.getDesc();
 			theType       = myValues.getType();
 			theActTypeId  = myValues.getActTypeId();
 			theOrder      = myValues.getOrder();
@@ -1872,18 +1936,33 @@ public class Account extends EncryptedItem<Account> {
 		}
 
 		/**
+		 * Update encryption after security change
+		 */
+		protected void updateSecurity() throws Exception {
+			/* Update the encryption */
+			theName = new StringPair(theName.getString());
+			if (theDesc     != null) theDesc		= new StringPair(theDesc.getString());
+			if (theWebSite  != null) theWebSite		= new CharArrayPair(theWebSite.getChars());
+			if (theCustNo   != null) theCustNo		= new CharArrayPair(theCustNo.getChars());
+			if (theUserId   != null) theUserId		= new CharArrayPair(theUserId.getChars());
+			if (thePassword != null) thePassword	= new CharArrayPair(thePassword.getChars());
+			if (theAccount  != null) theAccount		= new CharArrayPair(theAccount.getChars());
+			if (theNotes    != null) theNotes		= new CharArrayPair(theNotes.getChars());
+		}		
+
+		/**
 		 * Ensure encryption after security change
 		 */
 		protected void applySecurity() throws Exception {
 			/* Apply the encryption */
-			theName.encryptPair();
-			if (theDesc     != null) theDesc.encryptPair();
-			if (theWebSite  != null) theWebSite.encryptPair();
-			if (theCustNo   != null) theCustNo.encryptPair();
-			if (theUserId   != null) theUserId.encryptPair();
-			if (thePassword != null) thePassword.encryptPair();
-			if (theAccount  != null) theAccount.encryptPair();
-			if (theNotes    != null) theNotes.encryptPair();
+			theName.encryptPair(null);
+			if (theDesc     != null) theDesc.encryptPair(null);
+			if (theWebSite  != null) theWebSite.encryptPair(null);
+			if (theCustNo   != null) theCustNo.encryptPair(null);
+			if (theUserId   != null) theUserId.encryptPair(null);
+			if (thePassword != null) thePassword.encryptPair(null);
+			if (theAccount  != null) theAccount.encryptPair(null);
+			if (theNotes    != null) theNotes.encryptPair(null);
 		}		
 
 		/**
@@ -1894,14 +1973,14 @@ public class Account extends EncryptedItem<Account> {
 			Values myBase = (Values)pBase;
 
 			/* Apply the encryption */
-			theName.encryptPair(myBase.theName);
-			if (theDesc     != null) theDesc.encryptPair(myBase.theDesc);
-			if (theWebSite  != null) theWebSite.encryptPair(myBase.theWebSite);
-			if (theCustNo   != null) theCustNo.encryptPair(myBase.theCustNo);
-			if (theUserId   != null) theUserId.encryptPair(myBase.theUserId);
-			if (thePassword != null) thePassword.encryptPair(myBase.thePassword);
-			if (theAccount  != null) theAccount.encryptPair(myBase.theAccount);
-			if (theNotes    != null) theNotes.encryptPair(myBase.theNotes);
+			theName.encryptPair(myBase.getName());
+			if (theDesc     != null) theDesc.encryptPair(myBase.getDesc());
+			if (theWebSite  != null) theWebSite.encryptPair(myBase.getWebSite());
+			if (theCustNo   != null) theCustNo.encryptPair(myBase.getCustNo());
+			if (theUserId   != null) theUserId.encryptPair(myBase.getUserId());
+			if (thePassword != null) thePassword.encryptPair(myBase.getPassword());
+			if (theAccount  != null) theAccount.encryptPair(myBase.getAccount());
+			if (theNotes    != null) theNotes.encryptPair(myBase.getNotes());
 		}		
 	}
 }

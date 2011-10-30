@@ -113,6 +113,12 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	}
 		
 	/**
+	 * Get an initial set of values 
+	 * @return an initial set of values 
+	 */
+	protected HistoryValues<AcctRate> getNewValues() { return new Values(); }
+	
+	/**
 	 *	Construct a copy of a Rate Period
 	 * 
 	 * @param pPeriod The Period to copy 
@@ -120,9 +126,8 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	protected AcctRate(List pList, AcctRate pPeriod) {
 		/* Set standard values */
 		super(pList, pPeriod.getId());
-		Values myValues = new Values(pPeriod.getValues());
-		setValues(myValues);
-		setControlKey(pPeriod.getControlKey());		
+		Values myValues = getValues();
+		myValues.copyFrom(pPeriod.getValues());
 		ListStyle myOldStyle = pPeriod.getList().getStyle();
 
 		/* Switch on the ListStyle */
@@ -141,7 +146,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 				pList.setNewId(this);				
 				break;
 			case CLONE:
-				isolateCopy(pList.getData());
+				reBuildLinks(pList.getData());
 			case COPY:
 			case CORE:
 				/* Reset Id if this is an insert from a view */
@@ -158,9 +163,6 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	/* Standard constructor for a newly inserted rate */
 	public AcctRate(List pList) {
 		super(pList, 0);
-		Values myValues = new Values();
-		setValues(myValues);
-		setControlKey(pList.getControlKey());
 		setAccount(pList.theAccount);
 		pList.setNewId(this);		
 	}
@@ -176,8 +178,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		super(pList, uId);
 		
 		/* Initialise the values */
-		Values myValues = new Values();
-		setValues(myValues);
+		Values myValues = getValues();
 
 		/* Record the Id */
 		myValues.setAccountId(uAccountId);
@@ -215,8 +216,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		super(pList, uId);
 		
 		/* Initialise the values */
-		Values myValues = new Values();
-		setValues(myValues);
+		Values myValues = getValues();
 
 		/* Record the Id */
 		myValues.setAccountId(uAccountId);
@@ -311,12 +311,12 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	}
 
 	/**
-	 * Isolate Data Copy
+	 * Rebuild Links to partner data
 	 * @param pData the DataSet
 	 */
-	protected void isolateCopy(FinanceData pData) {
+	protected void reBuildLinks(FinanceData pData) {
 		/* Update the Encryption details */
-		super.isolateCopy(pData);
+		super.reBuildLinks(pData);
 		
 		/* Access Accounts */
 		Account.List myAccounts = pData.getAccounts();
@@ -490,7 +490,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
 		public List getEditList() 	{ return null; }
 		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
-		public List getDeepCopy(DataSet<?,?> pDataSet)	{ 
+		public List getDeepCopy(DataSet<?> pDataSet)	{ 
 			/* Build an empty Extract List */
 			List myList = new List(this);
 			myList.setData(pDataSet);
@@ -638,17 +638,17 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		/**
 		 *  Mark active rates
 		 */
-		protected void markActiveRates() {
+		protected void markActiveItems() {
 			ListIterator 	myIterator;
 			AcctRate 			myCurr;
 
 			/* Access the list iterator */
-			myIterator = listIterator(true);
+			myIterator = listIterator();
 			
 			/* Loop through the Rates */
 			while ((myCurr = myIterator.next()) != null) {
 				/* mark the account referred to */
-				myCurr.getAccount().touchRate(); 
+				myCurr.getAccount().touchItem(myCurr); 
 			}
 		}
 
@@ -843,8 +843,8 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		public void    copyFrom(HistoryValues<?> pSource) {
 			Values myValues = (Values)pSource;
 			super.copyFrom(myValues);
-			theRate      = new RatePair(myValues.getRate());
-			theBonus     = (myValues.getBonus() != null)	? new RatePair(myValues.getBonus()) : null;
+			theRate      = myValues.getRate();
+			theBonus     = myValues.getBonus();
 			theEndDate   = myValues.getEndDate();
 			theAccount   = myValues.getAccount();
 			theAccountId = myValues.getAccountId();
@@ -873,12 +873,21 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		}
 
 		/**
-		 * Ensure encryption after security change
+		 * Update encryption after security change
+		 */
+		protected void updateSecurity() throws Exception {
+			/* Update the encryption */
+			theRate	= new RatePair(theRate.getValue());
+			if (theBonus != null) theBonus = new RatePair(theBonus.getValue());
+		}		
+		
+		/**
+		 * Ensure encryption after non-encrypted load
 		 */
 		protected void applySecurity() throws Exception {
 			/* Apply the encryption */
-			theRate.encryptPair();
-			if (theBonus != null) theBonus.encryptPair();
+			theRate.encryptPair(null);
+			if (theBonus != null) theBonus.encryptPair(null);
 		}		
 		
 		/**

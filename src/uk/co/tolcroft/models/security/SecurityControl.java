@@ -1,7 +1,6 @@
 package uk.co.tolcroft.models.security;
 
 import java.security.*;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,6 +75,11 @@ public class SecurityControl extends DataItem<SecurityControl> {
 	public 		SecureRandom		getRandom()				{ return theRandom; }
 	
 	/**
+	 * Build History (no history)
+	 */
+	protected void buildHistory() {}
+	
+	/**
 	 * Constructor
 	 * @param pSignature the Security Signature Bytes (or null if first initialisation)  
 	 */
@@ -115,7 +119,7 @@ public class SecurityControl extends DataItem<SecurityControl> {
 		/* Create the signature */
 		theSignature = new SecuritySignature(thePassKey.getPasswordHash(),
 											 myType[0],
-											 theAsymKey.getPublicKey(),
+											 theAsymKey.getPublicKeyDef(),
 											 thePassKey.getSecuredPrivateKey(theAsymKey));
 		
 		/* Create the SymmetricKeyDef Map */
@@ -164,7 +168,7 @@ public class SecurityControl extends DataItem<SecurityControl> {
 				/* Create the signature */
 				theSignature = new SecuritySignature(thePassKey.getPasswordHash(),
 													 myType[0],
-													 theAsymKey.getPublicKey(),
+													 theAsymKey.getPublicKeyDef(),
 													 thePassKey.getSecuredPrivateKey(theAsymKey));
 			}
 			
@@ -174,8 +178,6 @@ public class SecurityControl extends DataItem<SecurityControl> {
 				thePassKey 	= new PasswordKey(theSignature.getPasswordHash(),
 											  pPassword,
 											  theRandom);
-				/* Access the control mode */
-				//theKeyType = thePassKey.getKeyMode().getAsymKeyType();
 				
 				/* Rebuild the asymmetric key */
 				theAsymKey  = thePassKey.getAsymmetricKey(theSignature.getSecuredKeyDef(),
@@ -304,7 +306,7 @@ public class SecurityControl extends DataItem<SecurityControl> {
 	 * @return the Asymmetric key
 	 */
 	public AsymmetricKey	getAsymmetricKey(byte[] 			pSecuredPrivateKey,
-											 X509EncodedKeySpec	pPublicKey,
+											 byte[]				pPublicKey,
 											 AsymKeyType		pKeyType) throws Exception {
 		AsymmetricKey 	myAsymKey;
 		
@@ -349,18 +351,14 @@ public class SecurityControl extends DataItem<SecurityControl> {
 	public SymmetricKey	getSymmetricKey(byte[] 		pSecuredKeyDef,
 										SymKeyType	pType) throws Exception {
 		SymmetricKey 	mySymKey;
-		byte[]			myKeyDef;
 		
 		/* Handle not initialised */
 		if (!isInitialised)
 			throw new Exception(ExceptionClass.LOGIC,
 								"Security Control uninitialised");
 			
-		/* Reverse the obscuring of the array */
-		myKeyDef = thePassKey.obscureArray(pSecuredKeyDef);
-	
 		/* Obtain the symmetric key via the Asymmetric key */
-		mySymKey = theAsymKey.getSymmetricKey(myKeyDef, pType);
+		mySymKey = theAsymKey.getSymmetricKey(pSecuredKeyDef, pType);
 		
 		/* Add the key definition to the map */
 		theKeyDefMap.put(mySymKey, pSecuredKeyDef);
@@ -389,9 +387,6 @@ public class SecurityControl extends DataItem<SecurityControl> {
 		/* wrap the key definition */
 		myKeyDef = theAsymKey.getSecuredKeyDef(pKey);
 				
-		/* Obscure the key  definition */
-		myKeyDef = thePassKey.obscureArray(myKeyDef);
-		
 		/* Check whether the KeyDef is too large */
 		if (myKeyDef.length > SymmetricKey.IDSIZE)
 			throw new Exception(ExceptionClass.DATA,
@@ -466,7 +461,7 @@ public class SecurityControl extends DataItem<SecurityControl> {
 				myString += (theSignature == null) ? null : Utils.HexStringFromBytes(theSignature.getSecuredKeyDef()); 
 				break;
 			case FIELD_PUBKEY:
-				myString += (theSignature == null) ? null : Utils.HexStringFromBytes(theSignature.getEncodedPublicKey()); 
+				myString += (theSignature == null) ? null : Utils.HexStringFromBytes(theSignature.getPublicKey()); 
 				break;
 		}
 		return myString;
@@ -534,7 +529,7 @@ public class SecurityControl extends DataItem<SecurityControl> {
 		public List getUpdateList() { return null; }
 		public List getEditList() 	{ return null; }
 		public List getShallowCopy() { return null; }
-		public List getDeepCopy(DataSet<?,?> pData) { return null; }
+		public List getDeepCopy(DataSet<?> pData) { return null; }
 		public List getDifferences(List pOld) { return null; }
 
 		/**

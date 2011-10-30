@@ -32,15 +32,15 @@ public class TableTaxType extends TableStaticData<TaxType> {
 	}
 	
 	/* Declare DataSet */
-	protected void declareData(DataSet<?,?> pData) {
+	protected void declareData(DataSet<?> pData) {
 		FinanceData myData = (FinanceData)pData;
 		theList = myData.getTaxTypes();
 		setList(theList);
 	}
 
 	/* Load the tax type */
-	protected void loadTheItem(int pId, int pControlId, boolean isEnabled, byte[] pType, byte[] pDesc) throws Exception {
+	protected void loadTheItem(int pId, int pControlId, boolean isEnabled, int iOrder, byte[] pType, byte[] pDesc) throws Exception {
 		/* Add into the list */
-		theList.addItem(pId, pControlId, isEnabled, pType, pDesc);
+		theList.addItem(pId, pControlId, isEnabled, iOrder, pType, pDesc);
 	}
 }

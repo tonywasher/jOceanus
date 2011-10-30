@@ -16,7 +16,7 @@ public class SymmetricKey {
 	/**
 	 * Encrypted ID Key Size
 	 */
-	public 	  final static int		IDSIZE   		= 256;
+	public 	  final static int		IDSIZE   		= 128;
 	
 	/**
 	 * Initialisation Vector size 

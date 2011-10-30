@@ -9,7 +9,7 @@ import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.ui.FileSelector.BackupCreate;
 import uk.co.tolcroft.models.views.DataControl;
 
-public class CreateBackup<T extends DataSet<T,?>> extends LoaderThread<T> {
+public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
 	/* Task description */
 	private static String  	theTask		= "Backup Creation";
 
@@ -35,7 +35,7 @@ public class CreateBackup<T extends DataSet<T,?>> extends LoaderThread<T> {
 	/* Background task (Worker Thread)*/
 	public T performTask() throws Throwable {
 		T				myData		= null;
-		DataSet<T,?>	myDiff		= null;
+		DataSet<T>		myDiff		= null;
 		SpreadSheet<T>	mySheet		= null;
 		boolean			doDelete	= false;
 		File			myFile		= null;

@@ -55,7 +55,7 @@ public class TablePattern extends TableEncrypted<Pattern> {
 	}
 	
 	/* Declare DataSet */
-	protected void declareData(DataSet<?,?> pData) {
+	protected void declareData(DataSet<?> pData) {
 		FinanceData myData = (FinanceData)pData;
 		theList 	= myData.getPatterns();
 		theAccounts = myData.getAccounts();

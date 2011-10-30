@@ -291,7 +291,7 @@ public class DebugItem implements HyperlinkListener,
 		/* Enable movement buttons */
 		theNextThou.setEnabled(myPos < mySize - 1000);
 		thePrevThou.setEnabled(myPos >= 1000);
-		theNextHun.setEnabled(myPos >= 100);
+		theNextHun.setEnabled(myPos < mySize - 100);
 		thePrevHun.setEnabled(myPos >= 100);
 		theNextTen.setEnabled(myPos < mySize - 10);
 		thePrevTen.setEnabled(myPos >= 10);

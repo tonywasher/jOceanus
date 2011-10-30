@@ -211,7 +211,7 @@ public class Statement implements DebugObject {
 		public List getUpdateList() { return null; }
 		public List getEditList() 	{ return null; }
 		public List getShallowCopy() { return null; }
-		public List getDeepCopy(DataSet<?,?> pData) { return null; }
+		public List getDeepCopy(DataSet<?> pData) { return null; }
 		public List getDifferences(List pOld) { return null; }
 
 		/* Is this list locked */
@@ -231,7 +231,16 @@ public class Statement implements DebugObject {
 		 * @return the newly added item
 		 */
 		public Line addNewItem() {
+			/* Create the new line */
 			Line myLine = new Line(this);
+
+			/* Set the Date as the start of the range */
+			myLine.setDate(theRange.getStart());
+			
+			/* Add zero amount */
+			try { myLine.setAmount(new Money(0)); } catch (Throwable e) {}
+			
+			/* Add line to list */
 			add(myLine);
 			return myLine;
 		}
@@ -406,6 +415,12 @@ public class Statement implements DebugObject {
 		}
 								
 		/**
+		 * Get an initial set of values 
+		 * @return an initial set of values 
+		 */
+		protected HistoryValues<Line> getNewValues() { return new Values(); }
+		
+		/**
 	 	* Construct a copy of a Line
 	 	* @param pLine The Line
 	 	*/
@@ -413,8 +428,8 @@ public class Statement implements DebugObject {
 			/* Set standard values */
 			super(pList, 0);
 			theStatement = pList.theStatement;
-			Values myValues = new Values(pLine.getValues());
-			setValues(myValues);
+			Values myValues = getValues();
+			myValues.copyFrom(pLine.getValues());
 			pList.setNewId(this);
 		}
 
@@ -422,8 +437,6 @@ public class Statement implements DebugObject {
 		public Line(List           pList) {
 			super(pList, 0);
 			theStatement = pList.theStatement;
-			Values myValues = new Values();
-			setValues(myValues);
 			setControlKey(pList.getControlKey());
 			pList.setNewId(this);				
 		}
@@ -434,8 +447,8 @@ public class Statement implements DebugObject {
 			/* Make this an element */
 			super(pList, pEvent.getId());
 			theStatement = pList.theStatement;
-			Values 			myValues	= new Values(pEvent.getValues());		
-			setValues(myValues);
+			Values myValues = getValues();
+			myValues.copyFrom(pEvent.getValues());
 			setBase(pEvent);
 			pList.setNewId(this);				
 		}
@@ -805,11 +818,11 @@ public class Statement implements DebugObject {
 					theYears     = myValues.getYears();
 					theTransType = myValues.getTransType();
 				}
-
+				
 				/* Handle a Line Values */
 				else if (pSource instanceof Event.Values) {
 					Event.Values myValues = (Event.Values)pSource;
-					super.setControl(myValues.getControl());
+					super.copyFrom(myValues);
 					theDate 	 = myValues.getDate();
 					theDesc 	 = new StringPair(myValues.getDesc());
 					theAmount 	 = new MoneyPair(myValues.getAmount());
@@ -879,31 +892,20 @@ public class Statement implements DebugObject {
 			}
 
 			/**
-			 * Ensure encryption after security change
+			 * Update encryption after security change
 			 */
-			protected void applySecurity() throws Exception {
-				/* Apply the encryption */
-				theDesc.encryptPair();
-				theAmount.encryptPair();
-				if (theUnits     != null) theUnits.encryptPair();
-				if (theTaxCredit != null) theTaxCredit.encryptPair();
-				if (theDilution  != null) theDilution.encryptPair();
-			}		
+			protected void updateSecurity() throws Exception {}
+			
+			/**
+			 * Apply encryption after non-encrypted load
+			 */
+			protected void applySecurity() throws Exception {}
 			
 			/**
 			 * Adopt encryption from base
 			 * @param pBase the Base values
 			 */
-			protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {
-				Values myBase = (Values)pBase;
-
-				/* Apply the encryption */
-				theDesc.encryptPair(myBase.getDesc());
-				theAmount.encryptPair(myBase.getAmount());
-				if (theUnits     != null) theUnits.encryptPair(myBase.getUnits());
-				if (theTaxCredit != null) theTaxCredit.encryptPair(myBase.getTaxCredit());
-				if (theDilution  != null) theDilution.encryptPair(myBase.getDilution());
-			}		
+			protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {}
 		}
 	}	
 }

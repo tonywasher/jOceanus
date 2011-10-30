@@ -30,6 +30,11 @@ public class HelpPage extends DataItem<HelpPage> {
 	public 	HelpEntry	getEntry()	{ return theEntry; }
 
 	/**
+	 * Build History (no history)
+	 */
+	protected void buildHistory() {}
+
+	/**
 	 * Constructor
 	 * @param pList the list to which this help page belongs
 	 * @param pEntry the help entry for the help page
@@ -198,7 +203,7 @@ public class HelpPage extends DataItem<HelpPage> {
 		public List getUpdateList() { return null; }
 		public List getEditList() 	{ return null; }
 		public List getShallowCopy() { return null; }
-		public List getDeepCopy(DataSet<?,?> pData) { return null; }
+		public List getDeepCopy(DataSet<?> pData) { return null; }
 		public List getDifferences(List pOld) { return null; }
 
 		/**

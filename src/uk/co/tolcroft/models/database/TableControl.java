@@ -40,7 +40,7 @@ public class TableControl extends DatabaseTable<ControlData> {
 	}
 	
 	/* Declare DataSet */
-	protected void declareData(DataSet<?,?> pData) {
+	protected void declareData(DataSet<?> pData) {
 		theList = pData.getControlData();
 		setList(theList);
 	}
