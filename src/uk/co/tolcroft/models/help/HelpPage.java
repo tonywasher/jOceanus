@@ -5,24 +5,15 @@ import java.io.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
-import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.data.HistoryValues;
 
 /**
  *  Help Page class. This class maps between the name of a help page and the html that the name represents.
  */
-public class HelpPage extends DataItem<HelpPage> {
+public class HelpPage extends SortedItem<HelpPage> {
 	/* Members */
 	private String		theName		= null;
 	private String		theHtml		= null;
 	private HelpEntry	theEntry	= null;
-	
-	/**
-	 * The item type
-	 */
-	private final static String itemType	= "HelpPage";
 	
 	/* Access methods */
 	public	String		getName()	{ return theName; }
@@ -42,7 +33,7 @@ public class HelpPage extends DataItem<HelpPage> {
 	 */
 	public HelpPage(List pList, HelpEntry pEntry, InputStream pStream) throws Exception {
 		/* Call the super-constructor */
-		super(pList, 0);
+		super(pList);
 		
 		/* Local variables */
 		BufferedReader 		myReader;
@@ -81,59 +72,6 @@ public class HelpPage extends DataItem<HelpPage> {
 		/* Link the entry to us */
 		pEntry.setHelpPage(this);
 		theEntry = pEntry;
-	}
-
-	/**
-	 * Return the item type
-	 * @return item type
-	 */
-	public String itemType() {	return itemType; }
-
-	/* Field IDs */
-	public static final int FIELD_NAME  	= 0;
-	public static final int FIELD_TEXT	    = 1;
-	public static final int NUMFIELDS	    = 2;
-	
-	/**
-	 * Obtain the number of fields for an item
-	 * @return the number of fields
-	 */
-	public int	numFields() {return NUMFIELDS; }
-	
-	/**
-	 * Determine the field name for a particular field
-	 * @return the field name
-	 */
-	public static String	fieldName(int iField) {
-		switch (iField) {
-			case FIELD_NAME:		return "Name";
-			case FIELD_TEXT:		return "Text";
-			default:		  		return DataItem.fieldName(iField);
-		}
-	}
-	
-	/**
-	 * Determine the field name in a non-static fashion 
-	 */
-	public String getFieldName(int iField) { return fieldName(iField); }
-	
-	/**
-	 * Format the value of a particular field as a table row
-	 * @param iField the field number
-	 * @param pValues the values to use
-	 * @return the formatted field
-	 */
-	public String formatField(int iField, HistoryValues<HelpPage> pValues) {
-		String myString = ""; 
-		switch (iField) {
-			case FIELD_NAME: 	
-				myString += theName;
-				break;
-			case FIELD_TEXT: 	
-				myString += theHtml;
-				break;
-		}
-		return myString;
 	}
 
 	/**
@@ -187,38 +125,12 @@ public class HelpPage extends DataItem<HelpPage> {
 	}
 	
 	/* List class */
-	public static class List extends DataList<List, HelpPage> {
+	public static class List extends SortedList<HelpPage> {
 		/**
 		 * Construct a top-level List
 		 */
-		public List() { super(List.class, HelpPage.class, ListStyle.VIEW, false); }
+		public List() { super(HelpPage.class); }
 
-		/**
-		 * Return the item type
-		 * @return item type
-		 */
-		public String itemType() {	return itemType; }
-
-		/* Obtain extract lists. (not supported) */
-		public List getUpdateList() { return null; }
-		public List getEditList() 	{ return null; }
-		public List getShallowCopy() { return null; }
-		public List getDeepCopy(DataSet<?> pData) { return null; }
-		public List getDifferences(List pOld) { return null; }
-
-		/**
-		 * Add a new item to the list
-		 * 
-		 * @param pItem the item to add
-		 * @return the newly added item
-		 */
-		public HelpPage addNewItem(DataItem<?> pItem) { return null; }
-	
-		/**
-		 * Add a new item to the edit list
-		 */
-		public HelpPage addNewItem() { return null; }
-		
 		/**
 		 * Add a help page to the list
 		 * @param pEntry the help entry of the help page

@@ -31,6 +31,11 @@ public class Event extends EncryptedItem<Event> {
 	 */
 	public final static int DESCLEN 		= 50;
 	
+	/**
+	 * Event Info Set
+	 */
+	private EventInfoSet	theInfoSet		= null;
+	
 	/* Access methods */
 	public  Values         	getValues()    { return (Values)super.getValues(); }	
 	public  Date      		getDate()      { return getValues().getDate(); }
@@ -43,6 +48,7 @@ public class Event extends EncryptedItem<Event> {
 	public  Money     		getTaxCredit() { return getPairValue(getValues().getTaxCredit()); }
 	public  Integer	        getYears()     { return getValues().getYears(); }
 	public  Dilution        getDilution()  { return getPairValue(getValues().getDilution()); }
+	protected EventInfoSet  getInfoSet()   { return theInfoSet; }
 
 	/* Encrypted value access */
 	public  byte[]	getAmountBytes()    { return getPairBytes(getValues().getAmount()); }
@@ -67,6 +73,19 @@ public class Event extends EncryptedItem<Event> {
 	public static final int FIELD_YEARS     = EncryptedItem.NUMFIELDS+9;
 	public static final int NUMFIELDS	    = EncryptedItem.NUMFIELDS+10;
 			
+	/* Virtual Field IDs */
+	public static final int VFIELD_TAXCREDIT	= 100;
+	public static final int VFIELD_NATINSURE	= 101;
+	public static final int VFIELD_BENEFIT		= 102;
+	public static final int VFIELD_PENSION		= 103;
+	public static final int VFIELD_CASHCONSIDER	= 104;
+	public static final int VFIELD_CREDITUNITS	= 105;
+	public static final int VFIELD_DEBITUNITS	= 106;
+	public static final int VFIELD_DILUTION		= 107;
+	public static final int VFIELD_XFERDELAY	= 108;
+	public static final int VFIELD_QUALIFYYEARS	= 109;
+	public static final int VFIELD_CASHACCOUNT	= 110;
+	
 	/**
 	 * Obtain the type of the item
 	 * @return the type of the item
@@ -256,7 +275,7 @@ public class Event extends EncryptedItem<Event> {
 		pList.setNewId(this);				
 	}
 
-	/* Standard constructor */
+	/* constructor for load from encrypted */
 	private Event(List      		pList,
 			      int	          	uId, 
 			      int				uControlId,
@@ -284,6 +303,9 @@ public class Event extends EncryptedItem<Event> {
 		
 		/* Create a new EventValues object */
 		Values myValues = getValues();
+		
+		/* Create a new EventInfoSet */
+		theInfoSet = new EventInfoSet(this);
 
 		/* Store the IDs that we will look up */
 		myValues.setDebitId(uDebit);
@@ -480,6 +502,20 @@ public class Event extends EncryptedItem<Event> {
 		myValues.setTransType(myNewTran);
 	}
 
+	/**
+	 * Add additional fields to HTML String
+	 * @param pDetail the debug detail
+	 * @param pBuffer the string buffer 
+	 */
+	public void addHTMLFields(DebugDetail 	pDetail, 
+							  StringBuilder pBuffer) {
+		/* If we have any Event Info */
+		if (theInfoSet != null) {
+			/* Add the detail */
+			theInfoSet.addHTMLFields(pDetail, pBuffer);
+		}
+	}
+	
 	/**
 	 * Determines whether an event can be valid
 	 * 
@@ -791,7 +827,7 @@ public class Event extends EncryptedItem<Event> {
 				((myTransType == null) ||
 				 ((!myTransType.isStockSplit()) &&
 				  (!myTransType.isAdminCharge())))) {  
-				addError("Units must positive unless this is a StockSplit/AdminCharge", FIELD_UNITS);
+				addError("Units must be positive unless this is a StockSplit/AdminCharge", FIELD_UNITS);
 			}
 		}
 		
@@ -1197,13 +1233,13 @@ public class Event extends EncryptedItem<Event> {
 	 */
 	public boolean applyChanges(DataItem<?> pItem){
 		boolean bChanged = false;
-		if (pItem instanceof Event) {
-			Event myEvent = (Event)pItem;
-			bChanged = applyChanges(myEvent);
-		}
-		else if (pItem instanceof Statement.Line) {
+		if (pItem instanceof Statement.Line) {
 			Statement.Line myLine = (Statement.Line)pItem;
 			bChanged = applyChanges(myLine);
+		}
+		else if (pItem instanceof Event) {
+			Event myEvent = (Event)pItem;
+			bChanged = applyChanges(myEvent);
 		}
 		return bChanged;
 	}
@@ -1337,6 +1373,18 @@ public class Event extends EncryptedItem<Event> {
 		
 		/* Return to caller */
 		return bChanged;
+	}
+
+	/**
+	 * Format an Account 
+	 * @param pAccount the account to format
+	 * @return the formatted account
+	 */
+	public static String format(Event pEvent) {
+		String 	myFormat;
+		myFormat = (pEvent != null) ? pEvent.getDesc()
+							 	    : "null";
+		return myFormat;
 	}
 
 	/**
@@ -1511,9 +1559,10 @@ public class Event extends EncryptedItem<Event> {
 
 		/**
 		 * Add additional fields to HTML String
+		 * @param pDetail the debug detail
 		 * @param pBuffer the string buffer 
 		 */
-		public void addHTMLFields(StringBuilder pBuffer) {
+		public void addHTMLFields(DebugDetail pDetail, StringBuilder pBuffer) {
 			/* If we have a Range */
 			if (theRange != null) {
 				/* Start the Fields section */

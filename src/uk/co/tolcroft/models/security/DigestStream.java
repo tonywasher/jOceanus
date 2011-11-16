@@ -53,7 +53,7 @@ public class DigestStream {
 		/**
 		 * Construct the output stream
 		 * @param pDigestType the type of digest
-		 * @param pFile the file to write encrypted data to
+		 * @param pStream the stream to write encrypted data to
 		 */
 		public Output(DigestType 			pDigestType,
 					  java.io.OutputStream 	pStream) throws Exception {		

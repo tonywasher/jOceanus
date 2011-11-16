@@ -27,7 +27,7 @@ import uk.co.tolcroft.models.views.ViewList.ListClass;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 
-public class PricePoint extends StdTable<SpotPrices.SpotPrice> {
+public class PricePoint extends StdTable<AcctPrice> {
 	/* Members */
 	private static final long serialVersionUID = 5826211763056873599L;
 	
@@ -36,7 +36,7 @@ public class PricePoint extends StdTable<SpotPrices.SpotPrice> {
 	private ListClass				theViewList			= null;
 	private spotViewModel			theModel			= null;
 	private SpotPrices             	theSnapshot			= null;
-	private SpotPrices.List        	thePrices			= null;
+	private AcctPrice.List        	thePrices			= null;
 	private MainTab					theParent			= null;
 	private JPanel					thePanel			= null;
 	private PricePoint			 	theTable			= this;
@@ -274,24 +274,24 @@ public class PricePoint extends StdTable<SpotPrices.SpotPrice> {
 	 * @param pItem the current item
 	 * @param pValues the potential values for restoration
 	 */
-	public boolean isValidHistory(DataItem<SpotPrices.SpotPrice>	pItem,
-							  	  HistoryValues<?>					pValues) {
-		SpotPrices.SpotPrice	mySpot  = (SpotPrices.SpotPrice) pItem;
+	public boolean isValidHistory(DataItem<AcctPrice>	pItem,
+							  	  HistoryValues<?>		pValues) {
+		SpotPrice	mySpot  = (SpotPrice) pItem;
 		
-		/* If this is an AcctPrice item */
-		if (pValues instanceof AcctPrice.Values) {
+		/* if it is a SpotPrice item */
+		if (pValues instanceof SpotPrice.Values) {
+			/* Always OK */
+			return true;
+		}
+
+		/* else If this is an AcctPrice item */
+		else if (pValues instanceof AcctPrice.Values) {
 			/* Access the values */
 			AcctPrice.Values	myPrice = (AcctPrice.Values) pValues;
 
 			/* Check whether the date is the same */
 			if (Date.differs(mySpot.getDate(), myPrice.getDate()).isDifferent())
 				return false;
-		}
-
-		/* else it is a SpotPrice item */
-		else if (pValues instanceof SpotPrices.SpotPrice.Values) {
-			/* Always OK */
-			return true;
 		}
 
 		/* else unsupported values */
@@ -451,11 +451,11 @@ public class PricePoint extends StdTable<SpotPrices.SpotPrice> {
 		 * @return the object value
 		 */
 		public Object getValueAt(int row, int col) {
-			SpotPrices.SpotPrice 	mySpot;
-			Object         			o;
+			SpotPrice 	mySpot;
+			Object      o;
 											
 			/* Access the spot price */
-			mySpot = thePrices.get(row);
+			mySpot = (SpotPrice)thePrices.get(row);
 			
 			/* Return the appropriate value */
 			switch (col) {
@@ -489,10 +489,10 @@ public class PricePoint extends StdTable<SpotPrices.SpotPrice> {
 		 * @param obj the object value to set
 		 */
 		public void setValueAt(Object obj, int row, int col) {
-			SpotPrices.SpotPrice mySpot;
+			SpotPrice mySpot;
 			
 			/* Access the line */
-			mySpot = thePrices.get(row);
+			mySpot = (SpotPrice)thePrices.get(row);
 			
 			/* Push history */
 			mySpot.pushHistory();
@@ -547,7 +547,7 @@ public class PricePoint extends StdTable<SpotPrices.SpotPrice> {
 	/**
 	 *  SpotView mouse listener
 	 */
-	private class spotViewMouse extends StdMouse<SpotPrices.SpotPrice> {
+	private class spotViewMouse extends StdMouse<AcctPrice> {
 		/**
 		 * Constructor
 		 */

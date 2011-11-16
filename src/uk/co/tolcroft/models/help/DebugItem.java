@@ -22,8 +22,8 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
 
-import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.ReportItem;
+import uk.co.tolcroft.models.ReportList;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
 
 public class DebugItem implements HyperlinkListener,
@@ -34,9 +34,10 @@ public class DebugItem implements HyperlinkListener,
 	 */
 	private JPanel						thePanel		= null;
 	private JPanel						theListPanel	= null;
-	private DataList<?,?>				theList 		= null;
-	private DataItem<?>					theItem 		= null;
-	private DataList<?,?>.ListIterator	theIterator		= null;
+	private ReportList<?>				theList 		= null;
+	private ReportItem<?>				theItem 		= null;
+	private ReportList<?>.ListIterator	theIterator		= null;
+	//private	DebugEntry					theEntry		= null;
 	private DebugObject					theObject		= null;
 	private DebugDetail					theDetail		= null;
 	private	JButton						theNext			= null;
@@ -187,17 +188,18 @@ public class DebugItem implements HyperlinkListener,
 	/* Display debug detail */
 	protected void displayDebug(DebugEntry pEntry) {
 		/* Record the object */
+		//theEntry  = pEntry;
 		theObject = pEntry.getObject();
 		
-		/* If we should use the DataList window */
+		/* If we should use the ReportList window */
 		if ((theObject != null) &&
-			(theObject instanceof DataList) && 
+			(theObject instanceof ReportList) && 
 			(!pEntry.hasChildren())) {
 			/* Show the list window */
 			theListPanel.setVisible(true);
 
 			/* Declare the list to the list window */
-			DataList<?,?> myList = (DataList<?,?>) theObject;
+			ReportList<?> myList = (ReportList<?>) theObject;
 			setList(myList);
 		}
 			
@@ -245,7 +247,7 @@ public class DebugItem implements HyperlinkListener,
 	/**
 	 * Set List
 	 */
-	private void setList(DataList<?,?> pList) {
+	private void setList(ReportList<?> pList) {
 		/* Record list */
 		theList 	= pList;
 		
@@ -274,8 +276,8 @@ public class DebugItem implements HyperlinkListener,
 	 */
 	private void displayItem() {
 		/* Access the list size */
-		int mySize = theList.size();
-		int myPos  = theList.indexOf(theItem);
+		int mySize = theList.sizeAll();
+		int myPos  = theList.indexAllOf(theItem);
 		
 		/* Show/hide movement buttons */
 		theNextThou.setVisible(mySize >= 1000);
@@ -382,7 +384,7 @@ public class DebugItem implements HyperlinkListener,
 	 * @param iNumSteps the number of steps to shift (positive or negative)
 	 */
 	private void shiftIterator(int iNumSteps) {
-		DataItem<?>	myNext = null;
+		ReportItem<?>	myNext = null;
 		
 		/* If we are stepping forwards */
 		if (iNumSteps > 0) {

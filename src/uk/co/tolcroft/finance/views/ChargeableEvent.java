@@ -3,14 +3,9 @@ package uk.co.tolcroft.finance.views;
 import uk.co.tolcroft.finance.data.Event;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
-import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.data.DataState;
-import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.help.DebugDetail;
 
-public class ChargeableEvent extends DataItem<ChargeableEvent> {
+public class ChargeableEvent extends ReportItem<ChargeableEvent> {
 	/**
 	 * The name of the object
 	 */
@@ -77,7 +72,7 @@ public class ChargeableEvent extends DataItem<ChargeableEvent> {
 	 */
 	private ChargeableEvent(List pList, Event pEvent) {
 		/* Call super constructor */
-		super(pList, pEvent.getId());
+		super(pList);
 		
 		/* Local variables */
 		long			myValue;
@@ -89,9 +84,6 @@ public class ChargeableEvent extends DataItem<ChargeableEvent> {
 		
 		/* Link to the event */
 		setBase(pEvent);
-		
-		/* Set status */
-		setState(DataState.CLEAN);
 	}
 	
 	/* Field IDs */
@@ -119,7 +111,7 @@ public class ChargeableEvent extends DataItem<ChargeableEvent> {
 		switch (iField) {
 			case FIELD_SLICE: 		return "Slice";
 			case FIELD_TAXATION: 	return "Taxation";
-			default:		  		return DataItem.fieldName(iField);
+			default:		  		return ReportItem.fieldName(iField);
 		}
 	}
 	
@@ -132,10 +124,9 @@ public class ChargeableEvent extends DataItem<ChargeableEvent> {
 	 * Format the value of a particular field as a table row
 	 * @param pDetail the debug detail
 	 * @param iField the field number
-	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(DebugDetail pDetail, int iField, HistoryValues<ChargeableEvent> pValues) {
+	public String formatField(DebugDetail pDetail, int iField) {
 		String myString = ""; 
 		switch (iField) {
 			case FIELD_SLICE:		
@@ -215,34 +206,12 @@ public class ChargeableEvent extends DataItem<ChargeableEvent> {
 	/**
 	 * List of ChargeableEvents
 	 */
-	public static class List extends DataList<List, ChargeableEvent> {
+	public static class List extends ReportList<ChargeableEvent> {
 		/**
 		 * Constructor
 		 */
-		public List() { super(List.class, ChargeableEvent.class, ListStyle.VIEW, false); }
+		public List() { super(ChargeableEvent.class); }
 		
-		/** 
-		/* Obtain extract lists. */
-		public List getUpdateList() { return null; }
-		public List getEditList() 	{ return null; }
-		public List getShallowCopy() { return null; }
-		public List getDeepCopy(DataSet<?> pData) { return null; }
-		public List getDifferences(List pOld) { return null; }
-
-		/**
-		 * Add a new item to the list
-		 * @param pItem the item to add
-		 * @return the newly added item
-		 */
-		public ChargeableEvent addNewItem(DataItem<?> pItem) { return null; }
-
-	
-		/**
-		 * Add a new item to the edit list
-		 * @return the newly added item
-		 */
-		public ChargeableEvent addNewItem() { return null; }
-	
 		/**
 		 * Obtain the type of the item
 		 * @return the type of the item

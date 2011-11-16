@@ -6,17 +6,17 @@ import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugObject;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
 import uk.co.tolcroft.models.Difference;
-import uk.co.tolcroft.models.LinkNode;
 import uk.co.tolcroft.models.LinkObject;
-import uk.co.tolcroft.models.SortedList;
+import uk.co.tolcroft.models.ReportItem;
 
 /**
  * Provides the abstract DataItem class as the basis for data items. The implementation of the 
  * {@link LinkObject} interface means that this object can only be held in one list at a time and is unique within that list
  * @see uk.co.tolcroft.models.data.DataList
  */
-public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
-																 DebugObject {
+public abstract class DataItem<T extends DataItem<T>> 
+								extends ReportItem<T> 
+								implements DebugObject {
 	/**
 	 * The list to which this item belongs
 	 */
@@ -51,11 +51,6 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	 * Is the item in the process of being restored
 	 */
     private boolean             	isRestoring	= false;
-
-    /**
-	 * Storage for the List Node
-	 */
-    private LinkNode<T>				theLink		= null;
 
     /**
 	 * The id number of the item
@@ -124,18 +119,6 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	 * @return the Base item or <code>null</code>
 	 */
 	protected HistoryControl<T>		getHistory()	{ return theHistory; }
-
-	/**
-	 * Get the link node for this item
-	 * @return the Link node or <code>null</code>
-	 */
-	public LinkNode<T>				getLinkNode(SortedList<T> pList)	{ return theLink; }
-
-	/**
-	 * Get the link node for this item
-	 * @return the Link node or <code>null</code>
-	 */
-	public void						setLinkNode(SortedList<T> l, LinkNode<T> o)	{ theLink = o; }
 
 	/**
 	 * Determine whether the item is visible to standard searches
@@ -308,9 +291,10 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	
 	/**
 	 * Stub for extensions to add their own fields
+	 * @param pDetail the debug detail
 	 * @param pBuffer the string buffer 
 	 */
-	public void 					addHTMLFields(StringBuilder pBuffer) {}
+	public void 					addHTMLFields(DebugDetail pDetail, StringBuilder pBuffer) {}
 
 	/**
 	 * Id for standard field
@@ -355,23 +339,8 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 		if (isDeleted) 
 			myString.append("<tr><td>Deleted</td><td>true</td></tr>");
 		
-		/* If we are part of a list */
-		if (theLink != null) {
-			/* Start the status section */
-			myString.append("<tr><th rowspan=\"");
-			myString.append((theLink.isHidden()) ? 4 : 3);
-			myString.append("\">Indices</th></tr>");
-			
-			/* Format the State and edit State */
-			myString.append("<tr><td>Index</td><td>");
-			myString.append(theLink.getIndex(false));
-			myString.append("</td></tr>");
-			myString.append("<tr><td>HiddenIndex</td><td>");
-			myString.append(theLink.getIndex(true));
-			myString.append("</td></tr>");
-			if (theLink.isHidden()) 
-				myString.append("<tr><td>Hidden</td><td>true</td></tr>");
-		}
+		/* Add Link Debug */
+		addLinkDebug(myString);
 		
 		/* Start the values section */
 		myString.append("<tr><th rowspan=\"");
@@ -392,7 +361,7 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 		}
 
 		/* Add any additional HTML Fields */
-		addHTMLFields(myString);
+		addHTMLFields(pDetail, myString);
 		
 		/* If errors exist */
 		if (hasErrors()) {
@@ -694,6 +663,7 @@ public abstract class DataItem<T extends DataItem<T>> implements LinkObject<T>,
 	 * @param uId the Id of the new item (or 0 if not yet known)
 	 */
 	public DataItem(DataList<?,T> pList, int uId) {
+		super(pList);
 		theId      = uId;
 		theList    = pList;
 		theItem	   = pList.getBaseClass().cast(this);

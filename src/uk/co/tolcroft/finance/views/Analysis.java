@@ -318,9 +318,10 @@ public class Analysis {
 		
 		/**
 		 * Add additional fields to HTML String
+		 * @param pDetail the debug detail
 		 * @param pBuffer the string buffer 
 		 */
-		public void addHTMLFields(StringBuilder pBuffer) {
+		public void addHTMLFields(DebugDetail pDetail, StringBuilder pBuffer) {
 			/* Start the Fields section */
 			pBuffer.append("<tr><th rowspan=\"4\">Fields</th></tr>");
 				

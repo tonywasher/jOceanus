@@ -228,7 +228,7 @@ public class MaintenanceTab implements ChangeListener {
 		/* If the selected component is Static */
 		else if (myComponent == (Component)theStatic.getPanel()) {
 			/* Set the debug focus */
-			theStatic.getDebugEntry().setFocus();			
+			theStatic.determineFocus();			
 		}
 	}
 }

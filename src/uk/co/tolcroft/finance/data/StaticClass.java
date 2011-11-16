@@ -1130,4 +1130,130 @@ public class StaticClass {
 								"Invalid Tax Regime Class Id: " + id);
 		}
 	}	
+	
+	/**
+	 * Enumeration of EventInfo Classes. 
+	 */
+	public enum EventInfoClass implements StaticInterface {
+		/**
+		 * Tax Credit
+		 */
+		TaxCredit(1),
+
+		/**
+		 * National Insurance
+		 */
+		NatInsurance(2),
+
+		/**
+		 * Benefit
+		 */
+		Benefit(3),
+
+		/**
+		 * Pension
+		 */
+		Pension(4),
+		
+		/**
+		 * QualifyingYears
+		 */
+		QualifyYears(5),
+		
+		/**
+		 * TransferDelay
+		 */
+		XferDelay(6),
+		
+		/**
+		 * Credit Units
+		 */
+		CreditUnits(7),
+		
+		/**
+		 * Debit Units
+		 */
+		DebitUnits(8),
+		
+		/**
+		 * Dilution
+		 */
+		Dilution(9),
+		
+		/**
+		 * CashConsideration
+		 */
+		CashConsider(10),
+		
+		/**
+		 * Cash Account
+		 */
+		CashAccount(11);
+		
+		/**
+		 * Class Id
+		 */
+		private int theId		= -1;
+		
+		/**
+		 * Class Order
+		 */
+		private int theOrder	= -1;
+		
+		/**
+		 * Obtain Class Id
+		 * @return the class id
+		 */
+		public int getClassId() { return theId; }
+		
+		/**
+		 * Obtain Class Order
+		 * @return the class order
+		 */
+		public int getOrder() 	{
+			if (theOrder == -1) theOrder = calculateOrder(this);
+			return theOrder; 
+		}
+		
+		/**
+		 * Obtain order
+		 * @param pClass the EventInfo class
+		 * @return the order
+		 */
+		private static int calculateOrder(EventInfoClass pClass) {
+			/* Switch on id */
+			switch(pClass) {
+				case TaxCredit: 	return 0;
+				case NatInsurance:	return 1;
+				case Benefit: 		return 2;
+				case Pension: 		return 3;
+				case QualifyYears: 	return 4;
+				case XferDelay: 	return 5;
+				case CreditUnits:	return 6;
+				case DebitUnits: 	return 7;
+				case Dilution: 		return 8;
+				case CashConsider:	return 9;
+				case CashAccount: 	
+				default:			return 10;
+			}
+		}
+
+		/**
+		 * Constructor
+		 */
+		private EventInfoClass(int uId) {
+			theId 		= uId;
+		}
+
+		/**
+		 * get value from id
+		 * @param id the id value
+		 * @return the corresponding enum object
+		 */
+		public static EventInfoClass fromId(int id) throws Exception {
+			for (EventInfoClass myClass: values()) {	if (myClass.getClassId() == id) return myClass; }
+			throw new Exception(ExceptionClass.DATA,
+								"Invalid EventInfo Class Id: " + id);
+		}
+	}	
 }

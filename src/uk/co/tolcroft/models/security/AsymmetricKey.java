@@ -93,7 +93,6 @@ public class AsymmetricKey {
 	/**
 	 * Constructor for new key
 	 * @param pKeyType the key type 
-	 * @param pPassKey the password key 
 	 * @param pRandom the secure random generator 
 	 */
 	public AsymmetricKey(AsymKeyType	pKeyType,

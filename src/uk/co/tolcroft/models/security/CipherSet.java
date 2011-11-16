@@ -63,7 +63,7 @@ public class CipherSet {
 	
 	/**
 	 * Add a Cipher
-	 * @param pKey the Symmetric Key
+	 * @param pCipher the Cipher
 	 */
 	public void addCipher(DataCipher	pCipher) {
 		/* Store into map */
@@ -343,7 +343,7 @@ public class CipherSet {
 
 	/**
 	 * Wrap SymmetricKey
-	 * @param pSymmetricKey the key to wrap
+	 * @param pKey the key to wrap
 	 * @return the wrapped symmetric key
 	 */
 	public byte[] wrapKey(SymmetricKey pKey) throws Exception {
@@ -382,7 +382,7 @@ public class CipherSet {
 	
 	/**
 	 * Wrap AsymmetricKey (privateKey)
-	 * @param pASymKey the key to wrap
+	 * @param pKey the key to wrap
 	 * @return the wrapped Asymmetric key
 	 */
 	public byte[] wrapKey(AsymmetricKey pKey) throws Exception {
@@ -405,7 +405,7 @@ public class CipherSet {
 	/**
 	 * Unwrap AsymmetricKey
 	 * @param pEncrypted the wrapped private key
-	 * @param pPublic the wrapped private key
+	 * @param pPublicKey the wrapped private key
 	 * @param pKeyType the KeyType of the ASymmetric Key
 	 * @return the Asymmetric key
 	 */

@@ -365,7 +365,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	/**
 	 * Values for an EncryptedItem
 	 */
-	protected abstract class EncryptedValues implements HistoryValues<T> {
+	protected abstract class EncryptedValues extends HistoryValues<T> {
 		private ControlKey	theControl   = null;
 		private int			theControlId = -1;
 		

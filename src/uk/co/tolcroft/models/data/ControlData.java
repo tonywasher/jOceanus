@@ -418,7 +418,7 @@ public class ControlData extends DataItem<ControlData> {
 	/**
 	 * Values for a controlData 
 	 */
-	public class Values implements HistoryValues<ControlData> {
+	public class Values extends HistoryValues<ControlData> {
 		private int 			theDataVersion	= -1;
 		private ControlKey		theControlKey	= null;
 		private int 			theControlId 	= -1;

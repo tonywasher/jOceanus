@@ -9,14 +9,10 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
-import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.security.AsymmetricKey.AsymKeyType;
 import uk.co.tolcroft.models.security.SymmetricKey.SymKeyType;
 
-public class SecurityControl extends DataItem<SecurityControl> {
+public class SecurityControl extends SortedItem<SecurityControl> {
 	/**
 	 * The name of the object
 	 */
@@ -86,7 +82,7 @@ public class SecurityControl extends DataItem<SecurityControl> {
 	private SecurityControl(List				pList,
 						    SecuritySignature	pSignature) throws Exception {
 		/* Call super-constructor */
-		super(pList, 0);
+		super(pList);
 		
 		/* Store the security key */
 		theSignature = pSignature;
@@ -101,7 +97,7 @@ public class SecurityControl extends DataItem<SecurityControl> {
 	 */
 	public SecurityControl(SecurityControl pSource) throws Exception {
 		/* Call super-constructor */
-		super((List)pSource.getList(), 0);
+		super(pSource.getList());
 
 		/* Copy the random generator */
 		theRandom 	= pSource.getRandom();
@@ -127,7 +123,7 @@ public class SecurityControl extends DataItem<SecurityControl> {
 		
 		/* Note that we are now initialised and add to the list */
 		isInitialised = true;
-		getList().add(this);
+		pSource.getList().add(this);
 	}
 	
 	/**
@@ -301,7 +297,8 @@ public class SecurityControl extends DataItem<SecurityControl> {
 	
 	/**
 	 * Rebuild an AsymmetricKey from a security key 
-	 * @param pSecurityKey the SecurityKey for the key
+	 * @param pSecuredPrivateKeyDef the Secured Private Key definition  
+	 * @param pPublicKey the Public Key  
 	 * @param pKeyType the Asymmetric key type
 	 * @return the Asymmetric key
 	 */
@@ -399,14 +396,6 @@ public class SecurityControl extends DataItem<SecurityControl> {
 		return myKeyDef; 
 	}
 	
-	/* Field IDs */
-	public static final int FIELD_INIT 		= 0;
-	public static final int FIELD_HASH		= 1;
-	public static final int FIELD_TYPE		= 2;
-	public static final int FIELD_PRVKEY	= 3;
-	public static final int FIELD_PUBKEY	= 4;
-	public static final int NUMFIELDS	    = 5;
-	
 	/**
 	 * Obtain the type of the item
 	 * @return the type of the item
@@ -414,63 +403,8 @@ public class SecurityControl extends DataItem<SecurityControl> {
 	public String itemType() { return objName; }
 	
 	/**
-	 * Obtain the number of fields for an item
-	 * @return the number of fields
-	 */
-	public int	numFields() {return NUMFIELDS; }
-	
-	/**
-	 * Determine the field name for a particular field
-	 * @return the field name
-	 */
-	public static String	fieldName(int iField) {
-		switch (iField) {
-			case FIELD_INIT: 		return "Initialised";
-			case FIELD_HASH: 		return "PasswordHash";
-			case FIELD_TYPE: 		return "KeyType";
-			case FIELD_PRVKEY: 		return "PrivateKey";
-			case FIELD_PUBKEY: 		return "PublicKey";
-			default:		  		return DataItem.fieldName(iField);
-		}
-	}
-	
-	/**
-	 * Determine the field name in a non-static fashion 
-	 */
-	public String getFieldName(int iField) { return fieldName(iField); }
-	
-	/**
-	 * Format the value of a particular field as a table row
-	 * @param iField the field number
-	 * @param pValues the values to use
-	 * @return the formatted field
-	 */
-	public String formatField(int iField, HistoryValues<SecurityControl> pValues) {
-		String myString = ""; 
-		switch (iField) {
-			case FIELD_INIT: 
-				myString +=	(isInitialised() ? "true" : "false");
-				break;
-			case FIELD_HASH:
-				myString += (theSignature == null) ? null : Utils.HexStringFromBytes(theSignature.getPasswordHash()); 
-				break;
-			case FIELD_TYPE:
-				myString += (theSignature == null) ? null : theSignature.getKeyType().toString(); 
-				break;
-			case FIELD_PRVKEY:
-				myString += (theSignature == null) ? null : Utils.HexStringFromBytes(theSignature.getSecuredKeyDef()); 
-				break;
-			case FIELD_PUBKEY:
-				myString += (theSignature == null) ? null : Utils.HexStringFromBytes(theSignature.getPublicKey()); 
-				break;
-		}
-		return myString;
-	}
-
-	/**
-	 * Compare this Bucket to another to establish equality.
-	 * 
-	 * @param pThat The Bucket to compare to
+	 * Compare this Control to another to establish equality.
+	 * @param pThat The Control to compare to
 	 * @return <code>true</code> if the bucket is identical, <code>false</code> otherwise
 	 */
 	public boolean equals(Object pThat) {
@@ -494,9 +428,8 @@ public class SecurityControl extends DataItem<SecurityControl> {
 	}
 
 	/**
-	 * Compare this Bucket to another to establish sort order.
-	 * 
-	 * @param pThat The Bucket to compare to
+	 * Compare this Control to another to establish sort order.
+	 * @param pThat The Control to compare to
 	 * @return (-1,0,1) depending of whether this object is before, equal, 
 	 * 					or after the passed object in the sort order
 	 */
@@ -511,45 +444,19 @@ public class SecurityControl extends DataItem<SecurityControl> {
 		/* Access the object as a SecurityControl */
 		SecurityControl myThat = (SecurityControl)pThat;
 				
-		/* Compare the IDs */
-		int iDiff = (int)(getId() - myThat.getId());
-		if (iDiff < 0) return -1;
-		if (iDiff > 0) return 1;
-		return 0;
+		/* Compare the Signatures */
+		if (theSignature == myThat.theSignature) return 0;
+		if (theSignature == null) return 1;
+		return theSignature.compareTo(myThat.theSignature);
 	}
 	
 	/* List of SecurityControls */
-	public static class List extends DataList<List, SecurityControl> {
+	public static class List extends SortedList<SecurityControl> {
 		/**
 		 * Construct a top-level List
 		 */
-		public List() { super(List.class, SecurityControl.class, ListStyle.VIEW, false); }
+		public List() { super(SecurityControl.class); }
 
-		/* Obtain extract lists. (not supported) */
-		public List getUpdateList() { return null; }
-		public List getEditList() 	{ return null; }
-		public List getShallowCopy() { return null; }
-		public List getDeepCopy(DataSet<?> pData) { return null; }
-		public List getDifferences(List pOld) { return null; }
-
-		/**
-		 * Add a new item to the list
-		 * @param pItem the item to add
-		 * @return the newly added item
-		 */
-		public SecurityControl addNewItem(DataItem<?> pItem) { return null; }
-	
-		/**
-		 * Add a new item to the edit list
-		 */
-		public SecurityControl addNewItem() { return null; }
-	
-		/**
-		 * Obtain the type of the item
-		 * @return the type of the item
-		 */
-		public String itemType() { return objName; }		
-		
 		/**
 		 * Access Security control
 		 * @param pSignature the Signature (or null)

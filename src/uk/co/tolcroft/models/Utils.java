@@ -4,13 +4,21 @@ import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.OutputStreamWriter;
 import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
+//import java.util.Currency;
 
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.security.SecurityControl;
 
 public class Utils {
+	/**
+	 * The Currency Symbol.
+	 */	
+	//private static String	thePound	 = Currency.getInstance("GBP").getSymbol(); 
+	//public  static String  	getPound()	 { return thePound; }
+	
 	/**
 	 * Determine whether two String objects differ.
 	 * @param pCurr The current string 
@@ -158,7 +166,7 @@ public class Utils {
 				myDigit = (int)(myLong % 16);
 				myChar  = (char)((myDigit > 9) ? ('a' + (myDigit-10)) : ('0' + myDigit));
 				myValue.insert(0, myChar);
-				myLong  /= 16;
+				myLong  >>= 4;
 			}
 			
 			/* Reinstate negative sign */
@@ -253,7 +261,7 @@ public class Utils {
 							  		"Non Hexadecimal Value: " + pHexString);
 				
 			/* Add into the value */
-			myValue *= 16;
+			myValue <<= 4;
 			myValue += ((myChar >= 'a') ? 10 + (myChar - 'a') : (myChar - '0'));
  		}
 		
@@ -330,7 +338,7 @@ public class Utils {
 			myByte &= 255;
 
 			/* Add in to value */
-			myValue *= 256;
+			myValue <<= 8;
 			myValue += myByte;
  		}
 		
@@ -355,7 +363,7 @@ public class Utils {
 			myBytes[i-1] = myByte;
 			
 			/* Adjust value */
-			myValue /= 256;
+			myValue >>= 8;
  		}
 		
  		/* Return the value */
@@ -378,7 +386,7 @@ public class Utils {
 			myByte &= 255;
 
 			/* Add in to value */
-			myValue *= 256;
+			myValue <<= 8;
 			myValue += myByte;
  		}
 		
@@ -403,10 +411,29 @@ public class Utils {
 			myBytes[i-1] = myByte;
 			
 			/* Adjust value */
-			myValue /= 256;
+			myValue >>= 8;
  		}
 		
  		/* Return the value */
  		return myBytes;
+	}
+
+	/**
+	 * Compare two byte arrays for sort order
+	 * @param pCurr The current array 
+	 * @param pNew The new array
+	 */
+	public static int compareTo(byte[] pCurr, byte[] pNew) {
+		/* Handle trivial cases */
+		if (pCurr == pNew) return 0;
+		if (pCurr == null) return 1;
+		if (pNew  == null) return -1;
+		
+		/* Wrap as Byte Buffers */
+		ByteBuffer myCurr = ByteBuffer.wrap(pCurr); 
+		ByteBuffer myNew  = ByteBuffer.wrap(pNew);
+		
+		/* Compare the two */
+		return myCurr.compareTo(myNew);
 	}
 }

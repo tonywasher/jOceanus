@@ -93,7 +93,6 @@ public class PBEKeyMode {
 	 * @param pSecondDigest the second digest type
 	 * @param pThirdDigest the second digest type
 	 * @param pPBEKeyType the PBE key type
-	 * @param pAsymKeyType the Asym Key type
 	 * @param pRandom the random generator
 	 */
 	public static PBEKeyMode getMode(DigestType		pFirstDigest,
@@ -167,7 +166,7 @@ public class PBEKeyMode {
 		
 		/* Shift up place nibbles */
 		int  iMask	= 15;
-		while (iPlace-- > 0) { iId *= 16; iMask *= 16; }
+		while (iPlace-- > 0) { iId <<= 4; iMask <<= 4; }
 		
 		/* Add into the mode */
 		theMode &= ~iMask;
@@ -183,7 +182,7 @@ public class PBEKeyMode {
 		/* Shift down place nibbles */
 		int  iId 	= pMode;
 		int  iMask	= 15;
-		while (iPlace-- > 0) { iId /= 16; }
+		while (iPlace-- > 0) { iId >>= 4; }
 		
 		/* Extract from the mode */
 		iId &= iMask;
@@ -201,7 +200,7 @@ public class PBEKeyMode {
 		
 		/* Shift up place bytes */
 		int iMask	= 15;
-		while (iPlace-- > 0) { iId *= 16; iMask *= 16; }
+		while (iPlace-- > 0) { iId <<= 4; iMask <<= 4; }
 		
 		/* Add into the mode */
 		theMode &= ~iMask;
@@ -217,7 +216,7 @@ public class PBEKeyMode {
 		/* Access as a long value and shift down place bytes */
 		int  iId 	= pMode;
 		int	 iMask	= 15;
-		while (iPlace-- > 0) { iId /= 16; }
+		while (iPlace-- > 0) { iId >>= 4; }
 		
 		/* Extract from the mode */
 		iId &= iMask;

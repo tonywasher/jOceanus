@@ -7,6 +7,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import uk.co.tolcroft.models.Date;
 import uk.co.tolcroft.models.Exception;
@@ -37,6 +38,11 @@ public class TableDefinition {
 	 * The Sort List 
 	 */
 	private List<ColumnDefinition>	theSortList		= null;
+
+	/**
+	 * Are we sorting on a reference column 
+	 */
+	private boolean					sortOnReference	= false;
 
 	/**
 	 * The array list for the columns
@@ -296,6 +302,24 @@ public class TableDefinition {
 		return myColumn;
 	}
 
+	/**
+	 * Locate reference
+	 * @param pTables the list of defined tables
+	 */
+	protected void resolveReferences(List<DatabaseTable<?>> pTables) {
+		Iterator<ColumnDefinition>	myIterator;
+		ColumnDefinition			myDef;
+
+		/* Create the iterator */
+		myIterator = theList.iterator();
+		
+		/* Loop through the columns */
+		while (myIterator.hasNext()) {
+			myDef = myIterator.next();
+			myDef.locateReference(pTables);
+		}
+	}
+	
 	/**
 	 * Load results
 	 * @param pResults the result set
@@ -830,6 +854,7 @@ public class TableDefinition {
 		while (myIterator.hasNext()) {
 			myDef = myIterator.next();
 			if (!myFirst) myBuilder.append(", ");
+			if (sortOnReference) myBuilder.append("a.");
 			myBuilder.append(myDef.getColumnName());
 			myFirst = false;
 		}
@@ -837,27 +862,104 @@ public class TableDefinition {
 		/* Close the statement */
 		myBuilder.append(" from ");
 		myBuilder.append(theTableName);
+		if (sortOnReference) myBuilder.append(" a");
 
 		/* If we are indexed */
 		if (isIndexed()) {
-			/* Create the iterator */
-			myIterator 	= theSortList.iterator();
-			myFirst		= true;
-		
+			/* Add Joins */
+			if (sortOnReference) 
+				myBuilder.append(getJoinString('a', 1));
+			
 			/* Add the order clause */
 			myBuilder.append(" order by ");
 
-			/* Loop through the columns */
-			while (myIterator.hasNext()) {
-				myDef = myIterator.next();
-				if (!myFirst) myBuilder.append(", ");
+			/* Build the order string */
+			myBuilder.append(getOrderString('a', 1)); 
+		}
+		
+		return myBuilder.toString();
+	}
+	
+	/**
+	 * Build the Join string for the list of columns
+	 * @param pChar the character for this table
+	 * @param iOffset the join offset 
+	 * @return the SQL string 
+	 */
+	protected String getJoinString(char 	pChar,
+								   Integer	pOffset) {
+		StringBuilder 				myBuilder 	= new StringBuilder(1000);
+		Iterator<ColumnDefinition>	myIterator;
+		ColumnDefinition			myDef;
+		
+		/* Create the iterator */
+		myIterator 	= theSortList.iterator();
+
+		/* Loop through the columns */
+		while (myIterator.hasNext()) {
+			/* Access next column and skip if not reference column */
+			myDef = myIterator.next();
+			if (!(myDef instanceof ReferenceColumn)) continue;
+			
+			/* Add the join */
+			ReferenceColumn myCol = (ReferenceColumn)myDef;
+			myCol.buildJoinString(myBuilder, pChar, pOffset);
+		}
+		
+		return myBuilder.toString();
+	}
+	
+	/**
+	 * Build the Order string for the list of columns
+	 * @param pChar the character for this table
+	 * @param iOffset the join offset 
+	 * @return the SQL string 
+	 */
+	protected String getOrderString(char 	pChar,
+								    Integer	pOffset) {
+		StringBuilder 				myBuilder 	= new StringBuilder(1000);
+		Iterator<ColumnDefinition>	myIterator;
+		ColumnDefinition			myDef;
+		boolean						myFirst;
+		
+		/* Create the iterator */
+		myIterator 	= theSortList.iterator();
+		myFirst		= true;
+
+		/* Loop through the columns */
+		while (myIterator.hasNext()) {
+			myDef = myIterator.next();
+			/* Handle secondary columns */
+			if (!myFirst) myBuilder.append(", ");
+			
+			/* If we are using prefixes */
+			if ((sortOnReference) || (pChar > 'a')) {
+				/* If this is a reference column */
+				if (myDef instanceof ReferenceColumn) {
+					/* Handle Reference column */
+					ReferenceColumn myCol = (ReferenceColumn)myDef;
+					myCol.buildOrderString(myBuilder, pOffset);
+				}
+				else {
+					/* Handle standard column with prefix */
+					myBuilder.append(pChar); 
+					myBuilder.append("."); 
+					myBuilder.append(myDef.getColumnName());
+					if (myDef.getSortOrder() == SortOrder.DESCENDING)
+						myBuilder.append(" DESC");
+				}
+			}
+			else { 
+				/* Handle standard column */
 				myBuilder.append(myDef.getColumnName());
 				if (myDef.getSortOrder() == SortOrder.DESCENDING)
 					myBuilder.append(" DESC");
-				myFirst = false;
 			}
+			
+			/* Note secondary columns */
+			myFirst = false;
 		}
-		
+
 		return myBuilder.toString();
 	}
 	
@@ -1135,6 +1237,7 @@ public class TableDefinition {
 		
 		/** 
 		 * Set sortOrder 
+		 * @param pOrder the Sort direction
 		 */
 		public void setSortOrder(SortOrder pOrder) {
 			theOrder = pOrder;
@@ -1164,6 +1267,12 @@ public class TableDefinition {
 		 * @param pBuilder the String builder
 		 */
 		protected void buildKeyReference(StringBuilder pBuilder) {}
+
+		/**
+		 * Locate reference
+		 * @param pTables the list of defined tables
+		 */
+		protected void locateReference(List<DatabaseTable<?>> pTables) {}
 	}
 	
 	/**
@@ -1260,6 +1369,11 @@ public class TableDefinition {
 		private String theReference	= null;
 		
 		/**
+		 * The definition of the referenced table 
+		 */
+		private TableDefinition theDefinition	= null;
+		
+		/**
 		 * Constructor
 		 * @param pId the column id
 		 * @param pName the name of the column
@@ -1269,6 +1383,15 @@ public class TableDefinition {
 			/* Record the column type */
 			super(pId, pName);
 			theReference 	= pTable;
+		}
+		
+		/** 
+		 * Set sortOrder 
+		 * @param pOrder the Sort direction
+		 */
+		public void setSortOrder(SortOrder pOrder) {
+			super.setSortOrder(pOrder);
+			sortOnReference = true;
 		}
 		
 		/**
@@ -1282,6 +1405,120 @@ public class TableDefinition {
 			pBuilder.append('(');
 			pBuilder.append(DataItem.NAME_ID);
 			pBuilder.append(')');
+		}
+		
+		/**
+		 * Locate reference
+		 * @param pTables the list of defined tables
+		 */
+		protected void locateReference(List<DatabaseTable<?>> pTables) {
+			/* Access the Iterator */
+			ListIterator<DatabaseTable<?>> myIterator;
+			myIterator = pTables.listIterator();
+			
+			/* Loop through the Tables */
+			while (myIterator.hasNext()) {
+				/* Access Table */
+				DatabaseTable<?> myTable = myIterator.next();
+				
+				/* If this is the referenced table */
+				if (theReference.compareTo(myTable.getTableName()) == 0) {
+					/* Store the reference and break the loop */
+					theDefinition = myTable.getDefinition();
+					break;
+				}
+			}
+		}
+		
+		/** 
+		 * build Join String
+		 * @param pBuilder the String Builder
+		 * @param pChar the character for this table
+		 * @param iOffset the join offset 
+		 * @return the SQL string 
+		 */
+		private void buildJoinString(StringBuilder 	pBuilder,
+									 char			pChar,
+									 Integer 		pOffset) {
+			/* Calculate join character */
+			char myChar = (char)('a' + pOffset);
+			
+			/* Build Initial part of string */
+			pBuilder.append(" join ");
+			pBuilder.append(theReference);
+			pBuilder.append(" ");
+			pBuilder.append(myChar);
+			
+			/* Build the join */
+			pBuilder.append(" on ");
+			pBuilder.append(pChar);
+			pBuilder.append(".");
+			pBuilder.append(getColumnName());
+			pBuilder.append(" = ");
+			pBuilder.append(myChar);
+			pBuilder.append(".");
+			pBuilder.append(DataItem.NAME_ID);
+			
+			/* Increment offset */
+			pOffset++;
+
+			/* Add the join string for the underlying table */
+			pBuilder.append(theDefinition.getJoinString(myChar, pOffset));
+		}
+
+		/** 
+		 * build Order String
+		 * @param pBuilder the String Builder
+		 * @param pChar the character for this table
+		 * @param iOffset the join offset 
+		 * @return the SQL string 
+		 */
+		private void buildOrderString(StringBuilder pBuilder,
+									  Integer 		pOffset) {
+			Iterator<ColumnDefinition>	myIterator;
+			ColumnDefinition			myDef;
+			boolean						myFirst = true;
+			
+			/* Calculate join character */
+			char myChar = (char)('a' + pOffset);
+			
+			/* Create the iterator */
+			myIterator 	= theDefinition.theSortList.iterator();
+
+			/* Loop through the columns */
+			while (myIterator.hasNext()) {
+				/* Access next column  */
+				myDef = myIterator.next();
+				
+				/* Handle subsequent columns */
+				if (!myFirst) pBuilder.append(", ");
+				
+				/* If this is a reference column */
+				if  (myDef instanceof ReferenceColumn) {
+					/* Increment offset */
+					pOffset++;
+
+					/* Determine new char */
+					char myNewChar = (char) ('a' + pOffset);
+
+					/* Add the join string for the underlying table */
+					ReferenceColumn myCol = (ReferenceColumn)myDef;
+					pBuilder.append(myCol.theDefinition.getOrderString(myNewChar, pOffset));
+				}
+
+				/* else standard column */
+				else {
+					/* Build the column name */
+					pBuilder.append(myChar);
+					pBuilder.append(".");
+					pBuilder.append(myDef.getColumnName());
+					if (myDef.getSortOrder() == SortOrder.DESCENDING)
+						pBuilder.append(" DESC");
+				}
+				
+				/* Note we have a column */
+				myFirst = false;
+			}
 		}
 	}
 	

@@ -289,6 +289,10 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 		return myRows;
 	}
 	
+	/**
+	 * Perform additional validation after change
+	 */
+	protected void validateAfterChange() {}
 	
 	/**
 	 * Set the show deleted indication
@@ -337,7 +341,6 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 	
 	/**
 	 * Insert an item 
-	 * @param isCredit is this a credit item
 	 */
 	protected void insertRow() {		
 		int 	myRowNo;
@@ -435,6 +438,9 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 			
 		/* Recalculate the table if required */
 		calculateTable();
+		
+		/* Revalidate after change */
+		validateAfterChange();
 	}
 		
 	/**
@@ -493,6 +499,9 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 			
 		/* Recalculate the table if required */
 		calculateTable();
+		
+		/* Revalidate after change */
+		validateAfterChange();
 	}
 		
 	/**
@@ -549,6 +558,9 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 					
 		/* Recalculate the table if required */
 		calculateTable();
+		
+		/* Revalidate after change */
+		validateAfterChange();
 	}
 	
 	/**
@@ -650,6 +662,9 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 
 		/* Recalculate the table if required */
 		calculateTable();
+		
+		/* Revalidate after change */
+		validateAfterChange();
 	}
 	
 	/**
@@ -718,6 +733,9 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 			
 		/* Recalculate the table if required */
 		calculateTable();
+		
+		/* Revalidate after change */
+		validateAfterChange();
 	}
 		
 	/**
@@ -781,6 +799,9 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 
 		/* Recalculate the table if required */
 		calculateTable();
+		
+		/* Revalidate after change */
+		validateAfterChange();
 	}
 		
 	/**
@@ -846,6 +867,9 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 
 		/* Recalculate the table if required */
 		calculateTable();
+		
+		/* Revalidate after change */
+		validateAfterChange();
 	}		
 
 	/**

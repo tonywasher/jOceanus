@@ -76,6 +76,12 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 */
 	protected String getTableName() { return theTable.getTableName(); }
 	
+	/**
+	 * Access the table definition
+	 * @return the table definition
+	 */
+	protected TableDefinition getDefinition() { return theTable; }
+	
 	/** 
 	 *  Close the result set and statement
 	 */

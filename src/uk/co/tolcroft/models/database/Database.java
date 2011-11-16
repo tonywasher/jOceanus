@@ -68,7 +68,10 @@ public abstract class Database<T extends DataSet<T>> {
 	 * Add a table 
 	 * @param pTable the Table to add
 	 */
-	protected void			addTable(DatabaseTable<?> pTable) 	{ theTables.add(pTable); }
+	protected void			addTable(DatabaseTable<?> pTable) 	{
+		pTable.getDefinition().resolveReferences(theTables);
+		theTables.add(pTable);
+	}
 	
 	/**
 	 * RollBack and disconnect on termination

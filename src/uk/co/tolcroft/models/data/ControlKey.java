@@ -742,7 +742,7 @@ public class ControlKey extends DataItem<ControlKey> {
 	/**
 	 * Values for a ControlKey 
 	 */
-	public class Values implements HistoryValues<ControlKey> {
+	public class Values extends HistoryValues<ControlKey> {
 		private byte[]			thePublicKey	= null;
 		private byte[]			thePrivateKey	= null;
 		private byte[]			thePasswordHash	= null;

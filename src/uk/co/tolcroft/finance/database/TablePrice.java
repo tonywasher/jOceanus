@@ -7,6 +7,8 @@ import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.database.TableDefinition;
 import uk.co.tolcroft.models.database.TableEncrypted;
+import uk.co.tolcroft.models.database.TableDefinition.ColumnDefinition;
+import uk.co.tolcroft.models.database.TableDefinition.SortOrder;
 
 public class TablePrice extends TableEncrypted<AcctPrice> {
 	/**
@@ -37,11 +39,22 @@ public class TablePrice extends TableEncrypted<AcctPrice> {
 	 * @param pTableDef the table definition
 	 */
 	protected void defineTable(TableDefinition	pTableDef) {
+		/* Define sort column variable */
 		super.defineTable(pTableDef);
 		theTableDef = pTableDef;
-		theTableDef.addReferenceColumn(AcctPrice.FIELD_ACCOUNT, AcctPrice.fieldName(AcctPrice.FIELD_ACCOUNT), TableAccount.TableName);
-		theTableDef.addDateColumn(AcctPrice.FIELD_DATE, AcctPrice.fieldName(AcctPrice.FIELD_DATE));
+
+		/* Define Sort Column variables */
+		ColumnDefinition myDateCol;
+		ColumnDefinition myActCol;
+		
+		/* Declare the columns */
+		myActCol  = theTableDef.addReferenceColumn(AcctPrice.FIELD_ACCOUNT, AcctPrice.fieldName(AcctPrice.FIELD_ACCOUNT), TableAccount.TableName);
+		myDateCol = theTableDef.addDateColumn(AcctPrice.FIELD_DATE, AcctPrice.fieldName(AcctPrice.FIELD_DATE));
 		theTableDef.addEncryptedColumn(AcctPrice.FIELD_PRICE, AcctPrice.fieldName(AcctPrice.FIELD_PRICE), EncryptedItem.PRICELEN);
+		
+		/* Declare Sort Columns */
+		myDateCol.setSortOrder(SortOrder.ASCENDING);
+		myActCol.setSortOrder(SortOrder.ASCENDING);
 	}
 	
 	/* Declare DataSet */

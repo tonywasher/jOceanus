@@ -29,7 +29,7 @@ public class MaintNewYear extends StdTable<Event> implements ActionListener {
 	private MaintenanceTab		theParent			= null;
 	private JPanel				thePanel			= null;
 	private yearColumnModel		theColumns			= null;
-	private TaxYear				theYear				= null;
+	//private TaxYear				theYear				= null;
 	private patternYearModel	theModel			= null;
 	private JButton				thePattern			= null;
 	private DebugEntry			theDebugYear		= null;
@@ -155,24 +155,24 @@ public class MaintNewYear extends StdTable<Event> implements ActionListener {
 		TaxYear.List.ListIterator myIterator;
 		
 		myIterator 	= myList.listIterator();
-		theYear 	= myIterator.peekLast();
-		setSelection();
+		//theYear 	= myIterator.peekLast();
+		setSelection(myIterator.peekLast());
 	}
 	
 	/**
 	 * Set Selection
+	 * @param pTaxYear the last active tax year
 	 */
-	public void setSelection() throws Exception {
+	public void setSelection(TaxYear pTaxYear) throws Exception {
 		theTaxYears	= null;
 		theEvents  	= null;			
 		thePattern.setVisible(false);
-		if (theYear != null) {
+		if (pTaxYear != null) {
 			FinanceData myData = theView.getData();
 			theTaxYears	= myData.getTaxYears().getNewEditList();
-			theEvents	= myData.getEvents().getEditList(theYear);
+			theEvents	= myData.getEvents().getEditList(theTaxYears.getNewYear());
 			thePattern.setVisible(true);
-			thePattern.setEnabled(!theYear.isActive() &&
-								  !theEvents.isEmpty());
+			thePattern.setEnabled(!theEvents.isEmpty());
 		}
 		setList(theEvents);
 		theYearView.setDataList(theTaxYears);

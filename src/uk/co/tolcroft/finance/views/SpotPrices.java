@@ -9,9 +9,7 @@ import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
-import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
-import uk.co.tolcroft.models.data.EncryptedItem.EncryptedList;
 import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugObject;
@@ -24,26 +22,26 @@ public class SpotPrices implements DebugObject {
 	private static final String objName = "SpotPrice";
 
 	/* Members */
-	private View	theView		= null;
-	private Date    theDate     = null;
-	private Date    theNext     = null;
-	private Date    thePrev     = null;
-	private List	thePrices	= null;
+	private View		theView		= null;
+	private Date    	theDate     = null;
+	private Date    	theNext     = null;
+	private Date    	thePrev     = null;
+	private SpotList	thePrices	= null;
 
 	/* Access methods */
 	public Date     getDate()    	{ return theDate; }
 	public Date     getNext()    	{ return theNext; }
 	public Date     getPrev()    	{ return thePrev; }
-	public List 	getPrices()     { return thePrices; }
+	public SpotList getPrices()     { return thePrices; }
 	public SpotPrice get(long uIndex) {
-		return thePrices.get((int)uIndex); }
+		return (SpotPrice)thePrices.get((int)uIndex); }
  	
  	/* Constructor */
 	public SpotPrices(View pView, Date pDate) {
 		/* Create a copy of the date and initiate the list */
 		theView		= pView;
 		theDate    	= pDate;
-		thePrices  	= new List(this);
+		thePrices  	= new SpotList(this);
 	}
 	
 	/**
@@ -90,130 +88,99 @@ public class SpotPrices implements DebugObject {
 	}
 	
 	/* The List class */
-	public class List extends EncryptedList<List, SpotPrice> {
+	public class SpotList extends AcctPrice.List {
 		/* Members */
 		private Date 		theDate 	= null;
 		
 		/* Constructors */
-		public List(SpotPrices pPrices) { 
-			super(List.class, SpotPrice.class, theView.getData(), ListStyle.EDIT);
+		public SpotList(SpotPrices pPrices) {
+			/* Build initial list */
+			super(theView.getData());
+			setStyle(ListStyle.EDIT);
 			theDate   = pPrices.theDate;
-			
+
 			/* Declare variables */
-			FinanceData		myData;
-			AcctPrice 		myCurr;
-			AcctPrice 		myLast;
-			AcctPrice.List	myPrices;
-			int				iDiff;
-			boolean			isNew;
-			boolean			isSet;
-			Account 		myAcct;
-			SpotPrice 		myPrice;
+			FinanceData					myData;
+			Account.List.ListIterator 	myActIterator;
+			Account 					myAccount;
+			SpotPrice					mySpot;
+			ListIterator 				myIterator;
+			AcctPrice					myPrice;
+			int							iDiff;
+			SpotPrice.Values			myValues;
 			
-			AcctPrice.List.ListIterator myIterator;
+			/* Loop through the Accounts */
+			myData			= theView.getData();
+			myActIterator	= myData.getAccounts().listIterator();
+			while ((myAccount = myActIterator.next()) != null) {
+				/* Ignore accounts that do not have prices */
+				if (!myAccount.isPriced()) continue;
+				
+				/* Create a SpotPrice entry */
+				mySpot = new SpotPrice(this, myAccount);
+				add(mySpot);
+				
+				/* If the account is closed then hide the entry */
+				if (myAccount.isClosed()) mySpot.setHidden();
+			}
 			
-			/* Access the iterator */
-			myData 		= theView.getData();
-			myPrices	= myData.getPrices();
-			myIterator 	= myPrices.listIterator(true);
-			myLast		= null;
-			myAcct		= null;
-			isSet		= false;
+			/* Set the base for this list */
+			AcctPrice.List myPrices = myData.getPrices();
 			setBase(myPrices);
 			
-			/* Loop through the prices looking for this price */
-			while ((myCurr = myIterator.next()) != null) {
-				/* Test the date and account */
-				iDiff 	= theDate.compareTo(myCurr.getDate()); 
-				isNew	= Account.differs(myAcct, myCurr.getAccount()).isDifferent();
+			/* Loop through the prices */
+			myIterator 	= myPrices.listIterator(true);
+			while ((myPrice = myIterator.next()) != null) {
+				/* Test the Date */
+				iDiff 	= theDate.compareTo(myPrice.getDate());
 				
-				/* If this is a new account */
-				if (isNew) {
-					/* If we have not set a price for this account */
-					if ((myAcct != null) && (!isSet)) {
-						/* Create the new spot price and add it to the list */
-						myPrice = new SpotPrice(this, myAcct, myLast);
-						add(myPrice);
-
-						/* Note if the account is closed */
-						if (myAcct.isClosed()) myPrice.setHidden();
-					}
-					
-					/* Record the account and note that we have no last value */
-					myAcct	= myCurr.getAccount();
-					myLast	= null;
-					isSet	= false;
-				}
-				
-				/* If this is prior to the required date */
-				if (iDiff > 0) {
-					/* Record nearest previous price point */
-					if ((thePrev == null) ||
-						(thePrev.compareTo(myCurr.getDate()) < 0))
-						thePrev = myCurr.getDate();
-
-					/* Record the last value for this account */
-					if (!myCurr.isDeleted()) myLast = myCurr;
-				}
-
-				/* If we have found an exact match */
-				if (iDiff == 0) {
-					/* Create the new spot price and add it to the list */
-					myPrice = new SpotPrice(this, myCurr, myLast);
-					add(myPrice);
-					isSet 	= true;
-
-					/* Note if the account is closed */
-					if (myAcct.isClosed()) myPrice.setHidden();
-				}
-				
-				/* If this is past the required date */
+				/* If we are past the date */
 				if (iDiff < 0) {
-					/* If we have not set a price for this account */
-					if (!isSet) {
-						/* Create the new spot price and add it to the list */
-						myPrice = new SpotPrice(this, myAcct, myLast);
-						add(myPrice);
-						isSet = true;
-
-						/* Note if the account is closed */
-						if (myAcct.isClosed()) myPrice.setHidden();
-					}
-					
-					/* Record nearest subsequent price point */
-					if ((theNext == null) ||
-						(theNext.compareTo(myCurr.getDate()) > 0))
-						theNext = myCurr.getDate();
+					/* Record the next date and break the loop */
+					theNext = myPrice.getDate();
+					break;
 				}
-			}	
-
-			/* If we have not set a price for this account */
-			if ((myAcct != null) && (!isSet)) {
-				/* Create the new spot price and add it to the list */
-				myPrice = new SpotPrice(this, myAcct, myLast);
-				add(myPrice);
+				
+				/* Access the Spot Price */
+				myAccount 	= myPrice.getAccount();
+				mySpot 		= (SpotPrice)searchFor(myAccount.getId());
+				myValues	= mySpot.getValues();
+				
+				/* If we are exactly the date */
+				if (iDiff == 0) {
+					/* Set price */
+					myValues.setPrice(myPrice.getPricePair());
+					
+					/* Link to base and re-establish state */
+					mySpot.setBase(myPrice);
+					mySpot.setState(DataState.CLEAN);
+				}
+				
+				/* else we are a previous date */
+				else {
+					/* Set previous date and value */
+					myValues.setPrevDate(myPrice.getDate());
+					myValues.setPrevPrice(myPrice.getPrice());
+					
+					/* Record the latest previous date */
+					thePrev = myPrice.getDate();
+				}
 			}
+			
 		}
 		
-		/* Obtain extract lists. */
-		public List getUpdateList() { return null; }
-		public List getEditList() 	{ return null; }
-		public List getShallowCopy() { return null; }
-		public List getDeepCopy(DataSet<?> pData) { return null; }
-		public List getDifferences(List pOld) { return null; }
+		/* Disable extract lists. */
+		public SpotList getUpdateList() { return null; }
+		public SpotList getEditList() 	{ return null; }
+		public SpotList getShallowCopy() { return null; }
+		public SpotList getDeepCopy(DataSet<?> pData) { return null; }
+		public SpotList getDifferences(SpotList pOld) { return null; }
 
 		/* Is this list locked */
 		public boolean isLocked() { return false; }
 		
-		/**
-		 * Add a new item (never used)
-		 */
-		public SpotPrice addNewItem(DataItem<?> pElement) {
-			return null;}
-		
-		/**
-		 * Add a new item to the edit list
-		 */
+		/* Disable Add a new item */
+		public SpotPrice addNewItem(DataItem<?> pElement) {	return null; }
 		public SpotPrice addNewItem() { return null; }
 	
 		/**
@@ -222,29 +189,12 @@ public class SpotPrices implements DebugObject {
 		 */
 		public String itemType() { return objName; }
 		
-		/** 
-		 * Validate a spot price list
-		 */
-		public void validate() {
-			ListIterator	myIterator;
-			SpotPrice 		myCurr;
-			
-			/* Access the iterator */
-			myIterator = listIterator();
-			
-			/* Loop through the list */
-			while ((myCurr = myIterator.next()) != null) {
-				/* Validate the item */
-				myCurr.validate();
-			}
-		}	
-		
 		/**
 		 * Calculate the Edit State for the list
 		 */
 		public void findEditState() {
 			ListIterator	myIterator;
-			SpotPrice 		myCurr;
+			AcctPrice 		myCurr;
 			EditState		myEdit;
 			
 			/* Access the iterator */
@@ -277,7 +227,7 @@ public class SpotPrices implements DebugObject {
 		 */
 		public boolean hasUpdates() {
 			ListIterator	myIterator;
-			SpotPrice 		myCurr;
+			AcctPrice 		myCurr;
 			
 			/* Access the iterator */
 			myIterator 	= listIterator();
@@ -306,7 +256,7 @@ public class SpotPrices implements DebugObject {
 		 */
 		public void resetChanges() {
 			ListIterator 	myIterator;
-			SpotPrice		myCurr;
+			AcctPrice		myCurr;
 				
 			/* Create an iterator for the list */
 			myIterator = listIterator(true);
@@ -339,29 +289,19 @@ public class SpotPrices implements DebugObject {
 		}
 	}
 			
-	public static class SpotPrice 	extends EncryptedItem<SpotPrice>  {
-		/* Properties */
-		private Account       	theAccount  	= null;
-		private Price			thePrevPrice	= null;
-		private Date			thePrevDate		= null;
-		private Date			theDate			= null;
-		
+	public static class SpotPrice extends AcctPrice {
 		/* Access methods */
-		public Date        	getDate()      { return theDate; }
-		public Account		getAccount()   { return theAccount; }
 		public Values      	getValues()    { return (Values)super.getValues(); }
-		public Price 		getPrevPrice() { return thePrevPrice; }
-		public Date			getPrevDate()  { return thePrevDate; }
+		public Price 		getPrevPrice() { return getValues().getPrevPrice(); }
+		public Date			getPrevDate()  { return getValues().getPrevDate(); }
 
-		public PricePair	getPricePair() { return getValues().getPrice(); }
-		
 		/* Linking methods */
 		public AcctPrice	 getBase() { return (AcctPrice)super.getBase(); }
 
 		/* Field IDs */
-		public static final int FIELD_ACCOUNT  = EncryptedItem.NUMFIELDS;
-		public static final int FIELD_PRICE    = EncryptedItem.NUMFIELDS+1;
-		public static final int NUMFIELDS	   = EncryptedItem.NUMFIELDS+2;
+		public static final int FIELD_PRVDATE  = AcctPrice.NUMFIELDS;
+		public static final int FIELD_PRVPRICE = AcctPrice.NUMFIELDS+1;
+		public static final int NUMFIELDS	   = AcctPrice.NUMFIELDS+2;
 		
 		/**
 		 * Obtain the type of the item
@@ -381,9 +321,9 @@ public class SpotPrices implements DebugObject {
 		 */
 		public static String	fieldName(int iField) {
 			switch (iField) {
-				case FIELD_ACCOUNT: return "Account";
-				case FIELD_PRICE: 	return "Price";
-				default:		  	return EncryptedItem.fieldName(iField);
+				case FIELD_PRVDATE: 	return "PreviousDate";
+				case FIELD_PRVPRICE: 	return "PreviousPrice";
+				default:		  		return AcctPrice.fieldName(iField);
 			}
 		}
 		
@@ -399,16 +339,15 @@ public class SpotPrices implements DebugObject {
 		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(DebugDetail pDetail, int iField, HistoryValues<SpotPrice> pValues) {
+		public String formatField(DebugDetail pDetail, int iField, HistoryValues<AcctPrice> pValues) {
 			String 	myString = "";
 			Values 	myValues = (Values)pValues;
 			switch (iField) {
-				case FIELD_ACCOUNT:	
-					myString += theAccount.getName(); 
-					myString = pDetail.addDebugLink(theAccount, myString);
+				case FIELD_PRVDATE: 	
+					myString += Date.format(myValues.getPrevDate());	
 					break;
-				case FIELD_PRICE: 	
-					myString += Price.format(myValues.getPriceValue());	
+				case FIELD_PRVPRICE: 	
+					myString += Price.format(myValues.getPrevPrice());	
 					break;
 				default: 		
 					myString += super.formatField(pDetail, iField, pValues); 
@@ -421,56 +360,24 @@ public class SpotPrices implements DebugObject {
 		 * Get an initial set of values 
 		 * @return an initial set of values 
 		 */
-		protected HistoryValues<SpotPrice> getNewValues() { return new Values(); }
+		protected HistoryValues<AcctPrice> getNewValues() { return new Values(); }
 		
-		/**
-		 *  Constructor for a new SpotPrice 
-		 *  @param pList the Spot Price List
-		 *  @param pPrice the price for the date
-		 *  @param pLast the last price for the account
-		 */
-		public SpotPrice(List pList, AcctPrice pPrice, AcctPrice pLast) {
-			super(pList, pPrice.getId());
-			theDate = pList.theDate;
-	
-			/* Variables */
-			Values 	myValues = getValues();
-			
-			/* Store base values */
-			setControlKey(pList.getControlKey());
-			theAccount 		= pPrice.getAccount();
-			if (pLast != null) {
-				thePrevPrice 	= pLast.getPrice();
-				thePrevDate 	= pLast.getDate();
-			}
-				
-			/* Set the price */
-			myValues.setPrice(new PricePair(pPrice.getPricePair()));
-			
-			/* Link to base */
-			setBase(pPrice);
-			
-			/* Set the state */
-			setState(DataState.CLEAN);			
-		}
-
 		/**
 		 *  Constructor for a new SpotPrice where no price data exists
 		 *  @param pList the Spot Price List
 		 *  @param pAccount the price for the date
 		 *  @param pLast the last price for the account
 		 */
-		public SpotPrice(List pList, Account pAccount, AcctPrice pLast) {
-			super(pList, 0);
-			theDate = pList.theDate;
+		private SpotPrice(SpotList pList, Account pAccount) {
+			super(pList, pAccount);
 	
+			/* Variables */
+			Values 	myValues = getValues();
+			
 			/* Store base values */
 			setControlKey(pList.getControlKey());
-			theAccount 		= pAccount;
-			if (pLast != null) {
-				thePrevPrice 	= pLast.getPrice();
-				thePrevDate 	= pLast.getDate();
-			}
+			myValues.setDate(pList.theDate);
+			myValues.setAccount(pAccount);
 			
 			/* Set the state */
 			setState(DataState.CLEAN);
@@ -513,6 +420,9 @@ public class SpotPrices implements DebugObject {
 					return null;
 			}
 		}
+
+		/* Disable setDate */
+		public void setDate(Date pDate) {}
 		
 		/**
 		 * Set the state of the item
@@ -571,54 +481,19 @@ public class SpotPrices implements DebugObject {
 		 */
 		public boolean equals(Object that) { return (this == that); }
 		
-		/**
-		 * Compare this price to another to establish sort order. 
-		 * @param pThat The Price to compare to
-		 * @return (-1,0,1) depending of whether this object is before, equal, 
-		 * 					or after the passed object in the sort order
-		 */
-		public int compareTo(Object pThat) {
-		
-			/* Handle the trivial cases */
-			if (this == pThat) return 0;
-			if (pThat == null) return -1;
-			
-			/* Make sure that the object is a SpotPrice */
-			if (pThat.getClass() != this.getClass()) return -1;
-			
-			/* Access the object as a SpotPrice */
-			SpotPrice myThat = (SpotPrice)pThat;
-
-			/* Compare the account */
-			if (this.getAccount() == myThat.getAccount()) return 0;
-			if (this.getAccount() == null) return 1;
-			if (myThat.getAccount() == null) return -1;
-			return getAccount().compareTo(myThat.getAccount());
-		}
-		
-		/**
-		 * Set a new price 
-		 * 
-		 * @param pPrice the new price 
-		 */
-		public void setPrice(Price pPrice) throws Exception {
-			if (pPrice != null) getValues().setPrice(new PricePair(pPrice));
-			else 				getValues().setPrice(null);
-		}
-		
 		/* SpotValues */
-		public class Values extends EncryptedValues {
-			private PricePair	thePrice	= null;
+		public class Values extends AcctPrice.Values {
+			private Price		thePrevPrice	= null;
+			private Date		thePrevDate		= null;
 			
 			/* Access methods */
-			public Date			getDate()     	{ return theDate; }
-			public Account		getAccount()    { return theAccount; }
-			public PricePair	getPrice()     	{ return thePrice; }
-			public Price  		getPriceValue() { return getPairValue(thePrice); }
-			public byte[]  		getPriceBytes() { return getPairBytes(thePrice); }
+			public Price	getPrevPrice()  	{ return thePrevPrice; }
+			public Date		getPrevDate()   	{ return thePrevDate; }
 			
-			public void setPrice(PricePair pPrice) {
-				thePrice  = pPrice; }
+			public void setPrevPrice(Price pPrice) {
+				thePrevPrice  = pPrice; }
+			public void setPrevDate(Date pDate) {
+				thePrevDate   = pDate; }
 
 			/* Constructor */
 			public Values() {}
@@ -626,15 +501,16 @@ public class SpotPrices implements DebugObject {
 			public Values(AcctPrice.Values 	pValues) { copyFrom(pValues); }
 			
 			/* Check whether this object is equal to that passed */
-			public boolean histEquals(HistoryValues<SpotPrice> pCompare) {
+			public boolean histEquals(HistoryValues<AcctPrice> pCompare) {
 				Values myValues = (Values)pCompare;
-				if (!super.histEquals(pCompare))							return false;
-				if (differs(thePrice,     myValues.thePrice).isDifferent()) return false;
+				if (!super.histEquals(pCompare))										return false;
+				if (Price.differs(thePrevPrice, myValues.thePrevPrice).isDifferent()) 	return false;
+				if (Date.differs(thePrevDate,	myValues.thePrevDate).isDifferent()) 	return false;
 				return true;
 			}
 			
 			/* Copy values */
-			public HistoryValues<SpotPrice> copySelf() {
+			public HistoryValues<AcctPrice> copySelf() {
 				return new Values(this);
 			}
 			public void    copyFrom(HistoryValues<?> pSource) {
@@ -642,23 +518,26 @@ public class SpotPrices implements DebugObject {
 				if (pSource instanceof Values) {
 					Values myValues = (Values)pSource;
 					super.copyFrom(myValues);
-					thePrice     = myValues.getPrice();
+					thePrevPrice	= myValues.getPrevPrice();
+					thePrevDate		= myValues.getPrevDate();
 				}
 
 				/* Handle an AcctPrice Values */
 				else if (pSource instanceof AcctPrice.Values) {
 					AcctPrice.Values myValues = (AcctPrice.Values)pSource;
 					super.copyFrom(myValues);
-					thePrice     = new PricePair(myValues.getPrice());
 				}
 			}
 			
-			public Difference	fieldChanged(int fieldNo, HistoryValues<SpotPrice> pOriginal) {
+			public Difference	fieldChanged(int fieldNo, HistoryValues<AcctPrice> pOriginal) {
 				Values		pValues = (Values)pOriginal;
 				Difference	bResult = Difference.Identical;
 				switch (fieldNo) {
-					case SpotPrices.SpotPrice.FIELD_PRICE:
-						bResult = (differs(thePrice,  pValues.thePrice));
+					case FIELD_PRVPRICE:
+						bResult = (Price.differs(thePrevPrice,  pValues.thePrevPrice));
+						break;
+					case FIELD_PRVDATE:
+						bResult = (Date.differs(thePrevDate,  pValues.thePrevDate));
 						break;
 					default:
 						bResult = super.fieldChanged(fieldNo, pValues);
@@ -668,19 +547,10 @@ public class SpotPrices implements DebugObject {
 			}
 
 			/**
-			 * Update encryption after security change
+			 * Disable encryption methods
 			 */
 			protected void updateSecurity() throws Exception {}
-			
-			/**
-			 * Apply encryption after non-encrypted load
-			 */
 			protected void applySecurity() throws Exception {}
-			
-			/**
-			 * Adopt encryption from base
-			 * @param pBase the Base values
-			 */
 			protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {}
 		}		
 	}

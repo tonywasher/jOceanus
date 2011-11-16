@@ -6,6 +6,8 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.database.TableDefinition;
+import uk.co.tolcroft.models.database.TableDefinition.ColumnDefinition;
+import uk.co.tolcroft.models.database.TableDefinition.SortOrder;
 import uk.co.tolcroft.models.database.TableEncrypted;
 
 public class TableRate extends TableEncrypted<AcctRate> {
@@ -37,12 +39,23 @@ public class TableRate extends TableEncrypted<AcctRate> {
 	 * @param pTableDef the table definition
 	 */
 	protected void defineTable(TableDefinition	pTableDef) {
+		/* Define sort column variable */
 		super.defineTable(pTableDef);
 		theTableDef = pTableDef;
-		theTableDef.addReferenceColumn(AcctRate.FIELD_ACCOUNT, AcctRate.fieldName(AcctRate.FIELD_ACCOUNT), TableAccount.TableName);
+
+		/* Define Sort Column variables */
+		ColumnDefinition myDateCol;
+		ColumnDefinition myActCol;
+		
+		/* Declare the columns */
+		myActCol = theTableDef.addReferenceColumn(AcctRate.FIELD_ACCOUNT, AcctRate.fieldName(AcctRate.FIELD_ACCOUNT), TableAccount.TableName);
 		theTableDef.addEncryptedColumn(AcctRate.FIELD_RATE, AcctRate.fieldName(AcctRate.FIELD_RATE), EncryptedItem.RATELEN);
 		theTableDef.addNullEncryptedColumn(AcctRate.FIELD_BONUS, AcctRate.fieldName(AcctRate.FIELD_BONUS), EncryptedItem.RATELEN);
-		theTableDef.addNullDateColumn(AcctRate.FIELD_ENDDATE, AcctRate.fieldName(AcctRate.FIELD_ENDDATE));
+		myDateCol = theTableDef.addNullDateColumn(AcctRate.FIELD_ENDDATE, AcctRate.fieldName(AcctRate.FIELD_ENDDATE));
+		
+		/* Declare Sort Columns */
+		myDateCol.setSortOrder(SortOrder.ASCENDING);
+		myActCol.setSortOrder(SortOrder.ASCENDING);
 	}
 	
 	/* Declare DataSet */

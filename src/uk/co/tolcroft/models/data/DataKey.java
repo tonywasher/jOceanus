@@ -530,7 +530,7 @@ public class DataKey extends DataItem<DataKey> {
 	/**
 	 * Values for a DataKey 
 	 */
-	public class Values implements HistoryValues<DataKey> {
+	public class Values extends HistoryValues<DataKey> {
 		private SecurityControl	theControl			= null;
 		private ControlKey		theControlKey		= null;
 		private byte[]			theSecuredKeyDef	= null;

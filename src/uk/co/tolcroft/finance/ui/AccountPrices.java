@@ -19,7 +19,7 @@ import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
-public class AccountPrices extends StdTable<ViewPrice> {
+public class AccountPrices extends StdTable<AcctPrice> {
 	/* Members */
 	private static final long serialVersionUID 		= 1035380774297559650L;
 
@@ -287,7 +287,7 @@ public class AccountPrices extends StdTable<ViewPrice> {
 			Object	o;
 			
 			/* Access the price */
-			myPrice = thePrices.get(row);
+			myPrice = (ViewPrice)thePrices.get(row);
 				
 			/* Return the appropriate value */
 			switch (col) {
@@ -314,7 +314,7 @@ public class AccountPrices extends StdTable<ViewPrice> {
 			ViewPrice myPrice;
 				
 			/* Access the price */
-			myPrice = thePrices.get(row);
+			myPrice = (ViewPrice)thePrices.get(row);
 				
 			/* Push history */
 			myPrice.pushHistory();
@@ -389,7 +389,7 @@ public class AccountPrices extends StdTable<ViewPrice> {
 	/**
 	 *  Prices mouse listener
 	 */
-	private class pricesMouse extends StdMouse<ViewPrice> {
+	private class pricesMouse extends StdMouse<AcctPrice> {
 		/**
 		 * Constructor
 		 */

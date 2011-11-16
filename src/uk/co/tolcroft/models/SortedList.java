@@ -102,18 +102,8 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 		/* Allocate the new node */
 		myNode = new LinkNode<T>(this, pItem);
 		
-		/* Add in the appropriate fashion */
-		if (insertFromStart) 
-			myNode.addFromStart(theFirst, theLast);
-		else
-			myNode.addFromEnd(theFirst, theLast);
-						
-		/* Adjust first and last if necessary */
-		if (myNode.getPrev(false) == null) theFirst = myNode;
-		if (myNode.getNext(false) == null) theLast  = myNode;
-
-		/* Set the reference to this node in the item */
-		pItem.setLinkNode(this, myNode);
+		/* Insert the node into the list */
+		insertNode(myNode); 
 		
 		/* Adjust the indexMap */
 		theIndexMap.insertNode(myNode);
@@ -122,6 +112,25 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 		return true;
 	}
 		
+	/**
+	 * Insert node
+	 * @param pNode - node to insert into list
+	 */
+	private void insertNode(LinkNode<T> pNode) {
+		/* Add in the appropriate fashion */
+		if (insertFromStart) 
+			pNode.addFromStart(theFirst, theLast);
+		else
+			pNode.addFromEnd(theFirst, theLast);
+						
+		/* Adjust first and last if necessary */
+		if (pNode.getPrev(false) == null) theFirst = pNode;
+		if (pNode.getNext(false) == null) theLast  = pNode;
+
+		/* Set the reference to this node in the item */
+		pNode.getObject().setLinkNode(this, pNode);		
+	}
+	
 	/**
 	 *  Remove node from list
 	 *  @param pNode - node to remove from list
@@ -211,7 +220,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 	 */
 	public java.util.Iterator<T> iterator() {
 		/* Return a new iterator */
-		return new ListIterator();
+		return new ListIterator(false);
 	}
 	
 	/**
@@ -220,7 +229,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 	 */
 	public ListIterator listIterator() {
 		/* Return a new iterator */
-		return new ListIterator();
+		return new ListIterator(false);
 	}
 	
 	/**
@@ -234,32 +243,51 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 	}
 	
 	/**
+	 * obtain a list Iterator for this list initialised to an item
+	 * @param pItem the item to initialise to
+	 * @param bShowAll show all items in the list
+	 * @return List iterator
+	 */
+	public ListIterator listIterator(T pItem, boolean bShowAll) {
+		LinkNode<T> 	myNode;
+		ListIterator	myCurr;
+		
+		/* Reject if the object is null */
+		if (pItem == null) throw new java.lang.NullPointerException();
+		
+		/* If the item is hidden and we are not showing all then ignore */
+		if ((!bShowAll) && (pItem.isHidden())) return null;
+		
+		/* Access the node of the item */
+		myNode = pItem.getLinkNode(this);
+		
+		/* If the node does not belong to the list then ignore */
+		if ((myNode == null) || (myNode.getList() != theList)) return null;
+			
+		/* Create a list iterator */
+		myCurr = new ListIterator(myNode, bShowAll);
+		
+		/* Return a new iterator */
+		return myCurr;
+	}
+	
+	/**
 	 * obtain a list Iterator for this list initialised to an index
 	 * @param iIndex the index to initialise to
 	 * @return List iterator
 	 */
 	public ListIterator listIterator(int iIndex) {
-		int 			iCurr = 0;
 		ListIterator	myCurr;
 		T				myObj;
 		
 		/* Reject if the index is negative */
 		if (iIndex < 0) throw new java.lang.IndexOutOfBoundsException();
 		
+		/* Access the item */
+		myObj = get(iIndex);
+		
 		/* Create a list iterator */
-		myCurr = new ListIterator();
-		
-		/* Loop through the elements */
-		while ((myObj = myCurr.next()) != null) {
-			/* Break if we have found the item */
-			if (iCurr == iIndex) break;
-			
-			/* Increment count */
-			iCurr++;
-		}
-		
-		/* Note if we did not find the item */
-		if (myObj == null) throw new java.lang.IndexOutOfBoundsException();
+		myCurr = new ListIterator(myObj.getLinkNode(this), false);
 		
 		/* Return a new iterator */
 		return myCurr;
@@ -478,6 +506,38 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 	}
 	
 	/**
+	 * obtain the index within the list of the object
+	 * @param o the object to find the index of
+	 * @return the index within the list (or -1 if not visible/present in the list)
+	 */
+	public int indexAllOf(Object o) {
+		int 		iIndex = 0;
+		LinkNode<T>	myNode;
+		T			myItem;
+		
+		/* Reject if the object is null */
+		if (o == null) throw new java.lang.NullPointerException();
+		
+		/* Reject if the object is invalid */
+		if (!(theClass.isInstance(o))) throw new java.lang.ClassCastException();
+		
+		/* Access as link object */
+		myItem = theClass.cast(o);
+		
+		/* Access the node of the item */
+		myNode = myItem.getLinkNode(this);
+		
+		/* If the node does not belong to the list then ignore */
+		if ((myNode == null) || (myNode.getList() != theList)) return -1;
+			
+		/* Access the index of the item */
+		iIndex = myNode.getIndex(false);
+		
+		/* Return the index */
+		return iIndex;
+	}
+	
+	/**
 	 * obtain the last index within the list of the object
 	 * @param o the object to find the last index of
 	 * @return the index within the list (or -1 if not visible/present in the list)
@@ -627,7 +687,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 		myArray = new Object[iSize];
 		
 		/* Loop through the list */
-		for (i = 0, myIterator = new ListIterator();
+		for (i = 0, myIterator = new ListIterator(false);
 			 i < iSize;
 			 i++) {
 			/* Store the next item */
@@ -805,15 +865,24 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 		private boolean				showAll 		= true;
 
 		/**
-		 * Constructor for standard iterator 
-		 */
-		private ListIterator() { this(false); }
-		
-		/**
 		 * Constructor for iterator that can show all elements 
 		 * @param bShowAll show all items in the list
 		 */
 		protected ListIterator(boolean bShowAll) { showAll = bShowAll; }
+		
+		/**
+		 * Constructor for iterator at particular position
+		 * @param pNode the node for the next operation  
+		 * @param bShowAll show all items in the list
+		 */
+		private ListIterator(LinkNode<T> pNode, boolean bShowAll) {
+			/* Call standard constructor */
+			this(bShowAll);
+			
+			/* Record position */
+			theNodeAfter  = pNode;
+			theNodeBefore = pNode.getPrev(!showAll);
+		}
 		
 		/**
 		 * Does the list have a next item
@@ -1048,6 +1117,49 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 				/* Record the new node after */
 				theNodeAfter = (theNodeBefore != null) ? theNodeBefore.getNext(false)
 													   : theFirst;
+			}
+			
+			/* Note that we can no longer remove the item */
+			canRemove = false;
+		}
+
+		/**
+		 * ReSort the last referenced item.
+		 */
+		public void reSort() {				
+			/* If we cannot remove the last item throw exception */
+			if (!canRemove) throw new java.lang.IllegalStateException();
+			
+			/* If the last operation was forward */
+			if (wasForward) {
+				/* Determine Node to remove */
+				LinkNode<T> myNode = theNodeBefore;
+				
+				/* Remove the item */
+				removeNode(myNode);
+				
+				/* Record the new node before */
+				theNodeBefore = (theNodeAfter != null) ? theNodeAfter.getPrev(false)
+													   : theLast;
+				
+				/* Re-insert the node */
+				insertNode(myNode);
+			}
+			
+			/* else the last operation was backwards */
+			else {
+				/* Determine Node to remove */
+				LinkNode<T> myNode = theNodeAfter;
+				
+				/* Remove the item */
+				removeNode(myNode);
+				
+				/* Record the new node after */
+				theNodeAfter = (theNodeBefore != null) ? theNodeBefore.getNext(false)
+													   : theFirst;
+
+				/* Re-insert the node */
+				insertNode(myNode);
 			}
 			
 			/* Note that we can no longer remove the item */

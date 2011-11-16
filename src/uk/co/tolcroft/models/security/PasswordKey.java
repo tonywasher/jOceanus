@@ -422,7 +422,8 @@ public class PasswordKey {
 	
 	/**
 	 * Generate an AsymmetricKey from its definition
-	 * @param pSecurityKey the Security Key  
+	 * @param pSecuredPrivateKeyDef the Secured Private Key definition  
+	 * @param pPublicKey the Public Key  
 	 * @param pKeyType	the key type
 	 */
 	public AsymmetricKey getAsymmetricKey(byte[] 		pSecuredPrivateKeyDef,

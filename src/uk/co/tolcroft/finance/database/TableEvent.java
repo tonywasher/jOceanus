@@ -39,9 +39,15 @@ public class TableEvent extends TableEncrypted<Event> {
 	 * @param pTableDef the table definition
 	 */
 	protected void defineTable(TableDefinition	pTableDef) {
+		/* Define Standard table */
 		super.defineTable(pTableDef);
 		theTableDef = pTableDef;
-		ColumnDefinition myDateCol = theTableDef.addDateColumn(Event.FIELD_DATE, Event.fieldName(Event.FIELD_DATE));
+		
+		/* Define sort column variable */
+		ColumnDefinition myDateCol;
+		
+		/* Define the columns */
+		myDateCol = theTableDef.addDateColumn(Event.FIELD_DATE, Event.fieldName(Event.FIELD_DATE));
 		theTableDef.addEncryptedColumn(Event.FIELD_DESC, Event.fieldName(Event.FIELD_DESC), Event.DESCLEN);
 		theTableDef.addEncryptedColumn(Event.FIELD_AMOUNT, Event.fieldName(Event.FIELD_AMOUNT), EncryptedItem.MONEYLEN);
 		theTableDef.addReferenceColumn(Event.FIELD_DEBIT, Event.fieldName(Event.FIELD_DEBIT), TableAccount.TableName);
@@ -51,6 +57,8 @@ public class TableEvent extends TableEncrypted<Event> {
 		theTableDef.addNullEncryptedColumn(Event.FIELD_TAXCREDIT, Event.fieldName(Event.FIELD_TAXCREDIT), EncryptedItem.MONEYLEN);
 		theTableDef.addNullEncryptedColumn(Event.FIELD_DILUTION, Event.fieldName(Event.FIELD_DILUTION), EncryptedItem.DILUTELEN);
 		theTableDef.addNullIntegerColumn(Event.FIELD_YEARS, Event.fieldName(Event.FIELD_YEARS));
+		
+		/* Declare the sort order */
 		myDateCol.setSortOrder(SortOrder.ASCENDING);
 	}
 	

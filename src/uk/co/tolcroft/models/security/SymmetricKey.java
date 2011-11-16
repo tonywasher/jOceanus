@@ -67,7 +67,6 @@ public class SymmetricKey {
 	
 	/**
 	 * Constructor for a new randomly generated key
-	 * @param pControl the security control 
 	 * @param pKeyType Symmetric KeyType
 	 * @param pRandom Secure Random byte generator
 	 */
@@ -187,7 +186,7 @@ public class SymmetricKey {
 	
 	/**
 	 * Initialise Stream cipher for decryption with initialisation vector
-	 * @param Initialisation vector for cipher
+	 * @param pInitVector Initialisation vector for cipher
 	 * @return the Stream Cipher
 	 */
 	public StreamCipher initDecryptionStream(byte[] pInitVector) throws Exception {

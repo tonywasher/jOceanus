@@ -431,7 +431,6 @@ public class ZipFile {
 		
 		/**
 		 * Constructor 
-		 * @param pControl the security control
 		 * @param pFile the file to read
 		 */
 		public Input(File	pFile) throws Exception {

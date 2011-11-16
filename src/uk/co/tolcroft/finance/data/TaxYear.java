@@ -997,7 +997,9 @@ public class TaxYear extends DataItem<TaxYear> {
 	/* The Tax Year List class */
 	public static class List extends DataList<List, TaxYear> {		
 		private FinanceData	theData			= null;
+		private TaxYear		theNewYear		= null;
 		public 	FinanceData getData()		{ return theData; }
+		public 	TaxYear		getNewYear()	{ return theNewYear; }
 
 		/** 
 	 	 * Construct an empty CORE TaxYear list
@@ -1112,6 +1114,9 @@ public class TaxYear extends DataItem<TaxYear> {
 			myYear.setDate(new Date(myBase.getDate()));
 			myYear.getDate().adjustYear(1);
 			myList.add(myYear);
+			
+			/* Record the new year */
+			myList.theNewYear = myYear;
 			
 			/* Return the List */
 			return myList;
@@ -1426,7 +1431,7 @@ public class TaxYear extends DataItem<TaxYear> {
 	/**
 	 *  Values for a tax year
 	 */
-	public class Values implements HistoryValues<TaxYear> {
+	public class Values extends HistoryValues<TaxYear> {
 		private Date 		theYear	 		 = null;
 		private Integer		theTaxRegimeId	 = null;
 		private TaxRegime 	theTaxRegime	 = null;

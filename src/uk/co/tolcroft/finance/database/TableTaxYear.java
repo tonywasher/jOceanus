@@ -43,9 +43,15 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	 * @param pTableDef the table definition
 	 */
 	protected void defineTable(TableDefinition	pTableDef) {
+		/* Define Standard table */
 		super.defineTable(pTableDef);
 		theTableDef = pTableDef;
-		ColumnDefinition myDateCol = theTableDef.addDateColumn(TaxYear.FIELD_YEAR, TaxYear.fieldName(TaxYear.FIELD_YEAR));
+
+		/* Define sort column variable */
+		ColumnDefinition myDateCol;
+		
+		/* define the columns */
+		myDateCol = theTableDef.addDateColumn(TaxYear.FIELD_YEAR, TaxYear.fieldName(TaxYear.FIELD_YEAR));
 		theTableDef.addReferenceColumn(TaxYear.FIELD_REGIME, TaxYear.fieldName(TaxYear.FIELD_REGIME), TableTaxRegime.TableName);
 		theTableDef.addMoneyColumn(TaxYear.FIELD_ALLOW, TaxYear.fieldName(TaxYear.FIELD_ALLOW));
 		theTableDef.addMoneyColumn(TaxYear.FIELD_RENTAL, TaxYear.fieldName(TaxYear.FIELD_RENTAL));
@@ -67,6 +73,8 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 		theTableDef.addNullMoneyColumn(TaxYear.FIELD_CAPALW, TaxYear.fieldName(TaxYear.FIELD_CAPALW));
 		theTableDef.addNullRateColumn(TaxYear.FIELD_CAPTAX, TaxYear.fieldName(TaxYear.FIELD_CAPTAX));
 		theTableDef.addNullRateColumn(TaxYear.FIELD_HCPTAX, TaxYear.fieldName(TaxYear.FIELD_HCPTAX));
+		
+		/* Declare the sort order */
 		myDateCol.setSortOrder(SortOrder.ASCENDING);
 	}
 	

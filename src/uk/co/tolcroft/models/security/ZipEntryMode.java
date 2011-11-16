@@ -300,7 +300,7 @@ public class ZipEntryMode {
 		/* Access as a long value and shift up place bytes */
 		long lId 	= iId;
 		long lMask	= 255;
-		while (iPlace-- > 0) { lId *= 256; lMask *= 256; }
+		while (iPlace-- > 0) { lId <<= 8; lMask <<= 8; }
 		
 		/* Add into the mode */
 		theMode &= ~lMask;
@@ -316,7 +316,7 @@ public class ZipEntryMode {
 		/* Access as a long value and shift down place bytes */
 		long lId 	= pMode;
 		long lMask	= 255;
-		while (iPlace-- > 0) { lId /= 256; }
+		while (iPlace-- > 0) { lId >>= 8; }
 		
 		/* Extract from the mode */
 		lId &= lMask;

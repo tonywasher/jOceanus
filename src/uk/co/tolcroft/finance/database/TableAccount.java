@@ -5,6 +5,8 @@ import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.database.TableDefinition;
+import uk.co.tolcroft.models.database.TableDefinition.ColumnDefinition;
+import uk.co.tolcroft.models.database.TableDefinition.SortOrder;
 import uk.co.tolcroft.models.database.TableEncrypted;
 
 public class TableAccount extends TableEncrypted<Account> {
@@ -36,10 +38,16 @@ public class TableAccount extends TableEncrypted<Account> {
 	 * @param pTableDef the table definition
 	 */
 	protected void defineTable(TableDefinition	pTableDef) {
+		/* Define Standard table */
 		super.defineTable(pTableDef);
 		theTableDef = pTableDef;
+		
+		/* Define sort column variable */
+		ColumnDefinition mySortCol;
+		
+		/* Define the columns */
 		theTableDef.addEncryptedColumn(Account.FIELD_NAME, Account.fieldName(Account.FIELD_NAME), Account.NAMELEN);
-		theTableDef.addReferenceColumn(Account.FIELD_TYPE, Account.fieldName(Account.FIELD_TYPE), TableAccountType.TableName);
+		mySortCol = theTableDef.addReferenceColumn(Account.FIELD_TYPE, Account.fieldName(Account.FIELD_TYPE), TableAccountType.TableName);
 		theTableDef.addNullEncryptedColumn(Account.FIELD_DESC, Account.fieldName(Account.FIELD_DESC), Account.DESCLEN);
 		theTableDef.addNullDateColumn(Account.FIELD_MATURITY, Account.fieldName(Account.FIELD_MATURITY));
 		theTableDef.addNullDateColumn(Account.FIELD_CLOSE, Account.fieldName(Account.FIELD_CLOSE));
@@ -51,6 +59,9 @@ public class TableAccount extends TableEncrypted<Account> {
 		theTableDef.addNullEncryptedColumn(Account.FIELD_PASSWORD, Account.fieldName(Account.FIELD_PASSWORD), Account.PWDLEN);
 		theTableDef.addNullEncryptedColumn(Account.FIELD_ACCOUNT, Account.fieldName(Account.FIELD_ACCOUNT), Account.ACTLEN);
 		theTableDef.addNullEncryptedColumn(Account.FIELD_NOTES, Account.fieldName(Account.FIELD_NOTES), Account.NOTELEN);
+
+		/* Declare the sort order */
+		mySortCol.setSortOrder(SortOrder.ASCENDING);
 	}
 	
 	/* Declare DataSet */

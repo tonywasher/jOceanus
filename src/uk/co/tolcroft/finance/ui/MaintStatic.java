@@ -28,6 +28,8 @@ public class MaintStatic implements stdPanel,
 	private MaintStaticData<?,?>	theTaxTypes		= null;
 	private MaintStaticData<?,?>	theTaxRegimes	= null;
 	private MaintStaticData<?,?>	theFrequencys	= null;
+	private MaintStaticData<?,?>	theInfoTypes	= null;
+	private MaintStaticData<?,?>	theCurrent		= null;
 	private ViewList				theViewSet		= null;
 	private DebugEntry				theDebugData	= null;
 
@@ -56,6 +58,7 @@ public class MaintStatic implements stdPanel,
 		theTaxTypes 	= new MaintStaticData<TaxType.List, TaxType>(this, TaxType.List.class);
 		theTaxRegimes 	= new MaintStaticData<TaxRegime.List, TaxRegime>(this, TaxRegime.List.class);
 		theFrequencys	= new MaintStaticData<Frequency.List, Frequency>(this, Frequency.List.class);
+		theInfoTypes	= new MaintStaticData<EventInfoType.List, EventInfoType>(this, EventInfoType.List.class);
 		
 		/* Build the Static box */
 		theSelectBox = new JComboBox();
@@ -64,6 +67,7 @@ public class MaintStatic implements stdPanel,
 		theSelectBox.addItem(TaxType.listName);
 		theSelectBox.addItem(TaxRegime.listName);
 		theSelectBox.addItem(Frequency.listName);
+		theSelectBox.addItem(EventInfoType.listName);
 		
 		/* Add the listener for item changes */
 		theSelectBox.addItemListener(this);
@@ -109,7 +113,8 @@ public class MaintStatic implements stdPanel,
 	                    .addComponent(theTranTypes.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
 	                    .addComponent(theTaxTypes.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
 	                    .addComponent(theTaxRegimes.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
-	                    .addComponent(theFrequencys.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE))
+	                    .addComponent(theFrequencys.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
+	                    .addComponent(theInfoTypes.getPanel(), GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE))
 	                .addContainerGap())
 	    );
 	    panelLayout.setVerticalGroup(
@@ -121,6 +126,7 @@ public class MaintStatic implements stdPanel,
 	                .addComponent(theTaxTypes.getPanel())
 	                .addComponent(theTaxRegimes.getPanel())
 	                .addComponent(theFrequencys.getPanel())
+	                .addComponent(theInfoTypes.getPanel())
 	                .addContainerGap())
 	    );
 	    
@@ -129,17 +135,28 @@ public class MaintStatic implements stdPanel,
 		setSelection(theActTypes);
 	}
 
+	/* Determine Focus */
+	protected void determineFocus() {
+		/* Set the required focus */
+		theCurrent.getDebugEntry().setFocus();
+	}
+	
 	/**
 	 * Set Selection
 	 * @param pClass the class that is selected
 	 */
 	private void setSelection(MaintStaticData<?,?> pClass) {
+		/* Record the current class and set debug focus */
+		theCurrent = pClass;
+		determineFocus();
+		
 		/* Enable/Disable view */
 		theActTypes.getPanel().setVisible(pClass == theActTypes);
 		theTranTypes.getPanel().setVisible(pClass == theTranTypes);
 		theTaxTypes.getPanel().setVisible(pClass == theTaxTypes);
 		theTaxRegimes.getPanel().setVisible(pClass == theTaxRegimes);
 		theFrequencys.getPanel().setVisible(pClass == theFrequencys);
+		theInfoTypes.getPanel().setVisible(pClass == theInfoTypes);
 	}
 	
 	/* ItemStateChanged listener event */
@@ -156,6 +173,7 @@ public class MaintStatic implements stdPanel,
 				else if (myName == TaxType.listName)			setSelection(theTaxTypes);
 				else if (myName == TaxRegime.listName)			setSelection(theTaxRegimes);
 				else if (myName == Frequency.listName)			setSelection(theFrequencys);
+				else if (myName == EventInfoType.listName)		setSelection(theInfoTypes);
 			}
 		}
 	}
@@ -211,6 +229,7 @@ public class MaintStatic implements stdPanel,
 		theTaxTypes.refreshData();
 		theTaxRegimes.refreshData();
 		theFrequencys.refreshData();
+		theInfoTypes.refreshData();
 	}
 	
 	/**

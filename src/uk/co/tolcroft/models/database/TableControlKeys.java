@@ -33,8 +33,11 @@ public class TableControlKeys extends DatabaseTable<ControlKey> {
 	 * @param pTableDef the table definition
 	 */
 	protected void defineTable(TableDefinition	pTableDef) {
+		/* Define Standard table */
 		super.defineTable(pTableDef);
 		theTableDef = pTableDef;
+
+		/* Define the columns */
 		theTableDef.addBinaryColumn(ControlKey.FIELD_PASSHASH,   ControlKey.fieldName(ControlKey.FIELD_PASSHASH), ControlKey.HASHLEN);
 		theTableDef.addIntegerColumn(ControlKey.FIELD_KEYTYPE,   ControlKey.fieldName(ControlKey.FIELD_KEYTYPE));
 		theTableDef.addIntegerColumn(ControlKey.FIELD_NUMSTEPS,  ControlKey.fieldName(ControlKey.FIELD_NUMSTEPS));

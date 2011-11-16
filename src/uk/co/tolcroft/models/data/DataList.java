@@ -1,5 +1,6 @@
 package uk.co.tolcroft.models.data;
 
+import uk.co.tolcroft.models.ReportList;
 import uk.co.tolcroft.models.SortedList;
 import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.help.DebugManager;
@@ -11,7 +12,7 @@ import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
  * @author Tony Washer
  */
 public abstract class DataList<L extends DataList<L,T>,
-							   T extends DataItem<T>> 	extends SortedList<T> 
+							   T extends DataItem<T>> 	extends ReportList<T> 
 												   		implements DebugObject {
 	/**
 	 * The style of the list
@@ -162,7 +163,7 @@ public abstract class DataList<L extends DataList<L,T>,
 	 * @param pSource the list to clone
 	 */
 	protected DataList(L pSource) {
-		super(pSource.getBaseClass(), false);
+		super(pSource.getBaseClass());
 		theStyle 		= ListStyle.VIEW;
 		theClass 		= pSource.theClass;
 		theList	 		= theClass.cast(this);
@@ -410,7 +411,7 @@ public abstract class DataList<L extends DataList<L,T>,
 	 */
 	public boolean remove(Object o) {
 		/* Make sure that the object is the same data class */
-		if (o.getClass() != getBaseClass()) return false;
+		if (!getBaseClass().isInstance(o)) return false;
 		
 		/* Remove the underlying item */
 		boolean bSuccess = super.remove(o);
@@ -782,6 +783,7 @@ public abstract class DataList<L extends DataList<L,T>,
 					/* Clear errors and mark the item as clean */
 					myCurr.clearErrors();
 					myCurr.setState(DataState.CLEAN);
+					myIterator.reSort();
 					break;
 			}
 		}

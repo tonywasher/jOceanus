@@ -4,14 +4,9 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
-import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.data.DataState;
-import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.help.DebugDetail;
 
-public class CapitalEvent extends DataItem<CapitalEvent> {
+public class CapitalEvent extends ReportItem<CapitalEvent> {
 	/**
 	 * The name of the object
 	 */
@@ -81,7 +76,7 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 		if (iField == 0) return "Date";
 		
 		/* Handle out of range */
-		return DataItem.fieldName(iField);
+		return ReportItem.fieldName(iField);
 	}
 	
 	/**
@@ -104,10 +99,9 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 	 * Format the value of a particular field as a table row
 	 * @param pDetail the debug detail
 	 * @param iField the field number
-	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(DebugDetail pDetail, int iField, HistoryValues<CapitalEvent> pValues) {
+	public String formatField(DebugDetail pDetail, int iField) {
 		Attribute myAttr;
 
 		/* If we have a valid element */
@@ -139,7 +133,7 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 	private CapitalEvent(List 			pList,
 						 Event 			pEvent) {
 		/* Call super-constructor */
-		super(pList, pEvent.getId());
+		super(pList);
 		
 		/* Create the attributes list */
 		theAttributes = new AttributeList();
@@ -147,9 +141,6 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 		
 		/* Link to the event */
 		setBase(pEvent);
-		
-		/* Set status */
-		setState(DataState.CLEAN);
 	}
 	
 	/**
@@ -160,14 +151,11 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 	private CapitalEvent(List 			pList,
 						 Date			pDate) {
 		/* Call super-constructor */
-		super(pList, 0);
+		super(pList);
 		
 		/* Create the attributes list */
 		theAttributes = new AttributeList();
 		theDate		  = pDate;
-		
-		/* Set status */
-		setState(DataState.CLEAN);
 	}
 	
 	/**
@@ -282,7 +270,7 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 	}
 	
 	/* The List of capital events */
-	public static class List extends DataList<List, CapitalEvent> {
+	public static class List extends ReportList<CapitalEvent> {
 		/* Members */
 		private FinanceData		theData			= null;
 		private Account			theAccount		= null;
@@ -297,33 +285,13 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 	 	 */
 		protected List(FinanceData	pData,
 					   Account		pAccount) { 
-			super(List.class, CapitalEvent.class, ListStyle.VIEW, false);
+			super(CapitalEvent.class);
 			
 			/* Store the data */
 			theData			= pData;
 			theAccount		= pAccount;
 		}
 
-		/* Obtain extract lists. */
-		public List getUpdateList() { return null; }
-		public List getEditList() 	{ return null; }
-		public List getShallowCopy() { return null; }
-		public List getDeepCopy(DataSet<?> pData) { return null; }
-		public List getDifferences(List pOld) { return null; }
-
-		/**
-		 * Add a new item to the list
-		 * @param pItem the item to add
-		 * @return the newly added item
-		 */
-		public CapitalEvent addNewItem(DataItem<?> pItem) { return null; }
-
-	
-		/**
-		 * Add a new item to the edit list
-		 */
-		public CapitalEvent addNewItem() { return null; }
-	
 		/**
 		 * Obtain the type of the item
 		 * @return the type of the item
@@ -407,9 +375,10 @@ public class CapitalEvent extends DataItem<CapitalEvent> {
 
 		/**
 		 * Add additional fields to HTML String
+		 * @param pDetail the debug detail
 		 * @param pBuffer the string buffer 
 		 */
-		public void addHTMLFields(StringBuilder pBuffer) {
+		public void addHTMLFields(DebugDetail pDetail, StringBuilder pBuffer) {
 			/* Start the Fields section */
 			pBuffer.append("<tr><th rowspan=\"2\">Fields</th></tr>");
 				

@@ -190,6 +190,7 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
 			if (bContinue) bContinue = SheetTaxType.loadArchive(pThread, myWorkbook, myData);
 			if (bContinue) bContinue = SheetTaxRegime.loadArchive(pThread, myWorkbook, myData);
 			if (bContinue) bContinue = SheetFrequency.loadArchive(pThread, myWorkbook, myData);
+			if (bContinue) bContinue = SheetEventInfoType.loadArchive(pThread, myWorkbook, myData);
 			if (bContinue) bContinue = SheetTaxYear.loadArchive(pThread, myWorkbook, myData, myRange);
 			if (bContinue) myData.calculateDateRange();
 			if (bContinue) bContinue = SheetAccount.loadArchive(pThread, myWorkbook, myData);

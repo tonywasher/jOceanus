@@ -193,6 +193,15 @@ public class AccountRates extends StdTable<AcctRate> {
 		theViewList.setDataList(theRates);
 	}
 		
+	/**
+	 * Perform additional validation after change
+	 */
+	protected void validateAfterChange() {
+		/* Validate Null rows */
+		theRates.validateNullDates(null);
+		theRates.findEditState();
+	}
+	
 	/* Rates table model */
 	public class RatesModel extends DataTableModel {
 		private static final long serialVersionUID = 296797947278000196L;
@@ -324,10 +333,6 @@ public class AccountRates extends StdTable<AcctRate> {
 				myRate.clearErrors();
 				myRate.setState(DataState.CHANGED);
 
-				/* Validate the item and update the edit state */
-				myRate.validate();
-				theRates.findEditState();
-				
 				/* Switch on the updated column */
 				switch (col) {
 					/* if we have updated a sort column */
@@ -354,6 +359,11 @@ public class AccountRates extends StdTable<AcctRate> {
 						break;
 				}
 			
+				/* Validate the item and update the edit state */
+				myRate.validate();
+				theRates.validateNullDates(myRate);
+				theRates.findEditState();
+				
 				/* Update components to reflect changes */
 				notifyChanges();
 				updateDebug();

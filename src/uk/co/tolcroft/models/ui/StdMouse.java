@@ -15,7 +15,7 @@ import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.EditState;
 
 public abstract class StdMouse<T extends DataItem<T>> extends MouseAdapter
-													      implements ActionListener {
+													  implements ActionListener {
 	/* Members */
 	private StdTable<T> 		theTable 		= null;
 	private boolean				doShowDeleted	= false;

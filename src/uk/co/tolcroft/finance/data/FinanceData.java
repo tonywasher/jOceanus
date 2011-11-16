@@ -16,12 +16,15 @@ public class FinanceData extends DataSet<FinanceData> {
 	private TaxType.List			theTaxTypes   	= null;
 	private TaxRegime.List			theTaxRegimes 	= null;
     private Frequency.List			theFrequencys 	= null;
+    private EventInfoType.List		theInfoTypes 	= null;
     private TaxYear.List			theTaxYears   	= null;
     private Account.List			theAccounts  	= null;
     private AcctRate.List			theRates      	= null;
     private AcctPrice.List			thePrices     	= null;
     private Pattern.List			thePatterns   	= null; 
 	private Event.List				theEvents     	= null;
+	private EventValue.List			theEventValues 	= null;
+	private EventData.List			theEventData 	= null;
     private Date.Range				theDateRange  	= null;
     private EventAnalysis			theAnalysis		= null;
     private LoadState				theLoadState  	= LoadState.INITIAL;
@@ -32,12 +35,15 @@ public class FinanceData extends DataSet<FinanceData> {
 	public TaxType.List 		getTaxTypes() 		{ return theTaxTypes; }
 	public TaxRegime.List 		getTaxRegimes() 	{ return theTaxRegimes; }
 	public Frequency.List 		getFrequencys() 	{ return theFrequencys; }
+	public EventInfoType.List 	getInfoTypes() 		{ return theInfoTypes; }
 	public TaxYear.List 		getTaxYears()  		{ return theTaxYears; }
 	public Account.List 		getAccounts()  		{ return theAccounts; }
 	public AcctRate.List 		getRates()  		{ return theRates; }
 	public AcctPrice.List 		getPrices()  		{ return thePrices; }
 	public Pattern.List 		getPatterns()  		{ return thePatterns; }
 	public Event.List 			getEvents()  		{ return theEvents; }
+	public EventValue.List 		getEventValues()  	{ return theEventValues; }
+	public EventData.List 		getEventData()  	{ return theEventData; }
 	public Date.Range 			getDateRange()  	{ return theDateRange; }
 	public EventAnalysis		getAnalysis()  		{ return theAnalysis; }
 	public LoadState 			getLoadState()  	{ return theLoadState; }
@@ -55,12 +61,15 @@ public class FinanceData extends DataSet<FinanceData> {
 		theTaxTypes    = new TaxType.List(this);
 		theTaxRegimes  = new TaxRegime.List(this);
 		theFrequencys  = new Frequency.List(this);
+		theInfoTypes   = new EventInfoType.List(this);
 		theTaxYears    = new TaxYear.List(this);
 		theAccounts    = new Account.List(this);
 		theRates       = new AcctRate.List(this);
 		thePrices      = new AcctPrice.List(this);
 		thePatterns    = new Pattern.List(this);
 		theEvents      = new Event.List(this);
+		theEventData   = new EventData.List(this);
+		theEventValues = new EventValue.List(this);
 		
 		/* Declare the lists */
 		declareLists();
@@ -88,14 +97,17 @@ public class FinanceData extends DataSet<FinanceData> {
 		myExtract.theTaxTypes   = theTaxTypes.getUpdateList();
 		myExtract.theTaxRegimes = theTaxRegimes.getUpdateList();
 		myExtract.theFrequencys = theFrequencys.getUpdateList();
+		myExtract.theInfoTypes  = theInfoTypes.getUpdateList();
 		
 		/* Build the data extract */
-		myExtract.theTaxYears   = theTaxYears.getUpdateList();
-		myExtract.theAccounts   = theAccounts.getUpdateList();
-		myExtract.theRates      = theRates.getUpdateList();
-		myExtract.thePrices     = thePrices.getUpdateList();
-		myExtract.thePatterns   = thePatterns.getUpdateList();
-		myExtract.theEvents     = theEvents.getUpdateList();
+		myExtract.theTaxYears    = theTaxYears.getUpdateList();
+		myExtract.theAccounts    = theAccounts.getUpdateList();
+		myExtract.theRates       = theRates.getUpdateList();
+		myExtract.thePrices      = thePrices.getUpdateList();
+		myExtract.thePatterns    = thePatterns.getUpdateList();
+		myExtract.theEvents      = theEvents.getUpdateList();
+		myExtract.theEventData   = theEventData.getUpdateList();
+		myExtract.theEventValues = theEventValues.getUpdateList();
 
 		/* Declare the lists */
 		myExtract.declareLists();
@@ -120,14 +132,17 @@ public class FinanceData extends DataSet<FinanceData> {
 		myExtract.theTaxTypes   = theTaxTypes.getDeepCopy(myExtract);
 		myExtract.theTaxRegimes = theTaxRegimes.getDeepCopy(myExtract);
 		myExtract.theFrequencys = theFrequencys.getDeepCopy(myExtract);
+		myExtract.theInfoTypes  = theInfoTypes.getDeepCopy(myExtract);
 		
 		/* Build the data extract */
-		myExtract.theTaxYears   = theTaxYears.getDeepCopy(myExtract);
-		myExtract.theAccounts   = theAccounts.getDeepCopy(myExtract);
-		myExtract.theRates      = theRates.getDeepCopy(myExtract);
-		myExtract.thePrices     = thePrices.getDeepCopy(myExtract);
-		myExtract.thePatterns   = thePatterns.getDeepCopy(myExtract);
-		myExtract.theEvents     = theEvents.getDeepCopy(myExtract);
+		myExtract.theTaxYears    = theTaxYears.getDeepCopy(myExtract);
+		myExtract.theAccounts    = theAccounts.getDeepCopy(myExtract);
+		myExtract.theRates       = theRates.getDeepCopy(myExtract);
+		myExtract.thePrices      = thePrices.getDeepCopy(myExtract);
+		myExtract.thePatterns    = thePatterns.getDeepCopy(myExtract);
+		myExtract.theEvents      = theEvents.getDeepCopy(myExtract);
+		myExtract.theEventData   = theEventData.getDeepCopy(myExtract);
+		myExtract.theEventValues = theEventValues.getDeepCopy(myExtract);
 
 		/* Declare the lists */
 		myExtract.declareLists();
@@ -165,14 +180,17 @@ public class FinanceData extends DataSet<FinanceData> {
 		myDiffers.theTaxTypes	= theTaxTypes.getDifferences(myOld.getTaxTypes());
 		myDiffers.theTaxRegimes	= theTaxRegimes.getDifferences(myOld.getTaxRegimes());
 		myDiffers.theFrequencys	= theFrequencys.getDifferences(myOld.getFrequencys());
+		myDiffers.theInfoTypes	= theInfoTypes.getDifferences(myOld.getInfoTypes());
 
 		/* Build the data differences */
-		myDiffers.theTaxYears  	= theTaxYears.getDifferences(myOld.getTaxYears());
-		myDiffers.theAccounts  	= theAccounts.getDifferences(myOld.getAccounts());
-		myDiffers.theRates	  	= theRates.getDifferences(myOld.getRates());
-		myDiffers.thePrices	  	= thePrices.getDifferences(myOld.getPrices());
-		myDiffers.thePatterns  	= thePatterns.getDifferences(myOld.getPatterns());
-		myDiffers.theEvents	  	= theEvents.getDifferences(myOld.getEvents());
+		myDiffers.theTaxYears  	 = theTaxYears.getDifferences(myOld.getTaxYears());
+		myDiffers.theAccounts  	 = theAccounts.getDifferences(myOld.getAccounts());
+		myDiffers.theRates	  	 = theRates.getDifferences(myOld.getRates());
+		myDiffers.thePrices	  	 = thePrices.getDifferences(myOld.getPrices());
+		myDiffers.thePatterns  	 = thePatterns.getDifferences(myOld.getPatterns());
+		myDiffers.theEvents	  	 = theEvents.getDifferences(myOld.getEvents());
+		myDiffers.theEventData	 = theEventData.getDifferences(myOld.getEventData());
+		myDiffers.theEventValues = theEventValues.getDifferences(myOld.getEventValues());
 
 		/* Declare the lists */
 		myDiffers.declareLists();
@@ -203,6 +221,7 @@ public class FinanceData extends DataSet<FinanceData> {
 		theTaxTypes.reBase(myOld.getTaxTypes());
 		theTaxRegimes.reBase(myOld.getTaxRegimes());
 		theFrequencys.reBase(myOld.getFrequencys());
+		theInfoTypes.reBase(myOld.getInfoTypes());
 
 		/* ReBase the data items */
 		theTaxYears.reBase(myOld.getTaxYears());
@@ -211,6 +230,8 @@ public class FinanceData extends DataSet<FinanceData> {
 		thePrices.reBase(myOld.getPrices());
 		thePatterns.reBase(myOld.getPatterns());
 		theEvents.reBase(myOld.getEvents());
+		theEventData.reBase(myOld.getEventData());
+		theEventValues.reBase(myOld.getEventValues());
 	}
 	
 	/**
@@ -223,12 +244,15 @@ public class FinanceData extends DataSet<FinanceData> {
 		addList(theTaxTypes);
 		addList(theTaxRegimes);
 		addList(theFrequencys);
+		addList(theInfoTypes);
 		addList(theTaxYears);
 		addList(theAccounts);
 		addList(theRates);
 		addList(thePrices);
 		addList(thePatterns);
 		addList(theEvents);		
+		addList(theEventData);		
+		addList(theEventValues);		
 	}
 
 	/**

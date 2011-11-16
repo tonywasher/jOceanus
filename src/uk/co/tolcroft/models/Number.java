@@ -140,7 +140,7 @@ public abstract class Number {
 		
 		/* Create a working copy */
 		myWork = new StringBuilder(pString);
-
+		
 		/* Trim leading and trailing blanks */
 		while ((myWork.length() > 0) && (Character.isWhitespace(myWork.charAt(0))))
 			myWork.deleteCharAt(0);

@@ -5,9 +5,11 @@ import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import uk.co.tolcroft.models.Date;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
-import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.SortedList;
+import uk.co.tolcroft.models.ui.DateSelect;
 import uk.co.tolcroft.models.ui.PasswordDialog;
 
 public class SecureManager {
@@ -47,6 +49,13 @@ public class SecureManager {
 		if (!myControl.isInitialised()) {
 			String 	myTitle;
 			boolean	needConfirm = false;
+		
+			/* Try a Date Dialog */
+			DateSelect myDate = new DateSelect(theFrame);
+			myDate.showDialog();
+			Date myAnswer = new Date(myDate.getSelected());
+			myDate.setSelectableRange(myAnswer.getDate(), null);
+			myDate.showDialog();
 			
 			/* Determine whether we need confirmation */
 			if (pKey == null) needConfirm = true;
@@ -149,7 +158,7 @@ public class SecureManager {
 	 * @param pControl the control to attempt
 	 */
 	private void attemptKnownPasswords(SecurityControl pControl) {
-		DataList<?,SecurityControl>.ListIterator 	myIterator;
+		SortedList<SecurityControl>.ListIterator 	myIterator;
 		SecurityControl								myCurr;
 		PasswordKey									myPassKey;
 		

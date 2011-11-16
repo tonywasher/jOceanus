@@ -25,13 +25,21 @@ public abstract class TableStaticData<T extends StaticData<T,?>> extends TableEn
 	 * @param pTableDef the table definition
 	 */
 	protected void defineTable(TableDefinition	pTableDef) {
+		/* Define Standard table */
 		super.defineTable(pTableDef);
 		theTableDef = pTableDef;
+
+		/* Define sort column variable */
+		ColumnDefinition mySortCol;
+		
+		/* Define the columns */
 		theTableDef.addBooleanColumn(StaticData.FIELD_ENABLED, StaticData.fieldName(StaticData.FIELD_ENABLED));
-		ColumnDefinition myOrderCol = theTableDef.addIntegerColumn(StaticData.FIELD_ORDER, StaticData.fieldName(StaticData.FIELD_ORDER));
+		mySortCol = theTableDef.addIntegerColumn(StaticData.FIELD_ORDER, StaticData.fieldName(StaticData.FIELD_ORDER));
 		theTableDef.addEncryptedColumn(StaticData.FIELD_NAME, getDataName(), StaticData.NAMELEN);
 		theTableDef.addNullEncryptedColumn(StaticData.FIELD_DESC, StaticData.fieldName(StaticData.FIELD_DESC), StaticData.DESCLEN);
-		myOrderCol.setSortOrder(SortOrder.ASCENDING);
+		
+		/* Declare the sort order */
+		mySortCol.setSortOrder(SortOrder.ASCENDING);
 	}
 	
 	/* Load the Static Data */

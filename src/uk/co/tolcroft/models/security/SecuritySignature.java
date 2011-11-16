@@ -121,7 +121,7 @@ public class SecuritySignature {
 	
 	/**
 	 * Compare this signature to another for equality 
-	 * @param pThat the key to compare to
+	 * @param pThat the signature to compare to
 	 * @return <code>true/false</code> 
 	 */
 	public boolean equals(Object pThat) {
@@ -145,5 +145,35 @@ public class SecuritySignature {
 		
 		/* Identical if those tests succeed */
 		return true;
+	}
+
+	/**
+	 * Compare this signature to another for sortOrder 
+	 * @param pThat the signature to compare to
+	 * @return <code>true/false</code> 
+	 */
+	public int compareTo(Object pThat) {
+		int iDiff;
+		
+		/* Handle the trivial cases */
+		if (this == pThat) return 0;
+		if (pThat == null) return -1;
+		
+		/* Make sure that the object is a SecuritySignature */
+		if (pThat.getClass() != this.getClass()) return -1;
+		
+		/* Access the target signature */
+		SecuritySignature myThat = (SecuritySignature)pThat;
+	
+		/* Compare Key Types */
+		if ((iDiff = myThat.theKeyType.compareTo(theKeyType)) != 0) return iDiff;
+		
+		/* Compare the private/public keys and password */
+		if ((iDiff = Utils.compareTo(thePasswordHash,  myThat.thePasswordHash)) != 0) 	return iDiff;
+		if ((iDiff = Utils.compareTo(theSecuredKeyDef, myThat.theSecuredKeyDef)) != 0) 	return iDiff;
+		if ((iDiff = Utils.compareTo(thePublicKey,     myThat.thePublicKey)) != 0) 		return iDiff;
+		
+		/* Identical if those tests succeed */
+		return 0;
 	}
 }

@@ -42,8 +42,11 @@ public class TablePattern extends TableEncrypted<Pattern> {
 	 * @param pTableDef the table definition
 	 */
 	protected void defineTable(TableDefinition	pTableDef) {
+		/* Define sort column variable */
 		super.defineTable(pTableDef);
 		theTableDef = pTableDef;
+
+		/* Declare the columns */
 		theTableDef.addReferenceColumn(Pattern.FIELD_ACCOUNT, Pattern.fieldName(Pattern.FIELD_ACCOUNT), TableAccount.TableName);
 		theTableDef.addDateColumn(Pattern.FIELD_DATE, Pattern.fieldName(Pattern.FIELD_DATE));
 		theTableDef.addEncryptedColumn(Pattern.FIELD_DESC, Pattern.fieldName(Pattern.FIELD_DESC), Pattern.DESCLEN);

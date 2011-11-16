@@ -160,14 +160,14 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		}
 	}
 
-	/* Standard constructor for a newly inserted rate */
+	/* Insert constructor */
 	public AcctRate(List pList) {
 		super(pList, 0);
 		setAccount(pList.theAccount);
 		pList.setNewId(this);		
 	}
 
-	/* Standard constructor */
+	/* Extract constructor */
 	private AcctRate(List       	pList,
 					 int			uId,
 				     int 		   	uAccountId,
@@ -288,10 +288,6 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		/* Access the object as a Rate */
 		AcctRate myThat = (AcctRate)pThat;
 
-		/* Compare the accounts */
-		iDiff = getAccount().compareTo(myThat.getAccount());
-		if (iDiff != 0) return iDiff;
-
 		/* If the date differs */
 		if (this.getEndDate() != myThat.getEndDate()) {
 			/* Handle null dates */
@@ -303,6 +299,10 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 			if (iDiff != 0) return iDiff;
 		}
 		
+		/* Compare the accounts */
+		iDiff = getAccount().compareTo(myThat.getAccount());
+		if (iDiff != 0) return iDiff;
+
 		/* Compare the IDs */
 		iDiff = (int)(getId() - myThat.getId());
 		if (iDiff < 0) return -1;
@@ -344,7 +344,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 			
 			/* Ignore if this item doesn't belong to the account */
 			if ((myCurr != null) &&
-			    (!Account.differs(myCurr.getAccount(), getAccount()).isDifferent()))
+			    (Account.differs(myCurr.getAccount(), getAccount()).isDifferent()))
 				myCurr = null;
 
 			/* If we have a later element then error */
@@ -353,7 +353,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		}
 
 		/* If we have a date */
-		if (myDate != null) {
+		else if (myDate != null) {
 			/* The date must be unique for this account */
 			if (myList.countInstances(myDate, getAccount()) > 1) {
 				addError("Rate Date must be unique", FIELD_ENDDATE);
@@ -546,9 +546,8 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 				/* Check the account */
 				int myResult = pAccount.compareTo(myCurr.getAccount());
 				
-				/* Handle differing accounts */
-				if (myResult ==  1) continue;
-				if (myResult == -1) break;
+				/* Skip different accounts */
+				if (myResult != 0) continue;
 				
 				/* Copy the item */
 				myItem = new AcctRate(myList, myCurr);
@@ -562,12 +561,12 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		/* Is this list locked */
 		public boolean isLocked() { return ((theAccount != null) && (theAccount.isLocked())); }
 
-
 		/**
 		 * Add additional fields to HTML String
+		 * @param pDetail the debug detail
 		 * @param pBuffer the string buffer 
 		 */
-		public void addHTMLFields(StringBuilder pBuffer) {
+		public void addHTMLFields(DebugDetail pDetail, StringBuilder pBuffer) {
 			/* If this is an account extract */
 			if (theAccount != null) {
 				/* Start the Fields section */
@@ -640,7 +639,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		 */
 		protected void markActiveItems() {
 			ListIterator 	myIterator;
-			AcctRate 			myCurr;
+			AcctRate 		myCurr;
 
 			/* Access the list iterator */
 			myIterator = listIterator();
@@ -653,13 +652,39 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		}
 
 		/**
+		 * Validate all null Dates
+		 * @param pCurrent the current (validated item)
+		 */
+		public void validateNullDates(AcctRate pCurrent) {
+			ListIterator 	myIterator;
+			AcctRate 		myCurr;
+
+			/* Access the list iterator */
+			myIterator = listIterator();
+			
+			/* Loop through the Rates in reverse order */
+			while ((myCurr = myIterator.previous()) != null) {
+				/* Skip current element */
+				if (differs(pCurrent, myCurr).isIdentical()) continue;
+				
+				/* Break loop if we have a date */
+				Date myDate = myCurr.getDate();
+				if ((myDate != null) && (!myDate.isNull())) break;
+				
+				/* Validate rate */
+				myCurr.clearErrors();
+				myCurr.validate();
+			}			
+		}
+		
+		/**
 		 *  Obtain the most relevant rate for an Account and a Date
 		 *   @param pAccount the Account for which to get the rate
 		 *   @param pDate the date from which a rate is required
 		 *   @return The relevant Rate record 
 		 */
 		public AcctRate getLatestRate(Account   pAccount, 
-								  Date 		pDate) {
+								  	  Date 		pDate) {
 			ListIterator 	myIterator;
 			AcctRate    		myRate = null;
 			AcctRate    		myCurr;
@@ -722,13 +747,13 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		}
 		
 		/**
-		 *  Allow a rate to be added
+		 *  Load an Extract Rate
 		 */
-		public void addItem(int				uId,
-							int  	 		uAccountId,
-	            			String   		pRate,
-	            			java.util.Date  pDate,
-				            String   		pBonus) throws Exception {
+		private void addItem(int			uId,
+							 int  	 		uAccountId,
+	            			 String   		pRate,
+	            			 java.util.Date pDate,
+				             String   		pBonus) throws Exception {
 			AcctRate     	myRate;
 			
 			/* Create the period */
@@ -755,7 +780,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		}			
 
 		/**
-		 *  Allow a rate to be added
+		 *  Load an Encrypted Rate
 		 */
 		public void addItem(int     		uId,
 							int				uControlId,
@@ -831,7 +856,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 			if (differs(theRate,  myValues.theRate).isDifferent())    				return false;
 			if (differs(theBonus, myValues.theBonus).isDifferent())   				return false;
 			if (Date.differs(theEndDate, 	myValues.theEndDate).isDifferent()) 	return false;
-			if (Account.differs(theAccount, myValues.theAccount).isDifferent()) 	return false;
+			if (differs(theAccount, myValues.theAccount).isDifferent()) 			return false;
 			if (Utils.differs(theAccountId, myValues.theAccountId).isDifferent()) 	return false;
 			return true;
 		}

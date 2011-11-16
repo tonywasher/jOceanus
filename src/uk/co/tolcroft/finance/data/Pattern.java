@@ -557,7 +557,8 @@ public class Pattern extends EncryptedItem<Pattern> {
 		myFreq = getFrequency().getFrequency();
 		
 		/* Access the Tax Year list */
-		myList = (TaxYear.List)pTaxYear.getList();
+		FinanceData myData = pEvents.getData();
+		myList = myData.getTaxYears();
 		
 		/* If this is the first request for an event */
 		if (pDate.compareTo(getDate()) == 0) {
@@ -890,9 +891,10 @@ public class Pattern extends EncryptedItem<Pattern> {
 	
 		/**
 		 * Add additional fields to HTML String
+		 * @param pDetail the debug detail
 		 * @param pBuffer the string buffer 
 		 */
-		public void addHTMLFields(StringBuilder pBuffer) {
+		public void addHTMLFields(DebugDetail pDetail, StringBuilder pBuffer) {
 			/* If this is an account extract */
 			if (theAccount != null) {
 				/* Start the Fields section */

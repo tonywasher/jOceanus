@@ -1,7 +1,6 @@
 package uk.co.tolcroft.finance.data;
 
 import uk.co.tolcroft.finance.views.SpotPrices;
-import uk.co.tolcroft.finance.views.ViewPrice;
 import uk.co.tolcroft.finance.views.SpotPrices.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
@@ -164,22 +163,6 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	}
 
 	/**
-	 * Construct a new price from a ViewPrice
-	 * @param pPrice the price to copy 
-	 */
-	private AcctPrice(List   	pList,
-		         	  ViewPrice	pPrice) {
-	
-		/* Set standard values */
-		super(pList, 0);
-		Values myValues = getValues();
-		myValues.copyFrom(pPrice.getValues());
-			
-		/* Allocate the id */
-		pList.setNewId(this);				
-	}
-	
-	/**
 	 * Construct a new price from a SpotPrice
 	 * @param pPrice the price to copy 
 	 */
@@ -196,13 +179,20 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	}
 	
 	/* Standard constructor for a newly inserted price */
-	private AcctPrice(List pList) {
+	protected AcctPrice(List pList) {
 		super(pList, 0);
 		setControlKey(pList.getControlKey());
 		pList.setNewId(this);
 	}
 
-	/* Standard constructor */
+	/* Standard constructor for a newly inserted price */
+	protected AcctPrice(List pList, Account pAccount) {
+		super(pList, pAccount.getId());
+		setControlKey(pList.getControlKey());
+		pList.setNewId(this);
+	}
+
+	/* Extract constructor */
 	private AcctPrice(List       		pList,
 					  int				uId,
 			      	  int 		    	uAccountId,
@@ -236,7 +226,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		pList.setNewId(this);				
 	}
 
-	/* Standard constructor */
+	/* Encryption constructor */
 	private AcctPrice(List       		pList,
 			      	  int           	uId, 
 			      	  int 				uControlId,
@@ -340,8 +330,8 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		AcctPrice myThat = (AcctPrice)pThat;
 
 		/* Compare the accounts */
-		iDiff = getAccount().compareTo(myThat.getAccount());
-		if (iDiff != 0) return iDiff;
+		//iDiff = getAccount().compareTo(myThat.getAccount());
+		//if (iDiff != 0) return iDiff;
 
 		/* If the date differs */
 		if (this.getDate() != myThat.getDate()) {
@@ -354,6 +344,10 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			if (iDiff != 0) return iDiff;
 		}
 		
+		/* Compare the accounts */
+		iDiff = getAccount().compareTo(myThat.getAccount());
+		if (iDiff != 0) return iDiff;
+
 		/* Compare the IDs */
 		iDiff =(int)(getId() - myThat.getId());
 		if (iDiff < 0) return -1;
@@ -381,7 +375,6 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 
 	/**
 	 * Validate the price
-	 * 
 	 */
 	public void validate() {
 		Date 		myDate = getDate();
@@ -443,13 +436,13 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	 */
 	public boolean applyChanges(DataItem<?> pItem) {
 		boolean bChanged = false;
-		if (pItem instanceof AcctPrice) {
-			AcctPrice myPrice = (AcctPrice)pItem;
-			bChanged = applyChanges(myPrice);
-		}
-		else if (pItem instanceof SpotPrice) {
+		if (pItem instanceof SpotPrice) {
 			SpotPrice mySpot = (SpotPrice)pItem;
 			bChanged = applyChanges(mySpot);
+		}
+		else if (pItem instanceof AcctPrice) {
+			AcctPrice myPrice = (AcctPrice)pItem;
+			bChanged = applyChanges(myPrice);
 		}
 		return bChanged;
 	}
@@ -625,10 +618,9 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 				/* Check the account */
 				int myResult = pAccount.compareTo(myCurr.getAccount());
 				
-				/* Handle differing accounts */
-				if (myResult ==  1) continue;
-				if (myResult == -1) break;
-				
+				/* Skip different accounts */
+				if (myResult != 0) continue;
+								
 				/* Copy the item */
 				myItem = new AcctPrice(myList, myCurr);
 				myList.add(myItem);
@@ -645,18 +637,13 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		 * @return the newly added item
 		 */
 		public AcctPrice addNewItem(DataItem<?> pPrice) {
-			if (pPrice instanceof AcctPrice) {
-				AcctPrice myPrice = new AcctPrice(this, (AcctPrice)pPrice);
-				add(myPrice);
-				return myPrice;
-			}
-			else if (pPrice instanceof SpotPrice) {
+			if (pPrice instanceof SpotPrice) {
 				AcctPrice myPrice = new AcctPrice(this, (SpotPrice)pPrice);
 				add(myPrice);
 				return myPrice;
 			}
-			else if (pPrice instanceof ViewPrice) {
-				AcctPrice myPrice = new AcctPrice(this, (ViewPrice)pPrice);
+			else if (pPrice instanceof AcctPrice) {
+				AcctPrice myPrice = new AcctPrice(this, (AcctPrice)pPrice);
 				add(myPrice);
 				return myPrice;
 			}
@@ -686,10 +673,10 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		 * @param pDate the date
 		 * @return The Item if present (or null)
 		 */
-		protected int countInstances(Date 		pDate,
-									 Account	pAccount) {
+		public int countInstances(Date 		pDate,
+								  Account	pAccount) {
 			ListIterator 	myIterator;
-			AcctPrice    		myCurr;
+			AcctPrice    	myCurr;
 			int      		iDiff;
 			int      		iCount = 0;
 
@@ -699,7 +686,8 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			/* Loop through the items to find the entry */
 			while ((myCurr = myIterator.next()) != null) {
 				iDiff = pDate.compareTo(myCurr.getDate());
-				if (iDiff == 0) iDiff = pAccount.compareTo(myCurr.getAccount());
+				if (iDiff != 0) continue;
+				iDiff = pAccount.compareTo(myCurr.getAccount());
 				if (iDiff == 0) iCount++;
 			}
 
@@ -764,12 +752,12 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		 * Apply changes from a Spot Price list
 		 */
 		public void applyChanges(SpotPrices pPrices) {
-			SpotPrices.List.ListIterator	myIterator;
-			SpotPrices.List 	 			myList;
-			SpotPrice 						mySpot;
-			Date							myDate;
-			EncryptedItem<?>.PricePair		myPoint;
-			AcctPrice						myPrice;
+			ListIterator	myIterator;
+			List 	 		myList;
+			AcctPrice 		mySpot;
+			Date			myDate;
+			PricePair		myPoint;
+			AcctPrice		myPrice;
 
 			/* Access details */
 			myDate = pPrices.getDate();
@@ -875,7 +863,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		}			
 
 		/**
-		 *  Allow a price to be added
+		 *  Load an Encrypted price
 		 */
 		public void addItem(int     		uId,
 			  	 			int 			uControlId,
@@ -965,7 +953,6 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		/* Constructor */
 		public Values() {}
 		public Values(Values 			pValues) { copyFrom(pValues); }
-		public Values(ViewPrice.Values 	pValues) { copyFrom(pValues); }
 		public Values(SpotPrice.Values 	pValues) { copyFrom(pValues); }
 		
 		/* Check whether this object is equal to that passed */
@@ -983,35 +970,25 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		public HistoryValues<AcctPrice> copySelf() {
 			return new Values(this);
 		}
-		public void    copyFrom(HistoryValues<?> pSource) {
+		public void    copyFrom(HistoryValues<?> pSource) {			
+			/* Handle a SpotPrice Values */
+			if (pSource instanceof SpotPrice.Values) {
+				SpotPrice.Values 	myValues = (SpotPrice.Values)pSource;
+				super.copyFrom(myValues);
+				theDate      = myValues.getDate();
+				thePrice     = (myValues.getPrice() == null) ? null : new PricePair(myValues.getPrice());
+				theAccount   = myValues.getAccount();
+				theAccountId = theAccount.getId();
+			}
+			
 			/* Handle a Price Values */
-			if (pSource instanceof Values) {
+			else if (pSource instanceof Values) {
 				Values myValues = (Values)pSource;
 				super.copyFrom(myValues);
 				theDate      = myValues.getDate();
 				thePrice     = myValues.getPrice();
 				theAccount   = myValues.getAccount();
 				theAccountId = myValues.getAccountId();
-			}
-			
-			/* Handle a SpotPrice Values */
-			else if (pSource instanceof SpotPrice.Values) {
-				SpotPrice.Values 	myValues = (SpotPrice.Values)pSource;
-				super.copyFrom(myValues);
-				theDate      = myValues.getDate();
-				thePrice     = new PricePair(myValues.getPrice());
-				theAccount   = myValues.getAccount();
-				theAccountId = theAccount.getId();
-			}
-			
-			/* Handle a ViewPrice Values */
-			else if (pSource instanceof ViewPrice.Values) {
-				ViewPrice.Values 	myValues = (ViewPrice.Values)pSource;
-				super.copyFrom(myValues);
-				theDate      = myValues.getDate();
-				thePrice     = new PricePair(myValues.getPrice());
-				theAccount   = myValues.getAccount();
-				theAccountId = theAccount.getId();
 			}
 		}
 		public Difference	fieldChanged(int fieldNo, HistoryValues<AcctPrice> pOriginal) {

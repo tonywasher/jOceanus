@@ -5,15 +5,10 @@ import uk.co.tolcroft.models.Date;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.Number.*;
-import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.data.DataState;
-import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.*;
 
-public class DilutionEvent extends DataItem<DilutionEvent> {
+public class DilutionEvent extends ReportItem<DilutionEvent> {
 	/**
 	 * The name of the object
 	 */
@@ -56,7 +51,7 @@ public class DilutionEvent extends DataItem<DilutionEvent> {
 			case FIELD_ACCOUNT: 	return "Name";
 			case FIELD_DATE: 		return "Date";
 			case FIELD_DILUTION:	return "Dilution";
-			default:		  		return DataItem.fieldName(iField);
+			default:		  		return ReportItem.fieldName(iField);
 		}
 	}
 	
@@ -69,10 +64,9 @@ public class DilutionEvent extends DataItem<DilutionEvent> {
 	 * Format the value of a particular field as a table row
 	 * @param pDetail the debug detail
 	 * @param iField the field number
-	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(DebugDetail pDetail, int iField, HistoryValues<DilutionEvent> pValues) {
+	public String formatField(DebugDetail pDetail, int iField) {
 		String myString = ""; 
 		switch (iField) {
 			case FIELD_ACCOUNT:		
@@ -161,7 +155,7 @@ public class DilutionEvent extends DataItem<DilutionEvent> {
 	private DilutionEvent(List 	pList, 
 						  Event pEvent) {
 		/* Call super constructor */
-		super(pList, pEvent.getId());
+		super(pList);
 		
 		/* Local variables */
 		Account 		myAccount;
@@ -190,9 +184,6 @@ public class DilutionEvent extends DataItem<DilutionEvent> {
 		
 		/* Link to the event */
 		setBase(pEvent);
-		
-		/* Set status */
-		setState(DataState.CLEAN);
 	}
 	
 	/**
@@ -206,21 +197,18 @@ public class DilutionEvent extends DataItem<DilutionEvent> {
 						  Date    	pDate,
 						  Dilution	pDilution) {
 		/* Call super constructor */
-		super(pList, 0);
+		super(pList);
 		
 		/* Store the values */
 		theAccount 	= pAccount;
 		theDate		= pDate;
 		theDilution = pDilution;
-		
-		/* Set status */
-		setState(DataState.CLEAN);
 	}
 	
 	/**
 	 * List of DilutionEvents
 	 */
-	public static class List extends DataList<List, DilutionEvent> {
+	public static class List extends ReportList<DilutionEvent> {
 		/* Members */
 		FinanceData theData = null;
 		
@@ -229,31 +217,10 @@ public class DilutionEvent extends DataItem<DilutionEvent> {
 		 * @param pData the DataSet
 		 */
 		public List(FinanceData pData) {
-			super(List.class, DilutionEvent.class, ListStyle.VIEW, false);
+			super(DilutionEvent.class);
 			theData = pData;
 		}
 		
-		/* Obtain extract lists. */
-		public List getUpdateList() { return null; }
-		public List getEditList() 	{ return null; }
-		public List getShallowCopy() { return null; }
-		public List getDeepCopy(DataSet<?> pData) { return null; }
-		public List getDifferences(List pOld) { return null; }
-
-		/**
-		 * Add a new item to the list
-		 * @param pItem the item to add
-		 * @return the newly added item
-		 */
-		public DilutionEvent addNewItem(DataItem<?> pItem) { return null; }
-
-	
-		/**
-		 * Add a new item to the edit list
-		 * @return the newly added item
-		 */
-		public DilutionEvent addNewItem() { return null; }
-	
 		/**
 		 * Obtain the type of the item
 		 * @return the type of the item
