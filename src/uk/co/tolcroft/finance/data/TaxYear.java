@@ -485,7 +485,7 @@ public class TaxYear extends DataItem<TaxYear> {
 		if (getId() != myThat.getId())	return false;
 		
 		/* Compare the changeable values */
-		return getValues().histEquals(myThat.getValues());
+		return getValues().histEquals(myThat.getValues()).isIdentical();
 	}
 
 	/**
@@ -1534,33 +1534,49 @@ public class TaxYear extends DataItem<TaxYear> {
 		public Values(Values pValues) { copyFrom(pValues); }
 		
 		/* Check whether this object is equal to that passed */
-		public boolean histEquals(HistoryValues<TaxYear> pCompare) {
-			/* Access as correct class and check parameters */
+		public Difference histEquals(HistoryValues<TaxYear> pCompare) {
+			/* Make sure that the object is the same class */
+			if (pCompare.getClass() != this.getClass()) return Difference.Different;
+			
+			/* Access as correct class */
 			Values myValues = (Values)pCompare;
-			if (Date.differs(theYear,     			myValues.theYear).isDifferent())		  return false;
-			if (Utils.differs(theTaxRegimeId,       myValues.theTaxRegimeId).isDifferent())   return false;
-			if (TaxRegime.differs(theTaxRegime,     myValues.theTaxRegime).isDifferent())	  return false;
-			if (Money.differs(theAllowance,     	myValues.theAllowance).isDifferent())     return false;
-			if (Money.differs(theRentalAllow,   	myValues.theRentalAllow).isDifferent())   return false;
-			if (Money.differs(theLoBand,       		myValues.theLoBand).isDifferent())        return false;
-			if (Money.differs(theBasicBand,     	myValues.theBasicBand).isDifferent())     return false;
-			if (Money.differs(theCapitalAllow,  	myValues.theCapitalAllow).isDifferent())  return false;
-			if (Money.differs(theLoAgeAllow,    	myValues.theLoAgeAllow).isDifferent())    return false;
-			if (Money.differs(theHiAgeAllow,    	myValues.theHiAgeAllow).isDifferent())    return false;
-			if (Money.differs(theAgeAllowLimit, 	myValues.theAgeAllowLimit).isDifferent()) return false;
-			if (Money.differs(theAddAllowLimit, 	myValues.theAddAllowLimit).isDifferent()) return false;
-			if (Money.differs(theAddIncBound,   	myValues.theAddIncBound).isDifferent())   return false;
-			if (Rate.differs(theLoTaxRate,   		myValues.theLoTaxRate).isDifferent())     return false;
-			if (Rate.differs(theBasicTaxRate,		myValues.theBasicTaxRate).isDifferent())  return false;
-			if (Rate.differs(theHiTaxRate,   		myValues.theHiTaxRate).isDifferent())     return false;
-			if (Rate.differs(theIntTaxRate,  		myValues.theIntTaxRate).isDifferent())    return false;
-			if (Rate.differs(theDivTaxRate,  		myValues.theDivTaxRate).isDifferent())    return false;
-			if (Rate.differs(theHiDivTaxRate,		myValues.theHiDivTaxRate).isDifferent())  return false;
-			if (Rate.differs(theAddTaxRate,  		myValues.theAddTaxRate).isDifferent())    return false;
-			if (Rate.differs(theAddDivTaxRate, 		myValues.theAddDivTaxRate).isDifferent()) return false;
-			if (Rate.differs(theCapTaxRate,    		myValues.theCapTaxRate).isDifferent())    return false;
-			if (Rate.differs(theHiCapTaxRate,  		myValues.theHiCapTaxRate).isDifferent())  return false;
-			return true;
+			
+			/* Handle different date */
+			if (Date.differs(theYear,	myValues.theYear).isDifferent())
+				return Difference.Different;
+
+			/* Handle different Tax RegimeId */
+			if (Utils.differs(theTaxRegimeId,       myValues.theTaxRegimeId).isDifferent())
+				return Difference.Different;
+
+			/* Handle different Money items */
+			if ((Money.differs(theAllowance,     	myValues.theAllowance).isDifferent())		||
+				(Money.differs(theRentalAllow,   	myValues.theRentalAllow).isDifferent())		||
+				(Money.differs(theLoBand,       	myValues.theLoBand).isDifferent())			||
+				(Money.differs(theBasicBand,     	myValues.theBasicBand).isDifferent())		||
+				(Money.differs(theCapitalAllow,  	myValues.theCapitalAllow).isDifferent())	||
+				(Money.differs(theLoAgeAllow,    	myValues.theLoAgeAllow).isDifferent())		||
+				(Money.differs(theHiAgeAllow,    	myValues.theHiAgeAllow).isDifferent())		||
+				(Money.differs(theAgeAllowLimit, 	myValues.theAgeAllowLimit).isDifferent())	||
+				(Money.differs(theAddAllowLimit, 	myValues.theAddAllowLimit).isDifferent())	||
+				(Money.differs(theAddIncBound,   	myValues.theAddIncBound).isDifferent()))
+				return Difference.Different;
+				
+			/* Handle different Rate items */
+			if ((Rate.differs(theLoTaxRate,   		myValues.theLoTaxRate).isDifferent())		||
+				(Rate.differs(theBasicTaxRate,		myValues.theBasicTaxRate).isDifferent())	||
+				(Rate.differs(theHiTaxRate,   		myValues.theHiTaxRate).isDifferent())		||
+				(Rate.differs(theIntTaxRate,  		myValues.theIntTaxRate).isDifferent())		||
+				(Rate.differs(theDivTaxRate,  		myValues.theDivTaxRate).isDifferent())		||
+				(Rate.differs(theHiDivTaxRate,		myValues.theHiDivTaxRate).isDifferent())	||
+				(Rate.differs(theAddTaxRate,  		myValues.theAddTaxRate).isDifferent())		||
+				(Rate.differs(theAddDivTaxRate, 	myValues.theAddDivTaxRate).isDifferent())	||
+				(Rate.differs(theCapTaxRate,    	myValues.theCapTaxRate).isDifferent())		||
+				(Rate.differs(theHiCapTaxRate,  	myValues.theHiCapTaxRate).isDifferent()))
+				return Difference.Different;
+				
+			/* Return any TaxRegime differences */
+			return TaxRegime.differs(theTaxRegime,	myValues.theTaxRegime);
 		}
 		
 		/* Copy values */

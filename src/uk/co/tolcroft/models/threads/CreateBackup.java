@@ -28,8 +28,8 @@ public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
 		/* Create the status */
 		theStatus = new ThreadStatus<T>(this, theControl);
 
-		/* Initialise the status window */
-		initStatusBar("Creating Backup");
+		/* Show the status window */
+		showStatusBar();
 	}
 
 	/* Background task (Worker Thread)*/
@@ -41,6 +41,9 @@ public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
 		File			myFile		= null;
 
 		try {
+			/* Initialise the status window */
+			theStatus.initTask("Creating Backup");
+
 			/* Determine the name of the file to build */
 			BackupCreate myDialog = new BackupCreate(theControl);
 			myDialog.selectFile();
@@ -62,8 +65,8 @@ public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
 			/* File created, so delete on error */
 			doDelete = true;
 
-			/* Re-initialise the status window */
-			initStatusBar("Verifying Backup");
+			/* Initialise the status window */
+			theStatus.initTask("Verifying Backup");
 
 			/* As we have encrypted then .zip was added to the file */
 			myFile 	= new File(myFile.getPath() + ".zip");

@@ -266,7 +266,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		if (getId() != myThat.getId()) return false;
 		
 		/* Compare the changeable values */
-		return getValues().histEquals(myThat.getValues());
+		return getValues().histEquals(myThat.getValues()).isIdentical();
 	}
 
 	/**
@@ -652,32 +652,6 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		}
 
 		/**
-		 * Validate all null Dates
-		 * @param pCurrent the current (validated item)
-		 */
-		public void validateNullDates(AcctRate pCurrent) {
-			ListIterator 	myIterator;
-			AcctRate 		myCurr;
-
-			/* Access the list iterator */
-			myIterator = listIterator();
-			
-			/* Loop through the Rates in reverse order */
-			while ((myCurr = myIterator.previous()) != null) {
-				/* Skip current element */
-				if (differs(pCurrent, myCurr).isIdentical()) continue;
-				
-				/* Break loop if we have a date */
-				Date myDate = myCurr.getDate();
-				if ((myDate != null) && (!myDate.isNull())) break;
-				
-				/* Validate rate */
-				myCurr.clearErrors();
-				myCurr.validate();
-			}			
-		}
-		
-		/**
 		 *  Obtain the most relevant rate for an Account and a Date
 		 *   @param pAccount the Account for which to get the rate
 		 *   @param pDate the date from which a rate is required
@@ -850,15 +824,25 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		public Values(Values pValues) { copyFrom(pValues); }
 
 		/* Check whether this object is equal to that passed */
-		public boolean histEquals(HistoryValues<AcctRate> pCompare) {
+		public Difference histEquals(HistoryValues<AcctRate> pCompare) {
+			/* Make sure that the object is the same class */
+			if (pCompare.getClass() != this.getClass()) return Difference.Different;
+			
+			/* Cast correctly */
 			Values myValues = (Values)pCompare;
-			if (!super.histEquals(pCompare))					  					return false;
-			if (differs(theRate,  myValues.theRate).isDifferent())    				return false;
-			if (differs(theBonus, myValues.theBonus).isDifferent())   				return false;
-			if (Date.differs(theEndDate, 	myValues.theEndDate).isDifferent()) 	return false;
-			if (differs(theAccount, myValues.theAccount).isDifferent()) 			return false;
-			if (Utils.differs(theAccountId, myValues.theAccountId).isDifferent()) 	return false;
-			return true;
+
+			/* Determine underlying differences */
+			Difference myDifference = super.histEquals(pCompare);
+			
+			/* Compare underlying values */
+			myDifference = myDifference.combine(differs(theRate,  			myValues.theRate));
+			myDifference = myDifference.combine(differs(theBonus, 			myValues.theBonus));
+			myDifference = myDifference.combine(Date.differs(theEndDate, 	myValues.theEndDate));
+			myDifference = myDifference.combine(differs(theAccount, 		myValues.theAccount));
+			myDifference = myDifference.combine(Utils.differs(theAccountId, myValues.theAccountId));
+			
+			/* Return the differences */
+			return myDifference;
 		}
 
 		/* Copy values */

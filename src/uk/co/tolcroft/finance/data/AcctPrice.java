@@ -307,7 +307,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		if (getId() != myThat.getId()) return false;
 		
 		/* Compare the changeable values */
-		return getValues().histEquals(myThat.getValues());
+		return getValues().histEquals(myThat.getValues()).isIdentical();
 	}
 
 	/**
@@ -956,14 +956,24 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		public Values(SpotPrice.Values 	pValues) { copyFrom(pValues); }
 		
 		/* Check whether this object is equal to that passed */
-		public boolean histEquals(HistoryValues<AcctPrice> pCompare) {
+		public Difference histEquals(HistoryValues<AcctPrice> pCompare) {
+			/* Make sure that the object is the same class */
+			if (pCompare.getClass() != this.getClass()) return Difference.Different;
+			
+			/* Cast correctly */
 			Values myValues = (Values)pCompare;
-			if (!super.histEquals(pCompare))					    			  return false;
-			if (Date.differs(theDate,     	myValues.theDate).isDifferent())      return false;
-			if (differs(thePrice, 			myValues.thePrice).isDifferent())     return false;
-			if (Account.differs(theAccount, myValues.theAccount).isDifferent())   return false;
-			if (Utils.differs(theAccountId, myValues.theAccountId).isDifferent()) return false;
-			return true;
+
+			/* Determine underlying differences */
+			Difference myDifference = super.histEquals(pCompare);
+			
+			/* Compare underlying values */
+			myDifference = myDifference.combine(Date.differs(theDate,     	myValues.theDate));
+			myDifference = myDifference.combine(differs(thePrice, 			myValues.thePrice));
+			myDifference = myDifference.combine(Account.differs(theAccount, myValues.theAccount));
+			myDifference = myDifference.combine(Utils.differs(theAccountId, myValues.theAccountId));
+			
+			/* Return differences */
+			return myDifference;
 		}
 		
 		/* Copy values */

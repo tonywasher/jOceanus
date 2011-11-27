@@ -260,6 +260,12 @@ public class AccountTab implements stdPanel,
 	 * Save changes from the view into the underlying data
 	 */
 	public void saveData() {
+		/* Validate the changes */
+		validateAll();
+		
+		/* Stop now if there are validation errors */
+		if (hasErrors()) return;
+		
 		/* Apply changes in the view set */
 		theViewSet.applyChanges();
 

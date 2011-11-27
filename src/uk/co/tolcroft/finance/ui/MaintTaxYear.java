@@ -30,9 +30,7 @@ import uk.co.tolcroft.models.ui.StdInterfaces.*;
 import uk.co.tolcroft.models.views.ViewList;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 
-public class MaintTaxYear implements ActionListener,
-									 ItemListener,
-									 stdPanel {
+public class MaintTaxYear implements stdPanel {
 	/* Properties */
 	private MaintenanceTab		theParent			= null;
 	private JPanel          	thePanel			= null;
@@ -205,30 +203,33 @@ public class MaintTaxYear implements ActionListener,
 		theDelButton  = new JButton();
 		theUndoButton = new JButton("Undo");
 		
+		/* Create listener */
+		TaxYearListener myListener = new TaxYearListener();
+		
 		/* Add listeners */
-		theRegimesBox.addItemListener(this);
-		theAllowance.addActionListener(this);
-		theLoAgeAllow.addActionListener(this);
-		theHiAgeAllow.addActionListener(this);
-		theCapitalAllow.addActionListener(this);
-		theAgeAllowLimit.addActionListener(this);
-		theAddAllowLimit.addActionListener(this);
-		theAddIncomeBndry.addActionListener(this);
-		theRental.addActionListener(this);
-		theLoTaxBand.addActionListener(this);
-		theBasicTaxBand.addActionListener(this);
-		theLoTaxRate.addActionListener(this);
-		theBasicTaxRate.addActionListener(this);
-		theHiTaxRate.addActionListener(this);
-		theIntTaxRate.addActionListener(this);
-		theDivTaxRate.addActionListener(this);
-		theHiDivTaxRate.addActionListener(this);
-		theAddTaxRate.addActionListener(this);
-		theAddDivTaxRate.addActionListener(this);
-		theCapTaxRate.addActionListener(this);
-		theHiCapTaxRate.addActionListener(this);
-		theDelButton.addActionListener(this);
-		theUndoButton.addActionListener(this);
+		theRegimesBox.addItemListener(myListener);
+		theAllowance.addActionListener(myListener);
+		theLoAgeAllow.addActionListener(myListener);
+		theHiAgeAllow.addActionListener(myListener);
+		theCapitalAllow.addActionListener(myListener);
+		theAgeAllowLimit.addActionListener(myListener);
+		theAddAllowLimit.addActionListener(myListener);
+		theAddIncomeBndry.addActionListener(myListener);
+		theRental.addActionListener(myListener);
+		theLoTaxBand.addActionListener(myListener);
+		theBasicTaxBand.addActionListener(myListener);
+		theLoTaxRate.addActionListener(myListener);
+		theBasicTaxRate.addActionListener(myListener);
+		theHiTaxRate.addActionListener(myListener);
+		theIntTaxRate.addActionListener(myListener);
+		theDivTaxRate.addActionListener(myListener);
+		theHiDivTaxRate.addActionListener(myListener);
+		theAddTaxRate.addActionListener(myListener);
+		theAddDivTaxRate.addActionListener(myListener);
+		theCapTaxRate.addActionListener(myListener);
+		theHiCapTaxRate.addActionListener(myListener);
+		theDelButton.addActionListener(myListener);
+		theUndoButton.addActionListener(myListener);
 
 		/* Create the Table buttons panel */
 		theSaveButs = new SaveButtons(this);
@@ -1202,121 +1203,127 @@ public class MaintTaxYear implements ActionListener,
 		}
 	}
 	
-	/* ItemStateChanged listener event */
-	public void itemStateChanged(ItemEvent evt) {
-		String                myName;
-
-		/* Ignore selection if refreshing data */
-		if (refreshingData) return;
+	/**
+	 * TaxYearListener class 
+	 */
+	private class TaxYearListener implements ActionListener,
+	 										 ItemListener {
+		@Override
+		public void itemStateChanged(ItemEvent evt) {
+			/* Ignore selection if refreshing data */
+			if (refreshingData) return;
 		
-		/* If this event relates to the regimes box */
-		if (evt.getSource() == (Object)theRegimesBox) {
-			myName = (String)evt.getItem();
-			if (evt.getStateChange() == ItemEvent.SELECTED) {
-				/* Push history */
-				theTaxYear.pushHistory();
+			/* If this event relates to the regimes box */
+			if (evt.getSource() == theRegimesBox) {
+				String myName = (String)evt.getItem();
+				if (evt.getStateChange() == ItemEvent.SELECTED) {
+					/* Push history */
+					theTaxYear.pushHistory();
 				
-				/* Select the new regime */
-				theTaxYear.setTaxRegime(theTaxRegimes.searchFor(myName));
+					/* Select the new regime */
+					theTaxYear.setTaxRegime(theTaxRegimes.searchFor(myName));
 				
-				/* Clear Capital tax rates if required */
-				if (theTaxYear.hasCapitalGainsAsIncome()) {
-					theTaxYear.setCapTaxRate(null);
-					theTaxYear.setHiCapTaxRate(null);
-				}
+					/* Clear Capital tax rates if required */
+					if (theTaxYear.hasCapitalGainsAsIncome()) {
+						theTaxYear.setCapTaxRate(null);
+						theTaxYear.setHiCapTaxRate(null);
+					}
 
-				/* Clear Additional values if required */
-				if (!theTaxYear.hasAdditionalTaxBand()) {
-					theTaxYear.setAddAllowLimit(null);
-					theTaxYear.setAddIncBound(null);
-					theTaxYear.setAddTaxRate(null);
-					theTaxYear.setAddDivTaxRate(null);
-				}
+					/* Clear Additional values if required */
+					if (!theTaxYear.hasAdditionalTaxBand()) {
+						theTaxYear.setAddAllowLimit(null);
+						theTaxYear.setAddIncBound(null);
+						theTaxYear.setAddTaxRate(null);
+						theTaxYear.setAddDivTaxRate(null);
+					}
 
-				/* Check for changes */
-				if (theTaxYear.checkForHistory()) {
-					/* Note that the item has changed */
-					theTaxYear.setState(DataState.CHANGED);
+					/* Check for changes */
+					if (theTaxYear.checkForHistory()) {
+						/* Note that the item has changed */
+						theTaxYear.setState(DataState.CHANGED);
 					
-					/* validate it */
-					theTaxYear.clearErrors();
-					theTaxYear.validate();
+						/* validate it */
+						theTaxYear.clearErrors();
+						theTaxYear.validate();
 					
-					/* Note that changes have occurred */
-					notifyChanges();
-					updateDebug();
+						/* Note that changes have occurred */
+						notifyChanges();
+						updateDebug();
+					}
 				}
 			}
 		}
-	}
 
-	/* ActionPerformed listener event */
-	public void actionPerformed(ActionEvent evt) {			
-		/* If this event relates to the undo button */
-		if (evt.getSource() == (Object)theUndoButton) {
-			/* Undo the changes */
-			undoChanges();
-			return;
-		}
-		
-		/* Push history */
-		theTaxYear.pushHistory();
-		
-		/* Protect against Exceptions */
-		try {
-			/* If this event relates to the update-able fields */
-			if ((evt.getSource() == (Object)theAllowance)  		||
-				(evt.getSource() == (Object)theLoAgeAllow) 		||
-				(evt.getSource() == (Object)theHiAgeAllow) 		||
-				(evt.getSource() == (Object)theRental)     		||
-				(evt.getSource() == (Object)theCapitalAllow)	||
-				(evt.getSource() == (Object)theAgeAllowLimit)	||
-				(evt.getSource() == (Object)theAddAllowLimit)	||
-				(evt.getSource() == (Object)theAddIncomeBndry)	||
-				(evt.getSource() == (Object)theLoTaxBand)  		||
-				(evt.getSource() == (Object)theBasicTaxBand)	||
-				(evt.getSource() == (Object)theLoTaxRate)  		||
-				(evt.getSource() == (Object)theBasicTaxRate)	||
-				(evt.getSource() == (Object)theHiTaxRate)  		||
-				(evt.getSource() == (Object)theIntTaxRate) 		||
-				(evt.getSource() == (Object)theDivTaxRate) 		||
-				(evt.getSource() == (Object)theHiDivTaxRate)	||
-				(evt.getSource() == (Object)theCapTaxRate) 		||
-				(evt.getSource() == (Object)theHiCapTaxRate)	||
-				(evt.getSource() == (Object)theAddTaxRate) 		||
-				(evt.getSource() == (Object)theAddDivTaxRate)) {
-				/* Update the text */
-				updateText();
+		@Override
+		public void actionPerformed(ActionEvent evt) {	
+			Object o = evt.getSource();
+			
+			/* If this event relates to the undo button */
+			if (o == theUndoButton) {
+				/* Undo the changes */
+				undoChanges();
+				return;
 			}
-		}
 		
-		/* Handle Exceptions */
-		catch (Throwable e) {
-			/* Reset values */
-			theTaxYear.popHistory();
+			/* Push history */
 			theTaxYear.pushHistory();
-			
-			/* Build the error */
-			Exception myError = new Exception(ExceptionClass.DATA,
-									          "Failed to update field",
-									          e);
-			
-			/* Show the error */
-			theError.setError(myError);
-		}
 		
-		/* Check for changes */
-		if (theTaxYear.checkForHistory()) {
-			/* Note that the item has changed */
-			theTaxYear.setState(DataState.CHANGED);
+			/* Protect against Exceptions */
+			try {
+				/* If this event relates to the update-able fields */
+				if ((o == theAllowance)  		||
+					(o == theLoAgeAllow) 		||
+					(o == theHiAgeAllow) 		||
+					(o == theRental)     		||
+					(o == theCapitalAllow)		||
+					(o == theAgeAllowLimit)		||
+					(o == theAddAllowLimit)		||
+					(o == theAddIncomeBndry)	||
+					(o == theLoTaxBand)  		||
+					(o == theBasicTaxBand)		||
+					(o == theLoTaxRate)  		||
+					(o == theBasicTaxRate)		||
+					(o == theHiTaxRate)  		||
+					(o == theIntTaxRate) 		||
+					(o == theDivTaxRate) 		||
+					(o == theHiDivTaxRate)		||
+					(o == theCapTaxRate) 		||
+					(o == theHiCapTaxRate)		||
+					(o == theAddTaxRate) 		||
+					(o == theAddDivTaxRate)) {
+					/* Update the text */
+					updateText();
+				}
+			}
+		
+			/* Handle Exceptions */
+			catch (Throwable e) {
+				/* Reset values */
+				theTaxYear.popHistory();
+				theTaxYear.pushHistory();
 			
-			/* validate it */
-			theTaxYear.clearErrors();
-			theTaxYear.validate();
+				/* Build the error */
+				Exception myError = new Exception(ExceptionClass.DATA,
+									          	  "Failed to update field",
+									          	  e);
 			
-			/* Note that changes have occurred */
-			notifyChanges();
-			updateDebug();
+				/* Show the error */
+				theError.setError(myError);
+			}
+		
+			/* Check for changes */
+			if (theTaxYear.checkForHistory()) {
+				/* Note that the item has changed */
+				theTaxYear.setState(DataState.CHANGED);
+			
+				/* validate it */
+				theTaxYear.clearErrors();
+				theTaxYear.validate();
+			
+				/* Note that changes have occurred */
+				notifyChanges();
+				updateDebug();
+			}
 		}
 	}			
 }

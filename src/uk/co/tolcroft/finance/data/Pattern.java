@@ -1,22 +1,22 @@
 package uk.co.tolcroft.finance.data;
 
+import java.util.Calendar;
+
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.Date.Range;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
-import uk.co.tolcroft.models.Number.*;
-import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
-import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
-import uk.co.tolcroft.models.data.ValidationControl;
-import uk.co.tolcroft.models.data.DataList.*;
+import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.help.DebugDetail;
+import uk.co.tolcroft.finance.data.Event.Values;
 import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.finance.views.*;
 
-public class Pattern extends EncryptedItem<Pattern> {
+public class Pattern extends Event {
 	/**
 	 * The name of the object
 	 */
@@ -25,45 +25,34 @@ public class Pattern extends EncryptedItem<Pattern> {
 	/**
 	 * The name of the object
 	 */
-	public static final String listName = objName + "s";
+	public static final String listName = objName + "s";			
 
 	/**
-	 * Pattern Description length
+	 * The interesting date range
 	 */
-	public final static int DESCLEN 		= Event.DESCLEN;
-			
+	public final static Range	thePatternRange	= new Range(new Date(1999, Calendar.APRIL, 6), 
+															new Date(2000, Calendar.APRIL, 5));
+	
 	/* Access methods */
 	public  Values         	getValues()     { return (Values)super.getValues(); }	
-	public  Date        	getDate()      	{ return getValues().getDate(); }
-	public  String          getDesc()      	{ return getPairValue(getValues().getDesc()); }
-	public  Money       	getAmount()    	{ return getPairValue(getValues().getAmount()); }
 	public  Account         getPartner()   	{ return getValues().getPartner(); }
 	public  Frequency   	getFrequency() 	{ return getValues().getFrequency(); }
-	public  TransactionType getTransType() 	{ return getValues().getTransType(); }
 	public  AccountType 	getActType()   	{ return getAccount().getActType(); }
 	public  boolean         isCredit()     	{ return getValues().isCredit(); }
 	public  Account		   	getAccount()	{ return getValues().getAccount(); }
-	private void         	setAccount(Account pAccount)   {
-		getValues().setAccount(pAccount); }
-
-	/* Encrypted value access */
-	public  byte[]	getAmountBytes()    { return getPairBytes(getValues().getAmount()); }
-	public  byte[]  getDescBytes()      { return getPairBytes(getValues().getDesc()); }
 
 	/* Linking methods */
 	public Pattern     getBase() { return (Pattern)super.getBase(); }
 	
 	/* Field IDs */
-	public static final int FIELD_ACCOUNT  = EncryptedItem.NUMFIELDS;
-	public static final int FIELD_DATE     = EncryptedItem.NUMFIELDS+1;
-	public static final int FIELD_DESC     = EncryptedItem.NUMFIELDS+2;
-	public static final int FIELD_PARTNER  = EncryptedItem.NUMFIELDS+3;
-	public static final int FIELD_AMOUNT   = EncryptedItem.NUMFIELDS+4;
-	public static final int FIELD_TRNTYP   = EncryptedItem.NUMFIELDS+5;
-	public static final int FIELD_FREQ     = EncryptedItem.NUMFIELDS+6;
-	public static final int FIELD_CREDIT   = EncryptedItem.NUMFIELDS+7;
-	public static final int NUMFIELDS	   = EncryptedItem.NUMFIELDS+8;
+	public static final int FIELD_FREQ     = Event.NUMFIELDS;
+	public static final int FIELD_ISCREDIT = Event.NUMFIELDS+1;
+	public static final int NUMFIELDS	   = Event.NUMFIELDS+2;
 	
+	/* Virtual Field IDs */
+	public static final int VFIELD_ACCOUNT = NUMFIELDS;
+	public static final int VFIELD_PARTNER = NUMFIELDS+1;
+
 	/**
 	 * Obtain the type of the item
 	 * @return the type of the item
@@ -82,15 +71,11 @@ public class Pattern extends EncryptedItem<Pattern> {
 	 */
 	public static String	fieldName(int iField) {
 		switch (iField) {
-			case FIELD_ACCOUNT:		return "Account";
-			case FIELD_DATE:		return "Date";
-			case FIELD_DESC:		return "Description";
-			case FIELD_PARTNER:		return "Partner";
-			case FIELD_AMOUNT:		return "Amount";
-			case FIELD_TRNTYP:		return "TransactionType";
 			case FIELD_FREQ:		return "Frequency";
-			case FIELD_CREDIT:		return "IsCredit";
-			default:		  		return EncryptedItem.fieldName(iField);
+			case FIELD_ISCREDIT:	return "IsCredit";
+			case VFIELD_ACCOUNT:	return "Account";
+			case VFIELD_PARTNER:	return "Partner";
+			default:		  		return Event.fieldName(iField);
 		}
 	}
 	
@@ -106,43 +91,10 @@ public class Pattern extends EncryptedItem<Pattern> {
 	 * @param pValues the values to use
 	 * @return the formatted field
 	 */
-	public String formatField(DebugDetail pDetail, int iField, HistoryValues<Pattern> pValues) {
+	public String formatField(DebugDetail pDetail, int iField, HistoryValues<Event> pValues) {
 		String 	myString = "";
 		Values 	myValues  = (Values)pValues;
 		switch (iField) {
-			case FIELD_ACCOUNT:	
-				if ((myValues.getAccount() == null) &&
-					(myValues.getAccountId() != null))
-					myString += "Id=" + myValues.getAccountId();
-				else
-					myString += Account.format(myValues.getAccount()); 
-				myString = pDetail.addDebugLink(myValues.getAccount(), myString);
-				break;
-			case FIELD_DATE:	
-				myString += Date.format(myValues.getDate()); 
-				break;
-			case FIELD_DESC:	
-				myString += myValues.getDescValue(); 
-				break;
-			case FIELD_PARTNER:	
-				if ((myValues.getPartner() == null) &&
-					(myValues.getPartnerId() != null))
-					myString += "Id=" + myValues.getPartnerId();
-				else
-					myString += Account.format(myValues.getPartner()); 
-				myString = pDetail.addDebugLink(myValues.getPartner(), myString);
-				break;
-			case FIELD_TRNTYP:	
-				if ((myValues.getTransType() == null) &&
-					(myValues.getTransId() != null))
-					myString += "Id=" + myValues.getTransId();
-				else
-					myString += TransactionType.format(myValues.getTransType()); 
-				myString = pDetail.addDebugLink(myValues.getTransType(), myString);
-				break;
-			case FIELD_AMOUNT:	
-				myString += Money.format(myValues.getAmountValue()); 
-				break;
 			case FIELD_FREQ:	
 				if ((myValues.getFrequency() == null) &&
 					(myValues.getFreqId() != null))
@@ -151,7 +103,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 					myString += Frequency.format(myValues.getFrequency()); 
 				myString = pDetail.addDebugLink(myValues.getFrequency(), myString);
 				break;
-			case FIELD_CREDIT: 
+			case FIELD_ISCREDIT: 
 				myString +=	(isCredit() ? "true" : "false");
 				break;
 			default: 		
@@ -165,18 +117,20 @@ public class Pattern extends EncryptedItem<Pattern> {
 	 * Get an initial set of values 
 	 * @return an initial set of values 
 	 */
-	protected HistoryValues<Pattern> getNewValues() { return new Values(); }
+	protected HistoryValues<Event> getNewValues() { return new Values(); }
 	
 	/**
 	 * Construct a copy of a Pattern
-	 * 
 	 * @param pPattern The Pattern 
 	 */
 	protected Pattern(List pList, Pattern pPattern) {
-		/* Set standard values */
-		super(pList, pPattern.getId());
-		Values myValues	= getValues();
-		myValues.copyFrom(pPattern.getValues());
+		/* Simply initialise as Event */
+		super(pList, pPattern);
+		
+		/* Copy the id */
+		setId(pPattern.getId());
+		
+		/* Access source style */
 		ListStyle myOldStyle = pPattern.getList().getStyle();
 
 		/* Switch on the ListStyle */
@@ -184,7 +138,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 			case EDIT:
 				/* If this is a view creation */
 				if (myOldStyle == ListStyle.CORE) {
-					/* Pattern is based on the original element */
+					/* Event is based on the original element */
 					setBase(pPattern);
 					pList.setNewId(this);				
 					break;
@@ -214,28 +168,29 @@ public class Pattern extends EncryptedItem<Pattern> {
 	
 	/* Standard constructor for a newly inserted pattern */
 	public Pattern(List    	pList) {
-		super(pList, 0);
-		setControlKey(pList.getControlKey());
-		pList.setNewId(this);		
+		/* Initialise as Event */
+		super(pList);
+		
+		/* Ensure that this is a debit from this account */
+		Values myValues = getValues();
+		myValues.setAccount(pList.getAccount());
 	}
 
 	/* Construct a new pattern from a statement line */
 	public Pattern(List pList, Statement.Line pLine) {
 		/* Set standard values */
-		super(pList, 0);
+		super(pList);
 		Values 					myValues	= getValues();
-		FinanceData				myData		= pList.getData();
 
+		/* Initialise values */
 		myValues.copyFrom(pLine.getValues());
 		pList.setNewId(this);		
 		
-		/* Adjust the date so that it is in the 2000 tax year */
-		TaxYear.List  myYears = myData.getTaxYears();
-		TaxYear       myTax   = myYears.searchFor("2000");
-		Date myDate = getDate();
-		while (myDate.compareTo(myTax.getDate()) > 0) myDate.adjustYear(-1);
-		myTax  = myYears.peekPrevious(myTax);
-		while (myDate.compareTo(myTax.getDate()) <= 0) myDate.adjustYear(1);
+		/* Adjust the date so that it is in the correct range */
+		Date myDate = new Date(getDate());
+		while (myDate.compareTo(thePatternRange.getEnd())   > 0) myDate.adjustYear(-1);
+		while (myDate.compareTo(thePatternRange.getStart()) < 0) myDate.adjustYear(1);
+		myValues.setDate(myDate);
 	}
 
 	/* Standard constructor */
@@ -250,56 +205,22 @@ public class Pattern extends EncryptedItem<Pattern> {
 	                int 			uTransId,
 	                int				uFreqId,
 	                boolean         isCredit) throws Exception {
-		/* Initialise item */
-		super(pList, uId);
+		/* Initialise item assuming account as debit and partner as credit */
+		super(pList, uId, uControlId, pDate, pDesc, 
+			  uAccountId, uPartnerId,
+			  uTransId, pAmount, null, null, null, null);
 		
 		/* Local variables */
-		Account 		myAccount;
-		Account.List	myAccounts;
-		TransactionType myTrans;
 		Frequency 		myFreq;
 		
 		/* Initialise values */
 		Values myValues = getValues();
 		
 		/* Record the IDs */
-		myValues.setAccountId(uAccountId);
-		myValues.setPartnerId(uPartnerId);
-		myValues.setTransId(uTransId);
 		myValues.setFreqId(uFreqId);
 		
-		/* Set control Key */
-		setControlKey(uControlId);
-		
-		/* Access the accounts */
+		/* Access the Frequencys */
 		FinanceData	myData 	= pList.getData();
-		myAccounts = myData.getAccounts();
-		
-		/* Look up the Account */
-		myAccount = myAccounts.searchFor(uAccountId);
-		if (myAccount == null) 
-			throw new Exception(ExceptionClass.DATA,
-								this,
-								"Invalid Account Id");
-		myValues.setAccount(myAccount);
-					
-		/* Look up the Partner */
-		myAccount = myAccounts.searchFor(uPartnerId);
-		if (myAccount == null) 
-			throw new Exception(ExceptionClass.DATA,
-								this,
-								"Invalid Partner Id");
-		myValues.setPartner(myAccount);
-					
-		/* Look up the TransType */
-		myTrans = myData.getTransTypes().searchFor(uTransId);
-		if (myTrans == null) 
-			throw new Exception(ExceptionClass.DATA,
-								this,
-								"Invalid TransType Id");
-		myValues.setTransType(myTrans);
-					
-		/* Look up the Frequency */
 		myFreq = myData.getFrequencys().searchFor(uFreqId);
 		if (myFreq == null) 
 			throw new Exception(ExceptionClass.DATA,
@@ -307,16 +228,8 @@ public class Pattern extends EncryptedItem<Pattern> {
 								"Invalid Frequency Id");
 		myValues.setFrequency(myFreq);
 
-		/* Create the date */
-		myValues.setDate(new Date(pDate));
-		
-		/* Record the encrypted values */
-		myValues.setDesc(new StringPair(pDesc));
-		myValues.setAmount(new MoneyPair(pAmount));
+		/* Record the isCredit Flag */
 		myValues.setIsCredit(isCredit);
-		
-		/* Allocate the id */
-		pList.setNewId(this);				
 	}
 			
 	/* Standard constructor */
@@ -330,24 +243,17 @@ public class Pattern extends EncryptedItem<Pattern> {
 	                TransactionType	pTransType,
 	                Frequency		pFrequency,
 	                boolean         isCredit) throws Exception {
-		/* Initialise item */
-		super(pList, uId);
+		/* Initialise item assuming account as debit and partner as credit */
+		super(pList, uId, pDate, pDesc, 
+			  pAccount, pPartner,
+			  pTransType, pAmount, null, null, null, null);
 		
 		/* Initialise values */
 		Values myValues = getValues();
 
-		/* Record the encrypted values */
-		myValues.setDesc(new StringPair(pDesc));
-		myValues.setAmount(new MoneyPair(pAmount));
-		myValues.setAccount(pAccount);
-		myValues.setPartner(pPartner);
-		myValues.setTransType(pTransType);
+		/* Record the values */
 		myValues.setFrequency(pFrequency);
-		myValues.setDate(new Date(pDate));
 		myValues.setIsCredit(isCredit);
-		
-		/* Allocate the id */
-		pList.setNewId(this);				
 	}
 			
 	/**
@@ -371,7 +277,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 		if (getId() != myThat.getId())	return false;
 		
 		/* Compare the changeable values */
-		return getValues().histEquals(myThat.getValues());
+		return getValues().histEquals(myThat.getValues()).isIdentical();
 	}
 
 	/**
@@ -393,10 +299,6 @@ public class Pattern extends EncryptedItem<Pattern> {
 		/* Access the object as a Pattern */
 		Pattern myThat = (Pattern)pThat;
 
-		/* Compare the accounts */
-		iDiff = getAccount().compareTo(myThat.getAccount());
-		if (iDiff != 0) return iDiff;
-
 		/* If the date differs */
 		if (this.getDate() != myThat.getDate()) {
 			/* Handle null dates */
@@ -408,6 +310,10 @@ public class Pattern extends EncryptedItem<Pattern> {
 			if (iDiff != 0) return iDiff;
 		}
 		
+		/* Compare the accounts */
+		iDiff = getAccount().compareTo(myThat.getAccount());
+		if (iDiff != 0) return iDiff;
+
 		/* If the descriptions differ */
 		if (this.getDesc() != myThat.getDesc()) {
 			/* Handle null descriptions */
@@ -443,99 +349,31 @@ public class Pattern extends EncryptedItem<Pattern> {
 	 * @param pData the DataSet
 	 */
 	protected void reBuildLinks(FinanceData pData) {
-		/* Update the Encryption details */
+		/* Update the Event details */
 		super.reBuildLinks(pData);
 		
 		/* Access Lists */
-		Account.List 			myAccounts 		= pData.getAccounts();
 		Frequency.List 			myFrequencys	= pData.getFrequencys();
-		TransactionType.List 	myTranTypes		= pData.getTransTypes();
 		
-		/* Update to use the local copy of the Accounts */
-		Values 	myValues   	= getValues();
-		Account	myAct		= myValues.getAccount();
-		Account	myNewAct 	= myAccounts.searchFor(myAct.getId());
-		myValues.setAccount(myNewAct);
-
-		/* Update partner to use the local copy of the Accounts */
-		myAct		= myValues.getPartner();
-		myNewAct 	= myAccounts.searchFor(myAct.getId());
-		myValues.setPartner(myNewAct);
-
 		/* Update frequency to use the local copy */
+		Values 	myValues   	= getValues();
 		Frequency	myFreq		= myValues.getFrequency();
 		Frequency	myNewFreq 	= myFrequencys.searchFor(myFreq.getId());
 		myValues.setFrequency(myNewFreq);
-
-		/* Update transtype to use the local copy */
-		TransactionType	myTran		= myValues.getTransType();
-		TransactionType	myNewTran 	= myTranTypes.searchFor(myTran.getId());
-		myValues.setTransType(myNewTran);
 	}
 
 	/**
 	 * Validate the pattern
 	 */
-	public    void validate() { validate(null); }
-	protected void validate(Event.List pList) {
-		Event        							myEvent;
-		ValidationControl<Event>.errorElement 	myError;
-		int          							iField;
-		List 		 							myList = (List)getList();
-		
-		/* Create a new Event list */
-		if (pList == null)
-			pList = myList.getData().getEvents().getViewList();
-		
-		/* Create a new event based on this line */
-		try { myEvent = new Event(pList, this); }
-		catch (Exception e) {
-			addError("Failed to validate", Pattern.FIELD_ACCOUNT);
-			return;
-		}
-
-		/* Validate it */
-		myEvent.validate();
-			
-		/* Loop through the errors */
-		for (myError = myEvent.getFirstError();
-		     myError != null;
-		     myError = myError.getNext()) {
-			switch (myError.getField()) {
-				case Event.FIELD_DATE: 
-					iField = Pattern.FIELD_DATE; break;
-				case Event.FIELD_DESC: 
-					iField = Pattern.FIELD_DESC; break;
-				case Event.FIELD_AMOUNT: 
-					iField = Pattern.FIELD_AMOUNT; break;
-				case Event.FIELD_TRNTYP: 
-					iField = Pattern.FIELD_TRNTYP; break;
-				case Event.FIELD_DEBIT: 
-					iField = (isCredit())
-								?  Pattern.FIELD_PARTNER
-							    :  Pattern.FIELD_ACCOUNT; 
-					break;
-				case Event.FIELD_CREDIT: 
-					iField = (isCredit())
-								?  Pattern.FIELD_ACCOUNT
-							    :  Pattern.FIELD_PARTNER; 
-					break;
-				default: iField = Pattern.FIELD_ACCOUNT;
-					break;
-			}	
-				
-			/* Add an error event to this object */
-			addError(myError.getError(), iField);
-		}
-			
+	public void validate() {		
 		/* Check that frequency is non-null */
 		if (getFrequency() == null) 
-			addError("Frequency must be non-null", Pattern.FIELD_FREQ);
+			addError("Frequency must be non-null", FIELD_FREQ);
 		else if (!getFrequency().getEnabled()) 
 			addError("Frequency must be enabled", FIELD_FREQ);
 		
-		/* Set validation flag */
-		if (!hasErrors()) setValidEdit();
+		/* Validate it */
+		super.validate();
 	}
 	
 	/**
@@ -578,12 +416,9 @@ public class Pattern extends EncryptedItem<Pattern> {
 					return null;
 			}
 			
-			/* Obtain the base tax year */
-			myBase = myList.searchFor("2000");
-		
 			/* Calculate the difference in years */
 			iAdjust = pTaxYear.getDate().getYear() 
-						- myBase.getDate().getYear();
+						- thePatternRange.getEnd().getYear();
 		
 			/* Adjust the date to fall into the tax year */
 			pDate.copyDate(getDate());
@@ -629,12 +464,9 @@ public class Pattern extends EncryptedItem<Pattern> {
 			if (myFreq == FreqClass.TENMONTHS) {					
 				myDate = new Date(getDate());
 				
-				/* Obtain the base tax year */
-				myBase = myList.searchFor("2000");
-			
 				/* Calculate the difference in years */
 				iAdjust = pTaxYear.getDate().getYear() 
-							- myBase.getDate().getYear();
+							- thePatternRange.getEnd().getYear();
 			
 				/* Adjust the date to fall into the tax year */
 				myDate.copyDate(getDate());
@@ -669,15 +501,6 @@ public class Pattern extends EncryptedItem<Pattern> {
 	}
 
 	/**
-	 * Set a new transtype 
-	 * 
-	 * @param pTransType the transtype 
-	 */
-	public void setTransType(TransactionType pTransType) {
-		getValues().setTransType(pTransType);
-	}
-
-	/**
 	 * Set a new frequency 
 	 * 
 	 * @param pFrequency the frequency 
@@ -685,36 +508,6 @@ public class Pattern extends EncryptedItem<Pattern> {
 	public void setFrequency(Frequency pFrequency) {
 		getValues().setFrequency(pFrequency);
 	}
-
-	/**
-	 * Set a new description 
-	 * 
-	 * @param pDesc the description 
-	 */
-	public void setDesc(String pDesc) throws Exception {
-		if (pDesc != null) getValues().setDesc(new StringPair(pDesc));
-		else 			   getValues().setDesc(null);
-	}
-	
-	/**
-	 * Set a new amount 
-	 * 
-	 * @param pAmount the amount 
-	 */
-	public void setAmount(Money pAmount) throws Exception {
-		if (pAmount != null) getValues().setAmount(new MoneyPair(pAmount));
-		else 				 getValues().setAmount(null);
-	}
-	
-	/**
-	 * Set a new date 
-	 * 
-	 * @param pDate the new date 
-	 */
-	public void setDate(Date pDate) {
-		getValues().setDate((pDate == null) ? null : new Date(pDate));
-	}
-
 	/**
 	 * Set a new isCredit indication 
 	 * 
@@ -737,6 +530,10 @@ public class Pattern extends EncryptedItem<Pattern> {
 		
 		/* Store the current detail into history */
 		pushHistory();
+		
+		/* Update the isCredit if required */
+		if (isCredit() != myPattern.isCredit()) 
+			setIsCredit(myPattern.isCredit());
 		
 		/* Update the partner if required */
 		if (Account.differs(getPartner(), myPattern.getPartner()).isDifferent()) 
@@ -762,10 +559,6 @@ public class Pattern extends EncryptedItem<Pattern> {
 		if (Date.differs(getDate(), myPattern.getDate()).isDifferent()) 
 			setDate(myPattern.getDate());
 		
-		/* Update the isCredit if required */
-		if (isCredit() != myPattern.isCredit()) 
-			setIsCredit(myPattern.isCredit());
-		
 		/* Check for changes */
 		if (checkForHistory()) {
 			/* Mark as changed */
@@ -777,7 +570,23 @@ public class Pattern extends EncryptedItem<Pattern> {
 		return bChanged;
 	}
 	
-	public static class List extends EncryptedList<List, Pattern> {
+	/**
+	 * Add an error for this item
+	 * @param pError the error text
+	 * @param iField the associated field
+	 */
+	protected void					addError(String pError, int iField) {
+		/* Re-Map Credit/Debit field errors */
+		switch (iField) {
+			case FIELD_CREDIT: iField = isCredit() ? VFIELD_ACCOUNT : VFIELD_PARTNER; break;
+			case FIELD_DEBIT:  iField = isCredit() ? VFIELD_PARTNER : VFIELD_ACCOUNT; break;
+		}
+		
+		/* Call super class */
+		super.addError(pError, iField);
+	}
+	
+	public static class List extends Event.List {
 		/* Local values */
 		private Account	theAccount	= null;
 		
@@ -790,7 +599,8 @@ public class Pattern extends EncryptedItem<Pattern> {
 	 	 * @param pData the DataSet for the list
 	 	 */
 		protected List(FinanceData pData) { 
-			super(List.class, Pattern.class, pData);
+			super(pData);
+			setRange(thePatternRange);
 		}
 
 		/**
@@ -799,6 +609,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 		 */
 		private List(List pSource) { 
 			super(pSource);
+			setRange(thePatternRange);
 		}
 		
 		/**
@@ -861,7 +672,7 @@ public class Pattern extends EncryptedItem<Pattern> {
 			myList.setStyle(ListStyle.EDIT);
 
 			/* Local variables */
-			Pattern 		myCurr;
+			Event			myCurr;
 			Pattern 		myItem;
 			ListIterator 	myIterator;
 			
@@ -874,14 +685,14 @@ public class Pattern extends EncryptedItem<Pattern> {
 			/* Loop through the Prices */
 			while ((myCurr = myIterator.next()) != null) {
 				/* Check the account */
-				int myResult = pAccount.compareTo(myCurr.getAccount());
+				myItem = (Pattern)myCurr;
+				int myResult = pAccount.compareTo(myItem.getAccount());
 				
-				/* Handle differing accounts */
-				if (myResult ==  1) continue;
-				if (myResult == -1) break;
+				/* Skip differing accounts */
+				if (myResult != 0) continue;
 				
 				/* Copy the item */
-				myItem = new Pattern(myList, myCurr);
+				myItem = new Pattern(myList, myItem);
 				myList.add(myItem);
 			}
 			
@@ -895,6 +706,9 @@ public class Pattern extends EncryptedItem<Pattern> {
 		 * @param pBuffer the string buffer 
 		 */
 		public void addHTMLFields(DebugDetail pDetail, StringBuilder pBuffer) {
+			/* Add underlying details */
+			super.addHTMLFields(pDetail, pBuffer);
+			
 			/* If this is an account extract */
 			if (theAccount != null) {
 				/* Start the Fields section */
@@ -927,7 +741,9 @@ public class Pattern extends EncryptedItem<Pattern> {
 		 */
 		public Pattern addNewItem() {
 			Pattern myPattern = new Pattern(this);
-			myPattern.setAccount(theAccount);
+			//myPattern.setAccount(theAccount);
+			/* Set the Date as the start of the range */
+			myPattern.setDate(getRange().getStart());
 			add(myPattern);
 			return myPattern;
 		}
@@ -939,55 +755,32 @@ public class Pattern extends EncryptedItem<Pattern> {
 		public String itemType() { return listName; }
 				
 		/**
-		 * Validate the patterns
-		 */
-		public void validate() {
-			Pattern     	myCurr;
-			Event.List		myEvents;
-			ListIterator 	myIterator;
-		
-			/* Clear the errors */
-			clearErrors();
-			
-			/* Create a new Event list */
-			myEvents = getData().getEvents().getViewList();
-			
-			/* Create an iterator */
-			myIterator = listIterator();
-			
-			/* Loop through the list */
-			while ((myCurr = myIterator.next()) != null) {
-				/* Validate it */
-				myCurr.validate(myEvents);
-			}
-			
-			/* find the edit state */
-			findEditState();
-		}
-		
-		/**
 		 * Mark Active items
 		 */
 		public void markActiveItems() {
 			ListIterator 	myIterator;
-			Pattern 		myCurr;
+			Event 			myCurr;
+			Pattern			myItem;
 					
 			/* Access the list iterator */
 			myIterator = listIterator();
 			
 			/* Loop through the Prices */
 			while ((myCurr = myIterator.next()) != null) {
+				/* * Access as a pattern */
+				myItem = (Pattern)myCurr;
+				
 				/* Touch the patterned account */
-				myCurr.getAccount().touchItem(myCurr);			
+				myItem.getAccount().touchItem(myCurr);			
 				
 				/* Touch the patterned partner */
-				myCurr.getPartner().touchItem(myCurr);			
+				myItem.getPartner().touchItem(myCurr);			
 				
 				/* Touch the patterned frequency */
-				myCurr.getFrequency().touchItem(myCurr);			
+				myItem.getFrequency().touchItem(myCurr);			
 				
 				/* Touch the patterned transaction type */
-				myCurr.getTransType().touchItem(myCurr);			
+				myItem.getTransType().touchItem(myCurr);			
 			}			 
 		}
 		
@@ -1115,68 +908,37 @@ public class Pattern extends EncryptedItem<Pattern> {
 	/**
 	 * Values for a pattern
 	 */
-	public class Values extends EncryptedValues {
-		private Date       		theDate      = null;
-		private StringPair    	theDesc      = null;
-		private MoneyPair  		theAmount    = null;
-		private Account			thePartner   = null;
+	public class Values extends Event.Values {
 		private Frequency		theFrequency = null;
-		private TransactionType	theTransType = null;
-		private Account    		theAccount   = null;
 		private boolean 		isCredit     = false;
-		private Integer 		theAccountId = null;
-		private Integer 		thePartnerId = null;
-		private Integer 		theTransId	 = null;
 		private Integer 		theFreqId	 = null;
 		
 		/* Access methods */
-		public Date       		getDate()      { return theDate; }
-		public StringPair       getDesc()      { return theDesc; }
-		public MoneyPair   		getAmount()    { return theAmount; }
-		public Account          getPartner()   { return thePartner; }
+		public Account          getPartner()   { return (isCredit) ? getDebit() : getCredit(); }
 		public Frequency  		getFrequency() { return theFrequency; }
-		public TransactionType  getTransType() { return theTransType; }
-		public Account			getAccount()   { return theAccount; }
+		public Account			getAccount()   { return (isCredit) ? getCredit() : getDebit(); }
 		public boolean         	isCredit()     { return isCredit; }
-		private Integer        	getAccountId() { return theAccountId; }
-		private Integer        	getPartnerId() { return thePartnerId; }
-		private Integer        	getTransId()   { return theTransId; }
 		private Integer        	getFreqId()    { return theFreqId; }
 		
-		/* Encrypted value access */
-		public  Money	getAmountValue()    { return getPairValue(getAmount()); }
-		public  String  getDescValue()      { return getPairValue(getDesc()); }
-
-		/* Encrypted bytes access */
-		public  byte[]	getAmountBytes()    { return getPairBytes(getAmount()); }
-		public  byte[]  getDescBytes()      { return getPairBytes(getDesc()); }
-
-		public void setDate(Date pDate) {
-			theDate      = pDate; }
-		public void setDesc(StringPair pDesc) {
-			theDesc      = pDesc; }
-		public void setAmount(MoneyPair pAmount) {
-			theAmount    = pAmount; }
 		public void setPartner(Account pPartner) {
-			thePartner   = pPartner; 
-			thePartnerId = (pPartner == null) ? null : pPartner.getId(); }
+			if (isCredit) 	setDebit(pPartner); 
+			else 			setCredit(pPartner); }
 		public void setFrequency(Frequency pFrequency) {
 			theFrequency = pFrequency; 
 			theFreqId = (pFrequency == null) ? null : pFrequency.getId(); }
-		public void setTransType(TransactionType pTransType) {
-			theTransType = pTransType; 
-			theTransId = (pTransType == null) ? null : pTransType.getId(); }
 		public void setAccount(Account pAccount) {
-			theAccount   = pAccount; 
-			theAccountId = (pAccount == null) ? null : pAccount.getId(); }
+			if (isCredit) 	setCredit(pAccount); 
+			else 			setDebit(pAccount); }
 		public void setIsCredit(boolean isCredit) {
+			/* If we are changing values */
+			if (isCredit != this.isCredit) {
+				/* Swap credit/debit values */
+				Account myTemp = getCredit();
+				setCredit(getDebit());
+				setDebit(myTemp);
+			}
+			/* Store value */
 			this.isCredit = isCredit; }
-		private void setAccountId(Integer pAccountId) {
-			theAccountId   = pAccountId; } 
-		private void setPartnerId(Integer pPartnerId) {
-			thePartnerId   = pPartnerId; } 
-		private void setTransId(Integer pTransId) {
-			theTransId   = pTransId; } 
 		private void setFreqId(Integer pFreqId) {
 			theFreqId   = pFreqId; } 
 
@@ -1186,26 +948,30 @@ public class Pattern extends EncryptedItem<Pattern> {
 		public Values(Statement.Line.Values pValues) { copyFrom(pValues); }
 		
 		/* Check whether this object is equal to that passed */
-		public boolean histEquals(HistoryValues<Pattern> pCompare) {
+		public Difference histEquals(HistoryValues<Event> pCompare) {
+			/* Make sure that the object is the same class */
+			if (pCompare.getClass() != this.getClass()) return Difference.Different;
+			
+			/* Cast correctly */
 			Values myValues = (Values)pCompare;
-			if (!super.histEquals(pCompare))					  								return false;
-			if (Date.differs(theDate,    				myValues.theDate).isDifferent())      	return false;
-			if (differs(theDesc,   						myValues.theDesc).isDifferent())      	return false;
-			if (differs(theAmount, 						myValues.theAmount).isDifferent())    	return false;
-			if (Account.differs(thePartner, 			myValues.thePartner).isDifferent())   	return false;
-			if (Frequency.differs(theFrequency, 		myValues.theFrequency).isDifferent())	return false;
-			if (TransactionType.differs(theTransType,	myValues.theTransType).isDifferent()) 	return false;
-			if (Account.differs(theAccount, 			myValues.theAccount).isDifferent())		return false;
-			if (isCredit != myValues.isCredit) 	   							   					return false;
-			if (Utils.differs(theAccountId, 			myValues.theAccountId).isDifferent())	return false;
-			if (Utils.differs(thePartnerId, 			myValues.thePartnerId).isDifferent())	return false;
-			if (Utils.differs(theTransId, 				myValues.theTransId).isDifferent())		return false;
-			if (Utils.differs(theFreqId, 				myValues.theFreqId).isDifferent())		return false;
-			return true;
+
+			/* Handle integer/boolean values */
+			if ((isCredit != myValues.isCredit) ||
+				(Utils.differs(theFreqId,	myValues.theFreqId).isDifferent()))
+				return Difference.Different;
+			
+			/* Determine underlying differences */
+			Difference myDifference = super.histEquals(pCompare);
+			
+			/* Compare underlying values */
+			myDifference = myDifference.combine(Frequency.differs(theFrequency, myValues.theFrequency));
+
+			/* Return Differences */
+			return myDifference;
 		}
 		
 		/* Copy values */
-		public HistoryValues<Pattern> copySelf() {
+		public HistoryValues<Event> copySelf() {
 			return new Values(this);
 		}
 		public void    copyFrom(HistoryValues<?> pSource) {
@@ -1213,18 +979,11 @@ public class Pattern extends EncryptedItem<Pattern> {
 			if (pSource instanceof Values) {
 				Values myValues = (Values)pSource;
 				super.copyFrom(myValues);
-				theDate      = myValues.getDate();
-				theDesc      = myValues.getDesc();
-				theAmount    = myValues.getAmount();
-				thePartner   = myValues.getPartner();
 				theFrequency = myValues.getFrequency();
-				theTransType = myValues.getTransType();
-				theAccount   = myValues.getAccount();
 				isCredit     = myValues.isCredit();
-				theAccountId = myValues.getAccountId();
-				thePartnerId = myValues.getPartnerId();
-				theTransId   = myValues.getTransId();
 				theFreqId    = myValues.getFreqId();
+				if (getTaxCredit() != null)
+					System.out.println("");
 			}
 			
 			/* Handle a Line Values */
@@ -1232,44 +991,19 @@ public class Pattern extends EncryptedItem<Pattern> {
 				FinanceData				myData	 = ((List)getList()).getData();
 				Statement.Line.Values 	myValues = (Statement.Line.Values)pSource;
 				super.copyFrom(myValues);
-				
-				theDate 	 = new Date(myValues.getDate());
-				theDesc 	 = new StringPair(myValues.getDesc());
-				theTransType = myValues.getTransType();
-				theAmount    = new MoneyPair(myValues.getAmount());
-				thePartner   = myValues.getPartner();
 				theFrequency = myData.getFrequencys().searchFor(FreqClass.ANNUALLY);
-				theAccount   = myValues.getAccount();
 				isCredit     = myValues.isCredit();
 			}
 		}
 		
-		public Difference	fieldChanged(int fieldNo, HistoryValues<Pattern> pOriginal) {
+		public Difference	fieldChanged(int fieldNo, HistoryValues<Event> pOriginal) {
 			Values 	pValues = (Values)pOriginal;
 			Difference	bResult = Difference.Identical;
 			switch (fieldNo) {
-				case FIELD_DATE:
-					bResult = (Date.differs(theDate,       			pValues.theDate));
-					break;
-				case FIELD_DESC:
-					bResult = (differs(theDesc,						pValues.theDesc));
-					break;
-				case FIELD_TRNTYP:
-					bResult = (TransactionType.differs(theTransType, pValues.theTransType));
-					break;
-				case FIELD_AMOUNT:
-					bResult = (differs(theAmount,					pValues.theAmount));
-					break;
-				case FIELD_PARTNER:
-					bResult = (Account.differs(thePartner,   		pValues.thePartner));
-					break;
 				case FIELD_FREQ:
 					bResult = (Frequency.differs(theFrequency, 		pValues.theFrequency));
 					break;
-				case FIELD_ACCOUNT:
-					bResult = (Account.differs(theAccount,   		pValues.theAccount));
-					break;
-				case FIELD_CREDIT:
+				case FIELD_ISCREDIT:
 					bResult = ((isCredit != pValues.isCredit) ? Difference.Different
 															  : Difference.Identical);
 					break;
@@ -1279,35 +1013,5 @@ public class Pattern extends EncryptedItem<Pattern> {
 			}
 			return bResult;
 		}
-
-		/**
-		 * Update encryption after security change
-		 */
-		protected void updateSecurity() throws Exception {
-			/* Update the encryption */
-			theDesc 	= new StringPair(theDesc.getString());
-			theAmount	= new MoneyPair(theAmount.getValue());
-		}		
-		
-		/**
-		 * Ensure encryption after non-encrypted load
-		 */
-		protected void applySecurity() throws Exception {
-			/* Apply the encryption */
-			theDesc.encryptPair(null);
-			theAmount.encryptPair(null);
-		}		
-		
-		/**
-		 * Adopt encryption from base
-		 * @param pBase the Base values
-		 */
-		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {
-			Values myBase = (Values)pBase;
-
-			/* Apply the encryption */
-			theDesc.encryptPair(myBase.getDesc());
-			theAmount.encryptPair(myBase.getAmount());
-		}		
 	}	
 }

@@ -13,6 +13,7 @@ import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellEditor;
@@ -29,8 +30,8 @@ import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
 public abstract class StdTable<T extends DataItem<T>> extends JTable 
-														  implements stdPanel,
-																  	 HistoryCheck<T> {
+													  implements stdPanel,
+															  	 HistoryCheck<T> {
 	/* Members */
 	private static final long serialVersionUID = 1258025191244933784L;
 	private JTable				theRowHdrTable	= null;
@@ -49,7 +50,6 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 	public boolean 	hasErrors()  		{ return (theList != null) &&
 												 theList.hasErrors(); }
 	public boolean 	isActive()			{ return isEnabled; }
-	public boolean 	calculateTable()  	{ return false; }
 	public void    	printIt()			{ }
 		
 	public AbstractTableModel getTableModel() 			{ return theModel; }
@@ -186,8 +186,8 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 			theList.findEditState();
 		}
 		
-		/* Recalculate the table if required */
-		calculateTable();
+		/* Re-validate */
+		validateAfterChange();
 		updateDebug();
 		
 		/* Notify that the entire table has changed */
@@ -436,10 +436,7 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 			}
 		}
 			
-		/* Recalculate the table if required */
-		calculateTable();
-		
-		/* Revalidate after change */
+		/* Re-validate after change */
 		validateAfterChange();
 	}
 		
@@ -497,10 +494,7 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 			theModel.fireInsertRowEvents(myRowNo);				
 		}
 			
-		/* Recalculate the table if required */
-		calculateTable();
-		
-		/* Revalidate after change */
+		/* Re-validate after change */
 		validateAfterChange();
 	}
 		
@@ -556,10 +550,7 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 			theModel.fireUpdateRowEvents(myRowNo);
 		}
 					
-		/* Recalculate the table if required */
-		calculateTable();
-		
-		/* Revalidate after change */
+		/* Re-validate after change */
 		validateAfterChange();
 	}
 	
@@ -660,10 +651,7 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 			}
 		}
 
-		/* Recalculate the table if required */
-		calculateTable();
-		
-		/* Revalidate after change */
+		/* Re-validate after change */
 		validateAfterChange();
 	}
 	
@@ -731,10 +719,7 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 			}
 		}
 			
-		/* Recalculate the table if required */
-		calculateTable();
-		
-		/* Revalidate after change */
+		/* Re-validate after change */
 		validateAfterChange();
 	}
 		
@@ -797,10 +782,7 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 			}
 		}
 
-		/* Recalculate the table if required */
-		calculateTable();
-		
-		/* Revalidate after change */
+		/* Re-validate after change */
 		validateAfterChange();
 	}
 		
@@ -865,10 +847,7 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 			}
 		}
 
-		/* Recalculate the table if required */
-		calculateTable();
-		
-		/* Revalidate after change */
+		/* Re-validate after change */
 		validateAfterChange();
 	}		
 
@@ -998,7 +977,6 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 				/* Report the change of headers in the region */
 				theRowHdrModel.fireTableRowsUpdated(pToRow, pFromRow);
 			}
-			
 		}
 
 		/**
@@ -1050,6 +1028,22 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 		}
  
 		/**
+		 * fire column updated events
+		 * @param pCol the updated column
+		 */
+		public void fireUpdateColEvent(int pCol) {
+			/* Access the size of the table */
+			int mySize;
+			if ((theList == null) || ((mySize = theList.size()) == 0)) return;
+			
+			/* Create the table event */
+			TableModelEvent myEvent = new TableModelEvent(this, 0, mySize-1, pCol);
+
+			/* Note that the data for this row and header has changed */
+			fireTableChanged(myEvent);
+		}
+ 
+		/**
 		 * fire events for new data view
 		 */
 		protected void fireNewDataEvents() {
@@ -1082,6 +1076,9 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 				/* Has the field changed */
 				pData.processTableRow(myRow, iField);
 			}
+			
+			/* else set default values */
+			else pData.setDefaults();
 				
 			/* return to the caller */
 			return;

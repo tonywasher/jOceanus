@@ -212,7 +212,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		myValues.updateSecurity();
 
 		/* Check for changes */
-		if (checkForHistory()) setState(DataState.CHANGED);
+		setState(DataState.CHANGED);
 	}
 	
 	/**
@@ -385,10 +385,9 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		public EncryptedValues() {}
 		public EncryptedValues(EncryptedValues pValues) { copyFrom(pValues); }
 		
-		public boolean histEquals(HistoryValues<T> pValues) {
+		public Difference histEquals(HistoryValues<T> pValues) {
 			EncryptedValues myValues = (EncryptedValues)pValues;
-			if (ControlKey.differs(theControl,    myValues.theControl).isDifferent())    return false;
-			return true;
+			return (ControlKey.differs(theControl,    myValues.theControl));
 		}
 		public void    copyFrom(HistoryValues<?> pValues) {
 			if (pValues instanceof EncryptedItem.EncryptedValues) {

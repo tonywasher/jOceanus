@@ -63,6 +63,7 @@ public class ControlKey extends DataItem<ControlKey> {
 	public  AsymKeyType		getKeyType()  			{ return getValues().getKeyType(); }
 	public  int				getNumSteps()  			{ return getValues().getNumSteps(); }
 	private SecureRandom	getRandom()  			{ return getValues().getRandom(); }
+	private boolean			useRestricted()  		{ return getValues().useRestricted(); }
 
 	/* Linking methods */
 	public ControlKey	getBase() 	{ return (ControlKey)super.getBase(); }
@@ -164,7 +165,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		switch (pList.getStyle()) {
 			case CLONE:
 				theMap 			= new EnumMap<SymKeyType,DataKey>(SymKeyType.class);
-				theCipherSet 	= new CipherSet(getRandom(), getNumSteps());				
+				theCipherSet 	= new CipherSet(getRandom(), useRestricted(), getNumSteps());				
 			case COPY:
 			case CORE:
 				pList.setNewId(this);				
@@ -233,7 +234,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		theMap = new EnumMap<SymKeyType,DataKey>(SymKeyType.class);
 		
 		/* Create the CipherSet */
-		theCipherSet = new CipherSet(getRandom(), getNumSteps());
+		theCipherSet = new CipherSet(getRandom(), useRestricted(), getNumSteps());
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -266,7 +267,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		theMap = new EnumMap<SymKeyType,DataKey>(SymKeyType.class);
 		
 		/* Create the CipherSet */
-		theCipherSet = new CipherSet(getRandom(), getNumSteps());
+		theCipherSet = new CipherSet(getRandom(), useRestricted(), getNumSteps());
 		
 		/* Allocate the id */
 		pList.setNewId(this);
@@ -306,7 +307,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		theMap = new EnumMap<SymKeyType,DataKey>(SymKeyType.class);
 		
 		/* Create the CipherSet */
-		theCipherSet = new CipherSet(getRandom(), getNumSteps());
+		theCipherSet = new CipherSet(getRandom(), useRestricted(), getNumSteps());
 		
 		/* Allocate the id */
 		myList.setNewId(this);
@@ -335,7 +336,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		if (getId() != myThat.getId()) 		return false;
 		
 		/* Compare the changeable values */
-		return getValues().histEquals(myThat.getValues());
+		return getValues().histEquals(myThat.getValues()).isIdentical();
 	}
 
 	/**
@@ -759,7 +760,8 @@ public class ControlKey extends DataItem<ControlKey> {
 		public  int				getKeyTypeId()  		{ return theKeyTypeId; }
 		public  AsymKeyType		getKeyType()  			{ return theKeyType; }
 		public  SecurityControl	getSecurityControl()	{ return theControl; }
-		public  SecureRandom	getRandom()				{ return (theControl == null) ? null : theControl.getRandom(); }
+		private SecureRandom	getRandom()				{ return (theControl == null) ? null : theControl.getRandom(); }
+		private boolean			useRestricted()			{ return (theControl == null) ? false : theControl.useRestricted(); }
 		
 		private void setPublicKey(byte[] pValue) {
 			thePublicKey 	= pValue; }
@@ -782,14 +784,27 @@ public class ControlKey extends DataItem<ControlKey> {
 		public Values(Values pValues) { copyFrom(pValues); }
 		
 		/* Check whether this object is equal to that passed */
-		public boolean histEquals(HistoryValues<ControlKey> pCompare) {
-			Values myValues = (Values)pCompare;
-			if (theKeyType  != myValues.theKeyType)   										return false;
-			if (theNumSteps != myValues.theNumSteps)   										return false;
-			if (Utils.differs(thePublicKey,		myValues.thePublicKey).isDifferent())   	return false;
-			if (Utils.differs(thePrivateKey,	myValues.thePrivateKey).isDifferent())   	return false;
-			if (Utils.differs(thePasswordHash,	myValues.thePasswordHash).isDifferent())	return false;
-			return true;
+		public Difference histEquals(HistoryValues<ControlKey> pCompare) {
+			/* Make sure that the object is the same class */
+			if (pCompare.getClass() != this.getClass()) return Difference.Different;
+			
+			/* Cast correctly */
+			Values 		myValues 		= (Values)pCompare;
+			Difference 	myDifference 	= Difference.Identical;
+			
+			/* Test integer differences */
+			if ((theKeyType  != myValues.theKeyType) ||
+			    (theNumSteps != myValues.theNumSteps)) 
+				myDifference = Difference.Different;
+			
+			/* Test byte array differences */
+			else if ((Utils.differs(thePublicKey,		myValues.thePublicKey).isDifferent())	||
+					 (Utils.differs(thePrivateKey,		myValues.thePrivateKey).isDifferent())  || 
+					 (Utils.differs(thePasswordHash,	myValues.thePasswordHash).isDifferent()))
+				myDifference = Difference.Different;
+				
+			/* Return difference */
+			return myDifference;
 		}
 		
 		/* Copy values */

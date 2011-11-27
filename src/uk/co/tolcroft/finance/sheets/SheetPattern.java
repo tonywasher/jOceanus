@@ -9,7 +9,7 @@ import uk.co.tolcroft.models.sheets.SheetDataItem;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 
-public class SheetPattern extends SheetDataItem<Pattern> {
+public class SheetPattern extends SheetDataItem<Event> {
 	/**
 	 * NamedArea for Patterns
 	 */
@@ -117,18 +117,20 @@ public class SheetPattern extends SheetDataItem<Pattern> {
 	 *  @param pItem the Item to insert
 	 *  @param isBackup is the spreadsheet a backup, or else clear text
 	 */
-	protected void insertItem(Pattern	pItem) throws Throwable  {
+	protected void insertItem(Event	pItem) throws Throwable  {
+		Pattern myItem = (Pattern)pItem;
+		
 		/* If we are creating a backup */
 		if (isBackup) {
 			/* Set the fields */
 			writeInteger(0, pItem.getId());
 			writeInteger(1, pItem.getControlKey().getId());				
-			writeInteger(2, pItem.getAccount().getId());				
-			writeInteger(3, pItem.getPartner().getId());				
+			writeInteger(2, myItem.getAccount().getId());				
+			writeInteger(3, myItem.getPartner().getId());				
 			writeInteger(6, pItem.getTransType().getId());				
-			writeInteger(7, pItem.getFrequency().getId());				
+			writeInteger(7, myItem.getFrequency().getId());				
 			writeDate(4, pItem.getDate());
-			writeBoolean(5, pItem.isCredit());
+			writeBoolean(5, myItem.isCredit());
 			writeBytes(8, pItem.getDescBytes());
 			writeBytes(9, pItem.getAmountBytes());
 		}
@@ -137,12 +139,12 @@ public class SheetPattern extends SheetDataItem<Pattern> {
 		else {
 			/* Set the fields */
 			writeInteger(0, pItem.getId());
-			writeValidatedString(1, pItem.getAccount().getName(), SheetAccount.AccountNames);				
-			writeValidatedString(6, pItem.getPartner().getName(), SheetAccount.AccountNames);				
+			writeValidatedString(1, myItem.getAccount().getName(), SheetAccount.AccountNames);				
+			writeValidatedString(6, myItem.getPartner().getName(), SheetAccount.AccountNames);				
 			writeValidatedString(7, pItem.getTransType().getName(), SheetTransactionType.TranTypeNames);				
-			writeValidatedString(8, pItem.getFrequency().getName(), SheetFrequency.FrequencyNames);				
+			writeValidatedString(8, myItem.getFrequency().getName(), SheetFrequency.FrequencyNames);				
 			writeDate(2, pItem.getDate());
-			writeBoolean(4, pItem.isCredit());			
+			writeBoolean(4, myItem.isCredit());			
 			writeString(3, pItem.getDesc());			
 			writeNumber(5, pItem.getAmount());			
 		}
@@ -157,12 +159,12 @@ public class SheetPattern extends SheetDataItem<Pattern> {
 
 		/* Write titles */
 		writeString(0, Pattern.fieldName(Pattern.FIELD_ID));
-		writeString(1, Pattern.fieldName(Pattern.FIELD_ACCOUNT));
+		writeString(1, Pattern.fieldName(Pattern.VFIELD_ACCOUNT));
 		writeString(2, Pattern.fieldName(Pattern.FIELD_DATE));
 		writeString(3, Pattern.fieldName(Pattern.FIELD_DESC));			
-		writeString(4, Pattern.fieldName(Pattern.FIELD_CREDIT));			
+		writeString(4, Pattern.fieldName(Pattern.FIELD_ISCREDIT));			
 		writeString(5, Pattern.fieldName(Pattern.FIELD_AMOUNT));			
-		writeString(6, Pattern.fieldName(Pattern.FIELD_PARTNER));			
+		writeString(6, Pattern.fieldName(Pattern.VFIELD_PARTNER));			
 		writeString(7, Pattern.fieldName(Pattern.FIELD_TRNTYP));			
 		writeString(8, Pattern.fieldName(Pattern.FIELD_FREQ));			
 		return true;

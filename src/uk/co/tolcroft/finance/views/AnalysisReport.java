@@ -137,7 +137,7 @@ public class AnalysisReport {
 		/* Format the header */
 		myOutput.append("<html><body><a name=\"Top\">");
 		myOutput.append("<h1 align=\"center\">Instant Asset Report for ");
-		myOutput.append(theDate.formatDate(false));
+		myOutput.append(theDate.formatDate());
 		myOutput.append("</h1></a>");
 		myOutput.append("<table border=\"1\" width=\"95%\" align=\"center\">"); 
 		myOutput.append("<thead><th>Class</th><th>Value</th></thead>");
@@ -214,7 +214,7 @@ public class AnalysisReport {
 		/* Format the header */
 		myOutput.append("<html><body><a name=\"Top\">");
 		myOutput.append("<h1 align=\"center\">Market Report for ");
-		myOutput.append(theDate.formatDate(false));
+		myOutput.append(theDate.formatDate());
 		myOutput.append("</h1></a>");
 		myOutput.append("<table border=\"1\" width=\"95%\" align=\"center\">"); 
 		myOutput.append("<thead><th>Name</th><th>Cost</th>");
@@ -1100,7 +1100,7 @@ public class AnalysisReport {
 		while ((myCharge  = myIterator.next()) != null) {
 			/* Format the detail */
 			myOutput.append("<tr><td>");
-			myOutput.append(myCharge.getDate().formatDate(false));
+			myOutput.append(myCharge.getDate().formatDate());
 			myOutput.append("</td><td>");
 			myOutput.append(myCharge.getDesc());
 			myOutput.append("</td>");

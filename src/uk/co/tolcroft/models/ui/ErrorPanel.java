@@ -17,7 +17,7 @@ import uk.co.tolcroft.models.ui.StdInterfaces.stdPanel;
 
 public class ErrorPanel implements ActionListener {
 	/* Members */
-	private stdPanel		theParent			= null;
+	private stdPanel			theParent			= null;
 	private JPanel				thePanel			= null;
 	private JLabel				theErrorField		= null;
 	private JButton 			theClearButton		= null;

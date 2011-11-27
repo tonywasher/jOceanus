@@ -191,8 +191,6 @@ public class EventAnalysis implements DebugObject {
 	protected void resetStatementBalance(Statement pStatement) throws Exception {
 		Statement.Line     			myLine;
 		Statement.List				myLines;
-		Event.List					myList;
-		Event						myEvent;
 		Statement.List.ListIterator	myIterator;
 
 		/* Access the iterator */
@@ -205,11 +203,8 @@ public class EventAnalysis implements DebugObject {
 		/* Restore the SavePoint */
 		theAccount.restoreSavePoint();
 		
-		/* Create a new Event list */
-		myList = theData.getEvents().getViewList();
-	
 		/* Loop through the lines adjusting the balance */
-		while ((myLine = myIterator.next()) != null) {
+		while ((myLine = (Statement.Line)myIterator.next()) != null) {
 			/* Skip deleted lines */
 			if (myLine.isDeleted()) continue;
 
@@ -218,11 +213,8 @@ public class EventAnalysis implements DebugObject {
 			if (myLine.getTransType() == null) continue;
 			if (myLine.getAmount() == null) continue;
 			
-			/* Create an event from this line */
-			myEvent = new Event(myList, myLine);
-
 			/* Process the event */
-			processEvent(myEvent);
+			processEvent(myLine);
 			
 			/* Update the balances */
 			myLine.setBalances();

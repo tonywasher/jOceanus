@@ -31,8 +31,8 @@ public class LoadArchive extends LoaderThread<FinanceData> {
 		/* Create the status */
 		theStatus = new ThreadStatus<FinanceData>(this, theControl);
 
-		/* Initialise the status window */
-		initStatusBar("Loading Extract");
+		/* Show the status window */
+		showStatusBar();
 	}
 
 	/* Background task (Worker Thread)*/
@@ -41,6 +41,9 @@ public class LoadArchive extends LoaderThread<FinanceData> {
 		FinanceData				myStore;
 		Database<FinanceData>	myDatabase;
 		File					myFile;
+
+		/* Initialise the status window */
+		theStatus.initTask("Loading Extract");
 
 		/* Determine the name of the file to load */
 		ArchiveLoad myDialog = new ArchiveLoad(theControl);
@@ -57,8 +60,8 @@ public class LoadArchive extends LoaderThread<FinanceData> {
 		/* Load workbook */
 		myData   = FinanceSheet.loadArchive(theStatus, myFile);
 
-		/* Re-initialise the status window */
-		initStatusBar("Accessing DataStore");
+		/* Initialise the status window */
+		theStatus.initTask("Accessing DataStore");
 
 		/* Create interface */
 		myDatabase = theControl.getDatabase();
@@ -66,14 +69,14 @@ public class LoadArchive extends LoaderThread<FinanceData> {
 		/* Load underlying database */
 		myStore	= myDatabase.loadDatabase(theStatus);
 
-		/* Re-initialise the status window */
-		initStatusBar("Applying Security");
+		/* Initialise the status window */
+		theStatus.initTask("Applying Security");
 	
 		/* Initialise the security, either from database or with a new security control */
 		myData.initialiseSecurity(theStatus, myStore);
 			
-		/* Re-initialise the status window */
-		initStatusBar("Analysing Data");
+		/* Initialise the status window */
+		theStatus.initTask("Analysing Data");
 	
 		/* Analyse the Data to ensure that close dates are updated */
 		myData.analyseData(theControl);

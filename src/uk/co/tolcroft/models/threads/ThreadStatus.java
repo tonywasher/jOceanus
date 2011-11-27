@@ -5,33 +5,6 @@ import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.views.DataControl;
 
 public class ThreadStatus<T extends DataSet<T>> implements StatusControl {
-	/* Status Data regarding a thread */
-	protected static class StatusData {
-		/* Properties */
-		private int	   theNumSteps   = 0;;
-		private int    theStepsDone  = 0;
-		private int    theNumStages  = 0;
-		private int    theStagesDone = 0;;
-		private String theStage		 = null;
-		
-		/* Access methods */
-		public int	  getNumSteps()   { return theNumSteps; }
-		public int	  getStepsDone()  { return theStepsDone; }
-		public int	  getNumStages()  { return theNumStages; }
-		public int	  getStagesDone() { return theStagesDone; }
-		public String getStage()      { return theStage; }
-		
-		/* Constructors */
-		public StatusData() {}
-		public StatusData(StatusData pStatus) {
-			theNumSteps   = pStatus.theNumSteps;
-			theNumStages  = pStatus.theNumStages;
-			theStepsDone  = pStatus.theStepsDone;
-			theStagesDone = pStatus.theStagesDone;
-			theStage      = pStatus.theStage;
-		}
-	}
-
 	private WorkerThread<?>	theThread		= null;
 	private StatusData 		theStatus		= null;
 	private DataControl<T>	theControl		= null;
@@ -56,33 +29,23 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl {
 	}
 	
 	/* Publish task 0 (Worker Thread)*/
-	public boolean setNumStages(int pNumStages) {
-		/* Check for cancellation */
-		if (theThread.isCancelled()) return false;
-		
-		/* Set number of Stages and set Stages done to -1 */
-		theStatus.theNumStages  = pNumStages;
-		theStatus.theStagesDone = -1;
-		
-		/* Return to caller */
-		return true;
-	}
-	
-	/* Publish task 1 (Worker Thread)*/
-	public boolean setNewStage(String pStage) {
+	public boolean initTask(String pTask) {
 		StatusData myStatus;
 		
 		/* Check for cancellation */
 		if (theThread.isCancelled()) return false;
 		
-		/* Store the stage and increment stages done */
-		theStatus.theStage = pStage;
-		theStatus.theStagesDone++;
-		theStatus.theNumSteps  = 100;
-		if (theStatus.theStagesDone < theStatus.theNumStages) 
-			theStatus.theStepsDone = 0;
-		else 
-			theStatus.theStepsDone = 100;
+		/* Record task and stage */
+		theStatus.setTask(pTask);
+		theStatus.setStage("");
+		
+		/* Set number of Stages and set Stages done to -1 */
+		theStatus.setNumStages(100);
+		theStatus.setStagesDone(-1);
+		
+		/* Set number of Steps and set Steps done to -1 */
+		theStatus.setNumSteps(100);
+		theStatus.setStepsDone(-1);
 		
 		/* Create a new Status */
 		myStatus = new StatusData(theStatus);
@@ -94,19 +57,58 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl {
 		return true;
 	}
 	
-	/* Publish task 2 (Worker Thread)*/
-	public boolean setNumSteps(int pNumSteps) {
+	/* Publish task 1 (Worker Thread)*/
+	public boolean setNumStages(int pNumStages) {
 		/* Check for cancellation */
 		if (theThread.isCancelled()) return false;
 		
-		/* Set number of Steps */
-		theStatus.theNumSteps  = pNumSteps;
+		/* Initialise the number of stages and Stages done */
+		theStatus.setNumStages(pNumStages);
+		theStatus.setStagesDone(-1);
+		
+		/* Return to caller */
+		return true;
+	}
+	
+	/* Publish task 2 (Worker Thread)*/
+	public boolean setNewStage(String pStage) {
+		StatusData myStatus;
+		
+		/* Check for cancellation */
+		if (theThread.isCancelled()) return false;
+		
+		/* Store the stage and increment stages done */
+		theStatus.setStage(pStage);
+		theStatus.setStagesDone(theStatus.getStagesDone()+1);
+		theStatus.setNumSteps(100);
+		if (theStatus.getStagesDone() < theStatus.getNumStages()) 
+			theStatus.setStepsDone(0);
+		else 
+			theStatus.setStepsDone(100);
+		
+		/* Create a new Status */
+		myStatus = new StatusData(theStatus);
+		
+		/* Publish it */
+		theThread.publish(myStatus);
 		
 		/* Return to caller */
 		return true;
 	}
 	
 	/* Publish task 3 (Worker Thread)*/
+	public boolean setNumSteps(int pNumSteps) {
+		/* Check for cancellation */
+		if (theThread.isCancelled()) return false;
+		
+		/* Set number of Steps */
+		theStatus.setNumSteps(pNumSteps);
+		
+		/* Return to caller */
+		return true;
+	}
+	
+	/* Publish task 4 (Worker Thread)*/
 	public boolean setStepsDone(int pStepsDone) {
 		StatusData myStatus;
 		
@@ -114,7 +116,7 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl {
 		if (theThread.isCancelled()) return false;
 		
 		/* Set Steps done */
-		theStatus.theStepsDone  = pStepsDone;
+		theStatus.setStepsDone(pStepsDone);
 		
 		/* Create a new Status */
 		myStatus = new StatusData(theStatus);

@@ -43,6 +43,7 @@ public class PricePoint extends StdTable<AcctPrice> {
 	private spotViewMouse			theMouse			= null;
 	private spotViewColumnModel		theColumns			= null;
 	private Date					theDate				= null;
+	private AccountType				theAccountType		= null;
 	private SpotSelect				theSelect	 		= null;
 	private SaveButtons  			theTabButs   		= null;
 	private DebugEntry				theDebugPrice		= null;
@@ -189,11 +190,17 @@ public class PricePoint extends StdTable<AcctPrice> {
 			if (getList().getShowDeleted() != theSelect.getShowClosed())
 				setShowDeleted(theSelect.getShowClosed());
 			
-			/* Set the new date */
-			if (Date.differs(theDate, theSelect.getDate()).isDifferent()) {
+			/* Access selection */
+			AccountType myType 	= theSelect.getAccountType();
+			Date		myDate 	= theSelect.getDate();
+			
+			/* If the selection differs */
+			if (((Date.differs(theDate, myDate)).isDifferent()) ||
+				(AccountType.differs(theAccountType, myType).isDifferent())) {
 				/* Protect against exceptions */
 				try {
-					setSelection(theSelect.getDate());
+					/* Set selection */
+					setSelection(myType, myDate);
 					
 					/* Create SavePoint */
 					theSelect.createSavePoint();
@@ -220,10 +227,12 @@ public class PricePoint extends StdTable<AcctPrice> {
 	 * Refresh views/controls after a load/update of underlying data
 	 */
 	public void refreshData() throws Exception {
-		Date.Range myRange = theView.getRange();
-		theSelect.setRange(myRange);
-		theDate = theSelect.getDate();
-		setSelection(theDate);
+		/* Refresh the data */
+		theSelect.refreshData();
+		
+		/* Access the selection details */
+		setSelection(theSelect.getAccountType(), 
+					 theSelect.getDate());
 		
 		/* Create SavePoint */
 		theSelect.createSavePoint();
@@ -246,22 +255,36 @@ public class PricePoint extends StdTable<AcctPrice> {
 	}
 		
 	/**
-	 * Set Selection to the specified date
+	 * Set Selection to the specified account type and date
+	 * @param pType the account type
 	 * @param pDate the Date for the extract
 	 */
-	public void setSelection(Date pDate) throws Exception {
+	public void setSelection(AccountType 	pType,
+							 Date 			pDate) throws Exception {
+		/* Record selection */
 		theDate = pDate;
-		if (theDate != null) {
-			theSnapshot = new SpotPrices(theView, pDate);
+		theAccountType = pType;
+		
+		/* If selection is valid */
+		if ((theDate != null) && (theAccountType != null)) {
+			/* Create the new list */
+			theSnapshot = new SpotPrices(theView, pType, pDate);
 			thePrices   = theSnapshot.getPrices();
+			
+			/* Update Next/Prev values */
 			theSelect.setAdjacent(theSnapshot.getPrev(), 
 								  theSnapshot.getNext());
 		}
+		
+		/* else invalid selection */
 		else {
+			/* Set no selection */
 			theSnapshot = null;
 			thePrices   = null;				
 			theSelect.setAdjacent(null, null);
 		}
+		
+		/* Update other details */
 		setList(thePrices);
 		theViewList.setDataList(thePrices);
 		theTabButs.setLockDown();
@@ -564,7 +587,7 @@ public class PricePoint extends StdTable<AcctPrice> {
 		private static final long serialVersionUID = 5102715203937500181L;
 
 		/* Renderers/Editors */
-		private Renderer.DateCell 		theDateRenderer  	= null;
+		private Renderer.CalendarCell 	theDateRenderer  	= null;
 		private Renderer.PriceCell 		thePriceRenderer  	= null;
 		private Editor.PriceCell 		thePriceEditor    	= null;
 		private Renderer.StringCell 	theStringRenderer 	= null;
@@ -574,7 +597,7 @@ public class PricePoint extends StdTable<AcctPrice> {
 		 */
 		private spotViewColumnModel() {		
 			/* Create the relevant formatters/editors */
-			theDateRenderer    = new Renderer.DateCell();
+			theDateRenderer    = new Renderer.CalendarCell();
 			thePriceRenderer   = new Renderer.PriceCell();
 			thePriceEditor     = new Editor.PriceCell();
 			theStringRenderer  = new Renderer.StringCell();

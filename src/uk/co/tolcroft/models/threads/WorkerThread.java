@@ -5,7 +5,6 @@ import javax.swing.SwingWorker;
 
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
-import uk.co.tolcroft.models.threads.ThreadStatus.StatusData;
 import uk.co.tolcroft.models.ui.StatusBar;
 
 public abstract class WorkerThread<T> extends SwingWorker <T, StatusData> {
@@ -44,13 +43,9 @@ public abstract class WorkerThread<T> extends SwingWorker <T, StatusData> {
 	}
 	
 	/**
-	 *  Initialise StatusBar
-	 *  @param pTask the Task for the StatusBar
+	 *  Show StatusBar
 	 */
-	protected void initStatusBar(String pTask) {
-		theStatusBar.setOperation(pTask);
-		theStatusBar.setStage("", 0, 100); 
-		theStatusBar.setSteps(0, 100);
+	protected void showStatusBar() {
 		theStatusBar.getProgressPanel().setVisible(true);		
 	}
 	
@@ -114,11 +109,7 @@ public abstract class WorkerThread<T> extends SwingWorker <T, StatusData> {
 		StatusData myStatus = pStatus.get(pStatus.size() - 1);
 
 		/* Update the status window */
-		theStatusBar.setStage(myStatus.getStage(), 
-						  	  myStatus.getStagesDone(),
-						  	  myStatus.getNumStages());
-		theStatusBar.setSteps(myStatus.getStepsDone(),
-						  	  myStatus.getNumSteps());
+		theStatusBar.updateStatusBar(myStatus);
 	}
 
 	/**

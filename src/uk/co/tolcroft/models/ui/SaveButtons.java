@@ -13,7 +13,7 @@ import uk.co.tolcroft.models.ui.StdInterfaces.*;
 public class SaveButtons implements ActionListener {
 	/* Members */
 	private JPanel					thePanel		= null;
-	private stdPanel			theParent		= null;
+	private stdPanel				theParent		= null;
 	private JButton               	theOKButton 	= null;
 	private JButton                 theResetButton  = null;
 	

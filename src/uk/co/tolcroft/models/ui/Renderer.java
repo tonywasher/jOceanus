@@ -6,6 +6,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.ui.DateSelect.CalendarCellRenderer;
 
 public class Renderer {
 	/* Properties */
@@ -117,11 +118,53 @@ public class Renderer {
 			else if (value == null) s = "";
 			else {
 				myDate = (Date)value;
-				s      = myDate.formatDate(false);
+				s      = myDate.formatDate();
 			}
 			
 			super.setValue(s);
 		}
+		public JComponent getTableCellRendererComponent(JTable table, Object value,
+														boolean isSelected, 
+														boolean hasFocus, 
+														int row, int column) {
+			super.getTableCellRendererComponent(table, value, isSelected,
+												hasFocus, row, column);
+			StdTable<?>.DataTableModel myModel = (StdTable<?>.DataTableModel)table.getModel();
+			theData.setPosition(row, column, isSelected);
+			myModel.getRenderData(theData);
+			setForeground(theData.getForeGround());
+			setBackground(theData.getBackGround());
+			setFont(theData.getFont());
+			setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+		    setToolTipText(theData.getToolTip());
+			return this;
+		}
+	}
+	
+	/* Calendar Cell Renderer */
+	public static class CalendarCell extends CalendarCellRenderer {
+		private static final long serialVersionUID = 1947211408966548011L;
+		private RenderData theData;
+		
+		public CalendarCell() {
+			super("dd-MMM-yyyy");
+			theData 	= new RenderData(true);
+		}
+
+		public void setValue(Object value) {
+			Date 	myDate;
+			
+			/* If this is a Date value */
+			if (value instanceof Date) {
+				/* Extract the java date */
+				myDate = (Date)value;
+				value  = myDate.getDate();
+			}
+			
+			/* Pass the value down */
+			super.setValue(value);
+		}
+		
 		public JComponent getTableCellRendererComponent(JTable table, Object value,
 														boolean isSelected, 
 														boolean hasFocus, 

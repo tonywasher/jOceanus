@@ -32,30 +32,50 @@ public class CipherSet {
 	public final static int DEFSTEPS 	= 3;
 
 	/**
+	 * Multiplier to obtain Keys from secret
+	 */
+	private final static int keyMULT 	= 13;
+
+	/**
+	 * Multiplier to obtain IV from vector
+	 */
+	private final static int vectMULT 	= 7; 
+
+	/**
 	 * The Number of Steps
 	 */
 	private int							theNumSteps	= DEFSTEPS;
 	
 	/**
+	 * Use restricted security 
+	 */
+	protected boolean					useRestricted	= false;
+	
+	/**
 	 * The Random Generator
 	 */
-	private SecureRandom				theRandom	= null;
+	private SecureRandom				theRandom		= null;
 	
 	/**
 	 * The DataKey Map
 	 */
-	private Map<SymKeyType, DataCipher>	theMap		= null;
+	private Map<SymKeyType, DataCipher>	theMap			= null;
 
 	/**
 	 * Constructor
 	 * @param pRandom the Secure Random
+	 * @param useRestricted use restricted keys
 	 * @param pNumSteps the Number of encryption steps 
 	 */
 	public CipherSet(SecureRandom	pRandom,
+					 boolean		useRestricted,
 					 int			pNumSteps) {
 		/* Store parameters */
 		theRandom 	= pRandom;
 		theNumSteps	= pNumSteps;
+		
+		/* Store restricted indication */
+		this.useRestricted = useRestricted;
 		
 		/* Build the Map */
 		theMap = new EnumMap<SymKeyType, DataCipher>(SymKeyType.class);
@@ -90,16 +110,16 @@ public class CipherSet {
 	private void buildCipher(SymKeyType pKeyType,
 							 byte[] 	pSecret) throws Exception {
 		/* Determine the key length in bytes */
-		int myKeyLen = pKeyType.getKeySize() / 8;
+		int myKeyLen = SymmetricKey.getKeyLen(useRestricted) / 8;
 			
 		/* If the secret is not long enough */
 		if (pSecret.length < myKeyLen) 
 			throw new Exception(ExceptionClass.CRYPTO,
 								"Secret is insufficient in length"); 
-					
+
 		/* Determine index into array for Key Type */
 		byte[] myNew = new byte[pSecret.length];
-		int    myIndex = 13*pKeyType.getId();
+		int    myIndex = keyMULT*pKeyType.getId();
 		myIndex %= pSecret.length;
 		
 		/* If we need to shift the array */
@@ -144,11 +164,17 @@ public class CipherSet {
 		
 		/* Loop through the SymKeyTypes */
 		for (int i=0; i < myKeyTypes.length; i++) {
+			/* Access the Key Type */
+			SymKeyType myType = myKeyTypes[i];
+			
 			/* Access the DataCipher */
-			DataCipher myCipher = theMap.get(myKeyTypes[i]);
+			DataCipher myCipher = theMap.get(myType);
+			
+			/* Access the shifted vector */
+			byte[] myShift = getShiftedVector(myType, myVector);
 			
 			/* Encrypt the bytes */
-			pBytes = myCipher.encryptBytes(pBytes, myVector);
+			pBytes = myCipher.encryptBytes(pBytes, myShift);
 		}
 		
 		/* Allocate the bytes */
@@ -216,15 +242,46 @@ public class CipherSet {
 		
 		/* Loop through the SymKeyTypes */
 		for (int i=myTypes.length-1; i >= 0; i--) {
+			/* Access the Key Type */
+			SymKeyType myType = myTypes[i];
+			
 			/* Access the DataCipher */
-			DataCipher myCipher = theMap.get(myTypes[i]);
+			DataCipher myCipher = theMap.get(myType);
+			
+			/* Access the shifted vector */
+			byte[] myShift = getShiftedVector(myType, myVector);
 			
 			/* Decrypt the bytes */
-			myBytes = myCipher.decryptBytes(myBytes, myVector);
+			myBytes = myCipher.decryptBytes(myBytes, myShift);
 		}
 		
 		/* Return the decrypted bytes */
 		return myBytes;
+	}
+	
+	/**
+	 * Obtain shifted Initialisation vector
+	 * @param pKeyType the Symmetric Key Type
+	 * @param pVector the initialisation vector
+	 * @return the shifted vector
+	 */
+	private byte[] getShiftedVector(SymKeyType	pKeyType,
+									byte[] 		pVector) {
+		/* Determine index into array for Key Type */
+		byte[] myNew = new byte[pVector.length];
+		int    myIndex = vectMULT*pKeyType.getId();
+		myIndex %= pVector.length;
+	
+		/* If we need to shift the array */
+		if (myIndex > 0) {
+			/* Access shifted array */
+			System.arraycopy(pVector, myIndex, myNew, 0, pVector.length-myIndex);
+			System.arraycopy(pVector, 0, myNew, pVector.length-myIndex, myIndex);
+			pVector = myNew;
+		}
+		
+		/* return the shifted vector */
+		return pVector;
 	}
 	
 	/**

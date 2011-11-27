@@ -262,11 +262,22 @@ public class ViewPrice extends AcctPrice {
 		public Values(AcctPrice.Values 	pValues) { copyFrom(pValues); }
 		
 		/* Check whether this object is equal to that passed */
-		public boolean histEquals(HistoryValues<AcctPrice> pCompare) {
+		public Difference histEquals(HistoryValues<AcctPrice> pCompare) {
+			/* Make sure that the object is the same class */
+			if (pCompare.getClass() != this.getClass()) return Difference.Different;
+			
+			/* Cast correctly */
 			Values myValues = (Values)pCompare;
-			if (Dilution.differs(theDilution, 			myValues.theDilution).isDifferent()) 		return false;
-			if (DilutedPrice.differs(theDilutedPrice, 	myValues.theDilutedPrice).isDifferent())	return false;
-			return super.histEquals(pCompare);
+
+			/* Determine underlying differences */
+			Difference myDifference = super.histEquals(pCompare);
+			
+			/* Compare underlying values */
+			myDifference = myDifference.combine(Dilution.differs(theDilution, 			myValues.theDilution));
+			myDifference = myDifference.combine(DilutedPrice.differs(theDilutedPrice, 	myValues.theDilutedPrice));
+			
+			/* Return differences */
+			return myDifference;
 		}
 		
 		/* Copy values */

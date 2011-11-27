@@ -29,8 +29,8 @@ public class LoadBackup<T extends DataSet<T>> extends LoaderThread<T> {
 		/* Create the status */
 		theStatus = new ThreadStatus<T>(this, theControl);
 
-		/* Initialise the status window */
-		initStatusBar("Loading Backup");
+		/* Show the Status bar */
+		showStatusBar();
 	}
 
 	/* Background task (Worker Thread)*/
@@ -40,6 +40,9 @@ public class LoadBackup<T extends DataSet<T>> extends LoaderThread<T> {
 		Database<T>		myDatabase;
 		SpreadSheet<T>	mySheet;
 		File			myFile;
+
+		/* Initialise the status window */
+		theStatus.initTask("Loading Backup");
 
 		/* Determine the name of the file to load */
 		BackupLoad myDialog = new BackupLoad(theControl);
@@ -59,7 +62,7 @@ public class LoadBackup<T extends DataSet<T>> extends LoaderThread<T> {
 									  myFile);
 
 		/* Initialise the status window */
-		initStatusBar("Accessing DataStore");
+		theStatus.initTask("Accessing DataStore");
 
 		/* Create interface */
 		myDatabase = theControl.getDatabase();

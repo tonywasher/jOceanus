@@ -180,7 +180,7 @@ public class ControlData extends DataItem<ControlData> {
 		if (getId() != myThat.getId())	return false;
 		
 		/* Compare the changeable values */
-		return getValues().histEquals(myThat.getValues());
+		return getValues().histEquals(myThat.getValues()).isIdentical();
 	}
 
 	/**
@@ -442,16 +442,16 @@ public class ControlData extends DataItem<ControlData> {
 		public Values(Values pValues) { copyFrom(pValues); }
 		
 		/* Check whether this object is equal to that passed */
-		public boolean histEquals(HistoryValues<ControlData> pCompare) {
+		public Difference histEquals(HistoryValues<ControlData> pCompare) {
 			/* Make sure that the object is the same class */
-			if (pCompare.getClass() != this.getClass()) return false;
+			if (pCompare.getClass() != this.getClass()) return Difference.Different;
 			
 			/* Cast correctly */
 			Values myValues = (Values)pCompare;
 
-			if (theDataVersion != myValues.theDataVersion)   								return false;
-			if (ControlKey.differs(theControlKey,    myValues.theControlKey).isDifferent()) return false;
-			return true;
+			/* Test differences */
+			if (theDataVersion != myValues.theDataVersion)  return Difference.Different;
+			return ControlKey.differs(theControlKey, myValues.theControlKey);
 		}
 		
 		/* Copy values */

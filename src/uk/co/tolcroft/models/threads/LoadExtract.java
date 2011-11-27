@@ -29,8 +29,8 @@ public class LoadExtract<T extends DataSet<T>> extends LoaderThread<T> {
 		/* Create the status */
 		theStatus = new ThreadStatus<T>(this, theControl);
 
-		/* Initialise the status window */
-		initStatusBar("Loading Extract");
+		/* Show the status window */
+		showStatusBar();
 	}
 
 	/* Background task (Worker Thread)*/
@@ -40,6 +40,9 @@ public class LoadExtract<T extends DataSet<T>> extends LoaderThread<T> {
 		Database<T>			myDatabase;
 		SpreadSheet<T>		mySheet;
 		File				myFile;
+
+		/* Initialise the status window */
+		theStatus.initTask("Loading Extract");
 
 		/* Determine the name of the file to load */
 		BackupLoad myDialog = new BackupLoad(theControl);
@@ -58,8 +61,8 @@ public class LoadExtract<T extends DataSet<T>> extends LoaderThread<T> {
 		myData   = mySheet.loadExtract(theStatus, 
 									   myFile);
 
-		/* Re-initialise the status window */
-		initStatusBar("Accessing DataStore");
+		/* Initialise the status window */
+		theStatus.initTask("Accessing DataStore");
 
 		/* Create interface */
 		myDatabase = theControl.getDatabase();
@@ -67,15 +70,15 @@ public class LoadExtract<T extends DataSet<T>> extends LoaderThread<T> {
 		/* Load underlying database */
 		myStore	= myDatabase.loadDatabase(theStatus);
 
-		/* Re-initialise the status window */
-		initStatusBar("Re-applying Security");
-	
+		/* Initialise the status window */
+		theStatus.initTask("Re-applying Security");
+
 		/* Initialise the security, either from database or with a new security control */
 		myData.initialiseSecurity(theStatus, myStore);
 			
-		/* Re-initialise the status window */
-		initStatusBar("Analysing Data");
-	
+		/* Initialise the status window */
+		theStatus.initTask("Analysing Data");
+
 		/* Analyse the Data to ensure that close dates are updated */
 		myData.analyseData(theControl);
 			

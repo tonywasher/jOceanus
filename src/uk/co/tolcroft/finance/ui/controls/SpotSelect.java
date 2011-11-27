@@ -4,70 +4,85 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
 import javax.swing.JButton;
 import javax.swing.LayoutStyle;
-import javax.swing.SpinnerDateModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
+import uk.co.tolcroft.finance.data.Account;
+import uk.co.tolcroft.finance.data.AccountType;
+import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.ui.DateSelect.CalendarButton;
+import uk.co.tolcroft.models.ui.DateSelect.DateModel;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
-public class SpotSelect implements ItemListener,
-								   ActionListener,
-								   ChangeListener {
+public class SpotSelect {
 	/* Members */
+	private SpotSelect				theSelf			= this;
 	private JPanel					thePanel		= null;
-	private stdPanel  			theParent		= null;
+	private stdPanel  				theParent		= null;
 	private View					theView			= null;
-	private SpinnerDateModel        theModel        = null;
-	private JSpinner                theDateBox      = null;
+	private CalendarButton			theDateButton	= null;
+	private DateModel				theModel		= null;
 	private JCheckBox				theShowClosed   = null;
 	private JButton					theNext   		= null;
 	private JButton					thePrev   		= null;
+	private JComboBox				theTypesBox 	= null;
+	private AccountType.List		theTypes 		= null;
 	private SpotState				theState		= null;
 	private SpotState				theSavePoint	= null;
 	private boolean					doShowClosed	= false;
+	private boolean					typesPopulated	= false;
+	private boolean					refreshingData	= false;
 	
 	/* Access methods */
-	public JPanel   getPanel()  	{ return thePanel; }
-	public Date		getDate()		{ return theState.getDate(); }
-	public boolean	getShowClosed() { return doShowClosed; }
+	public JPanel   	getPanel()  		{ return thePanel; }
+	public Date			getDate()			{ return theState.getDate(); }
+	public AccountType	getAccountType()	{ return theState.getAccountType(); }
+	public boolean		getShowClosed() 	{ return doShowClosed; }
 				
 	/* Constructor */
 	public SpotSelect(View pView, stdPanel pTable) {
+		/* Create listener */
+		SpotListener myListener = new SpotListener();
 		
 		/* Store table and view details */
 		theView 	  = pView;
 		theParent	  = pTable;
 		
+		/* Create Labels */
+		JLabel myDate	= new JLabel("Date:");
+		JLabel myAct	= new JLabel("AccountType:");
+		
 		/* Create the check box */
 		theShowClosed = new JCheckBox("Show Closed");
 		theShowClosed.setSelected(doShowClosed);
 		
-		/* Create the DateSpinner Model and Box */
-		theModel   	= new SpinnerDateModel();
-		theDateBox 	= new JSpinner(theModel);
+		/* Create the DateButton */
+		theDateButton	= new CalendarButton();
+		theModel		= theDateButton.getDateModel();
 		
 		/* Create the Buttons */
 		theNext   	= new JButton("Next");
 		thePrev		= new JButton("Prev");
 		
-		/* Initialise the data from the view */
-		refreshData();
+		/* Create the Type box */
+		theTypesBox	= new JComboBox();
 		
 		/* Create initial state */
 		theState = new SpotState();
 	
-		/* Set the format of the date */
-		theDateBox.setEditor(new JSpinner.DateEditor(theDateBox, "dd-MMM-yyyy"));
-			
+		/* Initialise the data from the view */
+		refreshData();
+		
 		/* Create the panel */
 		thePanel = new JPanel();
 		thePanel.setBorder(javax.swing.BorderFactory
@@ -82,20 +97,29 @@ public class SpotSelect implements ItemListener,
 	    	panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	            .addGroup(panelLayout.createSequentialGroup()
 	                .addContainerGap()
-	                .addComponent(theDateBox, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+	                .addComponent(myDate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                .addComponent(theDateButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
 	                .addComponent(theNext)
 	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 	                .addComponent(thePrev)
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                .addComponent(myAct)
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                .addComponent(theTypesBox)
 	                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
 	                .addComponent(theShowClosed))
 	    );
 	    panelLayout.setVerticalGroup(
 	        panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	            .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-	                .addComponent(theDateBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+	                .addComponent(myDate)
+	                .addComponent(theDateButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 	                .addComponent(theNext)
 	                .addComponent(thePrev)
+	                .addComponent(myAct)
+	                .addComponent(theTypesBox)
 	                .addComponent(theShowClosed))
 	    );
 
@@ -103,37 +127,111 @@ public class SpotSelect implements ItemListener,
 		theState.applyState();
 
 		/* Add the listener for item changes */
-		theModel.addChangeListener(this);
-		theShowClosed.addItemListener(this);
-		theNext.addActionListener(this);
-		thePrev.addActionListener(this);
+		theDateButton.addPropertyChangeListener(CalendarButton.valueDATE, myListener);
+		theShowClosed.addItemListener(myListener);
+		theNext.addActionListener(myListener);
+		thePrev.addActionListener(myListener);
+		theTypesBox.addItemListener(myListener);
 	}
 	
-	/* refresh data */
+	/**
+	 * Refresh data 
+	 */
 	public void refreshData() {
-		Date.Range   myRange;
+		Date.Range   				myRange;
+		AccountType					myType	= null;
+		AccountType					myFirst	= null;
+		Account						myAccount;
+		Account.List				myAccounts;
+		Account.List.ListIterator	myIterator;
 		
 		/* Access the data */
 		myRange = theView.getRange();
 		
-		/* Set the range for the Date Spinner */
+		/* Set the range for the Date Button */
 		setRange(myRange);				
+
+		/* Access the data */
+		FinanceData myData = theView.getData();
+		
+		/* Access types and accounts */
+		theTypes    = myData.getAccountTypes();
+		myAccounts 	= myData.getAccounts();
+	
+		/* Note that we are refreshing data */
+		refreshingData = true;
+		
+		/* If we have types already populated */
+		if (typesPopulated) {	
+			/* If we have a selected type */
+			if (getAccountType() != null) {
+				/* Find it in the new list */
+				theState.setType(theTypes.searchFor(getAccountType().getName()));
+			}
+			
+			/* Remove the types */
+			theTypesBox.removeAllItems();
+			typesPopulated = false;
+		}
+		
+		/* Access the iterator */
+		myIterator = myAccounts.listIterator(true);
+		
+		/* Loop through the non-owner accounts */
+		while ((myAccount = myIterator.next()) != null) {
+			/* Skip non-priced items */
+			if (!myAccount.isPriced()) continue;
+			
+			/* Skip deleted items */
+			if (myAccount.isDeleted()) continue;
+			
+			/* Skip alias items */
+			if (myAccount.isAlias()) continue;
+			
+			/* Skip closed items if required */
+			if ((!doShowClosed) && 
+				(myAccount.isClosed())) continue;
+			
+			/* If the type of this account is new */
+			if (AccountType.differs(myType, myAccount.getActType()).isDifferent()) {
+				/* Note the type */
+				myType = myAccount.getActType();
+				if (myFirst == null) myFirst = myType;
+			
+				/* Add the item to the list */
+				theTypesBox.addItem(myType.getName());
+				typesPopulated = true;
+			}
+		}
+		
+		/* If we have a selected type */
+		if (getAccountType() != null) {
+			/* Select it in the new list */
+			theTypesBox.setSelectedItem(getAccountType().getName());
+		}
+		
+		/* Else we have no type currently selected */
+		else if (typesPopulated) {
+			/* Select the first account type */
+			theTypesBox.setSelectedIndex(0);
+			theState.setType(myFirst);
+		}
+
+		/* Note that we have finished refreshing data */
+		refreshingData = false;
 	}
 
-	/* Set the range for the date box */
+	/**
+	 * Set the range for the date box
+	 * @param pRange the Range to set
+	 */
 	public  void setRange(Date.Range pRange) {
-		Date myStart = null;
-		Date myFirst;
-		Date myLast;
+		Date myStart = (pRange == null) ? null : pRange.getStart();
+		Date myEnd   = (pRange == null) ? null : pRange.getEnd();
 		
-		myFirst = (pRange == null) ? null : pRange.getStart();
-		myLast = (pRange == null) ? null : pRange.getEnd();
-		if (myFirst != null) {
-			myStart = new Date(myFirst);
-			myStart.adjustDay(-1);
-		}
-		theModel.setStart((myFirst == null) ? null : myStart.getDate());
-		theModel.setEnd((myLast == null) ? null : myLast.getDate());
+		/* Set up range */
+		theModel.setSelectableRange((myStart == null) ? null : myStart.getDate(),
+									(myEnd == null) ? null : myEnd.getDate());
 	}
 	
 	/* Lock/Unlock the selection */
@@ -143,7 +241,8 @@ public class SpotSelect implements ItemListener,
 		theNext.setEnabled(theState.getNextDate() != null);
 		thePrev.setEnabled(theState.getPrevDate() != null);
 		
-		theDateBox.setEnabled(!bLock);
+		theDateButton.setEnabled(!bLock);
+		theTypesBox.setEnabled(!bLock);
 	}
 	
 	/**
@@ -175,64 +274,86 @@ public class SpotSelect implements ItemListener,
 		theState.setAdjacent(pPrev, pNext);
 	}
 
-	/* actionPerformed listener event */
-	public void actionPerformed(ActionEvent evt) {
+	/**
+	 * Listener class
+	 */
+	private class SpotListener implements ActionListener, 
+										  PropertyChangeListener,
+										  ItemListener {
+		@Override
+		public void actionPerformed(ActionEvent evt) {
+			Object o = evt.getSource();
 
-		/* If this event relates to the Next button */
-		if (evt.getSource() == (Object)theNext) {
-			/* Set the Date to be the Next date */
-			theState.setNext();
-		}
+			/* If this event relates to the Next button */
+			if (o == theNext) {
+				/* Set the Date to be the Next date */
+				theState.setNext();
+			}
 		
-		/* If this event relates to the previous button */
-		else if (evt.getSource() == (Object)thePrev) {
-			/* Set the Date to be the Previous date */
-			theState.setPrev();
-		}
-		
-		/* No need to notify the parent since this will have been done by state update */
-	}
-	
-	/* ItemStateChanged listener event */
-	public void itemStateChanged(ItemEvent evt) {
-		boolean               bChange = false;
+			/* If this event relates to the previous button */
+			else if (o == thePrev) {
+				/* Set the Date to be the Previous date */
+				theState.setPrev();
+			}
 
-		/* If this event relates to the showClosed box */
-		if (evt.getSource() == (Object)theShowClosed) {
-			/* Note the new criteria and re-build lists */
-			doShowClosed = theShowClosed.isSelected();
-			bChange      = true;
+			/* No need to notify the parent since this will have been done by state update */
+		}
+	
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			/* if this date relates to the Date button */
+			if (evt.getSource() == theDateButton) {
+				/* Access the value */
+				if (theState.setDate(theModel))
+					theParent.notifySelection(theSelf);
+			}			
 		}
 		
-		/* If we have a change, alert the table */
-		if (bChange) { theParent.notifySelection(this); }
-	}
-	
-	/* stateChanged listener event */
-	public void stateChanged(ChangeEvent evt) {
-		boolean bChange = false;
+		@Override
+		public void itemStateChanged(ItemEvent evt) {
+			boolean	bChange = false;
+			Object	o		= evt.getSource();
+
+			/* Ignore selection if refreshing data */
+			if (refreshingData) return;
+			
+			/* If this event relates to the showClosed box */
+			if (o == theShowClosed) {
+				/* Note the new criteria and re-build lists */
+				doShowClosed = theShowClosed.isSelected();
+				bChange      = true;
+			}
 		
-		/* If this event relates to the start box */
-		if (evt.getSource() == (Object)theModel) {
-			theState.setDate(theModel);
-			bChange    = true;
-		}			
-				
-		/* If we have a change, notify the main program */
-		if (bChange) { theParent.notifySelection(this); }
+			/* If this event relates to the Account Type box */
+			else if ((o == theTypesBox) &&
+					 (evt.getStateChange() == ItemEvent.SELECTED)) {
+				String myName = (String)evt.getItem();
+
+				/* Select the new type */
+				theState.setType(theTypes.searchFor(myName));
+				bChange = true;
+			}
+			
+			/* If we have a change, alert the table */
+			if (bChange) { theParent.notifySelection(theSelf); }
+		}
 	}
 	
-	/* SavePoint values */
+	/**
+	 *  SavePoint values
+	 */
 	private class SpotState {
 		/* Members */
-		private Date	theDate		= null;
-		private Date	theNextDate	= null;
-		private Date	thePrevDate	= null;
+		private AccountType	theType		= null;
+		private Date		theDate		= null;
+		private Date		theNextDate	= null;
+		private Date		thePrevDate	= null;
 		
 		/* Access methods */
-		private Date	getDate() 		{ return theDate; }
-		private Date 	getNextDate() 	{ return theNextDate; }
-		private Date 	getPrevDate() 	{ return thePrevDate; }
+		private AccountType	getAccountType() 	{ return theType; }
+		private Date		getDate() 			{ return theDate; }
+		private Date 		getNextDate() 		{ return theNextDate; }
+		private Date 		getPrevDate() 		{ return thePrevDate; }
 
 		/**
 		 * Constructor
@@ -246,6 +367,7 @@ public class SpotSelect implements ItemListener,
 		 * @param pState state to copy from
 		 */
 		private SpotState(SpotState pState) {
+			theType		= pState.getAccountType();
 			theDate 	= new Date(pState.getDate());
 			if (pState.getNextDate() != null)
 				theNextDate = new Date(pState.getNextDate());
@@ -254,12 +376,26 @@ public class SpotSelect implements ItemListener,
 		}
 		
 		/**
+		 * Set new Account Type
+		 * @param pType the AccountType 
+		 */
+		private void setType(AccountType pType) {
+			/* Adjust the type */
+			theType = pType;
+		}
+		
+		/**
 		 * Set new Date
 		 * @param pModel the Spinner with the new date 
 		 */
-		private void setDate(SpinnerDateModel pModel) {
-			/* Adjust the date */
-			theDate = new Date(theModel.getDate());
+		private boolean setDate(DateModel pModel) {
+			/* Adjust the date and build the new range */
+			Date myDate = new Date(theModel.getSelectedDate());
+			if (Date.differs(myDate, theDate).isDifferent()) {
+				theDate = myDate;
+				return true;
+			}
+			return false;
 		}
 		
 		/**
@@ -300,7 +436,9 @@ public class SpotSelect implements ItemListener,
 		private void applyState() {
 			/* Adjust the lock-down */
 			setLockDown();
-			theModel.setValue(theDate.getDate());
+			theModel.setSelectedDate(theDate.getDate());
+			theTypesBox.setSelectedIndex(-1);
+			if (theType != null) theTypesBox.setSelectedItem(theType.getName());
 		}
 	}	
 }

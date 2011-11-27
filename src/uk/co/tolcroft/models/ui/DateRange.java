@@ -4,76 +4,64 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
 import javax.swing.LayoutStyle;
-import javax.swing.SpinnerDateModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.ui.DateSelect.CalendarButton;
+import uk.co.tolcroft.models.ui.DateSelect.DateModel;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
-public class DateRange  implements 	ItemListener,
-									ActionListener,
-									ChangeListener{
+public class DateRange {
 	/* Members */
-	private stdPanel			theParent  	   = null;
-	private SpinnerDateModel    theModel       = null;
-	private JSpinner            theStartBox    = null;
-	private JComboBox           thePeriodBox   = null;
-	private JPanel              thePanel       = null;
-	private JButton             theNextButton  = null;
-	private JButton             thePrevButton  = null;
-	private JLabel              theStartLabel  = null;
-	private JLabel              thePeriodLabel = null;
-	private Date          		theFirstDate   = null;
-	private Date          		theFinalDate   = null;
-	private DateRangeState 		theState   	   = null;
-	private DateRangeState      theSavePoint   = null;
-	private boolean				refreshingData = false;
+	private	DateRange			theSelf		   	= this;
+	private stdPanel			theParent  	   	= null;
+	private CalendarButton		theDateButton 	= null;
+	private DateModel			theModel		= null;
+	private JComboBox           thePeriodBox   	= null;
+	private JPanel              thePanel       	= null;
+	private JButton             theNextButton  	= null;
+	private JButton             thePrevButton  	= null;
+	private JLabel              theStartLabel  	= null;
+	private JLabel              thePeriodLabel 	= null;
+	private Date          		theFirstDate   	= null;
+	private Date          		theFinalDate   	= null;
+	private DateRangeState 		theState   	   	= null;
+	private DateRangeState      theSavePoint   	= null;
+	private boolean				refreshingData 	= false;
 
 	/* Access methods */
 	public 	JPanel            	getPanel()   	{ return thePanel; }
 	public	Date.Range      	getRange()   	{ return theState.getRange(); }
 
-	/* Period descriptions */
-	private static final String OneMonth    = "One Month";
-	private static final String QuarterYear = "Quarter Year";
-	private static final String HalfYear    = "Half Year";
-	private static final String OneYear     = "One Year";
-	private static final String Unlimited   = "Unlimited";
-
 	/* Constructor */
 	public DateRange(stdPanel pParent) {
+		DateListener myListener = new DateListener();
 		
-		/* Create the DateSpinner Model */
-		theModel 	= new SpinnerDateModel();
+		/* Store parameters */
 		theParent 	= pParent;
 	
 		/* Create the boxes */
-		theStartBox   = new JSpinner(theModel);
 		thePeriodBox  = new JComboBox();
 	
-		/* Set the format of the date */
-		theStartBox.setEditor(new JSpinner.DateEditor(theStartBox, "dd-MMM-yyyy"));
-	
+		/* Create the DateButton */
+		theDateButton = new CalendarButton();
+		theModel	  = theDateButton.getDateModel();
+		
 		/* Create initial state and limit the spinner to the Range */
 		theState = new DateRangeState();
 		setOverallRange(null);
+		theState.buildRange();
 	
 		/* Add the PeriodTypes to the period box */
-		thePeriodBox.addItem(OneMonth);
-		thePeriodBox.addItem(QuarterYear);
-		thePeriodBox.addItem(HalfYear);
-		thePeriodBox.addItem(OneYear);
-		thePeriodBox.addItem(Unlimited);
-		thePeriodBox.setSelectedIndex(0);
+		for (DatePeriod myPeriod : DatePeriod.values()) { thePeriodBox.addItem(myPeriod); }
 		
 		/* Create the labels */
 		theStartLabel = new JLabel("Start Date:");
@@ -98,37 +86,37 @@ public class DateRange  implements 	ItemListener,
 	            .addGroup(panelLayout.createSequentialGroup()
 	                .addContainerGap()
 	                .addComponent(theStartLabel)
-	                .addGap(18, 18, 18)
-	                .addComponent(theStartBox, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-	                .addGap(29, 29, 29)
-	                .addComponent(theNextButton)
-	                .addGap(26, 26, 26)
-	                .addComponent(thePrevButton)
-	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                .addComponent(theDateButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                .addComponent(thePeriodLabel)
-	                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 	                .addComponent(thePeriodBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-	                .addGap(25, 25, 25))
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                .addComponent(theNextButton)
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                .addComponent(thePrevButton)
+	                .addContainerGap())
 	    );
 	    panelLayout.setVerticalGroup(
 	        panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	            .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 	                .addComponent(theStartLabel)
-	                .addComponent(theStartBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-	                .addComponent(theNextButton)
-	                .addComponent(thePrevButton)
+	                .addComponent(theDateButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 	                .addComponent(thePeriodLabel)
-	                .addComponent(thePeriodBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+	                .addComponent(thePeriodBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+	                .addComponent(theNextButton)
+	                .addComponent(thePrevButton))
 	    );
 
 		/* Apply the current state */
 		theState.applyState();
 
 		/* Add the listeners for item changes */
-		thePeriodBox.addItemListener(this);
-		theNextButton.addActionListener(this);
-		thePrevButton.addActionListener(this);
-		theModel.addChangeListener(this);
+		thePeriodBox.addItemListener(myListener);
+		theNextButton.addActionListener(myListener);
+		thePrevButton.addActionListener(myListener);
+		theDateButton.addPropertyChangeListener(CalendarButton.valueDATE, myListener);
 	}
 
 	/**
@@ -136,16 +124,13 @@ public class DateRange  implements 	ItemListener,
 	 * @param pRange
 	 */
 	public  void setOverallRange(Date.Range pRange) {
-		Date myStart = null;
-		
+		/* Record total possible range */
 		theFirstDate = (pRange == null) ? null : pRange.getStart();
 		theFinalDate = (pRange == null) ? null : pRange.getEnd();
-		if (theFirstDate != null) {
-			myStart = new Date(theFirstDate);
-			myStart.adjustDay(-1);
-		}
-		theModel.setStart((theFirstDate == null) ? null : myStart.getDate());
-		theModel.setEnd((theFinalDate == null) ? null : theFinalDate.getDate());
+		
+		/* Set up range */
+		theModel.setSelectableRange((theFirstDate == null) ? null : theFirstDate.getDate(),
+									(theFinalDate == null) ? null : theFinalDate.getDate());
 	}
 	
 
@@ -190,104 +175,76 @@ public class DateRange  implements 	ItemListener,
 		theState.applyState();		
 	}
 
-	/* ItemStateChanged listener event */
-	public String getPeriodName(DatePeriod pPeriod) {
-		String myName = null;
-		
-		/* Switch on period to select name */
-		switch(pPeriod) {
-			case ONEMONTH:    myName = OneMonth;    break;
-			case QUARTERYEAR: myName = QuarterYear; break;
-			case HALFYEAR:    myName = HalfYear;    break;
-			case ONEYEAR:     myName = OneYear;     break;
-			case UNLIMITED:   myName = Unlimited;   break;
-		}
-		
-		/* Return the name */
-		return myName;
-	}
+	/* getPeriodName event */
+	public String getPeriodName(DatePeriod pPeriod) { return pPeriod.toString(); }
 	
 	/* Lock/Unlock the selection */
 	public void setLockDown() {
 		boolean bLock = theParent.hasUpdates();
 		
 		/* Lock/Unlock the selection */
-		theStartBox.setEnabled(!bLock);
+		theDateButton.setEnabled(!bLock);
 		thePeriodBox.setEnabled(!bLock);
 		theNextButton.setEnabled((!bLock) && theState.isNextOK());
 		thePrevButton.setEnabled((!bLock) && theState.isPrevOK());
 	}
 
-	/* ItemStateChanged listener event */
-	public void itemStateChanged(ItemEvent evt) {
-		String      myName;
-		DatePeriod	myPeriod	= null;
-		boolean     bChange 	= false;
+	/**
+	 * The Date Listener
+	 */
+	private class DateListener implements ActionListener,
+										  PropertyChangeListener,
+										  ItemListener {
+		@Override
+		public void itemStateChanged(ItemEvent evt) {
+			DatePeriod	myPeriod	= null;
 
-		/* Ignore selection if refreshing data */
-		if (refreshingData) return;
+			/* Ignore selection if refreshing data */
+			if (refreshingData) return;
 		
-		/* If this event relates to the period box */
-		if (evt.getSource() == (Object)thePeriodBox) {
-			myName = (String)evt.getItem();
-			if (evt.getStateChange() == ItemEvent.SELECTED) {
-				/* Determine the new period */
-				bChange = true;
-				if (myName == OneMonth)	        myPeriod = DatePeriod.ONEMONTH;
-				else if (myName == QuarterYear) myPeriod = DatePeriod.QUARTERYEAR;
-				else if (myName == HalfYear)    myPeriod = DatePeriod.HALFYEAR;
-				else if (myName == OneYear)     myPeriod = DatePeriod.ONEYEAR;
-				else if (myName == Unlimited)   myPeriod = DatePeriod.UNLIMITED;
-				else bChange = false;
-			
-				/* If we have a change */
-				if (bChange) {
+			/* If this event relates to the period box */
+			if (evt.getSource() == (Object)thePeriodBox) {
+				if (evt.getStateChange() == ItemEvent.SELECTED) {
+					/* Determine the new period */
+					myPeriod = (DatePeriod)evt.getItem();
+
 					/* Apply period and build the range */
 					theState.setPeriod(myPeriod);
-					theState.buildRange();
+					theParent.notifySelection(theSelf);
 				}
 			}
 		}
+
+		@Override
+		public void actionPerformed(ActionEvent evt) {
+			Object o = evt.getSource();
+			
+			/* If this event relates to the next button */
+			if (o == theNextButton) {
+				/* Set the next date */
+				theState.setNextDate();
+				theParent.notifySelection(theSelf);
+			}
+		
+			/* If this event relates to the previous button */
+			else if (o == thePrevButton) {
+				/* Set the previous date */
+				theState.setPreviousDate();
+				theParent.notifySelection(theSelf);
+			}
+		}
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			/* if this date relates to the Date button */
+			if (evt.getSource() == theDateButton) {
+				/* Access the value */
+				if (theState.setDate(theModel))
+					theParent.notifySelection(theSelf);
+			}			
+		}
+	}
 	
-		/* If we have a change, alert the tab group */
-		if (bChange) { theParent.notifySelection(this); }
-	}
-
-	/* ActionPerformed listener event */
-	public void actionPerformed(ActionEvent evt) {
-		/* If this event relates to the next button */
-		if (evt.getSource() == (Object)theNextButton) {
-			/* Set the next date */
-			theState.setNextDate();
-		}
-		
-		/* If this event relates to the previous button */
-		else if (evt.getSource() == (Object)thePrevButton) {
-			/* Set the previous date */
-			theState.setPreviousDate();
-		}
-		
-		/* No need to notify the parent since this will have been done by state update */
-	}
-
-	/* stateChanged listener event */
-	public void stateChanged(ChangeEvent evt) {
-		boolean bChange = false;
-
-		/* Ignore selection if refreshing data */
-		if (refreshingData) return;
-		
-		/* If this event relates to the start box */
-		if (evt.getSource() == (Object)theModel) {
-			/* Adjust the date according to the model */
-			theState.setDate(theModel);
-			bChange      = true;
-		}			
-				
-		/* If we have a change, notify the main program */
-		if (bChange) { theParent.notifySelection(this); }
-	}
-
 	/* SavePoint values */
 	private class DateRangeState {
 		/* Members */
@@ -309,7 +266,7 @@ public class DateRange  implements 	ItemListener,
 		 */
 		private DateRangeState() {
 			theStartDate = new Date();
-			thePeriod	 = DatePeriod.ONEMONTH;
+			thePeriod	 = DatePeriod.OneMonth;
 		}
 		
 		/**
@@ -333,12 +290,18 @@ public class DateRange  implements 	ItemListener,
 		
 		/**
 		 * Set new Date
-		 * @param pModel the Spinner with the new date 
+		 * @param pModel the Spinner with the new date
+		 * @return has the date changed 
 		 */
-		private void setDate(SpinnerDateModel pModel) {
+		private boolean setDate(DateModel pModel) {
 			/* Adjust the date and build the new range */
-			theStartDate = new Date(theModel.getDate());
-			buildRange();
+			Date myDate = new Date(theModel.getSelectedDate());
+			if (Date.differs(myDate, theStartDate).isDifferent()) {
+				theStartDate = myDate;
+				buildRange();
+				return true;
+			}
+			return false;
 		}
 		
 		/**
@@ -368,7 +331,7 @@ public class DateRange  implements 	ItemListener,
 			Date myEnd;
 		
 			/* If we are unlimited */
-			if (thePeriod == DatePeriod.UNLIMITED) {
+			if (thePeriod == DatePeriod.Unlimited) {
 				/* Set end date as last possible date*/
 				myEnd = theFinalDate;
 				
@@ -413,32 +376,25 @@ public class DateRange  implements 	ItemListener,
 		
 			/* Initialise the date */
 			myDate = new Date(pDate);
-		
-			/* Switch on the period */
-			switch (thePeriod) {
-				case ONEMONTH:
-					myDate.adjustMonth((bForward) ? 1 : -1);
-					break;
-				case QUARTERYEAR:
-					myDate.adjustMonth((bForward) ? 3 : -3);
-					break;
-				case HALFYEAR:
-					myDate.adjustMonth((bForward) ? 6 : -6);
-					break;
-				case ONEYEAR:
-					myDate.adjustYear((bForward) ? 1 : -1);
-					break;
-				case UNLIMITED:
-					if (!bForward) myDate = new Date(theFirstDate);
-					break;
+
+			/* If the period is unlimited */
+			if (thePeriod == DatePeriod.Unlimited) {
+				/* Shift back to first date if required */
+				if (!bForward) myDate = new Date(theFirstDate);				
 			}
 			
-			/* Make sure that we do not go beyond the date range */
-			if ((theFirstDate != null) &&
-				(myDate.compareTo(theFirstDate) < 0)) myDate = theFirstDate;
-			if ((theFinalDate != null) &&
-				(myDate.compareTo(theFinalDate) > 0)) myDate = theFinalDate;
-		
+			/* else we should adjust the date */
+			else {
+				/* Adjust the date appropriately */
+				myDate = thePeriod.adjustDate(pDate, bForward);
+
+				/* Make sure that we do not go beyond the date range */
+				if ((theFirstDate != null) &&
+					(myDate.compareTo(theFirstDate) < 0)) myDate = theFirstDate;
+				if ((theFinalDate != null) &&
+					(myDate.compareTo(theFinalDate) > 0)) myDate = theFinalDate;
+			}
+			
 			/* Return the date */
 			return myDate;
 		}
@@ -449,17 +405,8 @@ public class DateRange  implements 	ItemListener,
 		private void applyState() {
 			/* Adjust the lock-down */
 			setLockDown();
-			theModel.setValue(theStartDate.getDate());
-			thePeriodBox.setSelectedItem(getPeriodName(thePeriod));
+			theModel.setSelectedDate(theStartDate.getDate());
+			thePeriodBox.setSelectedItem(thePeriod);
 		}
 	}
-	
-	/* DatePeriod values */
-	private enum DatePeriod {
-		ONEMONTH,
-		QUARTERYEAR,
-		HALFYEAR,
-		ONEYEAR,
-		UNLIMITED;
-	}	
 }

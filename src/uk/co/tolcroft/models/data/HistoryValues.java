@@ -6,9 +6,9 @@ public abstract class HistoryValues<T extends DataItem<T>> {
 	/**
 	 * Is this object identical to the comparison object
 	 * @param pCompare the comparison object
-	 * @return <code>true</code> if the objects are equal <code>false</code> otherwise
+	 * @return Difference details of the two values
 	 */
-	protected abstract boolean	histEquals(HistoryValues<T> pCompare);
+	protected abstract Difference	histEquals(HistoryValues<T> pCompare);
 	
 	/**
 	 * Initialises the object with values from another (possibly different type) object. 
@@ -26,7 +26,7 @@ public abstract class HistoryValues<T extends DataItem<T>> {
 	 * Determines whether the indicated field has changed from the original
 	 * @param fieldNo the field to check
 	 * @param pOriginal the original values
-	 * @return <code>true</code> if the field has changed <code>false</code> otherwise
+	 * @return Difference details of the field
 	 */
 	public abstract Difference	fieldChanged(int fieldNo, HistoryValues<T> pOriginal);
 }

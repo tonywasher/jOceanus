@@ -14,10 +14,11 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
-public class AccountSelect implements ItemListener {
+public class AccountSelect {
 	/* Members */
+	private AccountSelect		theSelf			= this;
 	private JPanel				thePanel		= null;
-	private stdPanel		theParent		= null;
+	private stdPanel			theParent		= null;
 	private View				theView			= null;
 	private JComboBox           theTypesBox 	= null;
 	private JComboBox           theAccountBox	= null;
@@ -44,6 +45,7 @@ public class AccountSelect implements ItemListener {
 	public AccountSelect(View      		pView, 
 						 stdPanel 	pParent,
 						 boolean	    showDeleted) {
+		AccountListener	myListener = new AccountListener();
 		
 		/* Store table and view details */
 		theParent	  = pParent;
@@ -123,11 +125,11 @@ public class AccountSelect implements ItemListener {
 	            		.addComponent(theTypeLabel)
 	            		.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 	            		.addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-	            		.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+	            		.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	            		.addComponent(theAccountLabel)
 	            		.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 	            		.addComponent(theAccountBox)
-	            		.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+	            		.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	            		.addComponent(theShowClosed, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 	            		.addContainerGap())
 	    	);
@@ -146,10 +148,10 @@ public class AccountSelect implements ItemListener {
 		theState.applyState();
 
 		/* Add the listener for item changes */
-		theTypesBox.addItemListener(this);
-		theAccountBox.addItemListener(this);
-		theShowClosed.addItemListener(this);
-		theShowDeleted.addItemListener(this);		
+		theTypesBox.addItemListener(myListener);
+		theAccountBox.addItemListener(myListener);
+		theShowClosed.addItemListener(myListener);
+		theShowDeleted.addItemListener(myListener);		
 	}
 	
 	/**
@@ -465,53 +467,61 @@ public class AccountSelect implements ItemListener {
 	}
 	
 	/**
-	 *  ItemStateChanged listener event
+	 * TaxYear Listener class
 	 */
-	public void itemStateChanged(ItemEvent evt) {
-		String                myName;
-		boolean               bChange = false;
+	private class AccountListener implements ItemListener {
+		/**
+		 *  ItemStateChanged listener event
+		 */
+		public void itemStateChanged(ItemEvent evt) {
+			String  myName;
+			boolean	bChange = false;
+			Object	o		= evt.getSource();
 
-		/* Ignore selection if refreshing data */
-		if (refreshingData) return;
+			/* Ignore selection if refreshing data */
+			if (refreshingData) return;
 		
-		/* If this event relates to the types box */
-		if (evt.getSource() == (Object)theTypesBox) {
-			myName = (String)evt.getItem();
-			if (evt.getStateChange() == ItemEvent.SELECTED) {
-				/* Select the new type and rebuild account list */
-				theState.setType(theTypes.searchFor(myName));
+			/* If this event relates to the types box */
+			if (o == theTypesBox) {
+				if (evt.getStateChange() == ItemEvent.SELECTED) {
+					myName = (String)evt.getItem();
+ 
+					/* Select the new type and rebuild account list */
+					theState.setType(theTypes.searchFor(myName));
+					bChange = buildAccounts();
+				}
+			}
+		
+			/* If this event relates to the account box */
+			else if (o == theAccountBox) {
+				if (evt.getStateChange() == ItemEvent.SELECTED) {
+					myName = (String)evt.getItem();
+
+					/* Select the new account */						
+					theState.setSelected(theAccounts.searchFor(myName));
+					bChange     = true;
+				}
+			}
+		
+			/* If this event relates to the showClosed box */
+			else if (o == theShowClosed) {
+				/* Note the new criteria and re-build lists */
+				theState.setDoShowClosed(theShowClosed.isSelected());
+				buildAccountTypes();
 				bChange = buildAccounts();
 			}
-		}
 		
-		/* If this event relates to the account box */
-		if (evt.getSource() == (Object)theAccountBox) {
-			myName = (String)evt.getItem();
-			if (evt.getStateChange() == ItemEvent.SELECTED) {
-				/* Select the new account */						
-				theState.setSelected(theAccounts.searchFor(myName));
-				bChange     = true;
+			/* If this event relates to the showDeleted box */
+			else if (o == theShowDeleted) {
+				/* Note the new criteria and re-build lists */
+				theState.setDoShowDeleted(theShowDeleted.isSelected());
+				buildAccountTypes();
+				bChange = buildAccounts();
 			}
-		}
 		
-		/* If this event relates to the showClosed box */
-		if (evt.getSource() == (Object)theShowClosed) {
-			/* Note the new criteria and re-build lists */
-			theState.setDoShowClosed(theShowClosed.isSelected());
-			buildAccountTypes();
-			bChange = buildAccounts();
+			/* If we have a change, alert the table */
+			if (bChange) { theParent.notifySelection(theSelf); }
 		}
-		
-		/* If this event relates to the showDeleted box */
-		if (evt.getSource() == (Object)theShowDeleted) {
-			/* Note the new criteria and re-build lists */
-			theState.setDoShowDeleted(theShowDeleted.isSelected());
-			buildAccountTypes();
-			bChange = buildAccounts();
-		}
-		
-		/* If we have a change, alert the table */
-		if (bChange) { theParent.notifySelection(this); }
 	}
 	
 	/* SavePoint values */

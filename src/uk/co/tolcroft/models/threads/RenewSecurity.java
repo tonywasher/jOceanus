@@ -22,14 +22,17 @@ public class RenewSecurity<T extends DataSet<T>> extends LoaderThread<T> {
 		/* Create the status */
 		theStatus = new ThreadStatus<T>(this, theControl);
 
-		/* Initialise the status window */
-		initStatusBar("Renewing Security");
+		/* show the status window */
+		showStatusBar();
 	}
 
 
 	/* Background task (Worker Thread)*/
 	public T performTask() throws Throwable {
 		T			myData;
+
+		/* Initialise the status window */
+		theStatus.initTask("Renewing Security");
 
 		/* Access Data */
 		myData	= theControl.getData();

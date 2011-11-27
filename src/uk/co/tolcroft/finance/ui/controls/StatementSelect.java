@@ -12,10 +12,11 @@ import javax.swing.LayoutStyle;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.ui.StdInterfaces.stdPanel;
 
-public class StatementSelect implements	ItemListener {
+public class StatementSelect {
 	/* Members */
+	private StatementSelect		theSelf			= this;
 	private JPanel				thePanel		= null;
-	private stdPanel		theParent		= null;
+	private stdPanel			theParent		= null;
 	private JComboBox           theStateBox 	= null;
 	private JLabel				theStateLabel	= null;
 	private StatementType		theType			= null;
@@ -33,6 +34,7 @@ public class StatementSelect implements	ItemListener {
 
 	/* Constructor */
 	public StatementSelect(stdPanel pParent) {
+		StatementListener myListener = new StatementListener();
 		
 		/* Store table and view details */
 		theParent	  = pParent;
@@ -44,7 +46,7 @@ public class StatementSelect implements	ItemListener {
 		theStateLabel  = new JLabel("View:");
 
 		/* Add the listener for item changes */
-		theStateBox.addItemListener(this);
+		theStateBox.addItemListener(myListener);
 		
 		/* Create the panel */
 		thePanel = new JPanel();
@@ -62,7 +64,8 @@ public class StatementSelect implements	ItemListener {
 	                .addContainerGap()
 	                .addComponent(theStateLabel)
 	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-	                .addComponent(theStateBox, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE))
+	                .addComponent(theStateBox, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
+	                .addContainerGap())
 	    );
 	    panelLayout.setVerticalGroup(
 	        panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -140,29 +143,34 @@ public class StatementSelect implements	ItemListener {
 		refreshingData = false;
 	}
 	
-	/* ItemStateChanged listener event */
-	public void itemStateChanged(ItemEvent evt) {
-		String                myName;
-		boolean               bChange = false;
+	/**
+	 * TaxYear Listener class
+	 */
+	private class StatementListener implements ItemListener {
+		/* ItemStateChanged listener event */
+		public void itemStateChanged(ItemEvent evt) {
+			boolean               bChange = false;
 
-		/* Ignore selection if refreshing data */
-		if (refreshingData) return;
+			/* Ignore selection if refreshing data */
+			if (refreshingData) return;
 		
-		/* If this event relates to the Statement box */
-		if (evt.getSource() == (Object)theStateBox) {
-			myName = (String)evt.getItem();
-			if (evt.getStateChange() == ItemEvent.SELECTED) {
-				/* Determine the new report */
-				bChange = true;
-				if (myName == Value)	    theType = StatementType.VALUE;
-				else if (myName == Units) 	theType = StatementType.UNITS;
-				else if (myName == Extract)	theType = StatementType.EXTRACT;
-				else bChange = false;
+			/* If this event relates to the Statement box */
+			if (evt.getSource() == theStateBox) {
+				if (evt.getStateChange() == ItemEvent.SELECTED) {
+					String myName = (String)evt.getItem();
+
+					/* Determine the new report */
+					bChange = true;
+					if (myName == Value)	    theType = StatementType.VALUE;
+					else if (myName == Units) 	theType = StatementType.UNITS;
+					else if (myName == Extract)	theType = StatementType.EXTRACT;
+					else bChange = false;
+				}
 			}
-		}
 		
-		/* If we have a change, alert the table */
-		if (bChange) { theParent.notifySelection(this); }
+			/* If we have a change, alert the table */
+			if (bChange) { theParent.notifySelection(theSelf); }
+		}
 	}
 	
 	/* Statement Types */

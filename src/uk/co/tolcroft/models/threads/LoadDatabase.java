@@ -23,14 +23,17 @@ public class LoadDatabase<T extends DataSet<T>> extends LoaderThread<T> {
 		/* Create the status */
 		theStatus = new ThreadStatus<T>(this, theControl);
 
-		/* Initialise the status window */
-		initStatusBar("Loading Database");
+		/* Show the status window */
+		showStatusBar();
 	}
 
 	/* Background task (Worker Thread)*/
 	public T performTask() throws Throwable {
 		T			myData	   	= null;
 		Database<T>	myDatabase	= null;
+
+		/* Initialise the status window */
+		theStatus.initTask("Loading Database");
 
 		/* Access database */
 		myDatabase = theControl.getDatabase();

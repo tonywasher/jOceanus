@@ -4,33 +4,32 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
 import javax.swing.LayoutStyle;
-import javax.swing.SpinnerDateModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.EventAnalysis.AnalysisYear;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.ui.DateSelect.CalendarButton;
+import uk.co.tolcroft.models.ui.DateSelect.DateModel;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
-public class ReportSelect implements	ActionListener,
-										ItemListener,
-										ChangeListener {
+public class ReportSelect {
 	/* Members */
+	private ReportSelect		theSelf			= this;
 	private JPanel				thePanel		= null;
-	private stdPanel		theParent		= null;
+	private stdPanel			theParent		= null;
 	private View				theView			= null;
-	private SpinnerDateModel    theModel        = null;
-	private JSpinner            theDateBox      = null;
+	private DateModel			theModel		= null;
+	private CalendarButton		theDateButton	= null;
 	private JComboBox           theReportBox 	= null;
 	private JComboBox           theYearsBox 	= null;
 	private JLabel				theRepLabel		= null;
@@ -59,6 +58,7 @@ public class ReportSelect implements	ActionListener,
 
 	/* Constructor */
 	public ReportSelect(View pView, stdPanel pReport) {
+		ReportListener myListener = new ReportListener();
 		
 		/* Store table and view details */
 		theView 	  = pView;
@@ -68,9 +68,9 @@ public class ReportSelect implements	ActionListener,
 		theReportBox   = new JComboBox();
 		theYearsBox    = new JComboBox();
 		
-		/* Create the DateSpinner Model and Box */
-		theModel   = new SpinnerDateModel();
-		theDateBox = new JSpinner(theModel);
+		/* Create the DateButton */
+		theDateButton = new CalendarButton();
+		theModel	  = theDateButton.getDateModel();
 		
 		/* Create initial state */
 		theState = new ReportState();
@@ -94,12 +94,9 @@ public class ReportSelect implements	ActionListener,
 		
 		/* Create the print button */
 		thePrintButton = new JButton("Print");
-		thePrintButton.addActionListener(this);
+		thePrintButton.addActionListener(myListener);
 		
-		/* Set the format of the date */
-		theDateBox.setEditor(new JSpinner.DateEditor(theDateBox, "dd-MMM-yyyy"));
-	
-		/* Create the panel */
+		/* Create the selection panel */
 		thePanel = new JPanel();
 		thePanel.setBorder(javax.swing.BorderFactory
 							.createTitledBorder("Report Selection"));
@@ -115,37 +112,38 @@ public class ReportSelect implements	ActionListener,
 	                .addContainerGap()
 	                .addComponent(theRepLabel)
 	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-	                .addComponent(theReportBox, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
-	                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+	                .addComponent(theReportBox)
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                .addComponent(theYearLabel)
 	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 	                .addComponent(theYearsBox)
-	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 	                .addComponent(theDateLabel)
 	                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-	                .addComponent(theDateBox, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-	                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-	                .addComponent(thePrintButton))
+	                .addComponent(theDateButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+	                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                .addComponent(thePrintButton)
+	                .addContainerGap())
 	    );
 	    panelLayout.setVerticalGroup(
 	        panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	            .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 	                .addComponent(theRepLabel)
-	                .addComponent(theReportBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+	                .addComponent(theReportBox)
 	                .addComponent(theYearLabel)
-	                .addComponent(theYearsBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+	                .addComponent(theYearsBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 	                .addComponent(theDateLabel)
-	                .addComponent(theDateBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-	                .addComponent(thePrintButton)
+	                .addComponent(theDateButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+	                .addComponent(thePrintButton))
 	    );
-
+	    
 		/* Apply the current state */
 		theState.applyState();
 
 		/* Add the listener for item changes */
-		theReportBox.addItemListener(this);
-		theYearsBox.addItemListener(this);
-		theModel.addChangeListener(this);
+		theReportBox.addItemListener(myListener);
+		theYearsBox.addItemListener(myListener);
+		theDateButton.addPropertyChangeListener(CalendarButton.valueDATE, myListener);
 	}
 	
 	/* refresh data */
@@ -215,18 +213,12 @@ public class ReportSelect implements	ActionListener,
 
 	/* Set the range for the date box */
 	public  void setRange(Date.Range pRange) {
-		Date myStart = null;
-		Date myFirst;
-		Date myLast;
+		Date myStart = (pRange == null) ? null : pRange.getStart();
+		Date myEnd   = (pRange == null) ? null : pRange.getEnd();
 		
-		myFirst = (pRange == null) ? null : pRange.getStart();
-		myLast = (pRange == null) ? null : pRange.getEnd();
-		if (myFirst != null) {
-			myStart = new Date(myFirst);
-			myStart.adjustDay(-1);
-		}
-		theModel.setStart((myFirst == null) ? null : myStart.getDate());
-		theModel.setEnd((myLast == null) ? null : myLast.getDate());
+		/* Set up range */
+		theModel.setSelectableRange((myStart == null) ? null : myStart.getDate(),
+									(myEnd == null) ? null : myEnd.getDate());
 	}
 	
 	/**
@@ -257,79 +249,81 @@ public class ReportSelect implements	ActionListener,
 		boolean isNull    = (myType == null);
 		boolean isYear    = (!isNull && !isDate);
 		
-		theDateBox.setEnabled(isDate);
-		theDateLabel.setEnabled(isDate);
-		theYearsBox.setEnabled(isYear);
-		theYearLabel.setEnabled(isYear);				
+		theDateButton.setVisible(isDate);
+		theDateLabel.setVisible(isDate);
+		theYearsBox.setVisible(isYear);
+		theYearLabel.setVisible(isYear);				
 	}
 	
-	/* actionPerformed listener event */
-	public void actionPerformed(ActionEvent evt) {
-		/* If this event relates to the Print button */
-		if (evt.getSource() == (Object)thePrintButton) {
-			/* Pass command to the table */
-			theParent.printIt();
+	/**
+	 * Report Listener class
+	 */
+	private class ReportListener implements ActionListener,
+											PropertyChangeListener,
+											ItemListener {
+		/* actionPerformed listener event */
+		public void actionPerformed(ActionEvent evt) {
+			Object o = evt.getSource();
+		
+			/* If this event relates to the Print button */
+			if (o == thePrintButton) {
+				/* Pass command to the table */
+				theParent.printIt();
+			}
 		}
-	}
 	
-	/* ItemStateChanged listener event */
-	public void itemStateChanged(ItemEvent evt) {
-		String      myName;
-		ReportType	myType	= null;
-		boolean   	bChange	= false;
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			/* if this date relates to the Date button */
+			if (evt.getSource() == theDateButton) {
+				/* Access the value */
+				if (theState.setDate(theModel))
+					theParent.notifySelection(theSelf);
+			}			
+		}
+		
+		/* ItemStateChanged listener event */
+		public void itemStateChanged(ItemEvent evt) {
+			String      myName;
+			ReportType	myType	= null;
+			boolean   	bChange	= false;
+			Object 		o 		= evt.getSource();
 
-		/* Ignore selection if refreshing data */
-		if (refreshingData) return;
+			/* Ignore selection if refreshing data */
+			if (refreshingData) return;
 		
-		/* If this event relates to the years box */
-		if (evt.getSource() == (Object)theYearsBox) {
-			myName = (String)evt.getItem();
-			if (evt.getStateChange() == ItemEvent.SELECTED) {
-				/* Select the new year */
-				theState.setYear(theYears.searchFor(myName));
-				bChange = true;
+			/* If this event relates to the years box */
+			if (o == theYearsBox) {
+				myName = (String)evt.getItem();
+				if (evt.getStateChange() == ItemEvent.SELECTED) {
+					/* Select the new year */
+					theState.setYear(theYears.searchFor(myName));
+					bChange = true;
+				}
 			}
-		}
 						
-		/* If this event relates to the report box */
-		if (evt.getSource() == (Object)theReportBox) {
-			myName = (String)evt.getItem();
-			if (evt.getStateChange() == ItemEvent.SELECTED) {
-				/* Determine the new report */
-				bChange = true;
-				if (myName == Assets)	      	myType = ReportType.ASSET;
-				else if (myName == IncomeExp) 	myType = ReportType.INCOME;
-				else if (myName == Transaction)	myType = ReportType.TRANSACTION;
-				else if (myName == Taxation)  	myType = ReportType.TAX;
-				else if (myName == Instant)   	myType = ReportType.INSTANT;
-				else if (myName == Market)    	myType = ReportType.MARKET;
-				else bChange = false;
+			/* If this event relates to the report box */
+			else if (o == theReportBox) {
+				if (evt.getStateChange() == ItemEvent.SELECTED) {
+					/* Determine the new report */
+					myName 	= (String)evt.getItem();
+					bChange = true;
+					if (myName == Assets)	      	myType = ReportType.ASSET;
+					else if (myName == IncomeExp) 	myType = ReportType.INCOME;
+					else if (myName == Transaction)	myType = ReportType.TRANSACTION;
+					else if (myName == Taxation)  	myType = ReportType.TAX;
+					else if (myName == Instant)   	myType = ReportType.INSTANT;
+					else if (myName == Market)    	myType = ReportType.MARKET;
+					else bChange = false;
 				
-				/* Update state if we have a change */
-				if (bChange) theState.setType(myType);
+					/* Update state if we have a change */
+					if (bChange) theState.setType(myType);
+				}
 			}
+		
+			/* If we have a change, notify the main program */
+			if (bChange) { theParent.notifySelection(theSelf); }
 		}
-		
-		/* If we have a change, notify the main program */
-		if (bChange) { theParent.notifySelection(this); }
-	}
-	
-	/* stateChanged listener event */
-	public void stateChanged(ChangeEvent evt) {
-		boolean bChange = false;
-		
-		/* Ignore selection if refreshing data */
-		if (refreshingData) return;
-		
-		/* If this event relates to the start box */
-		if (evt.getSource() == (Object)theModel) {
-			/* Adjust the date according to the model */
-			theState.setDate(theModel);
-			bChange    = true;
-		}			
-				
-		/* If we have a change, notify the main program */
-		if (bChange) { theParent.notifySelection(this); }
 	}
 	
 	/* SavePoint values */
@@ -367,9 +361,14 @@ public class ReportSelect implements	ActionListener,
 		 * Set new Date
 		 * @param pModel the Spinner with the new date 
 		 */
-		private void setDate(SpinnerDateModel pModel) {
-			/* Adjust the date */
-			theDate = new Date(theModel.getDate());
+		private boolean setDate(DateModel pModel) {
+			/* Adjust the date and build the new range */
+			Date myDate = new Date(theModel.getSelectedDate());
+			if (Date.differs(myDate, theDate).isDifferent()) {
+				theDate = myDate;
+				return true;
+			}
+			return false;
 		}
 		
 		/**
@@ -398,7 +397,7 @@ public class ReportSelect implements	ActionListener,
 		private void applyState() {
 			/* Adjust the lock-down */
 			setLockDown();
-			theModel.setValue(theDate.getDate());
+			theModel.setSelectedDate(theDate.getDate());
 			if (theYear != null)
 				theYearsBox.setSelectedItem(Integer.toString(theYear.getDate().getYear()));
 			else 

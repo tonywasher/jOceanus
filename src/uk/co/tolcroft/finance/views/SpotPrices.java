@@ -23,24 +23,27 @@ public class SpotPrices implements DebugObject {
 
 	/* Members */
 	private View		theView		= null;
+	private AccountType	theType     = null;
 	private Date    	theDate     = null;
 	private Date    	theNext     = null;
 	private Date    	thePrev     = null;
 	private SpotList	thePrices	= null;
 
 	/* Access methods */
-	public Date     getDate()    	{ return theDate; }
-	public Date     getNext()    	{ return theNext; }
-	public Date     getPrev()    	{ return thePrev; }
-	public SpotList getPrices()     { return thePrices; }
+	public AccountType	getAccountType()    { return theType; }
+	public Date			getDate()    		{ return theDate; }
+	public Date     	getNext()    		{ return theNext; }
+	public Date     	getPrev()    		{ return thePrev; }
+	public SpotList 	getPrices()     	{ return thePrices; }
 	public SpotPrice get(long uIndex) {
 		return (SpotPrice)thePrices.get((int)uIndex); }
  	
  	/* Constructor */
-	public SpotPrices(View pView, Date pDate) {
+	public SpotPrices(View pView, AccountType pType, Date pDate) {
 		/* Create a copy of the date and initiate the list */
 		theView		= pView;
 		theDate    	= pDate;
+		theType		= pType;
 		thePrices  	= new SpotList(this);
 	}
 	
@@ -58,9 +61,12 @@ public class SpotPrices implements DebugObject {
 		myString.append("<th>Property</th><th>Value</th></thead><tbody>");
 			
 		/* Start the Fields section */
-		myString.append("<tr><th rowspan=\"4\">Fields</th></tr>");
+		myString.append("<tr><th rowspan=\"5\">Fields</th></tr>");
 			
 		/* Format the range */
+		myString.append("<tr><td>AccountType</td><td>"); 
+		myString.append(pDetail.addDebugLink(theType, AccountType.format(theType))); 
+		myString.append("</td></tr>");
 		myString.append("<tr><td>Date</td><td>"); 
 		myString.append(Date.format(theDate)); 
 		myString.append("</td></tr>");
@@ -113,8 +119,14 @@ public class SpotPrices implements DebugObject {
 			myData			= theView.getData();
 			myActIterator	= myData.getAccounts().listIterator();
 			while ((myAccount = myActIterator.next()) != null) {
+				/* Ignore accounts that are wrong type */
+				if (AccountType.differs(myAccount.getActType(), theType).isDifferent()) continue;
+				
 				/* Ignore accounts that do not have prices */
 				if (!myAccount.isPriced()) continue;
+				
+				/* Ignore aliases */
+				if (myAccount.isAlias()) continue;
 				
 				/* Create a SpotPrice entry */
 				mySpot = new SpotPrice(this, myAccount);
@@ -131,6 +143,9 @@ public class SpotPrices implements DebugObject {
 			/* Loop through the prices */
 			myIterator 	= myPrices.listIterator(true);
 			while ((myPrice = myIterator.next()) != null) {
+				/* Ignore accounts that are wrong type */
+				if (AccountType.differs(myPrice.getAccount().getActType(), theType).isDifferent()) continue;
+				
 				/* Test the Date */
 				iDiff 	= theDate.compareTo(myPrice.getDate());
 				
@@ -501,12 +516,22 @@ public class SpotPrices implements DebugObject {
 			public Values(AcctPrice.Values 	pValues) { copyFrom(pValues); }
 			
 			/* Check whether this object is equal to that passed */
-			public boolean histEquals(HistoryValues<AcctPrice> pCompare) {
+			public Difference histEquals(HistoryValues<AcctPrice> pCompare) {
+				/* Make sure that the object is the same class */
+				if (pCompare.getClass() != this.getClass()) return Difference.Different;
+				
+				/* Cast correctly */
 				Values myValues = (Values)pCompare;
-				if (!super.histEquals(pCompare))										return false;
-				if (Price.differs(thePrevPrice, myValues.thePrevPrice).isDifferent()) 	return false;
-				if (Date.differs(thePrevDate,	myValues.thePrevDate).isDifferent()) 	return false;
-				return true;
+
+				/* Determine underlying differences */
+				Difference myDifference = super.histEquals(pCompare);
+				
+				/* Compare underlying values */
+				myDifference = myDifference.combine(Price.differs(thePrevPrice, myValues.thePrevPrice));
+				myDifference = myDifference.combine(Date.differs(thePrevDate,	myValues.thePrevDate));
+				
+				/* Return differences */
+				return myDifference;
 			}
 			
 			/* Copy values */

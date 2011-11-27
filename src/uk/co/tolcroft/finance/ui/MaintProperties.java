@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 
 import javax.swing.GroupLayout;
@@ -11,36 +13,34 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
-import javax.swing.SpinnerDateModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ui.DateSelect.CalendarButton;
+import uk.co.tolcroft.models.ui.DateSelect.DateModel;
+import uk.co.tolcroft.models.ui.ValueField;
 import uk.co.tolcroft.models.ui.FileSelector.*;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
-public class MaintProperties implements ActionListener,
-										ItemListener,
-										ChangeListener {
+public class MaintProperties {
 	/* Properties */
 	private View				theView				= null;
 	private MaintenanceTab		theParent			= null;
 	private JPanel              thePanel			= null;
 	private JPanel              theButtons			= null;
 	private JPanel              theChecks			= null;
-	private JTextField			theDBDriver			= null;
+	//private JTextField			theDBDriver			= null;
+	private ValueField			theDBDriver			= null;
 	private JTextField			theDBConnect		= null;
 	private JTextField			theBaseSSheet		= null;
 	private JTextField			theRepoDir			= null;
 	private JTextField			theBackupDir		= null;
 	private JTextField			theBackupPrefix		= null;
-	private JSpinner			theSpinner			= null;
-	private SpinnerDateModel	theModel			= null;
+	private CalendarButton		theBirthButton		= null;
+	private DateModel			theDateModel		= null;
 	private JCheckBox			theShowDebug		= null;
 	private JButton				theOKButton			= null;
 	private JButton				theResetButton		= null;
@@ -77,7 +77,7 @@ public class MaintProperties implements ActionListener,
 		myBirthDate		= new JLabel("BirthDate:");
 
 		/* Create the text fields */
-		theDBDriver 	= new JTextField();
+		theDBDriver 	= new ValueField();
 		theDBConnect 	= new JTextField();
 		theBaseSSheet	= new JTextField();
 		theRepoDir		= new JTextField();
@@ -87,10 +87,9 @@ public class MaintProperties implements ActionListener,
 		/* Create the check boxes */
 		theShowDebug		= new JCheckBox("Show Debug");
 
-		/* Create the spinner */
-		theModel    = new SpinnerDateModel();
-		theSpinner  = new JSpinner(theModel);
-		theSpinner.setEditor(new JSpinner.DateEditor(theSpinner, "dd-MMM-yyyy"));
+		/* Create the Date Button */
+		theBirthButton = new CalendarButton();
+		theDateModel   = theBirthButton.getDateModel();
 		
 		/* Create the buttons */
 		theOKButton 	= new JButton("OK");
@@ -98,21 +97,6 @@ public class MaintProperties implements ActionListener,
 		theBaseSel		= new JButton("Choose");
 		theBackupSel	= new JButton("Choose");
 		theRepoSel		= new JButton("Choose");
-		
-		/* Add listeners */
-		theDBDriver.addActionListener(this);
-		theDBConnect.addActionListener(this);
-		theBaseSSheet.addActionListener(this);
-		theRepoDir.addActionListener(this);
-		theBackupDir.addActionListener(this);
-		theBackupPrefix.addActionListener(this);
-		theModel.addChangeListener(this);
-		theOKButton.addActionListener(this);
-		theResetButton.addActionListener(this);
-		theBaseSel.addActionListener(this);
-		theBackupSel.addActionListener(this);
-		theRepoSel.addActionListener(this);
-		theShowDebug.addItemListener(this);
 		
 		/* Create the buttons panel */
 		theButtons = new JPanel();
@@ -188,7 +172,7 @@ public class MaintProperties implements ActionListener,
                             .addComponent(theRepoDir, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
                             .addComponent(theBackupDir, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
                             .addComponent(theBackupPrefix, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
-                            .addComponent(theSpinner, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE))
+                            .addComponent(theBirthButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addComponent(theRepoSel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
@@ -228,10 +212,29 @@ public class MaintProperties implements ActionListener,
                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
 	            .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 	               	.addComponent(myBirthDate)
-                    .addComponent(theSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(theBirthButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 	            .addComponent(theChecks)
 	            .addComponent(theButtons))
         );            
+
+        /* Create listener */
+        PropertyListener myListener = new PropertyListener();
+        
+        /* Add listeners */
+		theDBDriver.addActionListener(myListener);
+		theDBDriver.addPropertyChangeListener(ValueField.valueName, myListener);
+		theDBConnect.addActionListener(myListener);
+		theBaseSSheet.addActionListener(myListener);
+		theRepoDir.addActionListener(myListener);
+		theBackupDir.addActionListener(myListener);
+		theBackupPrefix.addActionListener(myListener);
+		theBirthButton.addPropertyChangeListener(CalendarButton.valueDATE, myListener);
+		theOKButton.addActionListener(myListener);
+		theResetButton.addActionListener(myListener);
+		theBaseSel.addActionListener(myListener);
+		theBackupSel.addActionListener(myListener);
+		theRepoSel.addActionListener(myListener);
+		theShowDebug.addItemListener(myListener);
 	}
 	
 	/* hasUpdates */
@@ -272,12 +275,6 @@ public class MaintProperties implements ActionListener,
 		/* Note that we are refreshing Data */
 		refreshingData = true;
 		
-		/* Show the BirthDate */
-		theModel.setValue(theExtract.getBirthDate().getDate());
-		
-		/* Set the check boxes */
-		theShowDebug.setSelected(theExtract.doShowDebug());
-		
 		/* Notify the changes */
 		notifyChanges();
 
@@ -303,6 +300,12 @@ public class MaintProperties implements ActionListener,
 
 		/* Show the BaseSpreadsheet */
 		theBaseSSheet.setText(theExtract.getBaseSpreadSheet());
+		
+		/* Show the BirthDate */
+		theDateModel.setSelectedDate(theExtract.getBirthDate().getDate());
+		
+		/* Set the check boxes */
+		theShowDebug.setSelected(theExtract.doShowDebug());
 		
 		/* Enable the buttons */
 		theOKButton.setEnabled(theExtract.hasChanges());
@@ -338,112 +341,123 @@ public class MaintProperties implements ActionListener,
 		if (myText.length() != 0) theExtract.setBackupPrefix(myText);
 	}
 	
-	/* stateChanged listener event */
-	public void stateChanged(ChangeEvent evt) {
-		Date myDate;
-
-		/* Ignore selection if refreshing data */
-		if (refreshingData) return;
-		
-		/* If this event relates to the maturity box */
-		if (evt.getSource() == (Object)theModel) {
-			/* Access the value */
-			myDate = new Date(theModel.getDate());
-
-			/* Store the value */
-			theExtract.setBirthDate(myDate);
+	/**
+	 * PropertyListener class
+	 */
+	private class PropertyListener implements ActionListener,
+											  ItemListener,
+											  PropertyChangeListener {
+		@Override
+		public void actionPerformed(ActionEvent evt) {
+			Object o = evt.getSource();
 			
-			/* Update the text */
-			updateText();
-			
-			/* Note that changes have occurred */
-			notifyChanges();
-		}								
-	}
-	
-	/* ActionPerformed listener event */
-	public void actionPerformed(ActionEvent evt) {			
-		/* If this event relates to the OK button */
-		if (evt.getSource() == (Object)theOKButton) {
-			/* Perform the command */
-			performCommand(stdCommand.OK);
-		}
+			/* If this event relates to the OK button */
+			if (o == theOKButton) {
+				/* Perform the command */
+				performCommand(stdCommand.OK);
+			}
 		
-		/* If this event relates to the reset button */
-		else if (evt.getSource() == (Object)theResetButton) {
-			/* Perform the command */
-			performCommand(stdCommand.RESETALL);
-		}
+			/* If this event relates to the reset button */
+			else if (o == theResetButton) {
+				/* Perform the command */
+				performCommand(stdCommand.RESETALL);
+			}
 		
-		/* If this event relates to the Base Select button */
-		else if (evt.getSource() == (Object)theBaseSel) {
-			/* Create the and run the dialog */
-			ArchiveLoad myDialog = new ArchiveLoad(theView);
-			myDialog.selectFile();
-			File myFile = myDialog.getSelectedFile();
-			if (myFile != null)
-				theExtract.setBaseSpreadSheet(myFile.getPath());
+			/* If this event relates to the Base Select button */
+			else if (o == theBaseSel) {
+				/* Create the and run the dialog */
+				ArchiveLoad myDialog = new ArchiveLoad(theView);
+				myDialog.selectFile();
+				File myFile = myDialog.getSelectedFile();
+				if (myFile != null)
+					theExtract.setBaseSpreadSheet(myFile.getPath());
 			
-			/* Note that changes have occurred */
-			notifyChanges();
-		}
+				/* Note that changes have occurred */
+				notifyChanges();
+			}
 		
-		/* If this event relates to the Repo Select button */
-		else if (evt.getSource() == (Object)theRepoSel) {
-			/* Create the and run the dialog */
-			BackupDirectory myDialog = new BackupDirectory(theView);
-			myDialog.selectFile();
-			File myFile = myDialog.getSelectedFile();
-			if (myFile != null)
-				theExtract.setRepoDir(myFile.getPath());
+			/* If this event relates to the Repo Select button */
+			else if (o == theRepoSel) {
+				/* Create the and run the dialog */
+				BackupDirectory myDialog = new BackupDirectory(theView);
+				myDialog.selectFile();
+				File myFile = myDialog.getSelectedFile();
+				if (myFile != null)
+					theExtract.setRepoDir(myFile.getPath());
 			
-			/* Note that changes have occurred */
-			notifyChanges();
-		}
+				/* Note that changes have occurred */
+				notifyChanges();
+			}
 		
-		/* If this event relates to the Backup Select button */
-		else if (evt.getSource() == (Object)theBackupSel) {
-			/* Create the and run the dialog */
-			BackupDirectory myDialog = new BackupDirectory(theView);
-			myDialog.selectFile();
-			File myFile = myDialog.getSelectedFile();
-			if (myFile != null)
-				theExtract.setBackupDir(myFile.getPath());
+			/* If this event relates to the Backup Select button */
+			else if (o == theBackupSel) {
+				/* Create the and run the dialog */
+				BackupDirectory myDialog = new BackupDirectory(theView);
+				myDialog.selectFile();
+				File myFile = myDialog.getSelectedFile();
+				if (myFile != null)
+					theExtract.setBackupDir(myFile.getPath());
 			
-			/* Note that changes have occurred */
-			notifyChanges();
-		}
+				/* Note that changes have occurred */
+				notifyChanges();
+			}
 		
-		/* If this event relates to the name field */
-		else if ((evt.getSource() == (Object)theDBDriver)   ||
-		         (evt.getSource() == (Object)theDBConnect)  ||
-		         (evt.getSource() == (Object)theBaseSSheet) ||
-		         (evt.getSource() == (Object)theRepoDir)    ||
-		         (evt.getSource() == (Object)theBackupDir)  ||
-		         (evt.getSource() == (Object)theBackupPrefix)) {
-			/* Update the text */
-			updateText();
+			/* If this event relates to the name field */
+			else if ((o == theDBDriver)   ||
+					 (o == theDBConnect)  ||
+					 (o == theBaseSSheet) ||
+					 (o == theRepoDir)    ||
+					 (o == theBackupDir)  ||
+					 (o == theBackupPrefix)) {
+				/* Update the text */
+				updateText();
 			
-			/* Notify changes */
-			notifyChanges();
+				/* Notify changes */
+				notifyChanges();
+			}
 		}			
-	}			
 	
-	/* ItemStateChanged listener event */
-	public void itemStateChanged(ItemEvent evt) {
-		/* Ignore selection if refreshing data */
-		if (refreshingData) return;
+		@Override
+		public void itemStateChanged(ItemEvent evt) {
+			/* Ignore selection if refreshing data */
+			if (refreshingData) return;
 					
-		/* If this event relates to the showDebug box */
-		if (evt.getSource() == (Object)theShowDebug) {
-			/* Note the new criteria and re-build lists */
-			theExtract.setDoShowDebug(theShowDebug.isSelected());
+			/* If this event relates to the showDebug box */
+			if (evt.getSource() == theShowDebug) {
+				/* Note the new criteria and re-build lists */
+				theExtract.setDoShowDebug(theShowDebug.isSelected());
 
-			/* Update the text */
-			updateText();
+				/* Update the text */
+				updateText();
 			
-			/* Notify changes */
-			notifyChanges();
+				/* Notify changes */
+				notifyChanges();
+			}
+		}
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			Object o = evt.getSource();
+			
+			/* if this date relates to the Date button */
+			if (o == theBirthButton) {
+				/* Access the value */
+				Date myDate = new Date(theDateModel.getSelectedDate());
+
+				/* Store the value */
+				theExtract.setBirthDate(myDate);
+				
+				/* Update the text */
+				updateText();
+				
+				/* Note that changes have occurred */
+				notifyChanges();
+			}			
+
+			/* If this is our component */
+			else if (o == theDBDriver) {
+				//System.out.println("Hello");
+			}
 		}
 	}
 }

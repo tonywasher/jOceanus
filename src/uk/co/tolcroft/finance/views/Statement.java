@@ -5,13 +5,9 @@ import uk.co.tolcroft.finance.views.Analysis.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Number.*;
-import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.data.HistoryValues;
-import uk.co.tolcroft.models.data.ValidationControl;
-import uk.co.tolcroft.models.data.EncryptedItem.EncryptedList;
 import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugObject;
@@ -40,7 +36,7 @@ public class Statement implements DebugObject {
 	public AccountType 		getActType()      { return theAccount.getActType(); }
 	public List             getLines()        { return theLines; }
 	public Line extractItemAt(long uIndex) {
-		return theLines.get((int)uIndex); }
+		return (Line)theLines.get((int)uIndex); }
  	
  	/* Constructor */
 	public Statement(View		pView,
@@ -197,14 +193,20 @@ public class Statement implements DebugObject {
 	}
 	
 	/* The List class */
-	public class List extends EncryptedList<List, Line> {
+	public static class List extends Event.List {
 		private Statement theStatement = null;
+
+		/* Access functions */
+		private Statement	getStatement()	{ return theStatement; }
+		private Account 	getAccount() 	{ return theStatement.getAccount(); }
 		
 		/* Constructors */
 		public List(Statement pStatement) { 
-			super(List.class, Line.class, theView.getData(), ListStyle.EDIT);
+			/* Declare the data and set the style */
+			super(pStatement.theView.getData());
+			setStyle(ListStyle.EDIT);
 			theStatement = pStatement;
-			setBase(theView.getData().getEvents());
+			setBase(theStatement.theView.getData().getEvents());
 		}
 		
 		/* Obtain extract lists. */
@@ -215,7 +217,7 @@ public class Statement implements DebugObject {
 		public List getDifferences(List pOld) { return null; }
 
 		/* Is this list locked */
-		public boolean isLocked() { return theAccount.isLocked(); }
+		public boolean isLocked() { return theStatement.theAccount.isLocked(); }
 		
 		/**
 		 * Add a new item (never used)
@@ -235,10 +237,7 @@ public class Statement implements DebugObject {
 			Line myLine = new Line(this);
 
 			/* Set the Date as the start of the range */
-			myLine.setDate(theRange.getStart());
-			
-			/* Add zero amount */
-			try { myLine.setAmount(new Money(0)); } catch (Throwable e) {}
+			myLine.setDate(theStatement.theRange.getStart());
 			
 			/* Add line to list */
 			add(myLine);
@@ -250,78 +249,34 @@ public class Statement implements DebugObject {
 		 * @return the type of the item
 		 */
 		public String itemType() { return "StatementLine"; }
-		
-		/** 
-		 * Validate a statement
-		 */
-		public void validate() {
-			Line        	myCurr;
-			Event.List  	myList;
-			ListIterator	myIterator;
-			FinanceData		myData;
-			
-			/* Clear the errors */
-			clearErrors();
-			
-			/* Create an event list */
-			myData = theView.getData();
-			myList = myData.getEvents().getViewList();
-			
-			/* Create the iterator */
-			myIterator = listIterator();
-			
-			/* Loop through the lines */
-			while ((myCurr = myIterator.next()) != null) {
-				/* Validate the line */
-				myCurr.validate(myList);
-			}
-			
-			/* Determine the Edit State */
-			findEditState();
-		}
 	}
 			
-	public static class Line extends EncryptedItem<Line>  {
+	public static class Line extends Event {
 		private Money        		theBalance   = null;
 		private Units				theBalUnits  = null;
 		private Statement			theStatement = null;
 
 		/* Access methods */
-		public Account       	getAccount()   		{ return theStatement.theAccount; }
 		public Values      		getValues()       	{ return (Values)super.getValues(); }
-		public Date        		getDate()      		{ return getValues().getDate(); }
-		public String           getDesc()      		{ return getPairValue(getValues().getDesc()); }
-		public Units       		getUnits()     		{ return getPairValue(getValues().getUnits()); }
-		public Money       		getAmount()    		{ return getPairValue(getValues().getAmount()); }
 		public Account       	getPartner()   		{ return getValues().getPartner(); }
-		public Dilution   		getDilution() 		{ return getPairValue(getValues().getDilution()); }
-		public Money   			getTaxCredit() 		{ return getPairValue(getValues().getTaxCredit()); }
-		public Integer   		getYears() 			{ return getValues().getYears(); }
-		public TransactionType	getTransType() 		{ return getValues().getTransType(); }
+		public Account       	getAccount()   		{ return getValues().getAccount(); }
+		public boolean          isCredit()     		{ return getValues().isCredit(); }
 		public Money       		getBalance()   		{ return theBalance; }
 		public Units       		getBalanceUnits() 	{ return theBalUnits; }
-		public boolean          isCredit()     		{ return getValues().isCredit(); }
 		
-		private View       		getView()   		{ return theStatement.theView; }
 		private ActDetail		getBucket()			{ return theStatement.theBucket; }
 		
 		/* Linking methods */
 		public Event getBase() { return (Event)super.getBase(); }
 
 		/* Field IDs */
-		public static final int FIELD_DATE     	= EncryptedItem.NUMFIELDS;
-		public static final int FIELD_DESC     	= EncryptedItem.NUMFIELDS+1;
-		public static final int FIELD_AMOUNT   	= EncryptedItem.NUMFIELDS+2;
-		public static final int FIELD_TRNTYP   	= EncryptedItem.NUMFIELDS+3;
-		public static final int FIELD_PARTNER  	= EncryptedItem.NUMFIELDS+4;
-		public static final int FIELD_ACCOUNT  	= EncryptedItem.NUMFIELDS+5;
-		public static final int FIELD_UNITS    	= EncryptedItem.NUMFIELDS+6;
-		public static final int FIELD_CREDIT   	= EncryptedItem.NUMFIELDS+7;
-		public static final int FIELD_DILUTION 	= EncryptedItem.NUMFIELDS+8;
-		public static final int FIELD_TAXCREDIT	= EncryptedItem.NUMFIELDS+9;
-		public static final int FIELD_YEARS   	= EncryptedItem.NUMFIELDS+10;
-		public static final int NUMFIELDS	   	= EncryptedItem.NUMFIELDS+11;
+		public static final int FIELD_ISCREDIT = Event.NUMFIELDS;
+		public static final int NUMFIELDS	   = Event.NUMFIELDS+1;
 		
+		/* Virtual Field IDs */
+		public static final int VFIELD_ACCOUNT = NUMFIELDS;
+		public static final int VFIELD_PARTNER = NUMFIELDS+1;
+
 		/**
 		 * Obtain the type of the item
 		 * @return the type of the item
@@ -340,18 +295,10 @@ public class Statement implements DebugObject {
 		 */
 		public static String	fieldName(int iField) {
 			switch (iField) {
-				case FIELD_DATE: 		return "Date";
-				case FIELD_DESC: 		return "Description";
-				case FIELD_TRNTYP: 		return "TransactionType";
-				case FIELD_PARTNER: 	return "Partner";
-				case FIELD_ACCOUNT: 	return "Account";
-				case FIELD_AMOUNT: 		return "Amount";
-				case FIELD_UNITS: 		return "Units";
-				case FIELD_CREDIT:		return "IsCredit";
-				case FIELD_DILUTION:	return "Dilution";
-				case FIELD_TAXCREDIT:	return "TaxCredit";
-				case FIELD_YEARS:		return "Years";
-				default:		  		return EncryptedItem.fieldName(iField);
+				case VFIELD_PARTNER: 	return "Partner";
+				case VFIELD_ACCOUNT: 	return "Account";
+				case FIELD_ISCREDIT:	return "IsCredit";
+				default:		  		return Event.fieldName(iField);
 			}
 		}
 		
@@ -367,45 +314,12 @@ public class Statement implements DebugObject {
 		 * @param pValues the values to use
 		 * @return the formatted field
 		 */
-		public String formatField(DebugDetail pDetail, int iField, HistoryValues<Line> pValues) {
+		public String formatField(DebugDetail pDetail, int iField, HistoryValues<Event> pValues) {
 			String 	myString = "";
 			Values 	myValues = (Values)pValues;
 			switch (iField) {
-				case FIELD_ACCOUNT:	
-					myString += Account.format(getAccount()); 
-					myString = pDetail.addDebugLink(getAccount(), myString);
-					break;
-				case FIELD_DATE:	
-					myString += Date.format(myValues.getDate()); 
-					break;
-				case FIELD_DESC:	
-					myString += myValues.getDescValue(); 
-					break;
-				case FIELD_TRNTYP: 	
-					myString += TransactionType.format(myValues.getTransType());	
-					myString = pDetail.addDebugLink(getTransType(), myString);
-					break;
-				case FIELD_PARTNER:	
-					myString += Account.format(myValues.getPartner()); 
-					myString = pDetail.addDebugLink(getPartner(), myString);
-					break;
-				case FIELD_AMOUNT: 	
-					myString += Money.format(myValues.getAmountValue());	
-					break;
-				case FIELD_UNITS: 	
-					myString += Units.format(myValues.getUnitsValue());	
-					break;
-				case FIELD_CREDIT: 
-					myString +=	(isCredit() ? "true" : "false");
-					break;
-				case FIELD_TAXCREDIT: 	
-					myString += Money.format(myValues.getTaxCredValue());	
-					break;
-				case FIELD_YEARS:	
-					myString += myValues.getYears(); 
-					break;
-				case FIELD_DILUTION:	
-					myString += Dilution.format(myValues.getDilutionValue()); 
+				case FIELD_ISCREDIT: 
+					myString +=	(myValues.isCredit() ? "true" : "false");
 					break;
 				default: 		
 					myString += super.formatField(pDetail, iField, pValues); 
@@ -418,107 +332,39 @@ public class Statement implements DebugObject {
 		 * Get an initial set of values 
 		 * @return an initial set of values 
 		 */
-		protected HistoryValues<Line> getNewValues() { return new Values(); }
+		protected HistoryValues<Event> getNewValues() { return new Values(); }
 		
 		/**
 	 	* Construct a copy of a Line
 	 	* @param pLine The Line
 	 	*/
-		protected Line(List pList, Line pLine) {
+		protected Line(Statement.List pList, Line pLine) {
 			/* Set standard values */
-			super(pList, 0);
-			theStatement = pList.theStatement;
+			super(pList);
+			theStatement = pList.getStatement();
 			Values myValues = getValues();
 			myValues.copyFrom(pLine.getValues());
 			pList.setNewId(this);
 		}
 
 		/* Standard constructor for a newly inserted line */
-		public Line(List           pList) {
-			super(pList, 0);
-			theStatement = pList.theStatement;
-			setControlKey(pList.getControlKey());
-			pList.setNewId(this);				
+		public Line(Statement.List  pList) {
+			super(pList);
+			theStatement = pList.getStatement();
+			Values myValues = getValues();
+			myValues.setAccount(pList.getAccount());
 		}
 
 		/* Standard constructor */
-		public Line(List        pList,
-				    Event   	pEvent) {
+		public Line(Statement.List  pList,
+				    Event   		pEvent) {
 			/* Make this an element */
-			super(pList, pEvent.getId());
-			theStatement = pList.theStatement;
-			Values myValues = getValues();
-			myValues.copyFrom(pEvent.getValues());
+			super(pList, pEvent);
+			theStatement = pList.getStatement();
+			getValues().determineCredit(pList.getAccount());
 			setBase(pEvent);
-			pList.setNewId(this);				
 		}
 					
-		/**
-		 * Validate the line
-		 */
-		public void validate() { validate(null); }
-		public void validate(Event.List pList) {
-			Event        							myEvent;
-			ValidationControl<Event>.errorElement 	myError;
-			int          							iField;
-			FinanceData	 							myData;
-		
-			/* Access DataSet */
-			myData = getView().getData();
-			
-			/* Create a new Event list */
-			if (pList == null)
-				pList = myData.getEvents().getViewList();
-		
-			/* Create a new event based on this line */
-			myEvent = new Event(pList, this);
-
-			/* Validate it */
-			myEvent.validate();
-				
-			/* Loop through the errors */
-			for (myError = myEvent.getFirstError();
-			     myError != null;
-			     myError = myError.getNext()) {
-				switch (myError.getField()) {
-					case Event.FIELD_DATE: 
-						iField = Line.FIELD_DATE; break;
-					case Event.FIELD_DESC: 
-						iField = Line.FIELD_DESC; break;
-					case Event.FIELD_AMOUNT: 
-						iField = Line.FIELD_AMOUNT; break;
-					case Event.FIELD_TRNTYP: 
-						iField = Line.FIELD_TRNTYP; break;
-					case Event.FIELD_UNITS: 
-						iField = Line.FIELD_UNITS; break;
-					case Event.FIELD_DILUTION: 
-						iField = Line.FIELD_DILUTION; break;
-					case Event.FIELD_TAXCREDIT: 
-						iField = Line.FIELD_TAXCREDIT; break;
-					case Event.FIELD_YEARS: 
-						iField = Line.FIELD_YEARS; break;
-					case Event.FIELD_DEBIT: 
-						iField = (isCredit())
-									?  Line.FIELD_PARTNER
-								    :  Line.FIELD_ACCOUNT; 
-						break;
-					case Event.FIELD_CREDIT: 
-						iField = (isCredit())
-									?  Line.FIELD_ACCOUNT
-								    :  Line.FIELD_PARTNER; 
-						break;
-					default: iField = Line.FIELD_ACCOUNT;
-						break;
-				}	
-					
-				/* Add an error event to this object */
-				addError(myError.getError(), iField);
-			}
-			
-			/* Set validation flag */
-			if (!hasErrors()) setValidEdit();
-		}
-		
 		/**
 		 *  Set Balances
 		 */
@@ -537,97 +383,12 @@ public class Statement implements DebugObject {
 		}
 		
 		/**
-		 * Calculate the tax credit
-		 * @return the tax credit
-		 */
-		public Money calculateTaxCredit() {
-			Event        myEvent;
-			Event.List   myList;
-			FinanceData	 myData;
-		
-			/* Access DataSet */
-			myData = getView().getData();
-			
-			/* Create a new Event list */
-			myList = myData.getEvents().getViewList();
-		
-			/* Create a new event based on this line */
-			myEvent = new Event(myList, this);
-
-			/* calculate the tax credit */
-			return myEvent.calculateTaxCredit();
-		}
-		
-		/**
 		 * Compare the line
 		 */
 		public boolean equals(Object that) { return (this == that); }
 		
 		/**
-		 * Determines whether a line is locked to updates
-		 * 
-		 * @return true/false 
-		 */
-		public boolean isLocked() {
-			Account myPartner = getPartner();
-			
-			/* Check credit and debit accounts */
-			return ((myPartner != null) &&
-					((getPartner().isClosed()) ||
-					 (getAccount().isClosed())));
-		}
-			
-		/**
-		 * Compare this line to another to establish sort order. 
-		 * @param pThat The Line to compare to
-		 * @return (-1,0,1) depending of whether this object is before, equal, 
-		 * 					or after the passed object in the sort order
-		 */
-		public int compareTo(Object pThat) {
-			int iDiff;
-			
-			/* Handle the trivial cases */
-			if (this == pThat) return 0;
-			if (pThat == null) return -1;
-			
-			/* Make sure that the object is Statement Line */
-			if (pThat.getClass() != this.getClass()) return -1;
-			
-			/* Access the object as a Line */
-			Line myThat = (Line)pThat;
-
-			/* Compare the account */
-			iDiff = getAccount().compareTo(myThat.getAccount());
-			if (iDiff != 0) return iDiff;
-			
-			/* Compare the date */
-			if (this.getDate() == null) return 1;
-			if (myThat.getDate() == null) return -1;
-			iDiff = getDate().compareTo(myThat.getDate());
-			if (iDiff < 0) return -1;
-			if (iDiff > 0) return 1;
-			
-			/* Compare the transaction type */
-			if (this.getTransType() == null) return 1;
-			if (myThat.getTransType() == null) return -1;
-			iDiff = getTransType().compareTo(myThat.getTransType());
-			if (iDiff < 0) return -1;
-			if (iDiff > 0) return 1;
-			
-			/* Compare the description */
-			if (this.getDesc() == null) return 1;
-			if (myThat.getDesc() == null) return -1;
-			iDiff = getDesc().compareTo(myThat.getDesc());
-			if (iDiff < 0) return -1;
-			if (iDiff > 0) return 1;
-			
-			/* Return equality */
-			return 0;
-		}
-
-		/**
 		 * Set a new partner 
-		 * 
 		 * @param pPartner the new partner 
 		 */
 		public void setPartner(Account pPartner) {
@@ -635,85 +396,7 @@ public class Statement implements DebugObject {
 		}
 		
 		/**
-		 * Set a new transtype 
-		 * 
-		 * @param pTranType the transtype 
-		 */
-		public void setTransType(TransactionType pTranType) {
-			getValues().setTransType(pTranType);
-		}
-		
-		/**
-		 * Set a new description 
-		 * 
-		 * @param pDesc the description 
-		 */
-		public void setDescription(String pDesc) throws Exception {
-			if (pDesc != null) getValues().setDesc(new StringPair(pDesc));
-			else 			   getValues().setDesc(null);
-		}
-		
-		/**
-		 * Set a new amount 
-		 * 
-		 * @param pAmount the amount 
-		 */
-		public void setAmount(Money pAmount) throws Exception {
-			if (pAmount != null) getValues().setAmount(new MoneyPair(pAmount));
-			else 				 getValues().setAmount(null);
-		}
-		
-		/**
-		 * Set a new units 
-		 * 
-		 * @param pUnits the units 
-		 */
-		public void setUnits(Units pUnits) throws Exception {
-			if (pUnits != null) getValues().setUnits(new UnitsPair(pUnits));
-			else 				getValues().setUnits(null);
-		}
-		
-		/**
-		 * Set a new dilution
-		 * 
-		 * @param pDilution the dilution 
-		 */
-		public void setDilution(Dilution pDilution) throws Exception {
-			if (pDilution != null) getValues().setDilution(new DilutionPair(pDilution));
-			else 				   getValues().setDilution(null);
-		}
-		
-		/**
-		 * Set a new tax credit
-		 * 
-		 * @param pTaxCredit the tax credit 
-		 */
-		public void setTaxCredit(Money pTaxCredit) throws Exception {
-			if (pTaxCredit != null) getValues().setTaxCredit(new MoneyPair(pTaxCredit));
-			else 				    getValues().setTaxCredit(null);
-		}
-		
-		/**
-		 * Set a new years 
-		 * 
-		 * @param pYears the years 
-		 */
-		public void setYears(Integer pYears) {
-			getValues().setYears((pYears == null) ? null : new Integer(pYears));
-		}
-		
-		/**
-		 * Set a new date 
-		 * 
-		 * @param pDate the new date 
-		 */
-		public void setDate(Date pDate) {
-			getValues().setDate((pDate == null) ? null : new Date(pDate));
-		}
-		
-		/**
 		 * Set a new isCredit indication 
-		 * 
 		 * @param isCredit
 		 */
 		public void setIsCredit(boolean isCredit) {
@@ -721,60 +404,53 @@ public class Statement implements DebugObject {
 		}
 		
 		/**
+		 * Add an error for this item
+		 * @param pError the error text
+		 * @param iField the associated field
+		 */
+		protected void					addError(String pError, int iField) {
+			/* Re-Map Credit/Debit field errors */
+			switch (iField) {
+				case FIELD_CREDIT: iField = isCredit() ? VFIELD_ACCOUNT : VFIELD_PARTNER; break;
+				case FIELD_DEBIT:  iField = isCredit() ? VFIELD_PARTNER : VFIELD_ACCOUNT; break;
+			}
+			
+			/* Call super class */
+			super.addError(pError, iField);
+		}
+		
+		/**
 		 *  Values for a line 
 		 */
-		public class Values extends EncryptedValues {
-			private Date       		theDate      = null;
-			private StringPair      theDesc      = null;
-			private MoneyPair  		theAmount    = null;
-			private Account         thePartner   = null;
-			private UnitsPair  		theUnits     = null;
-			private DilutionPair	theDilution  = null;
-			private MoneyPair		theTaxCredit = null;
-			private Integer			theYears  	 = null;
-			private TransactionType	theTransType = null;
+		public class Values extends Event.Values {
 			private boolean         isCredit     = false;
 			
 			/* Access methods */
-			public Date       		getDate()      { return theDate; }
-			public StringPair       getDesc()      { return theDesc; }
-			public MoneyPair   		getAmount()    { return theAmount; }
-			public Account          getPartner()   { return thePartner; }
-			public UnitsPair  		getUnits()     { return theUnits; }
-			public DilutionPair		getDilution()  { return theDilution; }
-			public MoneyPair   		getTaxCredit() { return theTaxCredit; }
-			public Integer     		getYears()     { return theYears; }
-			public TransactionType	getTransType() { return theTransType; }
+			public Account          getPartner()   { return (isCredit) ? getDebit() : getCredit(); }
+			public Account			getAccount()   { return (isCredit) ? getCredit() : getDebit(); }
 			public boolean			isCredit() 	   { return isCredit; }
-			public Account       	getAccount()   { return theStatement.theAccount; }
 			
-			/* Encrypted value access */
-			public  Money		getAmountValue()    { return getPairValue(getAmount()); }
-			public  String  	getDescValue()      { return getPairValue(getDesc()); }
-			public  Money		getTaxCredValue()   { return getPairValue(getTaxCredit()); }
-			public  Units		getUnitsValue()     { return getPairValue(getUnits()); }
-			public  Dilution	getDilutionValue()  { return getPairValue(getDilution()); }
-
-			public void setDate(Date pDate) {
-				theDate      = pDate; }
-			public void setDesc(StringPair pDesc) {
-				theDesc      = pDesc; }
-			public void setAmount(MoneyPair pAmount) {
-				theAmount    = pAmount; }
 			public void setPartner(Account pPartner) {
-				thePartner   = pPartner; }
-			public void setUnits(UnitsPair pUnits) {
-				theUnits     = pUnits; }
-			public void setDilution(DilutionPair pDilution) {
-				theDilution  = pDilution; }
-			public void setTaxCredit(MoneyPair pTaxCredit) {
-				theTaxCredit = pTaxCredit; }
-			public void setYears(Integer pYears) {
-				theYears     = pYears; }
-			public void setTransType(TransactionType pTransType) {
-				theTransType = pTransType; }
+				if (isCredit) 	setDebit(pPartner); 
+				else 			setCredit(pPartner); }
+			public void setAccount(Account pAccount) {
+				if (isCredit) 	setCredit(pAccount); 
+				else 			setDebit(pAccount); }
 			public void setIsCredit(boolean isCredit) {
+				/* If we are changing values */
+				if (isCredit != this.isCredit) {
+					/* Swap credit/debit values */
+					Account myTemp = getCredit();
+					setCredit(getDebit());
+					setDebit(myTemp);
+				}
+				/* Store value */
 				this.isCredit = isCredit; }
+			
+			/* Determine credit setting */
+			private void determineCredit(Account pAccount) {
+				if (Account.differs(getDebit(), pAccount).isDifferent())
+					isCredit = true; }
 
 			/* Constructor */
 			public Values() {}
@@ -782,24 +458,26 @@ public class Statement implements DebugObject {
 			public Values(Event.Values 	pValues) { copyFrom(pValues); }
 			
 			/* Check whether this object is equal to that passed */
-			public boolean histEquals(HistoryValues<Line> pCompare) {
+			public Difference histEquals(HistoryValues<Event> pCompare) {
+				/* Make sure that the object is the same class */
+				if (pCompare.getClass() != this.getClass()) return Difference.Different;
+				
+				/* Cast correctly */
 				Values myValues = (Values)pCompare;
-				if (!super.histEquals(pCompare))					  							  return false;
-				if (isCredit != myValues.isCredit)      										  return false;
-				if (Date.differs(theDate,      				myValues.theDate).isDifferent())      return false;
-				if (differs(theDesc,      					myValues.theDesc).isDifferent())      return false;
-				if (differs(theAmount,    					myValues.theAmount).isDifferent())    return false;
-				if (differs(theUnits,     					myValues.theUnits).isDifferent())     return false;
-				if (Account.differs(thePartner,   			myValues.thePartner).isDifferent())   return false;
-				if (differs(theDilution,					myValues.theDilution).isDifferent())  return false;
-				if (differs(theTaxCredit, 					myValues.theTaxCredit).isDifferent()) return false;
-				if (Utils.differs(theYears,     			myValues.theYears).isDifferent())     return false;
-				if (TransactionType.differs(theTransType,	myValues.theTransType).isDifferent()) return false;
-				return true;
+
+				/* Handle boolean values */
+				if (isCredit != myValues.isCredit)
+					return Difference.Different;
+				
+				/* Determine underlying differences */
+				Difference myDifference = super.histEquals(pCompare);
+				
+				/* Return Differences */
+				return myDifference;
 			}
 			
 			/* Copy values */
-			public HistoryValues<Line> copySelf() {
+			public HistoryValues<Event> copySelf() {
 				return new Values(this);
 			}
 			public void    copyFrom(HistoryValues<?> pSource) {
@@ -808,81 +486,22 @@ public class Statement implements DebugObject {
 					Values myValues = (Values)pSource;
 					super.copyFrom(myValues);
 					isCredit     = myValues.isCredit();
-					theDate      = myValues.getDate();
-					theDesc      = myValues.getDesc();
-					theAmount    = myValues.getAmount();
-					thePartner   = myValues.getPartner();
-					theUnits     = myValues.getUnits();
-					theDilution  = myValues.getDilution();
-					theTaxCredit = myValues.getTaxCredit();
-					theYears     = myValues.getYears();
-					theTransType = myValues.getTransType();
 				}
 				
-				/* Handle a Line Values */
+				/* Handle an Event Values */
 				else if (pSource instanceof Event.Values) {
 					Event.Values myValues = (Event.Values)pSource;
 					super.copyFrom(myValues);
-					theDate 	 = myValues.getDate();
-					theDesc 	 = new StringPair(myValues.getDesc());
-					theAmount 	 = new MoneyPair(myValues.getAmount());
-					theTransType = myValues.getTransType();
-					theYears	 = myValues.getYears();
-					if (myValues.getUnits() != null)
-						theUnits     = new UnitsPair(myValues.getUnits());
-					if (myValues.getDilution() != null)
-						theDilution  = new DilutionPair(myValues.getDilution());
-					if (myValues.getTaxCredit() != null)
-						theTaxCredit = new MoneyPair(myValues.getTaxCredit());
-
-					/* If the account is credited */
-					if (getAccount().compareTo(myValues.getCredit()) == 0) {
-						thePartner = myValues.getDebit();
-						isCredit   = true;
-					}
-					
-					/* If the Account is debited */
-					else {
-						thePartner = myValues.getCredit();
-						isCredit   = false;
-					}
 				}
 			}
 			
-			public Difference	fieldChanged(int fieldNo, HistoryValues<Line> pOriginal) {
+			public Difference	fieldChanged(int fieldNo, HistoryValues<Event> pOriginal) {
 				Values		pValues = (Values)pOriginal;
 				Difference	bResult = Difference.Identical;
 				switch (fieldNo) {
-					case Statement.Line.FIELD_CREDIT:
+					case FIELD_ISCREDIT:
 						bResult = (isCredit != pValues.isCredit) ? Difference.Different 
 																 : Difference.Identical;
-						break;
-					case Statement.Line.FIELD_DATE:
-						bResult = (Date.differs(theDate,       			pValues.theDate));
-						break;
-					case Statement.Line.FIELD_DESC:
-						bResult = (differs(theDesc,      				pValues.theDesc));
-						break;
-					case Statement.Line.FIELD_AMOUNT:
-						bResult = (differs(theAmount,    				pValues.theAmount));
-						break;
-					case Statement.Line.FIELD_PARTNER:
-						bResult = (Account.differs(thePartner,   		pValues.thePartner));
-						break;
-					case Statement.Line.FIELD_UNITS:
-						bResult = (differs(theUnits,     				pValues.theUnits));
-						break;
-					case Statement.Line.FIELD_TRNTYP:
-						bResult = (TransactionType.differs(theTransType, pValues.theTransType));
-						break;
-					case Statement.Line.FIELD_TAXCREDIT:
-						bResult = (differs(theTaxCredit, 				pValues.theTaxCredit));
-						break;
-					case Statement.Line.FIELD_YEARS:
-						bResult = (Utils.differs(theYears,     			pValues.theYears));
-						break;
-					case Statement.Line.FIELD_DILUTION:
-						bResult = (differs(theDilution,  				pValues.theDilution));
 						break;
 					default:
 						bResult = super.fieldChanged(fieldNo, pValues);
@@ -890,22 +509,6 @@ public class Statement implements DebugObject {
 				}
 				return bResult;
 			}
-
-			/**
-			 * Update encryption after security change
-			 */
-			protected void updateSecurity() throws Exception {}
-			
-			/**
-			 * Apply encryption after non-encrypted load
-			 */
-			protected void applySecurity() throws Exception {}
-			
-			/**
-			 * Adopt encryption from base
-			 * @param pBase the Base values
-			 */
-			protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {}
 		}
 	}	
 }

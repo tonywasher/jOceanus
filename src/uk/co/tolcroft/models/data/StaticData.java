@@ -156,7 +156,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		if (getStaticClass() != myThat.getStaticClass())				return false;
 		
 		/* Compare the changeable values */
-		return getObj().histEquals(myThat.getObj());
+		return getObj().histEquals(myThat.getObj()).isIdentical();
 	}
 
 	/**
@@ -701,23 +701,29 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		public Values(StaticData<?,?>.Values pValues) { copyFrom(pValues); }
 		
 		/* Check whether this object is equal to that passed */
-		public boolean histEquals(HistoryValues<T> pCompare) {
+		public Difference histEquals(HistoryValues<T> pCompare) {
 			/* Make sure that the object is the same class */
-			if (pCompare.getClass() != this.getClass()) return false;
+			if (pCompare.getClass() != this.getClass()) return Difference.Different;
 			
 			/* Cast correctly */
 			StaticData<?,?>.Values myValues = (StaticData<?,?>.Values)pCompare;
 			
 			/* Make sure that the object is the same enumeration class */
-			if (myValues.getEnumClass() != theEnumClass) return false;
+			if (myValues.getEnumClass() != theEnumClass) return Difference.Different;
 			
-			/* Compare the values */
-			if (!super.histEquals(pCompare))							return false;
-			if (isEnabled != myValues.isEnabled)  						return false;
-			if (theOrder  != myValues.theOrder)  						return false;
-			if (differs(theName,    myValues.theName).isDifferent())  	return false;
-			if (differs(theDesc,    myValues.theDesc).isDifferent())  	return false;
-			return true;
+			/* Handle integer differences */
+			if ((isEnabled != myValues.isEnabled) ||
+			    (theOrder  != myValues.theOrder))	return Difference.Different;
+			
+			/* Determine underlying differences */
+			Difference myDifference = super.histEquals(pCompare);
+			
+			/* Handle remaining differences */
+			myDifference = myDifference.combine(differs(theName,	myValues.theName));
+			myDifference = myDifference.combine(differs(theDesc,	myValues.theDesc));
+			
+			/* Return differences */
+			return myDifference;
 		}
 		
 		/* Copy values */

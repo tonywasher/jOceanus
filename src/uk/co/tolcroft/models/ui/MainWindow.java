@@ -2,8 +2,8 @@ package uk.co.tolcroft.models.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -38,8 +38,7 @@ import uk.co.tolcroft.models.threads.UpdatePassword;
 import uk.co.tolcroft.models.threads.WorkerThread;
 import uk.co.tolcroft.models.views.DataControl;
 
-public abstract class MainWindow<T extends DataSet<T>> implements ActionListener,
-																  WindowListener {
+public abstract class MainWindow<T extends DataSet<T>> implements ActionListener {
 	private	DataControl<T>		theView			= null;
 	private Properties	  		theProperties	= null;
 	private JFrame          	theFrame  		= null;
@@ -281,67 +280,65 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
 		
 		/* Add a window listener */
 		theFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		theFrame.addWindowListener(this);
+		theFrame.addWindowListener(new WindowClose());
 		theView.setFrame(theFrame);
 
 		/* Load data from the database */
 		loadDatabase();
 	}
-	
-	public void windowClosed(WindowEvent e) {}
-	public void windowOpened(WindowEvent e) {}
-	public void windowIconified(WindowEvent e) {}
-	public void windowDeiconified(WindowEvent e) {}
-	public void windowActivated(WindowEvent e) {}
-	public void windowDeactivated(WindowEvent e) {}
-	
-	public void windowClosing(WindowEvent e) {
-		/* If this is the frame that is closing down */
-		if (e.getSource() == theFrame) {
-			/* If we have updates or changes */
-			if ((hasUpdates()) || (hasChanges())) {
-				/* Ask whether to continue */
-				int myOption = JOptionPane.showConfirmDialog(theFrame,
-														     "Discard unsaved data changes?",
-														     "Confirm Close",
-														     JOptionPane.YES_NO_OPTION);
-			
-				/* Ignore if no was responded */
-				if (myOption != JOptionPane.YES_OPTION) return;
-			}		
-		
-			/* terminate the executor */
-			theExecutor.shutdown();
-		
-			/* Dispose of the debug/help Windows if they exist */
-			if (theDebugWdw != null) theDebugWdw.dispose();
-			if (theHelpWdw  != null) theHelpWdw.dispose();
 
-			/* Dispose of the frame */
-			theFrame.dispose();
+	/**
+	 * Window Close Adapter
+	 */
+	private class WindowClose extends WindowAdapter {
+		public void windowClosing(WindowEvent e) {
+			/* If this is the frame that is closing down */
+			if (e.getSource() == theFrame) {
+				/* If we have updates or changes */
+				if ((hasUpdates()) || (hasChanges())) {
+					/* Ask whether to continue */
+					int myOption = JOptionPane.showConfirmDialog(theFrame,
+															     "Discard unsaved data changes?",
+															     "Confirm Close",
+															     JOptionPane.YES_NO_OPTION);
+				
+					/* Ignore if no was responded */
+					if (myOption != JOptionPane.YES_OPTION) return;
+				}		
 			
-			/* Exit the application */
-			System.exit(0);
-		}
-		
-		/* else if this is the Debug Window shutting down */
-		else if (e.getSource() == theDebugWdw) {
-			/* Re-enable the help menu item */
-			theShowDebug.setEnabled(true);
-			theDebugWdw.dispose();
-			theDebugWdw = null;
+				/* terminate the executor */
+				theExecutor.shutdown();
 			
-			/* Notify debug manager */
-			theDebugMgr.declareWindow(null);
-		}
+				/* Dispose of the debug/help Windows if they exist */
+				if (theDebugWdw != null) theDebugWdw.dispose();
+				if (theHelpWdw  != null) theHelpWdw.dispose();
 
-		/* else if this is the Help Window shutting down */
-		else if (e.getSource() == theHelpWdw) {
-			/* Re-enable the help menu item */
-			theHelpMgr.setEnabled(true);
-			theHelpWdw.dispose();
-			theHelpWdw = null;
-		}
+				/* Dispose of the frame */
+				theFrame.dispose();
+				
+				/* Exit the application */
+				System.exit(0);
+			}
+			
+			/* else if this is the Debug Window shutting down */
+			else if (e.getSource() == theDebugWdw) {
+				/* Re-enable the help menu item */
+				theShowDebug.setEnabled(true);
+				theDebugWdw.dispose();
+				theDebugWdw = null;
+				
+				/* Notify debug manager */
+				theDebugMgr.declareWindow(null);
+			}
+
+			/* else if this is the Help Window shutting down */
+			else if (e.getSource() == theHelpWdw) {
+				/* Re-enable the help menu item */
+				theHelpMgr.setEnabled(true);
+				theHelpWdw.dispose();
+				theHelpWdw = null;
+			}
+		}		
 	}
 
 	public void actionPerformed(ActionEvent evt) {
@@ -596,7 +593,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
 			theDebugWdw = new DebugWindow(theFrame, theDebugMgr);
 			
 			/* Listen for its closure */
-			theDebugWdw.addWindowListener(this);
+			theDebugWdw.addWindowListener(new WindowClose());
 			
 			/* Disable the menu item */
 			theShowDebug.setEnabled(false);
@@ -614,7 +611,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
 			theHelpWdw = new HelpWindow(theFrame, getHelpModule());
 			
 			/* Listen for its closure */
-			theHelpWdw.addWindowListener(this);
+			theHelpWdw.addWindowListener(new WindowClose());
 			
 			/* Disable the menu item */
 			theHelpMgr.setEnabled(false);

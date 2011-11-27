@@ -134,7 +134,7 @@ public class HistoryControl<T extends DataItem<T>> {
 	 */
 	protected boolean maybePopHistory(boolean isCursor) {
 		/* If there is no change */
-		if (theCurr.histEquals(theTop.theSnapShot)) {
+		if (!theCurr.histEquals(theTop.theSnapShot).isValueChanged()) {
 			/* Just pop the history */
 			popTheHistory();
 			return false;

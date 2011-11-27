@@ -61,7 +61,7 @@ public class Properties {
 	/**
 	 * Default Database connection string
 	 */
-	private final static String	defDBConnection	= "jdbc:sqlserver://Tony-LapTop;instanceName=SQLEXPRESS;database=Finance;integratedSecurity=true";
+	private final static String	defDBConnection	= "jdbc:sqlserver://localhost;instanceName=SQLEXPRESS;database=Finance;integratedSecurity=true";
 	
 	/**
 	 * Default Source old format spreadsheet
@@ -373,7 +373,7 @@ public class Properties {
 		theBirthDate = pValue;
 		
 		/* Store the value into the preferences */
-		setBirthDate(pValue.formatDate(false));
+		setBirthDate(pValue.formatDate());
 	}
 	
 	/**

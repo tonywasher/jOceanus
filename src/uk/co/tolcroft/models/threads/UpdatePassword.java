@@ -22,14 +22,17 @@ public class UpdatePassword<T extends DataSet<T>> extends LoaderThread<T> {
 		/* Create the status */
 		theStatus = new ThreadStatus<T>(this, theControl);
 
-		/* Initialise the status window */
-		initStatusBar("Updating Password");
+		/* Show the Status bar */
+		showStatusBar();
 	}
 
 
 	/* Background task (Worker Thread)*/
 	public T performTask() throws Throwable {
 		T			myData;
+
+		/* Initialise the status window */
+		theStatus.initTask("Updating Password");
 
 		/* Access Data */
 		myData 	= theControl.getData();

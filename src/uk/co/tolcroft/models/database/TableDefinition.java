@@ -22,7 +22,7 @@ public class TableDefinition {
 	/**
 	 * The Column Array expansion size
 	 */
-	private final static int		COLUMN_BLOCKSIZE	= 5;
+	private final static int		COLUMN_BLOCKSIZE	= 20;
 	
 	/**
 	 * The Table name

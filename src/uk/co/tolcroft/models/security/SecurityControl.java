@@ -2,7 +2,10 @@ package uk.co.tolcroft.models.security;
 
 import java.security.*;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -27,6 +30,11 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 	 * The BouncyCastle signature 
 	 */
 	protected final static String		BCSIGN 					= "BC";
+	
+	/**
+	 * Use restricted security 
+	 */
+	protected boolean					useRestricted			= false;
 	
 	/**
 	 * Have providers been added 
@@ -69,6 +77,7 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 	protected 	PasswordKey			getPassKey()			{ return thePassKey; }
 	public 		SecuritySignature	getSignature()			{ return theSignature; }
 	public 		SecureRandom		getRandom()				{ return theRandom; }
+	public 		boolean				useRestricted()			{ return useRestricted; }
 	
 	/**
 	 * Build History (no history)
@@ -105,6 +114,10 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 		/* Generate a cloned password key */
 		thePassKey  = new PasswordKey(pSource.getPassKey());
 		
+		/* Determine whether we are using restricted mode */
+		/* TODO pick up new Restricted property */
+		useRestricted = thePassKey.getKeyMode().useRestricted();
+		
 		/* Generate the new key mode */
 		AsymKeyType[] myType 	= AsymKeyType.getRandomTypes(1, theRandom);		
 		
@@ -125,6 +138,60 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 		isInitialised = true;
 		pSource.getList().add(this);
 	}
+
+	/**
+	 * Print out a set of algorithms
+	 * @param setName the name of the set
+	 * @param algorithms the set of algorithms
+	 */
+	private void printSet(String setName, Set<String> algorithms) {
+		System.out.println(setName + ":");
+		if (algorithms.isEmpty()) {
+			System.out.println("            None available.");
+		} else {
+			Iterator<String> it = algorithms.iterator();
+			while (it.hasNext()) {
+				String name = it.next();
+				System.out.println("            " + name);
+			}
+		}
+	}
+	
+	/**
+	 * List the supported algorithms
+	 */
+	private void listAlgorithms() {
+		Provider[] providers = Security.getProviders();
+		Set<String> ciphers = new HashSet<String>();
+		Set<String> keyFactories = new HashSet<String>();
+		Set<String> messageDigests = new HashSet<String>();
+		Set<String> signatures = new HashSet<String>();
+
+		for (int i = 0; i != providers.length; i++) {
+			if (!providers[i].getName().equals(BCSIGN)) continue;
+			Iterator<Object> it = providers[i].keySet().iterator();
+			while (it.hasNext()) {
+				String entry = (String) it.next();
+				if (entry.startsWith("Alg.Alias.")) {
+					entry = entry.substring("Alg.Alias.".length());
+				}
+				if (entry.startsWith("Cipher.")) {
+					ciphers.add(entry.substring("Cipher.".length()));
+				} else if (entry.startsWith("SecretKeyFactory.")) {
+					keyFactories.add(entry.substring("SecretKeyFactory.".length()));
+				} else if (entry.startsWith("MessageDigest.")) {
+					messageDigests.add(entry.substring("MessageDigest.".length()));
+				} else if (entry.startsWith("Signature.")) {
+					signatures.add(entry.substring("Signature.".length()));
+				}
+			}
+		}
+
+		printSet("Ciphers", ciphers);
+		printSet("SecretKeyFactories", keyFactories);
+		printSet("MessageDigests", messageDigests);
+		printSet("Signatures", signatures);
+	}
 	
 	/**
 	 * Initialise the security control with a password
@@ -140,9 +207,12 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 		try {
 			/* If we have not previously added providers */
 			if (!providersAdded) {
+				boolean bDebug = false;
+				
 				/* Ensure addition of Bouncy castle security provider */
 				Security.addProvider(new BouncyCastleProvider());
 				providersAdded = true;
+				if (bDebug) listAlgorithms();
 			}
 			
 			/* Create a new secure random generator */
@@ -151,7 +221,9 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 			/* If the security key is currently null */
 			if (theSignature == null) {
 				/* Generate the password key */
+				/* TODO pick up new Restricted property */
 				thePassKey 	= new PasswordKey(pPassword,
+											  useRestricted,
 											  theRandom);
 							
 				/* Generate the new key mode */
@@ -174,6 +246,9 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 				thePassKey 	= new PasswordKey(theSignature.getPasswordHash(),
 											  pPassword,
 											  theRandom);
+				
+				/* Determine whether we are using restricted mode */
+				useRestricted = thePassKey.getKeyMode().useRestricted();
 				
 				/* Rebuild the asymmetric key */
 				theAsymKey  = thePassKey.getAsymmetricKey(theSignature.getSecuredKeyDef(),
@@ -246,7 +321,9 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 								"Security Control uninitialised");
 			
 		/* Generate the password key class */
-		myPassKey = new PasswordKey(pPassword, theRandom);
+		myPassKey = new PasswordKey(pPassword, 
+									useRestricted, 
+									theRandom);
 		
 		/* Return the new key */
 		return myPassKey;
@@ -333,7 +410,7 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 								"Security Control uninitialised");
 			
 		/* Generate the symmetric key */
-		mySymKey = new SymmetricKey(pType, theRandom);
+		mySymKey = new SymmetricKey(pType, useRestricted, theRandom);
 		
 		/* Return the new key */
 		return mySymKey;
@@ -355,7 +432,7 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 								"Security Control uninitialised");
 			
 		/* Obtain the symmetric key via the Asymmetric key */
-		mySymKey = theAsymKey.getSymmetricKey(pSecuredKeyDef, pType);
+		mySymKey = theAsymKey.getSymmetricKey(pSecuredKeyDef, useRestricted, pType);
 		
 		/* Add the key definition to the map */
 		theKeyDefMap.put(mySymKey, pSecuredKeyDef);
@@ -382,7 +459,7 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 		if (myKeyDef != null) return myKeyDef;
 		
 		/* wrap the key definition */
-		myKeyDef = theAsymKey.getSecuredKeyDef(pKey);
+		myKeyDef = theAsymKey.getSecuredKeyDef(pKey, useRestricted);
 				
 		/* Check whether the KeyDef is too large */
 		if (myKeyDef.length > SymmetricKey.IDSIZE)

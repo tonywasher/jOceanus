@@ -27,7 +27,7 @@ import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 
-public class AccountPatterns extends StdTable<Pattern> {
+public class AccountPatterns extends StdTable<Event> {
 	/* Members */
 	private static final long serialVersionUID = 1968946370981616222L;
 
@@ -249,7 +249,7 @@ public class AccountPatterns extends StdTable<Pattern> {
 		Pattern 			myPattern;
 		
 		/* Access the pattern */
-		myPattern = thePatterns.get(row);
+		myPattern = (Pattern)thePatterns.get(row);
 
 		/* Switch on column */
 		switch (column) {
@@ -286,13 +286,16 @@ public class AccountPatterns extends StdTable<Pattern> {
 		myRow = myPattern.indexOf();
 		
 		/* Notify of the insertion of the row */
-		theModel.fireTableRowsInserted(myRow, myRow);
+		theModel.fireInsertRowEvents(myRow);
 	}
 	
 	/* Patterns table model */
 	public class PatternsModel extends DataTableModel {
 		private static final long serialVersionUID = -8445100544184045930L;
 
+		@Override
+		protected void fireInsertRowEvents(int pRow) { super.fireInsertRowEvents(pRow); }
+		
 		/**
 		 * Get the number of display columns
 		 * @return the columns
@@ -356,7 +359,7 @@ public class AccountPatterns extends StdTable<Pattern> {
 				case COLUMN_TRANTYP:	return Pattern.FIELD_TRNTYP;
 				case COLUMN_CREDIT: 	return Pattern.FIELD_AMOUNT;
 				case COLUMN_DEBIT: 		return Pattern.FIELD_AMOUNT;
-				case COLUMN_PARTNER:	return Pattern.FIELD_PARTNER;
+				case COLUMN_PARTNER:	return Pattern.VFIELD_PARTNER;
 				case COLUMN_FREQ:  		return Pattern.FIELD_FREQ;
 				default:				return -1;
 			}
@@ -372,7 +375,7 @@ public class AccountPatterns extends StdTable<Pattern> {
 			if (theAccount.isLocked()) return false;
 			
 			/* Access the pattern */
-			myPattern = thePatterns.get(row);
+			myPattern = (Pattern)thePatterns.get(row);
 			
 			/* Cannot edit if row is deleted or locked */
 			if (myPattern.isDeleted() || myPattern.isLocked())
@@ -394,7 +397,7 @@ public class AccountPatterns extends StdTable<Pattern> {
 			Object  o;
 				
 			/* Access the pattern */
-			myPattern = thePatterns.get(row);
+			myPattern = (Pattern)thePatterns.get(row);
 				
 			/* Return the appropriate value */
 			switch (col) {
@@ -447,7 +450,7 @@ public class AccountPatterns extends StdTable<Pattern> {
 			Pattern myPattern;
 			
 			/* Access the pattern */
-			myPattern = thePatterns.get(row);
+			myPattern = (Pattern)thePatterns.get(row);
 				
 			/* Push history */
 			myPattern.pushHistory();
@@ -460,7 +463,7 @@ public class AccountPatterns extends StdTable<Pattern> {
 						myPattern.setDate((Date)obj);    
 						break;
 					case COLUMN_DESC:  
-						myPattern.setDesc((String)obj);            
+						myPattern.setDescription((String)obj);            
 						break;
 					case COLUMN_TRANTYP:  
 						myPattern.setTransType(theTransTypes.searchFor((String)obj));    
@@ -543,7 +546,7 @@ public class AccountPatterns extends StdTable<Pattern> {
 	/**
 	 *  Pattern mouse listener
 	 */
-	private class patternMouse extends StdMouse<Pattern> {
+	private class patternMouse extends StdMouse<Event> {
 		
 		/* Pop-up Menu items */
 		private static final String popupCredit  		= "Set As Credit";
@@ -643,9 +646,23 @@ public class AccountPatterns extends StdTable<Pattern> {
 				if (myPattern.isCredit() == isCredit) continue;
 				
 				/* set the credit value */
+				myPattern.pushHistory();
 				myPattern.setIsCredit(isCredit);
-				myModel.fireTableRowsUpdated(row, row);
+				if (myPattern.checkForHistory()) {
+					/* Note that the item has changed */
+					myPattern.clearErrors();
+					myPattern.setState(DataState.CHANGED);
+
+					/* Validate the item */
+					myPattern.validate();
+				
+					/* Notify that the row has changed */
+					myModel.fireTableRowsUpdated(row, row);
+				}
 			}
+			
+			/* Determine the edit state */
+			thePatterns.findEditState();
 		}
 		
 		/**
@@ -690,8 +707,8 @@ public class AccountPatterns extends StdTable<Pattern> {
 		private static final long serialVersionUID = 520785956133901998L;
 
 		/* Renderers/Editors */
-		private Renderer.DateCell 		theDateRenderer   	= null;
-		private Editor.DateCell 		theDateEditor     	= null;
+		private Renderer.CalendarCell 	theDateRenderer   	= null;
+		private Editor.CalendarCell 	theDateEditor     	= null;
 		private Renderer.MoneyCell 		theMoneyRenderer  	= null;
 		private Editor.MoneyCell 		theMoneyEditor    	= null;
 		private Renderer.StringCell 	theStringRenderer 	= null;
@@ -703,16 +720,16 @@ public class AccountPatterns extends StdTable<Pattern> {
 		 */
 		private patternColumnModel() {		
 			/* Create the relevant formatters/editors */
-			theDateRenderer   = new Renderer.DateCell();
-			theDateEditor     = new Editor.DateCell();
+			theDateRenderer   = new Renderer.CalendarCell();
+			theDateEditor     = new Editor.CalendarCell();
 			theMoneyRenderer  = new Renderer.MoneyCell();
 			theMoneyEditor    = new Editor.MoneyCell();
 			theStringRenderer = new Renderer.StringCell();
 			theStringEditor   = new Editor.StringCell();
 			theComboEditor    = new Editor.ComboBoxCell();
 			
-			/* Set the date editor to show no years */
-			theDateEditor.setNoYear();
+			/* Restrict the date editor to pattern range */
+			theDateEditor.setRange(Pattern.thePatternRange);
 			
 			/* Create the columns */
 			addColumn(new DataColumn(COLUMN_DATE,     80, theDateRenderer,   theDateEditor));

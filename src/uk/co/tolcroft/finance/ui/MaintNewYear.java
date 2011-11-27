@@ -321,16 +321,16 @@ public class MaintNewYear extends StdTable<Event> implements ActionListener {
 		private static final long serialVersionUID = -894489367275603586L;
 
 		/* Renderers/Editors */
-		private Renderer.DateCell 	theDateRenderer   	= null;
-		private Renderer.MoneyCell 	theMoneyRenderer  	= null;
-		private Renderer.StringCell	theStringRenderer 	= null;
+		private Renderer.CalendarCell 	theDateRenderer   	= null;
+		private Renderer.MoneyCell 		theMoneyRenderer  	= null;
+		private Renderer.StringCell		theStringRenderer 	= null;
 
 		/**
 		 * Constructor 
 		 */
 		private yearColumnModel() {		
 			/* Create the relevant formatters/editors */
-			theDateRenderer   = new Renderer.DateCell();
+			theDateRenderer   = new Renderer.CalendarCell();
 			theMoneyRenderer  = new Renderer.MoneyCell();
 			theStringRenderer = new Renderer.StringCell();
 			

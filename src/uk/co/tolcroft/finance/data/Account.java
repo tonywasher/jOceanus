@@ -562,7 +562,7 @@ public class Account extends EncryptedItem<Account> {
 		if (getId() != myThat.getId()) return false;
 		
 		/* Compare the changeable values */
-		return getValues().histEquals(myThat.getValues());
+		return getValues().histEquals(myThat.getValues()).isIdentical();
 	}
 
 	/**
@@ -1837,27 +1837,40 @@ public class Account extends EncryptedItem<Account> {
 		public Values(Values pValues) { copyFrom(pValues); }
 		
 		/* Check whether this object is equal to that passed */
-		public boolean histEquals(HistoryValues<Account> pCompare) {
+		public Difference histEquals(HistoryValues<Account> pCompare) {
+			/* Make sure that the object is the same class */
+			if (pCompare.getClass() != this.getClass()) return Difference.Different;
+			
+			/* Cast correctly */
 			Values myValues = (Values)pCompare;
-			if (!super.histEquals(pCompare))					  					return false;
-			if (differs(theName,			myValues.theName).isDifferent())     	return false;
-			if (differs(theDesc,			myValues.theDesc).isDifferent())     	return false;
-			if (AccountType.differs(theType,myValues.theType).isDifferent())     	return false;
-			if (Utils.differs(theActTypeId, myValues.theActTypeId).isDifferent()) 	return false;
-			if (Utils.differs(theOrder,     myValues.theOrder).isDifferent())     	return false;
-			if (Date.differs(theMaturity, 	myValues.theMaturity).isDifferent()) 	return false;
-			if (Date.differs(theClose,    	myValues.theClose).isDifferent())    	return false;
-			if (Account.differs(theParent,  myValues.theParent).isDifferent())   	return false;
-			if (Account.differs(theAlias,   myValues.theAlias).isDifferent())   	return false;
-			if (Utils.differs(theParentId,  myValues.theParentId).isDifferent())  	return false;
-			if (Utils.differs(theAliasId,   myValues.theAliasId).isDifferent())   	return false;
-			if (differs(theWebSite,			myValues.theWebSite).isDifferent()) 	return false;
-			if (differs(theCustNo,			myValues.theCustNo).isDifferent()) 		return false;
-			if (differs(theUserId,			myValues.theUserId).isDifferent()) 		return false;
-			if (differs(thePassword,		myValues.thePassword).isDifferent()) 	return false;
-			if (differs(theAccount,			myValues.theAccount).isDifferent()) 	return false;
-			if (differs(theNotes,			myValues.theNotes).isDifferent()) 		return false;
-			return true;
+
+			/* Handle integer differences */
+			if ((Utils.differs(theActTypeId, myValues.theActTypeId).isDifferent())	||
+				(Utils.differs(theParentId,  myValues.theParentId).isDifferent())	||
+				(Utils.differs(theAliasId,   myValues.theAliasId).isDifferent())	||
+				(Utils.differs(theOrder,     myValues.theOrder).isDifferent()))
+				return Difference.Different;
+			
+			/* Determine underlying differences */
+			Difference myDifference = super.histEquals(pCompare);
+			
+			/* Compare underlying values */
+			myDifference = myDifference.combine(differs(theName,				myValues.theName));
+			myDifference = myDifference.combine(differs(theDesc,				myValues.theDesc));
+			myDifference = myDifference.combine(AccountType.differs(theType,	myValues.theType));
+			myDifference = myDifference.combine(Date.differs(theMaturity, 		myValues.theMaturity));
+			myDifference = myDifference.combine(Date.differs(theClose,    		myValues.theClose));
+			myDifference = myDifference.combine(Account.differs(theParent,  	myValues.theParent));
+			myDifference = myDifference.combine(Account.differs(theAlias,   	myValues.theAlias));
+			myDifference = myDifference.combine(differs(theWebSite,				myValues.theWebSite));
+			myDifference = myDifference.combine(differs(theCustNo,				myValues.theCustNo));
+			myDifference = myDifference.combine(differs(theUserId,				myValues.theUserId));
+			myDifference = myDifference.combine(differs(thePassword,			myValues.thePassword));
+			myDifference = myDifference.combine(differs(theAccount,				myValues.theAccount));
+			myDifference = myDifference.combine(differs(theNotes,				myValues.theNotes));
+			
+			/* Return the differences */
+			return myDifference;
 		}
 		
 		/* Copy values */

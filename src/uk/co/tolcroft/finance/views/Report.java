@@ -102,7 +102,7 @@ public class Report {
 		/* Build the cell */
 		myOutput.append("<td align=\"right\" color=\"blue\">");
 		if ((pDate != null) && (!pDate.isNull()))
-			myOutput.append(pDate.formatDate(false));
+			myOutput.append(pDate.formatDate());
 		myOutput.append("</td>");
 
 		/* Return the detail */

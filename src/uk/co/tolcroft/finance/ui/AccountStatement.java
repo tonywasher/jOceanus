@@ -31,7 +31,7 @@ import uk.co.tolcroft.models.Date;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 
-public class AccountStatement extends StdTable<Statement.Line> {
+public class AccountStatement extends StdTable<Event> {
 	/* Members */
 	private static final long serialVersionUID = -9123840084764342499L;
 
@@ -168,16 +168,15 @@ public class AccountStatement extends StdTable<Statement.Line> {
 	    );
 	}
 
-	/**
-	 * Save changes from the view into the underlying data
-	 */
-	public boolean calculateTable() {
+	@Override
+	public void validateAfterChange() {
 		/* Reset the balance */
 		if (theStatement != null) {
 			/* Protect against exceptions */
 			try {
-				/* Reset the balances */
+				/* Reset the balances and update the column */
 				theStatement.resetBalances();
+				theModel.fireUpdateColEvent(COLUMN_BALANCE);
 			}
 			/* Catch Exceptions */
 			catch (Exception e) {
@@ -190,8 +189,6 @@ public class AccountStatement extends StdTable<Statement.Line> {
 				theError.setError(myError);
 			}
 		}
-		/* Return that table refresh is required */
-		return true;
 	}
 	
 	/**
@@ -361,7 +358,7 @@ public class AccountStatement extends StdTable<Statement.Line> {
 		Statement.Line 		myLine;
 		
 		/* Access the line */
-		myLine = theLines.get(row-1);
+		myLine = (Statement.Line)theLines.get(row-1);
 
 		/* Switch on column */
 		switch (column) {
@@ -381,8 +378,8 @@ public class AccountStatement extends StdTable<Statement.Line> {
 	 * @param pItem the current item
 	 * @param pValues the potential values for restoration
 	 */
-	public boolean isValidHistory(DataItem<Statement.Line>	pItem,
-			  				  	  HistoryValues<?> 			pValues) {
+	public boolean isValidHistory(DataItem<Event>	pItem,
+			  				  	  HistoryValues<?> 	pValues) {
 		Statement.Line 			myLine;
 		Statement.Line.Values	myLineVals; 
 		Event.Values    		myEventVals;
@@ -501,23 +498,23 @@ public class AccountStatement extends StdTable<Statement.Line> {
 		 */
 		public int getFieldForCell(int row, int column) {
 			Statement.Line myLine = null;
-			if (row > 0) myLine = theLines.get(row-1);
+			if (row > 0) myLine = (Statement.Line)theLines.get(row-1);
 
 			/* Switch on column */
 			switch (column) {
 				case COLUMN_DATE: 		return Statement.Line.FIELD_DATE;
 				case COLUMN_DESC:		return Statement.Line.FIELD_DESC;
 				case COLUMN_TRANTYP:	return Statement.Line.FIELD_TRNTYP;
-				case COLUMN_PARTNER:	return Statement.Line.FIELD_PARTNER;
+				case COLUMN_PARTNER:	return Statement.Line.VFIELD_PARTNER;
 				case COLUMN_DILUTION:	return Statement.Line.FIELD_DILUTION;
 				case COLUMN_TAXCREDIT:	return Statement.Line.FIELD_TAXCREDIT;
 				case COLUMN_YEARS:		return Statement.Line.FIELD_YEARS;
-				case COLUMN_CREDIT:		if ((myLine != null) && (myLine.isCredit()))
+				case COLUMN_CREDIT:		if ((myLine == null) || (myLine.isCredit()))
 											return ((theStateType == StatementType.UNITS) 
 														? Statement.Line.FIELD_UNITS
 														: Statement.Line.FIELD_AMOUNT);
 										else return -1;
-				case COLUMN_DEBIT:		if ((myLine != null) && (!myLine.isCredit()))
+				case COLUMN_DEBIT:		if ((myLine == null) || (!myLine.isCredit()))
 											return ((theStateType == StatementType.UNITS) 
 														? Statement.Line.FIELD_UNITS
 														: Statement.Line.FIELD_AMOUNT);
@@ -539,7 +536,7 @@ public class AccountStatement extends StdTable<Statement.Line> {
 			if (row == 0) return false;
 			
 			/* Access the line */
-			myLine = theLines.get(row-1);
+			myLine = (Statement.Line)theLines.get(row-1);
 			
 			/* Cannot edit if row is deleted or locked */
 			if (myLine.isDeleted() || myLine.isLocked())
@@ -557,8 +554,8 @@ public class AccountStatement extends StdTable<Statement.Line> {
 					return ((myLine.getDate() != null) &&
 							(myLine.getTransType() != null));
 				default:
-					if ((myLine.getDate() == null) &&
-						(myLine.getDesc() == null) &&
+					if ((myLine.getDate() == null) ||
+						(myLine.getDesc() == null) ||
 						(myLine.getTransType() == null))
 						return false;
 					
@@ -604,8 +601,8 @@ public class AccountStatement extends StdTable<Statement.Line> {
 			}
 
 			/* Access the line */
-			myLine = theLines.get(row-1);
-			myNext = theLines.peekNext(myLine);
+			myLine = (Statement.Line)theLines.get(row-1);
+			myNext = (Statement.Line)theLines.peekNext(myLine);
 			
 			/* Return the appropriate value */
 			switch (col) {
@@ -675,7 +672,7 @@ public class AccountStatement extends StdTable<Statement.Line> {
 			Statement.Line myLine;
 			
 			/* Access the line */
-			myLine = theLines.get(row-1);
+			myLine = (Statement.Line)theLines.get(row-1);
 			
 			/* Push history */
 			myLine.pushHistory();
@@ -714,7 +711,6 @@ public class AccountStatement extends StdTable<Statement.Line> {
 							myLine.setAmount((Money)obj);
 							if (needsTaxCredit) myLine.setTaxCredit(myLine.calculateTaxCredit());
 						}
-						calculateTable();
 						break;
 					case COLUMN_PARTNER:
 						myLine.setPartner(theAccounts.searchFor((String)obj));    
@@ -765,7 +761,7 @@ public class AccountStatement extends StdTable<Statement.Line> {
 					case COLUMN_TRANTYP: 
 						/* Re-Sort the row */
 						theLines.reSort(myLine);
-						calculateTable();
+						validateAfterChange();
 						
 						/* Determine new row # */
 						int myNewRowNo = myLine.indexOf();
@@ -783,7 +779,7 @@ public class AccountStatement extends StdTable<Statement.Line> {
 					/* Recalculate balance if required */	
 					case COLUMN_CREDIT:
 					case COLUMN_DEBIT:
-						calculateTable();
+						validateAfterChange();
 						
 						/* fall through */
 						
@@ -803,7 +799,7 @@ public class AccountStatement extends StdTable<Statement.Line> {
 	/**
 	 *  Statement mouse listener
 	 */
-	private class statementMouse extends StdMouse<Statement.Line> {
+	private class statementMouse extends StdMouse<Event> {
 				
 		/* Pop-up Menu items */
 		private static final String popupExtract  		= "View Extract";
@@ -1035,7 +1031,7 @@ public class AccountStatement extends StdTable<Statement.Line> {
 			/* If it is valid */
 			if ((!isHeader()) && (myRow >= 0)) {
 				/* Access the line and partner */
-				myLine = theTable.extractItemAt(myRow);
+				myLine = (Statement.Line)theTable.extractItemAt(myRow);
 				myAccount = myLine.getPartner();
 			
 				/* If we have a different account then we can navigate */ 
@@ -1126,12 +1122,26 @@ public class AccountStatement extends StdTable<Statement.Line> {
 				if (myLine.isCredit() == isCredit) continue;
 				
 				/* set the credit value */
+				myLine.pushHistory();
 				myLine.setIsCredit(isCredit);
-				myModel.fireTableRowsUpdated(row, row);
+				if (myLine.checkForHistory()) {
+					/* Note that the item has changed */
+					myLine.clearErrors();
+					myLine.setState(DataState.CHANGED);
+
+					/* Validate the item */
+					myLine.validate();
+				
+					/* Notify that the row has changed */
+					myModel.fireTableRowsUpdated(row, row);
+				}
 			}
 			
+			/* Determine the edit state */
+			theLines.findEditState();
+			
 			/* Recalculate the table */
-			theTable.calculateTable();
+			theTable.validateAfterChange();
 		}
 		
 		/**
@@ -1327,8 +1337,8 @@ public class AccountStatement extends StdTable<Statement.Line> {
 		private static final long serialVersionUID = -183944035127105952L;
 
 		/* Renderers/Editors */
-		private Renderer.DateCell 		theDateRenderer   	= null;
-		private Editor.DateCell 		theDateEditor     	= null;
+		private Renderer.CalendarCell 	theDateRenderer   	= null;
+		private Editor.CalendarCell 	theDateEditor     	= null;
 		private Renderer.MoneyCell 		theMoneyRenderer  	= null;
 		private Editor.MoneyCell 		theMoneyEditor    	= null;
 		private Renderer.UnitCell 		theUnitsRenderer  	= null;
@@ -1352,8 +1362,8 @@ public class AccountStatement extends StdTable<Statement.Line> {
 		 */
 		private statementColumnModel() {		
 			/* Create the relevant formatters/editors */
-			theDateRenderer     = new Renderer.DateCell();
-			theDateEditor       = new Editor.DateCell();
+			theDateRenderer     = new Renderer.CalendarCell();
+			theDateEditor       = new Editor.CalendarCell();
 			theMoneyRenderer    = new Renderer.MoneyCell();
 			theMoneyEditor      = new Editor.MoneyCell();
 			theUnitsRenderer    = new Renderer.UnitCell();

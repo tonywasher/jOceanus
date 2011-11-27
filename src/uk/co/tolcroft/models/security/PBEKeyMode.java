@@ -12,7 +12,12 @@ public class PBEKeyMode {
 	/**
 	 * The mode	
 	 */
-	private int		theMode		= 0;
+	private int		theMode			= 0;
+	
+	/**
+	 * Use restricted security	
+	 */
+	private boolean	useRestricted	= false;
 	
 	/**
 	 * The type locations (in units of 4-bit shifts)
@@ -30,6 +35,11 @@ public class PBEKeyMode {
 	private final static int 		placeITER3		= 7;
 
 	/**
+	 * The mask for restricted security 
+	 */
+	private final static int		maskRESTRICT	= 128;
+	
+	/**
 	 * The Digest/Key types
 	 */
 	private DigestType	thePrimeDigest		= null;
@@ -45,6 +55,7 @@ public class PBEKeyMode {
 	/* Access methods */
 	protected	int		getMode() 			{ return theMode; }
 	protected	byte[]	getByteMode() 		{ return Utils.BytesFromInteger(theMode); }
+	public	boolean		useRestricted() 	{ return useRestricted; }
 	public	DigestType	getFirstDigest()	{ return thePrimeDigest; }
 	public	DigestType	getSecondDigest()	{ return theSecondDigest; }
 	public	DigestType	getThirdDigest()	{ return theThirdDigest; }
@@ -54,7 +65,7 @@ public class PBEKeyMode {
 	public	int			getThirdIterate()	{ return theThirdIteration; }
 
 	/**
-	 * Constructor from node
+	 * Constructor from mode
 	 * @param pMode the Control Mode
 	 */
 	protected PBEKeyMode(int pMode) throws Exception {
@@ -65,6 +76,9 @@ public class PBEKeyMode {
 		
 		/* Set the version */
 		setVersion(0);
+		
+		/* Set restricted */
+		setRestricted(getRestricted(pMode));
 		
 		/* Set Iterations */
 		setIterations(getIteration(pMode, placeITER1),
@@ -88,42 +102,18 @@ public class PBEKeyMode {
 	}
 	
 	/**
-	 * Construct a ControlMode
-	 * @param pFirstDigest the first digest type
-	 * @param pSecondDigest the second digest type
-	 * @param pThirdDigest the second digest type
-	 * @param pPBEKeyType the PBE key type
-	 * @param pRandom the random generator
-	 */
-	public static PBEKeyMode getMode(DigestType		pFirstDigest,
-				   					 DigestType		pSecondDigest,
-				   					 DigestType		pThirdDigest,
-				   					 PBEKeyType		pPBEKeyType,
-				   					 SecureRandom	pRandom) throws Exception {
-		/* Create a new PBEKeyMode */
-		PBEKeyMode myMode = new PBEKeyMode();
-
-		/* Set digest options */
-		myMode.setDigestTypes(pFirstDigest, pSecondDigest, pThirdDigest);
-
-		/* Set PBE key option */
-		myMode.setPBEKeyType(pPBEKeyType);
-		
-		/* Set iterations */
-		myMode.setRandomIterations(pRandom);
-		
-		/* Return the mode */
-		return myMode;
-	}
-	
-	/**
 	 * Construct a random KeyMode
+	 * @param useRestricted use restricted keys
 	 * @param pRandom the random generator
 	 */
-	public static PBEKeyMode getMode(SecureRandom pRandom) throws Exception {
+	public static PBEKeyMode getMode(boolean 		useRestricted,
+									 SecureRandom 	pRandom) throws Exception {
 		/* Create a new PBEKeyMode */
 		PBEKeyMode myMode = new PBEKeyMode();
 
+		/* Set restricted flag */
+		myMode.setRestricted(useRestricted);
+		
 		/* Access a random set of SymKeyTypes and DigestTypes */
 		PBEKeyType[]  myPBE 	= PBEKeyType.getRandomTypes(1, pRandom);		
 		DigestType[]  myDigest	= DigestType.getRandomTypes(3, pRandom);
@@ -228,7 +218,7 @@ public class PBEKeyMode {
 	 */
 	private void setVersion(int iVers) {
 		/* Shift up place bytes */
-		int iMask	 = 15;
+		int iMask	 = 7;
 		iVers 		&= iMask;
 		
 		/* Add into the mode */
@@ -243,9 +233,33 @@ public class PBEKeyMode {
 	private int getVersion(int pMode) {
 		/* Access as a long value and isolate */
 		int	iVers	= pMode;
-		int iMask	= 15;
+		int iMask	= 7;
 		iVers &= iMask;
 		return iVers;
+	}
+	
+	/**
+	 * Set restricted into mode
+	 * @param useRestricted use restricted keys
+	 */
+	private void setRestricted(boolean useRestricted) {
+		/* Access the mask */
+		int iMask	 = maskRESTRICT;
+		
+		/* Record flag */
+		this.useRestricted = useRestricted;
+		
+		/* Add into the mode */
+		theMode &= ~iMask;
+		if (useRestricted) theMode |= iMask;
+	}
+	
+	/**
+	 * Obtain useRestricted flag from mode
+	 * @return should restricted keys be used
+	 */
+	private boolean getRestricted(int pMode) {
+		return ((pMode & maskRESTRICT) != 0);
 	}
 	
 	/**

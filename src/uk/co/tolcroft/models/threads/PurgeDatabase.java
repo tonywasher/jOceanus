@@ -23,8 +23,8 @@ public class PurgeDatabase<T extends DataSet<T>> extends WorkerThread<Void> {
 		/* Create the status */
 		theStatus = new ThreadStatus<T>(this, theControl);
 
-		/* Initialise the status window */
-		initStatusBar("Purging Database");
+		/* Show the status window */
+		showStatusBar();
 	}
 
 	/* Background task (Worker Thread)*/
@@ -32,6 +32,9 @@ public class PurgeDatabase<T extends DataSet<T>> extends WorkerThread<Void> {
 		Database<T>	myDatabase	= null;
 		T			myData;
 		T			myNull;
+
+		/* Initialise the status window */
+		theStatus.initTask("Purging Database");
 
 		/* Create interface */
 		myDatabase = theControl.getDatabase();

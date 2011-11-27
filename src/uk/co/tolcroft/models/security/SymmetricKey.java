@@ -24,6 +24,16 @@ public class SymmetricKey {
 	public    final static int		IVSIZE   		= 16;
 	
 	/**
+	 * Restricted key length 
+	 */
+	private   final static int		smallKEYLEN		= 128;
+	
+	/**
+	 * Unlimited key length
+	 */
+	private   final static int		bigKEYLEN  		= 256;
+	
+	/**
 	 * The Secret Key 
 	 */
 	private SecretKey		theKey				= null;
@@ -32,6 +42,11 @@ public class SymmetricKey {
 	 * The Key Type 
 	 */
 	private SymKeyType		theKeyType			= null;
+	
+	/**
+	 * The Key Length
+	 */
+	private int				theKeyLen			= bigKEYLEN;
 	
 	/**
 	 * The secure random generator
@@ -53,8 +68,21 @@ public class SymmetricKey {
 	 * Obtain the secret key type
 	 * @return the secret key type
 	 */
-	public SymKeyType getKeyType() 	{ return theKeyType; }
+	public SymKeyType 	getKeyType() 	{ return theKeyType; }
 
+	/**
+	 * Obtain the key length
+	 * @return the secret key length
+	 */
+	public int 			getKeyLength() 	{ return theKeyLen; }
+
+	/**
+	 * Determine key length
+	 * @return key length
+	 */
+	protected static int	getKeyLen(boolean useRestricted) { 
+		return useRestricted ? smallKEYLEN : bigKEYLEN; } 
+	
 	/**
 	 * Encryption length
 	 * @param pDataLength the length of data to be encrypted
@@ -68,16 +96,21 @@ public class SymmetricKey {
 	/**
 	 * Constructor for a new randomly generated key
 	 * @param pKeyType Symmetric KeyType
+	 * @param useRestricted use restricted keys
 	 * @param pRandom Secure Random byte generator
 	 */
 	public SymmetricKey(SymKeyType		pKeyType,
+						boolean			useRestricted,
 						SecureRandom	pRandom) throws Exception {
 		/* Store the KeyType and the Secure Random instance */
 		theKeyType		= pKeyType;
+		theKeyLen		= getKeyLen(useRestricted);
 		theRandom 		= pRandom;
 		
 		/* Generate the new key */
-		theKey				= SymKeyGenerator.getInstance(theKeyType, theRandom);
+		theKey				= SymKeyGenerator.getInstance(theKeyType, 
+														  theKeyLen,
+														  theRandom);
 		theEncodedKeyDef	= theKey.getEncoded();
 	}
 	
@@ -92,6 +125,7 @@ public class SymmetricKey {
 						   SecureRandom		pRandom) throws Exception {
 		/* Store the Control, KeyType and the Secure Random instance */
 		theKeyType			= pKeyType;
+		theKeyLen			= pKey.getEncoded().length;
 		theRandom 			= pRandom;
 		theKey				= pKey;
 		theEncodedKeyDef	= theKey.getEncoded();
@@ -225,24 +259,28 @@ public class SymmetricKey {
 		private static SymKeyGenerator 	theGenerators	= null;
 		
 		/* Members */
-		private SymKeyType 		theKeyType 		= null;
-		private KeyGenerator	theGenerator 	= null;
-		private SymKeyGenerator theNext			= null;
+		private final SymKeyType 		theKeyType;
+		private final KeyGenerator		theGenerator;
+		private final SymKeyGenerator	theNext;
+		private	final int				theKeyLen;
 		
 		/**
 		 * Constructor
 		 * @param pKeyType the symmetric key type
+		 * @param pKeyLen the keyLength
 		 * @param pRandom the SecureRandom instance
 		 */
 		private SymKeyGenerator(SymKeyType 		pKeyType,
+								int				pKeyLen,
 								SecureRandom	pRandom) throws Exception {
 			/* Protect against Exceptions */
 			try {
 				/* Create the key generator */
 				theKeyType 		= pKeyType;
+				theKeyLen		= pKeyLen;
 				theGenerator 	= KeyGenerator.getInstance(pKeyType.getAlgorithm(), 
 						  								   SecurityControl.BCSIGN);
-				theGenerator.init(pKeyType.getKeySize(), pRandom);
+				theGenerator.init(pKeyLen, pRandom);
 				
 				/* Add to the list of generators */
 				theNext			= theGenerators;
@@ -261,10 +299,12 @@ public class SymmetricKey {
 		/**
 		 * Generate a new key of the specified type
 		 * @param pKeyType the symmetric key type
+		 * @param pKeyLen the keyLength
 		 * @param pRandom the SecureRandom instance
 		 * @return the new key
 		 */
 		private static SecretKey getInstance(SymKeyType 	pKeyType,
+											 int			pKeyLen,
 											 SecureRandom	pRandom) throws Exception {
 			SymKeyGenerator myCurr;
 			SecretKey		myKey;
@@ -274,13 +314,17 @@ public class SymmetricKey {
 				 myCurr != null; 
 				 myCurr  = myCurr.theNext) {
 				/* If we have found the type break the loop */
-				if (myCurr.theKeyType == pKeyType) break;
+				if ((myCurr.theKeyType	== pKeyType) &&
+					(myCurr.theKeyLen	== pKeyLen))
+						break;
 			}
 			
 			/* If we have not found the generator */
 			if (myCurr == null) {
 				/* Create a new generator */
-				myCurr = new SymKeyGenerator(pKeyType, pRandom);
+				myCurr = new SymKeyGenerator(pKeyType, 
+											 pKeyLen, 
+											 pRandom);
 			}
 			
 			/* Generate the Secret key */
@@ -319,12 +363,12 @@ public class SymmetricKey {
 	 * Symmetric key types
 	 */
 	public enum SymKeyType {
-		AES(1, 256, IVSIZE),
-		TwoFish(2, 256, IVSIZE),
-		Serpent(3, 256, IVSIZE),
-		CAMELLIA(4, 256, IVSIZE),
-		RC6(5, 256, IVSIZE),
-		CAST6(6, 256, IVSIZE);
+		AES(1),
+		TwoFish(2),
+		Serpent(3),
+		CAMELLIA(4),
+		RC6(5),
+		CAST6(6);
 		
 		/**
 		 * Symmetric full algorithm
@@ -334,24 +378,18 @@ public class SymmetricKey {
 		/**
 		 * Key values 
 		 */
-		private int theId = 0;
-		private int theKeySize = 0;
-		private int theIvLen = 0;
+		private final int theId;
 		
 		/* Access methods */
 		public int 		getId() 		{ return theId; }
-		public int 		getKeySize() 	{ return theKeySize; }
-		public int 		getIvLen() 		{ return theIvLen; }
 		public String 	getAlgorithm() 	{ return toString(); }
 		public String 	getCipher() 	{ return getAlgorithm() + FULLALGORITHM; }
 		
 		/**
 		 * Constructor
 		 */
-		private SymKeyType(int id, int keySize, int IvLen) {
+		private SymKeyType(int id) {
 			theId 		= id;
-			theKeySize 	= keySize;
-			theIvLen	= IvLen;
 		}
 		
 		/**

@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 
 import javax.swing.GroupLayout;
@@ -11,13 +13,9 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.LayoutStyle;
-import javax.swing.SpinnerDateModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
@@ -33,14 +31,13 @@ import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.ErrorPanel;
 import uk.co.tolcroft.models.ui.RenderData;
 import uk.co.tolcroft.models.ui.SaveButtons;
+import uk.co.tolcroft.models.ui.DateSelect.CalendarButton;
+import uk.co.tolcroft.models.ui.DateSelect.DateModel;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 import uk.co.tolcroft.models.views.ViewList;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 
-public class MaintAccount implements ActionListener,
-									 ItemListener,
-									 ChangeListener,
-									 stdPanel {
+public class MaintAccount implements stdPanel {
 	/* Properties */
 	private MaintenanceTab		theParent		= null;
 	private JPanel              thePanel		= null;
@@ -63,8 +60,8 @@ public class MaintAccount implements ActionListener,
 	private JComboBox			theTypesBox		= null;
 	private JComboBox			theParentBox	= null;
 	private JComboBox			theAliasBox		= null;
-	private JSpinner			theSpinner		= null;
-	private SpinnerDateModel	theModel		= null;
+	private CalendarButton		theMatButton	= null;
+	private DateModel			theDateModel	= null;
 	private JLabel				theTypLabel		= null;
 	private JLabel				theParLabel		= null;
 	private JLabel				theAlsLabel		= null;
@@ -130,8 +127,8 @@ public class MaintAccount implements ActionListener,
 		theAlsLabel	= new JLabel("Alias:");
 		myFirst	 	= new JLabel("FirstEvent:");
 		myLast 	 	= new JLabel("LastEvent:");
-		theFirst 	= new JLabel("01-01-2000");
-		theLast  	= new JLabel("01-01-2000");
+		theFirst 	= new JLabel("01-Jan-2000");
+		theLast  	= new JLabel("01-Jan-2000");
 		myWebSite 	= new JLabel("WebSite:");
 		myCustNo 	= new JLabel("CustomerNo:");
 		myUserId 	= new JLabel("UserId:");
@@ -177,34 +174,36 @@ public class MaintAccount implements ActionListener,
 		myDefValue = new String(myDefChars);
 		theTypesBox.setPrototypeDisplayValue(myDefValue);
 		
-		/* Create the spinner */
-		theModel    = new SpinnerDateModel();
-		theSpinner  = new JSpinner(theModel);
-		theSpinner.setEditor(new JSpinner.DateEditor(theSpinner, "dd-MMM-yyyy"));
+		/* Create the Maturity Button */
+		theMatButton  = new CalendarButton();
+		theDateModel  = theMatButton.getDateModel();
 		
 		/* Create the buttons */
 		theInsButton  = new JButton("New");
 		theDelButton  = new JButton();
 		theClsButton  = new JButton();
 		theUndoButton = new JButton("Undo");
+
+		/* Create the listener */
+		AccountListener myListener = new AccountListener();
 		
 		/* Add listeners */
-		theName.addActionListener(this);
-		theDesc.addActionListener(this);
-		theWebSite.addActionListener(this);
-		theCustNo.addActionListener(this);
-		theUserId.addActionListener(this);
-		thePassword.addActionListener(this);
-		theActDetail.addActionListener(this);
-		theNotes.addActionListener(this);
-		theTypesBox.addItemListener(this);
-		theParentBox.addItemListener(this);
-		theAliasBox.addItemListener(this);
-		theModel.addChangeListener(this);
-		theInsButton.addActionListener(this);
-		theDelButton.addActionListener(this);
-		theClsButton.addActionListener(this);
-		theUndoButton.addActionListener(this);
+		theName.addActionListener(myListener);
+		theDesc.addActionListener(myListener);
+		theWebSite.addActionListener(myListener);
+		theCustNo.addActionListener(myListener);
+		theUserId.addActionListener(myListener);
+		thePassword.addActionListener(myListener);
+		theActDetail.addActionListener(myListener);
+		theNotes.addActionListener(myListener);
+		theTypesBox.addItemListener(myListener);
+		theParentBox.addItemListener(myListener);
+		theAliasBox.addItemListener(myListener);
+		theMatButton.addPropertyChangeListener(CalendarButton.valueDATE, myListener);
+		theInsButton.addActionListener(myListener);
+		theDelButton.addActionListener(myListener);
+		theClsButton.addActionListener(myListener);
+		theUndoButton.addActionListener(myListener);
 		
 		/* Create the Account Selection panel */
 		theSelect = new AccountSelect(theView, this, true);
@@ -340,7 +339,7 @@ public class MaintAccount implements ActionListener,
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(theMatLabel)
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(theSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                .addComponent(theMatButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                             .addGroup(myLayout.createSequentialGroup()
                                	.addComponent(theParentBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
@@ -360,7 +359,7 @@ public class MaintAccount implements ActionListener,
                     .addComponent(myName)
                     .addComponent(theName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(theMatLabel)
-                    .addComponent(theSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(theMatButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(myDesc)
@@ -779,14 +778,14 @@ public class MaintAccount implements ActionListener,
 		
 			/* Handle maturity */
 			if (myType.isBond()) {
-				theModel.setValue(theAccount.getMaturity().getDate());
-				theSpinner.setVisible(true);
 				theMatLabel.setVisible(true);
-				theSpinner.setEnabled(!isClosed);
-				RenderData.formatComponent(theSpinner, Account.FIELD_MATURITY, theAccount, false, false);
+				theDateModel.setSelectedDate(theAccount.getMaturity().getDate());
+				theMatButton.setVisible(true);
+				theMatButton.setEnabled(!isClosed);
+				RenderData.formatComponent(theMatButton, Account.FIELD_MATURITY, theAccount, false, false);
 			}
 			else {
-				theSpinner.setVisible(false);
+				theMatButton.setVisible(false);
 				theMatLabel.setVisible(false);
 			}
 		
@@ -860,12 +859,12 @@ public class MaintAccount implements ActionListener,
 
 			/* Set the First Event */
 			theFirst.setText((theAccount.getEarliest() != null)
-								? theAccount.getEarliest().getDate().formatDate(false) 
+								? theAccount.getEarliest().getDate().formatDate() 
 								: "N/A");
 			
 			/* Set the First Event */
 			theLast.setText((theAccount.getLatest() != null)
-								? theAccount.getLatest().getDate().formatDate(false) 
+								? theAccount.getLatest().getDate().formatDate() 
 								: "N/A");
 			
 			/* Set text for close button */
@@ -920,109 +919,13 @@ public class MaintAccount implements ActionListener,
 			theParentBox.setVisible(false);
 			theAlsLabel.setVisible(false);
 			theAliasBox.setVisible(false);
-			theSpinner.setVisible(false);
+			theMatButton.setVisible(false);
 			theMatLabel.setVisible(false);
 			theTypLabel.setVisible(false);
 			theTypesBox.setVisible(false);
 		}
 	}
 	
-	/* ItemStateChanged listener event */
-	public void itemStateChanged(ItemEvent evt) {
-		String                myName;
-
-		/* Ignore selection if refreshing data */
-		if (refreshingData) return;
-		
-		/* Push history */
-		theAccount.pushHistory();
-		
-		/* Protect against exceptions */
-		try {
-			/* If this event relates to the period box */
-			if (evt.getSource() == (Object)theTypesBox) {
-				myName = (String)evt.getItem();
-				if (evt.getStateChange() == ItemEvent.SELECTED) {
-					/* Store the appropriate value */
-					theAccount.setActType(theAcTypList.searchFor(myName));
-				
-					/* If the account is now a bond */
-					if (theAccount.isBond()) {
-						/* If it doesn't have a maturity */
-						if (theAccount.getMaturity() == null) {
-							/* Create a default maturity */
-							theAccount.setMaturity(new Date());
-							theAccount.getMaturity().adjustYear(1);
-						}
-					}
-				
-					/* Else set maturity to null for non-bonds */
-					else theAccount.setMaturity(null);	
-				
-					/* Set parent to null for non-child accounts */
-					if (!theAccount.isChild()) theAccount.setParent(null);
-				
-					/* Update text */
-					updateText();
-				}
-			}
-	
-			/* If this event relates to the parent box */
-			else if (evt.getSource() == (Object)theParentBox) {
-				myName = (String)evt.getItem();
-				if (evt.getStateChange() == ItemEvent.SELECTED) {
-					/* Store the appropriate value */
-					theAccount.setParent(theAccounts.searchFor(myName));
-				
-					/* Update text */
-					updateText();
-				}
-			}
-			
-			/* If this event relates to the alias box */
-			else if (evt.getSource() == (Object)theAliasBox) {
-				myName = (String)evt.getItem();
-				if (evt.getStateChange() == ItemEvent.SELECTED) {
-					/* Store the appropriate value */
-					theAccount.setAlias(theAccounts.searchFor(myName));
-				
-					/* Update text */
-					updateText();
-				}
-			}
-		}
-		
-		
-		/* Handle Exceptions */
-		catch (Throwable e) {
-			/* Reset values */
-			theAccount.popHistory();
-			theAccount.pushHistory();
-			
-			/* Build the error */
-			Exception myError = new Exception(ExceptionClass.DATA,
-									          "Failed to update field",
-									          e);
-			
-			/* Show the error */
-			theError.setError(myError);
-		}
-		
-		/* Check for changes */
-		if (theAccount.checkForHistory()) {
-			/* Note that the item has changed */
-			theAccount.setState(DataState.CHANGED);
-
-			/* validate it */
-			theAccount.clearErrors();
-			theAccount.validate();
-			
-			/* Note that changes have occurred */
-			notifyChanges();
-			updateDebug();
-		}
-	}
-
 	/* Delete New Account */
 	private void delNewAccount() {
 		/* Set the previously selected account */
@@ -1135,155 +1038,255 @@ public class MaintAccount implements ActionListener,
 			delNewAccount();
 		}
 	}
-	
-	/* ActionPerformed listener event */
-	public void actionPerformed(ActionEvent evt) {			
-		/* If this event relates to the new button */
-		if (evt.getSource() == (Object)theInsButton) {
-			/* Create the new account */
-			newAccount();
-			return;
-		}
-		
-		/* If this event relates to the del button */
-		else if (evt.getSource() == (Object)theDelButton) {
-			/* else if this is a new account */
-			if (theAccount.getState() == DataState.NEW) {
-				/* Delete the new account */
-				delNewAccount();
-			}
-			
-			/* Else we should just delete/recover the account */
-			else {
-				/* Set the appropriate state */
-				theAccount.setState(theAccount.isDeleted() ? DataState.RECOVERED
-														   : DataState.DELETED);
-				
-				/* Notify changes */
-				notifyChanges();
-				updateDebug();
-			}
-			return;
-		}
-		
-		/* If this event relates to the undo button */
-		else if (evt.getSource() == (Object)theUndoButton) {
-			/* Undo the changes */
-			undoChanges();
-			return;
-		}
-		
-		/* Push history */
-		theAccount.pushHistory();
-		
-		/* Protect against exceptions */
-		try {
-			/* If this event relates to the name field */
-			if ((evt.getSource() == (Object)theName)      ||
-				(evt.getSource() == (Object)theDesc)      ||
-				(evt.getSource() == (Object)theWebSite)   ||
-				(evt.getSource() == (Object)theCustNo)    ||
-				(evt.getSource() == (Object)theUserId)    ||
-				(evt.getSource() == (Object)thePassword)  ||
-				(evt.getSource() == (Object)theActDetail) ||
-				(evt.getSource() == (Object)theNotes)) {
-				/* Update the text */
-				updateText();
-			}
-		
-			/* If this event relates to the close button */
-			else if (evt.getSource() == (Object)theClsButton) {
-				/* Re-open or close the account as required */
-				if (theAccount.isClosed()) 	theAccount.reOpenAccount();
-				else						theAccount.closeAccount();
-			
-				/* Update the text */
-				updateText();
-			}	
-		}
-		
-		/* Handle Exceptions */
-		catch (Throwable e) {
-			/* Reset values */
-			theAccount.popHistory();
-			theAccount.pushHistory();
-			
-			/* Build the error */
-			Exception myError = new Exception(ExceptionClass.DATA,
-									          "Failed to update field",
-									          e);
-			
-			/* Show the error */
-			theError.setError(myError);
-		}
-		
-		/* Check for changes */
-		if (theAccount.checkForHistory()) {
-			/* Note that the item has changed */
-			theAccount.setState(DataState.CHANGED);
-			
-			/* validate it */
-			theAccount.clearErrors();
-			theAccount.validate();
-			
-			/* Note that changes have occurred */
-			notifyChanges();
-			updateDebug();
-		}
-	}	
-	
-	/* stateChanged listener event */
-	public void stateChanged(ChangeEvent evt) {
-		Date myDate;
 
-		/* Ignore selection if refreshing data */
-		if (refreshingData) return;
-		
-		/* If this event relates to the maturity box */
-		if (evt.getSource() == (Object)theModel) {
-			/* Access the value */
-			myDate = new Date(theModel.getDate());
+	/**
+	 * AccountListener class
+	 */
+	private class AccountListener implements ActionListener,
+	 										 ItemListener,
+	 										 PropertyChangeListener {
+		@Override
+		public void itemStateChanged(ItemEvent evt) {
+			String	myName;
+			Object	o	= evt.getSource();
 
+			/* Ignore selection if refreshing data */
+			if (refreshingData) return;
+		
 			/* Push history */
 			theAccount.pushHistory();
-			
+		
 			/* Protect against exceptions */
 			try {
-				/* Store the appropriate value */
-				theAccount.setMaturity(myDate);    
-		
-				/* Update the text */
-				updateText();
-			}	
+				/* If this event relates to the period box */
+				if (o == theTypesBox) {
+					if (evt.getStateChange() == ItemEvent.SELECTED) {
+						/* Store the appropriate value */
+						myName = (String)evt.getItem();
+						theAccount.setActType(theAcTypList.searchFor(myName));
+				
+						/* If the account is now a bond */
+						if (theAccount.isBond()) {
+							/* If it doesn't have a maturity */
+							if (theAccount.getMaturity() == null) {
+								/* Create a default maturity */
+								theAccount.setMaturity(new Date());
+								theAccount.getMaturity().adjustYear(1);
+							}
+						}
+				
+						/* Else set maturity to null for non-bonds */
+						else theAccount.setMaturity(null);	
+				
+						/* Set parent to null for non-child accounts */
+						if (!theAccount.isChild()) theAccount.setParent(null);
+				
+						/* Update text */
+						updateText();
+					}
+				}
+	
+				/* If this event relates to the parent box */
+				else if (o == theParentBox) {
+					if (evt.getStateChange() == ItemEvent.SELECTED) {
+						/* Store the appropriate value */
+						myName = (String)evt.getItem();
+						theAccount.setParent(theAccounts.searchFor(myName));
+				
+						/* Update text */
+						updateText();
+					}
+				}
 			
+				/* If this event relates to the alias box */
+				else if (o == theAliasBox) {
+					if (evt.getStateChange() == ItemEvent.SELECTED) {
+						/* Store the appropriate value */
+						myName = (String)evt.getItem();
+						theAccount.setAlias(theAccounts.searchFor(myName));
+				
+						/* Update text */
+						updateText();
+					}
+				}
+			}
+		
 			/* Handle Exceptions */
 			catch (Throwable e) {
 				/* Reset values */
 				theAccount.popHistory();
 				theAccount.pushHistory();
-				
+			
 				/* Build the error */
 				Exception myError = new Exception(ExceptionClass.DATA,
-										          "Failed to update field",
-										          e);
-				
+												  "Failed to update field",
+												  e);
+			
 				/* Show the error */
 				theError.setError(myError);
 			}
-			
+		
 			/* Check for changes */
 			if (theAccount.checkForHistory()) {
 				/* Note that the item has changed */
 				theAccount.setState(DataState.CHANGED);
-				
+
 				/* validate it */
 				theAccount.clearErrors();
 				theAccount.validate();
-				
+			
 				/* Note that changes have occurred */
 				notifyChanges();
 				updateDebug();
 			}
-		}								
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent evt) {
+			Object o = evt.getSource();
+		
+			/* If this event relates to the new button */
+			if (o == theInsButton) {
+				/* Create the new account */
+				newAccount();
+				return;
+			}
+		
+			/* If this event relates to the del button */
+			else if (o == theDelButton) {
+				/* else if this is a new account */
+				if (theAccount.getState() == DataState.NEW) {
+					/* Delete the new account */
+					delNewAccount();
+				}
+			
+				/* Else we should just delete/recover the account */
+				else {
+					/* Set the appropriate state */
+					theAccount.setState(theAccount.isDeleted() ? DataState.RECOVERED
+															   : DataState.DELETED);
+				
+					/* Notify changes */
+					notifyChanges();
+					updateDebug();
+				}
+				return;
+			}
+		
+			/* If this event relates to the undo button */
+			else if (o == theUndoButton) {
+				/* Undo the changes */
+				undoChanges();
+				return;
+			}
+		
+			/* Push history */
+			theAccount.pushHistory();
+		
+			/* Protect against exceptions */
+			try {
+				/* If this event relates to the name field */
+				if ((o == theName)      ||
+					(o == theDesc)      ||
+					(o == theWebSite)   ||
+					(o == theCustNo)    ||
+					(o == theUserId)    ||
+					(o == thePassword)  ||
+					(o == theActDetail) ||
+					(o == theNotes)) {
+					/* Update the text */
+					updateText();
+				}
+		
+				/* If this event relates to the close button */
+				else if (o == theClsButton) {
+					/* Re-open or close the account as required */
+					if (theAccount.isClosed()) 	theAccount.reOpenAccount();
+					else						theAccount.closeAccount();
+			
+					/* Update the text */
+					updateText();
+				}	
+			}
+		
+			/* Handle Exceptions */
+			catch (Throwable e) {
+				/* Reset values */
+				theAccount.popHistory();
+				theAccount.pushHistory();
+			
+				/* Build the error */
+				Exception myError = new Exception(ExceptionClass.DATA,
+									          	  "Failed to update field",
+									          	  e);
+			
+				/* Show the error */
+				theError.setError(myError);
+			}
+		
+			/* Check for changes */
+			if (theAccount.checkForHistory()) {
+				/* Note that the item has changed */
+				theAccount.setState(DataState.CHANGED);
+			
+				/* validate it */
+				theAccount.clearErrors();
+				theAccount.validate();
+			
+				/* Note that changes have occurred */
+				notifyChanges();
+				updateDebug();
+			}
+		}	
+	
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			/* If this event relates to the maturity box */
+			if (evt.getSource() == (Object)theMatButton) {
+				/* Access the value */
+				Date myDate = new Date(theDateModel.getSelectedDate());
+
+				/* Push history */
+				theAccount.pushHistory();
+			
+				/* Protect against exceptions */
+				try {
+					/* Store the appropriate value */
+					theAccount.setMaturity(myDate);    
+		
+					/* Update the text */
+					updateText();
+				}	
+			
+				/* Handle Exceptions */
+				catch (Throwable e) {
+					/* Reset values */
+					theAccount.popHistory();
+					theAccount.pushHistory();
+				
+					/* Build the error */
+					Exception myError = new Exception(ExceptionClass.DATA,
+													  "Failed to update field",
+													  e);
+				
+					/* Show the error */
+					theError.setError(myError);
+				}
+			
+				/* Check for changes */
+				if (theAccount.checkForHistory()) {
+					/* Note that the item has changed */
+					theAccount.setState(DataState.CHANGED);
+				
+					/* validate it */
+					theAccount.clearErrors();
+					theAccount.validate();
+				
+					/* Note that changes have occurred */
+					notifyChanges();
+					updateDebug();
+				}
+			}	
+		}
 	}
 }

@@ -122,6 +122,7 @@ public class AsymmetricKey {
 	 * Constructor from public KeySpec
 	 * @param pKeySpec the public KeySpec 
 	 * @param pKeyType the key type 
+	 * @param useRestricted use restricted keys
 	 * @param pRandom the secure random generator 
 	 */
 	public AsymmetricKey(byte[]			pKeySpec,
@@ -143,8 +144,9 @@ public class AsymmetricKey {
 	}
 	
 	/**
-	 * Constructor from Security Signature
-	 * @param pSignature the signature 
+	 * Constructor from full specification
+	 * @param pPrivateKey the private KeySpec 
+	 * @param pPublicKey the public KeySpec 
 	 * @param pKeyType the key type 
 	 * @param pRandom the secure random generator 
 	 */
@@ -212,8 +214,11 @@ public class AsymmetricKey {
 	/**
 	 * Get CipherSet for partner Elliptic Curve
 	 * @param pPartner partner asymmetric key
+	 * @param useRestricted use restricted keys
+	 * @returns the new CipherSet
 	 */
-	public CipherSet getCipherSet(AsymmetricKey pPartner) throws Exception {
+	public CipherSet getCipherSet(AsymmetricKey pPartner,
+								  boolean		useRestricted) throws Exception {
 		/* Look for an already resolved CipherSet */
 		CipherSet mySet = theMap.get(pPartner);
 		
@@ -224,7 +229,7 @@ public class AsymmetricKey {
 		byte[] mySecret = getSharedSecret(pPartner);
 		
 		/* Build the CipherSet */
-		mySet = new CipherSet(theRandom, CipherSet.DEFSTEPS);
+		mySet = new CipherSet(theRandom, useRestricted, CipherSet.DEFSTEPS);
 		
 		/* Apply the Secret */
 		mySet.buildCiphers(mySecret);
@@ -238,13 +243,14 @@ public class AsymmetricKey {
 	
 	/**
 	 * Get CipherSet for internal Elliptic Curve
+	 * @param useRestricted use restricted keys
 	 */
-	private CipherSet getCipherSet() throws Exception {
+	private CipherSet getCipherSet(boolean useRestricted) throws Exception {
 		/* Return PreExisting set */
 		if (theCipherSet != null) return theCipherSet;
 		
 		/* Build the internal CipherSet */
-		theCipherSet = getCipherSet(this);
+		theCipherSet = getCipherSet(this, useRestricted);
 		
 		/* Return the Cipher Set */
 		return theCipherSet;
@@ -253,10 +259,12 @@ public class AsymmetricKey {
 	/**
 	 * Rebuild a SymmetricKey from secured key definition
 	 * @param pSecuredKeyDef the secured key definition
+	 * @param useRestricted use restricted keys
 	 * @param pKeyType the Symmetric key type
 	 * @return the Symmetric key
 	 */
 	public SymmetricKey	getSymmetricKey(byte[] 		pSecuredKeyDef,
+										boolean		useRestricted,
 										SymKeyType	pKeyType) throws Exception {
 		SymmetricKey 	mySymKey;
 		CipherSet		mySet;
@@ -273,7 +281,7 @@ public class AsymmetricKey {
 			/* If we are elliptic */
 			if (theKeyType.isElliptic()) {
 				/* Access the internal CipherSet */
-				mySet = getCipherSet();
+				mySet = getCipherSet(useRestricted);
 
 				/* Unwrap the Key */
 				mySymKey = mySet.unWrapKey(pSecuredKeyDef, pKeyType);
@@ -311,9 +319,11 @@ public class AsymmetricKey {
 	/**
 	 * Get the Secured Key Definition for a Symmetric Key
 	 * @param pKey the Symmetric Key to secure
+	 * @param useRestricted use restricted keys
 	 * @return the secured key definition
 	 */
-	public byte[] getSecuredKeyDef(SymmetricKey 	pKey) throws Exception {
+	public byte[] getSecuredKeyDef(SymmetricKey pKey,
+			  					   boolean		useRestricted) throws Exception {
 		byte[] 		myWrappedKey;
 		Cipher		myCipher;
 		CipherSet	mySet;
@@ -323,7 +333,7 @@ public class AsymmetricKey {
 			/* If we are elliptic */
 			if (theKeyType.isElliptic()) {
 				/* Access the internal CipherSet */
-				mySet = getCipherSet();
+				mySet = getCipherSet(useRestricted);
 
 				/* Wrap the Key */
 				myWrappedKey = mySet.wrapKey(pKey);
@@ -511,11 +521,13 @@ public class AsymmetricKey {
 	 * Encrypt string
 	 * @param pString string to encrypt
 	 * @param pTarget target partner of encryption
+	 * @param useRestricted use restricted keys
 	 * @return Encrypted bytes
 	 * @throws Exception 
 	 */
 	public byte[] encryptString(String 			pString,
-								AsymmetricKey	pTarget) throws Exception {
+								AsymmetricKey	pTarget,
+								boolean			useRestricted) throws Exception {
 		/* Target must be identical key type */
 		if (pTarget.theKeyType != theKeyType) 
 			throw new Exception(ExceptionClass.LOGIC,
@@ -526,7 +538,7 @@ public class AsymmetricKey {
 			/* If we are elliptic */
 			if (theKeyType.isElliptic()) {
 				/* Access the target CipherSet */
-				CipherSet mySet = getCipherSet(pTarget);
+				CipherSet mySet = getCipherSet(pTarget, useRestricted);
 
 				/* Encrypt the string */
 				return mySet.encryptString(pString);
@@ -624,11 +636,13 @@ public class AsymmetricKey {
 	 * Decrypt string
 	 * @param pBytes encrypted string to decrypt
 	 * @param pSource source partner of encryption
+	 * @param useRestricted use restricted keys
 	 * @return Decrypted string
 	 * @throws Exception 
 	 */
 	public String decryptString(byte[] 			pBytes,
-								AsymmetricKey	pSource) throws Exception {
+								AsymmetricKey	pSource,
+								boolean			useRestricted) throws Exception {
 		/* Cannot decrypt unless we have the private key */
 		if (isPublicOnly())
 			throw new Exception(ExceptionClass.LOGIC,
@@ -644,7 +658,7 @@ public class AsymmetricKey {
 			/* If we are elliptic */
 			if (theKeyType.isElliptic()) {
 				/* Access the required CipherSet */
-				CipherSet mySet = getCipherSet(pSource);
+				CipherSet mySet = getCipherSet(pSource, useRestricted);
 
 				/* Decrypt the string */
 				return mySet.decryptString(pBytes);

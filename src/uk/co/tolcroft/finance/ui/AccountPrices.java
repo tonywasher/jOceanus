@@ -406,8 +406,8 @@ public class AccountPrices extends StdTable<AcctPrice> {
 		private static final long serialVersionUID = -851990835577845594L;
 
 		/* Renderers/Editors */
-		private Renderer.DateCell 			theDateRenderer  	= null;
-		private Editor.DateCell 			theDateEditor    	= null;
+		private Renderer.CalendarCell 		theDateRenderer  	= null;
+		private Editor.CalendarCell 		theDateEditor    	= null;
 		private Renderer.PriceCell 			thePriceRenderer 	= null;
 		private Editor.PriceCell			thePriceEditor   	= null;
 		private Renderer.DilutionCell 		theDiluteRenderer 	= null;
@@ -421,8 +421,8 @@ public class AccountPrices extends StdTable<AcctPrice> {
 		 */
 		private pricesColumnModel() {		
 			/* Create the relevant formatters/editors */
-			theDateRenderer  	= new Renderer.DateCell();
-			theDateEditor    	= new Editor.DateCell();
+			theDateRenderer  	= new Renderer.CalendarCell();
+			theDateEditor    	= new Editor.CalendarCell();
 			thePriceRenderer 	= new Renderer.PriceCell();
 			thePriceEditor  	= new Editor.PriceCell();
 			theDiluteRenderer 	= new Renderer.DilutionCell();

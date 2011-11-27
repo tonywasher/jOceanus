@@ -28,8 +28,8 @@ public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
 		/* Create the status */
 		theStatus = new ThreadStatus<T>(this, theControl);
 
-		/* Initialise the status window */
-		initStatusBar("Creating Extract");
+		/* Show the status window */
+		showStatusBar();
 	}
 
 	/* Background task (Worker Thread)*/
@@ -42,6 +42,9 @@ public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
 
 		/* Catch Exceptions */
 		try {
+			/* Initialise the status window */
+			theStatus.initTask("Creating Extract");
+
 			/* Determine the name of the file to build */
 			BackupCreate myDialog = new BackupCreate(theControl);
 			myDialog.selectFile();
@@ -63,9 +66,9 @@ public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
 			/* File created, so delete on error */
 			doDelete = true;
 
-			/* Re-initialise the status window */
-			initStatusBar("Reading Extract");
-		
+			/* Initialise the status window */
+			theStatus.initTask("Reading Extract");
+
 			/* .xls will have been added to the file */
 			myFile 	= new File(myFile.getPath() + ".xls");
 
@@ -73,14 +76,14 @@ public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
 			myData   = mySheet.loadExtract(theStatus, 
 										   myFile);
 
-			/* Re-initialise the status window */
-			initStatusBar("Re-applying Security");
+			/* Initialise the status window */
+			theStatus.initTask("Re-applying Security");
 		
 			/* Initialise the security, from the original data */
 			myData.initialiseSecurity(theStatus, theControl.getData());
 			
-			/* Re-initialise the status window */
-			initStatusBar("Verifying Extract");
+			/* Initialise the status window */
+			theStatus.initTask("Verifying Extract");
 		
 			/* Analyse the Data to ensure that close dates are updated */
 			myData.analyseData(theControl);

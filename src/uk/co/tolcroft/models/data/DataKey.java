@@ -284,7 +284,7 @@ public class DataKey extends DataItem<DataKey> {
 		if (getId() != myThat.getId()) 		 		return false;
 		
 		/* Compare the changeable values */
-		return getValues().histEquals(myThat.getValues());
+		return getValues().histEquals(myThat.getValues()).isIdentical();
 	}
 
 	/**
@@ -574,12 +574,25 @@ public class DataKey extends DataItem<DataKey> {
 		public Values(Values pValues) { copyFrom(pValues); }
 		
 		/* Check whether this object is equal to that passed */
-		public boolean histEquals(HistoryValues<DataKey> pCompare) {
-			Values myValues = (Values)pCompare;
-			if (ControlKey.differs(theControlKey, myValues.theControlKey).isDifferent())	return false;
-			if (Utils.differs(theSecuredKeyDef,   myValues.theSecuredKeyDef).isDifferent()) return false;
-			if (!theKeyType.equals(myValues.theKeyType)) 									return false;
-			return true;
+		public Difference histEquals(HistoryValues<DataKey> pCompare) {
+			/* Make sure that the object is the same class */
+			if (pCompare.getClass() != this.getClass()) return Difference.Different;
+			
+			/* Cast correctly */
+			Values 		myValues 		= (Values)pCompare;
+			Difference 	myDifference 	= Difference.Identical;
+			
+			/* Test the standard fields */
+			if ((!theKeyType.equals(myValues.theKeyType)) ||
+				(Utils.differs(theSecuredKeyDef,   myValues.theSecuredKeyDef).isDifferent()))
+				myDifference = Difference.Different;
+			
+			/* Test underlying item differences */
+			if (myDifference.isIdentical()) 
+				myDifference = ControlKey.differs(theControlKey, myValues.theControlKey);
+			
+			/* Return the differences */
+			return myDifference;
 		}
 		
 		/* Copy values */

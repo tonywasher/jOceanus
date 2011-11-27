@@ -18,9 +18,10 @@ public class PasswordKey {
 	/**
 	 * Password Based Encryption algorithms
 	 */
-	private final static String algoAES 			= "PBEWITHSHA256AND256BITAES-CBC-BC";
+	private final static String algoAES 			= "PBEWITHSHA256AND128BITAES-CBC-BC";
 	private final static String algoTwofish			= "PBEWithSHAAndTwofish-CBC";
-	private final static String algoDESede			= "PBEWithSHAAnd3-KeyTripleDES-CBC";
+	private final static String algo3KDES			= "PBEWithSHAAnd3-KeyTripleDES-CBC";
+	private final static String algoRC2				= "PBEWithSHAAnd128BitRC2-CBC";
 	
 	/**
 	 * Mode length for passwords 
@@ -92,13 +93,15 @@ public class PasswordKey {
 	/**
 	 * Constructor for a completely new password key 
 	 * @param pPassword the password (cleared after usage)
+	 * @param useRestricted use restricted keys
 	 * @param pRandom Secure Random byte generator
 	 */
 	protected PasswordKey(char[] 			pPassword,
+						  boolean			useRestricted,
 						  SecureRandom		pRandom) throws WrongPasswordException,
 						  									Exception {
 		/* Create a random ControlMode */
-		theKeyMode 	= PBEKeyMode.getMode(pRandom);
+		theKeyMode 	= PBEKeyMode.getMode(useRestricted, pRandom);
 		
 		/* Store the secure random generator */
 		theRandom	= pRandom;
@@ -145,9 +148,10 @@ public class PasswordKey {
 		try {
 			/* Store the secure random generator */
 			theRandom = pSource.theRandom;
+			boolean useRestricted = pSource.getKeyMode().useRestricted();
 			
 			/* Create a random ControlMode */
-			theKeyMode = PBEKeyMode.getMode(theRandom);
+			theKeyMode = PBEKeyMode.getMode(useRestricted, theRandom);
 			
 			/* Validate the password */
 			setPassword(myPassword);
@@ -265,7 +269,9 @@ public class PasswordKey {
 			theSecretHash = myCipher.doFinal(theSecretHash);
 			
 			/* Create the Cipher Set */
-			theCipherSet = new CipherSet(theRandom, CipherSet.DEFSTEPS);
+			theCipherSet = new CipherSet(theRandom, 
+										 theKeyMode.useRestricted(), 
+										 CipherSet.DEFSTEPS);
 			theCipherSet.buildCiphers(theSecretHash);
 			
 			/* Encrypt the password */
@@ -591,7 +597,8 @@ public class PasswordKey {
 	public enum PBEKeyType {
 		AES(1,algoAES),
 		TwoFish(2,algoTwofish),
-		DESede(3,algoDESede);
+		TripleDES(3,algo3KDES),
+		RC2(4,algoRC2);
 		
 		/**
 		 * Key values 

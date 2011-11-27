@@ -15,8 +15,9 @@ import uk.co.tolcroft.finance.data.TaxYear;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
-public class TaxYearSelect implements ItemListener {
+public class TaxYearSelect {
 	/* Members */
+	private TaxYearSelect	theSelf			= this;
 	private JPanel			thePanel		= null;
 	private stdPanel		theParent		= null;
 	private View			theView			= null;
@@ -35,7 +36,8 @@ public class TaxYearSelect implements ItemListener {
 	
 	/* Constructor */
 	public TaxYearSelect(View pView, stdPanel pMaint) {
-		JLabel mySelect;
+		JLabel 			mySelect;
+		TaxYearListener myListener = new TaxYearListener();
 		
 		/* Store table and view details */
 		theView 	  = pView;
@@ -58,8 +60,8 @@ public class TaxYearSelect implements ItemListener {
 		theShowDeleted.setSelected(theState.doShowDeleted());
 		
 		/* Add item listeners */
-		theYearsBox.addItemListener(this);
-		theShowDeleted.addItemListener(this);
+		theYearsBox.addItemListener(myListener);
+		theShowDeleted.addItemListener(myListener);
 
 		/* Create the selection panel */
 		thePanel = new JPanel();
@@ -77,7 +79,7 @@ public class TaxYearSelect implements ItemListener {
     			.addComponent(mySelect)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
     			.addComponent(theYearsBox)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
     			.addComponent(theShowDeleted)
                 .addContainerGap())
         );
@@ -172,28 +174,34 @@ public class TaxYearSelect implements ItemListener {
 		refreshingData = false;
 	}
 	
-	/* ItemStateChanged listener event */
-	public void itemStateChanged(ItemEvent evt) {
-		String                myName;
+	/**
+	 * TaxYear Listener class
+	 */
+	private class TaxYearListener implements ItemListener {
+		/* ItemStateChanged listener event */
+		public void itemStateChanged(ItemEvent evt) {
+			Object	o = evt.getSource();
+			
+			/* Ignore selection if refreshing data */
+			if (refreshingData) return;
+		
+			/* If this event relates to the years box */
+			if (o == theYearsBox) {
+				if (evt.getStateChange() == ItemEvent.SELECTED) {
+					String myName = (String)evt.getItem();
 
-		/* Ignore selection if refreshing data */
-		if (refreshingData) return;
-		
-		/* If this event relates to the years box */
-		if (evt.getSource() == (Object)theYearsBox) {
-			myName = (String)evt.getItem();
-			if (evt.getStateChange() == ItemEvent.SELECTED) {
-				/* Select the new year and notify the change */
-				theState.setTaxYear(theTaxYears.searchFor(myName));
-				theParent.notifySelection(this);
+					/* Select the new year and notify the change */
+					theState.setTaxYear(theTaxYears.searchFor(myName));
+					theParent.notifySelection(theSelf);
+				}
 			}
-		}
 		
-		/* If this event relates to the showDeleted box */
-		if (evt.getSource() == (Object)theShowDeleted) {
-			/* Note the new criteria and re-build lists */
-			theState.setDoShowDeleted(theShowDeleted.isSelected());
-			refreshData();
+			/* If this event relates to the showDeleted box */
+			if (o == theShowDeleted) {
+				/* Note the new criteria and re-build lists */
+				theState.setDoShowDeleted(theShowDeleted.isSelected());
+				refreshData();
+			}
 		}
 	}
 

@@ -11,11 +11,11 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.LayoutStyle;
 import javax.swing.Timer;
-import javax.swing.plaf.ProgressBarUI;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
+import uk.co.tolcroft.models.threads.StatusData;
 import uk.co.tolcroft.models.views.DataControl;
 
 public class StatusBar implements ActionListener {
@@ -27,12 +27,13 @@ public class StatusBar implements ActionListener {
 	private JButton               	theCancel	 	= null;
 	private JButton               	theClear	 	= null;
 	private JLabel               	theStageLabel	= null;
-	private JLabel                  theOpnLabel  	= null;
+	private JLabel                  theTaskLabel  	= null;
 	private JLabel                  theStatusLabel  = null;
 	private MainWindow<?>			theControl		= null;
 	private Exception				theError		= null;
 	private Timer					theTimer		= null;
     private DebugEntry				theDebug		= null;
+	private StatusData				theCurrent 		= null;
 	
 	/* Access methods */
 	public  JPanel           	   	getProgressPanel()  { return theProgPanel; }
@@ -42,7 +43,6 @@ public class StatusBar implements ActionListener {
 	/* Constructor */
 	public StatusBar(MainWindow<?> pControl) {
 		GroupLayout 	panelLayout;
-		ProgressBarUI	myUI;
 	
 		/* Record passed parameters */
 		theControl 	= pControl;
@@ -53,22 +53,17 @@ public class StatusBar implements ActionListener {
 		/* Create the boxes */
 		theCancel      = new JButton("Cancel");
 		theClear       = new JButton("Clear");
-		theOpnLabel    = new JLabel();
+		theTaskLabel   = new JLabel();
 		theStageLabel  = new JLabel();
 		theStatusLabel = new JLabel();
 		theStages	   = new JProgressBar();
 		theSteps	   = new JProgressBar();
 
-		/* Create look/feel for progress bars */
-		myUI = new BasicProgressBarUI() { protected Color getSelectionBackground()  { return Color.black; } 
-										  protected Color getSelectionForeground()  { return Color.black; } 
-										};
-		
 		/* Set backgrounds */
 		theStages.setForeground(Color.green);
 		theSteps.setForeground(Color.green);
-		theSteps.setUI(myUI);
-		theStages.setUI(myUI);
+		theSteps.setUI(new ProgressUI());
+		theStages.setUI(new ProgressUI());
 		
 		/* Initialise progress bars */
 		theStages.setMaximum(100);
@@ -98,7 +93,7 @@ public class StatusBar implements ActionListener {
 		    	panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 		            .addGroup(panelLayout.createSequentialGroup()
 		                .addContainerGap()
-		                .addComponent(theOpnLabel)
+		                .addComponent(theTaskLabel)
 		                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 		                .addComponent(theStages)
 		                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
@@ -113,7 +108,7 @@ public class StatusBar implements ActionListener {
 		    	panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 		        	.addGroup(panelLayout.createSequentialGroup()
 		                .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
-		                	.addComponent(theOpnLabel, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+		                	.addComponent(theTaskLabel, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 		                    .addComponent(theStages, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 		                	.addComponent(theStageLabel, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 		                    .addComponent(theSteps, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -145,6 +140,17 @@ public class StatusBar implements ActionListener {
 		                	.addComponent(theStatusLabel, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 		                    .addComponent(theClear, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
 	    );
+	}
+	
+	/**
+	 * ProgressBar UI
+	 */
+	private class ProgressUI extends BasicProgressBarUI {
+		@Override 
+		protected Color getSelectionBackground()  { return Color.black; } 
+		
+		@Override
+		protected Color getSelectionForeground()  { return Color.black; } 
 	}
 	
 	/* actionPerformed listener event */
@@ -184,31 +190,56 @@ public class StatusBar implements ActionListener {
 	}
 	
 	/* Set Operation string */
-	public void setOperation(String pStatus) {
+	//public void setOperation(String pStatus) {
 		/* Set the label field */
-		theOpnLabel.setText(pStatus);
-	}
-	
-	/* Set Stage */
-	public void setStage(String pStage,
-			             int    pStagesDone,
-			             int    pNumStages) {
-		/* Expand stage text to 20 */
-		String myStage = pStage + "                              ";
-		myStage = myStage.substring(0, 20);
+		//theOpnLabel.setText(pStatus);
+	//}
+
+	/**
+	 * Update StatusBar
+	 * @param pStatus
+	 */
+	public void updateStatusBar(StatusData pStatus) {
+		/* Update Task if required */
+		if (pStatus.differTask(theCurrent)) {
+			/* Set Task */
+			theTaskLabel.setText(pStatus.getTask());
+		}
 		
-		/* Set the Stage progress */
-		theStageLabel.setText(pStage);
-		theStages.setMaximum(pNumStages);
-		theStages.setValue(pStagesDone);
-	}
-	
-	/* Set Steps */
-	public void setSteps(int    pStepsDone,
-			             int    pNumSteps) {
-		/* Set the steps progress */
-		theSteps.setMaximum(pNumSteps);
-		theSteps.setValue(pStepsDone);
+		/* Update Stage if required */
+		if (pStatus.differStage(theCurrent)) {
+			/* Expand stage text to 20 */
+			String myStage = pStatus.getStage() + "                              ";
+			myStage = myStage.substring(0, 20);
+			theStageLabel.setText(myStage);
+		}
+		
+		/* Update NumStages if required */
+		if (pStatus.differNumStages(theCurrent)) {
+			/* Set the Stage progress */
+			theStages.setMaximum(pStatus.getNumStages());
+		}
+		
+		/* Update StagesDone if required */
+		if (pStatus.differStagesDone(theCurrent)) {
+			/* Set the Stage progress */
+			theStages.setValue(pStatus.getStagesDone());
+		}
+		
+		/* Update NumSteps if required */
+		if (pStatus.differNumSteps(theCurrent)) {
+			/* Set the Steps progress */
+			theSteps.setMaximum(pStatus.getNumSteps());
+		}
+		
+		/* Update StepsDone if required */
+		if (pStatus.differStepsDone(theCurrent)) {
+			/* Set the Steps progress */
+			theSteps.setValue(pStatus.getStepsDone());
+		}
+		
+		/* Record current status */
+		theCurrent = pStatus;
 	}
 	
 	/* Set Success string */

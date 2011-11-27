@@ -3,6 +3,7 @@ package uk.co.tolcroft.models.ui;
 import java.awt.Color;
 import java.awt.Font;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.table.JTableHeader;
 
@@ -51,6 +52,17 @@ public class RenderData {
 		theRow 			= row;
 		theCol 			= col;
 		this.isSelected = isSelected; }
+	
+	/**
+	 * Process Table Row
+	 */
+	protected void setDefaults() {
+		/* Set the data */
+		theForeGround 	= theStdColor;
+		theBackGround	= theBackColor;
+		theFont			= (isFixed) ? theNumFont : theStdFont;
+		theToolTipText	= null;
+	}
 	
 	/**
 	 * Process Table Row
@@ -179,7 +191,7 @@ public class RenderData {
 			myFore = theNewColor;
 		else if (myState == DataState.RECOVERED)
 			myFore = theRecovColor;
-		
+
 		/* Determine the render information */
 		isChanged 	= pItem.fieldChanged(iField).isDifferent();
 		myFont 		= (isChanged) ? (isFixed ? theChgNumFont : theChgFont) 
@@ -218,7 +230,7 @@ public class RenderData {
 
 		/* Set component values */
 		pComp.setForeground(myRender.getForeGround());
-		pComp.setBackground(myRender.getBackGround());
+		if (!(pComp instanceof JButton)) pComp.setBackground(myRender.getBackGround());
 		pComp.setToolTipText(myRender.getToolTip());
 		pComp.setFont(myRender.getFont());
 	}

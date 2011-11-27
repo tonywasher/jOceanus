@@ -1,18 +1,21 @@
 package uk.co.tolcroft.models.ui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Calendar;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SpinnerDateModel;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableCellEditor;
 
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.ui.DateSelect.CalendarCellEditor;
 
 public class Editor {
 	/* String Cell Editor */
@@ -101,7 +104,9 @@ public class Editor {
 	public static class ComboBoxCell extends AbstractCellEditor
                                      implements TableCellEditor {
 		private static final long serialVersionUID = 6107290027015360230L;
-		private JComboBox theCombo;
+		private JComboBox 	theCombo;
+		private ComboAction	theActionListener = new ComboAction();
+		private ComboPopup	thePopupListener  = new ComboPopup();
 	
 		public JComponent getTableCellEditorComponent(JTable  table,
 													  Object  value,
@@ -110,75 +115,67 @@ public class Editor {
 													  int     col) {
 			StdTable<?> myTable = (StdTable<?>)table;
 			theCombo = myTable.getComboBox(row, col);
-			theCombo.setSelectedItem((java.lang.String)value);
+			theCombo.setSelectedIndex(-1);
+			if (value != null) theCombo.setSelectedItem((String)value);
+			theCombo.addActionListener(theActionListener);
+			theCombo.addPopupMenuListener(thePopupListener);
 			return theCombo;
 		}
-	
+
+		private class ComboAction implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				stopCellEditing();
+			}
+		}
+		
+		private class ComboPopup implements PopupMenuListener {
+			public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
+			public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
+			public void popupMenuCanceled(PopupMenuEvent e) {
+				cancelCellEditing();
+			}
+		}
+		
 		public Object getCellEditorValue() {
 			String s = (String)theCombo.getSelectedItem();
-			if ((s != null) && (!s.equals(""))) {
-				return s;
-			}
-			return null;
+			if ((s != null) && (s.equals(""))) s=null;
+			return s;
 		}
 	
+		public void cancelCellEditing() {
+			theCombo.removePopupMenuListener(thePopupListener);
+			theCombo.removeActionListener(theActionListener);
+			super.cancelCellEditing();
+		}
+		
 		public boolean stopCellEditing() {
-			String s = (String)getCellEditorValue();
-			if (s == null) {
-				fireEditingCanceled();
-				return false;
-			}
+			theCombo.removePopupMenuListener(thePopupListener);
+			theCombo.removeActionListener(theActionListener);
 			return super.stopCellEditing();
 		}
 	}
 	
-	/* Date Cell Editor */
-	public static class DateCell extends AbstractCellEditor
-	                             implements TableCellEditor {
-		private static final long 	serialVersionUID = -6886642204116115360L;
-		private SpinnerDateModel  	theModel       = null;
-		private JSpinner          	theSpinner     = null;
-		private Date.Range   		theRange		 = null;
+	/* Calendar Cell Editor */
+	public static class CalendarCell extends CalendarCellEditor {
+		private static final long serialVersionUID = -5463480186940634327L;
+		private DateSelect.DateModel  	theModel    = null;
+		private Date.Range   			theRange	= null;
 		
 		public  void setRange(Date.Range pRange) { theRange = pRange; }
 		
-		public DateCell() {
-			theModel   = new SpinnerDateModel();
-			theSpinner = new JSpinner(theModel);
-			theSpinner.setEditor(new JSpinner.DateEditor(theSpinner, "dd-MMM-yyyy"));
+		public CalendarCell() {
+			theModel   = getDateModel();
 		}
 
-		public void setNoYear() {
-			java.util.Calendar 	myDate;
-			Date 				myStart;
-			Date 				myEnd;
-			
-			/* Create the start and end dates */
-			myDate = Calendar.getInstance();
-			myDate.set(1999, Calendar.APRIL, 6, 0, 0, 0);
-			myStart = new Date(myDate.getTime());
-			myDate.set(2000, Calendar.APRIL, 5, 0, 0, 0);
-			myEnd = new Date(myDate.getTime());
-
-			/* Create the range */
-			theRange = new Date.Range(myStart, myEnd);
-		}
-		
 		public JComponent getTableCellEditorComponent(JTable  table,
 				                                      Object  value,
 				                                      boolean isSelected,
 				                                      int     row,
 				                                      int     col) {
 			/* Access the range */
-			Date myStart = theRange.getStart();
-			Date myEnd   = theRange.getEnd();
-			Date myCurr  = null;
-			
-			/* Start needs to be set back one day */
-			if (myStart != null) {
-				myStart = new Date(myStart);
-				myStart.adjustDay(-1);
-			}
+			Date myStart = (theRange == null) ? null : theRange.getStart();
+			Date myEnd   = (theRange == null) ? null : theRange.getEnd();
+			Date myCurr;
 			
 			/* If the value is null */
 			if ((value == null) || (value == Renderer.theError)) {
@@ -190,20 +187,16 @@ public class Editor {
 					myCurr = new Date(Calendar.getInstance().getTime());
 			}
 				
-			if (theRange.compareTo(myCurr) != 0) {
-				if (myEnd != null) myCurr = myEnd;
-				else myCurr = myStart;
-			}
+			/* Set up initial values and range */
+			theModel.setSelectableRange((myStart == null) ? null : myStart.getDate(),
+										(myEnd == null) ? null : myEnd.getDate());
 			
-			/* Set up spinner values */
-			theModel.setStart((myStart == null) ? null : myStart.getDate());
-			theModel.setEnd((myEnd == null) ? null : myEnd.getDate());
-			theModel.setValue(myCurr.getDate());
-			return theSpinner;
+			/* Pass onwards */
+			return super.getTableCellEditorComponent(table, myCurr.getDate(), isSelected, row, col);
 		}
 		
 		public Object getCellEditorValue() {
-			Date myValue = new Date(theModel.getDate());
+			Date myValue = new Date(theModel.getSelectedDate());
 			return myValue;
 		}
 		

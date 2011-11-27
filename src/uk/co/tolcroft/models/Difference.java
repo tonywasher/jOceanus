@@ -39,9 +39,9 @@ public enum Difference {
 	public boolean isValueChanged() {
 		switch(this) {
 			case Different:
-				return false;
-			default:
 				return true;
+			default:
+				return false;
 		}
 	}
 	

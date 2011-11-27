@@ -25,8 +25,8 @@ public class StoreDatabase<T extends DataSet<T>>	extends WorkerThread<Void> {
 		/* Create the status */
 		theStatus = new ThreadStatus<T>(this, theControl);
 
-		/* Initialise the status window */
-		initStatusBar("Storing to Database");
+		/* Show the status window */
+		showStatusBar();
 	}
 
 	/* Background task (Worker Thread)*/
@@ -35,14 +35,17 @@ public class StoreDatabase<T extends DataSet<T>>	extends WorkerThread<Void> {
 		T				myData;
 		DataSet<T>		myDiff;
 
+		/* Initialise the status window */
+		theStatus.initTask("Storing to Database");
+
 		/* Create interface */
 		myDatabase = theControl.getDatabase();
 
 		/* Store database */
 		myDatabase.updateDatabase(theStatus, theControl.getUpdates());
 
-		/* Re-initialise the status window */
-		initStatusBar("Verifying Store");
+		/* Initialise the status window */
+		theStatus.initTask("Verifying Store");
 
 		/* Load database */
 		myData	= myDatabase.loadDatabase(theStatus);

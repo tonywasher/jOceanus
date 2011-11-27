@@ -276,7 +276,7 @@ public class EventData extends EncryptedItem<EventData> {
 		if (getId() != myThat.getId()) return false;
 		
 		/* Compare the changeable values */
-		return getValues().histEquals(myThat.getValues());
+		return getValues().histEquals(myThat.getValues()).isIdentical();
 	}
 
 	/**
@@ -695,15 +695,28 @@ public class EventData extends EncryptedItem<EventData> {
 		public Values(Values pValues) { copyFrom(pValues); }
 
 		/* Check whether this object is equal to that passed */
-		public boolean histEquals(HistoryValues<EventData> pCompare) {
+		public Difference histEquals(HistoryValues<EventData> pCompare) {
+			/* Make sure that the object is the same class */
+			if (pCompare.getClass() != this.getClass()) return Difference.Different;
+			
+			/* Cast correctly */
 			Values myValues = (Values)pCompare;
-			if (!super.histEquals(pCompare))					  					return false;
-			if (differs(thePair,  myValues.thePair).isDifferent())    				return false;
-			if (differs(theEvent, myValues.theEvent).isDifferent()) 				return false;
-			if (differs(theInfoType, myValues.theInfoType).isDifferent()) 			return false;
-			if (Utils.differs(theEventId, 	myValues.theEventId).isDifferent())		return false;
-			if (Utils.differs(theInfTypId,	myValues.theInfTypId).isDifferent())	return false;
-			return true;
+
+			/* Handle integer values */
+			if ((Utils.differs(theEventId, 	myValues.theEventId).isDifferent())		||
+				(Utils.differs(theInfTypId,	myValues.theInfTypId).isDifferent()))
+				return Difference.Different;
+			
+			/* Determine underlying differences */
+			Difference myDifference = super.histEquals(pCompare);
+			
+			/* Compare underlying values */
+			myDifference = myDifference.combine(differs(thePair,  myValues.thePair));
+			myDifference = myDifference.combine(differs(theEvent, myValues.theEvent));
+			myDifference = myDifference.combine(differs(theInfoType, myValues.theInfoType));
+			
+			/* Return differences */
+			return myDifference;
 		}
 
 		/* Copy values */

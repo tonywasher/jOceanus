@@ -197,8 +197,29 @@ public class AccountRates extends StdTable<AcctRate> {
 	 * Perform additional validation after change
 	 */
 	protected void validateAfterChange() {
-		/* Validate Null rows */
-		theRates.validateNullDates(null);
+		AcctRate.List.ListIterator 	myIterator;
+		AcctRate 					myCurr;
+		int							myIndex = -1;
+
+		/* Access the list iterator */
+		myIterator = theRates.listIterator();
+			
+		/* Loop through the Rates in reverse order */
+		while ((myCurr = myIterator.previous()) != null) {
+			/* Break loop if we have a date */
+			Date myDate = myCurr.getDate();
+			if ((myDate != null) && (!myDate.isNull())) break;
+				
+			/* Validate rate */
+			myCurr.clearErrors();
+			myCurr.validate();
+			
+			/* Fire row update */
+			myIndex = myCurr.indexOf();
+			theModel.fireTableRowsUpdated(myIndex, myIndex);
+		}	
+		
+		/* Calculate Edit state */
 		theRates.findEditState();
 	}
 	
@@ -361,8 +382,7 @@ public class AccountRates extends StdTable<AcctRate> {
 			
 				/* Validate the item and update the edit state */
 				myRate.validate();
-				theRates.validateNullDates(myRate);
-				theRates.findEditState();
+				validateAfterChange();
 				
 				/* Update components to reflect changes */
 				notifyChanges();
@@ -486,8 +506,8 @@ public class AccountRates extends StdTable<AcctRate> {
 		private static final long serialVersionUID = -3431873508431574944L;
 
 		/* Renderers/Editors */
-		private Renderer.DateCell 		theDateRenderer = null;
-		private Editor.DateCell 		theDateEditor   = null;
+		private Renderer.CalendarCell 	theDateRenderer = null;
+		private Editor.CalendarCell 	theDateEditor   = null;
 		private Renderer.RateCell 		theRateRenderer = null;
 		private Editor.RateCell 		theRateEditor   = null;
 
@@ -496,8 +516,8 @@ public class AccountRates extends StdTable<AcctRate> {
 		 */
 		private ratesColumnModel() {		
 			/* Create the relevant formatters/editors */
-			theDateRenderer = new Renderer.DateCell();
-			theDateEditor   = new Editor.DateCell();
+			theDateRenderer = new Renderer.CalendarCell();
+			theDateEditor   = new Editor.CalendarCell();
 			theRateRenderer = new Renderer.RateCell();
 			theRateEditor   = new Editor.RateCell();
 			

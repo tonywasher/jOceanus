@@ -105,9 +105,6 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 		/* Insert the node into the list */
 		insertNode(myNode); 
 		
-		/* Adjust the indexMap */
-		theIndexMap.insertNode(myNode);
-		
 		/* Return to caller */
 		return true;
 	}
@@ -129,6 +126,9 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 
 		/* Set the reference to this node in the item */
 		pNode.getObject().setLinkNode(this, pNode);		
+
+		/* Adjust the indexMap */
+		theIndexMap.insertNode(pNode);
 	}
 	
 	/**

@@ -476,8 +476,8 @@ public class Extract extends StdTable<Event> {
 					return ((myEvent.getDate() != null) &&
 							(myEvent.getTransType() != null));
 				default:
-					if ((myEvent.getDate() == null) &&
-						(myEvent.getDesc() == null) &&
+					if ((myEvent.getDate() == null) ||
+						(myEvent.getDesc() == null) ||
 						(myEvent.getTransType() == null))
 						return false;
 					switch (col) {
@@ -1045,8 +1045,8 @@ public class Extract extends StdTable<Event> {
 		private static final long serialVersionUID = -7502445487118370020L;
 
 		/* Renderers/Editors */
-		private Renderer.DateCell 		theDateRenderer   	= null;
-		private Editor.DateCell 		theDateEditor     	= null;
+		private Renderer.CalendarCell 	theDateRenderer   	= null;
+		private Editor.CalendarCell 	theDateEditor     	= null;
 		private Renderer.MoneyCell 		theMoneyRenderer  	= null;
 		private Editor.MoneyCell 		theMoneyEditor    	= null;
 		private Renderer.UnitCell 		theUnitsRenderer  	= null;
@@ -1064,8 +1064,8 @@ public class Extract extends StdTable<Event> {
 		 */
 		private extractColumnModel() {		
 			/* Create the relevant formatters/editors */
-			theDateRenderer   	= new Renderer.DateCell();
-			theDateEditor     	= new Editor.DateCell();
+			theDateRenderer   	= new Renderer.CalendarCell();
+			theDateEditor     	= new Editor.CalendarCell();
 			theMoneyRenderer  	= new Renderer.MoneyCell();
 			theMoneyEditor    	= new Editor.MoneyCell();
 			theUnitsRenderer  	= new Renderer.UnitCell();

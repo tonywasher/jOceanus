@@ -267,6 +267,9 @@ public abstract class DataList<L extends DataList<L,T>,
 		/* Create a shallow copy of the old list */
 		myOld = pOld.getShallowCopy();
 			
+		/* Store the New as the base */
+		theBase = pNew.getShallowCopy();
+		
 		/* Note that this list should show deleted items */
 		setShowDeleted(true);
 			
@@ -565,6 +568,16 @@ public abstract class DataList<L extends DataList<L,T>,
 		myString.append("</td></tr>"); 
 		if (showDeleted) myString.append("<tr><td>showDeleted</td><td>true</td></tr>");
 		addHTMLFields(myString);
+
+		/* If we have an underlying list */
+		if (theBase != null) {
+			/* Format the Underlying list */
+			myString.append("<tr><th>Underlying</th><td colspan=\"2\">");
+			myString.append(pDetail.addDebugLink(theBase, theBase.itemType()));
+			myString.append("</td></tr>");
+		}
+		
+		/* Close the table */
 		myString.append("</tbody></table>"); 
 			
 		/* Return the string */

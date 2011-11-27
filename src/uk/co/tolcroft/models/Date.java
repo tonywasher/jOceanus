@@ -1,12 +1,24 @@
 package uk.co.tolcroft.models;
 
+import java.text.DateFormatSymbols;
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Represents a Date object. Dates in the finance package are merely dates with no associated
  * time value 
  */
 public class Date {
+	/**
+	 * The locale to be used
+	 */
+	private final static Locale				theLocale	= Locale.getDefault();
+	
+	/**
+	 * The format symbols to be used
+	 */
+	private final static DateFormatSymbols	theSymbols	= DateFormatSymbols.getInstance(theLocale);
+	
 	/**
 	 * The Date object in underlying Java form
 	 */
@@ -31,7 +43,7 @@ public class Date {
 	 * Construct a new Date and initialise with todays date 
 	 */
 	public Date() {
-		theDate = Calendar.getInstance();
+		theDate = Calendar.getInstance(theLocale);
 		obtainValues();
 	}
 
@@ -42,7 +54,7 @@ public class Date {
 	 */
 	public Date(java.util.Date pDate) {
 		if (pDate != null) {
-			theDate = Calendar.getInstance();
+			theDate = Calendar.getInstance(theLocale);
 			theDate.setTime(pDate);
 			obtainValues();
 		}
@@ -56,10 +68,24 @@ public class Date {
 	public Date(Date pDate) {
 		if ((pDate != null) && 
 		    (pDate.theDate != null)) {
-			theDate = Calendar.getInstance();
+			theDate = Calendar.getInstance(theLocale);
 			theDate.setTime(pDate.theDate.getTime());
 			obtainValues();
 		}
+	}
+	
+	/**
+	 * Construct an explicit Date
+	 * @param pYear the year
+	 * @param pMonth the month (Calendar.JUNE etc)
+	 * @param pDay the day of the month
+	 */
+	public Date(int pYear, int pMonth, int pDay) {
+		theDate = Calendar.getInstance(theLocale);
+		theDate.set(Calendar.YEAR, pYear); 
+		theDate.set(Calendar.MONTH, pMonth); 
+		theDate.set(Calendar.DAY_OF_MONTH, pDay); 
+		obtainValues();
 	}
 	
 	/**
@@ -82,6 +108,30 @@ public class Date {
 	public void adjustMonth(int iMonth) {
 		if (theDate != null) {
 			theDate.add(Calendar.MONTH, iMonth);
+			obtainValues();
+		}
+	}
+
+	/**
+	 * Adjust the date by a number of days
+	 * 
+	 * @param iDay the number of days to adjust by
+	 */
+	public void adjustDay(int iDay) {
+		if (theDate != null) {
+			theDate.add(Calendar.DAY_OF_MONTH, iDay);
+			obtainValues();
+		}
+	}
+
+	/**
+	 * Adjust the date by a determined amount
+	 * @param iField the field to adjust 
+	 * @param iUnits the number of units to adjust by
+	 */
+	public void adjustField(int iField, int iUnits) {
+		if (theDate != null) {
+			theDate.add(iField, iUnits);
 			obtainValues();
 		}
 	}
@@ -119,18 +169,6 @@ public class Date {
 		
 		/* Return to caller */
 		return myAge;
-	}
-
-	/**
-	 * Adjust the date by a number of days
-	 * 
-	 * @param iDay the number of days to adjust by
-	 */
-	public void adjustDay(int iDay) {
-		if (theDate != null) {
-			theDate.add(Calendar.DAY_OF_MONTH, iDay);
-			obtainValues();
-		}
 	}
 
 	/**
@@ -191,15 +229,11 @@ public class Date {
 	
 	/**
 	 * Format a Date 
-	 * 
-	 * @param bShowNULL <code>true</code> if a NULL date is to be formatted as "NULL" rather
-	 * than jut being returned as the null string
 	 * @return the formatted Date
 	 */
-	public String formatDate(boolean bShowNULL) {
+	public String formatDate() {
 		StringBuilder   myString = new StringBuilder();
-		String[] 		myMonths = { "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-				              		 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+		String[] 		myMonths = theSymbols.getShortMonths();
 		String   		myMonth;
 		
 		if (theDate != null) {
@@ -213,7 +247,7 @@ public class Date {
             myString.append(theDate.get(Calendar.YEAR));
 	        return myString.toString();
 		}
-		return (bShowNULL) ? "NULL" : null;
+		return null;
 	}
 	
 	/**
@@ -245,8 +279,8 @@ public class Date {
 	 */
 	public static String format(Date pDate) {
 		String 	myFormat;
-		myFormat = (pDate != null) ? pDate.formatDate(false)
-							       : "null";
+		myFormat = (pDate != null) ? pDate.formatDate()
+							       : null;
 		return myFormat;
 	}
 

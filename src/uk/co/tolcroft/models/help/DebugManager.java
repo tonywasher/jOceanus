@@ -209,7 +209,7 @@ public class DebugManager {
 			theObject = pObject;
 			
 			/* Note that this entry has changed */
-			if (isVisible) theModel.nodeChanged(theNode);
+			theModel.nodeChanged(theNode);
 			
 			/* Remove all the children */
 			removeChildren();

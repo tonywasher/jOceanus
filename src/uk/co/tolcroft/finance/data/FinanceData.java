@@ -260,6 +260,7 @@ public class FinanceData extends DataSet<FinanceData> {
 	 */
 	public void calculateDateRange() {
 		theDateRange = theTaxYears.getRange();
+		theEvents.setRange(theDateRange);
 	}
 	
 	/**
