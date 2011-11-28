@@ -50,6 +50,11 @@ public class AsymmetricKey {
 	private KeyPair					theKeyPair			= null;
 
 	/**
+	 * The Key Mode 
+	 */
+	private SecurityMode			theKeyMode			= null;
+	
+	/**
 	 * The Key Type 
 	 */
 	private AsymKeyType				theKeyType			= null;
@@ -85,21 +90,22 @@ public class AsymmetricKey {
 	private Map<AsymmetricKey, CipherSet>	theMap		= null;
 	
 	/* Access methods */
-	public AsymKeyType	getKeyType()		{ return theKeyType; }
+	public AsymKeyType	getKeyType()		{ return theKeyMode.getAsymKeyType(); }
 	public boolean		isPublicOnly()		{ return (theKeyPair.getPrivate() == null); }
 	public PrivateKey	getPrivateKey()		{ return theKeyPair.getPrivate(); }
 	public byte[]		getPublicKeyDef()	{ return thePublicKeyDef; }
 	
 	/**
 	 * Constructor for new key
-	 * @param pKeyType the key type 
+	 * @param pKeyMode the key mode 
 	 * @param pRandom the secure random generator 
 	 */
-	public AsymmetricKey(AsymKeyType	pKeyType,
+	public AsymmetricKey(SecurityMode	pKeyMode,
 						 SecureRandom	pRandom) throws Exception {
-		/* Store the password key, key type and the secure random */
-		theKeyType		= pKeyType;
-		theRandom		= pRandom;
+		/* Store the key mode and the secure random */
+		theKeyMode	= pKeyMode;
+		theKeyType	= theKeyMode.getAsymKeyType();
+		theRandom	= pRandom;
 		
 		/* Generate the new KeyPair */
 		theKeyPair	= AsymKeyPairGenerator.getInstance(theKeyType, theRandom);
@@ -121,19 +127,19 @@ public class AsymmetricKey {
 	/**
 	 * Constructor from public KeySpec
 	 * @param pKeySpec the public KeySpec 
-	 * @param pKeyType the key type 
-	 * @param useRestricted use restricted keys
+	 * @param pKeyMode the key mode 
 	 * @param pRandom the secure random generator 
 	 */
 	public AsymmetricKey(byte[]			pKeySpec,
-						 AsymKeyType	pKeyType,
+						 SecurityMode	pKeyMode,
 		 				 SecureRandom	pRandom) throws Exception {
-		/* Store the key types */
-		theKeyType	= pKeyType;
+		/* Store the key mode and the secure random */
+		theKeyMode	= pKeyMode;
+		theKeyType	= theKeyMode.getAsymKeyType();
 		theRandom	= pRandom;
 		
 		/* Obtain the KeyPair */
-		theKeyPair = AsymKeyFactory.getKeyPair(null, pKeySpec, pKeyType);
+		theKeyPair = AsymKeyFactory.getKeyPair(null, pKeySpec, theKeyType);
 
 		/* Access the encoded formats */
 		thePublicKeyDef  = theKeyPair.getPublic().getEncoded();
@@ -152,14 +158,15 @@ public class AsymmetricKey {
 	 */
 	protected  AsymmetricKey(byte[]			pPrivateKey,
 							 byte[]			pPublicKey,
-							 AsymKeyType	pKeyType,
+							 SecurityMode	pKeyMode,
 			 				 SecureRandom	pRandom) throws Exception {
-		/* Store the password key, key type and the secure random */
-		theKeyType	= pKeyType;
+		/* Store the key mode and the secure random */
+		theKeyMode	= pKeyMode;
+		theKeyType	= theKeyMode.getAsymKeyType();
 		theRandom	= pRandom;
 		
 		/* Obtain the KeyPair */
-		theKeyPair = AsymKeyFactory.getKeyPair(pPrivateKey, pPublicKey, pKeyType);
+		theKeyPair = AsymKeyFactory.getKeyPair(pPrivateKey, pPublicKey, theKeyType);
 
 		/* Access the encoded formats */
 		thePrivateKeyDef = theKeyPair.getPrivate().getEncoded();
@@ -180,7 +187,7 @@ public class AsymmetricKey {
 		if (thePrivateKeyDef != null)
 			hashCode += thePrivateKeyDef.hashCode();
 		hashCode *= 19;
-		hashCode += theKeyType.getId();
+		hashCode += theKeyMode.getMode();
 		return hashCode;
 	}
 	
@@ -200,8 +207,8 @@ public class AsymmetricKey {
 		/* Access the target Key */
 		AsymmetricKey myThat = (AsymmetricKey)pThat;
 	
-		/* Not equal if different key-types */
-		if (myThat.theKeyType != theKeyType) return false;
+		/* Not equal if different modes */
+		if (myThat.theKeyMode.getMode() != theKeyMode.getMode()) return false;
 		
 		/* Ensure that the private/public keys are identical */
 		if (Utils.differs(myThat.thePrivateKeyDef, thePrivateKeyDef).isDifferent()) return false;
@@ -214,11 +221,9 @@ public class AsymmetricKey {
 	/**
 	 * Get CipherSet for partner Elliptic Curve
 	 * @param pPartner partner asymmetric key
-	 * @param useRestricted use restricted keys
 	 * @returns the new CipherSet
 	 */
-	public CipherSet getCipherSet(AsymmetricKey pPartner,
-								  boolean		useRestricted) throws Exception {
+	public CipherSet getCipherSet(AsymmetricKey pPartner) throws Exception {
 		/* Look for an already resolved CipherSet */
 		CipherSet mySet = theMap.get(pPartner);
 		
@@ -229,7 +234,7 @@ public class AsymmetricKey {
 		byte[] mySecret = getSharedSecret(pPartner);
 		
 		/* Build the CipherSet */
-		mySet = new CipherSet(theRandom, useRestricted, CipherSet.DEFSTEPS);
+		mySet = new CipherSet(theRandom, theKeyMode, CipherSet.DEFSTEPS);
 		
 		/* Apply the Secret */
 		mySet.buildCiphers(mySecret);
@@ -243,14 +248,13 @@ public class AsymmetricKey {
 	
 	/**
 	 * Get CipherSet for internal Elliptic Curve
-	 * @param useRestricted use restricted keys
 	 */
-	private CipherSet getCipherSet(boolean useRestricted) throws Exception {
+	private CipherSet getCipherSet() throws Exception {
 		/* Return PreExisting set */
 		if (theCipherSet != null) return theCipherSet;
 		
 		/* Build the internal CipherSet */
-		theCipherSet = getCipherSet(this, useRestricted);
+		theCipherSet = getCipherSet(this);
 		
 		/* Return the Cipher Set */
 		return theCipherSet;
@@ -281,7 +285,7 @@ public class AsymmetricKey {
 			/* If we are elliptic */
 			if (theKeyType.isElliptic()) {
 				/* Access the internal CipherSet */
-				mySet = getCipherSet(useRestricted);
+				mySet = getCipherSet();
 
 				/* Unwrap the Key */
 				mySymKey = mySet.unWrapKey(pSecuredKeyDef, pKeyType);
@@ -333,7 +337,7 @@ public class AsymmetricKey {
 			/* If we are elliptic */
 			if (theKeyType.isElliptic()) {
 				/* Access the internal CipherSet */
-				mySet = getCipherSet(useRestricted);
+				mySet = getCipherSet();
 
 				/* Wrap the Key */
 				myWrappedKey = mySet.wrapKey(pKey);
@@ -529,7 +533,7 @@ public class AsymmetricKey {
 								AsymmetricKey	pTarget,
 								boolean			useRestricted) throws Exception {
 		/* Target must be identical key type */
-		if (pTarget.theKeyType != theKeyType) 
+		if (SecurityMode.differs(pTarget.theKeyMode, theKeyMode).isDifferent())
 			throw new Exception(ExceptionClass.LOGIC,
 								"Asymmetric Encryption must be between similar partners");
 		
@@ -538,7 +542,7 @@ public class AsymmetricKey {
 			/* If we are elliptic */
 			if (theKeyType.isElliptic()) {
 				/* Access the target CipherSet */
-				CipherSet mySet = getCipherSet(pTarget, useRestricted);
+				CipherSet mySet = getCipherSet(pTarget);
 
 				/* Encrypt the string */
 				return mySet.encryptString(pString);
@@ -649,7 +653,7 @@ public class AsymmetricKey {
 								"Cannot decrypt without private key"); 
 			
 		/* Source must be identical key type */
-		if (pSource.theKeyType != theKeyType) 
+		if (SecurityMode.differs(pSource.theKeyMode, theKeyMode).isDifferent())
 			throw new Exception(ExceptionClass.LOGIC,
 								"Asymmetric Encryption must be between similar partners");
 		
@@ -658,7 +662,7 @@ public class AsymmetricKey {
 			/* If we are elliptic */
 			if (theKeyType.isElliptic()) {
 				/* Access the required CipherSet */
-				CipherSet mySet = getCipherSet(pSource, useRestricted);
+				CipherSet mySet = getCipherSet(pSource);
 
 				/* Decrypt the string */
 				return mySet.decryptString(pBytes);

@@ -151,7 +151,7 @@ public class SecureManager {
 	private void attemptKnownPasswords(SecurityControl pControl) {
 		SortedList<SecurityControl>.ListIterator 	myIterator;
 		SecurityControl								myCurr;
-		PasswordKey									myPassKey;
+		PasswordHash								myPassHash;
 		
 		/* Access the iterator */
 		myIterator = theSecurity.listIterator();
@@ -161,11 +161,11 @@ public class SecureManager {
 			/* Skip if not initialised */
 			if (!myCurr.isInitialised()) continue;
 			
-			/* Access the password key for this control */
-			myPassKey = myCurr.getPassKey();
+			/* Access the password hash for this control */
+			myPassHash = myCurr.getPasswordHash();
 			
 			/* Attempt to initialise the control from this password */
-			myPassKey.attemptPassword(pControl);
+			myPassHash.attemptPassword(pControl);
 			
 			/* Break loop if we managed to initialise it */
 			if (pControl.isInitialised()) break;

@@ -12,7 +12,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
-import uk.co.tolcroft.models.security.AsymmetricKey.AsymKeyType;
 import uk.co.tolcroft.models.security.SymmetricKey.SymKeyType;
 
 public class SecurityControl extends SortedItem<SecurityControl> {
@@ -47,14 +46,14 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 	private SecureRandom				theRandom				= null;
 	
 	/**
-	 * The password key 
+	 * The asymmetric key 
 	 */
 	private AsymmetricKey				theAsymKey				= null;
 
 	/**
-	 * The password key 
+	 * The password hash 
 	 */
-	private PasswordKey					thePassKey				= null;
+	private PasswordHash				thePassHash				= null;
 
 	/**
 	 * Is the security control initialised 
@@ -74,7 +73,7 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 	/* Access methods */
 	public 		boolean				isInitialised()			{ return isInitialised; }
 	protected 	AsymmetricKey		getAsymKey()			{ return theAsymKey; }
-	protected 	PasswordKey			getPassKey()			{ return thePassKey; }
+	protected 	PasswordHash		getPasswordHash()		{ return thePassHash; }
 	public 		SecuritySignature	getSignature()			{ return theSignature; }
 	public 		SecureRandom		getRandom()				{ return theRandom; }
 	public 		boolean				useRestricted()			{ return useRestricted; }
@@ -111,25 +110,25 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 		/* Copy the random generator */
 		theRandom 	= pSource.getRandom();
 
-		/* Generate a cloned password key */
-		thePassKey  = new PasswordKey(pSource.getPassKey());
+		/* Generate a cloned password hash */
+		thePassHash	= new PasswordHash(pSource.getPasswordHash());
 		
 		/* Determine whether we are using restricted mode */
 		/* TODO pick up new Restricted property */
-		useRestricted = thePassKey.getKeyMode().useRestricted();
+		useRestricted = thePassHash.getSecurityMode().useRestricted();
 		
 		/* Generate the new key mode */
-		AsymKeyType[] myType 	= AsymKeyType.getRandomTypes(1, theRandom);		
+		SecurityMode myMode 	= SecurityMode.getAsymmetricMode(useRestricted, theRandom);		
 		
 		/* Create the asymmetric key */
-		theAsymKey  = new AsymmetricKey(myType[0],
+		theAsymKey  = new AsymmetricKey(myMode,
 										theRandom);			
 		
 		/* Create the signature */
-		theSignature = new SecuritySignature(thePassKey.getPasswordHash(),
-											 myType[0],
+		theSignature = new SecuritySignature(thePassHash.getPasswordHash(),
+											 myMode,
 											 theAsymKey.getPublicKeyDef(),
-											 thePassKey.getSecuredPrivateKey(theAsymKey));
+											 thePassHash.getSecuredPrivateKey(theAsymKey));
 		
 		/* Create the SymmetricKeyDef Map */
 		theKeyDefMap = new HashMap<SymmetricKey, byte[]>();
@@ -220,40 +219,40 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 
 			/* If the security key is currently null */
 			if (theSignature == null) {
-				/* Generate the password key */
+				/* Generate the password hash */
 				/* TODO pick up new Restricted property */
-				thePassKey 	= new PasswordKey(pPassword,
-											  useRestricted,
-											  theRandom);
+				thePassHash 	= new PasswordHash(pPassword,
+												   useRestricted,
+												   theRandom);
 							
 				/* Generate the new key mode */
-				AsymKeyType[] myType 	= AsymKeyType.getRandomTypes(1, theRandom);		
+				SecurityMode myMode 	= SecurityMode.getAsymmetricMode(useRestricted, theRandom);		
 				
 				/* Create the asymmetric key */
-				theAsymKey  = new AsymmetricKey(myType[0],
+				theAsymKey  = new AsymmetricKey(myMode,
 												theRandom);			
 
 				/* Create the signature */
-				theSignature = new SecuritySignature(thePassKey.getPasswordHash(),
-													 myType[0],
+				theSignature = new SecuritySignature(thePassHash.getPasswordHash(),
+													 myMode,
 													 theAsymKey.getPublicKeyDef(),
-													 thePassKey.getSecuredPrivateKey(theAsymKey));
+													 thePassHash.getSecuredPrivateKey(theAsymKey));
 			}
 			
 			/* Else we need to decode the keys */
 			else {
-				/* Rebuild the password key */
-				thePassKey 	= new PasswordKey(theSignature.getPasswordHash(),
-											  pPassword,
-											  theRandom);
+				/* Rebuild the password hash */
+				thePassHash	= new PasswordHash(theSignature.getPasswordHash(),
+											   pPassword,
+											   theRandom);
 				
 				/* Determine whether we are using restricted mode */
-				useRestricted = thePassKey.getKeyMode().useRestricted();
+				useRestricted = thePassHash.getSecurityMode().useRestricted();
 				
 				/* Rebuild the asymmetric key */
-				theAsymKey  = thePassKey.getAsymmetricKey(theSignature.getSecuredKeyDef(),
-														  theSignature.getPublicKey(),
-														  theSignature.getKeyType());
+				theAsymKey  = thePassHash.getAsymmetricKey(theSignature.getSecuredKeyDef(),
+														   theSignature.getPublicKey(),
+														   theSignature.getKeyMode());
 			}
 			
 			/* Note that we are now initialised */
@@ -308,56 +307,56 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 	}
 	
 	/**
-	 * Generate a new PasswordKey 
+	 * Generate a new PasswordHash 
 	 * @param pPassword the password (cleared after usage)
-	 * @return the Password key
+	 * @return the Password hash
 	 */
-	public PasswordKey	getPasswordKey(char[]		pPassword) throws Exception {
-		PasswordKey 	myPassKey;
+	public PasswordHash	getPasswordHash(char[]		pPassword) throws Exception {
+		PasswordHash 	myPassHash;
 		
 		/* Handle not initialised */
 		if (!isInitialised)
 			throw new Exception(ExceptionClass.LOGIC,
 								"Security Control uninitialised");
 			
-		/* Generate the password key class */
-		myPassKey = new PasswordKey(pPassword, 
-									useRestricted, 
-									theRandom);
+		/* Generate the password hash class */
+		myPassHash = new PasswordHash(pPassword, 
+									  useRestricted, 
+									  theRandom);
 		
-		/* Return the new key */
-		return myPassKey;
+		/* Return the new hash */
+		return myPassHash;
 	}
 	
 	/**
-	 * Generate a new PasswordKey for an existing salt
+	 * Generate a new PasswordHash for an existing salt
 	 * @param pPassword the password (cleared after usage)
 	 * @param pSaltAndHash the Salt And Hash array for the password 
-	 * @return the Password key
+	 * @return the Password Hash
 	 */
-	public PasswordKey	getPasswordKey(char[]		pPassword,
-									   byte[]		pSaltAndHash) throws WrongPasswordException,
-									   								 	 Exception {
-		PasswordKey 	myPassKey;
+	public PasswordHash	getPasswordHash(char[]	pPassword,
+										byte[]	pSaltAndHash) throws WrongPasswordException,
+									   							 	 Exception {
+		PasswordHash 	myPassHash;
 		
 		/* Handle not initialised */
 		if (!isInitialised)
 			throw new Exception(ExceptionClass.LOGIC,
 								"Security Control uninitialised");
 			
-		/* Generate the password key class */
-		myPassKey = new PasswordKey(pSaltAndHash, pPassword, theRandom);
+		/* Generate the password hash class */
+		myPassHash = new PasswordHash(pSaltAndHash, pPassword, theRandom);
 		
-		/* Return the new key */
-		return myPassKey;
+		/* Return the new hash */
+		return myPassHash;
 	}
 	
 	/**
 	 * Generate a new AsymmetricKey 
-	 * @param pKeyType the Asymmetric key type
+	 * @param pKeyMode the Asymmetric key mode
 	 * @return the Asymmetric key
 	 */
-	public AsymmetricKey	getAsymmetricKey(AsymKeyType pKeyType) throws Exception {
+	public AsymmetricKey	getAsymmetricKey(SecurityMode pKeyMode) throws Exception {
 		AsymmetricKey 	myAsymKey;
 		
 		/* Handle not initialised */
@@ -366,7 +365,7 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 								"Security Control uninitialised");
 			
 		/* Generate the asymmetric key class */
-		myAsymKey = new AsymmetricKey(pKeyType, theRandom);
+		myAsymKey = new AsymmetricKey(pKeyMode, theRandom);
 		
 		/* Return the new key */
 		return myAsymKey;
@@ -376,12 +375,12 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 	 * Rebuild an AsymmetricKey from a security key 
 	 * @param pSecuredPrivateKeyDef the Secured Private Key definition  
 	 * @param pPublicKey the Public Key  
-	 * @param pKeyType the Asymmetric key type
+	 * @param pKeyMode the Asymmetric key mode
 	 * @return the Asymmetric key
 	 */
-	public AsymmetricKey	getAsymmetricKey(byte[] 			pSecuredPrivateKey,
-											 byte[]				pPublicKey,
-											 AsymKeyType		pKeyType) throws Exception {
+	public AsymmetricKey	getAsymmetricKey(byte[] 		pSecuredPrivateKey,
+											 byte[]			pPublicKey,
+											 SecurityMode	pKeyMode) throws Exception {
 		AsymmetricKey 	myAsymKey;
 		
 		/* Handle not initialised */
@@ -390,7 +389,7 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 								"Security Control uninitialised");
 			
 		/* Generate the asymmetric key class */
-		myAsymKey = thePassKey.getAsymmetricKey(pSecuredPrivateKey, pPublicKey, pKeyType);
+		myAsymKey = thePassHash.getAsymmetricKey(pSecuredPrivateKey, pPublicKey, pKeyMode);
 		
 		/* Return the new key */
 		return myAsymKey;

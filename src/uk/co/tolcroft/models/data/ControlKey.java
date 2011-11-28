@@ -12,11 +12,11 @@ import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.security.AsymmetricKey;
 import uk.co.tolcroft.models.security.CipherSet;
-import uk.co.tolcroft.models.security.PasswordKey;
+import uk.co.tolcroft.models.security.PasswordHash;
 import uk.co.tolcroft.models.security.SecureManager;
 import uk.co.tolcroft.models.security.SecurityControl;
+import uk.co.tolcroft.models.security.SecurityMode;
 import uk.co.tolcroft.models.security.SecuritySignature;
-import uk.co.tolcroft.models.security.AsymmetricKey.AsymKeyType;
 import uk.co.tolcroft.models.security.SymmetricKey.SymKeyType;
 
 public class ControlKey extends DataItem<ControlKey> {
@@ -33,7 +33,7 @@ public class ControlKey extends DataItem<ControlKey> {
 	/**
 	 * PasswordHash Length
 	 */
-	public final static int HASHLEN 	= PasswordKey.HASHSIZE;
+	public final static int HASHLEN 	= PasswordHash.HASHSIZE;
 
 	/**
 	 * PublicKey Length
@@ -60,10 +60,9 @@ public class ControlKey extends DataItem<ControlKey> {
 	public  byte[] 			getPublicKey()  		{ return getValues().getPublicKey(); }
 	public  byte[] 			getPrivateKey()  		{ return getValues().getPrivateKey(); }
 	public  byte[] 			getPasswordHash()  		{ return getValues().getPasswordHash(); }
-	public  AsymKeyType		getKeyType()  			{ return getValues().getKeyType(); }
+	public  SecurityMode	getKeyMode()  			{ return getValues().getKeyMode(); }
 	public  int				getNumSteps()  			{ return getValues().getNumSteps(); }
 	private SecureRandom	getRandom()  			{ return getValues().getRandom(); }
-	private boolean			useRestricted()  		{ return getValues().useRestricted(); }
 
 	/* Linking methods */
 	public ControlKey	getBase() 	{ return (ControlKey)super.getBase(); }
@@ -73,7 +72,7 @@ public class ControlKey extends DataItem<ControlKey> {
 	public static final int FIELD_PUBLICKEY	   	= DataItem.NUMFIELDS;
 	public static final int FIELD_PRIVATEKEY   	= DataItem.NUMFIELDS+1;
 	public static final int FIELD_PASSHASH		= DataItem.NUMFIELDS+2;
-	public static final int FIELD_KEYTYPE  		= DataItem.NUMFIELDS+3;
+	public static final int FIELD_KEYMODE  		= DataItem.NUMFIELDS+3;
 	public static final int FIELD_NUMSTEPS 		= DataItem.NUMFIELDS+4;
 	public static final int NUMFIELDS	   		= DataItem.NUMFIELDS+5; 
 
@@ -98,7 +97,7 @@ public class ControlKey extends DataItem<ControlKey> {
 			case FIELD_PUBLICKEY:	return "PublicKey";
 			case FIELD_PRIVATEKEY:	return "PrivateKey";
 			case FIELD_PASSHASH:	return "PasswordHash";
-			case FIELD_KEYTYPE:		return "KeyType";
+			case FIELD_KEYMODE:		return "KeyMode";
 			case FIELD_NUMSTEPS:	return "NumSteps";
 			default:		  		return DataItem.fieldName(iField);
 		}
@@ -129,9 +128,9 @@ public class ControlKey extends DataItem<ControlKey> {
 			case FIELD_PASSHASH:
 				myString += Utils.HexStringFromBytes(myValues.getPasswordHash()); 
 				break;
-			case FIELD_KEYTYPE:
-				myString += (myValues.getKeyType() == null) ? ("Id=" + myValues.theKeyTypeId) : 
-													 		  myValues.getKeyType().toString(); 
+			case FIELD_KEYMODE:
+				myString += (myValues.getKeyMode() == null) ? ("Id=" + myValues.theMode) : 
+													 		  myValues.getKeyMode().toString(); 
 				break;
 			case FIELD_NUMSTEPS:
 				myString += myValues.getNumSteps(); 
@@ -165,7 +164,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		switch (pList.getStyle()) {
 			case CLONE:
 				theMap 			= new EnumMap<SymKeyType,DataKey>(SymKeyType.class);
-				theCipherSet 	= new CipherSet(getRandom(), useRestricted(), getNumSteps());				
+				theCipherSet 	= new CipherSet(getRandom(), getKeyMode(), getNumSteps());				
 			case COPY:
 			case CORE:
 				pList.setNewId(this);				
@@ -185,7 +184,7 @@ public class ControlKey extends DataItem<ControlKey> {
 	 * Constructor for loading an encrypted ControlKey 
 	 * @param pList the list to which to add the key to 
 	 * @param uId the id of the ControlKey
-	 * @param uKeyTypeId the id of the KeyType
+	 * @param uKeyMode the mode of the Key
 	 * @param uNumSteps the number of steps for the key
 	 * @param pPasswordHash the passwordHash
 	 * @param pPublicKey the public KeyDef
@@ -193,7 +192,7 @@ public class ControlKey extends DataItem<ControlKey> {
 	 */
 	private ControlKey(List     pList,
 				   	   int		uId,
-				   	   int		uKeyTypeId,
+				   	   int		uKeyMode,
 				   	   int		uNumSteps,
 				   	   byte[]	pPasswordHash,
 				   	   byte[]	pPublicKey,
@@ -203,7 +202,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		Values myValues = getValues();
 
 		/* Record the IDs */
-		myValues.setKeyTypeId(uKeyTypeId);
+		myValues.setMode(uKeyMode);
 		myValues.setNumSteps(uNumSteps);
 
 		/* Store the details */
@@ -211,19 +210,19 @@ public class ControlKey extends DataItem<ControlKey> {
 		myValues.setPrivateKey(pPrivateKey);
 		myValues.setPasswordHash(pPasswordHash);
 
-		/* Determine the AsymKeyType */
-		try { myValues.setKeyType(AsymKeyType.fromId(uKeyTypeId)); }
+		/* Determine the SecurityMode */
+		try { myValues.setKeyMode(new SecurityMode(uKeyMode)); }
 		catch (Exception e) {
 			throw new Exception(ExceptionClass.DATA,
 								this,
-	            				"Invalid KeyType Id " + uKeyTypeId);
+	            				"Invalid KeyMode " + uKeyMode);
 		}
 		
 		/* Access the Security manager */
 		DataSet<?>			myData 		= pList.getData();
 		SecureManager 		mySecurity 	= myData.getSecurity();
 		SecuritySignature	mySignature	= new SecuritySignature(pPasswordHash,
-																getKeyType(),
+																getKeyMode(),
 																pPublicKey,
 																pPrivateKey);
 		
@@ -234,7 +233,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		theMap = new EnumMap<SymKeyType,DataKey>(SymKeyType.class);
 		
 		/* Create the CipherSet */
-		theCipherSet = new CipherSet(getRandom(), useRestricted(), getNumSteps());
+		theCipherSet = new CipherSet(getRandom(), getKeyMode(), getNumSteps());
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -261,13 +260,13 @@ public class ControlKey extends DataItem<ControlKey> {
 		myValues.setPublicKey(mySign.getPublicKey());
 		myValues.setPrivateKey(mySign.getSecuredKeyDef());
 		myValues.setPasswordHash(mySign.getPasswordHash());
-		myValues.setKeyType(mySign.getKeyType());
+		myValues.setKeyMode(mySign.getKeyMode());
 		
 		/* Create the DataKey Map */
 		theMap = new EnumMap<SymKeyType,DataKey>(SymKeyType.class);
 		
 		/* Create the CipherSet */
-		theCipherSet = new CipherSet(getRandom(), useRestricted(), getNumSteps());
+		theCipherSet = new CipherSet(getRandom(), getKeyMode(), getNumSteps());
 		
 		/* Allocate the id */
 		pList.setNewId(this);
@@ -301,13 +300,13 @@ public class ControlKey extends DataItem<ControlKey> {
 		myValues.setPublicKey(mySign.getPublicKey());
 		myValues.setPrivateKey(mySign.getSecuredKeyDef());
 		myValues.setPasswordHash(mySign.getPasswordHash());
-		myValues.setKeyType(mySign.getKeyType());
+		myValues.setKeyMode(mySign.getKeyMode());
 		
 		/* Create the DataKey Map */
 		theMap = new EnumMap<SymKeyType,DataKey>(SymKeyType.class);
 		
 		/* Create the CipherSet */
-		theCipherSet = new CipherSet(getRandom(), useRestricted(), getNumSteps());
+		theCipherSet = new CipherSet(getRandom(), getKeyMode(), getNumSteps());
 		
 		/* Allocate the id */
 		myList.setNewId(this);
@@ -419,7 +418,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		myValues.setPublicKey(mySign.getPublicKey());
 		myValues.setPrivateKey(mySign.getSecuredKeyDef());
 		myValues.setPasswordHash(mySign.getPasswordHash());
-		myValues.setKeyType(mySign.getKeyType());
+		myValues.setKeyMode(mySign.getKeyMode());
 		
 		/* Loop through the SymKeyType values */
 		for (SymKeyType myType: SymKeyType.values()) {
@@ -710,7 +709,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		private ControlKey cloneControlKey(ControlKey pControlKey) throws Exception {
 			/* Clone the control key */
 			ControlKey myControl = addItem(pControlKey.getId(),
-										   pControlKey.getKeyType().getId(),
+										   pControlKey.getKeyMode().getMode(),
 										   pControlKey.getNumSteps(),
 										   pControlKey.getPasswordHash(),
 										   pControlKey.getPublicKey(),
@@ -748,8 +747,8 @@ public class ControlKey extends DataItem<ControlKey> {
 		private byte[]			thePrivateKey	= null;
 		private byte[]			thePasswordHash	= null;
 		private int				theNumSteps		= CipherSet.DEFSTEPS;
-		private int				theKeyTypeId	= -1;
-		private AsymKeyType		theKeyType		= null;
+		private SecurityMode	theKeyMode		= null;
+		private int				theMode			= -1;
 		private SecurityControl	theControl		= null;
 		
 		/* Access methods */
@@ -757,11 +756,10 @@ public class ControlKey extends DataItem<ControlKey> {
 		public  byte[] 			getPrivateKey()  		{ return thePrivateKey; }
 		public  byte[] 			getPasswordHash()  		{ return thePasswordHash; }
 		public  int				getNumSteps()  			{ return theNumSteps; }
-		public  int				getKeyTypeId()  		{ return theKeyTypeId; }
-		public  AsymKeyType		getKeyType()  			{ return theKeyType; }
+		public  int				getMode()  				{ return theMode; }
+		public  SecurityMode	getKeyMode()  			{ return theKeyMode; }
 		public  SecurityControl	getSecurityControl()	{ return theControl; }
 		private SecureRandom	getRandom()				{ return (theControl == null) ? null : theControl.getRandom(); }
-		private boolean			useRestricted()			{ return (theControl == null) ? false : theControl.useRestricted(); }
 		
 		private void setPublicKey(byte[] pValue) {
 			thePublicKey 	= pValue; }
@@ -771,11 +769,11 @@ public class ControlKey extends DataItem<ControlKey> {
 			thePasswordHash = pValue; }
 		private void setNumSteps(int pValue) {
 			theNumSteps		= pValue; }
-		private void setKeyType(AsymKeyType pValue) {
-			theKeyType 		= pValue; 
-			theKeyTypeId 	= (pValue == null) ? -1 : pValue.getId(); }
-		private void setKeyTypeId(int pValue) {
-			theKeyTypeId	= pValue; }
+		private void setKeyMode(SecurityMode pValue) {
+			theKeyMode 		= pValue;  
+			theMode			= (theKeyMode == null) ? -1 : theKeyMode.getMode(); }
+		private void setMode(int pValue) {
+			theMode			= pValue; }
 		private void setSecurityControl(SecurityControl pControl) {
 			theControl 		= pControl; }
 
@@ -793,14 +791,14 @@ public class ControlKey extends DataItem<ControlKey> {
 			Difference 	myDifference 	= Difference.Identical;
 			
 			/* Test integer differences */
-			if ((theKeyType  != myValues.theKeyType) ||
-			    (theNumSteps != myValues.theNumSteps)) 
+			if (theNumSteps != myValues.theNumSteps) 
 				myDifference = Difference.Different;
 			
 			/* Test byte array differences */
-			else if ((Utils.differs(thePublicKey,		myValues.thePublicKey).isDifferent())	||
-					 (Utils.differs(thePrivateKey,		myValues.thePrivateKey).isDifferent())  || 
-					 (Utils.differs(thePasswordHash,	myValues.thePasswordHash).isDifferent()))
+			else if ((Utils.differs(thePublicKey,		myValues.thePublicKey).isDifferent())	 ||
+					 (Utils.differs(thePrivateKey,		myValues.thePrivateKey).isDifferent())   || 
+					 (Utils.differs(thePasswordHash,	myValues.thePasswordHash).isDifferent()) ||
+				 	 (SecurityMode.differs(theKeyMode,	myValues.theKeyMode).isDifferent()))
 				myDifference = Difference.Different;
 				
 			/* Return difference */
@@ -817,8 +815,8 @@ public class ControlKey extends DataItem<ControlKey> {
 			thePublicKey	= myValues.getPublicKey();
 			thePrivateKey	= myValues.getPrivateKey();
 			thePasswordHash	= myValues.getPasswordHash();
-			theKeyType		= myValues.getKeyType();
-			theKeyTypeId	= myValues.getKeyTypeId();
+			theMode			= myValues.getMode();
+			theKeyMode		= myValues.getKeyMode();
 			theNumSteps		= myValues.getNumSteps();
 		}
 		public Difference	fieldChanged(int fieldNo, HistoryValues<ControlKey> pOriginal) {
@@ -834,9 +832,8 @@ public class ControlKey extends DataItem<ControlKey> {
 				case FIELD_PASSHASH:
 					bResult = (Utils.differs(thePasswordHash,	pValues.thePasswordHash));
 					break;
-				case FIELD_KEYTYPE:
-					bResult = (theKeyType != pValues.theKeyType) ? Difference.Different
-																 : Difference.Identical;
+				case FIELD_KEYMODE:
+					bResult = (SecurityMode.differs(theKeyMode, pValues.theKeyMode));
 					break;
 				case FIELD_NUMSTEPS:
 					bResult = (theNumSteps != pValues.theNumSteps) ? Difference.Different

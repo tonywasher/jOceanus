@@ -1,5 +1,6 @@
 package uk.co.tolcroft.models.security;
 
+import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -12,7 +13,6 @@ import javax.crypto.spec.SecretKeySpec;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
-import uk.co.tolcroft.models.security.AsymmetricKey.AsymKeyType;
 import uk.co.tolcroft.models.security.SymmetricKey.SymKeyType;
 
 public class CipherSet {
@@ -34,7 +34,7 @@ public class CipherSet {
 	/**
 	 * Multiplier to obtain Keys from secret
 	 */
-	private final static int keyMULT 	= 13;
+	//private final static int keyMULT 	= 13;
 
 	/**
 	 * Multiplier to obtain IV from vector
@@ -47,9 +47,9 @@ public class CipherSet {
 	private int							theNumSteps	= DEFSTEPS;
 	
 	/**
-	 * Use restricted security 
+	 * Security Mode
 	 */
-	protected boolean					useRestricted	= false;
+	protected SecurityMode				theMode		= null;
 	
 	/**
 	 * The Random Generator
@@ -64,18 +64,16 @@ public class CipherSet {
 	/**
 	 * Constructor
 	 * @param pRandom the Secure Random
-	 * @param useRestricted use restricted keys
+	 * @param pSecMode the Security Mode
 	 * @param pNumSteps the Number of encryption steps 
 	 */
 	public CipherSet(SecureRandom	pRandom,
-					 boolean		useRestricted,
+					 SecurityMode	pSecMode,
 					 int			pNumSteps) {
 		/* Store parameters */
 		theRandom 	= pRandom;
 		theNumSteps	= pNumSteps;
-		
-		/* Store restricted indication */
-		this.useRestricted = useRestricted;
+		theMode		= pSecMode;
 		
 		/* Build the Map */
 		theMap = new EnumMap<SymKeyType, DataCipher>(SymKeyType.class);
@@ -110,28 +108,54 @@ public class CipherSet {
 	private void buildCipher(SymKeyType pKeyType,
 							 byte[] 	pSecret) throws Exception {
 		/* Determine the key length in bytes */
-		int myKeyLen = SymmetricKey.getKeyLen(useRestricted) / 8;
+		int myKeyLen = SymmetricKey.getKeyLen(theMode.useRestricted()) / 8;
 			
-		/* If the secret is not long enough */
-		if (pSecret.length < myKeyLen) 
-			throw new Exception(ExceptionClass.CRYPTO,
-								"Secret is insufficient in length"); 
-
-		/* Determine index into array for Key Type */
-		byte[] myNew = new byte[pSecret.length];
-		int    myIndex = keyMULT*pKeyType.getId();
-		myIndex %= pSecret.length;
+		/* Create a buffer to hold the resulting key and # of bytes built */
+		byte[] 	myKeyBytes 	= new byte[myKeyLen];
+		int		myBuilt		= 0;
 		
-		/* If we need to shift the array */
-		if (myIndex > 0) {
-			/* Access shifted array */
-			System.arraycopy(pSecret, myIndex, myNew, 0, pSecret.length-myIndex);
-			System.arraycopy(pSecret, 0, myNew, pSecret.length-myIndex, myIndex);
-			pSecret = myNew;
-		}
+		/* Protect against exceptions */
+		try {
+			/* Create the MessageDigest and standard data */
+			byte[]			myCount	 = new byte[4];
+			Arrays.fill(myCount, (byte)0);
+			byte[] 			myAlgo	 = pKeyType.getAlgorithm().getBytes(SecurityControl.ENCODING);
+			MessageDigest 	myDigest = MessageDigest.getInstance(theMode.getCipherDigest().getAlgorithm(),
+														   		 SecurityControl.BCSIGN);
+		
+			/* while we need to generate more bytes */
+			while (myBuilt < myKeyLen) {
+				/* Increment count and add to hash */
+				myCount[3]++;
+				myDigest.update(myCount);
+		
+				/* Update with secret and algorithm */
+				myDigest.update(pSecret);
+				myDigest.update(myAlgo);
+		
+				/* Obtain the calculated hash */
+				byte[] myHash = myDigest.digest();
 			
+				/* Determine how many bytes of this hash should be used */
+				int myNeeded = myKeyLen - myBuilt;
+				if (myNeeded > myHash.length) myNeeded = myHash.length;
+			
+				/* Copy bytes across */
+				System.arraycopy(myHash, 0, myKeyBytes, myBuilt, myNeeded);
+				myBuilt += myNeeded;
+			}
+		}
+		
+		/* Catch exceptions */
+		catch (Throwable e) {
+			/* Throw exception */
+			throw new Exception(ExceptionClass.CRYPTO,
+								"Failed to Derive KeyDefinition",
+								e);
+		}
+		
 		/* Build the secret key specification */
-		SecretKey myKeyDef = new SecretKeySpec(Arrays.copyOf(pSecret, myKeyLen),
+		SecretKey myKeyDef = new SecretKeySpec(myKeyBytes,
 											   pKeyType.getAlgorithm());
 
 		/* Create the Symmetric Key */
@@ -463,19 +487,19 @@ public class CipherSet {
 	 * Unwrap AsymmetricKey
 	 * @param pEncrypted the wrapped private key
 	 * @param pPublicKey the wrapped private key
-	 * @param pKeyType the KeyType of the ASymmetric Key
+	 * @param pKeyMode the KeyMode of the ASymmetric Key
 	 * @return the Asymmetric key
 	 */
 	public AsymmetricKey unWrapKey(byte[] 		pEncrypted,
 			 					   byte[]		pPublicKey,
-			 					   AsymKeyType	pKeyType) throws Exception {
+			 					   SecurityMode	pKeyMode) throws Exception {
 		/* Decrypt the encoded bytes */
 		byte[] myEncoded = decryptBytes(pEncrypted);
 		
 		/* Create the Asymmetric Key */
 		AsymmetricKey myKey = new AsymmetricKey(myEncoded,
 												pPublicKey,
-											  	pKeyType,
+											  	pKeyMode,
 											  	theRandom);
 		/* Return the key */
 		return myKey;

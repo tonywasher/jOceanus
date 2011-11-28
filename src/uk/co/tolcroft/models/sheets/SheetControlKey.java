@@ -83,7 +83,7 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
 	protected void insertItem(ControlKey	pItem) throws Throwable  {
 		/* Set the fields */
 		writeInteger(0, pItem.getId());
-		writeInteger(1, pItem.getKeyType().getId());
+		writeInteger(1, pItem.getKeyMode().getMode());
 		writeInteger(2, pItem.getNumSteps());
 		writeBytes(3, pItem.getPasswordHash());
 		writeBytes(4, pItem.getPublicKey());
@@ -99,7 +99,7 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
 
 		/* Write titles */
 		writeString(0, ControlKey.fieldName(ControlKey.FIELD_ID));
-		writeString(1, ControlKey.fieldName(ControlKey.FIELD_KEYTYPE));			
+		writeString(1, ControlKey.fieldName(ControlKey.FIELD_KEYMODE));			
 		writeString(2, ControlKey.fieldName(ControlKey.FIELD_NUMSTEPS));			
 		writeString(3, ControlKey.fieldName(ControlKey.FIELD_PASSHASH));			
 		writeString(4, ControlKey.fieldName(ControlKey.FIELD_PUBLICKEY));			

@@ -12,7 +12,6 @@ import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.help.DebugDetail;
-import uk.co.tolcroft.finance.data.Event.Values;
 import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.finance.views.*;
 

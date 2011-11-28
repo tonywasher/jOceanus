@@ -2,7 +2,6 @@ package uk.co.tolcroft.models.security;
 
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
-import uk.co.tolcroft.models.security.AsymmetricKey.AsymKeyType;
 import uk.co.tolcroft.models.Utils;
 
 public class SecuritySignature {
@@ -17,9 +16,9 @@ public class SecuritySignature {
 	private byte[]						thePasswordHash			= null;
 
 	/**
-	 * The AsymKeyType
+	 * The Security Mode
 	 */
-	private AsymKeyType					theKeyType				= null;
+	private SecurityMode				theKeyMode				= null;
 	
 	/**
 	 * The public key
@@ -33,7 +32,7 @@ public class SecuritySignature {
 	
 	/* Access methods */
 	public byte[]				getPasswordHash()		{ return thePasswordHash; }
-	public AsymKeyType			getKeyType()			{ return theKeyType; }
+	public SecurityMode			getKeyMode()			{ return theKeyMode; }
 	public byte[]				getPublicKey()			{ return thePublicKey; }
 	public byte[]				getSecuredKeyDef()		{ return theSecuredKeyDef; }
 	
@@ -43,17 +42,17 @@ public class SecuritySignature {
 	/**
 	 * Constructor
 	 * @param pPasswordHash the password hash
-	 * @param pKeyType the Asymmetric Key type
+	 * @param pKeyMode the Asymmetric Key mode
 	 * @param pPublicKey the public key (in X509 format)
 	 * @param pSecuredKeyDef the secured private key
 	 */
-	public SecuritySignature(byte[] 			pPasswordHash,
-							 AsymKeyType 		pKeyType,
-							 byte[]				pPublicKey,
-							 byte[]				pSecuredKeyDef) {
+	public SecuritySignature(byte[] 		pPasswordHash,
+							 SecurityMode	pKeyMode,
+							 byte[]			pPublicKey,
+							 byte[]			pSecuredKeyDef) {
 		/* Store the values */
 		thePasswordHash 	= pPasswordHash;
-		theKeyType			= pKeyType;
+		theKeyMode			= pKeyMode;
 		thePublicKey		= pPublicKey;
 		theSecuredKeyDef	= pSecuredKeyDef;
 	}
@@ -75,7 +74,7 @@ public class SecuritySignature {
 		thePasswordHash 	= Utils.BytesFromHexString(myTokens[0]);
 		thePublicKey		= Utils.BytesFromHexString(myTokens[1]);
 		theSecuredKeyDef	= Utils.BytesFromHexString(myTokens[2]);
-		theKeyType			= AsymKeyType.fromId(Integer.parseInt(myTokens[3]));
+		theKeyMode			= new SecurityMode(Integer.parseInt(myTokens[3]));
 	}
 	
 	/**
@@ -98,7 +97,7 @@ public class SecuritySignature {
 		myBuilder.append(KEYSEP);
 
 		/* Add the KeyType */
-		myBuilder.append(Integer.toString(theKeyType.getId()));
+		myBuilder.append(Integer.toString(theKeyMode.getMode()));
 		
 		/* Return the String */
 		return myBuilder.toString();
@@ -115,7 +114,7 @@ public class SecuritySignature {
 		hashCode *= 19;
 		hashCode += thePasswordHash.hashCode();
 		hashCode *= 19;
-		hashCode += theKeyType.getId();
+		hashCode += theKeyMode.getMode();
 		return hashCode;
 	}
 	
@@ -136,7 +135,7 @@ public class SecuritySignature {
 		SecuritySignature myThat = (SecuritySignature)pThat;
 	
 		/* Not equal if different key-types */
-		if (myThat.theKeyType != theKeyType) return false;
+		if (myThat.theKeyMode.getMode() != theKeyMode.getMode()) return false;
 		
 		/* Ensure that the private/public keys and password are identical */
 		if (Utils.differs(myThat.thePasswordHash,   thePasswordHash).isDifferent()) 	return false;
@@ -165,8 +164,10 @@ public class SecuritySignature {
 		/* Access the target signature */
 		SecuritySignature myThat = (SecuritySignature)pThat;
 	
-		/* Compare Key Types */
-		if ((iDiff = myThat.theKeyType.compareTo(theKeyType)) != 0) return iDiff;
+		/* Not equal if different modes */
+		Integer myMode 		= theKeyMode.getMode();
+		Integer myCompMode 	= myThat.theKeyMode.getMode();
+		if ((iDiff = myCompMode.compareTo(myMode)) != 0) return iDiff;
 		
 		/* Compare the private/public keys and password */
 		if ((iDiff = Utils.compareTo(thePasswordHash,  myThat.thePasswordHash)) != 0) 	return iDiff;
