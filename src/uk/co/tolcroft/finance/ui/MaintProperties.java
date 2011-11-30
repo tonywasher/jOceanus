@@ -13,7 +13,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 
 import uk.co.tolcroft.finance.views.*;
@@ -32,13 +31,12 @@ public class MaintProperties {
 	private JPanel              thePanel			= null;
 	private JPanel              theButtons			= null;
 	private JPanel              theChecks			= null;
-	//private JTextField			theDBDriver			= null;
 	private ValueField			theDBDriver			= null;
-	private JTextField			theDBConnect		= null;
-	private JTextField			theBaseSSheet		= null;
-	private JTextField			theRepoDir			= null;
-	private JTextField			theBackupDir		= null;
-	private JTextField			theBackupPrefix		= null;
+	private ValueField			theDBConnect		= null;
+	private ValueField			theBaseSSheet		= null;
+	private ValueField			theRepoDir			= null;
+	private ValueField			theBackupDir		= null;
+	private ValueField			theBackupPrefix		= null;
 	private CalendarButton		theBirthButton		= null;
 	private DateModel			theDateModel		= null;
 	private JCheckBox			theShowDebug		= null;
@@ -78,11 +76,11 @@ public class MaintProperties {
 
 		/* Create the text fields */
 		theDBDriver 	= new ValueField();
-		theDBConnect 	= new JTextField();
-		theBaseSSheet	= new JTextField();
-		theRepoDir		= new JTextField();
-		theBackupDir	= new JTextField();
-		theBackupPrefix	= new JTextField();
+		theDBConnect 	= new ValueField();
+		theBaseSSheet	= new ValueField();
+		theRepoDir		= new ValueField();
+		theBackupDir	= new ValueField();
+		theBackupPrefix	= new ValueField();
 		
 		/* Create the check boxes */
 		theShowDebug		= new JCheckBox("Show Debug");
@@ -221,13 +219,12 @@ public class MaintProperties {
         PropertyListener myListener = new PropertyListener();
         
         /* Add listeners */
-		theDBDriver.addActionListener(myListener);
 		theDBDriver.addPropertyChangeListener(ValueField.valueName, myListener);
-		theDBConnect.addActionListener(myListener);
-		theBaseSSheet.addActionListener(myListener);
-		theRepoDir.addActionListener(myListener);
-		theBackupDir.addActionListener(myListener);
-		theBackupPrefix.addActionListener(myListener);
+		theDBConnect.addPropertyChangeListener(ValueField.valueName, myListener);
+		theBaseSSheet.addPropertyChangeListener(ValueField.valueName, myListener);
+		theRepoDir.addPropertyChangeListener(ValueField.valueName, myListener);
+		theBackupDir.addPropertyChangeListener(ValueField.valueName, myListener);
+		theBackupPrefix.addPropertyChangeListener(ValueField.valueName, myListener);
 		theBirthButton.addPropertyChangeListener(CalendarButton.valueDATE, myListener);
 		theOKButton.addActionListener(myListener);
 		theResetButton.addActionListener(myListener);
@@ -288,18 +285,18 @@ public class MaintProperties {
 		theExtract.checkChanges();
 		
 		/* Show the DB details */
-		theDBDriver.setText(theExtract.getDBDriver());
-		theDBConnect.setText(theExtract.getDBConnection());
+		theDBDriver.setValue(theExtract.getDBDriver());
+		theDBConnect.setValue(theExtract.getDBConnection());
 		
 		/* Show the Backup details */
-		theBackupDir.setText(theExtract.getBackupDir());
-		theBackupPrefix.setText(theExtract.getBackupPrefix());
+		theBackupDir.setValue(theExtract.getBackupDir());
+		theBackupPrefix.setValue(theExtract.getBackupPrefix());
 		
 		/* Show the Repository details */
-		theRepoDir.setText(theExtract.getRepoDir());
+		theRepoDir.setValue(theExtract.getRepoDir());
 
 		/* Show the BaseSpreadsheet */
-		theBaseSSheet.setText(theExtract.getBaseSpreadSheet());
+		theBaseSSheet.setValue(theExtract.getBaseSpreadSheet());
 		
 		/* Show the BirthDate */
 		theDateModel.setSelectedDate(theExtract.getBirthDate().getDate());
@@ -310,35 +307,6 @@ public class MaintProperties {
 		/* Enable the buttons */
 		theOKButton.setEnabled(theExtract.hasChanges());
 		theResetButton.setEnabled(theExtract.hasChanges());
-	}
-	
-	/* Update text */
-	private void updateText() {
-		String  myText;
-
-		/* Access the value */
-		myText = theDBDriver.getText();
-		if (myText.length() != 0) theExtract.setDBDriver(myText);    
-
-		/* Access the value */
-		myText = theDBConnect.getText();
-		if (myText.length() != 0) theExtract.setDBConnection(myText);
-
-		/* Access the value */
-		myText = theBaseSSheet.getText();
-		if (myText.length() != 0) theExtract.setBaseSpreadSheet(myText);
-
-		/* Access the value */
-		myText = theRepoDir.getText();
-		if (myText.length() != 0) theExtract.setRepoDir(myText);
-
-		/* Access the value */
-		myText = theBackupDir.getText();
-		if (myText.length() != 0) theExtract.setBackupDir(myText);
-
-		/* Access the value */
-		myText = theBackupPrefix.getText();
-		if (myText.length() != 0) theExtract.setBackupPrefix(myText);
 	}
 	
 	/**
@@ -401,20 +369,6 @@ public class MaintProperties {
 				/* Note that changes have occurred */
 				notifyChanges();
 			}
-		
-			/* If this event relates to the name field */
-			else if ((o == theDBDriver)   ||
-					 (o == theDBConnect)  ||
-					 (o == theBaseSSheet) ||
-					 (o == theRepoDir)    ||
-					 (o == theBackupDir)  ||
-					 (o == theBackupPrefix)) {
-				/* Update the text */
-				updateText();
-			
-				/* Notify changes */
-				notifyChanges();
-			}
 		}			
 	
 		@Override
@@ -427,9 +381,6 @@ public class MaintProperties {
 				/* Note the new criteria and re-build lists */
 				theExtract.setDoShowDebug(theShowDebug.isSelected());
 
-				/* Update the text */
-				updateText();
-			
 				/* Notify changes */
 				notifyChanges();
 			}
@@ -437,7 +388,8 @@ public class MaintProperties {
 
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			Object o = evt.getSource();
+			Object 	o 		= evt.getSource();
+			boolean	bChange = false;
 			
 			/* if this date relates to the Date button */
 			if (o == theBirthButton) {
@@ -446,18 +398,59 @@ public class MaintProperties {
 
 				/* Store the value */
 				theExtract.setBirthDate(myDate);
-				
-				/* Update the text */
-				updateText();
-				
-				/* Note that changes have occurred */
-				notifyChanges();
+				bChange = true;
 			}			
 
-			/* If this is our component */
+			/* If this is our DB Driver */
 			else if (o == theDBDriver) {
-				//System.out.println("Hello");
+				/* Update the extract TODO handle nulls */
+				String myText = (String)theDBDriver.getValue();
+				if (myText != null) theExtract.setDBDriver(myText);    
+				bChange = true;
+			}	
+			
+			/* If this is our DB Connection */
+			else if (o == theDBConnect) {
+				/* Update the extract TODO handle nulls */
+				String myText = (String)theDBConnect.getValue();
+				if (myText != null) theExtract.setDBConnection(myText);    
+				bChange = true;
 			}
+			
+			/* If this is our Base Spreadsheet */
+			else if (o == theBaseSSheet) {
+				/* Update the extract TODO handle nulls */
+				String myText = (String)theBaseSSheet.getValue();
+				if (myText != null) theExtract.setBaseSpreadSheet(myText);    
+				bChange = true;
+			}
+			
+			/* If this is our Repo directory */
+			else if (o == theRepoDir) {
+				/* Update the extract TODO handle nulls */
+				String myText = (String)theRepoDir.getValue();
+				if (myText != null) theExtract.setRepoDir(myText);    
+				bChange = true;
+			}
+			
+			/* If this is our Backup Directory */
+			else if (o == theBackupDir) {
+				/* Update the extract TODO handle nulls */
+				String myText = (String)theBackupDir.getValue();
+				if (myText != null) theExtract.setBackupDir(myText);    
+				bChange = true;
+			}
+			
+			/* If this is our Backup Prefix */
+			else if (o == theBackupPrefix) {
+				/* Update the extract TODO handle nulls */
+				String myText = (String)theBackupPrefix.getValue();
+				if (myText != null) theExtract.setBackupPrefix(myText);    
+				bChange = true;
+			}
+			
+			/* Note that changes have occurred */
+			if (bChange) notifyChanges();
 		}
 	}
 }

@@ -1161,9 +1161,6 @@ public class DateSelect {
 		 * @param pFormat the format string
 		 */
 		public CalendarCellRenderer(String pFormat) {
-			/* Call super class */
-			super();
-
 			/* Record the model */
 			theModel = new DateModel();
 			
@@ -1178,8 +1175,9 @@ public class DateSelect {
 		public DateModel getDateModel() { return theModel; }
 		
 		/**
-		 * Set value
-		 * @param pObject the value to display (String, Date or null)
+		 * Set value for the renderer. This will convert a Date into the required string format before passing it on.
+		 * If the object is already a string or is null it is passed directly on.
+		 * @param value the value to display (String, Date or null)
 		 */
 		public void setValue(Object value) {
 			String s = "";

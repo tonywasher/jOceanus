@@ -724,14 +724,14 @@ public class Account extends EncryptedItem<Account> {
 					addError("Aliased account has prices", FIELD_TYPE);
 				
 				/* Alias account must have prices */
-				if (!getAlias().hasPrices)
+				if ((!getAlias().hasPrices) && (getAlias().theEarliest != null))
 					addError("Alias account has no prices", FIELD_TYPE);
 			}
 			
 			/* else this is a standard account */
 			else {
 				/* Must have prices */
-				if (!hasPrices)
+				if ((!hasPrices) && (theEarliest != null))
 					addError("Priced account has no prices", FIELD_TYPE);
 			}
 	    }
@@ -930,21 +930,6 @@ public class Account extends EncryptedItem<Account> {
 		/* Note that the account is Active */
 		super.touchItem(pObject);
 		
-		/* If we are being touched by an event */
-		if (pObject instanceof Event) {
-			/* Access as event */
-			Event myEvent = (Event)pObject;
-			
-			/* Note flags */
-			/* Record the event */
-			if (theEarliest == null) theEarliest = myEvent;
-			theLatest = myEvent;
-			
-			/* If we have a parent, touch it */
-			if (getParent() != null) 
-				getParent().touchItem(pObject);
-		}
-		
 		/* If we are being touched by a rate */
 		if (pObject instanceof AcctRate) {
 			/* Note flags */
@@ -968,6 +953,21 @@ public class Account extends EncryptedItem<Account> {
 			if (differs(myPattern.getPartner(), this).isIdentical()) isPatterned = true;
 		}
 
+		/* If we are being touched by an event */
+		else if (pObject instanceof Event) {
+			/* Access as event */
+			Event myEvent = (Event)pObject;
+			
+			/* Note flags */
+			/* Record the event */
+			if (theEarliest == null) theEarliest = myEvent;
+			theLatest = myEvent;
+			
+			/* If we have a parent, touch it */
+			if (getParent() != null) 
+				getParent().touchItem(pObject);
+		}
+		
 		/* If we are being touched by another account */
 		else if (pObject instanceof Account) {
 			/* Access as account */

@@ -13,8 +13,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
 import javax.swing.LayoutStyle;
 
 import uk.co.tolcroft.finance.ui.controls.*;
@@ -29,10 +27,13 @@ import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.ErrorPanel;
-import uk.co.tolcroft.models.ui.RenderData;
+import uk.co.tolcroft.models.ui.ItemField;
 import uk.co.tolcroft.models.ui.SaveButtons;
 import uk.co.tolcroft.models.ui.DateSelect.CalendarButton;
 import uk.co.tolcroft.models.ui.DateSelect.DateModel;
+import uk.co.tolcroft.models.ui.ItemField.FieldSet;
+import uk.co.tolcroft.models.ui.ValueField;
+import uk.co.tolcroft.models.ui.ValueField.ValueClass;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 import uk.co.tolcroft.models.views.ViewList;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
@@ -47,14 +48,15 @@ public class MaintAccount implements stdPanel {
 	private JPanel				theSecure		= null;
 	private AccountSelect 		theSelect		= null;
 	private SaveButtons  		theSaveButs   	= null;
-	private JTextField			theName			= null;
-	private JTextField			theDesc			= null;
-	private JPasswordField		theWebSite		= null;
-	private JPasswordField		theCustNo		= null;
-	private JPasswordField		theUserId		= null;
-	private JPasswordField		thePassword		= null;
-	private JPasswordField		theActDetail	= null;
-	private JPasswordField		theNotes		= null;
+	private FieldSet			theFieldSet		= null;
+	private ItemField			theName			= null;
+	private ItemField			theDesc			= null;
+	private ItemField			theWebSite		= null;
+	private ItemField			theCustNo		= null;
+	private ItemField			theUserId		= null;
+	private ItemField			thePassword		= null;
+	private ItemField			theActDetail	= null;
+	private ItemField			theNotes		= null;
 	private JLabel				theFirst		= null;
 	private JLabel				theLast			= null;
 	private JComboBox			theTypesBox		= null;
@@ -116,7 +118,7 @@ public class MaintAccount implements stdPanel {
 				
 		/* Build the View set and List */
 		theViewSet	= new ViewList(theView);
-		theViewList = theViewSet.registerClass(TaxYear.class);
+		theViewList = theViewSet.registerClass(Account.class);
 
 		/* Create the labels */
 		myName 	 	= new JLabel("Name:");
@@ -136,30 +138,38 @@ public class MaintAccount implements stdPanel {
 		myAccount 	= new JLabel("Account:");
 		myNotes  	= new JLabel("Notes:");
 		
+		/* Build the field set */
+		theFieldSet	= new FieldSet();
+		
 		/* Create the text fields */
-		theName  = new JTextField(Account.NAMELEN);
-		theDesc  = new JTextField(Account.DESCLEN);
+		theName  = new ItemField(ValueClass.String, Account.FIELD_NAME, theFieldSet);
+		theDesc  = new ItemField(ValueClass.String, Account.FIELD_DESC, theFieldSet);
+		theName.setColumns(Account.NAMELEN);
+		theDesc.setColumns(Account.DESCLEN);
 		
 		/* Create the password fields */
-		theWebSite		= new JPasswordField(Account.WSITELEN);
-		theCustNo  		= new JPasswordField(Account.CUSTLEN);
-		theUserId		= new JPasswordField(Account.UIDLEN);
-		thePassword		= new JPasswordField(Account.PWDLEN);
-		theActDetail	= new JPasswordField(Account.ACTLEN);
-		theNotes	  	= new JPasswordField(Account.WSITELEN);
-		
-		/* Display the values in the password fields */
-		theWebSite.setEchoChar((char)0);
-		theCustNo.setEchoChar((char)0);
-		theUserId.setEchoChar((char)0);
-		thePassword.setEchoChar((char)0);
-		theActDetail.setEchoChar((char)0);
-		theNotes.setEchoChar((char)0);
+		theWebSite		= new ItemField(ValueClass.CharArray, Account.FIELD_WEBSITE, theFieldSet);
+		theCustNo  		= new ItemField(ValueClass.CharArray, Account.FIELD_CUSTNO, theFieldSet);
+		theUserId		= new ItemField(ValueClass.CharArray, Account.FIELD_USERID, theFieldSet);
+		thePassword		= new ItemField(ValueClass.CharArray, Account.FIELD_PASSWORD, theFieldSet);
+		theActDetail	= new ItemField(ValueClass.CharArray, Account.FIELD_ACCOUNT, theFieldSet);
+		theNotes	  	= new ItemField(ValueClass.CharArray, Account.FIELD_NOTES, theFieldSet);
+		theWebSite.setColumns(Account.WSITELEN);
+		theCustNo.setColumns(Account.CUSTLEN);
+		theUserId.setColumns(Account.UIDLEN);
+		thePassword.setColumns(Account.PWDLEN);
+		theActDetail.setColumns(Account.ACTLEN);
+		theNotes.setColumns(Account.WSITELEN);
 		
 		/* Create the combo boxes */
 		theTypesBox  = new JComboBox();
 		theParentBox = new JComboBox();
 		theAliasBox  = new JComboBox();
+		
+		/* Add the ComboBoxes to the Field Set */
+		theFieldSet.addItemField(new ItemField(theTypesBox,  Account.FIELD_TYPE));
+		theFieldSet.addItemField(new ItemField(theParentBox, Account.FIELD_PARENT));
+		theFieldSet.addItemField(new ItemField(theAliasBox,  Account.FIELD_ALIAS));
 		
 		/* Dimension the account boxes correctly */
 		myDefChars = new char[Account.NAMELEN];
@@ -177,6 +187,7 @@ public class MaintAccount implements stdPanel {
 		/* Create the Maturity Button */
 		theMatButton  = new CalendarButton();
 		theDateModel  = theMatButton.getDateModel();
+		theFieldSet.addItemField(new ItemField(theMatButton,  Account.FIELD_MATURITY));
 		
 		/* Create the buttons */
 		theInsButton  = new JButton("New");
@@ -188,14 +199,14 @@ public class MaintAccount implements stdPanel {
 		AccountListener myListener = new AccountListener();
 		
 		/* Add listeners */
-		theName.addActionListener(myListener);
-		theDesc.addActionListener(myListener);
-		theWebSite.addActionListener(myListener);
-		theCustNo.addActionListener(myListener);
-		theUserId.addActionListener(myListener);
-		thePassword.addActionListener(myListener);
-		theActDetail.addActionListener(myListener);
-		theNotes.addActionListener(myListener);
+		theName.addPropertyChangeListener(ValueField.valueName, myListener);
+		theDesc.addPropertyChangeListener(ValueField.valueName, myListener);
+		theWebSite.addPropertyChangeListener(ValueField.valueName, myListener);
+		theCustNo.addPropertyChangeListener(ValueField.valueName, myListener);
+		theUserId.addPropertyChangeListener(ValueField.valueName, myListener);
+		thePassword.addPropertyChangeListener(ValueField.valueName, myListener);
+		theActDetail.addPropertyChangeListener(ValueField.valueName, myListener);
+		theNotes.addPropertyChangeListener(ValueField.valueName, myListener);
 		theTypesBox.addItemListener(myListener);
 		theParentBox.addItemListener(myListener);
 		theAliasBox.addItemListener(myListener);
@@ -721,60 +732,44 @@ public class MaintAccount implements stdPanel {
 			
 			/* Access details */
 			isClosed = theAccount.isClosed();
+			myType	 = theAccount.getActType();
 			
 			/* Set the name */
-			theName.setText(theAccount.getName() != null ? 
-								theAccount.getName() : "");
+			theName.setValue(theAccount.getName());
 			theName.setEnabled(!isClosed && !theAccount.isDeleted());
-			RenderData.formatComponent(theName, Account.FIELD_NAME, theAccount, false, (theAccount.getName() == null));
 		
 			/* Set the description */
-			theDesc.setText(theAccount.getDesc() != null ? 
-								theAccount.getDesc() : "");
+			theDesc.setValue(theAccount.getDesc());
 			theDesc.setEnabled(!isClosed && !theAccount.isDeleted());
-			RenderData.formatComponent(theDesc, Account.FIELD_DESC, theAccount, false, (theAccount.getDesc() == null));
 		
 			/* Set the WebSite */
-			theWebSite.setText(theAccount.getWebSite() != null ? 
-							   new String(theAccount.getWebSite()) : "");
+			theWebSite.setValue(theAccount.getWebSite());
 			theWebSite.setEnabled(!isClosed && !theAccount.isDeleted());
-			RenderData.formatComponent(theWebSite, Account.FIELD_WEBSITE, theAccount, false, (theAccount.getWebSite() == null));
 		
 			/* Set the CustNo */
-			theCustNo.setText(theAccount.getCustNo() != null ? 
-							  new String(theAccount.getCustNo()) : "");
+			theCustNo.setValue(theAccount.getCustNo());
 			theCustNo.setEnabled(!isClosed && !theAccount.isDeleted());
-			RenderData.formatComponent(theCustNo, Account.FIELD_CUSTNO, theAccount, false, (theAccount.getCustNo() == null));
 		
 			/* Set the UserId */
-			theUserId.setText(theAccount.getUserId() != null ? 
-							  new String(theAccount.getUserId()) : "");
+			theUserId.setValue(theAccount.getUserId());
 			theUserId.setEnabled(!isClosed && !theAccount.isDeleted());
-			RenderData.formatComponent(theUserId, Account.FIELD_USERID, theAccount, false, (theAccount.getUserId() == null));
 		
 			/* Set the Password */
-			thePassword.setText(theAccount.getPassword() != null ? 
-							    new String(theAccount.getPassword()) : "");
+			thePassword.setValue(theAccount.getPassword());
 			thePassword.setEnabled(!isClosed && !theAccount.isDeleted());
-			RenderData.formatComponent(thePassword, Account.FIELD_PASSWORD, theAccount, false, (theAccount.getPassword() == null));
 		
 			/* Set the WebSite */
-			theActDetail.setText(theAccount.getAccount() != null ? 
-							     new String(theAccount.getAccount()) : "");
+			theActDetail.setValue(theAccount.getAccount());
 			theActDetail.setEnabled(!isClosed && !theAccount.isDeleted());
-			RenderData.formatComponent(theActDetail, Account.FIELD_ACCOUNT, theAccount, false, (theAccount.getAccount() == null));
 		
 			/* Set the Notes */
-			theNotes.setText(theAccount.getNotes() != null ? 
-							   new String(theAccount.getNotes()) : "");
+			theNotes.setValue(theAccount.getNotes());
 			theNotes.setEnabled(!isClosed && !theAccount.isDeleted());
-			RenderData.formatComponent(theNotes, Account.FIELD_NOTES, theAccount, false, (theAccount.getNotes() == null));
 		
 			/* Set the type */
 			theTypesBox.setSelectedItem(myType.getName());
 			theTypesBox.setVisible(theAccount.isDeletable() && (theAccount.getState() == DataState.NEW));
 			theTypLabel.setVisible(theAccount.isDeletable() && (theAccount.getState() == DataState.NEW));
-			RenderData.formatComponent(theTypesBox, Account.FIELD_TYPE, theAccount, false, false);
 		
 			/* Handle maturity */
 			if (myType.isBond()) {
@@ -782,7 +777,6 @@ public class MaintAccount implements stdPanel {
 				theDateModel.setSelectedDate(theAccount.getMaturity().getDate());
 				theMatButton.setVisible(true);
 				theMatButton.setEnabled(!isClosed);
-				RenderData.formatComponent(theMatButton, Account.FIELD_MATURITY, theAccount, false, false);
 			}
 			else {
 				theMatButton.setVisible(false);
@@ -797,8 +791,6 @@ public class MaintAccount implements stdPanel {
 					theParentBox.setSelectedItem(null);
 				theParentBox.setVisible(true);
 				theParLabel.setVisible(true);
-				RenderData.formatComponent(theParentBox, Account.FIELD_PARENT, theAccount, 
-										   false, (theAccount.getParent() == null));
 			}
 			else {
 				theParentBox.setVisible(false);
@@ -848,8 +840,6 @@ public class MaintAccount implements stdPanel {
 					theAliasBox.setSelectedItem(null);
 				theAliasBox.setVisible(true);
 				theAlsLabel.setVisible(true);
-				RenderData.formatComponent(theAliasBox, Account.FIELD_ALIAS, theAccount, 
-										   false, (theAccount.getAlias() == null));
 			}
 			else {
 				theAliasBox.setVisible(false);
@@ -857,12 +847,15 @@ public class MaintAccount implements stdPanel {
 			}
 			theAliasBox.setEnabled(!isClosed && !theAccount.isDeleted());
 
+			/* Render all fields in the set */
+			theFieldSet.renderSet(theAccount);
+			
 			/* Set the First Event */
 			theFirst.setText((theAccount.getEarliest() != null)
 								? theAccount.getEarliest().getDate().formatDate() 
 								: "N/A");
 			
-			/* Set the First Event */
+			/* Set the Last Event */
 			theLast.setText((theAccount.getLatest() != null)
 								? theAccount.getLatest().getDate().formatDate() 
 								: "N/A");
@@ -873,7 +866,7 @@ public class MaintAccount implements stdPanel {
 			/* Make sure buttons are visible */
 			theDelButton.setVisible(theAccount.isDeletable());
 			theDelButton.setText("Delete");
-			theClsButton.setVisible(true);
+			theClsButton.setVisible(!theAccount.isDeleted());
 			
 			/* Enable buttons */
 			theInsButton.setEnabled(!theAccount.hasChanges() && (!theAccount.getActType().isReserved()));
@@ -887,16 +880,16 @@ public class MaintAccount implements stdPanel {
 		/* else no account selected */
 		else {
 			/* Clear details */
-			theName.setText("");
-			theDesc.setText("");
+			theName.setValue(null);
+			theDesc.setValue(null);
 			theFirst.setText("");
 			theLast.setText("");
-			theWebSite.setText("");
-			theCustNo.setText("");
-			theUserId.setText("");
-			thePassword.setText("");
-			theActDetail.setText("");
-			theNotes.setText("");
+			theWebSite.setValue(null);
+			theCustNo.setValue(null);
+			theUserId.setValue(null);
+			thePassword.setValue(null);
+			theActDetail.setValue(null);
+			theNotes.setValue(null);
 			
 			/* Disable field entry */
 			theName.setEnabled(false);
@@ -946,68 +939,6 @@ public class MaintAccount implements stdPanel {
 		/* Notify changes */
 		notifyChanges();
 		updateDebug();
-	}
-	
-	/* Update text */
-	private void updateText() throws Exception {
-		String  myText;
-		char[]	myArray;
-
-		/* Access the value */
-		myText = theName.getText();
-		if (myText.length() == 0) myText = null;
-		
-		/* Store the appropriate value */
-		theAccount.setAccountName(myText);    
-
-		/* Access the value */
-		myText = theDesc.getText();
-		if (myText.length() == 0) myText = null;
-		
-		/* Store the appropriate value */
-		theAccount.setDescription(myText);
-
-		/* Access the value */
-		myArray = theWebSite.getPassword();
-		if (myArray.length == 0) myArray = null;
-		
-		/* Store the appropriate value */
-		theAccount.setWebSite(myArray);
-
-		/* Access the value */
-		myArray = theCustNo.getPassword();
-		if (myArray.length == 0) myArray = null;
-		
-		/* Store the appropriate value */
-		theAccount.setCustNo(myArray);
-
-		/* Access the value */
-		myArray = theUserId.getPassword();
-		if (myArray.length == 0) myArray = null;
-		
-		/* Store the appropriate value */
-		theAccount.setUserId(myArray);
-
-		/* Access the value */
-		myArray = thePassword.getPassword();
-		if (myArray.length == 0) myArray = null;
-		
-		/* Store the appropriate value */
-		theAccount.setPassword(myArray);
-
-		/* Access the value */
-		myArray = theActDetail.getPassword();
-		if (myArray.length == 0) myArray = null;
-		
-		/* Store the appropriate value */
-		theAccount.setAccount(myArray);
-
-		/* Access the value */
-		myArray = theNotes.getPassword();
-		if (myArray.length == 0) myArray = null;
-		
-		/* Store the appropriate value */
-		theAccount.setNotes(myArray);
 	}
 	
 	/* Undo changes */
@@ -1080,9 +1011,6 @@ public class MaintAccount implements stdPanel {
 				
 						/* Set parent to null for non-child accounts */
 						if (!theAccount.isChild()) theAccount.setParent(null);
-				
-						/* Update text */
-						updateText();
 					}
 				}
 	
@@ -1092,9 +1020,6 @@ public class MaintAccount implements stdPanel {
 						/* Store the appropriate value */
 						myName = (String)evt.getItem();
 						theAccount.setParent(theAccounts.searchFor(myName));
-				
-						/* Update text */
-						updateText();
 					}
 				}
 			
@@ -1104,9 +1029,6 @@ public class MaintAccount implements stdPanel {
 						/* Store the appropriate value */
 						myName = (String)evt.getItem();
 						theAccount.setAlias(theAccounts.searchFor(myName));
-				
-						/* Update text */
-						updateText();
 					}
 				}
 			}
@@ -1185,27 +1107,11 @@ public class MaintAccount implements stdPanel {
 		
 			/* Protect against exceptions */
 			try {
-				/* If this event relates to the name field */
-				if ((o == theName)      ||
-					(o == theDesc)      ||
-					(o == theWebSite)   ||
-					(o == theCustNo)    ||
-					(o == theUserId)    ||
-					(o == thePassword)  ||
-					(o == theActDetail) ||
-					(o == theNotes)) {
-					/* Update the text */
-					updateText();
-				}
-		
 				/* If this event relates to the close button */
-				else if (o == theClsButton) {
+				if (o == theClsButton) {
 					/* Re-open or close the account as required */
 					if (theAccount.isClosed()) 	theAccount.reOpenAccount();
 					else						theAccount.closeAccount();
-			
-					/* Update the text */
-					updateText();
 				}	
 			}
 		
@@ -1239,54 +1145,108 @@ public class MaintAccount implements stdPanel {
 			}
 		}	
 	
+		
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			/* If this event relates to the maturity box */
-			if (evt.getSource() == (Object)theMatButton) {
-				/* Access the value */
-				Date myDate = new Date(theDateModel.getSelectedDate());
-
-				/* Push history */
-				theAccount.pushHistory();
+			Object 	o 		= evt.getSource();
 			
-				/* Protect against exceptions */
-				try {
-					/* Store the appropriate value */
-					theAccount.setMaturity(myDate);    
-		
-					/* Update the text */
-					updateText();
+			/* Push history */
+			theAccount.pushHistory();
+	
+			/* Protect against exceptions */
+			try {
+				/* If this is the name */
+				if (o == theName) {
+					/* Update the Account */
+					String myValue = (String)theName.getValue();
+					theAccount.setAccountName(myValue);    
 				}	
 			
-				/* Handle Exceptions */
-				catch (Throwable e) {
-					/* Reset values */
-					theAccount.popHistory();
-					theAccount.pushHistory();
-				
-					/* Build the error */
-					Exception myError = new Exception(ExceptionClass.DATA,
-													  "Failed to update field",
-													  e);
-				
-					/* Show the error */
-					theError.setError(myError);
+				/* If this is the description */
+				else if (o == theDesc) {
+					/* Update the Account */
+					String myValue = (String)theDesc.getValue();
+					theAccount.setDescription(myValue);    
 				}
 			
-				/* Check for changes */
-				if (theAccount.checkForHistory()) {
-					/* Note that the item has changed */
-					theAccount.setState(DataState.CHANGED);
-				
-					/* validate it */
-					theAccount.clearErrors();
-					theAccount.validate();
-				
-					/* Note that changes have occurred */
-					notifyChanges();
-					updateDebug();
+				/* If this is our WebSite */
+				else if (o == theWebSite) {
+					/* Update the Account */
+					char[] myValue = (char[])theWebSite.getValue();
+					theAccount.setWebSite(myValue);    
 				}
-			}	
+			
+				/* If this is our CustNo */
+				else if (o == theCustNo) {
+					/* Update the Account */
+					char[] myValue = (char[])theCustNo.getValue();
+					theAccount.setCustNo(myValue);    
+				}
+			
+				/* If this is our UserId */
+				else if (o == theUserId) {
+					/* Update the Account */
+					char[] myValue = (char[])theUserId.getValue();
+					theAccount.setUserId(myValue);    
+				}
+				
+				/* If this is our Password */
+				else if (o == thePassword) {
+					/* Update the Account */
+					char[] myValue = (char[])thePassword.getValue();
+					theAccount.setPassword(myValue);    
+				}
+			
+				/* If this is our Account Detail */
+				else if (o == theActDetail) {
+					/* Update the Account */
+					char[] myValue = (char[])theActDetail.getValue();
+					theAccount.setAccount(myValue);    
+				}
+			
+				/* If this is our Notes */
+				else if (o == theNotes) {
+					/* Update the Account */
+					char[] myValue = (char[])theNotes.getValue();
+					theAccount.setNotes(myValue);    
+				}
+
+				/* If this event relates to the maturity box */
+				else if (o == theMatButton) {
+					/* Access the value */
+					Date myDate = new Date(theDateModel.getSelectedDate());
+					theAccount.setMaturity(myDate);    
+				}
+			}
+			
+			/* Handle Exceptions */
+			catch (Throwable e) {
+				/* Reset values */
+				theAccount.popHistory();
+				theAccount.pushHistory();
+			
+				/* Build the error */
+				Exception myError = new Exception(ExceptionClass.DATA,
+												  "Failed to update field",
+												  e);
+			
+				/* Show the error */
+				theError.setError(myError);
+			}
+		
+			/* Check for changes */
+			if (theAccount.checkForHistory()) {
+				/* Note that the item has changed */
+				theAccount.setState(DataState.CHANGED);
+			
+				/* validate it */
+				theAccount.clearErrors();
+				theAccount.validate();
+			
+				/* Note that changes have occurred */
+				notifyChanges();
+				updateDebug();
+			}
 		}
 	}
 }

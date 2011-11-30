@@ -3,8 +3,6 @@ package uk.co.tolcroft.models.ui;
 import java.awt.Color;
 import java.awt.Font;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.table.JTableHeader;
 
 import uk.co.tolcroft.models.data.DataItem;
@@ -16,13 +14,13 @@ public class RenderData {
 	private	static Font 	theNumFont 		= new Font("Courier", Font.PLAIN, 12);
 	private	static Font 	theChgFont 		= new Font("Arial", Font.ITALIC, 12);
 	private	static Font 	theChgNumFont 	= new Font("Courier", Font.ITALIC, 12);
-	private static Color	theErrorColor	= Color.red;
-	private static Color	theChangeColor	= Color.magenta;
-	private static Color	theNewColor		= Color.blue;
-	private static Color	theDelColor		= Color.lightGray;
-	private static Color	theRecovColor	= Color.darkGray;
-	private static Color	theStdColor		= Color.black;
-	private static Color	theBackColor	= Color.white;
+	protected static Color	theErrorColor	= Color.red;
+	protected static Color	theChangeColor	= Color.magenta.darker();
+	protected static Color	theNewColor		= Color.blue;
+	protected static Color	theDelColor		= Color.lightGray;
+	protected static Color	theRecovColor	= Color.darkGray;
+	protected static Color	theStdColor		= Color.black;
+	protected static Color	theBackColor	= Color.white;
 
 	/* Properties */
 	private String			theToolTipText 	= null;
@@ -78,8 +76,8 @@ public class RenderData {
 		boolean 	isChanged = false;
 		
 		/* Default is black on white */
-		myFore = theStdColor;
-		myBack = theBackColor;
+		myFore = getForeground(pRow, iField);
+		myBack = getBackground();
 
 		/* Has the field changed */
 		isChanged = pRow.fieldChanged(iField).isDifferent();
@@ -162,76 +160,69 @@ public class RenderData {
 	}
 	
 	/**
-	 * Process Item
-	 * @param pItem the item
-	 * @param iField the field id 
-	 * @param isNull is the item null 
+	 * Determine Standard foreground
+	 * @param pItem the Item
+	 * @param iField the Field number
+	 * @return the standard foreground for the item
 	 */
-	private void processComponent(DataItem<?> 	pItem,
-								  int			iField,
-		 					      boolean		isNull) {
-		boolean 	isChanged;
-		boolean 	isError;
-		boolean 	isFlipped;
-		DataState 	myState;
-		Font		myFont;
-		Color		myBack;
-		Color		myFore;
-		String		myTip = null;
-		
-		/* Access the data state */
-		myState = pItem.getState();
-		
-		/* Determine the standard colour */
-		myFore = theStdColor;
-		myBack = theBackColor;
-		if (myState == DataState.DELETED)
-			myFore = theDelColor;
-		else if (myState == DataState.NEW)
-			myFore = theNewColor;
-		else if (myState == DataState.RECOVERED)
-			myFore = theRecovColor;
+	protected static Color getForeground(DataItem<?> pItem,
+										 int		 iField) {
+		/* Handle deleted items */
+		if (pItem.isDeleted()) return theDelColor;
 
-		/* Determine the render information */
-		isChanged 	= pItem.fieldChanged(iField).isDifferent();
-		myFont 		= (isChanged) ? (isFixed ? theChgNumFont : theChgFont) 
-								  : (isFixed ? theNumFont : theStdFont);
-		if (isError = pItem.hasErrors(iField)) 
-			myTip  = pItem.getFieldErrors(iField);
-		myFore	= ((isError) ? theErrorColor  
-				 			 : (isChanged)	? theChangeColor
-				 							: myFore);
+		/* Handle error items */
+		if ((pItem.hasErrors()) && (pItem.hasErrors(iField))) 
+			return theErrorColor;
+			
+		/* Handle changed items */
+		if (pItem.fieldChanged(iField).isDifferent())
+			return theChangeColor;
 		
-		/* Determine whether to flip foreground and background */
-		isFlipped = ((isError) && (isNull));
-		
-		theForeGround	= (isFlipped) ? myBack : myFore;
-		theBackGround	= (isFlipped) ? myFore : myBack;
-		theToolTipText 	= myTip;
-		theFont			= myFont;		
+		/* Switch on Status */
+		switch (pItem.getState()) {
+			case NEW:		return theNewColor;
+			case RECOVERED:	return theRecovColor;
+			default: 		return theStdColor;
+		}
+	}
+
+	/**
+	 * Determine Standard background
+	 * @return the standard background
+	 */
+	protected static Color getBackground() { return theBackColor; }
+
+	/**
+	 * Determine Standard Font
+	 * @param pItem the Item
+	 * @param iField the Field number
+	 * @return the standard Font for the item
+	 */
+	protected static Font getFont(DataItem<?> 	pItem,
+								  int			iField,
+								  boolean		isFixed) {
+		if (pItem.fieldChanged(iField).isDifferent())
+			return (isFixed ? theChgNumFont : theChgFont); 
+		else 
+			return (isFixed ? theNumFont : theStdFont);
 	}
 	
 	/**
-	 * Format the component for the field
-	 * @param pComp the component
-	 * @param iField the field number
-	 * @param pItem the data item
-	 * @param isNumeric is the field numeric
-	 * @param isNull is the field null
+	 * Determine Standard ToolTip
+	 * @param pItem the Item
+	 * @param iField the Field number
+	 * @return the standard ToolTip for the item
 	 */
-	public static void formatComponent(JComponent	pComp,
-								   	   int			iField,
-								   	   DataItem<?>	pItem,
-								   	   boolean 		isNumeric,
-								   	   boolean		isNull) {
-		/* Access RenderData */
-		RenderData 	myRender	= new RenderData(isNumeric);
-		myRender.processComponent(pItem, iField, isNull);
+	protected static String getToolTip(DataItem<?> 	pItem,
+									   int			iField) {
+		/* Handle deleted items */
+		if (pItem.isDeleted()) return null;
 
-		/* Set component values */
-		pComp.setForeground(myRender.getForeGround());
-		if (!(pComp instanceof JButton)) pComp.setBackground(myRender.getBackGround());
-		pComp.setToolTipText(myRender.getToolTip());
-		pComp.setFont(myRender.getFont());
+		/* Handle error items */
+		if ((pItem.hasErrors()) && (pItem.hasErrors(iField))) 
+			return pItem.getFieldErrors(iField);
+			
+		/* Return no ToolTip */
+		return null;
 	}
 }
