@@ -5,6 +5,8 @@ import java.awt.Font;
 
 import javax.swing.table.JTableHeader;
 
+import uk.co.tolcroft.models.PropertySet.Property;
+import uk.co.tolcroft.models.PropertySet.PropertyType;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataState;
 
@@ -187,6 +189,17 @@ public class RenderData {
 	}
 
 	/**
+	 * Determine Standard foreground
+	 * @param pProperty the property
+	 * @return the standard foreground for the item
+	 */
+	protected static Color getForeground(Property pProperty) {
+		/* Handle changed items */
+		return (pProperty.isChanged()) 	? theChangeColor
+										: theStdColor;
+	}
+
+	/**
 	 * Determine Standard background
 	 * @return the standard background
 	 */
@@ -202,6 +215,19 @@ public class RenderData {
 								  int			iField,
 								  boolean		isFixed) {
 		if (pItem.fieldChanged(iField).isDifferent())
+			return (isFixed ? theChgNumFont : theChgFont); 
+		else 
+			return (isFixed ? theNumFont : theStdFont);
+	}
+	
+	/**
+	 * Determine Standard Font
+	 * @param pProperty the Item
+	 * @return the standard Font for the item
+	 */
+	protected static Font getFont(Property 	pProperty) {
+		boolean isFixed = pProperty.getType() == PropertyType.Integer; 
+		if (pProperty.isChanged())
 			return (isFixed ? theChgNumFont : theChgFont); 
 		else 
 			return (isFixed ? theNumFont : theStdFont);

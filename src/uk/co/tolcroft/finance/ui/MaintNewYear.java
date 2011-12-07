@@ -29,7 +29,6 @@ public class MaintNewYear extends StdTable<Event> implements ActionListener {
 	private MaintenanceTab		theParent			= null;
 	private JPanel				thePanel			= null;
 	private yearColumnModel		theColumns			= null;
-	//private TaxYear				theYear				= null;
 	private patternYearModel	theModel			= null;
 	private JButton				thePattern			= null;
 	private DebugEntry			theDebugYear		= null;

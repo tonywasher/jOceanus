@@ -25,9 +25,6 @@ import uk.co.tolcroft.models.views.ViewList;
 
 public class AccountTab implements stdPanel,
 								   ChangeListener {
-	/* Members */
-	private static final long serialVersionUID  = 7682053546233794088L;
-
 	private View				theView		 	= null;
 	private JPanel				thePanel	 	= null;
 	private MainTab				theParent    	= null;
@@ -50,7 +47,7 @@ public class AccountTab implements stdPanel,
 	public JPanel  		getPanel()   			  { return thePanel; }
 	public int  		getFieldForCol(int col)   { return -1; }
 	public ComboSelect	getComboList()			  { return theParent.getComboList(); }
-	public ViewList	getViewSet()			  { return theViewSet; }
+	public ViewList		getViewSet()			  { return theViewSet; }
 	public DebugEntry	getDebugEntry()			  { return theDebugEntry; }
 	public DebugManager getDebugManager() 		  { return theParent.getDebugMgr(); }
 	public void 		printIt()				  { }

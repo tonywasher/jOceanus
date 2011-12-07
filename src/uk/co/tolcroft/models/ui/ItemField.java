@@ -105,11 +105,11 @@ public class ItemField extends ValueField {
 	 * @param iField the field number
 	 * @param pSet the set to add to 
 	 */
-	public ItemField(JComponent pClass,
+	public ItemField(JComponent pComponent,
 			 		 int 		iField,
 			 		 FieldSet	pSet) {
 		/* Call standard constructor */
-		this(pClass, iField);
+		this(pComponent, iField);
 		
 		/* Add to the set */
 		pSet.addItemField(this);

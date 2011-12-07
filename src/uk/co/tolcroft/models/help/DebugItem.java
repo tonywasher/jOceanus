@@ -26,9 +26,7 @@ import uk.co.tolcroft.models.ReportItem;
 import uk.co.tolcroft.models.ReportList;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
 
-public class DebugItem implements HyperlinkListener,
-								  ActionListener,
-								  ItemListener {
+public class DebugItem {
 	/**
 	 * The members 
 	 */
@@ -37,7 +35,7 @@ public class DebugItem implements HyperlinkListener,
 	private ReportList<?>				theList 		= null;
 	private ReportItem<?>				theItem 		= null;
 	private ReportList<?>.ListIterator	theIterator		= null;
-	//private	DebugEntry					theEntry		= null;
+	private	DebugEntry					theEntry		= null;
 	private DebugObject					theObject		= null;
 	private DebugDetail					theDetail		= null;
 	private	JButton						theNext			= null;
@@ -84,7 +82,6 @@ public class DebugItem implements HyperlinkListener,
 		/* Create the editor pane as non-editable */
 		theEditor = new JEditorPane();
 		theEditor.setEditable(false);
-		theEditor.addHyperlinkListener(this);
 			
 		/* Add an editor kit to the editor */
 		myKit = new HTMLEditorKit();
@@ -171,30 +168,34 @@ public class DebugItem implements HyperlinkListener,
                 .addContainerGap())
         );
         
-        /* Add action Listeners */
-        theNext.addActionListener(this);
-        thePrev.addActionListener(this);
-        theNextTen.addActionListener(this);
-        thePrevTen.addActionListener(this);
-        theNextHun.addActionListener(this);
-        thePrevHun.addActionListener(this);
-        theNextThou.addActionListener(this);
-        thePrevThou.addActionListener(this);        
+        /* Create listener */
+        DebugListener myListener = new DebugListener();
+        
+        /* Add hyper-link listener */
+		theEditor.addHyperlinkListener(myListener);
+		
+	    /* Add action Listeners */		
+        theNext.addActionListener(myListener);
+        thePrev.addActionListener(myListener);
+        theNextTen.addActionListener(myListener);
+        thePrevTen.addActionListener(myListener);
+        theNextHun.addActionListener(myListener);
+        thePrevHun.addActionListener(myListener);
+        theNextThou.addActionListener(myListener);
+        thePrevThou.addActionListener(myListener);        
 
         /* Add item Listener */
-        theToggle.addItemListener(this);
+        theToggle.addItemListener(myListener);
 	}
 
 	/* Display debug detail */
 	protected void displayDebug(DebugEntry pEntry) {
 		/* Record the object */
-		//theEntry  = pEntry;
+		theEntry  = pEntry;
 		theObject = pEntry.getObject();
 		
 		/* If we should use the ReportList window */
-		if ((theObject != null) &&
-			(theObject instanceof ReportList) && 
-			(!pEntry.hasChildren())) {
+		if (isEntryList(pEntry)) {
 			/* Show the list window */
 			theListPanel.setVisible(true);
 
@@ -213,6 +214,42 @@ public class DebugItem implements HyperlinkListener,
 		}
 	}		
 
+	/* Is the entry a list */
+	private boolean isEntryList(DebugEntry pEntry) {
+		DebugObject myObject = pEntry.getObject();
+		
+		/* If we should use the ReportList window */
+		if ((myObject != null) &&
+			(myObject instanceof ReportList) && 
+			(!pEntry.hasChildren()))  return true;
+		
+		/* else standard entry */
+		return false;
+	}
+	
+	/* Update debug */
+	protected void updateDebug(DebugEntry pEntry) {
+		/* Access the object */
+		theObject = pEntry.getObject();
+
+		/* If we are updating the active object */
+		if (theEntry == pEntry) {
+			/* If this is a list window */
+			if (isEntryList(pEntry)) {
+				
+			}
+			
+			/* else standard window */
+			else {
+				/* Hide the list window */
+				theListPanel.setVisible(false);
+				
+				/* Display the object */
+				displayDetail(new DebugDetail(theObject));				
+			}
+		}
+	}
+	
 	/* Display debug object */
 	private void displayDetail(DebugDetail pDetail) {
 		StringBuilder	myValue = null;
@@ -333,53 +370,6 @@ public class DebugItem implements HyperlinkListener,
 	}
 
 	/**
-	 * Perform the requested action 
-	 * @param pEvent the event
-	 */
-	public void hyperlinkUpdate(HyperlinkEvent pEvent){
-		/* If this is an activated event */
-		if (pEvent.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-			if (pEvent instanceof HTMLFrameHyperlinkEvent) {
-				HTMLFrameHyperlinkEvent evt = (HTMLFrameHyperlinkEvent) pEvent;
-				HTMLDocument doc = (HTMLDocument)theEditor.getDocument();
-				doc.processHTMLFrameHyperlinkEvent(evt);
-			}
-			else {
-				try {
-					URL    url  = pEvent.getURL();
-					String desc = pEvent.getDescription();
-					if (url == null) {
-						/* Access the referenced link */
-						DebugDetail myDetail = theDetail.getDebugLink(desc);
-						
-						/* Shift to this link */
-						if (myDetail != null) 
-							displayDetail(myDetail);
-					}
-					else theEditor.setPage(pEvent.getURL());
-				}
-				catch (Throwable e) {}
-			}
-		}
-	}
-	
-	/**
-	 * Perform the requested action 
-	 * @param pEvent the event
-	 */
-	public void actionPerformed(ActionEvent pEvent) {
-		/* If we asked for the next item */
-		if 		(pEvent.getSource() == theNext) 	shiftIterator(1);
-		else if (pEvent.getSource() == theNextTen)	shiftIterator(10);
-		else if (pEvent.getSource() == theNextHun)	shiftIterator(100);
-		else if (pEvent.getSource() == theNextThou)	shiftIterator(100);
-		else if (pEvent.getSource() == thePrev)		shiftIterator(-1);
-		else if (pEvent.getSource() == thePrevTen)	shiftIterator(-10);
-		else if (pEvent.getSource() == thePrevHun)	shiftIterator(-100);
-		else if (pEvent.getSource() == thePrevThou)	shiftIterator(-1000);
-	}
-
-	/**
 	 * Shift the iterator a number of steps 
 	 * @param iNumSteps the number of steps to shift (positive or negative)
 	 */
@@ -435,29 +425,74 @@ public class DebugItem implements HyperlinkListener,
 	}
 
 	/**
-	 * Handle item change events 
-	 * @param pEvent the event
+	 * Debug Listener class 
 	 */
-	public void itemStateChanged(ItemEvent pEvent) {
-		/* If the event was the toggle button */
-		if (pEvent.getSource() == theToggle) {
-			/* If we are selecting list view */
-			if (pEvent.getStateChange() == ItemEvent.SELECTED) {
-				/* If we need to switch to item view */
-				if (!isListMode) {
-					/* Set list mode and display item */
-					isListMode = true;
-					displayItem();
+	private class DebugListener implements HyperlinkListener,
+	  									   ActionListener,
+	  									   ItemListener {
+		@Override
+		public void hyperlinkUpdate(HyperlinkEvent pEvent){
+			/* If this is an activated event */
+			if (pEvent.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+				if (pEvent instanceof HTMLFrameHyperlinkEvent) {
+					HTMLFrameHyperlinkEvent evt = (HTMLFrameHyperlinkEvent) pEvent;
+					HTMLDocument doc = (HTMLDocument)theEditor.getDocument();
+					doc.processHTMLFrameHyperlinkEvent(evt);
+				}
+				else {
+					try {
+						URL    url  = pEvent.getURL();
+						String desc = pEvent.getDescription();
+						if (url == null) {
+							/* Access the referenced link */
+							DebugDetail myDetail = theDetail.getDebugLink(desc);
+						
+							/* Shift to this link */
+							if (myDetail != null) 
+								displayDetail(myDetail);
+						}
+						else theEditor.setPage(pEvent.getURL());
+					}
+					catch (Throwable e) {}
 				}
 			}
+		}
+	
+		@Override
+		public void actionPerformed(ActionEvent pEvent) {
+			/* If we asked for the next item */
+			if 		(pEvent.getSource() == theNext) 	shiftIterator(1);
+			else if (pEvent.getSource() == theNextTen)	shiftIterator(10);
+			else if (pEvent.getSource() == theNextHun)	shiftIterator(100);
+			else if (pEvent.getSource() == theNextThou)	shiftIterator(100);
+			else if (pEvent.getSource() == thePrev)		shiftIterator(-1);
+			else if (pEvent.getSource() == thePrevTen)	shiftIterator(-10);
+			else if (pEvent.getSource() == thePrevHun)	shiftIterator(-100);
+			else if (pEvent.getSource() == thePrevThou)	shiftIterator(-1000);
+		}
 
-			/* else if we are deselecting list view */
-			else if (pEvent.getStateChange() == ItemEvent.DESELECTED) {
-				/* If we need to switch to header view */
-				if (isListMode) {
-					/* Clear list mode and display header */
-					isListMode = false;
-					displayHeader();
+		@Override
+		public void itemStateChanged(ItemEvent pEvent) {
+			/* If the event was the toggle button */
+			if (pEvent.getSource() == theToggle) {
+				/* If we are selecting list view */
+				if (pEvent.getStateChange() == ItemEvent.SELECTED) {
+					/* If we need to switch to item view */
+					if (!isListMode) {
+						/* Set list mode and display item */
+						isListMode = true;
+						displayItem();
+					}
+				}
+
+				/* else if we are deselecting list view */
+				else if (pEvent.getStateChange() == ItemEvent.DESELECTED) {
+					/* If we need to switch to header view */
+					if (isListMode) {
+						/* Clear list mode and display header */
+						isListMode = false;
+						displayHeader();
+					}
 				}
 			}
 		}

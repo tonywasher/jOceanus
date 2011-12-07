@@ -22,7 +22,7 @@ public class TableDefinition {
 	/**
 	 * The Column Array expansion size
 	 */
-	private final static int		COLUMN_BLOCKSIZE	= 20;
+	private final static int		COLUMN_BLOCKSIZE	= 5;
 	
 	/**
 	 * The Table name
@@ -1198,8 +1198,8 @@ public class TableDefinition {
 			theIdentity	= pId;
 			theName		= pName;
 			
-			/* If the column list size is too small */
-			if (theIdentity > theColumns.length-1) {
+			/* While the column list size is too small */
+			while (theIdentity > theColumns.length-1) {
 				/* Extend the column array */
 				theColumns = java.util.Arrays.copyOf(theColumns,
 													 theColumns.length+COLUMN_BLOCKSIZE,

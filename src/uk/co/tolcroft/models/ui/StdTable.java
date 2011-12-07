@@ -112,8 +112,8 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 	}
 	
 	/**
-	 * Set the table model
-	 * @param pModel the table model
+	 * Add the mouse listener
+	 * @param pListener the listener
 	 */
 	public void addMouseListener(MouseListener pListener) {
 		/* Pass call on */

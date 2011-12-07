@@ -108,7 +108,6 @@ public class MaintenanceTab implements ChangeListener {
 		/* Refresh sub-panels */
 		theAccountTab.refreshData();
 		theTaxYearTab.refreshData();
-		theProperties.refreshData();
 		thePatternYear.refreshData();
 		theStatic.refreshData();
 	}

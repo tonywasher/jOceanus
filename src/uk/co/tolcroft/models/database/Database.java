@@ -9,16 +9,18 @@ import java.util.ListIterator;
 
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.PropertySet;
+import uk.co.tolcroft.models.PropertySet.PropertyManager;
+import uk.co.tolcroft.models.PropertySet.PropertySetChooser;
 import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.views.DataControl;
 
-public abstract class Database<T extends DataSet<T>> {
+public abstract class Database<T extends DataSet<T>> implements PropertySetChooser {
 	/**
-	 * Properties for application
+	 * Properties for database
 	 */
-	private Properties				theProperties	= null;
+	private DatabaseProperties		theProperties	= null;
 	
 	/**
 	 * Database connection
@@ -26,23 +28,174 @@ public abstract class Database<T extends DataSet<T>> {
 	private Connection          	theConn         = null;
 	
 	/**
+	 * Batch Size 
+	 */
+	private Integer					theBatchSize	= null;
+	
+	/**
 	 * List of Database tables
 	 */
 	private List<DatabaseTable<?>>	theTables		= null;
+
+	@Override
+	public Class<? extends PropertySet> getPropertySetClass() { return DatabaseProperties.class; }
+	
+	/**
+	 * Database Properties
+	 */
+	public static class DatabaseProperties extends PropertySet {
+		/**
+		 * Registry name for DataBase driver
+		 */
+		protected final static String 	nameDBDriver	= "DBDriver";
+
+		/**
+		 * Registry name for DataBase server
+		 */
+		protected final static String 	nameDBServer	= "DBServer";
+
+		/**
+		 * Registry name for DataBase instance
+		 */
+		protected final static String 	nameDBInstance	= "DBInstance";
+
+		/**
+		 * Registry name for DataBase name
+		 */
+		protected final static String 	nameDBName		= "DBName";
+
+		/**
+		 * Registry name for DataBase batch size
+		 */
+		protected final static String 	nameDBBatch		= "DBBatchSize";
+
+		/**
+		 * Display name for DataBase driver
+		 */
+		protected final static String 	dispDBDriver	= "Database Driver Class";
+
+		/**
+		 * Display name for DataBase server
+		 */
+		protected final static String 	dispDBServer	= "Server Host Machine";
+
+		/**
+		 * Display name for DataBase instance
+		 */
+		protected final static String 	dispDBInstance	= "Server Instance";
+
+		/**
+		 * Display name for DataBase name
+		 */
+		protected final static String 	dispDBName		= "Database Name";
+
+		/**
+		 * Registry name for DataBase batch size
+		 */
+		protected final static String 	dispDBBatch		= "Batch Size";
+
+		/**
+		 * Default Database driver string
+		 */
+		private final static String		defDBDriver		= "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+
+		/**
+		 * Default Database connection string
+		 */
+		private final static String		defDBServer		= "localhost";
+		
+		/**
+		 * Default Database instance
+		 */
+		private final static String		defDBInstance	= "SQLEXPRESS";		
+
+		/**
+		 * Default Database name
+		 */
+		private final static String		defDBName		= "Finance";		
+
+		/**
+		 * Default Database batch size
+		 */
+		private final static Integer	defDBBatch		= 50;		
+
+		/**
+		 * Constructor
+		 * @throws Exception
+		 */
+		public DatabaseProperties() throws Exception { super();	}
+
+		@Override
+		protected void defineProperties() {
+			/* Define the properties */
+			defineProperty(nameDBDriver, PropertyType.String);
+			defineProperty(nameDBServer, PropertyType.String);
+			defineProperty(nameDBInstance, PropertyType.String);
+			defineProperty(nameDBName, PropertyType.String);
+			defineProperty(nameDBBatch, PropertyType.Integer);
+		}
+
+		@Override
+		protected Object getDefaultValue(String pName) {
+			/* Handle default values */
+			if (pName.equals(nameDBDriver)) 	return defDBDriver;
+			if (pName.equals(nameDBServer))		return defDBServer;
+			if (pName.equals(nameDBInstance))	return defDBInstance;
+			if (pName.equals(nameDBName))		return defDBName;
+			if (pName.equals(nameDBBatch))		return defDBBatch;
+			return null;
+		}
+		
+		@Override
+		protected String getDisplayName(String pName) {
+			/* Handle default values */
+			if (pName.equals(nameDBDriver)) 	return dispDBDriver;
+			if (pName.equals(nameDBServer))		return dispDBServer;
+			if (pName.equals(nameDBInstance))	return dispDBInstance;
+			if (pName.equals(nameDBName))		return dispDBName;
+			if (pName.equals(nameDBBatch))		return dispDBBatch;
+			return null;
+		}
+		
+		/**
+		 * Obtain connection string 
+		 * @return the connection string 
+		 */
+		private String getConnectionString() {
+			StringBuilder myBuilder = new StringBuilder(100);
+			
+			/* Build the connection string */
+			myBuilder.append("jdbc:sqlserver://");
+			myBuilder.append(getStringValue(nameDBServer));
+			myBuilder.append(";instanceName=");
+			myBuilder.append(getStringValue(nameDBInstance));
+			myBuilder.append(";database=");
+			myBuilder.append(getStringValue(nameDBName));
+			myBuilder.append(";integratedSecurity=true");
+			
+			/* Return the string */
+			return myBuilder.toString();
+		}
+	}
 	
 	/**
 	 * Construct a new Database class
 	 * @param pProperties the database properties
-	 * @param pDataSet the set to load or use for updates
 	 */
-	public Database(Properties 	pProperties) throws Exception {
-		/* Store the properties and DataSet */
-		theProperties 	= pProperties;
-		
+	public Database() throws Exception {
 		/* Create the connection */
 		try {
-			Class.forName(theProperties.getDBDriver());	   
-			theConn = DriverManager.getConnection(theProperties.getDBConnection());
+			/* Access the database properties */
+			theProperties = (DatabaseProperties)PropertyManager.getPropertySet(this);
+	
+			/* Access the batch size */
+			theBatchSize = theProperties.getIntegerValue(DatabaseProperties.nameDBBatch);
+			
+			/* Load the database driver */
+			Class.forName(theProperties.getStringValue(DatabaseProperties.nameDBDriver));
+
+			/* Obtain the connection */
+			theConn = DriverManager.getConnection(theProperties.getConnectionString());
 			theConn.setAutoCommit(false);
 		}
 		catch (Throwable e) {
@@ -164,7 +317,7 @@ public abstract class Database<T extends DataSet<T>> {
 	public void updateDatabase(ThreadStatus<T>	pThread,
 							   T 				pData) throws Exception {
 		boolean 		bContinue 	= true;
-		BatchControl	myBatch		= new BatchControl();
+		BatchControl	myBatch		= new BatchControl(theBatchSize);
 		
 		/* Set the number of stages */
 		if (!pThread.setNumStages(3*theTables.size())) return;
@@ -228,7 +381,6 @@ public abstract class Database<T extends DataSet<T>> {
 	/**
 	 * Create tables 
 	 * @param pThread the thread control
-	 * @return Continue <code>true/false</code>
 	 */
 	public void createTables(ThreadStatus<T>	pThread) throws Exception {
 		/* Drop any existing tables */
@@ -281,7 +433,6 @@ public abstract class Database<T extends DataSet<T>> {
 	/**
 	 * Purge tables 
 	 * @param pThread the thread control
-	 * @return Continue <code>true/false</code>
 	 */
 	public void purgeTables(ThreadStatus<T>	pThread) throws Exception {
 		

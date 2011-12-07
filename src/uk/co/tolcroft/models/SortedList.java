@@ -1,5 +1,8 @@
 package uk.co.tolcroft.models;
 
+import uk.co.tolcroft.models.PropertySet.PropertyManager;
+import uk.co.tolcroft.models.PropertySet.PropertySetChooser;
+
 /**
  * Extension of {@link java.util.List} that provides a sorted list implementation with the ability for objects to be hidden on the list.
  * Objects held in the list must be extensions of the LinkObject class. This requires the object to hold a link that 
@@ -7,51 +10,56 @@ package uk.co.tolcroft.models;
  * knowledge of the index of an object. A reference to the list is also passed with the link node allowing the object to implement 
  * a store that allows it to reside in multiple lists. This parameter can be ignored which has the side-effect that objects 
  * are uniquely associated with the list and cannot be held in more than one such list.
- * An index map {@link indexMap} is also built allowing fast search for objects by index.
+ * An index map {@link SortedList.indexMap} is also built allowing fast search for objects by index.
  * 
  * <ul><li>Null objects are not allowed.
  * <li>Duplicate objects are not allowed
- * <li>The semantics of the {@link #add(linkObject)} method are changed such that the element is added at 
+ * <li>The semantics of the {@link #add(T)} method are changed such that the element is added at 
  * its natural position in the list rather than at the end of the * list.
  * <li>The {@link #subList(int, int)} method is not supported</ul>
  * @author Tony Washer
  */
-public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
-
+public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
+															PropertySetChooser {
+	/**
+	 * Sorted List Properties
+	 */
+	private SortedListProperties	theProperties	= null;
+	
 	/**
 	 * The first node in the list
 	 */
-	private LinkNode<T>		theFirst		= null;
+	private LinkNode<T>				theFirst		= null;
 
 	/**
 	 * The last node in the list
 	 */
-	private LinkNode<T>		theLast			= null;
+	private LinkNode<T>				theLast			= null;
 
 	/**
 	 * Is the search for insert point conducted from the start or end of the list
 	 */
-	private boolean			insertFromStart = true;
+	private boolean					insertFromStart = true;
 		
 	/**
 	 * Do we skip hidden elements
 	 */
-	private boolean			doSkipHidden	= true;
+	private boolean					doSkipHidden	= true;
 	
 	/**
 	 * Index map for list
 	 */
-	private indexMap		theIndexMap		= new indexMap();
+	private indexMap				theIndexMap		= null;
 	
 	/**
 	 * Self reference
 	 */
-	private SortedList<T>	theList			= this;
+	private SortedList<T>			theList			= this;
 	
 	/**
 	 * Class of the objects held in this list
 	 */
-	private Class<T>		theClass		= null;
+	private Class<T>				theClass		= null;
 	
 	/**
 	 *  Obtain the class of objects in this sorted list
@@ -77,8 +85,15 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 	public SortedList(Class<T> pClass, boolean fromStart) { 
 		insertFromStart = fromStart;
 		theClass		= pClass;
+		
+		/* Access the sortedList properties */
+		theProperties = (SortedListProperties)PropertyManager.getPropertySet(this);		
+		theIndexMap		= new indexMap();
 	}
 		
+	@Override
+	public Class<? extends PropertySet> getPropertySetClass() { return SortedListProperties.class; }
+	
 	/**
 	 *  Set option as to whether to skip hidden elements
 	 *  @param skipHidden - should we skip hidden elements
@@ -742,7 +757,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 	/**
 	 * Set the contents of the item at index. Disallowed.
 	 * @param iIndex index of item to set 
-	 * @param object to set 
+	 * @param o object to set 
 	 */
 	public T set(int iIndex, T o) {				
 		/* Throw exception */
@@ -752,7 +767,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 	/**
 	 * Add at element at an explicit location. Disallowed.
 	 * @param iIndex index of item to add after
-	 * @param object to add
+	 * @param o object to add
 	 */
 	public void add(int iIndex, T o) {				
 		/* Throw exception */
@@ -1206,6 +1221,70 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 	}
 	
 	/**
+	 * SortedList Properties
+	 */
+	public static class SortedListProperties extends PropertySet {
+		/**
+		 * Registry name for Index Granularity
+		 */
+		protected final static String 	nameIdxGranular	= "IndexGranularity";
+
+		/**
+		 * Registry name for Index Granularity
+		 */
+		protected final static String 	nameIdxExpand	= "IndexExpansion";
+
+		/**
+		 * Display name for Index Granularity
+		 */
+		protected final static String 	dispIdxGranular	= "Index Granularity";
+
+		/**
+		 * Display name for Index Expansion
+		 */
+		protected final static String 	dispIdxExpand	= "Index Expansion";
+
+		/**
+		 * Default Index Granularity
+		 */
+		private final static Integer	defIdxGranular	= 50;		
+
+		/**
+		 * Default Index Expansion
+		 */
+		private final static Integer	defIdxExpand	= 5;		
+
+		/**
+		 * Constructor
+		 * @throws Exception
+		 */
+		public SortedListProperties() throws Exception { super();	}
+
+		@Override
+		protected void defineProperties() {
+			/* Define the properties */
+			defineProperty(nameIdxGranular, PropertyType.Integer);
+			defineProperty(nameIdxExpand, PropertyType.Integer);
+		}
+
+		@Override
+		protected Object getDefaultValue(String pName) {
+			/* Handle default values */
+			if (pName.equals(nameIdxGranular))	return defIdxGranular;
+			if (pName.equals(nameIdxExpand))	return defIdxExpand;
+			return null;
+		}
+		
+		@Override
+		protected String getDisplayName(String pName) {
+			/* Handle default values */
+			if (pName.equals(nameIdxGranular)) 	return dispIdxGranular;
+			if (pName.equals(nameIdxExpand)) 	return dispIdxExpand;
+			return null;
+		}
+	}
+	
+	/**
 	 * IndexMap class for this list. The map class locates its starting search point using the pure index.  The map holds a reference 
 	 * to every 50th element, a factor that is controlled by the constant {@link #theGranularity}. If the index required is 251, 
 	 * the search will immediately skip to index 250 and start the search from there. If we are skipping hidden
@@ -1216,22 +1295,22 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T> {
 		/**
 		 * Expansion rate of map 
 		 */
-		private final static int	theExpansion 	= 5;
+		private final int		theExpansion 	= theProperties.getIntegerValue(SortedListProperties.nameIdxExpand);
 		
 		/**
 		 * Granularity of map 
 		 */
-		private final static int	theGranularity 	= 50;
+		private final int		theGranularity 	= theProperties.getIntegerValue(SortedListProperties.nameIdxGranular);
 		
 		/**
 		 * Array of standard indexes 
 		 */
-		private LinkNode<T>[]		theMap 			= null;
+		private LinkNode<T>[]	theMap 			= null;
 		
 		/**
 		 * The length of the map 
 		 */
-		private int					theMapLength	= 0;
+		private int				theMapLength	= 0;
 		
 		/**
 		 * Obtain the node at the specified index

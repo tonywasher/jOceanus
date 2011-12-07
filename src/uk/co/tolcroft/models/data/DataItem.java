@@ -162,8 +162,7 @@ public abstract class DataItem<T extends DataItem<T>>
 	}
 
 	/**
-	 * Determine whether the item is visible to standard searches
-	 * @return <code>true/false</code>
+	 * Set the item as hidden to standard searches
 	 */
 	public void						setHidden()    	{ setDeleted(true); }
 
@@ -223,6 +222,11 @@ public abstract class DataItem<T extends DataItem<T>>
 	 * @return <code>true/false</code>
 	 */
 	public boolean					isListLocked() 	{ return false; }
+
+	/**
+	 * De-Register any infoSet links 
+	 */
+	public void						deRegister() 	{ }
 
 	/**
 	 * Is the Item Active
@@ -659,7 +663,7 @@ public abstract class DataItem<T extends DataItem<T>>
 	
 	/**
 	 * Construct a new item
-	 * @param pCtl the list that this item is associated with
+	 * @param pList the list that this item is associated with
 	 * @param uId the Id of the new item (or 0 if not yet known)
 	 */
 	public DataItem(DataList<?,T> pList, int uId) {

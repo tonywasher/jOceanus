@@ -221,7 +221,7 @@ public class AsymmetricKey {
 	/**
 	 * Get CipherSet for partner Elliptic Curve
 	 * @param pPartner partner asymmetric key
-	 * @returns the new CipherSet
+	 * @return the new CipherSet
 	 */
 	public CipherSet getCipherSet(AsymmetricKey pPartner) throws Exception {
 		/* Look for an already resolved CipherSet */

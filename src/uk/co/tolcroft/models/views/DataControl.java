@@ -127,7 +127,7 @@ public abstract class DataControl<T extends DataSet<T>> {
 
 	/**
 	 * Set Frame
-	 * @param pProperties the Properties
+	 * @param pFrame the frame
 	 */
 	public void		setFrame(JFrame pFrame)	{ theFrame = pFrame; }
 

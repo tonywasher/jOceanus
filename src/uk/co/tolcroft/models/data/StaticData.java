@@ -134,7 +134,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	/**
 	 * Compare this Static Data to another to establish equality.
 	 * 
-	 * @param that The Static Data to compare to
+	 * @param pThat The Static Data to compare to
 	 * @return <code>true</code> if the static data is identical, <code>false</code> otherwise
 	 */
 	public boolean equals(Object pThat) {
@@ -554,7 +554,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	 	 * Construct a generic static data list
 	 	 * @param pClass the class
 	 	 * @param pBaseClass the class of the underlying object
-	 	 * @param pPairs the encrypted pair control  
+	 	 * @param pData the dataSet  
 	 	 * @param pStyle the style of the list 
 	 	 */
 		public StaticList(Class<L>		pClass,

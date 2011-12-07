@@ -12,9 +12,11 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.PropertySet.PropertyManager;
+import uk.co.tolcroft.models.PropertySet.PropertySetChooser;
 import uk.co.tolcroft.models.security.SymmetricKey.SymKeyType;
 
-public class SecurityControl extends SortedItem<SecurityControl> {
+public class SecurityControl extends SortedItem<SecurityControl> implements PropertySetChooser {
 	/**
 	 * The name of the object
 	 */
@@ -29,6 +31,11 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 	 * The BouncyCastle signature 
 	 */
 	protected final static String		BCSIGN 					= "BC";
+	
+	/**
+	 * Security Properties
+	 */
+	private SecurityProperties			theProperties			= null;
 	
 	/**
 	 * Use restricted security 
@@ -68,7 +75,7 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 	/**
 	 * The Symmetric Key Map
 	 */
-	private Map<SymmetricKey, byte[]>	theKeyDefMap	= null;
+	private Map<SymmetricKey, byte[]>	theKeyDefMap			= null;
 	
 	/* Access methods */
 	public 		boolean				isInitialised()			{ return isInitialised; }
@@ -78,10 +85,8 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 	public 		SecureRandom		getRandom()				{ return theRandom; }
 	public 		boolean				useRestricted()			{ return useRestricted; }
 	
-	/**
-	 * Build History (no history)
-	 */
-	protected void buildHistory() {}
+	@Override
+	public Class<? extends PropertySet> getPropertySetClass() { return SecurityProperties.class; }
 	
 	/**
 	 * Constructor
@@ -92,6 +97,9 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 		/* Call super-constructor */
 		super(pList);
 		
+		/* Access the security properties */
+		theProperties 	= (SecurityProperties)PropertyManager.getPropertySet(this);
+
 		/* Store the security key */
 		theSignature = pSignature;
 
@@ -106,6 +114,9 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 	public SecurityControl(SecurityControl pSource) throws Exception {
 		/* Call super-constructor */
 		super(pSource.getList());
+
+		/* Access the security properties */
+		theProperties 	= (SecurityProperties)PropertyManager.getPropertySet(this);
 
 		/* Copy the random generator */
 		theRandom 	= pSource.getRandom();
@@ -373,7 +384,7 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 	
 	/**
 	 * Rebuild an AsymmetricKey from a security key 
-	 * @param pSecuredPrivateKeyDef the Secured Private Key definition  
+	 * @param pSecuredPrivateKey the Secured Private Key definition  
 	 * @param pPublicKey the Public Key  
 	 * @param pKeyMode the Asymmetric key mode
 	 * @return the Asymmetric key
@@ -578,6 +589,70 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 			
 			/* Return to caller */
 			return myControl;
+		}
+	}
+	
+	/**
+	 * Security Properties
+	 */
+	public static class SecurityProperties extends PropertySet {
+		/**
+		 * Registry name for Restricted Security
+		 */
+		protected final static String 	nameRestricted	= "RestrictedKeys";
+
+		/**
+		 * Registry name for Cipher Steps
+		 */
+		protected final static String 	nameCipherSteps	= "CipherSteps";
+
+		/**
+		 * Display name for Restricted Security
+		 */
+		protected final static String 	dispRestricted	= "Restricted Keys";
+
+		/**
+		 * Display name for Cipher Steps
+		 */
+		protected final static String 	dispCipherSteps	= "Number of CipherSteps";
+
+		/**
+		 * Default Restricted Security
+		 */
+		private final static Boolean	defRestricted	= Boolean.FALSE;		
+
+		/**
+		 * Default Cipher Steps
+		 */
+		private final static Integer	defCipherSteps	= 3;		
+
+		/**
+		 * Constructor
+		 * @throws Exception
+		 */
+		public SecurityProperties() throws Exception { super();	}
+
+		@Override
+		protected void defineProperties() {
+			/* Define the properties */
+			defineProperty(nameRestricted, PropertyType.Boolean);
+			defineProperty(nameCipherSteps, PropertyType.Integer);
+		}
+
+		@Override
+		protected Object getDefaultValue(String pName) {
+			/* Handle default values */
+			if (pName.equals(nameRestricted))	return defRestricted;
+			if (pName.equals(nameCipherSteps))	return defCipherSteps;
+			return null;
+		}
+		
+		@Override
+		protected String getDisplayName(String pName) {
+			/* Handle default values */
+			if (pName.equals(nameRestricted)) 	return dispRestricted;
+			if (pName.equals(nameCipherSteps)) 	return dispCipherSteps;
+			return null;
 		}
 	}
 	

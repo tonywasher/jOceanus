@@ -21,7 +21,6 @@ public class DebugManager {
 	
 	/**
 	 * Constructor
-	 * @param pTitle the title of the debug window
 	 */
 	public DebugManager() {
 		/* Create the root node */
@@ -43,7 +42,7 @@ public class DebugManager {
 	/**
 	 * Create a child entry for parent
 	 * @param pParent the parent to add to
-	 * @param the name of the new entry
+	 * @param pName the name of the new entry
 	 * @return the new child entry
 	 */
 	public DebugEntry addChildEntry(DebugEntry	pParent,
@@ -76,7 +75,7 @@ public class DebugManager {
 		
 		/**
 		 * Constructor
-		 * @param the object name
+		 * @param pName the object name
 		 */
 		public DebugEntry(String 		pName) {
 			/* Store name */
@@ -88,7 +87,7 @@ public class DebugManager {
 
 		/**
 		 * Add as a child into the tree
-		 * @param the parent object 
+		 * @param pParent the parent object 
 		 */
 		public void addAsChildOf(DebugEntry	pParent) {
 			/* Add as child of parent */
@@ -107,7 +106,7 @@ public class DebugManager {
 		
 		/**
 		 * Add as a child into the tree
-		 * @param the parent object 
+		 * @param pParent the parent object 
 		 */
 		public void addAsFirstChildOf(DebugEntry	pParent) {
 			/* Add as child of parent */
@@ -208,22 +207,22 @@ public class DebugManager {
 			/* Set the new object */
 			theObject = pObject;
 			
-			/* Note that this entry has changed */
-			theModel.nodeChanged(theNode);
-			
 			/* Remove all the children */
 			removeChildren();
 				
-			/* Return if the entry is null */
-			if (pObject == null) return;
+			/* Add all the new children */
+			if (pObject != null)
+				pObject.addChildEntries(theManager, this);
+
+			/* Note that this entry and its children have changed */
+			theModel.nodeStructureChanged(theNode);
 			
-			/* Add all the children */
-			pObject.addChildEntries(theManager, this);
+			/* Ensure that display is updated if this is active */
+			if (theWindow != null) theWindow.updateDebug(this);
 		}
 
 		/**
 		 * Note that the object has been changed
-		 * @param pObject the new object
 		 */
 		public void setChanged() {
 			/* If the node is visible */
@@ -232,13 +231,15 @@ public class DebugManager {
 				if (theObject != null)  theModel.nodeChanged(theNode);
 
 				/* Note that any children have changed */
-				theModel.nodeStructureChanged(theNode);				
+				theModel.nodeStructureChanged(theNode);		
+				
+				/* Ensure that display is updated if this is active */
+				theWindow.updateDebug(this);
 			}
 		}
 
 		/**
 		 * Remove children of an object
-		 * @param pObject the new object
 		 */
 		public void removeChildren() {
 			/* Remove all the children */

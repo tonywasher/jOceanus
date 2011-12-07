@@ -79,7 +79,7 @@ public class ErrorPanel implements ActionListener {
 	
 	/**
 	 * Set error indication for window 
-	 * @param pError the error
+	 * @param pException the exception
 	 */
 	public void setError(Exception pException) {
 		/* Record the error */

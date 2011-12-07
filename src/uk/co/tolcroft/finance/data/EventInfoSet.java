@@ -9,6 +9,7 @@ import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.Number.Dilution;
 import uk.co.tolcroft.models.Number.Money;
 import uk.co.tolcroft.models.Number.Units;
+import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.help.DebugDetail;
 
 public class EventInfoSet {
@@ -16,6 +17,11 @@ public class EventInfoSet {
 	 * The Event to which this set belongs
 	 */
 	private Event							theEvent		= null;
+	
+	/**
+	 * The list of EventInfoTypes
+	 */
+	private EventInfoType.List				theTypes		= null;
 	
 	/**
 	 * The EventData list for new data
@@ -48,22 +54,258 @@ public class EventInfoSet {
 		/* Create the Maps */
 		theValueMap = new EnumMap<EventInfoClass, EventValue>(EventInfoClass.class);
 		theDataMap 	= new EnumMap<EventInfoClass, EventData>(EventInfoClass.class);
+		
+		/* Access the dataSet */
+		FinanceData myData = ((Event.List)pEvent.getList()).getData();
+
+		/* Register the Value and Data lists */
+		theValueList = myData.getEventValues();
+		theDataList  = myData.getEventData();
+		
+		/* Access the EventInfo Types */
+		theTypes = myData.getInfoTypes();
 	}
 	
 	/**
 	 * Constructor
+	 * @param pEvent the event to which this is linked
 	 * @param pSet the InfoSet to clone
 	 */
-	protected EventInfoSet(EventInfoSet pSet) {
+	protected EventInfoSet(Event 		pEvent,
+						   EventInfoSet pSet) {
 		/* Store the Event */
-		theEvent = pSet.theEvent;
+		theEvent = pEvent;
 		
 		/* Create the Maps */
 		theValueMap = new EnumMap<EventInfoClass, EventValue>(EventInfoClass.class);
 		theDataMap 	= new EnumMap<EventInfoClass, EventData>(EventInfoClass.class);
 		
+		/* Determine the DataSet */
+		Event.List 	myList 		= (Event.List)pEvent.getList();
+		FinanceData	myDataSet 	= myList.getData();
+		
 		/* Create the lists for the Info */
-		theValueList = new EventValue.List(null);
+		theValueList = new EventValue.List(myDataSet, ListStyle.EDIT);
+		theDataList	 = new EventData.List(myDataSet, ListStyle.EDIT);
+		
+		/* For each EventInfo in the underlying ValueMap */
+		for (EventValue myValue : pSet.theValueMap.values()) {
+			/* Create the new value */
+			EventValue myNew = new EventValue(theValueList, myValue);
+			theValueList.add(myNew);
+			
+			/* Add to the value map */
+			theValueMap.put(myValue.getInfoType().getInfoClass(), myNew);
+		}
+		
+		/* For each EventData in the underlying DataMap */
+		for (EventData myData : pSet.theDataMap.values()) {
+			/* Create the new data */
+			EventData myNew = new EventData(theDataList, myData);
+			theDataList.add(myNew);
+			
+			/* Add to the value map */
+			theDataMap.put(myData.getInfoType().getInfoClass(), myNew);
+		}
+		
+		/* Access the EventInfo Types */
+		theTypes = pSet.theTypes;
+	}
+	
+	/**
+	 * Create a new EventValue
+	 * @param pClass the class of the item
+	 */
+	protected EventValue getNewValue(EventInfoClass pClass) throws Exception {
+		/* Access the EventInfoType */
+		EventInfoType myType = theTypes.searchFor(pClass);
+
+		/* Create the new value and add to the list */
+		EventValue myValue = theValueList.addNewItem(myType, theEvent);
+		
+		/* Register the value and return it */
+		registerValue(myValue);
+		return myValue;
+	}
+	
+	/**
+	 * Create a new EventData
+	 * @param pClass the class of the item
+	 */
+	protected EventData getNewData(EventInfoClass pClass) throws Exception {
+		/* Access the EventInfoType */
+		EventInfoType myType = theTypes.searchFor(pClass);
+
+		/* Create the new data and add to the list */
+		EventData myData = theDataList.addNewItem(myType, theEvent);
+		
+		/* Register the data and return it */
+		registerData(myData);
+		return myData;
+	}
+	
+	/**
+	 * Validate an InfoSet
+	 */
+	protected void validate() {
+		/* Access Event values */
+		Account 		myDebit		= theEvent.getDebit();
+		Account			myCredit 	= theEvent.getCredit();
+		TransactionType	myTrans		= theEvent.getTransType();
+		
+		/* Access Units */
+		Units			myDebUnits	= getUnits(EventInfoClass.DebitUnits);
+		Units			myCredUnits	= getUnits(EventInfoClass.CreditUnits);
+		
+		/* If we have Credit/Debit Units */
+		if ((myDebUnits != null) || (myCredUnits != null)) {
+			/* If we have debit units */
+			if ((myDebit != null) && (myDebUnits != null)) {				
+				/* Debit Units are only allowed if debit is priced */
+				if (!myDebit.isPriced()) {
+					theEvent.addError("Units are only allowed involving assets", 
+							 		  Event.VFIELD_DEBITUNITS);
+				}
+
+				/* TranType of dividend cannot debit units */
+				if ((myTrans != null) &&
+					(myTrans.isDividend())) {
+					theEvent.addError("Units cannot be debited for a dividend", 
+					 		  		   Event.VFIELD_DEBITUNITS);
+				}
+
+				/* Units must be non-zero and positive */
+				if ((!myDebUnits.isNonZero()) || (!myDebUnits.isPositive())) { 
+					theEvent.addError("Units must be non-Zero and positive", Event.VFIELD_DEBITUNITS);
+				}
+			}
+			
+			/* If we have Credit units */
+			if ((myCredit != null) && (myCredUnits != null)) {				
+				/* Credit Units are only allowed if credit is priced */
+				if (!myCredit.isPriced()) {
+					theEvent.addError("Units are only allowed involving assets", 
+							 		  Event.VFIELD_CREDITUNITS);
+				}
+
+				/* TranType of admin charge cannot credit units */
+				if ((myTrans != null) &&
+					(myTrans.isAdminCharge())) {
+					theEvent.addError("Units cannot be credited for an AdminCharge", 
+						  		   	  Event.VFIELD_CREDITUNITS);
+				}
+
+				/* Units must be non-zero and positive */
+				if ((!myCredUnits.isNonZero()) || (!myCredUnits.isPositive())) { 
+					theEvent.addError("Units must be non-Zero and positive", Event.VFIELD_CREDITUNITS);
+				}
+			}
+			
+			/* If both credit/debit are both priced */
+			if ((myCredit != null) && (myDebit != null) &&
+				(myCredit.isPriced()) && (myDebit.isPriced())) {
+				/* TranType must be stock split or dividend between same account */
+				if ((myTrans == null) ||
+					((!myTrans.isDividend()) &&
+					 (!myTrans.isStockSplit()) &&
+					 (!myTrans.isAdminCharge()) &&
+					 (!myTrans.isStockDemerger()) &&
+					 (!myTrans.isStockTakeover()))) { 
+					theEvent.addError("Units can only refer to a single priced asset unless " +
+								 	  "transaction is StockSplit/AdminCharge/Demerger/Takeover or Dividend", 
+								 	  (myCredit != null) ? Event.VFIELD_CREDITUNITS : Event.VFIELD_DEBITUNITS);
+				}
+					
+				/* Dividend between priced requires identical credit/debit */
+				if ((myTrans != null) &&
+					(myTrans.isDividend()) &&
+					(Account.differs(myCredit, myDebit).isDifferent())) {
+					theEvent.addError("Unit Dividends between assets must be between same asset", 
+								 	  Event.VFIELD_CREDITUNITS);
+				}
+				
+				/* Cannot have Credit and Debit if accounts are identical */
+				if ((myCredUnits != null) && (myDebUnits != null) &&
+					(Account.differs(myCredit, myDebit).isIdentical())) {
+					theEvent.addError("Cannot credit and debit same account", 
+						 	  		  Event.VFIELD_CREDITUNITS);
+				}
+			}
+		}
+	
+		/* Else check for required units */
+		else {
+			if (theEvent.isStockSplit()) 
+				theEvent.addError("Stock Split requires non-zero Units", Event.VFIELD_CREDITUNITS);
+			else if (theEvent.isAdminCharge()) 
+				theEvent.addError("Admin Charge requires non-zero Units", Event.VFIELD_DEBITUNITS);
+		}
+	
+		/* Access Dilution */
+		Dilution	myDilution	= getDilution(EventInfoClass.Dilution);
+		
+		/* If we have a dilution */
+		if (myDilution != null) {
+			/* If the dilution is not allowed */
+			if ((!Event.needsDilution(myTrans)) && (!myTrans.isStockSplit()))
+				theEvent.addError("Dilution factor given where not allowed", 
+						 		  Event.VFIELD_DILUTION);			
+
+			/* If the dilution is out of range */
+			if (myDilution.outOfRange())
+				theEvent.addError("Dilution factor value is outside allowed range (0-1)", 
+						 		  Event.VFIELD_DILUTION);			
+		}
+	
+		/* else if we are missing a required dilution factor */
+		else if (Event.needsDilution(myTrans)) {
+			theEvent.addError("Dilution factor missing where required", 
+					 		  Event.VFIELD_DILUTION);						
+		}
+	
+		/* Access Years and Tax Credit */
+		Integer	myYears	= getValue(EventInfoClass.QualifyYears);
+		Money	myTax	= getMoney(EventInfoClass.TaxCredit);
+		
+		/* If we are a taxable gain */
+		if ((myTrans != null) && (myTrans.isTaxableGain())) {
+			/* Years must be positive */
+			if ((myYears == null) || (myYears <= 0)) {
+				theEvent.addError("Years must be non-zero and positive", Event.VFIELD_QUALIFYYEARS);
+			}
+		
+			/* Tax Credit must be non-null and positive */
+			if ((myTax == null) || (!myTax.isPositive())) {
+				theEvent.addError("TaxCredit must be non-null", Event.VFIELD_TAXCREDIT);
+			}
+		}
+	
+		/* If we need a tax credit */
+		else if ((myTrans != null) && (Event.needsTaxCredit(myTrans, 
+													  		myDebit))) {
+			/* Tax Credit must be non-null and positive */
+			if ((myTax == null) || (!myTax.isPositive())) {
+				theEvent.addError("TaxCredit must be non-null", Event.VFIELD_TAXCREDIT);
+			}
+
+			/* Years must be null */
+			if (myYears != null) {
+				theEvent.addError("Years must be null", Event.VFIELD_QUALIFYYEARS);
+			}
+		}
+	
+		/* else we should not have a tax credit */
+		else if (myTrans != null) {
+			/* Tax Credit must be null */
+			if (myTax != null) {
+				theEvent.addError("TaxCredit must be null", Event.VFIELD_TAXCREDIT);
+			}
+
+			/* Years must be null */
+			if (myYears != null) {
+				theEvent.addError("Years must be null", Event.VFIELD_QUALIFYYEARS);
+			}
+		}
 	}
 	
 	/**
@@ -86,6 +328,18 @@ public class EventInfoSet {
 	}
 	
 	/**
+	 * DeRegister the event value
+	 * @param pValue the Value
+	 */
+	protected void deRegisterValue(EventValue pValue) {
+		/* Obtain the Type */
+		EventInfoType 	myType 	= pValue.getInfoType();
+
+		/* Remove the reference from the map */
+		theValueMap.remove(myType.getInfoClass());
+	}
+	
+	/**
 	 * Register the event data
 	 * @param pData the Data
 	 */
@@ -105,12 +359,24 @@ public class EventInfoSet {
 	}
 	
 	/**
+	 * DeRegister the event data
+	 * @param pData the Data
+	 */
+	protected void deRegisterData(EventData pData) {
+		/* Obtain the Type */
+		EventInfoType 	myType 	= pData.getInfoType();
+
+		/* Remove the reference from the map */
+		theDataMap.remove(myType.getInfoClass());
+	}
+	
+	/**
 	 * Obtain the required Event Value
 	 * @param pType the Value Type
 	 */
-	protected Integer getValue(EventInfoType pType) {
+	protected Integer getValue(EventInfoClass pType) {
 		/* Obtain the Map value */
-		EventValue myValue = theValueMap.get(pType.getInfoClass());
+		EventValue myValue = theValueMap.get(pType);
 		
 		/* Return the value */
 		return (myValue == null) ? null : myValue.getValue();
@@ -120,9 +386,9 @@ public class EventInfoSet {
 	 * Obtain the required Event Account
 	 * @param pType the Value Type
 	 */
-	protected Account getAccount(EventInfoType pType) {
+	protected Account getAccount(EventInfoClass pType) {
 		/* Obtain the Map value */
-		EventValue myValue = theValueMap.get(pType.getInfoClass());
+		EventValue myValue = theValueMap.get(pType);
 		
 		/* Return the value */
 		return (myValue == null) ? null : myValue.getAccount();
@@ -132,9 +398,9 @@ public class EventInfoSet {
 	 * Obtain the required Event Data Money
 	 * @param pType the Value Type
 	 */
-	protected Money getMoney(EventInfoType pType) {
+	protected Money getMoney(EventInfoClass pType) {
 		/* Obtain the Map value */
-		EventData myData = theDataMap.get(pType.getInfoClass());
+		EventData myData = theDataMap.get(pType);
 		
 		/* Return the data */
 		return (myData == null) ? null : myData.getMoney();
@@ -144,9 +410,9 @@ public class EventInfoSet {
 	 * Obtain the required Event Data Units
 	 * @param pType the Value Type
 	 */
-	protected Units getUnits(EventInfoType pType) {
+	protected Units getUnits(EventInfoClass pType) {
 		/* Obtain the Map value */
-		EventData myData = theDataMap.get(pType.getInfoClass());
+		EventData myData = theDataMap.get(pType);
 		
 		/* Return the data */
 		return (myData == null) ? null : myData.getUnits();
@@ -156,9 +422,9 @@ public class EventInfoSet {
 	 * Obtain the required Event Data Dilution
 	 * @param pType the Value Type
 	 */
-	protected Dilution getDilution(EventInfoType pType) {
+	protected Dilution getDilution(EventInfoClass pType) {
 		/* Obtain the Map value */
-		EventData myData = theDataMap.get(pType.getInfoClass());
+		EventData myData = theDataMap.get(pType);
 		
 		/* Return the data */
 		return (myData == null) ? null : myData.getDilution();
@@ -342,7 +608,7 @@ public class EventInfoSet {
 			/* Start the Info Section */
 			pBuffer.append("<tr><th rowspan=\"");
 			pBuffer.append(myEntries+1);
-			pBuffer.append("<tr><th rowspan=\"2\">Fields</th></tr>");
+			pBuffer.append("\">Fields</th></tr>");
 
 			/* Add the detail */
 			pBuffer.append(myBuilder);

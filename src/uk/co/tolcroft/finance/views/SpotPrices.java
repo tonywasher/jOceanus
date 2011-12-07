@@ -416,11 +416,7 @@ public class SpotPrices implements DebugObject {
 		}
 
 		/**
-		 * Set the state of the item
-		 * A Spot list has some minor changes to the algorithm in that there are 
-		 * no NEW or DELETED states, leaving just CLEAN and CHANGED. The isDeleted
-		 * flags is changed in usage to an isVisible flag
-		 * @param newState the new state to set
+		 * Obtain the price of the item
 		 */
 		public Price getPrice() {
 			/* Switch on state */

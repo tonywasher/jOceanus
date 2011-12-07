@@ -36,8 +36,8 @@ public class Subversion {
 	
 	/**
 	 * Load a repository from the input stream
-	 * @param the repository directory
-	 * @param the input stream
+	 * @param pRepository the repository directory
+	 * @param pStream the input stream
 	 */
 	public void loadRepository(File 		pRepository,
 							   InputStream	pStream) throws SVNException {

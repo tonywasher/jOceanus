@@ -15,8 +15,7 @@ public abstract class ReportItem<T extends ReportItem<T>> extends SortedItem<T>
 	
 	/**
 	 * Construct a new item
-	 * @param pCtl the list that this item is associated with
-	 * @param uId the Id of the new item (or 0 if not yet known)
+	 * @param pList the list that this item is associated with
 	 */
 	public ReportItem(SortedList<T> pList) {
 		super(pList);

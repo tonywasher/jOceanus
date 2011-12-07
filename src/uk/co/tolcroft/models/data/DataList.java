@@ -804,7 +804,6 @@ public abstract class DataList<L extends DataList<L,T>,
 
 	/** 
 	 * Prepare changes in an edit view back into the core data
-	 * @param pChanges - edit view with changes to apply
 	 */
 	public void prepareChanges() {
 		ListIterator 	myIterator;

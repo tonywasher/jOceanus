@@ -1,5 +1,6 @@
 package uk.co.tolcroft.finance.data;
 
+import uk.co.tolcroft.finance.data.StaticClass.EventInfoClass;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.views.Statement.*;
 import uk.co.tolcroft.models.*;
@@ -209,12 +210,21 @@ public class Event extends EncryptedItem<Event> {
 			case EDIT:
 				/* If this is a view creation */
 				if (myOldStyle == ListStyle.CORE) {
+					/* Create a new EventInfoSet for an event/StatementLine*/
+					if ((this.getClass() == Event.class) ||
+						(this.getClass() == Line.class))
+						theInfoSet = new EventInfoSet(this, pEvent.theInfoSet);
+
 					/* Event is based on the original element */
 					setBase(pEvent);
 					pList.setNewId(this);				
 					break;
 				}
 				
+				/* Create a new EventInfoSet for a true event */
+				//if (this.getClass() == Event.class)
+				//	theInfoSet = new EventInfoSet(thiset);
+
 				/* Else this is a duplication so treat as new item */
 				setId(0);
 				pList.setNewId(this);				
@@ -247,6 +257,10 @@ public class Event extends EncryptedItem<Event> {
 		Values myValues = getValues();
 		myValues.copyFrom(pLine.getValues());
 
+		/* Create a new EventInfoSet for a true event */
+		if (this.getClass() == Event.class)
+			theInfoSet = new EventInfoSet(this);
+
 		/* Allocate the id */
 		if (this.getClass() == Event.class)
 			pList.setNewId(this);				
@@ -265,6 +279,10 @@ public class Event extends EncryptedItem<Event> {
 		Values myValues = getValues();
 		myValues.copyFrom(pLine.getValues());
 			
+		/* Create a new EventInfoSet for a true event */
+		if (this.getClass() == Event.class)
+			theInfoSet = new EventInfoSet(this);
+
 		/* Allocate the id */
 		pList.setNewId(this);				
 	}
@@ -273,6 +291,11 @@ public class Event extends EncryptedItem<Event> {
 	public Event(List pList) {
 		super(pList, 0);
 		setControlKey(pList.getControlKey());
+
+		/* Create a new EventInfoSet for a true event */
+		if (this.getClass() == Event.class)
+			theInfoSet = new EventInfoSet(this);
+
 		pList.setNewId(this);				
 	}
 
@@ -305,8 +328,9 @@ public class Event extends EncryptedItem<Event> {
 		/* Create a new EventValues object */
 		Values myValues = getValues();
 		
-		/* Create a new EventInfoSet */
-		theInfoSet = new EventInfoSet(this);
+		/* Create a new EventInfoSet for a true event */
+		if (this.getClass() == Event.class)
+			theInfoSet = new EventInfoSet(this);
 
 		/* Store the IDs that we will look up */
 		myValues.setDebitId(uDebit);
@@ -374,6 +398,10 @@ public class Event extends EncryptedItem<Event> {
 		/* Create a new EventValues object */
 		Values myValues = getValues();
 
+		/* Create a new EventInfoSet for a true event */
+		if (this.getClass() == Event.class)
+			theInfoSet = new EventInfoSet(this);
+
 		/* Record the encrypted values */
 		myValues.setDesc(new StringPair(pDesc));
 		myValues.setAmount(new MoneyPair(pAmount));
@@ -385,6 +413,13 @@ public class Event extends EncryptedItem<Event> {
 		if (pUnits != null) myValues.setUnits(new UnitsPair(pUnits));
 		if (pTaxCredit != null) myValues.setTaxCredit(new MoneyPair(pTaxCredit));
 		if (pDilution != null) myValues.setDilution(new DilutionPair(pDilution));
+		
+		/* If Years exist */
+		if (pYears != null) {
+			/* Create the value */
+			EventValue myValue = theInfoSet.getNewValue(EventInfoClass.QualifyYears);
+			myValue.setValue(pYears);
+		}
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -924,6 +959,9 @@ public class Event extends EncryptedItem<Event> {
 		if (!hasErrors()) setValidEdit();
 	}
 	
+	@Override
+	protected void	addError(String pError, int iField) { super.addError(pError, iField); }
+	
 	/**
 	 * Determines whether an event relates to an account
 	 * 
@@ -1307,9 +1345,9 @@ public class Event extends EncryptedItem<Event> {
 	}
 
 	/**
-	 * Format an Account 
-	 * @param pAccount the account to format
-	 * @return the formatted account
+	 * Format an Event 
+	 * @param pEvent the event to format
+	 * @return the formatted event
 	 */
 	public static String format(Event pEvent) {
 		String 	myFormat;

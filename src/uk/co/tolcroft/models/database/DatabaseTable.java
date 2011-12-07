@@ -480,7 +480,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 		return bContinue;
 	}
 	
-	/* Update the rate */
+	/* Update the item */
 	private boolean updateItem(T	pItem) throws Exception {
 		HistoryValues<T> 	myCurr;
 		HistoryValues<T> 	myBase;

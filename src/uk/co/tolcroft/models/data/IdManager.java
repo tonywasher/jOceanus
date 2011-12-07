@@ -1,16 +1,38 @@
 package uk.co.tolcroft.models.data;
 
+import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.PropertySet;
+import uk.co.tolcroft.models.PropertySet.PropertyManager;
+import uk.co.tolcroft.models.PropertySet.PropertySetChooser;
 
-public class IdManager<T extends DataItem<T>> {
+
+public class IdManager<T extends DataItem<T>> implements PropertySetChooser {
+	/**
+	 * IdManager Properties
+	 */
+	private IdManagerProperties	theProperties	= null;
+	
 	/**
 	 * The maximum id
 	 */
-	private int 	theMaxId 	= 0;
+	private int 				theMaxId 		= 0;
 	
 	/**
 	 * The id map
 	 */
-	private idMap	theMap		= new idMap();
+	private idMap				theMap			= null;
+	
+	/**
+	 * Constructor
+	 */
+	protected IdManager() {
+		/* Access the idManager properties */
+		theProperties 	= (IdManagerProperties)PropertyManager.getPropertySet(this);
+		theMap			= new idMap();
+	}
+	
+	@Override
+	public Class<? extends PropertySet> getPropertySetClass() { return IdManagerProperties.class; }
 	
 	/**
 	 * Get Max Id
@@ -92,6 +114,52 @@ public class IdManager<T extends DataItem<T>> {
 		/* Reinitialise the map */
 		theMap = new idMap();
 	}
+		
+	/**
+	 * IdManager Properties
+	 */
+	public static class IdManagerProperties extends PropertySet {
+		/**
+		 * Registry name for Node Elements
+		 */
+		protected final static String 	nameNodeElems	= "NodeElements";
+
+		/**
+		 * Display name for Node Elements
+		 */
+		protected final static String 	dispNodeElems	= "Elements per Node";
+
+		/**
+		 * Default NodeElements
+		 */
+		private final static Integer	defNodeElems	= 10;		
+
+		/**
+		 * Constructor
+		 * @throws Exception
+		 */
+		public IdManagerProperties() throws Exception { super();	}
+
+		@Override
+		protected void defineProperties() {
+			/* Define the properties */
+			defineProperty(nameNodeElems, PropertyType.Integer);
+		}
+
+		@Override
+		protected Object getDefaultValue(String pName) {
+			/* Handle default values */
+			if (pName.equals(nameNodeElems))	return defNodeElems;
+			return null;
+		}
+		
+		@Override
+		protected String getDisplayName(String pName) {
+			/* Handle default values */
+			if (pName.equals(nameNodeElems)) 	return dispNodeElems;
+			return null;
+		}
+	}
 	
 	/**
 	 * Id map to element 
@@ -100,22 +168,22 @@ public class IdManager<T extends DataItem<T>> {
 		/**
 		 * The size of a single map element
 		 */
-		private final static int 	maxElements = 10;
+		private final int 	maxElements = theProperties.getIntegerValue(IdManagerProperties.nameNodeElems);
 
 		/**
 		 * The depth of this map
 		 */
-		private int 				theDepth	= 0;
+		private int 		theDepth	= 0;
 		
 		/**
 		 * The map indexed by id
 		 */
-		private idMap[] 			theMaps		= null;
+		private idMap[] 	theMaps		= null;
 		
 		/**
 		 * The map indexed by id
 		 */
-		private T[] 				theObjects	= null;
+		private T[] 		theObjects	= null;
 		
 		/**
 		 * Build a new map array

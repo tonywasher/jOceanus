@@ -68,7 +68,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
 	/**
 	 *  Load a Backup Workbook
 	 *  @param pFile the backup file to write to
-	 *  @returns the loaded DataSet
+	 *  @return the loaded DataSet
 	 */
 	public T	loadBackup(File 		pFile) throws Exception {
 		InputStream 		myStream  	= null;
@@ -142,7 +142,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
 	/**
 	 *  Load an Extract Workbook
 	 *  @param pFile the Extract file to load from
-	 *  @returns the loaded DataSet
+	 *  @return the loaded DataSet
 	 */
 	public T loadExtract(File pFile) throws Exception {
 		InputStream 		myStream  	= null;

@@ -62,7 +62,7 @@ public class ReportTab implements HyperlinkListener,
 	
 	/**
 	 * Constructor for Report Window
-	 * @param pParent the parent window
+	 * @param pWindow the parent window
 	 */
 	public ReportTab(MainTab pWindow) {
 		HTMLEditorKit myKit;

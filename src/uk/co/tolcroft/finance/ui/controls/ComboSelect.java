@@ -240,7 +240,7 @@ public class ComboSelect {
 	/**
 	 * Obtain the ComboBox of accounts for a Debit for a Transaction Type and Account
 	 * @param pType the transaction type
-	 * @param pDebit the debit account
+	 * @param pCredit the credit account
 	 * @return the ComboBox
 	 */
 	public JComboBox getDebitAccounts(TransactionType pType, Account pCredit) {

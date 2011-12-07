@@ -1,15 +1,25 @@
 package uk.co.tolcroft.models.threads;
 
+import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.PropertySet;
+import uk.co.tolcroft.models.PropertySet.PropertyManager;
+import uk.co.tolcroft.models.PropertySet.PropertySetChooser;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.views.DataControl;
 
-public class ThreadStatus<T extends DataSet<T>> implements StatusControl {
+public class ThreadStatus<T extends DataSet<T>> implements StatusControl,
+														   PropertySetChooser {
 	private WorkerThread<?>	theThread		= null;
 	private StatusData 		theStatus		= null;
 	private DataControl<T>	theControl		= null;
 	private Properties		theProperties	= null;
-	private int          	theSteps    	= 50;
+	private int          	theSteps;
+	
+	/**
+	 * ThreadStatus Properties
+	 */
+	private ThreadStatusProperties	theTProperties	= null;
 	
 	/* Access methods */
 	public int 				getReportingSteps() { return theSteps; }
@@ -24,9 +34,16 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl {
 		theControl		= pControl;
 		theProperties 	= pControl.getProperties();
 		
+		/* Access the threadStatus properties */
+		theTProperties 	= (ThreadStatusProperties)PropertyManager.getPropertySet(this);
+		theSteps		= theTProperties.getIntegerValue(ThreadStatusProperties.nameRepSteps);
+		
 		/* Create the status */
 		theStatus = new StatusData();
 	}
+	
+	@Override
+	public Class<? extends PropertySet> getPropertySetClass() { return ThreadStatusProperties.class; }
 	
 	/* Publish task 0 (Worker Thread)*/
 	public boolean initTask(String pTask) {
@@ -127,4 +144,50 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl {
 		/* Return to caller */
 		return true;
 	}
+	
+	/**
+	 * ThreadStatus Properties
+	 */
+	public static class ThreadStatusProperties extends PropertySet {
+		/**
+		 * Registry name for Reporting Steps
+		 */
+		protected final static String 	nameRepSteps	= "ReportingSteps";
+
+		/**
+		 * Display name for Reporting Steps
+		 */
+		protected final static String 	dispRepSteps	= "Reporting Steps";
+
+		/**
+		 * Default Reporting Steps
+		 */
+		private final static Integer	defRepSteps		= 10;		
+
+		/**
+		 * Constructor
+		 * @throws Exception
+		 */
+		public ThreadStatusProperties() throws Exception { super();	}
+
+		@Override
+		protected void defineProperties() {
+			/* Define the properties */
+			defineProperty(nameRepSteps, PropertyType.Integer);
+		}
+
+		@Override
+		protected Object getDefaultValue(String pName) {
+			/* Handle default values */
+			if (pName.equals(nameRepSteps))	return defRepSteps;
+			return null;
+		}
+		
+		@Override
+		protected String getDisplayName(String pName) {
+			/* Handle default values */
+			if (pName.equals(nameRepSteps)) 	return dispRepSteps;
+			return null;
+		}
+	}	
 }

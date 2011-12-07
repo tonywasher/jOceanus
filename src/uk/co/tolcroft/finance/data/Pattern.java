@@ -258,7 +258,7 @@ public class Pattern extends Event {
 	/**
 	 * Compare this pattern to another to establish equality.
 	 * 
-	 * @param that The pattern to compare to
+	 * @param pThat The pattern to compare to
 	 * @return <code>true</code> if the pattern is identical, <code>false</code> otherwise
 	 */
 	public boolean equals(Object pThat) {

@@ -242,6 +242,7 @@ public class EventAnalysis implements DebugObject {
 		TransactionType			myTransType;
 		Account 				myTaxMan;
 		DebugEntry				mySection;
+		IncomeBreakdown			myBreakdown	= null;
 
 		/* Store the parameters */
 		theData 	= pData;
@@ -288,6 +289,7 @@ public class EventAnalysis implements DebugObject {
 				myYear = theYears.getNewAnalysis(myTax, theAnalysis);
 				theAnalysis 	= myYear.getAnalysis();
 				theMetaAnalysis = myYear.getMetaAnalysis();
+				myBreakdown		= myYear.getBreakdown();
 
 				/* Access the TaxMan account bucket and Tax Credit transaction */
 				BucketList	myBuckets	= theAnalysis.getList();
@@ -313,6 +315,9 @@ public class EventAnalysis implements DebugObject {
 				theDilutions.addDilution(myCurr);
 			}
 
+			/* Process the event in the breakdown */
+			myBreakdown.processEvent(myCurr);
+			
 			/* Process the event in the report set */
 			processEvent(myCurr);
 			myTax.touchItem(myCurr);
@@ -384,6 +389,7 @@ public class EventAnalysis implements DebugObject {
 		/* Members */
 		private Analysis 		theAnalysis 	= null;
 		private MetaAnalysis	theMetaAnalysis	= null;
+		private IncomeBreakdown theBreakdown	= null;
 		private TaxYear			theYear			= null;
 		private DebugEntry		theListDebug	= null;
 		private DebugEntry		theChargeDebug	= null;
@@ -394,6 +400,7 @@ public class EventAnalysis implements DebugObject {
 		public 	TaxYear			getTaxYear()		{ return theYear; }
 		public 	Analysis		getAnalysis()		{ return theAnalysis; }
 		public 	MetaAnalysis	getMetaAnalysis()	{ return theMetaAnalysis; }
+		public 	IncomeBreakdown	getBreakdown()		{ return theBreakdown; }
 
 		/**
 		 * Build History (no history)
@@ -418,6 +425,9 @@ public class EventAnalysis implements DebugObject {
 			
 			/* Create associated MetaAnalyser */
 			theMetaAnalysis = new MetaAnalysis(theAnalysis);
+			
+			/* Create the breakdown */
+			theBreakdown = new IncomeBreakdown(theData);
 		}
 		
 		/* Field IDs */
@@ -518,7 +528,6 @@ public class EventAnalysis implements DebugObject {
 
 		/**
 		 * Produce totals for an analysis year 
-		 * @param pProperties the properties
 		 */
 		public void produceTotals() {
 			/* If we are in valued state */
@@ -558,6 +567,9 @@ public class EventAnalysis implements DebugObject {
 									DebugEntry		pParent) { 
 			/* Add Totals child */
 			theListDebug = pManager.addChildEntry(pParent, "Totals", theAnalysis.getList());			
+
+			/* Add Breakdown child */
+			pManager.addChildEntry(pParent, "Breakdown", theBreakdown);			
 
 			/* Add chargeable events child as hidden entry */
 			ChargeableEvent.List myCharges = theAnalysis.getCharges();

@@ -243,7 +243,9 @@ public class DilutionEvent extends ReportItem<DilutionEvent> {
 
 		/**
 		 * Add Dilution Event to List
-		 * @param pEvent the base event
+		 * @param pAccount the account to dilute
+		 * @param pDate the date of the price
+		 * @param pDilution the (possibly) diluted price
 		 */
 		public void addDilution(String 			pAccount,
 								java.util.Date 	pDate,
@@ -344,11 +346,10 @@ public class DilutionEvent extends ReportItem<DilutionEvent> {
 		}
 
 		/**
-		 * Obtain the undiluted price for the account and date
+		 * Add undiluted price for the account and date
 		 * @param pAccount the account to dilute
 		 * @param pDate the date of the price
 		 * @param pPrice the (possibly) diluted price
-		 * @return the dilution factor
 		 */
 		public void addPrice(String 		pAccount,
 							 java.util.Date pDate,

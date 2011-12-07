@@ -1274,7 +1274,6 @@ public class AccountStatement extends StdTable<Event> {
 		 */
 		private void addPatterns() {
 			Statement.Line		myLine;
-			int					row;
 
 			/* Loop through the selected rows */
 			for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
@@ -1284,10 +1283,6 @@ public class AccountStatement extends StdTable<Event> {
 				/* Ignore deleted rows */
 				if (myRow.isDeleted()) continue;
 
-				/* Determine row */
-				row = myRow.indexOf();
-				if (theTable.hasHeader()) row++;
-				
 				/* Access the line */
 				myLine = (Statement.Line)myRow;
 				

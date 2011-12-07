@@ -67,7 +67,6 @@ public abstract class DataSet<T extends DataSet<T>> 		implements DebugObject {
 	
 	/**
 	 * Construct a Deep Copy for for a DataSet.
-	 * @param pSource the source DataSet
 	 */
 	public abstract T	getDeepCopy();
 

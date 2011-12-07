@@ -14,11 +14,24 @@ import uk.co.tolcroft.models.security.SecurityControl;
 
 public class Utils {
 	/**
-	 * The Currency Symbol.
+	 * Determine whether two String objects differ.
+	 * @param pCurr The current string 
+	 * @param pNew The new string
+	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
 	 */	
-	//private static String	thePound	 = Currency.getInstance("GBP").getSymbol(); 
-	//public  static String  	getPound()	 { return thePound; }
-	
+	public static Difference differs(Object pCurr, Object pNew) {
+		/* Handle case where current value is null */
+		if  (pCurr == null) return (pNew != null) ? Difference.Different 
+												  : Difference.Identical;
+		
+		/* Handle case where new value is null */
+		if  (pNew == null) return Difference.Different;
+		
+		/* Handle Standard cases */
+		return (pCurr.equals(pNew)) ? Difference.Identical
+									: Difference.Different;
+	}
+
 	/**
 	 * Determine whether two String objects differ.
 	 * @param pCurr The current string 
@@ -294,9 +307,9 @@ public class Utils {
 	}
 
 	/**
-	 * Convert character array to byte array
-	 * @param pChars the character array
-	 * @return the byte array
+	 * Convert byte array to character array
+	 * @param pBytes the byte array
+	 * @return the character array
 	 */
 	public	static char[] byteToCharArray(byte[] pBytes) throws Exception {
 		/* protect against exceptions */

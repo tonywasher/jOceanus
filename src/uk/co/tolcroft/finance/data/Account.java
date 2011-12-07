@@ -1608,13 +1608,13 @@ public class Account extends EncryptedItem<Account> {
 		/**
 		 * Add an Account
 		 * @param uId the Id of the account
-		 * @param pAccount the Encrypted Name of the account 
+		 * @param pName the Encrypted Name of the account 
 		 * @param uAcTypeId the Id of the account type
 		 * @param pDesc the Encrypted Description of the account (or null)
 		 * @param pMaturity the Maturity date for a bond (or null)
 		 * @param pClosed the Close Date for the account (or null)
-		 * @param uParentId the Id of the parent account (or -1)
-		 * @param uAliasId the Id of the alias account (or -1)
+		 * @param pParentId the Id of the parent account (or -1)
+		 * @param pAliasId the Id of the alias account (or -1)
 		 * @param pWebSite the Encrypted WebSite of the account
 		 * @param pCustNo the Encrypted CustomerId of the account
 		 * @param pUserId the Encrypted UserId of the account

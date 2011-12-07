@@ -110,6 +110,12 @@ public class DebugWindow extends JFrame implements TreeSelectionListener {
 		theItemPane.displayDebug(pEntry);
 	}
 	
+	/* Update debug */
+	protected void updateDebug(DebugEntry pEntry) {
+		/* update debug if required */
+		theItemPane.updateDebug(pEntry);
+	}
+	
 	/* Handle tree selection */
 	public void valueChanged(TreeSelectionEvent e) {
 		DefaultMutableTreeNode myNode = 

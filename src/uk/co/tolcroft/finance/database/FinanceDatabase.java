@@ -2,21 +2,13 @@ package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.database.Database;
-import uk.co.tolcroft.models.security.SecureManager;
 
 public class FinanceDatabase extends Database<FinanceData> {
 	/**
 	 * Construct a new Database class for load
-	 * @param pProperties the database properties
-	 * @param pSecurity the security manager
 	 */
-	public FinanceDatabase(Properties 		pProperties,
-						   SecureManager	pSecurity) throws Exception {
-		/* Call super-constructor */
-		super(pProperties);
-		
+	public FinanceDatabase() throws Exception {
 		/* Add additional tables */
 		declareTables();
 	}	

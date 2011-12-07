@@ -366,7 +366,7 @@ public class Properties {
 	
 	/**
 	 * Set the BirthDate 
-	 * @param pDate the new value
+	 * @param pValue the new value
 	 */
 	public void setBirthDate(Date pValue) {
 		/* Record the new value */

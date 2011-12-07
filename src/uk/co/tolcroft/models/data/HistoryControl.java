@@ -6,9 +6,9 @@ import uk.co.tolcroft.models.help.DebugDetail;
 
 /**
  * Provides the implementation of a history buffer for a DataItem
- * Each element represents a changed set of values and refers to a {@link histObject} object
+ * Each element represents a changed set of values and refers to a {@link HistoryValues} object
  * which is the set of changeable values for the object. 
- * @see histElement
+ * @see HistoryValues
  */
 public class HistoryControl<T extends DataItem<T>> {
 	/**

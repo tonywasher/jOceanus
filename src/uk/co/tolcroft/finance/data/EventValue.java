@@ -30,7 +30,7 @@ public class EventValue extends DataItem<EventValue>{
 	public  Account			getAccount()	{ return getValues().getAccount(); }
 
 	/* Linking methods */
-	public EventData	getBase() { return (EventData)super.getBase(); }
+	public EventValue	getBase() { return (EventValue)super.getBase(); }
 	
 	/* Field IDs */
 	public static final int FIELD_INFOTYPE	= DataItem.NUMFIELDS;
@@ -243,6 +243,13 @@ public class EventValue extends DataItem<EventValue>{
 		pList.setNewId(this);				
 	}
 
+	@Override
+	public void deRegister() {
+		/* Access the EventInfoSet and register this value */
+		EventInfoSet mySet = getEvent().getInfoSet();
+		mySet.deRegisterValue(this);		
+	}
+	
 	/**
 	 * Compare this EventInfo to another to establish equality.
 	 * @param pThat The Rate to compare to
@@ -434,12 +441,24 @@ public class EventValue extends DataItem<EventValue>{
 		public 	FinanceData getData()		{ return theData; }
 		
 		/** 
-		 * Construct an empty CORE rate list
+		 * Construct an empty CORE list
 	 	 * @param pData the DataSet for the list
 		 */
 		protected List(FinanceData pData) { 
 			super(List.class, EventValue.class, ListStyle.CORE, false);
 			theData = pData;
+			setGeneration(pData.getGeneration());
+		}
+
+		/** 
+		 * Construct an empty list
+	 	 * @param pData the DataSet for the list
+	 	 * @param pStyle the required style
+		 */
+		protected List(FinanceData pData, ListStyle pStyle) { 
+			super(List.class, EventValue.class, pStyle, false);
+			theData = pData;
+			setGeneration(pData.getGeneration());
 		}
 
 		/**

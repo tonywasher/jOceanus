@@ -90,7 +90,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 							
 	/**
 	 * Constructor
-	 * @param pCtl the list that this item is associated with
+	 * @param pList the list that this item is associated with
 	 * @param uId the Id of the new item (or 0 if not yet known)
 	 */
 	public EncryptedItem(EncryptedList<?,T> pList, int uId) {
@@ -251,6 +251,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 							 ListStyle 		pStyle) { 
 			super(pClass, pBaseClass, pStyle, true);
 			theData = pData;
+			setGeneration(pData.getGeneration());
 		}
 
 		/**

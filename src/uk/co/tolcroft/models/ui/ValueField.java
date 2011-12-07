@@ -59,6 +59,7 @@ public class ValueField extends JTextField {
 		switch (pClass) {
 			/* Create appropriate model class */
 			case String:	theModel = new StringModel(); 		break;
+			case Integer:	theModel = new IntegerModel(); 		break;
 			case Money:		theModel = new MoneyModel(); 		break;
 			case Rate:		theModel = new RateModel(); 		break;
 			case Units:		theModel = new UnitsModel(); 		break;
@@ -99,7 +100,8 @@ public class ValueField extends JTextField {
 		Object myOld = getValue();
 		
 		/* Store the new value */
-		theModel.setValue(pValue);
+		if (bNew)  	theModel.setValue(pValue);
+		else 		theModel.establishStrings();
 		
 		/* Determine value to display */
 		if (theCache != null) setForeground(theCache);
@@ -199,7 +201,7 @@ public class ValueField extends JTextField {
 	/**
 	 * The Data Model class
 	 */
-	public abstract static class DataModel {
+	private abstract static class DataModel {
 		/**
 		 * The value of the Data
 		 */
@@ -219,7 +221,7 @@ public class ValueField extends JTextField {
 		 * Get Value
 		 * @return the value associated with the field
 		 */
-		public	Object		getValue() 		{ return theValue; }
+		protected	Object	getValue() 		{ return theValue; }
 		
 		/**
 		 * Get Display Value
@@ -274,31 +276,36 @@ public class ValueField extends JTextField {
 		 * @return true if the new value is different
 		 */
 		protected abstract boolean isNewValue(Object pObject);
+
+		/**
+		 * Establish display and edit strings for the value 
+		 */
+		protected abstract void establishStrings();
 	}
 	
 	/**
 	 * The String Data Model class
 	 */
-	public static class StringModel extends DataModel {
+	private static class StringModel extends DataModel {
 		@Override
-		public		String	getValue() 		{ return (String)super.getValue(); }
+		protected	String	getValue() 		{ return (String)super.getValue(); }
 		
 		@Override
-		protected	String	getDisplay() 	{ 
-			String s = getValue();
-			return (s == null) ? "" : s;
-		}
-		
-		@Override
-		public void setValue(Object pValue) {
+		protected	void 	setValue(Object pValue) {
 			/* Store the new value */
 			super.setValue((pValue == null) ? null : new String((String)pValue));
 			
+			/* Establish strings */
+			establishStrings();
+		}
+		
+		@Override 
+		protected void establishStrings() {
 			/* Set edit and display values */
 			String s = getValue();
 			if (s == null) s = "";
 			setDisplay(s);
-			setEdit(s);
+			setEdit(s);			
 		}
 		
 		@Override
@@ -322,22 +329,89 @@ public class ValueField extends JTextField {
 	}
 	
 	/**
-	 * The Money Data Model class
+	 * The Integer Data Model class
 	 */
-	public static class MoneyModel extends DataModel {
-		@Override
-		public		Money	getValue() 		{ return (Money)super.getValue(); }
+	private static class IntegerModel extends DataModel {
+		/**
+		 * Cached string value
+		 */
+		private String theString = "";
 		
 		@Override
-		public void setValue(Object pValue) {
+		protected	Integer	getValue() 		{ return (Integer)super.getValue(); }
+		
+		@Override
+		protected 	void 	setValue(Object pValue) {
+			/* Store the new value */
+			super.setValue((pValue == null) ? null : new Integer((Integer)pValue));
+			
+			/* Set edit and display values */
+			theString = (pValue == null) ? "" : Integer.toString(getValue());
+			establishStrings();
+		}
+		
+		@Override 
+		protected void establishStrings() {
+			/* Set edit and display values */
+			setDisplay(theString);
+			setEdit(theString);			
+		}
+		
+		@Override
+		protected Object parseValue(String pValue) {
+			/* Protect against exceptions */
+			try { return Integer.parseInt(pValue); } catch (Throwable e) { return null; }
+		}
+		
+		@Override
+		protected void validateObject(Object pValue) {
+			/* Reject non-string */
+			if (!(pValue instanceof Integer))
+				throw new IllegalArgumentException();
+		}
+		
+		@Override
+		protected boolean isNewValue(Object pValue) {
+			/* Determine whether the value has changed */
+			return (Utils.differs(getValue(), (Integer)pValue).isDifferent());
+		}
+	}
+	
+	/**
+	 * The Money Data Model class
+	 */
+	private static class MoneyModel extends DataModel {
+		/**
+		 * Cached display string value
+		 */
+		private String theDisplayString = "";
+		
+		/**
+		 * Cached edit string value
+		 */
+		private String theEditString 	= "";
+		
+		@Override
+		protected	Money	getValue() 		{ return (Money)super.getValue(); }
+		
+		@Override
+		protected 	void 	setValue(Object pValue) {
 			Money myNew = (Money)pValue;
 			
 			/* Store the new value */
 			super.setValue((pValue == null) ? null : new Money(myNew));
 			
 			/* Set new edit and display values */
-			setDisplay((myNew == null) ? "" : myNew.format(true));
-			setEdit((myNew == null) ? "" : myNew.format(false));
+			theDisplayString 	= ((myNew == null) ? "" : myNew.format(true));
+			theEditString 		= ((myNew == null) ? "" : myNew.format(false));
+			establishStrings();
+		}
+		
+		@Override 
+		protected void establishStrings() {
+			/* Set edit and display values */
+			setDisplay(theDisplayString);
+			setEdit(theEditString);			
 		}
 		
 		@Override
@@ -363,26 +437,38 @@ public class ValueField extends JTextField {
 	/**
 	 * The Rate Data Model class
 	 */
-	public static class RateModel extends DataModel {
-		@Override
-		public		Rate	getValue() 		{ return (Rate)super.getValue(); }
+	private	static class RateModel extends DataModel {
+		/**
+		 * Cached display string value
+		 */
+		private String theDisplayString = "";
+		
+		/**
+		 * Cached edit string value
+		 */
+		private String theEditString 	= "";
 		
 		@Override
-		protected	String	getDisplay() 	{ 
-			Rate s = getValue();
-			return (s == null) ? "" : s.format(true);
-		}
-		
+		protected	Rate	getValue() 		{ return (Rate)super.getValue(); }
+				
 		@Override
-		public void setValue(Object pValue) {
+		protected 	void 	setValue(Object pValue) {
 			Rate myNew = (Rate)pValue;
 			
 			/* Store the new value */
 			super.setValue((pValue == null) ? null : new Rate(myNew));
 			
 			/* Set new edit and display values */
-			setDisplay((myNew == null) ? "" : myNew.format(true));
-			setEdit((myNew == null) ? "" : myNew.format(false));
+			theDisplayString 	= ((myNew == null) ? "" : myNew.format(true));
+			theEditString 		= ((myNew == null) ? "" : myNew.format(false));
+			establishStrings();
+		}
+		
+		@Override 
+		protected void establishStrings() {
+			/* Set edit and display values */
+			setDisplay(theDisplayString);
+			setEdit(theEditString);			
 		}
 		
 		@Override
@@ -408,25 +494,38 @@ public class ValueField extends JTextField {
 	/**
 	 * The Units Data Model class
 	 */
-	public static class UnitsModel extends DataModel {
-		@Override
-		public		Units	getValue() 		{ return (Units)super.getValue(); }
+	private static class UnitsModel extends DataModel {
+		/**
+		 * Cached display string value
+		 */
+		private String theDisplayString = "";
+		
+		/**
+		 * Cached edit string value
+		 */
+		private String theEditString 	= "";
 		
 		@Override
-		protected	String	getDisplay() 	{ 
-			Units s = getValue();
-			return (s == null) ? "" : s.format(true);
-		}
-		
+		protected	Units	getValue() 		{ return (Units)super.getValue(); }
+				
 		@Override
-		public void setValue(Object pValue) {
+		protected 	void 	setValue(Object pValue) {
 			Units myNew = (Units)pValue;
 			
 			/* Store the new value */
 			super.setValue((pValue == null) ? null : new Units(myNew));
 			
-			/* Set new edit value */
-			setEdit((myNew == null) ? "" : myNew.format(false));
+			/* Set new edit and display values */
+			theDisplayString 	= ((myNew == null) ? "" : myNew.format(true));
+			theEditString 		= ((myNew == null) ? "" : myNew.format(false));
+			establishStrings();
+		}
+		
+		@Override 
+		protected void establishStrings() {
+			/* Set edit and display values */
+			setDisplay(theDisplayString);
+			setEdit(theEditString);			
 		}
 		
 		@Override
@@ -452,25 +551,38 @@ public class ValueField extends JTextField {
 	/**
 	 * The Price Data Model class
 	 */
-	public static class PriceModel extends DataModel {
-		@Override
-		public		Price	getValue() 		{ return (Price)super.getValue(); }
+	private static class PriceModel extends DataModel {
+		/**
+		 * Cached display string value
+		 */
+		private String theDisplayString = "";
+		
+		/**
+		 * Cached edit string value
+		 */
+		private String theEditString 	= "";
 		
 		@Override
-		protected	String	getDisplay() 	{ 
-			Price s = getValue();
-			return (s == null) ? "" : s.format(true);
-		}
+		protected	Price	getValue() 		{ return (Price)super.getValue(); }
 		
 		@Override
-		public void setValue(Object pValue) {
+		protected 	void 	setValue(Object pValue) {
 			Price myNew = (Price)pValue;
 			
 			/* Store the new value */
 			super.setValue((pValue == null) ? null : new Price(myNew));
 			
-			/* Set new edit value */
-			setEdit((myNew == null) ? "" : myNew.format(false));
+			/* Set new edit and display values */
+			theDisplayString 	= ((myNew == null) ? "" : myNew.format(true));
+			theEditString 		= ((myNew == null) ? "" : myNew.format(false));
+			establishStrings();
+		}
+		
+		@Override 
+		protected void establishStrings() {
+			/* Set edit and display values */
+			setDisplay(theDisplayString);
+			setEdit(theEditString);			
 		}
 		
 		@Override
@@ -496,25 +608,38 @@ public class ValueField extends JTextField {
 	/**
 	 * The Dilution Data Model class
 	 */
-	public static class DilutionModel extends DataModel {
-		@Override
-		public		Dilution	getValue() 		{ return (Dilution)super.getValue(); }
+	private static class DilutionModel extends DataModel {
+		/**
+		 * Cached display string value
+		 */
+		private String theDisplayString = "";
+		
+		/**
+		 * Cached edit string value
+		 */
+		private String theEditString 	= "";
 		
 		@Override
-		protected	String	getDisplay() 	{ 
-			Dilution s = getValue();
-			return (s == null) ? "" : s.format(true);
-		}
+		protected	Dilution	getValue() 		{ return (Dilution)super.getValue(); }
 		
 		@Override
-		public void setValue(Object pValue) {
+		protected 	void 		setValue(Object pValue) {
 			Dilution myNew = (Dilution)pValue;
 			
 			/* Store the new value */
 			super.setValue((pValue == null) ? null : new Dilution(myNew));
 			
-			/* Set new edit value */
-			setEdit((myNew == null) ? "" : myNew.format(false));
+			/* Set new edit and display values */
+			theDisplayString 	= ((myNew == null) ? "" : myNew.format(true));
+			theEditString 		= ((myNew == null) ? "" : myNew.format(false));
+			establishStrings();
+		}
+		
+		@Override 
+		protected void establishStrings() {
+			/* Set edit and display values */
+			setDisplay(theDisplayString);
+			setEdit(theEditString);			
 		}
 		
 		@Override
@@ -540,28 +665,47 @@ public class ValueField extends JTextField {
 	/**
 	 * The Char Array Model class
 	 */
-	public static class CharArrayModel extends DataModel {
-		@Override
-		public		char[]	getValue() 		{ return (char[])super.getValue(); }
+	private static class CharArrayModel extends DataModel {
+		/**
+		 * Cached display string value
+		 */
+		private String theDisplayString = "";
+		
+		/**
+		 * Cached edit string value
+		 */
+		private String theEditString 	= "";
 		
 		@Override
-		protected	String	getDisplay() 	{ 
-			char[] s = getValue();
-			if (s == null) return "";
-			char[] myMask = new char[s.length];
-			Arrays.fill(myMask, '*');
-			return new String(myMask);
-		}
+		protected	char[]	getValue() 		{ return (char[])super.getValue(); }
 		
 		@Override
-		public void setValue(Object pValue) {
+		protected 	void 	setValue(Object pValue) {
 			char[] myNew = (char[])pValue;
 			
 			/* Store the new value */
 			super.setValue((pValue == null) ? null : Arrays.copyOf(myNew, myNew.length));
 			
-			/* Set new edit value */
-			setEdit((myNew == null) ? "" : new String(myNew));
+			/* Set default edit/display valuese */
+			theEditString 		= ((myNew == null) ? "" : new String(myNew));
+			theDisplayString 	= "";
+
+			/* Set new display value */
+			if (myNew != null)  {
+				char[] myMask = new char[myNew.length];
+				Arrays.fill(myMask, '*');
+				theDisplayString = new String(myMask);
+			}
+			
+			/* Establish Strings */
+			establishStrings();
+		}
+				
+		@Override 
+		protected void establishStrings() {
+			/* Set edit and display values */
+			setDisplay(theDisplayString);
+			setEdit(theEditString);			
 		}
 		
 		@Override
@@ -589,6 +733,7 @@ public class ValueField extends JTextField {
 	 */
 	public enum ValueClass {
 		String,
+		Integer,
 		Money,
 		Rate,
 		Units,

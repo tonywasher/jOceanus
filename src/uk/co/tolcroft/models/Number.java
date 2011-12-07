@@ -1060,7 +1060,7 @@ public abstract class Number {
 		/**
 		 * Create a new Dilution by parsing a string value 
 		 * 
-		 * @param pDilutions the Dilution to parse
+		 * @param pDilution the Dilution to parse
 		 * @return the new Dilution or <code>null</code> if parsing failed
 		 */
 		public static Dilution Parse(String pDilution) {

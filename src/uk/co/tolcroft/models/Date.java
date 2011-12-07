@@ -1,6 +1,7 @@
 package uk.co.tolcroft.models;
 
 import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -18,6 +19,11 @@ public class Date {
 	 * The format symbols to be used
 	 */
 	private final static DateFormatSymbols	theSymbols	= DateFormatSymbols.getInstance(theLocale);
+
+	/**
+	 * The default date format 
+	 */
+	private final static SimpleDateFormat 	theFormat	= new SimpleDateFormat("dd-MMM-yyyy", theLocale);
 	
 	/**
 	 * The Date object in underlying Java form
@@ -86,6 +92,21 @@ public class Date {
 		theDate.set(Calendar.MONTH, pMonth); 
 		theDate.set(Calendar.DAY_OF_MONTH, pDay); 
 		obtainValues();
+	}
+	
+	/**
+	 * Construct a Date from a formatted string
+	 * @param pValue the formatted string
+	 */
+	public Date(String pValue) {
+		/* Access the parsed date */
+		java.util.Date myDate = null;
+		try { myDate = theFormat.parse(pValue); } catch (Throwable e) {}
+		if (myDate != null) {
+			theDate = Calendar.getInstance(theLocale);
+			theDate.setTime(myDate);
+			obtainValues();
+		}
 	}
 	
 	/**
@@ -391,8 +412,8 @@ public class Date {
 		/**
 		 * Format a Range 
 		 * 
-		 * @param pDate the date to format
-		 * @return the formatted Date
+		 * @param pRange the range to format
+		 * @return the formatted Range
 		 */
 		public static String format(Range pRange) {
 			String 	myFormat;
@@ -408,6 +429,5 @@ public class Date {
 			/* return the format */
 			return myFormat;
 		}
-
 	}	
 }

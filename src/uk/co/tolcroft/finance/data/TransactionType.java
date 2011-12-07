@@ -406,7 +406,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 	}
 
 	/**
-	 * Represents a list of {@link TransType} objects. 
+	 * Represents a list of {@link TransactionType} objects. 
 	 */
 	public static class List extends StaticList<List, TransactionType, TransClass> {
 		protected Class<TransClass> getEnumClass() { return TransClass.class; }

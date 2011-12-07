@@ -12,12 +12,12 @@ public class BatchControl {
 	/**
 	 * Default batch size for updates
 	 */
-	protected final static int    	BATCH_SIZE 		= 50;
+	private int    				theBatchSize 	= 50;
 
 	/**
 	 * Capacity of Batch Control (0=Unlimited)
 	 */
-	private int 				theCapacity		= BATCH_SIZE; 
+	private int 				theCapacity		= theBatchSize; 
 	
 	/**
 	 * Number of items in this batch
@@ -46,10 +46,15 @@ public class BatchControl {
 	
 	/**
 	 * Constructor
+	 * @param pBatchSize the batch size 
 	 */
-	protected BatchControl() {
+	protected BatchControl(Integer pBatchSize) {
 		/* Create the batch table list */
 		theList = new ArrayList<BatchTable>();
+		
+		/* Store batchSize and capacity */
+		theBatchSize = pBatchSize;
+		theCapacity  = pBatchSize;
 	}
 	
 	/**
@@ -165,8 +170,11 @@ public class BatchControl {
 					
 				/* If we are handling deletions */
 				if (theState == DataState.DELETED) {
-					/* Simply unlink the underlying item */
+					/* Unlink the underlying item */
 					myBase.unLink();
+					
+					/* Remove any registration */
+					myBase.deRegister();
 				}
 					
 				/* else we are handling new/changed items */

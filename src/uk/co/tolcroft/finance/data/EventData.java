@@ -238,6 +238,13 @@ public class EventData extends EncryptedItem<EventData> {
 		pList.setNewId(this);				
 	}
 
+	@Override
+	public void deRegister() {
+		/* Access the EventInfoSet and register this value */
+		EventInfoSet mySet = getEvent().getInfoSet();
+		mySet.deRegisterData(this);		
+	}
+	
 	/* Edit constructor */
 	private EventData(List     		pList,
 				      EventInfoType pType,
@@ -395,7 +402,7 @@ public class EventData extends EncryptedItem<EventData> {
 
 	/**
 	 * Format an Event Data 
-	 * @param pValue the data to format
+	 * @param pData the data to format
 	 * @return the formatted data
 	 */
 	public static String format(EventData pData) {
@@ -518,6 +525,17 @@ public class EventData extends EncryptedItem<EventData> {
 		 */
 		protected List(FinanceData pData) { 
 			super(List.class, EventData.class, pData);
+		}
+
+		/** 
+		 * Construct an empty list
+	 	 * @param pData the DataSet for the list
+	 	 * @param pStyle the required style
+		 */
+		protected List(FinanceData pData, ListStyle pStyle) { 
+			super(List.class, EventData.class, pData);
+			setStyle(pStyle);
+			setGeneration(pData.getGeneration());
 		}
 
 		/**

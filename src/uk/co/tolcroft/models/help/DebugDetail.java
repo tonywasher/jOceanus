@@ -28,9 +28,8 @@ public class DebugDetail {
 	}
 	
 	/**
-	 * Obtain Forward Debug Link
-	 * @param pName the Name
-	 * @return the corresponding object
+	 * Obtain History Links
+	 * @return the formatted links
 	 */
 	public StringBuilder getHistoryLinks() {
 		/* Ignore if no history */
@@ -100,9 +99,10 @@ public class DebugDetail {
 	}
 	
 	/**
-	 * Format a field
-	 * @param pName the Name
-	 * @return the corresponding object
+	 * Format a debug link
+	 * @param pItem the object for the link
+	 * @param pText the text for the link
+	 * @return the debug link
 	 */
 	public String addDebugLink(Object	pItem,
 							   String	pText) {

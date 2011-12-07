@@ -17,16 +17,10 @@ public abstract class SortedItem<T extends SortedItem<T>> implements LinkObject<
 	 */
 	public SortedList<T>   	getList()  		{ return theList; }
 	
-	/**
-	 * Get the link node for this item
-	 * @return the Link node or <code>null</code>
-	 */
+	@Override
 	public LinkNode<T>		getLinkNode(SortedList<T> pList)	{ return theLink; }
 
-	/**
-	 * Get the link node for this item
-	 * @return the Link node or <code>null</code>
-	 */
+	@Override
 	public void				setLinkNode(SortedList<T> l, LinkNode<T> o)	{ theLink = o; }
 
 	/**

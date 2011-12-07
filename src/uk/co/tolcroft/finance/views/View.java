@@ -51,8 +51,7 @@ public class View extends DataControl<FinanceData> {
 	 * @return new Database object
 	 */
 	public Database<FinanceData> getDatabase() throws Exception {
-		return new FinanceDatabase(getProperties(),
-								   getSecurity());
+		return new FinanceDatabase();
 	}
 	
 	/**
@@ -343,7 +342,7 @@ public class View extends DataControl<FinanceData> {
 		
 		/**
 		 * Set the BirthDate 
-		 * @param pDate the new value
+		 * @param pValue the new value
 		 */
 		public void setBirthDate(Date pValue) {
 			theBirthDate = pValue;

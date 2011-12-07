@@ -262,11 +262,6 @@ public class Analysis {
 		}
 		
 		/**
-		 * is the bucket active (i.e. should it be copied)
-		 */
-		//protected abstract boolean isActive();
-		
-		/**
 		 * is the bucket relevant (i.e. should it be reported)
 		 */
 		protected abstract boolean isRelevant();
