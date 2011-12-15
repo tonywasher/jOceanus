@@ -2,7 +2,6 @@ package uk.co.tolcroft.models.sheets;
 
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 
 public class SheetControlKey extends SheetDataItem<ControlKey> {
 	/**
@@ -10,11 +9,6 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
 	 */
 	private static final String Keys	   		= ControlKey.listName;
 
-	/**
-	 * Is the spreadsheet a backup spreadsheet or an edit-able one
-	 */
-	private boolean 			isBackup		= false;
-	
 	/**
 	 * ControlKey data list
 	 */
@@ -33,9 +27,6 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
 		/* Call super constructor */
 		super(pReader, Keys);
 		
-		/* Note whether this is a backup */
-		isBackup = (pReader.getType() == SheetType.BACKUP);
-		
 		/* Access the Lists */
 		theData	= pReader.getData();
 		theList = theData.getControlKeys();
@@ -49,9 +40,6 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
 		/* Call super constructor */
 		super(pWriter, Keys);
 		
-		/* Note whether this is a backup */
-		isBackup = (pWriter.getType() == SheetType.BACKUP);
-				
 		/* Access the Control list */
 		theList = pWriter.getData().getControlKeys();
 		setDataList(theList);
@@ -64,15 +52,14 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
 		/* Access the IDs */
 		int	myID 		= loadInteger(0);
 		int	myTypeID 	= loadInteger(1);
-		int	mySteps 	= loadInteger(2);
 		
 		/* Access the binary values  */
-		byte[] 	myHash		= loadBytes(3);
-		byte[] 	myPublic	= loadBytes(4);
-		byte[] 	myPrivate	= loadBytes(5);
+		byte[] 	myHash		= loadBytes(2);
+		byte[] 	myPublic	= loadBytes(3);
+		byte[] 	myPrivate	= loadBytes(4);
 
 		/* Add the Control */
-		theList.addItem(myID, myTypeID, mySteps, myHash, myPublic, myPrivate);
+		theList.addItem(myID, myTypeID, myHash, myPublic, myPrivate);
 	}
 
 	/**
@@ -84,34 +71,17 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
 		/* Set the fields */
 		writeInteger(0, pItem.getId());
 		writeInteger(1, pItem.getKeyMode().getMode());
-		writeInteger(2, pItem.getNumSteps());
-		writeBytes(3, pItem.getPasswordHash());
-		writeBytes(4, pItem.getPublicKey());
-		writeBytes(5, pItem.getPrivateKey());
+		writeBytes(2, pItem.getPasswordHash());
+		writeBytes(3, pItem.getPublicKey());
+		writeBytes(4, pItem.getPrivateKey());
 	}
 
-	/**
-	 * PreProcess on write
-	 */
-	protected boolean preProcessOnWrite() throws Throwable {		
-		/* Ignore if we are creating a backup */
-		if (isBackup) return false;
+	@Override
+	protected void preProcessOnWrite() throws Throwable {}		
 
-		/* Write titles */
-		writeString(0, ControlKey.fieldName(ControlKey.FIELD_ID));
-		writeString(1, ControlKey.fieldName(ControlKey.FIELD_KEYMODE));			
-		writeString(2, ControlKey.fieldName(ControlKey.FIELD_NUMSTEPS));			
-		writeString(3, ControlKey.fieldName(ControlKey.FIELD_PASSHASH));			
-		writeString(4, ControlKey.fieldName(ControlKey.FIELD_PUBLICKEY));			
-		writeString(5, ControlKey.fieldName(ControlKey.FIELD_PRIVATEKEY));			
-		return true;
-	}	
-
-	/**
-	 * PostProcess on write
-	 */
+	@Override
 	protected void postProcessOnWrite() throws Throwable {		
-		/* Set the six columns as the range */
-		nameRange(6);
+		/* Set the five columns as the range */
+		nameRange(5);
 	}
 }

@@ -12,7 +12,7 @@ import javax.swing.table.AbstractTableModel;
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.help.DebugManager;
@@ -460,7 +460,7 @@ public class AccountPatterns extends StdTable<Event> {
 				/* Store the appropriate value */
 				switch (col) {
 					case COLUMN_DATE:  
-						myPattern.setDate((Date)obj);    
+						myPattern.setDate((DateDay)obj);    
 						break;
 					case COLUMN_DESC:  
 						myPattern.setDescription((String)obj);            

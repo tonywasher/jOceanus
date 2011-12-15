@@ -14,7 +14,7 @@ import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.ui.controls.StatementSelect.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.HistoryValues;
@@ -27,7 +27,7 @@ import uk.co.tolcroft.models.ui.StdMouse;
 import uk.co.tolcroft.models.ui.StdTable;
 import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
-import uk.co.tolcroft.models.Date;
+import uk.co.tolcroft.models.DateDay;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 
@@ -49,7 +49,7 @@ public class AccountStatement extends StdTable<Event> {
 	private statementColumnModel	theColumns			= null;
 	private AccountTab				theParent    		= null;
 	private MainTab          		theTopWindow      	= null;
-	private Date.Range				theRange	 		= null;
+	private DateDay.Range			theRange	 		= null;
 	private DateRange 				theSelect	 		= null;
 	private StatementSelect			theStateBox 		= null;
 	private DebugEntry				theDebugEntry		= null;
@@ -274,7 +274,7 @@ public class AccountStatement extends StdTable<Event> {
 		theComboList 	= theParent.getComboList();
 		
 		/* Update the possible date range */
-		Date.Range myRange = theView.getRange();
+		DateDay.Range myRange = theView.getRange();
 		theSelect.setOverallRange(myRange);
 		
 		/* Create SavePoint */
@@ -324,7 +324,7 @@ public class AccountStatement extends StdTable<Event> {
 	 * Set Selection to the specified date range
 	 * @param pRange the Date range for the extract
 	 */
-	public void setSelection(Date.Range pRange) throws Exception {
+	public void setSelection(DateDay.Range pRange) throws Exception {
 		theStatement = null;
 		theLines     = null;
 		if (theAccount != null) {
@@ -383,7 +383,7 @@ public class AccountStatement extends StdTable<Event> {
 		Statement.Line 			myLine;
 		Statement.Line.Values	myLineVals; 
 		Event.Values    		myEventVals;
-		Date					myDate;
+		DateDay					myDate;
 		boolean					isCredit;
 		Account					myPartner;			
 		Account					mySelf;
@@ -619,7 +619,7 @@ public class AccountStatement extends StdTable<Event> {
 					break;
 				case COLUMN_BALANCE:
 					if ((myNext != null) && 
-						(!Date.differs(myNext.getDate(), myLine.getDate()).isDifferent()))
+						(!DateDay.differs(myNext.getDate(), myLine.getDate()).isDifferent()))
 						o = null;
 					else o = (theStateType == StatementType.UNITS)
 									? myLine.getBalanceUnits() 
@@ -687,7 +687,7 @@ public class AccountStatement extends StdTable<Event> {
 				/* Store the appropriate value */
 				switch (col) {
 					case COLUMN_DATE:  
-						myLine.setDate((Date)obj);    
+						myLine.setDate((DateDay)obj);    
 						break;
 					case COLUMN_DESC:  
 						myLine.setDescription((String)obj);            
@@ -1388,7 +1388,7 @@ public class AccountStatement extends StdTable<Event> {
 		 * Set the date editor range 
 		 * @param pRange
 		 */
-		private void setDateEditorRange(Date.Range pRange) {
+		private void setDateEditorRange(DateDay.Range pRange) {
 			/* Set the range */
 			theDateEditor.setRange(pRange);			
 		}

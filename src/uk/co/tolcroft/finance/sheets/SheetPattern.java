@@ -1,11 +1,18 @@
 package uk.co.tolcroft.finance.sheets;
 
-import jxl.*;
+import java.util.Date;
+
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
+
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.sheets.SheetDataItem;
+import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 
@@ -79,8 +86,8 @@ public class SheetPattern extends SheetDataItem<Event> {
 			int	myFreqId	= loadInteger(7);
 		
 			/* Access the date and credit flag */
-			java.util.Date 	myDate 		= loadDate(4);
-			boolean 		isCredit 	= loadBoolean(5);
+			Date 	myDate 		= loadDate(4);
+			boolean isCredit 	= loadBoolean(5);
 		
 			/* Access the binary values  */
 			byte[] 	myDesc 		= loadBytes(8);
@@ -100,8 +107,8 @@ public class SheetPattern extends SheetDataItem<Event> {
 			String myFrequency	= loadString(8);
 		
 			/* Access the name and description bytes */
-			java.util.Date 	myDate 		= loadDate(2);
-			Boolean 		isCredit	= loadBoolean(4);
+			Date 	myDate 		= loadDate(2);
+			Boolean isCredit	= loadBoolean(4);
 		
 			/* Access the binary values  */
 			String 	myDesc 		= loadString(3);
@@ -139,10 +146,10 @@ public class SheetPattern extends SheetDataItem<Event> {
 		else {
 			/* Set the fields */
 			writeInteger(0, pItem.getId());
-			writeValidatedString(1, myItem.getAccount().getName(), SheetAccount.AccountNames);				
-			writeValidatedString(6, myItem.getPartner().getName(), SheetAccount.AccountNames);				
-			writeValidatedString(7, pItem.getTransType().getName(), SheetTransactionType.TranTypeNames);				
-			writeValidatedString(8, myItem.getFrequency().getName(), SheetFrequency.FrequencyNames);				
+			writeString(1, myItem.getAccount().getName());				
+			writeString(6, myItem.getPartner().getName());				
+			writeString(7, pItem.getTransType().getName());				
+			writeString(8, myItem.getFrequency().getName());				
 			writeDate(2, pItem.getDate());
 			writeBoolean(4, myItem.isCredit());			
 			writeString(3, pItem.getDesc());			
@@ -150,29 +157,30 @@ public class SheetPattern extends SheetDataItem<Event> {
 		}
 	}
 
-	/**
-	 * PreProcess on write
-	 */
-	protected boolean preProcessOnWrite() throws Throwable {		
+	@Override
+	protected void preProcessOnWrite() throws Throwable {		
 		/* Ignore if we are creating a backup */
-		if (isBackup) return false;
+		if (isBackup) return;
+
+		/* Create a new row */
+		newRow();
 
 		/* Write titles */
-		writeString(0, Pattern.fieldName(Pattern.FIELD_ID));
-		writeString(1, Pattern.fieldName(Pattern.VFIELD_ACCOUNT));
-		writeString(2, Pattern.fieldName(Pattern.FIELD_DATE));
-		writeString(3, Pattern.fieldName(Pattern.FIELD_DESC));			
-		writeString(4, Pattern.fieldName(Pattern.FIELD_ISCREDIT));			
-		writeString(5, Pattern.fieldName(Pattern.FIELD_AMOUNT));			
-		writeString(6, Pattern.fieldName(Pattern.VFIELD_PARTNER));			
-		writeString(7, Pattern.fieldName(Pattern.FIELD_TRNTYP));			
-		writeString(8, Pattern.fieldName(Pattern.FIELD_FREQ));			
-		return true;
+		writeHeader(0, Pattern.fieldName(Pattern.FIELD_ID));
+		writeHeader(1, Pattern.fieldName(Pattern.VFIELD_ACCOUNT));
+		writeHeader(2, Pattern.fieldName(Pattern.FIELD_DATE));
+		writeHeader(3, Pattern.fieldName(Pattern.FIELD_DESC));			
+		writeHeader(4, Pattern.fieldName(Pattern.FIELD_ISCREDIT));			
+		writeHeader(5, Pattern.fieldName(Pattern.FIELD_AMOUNT));			
+		writeHeader(6, Pattern.fieldName(Pattern.VFIELD_PARTNER));			
+		writeHeader(7, Pattern.fieldName(Pattern.FIELD_TRNTYP));			
+		writeHeader(8, Pattern.fieldName(Pattern.FIELD_FREQ));			
+		
+		/* Adjust for Header */
+		adjustForHeader();
 	}	
 
-	/**
-	 * PostProcess on write
-	 */
+	@Override
 	protected void postProcessOnWrite() throws Throwable {		
 		/* If we are creating a backup */
 		if (isBackup) {
@@ -187,13 +195,18 @@ public class SheetPattern extends SheetDataItem<Event> {
 
 			/* Hide the ID column */
 			setHiddenColumn(0);
+			setIntegerColumn(0);
 			
 			/* Set the Account column width */
 			setColumnWidth(1, Account.NAMELEN);
+			applyDataValidation(1, SheetAccount.AccountNames);
 			setColumnWidth(3, Pattern.DESCLEN);
 			setColumnWidth(6, Account.NAMELEN);
+			applyDataValidation(6, SheetAccount.AccountNames);
 			setColumnWidth(7, StaticData.NAMELEN);
+			applyDataValidation(7, SheetTransactionType.TranTypeNames);
 			setColumnWidth(8, StaticData.NAMELEN);
+			applyDataValidation(8, SheetFrequency.FrequencyNames);
 			
 			/* Set Number columns */
 			setDateColumn(2);
@@ -202,9 +215,7 @@ public class SheetPattern extends SheetDataItem<Event> {
 		}
 	}
 
-	/**
-	 * postProcess on Load
-	 */
+	@Override
 	protected void postProcessOnLoad() throws Throwable {
 		theAccounts.validateLoadedAccounts();
 	}
@@ -212,21 +223,21 @@ public class SheetPattern extends SheetDataItem<Event> {
 	/**
 	 *  Load the Patterns from an archive
 	 *  @param pThread   the thread status control
-	 *  @param pWorkbook the workbook to load from
+	 *  @param pHelper the sheet helper
 	 *  @param pData the data set to load into
 	 *  @return continue to load <code>true/false</code> 
 	 */
 	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
-										 Workbook					pWorkbook,
+										 SheetHelper				pHelper,
 							   	  		 FinanceData				pData) throws Exception {
 		/* Local variables */
 		Pattern.List		myList;
-		Range[]   			myRange;
+		AreaReference		myRange	= null;
 		Sheet     			mySheet;
-		Cell      			myTop;
-		Cell      			myBottom;
+		CellReference		myTop;
+		CellReference		myBottom;
 		int       			myCol;
-		java.util.Date		myDate;
+		Date				myDate;
 		String    			myAccount;
 		String    			myDesc;
 		String    			myPartner;
@@ -234,8 +245,6 @@ public class SheetPattern extends SheetDataItem<Event> {
 		String    			myAmount;
 		String    			myFrequency;
 		boolean   			isCredit;
-		DateCell  			myDateCell;
-		BooleanCell 		myBoolCell;
 		int       			myTotal;
 		int					mySteps;
 		int       			myCount = 0;
@@ -243,7 +252,7 @@ public class SheetPattern extends SheetDataItem<Event> {
 		/* Protect against exceptions*/
 		try {
 			/* Find the range of cells */
-			myRange = pWorkbook.findByName(Patterns);
+			myRange = pHelper.resolveAreaReference(Patterns);
 		
 			/* Access the number of reporting steps */
 			mySteps = pThread.getReportingSteps();
@@ -252,13 +261,12 @@ public class SheetPattern extends SheetDataItem<Event> {
 			if (!pThread.setNewStage(Patterns)) return false;
 		
 			/* If we found the range OK */
-			if ((myRange != null) && (myRange.length == 1)) {
-			
+			if (myRange != null) {
 				/* Access the relevant sheet and Cell references */
-				mySheet  = pWorkbook.getSheet(myRange[0].getFirstSheetIndex());
-				myTop    = myRange[0].getTopLeft();
-				myBottom = myRange[0].getBottomRight();
-				myCol    = myTop.getColumn();
+				myTop    	= myRange.getFirstCell();
+				myBottom 	= myRange.getLastCell();
+				mySheet  	= pHelper.getSheetByName(myTop.getSheetName());
+				myCol		= myTop.getCol();
 		
 				/* Count the number of patterns */
 				myTotal  = myBottom.getRow() - myTop.getRow() + 1;
@@ -273,22 +281,22 @@ public class SheetPattern extends SheetDataItem<Event> {
 				for (int i = myTop.getRow();
 					 i <= myBottom.getRow();
 					 i++) {
+					/* Access the row */
+					Row myRow 	= mySheet.getRow(i);
 				
 					/* Access strings */
-					myAccount 	= mySheet.getCell(myCol, i).getContents();
-					myDesc    	= mySheet.getCell(myCol+2, i).getContents();
-					myAmount  	= mySheet.getCell(myCol+3, i).getContents();
-					myPartner 	= mySheet.getCell(myCol+4, i).getContents();
-					myTransType = mySheet.getCell(myCol+5, i).getContents();
-					myFrequency = mySheet.getCell(myCol+7, i).getContents();
+					myAccount 	= myRow.getCell(myCol).getStringCellValue();
+					myDesc    	= myRow.getCell(myCol+2).getStringCellValue();
+					myAmount  	= pHelper.formatNumericCell(myRow.getCell(myCol+3));
+					myPartner 	= myRow.getCell(myCol+4).getStringCellValue();
+					myTransType = myRow.getCell(myCol+5).getStringCellValue();
+					myFrequency = myRow.getCell(myCol+7).getStringCellValue();
 				
 					/* Handle Date */
-					myDateCell = (DateCell)mySheet.getCell(myCol+1, i);
-					myDate     = myDateCell.getDate();
+					myDate     = myRow.getCell(myCol+1).getDateCellValue();
 				
 					/* Handle isCredit */
-					myBoolCell 	= (BooleanCell)mySheet.getCell(myCol+6, i);
-					isCredit 	= myBoolCell.getValue();
+					isCredit 	= myRow.getCell(myCol+6).getBooleanCellValue();
 				
 					/* Add the value into the finance tables */
 					myList.addItem(0,

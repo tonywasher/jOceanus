@@ -1,5 +1,7 @@
 package uk.co.tolcroft.finance.database;
 
+import java.util.Date;
+
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.data.DataSet;
@@ -66,9 +68,9 @@ public class TablePrice extends TableEncrypted<AcctPrice> {
 
 	/* Load the price */
 	protected void loadItem(int pId, int pControlId) throws Exception {
-		int  			myAccountId;
-		byte[] 			myPrice;
-		java.util.Date  myDate;
+		int  	myAccountId;
+		byte[] 	myPrice;
+		Date  	myDate;
 		
 		/* Get the various fields */
 		myAccountId = theTableDef.getIntegerValue(AcctPrice.FIELD_ACCOUNT);

@@ -15,31 +15,28 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.ui.DateSelect.CalendarButton;
-import uk.co.tolcroft.models.ui.DateSelect.DateModel;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
 public class DateRange {
 	/* Members */
 	private	DateRange			theSelf		   	= this;
 	private stdPanel			theParent  	   	= null;
-	private CalendarButton		theDateButton 	= null;
-	private DateModel			theModel		= null;
+	private DateButton			theDateButton 	= null;
 	private JComboBox           thePeriodBox   	= null;
 	private JPanel              thePanel       	= null;
 	private JButton             theNextButton  	= null;
 	private JButton             thePrevButton  	= null;
 	private JLabel              theStartLabel  	= null;
 	private JLabel              thePeriodLabel 	= null;
-	private Date          		theFirstDate   	= null;
-	private Date          		theFinalDate   	= null;
+	private DateDay          	theFirstDate   	= null;
+	private DateDay          	theFinalDate   	= null;
 	private DateRangeState 		theState   	   	= null;
 	private DateRangeState      theSavePoint   	= null;
 	private boolean				refreshingData 	= false;
 
 	/* Access methods */
 	public 	JPanel            	getPanel()   	{ return thePanel; }
-	public	Date.Range      	getRange()   	{ return theState.getRange(); }
+	public	DateDay.Range      	getRange()   	{ return theState.getRange(); }
 
 	/* Constructor */
 	public DateRange(stdPanel pParent) {
@@ -52,8 +49,7 @@ public class DateRange {
 		thePeriodBox  = new JComboBox();
 	
 		/* Create the DateButton */
-		theDateButton = new CalendarButton();
-		theModel	  = theDateButton.getDateModel();
+		theDateButton = new DateButton();
 		
 		/* Create initial state and limit the spinner to the Range */
 		theState = new DateRangeState();
@@ -116,21 +112,21 @@ public class DateRange {
 		thePeriodBox.addItemListener(myListener);
 		theNextButton.addActionListener(myListener);
 		thePrevButton.addActionListener(myListener);
-		theDateButton.addPropertyChangeListener(CalendarButton.valueDATE, myListener);
+		theDateButton.addPropertyChangeListener(DateButton.valueDATE, myListener);
 	}
 
 	/**
 	 * Set the overall range for the control
 	 * @param pRange
 	 */
-	public  void setOverallRange(Date.Range pRange) {
+	public  void setOverallRange(DateDay.Range pRange) {
 		/* Record total possible range */
 		theFirstDate = (pRange == null) ? null : pRange.getStart();
 		theFinalDate = (pRange == null) ? null : pRange.getEnd();
 		
 		/* Set up range */
-		theModel.setSelectableRange((theFirstDate == null) ? null : theFirstDate.getDate(),
-									(theFinalDate == null) ? null : theFinalDate.getDate());
+		theDateButton.setSelectableRange((theFirstDate == null) ? null : theFirstDate.getDate(),
+										 (theFinalDate == null) ? null : theFinalDate.getDate());
 	}
 	
 
@@ -239,7 +235,7 @@ public class DateRange {
 			/* if this date relates to the Date button */
 			if (evt.getSource() == theDateButton) {
 				/* Access the value */
-				if (theState.setDate(theModel))
+				if (theState.setDate(theDateButton))
 					theParent.notifySelection(theSelf);
 			}			
 		}
@@ -248,24 +244,24 @@ public class DateRange {
 	/* SavePoint values */
 	private class DateRangeState {
 		/* Members */
-		private Date 		theStartDate 	= null;
-		private DatePeriod 	thePeriod 		= null;
-		private Date.Range	theRange		= null;
-		private boolean		isNextOK		= false;
-		private boolean		isPrevOK		= false;
+		private DateDay 		theStartDate 	= null;
+		private DatePeriod 		thePeriod 		= null;
+		private DateDay.Range	theRange		= null;
+		private boolean			isNextOK		= false;
+		private boolean			isPrevOK		= false;
 		
 		/* Access methods */
-		private Date 		getStartDate()	{ return theStartDate; }
-		private DatePeriod 	getPeriod() 	{ return thePeriod; }
-		private Date.Range 	getRange() 		{ return theRange; }
-		private boolean 	isNextOK() 		{ return isNextOK; }
-		private boolean 	isPrevOK() 		{ return isPrevOK; }
+		private DateDay 		getStartDate()	{ return theStartDate; }
+		private DatePeriod 		getPeriod() 	{ return thePeriod; }
+		private DateDay.Range 	getRange() 		{ return theRange; }
+		private boolean 		isNextOK() 		{ return isNextOK; }
+		private boolean 		isPrevOK() 		{ return isPrevOK; }
 
 		/**
 		 * Constructor
 		 */
 		private DateRangeState() {
-			theStartDate = new Date();
+			theStartDate = new DateDay();
 			thePeriod	 = DatePeriod.OneMonth;
 		}
 		
@@ -274,7 +270,7 @@ public class DateRange {
 		 * @param pState state to copy from
 		 */
 		private DateRangeState(DateRangeState pState) {
-			theStartDate = new Date(pState.getStartDate());
+			theStartDate = new DateDay(pState.getStartDate());
 			thePeriod	 = pState.getPeriod();
 		}
 		
@@ -290,13 +286,13 @@ public class DateRange {
 		
 		/**
 		 * Set new Date
-		 * @param pModel the Spinner with the new date
+		 * @param pButton the Button with the new date
 		 * @return has the date changed 
 		 */
-		private boolean setDate(DateModel pModel) {
+		private boolean setDate(DateButton pButton) {
 			/* Adjust the date and build the new range */
-			Date myDate = new Date(theModel.getSelectedDate());
-			if (Date.differs(myDate, theStartDate).isDifferent()) {
+			DateDay myDate = new DateDay(pButton.getSelectedDate());
+			if (DateDay.differs(myDate, theStartDate).isDifferent()) {
 				theStartDate = myDate;
 				buildRange();
 				return true;
@@ -328,7 +324,7 @@ public class DateRange {
 		 * Build the range represented by the selection
 		 */
 		private void buildRange() {
-			Date myEnd;
+			DateDay myEnd;
 		
 			/* If we are unlimited */
 			if (thePeriod == DatePeriod.Unlimited) {
@@ -339,13 +335,13 @@ public class DateRange {
 				isNextOK = false;
 				
 				/* Previous is only allowed if we are later than the first date */
-				isPrevOK = (Date.differs(theStartDate, theFirstDate).isDifferent());
+				isPrevOK = (DateDay.differs(theStartDate, theFirstDate).isDifferent());
 			}
 			
 			/* else we have to calculate the date */
 			else{
 				/* Initialise the end date */
-				myEnd = new Date(theStartDate);
+				myEnd = new DateDay(theStartDate);
 		
 				/* Adjust the date */
 				myEnd = adjustDate(myEnd, true);
@@ -366,21 +362,21 @@ public class DateRange {
 			}
 			
 			/* Create the range */
-			theRange = new Date.Range(theStartDate, myEnd);
+			theRange = new DateDay.Range(theStartDate, myEnd);
 		}
 		
 		/* adjust a date by a period */
-		private Date adjustDate(Date 	pDate,
-				                boolean bForward) {
-			Date myDate;
+		private DateDay adjustDate(DateDay 	pDate,
+				               	   boolean 	bForward) {
+			DateDay myDate;
 		
 			/* Initialise the date */
-			myDate = new Date(pDate);
+			myDate = new DateDay(pDate);
 
 			/* If the period is unlimited */
 			if (thePeriod == DatePeriod.Unlimited) {
 				/* Shift back to first date if required */
-				if (!bForward) myDate = new Date(theFirstDate);				
+				if (!bForward) myDate = new DateDay(theFirstDate);				
 			}
 			
 			/* else we should adjust the date */
@@ -405,7 +401,7 @@ public class DateRange {
 		private void applyState() {
 			/* Adjust the lock-down */
 			setLockDown();
-			theModel.setSelectedDate(theStartDate.getDate());
+			theDateButton.setSelectedDate(theStartDate.getDate());
 			thePeriodBox.setSelectedItem(thePeriod);
 		}
 	}

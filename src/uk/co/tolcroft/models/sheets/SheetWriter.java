@@ -5,13 +5,22 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
-import jxl.Workbook;
-import jxl.write.WritableWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Workbook;
+
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.Decimal;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.security.SecureManager;
 import uk.co.tolcroft.models.security.SecurityControl;
@@ -24,31 +33,36 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 	/**
 	 * Thread control
 	 */
-	private ThreadStatus<T>			theThread	= null;
+	private ThreadStatus<T>					theThread	= null;
 	
 	/**
 	 * Writable spreadsheet
 	 */
-	private WritableWorkbook		theWorkBook	= null;
+	private Workbook						theWorkBook	= null;
 	
 	/**
 	 * The DataSet
 	 */
-	private T						theData		= null;
+	private T								theData		= null;
 	
 	/**
 	 * The WorkSheets
 	 */
-	private List<SheetDataItem<?>>	theSheets	= null;
+	private List<SheetDataItem<?>>			theSheets	= null;
 	
 	/**
 	 * Class of output sheet
 	 */
-	private SheetType				theType		= null;
+	private SheetType						theType		= null;
+	
+	/**
+	 * Map of Allocated styles
+	 */
+	private Map<CellStyleType, CellStyle>	theMap		= null;
 	
 	/* Access methods */
 	protected ThreadStatus<T>	getThread()		{ return theThread; }
-	protected WritableWorkbook	getWorkBook()	{ return theWorkBook; }
+	protected Workbook			getWorkBook()	{ return theWorkBook; }
 	public 	  T					getData()		{ return theData; }
 	public 	  SheetType			getType()		{ return theType; }
 	
@@ -100,16 +114,18 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 													ZipEntryMode.getRandomTrioMode(myControl.getRandom()));
 			
 			/* Initialise the WorkBook */
-			initialiseWorkBook(myStream);									
+			initialiseWorkBook();									
 		
 			/* Write the data to the work book */
-			writeWorkBook();
+			writeWorkBook(myStream);
 			
 			/* Close the Stream to force out errors */
 			myStream.close();
+			myStream = null;
 			
 			/* Close the Zip file */
 			myZipFile.close();
+			myZipFile = null;
 		}
 
 		catch (Throwable e) {			
@@ -162,13 +178,14 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 			myStream  = new BufferedOutputStream(myOutFile);
 
 			/* Initialise the WorkBook */
-			initialiseWorkBook(myStream);									
+			initialiseWorkBook();									
 		
 			/* Write the data to the work book */
-			writeWorkBook();
+			writeWorkBook(myStream);
 			
 			/* Close the Stream to force out errors */
-			myStream.close();				
+			myStream.close();
+			myStream = null;
 		}
 
 		catch (Throwable e) {			
@@ -198,12 +215,12 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 
 	/**
 	 * Create the list of sheets to write
-	 * @param the output stream
 	 */
-	private void initialiseWorkBook(OutputStream pStream) throws Throwable {
+	private void initialiseWorkBook() throws Throwable {
 		/* Create the workbook attached to the output stream */
-		theWorkBook = Workbook.createWorkbook(pStream);									
-	
+		theWorkBook = new HSSFWorkbook();
+		createCellStyles();
+		
 		/* Initialise the list */
 		theSheets = new ArrayList<SheetDataItem<?>>();
 		
@@ -222,9 +239,130 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 	}
 	
 	/**
-	 * Write the WorkBook
+	 * Obtain the required CellStyle
+	 * @param pType the CellStyleType
+	 * @return the required CellStyle
 	 */
-	private void writeWorkBook() throws Throwable {
+	protected CellStyle getCellStyle(CellStyleType pType) { return theMap.get(pType); }
+	
+	/**
+	 * Obtain the required CellStyle
+	 * @param pType the CellStyleType
+	 * @return the required CellStyle
+	 */
+	protected CellStyle getCellStyle(Decimal pValue) {
+		if (pValue instanceof Money) 	return getCellStyle(CellStyleType.Money);		
+		if (pValue instanceof Units) 	return getCellStyle(CellStyleType.Units);		
+		if (pValue instanceof Rate) 	return getCellStyle(CellStyleType.Rate);		
+		if (pValue instanceof Price) 	return getCellStyle(CellStyleType.Price);		
+		if (pValue instanceof Dilution) return getCellStyle(CellStyleType.Dilution);		
+		return null;
+	}
+	
+	/**
+	 * Create the standard CellStyles
+	 */
+	private void createCellStyles() {
+		/* Create the map */
+		theMap = new EnumMap<CellStyleType, CellStyle>(CellStyleType.class);
+		
+		/* Ensure that we can create data formats */
+		DataFormat myFormat	= theWorkBook.createDataFormat();
+		
+		/* Create the Standard fonts */
+		Font myValueFont	= theWorkBook.createFont();
+		myValueFont.setFontName("Arial");
+		myValueFont.setFontHeightInPoints((short)10);
+		Font myNumberFont	= theWorkBook.createFont();
+		myNumberFont.setFontName("Courier");
+		myNumberFont.setFontHeightInPoints((short)10);
+		Font myHeaderFont	= theWorkBook.createFont();
+		myHeaderFont.setFontName("Arial");
+		myHeaderFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		myHeaderFont.setFontHeightInPoints((short)10);
+		
+		/* Create the Date Cell Style */
+		CellStyle myStyle = theWorkBook.createCellStyle();
+		myStyle.setDataFormat(myFormat.getFormat("dd-MMM-yy"));
+		myStyle.setFont(myNumberFont);
+		myStyle.setAlignment(CellStyle.ALIGN_LEFT); 
+		theMap.put(CellStyleType.Date, myStyle);
+
+		/* Create the Money Cell Style */
+		myStyle = theWorkBook.createCellStyle();
+		myStyle.setDataFormat(myFormat.getFormat("£#,##0.00")); 
+		myStyle.setFont(myNumberFont);
+		myStyle.setAlignment(CellStyle.ALIGN_RIGHT); 
+		theMap.put(CellStyleType.Money, myStyle);
+
+		/* Create the Price Cell Style */
+		myStyle = theWorkBook.createCellStyle();
+		myStyle.setDataFormat(myFormat.getFormat("£#,##0.0000")); 
+		myStyle.setFont(myNumberFont);
+		myStyle.setAlignment(CellStyle.ALIGN_RIGHT); 
+		theMap.put(CellStyleType.Price, myStyle);
+
+		/* Create the Units Cell Style */
+		myStyle = theWorkBook.createCellStyle();
+		myStyle.setDataFormat(myFormat.getFormat("#,##0.0000")); 
+		myStyle.setFont(myNumberFont);
+		myStyle.setAlignment(CellStyle.ALIGN_RIGHT); 
+		theMap.put(CellStyleType.Units, myStyle);
+
+		/* Create the Rate Cell Style */
+		myStyle = theWorkBook.createCellStyle();
+		myStyle.setDataFormat(myFormat.getFormat("0.00%")); 
+		myStyle.setFont(myNumberFont);
+		myStyle.setAlignment(CellStyle.ALIGN_RIGHT); 
+		theMap.put(CellStyleType.Rate, myStyle);
+
+		/* Create the Dilution Cell Style */
+		myStyle = theWorkBook.createCellStyle();
+		myStyle.setDataFormat(myFormat.getFormat("0.000000")); 
+		myStyle.setAlignment(CellStyle.ALIGN_RIGHT); 
+		myStyle.setFont(myNumberFont);
+		theMap.put(CellStyleType.Dilution, myStyle);		
+
+		/* Create the Integer Cell Style */
+		myStyle = theWorkBook.createCellStyle();
+		myStyle.setDataFormat(myFormat.getFormat("0")); 
+		myStyle.setFont(myNumberFont);
+		myStyle.setAlignment(CellStyle.ALIGN_RIGHT); 
+		theMap.put(CellStyleType.Integer, myStyle);		
+
+		/* Create the Boolean Cell Style */
+		myStyle = theWorkBook.createCellStyle();
+		myStyle.setFont(myValueFont);
+		myStyle.setAlignment(CellStyle.ALIGN_CENTER); 
+		theMap.put(CellStyleType.Boolean, myStyle);		
+
+		/* Create the String Cell Style */
+		myStyle = theWorkBook.createCellStyle();
+		myStyle.setFont(myValueFont);
+		myStyle.setAlignment(CellStyle.ALIGN_LEFT); 
+		theMap.put(CellStyleType.String, myStyle);		
+
+		/* Create the Header Cell Style */
+		myStyle = theWorkBook.createCellStyle();
+		myStyle.setFont(myHeaderFont);
+		myStyle.setAlignment(CellStyle.ALIGN_CENTER);
+		myStyle.setLocked(true);
+		theMap.put(CellStyleType.Header, myStyle);		
+
+		/* Create the Trailer Cell Style */
+		myStyle = theWorkBook.createCellStyle();
+		myStyle.setFillForegroundColor(IndexedColors.DARK_GREEN.getIndex());
+		myStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		myStyle.setAlignment(CellStyle.ALIGN_LEFT);
+		myStyle.setLocked(true);
+		theMap.put(CellStyleType.Trailer, myStyle);		
+	}
+	
+	/**
+	 * Write the WorkBook
+	 * @param the output stream
+	 */
+	private void writeWorkBook(OutputStream pStream) throws Throwable {
 		SheetDataItem<?> mySheet;
 		
 		/* Access the iterator for the list */
@@ -249,13 +387,29 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 		/* If we have created the workbook OK */
 		if (bContinue) {
 			/* Write it out to disk and close the stream */
-			theWorkBook.write();
-			theWorkBook.close();
+			theWorkBook.write(pStream);
 		}
 		
 		/* Check for cancellation */
 		if (!bContinue) 
 			throw new Exception(ExceptionClass.EXCEL,
 								"Operation Cancelled");
+	}
+	
+	/**
+	 * Cell Styles
+	 */
+	protected enum CellStyleType {
+		Integer,
+		Boolean,
+		Rate,
+		Dilution,
+		Price,
+		Money,
+		Units,
+		Date,
+		String,
+		Header,
+		Trailer;
 	}
 }

@@ -3,7 +3,7 @@ package uk.co.tolcroft.finance.views;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
@@ -122,7 +122,7 @@ public class ViewPrice extends AcctPrice {
 	 * Set a new date 
 	 * @param pDate the new date 
 	 */
-	public void setDate(Date pDate) {
+	public void setDate(DateDay pDate) {
 		/* Store date */
 		super.setDate(pDate);
 		calculateDiluted();
@@ -331,7 +331,7 @@ public class ViewPrice extends AcctPrice {
 			theDilutedPrice = null;				
 
 			/* Access Price and date */
-			Date 	myDate 		= getDate();
+			DateDay myDate 		= getDate();
 			Price 	myPrice		= getPriceValue();
 			Account myAccount 	= getAccount();
 			

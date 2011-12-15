@@ -5,10 +5,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import jxl.Cell;
-import jxl.Range;
-import jxl.Sheet;
-import jxl.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
 
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.DilutionEvent;
@@ -17,6 +19,7 @@ import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.ControlData;
 import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.sheets.SheetReader;
+import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.sheets.SheetWriter;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.threads.ThreadStatus;
@@ -62,44 +65,41 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
 	
 	/**
 	 *  Load the Static from an archive
-	 *  @param pThread   the thread status control
-	 *  @param pWorkbook the workbook to load from
+	 *  @param pThread the thread status control
+	 *  @param pHelper the sheet helper
 	 *  @param pData the data set to load into
 	 *  @param pRange the range of tax years
 	 *  @return continue to load <code>true/false</code> 
 	 */
 	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
-			 					  		 Workbook					pWorkbook,
+			 					  		 SheetHelper				pHelper,
 			 					  		 FinanceData				pData,
 			 					  		 YearRange					pRange) throws Exception {
 		/* Local variables */
-		Range[] 		myRange;
-		Sheet   		mySheet;
-		Cell    		myTop;
-		Cell    		myCell;
-		int     		myCol;
-		int     		myRow;
-		int     		myStages;
+		AreaReference		myRange;
+		Sheet   			mySheet;
+		CellReference		myTop;
+		Cell    			myCell;
+		int     			myCol;
+		int     			myStages;
 		ControlData.List 	myStatic;
 
 		/* Find the range of cells */
-		myRange = pWorkbook.findByName(YearRange);
+		myRange = pHelper.resolveAreaReference(YearRange);
 	
 		/* If we found the range OK */
-		if ((myRange != null) && (myRange.length == 1)) {
-			
+		if (myRange != null) {
 			/* Access the relevant sheet and Cell references */
-			mySheet  = pWorkbook.getSheet(myRange[0].getFirstSheetIndex());
-			
-			myTop    = myRange[0].getTopLeft();
-			myRow    = myTop.getRow();
-			myCol    = myTop.getColumn();
+			myTop    	= myRange.getFirstCell();
+			mySheet  	= pHelper.getSheetByName(myTop.getSheetName());
+			myCol		= myTop.getCol();
 		
 			/* Access the Year Range */
-			myCell = mySheet.getCell(myCol, myRow+1);
-			pRange.setMinYear(Integer.parseInt(myCell.getContents()));
-			myCell = mySheet.getCell(myCol+1, myRow+1);
-			pRange.setMaxYear(Integer.parseInt(myCell.getContents()));
+			Row myRow = mySheet.getRow(myTop.getRow()+1);
+			myCell = myRow.getCell(myCol);
+			pRange.setMinYear(pHelper.parseIntegerCell(myCell));
+			myCell = myRow.getCell(myCol+1);
+			pRange.setMaxYear(pHelper.parseIntegerCell(myCell));
 			
 			/* Access the static */
 			myStatic = pData.getControlData();
@@ -160,11 +160,12 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
 	private static FinanceData loadArchiveStream(ThreadStatus<FinanceData>	pThread,
 			 						  	  		 InputStream				pStream) throws Exception {
 		boolean             		bContinue;
-		Workbook        			myWorkbook 	= null;
+		HSSFWorkbook        		myWorkbook 	= null;
 		FinanceData					myData		= null;
 		DataControl<FinanceData>	myControl	= null;
 		YearRange					myRange 	= null;
 		DilutionEvent.List			myDilution	= null;
+		SheetHelper					myHelper	= null;
 		
 		/* Protect the workbook retrieval */
 		try {
@@ -173,8 +174,14 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
 			myData 	  = myControl.getNewData();
 			
 			/* Access the workbook from the stream */
-			myWorkbook = Workbook.getWorkbook(pStream);
+			myWorkbook = new HSSFWorkbook(pStream);
+			
+			/* Set the missing Cell Policy */
+			myWorkbook.setMissingCellPolicy(Row.RETURN_BLANK_AS_NULL);
 
+			/* Create the helper */
+			myHelper = new SheetHelper(myWorkbook);
+			
 			/* Create a YearRange */
 			myRange = new YearRange();
 			
@@ -182,27 +189,27 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
 			myDilution = new DilutionEvent.List(myData);
 			
 			/* Determine Year Range */
-			bContinue = loadArchive(pThread, myWorkbook, myData, myRange);
+			bContinue = loadArchive(pThread, myHelper, myData, myRange);
 			
 			/* Load Tables */
-			if (bContinue) bContinue = SheetAccountType.loadArchive(pThread, myWorkbook, myData);
-			if (bContinue) bContinue = SheetTransactionType.loadArchive(pThread, myWorkbook, myData);
-			if (bContinue) bContinue = SheetTaxType.loadArchive(pThread, myWorkbook, myData);
-			if (bContinue) bContinue = SheetTaxRegime.loadArchive(pThread, myWorkbook, myData);
-			if (bContinue) bContinue = SheetFrequency.loadArchive(pThread, myWorkbook, myData);
-			if (bContinue) bContinue = SheetEventInfoType.loadArchive(pThread, myWorkbook, myData);
-			if (bContinue) bContinue = SheetTaxYear.loadArchive(pThread, myWorkbook, myData, myRange);
+			if (bContinue) bContinue = SheetAccountType.loadArchive(pThread, myHelper, myData);
+			if (bContinue) bContinue = SheetTransactionType.loadArchive(pThread, myHelper, myData);
+			if (bContinue) bContinue = SheetTaxType.loadArchive(pThread, myHelper, myData);
+			if (bContinue) bContinue = SheetTaxRegime.loadArchive(pThread, myHelper, myData);
+			if (bContinue) bContinue = SheetFrequency.loadArchive(pThread, myHelper, myData);
+			if (bContinue) bContinue = SheetEventInfoType.loadArchive(pThread, myHelper, myData);
+			if (bContinue) bContinue = SheetTaxYear.loadArchive(pThread, myHelper, myData, myRange);
 			if (bContinue) myData.calculateDateRange();
-			if (bContinue) bContinue = SheetAccount.loadArchive(pThread, myWorkbook, myData);
-			if (bContinue) bContinue = SheetRate.loadArchive(pThread, myWorkbook, myData);
-			if (bContinue) bContinue = SheetDilution.loadArchive(pThread, myWorkbook, myData, myDilution);
-			if (bContinue) bContinue = SheetPrice.loadArchive(pThread, myWorkbook, myData, myDilution);
-			if (bContinue) bContinue = SheetPattern.loadArchive(pThread, myWorkbook, myData);
+			if (bContinue) bContinue = SheetAccount.loadArchive(pThread, myHelper, myData);
+			if (bContinue) bContinue = SheetRate.loadArchive(pThread, myHelper, myData);
+			if (bContinue) bContinue = SheetDilution.loadArchive(pThread, myHelper, myData, myDilution);
+			if (bContinue) bContinue = SheetPrice.loadArchive(pThread, myHelper, myData, myDilution);
+			if (bContinue) bContinue = SheetPattern.loadArchive(pThread, myHelper, myData);
 			if (bContinue) myData.getAccounts().validateLoadedAccounts();
-			if (bContinue) bContinue = SheetEvent.loadArchive(pThread, myWorkbook, myData, myRange);
+			if (bContinue) bContinue = SheetEvent.loadArchive(pThread, myHelper, myData, myRange);
 		
-			/* Close the work book (and the input stream) */
-			myWorkbook.close();		
+			/* Close the stream */
+			pStream.close();		
 		
 			/* Set the next stage */
 			if (!pThread.setNewStage("Refreshing data")) bContinue = false;

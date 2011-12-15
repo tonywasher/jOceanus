@@ -1,10 +1,18 @@
 package uk.co.tolcroft.finance.sheets;
 
-import jxl.*;
+import java.util.Date;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
+
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.sheets.SheetDataItem;
+import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 
@@ -67,9 +75,9 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 			int myActId		= loadInteger(2);
 		
 			/* Access the rates and end-date */
-			byte[] 			myRateBytes 	= loadBytes(3);
-			byte[] 			myBonusBytes 	= loadBytes(4);
-			java.util.Date	myEndDate 		= loadDate(5);
+			byte[] 	myRateBytes 	= loadBytes(3);
+			byte[] 	myBonusBytes 	= loadBytes(4);
+			Date	myEndDate 		= loadDate(5);
 		
 			/* Load the item */
 			theList.addItem(myID, myControlId, myActId, myRateBytes, myEndDate, myBonusBytes);
@@ -78,13 +86,13 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 		/* else this is a load from an edit-able spreadsheet */
 		else {
 			/* Access the account */
-			int	myID 		= loadInteger(0);
-			String myAccount	= loadString(1);
+			int		myID 		= loadInteger(0);
+			String 	myAccount	= loadString(1);
 		
 			/* Access the name and description bytes */
-			String 			myRate 		= loadString(2);
-			String 			myBonus		= loadString(3);
-			java.util.Date	myEndDate	= loadDate(4);
+			String 	myRate 		= loadString(2);
+			String 	myBonus		= loadString(3);
+			Date	myEndDate	= loadDate(4);
 		
 			/* Load the item */
 			theList.addItem(myID, myAccount, myRate, myEndDate, myBonus);
@@ -112,32 +120,33 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 		else {
 			/* Set the fields */
 			writeInteger(0, pItem.getId());
-			writeValidatedString(1, pItem.getAccount().getName(), SheetAccount.AccountNames);				
+			writeString(1, pItem.getAccount().getName());				
 			writeNumber(2, pItem.getRate());
 			writeNumber(3, pItem.getBonus());			
 			writeDate(4, pItem.getEndDate());			
 		}
 	}
 
-	/**
-	 * PreProcess on write
-	 */
-	protected boolean preProcessOnWrite() throws Throwable {		
+	@Override
+	protected void preProcessOnWrite() throws Throwable {		
 		/* Ignore if we are creating a backup */
-		if (isBackup) return false;
+		if (isBackup) return;
 
+		/* Create a new row */
+		newRow();
+		
 		/* Write titles */
-		writeString(0, AcctRate.fieldName(AcctRate.FIELD_ID));
-		writeString(1, AcctRate.fieldName(AcctRate.FIELD_ACCOUNT));
-		writeString(2, AcctRate.fieldName(AcctRate.FIELD_RATE));
-		writeString(3, AcctRate.fieldName(AcctRate.FIELD_BONUS));			
-		writeString(4, AcctRate.fieldName(AcctRate.FIELD_ENDDATE));			
-		return true;
+		writeHeader(0, AcctRate.fieldName(AcctRate.FIELD_ID));
+		writeHeader(1, AcctRate.fieldName(AcctRate.FIELD_ACCOUNT));
+		writeHeader(2, AcctRate.fieldName(AcctRate.FIELD_RATE));
+		writeHeader(3, AcctRate.fieldName(AcctRate.FIELD_BONUS));			
+		writeHeader(4, AcctRate.fieldName(AcctRate.FIELD_ENDDATE));			
+	
+		/* Adjust for Header */
+		adjustForHeader();
 	}	
 
-	/**
-	 * PostProcess on write
-	 */
+	@Override
 	protected void postProcessOnWrite() throws Throwable {		
 		/* If we are creating a backup */
 		if (isBackup) {
@@ -152,9 +161,11 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 
 			/* Hide the ID column */
 			setHiddenColumn(0);
+			setIntegerColumn(0);
 			
 			/* Set the Account column width */
 			setColumnWidth(1, Account.NAMELEN);
+			applyDataValidation(1, SheetAccount.AccountNames);
 			
 			/* Set Rate and Date columns */
 			setRateColumn(2);
@@ -166,25 +177,24 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 	/**
 	 *  Load the Rates from an archive
 	 *  @param pThread   the thread status control
-	 *  @param pWorkbook the workbook to load from
+	 *  @param pHelper the sheet helper
 	 *  @param pData the data set to load into
 	 *  @return continue to load <code>true/false</code> 
 	 */
 	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
-										 Workbook					pWorkbook,
+										 SheetHelper				pHelper,
 							   	  		 FinanceData				pData) throws Exception {
 		/* Local variables */
 		AcctRate.List	myList;
-		Range[]   		myRange;
+		AreaReference	myRange;
 		Sheet     		mySheet;
-		Cell      		myTop;
-		Cell      		myBottom;
+		CellReference	myTop;
+		CellReference	myBottom;
 		int       		myCol;
 		String    		myAccount;
 		String    		myRate;
 		String    		myBonus;
-		java.util.Date	myExpiry;
-		DateCell  		myDateCell;
+		Date			myExpiry;
 		Cell      		myCell;
 		int       		myTotal;
 		int				mySteps;
@@ -193,8 +203,8 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 		/* Protect against exceptions */
 		try { 
 			/* Find the range of cells */
-			myRange = pWorkbook.findByName(Rates);
-		
+			myRange = pHelper.resolveAreaReference(Rates);
+
 			/* Access the number of reporting steps */
 			mySteps = pThread.getReportingSteps();
 			
@@ -202,13 +212,12 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 			if (!pThread.setNewStage(Rates)) return false;
 		
 			/* If we found the range OK */
-			if ((myRange != null) && (myRange.length == 1)) {
-			
+			if (myRange != null) {
 				/* Access the relevant sheet and Cell references */
-				mySheet  = pWorkbook.getSheet(myRange[0].getFirstSheetIndex());
-				myTop    = myRange[0].getTopLeft();
-				myBottom = myRange[0].getBottomRight();
-				myCol    = myTop.getColumn();
+				myTop    	= myRange.getFirstCell();
+				myBottom 	= myRange.getLastCell();
+				mySheet  	= pHelper.getSheetByName(myTop.getSheetName());
+				myCol		= myTop.getCol();
 		
 				/* Count the number of rates */
 				myTotal  = myBottom.getRow() - myTop.getRow() + 1;
@@ -223,27 +232,29 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 				for (int i = myTop.getRow();
 			     	 i <= myBottom.getRow();
 			     	 i++) {
+					/* Access the row */
+					Row myRow 	= mySheet.getRow(i);
 				
 					/* Access account */
-					myAccount = mySheet.getCell(myCol, i).getContents();
+					myCell 		= myRow.getCell(myCol);
+					myAccount 	= myCell.getStringCellValue();
 				
 					/* Handle Rate */
-					myCell = mySheet.getCell(myCol+1, i);
-					myRate = myCell.getContents();
+					myCell 		= myRow.getCell(myCol+1);
+					myRate 		= pHelper.formatRateCell(myCell);
 				
 					/* Handle bonus which may be missing */
-					myCell  = mySheet.getCell(myCol+2, i);
-					myBonus = null;
-					if (myCell.getType() != CellType.EMPTY) {
-						myBonus = myCell.getContents();
+					myCell 		= myRow.getCell(myCol+2);
+					myBonus 	= null;
+					if (myCell != null) {
+						myBonus = pHelper.formatRateCell(myCell);
 					}
 				
 					/* Handle expiration which may be missing */
-					myCell     = mySheet.getCell(myCol+3, i);
+					myCell 		= myRow.getCell(myCol+3);
 					myExpiry = null;
-					if (myCell.getType() != CellType.EMPTY) {
-						myDateCell = (DateCell)myCell;
-						myExpiry = myDateCell.getDate();
+					if (myCell != null) {
+						myExpiry = myCell.getDateCellValue();
 					}
 				
 					/* Add the value into the finance tables */

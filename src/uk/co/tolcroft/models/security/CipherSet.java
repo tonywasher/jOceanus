@@ -11,11 +11,15 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.PropertySet;
 import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.PropertySet.PropertyManager;
+import uk.co.tolcroft.models.PropertySet.PropertySetChooser;
+import uk.co.tolcroft.models.security.SecurityControl.SecurityProperties;
 import uk.co.tolcroft.models.security.SymmetricKey.SymKeyType;
 
-public class CipherSet {
+public class CipherSet  implements PropertySetChooser {
 	/**
 	 * Maximum number of encryption steps
 	 */
@@ -30,11 +34,6 @@ public class CipherSet {
 	 * Default number of steps
 	 */
 	public final static int DEFSTEPS 	= 3;
-
-	/**
-	 * Multiplier to obtain Keys from secret
-	 */
-	//private final static int keyMULT 	= 13;
 
 	/**
 	 * Multiplier to obtain IV from vector
@@ -65,19 +64,23 @@ public class CipherSet {
 	 * Constructor
 	 * @param pRandom the Secure Random
 	 * @param pSecMode the Security Mode
-	 * @param pNumSteps the Number of encryption steps 
 	 */
 	public CipherSet(SecureRandom	pRandom,
-					 SecurityMode	pSecMode,
-					 int			pNumSteps) {
+					 SecurityMode	pSecMode) {
 		/* Store parameters */
 		theRandom 	= pRandom;
-		theNumSteps	= pNumSteps;
 		theMode		= pSecMode;
+		
+		/* Access the security properties and the number of steps */
+		SecurityProperties myProperties = (SecurityProperties)PropertyManager.getPropertySet(this);
+		theNumSteps = myProperties.getIntegerValue(SecurityProperties.nameCipherSteps);
 		
 		/* Build the Map */
 		theMap = new EnumMap<SymKeyType, DataCipher>(SymKeyType.class);
 	}
+	
+	@Override
+	public Class<? extends PropertySet> getPropertySetClass() { return SecurityProperties.class; }
 	
 	/**
 	 * Add a Cipher

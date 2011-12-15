@@ -1,5 +1,5 @@
 /**
- * DateSelect Date Selection widgets
+ * DateButton Date Selection widgets
  * Copyright (C) 2011 Tony Washer
  * Tony.Washer@yahoo.co.uk
  * 
@@ -59,9 +59,20 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 
 /**
- * @author Tony
+ * <p>Provides a button which displays the currently selected {@link Date}
+ * <p>When clicked the button displays a mode-less {@link Dialog} enabling date selection
+ * This dialog will be closed if focus is lost or escape is pressed
+ * <p>An underlying {@link DateModel} is used to control locale, format and select-able range, 
+ * and to directly set the selected date. Changes to the selected date are reported via a 
+ * {@link java.beans.PropertyChangeEvent} for the {@link #valueDATE} property, and may be monitored by attaching a 
+ * {@link java.beans.PropertyChangeListener} 
+ * 
+ * @author Tony Washer
  */
-public class DateSelect {
+public class DateButton extends JButton {
+	/* Serial Id */
+	private static final long serialVersionUID = 7110911129423423705L;
+	
 	/**
 	 * Standard fonts
 	 */
@@ -80,9 +91,124 @@ public class DateSelect {
 	private static String 	thePreviousYear		= "Previous Year";
 
 	/**
+	 * Name of the Date property
+	 */
+	public static final String	valueDATE		= "SelectedDate";
+	
+	/**
+	 * Self reference
+	 */
+	private final DateButton 		theSelf		= this;
+	
+	/**
+	 * The Underlying Dialog 
+	 */
+	private final Dialog 			theDialog;
+	
+	/**
+	 * The Underlying Date Model
+	 */
+	private final DateModel			theModel;
+	
+	/**
+	 * Constructor
+	 */
+	public DateButton() {
+		/* Create the Dialog */
+		theDialog = new Dialog(this);
+		theModel  = theDialog.getDateModel();
+		
+		/* Register this button as the model owner */
+		theModel.setOwner(this);
+		
+		/* Configure the button */
+		addActionListener(new ButtonListener());
+		setMargin(new Insets(1,1,1,1));
+		setPreferredSize(new Dimension(100, 25));
+	}
+	
+	/**
+	 * Obtain Dialog 
+	 * @return the dialog
+	 */
+	private Dialog 		getDialog() 	{ return theDialog; }
+	
+	/**
+	 * Obtain DateModel 
+	 * @return the date model
+	 */
+	public DateModel 	getDateModel() 	{ return theModel; }
+	
+	/**
+	 * Obtain SelectedDate 
+	 * @return the selected date
+	 */
+	public Date getSelectedDate() { return theModel.getSelectedDate(); }
+	
+	/**
+	 * Set SelectedDate 
+	 * @param pDate the selected date
+	 */
+	public void setSelectedDate(Date pDate) { theModel.setSelectedDate(pDate); }
+	
+	/**
+	 * Set Locale
+	 * @param pLocale the Locale
+	 */
+	public void setLocale(Locale	pLocale) { 
+		theModel.setLocale(pLocale);
+		super.setLocale(pLocale);
+	}
+	
+	/**
+	 * Set the date format
+	 * @param pFormat the format string
+	 */
+	public void setFormat(String pFormat) { theModel.setFormat(pFormat); }
+
+	/**
+	 * Set the range of allowable dates
+	 * @param pEarliest the Earliest select-able date
+	 * @param pLatest the Latest select-able date
+	 * @throws IllegalArgumentException if pEarliest is later than pLatest
+	 */
+	public void	setSelectableRange(Date pEarliest,
+								   Date pLatest) {	theModel.setSelectableRange(pEarliest, pLatest); }
+
+	/**
+	 * Refresh the text 
+	 */
+	private void refreshText() { setText(theModel.format(theModel.getSelectedDate())); }
+
+	@Override 
+	protected void firePropertyChange(String pProperty,
+									  Object pOldValue,
+									  Object pNewValue) { 
+		super.firePropertyChange(pProperty, pOldValue, pNewValue); }
+	
+	/**
+	 * Listener class 
+	 */
+	private class ButtonListener implements ActionListener {
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			/* If this is the button */
+			if (e.getSource() == theSelf) {
+				/* Position the dialog just below the button */
+				Point myLoc = getLocationOnScreen();
+				theDialog.setLocation(myLoc.x, myLoc.y + getHeight());
+
+				/* Show the dialog */
+				theDialog.setVisible(true);
+			}
+		}
+	}
+	
+	/**
 	 * Are the dates in the same month
 	 * @param pFirst the first date
 	 * @param pSecond the second date 
+	 * @return true/false
 	 */
 	private static boolean isSameMonth(Calendar pFirst, Calendar pSecond) {
 		if (!isSameYear(pFirst, pSecond)) return false;
@@ -93,6 +219,7 @@ public class DateSelect {
 	 * Are the dates in the same year
 	 * @param pFirst the first date
 	 * @param pSecond the second date 
+	 * @return true/false
 	 */
 	private static boolean isSameYear(Calendar pFirst, Calendar pSecond) {
 		if (pFirst == null) return false;
@@ -100,7 +227,7 @@ public class DateSelect {
 	}
 	
 	/**
-	 * Provides Date Management support for Calendar button
+	 * Provides Date Management support for {@link DateButton}
 	 */
 	public static class DateModel {
 		/**
@@ -130,7 +257,7 @@ public class DateSelect {
 		/**
 		 * The button to notify of Date changes
 		 */
-		private CalendarButton		theOwner		= null;
+		private DateButton			theOwner		= null;
 		
 		/**
 		 * Constructor
@@ -210,7 +337,7 @@ public class DateSelect {
 		 * Set the Button owner 
 		 * @return pOwner the owning button
 		 */
-		private void setOwner(CalendarButton pOwner) { theOwner = pOwner; }
+		private void setOwner(DateButton pOwner) { theOwner = pOwner; }
 		
 		/**
 		 * Set the selected date
@@ -236,7 +363,7 @@ public class DateSelect {
 			
 			/* Fire a Property change */
 			if (theOwner != null) 
-				theOwner.firePropertyChange(CalendarButton.valueDATE, 
+				theOwner.firePropertyChange(valueDATE, 
 											(myOld == null) ? null : myOld.getTime(),
 											(myNew == null) ? null : myNew.getTime());
 		}
@@ -278,7 +405,7 @@ public class DateSelect {
 		 * Format a date
 		 * @param pDate the date to format
 		 */
-		public String format(Date pDate) {
+		protected String format(Date pDate) {
 			/* Handle null */
 			if (pDate == null) return null;
 			
@@ -396,7 +523,7 @@ public class DateSelect {
 
 			/* Fire property change */
 			if (theOwner != null) 
-				theOwner.firePropertyChange(CalendarButton.valueDATE, 
+				theOwner.firePropertyChange(valueDATE, 
 											(myOld == null) ? null : myOld.getTime(),
 											myNew.getTime());			
 		}
@@ -438,21 +565,21 @@ public class DateSelect {
 	}
 	
 	/**
-	 * CalendarDay class
+	 * Panel class representing a single day in the panel
 	 */
-	private static class CalendarDay extends JLabel {
+	private static class PanelDay extends JLabel {
 		/* Serial Id */
 		private static final long serialVersionUID = -5636278095729007866L;
 
 		/**
 		 * Self Reference
 		 */
-		private CalendarDay		theSelf		= this;
+		private PanelDay		theSelf		= this;
 		
 		/**
 		 * Owning dialog
 		 */
-		private CalendarDialog	theDialog	= null;
+		private Dialog			theDialog	= null;
 		
 		/**
 		 * Various borders
@@ -484,7 +611,7 @@ public class DateSelect {
 		 * Constructor
 		 * @param pDialog the owning dialog
 		 */
-		private CalendarDay(CalendarDialog pDialog) {
+		private PanelDay(Dialog pDialog) {
 			/* Store the parameter */
 			theDialog = pDialog;
 			
@@ -594,9 +721,9 @@ public class DateSelect {
 	}
 	
 	/**
-	 * CalendarDays
+	 * PanelMonth class representing the set of PanelDay labels in a month
 	 */
-	private static class CalendarDays extends JPanel {
+	private static class PanelMonth extends JPanel {
 		/* Serial Id */
 		private static final long serialVersionUID = 4003892701953050327L;
 
@@ -613,12 +740,12 @@ public class DateSelect {
 		/**
 		 * The Array of Day Labels
 		 */
-		private CalendarDay[][]	theDays		= new CalendarDay[6][7];
+		private PanelDay[][]	theDays		= new PanelDay[6][7];
 		
 		/**
 		 * The Dialog
 		 */
-		private CalendarDialog	theDialog	= null;
+		private Dialog			theDialog	= null;
 		
 		/**
 		 * The Date Model
@@ -634,7 +761,7 @@ public class DateSelect {
 		 * Constructor
 		 * @param pDialog the owning dialog
 		 */
-		private CalendarDays(CalendarDialog pDialog) {
+		private PanelMonth(Dialog pDialog) {
 			/* Store the dialog */
 			theDialog = pDialog;
 			
@@ -665,7 +792,7 @@ public class DateSelect {
 	        /* Add the Days to the layout */
 	        for (int iRow=0; iRow<6; iRow++) {
 	        	for (int iCol=0; iCol<7; iCol++) {
-	        		CalendarDay myDay = new CalendarDay(pDialog);
+	        		PanelDay myDay = new PanelDay(pDialog);
 	        		theDays[iRow][iCol] = myDay;
 	        		add(myDay);
 	        	}
@@ -683,7 +810,7 @@ public class DateSelect {
 				theNumRows--;
 				
 				/* Loop through remaining rows */
-				for (CalendarDay day : theDays[theNumRows] ) {
+				for (PanelDay day : theDays[theNumRows] ) {
 					/* Remove from panel */
 					remove(day);
 				}
@@ -692,7 +819,7 @@ public class DateSelect {
 			/* Show any hidden rows that should now be visible */
 			while (iNumRows > theNumRows) {
 				/* Loop through remaining rows */
-				for (CalendarDay day : theDays[theNumRows] ) {
+				for (PanelDay day : theDays[theNumRows] ) {
 					/* Add to panel */
 					add(day);
 				}
@@ -743,7 +870,7 @@ public class DateSelect {
 				iCol < iFirstCol; 
 				iCol++, iDay++, myDate.add(Calendar.DAY_OF_MONTH, 1)) {
 				/* Access the label */
-				CalendarDay myLabel = theDays[0][iCol];
+				PanelDay myLabel = theDays[0][iCol];
 				
 				/* Reset the day and set no day */
 				myLabel.resetDay(false);
@@ -758,7 +885,7 @@ public class DateSelect {
 				if (iCol > 6) { iRow++; iCol=0; }
 				
 				/* Access the label */
-				CalendarDay myLabel = theDays[iRow][iCol];
+				PanelDay myLabel = theDays[iRow][iCol];
 				
 				/* Set initial parts of the day */
 				myLabel.resetDay(true);
@@ -778,7 +905,7 @@ public class DateSelect {
 			/* Loop through remaining columns */
 			for(int iDay = 1; iCol < 7; iCol++, iDay++) {
 				/* Access the label */
-				CalendarDay myLabel = theDays[iRow][iCol];
+				PanelDay myLabel = theDays[iRow][iCol];
 				
 				/* Reset the day and set no day */
 				myLabel.resetDay(false);
@@ -825,16 +952,16 @@ public class DateSelect {
 	}
 	
 	/**
-	 * CalendarNavigation
+	 * PanelNavigation class allowing navigation between months
 	 */
-	private static class CalendarNavigation extends JPanel {
+	private static class PanelNavigation extends JPanel {
 		/* Serial Id */
 		private static final long serialVersionUID = 4399207012690467687L;
 
 		/**
 		 * The owning dialog
 		 */
-		private CalendarDialog		theDialog			= null;
+		private Dialog				theDialog			= null;
 		
 		/**
 		 * The Date Model
@@ -858,7 +985,7 @@ public class DateSelect {
 		 * Constructor
 		 * @param pDialog the owning dialog
 		 */
-		private CalendarNavigation(CalendarDialog pDialog) {
+		private PanelNavigation(Dialog pDialog) {
 			/* Record the dialog */
 			theDialog = pDialog;
 			
@@ -966,21 +1093,23 @@ public class DateSelect {
 	}
 	
 	/**
-	 * CalendarDialog
+	 * Dialog class providing a dialog allowing selection of a date. 
+	 * <p>It will rebuild the dialog according to the currently set locale and date format 
+	 * whenever it is made visible 
 	 */
-	public static class CalendarDialog extends JDialog {		
+	private static class Dialog extends JDialog {		
 		/* Serial Id */
 		private static final long serialVersionUID = 2518033527621472786L;
 
 		/**
 		 * The month array 
 		 */
-		private CalendarDays		theDaysPanel	= null;
+		private PanelMonth		theDaysPanel	= null;
 
 		/**
 		 * The navigation 
 		 */
-		private CalendarNavigation	theNavigation	= null;
+		private PanelNavigation	theNavigation	= null;
 
 		/**
 		 * The Date Model
@@ -990,39 +1119,29 @@ public class DateSelect {
 		/**
 		 * The CellEditor if present
 		 */
-		private CalendarCellEditor	theEditor		= null;
-		
-		/**
-		 *  Constructor for no title
-		 *  @param pParent the parent component
-		 *  @param bModal the modal setting
-		 */
-		public CalendarDialog(Component pParent, boolean bModal) { this(pParent, null, bModal); }
+		private CellEditor			theEditor		= null;
 		
 		/**
 		 *  Constructor 
-		 *  @param pParent the parent component
-		 *  @param pTitle the dialog title
-		 *  @param bModal the modal setting
+		 *  @param pParent the parent component to which this dialog is attached
 		 */
-		public CalendarDialog(Component pParent, String pTitle, boolean bModal) {
+		public Dialog(Component pParent) {
 			/* Initialise the dialog */
-			super(JOptionPane.getFrameForComponent(pParent), bModal);
+			super(JOptionPane.getFrameForComponent(pParent), false);
 			
-			/* Handle title */
-			if (pTitle == null) setUndecorated(true);
-			else setTitle(pTitle);
+			/* Set as undecorated */
+			setUndecorated(true);
 			
 			/* Create the DateModel */
 			theModel = new DateModel();
 			
 			/* Build the panels */
-			theDaysPanel  = new CalendarDays(this);
-			theNavigation = new CalendarNavigation(this);			
+			theDaysPanel  = new PanelMonth(this);
+			theNavigation = new PanelNavigation(this);			
 
 			/* Set this to be the main panel */
 			JPanel myContainer = new JPanel(new BorderLayout());
-			if (pTitle == null) myContainer.setBorder(BorderFactory.createLineBorder(Color.black));
+			myContainer.setBorder(BorderFactory.createLineBorder(Color.black));
 			myContainer.add(theNavigation, BorderLayout.NORTH);
 			myContainer.add(theDaysPanel, BorderLayout.SOUTH);
 			setContentPane(myContainer);
@@ -1031,8 +1150,8 @@ public class DateSelect {
 			/* Handle Escape Key */
 			handleEscapeKey(myContainer);
 			
-			/* Create focus listener if non-modal */
-			if (!bModal) addWindowFocusListener(new CalendarFocus());
+			/* Create focus listener */
+			addWindowFocusListener(new CalendarFocus());
 			
 			/* Set the relative location */
 			setLocationRelativeTo(pParent);
@@ -1048,7 +1167,7 @@ public class DateSelect {
 		 * Set the Cell Editor owner 
 		 * @return pOwner the owning CellEditor
 		 */
-		private void setEditor(CalendarCellEditor pEditor) { theEditor = pEditor; }
+		private void setEditor(CellEditor pEditor) { theEditor = pEditor; }
 		
 		/**
 		 * Build the month 
@@ -1147,7 +1266,7 @@ public class DateSelect {
 	 * Provides a TableCellRenderer that displays {@link Date} data into a Table Cell. 
 	 * <p>An underlying {@link DateModel} is used to control locale and format,  
 	 */
-	public static class CalendarCellRenderer extends DefaultTableCellRenderer {
+	public static class CellRenderer extends DefaultTableCellRenderer {
 		/* Serial Id */
 		private static final long serialVersionUID = -7402034704535633915L;
 
@@ -1158,14 +1277,10 @@ public class DateSelect {
 		
 		/**
 		 * Constructor
-		 * @param pFormat the format string
 		 */
-		public CalendarCellRenderer(String pFormat) {
+		public CellRenderer() {
 			/* Record the model */
 			theModel = new DateModel();
-			
-			/* Create the format */
-			theModel.setFormat(pFormat);
 		}
 		
 		/**
@@ -1174,6 +1289,21 @@ public class DateSelect {
 		 */
 		public DateModel getDateModel() { return theModel; }
 		
+		/**
+		 * Set Locale
+		 * @param pLocale the Locale
+		 */
+		public void setLocale(Locale	pLocale) { 
+			theModel.setLocale(pLocale);
+			super.setLocale(pLocale);
+		}
+		
+		/**
+		 * Set the date format
+		 * @param pFormat the format string
+		 */
+		public void setFormat(String pFormat) { theModel.setFormat(pFormat); }
+
 		/**
 		 * Set value for the renderer. This will convert a Date into the required string format before passing it on.
 		 * If the object is already a string or is null it is passed directly on.
@@ -1202,33 +1332,27 @@ public class DateSelect {
 	 * contains {@link Date} data. 
 	 * <p>An underlying {@link DateModel} is used to control locale, format and select-able range,  
 	 */
-	public static class CalendarCellEditor extends AbstractCellEditor 
-										   implements TableCellEditor {
+	public static class CellEditor extends AbstractCellEditor 
+								   implements TableCellEditor {
 		/* Serial Id */
 		private static final long serialVersionUID = 429603680827168376L;
 
 		/**
 		 * the button
 		 */
-		private CalendarButton 	theButton	= null;
+		private DateButton 		theButton	= null;
 		
 		/**
 		 * The Dialog 
 		 */
-		private CalendarDialog 	theDialog	= null;
-		
-		/**
-		 * The Date Model
-		 */
-		private DateModel		theModel	= null;
+		private Dialog 			theDialog	= null;
 		
 		/**
 		 * Constructor
 		 */
-		public CalendarCellEditor() {
-			/* Create the button and access the Date Model and Dialog */
-			theButton = new CalendarButton();
-			theModel  = theButton.getDateModel();
+		public CellEditor() {
+			/* Create the button and access the Dialog */
+			theButton = new DateButton();
 			theDialog = theButton.getDialog();
 			theDialog.setEditor(this);
 			theButton.setBorderPainted(false);
@@ -1238,8 +1362,41 @@ public class DateSelect {
 		 * Obtain DateModel 
 		 * @return the date model
 		 */
-		public DateModel getDateModel() { return theModel; }
+		public DateModel getDateModel() { return theButton.getDateModel(); }
 		
+		/**
+		 * Obtain SelectedDate 
+		 * @return the selected date
+		 */
+		public Date getSelectedDate() { return theButton.getSelectedDate(); }
+		
+		/**
+		 * Set SelectedDate 
+		 * @param pDate the selected date
+		 */
+		public void setSelectedDate(Date pDate) { theButton.setSelectedDate(pDate); }
+		
+		/**
+		 * Set Locale
+		 * @param pLocale the Locale
+		 */
+		public void setLocale(Locale	pLocale) { theButton.setLocale(pLocale); }
+		
+		/**
+		 * Set the date format
+		 * @param pFormat the format string
+		 */
+		public void setFormat(String pFormat) { theButton.setFormat(pFormat); }
+
+		/**
+		 * Set the range of allowable dates
+		 * @param pEarliest the Earliest select-able date
+		 * @param pLatest the Latest select-able date
+		 * @throws IllegalArgumentException if pEarliest is later than pLatest
+		 */
+		public void	setSelectableRange(Date pEarliest,
+									   Date pLatest) {	theButton.setSelectableRange(pEarliest, pLatest); }
+
 		@Override
 		protected void fireEditingCanceled() { super.fireEditingCanceled(); }
 		
@@ -1248,7 +1405,7 @@ public class DateSelect {
 		
 		@Override
 		public Object getCellEditorValue() {
-			Date myDate = theModel.getSelectedDate();
+			Date myDate = theButton.getSelectedDate();
 			return myDate;
 		}
 
@@ -1259,118 +1416,14 @@ public class DateSelect {
 			if (value instanceof Date) {
 				Date myDate = (Date)value;
 				/* Set the selected date */
-				theModel.setSelectedDate(myDate);
+				theButton.setSelectedDate(myDate);
 			}
 			
 			/* else set the selected date to null */
-			else theModel.setSelectedDate(null);
+			else theButton.setSelectedDate(null);
 			
 			/* Return the button as the component */
 			return theButton;
-		}
-	}
-	
-	/**
-	 * Provides a button which displays the currently selected {@link Date}
-	 * <p> When clicked the button displays a mode-less CalendarDialog enabling date selection
-	 * This dialog will be closed if focus is lost or escape is pressed
-	 * <p>An underlying {@link DateModel} is used to control locale, format and select-able range, 
-	 * and to directly set the selected date. Changes to the selected date are reported via a 
-	 * {@link java.beans.PropertyChangeEvent} for the {@link #valueDATE} property, and may be monitored by attaching a 
-	 * {@link java.beans.PropertyChangeListener} 
-	 */
-	public static class CalendarButton extends JButton {
-		/* Serial Id */
-		private static final long serialVersionUID = 7110911129423423705L;
-		
-		/**
-		 * Name of the Date property
-		 */
-		public static final String	valueDATE		= "SelectedDate";
-		
-		/**
-		 * Self reference
-		 */
-		private final CalendarButton 	theSelf		= this;
-		
-		/**
-		 * The Underlying Dialog 
-		 */
-		private final CalendarDialog 	theDialog;
-		
-		/**
-		 * The Underlying Date Model
-		 */
-		private final DateModel			theModel;
-		
-		/**
-		 * Constructor
-		 */
-		public CalendarButton() {
-			/* Create the Dialog */
-			theDialog = new CalendarDialog(this, false);
-			theModel  = theDialog.getDateModel();
-			
-			/* Register this button as the model owner */
-			theModel.setOwner(this);
-			
-			/* Configure the button */
-			addActionListener(new ButtonListener());
-			setMargin(new Insets(1,1,1,1));
-			setPreferredSize(new Dimension(100, 25));
-		}
-		
-		/**
-		 * Obtain Dialog 
-		 * @return the dialog
-		 */
-		private CalendarDialog getDialog() { return theDialog; }
-		
-		/**
-		 * Obtain DateModel 
-		 * @return the date model
-		 */
-		public DateModel getDateModel() { return theModel; }
-		
-		/**
-		 * Obtain SelectedDate 
-		 * @return the selected date
-		 */
-		public Date getSelectedDate() { return theModel.getSelectedDate(); }
-		
-		/**
-		 * Set SelectedDate 
-		 * @param pDate the selected date
-		 */
-		public void setSelectedDate(Date pDate) { theModel.setSelectedDate(pDate); }
-		
-		/**
-		 * Refresh the text 
-		 */
-		private void refreshText() { setText(theModel.format(theModel.getSelectedDate())); }
-	
-		@Override 
-		protected void firePropertyChange(String pProperty,
-										  Object pOldValue,
-										  Object pNewValue) { 
-			super.firePropertyChange(pProperty, pOldValue, pNewValue); }
-		
-		/**
-		 * Listener class 
-		 */
-		private class ButtonListener implements ActionListener {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				/* If this is the button */
-				if (e.getSource() == theSelf) {
-					/* Position the dialog just below the button */
-					Point myLoc = getLocationOnScreen();
-					theDialog.setLocation(myLoc.x, myLoc.y + getHeight());
-
-					/* Show the dialog */
-					theDialog.setVisible(true);
-				}
-			}
 		}
 	}
 }

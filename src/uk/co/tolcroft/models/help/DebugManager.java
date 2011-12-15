@@ -234,7 +234,7 @@ public class DebugManager {
 				theModel.nodeStructureChanged(theNode);		
 				
 				/* Ensure that display is updated if this is active */
-				theWindow.updateDebug(this);
+				if (theWindow != null) theWindow.updateDebug(this);
 			}
 		}
 

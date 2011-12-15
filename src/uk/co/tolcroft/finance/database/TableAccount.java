@@ -1,5 +1,7 @@
 package uk.co.tolcroft.finance.database;
 
+import java.util.Date;
+
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.data.DataSet;
@@ -73,19 +75,19 @@ public class TableAccount extends TableEncrypted<Account> {
 
 	/* Load the account */
 	protected void loadItem(int pId, int pControlId) throws Exception {
-		byte[]  		myName;
-		int    			myActTypeId;
-		Integer	   		myParentId;
-		Integer    		myAliasId;
-		byte[]  		myDesc;
-		java.util.Date  myMaturity;
-		java.util.Date  myClosed;
-		byte[]     		myWebSite;
-		byte[]     		myCustNo;
-		byte[]     		myUserId;
-		byte[]     		myPassword;
-		byte[]     		myAccount;
-		byte[]     		myNotes;
+		byte[]  myName;
+		int    	myActTypeId;
+		Integer	myParentId;
+		Integer myAliasId;
+		byte[]  myDesc;
+		Date	myMaturity;
+		Date  	myClosed;
+		byte[]  myWebSite;
+		byte[]  myCustNo;
+		byte[]  myUserId;
+		byte[]  myPassword;
+		byte[]  myAccount;
+		byte[]  myNotes;
 		
 		/* Get the various fields */
 		myName   		= theTableDef.getBinaryValue(Account.FIELD_NAME);

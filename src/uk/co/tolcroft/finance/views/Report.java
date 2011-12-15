@@ -1,13 +1,14 @@
 package uk.co.tolcroft.finance.views;
 
-import uk.co.tolcroft.models.Number.*;
-import uk.co.tolcroft.models.Date;
+import uk.co.tolcroft.models.Decimal.*;
+import uk.co.tolcroft.models.DateDay;
 
 public class Report {
 	/* Report Types */
 	public static enum ReportType {
 		ASSET,
 		INCOME,
+		BREAKDOWN,
 		TAX,
 		TRANSACTION,
 		INSTANT,
@@ -96,7 +97,7 @@ public class Report {
 		return myOutput;
 	}
 	
-	protected static StringBuilder makeDateItem(Date pDate) {
+	protected static StringBuilder makeDateItem(DateDay pDate) {
 		StringBuilder myOutput = new StringBuilder(100);
 		
 		/* Build the cell */

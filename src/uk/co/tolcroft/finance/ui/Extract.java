@@ -12,10 +12,10 @@ import javax.swing.JPopupMenu;
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Date;
+import uk.co.tolcroft.models.DateDay;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.HistoryValues;
@@ -47,7 +47,7 @@ public class Extract extends StdTable<Event> {
 	private Extract				 	theTable	 		= this;
 	private extractMouse			theMouse	 		= null;
 	private extractColumnModel		theColumns			= null;
-	private Date.Range				theRange	 		= null;
+	private DateDay.Range			theRange	 		= null;
 	private DateRange 				theSelect	 		= null;
 	private SaveButtons  			theTabButs   		= null;
 	private DebugEntry				theDebugExtract		= null;
@@ -247,7 +247,7 @@ public class Extract extends StdTable<Event> {
 		theComboList 	= theParent.getComboList();
 		
 		/* Access range */
-		Date.Range myRange = theView.getRange();
+		DateDay.Range myRange = theView.getRange();
 		theSelect.setOverallRange(myRange);
 		theRange = theSelect.getRange();
 		setSelection(theRange);
@@ -276,7 +276,7 @@ public class Extract extends StdTable<Event> {
 	 * Set Selection to the specified date range
 	 * @param pRange the Date range for the extract
 	 */
-	public void setSelection(Date.Range pRange) throws Exception {
+	public void setSelection(DateDay.Range pRange) throws Exception {
 		theRange   = pRange;
 		theEvents  = null;				
 		if (theRange != null) {
@@ -583,7 +583,7 @@ public class Extract extends StdTable<Event> {
 				/* Store the appropriate value */
 				switch (col) {
 					case COLUMN_DATE:  
-						myEvent.setDate((Date)obj);    
+						myEvent.setDate((DateDay)obj);    
 						break;
 					case COLUMN_DESC:  
 						myEvent.setDescription((String)obj);            
@@ -1095,7 +1095,7 @@ public class Extract extends StdTable<Event> {
 		 * Set the date editor range 
 		 * @param pRange
 		 */
-		private void setDateEditorRange(Date.Range pRange) {
+		private void setDateEditorRange(DateDay.Range pRange) {
 			/* Set the range */
 			theDateEditor.setRange(pRange);			
 		}

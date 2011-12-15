@@ -1,9 +1,10 @@
 package uk.co.tolcroft.finance.data;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Date.Range;
+import uk.co.tolcroft.models.DateDay.Range;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.data.DataItem;
@@ -29,8 +30,8 @@ public class Pattern extends Event {
 	/**
 	 * The interesting date range
 	 */
-	public final static Range	thePatternRange	= new Range(new Date(1999, Calendar.APRIL, 6), 
-															new Date(2000, Calendar.APRIL, 5));
+	public final static Range	thePatternRange	= new Range(new DateDay(1999, Calendar.APRIL, 6), 
+															new DateDay(2000, Calendar.APRIL, 5));
 	
 	/* Access methods */
 	public  Values         	getValues()     { return (Values)super.getValues(); }	
@@ -186,24 +187,24 @@ public class Pattern extends Event {
 		pList.setNewId(this);		
 		
 		/* Adjust the date so that it is in the correct range */
-		Date myDate = new Date(getDate());
+		DateDay myDate = new DateDay(getDate());
 		while (myDate.compareTo(thePatternRange.getEnd())   > 0) myDate.adjustYear(-1);
 		while (myDate.compareTo(thePatternRange.getStart()) < 0) myDate.adjustYear(1);
 		myValues.setDate(myDate);
 	}
 
 	/* Standard constructor */
-	private Pattern(List      		pList,
-			        int            	uId,
-			        int				uControlId,
-			        int        		uAccountId,
-	                java.util.Date  pDate,
-	                byte[]          pDesc,
-	                byte[]			pAmount,
-	                int				uPartnerId,
-	                int 			uTransId,
-	                int				uFreqId,
-	                boolean         isCredit) throws Exception {
+	private Pattern(List    pList,
+			        int     uId,
+			        int		uControlId,
+			        int     uAccountId,
+	                Date  	pDate,
+	                byte[]  pDesc,
+	                byte[]	pAmount,
+	                int		uPartnerId,
+	                int 	uTransId,
+	                int		uFreqId,
+	                boolean isCredit) throws Exception {
 		/* Initialise item assuming account as debit and partner as credit */
 		super(pList, uId, uControlId, pDate, pDesc, 
 			  uAccountId, uPartnerId,
@@ -235,7 +236,7 @@ public class Pattern extends Event {
 	private Pattern(List      		pList,
 					int				uId,
 			        Account    		pAccount,
-	                java.util.Date  pDate,
+	                Date  			pDate,
 	                String          pDesc,
 	                String			pAmount,
 	                Account			pPartner,
@@ -382,10 +383,10 @@ public class Pattern extends Event {
 	 */
 	public Event nextEvent(Event.List 	pEvents,
 						   TaxYear   	pTaxYear,
-			               Date 		pDate) throws Exception {
+			               DateDay 		pDate) throws Exception {
 		Event     		myEvent;
 		TaxYear  		myBase;
-		Date 			myDate;
+		DateDay 		myDate;
 		FreqClass		myFreq;
 		int       		iAdjust;
 		TaxYear.List	myList;
@@ -461,7 +462,7 @@ public class Pattern extends Event {
 			
 			/* If this is a ten month repeat */
 			if (myFreq == FreqClass.TENMONTHS) {					
-				myDate = new Date(getDate());
+				myDate = new DateDay(getDate());
 				
 				/* Calculate the difference in years */
 				iAdjust = pTaxYear.getDate().getYear() 
@@ -484,7 +485,7 @@ public class Pattern extends Event {
 		myEvent = new Event(pEvents, this);
 		
 		/* Set the date for this event */
-		myEvent.setDate(new Date(pDate));
+		myEvent.setDate(new DateDay(pDate));
 		
 		/* Return the new event */
 		return myEvent;
@@ -555,7 +556,7 @@ public class Pattern extends Event {
 			myValues.setAmount(myNew.getAmount());
 		
 		/* Update the date if required */
-		if (Date.differs(getDate(), myPattern.getDate()).isDifferent()) 
+		if (DateDay.differs(getDate(), myPattern.getDate()).isDifferent()) 
 			setDate(myPattern.getDate());
 		
 		/* Check for changes */
@@ -740,7 +741,6 @@ public class Pattern extends Event {
 		 */
 		public Pattern addNewItem() {
 			Pattern myPattern = new Pattern(this);
-			//myPattern.setAccount(theAccount);
 			/* Set the Date as the start of the range */
 			myPattern.setDate(getRange().getStart());
 			add(myPattern);
@@ -786,15 +786,15 @@ public class Pattern extends Event {
 		/**
 		 *  Allow a pattern to be added
 		 */
-		public void addItem(int				uId,
-							java.util.Date  pDate,
-				            String   		pDesc,
-				            String   		pAmount,
-				            String   		pAccount,
-				            String 			pPartner,
-				            String			pTransType,
-				            String  		pFrequency,
-				            boolean  		isCredit) throws Exception {
+		public void addItem(int		uId,
+							Date  	pDate,
+				            String  pDesc,
+				            String  pAmount,
+				            String  pAccount,
+				            String 	pPartner,
+				            String	pTransType,
+				            String  pFrequency,
+				            boolean isCredit) throws Exception {
 			TransactionType.List	myTranTypes;
 			Frequency.List			myFrequencies;
 			Account.List 			myAccounts;
@@ -816,7 +816,7 @@ public class Pattern extends Event {
 			if (myAccount == null) 
 				throw new Exception(ExceptionClass.DATA,
 			                        "Pattern on [" + 
-			                        Date.format(new Date(pDate)) +
+			                        DateDay.format(new DateDay(pDate)) +
 			                        "] has invalid Account [" +
 			                        pAccount + "]");
 				
@@ -825,7 +825,7 @@ public class Pattern extends Event {
 			if (myPartner == null) 
 				throw new Exception(ExceptionClass.DATA,
 			                        "Pattern on [" + 
-			                        Date.format(new Date(pDate)) +
+			                        DateDay.format(new DateDay(pDate)) +
 			                        "] has invalid Partner [" +
 			                        pPartner + "]");
 				
@@ -834,7 +834,7 @@ public class Pattern extends Event {
 			if (myTransType == null) 
 				throw new Exception(ExceptionClass.DATA,
 			                        "Pattern on [" + 
-			                        Date.format(new Date(pDate)) +
+			                        DateDay.format(new DateDay(pDate)) +
 			                        "] has invalid TransType [" +
 			                        pTransType + "]");
 				
@@ -843,7 +843,7 @@ public class Pattern extends Event {
 			if (myFrequency == null) 
 				throw new Exception(ExceptionClass.DATA,
 			                        "Pattern on [" + 
-			                        Date.format(new Date(pDate)) +
+			                        DateDay.format(new DateDay(pDate)) +
 			                        "] has invalid Frequency [" +
 			                        pFrequency + "]");
 				
@@ -868,16 +868,16 @@ public class Pattern extends Event {
 		/**
 		 *  Allow a pattern to be added 
 		 */
-		public void addItem(int     		uId,
-							int				uControlId,
-				            java.util.Date  pDate,
-				            byte[]   		pDesc,
-				            byte[]   		pAmount,
-				            int     		uAccountId,
-				            int   			uPartnerId,
-				            int				uTransId,
-				            int   			uFreqId,
-				            boolean  		isCredit) throws Exception {
+		public void addItem(int     uId,
+							int		uControlId,
+				            Date  	pDate,
+				            byte[]  pDesc,
+				            byte[]  pAmount,
+				            int     uAccountId,
+				            int   	uPartnerId,
+				            int		uTransId,
+				            int   	uFreqId,
+				            boolean isCredit) throws Exception {
 			Pattern     myPattern;
 			
 			/* Create the new pattern */

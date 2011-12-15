@@ -4,7 +4,8 @@ import uk.co.tolcroft.finance.data.Account;
 import uk.co.tolcroft.finance.data.Event;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.TransactionType;
-import uk.co.tolcroft.models.Number.Money;
+import uk.co.tolcroft.finance.data.StaticClass.TransClass;
+import uk.co.tolcroft.models.Decimal.Money;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataSet;
@@ -30,15 +31,20 @@ public class IncomeBreakdown implements DebugObject {
 	 */
 	private RecordList theDividend	= null;
 	
+	/* Access functions */
+	public RecordList getSalary() 	{ return theSalary; }
+	public RecordList getInterest() { return theInterest; }
+	public RecordList getDividend() { return theDividend; }
+	
 	/**
 	 * Constructor
 	 * @param pData the DataSet
 	 */
 	protected IncomeBreakdown(FinanceData pData) {
 		/* Allocate lists */
-		theSalary	= new RecordList(pData);
-		theInterest	= new RecordList(pData);
-		theDividend	= new RecordList(pData);
+		theSalary	= new RecordList(pData, "Salary");
+		theInterest	= new RecordList(pData, "Interest");
+		theDividend	= new RecordList(pData, "Dividend");
 	}
 	
 	/**
@@ -123,17 +129,22 @@ public class IncomeBreakdown implements DebugObject {
 		/**
 		 * The name of the object
 		 */
-		private static final String objName = "AccountRecord";
+		private static final String objName 	= "AccountRecord";
 
 		/**
 		 * The account for the record 
 		 */
-		private Account			theAccount	= null;
+		private Account			theAccount		= null;
 		
 		/**
 		 * The Totals 
 		 */
-		private IncomeTotals 	theTotals	= null;
+		private IncomeTotals 	theTotals		= null;
+		
+		/**
+		 * The List Totals 
+		 */
+		private IncomeTotals 	theListTotals	= null;
 		
 		/**
 		 * The Events relating to this account
@@ -184,19 +195,24 @@ public class IncomeBreakdown implements DebugObject {
 			FinanceData myData = pList.getData();
 			
 			/* Store parameter */
-			theAccount 	= pAccount;
+			theAccount 		= pAccount;
 			
-			/* Create the totals */
-			theTotals 	= new IncomeTotals();
+			/* Create the totals and access those of the list */
+			theTotals 		= new IncomeTotals();
+			theListTotals	= pList.theTotals;
 			
-			/* Create the List */
+			/* Build the name of the child list */
+			StringBuilder myNameBuilder = new StringBuilder(100);
+			myNameBuilder.append(pList.getName());
+			myNameBuilder.append("-");
+			myNameBuilder.append(pAccount.getName());
+			String myName = myNameBuilder.toString();
+			
+			/* Create the list of children */
+			theChildren = new RecordList(myData, myName);
+			
+			/* Create the event list */
 			theEvents 	= myData.getEvents().getViewList();
-			
-			/* If the account is a parent */
-			if (pAccount.isParent()) {
-				/* Create the list of children */
-				theChildren = new RecordList(myData);
-			}
 		}
 		
 		/* Field IDs */
@@ -212,7 +228,7 @@ public class IncomeBreakdown implements DebugObject {
 		public String 	getFieldName(int iField) { return fieldName(iField); }
 
 		@Override
-		public int		numFields() {return NUMFIELDS; }
+		public int		numFields() { return NUMFIELDS; }
 		
 		/**
 		 * Determine the field name for a particular field
@@ -260,32 +276,52 @@ public class IncomeBreakdown implements DebugObject {
 		 */
 		private void processEvent(Event pEvent) {
 			/* Add the event to the list */
-			theEvents.addNewItem(pEvent);
+			//theEvents.addNewItem(pEvent);
 			
 			/* Access values */
-			Money 	myAmount 	= pEvent.getAmount();
-			Money 	myTax 		= pEvent.getTaxCredit();
-			Account myDebit 	= pEvent.getDebit();
+			Money 			myAmount 	= pEvent.getAmount();
+			Money 			myTax 		= pEvent.getTaxCredit();
+			Account 		myDebit 	= pEvent.getDebit();
+			TransactionType myTrans		= pEvent.getTransType();
 			
-			/* Add to gross and net */
-			theTotals.theGrossIncome.addAmount(myAmount);
-			theTotals.theNetIncome.addAmount(myAmount);
+			/* If we are NatInsurance/Benefit */
+			if ((myTrans.getTranClass() == TransClass.NATINSURANCE) ||
+			    (myTrans.getTranClass() == TransClass.BENEFIT)) {
+				/* Just add to gross */
+				theTotals.theGrossIncome.addAmount(myAmount);				
+				theListTotals.theGrossIncome.addAmount(myAmount);				
+			}
 			
-			/* If we have a tax credit */
-			if (myTax != null) {
-				/* Add to gross and tax */
-				theTotals.theGrossIncome.addAmount(myTax);
-				theTotals.theTaxCredit.addAmount(myTax);				
+			else {
+				/* Add to gross and net */
+				theTotals.theGrossIncome.addAmount(myAmount);
+				theTotals.theNetIncome.addAmount(myAmount);
+				theListTotals.theGrossIncome.addAmount(myAmount);
+				theListTotals.theNetIncome.addAmount(myAmount);
+			
+				/* If we have a tax credit */
+				if (myTax != null) {
+					/* Add to gross and tax */
+					theTotals.theGrossIncome.addAmount(myTax);
+					theTotals.theTaxCredit.addAmount(myTax);				
+					theListTotals.theGrossIncome.addAmount(myTax);
+					theListTotals.theTaxCredit.addAmount(myTax);				
+				}
 			}
 			
 			/* If the debit account is a child */
 			if (Account.differs(theAccount, myDebit).isDifferent()) {
 				/* Find the relevant account */
-				RecordList 		myList	= (RecordList)getList();
-				AccountRecord 	myChild = myList.findAccountRecord(myDebit);
+				AccountRecord 	myChild = theChildren.findAccountRecord(myDebit);
 				
 				/* Process the record for the child */
 				myChild.processEvent(pEvent);
+			}
+			
+			/* else we need to record the event */
+			else {
+				/* Add a copy of the event to the list */
+				theEvents.addNewItem(pEvent);
 			}
 		}
 
@@ -297,7 +333,8 @@ public class IncomeBreakdown implements DebugObject {
 		public void addChildEntries(DebugManager 	pManager,
 									DebugEntry		pParent) { 
 			/* Add Event list */
-			pManager.addChildEntry(pParent, "Events", theEvents);
+			if (theEvents != null)
+				pManager.addChildEntry(pParent, "Events", theEvents);
 
 			/* Add Children */
 			if (theChildren != null)
@@ -337,20 +374,44 @@ public class IncomeBreakdown implements DebugObject {
 		/**
 		 * The DataSet that this list is based on
 		 */
-		private FinanceData theData	= null;
+		private FinanceData 	theData		= null;
+		
+		/**
+		 * The Totals for the record list
+		 */
+		private IncomeTotals	theTotals	= new IncomeTotals();
+		
+		/**
+		 * The Name for the record list
+		 */
+		private String			theName		= null;
 		
 		/**
 		 * Access the DataSet for a RecordList
 		 * @return the DataSet
 		 */
-		private FinanceData getData() { return theData; }
+		private FinanceData getData() 	{ return theData; }
+		
+		/**
+		 * Access the Totals
+		 * @return the Totals
+		 */
+		public IncomeTotals getTotals() { return theTotals; }
+		
+		/**
+		 * Access the Name
+		 * @return the Name
+		 */
+		public String getName() 		{ return theName; }
 		
 		/**
 		 * Construct a top-level List
 		 */
-		public RecordList(FinanceData pData) { 
+		public RecordList(FinanceData 	pData,
+						  String 		pName) { 
 			super(RecordList.class, AccountRecord.class, ListStyle.VIEW, false);
 			theData = pData;
+			theName = pName;
 		}
 
 		/* Obtain extract lists. */
@@ -375,9 +436,6 @@ public class IncomeBreakdown implements DebugObject {
 		 * @return the record
 		 */
 		protected AccountRecord findAccountRecord(Account pAccount) {
-			if (pAccount == null)
-				System.out.println("HH");
-			
 			/* Locate the record in the list */
 			AccountRecord myRecord = (AccountRecord)searchFor(pAccount.getId());
 			

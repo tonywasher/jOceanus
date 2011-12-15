@@ -121,12 +121,11 @@ public class SecurityControl extends SortedItem<SecurityControl> implements Prop
 		/* Copy the random generator */
 		theRandom 	= pSource.getRandom();
 
-		/* Generate a cloned password hash */
-		thePassHash	= new PasswordHash(pSource.getPasswordHash());
-		
 		/* Determine whether we are using restricted mode */
-		/* TODO pick up new Restricted property */
-		useRestricted = thePassHash.getSecurityMode().useRestricted();
+		useRestricted = theProperties.getBooleanValue(SecurityProperties.nameRestricted);
+		
+		/* Generate a cloned password hash */
+		thePassHash	= new PasswordHash(pSource.getPasswordHash(), useRestricted);
 		
 		/* Generate the new key mode */
 		SecurityMode myMode 	= SecurityMode.getAsymmetricMode(useRestricted, theRandom);		
@@ -231,9 +230,8 @@ public class SecurityControl extends SortedItem<SecurityControl> implements Prop
 			/* If the security key is currently null */
 			if (theSignature == null) {
 				/* Generate the password hash */
-				/* TODO pick up new Restricted property */
 				thePassHash 	= new PasswordHash(pPassword,
-												   useRestricted,
+												   theProperties.getBooleanValue(SecurityProperties.nameRestricted),
 												   theRandom);
 							
 				/* Generate the new key mode */
@@ -664,7 +662,8 @@ public class SecurityControl extends SortedItem<SecurityControl> implements Prop
 		Tiger(2, 192),
 		WHIRLPOOL(3, 512),
 		RIPEMD(4, 320),
-		GOST(5, 256);
+		GOST(5, 256),
+		SHA512(6, 512);
 
 		/**
 		 * Key values 
@@ -702,6 +701,7 @@ public class SecurityControl extends SortedItem<SecurityControl> implements Prop
 		public String getAlgorithm() {
 			switch (this) {
 				case SHA256: 	return "SHA-256";
+				case SHA512: 	return "SHA-512";
 				case RIPEMD: 	return "RIPEMD320";
 				case GOST: 		return "GOST3411";
 				default:		return toString();

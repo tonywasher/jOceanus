@@ -3,7 +3,7 @@ package uk.co.tolcroft.finance.views;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataSet;
@@ -18,7 +18,7 @@ public class Analysis {
 	private BucketList				theList				= null;
 	private ChargeableEvent.List	theCharges			= null;
 	private TaxYear 				theYear				= null;
-	private Date					theDate				= null;
+	private DateDay					theDate				= null;
 	private Account					theAccount			= null;
 	private boolean					hasGainsSlices		= false;
 	private boolean					hasReducedAllow		= false;
@@ -29,7 +29,7 @@ public class Analysis {
 	public AnalysisState		getState() 			{ return theAnalysisState; }
 	public BucketList 			getList() 			{ return theList; }
 	public TaxYear 				getTaxYear() 		{ return theYear; }
-	public Date 				getDate() 			{ return theDate; }
+	public DateDay 				getDate() 			{ return theDate; }
 	public Account				getAccount()		{ return theAccount; }
 	public ChargeableEvent.List getCharges()   	  	{ return theCharges; }
 	public boolean     			hasReducedAllow() 	{ return hasReducedAllow; }
@@ -48,7 +48,7 @@ public class Analysis {
 	 * @param pDate	the Date for the analysis
 	 */
 	public Analysis(FinanceData	pData,
-					Date		pDate) {
+					DateDay		pDate) {
 		/* Store the data */
 		theData = pData;
 		theDate	= pDate;
@@ -66,7 +66,7 @@ public class Analysis {
 	 */
 	public Analysis(FinanceData pData,
 					Account		pAccount,
-					Date		pDate) {
+					DateDay		pDate) {
 		/* Store the data */
 		theData 	= pData;
 		theDate		= pDate;
@@ -153,12 +153,12 @@ public class Analysis {
 		/* Members */
 		private BucketType	theBucketType = null;
 		private FinanceData	theData		  = null;
-		private Date		theDate		  = null;
+		private DateDay		theDate		  = null;
 	
 		/* Access methods */
 		public 		BucketType 	getBucketType() { return theBucketType; }
 		protected 	FinanceData getData()		{ return theData; }
-		protected 	Date 		getDate()		{ return theDate; }
+		protected 	DateDay 	getDate()		{ return theDate; }
 
 		/**
 		 * Build History (no history)
@@ -325,7 +325,7 @@ public class Analysis {
 			pBuffer.append(theAnalysisState); 
 			pBuffer.append("</td></tr>"); 
 			pBuffer.append("<tr><td>Date</td><td>"); 
-			pBuffer.append(Date.format(theDate)); 
+			pBuffer.append(DateDay.format(theDate)); 
 			pBuffer.append("</td></tr>"); 
 			pBuffer.append("<tr><td>Account</td><td>"); 
 			pBuffer.append(Account.format(theAccount)); 
@@ -1175,7 +1175,7 @@ public class Analysis {
 
 		/* Members */
 		private Rate 			theRate			= null;
-		private Date 			theMaturity		= null;
+		private DateDay 		theMaturity		= null;
 		private MoneyAccount	theSavePoint	= null;
 
 		/* Override of getBase method */
@@ -1183,7 +1183,7 @@ public class Analysis {
 		
 		/* Access methods */
 		public Rate 	getRate() 		{ return theRate; }
-		public Date 	getMaturity()	{ return theMaturity; }
+		public DateDay 	getMaturity()	{ return theMaturity; }
 
 		/* Constructor */
 		private MoneyAccount(BucketList	pList,
@@ -1227,7 +1227,7 @@ public class Analysis {
 			if (pPrevious.getRate() != null)
 				theRate		= new Rate(pPrevious.getRate());
 			if (pPrevious.getMaturity() != null)
-				theMaturity	= new Date(pPrevious.getMaturity());
+				theMaturity	= new DateDay(pPrevious.getMaturity());
 			
 			/* Set status */
 			setState(DataState.CLEAN);
@@ -1276,7 +1276,7 @@ public class Analysis {
 					myString += Rate.format(theRate);
 					break;
 				case FIELD_MATURITY:		
-					myString += Date.format(theMaturity);
+					myString += DateDay.format(theMaturity);
 					break;
 				default:
 					myString += super.formatField(pDetail, iField, pValues);
@@ -1294,10 +1294,10 @@ public class Analysis {
 		 * record the rate of the account at a given date
 		 * @param pDate the date of valuation
 		 */
-		protected void recordRate(Date pDate) {
+		protected void recordRate(DateDay pDate) {
 			AcctRate.List	myRates = getData().getRates();
 			AcctRate 		myRate;
-			Date			myDate;
+			DateDay			myDate;
 
 			/* Obtain the appropriate price record */
 			myRate = myRates.getLatestRate(getAccount(), getDate());
@@ -1701,7 +1701,7 @@ public class Analysis {
 		 * value the asset at a particular date
 		 * @param pDate the date of valuation
 		 */
-		protected void valueAsset(Date pDate) {
+		protected void valueAsset(DateDay pDate) {
 			AcctPrice.List	myPrices = getData().getPrices();
 			AcctPrice 		myActPrice;
 

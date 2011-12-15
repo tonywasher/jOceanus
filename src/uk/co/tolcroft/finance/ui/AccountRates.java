@@ -9,7 +9,7 @@ import javax.swing.JPopupMenu;
 
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.help.DebugManager;
@@ -36,7 +36,7 @@ public class AccountRates extends StdTable<AcctRate> {
 	private ratesMouse				theMouse		= null;
 	private ratesColumnModel		theColumns		= null;
 	private AccountTab				theParent   	= null;
-	private Date.Range				theRange		= null;
+	private DateDay.Range			theRange		= null;
 	private Account                 theAccount  	= null;
 	private ListClass				theViewList		= null;
 	private DebugEntry				theDebugEntry	= null;
@@ -148,7 +148,7 @@ public class AccountRates extends StdTable<AcctRate> {
 	 */
 	public void refreshData() {			
 		theRange = theView.getRange();
-		theRange = new Date.Range(theRange.getStart(), null);
+		theRange = new DateDay.Range(theRange.getStart(), null);
 		theColumns.setDateEditorRange(theRange);
 	}
 		
@@ -207,7 +207,7 @@ public class AccountRates extends StdTable<AcctRate> {
 		/* Loop through the Rates in reverse order */
 		while ((myCurr = myIterator.previous()) != null) {
 			/* Break loop if we have a date */
-			Date myDate = myCurr.getDate();
+			DateDay myDate = myCurr.getDate();
 			if ((myDate != null) && (!myDate.isNull())) break;
 				
 			/* Validate rate */
@@ -326,9 +326,9 @@ public class AccountRates extends StdTable<AcctRate> {
 			try {
 				/* Store the appropriate value */
 				switch (col) {
-					case COLUMN_RATE:  	myRate.setRate((Rate)obj);  break;
-					case COLUMN_BONUS:  myRate.setBonus((Rate)obj); break;
-					case COLUMN_DATE:	myRate.setEndDate((Date)obj);  break;
+					case COLUMN_RATE:  	myRate.setRate((Rate)obj);  		break;
+					case COLUMN_BONUS:  myRate.setBonus((Rate)obj); 		break;
+					case COLUMN_DATE:	myRate.setEndDate((DateDay)obj);  	break;
 				}
 			}
 			
@@ -531,7 +531,7 @@ public class AccountRates extends StdTable<AcctRate> {
 		 * Set the date editor range 
 		 * @param pRange
 		 */
-		private void setDateEditorRange(Date.Range pRange) {
+		private void setDateEditorRange(DateDay.Range pRange) {
 			/* Set the range */
 			theDateEditor.setRange(pRange);			
 		}

@@ -5,15 +5,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import uk.co.tolcroft.models.Date;
+import uk.co.tolcroft.models.DateDay;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
-import uk.co.tolcroft.models.Number.Money;
-import uk.co.tolcroft.models.Number.Rate;
+import uk.co.tolcroft.models.Decimal.Money;
+import uk.co.tolcroft.models.Decimal.Rate;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.security.CipherSet;
 import uk.co.tolcroft.models.security.SymmetricKey;
@@ -466,7 +467,7 @@ public class TableDefinition {
 	 * Get Date value for column
 	 * @param pId the column id
 	 */
-	public java.util.Date getDateValue(int pId) throws Exception {
+	public Date getDateValue(int pId) throws Exception {
 		/* Obtain the correct id */
 		ColumnDefinition myCol = getColumnForId(pId);
 		
@@ -610,7 +611,7 @@ public class TableDefinition {
 	 * @param pId the column id
 	 * @param pValue the value
 	 */
-	public void setDateValue(int pId, Date pValue) throws Exception {
+	public void setDateValue(int pId, DateDay pValue) throws Exception {
 		/* Obtain the correct id */
 		ColumnDefinition myCol = getColumnForId(pId);
 		
@@ -1611,7 +1612,7 @@ public class TableDefinition {
 		 * Set the value
 		 * @param pValue the value
 		 */
-		private void setValue(java.util.Date pValue) {
+		private void setValue(Date pValue) {
 			super.setValue(pValue);
 		}
 		
@@ -1619,7 +1620,7 @@ public class TableDefinition {
 		 * Set the value
 		 * @param pValue the value
 		 */
-		private void setValue(Date pValue) {
+		private void setValue(DateDay pValue) {
 			super.setValue((pValue == null) ? null 
 										    : pValue.getDate());
 		}
@@ -1628,8 +1629,8 @@ public class TableDefinition {
 		 * Get the value
 		 * @return the value
 		 */
-		private java.util.Date getValue() {
-			return (java.util.Date)theValue;
+		private Date getValue() {
+			return (Date)theValue;
 		}
 		
 		/** 
@@ -1637,7 +1638,7 @@ public class TableDefinition {
 		 *  @param the index to load from
 		 */
 		protected void loadValue(int pIndex) throws SQLException {
-			java.util.Date myValue = theResults.getDate(pIndex);
+			Date myValue = theResults.getDate(pIndex);
 			setValue(myValue);
 		}
 		
@@ -1647,7 +1648,7 @@ public class TableDefinition {
 		 */
 		protected void storeValue(int pIndex) throws SQLException {
 			java.sql.Date 	myDate	= null;
-			java.util.Date 	myValue = getValue();
+			Date 			myValue = getValue();
 			
 			/* Build the date as a SQL date */
 			if (myValue != null) myDate = new java.sql.Date(myValue.getTime()); 

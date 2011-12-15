@@ -6,9 +6,9 @@ import java.util.Map;
 import uk.co.tolcroft.finance.data.StaticClass.EventInfoClass;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
-import uk.co.tolcroft.models.Number.Dilution;
-import uk.co.tolcroft.models.Number.Money;
-import uk.co.tolcroft.models.Number.Units;
+import uk.co.tolcroft.models.Decimal.Dilution;
+import uk.co.tolcroft.models.Decimal.Money;
+import uk.co.tolcroft.models.Decimal.Units;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.help.DebugDetail;
 

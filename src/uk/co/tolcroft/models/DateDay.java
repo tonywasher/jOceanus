@@ -6,10 +6,9 @@ import java.util.Calendar;
 import java.util.Locale;
 
 /**
- * Represents a Date object. Dates in the finance package are merely dates with no associated
- * time value 
+ * Represents a Date object that is fixed to a particular day. There is no concept of time within the day
  */
-public class Date {
+public class DateDay {
 	/**
 	 * The locale to be used
 	 */
@@ -48,7 +47,7 @@ public class Date {
 	/**
 	 * Construct a new Date and initialise with todays date 
 	 */
-	public Date() {
+	public DateDay() {
 		theDate = Calendar.getInstance(theLocale);
 		obtainValues();
 	}
@@ -58,7 +57,7 @@ public class Date {
 	 * 
 	 * @param pDate the java date to initialise from
 	 */
-	public Date(java.util.Date pDate) {
+	public DateDay(java.util.Date pDate) {
 		if (pDate != null) {
 			theDate = Calendar.getInstance(theLocale);
 			theDate.setTime(pDate);
@@ -71,7 +70,7 @@ public class Date {
 	 * 
 	 * @param pDate the finance date to initialise from
 	 */
-	public Date(Date pDate) {
+	public DateDay(DateDay pDate) {
 		if ((pDate != null) && 
 		    (pDate.theDate != null)) {
 			theDate = Calendar.getInstance(theLocale);
@@ -86,7 +85,7 @@ public class Date {
 	 * @param pMonth the month (Calendar.JUNE etc)
 	 * @param pDay the day of the month
 	 */
-	public Date(int pYear, int pMonth, int pDay) {
+	public DateDay(int pYear, int pMonth, int pDay) {
 		theDate = Calendar.getInstance(theLocale);
 		theDate.set(Calendar.YEAR, pYear); 
 		theDate.set(Calendar.MONTH, pMonth); 
@@ -98,7 +97,7 @@ public class Date {
 	 * Construct a Date from a formatted string
 	 * @param pValue the formatted string
 	 */
-	public Date(String pValue) {
+	public DateDay(String pValue) {
 		/* Access the parsed date */
 		java.util.Date myDate = null;
 		try { myDate = theFormat.parse(pValue); } catch (Throwable e) {}
@@ -174,7 +173,7 @@ public class Date {
 	 * @param pDate the date for which to calculate the age
 	 * @return the age on that date
 	 */
-	public int ageOn(Date pDate) {
+	public int ageOn(DateDay pDate) {
 		int myAge = -1;
 
 		if ((theDate != null) && (pDate.theDate != null)) {
@@ -197,7 +196,7 @@ public class Date {
 	 * 
 	 * @param pDate the date to copy from
 	 */
-	public void copyDate(Date pDate) {
+	public void copyDate(DateDay pDate) {
 		theDate.setTime(pDate.theDate.getTime());
 		obtainValues();
 	}
@@ -278,7 +277,7 @@ public class Date {
 	 * @return (-1,0,1) depending of whether this object is before, equal, 
 	 * 					or after the passed object in the sort order
 	 */
-	public int compareTo(Date that) {
+	public int compareTo(DateDay that) {
         if (this == that) return 0;
         if (that == null) return -1;
         if (this.theDate == null) return 1;
@@ -298,7 +297,7 @@ public class Date {
 	 * @param pDate the date to format
 	 * @return the formatted Date
 	 */
-	public static String format(Date pDate) {
+	public static String format(DateDay pDate) {
 		String 	myFormat;
 		myFormat = (pDate != null) ? pDate.formatDate()
 							       : null;
@@ -312,7 +311,7 @@ public class Date {
 	 * @param pNew The new Date
 	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
 	 */	
-	public static Difference differs(Date pCurr, Date pNew) {
+	public static Difference differs(DateDay pCurr, DateDay pNew) {
 		/* Handle case where current value is null */
 		if  (pCurr == null) return (pNew != null) ? Difference.Different 
 												  : Difference.Identical;
@@ -332,26 +331,26 @@ public class Date {
 		/**
 		 * The Start Date for the range
 		 */
-		private Date theStart = null;
+		private DateDay theStart = null;
 
 		/**
 		 * The End Date for the range
 		 */
-		private Date theEnd   = null;
+		private DateDay theEnd   = null;
 		
 		/**
 		 * Get the start date for the range
 		 * 
 		 * @return the Start date
 		 */
-		public Date  getStart()    { return theStart; }
+		public DateDay  getStart()    { return theStart; }
 
 		/**
 		 * Get the end date for the range
 		 * 
 		 * @return the End date
 		 */
-		public Date  getEnd()      { return theEnd; }
+		public DateDay  getEnd()      { return theEnd; }
 		
 		/**
 		 * Construct a Range from a Start Date and an End Date
@@ -359,9 +358,9 @@ public class Date {
 		 * @param pStart the start date
 		 * @param pEnd the end date
 		 */
-		public Range(Date pStart, Date pEnd) {
-			theStart = new Date(pStart);
-			theEnd   = new Date(pEnd);
+		public Range(DateDay pStart, DateDay pEnd) {
+			theStart = new DateDay(pStart);
+			theEnd   = new DateDay(pEnd);
 		}
 		
 		/**
@@ -370,8 +369,8 @@ public class Date {
 		 * @param pRange the range to copy from
 		 */
 		public Range(Range pRange) {
-			theStart = new Date(pRange.theStart);
-			theEnd   = new Date(pRange.theEnd);
+			theStart = new DateDay(pRange.theStart);
+			theEnd   = new DateDay(pRange.theEnd);
 		}
 		
 		/**
@@ -379,7 +378,7 @@ public class Date {
 		 * 
 		 * @return -1, 0, 1 if early, in range or late
 		 */
-		public short compareTo(Date pDate) {
+		public short compareTo(DateDay pDate) {
 			if ((theStart != null) && (theStart.compareTo(pDate) > 0)) return 1;
 			if ((theEnd != null) && (theEnd.compareTo(pDate) < 0))     return -1;
 			return 0;
@@ -422,9 +421,9 @@ public class Date {
 			if (pRange == null) return "null";
 			
 			/* Build range description */
-			myFormat  = Date.format(pRange.getStart());
+			myFormat  = DateDay.format(pRange.getStart());
 			myFormat += " to ";
-			myFormat += Date.format(pRange.getEnd());
+			myFormat += DateDay.format(pRange.getEnd());
 
 			/* return the format */
 			return myFormat;

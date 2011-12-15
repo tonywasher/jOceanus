@@ -40,7 +40,7 @@ public class ReportTab implements HyperlinkListener,
 	private JEditorPane         theEditor     	= null;
 	private ReportSelect 		theSelect     	= null;
 	private ReportType			theReportType 	= null;
-	private Date				theDate       	= null;
+	private DateDay				theDate       	= null;
 	private TaxYear				theYear       	= null;
 	private EventAnalysis		theAnalysis	  	= null;
 	private Properties			theProperties 	= null;
@@ -255,6 +255,12 @@ public class ReportTab implements HyperlinkListener,
 				myYear  	= theAnalysis.getAnalysisYear(theYear);
 				myReport	= new AnalysisReport(myYear);
 				myText 		= myReport.getTaxReport(theProperties);
+				break;
+				
+			case BREAKDOWN:
+				myYear  	= theAnalysis.getAnalysisYear(theYear);
+				myReport	= new AnalysisReport(myYear);
+				myText		= myReport.getBreakdownReport();
 				break;
 				
 			case INSTANT:

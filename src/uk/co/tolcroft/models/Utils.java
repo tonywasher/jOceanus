@@ -6,7 +6,6 @@ import java.io.OutputStreamWriter;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-//import java.util.Currency;
 
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
@@ -14,9 +13,9 @@ import uk.co.tolcroft.models.security.SecurityControl;
 
 public class Utils {
 	/**
-	 * Determine whether two String objects differ.
-	 * @param pCurr The current string 
-	 * @param pNew The new string
+	 * Determine whether two Generic objects differ.
+	 * @param pCurr The current object 
+	 * @param pNew The new object
 	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
 	 */	
 	public static Difference differs(Object pCurr, Object pNew) {
@@ -26,6 +25,12 @@ public class Utils {
 		
 		/* Handle case where new value is null */
 		if  (pNew == null) return Difference.Different;
+		
+		/* Handle char/byte arrays separately */
+		if ((pCurr instanceof char[]) && (pNew instanceof char[]))
+			return differs((char[])pCurr, (char[])pNew);
+		if ((pCurr instanceof byte[]) && (pNew instanceof byte[]))
+			return differs((byte[])pCurr, (byte[])pNew);
 		
 		/* Handle Standard cases */
 		return (pCurr.equals(pNew)) ? Difference.Identical
@@ -448,5 +453,16 @@ public class Utils {
 		
 		/* Compare the two */
 		return myCurr.compareTo(myNew);
+	}
+	
+	/**
+	 * Obtain character as a string
+	 * @param pChar the character to be represented as a string
+	 */
+	public static String getCharAsString(char pChar) {
+		/* Build a new string from the character */
+		char[] myArray = new char[1];
+		myArray[0] = pChar;
+		return new String(myArray);
 	}
 }

@@ -1,11 +1,19 @@
 package uk.co.tolcroft.finance.sheets;
 
-import jxl.*;
+import java.util.Date;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
+
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.sheets.SheetDataItem;
+import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 
@@ -77,8 +85,8 @@ public class SheetAccount extends SheetDataItem<Account> {
 			Integer	myAliasId 	= loadInteger(4);
 		
 			/* Access the dates */
-			java.util.Date 	myClose		= loadDate(5);
-			java.util.Date	myMaturity 	= loadDate(6);
+			Date 	myClose		= loadDate(5);
+			Date	myMaturity 	= loadDate(6);
 		
 			/* Access the binary values  */
 			byte[] 	myName 		= loadBytes(7);
@@ -107,8 +115,8 @@ public class SheetAccount extends SheetDataItem<Account> {
 			String myAlias		= loadString(5);
 		
 			/* Access the date and name and description bytes */
-			java.util.Date 	myClose		= loadDate(6);
-			java.util.Date 	myMaturity 	= loadDate(7);
+			Date 	myClose		= loadDate(6);
+			Date 	myMaturity 	= loadDate(7);
 		
 			/* Access the binary values  */
 			char[] 	myWebSite 	= loadChars(8);
@@ -158,7 +166,7 @@ public class SheetAccount extends SheetDataItem<Account> {
 			/* Set the fields */
 			writeInteger(0, pItem.getId());
 			writeString(1, pItem.getName());			
-			writeValidatedString(2, pItem.getActType().getName(), SheetAccountType.ActTypeNames);				
+			writeString(2, pItem.getActType().getName());				
 			writeString(3, pItem.getDesc());
 			if (pItem.getParent() != null)
 				writeString(4, pItem.getParent().getName());				
@@ -175,34 +183,35 @@ public class SheetAccount extends SheetDataItem<Account> {
 		}
 	}
 
-	/**
-	 * PreProcess on write
-	 */
-	protected boolean preProcessOnWrite() throws Throwable {		
+	@Override
+	protected void preProcessOnWrite() throws Throwable {		
 		/* Ignore if we are creating a backup */
-		if (isBackup) return false;
+		if (isBackup) return;
 
+		/* Create a new row */
+		newRow();
+		
 		/* Write titles */
-		writeString(0, Account.fieldName(Account.FIELD_ID));
-		writeString(1, Account.fieldName(Account.FIELD_NAME));
-		writeString(2, Account.fieldName(Account.FIELD_TYPE));			
-		writeString(3, Account.fieldName(Account.FIELD_DESC));			
-		writeString(4, Account.fieldName(Account.FIELD_PARENT));			
-		writeString(5, Account.fieldName(Account.FIELD_ALIAS));			
-		writeString(6, Account.fieldName(Account.FIELD_CLOSE));			
-		writeString(7, Account.fieldName(Account.FIELD_MATURITY));			
-		writeString(8, Account.fieldName(Account.FIELD_WEBSITE));			
-		writeString(9, Account.fieldName(Account.FIELD_CUSTNO));			
-		writeString(10, Account.fieldName(Account.FIELD_USERID));			
-		writeString(11, Account.fieldName(Account.FIELD_PASSWORD));			
-		writeString(12, Account.fieldName(Account.FIELD_ACCOUNT));			
-		writeString(13, Account.fieldName(Account.FIELD_NOTES));			
-		return true;
+		writeHeader(0, Account.fieldName(Account.FIELD_ID));
+		writeHeader(1, Account.fieldName(Account.FIELD_NAME));
+		writeHeader(2, Account.fieldName(Account.FIELD_TYPE));			
+		writeHeader(3, Account.fieldName(Account.FIELD_DESC));			
+		writeHeader(4, Account.fieldName(Account.FIELD_PARENT));			
+		writeHeader(5, Account.fieldName(Account.FIELD_ALIAS));			
+		writeHeader(6, Account.fieldName(Account.FIELD_CLOSE));			
+		writeHeader(7, Account.fieldName(Account.FIELD_MATURITY));			
+		writeHeader(8, Account.fieldName(Account.FIELD_WEBSITE));			
+		writeHeader(9, Account.fieldName(Account.FIELD_CUSTNO));			
+		writeHeader(10, Account.fieldName(Account.FIELD_USERID));			
+		writeHeader(11, Account.fieldName(Account.FIELD_PASSWORD));			
+		writeHeader(12, Account.fieldName(Account.FIELD_ACCOUNT));			
+		writeHeader(13, Account.fieldName(Account.FIELD_NOTES));			
+
+		/* Adjust for Header */
+		adjustForHeader();
 	}	
 
-	/**
-	 * PostProcess on write
-	 */
+	@Override
 	protected void postProcessOnWrite() throws Throwable {		
 		/* If we are creating a backup */
 		if (isBackup) {
@@ -217,6 +226,7 @@ public class SheetAccount extends SheetDataItem<Account> {
 
 			/* Set the Id column as hidden */
 			setHiddenColumn(0);
+			setIntegerColumn(0);
 
 			/* Set the name column width and range */
 			nameColumnRange(1, AccountNames);
@@ -224,9 +234,12 @@ public class SheetAccount extends SheetDataItem<Account> {
 			/* Set the Account column width */
 			setColumnWidth(1, Account.NAMELEN);
 			setColumnWidth(2, StaticData.NAMELEN);
+			applyDataValidation(2, SheetAccountType.ActTypeNames);
 			setColumnWidth(3, Account.DESCLEN);
 			setColumnWidth(4, Account.NAMELEN);
+			applyDataValidation(4, AccountNames);
 			setColumnWidth(5, Account.NAMELEN);
+			applyDataValidation(5, AccountNames);
 			
 			/* Set Date columns */
 			setDateColumn(6);
@@ -237,27 +250,26 @@ public class SheetAccount extends SheetDataItem<Account> {
 	/**
 	 *  Load the Accounts from an archive
 	 *  @param pThread   the thread status control
-	 *  @param pWorkbook the workbook to load from
+	 *  @param pHelper the sheet helper
 	 *  @param pData the data set to load into
 	 *  @return continue to load <code>true/false</code> 
 	 */
 	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
-										 Workbook					pWorkbook,
+										 SheetHelper				pHelper,
 							   	  		 FinanceData				pData) throws Exception {
 		/* Local variables */
 		Account.List 	myList;
-		Range[]   		myRange;
+		AreaReference	myRange;
 		Sheet     		mySheet;
-		Cell      		myTop;
-		Cell      		myBottom;
+		CellReference	myTop;
+		CellReference	myBottom;
 		int       		myCol;
 		String    		myAccount;
 		String    		myAcType; 
 		String    		myParent;
 		String			myAlias;
-		java.util.Date  myMaturity;
-		java.util.Date  myClosed;
-		DateCell  		myDateCell;
+		Date  			myMaturity;
+		Date  			myClosed;
 		Cell      		myCell;
 		int       		myTotal;
 		int				mySteps;
@@ -266,7 +278,7 @@ public class SheetAccount extends SheetDataItem<Account> {
 		/* Protect against exceptions */
 		try { 
 			/* Find the range of cells */
-			myRange = pWorkbook.findByName(Accounts);
+			myRange = pHelper.resolveAreaReference(Accounts);
 		
 			/* Access the number of reporting steps */
 			mySteps = pThread.getReportingSteps();
@@ -275,13 +287,12 @@ public class SheetAccount extends SheetDataItem<Account> {
 			if (!pThread.setNewStage(Accounts)) return false;
 		
 			/* If we found the range OK */
-			if ((myRange != null) && (myRange.length == 1)) {
-			
+			if (myRange != null) {
 				/* Access the relevant sheet and Cell references */
-				mySheet  = pWorkbook.getSheet(myRange[0].getFirstSheetIndex());
-				myTop    = myRange[0].getTopLeft();
-				myBottom = myRange[0].getBottomRight();
-				myCol    = myTop.getColumn();
+				myTop    	= myRange.getFirstCell();
+				myBottom 	= myRange.getLastCell();
+				mySheet  	= pHelper.getSheetByName(myTop.getSheetName());
+				myCol		= myTop.getCol();
 		
 				/* Count the number of accounts */
 				myTotal  = myBottom.getRow() - myTop.getRow() + 1;
@@ -296,39 +307,39 @@ public class SheetAccount extends SheetDataItem<Account> {
 				for (int i = myBottom.getRow();
 			     	 i >= myTop.getRow();
 			     	 i--) {
+					/* Access the row */
+					Row myRow 	= mySheet.getRow(i);
 				
 					/* Access account and account type */
-					myAccount = mySheet.getCell(myCol, i).getContents();
-					myAcType  = mySheet.getCell(myCol+1, i).getContents();
+					myAccount = myRow.getCell(myCol).getStringCellValue();
+					myAcType  = myRow.getCell(myCol+1).getStringCellValue();
 				
 					/* Handle maturity which may be missing */
-					myCell     = mySheet.getCell(myCol+2, i);
+					myCell     = myRow.getCell(myCol+2);
 					myMaturity = null;
-					if (myCell.getType() != CellType.EMPTY) {
-						myDateCell = (DateCell)myCell;
-						myMaturity = myDateCell.getDate();
+					if (myCell != null) {
+						myMaturity = myCell.getDateCellValue();
 					}
 			
 					/* Handle parent which may be missing */
-					myCell     = mySheet.getCell(myCol+3, i);
+					myCell     = myRow.getCell(myCol+3);
 					myParent = null;
-					if (myCell.getType() != CellType.EMPTY) {
-						myParent = myCell.getContents();
+					if (myCell != null) {
+						myParent = myCell.getStringCellValue();
 					}
 			
 					/* Handle alias which may be missing */
-					myCell     = mySheet.getCell(myCol+4, i);
+					myCell     = myRow.getCell(myCol+4);
 					myAlias = null;
-					if (myCell.getType() != CellType.EMPTY) {
-						myAlias = myCell.getContents();
+					if (myCell != null) {
+						myAlias = myCell.getStringCellValue();
 					}
 			
 					/* Handle closed which may be missing */
-					myCell     = mySheet.getCell(myCol+5, i);
+					myCell     = myRow.getCell(myCol+5);
 					myClosed = null;
-					if (myCell.getType() != CellType.EMPTY) {
-						myDateCell = (DateCell)myCell;
-						myClosed = myDateCell.getDate();
+					if (myCell != null) {
+						myClosed = myCell.getDateCellValue();
 					}
 				
 					/* Add the value into the finance tables */

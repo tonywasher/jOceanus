@@ -1,5 +1,7 @@
 package uk.co.tolcroft.finance.database;
 
+import java.util.Date;
+
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.data.DataSet;
@@ -71,16 +73,16 @@ public class TableEvent extends TableEncrypted<Event> {
 
 	/* Load the event */
 	protected void loadItem(int pId, int pControlId) throws Exception {
-		int  			myDebitId;
-		int  			myCreditId;
-		int  			myTranType;
-		byte[] 			myDesc;
-		byte[] 			myAmount;
-		byte[] 			myUnits;
-		byte[] 			myTaxCred;
-		byte[]			myDilution;
-		Integer			myYears;
-		java.util.Date  myDate;
+		int  	myDebitId;
+		int  	myCreditId;
+		int  	myTranType;
+		byte[] 	myDesc;
+		byte[] 	myAmount;
+		byte[] 	myUnits;
+		byte[] 	myTaxCred;
+		byte[]	myDilution;
+		Integer	myYears;
+		Date  	myDate;
 		
 		/* Get the various fields */
 		myDate 		= theTableDef.getDateValue(Event.FIELD_DATE);

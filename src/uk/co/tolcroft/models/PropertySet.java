@@ -242,7 +242,7 @@ public abstract class PropertySet {
 	 * @param pName the name of the property
 	 * @return the Date or null if no such date property exists
 	 */
-	public Date getDateValue(String	pName) {
+	public DateDay getDateValue(String	pName) {
 		/* Access property */
 		DateProperty myProp = getDateProperty(pName);
 		
@@ -640,7 +640,7 @@ public abstract class PropertySet {
 		 * Obtain the value of the property
 		 * @return the value of the property
 		 */
-		public Date getValue() { return (Date)super.getValue(); }
+		public DateDay getValue() { return (DateDay)super.getValue(); }
 		
 		/**
 		 * Constructor	 
@@ -660,7 +660,7 @@ public abstract class PropertySet {
 				if (myValue == null) bExists = false;
 				else {
 					/* Parse the Date */
-					Date   myDate  = new Date(myValue);
+					DateDay   myDate  = new DateDay(myValue);
 					if (myDate.isNull()) bExists = false;
 					else {
 						/* Set as initial value */
@@ -680,9 +680,9 @@ public abstract class PropertySet {
 		 * Set value
 		 * @param pNewValue the new value
 		 */
-		public void setValue(Date pNewValue) {
+		public void setValue(DateDay pNewValue) {
 			/* Take a copy if not null */
-			if (pNewValue != null) pNewValue = new Date(pNewValue);
+			if (pNewValue != null) pNewValue = new DateDay(pNewValue);
 			
 			/* Set the new value */
 			super.setNewValue(pNewValue);
@@ -691,7 +691,7 @@ public abstract class PropertySet {
 		@Override
 		protected void storeTheProperty(Object pNewValue) {
 			/* Store the value */
-			theHandle.put(getName(), ((Date)pNewValue).formatDate());			
+			theHandle.put(getName(), ((DateDay)pNewValue).formatDate());			
 		}
 	}	
 	

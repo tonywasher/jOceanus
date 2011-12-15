@@ -14,8 +14,8 @@ import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableCellEditor;
 
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Number.*;
-import uk.co.tolcroft.models.ui.DateSelect.CalendarCellEditor;
+import uk.co.tolcroft.models.Decimal.*;
+import uk.co.tolcroft.models.ui.DateButton.CellEditor;
 
 public class Editor {
 	/* String Cell Editor */
@@ -156,52 +156,47 @@ public class Editor {
 	}
 	
 	/* Calendar Cell Editor */
-	public static class CalendarCell extends CalendarCellEditor {
+	public static class CalendarCell extends CellEditor {
 		private static final long serialVersionUID = -5463480186940634327L;
-		private DateSelect.DateModel  	theModel    = null;
-		private Date.Range   			theRange	= null;
+		private DateDay.Range   			theRange	= null;
 		
-		public  void setRange(Date.Range pRange) { theRange = pRange; }
+		public  void setRange(DateDay.Range pRange) { theRange = pRange; }
 		
-		public CalendarCell() {
-			theModel   = getDateModel();
-		}
-
 		public JComponent getTableCellEditorComponent(JTable  table,
 				                                      Object  value,
 				                                      boolean isSelected,
 				                                      int     row,
 				                                      int     col) {
 			/* Access the range */
-			Date myStart = (theRange == null) ? null : theRange.getStart();
-			Date myEnd   = (theRange == null) ? null : theRange.getEnd();
-			Date myCurr;
+			DateDay myStart = (theRange == null) ? null : theRange.getStart();
+			DateDay myEnd   = (theRange == null) ? null : theRange.getEnd();
+			DateDay myCurr;
 			
 			/* If the value is null */
 			if ((value == null) || (value == Renderer.theError)) {
-				myCurr = new Date(Calendar.getInstance().getTime());
+				myCurr = new DateDay(Calendar.getInstance().getTime());
 			}
 			else {
-				myCurr = (Date)value;
+				myCurr = (DateDay)value;
 				if (myCurr.isNull())
-					myCurr = new Date(Calendar.getInstance().getTime());
+					myCurr = new DateDay(Calendar.getInstance().getTime());
 			}
 				
 			/* Set up initial values and range */
-			theModel.setSelectableRange((myStart == null) ? null : myStart.getDate(),
-										(myEnd == null) ? null : myEnd.getDate());
+			setSelectableRange((myStart == null) ? null : myStart.getDate(),
+							   (myEnd == null)   ? null : myEnd.getDate());
 			
 			/* Pass onwards */
 			return super.getTableCellEditorComponent(table, myCurr.getDate(), isSelected, row, col);
 		}
 		
 		public Object getCellEditorValue() {
-			Date myValue = new Date(theModel.getSelectedDate());
+			DateDay myValue = new DateDay(getSelectedDate());
 			return myValue;
 		}
 		
 		public boolean stopCellEditing() {
-			Date myDate = (Date)getCellEditorValue();
+			DateDay myDate = (DateDay)getCellEditorValue();
 			if ((Object)myDate == null) {
 				fireEditingCanceled();
 				return false;

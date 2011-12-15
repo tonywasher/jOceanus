@@ -2,7 +2,7 @@ package uk.co.tolcroft.finance.data;
 
 import uk.co.tolcroft.finance.views.EventAnalysis;
 import uk.co.tolcroft.finance.views.MetaAnalysis;
-import uk.co.tolcroft.models.Date;
+import uk.co.tolcroft.models.DateDay;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
@@ -25,7 +25,7 @@ public class FinanceData extends DataSet<FinanceData> {
 	private Event.List				theEvents     	= null;
 	private EventValue.List			theEventValues 	= null;
 	private EventData.List			theEventData 	= null;
-    private Date.Range				theDateRange  	= null;
+    private DateDay.Range				theDateRange  	= null;
     private EventAnalysis			theAnalysis		= null;
     private LoadState				theLoadState  	= LoadState.INITIAL;
 
@@ -44,7 +44,7 @@ public class FinanceData extends DataSet<FinanceData> {
 	public Event.List 			getEvents()  		{ return theEvents; }
 	public EventValue.List 		getEventValues()  	{ return theEventValues; }
 	public EventData.List 		getEventData()  	{ return theEventData; }
-	public Date.Range 			getDateRange()  	{ return theDateRange; }
+	public DateDay.Range 			getDateRange()  	{ return theDateRange; }
 	public EventAnalysis		getAnalysis()  		{ return theAnalysis; }
 	public LoadState 			getLoadState()  	{ return theLoadState; }
 

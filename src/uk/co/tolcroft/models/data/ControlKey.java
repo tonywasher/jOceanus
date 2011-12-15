@@ -61,7 +61,6 @@ public class ControlKey extends DataItem<ControlKey> {
 	public  byte[] 			getPrivateKey()  		{ return getValues().getPrivateKey(); }
 	public  byte[] 			getPasswordHash()  		{ return getValues().getPasswordHash(); }
 	public  SecurityMode	getKeyMode()  			{ return getValues().getKeyMode(); }
-	public  int				getNumSteps()  			{ return getValues().getNumSteps(); }
 	private SecureRandom	getRandom()  			{ return getValues().getRandom(); }
 
 	/* Linking methods */
@@ -73,8 +72,7 @@ public class ControlKey extends DataItem<ControlKey> {
 	public static final int FIELD_PRIVATEKEY   	= DataItem.NUMFIELDS+1;
 	public static final int FIELD_PASSHASH		= DataItem.NUMFIELDS+2;
 	public static final int FIELD_KEYMODE  		= DataItem.NUMFIELDS+3;
-	public static final int FIELD_NUMSTEPS 		= DataItem.NUMFIELDS+4;
-	public static final int NUMFIELDS	   		= DataItem.NUMFIELDS+5; 
+	public static final int NUMFIELDS	   		= DataItem.NUMFIELDS+4; 
 
 	/**
 	 * Obtain the type of the item
@@ -98,7 +96,6 @@ public class ControlKey extends DataItem<ControlKey> {
 			case FIELD_PRIVATEKEY:	return "PrivateKey";
 			case FIELD_PASSHASH:	return "PasswordHash";
 			case FIELD_KEYMODE:		return "KeyMode";
-			case FIELD_NUMSTEPS:	return "NumSteps";
 			default:		  		return DataItem.fieldName(iField);
 		}
 	}
@@ -132,9 +129,6 @@ public class ControlKey extends DataItem<ControlKey> {
 				myString += (myValues.getKeyMode() == null) ? ("Id=" + myValues.theMode) : 
 													 		  myValues.getKeyMode().toString(); 
 				break;
-			case FIELD_NUMSTEPS:
-				myString += myValues.getNumSteps(); 
-				break;
 			default: 		
 				myString += super.formatField(pDetail, iField, pValues); 
 				break;
@@ -164,7 +158,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		switch (pList.getStyle()) {
 			case CLONE:
 				theMap 			= new EnumMap<SymKeyType,DataKey>(SymKeyType.class);
-				theCipherSet 	= new CipherSet(getRandom(), getKeyMode(), getNumSteps());				
+				theCipherSet 	= new CipherSet(getRandom(), getKeyMode());				
 			case COPY:
 			case CORE:
 				pList.setNewId(this);				
@@ -185,7 +179,6 @@ public class ControlKey extends DataItem<ControlKey> {
 	 * @param pList the list to which to add the key to 
 	 * @param uId the id of the ControlKey
 	 * @param uKeyMode the mode of the Key
-	 * @param uNumSteps the number of steps for the key
 	 * @param pPasswordHash the passwordHash
 	 * @param pPublicKey the public KeyDef
 	 * @param pPrivateKey the encrypted private KeyDef
@@ -193,7 +186,6 @@ public class ControlKey extends DataItem<ControlKey> {
 	private ControlKey(List     pList,
 				   	   int		uId,
 				   	   int		uKeyMode,
-				   	   int		uNumSteps,
 				   	   byte[]	pPasswordHash,
 				   	   byte[]	pPublicKey,
 				   	   byte[]	pPrivateKey) throws Exception {
@@ -203,7 +195,6 @@ public class ControlKey extends DataItem<ControlKey> {
 
 		/* Record the IDs */
 		myValues.setMode(uKeyMode);
-		myValues.setNumSteps(uNumSteps);
 
 		/* Store the details */
 		myValues.setPublicKey(pPublicKey);
@@ -233,7 +224,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		theMap = new EnumMap<SymKeyType,DataKey>(SymKeyType.class);
 		
 		/* Create the CipherSet */
-		theCipherSet = new CipherSet(getRandom(), getKeyMode(), getNumSteps());
+		theCipherSet = new CipherSet(getRandom(), getKeyMode());
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -266,7 +257,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		theMap = new EnumMap<SymKeyType,DataKey>(SymKeyType.class);
 		
 		/* Create the CipherSet */
-		theCipherSet = new CipherSet(getRandom(), getKeyMode(), getNumSteps());
+		theCipherSet = new CipherSet(getRandom(), getKeyMode());
 		
 		/* Allocate the id */
 		pList.setNewId(this);
@@ -306,7 +297,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		theMap = new EnumMap<SymKeyType,DataKey>(SymKeyType.class);
 		
 		/* Create the CipherSet */
-		theCipherSet = new CipherSet(getRandom(), getKeyMode(), getNumSteps());
+		theCipherSet = new CipherSet(getRandom(), getKeyMode());
 		
 		/* Allocate the id */
 		myList.setNewId(this);
@@ -595,14 +586,12 @@ public class ControlKey extends DataItem<ControlKey> {
 		 *  Add a ControlKey item from a Database/Backup
 		 * @param uId the id of the ControlKey
 		 * @param uKeyTypeId the id of the KeyType
-		 * @param uNumSteps the number of steps for the key
 		 * @param pPasswordHash the passwordHash
 		 * @param pPublicKey the public KeyDef
 		 * @param pPrivateKey the encrypted private KeyDef
 		 */
 		public ControlKey addItem(int  		uId,
 			   	  				  int		uKeyTypeId,
-			   	  				  int		uNumSteps,
 			   	  				  byte[]	pPasswordHash,
 			   	  				  byte[]	pPublicKey,
 			   	  				  byte[]	pPrivateKey) throws Exception {
@@ -612,7 +601,6 @@ public class ControlKey extends DataItem<ControlKey> {
 			myKey = new ControlKey(this, 
 								   uId,
 								   uKeyTypeId,
-								   uNumSteps,
 								   pPasswordHash,
 								   pPublicKey,
 							       pPrivateKey);
@@ -710,7 +698,6 @@ public class ControlKey extends DataItem<ControlKey> {
 			/* Clone the control key */
 			ControlKey myControl = addItem(pControlKey.getId(),
 										   pControlKey.getKeyMode().getMode(),
-										   pControlKey.getNumSteps(),
 										   pControlKey.getPasswordHash(),
 										   pControlKey.getPublicKey(),
 										   pControlKey.getPrivateKey());
@@ -746,7 +733,6 @@ public class ControlKey extends DataItem<ControlKey> {
 		private byte[]			thePublicKey	= null;
 		private byte[]			thePrivateKey	= null;
 		private byte[]			thePasswordHash	= null;
-		private int				theNumSteps		= CipherSet.DEFSTEPS;
 		private SecurityMode	theKeyMode		= null;
 		private int				theMode			= -1;
 		private SecurityControl	theControl		= null;
@@ -755,7 +741,6 @@ public class ControlKey extends DataItem<ControlKey> {
 		public  byte[] 			getPublicKey()  		{ return thePublicKey; }
 		public  byte[] 			getPrivateKey()  		{ return thePrivateKey; }
 		public  byte[] 			getPasswordHash()  		{ return thePasswordHash; }
-		public  int				getNumSteps()  			{ return theNumSteps; }
 		public  int				getMode()  				{ return theMode; }
 		public  SecurityMode	getKeyMode()  			{ return theKeyMode; }
 		public  SecurityControl	getSecurityControl()	{ return theControl; }
@@ -767,8 +752,6 @@ public class ControlKey extends DataItem<ControlKey> {
 			thePrivateKey 	= pValue; }
 		private void setPasswordHash(byte[] pValue) {
 			thePasswordHash = pValue; }
-		private void setNumSteps(int pValue) {
-			theNumSteps		= pValue; }
 		private void setKeyMode(SecurityMode pValue) {
 			theKeyMode 		= pValue;  
 			theMode			= (theKeyMode == null) ? -1 : theKeyMode.getMode(); }
@@ -790,15 +773,11 @@ public class ControlKey extends DataItem<ControlKey> {
 			Values 		myValues 		= (Values)pCompare;
 			Difference 	myDifference 	= Difference.Identical;
 			
-			/* Test integer differences */
-			if (theNumSteps != myValues.theNumSteps) 
-				myDifference = Difference.Different;
-			
 			/* Test byte array differences */
-			else if ((Utils.differs(thePublicKey,		myValues.thePublicKey).isDifferent())	 ||
-					 (Utils.differs(thePrivateKey,		myValues.thePrivateKey).isDifferent())   || 
-					 (Utils.differs(thePasswordHash,	myValues.thePasswordHash).isDifferent()) ||
-				 	 (SecurityMode.differs(theKeyMode,	myValues.theKeyMode).isDifferent()))
+			if ((Utils.differs(thePublicKey,		myValues.thePublicKey).isDifferent())	 ||
+				(Utils.differs(thePrivateKey,		myValues.thePrivateKey).isDifferent())   || 
+				(Utils.differs(thePasswordHash,		myValues.thePasswordHash).isDifferent()) ||
+				(SecurityMode.differs(theKeyMode,	myValues.theKeyMode).isDifferent()))
 				myDifference = Difference.Different;
 				
 			/* Return difference */
@@ -817,7 +796,6 @@ public class ControlKey extends DataItem<ControlKey> {
 			thePasswordHash	= myValues.getPasswordHash();
 			theMode			= myValues.getMode();
 			theKeyMode		= myValues.getKeyMode();
-			theNumSteps		= myValues.getNumSteps();
 		}
 		public Difference	fieldChanged(int fieldNo, HistoryValues<ControlKey> pOriginal) {
 			Values 	pValues = (Values)pOriginal;
@@ -834,10 +812,6 @@ public class ControlKey extends DataItem<ControlKey> {
 					break;
 				case FIELD_KEYMODE:
 					bResult = (SecurityMode.differs(theKeyMode, pValues.theKeyMode));
-					break;
-				case FIELD_NUMSTEPS:
-					bResult = (theNumSteps != pValues.theNumSteps) ? Difference.Different
-																   : Difference.Identical;
 					break;
 			}
 			return bResult;

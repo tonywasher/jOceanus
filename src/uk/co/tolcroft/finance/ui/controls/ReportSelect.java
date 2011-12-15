@@ -18,8 +18,7 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.EventAnalysis.AnalysisYear;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.ui.DateSelect.CalendarButton;
-import uk.co.tolcroft.models.ui.DateSelect.DateModel;
+import uk.co.tolcroft.models.ui.DateButton;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
 public class ReportSelect {
@@ -28,8 +27,7 @@ public class ReportSelect {
 	private JPanel				thePanel		= null;
 	private stdPanel			theParent		= null;
 	private View				theView			= null;
-	private DateModel			theModel		= null;
-	private CalendarButton		theDateButton	= null;
+	private DateButton			theDateButton	= null;
 	private JComboBox           theReportBox 	= null;
 	private JComboBox           theYearsBox 	= null;
 	private JLabel				theRepLabel		= null;
@@ -46,7 +44,7 @@ public class ReportSelect {
 	public  JPanel      getPanel()      { return thePanel; }
 	public 	ReportType 	getReportType() { return theState.getType(); }
 	public 	TaxYear 	getTaxYear()    { return theState.getYear(); }
-	public	Date 	    getReportDate() { return theState.getDate(); }
+	public	DateDay 	getReportDate() { return theState.getDate(); }
 				
 	/* Report descriptions */
 	private static final String Assets    	= "Asset";
@@ -55,6 +53,7 @@ public class ReportSelect {
 	private static final String Taxation  	= "Taxation";
 	private static final String Instant   	= "Instant";
 	private static final String Market    	= "Market";
+	private static final String Breakdown  	= "Breakdown";
 
 	/* Constructor */
 	public ReportSelect(View pView, stdPanel pReport) {
@@ -69,8 +68,7 @@ public class ReportSelect {
 		theYearsBox    = new JComboBox();
 		
 		/* Create the DateButton */
-		theDateButton = new CalendarButton();
-		theModel	  = theDateButton.getDateModel();
+		theDateButton = new DateButton();
 		
 		/* Create initial state */
 		theState = new ReportState();
@@ -84,6 +82,7 @@ public class ReportSelect {
 		theReportBox.addItem(IncomeExp);
 		theReportBox.addItem(Transaction);
 		theReportBox.addItem(Taxation);
+		theReportBox.addItem(Breakdown);
 		theReportBox.addItem(Market);
 		theReportBox.setSelectedItem(Instant);
 		
@@ -143,14 +142,14 @@ public class ReportSelect {
 		/* Add the listener for item changes */
 		theReportBox.addItemListener(myListener);
 		theYearsBox.addItemListener(myListener);
-		theDateButton.addPropertyChangeListener(CalendarButton.valueDATE, myListener);
+		theDateButton.addPropertyChangeListener(DateButton.valueDATE, myListener);
 	}
 	
 	/* refresh data */
 	public void refreshData(EventAnalysis pAnalysis) {
 		FinanceData		myData;
 		AnalysisYear  	myYear;
-		Date.Range  	myRange;
+		DateDay.Range  	myRange;
 		TaxYear 		myTaxYear = theState.getYear();
 		
 		EventAnalysis.List.ListIterator myIterator;
@@ -212,13 +211,13 @@ public class ReportSelect {
 	}
 
 	/* Set the range for the date box */
-	public  void setRange(Date.Range pRange) {
-		Date myStart = (pRange == null) ? null : pRange.getStart();
-		Date myEnd   = (pRange == null) ? null : pRange.getEnd();
+	public  void setRange(DateDay.Range pRange) {
+		DateDay myStart = (pRange == null) ? null : pRange.getStart();
+		DateDay myEnd   = (pRange == null) ? null : pRange.getEnd();
 		
 		/* Set up range */
-		theModel.setSelectableRange((myStart == null) ? null : myStart.getDate(),
-									(myEnd == null) ? null : myEnd.getDate());
+		theDateButton.setSelectableRange((myStart == null) ? null : myStart.getDate(),
+										 (myEnd == null) ? null : myEnd.getDate());
 	}
 	
 	/**
@@ -277,7 +276,7 @@ public class ReportSelect {
 			/* if this date relates to the Date button */
 			if (evt.getSource() == theDateButton) {
 				/* Access the value */
-				if (theState.setDate(theModel))
+				if (theState.setDate(theDateButton))
 					theParent.notifySelection(theSelf);
 			}			
 		}
@@ -314,6 +313,7 @@ public class ReportSelect {
 					else if (myName == Taxation)  	myType = ReportType.TAX;
 					else if (myName == Instant)   	myType = ReportType.INSTANT;
 					else if (myName == Market)    	myType = ReportType.MARKET;
+					else if (myName == Breakdown)   myType = ReportType.BREAKDOWN;
 					else bChange = false;
 				
 					/* Update state if we have a change */
@@ -329,12 +329,12 @@ public class ReportSelect {
 	/* SavePoint values */
 	private class ReportState {
 		/* Members */
-		private Date				theDate		= null;
+		private DateDay				theDate		= null;
 		private TaxYear	 			theYear		= null;
 		private ReportType			theType		= null;
 		
 		/* Access methods */
-		private Date 		getDate() 	{ return theDate; }
+		private DateDay 	getDate() 	{ return theDate; }
 		private TaxYear 	getYear() 	{ return theYear; }
 		private ReportType 	getType() 	{ return theType; }
 
@@ -342,7 +342,7 @@ public class ReportSelect {
 		 * Constructor
 		 */
 		private ReportState() {
-			theDate = new Date();
+			theDate = new DateDay();
 			theYear = null;
 			theType = ReportType.INSTANT;
 		}
@@ -352,19 +352,19 @@ public class ReportSelect {
 		 * @param pState state to copy from
 		 */
 		private ReportState(ReportState pState) {
-			theDate = new Date(pState.getDate());
+			theDate = new DateDay(pState.getDate());
 			theYear = pState.getYear();
 			theType	= pState.getType();
 		}
 		
 		/**
 		 * Set new Date
-		 * @param pModel the Spinner with the new date 
+		 * @param pButton the Button with the new date 
 		 */
-		private boolean setDate(DateModel pModel) {
+		private boolean setDate(DateButton pButton) {
 			/* Adjust the date and build the new range */
-			Date myDate = new Date(theModel.getSelectedDate());
-			if (Date.differs(myDate, theDate).isDifferent()) {
+			DateDay myDate = new DateDay(pButton.getSelectedDate());
+			if (DateDay.differs(myDate, theDate).isDifferent()) {
 				theDate = myDate;
 				return true;
 			}
@@ -397,7 +397,7 @@ public class ReportSelect {
 		private void applyState() {
 			/* Adjust the lock-down */
 			setLockDown();
-			theModel.setSelectedDate(theDate.getDate());
+			theDateButton.setSelectedDate(theDate.getDate());
 			if (theYear != null)
 				theYearsBox.setSelectedItem(Integer.toString(theYear.getDate().getYear()));
 			else 
@@ -412,6 +412,7 @@ public class ReportSelect {
 		TAX,
 		TRANSACTION,
 		INSTANT,
+		BREAKDOWN,
 		MARKET;
 	}
 }

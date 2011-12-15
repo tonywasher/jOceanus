@@ -1,6 +1,7 @@
 package uk.co.tolcroft.models.data;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.prefs.Preferences;
 
 import uk.co.tolcroft.models.*;
@@ -146,7 +147,7 @@ public class Properties {
 	/**
 	 * BirthDate for tax purposes
 	 */
-	private Date 			theBirthDate	= null;
+	private DateDay 			theBirthDate	= null;
 			
 	/**
 	 * Determine the DB Driver string
@@ -194,7 +195,7 @@ public class Properties {
 	 * Determine birth date for tax calculations
 	 * @return the birthday
 	 */
-	public Date getBirthDate() 				{ return theBirthDate; }
+	public DateDay getBirthDate() 			{ return theBirthDate; }
 
 	/**
 	 * Constructor 
@@ -211,7 +212,7 @@ public class Properties {
 	 * Load DB Driver from preferences 
 	 */
 	private void loadPreferences() throws Exception {
-		java.util.Date 			   myDate;
+		Date 			   myDate;
 		java.text.SimpleDateFormat myFormat;
 		String					   myBirthDate;
 		
@@ -251,7 +252,7 @@ public class Properties {
 			/* Parse the date */
 			myFormat     = new SimpleDateFormat("dd-MMM-yyyy");
 			myDate       = myFormat.parse(myBirthDate);
-			theBirthDate = new Date(myDate);
+			theBirthDate = new DateDay(myDate);
 		}
 		catch (Throwable e) {
 			throw new Exception(ExceptionClass.DATA,
@@ -368,7 +369,7 @@ public class Properties {
 	 * Set the BirthDate 
 	 * @param pValue the new value
 	 */
-	public void setBirthDate(Date pValue) {
+	public void setBirthDate(DateDay pValue) {
 		/* Record the new value */
 		theBirthDate = pValue;
 		

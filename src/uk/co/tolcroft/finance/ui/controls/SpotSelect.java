@@ -20,8 +20,7 @@ import uk.co.tolcroft.finance.data.AccountType;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.ui.DateSelect.CalendarButton;
-import uk.co.tolcroft.models.ui.DateSelect.DateModel;
+import uk.co.tolcroft.models.ui.DateButton;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
 public class SpotSelect {
@@ -30,8 +29,7 @@ public class SpotSelect {
 	private JPanel					thePanel		= null;
 	private stdPanel  				theParent		= null;
 	private View					theView			= null;
-	private CalendarButton			theDateButton	= null;
-	private DateModel				theModel		= null;
+	private DateButton				theDateButton	= null;
 	private JCheckBox				theShowClosed   = null;
 	private JButton					theNext   		= null;
 	private JButton					thePrev   		= null;
@@ -45,7 +43,7 @@ public class SpotSelect {
 	
 	/* Access methods */
 	public JPanel   	getPanel()  		{ return thePanel; }
-	public Date			getDate()			{ return theState.getDate(); }
+	public DateDay		getDate()			{ return theState.getDate(); }
 	public AccountType	getAccountType()	{ return theState.getAccountType(); }
 	public boolean		getShowClosed() 	{ return doShowClosed; }
 				
@@ -67,8 +65,7 @@ public class SpotSelect {
 		theShowClosed.setSelected(doShowClosed);
 		
 		/* Create the DateButton */
-		theDateButton	= new CalendarButton();
-		theModel		= theDateButton.getDateModel();
+		theDateButton	= new DateButton();
 		
 		/* Create the Buttons */
 		theNext   	= new JButton("Next");
@@ -127,7 +124,7 @@ public class SpotSelect {
 		theState.applyState();
 
 		/* Add the listener for item changes */
-		theDateButton.addPropertyChangeListener(CalendarButton.valueDATE, myListener);
+		theDateButton.addPropertyChangeListener(DateButton.valueDATE, myListener);
 		theShowClosed.addItemListener(myListener);
 		theNext.addActionListener(myListener);
 		thePrev.addActionListener(myListener);
@@ -138,7 +135,7 @@ public class SpotSelect {
 	 * Refresh data 
 	 */
 	public void refreshData() {
-		Date.Range   				myRange;
+		DateDay.Range   			myRange;
 		AccountType					myType	= null;
 		AccountType					myFirst	= null;
 		Account						myAccount;
@@ -225,13 +222,13 @@ public class SpotSelect {
 	 * Set the range for the date box
 	 * @param pRange the Range to set
 	 */
-	public  void setRange(Date.Range pRange) {
-		Date myStart = (pRange == null) ? null : pRange.getStart();
-		Date myEnd   = (pRange == null) ? null : pRange.getEnd();
+	public  void setRange(DateDay.Range pRange) {
+		DateDay myStart = (pRange == null) ? null : pRange.getStart();
+		DateDay myEnd   = (pRange == null) ? null : pRange.getEnd();
 		
 		/* Set up range */
-		theModel.setSelectableRange((myStart == null) ? null : myStart.getDate(),
-									(myEnd == null) ? null : myEnd.getDate());
+		theDateButton.setSelectableRange((myStart == null) ? null : myStart.getDate(),
+										 (myEnd == null) ? null : myEnd.getDate());
 	}
 	
 	/* Lock/Unlock the selection */
@@ -269,7 +266,7 @@ public class SpotSelect {
 	 * @param pPrev the previous Date
 	 * @param pNext the next Date
 	 */
-	public void setAdjacent(Date pPrev, Date pNext) {
+	public void setAdjacent(DateDay pPrev, DateDay pNext) {
 		/* Record the dates */
 		theState.setAdjacent(pPrev, pNext);
 	}
@@ -304,7 +301,7 @@ public class SpotSelect {
 			/* if this date relates to the Date button */
 			if (evt.getSource() == theDateButton) {
 				/* Access the value */
-				if (theState.setDate(theModel))
+				if (theState.setDate(theDateButton))
 					theParent.notifySelection(theSelf);
 			}			
 		}
@@ -345,21 +342,21 @@ public class SpotSelect {
 	private class SpotState {
 		/* Members */
 		private AccountType	theType		= null;
-		private Date		theDate		= null;
-		private Date		theNextDate	= null;
-		private Date		thePrevDate	= null;
+		private DateDay		theDate		= null;
+		private DateDay		theNextDate	= null;
+		private DateDay		thePrevDate	= null;
 		
 		/* Access methods */
 		private AccountType	getAccountType() 	{ return theType; }
-		private Date		getDate() 			{ return theDate; }
-		private Date 		getNextDate() 		{ return theNextDate; }
-		private Date 		getPrevDate() 		{ return thePrevDate; }
+		private DateDay		getDate() 			{ return theDate; }
+		private DateDay 	getNextDate() 		{ return theNextDate; }
+		private DateDay 	getPrevDate() 		{ return thePrevDate; }
 
 		/**
 		 * Constructor
 		 */
 		private SpotState() {
-			theDate = new Date();
+			theDate = new DateDay();
 		}
 		
 		/**
@@ -368,11 +365,11 @@ public class SpotSelect {
 		 */
 		private SpotState(SpotState pState) {
 			theType		= pState.getAccountType();
-			theDate 	= new Date(pState.getDate());
+			theDate 	= new DateDay(pState.getDate());
 			if (pState.getNextDate() != null)
-				theNextDate = new Date(pState.getNextDate());
+				theNextDate = new DateDay(pState.getNextDate());
 			if (pState.getPrevDate() != null)
-				thePrevDate = new Date(pState.getPrevDate());
+				thePrevDate = new DateDay(pState.getPrevDate());
 		}
 		
 		/**
@@ -386,12 +383,12 @@ public class SpotSelect {
 		
 		/**
 		 * Set new Date
-		 * @param pModel the Spinner with the new date 
+		 * @param pButton the Button with the new date 
 		 */
-		private boolean setDate(DateModel pModel) {
+		private boolean setDate(DateButton pButton) {
 			/* Adjust the date and build the new range */
-			Date myDate = new Date(theModel.getSelectedDate());
-			if (Date.differs(myDate, theDate).isDifferent()) {
+			DateDay myDate = new DateDay(pButton.getSelectedDate());
+			if (DateDay.differs(myDate, theDate).isDifferent()) {
 				theDate = myDate;
 				return true;
 			}
@@ -403,7 +400,7 @@ public class SpotSelect {
 		 */
 		private void setNext() {
 			/* Copy date */
-			theDate = new Date(theNextDate);
+			theDate = new DateDay(theNextDate);
 			applyState();
 		}
 
@@ -412,7 +409,7 @@ public class SpotSelect {
 		 */
 		private void setPrev() {
 			/* Copy date */
-			theDate = new Date(thePrevDate);
+			theDate = new DateDay(thePrevDate);
 			applyState();
 		}
 
@@ -421,7 +418,7 @@ public class SpotSelect {
 		 * @param pPrev the previous Date
 		 * @param pNext the next Date
 		 */
-		private void setAdjacent(Date pPrev, Date pNext) {
+		private void setAdjacent(DateDay pPrev, DateDay pNext) {
 			/* Record the dates */
 			thePrevDate = pPrev;
 			theNextDate = pNext;
@@ -436,7 +433,7 @@ public class SpotSelect {
 		private void applyState() {
 			/* Adjust the lock-down */
 			setLockDown();
-			theModel.setSelectedDate(theDate.getDate());
+			theDateButton.setSelectedDate(theDate.getDate());
 			theTypesBox.setSelectedIndex(-1);
 			if (theType != null) theTypesBox.setSelectedItem(theType.getName());
 		}

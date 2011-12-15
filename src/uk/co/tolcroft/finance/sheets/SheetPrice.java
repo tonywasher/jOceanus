@@ -1,11 +1,19 @@
 package uk.co.tolcroft.finance.sheets;
 
-import jxl.*;
+import java.util.Date;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
+
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.DilutionEvent;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.sheets.SheetDataItem;
+import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 
@@ -73,8 +81,8 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 			int myActId		= loadInteger(2);
 		
 			/* Access the rates and end-date */
-			java.util.Date	myDate 			= loadDate(3);
-			byte[]			myPriceBytes 	= loadBytes(4);
+			Date	myDate 			= loadDate(3);
+			byte[]	myPriceBytes 	= loadBytes(4);
 		
 			/* Load the item */
 			theList.addItem(myID, myControlId, myDate, myActId, myPriceBytes);
@@ -87,8 +95,8 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 			String myAccount	= loadString(1);
 		
 			/* Access the name and description bytes */
-			java.util.Date	myDate 	= loadDate(2);
-			String			myPrice	= loadString(3);
+			Date	myDate 	= loadDate(2);
+			String	myPrice	= loadString(3);
 		
 			/* Load the item */
 			theList.addItem(myID, myDate, myAccount, myPrice);
@@ -115,30 +123,31 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 		else {
 			/* Set the fields */
 			writeInteger(0, pItem.getId());
-			writeValidatedString(1, pItem.getAccount().getName(), SheetAccount.AccountNames);				
+			writeString(1, pItem.getAccount().getName());				
 			writeDate(2, pItem.getDate());
 			writeNumber(3, pItem.getPrice());			
 		}
 	}
 
-	/**
-	 * PreProcess on write
-	 */
-	protected boolean preProcessOnWrite() throws Throwable {		
+	@Override
+	protected void preProcessOnWrite() throws Throwable {		
 		/* Ignore if we are creating a backup */
-		if (isBackup) return false;
+		if (isBackup) return;
+
+		/* Create a new row */
+		newRow();
 
 		/* Write titles */
-		writeString(0, AcctPrice.fieldName(AcctPrice.FIELD_ID));
-		writeString(1, AcctPrice.fieldName(AcctPrice.FIELD_ACCOUNT));
-		writeString(2, AcctPrice.fieldName(AcctPrice.FIELD_DATE));
-		writeString(3, AcctPrice.fieldName(AcctPrice.FIELD_PRICE));			
-		return true;
+		writeHeader(0, AcctPrice.fieldName(AcctPrice.FIELD_ID));
+		writeHeader(1, AcctPrice.fieldName(AcctPrice.FIELD_ACCOUNT));
+		writeHeader(2, AcctPrice.fieldName(AcctPrice.FIELD_DATE));
+		writeHeader(3, AcctPrice.fieldName(AcctPrice.FIELD_PRICE));			
+		
+		/* Adjust for Header */
+		adjustForHeader();
 	}	
 
-	/**
-	 * PostProcess on write
-	 */
+	@Override
 	protected void postProcessOnWrite() throws Throwable {		
 		/* If we are creating a backup */
 		if (isBackup) {
@@ -153,9 +162,11 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 
 			/* Hide the ID Column */
 			setHiddenColumn(0);
+			setIntegerColumn(0);
 			
 			/* Set the Account column width */
 			setColumnWidth(1, Account.NAMELEN);
+			applyDataValidation(1, SheetAccount.AccountNames);
 			
 			/* Set Price and Date columns */
 			setDateColumn(2);
@@ -166,26 +177,25 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 	/**
 	 *  Load the Prices from an archive
 	 *  @param pThread   the thread status control
-	 *  @param pWorkbook the workbook to load from
+	 *  @param pHelper the sheet helper
 	 *  @param pData the data set to load into
 	 *  @param pDilution the dilution events to modify the prices with
 	 *  @return continue to load <code>true/false</code> 
 	 */
 	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
-										 Workbook					pWorkbook,
+										 SheetHelper				pHelper,
 							   	  		 FinanceData				pData,
 							   	  		 DilutionEvent.List 		pDilution) throws Exception {
 		/* Local variables */
-		Range[]   		myRange;
+		AreaReference	myRange;
 		Sheet     		mySheet;
-		Cell      		myTop;
-		Cell      		myBottom;
-		int       		myActRow;
+		CellReference	myTop;
+		CellReference	myBottom;
+		Row       		myActRow;
 		int       		myDateCol;
 		String    		myAccount;
 		String    		myPrice; 
-		java.util.Date  myDate;
-		DateCell  		myDateCell;
+		Date  			myDate;
 		Cell      		myCell;
 		int       		myTotal;
 		int				mySteps;
@@ -194,7 +204,7 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 		/* Protect against exceptions */
 		try { 
 			/* Find the range of cells */
-			myRange = pWorkbook.findByName(Prices1);
+			myRange = pHelper.resolveAreaReference(Prices1);
 		
 			/* Access the number of reporting steps */
 			mySteps = pThread.getReportingSteps();
@@ -203,18 +213,17 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 			if (!pThread.setNewStage(Prices)) return false;
 		
 			/* If we found the range OK */
-			if ((myRange != null) && (myRange.length == 1)) {
-			
+			if (myRange != null) {
 				/* Access the relevant sheet and Cell references */
-				mySheet   = pWorkbook.getSheet(myRange[0].getFirstSheetIndex());
-				myTop     = myRange[0].getTopLeft();
-				myBottom  = myRange[0].getBottomRight();
-				myActRow  = myTop.getRow();
-				myDateCol = myTop.getColumn();
+				myTop    	= myRange.getFirstCell();
+				myBottom 	= myRange.getLastCell();
+				mySheet  	= pHelper.getSheetByName(myTop.getSheetName());
+				myDateCol	= myTop.getCol();
+				myActRow  	= mySheet.getRow(myTop.getRow());
 		
 				/* Count the number of tax classes */
 				myTotal  = (myBottom.getRow() - myTop.getRow() + 1);
-				myTotal *= (myBottom.getColumn() - myTop.getColumn() - 1);
+				myTotal *= (myBottom.getCol() - myTop.getCol() - 1);
 			
 				/* Declare the number of steps */
 				if (!pThread.setNumSteps(myTotal)) return false;
@@ -224,24 +233,28 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 			     	 i <= myBottom.getRow();
 			     	 i++) {
 				
+					/* Access the row */
+					Row myRow 	= mySheet.getRow(i);
+				
 					/* Access date */
-					myDateCell = (DateCell)mySheet.getCell(myDateCol, i);
-					myDate     = myDateCell.getDate();
+					myCell 	= myRow.getCell(myDateCol);
+					myDate	= myCell.getDateCellValue();
 			    
 					/* Loop through the columns of the table */
-					for (int j = myTop.getColumn() + 2;
-				     	 j <= myBottom.getColumn();
+					for (int j = myTop.getCol() + 2;
+				     	 j <= myBottom.getCol();
 				     	 j++) {
 					
 						/* Access account */
-						myAccount = mySheet.getCell(j, myActRow).getContents();
+						myCell	  = myActRow.getCell(j);
+						myAccount = myCell.getStringCellValue();
 				
 						/* Handle price which may be missing */
-						myCell    = mySheet.getCell(j, i);
+						myCell    = myRow.getCell(j);
 						myPrice   = null;
-						if (myCell.getType() != CellType.EMPTY) {
-							double myDouble = ((NumberCell)myCell).getValue();
-							myPrice = Double.toString(myDouble);
+						if (myCell != null) {
+							/* Access the formatted cell */
+							myPrice = pHelper.formatNumericCell(myCell);
 				
 							/* If the price is non-zero */
 							if (!myPrice.equals("0.0")) {

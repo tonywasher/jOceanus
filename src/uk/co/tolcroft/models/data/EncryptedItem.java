@@ -2,8 +2,8 @@ package uk.co.tolcroft.models.data;
 
 import uk.co.tolcroft.models.Difference;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Number;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.security.SecurityControl;
 import uk.co.tolcroft.models.threads.ThreadStatus;
@@ -768,7 +768,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 */
 		protected void setDecryptedValue(byte[] pValue) throws Exception {
 			/* Convert the byte array to a string */
-			Utils.byteToCharArray(pValue);
+			theChars = Utils.byteToCharArray(pValue);
 		}
 		
 		/**
@@ -816,7 +816,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	/**
 	 *  The Underlying Number Pair Class
 	 */
-	private abstract class NumberPair<X extends Number> extends StringPair {
+	private abstract class NumberPair<X extends Decimal> extends StringPair {
 		/**
 		 * The Non-encrypted number
 		 */
@@ -909,7 +909,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			EncryptedItem<?>.NumberPair<?> myThat = (EncryptedItem<?>.NumberPair<?>)pThat;
 			
 			/* Check differences */
-			if (Number.differs(getValue(), myThat.getValue()).isDifferent()) return false;
+			if (Decimal.differs(getValue(), myThat.getValue()).isDifferent()) return false;
 			if (Utils.differs(getBytes(), myThat.getBytes()).isDifferent()) return false;
 			return true;
 		}

@@ -29,12 +29,12 @@ public enum DatePeriod {
 	 * @param pDate the date to adjust
 	 * @param bForward adjust forwards or backwards
 	 */
-	public Date adjustDate(Date 	pDate,
-			               boolean 	bForward) {
-		Date myDate;
+	public DateDay adjustDate(DateDay 	pDate,
+							  boolean 	bForward) {
+		DateDay myDate;
 	
 		/* Initialise the date */
-		myDate = new Date(pDate);
+		myDate = new DateDay(pDate);
 	
 		/* Adjust the field */
 		myDate.adjustField(theField, (bForward) ? theValue : -theValue);

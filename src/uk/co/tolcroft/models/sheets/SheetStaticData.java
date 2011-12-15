@@ -117,25 +117,26 @@ public abstract class SheetStaticData <T extends StaticData<T,?>> extends SheetD
 		}
 	}
 
-	/**
-	 * PreProcess on write 
-	 */
-	protected boolean preProcessOnWrite() throws Throwable {		
-		/* Ignore if we are creating a backup */
-		if (isBackup) return false;
+	@Override
+	protected void preProcessOnWrite() throws Throwable {		
+		/* Ignore if this is a backup */
+		if (isBackup) return;
 
+		/* Create a new row */
+		newRow();
+		
 		/* Write titles */
-		writeString(0, StaticData.fieldName(StaticData.FIELD_ID));
-		writeString(1, StaticData.fieldName(StaticData.FIELD_ORDER));
-		writeString(2, StaticData.fieldName(StaticData.FIELD_ENABLED));
-		writeString(3, StaticData.fieldName(StaticData.FIELD_NAME));
-		writeString(4, StaticData.fieldName(StaticData.FIELD_DESC));			
-		return true;
+		writeHeader(0, StaticData.fieldName(StaticData.FIELD_ID));
+		writeHeader(1, StaticData.fieldName(StaticData.FIELD_ORDER));
+		writeHeader(2, StaticData.fieldName(StaticData.FIELD_ENABLED));
+		writeHeader(3, StaticData.fieldName(StaticData.FIELD_NAME));
+		writeHeader(4, StaticData.fieldName(StaticData.FIELD_DESC));			
+			
+		/* Adjust for Header */
+		adjustForHeader();
 	}	
 
-	/**
-	 * PostProcess on Write
-	 */
+	@Override
 	protected void postProcessOnWrite() throws Throwable {		
 		/* If we are creating a backup */
 		if (isBackup) {
@@ -150,6 +151,11 @@ public abstract class SheetStaticData <T extends StaticData<T,?>> extends SheetD
 
 			/* Set the Id column as hidden */
 			setHiddenColumn(0);
+			
+			/* Set default column types */
+			setIntegerColumn(0);
+			setIntegerColumn(1);
+			setBooleanColumn(2);
 
 			/* Set the name column width and range */
 			nameColumnRange(3, theNames);

@@ -5,7 +5,7 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataSet;
@@ -35,7 +35,7 @@ public class EventAnalysis implements DebugObject {
 	private MetaAnalysis		theMetaAnalysis	= null;
 	private List				theYears		= null;
 	private ActDetail			theAccount		= null;
-	private Date				theDate			= null;
+	private DateDay				theDate			= null;
 	private DilutionEvent.List 	theDilutions 	= null;
 	private ExternalAccount		theTaxMan		= null;
 	private TransDetail			theTaxPaid		= null;
@@ -53,7 +53,7 @@ public class EventAnalysis implements DebugObject {
 	 * @param pDate	the Date for the analysis
 	 */
 	public EventAnalysis(FinanceData	pData,
-						 Date	 		pDate) throws Exception {
+						 DateDay	 	pDate) throws Exception {
 		Event.List.ListIterator 	myIterator;
 		Event.List				 	myEvents;
 		Event 						myCurr;
@@ -109,7 +109,7 @@ public class EventAnalysis implements DebugObject {
 		Event.List.ListIterator 	myIterator;
 		Event.List					myEvents;
 		Event 						myCurr;
-		Date.Range					myRange;
+		DateDay.Range				myRange;
 		Account						myAccount;
 		Statement.Line				myLine;
 		Statement.List				myList;
@@ -235,7 +235,7 @@ public class EventAnalysis implements DebugObject {
 		Event.List.ListIterator	myIterator;
 		int             		myResult	= -1;
 		TaxYear         		myTax  		= null;
-		Date   					myDate 		= null;
+		DateDay   				myDate 		= null;
 		TaxYear.List			myList;
 		AnalysisYear			myYear;
 		Account					myAccount;
@@ -396,7 +396,7 @@ public class EventAnalysis implements DebugObject {
 		private FinanceData		theData			= null;
 
 		/* Access methods */
-		public 	Date			getDate()			{ return theYear.getDate(); }
+		public 	DateDay			getDate()			{ return theYear.getDate(); }
 		public 	TaxYear			getTaxYear()		{ return theYear; }
 		public 	Analysis		getAnalysis()		{ return theAnalysis; }
 		public 	MetaAnalysis	getMetaAnalysis()	{ return theMetaAnalysis; }
@@ -473,7 +473,7 @@ public class EventAnalysis implements DebugObject {
 			String myString = ""; 
 			switch (iField) {
 				case FIELD_YEAR: 			
-					myString += Date.format(theYear.getDate());
+					myString += DateDay.format(theYear.getDate());
 					break;
 			}
 			return myString;
@@ -497,7 +497,7 @@ public class EventAnalysis implements DebugObject {
 			AnalysisYear myThat = (AnalysisYear)pThat;
 		
 			/* Check for equality */
-			if (Date.differs(getDate(), myThat.getDate()).isDifferent()) 	return false;
+			if (DateDay.differs(getDate(), myThat.getDate()).isDifferent()) 	return false;
 			return true;
 		}
 

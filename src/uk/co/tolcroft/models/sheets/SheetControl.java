@@ -106,22 +106,23 @@ public class SheetControl extends SheetDataItem<ControlData> {
 		}
 	}
 
-	/**
-	 * PreProcess on write
-	 */
-	protected boolean preProcessOnWrite() throws Throwable {		
-		/* Ignore if we are creating a backup */
-		if (isBackup) return false;
+	@Override
+	protected void preProcessOnWrite() throws Throwable {		
+		/* Ignore if this is a backup */
+		if (isBackup) return;
 
+		/* Create a new row */
+		newRow();
+		
 		/* Write titles */
-		writeString(0, ControlData.fieldName(ControlData.FIELD_ID));			
-		writeString(1, ControlData.fieldName(ControlData.FIELD_VERS));			
-		return true;
+		writeHeader(0, ControlData.fieldName(ControlData.FIELD_ID));			
+		writeHeader(1, ControlData.fieldName(ControlData.FIELD_VERS));
+			
+		/* Adjust for Header */
+		adjustForHeader();
 	}	
 
-	/**
-	 * PostProcess on write
-	 */
+	@Override
 	protected void postProcessOnWrite() throws Throwable {		
 		/* If we are creating a backup */
 		if (isBackup) {
@@ -137,8 +138,9 @@ public class SheetControl extends SheetDataItem<ControlData> {
 			/* Set the Id column as hidden */
 			setHiddenColumn(0);
 
-			/* Set the Version column width */
-			setColumnWidth(1, 8);
+			/* Set default column types */
+			setIntegerColumn(0);
+			setIntegerColumn(1);
 		}
 	}
 }

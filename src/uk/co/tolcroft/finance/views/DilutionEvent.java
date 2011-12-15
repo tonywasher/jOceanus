@@ -1,10 +1,12 @@
 package uk.co.tolcroft.finance.views;
 
+import java.util.Date;
+
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Date;
+import uk.co.tolcroft.models.DateDay;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.*;
 
@@ -16,12 +18,12 @@ public class DilutionEvent extends ReportItem<DilutionEvent> {
 
 	/* Members */
 	private Account			theAccount	= null;
-	private Date			theDate		= null;
+	private DateDay			theDate		= null;
 	private	Dilution		theDilution	= null;
 
 	/* Access methods */
 	private Account			getAccount()  	{ return theAccount; }
-	private Date			getDate() 		{ return theDate; }	
+	private DateDay			getDate() 		{ return theDate; }	
 	private Dilution		getDilution() 	{ return theDilution; }	
 
 	/* Field IDs */
@@ -74,7 +76,7 @@ public class DilutionEvent extends ReportItem<DilutionEvent> {
 				myString = pDetail.addDebugLink(theAccount, myString);
 				break;
 			case FIELD_DATE: 		
-				myString += Date.format(theDate);
+				myString += DateDay.format(theDate);
 				break;
 			case FIELD_DILUTION: 	
 				myString += Dilution.format(theDilution);
@@ -101,7 +103,7 @@ public class DilutionEvent extends ReportItem<DilutionEvent> {
 		DilutionEvent myEvent = (DilutionEvent)pThat;
 		
 		/* Check for equality */
-		if (Date.differs(getDate(),      	myEvent.getDate()).isDifferent()) 		return false;
+		if (DateDay.differs(getDate(),      myEvent.getDate()).isDifferent()) 		return false;
 		if (Account.differs(getAccount(),  	myEvent.getAccount()).isDifferent()) 	return false;
 		if (Dilution.differs(getDilution(),	myEvent.getDilution()).isDifferent())	return false;
 		return getBase().equals(myEvent.getBase());
@@ -194,7 +196,7 @@ public class DilutionEvent extends ReportItem<DilutionEvent> {
 	 */
 	private DilutionEvent(List		pList,
 						  Account 	pAccount,
-						  Date    	pDate,
+						  DateDay   pDate,
 						  Dilution	pDilution) {
 		/* Call super constructor */
 		super(pList);
@@ -247,12 +249,12 @@ public class DilutionEvent extends ReportItem<DilutionEvent> {
 		 * @param pDate the date of the price
 		 * @param pDilution the (possibly) diluted price
 		 */
-		public void addDilution(String 			pAccount,
-								java.util.Date 	pDate,
-								String 			pDilution) throws Exception {
+		public void addDilution(String 	pAccount,
+								Date 	pDate,
+								String 	pDilution) throws Exception {
 			DilutionEvent 	myEvent;
 			Account			myAccount;
-			Date			myDate;
+			DateDay			myDate;
 			Dilution		myDilution;
 			Account.List	myAccounts;
 			
@@ -266,7 +268,7 @@ public class DilutionEvent extends ReportItem<DilutionEvent> {
 			                        "Invalid Dilution account [" + pAccount + "]");
 			
 			/* Create the date */
-			myDate = new Date(pDate);
+			myDate = new DateDay(pDate);
 			
 			/* Record the dilution */
 			myDilution = Dilution.Parse(pDilution);
@@ -317,7 +319,7 @@ public class DilutionEvent extends ReportItem<DilutionEvent> {
 		 * @param pDate the date of the price
 		 * @return the dilution factor
 		 */
-		public Dilution getDilutionFactor(Account pAccount, Date pDate) {
+		public Dilution getDilutionFactor(Account pAccount, DateDay pDate) {
 			SortedList<DilutionEvent>.ListIterator myIterator;
 			DilutionEvent 	myEvent;
 			Dilution 		myDilution = new Dilution(Dilution.MAX_VALUE);
@@ -351,13 +353,13 @@ public class DilutionEvent extends ReportItem<DilutionEvent> {
 		 * @param pDate the date of the price
 		 * @param pPrice the (possibly) diluted price
 		 */
-		public void addPrice(String 		pAccount,
-							 java.util.Date pDate,
-							 String			pPrice) throws Exception {
+		public void addPrice(String pAccount,
+							 Date 	pDate,
+							 String	pPrice) throws Exception {
 			Account			myAccount;
 			Account.List 	myAccounts;
 			AcctPrice.List	myPrices;
-			Date			myDate;
+			DateDay			myDate;
 			Price    		myPrice;
 			DilutedPrice 	myDilutedPrice;
 			Dilution		myDilution;
@@ -373,7 +375,7 @@ public class DilutionEvent extends ReportItem<DilutionEvent> {
 			                        "Invalid Price account [" + pAccount + "]");
 			
 			/* Create the date */
-			myDate = new Date(pDate);
+			myDate = new DateDay(pDate);
 
 			/* If the account has diluted prices for this date */
 			if ((hasDilution(myAccount)) &&

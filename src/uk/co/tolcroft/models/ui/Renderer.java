@@ -5,8 +5,8 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Number.*;
-import uk.co.tolcroft.models.ui.DateSelect.CalendarCellRenderer;
+import uk.co.tolcroft.models.Decimal.*;
+import uk.co.tolcroft.models.ui.DateButton.CellRenderer;
 
 public class Renderer {
 	/* Properties */
@@ -99,65 +99,23 @@ public class Renderer {
 			return this;
 		}
 	}
-	
-	/* Date Cell Renderer */
-	public static class DateCell extends DefaultTableCellRenderer {
-		private static final long serialVersionUID = -7384071058221166614L;
-		private RenderData theData = null;
-		
-		public DateCell() {
-			super();
-			theData = new RenderData(true);
-		}
 
-		public void setValue(Object value) {
-			Date 	myDate;
-			String  s;
-			
-			if (value == theError)  s = theError;
-			else if (value == null) s = "";
-			else {
-				myDate = (Date)value;
-				s      = myDate.formatDate();
-			}
-			
-			super.setValue(s);
-		}
-		public JComponent getTableCellRendererComponent(JTable table, Object value,
-														boolean isSelected, 
-														boolean hasFocus, 
-														int row, int column) {
-			super.getTableCellRendererComponent(table, value, isSelected,
-												hasFocus, row, column);
-			StdTable<?>.DataTableModel myModel = (StdTable<?>.DataTableModel)table.getModel();
-			theData.setPosition(row, column, isSelected);
-			myModel.getRenderData(theData);
-			setForeground(theData.getForeGround());
-			setBackground(theData.getBackGround());
-			setFont(theData.getFont());
-			setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-		    setToolTipText(theData.getToolTip());
-			return this;
-		}
-	}
-	
 	/* Calendar Cell Renderer */
-	public static class CalendarCell extends CalendarCellRenderer {
+	public static class CalendarCell extends CellRenderer {
 		private static final long serialVersionUID = 1947211408966548011L;
 		private RenderData theData;
 		
 		public CalendarCell() {
-			super("dd-MMM-yyyy");
 			theData 	= new RenderData(true);
 		}
 
 		public void setValue(Object value) {
-			Date 	myDate;
+			DateDay 	myDate;
 			
 			/* If this is a Date value */
-			if (value instanceof Date) {
+			if (value instanceof DateDay) {
 				/* Extract the java date */
-				myDate = (Date)value;
+				myDate = (DateDay)value;
 				value  = myDate.getDate();
 			}
 			

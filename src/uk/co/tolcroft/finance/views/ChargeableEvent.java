@@ -2,7 +2,7 @@ package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.Event;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.help.DebugDetail;
 
 public class ChargeableEvent extends ReportItem<ChargeableEvent> {
@@ -22,7 +22,7 @@ public class ChargeableEvent extends ReportItem<ChargeableEvent> {
 	 * Get the Date of the chargeable event 
 	 * @return the date of the chargeable event
 	 */
-	public Date 			getDate()		{ return getBase().getDate(); }
+	public DateDay 			getDate()		{ return getBase().getDate(); }
 
 	/**
 	 * Get the Description of the chargeable event 

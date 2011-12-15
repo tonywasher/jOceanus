@@ -18,7 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import uk.co.tolcroft.finance.ui.MaintProperties;
-import uk.co.tolcroft.models.Date;
+import uk.co.tolcroft.models.DateDay;
 import uk.co.tolcroft.models.PropertySet;
 import uk.co.tolcroft.models.PropertySet.BooleanProperty;
 import uk.co.tolcroft.models.PropertySet.DateProperty;
@@ -27,8 +27,6 @@ import uk.co.tolcroft.models.PropertySet.IntegerProperty;
 import uk.co.tolcroft.models.PropertySet.Property;
 import uk.co.tolcroft.models.PropertySet.PropertyType;
 import uk.co.tolcroft.models.PropertySet.StringProperty;
-import uk.co.tolcroft.models.ui.DateSelect.CalendarButton;
-import uk.co.tolcroft.models.ui.DateSelect.DateModel;
 import uk.co.tolcroft.models.ui.ValueField.ValueClass;
 
 public class PropertySetPanel extends JPanel {
@@ -113,7 +111,7 @@ public class PropertySetPanel extends JPanel {
 					/* Add the item to the options panel */
 					myOptions.add(myItem.getComponent());
 					break;
-				default:
+				case String:
 					/* Add the Label into the first slot */
 					myConstraints.gridx 	= 0;
 					myConstraints.gridy 	= myRow;
@@ -133,6 +131,37 @@ public class PropertySetPanel extends JPanel {
 					myConstraints.anchor    = GridBagConstraints.LINE_START;
 					myConstraints.insets	= new Insets(5,5,5,5);
 					add(myItem.getComponent(), myConstraints);
+					break;
+				default:
+					/* Add the Label into the first slot */
+					myConstraints.gridx 	= 0;
+					myConstraints.gridy 	= myRow;
+					myConstraints.gridwidth = 1;
+					myConstraints.fill 		= GridBagConstraints.NONE;
+					myConstraints.weightx   = 0.0;
+					myConstraints.anchor    = GridBagConstraints.LINE_END;
+					myConstraints.insets	= new Insets(5,5,5,5);
+					add(myItem.getLabel(), myConstraints);
+
+					/* Add the Component into the second slot */
+					myConstraints.gridx 	= 1;
+					myConstraints.gridy 	= myRow;
+					myConstraints.gridwidth = 1;
+					myConstraints.fill 		= GridBagConstraints.NONE;
+					myConstraints.weightx   = 0.0;
+					myConstraints.anchor    = GridBagConstraints.LINE_START;
+					myConstraints.insets	= new Insets(5,5,5,5);
+					add(myItem.getComponent(), myConstraints);
+
+					/* Add the Component into the second slot */
+					myConstraints.gridx 	= 2;
+					myConstraints.gridy 	= myRow++;
+					myConstraints.gridwidth = GridBagConstraints.REMAINDER;
+					myConstraints.fill 		= GridBagConstraints.HORIZONTAL;
+					myConstraints.weightx   = 1.0;
+					myConstraints.anchor    = GridBagConstraints.LINE_START;
+					myConstraints.insets	= new Insets(5,5,5,5);
+					add(new JLabel(), myConstraints);
 					break;
 			}
 			
@@ -381,6 +410,7 @@ public class PropertySetPanel extends JPanel {
 				/* Access the property and create the underlying field */
 				theInteger 	= (IntegerProperty)pProperty;
 				theField	= new ValueField(ValueClass.Integer);
+				theField.setColumns(10);
 				
 				/* Add property change listener */
 				theField.addPropertyChangeListener(ValueField.valueName, new PropertyListener());
@@ -490,17 +520,12 @@ public class PropertySetPanel extends JPanel {
 			/**
 			 * The underlying button field 
 			 */
-			private final CalendarButton	theField;
+			private final DateButton		theField;
 			
 			/**
 			 * The property as a dateProperty 
 			 */
 			private final DateProperty		theDate;
-			
-			/**
-			 * The Date model
-			 */
-			private final DateModel			theDateModel;
 			
 			/**
 			 * Constructor
@@ -509,8 +534,7 @@ public class PropertySetPanel extends JPanel {
 			private DateField(Property pProperty) {
 				/* Access the property and create the underlying field */
 				theDate 		= (DateProperty)pProperty;
-				theField		= new CalendarButton();
-				theDateModel	= theField.getDateModel();
+				theField		= new DateButton();
 				
 				/* Add property change listener */
 				theField.addPropertyChangeListener(ValueField.valueName, new PropertyListener());
@@ -519,7 +543,7 @@ public class PropertySetPanel extends JPanel {
 			@Override
 			protected void updateField() {
 				/* Update the field */
-				theDateModel.setSelectedDate(theDate.getValue().getDate());
+				theField.setSelectedDate(theDate.getValue().getDate());
 				
 				/* Set font and foreground */
 				theField.setForeground(RenderData.getForeground(theDate));
@@ -540,7 +564,7 @@ public class PropertySetPanel extends JPanel {
 					/* If this is our property */
 					if (o == theField) {
 						/* Set the new value of the property */
-						Date myValue = new Date(theDateModel.getSelectedDate());
+						DateDay myValue = new DateDay(theField.getSelectedDate());
 						theDate.setValue(myValue);
 					
 						/* Note if we have any changes */

@@ -114,21 +114,17 @@ public class SheetEventValues extends SheetDataItem<EventValue> {
 		}
 	}
 
-	/**
-	 * PreProcess on write
-	 */
-	protected boolean preProcessOnWrite() throws Throwable {		
+	@Override
+	protected void preProcessOnWrite() throws Throwable {		
 		/* Ignore if we are creating a backup */
-		if (isBackup) return false;
+		if (isBackup) return;
 
 		/* Write titles */
 		//writeString(0, TaxYear.fieldName(TaxYear.FIELD_ID));
-		return true;
+		return;
 	}	
 
-	/**
-	 * PostProcess on write
-	 */
+	@Override
 	protected void postProcessOnWrite() throws Throwable {		
 		/* If we are creating a backup */
 		if (isBackup) {

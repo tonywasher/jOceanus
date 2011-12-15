@@ -1,13 +1,16 @@
 package uk.co.tolcroft.finance.sheets;
 
-import jxl.Cell;
-import jxl.Range;
-import jxl.Sheet;
-import jxl.Workbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
+
 import uk.co.tolcroft.finance.data.EventInfoType;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.sheets.SheetStaticData;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 
@@ -71,19 +74,19 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
 	/**
 	 *  Load the InfoTypes from an archive
 	 *  @param pThread   the thread status control
-	 *  @param pWorkbook the workbook to load from
+	 *  @param pHelper the sheet helper
 	 *  @param pData the data set to load into
 	 *  @return continue to load <code>true/false</code> 
 	 */
 	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
-										 Workbook					pWorkbook,
+										 SheetHelper				pHelper,
 							   	  		 FinanceData				pData) throws Exception {
 		/* Local variables */
 		EventInfoType.List 	myList;
-		Range[] 			myRange;
+		AreaReference		myRange;
 		Sheet   			mySheet;
-		Cell    			myTop;
-		Cell    			myBottom;
+		CellReference		myTop;
+		CellReference		myBottom;
 		Cell    			myCell;
 		int     			myCol;
 		int     			myTotal;
@@ -93,7 +96,7 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
 		/* Protect against exceptions */
 		try {
 			/* Find the range of cells */
-			myRange = pWorkbook.findByName(EventInfoTypes);
+			myRange = pHelper.resolveAreaReference(EventInfoTypes);
 		
 			/* Declare the new stage */
 			if (!pThread.setNewStage(EventInfoTypes)) return false;
@@ -102,13 +105,12 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
 			mySteps = pThread.getReportingSteps();
 			
 			/* If we found the range OK */
-			if ((myRange != null) && (myRange.length == 1)) {
-			
+			if (myRange != null) {
 				/* Access the relevant sheet and Cell references */
-				mySheet  = pWorkbook.getSheet(myRange[0].getFirstSheetIndex());
-				myTop    = myRange[0].getTopLeft();
-				myBottom = myRange[0].getBottomRight();
-				myCol    = myTop.getColumn();
+				myTop    	= myRange.getFirstCell();
+				myBottom 	= myRange.getLastCell();
+				mySheet  	= pHelper.getSheetByName(myTop.getSheetName());
+				myCol		= myTop.getCol();
 		
 				/* Count the number of InfoTypes */
 				myTotal  = myBottom.getRow() - myTop.getRow() + 1;
@@ -124,10 +126,11 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
 			     	 i <= myBottom.getRow();
 			     	 i++) {
 					/* Access the cell by reference */
-					myCell = mySheet.getCell(myCol, i);
+					Row myRow 	= mySheet.getRow(i);
+					myCell 		= myRow.getCell(myCol);
 				
 					/* Add the value into the finance tables */
-					myList.addItem(myCell.getContents());
+					myList.addItem(myCell.getStringCellValue());
 				
 					/* Report the progress */
 					myCount++;

@@ -29,8 +29,7 @@ import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.ErrorPanel;
 import uk.co.tolcroft.models.ui.ItemField;
 import uk.co.tolcroft.models.ui.SaveButtons;
-import uk.co.tolcroft.models.ui.DateSelect.CalendarButton;
-import uk.co.tolcroft.models.ui.DateSelect.DateModel;
+import uk.co.tolcroft.models.ui.DateButton;
 import uk.co.tolcroft.models.ui.ItemField.FieldSet;
 import uk.co.tolcroft.models.ui.ValueField;
 import uk.co.tolcroft.models.ui.ValueField.ValueClass;
@@ -62,8 +61,7 @@ public class MaintAccount implements stdPanel {
 	private JComboBox			theTypesBox		= null;
 	private JComboBox			theParentBox	= null;
 	private JComboBox			theAliasBox		= null;
-	private CalendarButton		theMatButton	= null;
-	private DateModel			theDateModel	= null;
+	private DateButton			theMatButton	= null;
 	private JLabel				theTypLabel		= null;
 	private JLabel				theParLabel		= null;
 	private JLabel				theAlsLabel		= null;
@@ -185,8 +183,7 @@ public class MaintAccount implements stdPanel {
 		theTypesBox.setPrototypeDisplayValue(myDefValue);
 		
 		/* Create the Maturity Button */
-		theMatButton  = new CalendarButton();
-		theDateModel  = theMatButton.getDateModel();
+		theMatButton  = new DateButton();
 		theFieldSet.addItemField(new ItemField(theMatButton,  Account.FIELD_MATURITY));
 		
 		/* Create the buttons */
@@ -210,7 +207,7 @@ public class MaintAccount implements stdPanel {
 		theTypesBox.addItemListener(myListener);
 		theParentBox.addItemListener(myListener);
 		theAliasBox.addItemListener(myListener);
-		theMatButton.addPropertyChangeListener(CalendarButton.valueDATE, myListener);
+		theMatButton.addPropertyChangeListener(DateButton.valueDATE, myListener);
 		theInsButton.addActionListener(myListener);
 		theDelButton.addActionListener(myListener);
 		theClsButton.addActionListener(myListener);
@@ -774,7 +771,7 @@ public class MaintAccount implements stdPanel {
 			/* Handle maturity */
 			if (myType.isBond()) {
 				theMatLabel.setVisible(true);
-				theDateModel.setSelectedDate(theAccount.getMaturity().getDate());
+				theMatButton.setSelectedDate(theAccount.getMaturity().getDate());
 				theMatButton.setVisible(true);
 				theMatButton.setEnabled(!isClosed);
 			}
@@ -1001,7 +998,7 @@ public class MaintAccount implements stdPanel {
 							/* If it doesn't have a maturity */
 							if (theAccount.getMaturity() == null) {
 								/* Create a default maturity */
-								theAccount.setMaturity(new Date());
+								theAccount.setMaturity(new DateDay());
 								theAccount.getMaturity().adjustYear(1);
 							}
 						}
@@ -1214,7 +1211,7 @@ public class MaintAccount implements stdPanel {
 				/* If this event relates to the maturity box */
 				else if (o == theMatButton) {
 					/* Access the value */
-					Date myDate = new Date(theDateModel.getSelectedDate());
+					DateDay myDate = new DateDay(theMatButton.getSelectedDate());
 					theAccount.setMaturity(myDate);    
 				}
 			}

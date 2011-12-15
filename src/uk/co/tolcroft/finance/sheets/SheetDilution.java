@@ -1,10 +1,18 @@
 package uk.co.tolcroft.finance.sheets;
 
-import jxl.*;
+import java.util.Date;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
+
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.DilutionEvent;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 
 public class SheetDilution {
@@ -16,25 +24,24 @@ public class SheetDilution {
 	/**
 	 *  Load the Dilution Details from an archive
 	 *  @param pThread   the thread status control
-	 *  @param pWorkbook the workbook to load from
+	 *  @param pHelper the sheet helper
 	 *  @param pData the data set to link to
 	 *  @param pList the dilution list to load into
 	 *  @return continue to load <code>true/false</code> 
 	 */
 	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
-										 Workbook					pWorkbook,
+										 SheetHelper				pHelper,
 							   	  		 FinanceData				pData,
 							   	  		 DilutionEvent.List 		pList) throws Exception {
 		/* Local variables */
-		Range[]   		myRange;
+		AreaReference	myRange;
 		Sheet     		mySheet;
-		Cell      		myTop;
-		Cell      		myBottom;
+		CellReference	myTop;
+		CellReference	myBottom;
 		int       		myCol;
 		String    		myAccount;
 		String    		myFactor; 
-		java.util.Date  myDate;
-		DateCell  		myDateCell;
+		Date  			myDate;
 		Cell      		myCell;
 		int       		myTotal;
 		int				mySteps;
@@ -43,7 +50,7 @@ public class SheetDilution {
 		/* Protect against exceptions */
 		try { 
 			/* Find the range of cells */
-			myRange = pWorkbook.findByName(DilutionDtl);
+			myRange = pHelper.resolveAreaReference(DilutionDtl);
 		
 			/* Access the number of reporting steps */
 			mySteps = pThread.getReportingSteps();
@@ -52,12 +59,12 @@ public class SheetDilution {
 			if (!pThread.setNewStage(DilutionDtl)) return false;
 		
 			/* If we found the range OK */
-			if ((myRange != null) && (myRange.length == 1)) {
+			if (myRange != null)  {
 				/* Access the relevant sheet and Cell references */
-				mySheet   = pWorkbook.getSheet(myRange[0].getFirstSheetIndex());
-				myTop     = myRange[0].getTopLeft();
-				myBottom  = myRange[0].getBottomRight();
-				myCol     = myTop.getColumn();
+				myTop    	= myRange.getFirstCell();
+				myBottom 	= myRange.getLastCell();
+				mySheet  	= pHelper.getSheetByName(myTop.getSheetName());
+				myCol		= myTop.getCol();
 				
 				/* Count the number of dilutions */
 				myTotal   = myBottom.getRow() - myTop.getRow() + 1;
@@ -69,19 +76,20 @@ public class SheetDilution {
 				for (int i = myTop.getRow();
 			     	 i <= myBottom.getRow();
 			     	 i++) {
+					/* Access the row */
+					Row myRow 	= mySheet.getRow(i);
 				
 					/* Access account */
-					myCell    = mySheet.getCell(myCol, i);
-					myAccount = myCell.getContents();
+					myCell    = myRow.getCell(myCol);
+					myAccount = myCell.getStringCellValue();
 
 					/* Access date */
-					myCell     = mySheet.getCell(myCol+1, i);
-					myDateCell = (DateCell)myCell;
-					myDate     = myDateCell.getDate();
+					myCell     = myRow.getCell(myCol+1);
+					myDate     = myCell.getDateCellValue();
 					
 					/* Access Factor */
-					myCell   = mySheet.getCell(myCol+2, i);
-					myFactor = myCell.getContents();
+					myCell   = myRow.getCell(myCol+2);
+					myFactor = pHelper.formatNumericCell(myCell);
 				
 					/* Add any non-zero prices into the finance tables */
 					pList.addDilution(myAccount, 

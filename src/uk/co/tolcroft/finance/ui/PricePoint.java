@@ -10,7 +10,7 @@ import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.views.SpotPrices.SpotPrice;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.HistoryValues;
@@ -42,7 +42,7 @@ public class PricePoint extends StdTable<AcctPrice> {
 	private PricePoint			 	theTable			= this;
 	private spotViewMouse			theMouse			= null;
 	private spotViewColumnModel		theColumns			= null;
-	private Date					theDate				= null;
+	private DateDay					theDate				= null;
 	private AccountType				theAccountType		= null;
 	private SpotSelect				theSelect	 		= null;
 	private SaveButtons  			theTabButs   		= null;
@@ -192,10 +192,10 @@ public class PricePoint extends StdTable<AcctPrice> {
 			
 			/* Access selection */
 			AccountType myType 	= theSelect.getAccountType();
-			Date		myDate 	= theSelect.getDate();
+			DateDay		myDate 	= theSelect.getDate();
 			
 			/* If the selection differs */
-			if (((Date.differs(theDate, myDate)).isDifferent()) ||
+			if (((DateDay.differs(theDate, myDate)).isDifferent()) ||
 				(AccountType.differs(theAccountType, myType).isDifferent())) {
 				/* Protect against exceptions */
 				try {
@@ -260,7 +260,7 @@ public class PricePoint extends StdTable<AcctPrice> {
 	 * @param pDate the Date for the extract
 	 */
 	public void setSelection(AccountType 	pType,
-							 Date 			pDate) throws Exception {
+							 DateDay 		pDate) throws Exception {
 		/* Record selection */
 		theDate = pDate;
 		theAccountType = pType;
@@ -313,7 +313,7 @@ public class PricePoint extends StdTable<AcctPrice> {
 			AcctPrice.Values	myPrice = (AcctPrice.Values) pValues;
 
 			/* Check whether the date is the same */
-			if (Date.differs(mySpot.getDate(), myPrice.getDate()).isDifferent())
+			if (DateDay.differs(mySpot.getDate(), myPrice.getDate()).isDifferent())
 				return false;
 		}
 

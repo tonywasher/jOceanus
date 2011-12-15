@@ -1,12 +1,20 @@
 package uk.co.tolcroft.finance.sheets;
 
-import jxl.*;
+import java.util.Date;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
+
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.sheets.FinanceSheet.YearRange;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.sheets.SheetDataItem;
+import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 
@@ -73,8 +81,8 @@ public class SheetEvent extends SheetDataItem<Event> {
 			int	myTranId	= loadInteger(5);
 		
 			/* Access the date and years */
-			java.util.Date 	myDate 		= loadDate(2);
-			Integer 		myYears 	= loadInteger(11);
+			Date 	myDate 		= loadDate(2);
+			Integer myYears 	= loadInteger(11);
 		
 			/* Access the binary values  */
 			byte[] 	myDesc 		= loadBytes(6);
@@ -96,8 +104,8 @@ public class SheetEvent extends SheetDataItem<Event> {
 			String myTransType	= loadString(8);
 		
 			/* Access the date and name and description bytes */
-			java.util.Date 	myDate 	= loadDate(1);
-			Integer			myYears	= loadInteger(10);
+			Date 	myDate 	= loadDate(1);
+			Integer	myYears	= loadInteger(10);
 		
 			/* Access the binary values  */
 			String 	myDesc 		= loadString(2);
@@ -141,41 +149,42 @@ public class SheetEvent extends SheetDataItem<Event> {
 			writeDate(1, pItem.getDate());
 			writeString(2, pItem.getDesc());			
 			writeNumber(3, pItem.getAmount());			
-			writeValidatedString(4, pItem.getDebit().getName(), SheetAccount.AccountNames);				
-			writeValidatedString(5, pItem.getCredit().getName(), SheetAccount.AccountNames);				
+			writeString(4, pItem.getDebit().getName());				
+			writeString(5, pItem.getCredit().getName());				
 			writeNumber(6, pItem.getUnits());			
 			writeNumber(7, pItem.getDilution());			
-			writeValidatedString(8, pItem.getTransType().getName(), SheetTransactionType.TranTypeNames);				
+			writeString(8, pItem.getTransType().getName());				
 			writeNumber(9, pItem.getTaxCredit());				
 			writeInteger(10, pItem.getYears());			
 		}
 	}
 
-	/**
-	 * PreProcess on write
-	 */
-	protected boolean preProcessOnWrite() throws Throwable {		
+	@Override
+	protected void preProcessOnWrite() throws Throwable {		
 		/* Ignore if we are creating a backup */
-		if (isBackup) return false;
+		if (isBackup) return;
 
+		/* Create a new row */
+		newRow();
+		
 		/* Write titles */
-		writeString(0, Event.fieldName(Event.FIELD_ID));
-		writeString(1, Event.fieldName(Event.FIELD_DATE));
-		writeString(2, Event.fieldName(Event.FIELD_DESC));			
-		writeString(3, Event.fieldName(Event.FIELD_AMOUNT));			
-		writeString(4, Event.fieldName(Event.FIELD_DEBIT));			
-		writeString(5, Event.fieldName(Event.FIELD_CREDIT));			
-		writeString(6, Event.fieldName(Event.FIELD_UNITS));			
-		writeString(7, Event.fieldName(Event.FIELD_DILUTION));			
-		writeString(8, Event.fieldName(Event.FIELD_TRNTYP));			
-		writeString(9, Event.fieldName(Event.FIELD_TAXCREDIT));			
-		writeString(10, Event.fieldName(Event.FIELD_YEARS));			
-		return true;
+		writeHeader(0, Event.fieldName(Event.FIELD_ID));
+		writeHeader(1, Event.fieldName(Event.FIELD_DATE));
+		writeHeader(2, Event.fieldName(Event.FIELD_DESC));			
+		writeHeader(3, Event.fieldName(Event.FIELD_AMOUNT));			
+		writeHeader(4, Event.fieldName(Event.FIELD_DEBIT));			
+		writeHeader(5, Event.fieldName(Event.FIELD_CREDIT));			
+		writeHeader(6, Event.fieldName(Event.FIELD_UNITS));			
+		writeHeader(7, Event.fieldName(Event.FIELD_DILUTION));			
+		writeHeader(8, Event.fieldName(Event.FIELD_TRNTYP));			
+		writeHeader(9, Event.fieldName(Event.FIELD_TAXCREDIT));			
+		writeHeader(10, Event.fieldName(Event.FIELD_YEARS));			
+				
+		/* Adjust for Header */
+		adjustForHeader();
 	}	
 
-	/**
-	 * PostProcess on write
-	 */
+	@Override
 	protected void postProcessOnWrite() throws Throwable {		
 		/* If we are creating a backup */
 		if (isBackup) {
@@ -190,13 +199,16 @@ public class SheetEvent extends SheetDataItem<Event> {
 
 			/* Hide the ID column */
 			setHiddenColumn(0);
+			setIntegerColumn(0);
 			
 			/* Set the Account column width */
 			setColumnWidth(2, Event.DESCLEN);
 			setColumnWidth(4, Account.NAMELEN);
+			applyDataValidation(4, SheetAccount.AccountNames);
 			setColumnWidth(5, Account.NAMELEN);
+			applyDataValidation(5, SheetAccount.AccountNames);
 			setColumnWidth(8, StaticData.NAMELEN);
-			setColumnWidth(10, 8);
+			applyDataValidation(8, SheetTransactionType.TranTypeNames);
 			
 			/* Set Number columns */
 			setDateColumn(1);
@@ -204,28 +216,29 @@ public class SheetEvent extends SheetDataItem<Event> {
 			setUnitsColumn(6);
 			setDilutionColumn(7);
 			setMoneyColumn(9);
+			setIntegerColumn(10);
 		}
 	}
 
 	/**
 	 *  Load the Accounts from an archive
 	 *  @param pThread   the thread status control
-	 *  @param pWorkbook the workbook to load from
+	 *  @param pHelper the sheet helper
 	 *  @param pData the data set to load into
 	 *  @param pRange the range of tax years
 	 *  @return continue to load <code>true/false</code> 
 	 */
 	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
-										 Workbook					pWorkbook,
+										 SheetHelper				pHelper,
 							   	  		 FinanceData				pData,
 							   	  		 YearRange					pRange) throws Exception {
 		/* Local variables */
 		Event.List		myList;
-		String    		myName;
-		Range[]   		myRange;
+		String    		myRangeName;
+		AreaReference	myRange;
 		Sheet     		mySheet;
-		Cell      		myTop;
-		Cell      		myBottom;
+		CellReference	myTop;
+		CellReference	myBottom;
 		String    		myDesc;
 		String    		myAmount;
 		String    		myDebit;
@@ -236,8 +249,7 @@ public class SheetEvent extends SheetDataItem<Event> {
 		String			myDilution;
 		Integer	  		myYears;
 		Cell      		myCell;
-		DateCell  		myDateCell;
-		java.util.Date  myDate;
+		Date  			myDate;
 		int       		myCol;
 		int       		myTotal;
 		int				mySteps;
@@ -256,20 +268,20 @@ public class SheetEvent extends SheetDataItem<Event> {
 				 j <= pRange.getMaxYear();
 				 j++) {				
 				/* Find the range of cells */
-				myName  = j.toString();
-				myName  = "Finance" + myName.substring(2);
-				myRange = pWorkbook.findByName(myName);
+				myRangeName = j.toString();
+				myRangeName = "Finance" + myRangeName.substring(2);
+				myRange = pHelper.resolveAreaReference(myRangeName);
 		
 				/* Declare the new stage */
 				if (!pThread.setNewStage("Events from " + j)) return false;
 		
 				/* If we found the range OK */
-				if ((myRange != null) && (myRange.length == 1)) {
+				if (myRange != null) {
 					/* Access the relevant sheet and Cell references */
-					mySheet   = pWorkbook.getSheet(myRange[0].getFirstSheetIndex());
-					myTop     = myRange[0].getTopLeft();
-					myBottom  = myRange[0].getBottomRight();
-					myCol     = myTop.getColumn();
+					myTop    	= myRange.getFirstCell();
+					myBottom 	= myRange.getLastCell();
+					mySheet  	= pHelper.getSheetByName(myTop.getSheetName());
+					myCol		= myTop.getCol();
 			
 					/* Count the number of Events */
 					myTotal  = myBottom.getRow() - myTop.getRow();
@@ -281,46 +293,47 @@ public class SheetEvent extends SheetDataItem<Event> {
 					for (int i = myTop.getRow()+1;
 			     	 	 i <= myBottom.getRow();
 			     	 	 i++) {
+						/* Access the row */
+						Row myRow 	= mySheet.getRow(i);
+						
 						/* Access date */
-						myDateCell = (DateCell)mySheet.getCell(myCol, i);
-						myDate     = myDateCell.getDate();
+						myDate     = myRow.getCell(myCol).getDateCellValue();
 			    
 						/* Access the values */
-						myDesc         = mySheet.getCell(myCol+1, i).getContents();
-						myAmount       = mySheet.getCell(myCol+2, i).getContents();
-						myDebit        = mySheet.getCell(myCol+3, i).getContents();
-						myCredit       = mySheet.getCell(myCol+4, i).getContents();
-						myTranType     = mySheet.getCell(myCol+7, i).getContents();
+						myDesc         = myRow.getCell(myCol+1).getStringCellValue();
+						myAmount       = pHelper.formatNumericCell(myRow.getCell(myCol+2));
+						myDebit        = myRow.getCell(myCol+3).getStringCellValue();
+						myCredit       = myRow.getCell(myCol+4).getStringCellValue();
+						myTranType     = myRow.getCell(myCol+7).getStringCellValue();
 			    
 						/* Handle Dilution which may be missing */
-						myCell    	= mySheet.getCell(myCol+5, i);
+						myCell    	= myRow.getCell(myCol+5);
 						myDilution  = null;
-						if ((myCell.getType() != CellType.EMPTY) &&
-							(myCell.getContents().startsWith("0."))) {
-							double myDouble = ((NumberCell)myCell).getValue();
-							myDilution = Double.toString(myDouble);
+						if (myCell != null) {
+							myDilution = pHelper.formatNumericCell(myCell);
+							if (!myDilution.startsWith("0."))
+								myDilution = null;
 						}
 
-						/* Handle Dilution which may be missing */
-						myCell  = mySheet.getCell(myCol+6, i);
+						/* Handle Units which may be missing */
+						myCell  = myRow.getCell(myCol+6);
 						myUnits	= null;
-						if (myCell.getType() != CellType.EMPTY) {
-							double myDouble = ((NumberCell)myCell).getValue();
-							myUnits = Double.toString(myDouble);
+						if (myCell != null) {
+							myUnits = pHelper.formatNumericCell(myCell);
 						}
 
 						/* Handle Tax Credit which may be missing */
-						myCell      = mySheet.getCell(myCol+8, i);
+						myCell      = myRow.getCell(myCol+8);
 						myTaxCredit = null;
-						if (myCell.getType() != CellType.EMPTY) {
-							myTaxCredit = myCell.getContents();
+						if (myCell != null) {
+							myTaxCredit = pHelper.formatNumericCell(myCell);
 						}
 
 						/* Handle Years which may be missing */
-						myCell    = mySheet.getCell(myCol+9, i);
+						myCell    = myRow.getCell(myCol+9);
 						myYears   = null;
-						if (myCell.getType() != CellType.EMPTY) {
-							myYears = new Integer(myCell.getContents());
+						if (myCell != null) {
+							myYears = pHelper.parseIntegerCell(myCell);
 						}
 
 						/* Add the event */

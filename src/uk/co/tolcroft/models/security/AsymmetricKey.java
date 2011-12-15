@@ -234,7 +234,7 @@ public class AsymmetricKey {
 		byte[] mySecret = getSharedSecret(pPartner);
 		
 		/* Build the CipherSet */
-		mySet = new CipherSet(theRandom, theKeyMode, CipherSet.DEFSTEPS);
+		mySet = new CipherSet(theRandom, theKeyMode);
 		
 		/* Apply the Secret */
 		mySet.buildCiphers(mySecret);

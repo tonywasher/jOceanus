@@ -9,11 +9,11 @@ import java.util.Arrays;
 
 import javax.swing.JTextField;
 
-import uk.co.tolcroft.models.Number.Dilution;
-import uk.co.tolcroft.models.Number.Money;
-import uk.co.tolcroft.models.Number.Price;
-import uk.co.tolcroft.models.Number.Rate;
-import uk.co.tolcroft.models.Number.Units;
+import uk.co.tolcroft.models.Decimal.Dilution;
+import uk.co.tolcroft.models.Decimal.Money;
+import uk.co.tolcroft.models.Decimal.Price;
+import uk.co.tolcroft.models.Decimal.Rate;
+import uk.co.tolcroft.models.Decimal.Units;
 import uk.co.tolcroft.models.Utils;
 
 public class ValueField extends JTextField {

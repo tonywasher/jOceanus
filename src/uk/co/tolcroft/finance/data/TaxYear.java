@@ -1,11 +1,12 @@
 package uk.co.tolcroft.finance.data;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataSet;
@@ -30,7 +31,7 @@ public class TaxYear extends DataItem<TaxYear> {
 	public static final String listName = objName + "s";
 
 	/* Access methods */
-	public  Date  		getDate()         			{ return getValues().getYear(); }	
+	public  DateDay  	getDate()         			{ return getValues().getYear(); }	
 	public  Values   	getValues()          		{ return (Values)super.getCurrentValues(); }	
 	public  TaxRegime 	getTaxRegime()				{ return getValues().getTaxRegime(); }
 	public  Money 		getAllowance()    			{ return getValues().getAllowance(); }
@@ -56,7 +57,7 @@ public class TaxYear extends DataItem<TaxYear> {
 	public  boolean     hasLoSalaryBand() 			{ return getTaxRegime().hasLoSalaryBand(); }
 	public  boolean     hasAdditionalTaxBand() 		{ return getTaxRegime().hasAdditionalTaxBand(); }
 	public  boolean     hasCapitalGainsAsIncome() 	{ return getTaxRegime().hasCapitalGainsAsIncome(); }
-	public  void        setDate(Date pDate) 		{ getValues().setYear(pDate); }
+	public  void        setDate(DateDay pDate) 		{ getValues().setYear(pDate); }
 
 	/* Linking methods */
 	public TaxYear    	getBase() { return (TaxYear)super.getBase(); }
@@ -155,7 +156,7 @@ public class TaxYear extends DataItem<TaxYear> {
 				myString = pDetail.addDebugLink(myValues.getTaxRegime(), myString);
 				break;
 			case FIELD_YEAR:	
-				myString += Date.format(getDate()); 
+				myString += DateDay.format(getDate()); 
 				break;
 			case FIELD_ALLOW:	
 				myString += Money.format(myValues.getAllowance()); 
@@ -274,30 +275,30 @@ public class TaxYear extends DataItem<TaxYear> {
 	}
 	
 	/* Standard constructor */
-	private TaxYear(List     		pList,
-			        int            	uId,
-			        int				uRegimeId,
-			        java.util.Date  pDate,
-			        String 			pAllowance,
-			        String 			pRentalAllow,
-			        String 			pLoAgeAllow,
-			        String 			pHiAgeAllow,
-			        String			pCapAllow,
-			        String 			pAgeAllowLimit,
-			        String 			pAddAllowLimit,
-			        String 			pLoTaxBand,
-			        String 			pBasicTaxBand,
-			        String 			pAddIncBound,
-			        String			pLoTaxRate,
-			        String			pBasicTaxRate,
-			        String			pHiTaxRate,
-			        String			pIntTaxRate,
-			        String			pDivTaxRate,
-			        String			pHiDivTaxRate,
-			        String			pAddTaxRate,
-			        String			pAddDivTaxRate,
-			        String			pCapTaxRate,
-			        String			pHiCapTaxRate) throws Exception {
+	private TaxYear(List    pList,
+			        int     uId,
+			        int		uRegimeId,
+			        Date  	pDate,
+			        String 	pAllowance,
+			        String 	pRentalAllow,
+			        String 	pLoAgeAllow,
+			        String 	pHiAgeAllow,
+			        String	pCapAllow,
+			        String 	pAgeAllowLimit,
+			        String 	pAddAllowLimit,
+			        String 	pLoTaxBand,
+			        String 	pBasicTaxBand,
+			        String 	pAddIncBound,
+			        String	pLoTaxRate,
+			        String	pBasicTaxRate,
+			        String	pHiTaxRate,
+			        String	pIntTaxRate,
+			        String	pDivTaxRate,
+			        String	pHiDivTaxRate,
+			        String	pAddTaxRate,
+			        String	pAddDivTaxRate,
+			        String	pCapTaxRate,
+			        String	pHiCapTaxRate) throws Exception {
 		/* Initialise item */
 		super(pList, uId);
 		
@@ -309,7 +310,7 @@ public class TaxYear extends DataItem<TaxYear> {
 
 		/* Record the Id */
 		myValues.setTaxRegimeId(uRegimeId);
-		myValues.setYear(new Date(pDate));
+		myValues.setYear(new DateDay(pDate));
 		
 		/* Look up the Regime */
 		myRegime = pList.theData.getTaxRegimes().searchFor(uRegimeId);
@@ -541,7 +542,7 @@ public class TaxYear extends DataItem<TaxYear> {
 	 * Validate the taxYear
 	 */
 	public void validate() {
-		Date 	myDate = getDate();
+		DateDay myDate = getDate();
 		List 	myList = (List)getList();
 		TaxYear myPrev;
 				
@@ -677,13 +678,13 @@ public class TaxYear extends DataItem<TaxYear> {
 	 * 
 	 * @return the range of tax years
 	 */
-	public Date.Range getRange() {
-		Date  		myStart;
-		Date  		myEnd;
-		Date.Range 	myRange;
+	public DateDay.Range getRange() {
+		DateDay  		myStart;
+		DateDay  		myEnd;
+		DateDay.Range 	myRange;
 		
 		/* Access start date */
-		myStart =  new Date(getDate());
+		myStart =  new DateDay(getDate());
 		
 		/* Move back to start of year */
 		myStart.adjustYear(-1);
@@ -693,7 +694,7 @@ public class TaxYear extends DataItem<TaxYear> {
 		myEnd  = getDate();
 		
 		/* Create the range */
-		myRange = new Date.Range(myStart, myEnd);
+		myRange = new DateDay.Range(myStart, myEnd);
 		
 		/* Return the range */
 		return myRange;
@@ -1111,7 +1112,7 @@ public class TaxYear extends DataItem<TaxYear> {
 			myYear.setId(0);
 						
 			/* Adjust the year and add to list */
-			myYear.setDate(new Date(myBase.getDate()));
+			myYear.setDate(new DateDay(myBase.getDate()));
 			myYear.getDate().adjustYear(1);
 			myList.add(myYear);
 			
@@ -1151,10 +1152,10 @@ public class TaxYear extends DataItem<TaxYear> {
 		 * @param pDate Date of item
 		 * @return The TaxYear if present (or null)
 		 */
-		public TaxYear searchFor(Date pDate) {
+		public TaxYear searchFor(DateDay pDate) {
 			ListIterator 	myIterator;
 			TaxYear   		myCurr;
-			Date.Range		myRange;
+			DateDay.Range	myRange;
 			int        		iDiff;
 			
 			/* Access the iterator */
@@ -1208,7 +1209,7 @@ public class TaxYear extends DataItem<TaxYear> {
 		 * @param pDate the date
 		 * @return The Item if present (or null)
 		 */
-		protected int countInstances(Date pDate) {
+		protected int countInstances(DateDay pDate) {
 			ListIterator 	myIterator;
 			TaxYear 		myCurr;
 			int      		iDiff;
@@ -1232,12 +1233,12 @@ public class TaxYear extends DataItem<TaxYear> {
 		 * 
 		 * @return the range of tax years
 		 */
-		public Date.Range getRange() {
+		public DateDay.Range getRange() {
 			ListIterator 	myIterator;
 			TaxYear     	myCurr;
-			Date  			myStart;
-			Date  			myEnd;
-			Date.Range 		myRange;
+			DateDay  		myStart;
+			DateDay  		myEnd;
+			DateDay.Range 	myRange;
 			
 			/* Access the iterator */
 			myIterator = listIterator(true);
@@ -1253,7 +1254,7 @@ public class TaxYear extends DataItem<TaxYear> {
 			/* else we have a tax year */
 			else {
 				/* Access start date */
-				myStart =  new Date(myCurr.getDate());
+				myStart =  new DateDay(myCurr.getDate());
 			
 				/* Move back to start of year */
 				myStart.adjustYear(-1);
@@ -1265,7 +1266,7 @@ public class TaxYear extends DataItem<TaxYear> {
 			}
 			
 			/* Create the range */
-			myRange = new Date.Range(myStart, myEnd);
+			myRange = new DateDay.Range(myStart, myEnd);
 			
 			/* Return the range */
 			return myRange;
@@ -1289,29 +1290,29 @@ public class TaxYear extends DataItem<TaxYear> {
 		}
 
 		/* Allow a tax parameter to be added */
-		public void addItem(int				uId,
-							String  		pRegime,
-				            java.util.Date  pDate,
-				            String  		pAllowance,
-				            String  		pRentalAllow,
-				            String  		pLoAgeAllow,
-				            String  		pHiAgeAllow,
-				            String			pCapAllow,
-				            String  		pAgeAllowLimit,
-				            String  		pAddAllowLimit,
-				            String  		pLoTaxBand,
-				            String  		pBasicTaxBand,
-				            String  		pAddIncBound,
-				            String  		pLoTaxRate,
-				            String  		pBasicTaxRate,
-				            String  		pHiTaxRate,
-				            String  		pIntTaxRate,
-				            String  		pDivTaxRate,
-				            String  		pHiDivTaxRate,
-				            String  		pAddTaxRate,
-				            String  		pAddDivTaxRate,
-				            String			pCapTaxRate,
-				            String			pHiCapTaxRate) throws Exception {
+		public void addItem(int		uId,
+							String  pRegime,
+				            Date  	pDate,
+				            String  pAllowance,
+				            String  pRentalAllow,
+				            String  pLoAgeAllow,
+				            String  pHiAgeAllow,
+				            String	pCapAllow,
+				            String  pAgeAllowLimit,
+				            String  pAddAllowLimit,
+				            String  pLoTaxBand,
+				            String  pBasicTaxBand,
+				            String  pAddIncBound,
+				            String  pLoTaxRate,
+				            String  pBasicTaxRate,
+				            String  pHiTaxRate,
+				            String  pIntTaxRate,
+				            String  pDivTaxRate,
+				            String  pHiDivTaxRate,
+				            String  pAddTaxRate,
+				            String  pAddDivTaxRate,
+				            String	pCapTaxRate,
+				            String	pHiCapTaxRate) throws Exception {
 			/* Local variables */
 			TaxRegime    	myTaxRegime;		
 			
@@ -1320,7 +1321,7 @@ public class TaxYear extends DataItem<TaxYear> {
 			if (myTaxRegime == null) 
 				throw new Exception(ExceptionClass.DATA,
 			                        "TaxYear on <" + 
-			                        Date.format(new Date(pDate)) +
+			                        DateDay.format(new DateDay(pDate)) +
 			                        "> has invalid TaxRegime <" + pRegime + ">");
 			
 			/* Create the tax year */
@@ -1350,29 +1351,29 @@ public class TaxYear extends DataItem<TaxYear> {
 	    }
 		
 		/* Allow a tax parameter to be added */
-		public void addItem(int    			uId,
-							int    			uRegimeId,
-				            java.util.Date  pDate,
-				            String  		pAllowance,
-				            String  		pRentalAllow,
-				            String  		pLoAgeAllow,
-				            String  		pHiAgeAllow,
-				            String			pCapAllow,
-				            String  		pAgeAllowLimit,
-				            String  		pAddAllowLimit,
-				            String  		pLoTaxBand,
-				            String  		pBasicTaxBand,
-				            String  		pAddIncBound,
-				            String  		pLoTaxRate,
-				            String  		pBasicTaxRate,
-				            String  		pHiTaxRate,
-				            String  		pIntTaxRate,
-				            String  		pDivTaxRate,
-				            String  		pHiDivTaxRate,
-				            String  		pAddTaxRate,
-				            String  		pAddDivTaxRate,
-				            String			pCapTaxRate,
-				            String			pHiCapTaxRate) throws Exception {
+		public void addItem(int    	uId,
+							int    	uRegimeId,
+				            Date  	pDate,
+				            String  pAllowance,
+				            String  pRentalAllow,
+				            String  pLoAgeAllow,
+				            String  pHiAgeAllow,
+				            String	pCapAllow,
+				            String  pAgeAllowLimit,
+				            String  pAddAllowLimit,
+				            String  pLoTaxBand,
+				            String  pBasicTaxBand,
+				            String  pAddIncBound,
+				            String  pLoTaxRate,
+				            String  pBasicTaxRate,
+				            String  pHiTaxRate,
+				            String  pIntTaxRate,
+				            String  pDivTaxRate,
+				            String  pHiDivTaxRate,
+				            String  pAddTaxRate,
+				            String  pAddDivTaxRate,
+				            String	pCapTaxRate,
+				            String	pHiCapTaxRate) throws Exception {
 			/* Local variables */
 			TaxYear       myTaxYear;		
 			
@@ -1409,7 +1410,7 @@ public class TaxYear extends DataItem<TaxYear> {
 			  			            "Duplicate TaxYearId");
 			 
 			/* Check that this TaxYear has not been previously added */
-			if (searchFor(new Date(pDate)) != null) 
+			if (searchFor(new DateDay(pDate)) != null) 
 				throw new Exception(ExceptionClass.DATA,
 						  			myTaxYear,
 			                        "Duplicate TaxYear");
@@ -1432,7 +1433,7 @@ public class TaxYear extends DataItem<TaxYear> {
 	 *  Values for a tax year
 	 */
 	public class Values extends HistoryValues<TaxYear> {
-		private Date 		theYear	 		 = null;
+		private DateDay 	theYear	 		 = null;
 		private Integer		theTaxRegimeId	 = null;
 		private TaxRegime 	theTaxRegime	 = null;
 		private Money 		theAllowance     = null;
@@ -1457,7 +1458,7 @@ public class TaxYear extends DataItem<TaxYear> {
 		private Rate 		theHiCapTaxRate  = null;
 		
 		/* Access methods */
-		public Date 		getYear()			{ return theYear; }
+		public DateDay 		getYear()			{ return theYear; }
 		private Integer		getTaxRegimeId()	{ return theTaxRegimeId; }
 		public TaxRegime 	getTaxRegime()		{ return theTaxRegime; }
 		public Money 		getAllowance()		{ return theAllowance; }
@@ -1481,7 +1482,7 @@ public class TaxYear extends DataItem<TaxYear> {
 		public Rate  		getCapTaxRate() 	{ return theCapTaxRate; }
 		public Rate  		getHiCapTaxRate() 	{ return theHiCapTaxRate; }
 		
-		public void setYear(Date pYear) {
+		public void setYear(DateDay pYear) {
 			theYear   		= pYear; }
 		private void setTaxRegimeId(int uTaxRegimeId) {
 			theTaxRegimeId	= uTaxRegimeId; }
@@ -1542,7 +1543,7 @@ public class TaxYear extends DataItem<TaxYear> {
 			Values myValues = (Values)pCompare;
 			
 			/* Handle different date */
-			if (Date.differs(theYear,	myValues.theYear).isDifferent())
+			if (DateDay.differs(theYear,	myValues.theYear).isDifferent())
 				return Difference.Different;
 
 			/* Handle different Tax RegimeId */
@@ -1614,7 +1615,7 @@ public class TaxYear extends DataItem<TaxYear> {
 			Difference	bResult = Difference.Identical;
 			switch (fieldNo) {
 				case FIELD_YEAR:
-					bResult = (Date.differs(theYear,  			pValues.theYear));
+					bResult = (DateDay.differs(theYear,  		pValues.theYear));
 					break;
 				case FIELD_REGIME:
 					bResult = (TaxRegime.differs(theTaxRegime,  pValues.theTaxRegime));

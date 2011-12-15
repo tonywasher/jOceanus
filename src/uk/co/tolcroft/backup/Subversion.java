@@ -115,6 +115,10 @@ public class Subversion {
 			/* Close the stream */
 			myStream.close();
 			myStream = null;
+						
+			/* Close the Zip file */
+			myZipFile.close();
+			myZipFile = null;
 			
 			/* Note success */
 			bSuccess = true;
@@ -132,8 +136,17 @@ public class Subversion {
 		
 		/* Clean up on exit */
 		finally {
-			/* Close the stream if open */
-			if (myStream != null) try { myStream.close(); } catch (Throwable ex) {}
+			/* Protect while cleaning up */
+			try { 
+				/* Close the output stream */
+				if (myStream != null) myStream.close();
+
+				/* Close the Zip file */
+				if (myZipFile != null) myZipFile.close();
+			} 
+			
+			/* Ignore errors */
+			catch (Throwable ex) {}
 			
 			/* Delete the file on error */
 			if ((!bSuccess) && (myZipName != null))

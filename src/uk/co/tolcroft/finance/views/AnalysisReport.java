@@ -2,17 +2,20 @@ package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.views.Analysis.*;
 import uk.co.tolcroft.finance.views.EventAnalysis.AnalysisYear;
+import uk.co.tolcroft.finance.views.IncomeBreakdown.AccountRecord;
+import uk.co.tolcroft.finance.views.IncomeBreakdown.IncomeTotals;
+import uk.co.tolcroft.finance.views.IncomeBreakdown.RecordList;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.Properties;
 
 public class AnalysisReport {
 	/* Properties */
 	private Analysis		theAnalysis		= null;
 	private AnalysisYear	theAnalysisYear	= null;
-	private Date  			theDate 		= null;
+	private DateDay  		theDate 		= null;
 	private TaxYear			theYear			= null;
 	
 	/* Constructor */
@@ -649,7 +652,7 @@ public class AnalysisReport {
 			
 			/* Format the detail */
 			myOutput.append("<tr><th>");
-			myOutput.append(Date.format(myEvent.getDate()));
+			myOutput.append(DateDay.format(myEvent.getDate()));
 			myOutput.append("</th>");
 			myOutput.append(Report.makeUnitsItem((Units)myEvent.findAttribute(CapitalEvent.capitalDeltaUnits)));
 			myOutput.append(Report.makeMoneyItem((Money)myEvent.findAttribute(CapitalEvent.capitalDeltaCost)));
@@ -1036,7 +1039,7 @@ public class AnalysisReport {
 		/* Access the tax bucket iterator */
 		myIterator = myList.listIterator();
 		
-		/* Loop through the Transaction Summary Buckets */
+		/* Loop through the Transaction Detail Buckets */
 		while ((myBucket = myIterator.next()) != null) {
 			/* Skip non-detail buckets */
 			if (myBucket.getBucketType() != BucketType.TAXDETAIL) continue;
@@ -1130,5 +1133,175 @@ public class AnalysisReport {
 		
 		/* Return the output */
 		return myOutput;
-	}		
+	}
+
+	/**
+	 * Build income breakdown report 
+	 */
+	public String getBreakdownReport() {
+		/* Access the Income Breakdown */
+		IncomeBreakdown myBreakdown = theAnalysisYear.getBreakdown();
+		
+		/* Build the report */
+		StringBuilder myBuilder = makeAccountListReport(myBreakdown.getSalary(), null);
+		myBuilder.append(makeAccountListReport(myBreakdown.getInterest(), null));
+		myBuilder.append(makeAccountListReport(myBreakdown.getDividend(), null));
+	
+		/* Return the report */
+		return myBuilder.toString();
+	}
+	
+	/**
+	 * Build a standard income child report element
+	 * @return Web output
+	 */
+	public StringBuilder makeAccountListReport(RecordList 	pList,
+											   String		pReturn) {
+		StringBuilder			myOutput = new StringBuilder(1000);
+		StringBuilder			myDetail = new StringBuilder(1000);
+		AccountRecord			myAccount;
+		String					myListName;
+		RecordList.ListIterator	myIterator;
+
+		/* Format the detail */
+		myOutput.append("<a name=\"Income");
+		myOutput.append(pList.getName());
+		myOutput.append("\">");
+		myOutput.append("<h2 align=\"center\">");
+		myOutput.append(pList.getName());
+		myOutput.append("</h2></a>");
+		myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">"); 
+		myOutput.append("<thead><th>Account</th>");
+		myOutput.append("<th>Gross</th><th>Net<th>TaxCredit</h></thead>");
+		myOutput.append("<tbody>");
+		
+		/* Access the account iterator */
+		myIterator = pList.listIterator();
+		
+		/* Loop through the Accounts associated with this List */
+		while ((myAccount = myIterator.next()) != null) {
+			/* Access the name of the sublist */
+			myListName = myAccount.getChildren().getName();
+			
+			/* Format the detail */
+			myOutput.append("<tr><th align=\"center\"><a href=\"#Income");
+			myOutput.append(myListName);
+			myOutput.append("\">");
+			myOutput.append(Account.format(myAccount.getAccount()));
+			myOutput.append("</a></th>");
+			
+			/* Format the totals */
+			IncomeTotals myTotals = myAccount.getTotals();
+			myOutput.append(Report.makeMoneyItem(myTotals.getGrossIncome()));
+			myOutput.append(Report.makeMoneyItem(myTotals.getNetIncome()));
+			myOutput.append(Report.makeMoneyItem(myTotals.getTaxCredit()));
+			myOutput.append("</tr>");
+						
+			/* If we have events */
+			if (myAccount.getEvents().size() > 0) {
+				/* Add the child report */
+				myDetail.append(makeAccountEventReport(myAccount,
+													   pList.getName()));
+			}
+			
+			/* If we have children */
+			else if (myAccount.getChildren().size() > 0) {
+				/* Add the child report */
+				myDetail.append(makeAccountListReport(myAccount.getChildren(),
+													  pList.getName()));
+			}
+		}			 
+
+		/* Build the list totals */
+		IncomeTotals myTotals = pList.getTotals();
+		myOutput.append("<tr><th>");
+		if (pReturn != null) {
+			myOutput.append("<a href=\"#Income");
+			myOutput.append(pReturn);
+			myOutput.append("\">Total</a>");
+		}
+		else myOutput.append("Total");
+		myOutput.append("</th>");
+		myOutput.append(Report.makeMoneyTotal(myTotals.getGrossIncome()));
+		myOutput.append(Report.makeMoneyTotal(myTotals.getNetIncome()));
+		myOutput.append(Report.makeMoneyTotal(myTotals.getTaxCredit()));
+		myOutput.append("</tr></tbody></table>");
+
+		/* Append the detail */
+		myOutput.append(myDetail);
+		
+		/* Return the output */
+		return myOutput;
+	}	
+
+	/**
+	 * Build a standard income event report element
+	 * @return Web output
+	 */
+	public StringBuilder makeAccountEventReport(AccountRecord pAccount,
+												String 		  pReturn) {
+		StringBuilder			myOutput = new StringBuilder(1000);
+		Event					myEvent;
+		Account					myAccount = pAccount.getAccount();
+		Event.List.ListIterator	myIterator;
+
+		/* Format the detail */
+		myOutput.append("<a name=\"Income");
+		myOutput.append(pAccount.getChildren().getName());
+		myOutput.append("\">");
+		myOutput.append("<h2 align=\"center\">");
+		myOutput.append(myAccount.getName());
+		myOutput.append("</h2></a>");
+		myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">"); 
+		myOutput.append("<thead><th>Date</th><th>Description</th>");
+		myOutput.append("<th>Gross</th><th>Net<th>TaxCredit</h></thead>");
+		myOutput.append("<tbody>");
+		
+		/* Access the event iterator */
+		myIterator = pAccount.getEvents().listIterator();
+		
+		/* Loop through the Events associated with this Account */
+		while ((myEvent = myIterator.next()) != null) {
+			/* Format the detail */
+			myOutput.append("<tr><th align=\"center\">");
+			myOutput.append(myEvent.getDate().formatDate());
+			myOutput.append("</th><td>");
+			myOutput.append(myEvent.getDesc());
+			myOutput.append("</td>");
+			
+			/* Calculate Gross */
+			TransactionType myTrans = myEvent.getTransType();
+			Money 			myGross = new Money(myEvent.getAmount());
+			Money 			myNet	= myEvent.getAmount();
+			
+			/* If we are NatInsurance/Benefit */
+			if ((myTrans.getTranClass() == TransClass.NATINSURANCE) ||
+			    (myTrans.getTranClass() == TransClass.BENEFIT)) {
+				/* Just add to gross */
+				myNet = new Money(0);				
+			}
+
+			else if (myEvent.getTaxCredit() != null)
+				myGross.addAmount(myEvent.getTaxCredit());
+			
+			/* Report the values */
+			myOutput.append(Report.makeMoneyItem(myGross));
+			myOutput.append(Report.makeMoneyItem(myNet));
+			myOutput.append(Report.makeMoneyItem(myEvent.getTaxCredit()));
+			myOutput.append("</tr>");
+		}			 
+		
+		/* Format the totals */
+		IncomeTotals myTotals = pAccount.getTotals();
+		myOutput.append("<tr><th><a href=\"#");
+		myOutput.append(pReturn);
+		myOutput.append("\">Total</a></th><td/>");
+		myOutput.append(Report.makeMoneyTotal(myTotals.getGrossIncome()));
+		myOutput.append(Report.makeMoneyTotal(myTotals.getNetIncome()));
+		myOutput.append(Report.makeMoneyTotal(myTotals.getTaxCredit()));
+		myOutput.append("</tr></tbody></table>");
+		
+		/* Return the output */
+		return myOutput;
+	}	
 }

@@ -1,5 +1,7 @@
 package uk.co.tolcroft.finance.database;
 
+import java.util.Date;
+
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.data.DataSet;
@@ -95,28 +97,28 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	
 	/* Load the tax year */
 	public void loadItem(int pId) throws Exception {
-		java.util.Date  myYear;
-		String  		myAllowance;
-		String  		myRentalAllow;
-		String  		myLoBand;
-		String  		myBasicBand;
-		String  		myLoAgeAllow;
-		String  		myHiAgeAllow;
-		String  		myCapitalAllow;
-		String  		myAgeAllowLimit;
-		String  		myAddAllowLimit;
-		String  		myAddIncBound;
-		String  		myLoTaxRate;
-		String  		myBasicTaxRate;
-		String  		myHiTaxRate;
-		String  		myIntTaxRate;
-		String  		myDivTaxRate;
-		String  		myHiDivTaxRate;
-		String  		myAddTaxRate;
-		String  		myAddDivTaxRate;
-		String  		myCapTaxRate;
-		String  		myHiCapTaxRate;
-		int		  		myRegime;
+		Date  	myYear;
+		String  myAllowance;
+		String  myRentalAllow;
+		String  myLoBand;
+		String  myBasicBand;
+		String  myLoAgeAllow;
+		String  myHiAgeAllow;
+		String  myCapitalAllow;
+		String  myAgeAllowLimit;
+		String  myAddAllowLimit;
+		String  myAddIncBound;
+		String  myLoTaxRate;
+		String  myBasicTaxRate;
+		String  myHiTaxRate;
+		String  myIntTaxRate;
+		String  myDivTaxRate;
+		String  myHiDivTaxRate;
+		String  myAddTaxRate;
+		String  myAddDivTaxRate;
+		String  myCapTaxRate;
+		String  myHiCapTaxRate;
+		int		myRegime;
 		
 		/* Get the various fields */
 		myYear          = theTableDef.getDateValue(TaxYear.FIELD_YEAR);

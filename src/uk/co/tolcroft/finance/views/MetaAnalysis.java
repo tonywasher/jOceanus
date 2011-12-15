@@ -4,7 +4,7 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.finance.views.Analysis.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.Properties;
 
 public class MetaAnalysis {
@@ -12,7 +12,7 @@ public class MetaAnalysis {
 	private Analysis				theAnalysis			= null;
 	private Analysis.BucketList		theList				= null;
 	private ChargeableEvent.List	theCharges			= null;
-	private Date					theDate				= null;
+	private DateDay					theDate				= null;
 	private TaxYear					theYear				= null;
 	private AssetSummary			theAssetSummary		= null;
 	private AssetTotal 				theAssetTotals 		= null;

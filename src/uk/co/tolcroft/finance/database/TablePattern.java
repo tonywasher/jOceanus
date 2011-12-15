@@ -1,5 +1,7 @@
 package uk.co.tolcroft.finance.database;
 
+import java.util.Date;
+
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.data.DataSet;
@@ -84,14 +86,14 @@ public class TablePattern extends TableEncrypted<Event> {
 	
 	/* Load the pattern */
 	protected void loadItem(int pId, int pControlId) throws Exception {
-		int				myAccountId;
-		int  			myPartnerId;
-		int  			myTranType;
-		int  			myFreq;
-		boolean			isCredit;
-		byte[] 			myDesc;
-		byte[] 			myAmount;
-		java.util.Date  myDate;
+		int		myAccountId;
+		int  	myPartnerId;
+		int  	myTranType;
+		int  	myFreq;
+		boolean	isCredit;
+		byte[] 	myDesc;
+		byte[] 	myAmount;
+		Date  	myDate;
 		
 		/* Get the various fields */
 		myAccountId = theTableDef.getIntegerValue(Pattern.VFIELD_ACCOUNT);

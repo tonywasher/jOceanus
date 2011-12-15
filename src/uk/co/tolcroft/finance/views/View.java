@@ -15,14 +15,14 @@ import uk.co.tolcroft.models.Exception.ExceptionClass;
 public class View extends DataControl<FinanceData> {
 	/* Members */
 	private FinanceData  			theData 			= null;
-	private Date.Range  			theRange 			= null;
+	private DateDay.Range  			theRange 			= null;
 	private MainTab					theCtl 	 			= null;
     private EventAnalysis			theAnalysis			= null;
     private DilutionEvent.List		theDilutions		= null;
     
 	/* Access methods */
 	public MainTab				getControl()		{ return theCtl; }
-	public Date.Range			getRange()			{ return theRange; }
+	public DateDay.Range		getRange()			{ return theRange; }
 	public EventAnalysis    	getAnalysis()		{ return theAnalysis; }
 	public DilutionEvent.List   getDilutions()		{ return theDilutions; }
 	
@@ -200,7 +200,7 @@ public class View extends DataControl<FinanceData> {
 		/**
 		 * BirthDate for tax purposes
 		 */
-		private Date 			theBirthDate		= null;
+		private DateDay 		theBirthDate		= null;
 				
 		/**
 		 * Determine the DB Driver string
@@ -248,7 +248,7 @@ public class View extends DataControl<FinanceData> {
 		 * Determine birth date for tax calculations
 		 * @return the birthday
 		 */
-		public Date getBirthDate() 				{ return theBirthDate; }
+		public DateDay getBirthDate() 			{ return theBirthDate; }
 
 		/**
 		 * Determine whether we have changes
@@ -344,7 +344,7 @@ public class View extends DataControl<FinanceData> {
 		 * Set the BirthDate 
 		 * @param pValue the new value
 		 */
-		public void setBirthDate(Date pValue) {
+		public void setBirthDate(DateDay pValue) {
 			theBirthDate = pValue;
 		}		
 
@@ -377,7 +377,7 @@ public class View extends DataControl<FinanceData> {
 				theProperties.setBackupPrefix(getBackupPrefix());
 				
 			/* Update the BirthDate if required */
-			if (Date.differs(getBirthDate(), theProperties.getBirthDate()).isDifferent())  
+			if (DateDay.differs(getBirthDate(), theProperties.getBirthDate()).isDifferent())  
 				theProperties.setBirthDate(getBirthDate());
 				
 			/* Update the doShowDebug flag if required */
@@ -400,7 +400,7 @@ public class View extends DataControl<FinanceData> {
 						  (Utils.differs(getBackupDir(), theProperties.getBackupDir()).isDifferent()) 			  ||  
 						  (Utils.differs(getRepoDir(), theProperties.getRepoDir()).isDifferent()) 				  ||  
 						  (Utils.differs(getBackupPrefix(), theProperties.getBackupPrefix()).isDifferent())       ||  
-						  (Date.differs(getBirthDate(), theProperties.getBirthDate()).isDifferent())			  ||  
+						  (DateDay.differs(getBirthDate(), theProperties.getBirthDate()).isDifferent())			  ||  
 						  (doShowDebug != theProperties.doShowDebug()));  
 		}		
 	}

@@ -3,7 +3,7 @@ package uk.co.tolcroft.finance.views;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
@@ -24,22 +24,22 @@ public class SpotPrices implements DebugObject {
 	/* Members */
 	private View		theView		= null;
 	private AccountType	theType     = null;
-	private Date    	theDate     = null;
-	private Date    	theNext     = null;
-	private Date    	thePrev     = null;
+	private DateDay    	theDate     = null;
+	private DateDay    	theNext     = null;
+	private DateDay    	thePrev     = null;
 	private SpotList	thePrices	= null;
 
 	/* Access methods */
 	public AccountType	getAccountType()    { return theType; }
-	public Date			getDate()    		{ return theDate; }
-	public Date     	getNext()    		{ return theNext; }
-	public Date     	getPrev()    		{ return thePrev; }
+	public DateDay		getDate()    		{ return theDate; }
+	public DateDay     	getNext()    		{ return theNext; }
+	public DateDay     	getPrev()    		{ return thePrev; }
 	public SpotList 	getPrices()     	{ return thePrices; }
 	public SpotPrice get(long uIndex) {
 		return (SpotPrice)thePrices.get((int)uIndex); }
  	
  	/* Constructor */
-	public SpotPrices(View pView, AccountType pType, Date pDate) {
+	public SpotPrices(View pView, AccountType pType, DateDay pDate) {
 		/* Create a copy of the date and initiate the list */
 		theView		= pView;
 		theDate    	= pDate;
@@ -68,13 +68,13 @@ public class SpotPrices implements DebugObject {
 		myString.append(pDetail.addDebugLink(theType, AccountType.format(theType))); 
 		myString.append("</td></tr>");
 		myString.append("<tr><td>Date</td><td>"); 
-		myString.append(Date.format(theDate)); 
+		myString.append(DateDay.format(theDate)); 
 		myString.append("</td></tr>");
 		myString.append("<tr><td>Next</td><td>"); 
-		myString.append(Date.format(theNext)); 
+		myString.append(DateDay.format(theNext)); 
 		myString.append("</td></tr>");
 		myString.append("<tr><td>Previous</td><td>"); 
-		myString.append(Date.format(thePrev)); 
+		myString.append(DateDay.format(thePrev)); 
 		myString.append("</td></tr>");
 		myString.append("</tbody></table>"); 
 
@@ -96,7 +96,7 @@ public class SpotPrices implements DebugObject {
 	/* The List class */
 	public class SpotList extends AcctPrice.List {
 		/* Members */
-		private Date 		theDate 	= null;
+		private DateDay 		theDate 	= null;
 		
 		/* Constructors */
 		public SpotList(SpotPrices pPrices) {
@@ -308,7 +308,7 @@ public class SpotPrices implements DebugObject {
 		/* Access methods */
 		public Values      	getValues()    { return (Values)super.getValues(); }
 		public Price 		getPrevPrice() { return getValues().getPrevPrice(); }
-		public Date			getPrevDate()  { return getValues().getPrevDate(); }
+		public DateDay		getPrevDate()  { return getValues().getPrevDate(); }
 
 		/* Linking methods */
 		public AcctPrice	 getBase() { return (AcctPrice)super.getBase(); }
@@ -359,7 +359,7 @@ public class SpotPrices implements DebugObject {
 			Values 	myValues = (Values)pValues;
 			switch (iField) {
 				case FIELD_PRVDATE: 	
-					myString += Date.format(myValues.getPrevDate());	
+					myString += DateDay.format(myValues.getPrevDate());	
 					break;
 				case FIELD_PRVPRICE: 	
 					myString += Price.format(myValues.getPrevPrice());	
@@ -433,7 +433,7 @@ public class SpotPrices implements DebugObject {
 		}
 
 		/* Disable setDate */
-		public void setDate(Date pDate) {}
+		public void setDate(DateDay pDate) {}
 		
 		/**
 		 * Set the state of the item
@@ -495,15 +495,15 @@ public class SpotPrices implements DebugObject {
 		/* SpotValues */
 		public class Values extends AcctPrice.Values {
 			private Price		thePrevPrice	= null;
-			private Date		thePrevDate		= null;
+			private DateDay		thePrevDate		= null;
 			
 			/* Access methods */
 			public Price	getPrevPrice()  	{ return thePrevPrice; }
-			public Date		getPrevDate()   	{ return thePrevDate; }
+			public DateDay	getPrevDate()   	{ return thePrevDate; }
 			
 			public void setPrevPrice(Price pPrice) {
 				thePrevPrice  = pPrice; }
-			public void setPrevDate(Date pDate) {
+			public void setPrevDate(DateDay pDate) {
 				thePrevDate   = pDate; }
 
 			/* Constructor */
@@ -523,8 +523,8 @@ public class SpotPrices implements DebugObject {
 				Difference myDifference = super.histEquals(pCompare);
 				
 				/* Compare underlying values */
-				myDifference = myDifference.combine(Price.differs(thePrevPrice, myValues.thePrevPrice));
-				myDifference = myDifference.combine(Date.differs(thePrevDate,	myValues.thePrevDate));
+				myDifference = myDifference.combine(Price.differs(thePrevPrice, 	myValues.thePrevPrice));
+				myDifference = myDifference.combine(DateDay.differs(thePrevDate,	myValues.thePrevDate));
 				
 				/* Return differences */
 				return myDifference;
@@ -558,7 +558,7 @@ public class SpotPrices implements DebugObject {
 						bResult = (Price.differs(thePrevPrice,  pValues.thePrevPrice));
 						break;
 					case FIELD_PRVDATE:
-						bResult = (Date.differs(thePrevDate,  pValues.thePrevDate));
+						bResult = (DateDay.differs(thePrevDate, pValues.thePrevDate));
 						break;
 					default:
 						bResult = super.fieldChanged(fieldNo, pValues);

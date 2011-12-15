@@ -1,11 +1,13 @@
 package uk.co.tolcroft.finance.data;
 
+import java.util.Date;
+
 import uk.co.tolcroft.finance.views.SpotPrices;
 import uk.co.tolcroft.finance.views.SpotPrices.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
@@ -29,7 +31,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	/* Access methods */
 	public  Values  		getValues()    	{ return (Values)super.getValues(); }
 	public  Price 			getPrice()  	{ return getPairValue(getValues().getPrice()); }
-	public  Date  			getDate()		{ return getValues().getDate(); }
+	public  DateDay  		getDate()		{ return getValues().getDate(); }
 	public  Account			getAccount()	{ return getValues().getAccount(); }
 	private void    		setAccount(Account pAccount)   {
 		getValues().setAccount(pAccount); }
@@ -96,7 +98,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 				myString = pDetail.addDebugLink(myValues.getAccount(), myString);
 				break;
 			case FIELD_DATE:	
-				myString += Date.format(getDate()); 
+				myString += DateDay.format(getDate()); 
 				break;
 			case FIELD_PRICE:	
 				myString += Price.format(myValues.getPriceValue()); 
@@ -193,11 +195,11 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	}
 
 	/* Extract constructor */
-	private AcctPrice(List       		pList,
-					  int				uId,
-			      	  int 		    	uAccountId,
-			      	  java.util.Date 	pDate, 
-			      	  String 			pPrice) throws Exception {
+	private AcctPrice(List      pList,
+					  int		uId,
+			      	  int 		uAccountId,
+			      	  Date 		pDate, 
+			      	  String 	pPrice) throws Exception {
 		/* Initialise the item */
 		super(pList, uId);
 		
@@ -219,7 +221,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		myValues.setAccount(myAccount);
 					
 		/* Record the date and price */
-		myValues.setDate(new Date(pDate));
+		myValues.setDate(new DateDay(pDate));
 		myValues.setPrice(new PricePair(pPrice));
 		
 		/* Allocate the id */
@@ -227,12 +229,12 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	}
 
 	/* Encryption constructor */
-	private AcctPrice(List       		pList,
-			      	  int           	uId, 
-			      	  int 				uControlId,
-			      	  int 		    	uAccountId,
-			      	  java.util.Date 	pDate, 
-			      	  byte[] 			pPrice) throws Exception {
+	private AcctPrice(List      pList,
+			      	  int       uId, 
+			      	  int 		uControlId,
+			      	  int 		uAccountId,
+			      	  Date 		pDate, 
+			      	  byte[] 	pPrice) throws Exception {
 		/* Initialise the item */
 		super(pList, uId);
 		
@@ -257,7 +259,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		myValues.setAccount(myAccount);
 					
 		/* Record the date and price */
-		myValues.setDate(new Date(pDate));
+		myValues.setDate(new DateDay(pDate));
 		myValues.setPrice(new PricePair(pPrice));
 		
 		/* Allocate the id */
@@ -267,7 +269,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	/* Special price constructor for diluted prices */
 	private AcctPrice(List       	pList,
 				  	  Account	    pAccount,
-				  	  Date 			pDate, 
+				  	  DateDay 		pDate, 
 				  	  Price			pPrice) throws Exception {
 		/* Initialise the item */
 		super(pList, 0);
@@ -329,10 +331,6 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		/* Access the object as a Price */
 		AcctPrice myThat = (AcctPrice)pThat;
 
-		/* Compare the accounts */
-		//iDiff = getAccount().compareTo(myThat.getAccount());
-		//if (iDiff != 0) return iDiff;
-
 		/* If the date differs */
 		if (this.getDate() != myThat.getDate()) {
 			/* Handle null dates */
@@ -377,7 +375,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	 * Validate the price
 	 */
 	public void validate() {
-		Date 		myDate = getDate();
+		DateDay 	myDate = getDate();
 		List 		myList = (List)getList();
 		FinanceData	mySet  = myList.getData();
 			
@@ -425,8 +423,8 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	 * 
 	 * @param pDate the new date 
 	 */
-	public void setDate(Date pDate) {
-		getValues().setDate((pDate == null) ? null : new Date(pDate));
+	public void setDate(DateDay pDate) {
+		getValues().setDate((pDate == null) ? null : new DateDay(pDate));
 	}
 
 	/**
@@ -465,7 +463,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			myValues.setPrice(myNew.getPrice());
 	
 		/* Update the date if required */
-		if (Date.differs(getDate(), pPrice.getDate()).isDifferent()) 
+		if (DateDay.differs(getDate(), pPrice.getDate()).isDifferent()) 
 			setDate(pPrice.getDate());
 		
 		/* Check for changes */
@@ -673,7 +671,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		 * @param pDate the date
 		 * @return The Item if present (or null)
 		 */
-		public int countInstances(Date 		pDate,
+		public int countInstances(DateDay 	pDate,
 								  Account	pAccount) {
 			ListIterator 	myIterator;
 			AcctPrice    	myCurr;
@@ -702,7 +700,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		 *   @return The relevant Price record 
 		 */
 		public AcctPrice getLatestPrice(Account pAccount,
-										Date 	pDate) {
+										DateDay pDate) {
 			ListIterator 	myIterator;
 			AcctPrice 			myPrice = null;
 			AcctPrice 			myCurr;
@@ -755,7 +753,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			ListIterator	myIterator;
 			List 	 		myList;
 			AcctPrice 		mySpot;
-			Date			myDate;
+			DateDay			myDate;
 			PricePair		myPoint;
 			AcctPrice		myPrice;
 
@@ -786,7 +784,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 						myPrice = new AcctPrice(this);
 
 						/* Set the date and price */
-						myPrice.setDate(new Date(myDate));
+						myPrice.setDate(new DateDay(myDate));
 						myPrice.getValues().setPrice(myPrice.new PricePair(myPoint));
 						myPrice.setAccount(mySpot.getAccount());
 
@@ -805,10 +803,10 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		/**
 		 *  Add a Price
 		 */
-		public void addItem(int				uId,
-							java.util.Date  pDate,
-	            			String   		pAccount,
-				            String   		pPrice) throws Exception {
+		public void addItem(int		uId,
+							Date  	pDate,
+	            			String  pAccount,
+				            String  pPrice) throws Exception {
 			Account     	myAccount;
 			Account.List	myAccounts;
 			
@@ -820,7 +818,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			if (myAccount == null) 
 				throw new Exception(ExceptionClass.DATA,
 			                        "Price on [" + 
-			                        Date.format(new Date(pDate)) +
+			                        DateDay.format(new DateDay(pDate)) +
 			                        "] has invalid Account [" +
 			                        pAccount + "]");
 									
@@ -834,10 +832,10 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		/**
 		 *  Allow a price to be added
 		 */
-		public void addItem(int				uId,
-							java.util.Date  pDate,
-				            int     		uAccountId,
-				            String   		pPrice) throws Exception {
+		public void addItem(int		uId,
+							Date  	pDate,
+				            int     uAccountId,
+				            String  pPrice) throws Exception {
 			AcctPrice     	myPrice;
 			
 			/* Create the price and PricePoint */
@@ -865,11 +863,11 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		/**
 		 *  Load an Encrypted price
 		 */
-		public void addItem(int     		uId,
-			  	 			int 			uControlId,
-				            java.util.Date  pDate,
-				            int     		uAccountId,
-				            byte[]   		pPrice) throws Exception {
+		public void addItem(int     uId,
+			  	 			int 	uControlId,
+				            Date  	pDate,
+				            int     uAccountId,
+				            byte[]  pPrice) throws Exception {
 			AcctPrice     	myPrice;
 			
 			/* Create the price and PricePoint */
@@ -898,7 +896,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		 *  Allow a price to be added
 		 */
 		public AcctPrice addItem(Account 	pAccount,
-							     Date  		pDate,
+							     DateDay  	pDate,
 							     Price		pPrice) throws Exception {
 			AcctPrice     	myPrice;
 			
@@ -926,13 +924,13 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	 * Values for a price 
 	 */
 	public class Values extends EncryptedValues {
-		private Date    	theDate      = null;
+		private DateDay    	theDate      = null;
 		private PricePair   thePrice     = null;
 		private Account 	theAccount   = null;
 		private Integer	 	theAccountId = null;	
 		
 		/* Access methods */
-		public Date     	getDate()      { return theDate; }
+		public DateDay     	getDate()      { return theDate; }
 		public PricePair	getPrice()     { return thePrice; }
 		public Account		getAccount()   { return theAccount; }
 		private Integer		getAccountId() { return theAccountId; }
@@ -940,7 +938,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		public Price  		getPriceValue() { return getPairValue(thePrice); }
 		public byte[]  		getPriceBytes() { return getPairBytes(thePrice); }
 
-		public void setDate(Date pDate) {
+		public void setDate(DateDay pDate) {
 			theDate      = pDate; }
 		public void setPrice(PricePair pPrice) {
 			thePrice     = pPrice; }
@@ -967,7 +965,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			Difference myDifference = super.histEquals(pCompare);
 			
 			/* Compare underlying values */
-			myDifference = myDifference.combine(Date.differs(theDate,     	myValues.theDate));
+			myDifference = myDifference.combine(DateDay.differs(theDate,    myValues.theDate));
 			myDifference = myDifference.combine(differs(thePrice, 			myValues.thePrice));
 			myDifference = myDifference.combine(Account.differs(theAccount, myValues.theAccount));
 			myDifference = myDifference.combine(Utils.differs(theAccountId, myValues.theAccountId));
@@ -1006,7 +1004,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			Difference	bResult = Difference.Identical;
 			switch (fieldNo) {
 				case FIELD_DATE:
-					bResult = (Date.differs(theDate,     	pValues.theDate));
+					bResult = (DateDay.differs(theDate,     pValues.theDate));
 					break;
 				case FIELD_PRICE:
 					bResult = (differs(thePrice,     		pValues.thePrice));

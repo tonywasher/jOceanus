@@ -8,7 +8,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import jxl.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.AreaReference;
+
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
@@ -112,6 +122,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
 			
 			/* Close the Stream to force out errors */
 			myStream.close();
+			myStream = null;
 			
 			/* Check for cancellation */
 			if (!bContinue) 
@@ -165,6 +176,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
 			
 			/* Close the Stream to force out errors */
 			myStream.close();
+			myStream = null;
 			
 			/* Check for cancellation */
 			if (!bContinue) 
@@ -233,7 +245,10 @@ public abstract class SheetReader<T extends DataSet<T>> {
 		if (bContinue) bContinue = theThread.setNewStage("Loading");
 
 		/* Access the workbook from the stream */
-		if (bContinue) theWorkBook = Workbook.getWorkbook(pStream);
+		if (bContinue) theWorkBook = new HSSFWorkbook(pStream);
+
+		/* Set the missing Cell Policy */
+		theWorkBook.setMissingCellPolicy(Row.RETURN_BLANK_AS_NULL);
 		
 		/* Return continue status */
 		return bContinue;
@@ -261,13 +276,116 @@ public abstract class SheetReader<T extends DataSet<T>> {
 			bContinue = mySheet.loadSpreadSheet();
 		}
 		
-		/* Close the work book (and the input stream) */
-		theWorkBook.close();		
-	
 		/* Analyse the data */
 		if (!theThread.setNewStage("Refreshing data")) bContinue = false;
 						
 		/* Return continue status */
 		return bContinue;
+	}
+	
+	/**
+	 * SheetHelper class
+	 */
+	public static class SheetHelper {
+		/**
+		 * The Workbook
+		 */
+		private Workbook 			theWorkBook		= null;
+		
+		/**
+		 * The FormulaEvaluator 
+		 */
+		private FormulaEvaluator	theEvaluator	= null;
+		
+		/**
+		 * Constructor
+		 * @param pWorkBook the workbook
+		 */
+		public SheetHelper(HSSFWorkbook pWorkbook) {
+			/* Store the workbook */
+			theWorkBook	= pWorkbook;
+			
+			/* Create the evaluator */
+			theEvaluator = new HSSFFormulaEvaluator(pWorkbook);
+		}
+		
+		/**
+		 * Resolve reference
+		 * @param pName the name of the range
+		 * @return the AreaReference (or null)
+		 */
+		public AreaReference resolveAreaReference(String pName) {
+			AreaReference myRef = null;
+			Name myName = theWorkBook.getName(pName);
+			if (myName != null) myRef = new AreaReference(myName.getRefersToFormula());
+			return myRef;
+		}
+
+		/**
+		 * getSheetByName
+		 * @param pName the name of the sheet
+		 * @return the Sheet
+		 */
+		public Sheet getSheetByName(String pName) {
+			return theWorkBook.getSheet(pName);
+		}
+		
+		/**
+		 * Format numeric cell into decimal format
+		 * @param pCell the cell to format
+		 * @return the formatted string
+		 */
+		public String formatNumericCell(Cell pCell) {
+			double myDouble;
+			/* If this is a formula cell ensure that it is evaluated */
+			if (pCell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+				CellValue myValue = theEvaluator.evaluate(pCell);
+				myDouble = myValue.getNumberValue();					
+			}
+			/* else just extract the value directly */
+			else myDouble = pCell.getNumericCellValue();
+			
+			/* return the formatted string */
+			return Double.toString(myDouble);
+		}
+		
+		/**
+		 * Parse the cell to return an integer
+		 * @param pCell the cell to parse
+		 * @return the parsed cell
+		 */
+		public Integer parseIntegerCell(Cell pCell) {
+			double myDouble;
+			/* If this is a formula cell ensure that it is evaluated */
+			if (pCell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+				CellValue myValue = theEvaluator.evaluate(pCell);
+				myDouble = myValue.getNumberValue();					
+			}
+			
+			/* else just extract the value directly */
+			else myDouble = pCell.getNumericCellValue();
+			
+			/* Return the value as an integer */
+			return (int)myDouble;
+		}
+		
+		/**
+		 * Parse the cell to return an integer
+		 * @param pCell the cell to parse
+		 * @return the parsed cell
+		 */
+		public String formatRateCell(Cell pCell) {
+			double myDouble;
+			/* If this is a formula cell ensure that it is evaluated */
+			if (pCell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+				CellValue myValue = theEvaluator.evaluate(pCell);
+				myDouble = myValue.getNumberValue();					
+			}
+			/* else just extract the value directly */
+			else myDouble = pCell.getNumericCellValue();
+			
+			/* return the formatted string */
+			return Double.toString(100*myDouble);
+		}
 	}
 }

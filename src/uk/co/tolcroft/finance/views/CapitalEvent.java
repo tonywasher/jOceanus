@@ -3,7 +3,7 @@ package uk.co.tolcroft.finance.views;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.help.DebugDetail;
 
 public class CapitalEvent extends ReportItem<CapitalEvent> {
@@ -47,10 +47,10 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
 
 	/* Members */
 	private AttributeList	theAttributes	= null;
-	private Date			theDate			= null;
+	private DateDay			theDate			= null;
 	
 	/* Access methods */
-	public	Date			getDate()		{ return theDate; }
+	public	DateDay			getDate()		{ return theDate; }
 	
 	/* Map the getBase function */
 	public Event 			getBase()		{ return (Event)super.getBase(); }
@@ -107,7 +107,7 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
 		/* If we have a valid element */
 		if (iField < numFields()) {
 			/* Handle id of zero */
-			if (iField == 0) return Date.format(theDate);
+			if (iField == 0) return DateDay.format(theDate);
 
 			/* Access the attribute */
 			myAttr = theAttributes.get(iField-1);
@@ -149,7 +149,7 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
 	 * @param pEvent the underlying event
 	 */
 	private CapitalEvent(List 			pList,
-						 Date			pDate) {
+						 DateDay		pDate) {
 		/* Call super-constructor */
 		super(pList);
 		
@@ -317,7 +317,7 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
 		 * Add a date event to the list
 		 * @param pDate the Date for the event
 		 */
-		protected CapitalEvent addEvent(Date 	pDate) {
+		protected CapitalEvent addEvent(DateDay 	pDate) {
 			CapitalEvent myEvent;
 			
 			/* Create the Capital Event and add to list */
@@ -355,7 +355,7 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
 		 * Purge events after date
 		 * @param pDate date from which to purge events
 		 */
-		protected void purgeAfterDate(Date pDate) {
+		protected void purgeAfterDate(DateDay pDate) {
 			ListIterator myIterator;
 			CapitalEvent myEvent;
 			

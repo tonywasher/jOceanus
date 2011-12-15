@@ -5,7 +5,7 @@ import javax.swing.JPanel;
 
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
@@ -28,7 +28,7 @@ public class AccountPrices extends StdTable<AcctPrice> {
 	private ViewPrice.List 				thePrices  			= null;
 	private JPanel						thePanel			= null;
 	private AccountTab					theParent   		= null;
-	private Date.Range					theRange			= null;
+	private DateDay.Range				theRange			= null;
 	private Account             		theAccount  		= null;
 	private ListClass					theViewList			= null;
 	private AccountPrices				theTable	    	= this;
@@ -323,7 +323,7 @@ public class AccountPrices extends StdTable<AcctPrice> {
 			try {
 				/* Store the appropriate value */
 				switch (col) {
-					case COLUMN_DATE:  	myPrice.setDate((Date)obj);  break;
+					case COLUMN_DATE:  	myPrice.setDate((DateDay)obj);  break;
 					case COLUMN_PRICE:	myPrice.setPrice((Price)obj); break;
 				}	
 			}
@@ -439,7 +439,7 @@ public class AccountPrices extends StdTable<AcctPrice> {
 		 * Set the date editor range 
 		 * @param pRange
 		 */
-		private void setDateEditorRange(Date.Range pRange) {
+		private void setDateEditorRange(DateDay.Range pRange) {
 			/* Set the range */
 			theDateEditor.setRange(pRange);			
 		}

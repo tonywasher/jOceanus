@@ -2,7 +2,6 @@ package uk.co.tolcroft.models.sheets;
 
 import uk.co.tolcroft.models.data.DataKey;
 import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 
 public class SheetDataKey extends SheetDataItem<DataKey> {
 	/**
@@ -10,11 +9,6 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
 	 */
 	private static final String Keys	   		= DataKey.listName;
 
-	/**
-	 * Is the spreadsheet a backup spreadsheet or an edit-able one
-	 */
-	private boolean 			isBackup		= false;
-	
 	/**
 	 * DataKey list
 	 */
@@ -33,9 +27,6 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
 		/* Call super constructor */
 		super(pReader, Keys);
 		
-		/* Note whether this is a backup */
-		isBackup = (pReader.getType() == SheetType.BACKUP);
-		
 		/* Access the Lists */
 		theData	= pReader.getData();
 		theList = theData.getDataKeys();
@@ -49,9 +40,6 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
 		/* Call super constructor */
 		super(pWriter, Keys);
 		
-		/* Note whether this is a backup */
-		isBackup = (pWriter.getType() == SheetType.BACKUP);
-				
 		/* Access the Control list */
 		theList = pWriter.getData().getDataKeys();
 		setDataList(theList);
@@ -67,7 +55,7 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
 		int	myKeyType	= loadInteger(2);
 		
 		/* Access the Binary values  */
-		byte[]	myKey			= loadBytes(3);
+		byte[]	myKey	= loadBytes(3);
 
 		/* Add the DataKey */
 		theList.addItem(myID, myControl, myKeyType, myKey);
@@ -86,24 +74,10 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
 		writeBytes(3, pItem.getSecuredKeyDef());
 	}
 
-	/**
-	 * PreProcess on write
-	 */
-	protected boolean preProcessOnWrite() throws Throwable {		
-		/* Ignore if we are creating a backup */
-		if (isBackup) return false;
+	@Override
+	protected void preProcessOnWrite() throws Throwable {}		
 
-		/* Write titles */
-		writeString(0, DataKey.fieldName(DataKey.FIELD_ID));
-		writeString(1, DataKey.fieldName(DataKey.FIELD_CONTROL));			
-		writeString(2, DataKey.fieldName(DataKey.FIELD_KEYTYPE));			
-		writeString(3, DataKey.fieldName(DataKey.FIELD_KEY));			
-		return true;
-	}	
-
-	/**
-	 * PostProcess on write
-	 */
+	@Override
 	protected void postProcessOnWrite() throws Throwable {		
 		/* Set the four columns as the range */
 		nameRange(4);

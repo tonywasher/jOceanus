@@ -105,8 +105,10 @@ public class PasswordHash {
 	/**
 	 * Constructor for alternate password hash sharing same password
 	 * @param pSource the source hash
+	 * @param useRestricted use restricted keys
 	 */
-	protected PasswordHash(PasswordHash pSource) throws Exception {
+	protected PasswordHash(PasswordHash pSource,
+			   			   boolean		useRestricted) throws Exception {
 		char[] 		myPassword = null;
 		
 		/* Build the encryption cipher */
@@ -119,7 +121,6 @@ public class PasswordHash {
 		try {
 			/* Store the secure random generator */
 			theRandom = pSource.theRandom;
-			boolean useRestricted = pSource.getSecurityMode().useRestricted();
 			
 			/* Create a random SecurityMode */
 			theSecureMode = SecurityMode.getSecurityMode(useRestricted, theRandom);
@@ -223,8 +224,7 @@ public class PasswordHash {
 			
 			/* Create the Cipher Set */
 			theCipherSet = new CipherSet(theRandom, 
-										 theSecureMode, 
-										 CipherSet.DEFSTEPS);
+										 theSecureMode);
 			theCipherSet.buildCiphers(theSecretHash);
 			
 			/* Encrypt the password */

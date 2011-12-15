@@ -1,12 +1,14 @@
 package uk.co.tolcroft.finance.data;
 
+import java.util.Date;
+
 import uk.co.tolcroft.finance.data.StaticClass.EventInfoClass;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.views.Statement.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
@@ -39,7 +41,7 @@ public class Event extends EncryptedItem<Event> {
 	
 	/* Access methods */
 	public  Values         	getValues()    { return (Values)super.getValues(); }	
-	public  Date      		getDate()      { return getValues().getDate(); }
+	public  DateDay      	getDate()      { return getValues().getDate(); }
 	public  String          getDesc()      { return getPairValue(getValues().getDesc()); }
 	public  Money     		getAmount()    { return getPairValue(getValues().getAmount()); }
 	public  Account         getDebit()     { return getValues().getDebit(); }
@@ -136,7 +138,7 @@ public class Event extends EncryptedItem<Event> {
 		Values 	myValues = (Values)pValues;
 		switch (iField) {
 			case FIELD_DATE:	
-				myString += Date.format(myValues.getDate()); 
+				myString += DateDay.format(myValues.getDate()); 
 				break;
 			case FIELD_DESC:	
 				myString += myValues.getDescValue(); 
@@ -300,19 +302,19 @@ public class Event extends EncryptedItem<Event> {
 	}
 
 	/* constructor for load from encrypted */
-	protected Event(List      		pList,
-			        int	          	uId, 
-			        int				uControlId,
-		            java.util.Date 	pDate,
-		            byte[]        	pDesc,
-		            int           	uDebit,
-		            int	        	uCredit,
-		            int				uTransType,
-		            byte[]     		pAmount,
-		            byte[]			pUnits,
-		            byte[]			pTaxCredit,
-		            byte[]			pDilution,
-		            Integer			pYears) throws Exception {
+	protected Event(List    pList,
+			        int	    uId, 
+			        int		uControlId,
+		            Date 	pDate,
+		            byte[]  pDesc,
+		            int     uDebit,
+		            int	    uCredit,
+		            int		uTransType,
+		            byte[]  pAmount,
+		            byte[]	pUnits,
+		            byte[]	pTaxCredit,
+		            byte[]	pDilution,
+		            Integer	pYears) throws Exception {
 		/* Initialise item */
 		super(pList, uId);
 		
@@ -339,7 +341,7 @@ public class Event extends EncryptedItem<Event> {
 		setControlKey(uControlId);
 		
 		/* Create the date */
-		myValues.setDate(new Date(pDate));
+		myValues.setDate(new DateDay(pDate));
 		
 		/* Look up the Debit Account */
 		myAccount = myAccounts.searchFor(uDebit);
@@ -382,7 +384,7 @@ public class Event extends EncryptedItem<Event> {
 	/* Standard constructor */
 	protected Event(List      		pList,
 				    int				uId,
-		            java.util.Date 	pDate,
+		            Date 			pDate,
 		            String         	pDesc,
 		            Account         pDebit,
 		            Account        	pCredit,
@@ -408,11 +410,14 @@ public class Event extends EncryptedItem<Event> {
 		myValues.setDebit(pDebit);
 		myValues.setCredit(pCredit);
 		myValues.setTransType(pTransType);
-		myValues.setDate(new Date(pDate));
+		myValues.setDate(new DateDay(pDate));
 		myValues.setYears(pYears);
 		if (pUnits != null) myValues.setUnits(new UnitsPair(pUnits));
 		if (pTaxCredit != null) myValues.setTaxCredit(new MoneyPair(pTaxCredit));
 		if (pDilution != null) myValues.setDilution(new DilutionPair(pDilution));
+		
+		/* Allocate the id */
+		pList.setNewId(this);				
 		
 		/* If Years exist */
 		if (pYears != null) {
@@ -420,9 +425,6 @@ public class Event extends EncryptedItem<Event> {
 			EventValue myValue = theInfoSet.getNewValue(EventInfoClass.QualifyYears);
 			myValue.setValue(pYears);
 		}
-		
-		/* Allocate the id */
-		pList.setNewId(this);				
 	}
 	
 	/**
@@ -731,7 +733,7 @@ public class Event extends EncryptedItem<Event> {
 	 */
 	public void validate() {
 		List 			myList		= (List)getList();
-		Date 			myDate		= getDate();
+		DateDay 		myDate		= getDate();
 		String			myDesc		= getDesc();
 		Account			myDebit		= getDebit();
 		Account			myCredit	= getCredit();
@@ -1233,8 +1235,8 @@ public class Event extends EncryptedItem<Event> {
 	 * 
 	 * @param pDate the new date 
 	 */
-	public void setDate(Date pDate) {
-		getValues().setDate((pDate == null) ? null : new Date(pDate));
+	public void setDate(DateDay pDate) {
+		getValues().setDate((pDate == null) ? null : new DateDay(pDate));
 	}
 
 	/**
@@ -1294,7 +1296,7 @@ public class Event extends EncryptedItem<Event> {
 		pushHistory();
 		
 		/* Update the date if required */
-		if (Date.differs(getDate(), pEvent.getDate()).isDifferent()) 
+		if (DateDay.differs(getDate(), pEvent.getDate()).isDifferent()) 
 			setDate(pEvent.getDate());
 	
 		/* Update the description if required */
@@ -1361,14 +1363,14 @@ public class Event extends EncryptedItem<Event> {
 	 */
 	public static class List extends EncryptedList<List, Event> {
 		/* Members */
-		private Date.Range  theRange   = null;
+		private DateDay.Range  theRange   = null;
 
 		/* Access DataSet correctly */
-		public 		FinanceData getData() 	{ return (FinanceData) super.getData(); }
-		protected 	Date.Range 	getRange() 	{ return theRange; }
+		public 		FinanceData 	getData() 	{ return (FinanceData) super.getData(); }
+		protected 	DateDay.Range 	getRange() 	{ return theRange; }
 		
 		/* Set the range */
-		protected void setRange(Date.Range pRange) { theRange = pRange; }
+		protected void setRange(DateDay.Range pRange) { theRange = pRange; }
 		
 		/** 
 	 	 * Construct an empty CORE event list
@@ -1453,7 +1455,7 @@ public class Event extends EncryptedItem<Event> {
 	 	 *  Get an EditList for a range
 	 	 *  @param pRange the range
 	 	 */
-		public List getEditList(Date.Range pRange) {
+		public List getEditList(DateDay.Range pRange) {
 			/* Build an empty List */
 			List myList = new List(this);
 			
@@ -1505,7 +1507,7 @@ public class Event extends EncryptedItem<Event> {
 			Event     					myCurr;
 			Pattern						myPattern;
 			Event       				myEvent;
-			Date 						myDate;
+			DateDay 					myDate;
 			
 			/* Record range and initialise the list */
 			myList.theRange   = pTaxYear.getRange();
@@ -1520,7 +1522,7 @@ public class Event extends EncryptedItem<Event> {
 				myPattern = (Pattern)myCurr;
 				
 				/* Access a copy of the base date */
-				myDate = new Date(myCurr.getDate());
+				myDate = new DateDay(myCurr.getDate());
 					
 				/* Loop while we have an event to add */
 				while ((myEvent = myPattern.nextEvent(myList,
@@ -1548,7 +1550,7 @@ public class Event extends EncryptedItem<Event> {
 
 				/* Format the range */
 				pBuffer.append("<tr><td>Range</td><td>"); 
-				pBuffer.append(Date.Range.format(theRange)); 
+				pBuffer.append(DateDay.Range.format(theRange)); 
 				pBuffer.append("</td></tr>");
 			}
 		}
@@ -1617,17 +1619,17 @@ public class Event extends EncryptedItem<Event> {
 		/**
 		 *  Allow an event to be added
 		 */ 
-		public void addItem(int				uId,
-							java.util.Date	pDate,
-				            String   		pDesc,
-				            String   		pAmount,
-				            String   		pDebit,
-				            String   		pCredit,
-				            String   		pUnits,
-				            String   		pTransType,
-				            String   		pTaxCredit,
-				            String			pDilution,
-				            Integer   		pYears) throws Exception {
+		public void addItem(int		uId,
+							Date	pDate,
+				            String  pDesc,
+				            String  pAmount,
+				            String  pDebit,
+				            String  pCredit,
+				            String  pUnits,
+				            String  pTransType,
+				            String  pTaxCredit,
+				            String	pDilution,
+				            Integer pYears) throws Exception {
 			FinanceData		myData;
 			Account.List	myAccounts;
 			Account         myDebit;
@@ -1644,7 +1646,7 @@ public class Event extends EncryptedItem<Event> {
 			if (myTransType == null) 
 				throw new Exception(ExceptionClass.DATA,
 			                        "Event on [" + 
-			                        Date.format(new Date(pDate)) +
+			                        DateDay.format(new DateDay(pDate)) +
 			                        "] has invalid Transact Type [" + pTransType + "]");
 			
 			/* Look up the Credit Account */
@@ -1652,7 +1654,7 @@ public class Event extends EncryptedItem<Event> {
 			if (myCredit == null) 
 				throw new Exception(ExceptionClass.DATA,
 			                        "Event on [" + 
-			                        Date.format(new Date(pDate)) +
+			                        DateDay.format(new DateDay(pDate)) +
 			                        "] has invalid Credit account [" + pCredit + "]");
 			
 			/* Look up the Debit Account */
@@ -1660,7 +1662,7 @@ public class Event extends EncryptedItem<Event> {
 			if (myDebit == null) 
 				throw new Exception(ExceptionClass.DATA,
 			                        "Event on [" + 
-			                        Date.format(new Date(pDate)) +
+			                        DateDay.format(new DateDay(pDate)) +
 			                        "] has invalid Debit account [" + pDebit + "]");
 			
 			/* Create the new Event */
@@ -1685,18 +1687,18 @@ public class Event extends EncryptedItem<Event> {
 		/**
 		 *  Allow an event to be added
 		 */
-		public void addItem(int     		uId,
-							int				uControlId,
-				            java.util.Date  pDate,
-				            byte[]   		pDesc,
-				            byte[]   		pAmount,
-				            int     		uDebitId,
-				            int     		uCreditId,
-				            byte[]   		pUnits,
-				            int  	  		uTransId,
-				            byte[]   		pTaxCredit,
-				            byte[]			pDilution,
-				            Integer    		pYears) throws Exception {
+		public void addItem(int     uId,
+							int		uControlId,
+				            Date  	pDate,
+				            byte[]  pDesc,
+				            byte[]  pAmount,
+				            int     uDebitId,
+				            int     uCreditId,
+				            byte[]  pUnits,
+				            int  	uTransId,
+				            byte[]  pTaxCredit,
+				            byte[]	pDilution,
+				            Integer pYears) throws Exception {
 			Event	myEvent;
 			
 			/* Create the new Event */
@@ -1729,7 +1731,7 @@ public class Event extends EncryptedItem<Event> {
 	 *  Values for an event 
 	 */
 	public class Values extends EncryptedValues {
-		private Date       		theDate      = null;
+		private DateDay       	theDate      = null;
 		private StringPair      theDesc      = null;
 		private MoneyPair  		theAmount    = null;
 		private Account         theDebit     = null;
@@ -1744,7 +1746,7 @@ public class Event extends EncryptedItem<Event> {
 		private Integer			theTransId	 = null;
 		
 		/* Access methods */
-		public Date       		getDate()      { return theDate; }
+		public DateDay       	getDate()      { return theDate; }
 		public StringPair       getDesc()      { return theDesc; }
 		public MoneyPair  		getAmount()    { return theAmount; }
 		public Account          getDebit()     { return theDebit; }
@@ -1772,7 +1774,7 @@ public class Event extends EncryptedItem<Event> {
 		public  byte[]	getUnitsBytes()     { return getPairBytes(getUnits()); }
 		public  byte[]	getDilutionBytes()  { return getPairBytes(getDilution()); }
 
-		public void setDate(Date pDate) {
+		public void setDate(DateDay pDate) {
 			theDate      = pDate; }
 		public void setDesc(StringPair pDesc) {
 			theDesc      = pDesc; }
@@ -1828,7 +1830,7 @@ public class Event extends EncryptedItem<Event> {
 			Difference myDifference = super.histEquals(pCompare);
 			
 			/* Compare underlying values */
-			myDifference = myDifference.combine(Date.differs(theDate,      				myValues.theDate));
+			myDifference = myDifference.combine(DateDay.differs(theDate,      			myValues.theDate));
 			myDifference = myDifference.combine(differs(theDesc, 						myValues.theDesc));
 			myDifference = myDifference.combine(differs(theAmount,    					myValues.theAmount));
 			myDifference = myDifference.combine(differs(theUnits,     					myValues.theUnits));
@@ -1916,7 +1918,7 @@ public class Event extends EncryptedItem<Event> {
 			Difference	bResult = Difference.Identical;
 			switch (fieldNo) {
 				case FIELD_DATE:
-					bResult = (Date.differs(theDate,		      	pValues.theDate));
+					bResult = (DateDay.differs(theDate,		      	pValues.theDate));
 					break;
 				case FIELD_DESC:
 					bResult = (differs(theDesc,      				pValues.theDesc));

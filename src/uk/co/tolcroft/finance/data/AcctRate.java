@@ -1,9 +1,11 @@
 package uk.co.tolcroft.finance.data;
 
+import java.util.Date;
+
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
@@ -30,8 +32,8 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	public  byte[] 		getRateBytes() 	{ return getValues().getRateBytes(); }
 	public  Rate 		getBonus()     	{ return getValues().getBonusValue(); }
 	public  byte[] 		getBonusBytes() { return getValues().getBonusBytes(); }
-	public  Date 		getDate()   	{ return getValues().getEndDate(); }
-	public  Date 		getEndDate()   	{ return getValues().getEndDate(); }
+	public  DateDay 	getDate()   	{ return getValues().getEndDate(); }
+	public  DateDay 	getEndDate()   	{ return getValues().getEndDate(); }
 	public  Account		getAccount()	{ return getValues().getAccount(); }
 	private void        setAccount(Account pAccount)   {
 		getValues().setAccount(pAccount); }
@@ -103,7 +105,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 				myString += Rate.format(myValues.getBonusValue()); 
 				break;
 			case FIELD_ENDDATE:	
-				myString += Date.format(myValues.getEndDate()); 
+				myString += DateDay.format(myValues.getEndDate()); 
 				break;
 			default:
 				myString += super.formatField(pDetail, iField, pValues);
@@ -168,12 +170,12 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	}
 
 	/* Extract constructor */
-	private AcctRate(List       	pList,
-					 int			uId,
-				     int 		   	uAccountId,
-				     java.util.Date	pEndDate, 
-				     String		   	pRate,
-				     String		   	pBonus) throws Exception {
+	private AcctRate(List   pList,
+					 int	uId,
+				     int 	uAccountId,
+				     Date	pEndDate, 
+				     String	pRate,
+				     String	pBonus) throws Exception {
 		/* Initialise the item */
 		super(pList, uId);
 		
@@ -194,7 +196,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 					
 		/* Record the date */
 		if (pEndDate != null)
-			myValues.setEndDate(new Date(pEndDate));
+			myValues.setEndDate(new DateDay(pEndDate));
 
 		/* Set the encrypted objects */
 		myValues.setRate(new RatePair(pRate));
@@ -205,13 +207,13 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	}
 
 	/* Encryption constructor */
-	private AcctRate(List       	pList,
-				     int			uId,
-				     int			uControlId,
-				     int 		   	uAccountId,
-				     java.util.Date	pEndDate, 
-				     byte[]		   	pRate,
-				     byte[]		   	pBonus) throws Exception {
+	private AcctRate(List   pList,
+				     int	uId,
+				     int	uControlId,
+				     int 	uAccountId,
+				     Date	pEndDate, 
+				     byte[]	pRate,
+				     byte[]	pBonus) throws Exception {
 		/* Initialise the item */
 		super(pList, uId);
 		
@@ -235,7 +237,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 					
 		/* Record the date */
 		if (pEndDate != null)
-			myValues.setEndDate(new Date(pEndDate));
+			myValues.setEndDate(new DateDay(pEndDate));
 
 		/* Set the encrypted objects */
 		myValues.setRate(new RatePair(pRate));
@@ -333,7 +335,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	 */
 	public void validate() {
 		AcctRate 	myCurr;
-		Date 		myDate = getEndDate();
+		DateDay 	myDate = getEndDate();
 		List 		myList = (List)getList();
 		FinanceData	mySet  = myList.getData();
 
@@ -406,8 +408,8 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	 * 
 	 * @param pDate the new date 
 	 */
-	public void setEndDate(Date pDate) {
-		getValues().setEndDate(new Date(pDate));
+	public void setEndDate(DateDay pDate) {
+		getValues().setEndDate(new DateDay(pDate));
 	}
 
 	/**
@@ -433,7 +435,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 			myValues.setBonus(myNew.getBonus());
 
 		/* Update the date if required */
-		if (Date.differs(getEndDate(), myRate.getEndDate()).isDifferent()) 
+		if (DateDay.differs(getEndDate(), myRate.getEndDate()).isDifferent()) 
 			setEndDate(myRate.getEndDate());
 
 		/* Check for changes */
@@ -613,7 +615,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		 * @param pDate the date
 		 * @return The Item if present (or null)
 		 */
-		protected int countInstances(Date 		pDate,
+		protected int countInstances(DateDay 	pDate,
 									 Account    pAccount) {
 			ListIterator 	myIterator;
 			AcctRate 			myCurr;
@@ -658,11 +660,11 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		 *   @return The relevant Rate record 
 		 */
 		public AcctRate getLatestRate(Account   pAccount, 
-								  	  Date 		pDate) {
+								  	  DateDay 	pDate) {
 			ListIterator 	myIterator;
-			AcctRate    		myRate = null;
-			AcctRate    		myCurr;
-			Date 			myDate;
+			AcctRate    	myRate = null;
+			AcctRate    	myCurr;
+			DateDay 		myDate;
 
 			/* Access the list iterator */
 			myIterator = listIterator();
@@ -692,11 +694,11 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		/**
 		 *  Allow a rate to be added 
 		 */
-		public void addItem(int				uId,
-							String   		pAccount,
-	            			String   		pRate,
-	            			java.util.Date  pDate,
-				            String   		pBonus) throws Exception {
+		public void addItem(int		uId,
+							String  pAccount,
+	            			String  pRate,
+	            			Date  	pDate,
+				            String  pBonus) throws Exception {
 			Account     	myAccount;
 			Account.List 	myAccounts;
 			
@@ -708,7 +710,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 			if (myAccount == null) 
 				throw new Exception(ExceptionClass.DATA,
 			                        "Rate on [" + 
-			                        Date.format(new Date(pDate)) +
+			                        DateDay.format(new DateDay(pDate)) +
 			                        "] has invalid Account [" +
 			                        pAccount + "]");
 				
@@ -723,11 +725,11 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		/**
 		 *  Load an Extract Rate
 		 */
-		private void addItem(int			uId,
-							 int  	 		uAccountId,
-	            			 String   		pRate,
-	            			 java.util.Date pDate,
-				             String   		pBonus) throws Exception {
+		private void addItem(int	uId,
+							 int  	uAccountId,
+	            			 String pRate,
+	            			 Date 	pDate,
+				             String pBonus) throws Exception {
 			AcctRate     	myRate;
 			
 			/* Create the period */
@@ -756,12 +758,12 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		/**
 		 *  Load an Encrypted Rate
 		 */
-		public void addItem(int     		uId,
-							int				uControlId,
-							int  	 		uAccountId,
-	            			byte[]   		pRate,
-	            			java.util.Date  pDate,
-				            byte[]   		pBonus) throws Exception {
+		public void addItem(int     uId,
+							int		uControlId,
+							int  	uAccountId,
+	            			byte[]  pRate,
+	            			Date  	pDate,
+				            byte[]  pBonus) throws Exception {
 			AcctRate     	myRate;
 			
 			/* Create the period */
@@ -792,14 +794,14 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	public class Values extends EncryptedValues {
 		private RatePair	theRate      = null;
 		private RatePair	theBonus     = null;
-		private Date       	theEndDate   = null;
+		private DateDay     theEndDate   = null;
 		private Account    	theAccount   = null;
 		private Integer		theAccountId = null;
 
 		/* Access methods */
 		public RatePair		getRate()       { return theRate; }
 		public RatePair		getBonus()      { return theBonus; }
-		public Date       	getEndDate()    { return theEndDate; }
+		public DateDay      getEndDate()    { return theEndDate; }
 		public Account		getAccount()    { return theAccount; }
 		private Integer		getAccountId()  { return theAccountId; }
 		public Rate  		getRateValue()  { return getPairValue(theRate); }
@@ -811,7 +813,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 			theRate      = pRate; }
 		public void setBonus(RatePair pBonus) {
 			theBonus     = pBonus; }
-		public void setEndDate(Date pEndDate) {
+		public void setEndDate(DateDay pEndDate) {
 			theEndDate   = pEndDate; }
 		public void setAccount(Account pAccount) {
 			theAccount   = pAccount; 
@@ -837,7 +839,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 			/* Compare underlying values */
 			myDifference = myDifference.combine(differs(theRate,  			myValues.theRate));
 			myDifference = myDifference.combine(differs(theBonus, 			myValues.theBonus));
-			myDifference = myDifference.combine(Date.differs(theEndDate, 	myValues.theEndDate));
+			myDifference = myDifference.combine(DateDay.differs(theEndDate, myValues.theEndDate));
 			myDifference = myDifference.combine(differs(theAccount, 		myValues.theAccount));
 			myDifference = myDifference.combine(Utils.differs(theAccountId, myValues.theAccountId));
 			
@@ -869,10 +871,10 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 					bResult = (differs(theBonus,   pValues.theBonus));
 					break;
 				case FIELD_ENDDATE:
-					bResult = (Date.differs(theEndDate, pValues.theEndDate));
+					bResult = (DateDay.differs(theEndDate, 	pValues.theEndDate));
 					break;
 				case FIELD_ACCOUNT:
-					bResult = (Account.differs(theAccount,   pValues.theAccount));
+					bResult = (Account.differs(theAccount,  pValues.theAccount));
 					break;
 				default:
 					bResult = super.fieldChanged(fieldNo, pValues);

@@ -4,7 +4,7 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.Analysis.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.HistoryValues;
@@ -18,7 +18,7 @@ public class Statement implements DebugObject {
 	private View      		theView      	= null;
 	private Account      	theAccount      = null;
 	private ActDetail		theBucket		= null;
-	private Date.Range      theRange        = null;
+	private DateDay.Range   theRange        = null;
 	private Money    		theStartBalance = null;
 	private Money    		theEndBalance   = null;
 	private Units    		theStartUnits   = null;
@@ -28,7 +28,7 @@ public class Statement implements DebugObject {
 
 	/* Access methods */
 	public Account       	getAccount()      { return theAccount; }
-	public Date.Range       getDateRange()    { return theRange; }
+	public DateDay.Range    getDateRange()    { return theRange; }
 	public Money     		getStartBalance() { return theStartBalance; }
 	public Money     		getEndBalance()   { return theEndBalance; }
 	public Units     		getStartUnits()   { return theStartUnits; }
@@ -39,9 +39,9 @@ public class Statement implements DebugObject {
 		return (Line)theLines.get((int)uIndex); }
  	
  	/* Constructor */
-	public Statement(View		pView,
-					 Account 	pAccount,
-			         Date.Range pRange) throws Exception {
+	public Statement(View			pView,
+					 Account 		pAccount,
+			         DateDay.Range 	pRange) throws Exception {
 		/* Create a copy of the account (plus surrounding list) */
 		theView	   = pView;
 		theAccount = pAccount;
@@ -157,7 +157,7 @@ public class Statement implements DebugObject {
 		
 		/* Format the range */
 		myString.append("<tr><td>Range</td><td>"); 
-		myString.append(Date.Range.format(theRange)); 
+		myString.append(DateDay.Range.format(theRange)); 
 		myString.append("</td></tr>");
 		
 		/* Format the balances */

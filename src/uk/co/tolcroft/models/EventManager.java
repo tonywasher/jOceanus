@@ -20,12 +20,12 @@ public class EventManager {
 	/**
 	 * The Owner of the events
 	 */
-	private Object 					theOwner			= null;
+	private 			Object 					theOwner			= null;
 	
 	/**
 	 * The list of registrations
 	 */
-	private List<Registration> 		theRegistrations	= null;
+	private volatile 	List<Registration> 		theRegistrations	= null;
 	
 	/**
 	 * Registration enumeration 
@@ -89,7 +89,7 @@ public class EventManager {
 											  pListener);
 				
 		/* Add it to the list */
-		addListener(myReg);
+		adjustListenerList(myReg, true);
 	}
 	
 	/**
@@ -102,23 +102,7 @@ public class EventManager {
 											  pListener);
 		
 		/* Add it to the list */
-		addListener(myReg);
-	}
-	
-	/**
-	 * Add Listener to list 
-	 * @param pRegistration the registration to add
-	 */
-	private void addListener(Registration pRegistration) {
-		/* If the listener is already registered, return */
-		if (theRegistrations.contains(pRegistration)) return;
-		
-		/* Create a new list to avoid affecting any current fire iterations */
-		List<Registration> myNew = new ArrayList<Registration>(theRegistrations);
-		
-		/* Add the registration to the list and set as the new list */
-		myNew.add(pRegistration);
-		theRegistrations = myNew;
+		adjustListenerList(myReg, true);
 	}
 	
 	/**
@@ -131,7 +115,7 @@ public class EventManager {
 											  pListener);
 		
 		/* Remove it from the list */
-		removeListener(myReg);
+		adjustListenerList(myReg, false);
 	}
 
 	/**
@@ -144,25 +128,30 @@ public class EventManager {
 											  pListener);
 		
 		/* Remove it from the list */
-		removeListener(myReg);
+		adjustListenerList(myReg, false);
 	}
 
 	/**
-	 * Remove Listener 
-	 * @param pRegistration the registration to remove
+	 * Adjust listener list
+	 * @param pRegistration the relevant registration
+	 * @param isMember should this registration be in the list
 	 */
-	private void removeListener(Registration pRegistration) {
-		/* If the listener is not registered, return */
-		if (!theRegistrations.contains(pRegistration)) return;
+	private synchronized void adjustListenerList(Registration 	pRegistration,
+												 boolean		isMember) {
+		/* If the listener is already in the correct state, return */
+		if (theRegistrations.contains(pRegistration) == isMember) return;
 		
 		/* Create a new list to avoid affecting any current fire iterations */
 		List<Registration> myNew = new ArrayList<Registration>(theRegistrations);
 		
-		/* Remove the registration to the list and set as the new list */
-		myNew.remove(pRegistration);
+		/* Adjust the list */
+		if (isMember)	myNew.add(pRegistration);
+		else			myNew.remove(pRegistration);
+		
+		/* Record the new list */
 		theRegistrations = myNew;
 	}
-
+	
 	/**
 	 * Fire State Changed Event to all registered listeners
 	 */

@@ -1,10 +1,12 @@
 package uk.co.tolcroft.finance.data;
 
+import java.util.Date;
+
 import uk.co.tolcroft.finance.data.FinanceData.LoadState;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Exception;
 import uk.co.tolcroft.models.Exception.*;
-import uk.co.tolcroft.models.Number.*;
+import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
@@ -90,8 +92,8 @@ public class Account extends EncryptedItem<Account> {
 	public  AcctPrice   getInitPrice()  { return theInitPrice; }
 	public  AccountType getActType()   	{ return getValues().getType(); }
 	public  int         getOrder()     	{ return getValues().getOrder(); }
-	public  Date        getMaturity()  	{ return getValues().getMaturity(); }
-	public  Date    	getClose()     	{ return getValues().getClose(); }
+	public  DateDay     getMaturity()  	{ return getValues().getMaturity(); }
+	public  DateDay    	getClose()     	{ return getValues().getClose(); }
 	public  char[]    	getWebSite()	{ return getPairValue(getValues().getWebSite()); }
 	public  char[]    	getCustNo()		{ return getPairValue(getValues().getCustNo()); }
 	public  char[]    	getUserId()		{ return getPairValue(getValues().getUserId()); }
@@ -231,10 +233,10 @@ public class Account extends EncryptedItem<Account> {
 				myString = pDetail.addDebugLink(myValues.getType(), myString);
 				break;
 			case FIELD_CLOSE:	
-				myString += Date.format(myValues.getClose()); 
+				myString += DateDay.format(myValues.getClose()); 
 				break;
 			case FIELD_MATURITY:	
-				myString += Date.format(myValues.getMaturity()); 
+				myString += DateDay.format(myValues.getMaturity()); 
 				break;
 			case FIELD_PARENT:	
 				if ((myValues.getParent() == null) &&
@@ -273,12 +275,12 @@ public class Account extends EncryptedItem<Account> {
 			case FIELD_EVTFIRST:	
 				myString += null;
 				if (theEarliest != null) 
-					myString = pDetail.addDebugLink(theEarliest, Date.format(theEarliest.getDate())); 
+					myString = pDetail.addDebugLink(theEarliest, DateDay.format(theEarliest.getDate())); 
 				break;
 			case FIELD_EVTLAST:	
 				myString += null;
 				if (theLatest != null) 
-					myString = pDetail.addDebugLink(theLatest, Date.format(theLatest.getDate())); 
+					myString = pDetail.addDebugLink(theLatest, DateDay.format(theLatest.getDate())); 
 				break;
 			case FIELD_INITPRC:
 				myString += null;
@@ -400,22 +402,22 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pAccount the Encrypted Account details of the account
 	 * @param pNotes the Encrypted Notes for the account
 	 */
-	private Account(List    		pList,
-			        int           	uId,
-			        int				uControlId,
-					byte[]			pName, 
-					int				uAcTypeId,
-					byte[]         	pDesc,
-					java.util.Date 	pMaturity,
-			        java.util.Date 	pClose,
-			        Integer        	pParentId,
-			        Integer        	pAliasId,
-			        byte[]			pWebSite,
-			        byte[]			pCustNo,
-			        byte[]			pUserId,
-			        byte[]			pPassword,
-			        byte[]			pAccount,
-			        byte[]			pNotes) throws Exception {
+	private Account(List    pList,
+			        int     uId,
+			        int		uControlId,
+					byte[]	pName, 
+					int		uAcTypeId,
+					byte[]  pDesc,
+					Date 	pMaturity,
+			        Date 	pClose,
+			        Integer pParentId,
+			        Integer pAliasId,
+			        byte[]	pWebSite,
+			        byte[]	pCustNo,
+			        byte[]	pUserId,
+			        byte[]	pPassword,
+			        byte[]	pAccount,
+			        byte[]	pNotes) throws Exception {
 		/* Initialise the item */
 		super(pList, uId);
 		
@@ -444,11 +446,11 @@ public class Account extends EncryptedItem<Account> {
 
 		/* Parse the maturity date if it exists */
 		if (pMaturity != null) 
-			myValues.setMaturity(new Date(pMaturity));
+			myValues.setMaturity(new DateDay(pMaturity));
 			
 		/* Parse the closed date if it exists */
 		if (pClose != null) 
-			myValues.setClose(new Date(pClose));
+			myValues.setClose(new DateDay(pClose));
 				
 		/* Record the encrypted values */
 		myValues.setName(new StringPair(pName));
@@ -474,21 +476,21 @@ public class Account extends EncryptedItem<Account> {
 	 * @param uParentId the Parent id (or -1 if no parent)
 	 * @param uAliasId the Alias id (or -1 if no parent)
 	 */
-	private Account(List    		pList,
-					int				uId,
-					String         	sName, 
-					int				uAcTypeId,
-					String			pDesc,
-					java.util.Date 	pMaturity,
-			        java.util.Date 	pClose,
-			        Integer        	pParentId,
-			        Integer        	pAliasId,
-			        char[]			pWebSite,
-			        char[]			pCustNo,
-			        char[]			pUserId,
-			        char[]			pPassword,
-			        char[]			pAccount,
-			        char[]			pNotes) throws Exception {
+	private Account(List    pList,
+					int		uId,
+					String  sName, 
+					int		uAcTypeId,
+					String	pDesc,
+					Date 	pMaturity,
+			        Date 	pClose,
+			        Integer pParentId,
+			        Integer pAliasId,
+			        char[]	pWebSite,
+			        char[]	pCustNo,
+			        char[]	pUserId,
+			        char[]	pPassword,
+			        char[]	pAccount,
+			        char[]	pNotes) throws Exception {
 		/* Initialise the item */
 		super(pList, uId);
 		
@@ -524,11 +526,11 @@ public class Account extends EncryptedItem<Account> {
 
 		/* Parse the maturity date if it exists */
 		if (pMaturity != null) 
-			myValues.setMaturity(new Date(pMaturity));
+			myValues.setMaturity(new DateDay(pMaturity));
 			
 		/* Parse the closed date if it exists */
 		if (pClose != null) 
-			myValues.setClose(new Date(pClose));
+			myValues.setClose(new DateDay(pClose));
 				
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -861,15 +863,15 @@ public class Account extends EncryptedItem<Account> {
 	 * @param  pDate    The date of the valuation
 	 * @return Valuation of account
 	 */
-	public Money getValue(Date pDate) {
-		Event   						myCurr;
-		Event.List						myEvents;
+	public Money getValue(DateDay pDate) {
+		Event   					myCurr;
+		Event.List					myEvents;
 		Event.List.ListIterator 	myIterator;
-		int     						myResult;
-		Money 							myAmount;
-		Money 							myValue;
-		List 							myList = (List)getList();
-		FinanceData						mySet  = myList.getData();
+		int     					myResult;
+		Money 						myAmount;
+		Money 						myValue;
+		List 						myList = (List)getList();
+		FinanceData					mySet  = myList.getData();
 		
 		/* Initialise money */
 		myValue = new Money(0);
@@ -1033,16 +1035,16 @@ public class Account extends EncryptedItem<Account> {
 	 * Set a new maturity date 
 	 * @param pDate the new date 
 	 */
-	public void setMaturity(Date pDate) {
-		getValues().setMaturity((pDate == null) ? null : new Date(pDate));
+	public void setMaturity(DateDay pDate) {
+		getValues().setMaturity((pDate == null) ? null : new DateDay(pDate));
 	}
 	
 	/**
 	 * Set a new close date 
 	 * @param pDate the new date 
 	 */
-	public void setClose(Date pDate) {
-		getValues().setClose((pDate == null) ? null : new Date(pDate));
+	public void setClose(DateDay pDate) {
+		getValues().setClose((pDate == null) ? null : new DateDay(pDate));
 	}
 	
 	/**
@@ -1159,11 +1161,11 @@ public class Account extends EncryptedItem<Account> {
 			setActType(myAccount.getActType());
 			
 		/* Update the maturity if required */
-		if (Date.differs(getMaturity(), myAccount.getMaturity()).isDifferent()) 
+		if (DateDay.differs(getMaturity(), myAccount.getMaturity()).isDifferent()) 
 			setMaturity(myAccount.getMaturity());
 		
 		/* Update the close if required */
-		if (Date.differs(getClose(), myAccount.getClose()).isDifferent()) 
+		if (DateDay.differs(getClose(), myAccount.getClose()).isDifferent()) 
 			setClose(myAccount.getClose());
 		
 		/* Update the parent if required */
@@ -1521,20 +1523,20 @@ public class Account extends EncryptedItem<Account> {
 		 * @param pAlias the Name of the alias account (or null)
 		 * @throws Exception on error
 		 */ 
-		public void addItem(int				uId,
-							String   		pName,
-				            String   		pAcType,
-				            String			pDesc,
-				            java.util.Date  pMaturity,
-				            java.util.Date  pClosed,
-				            String   		pParent,
-				            String   		pAlias,
-					        char[]			pWebSite,
-					        char[]			pCustNo,
-					        char[]			pUserId,
-					        char[]			pPassword,
-					        char[]			pAccount,
-					        char[]			pNotes) throws Exception {
+		public void addItem(int		uId,
+							String  pName,
+				            String  pAcType,
+				            String	pDesc,
+				            Date  	pMaturity,
+				            Date  	pClosed,
+				            String  pParent,
+				            String  pAlias,
+					        char[]	pWebSite,
+					        char[]	pCustNo,
+					        char[]	pUserId,
+					        char[]	pPassword,
+					        char[]	pAccount,
+					        char[]	pNotes) throws Exception {
 			AccountType.List 	myActTypes;
 			AccountType 		myActType;
 			Account       		myAccount;			
@@ -1623,21 +1625,21 @@ public class Account extends EncryptedItem<Account> {
 		 * @param pNotes the Encrypted Notes for the account
 		 * @throws Exception on error
 		 */ 
-		public void addItem(int     		uId,
-							int				uControlId,
-				            byte[]   		pName,
-				            int     		uAcTypeId,
-				            byte[]   		pDesc,
-				            java.util.Date  pMaturity,
-				            java.util.Date  pClosed,
-				            Integer    		pParentId,
-				            Integer 		pAliasId,
-					        byte[]			pWebSite,
-					        byte[]			pCustNo,
-					        byte[]			pUserId,
-					        byte[]			pPassword,
-					        byte[]			pAccount,
-					        byte[]			pNotes) throws Exception {
+		public void addItem(int     uId,
+							int		uControlId,
+				            byte[]  pName,
+				            int     uAcTypeId,
+				            byte[]  pDesc,
+				            Date  	pMaturity,
+				            Date  	pClosed,
+				            Integer pParentId,
+				            Integer pAliasId,
+					        byte[]	pWebSite,
+					        byte[]	pCustNo,
+					        byte[]	pUserId,
+					        byte[]	pPassword,
+					        byte[]	pAccount,
+					        byte[]	pNotes) throws Exception {
 			Account       myAccount;
 				
 			/* Create the new account */
@@ -1745,8 +1747,8 @@ public class Account extends EncryptedItem<Account> {
 		private StringPair  	theName     	= null;
 		private StringPair  	theDesc     	= null;
 		private AccountType		theType			= null;
-		private Date       		theMaturity 	= null;
-		private Date       		theClose    	= null;
+		private DateDay       	theMaturity 	= null;
+		private DateDay       	theClose    	= null;
 		private Account			theParent		= null;
 		private Account			theAlias		= null;
 		private CharArrayPair	theWebSite		= null;
@@ -1760,8 +1762,8 @@ public class Account extends EncryptedItem<Account> {
 		public StringPair   	getName()      	{ return theName; }
 		public StringPair   	getDesc()      	{ return theDesc; }
 		public AccountType		getType()      	{ return theType; }
-		public Date       		getMaturity()  	{ return theMaturity; }
-		public Date       		getClose()     	{ return theClose; }
+		public DateDay       	getMaturity()  	{ return theMaturity; }
+		public DateDay       	getClose()     	{ return theClose; }
 		public Account			getParent()    	{ return theParent; }
 		public Account			getAlias()    	{ return theAlias; }
 		public CharArrayPair	getWebSite()	{ return theWebSite; }
@@ -1805,9 +1807,9 @@ public class Account extends EncryptedItem<Account> {
 			theOrder     = (pType == null) ? null : pType.getOrder(); }
 		private void setActTypeId(int uActTypeId) {
 			theActTypeId = uActTypeId; }
-		public void setMaturity(Date pMaturity) {
+		public void setMaturity(DateDay pMaturity) {
 			theMaturity  = pMaturity; }
-		public void setClose(Date pClose) {
+		public void setClose(DateDay pClose) {
 			theClose     = pClose; }
 		public void setParent(Account pParent) {
 			theParent    = pParent; 
@@ -1858,8 +1860,8 @@ public class Account extends EncryptedItem<Account> {
 			myDifference = myDifference.combine(differs(theName,				myValues.theName));
 			myDifference = myDifference.combine(differs(theDesc,				myValues.theDesc));
 			myDifference = myDifference.combine(AccountType.differs(theType,	myValues.theType));
-			myDifference = myDifference.combine(Date.differs(theMaturity, 		myValues.theMaturity));
-			myDifference = myDifference.combine(Date.differs(theClose,    		myValues.theClose));
+			myDifference = myDifference.combine(DateDay.differs(theMaturity, 	myValues.theMaturity));
+			myDifference = myDifference.combine(DateDay.differs(theClose,    	myValues.theClose));
 			myDifference = myDifference.combine(Account.differs(theParent,  	myValues.theParent));
 			myDifference = myDifference.combine(Account.differs(theAlias,   	myValues.theAlias));
 			myDifference = myDifference.combine(differs(theWebSite,				myValues.theWebSite));
@@ -1912,10 +1914,10 @@ public class Account extends EncryptedItem<Account> {
 					bResult = (AccountType.differs(theType, pValues.theType));
 					break;
 				case FIELD_MATURITY:
-					bResult = (Date.differs(theMaturity, 	pValues.theMaturity));
+					bResult = (DateDay.differs(theMaturity, pValues.theMaturity));
 					break;
 				case FIELD_CLOSE:
-					bResult = (Date.differs(theClose,    	pValues.theClose));
+					bResult = (DateDay.differs(theClose,    pValues.theClose));
 					break;
 				case FIELD_PARENT:
 					bResult = (Account.differs(theParent,   pValues.theParent));
