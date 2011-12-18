@@ -19,8 +19,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.security.SecureManager;
 import uk.co.tolcroft.models.security.SecurityControl;
@@ -80,7 +80,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
 	 *  @param pFile the backup file to write to
 	 *  @return the loaded DataSet
 	 */
-	public T	loadBackup(File 		pFile) throws Exception {
+	public T	loadBackup(File 		pFile) throws ModelException {
 		InputStream 		myStream  	= null;
 		ZipFile.Input 		myFile		= null;
 		DataControl<T>		myControl;
@@ -126,7 +126,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
 			
 			/* Check for cancellation */
 			if (!bContinue) 
-				throw new Exception(ExceptionClass.EXCEL,
+				throw new ModelException(ExceptionClass.EXCEL,
 									"Operation Cancelled");
 		}
 
@@ -141,7 +141,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
 			catch (Throwable ex) {}
 			
 			/* Report the error */
-			throw new Exception(ExceptionClass.EXCEL, 
+			throw new ModelException(ExceptionClass.EXCEL, 
 					  			"Failed to load Backup Workbook: " + pFile.getName(),
 					  			e);				
 		}
@@ -155,7 +155,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
 	 *  @param pFile the Extract file to load from
 	 *  @return the loaded DataSet
 	 */
-	public T loadExtract(File pFile) throws Exception {
+	public T loadExtract(File pFile) throws ModelException {
 		InputStream 		myStream  	= null;
 		FileInputStream		myInFile	= null;
 		
@@ -180,7 +180,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
 			
 			/* Check for cancellation */
 			if (!bContinue) 
-				throw new Exception(ExceptionClass.EXCEL,
+				throw new ModelException(ExceptionClass.EXCEL,
 									"Operation Cancelled");
 		}
 
@@ -195,7 +195,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
 			catch (Throwable ex) {}
 			
 			/* Report the error */
-			throw new Exception(ExceptionClass.EXCEL, 
+			throw new ModelException(ExceptionClass.EXCEL, 
 					  			"Failed to load Edit-able Workbook: " + pFile.getName(),
 					  			e);				
 		}

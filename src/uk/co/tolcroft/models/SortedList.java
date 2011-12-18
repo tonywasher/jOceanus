@@ -1256,9 +1256,9 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 
 		/**
 		 * Constructor
-		 * @throws Exception
+		 * @throws ModelException
 		 */
-		public SortedListProperties() throws Exception { super();	}
+		public SortedListProperties() throws ModelException { super();	}
 
 		@Override
 		protected void defineProperties() {

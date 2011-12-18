@@ -29,7 +29,7 @@ import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
-public abstract class StdTable<T extends DataItem<T>> extends JTable 
+public abstract class DataTable<T extends DataItem<T>> extends JTable 
 													  implements stdPanel,
 															  	 HistoryCheck<T> {
 	/* Members */
@@ -71,7 +71,7 @@ public abstract class StdTable<T extends DataItem<T>> extends JTable
 	 * Constructor
 	 * @param pMainWindow the main window
 	 */
-	public StdTable(MainWindow<?> pMainWindow) {
+	public DataTable(MainWindow<?> pMainWindow) {
 		/* Store parameters */
 		theMainWindow	= pMainWindow;
 		theRowHdrModel  = new rowTableModel();

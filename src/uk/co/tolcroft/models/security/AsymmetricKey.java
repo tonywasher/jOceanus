@@ -18,8 +18,8 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyAgreement;
 import javax.crypto.SecretKey;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.security.SymmetricKey.SymKeyType;
 import uk.co.tolcroft.models.Utils;
 
@@ -101,7 +101,7 @@ public class AsymmetricKey {
 	 * @param pRandom the secure random generator 
 	 */
 	public AsymmetricKey(SecurityMode	pKeyMode,
-						 SecureRandom	pRandom) throws Exception {
+						 SecureRandom	pRandom) throws ModelException {
 		/* Store the key mode and the secure random */
 		theKeyMode	= pKeyMode;
 		theKeyType	= theKeyMode.getAsymKeyType();
@@ -120,7 +120,7 @@ public class AsymmetricKey {
 		
 		/* Check whether the PublicKey is too large */
 		if (thePublicKeyDef.length > PUBLICSIZE)
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"PublicKey too large: " + thePublicKeyDef.length);			
 	}
 	
@@ -132,7 +132,7 @@ public class AsymmetricKey {
 	 */
 	public AsymmetricKey(byte[]			pKeySpec,
 						 SecurityMode	pKeyMode,
-		 				 SecureRandom	pRandom) throws Exception {
+		 				 SecureRandom	pRandom) throws ModelException {
 		/* Store the key mode and the secure random */
 		theKeyMode	= pKeyMode;
 		theKeyType	= theKeyMode.getAsymKeyType();
@@ -159,7 +159,7 @@ public class AsymmetricKey {
 	protected  AsymmetricKey(byte[]			pPrivateKey,
 							 byte[]			pPublicKey,
 							 SecurityMode	pKeyMode,
-			 				 SecureRandom	pRandom) throws Exception {
+			 				 SecureRandom	pRandom) throws ModelException {
 		/* Store the key mode and the secure random */
 		theKeyMode	= pKeyMode;
 		theKeyType	= theKeyMode.getAsymKeyType();
@@ -223,7 +223,7 @@ public class AsymmetricKey {
 	 * @param pPartner partner asymmetric key
 	 * @return the new CipherSet
 	 */
-	public CipherSet getCipherSet(AsymmetricKey pPartner) throws Exception {
+	public CipherSet getCipherSet(AsymmetricKey pPartner) throws ModelException {
 		/* Look for an already resolved CipherSet */
 		CipherSet mySet = theMap.get(pPartner);
 		
@@ -249,7 +249,7 @@ public class AsymmetricKey {
 	/**
 	 * Get CipherSet for internal Elliptic Curve
 	 */
-	private CipherSet getCipherSet() throws Exception {
+	private CipherSet getCipherSet() throws ModelException {
 		/* Return PreExisting set */
 		if (theCipherSet != null) return theCipherSet;
 		
@@ -269,7 +269,7 @@ public class AsymmetricKey {
 	 */
 	public SymmetricKey	getSymmetricKey(byte[] 		pSecuredKeyDef,
 										boolean		useRestricted,
-										SymKeyType	pKeyType) throws Exception {
+										SymKeyType	pKeyType) throws ModelException {
 		SymmetricKey 	mySymKey;
 		CipherSet		mySet;
 		SecretKey		myKey;
@@ -277,7 +277,7 @@ public class AsymmetricKey {
 		
 		/* Cannot unwrap unless we have the private key */
 		if (isPublicOnly())
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Cannot unwrap without private key"); 
 			
 		/* Protect against exceptions */
@@ -295,7 +295,7 @@ public class AsymmetricKey {
 			else {
 				/* Initialise the cipher */
 				myCipher	= Cipher.getInstance(theKeyType.getAlgorithm(), 
-												 SecurityControl.BCSIGN);
+												 SecurityControl.getProvider().getProvider());
 				myCipher.init(Cipher.UNWRAP_MODE, 
 							  theKeyPair.getPrivate());		
 				
@@ -309,9 +309,9 @@ public class AsymmetricKey {
 			}
 		}
 		
-		catch (Exception e) { throw e; }
+		catch (ModelException e) { throw e; }
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Failed to unwrap key",
 								e);
 		}
@@ -327,7 +327,7 @@ public class AsymmetricKey {
 	 * @return the secured key definition
 	 */
 	public byte[] getSecuredKeyDef(SymmetricKey pKey,
-			  					   boolean		useRestricted) throws Exception {
+			  					   boolean		useRestricted) throws ModelException {
 		byte[] 		myWrappedKey;
 		Cipher		myCipher;
 		CipherSet	mySet;
@@ -347,7 +347,7 @@ public class AsymmetricKey {
 			else {
 				/* Initialise the cipher */
 				myCipher	= Cipher.getInstance(theKeyType.getAlgorithm(),
-												 SecurityControl.BCSIGN);
+												 SecurityControl.getProvider().getProvider());
 				myCipher.init(Cipher.WRAP_MODE, 
 							  theKeyPair.getPublic());
 				
@@ -357,7 +357,7 @@ public class AsymmetricKey {
 		}
 		
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Failed to wrap key",
 								e);
 		}
@@ -371,16 +371,16 @@ public class AsymmetricKey {
 	 * @param pPartner partner asymmetric key
 	 * @return the shared secret
 	 */
-	protected synchronized byte[] getSharedSecret(AsymmetricKey pPartner) throws Exception {		
+	protected synchronized byte[] getSharedSecret(AsymmetricKey pPartner) throws ModelException {		
 		/* Both keys must be elliptic */
 		if ((!theKeyType.isElliptic()) ||
 			(pPartner.theKeyType != theKeyType)) 
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Shared Keys require both partners to be similar Elliptic");
 
 		/* Cannot generate unless we have the private key */
 		if (theKeyPair.getPrivate() == null)
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Cannot generate secret without private key"); 
 			
 		/* Protect against exceptions */
@@ -388,7 +388,7 @@ public class AsymmetricKey {
 			/* If we do not currently have a key Agreement */
 			if (theKeyAgreement == null) {
 				/* Create the key agreement */
-				theKeyAgreement = KeyAgreement.getInstance("ECDH", SecurityControl.BCSIGN);
+				theKeyAgreement = KeyAgreement.getInstance("ECDH", SecurityControl.getProvider().getProvider());
 			}
 			
 			/* Process the key agreement */
@@ -401,7 +401,7 @@ public class AsymmetricKey {
 		
 		/* Handle exceptions */
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Failed to negotiate key agreement",
 								e); 
 		}
@@ -412,7 +412,7 @@ public class AsymmetricKey {
 	 * @param pEntry the ZipFile properties
 	 * @return the signature 
 	 */
-	protected byte[] signFile(ZipFileEntry pEntry) throws Exception {
+	protected byte[] signFile(ZipFileEntry pEntry) throws ModelException {
 		byte[]		myValue;	
 		Signature	mySignature;
 		int			iIndex;
@@ -421,12 +421,12 @@ public class AsymmetricKey {
 		try { 
 			/* Cannot sign unless we have the private key */
 			if (theKeyPair.getPrivate() == null)
-				throw new Exception(ExceptionClass.LOGIC,
+				throw new ModelException(ExceptionClass.LOGIC,
 									"Cannot sign without private key"); 
 				
 			/* Create a signature */
 			mySignature = Signature.getInstance(theKeyType.getSignature(), 
-												SecurityControl.BCSIGN);
+												SecurityControl.getProvider().getProvider());
 			mySignature.initSign(theKeyPair.getPrivate(), 
 								 theRandom);
 			
@@ -456,9 +456,9 @@ public class AsymmetricKey {
 		} 
 	
 		/* Catch exceptions */
-		catch (Exception e) { throw e; }
+		catch (ModelException e) { throw e; }
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Exception calculating signature",
 								e);
 		}
@@ -471,7 +471,7 @@ public class AsymmetricKey {
 	 * Verify the signature for the zipFileEntry
 	 * @param pEntry the ZipFile properties
 	 */
-	public void verifyFile(ZipFileEntry pEntry) throws Exception {
+	public void verifyFile(ZipFileEntry pEntry) throws ModelException {
 		byte[]		myValue;
 		Signature	mySignature;
 		int			iIndex;
@@ -480,7 +480,7 @@ public class AsymmetricKey {
 		try { 
 			/* Create a signature */
 			mySignature = Signature.getInstance(theKeyType.getSignature(), 
-												SecurityControl.BCSIGN);
+												SecurityControl.getProvider().getProvider());
 			mySignature.initVerify(theKeyPair.getPublic());
 
 			/* Loop through the digests */
@@ -507,15 +507,15 @@ public class AsymmetricKey {
 			/* Check the signature */
 			if (!mySignature.verify(pEntry.getSignature())) {
 				/* Throw an invalid file exception */
-				throw new Exception(ExceptionClass.CRYPTO, 
+				throw new ModelException(ExceptionClass.CRYPTO, 
 									"Signature does not match");
 			}
 		} 
 	
 		/* Catch exceptions */
-		catch (Exception e) { throw e; }
+		catch (ModelException e) { throw e; }
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Exception occurred verifying signature",
 								e);
 		}
@@ -527,14 +527,14 @@ public class AsymmetricKey {
 	 * @param pTarget target partner of encryption
 	 * @param useRestricted use restricted keys
 	 * @return Encrypted bytes
-	 * @throws Exception 
+	 * @throws ModelException 
 	 */
 	public byte[] encryptString(String 			pString,
 								AsymmetricKey	pTarget,
-								boolean			useRestricted) throws Exception {
+								boolean			useRestricted) throws ModelException {
 		/* Target must be identical key type */
 		if (SecurityMode.differs(pTarget.theKeyMode, theKeyMode).isDifferent())
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Asymmetric Encryption must be between similar partners");
 		
 		/* Protect against exceptions */
@@ -553,9 +553,9 @@ public class AsymmetricKey {
 		}
 		
 		/* Catch exceptions */
-		catch (Exception e) { throw e; }
+		catch (ModelException e) { throw e; }
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Exception occurred initialising cipher",
 								e);
 		}
@@ -566,10 +566,10 @@ public class AsymmetricKey {
 	 * @param pString string to encrypt
 	 * @param pTarget target partner of encryption
 	 * @return Encrypted bytes
-	 * @throws Exception 
+	 * @throws ModelException 
 	 */
 	private byte[] encryptRSAString(String 			pString,
-									AsymmetricKey	pTarget) throws Exception {
+									AsymmetricKey	pTarget) throws ModelException {
 		byte[] myBytes;
 		byte[] myOutput;
 		int	   iBlockSize;
@@ -584,7 +584,7 @@ public class AsymmetricKey {
 		try {
 			/* Create the cipher */
 			myCipher = Cipher.getInstance(theKeyType.getCipher(), 
-					  					  SecurityControl.BCSIGN);
+					  					  SecurityControl.getProvider().getProvider());
 			myCipher.init(Cipher.ENCRYPT_MODE, 
 						  pTarget.theKeyPair.getPublic());
 			
@@ -627,7 +627,7 @@ public class AsymmetricKey {
 		}
 
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Failed to encrypt string",
 								e);
 		}
@@ -642,19 +642,19 @@ public class AsymmetricKey {
 	 * @param pSource source partner of encryption
 	 * @param useRestricted use restricted keys
 	 * @return Decrypted string
-	 * @throws Exception 
+	 * @throws ModelException 
 	 */
 	public String decryptString(byte[] 			pBytes,
 								AsymmetricKey	pSource,
-								boolean			useRestricted) throws Exception {
+								boolean			useRestricted) throws ModelException {
 		/* Cannot decrypt unless we have the private key */
 		if (isPublicOnly())
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Cannot decrypt without private key"); 
 			
 		/* Source must be identical key type */
 		if (SecurityMode.differs(pSource.theKeyMode, theKeyMode).isDifferent())
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Asymmetric Encryption must be between similar partners");
 		
 		/* Protect against exceptions */
@@ -673,9 +673,9 @@ public class AsymmetricKey {
 		}
 	
 		/* Catch exceptions */
-		catch (Exception e) { throw e; }
+		catch (ModelException e) { throw e; }
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Exception occurred initialising cipher",
 								e);
 		}
@@ -686,9 +686,9 @@ public class AsymmetricKey {
 	 * @param pBytes encrypted string to decrypt
 	 * @param pSource source partner of encryption
 	 * @return Decrypted string
-	 * @throws Exception 
+	 * @throws ModelException 
 	 */
-	private String decryptRSAString(byte[] 			pBytes) throws Exception {
+	private String decryptRSAString(byte[] 			pBytes) throws ModelException {
 		String myString;
 		byte[] myOutput;
 		int	   iBlockSize;
@@ -703,7 +703,7 @@ public class AsymmetricKey {
 		try {
 			/* Create the cipher */
 			myCipher = Cipher.getInstance(theKeyType.getCipher(), 
-					  					  SecurityControl.BCSIGN);
+					  					  SecurityControl.getProvider().getProvider());
 			myCipher.init(Cipher.DECRYPT_MODE, 
 						  theKeyPair.getPrivate());
 			
@@ -746,7 +746,7 @@ public class AsymmetricKey {
 		}
 
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Failed to decrypt string",
 								e);
 		}
@@ -775,13 +775,13 @@ public class AsymmetricKey {
 		 * @param pRandom the SecureRandom instance
 		 */
 		private AsymKeyPairGenerator(AsymKeyType 	pKeyType,
-				 					 SecureRandom	pRandom) throws Exception {
+				 					 SecureRandom	pRandom) throws ModelException {
 			/* Protect against Exceptions */
 			try {
 				/* Create the key generator */
 				theKeyType 		= pKeyType;
 				theGenerator 	= KeyPairGenerator.getInstance(pKeyType.getAlgorithm(), 
-															   SecurityControl.BCSIGN);
+															   SecurityControl.getProvider().getProvider());
 				
 				/* Handle elliptic curve key types differently */
 				if (pKeyType.isElliptic()) {
@@ -801,7 +801,7 @@ public class AsymmetricKey {
 			/* Catch exceptions */
 			catch (Throwable e) {
 				/* Throw the exception */
-				throw new Exception(ExceptionClass.CRYPTO,
+				throw new ModelException(ExceptionClass.CRYPTO,
 									"Failed to create key pair generator",
 									e);
 			}
@@ -814,7 +814,7 @@ public class AsymmetricKey {
 		 * @return the new KeyPair
 		 */
 		private static synchronized KeyPair getInstance(AsymKeyType 	pKeyType,
-				 						   				SecureRandom	pRandom) throws Exception {
+				 						   				SecureRandom	pRandom) throws ModelException {
 			AsymKeyPairGenerator 	myCurr;
 			KeyPair					myKeyPair;
 			
@@ -858,13 +858,13 @@ public class AsymmetricKey {
 		 * Constructor
 		 * @param pKeyType the symmetric key type
 		 */
-		private AsymKeyFactory(AsymKeyType 	pKeyType) throws Exception {
+		private AsymKeyFactory(AsymKeyType 	pKeyType) throws ModelException {
 			/* Protect against Exceptions */
 			try {
 				/* Create the key generator */
 				theKeyType 		= pKeyType;
 				theFactory 		= KeyFactory.getInstance(pKeyType.getAlgorithm(), 
-														 SecurityControl.BCSIGN);
+														 SecurityControl.getProvider().getProvider());
 				
 				/* Add to the list of generators */
 				theNext			= theFactories;
@@ -874,7 +874,7 @@ public class AsymmetricKey {
 			/* Catch exceptions */
 			catch (Throwable e) {
 				/* Throw the exception */
-				throw new Exception(ExceptionClass.CRYPTO,
+				throw new ModelException(ExceptionClass.CRYPTO,
 									"Failed to create key factory",
 									e);
 			}
@@ -889,7 +889,7 @@ public class AsymmetricKey {
 		 */
 		private static synchronized KeyPair getKeyPair(byte[]		pPrivate,
 													   byte[]		pPublic,
-													   AsymKeyType 	pKeyType) throws Exception {
+													   AsymKeyType 	pKeyType) throws ModelException {
 			AsymKeyFactory 	myCurr;
 			
 			/* Locate the key factory */
@@ -929,7 +929,7 @@ public class AsymmetricKey {
 			/* Catch exceptions */
 			catch (Throwable e) {
 				/* Throw the exception */
-				throw new Exception(ExceptionClass.CRYPTO,
+				throw new ModelException(ExceptionClass.CRYPTO,
 									"Failed to re-build private key",
 									e);
 			}
@@ -1010,9 +1010,9 @@ public class AsymmetricKey {
 		 * @param id the id value
 		 * @return the corresponding enum object
 		 */
-		public static AsymKeyType fromId(int id) throws Exception {
+		public static AsymKeyType fromId(int id) throws ModelException {
 			for (AsymKeyType myType: values()) {	if (myType.getId() == id) return myType; }
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Invalid AsymKeyType: " + id);
 		}
 
@@ -1022,7 +1022,7 @@ public class AsymmetricKey {
 		 * @param pRandom the random generator
 		 * @return the random set
 		 */
-		public static AsymKeyType[] getRandomTypes(int pNumTypes, SecureRandom pRandom) throws Exception {
+		public static AsymKeyType[] getRandomTypes(int pNumTypes, SecureRandom pRandom) throws ModelException {
 			/* Access the values */
 			AsymKeyType[] myValues 	 = values();
 			int			  iNumValues = myValues.length;
@@ -1030,7 +1030,7 @@ public class AsymmetricKey {
 			
 			/* Reject call if invalid number of types */
 			if ((pNumTypes < 1) || (pNumTypes > iNumValues))
-				throw new Exception(ExceptionClass.LOGIC,
+				throw new ModelException(ExceptionClass.LOGIC,
 									"Invalid number of types: " + pNumTypes);
 			
 			/* Create the result set */

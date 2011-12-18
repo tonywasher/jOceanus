@@ -3,7 +3,7 @@ package uk.co.tolcroft.finance.views;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.Analysis.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
@@ -41,7 +41,7 @@ public class Statement implements DebugObject {
  	/* Constructor */
 	public Statement(View			pView,
 					 Account 		pAccount,
-			         DateDay.Range 	pRange) throws Exception {
+			         DateDay.Range 	pRange) throws ModelException {
 		/* Create a copy of the account (plus surrounding list) */
 		theView	   = pView;
 		theAccount = pAccount;
@@ -94,7 +94,7 @@ public class Statement implements DebugObject {
 	/**
 	 *  Reset the balances
 	 */
-	public void resetBalances() throws Exception {
+	public void resetBalances() throws ModelException {
 		/* Reset the balances */
 		theAnalysis.resetStatementBalance(this);
 	}

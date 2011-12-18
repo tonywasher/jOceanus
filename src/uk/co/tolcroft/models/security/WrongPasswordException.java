@@ -1,8 +1,8 @@
 package uk.co.tolcroft.models.security;
 
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 
-public class WrongPasswordException extends Exception {
+public class WrongPasswordException extends ModelException {
 	/* Serial id */
 	private static final long serialVersionUID = 2437428363387806213L;
 

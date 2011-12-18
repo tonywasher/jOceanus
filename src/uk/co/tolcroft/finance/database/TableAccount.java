@@ -3,7 +3,7 @@ package uk.co.tolcroft.finance.database;
 import java.util.Date;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.database.TableDefinition;
@@ -74,7 +74,7 @@ public class TableAccount extends TableEncrypted<Account> {
 	}
 
 	/* Load the account */
-	protected void loadItem(int pId, int pControlId) throws Exception {
+	protected void loadItem(int pId, int pControlId) throws ModelException {
 		byte[]  myName;
 		int    	myActTypeId;
 		Integer	myParentId;
@@ -123,7 +123,7 @@ public class TableAccount extends TableEncrypted<Account> {
 	}
 	
 	/* Set a field value */
-	protected void setFieldValue(Account	pItem, int iField) throws Exception  {
+	protected void setFieldValue(Account	pItem, int iField) throws ModelException  {
 		/* Switch on field id */
 		switch (iField) {
 			case Account.FIELD_NAME:		theTableDef.setBinaryValue(iField, pItem.getNameBytes());			break;

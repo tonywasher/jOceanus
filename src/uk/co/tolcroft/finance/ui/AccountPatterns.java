@@ -19,15 +19,15 @@ import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.Editor;
 import uk.co.tolcroft.models.ui.ErrorPanel;
-import uk.co.tolcroft.models.ui.StdMouse;
-import uk.co.tolcroft.models.ui.StdTable;
+import uk.co.tolcroft.models.ui.DataMouse;
+import uk.co.tolcroft.models.ui.DataTable;
 import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 
-public class AccountPatterns extends StdTable<Event> {
+public class AccountPatterns extends DataTable<Event> {
 	/* Members */
 	private static final long serialVersionUID = 1968946370981616222L;
 
@@ -224,7 +224,7 @@ public class AccountPatterns extends StdTable<Event> {
 	 * Set Selection to the specified account
 	 * @param pAccount the Account for the extract
 	 */
-	public void setSelection(Account pAccount) throws Exception {
+	public void setSelection(Account pAccount) throws ModelException {
 		/* Record the account */
 		theAccount 	= pAccount;
 		thePatterns = null;
@@ -489,7 +489,7 @@ public class AccountPatterns extends StdTable<Event> {
 				myPattern.pushHistory();
 				
 				/* Build the error */
-				Exception myError = new Exception(ExceptionClass.DATA,
+				ModelException myError = new ModelException(ExceptionClass.DATA,
 										          "Failed to update field at ("
 										          + row + "," + col +")",
 										          e);
@@ -546,7 +546,7 @@ public class AccountPatterns extends StdTable<Event> {
 	/**
 	 *  Pattern mouse listener
 	 */
-	private class patternMouse extends StdMouse<Event> {
+	private class patternMouse extends DataMouse<Event> {
 		
 		/* Pop-up Menu items */
 		private static final String popupCredit  		= "Set As Credit";

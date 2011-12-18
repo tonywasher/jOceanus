@@ -7,8 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.PropertySet;
 import uk.co.tolcroft.models.PropertySet.PropertyManager;
 import uk.co.tolcroft.models.PropertySet.PropertySetChooser;
@@ -90,14 +90,14 @@ public abstract class Database<T extends DataSet<T>> implements PropertySetChoos
 		protected final static String 	dispDBName		= "Database Name";
 
 		/**
-		 * Registry name for DataBase batch size
+		 * Display name for DataBase batch size
 		 */
 		protected final static String 	dispDBBatch		= "Batch Size";
 
 		/**
 		 * Default Database driver string
 		 */
-		private final static String		defDBDriver		= "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+		private final static JDBCDriver	defDBDriver		= JDBCDriver.SQLServer;
 
 		/**
 		 * Default Database connection string
@@ -121,14 +121,14 @@ public abstract class Database<T extends DataSet<T>> implements PropertySetChoos
 
 		/**
 		 * Constructor
-		 * @throws Exception
+		 * @throws ModelException
 		 */
-		public DatabaseProperties() throws Exception { super();	}
+		public DatabaseProperties() throws ModelException { super();	}
 
 		@Override
 		protected void defineProperties() {
 			/* Define the properties */
-			defineProperty(nameDBDriver, PropertyType.String);
+			defineProperty(nameDBDriver, JDBCDriver.class);
 			defineProperty(nameDBServer, PropertyType.String);
 			defineProperty(nameDBInstance, PropertyType.String);
 			defineProperty(nameDBName, PropertyType.String);
@@ -164,8 +164,11 @@ public abstract class Database<T extends DataSet<T>> implements PropertySetChoos
 		private String getConnectionString() {
 			StringBuilder myBuilder = new StringBuilder(100);
 			
+			/* Access the driver */
+			JDBCDriver myDriver = getEnumValue(nameDBDriver, JDBCDriver.class);
+			
 			/* Build the connection string */
-			myBuilder.append("jdbc:sqlserver://");
+			myBuilder.append(myDriver.getPrefix());
 			myBuilder.append(getStringValue(nameDBServer));
 			myBuilder.append(";instanceName=");
 			myBuilder.append(getStringValue(nameDBInstance));
@@ -179,10 +182,39 @@ public abstract class Database<T extends DataSet<T>> implements PropertySetChoos
 	}
 	
 	/**
+	 * JDBCDriver
+	 */
+	public enum JDBCDriver {
+		SQLServer;
+		
+		/**
+		 * Obtain driver class
+		 * @return the driver class
+		 */
+		public String getDriver() {
+			switch (this) {
+				case SQLServer: return "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+				default: return null;
+			}
+		}
+
+		/**
+		 * Obtain connection prefix
+		 * @return the connection prefix
+		 */
+		public String getPrefix() {
+			switch (this) {
+				case SQLServer: return "jdbc:sqlserver://";
+				default: return null;
+			}
+		}
+	}
+	
+	/**
 	 * Construct a new Database class
 	 * @param pProperties the database properties
 	 */
-	public Database() throws Exception {
+	public Database() throws ModelException {
 		/* Create the connection */
 		try {
 			/* Access the database properties */
@@ -192,14 +224,14 @@ public abstract class Database<T extends DataSet<T>> implements PropertySetChoos
 			theBatchSize = theProperties.getIntegerValue(DatabaseProperties.nameDBBatch);
 			
 			/* Load the database driver */
-			Class.forName(theProperties.getStringValue(DatabaseProperties.nameDBDriver));
+			Class.forName(theProperties.getEnumValue(DatabaseProperties.nameDBDriver, JDBCDriver.class).getDriver());
 
 			/* Obtain the connection */
 			theConn = DriverManager.getConnection(theProperties.getConnectionString());
 			theConn.setAutoCommit(false);
 		}
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
+			throw new ModelException(ExceptionClass.SQLSERVER,
 								"Failed to load driver",
 								e);
 		}
@@ -273,7 +305,7 @@ public abstract class Database<T extends DataSet<T>> implements PropertySetChoos
 	 * @param pThread the thread control
 	 * @return the new DataSet
 	 */
-	public T loadDatabase(ThreadStatus<T> 	pThread) throws Exception {
+	public T loadDatabase(ThreadStatus<T> 	pThread) throws ModelException {
 		boolean bContinue 	= true;
 		
 		/* Set the number of stages */
@@ -302,7 +334,7 @@ public abstract class Database<T extends DataSet<T>> implements PropertySetChoos
 		
 		/* Check for cancellation */
 		if (!bContinue) 
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Operation Cancelled");
 		
 		/* Return the data */
@@ -315,7 +347,7 @@ public abstract class Database<T extends DataSet<T>> implements PropertySetChoos
 	 * @param pData the data
 	 */
 	public void updateDatabase(ThreadStatus<T>	pThread,
-							   T 				pData) throws Exception {
+							   T 				pData) throws ModelException {
 		boolean 		bContinue 	= true;
 		BatchControl	myBatch		= new BatchControl(theBatchSize);
 		
@@ -364,7 +396,7 @@ public abstract class Database<T extends DataSet<T>> implements PropertySetChoos
 			try { theConn.commit(); }
 			catch (Throwable e) {
 				close();
-				throw new Exception(ExceptionClass.SQLSERVER,
+				throw new ModelException(ExceptionClass.SQLSERVER,
 									"Failed to commit transction");				
 			}
 			
@@ -374,7 +406,7 @@ public abstract class Database<T extends DataSet<T>> implements PropertySetChoos
 		
 		/* Check for cancellation */
 		if (!bContinue) 
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Operation Cancelled");
 	}
 	
@@ -382,7 +414,7 @@ public abstract class Database<T extends DataSet<T>> implements PropertySetChoos
 	 * Create tables 
 	 * @param pThread the thread control
 	 */
-	public void createTables(ThreadStatus<T>	pThread) throws Exception {
+	public void createTables(ThreadStatus<T>	pThread) throws ModelException {
 		/* Drop any existing tables */
 		dropTables(pThread);
 		
@@ -408,7 +440,7 @@ public abstract class Database<T extends DataSet<T>> implements PropertySetChoos
 	 * @param pThread the thread control
 	 * @return Continue <code>true/false</code>
 	 */
-	private void dropTables(ThreadStatus<T>	pThread) throws Exception {
+	private void dropTables(ThreadStatus<T>	pThread) throws ModelException {
 		
 		/* Set the number of stages */
 		if (!pThread.setNumStages(1)) return;
@@ -434,7 +466,7 @@ public abstract class Database<T extends DataSet<T>> implements PropertySetChoos
 	 * Purge tables 
 	 * @param pThread the thread control
 	 */
-	public void purgeTables(ThreadStatus<T>	pThread) throws Exception {
+	public void purgeTables(ThreadStatus<T>	pThread) throws ModelException {
 		
 		/* Set the number of stages */
 		if (!pThread.setNumStages(1)) return;

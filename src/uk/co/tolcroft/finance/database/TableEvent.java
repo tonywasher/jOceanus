@@ -3,7 +3,7 @@ package uk.co.tolcroft.finance.database;
 import java.util.Date;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.database.Database;
@@ -72,7 +72,7 @@ public class TableEvent extends TableEncrypted<Event> {
 	}
 
 	/* Load the event */
-	protected void loadItem(int pId, int pControlId) throws Exception {
+	protected void loadItem(int pId, int pControlId) throws ModelException {
 		int  	myDebitId;
 		int  	myCreditId;
 		int  	myTranType;
@@ -112,7 +112,7 @@ public class TableEvent extends TableEncrypted<Event> {
 	}
 	
 	/* Set a field value */
-	protected void setFieldValue(Event	pItem, int iField) throws Exception  {
+	protected void setFieldValue(Event	pItem, int iField) throws ModelException  {
 		/* Switch on field id */
 		switch (iField) {
 			case Event.FIELD_DATE: 		theTableDef.setDateValue(Event.FIELD_DATE, pItem.getDate());					break;

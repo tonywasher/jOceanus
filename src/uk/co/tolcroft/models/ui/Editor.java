@@ -113,7 +113,7 @@ public class Editor {
 													  boolean isSelected,
 													  int     row,
 													  int     col) {
-			StdTable<?> myTable = (StdTable<?>)table;
+			DataTable<?> myTable = (DataTable<?>)table;
 			theCombo = myTable.getComboBox(row, col);
 			theCombo.setSelectedIndex(-1);
 			if (value != null) theCombo.setSelectedItem((String)value);

@@ -15,8 +15,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 
 public class ZipFile {
 	/**
@@ -84,7 +84,7 @@ public class ZipFile {
 		 *	@param pFile the file details for the new zip file 
 		 */
 		public Output(SecurityControl	pControl,
-				 	  File 				pFile) throws Exception {
+				 	  File 				pFile) throws ModelException {
 			FileOutputStream		myOutFile;
 			BufferedOutputStream	myOutBuffer;
 			
@@ -101,7 +101,7 @@ public class ZipFile {
 				
 			/* Catch exceptions */
 			catch (Throwable e) {
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									"Exception creating new Zip file",
 									e);
 			}			
@@ -112,7 +112,7 @@ public class ZipFile {
 		 *	@param pFile the file details for the new zip entry
 		 *	@param pMode the mode to store the new file in 
 		 */
-		public OutputStream getOutputStream(File pFile, ZipEntryMode pMode) throws Exception {
+		public OutputStream getOutputStream(File pFile, ZipEntryMode pMode) throws ModelException {
 			GZIPOutputStream 		myZip;
 			DigestStream.Output		myDigest;
 			EncryptionStream.Output	myEncrypt;
@@ -121,23 +121,23 @@ public class ZipFile {
 		
 			/* Reject call if we have closed the stream */
 			if (theStream == null)
-				throw new Exception(ExceptionClass.LOGIC,
+				throw new ModelException(ExceptionClass.LOGIC,
 						  			"ZipFile is closed");
 			
 			/* Reject call if we have an open stream */
 			if (theOutput != null)
-				throw new Exception(ExceptionClass.LOGIC,
+				throw new ModelException(ExceptionClass.LOGIC,
 						  			"Output stream already open");
 			
 			/* Reject call if the filename is fileHeader */
 			if (pFile.getPath().equals(fileHeader))
-				throw new Exception(ExceptionClass.LOGIC,
+				throw new ModelException(ExceptionClass.LOGIC,
 						  			"Cannot use reserved filename: " + fileHeader);
 			
 			/* Reject call if we have no security and encryption is requested */
 			if ((theControl == null) &&
 				(pMode.doEncrypt()))
-				throw new Exception(ExceptionClass.LOGIC,
+				throw new ModelException(ExceptionClass.LOGIC,
 						  			"Encryption not allowed for this ZipFile. No security credentials were provided.");
 			
 			/* Protect against exceptions */
@@ -195,7 +195,7 @@ public class ZipFile {
 			
 			/* Catch exceptions */
 			catch (Throwable e) {
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									"Exception creating new Output stream",
 									e);
 			}
@@ -263,7 +263,7 @@ public class ZipFile {
 			
 			/* Catch exceptions */
 			catch (IOException e) 	{ throw e; }
-			catch (Exception e) 	{ throw new IOException(e);	}
+			catch (ModelException e) 	{ throw new IOException(e);	}
 		}
 		
 		/**
@@ -433,7 +433,7 @@ public class ZipFile {
 		 * Constructor 
 		 * @param pFile the file to read
 		 */
-		public Input(File	pFile) throws Exception {
+		public Input(File	pFile) throws ModelException {
 			FileInputStream 	myInFile;
 			BufferedInputStream myInBuffer;
 			ZipEntry			myEntry;
@@ -461,7 +461,7 @@ public class ZipFile {
 			
 			/* Catch exceptions */
 			catch (Throwable e) {
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									"Exception accessing Zip file",
 									e);
 			}
@@ -471,7 +471,7 @@ public class ZipFile {
 		 * Set the security control
 		 * @param pControl the security control
 		 */
-		public void setSecurityControl(SecurityControl pControl) throws Exception {
+		public void setSecurityControl(SecurityControl pControl) throws ModelException {
 			byte[]			    myBuffer 	= new byte[BUFFERSIZE];
 			int					myRead;
 			int					myLen;
@@ -483,7 +483,7 @@ public class ZipFile {
 				if (theSecurityKey != null) {
 					/* Reject this is the wrong security control */
 					if (!pControl.getSignature().getSignature().equals(theSecurityKey))
-						throw new Exception(ExceptionClass.LOGIC,
+						throw new ModelException(ExceptionClass.LOGIC,
 			  								"Security control does not match ZipFile Security.");					
 			
 					/* Store the control */
@@ -528,9 +528,9 @@ public class ZipFile {
 			}
 			
 			/* Catch exceptions */
-			catch (Exception e) { throw e; }
+			catch (ModelException e) { throw e; }
 			catch (Throwable e) {				
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									"Exception reading header of Zip file",
 									e);
 			}
@@ -546,7 +546,7 @@ public class ZipFile {
 		 *	Obtain an input stream for an entry in the zip file
 		 *	@param pFile the file details for the new zip entry
 		 */
-		public InputStream getInputStream(ZipFileEntry pFile) throws Exception {
+		public InputStream getInputStream(ZipFileEntry pFile) throws ModelException {
 			FileInputStream 		myInFile;
 			BufferedInputStream 	myInBuffer;
 			ZipInputStream			myZipFile;
@@ -584,7 +584,7 @@ public class ZipFile {
 				if (myMode.doEncrypt()) {
 					/* Reject call if we have no security provided */
 					if (theControl == null) 
-						throw new Exception(ExceptionClass.LOGIC,
+						throw new ModelException(ExceptionClass.LOGIC,
 								  			"Decryption required for this entry. No security credentials were provided.");					
 					
 					/* Verify Encryption details and set for decryption */
@@ -637,9 +637,9 @@ public class ZipFile {
 			}
 			
 			/* Catch exceptions */
-			catch (Exception e) { throw e; }
+			catch (ModelException e) { throw e; }
 			catch (Throwable e) {
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									"Exception creating new Output stream",
 									e);
 			}

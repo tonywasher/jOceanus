@@ -10,8 +10,8 @@ import org.apache.poi.ss.util.CellReference;
 
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.DilutionEvent;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 
@@ -32,7 +32,7 @@ public class SheetDilution {
 	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
 										 SheetHelper				pHelper,
 							   	  		 FinanceData				pData,
-							   	  		 DilutionEvent.List 		pList) throws Exception {
+							   	  		 DilutionEvent.List 		pList) throws ModelException {
 		/* Local variables */
 		AreaReference	myRange;
 		Sheet     		mySheet;
@@ -106,7 +106,7 @@ public class SheetDilution {
 		
 		/* Handle exceptions */
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.EXCEL, 
+			throw new ModelException(ExceptionClass.EXCEL, 
 								"Failed to Load Dilution Details",
 								e);
 		}

@@ -1,430 +1,171 @@
 package uk.co.tolcroft.models.ui;
 
+import java.awt.Component;
 import java.io.File;
-//import java.util.Calendar;
 
-import javax.swing.JFrame;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.*;
 
-import uk.co.tolcroft.models.data.Properties;
-import uk.co.tolcroft.models.views.DataControl;
+public class FileSelector extends JFileChooser {
+	/* Serial Id */
+	private static final long serialVersionUID = -7626176642686030118L;
 
-public class FileSelector {
 	/**
-	 *  The ArchiveLoad Selector class
+	 * The frame that is the parent to this fileSelector
 	 */
-	public static class ArchiveLoad {
-		/* Members */
-		private JFrame			theFrame		= null;
-		private JFileChooser	theChooser		= null;	
-		private File			theResult		= null;
+	private Component		theParent		= null;
+	
+	/**
+	 * The resulting file/directory that has been chosen
+	 */
+	private File			theResult		= null;
 
-		/**
-		 * Obtain the selected file 
-		 */
-		public File getSelectedFile() { return theResult; }
-		
-		/**
-		 * Constructor
-		 */
-		public ArchiveLoad(DataControl<?> pControl) {
-			/* Access the properties */
-			Properties myProperties = pControl.getProperties();
-		
-			/* Access the frame */
-			theFrame = pControl.getFrame();
-		
-			/* Create the chooser */
-			theChooser = new JFileChooser();
-		
-			/* Initialise it to the selected file */
-			theChooser.setSelectedFile(new File(myProperties.getBaseSpreadSheet()));
-		
-			/* Set the file filter */
-			theChooser.setFileFilter(new fileFilter());
-		
-			/* Set the title */
-			theChooser.setDialogTitle("Select archive spreadsheet");
-		}
+	/**
+	 * Filter Prefix
+	 */
+	private String			thePrefix		= null;
 	
-		/**
-		 *  Show the dialog to select a file using an invokeAndWait clause if necessary 
-		 */
-		public void selectFile() {
+	/**
+	 * Filter Suffix
+	 */
+	private String			theSuffix		= null;
+	
+	@Override
+	public File getSelectedFile() { return theResult; }
+		
+	/**
+	 * Constructor
+	 * @param pParent the parent component
+	 * @param pTitle the title
+	 * @param pSelected the currently selected file
+	 * @param pPrefix the filter prefix
+	 * @param pSuffix the filter suffix
+	 */
+	public FileSelector(Component 	pParent,
+						String		pTitle,
+						File		pSelected,
+						String  	pPrefix,
+						String		pSuffix) {
+		/* Record the parent and the filter criteria */
+		theParent 	= pParent;
+		thePrefix	= pPrefix;
+		theSuffix	= pSuffix;
+		
+		/* Note the the chooser can only select a directory */
+		setFileSelectionMode(FILES_ONLY);
+		
+		/* Initialise it to the selected file/directory */
+		if (pSelected.isDirectory())
+			setCurrentDirectory(pSelected);
+		else 
+			setSelectedFile(pSelected);
+		
+		/* Set the file filter */
+		setFileFilter(new fileFilter());
+		
+		/* Set the title */
+		setDialogTitle(pTitle);
+	}
+	
+	/**
+	 * Constructor
+	 * @param pFrame the parent component
+	 * @param pTitle the title
+	 * @param pSelected the currently selected directory
+	 */
+	public FileSelector(Component	pParent,
+						String		pTitle,
+						File		pSelected) {
+		/* Record the parent */
+		theParent 	= pParent;
+		
+		/* Note the the chooser can only select a directory */
+		setFileSelectionMode(DIRECTORIES_ONLY);
+		
+		/* Initialise it to the selected file */
+		setSelectedFile(pSelected);
+		
+		/* Set the title */
+		setDialogTitle(pTitle);
+	}
+	
+	/**
+	 *  Show the dialog to select a file using an invokeAndWait clause if necessary 
+	 */
+	public void showDialog() {			
+		/* If this is the event dispatcher thread */
+		if (SwingUtilities.isEventDispatchThread()) {
+			/* invoke the dialog directly */
+			showTheDialog();			
+		}
 			
-			/* If this is the event dispatcher thread */
-			if (SwingUtilities.isEventDispatchThread()) {
-				/* invoke the dialog directly */
-				showDialog();			
+		/* else we must use invokeAndWait */
+		else {
+			try {
+				SwingUtilities.invokeAndWait(new Runnable() {
+					public void run() {
+						/* invoke the dialog */
+						showTheDialog();
+					}
+				});
 			}
 			
-			/* else we must use invokeAndWait */
-			else {
-				try {
-					SwingUtilities.invokeAndWait(new Runnable() {
-						public void run() {
-							/* invoke the dialog */
-							showDialog();
-						}
-					});
-				}
-			
-				catch (Throwable e) {}
-			}
+			catch (Throwable e) {}
 		}
+	}
 		
-		/**
-		 * Show the dialog to select the file 
-		 */
-		private void showDialog() {
-			/* Show the dialog and select the file */
-			int iRet = theChooser.showOpenDialog(theFrame);
+	/**
+	 * Show the dialog to select the file 
+	 */
+	private void showTheDialog() {
+		/* Show the dialog and select the file */
+		int iRet = showOpenDialog(theParent);
 		
-			/* If we selected a file */
-			if (iRet == JFileChooser.APPROVE_OPTION)
-				theResult = theChooser.getSelectedFile();
+		/* If we selected a file */
+		if (iRet == JFileChooser.APPROVE_OPTION)
+			theResult = super.getSelectedFile();
 		
-			/* else set no selection */
-			else theResult = null;
-		}
+		/* else set no selection */
+		else theResult = null;
+	}
 	
+	/**
+	 * FileFilter class
+	 */
+	private class fileFilter extends FileFilter {
 		/**
-		 * FileFilter class
+		 * Accept file 
+		 * @param pFile the file to check
+		 * @return true/false
 		 */
-		private class fileFilter extends FileFilter {
-			/**
-			 * Accept file 
-			 * @param pFile the file to check
-			 * @return true/false
-			 */
-			public boolean accept(File pFile) {
-				/* Always accept directories */
-				if (pFile.isDirectory()) return true;
+		public boolean accept(File pFile) {
+			/* Always accept directories */
+			if (pFile.isDirectory()) return true;
 			
-				/* The filename must end with .xls or .xls.zip */
-				String myName = pFile.getName();
-				if (myName.endsWith(".xls"))
-					return true;
+			/* Access the file name */
+			String myName = pFile.getName();
 			
-				/* reject the file */
+			/* Check the prefix */
+			if ((thePrefix != null) &&
+				(!myName.startsWith(thePrefix)))
 				return false;
-			}
-		
-			/**
-			 * Description
-			 * @returns the description of the filter
-			 */
-			public String getDescription() {
-				return "Finance backup files";
-			}
-		}
-	}
-
-	/**
-	 *  The BackupLoad Selector class
-	 */
-	public static class BackupLoad {
-		/* Members */
-		private JFrame			theFrame		= null;
-		private JFileChooser	theChooser		= null;
-		private String			thePrefix		= null;	
-		private File			theResult		= null;
-
-		/**
-		 * Obtain the selected file 
-		 */
-		public File getSelectedFile() { return theResult; }
-		
-		/**
-		 * Constructor
-		 */
-		public BackupLoad(DataControl<?> pControl) {
-			/* Access the properties */
-			Properties myProperties = pControl.getProperties();
-		
-			/* Access the frame */
-			theFrame = pControl.getFrame();
-		
-			/* Create the chooser */
-			theChooser = new JFileChooser();
-		
-			/* Initialise it to the required backup directory */
-			theChooser.setCurrentDirectory(new File(myProperties.getBackupDir()));
-		
-			/* Store the prefix value */
-			thePrefix  = myProperties.getBackupPrefix();
-
-			/* Set the file filter */
-			theChooser.setFileFilter(new fileFilter());
-		
-			/* Set the title */
-			theChooser.setDialogTitle("Select backup file to load");
-		}
-	
-		/**
-		 *  Show the dialog to select a file using an invokeAndWait clause if necessary 
-		 */
-		public void selectFile() {
 			
-			/* If this is the event dispatcher thread */
-			if (SwingUtilities.isEventDispatchThread()) {
-				/* invoke the dialog directly */
-				showDialog();			
-			}
-			
-			/* else we must use invokeAndWait */
-			else {
-				try {
-					SwingUtilities.invokeAndWait(new Runnable() {
-						public void run() {
-							/* invoke the dialog */
-							showDialog();
-						}
-					});
-				}
-			
-				catch (Throwable e) {}
-			}
-		}
-		
-		/**
-		 * Show the dialog to select the file 
-		 */
-		private void showDialog() {
-			/* Show the dialog and select the file */
-			int iRet = theChooser.showOpenDialog(theFrame);
-		
-			/* If we selected a file */
-			if (iRet == JFileChooser.APPROVE_OPTION)
-				theResult = theChooser.getSelectedFile();
-		
-			/* else set no selection */
-			else theResult = null;
-		}
-	
-		/**
-		 * FileFilter class
-		 */
-		private class fileFilter extends FileFilter {
-			/**
-			 * Accept file 
-			 * @param pFile the file to check
-			 * @return true/false
-			 */
-			public boolean accept(File pFile) {
-				/* Always accept directories */
-				if (pFile.isDirectory()) return true;
-			
-				/* The file must start with the prefix */
-				String myName = pFile.getName();
-				if (!myName.startsWith(thePrefix)) return false;
-			
-				/* It must end with .xls or .zip */
-				if (myName.endsWith(".xls") || myName.endsWith(".zip"))
-					return true;
-			
-				/* reject the file */
+			/* Check the suffix */
+			if ((theSuffix != null) &&
+				(!myName.endsWith(theSuffix)))
 				return false;
-			}
-		
-			/**
-			 * Description
-			 * @returns the description of the filter
-			 */
-			public String getDescription() {
-				return "Finance backup files";
-			}
-		}
-	}
-
-	/**
-	 *  The BackupCreate Selector class
-	 */
-	public static class BackupCreate {
-		/* Members */
-		private JFrame			theFrame		= null;
-		private JFileChooser	theChooser		= null;
-		private String			thePrefix		= null;	
-		private File			theResult		= null;
-
-		/**
-		 * Obtain the selected file 
-		 */
-		public File getSelectedFile() { return theResult; }
-		
-		/**
-		 * Constructor
-		 */
-		public BackupCreate(DataControl<?> pControl) {
-			/* Access the properties */
-			Properties myProperties = pControl.getProperties();
-		
-			/* Access the frame */
-			theFrame = pControl.getFrame();
-		
-			/* Create the chooser */
-			theChooser = new JFileChooser();
-		
-			/* Store the prefix value */
-			thePrefix  = myProperties.getBackupPrefix();
-
-			/* Note the the chooser can only select a directory */
-			theChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-			/* Initialise it to the required backup directory */
-			theChooser.setSelectedFile(new File(myProperties.getBackupDir()));
-		
-			/* Set the title */
-			theChooser.setDialogTitle("Select directory for backup file");
-		}
-	
-		/**
-		 *  Show the dialog to select a file using an invokeAndWait clause if necessary 
-		 */
-		public void selectFile() {
 			
-			/* If this is the event dispatcher thread */
-			if (SwingUtilities.isEventDispatchThread()) {
-				/* invoke the dialog directly */
-				showDialog();			
-			}
-			
-			/* else we must use invokeAndWait */
-			else {
-				try {
-					SwingUtilities.invokeAndWait(new Runnable() {
-						public void run() {
-							/* invoke the dialog */
-							showDialog();
-						}
-					});
-				}
-			
-				catch (Throwable e) {}
-			}
+			/* accept the file */
+			return true;
 		}
 		
 		/**
-		 * Show the dialog to select the file 
+		 * Description
+		 * @returns the description of the filter
 		 */
-		private void showDialog() {
-			String 		myName;
-			//Calendar	myNow;
-			//int		 	myValue;
-			
-			/* Show the dialog and select the file */
-			int iRet = theChooser.showSaveDialog(theFrame);
-		
-			/* If we selected a file */
-			if (iRet == JFileChooser.APPROVE_OPTION) {
-				/* Access the selected directory */
-				theResult = theChooser.getSelectedFile();
-				
-				/* Obtain the current date/time */
-				//myNow = Calendar.getInstance();
-				
-				/* Create the name of the file */
-				myName 	 = new String(thePrefix);
-				//myName 	+= myNow.get(Calendar.YEAR);
-				//myValue  = myNow.get(Calendar.MONTH) + 1;
-				//if (myValue < 10) myName += "0";
-				//myName += myValue;
-				//myValue  = myNow.get(Calendar.DAY_OF_MONTH);
-				//if (myValue < 10) myName += "0";
-				//myName += myValue;
-				
-				/* Add extension */
-				//myName += ".xls";
-				
-				/* Build new file name */
-				theResult = new File(theResult, myName);
-			}
-		
-			/* else set no selection */
-			else theResult = null;
-		}
-	}
-	
-	/**
-	 *  The BackupDirectory Selector class
-	 */
-	public static class BackupDirectory {
-		/* Members */
-		private JFrame			theFrame		= null;
-		private JFileChooser	theChooser		= null;
-		private File			theResult		= null;
-
-		/**
-		 * Obtain the selected file 
-		 */
-		public File getSelectedFile() { return theResult; }
-		
-		/**
-		 * Constructor
-		 */
-		public BackupDirectory(DataControl<?> pControl) {
-			/* Access the properties */
-			Properties myProperties = pControl.getProperties();
-		
-			/* Access the frame */
-			theFrame = pControl.getFrame();
-		
-			/* Create the chooser */
-			theChooser = new JFileChooser();
-		
-			/* Note the the chooser can only select a directory */
-			theChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-			/* Initialise it to the required backup directory */
-			theChooser.setSelectedFile(new File(myProperties.getBackupDir()));
-		
-			/* Set the title */
-			theChooser.setDialogTitle("Select directory for backup file");
-		}
-	
-		/**
-		 *  Show the dialog to select a file using an invokeAndWait clause if necessary 
-		 */
-		public void selectFile() {
-			
-			/* If this is the event dispatcher thread */
-			if (SwingUtilities.isEventDispatchThread()) {
-				/* invoke the dialog directly */
-				showDialog();			
-			}
-			
-			/* else we must use invokeAndWait */
-			else {
-				try {
-					SwingUtilities.invokeAndWait(new Runnable() {
-						public void run() {
-							/* invoke the dialog */
-							showDialog();
-						}
-					});
-				}
-			
-				catch (Throwable e) {}
-			}
-		}
-		
-		/**
-		 * Show the dialog to select the file 
-		 */
-		private void showDialog() {
-			/* Show the dialog and select the file */
-			int iRet = theChooser.showSaveDialog(theFrame);
-		
-			/* If we selected a file */
-			if (iRet == JFileChooser.APPROVE_OPTION) {
-				/* Access the selected directory */
-				theResult = theChooser.getSelectedFile();
-			}
-		
-			/* else set no selection */
-			else theResult = null;
+		public String getDescription() {
+			return "Filter selection";
 		}
 	}
 }

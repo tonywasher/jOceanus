@@ -20,10 +20,9 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.EventAnalysis.AnalysisYear;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.EditState;
-import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.ErrorPanel;
@@ -43,7 +42,6 @@ public class ReportTab implements HyperlinkListener,
 	private DateDay				theDate       	= null;
 	private TaxYear				theYear       	= null;
 	private EventAnalysis		theAnalysis	  	= null;
-	private Properties			theProperties 	= null;
 	private DebugEntry			theDebugReport	= null;
 	private DebugEntry			theSpotEntry	= null;
 
@@ -73,7 +71,6 @@ public class ReportTab implements HyperlinkListener,
 		/* Store the view and properties */
 		theParent	  = pWindow;
 		theView       = pWindow.getView();
-		theProperties = pWindow.getProperties();
 		
 		/* Create the top level debug entry for this view  */
 		DebugManager myDebugMgr = theView.getDebugMgr();
@@ -143,7 +140,7 @@ public class ReportTab implements HyperlinkListener,
 	/**
 	 * Refresh views/controls after a load/update of underlying data
 	 */
-	public void refreshData() throws Exception {		
+	public void refreshData() throws ModelException {		
 		/* Hide the instant debug since it is now invalid */
 		theSpotEntry.hideEntry();
 
@@ -185,9 +182,9 @@ public class ReportTab implements HyperlinkListener,
 			}
 			
 			/* Catch Exceptions */
-			catch (Exception e) {
+			catch (ModelException e) {
 				/* Build the error */
-				Exception myError = new Exception(ExceptionClass.DATA,
+				ModelException myError = new ModelException(ExceptionClass.DATA,
 										          "Failed to change selection",
 										          e);
 				
@@ -214,7 +211,7 @@ public class ReportTab implements HyperlinkListener,
 	/**
 	 *  Build the report
 	 */
-	private void buildReport() throws Exception {
+	private void buildReport() throws ModelException {
 		AnalysisYear    myYear;
 		EventAnalysis	mySnapshot;
 		AnalysisReport	myReport;
@@ -254,7 +251,7 @@ public class ReportTab implements HyperlinkListener,
 			case TAX:
 				myYear  	= theAnalysis.getAnalysisYear(theYear);
 				myReport	= new AnalysisReport(myYear);
-				myText 		= myReport.getTaxReport(theProperties);
+				myText 		= myReport.getTaxReport();
 				break;
 				
 			case BREAKDOWN:

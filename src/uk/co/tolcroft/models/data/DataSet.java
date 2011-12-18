@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.data.EncryptedItem.EncryptedList;
 import uk.co.tolcroft.models.help.DebugDetail;
@@ -100,7 +100,7 @@ public abstract class DataSet<T extends DataSet<T>> 		implements DebugObject {
 	 * Items that are in both list but differ will be viewed as changed 
 	 * @param pOld The old list to extract from 
 	 */
-	public abstract T getDifferenceSet(T pOld) throws Exception;
+	public abstract T getDifferenceSet(T pOld) throws ModelException;
 
 	/**
 	 * Construct a difference extract between two DataSets.
@@ -112,7 +112,7 @@ public abstract class DataSet<T extends DataSet<T>> 		implements DebugObject {
 	 * @param pOld The old list to compare 
 	 */
 	protected void getDifferenceSet(T pNew, 
-									T pOld) throws Exception {
+									T pOld) throws ModelException {
 		/* Build the security differences */
 		theControlKeys 	= pNew.getControlKeys().getDifferences(pOld.getControlKeys());
 		theDataKeys		= pNew.getDataKeys().getDifferences(pOld.getDataKeys());
@@ -123,7 +123,7 @@ public abstract class DataSet<T extends DataSet<T>> 		implements DebugObject {
 	 * ReBase this data set against an earlier version.
 	 * @param pOld The old data to reBase against 
 	 */
-	public void reBase(T pOld) throws Exception {
+	public void reBase(T pOld) throws ModelException {
 		/* ReBase the security items */
 		theControlKeys.reBase(pOld.getControlKeys());
 		theDataKeys.reBase(pOld.getDataKeys());
@@ -201,7 +201,7 @@ public abstract class DataSet<T extends DataSet<T>> 		implements DebugObject {
 	 * Analyse the DataSet
 	 * @param pControl The DataControl 
 	 */
-	public abstract void analyseData(DataControl<?> pControl) throws Exception;
+	public abstract void analyseData(DataControl<?> pControl) throws ModelException;
 
 	/**
 	 * Compare this data-set to another to establish equality.
@@ -355,7 +355,7 @@ public abstract class DataSet<T extends DataSet<T>> 		implements DebugObject {
 	 * @return Continue <code>true/false</code>
 	 */
 	public boolean initialiseSecurity(ThreadStatus<T>	pThread,
-								   	  T					pBase) throws Exception {
+								   	  T					pBase) throws ModelException {
 		/* Set the number of stages */
 		if (!pThread.setNumStages(1+theNumEncrypted)) return false;
 		
@@ -388,7 +388,7 @@ public abstract class DataSet<T extends DataSet<T>> 		implements DebugObject {
 	 * @param pThread the thread status
 	 * @return Continue <code>true/false</code>
 	 */
-	public boolean renewSecurity(ThreadStatus<T>	pThread) throws Exception {
+	public boolean renewSecurity(ThreadStatus<T>	pThread) throws ModelException {
 		/* Access ControlData */
 		ControlData myControl = getControl();
 		
@@ -407,7 +407,7 @@ public abstract class DataSet<T extends DataSet<T>> 		implements DebugObject {
 	 * @param pThread the thread status
 	 * @return Continue <code>true/false</code>
 	 */
-	public boolean updateSecurity(ThreadStatus<T>	pThread) throws Exception {
+	public boolean updateSecurity(ThreadStatus<T>	pThread) throws ModelException {
 		/* Access the control key */
 		ControlKey myControl = getControlKey();
 		
@@ -436,7 +436,7 @@ public abstract class DataSet<T extends DataSet<T>> 		implements DebugObject {
 	 * Get the Security control 
 	 * @return the security control 
 	 */
-	public SecurityControl getSecurityControl() throws Exception {
+	public SecurityControl getSecurityControl() throws ModelException {
 		/* Access the active control key */
 		ControlKey  myKey	= getControlKey();
 		
@@ -450,7 +450,7 @@ public abstract class DataSet<T extends DataSet<T>> 		implements DebugObject {
 	 * @param pSource the source of the data
 	 */
 	public void updateSecurityControl(ThreadStatus<T>	pThread,
-									  String 			pSource) throws Exception {
+									  String 			pSource) throws ModelException {
 		/* Obtain a new security control */
 		SecurityControl myControl = theSecurity.getSecurityControl(null, pSource);
 		

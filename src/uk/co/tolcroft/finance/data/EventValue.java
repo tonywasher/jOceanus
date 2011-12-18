@@ -1,9 +1,9 @@
 package uk.co.tolcroft.finance.data;
 
 import uk.co.tolcroft.models.Difference;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.Utils;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataSet;
@@ -172,7 +172,7 @@ public class EventValue extends DataItem<EventValue>{
 				       int		uId,
 				       int 		uInfoTypeId,
 				       int		uEventId, 
-				       Integer	pValue) throws Exception {
+				       Integer	pValue) throws ModelException {
 		/* Initialise the item */
 		super(pList, uId);
 		
@@ -187,7 +187,7 @@ public class EventValue extends DataItem<EventValue>{
 		FinanceData myData		= pList.getData();
 		EventInfoType myType	= myData.getInfoTypes().searchFor(uInfoTypeId);
 		if (myType == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid EventInfoType Id");
 		myValues.setInfoType(myType);
@@ -195,7 +195,7 @@ public class EventValue extends DataItem<EventValue>{
 		/* Look up the Event */
 		Event myEvent	= myData.getEvents().searchFor(uEventId);
 		if (myEvent == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid Event Id");
 		myValues.setEvent(myEvent);
@@ -210,7 +210,7 @@ public class EventValue extends DataItem<EventValue>{
 				/* Look up the Account */
 				Account myAccount	= myData.getAccounts().searchFor(pValue);
 				if (myAccount == null) 
-					throw new Exception(ExceptionClass.DATA,
+					throw new ModelException(ExceptionClass.DATA,
 										this,
 										"Invalid Account Id");
 				myValues.setAccount(myAccount);
@@ -399,7 +399,7 @@ public class EventValue extends DataItem<EventValue>{
 	 * Set Value 
 	 * @param pValue the Value
 	 */
-	protected void setValue(Integer pValue) throws Exception {
+	protected void setValue(Integer pValue) throws ModelException {
 		Values			myValues	= getValues();
 
 		/* Switch on Info type */
@@ -409,7 +409,7 @@ public class EventValue extends DataItem<EventValue>{
 				myValues.setInteger(pValue);
 				break;
 			default:
-				throw new Exception(ExceptionClass.LOGIC,
+				throw new ModelException(ExceptionClass.LOGIC,
 									this,
 									"Invalid Attempt to set Integer value");
 		}
@@ -419,7 +419,7 @@ public class EventValue extends DataItem<EventValue>{
 	 * Set Account 
 	 * @param pAccount the Account
 	 */
-	protected void setAccount(Account pValue) throws Exception {
+	protected void setAccount(Account pValue) throws ModelException {
 		Values			myValues	= getValues();
 
 		/* Switch on Info type */
@@ -428,7 +428,7 @@ public class EventValue extends DataItem<EventValue>{
 				myValues.setAccount(pValue);
 				break;
 			default:
-				throw new Exception(ExceptionClass.LOGIC,
+				throw new ModelException(ExceptionClass.LOGIC,
 									this,
 									"Invalid Attempt to set Account value");
 		}
@@ -530,7 +530,7 @@ public class EventValue extends DataItem<EventValue>{
 		public void addItem(int     		uId,
 							int  	 		uInfoTypeId,
 							int				uEventId,
-							Integer			pValue) throws Exception {
+							Integer			pValue) throws ModelException {
 			EventValue  	myInfo;
 			
 			/* Create the info */
@@ -539,7 +539,7 @@ public class EventValue extends DataItem<EventValue>{
 				
 			/* Check that this InfoId has not been previously added */
 			if (!isIdUnique(uId)) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 						            myInfo,
 			  			            "Duplicate ValueId");
 			 
@@ -548,7 +548,7 @@ public class EventValue extends DataItem<EventValue>{
 
 			/* Handle validation failure */
 			if (myInfo.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myInfo,
 									"Failed validation");
 				

@@ -4,9 +4,9 @@ import java.util.Arrays;
 
 import java.security.*;
 
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.Utils;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 
 public class PasswordHash {
 	/**
@@ -70,7 +70,7 @@ public class PasswordHash {
 	protected PasswordHash(char[] 		pPassword,
 						   boolean		useRestricted,
 						   SecureRandom	pRandom) throws WrongPasswordException,
-						  								Exception {
+						  								ModelException {
 		/* Create a random SecurityMode */
 		theSecureMode 	= SecurityMode.getSecurityMode(useRestricted, pRandom);
 		
@@ -90,7 +90,7 @@ public class PasswordHash {
 	protected PasswordHash(byte[]		pSaltAndHash,
 						   char[] 		pPassword,
 						   SecureRandom	pRandom) throws WrongPasswordException,
-						  								Exception {
+						  								ModelException {
 		/* Store the salt and hash and extract the mode */
 		theSaltAndHash 	= pSaltAndHash;
 		extractMode();
@@ -108,7 +108,7 @@ public class PasswordHash {
 	 * @param useRestricted use restricted keys
 	 */
 	protected PasswordHash(PasswordHash pSource,
-			   			   boolean		useRestricted) throws Exception {
+			   			   boolean		useRestricted) throws ModelException {
 		char[] 		myPassword = null;
 		
 		/* Build the encryption cipher */
@@ -130,7 +130,7 @@ public class PasswordHash {
 		}
 		
 		/* Catch Exceptions */
-		catch (Exception e) { throw e; }
+		catch (ModelException e) { throw e; }
 		finally { if (myPassword != null) Arrays.fill(myPassword, (char)0); }
 	}
 	
@@ -167,7 +167,7 @@ public class PasswordHash {
 	/**
 	 * Extract the mode from the salt and hash array
 	 */
-	private void extractMode() throws Exception {
+	private void extractMode() throws ModelException {
 		/* Extract the byte representation */
 		byte[] myBytes = Arrays.copyOf(theSaltAndHash, SecurityMode.MODELENGTH);
 		
@@ -183,7 +183,7 @@ public class PasswordHash {
 	 * @param pPassword the password (cleared after usage)
 	 */
 	private void setPassword(char[] pPassword) throws WrongPasswordException,
-													  Exception {
+													  ModelException {
 		byte[]				mySalt;
 		byte[]				mySaltAndHash;
 		
@@ -234,9 +234,9 @@ public class PasswordHash {
 			Arrays.fill(pPassword, (char) 0);
 		}
 		catch (WrongPasswordException e) { throw e; }
-		catch (Exception e) { throw e; }
+		catch (ModelException e) { throw e; }
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Failed to initialise using password",
 								e);
 		}
@@ -251,7 +251,7 @@ public class PasswordHash {
 	 * @param pPassword the password for the keys
 	 * @return the Salt and Hash array 
 	 */
-	private byte[] generateSaltAndHash(byte[] pSalt, char[] pPassword) throws Exception {
+	private byte[] generateSaltAndHash(byte[] pSalt, char[] pPassword) throws ModelException {
 		byte[] 			mySaltAndHash;
 		byte[] 			myPrimeHash;
 		byte[] 			myAlternateHash;
@@ -346,14 +346,14 @@ public class PasswordHash {
 		}
 		
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Failed to generate salt and hash",
 								e);
 		}
 		
 		/* Check whether the SaltAndHash is too large */
 		if (mySaltAndHash.length > HASHSIZE)
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Password Hash too large: " + mySaltAndHash.length);
 			
 		/* Return to caller */
@@ -365,13 +365,13 @@ public class PasswordHash {
 	 * @param pKey the AsymmetricKey whose private key is to be secured
 	 * @return the secured key
 	 */
-	public byte[] getSecuredPrivateKey(AsymmetricKey pKey) throws Exception {
+	public byte[] getSecuredPrivateKey(AsymmetricKey pKey) throws ModelException {
 		/* Return the Secured Key */
 		byte[] myKeyDef = theCipherSet.wrapKey(pKey);
 		
 		/* Check whether the SecuredKey is too large */
 		if (myKeyDef.length > AsymmetricKey.PRIVATESIZE)
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"PrivateKey too large: " + myKeyDef.length);			
 
 		/* Return to caller */
@@ -386,7 +386,7 @@ public class PasswordHash {
 	 */
 	public AsymmetricKey getAsymmetricKey(byte[] 		pSecuredPrivateKeyDef,
 										  byte[]		pPublicKey,
-										  SecurityMode	pKeyMode) throws Exception {
+										  SecurityMode	pKeyMode) throws ModelException {
 		/* unWrap the Asymmetric Key */
 		return theCipherSet.unWrapKey(pSecuredPrivateKeyDef, pPublicKey, pKeyMode);
 	}
@@ -397,7 +397,7 @@ public class PasswordHash {
 	 * @param pSecond the second Hash
 	 * @return the combined hash
 	 */
-	private byte[] combineHashes(byte[] pFirst, byte[] pSecond) throws Exception {
+	private byte[] combineHashes(byte[] pFirst, byte[] pSecond) throws ModelException {
 		byte[] 			myTarget	= pSecond;
 		byte[]			mySource	= pFirst;
 		int	   			myLen;
@@ -444,7 +444,7 @@ public class PasswordHash {
 		}
 		
 		/* Catch Exceptions */
-		catch (Exception e) { }
+		catch (ModelException e) { }
 		finally { if (myPassword != null) Arrays.fill(myPassword, (char)0); }		
 	}
 }

@@ -8,8 +8,8 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.sheets.SheetDataItem;
 import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
@@ -229,7 +229,7 @@ public class SheetPattern extends SheetDataItem<Event> {
 	 */
 	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
 										 SheetHelper				pHelper,
-							   	  		 FinanceData				pData) throws Exception {
+							   	  		 FinanceData				pData) throws ModelException {
 		/* Local variables */
 		Pattern.List		myList;
 		AreaReference		myRange	= null;
@@ -319,7 +319,7 @@ public class SheetPattern extends SheetDataItem<Event> {
 		
 		/* Handle exceptions */
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.EXCEL, 
+			throw new ModelException(ExceptionClass.EXCEL, 
 								"Failed to Load Patterns",
 								e);
 		}

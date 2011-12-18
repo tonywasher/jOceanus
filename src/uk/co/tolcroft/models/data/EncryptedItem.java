@@ -1,14 +1,14 @@
 package uk.co.tolcroft.models.data;
 
 import uk.co.tolcroft.models.Difference;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.Decimal;
 import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.security.SecurityControl;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.Utils;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 
 public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem<T> {
 	/**
@@ -110,7 +110,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 * Set ControlKey
 	 * @param uControlId the Control Id
 	 */
-	protected void setControlKey(int uControlId) throws Exception {
+	protected void setControlKey(int uControlId) throws ModelException {
 		/* Store the id */
 		EncryptedItem<?>.EncryptedValues myObj = getValues();
 		myObj.setControlId(uControlId);
@@ -122,7 +122,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		/* Look up the ControlKey */
 		ControlKey myControl = myKeys.searchFor(uControlId);
 		if (myControl == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid ControlKey Id");
 		
@@ -168,7 +168,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 * @param pControl the new Control Key 
 	 */	
 	private void adoptSecurity(ControlKey pControl,
-							   T		  pBase) throws Exception {
+							   T		  pBase) throws ModelException {
 		/* Access the values */
 		EncryptedItem<?>.EncryptedValues myValues = getValues();
 		
@@ -194,7 +194,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 * Update security for all encrypted values
 	 * @param pControl the new Control Key 
 	 */	
-	private void updateSecurity(ControlKey pControl) throws Exception {
+	private void updateSecurity(ControlKey pControl) throws ModelException {
 		/* Access the values */
 		EncryptedItem<?>.EncryptedValues myValues = getValues();
 
@@ -270,7 +270,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * @return Continue <code>true/false</code>
 		 */
 		public boolean updateSecurity(ThreadStatus<?>	pThread,
-			   	  					  ControlKey 		pControl) throws Exception {
+			   	  					  ControlKey 		pControl) throws ModelException {
 			ListIterator 	myIterator;
 			T				myCurr;
 			int				mySteps;
@@ -314,7 +314,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 */
 		protected boolean adoptSecurity(ThreadStatus<?>		pThread,
 			   	  						ControlKey 			pControl,
-								     	EncryptedList<?,?> 	pBase) throws Exception {
+								     	EncryptedList<?,?> 	pBase) throws ModelException {
 			/* Local variables */
 			ListIterator 		myIterator;
 			EncryptedItem<?>	myCurr;
@@ -409,10 +409,10 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		}
 
 		/* Apply Security */
-		protected abstract void applySecurity() throws Exception;
-		protected abstract void updateSecurity() throws Exception;
+		protected abstract void applySecurity() throws ModelException;
+		protected abstract void updateSecurity() throws ModelException;
 		protected abstract void adoptSecurity(ControlKey 		pControl,
-											  EncryptedValues	pBase) throws Exception;
+											  EncryptedValues	pBase) throws ModelException;
 	}
 	
 	/**
@@ -452,23 +452,23 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * Get bytes for Encryption
 		 * @return the bytes to be encrypted
 		 */
-		protected abstract byte[] getBytesForEncryption() throws Exception;
+		protected abstract byte[] getBytesForEncryption() throws ModelException;
 			
 		/**
 		 * Set decrypted value
 		 * @param pValue the decrypted byte value
 		 */
-		protected abstract void setDecryptedValue(byte[] pValue) throws Exception;
+		protected abstract void setDecryptedValue(byte[] pValue) throws ModelException;
 		
 		/**
 		 * Encrypt a valuePair
 		 */
-		protected void encryptPair() throws Exception {
+		protected void encryptPair() throws ModelException {
 			ControlKey myControl = getControlKey();
 			
 			/* Reject if encryption is not initialised */
 			if (myControl == null)
-				throw new Exception(ExceptionClass.LOGIC,
+				throw new ModelException(ExceptionClass.LOGIC,
 									"Encryption is not initialised");
 			
 			/* Obtain the bytes representation of the value */
@@ -484,12 +484,12 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		/**
 		 * Decrypt a valuePair
 		 */
-		protected void decryptPair() throws Exception {
+		protected void decryptPair() throws ModelException {
 			ControlKey myControl = getControlKey();
 			
 			/* Reject if encryption is not initialised */
 			if (myControl == null)
-				throw new Exception(ExceptionClass.LOGIC,
+				throw new ModelException(ExceptionClass.LOGIC,
 									"Encryption is not initialised");
 			
 			/* Decrypt the Bytes */
@@ -546,7 +546,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * Constructor from a clear value
 		 * @param pValue the clear value
 		 */
-		public StringPair(String pValue) throws Exception { 
+		public StringPair(String pValue) throws ModelException { 
 			/* Store the value */
 			theString = pValue;
 			
@@ -558,7 +558,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * Constructor from an Encrypted value
 		 * @param pBytes the encrypted value
 		 */
-		public StringPair(byte[] pBytes) throws Exception { 
+		public StringPair(byte[] pBytes) throws ModelException { 
 			/* Store the value */
 			super.setBytes(pBytes);
 			
@@ -605,7 +605,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * Get bytes for Encryption
 		 * @return the bytes to be encrypted
 		 */
-		protected byte[] getBytesForEncryption() throws Exception {
+		protected byte[] getBytesForEncryption() throws ModelException {
 			/* Protect against exceptions */
 			try {
 				/* Convert the string to a byte array */
@@ -614,7 +614,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			
 			/* Catch Exceptions */
 			catch (Throwable e) {
-				throw new Exception(ExceptionClass.CRYPTO,
+				throw new ModelException(ExceptionClass.CRYPTO,
 									"Failed to convert value to bytes");
 			}
 		}
@@ -623,7 +623,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * Set decrypted value
 		 * @param pValue the decrypted byte value
 		 */
-		protected void setDecryptedValue(byte[] pValue) throws Exception {
+		protected void setDecryptedValue(byte[] pValue) throws ModelException {
 			/* Protect against exceptions */
 			try {
 				/* Convert the byte array to a string */
@@ -632,7 +632,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			
 			/* Catch Exceptions */
 			catch (Throwable e) {
-				throw new Exception(ExceptionClass.CRYPTO,
+				throw new ModelException(ExceptionClass.CRYPTO,
 									"Failed to convert value from bytes");
 			}
 		}
@@ -663,7 +663,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * Encrypt a stringPair or borrow encrypted form from base
 		 * @param pBase the base encrypted pair
 		 */
-		public void encryptPair(EncryptedItem<?>.StringPair pBase) throws Exception {
+		public void encryptPair(EncryptedItem<?>.StringPair pBase) throws ModelException {
 			/* If the raw format differs */
 			if ((pBase == null) ||
 				(Utils.differs(getString(), pBase.getString()).isDifferent())) {
@@ -698,7 +698,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * Constructor from a clear value
 		 * @param pValue the clear value
 		 */
-		public CharArrayPair(char[] pValue) throws Exception { 
+		public CharArrayPair(char[] pValue) throws ModelException { 
 			/* Store the value */
 			theChars = pValue;
 			
@@ -710,7 +710,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * Constructor from an Encrypted value
 		 * @param pBytes the encrypted value
 		 */
-		public CharArrayPair(byte[] pBytes) throws Exception { 
+		public CharArrayPair(byte[] pBytes) throws ModelException { 
 			/* Store the value */
 			super.setBytes(pBytes);
 			
@@ -757,7 +757,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * Get bytes for Encryption
 		 * @return the bytes to be encrypted
 		 */
-		protected byte[] getBytesForEncryption() throws Exception {
+		protected byte[] getBytesForEncryption() throws ModelException {
 			/* Convert the string to a byte array */
 			return Utils.charToByteArray(theChars);
 		}
@@ -766,7 +766,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * Set decrypted value
 		 * @param pValue the decrypted byte value
 		 */
-		protected void setDecryptedValue(byte[] pValue) throws Exception {
+		protected void setDecryptedValue(byte[] pValue) throws ModelException {
 			/* Convert the byte array to a string */
 			theChars = Utils.byteToCharArray(pValue);
 		}
@@ -797,7 +797,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * Encrypt a charArrayPair or borrow encrypted form from base
 		 * @param pBase the base encrypted pair
 		 */
-		public void encryptPair(CharArrayPair pBase) throws Exception {
+		public void encryptPair(CharArrayPair pBase) throws ModelException {
 			/* If the raw format differs */
 			if ((pBase == null) || 
 				(Utils.differs(getChars(), pBase.getChars()).isDifferent())) {
@@ -832,7 +832,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * Constructor from a clear value
 		 * @param pValue the clear value
 		 */
-		public NumberPair(X pValue) throws Exception { 
+		public NumberPair(X pValue) throws ModelException { 
 			/* Store the value */
 			super(pValue.format(false));
 			
@@ -844,7 +844,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * Constructor from a string value
 		 * @param pValue the string value
 		 */
-		public NumberPair(String pValue) throws Exception { 
+		public NumberPair(String pValue) throws ModelException { 
 			/* Store the value */
 			super(pValue);
 			
@@ -857,7 +857,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * Constructor from an Encrypted value
 		 * @param pBytes the encrypted value
 		 */
-		public NumberPair(byte[] pBytes) throws Exception { 
+		public NumberPair(byte[] pBytes) throws ModelException { 
 			/* Store the value */
 			super(pBytes);
 		} 
@@ -877,7 +877,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * Set decrypted value
 		 * @param pValue the decrypted byte value
 		 */
-		protected void setDecryptedValue(byte[] pValue) throws Exception {
+		protected void setDecryptedValue(byte[] pValue) throws ModelException {
 			/* Convert the byte array to a string */
 			super.setDecryptedValue(pValue);
 			
@@ -890,7 +890,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * @param pValue the string value
 		 * @return the value
 		 */
-		protected abstract X parseValue(String pValue) throws Exception;
+		protected abstract X parseValue(String pValue) throws ModelException;
 				
 		/**
 		 * Compare this NumberPair type to another to establish equality.
@@ -918,14 +918,14 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	/* Encrypted Money */
 	public class MoneyPair extends NumberPair<Money> {
 		/* Pass-through constructors */
-		public MoneyPair(Money  pValue) throws Exception { super(pValue); }
-		public MoneyPair(String pValue) throws Exception { super(pValue); }
-		public MoneyPair(byte[] pValue) throws Exception { super(pValue); }
+		public MoneyPair(Money  pValue) throws ModelException { super(pValue); }
+		public MoneyPair(String pValue) throws ModelException { super(pValue); }
+		public MoneyPair(byte[] pValue) throws ModelException { super(pValue); }
 
 		public MoneyPair(EncryptedItem<?>.MoneyPair pValue) { super(pValue); }
 
 		/* Parse a money value */
-		protected Money parseValue(String pValue) throws Exception {
+		protected Money parseValue(String pValue) throws ModelException {
 			return new Money(pValue);
 		}
 	}
@@ -933,14 +933,14 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	/* Encrypted Units */
 	public class UnitsPair extends NumberPair<Units> {
 		/* Pass-through constructors */
-		public UnitsPair(Units  pValue) throws Exception { super(pValue); }
-		public UnitsPair(String pValue) throws Exception { super(pValue); }
-		public UnitsPair(byte[] pValue) throws Exception { super(pValue); }
+		public UnitsPair(Units  pValue) throws ModelException { super(pValue); }
+		public UnitsPair(String pValue) throws ModelException { super(pValue); }
+		public UnitsPair(byte[] pValue) throws ModelException { super(pValue); }
 
 		public UnitsPair(EncryptedItem<?>.UnitsPair pValue) { super(pValue); }
 
 		/* Parse a units value */
-		protected Units parseValue(String pValue) throws Exception {
+		protected Units parseValue(String pValue) throws ModelException {
 			return new Units(pValue);
 		}
 	}
@@ -948,14 +948,14 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	/* Encrypted Rate */
 	public class RatePair extends NumberPair<Rate> {
 		/* Pass-through constructors */
-		public RatePair(Rate   pValue) throws Exception	{ super(pValue); }
-		public RatePair(String pValue) throws Exception { super(pValue); }
-		public RatePair(byte[] pValue) throws Exception { super(pValue); }
+		public RatePair(Rate   pValue) throws ModelException	{ super(pValue); }
+		public RatePair(String pValue) throws ModelException { super(pValue); }
+		public RatePair(byte[] pValue) throws ModelException { super(pValue); }
 
 		public RatePair(EncryptedItem<?>.RatePair pValue) { super(pValue); }
 
 		/* Parse a rate value */
-		protected Rate parseValue(String pValue) throws Exception {
+		protected Rate parseValue(String pValue) throws ModelException {
 			return new Rate(pValue);
 		}
 	}
@@ -963,14 +963,14 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	/* Encrypted Price */
 	public class PricePair extends NumberPair<Price> {
 		/* Pass-through constructors */
-		public PricePair(Price  pValue) throws Exception	{ super(pValue); }
-		public PricePair(String pValue) throws Exception 	{ super(pValue); }
-		public PricePair(byte[] pValue) throws Exception 	{ super(pValue); }
+		public PricePair(Price  pValue) throws ModelException	{ super(pValue); }
+		public PricePair(String pValue) throws ModelException 	{ super(pValue); }
+		public PricePair(byte[] pValue) throws ModelException 	{ super(pValue); }
 
 		public PricePair(EncryptedItem<?>.PricePair pValue) { super(pValue); }
 
 		/* Parse a price value */
-		protected Price parseValue(String pValue) throws Exception {
+		protected Price parseValue(String pValue) throws ModelException {
 			return new Price(pValue);
 		}
 	}
@@ -978,14 +978,14 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	/* Encrypted Dilution */
 	public class DilutionPair extends NumberPair<Dilution> {
 		/* Pass-through constructors */
-		public DilutionPair(Dilution pValue) throws Exception { super(pValue); }
-		public DilutionPair(String   pValue) throws Exception { super(pValue); }
-		public DilutionPair(byte[]   pValue) throws Exception { super(pValue); }
+		public DilutionPair(Dilution pValue) throws ModelException { super(pValue); }
+		public DilutionPair(String   pValue) throws ModelException { super(pValue); }
+		public DilutionPair(byte[]   pValue) throws ModelException { super(pValue); }
 
 		public DilutionPair(EncryptedItem<?>.DilutionPair pValue) { super(pValue); }
 
 		/* Parse a dilution value */
-		protected Dilution parseValue(String pValue) throws Exception {
+		protected Dilution parseValue(String pValue) throws ModelException {
 			return new Dilution(pValue);
 		}
 	}

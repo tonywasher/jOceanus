@@ -13,8 +13,8 @@ import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.DateDay;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataState;
@@ -24,14 +24,14 @@ import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.DateRange;
 import uk.co.tolcroft.models.ui.Editor;
 import uk.co.tolcroft.models.ui.ErrorPanel;
-import uk.co.tolcroft.models.ui.StdMouse;
-import uk.co.tolcroft.models.ui.StdTable;
+import uk.co.tolcroft.models.ui.DataMouse;
+import uk.co.tolcroft.models.ui.DataTable;
 import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.ui.SaveButtons;
 import uk.co.tolcroft.models.views.ViewList;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 
-public class Extract extends StdTable<Event> {
+public class Extract extends DataTable<Event> {
 	/* Members */
 	private static final long serialVersionUID = -5531752729052421790L;
 
@@ -215,9 +215,9 @@ public class Extract extends StdTable<Event> {
 			}
 			
 			/* Catch Exceptions */
-			catch (Exception e) {
+			catch (ModelException e) {
 				/* Build the error */
-				Exception myError = new Exception(ExceptionClass.DATA,
+				ModelException myError = new ModelException(ExceptionClass.DATA,
 										          "Failed to change selection",
 										          e);
 				
@@ -233,7 +233,7 @@ public class Extract extends StdTable<Event> {
 	/**
 	 * Refresh views/controls after a load/update of underlying data
 	 */
-	public void refreshData() throws Exception {
+	public void refreshData() throws ModelException {
 		FinanceData	myData;
 		
 		/* Access data */
@@ -276,7 +276,7 @@ public class Extract extends StdTable<Event> {
 	 * Set Selection to the specified date range
 	 * @param pRange the Date range for the extract
 	 */
-	public void setSelection(DateDay.Range pRange) throws Exception {
+	public void setSelection(DateDay.Range pRange) throws ModelException {
 		theRange   = pRange;
 		theEvents  = null;				
 		if (theRange != null) {
@@ -309,9 +309,9 @@ public class Extract extends StdTable<Event> {
 		}
 		
 		/* Catch exceptions */
-		catch (Exception e) {
+		catch (ModelException e) {
 			/* Build the error */
-			Exception myError = new Exception(ExceptionClass.DATA,
+			ModelException myError = new ModelException(ExceptionClass.DATA,
 									          "Failed to select Period",
 									          e);
 			
@@ -631,7 +631,7 @@ public class Extract extends StdTable<Event> {
 				myEvent.pushHistory();
 				
 				/* Build the error */
-				Exception myError = new Exception(ExceptionClass.DATA,
+				ModelException myError = new ModelException(ExceptionClass.DATA,
 										          "Failed to update field at ("
 										          + row + "," + col +")",
 										          e);
@@ -688,7 +688,7 @@ public class Extract extends StdTable<Event> {
 	/**
 	 *  Extract mouse listener
 	 */
-	private class extractMouse extends StdMouse<Event> {
+	private class extractMouse extends DataMouse<Event> {
 			
 		/* Pop-up Menu items */
 		private static final String popupView    		= "View Account";

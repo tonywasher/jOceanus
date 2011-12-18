@@ -9,8 +9,8 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.sheets.SheetDataItem;
 import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
@@ -183,7 +183,7 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 	 */
 	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
 										 SheetHelper				pHelper,
-							   	  		 FinanceData				pData) throws Exception {
+							   	  		 FinanceData				pData) throws ModelException {
 		/* Local variables */
 		AcctRate.List	myList;
 		AreaReference	myRange;
@@ -274,7 +274,7 @@ public class SheetRate extends SheetDataItem<AcctRate> {
 		
 		/* Handle exceptions */
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.EXCEL, 
+			throw new ModelException(ExceptionClass.EXCEL, 
 								"Failed to Load Rates",
 								e);
 		}

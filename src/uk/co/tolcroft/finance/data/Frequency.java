@@ -1,7 +1,7 @@
 package uk.co.tolcroft.finance.data;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
@@ -49,7 +49,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 	 * @param sName Name of Frequency
 	 */
 	private Frequency(List 		pList,
-			      	  String	sName) throws Exception {
+			      	  String	sName) throws ModelException {
 		super(pList, sName);
 	}
 
@@ -67,7 +67,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 			          boolean	isEnabled,
 			          int		uOrder,
 			          String	pName,
-			          String	pDesc) throws Exception {
+			          String	pDesc) throws ModelException {
 		super(pList, uId, isEnabled, uOrder, pName, pDesc);
 	}
 	
@@ -87,7 +87,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 			      	  boolean	isEnabled,
 			      	  int		uOrder,
 			      	  byte[]	pName,
-			      	  byte[]	pDesc) throws Exception {
+			      	  byte[]	pDesc) throws ModelException {
 		super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
 	}
 
@@ -186,9 +186,9 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 		/**
 		 * Add a Frequency
 		 * @param pFrequency the Name of the frequency
-		 * @throws Exception on error
+		 * @throws ModelException on error
 		 */ 
-		public void addItem(String 	pFrequency) throws Exception {
+		public void addItem(String 	pFrequency) throws ModelException {
 			Frequency myFrequency;
 			
 			/* Create a new Frequency */
@@ -196,13 +196,13 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 				
 			/* Check that this FrequencyId has not been previously added */
 			if (!isIdUnique(myFrequency.getId())) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 	  					  			myFrequency,
 			  			            "Duplicate FrequencyId");
 				 
 			/* Check that this Frequency has not been previously added */
 			if (searchFor(pFrequency) != null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 	  					  			myFrequency,
 			                        "Duplicate Frequency");
 				
@@ -222,7 +222,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 							boolean	isEnabled,
 							int		uOrder,
 				            String 	pFrequency,
-				            String 	pDesc) throws Exception {
+				            String 	pDesc) throws ModelException {
 			Frequency myFreq;
 				
 			/* Create a new Frequency */
@@ -230,7 +230,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 				
 			/* Check that this FrequencyId has not been previously added */
 			if (!isIdUnique(myFreq.getId())) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 	  					  			myFreq,
 			  			            "Duplicate FrequencyId");
 				 
@@ -242,7 +242,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 
 			/* Handle validation failure */
 			if (myFreq.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myFreq,
 									"Failed validation");
 		}	
@@ -255,14 +255,14 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 		 * @param uOrder the sort order
 		 * @param pFrequency the Encrypted Name of the frequency
 		 * @param pDesc the Encrypted Description of the frequency
-		 * @throws Exception on error
+		 * @throws ModelException on error
 		 */ 
 		public void addItem(int		uId,
 							int		uControlId,
 							boolean	isEnabled,
 							int		uOrder,
 				            byte[] 	pFrequency,
-				            byte[]	pDesc) throws Exception {
+				            byte[]	pDesc) throws ModelException {
 			Frequency myFreq;
 			
 			/* Create a new Frequency */
@@ -270,7 +270,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 				
 			/* Check that this FrequencyId has not been previously added */
 			if (!isIdUnique(uId)) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 	  					  			myFreq,
 			  			            "Duplicate FrequencyId");
 				 
@@ -282,7 +282,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 
 			/* Handle validation failure */
 			if (myFreq.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myFreq,
 									"Failed validation");
 		}		

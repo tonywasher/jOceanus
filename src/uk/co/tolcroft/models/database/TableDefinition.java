@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 import uk.co.tolcroft.models.DateDay;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.Decimal.Money;
 import uk.co.tolcroft.models.Decimal.Rate;
 import uk.co.tolcroft.models.data.DataItem;
@@ -348,7 +348,7 @@ public class TableDefinition {
 	 * Insert values
 	 * @param pStmt the statement
 	 */
-	protected void insertValues(PreparedStatement pStmt) throws SQLException, Exception {
+	protected void insertValues(PreparedStatement pStmt) throws SQLException, ModelException {
 		Iterator<ColumnDefinition>	myIterator;
 		ColumnDefinition			myDef;
 		int							myIndex	= 1;
@@ -365,7 +365,7 @@ public class TableDefinition {
 
 			/* Reject if the value is not set */
 			if (!myDef.isValueSet())
-				throw new Exception(ExceptionClass.LOGIC,
+				throw new ModelException(ExceptionClass.LOGIC,
 									"Column " + myDef.getColumnName() + 
 									" in table " + theTableName +
 									" has no value for insert");
@@ -378,7 +378,7 @@ public class TableDefinition {
 	 * Update values
 	 * @param pStmt the statement
 	 */
-	protected void updateValues(PreparedStatement pStmt) throws SQLException, Exception {
+	protected void updateValues(PreparedStatement pStmt) throws SQLException, ModelException {
 		Iterator<ColumnDefinition>	myIterator;
 		ColumnDefinition			myDef;
 		ColumnDefinition			myId	= null;
@@ -427,13 +427,13 @@ public class TableDefinition {
 	 * Get Integer value for column
 	 * @param pId the column id
 	 */
-	public Integer getIntegerValue(int pId) throws Exception {
+	public Integer getIntegerValue(int pId) throws ModelException {
 		/* Obtain the correct id */
 		ColumnDefinition myCol = getColumnForId(pId);
 		
 		/* Reject if this is not an integer column */
 		if (!(myCol instanceof IntegerColumn))
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Column " + myCol.getColumnName() + 
 								" in table " + theTableName +
 								" is not Integer type");
@@ -447,13 +447,13 @@ public class TableDefinition {
 	 * Get Long value for column
 	 * @param pId the column id
 	 */
-	public Long getLongValue(int pId) throws Exception {
+	public Long getLongValue(int pId) throws ModelException {
 		/* Obtain the correct id */
 		ColumnDefinition myCol = getColumnForId(pId);
 		
 		/* Reject if this is not a long column */
 		if (!(myCol instanceof IntegerColumn))
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Column " + myCol.getColumnName() + 
 								" in table " + theTableName +
 								" is not Long type");
@@ -467,13 +467,13 @@ public class TableDefinition {
 	 * Get Date value for column
 	 * @param pId the column id
 	 */
-	public Date getDateValue(int pId) throws Exception {
+	public Date getDateValue(int pId) throws ModelException {
 		/* Obtain the correct id */
 		ColumnDefinition myCol = getColumnForId(pId);
 		
 		/* Reject if this is not a date column */
 		if (!(myCol instanceof DateColumn))
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Column " + myCol.getColumnName() + 
 								" in table " + theTableName +
 								" is not Date type");
@@ -487,13 +487,13 @@ public class TableDefinition {
 	 * Get Boolean value for column
 	 * @param pId the column id
 	 */
-	public Boolean getBooleanValue(int pId) throws Exception {
+	public Boolean getBooleanValue(int pId) throws ModelException {
 		/* Obtain the correct id */
 		ColumnDefinition myCol = getColumnForId(pId);
 		
 		/* Reject if this is not a boolean column */
 		if (!(myCol instanceof BooleanColumn))
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Column " + myCol.getColumnName() + 
 								" in table " + theTableName +
 								" is not Boolean type");
@@ -507,13 +507,13 @@ public class TableDefinition {
 	 * Get String value for column
 	 * @param pId the column id
 	 */
-	public String getStringValue(int pId) throws Exception {
+	public String getStringValue(int pId) throws ModelException {
 		/* Obtain the correct id */
 		ColumnDefinition myCol = getColumnForId(pId);
 		
 		/* Reject if this is not a string column */
 		if (!(myCol instanceof StringColumn))
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Column " + myCol.getColumnName() + 
 								" in table " + theTableName +
 								" is not String type");
@@ -527,13 +527,13 @@ public class TableDefinition {
 	 * Get Binary value for column
 	 * @param pId the column id
 	 */
-	public byte[] getBinaryValue(int pId) throws Exception {
+	public byte[] getBinaryValue(int pId) throws ModelException {
 		/* Obtain the correct id */
 		ColumnDefinition myCol = getColumnForId(pId);
 		
 		/* Reject if this is not a string column */
 		if (!(myCol instanceof BinaryColumn))
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Column " + myCol.getColumnName() + 
 								" in table " + theTableName +
 								" is not Binary type");
@@ -548,13 +548,13 @@ public class TableDefinition {
 	 * @param pId the column id
 	 * @param pValue the value
 	 */
-	public void setIntegerValue(int pId, Integer pValue) throws Exception {
+	public void setIntegerValue(int pId, Integer pValue) throws ModelException {
 		/* Obtain the correct id */
 		ColumnDefinition myCol = getColumnForId(pId);
 		
 		/* Reject if this is not an integer column */
 		if (!(myCol instanceof IntegerColumn))
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Column " + myCol.getColumnName() + 
 								" in table " + theTableName +
 								" is not Integer type");
@@ -569,13 +569,13 @@ public class TableDefinition {
 	 * @param pId the column id
 	 * @param pValue the value
 	 */
-	public void setLongValue(int pId, Long pValue) throws Exception {
+	public void setLongValue(int pId, Long pValue) throws ModelException {
 		/* Obtain the correct id */
 		ColumnDefinition myCol = getColumnForId(pId);
 		
 		/* Reject if this is not a long column */
 		if (!(myCol instanceof LongColumn))
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Column " + myCol.getColumnName() + 
 								" in table " + theTableName +
 								" is not Long type");
@@ -590,13 +590,13 @@ public class TableDefinition {
 	 * @param pId the column id
 	 * @param pValue the value
 	 */
-	public void setBooleanValue(int pId, Boolean pValue) throws Exception {
+	public void setBooleanValue(int pId, Boolean pValue) throws ModelException {
 		/* Obtain the correct id */
 		ColumnDefinition myCol = getColumnForId(pId);
 		
 		/* Reject if this is not a boolean column */
 		if (!(myCol instanceof BooleanColumn))
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Column " + myCol.getColumnName() + 
 								" in table " + theTableName +
 								" is not Boolean type");
@@ -611,13 +611,13 @@ public class TableDefinition {
 	 * @param pId the column id
 	 * @param pValue the value
 	 */
-	public void setDateValue(int pId, DateDay pValue) throws Exception {
+	public void setDateValue(int pId, DateDay pValue) throws ModelException {
 		/* Obtain the correct id */
 		ColumnDefinition myCol = getColumnForId(pId);
 		
 		/* Reject if this is not a Date column */
 		if (!(myCol instanceof DateColumn))
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Column " + myCol.getColumnName() + 
 								" in table " + theTableName +
 								" is not Date type");
@@ -632,13 +632,13 @@ public class TableDefinition {
 	 * @param pId the column id
 	 * @param pValue the value
 	 */
-	public void setStringValue(int pId, String pValue) throws Exception {
+	public void setStringValue(int pId, String pValue) throws ModelException {
 		/* Obtain the correct id */
 		ColumnDefinition myCol = getColumnForId(pId);
 		
 		/* Reject if this is not a string column */
 		if (!(myCol instanceof StringColumn))
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Column " + myCol.getColumnName() + 
 								" in table " + theTableName +
 								" is not String type");
@@ -653,13 +653,13 @@ public class TableDefinition {
 	 * @param pId the column id
 	 * @param pValue the value
 	 */
-	public void setBinaryValue(int pId, byte[] pValue) throws Exception {
+	public void setBinaryValue(int pId, byte[] pValue) throws ModelException {
 		/* Obtain the correct id */
 		ColumnDefinition myCol = getColumnForId(pId);
 		
 		/* Reject if this is not a binary column */
 		if (!(myCol instanceof BinaryColumn))
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Column " + myCol.getColumnName() + 
 								" in table " + theTableName +
 								" is not Binary type");
@@ -674,13 +674,13 @@ public class TableDefinition {
 	 * @param pId the column id
 	 * @param pValue the value
 	 */
-	public void setMoneyValue(int pId, Money pValue) throws Exception {
+	public void setMoneyValue(int pId, Money pValue) throws ModelException {
 		/* Obtain the correct id */
 		ColumnDefinition myCol = getColumnForId(pId);
 		
 		/* Reject if this is not a money column */
 		if (!(myCol instanceof MoneyColumn))
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Column " + myCol.getColumnName() + 
 								" in table " + theTableName +
 								" is not Money type");
@@ -695,13 +695,13 @@ public class TableDefinition {
 	 * @param pId the column id
 	 * @param pValue the value
 	 */
-	public void setRateValue(int pId, Rate pValue) throws Exception {
+	public void setRateValue(int pId, Rate pValue) throws ModelException {
 		/* Obtain the correct id */
 		ColumnDefinition myCol = getColumnForId(pId);
 		
 		/* Reject if this is not a rate column */
 		if (!(myCol instanceof RateColumn))
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Column " + myCol.getColumnName() + 
 								" in table " + theTableName +
 								" is not Rate type");
@@ -716,7 +716,7 @@ public class TableDefinition {
 	 * @param pId the id of the column
 	 * @return the column   
 	 */
-	private ColumnDefinition getColumnForId(int pId) throws Exception {
+	private ColumnDefinition getColumnForId(int pId) throws ModelException {
 		ColumnDefinition myDef = null;
 
 		/* If the column is in range of the array, extract its definition */
@@ -724,7 +724,7 @@ public class TableDefinition {
 		
 		/* Check that the id is in range and present */
 		if (myDef == null)
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Invalid Column Id: " + pId + " for " + theTableName);
 		
 		/* Return the column definition */
@@ -1004,7 +1004,7 @@ public class TableDefinition {
 	 * Build the update string for a list of columns
 	 * @return the SQL string 
 	 */
-	protected String getUpdateString() throws Exception {
+	protected String getUpdateString() throws ModelException {
 		StringBuilder 				myBuilder 	= new StringBuilder(1000);
 		Iterator<ColumnDefinition>	myIterator;
 		ColumnDefinition			myDef;
@@ -1027,7 +1027,7 @@ public class TableDefinition {
 			if (myDef instanceof IdColumn) {
 				/* Reject if the value is not set */
 				if (!myDef.isValueSet())
-					throw new Exception(ExceptionClass.LOGIC,
+					throw new ModelException(ExceptionClass.LOGIC,
 										"Column " + myDef.getColumnName() + 
 										" in table " + theTableName +
 										" has no value for update");

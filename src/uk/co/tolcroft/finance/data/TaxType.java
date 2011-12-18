@@ -1,7 +1,7 @@
 package uk.co.tolcroft.finance.data;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
@@ -59,7 +59,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 	 * @param sName Name of Tax Type
 	 */
 	private TaxType(List 	pList,
-			        String  sName) throws Exception {
+			        String  sName) throws ModelException {
 		super(pList, sName);
 	}
 	
@@ -77,7 +77,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 			        boolean	isEnabled,
 			        int		uOrder, 
 			        String	pName,
-			        String	pDesc) throws Exception {
+			        String	pDesc) throws ModelException {
 		super(pList, uId, isEnabled, uOrder, pName, pDesc);
 	}
 	
@@ -97,7 +97,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 			      	boolean	isEnabled,
 			      	int		uOrder, 
 			      	byte[]	sName,
-			      	byte[]	pDesc) throws Exception {
+			      	byte[]	pDesc) throws ModelException {
 		super(pList, uId, uControlId, isEnabled, uOrder, sName, pDesc);
 	}
 
@@ -229,7 +229,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 		 * Add a TaxType
 		 * @param pTaxType the Name of the tax type
 		 */ 
-		public void addItem(String 	pTaxType) throws Exception {
+		public void addItem(String 	pTaxType) throws ModelException {
 			TaxType      myTaxType;
 			
 			/* Create a new Tax Type */
@@ -237,13 +237,13 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 			
 			/* Check that this TaxTypeId has not been previously added */
 			if (!isIdUnique(myTaxType.getId())) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 	  					  			myTaxType,
 			  			            "Duplicate TaxTypeId");
 				 
 			/* Check that this TaxType has not been previously added */
 			if (searchFor(pTaxType) != null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 	  					  			myTaxType,
 			                        "Duplicate Tax Type");
 				
@@ -263,7 +263,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 							boolean	isEnabled,
 							int		uOrder, 	
 							String 	pTaxType,
-				            String 	pDesc) throws Exception {
+				            String 	pDesc) throws ModelException {
 			TaxType myTaxType;
 				
 			/* Create a new Tax Type */
@@ -271,7 +271,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 				
 			/* Check that this TaxTypeId has not been previously added */
 			if (!isIdUnique(myTaxType.getId())) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 	  					  			myTaxType,
 			  			            "Duplicate TaxTypeId");
 				 
@@ -283,7 +283,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 
 			/* Handle validation failure */
 			if (myTaxType.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myTaxType,
 									"Failed validation");
 		}	
@@ -302,7 +302,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 							boolean	isEnabled,
 							int		uOrder, 
 				            byte[] 	pTaxType,
-				            byte[]	pDesc) throws Exception {
+				            byte[]	pDesc) throws ModelException {
 			TaxType      myTaxType;
 			
 			/* Create a new Tax Type */
@@ -310,7 +310,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 			
 			/* Check that this TaxTypeId has not been previously added */
 			if (!isIdUnique(uId)) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 	  					  			myTaxType,
 			  			            "Duplicate TaxTypeId");
 				 
@@ -322,7 +322,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 
 			/* Handle validation failure */
 			if (myTaxType.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myTaxType,
 									"Failed validation");		
 		}			

@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.security.SymmetricKey.SymKeyType;
 
 public class EncryptionStream {
@@ -64,7 +64,7 @@ public class EncryptionStream {
 		 */
 		public Output(SecurityControl		pControl,
 					  SymKeyType			pKeyType,
-				 	  java.io.OutputStream 	pStream) throws Exception {
+				 	  java.io.OutputStream 	pStream) throws ModelException {
 			SymmetricKey myKey;
 			
 			/* Protect against exceptions */
@@ -85,7 +85,7 @@ public class EncryptionStream {
 			
 			/* Catch exceptions */
 			catch (Throwable e) {
-				throw new Exception(ExceptionClass.CRYPTO,
+				throw new ModelException(ExceptionClass.CRYPTO,
 									"Exception creating encryption output stream",
 									e);
 			}			
@@ -120,7 +120,7 @@ public class EncryptionStream {
 			
 			/* Catch exceptions */
 			catch (IOException e) 	{ throw e; }
-			catch (Exception e) 	{ throw new IOException(e);	}
+			catch (ModelException e) 	{ throw new IOException(e);	}
 		}
 		
 		/**
@@ -164,7 +164,7 @@ public class EncryptionStream {
 			
 			/* Catch exceptions */
 			catch (IOException e) 	{ throw e; }
-			catch (Exception e) 	{ throw new IOException(e);	}
+			catch (ModelException e) 	{ throw new IOException(e);	}
 		}
 		
 		/**
@@ -244,7 +244,7 @@ public class EncryptionStream {
 					 byte[]  				pSecretKey,
 					 SymKeyType				pKeyType,
 					 byte[]  				pInitVector,
-					 java.io.InputStream 	pStream) throws Exception {
+					 java.io.InputStream 	pStream) throws ModelException {
 			SymmetricKey myKey;
 			
 			/* Protect from exceptions */
@@ -260,8 +260,8 @@ public class EncryptionStream {
 			}
 
 			/* Catch exceptions */
-			catch (Exception e) {
-				throw new Exception(ExceptionClass.CRYPTO,
+			catch (ModelException e) {
+				throw new ModelException(ExceptionClass.CRYPTO,
 									"Exception deciphering secret key",
 									e);
 			}
@@ -510,7 +510,7 @@ public class EncryptionStream {
 			 * @param pBuffer the buffer from which to store bytes 
 			 * @param pLength the number of bytes read into the buffer (must not be zero)
 			 */
-			public void	storeBytes(byte[] pBuffer, int pLength)	throws 	Exception {
+			public void	storeBytes(byte[] pBuffer, int pLength)	throws 	ModelException {
 				int iNumBytes = 0; 
 			
 				/* If we have EOF from the input stream */

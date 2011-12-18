@@ -7,8 +7,8 @@ import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.security.SecurityControl;
 
 public class Utils {
@@ -200,7 +200,7 @@ public class Utils {
 	 * @param pHexString the hex string
 	 * @return the bytes
 	 */
-	public static byte[] BytesFromHexString(String pHexString) throws Exception {
+	public static byte[] BytesFromHexString(String pHexString) throws ModelException {
 		byte[]	myByteValue;
 		char	myChar;
 		int		myInt;
@@ -211,7 +211,7 @@ public class Utils {
 		
 		/* Check that it has an even length */
 		if ((myLen % 2) != 0) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Invalid HexString Length: " + pHexString);
 		
 		/* Allocate the new bytes array */
@@ -225,7 +225,7 @@ public class Utils {
 	
 			/* Check that the char is a valid hex digit */
 			if (!Character.isDigit(myChar) && ((myChar < 'a') || (myChar > 'f'))) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									"Non Hexadecimal Value: " + pHexString);
 			
 			/* Access the second byte */
@@ -234,7 +234,7 @@ public class Utils {
 				
 			/* Check that the char is a valid hex digit */
 			if (!Character.isDigit(myChar) && ((myChar < 'a') || (myChar > 'f'))) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									"Non Hexadecimal Value: " + pHexString);
 			
 			/* Convert to byte and store */
@@ -251,7 +251,7 @@ public class Utils {
 	 * @param pHexString the hex string
 	 * @return the bytes
 	 */
-	public static long LongFromHexString(String pHexString) throws Exception {
+	public static long LongFromHexString(String pHexString) throws ModelException {
 		int		myLen;
 		char 	myChar;
 		long	myValue = 0;
@@ -265,7 +265,7 @@ public class Utils {
 		
 		/* Check that it has an even length */
 		if ((myLen % 2) != 0) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Invalid HexString Length: " + pHexString);
 		
  		/* Loop through the string */
@@ -275,7 +275,7 @@ public class Utils {
  				
 			/* Check that the char is a valid hex digit */
 			if (!Character.isDigit(myChar) && ((myChar < 'a') || (myChar > 'f'))) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 							  		"Non Hexadecimal Value: " + pHexString);
 				
 			/* Add into the value */
@@ -295,7 +295,7 @@ public class Utils {
 	 * @param pChars the character array
 	 * @return the byte array
 	 */
-	public static byte[] charToByteArray(char[] pChars) throws Exception {
+	public static byte[] charToByteArray(char[] pChars) throws ModelException {
 		/* protect against exceptions */
 		try {
 			/* Transform the character array to a byte array */
@@ -306,7 +306,7 @@ public class Utils {
 			return baos.toByteArray();
 		}
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Unable to convert character array to bytes");
 		}
 	}
@@ -316,7 +316,7 @@ public class Utils {
 	 * @param pBytes the byte array
 	 * @return the character array
 	 */
-	public	static char[] byteToCharArray(byte[] pBytes) throws Exception {
+	public	static char[] byteToCharArray(byte[] pBytes) throws ModelException {
 		/* protect against exceptions */
 		try {			
 			/* Allocate the character array allowing for one character per byte */
@@ -335,7 +335,7 @@ public class Utils {
 			return myArray;
 		}
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Unable to convert byte array to characters");
 		}
 	}

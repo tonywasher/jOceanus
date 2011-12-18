@@ -1,6 +1,6 @@
 package uk.co.tolcroft.models.database;
 
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.data.ControlData;
 import uk.co.tolcroft.models.data.DataSet;
 
@@ -49,7 +49,7 @@ public class TableControl extends DatabaseTable<ControlData> {
 	}
 		
 	/* Load the control data */
-	protected void loadItem(int pId) throws Exception {
+	protected void loadItem(int pId) throws ModelException {
 		int	  			myVers;
 		int				myControl;
 		
@@ -62,7 +62,7 @@ public class TableControl extends DatabaseTable<ControlData> {
 	}
 	
 	/* Set a field value */
-	protected void setFieldValue(ControlData	pItem, int iField) throws Exception  {
+	protected void setFieldValue(ControlData	pItem, int iField) throws ModelException  {
 		/* Switch on field id */
 		switch (iField) {
 			case ControlData.FIELD_VERS:	theTableDef.setIntegerValue(iField, pItem.getDataVersion());			break;

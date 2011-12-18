@@ -1,14 +1,14 @@
 package uk.co.tolcroft.models.sheets;
 
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 
 public abstract class SheetStaticData <T extends StaticData<T,?>> extends SheetDataItem<T> {
 
 	/* Load the Static Data */
-	protected  abstract void loadEncryptedItem(int pId, int pControlId, boolean isEnabled, int iOrder, byte[] pName, byte[] pDesc) throws Exception;
-	protected  abstract void loadClearTextItem(int pId, boolean isEnabled, int iOrder, String pName, String pDesc) throws Exception;
+	protected  abstract void loadEncryptedItem(int pId, int pControlId, boolean isEnabled, int iOrder, byte[] pName, byte[] pDesc) throws ModelException;
+	protected  abstract void loadClearTextItem(int pId, boolean isEnabled, int iOrder, String pName, String pDesc) throws ModelException;
 
 	/**
 	 * Is the spreadsheet a backup spreadsheet or an edit-able one

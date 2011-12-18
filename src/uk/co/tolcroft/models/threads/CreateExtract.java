@@ -2,11 +2,12 @@ package uk.co.tolcroft.models.threads;
 
 import java.io.File;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.backup.BackupProperties;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
+import uk.co.tolcroft.models.PropertySet.PropertyManager;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
-import uk.co.tolcroft.models.ui.FileSelector.BackupCreate;
 import uk.co.tolcroft.models.views.DataControl;
 
 public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
@@ -45,18 +46,16 @@ public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
 			/* Initialise the status window */
 			theStatus.initTask("Creating Extract");
 
+			/* Access the Backup properties */
+			BackupProperties myProperties = (BackupProperties)PropertyManager.getPropertySet(BackupProperties.class);
+
+			/* Determine the archive name */
+			File 	myBackupDir	= new File(myProperties.getStringValue(BackupProperties.nameBackupDir));
+			String 	myPrefix	= myProperties.getStringValue(BackupProperties.nameBackupPfix);
+
 			/* Determine the name of the file to build */
-			BackupCreate myDialog = new BackupCreate(theControl);
-			myDialog.selectFile();
-			myFile = myDialog.getSelectedFile();
-
-			/* If we did not select a file */
-			if (myFile == null) {
-				/* Throw cancelled exception */
-				throw new Exception(ExceptionClass.EXCEL,
-									"Operation Cancelled");					
-			}
-
+			myFile = new File(myBackupDir.getPath() + myPrefix + ".xls");
+			
 			/* Create backup */
 			mySheet = theControl.getSpreadSheet();
 			mySheet.createExtract(theStatus, 
@@ -94,7 +93,7 @@ public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
 			/* If the difference set is non-empty */
 			if (!myDiff.isEmpty()) {
 				/* Throw an exception */
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									myDiff,
 									"Extract is inconsistent");
 			}

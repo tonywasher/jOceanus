@@ -13,7 +13,7 @@ import javax.swing.LayoutStyle;
 import javax.swing.Timer;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
 import uk.co.tolcroft.models.threads.StatusData;
 import uk.co.tolcroft.models.views.DataControl;
@@ -30,7 +30,7 @@ public class StatusBar implements ActionListener {
 	private JLabel                  theTaskLabel  	= null;
 	private JLabel                  theStatusLabel  = null;
 	private MainWindow<?>			theControl		= null;
-	private Exception				theError		= null;
+	private ModelException				theError		= null;
 	private Timer					theTimer		= null;
     private DebugEntry				theDebug		= null;
 	private StatusData				theCurrent 		= null;
@@ -38,7 +38,7 @@ public class StatusBar implements ActionListener {
 	/* Access methods */
 	public  JPanel           	   	getProgressPanel()  { return theProgPanel; }
 	public  JPanel           	   	getStatusPanel()	{ return theStatPanel; }
-	public  Exception	   			getError()			{ return theError; }
+	public  ModelException	   			getError()			{ return theError; }
 				
 	/* Constructor */
 	public StatusBar(MainWindow<?> pControl) {
@@ -259,7 +259,7 @@ public class StatusBar implements ActionListener {
 				
 	/* Set Failure string */
 	public void setFailure(String		pOperation,
-			               Exception 	pError) {
+			               ModelException 	pError) {
 		/* Initialise the message */
 		String myText = pOperation + " failed";
 		

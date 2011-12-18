@@ -5,14 +5,13 @@ import java.util.HashMap;
 import javax.swing.JFrame;
 
 import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
 import uk.co.tolcroft.models.security.SecureManager;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.ui.StatusBar;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 
 public abstract class DataControl<T extends DataSet<T>> {
 	/* Debug Names */
@@ -25,9 +24,8 @@ public abstract class DataControl<T extends DataSet<T>> {
 	/* Properties */
 	private T				theData			= null;
 	private T				theUpdates		= null;
-	private Exception		theError		= null;
+	private ModelException		theError		= null;
 	private StatusBar		theStatusBar	= null;
-	private Properties		theProperties	= null;
 	private JFrame			theFrame		= null;
     private SecureManager	theSecurity		= null;
     private DebugManager	theDebugMgr		= null;
@@ -93,13 +91,13 @@ public abstract class DataControl<T extends DataSet<T>> {
 	 * Set new Error
 	 * @param pError the new Error
 	 */
-	protected void		setError(Exception pError)	{ theError  = pError; }
+	protected void		setError(ModelException pError)	{ theError  = pError; }
 
 	/**
 	 * Obtain current updates
 	 * @return the current Updates
 	 */
-	public Exception	getError()		{ return theError; }
+	public ModelException	getError()		{ return theError; }
 
 	/**
 	 * Set StatusBar
@@ -112,18 +110,6 @@ public abstract class DataControl<T extends DataSet<T>> {
 	 * @return the StatusBar
 	 */
 	public StatusBar	getStatusBar()	{ return theStatusBar; }
-
-	/**
-	 * Set Properties
-	 * @param pProperties the Properties
-	 */
-	public void		setProperties(Properties pProperties)	{ theProperties = pProperties; }
-
-	/**
-	 * Obtain Properties
-	 * @return the Properties
-	 */
-	public Properties	getProperties()	{ return theProperties; }
 
 	/**
 	 * Set Frame
@@ -205,7 +191,7 @@ public abstract class DataControl<T extends DataSet<T>> {
 	 * Obtain Database object
 	 * @return database object
 	 */
-	public abstract Database<T>		getDatabase() throws Exception;
+	public abstract Database<T>		getDatabase() throws ModelException;
 
 	/**
 	 * Obtain DataSet object

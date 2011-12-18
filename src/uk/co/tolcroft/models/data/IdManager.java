@@ -1,6 +1,6 @@
 package uk.co.tolcroft.models.data;
 
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.PropertySet;
 import uk.co.tolcroft.models.PropertySet.PropertyManager;
 import uk.co.tolcroft.models.PropertySet.PropertySetChooser;
@@ -136,9 +136,9 @@ public class IdManager<T extends DataItem<T>> implements PropertySetChooser {
 
 		/**
 		 * Constructor
-		 * @throws Exception
+		 * @throws ModelException
 		 */
-		public IdManagerProperties() throws Exception { super();	}
+		public IdManagerProperties() throws ModelException { super();	}
 
 		@Override
 		protected void defineProperties() {

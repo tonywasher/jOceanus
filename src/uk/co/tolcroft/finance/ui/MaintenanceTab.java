@@ -11,7 +11,7 @@ import javax.swing.event.ChangeListener;
 
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 
@@ -104,7 +104,7 @@ public class MaintenanceTab implements ChangeListener {
 	}
 	
 	/* refresh data */
-	public void refreshData() throws Exception {
+	public void refreshData() throws ModelException {
 		/* Refresh sub-panels */
 		theAccountTab.refreshData();
 		theTaxYearTab.refreshData();

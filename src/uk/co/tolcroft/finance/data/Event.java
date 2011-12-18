@@ -6,8 +6,8 @@ import uk.co.tolcroft.finance.data.StaticClass.EventInfoClass;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.views.Statement.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
@@ -314,7 +314,7 @@ public class Event extends EncryptedItem<Event> {
 		            byte[]	pUnits,
 		            byte[]	pTaxCredit,
 		            byte[]	pDilution,
-		            Integer	pYears) throws Exception {
+		            Integer	pYears) throws ModelException {
 		/* Initialise item */
 		super(pList, uId);
 		
@@ -346,7 +346,7 @@ public class Event extends EncryptedItem<Event> {
 		/* Look up the Debit Account */
 		myAccount = myAccounts.searchFor(uDebit);
 		if (myAccount == null)
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
    					  			this, 
    					  			"Invalid Debit Account Id");
 		myValues.setDebit(myAccount);
@@ -354,7 +354,7 @@ public class Event extends EncryptedItem<Event> {
 		/* Look up the Debit Account */
 		myAccount = myAccounts.searchFor(uCredit);
 		if (myAccount == null)
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
    					  			this, 
    					  			"Invalid Credit Account Id");
 		myValues.setCredit(myAccount);
@@ -362,7 +362,7 @@ public class Event extends EncryptedItem<Event> {
 		/* Look up the Transaction Type */
 		myTransType = myData.getTransTypes().searchFor(uTransType);
 		if (myTransType == null)
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
    					  			this, 
    					  			"Invalid Transaction Type Id");
 		myValues.setTransType(myTransType);
@@ -393,7 +393,7 @@ public class Event extends EncryptedItem<Event> {
 		            String			pUnits,
 		            String			pTaxCredit,
 		            String			pDilution,
-		            Integer			pYears) throws Exception {
+		            Integer			pYears) throws ModelException {
 		/* Initialise item */
 		super(pList, uId);
 		
@@ -1205,7 +1205,7 @@ public class Event extends EncryptedItem<Event> {
 	 * 
 	 * @param pDesc the description 
 	 */
-	public void setDescription(String pDesc) throws Exception {
+	public void setDescription(String pDesc) throws ModelException {
 		if (pDesc != null) getValues().setDesc(new StringPair(pDesc));
 		else 			   getValues().setDesc(null);
 	}
@@ -1215,7 +1215,7 @@ public class Event extends EncryptedItem<Event> {
 	 * 
 	 * @param pAmount the amount 
 	 */
-	public void setAmount(Money pAmount) throws Exception {
+	public void setAmount(Money pAmount) throws ModelException {
 		if (pAmount != null) getValues().setAmount(new MoneyPair(pAmount));
 		else 				 getValues().setAmount(null);
 	}
@@ -1225,7 +1225,7 @@ public class Event extends EncryptedItem<Event> {
 	 * 
 	 * @param pUnits the units 
 	 */
-	public void setUnits(Units pUnits) throws Exception {
+	public void setUnits(Units pUnits) throws ModelException {
 		if (pUnits != null) getValues().setUnits(new UnitsPair(pUnits));
 		else 				getValues().setUnits(null);
 	}
@@ -1244,7 +1244,7 @@ public class Event extends EncryptedItem<Event> {
 	 * 
 	 * @param pAmount the tax credit amount 
 	 */
-	public void setTaxCredit(Money pAmount) throws Exception {
+	public void setTaxCredit(Money pAmount) throws ModelException {
 		if (pAmount != null) getValues().setTaxCredit(new MoneyPair(pAmount));
 		else 				 getValues().setTaxCredit(null);
 	}
@@ -1263,7 +1263,7 @@ public class Event extends EncryptedItem<Event> {
 	 * 
 	 * @param pDilution the dilution 
 	 */
-	public void setDilution(Dilution pDilution) throws Exception {
+	public void setDilution(Dilution pDilution) throws ModelException {
 		if (pDilution != null) getValues().setDilution(new DilutionPair(pDilution));
 		else 		   		   getValues().setDilution(null);
 	}
@@ -1494,7 +1494,7 @@ public class Event extends EncryptedItem<Event> {
 	 	 *  Get an EditList for a new TaxYear
 	 	 *  @param pTaxYear the new TaxYear
 	 	 */
-		public List getEditList(TaxYear pTaxYear) throws Exception {
+		public List getEditList(TaxYear pTaxYear) throws ModelException {
 			/* Build an empty List */
 			List myList = new List(this);
 			
@@ -1629,7 +1629,7 @@ public class Event extends EncryptedItem<Event> {
 				            String  pTransType,
 				            String  pTaxCredit,
 				            String	pDilution,
-				            Integer pYears) throws Exception {
+				            Integer pYears) throws ModelException {
 			FinanceData		myData;
 			Account.List	myAccounts;
 			Account         myDebit;
@@ -1644,7 +1644,7 @@ public class Event extends EncryptedItem<Event> {
 			/* Look up the Transaction Type */
 			myTransType = myData.getTransTypes().searchFor(pTransType);
 			if (myTransType == null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 			                        "Event on [" + 
 			                        DateDay.format(new DateDay(pDate)) +
 			                        "] has invalid Transact Type [" + pTransType + "]");
@@ -1652,7 +1652,7 @@ public class Event extends EncryptedItem<Event> {
 			/* Look up the Credit Account */
 			myCredit = myAccounts.searchFor(pCredit);
 			if (myCredit == null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 			                        "Event on [" + 
 			                        DateDay.format(new DateDay(pDate)) +
 			                        "] has invalid Credit account [" + pCredit + "]");
@@ -1660,7 +1660,7 @@ public class Event extends EncryptedItem<Event> {
 			/* Look up the Debit Account */
 			myDebit = myAccounts.searchFor(pDebit);
 			if (myDebit == null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 			                        "Event on [" + 
 			                        DateDay.format(new DateDay(pDate)) +
 			                        "] has invalid Debit account [" + pDebit + "]");
@@ -1676,7 +1676,7 @@ public class Event extends EncryptedItem<Event> {
 
 			/* Handle validation failure */
 			if (myEvent.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myEvent,
 									"Failed validation");
 					
@@ -1698,7 +1698,7 @@ public class Event extends EncryptedItem<Event> {
 				            int  	uTransId,
 				            byte[]  pTaxCredit,
 				            byte[]	pDilution,
-				            Integer pYears) throws Exception {
+				            Integer pYears) throws ModelException {
 			Event	myEvent;
 			
 			/* Create the new Event */
@@ -1709,7 +1709,7 @@ public class Event extends EncryptedItem<Event> {
 			
 			/* Check that this EventId has not been previously added */
 			if (!isIdUnique(uId)) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									myEvent,
 			  			            "Duplicate EventId");
 			 
@@ -1718,7 +1718,7 @@ public class Event extends EncryptedItem<Event> {
 
 			/* Handle validation failure */
 			if (myEvent.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myEvent,
 									"Failed validation");
 					
@@ -1875,7 +1875,7 @@ public class Event extends EncryptedItem<Event> {
 					if (needsTaxCredit(theTransType, theDebit)) {
 						/* Set a new null tax credit */
 						try { theTaxCredit = new MoneyPair(new Money(0)); }
-						catch (Exception e) {}
+						catch (ModelException e) {}
 						
 						/* If the event has tax years */
 						if (theTransType.isTaxableGain()) {
@@ -1888,7 +1888,7 @@ public class Event extends EncryptedItem<Event> {
 					if (needsDilution(theTransType)) {
 						/* Set a null dilution value */
 						try { theDilution = new DilutionPair(new Dilution(Dilution.MAX_VALUE)); }
-						catch (Exception e) {}
+						catch (ModelException e) {}
 					}									
 				}
 			}
@@ -1910,7 +1910,7 @@ public class Event extends EncryptedItem<Event> {
 					theTaxCredit = new MoneyPair(new Money(0));
 				else if ((!needsTaxCredit) && (!nullTaxCredit))
 					theTaxCredit = null;
-			} catch (Exception e) {}
+			} catch (ModelException e) {}
 		}
 
 		public Difference	fieldChanged(int fieldNo, HistoryValues<Event> pOriginal) {
@@ -1957,7 +1957,7 @@ public class Event extends EncryptedItem<Event> {
 		/**
 		 * Update encryption after security change
 		 */
-		protected void updateSecurity() throws Exception {
+		protected void updateSecurity() throws ModelException {
 			/* Update the encryption */
 			theDesc		= new StringPair(theDesc.getString());
 			theAmount 	= new MoneyPair(theAmount.getValue());
@@ -1969,7 +1969,7 @@ public class Event extends EncryptedItem<Event> {
 		/**
 		 * Apply encryption after non-encrypted load
 		 */
-		protected void applySecurity() throws Exception {
+		protected void applySecurity() throws ModelException {
 			/* Apply the encryption */
 			theDesc.encryptPair(null);
 			theAmount.encryptPair(null);
@@ -1982,7 +1982,7 @@ public class Event extends EncryptedItem<Event> {
 		 * Adopt encryption from base
 		 * @param pBase the Base values
 		 */
-		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {
+		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws ModelException {
 			Values myBase = (Values)pBase;
 
 			/* Apply the encryption */

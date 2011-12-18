@@ -1,14 +1,14 @@
 package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.FinanceData;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.database.Database;
 
 public class FinanceDatabase extends Database<FinanceData> {
 	/**
 	 * Construct a new Database class for load
 	 */
-	public FinanceDatabase() throws Exception {
+	public FinanceDatabase() throws ModelException {
 		/* Add additional tables */
 		declareTables();
 	}	

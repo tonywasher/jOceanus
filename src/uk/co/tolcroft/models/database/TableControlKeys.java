@@ -1,6 +1,6 @@
 package uk.co.tolcroft.models.database;
 
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataSet;
 
@@ -51,7 +51,7 @@ public class TableControlKeys extends DatabaseTable<ControlKey> {
 	}
 
 	/* Load the control key */
-	protected void loadItem(int pId) throws Exception {
+	protected void loadItem(int pId) throws ModelException {
 		byte[]	myHash;
 		byte[]	myPublic;
 		byte[]	myPrivate;
@@ -68,7 +68,7 @@ public class TableControlKeys extends DatabaseTable<ControlKey> {
 	}
 	
 	/* Set a field value */
-	protected void setFieldValue(ControlKey	pItem, int iField) throws Exception  {
+	protected void setFieldValue(ControlKey	pItem, int iField) throws ModelException  {
 		/* Switch on field id */
 		switch (iField) {
 			case ControlKey.FIELD_KEYMODE:		theTableDef.setIntegerValue(iField,  pItem.getKeyMode().getMode());	break;

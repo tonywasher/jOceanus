@@ -1,7 +1,7 @@
 package uk.co.tolcroft.models.security;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.Utils;
 
 public class SecuritySignature {
@@ -61,13 +61,13 @@ public class SecuritySignature {
 	 * Constructor
 	 * @param pSignature the signature
 	 */
-	public SecuritySignature(String	pSignature) throws Exception {
+	public SecuritySignature(String	pSignature) throws ModelException {
 		/* Split the signature */
 		String[] myTokens = pSignature.split(KEYSEP);
 		
 		/* Must have four parts */
 		if (myTokens.length != 4)
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Invalid Signature - " + pSignature);
 		
 		/* Store the values */

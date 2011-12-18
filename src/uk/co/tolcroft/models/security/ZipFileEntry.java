@@ -2,8 +2,8 @@ package uk.co.tolcroft.models.security;
 
 import java.util.Arrays;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 
 public class ZipFileEntry {
 	/**
@@ -78,7 +78,7 @@ public class ZipFileEntry {
 	 * Obtain the mode of the file 
 	 * @return the mode of the file
 	 */
-	public ZipEntryMode	getFileMode() throws Exception 			
+	public ZipEntryMode	getFileMode() throws ModelException 			
 		{ return new ZipEntryMode(getLongProperty(propName)); }
 	
 	/**
@@ -124,7 +124,7 @@ public class ZipFileEntry {
 	 * Construct encryption properties from encoded string
 	 * @param pCodedString the encoded properties 
 	 */
-	protected ZipFileEntry(String pCodedString) throws Exception {
+	protected ZipFileEntry(String pCodedString) throws ModelException {
 		StringBuilder	myString = new StringBuilder(pCodedString);
 		String			myPropSep	= Character.toString(thePropSeparator);
 		String			myFileSep	= Character.toString(theFileSeparator);
@@ -378,7 +378,7 @@ public class ZipFileEntry {
 	 * Parse the encoded string representation to obtain the property
 	 * @param pProperty the encoded property
 	 */
-	private void parseEncodedProperty(String pValue) throws Exception {
+	private void parseEncodedProperty(String pValue) throws ModelException {
 		property	myProperty;
 		String  	myName;
 		String		myBytes;
@@ -395,7 +395,7 @@ public class ZipFileEntry {
 		
 		/* Check that we found the value separator */
 		if (myLoc == -1) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Missing value separator: " + pValue);
 
 		/* Split the values and name */
@@ -405,7 +405,7 @@ public class ZipFileEntry {
 		
 		/* If the name is already present reject it */
 		if (getProperty(myName) != null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Duplicate name: " + pValue);
 		
 		/* Locate the Long separator in the string */
@@ -413,7 +413,7 @@ public class ZipFileEntry {
 		
 		/* Check that we found the long separator */
 		if (myLoc == -1) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Missing long separator: " + pValue);
 
 		/* Access the separate byte and long values */
@@ -431,7 +431,7 @@ public class ZipFileEntry {
 			
 			/* Check that it has an even length */
 			if ((myLen % 2) != 0) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									"Invalid Bytes Encoded Value Length: " + pValue);
 			
 			/* Allocate the new bytes array */
@@ -445,7 +445,7 @@ public class ZipFileEntry {
 		
 				/* Check that the char is a valid hex digit */
 				if (!Character.isDigit(myChar) && ((myChar < 'a') || (myChar > 'f'))) 
-					throw new Exception(ExceptionClass.DATA,
+					throw new ModelException(ExceptionClass.DATA,
 										"Non Hexadecimal Bytes Value: " + pValue);
 				
 				/* Access the second byte */
@@ -454,7 +454,7 @@ public class ZipFileEntry {
 					
 				/* Check that the char is a valid hex digit */
 				if (!Character.isDigit(myChar) && ((myChar < 'a') || (myChar > 'f'))) 
-					throw new Exception(ExceptionClass.DATA,
+					throw new ModelException(ExceptionClass.DATA,
 										"Non Hexadecimal Bytes Value: " + pValue);
 				
 				/* Convert to byte and store */
@@ -476,7 +476,7 @@ public class ZipFileEntry {
 	 				
 				/* Check that the char is a valid hex digit */
 				if (!Character.isDigit(myChar) && ((myChar < 'a') || (myChar > 'f'))) 
-					throw new Exception(ExceptionClass.DATA,
+					throw new ModelException(ExceptionClass.DATA,
 									    "Non Hexadecimal Numeric Value: " + myLong);
 					
 				/* Add into the value */

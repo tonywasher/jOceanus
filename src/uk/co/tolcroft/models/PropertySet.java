@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.prefs.Preferences;
 
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 
 public abstract class PropertySet {
 	/**
@@ -34,7 +34,7 @@ public abstract class PropertySet {
 	/**
 	 * Constructor 
 	 */
-	public PropertySet() throws Exception {
+	public PropertySet() throws ModelException {
 		/* Access the handle */
 		theHandle = Preferences.userNodeForPackage(this.getClass());
 		
@@ -84,6 +84,8 @@ public abstract class PropertySet {
 		switch (pType) {
 			/* Create property */
 			case String: 	myProp = new StringProperty(pName); break;
+			case File: 		myProp = new StringProperty(pName, PropertyType.File); break;
+			case Directory: myProp = new StringProperty(pName, PropertyType.Directory); break;
 			case Integer: 	myProp = new IntegerProperty(pName); break;
 			case Boolean: 	myProp = new BooleanProperty(pName); break;
 			case Date: 		myProp = new DateProperty(pName); break;
@@ -254,6 +256,48 @@ public abstract class PropertySet {
 	}
 	
 	/**
+	 * Obtain Enum property
+	 * @param pName the name of the property
+	 * @param pClass the Enum class
+	 * @return the Enum property or null if no such Enum property exists
+	 */
+	@SuppressWarnings("unchecked")
+	private <E extends Enum<E>> EnumProperty<E> getEnumProperty(String		pName,
+																Class<E> 	pClass) {
+		/* Access property */
+		Property myProp = getProperty(pName);
+		
+		/* If not found or wrong type return null */
+		if (myProp == null) return null;
+		if (!(myProp instanceof EnumProperty)) return null;
+		
+		/* Access as Enum property */
+		EnumProperty<?> myEnumProp = (EnumProperty<?>)myProp;
+		if (myEnumProp.theClass != pClass) return null;
+		
+		/* Return the property */
+		return (EnumProperty<E>)myProp;
+	}
+	
+	/**
+	 * Obtain Enum value
+	 * @param pName the name of the property
+	 * @param pClass the Enum class
+	 * @return the Enum or null if no such Enum property exists
+	 */
+	public <E extends Enum<E>> E getEnumValue(String	pName,
+											  Class<E> 	pClass) {
+		/* Access Enum property */
+		EnumProperty<E> myProp = getEnumProperty(pName, pClass);
+		
+		/* If not found or wrong type return null */
+		if (myProp == null) return null;
+		
+		/* Return the value */
+		return myProp.getValue();
+	}
+	
+	/**
 	 * Define a Property for the node
 	 * @param pProperty the property to define
 	 */
@@ -283,7 +327,7 @@ public abstract class PropertySet {
 	/**
 	 * Store Property changes 
 	 */
-	public void storeChanges() throws Exception {
+	public void storeChanges() throws ModelException {
 		/* Loop through all the properties */
 		for (Property myProp : theMap.values()) {
 			/* Store any changes */
@@ -297,7 +341,7 @@ public abstract class PropertySet {
 		}
 		
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.PREFERENCE,
+			throw new ModelException(ExceptionClass.PREFERENCE,
 								"Failed to flush preferences to store",
 								e);
 		}
@@ -590,9 +634,17 @@ public abstract class PropertySet {
 		 * Constructor	 
 		 * @param pName the name of the property
 		 */
-		public StringProperty(String 	pName) {
+		public StringProperty(String 	pName) { this(pName, PropertyType.String); }
+		
+		/**
+		 * Constructor	 
+		 * @param pName the name of the property
+		 * @param pType the type of the property
+		 */
+		public StringProperty(String 		pName,
+							  PropertyType	pType) {
 			/* Store name */
-			super(pName, PropertyType.String);
+			super(pName, pType);
 	
 			/* Check whether we have an existing value */
 			boolean bExists = checkExists(pName);
@@ -779,7 +831,7 @@ public abstract class PropertySet {
 		 * Set value
 		 * @param pNewValue the new value
 		 */
-		public void setValue(Enum<?> pNewValue) {
+		public void setValue(Enum<E> pNewValue) {
 			/* Set the new value */
 			super.setNewValue(pNewValue);
 		}
@@ -799,6 +851,8 @@ public abstract class PropertySet {
 		Integer,
 		Boolean,
 		Date,
+		File,
+		Directory,
 		Enum;
 	}
 	

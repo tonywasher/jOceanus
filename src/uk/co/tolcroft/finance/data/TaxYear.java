@@ -4,8 +4,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
@@ -298,7 +298,7 @@ public class TaxYear extends DataItem<TaxYear> {
 			        String	pAddTaxRate,
 			        String	pAddDivTaxRate,
 			        String	pCapTaxRate,
-			        String	pHiCapTaxRate) throws Exception {
+			        String	pHiCapTaxRate) throws ModelException {
 		/* Initialise item */
 		super(pList, uId);
 		
@@ -315,7 +315,7 @@ public class TaxYear extends DataItem<TaxYear> {
 		/* Look up the Regime */
 		myRegime = pList.theData.getTaxRegimes().searchFor(uRegimeId);
 		if (myRegime == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid Tax Regime Id");
 		myValues.setTaxRegime(myRegime);
@@ -323,56 +323,56 @@ public class TaxYear extends DataItem<TaxYear> {
 		/* Record the allowances */
 		Money myMoney = Money.Parse(pAllowance);
 		if (myMoney == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid Allowance: " + pAllowance);
 		myValues.setAllowance(myMoney);
 		myMoney = Money.Parse(pLoTaxBand);
 		if (myMoney == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid Low Tax Band: " + pLoTaxBand);
 		myValues.setLoBand(myMoney);
 		myMoney = Money.Parse(pBasicTaxBand);
 		if (myMoney == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid Basic Tax Band: " + pBasicTaxBand);
 		myValues.setBasicBand(myMoney);
 		myMoney = Money.Parse(pRentalAllow);
 		if (myMoney == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid Rental Allowance: " + pRentalAllow);
 		myValues.setRentalAllow(myMoney);
 		myMoney = Money.Parse(pLoAgeAllow);
 		if (myMoney == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid Low Age Allowance: " + pLoAgeAllow);
 		myValues.setLoAgeAllow(myMoney);	
 		myMoney = Money.Parse(pHiAgeAllow);
 		if (myMoney == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid High Age Allowance: " + pHiAgeAllow);
 		myValues.setHiAgeAllow(myMoney);	
 		myMoney = Money.Parse(pCapAllow);
 		if (myMoney == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid Capital Allowance: " + pHiAgeAllow);
 		myValues.setCapitalAllow(myMoney);	
 		myMoney = Money.Parse(pAgeAllowLimit);
 		if (myMoney == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid Age Allowance Limit: " + pAgeAllowLimit);
 		myValues.setAgeAllowLimit(myMoney);	
 		if (pAddAllowLimit != null) {
 			myMoney = Money.Parse(pAddAllowLimit);
 			if (myMoney == null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									this,
 									"Invalid Additional Allowance Limit: " + pAddAllowLimit);
 			myValues.setAddAllowLimit(myMoney);	
@@ -380,7 +380,7 @@ public class TaxYear extends DataItem<TaxYear> {
 		if (pAddIncBound != null) {
 			myMoney = Money.Parse(pAddIncBound);
 			if (myMoney == null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									this,
 									"Invalid Additional Income Boundary: " + pAddIncBound);
 			myValues.setAddIncBound(myMoney);	
@@ -389,44 +389,44 @@ public class TaxYear extends DataItem<TaxYear> {
 		/* Record the rates */
 		Rate myRate = Rate.Parse(pLoTaxRate);
 		if (myRate == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid Low Tax Rate: " + pLoTaxRate);
 		myValues.setLoTaxRate(myRate);
 		myRate = Rate.Parse(pBasicTaxRate);
 		if (myRate == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid Basic Tax Rate: " + pBasicTaxRate);
 		myValues.setBasicTaxRate(myRate);
 		myRate = Rate.Parse(pHiTaxRate);
 		if (myRate == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid High Tax Rate: " + pHiTaxRate);
 		myValues.setHiTaxRate(myRate);
 		myRate = Rate.Parse(pIntTaxRate);
 		if (myRate == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid Int Tax Rate: " + pIntTaxRate);
 		myValues.setIntTaxRate(myRate);
 		myRate = Rate.Parse(pDivTaxRate);
 		if (myRate == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid Div Tax Rate: " + pDivTaxRate);
 		myValues.setDivTaxRate(myRate);
 		myRate = Rate.Parse(pHiDivTaxRate);
 		if (myRate == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid High Div Tax Rate: " + pHiDivTaxRate);
 		myValues.setHiDivTaxRate(myRate);
 		if (pAddTaxRate != null) {
 			myRate = Rate.Parse(pAddTaxRate);
 			if (myRate == null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									this,
 									"Invalid Additional Tax Rate: " + pAddTaxRate);
 			myValues.setAddTaxRate(myRate);
@@ -434,7 +434,7 @@ public class TaxYear extends DataItem<TaxYear> {
 		if (pAddDivTaxRate != null) {
 			myRate = Rate.Parse(pAddDivTaxRate);
 			if (myRate == null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									this,
 									"Invalid Additional Div Tax Rate: " + pAddDivTaxRate);
 			myValues.setAddDivTaxRate(myRate);
@@ -442,7 +442,7 @@ public class TaxYear extends DataItem<TaxYear> {
 		if (pCapTaxRate != null) {
 			myRate = Rate.Parse(pCapTaxRate);
 			if (myRate == null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									this,
 									"Invalid Capital Gains Tax Rate: " + pCapTaxRate);
 			myValues.setCapTaxRate(myRate);
@@ -450,7 +450,7 @@ public class TaxYear extends DataItem<TaxYear> {
 		if (pHiCapTaxRate != null) {
 			myRate = Rate.Parse(pHiCapTaxRate);
 			if (myRate == null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									this,
 									"Invalid High Capital Gains Tax Rate: " + pHiCapTaxRate);
 			myValues.setHiCapTaxRate(myRate);
@@ -1312,14 +1312,14 @@ public class TaxYear extends DataItem<TaxYear> {
 				            String  pAddTaxRate,
 				            String  pAddDivTaxRate,
 				            String	pCapTaxRate,
-				            String	pHiCapTaxRate) throws Exception {
+				            String	pHiCapTaxRate) throws ModelException {
 			/* Local variables */
 			TaxRegime    	myTaxRegime;		
 			
 			/* Look up the Tax Regime */
 			myTaxRegime = theData.getTaxRegimes().searchFor(pRegime);
 			if (myTaxRegime == null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 			                        "TaxYear on <" + 
 			                        DateDay.format(new DateDay(pDate)) +
 			                        "> has invalid TaxRegime <" + pRegime + ">");
@@ -1373,7 +1373,7 @@ public class TaxYear extends DataItem<TaxYear> {
 				            String  pAddTaxRate,
 				            String  pAddDivTaxRate,
 				            String	pCapTaxRate,
-				            String	pHiCapTaxRate) throws Exception {
+				            String	pHiCapTaxRate) throws ModelException {
 			/* Local variables */
 			TaxYear       myTaxYear;		
 			
@@ -1405,13 +1405,13 @@ public class TaxYear extends DataItem<TaxYear> {
 			
 			/* Check that this TaxYearId has not been previously added */
 			if (!isIdUnique(uId)) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 						  			myTaxYear,
 			  			            "Duplicate TaxYearId");
 			 
 			/* Check that this TaxYear has not been previously added */
 			if (searchFor(new DateDay(pDate)) != null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 						  			myTaxYear,
 			                        "Duplicate TaxYear");
 			
@@ -1420,7 +1420,7 @@ public class TaxYear extends DataItem<TaxYear> {
 			
 			/* Handle validation failure */
 			if (myTaxYear.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myTaxYear,
 									"Failed validation");
 			

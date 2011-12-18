@@ -5,8 +5,8 @@ import java.io.*;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 
 /* The help module that is implemented by each Help System */
 public abstract class HelpModule {
@@ -50,7 +50,7 @@ public abstract class HelpModule {
 	 * Constructor 
 	 * @param pDefinitions the definitions file name
 	 */
-	public HelpModule(String pDefinitions) throws Exception {
+	public HelpModule(String pDefinitions) throws ModelException {
 		/* Allocate the list */
 		theList = new HelpPage.List();
 		
@@ -65,7 +65,7 @@ public abstract class HelpModule {
 	 * Parse Help Definition
 	 * @param pFile the xml file containing the definitions 
 	 */
-	private void parseHelpDefinition(String pFile) throws Exception {
+	private void parseHelpDefinition(String pFile) throws ModelException {
 		InputStream 			myStream;
 		DocumentBuilderFactory	myFactory;
 		DocumentBuilder 		myBuilder;
@@ -87,7 +87,7 @@ public abstract class HelpModule {
 			
 			/* Reject if this is not a Help Definitions file */
 			if (!myElement.getNodeName().equals(documentHelp))
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									"Invalid document name: " + myElement.getNodeName());
 			
 			/* Set title of document */
@@ -109,12 +109,12 @@ public abstract class HelpModule {
 		}
 		
 		/* Cascade exceptions */
-		catch (Exception e) { throw e; }
+		catch (ModelException e) { throw e; }
 		
 		/* Catch exceptions */
 		catch (Throwable e) {
 			/* Throw Exception */
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 		            			"Failed to load XML Help Definitions",
 		            			e);
 		}
@@ -124,14 +124,14 @@ public abstract class HelpModule {
 	 * Load Help entries from the file system
 	 * @param pEntries the Help Entries
 	 */
-	private void loadHelpPages(HelpEntry[] pEntries) throws Exception {
+	private void loadHelpPages(HelpEntry[] pEntries) throws ModelException {
 		InputStream myStream;
 		
 		/* Loop through the entities */
 		for (HelpEntry myEntry : pEntries) {
 			/* Check that the entry is not already in the list */
 			if (theList.searchFor(myEntry.getName()) != null)
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 						            "Duplicate Help object Name: " + myEntry.getName());
 
 			/* If we have a file name */

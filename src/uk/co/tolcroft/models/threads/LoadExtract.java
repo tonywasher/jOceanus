@@ -2,12 +2,14 @@ package uk.co.tolcroft.models.threads;
 
 import java.io.File;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.backup.BackupProperties;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
+import uk.co.tolcroft.models.PropertySet.PropertyManager;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
-import uk.co.tolcroft.models.ui.FileSelector.BackupLoad;
+import uk.co.tolcroft.models.ui.FileSelector;
 import uk.co.tolcroft.models.views.DataControl;
 
 public class LoadExtract<T extends DataSet<T>> extends LoaderThread<T> {
@@ -44,16 +46,27 @@ public class LoadExtract<T extends DataSet<T>> extends LoaderThread<T> {
 		/* Initialise the status window */
 		theStatus.initTask("Loading Extract");
 
+		/* Access the Backup properties */
+		BackupProperties myProperties = (BackupProperties)PropertyManager.getPropertySet(BackupProperties.class);
+
+		/* Determine the archive name */
+		File 	myBackupDir	= new File(myProperties.getStringValue(BackupProperties.nameBackupDir));
+		String 	myPrefix	= myProperties.getStringValue(BackupProperties.nameBackupPfix);
+
 		/* Determine the name of the file to load */
-		BackupLoad myDialog = new BackupLoad(theControl);
-		myDialog.selectFile();
+		FileSelector myDialog = new FileSelector(theControl.getFrame(),
+												 "Select Extract to load",
+												 myBackupDir,
+												 myPrefix,
+												 ".xls");
+		myDialog.showDialog();
 		myFile = myDialog.getSelectedFile();
 			
 		/* If we did not select a file */
 		if (myFile == null) {
 			/* Throw cancelled exception */
-			throw new Exception(ExceptionClass.EXCEL,
-								"Operation Cancelled");					
+			throw new ModelException(ExceptionClass.EXCEL,
+							    "Operation Cancelled");					
 		}
 			
 		/* Load workbook */

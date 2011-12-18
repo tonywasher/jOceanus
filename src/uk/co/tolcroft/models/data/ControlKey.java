@@ -6,9 +6,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 import uk.co.tolcroft.models.Difference;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.Utils;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.security.AsymmetricKey;
 import uk.co.tolcroft.models.security.CipherSet;
@@ -188,7 +188,7 @@ public class ControlKey extends DataItem<ControlKey> {
 				   	   int		uKeyMode,
 				   	   byte[]	pPasswordHash,
 				   	   byte[]	pPublicKey,
-				   	   byte[]	pPrivateKey) throws Exception {
+				   	   byte[]	pPrivateKey) throws ModelException {
 		/* Initialise the item */
 		super(pList, uId);
 		Values myValues = getValues();
@@ -203,8 +203,8 @@ public class ControlKey extends DataItem<ControlKey> {
 
 		/* Determine the SecurityMode */
 		try { myValues.setKeyMode(new SecurityMode(uKeyMode)); }
-		catch (Exception e) {
-			throw new Exception(ExceptionClass.DATA,
+		catch (ModelException e) {
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 	            				"Invalid KeyMode " + uKeyMode);
 		}
@@ -234,7 +234,7 @@ public class ControlKey extends DataItem<ControlKey> {
 	 * Constructor for a new ControlKey. This will create a set of DataKeys 
 	 * @param pList the list to which to add the key to 
 	 */
-	private ControlKey(List 	pList) throws Exception {
+	private ControlKey(List 	pList) throws ModelException {
 		/* Initialise the item */
 		super(pList, 0);
 		Values myValues = getValues();
@@ -270,7 +270,7 @@ public class ControlKey extends DataItem<ControlKey> {
 	 * Constructor for a new ControlKey with the same password. This will create a set of DataKeys 
 	 * @param pList the list to which to add the key to 
 	 */
-	private ControlKey(ControlKey 	pKey) throws Exception {
+	private ControlKey(ControlKey 	pKey) throws ModelException {
 		/* Initialise the item */
 		super(pKey.getList(), 0);
 		Values myValues = getValues();
@@ -359,7 +359,7 @@ public class ControlKey extends DataItem<ControlKey> {
 	 * Allocate a new set of DataKeys 
 	 * @param pData the DataSet
 	 */
-	private void allocateDataKeys(DataSet<?> pData) throws Exception {
+	private void allocateDataKeys(DataSet<?> pData) throws ModelException {
 		/* Access the DataKey List */
 		DataKey.List myKeys = pData.getDataKeys();
 		
@@ -398,7 +398,7 @@ public class ControlKey extends DataItem<ControlKey> {
 	 * Update security control 
 	 * @param pControl the new security control
 	 */
-	protected void updateSecurityControl(SecurityControl pControl) throws Exception {
+	protected void updateSecurityControl(SecurityControl pControl) throws ModelException {
 		/* Store the current detail into history */
 		pushHistory();
 
@@ -441,7 +441,7 @@ public class ControlKey extends DataItem<ControlKey> {
 	 * @param pBytes the bytes to encrypt
 	 * @return the encrypted bytes
 	 */
-	protected byte[] encryptBytes(byte[] pBytes) throws Exception {
+	protected byte[] encryptBytes(byte[] pBytes) throws ModelException {
 		/* encrypt using the CipherSet */
 		return theCipherSet.encryptBytes(pBytes);
 	}
@@ -451,7 +451,7 @@ public class ControlKey extends DataItem<ControlKey> {
 	 * @param pBytes the bytes to decrypt
 	 * @return the decrypted bytes
 	 */
-	protected byte[] decryptBytes(byte[] pBytes) throws Exception {
+	protected byte[] decryptBytes(byte[] pBytes) throws ModelException {
 		/* Decrypt using Cipher Set */
 		return theCipherSet.decryptBytes(pBytes);
 	}
@@ -594,7 +594,7 @@ public class ControlKey extends DataItem<ControlKey> {
 			   	  				  int		uKeyTypeId,
 			   	  				  byte[]	pPasswordHash,
 			   	  				  byte[]	pPublicKey,
-			   	  				  byte[]	pPrivateKey) throws Exception {
+			   	  				  byte[]	pPrivateKey) throws ModelException {
 			ControlKey     	myKey;
 			
 			/* Create the ControlKey */
@@ -607,7 +607,7 @@ public class ControlKey extends DataItem<ControlKey> {
 			
 			/* Check that this KeyId has not been previously added */
 			if (!isIdUnique(uId)) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									myKey,
 									"Duplicate ControlKeyId (" + uId + ")");
 			 
@@ -619,7 +619,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		/**
 		 *  Add a new ControlKey (with associated DataKeys)
 		 */
-		public ControlKey addItem() throws Exception {
+		public ControlKey addItem() throws ModelException {
 			ControlKey     	myKey;
 			
 			/* Create the key */
@@ -633,12 +633,12 @@ public class ControlKey extends DataItem<ControlKey> {
 		/**
 		 *  Add a cloned ControlKey (with associated DataKeys)
 		 */
-		public ControlKey addItem(ControlKey pSource) throws Exception {
+		public ControlKey addItem(ControlKey pSource) throws ModelException {
 			ControlKey     	myKey;
 			
 			/* Check that we are the same list */
 			if (pSource.getList() != this)
-				throw new Exception(ExceptionClass.LOGIC,
+				throw new ModelException(ExceptionClass.LOGIC,
 									"Invalid clone operation");
 			
 			/* Create the key */
@@ -653,7 +653,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		 * Initialise Security from a DataBase for a SpreadSheet load
 		 * @param pDatabase the DataSet for the Database
 		 */
-		protected void initialiseSecurity(DataSet<?> pDatabase) throws Exception {			
+		protected void initialiseSecurity(DataSet<?> pDatabase) throws ModelException {			
 			/* Access the active control key from the database */
 			ControlKey  myDatabaseKey	= pDatabase.getControlKey();
 			ControlKey 	myKey;
@@ -694,7 +694,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		 * Clone Security from a DataBase 
 		 * @param pControlKey the ControlKey to clone
 		 */
-		private ControlKey cloneControlKey(ControlKey pControlKey) throws Exception {
+		private ControlKey cloneControlKey(ControlKey pControlKey) throws ModelException {
 			/* Clone the control key */
 			ControlKey myControl = addItem(pControlKey.getId(),
 										   pControlKey.getKeyMode().getMode(),

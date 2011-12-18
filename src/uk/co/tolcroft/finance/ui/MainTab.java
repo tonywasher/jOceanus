@@ -13,9 +13,10 @@ import javax.swing.event.ChangeListener;
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.core.LoadArchive;
+import uk.co.tolcroft.finance.core.SubversionBackup;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.help.FinanceHelp;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.help.HelpModule;
 import uk.co.tolcroft.models.ui.DateRange;
 import uk.co.tolcroft.models.ui.MainWindow;
@@ -30,6 +31,7 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
 	private MaintenanceTab		theMaint		= null;
 	private ComboSelect     	theComboList    = null;	
 	private JMenuItem			theLoadSheet	= null;
+	private JMenuItem			theSVBackup		= null;
 	
 	/* Access methods */
 	public 		View			getView() 		{ return theView; }
@@ -52,10 +54,10 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
 	 * Obtain the Help Module
 	 * @return the help module
 	 */
-	protected HelpModule getHelpModule() throws Exception { return new FinanceHelp(); }
+	protected HelpModule getHelpModule() throws ModelException { return new FinanceHelp(); }
 	
 	/* Constructor */
-	public MainTab() throws Exception {
+	public MainTab() throws ModelException {
 		/* Create the view */
 		theView       = new View(this);
 		
@@ -112,6 +114,11 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
 		theLoadSheet.addActionListener(this);
 		pMenu.add(theLoadSheet);
 		
+		/* Create the file menu items */
+		theSVBackup = new JMenuItem("Backup SubVersion");
+		theSVBackup.addActionListener(this);
+		pMenu.add(theSVBackup);
+		
 		/* Pass call on */
 		super.addDataMenuItems(pMenu);
 	}
@@ -125,10 +132,18 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
 	}
 
 	public void actionPerformed(ActionEvent evt) {
+		Object o = evt.getSource();
+		
 		/* If this event relates to the Load spreadsheet item */
-		if (evt.getSource() == (Object)theLoadSheet) {
+		if (o == theLoadSheet) {
 			/* Start a write backup operation */
 			loadSpreadsheet();
+		}		
+		
+		/* If this event relates to the Load spreadsheet item */
+		else if (o == theSVBackup) {
+			/* Start a write backup operation */
+			backupSubversion();
 		}		
 		
 		/* else pass the event on */
@@ -141,6 +156,15 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
 
 		/* Create the worker thread */
 		myThread = new LoadArchive(theView);
+		startThread(myThread);
+	}
+	
+	/* Backup subversion */
+	public void backupSubversion() {
+		SubversionBackup	myThread;
+
+		/* Create the worker thread */
+		myThread = new SubversionBackup(theView);
 		startThread(myThread);
 	}
 	
@@ -182,7 +206,7 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
 	}
 	
 	/* refresh data */
-	public void refreshData() throws Exception {
+	public void refreshData() throws ModelException {
 		/* Create the combo list */
 		theComboList  = new ComboSelect(theView);
 			

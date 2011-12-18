@@ -8,8 +8,8 @@ import org.apache.poi.ss.util.CellReference;
 
 import uk.co.tolcroft.finance.data.EventInfoType;
 import uk.co.tolcroft.finance.data.FinanceData;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.sheets.SheetStaticData;
 import uk.co.tolcroft.models.threads.ThreadStatus;
@@ -58,7 +58,7 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
 	/**
 	 * Load encrypted 
 	 */
-	protected void loadEncryptedItem(int pId, int pControlId, boolean isEnabled, int iOrder, byte[] pName, byte[] pDesc) throws Exception {
+	protected void loadEncryptedItem(int pId, int pControlId, boolean isEnabled, int iOrder, byte[] pName, byte[] pDesc) throws ModelException {
 		/* Create the item */
 		theList.addItem(pId, pControlId, isEnabled, iOrder, pName, pDesc);		
 	}
@@ -66,7 +66,7 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
 	/**
 	 * Load clear text 
 	 */
-	protected void loadClearTextItem(int pId, boolean isEnabled, int iOrder, String pName, String pDesc) throws Exception {
+	protected void loadClearTextItem(int pId, boolean isEnabled, int iOrder, String pName, String pDesc) throws ModelException {
 		/* Create the item */
 		theList.addItem(pId, isEnabled, iOrder, pName, pDesc);		
 	}
@@ -80,7 +80,7 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
 	 */
 	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
 										 SheetHelper				pHelper,
-							   	  		 FinanceData				pData) throws Exception {
+							   	  		 FinanceData				pData) throws ModelException {
 		/* Local variables */
 		EventInfoType.List 	myList;
 		AreaReference		myRange;
@@ -141,7 +141,7 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
 		}
 		
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.EXCEL, 
+			throw new ModelException(ExceptionClass.EXCEL, 
 								"Failed to load EventInfoTypes",
 								e);
 		}

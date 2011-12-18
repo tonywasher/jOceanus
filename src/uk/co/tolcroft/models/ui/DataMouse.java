@@ -14,10 +14,10 @@ import javax.swing.table.AbstractTableModel;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.EditState;
 
-public abstract class StdMouse<T extends DataItem<T>> extends MouseAdapter
+public abstract class DataMouse<T extends DataItem<T>> extends MouseAdapter
 													  implements ActionListener {
 	/* Members */
-	private StdTable<T> 		theTable 		= null;
+	private DataTable<T> 		theTable 		= null;
 	private boolean				doShowDeleted	= false;
 	private int					theRow			= -1;
 	private int					theCol			= -1;
@@ -44,7 +44,7 @@ public abstract class StdMouse<T extends DataItem<T>> extends MouseAdapter
 	 * Constructor
 	 * @param pTable the table
 	 */
-	public StdMouse(StdTable<T> pTable) {
+	public DataMouse(DataTable<T> pTable) {
 		/* Store parameters */
 		theTable = pTable;
 		

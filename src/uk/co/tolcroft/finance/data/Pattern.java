@@ -5,8 +5,8 @@ import java.util.Date;
 
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.DateDay.Range;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
@@ -204,7 +204,7 @@ public class Pattern extends Event {
 	                int		uPartnerId,
 	                int 	uTransId,
 	                int		uFreqId,
-	                boolean isCredit) throws Exception {
+	                boolean isCredit) throws ModelException {
 		/* Initialise item assuming account as debit and partner as credit */
 		super(pList, uId, uControlId, pDate, pDesc, 
 			  uAccountId, uPartnerId,
@@ -223,7 +223,7 @@ public class Pattern extends Event {
 		FinanceData	myData 	= pList.getData();
 		myFreq = myData.getFrequencys().searchFor(uFreqId);
 		if (myFreq == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid Frequency Id");
 		myValues.setFrequency(myFreq);
@@ -242,7 +242,7 @@ public class Pattern extends Event {
 	                Account			pPartner,
 	                TransactionType	pTransType,
 	                Frequency		pFrequency,
-	                boolean         isCredit) throws Exception {
+	                boolean         isCredit) throws ModelException {
 		/* Initialise item assuming account as debit and partner as credit */
 		super(pList, uId, pDate, pDesc, 
 			  pAccount, pPartner,
@@ -383,7 +383,7 @@ public class Pattern extends Event {
 	 */
 	public Event nextEvent(Event.List 	pEvents,
 						   TaxYear   	pTaxYear,
-			               DateDay 		pDate) throws Exception {
+			               DateDay 		pDate) throws ModelException {
 		Event     		myEvent;
 		TaxYear  		myBase;
 		DateDay 		myDate;
@@ -794,7 +794,7 @@ public class Pattern extends Event {
 				            String 	pPartner,
 				            String	pTransType,
 				            String  pFrequency,
-				            boolean isCredit) throws Exception {
+				            boolean isCredit) throws ModelException {
 			TransactionType.List	myTranTypes;
 			Frequency.List			myFrequencies;
 			Account.List 			myAccounts;
@@ -814,7 +814,7 @@ public class Pattern extends Event {
 			/* Look up the Account */
 			myAccount = myAccounts.searchFor(pAccount);
 			if (myAccount == null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 			                        "Pattern on [" + 
 			                        DateDay.format(new DateDay(pDate)) +
 			                        "] has invalid Account [" +
@@ -823,7 +823,7 @@ public class Pattern extends Event {
 			/* Look up the Partner */
 			myPartner = myAccounts.searchFor(pPartner);
 			if (myPartner == null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 			                        "Pattern on [" + 
 			                        DateDay.format(new DateDay(pDate)) +
 			                        "] has invalid Partner [" +
@@ -832,7 +832,7 @@ public class Pattern extends Event {
 			/* Look up the TransType */
 			myTransType = myTranTypes.searchFor(pTransType);
 			if (myTransType == null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 			                        "Pattern on [" + 
 			                        DateDay.format(new DateDay(pDate)) +
 			                        "] has invalid TransType [" +
@@ -841,7 +841,7 @@ public class Pattern extends Event {
 			/* Look up the Frequency */
 			myFrequency = myFrequencies.searchFor(pFrequency);
 			if (myFrequency == null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 			                        "Pattern on [" + 
 			                        DateDay.format(new DateDay(pDate)) +
 			                        "] has invalid Frequency [" +
@@ -857,7 +857,7 @@ public class Pattern extends Event {
 
 			/* Handle validation failure */
 			if (myPattern.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myPattern,
 									"Failed validation");
 				
@@ -877,7 +877,7 @@ public class Pattern extends Event {
 				            int   	uPartnerId,
 				            int		uTransId,
 				            int   	uFreqId,
-				            boolean isCredit) throws Exception {
+				            boolean isCredit) throws ModelException {
 			Pattern     myPattern;
 			
 			/* Create the new pattern */
@@ -887,7 +887,7 @@ public class Pattern extends Event {
 			
 			/* Check that this PatternId has not been previously added */
 			if (!isIdUnique(uId)) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 			  			            "Duplicate PatternId <" + uId + ">");
 			 
 			/* Validate the pattern */
@@ -895,7 +895,7 @@ public class Pattern extends Event {
 
 			/* Handle validation failure */
 			if (myPattern.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myPattern,
 									"Failed validation");
 				

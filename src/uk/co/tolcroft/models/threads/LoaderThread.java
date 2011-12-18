@@ -1,7 +1,7 @@
 package uk.co.tolcroft.models.threads;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.views.DataControl;
 
@@ -41,7 +41,7 @@ public abstract class LoaderThread<T extends DataSet<T>> extends WorkerThread<T>
 		}	 	
 		catch (Throwable e) {
 			/* Report the failure */
-			setError(new Exception(ExceptionClass.DATA,
+			setError(new ModelException(ExceptionClass.DATA,
 								   "Failed to obtain and activate new data",
 								   e));
 			completeStatusBar();

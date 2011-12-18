@@ -3,8 +3,8 @@ package uk.co.tolcroft.models.security;
 import java.io.IOException;
 import java.security.MessageDigest;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.security.SecurityControl.DigestType;
 
 public class DigestStream {
@@ -56,12 +56,12 @@ public class DigestStream {
 		 * @param pStream the stream to write encrypted data to
 		 */
 		public Output(DigestType 			pDigestType,
-					  java.io.OutputStream 	pStream) throws Exception {		
+					  java.io.OutputStream 	pStream) throws ModelException {		
 			/* Protect against exceptions */
 			try {
 				/* Create the message digest */
 				theDigest = MessageDigest.getInstance(pDigestType.getAlgorithm(), 
-													  SecurityControl.BCSIGN);
+													  SecurityControl.getProvider().getProvider());
 
 				/* Store the stream */
 				theStream = pStream;
@@ -69,7 +69,7 @@ public class DigestStream {
 			
 			/* Catch exceptions */
 			catch (Throwable e) {
-				throw new Exception(ExceptionClass.CRYPTO,
+				throw new ModelException(ExceptionClass.CRYPTO,
 									"Exception creating digest output stream",
 									e);
 			}			
@@ -228,12 +228,12 @@ public class DigestStream {
 		 * @throws IOException
 		 */
 		public Input(DigestType 			pDigestType,
-				  	 java.io.InputStream 	pStream) throws Exception {
+				  	 java.io.InputStream 	pStream) throws ModelException {
 			/* Protect against exceptions */
 			try {
 				/* Create a message digest */
 				theDigest = MessageDigest.getInstance(pDigestType.getAlgorithm(),
-													  SecurityControl.BCSIGN);
+													  SecurityControl.getProvider().getProvider());
 
 				/* Store the stream details */
 				theStream = pStream;
@@ -241,7 +241,7 @@ public class DigestStream {
 			
 			/* Catch exceptions */
 			catch (Throwable e) {
-				throw new Exception(ExceptionClass.CRYPTO,
+				throw new ModelException(ExceptionClass.CRYPTO,
 									"Exception creating digest input stream",
 									e);
 			}			

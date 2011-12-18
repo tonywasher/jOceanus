@@ -43,7 +43,7 @@ public class Renderer {
 	                                                	int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 	                                        	hasFocus, row, column);
-			StdTable<?>.DataTableModel myModel = (StdTable<?>.DataTableModel)table.getModel();
+			DataTable<?>.DataTableModel myModel = (DataTable<?>.DataTableModel)table.getModel();
 			theData.setPosition(row, column, isSelected);
 			myModel.getRenderData(theData);
 			setForeground(theData.getForeGround());
@@ -88,7 +88,7 @@ public class Renderer {
 	                                                	int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 	                                        	hasFocus, row, column);
-			StdTable<?>.DataTableModel myModel = (StdTable<?>.DataTableModel)table.getModel();
+			DataTable<?>.DataTableModel myModel = (DataTable<?>.DataTableModel)table.getModel();
 			theData.setPosition(row, column, isSelected);
 			myModel.getRenderData(theData);
 			setForeground(theData.getForeGround());
@@ -129,7 +129,7 @@ public class Renderer {
 														int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 												hasFocus, row, column);
-			StdTable<?>.DataTableModel myModel = (StdTable<?>.DataTableModel)table.getModel();
+			DataTable<?>.DataTableModel myModel = (DataTable<?>.DataTableModel)table.getModel();
 			theData.setPosition(row, column, isSelected);
 			myModel.getRenderData(theData);
 			setForeground(theData.getForeGround());
@@ -170,7 +170,7 @@ public class Renderer {
 														int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 												hasFocus, row, column);
-			StdTable<?>.DataTableModel myModel = (StdTable<?>.DataTableModel)table.getModel();
+			DataTable<?>.DataTableModel myModel = (DataTable<?>.DataTableModel)table.getModel();
 			theData.setPosition(row, column, isSelected);
 			myModel.getRenderData(theData);
 			setForeground(theData.getForeGround());
@@ -211,7 +211,7 @@ public class Renderer {
 														int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 												hasFocus, row, column);
-			StdTable<?>.DataTableModel myModel = (StdTable<?>.DataTableModel)table.getModel();
+			DataTable<?>.DataTableModel myModel = (DataTable<?>.DataTableModel)table.getModel();
 			theData.setPosition(row, column, isSelected);
 			myModel.getRenderData(theData);
 			setForeground(theData.getForeGround());
@@ -252,7 +252,7 @@ public class Renderer {
 														int row, int column) {	
 			super.getTableCellRendererComponent(table, value, isSelected,
 												hasFocus, row, column);
-			StdTable<?>.DataTableModel myModel = (StdTable<?>.DataTableModel)table.getModel();
+			DataTable<?>.DataTableModel myModel = (DataTable<?>.DataTableModel)table.getModel();
 			theData.setPosition(row, column, isSelected);
 			myModel.getRenderData(theData);
 			setForeground(theData.getForeGround());
@@ -293,7 +293,7 @@ public class Renderer {
 														int row, int column) {	
 			super.getTableCellRendererComponent(table, value, isSelected,
 												hasFocus, row, column);
-			StdTable<?>.DataTableModel myModel = (StdTable<?>.DataTableModel)table.getModel();
+			DataTable<?>.DataTableModel myModel = (DataTable<?>.DataTableModel)table.getModel();
 			theData.setPosition(row, column, isSelected);
 			myModel.getRenderData(theData);
 			setForeground(theData.getForeGround());
@@ -335,7 +335,7 @@ public class Renderer {
 		                                                int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 		                                        hasFocus, row, column);
-			StdTable<?>.DataTableModel myModel = (StdTable<?>.DataTableModel)table.getModel();
+			DataTable<?>.DataTableModel myModel = (DataTable<?>.DataTableModel)table.getModel();
 			theData.setPosition(row, column, isSelected);
 			myModel.getRenderData(theData);
 			setForeground(theData.getForeGround());
@@ -377,7 +377,7 @@ public class Renderer {
 		                                                int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 		                                        hasFocus, row, column);
-			StdTable<?>.DataTableModel myModel = (StdTable<?>.DataTableModel)table.getModel();
+			DataTable<?>.DataTableModel myModel = (DataTable<?>.DataTableModel)table.getModel();
 			theData.setPosition(row, column, isSelected);
 			myModel.getRenderData(theData);
 			setForeground(theData.getForeGround());
@@ -420,7 +420,7 @@ public class Renderer {
 	                                                	int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected,
 	                                        	hasFocus, row, column);
-			StdTable<?>.rowTableModel myModel = (StdTable<?>.rowTableModel)table.getModel();
+			DataTable<?>.rowTableModel myModel = (DataTable<?>.rowTableModel)table.getModel();
 			theData.setPosition(row, column, isSelected);
 			myModel.getRenderData(theData);
 			setForeground(theData.getForeGround());

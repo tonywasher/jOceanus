@@ -2,11 +2,13 @@ package uk.co.tolcroft.models.threads;
 
 import java.io.File;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.backup.BackupProperties;
+import uk.co.tolcroft.models.DateDay;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
+import uk.co.tolcroft.models.PropertySet.PropertyManager;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
-import uk.co.tolcroft.models.ui.FileSelector.BackupCreate;
 import uk.co.tolcroft.models.views.DataControl;
 
 public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
@@ -44,16 +46,36 @@ public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
 			/* Initialise the status window */
 			theStatus.initTask("Creating Backup");
 
-			/* Determine the name of the file to build */
-			BackupCreate myDialog = new BackupCreate(theControl);
-			myDialog.selectFile();
-			myFile = myDialog.getSelectedFile();
+			/* Access the Backup properties */
+			BackupProperties myProperties = (BackupProperties)PropertyManager.getPropertySet(BackupProperties.class);
+
+			/* Determine the archive name */
+			File 	myBackupDir	= new File(myProperties.getStringValue(BackupProperties.nameBackupDir));
+			String 	myPrefix	= myProperties.getStringValue(BackupProperties.nameBackupPfix);
+			Boolean	doTimeStamp	= myProperties.getBooleanValue(BackupProperties.nameBackupTime);
+
+			/* If we are not doing time-stamps */
+			if (!doTimeStamp) {
+				/* Set the standard backup name */
+				myFile = new File(myBackupDir.getPath() + myPrefix + ".zip");
+			}
 			
-			/* If we did not select a file */
-			if (myFile == null) {
-				/* Throw cancelled exception */
-				throw new Exception(ExceptionClass.EXCEL,
-									"Operation Cancelled");					
+			/* else we need to generate a time-stamp (day only) */
+			else {
+				/* Obtain the current date/time */
+				DateDay myNow = new DateDay();
+			
+				/* Create the name of the file */
+				StringBuilder myName = new StringBuilder(100);
+				myName.append(myBackupDir.getPath());
+				myName.append(myPrefix);
+				myName.append(myNow.getYear());
+				if (myNow.getMonth() < 10) myName.append('0');
+				myName.append(myNow.getMonth());
+				if (myNow.getDay() < 10) myName.append('0');
+				myName.append(myNow.getDay());
+				myName.append(".zip");
+				myFile = new File(myName.toString());
 			}
 			
 			/* Create backup */
@@ -81,7 +103,7 @@ public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
 			/* If the difference set is non-empty */
 			if (!myDiff.isEmpty()) {
 				/* Throw an exception */
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									myDiff,
 									"Backup is inconsistent");
 			}

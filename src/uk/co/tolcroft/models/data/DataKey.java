@@ -1,8 +1,8 @@
 package uk.co.tolcroft.models.data;
 
 import uk.co.tolcroft.models.Difference;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.security.DataCipher;
 import uk.co.tolcroft.models.security.SecurityControl;
@@ -151,7 +151,7 @@ public class DataKey extends DataItem<DataKey> {
 				    int			uId,
 				    int			uControlId,
 				    int			uKeyTypeId,
-				    byte[]		pSecurityKey) throws Exception {
+				    byte[]		pSecurityKey) throws ModelException {
 		/* Initialise the item */
 		super(pList, uId);
 		Values myValues = getValues();
@@ -163,8 +163,8 @@ public class DataKey extends DataItem<DataKey> {
 
 		/* Determine the SymKeyType */
 		try { myValues.setKeyType(SymKeyType.fromId(uKeyTypeId)); }
-		catch (Exception e) {
-			throw new Exception(ExceptionClass.DATA,
+		catch (ModelException e) {
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 	            				"Invalid KeyType Id " + uKeyTypeId);
 		}
@@ -172,7 +172,7 @@ public class DataKey extends DataItem<DataKey> {
 		/* Look up the ControlKey */
 		ControlKey myControlKey = pList.theData.getControlKeys().searchFor(uControlId);
 		if (myControlKey == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 		                        this,
 					            "Invalid ControlKey Id");
 		
@@ -203,7 +203,7 @@ public class DataKey extends DataItem<DataKey> {
 	 */
 	private DataKey(List 		pList,
 				    ControlKey 	pControlKey,
-				    SymKeyType	pKeyType) throws Exception {
+				    SymKeyType	pKeyType) throws ModelException {
 		/* Initialise the item */
 		super(pList, 0);
 		Values myValues = getValues();
@@ -239,7 +239,7 @@ public class DataKey extends DataItem<DataKey> {
 	 */
 	private DataKey(List 		pList,
 				    ControlKey 	pControlKey,
-				    DataKey		pDataKey) throws Exception {
+				    DataKey		pDataKey) throws ModelException {
 		/* Initialise the item */
 		super(pList, 0);
 		Values myValues = getValues();
@@ -333,7 +333,7 @@ public class DataKey extends DataItem<DataKey> {
 	/**
 	 * Update security control 
 	 */
-	protected void updateSecurityControl() throws Exception {
+	protected void updateSecurityControl() throws ModelException {
 		/* Store the current detail into history */
 		pushHistory();
 
@@ -465,7 +465,7 @@ public class DataKey extends DataItem<DataKey> {
 		public DataKey addItem(int  	uId,
 							   int		uControlId,
 							   int		uKeyTypeId,
-	            			   byte[]	pSecurityKey) throws Exception {
+	            			   byte[]	pSecurityKey) throws ModelException {
 			DataKey     	myKey;
 			
 			/* Create the DataKey */
@@ -477,7 +477,7 @@ public class DataKey extends DataItem<DataKey> {
 			
 			/* Check that this KeyId has not been previously added */
 			if (!isIdUnique(uId)) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									myKey,
 									"Duplicate DataKeyId (" + uId + ")");
 			 
@@ -493,7 +493,7 @@ public class DataKey extends DataItem<DataKey> {
 		 *  @return the new DataKey
 		 */
 		public DataKey addItem(ControlKey 	pControlKey,
-							   SymKeyType	pKeyType) throws Exception {
+							   SymKeyType	pKeyType) throws ModelException {
 			DataKey     	myKey;
 			
 			/* Create the key */
@@ -513,7 +513,7 @@ public class DataKey extends DataItem<DataKey> {
 		 *  @return the new DataKey
 		 */
 		public DataKey addItem(ControlKey 	pControlKey,
-							   DataKey		pDataKey) throws Exception {
+							   DataKey		pDataKey) throws ModelException {
 			DataKey     	myKey;
 			
 			/* Create the key */

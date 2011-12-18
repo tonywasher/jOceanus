@@ -1,13 +1,17 @@
 package uk.co.tolcroft.finance.views;
 
+import java.util.Calendar;
+
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.finance.views.Analysis.*;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.PropertySet.PropertyManager;
+import uk.co.tolcroft.models.PropertySet.PropertySetChooser;
 import uk.co.tolcroft.models.Decimal.*;
-import uk.co.tolcroft.models.data.Properties;
 
-public class MetaAnalysis {
+public class MetaAnalysis implements PropertySetChooser {
 	/* Members */
 	private Analysis				theAnalysis			= null;
 	private Analysis.BucketList		theList				= null;
@@ -30,6 +34,55 @@ public class MetaAnalysis {
 	private boolean					hasGainsSlices		= false;
 	private boolean					hasReducedAllow		= false;
 	private int						theAge				= 0;
+	
+	@Override
+	public Class<? extends PropertySet> getPropertySetClass() { return TaxationProperties.class; }
+	
+	/**
+	 * Taxation Properties
+	 */
+	public static class TaxationProperties extends PropertySet {
+		/**
+		 * Registry name for BirthDate
+		 */
+		protected final static String 	nameBirthDate	= "BirthDate";
+
+		/**
+		 * Display name for BirthDate
+		 */
+		protected final static String 	dispBirthDate	= "Birth Date";
+
+		/**
+		 * Default value for BirthDate
+		 */
+		private final static DateDay	defBirthDate	= new DateDay(1970, Calendar.JANUARY, 1);
+
+		/**
+		 * Constructor
+		 * @throws ModelException
+		 */
+		public TaxationProperties() throws ModelException { super();	}
+
+		@Override
+		protected void defineProperties() {
+			/* Define the properties */
+			defineProperty(nameBirthDate, PropertyType.Date);
+		}
+
+		@Override
+		protected Object getDefaultValue(String pName) {
+			/* Handle default values */
+			if (pName.equals(nameBirthDate)) 	return defBirthDate;
+			return null;
+		}
+		
+		@Override
+		protected String getDisplayName(String pName) {
+			/* Handle default values */
+			if (pName.equals(nameBirthDate)) 	return dispBirthDate;
+			return null;
+		}
+	}
 	
 	/**
 	 * Constructor
@@ -302,9 +355,8 @@ public class MetaAnalysis {
 	
 	/**
 	 * Calculate tax
-	 * @param pProperties the properties
 	 */
-	protected void calculateTax(Properties pProperties) {
+	protected void calculateTax() {
 		taxBands		myBands;
 		Money 			myIncome	= new Money(0);
 		Money 			myTax		= new Money(0);
@@ -334,7 +386,7 @@ public class MetaAnalysis {
 		calculateGrossIncome();
 		
 		/* Calculate the allowances and tax bands */
-		myBands = calculateAllowances(pProperties);
+		myBands = calculateAllowances();
 		
 		/* Calculate the salary taxation */
 		myBucket = calculateSalaryTax(myBands);
@@ -745,9 +797,8 @@ public class MetaAnalysis {
 	
 	/**
 	 * Calculate the allowances and tax bands
-	 * @param pProperties the properties
 	 */
-	private taxBands calculateAllowances(Properties pProperties) {
+	private taxBands calculateAllowances() {
 		taxBands     	myBands;
 		TaxDetail		myBucket;
 		TaxDetail		myParentBucket;
@@ -759,8 +810,11 @@ public class MetaAnalysis {
 		/* Allocate the tax bands class */
 		myBands = new taxBands();
 		
+		/* Access the taxation properties */
+		TaxationProperties myProperties = (TaxationProperties)PropertyManager.getPropertySet(this);
+
 		/* Determine the relevant age for this tax year */
-		theAge = pProperties.getBirthDate().ageOn(theYear.getDate());
+		theAge = myProperties.getDateValue(TaxationProperties.nameBirthDate).ageOn(theYear.getDate());
 		
 		/* Determine the relevant allowance */
 		if (theAge >= 75) {

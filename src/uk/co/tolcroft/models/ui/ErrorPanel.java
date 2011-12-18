@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.StdInterfaces.stdPanel;
@@ -22,7 +22,7 @@ public class ErrorPanel implements ActionListener {
 	private JLabel				theErrorField		= null;
 	private JButton 			theClearButton		= null;
 	private DebugEntry			theDebugError		= null;
-	private Exception			theError			= null;
+	private ModelException			theError			= null;
 
 	/* Access methods */
 	public JPanel getPanel() { return thePanel; }
@@ -81,7 +81,7 @@ public class ErrorPanel implements ActionListener {
 	 * Set error indication for window 
 	 * @param pException the exception
 	 */
-	public void setError(Exception pException) {
+	public void setError(ModelException pException) {
 		/* Record the error */
 		theError = pException;
 		

@@ -8,8 +8,8 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.Utils;
 
 public class SymmetricKey {
@@ -101,7 +101,7 @@ public class SymmetricKey {
 	 */
 	public SymmetricKey(SymKeyType		pKeyType,
 						boolean			useRestricted,
-						SecureRandom	pRandom) throws Exception {
+						SecureRandom	pRandom) throws ModelException {
 		/* Store the KeyType and the Secure Random instance */
 		theKeyType		= pKeyType;
 		theKeyLen		= getKeyLen(useRestricted);
@@ -122,7 +122,7 @@ public class SymmetricKey {
 	 */
 	protected SymmetricKey(SecretKey		pKey,
 			   			   SymKeyType		pKeyType,
-						   SecureRandom		pRandom) throws Exception {
+						   SecureRandom		pRandom) throws ModelException {
 		/* Store the Control, KeyType and the Secure Random instance */
 		theKeyType			= pKeyType;
 		theKeyLen			= pKey.getEncoded().length;
@@ -169,14 +169,14 @@ public class SymmetricKey {
 	 * Initialise data cipher for encryption/decryption
 	 * @return the Data Cipher
 	 */
-	public DataCipher initDataCipher() throws Exception {
+	public DataCipher initDataCipher() throws ModelException {
 		Cipher	myCipher;
 
 		/* Protect against exceptions */
 		try {
 			/* Create a new cipher */
 			myCipher = Cipher.getInstance(theKeyType.getCipher(), 
-										  SecurityControl.BCSIGN);
+										  SecurityControl.getProvider().getProvider());
 			
 			/* Return the Data Cipher */
 			return new DataCipher(myCipher, this);
@@ -184,7 +184,7 @@ public class SymmetricKey {
 		
 		/* catch exceptions */
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Failed to initialise cipher",
 								e);
 		}
@@ -194,14 +194,14 @@ public class SymmetricKey {
 	 * Initialise stream cipher for encryption with random initialisation vector
 	 * @return the Stream Cipher
 	 */
-	public StreamCipher initEncryptionStream() throws Exception {
+	public StreamCipher initEncryptionStream() throws ModelException {
 		Cipher	myCipher;
 
 		/* Protect against exceptions */
 		try {
 			/* Create a new cipher */
 			myCipher = Cipher.getInstance(theKeyType.getCipher(), 
-					  					  SecurityControl.BCSIGN);
+					  					  SecurityControl.getProvider().getProvider());
 			
 			/* Initialise the cipher generating a random Initialisation vector */
 			myCipher.init(Cipher.ENCRYPT_MODE, theKey, theRandom);
@@ -212,7 +212,7 @@ public class SymmetricKey {
 		
 		/* catch exceptions */
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Failed to initialise cipher",
 								e);
 		}
@@ -223,7 +223,7 @@ public class SymmetricKey {
 	 * @param pInitVector Initialisation vector for cipher
 	 * @return the Stream Cipher
 	 */
-	public StreamCipher initDecryptionStream(byte[] pInitVector) throws Exception {
+	public StreamCipher initDecryptionStream(byte[] pInitVector) throws ModelException {
 		AlgorithmParameterSpec 	myParms;
 		Cipher					myCipher;
 
@@ -231,7 +231,7 @@ public class SymmetricKey {
 		try {
 			/* Create a new cipher */
 			myCipher = Cipher.getInstance(theKeyType.getCipher(), 
-					  					  SecurityControl.BCSIGN);
+					  					  SecurityControl.getProvider().getProvider());
 			
 			/* Initialise the cipher using the password */
 			myParms = new IvParameterSpec(pInitVector);
@@ -243,7 +243,7 @@ public class SymmetricKey {
 		
 		/* catch exceptions */
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Failed to initialise cipher",
 								e);
 		}
@@ -272,14 +272,14 @@ public class SymmetricKey {
 		 */
 		private SymKeyGenerator(SymKeyType 		pKeyType,
 								int				pKeyLen,
-								SecureRandom	pRandom) throws Exception {
+								SecureRandom	pRandom) throws ModelException {
 			/* Protect against Exceptions */
 			try {
 				/* Create the key generator */
 				theKeyType 		= pKeyType;
 				theKeyLen		= pKeyLen;
 				theGenerator 	= KeyGenerator.getInstance(pKeyType.getAlgorithm(), 
-						  								   SecurityControl.BCSIGN);
+						  								   SecurityControl.getProvider().getProvider());
 				theGenerator.init(pKeyLen, pRandom);
 				
 				/* Add to the list of generators */
@@ -290,7 +290,7 @@ public class SymmetricKey {
 			/* Catch exceptions */
 			catch (Throwable e) {
 				/* Throw the exception */
-				throw new Exception(ExceptionClass.CRYPTO,
+				throw new ModelException(ExceptionClass.CRYPTO,
 									"Failed to create key generator",
 									e);
 			}
@@ -305,7 +305,7 @@ public class SymmetricKey {
 		 */
 		private static SecretKey getInstance(SymKeyType 	pKeyType,
 											 int			pKeyLen,
-											 SecureRandom	pRandom) throws Exception {
+											 SecureRandom	pRandom) throws ModelException {
 			SymKeyGenerator myCurr;
 			SecretKey		myKey;
 			
@@ -397,9 +397,9 @@ public class SymmetricKey {
 		 * @param id the id value
 		 * @return the corresponding enum object
 		 */
-		public static SymKeyType fromId(int id) throws Exception {
+		public static SymKeyType fromId(int id) throws ModelException {
 			for (SymKeyType myType: values()) {	if (myType.getId() == id) return myType; }
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Invalid SymKeyType: " + id);
 		}
 		
@@ -409,7 +409,7 @@ public class SymmetricKey {
 		 * @param pRandom the random generator
 		 * @return the random set
 		 */
-		public static SymKeyType[] getRandomTypes(int pNumTypes, SecureRandom pRandom) throws Exception {
+		public static SymKeyType[] getRandomTypes(int pNumTypes, SecureRandom pRandom) throws ModelException {
 			/* Access the values */
 			SymKeyType[] myValues 	= values();
 			int			 iNumValues = myValues.length;
@@ -417,7 +417,7 @@ public class SymmetricKey {
 			
 			/* Reject call if invalid number of types */
 			if ((pNumTypes < 1) || (pNumTypes > iNumValues))
-				throw new Exception(ExceptionClass.LOGIC,
+				throw new ModelException(ExceptionClass.LOGIC,
 									"Invalid number of types: " + pNumTypes);
 			
 			/* Create the result set */

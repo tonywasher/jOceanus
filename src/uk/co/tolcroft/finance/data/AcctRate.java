@@ -3,8 +3,8 @@ package uk.co.tolcroft.finance.data;
 import java.util.Date;
 
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
@@ -175,7 +175,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 				     int 	uAccountId,
 				     Date	pEndDate, 
 				     String	pRate,
-				     String	pBonus) throws Exception {
+				     String	pBonus) throws ModelException {
 		/* Initialise the item */
 		super(pList, uId);
 		
@@ -189,7 +189,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		FinanceData myData 		= pList.getData();
 		Account 	myAccount 	= myData.getAccounts().searchFor(uAccountId);
 		if (myAccount == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid Account Id");
 		myValues.setAccount(myAccount);
@@ -213,7 +213,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 				     int 	uAccountId,
 				     Date	pEndDate, 
 				     byte[]	pRate,
-				     byte[]	pBonus) throws Exception {
+				     byte[]	pBonus) throws ModelException {
 		/* Initialise the item */
 		super(pList, uId);
 		
@@ -230,7 +230,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		FinanceData myData	= pList.getData();
 		Account myAccount 	= myData.getAccounts().searchFor(uAccountId);
 		if (myAccount == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid Account Id");
 		myValues.setAccount(myAccount);
@@ -389,7 +389,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	 * Set a new rate 
 	 * @param pRate the rate 
 	 */
-	public void setRate(Rate pRate) throws Exception {
+	public void setRate(Rate pRate) throws ModelException {
 		if (pRate != null) 	getValues().setRate(new RatePair(pRate));
 		else 				getValues().setRate(null);
 	}
@@ -398,7 +398,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	 * Set a new bonus 
 	 * @param pBonus the rate 
 	 */
-	public void setBonus(Rate pBonus) throws Exception {
+	public void setBonus(Rate pBonus) throws ModelException {
 		if (pBonus != null) getValues().setBonus(new RatePair(pBonus));
 		else 				getValues().setBonus(null);
 	}
@@ -698,7 +698,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 							String  pAccount,
 	            			String  pRate,
 	            			Date  	pDate,
-				            String  pBonus) throws Exception {
+				            String  pBonus) throws ModelException {
 			Account     	myAccount;
 			Account.List 	myAccounts;
 			
@@ -708,7 +708,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 			/* Look up the Account */
 			myAccount = myAccounts.searchFor(pAccount);
 			if (myAccount == null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 			                        "Rate on [" + 
 			                        DateDay.format(new DateDay(pDate)) +
 			                        "] has invalid Account [" +
@@ -729,7 +729,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 							 int  	uAccountId,
 	            			 String pRate,
 	            			 Date 	pDate,
-				             String pBonus) throws Exception {
+				             String pBonus) throws ModelException {
 			AcctRate     	myRate;
 			
 			/* Create the period */
@@ -738,7 +738,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 				
 			/* Check that this RateId has not been previously added */
 			if (!isIdUnique(myRate.getId())) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 						            myRate,
 			  			            "Duplicate RateId");
 			 
@@ -747,7 +747,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 
 			/* Handle validation failure */
 			if (myRate.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myRate,
 									"Failed validation");
 				
@@ -763,7 +763,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 							int  	uAccountId,
 	            			byte[]  pRate,
 	            			Date  	pDate,
-				            byte[]  pBonus) throws Exception {
+				            byte[]  pBonus) throws ModelException {
 			AcctRate     	myRate;
 			
 			/* Create the period */
@@ -772,7 +772,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 				
 			/* Check that this RateId has not been previously added */
 			if (!isIdUnique(uId)) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 						            myRate,
 			  			            "Duplicate RateId");
 			 
@@ -781,7 +781,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 
 			/* Handle validation failure */
 			if (myRate.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myRate,
 									"Failed validation");
 				
@@ -886,7 +886,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		/**
 		 * Update encryption after security change
 		 */
-		protected void updateSecurity() throws Exception {
+		protected void updateSecurity() throws ModelException {
 			/* Update the encryption */
 			theRate	= new RatePair(theRate.getValue());
 			if (theBonus != null) theBonus = new RatePair(theBonus.getValue());
@@ -895,7 +895,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		/**
 		 * Ensure encryption after non-encrypted load
 		 */
-		protected void applySecurity() throws Exception {
+		protected void applySecurity() throws ModelException {
 			/* Apply the encryption */
 			theRate.encryptPair(null);
 			if (theBonus != null) theBonus.encryptPair(null);
@@ -905,7 +905,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		 * Adopt encryption from base
 		 * @param pBase the Base values
 		 */
-		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {
+		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws ModelException {
 			Values myBase = (Values)pBase;
 
 			/* Apply the encryption */

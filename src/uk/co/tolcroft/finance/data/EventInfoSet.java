@@ -4,8 +4,8 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import uk.co.tolcroft.finance.data.StaticClass.EventInfoClass;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.Decimal.Dilution;
 import uk.co.tolcroft.models.Decimal.Money;
 import uk.co.tolcroft.models.Decimal.Units;
@@ -116,7 +116,7 @@ public class EventInfoSet {
 	 * Create a new EventValue
 	 * @param pClass the class of the item
 	 */
-	protected EventValue getNewValue(EventInfoClass pClass) throws Exception {
+	protected EventValue getNewValue(EventInfoClass pClass) throws ModelException {
 		/* Access the EventInfoType */
 		EventInfoType myType = theTypes.searchFor(pClass);
 
@@ -132,7 +132,7 @@ public class EventInfoSet {
 	 * Create a new EventData
 	 * @param pClass the class of the item
 	 */
-	protected EventData getNewData(EventInfoClass pClass) throws Exception {
+	protected EventData getNewData(EventInfoClass pClass) throws ModelException {
 		/* Access the EventInfoType */
 		EventInfoType myType = theTypes.searchFor(pClass);
 
@@ -312,14 +312,14 @@ public class EventInfoSet {
 	 * Register the event value
 	 * @param pValue the Value
 	 */
-	protected void registerValue(EventValue pValue) throws Exception {
+	protected void registerValue(EventValue pValue) throws ModelException {
 		/* Obtain the Map value */
 		EventInfoType 	myType 	= pValue.getInfoType();
 		EventValue 		myValue = theValueMap.get(myType.getInfoClass());
 		
 		/* If we already have a value */
 		if (myValue != null)
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								theEvent,
 								"InfoClass " + myType.getName() + " already registered");
 
@@ -343,14 +343,14 @@ public class EventInfoSet {
 	 * Register the event data
 	 * @param pData the Data
 	 */
-	protected void registerData(EventData pData) throws Exception {
+	protected void registerData(EventData pData) throws ModelException {
 		/* Obtain the Map value */
 		EventInfoType 	myType 	= pData.getInfoType();
 		EventData 		myData 	= theDataMap.get(myType.getInfoClass());
 		
 		/* If we already have a value */
 		if (myData != null)
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								theEvent,
 								"InfoClass " + myType.getName() + " already registered");
 
@@ -435,7 +435,7 @@ public class EventInfoSet {
 	 * @param pType the Value Type
 	 * @param pValue the Value (may be null)
 	 */
-	protected void setValue(EventInfoType pType, Integer pValue) throws Exception {
+	protected void setValue(EventInfoType pType, Integer pValue) throws ModelException {
 		/* Obtain the Map value */
 		EventValue myValue = theValueMap.get(pType.getInfoClass());
 		
@@ -457,7 +457,7 @@ public class EventInfoSet {
 	 * @param pType the Value Type
 	 * @param pValue the Value (may be null)
 	 */
-	protected void setAccount(EventInfoType pType, Account pValue) throws Exception {
+	protected void setAccount(EventInfoType pType, Account pValue) throws ModelException {
 		/* Obtain the Map value */
 		EventValue myValue = theValueMap.get(pType.getInfoClass());
 		
@@ -479,7 +479,7 @@ public class EventInfoSet {
 	 * @param pType the Value Type
 	 * @param pValue the Value (may be null)
 	 */
-	protected void setMoney(EventInfoType pType, Money pValue) throws Exception {
+	protected void setMoney(EventInfoType pType, Money pValue) throws ModelException {
 		/* Obtain the Map data */
 		EventData myData = theDataMap.get(pType.getInfoClass());
 		
@@ -501,7 +501,7 @@ public class EventInfoSet {
 	 * @param pType the Value Type
 	 * @param pValue the Value (may be null)
 	 */
-	protected void setUnits(EventInfoType pType, Units pValue) throws Exception {
+	protected void setUnits(EventInfoType pType, Units pValue) throws ModelException {
 		/* Obtain the Map data */
 		EventData myData = theDataMap.get(pType.getInfoClass());
 		
@@ -523,7 +523,7 @@ public class EventInfoSet {
 	 * @param pType the Value Type
 	 * @param pValue the Value (may be null)
 	 */
-	protected void setDilution(EventInfoType pType, Dilution pValue) throws Exception {
+	protected void setDilution(EventInfoType pType, Dilution pValue) throws ModelException {
 		/* Obtain the Map data */
 		EventData myData = theDataMap.get(pType.getInfoClass());
 		

@@ -2,7 +2,7 @@ package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.EventValue;
 import uk.co.tolcroft.finance.data.FinanceData;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.database.DatabaseTable;
@@ -63,7 +63,7 @@ public class TableEventValues extends DatabaseTable<EventValue> {
 	}
 
 	/* Load the tax year */
-	public void loadItem(int pId) throws Exception {
+	public void loadItem(int pId) throws ModelException {
 		int		  		myInfoType;
 		int		  		myEvent;
 		int				myValue;
@@ -78,7 +78,7 @@ public class TableEventValues extends DatabaseTable<EventValue> {
 	}
 	
 	/* Set a field value */
-	protected void setFieldValue(EventValue	pItem, int iField) throws Exception  {
+	protected void setFieldValue(EventValue	pItem, int iField) throws ModelException  {
 		/* Switch on field id */
 		switch (iField) {
 			case EventValue.FIELD_INFOTYPE:	theTableDef.setIntegerValue(iField, pItem.getInfoType().getId());	break;

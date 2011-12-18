@@ -1,6 +1,6 @@
 package uk.co.tolcroft.models.database;
 
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.data.EncryptedItem;
 
 public abstract class TableEncrypted<T extends EncryptedItem<T>> extends DatabaseTable<T> {
@@ -33,10 +33,10 @@ public abstract class TableEncrypted<T extends EncryptedItem<T>> extends Databas
 	 * @param pId the Id of the item
 	 * @param pControlId the ControlKey id of the item 
 	 */
-	protected abstract void   	loadItem(int pId, int pControlId)	throws Exception;
+	protected abstract void   	loadItem(int pId, int pControlId)	throws ModelException;
 	
 	/* Load the static data */
-	protected void loadItem(int pId) throws Exception {
+	protected void loadItem(int pId) throws ModelException {
 		int	    						myControlId;
 		
 		/* Get the various fields */
@@ -47,7 +47,7 @@ public abstract class TableEncrypted<T extends EncryptedItem<T>> extends Databas
 	}
 	
 	/* Set a field value */
-	protected void setFieldValue(T	pItem, int iField) throws Exception  {
+	protected void setFieldValue(T	pItem, int iField) throws ModelException  {
 		/* Switch on field id */
 		switch (iField) {
 			case EncryptedItem.FIELD_CONTROL: 	theTableDef.setIntegerValue(iField, pItem.getControlKey().getId());	break;

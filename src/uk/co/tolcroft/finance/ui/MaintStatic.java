@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.View;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
@@ -222,7 +222,7 @@ public class MaintStatic implements stdPanel,
 	/**
 	 * Refresh views/controls after a load/update of underlying data
 	 */
-	public void refreshData() throws Exception {
+	public void refreshData() throws ModelException {
 		/* Refresh the underlying children */
 		theActTypes.refreshData();
 		theTranTypes.refreshData();

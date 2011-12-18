@@ -9,7 +9,7 @@ import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.views.SpotPrices.SpotPrice;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataState;
@@ -18,16 +18,16 @@ import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.Editor;
 import uk.co.tolcroft.models.ui.ErrorPanel;
-import uk.co.tolcroft.models.ui.StdMouse;
-import uk.co.tolcroft.models.ui.StdTable;
+import uk.co.tolcroft.models.ui.DataMouse;
+import uk.co.tolcroft.models.ui.DataTable;
 import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.ui.SaveButtons;
 import uk.co.tolcroft.models.views.ViewList;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 
-public class PricePoint extends StdTable<AcctPrice> {
+public class PricePoint extends DataTable<AcctPrice> {
 	/* Members */
 	private static final long serialVersionUID = 5826211763056873599L;
 	
@@ -207,9 +207,9 @@ public class PricePoint extends StdTable<AcctPrice> {
 				}
 				
 				/* Catch Exceptions */
-				catch (Exception e) {
+				catch (ModelException e) {
 					/* Build the error */
-					Exception myError = new Exception(ExceptionClass.DATA,
+					ModelException myError = new ModelException(ExceptionClass.DATA,
 											          "Failed to change selection",
 											          e);
 					
@@ -226,7 +226,7 @@ public class PricePoint extends StdTable<AcctPrice> {
 	/**
 	 * Refresh views/controls after a load/update of underlying data
 	 */
-	public void refreshData() throws Exception {
+	public void refreshData() throws ModelException {
 		/* Refresh the data */
 		theSelect.refreshData();
 		
@@ -260,7 +260,7 @@ public class PricePoint extends StdTable<AcctPrice> {
 	 * @param pDate the Date for the extract
 	 */
 	public void setSelection(AccountType 	pType,
-							 DateDay 		pDate) throws Exception {
+							 DateDay 		pDate) throws ModelException {
 		/* Record selection */
 		theDate = pDate;
 		theAccountType = pType;
@@ -538,7 +538,7 @@ public class PricePoint extends StdTable<AcctPrice> {
 				mySpot.pushHistory();
 				
 				/* Build the error */
-				Exception myError = new Exception(ExceptionClass.DATA,
+				ModelException myError = new ModelException(ExceptionClass.DATA,
 										          "Failed to update field at ("
 										          + row + "," + col +")",
 										          e);
@@ -570,7 +570,7 @@ public class PricePoint extends StdTable<AcctPrice> {
 	/**
 	 *  SpotView mouse listener
 	 */
-	private class spotViewMouse extends StdMouse<AcctPrice> {
+	private class spotViewMouse extends DataMouse<AcctPrice> {
 		/**
 		 * Constructor
 		 */

@@ -3,7 +3,7 @@ package uk.co.tolcroft.finance.database;
 import java.util.Date;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.database.DatabaseTable;
@@ -91,12 +91,12 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	/**
 	 * postProcess on Load
 	 */
-	protected void postProcessOnLoad() throws Exception {
+	protected void postProcessOnLoad() throws ModelException {
 		theData.calculateDateRange();
 	}
 	
 	/* Load the tax year */
-	public void loadItem(int pId) throws Exception {
+	public void loadItem(int pId) throws ModelException {
 		Date  	myYear;
 		String  myAllowance;
 		String  myRentalAllow;
@@ -160,7 +160,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
 	}
 	
 	/* Set a field value */
-	protected void setFieldValue(TaxYear	pItem, int iField) throws Exception  {
+	protected void setFieldValue(TaxYear	pItem, int iField) throws ModelException  {
 		/* Switch on field id */
 		switch (iField) {
 			case TaxYear.FIELD_YEAR:	theTableDef.setDateValue(iField, pItem.getDate());					break;

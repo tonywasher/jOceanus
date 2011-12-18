@@ -2,7 +2,7 @@ package uk.co.tolcroft.models.sheets;
 
 import java.io.File;
 
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 
@@ -28,7 +28,7 @@ public abstract class SpreadSheet<T extends DataSet<T>> {
 	 *  @return the newly loaded data
 	 */
 	public T loadBackup(ThreadStatus<T> pThread,
-	  		 			File 			pFile) throws Exception {
+	  		 			File 			pFile) throws ModelException {
 		/* Create a sheet reader object */
 		SheetReader<T> myReader = getSheetReader(pThread);
 			
@@ -47,7 +47,7 @@ public abstract class SpreadSheet<T extends DataSet<T>> {
 	 */
 	public void createBackup(ThreadStatus<T> 	pThread,
 							 T					pData,
-							 File 				pFile) throws Exception {
+							 File 				pFile) throws ModelException {
 		/* Create a sheet writer object */
 		SheetWriter<T> myWriter = getSheetWriter(pThread);
 			
@@ -62,7 +62,7 @@ public abstract class SpreadSheet<T extends DataSet<T>> {
 	 *  @return the newly loaded data
 	 */
 	public T loadExtract(ThreadStatus<T>	pThread,
-	  		 			 File 				pFile) throws Exception {
+	  		 			 File 				pFile) throws ModelException {
 		/* Create a Sheet Reader object */
 		SheetReader<T> myReader = getSheetReader(pThread);
 			
@@ -81,7 +81,7 @@ public abstract class SpreadSheet<T extends DataSet<T>> {
 	 */
 	public void createExtract(ThreadStatus<T> 	pThread,
 							  T					pData,
-							  File 				pFile) throws Exception {
+							  File 				pFile) throws ModelException {
 		/* Create a SheetWriter object */
 		SheetWriter<T> myWriter = getSheetWriter(pThread);
 			

@@ -4,19 +4,18 @@ import uk.co.tolcroft.finance.views.Analysis.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.HistoryValues;
-import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugObject;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.views.DataControl;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 
 public class EventAnalysis implements DebugObject {
 	/**
@@ -53,7 +52,7 @@ public class EventAnalysis implements DebugObject {
 	 * @param pDate	the Date for the analysis
 	 */
 	public EventAnalysis(FinanceData	pData,
-						 DateDay	 	pDate) throws Exception {
+						 DateDay	 	pDate) throws ModelException {
 		Event.List.ListIterator 	myIterator;
 		Event.List				 	myEvents;
 		Event 						myCurr;
@@ -105,7 +104,7 @@ public class EventAnalysis implements DebugObject {
 	 * @param pStatement the statement to prepare
 	 */
 	public EventAnalysis(FinanceData	pData,
-						 Statement 		pStatement)  throws Exception {
+						 Statement 		pStatement)  throws ModelException {
 		Event.List.ListIterator 	myIterator;
 		Event.List					myEvents;
 		Event 						myCurr;
@@ -188,7 +187,7 @@ public class EventAnalysis implements DebugObject {
  	 * recalculate statement balance
  	 * @param pStatement the statement
  	 */
-	protected void resetStatementBalance(Statement pStatement) throws Exception {
+	protected void resetStatementBalance(Statement pStatement) throws ModelException {
 		Statement.Line     			myLine;
 		Statement.List				myLines;
 		Statement.List.ListIterator	myIterator;
@@ -230,7 +229,7 @@ public class EventAnalysis implements DebugObject {
 	 * @param pData the Data to analyse
 	 */
 	public EventAnalysis(DataControl<?>	pView,
-						 FinanceData	pData) throws Exception {
+						 FinanceData	pData) throws ModelException {
 		Event           		myCurr;
 		Event.List.ListIterator	myIterator;
 		int             		myResult	= -1;
@@ -542,13 +541,12 @@ public class EventAnalysis implements DebugObject {
 
 		/**
 		 * Calculate tax for an analysis year 
-		 * @param pProperties the properties
 		 */
-		public void calculateTax(Properties pProperties) {
+		public void calculateTax() {
 			/* If we are not in taxed state */
 			if (theAnalysis.getState() != AnalysisState.TAXED) {
 				/* call the meta analyser to calculate tax */
-				theMetaAnalysis.calculateTax(pProperties);
+				theMetaAnalysis.calculateTax();
 				
 				/* Declare a change in the debug entry */
 				theListDebug.setChanged();
@@ -677,7 +675,7 @@ public class EventAnalysis implements DebugObject {
 	 * Process an event 
 	 * @param pEvent the event to process 
 	 */
-	private void processEvent(Event pEvent) throws Exception {
+	private void processEvent(Event pEvent) throws ModelException {
 		Account			myDebit 	= pEvent.getDebit();
 		Account			myCredit 	= pEvent.getCredit(); 
 		
@@ -730,7 +728,7 @@ public class EventAnalysis implements DebugObject {
 	 * Process a capital event 
 	 * @param pEvent the event to process 
 	 */
-	void processCapitalEvent(Event pEvent) throws Exception {
+	void processCapitalEvent(Event pEvent) throws ModelException {
 		TransactionType 		myTrans 	= pEvent.getTransType();
 		
 		/* Switch on the transaction */
@@ -781,7 +779,7 @@ public class EventAnalysis implements DebugObject {
 				break;
 			/* Throw an Exception  */
 			default:
-				throw new Exception(ExceptionClass.LOGIC,
+				throw new ModelException(ExceptionClass.LOGIC,
 									"Unexpected transaction type: " + myTrans.getTranClass());
 		}
 	}

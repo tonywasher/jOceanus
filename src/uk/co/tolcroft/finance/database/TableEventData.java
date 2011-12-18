@@ -2,7 +2,7 @@ package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.EventData;
 import uk.co.tolcroft.finance.data.FinanceData;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.database.Database;
@@ -64,7 +64,7 @@ public class TableEventData extends TableEncrypted<EventData> {
 	}
 
 	/* Load the event */
-	protected void loadItem(int pId, int pControlId) throws Exception {
+	protected void loadItem(int pId, int pControlId) throws ModelException {
 		int  			myInfoTypId;
 		int  			myEventId;
 		byte[] 			myValue;
@@ -83,7 +83,7 @@ public class TableEventData extends TableEncrypted<EventData> {
 	}
 	
 	/* Set a field value */
-	protected void setFieldValue(EventData	pItem, int iField) throws Exception  {
+	protected void setFieldValue(EventData	pItem, int iField) throws ModelException  {
 		/* Switch on field id */
 		switch (iField) {
 			case EventData.FIELD_INFOTYPE:	theTableDef.setIntegerValue(EventData.FIELD_INFOTYPE, pItem.getInfoType().getId());	break;

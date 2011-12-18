@@ -5,8 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataSet;
@@ -192,14 +192,14 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	/**
 	 * Load an individual item from the result set 
 	 */
-	protected abstract void   	loadItem(int pId)	throws Exception;
+	protected abstract void   	loadItem(int pId)	throws ModelException;
 	
 	/**
 	 * Set a field value for an item
 	 * @param pItem the item to insert
 	 * @param iField the field id
 	 */
-	protected void setFieldValue(T pItem, int iField) throws Exception  {
+	protected void setFieldValue(T pItem, int iField) throws ModelException  {
 		/* Switch on field id */
 		switch (iField) {
 			case DataItem.FIELD_ID:	theTable.setIntegerValue(DataItem.FIELD_ID, pItem.getId());	break;
@@ -209,7 +209,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	/**
 	 * Post-Process on a load operation
 	 */
-	protected void	postProcessOnLoad() throws Exception {} 
+	protected void	postProcessOnLoad() throws ModelException {} 
 	
 	/**
 	 * Load items from the list into the table
@@ -218,7 +218,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 * @return Continue <code>true/false</code>
 	 */
 	protected boolean loadItems(ThreadStatus<?> pThread,
-								DataSet<?>		pData) throws Exception {
+								DataSet<?>		pData) throws ModelException {
 		boolean bContinue = true;
 		String	myQuery;
 		int		mySteps;
@@ -266,7 +266,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 		}
 		
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
+			throw new ModelException(ExceptionClass.SQLSERVER,
 					            "Failed to load " + getTableName(),
 					            e);
 		}
@@ -309,7 +309,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 */
 	protected boolean insertItems(ThreadStatus<?> 	pThread,
 								  DataSet<?>		pData,
-								  BatchControl		pBatch) throws Exception {
+								  BatchControl		pBatch) throws ModelException {
 		DataList<?,T>.ListIterator	myIterator;
 		T							myCurr    = null;
 		int     					myCount   = 0;
@@ -387,7 +387,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 		
 		catch (Throwable e) {
 			theDatabase.close();
-			throw new Exception(ExceptionClass.SQLSERVER,
+			throw new ModelException(ExceptionClass.SQLSERVER,
 								myCurr,
 					            "Failed to insert " + getTableName(),
 					            e);
@@ -403,7 +403,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 * @return Continue <code>true/false</code>
 	 */
 	protected boolean updateItems(ThreadStatus<?> 	pThread,
-			  					  BatchControl		pBatch) throws Exception {
+			  					  BatchControl		pBatch) throws ModelException {
 		DataList<?,T>.ListIterator	myIterator;
 		T							myCurr    = null;
 		int     					myCount   = 0;
@@ -470,7 +470,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	
 		catch (Throwable e) {
 			theDatabase.close();
-			throw new Exception(ExceptionClass.SQLSERVER,
+			throw new ModelException(ExceptionClass.SQLSERVER,
 								myCurr,
 								"Failed to update " + getTableName(),
 								e);
@@ -481,7 +481,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	}
 	
 	/* Update the item */
-	private boolean updateItem(T	pItem) throws Exception {
+	private boolean updateItem(T	pItem) throws ModelException {
 		HistoryValues<T> 	myCurr;
 		HistoryValues<T> 	myBase;
 		boolean				isUpdated = false;
@@ -513,7 +513,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 		}
 		
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.SQLSERVER,
+			throw new ModelException(ExceptionClass.SQLSERVER,
 								pItem,
 					            "Failed to update item",
 					            e);
@@ -529,7 +529,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 * @return Continue <code>true/false</code>
 	 */
 	protected boolean deleteItems(ThreadStatus<?> 	pThread,
-			  					  BatchControl		pBatch) throws Exception {
+			  					  BatchControl		pBatch) throws ModelException {
 		DataList<?,T>.ListIterator	myIterator;
 		T							myCurr    = null;
 		int     					myCount   = 0;
@@ -598,7 +598,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	
 		catch (Throwable e) {
 			theDatabase.close();
-			throw new Exception(ExceptionClass.SQLSERVER,
+			throw new ModelException(ExceptionClass.SQLSERVER,
 								myCurr,
 								"Failed to delete " + getTableName(),
 								e);
@@ -611,7 +611,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	/**
 	 * Create the table
 	 */
-	protected void createTable() throws Exception {
+	protected void createTable() throws ModelException {
 		String	myCreate;
 	
 		/* Protect the create */
@@ -630,7 +630,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	
 		catch (Throwable e) {
 			theDatabase.close();
-			throw new Exception(ExceptionClass.SQLSERVER,
+			throw new ModelException(ExceptionClass.SQLSERVER,
 								"Failed to create " + getTableName(),
 								e);
 		}
@@ -642,7 +642,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	/**
 	 * Drop the table
 	 */
-	protected void dropTable() throws Exception {
+	protected void dropTable() throws ModelException {
 		String	myDrop;
 	
 		/* Protect the drop */
@@ -661,7 +661,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	
 		catch (Throwable e) {
 			theDatabase.close();
-			throw new Exception(ExceptionClass.SQLSERVER,
+			throw new ModelException(ExceptionClass.SQLSERVER,
 								"Failed to drop " + getTableName(),
 								e);
 		}
@@ -673,7 +673,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	/**
 	 * Truncate the table
 	 */
-	protected void purgeTable() throws Exception {
+	protected void purgeTable() throws ModelException {
 		String	myTrunc;
 	
 		/* Protect the truncate */
@@ -685,7 +685,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	
 		catch (Throwable e) {
 			theDatabase.close();
-			throw new Exception(ExceptionClass.SQLSERVER,
+			throw new ModelException(ExceptionClass.SQLSERVER,
 								"Failed to purge " + getTableName(),
 								e);
 		}

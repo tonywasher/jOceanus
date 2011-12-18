@@ -23,15 +23,15 @@ import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.DateRange;
 import uk.co.tolcroft.models.ui.Editor;
 import uk.co.tolcroft.models.ui.ErrorPanel;
-import uk.co.tolcroft.models.ui.StdMouse;
-import uk.co.tolcroft.models.ui.StdTable;
+import uk.co.tolcroft.models.ui.DataMouse;
+import uk.co.tolcroft.models.ui.DataTable;
 import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 import uk.co.tolcroft.models.DateDay;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.*;
 
-public class AccountStatement extends StdTable<Event> {
+public class AccountStatement extends DataTable<Event> {
 	/* Members */
 	private static final long serialVersionUID = -9123840084764342499L;
 
@@ -179,9 +179,9 @@ public class AccountStatement extends StdTable<Event> {
 				theModel.fireUpdateColEvent(COLUMN_BALANCE);
 			}
 			/* Catch Exceptions */
-			catch (Exception e) {
+			catch (ModelException e) {
 				/* Build the error */
-				Exception myError = new Exception(ExceptionClass.DATA,
+				ModelException myError = new ModelException(ExceptionClass.DATA,
 										          "Failed to calculate table",
 										          e);
 				
@@ -236,9 +236,9 @@ public class AccountStatement extends StdTable<Event> {
 			}
 			
 			/* Catch Exceptions */
-			catch (Exception e) {
+			catch (ModelException e) {
 				/* Build the error */
-				Exception myError = new Exception(ExceptionClass.DATA,
+				ModelException myError = new ModelException(ExceptionClass.DATA,
 										          "Failed to change selection",
 										          e);
 				
@@ -285,7 +285,7 @@ public class AccountStatement extends StdTable<Event> {
 	 * Set Selection to the specified account
 	 * @param pAccount the Account for the extract
 	 */
-	public void setSelection(Account pAccount) throws Exception {
+	public void setSelection(Account pAccount) throws ModelException {
 		theStatement = null;
 		theLines     = null;
 		theRange     = theSelect.getRange();
@@ -324,7 +324,7 @@ public class AccountStatement extends StdTable<Event> {
 	 * Set Selection to the specified date range
 	 * @param pRange the Date range for the extract
 	 */
-	public void setSelection(DateDay.Range pRange) throws Exception {
+	public void setSelection(DateDay.Range pRange) throws ModelException {
 		theStatement = null;
 		theLines     = null;
 		if (theAccount != null) {
@@ -734,7 +734,7 @@ public class AccountStatement extends StdTable<Event> {
 				myLine.pushHistory();
 								
 				/* Build the error */
-				Exception myError = new Exception(ExceptionClass.DATA,
+				ModelException myError = new ModelException(ExceptionClass.DATA,
 										          "Failed to update field at ("
 										          + row + "," + col +")",
 										          e);
@@ -799,7 +799,7 @@ public class AccountStatement extends StdTable<Event> {
 	/**
 	 *  Statement mouse listener
 	 */
-	private class statementMouse extends StdMouse<Event> {
+	private class statementMouse extends DataMouse<Event> {
 				
 		/* Pop-up Menu items */
 		private static final String popupExtract  		= "View Extract";

@@ -4,8 +4,8 @@ import java.util.Date;
 
 import uk.co.tolcroft.finance.data.FinanceData.LoadState;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
@@ -417,7 +417,7 @@ public class Account extends EncryptedItem<Account> {
 			        byte[]	pUserId,
 			        byte[]	pPassword,
 			        byte[]	pAccount,
-			        byte[]	pNotes) throws Exception {
+			        byte[]	pNotes) throws ModelException {
 		/* Initialise the item */
 		super(pList, uId);
 		
@@ -439,7 +439,7 @@ public class Account extends EncryptedItem<Account> {
 		FinanceData	myData 	= pList.getData();
 		myActType = myData.getAccountTypes().searchFor(uAcTypeId);
 		if (myActType == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 		                        this,
 					            "Invalid Account Type Id");
 		myValues.setType(myActType);
@@ -490,7 +490,7 @@ public class Account extends EncryptedItem<Account> {
 			        char[]	pUserId,
 			        char[]	pPassword,
 			        char[]	pAccount,
-			        char[]	pNotes) throws Exception {
+			        char[]	pNotes) throws ModelException {
 		/* Initialise the item */
 		super(pList, uId);
 		
@@ -519,7 +519,7 @@ public class Account extends EncryptedItem<Account> {
 		FinanceData	myData 	= pList.getData();
 		myActType = myData.getAccountTypes().searchFor(uAcTypeId);
 		if (myActType == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 		                        this,
 					            "Invalid Account Type Id");
 		myValues.setType(myActType);
@@ -1026,7 +1026,7 @@ public class Account extends EncryptedItem<Account> {
 	 * Set a new description 
 	 * @param pDesc the description 
 	 */
-	public void setDescription(String pDesc) throws Exception {
+	public void setDescription(String pDesc) throws ModelException {
 		if (pDesc != null) getValues().setDesc(new StringPair(pDesc));
 		else 			   getValues().setDesc(null);
 	}
@@ -1067,7 +1067,7 @@ public class Account extends EncryptedItem<Account> {
 	 * Set a new account name 
 	 * @param pName the new name 
 	 */
-	public void setAccountName(String pName) throws Exception {
+	public void setAccountName(String pName) throws ModelException {
 		if (pName != null) getValues().setName(new StringPair(pName));
 		else 			   getValues().setName(null);
 	}
@@ -1084,7 +1084,7 @@ public class Account extends EncryptedItem<Account> {
 	 * Set a new web site
 	 * @param pWebSite the new site 
 	 */
-	public void setWebSite(char[] pWebSite) throws Exception {
+	public void setWebSite(char[] pWebSite) throws ModelException {
 		if (pWebSite != null) getValues().setWebSite(new CharArrayPair(pWebSite));
 		else 				  getValues().setWebSite(null);
 	}
@@ -1093,7 +1093,7 @@ public class Account extends EncryptedItem<Account> {
 	 * Set a new customer number
 	 * @param pCustNo the new number 
 	 */
-	public void setCustNo(char[] pCustNo) throws Exception {
+	public void setCustNo(char[] pCustNo) throws ModelException {
 		if (pCustNo != null) getValues().setCustNo(new CharArrayPair(pCustNo));
 		else 				 getValues().setCustNo(null);
 	}
@@ -1102,7 +1102,7 @@ public class Account extends EncryptedItem<Account> {
 	 * Set a new UserId
 	 * @param pUserId the new id 
 	 */
-	public void setUserId(char[] pUserId) throws Exception {
+	public void setUserId(char[] pUserId) throws ModelException {
 		if (pUserId != null) getValues().setUserId(new CharArrayPair(pUserId));
 		else 				 getValues().setUserId(null);
 	}
@@ -1111,7 +1111,7 @@ public class Account extends EncryptedItem<Account> {
 	 * Set a new password
 	 * @param pPassword the new password 
 	 */
-	public void setPassword(char[] pPassword) throws Exception {
+	public void setPassword(char[] pPassword) throws ModelException {
 		if (pPassword != null) getValues().setPassword(new CharArrayPair(pPassword));
 		else 				   getValues().setPassword(null);
 	}
@@ -1120,7 +1120,7 @@ public class Account extends EncryptedItem<Account> {
 	 * Set a new account
 	 * @param pAccount the new account 
 	 */
-	public void setAccount(char[] pAccount) throws Exception {
+	public void setAccount(char[] pAccount) throws ModelException {
 		if (pAccount != null) getValues().setAccount(new CharArrayPair(pAccount));
 		else 				  getValues().setAccount(null);
 	}
@@ -1129,7 +1129,7 @@ public class Account extends EncryptedItem<Account> {
 	 * Set a new notes
 	 * @param pNotes the new notes 
 	 */
-	public void setNotes(char[] pNotes) throws Exception {
+	public void setNotes(char[] pNotes) throws ModelException {
 		if (pNotes != null) getValues().setNotes(new CharArrayPair(pNotes));
 		else 				getValues().setNotes(null);
 	}
@@ -1363,7 +1363,7 @@ public class Account extends EncryptedItem<Account> {
 		/**
 		 * Update account details after data update
 		 */
-		public void markActiveItems() throws Exception {
+		public void markActiveItems() throws ModelException {
 			ListIterator 	myIterator;
 			Account 		myCurr;
 			AccountType		myType;
@@ -1419,7 +1419,7 @@ public class Account extends EncryptedItem<Account> {
 					/* Validate the account */
 					myCurr.validate();
 					if (myCurr.hasErrors()) 
-						throw new Exception(ExceptionClass.VALIDATE,
+						throw new ModelException(ExceptionClass.VALIDATE,
 											myCurr,
 											"Failed validation");
 				}
@@ -1521,7 +1521,7 @@ public class Account extends EncryptedItem<Account> {
 		 * @param pClosed the Close Date for the account (or null)
 		 * @param pParent the Name of the parent account (or null)
 		 * @param pAlias the Name of the alias account (or null)
-		 * @throws Exception on error
+		 * @throws ModelException on error
 		 */ 
 		public void addItem(int		uId,
 							String  pName,
@@ -1536,7 +1536,7 @@ public class Account extends EncryptedItem<Account> {
 					        char[]	pUserId,
 					        char[]	pPassword,
 					        char[]	pAccount,
-					        char[]	pNotes) throws Exception {
+					        char[]	pNotes) throws ModelException {
 			AccountType.List 	myActTypes;
 			AccountType 		myActType;
 			Account       		myAccount;			
@@ -1551,7 +1551,7 @@ public class Account extends EncryptedItem<Account> {
 			/* Look up the Account Type */
 			myActType = myActTypes.searchFor(pAcType);
 			if (myActType == null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 			                        "Account [" + pName + 
 			                        "] has invalid Account Type [" + 
 			                        pAcType + "]");
@@ -1561,7 +1561,7 @@ public class Account extends EncryptedItem<Account> {
 				/* Look up the Parent */
 				myParent = searchFor(pParent);
 				if (myParent == null) 
-					throw new Exception(ExceptionClass.DATA,
+					throw new ModelException(ExceptionClass.DATA,
 			                            "Account [" + pName + 
 			                            "] has invalid Parent [" + 
 			                            pParent + "]");
@@ -1573,7 +1573,7 @@ public class Account extends EncryptedItem<Account> {
 				/* Look up the Parent */
 				myAlias = searchFor(pAlias);
 				if (myAlias == null) 
-					throw new Exception(ExceptionClass.DATA,
+					throw new ModelException(ExceptionClass.DATA,
 			                            "Account [" + pName + 
 			                            "] has invalid Alias [" + 
 			                            pAlias + "]");
@@ -1599,7 +1599,7 @@ public class Account extends EncryptedItem<Account> {
 				
 			/* Check that this Account has not been previously added */
 			if (searchFor(myAccount.getName()) != null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 						  			myAccount,
 			                        "Duplicate Account");			
 			
@@ -1623,7 +1623,7 @@ public class Account extends EncryptedItem<Account> {
 		 * @param pPassword the Encrypted Password of the account
 		 * @param pAccount the Encrypted Account details of the account
 		 * @param pNotes the Encrypted Notes for the account
-		 * @throws Exception on error
+		 * @throws ModelException on error
 		 */ 
 		public void addItem(int     uId,
 							int		uControlId,
@@ -1639,7 +1639,7 @@ public class Account extends EncryptedItem<Account> {
 					        byte[]	pUserId,
 					        byte[]	pPassword,
 					        byte[]	pAccount,
-					        byte[]	pNotes) throws Exception {
+					        byte[]	pNotes) throws ModelException {
 			Account       myAccount;
 				
 			/* Create the new account */
@@ -1662,13 +1662,13 @@ public class Account extends EncryptedItem<Account> {
 				
 			/* Check that this AccountId has not been previously added */
 			if (!isIdUnique(uId)) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									myAccount,
 			  			            "Duplicate AccountId");
 				 
 			/* Check that this Account has not been previously added */
 			if (searchFor(myAccount.getName()) != null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 						  			myAccount,
 			                        "Duplicate Account");
 			
@@ -1680,7 +1680,7 @@ public class Account extends EncryptedItem<Account> {
 		 * Validate newly loaded accounts. This is deliberately deferred until after loading
 		 * of the Rates/Patterns/Prices so as to validate the interrelationships
 		 */
-		public void validateLoadedAccounts() throws Exception {
+		public void validateLoadedAccounts() throws ModelException {
 			ListIterator myIterator;
 			Account      myCurr;
 			AccountType	 myType;
@@ -1729,7 +1729,7 @@ public class Account extends EncryptedItem<Account> {
 					
 				/* Handle validation failure */
 				if (myCurr.hasErrors()) 
-					throw new Exception(ExceptionClass.VALIDATE,
+					throw new ModelException(ExceptionClass.VALIDATE,
 										myCurr,
 										"Failed validation");				
 			}
@@ -1953,7 +1953,7 @@ public class Account extends EncryptedItem<Account> {
 		/**
 		 * Update encryption after security change
 		 */
-		protected void updateSecurity() throws Exception {
+		protected void updateSecurity() throws ModelException {
 			/* Update the encryption */
 			theName = new StringPair(theName.getString());
 			if (theDesc     != null) theDesc		= new StringPair(theDesc.getString());
@@ -1968,7 +1968,7 @@ public class Account extends EncryptedItem<Account> {
 		/**
 		 * Ensure encryption after security change
 		 */
-		protected void applySecurity() throws Exception {
+		protected void applySecurity() throws ModelException {
 			/* Apply the encryption */
 			theName.encryptPair(null);
 			if (theDesc     != null) theDesc.encryptPair(null);
@@ -1984,7 +1984,7 @@ public class Account extends EncryptedItem<Account> {
 		 * Adopt encryption from base
 		 * @param pBase the Base values
 		 */
-		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {
+		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws ModelException {
 			Values myBase = (Values)pBase;
 
 			/* Apply the encryption */

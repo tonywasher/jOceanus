@@ -5,7 +5,7 @@ import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugObject;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
 
-public class Exception 	extends java.lang.Exception
+public class ModelException 	extends java.lang.Exception
 						implements DebugObject {
 	/**
 	 * Required serialisation field
@@ -39,7 +39,7 @@ public class Exception 	extends java.lang.Exception
 	 * @param ec the exception class
 	 * @param s the description of the exception
 	 */
-	public Exception(ExceptionClass ec, String s) { 
+	public ModelException(ExceptionClass ec, String s) { 
 		super(s); 
 		theClass = ec;
 		fillInStackTrace();
@@ -51,7 +51,7 @@ public class Exception 	extends java.lang.Exception
 	 * @param s the description of the exception
 	 * @param c	the underlying exception
 	 */
-	public Exception(ExceptionClass ec, String s, Throwable c) {
+	public ModelException(ExceptionClass ec, String s, Throwable c) {
 		super(s, c);
 		theClass = ec;
 	}
@@ -62,7 +62,7 @@ public class Exception 	extends java.lang.Exception
 	 * @param o	the associated object
 	 * @param s the description of the exception
 	 */
-	public Exception(ExceptionClass ec,
+	public ModelException(ExceptionClass ec,
 			         DebugObject   o,
 			         String         s) {
 		super(s);
@@ -78,7 +78,7 @@ public class Exception 	extends java.lang.Exception
 	 * @param s the description of the exception
 	 * @param c	the underlying exception
 	 */
-	public Exception(ExceptionClass ec,
+	public ModelException(ExceptionClass ec,
 			         DebugObject   o,
 			         String         s,
 			         Throwable		c) {
@@ -111,8 +111,8 @@ public class Exception 	extends java.lang.Exception
 		/* while the current exception is non-null */
 		while (myException != null) {
 			/* If the exception is an instance of us */
-			if (myException instanceof Exception) {
-				Exception myExc = (Exception)myException;
+			if (myException instanceof ModelException) {
+				ModelException myExc = (ModelException)myException;
 				
 				/* Add the message details */
 				myDetail.append("<tr><td>Class</td><td>");
@@ -139,7 +139,7 @@ public class Exception 	extends java.lang.Exception
 			myNext	= myException.getCause();
 			
 			/* Break loop if at first level with an Exception cause else continue down chain */
-			if ((myException == this) && (myNext instanceof Exception)) break;
+			if ((myException == this) && (myNext instanceof ModelException)) break;
 			myException = myNext;
 		}
 		
@@ -183,9 +183,9 @@ public class Exception 	extends java.lang.Exception
 
 		/* If we have an underlying cause */
 		if ((myCause != null) &&
-			(myCause instanceof Exception)) {
+			(myCause instanceof ModelException)) {
 			/* Add caused by child */
-			pManager.addChildEntry(pParent, "CausedBy", (Exception)myCause);
+			pManager.addChildEntry(pParent, "CausedBy", (ModelException)myCause);
 		}
 		
 		/* If we have an object */

@@ -1,8 +1,8 @@
 package uk.co.tolcroft.models.data;
 
 import uk.co.tolcroft.models.Difference;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.help.DebugDetail;
 
 public class ControlData extends DataItem<ControlData> {
@@ -123,7 +123,7 @@ public class ControlData extends DataItem<ControlData> {
 	private ControlData(List pList,
 				  	    int	 uId,
 				  	    int  uVersion, 
-				  	    int	 uControlId) throws Exception {
+				  	    int	 uControlId) throws ModelException {
 		/* Initialise the item */
 		super(pList, uId);
 		Values myValues = getValues();
@@ -135,7 +135,7 @@ public class ControlData extends DataItem<ControlData> {
 		/* Look up the ControlKey */
 		ControlKey myControl = pList.theData.getControlKeys().searchFor(uControlId);
 		if (myControl == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 		                        this,
 					            "Invalid ControlKey Id");
 		myValues.setControlKey(myControl);
@@ -232,7 +232,7 @@ public class ControlData extends DataItem<ControlData> {
 	 * Set a new ControlKey 
 	 * @param pControl the new control key 
 	 */
-	protected void setControlKey(ControlKey pControl) throws Exception {
+	protected void setControlKey(ControlKey pControl) throws ModelException {
 		/* If we do not have a control Key */
 		Values myValues = getValues();
 
@@ -367,7 +367,7 @@ public class ControlData extends DataItem<ControlData> {
 		 */
 		public void addItem(int  	uId,
 							int  	uVersion,
-							int		uControlId) throws Exception {
+							int		uControlId) throws ModelException {
 			ControlData     	myControl;
 			
 			/* Create the ControlData */
@@ -378,13 +378,13 @@ public class ControlData extends DataItem<ControlData> {
 			
 			/* Check that this ControlId has not been previously added */
 			if (!isIdUnique(uId)) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									myControl,
 									"Duplicate ControlId (" + uId + ")");
 			 
 			/* Only one static is allowed */
 			if (theControl != null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									myControl,
 									"Control record already exists");
 			 
@@ -397,7 +397,7 @@ public class ControlData extends DataItem<ControlData> {
 		 *  Add a ControlData item (with no security as yet)
 		 */
 		public void addItem(int		uId,
-							int  	uVersion) throws Exception {
+							int  	uVersion) throws ModelException {
 			ControlData     	myControl;
 			
 			/* Create the ControlData */
@@ -405,7 +405,7 @@ public class ControlData extends DataItem<ControlData> {
 			
 			/* Only one static is allowed */
 			if (theControl != null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									myControl,
 									"Control record already exists");
 			 

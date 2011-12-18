@@ -2,7 +2,7 @@ package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.EventInfoType;
 import uk.co.tolcroft.finance.data.FinanceData;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.database.TableStaticData;
@@ -40,7 +40,7 @@ public class TableEventInfoType extends TableStaticData<EventInfoType> {
 	}
 
 	/* Load the infoType */
-	protected void loadTheItem(int pId, int pControlId, boolean isEnabled, int iOrder, byte[] pFreq, byte[] pDesc) throws Exception {
+	protected void loadTheItem(int pId, int pControlId, boolean isEnabled, int iOrder, byte[] pFreq, byte[] pDesc) throws ModelException {
 		/* Add into the list */
 		theList.addItem(pId, pControlId, isEnabled, iOrder, pFreq, pDesc);
 	}

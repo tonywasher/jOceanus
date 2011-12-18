@@ -1,7 +1,7 @@
 package uk.co.tolcroft.finance.data;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
@@ -50,7 +50,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 	 * @param sName Name of TaxRegime
 	 */
 	private TaxRegime(List 	 pList,
-			          String sName) throws Exception {
+			          String sName) throws ModelException {
 		super(pList, sName);
 	}
 	
@@ -68,7 +68,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 			          boolean	isEnabled,
 			          int		uOrder, 
 			          String	pName,
-			          String	pDesc) throws Exception {
+			          String	pDesc) throws ModelException {
 		super(pList, uId, isEnabled, uOrder , pName, pDesc);
 	}
 	
@@ -88,7 +88,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 			      	  boolean	isEnabled,
 			      	  int		uOrder, 
 			      	  byte[]	pName,
-			      	  byte[]	pDesc) throws Exception {
+			      	  byte[]	pDesc) throws ModelException {
 		super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
 	}
 
@@ -222,7 +222,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 		 * Add a TaxRegime
 		 * @param pTaxRegime the Name of the tax regime
 		 */ 
-		public void addItem(String pTaxRegime) throws Exception {
+		public void addItem(String pTaxRegime) throws ModelException {
 			TaxRegime     myTaxRegime;
 			
 			/* Create a new tax regime */
@@ -230,13 +230,13 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 				
 			/* Check that this TaxRegimeId has not been previously added */
 			if (!isIdUnique(myTaxRegime.getId())) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 	  					  			myTaxRegime,
 			  			            "Duplicate TaxRegimeId");
 				 
 			/* Check that this TaxRegime has not been previously added */
 			if (searchFor(pTaxRegime) != null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 	  					  			myTaxRegime,
 			                        "Duplicate TaxRegime");
 								
@@ -256,7 +256,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 							boolean	isEnabled,
 							int		uOrder,
 				            String 	pTaxRegime,
-				            String 	pDesc) throws Exception {
+				            String 	pDesc) throws ModelException {
 			TaxRegime myTaxReg;
 				
 			/* Create a new Tax Regime */
@@ -264,7 +264,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 				
 			/* Check that this TaxRegimeId has not been previously added */
 			if (!isIdUnique(myTaxReg.getId())) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 	  					  			myTaxReg,
 			  			            "Duplicate TaxRegimeId");
 				 
@@ -276,7 +276,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 
 			/* Handle validation failure */
 			if (myTaxReg.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myTaxReg,
 									"Failed validation");
 		}	
@@ -295,7 +295,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 							boolean	isEnabled,
 							int		uOrder,
 				            byte[] 	pTaxRegime,
-				            byte[] 	pDesc) throws Exception {
+				            byte[] 	pDesc) throws ModelException {
 			TaxRegime     myTaxReg;
 			
 			/* Create a new tax regime */
@@ -303,7 +303,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 				
 			/* Check that this TaxRegimeId has not been previously added */
 			if (!isIdUnique(uId)) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 	  					  			myTaxReg,
 			  			            "Duplicate TaxRegimeId");
 				 
@@ -315,7 +315,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 
 			/* Handle validation failure */
 			if (myTaxReg.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myTaxReg,
 									"Failed validation");
 		}			

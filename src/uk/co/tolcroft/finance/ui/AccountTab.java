@@ -12,8 +12,8 @@ import javax.swing.event.ChangeListener;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.ui.controls.*;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
@@ -149,7 +149,7 @@ public class AccountTab implements stdPanel,
 	/**
 	 * Refresh views/controls after a load/update of underlying data
 	 */
-	public void refreshData() throws Exception {
+	public void refreshData() throws ModelException {
 		/* Refresh the account selection */
 		theSelect.refreshData();
 			
@@ -267,7 +267,7 @@ public class AccountTab implements stdPanel,
 		theViewSet.applyChanges();
 
 		/* Access any error */
-		Exception myError = theView.getError();
+		ModelException myError = theView.getError();
 		
 		/* Show the error */
 		if (myError != null) theError.setError(myError);
@@ -297,7 +297,7 @@ public class AccountTab implements stdPanel,
 			
 			catch (Throwable e) {
 				/* Build the error */
-				Exception myError = new Exception(ExceptionClass.DATA,
+				ModelException myError = new ModelException(ExceptionClass.DATA,
 										          "Failed to change selection",
 										          e);
 				
@@ -326,7 +326,7 @@ public class AccountTab implements stdPanel,
 	 * Select an explicit account
 	 * @param pAccount the account to select
 	 */
-	public void setSelection(Account pAccount) throws Exception {
+	public void setSelection(Account pAccount) throws ModelException {
 		FinanceData myData = theView.getData();
 		
 		/* Release old list */
@@ -503,7 +503,7 @@ public class AccountTab implements stdPanel,
 
 		catch (Throwable e) {
 			/* Build the error */
-			Exception myError = new Exception(ExceptionClass.DATA,
+			ModelException myError = new ModelException(ExceptionClass.DATA,
 									          "Failed to change selection",
 									          e);
 			

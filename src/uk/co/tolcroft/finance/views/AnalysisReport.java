@@ -9,7 +9,6 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Decimal.*;
-import uk.co.tolcroft.models.data.Properties;
 
 public class AnalysisReport {
 	/* Properties */
@@ -776,10 +775,9 @@ public class AnalysisReport {
 
 	/**
 	 * Build a web output of the taxation report 
-	 * @param pProperties the Properties
 	 * @return Web output
 	 */
-	public String getTaxReport(Properties pProperties) {
+	public String getTaxReport() {
 		AnalysisBucket  		myBucket;
 		StringBuilder		    myOutput = new StringBuilder(10000);
 		StringBuilder			myDetail = new StringBuilder(10000);
@@ -789,7 +787,7 @@ public class AnalysisReport {
 		TransSummary			myTrans;
 
 		/* Ensure that tax has been calculated */
-		theAnalysisYear.calculateTax(pProperties);
+		theAnalysisYear.calculateTax();
 		
 		/* Access the bucket lists */
 		myList  = theAnalysis.getList();
@@ -1144,8 +1142,12 @@ public class AnalysisReport {
 		
 		/* Build the report */
 		StringBuilder myBuilder = makeAccountListReport(myBreakdown.getSalary(), null);
-		myBuilder.append(makeAccountListReport(myBreakdown.getInterest(), null));
-		myBuilder.append(makeAccountListReport(myBreakdown.getDividend(), null));
+		myBuilder.append(makeAccountListReport(myBreakdown.getRental(), null));
+		myBuilder.append(makeAccountListReport(myBreakdown.getTaxableInterest(), null));
+		myBuilder.append(makeAccountListReport(myBreakdown.getTaxableDividend(), null));
+		myBuilder.append(makeAccountListReport(myBreakdown.getUnitTrustDividend(), null));
+		myBuilder.append(makeAccountListReport(myBreakdown.getTaxFreeInterest(), null));
+		myBuilder.append(makeAccountListReport(myBreakdown.getTaxFreeDividend(), null));
 	
 		/* Return the report */
 		return myBuilder.toString();
@@ -1163,6 +1165,9 @@ public class AnalysisReport {
 		String					myListName;
 		RecordList.ListIterator	myIterator;
 
+		/* If there is zero income return empty string */
+		if (!pList.getTotals().getGrossIncome().isNonZero()) return myOutput;
+		
 		/* Format the detail */
 		myOutput.append("<a name=\"Income");
 		myOutput.append(pList.getName());

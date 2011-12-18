@@ -4,13 +4,17 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -53,11 +57,6 @@ public class PropertySetPanel extends JPanel {
 	 */
 	private String					theName		= null;
 	
-	/**
-	 * Do we have changes 
-	 */
-	private boolean					hasChanges	= false;
-	
 	@Override
 	public String toString() { return theName; }
 	
@@ -72,7 +71,6 @@ public class PropertySetPanel extends JPanel {
 		
 		/* Record the set */
 		theProperties 	= pSet;
-		theParent		= pParent;
 
 		/* Record the name of the set */
 		theName = pSet.getClass().getSimpleName();
@@ -132,6 +130,28 @@ public class PropertySetPanel extends JPanel {
 					myConstraints.insets	= new Insets(5,5,5,5);
 					add(myItem.getComponent(), myConstraints);
 					break;
+				case Directory:
+				case File:
+					/* Add the Label into the first slot */
+					myConstraints.gridx 	= 0;
+					myConstraints.gridy 	= myRow;
+					myConstraints.gridwidth = 1;
+					myConstraints.fill 		= GridBagConstraints.HORIZONTAL;
+					myConstraints.weightx   = 0.0;
+					myConstraints.anchor    = GridBagConstraints.LINE_END;
+					myConstraints.insets	= new Insets(5,5,5,5);
+					add(myItem.getLabel(), myConstraints);
+
+					/* Add the Component into the second slot */
+					myConstraints.gridx 	= 1;
+					myConstraints.gridy 	= myRow++;
+					myConstraints.gridwidth = GridBagConstraints.REMAINDER;
+					myConstraints.fill 		= GridBagConstraints.HORIZONTAL;
+					myConstraints.weightx   = 1.0;
+					myConstraints.anchor    = GridBagConstraints.LINE_START;
+					myConstraints.insets	= new Insets(5,5,5,5);
+					add(myItem.getComponent(), myConstraints);
+					break;
 				default:
 					/* Add the Label into the first slot */
 					myConstraints.gridx 	= 0;
@@ -164,27 +184,30 @@ public class PropertySetPanel extends JPanel {
 					add(new JLabel(), myConstraints);
 					break;
 			}
-			
-			/* If we have an options panel */
-			if (myOptions != null) {
-				/* Add the Label into the first slot */
-				myConstraints.gridx 	= 0;
-				myConstraints.gridy 	= myRow++;
-				myConstraints.gridwidth = GridBagConstraints.REMAINDER;
-				myConstraints.fill 		= GridBagConstraints.HORIZONTAL;				
-				myConstraints.weightx   = 1.0;
-				myConstraints.anchor    = GridBagConstraints.LINE_START;
-				myConstraints.insets	= new Insets(5,5,5,5);
-				add(myOptions, myConstraints);
-			}
 		}
+		
+		/* If we have an options panel */
+		if (myOptions != null) {
+			/* Add the Label into the first slot */
+			myConstraints.gridx 	= 0;
+			myConstraints.gridy 	= myRow++;
+			myConstraints.gridwidth = GridBagConstraints.REMAINDER;
+			myConstraints.fill 		= GridBagConstraints.HORIZONTAL;				
+			myConstraints.weightx   = 1.0;
+			myConstraints.anchor    = GridBagConstraints.LINE_START;
+			myConstraints.insets	= new Insets(5,5,5,5);
+			add(myOptions, myConstraints);
+		}
+		
+		/* Declare the parent */
+		theParent		= pParent;
 	}
 	
 	/**
 	 * Does the Property Set have changes
 	 * @return does the set have changes  
 	 */
-	public boolean hasChanges() { return hasChanges; }
+	public boolean hasChanges() { return theProperties.hasChanges(); }
 	
 	/**
 	 * Reset changes 
@@ -192,7 +215,6 @@ public class PropertySetPanel extends JPanel {
 	public void resetChanges() {
 		/* Reset changes and clear flag */
 		theProperties.resetChanges();
-		hasChanges = false;
 		
 		/* Update the fields */
 		updateFields();
@@ -204,7 +226,6 @@ public class PropertySetPanel extends JPanel {
 	public void storeChanges() throws Exception {
 		/* Reset changes and clear flag */
 		theProperties.storeChanges();
-		hasChanges = false;
 		
 		/* Update the fields */
 		updateFields();
@@ -225,14 +246,11 @@ public class PropertySetPanel extends JPanel {
 	 * Notify changes 
 	 */
 	private void notifyChanges()  {
-		/* Set flag */
-		hasChanges = true;
-		
 		/* Update the fields */
 		updateFields();
 		
 		/* Notify the parent */
-		theParent.notifyChanges();
+		if (theParent != null) theParent.notifyChanges();
 	}
 	
 	/**
@@ -257,7 +275,7 @@ public class PropertySetPanel extends JPanel {
 		/**
 		 * The label for the property
 		 */
-		private final JLabel		theLabel;
+		private final JLabel	theLabel;
 		
 		/**
 		 * Constructor
@@ -267,26 +285,28 @@ public class PropertySetPanel extends JPanel {
 			theProperty = pProperty;
 			theType		= pProperty.getType();
 			
+			/* Create the label item */
+			switch (theType) {
+				case Boolean:	theLabel=null; break;
+				default:
+					/* Create the label */
+					theLabel = new JLabel(theProperty.getDisplay() + ":");
+					theLabel.setHorizontalAlignment(JLabel.RIGHT);
+					break;
+			}
+			
 			/* Switch on field type */
 			switch (theType) {
 				/* Create the Underlying field */
 				case String: 	theField = new StringField(theProperty); break;
+				case Directory: theField = new StringField(theProperty); break;
+				case File: 		theField = new StringField(theProperty); break;
 				case Integer: 	theField = new IntegerField(theProperty); break;
 				case Boolean: 	theField = new BooleanField(theProperty); break;
 				case Date: 		theField = new DateField(theProperty); break;
 				case Enum: 		theField = new EnumField(theProperty); break;
 				default:		theField = null;
 			}
-			
-			/* If the type if not boolean */
-			if (theType != PropertyType.Boolean) {
-				/* Create the label */
-				theLabel = new JLabel(theProperty.getDisplay() + ":");
-				theLabel.setHorizontalAlignment(JLabel.RIGHT);
-			}
-			
-			/* else no JLabel */
-			else theLabel = null;
 			
 			/* Initialise the field */
 			theField.updateField();
@@ -301,8 +321,8 @@ public class PropertySetPanel extends JPanel {
 		 * Obtain label
 		 * @return the label
 		 */
-		protected JLabel getLabel() 	{ return theLabel; }
-		
+		protected JComponent getLabel() 	{ return theField.getLabel(); }
+				
 		/**
 		 * Obtain component
 		 * @return the component
@@ -318,6 +338,12 @@ public class PropertySetPanel extends JPanel {
 			 * @return the component
 			 */
 			protected abstract JComponent getComponent();
+			
+			/**
+			 * Obtain label
+			 * @return the label
+			 */
+			protected JComponent getLabel() 	{ return theLabel; }
 			
 			/**
 			 * Update the field value and adjust rendering
@@ -340,6 +366,14 @@ public class PropertySetPanel extends JPanel {
 			private final StringProperty	theString;
 			
 			/**
+			 * The button for the property 
+			 */
+			private  JButton				theButton = null;
+		
+			@Override
+			protected JComponent getLabel() { return (theType == PropertyType.String) ? super.getLabel() : theButton; }
+			
+			/**
 			 * Constructor
 			 * @param pProperty
 			 */
@@ -350,7 +384,15 @@ public class PropertySetPanel extends JPanel {
 				theField.setColumns(60);
 				
 				/* Add property change listener */
-				theField.addPropertyChangeListener(ValueField.valueName, new PropertyListener());
+				PropertyListener myListener = new PropertyListener();
+				theField.addPropertyChangeListener(ValueField.valueName, myListener);
+				
+				/* If the property type is string we have finished */
+				if (pProperty.getType() == PropertyType.String) return;
+				
+				/* Create a button */
+				theButton = new JButton(pProperty.getDisplay());
+				theButton.addActionListener(myListener);
 			}
 			
 			@Override
@@ -369,7 +411,8 @@ public class PropertySetPanel extends JPanel {
 			/**
 			 * PropertyListener class
 			 */
-			private class PropertyListener implements PropertyChangeListener {
+			private class PropertyListener implements PropertyChangeListener,
+													  ActionListener {
 
 				@Override
 				public void propertyChange(PropertyChangeEvent evt) {
@@ -381,8 +424,58 @@ public class PropertySetPanel extends JPanel {
 						theString.setValue(myValue);
 					
 						/* Note if we have any changes */
-						if (theString.isChanged())
-							notifyChanges();
+						notifyChanges();
+					}
+				}
+
+				@Override
+				public void actionPerformed(ActionEvent evt) {
+					Object o = evt.getSource();
+					
+					/* If this is our button */
+					if (o == theButton) {
+						/* Switch on the property type */
+						switch (theType) {
+							/* If we are a directory property */
+							case Directory:
+								/* Create and show the dialog */
+								FileSelector myDialog = new FileSelector(theParent.getPanel(),
+																		 "Select " + theString.getDisplay(),
+																		 new File(theString.getValue()));
+								myDialog.showDialog();
+								
+								/* Handle selection */
+								File myDir = myDialog.getSelectedFile();
+								if (myDir != null) {
+									/* Set the new value of the property */
+									theString.setValue(myDir.getAbsolutePath());
+								
+									/* Note of any changes */
+									notifyChanges();								
+								}
+								break;
+
+							/* If we are a file property */
+							case File:
+								/* Create and show the dialog */
+								FileSelector myFileDialog = new FileSelector(theParent.getPanel(),
+																		 	 "Select " + theString.getDisplay(),
+																		 	 new File(theString.getValue()),
+																		 	 null,
+																		 	 null);
+								myFileDialog.showDialog();
+								
+								/* Handle selection */
+								File myFile = myFileDialog.getSelectedFile();
+								if (myFile != null) {
+									/* Set the new value of the property */
+									theString.setValue(myFile.getAbsolutePath());
+								
+									/* Note of any changes */
+									notifyChanges();								
+								}
+								break;
+						}
 					}
 				}
 			}			
@@ -444,8 +537,7 @@ public class PropertySetPanel extends JPanel {
 						theInteger.setValue(myValue);
 					
 						/* Note if we have any changes */
-						if (theInteger.isChanged())
-							notifyChanges();
+						notifyChanges();
 					}
 				}
 			}			
@@ -506,8 +598,7 @@ public class PropertySetPanel extends JPanel {
 						theBoolean.setValue(myValue);
 					
 						/* Note if we have any changes */
-						if (theBoolean.isChanged())
-							notifyChanges();
+						notifyChanges();
 					}
 				}
 			}			
@@ -537,7 +628,7 @@ public class PropertySetPanel extends JPanel {
 				theField		= new DateButton();
 				
 				/* Add property change listener */
-				theField.addPropertyChangeListener(ValueField.valueName, new PropertyListener());
+				theField.addPropertyChangeListener(DateButton.valueDATE, new PropertyListener());
 			}
 			
 			@Override
@@ -568,8 +659,7 @@ public class PropertySetPanel extends JPanel {
 						theDate.setValue(myValue);
 					
 						/* Note if we have any changes */
-						if (theDate.isChanged())
-							notifyChanges();
+						notifyChanges();
 					}
 				}
 			}			
@@ -637,8 +727,7 @@ public class PropertySetPanel extends JPanel {
 							theEnum.setValue(myName);
 					
 							/* Note if we have any changes */
-							if (theEnum.isChanged())
-								notifyChanges();
+							notifyChanges();
 						}
 					}
 				}

@@ -3,7 +3,7 @@ package uk.co.tolcroft.finance.database;
 import java.util.Date;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.database.Database;
@@ -80,12 +80,12 @@ public class TablePattern extends TableEncrypted<Event> {
 	/**
 	 * postProcess on Load
 	 */
-	protected void postProcessOnLoad() throws Exception {
+	protected void postProcessOnLoad() throws ModelException {
 		theAccounts.validateLoadedAccounts();
 	}
 	
 	/* Load the pattern */
-	protected void loadItem(int pId, int pControlId) throws Exception {
+	protected void loadItem(int pId, int pControlId) throws ModelException {
 		int		myAccountId;
 		int  	myPartnerId;
 		int  	myTranType;
@@ -122,7 +122,7 @@ public class TablePattern extends TableEncrypted<Event> {
 	}
 	
 	/* Set a field value */
-	protected void setFieldValue(Event	pItem, int iField) throws Exception  {
+	protected void setFieldValue(Event	pItem, int iField) throws ModelException  {
 		Pattern myItem = (Pattern)pItem;
 		
 		/* Switch on field id */

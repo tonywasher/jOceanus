@@ -11,15 +11,15 @@ import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.Editor;
 import uk.co.tolcroft.models.ui.ErrorPanel;
-import uk.co.tolcroft.models.ui.StdMouse;
-import uk.co.tolcroft.models.ui.StdTable;
+import uk.co.tolcroft.models.ui.DataMouse;
+import uk.co.tolcroft.models.ui.DataTable;
 import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 
-public class AccountPrices extends StdTable<AcctPrice> {
+public class AccountPrices extends DataTable<AcctPrice> {
 	/* Members */
 	private static final long serialVersionUID 		= 1035380774297559650L;
 
@@ -174,7 +174,7 @@ public class AccountPrices extends StdTable<AcctPrice> {
 	 * Set Selection to the specified account
 	 * @param pAccount the Account for the extract
 	 */
-	public void setSelection(Account pAccount) throws Exception {
+	public void setSelection(Account pAccount) throws ModelException {
 		/* Record the account */
 		theAccount 	= pAccount;
 		thePrices 	= null;
@@ -335,7 +335,7 @@ public class AccountPrices extends StdTable<AcctPrice> {
 				myPrice.pushHistory();
 				
 				/* Build the error */
-				Exception myError = new Exception(ExceptionClass.DATA,
+				ModelException myError = new ModelException(ExceptionClass.DATA,
 										          "Failed to update field at ("
 										          + row + "," + col +")",
 										          e);
@@ -389,7 +389,7 @@ public class AccountPrices extends StdTable<AcctPrice> {
 	/**
 	 *  Prices mouse listener
 	 */
-	private class pricesMouse extends StdMouse<AcctPrice> {
+	private class pricesMouse extends DataMouse<AcctPrice> {
 		/**
 		 * Constructor
 		 */

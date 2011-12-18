@@ -1,17 +1,35 @@
+/**
+ * Decimal Numbers represented as longs
+ * Copyright (C) 2011 Tony Washer
+ * Tony.Washer@yahoo.co.uk
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ */
 package uk.co.tolcroft.models;
 
 import java.text.DecimalFormatSymbols;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
-
 /**
- * Provides classes to represent decimal numbers with fixed numbers of decimal digits as Long integers.
- * Arithmetic is performed as integer arithmetic removing the inconsistent results provided by floating point arithmetic.
- * TODO handle decimals with zero decimal digits
- * TODO enable money/rate etc to be extended with differing numbers of decimals
- * TODO pick up money decimals from local
- * TODO provide Excel format patterns
+ * Provides classes to represent decimal numbers with fixed numbers of decimal digits {@link #theDecimals} as Long integers. The decimal value is multiplied by
+ * 10 to the power of the number of decimals for the number ({@link #theFactor}). The integral part of the number can be expressed as (Value / Factor) and the fractional part
+ * as (Value % Factor). Arithmetic is then performed as whole number arithmetic on these values, with due care
+ * taken on multiplication and division to express the result to the correct number of decimals without losing any part of the answer to overflow.
+ * <ul><li>TODO handle decimals with zero decimal digits
+ * <li>TODO enable money/rate etc to be extended with differing numbers of decimals
+ * <li>TODO pick up money decimals from local
+ * <li>TODO provide Excel format patterns
+ * </ul>
  */	
 public abstract class Decimal {
 	/**
@@ -284,7 +302,7 @@ public abstract class Decimal {
 	 * Parse a string to set the value 
 	 * @param pString The string to parse.
 	 */
-	private void ParseString(String pString) throws Exception {
+	private void ParseString(String pString) {
 		int 			myLen 		= pString.length();
 		StringBuilder	myWork;
 		StringBuilder	myDecimals	= null;
@@ -349,8 +367,7 @@ public abstract class Decimal {
  				
 			/* Check that the char is a valid digit */
 			if (!Character.isDigit(myChar)) 
-				throw new Exception(ExceptionClass.DATA,
-								    "Non Decimal Numeric Value: " + pString);
+				throw new IllegalArgumentException("Non Decimal Numeric Value: " + pString);
 				
 			/* Add into the value */
 			theValue *= 10;
@@ -378,8 +395,7 @@ public abstract class Decimal {
 	 				
 				/* Check that the char is a valid hex digit */
 				if (!Character.isDigit(myChar)) 
-					throw new Exception(ExceptionClass.DATA,
-									    "Non Decimal Numeric Value: " + pString);
+					throw new IllegalArgumentException("Non Decimal Numeric Value: " + pString);
 					
 				/* Add into the value */
 				theValue *= 10;
@@ -581,7 +597,7 @@ public abstract class Decimal {
 		 * Construct a new Rate by parsing a string value 
 		 * @param pRate the Rate to parse
 		 */
-		public Rate(String pRate) throws Exception {
+		public Rate(String pRate) {
 			super(NUMDEC, NumberClass.RATE);
 			super.ParseString(pRate);
 		}		
@@ -633,7 +649,7 @@ public abstract class Decimal {
 		 */
 		public static Rate Parse(String pRate) {
 			try { return new Rate(pRate); }
-			catch (Exception e) { return null; 	}
+			catch (Throwable e) { return null; 	}
 		}
 
 		/**
@@ -706,7 +722,7 @@ public abstract class Decimal {
 		 * Construct a new Ratio by parsing a string value 
 		 * @param pRatio the Ratio to parse
 		 */
-		public Ratio(String pRatio) throws Exception {
+		public Ratio(String pRatio) {
 			super(NUMDEC, NumberClass.RATE);
 			super.ParseString(pRatio);
 		}		
@@ -749,7 +765,7 @@ public abstract class Decimal {
 		 */
 		public static Ratio Parse(String pRatio) {
 			try { return new Ratio(pRatio); }
-			catch (Exception e) { return null; 	}
+			catch (Throwable e) { return null; 	}
 		}
 
 		/**
@@ -811,7 +827,7 @@ public abstract class Decimal {
 		 * Construct a new Price by parsing a string value 
 		 * @param pPrice the Price to parse
 		 */
-		public Price(String pPrice) throws Exception {
+		public Price(String pPrice) {
 			super(NUMDEC, NumberClass.MONEY);
 			super.ParseString(pPrice);
 		}		
@@ -882,7 +898,7 @@ public abstract class Decimal {
 		 */
 		public static Price Parse(String pPrice) {
 			try { return new Price(pPrice); }
-			catch (Exception e) { return null; }
+			catch (Throwable e) { return null; }
 		}
 		
 		/**
@@ -955,7 +971,7 @@ public abstract class Decimal {
 		 * Construct a new DilutedPrice by parsing a string value 
 		 * @param pPrice the Price to parse
 		 */
-		public DilutedPrice(String pPrice) throws Exception {
+		public DilutedPrice(String pPrice) {
 			super(NUMDEC, NumberClass.MONEY);
 			super.ParseString(pPrice);
 		}		
@@ -1026,7 +1042,7 @@ public abstract class Decimal {
 		 */
 		public static DilutedPrice Parse(String pPrice) {
 			try { return new DilutedPrice(pPrice); }
-			catch (Exception e) { return null; }
+			catch (Throwable e) { return null; }
 		}
 
 		/**
@@ -1085,7 +1101,7 @@ public abstract class Decimal {
 		 * Construct a new Units by parsing a string value 
 		 * @param pUnits the Units to parse
 		 */
-		public Units(String pUnits) throws Exception {
+		public Units(String pUnits) {
 			super(NUMDEC);
 			super.ParseString(pUnits);
 		}		
@@ -1121,7 +1137,7 @@ public abstract class Decimal {
 		 */
 		public static Units Parse(String pUnits) {
 			try { return new Units(pUnits); }
-			catch (Exception e) { return null; }
+			catch (Throwable e) { return null; }
 		}
 
 		/**
@@ -1189,11 +1205,10 @@ public abstract class Decimal {
 		 * Construct a new Dilution by parsing a string value 
 		 * @param pDilution the Dilution to parse
 		 */
-		public Dilution(String pDilution) throws Exception {
+		public Dilution(String pDilution) {
 			super(NUMDEC);
 			super.ParseString(pDilution);
-			if (outOfRange()) throw new Exception(ExceptionClass.DATA,
-												  "Dilution value invalid :" + pDilution);
+			if (outOfRange()) throw new IllegalArgumentException("Dilution value invalid :" + pDilution);
 		}		
 		
 		/**
@@ -1236,7 +1251,7 @@ public abstract class Decimal {
 		 */
 		public static Dilution Parse(String pDilution) {
 			try { return new Dilution(pDilution); }
-			catch (Exception e) { return null; }
+			catch (Throwable e) { return null; }
 		}
 
 		/**
@@ -1341,7 +1356,7 @@ public abstract class Decimal {
 		 * Construct a new Money by parsing a string value 
 		 * @param pMoney the Money to parse
 		 */
-		public Money(String pMoney) throws Exception {
+		public Money(String pMoney) {
 			super(NUMDEC, NumberClass.MONEY);
 			super.ParseString(pMoney);
 		}		
@@ -1422,7 +1437,7 @@ public abstract class Decimal {
 		 */
 		public static Money Parse(String pMoney) {
 			try { return new Money(pMoney); }
-			catch (Exception e) { return null; 	}
+			catch (Throwable e) { return null; 	}
 		}
 		
 		/**
@@ -1476,6 +1491,9 @@ public abstract class Decimal {
 		 */
 		public Money valueAtWeight(Money pWeight,
 								   Money pTotal) {
+			/* Handle zero total */
+			if (!pTotal.isNonZero()) return new Money(0);
+			
 			/* Calculate the defined ratio of this value */
 			Ratio myRatio = new Ratio(pWeight, pTotal);
 			Money myTotal = new Money(this, myRatio);
@@ -1492,6 +1510,9 @@ public abstract class Decimal {
 		 */
 		public Money valueAtWeight(Units pWeight,
 								   Units pTotal) {
+			/* Handle zero total */
+			if (!pTotal.isNonZero()) return new Money(0);
+			
 			/* Calculate the defined ratio of this value */
 			Ratio myRatio = new Ratio(pWeight, pTotal);
 			Money myTotal = new Money(this, myRatio);

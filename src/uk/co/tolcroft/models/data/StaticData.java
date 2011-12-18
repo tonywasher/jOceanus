@@ -1,8 +1,8 @@
 package uk.co.tolcroft.models.data;
 
 import uk.co.tolcroft.models.Difference;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.help.DebugDetail;
 
@@ -291,7 +291,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	 * @param pValue the name of the new item
 	 */
 	protected StaticData(StaticList<?,T,E> 	pList, 
-					  	 String				pValue) throws Exception {
+					  	 String				pValue) throws ModelException {
 		super(pList, 0);
 		theEnumClass = pList.getEnumClass();
 		StaticData<?,?>.Values myValues = getObj();
@@ -318,7 +318,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 					  	 boolean			isEnabled,
 					  	 int				uOrder,
 					  	 String				pValue,
-					  	 String				pDesc) throws Exception {
+					  	 String				pDesc) throws ModelException {
 		super(pList, uId);
 		theEnumClass = pList.getEnumClass();
 		StaticData<?,?>.Values myValues = getObj();
@@ -352,7 +352,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 					  	 boolean			isEnabled,
 					  	 int				uOrder,
 					  	 byte[]				pValue,
-					  	 byte[]				pDesc) throws Exception {
+					  	 byte[]				pDesc) throws ModelException {
 		super(pList, uId);
 		theEnumClass = pList.getEnumClass();
 		StaticData<?,?>.Values myValues = getObj();
@@ -377,7 +377,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	 * Parse enum type
 	 * @param pValue
 	 */
-	private void parseEnumValue(String pValue) throws Exception {
+	private void parseEnumValue(String pValue) throws ModelException {
 		StaticInterface myIFace 		= null;
 		E[] 			myEnums 		= theEnumClass.getEnumConstants();
 		StaticData<?,?>.Values myValues	= getObj();
@@ -402,13 +402,13 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		
 		/* Reject if we didn't find the class */
 		if (getStaticClass() == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 							    "Invalid value for " + theEnumClass.getSimpleName() +
 								": " + pValue);
 		
 		/* Reject if class was wrong type */
 		if (myIFace == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 							    "Class: " + theEnumClass.getSimpleName() +
 								" is not valid for StaticData");
 	}
@@ -417,7 +417,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	 * Parse enum id
 	 * @param pId
 	 */
-	private void parseEnumId(int pId) throws Exception {
+	private void parseEnumId(int pId) throws ModelException {
 		StaticInterface myIFace 		= null;
 		E[] 			myEnums 		= (E[])theEnumClass.getEnumConstants();
 		StaticData<?,?>.Values myValues	= getObj();
@@ -426,7 +426,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		for (E myValue: myEnums) {
 			/* Ensure that the class is of the right type */
 			if (!(myValue instanceof StaticInterface)) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									"Class: " + theEnumClass.getSimpleName() +
 									" is not valid for StaticData");
 				
@@ -443,7 +443,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		
 		/* Reject if we didn't find the class */
 		if (getStaticClass() == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 							    "Invalid id for " + theEnumClass.getSimpleName() +
 								": " + pId);		
 	}
@@ -464,7 +464,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	 * Set a new name 
 	 * @param pName the name 
 	 */
-	public void setName(String pName) throws Exception {
+	public void setName(String pName) throws ModelException {
 		if (pName != null) 	getObj().setName(new StringPair(pName));
 		else 				getObj().setName(null);
 	}
@@ -473,7 +473,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	 * Set a new description
 	 * @param pDesc the description 
 	 */
-	public void setDescription(String pDesc) throws Exception {
+	public void setDescription(String pDesc) throws ModelException {
 		/* Set the appropriate value */
 		if (pDesc != null) 	getObj().setDesc(new StringPair(pDesc));
 		else 				getObj().setDesc(null);
@@ -772,7 +772,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		/**
 		 * Update encryption after security change
 		 */
-		protected void updateSecurity() throws Exception {
+		protected void updateSecurity() throws ModelException {
 			/* Update the encryption */
 			theName = new StringPair(theName.getString());
 			if (theDesc != null) theDesc = new StringPair(theDesc.getString());
@@ -781,7 +781,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		/**
 		 * Apply encryption after non-encrypted load
 		 */
-		protected void applySecurity() throws Exception {
+		protected void applySecurity() throws ModelException {
 			/* Apply the encryption */
 			theName.encryptPair();
 			if (theDesc != null) theDesc.encryptPair();
@@ -791,7 +791,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		 * Adopt encryption from base
 		 * @param pBase the Base values
 		 */
-		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {
+		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws ModelException {
 			StaticData<?,?>.Values myBase = (StaticData<?,?>.Values)pBase;
 			
 			/* Apply the encryption */

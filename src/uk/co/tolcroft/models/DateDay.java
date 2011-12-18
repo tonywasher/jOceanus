@@ -290,6 +290,29 @@ public class DateDay {
         if (this.theDay > that.theDay) return 1;
 		return 0;
 	}
+
+	@Override
+	public boolean equals(Object pThat) {
+		/* Handle the trivial cases */
+		if (this == pThat) return true;
+		if (pThat == null) return false;
+		
+		/* Make sure that the object is a DateDay */
+		if (pThat.getClass() != this.getClass()) return false;
+		
+		/* Access the object as a DateDay */
+		DateDay myThat = (DateDay)pThat;
+		
+		/* Handle null dates */
+		if (this.theDate == null) 	return (myThat.theDate == null);
+		if (myThat.theDate == null) return false;
+		
+		/* Check components */
+		if (this.theYear  != myThat.theYear)  return false;
+		if (this.theMonth != myThat.theMonth) return false;
+		if (this.theDay   != myThat.theDay)   return false;
+		return true;
+	}
 	
 	/**
 	 * Format a Date 

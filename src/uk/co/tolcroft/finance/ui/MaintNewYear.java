@@ -10,17 +10,17 @@ import javax.swing.JPanel;
 
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
-import uk.co.tolcroft.models.ui.StdTable;
+import uk.co.tolcroft.models.ui.DataTable;
 import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 import uk.co.tolcroft.models.views.ViewList;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 
-public class MaintNewYear extends StdTable<Event> implements ActionListener {
+public class MaintNewYear extends DataTable<Event> implements ActionListener {
 	private static final long serialVersionUID = 7406051901546832781L;
 	
 	private View				theView				= null;
@@ -148,7 +148,7 @@ public class MaintNewYear extends StdTable<Event> implements ActionListener {
 	/**
 	 * Refresh views/controls after a load/update of underlying data
 	 */
-	public void refreshData() throws Exception {
+	public void refreshData() throws ModelException {
 		FinanceData		myData = theView.getData();
 		TaxYear.List 	myList = myData.getTaxYears();
 		TaxYear.List.ListIterator myIterator;
@@ -162,7 +162,7 @@ public class MaintNewYear extends StdTable<Event> implements ActionListener {
 	 * Set Selection
 	 * @param pTaxYear the last active tax year
 	 */
-	public void setSelection(TaxYear pTaxYear) throws Exception {
+	public void setSelection(TaxYear pTaxYear) throws ModelException {
 		theTaxYears	= null;
 		theEvents  	= null;			
 		thePattern.setVisible(false);

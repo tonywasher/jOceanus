@@ -7,9 +7,9 @@ import javax.crypto.spec.IvParameterSpec;
 
 import org.bouncycastle.util.Arrays;
 
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.Utils;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.security.SymmetricKey.SymKeyType;
 
 public class DataCipher {
@@ -52,10 +52,10 @@ public class DataCipher {
 	 * @param pBytes bytes to encrypt
 	 * @param pVector initialisation vector
 	 * @return Encrypted bytes
-	 * @throws Exception 
+	 * @throws ModelException 
 	 */
 	public byte[] encryptBytes(byte[] pBytes,
-							   byte[] pVector) throws Exception {
+							   byte[] pVector) throws ModelException {
 		byte[]					myBytes;
 		
 		/* Protect against exceptions */
@@ -67,7 +67,7 @@ public class DataCipher {
 			myBytes = theCipher.doFinal(pBytes);
 		}
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Failed to encrypt bytes",
 								e);
 		}
@@ -81,10 +81,10 @@ public class DataCipher {
 	 * @param pBytes bytes to decrypt
 	 * @param pVector initialisation vector
 	 * @return Decrypted bytes
-	 * @throws Exception 
+	 * @throws ModelException 
 	 */
 	public byte[] decryptBytes(byte[] pBytes,
-							   byte[] pVector) throws Exception {
+							   byte[] pVector) throws ModelException {
 		byte[]					myBytes;
 		
 		/* Protect against exceptions */
@@ -96,7 +96,7 @@ public class DataCipher {
 			myBytes = theCipher.doFinal(pBytes);
 		}
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Failed to decrypt bytes",
 								e);
 		}
@@ -109,9 +109,9 @@ public class DataCipher {
 	 * Encrypt string
 	 * @param pString string to encrypt
 	 * @return Encrypted bytes
-	 * @throws Exception 
+	 * @throws ModelException 
 	 */
-	public byte[] encryptString(String pString) throws Exception {
+	public byte[] encryptString(String pString) throws ModelException {
 		byte[] myBytes;
 		
 		/* Protect against exceptions */
@@ -123,7 +123,7 @@ public class DataCipher {
 			myBytes = theCipher.doFinal(myBytes);
 		}
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Failed to encrypt string",
 								e);
 		}
@@ -137,7 +137,7 @@ public class DataCipher {
 	 * @param pChars Characters to encrypt
 	 * @return Encrypted bytes
 	 */
-	public byte[] encryptChars(char[] pChars) throws Exception {
+	public byte[] encryptChars(char[] pChars) throws ModelException {
 		byte[] myBytes;
 		byte[] myRawBytes;
 		
@@ -153,7 +153,7 @@ public class DataCipher {
 			Arrays.fill(myRawBytes, (byte)0);
 		}
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Failed to encrypt character array",
 								e);
 		}
@@ -167,7 +167,7 @@ public class DataCipher {
 	 * @param pBytes bytes to decrypt
 	 * @return Decrypted string
 	 */
-	public String decryptString(byte[] pBytes) throws Exception {
+	public String decryptString(byte[] pBytes) throws ModelException {
 		byte[] 	myBytes;
 		String	myString;
 		
@@ -180,7 +180,7 @@ public class DataCipher {
 			myString = new String(myBytes, SecurityControl.ENCODING);
 		}
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Failed to decrypt string",
 								e);
 		}
@@ -194,7 +194,7 @@ public class DataCipher {
 	 * @param pBytes Bytes to decrypt
 	 * @return Decrypted character array
 	 */
-	public char[] decryptChars(byte[] pBytes) throws Exception {
+	public char[] decryptChars(byte[] pBytes) throws ModelException {
 		byte[] 	myBytes;
 		char[]	myChars;
 		
@@ -210,7 +210,7 @@ public class DataCipher {
 			Arrays.fill(myBytes, (byte)0);
 		}
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Failed to decrypt character array",
 								e);
 		}

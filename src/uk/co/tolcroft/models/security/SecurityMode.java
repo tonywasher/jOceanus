@@ -3,8 +3,8 @@ package uk.co.tolcroft.models.security;
 import java.security.SecureRandom;
 
 import uk.co.tolcroft.models.Difference;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.security.AsymmetricKey.AsymKeyType;
 import uk.co.tolcroft.models.security.SecurityControl.DigestType;
 import uk.co.tolcroft.models.Utils;
@@ -78,10 +78,10 @@ public class SecurityMode {
 	 * Constructor from mode
 	 * @param pMode the Control Mode
 	 */
-	public SecurityMode(int pMode) throws Exception {
+	public SecurityMode(int pMode) throws ModelException {
 		/* Not allowed unless version is zero */
 		if (getVersion(pMode) != 0)
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Invalid mode version: " + getVersion(pMode));
 		
 		/* Set the version */
@@ -126,7 +126,7 @@ public class SecurityMode {
 	 * @param pRandom the random generator
 	 */
 	public static SecurityMode getSecurityMode(boolean 		useRestricted,
-									   		   SecureRandom pRandom) throws Exception {
+									   		   SecureRandom pRandom) throws ModelException {
 		/* Create a new SecurityMode */
 		SecurityMode myMode = new SecurityMode();
 
@@ -156,7 +156,7 @@ public class SecurityMode {
 	 * @param pRandom the random generator
 	 */
 	public static SecurityMode getAsymmetricMode(boolean 		useRestricted,
-									   		   	 SecureRandom 	pRandom) throws Exception {
+									   		   	 SecureRandom 	pRandom) throws ModelException {
 		/* Create a new SecurityMode */
 		SecurityMode myMode = new SecurityMode();
 
@@ -181,7 +181,7 @@ public class SecurityMode {
 	 * Construct a random set of iterations
 	 * @param pRandom the random generator
 	 */
-	protected void setRandomIterations(SecureRandom pRandom) throws Exception {
+	protected void setRandomIterations(SecureRandom pRandom) throws ModelException {
 		/* Access a random set of Iterations */
 		int iSwitch = 1 + pRandom.nextInt(15);		
 		int iFinal 	= 1 + pRandom.nextInt(15);		
@@ -195,11 +195,11 @@ public class SecurityMode {
 	 * @param iValue the value to set 
 	 * @param iPlace the position to set the value
 	 */
-	private void setValue(int iValue, int iPlace) throws Exception {
+	private void setValue(int iValue, int iPlace) throws ModelException {
 		/* Ensure that ordinal is store-able within a nibble */
 		if (((iValue < 1) || (iValue > 15)) &&
 			(iPlace != placeFLAGS))
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Invalid Value: " + iValue + " at position: " + iPlace);
 		
 		/* Shift up place bytes */
@@ -259,7 +259,7 @@ public class SecurityMode {
 	 * @param isPasswordHash is this a password hash
 	 */
 	private void setFlags(boolean useRestricted,
-						  boolean isPasswordHash) throws Exception {
+						  boolean isPasswordHash) throws ModelException {
 		/* Initialise the value */
 		int iValue = 0;
 		
@@ -299,7 +299,7 @@ public class SecurityMode {
 	 * @param pFinalIteration the final iteration
 	 */
 	private void setIterations(int pSwitchIteration,
-							   int pFinalIteration) throws Exception {
+							   int pFinalIteration) throws ModelException {
 		/* Record the iterations */
 		theSwitchIteration 	+= pSwitchIteration;
 		theFinalIteration 	+= pFinalIteration;
@@ -317,7 +317,7 @@ public class SecurityMode {
 	 */
 	private void setPasswordDigests(DigestType pPrimeDigest,
 									DigestType pAltDigest,
-									DigestType pSecretDigest) throws Exception {
+									DigestType pSecretDigest) throws ModelException {
 		/* Record the digests */
 		thePrimeDigest 	= pPrimeDigest;
 		theAltDigest 	= pAltDigest;
@@ -333,7 +333,7 @@ public class SecurityMode {
 	 * Set CipherSet Digest
 	 * @param pCipherDigest the cipher set digest type
 	 */
-	private void setCipherDigest(DigestType pCipherDigest) throws Exception {
+	private void setCipherDigest(DigestType pCipherDigest) throws ModelException {
 		/* Record the digests */
 		theCipherDigest = pCipherDigest;
 
@@ -347,7 +347,7 @@ public class SecurityMode {
 	 * @param iPlace the position from which to receive the digestType
 	 * @return the retrieved DigestType
 	 */
-	private DigestType getDigestType(int pMode, int iPlace) throws Exception {
+	private DigestType getDigestType(int pMode, int iPlace) throws ModelException {
 		/* Obtain the value */
 		int iValue = getValue(pMode, iPlace);
 		
@@ -359,7 +359,7 @@ public class SecurityMode {
 	 * Set AsymKeyType
 	 * @param pKeyType the asymmetric keyType
 	 */
-	private void setAsymKeyType(AsymKeyType pKeyType) throws Exception {
+	private void setAsymKeyType(AsymKeyType pKeyType) throws ModelException {
 		/* Record the key type */
 		theAsymKeyType 	= pKeyType;
 
@@ -373,7 +373,7 @@ public class SecurityMode {
 	 * @param iPlace the position from which to receive the keyType
 	 * @return the retrieved keyType
 	 */
-	private AsymKeyType getAsymKeyType(int pMode, int iPlace) throws Exception {
+	private AsymKeyType getAsymKeyType(int pMode, int iPlace) throws ModelException {
 		/* Obtain the value */
 		int iValue = getValue(pMode, iPlace);
 		

@@ -5,8 +5,8 @@ import java.util.Date;
 import uk.co.tolcroft.finance.views.SpotPrices;
 import uk.co.tolcroft.finance.views.SpotPrices.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
@@ -199,7 +199,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 					  int		uId,
 			      	  int 		uAccountId,
 			      	  Date 		pDate, 
-			      	  String 	pPrice) throws Exception {
+			      	  String 	pPrice) throws ModelException {
 		/* Initialise the item */
 		super(pList, uId);
 		
@@ -215,7 +215,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		/* Look up the Account */
 		Account myAccount = myData.getAccounts().searchFor(uAccountId);
 		if (myAccount == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid Account Id");
 		myValues.setAccount(myAccount);
@@ -234,7 +234,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			      	  int 		uControlId,
 			      	  int 		uAccountId,
 			      	  Date 		pDate, 
-			      	  byte[] 	pPrice) throws Exception {
+			      	  byte[] 	pPrice) throws ModelException {
 		/* Initialise the item */
 		super(pList, uId);
 		
@@ -253,7 +253,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		/* Look up the Account */
 		Account myAccount = myData.getAccounts().searchFor(uAccountId);
 		if (myAccount == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid Account Id");
 		myValues.setAccount(myAccount);
@@ -270,7 +270,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	private AcctPrice(List       	pList,
 				  	  Account	    pAccount,
 				  	  DateDay 		pDate, 
-				  	  Price			pPrice) throws Exception {
+				  	  Price			pPrice) throws ModelException {
 		/* Initialise the item */
 		super(pList, 0);
 		
@@ -413,7 +413,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	 * 
 	 * @param pPrice the price 
 	 */
-	public void setPrice(Price pPrice) throws Exception {
+	public void setPrice(Price pPrice) throws ModelException {
 		if (pPrice != null) getValues().setPrice(new PricePair(pPrice));
 		else 				getValues().setPrice(null);
 	}
@@ -806,7 +806,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		public void addItem(int		uId,
 							Date  	pDate,
 	            			String  pAccount,
-				            String  pPrice) throws Exception {
+				            String  pPrice) throws ModelException {
 			Account     	myAccount;
 			Account.List	myAccounts;
 			
@@ -816,7 +816,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			/* Look up the Account */
 			myAccount = myAccounts.searchFor(pAccount);
 			if (myAccount == null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 			                        "Price on [" + 
 			                        DateDay.format(new DateDay(pDate)) +
 			                        "] has invalid Account [" +
@@ -835,7 +835,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		public void addItem(int		uId,
 							Date  	pDate,
 				            int     uAccountId,
-				            String  pPrice) throws Exception {
+				            String  pPrice) throws ModelException {
 			AcctPrice     	myPrice;
 			
 			/* Create the price and PricePoint */
@@ -843,7 +843,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			
 			/* Check that this PriceId has not been previously added */
 			if (!isIdUnique(myPrice.getId())) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									myPrice,
 									"Duplicate PriceId <" + myPrice.getId() + ">");
 			 
@@ -852,7 +852,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 
 			/* Handle validation failure */
 			if (myPrice.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myPrice,
 									"Failed validation");
 				
@@ -867,7 +867,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			  	 			int 	uControlId,
 				            Date  	pDate,
 				            int     uAccountId,
-				            byte[]  pPrice) throws Exception {
+				            byte[]  pPrice) throws ModelException {
 			AcctPrice     	myPrice;
 			
 			/* Create the price and PricePoint */
@@ -875,7 +875,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			
 			/* Check that this PriceId has not been previously added */
 			if (!isIdUnique(uId)) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									myPrice,
 									"Duplicate PriceId <" + uId + ">");
 			 
@@ -884,7 +884,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 
 			/* Handle validation failure */
 			if (myPrice.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myPrice,
 									"Failed validation");
 				
@@ -897,7 +897,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		 */
 		public AcctPrice addItem(Account 	pAccount,
 							     DateDay  	pDate,
-							     Price		pPrice) throws Exception {
+							     Price		pPrice) throws ModelException {
 			AcctPrice     	myPrice;
 			
 			/* Create the price and PricePoint */
@@ -908,7 +908,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 
 			/* Handle validation failure */
 			if (myPrice.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myPrice,
 									"Failed validation");
 				
@@ -1022,7 +1022,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		/**
 		 * Update encryption after security change
 		 */
-		protected void updateSecurity() throws Exception {
+		protected void updateSecurity() throws ModelException {
 			/* Update the encryption */
 			thePrice	= new PricePair(thePrice.getValue());
 		}		
@@ -1030,7 +1030,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		/**
 		 * Ensure encryption after security change
 		 */
-		protected void applySecurity() throws Exception {
+		protected void applySecurity() throws ModelException {
 			/* Apply the encryption */
 			thePrice.encryptPair(null);
 		}		
@@ -1039,7 +1039,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		 * Adopt encryption from base
 		 * @param pBase the Base values
 		 */
-		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {
+		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws ModelException {
 			Values myBase = (Values)pBase;
 
 			/* Apply the encryption */

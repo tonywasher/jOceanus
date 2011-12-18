@@ -2,8 +2,8 @@ package uk.co.tolcroft.models.security;
 
 import javax.crypto.Cipher;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 
 public class StreamCipher {
 	/**
@@ -59,7 +59,7 @@ public class StreamCipher {
 	 * @param pLength length of data to update with
 	 * @return number of bytes transferred to output buffer 
 	 */
-	public int update(byte[] pBytes, int pOffset, int pLength) throws Exception {
+	public int update(byte[] pBytes, int pOffset, int pLength) throws ModelException {
 		int iNumBytes;
 		
 		/* Protect against exceptions */
@@ -75,7 +75,7 @@ public class StreamCipher {
 			iNumBytes = theCipher.update(pBytes, pOffset, pLength, theBuffer);					
 		}
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Failed to update cipher",
 								e);
 		}
@@ -88,7 +88,7 @@ public class StreamCipher {
 	 * Finish Cipher encrypting/decrypting any data buffered within the cipher
 	 * @return number of bytes transferred to output buffer 
 	 */
-	public int finish() throws Exception {
+	public int finish() throws ModelException {
 		int iNumBytes;
 		
 		/* Protect against exceptions */
@@ -104,7 +104,7 @@ public class StreamCipher {
 			iNumBytes = theCipher.doFinal(theBuffer, 0);
 		}
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Failed to finish cipher operation",
 								e);
 		}

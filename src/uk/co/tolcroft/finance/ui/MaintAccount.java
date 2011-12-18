@@ -18,9 +18,9 @@ import javax.swing.LayoutStyle;
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.data.StaticData;
@@ -1037,7 +1037,7 @@ public class MaintAccount implements stdPanel {
 				theAccount.pushHistory();
 			
 				/* Build the error */
-				Exception myError = new Exception(ExceptionClass.DATA,
+				ModelException myError = new ModelException(ExceptionClass.DATA,
 												  "Failed to update field",
 												  e);
 			
@@ -1119,7 +1119,7 @@ public class MaintAccount implements stdPanel {
 				theAccount.pushHistory();
 			
 				/* Build the error */
-				Exception myError = new Exception(ExceptionClass.DATA,
+				ModelException myError = new ModelException(ExceptionClass.DATA,
 									          	  "Failed to update field",
 									          	  e);
 			
@@ -1223,7 +1223,7 @@ public class MaintAccount implements stdPanel {
 				theAccount.pushHistory();
 			
 				/* Build the error */
-				Exception myError = new Exception(ExceptionClass.DATA,
+				ModelException myError = new ModelException(ExceptionClass.DATA,
 												  "Failed to update field",
 												  e);
 			

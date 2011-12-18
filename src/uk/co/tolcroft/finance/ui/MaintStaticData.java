@@ -10,8 +10,8 @@ import javax.swing.JPopupMenu;
 
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.View;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.StaticData;
@@ -22,13 +22,13 @@ import uk.co.tolcroft.models.ui.Editor;
 import uk.co.tolcroft.models.ui.ErrorPanel;
 import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.ui.SaveButtons;
-import uk.co.tolcroft.models.ui.StdMouse;
-import uk.co.tolcroft.models.ui.StdTable;
+import uk.co.tolcroft.models.ui.DataMouse;
+import uk.co.tolcroft.models.ui.DataTable;
 import uk.co.tolcroft.models.views.ViewList;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 
 public class MaintStaticData<L extends StaticList<L,T,?>,
-							 T extends StaticData<T,?>>  extends StdTable<T> {
+							 T extends StaticData<T,?>>  extends DataTable<T> {
 	private static final long serialVersionUID = -8747707037700378702L;
 
 	/* Properties */
@@ -186,7 +186,7 @@ public class MaintStaticData<L extends StaticList<L,T,?>,
 	/**
 	 * Refresh views/controls after a load/update of underlying data
 	 */
-	public void refreshData() throws Exception {
+	public void refreshData() throws ModelException {
 		FinanceData	myData;
 		
 		/* Access data */
@@ -379,7 +379,7 @@ public class MaintStaticData<L extends StaticList<L,T,?>,
 				myData.pushHistory();
 				
 				/* Build the error */
-				Exception myError = new Exception(ExceptionClass.DATA,
+				ModelException myError = new ModelException(ExceptionClass.DATA,
 										          "Failed to update field at ("
 										          + row + "," + col +")",
 										          e);
@@ -416,7 +416,7 @@ public class MaintStaticData<L extends StaticList<L,T,?>,
 	/**
 	 *  Static mouse listener
 	 */
-	private class staticMouse extends StdMouse<T> {
+	private class staticMouse extends DataMouse<T> {
 			
 		/* Pop-up Menu items */
 		private static final String popupSetEnabled		= "Set As Enabled";

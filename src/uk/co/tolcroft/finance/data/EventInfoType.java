@@ -1,8 +1,8 @@
 package uk.co.tolcroft.finance.data;
 
 import uk.co.tolcroft.finance.data.StaticClass.EventInfoClass;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
@@ -52,7 +52,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
 	 * @param sName Name of InfoType
 	 */
 	private EventInfoType(List 	 pList,
-			          	  String sName) throws Exception {
+			          	  String sName) throws ModelException {
 		super(pList, sName);
 	}
 	
@@ -70,7 +70,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
 					  	  boolean	isEnabled,
 					  	  int		uOrder, 
 					  	  String	pName,
-					  	  String	pDesc) throws Exception {
+					  	  String	pDesc) throws ModelException {
 		super(pList, uId, isEnabled, uOrder , pName, pDesc);
 	}
 	
@@ -90,7 +90,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
 			      	  	  boolean	isEnabled,
 			      	  	  int		uOrder, 
 			      	  	  byte[]	pName,
-			      	  	  byte[]	pDesc) throws Exception {
+			      	  	  byte[]	pDesc) throws ModelException {
 		super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
 	}
 
@@ -190,7 +190,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
 		 * Add an InfoType
 		 * @param pType the Name of the InfoType
 		 */ 
-		public void addItem(String pType) throws Exception {
+		public void addItem(String pType) throws ModelException {
 			EventInfoType	myType;
 			
 			/* Create a new InfoType */
@@ -198,13 +198,13 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
 				
 			/* Check that this InfoId has not been previously added */
 			if (!isIdUnique(myType.getId())) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 	  					  			myType,
 			  			            "Duplicate EventInfoTypeId");
 				 
 			/* Check that this InfoType has not been previously added */
 			if (searchFor(pType) != null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 	  					  			myType,
 			                        "Duplicate EventInfoType");
 								
@@ -224,7 +224,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
 							boolean	isEnabled,
 							int		uOrder,
 				            String 	pInfoType,
-				            String 	pDesc) throws Exception {
+				            String 	pDesc) throws ModelException {
 			EventInfoType myType;
 				
 			/* Create a new InfoType */
@@ -232,7 +232,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
 				
 			/* Check that this InfoId has not been previously added */
 			if (!isIdUnique(myType.getId())) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 	  					  			myType,
 			  			            "Duplicate EventInfoTypeId");
 				 
@@ -244,7 +244,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
 
 			/* Handle validation failure */
 			if (myType.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myType,
 									"Failed validation");
 		}	
@@ -263,7 +263,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
 							boolean	isEnabled,
 							int		uOrder,
 				            byte[] 	pInfoType,
-				            byte[] 	pDesc) throws Exception {
+				            byte[] 	pDesc) throws ModelException {
 			EventInfoType	myType;
 			
 			/* Create a new InfoType */
@@ -271,7 +271,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
 				
 			/* Check that this TaxRegimeId has not been previously added */
 			if (!isIdUnique(uId)) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 	  					  			myType,
 			  			            "Duplicate EventInfoTypeId");
 				 
@@ -283,7 +283,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
 
 			/* Handle validation failure */
 			if (myType.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myType,
 									"Failed validation");
 		}			

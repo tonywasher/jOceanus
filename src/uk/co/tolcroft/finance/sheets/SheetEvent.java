@@ -10,8 +10,8 @@ import org.apache.poi.ss.util.CellReference;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.sheets.FinanceSheet.YearRange;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.sheets.SheetDataItem;
 import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
@@ -231,7 +231,7 @@ public class SheetEvent extends SheetDataItem<Event> {
 	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
 										 SheetHelper				pHelper,
 							   	  		 FinanceData				pData,
-							   	  		 YearRange					pRange) throws Exception {
+							   	  		 YearRange					pRange) throws ModelException {
 		/* Local variables */
 		Event.List		myList;
 		String    		myRangeName;
@@ -359,7 +359,7 @@ public class SheetEvent extends SheetDataItem<Event> {
 		}
 		
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.EXCEL, 
+			throw new ModelException(ExceptionClass.EXCEL, 
 								"Failed to load Events",
 								e);
 		}

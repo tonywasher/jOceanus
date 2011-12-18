@@ -5,8 +5,8 @@ import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.SortedList;
 import uk.co.tolcroft.models.ui.PasswordDialog;
 
@@ -34,7 +34,7 @@ public class SecureManager {
 	 *  @return the security control
 	 */
 	public SecurityControl getSecurityControl(SecuritySignature pKey,
-											  String 			pSource) throws Exception {
+											  String 			pSource) throws ModelException {
 		/* Access or create the required Security control */
 		SecurityControl myControl = theSecurity.getSecurityControl(pKey);
 
@@ -92,7 +92,7 @@ public class SecureManager {
 					theSecurity.remove(myControl);
 				
 				/* Throw an exception */
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									"Invalid Password");
 			}
 		}
@@ -106,7 +106,7 @@ public class SecureManager {
 	 *  @param pControl the control
 	 *  @return the cloned security control
 	 */
-	public SecurityControl cloneSecurityControl(SecurityControl pControl) throws Exception {
+	public SecurityControl cloneSecurityControl(SecurityControl pControl) throws ModelException {
 		/* Access or create the required Security control */
 		SecurityControl myControl = theSecurity.cloneSecurityControl(pControl);
 		

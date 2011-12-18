@@ -2,8 +2,8 @@ package uk.co.tolcroft.models.security;
 
 import java.security.SecureRandom;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.security.SecurityControl.DigestType;
 import uk.co.tolcroft.models.security.SymmetricKey.SymKeyType;
 
@@ -56,10 +56,10 @@ public class ZipEntryMode {
 	 * Constructor from node
 	 * @param pMode the Zip Mode
 	 */
-	protected ZipEntryMode(long pMode) throws Exception {
+	protected ZipEntryMode(long pMode) throws ModelException {
 		/* Not allowed unless version is zero */
 		if (getVersion(pMode) != 0)
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Invalid mode version: " + getVersion(pMode));
 		
 		/* Set the version */
@@ -174,7 +174,7 @@ public class ZipEntryMode {
 	 * @param pDigestType the digest type
 	 */
 	public static ZipEntryMode getEncryptionMode(SymKeyType	pKeyType,
-				   								 DigestType	pDigestType) throws Exception {
+				   								 DigestType	pDigestType) throws ModelException {
 		/* Create a new ZipEntryMode */
 		ZipEntryMode myMode = new ZipEntryMode();
 
@@ -199,7 +199,7 @@ public class ZipEntryMode {
 	 */
 	public static ZipEntryMode getDualMode(SymKeyType	pPrimeKeyType,
 										   SymKeyType	pSecondKeyType,
-				   						   DigestType	pDigestType) throws Exception {
+				   						   DigestType	pDigestType) throws ModelException {
 		/* Create a new ZipEntryMode */
 		ZipEntryMode myMode = new ZipEntryMode();
 		
@@ -226,7 +226,7 @@ public class ZipEntryMode {
 	public static ZipEntryMode getTrioMode(SymKeyType	pPrimeKeyType,
 										   SymKeyType	pSecondKeyType,
 										   SymKeyType	pThirdKeyType,
-				   						   DigestType	pDigestType) throws Exception {
+				   						   DigestType	pDigestType) throws ModelException {
 		/* Create a new ZipEntryMode */
 		ZipEntryMode myMode = new ZipEntryMode();
 		
@@ -247,7 +247,7 @@ public class ZipEntryMode {
 	 * Construct a random encryption zipMode
 	 * @param pRandom Random generator
 	 */
-	public static ZipEntryMode getRandomEncryptionMode(SecureRandom pRandom) throws Exception {
+	public static ZipEntryMode getRandomEncryptionMode(SecureRandom pRandom) throws ModelException {
 		/* Access a random set of SymKeyTypes and DigestTypes */
 		SymKeyType[] myTypes 	= SymKeyType.getRandomTypes(1, pRandom);		
 		DigestType[] myDigest	= DigestType.getRandomTypes(1, pRandom);		
@@ -261,7 +261,7 @@ public class ZipEntryMode {
 	 * Construct a random dual encryption zipMode
 	 * @param pRandom Random generator
 	 */
-	public static ZipEntryMode getRandomDualMode(SecureRandom 	pRandom) throws Exception {
+	public static ZipEntryMode getRandomDualMode(SecureRandom 	pRandom) throws ModelException {
 		/* Access a random set of SymKeyTypes and DigestTypes */
 		SymKeyType[] myTypes 	= SymKeyType.getRandomTypes(1, pRandom);		
 		DigestType[] myDigest	= DigestType.getRandomTypes(1, pRandom);		
@@ -276,7 +276,7 @@ public class ZipEntryMode {
 	 * Construct a random triple encryption zipMode
 	 * @param pRandom Random generator
 	 */
-	public static ZipEntryMode getRandomTrioMode(SecureRandom 	pRandom) throws Exception {
+	public static ZipEntryMode getRandomTrioMode(SecureRandom 	pRandom) throws ModelException {
 		/* Access a random set of SymKeyTypes and DigestTypes */
 		SymKeyType[] myTypes 	= SymKeyType.getRandomTypes(3, pRandom);		
 		DigestType[] myDigest	= DigestType.getRandomTypes(1, pRandom);		
@@ -291,10 +291,10 @@ public class ZipEntryMode {
 	/**
 	 * Set id into mode
 	 */
-	private void setId(int iId, int iPlace) throws Exception {
+	private void setId(int iId, int iPlace) throws ModelException {
 		/* Ensure that ordinal is store-able within a byte */
 		if ((iId < 1) || (iId > 255))
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Invalid id: " + iId);
 		
 		/* Access as a long value and shift up place bytes */
@@ -352,10 +352,10 @@ public class ZipEntryMode {
 	/**
 	 * Set Compress flag
 	 */
-	private void setCompress() throws Exception {
+	private void setCompress() throws ModelException {
 		/* Not allowed unless encryption has been specified */
 		if (!doEncrypt())
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Compress requested without Encryption");
 		
 		/* Set the value into the mode and the flag */
@@ -365,10 +365,10 @@ public class ZipEntryMode {
 	/**
 	 * Set Debug flag
 	 */
-	protected void setDebug() throws Exception {
+	protected void setDebug() throws ModelException {
 		/* Not allowed unless digest has been specified */
 		if (!doDigest())
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Debug requested without Digest");
 		
 		/* Set the value into the mode and the flag */
@@ -379,10 +379,10 @@ public class ZipEntryMode {
 	 * Set Digest type
 	 * @param pDigestType the digest type
 	 */
-	private void setDigest(DigestType pDigestType) throws Exception {
+	private void setDigest(DigestType pDigestType) throws ModelException {
 		/* Not allowed unless encryption has been specified */
 		if (!doEncrypt())
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Digest requested without Encryption");
 		
 		/* Record the digest */
@@ -397,7 +397,7 @@ public class ZipEntryMode {
 	 * Set Encryption type
 	 * @param pKeyType the key type
 	 */
-	private void setEncryption(SymKeyType pKeyType) throws Exception {
+	private void setEncryption(SymKeyType pKeyType) throws ModelException {
 		/* Record the key type */
 		thePrimeKeyType 	= pKeyType;
 		theSecondKeyType 	= null;
@@ -415,7 +415,7 @@ public class ZipEntryMode {
 	 * @param pSecondKeyType the second key type
 	 */
 	private void setEncryption(SymKeyType pPrimeKeyType,
-							   SymKeyType pSecondKeyType) throws Exception {
+							   SymKeyType pSecondKeyType) throws ModelException {
 		/* Record the key type */
 		thePrimeKeyType 	= pPrimeKeyType;
 		theSecondKeyType 	= pSecondKeyType;
@@ -436,7 +436,7 @@ public class ZipEntryMode {
 	 */
 	private void setEncryption(SymKeyType pPrimeKeyType,
 							   SymKeyType pSecondKeyType,
-							   SymKeyType pThirdKeyType) throws Exception {
+							   SymKeyType pThirdKeyType) throws ModelException {
 		/* Record the key type */
 		thePrimeKeyType 	= pPrimeKeyType;
 		theSecondKeyType 	= pSecondKeyType;

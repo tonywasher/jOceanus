@@ -18,9 +18,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugWindow;
 import uk.co.tolcroft.models.help.HelpModule;
@@ -40,7 +39,6 @@ import uk.co.tolcroft.models.views.DataControl;
 
 public abstract class MainWindow<T extends DataSet<T>> implements ActionListener {
 	private	DataControl<T>		theView			= null;
-	private Properties	  		theProperties	= null;
 	private JFrame          	theFrame  		= null;
 	private JPanel          	thePanel 		= null;
 	private StatusBar 			theStatusBar    = null;
@@ -69,7 +67,6 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
 
 	/* Access methods */
 	public DataControl<T>	getView()  		{ return theView; }
-	public Properties		getProperties() { return theProperties; }
 	public JFrame      		getFrame()      { return theFrame; }
 	public JPanel      		getPanel()      { return thePanel; }
 	public StatusBar		getStatusBar()	{ return theStatusBar; }
@@ -91,17 +88,14 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
 	 * Obtain the Help Module
 	 * @return the help module
 	 */
-	protected abstract	HelpModule getHelpModule() throws Exception;
+	protected abstract	HelpModule getHelpModule() throws ModelException;
 	
 	/**
 	 * Constructor
 	 */
-	protected MainWindow() throws Exception {
+	protected MainWindow() throws ModelException {
 		/* Create the debug manager */
 		theDebugMgr	  = new DebugManager();		
-
-		/* Access properties */
-		theProperties = new Properties();		
 
 		/* Create the Executor service */
 		theExecutor = Executors.newSingleThreadExecutor();
@@ -111,14 +105,13 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
 	 *  Build the main window
 	 *  @param pView the Data view
 	 */
-	public void buildMainWindow(DataControl<T> pView) throws Exception {
+	public void buildMainWindow(DataControl<T> pView) throws ModelException {
 		JPanel  	myProgress;
 		JPanel  	myStatus;
 		JComponent	myMainPanel;
 
 		/* Store the view */
 		theView = pView;
-		theView.setProperties(theProperties);
 		
 		/* Create the new status bar */
 		theStatusBar = new StatusBar(this);
@@ -272,7 +265,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
 	}
 
 	/* Make the frame */
-	public void makeFrame() throws Exception {
+	public void makeFrame() throws ModelException {
 		/* Show the frame */
 		theFrame.pack();
 		theFrame.setLocationRelativeTo(null);
@@ -291,9 +284,11 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
 	 * Window Close Adapter
 	 */
 	private class WindowClose extends WindowAdapter {
-		public void windowClosing(WindowEvent e) {
+		public void windowClosing(WindowEvent evt) {
+			Object o = evt.getSource();
+
 			/* If this is the frame that is closing down */
-			if (e.getSource() == theFrame) {
+			if (o == theFrame) {
 				/* If we have updates or changes */
 				if ((hasUpdates()) || (hasChanges())) {
 					/* Ask whether to continue */
@@ -321,7 +316,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
 			}
 			
 			/* else if this is the Debug Window shutting down */
-			else if (e.getSource() == theDebugWdw) {
+			else if (o == theDebugWdw) {
 				/* Re-enable the help menu item */
 				theShowDebug.setEnabled(true);
 				theDebugWdw.dispose();
@@ -332,7 +327,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
 			}
 
 			/* else if this is the Help Window shutting down */
-			else if (e.getSource() == theHelpWdw) {
+			else if (o == theHelpWdw) {
 				/* Re-enable the help menu item */
 				theHelpMgr.setEnabled(true);
 				theHelpWdw.dispose();
@@ -342,74 +337,76 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
 	}
 
 	public void actionPerformed(ActionEvent evt) {
+		Object o = evt.getSource();
+		
 		/* If this event relates to the Write Backup item */
-		if (evt.getSource() == (Object)theWriteBackup) {
+		if (o == theWriteBackup) {
 			/* Start a write backup operation */
 			writeBackup();
 		}
 		
 		/* If this event relates to the Write Extract item */
-		if (evt.getSource() == (Object)theWriteExtract) {
+		else if (o == theWriteExtract) {
 			/* Start a write extract operation */
 			writeExtract();
 		}
 		
 		/* If this event relates to the Save Database item */
-		if (evt.getSource() == (Object)theSaveDBase) {
+		else if (o == theSaveDBase) {
 			/* Start a store database operation */
 			storeDatabase();
 		}		
 		
 		/* If this event relates to the Load Database item */
-		if (evt.getSource() == (Object)theLoadDBase) {
+		else if (o == theLoadDBase) {
 			/* Start a load database operation */
 			loadDatabase();
 		}		
 		
 		/* If this event relates to the Create Database item */
-		if (evt.getSource() == (Object)theCreateDBase) {
+		else if (o == theCreateDBase) {
 			/* Start a load database operation */
 			createDatabase();
 		}		
 		
 		/* If this event relates to the Purge Database item */
-		if (evt.getSource() == (Object)thePurgeDBase) {
+		else if (o == thePurgeDBase) {
 			/* Start a load database operation */
 			purgeDatabase();
 		}		
 		
 		/* If this event relates to the Load backup item */
-		if (evt.getSource() == (Object)theLoadBackup) {
+		else if (o == theLoadBackup) {
 			/* Start a restore backup operation */
 			restoreBackup();
 		}		
 		
 		/* If this event relates to the Load extract item */
-		if (evt.getSource() == (Object)theLoadExtract) {
+		else if (o == theLoadExtract) {
 			/* Start a load backup operation */
 			loadExtract();
 		}		
 		
 		/* If this event relates to the Update Password item */
-		if (evt.getSource() == (Object)theUpdatePass) {
+		else if (o == theUpdatePass) {
 			/* Start an Update Password operation */
 			updatePassword();
 		}		
 		
 		/* If this event relates to the Renew Security item */
-		if (evt.getSource() == (Object)theRenewSec) {
+		else if (o == theRenewSec) {
 			/* Start a reNew Security operation */
 			reNewSecurity();
 		}		
 		
 		/* If this event relates to the Display Debug item */
-		if (evt.getSource() == (Object)theShowDebug) {
+		else if (o == theShowDebug) {
 			/* Open the debug window */
 			displayDebug();
 		}		
 		
 		/* If this event relates to the Display Help item */
-		if (evt.getSource() == (Object)theHelpMgr) {
+		else if (o == theHelpMgr) {
 			/* Open the help window */
 			displayHelp();
 		}		
@@ -434,7 +431,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
 		theSecureMenu.setEnabled(!hasWorker);
 		
 		/* Enable/Disable the debug menu item */
-		theShowDebug.setVisible(theProperties.doShowDebug());
+		//theShowDebug.setVisible(theProperties.doShowDebug());
 		
 		/* If we have changes disable the create backup options */
 		theWriteBackup.setEnabled(!hasChanges && !hasUpdates);

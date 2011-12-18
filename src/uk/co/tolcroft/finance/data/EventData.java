@@ -1,8 +1,8 @@
 package uk.co.tolcroft.finance.data;
 
 import uk.co.tolcroft.models.Difference;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.Decimal.Dilution;
 import uk.co.tolcroft.models.Decimal.Money;
 import uk.co.tolcroft.models.Decimal.Units;
@@ -181,7 +181,7 @@ public class EventData extends EncryptedItem<EventData> {
 				      int		uControlId,
 				      int 		uInfoTypeId,
 				      int		uEventId, 
-				      byte[]	pValue) throws Exception {
+				      byte[]	pValue) throws ModelException {
 		/* Initialise the item */
 		super(pList, uId);
 		
@@ -199,7 +199,7 @@ public class EventData extends EncryptedItem<EventData> {
 		FinanceData 	myData	= pList.getData();
 		EventInfoType	myType	= myData.getInfoTypes().searchFor(uInfoTypeId);
 		if (myType == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid EventInfoType Id");
 		myValues.setInfoType(myType);
@@ -207,7 +207,7 @@ public class EventData extends EncryptedItem<EventData> {
 		/* Look up the Event */
 		Event myEvent	= myData.getEvents().searchFor(uEventId);
 		if (myEvent == null) 
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								this,
 								"Invalid Event Id");
 		myValues.setEvent(myEvent);
@@ -432,7 +432,7 @@ public class EventData extends EncryptedItem<EventData> {
 	 * Set Money
 	 * @param pValue the Value
 	 */
-	protected void setMoney(Money pValue) throws Exception {
+	protected void setMoney(Money pValue) throws ModelException {
 		Values			myValues	= getValues();
 
 		/* Switch on Info type */
@@ -453,7 +453,7 @@ public class EventData extends EncryptedItem<EventData> {
 				}
 				break;
 			default:
-				throw new Exception(ExceptionClass.LOGIC,
+				throw new ModelException(ExceptionClass.LOGIC,
 									this,
 									"Invalid Attempt to set Money value");
 		}
@@ -463,7 +463,7 @@ public class EventData extends EncryptedItem<EventData> {
 	 * Set Units 
 	 * @param pValue the Value
 	 */
-	protected void setUnits(Units pValue) throws Exception {
+	protected void setUnits(Units pValue) throws ModelException {
 		Values			myValues	= getValues();
 
 		/* Switch on Info type */
@@ -481,7 +481,7 @@ public class EventData extends EncryptedItem<EventData> {
 				}
 				break;
 			default:
-				throw new Exception(ExceptionClass.LOGIC,
+				throw new ModelException(ExceptionClass.LOGIC,
 									this,
 									"Invalid Attempt to set Units value");
 		}
@@ -491,7 +491,7 @@ public class EventData extends EncryptedItem<EventData> {
 	 * Set Dilution
 	 * @param pValue the Value
 	 */
-	protected void setDilution(Dilution pValue) throws Exception {
+	protected void setDilution(Dilution pValue) throws ModelException {
 		Values			myValues	= getValues();
 
 		/* Switch on Info type */
@@ -508,7 +508,7 @@ public class EventData extends EncryptedItem<EventData> {
 				}
 				break;
 			default:
-				throw new Exception(ExceptionClass.LOGIC,
+				throw new ModelException(ExceptionClass.LOGIC,
 									this,
 									"Invalid Attempt to set Dilution value");
 		}
@@ -607,7 +607,7 @@ public class EventData extends EncryptedItem<EventData> {
 							int				uControlId,
 							int  	 		uInfoTypeId,
 							int				uEventId,
-	            			byte[]   		pValue) throws Exception {
+	            			byte[]   		pValue) throws ModelException {
 			EventData  	myInfo;
 			
 			/* Create the info */
@@ -616,7 +616,7 @@ public class EventData extends EncryptedItem<EventData> {
 				
 			/* Check that this DataId has not been previously added */
 			if (!isIdUnique(uId)) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 						            myInfo,
 			  			            "Duplicate DataId");
 			 
@@ -625,7 +625,7 @@ public class EventData extends EncryptedItem<EventData> {
 
 			/* Handle validation failure */
 			if (myInfo.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myInfo,
 									"Failed validation");
 				
@@ -776,7 +776,7 @@ public class EventData extends EncryptedItem<EventData> {
 		/**
 		 * Update encryption after security change
 		 */
-		protected void updateSecurity() throws Exception {
+		protected void updateSecurity() throws ModelException {
 			/* Update the encryption */	
 			if (theMoney 	!= null) { 
 				theMoney 	= new MoneyPair(theMoney.getValue());
@@ -795,7 +795,7 @@ public class EventData extends EncryptedItem<EventData> {
 		/**
 		 * Ensure encryption after non-encrypted load
 		 */
-		protected void applySecurity() throws Exception {
+		protected void applySecurity() throws ModelException {
 			/* Apply the encryption */
 			if (theMoney 	!= null) theMoney.encryptPair(null);
 			if (theUnits 	!= null) theUnits.encryptPair(null);
@@ -806,7 +806,7 @@ public class EventData extends EncryptedItem<EventData> {
 		 * Adopt encryption from base
 		 * @param pBase the Base values
 		 */
-		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {
+		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws ModelException {
 			Values myBase = (Values)pBase;
 
 			/* Apply the encryption */

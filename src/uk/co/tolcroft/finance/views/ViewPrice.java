@@ -2,7 +2,7 @@ package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
@@ -113,7 +113,7 @@ public class ViewPrice extends AcctPrice {
 	 * Set a new price 
 	 * @param pPrice the price 
 	 */
-	public void setPrice(Price pPrice) throws Exception {
+	public void setPrice(Price pPrice) throws ModelException {
 		super.setPrice(pPrice);
 		calculateDiluted();
 	}
@@ -352,8 +352,8 @@ public class ViewPrice extends AcctPrice {
 		/**
 		 * Disable encryption methods
 		 */
-		protected void updateSecurity() throws Exception {}
-		protected void applySecurity() throws Exception {}
-		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {}
+		protected void updateSecurity() throws ModelException {}
+		protected void applySecurity() throws ModelException {}
+		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws ModelException {}
 	}		
 }

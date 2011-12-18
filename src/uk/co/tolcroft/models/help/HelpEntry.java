@@ -3,8 +3,8 @@ package uk.co.tolcroft.models.help;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 
 import java.util.Arrays;
 
@@ -63,7 +63,7 @@ public class HelpEntry {
 	 * Constructor for an HTML element built from an XML node
 	 * @param pElement the XML element describing the help entry
 	 */
-	protected static HelpEntry[] getHelpEntryArray(Element pElement) throws Exception {
+	protected static HelpEntry[] getHelpEntryArray(Element pElement) throws ModelException {
 		Node 		myNode;
 		Element 	myChild;
 		HelpEntry	myEntry;
@@ -106,16 +106,16 @@ public class HelpEntry {
 	 * Constructor for an HTML element built from an XML node
 	 * @param pElement the XML element describing the help entry
 	 */
-	public HelpEntry(Element pElement) throws Exception {
+	public HelpEntry(Element pElement) throws ModelException {
 		/* Reject entry if it is not a HelpElement */
 		if (!pElement.getNodeName().equals(elementHelp))
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Invalid element name: " + pElement.getNodeName());
 
 		/* Access the name of the element */
 		theName 	= pElement.getAttribute(attrName);
 		if (theName == null)
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Node has no associated name");
 		
 		/* Access the title of the element and default it if required */

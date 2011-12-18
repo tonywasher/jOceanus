@@ -4,8 +4,8 @@ import java.util.Date;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.DateDay;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.*;
@@ -251,7 +251,7 @@ public class DilutionEvent extends ReportItem<DilutionEvent> {
 		 */
 		public void addDilution(String 	pAccount,
 								Date 	pDate,
-								String 	pDilution) throws Exception {
+								String 	pDilution) throws ModelException {
 			DilutionEvent 	myEvent;
 			Account			myAccount;
 			DateDay			myDate;
@@ -264,7 +264,7 @@ public class DilutionEvent extends ReportItem<DilutionEvent> {
 			/* Search for the account */
 			myAccount = myAccounts.searchFor(pAccount);
 			if (myAccount == null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 			                        "Invalid Dilution account [" + pAccount + "]");
 			
 			/* Create the date */
@@ -273,7 +273,7 @@ public class DilutionEvent extends ReportItem<DilutionEvent> {
 			/* Record the dilution */
 			myDilution = Dilution.Parse(pDilution);
 			if (myDilution == null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 									"Invalid Dilution: " + pDilution);
 			
 			/* Create the dilution event */
@@ -355,7 +355,7 @@ public class DilutionEvent extends ReportItem<DilutionEvent> {
 		 */
 		public void addPrice(String pAccount,
 							 Date 	pDate,
-							 String	pPrice) throws Exception {
+							 String	pPrice) throws ModelException {
 			Account			myAccount;
 			Account.List 	myAccounts;
 			AcctPrice.List	myPrices;
@@ -371,7 +371,7 @@ public class DilutionEvent extends ReportItem<DilutionEvent> {
 			/* Search for the account */
 			myAccount = myAccounts.searchFor(pAccount);
 			if (myAccount == null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 			                        "Invalid Price account [" + pAccount + "]");
 			
 			/* Create the date */
@@ -383,7 +383,7 @@ public class DilutionEvent extends ReportItem<DilutionEvent> {
 				/* Obtain the diluted price */
 				myDilutedPrice = DilutedPrice.Parse(pPrice);
 				if (myDilutedPrice == null) 
-					throw new Exception(ExceptionClass.DATA,
+					throw new ModelException(ExceptionClass.DATA,
 										"Invalid DilutedPrice: " + pPrice);
 				
 				/* Obtain the undiluted price */
@@ -395,7 +395,7 @@ public class DilutionEvent extends ReportItem<DilutionEvent> {
 				/* Obtain the the price */
 				myPrice = Price.Parse(pPrice);
 				if (myPrice == null) 
-					throw new Exception(ExceptionClass.DATA,
+					throw new ModelException(ExceptionClass.DATA,
 										"Invalid Price: " + pPrice);
 			}
 			

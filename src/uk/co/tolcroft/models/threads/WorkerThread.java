@@ -3,8 +3,8 @@ package uk.co.tolcroft.models.threads;
 import java.util.List;
 import javax.swing.SwingWorker;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.ui.StatusBar;
 
 public abstract class WorkerThread<T> extends SwingWorker <T, StatusData> {
@@ -21,7 +21,7 @@ public abstract class WorkerThread<T> extends SwingWorker <T, StatusData> {
 	/**
 	 * The error for the operation
 	 */
-	private Exception 	theError		= null;
+	private ModelException 	theError		= null;
 
 	/**
 	 * Constructor	
@@ -37,7 +37,7 @@ public abstract class WorkerThread<T> extends SwingWorker <T, StatusData> {
 	 *  Set Error
 	 *  @param pError the Error for the task  
 	 */
-	protected void setError(Exception pError) {
+	protected void setError(ModelException pError) {
 		/* Store the error */
 		theError = pError;
 	}
@@ -83,11 +83,11 @@ public abstract class WorkerThread<T> extends SwingWorker <T, StatusData> {
 		/* Catch any exceptions */
 		catch (Throwable e) {
 			/* If this is an Exception */
-			if (e instanceof Exception)
-				setError((Exception)e);
+			if (e instanceof ModelException)
+				setError((ModelException)e);
 			
 			/* Else wrap the failure */
-			else setError(new Exception(ExceptionClass.DATA,
+			else setError(new ModelException(ExceptionClass.DATA,
 								   		"Failed " + theTask,
 								   		e));
 			return null;

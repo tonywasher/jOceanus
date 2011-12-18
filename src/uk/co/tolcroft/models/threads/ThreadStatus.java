@@ -1,11 +1,10 @@
 package uk.co.tolcroft.models.threads;
 
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.PropertySet;
 import uk.co.tolcroft.models.PropertySet.PropertyManager;
 import uk.co.tolcroft.models.PropertySet.PropertySetChooser;
 import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.views.DataControl;
 
 public class ThreadStatus<T extends DataSet<T>> implements StatusControl,
@@ -13,7 +12,6 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl,
 	private WorkerThread<?>	theThread		= null;
 	private StatusData 		theStatus		= null;
 	private DataControl<T>	theControl		= null;
-	private Properties		theProperties	= null;
 	private int          	theSteps;
 	
 	/**
@@ -23,8 +21,8 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl,
 	
 	/* Access methods */
 	public int 				getReportingSteps() { return theSteps; }
-	public Properties 		getProperties() 	{ return theProperties; }
 	public DataControl<T>	getControl() 		{ return theControl; }
+	public boolean			isCancelled() 		{ return theThread.isCancelled(); }
 		
 	/* Constructor */
 	public ThreadStatus(WorkerThread<?>	pThread,
@@ -32,7 +30,6 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl,
 		/* Store parameter */
 		theThread 		= pThread;
 		theControl		= pControl;
-		theProperties 	= pControl.getProperties();
 		
 		/* Access the threadStatus properties */
 		theTProperties 	= (ThreadStatusProperties)PropertyManager.getPropertySet(this);
@@ -166,9 +163,9 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl,
 
 		/**
 		 * Constructor
-		 * @throws Exception
+		 * @throws ModelException
 		 */
-		public ThreadStatusProperties() throws Exception { super();	}
+		public ThreadStatusProperties() throws ModelException { super();	}
 
 		@Override
 		protected void defineProperties() {

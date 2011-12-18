@@ -17,8 +17,8 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.Decimal;
 import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.DataSet;
@@ -85,7 +85,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 	 *  @param pFile the backup file to write to
 	 */
 	public void createBackup(T			pData,
-							 File 		pFile) throws Exception {
+							 File 		pFile) throws ModelException {
 		OutputStream		myStream	= null;
 		File				myTgtFile	= null;
 		ZipFile.Output 		myZipFile   = null;
@@ -145,7 +145,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 			if (myTgtFile != null) myTgtFile.delete();			
 			
 			/* Report the error */
-			throw new Exception(ExceptionClass.EXCEL, 
+			throw new ModelException(ExceptionClass.EXCEL, 
 					  			"Failed to create Backup Workbook: " + pFile.getName(),
 					  			e);				
 		}
@@ -157,7 +157,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 	 *  @param pFile the backup file to write to
 	 */
 	public void createExtract(T				pData,
-							  File 			pFile) throws Exception {
+							  File 			pFile) throws ModelException {
 		OutputStream		myStream	= null;
 		FileOutputStream    myOutFile  	= null;
 		File				myTgtFile	= null;
@@ -202,7 +202,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 			if (myTgtFile != null) myTgtFile.delete();			
 			
 			/* Report the error */
-			throw new Exception(ExceptionClass.EXCEL, 
+			throw new ModelException(ExceptionClass.EXCEL, 
 					  			"Failed to create Editable Workbook: " + myTgtFile.getName(),
 					  			e);				
 		}
@@ -392,7 +392,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 		
 		/* Check for cancellation */
 		if (!bContinue) 
-			throw new Exception(ExceptionClass.EXCEL,
+			throw new ModelException(ExceptionClass.EXCEL,
 								"Operation Cancelled");
 	}
 	

@@ -3,8 +3,8 @@ package uk.co.tolcroft.models.help;
 import java.io.*;
 
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 
 /**
  *  Help Page class. This class maps between the name of a help page and the html that the name represents.
@@ -31,7 +31,7 @@ public class HelpPage extends SortedItem<HelpPage> {
 	 * @param pEntry the help entry for the help page
 	 * @param pStream the stream to read the help page from 
 	 */
-	public HelpPage(List pList, HelpEntry pEntry, InputStream pStream) throws Exception {
+	public HelpPage(List pList, HelpEntry pEntry, InputStream pStream) throws ModelException {
 		/* Call the super-constructor */
 		super(pList);
 		
@@ -60,7 +60,7 @@ public class HelpPage extends SortedItem<HelpPage> {
 		/* Catch exceptions */
 		catch (Throwable e) {
 			/* Throw an exception */
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Failed to load help file " + pEntry.getName(),
 								e);
 		}
@@ -136,7 +136,7 @@ public class HelpPage extends SortedItem<HelpPage> {
 		 * @param pEntry the help entry of the help page
 		 * @param pStream the stream to read the help page from 
 		 */
-		public void addItem(HelpEntry pEntry, InputStream pStream) throws Exception {
+		public void addItem(HelpEntry pEntry, InputStream pStream) throws ModelException {
 			HelpPage myPage;
 			
 			/* Build the help page */

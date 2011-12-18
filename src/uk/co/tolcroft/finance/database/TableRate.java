@@ -3,7 +3,7 @@ package uk.co.tolcroft.finance.database;
 import java.util.Date;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.EncryptedItem;
 import uk.co.tolcroft.models.database.Database;
@@ -68,7 +68,7 @@ public class TableRate extends TableEncrypted<AcctRate> {
 	}
 
 	/* Load the rate */
-	protected void loadItem(int pId, int pControlId) throws Exception {
+	protected void loadItem(int pId, int pControlId) throws ModelException {
 		int	  	myAccountId;
 		byte[]	myRate;
 		byte[] 	myBonus;
@@ -93,7 +93,7 @@ public class TableRate extends TableEncrypted<AcctRate> {
 	}
 	
 	/* Set a field value */
-	protected void setFieldValue(AcctRate	pItem, int iField) throws Exception  {
+	protected void setFieldValue(AcctRate	pItem, int iField) throws ModelException  {
 		/* Switch on field id */
 		switch (iField) {
 			case AcctRate.FIELD_ACCOUNT:	theTableDef.setIntegerValue(iField, pItem.getAccount().getId());	break;

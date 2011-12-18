@@ -10,10 +10,10 @@ import java.util.Map;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.PropertySet;
 import uk.co.tolcroft.models.Utils;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.PropertySet.PropertyManager;
 import uk.co.tolcroft.models.PropertySet.PropertySetChooser;
 import uk.co.tolcroft.models.security.SecurityControl.SecurityProperties;
@@ -95,7 +95,7 @@ public class CipherSet  implements PropertySetChooser {
 	 * Build Secret Ciphers
 	 * @param pSecret the Secret bytes
 	 */
-	public void buildCiphers(byte[] pSecret) throws Exception {
+	public void buildCiphers(byte[] pSecret) throws ModelException {
 		/* Loop through the Cipher values */
 		for (SymKeyType myType : SymKeyType.values()) {
 			/* Build the Cipher */
@@ -109,7 +109,7 @@ public class CipherSet  implements PropertySetChooser {
 	 * @param pSecret the Secret Key
 	 */
 	private void buildCipher(SymKeyType pKeyType,
-							 byte[] 	pSecret) throws Exception {
+							 byte[] 	pSecret) throws ModelException {
 		/* Determine the key length in bytes */
 		int myKeyLen = SymmetricKey.getKeyLen(theMode.useRestricted()) / 8;
 			
@@ -124,7 +124,7 @@ public class CipherSet  implements PropertySetChooser {
 			Arrays.fill(myCount, (byte)0);
 			byte[] 			myAlgo	 = pKeyType.getAlgorithm().getBytes(SecurityControl.ENCODING);
 			MessageDigest 	myDigest = MessageDigest.getInstance(theMode.getCipherDigest().getAlgorithm(),
-														   		 SecurityControl.BCSIGN);
+														   		 SecurityControl.getProvider().getProvider());
 		
 			/* while we need to generate more bytes */
 			while (myBuilt < myKeyLen) {
@@ -152,7 +152,7 @@ public class CipherSet  implements PropertySetChooser {
 		/* Catch exceptions */
 		catch (Throwable e) {
 			/* Throw exception */
-			throw new Exception(ExceptionClass.CRYPTO,
+			throw new ModelException(ExceptionClass.CRYPTO,
 								"Failed to Derive KeyDefinition",
 								e);
 		}
@@ -178,7 +178,7 @@ public class CipherSet  implements PropertySetChooser {
 	 * @param pBytes the bytes to encrypt
 	 * @return the encrypted bytes
 	 */
-	public byte[] encryptBytes(byte[] pBytes) throws Exception {
+	public byte[] encryptBytes(byte[] pBytes) throws ModelException {
 		/* Allocate a new initialisation vector */
 		byte[] 			myVector = new byte[SymmetricKey.IVSIZE];
 		theRandom.nextBytes(myVector);
@@ -229,7 +229,7 @@ public class CipherSet  implements PropertySetChooser {
 	 * @param pTypes the types to encode
 	 * @return the encoded types
 	 */
-	private byte[] encodeSymKeyTypes(SymKeyType[] pTypes) throws Exception {
+	private byte[] encodeSymKeyTypes(SymKeyType[] pTypes) throws ModelException {
 		/* Determine the number of bytes */
 		int myNumBytes = numKeyBytes(pTypes.length);
 		
@@ -259,7 +259,7 @@ public class CipherSet  implements PropertySetChooser {
 	 * @param pBytes the bytes to decrypt
 	 * @return the decrypted bytes
 	 */
-	public byte[] decryptBytes(byte[] pBytes) throws Exception {
+	public byte[] decryptBytes(byte[] pBytes) throws ModelException {
 		/* Split the bytes into the separate parts */
 		byte[] 			myVector = Arrays.copyOf(pBytes, SymmetricKey.IVSIZE);
 		SymKeyType[]	myTypes	 = decodeSymKeyTypes(pBytes);	
@@ -316,7 +316,7 @@ public class CipherSet  implements PropertySetChooser {
 	 * @param pBytes the encrypted bytes
 	 * @return the array of SymKeyTypes
 	 */
-	private SymKeyType[] decodeSymKeyTypes(byte[] pBytes) throws Exception {
+	private SymKeyType[] decodeSymKeyTypes(byte[] pBytes) throws ModelException {
 		/* Extract the number of SymKeys */
 		int myNumKeys = pBytes[SymmetricKey.IVSIZE] / 16;
 		
@@ -345,7 +345,7 @@ public class CipherSet  implements PropertySetChooser {
 	 * @param pString the string to encrypt
 	 * @return the encrypted bytes
 	 */
-	public byte[] encryptString(String pString) throws Exception {
+	public byte[] encryptString(String pString) throws ModelException {
 		/* Protect against exceptions */
 		try {
 			/* Access the bytes */
@@ -354,9 +354,9 @@ public class CipherSet  implements PropertySetChooser {
 			/* Encrypt the bytes */
 			return encryptBytes(myBytes);
 		}
-		catch (Exception e) { throw e; }
+		catch (ModelException e) { throw e; }
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Failed to extract bytes from String - " + pString,
 								e);
 		}
@@ -367,7 +367,7 @@ public class CipherSet  implements PropertySetChooser {
 	 * @param pBytes the string to decrypt
 	 * @return the decrypted string
 	 */
-	public String decryptString(byte[] pBytes) throws Exception {
+	public String decryptString(byte[] pBytes) throws ModelException {
 		/* Protect against exceptions */
 		try {
 			/* Decrypt the bytes */
@@ -376,9 +376,9 @@ public class CipherSet  implements PropertySetChooser {
 			/* ReBuild the string */
 			return new String(myBytes, SecurityControl.ENCODING);
 		}
-		catch (Exception e) { throw e; }
+		catch (ModelException e) { throw e; }
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Failed to build string from bytes",
 								e);
 		}
@@ -389,7 +389,7 @@ public class CipherSet  implements PropertySetChooser {
 	 * @param pChars Characters to encrypt
 	 * @return Encrypted bytes
 	 */
-	public byte[] encryptChars(char[] pChars) throws Exception {
+	public byte[] encryptChars(char[] pChars) throws ModelException {
 		byte[] myBytes;
 		byte[] myRawBytes;
 		
@@ -408,7 +408,7 @@ public class CipherSet  implements PropertySetChooser {
 	 * @param pBytes Bytes to decrypt
 	 * @return Decrypted character array
 	 */
-	public char[] decryptChars(byte[] pBytes) throws Exception {
+	public char[] decryptChars(byte[] pBytes) throws ModelException {
 		byte[] 	myBytes;
 		char[]	myChars;
 		
@@ -430,7 +430,7 @@ public class CipherSet  implements PropertySetChooser {
 	 * @param pKey the key to wrap
 	 * @return the wrapped symmetric key
 	 */
-	public byte[] wrapKey(SymmetricKey pKey) throws Exception {
+	public byte[] wrapKey(SymmetricKey pKey) throws ModelException {
 		/* Extract the encoded version of the key */
 		byte[] myEncoded = pKey.getSecretKey().getEncoded();
 		
@@ -448,7 +448,7 @@ public class CipherSet  implements PropertySetChooser {
 	 * @return the symmetric key
 	 */
 	public SymmetricKey unWrapKey(byte[] 		pEncrypted,
-								  SymKeyType	pKeyType) throws Exception {
+								  SymKeyType	pKeyType) throws ModelException {
 		/* Decrypt the encoded bytes */
 		byte[] myEncoded = decryptBytes(pEncrypted);
 		
@@ -469,7 +469,7 @@ public class CipherSet  implements PropertySetChooser {
 	 * @param pKey the key to wrap
 	 * @return the wrapped Asymmetric key
 	 */
-	public byte[] wrapKey(AsymmetricKey pKey) throws Exception {
+	public byte[] wrapKey(AsymmetricKey pKey) throws ModelException {
 		/* Access the Private Key */
 		PrivateKey myPrivate = pKey.getPrivateKey();
 		
@@ -495,7 +495,7 @@ public class CipherSet  implements PropertySetChooser {
 	 */
 	public AsymmetricKey unWrapKey(byte[] 		pEncrypted,
 			 					   byte[]		pPublicKey,
-			 					   SecurityMode	pKeyMode) throws Exception {
+			 					   SecurityMode	pKeyMode) throws ModelException {
 		/* Decrypt the encoded bytes */
 		byte[] myEncoded = decryptBytes(pEncrypted);
 		

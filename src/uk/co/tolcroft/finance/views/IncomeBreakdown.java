@@ -19,22 +19,46 @@ public class IncomeBreakdown implements DebugObject {
 	/**
 	 * The Salary analysis
 	 */
-	private RecordList theSalary	= null;
+	private RecordList theSalary			= null;
 	
 	/**
-	 * The Interest analysis
+	 * The Rental analysis
 	 */
-	private RecordList theInterest	= null;
+	private RecordList theRental			= null;
 	
 	/**
-	 * The Dividend analysis
+	 * The Taxable Interest analysis
 	 */
-	private RecordList theDividend	= null;
+	private RecordList theTaxedInterest		= null;
+	
+	/**
+	 * The TaxFree Interest analysis
+	 */
+	private RecordList theTaxFreeInterest	= null;
+	
+	/**
+	 * The Taxable Dividend analysis
+	 */
+	private RecordList theTaxedDividend		= null;
+	
+	/**
+	 * The TaxFree Dividend analysis
+	 */
+	private RecordList theTaxFreeDividend	= null;
+	
+	/**
+	 * The Taxable UnitTrust Dividend analysis
+	 */
+	private RecordList theUnitTrustDividend	= null;
 	
 	/* Access functions */
-	public RecordList getSalary() 	{ return theSalary; }
-	public RecordList getInterest() { return theInterest; }
-	public RecordList getDividend() { return theDividend; }
+	public RecordList getSalary() 				{ return theSalary; }
+	public RecordList getRental() 				{ return theRental; }
+	public RecordList getTaxableInterest() 		{ return theTaxedInterest; }
+	public RecordList getTaxFreeInterest() 		{ return theTaxFreeInterest; }
+	public RecordList getTaxableDividend() 		{ return theTaxedDividend; }
+	public RecordList getTaxFreeDividend() 		{ return theTaxFreeDividend; }
+	public RecordList getUnitTrustDividend()	{ return theUnitTrustDividend; }
 	
 	/**
 	 * Constructor
@@ -42,9 +66,13 @@ public class IncomeBreakdown implements DebugObject {
 	 */
 	protected IncomeBreakdown(FinanceData pData) {
 		/* Allocate lists */
-		theSalary	= new RecordList(pData, "Salary");
-		theInterest	= new RecordList(pData, "Interest");
-		theDividend	= new RecordList(pData, "Dividend");
+		theSalary				= new RecordList(pData, "Salary");
+		theRental				= new RecordList(pData, "Rental");
+		theTaxedInterest		= new RecordList(pData, "TaxedInterest");
+		theTaxFreeInterest		= new RecordList(pData, "TaxFreeInterest");
+		theTaxedDividend		= new RecordList(pData, "TaxedDividend");
+		theTaxFreeDividend		= new RecordList(pData, "TaxFreeDividend");
+		theUnitTrustDividend	= new RecordList(pData, "UnitTrustDividend");
 	}
 	
 	/**
@@ -59,17 +87,24 @@ public class IncomeBreakdown implements DebugObject {
 		/* Switch on Transaction Type */
 		switch (myTrans.getTranClass()) {
 			case INTEREST:
-				myRecord = theInterest.findAccountRecord(myDebit.getParent());
+				if (myDebit.isTaxFree()) myRecord = theTaxFreeInterest.findAccountRecord(myDebit.getParent());
+				else 					 myRecord = theTaxedInterest.findAccountRecord(myDebit.getParent());
 				myRecord.processEvent(pEvent);
 				break;
 			case DIVIDEND:
-				myRecord = theDividend.findAccountRecord(myDebit.isChild() ? myDebit.getParent() : myDebit);
+				if (myDebit.isTaxFree()) 		myRecord = theTaxFreeDividend.findAccountRecord(myDebit.isChild() ? myDebit.getParent() : myDebit);
+				else if (myDebit.isUnitTrust()) myRecord = theUnitTrustDividend.findAccountRecord(myDebit.isChild() ? myDebit.getParent() : myDebit);
+				else 					 		myRecord = theTaxedDividend.findAccountRecord(myDebit.isChild() ? myDebit.getParent() : myDebit);
 				myRecord.processEvent(pEvent);
 				break;
 			case TAXEDINCOME:
 			case BENEFIT:
 			case NATINSURANCE:
 				myRecord = theSalary.findAccountRecord(myDebit);
+				myRecord.processEvent(pEvent);
+				break;
+			case RENTALINCOME:
+				myRecord = theRental.findAccountRecord(myDebit);
 				myRecord.processEvent(pEvent);
 				break;
 		}
@@ -82,9 +117,13 @@ public class IncomeBreakdown implements DebugObject {
 	public void addChildEntries(DebugManager 	pManager,
 								DebugEntry		pParent) { 
 		/* Add the analyses */
-		pManager.addChildEntry(pParent, "Salary", 	theSalary);
-		pManager.addChildEntry(pParent, "Interest", theInterest);
-		pManager.addChildEntry(pParent, "Dividend", theDividend);
+		pManager.addChildEntry(pParent, "Salary", 				theSalary);
+		pManager.addChildEntry(pParent, "Rental", 				theRental);
+		pManager.addChildEntry(pParent, "TaxedInterest", 		theTaxedInterest);
+		pManager.addChildEntry(pParent, "TaxFreeInterest", 		theTaxFreeInterest);
+		pManager.addChildEntry(pParent, "TaxedDividend", 		theTaxedDividend);
+		pManager.addChildEntry(pParent, "TaxFreeDividend", 		theTaxFreeDividend);
+		pManager.addChildEntry(pParent, "UnitTrustDividend", 	theUnitTrustDividend);
 	}
 
 	/**

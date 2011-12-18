@@ -3,8 +3,8 @@ package uk.co.tolcroft.finance.data;
 import uk.co.tolcroft.finance.views.EventAnalysis;
 import uk.co.tolcroft.finance.views.MetaAnalysis;
 import uk.co.tolcroft.models.DateDay;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.security.SecureManager;
 import uk.co.tolcroft.models.views.DataControl;
@@ -159,10 +159,10 @@ public class FinanceData extends DataSet<FinanceData> {
 	 * Items that are in both lists but differ will be viewed as changed 
 	 * @param pOld The DataSet to compare to 
 	 */
-	public FinanceData getDifferenceSet(FinanceData pOld) throws Exception {
+	public FinanceData getDifferenceSet(FinanceData pOld) throws ModelException {
 		/* Make sure that the DataSet if the same type */
 		if (!(pOld instanceof FinanceData)) 
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Invalid DataSet type");
 		
 		/* Cast correctly */
@@ -203,10 +203,10 @@ public class FinanceData extends DataSet<FinanceData> {
 	 * ReBase this data set against an earlier version.
 	 * @param pOld The old data to reBase against 
 	 */
-	public void reBase(FinanceData pOld) throws Exception {
+	public void reBase(FinanceData pOld) throws ModelException {
 		/* Make sure that the DataSet if the same type */
 		if (!(pOld instanceof FinanceData)) 
-			throw new Exception(ExceptionClass.LOGIC,
+			throw new ModelException(ExceptionClass.LOGIC,
 								"Invalid DataSet type");
 		
 		/* Cast correctly */
@@ -267,7 +267,7 @@ public class FinanceData extends DataSet<FinanceData> {
 	 * Analyse the data
 	 * @param pControl the data view
 	 */
-	public void analyseData(DataControl<?>	pControl) throws Exception {
+	public void analyseData(DataControl<?>	pControl) throws ModelException {
 		MetaAnalysis 		myMetaAnalysis;
 						
 		/* Update INITIAL Load status */

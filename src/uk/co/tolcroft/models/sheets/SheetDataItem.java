@@ -14,8 +14,8 @@ import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
 
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.sheets.SheetWriter.CellStyleType;
@@ -124,7 +124,7 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
 	 *  Load the DataItems from a spreadsheet 
 	 *  @return continue to load <code>true/false</code> 
 	 */
-	public boolean loadSpreadSheet() throws Exception {
+	public boolean loadSpreadSheet() throws ModelException {
 		/* Local variables */
 		AreaReference		myRange	= null;
 		CellReference		myTop;
@@ -185,7 +185,7 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
 		
 		/* Handle exceptions */
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.EXCEL, 
+			throw new ModelException(ExceptionClass.EXCEL, 
 								"Failed to Load " + theRangeName,
 								e);
 		}
@@ -198,7 +198,7 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
 	 *  Write the DataItems to a spreadsheet
 	 *  @return continue to write <code>true/false</code> 
 	 */
-	protected boolean writeSpreadSheet() throws Exception {
+	protected boolean writeSpreadSheet() throws ModelException {
 		DataList<?,T>.ListIterator	myIterator;
 		T							myCurr;
 		int							myCount;
@@ -258,7 +258,7 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
 		}
 	
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.EXCEL, 
+			throw new ModelException(ExceptionClass.EXCEL, 
 								"Failed to create " + theRangeName,
 								e);
 		}

@@ -1,7 +1,7 @@
 package uk.co.tolcroft.finance.database;
 
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.database.TableStaticData;
@@ -40,7 +40,7 @@ public class TableTaxRegime extends TableStaticData<TaxRegime> {
 
 	
 	/* Load the tax regime */
-	protected void loadTheItem(int pId, int pControlId, boolean isEnabled, int iOrder, byte[] pRegime, byte[] pDesc) throws Exception {
+	protected void loadTheItem(int pId, int pControlId, boolean isEnabled, int iOrder, byte[] pRegime, byte[] pDesc) throws ModelException {
 		/* Add into the list */
 		theList.addItem(pId, pControlId, isEnabled, iOrder, pRegime, pDesc);
 	}	

@@ -12,12 +12,14 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 
+import uk.co.tolcroft.backup.BackupProperties;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.DilutionEvent;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
+import uk.co.tolcroft.models.PropertySet.PropertyManager;
 import uk.co.tolcroft.models.data.ControlData;
-import uk.co.tolcroft.models.data.Properties;
+//import uk.co.tolcroft.models.data.Properties;
 import uk.co.tolcroft.models.sheets.SheetReader;
 import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.sheets.SheetWriter;
@@ -74,7 +76,7 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
 	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
 			 					  		 SheetHelper				pHelper,
 			 					  		 FinanceData				pData,
-			 					  		 YearRange					pRange) throws Exception {
+			 					  		 YearRange					pRange) throws ModelException {
 		/* Local variables */
 		AreaReference		myRange;
 		Sheet   			mySheet;
@@ -105,7 +107,7 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
 			myStatic = pData.getControlData();
 		
 			/* Add the value into the finance tables (with no security as yet) */
-			myStatic.addItem(0, Properties.CURRENTVERSION);
+			myStatic.addItem(0, 0);
 		}
 
 		/* Calculate the number of stages */
@@ -118,19 +120,24 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
 	/**
 	 *  Load an Archive Workbook
 	 *  @param pThread Thread Control for task
-	 *  @param pFile the archive file to load from
 	 *  @return the newly loaded data
 	 */
-	public static FinanceData loadArchive(ThreadStatus<FinanceData>	pThread,
-	  		 				   	   		  File 	 					pFile) throws Exception {
+	public static FinanceData loadArchive(ThreadStatus<FinanceData>	pThread) throws ModelException {
 		InputStream 		myStream  	= null;
 		FileInputStream     myInFile  	= null;
+		File				myArchive	= null;
 		FinanceData			myData;
 		
 		/* Protect the workbook retrieval */
 		try {
+			/* Access the Backup properties */
+			BackupProperties myProperties = (BackupProperties)PropertyManager.getPropertySet(BackupProperties.class);
+
+			/* Determine the archive name */
+			myArchive	= new File(myProperties.getStringValue(BackupProperties.nameArchiveFile));
+
 			/* Create an input stream to the file */
-			myInFile = new FileInputStream(pFile);
+			myInFile = new FileInputStream(myArchive);
 			myStream = new BufferedInputStream(myInFile);
 								
 			/* Load the data from the stream */
@@ -142,8 +149,8 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
 
 		catch (Throwable e) {
 			/* Report the error */
-			throw new Exception(ExceptionClass.EXCEL, 
-					  			"Failed to load Workbook: " + pFile.getName(),
+			throw new ModelException(ExceptionClass.EXCEL, 
+					  			"Failed to load Workbook: " + myArchive.getName(),
 					  			e);				
 		}
 		
@@ -158,7 +165,7 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
 	 *  @return the newly loaded data
 	 */
 	private static FinanceData loadArchiveStream(ThreadStatus<FinanceData>	pThread,
-			 						  	  		 InputStream				pStream) throws Exception {
+			 						  	  		 InputStream				pStream) throws ModelException {
 		boolean             		bContinue;
 		HSSFWorkbook        		myWorkbook 	= null;
 		FinanceData					myData		= null;
@@ -216,7 +223,7 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
 							
 			/* Check for cancellation */
 			if (!bContinue) 
-				throw new Exception(ExceptionClass.EXCEL,
+				throw new ModelException(ExceptionClass.EXCEL,
 									"Operation Cancelled");
 		}
 		
@@ -225,7 +232,7 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
 			bContinue = false;
 			
 			/* Report the error */
-			throw new Exception(ExceptionClass.EXCEL, 
+			throw new ModelException(ExceptionClass.EXCEL, 
 					  			"Failed to load Workbook",
 					  			e);				
 		}

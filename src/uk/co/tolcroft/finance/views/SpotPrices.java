@@ -2,7 +2,7 @@ package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
@@ -570,9 +570,9 @@ public class SpotPrices implements DebugObject {
 			/**
 			 * Disable encryption methods
 			 */
-			protected void updateSecurity() throws Exception {}
-			protected void applySecurity() throws Exception {}
-			protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws Exception {}
+			protected void updateSecurity() throws ModelException {}
+			protected void applySecurity() throws ModelException {}
+			protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws ModelException {}
 		}		
 	}
 }

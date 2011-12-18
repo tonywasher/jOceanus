@@ -10,8 +10,8 @@ import org.apache.poi.ss.util.CellReference;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.DilutionEvent;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.sheets.SheetDataItem;
 import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
@@ -185,7 +185,7 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 	protected static boolean loadArchive(ThreadStatus<FinanceData>	pThread,
 										 SheetHelper				pHelper,
 							   	  		 FinanceData				pData,
-							   	  		 DilutionEvent.List 		pDilution) throws Exception {
+							   	  		 DilutionEvent.List 		pDilution) throws ModelException {
 		/* Local variables */
 		AreaReference	myRange;
 		Sheet     		mySheet;
@@ -276,7 +276,7 @@ public class SheetPrice extends SheetDataItem<AcctPrice> {
 		
 		/* Handle exceptions */
 		catch (Throwable e) {
-			throw new Exception(ExceptionClass.EXCEL, 
+			throw new ModelException(ExceptionClass.EXCEL, 
 								"Failed to Load Prices",
 								e);
 		}

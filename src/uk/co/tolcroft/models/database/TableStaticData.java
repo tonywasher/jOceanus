@@ -1,6 +1,6 @@
 package uk.co.tolcroft.models.database;
 
-import uk.co.tolcroft.models.Exception;
+import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.database.TableDefinition.ColumnDefinition;
 import uk.co.tolcroft.models.database.TableDefinition.SortOrder;
@@ -43,13 +43,13 @@ public abstract class TableStaticData<T extends StaticData<T,?>> extends TableEn
 	}
 	
 	/* Load the Static Data */
-	protected  abstract void loadTheItem(int pId, int pControlId, boolean isEnabled, int iOrder, byte[] pName, byte[] pDesc) throws Exception;
+	protected  abstract void loadTheItem(int pId, int pControlId, boolean isEnabled, int iOrder, byte[] pName, byte[] pDesc) throws ModelException;
 	
 	/* Name the data column */
 	protected  abstract String getDataName();
 	
 	/* Load the static data */
-	protected void loadItem(int pId, int pControlId) throws Exception {
+	protected void loadItem(int pId, int pControlId) throws ModelException {
 		int		myOrder;
 		boolean	myEnabled;
 		byte[] 	myType;
@@ -69,7 +69,7 @@ public abstract class TableStaticData<T extends StaticData<T,?>> extends TableEn
 	}
 	
 	/* Set a field value */
-	protected void setFieldValue(T	pItem, int iField) throws Exception  {
+	protected void setFieldValue(T	pItem, int iField) throws ModelException  {
 		/* Switch on field id */
 		switch (iField) {
 			case StaticData.FIELD_ENABLED: 	theTableDef.setBooleanValue(iField, pItem.getEnabled());	break;

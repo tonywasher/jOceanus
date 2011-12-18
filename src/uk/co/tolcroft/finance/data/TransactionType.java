@@ -1,8 +1,8 @@
 package uk.co.tolcroft.finance.data;
 
 import uk.co.tolcroft.finance.data.StaticClass.TransClass;
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
@@ -55,7 +55,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 	 * @param sName Name of Transaction Type
 	 */
 	private TransactionType(List 	pList,
-                      		String	sName) throws Exception {
+                      		String	sName) throws ModelException {
 		super(pList, sName);
 	}
 
@@ -73,7 +73,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 			         		boolean	isEnabled,
 			         		int		uOrder,
 			         		String	pName,
-			         		String	pDesc) throws Exception {
+			         		String	pDesc) throws ModelException {
 		super(pList, uId, isEnabled, uOrder, pName, pDesc);
 	}
 	
@@ -93,7 +93,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     			            boolean	isEnabled,
     			            int		uOrder,	
     			            byte[]	pName,
-    			            byte[]	pDesc) throws Exception {
+    			            byte[]	pDesc) throws ModelException {
 		super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
 	}
 
@@ -502,7 +502,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 		 * Add a TransactionType
 		 * @param pTransType the Name of the transaction type
 		 */ 
-		public void addItem(String pTransType) throws Exception {
+		public void addItem(String pTransType) throws ModelException {
 			TransactionType     myTransType;
 			
 			/* Create a new Transaction Type */
@@ -510,13 +510,13 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 			
 			/* Check that this TransTypeId has not been previously added */
 			if (!isIdUnique(myTransType.getId())) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 	  					  			myTransType,
 			  			            "Duplicate TranTypeId");
 				 
 			/* Check that this TransactionType has not been previously added */
 			if (searchFor(pTransType) != null) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 	  					  			myTransType,
 			                        "Duplicate Transaction Type");
 				
@@ -536,7 +536,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 							boolean	isEnabled,
 							int		uOrder,
 				            String 	pTranType,
-				            String 	pDesc) throws Exception {
+				            String 	pDesc) throws ModelException {
 			TransactionType myTransType;
 				
 			/* Create a new Transaction Type */
@@ -544,7 +544,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 				
 			/* Check that this TransTypeId has not been previously added */
 			if (!isIdUnique(myTransType.getId())) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 	  					  			myTransType,
 			  			            "Duplicate TranTypeId");
 				 
@@ -556,7 +556,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 
 			/* Handle validation failure */
 			if (myTransType.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myTransType,
 									"Failed validation");		
 		}	
@@ -575,7 +575,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 							boolean	isEnabled,
 							int		uOrder,
 				            byte[] 	pTransType,
-				            byte[] 	pDesc) throws Exception {
+				            byte[] 	pDesc) throws ModelException {
 			TransactionType     myTransType;
 			
 			/* Create a new Transaction Type */
@@ -583,7 +583,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 			
 			/* Check that this TransTypeId has not been previously added */
 			if (!isIdUnique(uId)) 
-				throw new Exception(ExceptionClass.DATA,
+				throw new ModelException(ExceptionClass.DATA,
 	   					  			myTransType,
 			  			            "Duplicate TransTypeId");
 
@@ -595,7 +595,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 
 			/* Handle validation failure */
 			if (myTransType.hasErrors()) 
-				throw new Exception(ExceptionClass.VALIDATE,
+				throw new ModelException(ExceptionClass.VALIDATE,
 									myTransType,
 									"Failed validation");		
 		}			

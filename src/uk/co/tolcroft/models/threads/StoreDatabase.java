@@ -1,7 +1,7 @@
 package uk.co.tolcroft.models.threads;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.ExceptionClass;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.views.DataControl;
@@ -56,7 +56,7 @@ public class StoreDatabase<T extends DataSet<T>>	extends WorkerThread<Void> {
 		/* If the difference set is non-empty */
 		if (!myDiff.isEmpty()) {
 			/* Throw an exception */
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								myDiff,
 								"DataStore is inconsistent");
 		}

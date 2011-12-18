@@ -1,7 +1,7 @@
 package uk.co.tolcroft.finance.data;
 
-import uk.co.tolcroft.models.Exception;
-import uk.co.tolcroft.models.Exception.*;
+import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.data.StaticData.*;
 
 public class StaticClass {
@@ -220,9 +220,9 @@ public class StaticClass {
 		 * @param id the id value
 		 * @return the corresponding enum object
 		 */
-		public static AccountClass fromId(int id) throws Exception {
+		public static AccountClass fromId(int id) throws ModelException {
 			for (AccountClass myClass: values()) {	if (myClass.getClassId() == id) return myClass; }
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Invalid Frequency Class Id: " + id);
 		}
 	}
@@ -508,9 +508,9 @@ public class StaticClass {
 		 * @param id the id value
 		 * @return the corresponding enum object
 		 */
-		public static TransClass fromId(int id) throws Exception {
+		public static TransClass fromId(int id) throws ModelException {
 			for (TransClass myClass: values()) {	if (myClass.getClassId() == id) return myClass; }
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Invalid Frequency Class Id: " + id);
 		}
 	}
@@ -938,9 +938,9 @@ public class StaticClass {
 		 * @param id the id value
 		 * @return the corresponding enum object
 		 */
-		public static TaxClass fromId(int id) throws Exception {
+		public static TaxClass fromId(int id) throws ModelException {
 			for (TaxClass myClass: values()) {	if (myClass.getClassId() == id) return myClass; }
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Invalid Tax Class Id: " + id);
 		}
 	}
@@ -1040,9 +1040,9 @@ public class StaticClass {
 		 * @param id the id value
 		 * @return the corresponding enum object
 		 */
-		public static FreqClass fromId(int id) throws Exception {
+		public static FreqClass fromId(int id) throws ModelException {
 			for (FreqClass myClass: values()) {	if (myClass.getClassId() == id) return myClass; }
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Invalid Frequency Class Id: " + id);
 		}
 	}
@@ -1124,9 +1124,9 @@ public class StaticClass {
 		 * @param id the id value
 		 * @return the corresponding enum object
 		 */
-		public static TaxRegClass fromId(int id) throws Exception {
+		public static TaxRegClass fromId(int id) throws ModelException {
 			for (TaxRegClass myClass: values()) {	if (myClass.getClassId() == id) return myClass; }
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Invalid Tax Regime Class Id: " + id);
 		}
 	}	
@@ -1250,9 +1250,9 @@ public class StaticClass {
 		 * @param id the id value
 		 * @return the corresponding enum object
 		 */
-		public static EventInfoClass fromId(int id) throws Exception {
+		public static EventInfoClass fromId(int id) throws ModelException {
 			for (EventInfoClass myClass: values()) {	if (myClass.getClassId() == id) return myClass; }
-			throw new Exception(ExceptionClass.DATA,
+			throw new ModelException(ExceptionClass.DATA,
 								"Invalid EventInfo Class Id: " + id);
 		}
 	}	
