@@ -38,9 +38,9 @@ public class MaintStaticData<L extends StaticList<L,T,?>,
 	private Class<L>				theClass			= null;
 	private L						theStatic			= null;
 	private MaintStaticData<L,T>	theTable	 		= this;
-	private staticModel				theModel			= null;
-	private staticMouse				theMouse	 		= null;
-	private staticColumnModel		theColumns			= null;
+	private StaticModel				theModel			= null;
+	private StaticMouse				theMouse	 		= null;
+	private StaticColumnModel		theColumns			= null;
 	private ViewList				theViewSet			= null;
 	private ListClass				theDataView			= null;
 	private DebugEntry				theDebugData		= null;
@@ -90,11 +90,11 @@ public class MaintStaticData<L extends StaticList<L,T,?>,
         theDebugData.addAsChildOf(pParent.getDebugEntry());
 
         /* Set the table model */
-		theModel  = new staticModel();
+		theModel  = new StaticModel();
 		setModel(theModel);
 			
 		/* Create the data column model and declare it */
-		theColumns = new staticColumnModel();
+		theColumns = new StaticColumnModel();
 		setColumnModel(theColumns);
 		
 		/* Prevent reordering of columns and auto-resizing */
@@ -105,7 +105,7 @@ public class MaintStaticData<L extends StaticList<L,T,?>,
 		setPreferredScrollableViewportSize(new Dimension(800, 200));
 		
 		/* Add the mouse listener */
-		theMouse = new staticMouse();
+		theMouse = new StaticMouse();
 		addMouseListener(theMouse);
 		
 		/* Create the sub panels */
@@ -205,9 +205,17 @@ public class MaintStaticData<L extends StaticList<L,T,?>,
 	}
 	
 	/* Static table model */
-	public class staticModel extends DataTableModel {
+	public class StaticModel extends DataTableModel {
 		private static final long serialVersionUID = -6428052539280821038L;
 
+		/**
+		 * Constructor 
+		 */
+		private StaticModel() {		
+			/* call constructor */
+			super(theTable);
+		}
+		
 		/**
 		 * Get the number of display columns
 		 * @return the columns
@@ -416,7 +424,7 @@ public class MaintStaticData<L extends StaticList<L,T,?>,
 	/**
 	 *  Static mouse listener
 	 */
-	private class staticMouse extends DataMouse<T> {
+	private class StaticMouse extends DataMouse<T> {
 			
 		/* Pop-up Menu items */
 		private static final String popupSetEnabled		= "Set As Enabled";
@@ -425,7 +433,7 @@ public class MaintStaticData<L extends StaticList<L,T,?>,
 		/**
 		 * Constructor
 		 */
-		private staticMouse() {
+		private StaticMouse() {
 			/* Call super-constructor */
 			super(theTable);
 		}
@@ -587,7 +595,7 @@ public class MaintStaticData<L extends StaticList<L,T,?>,
 	/**
 	 * Column Model class
 	 */
-	private class staticColumnModel extends DataColumnModel {
+	private class StaticColumnModel extends DataColumnModel {
 		private static final long serialVersionUID = 676363206266447113L;
 
 		/* Renderers/Editors */
@@ -598,7 +606,10 @@ public class MaintStaticData<L extends StaticList<L,T,?>,
 		/**
 		 * Constructor 
 		 */
-		private staticColumnModel() {		
+		private StaticColumnModel() {		
+			/* call constructor */
+			super(theTable);
+			
 			/* Create the relevant formatters/editors */
 			theIntegerRenderer 	= new Renderer.IntegerCell();
 			theStringRenderer 	= new Renderer.StringCell();

@@ -23,13 +23,14 @@ import uk.co.tolcroft.models.views.ViewList.ListClass;
 public class MaintNewYear extends DataTable<Event> implements ActionListener {
 	private static final long serialVersionUID = 7406051901546832781L;
 	
+	private MaintNewYear		theTable	    	= this;
 	private View				theView				= null;
 	private TaxYear.List	    theTaxYears			= null;
 	private Event.List	        theEvents			= null;
 	private MaintenanceTab		theParent			= null;
 	private JPanel				thePanel			= null;
-	private yearColumnModel		theColumns			= null;
-	private patternYearModel	theModel			= null;
+	private YearColumnModel		theColumns			= null;
+	private PatternYearModel	theModel			= null;
 	private JButton				thePattern			= null;
 	private DebugEntry			theDebugYear		= null;
 	private DebugEntry			theDebugEvents		= null;
@@ -81,13 +82,13 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
 		theEventView	= theViewSet.registerClass(Event.class);
 
 		/* Set the table model */
-		theModel  = new patternYearModel();
+		theModel  = new PatternYearModel();
 			
 		/* Set the table model */
 		setModel(theModel);
 			
 		/* Create the data column model and declare it */
-		theColumns = new yearColumnModel();
+		theColumns = new YearColumnModel();
 		setColumnModel(theColumns);
 		
 		/* Prevent reordering of columns and auto-resizing */
@@ -194,9 +195,17 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
 	}
 	
 	/* PatternYear table model */
-	public class patternYearModel extends DataTableModel {
+	public class PatternYearModel extends DataTableModel {
 		private static final long serialVersionUID = 4796112294536415723L;
 
+		/**
+		 * Constructor 
+		 */
+		private PatternYearModel() {		
+			/* call constructor */
+			super(theTable);
+		}
+		
 		/**
 		 * Get the number of display columns
 		 * @return the columns
@@ -316,7 +325,7 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
 	/**
 	 * Column Model class
 	 */
-	private class yearColumnModel extends DataColumnModel {
+	private class YearColumnModel extends DataColumnModel {
 		private static final long serialVersionUID = -894489367275603586L;
 
 		/* Renderers/Editors */
@@ -327,7 +336,10 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
 		/**
 		 * Constructor 
 		 */
-		private yearColumnModel() {		
+		private YearColumnModel() {		
+			/* call constructor */
+			super(theTable);
+			
 			/* Create the relevant formatters/editors */
 			theDateRenderer   = new Renderer.CalendarCell();
 			theMoneyRenderer  = new Renderer.MoneyCell();

@@ -32,8 +32,8 @@ public class AccountPrices extends DataTable<AcctPrice> {
 	private Account             		theAccount  		= null;
 	private ListClass					theViewList			= null;
 	private AccountPrices				theTable	    	= this;
-	private pricesMouse					theMouse			= null;
-	private pricesColumnModel			theColumns			= null;
+	private PricesMouse					theMouse			= null;
+	private PricesColumnModel			theColumns			= null;
 	private DebugEntry					theDebugEntry		= null;
 	private ErrorPanel					theError			= null;
 
@@ -80,7 +80,7 @@ public class AccountPrices extends DataTable<AcctPrice> {
 		setModel(theModel);
 			
 		/* Create the data column model and declare it */
-		theColumns = new pricesColumnModel();
+		theColumns = new PricesColumnModel();
 		setColumnModel(theColumns);
 
 		/* Prevent reordering of columns and auto-resizing */
@@ -94,7 +94,7 @@ public class AccountPrices extends DataTable<AcctPrice> {
         theDebugEntry.hideEntry();
 			
 		/* Add the mouse listener */
-		theMouse = new pricesMouse();
+		theMouse = new PricesMouse();
 		addMouseListener(theMouse);
 		
         /* Create the error panel for this view */
@@ -218,6 +218,14 @@ public class AccountPrices extends DataTable<AcctPrice> {
 	public class PricesModel extends DataTableModel {
 		private static final long serialVersionUID = -2613779599240142148L;
 
+		/**
+		 * Constructor 
+		 */
+		private PricesModel() {		
+			/* call constructor */
+			super(theTable);
+		}
+		
 		/**
 		 * Get the number of display columns
 		 * @return the columns
@@ -389,11 +397,11 @@ public class AccountPrices extends DataTable<AcctPrice> {
 	/**
 	 *  Prices mouse listener
 	 */
-	private class pricesMouse extends DataMouse<AcctPrice> {
+	private class PricesMouse extends DataMouse<AcctPrice> {
 		/**
 		 * Constructor
 		 */
-		private pricesMouse() {
+		private PricesMouse() {
 			/* Call super-constructor */
 			super(theTable);
 		}		
@@ -402,7 +410,7 @@ public class AccountPrices extends DataTable<AcctPrice> {
 	/**
 	 * Column Model class
 	 */
-	private class pricesColumnModel extends DataColumnModel {
+	private class PricesColumnModel extends DataColumnModel {
 		private static final long serialVersionUID = -851990835577845594L;
 
 		/* Renderers/Editors */
@@ -419,7 +427,10 @@ public class AccountPrices extends DataTable<AcctPrice> {
 		/**
 		 * Constructor 
 		 */
-		private pricesColumnModel() {		
+		private PricesColumnModel() {		
+			/* call constructor */
+			super(theTable);
+			
 			/* Create the relevant formatters/editors */
 			theDateRenderer  	= new Renderer.CalendarCell();
 			theDateEditor    	= new Editor.CalendarCell();

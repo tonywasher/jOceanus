@@ -46,7 +46,7 @@ public class Extract extends DataTable<Event> {
 	private JPanel					thePanel	 		= null;
 	private Extract				 	theTable	 		= this;
 	private extractMouse			theMouse	 		= null;
-	private extractColumnModel		theColumns			= null;
+	private ExtractColumnModel		theColumns			= null;
 	private DateDay.Range			theRange	 		= null;
 	private DateRange 				theSelect	 		= null;
 	private SaveButtons  			theTabButs   		= null;
@@ -116,7 +116,7 @@ public class Extract extends DataTable<Event> {
 		setModel(theModel);
 			
 		/* Create the data column model and declare it */
-		theColumns = new extractColumnModel();
+		theColumns = new ExtractColumnModel();
 		setColumnModel(theColumns);
 		
 		/* Prevent reordering of columns and auto-resizing */			
@@ -379,6 +379,14 @@ public class Extract extends DataTable<Event> {
 	/* Extract table model */
 	public class ExtractModel extends DataTableModel {
 		private static final long serialVersionUID = 7997087757206121152L;
+		
+		/**
+		 * Constructor 
+		 */
+		private ExtractModel() {		
+			/* call constructor */
+			super(theTable);
+		}
 		
 		/**
 		 * Get the number of display columns
@@ -1041,7 +1049,7 @@ public class Extract extends DataTable<Event> {
 	/**
 	 * Column Model class
 	 */
-	private class extractColumnModel extends DataColumnModel {
+	private class ExtractColumnModel extends DataColumnModel {
 		private static final long serialVersionUID = -7502445487118370020L;
 
 		/* Renderers/Editors */
@@ -1062,7 +1070,10 @@ public class Extract extends DataTable<Event> {
 		/**
 		 * Constructor 
 		 */
-		private extractColumnModel() {		
+		private ExtractColumnModel() {		
+			/* call constructor */
+			super(theTable);
+			
 			/* Create the relevant formatters/editors */
 			theDateRenderer   	= new Renderer.CalendarCell();
 			theDateEditor     	= new Editor.CalendarCell();

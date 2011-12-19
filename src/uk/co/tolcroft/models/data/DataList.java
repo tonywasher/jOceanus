@@ -129,6 +129,12 @@ public abstract class DataList<L extends DataList<L,T>,
 	public		L			getList() 	{ return theList; }
 	
 	/**
+	 * Get ListClass
+	 * @return the ListClass
+	 */
+	protected	Class<L>	getListClass() 	{ return theClass; }
+	
+	/**
 	 * Get Max Id
 	 * @return the Maximum Id
 	 */
@@ -165,7 +171,7 @@ public abstract class DataList<L extends DataList<L,T>,
 	protected DataList(L pSource) {
 		super(pSource.getBaseClass());
 		theStyle 		= ListStyle.VIEW;
-		theClass 		= pSource.theClass;
+		theClass 		= pSource.getListClass();
 		theList	 		= theClass.cast(this);
 		theMgr	 		= new IdManager<T>();
 		theBase  		= pSource;

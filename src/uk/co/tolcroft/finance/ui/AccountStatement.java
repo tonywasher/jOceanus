@@ -45,8 +45,8 @@ public class AccountStatement extends DataTable<Event> {
 	private TransactionType.List	theTransTypes		= null;
 	private JPanel					thePanel	 		= null;
 	private AccountStatement		theTable	 		= this;
-	private statementMouse			theMouse	 		= null;
-	private statementColumnModel	theColumns			= null;
+	private StatementMouse			theMouse	 		= null;
+	private StatementColumnModel	theColumns			= null;
 	private AccountTab				theParent    		= null;
 	private MainTab          		theTopWindow      	= null;
 	private DateDay.Range			theRange	 		= null;
@@ -110,14 +110,14 @@ public class AccountStatement extends DataTable<Event> {
 		setModel(theModel);
 		
 		/* Create the data column model and declare it */
-		theColumns = new statementColumnModel();
+		theColumns = new StatementColumnModel();
 		setColumnModel(theColumns);
 
 		/* Prevent reordering of columns */		
 		getTableHeader().setReorderingAllowed(false);
 			
 		/* Add the mouse listener */
-		theMouse = new statementMouse();
+		theMouse = new StatementMouse();
 		addMouseListener(theMouse);
 		
 		/* Create the sub panels */
@@ -441,6 +441,14 @@ public class AccountStatement extends DataTable<Event> {
 	public class StatementModel extends DataTableModel {
 		private static final long serialVersionUID = 269477444398236458L;
 
+		/**
+		 * Constructor 
+		 */
+		private StatementModel() {		
+			/* call constructor */
+			super(theTable);
+		}
+		
 		/**
 		 * Get the number of display columns
 		 * @return the columns
@@ -799,7 +807,7 @@ public class AccountStatement extends DataTable<Event> {
 	/**
 	 *  Statement mouse listener
 	 */
-	private class statementMouse extends DataMouse<Event> {
+	private class StatementMouse extends DataMouse<Event> {
 				
 		/* Pop-up Menu items */
 		private static final String popupExtract  		= "View Extract";
@@ -820,7 +828,7 @@ public class AccountStatement extends DataTable<Event> {
 		/**
 		 * Constructor
 		 */
-		private statementMouse() {
+		private StatementMouse() {
 			/* Call super-constructor */
 			super(theTable);
 		}
@@ -1328,7 +1336,7 @@ public class AccountStatement extends DataTable<Event> {
 	/**
 	 * Column Model class
 	 */
-	private class statementColumnModel extends DataColumnModel {
+	private class StatementColumnModel extends DataColumnModel {
 		private static final long serialVersionUID = -183944035127105952L;
 
 		/* Renderers/Editors */
@@ -1355,7 +1363,10 @@ public class AccountStatement extends DataTable<Event> {
 		/**
 		 * Constructor 
 		 */
-		private statementColumnModel() {		
+		private StatementColumnModel() {		
+			/* call constructor */
+			super(theTable);
+			
 			/* Create the relevant formatters/editors */
 			theDateRenderer     = new Renderer.CalendarCell();
 			theDateEditor       = new Editor.CalendarCell();

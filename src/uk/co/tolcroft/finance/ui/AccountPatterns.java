@@ -40,8 +40,8 @@ public class AccountPatterns extends DataTable<Event> {
 	private JPanel					thePanel			= null;
 	private JComboBox				theFreqBox			= null;
 	private AccountPatterns		 	theTable	 		= this;
-	private patternMouse			theMouse	 		= null;
-	private patternColumnModel		theColumns			= null;
+	private PatternMouse			theMouse	 		= null;
+	private PatternColumnModel		theColumns			= null;
 	private AccountTab				theParent   		= null;
 	private Account                 theAccount  		= null;
 	private ListClass				theViewList			= null;
@@ -96,7 +96,7 @@ public class AccountPatterns extends DataTable<Event> {
 		setModel(theModel);
 		
 		/* Create the data column model and declare it */
-		theColumns = new patternColumnModel();
+		theColumns = new PatternColumnModel();
 		setColumnModel(theColumns);
 
 		/* Prevent reordering of columns */
@@ -112,7 +112,7 @@ public class AccountPatterns extends DataTable<Event> {
         theDebugEntry.hideEntry();
 			
 		/* Add the mouse listener */
-		theMouse = new patternMouse();
+		theMouse = new PatternMouse();
 		addMouseListener(theMouse);
 		
         /* Create the error panel for this view */
@@ -293,6 +293,14 @@ public class AccountPatterns extends DataTable<Event> {
 	public class PatternsModel extends DataTableModel {
 		private static final long serialVersionUID = -8445100544184045930L;
 
+		/**
+		 * Constructor 
+		 */
+		private PatternsModel() {		
+			/* call constructor */
+			super(theTable);
+		}
+		
 		@Override
 		protected void fireInsertRowEvents(int pRow) { super.fireInsertRowEvents(pRow); }
 		
@@ -546,7 +554,7 @@ public class AccountPatterns extends DataTable<Event> {
 	/**
 	 *  Pattern mouse listener
 	 */
-	private class patternMouse extends DataMouse<Event> {
+	private class PatternMouse extends DataMouse<Event> {
 		
 		/* Pop-up Menu items */
 		private static final String popupCredit  		= "Set As Credit";
@@ -555,7 +563,7 @@ public class AccountPatterns extends DataTable<Event> {
 		/**
 		 * Constructor
 		 */
-		private patternMouse() {
+		private PatternMouse() {
 			/* Call super-constructor */
 			super(theTable);
 		}
@@ -703,7 +711,7 @@ public class AccountPatterns extends DataTable<Event> {
 	/**
 	 * Column Model class
 	 */
-	private class patternColumnModel extends DataColumnModel {
+	private class PatternColumnModel extends DataColumnModel {
 		private static final long serialVersionUID = 520785956133901998L;
 
 		/* Renderers/Editors */
@@ -718,7 +726,10 @@ public class AccountPatterns extends DataTable<Event> {
 		/**
 		 * Constructor 
 		 */
-		private patternColumnModel() {		
+		private PatternColumnModel() {		
+			/* call constructor */
+			super(theTable);
+			
 			/* Create the relevant formatters/editors */
 			theDateRenderer   = new Renderer.CalendarCell();
 			theDateEditor     = new Editor.CalendarCell();

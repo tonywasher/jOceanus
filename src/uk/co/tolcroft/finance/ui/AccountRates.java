@@ -33,8 +33,8 @@ public class AccountRates extends DataTable<AcctRate> {
 	private AcctRate.List		    theRates   		= null;
 	private JPanel					thePanel		= null;
 	private AccountRates			theTable    	= this;
-	private ratesMouse				theMouse		= null;
-	private ratesColumnModel		theColumns		= null;
+	private RatesMouse				theMouse		= null;
+	private RatesColumnModel		theColumns		= null;
 	private AccountTab				theParent   	= null;
 	private DateDay.Range			theRange		= null;
 	private Account                 theAccount  	= null;
@@ -80,7 +80,7 @@ public class AccountRates extends DataTable<AcctRate> {
 		setModel(theModel);
 		
 		/* Create the data column model and declare it */
-		theColumns = new ratesColumnModel();
+		theColumns = new RatesColumnModel();
 		setColumnModel(theColumns);
 
 		/* Prevent reordering of columns and auto-resizing */
@@ -88,7 +88,7 @@ public class AccountRates extends DataTable<AcctRate> {
 		setAutoResizeMode(AUTO_RESIZE_OFF);
 			
 		/* Create the mouse listener (automatically added) */
-		theMouse = new ratesMouse();
+		theMouse = new RatesMouse();
 		addMouseListener(theMouse);
 		
         /* Create the debug entry, attach to AccountDebug entry and hide it */
@@ -227,6 +227,14 @@ public class AccountRates extends DataTable<AcctRate> {
 	public class RatesModel extends DataTableModel {
 		private static final long serialVersionUID = 296797947278000196L;
 
+		/**
+		 * Constructor 
+		 */
+		private RatesModel() {		
+			/* call constructor */
+			super(theTable);
+		}
+		
 		/**
 		 * Get the number of display columns
 		 * @return the columns
@@ -394,7 +402,7 @@ public class AccountRates extends DataTable<AcctRate> {
 	/**
 	 *  Rates mouse listener
 	 */
-	private class ratesMouse extends DataMouse<AcctRate> {
+	private class RatesMouse extends DataMouse<AcctRate> {
 			
 		/* Pop-up Menu items */
 		private static final String popupSetNullDate  = "Set Null Date";
@@ -403,7 +411,7 @@ public class AccountRates extends DataTable<AcctRate> {
 		/**
 		 * Constructor
 		 */
-		private ratesMouse() {
+		private RatesMouse() {
 			/* Call super-constructor */
 			super(theTable);
 		}		
@@ -502,7 +510,7 @@ public class AccountRates extends DataTable<AcctRate> {
 	/**
 	 * Column Model class
 	 */
-	private class ratesColumnModel extends DataColumnModel {
+	private class RatesColumnModel extends DataColumnModel {
 		private static final long serialVersionUID = -3431873508431574944L;
 
 		/* Renderers/Editors */
@@ -514,7 +522,10 @@ public class AccountRates extends DataTable<AcctRate> {
 		/**
 		 * Constructor 
 		 */
-		private ratesColumnModel() {		
+		private RatesColumnModel() {		
+			/* call constructor */
+			super(theTable);
+			
 			/* Create the relevant formatters/editors */
 			theDateRenderer = new Renderer.CalendarCell();
 			theDateEditor   = new Editor.CalendarCell();

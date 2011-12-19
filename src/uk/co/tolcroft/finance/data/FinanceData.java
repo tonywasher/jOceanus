@@ -89,7 +89,7 @@ public class FinanceData extends DataSet<FinanceData> {
 		FinanceData myExtract = new FinanceData(this);
 		
 		/* Obtain underlying updates */
-		getUpdateSet(myExtract);
+		myExtract.getUpdateSet(this);
 		
 		/* Build the static extract */
 		myExtract.theActTypes   = theActTypes.getUpdateList();

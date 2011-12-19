@@ -83,13 +83,13 @@ public abstract class DataSet<T extends DataSet<T>> 		implements DebugObject {
 	
 	/**
 	 * Construct an update extract for a DataSet.
-	 * @param pExtract the extract to build 
+	 * @param pSource the source of the extract 
 	 */
-	protected void getUpdateSet(T	pExtract) {
+	protected void getUpdateSet(T	pSource) {
 		/* Build the static differences */
-		pExtract.theControlKeys = theControlKeys.getUpdateList();
-		pExtract.theDataKeys   	= theDataKeys.getUpdateList();
-		pExtract.theControlData = theControlData.getUpdateList();
+		theControlKeys	= pSource.getControlKeys().getUpdateList();
+		theDataKeys   	= pSource.getDataKeys().getUpdateList();
+		theControlData	= pSource.getControlData().getUpdateList();
 	}
 	
 	/**
@@ -162,7 +162,7 @@ public abstract class DataSet<T extends DataSet<T>> 		implements DebugObject {
 	 * @param pItemType the type of items
 	 * @return the list of items
 	 */
-	private DataList<?,?> getDataListForClass(Class<?> pItemType) {
+	protected DataList<?,?> getDataListForClass(Class<?> pItemType) {
 		/* Create the iterator */
 		ListIterator<DataList<?,?>> myIterator = theList.listIterator();
 		

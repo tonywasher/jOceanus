@@ -34,14 +34,14 @@ public class PricePoint extends DataTable<AcctPrice> {
 	private View					theView				= null;
 	private ViewList				theViewSet			= null;
 	private ListClass				theViewList			= null;
-	private spotViewModel			theModel			= null;
+	private SpotViewModel			theModel			= null;
 	private SpotPrices             	theSnapshot			= null;
 	private AcctPrice.List        	thePrices			= null;
 	private MainTab					theParent			= null;
 	private JPanel					thePanel			= null;
 	private PricePoint			 	theTable			= this;
-	private spotViewMouse			theMouse			= null;
-	private spotViewColumnModel		theColumns			= null;
+	private SpotViewMouse			theMouse			= null;
+	private SpotViewColumnModel		theColumns			= null;
 	private DateDay					theDate				= null;
 	private AccountType				theAccountType		= null;
 	private SpotSelect				theSelect	 		= null;
@@ -93,11 +93,11 @@ public class PricePoint extends DataTable<AcctPrice> {
         theDebugPrice.addAsChildOf(mySection);
 		
 		/* Create the model and declare it to our superclass */
-		theModel  = new spotViewModel();
+		theModel  = new SpotViewModel();
 		setModel(theModel);
 			
 		/* Create the data column model and declare it */
-		theColumns = new spotViewColumnModel();
+		theColumns = new SpotViewColumnModel();
 		setColumnModel(theColumns);
 		
 		/* Prevent reordering of columns and auto-resizing */
@@ -108,7 +108,7 @@ public class PricePoint extends DataTable<AcctPrice> {
 		setPreferredScrollableViewportSize(new Dimension(900, 200));
 		
 		/* Add the mouse listener */
-		theMouse = new spotViewMouse();
+		theMouse = new SpotViewMouse();
 		addMouseListener(theMouse);
 		
 		/* Create the sub panels */
@@ -394,9 +394,17 @@ public class PricePoint extends DataTable<AcctPrice> {
 	protected boolean disableShowDeleted(SpotPrice pRow) { return true; }
 	
 	/* SpotView table model */
-	public class spotViewModel extends DataTableModel {
+	public class SpotViewModel extends DataTableModel {
 		private static final long serialVersionUID = 2520681944053000625L;
 
+		/**
+		 * Constructor 
+		 */
+		private SpotViewModel() {		
+			/* call constructor */
+			super(theTable);
+		}
+		
 		/**
 		 * Get the number of display columns
 		 * @return the columns
@@ -570,11 +578,11 @@ public class PricePoint extends DataTable<AcctPrice> {
 	/**
 	 *  SpotView mouse listener
 	 */
-	private class spotViewMouse extends DataMouse<AcctPrice> {
+	private class SpotViewMouse extends DataMouse<AcctPrice> {
 		/**
 		 * Constructor
 		 */
-		private spotViewMouse() {
+		private SpotViewMouse() {
 			/* Call super-constructor */
 			super(theTable);
 		}		
@@ -583,7 +591,7 @@ public class PricePoint extends DataTable<AcctPrice> {
 	/**
 	 * Column Model class
 	 */
-	private class spotViewColumnModel extends DataColumnModel {
+	private class SpotViewColumnModel extends DataColumnModel {
 		private static final long serialVersionUID = 5102715203937500181L;
 
 		/* Renderers/Editors */
@@ -595,7 +603,10 @@ public class PricePoint extends DataTable<AcctPrice> {
 		/**
 		 * Constructor 
 		 */
-		private spotViewColumnModel() {		
+		private SpotViewColumnModel() {		
+			/* call constructor */
+			super(theTable);
+			
 			/* Create the relevant formatters/editors */
 			theDateRenderer    = new Renderer.CalendarCell();
 			thePriceRenderer   = new Renderer.PriceCell();
