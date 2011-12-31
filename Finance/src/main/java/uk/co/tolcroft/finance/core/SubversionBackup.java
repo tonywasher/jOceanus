@@ -1,6 +1,6 @@
 package uk.co.tolcroft.finance.core;
 
-import uk.co.tolcroft.backup.Subversion;
+import uk.co.tolcroft.subversion.Subversion;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.models.security.SecureManager;
 import uk.co.tolcroft.models.security.SecurityControl;

@@ -2,7 +2,7 @@ package uk.co.tolcroft.models.threads;
 
 import java.io.File;
 
-import uk.co.tolcroft.backup.BackupProperties;
+import uk.co.tolcroft.subversion.BackupProperties;
 import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.PropertySet.PropertyManager;
