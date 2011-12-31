@@ -12,6 +12,7 @@ public class ChargeableEvent extends ReportItem<ChargeableEvent> {
 	private static final String objName = "ChargeableEvent";
 
 	/* Members */
+	private		Money	theGains    = null;
 	private		Money	theSlice    = null;
 	private		Money	theTaxation = null;
 		
@@ -34,7 +35,7 @@ public class ChargeableEvent extends ReportItem<ChargeableEvent> {
 	 * Get the Amount of the chargeable event 
 	 * @return the amount of the chargeable event
 	 */
-	public Money			getAmount()		{ return getBase().getAmount(); }
+	public Money			getAmount()		{ return theGains; }
 
 	/**
 	 * Get the TaxCredit of the chargeable event 
@@ -69,8 +70,11 @@ public class ChargeableEvent extends ReportItem<ChargeableEvent> {
 	 * Constructor
 	 * @param pList the list
 	 * @param pEvent the Event
+	 * @param pGains the Gains
 	 */
-	private ChargeableEvent(List pList, Event pEvent) {
+	private ChargeableEvent(List 	pList, 
+							Event 	pEvent,
+							Money	pGains) {
 		/* Call super constructor */
 		super(pList);
 		
@@ -78,7 +82,8 @@ public class ChargeableEvent extends ReportItem<ChargeableEvent> {
 		long			myValue;
 		
 		/* Access the slice value of the event */
-		myValue 	 = pEvent.getAmount().getAmount();
+		theGains	 = pGains;
+		myValue 	 = pGains.getAmount();
 		myValue 	/= pEvent.getYears();
 		theSlice	 = new Money(myValue);
 		
@@ -87,9 +92,10 @@ public class ChargeableEvent extends ReportItem<ChargeableEvent> {
 	}
 	
 	/* Field IDs */
-	public static final int FIELD_SLICE  	= 0;
-	public static final int FIELD_TAXATION  = 1;
-	public static final int NUMFIELDS	    = 2;
+	public static final int FIELD_GAINS 	= 0;
+	public static final int FIELD_SLICE  	= 1;
+	public static final int FIELD_TAXATION  = 2;
+	public static final int NUMFIELDS	    = 3;
 	
 	/**
 	 * Obtain the type of the item
@@ -109,6 +115,7 @@ public class ChargeableEvent extends ReportItem<ChargeableEvent> {
 	 */
 	public static String	fieldName(int iField) {
 		switch (iField) {
+			case FIELD_GAINS: 		return "Gains";
 			case FIELD_SLICE: 		return "Slice";
 			case FIELD_TAXATION: 	return "Taxation";
 			default:		  		return ReportItem.fieldName(iField);
@@ -129,6 +136,9 @@ public class ChargeableEvent extends ReportItem<ChargeableEvent> {
 	public String formatField(DebugDetail pDetail, int iField) {
 		String myString = ""; 
 		switch (iField) {
+			case FIELD_GAINS:		
+				myString += Money.format(theGains);
+				break;
 			case FIELD_SLICE:		
 				myString += Money.format(theSlice);
 				break;
@@ -221,12 +231,14 @@ public class ChargeableEvent extends ReportItem<ChargeableEvent> {
 		/**
 		 * Add Chargeable Event to List
 		 * @param pEvent the base event
+		 * @param pGains the gains
 		 */
-		public void addEvent(Event pEvent) {
+		public void addEvent(Event pEvent,
+							 Money pGains) {
 			ChargeableEvent myEvent;
 			
 			/* Create the chargeable event */
-			myEvent = new ChargeableEvent(this, pEvent);
+			myEvent = new ChargeableEvent(this, pEvent, pGains);
 			
 			/* Add it to the list */
 			add(myEvent);
@@ -305,7 +317,7 @@ public class ChargeableEvent extends ReportItem<ChargeableEvent> {
 			/* Loop through the list */
 			while ((myEvent = myIterator.next()) != null) {				
 				/* Add in this slice */
-				myTotal.addAmount(myEvent.getBase().getAmount());
+				myTotal.addAmount(myEvent.getAmount());
 			}
 			
 			/* Return the total */

@@ -54,7 +54,7 @@ public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
 			String 	myPrefix	= myProperties.getStringValue(BackupProperties.nameBackupPfix);
 
 			/* Determine the name of the file to build */
-			myFile = new File(myBackupDir.getPath() + myPrefix + ".xls");
+			myFile = new File(myBackupDir.getPath() + File.separator + myPrefix + ".xls");
 			
 			/* Create backup */
 			mySheet = theControl.getSpreadSheet();

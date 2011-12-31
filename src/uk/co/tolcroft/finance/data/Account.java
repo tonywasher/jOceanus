@@ -72,6 +72,7 @@ public class Account extends EncryptedItem<Account> {
 	private Event                 theLatest    = null;
 	private AcctPrice             theInitPrice = null;
 	private boolean               isCloseable  = true;
+	private boolean               hasDebts	   = false;
 	private boolean               hasRates	   = false;
 	private boolean               hasPrices	   = false;
 	private boolean               hasPatterns  = false;
@@ -101,6 +102,7 @@ public class Account extends EncryptedItem<Account> {
 	public  char[]    	getAccount()	{ return getPairValue(getValues().getAccount()); }
 	public  char[]    	getNotes()		{ return getPairValue(getValues().getNotes()); }
 	public  boolean     isCloseable()  	{ return isCloseable; }
+	public  boolean     hasDebts()  	{ return hasDebts; }
 	public  boolean     isParent()  	{ return isParent; }
 	public  boolean     isClosed()     	{ return (getClose() != null); }
 	public  boolean     isAlias()     	{ return (getAliasId() != null); }
@@ -148,14 +150,15 @@ public class Account extends EncryptedItem<Account> {
 	public static final int FIELD_EVTFIRST = EncryptedItem.NUMFIELDS+13;
 	public static final int FIELD_EVTLAST  = EncryptedItem.NUMFIELDS+14;
 	public static final int FIELD_INITPRC  = EncryptedItem.NUMFIELDS+15;
-	public static final int FIELD_HASRATES = EncryptedItem.NUMFIELDS+16;
-	public static final int FIELD_HASPRICE = EncryptedItem.NUMFIELDS+17;
-	public static final int FIELD_HASPATT  = EncryptedItem.NUMFIELDS+18;
-	public static final int FIELD_ISPATT   = EncryptedItem.NUMFIELDS+19;
-	public static final int FIELD_ISPARENT = EncryptedItem.NUMFIELDS+20;
-	public static final int FIELD_ISALIASD = EncryptedItem.NUMFIELDS+21;
-	public static final int FIELD_ISCLSABL = EncryptedItem.NUMFIELDS+22;
-	public static final int NUMFIELDS	   = EncryptedItem.NUMFIELDS+23;
+	public static final int FIELD_HASDEBTS = EncryptedItem.NUMFIELDS+16;
+	public static final int FIELD_HASRATES = EncryptedItem.NUMFIELDS+17;
+	public static final int FIELD_HASPRICE = EncryptedItem.NUMFIELDS+18;
+	public static final int FIELD_HASPATT  = EncryptedItem.NUMFIELDS+19;
+	public static final int FIELD_ISPATT   = EncryptedItem.NUMFIELDS+20;
+	public static final int FIELD_ISPARENT = EncryptedItem.NUMFIELDS+21;
+	public static final int FIELD_ISALIASD = EncryptedItem.NUMFIELDS+22;
+	public static final int FIELD_ISCLSABL = EncryptedItem.NUMFIELDS+23;
+	public static final int NUMFIELDS	   = EncryptedItem.NUMFIELDS+24;
 	
 	/**
 	 * Obtain the type of the item
@@ -191,6 +194,7 @@ public class Account extends EncryptedItem<Account> {
 			case FIELD_EVTFIRST:	return "FirstEvent";
 			case FIELD_EVTLAST:		return "LastEvent";
 			case FIELD_INITPRC:		return "InitialPrice";
+			case FIELD_HASDEBTS:	return "HasDebts";
 			case FIELD_HASRATES:	return "HasRates";
 			case FIELD_HASPRICE:	return "HasPrices";
 			case FIELD_HASPATT:		return "HasPatterns";
@@ -287,6 +291,9 @@ public class Account extends EncryptedItem<Account> {
 				if (theInitPrice != null) 
 					myString = pDetail.addDebugLink(theInitPrice, Price.format(theInitPrice.getPrice())); 
 				break;
+			case FIELD_HASDEBTS:	
+				myString += hasDebts ? true : false; 
+				break;
 			case FIELD_HASPATT:	
 				myString += hasPatterns ? true : false; 
 				break;
@@ -340,6 +347,7 @@ public class Account extends EncryptedItem<Account> {
 		hasPatterns  = pItem.hasPatterns;
 		hasRates     = pItem.hasRates;
 		hasPrices    = pItem.hasPrices;
+		hasDebts     = pItem.hasDebts;
 	}
 	
 	/**
@@ -351,10 +359,10 @@ public class Account extends EncryptedItem<Account> {
 		super(pList, pAccount.getId());
 		Values myValues = getValues();
 		myValues.copyFrom(pAccount.getValues());
-		ListStyle myOldStyle = pAccount.getList().getStyle();
+		ListStyle myOldStyle = pAccount.getStyle();
 
 		/* Switch on the ListStyle */
-		switch (pList.getStyle()) {
+		switch (getStyle()) {
 			case EDIT:
 				/* If this is a view creation */
 				if (myOldStyle == ListStyle.CORE) {
@@ -917,6 +925,7 @@ public class Account extends EncryptedItem<Account> {
 		theEarliest   = null;
 		theLatest     = null;
 		theInitPrice  = null;
+		hasDebts      = false;
 		hasRates      = false;
 		hasPrices     = false;
 		hasPatterns   = false;
@@ -976,8 +985,11 @@ public class Account extends EncryptedItem<Account> {
 			Account myAccount = (Account)pObject;
 			
 			/* Note flags */
-			if (differs(myAccount.getParent(), this).isIdentical()) isParent 	= true;
 			if (differs(myAccount.getAlias(), this).isIdentical())  isAliasedTo = true;
+			if (differs(myAccount.getParent(), this).isIdentical()) {
+				isParent 	= true;
+				if (myAccount.isDebt()) hasDebts = true;
+			}
 		}
 	}
 		

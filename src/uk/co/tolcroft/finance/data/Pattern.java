@@ -11,7 +11,6 @@ import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.HistoryValues;
-import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.finance.views.*;
@@ -44,6 +43,9 @@ public class Pattern extends Event {
 	/* Linking methods */
 	public Pattern     getBase() { return (Pattern)super.getBase(); }
 	
+	@Override
+	protected boolean requiredInfoSet()	{ return false; }
+
 	/* Field IDs */
 	public static final int FIELD_FREQ     = Event.NUMFIELDS;
 	public static final int FIELD_ISCREDIT = Event.NUMFIELDS+1;
@@ -125,42 +127,42 @@ public class Pattern extends Event {
 	 */
 	protected Pattern(List pList, Pattern pPattern) {
 		/* Simply initialise as Event */
-		super(pList, pPattern);
+		super(pList, (Event)pPattern);
 		
 		/* Copy the id */
-		setId(pPattern.getId());
+		//setId(pPattern.getId());
 		
 		/* Access source style */
-		ListStyle myOldStyle = pPattern.getList().getStyle();
+		//ListStyle myOldStyle = pPattern.getList().getStyle();
 
 		/* Switch on the ListStyle */
-		switch (pList.getStyle()) {
-			case EDIT:
+		//switch (pList.getStyle()) {
+			//case EDIT:
 				/* If this is a view creation */
-				if (myOldStyle == ListStyle.CORE) {
+				//if (myOldStyle == ListStyle.CORE) {
 					/* Event is based on the original element */
-					setBase(pPattern);
-					pList.setNewId(this);				
-					break;
-				}
+					//setBase(pPattern);
+					//pList.setNewId(this);				
+					//break;
+				//}
 				
 				/* Else this is a duplication so treat as new item */
-				setId(0);
-				pList.setNewId(this);				
-				break;
-			case CLONE:
-				reBuildLinks(pList.getData());
-			case COPY:
-			case CORE:
+				//setId(0);
+				//pList.setNewId(this);				
+				//break;
+			//case CLONE:
+				//reBuildLinks(pList.getData());
+			//case COPY:
+			//case CORE:
 				/* Reset Id if this is an insert from a view */
-				if (myOldStyle == ListStyle.EDIT) setId(0);
-				pList.setNewId(this);				
-				break;
-			case UPDATE:
-				setBase(pPattern);
-				setState(pPattern.getState());
-				break;
-		}
+				//if (myOldStyle == ListStyle.EDIT) setId(0);
+				//pList.setNewId(this);				
+				//break;
+			//case UPDATE:
+				//setBase(pPattern);
+				//setState(pPattern.getState());
+				//break;
+		//}
 	}
 
 	/* Is this list locked */
@@ -1005,6 +1007,12 @@ public class Pattern extends Event {
 				case FIELD_ISCREDIT:
 					bResult = ((isCredit != pValues.isCredit) ? Difference.Different
 															  : Difference.Identical);
+					break;
+				case VFIELD_ACCOUNT:
+					bResult = (Account.differs(getAccount(), 		pValues.getAccount()));
+					break;
+				case VFIELD_PARTNER:
+					bResult = (Account.differs(getPartner(), 		pValues.getPartner()));
 					break;
 				default:
 					bResult = super.fieldChanged(fieldNo, pValues);

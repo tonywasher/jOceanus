@@ -251,10 +251,10 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		theEnumClass 	= pSource.theEnumClass;
 		StaticData<?,?>.Values myValues = getObj();
 		myValues.copyFrom(pSource.getObj());
-		ListStyle myOldStyle = pSource.getList().getStyle();
+		ListStyle myOldStyle = pSource.getStyle();
 
 		/* Switch on the ListStyle */
-		switch (pList.getStyle()) {
+		switch (getStyle()) {
 			case EDIT:
 				/* If this is a view creation */
 				if (myOldStyle == ListStyle.CORE) {
@@ -287,7 +287,6 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	/**
 	 * Initial constructor
 	 * @param pList The list to associate the Static Data with
-	 * @param uId the id of the new item
 	 * @param pValue the name of the new item
 	 */
 	protected StaticData(StaticList<?,T,E> 	pList, 

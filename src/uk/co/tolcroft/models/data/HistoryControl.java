@@ -1,6 +1,7 @@
 package uk.co.tolcroft.models.data;
 
 import uk.co.tolcroft.models.Difference;
+import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.help.DebugDetail;
 
 
@@ -88,6 +89,62 @@ public class HistoryControl<T extends DataItem<T>> {
 	 */
 	public DataItem<?>	getBase()      	{ return theBase; }
 
+	/**
+	 * Determine State of item
+	 * @return the state of the item
+	 */
+	protected DataState determineState() {
+		/* If we have no history we are clean */
+		if (theCurr == null) return DataState.CLEAN;
+		
+		/* If we are an edit extract */
+		if (theItem.getStyle() == ListStyle.EDIT) {
+			/* If the item is deleted */
+			if (theCurr.isDeletion()) {
+				/* If we have no base then we are DelNew */
+				if (theBase == null) return DataState.DELNEW;
+				
+				/* If we have no history then we are clean */
+				if (theOriginal == null) return DataState.CLEAN;
+				
+				/* We are simply deleted */
+				return DataState.DELETED;
+			}
+			
+			/* If we have no base then we are New */
+			if (theBase == null) return DataState.NEW;
+			
+			/* If we have no history we are Clean */
+			if (theOriginal == null) return DataState.CLEAN;
+
+			/* If we have a single change that is to undelete then we are Recovered */
+			if ((theTop == theOriginal) && (theBase.isDeleted())) return DataState.RECOVERED;
+			
+			/* else we are changed */
+			return DataState.CHANGED;
+		}
+		
+		/* If the item is deleted */
+		if (theCurr.isDeletion()) {
+			/* We must have a change */
+			if (theOriginal == null)  { 
+				throw new IllegalArgumentException(); }
+			else if (theOriginal.theSnapShot.getVersion() != 0) return DataState.DELNEW;
+
+			/* Return deleted */
+			return DataState.DELETED;
+		}
+		
+		/* If we have no changes we are either Clean or New */
+		if (theOriginal == null) return (theCurr.getVersion() == 0) ? DataState.CLEAN : DataState.NEW;
+
+		/* If we have the original values have version 0 */
+		if (theOriginal.theSnapShot.getVersion() == 0) return DataState.CHANGED;
+		
+		/* Return new state */
+		return DataState.NEW;
+	}
+	
 	/**
 	 *  Push Item to the history
 	 */

@@ -57,7 +57,7 @@ public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
 			/* If we are not doing time-stamps */
 			if (!doTimeStamp) {
 				/* Set the standard backup name */
-				myFile = new File(myBackupDir.getPath() + myPrefix + ".zip");
+				myFile = new File(myBackupDir.getPath() + File.separator + myPrefix);
 			}
 			
 			/* else we need to generate a time-stamp (day only) */
@@ -68,6 +68,7 @@ public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
 				/* Create the name of the file */
 				StringBuilder myName = new StringBuilder(100);
 				myName.append(myBackupDir.getPath());
+				myName.append(File.separator);
 				myName.append(myPrefix);
 				myName.append(myNow.getYear());
 				if (myNow.getMonth() < 10) myName.append('0');

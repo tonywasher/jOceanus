@@ -4,6 +4,40 @@ import uk.co.tolcroft.models.Difference;
 
 public abstract class HistoryValues<T extends DataItem<T>> {
 	/**
+	 * Version # of the values
+	 */
+	private int		theVersion	= 0;
+	
+	/**
+	 * Is this object a record of a deletion event
+	 */
+	private boolean	isDeletion	= false;
+	
+	/**
+	 * Obtain the version # of the values
+	 * @return the version #
+	 */
+	protected int 		getVersion()	{ return theVersion; }
+	
+	/**
+	 * Set the version # of the values
+	 * @param pVersion the version #
+	 */
+	protected void 		setVersion(int pVersion)	{ theVersion = pVersion; }
+	
+	/**
+	 * Determine if this object is a record of a deletion event
+	 * @return true/false
+	 */
+	protected boolean 	isDeletion()	{ return isDeletion; }
+	
+	/**
+	 * Set deletion indication
+	 * @return true/false
+	 */
+	protected void 		setDeletion()	{ isDeletion = true; }
+	
+	/**
 	 * Is this object identical to the comparison object
 	 * @param pCompare the comparison object
 	 * @return Difference details of the two values

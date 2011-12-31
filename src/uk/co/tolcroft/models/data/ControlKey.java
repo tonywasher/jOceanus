@@ -155,7 +155,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		myValues.copyFrom(pKey.getValues());
 
 		/* Switch on the LinkStyle */
-		switch (pList.getStyle()) {
+		switch (getStyle()) {
 			case CLONE:
 				theMap 			= new EnumMap<SymKeyType,DataKey>(SymKeyType.class);
 				theCipherSet 	= new CipherSet(getRandom(), getKeyMode());				

@@ -1201,6 +1201,9 @@ public class EventAnalysis implements DebugObject {
 		/* Adjust the TaxMan account for the tax credit */
 		theTaxMan.adjustForTaxCredit(pEvent);
 		theTaxPaid.adjustForTaxCredit(pEvent);
+		
+		/* Add the chargeable event */
+		theAnalysis.getCharges().addEvent(pEvent, myDeltaGains);
 	}
 	
 	/**

@@ -23,6 +23,11 @@ public abstract class DataItem<T extends DataItem<T>>
 	private DataList<?,T>			theList		= null;
 	
 	/**
+	 * The list to which this item belongs
+	 */
+	private ListStyle				theStyle	= null;
+	
+	/**
 	 * Self reference (built as cast during constructor)
 	 */
 	private T						theItem;
@@ -77,6 +82,12 @@ public abstract class DataItem<T extends DataItem<T>>
 	 * @return the list control
 	 */
 	public DataList<?,T>   			getList()  		{ return theList; }
+	
+	/**
+	 * Get the list control for this item
+	 * @return the list control
+	 */
+	public ListStyle   				getStyle()  	{ return theStyle; }
 	
 	/**
 	 * Get the changeable values object for this item 
@@ -327,12 +338,15 @@ public abstract class DataItem<T extends DataItem<T>>
 		
 		/* Start the status section */
 		myString.append("<tr><th rowspan=\"");
-		myString.append((isDeleted) ? 5 : 4);
+		myString.append((isDeleted) ? 6 : 5);
 		myString.append("\">Status</th></tr>");
 		
 		/* Format the State and edit State */
 		myString.append("<tr><td>Generation</td><td>");
 		myString.append(getGeneration());
+		myString.append("</td></tr>");
+		myString.append("<tr><td>Style</td><td>");
+		myString.append(theStyle);
 		myString.append("</td></tr>");
 		myString.append("<tr><td>State</td><td>");
 		myString.append(theState);
@@ -348,15 +362,19 @@ public abstract class DataItem<T extends DataItem<T>>
 		
 		/* Start the values section */
 		myString.append("<tr><th rowspan=\"");
-		myString.append(iNumFields+1);
+		myString.append(iNumFields+2);
 		myString.append("\">Values</th></tr>");
+		myString.append("<td>DerivedState</td><td>"); 
+		myString.append(theHistory.determineState());
+		myString.append("</td></tr>");
 		
 		/* Loop through the fields */
 		HistoryValues<T> myValues = theHistory.getCurrentValues();
 		for (iField = 0;
 			 iField < iNumFields;
 			 iField++) {
-			if (iField != 0) myString.append("<tr>"); 
+			//if (iField != 0)
+			myString.append("<tr>"); 
 			myString.append("<td>"); 
 			myString.append(getFieldName(iField)); 
 			myString.append("</td><td>"); 
@@ -670,6 +688,7 @@ public abstract class DataItem<T extends DataItem<T>>
 		super(pList);
 		theId      = uId;
 		theList    = pList;
+		theStyle   = pList.getStyle();
 		theItem	   = pList.getBaseClass().cast(this);
 		theHistory = new HistoryControl<T>(theItem);
 		buildHistory();
@@ -824,7 +843,7 @@ public abstract class DataItem<T extends DataItem<T>>
 				theEdit   = EditState.CLEAN;
 				switch (getBaseState()) {
 					case NOSTATE:
-						if (theList.getStyle() == ListStyle.EDIT) {
+						if (theStyle == ListStyle.EDIT) {
 							theState  = DataState.NEW;
 							theEdit   = EditState.DIRTY;
 						}

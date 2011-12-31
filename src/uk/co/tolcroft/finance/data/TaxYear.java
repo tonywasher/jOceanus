@@ -241,10 +241,10 @@ public class TaxYear extends DataItem<TaxYear> {
 		super(pList, pTaxYear.getId());
 		Values myValues  = getValues();
 		myValues.copyFrom(pTaxYear.getValues());
-		ListStyle myOldStyle = pTaxYear.getList().getStyle();
+		ListStyle myOldStyle = pTaxYear.getStyle();
 
 		/* Switch on the ListStyle */
-		switch (pList.getStyle()) {
+		switch (getStyle()) {
 			case EDIT:
 				/* If this is a view creation */
 				if (myOldStyle == ListStyle.CORE) {

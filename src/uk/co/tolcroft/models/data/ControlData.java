@@ -101,7 +101,7 @@ public class ControlData extends DataItem<ControlData> {
 		myValues.copyFrom(pSource.getValues());
 
 		/* Switch on the LinkStyle */
-		switch (pList.getStyle()) {
+		switch (getStyle()) {
 			case CLONE:
 				isolateCopy(pList.getData());
 			case CORE:

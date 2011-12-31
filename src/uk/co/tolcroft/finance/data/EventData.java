@@ -143,10 +143,10 @@ public class EventData extends EncryptedItem<EventData> {
 		super(pList, pInfo.getId());
 		Values myValues = getValues();
 		myValues.copyFrom(pInfo.getValues());
-		ListStyle myOldStyle = pInfo.getList().getStyle();
+		ListStyle myOldStyle = pInfo.getStyle();
 
 		/* Switch on the ListStyle */
-		switch (pList.getStyle()) {
+		switch (getStyle()) {
 			case EDIT:
 				/* If this is a view creation */
 				if (myOldStyle == ListStyle.CORE) {

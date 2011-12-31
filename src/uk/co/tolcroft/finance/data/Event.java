@@ -63,6 +63,12 @@ public class Event extends EncryptedItem<Event> {
 	/* Linking methods */
 	public Event     getBase() { return (Event)super.getBase(); }
 	
+	/**
+	 * Does this class require an EvenInfoSet
+	 * @return true/false
+	 */
+	protected boolean requiredInfoSet()	{ return true; }
+	
 	/* Field IDs */
 	public static final int FIELD_DATE      = EncryptedItem.NUMFIELDS;
 	public static final int FIELD_DESC      = EncryptedItem.NUMFIELDS+1;
@@ -205,36 +211,37 @@ public class Event extends EncryptedItem<Event> {
 		super(pList, pEvent.getId());
 		Values myValues = getValues();
 		myValues.copyFrom(pEvent.getValues());
-		ListStyle myOldStyle = pEvent.getList().getStyle();
+		ListStyle myOldStyle = pEvent.getStyle();
 
+		/* Determine whether infoSet is needed */
+		boolean bNeedInfoSet = requiredInfoSet();
+		
 		/* Switch on the ListStyle */
-		switch (pList.getStyle()) {
+		switch (getStyle()) {
 			case EDIT:
+				/* Create a copy of the infoSet if required */
+				if (bNeedInfoSet) theInfoSet = new EventInfoSet(this, pEvent.theInfoSet);
+
 				/* If this is a view creation */
 				if (myOldStyle == ListStyle.CORE) {
-					/* Create a new EventInfoSet for an event/StatementLine*/
-					if ((this.getClass() == Event.class) ||
-						(this.getClass() == Line.class))
-						theInfoSet = new EventInfoSet(this, pEvent.theInfoSet);
-
 					/* Event is based on the original element */
 					setBase(pEvent);
 					pList.setNewId(this);				
 					break;
 				}
 				
-				/* Create a new EventInfoSet for a true event */
-				//if (this.getClass() == Event.class)
-				//	theInfoSet = new EventInfoSet(thiset);
-
 				/* Else this is a duplication so treat as new item */
 				setId(0);
 				pList.setNewId(this);				
+
 				break;
 			case CLONE:
 				reBuildLinks(pList.getData());
 			case COPY:
 			case CORE:
+				/* Create a new infoSet if required */
+				if (bNeedInfoSet) theInfoSet = new EventInfoSet(this);
+
 				/* Reset Id if this is an insert from a view */
 				if (myOldStyle == ListStyle.EDIT) setId(0);
 				pList.setNewId(this);				
@@ -259,31 +266,8 @@ public class Event extends EncryptedItem<Event> {
 		Values myValues = getValues();
 		myValues.copyFrom(pLine.getValues());
 
-		/* Create a new EventInfoSet for a true event */
-		if (this.getClass() == Event.class)
-			theInfoSet = new EventInfoSet(this);
-
-		/* Allocate the id */
-		if (this.getClass() == Event.class)
-			pList.setNewId(this);				
-	}
-	
-	/**
-	 * Construct a new event from a Statement Line
-	 * 
-	 * @param pLine The Line to copy 
-	 */
-	public Event(List   pList,
-		         Line	pLine) {
-	
-		/* Set standard values */
-		super(pList, 0);
-		Values myValues = getValues();
-		myValues.copyFrom(pLine.getValues());
-			
-		/* Create a new EventInfoSet for a true event */
-		if (this.getClass() == Event.class)
-			theInfoSet = new EventInfoSet(this);
+		/* Create a new EventInfoSet if required */
+		if (requiredInfoSet()) theInfoSet = new EventInfoSet(this);
 
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -294,9 +278,8 @@ public class Event extends EncryptedItem<Event> {
 		super(pList, 0);
 		setControlKey(pList.getControlKey());
 
-		/* Create a new EventInfoSet for a true event */
-		if (this.getClass() == Event.class)
-			theInfoSet = new EventInfoSet(this);
+		/* Create a new EventInfoSet if required */
+		if (requiredInfoSet()) theInfoSet = new EventInfoSet(this);
 
 		pList.setNewId(this);				
 	}
@@ -330,9 +313,8 @@ public class Event extends EncryptedItem<Event> {
 		/* Create a new EventValues object */
 		Values myValues = getValues();
 		
-		/* Create a new EventInfoSet for a true event */
-		if (this.getClass() == Event.class)
-			theInfoSet = new EventInfoSet(this);
+		/* Create a new EventInfoSet if required */
+		if (requiredInfoSet()) theInfoSet = new EventInfoSet(this);
 
 		/* Store the IDs that we will look up */
 		myValues.setDebitId(uDebit);
@@ -400,9 +382,8 @@ public class Event extends EncryptedItem<Event> {
 		/* Create a new EventValues object */
 		Values myValues = getValues();
 
-		/* Create a new EventInfoSet for a true event */
-		if (this.getClass() == Event.class)
-			theInfoSet = new EventInfoSet(this);
+		/* Create a new EventInfoSet if required */
+		if (requiredInfoSet()) theInfoSet = new EventInfoSet(this);
 
 		/* Record the encrypted values */
 		myValues.setDesc(new StringPair(pDesc));
@@ -411,16 +392,45 @@ public class Event extends EncryptedItem<Event> {
 		myValues.setCredit(pCredit);
 		myValues.setTransType(pTransType);
 		myValues.setDate(new DateDay(pDate));
-		myValues.setYears(pYears);
 		if (pUnits != null) myValues.setUnits(new UnitsPair(pUnits));
-		if (pTaxCredit != null) myValues.setTaxCredit(new MoneyPair(pTaxCredit));
-		if (pDilution != null) myValues.setDilution(new DilutionPair(pDilution));
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
 		
+		/* If Units exist */
+		if (pUnits != null) {
+			myValues.setUnits(new UnitsPair(pUnits));
+			/* Create the data */
+			Units myUnits = new Units(pUnits);
+			boolean isCredit = myValues.getCredit().isPriced();
+			if ((isStockSplit() || isAdminCharge()) && (!myUnits.isPositive())) {
+				myUnits.negate();
+				isCredit=false;
+			}
+			EventData myData = theInfoSet.getNewData(isCredit 	? EventInfoClass.CreditUnits
+																: EventInfoClass.DebitUnits);
+			myData.setUnits(myUnits);
+		}
+		
+		/* If TaxCredit exist */
+		if (pTaxCredit != null) {
+			myValues.setTaxCredit(new MoneyPair(pTaxCredit));
+			/* Create the data */
+			EventData myData = theInfoSet.getNewData(EventInfoClass.TaxCredit);
+			myData.setMoney(new Money(pTaxCredit));
+		}
+		
+		/* If Dilution exist */
+		if (pDilution != null) {
+			myValues.setDilution(new DilutionPair(pDilution));
+			/* Create the data */
+			EventData myData = theInfoSet.getNewData(EventInfoClass.Dilution);
+			myData.setDilution(new Dilution(pDilution));
+		}
+		
 		/* If Years exist */
 		if (pYears != null) {
+			myValues.setYears(pYears);
 			/* Create the value */
 			EventValue myValue = theInfoSet.getNewValue(EventInfoClass.QualifyYears);
 			myValue.setValue(pYears);

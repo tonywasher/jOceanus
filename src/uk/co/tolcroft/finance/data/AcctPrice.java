@@ -126,10 +126,10 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		super(pList, pPrice.getId());
 		Values myValues = getValues();
 		myValues.copyFrom(pPrice.getValues());
-		ListStyle myOldStyle = pPrice.getList().getStyle();
+		ListStyle myOldStyle = pPrice.getStyle();
 
 		/* Switch on the ListStyle */
-		switch (pList.getStyle()) {
+		switch (getStyle()) {
 			case EDIT:
 				/* If this is a view creation */
 				if (myOldStyle == ListStyle.CORE) {

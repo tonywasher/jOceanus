@@ -130,10 +130,10 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		super(pList, pPeriod.getId());
 		Values myValues = getValues();
 		myValues.copyFrom(pPeriod.getValues());
-		ListStyle myOldStyle = pPeriod.getList().getStyle();
+		ListStyle myOldStyle = pPeriod.getStyle();
 
 		/* Switch on the ListStyle */
-		switch (pList.getStyle()) {
+		switch (getStyle()) {
 			case EDIT:
 				/* If this is a view creation */
 				if (myOldStyle == ListStyle.CORE) {

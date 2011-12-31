@@ -58,9 +58,19 @@ public class EventInfoSet {
 		/* Access the dataSet */
 		FinanceData myData = ((Event.List)pEvent.getList()).getData();
 
-		/* Register the Value and Data lists */
-		theValueList = myData.getEventValues();
-		theDataList  = myData.getEventData();
+		/* If the underlying event is EDIT */
+		if (pEvent.getStyle() == ListStyle.EDIT) {
+			/* Create the lists for the Info */
+			theValueList = new EventValue.List(myData, ListStyle.EDIT);
+			theDataList	 = new EventData.List(myData, ListStyle.EDIT);			
+		}
+		
+		/* else use the ones for the DataSet */
+		else {
+			/* Register the Value and Data lists */
+			theValueList = myData.getEventValues();
+			theDataList  = myData.getEventData();
+		}
 		
 		/* Access the EventInfo Types */
 		theTypes = myData.getInfoTypes();
@@ -73,22 +83,13 @@ public class EventInfoSet {
 	 */
 	protected EventInfoSet(Event 		pEvent,
 						   EventInfoSet pSet) {
-		/* Store the Event */
-		theEvent = pEvent;
+		/* Call standard constructor */
+		this(pEvent);
+
+		/* Return if there is no infoSet */
+		if (pSet == null) return;
 		
-		/* Create the Maps */
-		theValueMap = new EnumMap<EventInfoClass, EventValue>(EventInfoClass.class);
-		theDataMap 	= new EnumMap<EventInfoClass, EventData>(EventInfoClass.class);
-		
-		/* Determine the DataSet */
-		Event.List 	myList 		= (Event.List)pEvent.getList();
-		FinanceData	myDataSet 	= myList.getData();
-		
-		/* Create the lists for the Info */
-		theValueList = new EventValue.List(myDataSet, ListStyle.EDIT);
-		theDataList	 = new EventData.List(myDataSet, ListStyle.EDIT);
-		
-		/* For each EventInfo in the underlying ValueMap */
+		/* Clone the InfoSetor each EventInfo in the underlying ValueMap */
 		for (EventValue myValue : pSet.theValueMap.values()) {
 			/* Create the new value */
 			EventValue myNew = new EventValue(theValueList, myValue);
@@ -107,9 +108,6 @@ public class EventInfoSet {
 			/* Add to the value map */
 			theDataMap.put(myData.getInfoType().getInfoClass(), myNew);
 		}
-		
-		/* Access the EventInfo Types */
-		theTypes = pSet.theTypes;
 	}
 	
 	/**

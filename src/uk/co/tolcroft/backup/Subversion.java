@@ -107,7 +107,7 @@ public class Subversion {
 			String myPrefix = myProperties.getStringValue(BackupProperties.nameRepoPfix);
 			
 			/* Determine the name of the zip file */
-			myZipName 	= new File(pBackupDir.getPath() + myPrefix + myName + ".zip");
+			myZipName 	= new File(pBackupDir.getPath() + File.separator + myPrefix + myName + ".zip");
 
 			/* If the backup file exists */
 			if (myZipName.exists()) {
