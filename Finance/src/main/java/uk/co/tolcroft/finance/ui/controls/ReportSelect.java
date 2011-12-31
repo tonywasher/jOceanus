@@ -14,11 +14,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
+import net.sourceforge.JDateButton.JDateButton;
+
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.EventAnalysis.AnalysisYear;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.ui.DateButton;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
 public class ReportSelect {
@@ -27,7 +28,7 @@ public class ReportSelect {
 	private JPanel				thePanel		= null;
 	private stdPanel			theParent		= null;
 	private View				theView			= null;
-	private DateButton			theDateButton	= null;
+	private JDateButton			theDateButton	= null;
 	private JComboBox           theReportBox 	= null;
 	private JComboBox           theYearsBox 	= null;
 	private JLabel				theRepLabel		= null;
@@ -68,7 +69,7 @@ public class ReportSelect {
 		theYearsBox    = new JComboBox();
 		
 		/* Create the DateButton */
-		theDateButton = new DateButton();
+		theDateButton = new JDateButton();
 		
 		/* Create initial state */
 		theState = new ReportState();
@@ -142,7 +143,7 @@ public class ReportSelect {
 		/* Add the listener for item changes */
 		theReportBox.addItemListener(myListener);
 		theYearsBox.addItemListener(myListener);
-		theDateButton.addPropertyChangeListener(DateButton.valueDATE, myListener);
+		theDateButton.addPropertyChangeListener(JDateButton.valueDATE, myListener);
 	}
 	
 	/* refresh data */
@@ -361,7 +362,7 @@ public class ReportSelect {
 		 * Set new Date
 		 * @param pButton the Button with the new date 
 		 */
-		private boolean setDate(DateButton pButton) {
+		private boolean setDate(JDateButton pButton) {
 			/* Adjust the date and build the new range */
 			DateDay myDate = new DateDay(pButton.getSelectedDate());
 			if (DateDay.differs(myDate, theDate).isDifferent()) {

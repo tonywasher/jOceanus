@@ -15,12 +15,13 @@ import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.LayoutStyle;
 
+import net.sourceforge.JDateButton.JDateButton;
+
 import uk.co.tolcroft.finance.data.Account;
 import uk.co.tolcroft.finance.data.AccountType;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.ui.DateButton;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
 public class SpotSelect {
@@ -29,7 +30,7 @@ public class SpotSelect {
 	private JPanel					thePanel		= null;
 	private stdPanel  				theParent		= null;
 	private View					theView			= null;
-	private DateButton				theDateButton	= null;
+	private JDateButton				theDateButton	= null;
 	private JCheckBox				theShowClosed   = null;
 	private JButton					theNext   		= null;
 	private JButton					thePrev   		= null;
@@ -65,7 +66,7 @@ public class SpotSelect {
 		theShowClosed.setSelected(doShowClosed);
 		
 		/* Create the DateButton */
-		theDateButton	= new DateButton();
+		theDateButton	= new JDateButton();
 		
 		/* Create the Buttons */
 		theNext   	= new JButton("Next");
@@ -124,7 +125,7 @@ public class SpotSelect {
 		theState.applyState();
 
 		/* Add the listener for item changes */
-		theDateButton.addPropertyChangeListener(DateButton.valueDATE, myListener);
+		theDateButton.addPropertyChangeListener(JDateButton.valueDATE, myListener);
 		theShowClosed.addItemListener(myListener);
 		theNext.addActionListener(myListener);
 		thePrev.addActionListener(myListener);
@@ -385,7 +386,7 @@ public class SpotSelect {
 		 * Set new Date
 		 * @param pButton the Button with the new date 
 		 */
-		private boolean setDate(DateButton pButton) {
+		private boolean setDate(JDateButton pButton) {
 			/* Adjust the date and build the new range */
 			DateDay myDate = new DateDay(pButton.getSelectedDate());
 			if (DateDay.differs(myDate, theDate).isDifferent()) {

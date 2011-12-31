@@ -15,10 +15,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
+import net.sourceforge.JDateButton.JDateButton;
+
 import uk.co.tolcroft.finance.ui.controls.*;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataState;
@@ -29,7 +30,6 @@ import uk.co.tolcroft.models.help.DebugManager.*;
 import uk.co.tolcroft.models.ui.ErrorPanel;
 import uk.co.tolcroft.models.ui.ItemField;
 import uk.co.tolcroft.models.ui.SaveButtons;
-import uk.co.tolcroft.models.ui.DateButton;
 import uk.co.tolcroft.models.ui.ItemField.FieldSet;
 import uk.co.tolcroft.models.ui.ValueField;
 import uk.co.tolcroft.models.ui.ValueField.ValueClass;
@@ -61,7 +61,7 @@ public class MaintAccount implements stdPanel {
 	private JComboBox			theTypesBox		= null;
 	private JComboBox			theParentBox	= null;
 	private JComboBox			theAliasBox		= null;
-	private DateButton			theMatButton	= null;
+	private JDateButton			theMatButton	= null;
 	private JLabel				theTypLabel		= null;
 	private JLabel				theParLabel		= null;
 	private JLabel				theAlsLabel		= null;
@@ -183,7 +183,7 @@ public class MaintAccount implements stdPanel {
 		theTypesBox.setPrototypeDisplayValue(myDefValue);
 		
 		/* Create the Maturity Button */
-		theMatButton  = new DateButton();
+		theMatButton  = new JDateButton();
 		theFieldSet.addItemField(new ItemField(theMatButton,  Account.FIELD_MATURITY));
 		
 		/* Create the buttons */
@@ -207,7 +207,7 @@ public class MaintAccount implements stdPanel {
 		theTypesBox.addItemListener(myListener);
 		theParentBox.addItemListener(myListener);
 		theAliasBox.addItemListener(myListener);
-		theMatButton.addPropertyChangeListener(DateButton.valueDATE, myListener);
+		theMatButton.addPropertyChangeListener(JDateButton.valueDATE, myListener);
 		theInsButton.addActionListener(myListener);
 		theDelButton.addActionListener(myListener);
 		theClsButton.addActionListener(myListener);
