@@ -21,6 +21,8 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import net.sourceforge.JDateButton.JDateButton;
+
 import uk.co.tolcroft.finance.ui.MaintProperties;
 import uk.co.tolcroft.models.DateDay;
 import uk.co.tolcroft.models.PropertySet;
@@ -611,7 +613,7 @@ public class PropertySetPanel extends JPanel {
 			/**
 			 * The underlying button field 
 			 */
-			private final DateButton		theField;
+			private final JDateButton		theField;
 			
 			/**
 			 * The property as a dateProperty 
@@ -625,10 +627,10 @@ public class PropertySetPanel extends JPanel {
 			private DateField(Property pProperty) {
 				/* Access the property and create the underlying field */
 				theDate 		= (DateProperty)pProperty;
-				theField		= new DateButton();
+				theField		= new JDateButton();
 				
 				/* Add property change listener */
-				theField.addPropertyChangeListener(DateButton.valueDATE, new PropertyListener());
+				theField.addPropertyChangeListener(JDateButton.valueDATE, new PropertyListener());
 			}
 			
 			@Override

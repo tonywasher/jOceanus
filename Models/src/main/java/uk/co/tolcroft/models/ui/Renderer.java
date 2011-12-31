@@ -4,11 +4,12 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import net.sourceforge.JDateButton.JDateButton.CellRenderer;
+
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.ui.DataTable.DataTableModel;
 import uk.co.tolcroft.models.ui.DataTable.RowTableModel;
-import uk.co.tolcroft.models.ui.DateButton.CellRenderer;
 
 public class Renderer {
 	/* Properties */

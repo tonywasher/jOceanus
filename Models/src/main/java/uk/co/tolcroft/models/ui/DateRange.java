@@ -14,6 +14,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
+import net.sourceforge.JDateButton.JDateButton;
+
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
@@ -21,7 +23,7 @@ public class DateRange {
 	/* Members */
 	private	DateRange			theSelf		   	= this;
 	private stdPanel			theParent  	   	= null;
-	private DateButton			theDateButton 	= null;
+	private JDateButton			theDateButton 	= null;
 	private JComboBox           thePeriodBox   	= null;
 	private JPanel              thePanel       	= null;
 	private JButton             theNextButton  	= null;
@@ -49,7 +51,7 @@ public class DateRange {
 		thePeriodBox  = new JComboBox();
 	
 		/* Create the DateButton */
-		theDateButton = new DateButton();
+		theDateButton = new JDateButton();
 		
 		/* Create initial state and limit the spinner to the Range */
 		theState = new DateRangeState();
@@ -112,7 +114,7 @@ public class DateRange {
 		thePeriodBox.addItemListener(myListener);
 		theNextButton.addActionListener(myListener);
 		thePrevButton.addActionListener(myListener);
-		theDateButton.addPropertyChangeListener(DateButton.valueDATE, myListener);
+		theDateButton.addPropertyChangeListener(JDateButton.valueDATE, myListener);
 	}
 
 	/**
@@ -289,7 +291,7 @@ public class DateRange {
 		 * @param pButton the Button with the new date
 		 * @return has the date changed 
 		 */
-		private boolean setDate(DateButton pButton) {
+		private boolean setDate(JDateButton pButton) {
 			/* Adjust the date and build the new range */
 			DateDay myDate = new DateDay(pButton.getSelectedDate());
 			if (DateDay.differs(myDate, theStartDate).isDifferent()) {

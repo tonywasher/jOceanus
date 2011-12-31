@@ -13,9 +13,10 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableCellEditor;
 
+import net.sourceforge.JDateButton.JDateButton.CellEditor;
+
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Decimal.*;
-import uk.co.tolcroft.models.ui.DateButton.CellEditor;
 
 public class Editor {
 	/* String Cell Editor */
