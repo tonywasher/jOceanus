@@ -1,7 +1,29 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.models;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.OutputStreamWriter;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
@@ -464,5 +486,45 @@ public class Utils {
 		char[] myArray = new char[1];
 		myArray[0] = pChar;
 		return new String(myArray);
+	}
+	
+	/**
+	 * Remove a directory and all of its contents
+	 * @param pDir the directory to remove
+	 * @return success/failure
+	 */
+	public static boolean removeDirectory(File pDir) {
+		/* Clear the directory */
+		if (!clearDirectory(pDir))	return false;
+
+		/* Delete the directory itself */
+		return pDir.delete();
+	}
+
+	/**
+	 * Clear a directory of all of its contents
+	 * @param pDir the directory to clear
+	 * @return success/failure
+	 */
+	public static boolean clearDirectory(File pDir) {
+		/* Handle trivial operations */
+		if (pDir == null)			return true;
+		if (!pDir.exists())			return true;
+		if (!pDir.isDirectory()) 	return false;
+
+		/* Loop through all items */
+		for (File myFile: pDir.listFiles()) {
+	    	/* If the file is a directory */
+	    	if (myFile.isDirectory()) {
+	    		/* Remove it recursively */
+	    		if (!removeDirectory(myFile))	return false;
+	    	}
+	    	
+	    	/* else remove the file */
+	    	else if (!myFile.delete())	return false;
+		}
+
+		/* All cleared */
+		return true;
 	}
 }

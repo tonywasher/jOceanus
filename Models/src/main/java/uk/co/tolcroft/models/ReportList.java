@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.models;
 
 import uk.co.tolcroft.models.help.DebugDetail;
@@ -30,11 +51,7 @@ public abstract class ReportList<T extends ReportItem<T>> extends SortedList<T>
 	 */
 	public void addHTMLFields(DebugDetail pDetail, StringBuilder pBuffer) {}
 	
-	/**
-	 * Provide a string representation of this object
-	 * @param pDetail the Debug Detail
-	 * @return formatted string
-	 */
+	@Override
 	public StringBuilder buildDebugDetail(DebugDetail pDetail) {
 		/* Local variables */
 		StringBuilder	myString = new StringBuilder(10000);
@@ -59,11 +76,7 @@ public abstract class ReportList<T extends ReportItem<T>> extends SortedList<T>
 		return myString;
 	}
 		
-	/**
-	 * Add child entries for the debug object
-	 * @param pManager the debug manager
-	 * @param pParent the parent debug entry
-	 */
+	@Override
 	public void addChildEntries(DebugManager 	pManager,
 								DebugEntry		pParent) { }	
 }

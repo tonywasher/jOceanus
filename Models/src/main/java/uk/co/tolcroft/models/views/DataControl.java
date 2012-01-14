@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.models.views;
 
 import java.util.HashMap;
@@ -10,6 +31,8 @@ import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
 import uk.co.tolcroft.models.security.SecureManager;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
+import uk.co.tolcroft.models.threads.ThreadStatus;
+import uk.co.tolcroft.models.threads.WorkerThread;
 import uk.co.tolcroft.models.ui.StatusBar;
 import uk.co.tolcroft.models.ModelException;
 
@@ -24,7 +47,7 @@ public abstract class DataControl<T extends DataSet<T>> {
 	/* Properties */
 	private T				theData			= null;
 	private T				theUpdates		= null;
-	private ModelException		theError		= null;
+	private ModelException	theError		= null;
 	private StatusBar		theStatusBar	= null;
 	private JFrame			theFrame		= null;
     private SecureManager	theSecurity		= null;
@@ -86,6 +109,13 @@ public abstract class DataControl<T extends DataSet<T>> {
 	 * @return the current Updates
 	 */
 	public T			getUpdates()	{ return theUpdates; }
+
+	/**
+	 * Obtain a new ThreadStatus
+	 * @param the thread to get the status for 
+	 * @return a new ThreadStatus
+	 */
+	public abstract ThreadStatus<T>	allocateThreadStatus(WorkerThread<?>	pThread);
 
 	/**
 	 * Set new Error

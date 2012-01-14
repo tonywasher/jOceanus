@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.models.threads;
 
 import java.util.List;
@@ -68,7 +89,7 @@ public abstract class WorkerThread<T> extends SwingWorker <T, StatusData> {
 	/* Task for worker thread */
 	protected abstract T performTask() throws Throwable;
 	
-	/* Background task (Worker Thread)*/
+	@Override
 	public T doInBackground() {
 		T myResult;
 		
@@ -94,16 +115,13 @@ public abstract class WorkerThread<T> extends SwingWorker <T, StatusData> {
 		}	
 	}
 
-	/* Completion task (Event Thread)*/
+	@Override
 	public void done() {
 		/* Update the Status Bar */
 		completeStatusBar();
 	}		
 
-	/**
-	 * Process task (Event Thread)
-	 * @param pStatus list of recently published Status Events
-	 */
+	@Override
 	protected void process(List<StatusData> pStatus) {
 		/* Access the latest status */
 		StatusData myStatus = pStatus.get(pStatus.size() - 1);

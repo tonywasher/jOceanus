@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.models.database;
 
 import uk.co.tolcroft.models.ModelException;
@@ -22,6 +43,7 @@ public abstract class TableEncrypted<T extends EncryptedItem<T>> extends Databas
 	 * Define the table columns (called from within super-constructor)
 	 * @param pTableDef the table definition
 	 */
+	@Override
 	protected void defineTable(TableDefinition	pTableDef) {
 		super.defineTable(pTableDef);
 		theTableDef = pTableDef;
@@ -35,7 +57,7 @@ public abstract class TableEncrypted<T extends EncryptedItem<T>> extends Databas
 	 */
 	protected abstract void   	loadItem(int pId, int pControlId)	throws ModelException;
 	
-	/* Load the static data */
+	@Override
 	protected void loadItem(int pId) throws ModelException {
 		int	    						myControlId;
 		
@@ -46,7 +68,7 @@ public abstract class TableEncrypted<T extends EncryptedItem<T>> extends Databas
 		loadItem(pId, myControlId);
 	}
 	
-	/* Set a field value */
+	@Override
 	protected void setFieldValue(T	pItem, int iField) throws ModelException  {
 		/* Switch on field id */
 		switch (iField) {

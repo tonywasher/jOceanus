@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.models.database;
 
 import java.sql.PreparedStatement;
@@ -1290,10 +1311,7 @@ public class TableDefinition {
 			super(pId, pName);
 		}
 		
-		/**
-		 * Build the column type 
-		 * @param pBuilder the String builder
-		 */
+		@Override
 		protected void buildColumnType(StringBuilder pBuilder) {
 			/* Add the column type */
 			pBuilder.append("int");
@@ -1315,10 +1333,7 @@ public class TableDefinition {
 			return (Integer)theValue;
 		}
 		
-		/** 
-		 *  Load data from column
-		 *  @param the index to load from
-		 */
+		@Override
 		protected void loadValue(int pIndex) throws SQLException {
 			int myValue = theResults.getInt(pIndex);
 			if ((myValue == 0) && (theResults.wasNull()))
@@ -1327,10 +1342,7 @@ public class TableDefinition {
 				setValue(myValue);
 		}
 		
-		/** 
-		 *  Store data to column
-		 *  @param the index to store to
-		 */
+		@Override
 		protected void storeValue(int pIndex) throws SQLException {
 			Integer myValue = getValue();
 			if (myValue == null) theStatement.setNull(pIndex, Types.INTEGER);
@@ -1350,10 +1362,7 @@ public class TableDefinition {
 			super(0, DataItem.NAME_ID);
 		}
 		
-		/**
-		 * Build the key reference 
-		 * @param pBuilder the String builder
-		 */
+		@Override
 		protected void buildKeyReference(StringBuilder pBuilder) {
 			/* Add the column type */
 			pBuilder.append(" primary key");
@@ -1386,19 +1395,13 @@ public class TableDefinition {
 			theReference 	= pTable;
 		}
 		
-		/** 
-		 * Set sortOrder 
-		 * @param pOrder the Sort direction
-		 */
+		@Override
 		public void setSortOrder(SortOrder pOrder) {
 			super.setSortOrder(pOrder);
 			sortOnReference = true;
 		}
 		
-		/**
-		 * Build the key reference 
-		 * @param pBuilder the String builder
-		 */
+		@Override
 		protected void buildKeyReference(StringBuilder pBuilder) {
 			/* Add the reference */
 			pBuilder.append(" references ");
@@ -1408,10 +1411,7 @@ public class TableDefinition {
 			pBuilder.append(')');
 		}
 		
-		/**
-		 * Locate reference
-		 * @param pTables the list of defined tables
-		 */
+		@Override
 		protected void locateReference(List<DatabaseTable<?>> pTables) {
 			/* Access the Iterator */
 			ListIterator<DatabaseTable<?>> myIterator;
@@ -1537,10 +1537,7 @@ public class TableDefinition {
 			super(pId, pName);
 		}
 		
-		/**
-		 * Build the column type 
-		 * @param pBuilder the String builder
-		 */
+		@Override
 		protected void buildColumnType(StringBuilder pBuilder) {
 			/* Add the column type */
 			pBuilder.append("bigint");
@@ -1562,10 +1559,7 @@ public class TableDefinition {
 			return (Long)theValue;
 		}
 		
-		/** 
-		 *  Load data from column
-		 *  @param the index to load from
-		 */
+		@Override
 		protected void loadValue(int pIndex) throws SQLException {
 			long myValue = theResults.getLong(pIndex);
 			if ((myValue == 0) && (theResults.wasNull()))
@@ -1574,10 +1568,7 @@ public class TableDefinition {
 				setValue(myValue);
 		}
 		
-		/** 
-		 *  Store data to column
-		 *  @param the index to store to
-		 */
+		@Override
 		protected void storeValue(int pIndex) throws SQLException {
 			Long myValue = getValue();
 			if (myValue == null) theStatement.setNull(pIndex, Types.BIGINT);
@@ -1599,10 +1590,7 @@ public class TableDefinition {
 			super(pId, pName);
 		}
 		
-		/**
-		 * Build the column type 
-		 * @param pBuilder the String builder
-		 */
+		@Override
 		protected void buildColumnType(StringBuilder pBuilder) {
 			/* Add the column type */
 			pBuilder.append("date");
@@ -1633,19 +1621,13 @@ public class TableDefinition {
 			return (Date)theValue;
 		}
 		
-		/** 
-		 *  Load data from column
-		 *  @param the index to load from
-		 */
+		@Override
 		protected void loadValue(int pIndex) throws SQLException {
 			Date myValue = theResults.getDate(pIndex);
 			setValue(myValue);
 		}
 		
-		/** 
-		 *  Store data to column
-		 *  @param the index to store to
-		 */
+		@Override
 		protected void storeValue(int pIndex) throws SQLException {
 			java.sql.Date 	myDate	= null;
 			Date 			myValue = getValue();
@@ -1670,10 +1652,7 @@ public class TableDefinition {
 			super(pId, pName);
 		}
 		
-		/**
-		 * Build the column type 
-		 * @param pBuilder the String builder
-		 */
+		@Override
 		protected void buildColumnType(StringBuilder pBuilder) {
 			/* Add the column type */
 			pBuilder.append("bit");
@@ -1695,10 +1674,7 @@ public class TableDefinition {
 			return (Boolean)theValue;
 		}
 		
-		/** 
-		 *  Load data from column
-		 *  @param the index to load from
-		 */
+		@Override
 		protected void loadValue(int pIndex) throws SQLException {
 			boolean myValue = theResults.getBoolean(pIndex);
 			if ((myValue == false) && (theResults.wasNull()))
@@ -1707,10 +1683,7 @@ public class TableDefinition {
 				setValue(myValue);
 		}
 		
-		/** 
-		 *  Store data to column
-		 *  @param the index to store to
-		 */
+		@Override
 		protected void storeValue(int pIndex) throws SQLException {
 			Boolean myValue = getValue();
 			if (myValue == null) theStatement.setNull(pIndex, Types.BIT);
@@ -1738,10 +1711,7 @@ public class TableDefinition {
 			theLength	= pLength;
 		}
 		
-		/**
-		 * Build the column type 
-		 * @param pBuilder the String builder
-		 */
+		@Override
 		protected void buildColumnType(StringBuilder pBuilder) {
 			/* Add the column type */
 			pBuilder.append("varchar(");
@@ -1765,19 +1735,13 @@ public class TableDefinition {
 			return (String)theValue;
 		}
 		
-		/** 
-		 *  Load data from column
-		 *  @param the index to load from
-		 */
+		@Override
 		protected void loadValue(int pIndex) throws SQLException {
 			String myValue = theResults.getString(pIndex);
 			setValue(myValue);
 		}
 		
-		/** 
-		 *  Store data to column
-		 *  @param the index to store to
-		 */
+		@Override
 		protected void storeValue(int pIndex) throws SQLException {
 			theStatement.setString(pIndex, getValue());
 		}
@@ -1797,10 +1761,7 @@ public class TableDefinition {
 			super(pId, pName, 0);
 		}
 		
-		/**
-		 * Build the column type 
-		 * @param pBuilder the String builder
-		 */
+		@Override
 		protected void buildColumnType(StringBuilder pBuilder) {
 			/* Add the column type */
 			pBuilder.append("money");
@@ -1831,10 +1792,7 @@ public class TableDefinition {
 			super(pId, pName, 0);
 		}
 		
-		/**
-		 * Build the column type 
-		 * @param pBuilder the String builder
-		 */
+		@Override
 		protected void buildColumnType(StringBuilder pBuilder) {
 			/* Add the column type */
 			pBuilder.append("decimal(4,2)");
@@ -1872,10 +1830,7 @@ public class TableDefinition {
 			theLength	= pLength;
 		}
 		
-		/**
-		 * Build the column type 
-		 * @param pBuilder the String builder
-		 */
+		@Override
 		protected void buildColumnType(StringBuilder pBuilder) {
 			/* Add the column type */
 			pBuilder.append("varbinary(");
@@ -1899,19 +1854,13 @@ public class TableDefinition {
 			return (byte[])theValue;
 		}
 		
-		/** 
-		 *  Load data from column
-		 *  @param the index to load from
-		 */
+		@Override
 		protected void loadValue(int pIndex) throws SQLException {
 			byte[] myValue = theResults.getBytes(pIndex);
 			setValue(myValue);
 		}
 		
-		/** 
-		 *  Store data to column
-		 *  @param the index to store to
-		 */
+		@Override
 		protected void storeValue(int pIndex) throws SQLException {
 			theStatement.setBytes(pIndex, getValue());
 		}

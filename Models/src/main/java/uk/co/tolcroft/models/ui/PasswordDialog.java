@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.models.ui;
 
 import java.awt.Color;
@@ -232,17 +253,12 @@ public class PasswordDialog  extends JDialog
 		setLocationRelativeTo(pParent);
 	}
 
-	/**
-	 * clear out the password array on termination
-	 */
+	@Override
 	protected void finalize() throws Throwable {
 		if (thePassword != null) Arrays.fill(thePassword, (char) 0);
 	}
 	
-	/**
-	 * Perform a requested action
-	 * @param evt the action event
-	 */
+	@Override
 	public void actionPerformed(ActionEvent evt) {
 
 		/* If this event relates to the OK box or the password field */
@@ -315,12 +331,7 @@ public class PasswordDialog  extends JDialog
 	
 	/* Focus traversal policy, used so that you tab straight to confirm from password */
 	private class TraversalPolicy extends FocusTraversalPolicy {
-		/**
-		 * Get component after 
-		 * @param pRoot the focus cycle root
-		 * @param pCurrent the current component
-		 * @return the component after the current component
-		 */
+		@Override
 		public Component getComponentAfter(Container pRoot,
 										   Component pCurrent) {
 			/* Handle field order */
@@ -333,12 +344,7 @@ public class PasswordDialog  extends JDialog
 			return getFirstComponent(pRoot);
 		}
 
-		/**
-		 * Get component before 
-		 * @param pRoot the focus cycle root
-		 * @param pCurrent the current component
-		 * @return the component before the current component
-		 */
+		@Override
 		public Component getComponentBefore(Container pRoot,
 										    Component pCurrent) {
 			/* Handle field order */
@@ -351,31 +357,19 @@ public class PasswordDialog  extends JDialog
 			return getFirstComponent(pRoot);
 		}
 
-		/**
-		 * Get default component 
-		 * @param pRoot the focus cycle root
-		 * @return the default component
-		 */
+		@Override
 		public Component getDefaultComponent(Container pRoot) {
 			/* Return the first component */
 			return getFirstComponent(pRoot);
 		}
 
-		/**
-		 * Get first component 
-		 * @param pRoot the focus cycle root
-		 * @return the first component
-		 */
+		@Override
 		public Component getFirstComponent(Container pRoot) {
 			/* Return the password field */
 			return thePassField;
 		}
 
-		/**
-		 * Get last component 
-		 * @param pRoot the focus cycle root
-		 * @return the last component
-		 */
+		@Override
 		public Component getLastComponent(Container pRoot) {
 			/* Return the password field */
 			return theCancelButton;

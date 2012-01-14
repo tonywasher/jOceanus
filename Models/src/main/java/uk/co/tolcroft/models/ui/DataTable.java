@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.models.ui;
 
 import java.awt.Dimension;
@@ -45,26 +66,30 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable
 
 	/* Access methods */
 	public boolean 	hasHeader() 		{ return false; }
+	@Override
 	public boolean 	hasUpdates() 		{ return (theList != null) &&
 												 theList.hasUpdates(); }
 	public boolean 	hasErrors()  		{ return (theList != null) &&
 												 theList.hasErrors(); }
 	public boolean 	isActive()			{ return isEnabled; }
+	@Override
 	public void    	printIt()			{ }
 		
 	public DataTableModel getTableModel() 					{ return theModel; }
 	
 	public DataList<?,T> 	getList() 						{ return theList; }
 	public JScrollPane 		getScrollPane()					{ return theScroll; }
+	@Override
 	public void    			notifySelection(Object obj)    	{ }
 	public void    			updateDebug()			    	{ }
 	public void    			setActive(boolean isActive)		{ isEnabled = isActive; }
 	public JComboBox 		getComboBox(int row, int col) 	{ return null; }
+	@Override
 	public boolean 			isValidHistory(DataItem<T> pItem, HistoryValues<?>  pValues) { return true; }
+	@Override
 	public DebugManager 	getDebugManager() 				{ return theMainWindow.getDebugMgr(); }
 		
 	/* Abstract methods */
-	public abstract void 	notifyChanges();
 	public abstract void 	saveData();
 
 	/* Internal helpers */
@@ -114,10 +139,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable
 							theRowHdrTable.getTableHeader());
 	}
 	
-	/**
-	 * Add the mouse listener
-	 * @param pListener the listener
-	 */
+	@Override
 	public void addMouseListener(MouseListener pListener) {
 		/* Pass call on */
 		super.addMouseListener(pListener);
@@ -127,10 +149,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable
 			theRowHdrTable.addMouseListener(pListener);
 	}
 	
-	/**
-	 * Get the Edit State 
-	 * @return the edit state
-	 */
+	@Override
 	public EditState getEditState() {
 		if (theList == null) return EditState.CLEAN;
 		return theList.getEditState();
@@ -157,10 +176,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable
 			selectRowWithScroll(myZeroRow);		
 	}
 				
-	/**
-	 * Is the table locked
-	 * @return true/false
-	 */
+	@Override
 	public boolean isLocked() {
 		/* Store list and select correct mode */
 		return ((theList == null) || theList.isLocked());
@@ -218,7 +234,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable
 		if (isEditing()) cellEditor.cancelCellEditing();
 	}
 	
-	/* valueChanged listener event */
+	@Override
 	public void valueChanged(ListSelectionEvent evt) {
 		super.valueChanged(evt);
         if (evt.getValueIsAdjusting()) {
@@ -854,9 +870,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable
 		validateAfterChange();
 	}		
 
-	/**
-	 * Perform command function
-	 */
+	@Override
 	public void performCommand(stdCommand pCmd) {
 			
 		/* Cancel any editing */
@@ -899,36 +913,19 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable
 			theTable		= pTable;
 		}
 		
-		/**
-		 * Get the number of display columns
-		 * @return the columns
-		 */
+		@Override
 		public int getColumnCount() { return 1; }
 		
-		/**
-		 * Get the number of rows in the current table
-		 * @return the number of rows
-		 */
+		@Override
 		public int getRowCount() { return theTable.getModel().getRowCount(); }		
 
-		/**
-		 * Get the name of the column
-		 * @param col the column
-		 * @return the name of the column
-		 */
+		@Override
 		public String getColumnName(int col) {	return titleRow; }
 
-		/**
-		 * Get the object class of the column
-		 * @param col the column
-		 * @return the class of the objects associated with the column
-		 */
+		@Override
 		public Class<?> getColumnClass(int col) { return Integer.class; }
 
-		/**
-		 * Get the value at (row, col)
-		 * @return the object value
-		 */
+		@Override
 		public Object getValueAt(int row, int col) { return theTable.hasHeader() ? row : row+1; }
 		
 		/**
@@ -1148,9 +1145,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable
 			super(modelIndex, width, cellRenderer, cellEditor);
 		}
 
-		/**
-		 * Obtain Header name (necessary to rebuild the JTableHeader)
-		 */
+		@Override
 		public Object getHeaderValue() {
 			/* Return the column name according to the model */
 			return theModel.getColumnName(getModelIndex());

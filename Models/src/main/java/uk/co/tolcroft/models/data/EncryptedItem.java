@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
 import uk.co.tolcroft.models.Difference;
@@ -63,13 +84,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		}
 	}
 	
-	/**
-	 * Format the value of a particular field as a table row
-	 * @param pDetail the debug detail
-	 * @param iField the field number
-	 * @param pObj the values to use
-	 * @return the formatted field
-	 */
+	@Override
 	public String formatField(DebugDetail pDetail, int iField, HistoryValues<T> pObj) {
 		String 			myString = "";
 		EncryptedItem<?>.EncryptedValues myObj 	 = (EncryptedItem<?>.EncryptedValues)pObj;
@@ -167,8 +182,8 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 * Initialise security for all encrypted values
 	 * @param pControl the new Control Key 
 	 */	
-	private void adoptSecurity(ControlKey pControl,
-							   T		  pBase) throws ModelException {
+	protected void adoptSecurity(ControlKey pControl,
+								 T		  	pBase) throws ModelException {
 		/* Access the values */
 		EncryptedItem<?>.EncryptedValues myValues = getValues();
 		
@@ -194,7 +209,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 * Update security for all encrypted values
 	 * @param pControl the new Control Key 
 	 */	
-	private void updateSecurity(ControlKey pControl) throws ModelException {
+	protected void updateSecurity(ControlKey pControl) throws ModelException {
 		/* Access the values */
 		EncryptedItem<?>.EncryptedValues myValues = getValues();
 
@@ -260,7 +275,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 */
 		protected EncryptedList(L pSource) { 
 			super(pSource);
-			theData = pSource.theData;
+			theData = pSource.getData();
 		}
 		
 		/**
@@ -359,7 +374,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			return true;
 		}
 		
-		/* List Iterators */
+		@Override
 		public void setNewId(T pItem)	{ super.setNewId(pItem); }
 	}
 		
@@ -386,10 +401,12 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		public EncryptedValues() {}
 		public EncryptedValues(EncryptedValues pValues) { copyFrom(pValues); }
 		
+		@Override
 		public Difference histEquals(HistoryValues<T> pValues) {
 			EncryptedValues myValues = (EncryptedValues)pValues;
 			return (ControlKey.differs(theControl,    myValues.theControl));
 		}
+		@Override
 		public void    copyFrom(HistoryValues<?> pValues) {
 			if (pValues instanceof EncryptedItem.EncryptedValues) {
 				EncryptedItem<?>.EncryptedValues myValues = (EncryptedItem<?>.EncryptedValues)pValues;
@@ -397,6 +414,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 				theControlId 	= (theControl == null) ? -1 : theControl.getId();
 			}
 		}
+		@Override
 		public Difference	fieldChanged(int fieldNo, HistoryValues<T> pOriginal) {
 			EncryptedValues 	pValues = (EncryptedValues)pOriginal;
 			Difference	bResult = Difference.Identical;
@@ -578,10 +596,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			super.setBytes(pPair.getBytes());
 		} 
 
-		/**
-		 * Compare to another ValuePair
-		 * @param pPair the other pair
-		 */
+		@Override
 		protected Difference	differs(ValuePair pNew) {
 			/* Reject if wrong class */
 			if (!(pNew instanceof EncryptedItem<?>.StringPair)) return Difference.Different;
@@ -601,10 +616,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			return Difference.Identical;
 		}
 		
-		/**
-		 * Get bytes for Encryption
-		 * @return the bytes to be encrypted
-		 */
+		@Override
 		protected byte[] getBytesForEncryption() throws ModelException {
 			/* Protect against exceptions */
 			try {
@@ -619,10 +631,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			}
 		}
 
-		/**
-		 * Set decrypted value
-		 * @param pValue the decrypted byte value
-		 */
+		@Override
 		protected void setDecryptedValue(byte[] pValue) throws ModelException {
 			/* Protect against exceptions */
 			try {
@@ -637,11 +646,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			}
 		}
 		
-		/**
-		 * Compare this StringPair type to another to establish equality.
-		 * @param pThat The Pair to compare to
-		 * @return <code>true</code> if the account type is identical, <code>false</code> otherwise
-		 */
+		@Override
 		public boolean equals(Object pThat) {
 			/* Handle the trivial cases */
 			if (this == pThat) return true;
@@ -730,10 +735,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			super.setBytes(pPair.getBytes());
 		} 
 
-		/**
-		 * Compare to another ValuePair
-		 * @param pPair the other pair
-		 */
+		@Override
 		protected Difference	differs(ValuePair pNew) {
 			/* Reject if wrong class */
 			if (!(pNew instanceof EncryptedItem<?>.CharArrayPair)) return Difference.Different;
@@ -753,29 +755,19 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			return Difference.Identical;
 		}
 		
-		/**
-		 * Get bytes for Encryption
-		 * @return the bytes to be encrypted
-		 */
+		@Override
 		protected byte[] getBytesForEncryption() throws ModelException {
 			/* Convert the string to a byte array */
 			return Utils.charToByteArray(theChars);
 		}
 
-		/**
-		 * Set decrypted value
-		 * @param pValue the decrypted byte value
-		 */
+		@Override
 		protected void setDecryptedValue(byte[] pValue) throws ModelException {
 			/* Convert the byte array to a string */
 			theChars = Utils.byteToCharArray(pValue);
 		}
 		
-		/**
-		 * Compare this StringPair type to another to establish equality.
-		 * @param pThat The Pair to compare to
-		 * @return <code>true</code> if the account type is identical, <code>false</code> otherwise
-		 */
+		@Override
 		public boolean equals(Object pThat) {
 			/* Handle the trivial cases */
 			if (this == pThat) return true;
@@ -873,10 +865,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			theValue = pPair.getValue();
 		} 
 
-		/**
-		 * Set decrypted value
-		 * @param pValue the decrypted byte value
-		 */
+		@Override
 		protected void setDecryptedValue(byte[] pValue) throws ModelException {
 			/* Convert the byte array to a string */
 			super.setDecryptedValue(pValue);
@@ -892,11 +881,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 */
 		protected abstract X parseValue(String pValue) throws ModelException;
 				
-		/**
-		 * Compare this NumberPair type to another to establish equality.
-		 * @param pThat The Pair to compare to
-		 * @return <code>true</code> if the account type is identical, <code>false</code> otherwise
-		 */
+		@Override
 		public boolean equals(Object pThat) {
 			/* Handle the trivial cases */
 			if (this == pThat) return true;
@@ -924,7 +909,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 
 		public MoneyPair(EncryptedItem<?>.MoneyPair pValue) { super(pValue); }
 
-		/* Parse a money value */
+		@Override
 		protected Money parseValue(String pValue) throws ModelException {
 			return new Money(pValue);
 		}
@@ -939,7 +924,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 
 		public UnitsPair(EncryptedItem<?>.UnitsPair pValue) { super(pValue); }
 
-		/* Parse a units value */
+		@Override
 		protected Units parseValue(String pValue) throws ModelException {
 			return new Units(pValue);
 		}
@@ -954,7 +939,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 
 		public RatePair(EncryptedItem<?>.RatePair pValue) { super(pValue); }
 
-		/* Parse a rate value */
+		@Override
 		protected Rate parseValue(String pValue) throws ModelException {
 			return new Rate(pValue);
 		}
@@ -969,7 +954,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 
 		public PricePair(EncryptedItem<?>.PricePair pValue) { super(pValue); }
 
-		/* Parse a price value */
+		@Override
 		protected Price parseValue(String pValue) throws ModelException {
 			return new Price(pValue);
 		}
@@ -984,7 +969,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 
 		public DilutionPair(EncryptedItem<?>.DilutionPair pValue) { super(pValue); }
 
-		/* Parse a dilution value */
+		@Override
 		protected Dilution parseValue(String pValue) throws ModelException {
 			return new Dilution(pValue);
 		}

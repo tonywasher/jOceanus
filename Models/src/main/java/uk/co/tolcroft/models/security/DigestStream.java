@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.models.security;
 
 import java.io.IOException;
@@ -75,10 +96,7 @@ public class DigestStream {
 			}			
 		}
 		
-		/**
-		 * Close the output stream
-		 * @throws IOException
-		 */
+		@Override
 		public void close() throws IOException {
 			/* Null operation if we are already closed */
 			if (!isClosed) {
@@ -91,10 +109,7 @@ public class DigestStream {
 			}
 		}
 		
-		/**
-		 * Flush the output stream
-		 * @throws IOException
-		 */
+		@Override
 		public void flush() throws IOException {
 			/* If we are already closed throw IO Exception */
 			if (isClosed) throw new IOException("Stream is closed");
@@ -103,13 +118,7 @@ public class DigestStream {
 			theStream.flush();
 		}
 		
-		/**
-		 * Write an array of bytes to the Output stream
-		 * @param pBytes the bytes to write
-		 * @param pOffset the offset from which to start writing
-		 * @param pLength the length of data to write
-		 * @throws IOException
-		 */
+		@Override
 		public void write(byte[] pBytes, int pOffset, int pLength) throws IOException {
 			/* If we are already closed throw IO Exception */
 			if (isClosed) throw new IOException("Stream is closed");
@@ -124,21 +133,13 @@ public class DigestStream {
 			theStream.write(pBytes, pOffset, pLength);
 		}
 		
-		/**
-		 * Write an array of bytes to the Output stream
-		 * @param pBytes the bytes to write
-		 * @throws IOException
-		 */
+		@Override
 		public void write(byte[] pBytes) throws IOException {
 			/* Write the bytes to the stream */
 			write(pBytes, 0, pBytes.length);
 		}
 		
-		/**
-		 * Write a byte to the Output stream
-		 * @param pByte the byte to write
-		 * @throws IOException
-		 */
+		@Override
 		public void write(int pByte) throws IOException {
 			/* If we are already closed throw IO Exception */
 			if (isClosed) throw new IOException("Stream is closed");
@@ -247,10 +248,7 @@ public class DigestStream {
 			}			
 		}
 		
-		/**
-		 * Close the input stream
-		 * @throws IOException
-		 */
+		@Override
 		public void close() throws IOException {
 			/* Null operation if we are already closed */
 			if (!isClosed) {
@@ -282,12 +280,7 @@ public class DigestStream {
 			}
 		}
 		
-		/**
-		 * Skip a number of bytes in the input stream
-		 * @param iNumToSkip the number of bytes to skip
-		 * @return the actual number of bytes skipped
-		 * @throws IOException
-		 */
+		@Override
 		public long skip(long iNumToSkip) throws IOException {
 			long iNumSkipped = 0;
 			int iNumToRead;
@@ -316,11 +309,7 @@ public class DigestStream {
 			return iNumSkipped;
 		}
 		
-		/**
-		 * Determine the number of bytes available without blocking
-		 * @return the number of bytes available
-		 * @throws IOException
-		 */
+		@Override
 		public int available() throws IOException {
 			/* If we are already closed throw IO Exception */
 			if (isClosed) throw new IOException("Stream is closed");
@@ -329,28 +318,19 @@ public class DigestStream {
 			return theStream.available();
 		}
 		
-		/**
-		 * Determines whether the mark and reset methods are available
-		 * @return <code>false</code>
-		 */
+		@Override
 		public boolean markSupported() {
 			/* Always return false */
 			return false;
 		}
 		
-		/**
-		 * Marks the current position in the input stream
-		 * @param readLimit the number of bytes to read before mark is invalidated
-		 */
+		@Override
 		public void mark(int readLimit) {
 			/* Just ignore the call */
 			return;
 		}
 		
-		/**
-		 * Resets the current position in the input stream to that which was last marked
-		 * @throws IOException
-		 */
+		@Override
 		public void reset() throws IOException {
 			/* If we are already closed throw IO Exception */
 			if (isClosed) throw new IOException("Stream is closed");
@@ -359,14 +339,7 @@ public class DigestStream {
 			throw new IOException("Mark not supported");
 		}
 		
-		/**
-		 * Read an array of bytes from the Input stream
-		 * @param pBuffer the buffer to read into to write
-		 * @param pOffset the offset from which to start reading
-		 * @param pLength the maximum length of data to read
-		 * @return the actual length of data read or -1 if EOF
-		 * @throws IOException
-		 */
+		@Override
 		public int read(byte[] pBuffer, int pOffset, int pLength) throws IOException {			
 			/* If we are already closed throw IO Exception */
 			if (isClosed) throw new IOException("Stream is closed");
@@ -391,22 +364,13 @@ public class DigestStream {
 			return iNumRead;
 		}
 		
-		/**
-		 * Read an array of bytes from the Input stream
-		 * @param pBytes the buffer to read into to write
-		 * @return the actual length of data read or -1 if EOF
-		 * @throws IOException
-		 */
+		@Override
 		public int read(byte[] pBytes) throws IOException {
 			/* Read the bytes from the stream */
 			return read(pBytes, 0, pBytes.length);
 		}
 		
-		/**
-		 * Read a byte from the Input stream
-		 * @return the byte read or -1 if EOF
-		 * @throws IOException
-		 */
+		@Override
 		public int read() throws IOException {
 			/* If we are already closed throw IO Exception */
 			if (isClosed) throw new IOException("Stream is closed");

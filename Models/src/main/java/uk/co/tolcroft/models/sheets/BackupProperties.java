@@ -1,4 +1,25 @@
-package uk.co.tolcroft.subversion;
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
+package uk.co.tolcroft.models.sheets;
 
 import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.PropertySet;
@@ -18,16 +39,6 @@ public class BackupProperties extends PropertySet {
 	 * Registry name for Archive FileName
 	 */
 	public final static String 		nameArchiveFile		= "ArchiveFile";
-
-	/**
-	 * Registry name for Subversion Repository Location
-	 */
-	public final static String 		nameSubVersionRepo	= "SubVersionRepo";
-
-	/**
-	 * Registry name for Repo Prefix
-	 */
-	public final static String 		nameRepoPfix		= "RepoPrefix";
 
 	/**
 	 * Registry name for Backup TimeStamp
@@ -50,16 +61,6 @@ public class BackupProperties extends PropertySet {
 	protected final static String 	dispArchiveFile		= "Archive File";
 
 	/**
-	 * Display name for SubversioDirectory
-	 */
-	protected final static String 	dispSubVersionRepo	= "Subversion Repositories";
-
-	/**
-	 * Display name for Repository Prefix
-	 */
-	protected final static String 	dispRepoPfix		= "Repository Prefix";
-
-	/**
 	 * Display name for Backup Timestamp
 	 */
 	protected final static String 	dispBackupTime		= "Backup TimeStamps";
@@ -80,16 +81,6 @@ public class BackupProperties extends PropertySet {
 	private final static String		defArchiveFile		= "C:\\Archive.xls";
 
 	/**
-	 * Default value for SubversionDirectory
-	 */
-	private final static String		defSubVersionRepo	= "C:\\Program Files\\csvn\\data\\repositories";
-
-	/**
-	 * Default value for BackupPrefix
-	 */
-	private final static String		defRepoPfix			= "SvnRepo";
-
-	/**
 	 * Default value for Archive File
 	 */
 	private final static Boolean	defBackupTime		= Boolean.FALSE;
@@ -106,8 +97,6 @@ public class BackupProperties extends PropertySet {
 		defineProperty(nameBackupDir, 		PropertyType.Directory);
 		defineProperty(nameBackupPfix, 		PropertyType.String);
 		defineProperty(nameArchiveFile, 	PropertyType.File);
-		defineProperty(nameSubVersionRepo, 	PropertyType.Directory);
-		defineProperty(nameRepoPfix,   		PropertyType.String);
 		defineProperty(nameBackupTime, 		PropertyType.Boolean);
 	}
 
@@ -117,8 +106,6 @@ public class BackupProperties extends PropertySet {
 		if (pName.equals(nameBackupDir)) 		return defBackupDir;
 		if (pName.equals(nameBackupPfix)) 		return defBackupPfix;
 		if (pName.equals(nameArchiveFile)) 		return defArchiveFile;
-		if (pName.equals(nameSubVersionRepo)) 	return defSubVersionRepo;
-		if (pName.equals(nameRepoPfix)) 		return defRepoPfix;
 		if (pName.equals(nameBackupTime)) 		return defBackupTime;
 		return null;
 	}
@@ -129,8 +116,6 @@ public class BackupProperties extends PropertySet {
 		if (pName.equals(nameBackupDir)) 		return dispBackupDir;
 		if (pName.equals(nameBackupPfix)) 		return dispBackupPfix;
 		if (pName.equals(nameArchiveFile)) 		return dispArchiveFile;
-		if (pName.equals(nameSubVersionRepo)) 	return dispSubVersionRepo;
-		if (pName.equals(nameRepoPfix)) 		return dispRepoPfix;
 		if (pName.equals(nameBackupTime)) 		return dispBackupTime;
 		return null;
 	}

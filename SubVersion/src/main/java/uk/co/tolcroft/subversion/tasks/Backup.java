@@ -1,4 +1,25 @@
-package uk.co.tolcroft.subversion;
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
+package uk.co.tolcroft.subversion.tasks;
 
 import java.io.File;
 import java.io.InputStream;
@@ -22,9 +43,11 @@ import uk.co.tolcroft.models.PropertySet.PropertyManager;
 import uk.co.tolcroft.models.security.SecurityControl;
 import uk.co.tolcroft.models.security.ZipEntryMode;
 import uk.co.tolcroft.models.security.ZipFile;
+import uk.co.tolcroft.models.sheets.BackupProperties;
 import uk.co.tolcroft.models.threads.ThreadStatus;
+import uk.co.tolcroft.subversion.data.SubVersionProperties;
 
-public class Subversion {
+public class Backup {
 	/**
 	 * The Client Manager
 	 */
@@ -48,7 +71,7 @@ public class Subversion {
 	/**
 	 * Constructor
 	 */
-	public Subversion(ThreadStatus<?> pStatus) {
+	public Backup(ThreadStatus<?> pStatus) {
 		/* Store parameters */
 		theStatus = pStatus;
 		
@@ -100,11 +123,12 @@ public class Subversion {
 			myName 		= pRepository.getName();
 			myEntryName	= new File(ZipFile.fileData);
 			
-			/* Access the Backup properties */
-			BackupProperties myProperties = (BackupProperties)PropertyManager.getPropertySet(BackupProperties.class);
+			/* Access the SubVersion properties */
+			SubVersionProperties myProperties = 
+					(SubVersionProperties)PropertyManager.getPropertySet(SubVersionProperties.class);
 
 			/* Determine the prefix for backups */
-			String myPrefix = myProperties.getStringValue(BackupProperties.nameRepoPfix);
+			String myPrefix = myProperties.getStringValue(SubVersionProperties.nameRepoPfix);
 			
 			/* Determine the name of the zip file */
 			myZipName 	= new File(pBackupDir.getPath() + File.separator + myPrefix + myName + ".zip");
@@ -205,12 +229,15 @@ public class Subversion {
 		/* Install an event handler */
 		theAdminClient.setEventHandler(new SubversionHandler());
 
-		/* Access the Backup properties */
-		BackupProperties myProperties = (BackupProperties)PropertyManager.getPropertySet(BackupProperties.class);
+		/* Access the SubVersion/BackUp properties */
+		SubVersionProperties 	mySVNProperties = 
+				(SubVersionProperties)PropertyManager.getPropertySet(SubVersionProperties.class);
+		BackupProperties 		myBUProperties 	= 
+				(BackupProperties)PropertyManager.getPropertySet(BackupProperties.class);
 
 		/* Determine the repository and backup directories directory */
-		File myRepo 	= new File(myProperties.getStringValue(BackupProperties.nameSubVersionRepo));
-		File myBackup 	= new File(myProperties.getStringValue(BackupProperties.nameBackupDir));
+		File myRepo 	= new File(mySVNProperties.getStringValue(SubVersionProperties.nameSubVersionRepo));
+		File myBackup 	= new File(myBUProperties.getStringValue(BackupProperties.nameBackupDir));
 		
 		/* Loop through the repository directories */
 		for (File myRepository: myRepo.listFiles()) {

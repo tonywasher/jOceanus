@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.models;
 
 import uk.co.tolcroft.models.data.DataItem;
@@ -54,18 +75,6 @@ public abstract class ReportItem<T extends ReportItem<T>> extends SortedItem<T>
 	}
 							
 	/**
-	 *  Test an element for equality
-	 *  @param that the object to test against
-	 */
-	public abstract boolean equals(Object that);
-	
-	/**
-	 *  Compare an element for sort order
-	 *  @param that the object to test against
-	 */
-	public abstract int compareTo(Object that);
-	
-	/**
 	 * Obtain the type of the item
 	 * @return the type of the item
 	 */
@@ -84,11 +93,7 @@ public abstract class ReportItem<T extends ReportItem<T>> extends SortedItem<T>
 	 */
 	public int						numFields() { return 0; }
 	
-	/**
-	 * Format this item to a string
-	 * @param pDetail the Debug Detail
-	 * @return the formatted item
-	 */
+	@Override
 	public StringBuilder 			buildDebugDetail(DebugDetail pDetail) {
 		StringBuilder	myString = new StringBuilder(2000);
 		int     iField;
@@ -146,11 +151,7 @@ public abstract class ReportItem<T extends ReportItem<T>> extends SortedItem<T>
 	 */
 	public void addHTMLFields(DebugDetail pDetail, StringBuilder pBuffer) {}
 
-	/**
-	 * Add child entries for the debug object
-	 * @param pManager the debug manager
-	 * @param pParent the parent debug entry
-	 */
+	@Override
 	public void addChildEntries(DebugManager 	pManager,
 								DebugEntry		pParent) { }	
 }

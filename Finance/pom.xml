@@ -1,23 +1,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>uk.co.tolcroft</groupId>
-  <artifactId>fin</artifactId>
+  <groupId>uk.co.tolcroft.finapp</groupId>
+  <artifactId>finapp</artifactId>
   <version>v1.0.0-SNAPSHOT</version>
   <name>FinanceApp</name>
   <description>Finance Application</description>
   <dependencies>
   	<dependency>
-  		<groupId>uk.co.tolcroft</groupId>
+  		<groupId>uk.co.tolcroft.finapp</groupId>
   		<artifactId>finsvn</artifactId>
   		<version>v1.0.0-SNAPSHOT</version>
   	</dependency>
   	<dependency>
-  		<groupId>uk.co.tolcroft</groupId>
+  		<groupId>uk.co.tolcroft.finapp</groupId>
   		<artifactId>finmdl</artifactId>
   		<version>v1.0.0-SNAPSHOT</version>
   	</dependency>
   	<dependency>
-  		<groupId>net.sourceforge</groupId>
+  		<groupId>net.sourceforge.JDateButton</groupId>
   		<artifactId>JDateButton</artifactId>
   		<version>v1.0.0-SNAPSHOT</version>
   	</dependency>

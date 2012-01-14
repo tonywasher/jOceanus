@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
 import uk.co.tolcroft.models.data.DataList.ListStyle;
@@ -77,10 +98,7 @@ public abstract class DataItem<T extends DataItem<T>>
 	 */
 	private	boolean					isActive	= false;
 		
-	/**
-	 * Get the list control for this item
-	 * @return the list control
-	 */
+	@Override
 	public DataList<?,T>   			getList()  		{ return theList; }
 	
 	/**
@@ -113,10 +131,7 @@ public abstract class DataItem<T extends DataItem<T>>
 	 */
 	public DataState				getState()     	{ return theState; }
 	
-	/**
-	 * Get the base item for this item
-	 * @return the Base item or <code>null</code>
-	 */
+	@Override
 	public DataItem<?>				getBase()      	{ return theHistory.getBase(); }
 
 	/**
@@ -195,10 +210,7 @@ public abstract class DataItem<T extends DataItem<T>>
 	 */
 	protected boolean				isRestoring()   { return isRestoring; }
 
-	/**
-	 * Determine whether the item is visible to standard searches
-	 * @return <code>true/false</code>
-	 */
+	@Override
 	public boolean					isHidden()    	{ return isDeleted; }
 
 	/**
@@ -216,10 +228,7 @@ public abstract class DataItem<T extends DataItem<T>>
 	 */
 	public void						setId(int id) 	{ theId = id; }
 	
-	/**
-	 * Set the base item for this item
-	 * @param pBase the Base item
-	 */
+	@Override
 	public void						setBase(DataItem<?> pBase) { theHistory.setBase(pBase); }
 	
 	/**
@@ -297,11 +306,7 @@ public abstract class DataItem<T extends DataItem<T>>
 		return myString;
 	}
 							
-	/**
-	 * Determine the field name for a particular field
-	 * This method is always overridden but is used to supply the default field name 
-	 * @return the field name
-	 */
+	@Override
 	public abstract String			getFieldName(int fieldId);
 	
 	/**
@@ -309,6 +314,7 @@ public abstract class DataItem<T extends DataItem<T>>
 	 * @param pDetail the debug detail
 	 * @param pBuffer the string buffer 
 	 */
+	@Override
 	public void 					addHTMLFields(DebugDetail pDetail, StringBuilder pBuffer) {}
 
 	/**
@@ -319,11 +325,7 @@ public abstract class DataItem<T extends DataItem<T>>
 	public static final int 	NUMFIELDS		= FIELD_ACTIVE+1; 
 	public static final String	NAME_ID			= "Id";
 	
-	/**
-	 * Format this item to a string
-	 * @param pDetail the Debug Detail
-	 * @return the formatted item
-	 */
+	@Override
 	public StringBuilder 			buildDebugDetail(DebugDetail pDetail) {
 		StringBuilder	myString = new StringBuilder(2000);
 		int     iField;
@@ -412,24 +414,14 @@ public abstract class DataItem<T extends DataItem<T>>
 		return myString;
 	}
 	
-	/**
-	 * Add child entries for the debug object
-	 * @param pManager the debug manager
-	 * @param pParent the parent debug entry
-	 */
+	@Override
 	public void addChildEntries(DebugManager 	pManager,
 								DebugEntry		pParent) { }	
 
-	/**
-	 * Obtain the type of the item
-	 * @return the type of the item
-	 */
+	@Override
 	abstract public String 			itemType();
 	
-	/**
-	 * Obtain the number of fields for an item
-	 * @return the number of fields
-	 */
+	@Override
 	public int						numFields() { return 0; }
 	
 	/**
@@ -677,7 +669,7 @@ public abstract class DataItem<T extends DataItem<T>>
 	 * Copy flags 
 	 * @param pItem the original item 
 	 */
-	protected void copyFlags(T pItem) { isActive = pItem.isActive; }
+	protected void copyFlags(T pItem) { isActive = pItem.isActive(); }
 	
 	/**
 	 * Construct a new item
@@ -728,18 +720,6 @@ public abstract class DataItem<T extends DataItem<T>>
 		if (getEditState() == EditState.DIRTY)
 			setEditState(EditState.VALID);
 	}
-	
-	/**
-	 *  Test an element for equality
-	 *  @param that the object to test against
-	 */
-	public abstract boolean equals(Object that);
-	
-	/**
-	 *  Compare an element for sort order
-	 *  @param that the object to test against
-	 */
-	public abstract int compareTo(Object that);
 	
 	/**
 	 * State Management algorithm

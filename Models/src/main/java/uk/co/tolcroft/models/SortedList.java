@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.models;
 
 import uk.co.tolcroft.models.PropertySet.PropertyManager;
@@ -100,11 +121,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 	 */
 	public void setSkipHidden(boolean skipHidden) { doSkipHidden = skipHidden; }
 
-	/**
-	 *  add an object to the list  
-	 *  @param pItem - item to add to the list
-	 *  @return <code>true</code>
-	 */
+	@Override
 	public boolean add(T pItem) {
 		LinkNode<T> myNode;
 		
@@ -189,9 +206,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 	    }
 	}
 		
-	/**
-	 * remove All list items
-	 */
+	@Override
 	public void clear() {
 		LinkNode<T> myNode;
 		
@@ -211,10 +226,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 		theIndexMap.clear();
 	}
 	
-	/**
-	 * is the list empty of visible items
-	 * @return <code>true/false</code>
-	 */
+	@Override
 	public boolean isEmpty() {
 		/* Return details */
 		return (getFirst() == null);
@@ -229,19 +241,13 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 		return (theFirst == null);
 	}
 	
-	/**
-	 * obtain an Iterator for this list
-	 * @return <code>true/false</code>
-	 */
+	@Override
 	public java.util.Iterator<T> iterator() {
 		/* Return a new iterator */
 		return new ListIterator(false);
 	}
 	
-	/**
-	 * obtain a list Iterator for this list
-	 * @return List iterator
-	 */
+	@Override
 	public ListIterator listIterator() {
 		/* Return a new iterator */
 		return new ListIterator(false);
@@ -286,11 +292,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 		return myCurr;
 	}
 	
-	/**
-	 * obtain a list Iterator for this list initialised to an index
-	 * @param iIndex the index to initialise to
-	 * @return List iterator
-	 */
+	@Override
 	public ListIterator listIterator(int iIndex) {
 		ListIterator	myCurr;
 		T				myObj;
@@ -308,10 +310,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 		return myCurr;
 	}
 	
-	/**
-	 * Determine whether this list is equal to another
-	 * @return <code>true/false</code>
-	 */
+	@Override
 	public boolean equals(Object pThat) {
 		LinkNode<?>		myCurr;
 		LinkNode<?>		myOther;
@@ -345,10 +344,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 		return true;
 	}
 	
-	/**
-	 * obtain the size of the list
-	 * @return the number of visible items in the list
-	 */
+	@Override
 	public int size() {
 		int				iSize = 0;
 		
@@ -396,11 +392,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 		return iSize;
 	}
 	
-	/**
-	 * get the item at the specified index
-	 * @param iIndex index of item
-	 * @return the required item
-	 */
+	@Override
 	public T get(int iIndex) {
 		LinkNode<T>		myNode;
 		
@@ -418,11 +410,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 		return myNode.getObject();
 	}
 	
-	/**
-	 * remove the item at the specified index
-	 * @param iIndex index of item
-	 * @return the removed item
-	 */
+	@Override
 	public T remove(int iIndex) {
 		LinkNode<T>	myNode;
 		
@@ -442,11 +430,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 		return myNode.getObject();
 	}
 	
-	/**
-	 * remove the specified item 
-	 * @param o the item to remove
-	 * @return <code>true/false</code> was the item removed
-	 */
+	@Override
 	public boolean remove(Object o) {
 		LinkNode<T>	myNode;
 		T			myItem;
@@ -488,11 +472,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 		add(myObject);		
 	}
 	
-	/**
-	 * obtain the index within the list of the object
-	 * @param o the object to find the index of
-	 * @return the index within the list (or -1 if not visible/present in the list)
-	 */
+	@Override
 	public int indexOf(Object o) {
 		int 		iIndex = 0;
 		LinkNode<T>	myNode;
@@ -552,21 +532,13 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 		return iIndex;
 	}
 	
-	/**
-	 * obtain the last index within the list of the object
-	 * @param o the object to find the last index of
-	 * @return the index within the list (or -1 if not visible/present in the list)
-	 */
+	@Override
 	public int lastIndexOf(Object o) {
 		/* Objects cannot be duplicate so redirect to indexOf */
 		return indexOf(o);
 	}
 	
-	/**
-	 * determine whether the list contains this item
-	 * @param o the object to check
-	 * @return <code>true/false</code>
-	 */
+	@Override
 	public boolean contains(Object o) {
 		LinkNode<T>	myNode;
 		T			myItem;
@@ -666,11 +638,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 		return (myNode == null) ? null : myNode.getObject();
 	}
 
-	/**
-	 * determine whether the list contains all items in the collection
-	 * @param pCollection the collection of objects to check
-	 * @return the index within the list (or -1 if not visible/present in the list)
-	 */
+	@Override
 	public boolean containsAll(java.util.Collection<?> pCollection) {	
 		/* Reject if the collection is null */
 		if (pCollection == null) throw new java.lang.NullPointerException();
@@ -685,10 +653,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 		return true;
 	}
 	
-	/**
-	 * return an array of the items in this list in sort order
-	 * @return the array
-	 */
+	@Override
 	public Object[] toArray() {
 		int 				iSize;
 		int					i;
@@ -713,10 +678,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 		return myArray;
 	}
 	
-	/**
-	 * return an array of the items in this list in sort order
-	 * @return the array
-	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <X> X[] toArray(X[] a) {
 		int 					iSize;
@@ -749,9 +711,10 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 	 * @param iFromIndex start index of sublist 
 	 * @param iToIndex end index of sublist 
 	 */
+	@Override
 	public SortedList<T> subList(int iFromIndex, int iToIndex) {				
 		/* Throw exception */
-		throw new java.lang.UnsupportedOperationException();
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -759,9 +722,10 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 	 * @param iIndex index of item to set 
 	 * @param o object to set 
 	 */
+	@Override
 	public T set(int iIndex, T o) {				
 		/* Throw exception */
-		throw new java.lang.UnsupportedOperationException();
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -769,45 +733,50 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 	 * @param iIndex index of item to add after
 	 * @param o object to add
 	 */
+	@Override
 	public void add(int iIndex, T o) {				
 		/* Throw exception */
-		throw new java.lang.UnsupportedOperationException();
+		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 * Add All elements in the collection. Disallowed.
 	 * @param pCollection collection of items to add
 	 */
+	@Override
 	public boolean addAll(java.util.Collection<? extends T> pCollection) {				
 		/* Throw exception */
-		throw new java.lang.UnsupportedOperationException();
+		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 * Add All elements in the collection at an index. Disallowed.
 	 * @param pCollection collection of items to add
 	 */
+	@Override
 	public boolean addAll(int iIndex, java.util.Collection<? extends T> pCollection) {				
 		/* Throw exception */
-		throw new java.lang.UnsupportedOperationException();
+		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 * Retain All elements in the collection. Disallowed.
 	 * @param pCollection collection of items to retain
 	 */
+	@Override
 	public boolean retainAll(java.util.Collection<?> pCollection) {				
 		/* Throw exception */
-		throw new java.lang.UnsupportedOperationException();
+		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 * Remove All elements in the collection. Disallowed.
 	 * @param pCollection collection of items to remove
 	 */
+	@Override
 	public boolean removeAll(java.util.Collection<?> pCollection) {				
 		/* Throw exception */
-		throw new java.lang.UnsupportedOperationException();
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -899,10 +868,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 			theNodeBefore = pNode.getPrev(!showAll);
 		}
 		
-		/**
-		 * Does the list have a next item
-		 * @return <code>true/false</code>
-		 */
+		@Override
 		public boolean hasNext() {
 			LinkNode<T> myNext;
 			
@@ -916,10 +882,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 			return (myNext != null);
 		}
 
-		/**
-		 * Does the list have a previous item
-		 * @return <code>true/false</code>
-		 */
+		@Override
 		public boolean hasPrevious() {
 			LinkNode<T> myPrev;
 			
@@ -995,10 +958,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 			return (myLast == null) ? null : myLast.getObject();
 		}
 
-		/**
-		 * Access the next item
-		 * @return the next item (or null if there is no next item)
-		 */
+		@Override
 		public T next() {
 			LinkNode<T> myNext;
 			
@@ -1021,10 +981,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 			return (myNext != null) ? myNext.getObject() : null;
 		}
 
-		/**
-		 * Access the previous item
-		 * @return the previous item (or null if there is no previous item)
-		 */
+		@Override
 		public T previous() {
 			LinkNode<T> myPrev;
 			
@@ -1047,10 +1004,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 			return (myPrev != null) ? myPrev.getObject() : null;
 		}
 		
-		/**
-		 * Access the next index
-		 * @return the next item index (or -1 if there is no next item)
-		 */
+		@Override
 		public int nextIndex() {
 			LinkNode<T> myNext;
 			int			iIndex = -1;
@@ -1068,10 +1022,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 			return iIndex;
 		}
 
-		/**
-		 * Access the previous index
-		 * @return the previous item index (or -1 if there is no previous item)
-		 */
+		@Override
 		public int previousIndex() {
 			LinkNode<T>	myPrev;
 			int		 	iIndex = -1;
@@ -1093,23 +1044,23 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 		 * Set the contents of the item. Disallowed.
 		 * @param o object to set 
 		 */
+		@Override
 		public void set(T o) {				
 			/* Throw exception */
-			throw new java.lang.UnsupportedOperationException();
+			throw new UnsupportedOperationException();
 		}
 
 		/**
 		 * Add the item at this position. Disallowed.
 		 * @param o object to add
 		 */
+		@Override
 		public void add(T o) {				
 			/* Throw exception */
-			throw new java.lang.UnsupportedOperationException();
+			throw new UnsupportedOperationException();
 		}
 
-		/**
-		 * Remove the last referenced item.
-		 */
+		@Override
 		public void remove() {				
 			/* If we cannot remove the last item throw exception */
 			if (!canRemove) throw new java.lang.IllegalStateException();

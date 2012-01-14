@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.models.ui;
 
 import java.awt.event.ActionEvent;
@@ -29,6 +50,7 @@ public class Editor {
 			theField = new JTextField();
 		}
 	
+		@Override
 		public JComponent getTableCellEditorComponent(JTable  table,
 													  Object  value,
 													  boolean isSelected,
@@ -39,6 +61,7 @@ public class Editor {
 			return theField;
 		}
 	
+		@Override
 		public Object getCellEditorValue() {
 			String s = theField.getText();
 			if (!s.equals("")) {
@@ -47,6 +70,7 @@ public class Editor {
 			return null;
 		}
 	
+		@Override
 		public boolean stopCellEditing() {
 			String s = (String)getCellEditorValue();
 			if (s == null) {
@@ -67,6 +91,7 @@ public class Editor {
 			theField = new JTextField();
 		}
 	
+		@Override
 		public JComponent getTableCellEditorComponent(JTable  table,
 													  Object  value,
 													  boolean isSelected,
@@ -77,6 +102,7 @@ public class Editor {
 			return theField;
 		}
 	
+		@Override
 		public Object getCellEditorValue() {
 			String s = theField.getText();
 			if (!s.equals("")) {
@@ -91,6 +117,7 @@ public class Editor {
 			return null;
 		}
 	
+		@Override
 		public boolean stopCellEditing() {
 			String s = (String)getCellEditorValue();
 			if (s == null) {
@@ -109,6 +136,7 @@ public class Editor {
 		private ComboAction	theActionListener = new ComboAction();
 		private ComboPopup	thePopupListener  = new ComboPopup();
 	
+		@Override
 		public JComponent getTableCellEditorComponent(JTable  table,
 													  Object  value,
 													  boolean isSelected,
@@ -124,31 +152,38 @@ public class Editor {
 		}
 
 		private class ComboAction implements ActionListener {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				stopCellEditing();
 			}
 		}
 		
 		private class ComboPopup implements PopupMenuListener {
+			@Override
 			public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
+			@Override
 			public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
+			@Override
 			public void popupMenuCanceled(PopupMenuEvent e) {
 				cancelCellEditing();
 			}
 		}
 		
+		@Override
 		public Object getCellEditorValue() {
 			String s = (String)theCombo.getSelectedItem();
 			if ((s != null) && (s.equals(""))) s=null;
 			return s;
 		}
 	
+		@Override
 		public void cancelCellEditing() {
 			theCombo.removePopupMenuListener(thePopupListener);
 			theCombo.removeActionListener(theActionListener);
 			super.cancelCellEditing();
 		}
 		
+		@Override
 		public boolean stopCellEditing() {
 			theCombo.removePopupMenuListener(thePopupListener);
 			theCombo.removeActionListener(theActionListener);
@@ -163,6 +198,7 @@ public class Editor {
 		
 		public  void setRange(DateDay.Range pRange) { theRange = pRange; }
 		
+		@Override
 		public JComponent getTableCellEditorComponent(JTable  table,
 				                                      Object  value,
 				                                      boolean isSelected,
@@ -191,11 +227,13 @@ public class Editor {
 			return super.getTableCellEditorComponent(table, myCurr.getDate(), isSelected, row, col);
 		}
 		
+		@Override
 		public Object getCellEditorValue() {
 			DateDay myValue = new DateDay(getSelectedDate());
 			return myValue;
 		}
 		
+		@Override
 		public boolean stopCellEditing() {
 			DateDay myDate = (DateDay)getCellEditorValue();
 			if ((Object)myDate == null) {
@@ -216,6 +254,7 @@ public class Editor {
 			theField = new JTextField();
 		}
 		
+		@Override
 		public JComponent getTableCellEditorComponent(JTable  table,
 				                                      Object  value,
 				                                      boolean isSelected,
@@ -226,6 +265,7 @@ public class Editor {
 			return theField;
 		}
 		
+		@Override
 		public Object getCellEditorValue() {
 			String s = theField.getText();
 			if (!s.equals("")) {
@@ -240,6 +280,7 @@ public class Editor {
 			return null;
 		}
 		
+		@Override
 		public boolean stopCellEditing() {
 			Rate myRate = (Rate)getCellEditorValue();
 			if (myRate == null) {
@@ -260,6 +301,7 @@ public class Editor {
 			theField = new JTextField();
 		}
 		
+		@Override
 		public JComponent getTableCellEditorComponent(JTable  table,
 				                                      Object  value,
 				                                      boolean isSelected,
@@ -270,6 +312,7 @@ public class Editor {
 			return theField;
 		}
 		
+		@Override
 		public Object getCellEditorValue() {
 			String s = theField.getText();
 			if (!s.equals("")) {
@@ -284,6 +327,7 @@ public class Editor {
 			return null;
 		}
 		
+		@Override
 		public boolean stopCellEditing() {
 			Money myMoney = (Money)getCellEditorValue();
 			if (myMoney == null) {
@@ -304,6 +348,7 @@ public class Editor {
 			theField = new JTextField();
 		}
 		
+		@Override
 		public JComponent getTableCellEditorComponent(JTable  table,
 				                                      Object  value,
 				                                      boolean isSelected,
@@ -314,6 +359,7 @@ public class Editor {
 			return theField;
 		}
 		
+		@Override
 		public Object getCellEditorValue() {
 			String s = theField.getText();
 			if (!s.equals("")) {
@@ -328,6 +374,7 @@ public class Editor {
 			return null;
 		}
 		
+		@Override
 		public boolean stopCellEditing() {
 			Units myUnits = (Units)getCellEditorValue();
 			if ((Object)myUnits == this) {
@@ -348,6 +395,7 @@ public class Editor {
 			theField = new JTextField();
 		}
 		
+		@Override
 		public JComponent getTableCellEditorComponent(JTable  table,
 				                                      Object  value,
 				                                      boolean isSelected,
@@ -358,6 +406,7 @@ public class Editor {
 			return theField;
 		}
 		
+		@Override
 		public Object getCellEditorValue() {
 			String s = theField.getText();
 			if (!s.equals("")) {
@@ -372,6 +421,7 @@ public class Editor {
 			return null;
 		}
 		
+		@Override
 		public boolean stopCellEditing() {
 			Units myUnits = (Units)getCellEditorValue();
 			if ((Object)myUnits == this) {
@@ -392,6 +442,7 @@ public class Editor {
 			theField = new JTextField();
 		}
 		
+		@Override
 		public JComponent getTableCellEditorComponent(JTable  table,
 				                                      Object  value,
 				                                      boolean isSelected,
@@ -402,6 +453,7 @@ public class Editor {
 			return theField;
 		}
 		
+		@Override
 		public Object getCellEditorValue() {
 			String s = theField.getText();
 			if (!s.equals("")) {
@@ -416,6 +468,7 @@ public class Editor {
 			return null;
 		}
 		
+		@Override
 		public boolean stopCellEditing() {
 			Price myPrice = (Price)getCellEditorValue();
 			if (myPrice == null) {
@@ -436,6 +489,7 @@ public class Editor {
 			theField = new JTextField();
 		}
 		
+		@Override
 		public JComponent getTableCellEditorComponent(JTable  table,
 				                                      Object  value,
 				                                      boolean isSelected,
@@ -446,6 +500,7 @@ public class Editor {
 			return theField;
 		}
 		
+		@Override
 		public Object getCellEditorValue() {
 			String s = theField.getText();
 			if (!s.equals("")) {
@@ -460,6 +515,7 @@ public class Editor {
 			return null;
 		}
 		
+		@Override
 		public boolean stopCellEditing() {
 			Price myPrice = (Price)getCellEditorValue();
 			if (myPrice == null) {

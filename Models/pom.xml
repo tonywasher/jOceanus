@@ -1,10 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>uk.co.tolcroft</groupId>
+  <groupId>uk.co.tolcroft.finapp</groupId>
   <artifactId>finmdl</artifactId>
   <version>v1.0.0-SNAPSHOT</version>
-  <name>Models</name>
-  <description>Model Application Utilities</description>
+  <name>Generic Framework</name>
   <dependencies>
   	<dependency>
   		<groupId>org.apache.poi</groupId>
@@ -17,9 +16,10 @@
   		<version>1.46</version>
   	</dependency>
   	<dependency>
-  		<groupId>net.sourceforge</groupId>
+  		<groupId>net.sourceforge.JDateButton</groupId>
   		<artifactId>JDateButton</artifactId>
   		<version>v1.0.0-SNAPSHOT</version>
   	</dependency>
   </dependencies>
+  <description>Generic Framework for application</description>
 </project>

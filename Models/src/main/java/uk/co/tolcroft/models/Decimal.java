@@ -419,8 +419,8 @@ public abstract class Decimal {
 	
 	/**
 	 * Format a numeric decimal value 
-	 * @param bPretty <code>true</code> if the value is to be formatted with thousands separator, 
-	 * <code>false</code> otherwise
+	 * @param bPretty <code>true</code> if the value is to be formatted with thousands separator
+	 * (and other appropriate enhancements such as %), <code>false</code> otherwise
 	 * @return the formatted value.
 	 */
 	private StringBuilder formatNumber(boolean bPretty) {
@@ -619,12 +619,7 @@ public abstract class Decimal {
 			return new Ratio(OneHundredPerCent, this);
 		}
 		
-		/**
-		 * Format a Rate 
-		 * @param bPretty <code>true</code> if the value is to be formatted with thousands separator
-		 * and with a percent sign at the end, <code>false</code> otherwise
-		 * @return the formatted Rate
-		 */
+		@Override
 		public String format(boolean bPretty) {
 			StringBuilder myFormat;
 			myFormat = super.formatNumber(bPretty);
@@ -662,10 +657,7 @@ public abstract class Decimal {
 			return adjustDecimals(pValue, NUMDEC);       
 		}		
 
-		/**
-		 * Convert the value into a Double 
-		 * @return the value as a double 
-		 */
+		@Override
 		public double convertToDouble() {
 			/* Convert the value into units (to increase decimals by two) */
 			Units myUnits = new Units(getValue());
@@ -735,12 +727,7 @@ public abstract class Decimal {
 			return new Ratio(Rate.OneHundredPerCent, this);
 		}
 		
-		/**
-		 * Format a Ratio
-		 * @param bPretty <code>true</code> if the value is to be formatted with thousands separator
-		 * and with a percent sign at the end, <code>false</code> otherwise
-		 * @return the formatted Rate
-		 */
+		@Override
 		public String format(boolean bPretty) {
 			StringBuilder myFormat;
 			myFormat = super.formatNumber(bPretty);
@@ -845,12 +832,7 @@ public abstract class Decimal {
 			return myTotal;
 		}
 
-		/**
-		 * Format a Price 
-		 * @param bPretty <code>true</code> if the value is to be formatted with thousands separator
-		 * and with a currency sign at the beginning, <code>false</code> otherwise
-		 * @return the formatted Price
-		 */
+		@Override
 		public String format(boolean bPretty) {
 			StringBuilder	myFormat;
 			boolean 		isNegative;
@@ -989,12 +971,7 @@ public abstract class Decimal {
 			return myTotal;
 		}
 
-		/**
-		 * Format a Price 
-		 * @param bPretty <code>true</code> if the value is to be formatted with thousands separator
-		 * and with a currency sign at the beginning, <code>false</code> otherwise
-		 * @return the formatted Price
-		 */
+		@Override
 		public String format(boolean bPretty) {
 			StringBuilder	myFormat;
 			boolean 		isNegative;
@@ -1106,12 +1083,7 @@ public abstract class Decimal {
 			super.ParseString(pUnits);
 		}		
 		
-		/**
-		 * Format a Units 
-		 * @param bPretty <code>true</code> if the value is to be formatted with thousands separator,
-		 * <code>false</code> otherwise
-		 * @return the formatted Units
-		 */
+		@Override
 		public String format(boolean bPretty) {
 			StringBuilder myFormat = super.formatNumber(bPretty);
 			return myFormat.toString();
@@ -1233,12 +1205,7 @@ public abstract class Decimal {
 					(getValue() < MIN_VALUE));
 		}
 		
-		/**
-		 * Format a Dilution
-		 * @param bPretty <code>true</code> if the value is to be formatted with thousands separator,
-		 * <code>false</code> otherwise
-		 * @return the formatted Units
-		 */
+		@Override
 		public String format(boolean bPretty) {
 			StringBuilder myFormat = super.formatNumber(bPretty);
 			return myFormat.toString();
@@ -1374,12 +1341,7 @@ public abstract class Decimal {
 			return myTotal;
 		}
 
-		/**
-		 * Format a Money 
-		 * @param bPretty <code>true</code> if the value is to be formatted with thousands separator
-		 * and with a currency sign at the beginning, <code>false</code> otherwise
-		 * @return the formatted Money
-		 */
+		@Override
 		public String format(boolean bPretty) {
 			StringBuilder	myFormat;
 			boolean 		isNegative;

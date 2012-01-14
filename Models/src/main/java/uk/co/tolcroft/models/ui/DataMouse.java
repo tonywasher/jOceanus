@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.models.ui;
 
 import java.awt.Point;
@@ -51,16 +72,13 @@ public abstract class DataMouse<T extends DataItem<T>> extends MouseAdapter
 		/* Add as listener to the header */
 		theTable.getTableHeader().addMouseListener(this);
 	}
-	/**
-	 * Handle mouse Pressed event
-	 */
+
+	@Override
 	public void mousePressed(MouseEvent e) {
 		maybeShowPopup(e);
 	}
 
-	/**
-	 * Handle mouse Released event
-	 */
+	@Override
 	public void mouseReleased(MouseEvent e) {
 		maybeShowPopup(e);
 	}
@@ -386,10 +404,7 @@ public abstract class DataMouse<T extends DataItem<T>> extends MouseAdapter
 		}
 	}
 	
-	/**
-	 * Perform actions for controls/pop-ups on this table
-	 * @param evt the event
-	 */
+	@Override
 	public void actionPerformed(ActionEvent evt) {
 		String myCmd = evt.getActionCommand();
 		Object mySrc = evt.getSource();

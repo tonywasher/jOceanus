@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
 import uk.co.tolcroft.models.ReportList;
@@ -397,11 +418,7 @@ public abstract class DataList<L extends DataList<L,T>,
 		}
 	}
 	
-	/**
-	 *  add an object to the list  
-	 *  @param pItem - item to add to the list
-	 *  @return <code>true</code>
-	 */
+	@Override
 	public boolean add(T pItem) {
 		/* Add the item to the underlying list */
 		boolean bSuccess = super.add(pItem);
@@ -413,11 +430,7 @@ public abstract class DataList<L extends DataList<L,T>,
 		return bSuccess;
 	}
 	
-	/**
-	 * remove the specified item 
-	 * @param o the item to remove
-	 * @return <code>true/false</code> was the item removed
-	 */
+	@Override
 	public boolean remove(Object o) {
 		/* Make sure that the object is the same data class */
 		if (!getBaseClass().isInstance(o)) return false;
@@ -435,11 +448,7 @@ public abstract class DataList<L extends DataList<L,T>,
 		return bSuccess;
 	}
 	
-	/**
-	 * remove the item at the specified index
-	 * @param iIndex index of item
-	 * @return the removed item
-	 */
+	@Override
 	public T remove(int iIndex) {
 		/* Remove the underlying item */
 		T myItem = super.remove(iIndex);
@@ -451,48 +460,31 @@ public abstract class DataList<L extends DataList<L,T>,
 		return myItem;
 	}
 	
-	/**
-	 * obtain an Iterator for this list
-	 * @return <code>true/false</code>
-	 */
+	@Override
 	public java.util.Iterator<T> iterator() {
 		/* Return a new iterator */
 		return new ListIterator();
 	}
 	
-	/**
-	 * obtain a list Iterator for this list
-	 * @return List iterator
-	 */
+	@Override
 	public ListIterator listIterator() {
 		/* Return a new iterator */
 		return new ListIterator();
 	}
 	
-	/**
-	 * obtain a list Iterator for this list
-	 * @param bShowAll show all items in the list
-	 * @return List iterator
-	 */
+	@Override
 	public ListIterator listIterator(boolean bShowAll) {
 		/* Return a new iterator */
 		return new ListIterator(bShowAll);
 	}
 	
-	/**
-	 * obtain a list Iterator for this list
-	 * obtain a list Iterator for this list initialised to an index
-	 * @param iIndex the index to initialise to
-	 * @return List iterator
-	 */
+	@Override
 	public ListIterator listIterator(int iIndex) {
 		/* Throw exception */
-		throw new java.lang.UnsupportedOperationException();
+		throw new UnsupportedOperationException();
 	}
 	
-	/**
-	 * remove All list items
-	 */
+	@Override
 	public void clear() {
 		/* Clear the underlying list */
 		super.clear();
@@ -521,22 +513,12 @@ public abstract class DataList<L extends DataList<L,T>,
 	}
 	
 	/**
-	 * Obtain the type of the list
-	 * @return the type of the list
-	 */
-	abstract public String itemType();
-	
-	/**
 	 * Stub for extensions to add their own fields
 	 * @param pBuffer the string buffer 
 	 */
 	public void addHTMLFields(StringBuilder pBuffer) {}
 	
-	/**
-	 * Provide a string representation of this object
-	 * @param pDetail the Debug Detail
-	 * @return formatted string
-	 */
+	@Override
 	public StringBuilder buildDebugDetail(DebugDetail pDetail) {
 		/* Local variables */
 		StringBuilder	myString = new StringBuilder(10000);
@@ -590,11 +572,7 @@ public abstract class DataList<L extends DataList<L,T>,
 		return myString;
 	}
 		
-	/**
-	 * Add child entries for the debug object
-	 * @param pManager the debug manager
-	 * @param pParent the parent debug entry
-	 */
+	@Override
 	public void addChildEntries(DebugManager 	pManager,
 								DebugEntry		pParent) { }	
 
@@ -998,9 +976,7 @@ public abstract class DataList<L extends DataList<L,T>,
 		 */
 		private ListIterator(boolean bShowAll) { super(bShowAll); }		
 
-		/**
-		 * Remove the last referenced item.
-		 */
+		@Override
 		public void remove() {
 			/* Remove the last Item */
 			T myItem = super.removeLastItem();

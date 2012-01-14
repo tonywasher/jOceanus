@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.finance.ui;
 
 import java.awt.CardLayout;
@@ -19,10 +40,13 @@ import javax.swing.LayoutStyle;
 
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.PropertySet.PropertyManager;
+import uk.co.tolcroft.models.data.EditState;
+import uk.co.tolcroft.models.help.DebugManager;
+import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
 import uk.co.tolcroft.models.ui.PropertySetPanel;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
-public class MaintProperties {
+public class MaintProperties implements stdPanel {
 	/* Properties */
 	private MaintenanceTab		theParent			= null;
 	private JPanel              thePanel			= null;
@@ -246,5 +270,26 @@ public class MaintProperties {
 			/* Note that the panel should be re-displayed */
 			theProperties.invalidate();
 		}			
-	}	
+	}
+
+	@Override
+	public void notifySelection(Object o) {}
+
+	@Override
+	public void printIt() {}
+
+	@Override
+	public boolean isLocked() { return false; }
+
+	@Override
+	public EditState getEditState() { return null; }
+
+	@Override
+	public DebugManager getDebugManager() { return null; }
+
+	@Override
+	public DebugEntry getDebugEntry() { return null; }
+
+	@Override
+	public void lockOnError(boolean isError) {}
 }

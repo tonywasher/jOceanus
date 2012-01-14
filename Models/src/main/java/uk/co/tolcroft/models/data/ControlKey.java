@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
 import java.security.SecureRandom;
@@ -64,6 +85,7 @@ public class ControlKey extends DataItem<ControlKey> {
 	private SecureRandom	getRandom()  			{ return getValues().getRandom(); }
 
 	/* Linking methods */
+	@Override
 	public ControlKey	getBase() 	{ return (ControlKey)super.getBase(); }
 	public Values  		getValues() { return (Values)super.getCurrentValues(); }	
 	
@@ -74,16 +96,10 @@ public class ControlKey extends DataItem<ControlKey> {
 	public static final int FIELD_KEYMODE  		= DataItem.NUMFIELDS+3;
 	public static final int NUMFIELDS	   		= DataItem.NUMFIELDS+4; 
 
-	/**
-	 * Obtain the type of the item
-	 * @return the type of the item
-	 */
+	@Override
 	public String itemType() { return objName; }
 	
-	/**
-	 * Obtain the number of fields for an item
-	 * @return the number of fields
-	 */
+	@Override
 	public int	numFields() { return NUMFIELDS; }
 	
 	/**
@@ -100,18 +116,10 @@ public class ControlKey extends DataItem<ControlKey> {
 		}
 	}
 				
-	/**
-	 * Determine the field name in a non-static fashion 
-	 */
+	@Override
 	public String getFieldName(int iField) { return fieldName(iField); }
 	
-	/**
-	 * Format the value of a particular field as a table row
-	 * @param pDetail the debug detail
-	 * @param iField the field number
-	 * @param pValues the values to use
-	 * @return the formatted field
-	 */
+	@Override
 	public String formatField(DebugDetail pDetail, int iField, HistoryValues<ControlKey> pValues) {
 		Values	myValues = (Values)pValues;
 		String 	myString = "";
@@ -136,10 +144,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		return myString;
 	}
 							
-	/**
-	 * Get an initial set of values 
-	 * @return an initial set of values 
-	 */
+	@Override
 	protected HistoryValues<ControlKey> getNewValues() { return new Values(); }
 	
 	/**
@@ -306,11 +311,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		allocateDataKeys(myData);
 	}
 
-	/**
-	 * Compare this ControlKey to another to establish equality.
-	 * @param pThat The ControlKey to compare to
-	 * @return <code>true</code> if the ControlKey is identical, <code>false</code> otherwise
-	 */
+	@Override
 	public boolean equals(Object pThat) {
 		/* Handle the trivial cases */
 		if (this == pThat) return true;
@@ -329,12 +330,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		return getValues().histEquals(myThat.getValues()).isIdentical();
 	}
 
-	/**
-	 * Compare this ControlKey to another to establish sort order. 
-	 * @param pThat The ControlKey to compare to
-	 * @return (-1,0,1) depending of whether this object is before, equal, 
-	 * 					or after the passed object in the sort order
-	 */
+	@Override
 	public int compareTo(Object pThat) {
 		int iDiff;
 		
@@ -527,9 +523,13 @@ public class ControlKey extends DataItem<ControlKey> {
 		}
 
 		/* Obtain extract lists. */
+		@Override
 		public List getUpdateList() 	{ return getExtractList(ListStyle.UPDATE); }
+		@Override
 		public List getEditList() 		{ return null; }
+		@Override
 		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
+		@Override
 		public List getDeepCopy(DataSet<?> pDataSet)	{ 
 			/* Build an empty Extract List */
 			List myList = new List(this);
@@ -543,11 +543,7 @@ public class ControlKey extends DataItem<ControlKey> {
 			return myList;
 		}
 
-		/** 
-		 * Construct a difference ControlData list
-		 * @param pNew the new ControlData list 
-		 * @param pOld the old ControlData list 
-		 */
+		@Override
 		protected List getDifferences(List pOld) { 
 			/* Build an empty Difference List */
 			List myList = new List(this);
@@ -559,27 +555,17 @@ public class ControlKey extends DataItem<ControlKey> {
 			return myList;
 		}
 
-		/**
-		 * Add a new item to the core list
-		 * @param pItem item
-		 * @return the newly added item
-		 */
+		@Override
 		public ControlKey addNewItem(DataItem<?> pItem) { 
 			ControlKey myKey = new ControlKey(this, (ControlKey)pItem);
 			add(myKey);
 			return myKey; 
 		}
 
-		/**
-		 * Add a new item to the edit list
-		 * @return the newly added item
-		 */
+		@Override
 		public ControlKey addNewItem() { return null; }
 
-		/**
-		 * 	Obtain the type of the item
-		 * @return the type of the item
-		 */
+		@Override
 		public String itemType() { return listName; }
 
 		/**
@@ -764,7 +750,7 @@ public class ControlKey extends DataItem<ControlKey> {
 		public Values() {}
 		public Values(Values pValues) { copyFrom(pValues); }
 		
-		/* Check whether this object is equal to that passed */
+		@Override
 		public Difference histEquals(HistoryValues<ControlKey> pCompare) {
 			/* Make sure that the object is the same class */
 			if (pCompare.getClass() != this.getClass()) return Difference.Different;
@@ -784,10 +770,11 @@ public class ControlKey extends DataItem<ControlKey> {
 			return myDifference;
 		}
 		
-		/* Copy values */
+		@Override
 		public HistoryValues<ControlKey> copySelf() {
 			return new Values(this);
 		}
+		@Override
 		public void    copyFrom(HistoryValues<?> pSource) {
 			Values myValues = (Values)pSource;
 			theControl		= myValues.getSecurityControl();
@@ -797,6 +784,7 @@ public class ControlKey extends DataItem<ControlKey> {
 			theMode			= myValues.getMode();
 			theKeyMode		= myValues.getKeyMode();
 		}
+		@Override
 		public Difference	fieldChanged(int fieldNo, HistoryValues<ControlKey> pOriginal) {
 			Values 	pValues = (Values)pOriginal;
 			Difference	bResult = Difference.Identical;

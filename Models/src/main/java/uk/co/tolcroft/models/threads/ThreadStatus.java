@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.models.threads;
 
 import uk.co.tolcroft.models.ModelException;
@@ -42,7 +63,7 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl,
 	@Override
 	public Class<? extends PropertySet> getPropertySetClass() { return ThreadStatusProperties.class; }
 	
-	/* Publish task 0 (Worker Thread)*/
+	@Override
 	public boolean initTask(String pTask) {
 		StatusData myStatus;
 		
@@ -71,7 +92,7 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl,
 		return true;
 	}
 	
-	/* Publish task 1 (Worker Thread)*/
+	@Override
 	public boolean setNumStages(int pNumStages) {
 		/* Check for cancellation */
 		if (theThread.isCancelled()) return false;
@@ -84,7 +105,7 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl,
 		return true;
 	}
 	
-	/* Publish task 2 (Worker Thread)*/
+	@Override
 	public boolean setNewStage(String pStage) {
 		StatusData myStatus;
 		
@@ -110,7 +131,7 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl,
 		return true;
 	}
 	
-	/* Publish task 3 (Worker Thread)*/
+	@Override
 	public boolean setNumSteps(int pNumSteps) {
 		/* Check for cancellation */
 		if (theThread.isCancelled()) return false;
@@ -122,7 +143,7 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl,
 		return true;
 	}
 	
-	/* Publish task 4 (Worker Thread)*/
+	@Override
 	public boolean setStepsDone(int pStepsDone) {
 		StatusData myStatus;
 		

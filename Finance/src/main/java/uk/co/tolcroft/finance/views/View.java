@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.sheets.FinanceSheet;
@@ -7,6 +28,8 @@ import uk.co.tolcroft.finance.database.FinanceDatabase;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
+import uk.co.tolcroft.models.threads.ThreadStatus;
+import uk.co.tolcroft.models.threads.WorkerThread;
 import uk.co.tolcroft.models.views.DataControl;
 import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.ModelException.ExceptionClass;
@@ -60,7 +83,11 @@ public class View extends DataControl<FinanceData> {
 	public SpreadSheet<FinanceData> getSpreadSheet() {
 		return new FinanceSheet();
 	}
-	
+
+	@Override
+	public ThreadStatus<FinanceData> allocateThreadStatus(WorkerThread<?> pThread) { 
+		return new ThreadStatus<FinanceData>(pThread, this); }
+
 	/**
 	 * Update the data for a view
 	 * @param pData the new data set

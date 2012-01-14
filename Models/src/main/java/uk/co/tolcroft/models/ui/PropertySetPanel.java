@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.models.ui;
 
 import java.awt.FlowLayout;
@@ -23,7 +44,6 @@ import javax.swing.JPanel;
 
 import net.sourceforge.JDateButton.JDateButton;
 
-import uk.co.tolcroft.finance.ui.MaintProperties;
 import uk.co.tolcroft.models.DateDay;
 import uk.co.tolcroft.models.PropertySet;
 import uk.co.tolcroft.models.PropertySet.BooleanProperty;
@@ -33,6 +53,7 @@ import uk.co.tolcroft.models.PropertySet.IntegerProperty;
 import uk.co.tolcroft.models.PropertySet.Property;
 import uk.co.tolcroft.models.PropertySet.PropertyType;
 import uk.co.tolcroft.models.PropertySet.StringProperty;
+import uk.co.tolcroft.models.ui.StdInterfaces.stdPanel;
 import uk.co.tolcroft.models.ui.ValueField.ValueClass;
 
 public class PropertySetPanel extends JPanel {
@@ -42,12 +63,17 @@ public class PropertySetPanel extends JPanel {
 	/**
 	 * The Parent for this panel
 	 */
-	private final MaintProperties 	theParent;
+	private final stdPanel			theParent;
 	
 	/**
 	 * The PropertySet for this panel
 	 */
 	private final PropertySet 		theProperties;
+	
+	/**
+	 * The Self Reference
+	 */
+	private final PropertySetPanel	theSelf		= this;
 	
 	/**
 	 * The individual property items
@@ -65,8 +91,8 @@ public class PropertySetPanel extends JPanel {
 	/**
 	 * Constructor
 	 */
-	public PropertySetPanel(MaintProperties pParent,
-							PropertySet 	pSet) {
+	public PropertySetPanel(stdPanel	pParent,
+							PropertySet pSet) {
 		/* Options SubPanel */
 		JPanel 	myOptions	= null;
 		int		myRow		= 0;
@@ -441,7 +467,7 @@ public class PropertySetPanel extends JPanel {
 							/* If we are a directory property */
 							case Directory:
 								/* Create and show the dialog */
-								FileSelector myDialog = new FileSelector(theParent.getPanel(),
+								FileSelector myDialog = new FileSelector(theSelf,
 																		 "Select " + theString.getDisplay(),
 																		 new File(theString.getValue()));
 								myDialog.showDialog();
@@ -460,7 +486,7 @@ public class PropertySetPanel extends JPanel {
 							/* If we are a file property */
 							case File:
 								/* Create and show the dialog */
-								FileSelector myFileDialog = new FileSelector(theParent.getPanel(),
+								FileSelector myFileDialog = new FileSelector(theSelf,
 																		 	 "Select " + theString.getDisplay(),
 																		 	 new File(theString.getValue()),
 																		 	 null,

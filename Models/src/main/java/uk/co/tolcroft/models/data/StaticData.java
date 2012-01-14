@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
 import uk.co.tolcroft.models.Difference;
@@ -84,10 +105,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 	public static final int FIELD_CLASS    	= EncryptedItem.NUMFIELDS+4;
 	public static final int NUMFIELDS	   	= EncryptedItem.NUMFIELDS+5;
 	
-	/**
-	 * Obtain the number of fields for an item
-	 * @return the number of fields
-	 */
+	@Override
 	public int	numFields() {return NUMFIELDS; }
 	
 	/**
@@ -105,18 +123,10 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		}
 	}
 	
-	/**
-	 * Determine the field name in a non-static fashion 
-	 */
+	@Override
 	public String getFieldName(int iField) { return fieldName(iField); }
 	
-	/**
-	 * Format the value of a particular field as a table row
-	 * @param pDetail the debug detail
-	 * @param iField the field number
-	 * @param pObj the values to use
-	 * @return the formatted field
-	 */
+	@Override
 	public String formatField(DebugDetail pDetail, int iField, HistoryValues<T> pObj) {
 		String myString = ""; 
 		StaticData<?,?>.Values 	myObj 	 = (StaticData<?,?>.Values)pObj;
@@ -131,12 +141,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		return myString;
 	}
 	
-	/**
-	 * Compare this Static Data to another to establish equality.
-	 * 
-	 * @param pThat The Static Data to compare to
-	 * @return <code>true</code> if the static data is identical, <code>false</code> otherwise
-	 */
+	@Override
 	public boolean equals(Object pThat) {
 		/* Handle the trivial cases */
 		if (this == pThat) return true;
@@ -159,13 +164,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		return getObj().histEquals(myThat.getObj()).isIdentical();
 	}
 
-	/**
-	 * Compare this StaticData to another to establish sort order.
-	 * 
-	 * @param pThat The StaticData to compare to
-	 * @return (-1,0,1) depending of whether this object is before, equal, 
-	 * 					or after the passed object in the sort order
-	 */
+	@Override
 	public int compareTo(Object pThat) {
 		long result;
 
@@ -198,9 +197,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		else return 1;
 	}
 
-	/**
-	 *  Validate the element
-	 */
+	@Override
 	public void validate() {
 		StaticList<?,?,?>	myList = (StaticList<?,?,?>)getList();
 
@@ -234,10 +231,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		if (!hasErrors()) setValidEdit();
 	}
 	
-	/**
-	 * Get an initial set of values 
-	 * @return an initial set of values 
-	 */
+	@Override
 	protected HistoryValues<T> getNewValues() { return new Values(); }
 	
 	/**
@@ -496,11 +490,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		getObj().setOrder(iOrder);
 	}
 
-	/**
-	 * Update StaticData from a StaticData extract  
-	 * @param pData the updated item 
-	 * @return whether changes have been made
-	 */
+	@Override
 	public boolean applyChanges(DataItem<?> pData) {
 		StaticData<?,?>			myData 		= (StaticData<?,?>)pData;
 		StaticData<?,?>.Values	myObj		= getObj();
@@ -571,7 +561,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 			super(pSource);
 		}
 		
-		/* List Iterators */
+		@Override
 		public void setNewId(T pItem)	{ super.setNewId(pItem); }
 		
 		/**
@@ -699,7 +689,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 		public Values() {}
 		public Values(StaticData<?,?>.Values pValues) { copyFrom(pValues); }
 		
-		/* Check whether this object is equal to that passed */
+		@Override
 		public Difference histEquals(HistoryValues<T> pCompare) {
 			/* Make sure that the object is the same class */
 			if (pCompare.getClass() != this.getClass()) return Difference.Different;
@@ -725,10 +715,11 @@ public abstract class StaticData<T extends StaticData<T,E>,
 			return myDifference;
 		}
 		
-		/* Copy values */
+		@Override
 		public HistoryValues<T> copySelf() {
 			return new Values(this);
 		}
+		@Override
 		public void    copyFrom(HistoryValues<?> pSource) {
 			StaticData<?,?>.Values myValues = (StaticData<?,?>.Values)pSource;
 			copyFrom(myValues);
@@ -743,6 +734,7 @@ public abstract class StaticData<T extends StaticData<T,E>,
 									? new StringPair(pValues.getDesc())
 									: null;
 		}
+		@Override
 		public Difference	fieldChanged(int fieldNo, HistoryValues<T> pOriginal) {
 			StaticData<?,?>.Values 	pValues = (StaticData<?,?>.Values)pOriginal;
 			Difference	bResult = Difference.Identical;
@@ -768,28 +760,21 @@ public abstract class StaticData<T extends StaticData<T,E>,
 			return bResult;
 		}
 
-		/**
-		 * Update encryption after security change
-		 */
+		@Override
 		protected void updateSecurity() throws ModelException {
 			/* Update the encryption */
 			theName = new StringPair(theName.getString());
 			if (theDesc != null) theDesc = new StringPair(theDesc.getString());
 		}		
 		
-		/**
-		 * Apply encryption after non-encrypted load
-		 */
+		@Override
 		protected void applySecurity() throws ModelException {
 			/* Apply the encryption */
 			theName.encryptPair();
 			if (theDesc != null) theDesc.encryptPair();
 		}		
 		
-		/**
-		 * Adopt encryption from base
-		 * @param pBase the Base values
-		 */
+		@Override
 		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws ModelException {
 			StaticData<?,?>.Values myBase = (StaticData<?,?>.Values)pBase;
 			
