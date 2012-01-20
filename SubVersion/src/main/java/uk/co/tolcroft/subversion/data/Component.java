@@ -67,11 +67,6 @@ public class Component {
 	private final String			theName;
 	
 	/**
-	 * The Client Manager
-	 */
-	private final SVNClientManager	theMgr;
-	
-	/**
 	 * BranchList 
 	 */
 	private final BranchList		theBranches;
@@ -81,12 +76,6 @@ public class Component {
 	 * @return the repository
 	 */
 	public Repository 		getRepository() 	{ return theRepository; }
-	
-	/**
-	 * Obtain the client manager
-	 * @return the manager
-	 */
-	public SVNClientManager	getClientManager() 	{ return theMgr; }
 	
 	/**
 	 * Obtain the component name
@@ -109,8 +98,7 @@ public class Component {
 		/* Store values */
 		theName			= pName;
 		theRepository	= pParent;
-		theMgr			= theRepository.getClientManager();
-		
+
 		/* Create branch list */
 		theBranches = new BranchList(this);
 	}
@@ -257,6 +245,9 @@ public class Component {
 								SVNDepth.IMMEDIATES, 
 								SVNDirEntry.DIRENT_ALL,
 								new ComponentHandler());
+				
+				/* Release the client manager */
+				theRepository.releaseClientManager(myMgr);
 			}
 			
 			catch (SVNException e) {

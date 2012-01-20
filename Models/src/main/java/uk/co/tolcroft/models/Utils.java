@@ -498,7 +498,7 @@ public class Utils {
 		if (!clearDirectory(pDir))	return false;
 
 		/* Delete the directory itself */
-		return pDir.delete();
+		return (!pDir.exists()) || (pDir.delete());
 	}
 
 	/**

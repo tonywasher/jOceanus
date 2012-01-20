@@ -59,11 +59,6 @@ public class Tag {
 	private final Component			theComponent;
 	
 	/**
-	 * The Client Manager
-	 */
-	private final SVNClientManager	theMgr;
-	
-	/**
 	 * The Branch to which this Tag belongs
 	 */
 	private final Branch			theBranch;
@@ -84,7 +79,6 @@ public class Tag {
 		theBranch 		= pParent;
 		theRepository	= pParent.getRepository();
 		theComponent	= pParent.getComponent();
-		theMgr			= pParent.getClientManager();
 		theTag			= pTag;
 	}
 	
@@ -112,12 +106,6 @@ public class Tag {
 	 * @return the branch
 	 */
 	public Branch 			getBranch() 		{ return theBranch; }
-	
-	/**
-	 * Obtain the client manager
-	 * @return the manager
-	 */
-	public SVNClientManager	getClientManager()	{ return theMgr; }
 	
 	/**
 	 * Obtain repository path for the tag 
@@ -223,7 +211,8 @@ public class Tag {
 			theList.clear();
 			
 			/* Access a LogClient */
-			SVNClientManager	myMgr	 = theBranch.getClientManager();
+			Repository			myRepo	 = theComponent.getRepository();
+			SVNClientManager	myMgr	 = myRepo.getClientManager();
 			SVNLogClient 		myClient = myMgr.getLogClient();
 			
 			/* Protect against exceptions */
@@ -239,6 +228,9 @@ public class Tag {
 								SVNDepth.IMMEDIATES, 
 								SVNDirEntry.DIRENT_ALL,
 								new TagHandler());
+				
+				/* Release the client manager */
+				myRepo.releaseClientManager(myMgr);
 			}
 			
 			catch (SVNException e) {

@@ -27,8 +27,10 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.tmatesoft.svn.core.SVNDepth;
+import org.tmatesoft.svn.core.SVNErrorCode;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
+import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNStatus;
 import org.tmatesoft.svn.core.wc.SVNStatusClient;
@@ -36,22 +38,28 @@ import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 import org.tmatesoft.svn.core.wc.SVNWCClient;
 
 import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 
 public class WorkingCopy {
 	/**
 	 * The branch associated with the working copy
 	 */
-	private Branch 	theBranch	= null;
+	private Branch 				theBranch	= null;
 
 	/**
 	 * The sub-path of the branch that is checked out 
 	 */
-	private String	theSubPath	= null;
+	private String				theSubPath	= null;
 	
 	/**
 	 * The path at which the branch is checked out
 	 */
-	private File 	theLocation	= null;
+	private File 				theLocation	= null;
+	
+	/**
+	 * The project definition
+	 */
+	private ProjectDefinition 	theProject	= null;
 	
 	/**
 	 * Get branch
@@ -72,6 +80,12 @@ public class WorkingCopy {
 	public File 	getLocation() 	{ return theLocation; }
 	
 	/**
+	 * Get Project Definition
+	 * @return the project definition
+	 */
+	public ProjectDefinition	getProjectDefinition() 	{ return theProject; }
+	
+	/**
 	 * Constructor
 	 * @param pLocation the location
 	 * @param pBranch the branch
@@ -79,7 +93,7 @@ public class WorkingCopy {
 	 */
 	protected WorkingCopy(File 		pLocation,
 						  Branch	pBranch,
-						  SVNURL	pSource) {
+						  SVNURL	pSource) throws ModelException {
 		/* Store parameters */
 		theBranch 	= pBranch;
 		theLocation	= pLocation;
@@ -90,6 +104,52 @@ public class WorkingCopy {
 		
 		/* Access the SubPath */
 		theSubPath = myURL.substring(myPath.length());
+		
+		/* Determine the location of the project definition */
+		File myPom = ProjectDefinition.getProjectDefFile(theLocation);
+		if (myPom != null) theProject = new ProjectDefinition(myPom); 
+	}
+	
+	/**
+	 * Get status for a file in a working copy 
+	 * @param pRepo the repository
+	 * @param pFile the file to get status for
+	 * @return the status (null if not under VC) 
+	 */
+	public static SVNStatus getFileStatus(Repository 	pRepo,
+										  File 		 	pFile) throws ModelException {
+		SVNClientManager	myMgr		= pRepo.getClientManager();
+		SVNStatusClient 	myClient 	= myMgr.getStatusClient();
+		
+		/* File must exist */
+		if (!pFile.exists()) return null;
+		
+		/* Initialise the status */
+		SVNStatus myStatus;
+		
+		/* Protect against exceptions */
+		try {
+			/* Access status of the file */
+			myStatus = myClient.doStatus(pFile, false);
+		}
+		catch (SVNException e) {
+			/* Access the error code */
+			SVNErrorCode myCode = e.getErrorMessage().getErrorCode();
+			
+			/* Allow file/directory exists but is not WC */
+			if ((myCode != SVNErrorCode.WC_NOT_FILE) && 
+				(myCode != SVNErrorCode.WC_NOT_DIRECTORY))
+				throw new ModelException(ExceptionClass.SUBVERSION, 
+										 "Unable to get status",
+										 e);
+								
+			/* Set status to null */
+			myStatus = null;
+		}	
+		
+		/* Release the client manager */
+		pRepo.releaseClientManager(myMgr);
+		return myStatus;
 	}
 	
 	/**
@@ -112,11 +172,6 @@ public class WorkingCopy {
 		private List<WorkingCopy>	theList			= null;
 		
 		/**
-		 * The status client
-		 */
-		private SVNStatusClient 	theClient 		= null;
-
-		/**
 		 * Constructor
 		 * @param pRepository the repository
 		 * @param pLocation the location
@@ -126,9 +181,6 @@ public class WorkingCopy {
 			/* Store parameters */
 			theRepository 	= pRepository;
 			theLocation   	= new File(pLocation);
-
-			/* Access the status client */
-			theClient 		= theRepository.getClientManager().getStatusClient();
 
 			/* Allocate the list */
 			theList 		= new ArrayList<WorkingCopy>();
@@ -150,27 +202,21 @@ public class WorkingCopy {
 				/* Ignore if file is not a directory */
 				if (!myFile.isDirectory()) continue;
 				
-				/* Ignore if file is special directory */
+				/* Ignore if file is special file/directory */
 				if (myFile.getName().startsWith(".")) continue;
 				
-				/* Initialise the status */
-				SVNStatus myStatus = null;
-				
-				/* Access status (Alternate Method) */
-				try { myStatus = theClient.doStatus(myFile, false); }
-				catch (SVNException e) {
-					myStatus = null;
-				}	
+				/* Access status for the file */
+				SVNStatus myStatus = getFileStatus(theRepository, myFile);
 				
 				/* If this is a working copy */
 				if (myStatus != null) {
 					/* Obtain the repository URL */
 					SVNURL myURL = myStatus.getRemoteURL();
 					
-					/* Obtain the branch in the repository */
+					/* Obtain the relevant branch in the repository */
 					Branch myBranch = theRepository.locateBranch(myURL);
 					
-					/* If we found a branch */
+					/* If we found the branch */
 					if (myBranch != null) {
 						/* Create the working copy */
 						WorkingCopy myCopy = new WorkingCopy(myFile, myBranch, myURL);
@@ -189,7 +235,7 @@ public class WorkingCopy {
 		 * Obtain locations array
 		 * @return locations array
 		 */
-		private File[] getLocationsArray() {
+		protected File[] getLocationsArray() {
 			/* Allocate array */
 			File[] 	myFiles = new File[theList.size()];
 			int		myFile  = 0;
@@ -206,6 +252,33 @@ public class WorkingCopy {
 			
 			/* Return the array */
 			return myFiles;
+		}
+		
+		/**
+		 * Obtain active branch for component in working set
+		 * @param pComp the component
+		 * @return the active branch
+		 */
+		public Branch getActiveBranch(String pComponent) {
+			/* Allocate the iterator */
+			ListIterator<WorkingCopy> myIterator = theList.listIterator();
+			
+			/* While there are entries */
+			while (myIterator.hasNext()) {
+				/* Access copy and obtain branch/component */
+				WorkingCopy myCopy 	= myIterator.next();
+				Branch myBranch 	= myCopy.getBranch();
+				Component myComp 	= myBranch.getComponent();
+				
+				/* If this is the right component */
+				if (myComp.getName().equals(pComponent)) {
+					/* return the branch */
+					return myBranch;
+				}
+			}
+			
+			/* Return null */
+			return null;
 		}
 		
 		/**

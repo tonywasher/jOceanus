@@ -42,7 +42,7 @@ import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.subversion.data.Tag.TagList;
 
 /**
- * Represents a branch of a component
+ * Represents a branch of a component in the repository
  * @author Tony
  */
 public class Branch {
@@ -65,11 +65,6 @@ public class Branch {
 	 * Parent Component
 	 */
 	private final Component			theComponent;
-	
-	/**
-	 * The Client Manager
-	 */
-	private final SVNClientManager	theMgr;
 	
 	/**
 	 * Major version
@@ -104,12 +99,6 @@ public class Branch {
 	public Component 		getComponent() 		{ return theComponent; }
 	
 	/**
-	 * Obtain the client manager
-	 * @return the manager
-	 */
-	public SVNClientManager	getClientManager()	{ return theMgr; }
-	
-	/**
 	 * Get the tag list for this branch
 	 * @return the tag list
 	 */
@@ -125,7 +114,6 @@ public class Branch {
 		/* Store values */
 		theComponent 	= pParent;
 		theRepository	= pParent.getRepository();
-		theMgr			= pParent.getClientManager();
 		
 		/* Parse the version */
 		String[] myParts = pVersion.split("\\" + branchSep);
@@ -156,7 +144,6 @@ public class Branch {
 		/* Store values */
 		theComponent 	= pParent;
 		theRepository	= pParent.getRepository();
-		theMgr			= pParent.getClientManager();
 				
 		/* Determine values */
 		theMajorVersion = pMajor;
@@ -280,7 +267,8 @@ public class Branch {
 			theList.clear();
 			
 			/* Access a LogClient */
-			SVNClientManager	myMgr	 = theComponent.getClientManager();
+			Repository			myRepo	 = theComponent.getRepository();
+			SVNClientManager	myMgr	 = myRepo.getClientManager();
 			SVNLogClient 		myClient = myMgr.getLogClient();
 			
 			/* Protect against exceptions */
@@ -296,6 +284,9 @@ public class Branch {
 								SVNDepth.IMMEDIATES, 
 								SVNDirEntry.DIRENT_ALL,
 								new BranchHandler());
+				
+				/* Release the client manager */
+				myRepo.releaseClientManager(myMgr);
 			}
 			
 			catch (SVNException e) {
@@ -471,7 +462,7 @@ public class Branch {
 					/* Create the branch and add to the list */
 					Branch myBranch = new Branch(theComponent, myName);
 					theList.add(myBranch);				
-				
+									
 					/* Discover tags */
 					myBranch.getTagList().discover();
 				}

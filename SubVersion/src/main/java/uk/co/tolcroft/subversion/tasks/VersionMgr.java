@@ -55,6 +55,7 @@ import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.subversion.data.Branch;
 import uk.co.tolcroft.subversion.data.Branch.BranchList;
 import uk.co.tolcroft.subversion.data.Component;
+import uk.co.tolcroft.subversion.data.ProjectDefinition;
 import uk.co.tolcroft.subversion.data.Repository;
 import uk.co.tolcroft.subversion.data.SubVersionProperties;
 import uk.co.tolcroft.subversion.data.Tag;
@@ -86,6 +87,12 @@ public class VersionMgr {
 		theMgr 			= theRepository.getClientManager();
 	}
 
+	@Override
+	public void finalize() {
+		/* Release the client manager */
+		theRepository.releaseClientManager(theMgr);		
+	}
+	
 	/**
 	 * Create major branch
 	 * @param pSource the tag to base the branch on
@@ -163,8 +170,8 @@ public class VersionMgr {
 	 * @param pSource the branch to tag
 	 * @param pIssue the issue to make changes against
 	 */
-	protected Tag createNextTag(Branch 	pSource,
-			   					Issue 	pIssue) throws ModelException {
+	public Tag createNextTag(Branch pSource,
+			 				 Issue 	pIssue) throws ModelException {
 		/* Access tag list */
 		TagList myList	= pSource.getTagList();
 		
@@ -186,8 +193,8 @@ public class VersionMgr {
 	 */
 	private Integer countObjects(SVNURL pURL) {
 		/* Access a LogClient */
-		SVNLogClient 	myClient = theMgr.getLogClient();
-		Integer			myCount	 = new Integer(0);
+		SVNLogClient 	myClient 	= theMgr.getLogClient();
+		CountHandler	myHandler	= new CountHandler();
 	
 		/* Protect against exceptions */
 		try { 
@@ -198,10 +205,10 @@ public class VersionMgr {
 							false, 
 							SVNDepth.INFINITY, 
 							SVNDirEntry.DIRENT_ALL,
-							new CountHandler(myCount));		
+							myHandler);		
 
 			/* Return the count */
-			return myCount;
+			return myHandler.getObjectCount();
 		}
 		catch (SVNException e) { return null;}
 	}
@@ -209,17 +216,16 @@ public class VersionMgr {
 	/**
 	 * The Count Handler
 	 */
-	private class CountHandler implements ISVNDirEntryHandler {
+	protected static class CountHandler implements ISVNDirEntryHandler {
 		/**
 		 * The object count 
 		 */
-		private Integer theCount;
+		private int theCount = 0;
 		
 		/**
-		 * Constructor
-		 * @param pCount the count integer
+		 * Obtain the object count 
 		 */
-		private CountHandler(Integer pCount) { theCount = pCount; }
+		public int getObjectCount() { return theCount; }
 		
 		@Override
 		public void handleDirEntry(SVNDirEntry pEntry) throws SVNException {
@@ -252,7 +258,7 @@ public class VersionMgr {
 		try { 
 			/* Access the work and target */
 			File myWork 	= prepareWorkDir();
-			File myTarget 	= new File(myWork.getAbsolutePath() + File.separator + pTarget.getBranchName());
+			File myTarget 	= new File(myWork, pTarget.getBranchName());
 		
 			/* Determine the URL for the branches path */
 			String	myBase	 = myComp.getBranchesPath();
@@ -275,6 +281,8 @@ public class VersionMgr {
 		
 			/* Count the objects that we are to copy */
 			Integer myCount = countObjects(mySrcURL);
+			CopyHandler myCopyHandler = new CopyHandler();
+			myCopy.setEventHandler(myCopyHandler);
 			
 			/* Copy the source tag to the new branch */
 			myCopy.doCopy(mySrcs, 
@@ -282,8 +290,15 @@ public class VersionMgr {
 					  	  false, 
 					  	  false, 
 					  	  true);
-		
-			/* Update pom.xml */
+					
+			/* Determine count of objects copied */
+			Integer myCopied = myCopyHandler.getCopyCount();
+
+			/* Determine the location of the project definition */
+			File myPom = ProjectDefinition.getProjectDefFile(myTarget);
+			if (myPom != null) {
+				ProjectDefinition myProject = new ProjectDefinition(myPom); 
+			}
 		
 			/* Commit the changes */
 			//SVNCommitPacket myPacket = myCommit.doCollectCommitItems(new File[] { myWork }, false, false, SVNDepth.INFINITY, null);
@@ -294,6 +309,7 @@ public class VersionMgr {
 			//Utils.removeDirectory(myWork);
 		}
 		
+		catch (ModelException e) { throw e; }
 		catch (SVNException e) {
 			throw new ModelException(ExceptionClass.SUBVERSION,
 									 "Failed to create branch " + pTarget.getBranchName(),
@@ -322,7 +338,7 @@ public class VersionMgr {
 		try { 
 			/* Access the work and target */
 			File myWork 	= prepareWorkDir();
-			File myTarget 	= new File(myWork.getAbsolutePath() + File.separator + pTarget.getTagName());
+			File myTarget 	= new File(myWork, pTarget.getTagName());
 		
 			/* Determine the URL for the tags path */
 			String	myBase	 = myComp.getTagsPath();
@@ -345,7 +361,8 @@ public class VersionMgr {
 				
 			/* Count the objects that we are to copy */
 			Integer myCount = countObjects(mySrcURL);
-			myCopy.setEventHandler(new CopyHandler());
+			CopyHandler myCopyHandler = new CopyHandler();
+			myCopy.setEventHandler(myCopyHandler);
 			
 			/* Copy the source branch to the new tag */
 			myCopy.doCopy(mySrcs, 
@@ -354,8 +371,15 @@ public class VersionMgr {
 					  	  false, 
 					  	  true);
 		
-			/* Update pom.xml */
-		
+			/* Determine count of objects copied */
+			Integer myCopied = myCopyHandler.getCopyCount();
+
+			/* Determine the location of the project definition */
+			File myPom = ProjectDefinition.getProjectDefFile(myTarget);
+			if (myPom != null) {
+				ProjectDefinition myProject = new ProjectDefinition(myPom); 
+			}
+				
 			/* Commit the changes */
 			//SVNCommitPacket myPacket = myCommit.doCollectCommitItems(new File[] { myWork }, false, false, SVNDepth.INFINITY, null);
 			//SVNCommitInfo 	myResult = myCommit.doCommit(myPacket, false, "Created tag " + pTarget.getTagName());
@@ -398,7 +422,17 @@ public class VersionMgr {
 	 * Copy Event Handler class
 	 */
 	private class CopyHandler extends SVNEventAdapter {
-
+		/**
+		 * Copy count 
+		 */
+		private int theCount = 0;
+		
+		/**
+		 * Obtain the object count 
+		 */
+		public int getCopyCount() { return theCount; }
+		
+		
 		@Override
 		public void checkCancelled() throws SVNCancelException {
 			//if (theStatus.isCancelled())
@@ -407,6 +441,8 @@ public class VersionMgr {
 
 		@Override
 		public void handleEvent(SVNEvent arg0, double arg1) throws SVNException {
+			/* Increment the count */
+			theCount++;
 		}		
 	}
 }

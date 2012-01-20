@@ -21,11 +21,19 @@
  ******************************************************************************/
 package uk.co.tolcroft.subversion.data;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+
+import org.tmatesoft.svn.core.SVNErrorCode;
+import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
-import org.tmatesoft.svn.core.wc.SVNWCUtil;
+import org.tmatesoft.svn.core.wc.SVNRevision;
+import org.tmatesoft.svn.core.wc.SVNWCClient;
 
 import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.PropertySet.PropertyManager;
 import uk.co.tolcroft.subversion.data.Component.ComponentList;
 import uk.co.tolcroft.subversion.data.WorkingCopy.WorkingCopySet;
@@ -53,7 +61,7 @@ public class Repository {
 	/**
 	 * The Client Manager
 	 */
-	private final SVNClientManager	theMgr;
+	private final ClientManager		theClientMgrPool;
 	
 	/**
 	 * ComponentList 
@@ -72,10 +80,16 @@ public class Repository {
 	public String			getName() 			{ return theName; }
 	
 	/**
-	 * Obtain the client manager
+	 * Obtain a client manager
 	 * @return the manager
 	 */
-	public SVNClientManager	getClientManager() 	{ return theMgr; }
+	public SVNClientManager	getClientManager() 	{ return theClientMgrPool.getClientMgr(); }
+	
+	/**
+	 * Release a client manager
+	 * @param pMgr the manager
+	 */
+	public void	releaseClientManager(SVNClientManager pMgr) 	{ theClientMgrPool.releaseClientMgr(pMgr); }
 	
 	/**
 	 * Get the component list for this repository
@@ -104,8 +118,8 @@ public class Repository {
 		/* Access the Repository base */
 		theBase = myProperties.getStringValue(SubVersionProperties.nameSubVersionRepo);
 
-		/* Access a default client manager */
-		theMgr = getClientMgr();
+		/* Create a client manager pool */
+		theClientMgrPool = new ClientManager();
 
 		/* Create component list */
 		theComponents = new ComponentList(this);
@@ -138,24 +152,6 @@ public class Repository {
 	}	
 
 	/**
-	 * Obtain new Client Manager instance
-	 */
-	public SVNClientManager getClientMgr() {
-		/* Access the SubVersion properties */
-		SubVersionProperties myProperties = 
-				(SubVersionProperties)PropertyManager.getPropertySet(SubVersionProperties.class);
-
-		/* Access a default client manager */
-		SVNClientManager myMgr = SVNClientManager.newInstance();
-		myMgr.setAuthenticationManager(SVNWCUtil.createDefaultAuthenticationManager(
-				myProperties.getStringValue(SubVersionProperties.nameSubVersionUser),
-				myProperties.getStringValue(SubVersionProperties.nameSubVersionPass)));
-
-		/* Return the new instance */
-		return myMgr;
-	}
-	
-	/**
 	 * Compare this repository to another repository 
 	 * @param pThat the other repository
 	 * @return -1 if earlier repository, 0 if equal repository, 1 if later repository
@@ -181,5 +177,47 @@ public class Repository {
 	protected Branch locateBranch(SVNURL pURL) {
 		/* Locate branch in component list */
 		return theComponents.locateBranch(pURL);
+	}
+	
+	/**
+	 * Get FileURL as input stream
+	 * @param pURL the URL to stream
+	 * @return the stream of null if file does not exists
+	 */
+	public InputStream getFileURLasInputStream(SVNURL pURL) throws ModelException {
+		/* Access client */
+		SVNClientManager		myMgr		= getClientManager();
+		SVNWCClient 			myClient 	= myMgr.getWCClient();
+		ByteArrayInputStream	myStream	= null;
+		
+		/* Create the byte array stream */
+		ByteArrayOutputStream myBaos = new ByteArrayOutputStream(1000); 
+
+		/* Protect against exceptions */
+		try {
+			/* Read the entry into the outputStream and create an input stream from it */
+			myClient.doGetFileContents(pURL, SVNRevision.HEAD, SVNRevision.HEAD, true, myBaos);
+			myStream = new ByteArrayInputStream(myBaos.toByteArray());
+		}
+		catch (SVNException e) {
+			/* Access the error code */
+			SVNErrorCode myCode = e.getErrorMessage().getErrorCode();
+			
+			/* Allow file/directory exists but is not WC */
+			if ((myCode != SVNErrorCode.WC_NOT_FILE) && 
+				(myCode != SVNErrorCode.WC_NOT_DIRECTORY))
+				throw new ModelException(ExceptionClass.SUBVERSION, 
+										 "Unable to read File URL",
+										 e);
+								
+			/* Set stream to null */
+			myStream = null;
+		}
+		
+		/* Release the client manager */
+		releaseClientManager(myMgr);
+		
+		/* Return the stream */
+		return myStream;
 	}
 }

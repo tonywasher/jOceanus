@@ -22,7 +22,9 @@
 package uk.co.tolcroft.subversion;
 
 import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.subversion.data.Branch;
 import uk.co.tolcroft.subversion.data.Repository;
+import uk.co.tolcroft.subversion.data.WorkingCopy.WorkingCopySet;
 import uk.co.tolcroft.subversion.tasks.VersionMgr;
 
 public class TestSubVersion {
@@ -32,8 +34,10 @@ public class TestSubVersion {
 	public static void main(String[] args) {
 		try { 
 			Repository myRepository = new Repository("Finance");
+			WorkingCopySet myWorkingSet = myRepository.getWorkingSet();
 			VersionMgr myVersionMgr = new VersionMgr(myRepository);
-			myVersionMgr.createTag();
+			Branch myBranch = myWorkingSet.getActiveBranch("JDateButton");
+			myVersionMgr.createNextTag(myBranch, null);
 		}
 		catch (ModelException e) {}
 	}
