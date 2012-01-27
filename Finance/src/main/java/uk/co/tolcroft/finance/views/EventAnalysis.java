@@ -29,6 +29,7 @@ import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.help.DebugDetail;
@@ -74,10 +75,10 @@ public class EventAnalysis implements DebugObject {
 	 */
 	public EventAnalysis(FinanceData	pData,
 						 DateDay	 	pDate) throws ModelException {
-		Event.List.ListIterator 	myIterator;
-		Event.List				 	myEvents;
-		Event 						myCurr;
-		int   						myResult;
+		DataListIterator<Event>	myIterator;
+		Event.List				myEvents;
+		Event 					myCurr;
+		int   					myResult;
 		
 		/* Store the parameters */
 		theData 	= pData;
@@ -126,14 +127,14 @@ public class EventAnalysis implements DebugObject {
 	 */
 	public EventAnalysis(FinanceData	pData,
 						 Statement 		pStatement)  throws ModelException {
-		Event.List.ListIterator 	myIterator;
-		Event.List					myEvents;
-		Event 						myCurr;
-		DateDay.Range				myRange;
-		Account						myAccount;
-		Statement.Line				myLine;
-		Statement.List				myList;
-		int   						myResult;
+		DataListIterator<Event>	myIterator;
+		Event.List				myEvents;
+		Event 					myCurr;
+		DateDay.Range			myRange;
+		Account					myAccount;
+		Statement.Line			myLine;
+		Statement.List			myList;
+		int   					myResult;
 
 		/* Access key points of the statement */
 		myRange		= pStatement.getDateRange();
@@ -209,9 +210,9 @@ public class EventAnalysis implements DebugObject {
  	 * @param pStatement the statement
  	 */
 	protected void resetStatementBalance(Statement pStatement) throws ModelException {
-		Statement.Line     			myLine;
-		Statement.List				myLines;
-		Statement.List.ListIterator	myIterator;
+		Statement.Line     		myLine;
+		Statement.List			myLines;
+		DataListIterator<Event>	myIterator;
 
 		/* Access the iterator */
 		myLines		= pStatement.getLines();
@@ -252,7 +253,7 @@ public class EventAnalysis implements DebugObject {
 	public EventAnalysis(DataControl<?>	pView,
 						 FinanceData	pData) throws ModelException {
 		Event           		myCurr;
-		Event.List.ListIterator	myIterator;
+		DataListIterator<Event>	myIterator;
 		int             		myResult	= -1;
 		TaxYear         		myTax  		= null;
 		DateDay   				myDate 		= null;
@@ -657,8 +658,8 @@ public class EventAnalysis implements DebugObject {
 		 * @return the analysis
 		 */
 		public AnalysisYear searchFor(TaxYear pYear) {
-			ListIterator myIterator;
-			AnalysisYear myCurr;
+			DataListIterator<AnalysisYear> 	myIterator;
+			AnalysisYear 					myCurr;
 			
 			/* Access the list iterator */
 			myIterator = listIterator();
@@ -681,8 +682,8 @@ public class EventAnalysis implements DebugObject {
 		 */
 		public void addChildEntries(DebugManager 	pManager,
 									DebugEntry		pParent) { 
-			ListIterator 	myIterator = listIterator();
-			AnalysisYear	myYear;
+			DataListIterator<AnalysisYear> 	myIterator = listIterator();
+			AnalysisYear					myYear;
 			
 			/* Loop through the years */
 			while ((myYear = myIterator.previous()) != null) {
@@ -1689,9 +1690,9 @@ public class EventAnalysis implements DebugObject {
 		 */
 		public void addChildEntries(DebugManager 	pManager,
 									DebugEntry		pParent) {
-			BucketList.ListIterator myIterator;
-			AnalysisBucket			myCurr;
-			AssetAccount			myAsset;
+			DataListIterator<AnalysisBucket>	myIterator;
+			AnalysisBucket						myCurr;
+			AssetAccount						myAsset;
 
 			/* Access the iterator */
 			myIterator = theList.listIterator();

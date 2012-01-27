@@ -35,10 +35,10 @@ import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
 
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.sheets.SheetWriter.CellStyleType;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.Decimal;
@@ -220,11 +220,11 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
 	 *  @return continue to write <code>true/false</code> 
 	 */
 	protected boolean writeSpreadSheet() throws ModelException {
-		DataList<?,T>.ListIterator	myIterator;
-		T							myCurr;
-		int							myCount;
-		int							myTotal;
-		int							mySteps;
+		DataListIterator<T>	myIterator;
+		T					myCurr;
+		int					myCount;
+		int					myTotal;
+		int					mySteps;
 	
 		/* Protect against exceptions */
 		try { 

@@ -695,9 +695,9 @@ public class Pattern extends Event {
 			myList.setStyle(ListStyle.EDIT);
 
 			/* Local variables */
-			Event			myCurr;
-			Pattern 		myItem;
-			ListIterator 	myIterator;
+			Event					myCurr;
+			Pattern 				myItem;
+			DataListIterator<Event> myIterator;
 			
 			/* Store the account */
 			myList.theAccount = pAccount;
@@ -780,9 +780,9 @@ public class Pattern extends Event {
 		 * Mark Active items
 		 */
 		public void markActiveItems() {
-			ListIterator 	myIterator;
-			Event 			myCurr;
-			Pattern			myItem;
+			DataListIterator<Event> myIterator;
+			Event 					myCurr;
+			Pattern					myItem;
 					
 			/* Access the list iterator */
 			myIterator = listIterator();

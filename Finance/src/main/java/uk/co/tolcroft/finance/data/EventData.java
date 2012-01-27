@@ -28,10 +28,15 @@ import uk.co.tolcroft.models.Decimal.Dilution;
 import uk.co.tolcroft.models.Decimal.Money;
 import uk.co.tolcroft.models.Decimal.Units;
 import uk.co.tolcroft.models.Utils;
-import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.data.EncryptedData;
+import uk.co.tolcroft.models.data.EncryptedData.EncryptedDecimal;
+import uk.co.tolcroft.models.data.EncryptedData.EncryptedDilution;
+import uk.co.tolcroft.models.data.EncryptedData.EncryptedMoney;
+import uk.co.tolcroft.models.data.EncryptedData.EncryptedUnits;
 import uk.co.tolcroft.models.data.EncryptedItem;
+import uk.co.tolcroft.models.data.EncryptedValues;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.help.DebugDetail;
@@ -240,14 +245,14 @@ public class EventData extends EncryptedItem<EventData> {
 			case Benefit:
 			case Pension:
 			case CashConsider:
-				myValues.setMoney(new MoneyPair(pValue));
+				myValues.setMoney(pValue);
 				break;
 			case Dilution:
-				myValues.setDilution(new DilutionPair(pValue));
+				myValues.setDilution(pValue);
 				break;
 			case CreditUnits:
 			case DebitUnits:
-				myValues.setUnits(new UnitsPair(pValue));
+				myValues.setUnits(pValue);
 				break;
 		}
 		
@@ -463,15 +468,8 @@ public class EventData extends EncryptedItem<EventData> {
 			case Pension:
 			case Benefit:
 			case CashConsider:
-				/* Access current Value */
-				MoneyPair myCurrent = myValues.getMoney();
-				
-				/* If we have a different value */
-				if ((myCurrent == null) ||
-				    (Money.differs(pValue, myCurrent.getValue()).isDifferent())) {
-					/* Set the new value */
-					myValues.setMoney((pValue == null) ? null : new MoneyPair(pValue));					
-				}
+				/* Set the value */
+				myValues.setMoney(pValue);
 				break;
 			default:
 				throw new ModelException(ExceptionClass.LOGIC,
@@ -491,15 +489,8 @@ public class EventData extends EncryptedItem<EventData> {
 		switch (getInfoType().getInfoClass()) {
 			case CreditUnits:
 			case DebitUnits:
-				/* Access current Value */
-				UnitsPair myCurrent = myValues.getUnits();
-				
-				/* If we have a different value */
-				if ((myCurrent == null) ||
-					(Units.differs(pValue, myCurrent.getValue()).isDifferent())) {
-					/* Set the new value */
-					myValues.setUnits((pValue == null) ? null : new UnitsPair(pValue));					
-				}
+				/* Set the value */
+				myValues.setUnits(pValue);
 				break;
 			default:
 				throw new ModelException(ExceptionClass.LOGIC,
@@ -518,15 +509,8 @@ public class EventData extends EncryptedItem<EventData> {
 		/* Switch on Info type */
 		switch (getInfoType().getInfoClass()) {
 			case Dilution:
-				/* Access current Value */
-				DilutionPair myCurrent = myValues.getDilution();
-				
-				/* If we have a different value */
-				if ((myCurrent == null) ||
-					(Dilution.differs(pValue, myCurrent.getValue()).isDifferent())) {
-					/* Set the new value */
-					myValues.setDilution((pValue == null) ? null : new DilutionPair(pValue));					
-				}
+				/* Set value */
+				myValues.setDilution(pValue);				
 				break;
 			default:
 				throw new ModelException(ExceptionClass.LOGIC,
@@ -685,29 +669,29 @@ public class EventData extends EncryptedItem<EventData> {
 	}
 
 	/* EventInfoValues */
-	public class Values extends EncryptedValues {
-		private EventInfoType	theInfoType	= null;
-		private Event			theEvent    = null;
-		private StringPair 		thePair		= null;
-		private MoneyPair  		theMoney	= null;
-		private UnitsPair  		theUnits	= null;
-		private DilutionPair  	theDilution	= null;
-		private Integer 		theEventId	= null;
-		private Integer 		theInfTypId	= null;
+	public class Values extends EncryptedValues<EventData> {
+		private EventInfoType		theInfoType	= null;
+		private Event				theEvent    = null;
+		private EncryptedDecimal<?> thePair		= null;
+		private EncryptedMoney		theMoney	= null;
+		private EncryptedUnits		theUnits	= null;
+		private EncryptedDilution 	theDilution	= null;
+		private Integer 			theEventId	= null;
+		private Integer 			theInfTypId	= null;
 
 		/* Access methods */
-		public EventInfoType	getInfoType()		{ return theInfoType; }
-		public Event			getEvent()			{ return theEvent; }
-		public StringPair		getPair()			{ return thePair; }
-		public MoneyPair		getMoney()			{ return theMoney; }
-		public UnitsPair		getUnits()			{ return theUnits; }
-		public DilutionPair		getDilution()		{ return theDilution; }
-		public Money 			getMoneyValue() 	{ return getPairValue(theMoney); }
-		public Units 			getUnitsValue() 	{ return getPairValue(theUnits); }
-		public Dilution			getDilutionValue()	{ return getPairValue(theDilution); }
-		public byte[]  			getData()			{ return getPairBytes(thePair); }
-		private Integer        	getEventId()   		{ return theEventId; }
-		private Integer        	getInfTypId()    	{ return theInfTypId; }
+		public EventInfoType		getInfoType()		{ return theInfoType; }
+		public Event				getEvent()			{ return theEvent; }
+		public EncryptedDecimal<?>	getPair()			{ return thePair; }
+		public EncryptedMoney		getMoney()			{ return theMoney; }
+		public EncryptedUnits		getUnits()			{ return theUnits; }
+		public EncryptedDilution	getDilution()		{ return theDilution; }
+		public Money 				getMoneyValue() 	{ return EncryptedData.getValue(theMoney); }
+		public Units 				getUnitsValue() 	{ return EncryptedData.getValue(theUnits); }
+		public Dilution				getDilutionValue()	{ return EncryptedData.getValue(theDilution); }
+		public byte[]  				getData()			{ return EncryptedData.getBytes(thePair); }
+		private Integer        		getEventId()   		{ return theEventId; }
+		private Integer        		getInfTypId()    	{ return theInfTypId; }
 
 		public void setInfoType(EventInfoType pType) {
 			theInfoType	= pType;  
@@ -715,19 +699,33 @@ public class EventData extends EncryptedItem<EventData> {
 		public void setEvent(Event pEvent) {
 			theEvent	= pEvent;  
 			theEventId = (pEvent == null) ? null : pEvent.getId();}
-		public void setMoney(MoneyPair pValue) {
+		public void setMoney(EncryptedMoney pValue) {
 			theMoney	= pValue;
 			thePair		= pValue; }
-		public void setUnits(UnitsPair pValue) {
+		public void setUnits(EncryptedUnits pValue) {
 			theUnits	= pValue;
 			thePair		= pValue; }
-		public void setDilution(DilutionPair pValue) {
+		public void setDilution(EncryptedDilution pValue) {
 			theDilution	= pValue;
 			thePair		= pValue; }
 		private void setEventId(Integer pEventId) {
 			theEventId	= pEventId; } 
 		private void setInfTypId(Integer pInfTypId) {
 			theInfTypId = pInfTypId; } 
+
+		public EncryptedDecimal<?>	determinePair()			{ 
+			if (theMoney != null) return theMoney;
+			if (theUnits != null) return theUnits;
+			return theDilution;
+		}
+		
+		/* Set Encrypted Values */
+		protected 	void setMoney(Money pMoney) throws ModelException			{ theMoney = createEncryptedMoney(theMoney, pMoney); thePair = theMoney; }
+		protected 	void setUnits(Units pUnits) throws ModelException			{ theUnits = createEncryptedUnits(theUnits, pUnits); thePair = theUnits; }
+		protected 	void setDilution(Dilution pDilution) throws ModelException	{ theDilution = createEncryptedDilution(theDilution, pDilution); thePair = theDilution; }
+		protected	void setMoney(byte[] pMoney) throws ModelException			{ theMoney = createEncryptedMoney(pMoney); thePair = theMoney; }
+		protected	void setUnits(byte[] pUnits) throws ModelException			{ theUnits = createEncryptedUnits(pUnits); thePair = theUnits; }
+		protected	void setDilution(byte[] pDilution) throws ModelException	{ theDilution = createEncryptedDilution(pDilution); thePair = theDilution; }
 
 		/* Constructor */
 		public Values() {}
@@ -799,18 +797,10 @@ public class EventData extends EncryptedItem<EventData> {
 		 */
 		protected void updateSecurity() throws ModelException {
 			/* Update the encryption */	
-			if (theMoney 	!= null) { 
-				theMoney 	= new MoneyPair(theMoney.getValue());
-				thePair		= theMoney;
-			}
-			if (theUnits 	!= null) { 
-				theUnits 	= new UnitsPair(theUnits.getValue());
-				thePair		= theUnits;
-			}
-			if (theDilution != null) { 
-				theDilution = new DilutionPair(theDilution.getValue());
-				thePair		= theDilution;
-			}
+			theMoney	= updateEncryptedMoney(theMoney);
+			theUnits	= updateEncryptedUnits(theUnits);
+			theDilution	= updateEncryptedDilution(theDilution);
+			thePair 	= determinePair();
 		}		
 		
 		/**
@@ -818,22 +808,21 @@ public class EventData extends EncryptedItem<EventData> {
 		 */
 		protected void applySecurity() throws ModelException {
 			/* Apply the encryption */
-			if (theMoney 	!= null) theMoney.encryptPair(null);
-			if (theUnits 	!= null) theUnits.encryptPair(null);
-			if (theDilution != null) theDilution.encryptPair(null);
+			applyEncryption(thePair);
 		}		
 		
 		/**
 		 * Adopt encryption from base
 		 * @param pBase the Base values
 		 */
-		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws ModelException {
+		protected void adoptSecurity(EncryptedValues<EventData> pBase) throws ModelException {
 			Values myBase = (Values)pBase;
 
 			/* Apply the encryption */
-			if (theMoney 	!= null) theMoney.encryptPair(myBase.getMoney());
-			if (theUnits 	!= null) theUnits.encryptPair(myBase.getMoney());
-			if (theDilution	!= null) theDilution.encryptPair(myBase.getMoney());
+			adoptEncryption(theMoney, myBase.getMoney());
+			adoptEncryption(theUnits, myBase.getUnits());
+			adoptEncryption(theDilution, myBase.getDilution());
+			thePair = determinePair();
 		}		
 	}
 }

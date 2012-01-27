@@ -519,8 +519,8 @@ public class IncomeBreakdown implements DebugObject {
 		 */
 		public void addChildEntries(DebugManager 	pManager,
 									DebugEntry		pParent) { 
-			ListIterator 	myIterator = listIterator();
-			AccountRecord	myRecord;
+			DataListIterator<AccountRecord> 	myIterator = listIterator();
+			AccountRecord						myRecord;
 			
 			/* Loop through the records */
 			while ((myRecord = myIterator.previous()) != null) {

@@ -27,10 +27,10 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.finance.views.Analysis.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.PropertySet.PropertyManager;
 import uk.co.tolcroft.models.PropertySet.PropertySetChooser;
 import uk.co.tolcroft.models.Decimal.*;
+import uk.co.tolcroft.models.data.DataList.DataListIterator;
 
 public class MetaAnalysis implements PropertySetChooser {
 	/* Members */
@@ -121,13 +121,13 @@ public class MetaAnalysis implements PropertySetChooser {
 	 * Value the priced assets 
 	 */
 	protected void valueAssets() {
-		BucketList.ListIterator myIterator;
-		AnalysisBucket			myCurr;
-		AnalysisState			myState;
-		AssetAccount			myAsset;
-		MoneyAccount			myMoney;
-		FinanceData				myData;
-		Account.List			myAccounts;
+		DataListIterator<AnalysisBucket>	myIterator;
+		AnalysisBucket						myCurr;
+		AnalysisState						myState;
+		AssetAccount						myAsset;
+		MoneyAccount						myMoney;
+		FinanceData							myData;
+		Account.List						myAccounts;
 
 		/* Access the state of the analysis */
 		myState = theAnalysis.getState();
@@ -281,9 +281,9 @@ public class MetaAnalysis implements PropertySetChooser {
 	 * Produce totals 
 	 */
 	protected void produceTotals() {
-		BucketList.ListIterator myIterator;
-		AnalysisBucket			myCurr;
-		AnalysisState			myState;
+		DataListIterator<AnalysisBucket> 	myIterator;
+		AnalysisBucket						myCurr;
+		AnalysisState						myState;
 
 		/* Access the state of the analysis */
 		myState = theAnalysis.getState();
@@ -469,12 +469,12 @@ public class MetaAnalysis implements PropertySetChooser {
 	 * Mark active accounts
 	 */
 	public void markActiveAccounts() {
-		BucketList.ListIterator	myIterator;
-		Account     			myAccount;
-		AnalysisBucket 			myCurr;
-		MoneyAccount			myMoney;
-		DebtAccount				myDebt;
-		AssetAccount			myAsset;
+		DataListIterator<AnalysisBucket>	myIterator;
+		Account     						myAccount;
+		AnalysisBucket 						myCurr;
+		MoneyAccount						myMoney;
+		DebtAccount							myDebt;
+		AssetAccount						myAsset;
 	
 		/* Access the iterator */
 		myIterator = theList.listIterator();

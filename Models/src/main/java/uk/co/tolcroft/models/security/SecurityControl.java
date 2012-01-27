@@ -555,8 +555,8 @@ public class SecurityControl extends SortedItem<SecurityControl> {
 		 * @param pSignature the Signature (or null)
 		 */
 		public SecurityControl getSecurityControl(SecuritySignature pSignature) throws ModelException {
-			SecurityControl myControl = null;
-			ListIterator	myIterator;
+			SecurityControl 					myControl = null;
+			SortedListIterator<SecurityControl>	myIterator;
 			
 			/* Create an iterator */
 			myIterator = listIterator();

@@ -43,6 +43,7 @@ import uk.co.tolcroft.finance.data.AccountType;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
 public class SpotSelect {
@@ -162,7 +163,7 @@ public class SpotSelect {
 		AccountType					myFirst	= null;
 		Account						myAccount;
 		Account.List				myAccounts;
-		Account.List.ListIterator	myIterator;
+		DataListIterator<Account>	myIterator;
 		
 		/* Access the data */
 		myRange = theView.getRange();

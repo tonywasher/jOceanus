@@ -1,41 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>uk.co.tolcroft</groupId>
+  <groupId>uk.co.tolcroft.finapp</groupId>
   <artifactId>finjira</artifactId>
   <version>v1.0.0-SNAPSHOT</version>
-  <name>Jira</name>
-  <description>Jira Utilities</description>
-  <build>
-    <plugins>
-      <plugin>
-	<groupId>org.codehaus.mojo</groupId>
-	<artifactId>axistools-maven-plugin</artifactId>
-	<version>1.4</version>
-	<dependencies>
-	  <dependency>
-	    <groupId>axis</groupId>
-	    <artifactId>axis</artifactId>
-	    <version>1.4</version>
-	  </dependency>
-	</dependencies>
-	<configuration>
-	  <wsdlFiles>
-	    <wsdlFile>jirasoapservice-v2.wsdl</wsdlFile>
-	  </wsdlFiles>
-	  <packageSpace>uk.co.tolcroft.jira.soap</packageSpace>
-	</configuration>
-	<executions>
-	  <execution>
-	    <id>wsdl2java-generation</id>
-	    <phase>generate-sources</phase>
-	    <goals>
-	      <goal>wsdl2java</goal>
-	    </goals>
-	  </execution>
-	</executions>
-      </plugin>
-    </plugins>
-  </build>
+  <name>Jira Interface</name>
+  <description>Jira Utilities for Finance Application</description>
   <profiles>
     <profile>
       <id>buildclient</id>
@@ -58,7 +27,7 @@
 		</goals>
 		<configuration>
 		  <tasks>
-		    <get src="${jira.soapclient.jiraurl}/rpc/soap/jirasoapservice-v2?wsdl" dest="${basedir}/src/main/wsdl/jirasoapservice-v2.wsdl"/>
+		    <get src="${jira.soapclient.jiraurl}/rpc/soap/jirasoapservice-v2?wsdl" dest="${basedir}/src/main/wsdl/jirasoapservice-v2_1.wsdl"/>
 		  </tasks>
 		</configuration>
 	      </execution>
@@ -85,11 +54,6 @@
       <version>v1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>uk.co.tolcroft.finapp</groupId>
-      <artifactId>finjra</artifactId>
-      <version>v1.0.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
       <groupId>axis</groupId>
       <artifactId>axis</artifactId>
       <version>1.4</version>
@@ -110,5 +74,82 @@
       <version>1.5.1</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.8</version>
+    </dependency>
   </dependencies>
+  <licenses>
+    <license>
+      <name>Apache 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>tony</id>
+      <name>Tony Washer</name>
+      <email>Tony.Washer@yahoo.co.uk</email>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+    </developer>
+  </developers>
+  <issueManagement>
+    <system>Jira</system>
+    <url>http://127.0.0.1:8080/</url>
+  </issueManagement>
+  <scm>
+    <connection>scm:svn:http://127.0.0.1/svn/Finance</connection>
+    <developerConnection>scm:svn:https://127.0.0.1/svn/Finance</developerConnection>
+    <tag>HEAD</tag>
+    <url>http://127.0.0.1/websvn/Finance</url>
+  </scm>
+  <build>
+    <plugins>
+      <plugin>
+	<groupId>org.codehaus.mojo</groupId>
+	<artifactId>axistools-maven-plugin</artifactId>
+	<version>1.4</version>
+	<dependencies>
+	  <dependency>
+	    <groupId>axis</groupId>
+	    <artifactId>axis</artifactId>
+	    <version>1.4</version>
+	  </dependency>
+	</dependencies>
+	<configuration>
+	  <wsdlFiles>
+	    <wsdlFile>jirasoapservice-v2_1.wsdl</wsdlFile>
+	  </wsdlFiles>
+	  <packageSpace>uk.co.tolcroft.jira.soap</packageSpace>
+	</configuration>
+	<executions>
+	  <execution>
+	    <id>wsdl2java-generation</id>
+	    <phase>generate-sources</phase>
+	    <goals>
+	      <goal>wsdl2java</goal>
+	    </goals>
+	  </execution>
+	</executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.1</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <packageName>uk/co/tolcroft/Jira/</packageName>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

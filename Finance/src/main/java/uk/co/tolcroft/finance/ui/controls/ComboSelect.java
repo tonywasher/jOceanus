@@ -25,6 +25,7 @@ import javax.swing.JComboBox;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.*;
+import uk.co.tolcroft.models.data.DataList.DataListIterator;
 
 public class ComboSelect {
 	/**
@@ -51,7 +52,7 @@ public class ComboSelect {
 		/* Access the transaction types */
 		TransactionType.List				myList = theData.getTransTypes();
 		TransactionType						myTrans;
-		TransactionType.List.ListIterator  	myIterator;
+		DataListIterator<TransactionType>  	myIterator;
 		
 		/* Create the iterator */
 		myIterator = myList.listIterator();
@@ -88,7 +89,7 @@ public class ComboSelect {
 		TransactionType			myTrans;
 		JComboBox				myCombo;
 		
-		TransactionType.List.ListIterator myIterator;
+		DataListIterator<TransactionType>	myIterator;
 		
 		/* Create the iterator */
 		myIterator = myList.listIterator();
@@ -125,7 +126,7 @@ public class ComboSelect {
 		TransactionType			myTrans;
 		JComboBox				myCombo;
 		
-		TransactionType.List.ListIterator myIterator;
+		DataListIterator<TransactionType> myIterator;
 		
 		/* Create the iterator */
 		myIterator = myList.listIterator();
@@ -164,7 +165,7 @@ public class ComboSelect {
 		boolean			isValid		= false;
 		JComboBox		myCombo;
 		
-		Account.List.ListIterator myIterator;
+		DataListIterator<Account> myIterator;
 		
 		/* Access the iterator */
 		myIterator = myList.listIterator();
@@ -210,7 +211,7 @@ public class ComboSelect {
 		boolean			isValid		= false;
 		JComboBox		myCombo;
 		
-		Account.List.ListIterator myIterator;
+		DataListIterator<Account>	myIterator;
 		
 		/* Access the iterator */
 		myIterator = myList.listIterator();
@@ -271,7 +272,7 @@ public class ComboSelect {
 		boolean			isValid		= false;
 		JComboBox		myCombo;
 		
-		Account.List.ListIterator myIterator;
+		DataListIterator<Account>	myIterator;
 		
 		/* Access the iterator */
 		myIterator = myList.listIterator();

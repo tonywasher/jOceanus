@@ -3,8 +3,8 @@
   <groupId>uk.co.tolcroft.finapp</groupId>
   <artifactId>finsvn</artifactId>
   <version>v1.0.0-SNAPSHOT</version>
-  <name>SubVersion</name>
-  <description>SubVersion Utilities</description>
+  <name>SubVersion Interface</name>
+  <description>SubVersion Utilities for Finance Application</description>
   <dependencies>
   	<dependency>
   		<groupId>org.tmatesoft.svnkit</groupId>
@@ -13,7 +13,7 @@
   	</dependency>
   	<dependency>
   		<groupId>uk.co.tolcroft.finapp</groupId>
-  		<artifactId>finjra</artifactId>
+  		<artifactId>finjira</artifactId>
   		<version>v1.0.0-SNAPSHOT</version>
   	</dependency>
   	<dependency>
@@ -22,4 +22,49 @@
   		<version>v1.0.0-SNAPSHOT</version>
   	</dependency>
   </dependencies>
+  <licenses>
+    <license>
+      <name>Apache 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>tony</id>
+      <name>Tony Washer</name>
+      <email>Tony.Washer@yahoo.co.uk</email>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+    </developer>
+  </developers>
+  <issueManagement>
+    <system>Jira</system>
+    <url>http://127.0.0.1:8080/</url>
+  </issueManagement>
+  <scm>
+    <connection>scm:svn:http://127.0.0.1/svn/Finance</connection>
+    <developerConnection>scm:svn:https://127.0.0.1/svn/Finance</developerConnection>
+    <tag>HEAD</tag>
+    <url>http://127.0.0.1/websvn/Finance</url>
+  </scm>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.1</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <packageName>uk/co/tolcroft/SubVersion/</packageName>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

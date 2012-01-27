@@ -32,6 +32,7 @@ import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.*;
@@ -42,7 +43,6 @@ import uk.co.tolcroft.models.ui.DataTable;
 import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.ModelException.ExceptionClass;
 
 public class AccountRates extends DataTable<AcctRate> {
@@ -218,7 +218,7 @@ public class AccountRates extends DataTable<AcctRate> {
 	 * Perform additional validation after change
 	 */
 	protected void validateAfterChange() {
-		AcctRate.List.ListIterator 	myIterator;
+		DataListIterator<AcctRate> 	myIterator;
 		AcctRate 					myCurr;
 		int							myIndex = -1;
 

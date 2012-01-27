@@ -353,8 +353,8 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
 		 * Find the cash takeover event (if present)
 		 */
 		protected CapitalEvent getCashTakeOver() {
-			ListIterator myIterator;
-			CapitalEvent myEvent;
+			SortedListIterator<CapitalEvent> 	myIterator;
+			CapitalEvent 						myEvent;
 			
 			/* Create the iterator */
 			myIterator = listIterator();
@@ -377,8 +377,8 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
 		 * @param pDate date from which to purge events
 		 */
 		protected void purgeAfterDate(DateDay pDate) {
-			ListIterator myIterator;
-			CapitalEvent myEvent;
+			SortedListIterator<CapitalEvent> 	myIterator;
+			CapitalEvent 						myEvent;
 			
 			/* Access the iterator */
 			myIterator = listIterator();
@@ -568,8 +568,8 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
 		 * @return the value of the attribute or null
 		 */
 		protected Object findAttribute(String pName) {
-			ListIterator 	myIterator;
-			Attribute		myCurr;
+			SortedListIterator<Attribute> 	myIterator;
+			Attribute						myCurr;
 			
 			/* Access the iterator */
 			myIterator = listIterator();

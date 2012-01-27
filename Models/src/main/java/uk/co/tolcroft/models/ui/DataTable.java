@@ -278,9 +278,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable
 	 * Get an array of the selected rows
 	 * @return array of selected rows 
 	 */
-	@SuppressWarnings("unchecked")
 	protected T[] cacheSelectedRows() {
-		T[]		myRows;
 		int[]	mySelected;
 		int		myIndex;
 		int		i,j;
@@ -289,7 +287,8 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable
 		mySelected = getSelectedRows();
 	
 		/* Create a row array relating to the selections */
-		myRows = (T[])new DataItem[mySelected.length];
+		@SuppressWarnings("unchecked")
+		T[] myRows = (T[])new DataItem[mySelected.length];
 		Arrays.fill(myRows, null);
 	
 		/* Loop through the selection indices */

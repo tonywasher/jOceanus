@@ -26,14 +26,15 @@ import java.util.Date;
 import uk.co.tolcroft.finance.views.SpotPrices;
 import uk.co.tolcroft.finance.views.SpotPrices.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.Decimal.*;
-import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.EncryptedData;
+import uk.co.tolcroft.models.data.EncryptedData.EncryptedPrice;
 import uk.co.tolcroft.models.data.EncryptedItem;
+import uk.co.tolcroft.models.data.EncryptedValues;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.help.DebugDetail;
@@ -51,14 +52,14 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 
 	/* Access methods */
 	public  Values  		getValues()    	{ return (Values)super.getValues(); }
-	public  Price 			getPrice()  	{ return getPairValue(getValues().getPrice()); }
+	public  Price 			getPrice()  	{ return getValues().getPriceValue(); }
 	public  DateDay  		getDate()		{ return getValues().getDate(); }
 	public  Account			getAccount()	{ return getValues().getAccount(); }
 	private void    		setAccount(Account pAccount)   {
 		getValues().setAccount(pAccount); }
 
-	public  byte[] 		getPriceBytes() 	{ return getValues().getPriceBytes(); }
-	public  PricePair	getPricePair()   	{ return getValues().getPrice(); }
+	public  byte[] 			getPriceBytes() { return getValues().getPriceBytes(); }
+	public  EncryptedPrice	getPricePair()  { return getValues().getPrice(); }
 
 	/* Linking methods */
 	public AcctPrice     getBase() { return (AcctPrice)super.getBase(); }
@@ -243,7 +244,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 					
 		/* Record the date and price */
 		myValues.setDate(new DateDay(pDate));
-		myValues.setPrice(new PricePair(pPrice));
+		myValues.setPrice(pPrice);
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -281,7 +282,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 					
 		/* Record the date and price */
 		myValues.setDate(new DateDay(pDate));
-		myValues.setPrice(new PricePair(pPrice));
+		myValues.setPrice(pPrice);
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -303,7 +304,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		myValues.setDate(pDate);
 
 		/* Create the pair for the values */
-		myValues.setPrice(new PricePair(pPrice));
+		myValues.setPrice(pPrice);
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -435,8 +436,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	 * @param pPrice the price 
 	 */
 	public void setPrice(Price pPrice) throws ModelException {
-		if (pPrice != null) getValues().setPrice(new PricePair(pPrice));
-		else 				getValues().setPrice(null);
+		getValues().setPrice(pPrice);
 	}
 
 	/**
@@ -521,7 +521,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		
 			/* Update the price if required */
 			if (differs(myValues.getPrice(), myNew.getPrice()).isDifferent()) 
-				myValues.setPrice(new PricePair(myNew.getPrice()));
+				myValues.setPrice(myNew.getPrice());
 	
 			/* Check for changes */
 			if (checkForHistory()) {
@@ -622,9 +622,9 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 			myList.setStyle(ListStyle.EDIT);
 
 			/* Local variables */
-			AcctPrice 		myCurr;
-			AcctPrice 		myItem;
-			ListIterator 	myIterator;
+			AcctPrice 					myCurr;
+			AcctPrice 					myItem;
+			DataListIterator<AcctPrice> myIterator;
 			
 			/* Store the account */
 			myList.theAccount = pAccount;
@@ -694,10 +694,10 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		 */
 		public int countInstances(DateDay 	pDate,
 								  Account	pAccount) {
-			ListIterator 	myIterator;
-			AcctPrice    	myCurr;
-			int      		iDiff;
-			int      		iCount = 0;
+			DataListIterator<AcctPrice> myIterator;
+			AcctPrice    				myCurr;
+			int      					iDiff;
+			int      					iCount = 0;
 
 			/* Access the list iterator */
 			myIterator = listIterator(true);
@@ -722,9 +722,9 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		 */
 		public AcctPrice getLatestPrice(Account pAccount,
 										DateDay pDate) {
-			ListIterator 	myIterator;
-			AcctPrice 			myPrice = null;
-			AcctPrice 			myCurr;
+			DataListIterator<AcctPrice> myIterator;
+			AcctPrice 					myPrice = null;
+			AcctPrice 					myCurr;
 
 			/* Skip to alias if required */
 			if (pAccount.getAlias() != null)
@@ -754,8 +754,8 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		 *  Mark active prices
 		 */
 		protected void markActiveItems () {
-			ListIterator 	myIterator;
-			AcctPrice 		myCurr;
+			DataListIterator<AcctPrice> myIterator;
+			AcctPrice 					myCurr;
 
 			/* Access the list iterator */
 			myIterator = listIterator();
@@ -771,12 +771,12 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		 * Apply changes from a Spot Price list
 		 */
 		public void applyChanges(SpotPrices pPrices) {
-			ListIterator	myIterator;
-			List 	 		myList;
-			AcctPrice 		mySpot;
-			DateDay			myDate;
-			PricePair		myPoint;
-			AcctPrice		myPrice;
+			DataListIterator<AcctPrice>	myIterator;
+			List 	 					myList;
+			AcctPrice 					mySpot;
+			DateDay						myDate;
+			EncryptedPrice				myPoint;
+			AcctPrice					myPrice;
 
 			/* Access details */
 			myDate = pPrices.getDate();
@@ -806,7 +806,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 
 						/* Set the date and price */
 						myPrice.setDate(new DateDay(myDate));
-						myPrice.getValues().setPrice(myPrice.new PricePair(myPoint));
+						myPrice.getValues().setPrice(myPoint);
 						myPrice.setAccount(mySpot.getAccount());
 
 						/* Add to the list and link backwards */
@@ -944,30 +944,36 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 	/**
 	 * Values for a price 
 	 */
-	public class Values extends EncryptedValues {
-		private DateDay    	theDate      = null;
-		private PricePair   thePrice     = null;
-		private Account 	theAccount   = null;
-		private Integer	 	theAccountId = null;	
+	public class Values extends EncryptedValues<AcctPrice> {
+		private DateDay    		theDate      = null;
+		private EncryptedPrice  thePrice     = null;
+		private Account 		theAccount   = null;
+		private Integer	 		theAccountId = null;	
 		
 		/* Access methods */
-		public DateDay     	getDate()      { return theDate; }
-		public PricePair	getPrice()     { return thePrice; }
-		public Account		getAccount()   { return theAccount; }
-		private Integer		getAccountId() { return theAccountId; }
+		public DateDay     		getDate()      { return theDate; }
+		public EncryptedPrice	getPrice()     { return thePrice; }
+		public Account			getAccount()   { return theAccount; }
+		private Integer			getAccountId() { return theAccountId; }
 		
-		public Price  		getPriceValue() { return getPairValue(thePrice); }
-		public byte[]  		getPriceBytes() { return getPairBytes(thePrice); }
+		/* Encrypted value access */
+		public Price	getPriceValue()  	{ return EncryptedData.getValue(thePrice); }
+		public byte[]	getPriceBytes()  	{ return EncryptedData.getBytes(thePrice); }
 
 		public void setDate(DateDay pDate) {
 			theDate      = pDate; }
-		public void setPrice(PricePair pPrice) {
+		public void setPrice(EncryptedPrice pPrice) {
 			thePrice     = pPrice; }
 		public void setAccount(Account pAccount) {
 			theAccount   = pAccount; 
 			theAccountId = (pAccount == null) ? null : pAccount.getId(); }
 		private void setAccountId(Integer pAccountId) {
 			theAccountId   = pAccountId; } 
+
+		/* Set Encrypted Values */
+		protected 	void setPrice(Price  pPrice) throws ModelException	{ thePrice = createEncryptedPrice(thePrice, pPrice); }
+		protected 	void setPrice(String pPrice) throws ModelException	{ thePrice = createEncryptedPrice(thePrice, pPrice); }
+		protected	void setPrice(byte[] pPrice) throws ModelException	{ thePrice = createEncryptedPrice(pPrice); }
 
 		/* Constructor */
 		public Values() {}
@@ -1005,7 +1011,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 				SpotPrice.Values 	myValues = (SpotPrice.Values)pSource;
 				super.copyFrom(myValues);
 				theDate      = myValues.getDate();
-				thePrice     = (myValues.getPrice() == null) ? null : new PricePair(myValues.getPrice());
+				thePrice     = myValues.getPrice();
 				theAccount   = myValues.getAccount();
 				theAccountId = theAccount.getId();
 			}
@@ -1045,7 +1051,7 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		 */
 		protected void updateSecurity() throws ModelException {
 			/* Update the encryption */
-			thePrice	= new PricePair(thePrice.getValue());
+			thePrice	= updateEncryptedPrice(thePrice);
 		}		
 		
 		/**
@@ -1053,18 +1059,18 @@ public class AcctPrice extends EncryptedItem<AcctPrice> {
 		 */
 		protected void applySecurity() throws ModelException {
 			/* Apply the encryption */
-			thePrice.encryptPair(null);
+			applyEncryption(thePrice);
 		}		
 		
 		/**
 		 * Adopt encryption from base
 		 * @param pBase the Base values
 		 */
-		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws ModelException {
+		protected void adoptSecurity(EncryptedValues<AcctPrice> pBase) throws ModelException {
 			Values myBase = (Values)pBase;
 
 			/* Apply the encryption */
-			thePrice.encryptPair(myBase.getPrice());
+			adoptEncryption(thePrice , myBase.getPrice());
 		}
 	}		
 }

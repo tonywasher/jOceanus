@@ -23,12 +23,9 @@ package uk.co.tolcroft.models.data;
 
 import uk.co.tolcroft.models.Difference;
 import uk.co.tolcroft.models.ModelException;
-import uk.co.tolcroft.models.Decimal;
-import uk.co.tolcroft.models.Decimal.*;
+import uk.co.tolcroft.models.data.EncryptedData.EncryptedField;
 import uk.co.tolcroft.models.help.DebugDetail;
-import uk.co.tolcroft.models.security.SecurityControl;
 import uk.co.tolcroft.models.threads.ThreadStatus;
-import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.models.ModelException.ExceptionClass;
 
 public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem<T> {
@@ -61,11 +58,10 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 * Get the ControlKey for this item
 	 * @return the ControlKey
 	 */
-	public ControlKey		getControlKey()     { return getValues().getControl(); }
+	public ControlKey		getControlKey()     { return getValues().getControlKey(); }
 
 	/* Linking methods */
-	public EncryptedItem<?>.EncryptedValues  getValues()  { 
-		return (EncryptedItem<?>.EncryptedValues)super.getCurrentValues(); }
+	public EncryptedValues<T>  getValues()  { return (EncryptedValues<T>)super.getCurrentValues(); }
 	
 	/* Field IDs */
 	public static final int 	FIELD_CONTROL  	= DataItem.NUMFIELDS;
@@ -86,13 +82,13 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	
 	@Override
 	public String formatField(DebugDetail pDetail, int iField, HistoryValues<T> pObj) {
-		String 			myString = "";
-		EncryptedItem<?>.EncryptedValues myObj 	 = (EncryptedItem<?>.EncryptedValues)pObj;
+		String 				myString = "";
+		EncryptedValues<T> 	myObj 	 = (EncryptedValues<T>)pObj;
 		switch (iField) {
 			case FIELD_CONTROL:
-				if (myObj.getControl() != null) {
+				if (myObj.getControlKey() != null) {
 					myString = "Id=" + myObj.getControlId();					
-					myString = pDetail.addDebugLink(myObj.getControl(), myString);
+					myString = pDetail.addDebugLink(myObj.getControlKey(), myString);
 				}
 				else myString = "Id=" + myObj.getControlId();					
 				break;
@@ -117,8 +113,8 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 * @param pControlKey the Control Key
 	 */
 	protected void setControlKey(ControlKey pControlKey) {
-		EncryptedItem<?>.EncryptedValues myObj = getValues();
-		if (myObj != null) myObj.setControl(pControlKey);
+		EncryptedValues<T> myValues = getValues();
+		if (myValues != null) myValues.setControlKey(pControlKey);
 	}
 	
 	/**
@@ -127,7 +123,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 */
 	protected void setControlKey(int uControlId) throws ModelException {
 		/* Store the id */
-		EncryptedItem<?>.EncryptedValues myObj = getValues();
+		EncryptedValues<T> myObj = getValues();
 		myObj.setControlId(uControlId);
 
 		/* Look up the Control keys */
@@ -151,8 +147,8 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 * @param pNew The new Pair
 	 * @return <code>true</code> if the objects differ, <code>false</code> otherwise 
 	 */	
-	public static Difference differs(EncryptedItem<?>.ValuePair pCurr, 
-								  	 EncryptedItem<?>.ValuePair pNew) {
+	public static Difference differs(EncryptedField<?> pCurr, 
+								  	 EncryptedField<?> pNew) {
 		/* Handle case where current value is null */
 		if  (pCurr == null) return (pNew != null) ? Difference.Different 
 												  : Difference.Identical;
@@ -172,10 +168,10 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		ControlKey.List myKeys = pData.getControlKeys();
 		
 		/* Update to use the local copy of the ControlKeys */
-		EncryptedItem<?>.EncryptedValues	myValues   	= getValues();
-		ControlKey 	myKey 		= myValues.getControl();
+		EncryptedValues<?>	myValues   	= getValues();
+		ControlKey 	myKey 		= myValues.getControlKey();
 		ControlKey 	myNewKey 	= myKeys.searchFor(myKey.getId());
-		myValues.setControl(myNewKey);
+		myValues.setControlKey(myNewKey);
 	}
 
 	/**
@@ -185,17 +181,17 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	protected void adoptSecurity(ControlKey pControl,
 								 T		  	pBase) throws ModelException {
 		/* Access the values */
-		EncryptedItem<?>.EncryptedValues myValues = getValues();
+		EncryptedValues<T> myValues = getValues();
 		
 		/* Set the Control Key */
-		setControlKey(pControl);
+		myValues.setControlKey(pControl);
 		
 		/* If we have the same control key */
 		if ((pBase != null) &&
 			(pControl.equals(pBase.getControlKey())))
 		{
-			/* Adopt the security */
-			myValues.adoptSecurity(pControl, pBase.getValues());
+			/* Try to adopy the underlying */
+			myValues.adoptSecurity(pBase.getValues());
 		}
 		
 		/* else we need to initialise security */
@@ -211,7 +207,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 	 */	
 	protected void updateSecurity(ControlKey pControl) throws ModelException {
 		/* Access the values */
-		EncryptedItem<?>.EncryptedValues myValues = getValues();
+		EncryptedValues<T> myValues = getValues();
 
 		/* Ignore call if we have the same control key */
 		if (pControl.equals(getControlKey()))
@@ -286,10 +282,10 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 */
 		public boolean updateSecurity(ThreadStatus<?>	pThread,
 			   	  					  ControlKey 		pControl) throws ModelException {
-			ListIterator 	myIterator;
-			T				myCurr;
-			int				mySteps;
-			int				myCount = 0;
+			DataListIterator<T> myIterator;
+			T					myCurr;
+			int					mySteps;
+			int					myCount = 0;
 			
 			/* Declare the new stage */
 			if (!pThread.setNewStage(itemType())) return false;
@@ -323,7 +319,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		 * If a match for the item is found in the underlying list, its security is adopted.
 		 * If no match is found then the security is initialised.
 		 * @param pThread the thread status
-		 * @param pControlKey the control key to initialise from
+		 * @param pControl the control key to initialise from
 		 * @param pBase The base list to adopt from 
 		 * @return Continue <code>true/false</code>
 		 */
@@ -331,8 +327,8 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 			   	  						ControlKey 			pControl,
 								     	EncryptedList<?,?> 	pBase) throws ModelException {
 			/* Local variables */
-			ListIterator 		myIterator;
-			EncryptedItem<?>	myCurr;
+			DataListIterator<T> myIterator;
+			EncryptedItem<T>	myCurr;
 			EncryptedItem<?>	myBase;
 			T					mySource;
 			T					myTarget;
@@ -376,602 +372,5 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 		
 		@Override
 		public void setNewId(T pItem)	{ super.setNewId(pItem); }
-	}
-		
-	/**
-	 * Values for an EncryptedItem
-	 */
-	protected abstract class EncryptedValues extends HistoryValues<T> {
-		private ControlKey	theControl   = null;
-		private int			theControlId = -1;
-		
-		/* Access methods */
-		public ControlKey  	getControl()   	{ return theControl; }
-		public int			getControlId()  { return theControlId; }
-		
-		/* Value setting */
-		private void setControl(ControlKey pControl) { 
-			theControl   = pControl;
-			theControlId = (pControl == null) ? -1 : pControl.getId();
-		}
-		private void setControlId(int pValue) {
-			theControlId		= pValue; }
-
-		/* Constructor */
-		public EncryptedValues() {}
-		public EncryptedValues(EncryptedValues pValues) { copyFrom(pValues); }
-		
-		@Override
-		public Difference histEquals(HistoryValues<T> pValues) {
-			EncryptedValues myValues = (EncryptedValues)pValues;
-			return (ControlKey.differs(theControl,    myValues.theControl));
-		}
-		@Override
-		public void    copyFrom(HistoryValues<?> pValues) {
-			if (pValues instanceof EncryptedItem.EncryptedValues) {
-				EncryptedItem<?>.EncryptedValues myValues = (EncryptedItem<?>.EncryptedValues)pValues;
-				theControl 		= myValues.getControl();
-				theControlId 	= (theControl == null) ? -1 : theControl.getId();
-			}
-		}
-		@Override
-		public Difference	fieldChanged(int fieldNo, HistoryValues<T> pOriginal) {
-			EncryptedValues 	pValues = (EncryptedValues)pOriginal;
-			Difference	bResult = Difference.Identical;
-			switch (fieldNo) {
-				case FIELD_CONTROL:
-					bResult = (ControlKey.differs(theControl,      pValues.theControl));
-					break;
-			}
-			return bResult;
-		}
-
-		/* Apply Security */
-		protected abstract void applySecurity() throws ModelException;
-		protected abstract void updateSecurity() throws ModelException;
-		protected abstract void adoptSecurity(ControlKey 		pControl,
-											  EncryptedValues	pBase) throws ModelException;
-	}
-	
-	/**
-	 *  The underlying Value Pair Class
-	 */
-	private abstract class ValuePair {
-		/**
-		 * The Encrypted Value
-		 */
-		private byte[] theBytes	= null;
-		
-		/**
-		 * Obtain the encrypted value
-		 * @return the encrypted value
-		 */
-		public byte[] getBytes() { return theBytes; }
-		
-		/**
-		 * Set the encrypted bytes
-		 * @param pBytes the encrypted value
-		 */
-		private void setBytes(byte[] pBytes) { theBytes = pBytes; }
-		
-		/**
-		 * Compare to another ValuePair
-		 * @param pPair the other pair
-		 */
-		protected abstract Difference	differs(ValuePair pNew);
-		
-		/**
-		 * Set the encrypted bytes
-		 * @param pBytes the encrypted bytes
-		 */
-		private void setEncryptedValue(byte[] pBytes) { theBytes = pBytes; } 
-		
-		/**
-		 * Get bytes for Encryption
-		 * @return the bytes to be encrypted
-		 */
-		protected abstract byte[] getBytesForEncryption() throws ModelException;
-			
-		/**
-		 * Set decrypted value
-		 * @param pValue the decrypted byte value
-		 */
-		protected abstract void setDecryptedValue(byte[] pValue) throws ModelException;
-		
-		/**
-		 * Encrypt a valuePair
-		 */
-		protected void encryptPair() throws ModelException {
-			ControlKey myControl = getControlKey();
-			
-			/* Reject if encryption is not initialised */
-			if (myControl == null)
-				throw new ModelException(ExceptionClass.LOGIC,
-									"Encryption is not initialised");
-			
-			/* Obtain the bytes representation of the value */
-			byte[] myBytes = getBytesForEncryption();
-			
-			/* Encrypt the Bytes */
-			myBytes = myControl.encryptBytes(myBytes);
-
-			/* Set the encrypted value */
-			setEncryptedValue(myBytes);
-		}		
-
-		/**
-		 * Decrypt a valuePair
-		 */
-		protected void decryptPair() throws ModelException {
-			ControlKey myControl = getControlKey();
-			
-			/* Reject if encryption is not initialised */
-			if (myControl == null)
-				throw new ModelException(ExceptionClass.LOGIC,
-									"Encryption is not initialised");
-			
-			/* Decrypt the Bytes */
-			byte[] myBytes = myControl.decryptBytes(theBytes);
-
-			/* Set the decrypted value */
-			setDecryptedValue(myBytes);
-		}		
-	}
-	
-	/* Access methods for encryption */
-	public static String getPairValue(EncryptedItem<?>.StringPair pPair) {
-		return (pPair == null) ? null : pPair.getString(); }
-	public static char[] getPairValue(EncryptedItem<?>.CharArrayPair pPair) {
-		return (pPair == null) ? null : pPair.getChars(); }
-	public static Money getPairValue(EncryptedItem<?>.MoneyPair pPair) {
-		return (pPair == null) ? null : pPair.getValue(); }
-	public static Units getPairValue(EncryptedItem<?>.UnitsPair pPair) {
-		return (pPair == null) ? null : pPair.getValue(); }
-	public static Rate getPairValue(EncryptedItem<?>.RatePair pPair) {
-		return (pPair == null) ? null : pPair.getValue(); }
-	public static Price getPairValue(EncryptedItem<?>.PricePair pPair) {
-		return (pPair == null) ? null : pPair.getValue(); }
-	public static Dilution getPairValue(EncryptedItem<?>.DilutionPair pPair) {
-		return (pPair == null) ? null : pPair.getValue(); }
-	public static byte[] getPairBytes(EncryptedItem<?>.ValuePair pPair) {
-		return (pPair == null) ? null : pPair.getBytes(); }
-	public static String getCharArrayPairString(EncryptedItem<?>.CharArrayPair pPair) {
-		return ((pPair == null) || (pPair.getChars() == null)) ? null : new String(pPair.getChars());
-	}
-
-	/**
-	 *  The String Pair Class
-	 */
-	public class StringPair extends ValuePair {
-		/**
-		 * The Non-encrypted value
-		 */
-		private String theString	= null;
-		
-		/**
-		 * Obtain the non-encrypted value
-		 * @return the non-encrypted string
-		 */
-		public String getString() { return theString; }
-		
-		/**
-		 * Set the Clear text value
-		 * @param pString the clear text string
-		 */
-		protected void setString(String pString) { theString = pString; }
-		
-		/**
-		 * Constructor from a clear value
-		 * @param pValue the clear value
-		 */
-		public StringPair(String pValue) throws ModelException { 
-			/* Store the value */
-			theString = pValue;
-			
-			/* Encrypt immediately if possible */
-			if (getControlKey() != null) encryptPair();
-		} 
-
-		/**
-		 * Constructor from an Encrypted value
-		 * @param pBytes the encrypted value
-		 */
-		public StringPair(byte[] pBytes) throws ModelException { 
-			/* Store the value */
-			super.setBytes(pBytes);
-			
-			/* Decrypt immediately */
-			decryptPair();
-		} 
-
-		/**
-		 * Constructor from a String Pair
-		 * @param pPair the String pair
-		 */
-		public StringPair(EncryptedItem<?>.StringPair pPair) { 
-			/* Store the string value */
-			theString = pPair.getString();
-			
-			/* Store the bytes */
-			super.setBytes(pPair.getBytes());
-		} 
-
-		@Override
-		protected Difference	differs(ValuePair pNew) {
-			/* Reject if wrong class */
-			if (!(pNew instanceof EncryptedItem<?>.StringPair)) return Difference.Different;
-			
-			/* Access as correct class */
-			EncryptedItem<?>.StringPair myPair = (EncryptedItem<?>.StringPair)pNew;
-			
-			/* Compare String value */
-			if (Utils.differs(theString, myPair.theString).isDifferent())
-				return Difference.Different;
-
-			/* Compare Bytes value */
-			if (Utils.differs(getBytes(), myPair.getBytes()).isDifferent())
-				return Difference.Security;
-			
-			/* Item is the Same */
-			return Difference.Identical;
-		}
-		
-		@Override
-		protected byte[] getBytesForEncryption() throws ModelException {
-			/* Protect against exceptions */
-			try {
-				/* Convert the string to a byte array */
-				return theString.getBytes(SecurityControl.ENCODING);
-			}
-			
-			/* Catch Exceptions */
-			catch (Throwable e) {
-				throw new ModelException(ExceptionClass.CRYPTO,
-									"Failed to convert value to bytes");
-			}
-		}
-
-		@Override
-		protected void setDecryptedValue(byte[] pValue) throws ModelException {
-			/* Protect against exceptions */
-			try {
-				/* Convert the byte array to a string */
-				setString(new String(pValue, SecurityControl.ENCODING));
-			}
-			
-			/* Catch Exceptions */
-			catch (Throwable e) {
-				throw new ModelException(ExceptionClass.CRYPTO,
-									"Failed to convert value from bytes");
-			}
-		}
-		
-		@Override
-		public boolean equals(Object pThat) {
-			/* Handle the trivial cases */
-			if (this == pThat) return true;
-			if (pThat == null) return false;
-			
-			/* Make sure that the object is a StringPair */
-			if (pThat.getClass() != this.getClass()) return false;
-			
-			/* Access the target Pair */
-			EncryptedItem<?>.StringPair myThat = (EncryptedItem<?>.StringPair)pThat;
-			
-			/* Check differences */
-			if (Utils.differs(getString(), myThat.getString()).isDifferent()) return false;
-			if (Utils.differs(getBytes(), myThat.getBytes()).isDifferent()) return false;
-			return true;
-		}
-
-		/**
-		 * Encrypt a stringPair or borrow encrypted form from base
-		 * @param pBase the base encrypted pair
-		 */
-		public void encryptPair(EncryptedItem<?>.StringPair pBase) throws ModelException {
-			/* If the raw format differs */
-			if ((pBase == null) ||
-				(Utils.differs(getString(), pBase.getString()).isDifferent())) {
-				/* Ignore the base and encrypt the string */
-				encryptPair();
-			}
-			
-			/* else we should adopt the previous encryption */
-			else {				
-				/* Store the bytes */
-				super.setBytes(pBase.getBytes());
-			}
-		}		
-	}
-	
-	/**
-	 *  The CharArray Pair Class
-	 */
-	public class CharArrayPair extends ValuePair {
-		/**
-		 * The Non-encrypted value
-		 */
-		private char[] theChars	= null;
-		
-		/**
-		 * Obtain the non-encrypted value
-		 * @return the non-encrypted characters
-		 */
-		public char[] getChars() { return theChars; }
-		
-		/**
-		 * Constructor from a clear value
-		 * @param pValue the clear value
-		 */
-		public CharArrayPair(char[] pValue) throws ModelException { 
-			/* Store the value */
-			theChars = pValue;
-			
-			/* Encrypt immediately if possible */
-			if (getControlKey() != null) encryptPair();
-		} 
-
-		/**
-		 * Constructor from an Encrypted value
-		 * @param pBytes the encrypted value
-		 */
-		public CharArrayPair(byte[] pBytes) throws ModelException { 
-			/* Store the value */
-			super.setBytes(pBytes);
-			
-			/* Decrypt immediately */
-			decryptPair();
-		} 
-
-		/**
-		 * Constructor from a String Pair
-		 * @param pPair the String pair
-		 */
-		public CharArrayPair(EncryptedItem<?>.CharArrayPair pPair) { 
-			/* Store the chars value */
-			theChars = pPair.getChars();
-			
-			/* Store the bytes */
-			super.setBytes(pPair.getBytes());
-		} 
-
-		@Override
-		protected Difference	differs(ValuePair pNew) {
-			/* Reject if wrong class */
-			if (!(pNew instanceof EncryptedItem<?>.CharArrayPair)) return Difference.Different;
-			
-			/* Access as correct class */
-			EncryptedItem<?>.CharArrayPair myPair = (EncryptedItem<?>.CharArrayPair)pNew;
-			
-			/* Compare String value */
-			if (Utils.differs(theChars, myPair.theChars).isDifferent())
-				return Difference.Different;
-
-			/* Compare Bytes value */
-			if (Utils.differs(getBytes(), myPair.getBytes()).isDifferent())
-				return Difference.Security;
-			
-			/* Item is the Same */
-			return Difference.Identical;
-		}
-		
-		@Override
-		protected byte[] getBytesForEncryption() throws ModelException {
-			/* Convert the string to a byte array */
-			return Utils.charToByteArray(theChars);
-		}
-
-		@Override
-		protected void setDecryptedValue(byte[] pValue) throws ModelException {
-			/* Convert the byte array to a string */
-			theChars = Utils.byteToCharArray(pValue);
-		}
-		
-		@Override
-		public boolean equals(Object pThat) {
-			/* Handle the trivial cases */
-			if (this == pThat) return true;
-			if (pThat == null) return false;
-			
-			/* Make sure that the object is a CharArrayPair */
-			if (pThat.getClass() != this.getClass()) return false;
-			
-			/* Access the target Pair */
-			EncryptedItem<?>.CharArrayPair myThat = (EncryptedItem<?>.CharArrayPair)pThat;
-			
-			/* Check differences */
-			if (Utils.differs(getChars(), myThat.getChars()).isDifferent()) return false;
-			if (Utils.differs(getBytes(), myThat.getBytes()).isDifferent()) return false;
-			return true;
-		}
-
-		/**
-		 * Encrypt a charArrayPair or borrow encrypted form from base
-		 * @param pBase the base encrypted pair
-		 */
-		public void encryptPair(CharArrayPair pBase) throws ModelException {
-			/* If the raw format differs */
-			if ((pBase == null) || 
-				(Utils.differs(getChars(), pBase.getChars()).isDifferent())) {
-				/* Ignore the base and encrypt the string */
-				encryptPair();
-			}
-			
-			/* else we should adopt the previous encryption */
-			else {				
-				/* Store the bytes */
-				super.setBytes(pBase.getBytes());
-			}
-		}		
-	}
-	
-	/**
-	 *  The Underlying Number Pair Class
-	 */
-	private abstract class NumberPair<X extends Decimal> extends StringPair {
-		/**
-		 * The Non-encrypted number
-		 */
-		private X			theValue;
-		
-		/**
-		 * Access the Non-encrypted value
-		 * @return the non-encrypted value
-		 */
-		public X			getValue() { return theValue; } 
-
-		/**
-		 * Constructor from a clear value
-		 * @param pValue the clear value
-		 */
-		public NumberPair(X pValue) throws ModelException { 
-			/* Store the value */
-			super(pValue.format(false));
-			
-			/* Store the value */
-			theValue = pValue;
-		} 
-
-		/**
-		 * Constructor from a string value
-		 * @param pValue the string value
-		 */
-		public NumberPair(String pValue) throws ModelException { 
-			/* Store the value */
-			super(pValue);
-			
-			/* Store the value */
-			theValue = parseValue(pValue);
-			setString(theValue.format(false));
-		} 
-
-		/**
-		 * Constructor from an Encrypted value
-		 * @param pBytes the encrypted value
-		 */
-		public NumberPair(byte[] pBytes) throws ModelException { 
-			/* Store the value */
-			super(pBytes);
-		} 
-
-		/**
-		 * Constructor from a Number Pair
-		 * @param pPair the Number pair
-		 */
-		public NumberPair(EncryptedItem<?>.NumberPair<X> pPair) {
-			super(pPair);
-			
-			/* Store the value */
-			theValue = pPair.getValue();
-		} 
-
-		@Override
-		protected void setDecryptedValue(byte[] pValue) throws ModelException {
-			/* Convert the byte array to a string */
-			super.setDecryptedValue(pValue);
-			
-			/* Parse the value */
-			theValue = parseValue(getString());
-		}
-		
-		/**
-		 * Parse a string value to get a value
-		 * @param pValue the string value
-		 * @return the value
-		 */
-		protected abstract X parseValue(String pValue) throws ModelException;
-				
-		@Override
-		public boolean equals(Object pThat) {
-			/* Handle the trivial cases */
-			if (this == pThat) return true;
-			if (pThat == null) return false;
-			
-			/* Make sure that the object is a NumberPair */
-			if (pThat.getClass() != this.getClass()) return false;
-			
-			/* Access the target Pair */
-			EncryptedItem<?>.NumberPair<?> myThat = (EncryptedItem<?>.NumberPair<?>)pThat;
-			
-			/* Check differences */
-			if (Decimal.differs(getValue(), myThat.getValue()).isDifferent()) return false;
-			if (Utils.differs(getBytes(), myThat.getBytes()).isDifferent()) return false;
-			return true;
-		}
-	}
-	
-	/* Encrypted Money */
-	public class MoneyPair extends NumberPair<Money> {
-		/* Pass-through constructors */
-		public MoneyPair(Money  pValue) throws ModelException { super(pValue); }
-		public MoneyPair(String pValue) throws ModelException { super(pValue); }
-		public MoneyPair(byte[] pValue) throws ModelException { super(pValue); }
-
-		public MoneyPair(EncryptedItem<?>.MoneyPair pValue) { super(pValue); }
-
-		@Override
-		protected Money parseValue(String pValue) throws ModelException {
-			return new Money(pValue);
-		}
-	}
-		
-	/* Encrypted Units */
-	public class UnitsPair extends NumberPair<Units> {
-		/* Pass-through constructors */
-		public UnitsPair(Units  pValue) throws ModelException { super(pValue); }
-		public UnitsPair(String pValue) throws ModelException { super(pValue); }
-		public UnitsPair(byte[] pValue) throws ModelException { super(pValue); }
-
-		public UnitsPair(EncryptedItem<?>.UnitsPair pValue) { super(pValue); }
-
-		@Override
-		protected Units parseValue(String pValue) throws ModelException {
-			return new Units(pValue);
-		}
-	}
-	
-	/* Encrypted Rate */
-	public class RatePair extends NumberPair<Rate> {
-		/* Pass-through constructors */
-		public RatePair(Rate   pValue) throws ModelException	{ super(pValue); }
-		public RatePair(String pValue) throws ModelException { super(pValue); }
-		public RatePair(byte[] pValue) throws ModelException { super(pValue); }
-
-		public RatePair(EncryptedItem<?>.RatePair pValue) { super(pValue); }
-
-		@Override
-		protected Rate parseValue(String pValue) throws ModelException {
-			return new Rate(pValue);
-		}
-	}
-		
-	/* Encrypted Price */
-	public class PricePair extends NumberPair<Price> {
-		/* Pass-through constructors */
-		public PricePair(Price  pValue) throws ModelException	{ super(pValue); }
-		public PricePair(String pValue) throws ModelException 	{ super(pValue); }
-		public PricePair(byte[] pValue) throws ModelException 	{ super(pValue); }
-
-		public PricePair(EncryptedItem<?>.PricePair pValue) { super(pValue); }
-
-		@Override
-		protected Price parseValue(String pValue) throws ModelException {
-			return new Price(pValue);
-		}
-	}
-	
-	/* Encrypted Dilution */
-	public class DilutionPair extends NumberPair<Dilution> {
-		/* Pass-through constructors */
-		public DilutionPair(Dilution pValue) throws ModelException { super(pValue); }
-		public DilutionPair(String   pValue) throws ModelException { super(pValue); }
-		public DilutionPair(byte[]   pValue) throws ModelException { super(pValue); }
-
-		public DilutionPair(EncryptedItem<?>.DilutionPair pValue) { super(pValue); }
-
-		@Override
-		protected Dilution parseValue(String pValue) throws ModelException {
-			return new Dilution(pValue);
-		}
 	}
 }

@@ -313,9 +313,9 @@ public class DilutionEvent extends ReportItem<DilutionEvent> {
 		 * @return <code>true</code> if the account has diluted prices, <code>false</code> otherwise
 		 */
 		public boolean hasDilution(Account pAccount) {
-			SortedList<DilutionEvent>.ListIterator myIterator;
-			DilutionEvent 	myEvent;
-			boolean 		myResult = false;
+			SortedListIterator<DilutionEvent>	myIterator;
+			DilutionEvent 						myEvent;
+			boolean 							myResult = false;
 			
 			/* Create the iterator */
 			myIterator = listIterator();
@@ -341,9 +341,9 @@ public class DilutionEvent extends ReportItem<DilutionEvent> {
 		 * @return the dilution factor
 		 */
 		public Dilution getDilutionFactor(Account pAccount, DateDay pDate) {
-			SortedList<DilutionEvent>.ListIterator myIterator;
-			DilutionEvent 	myEvent;
-			Dilution 		myDilution = new Dilution(Dilution.MAX_VALUE);
+			SortedListIterator<DilutionEvent>	myIterator;
+			DilutionEvent 						myEvent;
+			Dilution 							myDilution = new Dilution(Dilution.MAX_VALUE);
 			
 			/* Create the iterator */
 			myIterator = listIterator();

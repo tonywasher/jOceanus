@@ -43,6 +43,7 @@ import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.ModelException.ExceptionClass;
+import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.data.StaticData;
@@ -598,7 +599,7 @@ public class MaintAccount implements stdPanel {
 		FinanceData	myData;
 		AccountType 	myType;
 	
-		AccountType.List.ListIterator 	myTypeIterator;
+		DataListIterator<AccountType> 	myTypeIterator;
 		
 		/* Access the data */
 		myData = theView.getData();
@@ -653,7 +654,7 @@ public class MaintAccount implements stdPanel {
 	private void refreshParents() {
 		Account	  	  				myAcct;
 		AccountType					myType;
-		Account.List.ListIterator	myActIterator;
+		DataListIterator<Account>	myActIterator;
 		
 		/* Note that we are refreshing data */
 		refreshingData = true;
@@ -826,7 +827,7 @@ public class MaintAccount implements stdPanel {
 				}
 				
 				/* Create an account iterator */
-				Account.List.ListIterator  	myActIterator = theAccounts.listIterator();
+				DataListIterator<Account>  	myActIterator = theAccounts.listIterator();
 				Account						myAcct;
 				
 				/* Add the Account values to the parents box */

@@ -41,6 +41,7 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.EventAnalysis.AnalysisYear;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.models.*;
+import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
 public class ReportSelect {
@@ -174,7 +175,7 @@ public class ReportSelect {
 		DateDay.Range  	myRange;
 		TaxYear 		myTaxYear = theState.getYear();
 		
-		EventAnalysis.List.ListIterator myIterator;
+		DataListIterator<AnalysisYear> 	myIterator;
 		
 		/* Access the data */
 		myData  = theView.getData();

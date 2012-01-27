@@ -21,6 +21,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.models;
 
+import java.util.Iterator;
+
 import uk.co.tolcroft.models.PropertySet.PropertyManager;
 import uk.co.tolcroft.models.PropertySet.PropertySetChooser;
 
@@ -145,7 +147,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 	 * Insert node
 	 * @param pNode - node to insert into list
 	 */
-	private void insertNode(LinkNode<T> pNode) {
+	protected void insertNode(LinkNode<T> pNode) {
 		/* Add in the appropriate fashion */
 		if (insertFromStart) 
 			pNode.addFromStart(theFirst, theLast);
@@ -167,7 +169,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 	 *  Remove node from list
 	 *  @param pNode - node to remove from list
 	 */
-	private void removeNode(LinkNode<T> pNode) {	    
+	protected void removeNode(LinkNode<T> pNode) {	    
 		/* Remove the reference to this node in the item */
 		pNode.getObject().setLinkNode(this, null);
 		
@@ -242,15 +244,15 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 	}
 	
 	@Override
-	public java.util.Iterator<T> iterator() {
+	public Iterator<T> iterator() {
 		/* Return a new iterator */
-		return new ListIterator(false);
+		return listIterator();
 	}
 	
 	@Override
-	public ListIterator listIterator() {
+	public SortedListIterator<T> listIterator() {
 		/* Return a new iterator */
-		return new ListIterator(false);
+		return listIterator(false);
 	}
 	
 	/**
@@ -258,9 +260,9 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 	 * @param bShowAll show all items in the list
 	 * @return List iterator
 	 */
-	public ListIterator listIterator(boolean bShowAll) {
+	public SortedListIterator<T> listIterator(boolean bShowAll) {
 		/* Return a new iterator */
-		return new ListIterator(bShowAll);
+		return new SortedListIterator<T>(this, bShowAll);
 	}
 	
 	/**
@@ -269,9 +271,9 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 	 * @param bShowAll show all items in the list
 	 * @return List iterator
 	 */
-	public ListIterator listIterator(T pItem, boolean bShowAll) {
-		LinkNode<T> 	myNode;
-		ListIterator	myCurr;
+	public SortedListIterator<T> listIterator(T pItem, boolean bShowAll) {
+		LinkNode<T> 			myNode;
+		SortedListIterator<T>	myCurr;
 		
 		/* Reject if the object is null */
 		if (pItem == null) throw new java.lang.NullPointerException();
@@ -286,16 +288,16 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 		if ((myNode == null) || (myNode.getList() != theList)) return null;
 			
 		/* Create a list iterator */
-		myCurr = new ListIterator(myNode, bShowAll);
+		myCurr = new SortedListIterator<T>(this, myNode, bShowAll);
 		
 		/* Return a new iterator */
 		return myCurr;
 	}
 	
 	@Override
-	public ListIterator listIterator(int iIndex) {
-		ListIterator	myCurr;
-		T				myObj;
+	public SortedListIterator<T> listIterator(int iIndex) {
+		SortedListIterator<T>	myCurr;
+		T						myObj;
 		
 		/* Reject if the index is negative */
 		if (iIndex < 0) throw new java.lang.IndexOutOfBoundsException();
@@ -304,7 +306,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 		myObj = get(iIndex);
 		
 		/* Create a list iterator */
-		myCurr = new ListIterator(myObj.getLinkNode(this), false);
+		myCurr = new SortedListIterator<T>(this, myObj.getLinkNode(this), false);
 		
 		/* Return a new iterator */
 		return myCurr;
@@ -655,10 +657,10 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 	
 	@Override
 	public Object[] toArray() {
-		int 				iSize;
-		int					i;
-		ListIterator		myIterator;
-		Object[] 			myArray;
+		int 					iSize;
+		int						i;
+		SortedListIterator<?>	myIterator;
+		Object[] 				myArray;
 			
 		/* Determine the size of the array */
 		iSize = size();
@@ -667,7 +669,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 		myArray = new Object[iSize];
 		
 		/* Loop through the list */
-		for (i = 0, myIterator = new ListIterator(false);
+		for (i = 0, myIterator = listIterator(false);
 			 i < iSize;
 			 i++) {
 			/* Store the next item */
@@ -679,7 +681,6 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public <X> X[] toArray(X[] a) {
 		int 					iSize;
 		java.util.List<X> 		myList;
@@ -699,7 +700,9 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 		/* Loop through the list */
 		for(Object myObj : toArray()) {
 			/* Store the next item */
-			myList.add((X)myObj);
+			@SuppressWarnings("unchecked")
+			X myAdd = (X)myObj;
+			myList.add(myAdd);
 		}
 				
 		/* Return the array */
@@ -783,7 +786,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 	 * Get the first node in the sequence
 	 * @return the First visible node
 	 */
-	private LinkNode<T> getFirst() {
+	protected LinkNode<T> getFirst() {
 		LinkNode<T> myFirst;
 		
 		/* Get the first item */
@@ -803,7 +806,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 	 * Get the last node in the sequence
 	 * @return the Last visible node
 	 */
-	private LinkNode<T> getLast() {
+	protected LinkNode<T> getLast() {
 		LinkNode<T> myLast;
 		
 		/* Get the last item */
@@ -820,356 +823,16 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>,
 	}
 	
 	/**
-	 * ListIterator class for this list
+	 * Get the first node in the sequence
+	 * @return the First node
 	 */
-	public class ListIterator implements java.util.ListIterator<T> {
-		/**
-		 * Last node accessed 
-		 */
-		private LinkNode<T>			theNodeBefore 	= null;
-		
-		/**
-		 * Last node accessed 
-		 */
-		private LinkNode<T>			theNodeAfter	= null;
-		
-		/**
-		 * Can we remove the last item 
-		 */
-		private boolean				canRemove 		= false;
-		
-		/**
-		 * Which direction was the last scan 
-		 */
-		private boolean				wasForward 		= true;
-
-		/**
-		 * Should we show all elements 
-		 */
-		private boolean				showAll 		= true;
-
-		/**
-		 * Constructor for iterator that can show all elements 
-		 * @param bShowAll show all items in the list
-		 */
-		protected ListIterator(boolean bShowAll) { showAll = bShowAll; }
-		
-		/**
-		 * Constructor for iterator at particular position
-		 * @param pNode the node for the next operation  
-		 * @param bShowAll show all items in the list
-		 */
-		private ListIterator(LinkNode<T> pNode, boolean bShowAll) {
-			/* Call standard constructor */
-			this(bShowAll);
-			
-			/* Record position */
-			theNodeAfter  = pNode;
-			theNodeBefore = pNode.getPrev(!showAll);
-		}
-		
-		@Override
-		public boolean hasNext() {
-			LinkNode<T> myNext;
-			
-			/* Access the next node */
-			myNext = (theNodeBefore != null) 
-							? theNodeBefore.getNext(!showAll)
-					   		: ((showAll) ? theFirst 
-					   					 : getFirst());
-			
-			/* Return whether we have a next node */
-			return (myNext != null);
-		}
-
-		@Override
-		public boolean hasPrevious() {
-			LinkNode<T> myPrev;
-			
-			/* Access the next node */
-			myPrev = (theNodeAfter != null) 
-							? theNodeAfter.getPrev(!showAll)
-							: ((showAll) ? theLast 
-										 : getLast());
-			
-			/* Return whether we have a previous node */
-			return (myPrev != null);
-		}
-
-		/**
-		 * Peek at the next item
-		 * @return the next item or <code>null</code>
-		 */
-		public T peekNext() {
-			LinkNode<T> myNext;
-			
-			/* Access the next node */
-			myNext = (theNodeBefore != null) 
-							? theNodeBefore.getNext(!showAll)
-					   		: ((showAll) ? theFirst 
-					   					 : getFirst());
-			
-			/* Return the next object */
-			return (myNext == null) ? null : myNext.getObject();
-		}
-
-		/**
-		 * Peek at the previous item
-		 * @return the previous item or <code>null</code>
-		 */
-		public T peekPrevious() {
-			LinkNode<T> myPrev;
-			
-			/* Access the next node */
-			myPrev = (theNodeAfter != null) 
-							? theNodeAfter.getPrev(!showAll)
-							: ((showAll) ? theLast 
-										 : getLast());
-			
-			/* Return the previous object */
-			return (myPrev == null) ? null : myPrev.getObject();
-		}
-
-		/**
-		 * Peek at the first item
-		 * @return the first item or <code>null</code>
-		 */
-		public T peekFirst() {
-			LinkNode<T> myFirst;
-			
-			/* Access the first node */
-			myFirst = ((showAll) ? theFirst : getFirst());
-			
-			/* Return the next object */
-			return (myFirst == null) ? null : myFirst.getObject();
-		}
-
-		/**
-		 * Peek at the last item
-		 * @return the last item or <code>null</code>
-		 */
-		public T peekLast() {
-			LinkNode<T> myLast;
-			
-			/* Access the last node */
-			myLast = ((showAll) ? theLast : getLast());
-			
-			/* Return the previous object */
-			return (myLast == null) ? null : myLast.getObject();
-		}
-
-		@Override
-		public T next() {
-			LinkNode<T> myNext;
-			
-			/* Access the next node */
-			myNext = (theNodeBefore != null) 
-							? theNodeBefore.getNext(!showAll)
-					   		: ((showAll) ? theFirst 
-					   					 : getFirst());											 
+	protected LinkNode<T> getHead() { return theFirst; }
 	
-			/* If we have a next then move the cursor */
-			if (myNext != null) {
-				/* Record the cursor */
-				theNodeBefore 	= myNext;
-				theNodeAfter  	= myNext.getNext(false);
-				wasForward	  	= true;
-				canRemove		= true;
-			}
-				
-			/* Return the next item */
-			return (myNext != null) ? myNext.getObject() : null;
-		}
-
-		@Override
-		public T previous() {
-			LinkNode<T> myPrev;
-			
-			/* Access the previous node */
-			myPrev = (theNodeAfter != null) 
-							? theNodeAfter.getPrev(!showAll)
-							: ((showAll) ? theLast 
-										 : getLast());
-	
-			/* If we have a previous then move the cursor */
-			if (myPrev != null) {
-				/* Record the cursor */
-				theNodeBefore 	= myPrev.getPrev(false);
-				theNodeAfter  	= myPrev;
-				wasForward	  	= false;
-				canRemove		= true;
-			}
-				
-			/* Return the previous item */
-			return (myPrev != null) ? myPrev.getObject() : null;
-		}
-		
-		@Override
-		public int nextIndex() {
-			LinkNode<T> myNext;
-			int			iIndex = -1;
-			
-			/* Access the next node */
-			myNext = (theNodeBefore != null) 
-							? theNodeBefore.getNext(!showAll)
-							: ((showAll) ? theFirst 
-										 : getFirst());											 
-	
-			/* If we have a next then calculate its index */
-			if (myNext != null) iIndex = myNext.getIndex(!showAll);
-				
-			/* Return the next item */
-			return iIndex;
-		}
-
-		@Override
-		public int previousIndex() {
-			LinkNode<T>	myPrev;
-			int		 	iIndex = -1;
-			
-			/* Access the previous node */
-			myPrev = (theNodeAfter != null) 
-							? theNodeAfter.getPrev(!showAll)
-							: ((showAll) ? theLast 
-										 : getLast());
-	
-			/* If we have a previous then calculate its index */
-			if (myPrev != null) iIndex = myPrev.getIndex(!showAll);
-				
-			/* Return the index */
-			return iIndex;
-		}
-
-		/**
-		 * Set the contents of the item. Disallowed.
-		 * @param o object to set 
-		 */
-		@Override
-		public void set(T o) {				
-			/* Throw exception */
-			throw new UnsupportedOperationException();
-		}
-
-		/**
-		 * Add the item at this position. Disallowed.
-		 * @param o object to add
-		 */
-		@Override
-		public void add(T o) {				
-			/* Throw exception */
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public void remove() {				
-			/* If we cannot remove the last item throw exception */
-			if (!canRemove) throw new java.lang.IllegalStateException();
-			
-			/* If the last operation was forward */
-			if (wasForward) {
-				/* Remove the item */
-				removeNode(theNodeBefore);
-				
-				/* Record the new node before */
-				theNodeBefore = (theNodeAfter != null) ? theNodeAfter.getPrev(false)
-													   : theLast;
-			}
-			
-			/* else the last operation was backwards */
-			else {
-				/* Remove the item */
-				removeNode(theNodeAfter);
-				
-				/* Record the new node after */
-				theNodeAfter = (theNodeBefore != null) ? theNodeBefore.getNext(false)
-													   : theFirst;
-			}
-			
-			/* Note that we can no longer remove the item */
-			canRemove = false;
-		}
-
-		/**
-		 * ReSort the last referenced item.
-		 */
-		public void reSort() {				
-			/* If we cannot remove the last item throw exception */
-			if (!canRemove) throw new java.lang.IllegalStateException();
-			
-			/* If the last operation was forward */
-			if (wasForward) {
-				/* Determine Node to remove */
-				LinkNode<T> myNode = theNodeBefore;
-				
-				/* Remove the item */
-				removeNode(myNode);
-				
-				/* Record the new node before */
-				theNodeBefore = (theNodeAfter != null) ? theNodeAfter.getPrev(false)
-													   : theLast;
-				
-				/* Re-insert the node */
-				insertNode(myNode);
-			}
-			
-			/* else the last operation was backwards */
-			else {
-				/* Determine Node to remove */
-				LinkNode<T> myNode = theNodeAfter;
-				
-				/* Remove the item */
-				removeNode(myNode);
-				
-				/* Record the new node after */
-				theNodeAfter = (theNodeBefore != null) ? theNodeBefore.getNext(false)
-													   : theFirst;
-
-				/* Re-insert the node */
-				insertNode(myNode);
-			}
-			
-			/* Note that we can no longer remove the item */
-			canRemove = false;
-		}
-
-		/**
-		 * Remove the last referenced item.
-		 */
-		protected T removeLastItem() {
-			T myItem;
-			
-			/* If we cannot remove the last item throw exception */
-			if (!canRemove) throw new java.lang.IllegalStateException();
-			
-			/* If the last operation was forward */
-			if (wasForward) {
-				/* Remove the item */
-				removeNode(theNodeBefore);
-				myItem = theNodeBefore.getObject();
-				
-				/* Record the new node before */
-				theNodeBefore = (theNodeAfter != null) ? theNodeAfter.getPrev(false)
-													   : theLast;
-			}
-			
-			/* else the last operation was backwards */
-			else {
-				/* Remove the item */
-				myItem = theNodeAfter.getObject();
-				removeNode(theNodeAfter);
-				
-				/* Record the new node after */
-				theNodeAfter = (theNodeBefore != null) ? theNodeBefore.getNext(false)
-													   : theFirst;
-			}
-			
-			/* Note that we can no longer remove the item */
-			canRemove = false;
-			
-			/* Return the deleted object */
-			return myItem;
-		}
-	}
+	/**
+	 * Get the last node in the sequence
+	 * @return the Last visible node
+	 */
+	protected LinkNode<T> getTail() { return theLast; }
 	
 	/**
 	 * SortedList Properties

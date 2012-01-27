@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataState;
 
 public class BatchControl {
@@ -174,9 +174,9 @@ public class BatchControl {
 		 * @param pState the state of the items to update
 		 */
 		private void commitBatch() {
-			DataList<?,?>.ListIterator	myIterator;
-			DataItem<?>					myCurr;
-			DataItem<?>					myBase;
+			DataListIterator<?>	myIterator;
+			DataItem<?>			myCurr;
+			DataItem<?>			myBase;
 			
 			/* Access the iterator */
 			myIterator = theTable.getList().listIterator(true);

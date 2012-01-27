@@ -21,6 +21,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.models;
 
+import java.util.Iterator;
+
 import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
@@ -78,5 +80,20 @@ public abstract class ReportList<T extends ReportItem<T>> extends SortedList<T>
 		
 	@Override
 	public void addChildEntries(DebugManager 	pManager,
-								DebugEntry		pParent) { }	
+								DebugEntry		pParent) { }
+	
+	@Override
+	public Iterator<T> iterator() { return super.iterator(); }
+	
+	@Override
+	public SortedListIterator<T> listIterator() { return super.listIterator(); }
+
+	@Override
+	public SortedListIterator<T> listIterator(int iIndex) { return super.listIterator(iIndex); }
+
+	@Override
+	public SortedListIterator<T> listIterator(boolean bShowAll) { return super.listIterator(bShowAll); }
+
+	@Override
+	public SortedListIterator<T> listIterator(T pItem, boolean bShowAll) { return super.listIterator(pItem, bShowAll); }
 }

@@ -44,11 +44,6 @@ public abstract class DataItem<T extends DataItem<T>>
 	private DataList<?,T>			theList		= null;
 	
 	/**
-	 * The list to which this item belongs
-	 */
-	private ListStyle				theStyle	= null;
-	
-	/**
 	 * Self reference (built as cast during constructor)
 	 */
 	private T						theItem;
@@ -105,7 +100,7 @@ public abstract class DataItem<T extends DataItem<T>>
 	 * Get the list control for this item
 	 * @return the list control
 	 */
-	public ListStyle   				getStyle()  	{ return theStyle; }
+	public ListStyle   				getStyle()  	{ return theList.getStyle(); }
 	
 	/**
 	 * Get the changeable values object for this item 
@@ -348,7 +343,7 @@ public abstract class DataItem<T extends DataItem<T>>
 		myString.append(getGeneration());
 		myString.append("</td></tr>");
 		myString.append("<tr><td>Style</td><td>");
-		myString.append(theStyle);
+		myString.append(getStyle());
 		myString.append("</td></tr>");
 		myString.append("<tr><td>State</td><td>");
 		myString.append(theState);
@@ -680,7 +675,6 @@ public abstract class DataItem<T extends DataItem<T>>
 		super(pList);
 		theId      = uId;
 		theList    = pList;
-		theStyle   = pList.getStyle();
 		theItem	   = pList.getBaseClass().cast(this);
 		theHistory = new HistoryControl<T>(theItem);
 		buildHistory();
@@ -823,7 +817,7 @@ public abstract class DataItem<T extends DataItem<T>>
 				theEdit   = EditState.CLEAN;
 				switch (getBaseState()) {
 					case NOSTATE:
-						if (theStyle == ListStyle.EDIT) {
+						if (getStyle() == ListStyle.EDIT) {
 							theState  = DataState.NEW;
 							theEdit   = EditState.DIRTY;
 						}

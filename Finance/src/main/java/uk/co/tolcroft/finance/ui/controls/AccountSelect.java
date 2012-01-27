@@ -33,6 +33,7 @@ import javax.swing.LayoutStyle;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.views.*;
+import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
 public class AccountSelect {
@@ -217,7 +218,7 @@ public class AccountSelect {
 		boolean		doShowDeleted;
 		boolean		doShowClosed;
 		
-		Account.List.ListIterator	myIterator;
+		DataListIterator<Account>	myIterator;
 		
 		/* Access the data */
 		myData = theView.getData();
@@ -331,7 +332,7 @@ public class AccountSelect {
 		boolean		doShowClosed;
 		AccountType	myType;
 		
-		Account.List.ListIterator	myIterator;
+		DataListIterator<Account>	myIterator;
 		
 		/* Access current values */
 		doShowDeleted = doShowDeleted();

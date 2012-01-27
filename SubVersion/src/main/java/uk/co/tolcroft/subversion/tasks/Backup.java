@@ -28,14 +28,18 @@ import java.util.Date;
 
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.SVNURL;
+import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
+import org.tmatesoft.svn.core.io.SVNRepository;
+import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNEvent;
 import org.tmatesoft.svn.core.wc.SVNRevision;
+import org.tmatesoft.svn.core.wc.SVNWCUtil;
 import org.tmatesoft.svn.core.wc.admin.ISVNAdminEventHandler;
 import org.tmatesoft.svn.core.wc.admin.SVNAdminClient;
 import org.tmatesoft.svn.core.wc.admin.SVNAdminEvent;
 import org.tmatesoft.svn.core.wc.admin.SVNAdminEventAction;
-import org.tmatesoft.svn.core.wc.admin.SVNLookClient;
 
 import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.ModelException.ExceptionClass;
@@ -49,24 +53,29 @@ import uk.co.tolcroft.subversion.data.SubVersionProperties;
 
 public class Backup {
 	/**
-	 * The Client Manager
+	 * The Subversion properties
 	 */
-	private SVNClientManager	theManager 		= null;
+	private SubVersionProperties		theProperties	= null;
 
 	/**
-	 * The Admin Client
+	 * The Authentication manager
 	 */
-	private SVNAdminClient 		theAdminClient 	= null;
-	
+	private ISVNAuthenticationManager	theAuth 		= null;
+
 	/**
-	 * The Look Client
+	 * The Client Manager
 	 */
-	private SVNLookClient 		theLookClient	= null;
+	private SVNClientManager			theManager 		= null;
+
+	/**
+	 * The Administration Client
+	 */
+	private SVNAdminClient 				theAdminClient 	= null;
 	
 	/**
 	 * The Thread Status
 	 */
-	private ThreadStatus<?>		theStatus		= null;
+	private ThreadStatus<?>				theStatus		= null;
 	
 	/**
 	 * Constructor
@@ -75,12 +84,20 @@ public class Backup {
 		/* Store parameters */
 		theStatus = pStatus;
 		
+		/* Access the SubVersion properties */
+		theProperties = (SubVersionProperties)PropertyManager.getPropertySet(SubVersionProperties.class);
+
+		/* Access a default client manager */
+		theAuth = SVNWCUtil.createDefaultAuthenticationManager(
+					theProperties.getStringValue(SubVersionProperties.nameSubVersionUser),
+					theProperties.getStringValue(SubVersionProperties.nameSubVersionPass));
+		
 		/* Access a default client manager */
 		theManager = SVNClientManager.newInstance();
+		theManager.setAuthenticationManager(theAuth);
 
-		/* Access Admin and Look clients */
+		/* Access Administration and Look clients */
 		theAdminClient = theManager.getAdminClient();
-		theLookClient  = theManager.getLookClient();
 	}
 	
 	/**
@@ -123,15 +140,22 @@ public class Backup {
 			myName 		= pRepository.getName();
 			myEntryName	= new File(ZipFile.fileData);
 			
-			/* Access the SubVersion properties */
-			SubVersionProperties myProperties = 
-					(SubVersionProperties)PropertyManager.getPropertySet(SubVersionProperties.class);
-
 			/* Determine the prefix for backups */
-			String myPrefix = myProperties.getStringValue(SubVersionProperties.nameRepoPfix);
+			String myPrefix = theProperties.getStringValue(SubVersionProperties.nameRepoPfix);
 			
+			/* Determine the repository name */
+			String myRepoName	= theProperties.getStringValue(SubVersionProperties.nameSubVersionRepo) + "/" + myName;
+			SVNURL myURL		= SVNURL.parseURIDecoded(myRepoName);
+			
+			/* Access the repository */
+			SVNRepository myRepo = SVNRepositoryFactory.create(myURL);
+			myRepo.setAuthenticationManager(theAuth);
+
+			/* Determine the most recent revision # in the repository */
+		    long revLast = myRepo.getDatedRevision(new Date());
+		    
 			/* Determine the name of the zip file */
-			myZipName 	= new File(pBackupDir.getPath() + File.separator + myPrefix + myName + ".zip");
+			myZipName 	= new File(pBackupDir.getPath(), myPrefix + myName + ".zip");
 
 			/* If the backup file exists */
 			if (myZipName.exists()) {
@@ -139,18 +163,18 @@ public class Backup {
 			    Date myDate = new Date();
 			    myDate.setTime(myZipName.lastModified());
 			    
-			    /* Access the last modified time of the repository */
-			    Date myRepDate = theLookClient.doGetDate(pRepository, SVNRevision.HEAD);
+			    /* Access the revision for the zip file */
+			    long revZip = myRepo.getDatedRevision(myDate);
 			    
 			    /* If the Backup date is later than the repository date */
-			    if (myDate.compareTo(myRepDate) > 0) {
+			    if (revZip >= revLast) {
 			    	/* No need to backup the repository so just return */
 			    	return;
 			    }
 			}
 			
 			/* Determine the number of revisions */
-			int myNumRevisions = (int)theLookClient.doGetYoungestRevision(pRepository);
+			int myNumRevisions = (int)revLast;
 			
 			/* Declare the number of revisions */
 			if (!theStatus.setNumSteps(myNumRevisions)) return;
@@ -173,9 +197,9 @@ public class Backup {
 			theAdminClient.doDump(pRepository, 
 							  	  myStream, 
 							  	  SVNRevision.UNDEFINED, 
-							  	  SVNRevision.UNDEFINED, 
+							  	  SVNRevision.create(revLast), 
 							  	  false, 
-							  	  false);
+							  	  true);
 			
 			/* Close the stream */
 			myStream.close();
@@ -229,20 +253,18 @@ public class Backup {
 		/* Install an event handler */
 		theAdminClient.setEventHandler(new SubversionHandler());
 
-		/* Access the SubVersion/BackUp properties */
-		SubVersionProperties 	mySVNProperties = 
-				(SubVersionProperties)PropertyManager.getPropertySet(SubVersionProperties.class);
+		/* Access the BackUp properties */
 		BackupProperties 		myBUProperties 	= 
 				(BackupProperties)PropertyManager.getPropertySet(BackupProperties.class);
 
 		/* Determine the repository and backup directories directory */
-		File myRepo 	= new File(mySVNProperties.getStringValue(SubVersionProperties.nameSubVersionRepo));
+		File myRepo 	= new File(theProperties.getStringValue(SubVersionProperties.nameSubVersionDir));
 		File myBackup 	= new File(myBUProperties.getStringValue(BackupProperties.nameBackupDir));
 		
 		/* Loop through the repository directories */
 		for (File myRepository: myRepo.listFiles()) {
 			/* Count if its is a directory */
-			if (!myRepository.isDirectory()) iNumStages++;
+			if (myRepository.isDirectory()) iNumStages++;
 		}
 
 		/* Declare the number of stages */

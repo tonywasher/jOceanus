@@ -282,7 +282,6 @@ public abstract class PropertySet {
 	 * @param pClass the Enum class
 	 * @return the Enum property or null if no such Enum property exists
 	 */
-	@SuppressWarnings("unchecked")
 	private <E extends Enum<E>> EnumProperty<E> getEnumProperty(String		pName,
 																Class<E> 	pClass) {
 		/* Access property */
@@ -297,7 +296,9 @@ public abstract class PropertySet {
 		if (myEnumProp.theClass != pClass) return null;
 		
 		/* Return the property */
-		return (EnumProperty<E>)myProp;
+		@SuppressWarnings("unchecked")
+		EnumProperty<E> myResult = (EnumProperty<E>)myProp;
+		return myResult;
 	}
 	
 	/**

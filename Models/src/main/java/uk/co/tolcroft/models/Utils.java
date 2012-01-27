@@ -53,6 +53,8 @@ public class Utils {
 			return differs((char[])pCurr, (char[])pNew);
 		if ((pCurr instanceof byte[]) && (pNew instanceof byte[]))
 			return differs((byte[])pCurr, (byte[])pNew);
+		if ((pCurr instanceof Decimal) && (pNew instanceof Decimal))
+			return Decimal.differs((Decimal)pCurr, (Decimal)pNew);
 		
 		/* Handle Standard cases */
 		return (pCurr.equals(pNew)) ? Difference.Identical

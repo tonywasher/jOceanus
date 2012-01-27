@@ -28,7 +28,7 @@ import javax.swing.SwingUtilities;
 
 import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.ModelException.ExceptionClass;
-import uk.co.tolcroft.models.SortedList;
+import uk.co.tolcroft.models.SortedListIterator;
 import uk.co.tolcroft.models.ui.PasswordDialog;
 
 public class SecureManager {
@@ -171,9 +171,9 @@ public class SecureManager {
 	 * @param pControl the control to attempt
 	 */
 	private void attemptKnownPasswords(SecurityControl pControl) {
-		SortedList<SecurityControl>.ListIterator 	myIterator;
-		SecurityControl								myCurr;
-		PasswordHash								myPassHash;
+		SortedListIterator<SecurityControl>	myIterator;
+		SecurityControl						myCurr;
+		PasswordHash						myPassHash;
 		
 		/* Access the iterator */
 		myIterator = theSecurity.listIterator();

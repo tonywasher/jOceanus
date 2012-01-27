@@ -1119,7 +1119,7 @@ public class TaxYear extends DataItem<TaxYear> {
 			/* Local Variables */
 			TaxYear.List 				myTaxYears;
 			TaxYear    					myBase;
-			TaxYear.List.ListIterator 	myIterator;
+			DataListIterator<TaxYear> 	myIterator;
 			
 			/* Access the existing tax years */
 			myTaxYears = theData.getTaxYears();
@@ -1174,10 +1174,10 @@ public class TaxYear extends DataItem<TaxYear> {
 		 * @return The TaxYear if present (or null)
 		 */
 		public TaxYear searchFor(DateDay pDate) {
-			ListIterator 	myIterator;
-			TaxYear   		myCurr;
-			DateDay.Range	myRange;
-			int        		iDiff;
+			DataListIterator<TaxYear> 	myIterator;
+			TaxYear   					myCurr;
+			DateDay.Range				myRange;
+			int        					iDiff;
 			
 			/* Access the iterator */
 			myIterator = listIterator(true);
@@ -1203,10 +1203,10 @@ public class TaxYear extends DataItem<TaxYear> {
 		 * @return The TaxYear if present (or null)
 		 */
 		public TaxYear searchFor(String pYear) {
-			ListIterator 	myIterator;
-			TaxYear   		myCurr;
-			boolean    		isMatch;
-			long	   		uYear;
+			DataListIterator<TaxYear> 	myIterator;
+			TaxYear   					myCurr;
+			boolean    					isMatch;
+			long	   					uYear;
 			
 			/* Access the search year */
 			uYear = Long.parseLong(pYear);
@@ -1231,10 +1231,10 @@ public class TaxYear extends DataItem<TaxYear> {
 		 * @return The Item if present (or null)
 		 */
 		protected int countInstances(DateDay pDate) {
-			ListIterator 	myIterator;
-			TaxYear 		myCurr;
-			int      		iDiff;
-			int      		iCount = 0;
+			DataListIterator<TaxYear> 	myIterator;
+			TaxYear 					myCurr;
+			int      					iDiff;
+			int      					iCount = 0;
 			
 			/* Access the iterator */
 			myIterator = listIterator(true);
@@ -1255,11 +1255,11 @@ public class TaxYear extends DataItem<TaxYear> {
 		 * @return the range of tax years
 		 */
 		public DateDay.Range getRange() {
-			ListIterator 	myIterator;
-			TaxYear     	myCurr;
-			DateDay  		myStart;
-			DateDay  		myEnd;
-			DateDay.Range 	myRange;
+			DataListIterator<TaxYear> 	myIterator;
+			TaxYear     				myCurr;
+			DateDay  					myStart;
+			DateDay  					myEnd;
+			DateDay.Range 				myRange;
 			
 			/* Access the iterator */
 			myIterator = listIterator(true);
@@ -1297,8 +1297,8 @@ public class TaxYear extends DataItem<TaxYear> {
 		 *  Mark active prices
 		 */
 		protected void markActiveItems () {
-			ListIterator 	myIterator;
-			TaxYear 		myCurr;
+			DataListIterator<TaxYear> 	myIterator;
+			TaxYear 					myCurr;
 
 			/* Access the list iterator */
 			myIterator = listIterator();

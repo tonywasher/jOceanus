@@ -45,32 +45,33 @@ import javax.swing.text.html.StyleSheet;
 
 import uk.co.tolcroft.models.ReportItem;
 import uk.co.tolcroft.models.ReportList;
+import uk.co.tolcroft.models.SortedListIterator;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
 
 public class DebugItem {
 	/**
 	 * The members 
 	 */
-	private JPanel						thePanel		= null;
-	private JPanel						theListPanel	= null;
-	private ReportList<?>				theList 		= null;
-	private ReportItem<?>				theItem 		= null;
-	private ReportList<?>.ListIterator	theIterator		= null;
-	private	DebugEntry					theEntry		= null;
-	private DebugObject					theObject		= null;
-	private DebugDetail					theDetail		= null;
-	private	JButton						theNext			= null;
-	private	JButton						theNextTen		= null;
-	private	JButton						theNextHun		= null;
-	private	JButton						theNextThou		= null;
-	private	JButton						thePrev			= null;
-	private	JButton						thePrevTen		= null;
-	private	JButton						thePrevHun		= null;
-	private	JButton						thePrevThou		= null;
-	private JToggleButton				theToggle		= null;
-	private JLabel						theLabel		= null;
-	private JEditorPane     			theEditor   	= null;
-	private boolean						isListMode		= false;
+	private JPanel					thePanel		= null;
+	private JPanel					theListPanel	= null;
+	private ReportList<?>			theList 		= null;
+	private ReportItem<?>			theItem 		= null;
+	private SortedListIterator<?>	theIterator		= null;
+	private	DebugEntry				theEntry		= null;
+	private DebugObject				theObject		= null;
+	private DebugDetail				theDetail		= null;
+	private	JButton					theNext			= null;
+	private	JButton					theNextTen		= null;
+	private	JButton					theNextHun		= null;
+	private	JButton					theNextThou		= null;
+	private	JButton					thePrev			= null;
+	private	JButton					thePrevTen		= null;
+	private	JButton					thePrevHun		= null;
+	private	JButton					thePrevThou		= null;
+	private JToggleButton			theToggle		= null;
+	private JLabel					theLabel		= null;
+	private JEditorPane     		theEditor   	= null;
+	private boolean					isListMode		= false;
 	
 	/* Access methods */
 	protected	JPanel	getPanel()		{ return thePanel; } 
@@ -313,7 +314,7 @@ public class DebugItem {
 		if (theList.sizeAll() > 0) {
 			/* Create iterator and obtain first item */
 			theIterator = theList.listIterator(true);
-			theItem 	= theIterator.next();
+			theItem 	= (ReportItem<?>)theIterator.next();
 		
 			/* Display header initially */
 			theToggle.setSelected(false);
@@ -402,12 +403,12 @@ public class DebugItem {
 			/* Loop through the steps */
 			while (iNumSteps-- > 0) {
 				/* Shift to next element */
-				myNext = theIterator.next();
+				myNext = (ReportItem<?>)theIterator.next();
 				
 				/* If we have reached the end of the list (should never happen) */
 				if (myNext == null) {
 					/* Set next element to the last in the list and break loop */
-					myNext = theIterator.peekLast();
+					myNext = (ReportItem<?>)theIterator.peekLast();
 					break;
 				}
 			}
@@ -424,12 +425,12 @@ public class DebugItem {
 			/* Loop through the steps */
 			while (iNumSteps++ < 0) {
 				/* Shift to previous element */
-				myNext = theIterator.previous();
+				myNext = (ReportItem<?>)theIterator.previous();
 				
 				/* If we have reached the end of the list (should never happen) */
 				if (myNext == null) {
 					/* Set next element to the last in the list and break loop */
-					myNext = theIterator.peekFirst();
+					myNext = (ReportItem<?>)theIterator.peekFirst();
 					break;
 				}
 			}
@@ -485,7 +486,7 @@ public class DebugItem {
 			if 		(pEvent.getSource() == theNext) 	shiftIterator(1);
 			else if (pEvent.getSource() == theNextTen)	shiftIterator(10);
 			else if (pEvent.getSource() == theNextHun)	shiftIterator(100);
-			else if (pEvent.getSource() == theNextThou)	shiftIterator(100);
+			else if (pEvent.getSource() == theNextThou)	shiftIterator(1000);
 			else if (pEvent.getSource() == thePrev)		shiftIterator(-1);
 			else if (pEvent.getSource() == thePrevTen)	shiftIterator(-10);
 			else if (pEvent.getSource() == thePrevHun)	shiftIterator(-100);

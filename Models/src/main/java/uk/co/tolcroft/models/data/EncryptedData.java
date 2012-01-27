@@ -34,27 +34,7 @@ import uk.co.tolcroft.models.Utils;
 import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.security.SecurityControl;
 
-public class EncryptionControl {
-	/**
-	 * ControlKey
-	 */
-	private ControlKey	theControl	= null;
-
-	/**
-	 * Constructor
-	 * @param pControl the ControlKey to use
-	 */
-	public EncryptionControl(ControlKey pControl) {
-		/* Store value */
-		theControl = pControl;
-	}
-	
-	/**
-	 * Obtain the ControlKey
-	 * @return the Control Key
-	 */
-	public ControlKey getControlKey() { return theControl; }
-	
+public class EncryptedData {
 	/**
 	 * Obtain value for a field (which may be null)
 	 * @param pField the field to obtain the value for
@@ -72,34 +52,57 @@ public class EncryptionControl {
 		return (pField == null) ? null : pField.getBytes(); }
 	
 	/**
+	 * Obtain string representation of EncryptedCharArray
+	 * @param pArray the charArray to obtain the string for
+	 * @return the string
+	 */
+	public static String getStringFormat(EncryptedCharArray pArray) {
+		return (pArray == null) ? null : new String(pArray.getValue()); }
+	
+	/**
 	 * The generic encrypted object class 
 	 */
-	private abstract class EncryptedField<T> {
+	protected static abstract class EncryptedField<T> {
+		/**
+		 * Encryption Control
+		 */
+		private ControlKey	theControlKey	= null;
+	
 		/**
 		 * Encrypted value
 		 */
-		private byte[]	theEncrypted	= null;
+		private byte[]		theEncrypted	= null;
 	
 		/**
 		 * Decrypted value
 		 */
-		private T		theDecrypted	= null;
+		private T			theDecrypted	= null;
 	
 		/**
 		 * Constructor
+		 */
+		private EncryptedField() {}
+		
+		/**
+		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pEncrypted the encrypted value of the field
 		 */
-		private EncryptedField(byte[] 	pEncrypted) throws ModelException {
+		private EncryptedField(ControlKey	pControlKey,
+							   byte[] 		pEncrypted) throws ModelException {
+			/* Store the control key */
+			theControlKey = pControlKey;
+			
 			/* Store the encrypted value */
 			theEncrypted = pEncrypted;
 			
-			/* Reject if encryption is not initialised */
-			if (theControl == null)
+			/* Reject if encryption is not initialized */
+			if (theControlKey == null)
 				throw new ModelException(ExceptionClass.LOGIC,
-									"Encryption is not initialised");
+										 "Encryption is not initialised");
 				
 			/* Decrypt the Bytes */
-			byte[] myBytes = theControl.decryptBytes(theEncrypted);
+			byte[] myBytes = theControlKey.decryptBytes(theEncrypted);
 
 			/* Set the decrypted value */
 			theDecrypted = parseBytes(myBytes);
@@ -109,28 +112,33 @@ public class EncryptionControl {
 		 * Encrypt the value
 		 */
 		private void encryptValue() throws ModelException {
-			/* Reject if encryption is not initialised */
-			if (theControl == null)
+			/* Reject if encryption is not initialized */
+			if (theControlKey == null)
 				throw new ModelException(ExceptionClass.LOGIC,
-									"Encryption is not initialised");
+									     "Encryption is not initialised");
 			
 			/* Obtain the bytes representation of the value */
 			byte[] myBytes = getBytesForEncryption();
 			
 			/* Encrypt the Bytes */
-			theEncrypted = theControl.encryptBytes(myBytes);
+			theEncrypted = theControlKey.encryptBytes(myBytes);
 		}		
 
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pUnencrypted the unencrypted value of the field
 		 */
-		public EncryptedField(T pUnencrypted) throws ModelException {
+		private EncryptedField(ControlKey	pControlKey,
+				   			   T 			pUnencrypted) throws ModelException {
+			/* Store the control */
+			theControlKey = pControlKey;
+			
 			/* Store the value */
 			theDecrypted = pUnencrypted;
 			
 			/* Return if we have no encryption yet */
-			if (theControl == null) return;
+			if (theControlKey == null) return;
 			
 			/* encrypt the value */
 			encryptValue();
@@ -140,17 +148,20 @@ public class EncryptionControl {
 		 * Constructor
 		 * @param pField the field to initialise from
 		 */
-		public EncryptedField(EncryptedField<T> pField) {
+		private EncryptedField(EncryptedField<T>	pField) {
+			/* Store the control */
+			theControlKey	= pField.getControlKey();
+			
 			/* Store the values */
-			theDecrypted = pField.theDecrypted;
-			theEncrypted = pField.theEncrypted;
+			theDecrypted 	= pField.getValue();
+			theEncrypted 	= pField.getBytes();
 		}
 
 		/**
 		 * Obtain the ControlKey
 		 * @return the Control Key
 		 */
-		public ControlKey getControlKey() { return theControl; }
+		public ControlKey getControlKey() { return theControlKey; }
 		
 		/**
 		 * Obtain the encrypted value
@@ -172,7 +183,7 @@ public class EncryptionControl {
 		
 		/**
 		 * Parse the decrypted bytes
-		 * @param the decrypted bytes
+		 * @param pBytes the decrypted bytes
 		 * @return the decrypted value
 		 */
 		protected abstract T parseBytes(byte[] pBytes) throws ModelException;
@@ -185,19 +196,31 @@ public class EncryptionControl {
 
 		/**
 		 * Apply fresh encryption to value
+		 * @param pControlKey the control Key
 		 */
-		protected void renewEncryption() throws ModelException { encryptValue(); }
+		protected void applyEncryption(ControlKey pControlKey) throws ModelException {
+			/* Store the Control Key */
+			theControlKey = pControlKey;
+
+			/* Encrypt the value */
+			encryptValue();
+		}
 		
 		/**
 		 * Adopt Encryption
+		 * @param pControlKey the control Key
 		 * @param pField field to adopt encryption from 
 		 */
-		protected void adoptEncryption(EncryptedField<T> pField) throws ModelException { 
+		protected void adoptEncryption(ControlKey 			pControlKey,
+									   EncryptedField<T> 	pField) throws ModelException { 
+			/* Store the Control Key */
+			theControlKey = pControlKey;
+
 			/* If we need to renew the encryption */
 			if ((pField == null) ||
-				(ControlKey.differs(getControlKey(), pField.getControlKey()).isDifferent()) ||
+				(ControlKey.differs(pControlKey, pField.getControlKey()).isDifferent()) ||
 				(Utils.differs(getValue(), pField.getValue()).isDifferent())) {
-				/* encrypt the value again */
+				/* encrypt the value */
 				encryptValue();
 			}
 				
@@ -222,7 +245,7 @@ public class EncryptionControl {
 			
 			/* Check differences */
 			if (Utils.differs(getValue(), myThat.getValue()).isDifferent()) return false;
-			if (Utils.differs(theEncrypted, myThat.theEncrypted).isDifferent()) return false;
+			if (Utils.differs(getBytes(), myThat.getBytes()).isDifferent()) return false;
 			return true;
 		}
 
@@ -256,24 +279,28 @@ public class EncryptionControl {
 	/**
 	 * The encrypted String class
 	 */
-	public class EncryptedString extends EncryptedField<String> {
+	public static class EncryptedString extends EncryptedField<String> {
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pEncrypted the encrypted value of the field
 		 */
-		public EncryptedString(byte[] pEncrypted) throws ModelException { super(pEncrypted); }
+		protected EncryptedString(ControlKey	pControlKey,
+				   				  byte[] 		pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
 
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pUnencrypted the unencrypted value of the field
 		 */
-		public EncryptedString(String pUnencrypted) throws ModelException { super(pUnencrypted); }
+		protected EncryptedString(ControlKey	pControlKey,
+				   				  String 		pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
 
 		/**
 		 * Constructor
 		 * @param pField the field to initialise from
 		 */
-		public EncryptedString(EncryptedString pField) { super(pField); }
+		public	  EncryptedString(EncryptedString 	pField) 	{ super(pField); }
 
 		@Override
 		protected String parseBytes(byte[] pBytes) throws ModelException {
@@ -286,7 +313,7 @@ public class EncryptionControl {
 			/* Catch Exceptions */
 			catch (Throwable e) {
 				throw new ModelException(ExceptionClass.CRYPTO,
-									"Failed to convert value from bytes");
+									     "Failed to convert value from bytes");
 			}
 		}
 
@@ -301,7 +328,7 @@ public class EncryptionControl {
 			/* Catch Exceptions */
 			catch (Throwable e) {
 				throw new ModelException(ExceptionClass.CRYPTO,
-									"Failed to convert value to bytes");
+									     "Failed to convert value to bytes");
 			}
 		}
 	}
@@ -309,24 +336,28 @@ public class EncryptionControl {
 	/**
 	 * The encrypted Integer class
 	 */
-	public class EncryptedInteger extends EncryptedField<Integer> {
+	public static class EncryptedInteger extends EncryptedField<Integer> {
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pEncrypted the encrypted value of the field
 		 */
-		private EncryptedInteger(byte[] pEncrypted) throws ModelException { super(pEncrypted); }
+		protected EncryptedInteger(ControlKey	pControlKey,
+	   			   				   byte[] 		pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
 
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pUnencrypted the unencrypted value of the field
 		 */
-		private EncryptedInteger(Integer pUnencrypted) throws ModelException { super(pUnencrypted); }
+		protected EncryptedInteger(ControlKey	pControlKey,
+	   			   				   Integer		pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
 
 		/**
 		 * Constructor
 		 * @param pField the field to initialise from
 		 */
-		private EncryptedInteger(EncryptedInteger pField) { super(pField); }
+		public    EncryptedInteger(EncryptedInteger pField) 	{ super(pField); }
 
 		@Override
 		protected Integer parseBytes(byte[] pBytes) throws ModelException {
@@ -339,7 +370,7 @@ public class EncryptionControl {
 			/* Catch Exceptions */
 			catch (Throwable e) {
 				throw new ModelException(ExceptionClass.CRYPTO,
-									"Failed to convert value from bytes");
+									     "Failed to convert value from bytes");
 			}
 		}
 
@@ -354,7 +385,7 @@ public class EncryptionControl {
 			/* Catch Exceptions */
 			catch (Throwable e) {
 				throw new ModelException(ExceptionClass.CRYPTO,
-									"Failed to convert value to bytes");
+									     "Failed to convert value to bytes");
 			}
 		}		
 	}
@@ -362,24 +393,28 @@ public class EncryptionControl {
 	/**
 	 * The encrypted Boolean class
 	 */
-	public class EncryptedBoolean extends EncryptedField<Boolean> {
+	public static class EncryptedBoolean extends EncryptedField<Boolean> {
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pEncrypted the encrypted value of the field
 		 */
-		private EncryptedBoolean(byte[] pEncrypted) throws ModelException { super(pEncrypted); }
+		protected EncryptedBoolean(ControlKey	pControlKey,
+	   				 			   byte[] 		pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
 
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pUnencrypted the unencrypted value of the field
 		 */
-		private EncryptedBoolean(Boolean pUnencrypted) throws ModelException { super(pUnencrypted); }
+		protected EncryptedBoolean(ControlKey	pControlKey,
+	   				 			   Boolean		pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
 
 		/**
 		 * Constructor
 		 * @param pField the field to initialise from
 		 */
-		private EncryptedBoolean(EncryptedBoolean pField) { super(pField); }
+		public    EncryptedBoolean(EncryptedBoolean pField) { super(pField); }
 
 		@Override
 		protected Boolean parseBytes(byte[] pBytes) throws ModelException {
@@ -392,7 +427,7 @@ public class EncryptionControl {
 			/* Catch Exceptions */
 			catch (Throwable e) {
 				throw new ModelException(ExceptionClass.CRYPTO,
-									"Failed to convert value from bytes");
+										 "Failed to convert value from bytes");
 			}
 		}
 
@@ -407,7 +442,7 @@ public class EncryptionControl {
 			/* Catch Exceptions */
 			catch (Throwable e) {
 				throw new ModelException(ExceptionClass.CRYPTO,
-									"Failed to convert value to bytes");
+										 "Failed to convert value to bytes");
 			}
 		}		
 	}
@@ -415,24 +450,28 @@ public class EncryptionControl {
 	/**
 	 * The encrypted Date class
 	 */
-	public class EncryptedDate extends EncryptedField<DateDay> {
+	public static class EncryptedDate extends EncryptedField<DateDay> {
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pEncrypted the encrypted value of the field
 		 */
-		private EncryptedDate(byte[] pEncrypted) throws ModelException { super(pEncrypted); }
+		protected EncryptedDate(ControlKey	pControlKey,
+		 			 			byte[] 		pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
 
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pUnencrypted the unencrypted value of the field
 		 */
-		private EncryptedDate(DateDay pUnencrypted) throws ModelException { super(pUnencrypted); }
+		protected EncryptedDate(ControlKey	pControlKey,
+		 			 			DateDay 	pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
 
 		/**
 		 * Constructor
 		 * @param pField the field to initialise from
 		 */
-		private EncryptedDate(EncryptedDate pField) { super(pField); }
+		public    EncryptedDate(EncryptedDate 	pField) 	{ super(pField); }
 
 		@Override
 		protected DateDay parseBytes(byte[] pBytes) throws ModelException {
@@ -445,7 +484,7 @@ public class EncryptionControl {
 			/* Catch Exceptions */
 			catch (Throwable e) {
 				throw new ModelException(ExceptionClass.CRYPTO,
-									"Failed to convert value from bytes");
+										 "Failed to convert value from bytes");
 			}
 		}
 	
@@ -460,7 +499,7 @@ public class EncryptionControl {
 			/* Catch Exceptions */
 			catch (Throwable e) {
 				throw new ModelException(ExceptionClass.CRYPTO,
-									"Failed to convert value to bytes");
+										 "Failed to convert value to bytes");
 			}
 		}		
 	}
@@ -468,24 +507,28 @@ public class EncryptionControl {
 	/**
 	 * The encrypted CharArray class
 	 */
-	public class EncryptedCharArray extends EncryptedField<char[]> {
+	public static class EncryptedCharArray extends EncryptedField<char[]> {
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pEncrypted the encrypted value of the field
 		 */
-		private EncryptedCharArray(byte[] pEncrypted) throws ModelException { super(pEncrypted); }
+		protected EncryptedCharArray(ControlKey	pControlKey,
+		 		  					 byte[] 	pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
 	
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pUnencrypted the unencrypted value of the field
 		 */
-		private EncryptedCharArray(char[] pUnencrypted) throws ModelException { super(pUnencrypted); }
+		protected EncryptedCharArray(ControlKey	pControlKey,
+		 		  					 char[] 	pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
 	
 		/**
 		 * Constructor
 		 * @param pField the field to initialise from
 		 */
-		private EncryptedCharArray(EncryptedCharArray pField) { super(pField); }
+		public    EncryptedCharArray(EncryptedCharArray pField) 	{ super(pField); }
 	
 		@Override
 		protected char[] parseBytes(byte[] pBytes) throws ModelException {
@@ -499,26 +542,30 @@ public class EncryptionControl {
 	}
 
 	/**
-	 * The encrypted Number class
+	 * The encrypted Decimal class
 	 */
-	public abstract class EncryptedNumber<X extends Decimal> extends EncryptedField<X> {
+	public static abstract class EncryptedDecimal<X extends Decimal> extends EncryptedField<X> {
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pEncrypted the encrypted value of the field
 		 */
-		private EncryptedNumber(byte[] pEncrypted) throws ModelException { super(pEncrypted); }
+		private EncryptedDecimal(ControlKey	pControlKey,
+				   				 byte[] 	pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
 
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pUnencrypted the unencrypted value of the field
 		 */
-		private EncryptedNumber(X pUnencrypted) throws ModelException { super(pUnencrypted); }
+		private EncryptedDecimal(ControlKey	pControlKey,
+				   				 X 			pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
 
 		/**
 		 * Constructor
 		 * @param pField the field to initialise from
 		 */
-		private EncryptedNumber(EncryptedNumber<X> pField) { super(pField); }
+		private EncryptedDecimal(EncryptedDecimal<X> 	pField) 	{ super(pField); }
 
 		@Override
 		protected X parseBytes(byte[] pBytes) throws ModelException {
@@ -532,7 +579,7 @@ public class EncryptionControl {
 			catch (ModelException e) { throw e; }
 			catch (Throwable e) {
 				throw new ModelException(ExceptionClass.CRYPTO,
-									"Failed to convert value from bytes");
+										 "Failed to convert value from bytes");
 			}
 		}
 		
@@ -557,7 +604,7 @@ public class EncryptionControl {
 			/* Catch Exceptions */
 			catch (Throwable e) {
 				throw new ModelException(ExceptionClass.CRYPTO,
-									"Failed to convert value to bytes");
+										 "Failed to convert value to bytes");
 			}
 		}
 	}
@@ -565,24 +612,28 @@ public class EncryptionControl {
 	/**
 	 * The encrypted Money class
 	 */
-	public class EncryptedMoney extends EncryptedNumber<Money> {
+	public static class EncryptedMoney extends EncryptedDecimal<Money> {
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pEncrypted the encrypted value of the field
 		 */
-		public EncryptedMoney(byte[] pEncrypted) throws ModelException { super(pEncrypted); }
+		public EncryptedMoney(ControlKey	pControlKey,
+  				 			  byte[] 		pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
 
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pUnencrypted the unencrypted value of the field
 		 */
-		public EncryptedMoney(Money pUnencrypted) throws ModelException { super(pUnencrypted); }
+		public EncryptedMoney(ControlKey 	pControlKey,
+  				 			  Money 		pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
 
 		/**
 		 * Constructor
 		 * @param pField the field to initialise from
 		 */
-		public EncryptedMoney(EncryptedMoney pField) { super(pField); }
+		public EncryptedMoney(EncryptedMoney 	pField) 	{ super(pField); }
 
 		@Override
 		protected Money parseValue(String pValue) throws ModelException { return new Money(pValue); }
@@ -591,24 +642,28 @@ public class EncryptionControl {
 	/**
 	 * The encrypted Units class
 	 */
-	public class EncryptedUnits extends EncryptedNumber<Units> {
+	public static class EncryptedUnits extends EncryptedDecimal<Units> {
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pEncrypted the encrypted value of the field
 		 */
-		public EncryptedUnits(byte[] pEncrypted) throws ModelException { super(pEncrypted); }
+		public EncryptedUnits(ControlKey	pControlKey,
+  				 			  byte[] 		pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
 
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pUnencrypted the unencrypted value of the field
 		 */
-		public EncryptedUnits(Units pUnencrypted) throws ModelException { super(pUnencrypted); }
+		public EncryptedUnits(ControlKey 	pControlKey,
+  				 			  Units 		pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
 
 		/**
 		 * Constructor
 		 * @param pField the field to initialise from
 		 */
-		public EncryptedUnits(EncryptedUnits pField) { super(pField); }
+		public EncryptedUnits(EncryptedUnits 	pField) 	{ super(pField); }
 
 		@Override
 		protected Units parseValue(String pValue) throws ModelException { return new Units(pValue); }
@@ -617,24 +672,28 @@ public class EncryptionControl {
 	/**
 	 * The encrypted Rate class
 	 */
-	public class EncryptedRate extends EncryptedNumber<Rate> {
+	public static class EncryptedRate extends EncryptedDecimal<Rate> {
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pEncrypted the encrypted value of the field
 		 */
-		public EncryptedRate(byte[] pEncrypted) throws ModelException { super(pEncrypted); }
+		public EncryptedRate(ControlKey	pControlKey,
+  				 			 byte[] 	pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
 
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pUnencrypted the unencrypted value of the field
 		 */
-		public EncryptedRate(Rate pUnencrypted) throws ModelException { super(pUnencrypted); }
+		public EncryptedRate(ControlKey	pControlKey,
+  				 			 Rate 		pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
 
 		/**
 		 * Constructor
 		 * @param pField the field to initialise from
 		 */
-		public EncryptedRate(EncryptedRate pField) { super(pField); }
+		public EncryptedRate(EncryptedRate 	pField) 	{ super(pField); }
 
 		@Override
 		protected Rate parseValue(String pValue) throws ModelException { return new Rate(pValue); }
@@ -643,24 +702,28 @@ public class EncryptionControl {
 	/**
 	 * The encrypted Price class
 	 */
-	public class EncryptedPrice extends EncryptedNumber<Price> {
+	public static class EncryptedPrice extends EncryptedDecimal<Price> {
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pEncrypted the encrypted value of the field
 		 */
-		public EncryptedPrice(byte[] pEncrypted) throws ModelException { super(pEncrypted); }
+		public EncryptedPrice(ControlKey 	pControlKey,
+  				 			  byte[] 		pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
 
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pUnencrypted the unencrypted value of the field
 		 */
-		public EncryptedPrice(Price pUnencrypted) throws ModelException { super(pUnencrypted); }
+		public EncryptedPrice(ControlKey 	pControlKey,
+  				 			  Price 		pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
 
 		/**
 		 * Constructor
 		 * @param pField the field to initialise from
 		 */
-		public EncryptedPrice(EncryptedPrice pField) { super(pField); }
+		public EncryptedPrice(EncryptedPrice 	pField) 	{ super(pField); }
 
 		@Override
 		protected Price parseValue(String pValue) throws ModelException { return new Price(pValue); }
@@ -669,24 +732,29 @@ public class EncryptionControl {
 	/**
 	 * The encrypted Dilution class
 	 */
-	public class EncryptedDilution extends EncryptedNumber<Dilution> {
+	public static class EncryptedDilution extends EncryptedDecimal<Dilution> {
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pEncrypted the encrypted value of the field
 		 */
-		public EncryptedDilution(byte[] pEncrypted) throws ModelException { super(pEncrypted); }
+		public EncryptedDilution(ControlKey	pControlKey,
+  				 				 byte[] 	pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
 
 		/**
 		 * Constructor
+		 * @param pControlKey the control key
 		 * @param pUnencrypted the unencrypted value of the field
 		 */
-		public EncryptedDilution(Dilution pUnencrypted) throws ModelException { super(pUnencrypted); }
+		public EncryptedDilution(ControlKey	pControlKey,
+  				 				 Dilution	pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
 
 		/**
 		 * Constructor
+		 * @param pControl the encryption control
 		 * @param pField the field to initialise from
 		 */
-		public EncryptedDilution(EncryptedDilution pField) { super(pField); }
+		public EncryptedDilution(EncryptedDilution 	pField) 	{ super(pField); }
 
 		@Override
 		protected Dilution parseValue(String pValue) throws ModelException { return new Dilution(pValue); }

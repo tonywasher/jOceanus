@@ -21,8 +21,10 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
+import java.util.Iterator;
+
 import uk.co.tolcroft.models.ReportList;
-import uk.co.tolcroft.models.SortedList;
+import uk.co.tolcroft.models.SortedListIterator;
 import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugObject;
@@ -238,9 +240,9 @@ public abstract class DataList<L extends DataList<L,T>,
 		theStyle = pStyle;
 			
 		/* Local variables */
-		DataList<?,?>.ListIterator 	myIterator;
-		DataItem<?>					myCurr;
-		DataItem<T>					myItem;
+		DataListIterator<?>	myIterator;
+		DataItem<?>			myCurr;
+		DataItem<T>			myItem;
 			
 		/* Note that this list should show deleted items on UPDATE */
 		if (pStyle == ListStyle.UPDATE) setShowDeleted(true);
@@ -285,11 +287,11 @@ public abstract class DataList<L extends DataList<L,T>,
 		theStyle = ListStyle.DIFFER;
 			
 		/* Local variables */
-		ListIterator 	myIterator;
-		DataItem<T>		myCurr;
-		DataItem<T>		myItem;
-		DataItem<T>		myNew;
-		L				myOld;
+		DataListIterator<T> myIterator;
+		DataItem<T>			myCurr;
+		DataItem<T>			myItem;
+		DataItem<T>			myNew;
+		L					myOld;
 			
 		/* Create a shallow copy of the old list */
 		myOld = pOld.getShallowCopy();
@@ -357,10 +359,10 @@ public abstract class DataList<L extends DataList<L,T>,
 	 */
 	public void reBase(L pBase) {
 		/* Local variables */
-		ListIterator 	myIterator;
-		T				myCurr;
-		T				myItem;
-		L				myBase;
+		DataListIterator<T> myIterator;
+		T					myCurr;
+		T					myItem;
+		L					myBase;
 			
 		/* Create a shallow copy of the base list */
 		myBase = pBase.getShallowCopy();
@@ -461,25 +463,25 @@ public abstract class DataList<L extends DataList<L,T>,
 	}
 	
 	@Override
-	public java.util.Iterator<T> iterator() {
+	public Iterator<T> iterator() {
 		/* Return a new iterator */
-		return new ListIterator();
+		return new DataListIterator<T>(this);
 	}
 	
 	@Override
-	public ListIterator listIterator() {
+	public DataListIterator<T> listIterator() {
 		/* Return a new iterator */
-		return new ListIterator();
+		return new DataListIterator<T>(this);
 	}
 	
 	@Override
-	public ListIterator listIterator(boolean bShowAll) {
+	public DataListIterator<T> listIterator(boolean bShowAll) {
 		/* Return a new iterator */
-		return new ListIterator(bShowAll);
+		return new DataListIterator<T>(this, bShowAll);
 	}
 	
 	@Override
-	public ListIterator listIterator(int iIndex) {
+	public DataListIterator<T> listIterator(int iIndex) {
 		/* Throw exception */
 		throw new UnsupportedOperationException();
 	}
@@ -598,11 +600,11 @@ public abstract class DataList<L extends DataList<L,T>,
 	 * Calculate the Edit State for the list
 	 */
 	public void findEditState() {
-		boolean			isDirty = false;
-		boolean			isError = false;
-		boolean			isValid	= false;
-		ListIterator 	myIterator;
-		T 				myCurr;
+		boolean				isDirty = false;
+		boolean				isError = false;
+		boolean				isValid	= false;
+		DataListIterator<T> myIterator;
+		T 					myCurr;
 			
 		/* Create an iterator for the list */
 		myIterator = listIterator(true);
@@ -651,8 +653,8 @@ public abstract class DataList<L extends DataList<L,T>,
 	 * Validate the data items
 	 */
 	public void validate() {
-		ListIterator 	myIterator;
-		T				myCurr;
+		DataListIterator<T>	myIterator;
+		T					myCurr;
 		
 		/* Clear the errors */
 		clearErrors();
@@ -681,8 +683,8 @@ public abstract class DataList<L extends DataList<L,T>,
 	 * @return <code>true/false</code>
 	 */
 	public boolean hasUpdates() {
-		ListIterator 	myIterator;
-		T 				myCurr;
+		DataListIterator<T>	myIterator;
+		T 					myCurr;
 			
 		/* Create an iterator for the list */
 		myIterator = listIterator(true);
@@ -705,8 +707,8 @@ public abstract class DataList<L extends DataList<L,T>,
 	 *  Clear errors
 	 */
 	public void clearErrors() {
-		ListIterator 	myIterator;
-		T 				myCurr;
+		DataListIterator<T> myIterator;
+		T 					myCurr;
 			
 		/* Create an iterator for the list */
 		myIterator = listIterator(true);
@@ -721,8 +723,8 @@ public abstract class DataList<L extends DataList<L,T>,
 	 *  Reset active
 	 */
 	public void clearActive() {
-		ListIterator 	myIterator;
-		T 				myCurr;
+		DataListIterator<T> myIterator;
+		T 					myCurr;
 			
 		/* Create an iterator for the list */
 		myIterator = listIterator(true);
@@ -748,8 +750,8 @@ public abstract class DataList<L extends DataList<L,T>,
 	 * Reset changes in an edit view
 	 */
 	public void resetChanges() {
-		ListIterator 	myIterator;
-		T 				myCurr;
+		DataListIterator<T> myIterator;
+		T 					myCurr;
 			
 		/* Create an iterator for the list */
 		myIterator = listIterator(true);
@@ -790,9 +792,9 @@ public abstract class DataList<L extends DataList<L,T>,
 	 * Prepare changes in an edit view back into the core data
 	 */
 	public void prepareChanges() {
-		ListIterator 	myIterator;
-		DataItem<T>		myCurr;
-		DataItem<?>		myBase;
+		DataListIterator<T>	myIterator;
+		DataItem<T>			myCurr;
+		DataItem<?>			myBase;
 			
 		/* Create an iterator for the changes list */
 		myIterator = listIterator(true);
@@ -855,9 +857,9 @@ public abstract class DataList<L extends DataList<L,T>,
 	 * RollBack changes in an edit view that have been applied to core data
 	 */
 	public void rollBackChanges() {
-		ListIterator 	myIterator;
-		DataItem<T>		myCurr;
-		DataItem<?>		myBase;
+		DataListIterator<T>	myIterator;
+		DataItem<T>			myCurr;
+		DataItem<?>			myBase;
 			
 		/* Create an iterator for this list */
 		myIterator = listIterator(true);
@@ -927,8 +929,8 @@ public abstract class DataList<L extends DataList<L,T>,
 	 * Commit changes in an edit view that have been applied to the core data
 	 */
 	public void commitChanges() {
-		ListIterator 	myIterator;
-		DataItem<T>		myCurr;
+		DataListIterator<T> myIterator;
+		DataItem<T>			myCurr;
 			
 		/* Create an iterator for this list */
 		myIterator = listIterator(true);
@@ -964,22 +966,33 @@ public abstract class DataList<L extends DataList<L,T>,
 	/**
 	 * ListIterator class for this list
 	 */
-	public class ListIterator extends SortedList<T>.ListIterator {
+	public static class DataListIterator<X extends DataItem<X>> extends SortedListIterator<X> {
+		/**
+		 * The id manager 
+		 */
+		private	IdManager<X>	theMgr	  		= null;
+			
 		/**
 		 * Constructor for standard iterator 
+		 * @param pList the list to build the iterator on
 		 */
-		private ListIterator() { this(false); }
+		private DataListIterator(DataList<?,X> pList) { this(pList, false); }
 		
 		/**
 		 * Constructor for iterator that can show all elements 
+		 * @param pList the list to build the iterator on
 		 * @param bShowAll show all items in the list
 		 */
-		private ListIterator(boolean bShowAll) { super(bShowAll); }		
+		private DataListIterator(DataList<?,X> 	pList,
+								 boolean 		bShowAll) { 
+			super(pList, bShowAll);
+			theMgr = pList.theMgr;
+		}		
 
 		@Override
 		public void remove() {
 			/* Remove the last Item */
-			T myItem = super.removeLastItem();
+			X myItem = super.removeLastItem();
 
 			/* Declare to the id Manager */
 			theMgr.setItem(myItem.getId(), null);

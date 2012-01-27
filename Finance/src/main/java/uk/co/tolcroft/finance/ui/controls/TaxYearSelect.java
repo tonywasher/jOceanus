@@ -34,6 +34,7 @@ import javax.swing.LayoutStyle;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.TaxYear;
 import uk.co.tolcroft.finance.views.*;
+import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
 public class TaxYearSelect {
@@ -136,7 +137,7 @@ public class TaxYearSelect {
 		TaxYear  	myYear;
 		TaxYear		myFirst;
 
-		TaxYear.List.ListIterator 		myYearIterator;
+		DataListIterator<TaxYear>	myYearIterator;
 		
 		/* Access the data */
 		myData = theView.getData();

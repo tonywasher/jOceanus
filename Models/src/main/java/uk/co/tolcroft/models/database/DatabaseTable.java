@@ -30,6 +30,7 @@ import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.HistoryValues;
@@ -302,9 +303,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 * @return the count of items
 	 */
 	private int countStateItems(DataState pState) {
-		DataList<?,T>.ListIterator	myIterator;
-		T							myCurr;
-		int 						iCount = 0;
+		DataListIterator<T>	myIterator;
+		T					myCurr;
+		int 				iCount = 0;
 		
 		/* Access the iterator */
 		myIterator = theList.listIterator(true);
@@ -331,12 +332,12 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	protected boolean insertItems(ThreadStatus<?> 	pThread,
 								  DataSet<?>		pData,
 								  BatchControl		pBatch) throws ModelException {
-		DataList<?,T>.ListIterator	myIterator;
-		T							myCurr    = null;
-		int     					myCount   = 0;
-		int							mySteps;
-		String						myInsert;
-		boolean             		bContinue = true;
+		DataListIterator<T>	myIterator;
+		T					myCurr    = null;
+		int     			myCount   = 0;
+		int					mySteps;
+		String				myInsert;
+		boolean             bContinue = true;
 		
 		/* Declare the new stage */
 		if (!pThread.setNewStage("Inserting " + getTableName())) return false;
@@ -425,12 +426,12 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 */
 	protected boolean updateItems(ThreadStatus<?> 	pThread,
 			  					  BatchControl		pBatch) throws ModelException {
-		DataList<?,T>.ListIterator	myIterator;
-		T							myCurr    = null;
-		int     					myCount   = 0;
-		int							mySteps;
-		String						myUpdate;
-		boolean          			bContinue = true;
+		DataListIterator<T>	myIterator;
+		T					myCurr    = null;
+		int     			myCount   = 0;
+		int					mySteps;
+		String				myUpdate;
+		boolean          	bContinue = true;
 	
 		/* Declare the new stage */
 		if (!pThread.setNewStage("Updating " + getTableName())) return false;
@@ -551,12 +552,12 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 	 */
 	protected boolean deleteItems(ThreadStatus<?> 	pThread,
 			  					  BatchControl		pBatch) throws ModelException {
-		DataList<?,T>.ListIterator	myIterator;
-		T							myCurr    = null;
-		int     					myCount   = 0;
-		int							mySteps;
-		String						myDelete;
-		boolean          			bContinue = true;
+		DataListIterator<T>	myIterator;
+		T					myCurr    = null;
+		int     			myCount   = 0;
+		int					mySteps;
+		String				myDelete;
+		boolean          	bContinue = true;
 	
 		/* Declare the new stage */
 		if (!pThread.setNewStage("Deleting " + getTableName())) return false;

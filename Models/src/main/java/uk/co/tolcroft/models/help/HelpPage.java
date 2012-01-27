@@ -161,8 +161,8 @@ public class HelpPage extends SortedItem<HelpPage> {
 		 * @return the help page 
 		 */
 		public HelpPage searchFor(String pName) {
-			ListIterator	myIterator;
-			HelpPage 		myPage;
+			SortedListIterator<HelpPage>	myIterator;
+			HelpPage 						myPage;
 			
 			/* Create an iterator */
 			myIterator = listIterator();

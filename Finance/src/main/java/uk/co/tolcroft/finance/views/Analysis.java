@@ -27,6 +27,7 @@ import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.HistoryValues;
@@ -108,13 +109,13 @@ public class Analysis {
 					TaxYear 	pYear,
 					Analysis	pAnalysis) {
 		/* Local variables */
-		BucketList.ListIterator myIterator;
-		AnalysisBucket			myCurr;
-		AssetAccount			myAsset;
-		DebtAccount				myDebt;
-		MoneyAccount			myMoney;
-		ExternalAccount			myExternal;
-		TransDetail				myTrans;
+		DataListIterator<AnalysisBucket> 	myIterator;
+		AnalysisBucket						myCurr;
+		AssetAccount						myAsset;
+		DebtAccount							myDebt;
+		MoneyAccount						myMoney;
+		ExternalAccount						myExternal;
+		TransDetail							myTrans;
 		
 		/* Store the data */
 		theData = pData;
@@ -597,8 +598,8 @@ public class Analysis {
 		 * Prune the list to remove irrelevant items 
 		 */
 		protected void prune() {
-			ListIterator 	myIterator;
-			AnalysisBucket	myCurr;
+			DataListIterator<AnalysisBucket> 	myIterator;
+			AnalysisBucket						myCurr;
 
 			/* Access the iterator */
 			myIterator = listIterator();

@@ -24,14 +24,15 @@ package uk.co.tolcroft.finance.data;
 import java.util.Date;
 
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.Decimal.*;
-import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.EncryptedData;
+import uk.co.tolcroft.models.data.EncryptedData.EncryptedRate;
 import uk.co.tolcroft.models.data.EncryptedItem;
+import uk.co.tolcroft.models.data.EncryptedValues;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.help.DebugDetail;
@@ -220,8 +221,8 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 			myValues.setEndDate(new DateDay(pEndDate));
 
 		/* Set the encrypted objects */
-		myValues.setRate(new RatePair(pRate));
-		myValues.setBonus((pBonus == null) ? null : new RatePair(pBonus));
+		myValues.setRate(pRate);
+		myValues.setBonus(pBonus);
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -261,8 +262,8 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 			myValues.setEndDate(new DateDay(pEndDate));
 
 		/* Set the encrypted objects */
-		myValues.setRate(new RatePair(pRate));
-		myValues.setBonus((pBonus == null) ? null : new RatePair(pBonus));
+		myValues.setRate(pRate);
+		myValues.setBonus(pBonus);
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -411,8 +412,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	 * @param pRate the rate 
 	 */
 	public void setRate(Rate pRate) throws ModelException {
-		if (pRate != null) 	getValues().setRate(new RatePair(pRate));
-		else 				getValues().setRate(null);
+		getValues().setRate(pRate);
 	}
 
 	/**
@@ -420,8 +420,7 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	 * @param pBonus the rate 
 	 */
 	public void setBonus(Rate pBonus) throws ModelException {
-		if (pBonus != null) getValues().setBonus(new RatePair(pBonus));
-		else 				getValues().setBonus(null);
+		getValues().setBonus(pBonus);
 	}
 
 	/**
@@ -554,9 +553,9 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 			myList.setStyle(ListStyle.EDIT);
 
 			/* Local variables */
-			ListIterator 	myIterator;
-			AcctRate 			myCurr;
-			AcctRate 			myItem;
+			DataListIterator<AcctRate> 	myIterator;
+			AcctRate 					myCurr;
+			AcctRate 					myItem;
 
 			/* Store the account */
 			myList.theAccount = pAccount;
@@ -638,10 +637,10 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		 */
 		protected int countInstances(DateDay 	pDate,
 									 Account    pAccount) {
-			ListIterator 	myIterator;
-			AcctRate 			myCurr;
-			int  			iDiff;
-			int  			iCount = 0;
+			DataListIterator<AcctRate> 	myIterator;
+			AcctRate 					myCurr;
+			int  						iDiff;
+			int  						iCount = 0;
 
 			/* Access the list iterator */
 			myIterator = listIterator(true);
@@ -661,8 +660,8 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		 *  Mark active rates
 		 */
 		protected void markActiveItems() {
-			ListIterator 	myIterator;
-			AcctRate 		myCurr;
+			DataListIterator<AcctRate> 	myIterator;
+			AcctRate 					myCurr;
 
 			/* Access the list iterator */
 			myIterator = listIterator();
@@ -682,10 +681,10 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		 */
 		public AcctRate getLatestRate(Account   pAccount, 
 								  	  DateDay 	pDate) {
-			ListIterator 	myIterator;
-			AcctRate    	myRate = null;
-			AcctRate    	myCurr;
-			DateDay 		myDate;
+			DataListIterator<AcctRate> 	myIterator;
+			AcctRate    				myRate = null;
+			AcctRate    				myCurr;
+			DateDay 					myDate;
 
 			/* Access the list iterator */
 			myIterator = listIterator();
@@ -812,27 +811,29 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 	}
 
 	/* RateValues */
-	public class Values extends EncryptedValues {
-		private RatePair	theRate      = null;
-		private RatePair	theBonus     = null;
-		private DateDay     theEndDate   = null;
-		private Account    	theAccount   = null;
-		private Integer		theAccountId = null;
+	public class Values extends EncryptedValues<AcctRate> {
+		private EncryptedRate	theRate      = null;
+		private EncryptedRate	theBonus     = null;
+		private DateDay     	theEndDate   = null;
+		private Account    		theAccount   = null;
+		private Integer			theAccountId = null;
 
 		/* Access methods */
-		public RatePair		getRate()       { return theRate; }
-		public RatePair		getBonus()      { return theBonus; }
-		public DateDay      getEndDate()    { return theEndDate; }
-		public Account		getAccount()    { return theAccount; }
-		private Integer		getAccountId()  { return theAccountId; }
-		public Rate  		getRateValue()  { return getPairValue(theRate); }
-		public Rate  		getBonusValue() { return getPairValue(theBonus); }
-		public byte[]  		getRateBytes()  { return getPairBytes(theRate); }
-		public byte[]  		getBonusBytes() { return getPairBytes(theBonus); }
+		public EncryptedRate	getRate()       { return theRate; }
+		public EncryptedRate	getBonus()      { return theBonus; }
+		public DateDay      	getEndDate()    { return theEndDate; }
+		public Account			getAccount()    { return theAccount; }
+		private Integer			getAccountId()  { return theAccountId; }
 
-		public void setRate(RatePair pRate) {
+		/* Encrypted value access */
+		public Rate  			getRateValue()  { return EncryptedData.getValue(theRate); }
+		public Rate  			getBonusValue() { return EncryptedData.getValue(theBonus); }
+		public byte[]  			getRateBytes()  { return EncryptedData.getBytes(theRate); }
+		public byte[]  			getBonusBytes() { return EncryptedData.getBytes(theBonus); }
+
+		public void setRate(EncryptedRate pRate) {
 			theRate      = pRate; }
-		public void setBonus(RatePair pBonus) {
+		public void setBonus(EncryptedRate pBonus) {
 			theBonus     = pBonus; }
 		public void setEndDate(DateDay pEndDate) {
 			theEndDate   = pEndDate; }
@@ -841,6 +842,14 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 			theAccountId = (pAccount == null) ? null : pAccount.getId(); }
 		private void setAccountId(Integer pAccountId) {
 			theAccountId   = pAccountId; } 
+
+		/* Set Encrypted Values */
+		protected 	void setRate(Rate   pRate) throws ModelException	{ theRate = createEncryptedRate(theRate, pRate); }
+		protected 	void setRate(String pRate) throws ModelException	{ theRate = createEncryptedRate(theRate, pRate); }
+		protected	void setRate(byte[] pRate) throws ModelException	{ theRate = createEncryptedRate(pRate); }
+		protected 	void setBonus(Rate   pRate) throws ModelException	{ theBonus = createEncryptedRate(theBonus, pRate); }
+		protected 	void setBonus(String pRate) throws ModelException	{ theBonus = createEncryptedRate(theBonus, pRate); }
+		protected	void setBonus(byte[] pRate) throws ModelException	{ theBonus = createEncryptedRate(pRate); }
 
 		/* Constructor */
 		public Values() {}
@@ -909,8 +918,8 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		 */
 		protected void updateSecurity() throws ModelException {
 			/* Update the encryption */
-			theRate	= new RatePair(theRate.getValue());
-			if (theBonus != null) theBonus = new RatePair(theBonus.getValue());
+			theRate		= updateEncryptedRate(theRate);
+			theBonus	= updateEncryptedRate(theBonus);
 		}		
 		
 		/**
@@ -918,20 +927,20 @@ public class AcctRate extends EncryptedItem<AcctRate> {
 		 */
 		protected void applySecurity() throws ModelException {
 			/* Apply the encryption */
-			theRate.encryptPair(null);
-			if (theBonus != null) theBonus.encryptPair(null);
+			applyEncryption(theRate);
+			applyEncryption(theBonus);
 		}		
 		
 		/**
 		 * Adopt encryption from base
 		 * @param pBase the Base values
 		 */
-		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws ModelException {
+		protected void adoptSecurity(EncryptedValues<AcctRate> pBase) throws ModelException {
 			Values myBase = (Values)pBase;
 
 			/* Apply the encryption */
-			theRate.encryptPair(myBase.getRate());
-			if (theBonus != null) theBonus.encryptPair(myBase.getBonus());
+			adoptEncryption(theRate,  myBase.getRate());
+			adoptEncryption(theBonus, myBase.getBonus());
 		}		
 	}
 }

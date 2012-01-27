@@ -27,14 +27,18 @@ import uk.co.tolcroft.finance.data.StaticClass.EventInfoClass;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.views.Statement.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.Decimal.*;
-import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.EncryptedData;
+import uk.co.tolcroft.models.data.EncryptedData.EncryptedDilution;
+import uk.co.tolcroft.models.data.EncryptedData.EncryptedMoney;
+import uk.co.tolcroft.models.data.EncryptedData.EncryptedString;
+import uk.co.tolcroft.models.data.EncryptedData.EncryptedUnits;
 import uk.co.tolcroft.models.data.EncryptedItem;
+import uk.co.tolcroft.models.data.EncryptedValues;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.help.DebugDetail;
@@ -63,23 +67,23 @@ public class Event extends EncryptedItem<Event> {
 	/* Access methods */
 	public  Values         	getValues()    { return (Values)super.getValues(); }	
 	public  DateDay      	getDate()      { return getValues().getDate(); }
-	public  String          getDesc()      { return getPairValue(getValues().getDesc()); }
-	public  Money     		getAmount()    { return getPairValue(getValues().getAmount()); }
+	public  String          getDesc()      { return getValues().getDescValue(); }
+	public  Money     		getAmount()    { return getValues().getAmountValue(); }
 	public  Account         getDebit()     { return getValues().getDebit(); }
 	public  Account         getCredit()    { return getValues().getCredit(); }
-	public  Units     		getUnits()     { return getPairValue(getValues().getUnits()); }
+	public  Units     		getUnits()     { return getValues().getUnitsValue(); }
 	public  TransactionType getTransType() { return getValues().getTransType(); }
-	public  Money     		getTaxCredit() { return getPairValue(getValues().getTaxCredit()); }
+	public  Money     		getTaxCredit() { return getValues().getTaxCredValue(); }
 	public  Integer	        getYears()     { return getValues().getYears(); }
-	public  Dilution        getDilution()  { return getPairValue(getValues().getDilution()); }
+	public  Dilution        getDilution()  { return getValues().getDilutionValue(); }
 	protected EventInfoSet  getInfoSet()   { return theInfoSet; }
 
 	/* Encrypted value access */
-	public  byte[]	getAmountBytes()    { return getPairBytes(getValues().getAmount()); }
-	public  byte[]  getDescBytes()      { return getPairBytes(getValues().getDesc()); }
-	public  byte[]	getUnitsBytes()     { return getPairBytes(getValues().getUnits()); }
-	public  byte[]  getTaxCredBytes()   { return getPairBytes(getValues().getTaxCredit()); }
-	public  byte[]  getDilutionBytes()  { return getPairBytes(getValues().getDilution()); }
+	public  byte[]	getAmountBytes()    { return getValues().getAmountBytes(); }
+	public  byte[]  getDescBytes()      { return getValues().getDescBytes(); }
+	public  byte[]	getUnitsBytes()     { return getValues().getUnitsBytes(); }
+	public  byte[]  getTaxCredBytes()   { return getValues().getTaxCredBytes(); }
+	public  byte[]  getDilutionBytes()  { return getValues().getDilutionBytes(); }
 
 	/* Linking methods */
 	public Event     getBase() { return (Event)super.getBase(); }
@@ -374,11 +378,11 @@ public class Event extends EncryptedItem<Event> {
 		myValues.setYears(pYears);
 		
 		/* Record the encrypted values */
-		myValues.setDesc(new StringPair(pDesc));
-		myValues.setAmount(new MoneyPair(pAmount));
-		if (pUnits != null) myValues.setUnits(new UnitsPair(pUnits));
-		if (pTaxCredit != null) myValues.setTaxCredit(new MoneyPair(pTaxCredit));
-		if (pDilution != null) myValues.setDilution(new DilutionPair(pDilution));
+		myValues.setDesc(pDesc);
+		myValues.setAmount(pAmount);
+		myValues.setUnits(pUnits);
+		myValues.setTaxCredit(pTaxCredit);
+		myValues.setDilution(pDilution);
 
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -407,20 +411,19 @@ public class Event extends EncryptedItem<Event> {
 		if (requiredInfoSet()) theInfoSet = new EventInfoSet(this);
 
 		/* Record the encrypted values */
-		myValues.setDesc(new StringPair(pDesc));
-		myValues.setAmount(new MoneyPair(pAmount));
+		myValues.setDesc(pDesc);
+		myValues.setAmount(pAmount);
 		myValues.setDebit(pDebit);
 		myValues.setCredit(pCredit);
 		myValues.setTransType(pTransType);
 		myValues.setDate(new DateDay(pDate));
-		if (pUnits != null) myValues.setUnits(new UnitsPair(pUnits));
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
 		
 		/* If Units exist */
 		if (pUnits != null) {
-			myValues.setUnits(new UnitsPair(pUnits));
+			myValues.setUnits(pUnits);
 			/* Create the data */
 			Units myUnits = new Units(pUnits);
 			boolean isCredit = myValues.getCredit().isPriced();
@@ -435,7 +438,7 @@ public class Event extends EncryptedItem<Event> {
 		
 		/* If TaxCredit exist */
 		if (pTaxCredit != null) {
-			myValues.setTaxCredit(new MoneyPair(pTaxCredit));
+			myValues.setTaxCredit(pTaxCredit);
 			/* Create the data */
 			EventData myData = theInfoSet.getNewData(EventInfoClass.TaxCredit);
 			myData.setMoney(new Money(pTaxCredit));
@@ -443,7 +446,7 @@ public class Event extends EncryptedItem<Event> {
 		
 		/* If Dilution exist */
 		if (pDilution != null) {
-			myValues.setDilution(new DilutionPair(pDilution));
+			myValues.setDilution(pDilution);
 			/* Create the data */
 			EventData myData = theInfoSet.getNewData(EventInfoClass.Dilution);
 			myData.setDilution(new Dilution(pDilution));
@@ -1237,8 +1240,7 @@ public class Event extends EncryptedItem<Event> {
 	 * @param pDesc the description 
 	 */
 	public void setDescription(String pDesc) throws ModelException {
-		if (pDesc != null) getValues().setDesc(new StringPair(pDesc));
-		else 			   getValues().setDesc(null);
+		getValues().setDesc(pDesc);
 	}
 	
 	/**
@@ -1247,8 +1249,7 @@ public class Event extends EncryptedItem<Event> {
 	 * @param pAmount the amount 
 	 */
 	public void setAmount(Money pAmount) throws ModelException {
-		if (pAmount != null) getValues().setAmount(new MoneyPair(pAmount));
-		else 				 getValues().setAmount(null);
+		getValues().setAmount(pAmount);
 	}
 	
 	/**
@@ -1257,8 +1258,7 @@ public class Event extends EncryptedItem<Event> {
 	 * @param pUnits the units 
 	 */
 	public void setUnits(Units pUnits) throws ModelException {
-		if (pUnits != null) getValues().setUnits(new UnitsPair(pUnits));
-		else 				getValues().setUnits(null);
+		getValues().setUnits(pUnits);
 	}
 	
 	/**
@@ -1276,8 +1276,7 @@ public class Event extends EncryptedItem<Event> {
 	 * @param pAmount the tax credit amount 
 	 */
 	public void setTaxCredit(Money pAmount) throws ModelException {
-		if (pAmount != null) getValues().setTaxCredit(new MoneyPair(pAmount));
-		else 				 getValues().setTaxCredit(null);
+		getValues().setTaxCredit(pAmount);
 	}
 	
 	/**
@@ -1295,8 +1294,7 @@ public class Event extends EncryptedItem<Event> {
 	 * @param pDilution the dilution 
 	 */
 	public void setDilution(Dilution pDilution) throws ModelException {
-		if (pDilution != null) getValues().setDilution(new DilutionPair(pDilution));
-		else 		   		   getValues().setDilution(null);
+		getValues().setDilution(pDilution);
 	}
 	
 	/**
@@ -1494,10 +1492,10 @@ public class Event extends EncryptedItem<Event> {
 			myList.setStyle(ListStyle.EDIT);
 
 			/* local variable */
-			Event.List.ListIterator 	myIterator;
-			Event      					myCurr;
-			Event      					myEvent;
-			int       					myResult;
+			DataListIterator<Event> myIterator;
+			Event      				myCurr;
+			Event      				myEvent;
+			int       				myResult;
 			
 			/* Record range and initialise the list */
 			myList.theRange   = pRange;
@@ -1533,7 +1531,7 @@ public class Event extends EncryptedItem<Event> {
 			myList.setStyle(ListStyle.EDIT);
 
 			/* Local variables */
-			Pattern.List.ListIterator 	myIterator;
+			DataListIterator<Event> 	myIterator;
 			Pattern.List 				myPatterns;
 			Event     					myCurr;
 			Pattern						myPattern;
@@ -1590,8 +1588,8 @@ public class Event extends EncryptedItem<Event> {
 		 * Validate an extract
 		 */
 		public void validate() {
-			Event.List.ListIterator 	myIterator;
-			Event 						myCurr;
+			DataListIterator<Event> myIterator;
+			Event 					myCurr;
 
 			/* Clear the errors */
 			clearErrors();
@@ -1761,55 +1759,55 @@ public class Event extends EncryptedItem<Event> {
 	/**
 	 *  Values for an event 
 	 */
-	public class Values extends EncryptedValues {
-		private DateDay       	theDate      = null;
-		private StringPair      theDesc      = null;
-		private MoneyPair  		theAmount    = null;
-		private Account         theDebit     = null;
-		private Account         theCredit    = null;
-		private UnitsPair  		theUnits     = null;
-		private TransactionType	theTransType = null;
-		private MoneyPair  		theTaxCredit = null;
-		private Integer         theYears     = null;
-		private DilutionPair	theDilution  = null;
-		private Integer			theDebitId	 = null;
-		private Integer			theCreditId	 = null;
-		private Integer			theTransId	 = null;
+	public class Values extends EncryptedValues<Event> {
+		private DateDay       		theDate      = null;
+		private EncryptedString    	theDesc      = null;
+		private EncryptedMoney		theAmount    = null;
+		private Account         	theDebit     = null;
+		private Account         	theCredit    = null;
+		private EncryptedUnits		theUnits     = null;
+		private TransactionType		theTransType = null;
+		private EncryptedMoney		theTaxCredit = null;
+		private Integer         	theYears     = null;
+		private EncryptedDilution	theDilution  = null;
+		private Integer				theDebitId	 = null;
+		private Integer				theCreditId	 = null;
+		private Integer				theTransId	 = null;
 		
 		/* Access methods */
-		public DateDay       	getDate()      { return theDate; }
-		public StringPair       getDesc()      { return theDesc; }
-		public MoneyPair  		getAmount()    { return theAmount; }
-		public Account          getDebit()     { return theDebit; }
-		public Account          getCredit()    { return theCredit; }
-		public UnitsPair   		getUnits()     { return theUnits; }
-		public TransactionType	getTransType() { return theTransType; }
-		public MoneyPair  		getTaxCredit() { return theTaxCredit; }
-		public Integer          getYears()     { return theYears; }
-		public DilutionPair     getDilution()  { return theDilution; }
-		private Integer         getDebitId()   { return theDebitId; }
-		private Integer         getCreditId()  { return theCreditId; }
-		private Integer         getTransId()   { return theTransId; }
+		public DateDay       		getDate()      { return theDate; }
+		public EncryptedString  	getDesc()      { return theDesc; }
+		public EncryptedMoney		getAmount()    { return theAmount; }
+		public Account          	getDebit()     { return theDebit; }
+		public Account          	getCredit()    { return theCredit; }
+		public EncryptedUnits		getUnits()     { return theUnits; }
+		public TransactionType		getTransType() { return theTransType; }
+		public EncryptedMoney		getTaxCredit() { return theTaxCredit; }
+		public Integer          	getYears()     { return theYears; }
+		public EncryptedDilution	getDilution()  { return theDilution; }
+		private Integer         	getDebitId()   { return theDebitId; }
+		private Integer         	getCreditId()  { return theCreditId; }
+		private Integer         	getTransId()   { return theTransId; }
 		
 		/* Encrypted value access */
-		public  Money		getAmountValue()    { return getPairValue(getAmount()); }
-		public  String  	getDescValue()      { return getPairValue(getDesc()); }
-		public  Money		getTaxCredValue()   { return getPairValue(getTaxCredit()); }
-		public  Units		getUnitsValue()     { return getPairValue(getUnits()); }
-		public  Dilution	getDilutionValue()  { return getPairValue(getDilution()); }
+		public  Money		getAmountValue()    { return EncryptedData.getValue(getAmount()); }
+		public  String  	getDescValue()      { return EncryptedData.getValue(getDesc()); }
+		public  Money		getTaxCredValue()   { return EncryptedData.getValue(getTaxCredit()); }
+		public  Units		getUnitsValue()     { return EncryptedData.getValue(getUnits()); }
+		public  Dilution	getDilutionValue()  { return EncryptedData.getValue(getDilution()); }
 
 		/* Encrypted bytes access */
-		public  byte[]	getAmountBytes()    { return getPairBytes(getAmount()); }
-		public  byte[]  getDescBytes()      { return getPairBytes(getDesc()); }
-		public  byte[]	getTaxCredBytes()   { return getPairBytes(getTaxCredit()); }
-		public  byte[]	getUnitsBytes()     { return getPairBytes(getUnits()); }
-		public  byte[]	getDilutionBytes()  { return getPairBytes(getDilution()); }
+		public  byte[]	getAmountBytes()    { return EncryptedData.getBytes(getAmount()); }
+		public  byte[]  getDescBytes()      { return EncryptedData.getBytes(getDesc()); }
+		public  byte[]	getTaxCredBytes()   { return EncryptedData.getBytes(getTaxCredit()); }
+		public  byte[]	getUnitsBytes()     { return EncryptedData.getBytes(getUnits()); }
+		public  byte[]	getDilutionBytes()  { return EncryptedData.getBytes(getDilution()); }
 
 		public void setDate(DateDay pDate) {
 			theDate      = pDate; }
-		public void setDesc(StringPair pDesc) {
+		public void setDesc(EncryptedString pDesc) {
 			theDesc      = pDesc; }
-		public void setAmount(MoneyPair pAmount) {
+		public void setAmount(EncryptedMoney pAmount) {
 			theAmount    = pAmount; }
 		public void setDebit(Account pDebit) {
 			theDebit     = pDebit; 
@@ -1818,17 +1816,17 @@ public class Event extends EncryptedItem<Event> {
 		public void setCredit(Account pCredit) {
 			theCredit    = pCredit; 
 			theCreditId  = (pCredit == null) ? null : pCredit.getId(); }
-		public void setUnits(UnitsPair pUnits) {
+		public void setUnits(EncryptedUnits pUnits) {
 			theUnits     = pUnits; }
 		public void setTransType(TransactionType pTransType) {
 			theTransType = pTransType; 
 			theTransId   = (pTransType == null) ? null : pTransType.getId();
 			adjustTaxCredit(); }
-		public void setTaxCredit(MoneyPair pTaxCredit) {
+		public void setTaxCredit(EncryptedMoney pTaxCredit) {
 			theTaxCredit = pTaxCredit; }
 		public void setYears(Integer iYears) {
 			theYears     = iYears; }
-		public void setDilution(DilutionPair pDilution) {
+		public void setDilution(EncryptedDilution pDilution) {
 			theDilution  = pDilution; }
 		private void setDebitId(Integer pDebitId) {
 			theDebitId   = pDebitId; } 
@@ -1836,6 +1834,22 @@ public class Event extends EncryptedItem<Event> {
 			theCreditId  = pCreditId; } 
 		private void setTransId(Integer pTransId) {
 			theTransId   = pTransId; } 
+
+		/* Set Encrypted Values */
+		protected 	void setDesc(String pDesc) throws ModelException			{ theDesc = createEncryptedString(theDesc, pDesc); }
+		protected	void setDesc(byte[] pDesc) throws ModelException			{ theDesc = createEncryptedString(pDesc); }
+		protected 	void setAmount(Money pAmount) throws ModelException			{ theAmount = createEncryptedMoney(theAmount, pAmount); }
+		protected 	void setAmount(String pAmount) throws ModelException		{ theAmount = createEncryptedMoney(theAmount, pAmount); }
+		protected	void setAmount(byte[] pAmount) throws ModelException		{ theAmount = createEncryptedMoney(pAmount); }
+		protected 	void setUnits(Units pUnits) throws ModelException			{ theUnits = createEncryptedUnits(theUnits, pUnits); }
+		protected 	void setUnits(String pUnits) throws ModelException			{ theUnits = createEncryptedUnits(theUnits, pUnits); }
+		protected	void setUnits(byte[] pUnits) throws ModelException			{ theUnits = createEncryptedUnits(pUnits); }
+		protected 	void setTaxCredit(Money pAmount) throws ModelException		{ theTaxCredit = createEncryptedMoney(theTaxCredit, pAmount); }
+		protected 	void setTaxCredit(String pAmount) throws ModelException		{ theTaxCredit = createEncryptedMoney(theTaxCredit, pAmount); }
+		protected	void setTaxCredit(byte[] pAmount) throws ModelException		{ theTaxCredit = createEncryptedMoney(pAmount); }
+		protected 	void setDilution(Dilution pDilution) throws ModelException	{ theDilution = createEncryptedDilution(theDilution, pDilution); }
+		protected 	void setDilution(String pDilution) throws ModelException	{ theDilution = createEncryptedDilution(theDilution, pDilution); }
+		protected	void setDilution(byte[] pDilution) throws ModelException	{ theDilution = createEncryptedDilution(pDilution); }
 
 		/* Constructor */
 		public Values() {}
@@ -1905,7 +1919,7 @@ public class Event extends EncryptedItem<Event> {
 					/* If the event needs a Tax Credit */
 					if (needsTaxCredit(theTransType, theDebit)) {
 						/* Set a new null tax credit */
-						try { theTaxCredit = new MoneyPair(new Money(0)); }
+						try { theTaxCredit = createEncryptedMoney(null, new Money(0)); }
 						catch (ModelException e) {}
 						
 						/* If the event has tax years */
@@ -1918,7 +1932,7 @@ public class Event extends EncryptedItem<Event> {
 					/* If the event needs dilution */
 					if (needsDilution(theTransType)) {
 						/* Set a null dilution value */
-						try { theDilution = new DilutionPair(new Dilution(Dilution.MAX_VALUE)); }
+						try { theDilution = createEncryptedDilution(null, new Dilution(Dilution.MAX_VALUE)); }
 						catch (ModelException e) {}
 					}									
 				}
@@ -1938,7 +1952,7 @@ public class Event extends EncryptedItem<Event> {
 			
 			try {
 				if ((needsTaxCredit) && (nullTaxCredit))
-					theTaxCredit = new MoneyPair(new Money(0));
+					theTaxCredit = createEncryptedMoney(null, new Money(0));
 				else if ((!needsTaxCredit) && (!nullTaxCredit))
 					theTaxCredit = null;
 			} catch (ModelException e) {}
@@ -1990,11 +2004,11 @@ public class Event extends EncryptedItem<Event> {
 		 */
 		protected void updateSecurity() throws ModelException {
 			/* Update the encryption */
-			theDesc		= new StringPair(theDesc.getString());
-			theAmount 	= new MoneyPair(theAmount.getValue());
-			if (theUnits     != null) theUnits 		= new UnitsPair(theUnits.getValue());
-			if (theTaxCredit != null) theTaxCredit 	= new MoneyPair(theTaxCredit.getValue());
-			if (theDilution  != null) theDilution	= new DilutionPair(theDilution.getValue());
+			theDesc			= updateEncryptedString(theDesc);
+			theAmount		= updateEncryptedMoney(theAmount);
+			theUnits		= updateEncryptedUnits(theUnits);
+			theTaxCredit	= updateEncryptedMoney(theTaxCredit);
+			theDilution		= updateEncryptedDilution(theDilution);
 		}		
 		
 		/**
@@ -2002,26 +2016,26 @@ public class Event extends EncryptedItem<Event> {
 		 */
 		protected void applySecurity() throws ModelException {
 			/* Apply the encryption */
-			theDesc.encryptPair(null);
-			theAmount.encryptPair(null);
-			if (theUnits     != null) theUnits.encryptPair(null);
-			if (theTaxCredit != null) theTaxCredit.encryptPair(null);
-			if (theDilution  != null) theDilution.encryptPair(null);
+			applyEncryption(theDesc);
+			applyEncryption(theAmount);
+			applyEncryption(theUnits);
+			applyEncryption(theTaxCredit);
+			applyEncryption(theDilution);
 		}		
 		
 		/**
 		 * Adopt encryption from base
 		 * @param pBase the Base values
 		 */
-		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws ModelException {
+		protected void adoptSecurity(EncryptedValues<Event> pBase) throws ModelException {
 			Values myBase = (Values)pBase;
 
 			/* Apply the encryption */
-			theDesc.encryptPair(myBase.getDesc());
-			theAmount.encryptPair(myBase.getAmount());
-			if (theUnits     != null) theUnits.encryptPair(myBase.getUnits());
-			if (theTaxCredit != null) theTaxCredit.encryptPair(myBase.getTaxCredit());
-			if (theDilution  != null) theDilution.encryptPair(myBase.getDilution());
+			adoptEncryption(theDesc, 		myBase.getDesc());
+			adoptEncryption(theAmount, 		myBase.getAmount());
+			adoptEncryption(theUnits, 		myBase.getUnits());
+			adoptEncryption(theTaxCredit, 	myBase.getTaxCredit());
+			adoptEncryption(theDilution, 	myBase.getDilution());
 		}				
 	}	
 }

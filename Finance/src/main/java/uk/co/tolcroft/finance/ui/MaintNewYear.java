@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 import uk.co.tolcroft.finance.views.*;
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.help.DebugManager;
 import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
@@ -171,9 +172,9 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
 	 * Refresh views/controls after a load/update of underlying data
 	 */
 	public void refreshData() throws ModelException {
-		FinanceData		myData = theView.getData();
-		TaxYear.List 	myList = myData.getTaxYears();
-		TaxYear.List.ListIterator myIterator;
+		FinanceData					myData = theView.getData();
+		TaxYear.List 				myList = myData.getTaxYears();
+		DataListIterator<TaxYear> 	myIterator;
 		
 		myIterator 	= myList.listIterator();
 		//theYear 	= myIterator.peekLast();

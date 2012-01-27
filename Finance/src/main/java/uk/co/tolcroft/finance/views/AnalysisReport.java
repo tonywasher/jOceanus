@@ -30,6 +30,7 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.finance.data.StaticClass.*;
 import uk.co.tolcroft.models.*;
 import uk.co.tolcroft.models.Decimal.*;
+import uk.co.tolcroft.models.data.DataList.DataListIterator;
 
 public class AnalysisReport {
 	/* Properties */
@@ -65,13 +66,13 @@ public class AnalysisReport {
 	 * @return Web output
 	 */
 	public String getYearReport() {
-		BucketList.ListIterator	myIterator;
-		AnalysisBucket			myBucket;
-		StringBuilder		   	myOutput = new StringBuilder(10000);
-		StringBuilder          	myDetail = new StringBuilder(10000);	
-		BucketList 				myList;
-		AssetSummary			mySummary;
-		AssetTotal				myTotal;
+		DataListIterator<AnalysisBucket>	myIterator;
+		AnalysisBucket						myBucket;
+		StringBuilder		   				myOutput = new StringBuilder(10000);
+		StringBuilder          				myDetail = new StringBuilder(10000);	
+		BucketList 							myList;
+		AssetSummary						mySummary;
+		AssetTotal							myTotal;
 
 		/* Access the bucket lists */
 		myList = theAnalysis.getList();
@@ -145,14 +146,14 @@ public class AnalysisReport {
 	 * @return Web output
 	 */
 	public String getInstantReport() {
-		BucketList.ListIterator	myIterator;
-		AnalysisBucket			myBucket;
-		StringBuilder		   	myOutput = new StringBuilder(10000);
-		StringBuilder          	myDetail = new StringBuilder(10000);	
-		AccountType       		myType;
-		AssetSummary			mySummary;
-		AssetTotal				myTotal;
-		BucketList 				myList;
+		DataListIterator<AnalysisBucket>	myIterator;
+		AnalysisBucket						myBucket;
+		StringBuilder		   				myOutput = new StringBuilder(10000);
+		StringBuilder          				myDetail = new StringBuilder(10000);	
+		AccountType       					myType;
+		AssetSummary						mySummary;
+		AssetTotal							myTotal;
+		BucketList 							myList;
 
 		/* Access the bucket list */
 		myList = theAnalysis.getList();
@@ -222,14 +223,14 @@ public class AnalysisReport {
 	 * @return Web output
 	 */
 	public String getMarketReport() {
-		BucketList.ListIterator	myIterator;
-		AnalysisBucket			myBucket;
-		StringBuilder			myOutput = new StringBuilder(10000);
-		StringBuilder          	myDetail = new StringBuilder(10000);	
-		AccountType       		myType; 
-		BucketList				myList;
-		AssetAccount			myAsset;
-		MarketTotal				myTotal;
+		DataListIterator<AnalysisBucket>	myIterator;
+		AnalysisBucket						myBucket;
+		StringBuilder						myOutput = new StringBuilder(10000);
+		StringBuilder          				myDetail = new StringBuilder(10000);	
+		AccountType       					myType; 
+		BucketList							myList;
+		AssetAccount						myAsset;
+		MarketTotal							myTotal;
 
 		/* Access the bucket lists */
 		myList = theAnalysis.getList();
@@ -308,12 +309,12 @@ public class AnalysisReport {
 	 * @return Web output
 	 */
 	public String getIncomeReport() {
-		AnalysisBucket 			myBucket;
-		StringBuilder			myOutput = new StringBuilder(10000);
-		BucketList				myList;
-		BucketList.ListIterator	myIterator;
-		ExternalAccount			myExternal;
-		ExternalTotal			myTotal;
+		AnalysisBucket 						myBucket;
+		StringBuilder						myOutput = new StringBuilder(10000);
+		BucketList							myList;
+		DataListIterator<AnalysisBucket>	myIterator;
+		ExternalAccount						myExternal;
+		ExternalTotal						myTotal;
 
 		/* Access the bucket lists */
 		myList = theAnalysis.getList();
@@ -384,12 +385,12 @@ public class AnalysisReport {
 	 * @return Web output
 	 */
 	public StringBuilder makeStandardReport(AssetSummary pSummary) {
-		BucketList.ListIterator	myIterator;
-		StringBuilder			myOutput = new StringBuilder(10000);
-		AccountType				myType;
-		AnalysisBucket			myBucket;
-		BucketList 				myList;
-		ValueAccount			myValue;
+		DataListIterator<AnalysisBucket>	myIterator;
+		StringBuilder						myOutput = new StringBuilder(10000);
+		AccountType							myType;
+		AnalysisBucket						myBucket;
+		BucketList 							myList;
+		ValueAccount						myValue;
 
 		/* Access the bucket lists */
 		myList = theAnalysis.getList();
@@ -451,12 +452,12 @@ public class AnalysisReport {
 	 * @return Web output
 	 */
 	private StringBuilder makeRatedReport(AssetSummary pSummary) {
-		BucketList.ListIterator	myIterator;
-		StringBuilder		   	myOutput = new StringBuilder(10000);
-		AccountType       		myType;
-		AnalysisBucket			myBucket;
-		BucketList				myList;
-		MoneyAccount			myMoney;
+		DataListIterator<AnalysisBucket>	myIterator;
+		StringBuilder		   				myOutput = new StringBuilder(10000);
+		AccountType       					myType;
+		AnalysisBucket						myBucket;
+		BucketList							myList;
+		MoneyAccount						myMoney;
 
 		/* Access the bucket lists */
 		myList = theAnalysis.getList();
@@ -515,12 +516,12 @@ public class AnalysisReport {
 	 * @return Web output
 	 */
 	public StringBuilder makeDebtReport(AssetSummary pSummary) {
-		BucketList.ListIterator	myIterator;
-		StringBuilder		   	myOutput = new StringBuilder(10000);
-		AccountType 			myType;
-		AnalysisBucket			myBucket;
-		BucketList 				myList;
-		DebtAccount				myDebt;
+		DataListIterator<AnalysisBucket>	myIterator;
+		StringBuilder		   				myOutput = new StringBuilder(10000);
+		AccountType 						myType;
+		AnalysisBucket						myBucket;
+		BucketList 							myList;
+		DebtAccount							myDebt;
 
 		/* Access the bucket lists */
 		myList = theAnalysis.getList();
@@ -575,12 +576,12 @@ public class AnalysisReport {
 	 * @return Web output
 	 */
 	public StringBuilder makePricedReport(AssetSummary pSummary) {
-		BucketList.ListIterator	myIterator;
-		StringBuilder		   	myOutput = new StringBuilder(10000);
-		AccountType				myType;
-		AnalysisBucket			myBucket;
-		BucketList 				myList;
-		AssetAccount			myAsset;
+		DataListIterator<AnalysisBucket>	myIterator;
+		StringBuilder		   				myOutput = new StringBuilder(10000);
+		AccountType							myType;
+		AnalysisBucket						myBucket;
+		BucketList 							myList;
+		AssetAccount						myAsset;
 
 		/* Access the bucket lists */
 		myList = theAnalysis.getList();
@@ -642,10 +643,10 @@ public class AnalysisReport {
 	 * @return Web output
 	 */
 	public StringBuilder makeCapitalEventReport(AssetAccount pAsset) {
-		CapitalEvent.List.ListIterator	myIterator;
-		StringBuilder		 			myOutput = new StringBuilder(10000);
-		CapitalEvent					myEvent;
-		CapitalEvent.List				myList;
+		SortedListIterator<CapitalEvent>	myIterator;
+		StringBuilder		 				myOutput = new StringBuilder(10000);
+		CapitalEvent						myEvent;
+		CapitalEvent.List					myList;
 
 		/* Access the event lists */
 		myList = pAsset.getCapitalEvents();
@@ -696,13 +697,13 @@ public class AnalysisReport {
 	 * @return Web output
 	 */
 	public String getTransReport() {
-		AnalysisBucket  		myBucket;
-		StringBuilder		    myOutput = new StringBuilder(10000);
-		BucketList 				myList;
-		BucketList.ListIterator	myIterator;
-		TransSummary			mySummary;
-		TransTotal				myTotal;
-		TransDetail				myDetail;
+		AnalysisBucket  					myBucket;
+		StringBuilder		    			myOutput = new StringBuilder(10000);
+		BucketList 							myList;
+		DataListIterator<AnalysisBucket>	myIterator;
+		TransSummary						mySummary;
+		TransTotal							myTotal;
+		TransDetail							myDetail;
 
 		/* Access the bucket lists */
 		myList = theAnalysis.getList();
@@ -799,13 +800,13 @@ public class AnalysisReport {
 	 * @return Web output
 	 */
 	public String getTaxReport() {
-		AnalysisBucket  		myBucket;
-		StringBuilder		    myOutput = new StringBuilder(10000);
-		StringBuilder			myDetail = new StringBuilder(10000);
-		BucketList		    	myList;
-		BucketList.ListIterator	myIterator;
-		TaxDetail				myTax;
-		TransSummary			myTrans;
+		AnalysisBucket  					myBucket;
+		StringBuilder		    			myOutput = new StringBuilder(10000);
+		StringBuilder						myDetail = new StringBuilder(10000);
+		BucketList		    				myList;
+		DataListIterator<AnalysisBucket>	myIterator;
+		TaxDetail							myTax;
+		TransSummary						myTrans;
 
 		/* Ensure that tax has been calculated */
 		theAnalysisYear.calculateTax();
@@ -1034,11 +1035,11 @@ public class AnalysisReport {
 	 * @return Web output
 	 */
 	public StringBuilder makeTaxReport(TaxDetail pSummary) {
-		StringBuilder			myOutput = new StringBuilder(1000);
-		AnalysisBucket			myBucket;
-		BucketList				myList;
-		TaxDetail				myTax;
-		BucketList.ListIterator	myIterator;
+		StringBuilder						myOutput = new StringBuilder(1000);
+		AnalysisBucket						myBucket;
+		BucketList							myList;
+		TaxDetail							myTax;
+		DataListIterator<AnalysisBucket>	myIterator;
 
 		/* Access the bucket lists */
 		myList = theAnalysis.getList();
@@ -1100,7 +1101,7 @@ public class AnalysisReport {
 		BucketList							myList;
 		ChargeableEvent						myCharge;
 		ChargeableEvent.List				myCharges;
-		ChargeableEvent.List.ListIterator 	myIterator;
+		SortedListIterator<ChargeableEvent>	myIterator;
 
 		/* Access the bucket lists */
 		myList		= theAnalysis.getList();
@@ -1180,11 +1181,11 @@ public class AnalysisReport {
 	 */
 	public StringBuilder makeAccountListReport(RecordList 	pList,
 											   String		pReturn) {
-		StringBuilder			myOutput = new StringBuilder(1000);
-		StringBuilder			myDetail = new StringBuilder(1000);
-		AccountRecord			myAccount;
-		String					myListName;
-		RecordList.ListIterator	myIterator;
+		StringBuilder					myOutput = new StringBuilder(1000);
+		StringBuilder					myDetail = new StringBuilder(1000);
+		AccountRecord					myAccount;
+		String							myListName;
+		DataListIterator<AccountRecord>	myIterator;
 
 		/* If there is zero income return empty string */
 		if (!pList.getTotals().getGrossIncome().isNonZero()) return myOutput;
@@ -1269,7 +1270,7 @@ public class AnalysisReport {
 		StringBuilder			myOutput = new StringBuilder(1000);
 		Event					myEvent;
 		Account					myAccount = pAccount.getAccount();
-		Event.List.ListIterator	myIterator;
+		DataListIterator<Event>	myIterator;
 
 		/* Format the detail */
 		myOutput.append("<a name=\"Income");

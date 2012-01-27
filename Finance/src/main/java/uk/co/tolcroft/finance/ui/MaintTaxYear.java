@@ -42,6 +42,7 @@ import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.Decimal.*;
+import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.help.DebugManager;
@@ -727,7 +728,7 @@ public class MaintTaxYear implements stdPanel {
 		FinanceData	myData;
 		TaxRegime	myRegime;
 
-		TaxRegime.List.ListIterator	myRegIterator;
+		DataListIterator<TaxRegime>	myRegIterator;
 		
 		/* Access the data */
 		myData = theView.getData();

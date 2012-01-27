@@ -23,11 +23,11 @@ package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.data.EncryptedValues;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.help.DebugDetail;
 
@@ -178,7 +178,7 @@ public class ViewPrice extends AcctPrice {
 			AcctPrice.List				myPrices;
 			AcctPrice 					myCurr;
 			ViewPrice 					myItem;
-			AcctPrice.List.ListIterator myIterator;
+			DataListIterator<AcctPrice> myIterator;
 
 			/* Skip to alias if required */
 			if ((pAccount != null) && (pAccount.getAlias() != null))
@@ -375,6 +375,6 @@ public class ViewPrice extends AcctPrice {
 		 */
 		protected void updateSecurity() throws ModelException {}
 		protected void applySecurity() throws ModelException {}
-		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws ModelException {}
+		protected void adoptSecurity(ControlKey pControl, EncryptedValues<AcctPrice> pBase) throws ModelException {}
 	}		
 }

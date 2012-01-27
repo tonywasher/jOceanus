@@ -272,9 +272,9 @@ public class ChargeableEvent extends ReportItem<ChargeableEvent> {
 		 * @return the slice total of the chargeable event list 
 		 */
 		public Money	getSliceTotal()		{
-			Money 			myTotal;
-			ChargeableEvent myEvent;
-			ListIterator 	myIterator;
+			Money 								myTotal;
+			ChargeableEvent 					myEvent;
+			SortedListIterator<ChargeableEvent> myIterator;
 			
 			/* Access the iterator */
 			myIterator = listIterator();
@@ -298,9 +298,9 @@ public class ChargeableEvent extends ReportItem<ChargeableEvent> {
 		 * @return the tax total of the chargeable event list 
 		 */
 		public Money	getTaxTotal()		{
-			Money 			myTotal;
-			ChargeableEvent myEvent;
-			ListIterator 	myIterator;
+			Money 								myTotal;
+			ChargeableEvent 					myEvent;
+			SortedListIterator<ChargeableEvent>	myIterator;
 			
 			/* Access the iterator */
 			myIterator = listIterator();
@@ -325,9 +325,9 @@ public class ChargeableEvent extends ReportItem<ChargeableEvent> {
 		 * @return the slice total of the chargeable event list 
 		 */
 		public Money	getGainsTotal()		{
-			Money 			myTotal;
-			ChargeableEvent myEvent;
-			ListIterator 	myIterator;
+			Money 								myTotal;
+			ChargeableEvent 					myEvent;
+			SortedListIterator<ChargeableEvent>	myIterator;
 			
 			/* Access the iterator */
 			myIterator = listIterator();
@@ -353,8 +353,8 @@ public class ChargeableEvent extends ReportItem<ChargeableEvent> {
 		 */
 		public void applyTax(Money pTax,
 				             Money pTotal)	{
-			ChargeableEvent myEvent;
-			ListIterator 	myIterator;
+			ChargeableEvent 					myEvent;
+			SortedListIterator<ChargeableEvent> myIterator;
 			
 			/* Access the iterator */
 			myIterator = listIterator();

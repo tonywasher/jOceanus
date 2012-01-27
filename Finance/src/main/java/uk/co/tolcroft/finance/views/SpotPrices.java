@@ -23,13 +23,13 @@ package uk.co.tolcroft.finance.views;
 
 import uk.co.tolcroft.finance.data.*;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.Decimal.*;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
+import uk.co.tolcroft.models.data.EncryptedValues;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.help.DebugDetail;
 import uk.co.tolcroft.models.help.DebugManager;
@@ -128,10 +128,10 @@ public class SpotPrices implements DebugObject {
 
 			/* Declare variables */
 			FinanceData					myData;
-			Account.List.ListIterator 	myActIterator;
+			DataListIterator<Account> 	myActIterator;
 			Account 					myAccount;
 			SpotPrice					mySpot;
-			ListIterator 				myIterator;
+			DataListIterator<AcctPrice> myIterator;
 			AcctPrice					myPrice;
 			int							iDiff;
 			SpotPrice.Values			myValues;
@@ -229,9 +229,9 @@ public class SpotPrices implements DebugObject {
 		 * Calculate the Edit State for the list
 		 */
 		public void findEditState() {
-			ListIterator	myIterator;
-			AcctPrice 		myCurr;
-			EditState		myEdit;
+			DataListIterator<AcctPrice>	myIterator;
+			AcctPrice 					myCurr;
+			EditState					myEdit;
 			
 			/* Access the iterator */
 			myIterator 	= listIterator();
@@ -262,8 +262,8 @@ public class SpotPrices implements DebugObject {
 		 * Does the list have updates
 		 */
 		public boolean hasUpdates() {
-			ListIterator	myIterator;
-			AcctPrice 		myCurr;
+			DataListIterator<AcctPrice>	myIterator;
+			AcctPrice 					myCurr;
 			
 			/* Access the iterator */
 			myIterator 	= listIterator();
@@ -291,8 +291,8 @@ public class SpotPrices implements DebugObject {
 		 * Reset changes in an edit view
 		 */
 		public void resetChanges() {
-			ListIterator 	myIterator;
-			AcctPrice		myCurr;
+			DataListIterator<AcctPrice> myIterator;
+			AcctPrice					myCurr;
 				
 			/* Create an iterator for the list */
 			myIterator = listIterator(true);
@@ -445,9 +445,9 @@ public class SpotPrices implements DebugObject {
 				case NEW:
 				case CHANGED:
 				case RECOVERED:
-					return getPairValue(getValues().getPrice());
+					return getValues().getPriceValue();
 				case CLEAN:
-					return (getBase().isDeleted()) ? null : getPairValue(getValues().getPrice());
+					return (getBase().isDeleted()) ? null : getValues().getPriceValue();
 				default:
 					return null;
 			}
@@ -593,7 +593,7 @@ public class SpotPrices implements DebugObject {
 			 */
 			protected void updateSecurity() throws ModelException {}
 			protected void applySecurity() throws ModelException {}
-			protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws ModelException {}
+			protected void adoptSecurity(ControlKey pControl, EncryptedValues<AcctPrice> pBase) throws ModelException {}
 		}		
 	}
 }

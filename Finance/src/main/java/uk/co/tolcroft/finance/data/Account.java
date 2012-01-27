@@ -25,14 +25,17 @@ import java.util.Date;
 
 import uk.co.tolcroft.finance.data.FinanceData.LoadState;
 import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.ModelException.*;
 import uk.co.tolcroft.models.Decimal.*;
-import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EncryptedItem;
+import uk.co.tolcroft.models.data.EncryptedValues;
+import uk.co.tolcroft.models.data.EncryptedData;
+import uk.co.tolcroft.models.data.EncryptedData.EncryptedCharArray;
+import uk.co.tolcroft.models.data.EncryptedData.EncryptedString;
 import uk.co.tolcroft.models.data.HistoryValues;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.help.DebugDetail;
@@ -103,8 +106,8 @@ public class Account extends EncryptedItem<Account> {
 		
 	/* Access methods */
 	public  Values      getValues()     { return (Values)super.getValues(); }	
-	public  String      getName()      	{ return getPairValue(getValues().getName()); }
-	public  String      getDesc()      	{ return getPairValue(getValues().getDesc()); }
+	public  String      getName()      	{ return getValues().getNameValue(); }
+	public  String      getDesc()      	{ return getValues().getDescValue(); }
 	public  Account     getParent()    	{ return getValues().getParent(); }
 	public  Integer		getParentId()  	{ return getValues().getParentId(); }
 	public  Account     getAlias()    	{ return getValues().getAlias(); }
@@ -116,12 +119,12 @@ public class Account extends EncryptedItem<Account> {
 	public  int         getOrder()     	{ return getValues().getOrder(); }
 	public  DateDay     getMaturity()  	{ return getValues().getMaturity(); }
 	public  DateDay    	getClose()     	{ return getValues().getClose(); }
-	public  char[]    	getWebSite()	{ return getPairValue(getValues().getWebSite()); }
-	public  char[]    	getCustNo()		{ return getPairValue(getValues().getCustNo()); }
-	public  char[]    	getUserId()		{ return getPairValue(getValues().getUserId()); }
-	public  char[]    	getPassword()	{ return getPairValue(getValues().getPassword()); }
-	public  char[]    	getAccount()	{ return getPairValue(getValues().getAccount()); }
-	public  char[]    	getNotes()		{ return getPairValue(getValues().getNotes()); }
+	public  char[]    	getWebSite()	{ return getValues().getWebSiteValue(); }
+	public  char[]    	getCustNo()		{ return getValues().getCustNoValue(); }
+	public  char[]    	getUserId()		{ return getValues().getUserIdValue(); }
+	public  char[]    	getPassword()	{ return getValues().getPasswordValue(); }
+	public  char[]    	getAccount()	{ return getValues().getAccountValue(); }
+	public  char[]    	getNotes()		{ return getValues().getNotesValue(); }
 	public  boolean     isCloseable()  	{ return isCloseable; }
 	public  boolean     hasDebts()  	{ return hasDebts; }
 	public  boolean     isParent()  	{ return isParent; }
@@ -141,14 +144,14 @@ public class Account extends EncryptedItem<Account> {
 	}
 		
 	/* Encrypted bytes access */
-	public  byte[]	getNameBytes()      { return getPairBytes(getValues().getName()); }
-	public  byte[]  getDescBytes()      { return getPairBytes(getValues().getDesc()); }
-	public  byte[]  getWebSiteBytes()	{ return getPairBytes(getValues().getWebSite()); }
-	public  byte[]  getCustNoBytes()	{ return getPairBytes(getValues().getCustNo()); }
-	public  byte[]  getUserIdBytes()	{ return getPairBytes(getValues().getUserId()); }
-	public  byte[]  getPasswordBytes()	{ return getPairBytes(getValues().getPassword()); }
-	public  byte[]  getAccountBytes()	{ return getPairBytes(getValues().getAccount()); }
-	public  byte[]  getNotesBytes()		{ return getPairBytes(getValues().getNotes()); }
+	public  byte[]	getNameBytes()      { return getValues().getNameBytes(); }
+	public  byte[]  getDescBytes()      { return getValues().getDescBytes(); }
+	public  byte[]  getWebSiteBytes()	{ return getValues().getWebSiteBytes(); }
+	public  byte[]  getCustNoBytes()	{ return getValues().getCustNoBytes(); }
+	public  byte[]  getUserIdBytes()	{ return getValues().getUserIdBytes(); }
+	public  byte[]  getPasswordBytes()	{ return getValues().getPasswordBytes(); }
+	public  byte[]  getAccountBytes()	{ return getValues().getAccountBytes(); }
+	public  byte[]  getNotesBytes()		{ return getValues().getNotesBytes(); }
 	
 	/* Linking methods */
 	public Account     getBase() { return (Account)super.getBase(); }
@@ -280,22 +283,22 @@ public class Account extends EncryptedItem<Account> {
 				myString = pDetail.addDebugLink(myValues.getAlias(), myString);
 				break;
 			case FIELD_WEBSITE:	
-				myString += getCharArrayPairString(myValues.getWebSite()); 
+				myString += EncryptedData.getStringFormat(myValues.getWebSite()); 
 				break;
 			case FIELD_CUSTNO:	
-				myString += getCharArrayPairString(myValues.getCustNo()); 
+				myString += EncryptedData.getStringFormat(myValues.getCustNo()); 
 				break;
 			case FIELD_USERID:	
-				myString += getCharArrayPairString(myValues.getUserId()); 
+				myString += EncryptedData.getStringFormat(myValues.getUserId()); 
 				break;
 			case FIELD_PASSWORD:	
-				myString += getCharArrayPairString(myValues.getPassword()); 
+				myString += EncryptedData.getStringFormat(myValues.getPassword()); 
 				break;
 			case FIELD_ACCOUNT:	
-				myString += getCharArrayPairString(myValues.getAccount()); 
+				myString += EncryptedData.getStringFormat(myValues.getAccount()); 
 				break;
 			case FIELD_NOTES:	
-				myString += getCharArrayPairString(myValues.getNotes()); 
+				myString += EncryptedData.getStringFormat(myValues.getNotes()); 
 				break;
 			case FIELD_EVTFIRST:	
 				myString += null;
@@ -482,14 +485,14 @@ public class Account extends EncryptedItem<Account> {
 			myValues.setClose(new DateDay(pClose));
 				
 		/* Record the encrypted values */
-		myValues.setName(new StringPair(pName));
-		myValues.setDesc((pDesc == null) ? null : new StringPair(pDesc));
-		myValues.setWebSite((pWebSite == null) ? null : new CharArrayPair(pWebSite));
-		myValues.setCustNo((pCustNo == null) ? null : new CharArrayPair(pCustNo));
-		myValues.setUserId((pUserId == null) ? null : new CharArrayPair(pUserId));
-		myValues.setPassword((pPassword == null) ? null : new CharArrayPair(pPassword));
-		myValues.setAccount((pAccount == null) ? null : new CharArrayPair(pAccount));
-		myValues.setNotes((pNotes == null) ? null : new CharArrayPair(pNotes));
+		myValues.setName(pName);
+		myValues.setDesc(pDesc);
+		myValues.setWebSite(pWebSite);
+		myValues.setCustNo(pCustNo);
+		myValues.setUserId(pUserId);
+		myValues.setPassword(pPassword);
+		myValues.setAccount(pAccount);
+		myValues.setNotes(pNotes);
 		
 		/* Allocate the id */
 		pList.setNewId(this);				
@@ -530,14 +533,14 @@ public class Account extends EncryptedItem<Account> {
 		Values myValues	= getValues();
 
 		/* Record the encrypted values */
-		myValues.setName(new StringPair(sName));
-		myValues.setDesc((pDesc == null) ? null : new StringPair(pDesc));
-		myValues.setWebSite((pWebSite == null) ? null : new CharArrayPair(pWebSite));
-		myValues.setCustNo((pCustNo == null) ? null : new CharArrayPair(pCustNo));
-		myValues.setUserId((pUserId == null) ? null : new CharArrayPair(pUserId));
-		myValues.setPassword((pPassword == null) ? null : new CharArrayPair(pPassword));
-		myValues.setAccount((pAccount == null) ? null : new CharArrayPair(pAccount));
-		myValues.setNotes((pNotes == null) ? null : new CharArrayPair(pNotes));
+		myValues.setName(sName);
+		myValues.setDesc(pDesc);
+		myValues.setWebSite(pWebSite);
+		myValues.setCustNo(pCustNo);
+		myValues.setUserId(pUserId);
+		myValues.setPassword(pPassword);
+		myValues.setAccount(pAccount);
+		myValues.setNotes(pNotes);
 		
 		/* Store the IDs */
 		myValues.setActTypeId(uAcTypeId);
@@ -893,14 +896,14 @@ public class Account extends EncryptedItem<Account> {
 	 * @return Valuation of account
 	 */
 	public Money getValue(DateDay pDate) {
-		Event   					myCurr;
-		Event.List					myEvents;
-		Event.List.ListIterator 	myIterator;
-		int     					myResult;
-		Money 						myAmount;
-		Money 						myValue;
-		List 						myList = (List)getList();
-		FinanceData					mySet  = myList.getData();
+		Event   				myCurr;
+		Event.List				myEvents;
+		DataListIterator<Event> myIterator;
+		int     				myResult;
+		Money 					myAmount;
+		Money 					myValue;
+		List 					myList = (List)getList();
+		FinanceData				mySet  = myList.getData();
 		
 		/* Initialise money */
 		myValue = new Money(0);
@@ -1060,8 +1063,7 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pDesc the description 
 	 */
 	public void setDescription(String pDesc) throws ModelException {
-		if (pDesc != null) getValues().setDesc(new StringPair(pDesc));
-		else 			   getValues().setDesc(null);
+		getValues().setDesc(pDesc);
 	}
 	
 	/**
@@ -1101,8 +1103,7 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pName the new name 
 	 */
 	public void setAccountName(String pName) throws ModelException {
-		if (pName != null) getValues().setName(new StringPair(pName));
-		else 			   getValues().setName(null);
+		getValues().setName(pName);
 	}
 	
 	/**
@@ -1118,8 +1119,7 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pWebSite the new site 
 	 */
 	public void setWebSite(char[] pWebSite) throws ModelException {
-		if (pWebSite != null) getValues().setWebSite(new CharArrayPair(pWebSite));
-		else 				  getValues().setWebSite(null);
+		getValues().setWebSite(pWebSite);
 	}
 	
 	/**
@@ -1127,8 +1127,7 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pCustNo the new number 
 	 */
 	public void setCustNo(char[] pCustNo) throws ModelException {
-		if (pCustNo != null) getValues().setCustNo(new CharArrayPair(pCustNo));
-		else 				 getValues().setCustNo(null);
+		getValues().setCustNo(pCustNo);
 	}
 	
 	/**
@@ -1136,8 +1135,7 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pUserId the new id 
 	 */
 	public void setUserId(char[] pUserId) throws ModelException {
-		if (pUserId != null) getValues().setUserId(new CharArrayPair(pUserId));
-		else 				 getValues().setUserId(null);
+		getValues().setUserId(pUserId);
 	}
 	
 	/**
@@ -1145,8 +1143,7 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pPassword the new password 
 	 */
 	public void setPassword(char[] pPassword) throws ModelException {
-		if (pPassword != null) getValues().setPassword(new CharArrayPair(pPassword));
-		else 				   getValues().setPassword(null);
+		getValues().setPassword(pPassword);
 	}
 	
 	/**
@@ -1154,8 +1151,7 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pAccount the new account 
 	 */
 	public void setAccount(char[] pAccount) throws ModelException {
-		if (pAccount != null) getValues().setAccount(new CharArrayPair(pAccount));
-		else 				  getValues().setAccount(null);
+		getValues().setAccount(pAccount);
 	}
 	
 	/**
@@ -1163,8 +1159,7 @@ public class Account extends EncryptedItem<Account> {
 	 * @param pNotes the new notes 
 	 */
 	public void setNotes(char[] pNotes) throws ModelException {
-		if (pNotes != null) getValues().setNotes(new CharArrayPair(pNotes));
-		else 				getValues().setNotes(null);
+		getValues().setNotes(pNotes);
 	}
 	
 	/**
@@ -1397,9 +1392,9 @@ public class Account extends EncryptedItem<Account> {
 		 * Update account details after data update
 		 */
 		public void markActiveItems() throws ModelException {
-			ListIterator 	myIterator;
-			Account 		myCurr;
-			AccountType		myType;
+			DataListIterator<Account> 	myIterator;
+			Account 					myCurr;
+			AccountType					myType;
 					
 			/* Access the iterator */
 			myIterator = listIterator();
@@ -1465,10 +1460,10 @@ public class Account extends EncryptedItem<Account> {
 		 * @return The Item if present (or null)
 		 */
 		protected int countInstances(String pName) {
-			ListIterator 	myIterator;
-			Account 		myCurr;
-			int     		iDiff;
-			int     		iCount = 0;
+			DataListIterator<Account> 	myIterator;
+			Account 					myCurr;
+			int     					iDiff;
+			int     					iCount = 0;
 			
 			/* Access the iterator */
 			myIterator = listIterator(true);
@@ -1489,9 +1484,9 @@ public class Account extends EncryptedItem<Account> {
 		 * @return The Item if present (or null)
 		 */
 		public Account searchFor(String sName) {
-			ListIterator 	myIterator;
-			Account 		myCurr;
-			int     		iDiff;
+			DataListIterator<Account> 	myIterator;
+			Account 					myCurr;
+			int     					iDiff;
 			
 			/* Access the iterator */
 			myIterator = listIterator(true);
@@ -1511,8 +1506,8 @@ public class Account extends EncryptedItem<Account> {
 		 * @return the Market account
 		 */
 		public Account getMarket() {
-			ListIterator 	myIterator;
-			Account 		myCurr;
+			DataListIterator<Account> 	myIterator;
+			Account 					myCurr;
 			
 			/* Access the iterator */
 			myIterator = listIterator(true);
@@ -1531,8 +1526,8 @@ public class Account extends EncryptedItem<Account> {
 		 * @return the TaxMan account
 		 */
 		public Account getTaxMan() {
-			ListIterator 	myIterator;
-			Account 		myCurr;
+			DataListIterator<Account> 	myIterator;
+			Account 					myCurr;
 			
 			/* Access the iterator */
 			myIterator = listIterator(true);
@@ -1714,10 +1709,10 @@ public class Account extends EncryptedItem<Account> {
 		 * of the Rates/Patterns/Prices so as to validate the interrelationships
 		 */
 		public void validateLoadedAccounts() throws ModelException {
-			ListIterator myIterator;
-			Account      myCurr;
-			AccountType	 myType;
-			FinanceData	 myData = getData();
+			DataListIterator<Account> 	myIterator;
+			Account      				myCurr;
+			AccountType	 				myType;
+			FinanceData	 				myData = getData();
 		
 			/* Mark active items referenced by rates */
 			myData.getRates().markActiveItems();
@@ -1772,67 +1767,67 @@ public class Account extends EncryptedItem<Account> {
 	/**
 	 * Values for account
 	 */
-	public class Values extends EncryptedValues {
-		private Integer         theOrder     	= -1;
-		private Integer			theParentId  	= null;
-		private Integer			theAliasId   	= null;
-		private Integer		    theActTypeId 	= null;
-		private StringPair  	theName     	= null;
-		private StringPair  	theDesc     	= null;
-		private AccountType		theType			= null;
-		private DateDay       	theMaturity 	= null;
-		private DateDay       	theClose    	= null;
-		private Account			theParent		= null;
-		private Account			theAlias		= null;
-		private CharArrayPair	theWebSite		= null;
-		private CharArrayPair	theCustNo		= null;
-		private CharArrayPair	theUserId		= null;
-		private CharArrayPair	thePassword		= null;
-		private CharArrayPair	theAccount		= null;
-		private CharArrayPair	theNotes		= null;
+	public class Values extends EncryptedValues<Account> {
+		private Integer         	theOrder     	= -1;
+		private Integer				theParentId  	= null;
+		private Integer				theAliasId   	= null;
+		private Integer		    	theActTypeId 	= null;
+		private EncryptedString		theName     	= null;
+		private EncryptedString 	theDesc     	= null;
+		private AccountType			theType			= null;
+		private DateDay       		theMaturity 	= null;
+		private DateDay       		theClose    	= null;
+		private Account				theParent		= null;
+		private Account				theAlias		= null;
+		private EncryptedCharArray	theWebSite		= null;
+		private EncryptedCharArray	theCustNo		= null;
+		private EncryptedCharArray	theUserId		= null;
+		private EncryptedCharArray	thePassword		= null;
+		private EncryptedCharArray	theAccount		= null;
+		private EncryptedCharArray	theNotes		= null;
 		
 		/* Access methods */
-		public StringPair   	getName()      	{ return theName; }
-		public StringPair   	getDesc()      	{ return theDesc; }
-		public AccountType		getType()      	{ return theType; }
-		public DateDay       	getMaturity()  	{ return theMaturity; }
-		public DateDay       	getClose()     	{ return theClose; }
-		public Account			getParent()    	{ return theParent; }
-		public Account			getAlias()    	{ return theAlias; }
-		public CharArrayPair	getWebSite()	{ return theWebSite; }
-		public CharArrayPair	getCustNo()		{ return theCustNo; }
-		public CharArrayPair	getUserId()		{ return theUserId; }
-		public CharArrayPair	getPassword()	{ return thePassword; }
-		public CharArrayPair	getAccount()	{ return theAccount; }
-		public CharArrayPair	getNotes()		{ return theNotes; }
-		private Integer			getOrder()   	{ return theOrder; }
-		private Integer			getActTypeId()  { return theActTypeId; }
-		private Integer			getParentId()   { return theParentId; }
-		private Integer			getAliasId()    { return theAliasId; }
+		public EncryptedString 		getName()      	{ return theName; }
+		public EncryptedString 		getDesc()      	{ return theDesc; }
+		public AccountType			getType()      	{ return theType; }
+		public DateDay       		getMaturity()  	{ return theMaturity; }
+		public DateDay       		getClose()     	{ return theClose; }
+		public Account				getParent()    	{ return theParent; }
+		public Account				getAlias()    	{ return theAlias; }
+		public EncryptedCharArray	getWebSite()	{ return theWebSite; }
+		public EncryptedCharArray	getCustNo()		{ return theCustNo; }
+		public EncryptedCharArray	getUserId()		{ return theUserId; }
+		public EncryptedCharArray	getPassword()	{ return thePassword; }
+		public EncryptedCharArray	getAccount()	{ return theAccount; }
+		public EncryptedCharArray	getNotes()		{ return theNotes; }
+		private Integer				getOrder()   	{ return theOrder; }
+		private Integer				getActTypeId()  { return theActTypeId; }
+		private Integer				getParentId()   { return theParentId; }
+		private Integer				getAliasId()    { return theAliasId; }
 
 		/* Encrypted value access */
-		public  String	getNameValue()      { return getPairValue(getName()); }
-		public  String  getDescValue()      { return getPairValue(getDesc()); }
-		public  char[]  getWebSiteValue()	{ return getPairValue(getWebSite()); }
-		public  char[]  getCustNoValue()	{ return getPairValue(getCustNo()); }
-		public  char[]  getUserIdValue()	{ return getPairValue(getUserId()); }
-		public  char[]  getPasswordValue()	{ return getPairValue(getPassword()); }
-		public  char[]  getAccountValue()	{ return getPairValue(getAccount()); }
-		public  char[]  getNotesValue()		{ return getPairValue(getNotes()); }
+		public 	String  getNameValue()  	{ return EncryptedData.getValue(theName); }
+		public 	String  getDescValue()  	{ return EncryptedData.getValue(theDesc); }
+		public  char[]  getWebSiteValue()	{ return EncryptedData.getValue(getWebSite()); }
+		public  char[]  getCustNoValue()	{ return EncryptedData.getValue(getCustNo()); }
+		public  char[]  getUserIdValue()	{ return EncryptedData.getValue(getUserId()); }
+		public  char[]  getPasswordValue()	{ return EncryptedData.getValue(getPassword()); }
+		public  char[]  getAccountValue()	{ return EncryptedData.getValue(getAccount()); }
+		public  char[]  getNotesValue()		{ return EncryptedData.getValue(getNotes()); }
 		
 		/* Encrypted bytes access */
-		public  byte[]	getNameBytes()      { return getPairBytes(getName()); }
-		public  byte[]  getDescBytes()      { return getPairBytes(getDesc()); }
-		public  byte[]  getWebSiteBytes()	{ return getPairBytes(getWebSite()); }
-		public  byte[]  getCustNoBytes()	{ return getPairBytes(getCustNo()); }
-		public  byte[]  getUserIdBytes()	{ return getPairBytes(getUserId()); }
-		public  byte[]  getPasswordBytes()	{ return getPairBytes(getPassword()); }
-		public  byte[]  getAccountBytes()	{ return getPairBytes(getAccount()); }
-		public  byte[]  getNotesBytes()		{ return getPairBytes(getNotes()); }
+		public 	byte[]  getNameBytes()  	{ return EncryptedData.getBytes(theName); }
+		public 	byte[]  getDescBytes()  	{ return EncryptedData.getBytes(theDesc); }
+		public  byte[]  getWebSiteBytes()	{ return EncryptedData.getBytes(getWebSite()); }
+		public  byte[]  getCustNoBytes()	{ return EncryptedData.getBytes(getCustNo()); }
+		public  byte[]  getUserIdBytes()	{ return EncryptedData.getBytes(getUserId()); }
+		public  byte[]  getPasswordBytes()	{ return EncryptedData.getBytes(getPassword()); }
+		public  byte[]  getAccountBytes()	{ return EncryptedData.getBytes(getAccount()); }
+		public  byte[]  getNotesBytes()		{ return EncryptedData.getBytes(getNotes()); }
 		
-		public void setName(StringPair pName) {
+		public void setName(EncryptedString pName) {
 			theName      = pName; }
-		public void setDesc(StringPair pDesc) {
+		public void setDesc(EncryptedString pDesc) {
 			theDesc      = pDesc; }
 		public void setType(AccountType pType) {
 			theType      = pType; 
@@ -1854,19 +1849,37 @@ public class Account extends EncryptedItem<Account> {
 			theParentId	 = uParentId; }
 		private void setAliasId(Integer uAliasId) {
 			theAliasId	 = uAliasId; }
-		public void setWebSite(CharArrayPair pWebSite) {
+		public void setWebSite(EncryptedCharArray pWebSite) {
 			theWebSite		= pWebSite; }
-		public void setCustNo(CharArrayPair pCustNo) {
+		public void setCustNo(EncryptedCharArray pCustNo) {
 			theCustNo		= pCustNo; }
-		public void setUserId(CharArrayPair pUserId) {
+		public void setUserId(EncryptedCharArray pUserId) {
 			theUserId		= pUserId; }
-		public void setPassword(CharArrayPair pPassword) {
+		public void setPassword(EncryptedCharArray pPassword) {
 			thePassword		= pPassword; }
-		public void setAccount(CharArrayPair pAccount) {
+		public void setAccount(EncryptedCharArray pAccount) {
 			theAccount		= pAccount; }
-		public void setNotes(CharArrayPair pNotes) {
+		public void setNotes(EncryptedCharArray pNotes) {
 			theUserId		= pNotes; }
 
+		/* Set Encrypted Values */
+		protected 	void setName(String pName) throws ModelException		{ theName = createEncryptedString(theName, pName); }
+		protected	void setDesc(String pDesc) throws ModelException		{ theDesc = createEncryptedString(theDesc, pDesc); }
+		protected	void setWebSite(char[] pWebSite) throws ModelException	{ theWebSite = createEncryptedCharArray(theWebSite, pWebSite); }
+		protected	void setCustNo(char[] pCustNo) throws ModelException	{ theCustNo = createEncryptedCharArray(theCustNo, pCustNo); }
+		protected	void setUserId(char[] pUserId) throws ModelException	{ theUserId = createEncryptedCharArray(theUserId, pUserId); }
+		protected	void setPassword(char[] pPasswd) throws ModelException	{ thePassword = createEncryptedCharArray(thePassword, pPasswd); }
+		protected	void setAccount(char[] pAccount) throws ModelException	{ theAccount = createEncryptedCharArray(theAccount, pAccount); }
+		protected	void setNotes(char[] pNotes) throws ModelException		{ theNotes = createEncryptedCharArray(theNotes, pNotes); }
+		protected 	void setName(byte[] pName) throws ModelException		{ theName = createEncryptedString(pName); }
+		protected	void setDesc(byte[] pDesc) throws ModelException		{ theDesc = createEncryptedString(pDesc); }
+		protected	void setWebSite(byte[] pWebSite) throws ModelException	{ theWebSite = createEncryptedCharArray(pWebSite); }
+		protected	void setCustNo(byte[] pCustNo) throws ModelException	{ theCustNo = createEncryptedCharArray(pCustNo); }
+		protected	void setUserId(byte[] pUserId) throws ModelException	{ theUserId = createEncryptedCharArray(pUserId); }
+		protected	void setPassword(byte[] pPasswd) throws ModelException	{ thePassword = createEncryptedCharArray(pPasswd); }
+		protected	void setAccount(byte[] pAccount) throws ModelException	{ theAccount = createEncryptedCharArray(pAccount); }
+		protected	void setNotes(byte[] pNotes) throws ModelException		{ theNotes = createEncryptedCharArray(pNotes); }
+		
 		/* Constructor */
 		public Values() {}
 		public Values(Values pValues) { copyFrom(pValues); }
@@ -1926,12 +1939,12 @@ public class Account extends EncryptedItem<Account> {
 			theAlias      = myValues.getAlias();
 			theParentId   = myValues.getParentId();
 			theAliasId    = myValues.getAliasId();
-			theWebSite 	  = (myValues.getWebSite() != null)		? new CharArrayPair(myValues.getWebSite()) : null;
-			theCustNo 	  = (myValues.getCustNo() != null)		? new CharArrayPair(myValues.getCustNo()) : null;
-			theUserId 	  = (myValues.getUserId() != null)		? new CharArrayPair(myValues.getUserId()) : null;
-			thePassword	  = (myValues.getPassword() != null)	? new CharArrayPair(myValues.getPassword()) : null;
-			theAccount	  = (myValues.getAccount() != null)		? new CharArrayPair(myValues.getAccount()) : null;
-			theNotes	  = (myValues.getNotes() != null)		? new CharArrayPair(myValues.getNotes()) : null;
+			theWebSite 	  = myValues.getWebSite();
+			theCustNo 	  = myValues.getCustNo();
+			theUserId 	  = myValues.getUserId();
+			thePassword	  = myValues.getPassword();
+			theAccount	  = myValues.getAccount();
+			theNotes	  = myValues.getNotes();
 		}
 		public Difference	fieldChanged(int fieldNo, HistoryValues<Account> pOriginal) {
 			Values 	pValues = (Values)pOriginal;
@@ -1988,14 +2001,14 @@ public class Account extends EncryptedItem<Account> {
 		 */
 		protected void updateSecurity() throws ModelException {
 			/* Update the encryption */
-			theName = new StringPair(theName.getString());
-			if (theDesc     != null) theDesc		= new StringPair(theDesc.getString());
-			if (theWebSite  != null) theWebSite		= new CharArrayPair(theWebSite.getChars());
-			if (theCustNo   != null) theCustNo		= new CharArrayPair(theCustNo.getChars());
-			if (theUserId   != null) theUserId		= new CharArrayPair(theUserId.getChars());
-			if (thePassword != null) thePassword	= new CharArrayPair(thePassword.getChars());
-			if (theAccount  != null) theAccount		= new CharArrayPair(theAccount.getChars());
-			if (theNotes    != null) theNotes		= new CharArrayPair(theNotes.getChars());
+			theName 	= updateEncryptedString(theName);
+			theDesc 	= updateEncryptedString(theDesc);
+			theWebSite 	= updateEncryptedCharArray(theWebSite);
+			theCustNo 	= updateEncryptedCharArray(theCustNo);
+			theUserId 	= updateEncryptedCharArray(theUserId);
+			thePassword = updateEncryptedCharArray(thePassword);
+			theAccount 	= updateEncryptedCharArray(theAccount);
+			theNotes 	= updateEncryptedCharArray(theNotes);
 		}		
 
 		/**
@@ -2003,32 +2016,32 @@ public class Account extends EncryptedItem<Account> {
 		 */
 		protected void applySecurity() throws ModelException {
 			/* Apply the encryption */
-			theName.encryptPair(null);
-			if (theDesc     != null) theDesc.encryptPair(null);
-			if (theWebSite  != null) theWebSite.encryptPair(null);
-			if (theCustNo   != null) theCustNo.encryptPair(null);
-			if (theUserId   != null) theUserId.encryptPair(null);
-			if (thePassword != null) thePassword.encryptPair(null);
-			if (theAccount  != null) theAccount.encryptPair(null);
-			if (theNotes    != null) theNotes.encryptPair(null);
+			applyEncryption(theName);
+			applyEncryption(theDesc);
+			applyEncryption(theWebSite);
+			applyEncryption(theCustNo);
+			applyEncryption(theUserId);
+			applyEncryption(thePassword);
+			applyEncryption(theAccount);
+			applyEncryption(theNotes);
 		}		
 
 		/**
 		 * Adopt encryption from base
 		 * @param pBase the Base values
 		 */
-		protected void adoptSecurity(ControlKey pControl, EncryptedValues pBase) throws ModelException {
+		protected void adoptSecurity(EncryptedValues<Account> pBase) throws ModelException {
 			Values myBase = (Values)pBase;
 
 			/* Apply the encryption */
-			theName.encryptPair(myBase.getName());
-			if (theDesc     != null) theDesc.encryptPair(myBase.getDesc());
-			if (theWebSite  != null) theWebSite.encryptPair(myBase.getWebSite());
-			if (theCustNo   != null) theCustNo.encryptPair(myBase.getCustNo());
-			if (theUserId   != null) theUserId.encryptPair(myBase.getUserId());
-			if (thePassword != null) thePassword.encryptPair(myBase.getPassword());
-			if (theAccount  != null) theAccount.encryptPair(myBase.getAccount());
-			if (theNotes    != null) theNotes.encryptPair(myBase.getNotes());
+			adoptEncryption(theName, 		myBase.getName());
+			adoptEncryption(theDesc, 		myBase.getDesc());
+			adoptEncryption(theWebSite, 	myBase.getWebSite());
+			adoptEncryption(theCustNo, 		myBase.getCustNo());
+			adoptEncryption(theUserId, 		myBase.getUserId());
+			adoptEncryption(thePassword, 	myBase.getPassword());
+			adoptEncryption(theAccount, 	myBase.getAccount());
+			adoptEncryption(theNotes, 		myBase.getNotes());
 		}		
 	}
 }
