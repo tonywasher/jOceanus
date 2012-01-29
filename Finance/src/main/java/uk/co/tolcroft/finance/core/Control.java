@@ -34,7 +34,7 @@ public class Control {
 			
 		}
 		catch (Throwable e) {
-			System.out.println("Help");
+			e.printStackTrace();
 		}
 	}
 	

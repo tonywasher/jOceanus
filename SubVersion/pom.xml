@@ -9,7 +9,7 @@
   	<dependency>
   		<groupId>org.tmatesoft.svnkit</groupId>
   		<artifactId>svnkit</artifactId>
-  		<version>1.3.5</version>
+  		<version>1.3.7</version>
   	</dependency>
   	<dependency>
   		<groupId>uk.co.tolcroft.finapp</groupId>
@@ -50,16 +50,62 @@
     <tag>HEAD</tag>
     <url>http://127.0.0.1/websvn/Finance</url>
   </scm>
+  <repositories>
+    <repository>
+      <id>svnkit</id>
+      <name>SubVersion Repository</name>
+      <url>http://maven.tmatesoft.com/content/repositories/releases</url>
+    </repository>
+  </repositories>
+  <properties>
+    <backup-dir>../../backup/lib</backup-dir>
+  </properties>
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.4</version>
+        <executions>
+          <execution>
+            <id>copy-installed</id>
+            <phase>install</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>${project.artifactId}</artifactId>
+                  <version>${project.version}</version>
+                  <type>${project.packaging}</type>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${backup-dir}</outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>install</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${backup-dir}</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.1</version>
+        <version>2.3.2</version>
         <configuration>
           <archive>
             <manifest>
-              <packageName>uk/co/tolcroft/SubVersion/</packageName>
+              <packageName>uk.co.tolcroft.SubVersion</packageName>
+              <addClasspath>true</addClasspath>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
           </archive>
