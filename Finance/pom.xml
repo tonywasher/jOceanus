@@ -26,7 +26,7 @@
     <license>
       <name>Apache 2</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
+      <distribution>manual</distribution>
     </license>
   </licenses>
   <developers>
@@ -50,20 +50,60 @@
     <tag>HEAD</tag>
     <url>http://127.0.0.1/websvn/Finance</url>
   </scm>
+  <properties>
+    <backup-dir>../../backup</backup-dir>
+    <backuplib-dir>../../backup/lib</backuplib-dir>
+  </properties>
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.4</version>
+        <executions>
+          <execution>
+            <id>copy-installed</id>
+            <phase>install</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>${project.artifactId}</artifactId>
+                  <version>${project.version}</version>
+                  <type>${project.packaging}</type>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${backup-dir}</outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>install</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${backuplib-dir}</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.1</version>
+        <version>2.3.2</version>
         <configuration>
           <archive>
             <manifest>
 	      <mainClass>uk.co.tolcroft.finance.core.Control</mainClass>
-              <packageName>uk/co/tolcroft/Finance/</packageName>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <packageName>uk.co.tolcroft.Finance</packageName>
+              <addClasspath>true</addClasspath>
+              <classpathPrefix>lib/</classpathPrefix>                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
-          </archive>
+          </archive>   
         </configuration>
       </plugin>
     </plugins>
