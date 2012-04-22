@@ -228,6 +228,7 @@ public class Statement implements DebugObject {
 			setStyle(ListStyle.EDIT);
 			theStatement = pStatement;
 			setBase(theStatement.theView.getData().getEvents());
+			setRange(theStatement.getDateRange());
 		}
 		
 		/* Obtain extract lists. */
