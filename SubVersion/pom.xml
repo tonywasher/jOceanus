@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>uk.co.tolcroft.finapp</groupId>
   <artifactId>finsvn</artifactId>
-  <version>v1.0.0-b1</version>
+  <version>v1.1.0-SNAPSHOT</version>
   <name>SubVersion Interface</name>
   <description>SubVersion Utilities for Finance Application</description>
   <dependencies>
@@ -14,12 +14,12 @@
   	<dependency>
   		<groupId>uk.co.tolcroft.finapp</groupId>
   		<artifactId>finjira</artifactId>
-  		<version>v1.0.0-b1</version>
+  		<version>v1.1.0-SNAPSHOT</version>
   	</dependency>
   	<dependency>
   		<groupId>uk.co.tolcroft.finapp</groupId>
   		<artifactId>finmdl</artifactId>
-  		<version>v1.0.0-b1</version>
+  		<version>v1.1.0-SNAPSHOT</version>
   	</dependency>
   </dependencies>
   <licenses>

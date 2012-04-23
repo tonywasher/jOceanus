@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>uk.co.tolcroft.finapp</groupId>
   <artifactId>finmdl</artifactId>
-  <version>v1.0.0-b1</version>
+  <version>v1.1.0-SNAPSHOT</version>
   <name>Finance Models</name>
   <description>Generic Framework for Finance Application</description>
   <dependencies>
@@ -24,7 +24,7 @@
   	<dependency>
   		<groupId>net.sourceforge.JDateButton</groupId>
   		<artifactId>JDateButton</artifactId>
-  		<version>v1.0.0-b1</version>
+  		<version>v1.1.0-SNAPSHOT</version>
   	</dependency>
   </dependencies>
   <licenses>
