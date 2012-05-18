@@ -25,218 +25,240 @@ import java.util.HashMap;
 
 import javax.swing.JFrame;
 
+import net.sourceforge.JDataWalker.DebugManager;
+import net.sourceforge.JDataWalker.DebugManager.DebugEntry;
+import net.sourceforge.JDataWalker.ModelException;
+import net.sourceforge.JGordianKnot.SecureManager;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
-import uk.co.tolcroft.models.help.DebugManager;
-import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
-import uk.co.tolcroft.models.security.SecureManager;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.threads.WorkerThread;
 import uk.co.tolcroft.models.ui.StatusBar;
-import uk.co.tolcroft.models.ModelException;
 
 public abstract class DataControl<T extends DataSet<T>> {
-	/* Debug Names */
-	public static final String DebugViews		= "DataViews";
-	public static final String DebugData		= "UnderlyingData";
-	public static final String DebugUpdates		= "DataUpdates";
-	public static final String DebugAnalysis	= "Analysis";
-	public static final String DebugError		= "Error";
+    /* Debug Names */
+    public static final String DebugViews = "DataViews";
+    public static final String DebugData = "UnderlyingData";
+    public static final String DebugUpdates = "DataUpdates";
+    public static final String DebugAnalysis = "Analysis";
+    public static final String DebugError = "Error";
 
-	/* Properties */
-	private T				theData			= null;
-	private T				theUpdates		= null;
-	private ModelException	theError		= null;
-	private StatusBar		theStatusBar	= null;
-	private JFrame			theFrame		= null;
-    private SecureManager	theSecurity		= null;
-    private DebugManager	theDebugMgr		= null;
-   
-    private HashMap<String, DebugEntry>	theMap	= null;
-	
+    /* Properties */
+    private T theData = null;
+    private T theUpdates = null;
+    private ModelException theError = null;
+    private StatusBar theStatusBar = null;
+    private JFrame theFrame = null;
+    private SecureManager theSecurity = null;
+    private DebugManager theDebugMgr = null;
+
+    private HashMap<String, DebugEntry> theMap = null;
+
     /**
      * Constructor
      */
     protected DataControl() {
-    	/* Create the Secure Manager */
-    	theSecurity = new SecureManager();
-    	
-    	/* Create the Debug Map */
-    	theMap = new HashMap<String, DebugEntry>();
+        /* Create the Secure Manager */
+        theSecurity = new SecureManager();
+
+        /* Create the Debug Map */
+        theMap = new HashMap<String, DebugEntry>();
     }
-    
-	/**
-	 * Record new DataSet
-	 * @param pData the new DataSet
-	 */
-	public void			setData(T pData)	{
-		/* If we already have data */
-		if (theData != null) {
-			/* Bump the generation */
-			pData.setGeneration(theData.getGeneration()+1);
-		}
-		
-		/* Store the data */
-		theData  = pData;
-		
-		/* Update the Debug entry */
-		DebugEntry myDebug = getDebugEntry(DebugData);
-		myDebug.setObject(pData);
-	}
 
-	/**
-	 * Obtain current DataSet
-	 * @return the current DataSet
-	 */
-	public T			getData()		{ return theData; }
+    /**
+     * Record new DataSet
+     * @param pData the new DataSet
+     */
+    public void setData(T pData) {
+        /* If we already have data */
+        if (theData != null) {
+            /* Bump the generation */
+            pData.setGeneration(theData.getGeneration() + 1);
+        }
 
-	/**
-	 * Record new Updates
-	 * @param pUpdates the new Updates
-	 */
-	protected void		setUpdates(T pUpdates)	{
-		/* Store the updates */
-		theUpdates  = pUpdates;
-		
-		/* Update the Debug entry */
-		DebugEntry myDebug = getDebugEntry(DebugUpdates);
-		myDebug.setObject(pUpdates);
-	}
+        /* Store the data */
+        theData = pData;
 
-	/**
-	 * Obtain current Updates
-	 * @return the current Updates
-	 */
-	public T			getUpdates()	{ return theUpdates; }
+        /* Update the Debug entry */
+        DebugEntry myDebug = getDebugEntry(DebugData);
+        myDebug.setObject(pData);
+    }
 
-	/**
-	 * Obtain a new ThreadStatus
-	 * @param the thread to get the status for 
-	 * @return a new ThreadStatus
-	 */
-	public abstract ThreadStatus<T>	allocateThreadStatus(WorkerThread<?>	pThread);
+    /**
+     * Obtain current DataSet
+     * @return the current DataSet
+     */
+    public T getData() {
+        return theData;
+    }
 
-	/**
-	 * Set new Error
-	 * @param pError the new Error
-	 */
-	protected void		setError(ModelException pError)	{ theError  = pError; }
+    /**
+     * Record new Updates
+     * @param pUpdates the new Updates
+     */
+    protected void setUpdates(T pUpdates) {
+        /* Store the updates */
+        theUpdates = pUpdates;
 
-	/**
-	 * Obtain current updates
-	 * @return the current Updates
-	 */
-	public ModelException	getError()		{ return theError; }
+        /* Update the Debug entry */
+        DebugEntry myDebug = getDebugEntry(DebugUpdates);
+        myDebug.setObject(pUpdates);
+    }
 
-	/**
-	 * Set StatusBar
-	 * @param pStatusBar the StatusBar
-	 */
-	public void			setStatusBar(StatusBar pStatusBar)	{ theStatusBar = pStatusBar; }
+    /**
+     * Obtain current Updates
+     * @return the current Updates
+     */
+    public T getUpdates() {
+        return theUpdates;
+    }
 
-	/**
-	 * Obtain StatusBar
-	 * @return the StatusBar
-	 */
-	public StatusBar	getStatusBar()	{ return theStatusBar; }
+    /**
+     * Obtain a new ThreadStatus
+     * @param pThread the thread to get the status for
+     * @return a new ThreadStatus
+     */
+    public abstract ThreadStatus<T> allocateThreadStatus(WorkerThread<?> pThread);
 
-	/**
-	 * Set Frame
-	 * @param pFrame the frame
-	 */
-	public void		setFrame(JFrame pFrame)	{ theFrame = pFrame; }
+    /**
+     * Set new Error
+     * @param pError the new Error
+     */
+    protected void setError(ModelException pError) {
+        theError = pError;
+    }
 
-	/**
-	 * Obtain Frame
-	 * @return the Frame
-	 */
-	public JFrame		getFrame()		{ return theFrame; }
+    /**
+     * Obtain current updates
+     * @return the current Updates
+     */
+    public ModelException getError() {
+        return theError;
+    }
 
-	/**
-	 * Obtain Secure Manager
-	 * @return the Secure Manager
-	 */
-	public SecureManager		getSecurity() 		{ return theSecurity; }
-	
-	/**
-	 * Set Debug Manager
-	 * @param pDebugMgr the Debug Manager
-	 */
-	protected void				setDebugMgr(DebugManager pDebug)	{ 
-		/* Store the Manager */
-		theDebugMgr = pDebug;
-		
-		/* Create Debug Entries */
-		DebugEntry myViews		= getDebugEntry(DebugViews);
-		DebugEntry myData		= getDebugEntry(DebugData);
-		DebugEntry myUpdates	= getDebugEntry(DebugUpdates);
-		DebugEntry myAnalysis	= getDebugEntry(DebugAnalysis);
-		DebugEntry myError		= getDebugEntry(DebugError);
-		
-		/* Create the structure */
-		myViews.addAsRootChild();
-		myAnalysis.addAsRootChild();
-		myData.addAsChildOf(myViews);
-		myUpdates.addAsChildOf(myViews);
-		myError.addAsRootChild();
-		
-		/* Hide the Error Entry */
-		myError.hideEntry();
-	}
+    /**
+     * Set StatusBar
+     * @param pStatusBar the StatusBar
+     */
+    public void setStatusBar(StatusBar pStatusBar) {
+        theStatusBar = pStatusBar;
+    }
 
-	/**
-	 * Obtain Debug Manager
-	 * @return the Debug Manager
-	 */
-	public DebugManager			getDebugMgr() 		{ return theDebugMgr; }
-	
-	/**
-	 * Add Debug Entry
-	 * @param pName the Name of the entry
-	 * @return the Debug Entry
-	 */
-	public DebugEntry			getDebugEntry(String pName) {
-		/* Access any existing entry */
-		DebugEntry myEntry = theMap.get(pName);
-		
-		/* If the entry does not exist */
-		if (myEntry == null) {
-			/* Build the entry and add to the map */
-			myEntry = theDebugMgr.new DebugEntry(pName);
-			theMap.put(pName, myEntry);
-		}
-		
-		/* Return the entry */
-		return myEntry;
-	}
-	
-	/**
-	 * Obtain SpreadSheet object
-	 * @return SpreadSheet object
-	 */
-	public abstract SpreadSheet<T>	getSpreadSheet();
+    /**
+     * Obtain StatusBar
+     * @return the StatusBar
+     */
+    public StatusBar getStatusBar() {
+        return theStatusBar;
+    }
 
-	/**
-	 * Obtain Database object
-	 * @return database object
-	 */
-	public abstract Database<T>		getDatabase() throws ModelException;
+    /**
+     * Set Frame
+     * @param pFrame the frame
+     */
+    public void setFrame(JFrame pFrame) {
+        theFrame = pFrame;
+    }
 
-	/**
-	 * Obtain DataSet object
-	 * @return dataSet object
-	 */
-	public abstract T				getNewData();
-	
-	/**
-	 * Refresh the Windows 
-	 */
-	protected abstract void refreshWindow();
+    /**
+     * Obtain Frame
+     * @return the Frame
+     */
+    public JFrame getFrame() {
+        return theFrame;
+    }
 
-	/**
-	 * Analyse the data in the view
-	 * @param bPreserve preserve any error
-	 */ 
-	protected abstract boolean analyseData(boolean bPreserve);
+    /**
+     * Obtain Secure Manager
+     * @return the Secure Manager
+     */
+    public SecureManager getSecurity() {
+        return theSecurity;
+    }
+
+    /**
+     * Set Debug Manager
+     * @param pDebugMgr the Debug Manager
+     */
+    protected void setDebugMgr(DebugManager pDebugMgr) {
+        /* Store the Manager */
+        theDebugMgr = pDebugMgr;
+
+        /* Create Debug Entries */
+        DebugEntry myViews = getDebugEntry(DebugViews);
+        DebugEntry myData = getDebugEntry(DebugData);
+        DebugEntry myUpdates = getDebugEntry(DebugUpdates);
+        DebugEntry myAnalysis = getDebugEntry(DebugAnalysis);
+        DebugEntry myError = getDebugEntry(DebugError);
+
+        /* Create the structure */
+        myViews.addAsRootChild();
+        myAnalysis.addAsRootChild();
+        myData.addAsChildOf(myViews);
+        myUpdates.addAsChildOf(myViews);
+        myError.addAsRootChild();
+
+        /* Hide the Error Entry */
+        myError.hideEntry();
+    }
+
+    /**
+     * Obtain Debug Manager
+     * @return the Debug Manager
+     */
+    public DebugManager getDebugMgr() {
+        return theDebugMgr;
+    }
+
+    /**
+     * Add Debug Entry
+     * @param pName the Name of the entry
+     * @return the Debug Entry
+     */
+    public DebugEntry getDebugEntry(String pName) {
+        /* Access any existing entry */
+        DebugEntry myEntry = theMap.get(pName);
+
+        /* If the entry does not exist */
+        if (myEntry == null) {
+            /* Build the entry and add to the map */
+            myEntry = theDebugMgr.new DebugEntry(pName);
+            theMap.put(pName, myEntry);
+        }
+
+        /* Return the entry */
+        return myEntry;
+    }
+
+    /**
+     * Obtain SpreadSheet object
+     * @return SpreadSheet object
+     */
+    public abstract SpreadSheet<T> getSpreadSheet();
+
+    /**
+     * Obtain Database object
+     * @return database object
+     * @throws ModelException
+     */
+    public abstract Database<T> getDatabase() throws ModelException;
+
+    /**
+     * Obtain DataSet object
+     * @return dataSet object
+     */
+    public abstract T getNewData();
+
+    /**
+     * Refresh the Windows
+     */
+    protected abstract void refreshWindow();
+
+    /**
+     * Analyse the data in the view
+     * @param bPreserve preserve any error
+     * @return success true/false
+     */
+    protected abstract boolean analyseData(boolean bPreserve);
 }

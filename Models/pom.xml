@@ -9,17 +9,17 @@
   	<dependency>
   		<groupId>org.apache.poi</groupId>
   		<artifactId>poi</artifactId>
-  		<version>3.7</version>
+  		<version>3.8</version>
   	</dependency>
   	<dependency>
   		<groupId>org.bouncycastle</groupId>
-  		<artifactId>bcprov-jdk16</artifactId>
-  		<version>1.46</version>
+  		<artifactId>bcprov-jdk15on</artifactId>
+  		<version>1.47</version>
   	</dependency>
   	<dependency>
   		<groupId>microsoft</groupId>
   		<artifactId>sqljdbc</artifactId>
-  		<version>3.0</version>
+  		<version>4.0</version>
   	</dependency>
   	<dependency>
   		<groupId>net.sourceforge.JDateButton</groupId>

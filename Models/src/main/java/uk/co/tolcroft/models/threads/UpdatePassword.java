@@ -25,44 +25,43 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.views.DataControl;
 
 public class UpdatePassword<T extends DataSet<T>> extends LoaderThread<T> {
-	/* Task description */
-	private static String  	theTask		= "Update Password";
+    /* Task description */
+    private static String theTask = "Update Password";
 
-	/* Properties */
-	private DataControl<T>	theControl	 = null;
-	private ThreadStatus<T>	theStatus    = null;
+    /* Properties */
+    private DataControl<T> theControl = null;
+    private ThreadStatus<T> theStatus = null;
 
-	/* Constructor (Event Thread)*/
-	public UpdatePassword(DataControl<T> pControl) {
-		/* Call super-constructor */
-		super(theTask, pControl);
-		
-		/* Store passed parameters */
-		theControl	  = pControl;
+    /* Constructor (Event Thread) */
+    public UpdatePassword(DataControl<T> pControl) {
+        /* Call super-constructor */
+        super(theTask, pControl);
 
-		/* Create the status */
-		theStatus = new ThreadStatus<T>(this, theControl);
+        /* Store passed parameters */
+        theControl = pControl;
 
-		/* Show the Status bar */
-		showStatusBar();
-	}
+        /* Create the status */
+        theStatus = new ThreadStatus<T>(this, theControl);
 
+        /* Show the Status bar */
+        showStatusBar();
+    }
 
-	@Override
-	public T performTask() throws Throwable {
-		T			myData;
+    @Override
+    public T performTask() throws Throwable {
+        T myData;
 
-		/* Initialise the status window */
-		theStatus.initTask("Updating Password");
+        /* Initialise the status window */
+        theStatus.initTask("Updating Password");
 
-		/* Access Data */
-		myData 	= theControl.getData();
-		myData	= myData.getDeepCopy();
+        /* Access Data */
+        myData = theControl.getData();
+        myData = myData.getDeepCopy();
 
-		/* Update password */
-		myData.updateSecurityControl(theStatus, "Database");
+        /* Update password */
+        myData.updatePasswordHash(theStatus, "Database");
 
-		/* Return null */
-		return myData;
-	}
+        /* Return null */
+        return myData;
+    }
 }

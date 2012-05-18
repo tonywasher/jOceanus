@@ -23,113 +23,110 @@ package uk.co.tolcroft.models.threads;
 
 import java.io.File;
 
-import uk.co.tolcroft.models.ModelException;
-import uk.co.tolcroft.models.ModelException.ExceptionClass;
-import uk.co.tolcroft.models.PropertySet.PropertyManager;
+import net.sourceforge.JDataWalker.ModelException;
+import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.sheets.BackupProperties;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.views.DataControl;
 
 public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
-	/* Task description */
-	private static String  	theTask		= "Extract Creation";
+    /* Task description */
+    private static String theTask = "Extract Creation";
 
-	/* Properties */
-	private DataControl<T>	theControl	= null;
-	private ThreadStatus<T>	theStatus	= null;
+    /* Properties */
+    private DataControl<T> theControl = null;
+    private ThreadStatus<T> theStatus = null;
 
-	/* Constructor (Event Thread)*/
-	public CreateExtract(DataControl<T> pControl) {
-		/* Call super-constructor */
-		super(theTask, pControl.getStatusBar());
-		
-		/* Store passed parameters */
-		theControl	= pControl;
+    /* Constructor (Event Thread) */
+    public CreateExtract(DataControl<T> pControl) {
+        /* Call super-constructor */
+        super(theTask, pControl.getStatusBar());
 
-		/* Create the status */
-		theStatus = new ThreadStatus<T>(this, theControl);
+        /* Store passed parameters */
+        theControl = pControl;
 
-		/* Show the status window */
-		showStatusBar();
-	}
+        /* Create the status */
+        theStatus = new ThreadStatus<T>(this, theControl);
 
-	@Override
-	public Void performTask() throws Throwable {
-		T				myData	  	= null;
-		DataSet<T>		myDiff	  	= null;
-		SpreadSheet<T>	mySheet		= null;
-		boolean			doDelete  	= false;
-		File			myFile	  	= null;
+        /* Show the status window */
+        showStatusBar();
+    }
 
-		/* Catch Exceptions */
-		try {
-			/* Initialise the status window */
-			theStatus.initTask("Creating Extract");
+    @Override
+    public Void performTask() throws Throwable {
+        T myData = null;
+        DataSet<T> myDiff = null;
+        SpreadSheet<T> mySheet = null;
+        boolean doDelete = false;
+        File myFile = null;
 
-			/* Access the Sheet properties */
-			BackupProperties myProperties = (BackupProperties)PropertyManager.getPropertySet(BackupProperties.class);
+        /* Catch Exceptions */
+        try {
+            /* Initialise the status window */
+            theStatus.initTask("Creating Extract");
 
-			/* Determine the archive name */
-			File 	myBackupDir	= new File(myProperties.getStringValue(BackupProperties.nameBackupDir));
-			String 	myPrefix	= myProperties.getStringValue(BackupProperties.nameBackupPfix);
+            /* Access the Sheet properties */
+            BackupProperties myProperties = (BackupProperties) PreferenceManager
+                    .getPreferenceSet(BackupProperties.class);
 
-			/* Determine the name of the file to build */
-			myFile = new File(myBackupDir.getPath() + File.separator + myPrefix + ".xls");
-			
-			/* Create backup */
-			mySheet = theControl.getSpreadSheet();
-			mySheet.createExtract(theStatus, 
-							  	  theControl.getData(), 
-							  	  myFile);
+            /* Determine the archive name */
+            File myBackupDir = new File(myProperties.getStringValue(BackupProperties.nameBackupDir));
+            String myPrefix = myProperties.getStringValue(BackupProperties.nameBackupPfix);
 
-			/* File created, so delete on error */
-			doDelete = true;
+            /* Determine the name of the file to build */
+            myFile = new File(myBackupDir.getPath() + File.separator + myPrefix + ".xls");
 
-			/* Initialise the status window */
-			theStatus.initTask("Reading Extract");
+            /* Create backup */
+            mySheet = theControl.getSpreadSheet();
+            mySheet.createExtract(theStatus, theControl.getData(), myFile);
 
-			/* .xls will have been added to the file */
-			myFile 	= new File(myFile.getPath() + ".xls");
+            /* File created, so delete on error */
+            doDelete = true;
 
-			/* Load workbook */
-			myData   = mySheet.loadExtract(theStatus, 
-										   myFile);
+            /* Initialise the status window */
+            theStatus.initTask("Reading Extract");
 
-			/* Initialise the status window */
-			theStatus.initTask("Re-applying Security");
-		
-			/* Initialise the security, from the original data */
-			myData.initialiseSecurity(theStatus, theControl.getData());
-			
-			/* Initialise the status window */
-			theStatus.initTask("Verifying Extract");
-		
-			/* Analyse the Data to ensure that close dates are updated */
-			myData.analyseData(theControl);
-			
-			/* Create a difference set between the two data copies */
-			myDiff = myData.getDifferenceSet(theControl.getData());
+            /* .xls will have been added to the file */
+            myFile = new File(myFile.getPath() + ".xls");
 
-			/* If the difference set is non-empty */
-			if (!myDiff.isEmpty()) {
-				/* Throw an exception */
-				throw new ModelException(ExceptionClass.DATA,
-									myDiff,
-									"Extract is inconsistent");
-			}
-		}
-		
-		/* Catch any exceptions */
-		catch (Throwable e) {
-			/* Delete the file */
-			if (doDelete) myFile.delete();
+            /* Load workbook */
+            myData = mySheet.loadExtract(theStatus, myFile);
 
-			/* Report the failure */
-			throw e;
-		}	
+            /* Initialise the status window */
+            theStatus.initTask("Re-applying Security");
 
-		/* Return nothing */
-		return null;
-	}
+            /* Initialise the security, from the original data */
+            myData.initialiseSecurity(theStatus, theControl.getData());
+
+            /* Initialise the status window */
+            theStatus.initTask("Verifying Extract");
+
+            /* Analyse the Data to ensure that close dates are updated */
+            myData.analyseData(theControl);
+
+            /* Create a difference set between the two data copies */
+            myDiff = myData.getDifferenceSet(theControl.getData());
+
+            /* If the difference set is non-empty */
+            if (!myDiff.isEmpty()) {
+                /* Throw an exception */
+                throw new ModelException(ExceptionClass.DATA, myDiff, "Extract is inconsistent");
+            }
+        }
+
+        /* Catch any exceptions */
+        catch (Throwable e) {
+            /* Delete the file */
+            if (doDelete)
+                myFile.delete();
+
+            /* Report the failure */
+            throw e;
+        }
+
+        /* Return nothing */
+        return null;
+    }
 }

@@ -21,742 +21,859 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
-import uk.co.tolcroft.models.DateDay;
-import uk.co.tolcroft.models.Difference;
-import uk.co.tolcroft.models.ModelException;
-import uk.co.tolcroft.models.Decimal;
-import uk.co.tolcroft.models.Decimal.Dilution;
-import uk.co.tolcroft.models.Decimal.Money;
-import uk.co.tolcroft.models.Decimal.Price;
-import uk.co.tolcroft.models.Decimal.Rate;
-import uk.co.tolcroft.models.Decimal.Units;
-import uk.co.tolcroft.models.Utils;
-import uk.co.tolcroft.models.ModelException.ExceptionClass;
-import uk.co.tolcroft.models.security.SecurityControl;
+import java.util.Arrays;
+
+import net.sourceforge.JDataWalker.DataConverter;
+import net.sourceforge.JDataWalker.Difference;
+import net.sourceforge.JDataWalker.ModelException;
+import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDecimal.Decimal;
+import net.sourceforge.JDecimal.Decimal.Dilution;
+import net.sourceforge.JDecimal.Decimal.Money;
+import net.sourceforge.JDecimal.Decimal.Price;
+import net.sourceforge.JDecimal.Decimal.Rate;
+import net.sourceforge.JDecimal.Decimal.Units;
+import net.sourceforge.JGordianKnot.CipherSet;
 
 public class EncryptedData {
-	/**
-	 * Obtain value for a field (which may be null)
-	 * @param pField the field to obtain the value for
-	 * @return the value
-	 */
-	public static <T> T getValue(EncryptedField<T> pField) {
-		return (pField == null) ? null : pField.getValue(); }
-	
-	/**
-	 * Obtain encrypted bytes for a field (which may be null)
-	 * @param pField the field to obtain the encrypted bytes for
-	 * @return the value
-	 */
-	public static byte[] getBytes(EncryptedField<?> pField) {
-		return (pField == null) ? null : pField.getBytes(); }
-	
-	/**
-	 * Obtain string representation of EncryptedCharArray
-	 * @param pArray the charArray to obtain the string for
-	 * @return the string
-	 */
-	public static String getStringFormat(EncryptedCharArray pArray) {
-		return (pArray == null) ? null : new String(pArray.getValue()); }
-	
-	/**
-	 * The generic encrypted object class 
-	 */
-	protected static abstract class EncryptedField<T> {
-		/**
-		 * Encryption Control
-		 */
-		private ControlKey	theControlKey	= null;
-	
-		/**
-		 * Encrypted value
-		 */
-		private byte[]		theEncrypted	= null;
-	
-		/**
-		 * Decrypted value
-		 */
-		private T			theDecrypted	= null;
-	
-		/**
-		 * Constructor
-		 */
-		private EncryptedField() {}
-		
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pEncrypted the encrypted value of the field
-		 */
-		private EncryptedField(ControlKey	pControlKey,
-							   byte[] 		pEncrypted) throws ModelException {
-			/* Store the control key */
-			theControlKey = pControlKey;
-			
-			/* Store the encrypted value */
-			theEncrypted = pEncrypted;
-			
-			/* Reject if encryption is not initialized */
-			if (theControlKey == null)
-				throw new ModelException(ExceptionClass.LOGIC,
-										 "Encryption is not initialised");
-				
-			/* Decrypt the Bytes */
-			byte[] myBytes = theControlKey.decryptBytes(theEncrypted);
+    /**
+     * Obtain value for a field (which may be null)
+     * @param <T> the field type
+     * @param pField the field to obtain the value for
+     * @return the value
+     */
+    public static <T> T getValue(EncryptedField<T> pField) {
+        return (pField == null) ? null : pField.getValue();
+    }
 
-			/* Set the decrypted value */
-			theDecrypted = parseBytes(myBytes);
-		}
-	
-		/**
-		 * Encrypt the value
-		 */
-		private void encryptValue() throws ModelException {
-			/* Reject if encryption is not initialized */
-			if (theControlKey == null)
-				throw new ModelException(ExceptionClass.LOGIC,
-									     "Encryption is not initialised");
-			
-			/* Obtain the bytes representation of the value */
-			byte[] myBytes = getBytesForEncryption();
-			
-			/* Encrypt the Bytes */
-			theEncrypted = theControlKey.encryptBytes(myBytes);
-		}		
+    /**
+     * Obtain encrypted bytes for a field (which may be null)
+     * @param pField the field to obtain the encrypted bytes for
+     * @return the value
+     */
+    public static byte[] getBytes(EncryptedField<?> pField) {
+        return (pField == null) ? null : pField.getBytes();
+    }
 
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pUnencrypted the unencrypted value of the field
-		 */
-		private EncryptedField(ControlKey	pControlKey,
-				   			   T 			pUnencrypted) throws ModelException {
-			/* Store the control */
-			theControlKey = pControlKey;
-			
-			/* Store the value */
-			theDecrypted = pUnencrypted;
-			
-			/* Return if we have no encryption yet */
-			if (theControlKey == null) return;
-			
-			/* encrypt the value */
-			encryptValue();
-		}
+    /**
+     * Field Generator Helper class
+     */
+    public static class EncryptionGenerator {
+        /**
+         * The CipherSet to use for generation
+         */
+        private final CipherSet theCipherSet;
 
-		/**
-		 * Constructor
-		 * @param pField the field to initialise from
-		 */
-		private EncryptedField(EncryptedField<T>	pField) {
-			/* Store the control */
-			theControlKey	= pField.getControlKey();
-			
-			/* Store the values */
-			theDecrypted 	= pField.getValue();
-			theEncrypted 	= pField.getBytes();
-		}
+        /**
+         * Constructor
+         * @param pCipherSet the CipherSet
+         */
+        public EncryptionGenerator(CipherSet pCipherSet) {
+            /* Store Parameter */
+            theCipherSet = pCipherSet;
+        }
 
-		/**
-		 * Obtain the ControlKey
-		 * @return the Control Key
-		 */
-		public ControlKey getControlKey() { return theControlKey; }
-		
-		/**
-		 * Obtain the encrypted value
-		 * @return the encrypted value
-		 */
-		public byte[] getBytes() { return theEncrypted; }
-		
-		/**
-		 * Obtain the unencrypted value
-		 * @return the unencrypted value
-		 */
-		public T getValue() { return theDecrypted; }
-		
-		/**
-		 * Set the unencrypted value
-		 * @param pValue the unencrypted value
-		 */
-		public void setValue(T pValue) { theDecrypted = pValue; }
-		
-		/**
-		 * Parse the decrypted bytes
-		 * @param pBytes the decrypted bytes
-		 * @return the decrypted value
-		 */
-		protected abstract T parseBytes(byte[] pBytes) throws ModelException;
+        /**
+         * Set Encrypted value
+         * @param pCurrent the current encrypted value
+         * @param pValue the new value to encrypt
+         * @return the encrypted field
+         * @throws ModelException
+         */
+        public EncryptedField<?> encryptValue(EncryptedField<?> pCurrent,
+                                              Object pValue) throws ModelException {
+            /* If we are passed a null value just return null */
+            if (pValue == null)
+                return null;
 
-		/**
-		 * Obtain the bytes format to encrypt
-		 * @return the bytes to encrypt
-		 */
-		protected abstract byte[] getBytesForEncryption() throws ModelException;
+            /* Access current value */
+            EncryptedField<?> myCurrent = pCurrent;
 
-		/**
-		 * Apply fresh encryption to value
-		 * @param pControlKey the control Key
-		 */
-		protected void applyEncryption(ControlKey pControlKey) throws ModelException {
-			/* Store the Control Key */
-			theControlKey = pControlKey;
+            /* If there is a current value */
+            if (myCurrent != null) {
+                /* If we have no cipher or else a different cipher, ignore the current value */
+                if ((theCipherSet == null) || (!theCipherSet.equals(myCurrent.getCipherSet())))
+                    myCurrent = null;
+            }
 
-			/* Encrypt the value */
-			encryptValue();
-		}
-		
-		/**
-		 * Adopt Encryption
-		 * @param pControlKey the control Key
-		 * @param pField field to adopt encryption from 
-		 */
-		protected void adoptEncryption(ControlKey 			pControlKey,
-									   EncryptedField<T> 	pField) throws ModelException { 
-			/* Store the Control Key */
-			theControlKey = pControlKey;
+            /* If there is a current value */
+            if (myCurrent != null) {
+                /* If the value is not changed return the current value */
+                if (Difference.getDifference(myCurrent.getValue(), pValue).isIdentical())
+                    return pCurrent;
 
-			/* If we need to renew the encryption */
-			if ((pField == null) ||
-				(ControlKey.differs(pControlKey, pField.getControlKey()).isDifferent()) ||
-				(Utils.differs(getValue(), pField.getValue()).isDifferent())) {
-				/* encrypt the value */
-				encryptValue();
-			}
-				
-			/* else we can simply adopt the underlying encryption */
-			else {
-				/* Pick up the underlying encryption */
-				theEncrypted = pField.getBytes();
-			}
-		}
-		
-		@Override
-		public boolean equals(Object pThat) {
-			/* Handle the trivial cases */
-			if (this == pThat) return true;
-			if (pThat == null) return false;
-			
-			/* Make sure that the object is the same class */
-			if (pThat.getClass() != this.getClass()) return false;
-			
-			/* Access the target field */
-			EncryptedField<?> myThat = (EncryptedField<?>)pThat;
-			
-			/* Check differences */
-			if (Utils.differs(getValue(), myThat.getValue()).isDifferent()) return false;
-			if (Utils.differs(getBytes(), myThat.getBytes()).isDifferent()) return false;
-			return true;
-		}
+                /* If the value is a different class ignore the current value */
+                if (pValue.getClass() != myCurrent.getValue().getClass())
+                    myCurrent = null;
+            }
 
-		/**
-		 * Compare two EncryptedFields for differences
-		 * @param pNew the other field
-		 */
-		protected Difference	differs(EncryptedField<?> pNew) {
-			/* Reject if null */
-			if (pNew == null) return Difference.Different;
-			
-			/* Reject if wrong class */
-			if (this.getClass() != pNew.getClass()) return Difference.Different;
-			
-			/* Access as correct class */
-			EncryptedField<?> myField = (EncryptedField<?>)pNew;
-			
-			/* Compare Unencrypted value */
-			if (Utils.differs(getValue(), myField.getValue()).isDifferent())
-				return Difference.Different;
+            /* We need a new Field so handle each case individually */
+            if (String.class.isInstance(pValue))
+                return new EncryptedString(theCipherSet, (String) pValue);
+            if (Integer.class.isInstance(pValue))
+                return new EncryptedInteger(theCipherSet, (Integer) pValue);
+            if (Boolean.class.isInstance(pValue))
+                return new EncryptedBoolean(theCipherSet, (Boolean) pValue);
+            if (DateDay.class.isInstance(pValue))
+                return new EncryptedDate(theCipherSet, (DateDay) pValue);
+            if (char[].class.isInstance(pValue))
+                return new EncryptedCharArray(theCipherSet, (char[]) pValue);
 
-			/* Compare Encrypted value */
-			if (Utils.differs(getBytes(), myField.getBytes()).isDifferent())
-				return Difference.Security;
-			
-			/* Item is the Same */
-			return Difference.Identical;
-		}
-	}
-	
-	/**
-	 * The encrypted String class
-	 */
-	public static class EncryptedString extends EncryptedField<String> {
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pEncrypted the encrypted value of the field
-		 */
-		protected EncryptedString(ControlKey	pControlKey,
-				   				  byte[] 		pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
+            /* Handle decimal instances */
+            if (Money.class.isInstance(pValue))
+                return new EncryptedMoney(theCipherSet, (Money) pValue);
+            if (Units.class.isInstance(pValue))
+                return new EncryptedUnits(theCipherSet, (Units) pValue);
+            if (Rate.class.isInstance(pValue))
+                return new EncryptedRate(theCipherSet, (Rate) pValue);
+            if (Price.class.isInstance(pValue))
+                return new EncryptedPrice(theCipherSet, (Price) pValue);
+            if (Dilution.class.isInstance(pValue))
+                return new EncryptedDilution(theCipherSet, (Dilution) pValue);
 
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pUnencrypted the unencrypted value of the field
-		 */
-		protected EncryptedString(ControlKey	pControlKey,
-				   				  String 		pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
+            /* Unsupported so reject */
+            throw new ModelException(ExceptionClass.LOGIC, "Invalid Object Class for Encryption"
+                    + pValue.getClass().getCanonicalName());
+        }
 
-		/**
-		 * Constructor
-		 * @param pField the field to initialise from
-		 */
-		public	  EncryptedString(EncryptedString 	pField) 	{ super(pField); }
+        /**
+         * decrypt value
+         * @param pEncrypted the encrypted value
+         * @param pClass the class of the encrypted value
+         * @return the encrypted field
+         * @throws ModelException
+         */
+        public EncryptedField<?> decryptValue(byte[] pEncrypted,
+                                              Class<?> pClass) throws ModelException {
+            /* If we are passed a null value just return null */
+            if (pEncrypted == null)
+                return null;
 
-		@Override
-		protected String parseBytes(byte[] pBytes) throws ModelException {
-			/* Protect against exceptions */
-			try {
-				/* Convert the byte array to a string */
-				return new String(pBytes, SecurityControl.ENCODING);
-			}
-			
-			/* Catch Exceptions */
-			catch (Throwable e) {
-				throw new ModelException(ExceptionClass.CRYPTO,
-									     "Failed to convert value from bytes");
-			}
-		}
+            /* We need a new Field so handle each case individually */
+            if (String.class == pClass)
+                return new EncryptedString(theCipherSet, pEncrypted);
+            if (Integer.class == pClass)
+                return new EncryptedInteger(theCipherSet, pEncrypted);
+            if (Boolean.class == pClass)
+                return new EncryptedBoolean(theCipherSet, pEncrypted);
+            if (DateDay.class == pClass)
+                return new EncryptedDate(theCipherSet, pEncrypted);
+            if (char[].class == pClass)
+                return new EncryptedCharArray(theCipherSet, pEncrypted);
 
-		@Override
-		protected byte[] getBytesForEncryption() throws ModelException {
-			/* Protect against exceptions */
-			try {
-				/* Convert the string to a byte array */
-				return getValue().getBytes(SecurityControl.ENCODING);
-			}
-			
-			/* Catch Exceptions */
-			catch (Throwable e) {
-				throw new ModelException(ExceptionClass.CRYPTO,
-									     "Failed to convert value to bytes");
-			}
-		}
-	}
-	
-	/**
-	 * The encrypted Integer class
-	 */
-	public static class EncryptedInteger extends EncryptedField<Integer> {
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pEncrypted the encrypted value of the field
-		 */
-		protected EncryptedInteger(ControlKey	pControlKey,
-	   			   				   byte[] 		pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
+            /* Handle decimal instances */
+            if (Money.class == pClass)
+                return new EncryptedMoney(theCipherSet, pEncrypted);
+            if (Units.class == pClass)
+                return new EncryptedUnits(theCipherSet, pEncrypted);
+            if (Rate.class == pClass)
+                return new EncryptedRate(theCipherSet, pEncrypted);
+            if (Price.class == pClass)
+                return new EncryptedPrice(theCipherSet, pEncrypted);
+            if (Dilution.class == pClass)
+                return new EncryptedDilution(theCipherSet, pEncrypted);
 
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pUnencrypted the unencrypted value of the field
-		 */
-		protected EncryptedInteger(ControlKey	pControlKey,
-	   			   				   Integer		pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
+            /* Unsupported so reject */
+            throw new ModelException(ExceptionClass.LOGIC, "Invalid Object Class for Encryption"
+                    + pClass.getCanonicalName());
+        }
 
-		/**
-		 * Constructor
-		 * @param pField the field to initialise from
-		 */
-		public    EncryptedInteger(EncryptedInteger pField) 	{ super(pField); }
+        /**
+         * Adopt Encryption
+         * @param pTarget the target field
+         * @param pSource the source field
+         * @throws ModelException
+         */
+        public void adoptEncryption(EncryptedField<?> pTarget,
+                                    EncryptedField<?> pSource) throws ModelException {
+            /* Adopt the encryption */
+            pTarget.adoptEncryption(theCipherSet, pSource);
+        }
+    }
 
-		@Override
-		protected Integer parseBytes(byte[] pBytes) throws ModelException {
-			/* Protect against exceptions */
-			try {
-				/* Convert the byte array to a string and then an integer */
-				return Integer.parseInt(new String(pBytes, SecurityControl.ENCODING));
-			}
-			
-			/* Catch Exceptions */
-			catch (Throwable e) {
-				throw new ModelException(ExceptionClass.CRYPTO,
-									     "Failed to convert value from bytes");
-			}
-		}
+    /**
+     * The generic encrypted object class
+     * @param <T> the field type
+     */
+    public static abstract class EncryptedField<T> {
+        /**
+         * Encryption CipherSet
+         */
+        private CipherSet theCipherSet = null;
 
-		@Override
-		protected byte[] getBytesForEncryption() throws ModelException {
-			/* Protect against exceptions */
-			try {
-				/* Convert the integer to a string and then a byte array */
-				return getValue().toString().getBytes(SecurityControl.ENCODING);
-			}
-			
-			/* Catch Exceptions */
-			catch (Throwable e) {
-				throw new ModelException(ExceptionClass.CRYPTO,
-									     "Failed to convert value to bytes");
-			}
-		}		
-	}
-		
-	/**
-	 * The encrypted Boolean class
-	 */
-	public static class EncryptedBoolean extends EncryptedField<Boolean> {
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pEncrypted the encrypted value of the field
-		 */
-		protected EncryptedBoolean(ControlKey	pControlKey,
-	   				 			   byte[] 		pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
+        /**
+         * Encrypted value
+         */
+        private byte[] theEncrypted = null;
 
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pUnencrypted the unencrypted value of the field
-		 */
-		protected EncryptedBoolean(ControlKey	pControlKey,
-	   				 			   Boolean		pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
+        /**
+         * Decrypted value
+         */
+        private T theDecrypted = null;
 
-		/**
-		 * Constructor
-		 * @param pField the field to initialise from
-		 */
-		public    EncryptedBoolean(EncryptedBoolean pField) { super(pField); }
+        /**
+         * Constructor
+         * @param pCipherSet the cipher set
+         * @param pEncrypted the encrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedField(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+            /* Store the cipherSet */
+            theCipherSet = pCipherSet;
 
-		@Override
-		protected Boolean parseBytes(byte[] pBytes) throws ModelException {
-			/* Protect against exceptions */
-			try {
-				/* Convert the byte array to a string and then an integer */
-				return Boolean.parseBoolean(new String(pBytes, SecurityControl.ENCODING));
-			}
-			
-			/* Catch Exceptions */
-			catch (Throwable e) {
-				throw new ModelException(ExceptionClass.CRYPTO,
-										 "Failed to convert value from bytes");
-			}
-		}
+            /* Store the encrypted value */
+            theEncrypted = pEncrypted;
 
-		@Override
-		protected byte[] getBytesForEncryption() throws ModelException {
-			/* Protect against exceptions */
-			try {
-				/* Convert the boolean to a string and then a byte array */
-				return getValue().toString().getBytes(SecurityControl.ENCODING);
-			}
-			
-			/* Catch Exceptions */
-			catch (Throwable e) {
-				throw new ModelException(ExceptionClass.CRYPTO,
-										 "Failed to convert value to bytes");
-			}
-		}		
-	}
-		
-	/**
-	 * The encrypted Date class
-	 */
-	public static class EncryptedDate extends EncryptedField<DateDay> {
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pEncrypted the encrypted value of the field
-		 */
-		protected EncryptedDate(ControlKey	pControlKey,
-		 			 			byte[] 		pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
+            /* Reject if encryption is not initialized */
+            if (theCipherSet == null)
+                throw new ModelException(ExceptionClass.LOGIC, "Encryption is not initialised");
 
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pUnencrypted the unencrypted value of the field
-		 */
-		protected EncryptedDate(ControlKey	pControlKey,
-		 			 			DateDay 	pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
+            /* Decrypt the Bytes */
+            byte[] myBytes = theCipherSet.decryptBytes(theEncrypted);
 
-		/**
-		 * Constructor
-		 * @param pField the field to initialise from
-		 */
-		public    EncryptedDate(EncryptedDate 	pField) 	{ super(pField); }
+            /* Set the decrypted value */
+            theDecrypted = parseBytes(myBytes);
+        }
 
-		@Override
-		protected DateDay parseBytes(byte[] pBytes) throws ModelException {
-			/* Protect against exceptions */
-			try {
-				/* Convert the byte array to a string and then an integer */
-				return new DateDay(new String(pBytes, SecurityControl.ENCODING));
-			}
-			
-			/* Catch Exceptions */
-			catch (Throwable e) {
-				throw new ModelException(ExceptionClass.CRYPTO,
-										 "Failed to convert value from bytes");
-			}
-		}
-	
-		@Override
-		protected byte[] getBytesForEncryption() throws ModelException {
-			/* Protect against exceptions */
-			try {
-				/* Convert the date to a string and then a byte array */
-				return getValue().formatDate().getBytes(SecurityControl.ENCODING);
-			}
-			
-			/* Catch Exceptions */
-			catch (Throwable e) {
-				throw new ModelException(ExceptionClass.CRYPTO,
-										 "Failed to convert value to bytes");
-			}
-		}		
-	}
+        /**
+         * Encrypt the value
+         * @throws ModelException
+         */
+        private void encryptValue() throws ModelException {
+            /* Reject if encryption is not initialized */
+            if (theCipherSet == null)
+                throw new ModelException(ExceptionClass.LOGIC, "Encryption is not initialised");
 
-	/**
-	 * The encrypted CharArray class
-	 */
-	public static class EncryptedCharArray extends EncryptedField<char[]> {
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pEncrypted the encrypted value of the field
-		 */
-		protected EncryptedCharArray(ControlKey	pControlKey,
-		 		  					 byte[] 	pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
-	
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pUnencrypted the unencrypted value of the field
-		 */
-		protected EncryptedCharArray(ControlKey	pControlKey,
-		 		  					 char[] 	pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
-	
-		/**
-		 * Constructor
-		 * @param pField the field to initialise from
-		 */
-		public    EncryptedCharArray(EncryptedCharArray pField) 	{ super(pField); }
-	
-		@Override
-		protected char[] parseBytes(byte[] pBytes) throws ModelException {
-			return Utils.byteToCharArray(pBytes);
-		}
-	
-		@Override
-		protected byte[] getBytesForEncryption() throws ModelException {
-			return Utils.charToByteArray(getValue());
-		}		
-	}
+            /* Obtain the bytes representation of the value */
+            byte[] myBytes = getBytesForEncryption();
 
-	/**
-	 * The encrypted Decimal class
-	 */
-	public static abstract class EncryptedDecimal<X extends Decimal> extends EncryptedField<X> {
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pEncrypted the encrypted value of the field
-		 */
-		private EncryptedDecimal(ControlKey	pControlKey,
-				   				 byte[] 	pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
+            /* Encrypt the Bytes */
+            theEncrypted = theCipherSet.encryptBytes(myBytes);
+        }
 
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pUnencrypted the unencrypted value of the field
-		 */
-		private EncryptedDecimal(ControlKey	pControlKey,
-				   				 X 			pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
+        /**
+         * Constructor
+         * @param pCipherSet the CipherSet
+         * @param pUnencrypted the unencrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedField(CipherSet pCipherSet, T pUnencrypted) throws ModelException {
+            /* Store the control */
+            theCipherSet = pCipherSet;
 
-		/**
-		 * Constructor
-		 * @param pField the field to initialise from
-		 */
-		private EncryptedDecimal(EncryptedDecimal<X> 	pField) 	{ super(pField); }
+            /* Store the value */
+            theDecrypted = pUnencrypted;
 
-		@Override
-		protected X parseBytes(byte[] pBytes) throws ModelException {
-			/* Protect against exceptions */
-			try {
-				/* Convert the byte array to a string and parse it */
-				return parseValue(new String(pBytes, SecurityControl.ENCODING));
-			}
-			
-			/* Catch Exceptions */
-			catch (ModelException e) { throw e; }
-			catch (Throwable e) {
-				throw new ModelException(ExceptionClass.CRYPTO,
-										 "Failed to convert value from bytes");
-			}
-		}
-		
-		/**
-		 * Parse a string value to get a value
-		 * @param pValue the string value
-		 * @return the value
-		 */
-		protected abstract X parseValue(String pValue) throws ModelException;
-				
-		@Override
-		protected byte[] getBytesForEncryption() throws ModelException {
-			/* Protect against exceptions */
-			try {
-				/* Format the value */
-				String myValue = getValue().format(false);
-				
-				/* Convert the string to a byte array */
-				return myValue.getBytes(SecurityControl.ENCODING);
-			}
-			
-			/* Catch Exceptions */
-			catch (Throwable e) {
-				throw new ModelException(ExceptionClass.CRYPTO,
-										 "Failed to convert value to bytes");
-			}
-		}
-	}
+            /* Return if we have no encryption yet */
+            if (theCipherSet == null)
+                return;
 
-	/**
-	 * The encrypted Money class
-	 */
-	public static class EncryptedMoney extends EncryptedDecimal<Money> {
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pEncrypted the encrypted value of the field
-		 */
-		public EncryptedMoney(ControlKey	pControlKey,
-  				 			  byte[] 		pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
+            /* encrypt the value */
+            encryptValue();
+        }
 
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pUnencrypted the unencrypted value of the field
-		 */
-		public EncryptedMoney(ControlKey 	pControlKey,
-  				 			  Money 		pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
+        /**
+         * Obtain the CipherSet
+         * @return the Cipher Set
+         */
+        public CipherSet getCipherSet() {
+            return theCipherSet;
+        }
 
-		/**
-		 * Constructor
-		 * @param pField the field to initialise from
-		 */
-		public EncryptedMoney(EncryptedMoney 	pField) 	{ super(pField); }
+        /**
+         * Obtain the encrypted value
+         * @return the encrypted value
+         */
+        public byte[] getBytes() {
+            return theEncrypted;
+        }
 
-		@Override
-		protected Money parseValue(String pValue) throws ModelException { return new Money(pValue); }
-	}
+        /**
+         * Obtain the unencrypted value
+         * @return the unencrypted value
+         */
+        public T getValue() {
+            return theDecrypted;
+        }
 
-	/**
-	 * The encrypted Units class
-	 */
-	public static class EncryptedUnits extends EncryptedDecimal<Units> {
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pEncrypted the encrypted value of the field
-		 */
-		public EncryptedUnits(ControlKey	pControlKey,
-  				 			  byte[] 		pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
+        /**
+         * Parse the decrypted bytes
+         * @param pBytes the decrypted bytes
+         * @return the decrypted value
+         * @throws ModelException
+         */
+        protected abstract T parseBytes(byte[] pBytes) throws ModelException;
 
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pUnencrypted the unencrypted value of the field
-		 */
-		public EncryptedUnits(ControlKey 	pControlKey,
-  				 			  Units 		pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
+        /**
+         * Obtain the bytes format to encrypt
+         * @return the bytes to encrypt
+         * @throws ModelException
+         */
+        protected abstract byte[] getBytesForEncryption() throws ModelException;
 
-		/**
-		 * Constructor
-		 * @param pField the field to initialise from
-		 */
-		public EncryptedUnits(EncryptedUnits 	pField) 	{ super(pField); }
+        /**
+         * Apply fresh encryption to value
+         * @param pCipherSet the cipherSet
+         * @throws ModelException
+         */
+        protected void applyEncryption(CipherSet pCipherSet) throws ModelException {
+            /* Store the CipherSet */
+            theCipherSet = pCipherSet;
 
-		@Override
-		protected Units parseValue(String pValue) throws ModelException { return new Units(pValue); }
-	}
+            /* Encrypt the value */
+            encryptValue();
+        }
 
-	/**
-	 * The encrypted Rate class
-	 */
-	public static class EncryptedRate extends EncryptedDecimal<Rate> {
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pEncrypted the encrypted value of the field
-		 */
-		public EncryptedRate(ControlKey	pControlKey,
-  				 			 byte[] 	pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
+        /**
+         * Adopt Encryption
+         * @param pCipherSet the cipherSet
+         * @param pField field to adopt encryption from
+         * @throws ModelException
+         */
+        private void adoptEncryption(CipherSet pCipherSet,
+                                     EncryptedField<?> pField) throws ModelException {
+            /* Store the CipherSet */
+            theCipherSet = pCipherSet;
 
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pUnencrypted the unencrypted value of the field
-		 */
-		public EncryptedRate(ControlKey	pControlKey,
-  				 			 Rate 		pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
+            /* If we need to renew the encryption */
+            if ((pField == null)
+                    || (Difference.getDifference(pCipherSet, pField.getCipherSet()).isDifferent())
+                    || (Difference.getDifference(getValue(), pField.getValue()).isDifferent())) {
+                /* encrypt the value */
+                encryptValue();
+            }
 
-		/**
-		 * Constructor
-		 * @param pField the field to initialise from
-		 */
-		public EncryptedRate(EncryptedRate 	pField) 	{ super(pField); }
+            /* else we can simply adopt the underlying encryption */
+            else {
+                /* Pick up the underlying encryption */
+                theEncrypted = pField.getBytes();
+            }
+        }
 
-		@Override
-		protected Rate parseValue(String pValue) throws ModelException { return new Rate(pValue); }
-	}
+        @Override
+        public boolean equals(Object pThat) {
+            /* Handle the trivial cases */
+            if (this == pThat)
+                return true;
+            if (pThat == null)
+                return false;
 
-	/**
-	 * The encrypted Price class
-	 */
-	public static class EncryptedPrice extends EncryptedDecimal<Price> {
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pEncrypted the encrypted value of the field
-		 */
-		public EncryptedPrice(ControlKey 	pControlKey,
-  				 			  byte[] 		pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
+            /* Make sure that the object is the same class */
+            if (pThat.getClass() != this.getClass())
+                return false;
 
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pUnencrypted the unencrypted value of the field
-		 */
-		public EncryptedPrice(ControlKey 	pControlKey,
-  				 			  Price 		pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
+            /* Access the target field */
+            EncryptedField<?> myThat = (EncryptedField<?>) pThat;
 
-		/**
-		 * Constructor
-		 * @param pField the field to initialise from
-		 */
-		public EncryptedPrice(EncryptedPrice 	pField) 	{ super(pField); }
+            /* Check differences */
+            if (Difference.getDifference(getValue(), myThat.getValue()).isDifferent())
+                return false;
+            if (!Arrays.equals(getBytes(), myThat.getBytes()))
+                return false;
+            return true;
+        }
 
-		@Override
-		protected Price parseValue(String pValue) throws ModelException { return new Price(pValue); }
-	}
+        @Override
+        public int hashCode() {
+            /* Calculate hash allowing for field that has not been encrypted yet */
+            int myHashCode = 17 * getValue().hashCode();
+            if (theEncrypted != null)
+                myHashCode += theEncrypted.hashCode();
+            return myHashCode;
+        }
 
-	/**
-	 * The encrypted Dilution class
-	 */
-	public static class EncryptedDilution extends EncryptedDecimal<Dilution> {
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pEncrypted the encrypted value of the field
-		 */
-		public EncryptedDilution(ControlKey	pControlKey,
-  				 				 byte[] 	pEncrypted) throws ModelException 	{ super(pControlKey, pEncrypted); }
+        /**
+         * Compare two EncryptedFields for differences
+         * @param pNew the other field
+         * @return the difference
+         */
+        public Difference differs(EncryptedField<?> pNew) {
+            /* Reject if null */
+            if (pNew == null)
+                return Difference.Different;
 
-		/**
-		 * Constructor
-		 * @param pControlKey the control key
-		 * @param pUnencrypted the unencrypted value of the field
-		 */
-		public EncryptedDilution(ControlKey	pControlKey,
-  				 				 Dilution	pUnencrypted) throws ModelException { super(pControlKey, pUnencrypted); }
+            /* Reject if wrong class */
+            if (this.getClass() != pNew.getClass())
+                return Difference.Different;
 
-		/**
-		 * Constructor
-		 * @param pControl the encryption control
-		 * @param pField the field to initialise from
-		 */
-		public EncryptedDilution(EncryptedDilution 	pField) 	{ super(pField); }
+            /* Access as correct class */
+            EncryptedField<?> myField = (EncryptedField<?>) pNew;
 
-		@Override
-		protected Dilution parseValue(String pValue) throws ModelException { return new Dilution(pValue); }
-	}
+            /* Compare Unencrypted value */
+            if (Difference.getDifference(getValue(), myField.getValue()).isDifferent())
+                return Difference.Different;
+
+            /* Compare Encrypted value */
+            if (!Arrays.equals(getBytes(), myField.getBytes()))
+                return Difference.Security;
+
+            /* Item is the Same */
+            return Difference.Identical;
+        }
+    }
+
+    /**
+     * The encrypted String class
+     */
+    public static class EncryptedString extends EncryptedField<String> {
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pEncrypted the encrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedString(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+            super(pCipherSet, pEncrypted);
+        }
+
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pUnencrypted the unencrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedString(CipherSet pCipherSet, String pUnencrypted) throws ModelException {
+            super(pCipherSet, pUnencrypted);
+        }
+
+        @Override
+        protected String parseBytes(byte[] pBytes) throws ModelException {
+            /* Protect against exceptions */
+            try {
+                /* Convert the byte array to a string */
+                return DataConverter.byteArrayToString(pBytes);
+            }
+
+            /* Catch Exceptions */
+            catch (Exception e) {
+                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value from bytes");
+            }
+        }
+
+        @Override
+        protected byte[] getBytesForEncryption() throws ModelException {
+            /* Protect against exceptions */
+            try {
+                /* Convert the string to a byte array */
+                return DataConverter.stringToByteArray(getValue());
+            }
+
+            /* Catch Exceptions */
+            catch (Exception e) {
+                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value to bytes");
+            }
+        }
+    }
+
+    /**
+     * The encrypted Integer class
+     */
+    public static class EncryptedInteger extends EncryptedField<Integer> {
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pEncrypted the encrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedInteger(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+            super(pCipherSet, pEncrypted);
+        }
+
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pUnencrypted the unencrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedInteger(CipherSet pCipherSet, Integer pUnencrypted) throws ModelException {
+            super(pCipherSet, pUnencrypted);
+        }
+
+        @Override
+        protected Integer parseBytes(byte[] pBytes) throws ModelException {
+            /* Protect against exceptions */
+            try {
+                /* Convert the byte array to a string and then an integer */
+                return Integer.parseInt(DataConverter.byteArrayToString(pBytes));
+            }
+
+            /* Catch Exceptions */
+            catch (Exception e) {
+                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value from bytes");
+            }
+        }
+
+        @Override
+        protected byte[] getBytesForEncryption() throws ModelException {
+            /* Protect against exceptions */
+            try {
+                /* Convert the integer to a string and then a byte array */
+                return DataConverter.stringToByteArray(getValue().toString());
+            }
+
+            /* Catch Exceptions */
+            catch (Exception e) {
+                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value to bytes");
+            }
+        }
+    }
+
+    /**
+     * The encrypted Boolean class
+     */
+    public static class EncryptedBoolean extends EncryptedField<Boolean> {
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pEncrypted the encrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedBoolean(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+            super(pCipherSet, pEncrypted);
+        }
+
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pUnencrypted the unencrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedBoolean(CipherSet pCipherSet, Boolean pUnencrypted) throws ModelException {
+            super(pCipherSet, pUnencrypted);
+        }
+
+        @Override
+        protected Boolean parseBytes(byte[] pBytes) throws ModelException {
+            /* Protect against exceptions */
+            try {
+                /* Convert the byte array to a string and then an integer */
+                return Boolean.parseBoolean(DataConverter.byteArrayToString(pBytes));
+            }
+
+            /* Catch Exceptions */
+            catch (Exception e) {
+                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value from bytes");
+            }
+        }
+
+        @Override
+        protected byte[] getBytesForEncryption() throws ModelException {
+            /* Protect against exceptions */
+            try {
+                /* Convert the boolean to a string and then a byte array */
+                return DataConverter.stringToByteArray(getValue().toString());
+            }
+
+            /* Catch Exceptions */
+            catch (Exception e) {
+                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value to bytes");
+            }
+        }
+    }
+
+    /**
+     * The encrypted Date class
+     */
+    public static class EncryptedDate extends EncryptedField<DateDay> {
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pEncrypted the encrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedDate(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+            super(pCipherSet, pEncrypted);
+        }
+
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pUnencrypted the unencrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedDate(CipherSet pCipherSet, DateDay pUnencrypted) throws ModelException {
+            super(pCipherSet, pUnencrypted);
+        }
+
+        @Override
+        protected DateDay parseBytes(byte[] pBytes) throws ModelException {
+            /* Protect against exceptions */
+            try {
+                /* Convert the byte array to a string and then an integer */
+                return new DateDay(DataConverter.byteArrayToString(pBytes));
+            }
+
+            /* Catch Exceptions */
+            catch (Exception e) {
+                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value from bytes");
+            }
+        }
+
+        @Override
+        protected byte[] getBytesForEncryption() throws ModelException {
+            /* Protect against exceptions */
+            try {
+                /* Convert the date to a string and then a byte array */
+                return DataConverter.stringToByteArray(getValue().toString());
+            }
+
+            /* Catch Exceptions */
+            catch (Exception e) {
+                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value to bytes");
+            }
+        }
+    }
+
+    /**
+     * The encrypted CharArray class
+     */
+    public static class EncryptedCharArray extends EncryptedField<char[]> {
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pEncrypted the encrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedCharArray(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+            super(pCipherSet, pEncrypted);
+        }
+
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pUnencrypted the unencrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedCharArray(CipherSet pCipherSet, char[] pUnencrypted) throws ModelException {
+            super(pCipherSet, pUnencrypted);
+        }
+
+        @Override
+        protected char[] parseBytes(byte[] pBytes) throws ModelException {
+            return DataConverter.bytesToCharArray(pBytes);
+        }
+
+        @Override
+        protected byte[] getBytesForEncryption() throws ModelException {
+            return DataConverter.charsToByteArray(getValue());
+        }
+    }
+
+    /**
+     * The encrypted Decimal class
+     * @param <X> the decimal type
+     */
+    public static abstract class EncryptedDecimal<X extends Decimal> extends EncryptedField<X> {
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pEncrypted the encrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedDecimal(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+            super(pCipherSet, pEncrypted);
+        }
+
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pUnencrypted the unencrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedDecimal(CipherSet pCipherSet, X pUnencrypted) throws ModelException {
+            super(pCipherSet, pUnencrypted);
+        }
+
+        @Override
+        protected X parseBytes(byte[] pBytes) throws ModelException {
+            /* Protect against exceptions */
+            try {
+                /* Convert the byte array to a string and parse it */
+                return parseValue(DataConverter.byteArrayToString(pBytes));
+            }
+
+            /* Catch Exceptions */
+            catch (ModelException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value from bytes");
+            }
+        }
+
+        /**
+         * Parse a string value to get a value
+         * @param pValue the string value
+         * @return the value
+         * @throws ModelException
+         */
+        protected abstract X parseValue(String pValue) throws ModelException;
+
+        @Override
+        protected byte[] getBytesForEncryption() throws ModelException {
+            /* Protect against exceptions */
+            try {
+                /* Format the value */
+                String myValue = getValue().format(false);
+
+                /* Convert the string to a byte array */
+                return DataConverter.stringToByteArray(myValue);
+            }
+
+            /* Catch Exceptions */
+            catch (Exception e) {
+                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value to bytes");
+            }
+        }
+    }
+
+    /**
+     * The encrypted Money class
+     */
+    public static class EncryptedMoney extends EncryptedDecimal<Money> {
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pEncrypted the encrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedMoney(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+            super(pCipherSet, pEncrypted);
+        }
+
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pUnencrypted the unencrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedMoney(CipherSet pCipherSet, Money pUnencrypted) throws ModelException {
+            super(pCipherSet, pUnencrypted);
+        }
+
+        @Override
+        protected Money parseValue(String pValue) throws ModelException {
+            return new Money(pValue);
+        }
+    }
+
+    /**
+     * The encrypted Units class
+     */
+    public static class EncryptedUnits extends EncryptedDecimal<Units> {
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pEncrypted the encrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedUnits(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+            super(pCipherSet, pEncrypted);
+        }
+
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pUnencrypted the unencrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedUnits(CipherSet pCipherSet, Units pUnencrypted) throws ModelException {
+            super(pCipherSet, pUnencrypted);
+        }
+
+        @Override
+        protected Units parseValue(String pValue) throws ModelException {
+            return new Units(pValue);
+        }
+    }
+
+    /**
+     * The encrypted Rate class
+     */
+    public static class EncryptedRate extends EncryptedDecimal<Rate> {
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pEncrypted the encrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedRate(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+            super(pCipherSet, pEncrypted);
+        }
+
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pUnencrypted the unencrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedRate(CipherSet pCipherSet, Rate pUnencrypted) throws ModelException {
+            super(pCipherSet, pUnencrypted);
+        }
+
+        @Override
+        protected Rate parseValue(String pValue) throws ModelException {
+            return new Rate(pValue);
+        }
+    }
+
+    /**
+     * The encrypted Price class
+     */
+    public static class EncryptedPrice extends EncryptedDecimal<Price> {
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pEncrypted the encrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedPrice(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+            super(pCipherSet, pEncrypted);
+        }
+
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pUnencrypted the unencrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedPrice(CipherSet pCipherSet, Price pUnencrypted) throws ModelException {
+            super(pCipherSet, pUnencrypted);
+        }
+
+        @Override
+        protected Price parseValue(String pValue) throws ModelException {
+            return new Price(pValue);
+        }
+    }
+
+    /**
+     * The encrypted Dilution class
+     */
+    public static class EncryptedDilution extends EncryptedDecimal<Dilution> {
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pEncrypted the encrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedDilution(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+            super(pCipherSet, pEncrypted);
+        }
+
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pUnencrypted the unencrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedDilution(CipherSet pCipherSet, Dilution pUnencrypted) throws ModelException {
+            super(pCipherSet, pUnencrypted);
+        }
+
+        @Override
+        protected Dilution parseValue(String pValue) throws ModelException {
+            return new Dilution(pValue);
+        }
+    }
 }

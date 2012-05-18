@@ -23,9 +23,9 @@ package uk.co.tolcroft.models.threads;
 
 import java.io.File;
 
-import uk.co.tolcroft.models.ModelException;
-import uk.co.tolcroft.models.ModelException.ExceptionClass;
-import uk.co.tolcroft.models.PropertySet.PropertyManager;
+import net.sourceforge.JDataWalker.ModelException;
+import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.sheets.BackupProperties;
@@ -34,80 +34,76 @@ import uk.co.tolcroft.models.ui.FileSelector;
 import uk.co.tolcroft.models.views.DataControl;
 
 public class LoadBackup<T extends DataSet<T>> extends LoaderThread<T> {
-	/* Task description */
-	private static String  	theTask		= "Backup Restoration";
+    /* Task description */
+    private static String theTask = "Backup Restoration";
 
-	/* Properties */
-	private DataControl<T> 	theControl 	= null;
-	private ThreadStatus<T>	theStatus   = null;
+    /* Properties */
+    private DataControl<T> theControl = null;
+    private ThreadStatus<T> theStatus = null;
 
-	/* Constructor (Event Thread)*/
-	public LoadBackup(DataControl<T> pControl) {
-		/* Call super-constructor */
-		super(theTask, pControl);
-		
-		/* Store passed parameters */
-		theControl	= pControl;
+    /* Constructor (Event Thread) */
+    public LoadBackup(DataControl<T> pControl) {
+        /* Call super-constructor */
+        super(theTask, pControl);
 
-		/* Create the status */
-		theStatus = new ThreadStatus<T>(this, theControl);
+        /* Store passed parameters */
+        theControl = pControl;
 
-		/* Show the Status bar */
-		showStatusBar();
-	}
+        /* Create the status */
+        theStatus = new ThreadStatus<T>(this, theControl);
 
-	@Override
-	public T performTask() throws Throwable {
-		T				myData	  = null;
-		T				myStore;
-		Database<T>		myDatabase;
-		SpreadSheet<T>	mySheet;
-		File			myFile;
+        /* Show the Status bar */
+        showStatusBar();
+    }
 
-		/* Initialise the status window */
-		theStatus.initTask("Loading Backup");
+    @Override
+    public T performTask() throws Throwable {
+        T myData = null;
+        T myStore;
+        Database<T> myDatabase;
+        SpreadSheet<T> mySheet;
+        File myFile;
 
-		/* Access the Sheet properties */
-		BackupProperties myProperties = (BackupProperties)PropertyManager.getPropertySet(BackupProperties.class);
+        /* Initialise the status window */
+        theStatus.initTask("Loading Backup");
 
-		/* Determine the archive name */
-		File 	myBackupDir	= new File(myProperties.getStringValue(BackupProperties.nameBackupDir));
-		String 	myPrefix	= myProperties.getStringValue(BackupProperties.nameBackupPfix);
+        /* Access the Sheet properties */
+        BackupProperties myProperties = (BackupProperties) PreferenceManager
+                .getPreferenceSet(BackupProperties.class);
 
-		/* Determine the name of the file to load */
-		FileSelector myDialog = new FileSelector(theControl.getFrame(),
-												 "Select Backup to load",
-												 myBackupDir,
-												 myPrefix,
-												 ".zip");
-		myDialog.showDialog();
-		myFile = myDialog.getSelectedFile();
-			
-		/* If we did not select a file */
-		if (myFile == null) {
-			/* Throw cancelled exception */
-			throw new ModelException(ExceptionClass.EXCEL,
-							    "Operation Cancelled");					
-		}
-			
-		/* Load workbook */
-		mySheet	 = theControl.getSpreadSheet();
-		myData   = mySheet.loadBackup(theStatus, 
-									  myFile);
+        /* Determine the archive name */
+        File myBackupDir = new File(myProperties.getStringValue(BackupProperties.nameBackupDir));
+        String myPrefix = myProperties.getStringValue(BackupProperties.nameBackupPfix);
 
-		/* Initialise the status window */
-		theStatus.initTask("Accessing DataStore");
+        /* Determine the name of the file to load */
+        FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Backup to load", myBackupDir,
+                myPrefix, ".zip");
+        myDialog.showDialog();
+        myFile = myDialog.getSelectedFile();
 
-		/* Create interface */
-		myDatabase = theControl.getDatabase();
+        /* If we did not select a file */
+        if (myFile == null) {
+            /* Throw cancelled exception */
+            throw new ModelException(ExceptionClass.EXCEL, "Operation Cancelled");
+        }
 
-		/* Load underlying database */
-		myStore	= myDatabase.loadDatabase(theStatus);
+        /* Load workbook */
+        mySheet = theControl.getSpreadSheet();
+        myData = mySheet.loadBackup(theStatus, myFile);
 
-		/* Re-base the loaded backup onto the database image */
-		myData.reBase(myStore);
-		
-		/* Return the Data */
-		return myData;
-	}	
+        /* Initialise the status window */
+        theStatus.initTask("Accessing DataStore");
+
+        /* Create interface */
+        myDatabase = theControl.getDatabase();
+
+        /* Load underlying database */
+        myStore = myDatabase.loadDatabase(theStatus);
+
+        /* Re-base the loaded backup onto the database image */
+        myData.reBase(myStore);
+
+        /* Return the Data */
+        return myData;
+    }
 }

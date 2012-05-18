@@ -23,124 +23,123 @@ package uk.co.tolcroft.models.threads;
 
 import java.io.File;
 
-import uk.co.tolcroft.models.DateDay;
-import uk.co.tolcroft.models.ModelException;
-import uk.co.tolcroft.models.ModelException.ExceptionClass;
-import uk.co.tolcroft.models.PropertySet.PropertyManager;
+import net.sourceforge.JDataWalker.ModelException;
+import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.sheets.BackupProperties;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.views.DataControl;
 
 public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
-	/* Task description */
-	private static String  	theTask		= "Backup Creation";
+    /* Task description */
+    private static String theTask = "Backup Creation";
 
-	/* Properties */
-	private DataControl<T>	theControl	= null;
-	private ThreadStatus<T>	theStatus	= null;
+    /* Properties */
+    private DataControl<T> theControl = null;
+    private ThreadStatus<T> theStatus = null;
 
-	/* Constructor (Event Thread)*/
-	public CreateBackup(DataControl<T> pControl) {
-		/* Call super-constructor */
-		super(theTask, pControl);
-		
-		/* Store passed parameters */
-		theControl	= pControl;
+    /* Constructor (Event Thread) */
+    public CreateBackup(DataControl<T> pControl) {
+        /* Call super-constructor */
+        super(theTask, pControl);
 
-		/* Create the status */
-		theStatus = new ThreadStatus<T>(this, theControl);
+        /* Store passed parameters */
+        theControl = pControl;
 
-		/* Show the status window */
-		showStatusBar();
-	}
+        /* Create the status */
+        theStatus = new ThreadStatus<T>(this, theControl);
 
-	@Override
-	public T performTask() throws Throwable {
-		T				myData		= null;
-		DataSet<T>		myDiff		= null;
-		SpreadSheet<T>	mySheet		= null;
-		boolean			doDelete	= false;
-		File			myFile		= null;
+        /* Show the status window */
+        showStatusBar();
+    }
 
-		try {
-			/* Initialise the status window */
-			theStatus.initTask("Creating Backup");
+    @Override
+    public T performTask() throws Throwable {
+        T myData = null;
+        DataSet<T> myDiff = null;
+        SpreadSheet<T> mySheet = null;
+        boolean doDelete = false;
+        File myFile = null;
 
-			/* Access the Backup properties */
-			BackupProperties myProperties = (BackupProperties)PropertyManager.getPropertySet(BackupProperties.class);
+        try {
+            /* Initialise the status window */
+            theStatus.initTask("Creating Backup");
 
-			/* Determine the archive name */
-			File 	myBackupDir	= new File(myProperties.getStringValue(BackupProperties.nameBackupDir));
-			String 	myPrefix	= myProperties.getStringValue(BackupProperties.nameBackupPfix);
-			Boolean	doTimeStamp	= myProperties.getBooleanValue(BackupProperties.nameBackupTime);
+            /* Access the Backup properties */
+            BackupProperties myProperties = (BackupProperties) PreferenceManager
+                    .getPreferenceSet(BackupProperties.class);
 
-			/* If we are not doing time-stamps */
-			if (!doTimeStamp) {
-				/* Set the standard backup name */
-				myFile = new File(myBackupDir.getPath() + File.separator + myPrefix);
-			}
-			
-			/* else we need to generate a time-stamp (day only) */
-			else {
-				/* Obtain the current date/time */
-				DateDay myNow = new DateDay();
-			
-				/* Create the name of the file */
-				StringBuilder myName = new StringBuilder(100);
-				myName.append(myBackupDir.getPath());
-				myName.append(File.separator);
-				myName.append(myPrefix);
-				myName.append(myNow.getYear());
-				if (myNow.getMonth() < 10) myName.append('0');
-				myName.append(myNow.getMonth());
-				if (myNow.getDay() < 10) myName.append('0');
-				myName.append(myNow.getDay());
-				myName.append(".zip");
-				myFile = new File(myName.toString());
-			}
-			
-			/* Create backup */
-			mySheet = theControl.getSpreadSheet();
-			mySheet.createBackup(theStatus, 
-								 theControl.getData(), 
-								 myFile);
+            /* Determine the archive name */
+            File myBackupDir = new File(myProperties.getStringValue(BackupProperties.nameBackupDir));
+            String myPrefix = myProperties.getStringValue(BackupProperties.nameBackupPfix);
+            Boolean doTimeStamp = myProperties.getBooleanValue(BackupProperties.nameBackupTime);
 
-			/* File created, so delete on error */
-			doDelete = true;
+            /* If we are not doing time-stamps */
+            if (!doTimeStamp) {
+                /* Set the standard backup name */
+                myFile = new File(myBackupDir.getPath() + File.separator + myPrefix);
+            }
 
-			/* Initialise the status window */
-			theStatus.initTask("Verifying Backup");
+            /* else we need to generate a time-stamp (day only) */
+            else {
+                /* Obtain the current date/time */
+                DateDay myNow = new DateDay();
 
-			/* As we have encrypted then .zip was added to the file */
-			myFile 	= new File(myFile.getPath() + ".zip");
-			
-			/* Load workbook */
-			myData   = mySheet.loadBackup(theStatus, 
-										  myFile);
+                /* Create the name of the file */
+                StringBuilder myName = new StringBuilder(100);
+                myName.append(myBackupDir.getPath());
+                myName.append(File.separator);
+                myName.append(myPrefix);
+                myName.append(myNow.getYear());
+                if (myNow.getMonth() < 10)
+                    myName.append('0');
+                myName.append(myNow.getMonth());
+                if (myNow.getDay() < 10)
+                    myName.append('0');
+                myName.append(myNow.getDay());
+                myName.append(".zip");
+                myFile = new File(myName.toString());
+            }
 
-			/* Create a difference set between the two data copies */
-			myDiff = myData.getDifferenceSet(theControl.getData());
+            /* Create backup */
+            mySheet = theControl.getSpreadSheet();
+            mySheet.createBackup(theStatus, theControl.getData(), myFile);
 
-			/* If the difference set is non-empty */
-			if (!myDiff.isEmpty()) {
-				/* Throw an exception */
-				throw new ModelException(ExceptionClass.DATA,
-									myDiff,
-									"Backup is inconsistent");
-			}
-		}	
+            /* File created, so delete on error */
+            doDelete = true;
 
-		/* Catch any exceptions */
-		catch (Throwable e) {
-			/* Delete the file */
-			if (doDelete) myFile.delete();
+            /* Initialise the status window */
+            theStatus.initTask("Verifying Backup");
 
-			/* Report the failure */
-			throw e;
-		}	
+            /* As we have encrypted then .zip was added to the file */
+            myFile = new File(myFile.getPath() + ".zip");
 
-		/* Return nothing */
-		return null;
-	}
+            /* Load workbook */
+            myData = mySheet.loadBackup(theStatus, myFile);
+
+            /* Create a difference set between the two data copies */
+            myDiff = myData.getDifferenceSet(theControl.getData());
+
+            /* If the difference set is non-empty */
+            if (!myDiff.isEmpty()) {
+                /* Throw an exception */
+                throw new ModelException(ExceptionClass.DATA, myDiff, "Backup is inconsistent");
+            }
+        }
+
+        /* Catch any exceptions */
+        catch (Throwable e) {
+            /* Delete the file */
+            if (doDelete)
+                myFile.delete();
+
+            /* Report the failure */
+            throw e;
+        }
+
+        /* Return nothing */
+        return null;
+    }
 }

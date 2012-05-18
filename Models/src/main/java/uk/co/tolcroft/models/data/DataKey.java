@@ -21,598 +21,572 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
-import uk.co.tolcroft.models.Difference;
-import uk.co.tolcroft.models.ModelException;
-import uk.co.tolcroft.models.ModelException.ExceptionClass;
-import uk.co.tolcroft.models.help.DebugDetail;
-import uk.co.tolcroft.models.security.DataCipher;
-import uk.co.tolcroft.models.security.SecurityControl;
-import uk.co.tolcroft.models.security.SymmetricKey;
-import uk.co.tolcroft.models.security.SymmetricKey.SymKeyType;
-import uk.co.tolcroft.models.Utils;
+import net.sourceforge.JDataWalker.ModelException;
+import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataWalker.ReportFields;
+import net.sourceforge.JDataWalker.ReportFields.ReportField;
+import net.sourceforge.JGordianKnot.CipherSet;
+import net.sourceforge.JGordianKnot.DataCipher;
+import net.sourceforge.JGordianKnot.PasswordHash;
+import net.sourceforge.JGordianKnot.SecurityGenerator;
+import net.sourceforge.JGordianKnot.SymKeyType;
+import net.sourceforge.JGordianKnot.SymmetricKey;
+import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
 
 public class DataKey extends DataItem<DataKey> {
-	/**
-	 * The name of the object
-	 */
-	public static final String objName = "DataKey";
+    /**
+     * Object name
+     */
+    public static String objName = DataKey.class.getSimpleName();
 
-	/**
-	 * The name of the object
-	 */
-	public static final String listName = objName + "s";
+    /**
+     * List name
+     */
+    public static String listName = objName + "s";
 
-	/**
-	 * Encrypted Symmetric Key Length
-	 */
-	public final static int KEYLEN 		= SymmetricKey.IDSIZE;
+    /**
+     * Report fields
+     */
+    private static final ReportFields theLocalFields = new ReportFields(objName, DataItem.theLocalFields);
 
-	/* Access methods */
-	public  byte[] 			getSecuredKeyDef()  { return getValues().getSecuredKeyDef(); }
-	public  DataCipher		getCipher()  		{ return getValues().getCipher(); }
-	public  SymKeyType		getKeyType()  		{ return getValues().getKeyType(); }
-	public  ControlKey		getControlKey()		{ return getValues().getControlKey(); }
-	protected SymmetricKey	getDataKey()		{ return getValues().getKey(); }
+    /* Called from constructor */
+    @Override
+    public ReportFields declareFields() {
+        return theLocalFields;
+    }
 
-	/* Linking methods */
-	@Override
-	public DataKey	getBase() 	{ return (DataKey)super.getBase(); }
-	public Values  	getValues() { return (Values)super.getCurrentValues(); }	
-	
-	/* Field IDs */
-	public static final int FIELD_CONTROL  = DataItem.NUMFIELDS;
-	public static final int FIELD_KEYTYPE  = DataItem.NUMFIELDS+1;
-	public static final int FIELD_KEY	   = DataItem.NUMFIELDS+2;
-	public static final int NUMFIELDS	   = DataItem.NUMFIELDS+3; 
+    /* Field IDs */
+    public static final ReportField FIELD_CONTROLKEY = theLocalFields.declareEqualityValueField("ControlKey");
+    public static final ReportField FIELD_KEYTYPE = theLocalFields.declareEqualityValueField("KeyType");
+    public static final ReportField FIELD_KEYDEF = theLocalFields.declareEqualityValueField("KeyDefinition");
+    public static final ReportField FIELD_HASH = theLocalFields.declareDerivedValueField("PasswordHash");
+    public static final ReportField FIELD_KEY = theLocalFields.declareDerivedValueField("DataKey");
+    public static final ReportField FIELD_CIPHER = theLocalFields.declareDerivedValueField("Cipher");
 
-	@Override
-	public String itemType() { return objName; }
-	
-	@Override
-	public int	numFields() {return NUMFIELDS; }
-	
-	/**
-	 * Determine the field name for a particular field
-	 * @return the field name
-	 */
-	public static String	fieldName(int iField) {
-		switch (iField) {
-			case FIELD_CONTROL:		return "ControlId";
-			case FIELD_KEYTYPE:		return "KeyType";
-			case FIELD_KEY:			return "DataKey";
-			default:		  		return DataItem.fieldName(iField);
-		}
-	}
-				
-	@Override
-	public String getFieldName(int iField) { return fieldName(iField); }
-	
-	@Override
-	public String formatField(DebugDetail pDetail, int iField, HistoryValues<DataKey> pValues) {
-		Values	myValues = (Values)pValues;
-		String 	myString = "";
-		switch (iField) {
-			case FIELD_CONTROL: 		
-				myString = "Id=" + myValues.theControlId;					
-				if (myValues.getControlKey() != null)
-					myString = pDetail.addDebugLink(myValues.getControlKey(), myString);
-				break;
-			case FIELD_KEYTYPE: 		
-				myString += (myValues.getKeyType() == null) ? ("Id=" + myValues.theKeyTypeId)  
-															: myValues.getKeyType().toString(); 
-				break;
-			case FIELD_KEY:
-				myString += Utils.HexStringFromBytes(myValues.getSecuredKeyDef()); 
-				break;
-			default: 		
-				myString += super.formatField(pDetail, iField, pValues); 
-				break;
-		}
-		return myString;
-	}
-							
-	@Override
-	protected HistoryValues<DataKey> getNewValues() { return new Values(); }
-	
-	/**
- 	 * Construct a copy of a DataKey
-	 * @param pList the list to add to
- 	 * @param pKey The Key to copy 
- 	 */
-	protected DataKey(List pList, DataKey pKey) {
-		/* Set standard values */
-		super(pList, pKey.getId());
-		Values myValues = getValues();
-		myValues.copyFrom(pKey.getValues());
+    /**
+     * Encrypted Symmetric Key Length
+     */
+    public final static int KEYLEN = SymmetricKey.IDSIZE;
 
-		/* Switch on the LinkStyle */
-		switch (getStyle()) {
-			case CLONE:
-				isolateCopy(pList.getData());
-			case CORE:
-			case COPY:
-				pList.setNewId(this);				
-				break;
-			case EDIT:
-				setBase(pKey);
-				setState(DataState.CLEAN);
-				break;
-			case UPDATE:
-				setBase(pKey);
-				setState(pKey.getState());
-				break;
-		}
-	}
+    /**
+     * The active set of values
+     */
+    private ValueSet<DataKey> theValueSet;
 
-	/**
- 	 * Construct a DataKey from Database/Backup
-	 * @param pList the list to add to
- 	 * @param uId the id of the DataKey
- 	 * @param uControlId the id of the ControlKey
- 	 * @param uKeyTypeId the id of the KeyType
-	 * @param pSecurityKey the encrypted symmetric key
-	 */
-	private DataKey(List     	pList,
-				    int			uId,
-				    int			uControlId,
-				    int			uKeyTypeId,
-				    byte[]		pSecurityKey) throws ModelException {
-		/* Initialise the item */
-		super(pList, uId);
-		Values myValues = getValues();
+    @Override
+    public void declareValues(ValueSet<DataKey> pValues) {
+        super.declareValues(pValues);
+        theValueSet = pValues;
+    }
 
-		/* Record the IDs */
-		myValues.setControlId(uControlId);
-		myValues.setKeyTypeId(uKeyTypeId);
-		myValues.setSecuredKeyDef(pSecurityKey);
+    /* Access methods */
+    public ControlKey getControlKey() {
+        return getControlKey(theValueSet);
+    }
 
-		/* Determine the SymKeyType */
-		try { myValues.setKeyType(SymKeyType.fromId(uKeyTypeId)); }
-		catch (ModelException e) {
-			throw new ModelException(ExceptionClass.DATA,
-								this,
-	            				"Invalid KeyType Id " + uKeyTypeId);
-		}
-		
-		/* Look up the ControlKey */
-		ControlKey myControlKey = pList.theData.getControlKeys().searchFor(uControlId);
-		if (myControlKey == null) 
-			throw new ModelException(ExceptionClass.DATA,
-		                        this,
-					            "Invalid ControlKey Id");
-		
-		/* Store the keys */
-		myValues.setControlKey(myControlKey);
+    public SymKeyType getKeyType() {
+        return getKeyType(theValueSet);
+    }
 
-		/* Create the Symmetric Key from the wrapped data */
-		SecurityControl myControl = myControlKey.getSecurityControl();
-		SymmetricKey myKey = myControl.getSymmetricKey(pSecurityKey, getKeyType());
-		myValues.setKey(myKey);
-		myValues.setSecurityControl(myControl);
-		
-		/* Access the Cipher */
-		myValues.setCipher(myKey.initDataCipher());
-		
-		/* Register the DataKey */
-		myControlKey.registerDataKey(this);
-		
-		/* Allocate the id */
-		pList.setNewId(this);				
-	}
+    public byte[] getSecuredKeyDef() {
+        return getSecuredKeyDef(theValueSet);
+    }
 
-	/**
-	 * Constructor for a new DataKey in a new ControlKey set
-	 * @param pList the list to add to
-	 * @param pControlKey the ControlKey to which this key belongs
-	 * @param pKeyType the Key type of the new key
-	 */
-	private DataKey(List 		pList,
-				    ControlKey 	pControlKey,
-				    SymKeyType	pKeyType) throws ModelException {
-		/* Initialise the item */
-		super(pList, 0);
-		Values myValues = getValues();
-		
-		/* Store the Details */
-		myValues.setControlKey(pControlKey);
-		myValues.setKeyType(pKeyType);
-		
-		/* Create the new key */
-		SecurityControl myControl = pControlKey.getSecurityControl();
-		SymmetricKey myKey  = myControl.getSymmetricKey(pKeyType);
-		myValues.setKey(myKey);
-		
-		/* Access the Cipher */
-		myValues.setCipher(myKey.initDataCipher());
-		
-		/* Store its secured keyDef */
-		myValues.setSecurityControl(myControl);
-		myValues.setSecuredKeyDef(myControl.getSecuredKeyDef(myKey));			
-	
-		/* Register the DataKey */
-		pControlKey.registerDataKey(this);
-		
-		/* Allocate the id */
-		pList.setNewId(this);				
-	}
+    protected SymmetricKey getDataKey() {
+        return getDataKey(theValueSet);
+    }
 
-	/**
-	 * Constructor for a cloned DataKey in a new ControlKey set
-	 * @param pList the list to add to
-	 * @param pControlKey the ControlKey to which this key belongs
-	 * @param pDataKey the DataKey to clone
-	 */
-	private DataKey(List 		pList,
-				    ControlKey 	pControlKey,
-				    DataKey		pDataKey) throws ModelException {
-		/* Initialise the item */
-		super(pList, 0);
-		Values myValues = getValues();
-		
-		/* Store the Control details */
-		myValues.setControlKey(pControlKey);
-		
-		/* Copy the key details */
-		myValues.setKey(pDataKey.getDataKey());
-		myValues.setCipher(pDataKey.getCipher());
-		
-		/* Access Security Control */
-		SecurityControl myControl = pControlKey.getSecurityControl();
+    protected DataCipher getCipher() {
+        return getCipher(theValueSet);
+    }
 
-		/* Store its secured keyDef */
-		myValues.setSecurityControl(myControl);
-		myValues.setKeyType(pDataKey.getKeyType());
-		myValues.setSecuredKeyDef(myControl.getSecuredKeyDef(myValues.getKey()));			
-		
-		/* Allocate the id */
-		pList.setNewId(this);				
-	}
+    protected PasswordHash getPasswordHash() {
+        return getPasswordHash(theValueSet);
+    }
 
-	@Override
-	public boolean equals(Object pThat) {
-		/* Handle the trivial cases */
-		if (this == pThat) return true;
-		if (pThat == null) return false;
-		
-		/* Make sure that the object is a DataKey */
-		if (pThat.getClass() != this.getClass()) return false;
-		
-		/* Access the object as a DataKey */
-		DataKey myThat = (DataKey)pThat;
-		
-		/* Check for equality */
-		if (getId() != myThat.getId()) 		 		return false;
-		
-		/* Compare the changeable values */
-		return getValues().histEquals(myThat.getValues()).isIdentical();
-	}
+    public static ControlKey getControlKey(ValueSet<DataKey> pValueSet) {
+        return pValueSet.getValue(FIELD_CONTROLKEY, ControlKey.class);
+    }
 
-	@Override
-	public int compareTo(Object pThat) {
-		int iDiff;
-		
-		/* Handle the trivial cases */
-		if (this == pThat) return 0;
-		if (pThat == null) return -1;
-		
-		/* Make sure that the object is a DataKey */
-		if (pThat.getClass() != this.getClass()) return -1;
-		
-		/* Access the object as a DataKey */
-		DataKey myThat = (DataKey)pThat;
+    public static SymKeyType getKeyType(ValueSet<DataKey> pValueSet) {
+        return pValueSet.getValue(FIELD_KEYTYPE, SymKeyType.class);
+    }
 
-		/* Compare the IDs */
-		iDiff =(int)(getId() - myThat.getId());
-		if (iDiff < 0) return -1;
-		if (iDiff > 0) return 1;
-		return 0;
-	}
+    public static byte[] getSecuredKeyDef(ValueSet<DataKey> pValueSet) {
+        return pValueSet.getValue(FIELD_KEYDEF, byte[].class);
+    }
 
-	/**
-	 * Isolate Data Copy
-	 * @param pData the DataSet
-	 */
-	private void isolateCopy(DataSet<?> pData) {
-		ControlKey.List myKeys = pData.getControlKeys();
-		
-		/* Update to use the local copy of the ControlKeys */
-		Values 		myValues   	= getValues();
-		ControlKey 	myKey 		= myValues.getControlKey();
-		ControlKey 	myNewKey 	= myKeys.searchFor(myKey.getId());
-		myValues.setControlKey(myNewKey);
-		
-		/* Register the Key */
-		myNewKey.registerDataKey(this);
-	}
+    protected static SymmetricKey getDataKey(ValueSet<DataKey> pValueSet) {
+        return pValueSet.getValue(FIELD_KEY, SymmetricKey.class);
+    }
 
-	/**
-	 * Update security control 
-	 */
-	protected void updateSecurityControl() throws ModelException {
-		/* Store the current detail into history */
-		pushHistory();
+    protected static DataCipher getCipher(ValueSet<DataKey> pValueSet) {
+        return pValueSet.getValue(FIELD_CIPHER, DataCipher.class);
+    }
 
-		/* Update the Security Control Key and obtain the new secured KeyDef */
-		Values 			myValues   		= getValues();
-		ControlKey		myControlKey	= getControlKey();
-		SecurityControl	myControl		= myControlKey.getSecurityControl();
-		myValues.setSecurityControl(myControl);
-		myValues.setSecuredKeyDef(myControl.getSecuredKeyDef(myValues.getKey()));			
-		
-		/* Check for changes */
-		if (checkForHistory()) setState(DataState.CHANGED);
-	}
-	
-	/**
-	 * DataKey List
-	 */
-	public static class List  extends DataList<List, DataKey> {
-		/* Members */
-		private DataSet<?>	theData		= null;
-		public 	DataSet<?> 	getData()	{ return theData; }
+    protected static PasswordHash getPasswordHash(ValueSet<DataKey> pValueSet) {
+        return pValueSet.getValue(FIELD_HASH, PasswordHash.class);
+    }
 
-		/** 
-		 * Construct an empty CORE DataKey list
-	 	 * @param pData the DataSet for the list
-		 */
-		protected List(DataSet<?> pData) { 
-			super(List.class, DataKey.class, ListStyle.CORE, false);
-			theData = pData;
-		}
+    private void setValueControlKey(ControlKey pKey) {
+        theValueSet.setValue(FIELD_CONTROLKEY, pKey);
+    }
 
-		/** 
-		 * Construct an empty generic DataKey list
-	 	 * @param pData the DataSet for the list
-		 * @param pStyle the style of the list 
-		 */
-		protected List(DataSet<?> pData, ListStyle pStyle) {
-			super(List.class, DataKey.class, pStyle, false);
-			theData = pData;
-		}
+    private void setValueControlKey(Integer pId) {
+        theValueSet.setValue(FIELD_CONTROLKEY, pId);
+    }
 
-		/**
-		 * Constructor for a cloned List
-		 * @param pSource the source List
-		 */
-		private List(List pSource) { 
-			super(pSource);
-			theData = pSource.theData;
-		}
-		
-		/**
-		 * Construct an update extract for the List.
-		 * @return the update Extract
-		 */
-		private List getExtractList(ListStyle pStyle) {
-			/* Build an empty Extract List */
-			List myList = new List(this);
-			
-			/* Obtain underlying updates */
-			myList.populateList(pStyle);
-			
-			/* Return the list */
-			return myList;
-		}
+    private void setValueKeyType(SymKeyType pKeyType) {
+        theValueSet.setValue(FIELD_KEYTYPE, pKeyType);
+    }
 
-		/* Obtain extract lists. */
-		@Override
-		public List getUpdateList() 	{ return getExtractList(ListStyle.UPDATE); }
-		@Override
-		public List getEditList() 		{ return null; }
-		@Override
-		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
-		@Override
-		public List getDeepCopy(DataSet<?> pDataSet)	{ 
-			/* Build an empty Extract List */
-			List myList = new List(this);
-			myList.theData = pDataSet;
-			
-			/* Obtain underlying clones */
-			myList.populateList(ListStyle.CLONE);
-			myList.setStyle(ListStyle.CORE);
-			
-			/* Return the list */
-			return myList;
-		}
+    private void setValueKeyType(Integer pId) {
+        theValueSet.setValue(FIELD_KEYTYPE, pId);
+    }
 
-		@Override
-		protected List getDifferences(List pOld) { 
-			/* Build an empty Difference List */
-			List myList = new List(this);
-			
-			/* Calculate the differences */
-			myList.getDifferenceList(this, pOld);
-			
-			/* Return the list */
-			return myList;
-		}
+    private void setValueSecuredKeyDef(byte[] pKeyDef) {
+        theValueSet.setValue(FIELD_KEYDEF, pKeyDef);
+    }
 
-		@Override
-		public DataKey addNewItem(DataItem<?> pItem) { 
-			DataKey myKey = new DataKey(this, (DataKey)pItem);
-			add(myKey);
-			return myKey; 
-		}
+    private void setValueDataKey(SymmetricKey pKey) {
+        theValueSet.setValue(FIELD_KEY, pKey);
+    }
 
-		@Override
-		public DataKey addNewItem() { return null; }
+    private void setValueCipher(DataCipher pCipher) {
+        theValueSet.setValue(FIELD_CIPHER, pCipher);
+    }
 
-		@Override
-		public String itemType() { return listName; }
+    private void setValuePasswordHash(PasswordHash pHash) {
+        theValueSet.setValue(FIELD_HASH, pHash);
+    }
 
-		/**
-	 	 * Add a DataKey from Database/Backup
-	 	 * @param uId the id of the DataKey
-	 	 * @param uControlId the id of the ControlKey
-	 	 * @param uKeyTypeId the id of the KeyType
-		 * @param pSecurityKey the encrypted symmetric key
-	 	 */
-		public DataKey addItem(int  	uId,
-							   int		uControlId,
-							   int		uKeyTypeId,
-	            			   byte[]	pSecurityKey) throws ModelException {
-			DataKey     	myKey;
-			
-			/* Create the DataKey */
-			myKey = new DataKey(this, 
-								uId,
-								uControlId,
-								uKeyTypeId,
-							    pSecurityKey);
-			
-			/* Check that this KeyId has not been previously added */
-			if (!isIdUnique(uId)) 
-				throw new ModelException(ExceptionClass.DATA,
-									myKey,
-									"Duplicate DataKeyId (" + uId + ")");
-			 
-			/* Add to the list */
-			add(myKey);
-			return myKey;
-		}			
+    /* Linking methods */
+    @Override
+    public DataKey getBase() {
+        return (DataKey) super.getBase();
+    }
 
-		/**
-		 *  Add a new DataKey for the passed ControlKey
-		 *  @param pControlKey the ControlKey
-		 *  @param pKeyType the KeyType
-		 *  @return the new DataKey
-		 */
-		public DataKey addItem(ControlKey 	pControlKey,
-							   SymKeyType	pKeyType) throws ModelException {
-			DataKey     	myKey;
-			
-			/* Create the key */
-			myKey = new DataKey(this, 
-								pControlKey,
-								pKeyType);
-			
-			/* Add to the list */
-			add(myKey);
-			return myKey;
-		}			
+    /**
+     * Construct a copy of a DataKey
+     * @param pList the list to add to
+     * @param pSource The Key to copy
+     */
+    protected DataKey(DataKeyList pList,
+                      DataKey pSource) {
+        /* Set standard values */
+        super(pList, pSource);
 
-		/**
-		 *  Add a clone of the passed DataKey for the passed ControlKey
-		 *  @param pControlKey the ControlKey
-		 *  @param pDataKey the DataKey
-		 *  @return the new DataKey
-		 */
-		public DataKey addItem(ControlKey 	pControlKey,
-							   DataKey		pDataKey) throws ModelException {
-			DataKey     	myKey;
-			
-			/* Create the key */
-			myKey = new DataKey(this, 
-								pControlKey,
-								pDataKey);
-			
-			/* Add to the list */
-			add(myKey);
-			return myKey;
-		}			
-	}
+        /* Switch on the LinkStyle */
+        switch (getStyle()) {
+            case CLONE:
+                isolateCopy(pList.getData());
+            case CORE:
+            case COPY:
+                pList.setNewId(this);
+                break;
+            case EDIT:
+                setBase(pSource);
+                setState(DataState.CLEAN);
+                break;
+            case UPDATE:
+                setBase(pSource);
+                setState(pSource.getState());
+                break;
+        }
+    }
 
-	/**
-	 * Values for a DataKey 
-	 */
-	public class Values extends HistoryValues<DataKey> {
-		private SecurityControl	theControl			= null;
-		private ControlKey		theControlKey		= null;
-		private byte[]			theSecuredKeyDef	= null;
-		private SymKeyType		theKeyType			= null;
-		private int 			theControlId 		= -1;
-		private int 			theKeyTypeId 		= -1;
-		private DataCipher		theCipher			= null;
-		private SymmetricKey	theKey				= null;
-		
-		/* Access methods */
-		public  SecurityControl	getSecurityControl()	{ return theControl; }
-		public  ControlKey		getControlKey()  		{ return theControlKey; }
-		public  byte[] 			getSecuredKeyDef()  	{ return theSecuredKeyDef; }
-		public  SymKeyType		getKeyType()  			{ return theKeyType; }
-		public  int				getControlId()  		{ return theControlId; }
-		public  int				getKeyTypeId()  		{ return theKeyTypeId; }
-		public  DataCipher		getCipher()  			{ return theCipher; }
-		public  SymmetricKey	getKey()  				{ return theKey; }
-		
-		private void setSecurityControl(SecurityControl pControl) {
-			theControl			= pControl; }
-		private void setControlKey(ControlKey pValue) {
-			theControlKey		= pValue; 
-			theControlId 		= (pValue == null) ? -1 : pValue.getId(); }
-		private void setSecuredKeyDef(byte[] pValue) {
-			theSecuredKeyDef	= pValue; }
-		private void setKeyType(SymKeyType pValue) {
-			theKeyType			= pValue; 
-			theKeyTypeId 		= (pValue == null) ? -1 : pValue.getId(); }
-		private void setKeyTypeId(int pValue) {
-			theKeyTypeId		= pValue; }
-		private void setControlId(int pValue) {
-			theControlId		= pValue; }
-		private void setCipher(DataCipher pValue) {
-			theCipher			= pValue; }
-		private void setKey(SymmetricKey pValue) {
-			theKey				= pValue; }
+    /**
+     * Construct a DataKey from Database/Backup
+     * @param pList the list to add to
+     * @param uId the id of the DataKey
+     * @param uControlId the id of the ControlKey
+     * @param uKeyTypeId the id of the KeyType
+     * @param pSecurityKey the encrypted symmetric key
+     * @throws ModelException
+     */
+    private DataKey(DataKeyList pList,
+                    int uId,
+                    int uControlId,
+                    int uKeyTypeId,
+                    byte[] pSecurityKey) throws ModelException {
+        /* Initialise the item */
+        super(pList, uId);
 
-		/* Constructor */
-		public Values() {}
-		public Values(Values pValues) { copyFrom(pValues); }
-		
-		@Override
-		public Difference histEquals(HistoryValues<DataKey> pCompare) {
-			/* Make sure that the object is the same class */
-			if (pCompare.getClass() != this.getClass()) return Difference.Different;
-			
-			/* Cast correctly */
-			Values 		myValues 		= (Values)pCompare;
-			Difference 	myDifference 	= Difference.Identical;
-			
-			/* Test the standard fields */
-			if ((!theKeyType.equals(myValues.theKeyType)) ||
-				(Utils.differs(theSecuredKeyDef,   myValues.theSecuredKeyDef).isDifferent()))
-				myDifference = Difference.Different;
-			
-			/* Test underlying item differences */
-			if (myDifference.isIdentical()) 
-				myDifference = ControlKey.differs(theControlKey, myValues.theControlKey);
-			
-			/* Return the differences */
-			return myDifference;
-		}
-		
-		@Override
-		public HistoryValues<DataKey> copySelf() {
-			return new Values(this);
-		}
-		@Override
-		public void    copyFrom(HistoryValues<?> pSource) {
-			Values myValues 	= (Values)pSource;
-			theControl			= myValues.getSecurityControl();
-			theControlKey		= myValues.getControlKey();
-			theSecuredKeyDef	= myValues.getSecuredKeyDef();
-			theKeyType			= myValues.getKeyType();
-			theKeyTypeId		= myValues.getKeyTypeId();
-			theControlId		= myValues.getControlId();
-			theCipher			= myValues.getCipher();
-			theKey				= myValues.getKey();
-		}
-		@Override
-		public Difference	fieldChanged(int fieldNo, HistoryValues<DataKey> pOriginal) {
-			Values 	pValues = (Values)pOriginal;
-			Difference	bResult = Difference.Identical;
-			switch (fieldNo) {
-				case FIELD_CONTROL:
-					bResult = (ControlKey.differs(theControlKey, pValues.theControlKey));
-					break;
-				case FIELD_KEYTYPE:
-					bResult = (theKeyType != pValues.theKeyType) ? Difference.Different
-							 									 : Difference.Identical;
-					break;
-				case FIELD_KEY:
-					bResult = (Utils.differs(theSecuredKeyDef,	pValues.theSecuredKeyDef));
-					break;
-			}
-			return bResult;
-		}
-	}	
+        /* Protect against exceptions */
+        try {
+            /* Record the IDs */
+            setValueControlKey(uControlId);
+            setValueKeyType(uKeyTypeId);
+            setValueSecuredKeyDef(pSecurityKey);
+
+            /* Determine the SymKeyType */
+            try {
+                setValueKeyType(SymKeyType.fromId(uKeyTypeId));
+            } catch (ModelException e) {
+                throw new ModelException(ExceptionClass.DATA, this, "Invalid KeyType Id " + uKeyTypeId);
+            }
+
+            /* Look up the ControlKey */
+            ControlKey myControlKey = pList.theData.getControlKeys().searchFor(uControlId);
+            if (myControlKey == null)
+                throw new ModelException(ExceptionClass.DATA, this, "Invalid ControlKey Id");
+
+            /* Store the keys */
+            setValueControlKey(myControlKey);
+
+            /* Create the Symmetric Key from the wrapped data */
+            PasswordHash myHash = myControlKey.getPasswordHash();
+            CipherSet myCipher = myHash.getCipherSet();
+            SymmetricKey myKey = myCipher.deriveSymmetricKey(pSecurityKey);
+            setValueDataKey(myKey);
+            setValuePasswordHash(myHash);
+
+            /* Access the Cipher */
+            setValueCipher(myKey.initDataCipher());
+
+            /* Register the DataKey */
+            myControlKey.registerDataKey(this);
+
+            /* Allocate the id */
+            pList.setNewId(this);
+        }
+
+        /* Catch Exceptions */
+        catch (Exception e) {
+            /* Pass on exception */
+            throw new ModelException(ExceptionClass.DATA, this, "Failed to create item", e);
+        }
+    }
+
+    /**
+     * Constructor for a new DataKey in a new ControlKey set
+     * @param pList the list to add to
+     * @param pControlKey the ControlKey to which this key belongs
+     * @param pKeyType the Key type of the new key
+     * @throws ModelException
+     */
+    private DataKey(DataKeyList pList,
+                    ControlKey pControlKey,
+                    SymKeyType pKeyType) throws ModelException {
+        /* Initialise the item */
+        super(pList, 0);
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Details */
+            setValueControlKey(pControlKey);
+            setValueKeyType(pKeyType);
+
+            /* Create the new key */
+            PasswordHash myHash = pControlKey.getPasswordHash();
+            CipherSet myCipher = myHash.getCipherSet();
+            SecurityGenerator myGenerator = myHash.getSecurityGenerator();
+            SymmetricKey myKey = myGenerator.generateSymmetricKey(pKeyType);
+            setValuePasswordHash(myHash);
+            setValueDataKey(myKey);
+
+            /* Store its secured keyDef */
+            setValueSecuredKeyDef(myCipher.secureSymmetricKey(myKey));
+
+            /* Access the Cipher */
+            setValueCipher(myKey.initDataCipher());
+
+            /* Register the DataKey */
+            pControlKey.registerDataKey(this);
+
+            /* Allocate the id */
+            pList.setNewId(this);
+        }
+
+        /* Catch Exceptions */
+        catch (Exception e) {
+            /* Pass on exception */
+            throw new ModelException(ExceptionClass.DATA, this, "Failed to create item", e);
+        }
+    }
+
+    /**
+     * Constructor for a cloned DataKey in a new ControlKey set
+     * @param pList the list to add to
+     * @param pControlKey the ControlKey to which this key belongs
+     * @param pDataKey the DataKey to clone
+     * @throws ModelException
+     */
+    private DataKey(DataKeyList pList,
+                    ControlKey pControlKey,
+                    DataKey pDataKey) throws ModelException {
+        /* Initialise the item */
+        super(pList, 0);
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Control details */
+            setValueControlKey(pControlKey);
+
+            /* Copy the key details */
+            setValueDataKey(pDataKey.getDataKey());
+            setValueCipher(pDataKey.getCipher());
+            setValueKeyType(pDataKey.getKeyType());
+
+            /* Access Password Hash */
+            PasswordHash myHash = pControlKey.getPasswordHash();
+
+            /* Store its secured keyDef */
+            setValuePasswordHash(myHash);
+            CipherSet myCipher = myHash.getCipherSet();
+            setValueSecuredKeyDef(myCipher.secureSymmetricKey(getDataKey()));
+
+            /* Allocate the id */
+            pList.setNewId(this);
+        }
+
+        /* Catch Exceptions */
+        catch (Exception e) {
+            /* Pass on exception */
+            throw new ModelException(ExceptionClass.DATA, this, "Failed to create item", e);
+        }
+    }
+
+    @Override
+    public int compareTo(Object pThat) {
+        int iDiff;
+
+        /* Handle the trivial cases */
+        if (this == pThat)
+            return 0;
+        if (pThat == null)
+            return -1;
+
+        /* Make sure that the object is a DataKey */
+        if (pThat.getClass() != this.getClass())
+            return -1;
+
+        /* Access the object as a DataKey */
+        DataKey myThat = (DataKey) pThat;
+
+        /* Compare the IDs */
+        iDiff = (int) (getId() - myThat.getId());
+        if (iDiff < 0)
+            return -1;
+        if (iDiff > 0)
+            return 1;
+        return 0;
+    }
+
+    /**
+     * Isolate Data Copy
+     * @param pData the DataSet
+     */
+    private void isolateCopy(DataSet<?> pData) {
+        ControlKeyList myKeys = pData.getControlKeys();
+
+        /* Update to use the local copy of the ControlKeys */
+        ControlKey myKey = getControlKey();
+        ControlKey myNewKey = myKeys.searchFor(myKey.getId());
+        setValueControlKey(myNewKey);
+
+        /* Register the Key */
+        myNewKey.registerDataKey(this);
+    }
+
+    /**
+     * Update password hash
+     * @throws ModelException
+     */
+    protected void updatePasswordHash() throws ModelException {
+        /* Store the current detail into history */
+        pushHistory();
+
+        /* Update the Security Control Key and obtain the new secured KeyDef */
+        ControlKey myControlKey = getControlKey();
+        PasswordHash myHash = myControlKey.getPasswordHash();
+        CipherSet myCipher = myHash.getCipherSet();
+        setValuePasswordHash(myHash);
+        setValueSecuredKeyDef(myCipher.secureSymmetricKey(getDataKey()));
+
+        /* Check for changes */
+        if (checkForHistory())
+            setState(DataState.CHANGED);
+    }
+
+    /**
+     * DataKey List
+     */
+    public static class DataKeyList extends DataList<DataKeyList, DataKey> {
+        /* Members */
+        private DataSet<?> theData = null;
+
+        public DataSet<?> getData() {
+            return theData;
+        }
+
+        @Override
+        public String listName() {
+            return listName;
+        }
+
+        /**
+         * Construct an empty CORE DataKey list
+         * @param pData the DataSet for the list
+         */
+        protected DataKeyList(DataSet<?> pData) {
+            super(DataKeyList.class, DataKey.class, ListStyle.CORE, false);
+            theData = pData;
+        }
+
+        /**
+         * Construct an empty generic DataKey list
+         * @param pData the DataSet for the list
+         * @param pStyle the style of the list
+         */
+        protected DataKeyList(DataSet<?> pData,
+                              ListStyle pStyle) {
+            super(DataKeyList.class, DataKey.class, pStyle, false);
+            theData = pData;
+        }
+
+        /**
+         * Constructor for a cloned List
+         * @param pSource the source List
+         */
+        private DataKeyList(DataKeyList pSource) {
+            super(pSource);
+            theData = pSource.theData;
+        }
+
+        /**
+         * Construct an update extract for the List.
+         * @param pStyle the list style
+         * @return the update Extract
+         */
+        private DataKeyList getExtractList(ListStyle pStyle) {
+            /* Build an empty Extract List */
+            DataKeyList myList = new DataKeyList(this);
+
+            /* Obtain underlying updates */
+            myList.populateList(pStyle);
+
+            /* Return the list */
+            return myList;
+        }
+
+        /* Obtain extract lists. */
+        @Override
+        public DataKeyList getUpdateList() {
+            return getExtractList(ListStyle.UPDATE);
+        }
+
+        @Override
+        public DataKeyList getEditList() {
+            return null;
+        }
+
+        @Override
+        public DataKeyList getShallowCopy() {
+            return getExtractList(ListStyle.COPY);
+        }
+
+        @Override
+        public DataKeyList getDeepCopy(DataSet<?> pDataSet) {
+            /* Build an empty Extract List */
+            DataKeyList myList = new DataKeyList(this);
+            myList.theData = pDataSet;
+
+            /* Obtain underlying clones */
+            myList.populateList(ListStyle.CLONE);
+            myList.setStyle(ListStyle.CORE);
+
+            /* Return the list */
+            return myList;
+        }
+
+        @Override
+        protected DataKeyList getDifferences(DataKeyList pOld) {
+            /* Build an empty Difference List */
+            DataKeyList myList = new DataKeyList(this);
+
+            /* Calculate the differences */
+            myList.getDifferenceList(this, pOld);
+
+            /* Return the list */
+            return myList;
+        }
+
+        @Override
+        public DataKey addNewItem(DataItem<?> pItem) {
+            DataKey myKey = new DataKey(this, (DataKey) pItem);
+            add(myKey);
+            return myKey;
+        }
+
+        @Override
+        public DataKey addNewItem() {
+            return null;
+        }
+
+        /**
+         * Add a DataKey from Database/Backup
+         * @param uId the id of the DataKey
+         * @param uControlId the id of the ControlKey
+         * @param uKeyTypeId the id of the KeyType
+         * @param pSecurityKey the encrypted symmetric key
+         * @return the new item
+         * @throws ModelException
+         */
+        public DataKey addItem(int uId,
+                               int uControlId,
+                               int uKeyTypeId,
+                               byte[] pSecurityKey) throws ModelException {
+            DataKey myKey;
+
+            /* Create the DataKey */
+            myKey = new DataKey(this, uId, uControlId, uKeyTypeId, pSecurityKey);
+
+            /* Check that this KeyId has not been previously added */
+            if (!isIdUnique(uId))
+                throw new ModelException(ExceptionClass.DATA, myKey, "Duplicate DataKeyId (" + uId + ")");
+
+            /* Add to the list */
+            add(myKey);
+            return myKey;
+        }
+
+        /**
+         * Add a new DataKey for the passed ControlKey
+         * @param pControlKey the ControlKey
+         * @param pKeyType the KeyType
+         * @return the new DataKey
+         * @throws ModelException
+         */
+        public DataKey addItem(ControlKey pControlKey,
+                               SymKeyType pKeyType) throws ModelException {
+            DataKey myKey;
+
+            /* Create the key */
+            myKey = new DataKey(this, pControlKey, pKeyType);
+
+            /* Add to the list */
+            add(myKey);
+            return myKey;
+        }
+
+        /**
+         * Add a clone of the passed DataKey for the passed ControlKey
+         * @param pControlKey the ControlKey
+         * @param pDataKey the DataKey
+         * @return the new DataKey
+         * @throws ModelException
+         */
+        public DataKey addItem(ControlKey pControlKey,
+                               DataKey pDataKey) throws ModelException {
+            DataKey myKey;
+
+            /* Create the key */
+            myKey = new DataKey(this, pControlKey, pDataKey);
+
+            /* Add to the list */
+            add(myKey);
+            return myKey;
+        }
+    }
 }

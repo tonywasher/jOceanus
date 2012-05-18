@@ -21,51 +21,49 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.threads;
 
-import uk.co.tolcroft.models.ModelException;
-import uk.co.tolcroft.models.ModelException.ExceptionClass;
+import net.sourceforge.JDataWalker.ModelException;
+import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.views.DataControl;
 
-public abstract class LoaderThread<T extends DataSet<T>> extends WorkerThread<T> { 
-	private DataControl<T>	theControl	= null;
+public abstract class LoaderThread<T extends DataSet<T>> extends WorkerThread<T> {
+    private DataControl<T> theControl = null;
 
-	/**
-	 * Constructor	
-	 */
-	protected LoaderThread(String			pTask,
-						   DataControl<T>	pControl) {
-		/* Record the parameters */
-		super(pTask, pControl.getStatusBar());
-		theControl = pControl;
-	}
+    /**
+     * Constructor
+     * @param pTask task name
+     * @param pControl data control
+     */
+    protected LoaderThread(String pTask, DataControl<T> pControl) {
+        /* Record the parameters */
+        super(pTask, pControl.getStatusBar());
+        theControl = pControl;
+    }
 
-	@Override
-	public void done() {
-		T 			myData;
+    @Override
+    public void done() {
+        T myData;
 
-		try {
-			/* If we are not cancelled */
-			if (!isCancelled()) {				
-				/* Get the newly loaded data */
-				myData = get();
+        try {
+            /* If we are not cancelled */
+            if (!isCancelled()) {
+                /* Get the newly loaded data */
+                myData = get();
 
-				/* If we have new data */
-				if (myData != null) {
-					/* Activate the data and obtain any error */
-					theControl.setData(myData);
-					setError(theControl.getError());
-				}
-			}
+                /* If we have new data */
+                if (myData != null) {
+                    /* Activate the data and obtain any error */
+                    theControl.setData(myData);
+                    setError(theControl.getError());
+                }
+            }
 
-			/* Update the Status Bar */
-			completeStatusBar();
-		}	 	
-		catch (Throwable e) {
-			/* Report the failure */
-			setError(new ModelException(ExceptionClass.DATA,
-								   "Failed to obtain and activate new data",
-								   e));
-			completeStatusBar();
-		}
-	}			
+            /* Update the Status Bar */
+            completeStatusBar();
+        } catch (Throwable e) {
+            /* Report the failure */
+            setError(new ModelException(ExceptionClass.DATA, "Failed to obtain and activate new data", e));
+            completeStatusBar();
+        }
+    }
 }

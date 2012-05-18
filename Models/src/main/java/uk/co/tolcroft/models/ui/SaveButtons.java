@@ -31,16 +31,14 @@ import javax.swing.LayoutStyle;
 
 import uk.co.tolcroft.models.ui.StdInterfaces.*;
 
-public class SaveButtons implements ActionListener {
+public class SaveButtons extends JPanel {
+	private static final long serialVersionUID = -6297579158428259704L;
+	
 	/* Members */
-	private JPanel					thePanel		= null;
 	private stdPanel				theParent		= null;
 	private JButton               	theOKButton 	= null;
 	private JButton                 theResetButton  = null;
 	
-	/* Access methods */
-	public	JPanel           	   	getPanel()      { return thePanel; }
-				
 	/* Constructor */
 	public SaveButtons(stdPanel pParent) {
 		GroupLayout panelLayout;
@@ -51,18 +49,17 @@ public class SaveButtons implements ActionListener {
 		theParent	   = pParent;
 		
 		/* Add the listener for item changes */
-		theOKButton.addActionListener(this);
-		//theValidButton.addActionListener(this);
-		theResetButton.addActionListener(this);
+		SaveListener myListener = new SaveListener();
+		theOKButton.addActionListener(myListener);
+		theResetButton.addActionListener(myListener);
 		
 		/* Create the save panel */
-		thePanel = new JPanel();
-		thePanel.setBorder(javax.swing.BorderFactory
-							.createTitledBorder("Save Options"));
+		setBorder(javax.swing.BorderFactory
+						.createTitledBorder("Save Options"));
 
 		/* Create the layout for the save panel */
-	    panelLayout = new GroupLayout(thePanel);
-	    thePanel.setLayout(panelLayout);
+	    panelLayout = new GroupLayout(this);
+	    setLayout(panelLayout);
 	    
 	    /* Set the layout */
         panelLayout.setHorizontalGroup(
@@ -113,22 +110,28 @@ public class SaveButtons implements ActionListener {
 		}
 	}
 	
-	@Override
-	public void actionPerformed(ActionEvent evt) {
-
-		/* If this event relates to the OK box */
-		if (evt.getSource() == (Object)theOKButton) {
-			/* Pass command to the table */
-			theParent.performCommand(stdCommand.OK);
-		}
+	/**
+	 * Listener class
+	 */
+	private class SaveListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent evt) {
+			Object o = evt.getSource();
+			
+			/* If this event relates to the OK box */
+			if (o == theOKButton) {
+				/* Pass command to the table */
+				theParent.performCommand(stdCommand.OK);
+			}
 		
-		/* If this event relates to the Reset box */
-		else if (evt.getSource() == (Object)theResetButton) {
-			/* Pass command to the table */
-			theParent.performCommand(stdCommand.RESETALL);
-		}
+			/* If this event relates to the Reset box */
+			else if (o == theResetButton) {
+				/* Pass command to the table */
+				theParent.performCommand(stdCommand.RESETALL);
+			}
 		
-		/* Set the lockDown Status */
-		setLockDown();
+			/* Set the lockDown Status */
+			setLockDown();
+		}
 	}
 }

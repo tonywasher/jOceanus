@@ -22,81 +22,77 @@
 package uk.co.tolcroft.models.sheets;
 
 import uk.co.tolcroft.models.data.ControlKey;
+import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
 import uk.co.tolcroft.models.data.DataSet;
 
 public class SheetControlKey extends SheetDataItem<ControlKey> {
-	/**
-	 * SheetName for Keys
-	 */
-	private static final String Keys	   		= ControlKey.listName;
+    /**
+     * SheetName for Keys
+     */
+    private static final String Keys = ControlKey.class.getSimpleName();
 
-	/**
-	 * ControlKey data list
-	 */
-	private ControlKey.List 	theList			= null;
+    /**
+     * ControlKey data list
+     */
+    private ControlKeyList theList = null;
 
-	/**
-	 * DataSet
-	 */
-	private DataSet<?> 			theData			= null;
+    /**
+     * DataSet
+     */
+    private DataSet<?> theData = null;
 
-	/**
-	 * Constructor for loading a spreadsheet
-	 * @param pReader the spreadsheet reader
-	 */
-	protected SheetControlKey(SheetReader<?>	pReader) {
-		/* Call super constructor */
-		super(pReader, Keys);
-		
-		/* Access the Lists */
-		theData	= pReader.getData();
-		theList = theData.getControlKeys();
-	}
+    /**
+     * Constructor for loading a spreadsheet
+     * @param pReader the spreadsheet reader
+     */
+    protected SheetControlKey(SheetReader<?> pReader) {
+        /* Call super constructor */
+        super(pReader, Keys);
 
-	/**
-	 *  Constructor for creating a spreadsheet
-	 *  @param pWriter the Spreadsheet writer
-	 */
-	protected SheetControlKey(SheetWriter<?>	pWriter) {
-		/* Call super constructor */
-		super(pWriter, Keys);
-		
-		/* Access the Control list */
-		theList = pWriter.getData().getControlKeys();
-		setDataList(theList);
-	}
-	
-	@Override
-	protected void loadItem() throws Throwable {
-		/* Access the IDs */
-		int	myID 		= loadInteger(0);
-		int	myTypeID 	= loadInteger(1);
-		
-		/* Access the binary values  */
-		byte[] 	myHash		= loadBytes(2);
-		byte[] 	myPublic	= loadBytes(3);
-		byte[] 	myPrivate	= loadBytes(4);
+        /* Access the Lists */
+        theData = pReader.getData();
+        theList = theData.getControlKeys();
+    }
 
-		/* Add the Control */
-		theList.addItem(myID, myTypeID, myHash, myPublic, myPrivate);
-	}
+    /**
+     * Constructor for creating a spreadsheet
+     * @param pWriter the Spreadsheet writer
+     */
+    protected SheetControlKey(SheetWriter<?> pWriter) {
+        /* Call super constructor */
+        super(pWriter, Keys);
 
-	@Override
-	protected void insertItem(ControlKey	pItem) throws Throwable  {
-		/* Set the fields */
-		writeInteger(0, pItem.getId());
-		writeInteger(1, pItem.getKeyMode().getMode());
-		writeBytes(2, pItem.getPasswordHash());
-		writeBytes(3, pItem.getPublicKey());
-		writeBytes(4, pItem.getPrivateKey());
-	}
+        /* Access the Control list */
+        theList = pWriter.getData().getControlKeys();
+        setDataList(theList);
+    }
 
-	@Override
-	protected void preProcessOnWrite() throws Throwable {}		
+    @Override
+    protected void loadItem() throws Throwable {
+        /* Access the IDs */
+        int myID = loadInteger(0);
 
-	@Override
-	protected void postProcessOnWrite() throws Throwable {		
-		/* Set the five columns as the range */
-		nameRange(5);
-	}
+        /* Access the binary values */
+        byte[] myHash = loadBytes(1);
+
+        /* Add the Control */
+        theList.addItem(myID, myHash);
+    }
+
+    @Override
+    protected void insertItem(ControlKey pItem) throws Throwable {
+        /* Set the fields */
+        writeInteger(0, pItem.getId());
+        writeBytes(1, pItem.getHashBytes());
+    }
+
+    @Override
+    protected void preProcessOnWrite() throws Throwable {
+    }
+
+    @Override
+    protected void postProcessOnWrite() throws Throwable {
+        /* Set the two columns as the range */
+        nameRange(2);
+    }
 }

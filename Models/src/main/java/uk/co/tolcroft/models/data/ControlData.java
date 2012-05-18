@@ -21,449 +21,400 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
-import uk.co.tolcroft.models.Difference;
-import uk.co.tolcroft.models.ModelException;
-import uk.co.tolcroft.models.ModelException.*;
-import uk.co.tolcroft.models.help.DebugDetail;
+import net.sourceforge.JDataWalker.ModelException;
+import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataWalker.ReportFields;
+import net.sourceforge.JDataWalker.ReportFields.ReportField;
+import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
 
 public class ControlData extends DataItem<ControlData> {
-	/**
-	 * The name of the object
-	 */
-	public static final String objName = "ControlData";
+    /**
+     * Object name
+     */
+    public static String objName = ControlData.class.getSimpleName();
 
-	/**
-	 * The name of the object
-	 */
-	public static final String listName = objName;
+    /**
+     * List name
+     */
+    public static String listName = objName + "s";
 
-	/* Access methods */
-	public  int 			getDataVersion()  	{ return getValues().getDataVersion(); }
-	public  ControlKey		getControlKey()  	{ return getValues().getControlKey(); }
+    /**
+     * Report fields
+     */
+    private static final ReportFields theLocalFields = new ReportFields(objName, DataItem.theLocalFields);
 
-	/* Linking methods */
-	@Override
-	public ControlData	getBase() 		{ return (ControlData)super.getBase(); }
-	public Values  		getValues()  	{ return (Values)super.getCurrentValues(); }	
-	
-	/* Field IDs */
-	public static final int FIELD_VERS	   = DataItem.NUMFIELDS;
-	public static final int FIELD_CONTROL  = DataItem.NUMFIELDS+1;
-	public static final int NUMFIELDS	   = DataItem.NUMFIELDS+2; 
+    /* Called from constructor */
+    @Override
+    public ReportFields declareFields() {
+        return theLocalFields;
+    }
 
-	@Override
-	public String itemType() { return objName; }
-	
-	@Override
-	public int	numFields() {return NUMFIELDS; }
-	
-	/**
-	 * Determine the field name for a particular field
-	 * @return the field name
-	 */
-	public static String	fieldName(int iField) {
-		switch (iField) {
-			case FIELD_VERS:		return "Version";
-			case FIELD_CONTROL:		return "Control";
-			default:		  		return DataItem.fieldName(iField);
-		}
-	}
-				
-	@Override
-	public String getFieldName(int iField) { return fieldName(iField); }
-	
-	@Override
-	public String formatField(DebugDetail pDetail, int iField, HistoryValues<ControlData> pValues) {
-		Values myValues = (Values)pValues;
-		String 	myString = "";
-		switch (iField) {
-			case FIELD_VERS:
-				myString += myValues.getDataVersion(); 
-				break;
-			case FIELD_CONTROL:
-				myString = "Id=" + myValues.getControlId();					
-				if (myValues.getControlKey() != null)
-					myString = pDetail.addDebugLink(myValues.getControlKey(), myString);
-				break;
-			default: 		
-				myString += super.formatField(pDetail, iField, pValues); 
-				break;
-		}
-		return myString;
-	}
-							
-	@Override
-	protected HistoryValues<ControlData> getNewValues() { return new Values(); }
-	
-	/**
- 	 * Construct a copy of a ControlData 
- 	 * @param pSource The source 
- 	 */
-	protected ControlData(List pList, ControlData pSource) {
-		/* Set standard values */
-		super(pList, pSource.getId());
-		Values myValues = getValues();
-		myValues.copyFrom(pSource.getValues());
+    /* Field IDs */
+    public static final ReportField FIELD_VERSION = theLocalFields.declareEqualityValueField("Version");
+    public static final ReportField FIELD_CONTROLKEY = theLocalFields.declareEqualityValueField("ControlKey");
 
-		/* Switch on the LinkStyle */
-		switch (getStyle()) {
-			case CLONE:
-				isolateCopy(pList.getData());
-			case CORE:
-			case COPY:
-				pList.setNewId(this);				
-				break;
-			case EDIT:
-				setBase(pSource);
-				setState(DataState.CLEAN);
-				break;
-			case UPDATE:
-				setBase(pSource);
-				setState(pSource.getState());
-				break;
-		}
-	}
+    /**
+     * The active set of values
+     */
+    private ValueSet<ControlData> theValueSet;
 
-	/* Standard constructor */
-	private ControlData(List pList,
-				  	    int	 uId,
-				  	    int  uVersion, 
-				  	    int	 uControlId) throws ModelException {
-		/* Initialise the item */
-		super(pList, uId);
-		Values myValues = getValues();
+    @Override
+    public void declareValues(ValueSet<ControlData> pValues) {
+        super.declareValues(pValues);
+        theValueSet = pValues;
+    }
 
-		/* Record the values */
-		myValues.setDataVersion(uVersion);
-		myValues.setControlId(uControlId);
-		
-		/* Look up the ControlKey */
-		ControlKey myControl = pList.theData.getControlKeys().searchFor(uControlId);
-		if (myControl == null) 
-			throw new ModelException(ExceptionClass.DATA,
-		                        this,
-					            "Invalid ControlKey Id");
-		myValues.setControlKey(myControl);
+    /* Access methods */
+    public Integer getDataVersion() {
+        return getDataVersion(theValueSet);
+    }
 
-		/* Allocate the id */
-		pList.setNewId(this);				
-	}
+    public ControlKey getControlKey() {
+        return getControlKey(theValueSet);
+    }
 
-	/* Limited (no security) constructor */
-	private ControlData(List pList,
-						int	 uId,
-				  	    int	 uVersion) {
-		/* Initialise the item */
-		super(pList, uId);
-		Values myValues = getValues();
+    public static Integer getDataVersion(ValueSet<ControlData> pValueSet) {
+        return pValueSet.getValue(FIELD_VERSION, Integer.class);
+    }
 
-		/* Record the values */
-		myValues.setDataVersion(uVersion);
-				
-		/* Allocate the id */
-		pList.setNewId(this);				
-	}
+    public static ControlKey getControlKey(ValueSet<ControlData> pValueSet) {
+        return pValueSet.getValue(FIELD_CONTROLKEY, ControlKey.class);
+    }
 
-	@Override
-	public boolean equals(Object pThat) {
-		/* Handle the trivial cases */
-		if (this == pThat) return true;
-		if (pThat == null) return false;
-		
-		/* Make sure that the object is a ControlData */
-		if (pThat.getClass() != this.getClass()) return false;
-		
-		/* Access the object as a ControlData */
-		ControlData myThat = (ControlData)pThat;
-		
-		/* Check for equality on id */
-		if (getId() != myThat.getId())	return false;
-		
-		/* Compare the changeable values */
-		return getValues().histEquals(myThat.getValues()).isIdentical();
-	}
+    private void setValueDataVersion(Integer pId) {
+        theValueSet.setValue(FIELD_VERSION, pId);
+    }
 
-	@Override
-	public int compareTo(Object pThat) {
-		int iDiff;
-		
-		/* Handle the trivial cases */
-		if (this == pThat) return 0;
-		if (pThat == null) return -1;
-		
-		/* Make sure that the object is a ControlData */
-		if (pThat.getClass() != this.getClass()) return -1;
-		
-		/* Access the object as a ControlData */
-		ControlData myThat = (ControlData)pThat;
+    private void setValueControlKey(ControlKey pKey) {
+        theValueSet.setValue(FIELD_CONTROLKEY, pKey);
+    }
 
-		/* Compare the Versions */
-		iDiff =(int)(getDataVersion() - myThat.getDataVersion());
-		if (iDiff < 0) return -1;
-		if (iDiff > 0) return 1;
+    private void setValueControlKey(Integer pId) {
+        theValueSet.setValue(FIELD_CONTROLKEY, pId);
+    }
 
-		/* Compare the IDs */
-		iDiff =(int)(getId() - myThat.getId());
-		if (iDiff < 0) return -1;
-		if (iDiff > 0) return 1;
-		return 0;
-	}
+    /* Linking methods */
+    @Override
+    public ControlData getBase() {
+        return (ControlData) super.getBase();
+    }
 
-	/**
-	 * Isolate Data Copy
-	 * @param pData the DataSet
-	 */
-	private void isolateCopy(DataSet<?> pData) {
-		ControlKey.List myKeys = pData.getControlKeys();
-		
-		/* Update to use the local copy of the ControlKeys */
-		Values 		myValues   	= getValues();
-		ControlKey 	myKey 		= myValues.getControlKey();
-		ControlKey 	myNewKey 	= myKeys.searchFor(myKey.getId());
-		myValues.setControlKey(myNewKey);
-	}
+    /**
+     * Construct a copy of a ControlData
+     * @param pList the associated list
+     * @param pSource The source
+     */
+    protected ControlData(ControlDataList pList, ControlData pSource) {
+        /* Set standard values */
+        super(pList, pSource);
 
-	/**
-	 * Set a new ControlKey 
-	 * @param pControl the new control key 
-	 */
-	protected void setControlKey(ControlKey pControl) throws ModelException {
-		/* If we do not have a control Key */
-		Values myValues = getValues();
+        /* Switch on the LinkStyle */
+        switch (getStyle()) {
+            case CLONE:
+                isolateCopy(pList.getData());
+            case CORE:
+            case COPY:
+                pList.setNewId(this);
+                break;
+            case EDIT:
+                setBase(pSource);
+                setState(DataState.CLEAN);
+                break;
+            case UPDATE:
+                setBase(pSource);
+                setState(pSource.getState());
+                break;
+        }
+    }
 
-		if (myValues.getControlId() == -1) {
-			/* Store the control details and return */
-			myValues.setControlKey(pControl);
-			return;
-		}
-		
-		/* Store the current detail into history */
-		pushHistory();
+    /* Standard constructor */
+    private ControlData(ControlDataList pList, int uId, int uVersion, int uControlId) throws ModelException {
+        /* Initialise the item */
+        super(pList, uId);
 
-		/* Store the control details */
-		myValues.setControlKey(pControl);
+        /* Protect against exceptions */
+        try {
+            /* Record the values */
+            setValueDataVersion(uVersion);
+            setValueControlKey(uControlId);
 
-		/* Check for changes */
-		if (checkForHistory()) setState(DataState.CHANGED);
-	}
-	
-	/**
-	 * Static List
-	 */
-	public static class List  extends DataList<List, ControlData> {
-		/* Members */
-		private DataSet<?>		theData			= null;
-		public 	DataSet<?> 		getData()		{ return theData; }
-		private ControlData		theControl		= null;
-		public 	ControlData		getControl()	{ return theControl; }
-		
-		/** 
-		 * Construct an empty CORE static list
-	 	 * @param pData the DataSet for the list
-		 */
-		protected List(DataSet<?> pData) { 
-			super(List.class, ControlData.class, ListStyle.CORE, false);
-			theData = pData;
-		}
+            /* Look up the ControlKey */
+            ControlKey myControl = pList.theData.getControlKeys().searchFor(uControlId);
+            if (myControl == null)
+                throw new ModelException(ExceptionClass.DATA, this, "Invalid ControlKey Id");
+            setValueControlKey(myControl);
 
-		/** 
-		 * Construct an empty generic ControlData list
-	 	 * @param pData the DataSet for the list
-		 * @param pStyle the style of the list 
-		 */
-		protected List(DataSet<?> pData, ListStyle pStyle) {
-			super(List.class, ControlData.class, pStyle, false);
-			theData = pData;
-		}
+            /* Allocate the id */
+            pList.setNewId(this);
+        }
 
-		/**
-		 * Constructor for a cloned List
-		 * @param pSource the source List
-		 */
-		private List(List pSource) { 
-			super(pSource);
-			theData = pSource.theData;
-		}
-		
-		/**
-		 * Construct an update extract for the List.
-		 * @return the update Extract
-		 */
-		private List getExtractList(ListStyle pStyle) {
-			/* Build an empty Extract List */
-			List myList = new List(this);
-			
-			/* Obtain underlying updates */
-			myList.populateList(pStyle);
-			
-			/* Return the list */
-			return myList;
-		}
+        /* Catch Exceptions */
+        catch (Exception e) {
+            /* Pass on exception */
+            throw new ModelException(ExceptionClass.DATA, this, "Failed to create item", e);
+        }
+    }
 
-		/* Obtain extract lists. */
-		@Override
-		public List getUpdateList() 	{ return getExtractList(ListStyle.UPDATE); }
-		@Override
-		public List getEditList() 		{ return null; }
-		@Override
-		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
-		@Override
-		public List getDeepCopy(DataSet<?> pDataSet)	{ 
-			/* Build an empty Extract List */
-			List myList = new List(this);
-			myList.theData = pDataSet;
-			
-			/* Obtain underlying clones */
-			myList.populateList(ListStyle.CLONE);
-			myList.setStyle(ListStyle.CORE);
-			
-			/* Return the list */
-			return myList;
-		}
+    /* Limited (no security) constructor */
+    private ControlData(ControlDataList pList, int uId, int uVersion) throws ModelException {
+        /* Initialise the item */
+        super(pList, uId);
 
-		@Override
-		protected List getDifferences(List pOld) { 
-			/* Build an empty Difference List */
-			List myList = new List(this);
-			
-			/* Calculate the differences */
-			myList.getDifferenceList(this, pOld);
-			
-			/* Return the list */
-			return myList;
-		}
+        /* Protect against exceptions */
+        try {
+            /* Record the values */
+            setValueDataVersion(uVersion);
 
-		@Override
-		public ControlData addNewItem(DataItem<?> pItem) { 
-			ControlData myControl = new ControlData(this, (ControlData)pItem);
-			add(myControl);
-			theControl = myControl;
-			return myControl; 
-		}
+            /* Allocate the id */
+            pList.setNewId(this);
+        }
 
-		@Override
-		public ControlData addNewItem() { return null; }
+        /* Catch Exceptions */
+        catch (Exception e) {
+            /* Pass on exception */
+            throw new ModelException(ExceptionClass.DATA, this, "Failed to create item", e);
+        }
+    }
 
-		@Override
-		public String itemType() { return listName; }
+    @Override
+    public int compareTo(Object pThat) {
+        int iDiff;
 
-		/**
-		 *  Add a ControlData item
-		 */
-		public void addItem(int  	uId,
-							int  	uVersion,
-							int		uControlId) throws ModelException {
-			ControlData     	myControl;
-			
-			/* Create the ControlData */
-			myControl = new ControlData(this, 
-								  		uId, 
-								  		uVersion,
-								  		uControlId);
-			
-			/* Check that this ControlId has not been previously added */
-			if (!isIdUnique(uId)) 
-				throw new ModelException(ExceptionClass.DATA,
-									myControl,
-									"Duplicate ControlId (" + uId + ")");
-			 
-			/* Only one static is allowed */
-			if (theControl != null) 
-				throw new ModelException(ExceptionClass.DATA,
-									myControl,
-									"Control record already exists");
-			 
-			/* Add to the list */
-			theControl = myControl;
-			add(myControl);
-		}			
+        /* Handle the trivial cases */
+        if (this == pThat)
+            return 0;
+        if (pThat == null)
+            return -1;
 
-		/**
-		 *  Add a ControlData item (with no security as yet)
-		 */
-		public void addItem(int		uId,
-							int  	uVersion) throws ModelException {
-			ControlData     	myControl;
-			
-			/* Create the ControlData */
-			myControl = new ControlData(this,  uId, uVersion);
-			
-			/* Only one static is allowed */
-			if (theControl != null) 
-				throw new ModelException(ExceptionClass.DATA,
-									myControl,
-									"Control record already exists");
-			 
-			/* Add to the list */
-			theControl = myControl;
-			add(myControl);
-		}			
-	}
+        /* Make sure that the object is a ControlData */
+        if (pThat.getClass() != this.getClass())
+            return -1;
 
-	/**
-	 * Values for a controlData 
-	 */
-	public class Values extends HistoryValues<ControlData> {
-		private int 			theDataVersion	= -1;
-		private ControlKey		theControlKey	= null;
-		private int 			theControlId 	= -1;
-		
-		/* Access methods */
-		public  int 			getDataVersion()  	{ return theDataVersion; }
-		public  ControlKey		getControlKey()  	{ return theControlKey; }
-		public  int				getControlId()  	{ return theControlId; }
-		
-		private void setDataVersion(int pValue) {
-			theDataVersion = pValue; }
-		private void setControlKey(ControlKey pValue) {
-			theControlKey  = pValue;
-			theControlId = (theControlKey == null) ? -1 : theControlKey.getId();
-		}
-		private void setControlId(int pValue) {
-			theControlId		= pValue; }
+        /* Access the object as a ControlData */
+        ControlData myThat = (ControlData) pThat;
 
-		/* Constructor */
-		public Values() {}
-		public Values(Values pValues) { copyFrom(pValues); }
-		
-		@Override
-		public Difference histEquals(HistoryValues<ControlData> pCompare) {
-			/* Make sure that the object is the same class */
-			if (pCompare.getClass() != this.getClass()) return Difference.Different;
-			
-			/* Cast correctly */
-			Values myValues = (Values)pCompare;
+        /* Compare the Versions */
+        iDiff = (int) (getDataVersion() - myThat.getDataVersion());
+        if (iDiff < 0)
+            return -1;
+        if (iDiff > 0)
+            return 1;
 
-			/* Test differences */
-			if (theDataVersion != myValues.theDataVersion)  return Difference.Different;
-			return ControlKey.differs(theControlKey, myValues.theControlKey);
-		}
-		
-		@Override
-		public HistoryValues<ControlData> copySelf() {
-			return new Values(this);
-		}
-		@Override
-		public void    copyFrom(HistoryValues<?> pSource) {
-			Values myValues = (Values)pSource;
-			theDataVersion	= myValues.getDataVersion();
-			theControlKey	= myValues.getControlKey();
-			theControlId 	= myValues.getControlId();
-		}
-		@Override
-		public Difference	fieldChanged(int fieldNo, HistoryValues<ControlData> pOriginal) {
-			Values 	pValues = (Values)pOriginal;
-			Difference	bResult = Difference.Identical;
-			switch (fieldNo) {
-				case FIELD_VERS:
-					bResult = (theDataVersion != pValues.theDataVersion) ? Difference.Different
-							 											 : Difference.Identical;
-					break;
-				case FIELD_CONTROL:
-					bResult = (ControlKey.differs(theControlKey,		pValues.theControlKey));
-					break;
-			}
-			return bResult;
-		}
-	}	
+        /* Compare the IDs */
+        iDiff = (int) (getId() - myThat.getId());
+        if (iDiff < 0)
+            return -1;
+        if (iDiff > 0)
+            return 1;
+        return 0;
+    }
+
+    /**
+     * Isolate Data Copy
+     * @param pData the DataSet
+     */
+    private void isolateCopy(DataSet<?> pData) {
+        ControlKeyList myKeys = pData.getControlKeys();
+
+        /* Update to use the local copy of the ControlKeys */
+        ControlKey myKey = getControlKey();
+        ControlKey myNewKey = myKeys.searchFor(myKey.getId());
+        setValueControlKey(myNewKey);
+    }
+
+    /**
+     * Set a new ControlKey
+     * @param pControl the new control key
+     * @throws ModelException
+     */
+    protected void setControlKey(ControlKey pControl) throws ModelException {
+        /* If we do not have a control Key */
+        if (getControlKey() == null) {
+            /* Store the control details and return */
+            setValueControlKey(pControl);
+            return;
+        }
+
+        /* Store the current detail into history */
+        pushHistory();
+
+        /* Store the control details */
+        setValueControlKey(pControl);
+
+        /* Check for changes */
+        if (checkForHistory())
+            setState(DataState.CHANGED);
+    }
+
+    /**
+     * Static List
+     */
+    public static class ControlDataList extends DataList<ControlDataList, ControlData> {
+        /* Members */
+        private DataSet<?> theData = null;
+
+        public DataSet<?> getData() {
+            return theData;
+        }
+
+        @Override
+        public String listName() {
+            return listName;
+        }
+
+        private ControlData theControl = null;
+
+        public ControlData getControl() {
+            return theControl;
+        }
+
+        /**
+         * Construct an empty CORE static list
+         * @param pData the DataSet for the list
+         */
+        protected ControlDataList(DataSet<?> pData) {
+            super(ControlDataList.class, ControlData.class, ListStyle.CORE, false);
+            theData = pData;
+        }
+
+        /**
+         * Construct an empty generic ControlData list
+         * @param pData the DataSet for the list
+         * @param pStyle the style of the list
+         */
+        protected ControlDataList(DataSet<?> pData, ListStyle pStyle) {
+            super(ControlDataList.class, ControlData.class, pStyle, false);
+            theData = pData;
+        }
+
+        /**
+         * Constructor for a cloned List
+         * @param pSource the source List
+         */
+        private ControlDataList(ControlDataList pSource) {
+            super(pSource);
+            theData = pSource.theData;
+        }
+
+        /**
+         * Construct an update extract for the List.
+         * @param pStyle the list style
+         * @return the update Extract
+         */
+        private ControlDataList getExtractList(ListStyle pStyle) {
+            /* Build an empty Extract List */
+            ControlDataList myList = new ControlDataList(this);
+
+            /* Obtain underlying updates */
+            myList.populateList(pStyle);
+
+            /* Return the list */
+            return myList;
+        }
+
+        /* Obtain extract lists. */
+        @Override
+        public ControlDataList getUpdateList() {
+            return getExtractList(ListStyle.UPDATE);
+        }
+
+        @Override
+        public ControlDataList getEditList() {
+            return null;
+        }
+
+        @Override
+        public ControlDataList getShallowCopy() {
+            return getExtractList(ListStyle.COPY);
+        }
+
+        @Override
+        public ControlDataList getDeepCopy(DataSet<?> pDataSet) {
+            /* Build an empty Extract List */
+            ControlDataList myList = new ControlDataList(this);
+            myList.theData = pDataSet;
+
+            /* Obtain underlying clones */
+            myList.populateList(ListStyle.CLONE);
+            myList.setStyle(ListStyle.CORE);
+
+            /* Return the list */
+            return myList;
+        }
+
+        @Override
+        protected ControlDataList getDifferences(ControlDataList pOld) {
+            /* Build an empty Difference List */
+            ControlDataList myList = new ControlDataList(this);
+
+            /* Calculate the differences */
+            myList.getDifferenceList(this, pOld);
+
+            /* Return the list */
+            return myList;
+        }
+
+        @Override
+        public ControlData addNewItem(DataItem<?> pItem) {
+            ControlData myControl = new ControlData(this, (ControlData) pItem);
+            add(myControl);
+            theControl = myControl;
+            return myControl;
+        }
+
+        @Override
+        public ControlData addNewItem() {
+            return null;
+        }
+
+        /**
+         * Add a ControlData item
+         * @param uId the id
+         * @param uVersion the version
+         * @param uControlId the controlId
+         * @throws ModelException
+         */
+        public void addItem(int uId,
+                            int uVersion,
+                            int uControlId) throws ModelException {
+            ControlData myControl;
+
+            /* Create the ControlData */
+            myControl = new ControlData(this, uId, uVersion, uControlId);
+
+            /* Check that this ControlId has not been previously added */
+            if (!isIdUnique(uId))
+                throw new ModelException(ExceptionClass.DATA, myControl, "Duplicate ControlId (" + uId + ")");
+
+            /* Only one static is allowed */
+            if (theControl != null)
+                throw new ModelException(ExceptionClass.DATA, myControl, "Control record already exists");
+
+            /* Add to the list */
+            theControl = myControl;
+            add(myControl);
+        }
+
+        /**
+         * Add a ControlData item (with no security as yet)
+         * @param uId the id
+         * @param uVersion the version
+         * @throws ModelException
+         */
+        public void addItem(int uId,
+                            int uVersion) throws ModelException {
+            ControlData myControl;
+
+            /* Create the ControlData */
+            myControl = new ControlData(this, uId, uVersion);
+
+            /* Only one static is allowed */
+            if (theControl != null)
+                throw new ModelException(ExceptionClass.DATA, myControl, "Control record already exists");
+
+            /* Add to the list */
+            theControl = myControl;
+            add(myControl);
+        }
+    }
 }

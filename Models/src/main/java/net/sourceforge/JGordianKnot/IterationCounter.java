@@ -1,0 +1,53 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
+package net.sourceforge.JGordianKnot;
+
+import org.bouncycastle.util.Arrays;
+
+public class IterationCounter {
+    /**
+     * The buffer
+     */
+    private final byte[] theBuffer;
+
+    /**
+     * Constructor
+     */
+    protected IterationCounter() {
+        /* initialise the buffer */
+        theBuffer = new byte[4];
+        Arrays.fill(theBuffer, (byte) 0);
+    }
+
+    /**
+     * Iterate
+     * @return the buffer
+     */
+    protected byte[] iterate() {
+        /* Increment the buffer */
+        if ((++theBuffer[3] == 0) && (++theBuffer[2] == 0) && (++theBuffer[1] == 0))
+            ++theBuffer[0];
+
+        /* Return the buffer */
+        return theBuffer;
+    }
+}

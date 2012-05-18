@@ -21,68 +21,66 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.threads;
 
-import uk.co.tolcroft.models.ModelException;
-import uk.co.tolcroft.models.ModelException.ExceptionClass;
+import net.sourceforge.JDataWalker.ModelException;
+import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.views.DataControl;
 
-public class StoreDatabase<T extends DataSet<T>>	extends WorkerThread<Void> {
-	/* Task description */
-	private static String  	theTask		= "DataBase Store";
+public class StoreDatabase<T extends DataSet<T>> extends WorkerThread<Void> {
+    /* Task description */
+    private static String theTask = "DataBase Store";
 
-	/* Properties */
-	private DataControl<T>	theControl	= null;
-	private ThreadStatus<T>	theStatus	= null;
+    /* Properties */
+    private DataControl<T> theControl = null;
+    private ThreadStatus<T> theStatus = null;
 
-	/* Constructor (Event Thread)*/
-	public StoreDatabase(DataControl<T> pControl) {
-		/* Call super-constructor */
-		super(theTask, pControl.getStatusBar());
-		
-		/* Store passed parameters */
-		theControl	  = pControl;
+    /* Constructor (Event Thread) */
+    public StoreDatabase(DataControl<T> pControl) {
+        /* Call super-constructor */
+        super(theTask, pControl.getStatusBar());
 
-		/* Create the status */
-		theStatus = new ThreadStatus<T>(this, theControl);
+        /* Store passed parameters */
+        theControl = pControl;
 
-		/* Show the status window */
-		showStatusBar();
-	}
+        /* Create the status */
+        theStatus = new ThreadStatus<T>(this, theControl);
 
-	@Override
-	public Void performTask() throws Throwable {
-		Database<T>		myDatabase	= null;
-		T				myData;
-		DataSet<T>		myDiff;
+        /* Show the status window */
+        showStatusBar();
+    }
 
-		/* Initialise the status window */
-		theStatus.initTask("Storing to Database");
+    @Override
+    public Void performTask() throws Throwable {
+        Database<T> myDatabase = null;
+        T myData;
+        DataSet<T> myDiff;
 
-		/* Create interface */
-		myDatabase = theControl.getDatabase();
+        /* Initialise the status window */
+        theStatus.initTask("Storing to Database");
 
-		/* Store database */
-		myDatabase.updateDatabase(theStatus, theControl.getUpdates());
+        /* Create interface */
+        myDatabase = theControl.getDatabase();
 
-		/* Initialise the status window */
-		theStatus.initTask("Verifying Store");
+        /* Store database */
+        myDatabase.updateDatabase(theStatus, theControl.getUpdates());
 
-		/* Load database */
-		myData	= myDatabase.loadDatabase(theStatus);
+        /* Initialise the status window */
+        theStatus.initTask("Verifying Store");
 
-		/* Create a difference set between the two data copies */
-		myDiff 	= myData.getDifferenceSet(theControl.getData());
+        /* Load database */
+        myData = myDatabase.loadDatabase(theStatus);
 
-		/* If the difference set is non-empty */
-		if (!myDiff.isEmpty()) {
-			/* Throw an exception */
-			throw new ModelException(ExceptionClass.DATA,
-								myDiff,
-								"DataStore is inconsistent");
-		}
-		
-		/* Return null */
-		return null;
-	}
+        /* Create a difference set between the two data copies */
+        myDiff = myData.getDifferenceSet(theControl.getData());
+
+        /* If the difference set is non-empty */
+        if (!myDiff.isEmpty()) {
+            /* Throw an exception */
+            throw new ModelException(ExceptionClass.DATA, myDiff, "DataStore is inconsistent");
+        }
+
+        /* Return null */
+        return null;
+    }
 }
