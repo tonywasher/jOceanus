@@ -29,8 +29,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JGordianKnot.PasswordHash;
 import net.sourceforge.JGordianKnot.SecureManager;
 import net.sourceforge.JGordianKnot.ZipFile.ZipReadFile;
@@ -164,7 +164,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
                 throw new ModelException(ExceptionClass.EXCEL, "Operation Cancelled");
         }
 
-        catch (Throwable e) {
+        catch (Exception e) {
             /* Protect while cleaning up */
             try {
                 /* Close the input stream */
@@ -173,7 +173,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
             }
 
             /* Ignore errors */
-            catch (Throwable ex) {
+            catch (Exception ex) {
             }
 
             /* Report the error */
@@ -220,7 +220,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
                 throw new ModelException(ExceptionClass.EXCEL, "Operation Cancelled");
         }
 
-        catch (Throwable e) {
+        catch (Exception e) {
             /* Protect while cleaning up */
             try {
                 /* Close the input stream */
@@ -229,7 +229,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
             }
 
             /* Ignore errors */
-            catch (Throwable ex) {
+            catch (Exception ex) {
             }
 
             /* Report the error */

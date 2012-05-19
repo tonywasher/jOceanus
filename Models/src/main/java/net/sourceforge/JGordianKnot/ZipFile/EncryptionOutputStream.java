@@ -24,8 +24,8 @@ package net.sourceforge.JGordianKnot.ZipFile;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JGordianKnot.SymmetricKey;
 
 /**

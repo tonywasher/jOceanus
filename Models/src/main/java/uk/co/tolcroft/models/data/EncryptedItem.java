@@ -21,12 +21,12 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
-import net.sourceforge.JDataWalker.Difference;
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
-import net.sourceforge.JDataWalker.ReportFields;
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
-import net.sourceforge.JDataWalker.ReportItem;
+import net.sourceforge.JDataManager.Difference;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ReportFields;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ReportItem;
 import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
 import uk.co.tolcroft.models.data.EncryptedData.EncryptedField;
 import uk.co.tolcroft.models.data.EncryptedData.EncryptionGenerator;
@@ -122,7 +122,8 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
      * @param pList the list that this item is associated with
      * @param uId the Id of the new item (or 0 if not yet known)
      */
-    public EncryptedItem(EncryptedList<?, T> pList, int uId) {
+    public EncryptedItem(EncryptedList<?, T> pList,
+                         int uId) {
         super(pList, uId);
         theGenerator = new EncryptionGenerator(null);
     }
@@ -132,7 +133,8 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
      * @param pList the list that this item is associated with
      * @param pSource the source item
      */
-    public EncryptedItem(EncryptedList<?, T> pList, T pSource) {
+    public EncryptedItem(EncryptedList<?, T> pList,
+                         T pSource) {
         super(pList, pSource);
         theGenerator = pSource.theGenerator;
     }
@@ -310,7 +312,9 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
          * @param pBaseClass the class of the underlying object
          * @param pData the DataSet for the list
          */
-        protected EncryptedList(Class<L> pClass, Class<T> pBaseClass, DataSet<?> pData) {
+        protected EncryptedList(Class<L> pClass,
+                                Class<T> pBaseClass,
+                                DataSet<?> pData) {
             super(pClass, pBaseClass, ListStyle.CORE, true);
             theData = pData;
         }
@@ -322,7 +326,10 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
          * @param pData the DataSet for the list
          * @param pStyle the style of the list
          */
-        public EncryptedList(Class<L> pClass, Class<T> pBaseClass, DataSet<?> pData, ListStyle pStyle) {
+        public EncryptedList(Class<L> pClass,
+                             Class<T> pBaseClass,
+                             DataSet<?> pData,
+                             ListStyle pStyle) {
             super(pClass, pBaseClass, pStyle, true);
             theData = pData;
             setGeneration(pData.getGeneration());

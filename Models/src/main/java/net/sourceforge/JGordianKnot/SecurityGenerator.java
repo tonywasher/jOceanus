@@ -43,16 +43,16 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import net.sourceforge.JDataWalker.DataConverter;
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
+import net.sourceforge.JDataManager.DataConverter;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
 
 public class SecurityGenerator {
     /**
      * Security Preferences
      */
-    private final SecurityProperties thePreferences;
+    private final SecurityPreferences thePreferences;
 
     /**
      * The Security provider
@@ -92,7 +92,7 @@ public class SecurityGenerator {
      * @return the default security provider
      */
     protected SecurityProvider getDefaultProvider() {
-        return thePreferences.getEnumValue(SecurityProperties.nameProvider, SecurityProvider.class);
+        return thePreferences.getEnumValue(SecurityPreferences.nameProvider, SecurityProvider.class);
     }
 
     /**
@@ -108,7 +108,7 @@ public class SecurityGenerator {
      * @return the number of hash iterations
      */
     protected int getNumHashIterations() {
-        return thePreferences.getIntegerValue(SecurityProperties.nameHashIterations);
+        return thePreferences.getIntegerValue(SecurityPreferences.nameHashIterations);
     }
 
     /**
@@ -116,7 +116,7 @@ public class SecurityGenerator {
      * @return the secure random
      */
     protected byte[] getSecurityBytes() {
-        String myPhrase = thePreferences.getStringValue(SecurityProperties.nameSecurityPhrase);
+        String myPhrase = thePreferences.getStringValue(SecurityPreferences.nameSecurityPhrase);
         return DataConverter.stringToByteArray(myPhrase);
     }
 
@@ -125,7 +125,7 @@ public class SecurityGenerator {
      * @return the number of cipher steps
      */
     public int getNumCipherSteps() {
-        return thePreferences.getIntegerValue(SecurityProperties.nameCipherSteps);
+        return thePreferences.getIntegerValue(SecurityPreferences.nameCipherSteps);
     }
 
     /**
@@ -133,7 +133,7 @@ public class SecurityGenerator {
      * @return true/false
      */
     protected boolean useRestricted() {
-        return thePreferences.getBooleanValue(SecurityProperties.nameRestricted);
+        return thePreferences.getBooleanValue(SecurityPreferences.nameRestricted);
     }
 
     /**
@@ -150,7 +150,7 @@ public class SecurityGenerator {
      */
     public SecurityGenerator(SecurityProvider pProvider) {
         /* Access the preferences */
-        thePreferences = PreferenceManager.getPreferenceSet(SecurityProperties.class);
+        thePreferences = PreferenceManager.getPreferenceSet(SecurityPreferences.class);
 
         /* Store the provider */
         theProvider = (pProvider != null) ? pProvider : getDefaultProvider();

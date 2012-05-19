@@ -31,9 +31,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
-import net.sourceforge.JDataWalker.DebugManager;
-import net.sourceforge.JDataWalker.DebugManager.DebugEntry;
-import net.sourceforge.JDataWalker.ModelException;
+import net.sourceforge.JDataManager.DebugManager;
+import net.sourceforge.JDataManager.DebugManager.DebugEntry;
+import net.sourceforge.JDataManager.ModelException;
 import uk.co.tolcroft.models.ui.StdInterfaces.stdPanel;
 
 public class ErrorPanel extends JPanel {
@@ -77,10 +77,10 @@ public class ErrorPanel extends JPanel {
         setLayout(myLayout);
 
         /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-                myLayout.createSequentialGroup().addContainerGap().addComponent(theClearButton)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(theErrorField)
-                        .addContainerGap()));
+        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(myLayout.createSequentialGroup().addContainerGap().addComponent(theClearButton)
+                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                  .addComponent(theErrorField).addContainerGap()));
         myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addComponent(theClearButton).addComponent(theErrorField));
 

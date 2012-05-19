@@ -21,7 +21,7 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.sheets;
 
-import net.sourceforge.JDataWalker.ModelException;
+import net.sourceforge.JDataManager.ModelException;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
@@ -57,7 +57,8 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetD
      * @param pReader the spreadsheet reader
      * @param pRange the range to load
      */
-    protected SheetStaticData(SheetReader<?> pReader, String pRange) {
+    protected SheetStaticData(SheetReader<?> pReader,
+                              String pRange) {
         /* Call super constructor */
         super(pReader, pRange);
 
@@ -71,7 +72,9 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetD
      * @param pRange the range to create
      * @param pNames the name range to create
      */
-    protected SheetStaticData(SheetWriter<?> pWriter, String pRange, String pNames) {
+    protected SheetStaticData(SheetWriter<?> pWriter,
+                              String pRange,
+                              String pNames) {
         /* Call super constructor */
         super(pWriter, pRange);
 
@@ -83,7 +86,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetD
     }
 
     @Override
-    protected void loadItem() throws Throwable {
+    protected void loadItem() throws Exception {
         /* If this is a backup load */
         if (isBackup) {
             /* Access the IDs */
@@ -117,7 +120,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetD
     }
 
     @Override
-    protected void insertItem(T pItem) throws Throwable {
+    protected void insertItem(T pItem) throws Exception {
         /* If we are creating a backup */
         if (isBackup) {
             /* Set the fields */
@@ -141,7 +144,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetD
     }
 
     @Override
-    protected void preProcessOnWrite() throws Throwable {
+    protected void preProcessOnWrite() throws Exception {
         /* Ignore if this is a backup */
         if (isBackup)
             return;
@@ -161,7 +164,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetD
     }
 
     @Override
-    protected void postProcessOnWrite() throws Throwable {
+    protected void postProcessOnWrite() throws Exception {
         /* If we are creating a backup */
         if (isBackup) {
             /* Set the six columns as the range */

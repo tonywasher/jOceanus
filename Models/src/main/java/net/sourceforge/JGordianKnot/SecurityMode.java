@@ -23,9 +23,9 @@ package net.sourceforge.JGordianKnot;
 
 import java.util.Arrays;
 
-import net.sourceforge.JDataWalker.ReportFields;
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
-import net.sourceforge.JDataWalker.ReportObject.ReportDetail;
+import net.sourceforge.JDataManager.ReportFields;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ReportObject.ReportDetail;
 
 public abstract class SecurityMode implements ReportDetail {
     /**

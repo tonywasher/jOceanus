@@ -23,8 +23,8 @@ package uk.co.tolcroft.models.data;
 
 import java.util.Stack;
 
-import net.sourceforge.JDataWalker.Difference;
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
+import net.sourceforge.JDataManager.Difference;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 
 /**

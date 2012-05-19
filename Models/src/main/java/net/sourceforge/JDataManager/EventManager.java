@@ -19,7 +19,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JPreferenceSet;
+package net.sourceforge.JDataManager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -68,7 +68,8 @@ public class EventManager {
          * @param pType the Registration Type
          * @param pListener the Listener
          */
-        private Registration(RegistrationType pType, EventListener pListener) {
+        private Registration(RegistrationType pType,
+                             EventListener pListener) {
             /* Store value */
             theType = pType;
             theListener = pListener;

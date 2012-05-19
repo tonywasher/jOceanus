@@ -23,10 +23,10 @@ package net.sourceforge.JGordianKnot;
 
 import java.security.SecureRandom;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
-import net.sourceforge.JDataWalker.ReportFields;
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ReportFields;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
 
 public class HashMode extends SecurityMode {
     /**
@@ -169,7 +169,8 @@ public class HashMode extends SecurityMode {
      * @param pRandom the random generator
      * @throws ModelException
      */
-    protected HashMode(boolean useRestricted, SecureRandom pRandom) throws ModelException {
+    protected HashMode(boolean useRestricted,
+                       SecureRandom pRandom) throws ModelException {
         /* Access a random set of DigestTypes */
         DigestType[] myDigest = DigestType.getRandomTypes(3, pRandom);
         DigestType[] mySetDigest = DigestType.getRandomTypes(1, pRandom);

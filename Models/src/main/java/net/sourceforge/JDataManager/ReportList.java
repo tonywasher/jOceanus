@@ -19,10 +19,10 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataWalker;
+package net.sourceforge.JDataManager;
 
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
-import net.sourceforge.JDataWalker.ReportObject.ReportDetail;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ReportObject.ReportDetail;
 import net.sourceforge.JSortedList.SortedList;
 
 public abstract class ReportList<T extends ReportItem<T>> extends SortedList<T> implements ReportDetail {
@@ -79,7 +79,8 @@ public abstract class ReportList<T extends ReportItem<T>> extends SortedList<T> 
      * @param pClass the class of the list item
      * @param fromStart inserts from start?
      */
-    public ReportList(Class<T> pClass, boolean fromStart) {
+    public ReportList(Class<T> pClass,
+                      boolean fromStart) {
         /* Initialise as a list */
         super(pClass, fromStart);
 

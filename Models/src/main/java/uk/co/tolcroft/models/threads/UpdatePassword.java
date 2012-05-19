@@ -48,7 +48,7 @@ public class UpdatePassword<T extends DataSet<T>> extends LoaderThread<T> {
     }
 
     @Override
-    public T performTask() throws Throwable {
+    public T performTask() throws Exception {
         T myData;
 
         /* Initialise the status window */

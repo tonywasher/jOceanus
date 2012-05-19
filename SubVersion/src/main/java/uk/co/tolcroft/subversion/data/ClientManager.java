@@ -24,86 +24,85 @@ package uk.co.tolcroft.subversion.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
+
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
-import uk.co.tolcroft.models.PropertySet.PropertyManager;
-
 public class ClientManager {
-	/**
-	 * Available pool of connections
-	 */
-	private List<SVNClientManager>	thePool	= null;
-	
-	/**
-	 * Subversion User name
-	 */
-	private String					theUser	= null;
+    /**
+     * Available pool of connections
+     */
+    private List<SVNClientManager> thePool = null;
 
-	/**
-	 * Subversion Password
-	 */
-	private String					thePass	= null;
-	
-	/**
-	 * Constructor
-	 */
-	protected ClientManager() {
-		/* Allocate the pool */
-		thePool = new ArrayList<SVNClientManager>();
+    /**
+     * Subversion User name
+     */
+    private String theUser = null;
 
-		/* Access the SubVersion properties */
-		SubVersionProperties myProperties = 
-				(SubVersionProperties)PropertyManager.getPropertySet(SubVersionProperties.class);
+    /**
+     * Subversion Password
+     */
+    private String thePass = null;
 
-		/* Access UserId and password */
-		theUser = myProperties.getStringValue(SubVersionProperties.nameSubVersionUser);
-		thePass = myProperties.getStringValue(SubVersionProperties.nameSubVersionPass);
-	}
-	
-	/**
-	 * Allocate new Client Manager instance
-	 * @return the instance
-	 */
-	public SVNClientManager getClientMgr() {
-		/* If we have an already allocated client manager in the pool */
-		if (thePool.size() > 0) {
-			/* Access the most recent item and remove it from the pool */
-			SVNClientManager myMgr = thePool.get(thePool.size()-1);
-			thePool.remove(myMgr);
-			
-			/* return it */
-			return myMgr;
-		}
-		
-		/* Allocate an entirely new one */
-		return allocateClientMgr();
-	}
+    /**
+     * Constructor
+     */
+    protected ClientManager() {
+        /* Allocate the pool */
+        thePool = new ArrayList<SVNClientManager>();
 
-	/**
-	 * Return an allocated Client Manager instance to the pool 
-	 * @param pMgr the instance to return 
-	 */
-	public void releaseClientMgr(SVNClientManager pMgr) {
-		/* Set event handler to null */
-		pMgr.setEventHandler(null);
-		
-		/* Add it back into the pool */
-		thePool.add(pMgr);
-	}
+        /* Access the SubVersion preferences */
+        SubVersionPreferences myPreferences = PreferenceManager.getPreferenceSet(SubVersionPreferences.class);
 
-	/**
-	 * Allocate new Client Manager instance
-	 * @return the instance
-	 */
-	private SVNClientManager allocateClientMgr() {
-		/* Access a default client manager */
-		SVNClientManager 			myMgr 	= SVNClientManager.newInstance();
-		ISVNAuthenticationManager	myAuth 	= SVNWCUtil.createDefaultAuthenticationManager(theUser, thePass);
-		myMgr.setAuthenticationManager(myAuth);
+        /* Access UserId and password */
+        theUser = myPreferences.getStringValue(SubVersionPreferences.nameSubVersionUser);
+        thePass = myPreferences.getStringValue(SubVersionPreferences.nameSubVersionPass);
+    }
 
-		/* Return the new instance */
-		return myMgr;
-	}
+    /**
+     * Allocate new Client Manager instance
+     * @return the instance
+     */
+    public SVNClientManager getClientMgr() {
+        /* If we have an already allocated client manager in the pool */
+        if (thePool.size() > 0) {
+            /* Access the most recent item and remove it from the pool */
+            SVNClientManager myMgr = thePool.get(thePool.size() - 1);
+            thePool.remove(myMgr);
+
+            /* return it */
+            return myMgr;
+        }
+
+        /* Allocate an entirely new one */
+        return allocateClientMgr();
+    }
+
+    /**
+     * Return an allocated Client Manager instance to the pool
+     * @param pMgr the instance to return
+     */
+    public void releaseClientMgr(SVNClientManager pMgr) {
+        /* Set event handler to null */
+        pMgr.setEventHandler(null);
+
+        /* Add it back into the pool */
+        thePool.add(pMgr);
+    }
+
+    /**
+     * Allocate new Client Manager instance
+     * @return the instance
+     */
+    private SVNClientManager allocateClientMgr() {
+        /* Access a default client manager */
+        SVNClientManager myMgr = SVNClientManager.newInstance();
+        ISVNAuthenticationManager myAuth = SVNWCUtil.createDefaultAuthenticationManager(theUser, thePass);
+        myMgr.setAuthenticationManager(myAuth);
+
+        /* Return the new instance */
+        return myMgr;
+    }
 }

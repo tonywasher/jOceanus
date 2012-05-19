@@ -21,8 +21,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
 import uk.co.tolcroft.models.data.EncryptedData.EncryptedField;
 import uk.co.tolcroft.models.data.EncryptedData.EncryptionGenerator;
 

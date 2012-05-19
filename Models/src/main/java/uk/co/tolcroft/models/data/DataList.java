@@ -23,10 +23,10 @@ package uk.co.tolcroft.models.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.JDataWalker.ReportFields;
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
-import net.sourceforge.JDataWalker.ReportList;
-import net.sourceforge.JDataWalker.ReportObject.ReportDetail;
+import net.sourceforge.JDataManager.ReportFields;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ReportList;
+import net.sourceforge.JDataManager.ReportObject.ReportDetail;
 import net.sourceforge.JSortedList.SortedListIterator;
 
 /**
@@ -268,7 +268,10 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
      * @param pStyle the new {@link ListStyle}
      * @param fromStart - should inserts be attempted from start/end of list
      */
-    protected DataList(Class<L> pClass, Class<T> pBaseClass, ListStyle pStyle, boolean fromStart) {
+    protected DataList(Class<L> pClass,
+                       Class<T> pBaseClass,
+                       ListStyle pStyle,
+                       boolean fromStart) {
         super(pBaseClass, fromStart);
         theClass = pClass;
         theList = pClass.cast(this);
@@ -1028,7 +1031,8 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
          * @param pList the list to build the iterator on
          * @param bShowAll show all items in the list
          */
-        private DataListIterator(DataList<?, X> pList, boolean bShowAll) {
+        private DataListIterator(DataList<?, X> pList,
+                                 boolean bShowAll) {
             super(pList, bShowAll);
             theMgr = pList.theMgr;
         }

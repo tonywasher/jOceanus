@@ -31,8 +31,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JDecimal.Decimal;
 import net.sourceforge.JDecimal.Decimal.Dilution;
 import net.sourceforge.JDecimal.Decimal.Money;
@@ -166,7 +166,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
             myZipFile = null;
         }
 
-        catch (Throwable e) {
+        catch (Exception e) {
             /* Protect while cleaning up */
             try {
                 /* Close the output stream */
@@ -179,7 +179,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
             }
 
             /* Ignore errors */
-            catch (Throwable ex) {
+            catch (Exception ex) {
             }
 
             /* Delete the file on error */
@@ -230,7 +230,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
             myStream = null;
         }
 
-        catch (Throwable e) {
+        catch (Exception e) {
             /* Protect while cleaning up */
             try {
                 /* Close the output stream */
@@ -239,7 +239,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
             }
 
             /* Ignore errors */
-            catch (Throwable ex) {
+            catch (Exception ex) {
             }
 
             /* Delete the file on error */

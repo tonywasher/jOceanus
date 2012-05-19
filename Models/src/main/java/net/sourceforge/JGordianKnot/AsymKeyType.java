@@ -23,8 +23,8 @@ package net.sourceforge.JGordianKnot;
 
 import java.security.SecureRandom;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 
 public enum AsymKeyType {
     // RSA(1, 2048),
@@ -120,7 +120,8 @@ public enum AsymKeyType {
      * @param id the id
      * @param keySize the RSA Key size
      */
-    private AsymKeyType(int id, int keySize) {
+    private AsymKeyType(int id,
+                        int keySize) {
         theId = id;
         theKeySize = keySize;
     }
@@ -130,7 +131,8 @@ public enum AsymKeyType {
      * @param id the id
      * @param pCurve the keySize the RSA Key size
      */
-    private AsymKeyType(int id, String pCurve) {
+    private AsymKeyType(int id,
+                        String pCurve) {
         theId = id;
         theCurve = pCurve;
         isElliptic = true;

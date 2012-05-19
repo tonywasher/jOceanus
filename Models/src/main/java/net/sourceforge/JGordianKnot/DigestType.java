@@ -23,8 +23,8 @@ package net.sourceforge.JGordianKnot;
 
 import java.security.SecureRandom;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 
 public enum DigestType {
     /**
@@ -77,7 +77,8 @@ public enum DigestType {
      * @param id the id
      * @param iLen the hash length
      */
-    private DigestType(int id, int iLen) {
+    private DigestType(int id,
+                       int iLen) {
         theId = id;
         theHashLen = iLen;
     }

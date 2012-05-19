@@ -23,11 +23,11 @@ package uk.co.tolcroft.models.threads;
 
 import java.io.File;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
 import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.sheets.BackupProperties;
+import uk.co.tolcroft.models.sheets.BackupPreferences;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.views.DataControl;
 
@@ -55,7 +55,7 @@ public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
     }
 
     @Override
-    public Void performTask() throws Throwable {
+    public Void performTask() throws Exception {
         T myData = null;
         DataSet<T> myDiff = null;
         SpreadSheet<T> mySheet = null;
@@ -67,13 +67,12 @@ public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
             /* Initialise the status window */
             theStatus.initTask("Creating Extract");
 
-            /* Access the Sheet properties */
-            BackupProperties myProperties = (BackupProperties) PreferenceManager
-                    .getPreferenceSet(BackupProperties.class);
+            /* Access the Sheet preferences */
+            BackupPreferences myProperties = PreferenceManager.getPreferenceSet(BackupPreferences.class);
 
             /* Determine the archive name */
-            File myBackupDir = new File(myProperties.getStringValue(BackupProperties.nameBackupDir));
-            String myPrefix = myProperties.getStringValue(BackupProperties.nameBackupPfix);
+            File myBackupDir = new File(myProperties.getStringValue(BackupPreferences.nameBackupDir));
+            String myPrefix = myProperties.getStringValue(BackupPreferences.nameBackupPfix);
 
             /* Determine the name of the file to build */
             myFile = new File(myBackupDir.getPath() + File.separator + myPrefix + ".xls");
@@ -117,7 +116,7 @@ public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
         }
 
         /* Catch any exceptions */
-        catch (Throwable e) {
+        catch (Exception e) {
             /* Delete the file */
             if (doDelete)
                 myFile.delete();

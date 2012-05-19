@@ -26,9 +26,9 @@ import java.awt.Font;
 
 import javax.swing.table.JTableHeader;
 
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceItem;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceType;
+import net.sourceforge.JDataManager.PreferenceSet.PreferenceItem;
+import net.sourceforge.JDataManager.PreferenceSet.PreferenceType;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataState;
 

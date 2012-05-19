@@ -21,10 +21,10 @@
  ******************************************************************************/
 package net.sourceforge.JGordianKnot;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JPreferenceSet.PreferenceSet;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.PreferenceSet;
 
-public class SecurityProperties extends PreferenceSet {
+public class SecurityPreferences extends PreferenceSet {
     /**
      * Registry name for Security Provider
      */
@@ -104,7 +104,7 @@ public class SecurityProperties extends PreferenceSet {
      * Constructor
      * @throws ModelException
      */
-    public SecurityProperties() throws ModelException {
+    public SecurityPreferences() throws ModelException {
         super();
     }
 

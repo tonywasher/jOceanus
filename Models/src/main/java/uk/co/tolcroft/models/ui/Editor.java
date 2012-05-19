@@ -110,7 +110,7 @@ public class Editor {
                 try {
                     Integer myInt = new Integer(s);
                     return myInt;
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     return null;
                 }
             }
@@ -274,7 +274,7 @@ public class Editor {
                 try {
                     Rate myRate = new Rate(s);
                     return myRate;
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     return null;
                 }
             }
@@ -319,7 +319,7 @@ public class Editor {
                 try {
                     Money myMoney = new Money(s);
                     return myMoney;
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     return null;
                 }
             }
@@ -364,8 +364,8 @@ public class Editor {
                 try {
                     Units myUnits = new Units(s);
                     return myUnits;
-                } catch (Throwable e) {
-                    return this;
+                } catch (Exception e) {
+                    return null;
                 }
             }
             return null;
@@ -409,8 +409,8 @@ public class Editor {
                 try {
                     Dilution myDilution = new Dilution(s);
                     return myDilution;
-                } catch (Throwable e) {
-                    return this;
+                } catch (Exception e) {
+                    return null;
                 }
             }
             return null;
@@ -454,7 +454,7 @@ public class Editor {
                 try {
                     Price myPrice = new Price(s);
                     return myPrice;
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     return null;
                 }
             }
@@ -499,7 +499,7 @@ public class Editor {
                 try {
                     DilutedPrice myPrice = new DilutedPrice(s);
                     return myPrice;
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     return null;
                 }
             }

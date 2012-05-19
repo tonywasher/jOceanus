@@ -25,8 +25,8 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.ui.StatusBar;
 
 public abstract class WorkerThread<T> extends SwingWorker<T, StatusData> {
@@ -50,7 +50,8 @@ public abstract class WorkerThread<T> extends SwingWorker<T, StatusData> {
      * @param pTask task name
      * @param pStatusBar status bar
      */
-    protected WorkerThread(String pTask, StatusBar pStatusBar) {
+    protected WorkerThread(String pTask,
+                           StatusBar pStatusBar) {
         /* Record the parameters */
         theTask = pTask;
         theStatusBar = pStatusBar;
@@ -88,7 +89,7 @@ public abstract class WorkerThread<T> extends SwingWorker<T, StatusData> {
     }
 
     /* Task for worker thread */
-    protected abstract T performTask() throws Throwable;
+    protected abstract T performTask() throws Exception;
 
     @Override
     public T doInBackground() {
@@ -103,7 +104,7 @@ public abstract class WorkerThread<T> extends SwingWorker<T, StatusData> {
         }
 
         /* Catch any exceptions */
-        catch (Throwable e) {
+        catch (Exception e) {
             /* If this is an Exception */
             if (e instanceof ModelException)
                 setError((ModelException) e);

@@ -23,10 +23,10 @@ package uk.co.tolcroft.models.data;
 
 import java.util.Arrays;
 
-import net.sourceforge.JDataWalker.DataConverter;
-import net.sourceforge.JDataWalker.Difference;
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.DataConverter;
+import net.sourceforge.JDataManager.Difference;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Decimal;
 import net.sourceforge.JDecimal.Decimal.Dilution;
@@ -218,7 +218,8 @@ public class EncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws ModelException
          */
-        private EncryptedField(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+        private EncryptedField(CipherSet pCipherSet,
+                               byte[] pEncrypted) throws ModelException {
             /* Store the cipherSet */
             theCipherSet = pCipherSet;
 
@@ -258,7 +259,8 @@ public class EncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws ModelException
          */
-        private EncryptedField(CipherSet pCipherSet, T pUnencrypted) throws ModelException {
+        private EncryptedField(CipherSet pCipherSet,
+                               T pUnencrypted) throws ModelException {
             /* Store the control */
             theCipherSet = pCipherSet;
 
@@ -423,7 +425,8 @@ public class EncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws ModelException
          */
-        private EncryptedString(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+        private EncryptedString(CipherSet pCipherSet,
+                                byte[] pEncrypted) throws ModelException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -433,7 +436,8 @@ public class EncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws ModelException
          */
-        private EncryptedString(CipherSet pCipherSet, String pUnencrypted) throws ModelException {
+        private EncryptedString(CipherSet pCipherSet,
+                                String pUnencrypted) throws ModelException {
             super(pCipherSet, pUnencrypted);
         }
 
@@ -476,7 +480,8 @@ public class EncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws ModelException
          */
-        private EncryptedInteger(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+        private EncryptedInteger(CipherSet pCipherSet,
+                                 byte[] pEncrypted) throws ModelException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -486,7 +491,8 @@ public class EncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws ModelException
          */
-        private EncryptedInteger(CipherSet pCipherSet, Integer pUnencrypted) throws ModelException {
+        private EncryptedInteger(CipherSet pCipherSet,
+                                 Integer pUnencrypted) throws ModelException {
             super(pCipherSet, pUnencrypted);
         }
 
@@ -529,7 +535,8 @@ public class EncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws ModelException
          */
-        private EncryptedBoolean(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+        private EncryptedBoolean(CipherSet pCipherSet,
+                                 byte[] pEncrypted) throws ModelException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -539,7 +546,8 @@ public class EncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws ModelException
          */
-        private EncryptedBoolean(CipherSet pCipherSet, Boolean pUnencrypted) throws ModelException {
+        private EncryptedBoolean(CipherSet pCipherSet,
+                                 Boolean pUnencrypted) throws ModelException {
             super(pCipherSet, pUnencrypted);
         }
 
@@ -582,7 +590,8 @@ public class EncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws ModelException
          */
-        private EncryptedDate(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+        private EncryptedDate(CipherSet pCipherSet,
+                              byte[] pEncrypted) throws ModelException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -592,7 +601,8 @@ public class EncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws ModelException
          */
-        private EncryptedDate(CipherSet pCipherSet, DateDay pUnencrypted) throws ModelException {
+        private EncryptedDate(CipherSet pCipherSet,
+                              DateDay pUnencrypted) throws ModelException {
             super(pCipherSet, pUnencrypted);
         }
 
@@ -635,7 +645,8 @@ public class EncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws ModelException
          */
-        private EncryptedCharArray(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+        private EncryptedCharArray(CipherSet pCipherSet,
+                                   byte[] pEncrypted) throws ModelException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -645,7 +656,8 @@ public class EncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws ModelException
          */
-        private EncryptedCharArray(CipherSet pCipherSet, char[] pUnencrypted) throws ModelException {
+        private EncryptedCharArray(CipherSet pCipherSet,
+                                   char[] pUnencrypted) throws ModelException {
             super(pCipherSet, pUnencrypted);
         }
 
@@ -671,7 +683,8 @@ public class EncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws ModelException
          */
-        private EncryptedDecimal(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+        private EncryptedDecimal(CipherSet pCipherSet,
+                                 byte[] pEncrypted) throws ModelException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -681,7 +694,8 @@ public class EncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws ModelException
          */
-        private EncryptedDecimal(CipherSet pCipherSet, X pUnencrypted) throws ModelException {
+        private EncryptedDecimal(CipherSet pCipherSet,
+                                 X pUnencrypted) throws ModelException {
             super(pCipherSet, pUnencrypted);
         }
 
@@ -737,7 +751,8 @@ public class EncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws ModelException
          */
-        private EncryptedMoney(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+        private EncryptedMoney(CipherSet pCipherSet,
+                               byte[] pEncrypted) throws ModelException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -747,7 +762,8 @@ public class EncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws ModelException
          */
-        private EncryptedMoney(CipherSet pCipherSet, Money pUnencrypted) throws ModelException {
+        private EncryptedMoney(CipherSet pCipherSet,
+                               Money pUnencrypted) throws ModelException {
             super(pCipherSet, pUnencrypted);
         }
 
@@ -767,7 +783,8 @@ public class EncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws ModelException
          */
-        private EncryptedUnits(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+        private EncryptedUnits(CipherSet pCipherSet,
+                               byte[] pEncrypted) throws ModelException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -777,7 +794,8 @@ public class EncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws ModelException
          */
-        private EncryptedUnits(CipherSet pCipherSet, Units pUnencrypted) throws ModelException {
+        private EncryptedUnits(CipherSet pCipherSet,
+                               Units pUnencrypted) throws ModelException {
             super(pCipherSet, pUnencrypted);
         }
 
@@ -797,7 +815,8 @@ public class EncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws ModelException
          */
-        private EncryptedRate(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+        private EncryptedRate(CipherSet pCipherSet,
+                              byte[] pEncrypted) throws ModelException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -807,7 +826,8 @@ public class EncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws ModelException
          */
-        private EncryptedRate(CipherSet pCipherSet, Rate pUnencrypted) throws ModelException {
+        private EncryptedRate(CipherSet pCipherSet,
+                              Rate pUnencrypted) throws ModelException {
             super(pCipherSet, pUnencrypted);
         }
 
@@ -827,7 +847,8 @@ public class EncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws ModelException
          */
-        private EncryptedPrice(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+        private EncryptedPrice(CipherSet pCipherSet,
+                               byte[] pEncrypted) throws ModelException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -837,7 +858,8 @@ public class EncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws ModelException
          */
-        private EncryptedPrice(CipherSet pCipherSet, Price pUnencrypted) throws ModelException {
+        private EncryptedPrice(CipherSet pCipherSet,
+                               Price pUnencrypted) throws ModelException {
             super(pCipherSet, pUnencrypted);
         }
 
@@ -857,7 +879,8 @@ public class EncryptedData {
          * @param pEncrypted the encrypted value of the field
          * @throws ModelException
          */
-        private EncryptedDilution(CipherSet pCipherSet, byte[] pEncrypted) throws ModelException {
+        private EncryptedDilution(CipherSet pCipherSet,
+                                  byte[] pEncrypted) throws ModelException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -867,7 +890,8 @@ public class EncryptedData {
          * @param pUnencrypted the unencrypted value of the field
          * @throws ModelException
          */
-        private EncryptedDilution(CipherSet pCipherSet, Dilution pUnencrypted) throws ModelException {
+        private EncryptedDilution(CipherSet pCipherSet,
+                                  Dilution pUnencrypted) throws ModelException {
             super(pCipherSet, pUnencrypted);
         }
 

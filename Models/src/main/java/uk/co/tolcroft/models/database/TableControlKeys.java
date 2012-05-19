@@ -21,8 +21,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.database;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
 import uk.co.tolcroft.models.data.DataSet;

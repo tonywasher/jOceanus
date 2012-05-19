@@ -25,10 +25,10 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
-import net.sourceforge.JDataWalker.ReportFields;
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ReportFields;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
 import net.sourceforge.JGordianKnot.CipherSet;
 import net.sourceforge.JGordianKnot.HashMode;
 import net.sourceforge.JGordianKnot.PasswordHash;
@@ -169,7 +169,8 @@ public class ControlKey extends DataItem<ControlKey> {
      * @param pList the list the copy belongs to
      * @param pSource The Key to copy
      */
-    protected ControlKey(ControlKeyList pList, ControlKey pSource) {
+    protected ControlKey(ControlKeyList pList,
+                         ControlKey pSource) {
         /* Set standard values */
         super(pList, pSource);
 
@@ -202,7 +203,9 @@ public class ControlKey extends DataItem<ControlKey> {
      * @param pHashBytes the hash bytes
      * @throws ModelException
      */
-    private ControlKey(ControlKeyList pList, int uId, byte[] pHashBytes) throws ModelException {
+    private ControlKey(ControlKeyList pList,
+                       int uId,
+                       byte[] pHashBytes) throws ModelException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -468,7 +471,8 @@ public class ControlKey extends DataItem<ControlKey> {
          * @param pData the DataSet for the list
          * @param pStyle the style of the list
          */
-        protected ControlKeyList(DataSet<?> pData, ListStyle pStyle) {
+        protected ControlKeyList(DataSet<?> pData,
+                                 ListStyle pStyle) {
             super(ControlKeyList.class, ControlKey.class, pStyle, false);
             theData = pData;
         }

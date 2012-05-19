@@ -19,7 +19,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JPreferenceSet;
+package net.sourceforge.JDataManager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,9 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.prefs.Preferences;
 
-import net.sourceforge.JDataWalker.Difference;
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JDateDay.DateDay;
 
 public abstract class PreferenceSet {

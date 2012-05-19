@@ -23,10 +23,10 @@ package net.sourceforge.JSortedList;
 
 import java.util.Iterator;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JPreferenceSet.PreferenceSet;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceSetChooser;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.PreferenceSet;
+import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
+import net.sourceforge.JDataManager.PreferenceSet.PreferenceSetChooser;
 
 /**
  * Extension of {@link java.util.List} that provides a sorted list implementation with the ability for objects

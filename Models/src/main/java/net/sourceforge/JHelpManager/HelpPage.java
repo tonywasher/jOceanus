@@ -19,27 +19,24 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.models.help;
+package net.sourceforge.JHelpManager;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import net.sourceforge.JDataWalker.Difference;
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
-import net.sourceforge.JSortedList.SortedItem;
-import net.sourceforge.JSortedList.SortedList;
-import net.sourceforge.JSortedList.SortedListIterator;
+import net.sourceforge.JDataManager.Difference;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 
 /**
- * Help Page class. This class maps between the name of a help page and the html that the name represents.
+ * Help Page class. This class maps between the name of a help page and the HTML that the name represents.
  */
-public class HelpPage extends SortedItem<HelpPage> {
+public class HelpPage implements Comparable<Object> {
     /* Members */
-    private String theName = null;
-    private String theHtml = null;
-    private HelpEntry theEntry = null;
+    private final String theName;
+    private final String theHtml;
+    private final HelpEntry theEntry;
 
     /* Access methods */
     public String getName() {
@@ -56,15 +53,12 @@ public class HelpPage extends SortedItem<HelpPage> {
 
     /**
      * Constructor
-     * @param pList the list to which this help page belongs
      * @param pEntry the help entry for the help page
      * @param pStream the stream to read the help page from
      * @throws ModelException
      */
-    public HelpPage(List pList, HelpEntry pEntry, InputStream pStream) throws ModelException {
-        /* Call the super-constructor */
-        super(pList);
-
+    public HelpPage(HelpEntry pEntry,
+                    InputStream pStream) throws ModelException {
         /* Local variables */
         BufferedReader myReader;
         InputStreamReader myInputReader;
@@ -88,7 +82,7 @@ public class HelpPage extends SortedItem<HelpPage> {
         }
 
         /* Catch exceptions */
-        catch (Throwable e) {
+        catch (Exception e) {
             /* Throw an exception */
             throw new ModelException(ExceptionClass.DATA, "Failed to load help file " + pEntry.getName(), e);
         }
@@ -161,55 +155,5 @@ public class HelpPage extends SortedItem<HelpPage> {
             return -1;
         else
             return 1;
-    }
-
-    /* List class */
-    public static class List extends SortedList<HelpPage> {
-        /**
-         * Construct a top-level List
-         */
-        public List() {
-            super(HelpPage.class);
-        }
-
-        /**
-         * Add a help page to the list
-         * @param pEntry the help entry of the help page
-         * @param pStream the stream to read the help page from
-         * @throws ModelException
-         */
-        public void addItem(HelpEntry pEntry,
-                            InputStream pStream) throws ModelException {
-            HelpPage myPage;
-
-            /* Build the help page */
-            myPage = new HelpPage(this, pEntry, pStream);
-
-            /* Add it to the list */
-            add(myPage);
-        }
-
-        /**
-         * Search for a help page in the list
-         * @param pName the name of the help page
-         * @return the help page
-         */
-        public HelpPage searchFor(String pName) {
-            SortedListIterator<HelpPage> myIterator;
-            HelpPage myPage;
-
-            /* Create an iterator */
-            myIterator = listIterator();
-
-            /* Loop through the entries */
-            while ((myPage = myIterator.next()) != null) {
-                /* If we have found the page break loop */
-                if (pName.equals(myPage.getName()))
-                    break;
-            }
-
-            /* Return the page */
-            return myPage;
-        }
     }
 }

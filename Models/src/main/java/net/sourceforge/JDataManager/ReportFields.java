@@ -19,7 +19,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataWalker;
+package net.sourceforge.JDataManager;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -76,7 +76,8 @@ public class ReportFields {
      * @param pName the name of the item
      * @param pUnderlying the underlying fields
      */
-    public ReportFields(String pName, ReportFields pUnderlying) {
+    public ReportFields(String pName,
+                        ReportFields pUnderlying) {
         /* Initialise the list */
         theName = pName;
         theUnderlying = pUnderlying;
@@ -277,7 +278,9 @@ public class ReportFields {
          * @param isEquality is the field used in equality test
          * @param isValueSet is the field held in a ValueSet
          */
-        public ReportField(String pName, boolean isEquality, boolean isValueSet) {
+        public ReportField(String pName,
+                           boolean isEquality,
+                           boolean isValueSet) {
             /* Store parameters */
             theName = pName;
             isEqualityField = isEquality;

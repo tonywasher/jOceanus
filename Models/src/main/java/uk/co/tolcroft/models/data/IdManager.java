@@ -21,10 +21,10 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JPreferenceSet.PreferenceSet;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceSetChooser;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.PreferenceSet;
+import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
+import net.sourceforge.JDataManager.PreferenceSet.PreferenceSetChooser;
 
 public class IdManager<T extends DataItem<T>> implements PreferenceSetChooser {
     /**

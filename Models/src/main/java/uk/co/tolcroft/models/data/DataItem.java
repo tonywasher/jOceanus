@@ -21,12 +21,12 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
-import net.sourceforge.JDataWalker.Difference;
-import net.sourceforge.JDataWalker.ReportFields;
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
-import net.sourceforge.JDataWalker.ReportItem;
-import net.sourceforge.JDataWalker.ReportObject;
-import net.sourceforge.JDataWalker.ReportObject.ReportValues;
+import net.sourceforge.JDataManager.Difference;
+import net.sourceforge.JDataManager.ReportFields;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ReportItem;
+import net.sourceforge.JDataManager.ReportObject;
+import net.sourceforge.JDataManager.ReportObject.ReportValues;
 import net.sourceforge.JSortedList.LinkObject;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 
@@ -583,7 +583,8 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
      * @param pList the list that this item is associated with
      * @param uId the Id of the new item (or 0 if not yet known)
      */
-    public DataItem(DataList<?, T> pList, int uId) {
+    public DataItem(DataList<?, T> pList,
+                    int uId) {
         /* Initialise as a ReportItem */
         super(pList);
 
@@ -601,7 +602,8 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
      * @param pList the list that this item is associated with
      * @param pBase the old item
      */
-    protected DataItem(DataList<?, T> pList, T pBase) {
+    protected DataItem(DataList<?, T> pList,
+                       T pBase) {
         /* Initialise as a ReportItem */
         this(pList, pBase.getId());
 

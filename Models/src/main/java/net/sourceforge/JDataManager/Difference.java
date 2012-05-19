@@ -19,7 +19,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataWalker;
+package net.sourceforge.JDataManager;
 
 import java.util.Arrays;
 

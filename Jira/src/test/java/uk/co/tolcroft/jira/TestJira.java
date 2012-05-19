@@ -21,18 +21,18 @@
  ******************************************************************************/
 package uk.co.tolcroft.jira;
 
+import net.sourceforge.JDataManager.ModelException;
 import uk.co.tolcroft.jira.data.Server;
-import uk.co.tolcroft.models.ModelException;
 
 public class TestJira {
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		try { 
-			Server myServer = new Server();
-			myServer.loadIssuesFromFilter("AllIssues");
-		}
-		catch (ModelException e) {}
-	}
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
+        try {
+            Server myServer = new Server();
+            myServer.loadIssuesFromFilter("AllIssues");
+        } catch (ModelException e) {
+        }
+    }
 }

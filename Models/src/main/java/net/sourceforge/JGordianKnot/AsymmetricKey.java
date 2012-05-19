@@ -33,12 +33,12 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyAgreement;
 import javax.crypto.SecretKey;
 
-import net.sourceforge.JDataWalker.DataConverter;
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
-import net.sourceforge.JDataWalker.ReportFields;
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
-import net.sourceforge.JDataWalker.ReportObject.ReportDetail;
+import net.sourceforge.JDataManager.DataConverter;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ReportFields;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ReportObject.ReportDetail;
 import net.sourceforge.JGordianKnot.DataHayStack.AsymModeNeedle;
 import net.sourceforge.JGordianKnot.DataHayStack.SymKeyNeedle;
 import net.sourceforge.JGordianKnot.ZipFile.ZipFileEntry;

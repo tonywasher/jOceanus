@@ -30,7 +30,7 @@ import java.util.Arrays;
 
 import javax.swing.JTextField;
 
-import net.sourceforge.JDataWalker.Difference;
+import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDecimal.Decimal.Dilution;
 import net.sourceforge.JDecimal.Decimal.Money;
 import net.sourceforge.JDecimal.Decimal.Price;
@@ -427,7 +427,7 @@ public class ValueField extends JTextField {
             /* Protect against exceptions */
             try {
                 return Integer.parseInt(pValue);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 return null;
             }
         }

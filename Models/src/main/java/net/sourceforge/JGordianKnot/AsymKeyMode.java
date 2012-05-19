@@ -23,10 +23,10 @@ package net.sourceforge.JGordianKnot;
 
 import java.security.SecureRandom;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
-import net.sourceforge.JDataWalker.ReportFields;
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ReportFields;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
 
 public class AsymKeyMode extends SecurityMode {
     /**
@@ -101,7 +101,8 @@ public class AsymKeyMode extends SecurityMode {
      * @param pRandom the random generator
      * @throws ModelException
      */
-    protected AsymKeyMode(boolean useRestricted, SecureRandom pRandom) throws ModelException {
+    protected AsymKeyMode(boolean useRestricted,
+                          SecureRandom pRandom) throws ModelException {
         /* Access a random set of Key/DigestTypes */
         AsymKeyType[] myKeyType = AsymKeyType.getRandomTypes(1, pRandom);
         DigestType[] myDigest = DigestType.getRandomTypes(1, pRandom);
@@ -125,7 +126,8 @@ public class AsymKeyMode extends SecurityMode {
      * @param useRestricted use restricted keys
      * @param pSource the key mode to initialise from
      */
-    protected AsymKeyMode(boolean useRestricted, AsymKeyMode pSource) {
+    protected AsymKeyMode(boolean useRestricted,
+                          AsymKeyMode pSource) {
         /* Store Key type and digest */
         theAsymKeyType = pSource.getAsymKeyType();
         theCipherDigest = pSource.getCipherDigest();

@@ -21,8 +21,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.ui;
 
-import net.sourceforge.JDataWalker.DebugManager;
-import net.sourceforge.JDataWalker.DebugManager.DebugEntry;
+import net.sourceforge.JDataManager.DebugManager;
+import net.sourceforge.JDataManager.DebugManager.DebugEntry;
 import uk.co.tolcroft.models.data.EditState;
 
 public class StdInterfaces {

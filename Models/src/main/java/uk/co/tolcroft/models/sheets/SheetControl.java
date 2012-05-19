@@ -81,7 +81,7 @@ public class SheetControl extends SheetDataItem<ControlData> {
     }
 
     @Override
-    protected void loadItem() throws Throwable {
+    protected void loadItem() throws Exception {
         /* If this is a backup */
         if (isBackup) {
             /* Access the IDs */
@@ -107,7 +107,7 @@ public class SheetControl extends SheetDataItem<ControlData> {
     }
 
     @Override
-    protected void insertItem(ControlData pItem) throws Throwable {
+    protected void insertItem(ControlData pItem) throws Exception {
         /* If this is a backup */
         if (isBackup) {
             /* Set the fields */
@@ -124,7 +124,7 @@ public class SheetControl extends SheetDataItem<ControlData> {
     }
 
     @Override
-    protected void preProcessOnWrite() throws Throwable {
+    protected void preProcessOnWrite() throws Exception {
         /* Ignore if this is a backup */
         if (isBackup)
             return;
@@ -141,7 +141,7 @@ public class SheetControl extends SheetDataItem<ControlData> {
     }
 
     @Override
-    protected void postProcessOnWrite() throws Throwable {
+    protected void postProcessOnWrite() throws Exception {
         /* If we are creating a backup */
         if (isBackup) {
             /* Set the three columns as the range */

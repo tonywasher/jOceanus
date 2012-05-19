@@ -19,7 +19,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataWalker;
+package net.sourceforge.JDataManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,7 +27,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 
 public class DataConverter {
     /**
@@ -236,7 +236,7 @@ public class DataConverter {
             }
             out.flush();
             return baos.toByteArray();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new ModelException(ExceptionClass.DATA, "Unable to convert character array to bytes");
         }
     }
@@ -264,7 +264,7 @@ public class DataConverter {
 
             /* Return the array */
             return myArray;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new ModelException(ExceptionClass.DATA, "Unable to convert byte array to characters");
         }
     }

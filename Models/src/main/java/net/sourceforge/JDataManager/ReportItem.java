@@ -19,12 +19,12 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataWalker;
+package net.sourceforge.JDataManager;
 
 import java.util.Iterator;
 
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
-import net.sourceforge.JDataWalker.ReportObject.ReportDetail;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ReportObject.ReportDetail;
 import net.sourceforge.JSortedList.SortedItem;
 
 public abstract class ReportItem<T extends ReportItem<T>> extends SortedItem<T> implements ReportDetail {

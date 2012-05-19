@@ -21,8 +21,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.threads;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.views.DataControl;
 
@@ -34,7 +34,8 @@ public abstract class LoaderThread<T extends DataSet<T>> extends WorkerThread<T>
      * @param pTask task name
      * @param pControl data control
      */
-    protected LoaderThread(String pTask, DataControl<T> pControl) {
+    protected LoaderThread(String pTask,
+                           DataControl<T> pControl) {
         /* Record the parameters */
         super(pTask, pControl.getStatusBar());
         theControl = pControl;
@@ -60,7 +61,7 @@ public abstract class LoaderThread<T extends DataSet<T>> extends WorkerThread<T>
 
             /* Update the Status Bar */
             completeStatusBar();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             /* Report the failure */
             setError(new ModelException(ExceptionClass.DATA, "Failed to obtain and activate new data", e));
             completeStatusBar();

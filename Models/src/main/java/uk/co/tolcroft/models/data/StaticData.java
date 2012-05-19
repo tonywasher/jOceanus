@@ -21,11 +21,11 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
-import net.sourceforge.JDataWalker.Difference;
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
-import net.sourceforge.JDataWalker.ReportFields;
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
+import net.sourceforge.JDataManager.Difference;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ReportFields;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.data.EncryptedData.EncryptedString;
 
@@ -382,7 +382,8 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E>> 
      * @param pList The list to associate the Static Data with
      * @param pSource The static data to copy
      */
-    protected StaticData(StaticList<?, T, E> pList, T pSource) {
+    protected StaticData(StaticList<?, T, E> pList,
+                         T pSource) {
         super(pList, pSource);
         ListStyle myOldStyle = pSource.getStyle();
 
@@ -424,7 +425,8 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E>> 
      * @param pValue the name of the new item
      * @throws ModelException
      */
-    protected StaticData(StaticList<?, T, E> pList, String pValue) throws ModelException {
+    protected StaticData(StaticList<?, T, E> pList,
+                         String pValue) throws ModelException {
         /* Call super constructor */
         super(pList, 0);
 
@@ -449,8 +451,12 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E>> 
      * @param pDesc the description of the new item
      * @throws ModelException
      */
-    protected StaticData(StaticList<?, T, E> pList, int uId, boolean isEnabled, int uOrder, String pValue,
-            String pDesc) throws ModelException {
+    protected StaticData(StaticList<?, T, E> pList,
+                         int uId,
+                         boolean isEnabled,
+                         int uOrder,
+                         String pValue,
+                         String pDesc) throws ModelException {
         /* Call super constructor */
         super(pList, uId);
 
@@ -488,8 +494,13 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E>> 
      * @param pDesc the encrypted description of the new item
      * @throws ModelException
      */
-    protected StaticData(StaticList<?, T, E> pList, int uId, int uControlId, boolean isEnabled, int uOrder,
-            byte[] pValue, byte[] pDesc) throws ModelException {
+    protected StaticData(StaticList<?, T, E> pList,
+                         int uId,
+                         int uControlId,
+                         boolean isEnabled,
+                         int uOrder,
+                         byte[] pValue,
+                         byte[] pDesc) throws ModelException {
         /* Call super constructor */
         super(pList, uId);
 
@@ -696,7 +707,10 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E>> 
          * @param pData the dataSet
          * @param pStyle the style of the list
          */
-        public StaticList(Class<L> pClass, Class<T> pBaseClass, DataSet<?> pData, ListStyle pStyle) {
+        public StaticList(Class<L> pClass,
+                          Class<T> pBaseClass,
+                          DataSet<?> pData,
+                          ListStyle pStyle) {
             super(pClass, pBaseClass, pData, pStyle);
         }
 

@@ -24,7 +24,7 @@ package net.sourceforge.JGordianKnot.ZipFile;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.sourceforge.JDataWalker.ModelException;
+import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JGordianKnot.MsgDigest;
 
 /**

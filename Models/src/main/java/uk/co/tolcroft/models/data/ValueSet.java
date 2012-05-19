@@ -24,9 +24,9 @@ package uk.co.tolcroft.models.data;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import net.sourceforge.JDataWalker.Difference;
-import net.sourceforge.JDataWalker.ReportFields;
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
+import net.sourceforge.JDataManager.Difference;
+import net.sourceforge.JDataManager.ReportFields;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
 
 /**
  * ValueSet class

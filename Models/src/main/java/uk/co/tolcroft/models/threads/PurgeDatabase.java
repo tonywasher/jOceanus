@@ -26,49 +26,49 @@ import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.views.DataControl;
 
 public class PurgeDatabase<T extends DataSet<T>> extends WorkerThread<Void> {
-	/* Task description */
-	private static String  	theTask		= "DataBase Purge";
+    /* Task description */
+    private static String theTask = "DataBase Purge";
 
-	/* Properties */
-	private DataControl<T>	theControl	 = null;
-	private ThreadStatus<T>	theStatus    = null;
+    /* Properties */
+    private DataControl<T> theControl = null;
+    private ThreadStatus<T> theStatus = null;
 
-	/* Constructor (Event Thread)*/
-	public PurgeDatabase(DataControl<T> pControl) {
-		/* Call super-constructor */
-		super(theTask, pControl.getStatusBar());
-		
-		/* Store passed parameters */
-		theControl	  = pControl;
+    /* Constructor (Event Thread) */
+    public PurgeDatabase(DataControl<T> pControl) {
+        /* Call super-constructor */
+        super(theTask, pControl.getStatusBar());
 
-		/* Create the status */
-		theStatus = new ThreadStatus<T>(this, theControl);
+        /* Store passed parameters */
+        theControl = pControl;
 
-		/* Show the status window */
-		showStatusBar();
-	}
+        /* Create the status */
+        theStatus = new ThreadStatus<T>(this, theControl);
 
-	@Override
-	public Void performTask() throws Throwable {
-		Database<T>	myDatabase	= null;
-		T			myData;
-		T			myNull;
+        /* Show the status window */
+        showStatusBar();
+    }
 
-		/* Initialise the status window */
-		theStatus.initTask("Purging Database");
+    @Override
+    public Void performTask() throws Exception {
+        Database<T> myDatabase = null;
+        T myData;
+        T myNull;
 
-		/* Create interface */
-		myDatabase = theControl.getDatabase();
+        /* Initialise the status window */
+        theStatus.initTask("Purging Database");
 
-		/* Load database */
-		myDatabase.purgeTables(theStatus);
+        /* Create interface */
+        myDatabase = theControl.getDatabase();
 
-		/* Re-base this set on a null set */
-		myNull = theControl.getNewData();
-		myData = theControl.getData();
-		myData.reBase(myNull);
-		
-		/* Return null */
-		return null;
-	}
+        /* Load database */
+        myDatabase.purgeTables(theStatus);
+
+        /* Re-base this set on a null set */
+        myNull = theControl.getNewData();
+        myData = theControl.getData();
+        myData.reBase(myNull);
+
+        /* Return null */
+        return null;
+    }
 }

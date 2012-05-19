@@ -29,9 +29,9 @@ import java.io.OutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import net.sourceforge.JDataWalker.DataConverter;
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.DataConverter;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JGordianKnot.AsymmetricKey;
 import net.sourceforge.JGordianKnot.MsgDigest;
 import net.sourceforge.JGordianKnot.PasswordHash;

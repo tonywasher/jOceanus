@@ -21,8 +21,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.database;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.database.TableDefinition.ColumnDefinition;
 import uk.co.tolcroft.models.database.TableDefinition.SortOrder;
@@ -38,7 +38,8 @@ public abstract class TableStaticData<T extends StaticData<T, ?>> extends TableE
      * @param pDatabase the database control
      * @param pTabName the table name
      */
-    protected TableStaticData(Database<?> pDatabase, String pTabName) {
+    protected TableStaticData(Database<?> pDatabase,
+                              String pTabName) {
         super(pDatabase, pTabName);
     }
 

@@ -26,43 +26,43 @@ import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.views.DataControl;
 
 public class LoadDatabase<T extends DataSet<T>> extends LoaderThread<T> {
-	/* Task description */
-	private static String  	theTask		= "DataBase Load";
+    /* Task description */
+    private static String theTask = "DataBase Load";
 
-	/* Properties */
-	private DataControl<T>	theControl	= null;
-	private ThreadStatus<T>	theStatus	= null;
+    /* Properties */
+    private DataControl<T> theControl = null;
+    private ThreadStatus<T> theStatus = null;
 
-	/* Constructor (Event Thread)*/
-	public LoadDatabase(DataControl<T>	pControl) {
-		/* Call super-constructor */
-		super(theTask, pControl);
-		
-		/* Store passed parameters */
-		theControl	= pControl;
+    /* Constructor (Event Thread) */
+    public LoadDatabase(DataControl<T> pControl) {
+        /* Call super-constructor */
+        super(theTask, pControl);
 
-		/* Create the status */
-		theStatus = new ThreadStatus<T>(this, theControl);
+        /* Store passed parameters */
+        theControl = pControl;
 
-		/* Show the status window */
-		showStatusBar();
-	}
+        /* Create the status */
+        theStatus = new ThreadStatus<T>(this, theControl);
 
-	@Override
-	public T performTask() throws Throwable {
-		T			myData	   	= null;
-		Database<T>	myDatabase	= null;
+        /* Show the status window */
+        showStatusBar();
+    }
 
-		/* Initialise the status window */
-		theStatus.initTask("Loading Database");
+    @Override
+    public T performTask() throws Exception {
+        T myData = null;
+        Database<T> myDatabase = null;
 
-		/* Access database */
-		myDatabase = theControl.getDatabase();
+        /* Initialise the status window */
+        theStatus.initTask("Loading Database");
 
-		/* Load database */
-		myData    = myDatabase.loadDatabase(theStatus);
+        /* Access database */
+        myDatabase = theControl.getDatabase();
 
-		/* Return the loaded data */
-		return myData;
-	}
+        /* Load database */
+        myData = myDatabase.loadDatabase(theStatus);
+
+        /* Return the loaded data */
+        return myData;
+    }
 }

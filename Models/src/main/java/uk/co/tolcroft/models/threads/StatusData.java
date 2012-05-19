@@ -21,7 +21,7 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.threads;
 
-import net.sourceforge.JDataWalker.Difference;
+import net.sourceforge.JDataManager.Difference;
 
 public class StatusData {
     /* Properties */

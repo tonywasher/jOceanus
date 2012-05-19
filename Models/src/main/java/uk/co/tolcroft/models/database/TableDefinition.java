@@ -33,9 +33,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Decimal.Money;
 import net.sourceforge.JDecimal.Decimal.Rate;
@@ -1401,7 +1401,8 @@ public class TableDefinition {
          * @param pId the column id
          * @param pTable the name of the referenced table
          */
-        private ReferenceColumn(ReportField pId, String pTable) {
+        private ReferenceColumn(ReportField pId,
+                                String pTable) {
             /* Record the column type */
             super(pId);
             theReference = pTable;
@@ -1719,7 +1720,8 @@ public class TableDefinition {
          * @param pId the column id
          * @param pLength the length
          */
-        private StringColumn(ReportField pId, int pLength) {
+        private StringColumn(ReportField pId,
+                             int pLength) {
             /* Record the column type */
             super(pId);
             theLength = pLength;
@@ -1837,7 +1839,8 @@ public class TableDefinition {
          * @param pId the column id
          * @param pLength the length of the column
          */
-        private BinaryColumn(ReportField pId, int pLength) {
+        private BinaryColumn(ReportField pId,
+                             int pLength) {
             /* Record the column type */
             super(pId);
             theLength = pLength;

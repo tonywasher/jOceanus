@@ -40,12 +40,12 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 import javax.swing.WindowConstants;
 
-import net.sourceforge.JDataWalker.DebugManager;
-import net.sourceforge.JDataWalker.DebugWindow;
-import net.sourceforge.JDataWalker.ModelException;
+import net.sourceforge.JDataManager.DebugManager;
+import net.sourceforge.JDataManager.DebugWindow;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JHelpManager.HelpModule;
+import net.sourceforge.JHelpManager.HelpWindow;
 import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.help.HelpModule;
-import uk.co.tolcroft.models.help.HelpWindow;
 import uk.co.tolcroft.models.threads.CreateBackup;
 import uk.co.tolcroft.models.threads.CreateDatabase;
 import uk.co.tolcroft.models.threads.CreateExtract;
@@ -171,26 +171,28 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         thePanel.setLayout(myLayout);
 
         /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-                myLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(
-                                myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(myMainPanel, GroupLayout.Alignment.LEADING,
-                                                GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
-                                                Short.MAX_VALUE)
-                                        .addComponent(myProgress, GroupLayout.Alignment.LEADING,
-                                                GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
-                                                Short.MAX_VALUE)
-                                        .addComponent(myStatus, GroupLayout.Alignment.LEADING,
-                                                GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
-                                                Short.MAX_VALUE)).addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-                GroupLayout.Alignment.TRAILING,
-                myLayout.createSequentialGroup().addComponent(myStatus)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(myProgress)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(myMainPanel)
-                        .addContainerGap()));
+        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(myLayout.createSequentialGroup()
+                                  .addContainerGap()
+                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING,
+                                                                         false)
+                                                    .addComponent(myMainPanel, GroupLayout.Alignment.LEADING,
+                                                                  GroupLayout.DEFAULT_SIZE,
+                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                    .addComponent(myProgress, GroupLayout.Alignment.LEADING,
+                                                                  GroupLayout.DEFAULT_SIZE,
+                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                    .addComponent(myStatus, GroupLayout.Alignment.LEADING,
+                                                                  GroupLayout.DEFAULT_SIZE,
+                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                  .addContainerGap()));
+        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(GroupLayout.Alignment.TRAILING,
+                          myLayout.createSequentialGroup().addComponent(myStatus)
+                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                  .addComponent(myProgress)
+                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                  .addComponent(myMainPanel).addContainerGap()));
 
         /* Create the frame */
         theFrame = new JFrame(getFrameName());
@@ -333,7 +335,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
                 if ((hasUpdates()) || (hasChanges())) {
                     /* Ask whether to continue */
                     int myOption = JOptionPane.showConfirmDialog(theFrame, "Discard unsaved data changes?",
-                            "Confirm Close", JOptionPane.YES_NO_OPTION);
+                                                                 "Confirm Close", JOptionPane.YES_NO_OPTION);
 
                     /* Ignore if no was responded */
                     if (myOption != JOptionPane.YES_OPTION)
@@ -643,7 +645,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
 
             /* Display it */
             theDebugWdw.showDialog();
-        } catch (Throwable e) {
+        } catch (Exception e) {
         }
     }
 
@@ -661,7 +663,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
 
             /* Display it */
             theHelpWdw.showDialog();
-        } catch (Throwable e) {
+        } catch (Exception e) {
         }
     }
 }

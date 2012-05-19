@@ -68,7 +68,7 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
     }
 
     @Override
-    protected void loadItem() throws Throwable {
+    protected void loadItem() throws Exception {
         /* Access the IDs */
         int myID = loadInteger(0);
 
@@ -80,18 +80,18 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
     }
 
     @Override
-    protected void insertItem(ControlKey pItem) throws Throwable {
+    protected void insertItem(ControlKey pItem) throws Exception {
         /* Set the fields */
         writeInteger(0, pItem.getId());
         writeBytes(1, pItem.getHashBytes());
     }
 
     @Override
-    protected void preProcessOnWrite() throws Throwable {
+    protected void preProcessOnWrite() throws Exception {
     }
 
     @Override
-    protected void postProcessOnWrite() throws Throwable {
+    protected void postProcessOnWrite() throws Exception {
         /* Set the two columns as the range */
         nameRange(2);
     }

@@ -24,8 +24,8 @@ package net.sourceforge.JGordianKnot;
 import java.security.MessageDigest;
 import java.util.Arrays;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JGordianKnot.DataHayStack.DigestNeedle;
 
 public class MsgDigest {

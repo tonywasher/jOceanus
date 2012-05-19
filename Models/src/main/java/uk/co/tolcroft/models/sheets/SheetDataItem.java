@@ -21,9 +21,9 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.sheets;
 
-import net.sourceforge.JDataWalker.DataConverter;
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.DataConverter;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Decimal;
 
@@ -112,7 +112,8 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
      * @param pReader the spreadsheet reader
      * @param pRange the range to load
      */
-    protected SheetDataItem(SheetReader<?> pReader, String pRange) {
+    protected SheetDataItem(SheetReader<?> pReader,
+                            String pRange) {
         /* Store parameters */
         theThread = pReader.getThread();
         theReader = pReader;
@@ -125,7 +126,8 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
      * @param pWriter the spreadsheet writer
      * @param pRange the range to create
      */
-    protected SheetDataItem(SheetWriter<?> pWriter, String pRange) {
+    protected SheetDataItem(SheetWriter<?> pWriter,
+                            String pRange) {
         /* Store parameters */
         theThread = pWriter.getThread();
         theWriter = pWriter;
@@ -209,7 +211,7 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
         }
 
         /* Handle exceptions */
-        catch (Throwable e) {
+        catch (Exception e) {
             throw new ModelException(ExceptionClass.EXCEL, "Failed to Load " + theRangeName, e);
         }
 
@@ -284,7 +286,7 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
                 postProcessOnWrite();
         }
 
-        catch (Throwable e) {
+        catch (Exception e) {
             throw new ModelException(ExceptionClass.EXCEL, "Failed to create " + theRangeName, e);
         }
 
@@ -293,20 +295,20 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
     }
 
     /* Load item from spreadsheet */
-    protected abstract void loadItem() throws Throwable;
+    protected abstract void loadItem() throws Exception;
 
     /* Insert item into spreadsheet */
-    protected abstract void insertItem(T pItem) throws Throwable;
+    protected abstract void insertItem(T pItem) throws Exception;
 
     /* PostProcess on Load */
-    protected void postProcessOnLoad() throws Throwable {
+    protected void postProcessOnLoad() throws Exception {
     }
 
     /* PreProcess on Write */
-    protected abstract void preProcessOnWrite() throws Throwable;
+    protected abstract void preProcessOnWrite() throws Exception;
 
     /* PostProcess on Write */
-    protected abstract void postProcessOnWrite() throws Throwable;
+    protected abstract void postProcessOnWrite() throws Exception;
 
     /**
      * Adjust for header
@@ -466,7 +468,7 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
     protected void setDilutionColumn(int pOffset) {
         /* Apply the style to the sheet */
         theWorkSheet.setDefaultColumnStyle(theBaseCol + pOffset,
-                theWriter.getCellStyle(CellStyleType.Dilution));
+                                           theWriter.getCellStyle(CellStyleType.Dilution));
         theWorkSheet.setColumnWidth(theBaseCol + pOffset, 13 * 256);
     }
 
@@ -477,7 +479,7 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
     protected void setBooleanColumn(int pOffset) {
         /* Apply the style to the sheet */
         theWorkSheet.setDefaultColumnStyle(theBaseCol + pOffset,
-                theWriter.getCellStyle(CellStyleType.Boolean));
+                                           theWriter.getCellStyle(CellStyleType.Boolean));
         theWorkSheet.setColumnWidth(theBaseCol + pOffset, 8 * 256);
     }
 
@@ -488,7 +490,7 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
     protected void setIntegerColumn(int pOffset) {
         /* Apply the style to the sheet */
         theWorkSheet.setDefaultColumnStyle(theBaseCol + pOffset,
-                theWriter.getCellStyle(CellStyleType.Integer));
+                                           theWriter.getCellStyle(CellStyleType.Integer));
         theWorkSheet.setColumnWidth(theBaseCol + pOffset, 8 * 256);
     }
 

@@ -19,15 +19,18 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.models.help;
+package net.sourceforge.JHelpManager;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -47,7 +50,7 @@ public abstract class HelpModule {
     /**
      * The list of Help pages
      */
-    private HelpPage.List theList = null;
+    private List<HelpPage> theList = null;
 
     /**
      * The Help Entries
@@ -65,7 +68,7 @@ public abstract class HelpModule {
     private String theInitial = null;
 
     /* Access methods */
-    public HelpPage.List getHelpPages() {
+    public List<HelpPage> getHelpPages() {
         return theList;
     }
 
@@ -88,13 +91,34 @@ public abstract class HelpModule {
      */
     public HelpModule(String pDefinitions) throws ModelException {
         /* Allocate the list */
-        theList = new HelpPage.List();
+        theList = new ArrayList<HelpPage>();
 
         /* Parse the help definitions */
         parseHelpDefinition(pDefinitions);
 
         /* Loop through the entities */
         loadHelpPages(theEntries);
+    }
+
+    /**
+     * Search for a help page in the list
+     * @param pName the name of the help page
+     * @return the help page
+     */
+    public HelpPage searchFor(String pName) {
+        /* Loop through the entries */
+        Iterator<HelpPage> myIterator = theList.iterator();
+        while (myIterator.hasNext()) {
+            /* Access the entry */
+            HelpPage myPage = myIterator.next();
+
+            /* If we have found the page return it */
+            if (pName.equals(myPage.getName()))
+                return myPage;
+        }
+
+        /* Return not found */
+        return null;
     }
 
     /**
@@ -144,7 +168,7 @@ public abstract class HelpModule {
             /* Close the stream */
             try {
                 myStream.close();
-            } catch (Throwable e) {
+            } catch (Exception e) {
             }
         }
 
@@ -154,7 +178,7 @@ public abstract class HelpModule {
         }
 
         /* Catch exceptions */
-        catch (Throwable e) {
+        catch (Exception e) {
             /* Throw Exception */
             throw new ModelException(ExceptionClass.DATA, "Failed to load XML Help Definitions", e);
         }
@@ -171,7 +195,7 @@ public abstract class HelpModule {
         /* Loop through the entities */
         for (HelpEntry myEntry : pEntries) {
             /* Check that the entry is not already in the list */
-            if (theList.searchFor(myEntry.getName()) != null)
+            if (searchFor(myEntry.getName()) != null)
                 throw new ModelException(ExceptionClass.DATA, "Duplicate Help object Name: "
                         + myEntry.getName());
 
@@ -180,13 +204,16 @@ public abstract class HelpModule {
                 /* Access the input stream for the entity */
                 myStream = this.getClass().getResourceAsStream(myEntry.getFileName());
 
+                /* Build the help page */
+                HelpPage myPage = new HelpPage(myEntry, myStream);
+
                 /* Add it to the list */
-                theList.addItem(myEntry, myStream);
+                theList.add(myPage);
 
                 /* Close the stream */
                 try {
                     myStream.close();
-                } catch (Throwable e) {
+                } catch (Exception e) {
                 }
             }
 

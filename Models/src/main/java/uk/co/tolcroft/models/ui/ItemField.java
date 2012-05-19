@@ -31,7 +31,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
 import uk.co.tolcroft.models.data.DataItem;
 
 public class ItemField extends ValueField {
@@ -58,7 +58,8 @@ public class ItemField extends ValueField {
      * @param pClass the value class
      * @param iField the field number
      */
-    public ItemField(ValueClass pClass, ReportField iField) {
+    public ItemField(ValueClass pClass,
+                     ReportField iField) {
         /* Call super constructor */
         super(pClass);
 
@@ -92,7 +93,8 @@ public class ItemField extends ValueField {
      * @param pComponent the component
      * @param iField the field number
      */
-    public ItemField(JComponent pComponent, ReportField iField) {
+    public ItemField(JComponent pComponent,
+                     ReportField iField) {
         /* Store the Component */
         theComponent = pComponent;
 
@@ -109,7 +111,9 @@ public class ItemField extends ValueField {
      * @param iField the field number
      * @param pSet the set to add to
      */
-    public ItemField(ValueClass pClass, ReportField iField, FieldSet pSet) {
+    public ItemField(ValueClass pClass,
+                     ReportField iField,
+                     FieldSet pSet) {
         /* Call standard constructor */
         this(pClass, iField);
 
@@ -123,7 +127,9 @@ public class ItemField extends ValueField {
      * @param iField the field number
      * @param pSet the set to add to
      */
-    public ItemField(JComponent pComponent, ReportField iField, FieldSet pSet) {
+    public ItemField(JComponent pComponent,
+                     ReportField iField,
+                     FieldSet pSet) {
         /* Call standard constructor */
         this(pComponent, iField);
 

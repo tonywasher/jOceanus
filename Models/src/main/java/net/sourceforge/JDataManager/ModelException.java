@@ -19,10 +19,10 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataWalker;
+package net.sourceforge.JDataManager;
 
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
-import net.sourceforge.JDataWalker.ReportObject.ReportDetail;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ReportObject.ReportDetail;
 
 public class ModelException extends java.lang.Exception implements ReportDetail {
     /**
@@ -135,7 +135,8 @@ public class ModelException extends java.lang.Exception implements ReportDetail 
      * @param ec the exception class
      * @param s the description of the exception
      */
-    public ModelException(ExceptionClass ec, String s) {
+    public ModelException(ExceptionClass ec,
+                          String s) {
         super(s);
         theClass = ec;
         fillInStackTrace();
@@ -147,7 +148,9 @@ public class ModelException extends java.lang.Exception implements ReportDetail 
      * @param s the description of the exception
      * @param c the underlying exception
      */
-    public ModelException(ExceptionClass ec, String s, Throwable c) {
+    public ModelException(ExceptionClass ec,
+                          String s,
+                          Throwable c) {
         super(s, c);
         theClass = ec;
     }
@@ -158,7 +161,9 @@ public class ModelException extends java.lang.Exception implements ReportDetail 
      * @param o the associated object
      * @param s the description of the exception
      */
-    public ModelException(ExceptionClass ec, ReportDetail o, String s) {
+    public ModelException(ExceptionClass ec,
+                          ReportDetail o,
+                          String s) {
         super(s);
         theClass = ec;
         theObject = o;
@@ -172,7 +177,10 @@ public class ModelException extends java.lang.Exception implements ReportDetail 
      * @param s the description of the exception
      * @param c the underlying exception
      */
-    public ModelException(ExceptionClass ec, ReportDetail o, String s, Throwable c) {
+    public ModelException(ExceptionClass ec,
+                          ReportDetail o,
+                          String s,
+                          Throwable c) {
         super(s, c);
         theClass = ec;
         theObject = o;

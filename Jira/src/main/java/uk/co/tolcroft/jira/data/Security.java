@@ -26,348 +26,366 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import uk.co.tolcroft.jira.soap.JiraSoapService;
 import uk.co.tolcroft.jira.soap.RemoteGroup;
 import uk.co.tolcroft.jira.soap.RemoteProjectRole;
 import uk.co.tolcroft.jira.soap.RemoteUser;
-import uk.co.tolcroft.models.ModelException;
-import uk.co.tolcroft.models.ModelException.ExceptionClass;
 
 public class Security {
-	/**
-	 * Server
-	 */
-	private final Server			theServer;
+    /**
+     * Server
+     */
+    private final Server theServer;
 
-	/**
-	 * Service
-	 */
-	private final JiraSoapService	theService;
+    /**
+     * Service
+     */
+    private final JiraSoapService theService;
 
-	/**
-	 * Users
-	 */
-	private final List<User>		theUsers;
+    /**
+     * Users
+     */
+    private final List<User> theUsers;
 
-	/**
-	 * Groups
-	 */
-	private final List<Group>		theGroups;
+    /**
+     * Groups
+     */
+    private final List<Group> theGroups;
 
-	/**
-	 * Roles
-	 */
-	private final List<Role>		theRoles;
+    /**
+     * Roles
+     */
+    private final List<Role> theRoles;
 
-	/**
-	 * Constructor
-	 * @param pServer the server
-	 */
-	protected Security(Server pServer) throws ModelException {
-		/* Store parameters */
-		theServer 	= pServer;
-		theService 	= theServer.getService();
+    /**
+     * Constructor
+     * @param pServer the server
+     * @throws ModelException
+     */
+    protected Security(Server pServer) throws ModelException {
+        /* Store parameters */
+        theServer = pServer;
+        theService = theServer.getService();
 
-		/* Allocate the lists */
-		theUsers 	= new ArrayList<User>();
-		theGroups 	= new ArrayList<Group>();
-		theRoles 	= new ArrayList<Role>();
-		
-		/* Load Roles */
-		loadRoles();
-	}
-	
+        /* Allocate the lists */
+        theUsers = new ArrayList<User>();
+        theGroups = new ArrayList<Group>();
+        theRoles = new ArrayList<Role>();
+
+        /* Load Roles */
+        loadRoles();
+    }
+
     /**
      * Obtain User
      * @param pName the name of the user
      * @return the User
+     * @throws ModelException
      */
     public User getUser(String pName) throws ModelException {
-    	/* Return an existing user if found in list */
-    	Iterator<User> myIterator = theUsers.iterator();
-    	while (myIterator.hasNext()) {
-    		User myUser = myIterator.next();
-    		if (myUser.getName().equals(pName)) return myUser;
-    	}
-    	
-    	/* Protect against exceptions */
-    	try {
-    		/* Access the authorization token */
-    		String myToken = theServer.getAuthToken();
-    		
-    		/* Access the user and add to list */
-    		RemoteUser myUserDtl = theService.getUser(myToken, pName);
-    		User myUser = new User(myUserDtl);
-   			theUsers.add(myUser);
-   			return myUser;
-    	}
-    	catch (ModelException e) { throw e; }
-        catch (RemoteException e)
-        {
-        	/* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA,
-            						 "Failed to load user " + pName, 
-            						 e);
+        /* Return an existing user if found in list */
+        Iterator<User> myIterator = theUsers.iterator();
+        while (myIterator.hasNext()) {
+            User myUser = myIterator.next();
+            if (myUser.getName().equals(pName))
+                return myUser;
+        }
+
+        /* Protect against exceptions */
+        try {
+            /* Access the authorization token */
+            String myToken = theServer.getAuthToken();
+
+            /* Access the user and add to list */
+            RemoteUser myUserDtl = theService.getUser(myToken, pName);
+            User myUser = new User(myUserDtl);
+            theUsers.add(myUser);
+            return myUser;
+        } catch (ModelException e) {
+            throw e;
+        } catch (RemoteException e) {
+            /* Pass the exception on */
+            throw new ModelException(ExceptionClass.JIRA, "Failed to load user " + pName, e);
         }
     }
-    
+
     /**
      * Obtain User
      * @param pUser the Remote User definition
      * @return the User
      */
     private User getUser(RemoteUser pUser) {
-    	/* Return an existing user if found in list */
-    	Iterator<User> myIterator = theUsers.iterator();
-    	while (myIterator.hasNext()) {
-    		User myUser = myIterator.next();
-    		if (myUser.getName().equals(pUser.getName())) return myUser;
-    	}
-    	
-   		/* Access the user and add to list */
-    	User myUser = new User(pUser);
-   		theUsers.add(myUser);
-   		return myUser;
+        /* Return an existing user if found in list */
+        Iterator<User> myIterator = theUsers.iterator();
+        while (myIterator.hasNext()) {
+            User myUser = myIterator.next();
+            if (myUser.getName().equals(pUser.getName()))
+                return myUser;
+        }
+
+        /* Access the user and add to list */
+        User myUser = new User(pUser);
+        theUsers.add(myUser);
+        return myUser;
     }
-    
+
     /**
      * Obtain Group
      * @param pName the name of the group
      * @return the Group
+     * @throws ModelException
      */
     public Group getGroup(String pName) throws ModelException {
-    	/* Return an existing group if found in list */
-    	Iterator<Group> myIterator = theGroups.iterator();
-    	while (myIterator.hasNext()) {
-    		Group myGroup = myIterator.next();
-    		if (myGroup.getName().equals(pName)) return myGroup;
-    	}
-    	
-    	/* Protect against exceptions */
-    	try {
-    		/* Access the authorization token */
-    		String myToken = theServer.getAuthToken();
-    		
-    		/* Access the group and add to list */
-    		RemoteGroup myGroupDtl = theService.getGroup(myToken, pName);
-    		Group myGroup = new Group(myGroupDtl);
-   			theGroups.add(myGroup);
-   			return myGroup;
-    	}
-    	catch (ModelException e) { throw e; }
-        catch (RemoteException e)
-        {
-        	/* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA,
-            						 "Failed to load group " + pName, 
-            						 e);
+        /* Return an existing group if found in list */
+        Iterator<Group> myIterator = theGroups.iterator();
+        while (myIterator.hasNext()) {
+            Group myGroup = myIterator.next();
+            if (myGroup.getName().equals(pName))
+                return myGroup;
+        }
+
+        /* Protect against exceptions */
+        try {
+            /* Access the authorization token */
+            String myToken = theServer.getAuthToken();
+
+            /* Access the group and add to list */
+            RemoteGroup myGroupDtl = theService.getGroup(myToken, pName);
+            Group myGroup = new Group(myGroupDtl);
+            theGroups.add(myGroup);
+            return myGroup;
+        } catch (ModelException e) {
+            throw e;
+        } catch (RemoteException e) {
+            /* Pass the exception on */
+            throw new ModelException(ExceptionClass.JIRA, "Failed to load group " + pName, e);
         }
     }
-    
+
     /**
      * Obtain Role
      * @param pId the id of the Role
      * @return the Role
+     * @throws ModelException
      */
     public Role getRole(long pId) throws ModelException {
-    	/* Return an existing role if found in list */
-    	Iterator<Role> myIterator = theRoles.iterator();
-    	while (myIterator.hasNext()) {
-    		Role myRole = myIterator.next();
-    		if (myRole.getId() == pId) return myRole;
-    	}
-    	
-    	/* throw exception */
-        throw new ModelException(ExceptionClass.JIRA,
-        						 "Invalid RoleId " + pId);
+        /* Return an existing role if found in list */
+        Iterator<Role> myIterator = theRoles.iterator();
+        while (myIterator.hasNext()) {
+            Role myRole = myIterator.next();
+            if (myRole.getId() == pId)
+                return myRole;
+        }
+
+        /* throw exception */
+        throw new ModelException(ExceptionClass.JIRA, "Invalid RoleId " + pId);
     }
-    
+
     /**
      * Load Roles
+     * @throws ModelException
      */
     private void loadRoles() throws ModelException {
-    	/* Protect against exceptions */
-    	try {
-    		/* Access the authorization token */
-    		String myToken = theServer.getAuthToken();
-    		
-    		/* Access the roles */
-    		RemoteProjectRole[] myRoles = theService.getProjectRoles(myToken);
-    		
-    		/* Loop through the roles */
-    		for(RemoteProjectRole myRole: myRoles) {
-    			/* Add new role to list */
-    			theRoles.add(new Role(myRole));
-    		}
-    	}
-    	catch (ModelException e) { throw e; }
-        catch (RemoteException e)
-        {
-        	/* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA,
-            						 "Failed to load project roles", 
-            						 e);
+        /* Protect against exceptions */
+        try {
+            /* Access the authorization token */
+            String myToken = theServer.getAuthToken();
+
+            /* Access the roles */
+            RemoteProjectRole[] myRoles = theService.getProjectRoles(myToken);
+
+            /* Loop through the roles */
+            for (RemoteProjectRole myRole : myRoles) {
+                /* Add new role to list */
+                theRoles.add(new Role(myRole));
+            }
+        } catch (ModelException e) {
+            throw e;
+        } catch (RemoteException e) {
+            /* Pass the exception on */
+            throw new ModelException(ExceptionClass.JIRA, "Failed to load project roles", e);
         }
     }
 
     /**
-	 * User class
-	 */
-	public class User {
-		/**
-		 * The underlying remote user
-		 */
-		private final RemoteUser		theUser;
-		
-		/**
-		 * The name of the user
-		 */
-		private final String			theName;
-		
-		/**
-		 * The full name of the user
-		 */
-		private final String			theFullName;
-		
-		/**
-		 * Get the underlying user
-		 * @return the user
-		 */
-		public RemoteUser getUser() 	{ return theUser; }
+     * User class
+     */
+    public class User {
+        /**
+         * The underlying remote user
+         */
+        private final RemoteUser theUser;
 
-		/**
-		 * Get the name of the user
-		 * @return the name
-		 */
-		public String getName() 		{ return theName; }
+        /**
+         * The name of the user
+         */
+        private final String theName;
 
-		/**
-		 * Get the full name of the user
-		 * @return the full name
-		 */
-		public String getFullName() 	{ return theFullName; }
+        /**
+         * The full name of the user
+         */
+        private final String theFullName;
 
-		/**
-		 * Constructor
-		 * @param pUser the underlying user
-		 */
-		private User(RemoteUser pUser) {
-			/* Access the details */
-			theUser		= pUser;
-			theName 	= pUser.getName();
-			theFullName	= pUser.getFullname();
-		}
-	}
+        /**
+         * Get the underlying user
+         * @return the user
+         */
+        public RemoteUser getUser() {
+            return theUser;
+        }
+
+        /**
+         * Get the name of the user
+         * @return the name
+         */
+        public String getName() {
+            return theName;
+        }
+
+        /**
+         * Get the full name of the user
+         * @return the full name
+         */
+        public String getFullName() {
+            return theFullName;
+        }
+
+        /**
+         * Constructor
+         * @param pUser the underlying user
+         */
+        private User(RemoteUser pUser) {
+            /* Access the details */
+            theUser = pUser;
+            theName = pUser.getName();
+            theFullName = pUser.getFullname();
+        }
+    }
 
     /**
-	 * Group class
-	 */
-	public class Group {
-		/**
-		 * The underlying remote group
-		 */
-		private final RemoteGroup		theGroup;
-		
-		/**
-		 * The name of the group
-		 */
-		private final String			theName;
-		
-		/**
-		 * The list of members
-		 */
-		private final List<User>		theMembers;
-		
-		/**
-		 * Get the underlying user
-		 * @return the user
-		 */
-		public RemoteGroup getGroup() 	{ return theGroup; }
+     * Group class
+     */
+    public class Group {
+        /**
+         * The underlying remote group
+         */
+        private final RemoteGroup theGroup;
 
-		/**
-		 * Get the name of the group
-		 * @return the name
-		 */
-		public String getName() 		{ return theName; }
+        /**
+         * The name of the group
+         */
+        private final String theName;
 
-		/**
-		 * Constructor
-		 * @param pGroup the underlying group
-		 */
-		private Group(RemoteGroup pGroup) throws ModelException {
-			/* Access the details */
-			theGroup	= pGroup;
-			theName 	= pGroup.getName();
-			
-			/* Allocate the member list */
-			theMembers	= new ArrayList<User>();
-			
-			/* Loop through the members */
-			for(RemoteUser myUser : pGroup.getUsers()) {
-				/* Access the cached user and add it */
-				theMembers.add(getUser(myUser));
-			}
-		}
-	}
-	
+        /**
+         * The list of members
+         */
+        private final List<User> theMembers;
+
+        /**
+         * Get the underlying user
+         * @return the user
+         */
+        public RemoteGroup getGroup() {
+            return theGroup;
+        }
+
+        /**
+         * Get the name of the group
+         * @return the name
+         */
+        public String getName() {
+            return theName;
+        }
+
+        /**
+         * Constructor
+         * @param pGroup the underlying group
+         * @throws ModelException
+         */
+        private Group(RemoteGroup pGroup) throws ModelException {
+            /* Access the details */
+            theGroup = pGroup;
+            theName = pGroup.getName();
+
+            /* Allocate the member list */
+            theMembers = new ArrayList<User>();
+
+            /* Loop through the members */
+            for (RemoteUser myUser : pGroup.getUsers()) {
+                /* Access the cached user and add it */
+                theMembers.add(getUser(myUser));
+            }
+        }
+    }
+
     /**
-	 * Role class
-	 */
-	public class Role {
-		/**
-		 * The underlying remote role
-		 */
-		private final RemoteProjectRole		theRole;
-		
-		/**
-		 * The id of the role
-		 */
-		private final long					theId;
-		
-		/**
-		 * The name of the role
-		 */
-		private final String				theName;
-		
-		/**
-		 * The description of the role
-		 */
-		private final String				theDesc;
-		
-		/**
-		 * Get the underlying role
-		 * @return the role
-		 */
-		public RemoteProjectRole getRole() 	{ return theRole; }
+     * Role class
+     */
+    public class Role {
+        /**
+         * The underlying remote role
+         */
+        private final RemoteProjectRole theRole;
 
-		/**
-		 * Get the id of the role
-		 * @return the id
-		 */
-		public long getId() 				{ return theId; }
+        /**
+         * The id of the role
+         */
+        private final long theId;
 
-		/**
-		 * Get the name of the role
-		 * @return the name
-		 */
-		public String getName() 			{ return theName; }
+        /**
+         * The name of the role
+         */
+        private final String theName;
 
-		/**
-		 * Get the description of the role
-		 * @return the description
-		 */
-		public String getDesc() 			{ return theDesc; }
+        /**
+         * The description of the role
+         */
+        private final String theDesc;
 
-		/**
-		 * Constructor
-		 * @param pRole the underlying role
-		 */
-		private Role(RemoteProjectRole pRole) {
-			/* Access the details */
-			theRole		= pRole;
-			theId 		= pRole.getId();
-			theName 	= pRole.getName();
-			theDesc 	= pRole.getDescription();
-		}
-	}
+        /**
+         * Get the underlying role
+         * @return the role
+         */
+        public RemoteProjectRole getRole() {
+            return theRole;
+        }
+
+        /**
+         * Get the id of the role
+         * @return the id
+         */
+        public long getId() {
+            return theId;
+        }
+
+        /**
+         * Get the name of the role
+         * @return the name
+         */
+        public String getName() {
+            return theName;
+        }
+
+        /**
+         * Get the description of the role
+         * @return the description
+         */
+        public String getDesc() {
+            return theDesc;
+        }
+
+        /**
+         * Constructor
+         * @param pRole the underlying role
+         */
+        private Role(RemoteProjectRole pRole) {
+            /* Access the details */
+            theRole = pRole;
+            theId = pRole.getId();
+            theName = pRole.getName();
+            theDesc = pRole.getDescription();
+        }
+    }
 }

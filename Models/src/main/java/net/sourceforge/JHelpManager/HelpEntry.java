@@ -19,15 +19,15 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.models.help;
+package net.sourceforge.JHelpManager;
 
 import java.util.Arrays;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -181,7 +181,9 @@ public class HelpEntry {
      * @param pTitle the title for this page in the table of contents
      * @param pFileName the name of the file containing the HTML for this entry
      */
-    public HelpEntry(String pName, String pTitle, String pFileName) {
+    public HelpEntry(String pName,
+                     String pTitle,
+                     String pFileName) {
         theName = pName;
         theTitle = pTitle;
         theFileName = pFileName;
@@ -193,7 +195,9 @@ public class HelpEntry {
      * @param pTitle the title for this page in the table of contents
      * @param pChildren the children for this element
      */
-    public HelpEntry(String pName, String pTitle, HelpEntry[] pChildren) {
+    public HelpEntry(String pName,
+                     String pTitle,
+                     HelpEntry[] pChildren) {
         theName = pName;
         theTitle = pTitle;
         theChildren = pChildren;
@@ -206,7 +210,10 @@ public class HelpEntry {
      * @param pFileName the name of the file containing the HTML for this entry
      * @param pChildren the children for this element
      */
-    protected HelpEntry(String pName, String pTitle, String pFileName, HelpEntry[] pChildren) {
+    protected HelpEntry(String pName,
+                        String pTitle,
+                        String pFileName,
+                        HelpEntry[] pChildren) {
         theName = pName;
         theTitle = pTitle;
         theChildren = pChildren;

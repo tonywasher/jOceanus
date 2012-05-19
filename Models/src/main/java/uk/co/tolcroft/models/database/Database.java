@@ -28,11 +28,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
-import net.sourceforge.JPreferenceSet.PreferenceSet;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceSetChooser;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.PreferenceSet;
+import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
+import net.sourceforge.JDataManager.PreferenceSet.PreferenceSetChooser;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.views.DataControl;
@@ -269,7 +269,7 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             /* Obtain the connection */
             theConn = DriverManager.getConnection(thePreferences.getConnectionString());
             theConn.setAutoCommit(false);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new ModelException(ExceptionClass.SQLSERVER, "Failed to load driver", e);
         }
 
@@ -334,7 +334,7 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
         }
 
         /* Discard Exceptions */
-        catch (Throwable e) {
+        catch (Exception e) {
         }
     }
 
@@ -433,7 +433,7 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             /* Commit the database */
             try {
                 theConn.commit();
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 close();
                 throw new ModelException(ExceptionClass.SQLSERVER, "Failed to commit transction");
             }

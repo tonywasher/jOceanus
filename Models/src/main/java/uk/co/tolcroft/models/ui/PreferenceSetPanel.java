@@ -43,20 +43,20 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import net.sourceforge.JDataManager.PreferenceSet;
+import net.sourceforge.JDataManager.PreferenceSet.BooleanPreference;
+import net.sourceforge.JDataManager.PreferenceSet.DatePreference;
+import net.sourceforge.JDataManager.PreferenceSet.EnumPreference;
+import net.sourceforge.JDataManager.PreferenceSet.IntegerPreference;
+import net.sourceforge.JDataManager.PreferenceSet.PreferenceItem;
+import net.sourceforge.JDataManager.PreferenceSet.PreferenceType;
+import net.sourceforge.JDataManager.PreferenceSet.StringPreference;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayButton;
-import net.sourceforge.JPreferenceSet.PreferenceSet;
-import net.sourceforge.JPreferenceSet.PreferenceSet.BooleanPreference;
-import net.sourceforge.JPreferenceSet.PreferenceSet.DatePreference;
-import net.sourceforge.JPreferenceSet.PreferenceSet.EnumPreference;
-import net.sourceforge.JPreferenceSet.PreferenceSet.IntegerPreference;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceItem;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceType;
-import net.sourceforge.JPreferenceSet.PreferenceSet.StringPreference;
 import uk.co.tolcroft.models.ui.StdInterfaces.stdPanel;
 import uk.co.tolcroft.models.ui.ValueField.ValueClass;
 
-public class PropertySetPanel extends JPanel {
+public class PreferenceSetPanel extends JPanel {
     /* Serial Id */
     private static final long serialVersionUID = -713132970269487546L;
 
@@ -73,7 +73,7 @@ public class PropertySetPanel extends JPanel {
     /**
      * The Self Reference
      */
-    private final PropertySetPanel theSelf = this;
+    private final PreferenceSetPanel theSelf = this;
 
     /**
      * The individual preference elements
@@ -95,8 +95,8 @@ public class PropertySetPanel extends JPanel {
      * @param pParent the parent
      * @param pSet the preference set
      */
-    public PropertySetPanel(stdPanel pParent,
-                            PreferenceSet pSet) {
+    public PreferenceSetPanel(stdPanel pParent,
+                              PreferenceSet pSet) {
         /* Options SubPanel */
         JPanel myOptions = null;
         int myRow = 0;

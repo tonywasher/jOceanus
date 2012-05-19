@@ -22,6 +22,16 @@
   		<version>4.0</version>
   	</dependency>
   	<dependency>
+  		<groupId>net.sourceforge.JDecimal</groupId>
+  		<artifactId>JDecimal</artifactId>
+  		<version>v1.0.0-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>net.sourceforge.JDateDay</groupId>
+  		<artifactId>JDateDay</artifactId>
+  		<version>v1.0.0-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
   		<groupId>net.sourceforge.JDateButton</groupId>
   		<artifactId>JDateButton</artifactId>
   		<version>v1.1.0-SNAPSHOT</version>

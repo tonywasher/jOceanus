@@ -41,8 +41,8 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import net.sourceforge.JDataWalker.DebugManager;
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
+import net.sourceforge.JDataManager.DebugManager;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataState;
@@ -1105,8 +1105,10 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
          * @param cellRenderer cell renderer
          * @param cellEditor cell editor
          */
-        public DataColumn(int modelIndex, int width, TableCellRenderer cellRenderer,
-                TableCellEditor cellEditor) {
+        public DataColumn(int modelIndex,
+                          int width,
+                          TableCellRenderer cellRenderer,
+                          TableCellEditor cellEditor) {
             /* Call super-constructor */
             super(modelIndex, width, cellRenderer, cellEditor);
         }

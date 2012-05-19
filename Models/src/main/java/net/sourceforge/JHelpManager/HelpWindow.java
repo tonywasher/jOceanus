@@ -19,7 +19,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.models.help;
+package net.sourceforge.JHelpManager;
 
 import java.awt.Dimension;
 import java.net.URL;
@@ -48,18 +48,19 @@ public class HelpWindow extends JFrame implements HyperlinkListener, TreeSelecti
     private static final long serialVersionUID = 3908377793788072474L;
 
     /* Members */
-    private JEditorPane theEditor = null;
-    private JTree theTree = null;
-    private HelpEntry[] theEntries = null;
-    private HelpPage.List theList = null;
-    private DefaultMutableTreeNode theRoot = null;
+    private final JEditorPane theEditor;
+    private final JTree theTree;
+    private final HelpEntry[] theEntries;
+    private final HelpModule theModule;
+    private final DefaultMutableTreeNode theRoot;
 
     /**
      * Constructor
      * @param pParent the parent frame
      * @param pModule the help module to display
      */
-    public HelpWindow(JFrame pParent, HelpModule pModule) {
+    public HelpWindow(JFrame pParent,
+                      HelpModule pModule) {
         /* Local variables */
         JSplitPane mySplit;
         JScrollPane myDocScroll;
@@ -73,7 +74,7 @@ public class HelpWindow extends JFrame implements HyperlinkListener, TreeSelecti
 
         /* Access the Help entries and list */
         theEntries = pModule.getHelpEntries();
-        theList = pModule.getHelpPages();
+        theModule = pModule;
 
         /* Access the initial id */
         String myName = pModule.getInitialName();
@@ -131,10 +132,11 @@ public class HelpWindow extends JFrame implements HyperlinkListener, TreeSelecti
         myPanel.setLayout(myLayout);
 
         /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-                myLayout.createSequentialGroup().addContainerGap().addComponent(mySplit).addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                mySplit));
+        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(myLayout.createSequentialGroup().addContainerGap().addComponent(mySplit)
+                                  .addContainerGap()));
+        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addComponent(mySplit));
 
         /* Set this to be the main panel */
         getContentPane().add(myPanel);
@@ -172,7 +174,7 @@ public class HelpWindow extends JFrame implements HyperlinkListener, TreeSelecti
         /* If we are switching pages */
         if (myName != null) {
             /* Access the help page */
-            HelpPage myPage = theList.searchFor(myName);
+            HelpPage myPage = theModule.searchFor(myName);
 
             /* If we have a page */
             if (myPage != null) {
@@ -212,7 +214,7 @@ public class HelpWindow extends JFrame implements HyperlinkListener, TreeSelecti
                         displayPage(desc);
                     } else
                         theEditor.setPage(e.getURL());
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
         }

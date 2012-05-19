@@ -23,12 +23,12 @@ package uk.co.tolcroft.models.threads;
 
 import java.io.File;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
-import uk.co.tolcroft.models.sheets.BackupProperties;
+import uk.co.tolcroft.models.sheets.BackupPreferences;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.ui.FileSelector;
 import uk.co.tolcroft.models.views.DataControl;
@@ -57,7 +57,7 @@ public class LoadBackup<T extends DataSet<T>> extends LoaderThread<T> {
     }
 
     @Override
-    public T performTask() throws Throwable {
+    public T performTask() throws Exception {
         T myData = null;
         T myStore;
         Database<T> myDatabase;
@@ -67,13 +67,12 @@ public class LoadBackup<T extends DataSet<T>> extends LoaderThread<T> {
         /* Initialise the status window */
         theStatus.initTask("Loading Backup");
 
-        /* Access the Sheet properties */
-        BackupProperties myProperties = (BackupProperties) PreferenceManager
-                .getPreferenceSet(BackupProperties.class);
+        /* Access the Sheet preferences */
+        BackupPreferences myProperties = PreferenceManager.getPreferenceSet(BackupPreferences.class);
 
         /* Determine the archive name */
-        File myBackupDir = new File(myProperties.getStringValue(BackupProperties.nameBackupDir));
-        String myPrefix = myProperties.getStringValue(BackupProperties.nameBackupPfix);
+        File myBackupDir = new File(myProperties.getStringValue(BackupPreferences.nameBackupDir));
+        String myPrefix = myProperties.getStringValue(BackupPreferences.nameBackupPfix);
 
         /* Determine the name of the file to load */
         FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Backup to load", myBackupDir,

@@ -34,8 +34,8 @@ import javax.swing.LayoutStyle;
 import javax.swing.Timer;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 
-import net.sourceforge.JDataWalker.DebugManager.DebugEntry;
-import net.sourceforge.JDataWalker.ModelException;
+import net.sourceforge.JDataManager.DebugManager.DebugEntry;
+import net.sourceforge.JDataManager.ModelException;
 import uk.co.tolcroft.models.threads.StatusData;
 import uk.co.tolcroft.models.views.DataControl;
 
@@ -120,40 +120,52 @@ public class StatusBar {
 
         /* Set the layout */
         panelLayout.setHorizontalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(
-                        panelLayout
-                                .createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(theTaskLabel)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(theStages)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(theStageLabel, GroupLayout.PREFERRED_SIZE, 130,
-                                        GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(theSteps)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(theCancel).addContainerGap()));
-        panelLayout.setVerticalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(
-                        panelLayout.createSequentialGroup().addGroup(
-                                panelLayout
-                                        .createParallelGroup(GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(theTaskLabel, GroupLayout.Alignment.LEADING,
-                                                GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
-                                                Short.MAX_VALUE)
-                                        .addComponent(theStages, GroupLayout.Alignment.LEADING,
-                                                GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
-                                                Short.MAX_VALUE)
-                                        .addComponent(theStageLabel, GroupLayout.Alignment.LEADING,
-                                                GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
-                                                Short.MAX_VALUE)
-                                        .addComponent(theSteps, GroupLayout.Alignment.LEADING,
-                                                GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
-                                                Short.MAX_VALUE)
-                                        .addComponent(theCancel, GroupLayout.Alignment.LEADING,
-                                                GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
-                                                Short.MAX_VALUE))));
+                .addGroup(panelLayout
+                                  .createSequentialGroup()
+                                  .addContainerGap()
+                                  .addComponent(theTaskLabel)
+                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                  .addComponent(theStages)
+                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                  .addComponent(theStageLabel, GroupLayout.PREFERRED_SIZE, 130,
+                                                GroupLayout.PREFERRED_SIZE)
+                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                  .addComponent(theSteps)
+                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                  .addComponent(theCancel).addContainerGap()));
+        panelLayout
+                .setVerticalGroup(panelLayout
+                        .createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(panelLayout
+                                          .createSequentialGroup()
+                                          .addGroup(panelLayout
+                                                            .createParallelGroup(GroupLayout.Alignment.TRAILING,
+                                                                                 false)
+                                                            .addComponent(theTaskLabel,
+                                                                          GroupLayout.Alignment.LEADING,
+                                                                          GroupLayout.DEFAULT_SIZE,
+                                                                          GroupLayout.DEFAULT_SIZE,
+                                                                          Short.MAX_VALUE)
+                                                            .addComponent(theStages,
+                                                                          GroupLayout.Alignment.LEADING,
+                                                                          GroupLayout.DEFAULT_SIZE,
+                                                                          GroupLayout.DEFAULT_SIZE,
+                                                                          Short.MAX_VALUE)
+                                                            .addComponent(theStageLabel,
+                                                                          GroupLayout.Alignment.LEADING,
+                                                                          GroupLayout.DEFAULT_SIZE,
+                                                                          GroupLayout.DEFAULT_SIZE,
+                                                                          Short.MAX_VALUE)
+                                                            .addComponent(theSteps,
+                                                                          GroupLayout.Alignment.LEADING,
+                                                                          GroupLayout.DEFAULT_SIZE,
+                                                                          GroupLayout.DEFAULT_SIZE,
+                                                                          Short.MAX_VALUE)
+                                                            .addComponent(theCancel,
+                                                                          GroupLayout.Alignment.LEADING,
+                                                                          GroupLayout.DEFAULT_SIZE,
+                                                                          GroupLayout.DEFAULT_SIZE,
+                                                                          Short.MAX_VALUE))));
 
         /* Create the status panel */
         theStatPanel = new JPanel();
@@ -165,22 +177,28 @@ public class StatusBar {
 
         /* Set the layout */
         panelLayout.setHorizontalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(
-                        GroupLayout.Alignment.TRAILING,
-                        panelLayout.createSequentialGroup().addContainerGap().addComponent(theClear)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(theStatusLabel)));
-        panelLayout.setVerticalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(
-                        panelLayout.createSequentialGroup().addGroup(
-                                panelLayout
-                                        .createParallelGroup(GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(theStatusLabel, GroupLayout.Alignment.LEADING,
-                                                GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
-                                                Short.MAX_VALUE)
-                                        .addComponent(theClear, GroupLayout.Alignment.LEADING,
-                                                GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
-                                                Short.MAX_VALUE))));
+                .addGroup(GroupLayout.Alignment.TRAILING,
+                          panelLayout.createSequentialGroup().addContainerGap().addComponent(theClear)
+                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                  .addComponent(theStatusLabel)));
+        panelLayout
+                .setVerticalGroup(panelLayout
+                        .createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(panelLayout
+                                          .createSequentialGroup()
+                                          .addGroup(panelLayout
+                                                            .createParallelGroup(GroupLayout.Alignment.TRAILING,
+                                                                                 false)
+                                                            .addComponent(theStatusLabel,
+                                                                          GroupLayout.Alignment.LEADING,
+                                                                          GroupLayout.DEFAULT_SIZE,
+                                                                          GroupLayout.DEFAULT_SIZE,
+                                                                          Short.MAX_VALUE)
+                                                            .addComponent(theClear,
+                                                                          GroupLayout.Alignment.LEADING,
+                                                                          GroupLayout.DEFAULT_SIZE,
+                                                                          GroupLayout.DEFAULT_SIZE,
+                                                                          Short.MAX_VALUE))));
     }
 
     /**

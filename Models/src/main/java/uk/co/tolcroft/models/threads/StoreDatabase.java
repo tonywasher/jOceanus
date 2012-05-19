@@ -21,8 +21,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.threads;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.views.DataControl;
@@ -51,7 +51,7 @@ public class StoreDatabase<T extends DataSet<T>> extends WorkerThread<Void> {
     }
 
     @Override
-    public Void performTask() throws Throwable {
+    public Void performTask() throws Exception {
         Database<T> myDatabase = null;
         T myData;
         DataSet<T> myDiff;

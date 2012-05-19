@@ -25,50 +25,50 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.views.DataControl;
 
-public class CreateDatabase<T extends DataSet<T>>	extends WorkerThread<Void> {
-	/* Task description */
-	private static String  	theTask		= "DataBase Creation";
+public class CreateDatabase<T extends DataSet<T>> extends WorkerThread<Void> {
+    /* Task description */
+    private static String theTask = "DataBase Creation";
 
-	/* Properties */
-	private DataControl<T>	theControl	= null;
-	private ThreadStatus<T>	theStatus	= null;
+    /* Properties */
+    private DataControl<T> theControl = null;
+    private ThreadStatus<T> theStatus = null;
 
-	/* Constructor (Event Thread)*/
-	public CreateDatabase(DataControl<T> pControl) {
-		/* Call super-constructor */
-		super(theTask, pControl.getStatusBar());
-		
-		/* Store passed parameters */
-		theControl	  = pControl;
+    /* Constructor (Event Thread) */
+    public CreateDatabase(DataControl<T> pControl) {
+        /* Call super-constructor */
+        super(theTask, pControl.getStatusBar());
 
-		/* Create the status */
-		theStatus = new ThreadStatus<T>(this, theControl);
+        /* Store passed parameters */
+        theControl = pControl;
 
-		/* Show the status window */
-		showStatusBar();
-	}
+        /* Create the status */
+        theStatus = new ThreadStatus<T>(this, theControl);
 
-	@Override
-	public Void performTask() throws Throwable {
-		Database<T>		myDatabase	= null;
-		T				myData;
-		T				myNull;
+        /* Show the status window */
+        showStatusBar();
+    }
 
-		/* Initialise the status window */
-		theStatus.initTask("Creating Database");
+    @Override
+    public Void performTask() throws Exception {
+        Database<T> myDatabase = null;
+        T myData;
+        T myNull;
 
-		/* Access Database */
-		myDatabase = theControl.getDatabase();
+        /* Initialise the status window */
+        theStatus.initTask("Creating Database");
 
-		/* Load database */
-		myDatabase.createTables(theStatus);
+        /* Access Database */
+        myDatabase = theControl.getDatabase();
 
-		/* Re-base this set on a null set */
-		myNull = theControl.getNewData();
-		myData = theControl.getData();
-		myData.reBase(myNull);
-		
-		/* Return null value */
-		return null;
-	}
+        /* Load database */
+        myDatabase.createTables(theStatus);
+
+        /* Re-base this set on a null set */
+        myNull = theControl.getNewData();
+        myData = theControl.getData();
+        myData.reBase(myNull);
+
+        /* Return null value */
+        return null;
+    }
 }

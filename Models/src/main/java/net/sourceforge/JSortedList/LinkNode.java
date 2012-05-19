@@ -21,10 +21,10 @@
  ******************************************************************************/
 package net.sourceforge.JSortedList;
 
-import net.sourceforge.JDataWalker.ReportFields;
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
-import net.sourceforge.JDataWalker.ReportObject;
-import net.sourceforge.JDataWalker.ReportObject.ReportDetail;
+import net.sourceforge.JDataManager.ReportFields;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ReportObject;
+import net.sourceforge.JDataManager.ReportObject.ReportDetail;
 
 public class LinkNode<T extends LinkObject<T>> implements ReportDetail {
     /**
@@ -126,7 +126,8 @@ public class LinkNode<T extends LinkObject<T>> implements ReportDetail {
      * @param pList the list that this node belongs to
      * @param pObject the object that this node represents
      */
-    protected LinkNode(SortedList<T> pList, T pObject) {
+    protected LinkNode(SortedList<T> pList,
+                       T pObject) {
         theList = pList;
         theObject = pObject;
     }

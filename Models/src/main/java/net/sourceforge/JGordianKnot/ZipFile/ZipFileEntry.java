@@ -26,8 +26,8 @@ import java.util.zip.ZipEntry;
 
 import javax.crypto.Mac;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JGordianKnot.AsymmetricKey;
 
 public class ZipFileEntry {

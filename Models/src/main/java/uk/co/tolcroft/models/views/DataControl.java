@@ -25,9 +25,9 @@ import java.util.HashMap;
 
 import javax.swing.JFrame;
 
-import net.sourceforge.JDataWalker.DebugManager;
-import net.sourceforge.JDataWalker.DebugManager.DebugEntry;
-import net.sourceforge.JDataWalker.ModelException;
+import net.sourceforge.JDataManager.DebugManager;
+import net.sourceforge.JDataManager.DebugManager.DebugEntry;
+import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JGordianKnot.SecureManager;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;

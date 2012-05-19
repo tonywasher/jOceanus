@@ -21,8 +21,8 @@
  ******************************************************************************/
 package net.sourceforge.JGordianKnot;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 
 public class DataHayStack {
     /**

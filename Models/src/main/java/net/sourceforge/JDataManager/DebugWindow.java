@@ -19,7 +19,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataWalker;
+package net.sourceforge.JDataManager;
 
 import java.awt.Dimension;
 
@@ -35,7 +35,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import net.sourceforge.JDataWalker.DebugManager.DebugEntry;
+import net.sourceforge.JDataManager.DebugManager.DebugEntry;
 
 public class DebugWindow extends JFrame implements TreeSelectionListener {
     private static final long serialVersionUID = 3055614623371854422L;
@@ -46,7 +46,8 @@ public class DebugWindow extends JFrame implements TreeSelectionListener {
     private DebugItem theItemPane = null;
 
     /* Constructor */
-    public DebugWindow(JFrame pParent, DebugManager pManager) {
+    public DebugWindow(JFrame pParent,
+                       DebugManager pManager) {
         JSplitPane mySplit;
         JScrollPane myTreeScroll;
 
@@ -94,10 +95,11 @@ public class DebugWindow extends JFrame implements TreeSelectionListener {
         myPanel.setLayout(myLayout);
 
         /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-                myLayout.createSequentialGroup().addContainerGap().addComponent(mySplit).addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                mySplit));
+        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(myLayout.createSequentialGroup().addContainerGap().addComponent(mySplit)
+                                  .addContainerGap()));
+        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addComponent(mySplit));
 
         /* Set this to be the main panel */
         getContentPane().add(myPanel);

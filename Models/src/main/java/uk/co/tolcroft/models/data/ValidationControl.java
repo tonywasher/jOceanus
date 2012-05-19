@@ -25,10 +25,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.JDataWalker.ReportFields;
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
-import net.sourceforge.JDataWalker.ReportObject.ReportDetail;
-import net.sourceforge.JDataWalker.ReportObject.ReportElement;
+import net.sourceforge.JDataManager.ReportFields;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ReportObject.ReportDetail;
+import net.sourceforge.JDataManager.ReportObject.ReportElement;
 
 public class ValidationControl<T extends DataItem<T>> implements ReportDetail {
     /**
@@ -255,7 +255,8 @@ public class ValidationControl<T extends DataItem<T>> implements ReportDetail {
          * @param pError the error text
          * @param pField the field
          */
-        private errorElement(String pError, ReportField pField) {
+        private errorElement(String pError,
+                             ReportField pField) {
             theError = pError;
             theField = pField;
         }

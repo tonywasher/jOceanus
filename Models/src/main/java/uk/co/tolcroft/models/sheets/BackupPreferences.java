@@ -21,10 +21,10 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.sheets;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JPreferenceSet.PreferenceSet;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.PreferenceSet;
 
-public class BackupProperties extends PreferenceSet {
+public class BackupPreferences extends PreferenceSet {
     /**
      * Registry name for Backup Directory
      */
@@ -89,7 +89,7 @@ public class BackupProperties extends PreferenceSet {
      * Constructor
      * @throws ModelException
      */
-    public BackupProperties() throws ModelException {
+    public BackupPreferences() throws ModelException {
         super();
     }
 

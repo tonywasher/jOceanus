@@ -21,60 +21,62 @@
  ******************************************************************************/
 package uk.co.tolcroft.subversion.threads;
 
-import uk.co.tolcroft.subversion.tasks.Backup;
+import net.sourceforge.JGordianKnot.PasswordHash;
+import net.sourceforge.JGordianKnot.SecureManager;
 import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.security.SecureManager;
-import uk.co.tolcroft.models.security.SecurityControl;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.threads.WorkerThread;
 import uk.co.tolcroft.models.views.DataControl;
+import uk.co.tolcroft.subversion.tasks.Backup;
 
 public class SubversionBackup extends WorkerThread<Void> {
-	/* Task description */
-	private static String  	theTask		= "Subversion Backup Creation";
+    /* Task description */
+    private static String theTask = "Subversion Backup Creation";
 
-	/* Properties */
-	private DataControl<?>	theControl	= null;
-	private ThreadStatus<?>	theStatus	= null;
+    /* Properties */
+    private DataControl<?> theControl = null;
+    private ThreadStatus<?> theStatus = null;
 
-	/* Constructor (Event Thread)*/
-	public SubversionBackup(DataControl<?> pControl) {
-		/* Call super-constructor */
-		super(theTask, pControl.getStatusBar());
-		
-		/* Store passed parameters */
-		theControl	= pControl;
+    /* Constructor (Event Thread) */
+    public SubversionBackup(DataControl<?> pControl) {
+        /* Call super-constructor */
+        super(theTask, pControl.getStatusBar());
 
-		/* Create the status */
-		theStatus = theControl.allocateThreadStatus(this);
+        /* Store passed parameters */
+        theControl = pControl;
 
-		/* Show the status window */
-		showStatusBar();
-	}
+        /* Create the status */
+        theStatus = theControl.allocateThreadStatus(this);
 
-	/* Background task (Worker Thread)*/
-	public Void performTask() throws Throwable {
-		Backup	myAccess	= null;
-		
-		try {
-			/* Initialise the status window */
-			theStatus.initTask("Creating Subversion Backup");
+        /* Show the status window */
+        showStatusBar();
+    }
 
-			/* Create a clone of the security control */
-			DataSet<?>		myData		= theControl.getData();
-			SecureManager 	mySecure	= myData.getSecurity();
-			SecurityControl	myBase		= myData.getSecurityControl();
-			SecurityControl myControl	= mySecure.cloneSecurityControl(myBase);
-				
-			/* Create backup */
-			myAccess = new Backup(theStatus);
-			myAccess.backUpRepositories(myControl);
-		}	
+    /* Background task (Worker Thread) */
+    @Override
+    public Void performTask() throws Exception {
+        Backup myAccess = null;
 
-		/* Catch any exceptions */
-		catch (Throwable e) { throw e;	}	
+        try {
+            /* Initialise the status window */
+            theStatus.initTask("Creating Subversion Backup");
 
-		/* Return nothing */
-		return null;
-	}
+            /* Create a clone of the security control */
+            DataSet<?> myData = theControl.getData();
+            SecureManager mySecure = myData.getSecurity();
+            PasswordHash myBase = myData.getPasswordHash();
+
+            /* Create backup */
+            myAccess = new Backup(theStatus);
+            myAccess.backUpRepositories(mySecure, myBase);
+        }
+
+        /* Catch any exceptions */
+        catch (Exception e) {
+            throw e;
+        }
+
+        /* Return nothing */
+        return null;
+    }
 }

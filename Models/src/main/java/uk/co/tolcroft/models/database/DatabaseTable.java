@@ -26,9 +26,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataList.DataListIterator;
@@ -74,7 +74,8 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
      * @param pDatabase the database control
      * @param pTable the table name
      */
-    protected DatabaseTable(Database<?> pDatabase, String pTable) {
+    protected DatabaseTable(Database<?> pDatabase,
+                            String pTable) {
         /* Set the table */
         theDatabase = pDatabase;
         theConn = theDatabase.getConn();
@@ -313,7 +314,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             postProcessOnLoad();
         }
 
-        catch (Throwable e) {
+        catch (Exception e) {
             throw new ModelException(ExceptionClass.SQLSERVER, "Failed to load " + getTableName(), e);
         }
 
@@ -435,7 +436,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             closeStmt();
         }
 
-        catch (Throwable e) {
+        catch (Exception e) {
             theDatabase.close();
             throw new ModelException(ExceptionClass.SQLSERVER, myCurr, "Failed to insert " + getTableName(),
                     e);
@@ -522,7 +523,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             }
         }
 
-        catch (Throwable e) {
+        catch (Exception e) {
             theDatabase.close();
             throw new ModelException(ExceptionClass.SQLSERVER, myCurr, "Failed to update " + getTableName(),
                     e);
@@ -566,7 +567,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             }
         }
 
-        catch (Throwable e) {
+        catch (Exception e) {
             throw new ModelException(ExceptionClass.SQLSERVER, pItem, "Failed to update item", e);
         }
 
@@ -653,7 +654,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             closeStmt();
         }
 
-        catch (Throwable e) {
+        catch (Exception e) {
             theDatabase.close();
             throw new ModelException(ExceptionClass.SQLSERVER, myCurr, "Failed to delete " + getTableName(),
                     e);
@@ -684,7 +685,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             }
         }
 
-        catch (Throwable e) {
+        catch (Exception e) {
             theDatabase.close();
             throw new ModelException(ExceptionClass.SQLSERVER, "Failed to create " + getTableName(), e);
         }
@@ -714,7 +715,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             executeStatement(myDrop);
         }
 
-        catch (Throwable e) {
+        catch (Exception e) {
             theDatabase.close();
             throw new ModelException(ExceptionClass.SQLSERVER, "Failed to drop " + getTableName(), e);
         }
@@ -737,7 +738,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             executeStatement(myTrunc);
         }
 
-        catch (Throwable e) {
+        catch (Exception e) {
             theDatabase.close();
             throw new ModelException(ExceptionClass.SQLSERVER, "Failed to purge " + getTableName(), e);
         }

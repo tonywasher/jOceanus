@@ -21,8 +21,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.database;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ReportFields.ReportField;
 import uk.co.tolcroft.models.data.EncryptedItem;
 
 public abstract class TableEncrypted<T extends EncryptedItem<T>> extends DatabaseTable<T> {
@@ -36,7 +36,8 @@ public abstract class TableEncrypted<T extends EncryptedItem<T>> extends Databas
      * @param pDatabase the database control
      * @param pTabName the table name
      */
-    protected TableEncrypted(Database<?> pDatabase, String pTabName) {
+    protected TableEncrypted(Database<?> pDatabase,
+                             String pTabName) {
         super(pDatabase, pTabName);
     }
 

@@ -24,8 +24,8 @@ package net.sourceforge.JGordianKnot.ZipFile;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import net.sourceforge.JDataWalker.ModelException;
-import net.sourceforge.JDataWalker.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JGordianKnot.MsgDigest;
 
 /**
@@ -82,7 +82,7 @@ public class DigestOutputStream extends OutputStream {
         }
 
         /* Catch exceptions */
-        catch (Throwable e) {
+        catch (Exception e) {
             throw new ModelException(ExceptionClass.CRYPTO, "Exception creating digest output stream", e);
         }
     }

@@ -19,7 +19,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataWalker;
+package net.sourceforge.JDataManager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,8 +43,8 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
 
-import net.sourceforge.JDataWalker.DebugManager.DebugEntry;
-import net.sourceforge.JDataWalker.ReportObject.ReportDetail;
+import net.sourceforge.JDataManager.DebugManager.DebugEntry;
+import net.sourceforge.JDataManager.ReportObject.ReportDetail;
 import net.sourceforge.JSortedList.SortedListIterator;
 
 public class DebugItem {
@@ -132,18 +132,28 @@ public class DebugItem {
         theListPanel.setLayout(myLayout);
 
         /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-                myLayout.createSequentialGroup().addContainerGap().addComponent(theToggle)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
-                        .addComponent(thePrevThou).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(thePrevHun).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(thePrevTen).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(thePrev).addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(theLabel).addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(theNext).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(theNextTen).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(theNextHun).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(theNextThou).addContainerGap()));
+        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(myLayout.createSequentialGroup()
+                                  .addContainerGap()
+                                  .addComponent(theToggle)
+                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 100,
+                                                   Short.MAX_VALUE).addComponent(thePrevThou)
+                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                  .addComponent(thePrevHun)
+                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                  .addComponent(thePrevTen)
+                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                  .addComponent(thePrev)
+                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                  .addComponent(theLabel)
+                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                  .addComponent(theNext)
+                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                  .addComponent(theNextTen)
+                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                  .addComponent(theNextHun)
+                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                  .addComponent(theNextThou).addContainerGap()));
         myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addComponent(theToggle).addComponent(thePrevThou).addComponent(thePrevHun)
                 .addComponent(thePrevTen).addComponent(thePrev).addComponent(theLabel).addComponent(theNext)
@@ -159,9 +169,9 @@ public class DebugItem {
         /* Set the layout */
         myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addComponent(theListPanel).addComponent(myScroll));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-                myLayout.createSequentialGroup().addContainerGap().addComponent(theListPanel)
-                        .addContainerGap().addComponent(myScroll).addContainerGap()));
+        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(myLayout.createSequentialGroup().addContainerGap().addComponent(theListPanel)
+                                  .addContainerGap().addComponent(myScroll).addContainerGap()));
 
         /* Create listener */
         DebugListener myListener = new DebugListener();
@@ -447,7 +457,7 @@ public class DebugItem {
                                 displayDetail(myDetail);
                         } else
                             theEditor.setPage(pEvent.getURL());
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                     }
                 }
             }
