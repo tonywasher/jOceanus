@@ -29,7 +29,6 @@ import java.io.OutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import net.sourceforge.JDataManager.DataConverter;
 import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JGordianKnot.AsymmetricKey;
@@ -149,7 +148,6 @@ public class ZipWriteFile {
             myOutFile = new FileOutputStream(pFile);
             myOutBuffer = new BufferedOutputStream(myOutFile);
             theStream = new ZipOutputStream(myOutBuffer);
-            theStream.setMethod(ZipEntry.STORED);
 
             /* Create the file contents */
             theContents = new ZipFileContents();
@@ -182,7 +180,6 @@ public class ZipWriteFile {
             myOutFile = new FileOutputStream(pFile);
             myOutBuffer = new BufferedOutputStream(myOutFile);
             theStream = new ZipOutputStream(myOutBuffer);
-            theStream.setMethod(ZipEntry.DEFLATED);
 
             /* Create the file contents */
             theContents = new ZipFileContents();
@@ -225,7 +222,6 @@ public class ZipWriteFile {
      */
     private OutputStream getOutputStream(File pFile,
                                          boolean bDebug) throws ModelException {
-        // GZIPOutputStream myZip;
         LZMAOutputStream myZip;
         DigestOutputStream myDigest;
         EncryptionOutputStream myEncrypt;
@@ -291,8 +287,7 @@ public class ZipWriteFile {
                     }
                 }
 
-                /* Create a GZIP output stream onto the output */
-                // myZip = new GZIPOutputStream(theOutput);
+                /* Attach an LZMA output stream onto the output */
                 myZip = new LZMAOutputStream(theOutput);
                 theOutput = myZip;
 
@@ -392,12 +387,6 @@ public class ZipWriteFile {
                     /* Add the wrapped private key property */
                     myEntry.setPrivateKey(theHash.securePrivateKey(theAsymKey));
 
-                    /* Set the number of encryption steps */
-                    // myEntry.setNumEncrypts(theNumEncrypts);
-
-                    /* Access the encoded file string */
-                    myHeader = theContents.encodeContents();
-
                     /* Create the header entry */
                     ++theFileNo;
                     theEntry = new ZipEntry(filePrefix + theFileNo);
@@ -406,15 +395,17 @@ public class ZipWriteFile {
                     theEntry.setExtra(theHash.getHashBytes());
 
                     /* Start the new entry */
-                    theStream.setMethod(ZipEntry.DEFLATED);
                     theStream.putNextEntry(theEntry);
-
-                    /* Write the bytes to the zip file and close the entry */
-                    theStream.write(DataConverter.stringToByteArray(myHeader));
-                    theStream.closeEntry();
 
                     /* Declare the details */
                     myEntry.setZipEntry(theEntry);
+
+                    /* Access the encoded file string */
+                    myHeader = theContents.encodeContents();
+
+                    /* Write the bytes to the zip file and close the entry */
+                    theStream.write(theHash.encryptString(myHeader));
+                    theStream.closeEntry();
 
                     /* reSeed the random number generator */
                     theGenerator.reSeedRandom();

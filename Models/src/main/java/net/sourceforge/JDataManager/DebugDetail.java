@@ -95,21 +95,22 @@ public class DebugDetail {
      */
     protected DebugDetail getDebugLink(String pName) {
         DebugLink myLink = theLinks;
+        String myName = pName;
 
         /* Shift over # */
-        if (pName.startsWith("#"))
-            pName = pName.substring(1);
+        if (myName.startsWith("#"))
+            myName = myName.substring(1);
 
         /* Handle forward/backward links */
-        if (pName.compareTo(theForwardLink) == 0)
+        if (myName.compareTo(theForwardLink) == 0)
             return theForward;
-        if (pName.compareTo(theBackwardLink) == 0)
+        if (myName.compareTo(theBackwardLink) == 0)
             return theBackward;
 
         /* Loop through the links */
         while (myLink != null) {
             /* If we have the link, break the loop */
-            if (pName.compareTo(myLink.theName) == 0)
+            if (myName.compareTo(myLink.theName) == 0)
                 break;
 
             /* Move to next link */

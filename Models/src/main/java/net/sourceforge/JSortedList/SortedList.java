@@ -387,12 +387,12 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>, P
     @Override
     public int hashCode() {
         /* Initial hash mode */
-        int myHash = 0;
+        int myHash = 1;
 
         /* Loop through the list */
         for (LinkNode<?> myCurr = theFirst; myCurr != null; myCurr = myCurr.getNext(false)) {
             /* Calculate hash */
-            myHash *= 17;
+            myHash *= 31;
             myHash += myCurr.getObject().hashCode();
         }
 
@@ -440,7 +440,7 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>, P
         /* If we have an element in the list */
         if (theLast != null) {
             /* Get the hidden index and add 1 */
-            iSize = 1 + theLast.getIndex(false);
+            iSize = 1 + theLast.getIndex(true);
         }
 
         /* Return the count */

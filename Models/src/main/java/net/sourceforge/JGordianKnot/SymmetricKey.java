@@ -197,7 +197,7 @@ public class SymmetricKey implements ReportDetail {
     public int hashCode() {
         /* Calculate and return the hashCode for this symmetric key */
         int hashCode = 19 * theEncodedKeyDef.hashCode();
-        hashCode += theKeyType.getId();
+        hashCode += theKeyType.hashCode();
         return hashCode;
     }
 

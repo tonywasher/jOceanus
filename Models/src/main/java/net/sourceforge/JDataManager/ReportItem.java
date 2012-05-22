@@ -118,12 +118,42 @@ public abstract class ReportItem<T extends ReportItem<T>> extends SortedItem<T> 
         return true;
     }
 
+    @Override
+    public int hashCode() {
+        /* Initialise hash code */
+        int myHash = 1;
+
+        /* Loop through the fields */
+        Iterator<ReportField> myIterator = theFields.fieldIterator();
+        while (myIterator.hasNext()) {
+            /* Access Field */
+            ReportField myField = myIterator.next();
+
+            /* Skip if not used in equality */
+            if (!myField.isEqualityField())
+                continue;
+
+            /* Access the values */
+            Object myValue = getFieldValue(myField);
+
+            /* Adjust existing hash */
+            myHash *= 19;
+
+            /* Add the hash for the field */
+            if (myValue != null)
+                myHash += myValue.hashCode();
+        }
+
+        /* Return the hash */
+        return myHash;
+    }
+
     /**
      * Determine whether two ReportItem objects differ.
      * @param pNew The new report item
      * @return <code>true</code> if the objects differ, <code>false</code> otherwise
      */
-    public Difference differs(ReportItem<?> pNew) {
+    public Difference getDifference(ReportItem<?> pNew) {
         /* Handle trivial cases */
         if (this == pNew)
             return Difference.Identical;

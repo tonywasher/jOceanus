@@ -215,8 +215,8 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
      * @param pNew The new Pair
      * @return <code>true</code> if the objects differ, <code>false</code> otherwise
      */
-    public static Difference differs(EncryptedField<?> pCurr,
-                                     EncryptedField<?> pNew) {
+    public static Difference getDifference(EncryptedField<?> pCurr,
+                                           EncryptedField<?> pNew) {
         /* Handle case where current value is null */
         if (pCurr == null)
             return (pNew != null) ? Difference.Different : Difference.Identical;
@@ -226,7 +226,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
             return Difference.Different;
 
         /* Handle Standard cases */
-        return pCurr.differs(pNew);
+        return pCurr.getDifference(pNew);
     }
 
     /**

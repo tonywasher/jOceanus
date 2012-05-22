@@ -58,6 +58,14 @@ public class ZipFileContents {
     }
 
     /**
+     * Obtain and iterator
+     * @return the header
+     */
+    public Iterator<ZipFileEntry> iterator() {
+        return theList.iterator();
+    }
+
+    /**
      * Constructor
      */
     protected ZipFileContents() {

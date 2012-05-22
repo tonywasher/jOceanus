@@ -220,7 +220,7 @@ public class DebugItem {
     }
 
     /* Is the entry a list */
-    private boolean isEntryList(DebugEntry pEntry) {
+    private static boolean isEntryList(DebugEntry pEntry) {
         ReportDetail myObject = pEntry.getObject();
 
         /* If we should use the ReportList window */
@@ -383,11 +383,12 @@ public class DebugItem {
      */
     private void shiftIterator(int iNumSteps) {
         ReportItem<?> myNext = null;
+        int myNumSteps = iNumSteps;
 
         /* If we are stepping forwards */
-        if (iNumSteps > 0) {
+        if (myNumSteps > 0) {
             /* Loop through the steps */
-            while (iNumSteps-- > 0) {
+            while (myNumSteps-- > 0) {
                 /* Shift to next element */
                 myNext = (ReportItem<?>) theIterator.next();
 
@@ -404,12 +405,12 @@ public class DebugItem {
         }
 
         /* else we are stepping backwards */
-        else if (iNumSteps < 0) {
+        else if (myNumSteps < 0) {
             /* Shift back one step */
             theIterator.previous();
 
             /* Loop through the steps */
-            while (iNumSteps++ < 0) {
+            while (myNumSteps++ < 0) {
                 /* Shift to previous element */
                 myNext = (ReportItem<?>) theIterator.previous();
 

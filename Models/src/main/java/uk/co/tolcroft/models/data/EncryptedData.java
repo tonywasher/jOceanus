@@ -111,8 +111,12 @@ public class EncryptedData {
             /* We need a new Field so handle each case individually */
             if (String.class.isInstance(pValue))
                 return new EncryptedString(theCipherSet, (String) pValue);
+            if (Short.class.isInstance(pValue))
+                return new EncryptedShort(theCipherSet, (Short) pValue);
             if (Integer.class.isInstance(pValue))
                 return new EncryptedInteger(theCipherSet, (Integer) pValue);
+            if (Long.class.isInstance(pValue))
+                return new EncryptedLong(theCipherSet, (Long) pValue);
             if (Boolean.class.isInstance(pValue))
                 return new EncryptedBoolean(theCipherSet, (Boolean) pValue);
             if (DateDay.class.isInstance(pValue))
@@ -153,8 +157,12 @@ public class EncryptedData {
             /* We need a new Field so handle each case individually */
             if (String.class == pClass)
                 return new EncryptedString(theCipherSet, pEncrypted);
+            if (Short.class == pClass)
+                return new EncryptedShort(theCipherSet, pEncrypted);
             if (Integer.class == pClass)
                 return new EncryptedInteger(theCipherSet, pEncrypted);
+            if (Long.class == pClass)
+                return new EncryptedLong(theCipherSet, pEncrypted);
             if (Boolean.class == pClass)
                 return new EncryptedBoolean(theCipherSet, pEncrypted);
             if (DateDay.class == pClass)
@@ -226,7 +234,7 @@ public class EncryptedData {
             /* Store the encrypted value */
             theEncrypted = pEncrypted;
 
-            /* Reject if encryption is not initialized */
+            /* Reject if encryption is not initialised */
             if (theCipherSet == null)
                 throw new ModelException(ExceptionClass.LOGIC, "Encryption is not initialised");
 
@@ -371,9 +379,9 @@ public class EncryptedData {
             /* Check differences */
             if (Difference.getDifference(getValue(), myThat.getValue()).isDifferent())
                 return false;
-            if (!Arrays.equals(getBytes(), myThat.getBytes()))
-                return false;
-            return true;
+
+            /* Check encryption */
+            return !Arrays.equals(getBytes(), myThat.getBytes());
         }
 
         @Override
@@ -390,7 +398,7 @@ public class EncryptedData {
          * @param pNew the other field
          * @return the difference
          */
-        public Difference differs(EncryptedField<?> pNew) {
+        public Difference getDifference(EncryptedField<?> pNew) {
             /* Reject if null */
             if (pNew == null)
                 return Difference.Different;
@@ -471,6 +479,61 @@ public class EncryptedData {
     }
 
     /**
+     * The encrypted Short class
+     */
+    public static class EncryptedShort extends EncryptedField<Short> {
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pEncrypted the encrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedShort(CipherSet pCipherSet,
+                               byte[] pEncrypted) throws ModelException {
+            super(pCipherSet, pEncrypted);
+        }
+
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pUnencrypted the unencrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedShort(CipherSet pCipherSet,
+                               Short pUnencrypted) throws ModelException {
+            super(pCipherSet, pUnencrypted);
+        }
+
+        @Override
+        protected Short parseBytes(byte[] pBytes) throws ModelException {
+            /* Protect against exceptions */
+            try {
+                /* Convert the byte array to a string and then a short */
+                return Short.parseShort(DataConverter.byteArrayToString(pBytes));
+            }
+
+            /* Catch Exceptions */
+            catch (Exception e) {
+                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value from bytes");
+            }
+        }
+
+        @Override
+        protected byte[] getBytesForEncryption() throws ModelException {
+            /* Protect against exceptions */
+            try {
+                /* Convert the short to a string and then a byte array */
+                return DataConverter.stringToByteArray(getValue().toString());
+            }
+
+            /* Catch Exceptions */
+            catch (Exception e) {
+                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value to bytes");
+            }
+        }
+    }
+
+    /**
      * The encrypted Integer class
      */
     public static class EncryptedInteger extends EncryptedField<Integer> {
@@ -515,6 +578,61 @@ public class EncryptedData {
             /* Protect against exceptions */
             try {
                 /* Convert the integer to a string and then a byte array */
+                return DataConverter.stringToByteArray(getValue().toString());
+            }
+
+            /* Catch Exceptions */
+            catch (Exception e) {
+                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value to bytes");
+            }
+        }
+    }
+
+    /**
+     * The encrypted Long class
+     */
+    public static class EncryptedLong extends EncryptedField<Long> {
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pEncrypted the encrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedLong(CipherSet pCipherSet,
+                              byte[] pEncrypted) throws ModelException {
+            super(pCipherSet, pEncrypted);
+        }
+
+        /**
+         * Constructor
+         * @param pCipherSet the cipherSet
+         * @param pUnencrypted the unencrypted value of the field
+         * @throws ModelException
+         */
+        private EncryptedLong(CipherSet pCipherSet,
+                              Long pUnencrypted) throws ModelException {
+            super(pCipherSet, pUnencrypted);
+        }
+
+        @Override
+        protected Long parseBytes(byte[] pBytes) throws ModelException {
+            /* Protect against exceptions */
+            try {
+                /* Convert the byte array to a string and then a long */
+                return Long.parseLong(DataConverter.byteArrayToString(pBytes));
+            }
+
+            /* Catch Exceptions */
+            catch (Exception e) {
+                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value from bytes");
+            }
+        }
+
+        @Override
+        protected byte[] getBytesForEncryption() throws ModelException {
+            /* Protect against exceptions */
+            try {
+                /* Convert the long to a string and then a byte array */
                 return DataConverter.stringToByteArray(getValue().toString());
             }
 

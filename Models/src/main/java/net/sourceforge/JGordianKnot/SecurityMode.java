@@ -21,22 +21,19 @@
  ******************************************************************************/
 package net.sourceforge.JGordianKnot;
 
-import java.util.Arrays;
-
 import net.sourceforge.JDataManager.ReportFields;
 import net.sourceforge.JDataManager.ReportFields.ReportField;
-import net.sourceforge.JDataManager.ReportObject.ReportDetail;
 
-public abstract class SecurityMode implements ReportDetail {
+public abstract class SecurityMode extends NybbleArray {
     /**
      * Report fields
      */
-    protected static final ReportFields theFields = new ReportFields(SecurityMode.class.getSimpleName());
+    protected static final ReportFields theFields = new ReportFields(SecurityMode.class.getSimpleName(),
+            NybbleArray.theFields);
 
     /* Field IDs */
+    public static final ReportField FIELD_VERSION = theFields.declareLocalField("Version");
     public static final ReportField FIELD_RESTRICT = theFields.declareLocalField("Restricted");
-    public static final ReportField FIELD_ENCODED = theFields.declareLocalField("Encoded");
-    public static final ReportField FIELD_LENGTH = theFields.declareLocalField("ParsedLength");
 
     @Override
     public ReportFields getReportFields() {
@@ -45,8 +42,8 @@ public abstract class SecurityMode implements ReportDetail {
 
     @Override
     public Object getFieldValue(ReportField pField) {
-        if (pField == FIELD_ENCODED)
-            return theEncoded;
+        if (pField == FIELD_VERSION)
+            return theVersion;
         if (pField == FIELD_RESTRICT)
             return useRestricted;
         return null;
@@ -85,11 +82,6 @@ public abstract class SecurityMode implements ReportDetail {
     private short theFlags;
 
     /**
-     * The encoded format
-     */
-    private byte[] theEncoded;
-
-    /**
      * The data offset
      */
     private int theDataOffset;
@@ -108,14 +100,6 @@ public abstract class SecurityMode implements ReportDetail {
      */
     public boolean useRestricted() {
         return useRestricted;
-    }
-
-    /**
-     * Obtain the Encoded format
-     * @return the encoded format
-     */
-    public byte[] getEncoded() {
-        return theEncoded;
     }
 
     /**
@@ -145,13 +129,10 @@ public abstract class SecurityMode implements ReportDetail {
         theFlags = (useRestricted ? flagRESTRICT : 0);
     }
 
-    /**
-     * Set the encoded value
-     * @param pEncoded the encoded array
-     */
+    @Override
     public void setEncoded(byte[] pEncoded) {
         /* Store value */
-        theEncoded = pEncoded;
+        super.setEncoded(pEncoded);
 
         /* Declare data positions */
         theDataOffset = placeFLAGS + 1;
@@ -162,21 +143,16 @@ public abstract class SecurityMode implements ReportDetail {
         useRestricted = ((myFlags & flagRESTRICT) != 0);
     }
 
-    /**
-     * Allocate encoded value
-     * @param iMaxPos the maximum data position
-     */
+    @Override
     protected void allocateEncoded(int iMaxPos) {
-        /* Encode the header */
-        encodeHeader();
-
         /* Declare data positions */
         theDataOffset = placeFLAGS + 1;
 
         /* Allocate the encoded array */
-        int encodeLen = 1 + ((iMaxPos + theDataOffset) / 2);
-        theEncoded = new byte[encodeLen];
-        Arrays.fill(theEncoded, (byte) 0);
+        super.allocateEncoded(iMaxPos + theDataOffset);
+
+        /* Encode the header */
+        encodeHeader();
 
         /* Store version and flags */
         setValue(placeVERSION, theVersion);
@@ -194,22 +170,6 @@ public abstract class SecurityMode implements ReportDetail {
     }
 
     /**
-     * Obtain value of a nybble in a byte
-     * @param iPos the nybble within the array
-     * @return the nybble
-     */
-    private short getValue(int iPos) {
-        /* Obtain the relevant byte from the array */
-        byte myByte = theEncoded[iPos / 2];
-
-        /* Determine whether this is high/low nybble */
-        boolean bHigh = ((iPos % 2) == 0);
-
-        /* Return the relevant nybble */
-        return (short) ((bHigh) ? ((myByte >> 4) & 0xF) : (myByte & 0xF));
-    }
-
-    /**
      * Set value of a nybble in a byte array
      * @param iPos the nybble within the array
      * @param pValue the value to set
@@ -218,93 +178,5 @@ public abstract class SecurityMode implements ReportDetail {
                                 int pValue) {
         /* Adjust for data offset */
         setValue(iPos + theDataOffset, pValue);
-    }
-
-    /**
-     * Set value of a nybble in a byte array
-     * @param iPos the nybble within the array
-     * @param pValue the value to set
-     */
-    private void setValue(int iPos,
-                          int pValue) {
-        /* Calculate the position in the array */
-        int myPos = iPos / 2;
-
-        /* Ensure that it is within range */
-        if (myPos >= theEncoded.length)
-            throw new IndexOutOfBoundsException("Invalid data position");
-
-        /* Ensure that it is within range */
-        if ((pValue > 0xF) || (pValue < 0))
-            throw new IllegalArgumentException("Invalid value - " + pValue);
-
-        /* Obtain the relevant byte from the array */
-        byte myByte = theEncoded[myPos];
-
-        /* Determine whether this is high/low nybble */
-        boolean bHigh = ((iPos % 2) == 0);
-
-        /* If this is a high nybble */
-        if (bHigh) {
-            /* Set value into byte */
-            myByte &= 0xF;
-            myByte |= (pValue << 4);
-        }
-
-        /* else this is a low nybble */
-        else {
-            /* Set value into byte */
-            myByte &= 0xF0;
-            myByte |= (pValue & 0xF);
-        }
-
-        /* Store value back into array */
-        theEncoded[myPos] = myByte;
-    }
-
-    @Override
-    public boolean equals(Object pThat) {
-        /* Handle the trivial cases */
-        if (this == pThat)
-            return true;
-        if (pThat == null)
-            return false;
-
-        /* Make sure that the object is the same class */
-        if (pThat.getClass() != this.getClass())
-            return false;
-
-        /* Access the object as a SecurityMode */
-        SecurityMode myMode = (SecurityMode) pThat;
-
-        /* Determine equality */
-        return Arrays.equals(getEncoded(), myMode.getEncoded());
-    }
-
-    @Override
-    public int hashCode() {
-        return Arrays.hashCode(theEncoded);
-    }
-
-    /**
-     * Are the two modes different
-     * @param pFirst first mode
-     * @param pSecond second mode
-     * @return true/false
-     */
-    public static boolean isDifferent(SecurityMode pFirst,
-                                      SecurityMode pSecond) {
-        /* Handle nulls */
-        if (pFirst == null)
-            return (pSecond != null);
-        if (pSecond == null)
-            return true;
-
-        /* Make sure that they are the same class */
-        if (pFirst.getClass() != pSecond.getClass())
-            return true;
-
-        /* Return difference in modes */
-        return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
     }
 }

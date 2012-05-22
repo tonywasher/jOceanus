@@ -30,6 +30,14 @@ public class IterationCounter {
     private final byte[] theBuffer;
 
     /**
+     * get buffer pointer
+     * @return the buffer
+     */
+    public byte[] getBuffer() {
+        return theBuffer;
+    }
+
+    /**
      * Constructor
      */
     protected IterationCounter() {

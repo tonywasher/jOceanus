@@ -68,6 +68,7 @@ public class LZMAInputStream extends InputStream {
 
         /* Create decoder thread */
         theThread = new DecoderThread();
+        theThread.start();
     }
 
     @Override
@@ -166,8 +167,9 @@ public class LZMAInputStream extends InputStream {
                 /* Decode the stream */
                 theDecoder.Code(theInput, theSink, -1);
 
-                /* Close the input stream */
+                /* Close the input/output streams */
                 theInput.close();
+                theSink.close();
             } catch (IOException e) {
                 theError = e;
             }

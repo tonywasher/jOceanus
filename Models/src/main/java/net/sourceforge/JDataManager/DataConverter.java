@@ -26,6 +26,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.Arrays;
 
 import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 
@@ -99,7 +100,7 @@ public class DataConverter {
 
         /* Special case for zero */
         if (myLong == 0)
-            myValue.append('0');
+            myValue.append("00");
 
         /* else need to loop through the digits */
         else {
@@ -111,6 +112,10 @@ public class DataConverter {
                 myValue.insert(0, myChar);
                 myLong >>= 4;
             }
+
+            /* If we are odd length prefix a zero */
+            if ((myValue.length() % 2) != 0)
+                myValue.insert(0, '0');
 
             /* Reinstate negative sign */
             if (isNegative)
@@ -390,6 +395,49 @@ public class DataConverter {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    /**
+     * Simple function to combine hashes. Hashes are simply XORed together.
+     * @param pFirst the first Hash
+     * @param pSecond the second Hash
+     * @return the combined hash
+     * @throws ModelException
+     */
+    public static byte[] combineHashes(byte[] pFirst,
+                                       byte[] pSecond) throws ModelException {
+        byte[] myTarget = pSecond;
+        byte[] mySource = pFirst;
+        int myLen;
+        int i;
+
+        /* Handle nulls */
+        if (pFirst == null)
+            return pSecond;
+        if (pSecond == null)
+            return pFirst;
+
+        /* If the target is smaller than the source */
+        if (myTarget.length < mySource.length) {
+            /* Reverse the order to make use of all bits */
+            myTarget = pFirst;
+            mySource = pSecond;
+        }
+
+        /* Allocate the target as a copy of the input */
+        myTarget = Arrays.copyOf(myTarget, myTarget.length);
+
+        /* Determine length of operation */
+        myLen = mySource.length;
+
+        /* Loop through the array bytes */
+        for (i = 0; i < myTarget.length; i++) {
+            /* Combine the bytes */
+            myTarget[i] ^= mySource[i % myLen];
+        }
+
+        /* return the array */
+        return myTarget;
     }
 
     /**

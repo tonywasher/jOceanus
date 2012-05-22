@@ -108,7 +108,7 @@ public class ZipFileProperties {
         myProperty = getProperty(pName);
 
         /* If the property does not exist */
-        if (myProperty != null) {
+        if (myProperty == null) {
             /* Create the new property */
             myProperty = new Property(pName);
         }
@@ -130,7 +130,7 @@ public class ZipFileProperties {
         myProperty = getProperty(pName);
 
         /* If the property does not exist */
-        if (myProperty != null) {
+        if (myProperty == null) {
             /* Create the new property */
             myProperty = new Property(pName);
         }

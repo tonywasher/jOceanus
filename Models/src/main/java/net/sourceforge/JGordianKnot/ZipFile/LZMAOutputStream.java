@@ -69,6 +69,7 @@ public class LZMAOutputStream extends OutputStream {
 
         /* Create encoder thread */
         theThread = new EncoderThread();
+        theThread.start();
     }
 
     @Override

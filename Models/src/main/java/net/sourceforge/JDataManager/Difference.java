@@ -23,9 +23,6 @@ package net.sourceforge.JDataManager;
 
 import java.util.Arrays;
 
-import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDateDay.DateDayRange;
-import net.sourceforge.JDecimal.Decimal;
 import uk.co.tolcroft.models.data.EncryptedData.EncryptedField;
 
 public enum Difference {
@@ -115,50 +112,63 @@ public enum Difference {
      */
     public static Difference getDifference(Object pCurr,
                                            Object pNew) {
-        /* Handle case where current value is null */
-        if (pCurr == null)
-            return (pNew != null) ? Difference.Different : Difference.Identical;
+        /* Handle identity */
+        if (pCurr == pNew)
+            return Identical;
 
-        /* Handle case where new value is null */
-        if (pNew == null)
-            return Difference.Different;
+        /* Neither value can be false */
+        if ((pCurr == null) || (pNew == null))
+            return Different;
 
         /* Handle class differences */
         if (pCurr.getClass() != pNew.getClass())
-            return Difference.Different;
+            return Different;
 
-        /* Handle standard java data-types separately */
-        if (pCurr instanceof String)
-            return ((String) pCurr).equals(pNew) ? Difference.Identical : Difference.Different;
-        if (pCurr instanceof Boolean)
-            return ((Boolean) pCurr).equals(pNew) ? Difference.Identical : Difference.Different;
-        if (pCurr instanceof Short)
-            return ((Short) pCurr).equals(pNew) ? Difference.Identical : Difference.Different;
-        if (pCurr instanceof Integer)
-            return ((Integer) pCurr).equals(pNew) ? Difference.Identical : Difference.Different;
-        if (pCurr instanceof Long)
-            return ((Long) pCurr).equals(pNew) ? Difference.Identical : Difference.Different;
-        if (pCurr instanceof char[])
-            return Arrays.equals((char[]) pCurr, (char[]) pNew) ? Difference.Identical : Difference.Different;
-        if (pCurr instanceof byte[])
-            return Arrays.equals((byte[]) pCurr, (byte[]) pNew) ? Difference.Identical : Difference.Different;
-
-        /* Handle model data-types separately */
-        if (pCurr instanceof DateDay)
-            return DateDay.isDifferent((DateDay) pCurr, (DateDay) pNew) ? Difference.Different
-                    : Difference.Identical;
-        if (pCurr instanceof DateDayRange)
-            return DateDayRange.isDifferent((DateDayRange) pCurr, (DateDayRange) pNew) ? Difference.Different
-                    : Difference.Identical;
-        if (pCurr instanceof Decimal)
-            return Decimal.isDifferent((Decimal) pCurr, (Decimal) pNew) ? Difference.Different
-                    : Difference.Identical;
+        /* Handle encrypted cases */
         if (pCurr instanceof EncryptedField)
-            return ((EncryptedField<?>) pCurr).differs((EncryptedField<?>) pNew);
+            return ((EncryptedField<?>) pCurr).getDifference((EncryptedField<?>) pNew);
+
+        /* Handle Report Item cases */
         if (pCurr instanceof ReportItem)
-            return ((ReportItem<?>) pCurr).differs((ReportItem<?>) pNew);
+            return ((ReportItem<?>) pCurr).getDifference((ReportItem<?>) pNew);
 
         /* Handle Standard cases */
-        return (pCurr.equals(pNew)) ? Difference.Identical : Difference.Different;
+        return (pCurr.equals(pNew)) ? Identical : Different;
+    }
+
+    /**
+     * Determine whether two Generic objects differ.
+     * @param pCurr The current object
+     * @param pNew The new object
+     * @return the Difference between the objects
+     */
+    public static boolean isEqual(Object pCurr,
+                                  Object pNew) {
+        /* Handle identity */
+        if (pCurr == pNew)
+            return true;
+
+        /* Neither value can be false */
+        if ((pCurr == null) || (pNew == null))
+            return false;
+
+        /* Handle class differences */
+        if (pCurr.getClass() != pNew.getClass())
+            return false;
+
+        /* Handle arrays */
+        if (pCurr.getClass().isArray()) {
+            /* Handle special cases for efficiency */
+            if (pCurr instanceof byte[])
+                return Arrays.equals((byte[]) pCurr, (byte[]) pNew);
+            if (pCurr instanceof char[])
+                return Arrays.equals((char[]) pCurr, (char[]) pNew);
+
+            /* Handle generic arrays */
+            return Arrays.equals((Object[]) pCurr, (Object[]) pNew);
+        }
+
+        /* Handle Standard cases */
+        return pCurr.equals(pNew);
     }
 }

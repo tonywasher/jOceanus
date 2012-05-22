@@ -275,7 +275,7 @@ public class ZipReadFile {
 
             /* Note the current input stream */
             myCurrent = myZipFile;
-            iDigest = 1;
+            iDigest = 0;
 
             /* If the file is encrypted */
             if (isEncrypted()) {
@@ -316,8 +316,7 @@ public class ZipReadFile {
                     }
                 }
 
-                /* Wrap a GZIPInputStream around the stream */
-                // myCurrent = new GZIPInputStream(myCurrent);
+                /* Wrap a LZMAInputStream around the stream */
                 myCurrent = new LZMAInputStream(myCurrent);
 
                 /* Wrap a digest input stream around the stream */

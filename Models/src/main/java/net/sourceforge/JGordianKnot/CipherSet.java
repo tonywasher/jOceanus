@@ -21,13 +21,13 @@
  ******************************************************************************/
 package net.sourceforge.JGordianKnot;
 
-import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 
+import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -37,6 +37,7 @@ import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JDataManager.ReportFields;
 import net.sourceforge.JDataManager.ReportFields.ReportField;
 import net.sourceforge.JDataManager.ReportObject.ReportDetail;
+import net.sourceforge.JGordianKnot.DataHayStack.EncryptModeNeedle;
 import net.sourceforge.JGordianKnot.DataHayStack.SymKeyNeedle;
 
 public class CipherSet implements ReportDetail {
@@ -222,34 +223,22 @@ public class CipherSet implements ReportDetail {
 
         /* Protect against exceptions */
         try {
-            /* Create the MessageDigest and standard data */
+            /* Create the Mac and standard data */
             IterationCounter myCount = new IterationCounter();
-            byte[] myAlgo = DataConverter.stringToByteArray(pKeyType.getAlgorithm());
-            MessageDigest myDigest = theGenerator.accessDigest(theDigest);
-            byte[] mySeed = theGenerator.getSecurityBytes();
+            Mac myMac = theGenerator.accessMac(theDigest, pSecret);
 
             /* while we need to generate more bytes */
             while (myBuilt < myKeyLen) {
-                /* Increment count and add to hash */
-                myDigest.update(myCount.iterate());
-
-                /* Update with secret and algorithm */
-                myDigest.update(pSecret);
-                myDigest.update(myAlgo);
-
-                /* Update with security bytes */
-                myDigest.update(mySeed);
-
-                /* Obtain the calculated hash */
-                byte[] myHash = myDigest.digest();
+                /* Build the cipher section */
+                byte[] mySection = buildCipherSection(myMac, myCount.iterate(), pKeyType);
 
                 /* Determine how many bytes of this hash should be used */
                 int myNeeded = myKeyLen - myBuilt;
-                if (myNeeded > myHash.length)
-                    myNeeded = myHash.length;
+                if (myNeeded > mySection.length)
+                    myNeeded = mySection.length;
 
                 /* Copy bytes across */
-                System.arraycopy(myHash, 0, myKeyBytes, myBuilt, myNeeded);
+                System.arraycopy(mySection, 0, myKeyBytes, myBuilt, myNeeded);
                 myBuilt += myNeeded;
             }
         }
@@ -274,6 +263,50 @@ public class CipherSet implements ReportDetail {
     }
 
     /**
+     * Build Secret Key section
+     * @param pMac the Mac to utilise
+     * @param pSection the section count
+     * @param pKeyType the Key type
+     * @return the section
+     * @throws ModelException
+     */
+    private byte[] buildCipherSection(Mac pMac,
+                                      byte[] pSection,
+                                      SymKeyType pKeyType) throws ModelException {
+        /* Declare initial value */
+        byte[] myResult = null;
+
+        /* Access number of iterations */
+        int iIterations = theGenerator.getNumHashIterations();
+
+        /* Create the standard data */
+        IterationCounter myCount = new IterationCounter();
+        byte[] myAlgo = DataConverter.stringToByteArray(pKeyType.getAlgorithm());
+        byte[] mySeed = theGenerator.getSecurityBytes();
+
+        /* Loop through the iterations */
+        for (int i = 0; i < iIterations; i++) {
+            /* Add section number to hash */
+            pMac.update(pSection);
+
+            /* Update with algorithm */
+            pMac.update(myAlgo);
+
+            /* Increment count and add to hash */
+            pMac.update(myCount.iterate());
+
+            /* Update with security bytes */
+            pMac.update(mySeed);
+
+            /* Calculate Mac */
+            myResult = DataConverter.combineHashes(pMac.doFinal(), myResult);
+        }
+
+        /* Return the result */
+        return myResult;
+    }
+
+    /**
      * Encrypt item
      * @param pBytes the bytes to encrypt
      * @return the encrypted bytes
@@ -287,11 +320,9 @@ public class CipherSet implements ReportDetail {
         /* Access the current set of bytes */
         byte[] myCurBytes = pBytes;
 
-        /* Determine the SymKeyTypes to use */
-        SymKeyType[] myKeyTypes = SymKeyType.getRandomTypes(theNumSteps, theRandom);
-
-        /* Encode the array */
-        byte[] myKeyBytes = encodeSymKeyTypes(myKeyTypes);
+        /* Determine the encryption mode */
+        EncryptionMode myMode = new EncryptionMode(theNumSteps, theRandom);
+        SymKeyType[] myKeyTypes = myMode.getSymKeyTypes();
 
         /* Loop through the SymKeyTypes */
         for (int i = 0; i < myKeyTypes.length; i++) {
@@ -308,14 +339,11 @@ public class CipherSet implements ReportDetail {
             myCurBytes = myCipher.encryptBytes(myCurBytes, myShift);
         }
 
-        /* Allocate the bytes */
-        byte[] myEncrypt = new byte[SymmetricKey.IVSIZE + myKeyBytes.length + myCurBytes.length];
-        System.arraycopy(myVector, 0, myEncrypt, 0, SymmetricKey.IVSIZE);
-        System.arraycopy(myKeyBytes, 0, myEncrypt, SymmetricKey.IVSIZE, myKeyBytes.length);
-        System.arraycopy(myCurBytes, 0, myEncrypt, SymmetricKey.IVSIZE + myKeyBytes.length, myCurBytes.length);
+        /* hide the encryptionMode */
+        EncryptModeNeedle myNeedle = new EncryptModeNeedle(myMode, myVector, myCurBytes);
 
         /* Return the encrypted bytes */
-        return myEncrypt;
+        return myNeedle.getExternal();
     }
 
     /**
@@ -329,51 +357,18 @@ public class CipherSet implements ReportDetail {
     }
 
     /**
-     * Encode SymKeyTypes
-     * @param pTypes the types to encode
-     * @return the encoded types
-     * @throws ModelException
-     */
-    private static byte[] encodeSymKeyTypes(SymKeyType[] pTypes) throws ModelException {
-        /* Determine the number of bytes */
-        int myNumBytes = numKeyBytes(pTypes.length);
-
-        /* Allocate the bytes */
-        byte[] myBytes = new byte[myNumBytes];
-        Arrays.fill(myBytes, (byte) 0);
-
-        /* Loop through the keys */
-        for (int i = 0, j = 0; i < pTypes.length; i++) {
-            /* Access the id of the Symmetric Key */
-            int myId = pTypes[i].getId();
-
-            /* Access the id */
-            if ((i % 2) == 1) {
-                myId <<= 4;
-                j++;
-            }
-            myBytes[j] |= myId;
-        }
-
-        /* Encode the number of keys */
-        myBytes[0] |= (pTypes.length << 4);
-
-        /* Return the bytes */
-        return myBytes;
-    }
-
-    /**
      * Decrypt item
      * @param pBytes the bytes to decrypt
      * @return the decrypted bytes
      * @throws ModelException
      */
     public byte[] decryptBytes(byte[] pBytes) throws ModelException {
-        /* Split the bytes into the separate parts */
-        byte[] myVector = Arrays.copyOf(pBytes, SymmetricKey.IVSIZE);
-        SymKeyType[] myTypes = decodeSymKeyTypes(pBytes);
-        byte[] myBytes = Arrays.copyOfRange(pBytes, SymmetricKey.IVSIZE + numKeyBytes(myTypes.length),
-                                            pBytes.length);
+        /* Parse the bytes into the separate parts */
+        EncryptModeNeedle myNeedle = new EncryptModeNeedle(pBytes);
+        byte[] myVector = myNeedle.getInitVector();
+        byte[] myBytes = myNeedle.getEncryptedBytes();
+        EncryptionMode myMode = myNeedle.getEncryptionMode();
+        SymKeyType[] myTypes = myMode.getSymKeyTypes();
 
         /* Loop through the SymKeyTypes */
         for (int i = myTypes.length - 1; i >= 0; i--) {
@@ -420,39 +415,6 @@ public class CipherSet implements ReportDetail {
 
         /* return the shifted vector */
         return myVector;
-    }
-
-    /**
-     * Decode SymKeyTypes
-     * @param pBytes the encrypted bytes
-     * @return the array of SymKeyTypes
-     * @throws ModelException
-     */
-    private static SymKeyType[] decodeSymKeyTypes(byte[] pBytes) throws ModelException {
-        /* Extract the number of SymKeys */
-        int myNumKeys = (pBytes[SymmetricKey.IVSIZE] >> 4) & 0xF;
-
-        /* Allocate the array */
-        SymKeyType[] myTypes = new SymKeyType[myNumKeys];
-
-        /* Loop through the keys */
-        for (int i = 0, j = SymmetricKey.IVSIZE; i < myNumKeys; i++) {
-            /* Access the id of the Symmetric Key */
-            int myId = pBytes[j];
-
-            /* Isolate the id */
-            if ((i % 2) == 1)
-                myId >>= 4;
-            else
-                j++;
-            myId &= 0xF;
-
-            /* Determine the SymKeyType */
-            myTypes[i] = SymKeyType.fromId(myId);
-        }
-
-        /* Return the array */
-        return myTypes;
     }
 
     /**

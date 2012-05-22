@@ -21,6 +21,8 @@
  ******************************************************************************/
 package net.sourceforge.JGordianKnot;
 
+import java.util.Arrays;
+
 import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 
@@ -562,6 +564,119 @@ public class DataHayStack {
 
             /* Access Mode */
             theMode = new HashMode(myNeedle);
+        }
+    }
+
+    /**
+     * EncryptionModeNeedle
+     */
+    public static class EncryptModeNeedle {
+        /**
+         * EncryptionMode
+         */
+        private final EncryptionMode theMode;
+
+        /**
+         * InitVector
+         */
+        private final byte[] theInitVector;
+
+        /**
+         * Encrypted bytes
+         */
+        private final byte[] theBytes;
+
+        /**
+         * External format
+         */
+        private final byte[] theExternal;
+
+        /**
+         * Obtain the EncryptionMode
+         * @return the EncryptionMode
+         */
+        public EncryptionMode getEncryptionMode() {
+            return theMode;
+        }
+
+        /**
+         * Obtain the InitVector
+         * @return the InitVector
+         */
+        public byte[] getInitVector() {
+            return theInitVector;
+        }
+
+        /**
+         * Obtain the encrypted bytes
+         * @return the encrypted bytes
+         */
+        public byte[] getEncryptedBytes() {
+            return theBytes;
+        }
+
+        /**
+         * Obtain the External format
+         * @return the External format
+         */
+        public byte[] getExternal() {
+            return theExternal;
+        }
+
+        /**
+         * Constructor to form External format
+         * @param pMode the HashMode
+         * @param pInitVector the initVector
+         * @param pBytes the encrypted bytes
+         */
+        public EncryptModeNeedle(EncryptionMode pMode,
+                                 byte[] pInitVector,
+                                 byte[] pBytes) {
+            /* Store the parameters */
+            theMode = pMode;
+            theInitVector = pInitVector;
+            theBytes = pBytes;
+
+            /* Create the byte array to hide */
+            byte[] myMode = pMode.getEncoded();
+
+            /* Allocate the hayStack */
+            byte[] myHayStack = new byte[SymmetricKey.IVSIZE + pBytes.length];
+            System.arraycopy(pInitVector, 0, myHayStack, 0, SymmetricKey.IVSIZE);
+            System.arraycopy(pBytes, 0, myHayStack, SymmetricKey.IVSIZE, pBytes.length);
+
+            /* Hide the EncryptionMode into the HayStack */
+            theExternal = hideNeedle(myMode, myHayStack);
+        }
+
+        /**
+         * Constructor to parse External format
+         * @param pExternal the external format
+         * @throws ModelException
+         */
+        public EncryptModeNeedle(byte[] pExternal) throws ModelException {
+            /* Store the parameters */
+            theExternal = pExternal;
+
+            /* Find the needle in the hayStack */
+            NeedleResult myResult = findNeedle(theExternal);
+
+            /* Check that we found the needle */
+            if (myResult == null)
+                throw new ModelException(ExceptionClass.DATA, "Invalid EncryptMode");
+
+            /* Store the bytes */
+            byte[] myHayStack = myResult.getHayStack();
+
+            /* Access the needle */
+            byte[] myNeedle = myResult.getNeedle();
+
+            /* Access Mode */
+            theMode = new EncryptionMode(myNeedle);
+
+            /* Split the HayStack into the separate parts */
+            theInitVector = Arrays.copyOf(myHayStack, SymmetricKey.IVSIZE);
+            theBytes = Arrays.copyOfRange(myHayStack, SymmetricKey.IVSIZE, myHayStack.length);
         }
     }
 }

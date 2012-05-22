@@ -1,5 +1,12 @@
 package net.sourceforge.JGordianKnot;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.Provider;
 import java.security.Security;
 import java.util.HashSet;
@@ -9,6 +16,11 @@ import java.util.Set;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JGordianKnot.ZipFile.ZipFileContents;
+import net.sourceforge.JGordianKnot.ZipFile.ZipFileEntry;
+import net.sourceforge.JGordianKnot.ZipFile.ZipReadFile;
+import net.sourceforge.JGordianKnot.ZipFile.ZipWriteFile;
 
 public class SecurityTest {
     /**
@@ -25,10 +37,144 @@ public class SecurityTest {
 
     public static void createAndShowGUI() {
         try {
-            /* Test security */
-            testSecurity();
+            /* Test zip file creation */
+            File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");
+            createStdZipFile(myZipFile, new File("c:\\Users\\Tony\\tester"));
+            extractZipFile(myZipFile, new File("c:\\Users\\Tony\\testcomp"));
         } catch (Exception e) {
             System.out.println("Help");
+            e.printStackTrace();
+        }
+        System.exit(0);
+    }
+
+    /**
+     * Create a Zip File of files in a directory
+     * @param pZipFile the name of the zip file to create
+     * @param pDirectory the directory to archive
+     * @return the contents of the zip file
+     * @throws ModelException
+     */
+    protected static ZipFileContents createStdZipFile(File pZipFile,
+                                                      File pDirectory) throws ModelException {
+        ZipWriteFile myZipFile;
+
+        try {
+            /* Create new Password Hash */
+            SecureManager myManager = new SecureManager();
+            PasswordHash myHash = myManager.resolvePasswordHash(null, "New");
+
+            /* Initialise the Zip file */
+            myZipFile = new ZipWriteFile(myHash, pZipFile);
+
+            /* Create a read buffer */
+            int myBufLen = 1024;
+            byte[] myBuffer = new byte[myBufLen];
+            int myRead;
+
+            /* Make sure that we have a directory */
+            if (!pDirectory.isDirectory())
+                throw new ModelException(ExceptionClass.LOGIC, "Invalid source directory");
+
+            /* Loop through the files is the directory */
+            for (File myFile : pDirectory.listFiles()) {
+                /* Skip directories */
+                if (myFile.isDirectory())
+                    continue;
+
+                /* Open the file for reading */
+                InputStream myInFile = new FileInputStream(myFile);
+                InputStream myInBuffer = new BufferedInputStream(myInFile);
+
+                /* Open the output stream */
+                OutputStream myOutput = myZipFile.getOutputStream(new File(myFile.getName()));
+
+                /* Read the header entry */
+                while ((myRead = myInBuffer.read(myBuffer, 0, myBufLen)) != -1) {
+                    /* Write the data to the zip file */
+                    myOutput.write(myBuffer, 0, myRead);
+                }
+
+                /* Close the streams */
+                myOutput.close();
+                myInBuffer.close();
+            }
+
+            /* Close the Zip File */
+            myZipFile.close();
+
+            /* Return the zip file entries */
+            return myZipFile.getContents();
+
+        } catch (ModelException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ModelException(ExceptionClass.DATA, "Failed to create Zip File", e);
+        }
+    }
+
+    /**
+     * Extract a Zip File to a directory
+     * @param pZipFile the name of the zip file to extract from
+     * @param pDirectory the directory to extract to
+     * @throws ModelException
+     */
+    protected static void extractZipFile(File pZipFile,
+                                         File pDirectory) throws ModelException {
+        ZipReadFile myZipFile;
+
+        try {
+            /* Access the Zip file */
+            myZipFile = new ZipReadFile(pZipFile);
+
+            /* Check for security */
+            byte[] myHashBytes = myZipFile.getHashBytes();
+            if (myHashBytes != null) {
+                /* Resolve security and unlock file */
+                SecureManager myManager = new SecureManager();
+                PasswordHash myHash = myManager.resolvePasswordHash(myHashBytes, pZipFile.getName());
+                myZipFile.setPasswordHash(myHash);
+            }
+
+            /* Access the contents */
+            ZipFileContents myContents = myZipFile.getContents();
+
+            /* Create a read buffer */
+            int myBufLen = 1024;
+            byte[] myBuffer = new byte[myBufLen];
+            int myRead;
+
+            /* Make sure that we have a directory */
+            if (!pDirectory.isDirectory())
+                throw new ModelException(ExceptionClass.LOGIC, "Invalid source directory");
+
+            Iterator<ZipFileEntry> myIterator = myContents.iterator();
+            while (myIterator.hasNext()) {
+                /* Access next entry */
+                ZipFileEntry myEntry = myIterator.next();
+
+                /* Open the input stream */
+                InputStream myInput = myZipFile.getInputStream(myEntry);
+
+                /* Open the output file for writing */
+                OutputStream myOutFile = new FileOutputStream(new File(pDirectory, myEntry.getFileName()));
+                OutputStream myOutBuffer = new BufferedOutputStream(myOutFile);
+
+                /* Read the entry */
+                while ((myRead = myInput.read(myBuffer, 0, myBufLen)) != -1) {
+                    /* Write the data to the zip file */
+                    myOutBuffer.write(myBuffer, 0, myRead);
+                }
+
+                /* Close the streams */
+                myInput.close();
+                myOutBuffer.close();
+            }
+
+        } catch (ModelException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ModelException(ExceptionClass.DATA, "Failed to extract Zip File", e);
         }
     }
 
@@ -81,11 +227,11 @@ public class SecurityTest {
 
         /* Check the keys are the same */
         if (!myAsym1.equals(myAsym))
-            System.out.println("help");
+            System.out.println("Failed to decrypt AsymmetricKey");
         if (!mySym1.equals(mySym))
-            System.out.println("help");
+            System.out.println("Failed to decrypt SymmetricKey via Hash");
         if (!mySym2.equals(mySym))
-            System.out.println("help");
+            System.out.println("Failed to decrypt SymmetricKey via Asym Key");
     }
 
     /**

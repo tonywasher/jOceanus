@@ -513,7 +513,7 @@ public class AsymmetricKey implements ReportDetail {
      */
     private synchronized byte[] getSharedSecret(AsymmetricKey pPartner) throws ModelException {
         /* Both keys must be elliptic */
-        if ((!theKeyType.isElliptic()) || (pPartner.theKeyType != theKeyType))
+        if ((!theKeyType.isElliptic()) || (!theKeyMode.equals(pPartner.getKeyMode())))
             throw new ModelException(ExceptionClass.LOGIC,
                     "Shared Keys require both partners to be similar Elliptic");
 
@@ -615,7 +615,7 @@ public class AsymmetricKey implements ReportDetail {
     public byte[] encryptString(String pString,
                                 AsymmetricKey pTarget) throws ModelException {
         /* Target must be identical key type */
-        if (SecurityMode.isDifferent(pTarget.getKeyMode(), theKeyMode))
+        if (!theKeyMode.equals(pTarget.getKeyMode()))
             throw new ModelException(ExceptionClass.LOGIC,
                     "Asymmetric Encryption must be between similar partners");
 
@@ -729,7 +729,7 @@ public class AsymmetricKey implements ReportDetail {
             throw new ModelException(ExceptionClass.LOGIC, "Cannot decrypt without private key");
 
         /* Source must be identical key type */
-        if (SecurityMode.isDifferent(pSource.getKeyMode(), getKeyMode()))
+        if (!theKeyMode.equals(pSource.getKeyMode()))
             throw new ModelException(ExceptionClass.LOGIC,
                     "Asymmetric Encryption must be between similar partners");
 

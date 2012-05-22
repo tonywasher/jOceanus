@@ -317,8 +317,8 @@ public class ZipFileEntry {
             /* Loop through the encrypts */
             for (int iIndex = 1; iIndex <= myNumDigests; iIndex++) {
                 /* Get digest properties */
-                theDigests[iIndex] = pProperties.getByteProperty(propDigest + iIndex);
-                theDigestLens[iIndex] = pProperties.getLongProperty(propDigest + iIndex);
+                theDigests[iIndex - 1] = pProperties.getByteProperty(propDigest + iIndex);
+                theDigestLens[iIndex - 1] = pProperties.getLongProperty(propDigest + iIndex);
             }
 
             /* Determine the number of encryption steps */
@@ -329,8 +329,8 @@ public class ZipFileEntry {
             /* Loop through the encrypts */
             for (int iIndex = 1; iIndex <= myNumEncrypts; iIndex++) {
                 /* Get digest properties */
-                theSecretKeys[iIndex] = pProperties.getByteProperty(propSecretKey + iIndex);
-                theInitVectors[iIndex] = pProperties.getByteProperty(propInitVector + iIndex);
+                theSecretKeys[iIndex - 1] = pProperties.getByteProperty(propSecretKey + iIndex);
+                theInitVectors[iIndex - 1] = pProperties.getByteProperty(propInitVector + iIndex);
             }
 
             /* Get signature */
@@ -375,8 +375,8 @@ public class ZipFileEntry {
             /* Loop through the digests */
             for (int iIndex = 1; iIndex <= myNumDigests; iIndex++) {
                 /* Set digest properties */
-                myProperties.setProperty(propDigest + iIndex, theDigests[iIndex]);
-                myProperties.setProperty(propDigest + iIndex, theDigestLens[iIndex]);
+                myProperties.setProperty(propDigest + iIndex, theDigests[iIndex - 1]);
+                myProperties.setProperty(propDigest + iIndex, theDigestLens[iIndex - 1]);
             }
 
             /* Store the number of encryption steps */
@@ -386,8 +386,8 @@ public class ZipFileEntry {
             /* Loop through the secret keys and initVectors */
             for (int iIndex = 1; iIndex <= myNumEncrypts; iIndex++) {
                 /* Set Secret key properties */
-                myProperties.setProperty(propSecretKey + iIndex, theSecretKeys[iIndex]);
-                myProperties.setProperty(propInitVector + iIndex, theInitVectors[iIndex]);
+                myProperties.setProperty(propSecretKey + iIndex, theSecretKeys[iIndex - 1]);
+                myProperties.setProperty(propInitVector + iIndex, theInitVectors[iIndex - 1]);
             }
 
             /* Store the signature */

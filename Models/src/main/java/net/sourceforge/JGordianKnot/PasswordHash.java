@@ -411,7 +411,7 @@ public class PasswordHash implements ReportDetail {
                 /* Iterate the counter */
                 byte[] myCountBuffer = myCounter.iterate();
 
-                /* Update the prime MAC */
+                /* Update the prime Mac */
                 myPrimeMac.update(myPrimeHash);
                 myPrimeMac.update(myCountBuffer);
                 myPrimeMac.update(mySeed);
@@ -419,13 +419,10 @@ public class PasswordHash implements ReportDetail {
                 /* Recalculate the prime hash skipping every third time */
                 if ((bFinalPass) || ((iPass % 3) != 0)) {
                     myPrimeHash = myPrimeMac.doFinal();
-                    if (myPrimeBytes == null)
-                        myPrimeBytes = myPrimeHash;
-                    else
-                        myPrimeBytes = combineHashes(myPrimeBytes, myPrimeHash);
+                    myPrimeBytes = DataConverter.combineHashes(myPrimeBytes, myPrimeHash);
                 }
 
-                /* Update the alternate MAC */
+                /* Update the alternate Mac */
                 myAlternateMac.update(myAlternateHash);
                 myAlternateMac.update(myCountBuffer);
                 myAlternateMac.update(mySeed);
@@ -433,13 +430,10 @@ public class PasswordHash implements ReportDetail {
                 /* Recalculate the alternate hash skipping every fifth time */
                 if ((bFinalPass) || ((iPass % 5) != 0)) {
                     myAlternateHash = myAlternateMac.doFinal();
-                    if (myAlternateBytes == null)
-                        myAlternateBytes = myAlternateHash;
-                    else
-                        myAlternateBytes = combineHashes(myAlternateBytes, myAlternateHash);
+                    myAlternateBytes = DataConverter.combineHashes(myAlternateBytes, myAlternateHash);
                 }
 
-                /* Update the secret digest */
+                /* Update the secret Mac */
                 mySecretMac.update(mySecretHash);
                 mySecretMac.update(myCountBuffer);
                 mySecretMac.update(mySeed);
@@ -447,11 +441,7 @@ public class PasswordHash implements ReportDetail {
                 /* Recalculate the secret hash skipping every seventh time */
                 if ((bFinalPass) || ((iPass % 7) != 0)) {
                     mySecretHash = mySecretMac.doFinal();
-                    if (mySecretBytes == null)
-                        mySecretBytes = mySecretHash;
-                    else
-                        mySecretBytes = combineHashes(mySecretBytes, mySecretHash);
-
+                    mySecretBytes = DataConverter.combineHashes(mySecretBytes, mySecretHash);
                 }
 
                 /* Every seventh time */
@@ -473,7 +463,7 @@ public class PasswordHash implements ReportDetail {
             }
 
             /* Combine the Primary and Alternate hashes */
-            byte[] myExternalHash = combineHashes(myPrimeBytes, myAlternateBytes);
+            byte[] myExternalHash = DataConverter.combineHashes(myPrimeBytes, myAlternateBytes);
 
             /* Store the Secret Hash */
             theSecretHash = mySecretBytes;
@@ -583,43 +573,6 @@ public class PasswordHash implements ReportDetail {
     public String decryptString(byte[] pBytes) throws ModelException {
         /* Decrypt the bytes */
         return theCipherSet.decryptString(pBytes);
-    }
-
-    /**
-     * Simple function to combine hashes. Hashes are simply XORed together.
-     * @param pFirst the first Hash
-     * @param pSecond the second Hash
-     * @return the combined hash
-     * @throws ModelException
-     */
-    private static byte[] combineHashes(byte[] pFirst,
-                                        byte[] pSecond) throws ModelException {
-        byte[] myTarget = pSecond;
-        byte[] mySource = pFirst;
-        int myLen;
-        int i;
-
-        /* If the target is smaller than the source */
-        if (myTarget.length < mySource.length) {
-            /* Reverse the order to make use of all bits */
-            myTarget = pFirst;
-            mySource = pSecond;
-        }
-
-        /* Allocate the target as a copy of the input */
-        myTarget = Arrays.copyOf(myTarget, myTarget.length);
-
-        /* Determine length of operation */
-        myLen = mySource.length;
-
-        /* Loop through the array bytes */
-        for (i = 0; i < myTarget.length; i++) {
-            /* Combine the bytes */
-            myTarget[i] ^= mySource[i % myLen];
-        }
-
-        /* return the array */
-        return myTarget;
     }
 
     /**
