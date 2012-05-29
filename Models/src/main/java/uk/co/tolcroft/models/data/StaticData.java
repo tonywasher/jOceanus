@@ -26,8 +26,10 @@ import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JDataManager.ReportFields;
 import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ValueSet;
+import net.sourceforge.JGordianKnot.EncryptedData.EncryptedString;
+import net.sourceforge.JGordianKnot.EncryptedValueSet;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
-import uk.co.tolcroft.models.data.EncryptedData.EncryptedString;
 
 public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E>> extends EncryptedItem<T> {
     /**

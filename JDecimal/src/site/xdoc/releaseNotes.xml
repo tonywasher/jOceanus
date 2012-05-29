@@ -1,0 +1,19 @@
+<document>
+  <properties>
+    <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
+    <title>JDateDay Release Notes</title>
+  </properties>
+  <body>
+    <section name="Overview">
+      <p>This project was the original version of JDateButton. When I decided to upload the project to sourceforge, I
+felt that it would be more useful to split the JDateButton functionality out, based on the standard Java Calendar object.</p>
+       <p>This project utilises a data object called DateDay, which is simply a Calendar object with the time information split out, so that it represents a whole day, rather than an instant of time within that day</p>
+       <p>In addition to this object, a DateDayRange object is defined to represent a contiguous range of dates. Various helper classes are provided to support these two objects</p>
+    </section>
+    <section name="Build History">
+      <dl>
+<dt>v1.0.0-b1</dt> <dd>initial upload of code</dd>
+      </dl>
+    </section>
+  </body>
+</document>

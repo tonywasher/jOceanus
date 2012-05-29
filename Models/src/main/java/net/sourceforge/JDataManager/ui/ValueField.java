@@ -19,7 +19,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.models.ui;
+package net.sourceforge.JDataManager.ui;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -31,11 +31,12 @@ import java.util.Arrays;
 import javax.swing.JTextField;
 
 import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDecimal.Decimal.Dilution;
-import net.sourceforge.JDecimal.Decimal.Money;
-import net.sourceforge.JDecimal.Decimal.Price;
-import net.sourceforge.JDecimal.Decimal.Rate;
-import net.sourceforge.JDecimal.Decimal.Units;
+import net.sourceforge.JDecimal.Decimal;
+import net.sourceforge.JDecimal.Dilution;
+import net.sourceforge.JDecimal.Money;
+import net.sourceforge.JDecimal.Price;
+import net.sourceforge.JDecimal.Rate;
+import net.sourceforge.JDecimal.Units;
 
 public class ValueField extends JTextField {
     /* Serial Id */
@@ -488,7 +489,7 @@ public class ValueField extends JTextField {
         @Override
         protected Object parseValue(String pValue) {
             /* Return the parsed value */
-            return Money.Parse(pValue);
+            return Money.parseString(pValue);
         }
 
         @Override
@@ -501,7 +502,7 @@ public class ValueField extends JTextField {
         @Override
         protected boolean isNewValue(Object pValue) {
             /* Determine whether the value has changed */
-            return (Difference.getDifference(getValue(), (Money) pValue).isDifferent());
+            return (Difference.isEqual(getValue(), (Decimal) pValue));
         }
     }
 
@@ -547,7 +548,7 @@ public class ValueField extends JTextField {
         @Override
         protected Object parseValue(String pValue) {
             /* Return the parsed value */
-            return Rate.Parse(pValue);
+            return Rate.parseString(pValue);
         }
 
         @Override
@@ -606,7 +607,7 @@ public class ValueField extends JTextField {
         @Override
         protected Object parseValue(String pValue) {
             /* Return the parsed value */
-            return Units.Parse(pValue);
+            return Units.parseString(pValue);
         }
 
         @Override
@@ -665,7 +666,7 @@ public class ValueField extends JTextField {
         @Override
         protected Object parseValue(String pValue) {
             /* Return the parsed value */
-            return Price.Parse(pValue);
+            return Price.parseString(pValue);
         }
 
         @Override
@@ -724,7 +725,7 @@ public class ValueField extends JTextField {
         @Override
         protected Object parseValue(String pValue) {
             /* Return the parsed value */
-            return Dilution.Parse(pValue);
+            return Dilution.parseString(pValue);
         }
 
         @Override

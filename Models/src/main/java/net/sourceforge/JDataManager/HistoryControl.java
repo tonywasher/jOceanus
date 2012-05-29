@@ -19,13 +19,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.models.data;
+package net.sourceforge.JDataManager;
 
 import java.util.Stack;
 
-import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.ReportFields.ReportField;
+import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
+import uk.co.tolcroft.models.data.DataState;
 
 /**
  * Provides the implementation of a history buffer for a DataItem Each element represents a changed set of
@@ -58,7 +59,7 @@ public class HistoryControl<T extends DataItem<T>> {
      * Constructor
      * @param pItem the item to which this validation control belongs
      */
-    protected HistoryControl(T pItem) {
+    public HistoryControl(T pItem) {
         /* Store details */
         theItem = pItem;
 
@@ -70,7 +71,7 @@ public class HistoryControl<T extends DataItem<T>> {
      * Initialise the current values
      * @param pValues the current values
      */
-    protected void setValues(ValueSet<T> pValues) {
+    public void setValues(ValueSet<T> pValues) {
         /* Store details and clear the stack */
         theCurr = pValues;
         theOriginal = theCurr;
@@ -89,7 +90,7 @@ public class HistoryControl<T extends DataItem<T>> {
      * Get original values
      * @return original values
      */
-    protected ValueSet<T> getOriginalValues() {
+    public ValueSet<T> getOriginalValues() {
         return theOriginal;
     }
 
@@ -164,7 +165,7 @@ public class HistoryControl<T extends DataItem<T>> {
     /**
      * Push Item to the history
      */
-    protected void pushHistory() {
+    public void pushHistory() {
         /* Create a new ValueSet */
         ValueSet<T> mySet = theCurr.cloneIt();
 
@@ -179,7 +180,7 @@ public class HistoryControl<T extends DataItem<T>> {
     /**
      * popItem from the history and remove from history
      */
-    protected void popTheHistory() {
+    public void popTheHistory() {
         /* If we have an item on the stack */
         if (hasHistory()) {
             /* Remove it from the list */
@@ -194,7 +195,7 @@ public class HistoryControl<T extends DataItem<T>> {
      * popItem from the history if equal to current
      * @return was a change made
      */
-    protected boolean maybePopHistory() {
+    public boolean maybePopHistory() {
         /* If there is no change */
         if (theCurr.differs(theStack.peek()).isValueChanged()) {
             /* Just pop the history */
@@ -210,14 +211,14 @@ public class HistoryControl<T extends DataItem<T>> {
      * Is there any history
      * @return whether there are entries in the history list
      */
-    protected boolean hasHistory() {
+    public boolean hasHistory() {
         return (!theStack.empty());
     }
 
     /**
      * Clear history
      */
-    protected void clearHistory() {
+    public void clearHistory() {
         /* Remove all history */
         theStack.clear();
         theOriginal = theCurr;
@@ -226,7 +227,7 @@ public class HistoryControl<T extends DataItem<T>> {
     /**
      * Reset history
      */
-    protected void resetHistory() {
+    public void resetHistory() {
         /* Remove all history */
         theStack.clear();
         theCurr = theOriginal;
@@ -237,7 +238,7 @@ public class HistoryControl<T extends DataItem<T>> {
      * Set history explicitly
      * @param pBase the base item
      */
-    protected void setHistory(DataItem<?> pBase) {
+    public void setHistory(DataItem<?> pBase) {
         ValueSet<?> mySource = pBase.getOriginalValues();
         theStack.clear();
         theOriginal = theCurr.cloneIt();
@@ -250,7 +251,7 @@ public class HistoryControl<T extends DataItem<T>> {
      * @param pField the field
      * @return the difference
      */
-    protected Difference fieldChanged(ReportField pField) {
+    public Difference fieldChanged(ReportField pField) {
         /* Handle irrelevant cases */
         if (!pField.isValueSetField())
             return Difference.Identical;

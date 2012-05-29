@@ -19,7 +19,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.models.ui;
+package net.sourceforge.JDataManager.ui;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -106,7 +106,7 @@ public class RenderData {
     /**
      * Process Table Row
      */
-    protected void setDefaults() {
+    public void setDefaults() {
         /* Set the data */
         theForeGround = theStdColor;
         theBackGround = theBackColor;
@@ -119,8 +119,8 @@ public class RenderData {
      * @param pRow the Table row
      * @param iField the field id
      */
-    protected void processTableRow(DataItem<?> pRow,
-                                   ReportField iField) {
+    public void processTableRow(DataItem<?> pRow,
+                                ReportField iField) {
         String myTip = null;
         Color myFore;
         Color myBack;
@@ -182,8 +182,8 @@ public class RenderData {
      * @param pRow the Table row
      * @param iFields the field ids
      */
-    protected void processRowHeader(DataItem<?> pRow,
-                                    ReportField[] iFields) {
+    public void processRowHeader(DataItem<?> pRow,
+                                 ReportField[] iFields) {
         boolean isChanged;
 
         /* Has the row changed */
@@ -210,8 +210,8 @@ public class RenderData {
      * @param iField the Field number
      * @return the standard foreground for the item
      */
-    protected static Color getForeground(DataItem<?> pItem,
-                                         ReportField iField) {
+    public static Color getForeground(DataItem<?> pItem,
+                                      ReportField iField) {
         /* Handle deleted items */
         if (pItem.isDeleted())
             return theDelColor;
@@ -249,7 +249,7 @@ public class RenderData {
      * Determine Standard background
      * @return the standard background
      */
-    protected static Color getBackground() {
+    public static Color getBackground() {
         return theBackColor;
     }
 
@@ -260,9 +260,9 @@ public class RenderData {
      * @param isFixed is the field fixed width
      * @return the standard Font for the item
      */
-    protected static Font getFont(DataItem<?> pItem,
-                                  ReportField iField,
-                                  boolean isFixed) {
+    public static Font getFont(DataItem<?> pItem,
+                               ReportField iField,
+                               boolean isFixed) {
         if (pItem.fieldChanged(iField).isDifferent())
             return (isFixed ? theChgNumFont : theChgFont);
         else
@@ -274,7 +274,7 @@ public class RenderData {
      * @param pPreference the Item
      * @return the standard Font for the item
      */
-    protected static Font getFont(PreferenceItem pPreference) {
+    public static Font getFont(PreferenceItem pPreference) {
         boolean isFixed = pPreference.getType() == PreferenceType.Integer;
         if (pPreference.isChanged())
             return (isFixed ? theChgNumFont : theChgFont);
@@ -288,8 +288,8 @@ public class RenderData {
      * @param iField the Field number
      * @return the standard ToolTip for the item
      */
-    protected static String getToolTip(DataItem<?> pItem,
-                                       ReportField iField) {
+    public static String getToolTip(DataItem<?> pItem,
+                                    ReportField iField) {
         /* Handle deleted items */
         if (pItem.isDeleted())
             return null;

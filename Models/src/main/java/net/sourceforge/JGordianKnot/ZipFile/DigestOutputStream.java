@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,22 +35,22 @@ import net.sourceforge.JGordianKnot.MsgDigest;
  */
 public class DigestOutputStream extends OutputStream {
     /**
-     * The underlying output stream
+     * The underlying output stream.
      */
     private final OutputStream theStream;
 
     /**
-     * has this stream been closed
+     * has this stream been closed.
      */
     private boolean isClosed = false;
 
     /**
-     * The Message Digest of the data written
+     * The Message Digest of the data written.
      */
     private final MsgDigest theDigest;
 
     /**
-     * Access the length of the data written
+     * Access the length of the data written.
      * @return the length of data written
      */
     public long getDataLen() {
@@ -57,7 +58,7 @@ public class DigestOutputStream extends OutputStream {
     }
 
     /**
-     * Access the digest of the data written
+     * Access the digest of the data written.
      * @return the digest of data written
      */
     public byte[] getDigest() {
@@ -65,13 +66,13 @@ public class DigestOutputStream extends OutputStream {
     }
 
     /**
-     * Construct the output stream
+     * Construct the output stream.
      * @param pDigest the message digest
      * @param pStream the stream to write encrypted data to
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public DigestOutputStream(MsgDigest pDigest,
-                              OutputStream pStream) throws ModelException {
+    public DigestOutputStream(final MsgDigest pDigest,
+                              final OutputStream pStream) throws ModelException {
         /* Protect against exceptions */
         try {
             /* Store the message digest */
@@ -79,10 +80,9 @@ public class DigestOutputStream extends OutputStream {
 
             /* Store the stream */
             theStream = pStream;
-        }
 
-        /* Catch exceptions */
-        catch (Exception e) {
+            /* Catch exceptions */
+        } catch (Exception e) {
             throw new ModelException(ExceptionClass.CRYPTO, "Exception creating digest output stream", e);
         }
     }
@@ -103,20 +103,22 @@ public class DigestOutputStream extends OutputStream {
     @Override
     public void flush() throws IOException {
         /* If we are already closed throw IO Exception */
-        if (isClosed)
+        if (isClosed) {
             throw new IOException("Stream is closed");
+        }
 
         /* Flush the output stream */
         theStream.flush();
     }
 
     @Override
-    public void write(byte[] pBytes,
-                      int pOffset,
-                      int pLength) throws IOException {
+    public void write(final byte[] pBytes,
+                      final int pOffset,
+                      final int pLength) throws IOException {
         /* If we are already closed throw IO Exception */
-        if (isClosed)
+        if (isClosed) {
             throw new IOException("Stream is closed");
+        }
 
         /* Update the data digest */
         theDigest.update(pBytes, pOffset, pLength);
@@ -126,16 +128,17 @@ public class DigestOutputStream extends OutputStream {
     }
 
     @Override
-    public void write(byte[] pBytes) throws IOException {
+    public void write(final byte[] pBytes) throws IOException {
         /* Write the bytes to the stream */
         write(pBytes, 0, pBytes.length);
     }
 
     @Override
-    public void write(int pByte) throws IOException {
+    public void write(final int pByte) throws IOException {
         /* If we are already closed throw IO Exception */
-        if (isClosed)
+        if (isClosed) {
             throw new IOException("Stream is closed");
+        }
 
         /* Update the data digest */
         theDigest.update((byte) pByte);

@@ -390,7 +390,7 @@ public class DateDayExample extends JApplet {
 
         /* Create the range selection */
         theRangeSelect = new DateDayRangeSelect();
-        theRangeSelect.addPropertyChangeListener(DateDayRangeSelect.propertyRANGE, theListener);
+        theRangeSelect.addPropertyChangeListener(DateDayRangeSelect.PROPERTY_RANGE, theListener);
 
         /* Initialise the values */
         DateDay myStart = makeDate(2007, Calendar.JANUARY, 25);
@@ -404,8 +404,8 @@ public class DateDayExample extends JApplet {
         applyRange();
 
         /* Add Listener to buttons */
-        theStartDate.addPropertyChangeListener(DateDayButton.propertyDATE, theListener);
-        theEndDate.addPropertyChangeListener(DateDayButton.propertyDATE, theListener);
+        theStartDate.addPropertyChangeListener(DateDayButton.PROPERTY_DATE, theListener);
+        theEndDate.addPropertyChangeListener(DateDayButton.PROPERTY_DATE, theListener);
     }
 
     /**

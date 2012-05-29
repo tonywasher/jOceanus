@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,28 +51,41 @@ import net.sourceforge.JGordianKnot.ZipFile.ZipFileEntry;
  */
 public class AsymmetricKey implements ReportDetail {
     /**
-     * Report fields
+     * Report fields.
      */
-    protected static final ReportFields theFields = new ReportFields(AsymmetricKey.class.getSimpleName());
+    protected static final ReportFields FIELD_DEFS = new ReportFields(AsymmetricKey.class.getSimpleName());
 
-    /* Field IDs */
-    public static final ReportField FIELD_KEYMODE = theFields.declareLocalField("KeyMode");
-    public static final ReportField FIELD_CIPHERMAP = theFields.declareLocalField("CipherMap");
-    public static final ReportField FIELD_SYMKEYMAP = theFields.declareLocalField("SymKeyMap");
+    /**
+     * Field ID for Key Mode.
+     */
+    public static final ReportField FIELD_KEYMODE = FIELD_DEFS.declareLocalField("KeyMode");
+
+    /**
+     * Field ID for Cipher Map.
+     */
+    public static final ReportField FIELD_CIPHERMAP = FIELD_DEFS.declareLocalField("CipherMap");
+
+    /**
+     * Field ID for Symmetric Key Map.
+     */
+    public static final ReportField FIELD_SYMKEYMAP = FIELD_DEFS.declareLocalField("SymKeyMap");
 
     @Override
     public ReportFields getReportFields() {
-        return theFields;
+        return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(ReportField pField) {
-        if (pField == FIELD_KEYMODE)
+    public Object getFieldValue(final ReportField pField) {
+        if (pField == FIELD_KEYMODE) {
             return theKeyMode;
-        if (pField == FIELD_CIPHERMAP)
+        }
+        if (pField == FIELD_CIPHERMAP) {
             return theCipherMap;
-        if (pField == FIELD_SYMKEYMAP)
+        }
+        if (pField == FIELD_SYMKEYMAP) {
             return theSymKeyMap;
+        }
         return null;
     }
 
@@ -81,72 +95,72 @@ public class AsymmetricKey implements ReportDetail {
     }
 
     /**
-     * Encoded Size for Public Keys
+     * Encoded Size for Public Keys.
      */
     public static final int PUBLICSIZE = 512;
 
     /**
-     * Encrypted Size for Private Keys
+     * Encrypted Size for Private Keys.
      */
     public static final int PRIVATESIZE = 1280;
 
     /**
-     * The Public/Private Key Pair
+     * The Public/Private Key Pair.
      */
     private final KeyPair theKeyPair;
 
     /**
-     * The Key Mode
+     * The Key Mode.
      */
     private final AsymKeyMode theKeyMode;
 
     /**
-     * The Key Type
+     * The Key Type.
      */
     private final AsymKeyType theKeyType;
 
     /**
-     * The security generator
+     * The security generator.
      */
     private final SecurityGenerator theGenerator;
 
     /**
-     * The Key Agreement object
+     * The Key Agreement object.
      */
     private KeyAgreement theKeyAgreement = null;
 
     /**
-     * The External Definition
+     * The External Definition.
      */
     private final byte[] theExternalKeyDef;
 
     /**
-     * The Encoded Public Key
+     * The Encoded Public Key.
      */
     private final byte[] thePublicKeyDef;
 
     /**
-     * The Encoded Private Key
+     * The Encoded Private Key.
      */
     private final byte[] thePrivateKeyDef;
 
     /**
-     * The CipherSet
+     * The CipherSet.
      */
     private CipherSet theCipherSet = null;
 
     /**
-     * The CipherSet map
+     * The CipherSet map.
      */
     private final Map<AsymmetricKey, CipherSet> theCipherMap;
 
     /**
-     * The Symmetric Key Map
+     * The Symmetric Key Map.
      */
     private final Map<SymmetricKey, byte[]> theSymKeyMap;
 
     /**
-     * Obtain the Asymmetric Key type
+     * Obtain the Asymmetric Key type.
      * @return the key type
      */
     public AsymKeyType getKeyType() {
@@ -154,7 +168,7 @@ public class AsymmetricKey implements ReportDetail {
     }
 
     /**
-     * Obtain the Asymmetric Key mode
+     * Obtain the Asymmetric Key mode.
      * @return the key mode
      */
     public AsymKeyMode getKeyMode() {
@@ -162,7 +176,7 @@ public class AsymmetricKey implements ReportDetail {
     }
 
     /**
-     * Is the Asymmetric Key a public only key
+     * Is the Asymmetric Key a public only key.
      * @return true/false
      */
     public boolean isPublicOnly() {
@@ -170,7 +184,7 @@ public class AsymmetricKey implements ReportDetail {
     }
 
     /**
-     * Obtain the Private Key
+     * Obtain the Private Key.
      * @return the private key
      */
     protected PrivateKey getPrivateKey() {
@@ -178,7 +192,7 @@ public class AsymmetricKey implements ReportDetail {
     }
 
     /**
-     * Obtain the Public Key
+     * Obtain the Public Key.
      * @return the private key
      */
     protected PublicKey getPublicKey() {
@@ -186,7 +200,7 @@ public class AsymmetricKey implements ReportDetail {
     }
 
     /**
-     * Obtain the External Key definition
+     * Obtain the External Key definition.
      * @return the key definition
      */
     public byte[] getExternalDef() {
@@ -194,13 +208,13 @@ public class AsymmetricKey implements ReportDetail {
     }
 
     /**
-     * Constructor for new key
+     * Constructor for new key.
      * @param pGenerator the security generator
      * @param pKeyMode the key mode
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected AsymmetricKey(SecurityGenerator pGenerator,
-                            AsymKeyMode pKeyMode) throws ModelException {
+    protected AsymmetricKey(final SecurityGenerator pGenerator,
+                            final AsymKeyMode pKeyMode) throws ModelException {
         /* Store the key mode and the generator */
         theKeyMode = pKeyMode;
         theKeyType = theKeyMode.getAsymKeyType();
@@ -218,27 +232,29 @@ public class AsymmetricKey implements ReportDetail {
         theExternalKeyDef = myNeedle.getExternal();
 
         /* Create the map for elliptic keys */
-        if (theKeyType.isElliptic())
+        if (theKeyType.isElliptic()) {
             theCipherMap = new HashMap<AsymmetricKey, CipherSet>();
-        else
+        } else {
             theCipherMap = null;
+        }
 
         /* Build the SymmetricKey map */
         theSymKeyMap = new HashMap<SymmetricKey, byte[]>();
 
         /* Check whether the PublicKey is too large */
-        if (theExternalKeyDef.length > PUBLICSIZE)
+        if (theExternalKeyDef.length > PUBLICSIZE) {
             throw new ModelException(ExceptionClass.DATA, "PublicKey too large: " + theExternalKeyDef.length);
+        }
     }
 
     /**
-     * Constructor from public KeySpec
+     * Constructor from public KeySpec.
      * @param pGenerator the security generator
      * @param pKeySpec the public KeySpec
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected AsymmetricKey(SecurityGenerator pGenerator,
-                            byte[] pKeySpec) throws ModelException {
+    protected AsymmetricKey(final SecurityGenerator pGenerator,
+                            final byte[] pKeySpec) throws ModelException {
         /* Parse the KeySpec */
         AsymModeNeedle myNeedle = new AsymModeNeedle(pKeySpec);
 
@@ -256,25 +272,26 @@ public class AsymmetricKey implements ReportDetail {
         thePrivateKeyDef = null;
 
         /* Create the map for elliptic keys */
-        if (theKeyType.isElliptic())
+        if (theKeyType.isElliptic()) {
             theCipherMap = new HashMap<AsymmetricKey, CipherSet>();
-        else
+        } else {
             theCipherMap = null;
+        }
 
         /* Build the SymmetricKey map */
         theSymKeyMap = new HashMap<SymmetricKey, byte[]>();
     }
 
     /**
-     * Constructor from full specification
+     * Constructor from full specification.
      * @param pGenerator the security generator
      * @param pPrivateKey the private KeySpec
      * @param pKeySpec the public KeySpec
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected AsymmetricKey(SecurityGenerator pGenerator,
-                            byte[] pPrivateKey,
-                            byte[] pKeySpec) throws ModelException {
+    protected AsymmetricKey(final SecurityGenerator pGenerator,
+                            final byte[] pPrivateKey,
+                            final byte[] pKeySpec) throws ModelException {
         /* Parse the KeySpec */
         AsymModeNeedle myNeedle = new AsymModeNeedle(pKeySpec);
 
@@ -292,10 +309,11 @@ public class AsymmetricKey implements ReportDetail {
         thePublicKeyDef = getPublicKey().getEncoded();
 
         /* Create the map for elliptic keys */
-        if (theKeyType.isElliptic())
+        if (theKeyType.isElliptic()) {
             theCipherMap = new HashMap<AsymmetricKey, CipherSet>();
-        else
+        } else {
             theCipherMap = null;
+        }
 
         /* Build the SymmetricKey map */
         theSymKeyMap = new HashMap<SymmetricKey, byte[]>();
@@ -304,61 +322,67 @@ public class AsymmetricKey implements ReportDetail {
     @Override
     public int hashCode() {
         /* Calculate and return the hashCode for this asymmetric key */
-        int hashCode = 19 * thePublicKeyDef.hashCode();
-        if (thePrivateKeyDef != null)
+        int hashCode = 1;
+        if (thePrivateKeyDef != null) {
             hashCode += thePrivateKeyDef.hashCode();
-        hashCode *= 19;
+        }
+        hashCode *= SecurityGenerator.HASH_PRIME;
         hashCode += theKeyMode.hashCode();
+        hashCode *= SecurityGenerator.HASH_PRIME;
+        hashCode += thePublicKeyDef.hashCode();
         return hashCode;
     }
 
     @Override
-    public boolean equals(Object pThat) {
+    public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-        if (this == pThat)
+        if (this == pThat) {
             return true;
-        if (pThat == null)
+        }
+        if (pThat == null) {
             return false;
+        }
 
         /* Make sure that the object is an Asymmetric Key */
-        if (pThat.getClass() != this.getClass())
+        if (pThat.getClass() != this.getClass()) {
             return false;
+        }
 
         /* Access the target Key */
         AsymmetricKey myThat = (AsymmetricKey) pThat;
 
         /* Not equal if different modes */
-        if (!myThat.getKeyMode().equals(theKeyMode))
+        if (!myThat.getKeyMode().equals(theKeyMode)) {
             return false;
+        }
 
         /* Ensure that the private/public keys are identical */
-        if (!Arrays.equals(myThat.thePrivateKeyDef, thePrivateKeyDef))
+        if (!Arrays.equals(myThat.thePrivateKeyDef, thePrivateKeyDef)) {
             return false;
-        if (!Arrays.equals(myThat.thePublicKeyDef, thePublicKeyDef))
-            return false;
-
-        /* Identical if those tests succeed */
-        return true;
+        }
+        return (Arrays.equals(myThat.thePublicKeyDef, thePublicKeyDef));
     }
 
     /**
-     * Get CipherSet for partner Elliptic Curve
+     * Get CipherSet for partner Elliptic Curve.
      * @param pPartner partner asymmetric key
      * @return the new CipherSet
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public CipherSet getCipherSet(AsymmetricKey pPartner) throws ModelException {
+    public CipherSet getCipherSet(final AsymmetricKey pPartner) throws ModelException {
         /* Both keys must be elliptic */
-        if ((!theKeyType.isElliptic()) || (pPartner.getKeyType() != theKeyType))
+        if ((!theKeyType.isElliptic()) || (pPartner.getKeyType() != theKeyType)) {
             throw new ModelException(ExceptionClass.LOGIC,
                     "Shared Keys require both partners to be similar Elliptic");
+        }
 
         /* Look for an already resolved CipherSet */
         CipherSet mySet = theCipherMap.get(pPartner);
 
         /* Return it if found */
-        if (mySet != null)
+        if (mySet != null) {
             return mySet;
+        }
 
         /* Access the Shared Secret */
         byte[] mySecret = getSharedSecret(pPartner);
@@ -377,14 +401,15 @@ public class AsymmetricKey implements ReportDetail {
     }
 
     /**
-     * Get CipherSet for internal Elliptic Curve
+     * Get CipherSet for internal Elliptic Curve.
      * @return the cipher set
-     * @throws ModelException
+     * @throws ModelException on error
      */
     public CipherSet getCipherSet() throws ModelException {
         /* Return PreExisting set */
-        if (theCipherSet != null)
+        if (theCipherSet != null) {
             return theCipherSet;
+        }
 
         /* Build the internal CipherSet */
         theCipherSet = getCipherSet(this);
@@ -394,20 +419,21 @@ public class AsymmetricKey implements ReportDetail {
     }
 
     /**
-     * derive a SymmetricKey from secured key definition
+     * derive a SymmetricKey from secured key definition.
      * @param pSecuredKeyDef the secured key definition
      * @return the Symmetric key
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public SymmetricKey deriveSymmetricKey(byte[] pSecuredKeyDef) throws ModelException {
+    public SymmetricKey deriveSymmetricKey(final byte[] pSecuredKeyDef) throws ModelException {
         SymmetricKey mySymKey;
         CipherSet mySet;
         SecretKey myKey;
         Cipher myCipher;
 
         /* Cannot unwrap unless we have the private key */
-        if (isPublicOnly())
+        if (isPublicOnly()) {
             throw new ModelException(ExceptionClass.LOGIC, "Cannot unwrap without private key");
+        }
 
         /* Protect against exceptions */
         try {
@@ -418,10 +444,9 @@ public class AsymmetricKey implements ReportDetail {
 
                 /* Unwrap the Key */
                 mySymKey = mySet.deriveSymmetricKey(pSecuredKeyDef);
-            }
 
-            /* else we use RAS semantics */
-            else {
+                /* else we use RAS semantics */
+            } else {
                 /* Initialise the cipher */
                 myCipher = theGenerator.accessCipher(theKeyType.getAlgorithm());
                 myCipher.init(Cipher.UNWRAP_MODE, getPrivateKey());
@@ -437,9 +462,8 @@ public class AsymmetricKey implements ReportDetail {
                 /* Build the symmetric key */
                 mySymKey = new SymmetricKey(theGenerator, myKey, myType);
             }
-        }
 
-        catch (ModelException e) {
+        } catch (ModelException e) {
             throw e;
         } catch (Exception e) {
             throw new ModelException(ExceptionClass.CRYPTO, "Failed to unwrap key", e);
@@ -453,20 +477,21 @@ public class AsymmetricKey implements ReportDetail {
     }
 
     /**
-     * Get the Secured Key Definition for a Symmetric Key
+     * Get the Secured Key Definition for a Symmetric Key.
      * @param pKey the Symmetric Key to secure
      * @return the secured key definition
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public byte[] secureSymmetricKey(SymmetricKey pKey) throws ModelException {
+    public byte[] secureSymmetricKey(final SymmetricKey pKey) throws ModelException {
         byte[] myWrappedKey;
         Cipher myCipher;
         CipherSet mySet;
 
         /* Look for an entry in the map and return it if found */
         myWrappedKey = theSymKeyMap.get(pKey);
-        if (myWrappedKey != null)
+        if (myWrappedKey != null) {
             return myWrappedKey;
+        }
 
         /* Protect against exceptions */
         try {
@@ -477,10 +502,9 @@ public class AsymmetricKey implements ReportDetail {
 
                 /* Wrap the Key */
                 myWrappedKey = mySet.secureSymmetricKey(pKey);
-            }
 
-            /* else we are using RSA semantics */
-            else {
+                /* else we are using RSA semantics */
+            } else {
                 /* Initialise the cipher */
                 myCipher = theGenerator.accessCipher(theKeyType.getAlgorithm());
                 myCipher.init(Cipher.WRAP_MODE, getPublicKey());
@@ -492,9 +516,8 @@ public class AsymmetricKey implements ReportDetail {
                 SymKeyNeedle myNeedle = new SymKeyNeedle(pKey.getKeyType(), myWrappedKey);
                 myWrappedKey = myNeedle.getExternal();
             }
-        }
 
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new ModelException(ExceptionClass.CRYPTO, "Failed to wrap key", e);
         }
 
@@ -506,20 +529,22 @@ public class AsymmetricKey implements ReportDetail {
     }
 
     /**
-     * Obtain shared secret for partner Asymmetric Key
+     * Obtain shared secret for partner Asymmetric Key.
      * @param pPartner partner asymmetric key
      * @return the shared secret
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    private synchronized byte[] getSharedSecret(AsymmetricKey pPartner) throws ModelException {
+    private synchronized byte[] getSharedSecret(final AsymmetricKey pPartner) throws ModelException {
         /* Both keys must be elliptic */
-        if ((!theKeyType.isElliptic()) || (!theKeyMode.equals(pPartner.getKeyMode())))
+        if ((!theKeyType.isElliptic()) || (!theKeyMode.equals(pPartner.getKeyMode()))) {
             throw new ModelException(ExceptionClass.LOGIC,
                     "Shared Keys require both partners to be similar Elliptic");
+        }
 
         /* Cannot generate unless we have the private key */
-        if (isPublicOnly())
+        if (isPublicOnly()) {
             throw new ModelException(ExceptionClass.LOGIC, "Cannot generate secret without private key");
+        }
 
         /* Protect against exceptions */
         try {
@@ -535,24 +560,24 @@ public class AsymmetricKey implements ReportDetail {
 
             /* Generate the secret */
             return theKeyAgreement.generateSecret();
-        }
 
-        /* Handle exceptions */
-        catch (Exception e) {
+            /* Handle exceptions */
+        } catch (Exception e) {
             throw new ModelException(ExceptionClass.CRYPTO, "Failed to negotiate key agreement", e);
         }
     }
 
     /**
-     * Obtain the signature for the file entry
+     * Obtain the signature for the file entry.
      * @param pEntry the ZipFile properties
      * @return the signature
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public byte[] signFile(ZipFileEntry pEntry) throws ModelException {
+    public byte[] signFile(final ZipFileEntry pEntry) throws ModelException {
         /* Cannot sign unless we have the private key */
-        if (isPublicOnly())
+        if (isPublicOnly()) {
             throw new ModelException(ExceptionClass.LOGIC, "Cannot sign without private key");
+        }
 
         /* Protect against exceptions */
         try {
@@ -565,10 +590,9 @@ public class AsymmetricKey implements ReportDetail {
 
             /* Complete the signature */
             return mySignature.sign();
-        }
 
-        /* Catch exceptions */
-        catch (ModelException e) {
+            /* Catch exceptions */
+        } catch (ModelException e) {
             throw e;
         } catch (Exception e) {
             throw new ModelException(ExceptionClass.CRYPTO, "Exception calculating signature", e);
@@ -576,11 +600,11 @@ public class AsymmetricKey implements ReportDetail {
     }
 
     /**
-     * Verify the signature for the zipFileEntry
+     * Verify the signature for the zipFileEntry.
      * @param pEntry the ZipFile properties
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public void verifyFile(ZipFileEntry pEntry) throws ModelException {
+    public void verifyFile(final ZipFileEntry pEntry) throws ModelException {
         /* Protect against exceptions */
         try {
             /* Create a signature */
@@ -595,10 +619,9 @@ public class AsymmetricKey implements ReportDetail {
                 /* Throw an invalid file exception */
                 throw new ModelException(ExceptionClass.CRYPTO, "Signature does not match");
             }
-        }
 
-        /* Catch exceptions */
-        catch (ModelException e) {
+            /* Catch exceptions */
+        } catch (ModelException e) {
             throw e;
         } catch (Exception e) {
             throw new ModelException(ExceptionClass.CRYPTO, "Exception occurred verifying signature", e);
@@ -606,18 +629,19 @@ public class AsymmetricKey implements ReportDetail {
     }
 
     /**
-     * Encrypt string
+     * Encrypt string.
      * @param pString string to encrypt
      * @param pTarget target partner of encryption
      * @return Encrypted bytes
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public byte[] encryptString(String pString,
-                                AsymmetricKey pTarget) throws ModelException {
+    public byte[] encryptString(final String pString,
+                                final AsymmetricKey pTarget) throws ModelException {
         /* Target must be identical key type */
-        if (!theKeyMode.equals(pTarget.getKeyMode()))
+        if (!theKeyMode.equals(pTarget.getKeyMode())) {
             throw new ModelException(ExceptionClass.LOGIC,
                     "Asymmetric Encryption must be between similar partners");
+        }
 
         /* Protect against exceptions */
         try {
@@ -628,15 +652,14 @@ public class AsymmetricKey implements ReportDetail {
 
                 /* Encrypt the string */
                 return mySet.encryptString(pString);
+
+                /* else handle RSA semantics */
+            } else {
+                return encryptRSAString(pString, pTarget);
             }
 
-            /* else handle RSA semantics */
-            else
-                return encryptRSAString(pString, pTarget);
-        }
-
-        /* Catch exceptions */
-        catch (ModelException e) {
+            /* Catch exceptions */
+        } catch (ModelException e) {
             throw e;
         } catch (Exception e) {
             throw new ModelException(ExceptionClass.CRYPTO, "Exception occurred initialising cipher", e);
@@ -644,14 +667,14 @@ public class AsymmetricKey implements ReportDetail {
     }
 
     /**
-     * Encrypt string
+     * Encrypt RSA string.
      * @param pString string to encrypt
      * @param pTarget target partner of encryption
      * @return Encrypted bytes
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    private byte[] encryptRSAString(String pString,
-                                    AsymmetricKey pTarget) throws ModelException {
+    private byte[] encryptRSAString(final String pString,
+                                    final AsymmetricKey pTarget) throws ModelException {
         byte[] myBytes;
         byte[] myOutput;
         int iBlockSize;
@@ -690,8 +713,9 @@ public class AsymmetricKey implements ReportDetail {
             while (iDataLen > 0) {
                 /* Determine the length of data to process */
                 iNumBytes = iDataLen;
-                if (iNumBytes > iBlockSize)
+                if (iNumBytes > iBlockSize) {
                     iNumBytes = iBlockSize;
+                }
 
                 /* Encrypt the data */
                 iOutSize = myCipher.doFinal(myBytes, iOffset, iNumBytes, myOutput, iOutOffs);
@@ -703,11 +727,10 @@ public class AsymmetricKey implements ReportDetail {
             }
 
             /* Adjust output array correctly */
-            if (iOutOffs < myOutput.length)
+            if (iOutOffs < myOutput.length) {
                 myOutput = Arrays.copyOf(myOutput, iOutOffs);
-        }
-
-        catch (Exception e) {
+            }
+        } catch (Exception e) {
             throw new ModelException(ExceptionClass.CRYPTO, "Failed to encrypt string", e);
         }
 
@@ -716,22 +739,24 @@ public class AsymmetricKey implements ReportDetail {
     }
 
     /**
-     * Decrypt string
+     * Decrypt string.
      * @param pBytes encrypted string to decrypt
      * @param pSource source partner of encryption
      * @return Decrypted string
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public String decryptString(byte[] pBytes,
-                                AsymmetricKey pSource) throws ModelException {
+    public String decryptString(final byte[] pBytes,
+                                final AsymmetricKey pSource) throws ModelException {
         /* Cannot decrypt unless we have the private key */
-        if (isPublicOnly())
+        if (isPublicOnly()) {
             throw new ModelException(ExceptionClass.LOGIC, "Cannot decrypt without private key");
+        }
 
         /* Source must be identical key type */
-        if (!theKeyMode.equals(pSource.getKeyMode()))
+        if (!theKeyMode.equals(pSource.getKeyMode())) {
             throw new ModelException(ExceptionClass.LOGIC,
                     "Asymmetric Encryption must be between similar partners");
+        }
 
         /* Protect against exceptions */
         try {
@@ -742,15 +767,14 @@ public class AsymmetricKey implements ReportDetail {
 
                 /* Decrypt the string */
                 return mySet.decryptString(pBytes);
+
+                /* else handle RSA semantics */
+            } else {
+                return decryptRSAString(pBytes);
             }
 
-            /* else handle RSA semantics */
-            else
-                return decryptRSAString(pBytes);
-        }
-
-        /* Catch exceptions */
-        catch (ModelException e) {
+            /* Catch exceptions */
+        } catch (ModelException e) {
             throw e;
         } catch (Exception e) {
             throw new ModelException(ExceptionClass.CRYPTO, "Exception occurred initialising cipher", e);
@@ -758,12 +782,12 @@ public class AsymmetricKey implements ReportDetail {
     }
 
     /**
-     * Decrypt RSA string
+     * Decrypt RSA string.
      * @param pBytes encrypted string to decrypt
      * @return Decrypted string
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    private String decryptRSAString(byte[] pBytes) throws ModelException {
+    private String decryptRSAString(final byte[] pBytes) throws ModelException {
         String myString;
         byte[] myOutput;
         int iBlockSize;
@@ -799,8 +823,9 @@ public class AsymmetricKey implements ReportDetail {
             while (iDataLen > 0) {
                 /* Determine the length of data to process */
                 iNumBytes = iDataLen;
-                if (iNumBytes > iBlockSize)
+                if (iNumBytes > iBlockSize) {
                     iNumBytes = iBlockSize;
+                }
 
                 /* Encrypt the data */
                 iOutSize = myCipher.doFinal(pBytes, iOffset, iNumBytes, myOutput, iOutOffs);
@@ -812,14 +837,13 @@ public class AsymmetricKey implements ReportDetail {
             }
 
             /* Adjust output array correctly */
-            if (iOutOffs < myOutput.length)
+            if (iOutOffs < myOutput.length) {
                 myOutput = Arrays.copyOf(myOutput, iOutOffs);
+            }
 
             /* Create the string */
             myString = DataConverter.byteArrayToString(myOutput);
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new ModelException(ExceptionClass.CRYPTO, "Failed to decrypt string", e);
         }
 

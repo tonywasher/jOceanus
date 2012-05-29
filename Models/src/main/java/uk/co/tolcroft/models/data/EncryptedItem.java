@@ -27,9 +27,10 @@ import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JDataManager.ReportFields;
 import net.sourceforge.JDataManager.ReportFields.ReportField;
 import net.sourceforge.JDataManager.ReportItem;
+import net.sourceforge.JGordianKnot.EncryptedData.EncryptedField;
+import net.sourceforge.JGordianKnot.EncryptedData.EncryptionGenerator;
+import net.sourceforge.JGordianKnot.EncryptedValueSet;
 import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
-import uk.co.tolcroft.models.data.EncryptedData.EncryptedField;
-import uk.co.tolcroft.models.data.EncryptedData.EncryptionGenerator;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 
 public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem<T> {

@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDateDay: Java Date Day
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,39 +26,43 @@ import java.util.Calendar;
 
 import net.sourceforge.JDateButton.JDateConfig;
 
+/**
+ * Class that extends {@link JDateConfig} to handle {@link DateDay} objects.
+ * @author Tony Washer
+ */
 public class DateDayConfig extends JDateConfig {
     /**
-     * Currently selected date (Calendar)
+     * Currently selected date (Calendar).
      */
     private Calendar theSelectedDate = null;
 
     /**
-     * Currently selected date (DateDay)
+     * Currently selected date (DateDay).
      */
     private DateDay theSelectedDateDay = null;
 
     /**
-     * Current earliest date (Calendar)
+     * Current earliest date (Calendar).
      */
     private Calendar theEarliestDate = null;
 
     /**
-     * Current earliest date (DateDay)
+     * Current earliest date (DateDay).
      */
     private DateDay theEarliestDateDay = null;
 
     /**
-     * Current latest date (Calendar)
+     * Current latest date (Calendar).
      */
     private Calendar theLatestDate = null;
 
     /**
-     * Current latest date (DateDay)
+     * Current latest date (DateDay).
      */
     private DateDay theLatestDateDay = null;
 
     /**
-     * Obtain the selected DateDay
+     * Obtain the selected DateDay.
      * @return the selected DateDay
      */
     public DateDay getSelectedDateDay() {
@@ -76,19 +81,20 @@ public class DateDayConfig extends JDateConfig {
     }
 
     /**
-     * Set selected DateDay
+     * Set selected DateDay.
      * @param pDate the selected date
      */
-    public void setSelectedDateDay(DateDay pDate) {
+    public void setSelectedDateDay(final DateDay pDate) {
         /* Set the selected DateDay */
-        if (pDate == null)
+        if (pDate == null) {
             setSelectedDate(null);
-        else
+        } else {
             setSelectedDate(pDate.getCalendar());
+        }
     }
 
     /**
-     * Obtain the earliest DateDay
+     * Obtain the earliest DateDay.
      * @return the earliest DateDay
      */
     public DateDay getEarliestDateDay() {
@@ -107,19 +113,20 @@ public class DateDayConfig extends JDateConfig {
     }
 
     /**
-     * Set earliest DateDay
+     * Set earliest DateDay.
      * @param pDate the earliest date
      */
-    public void setEarliestDateDay(DateDay pDate) {
+    public void setEarliestDateDay(final DateDay pDate) {
         /* Set the earliest DateDay */
-        if (pDate == null)
+        if (pDate == null) {
             setEarliestDate(null);
-        else
+        } else {
             setEarliestDate(pDate.getCalendar());
+        }
     }
 
     /**
-     * Obtain the latest DateDay
+     * Obtain the latest DateDay.
      * @return the latest DateDay
      */
     public DateDay getLatestDateDay() {
@@ -138,14 +145,15 @@ public class DateDayConfig extends JDateConfig {
     }
 
     /**
-     * Set latest DateDay
+     * Set latest DateDay.
      * @param pDate the latest date
      */
-    public void setLatestDateDay(DateDay pDate) {
+    public void setLatestDateDay(final DateDay pDate) {
         /* Set the latest DateDay */
-        if (pDate == null)
+        if (pDate == null) {
             setLatestDate(null);
-        else
+        } else {
             setLatestDate(pDate.getCalendar());
+        }
     }
 }

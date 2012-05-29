@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,47 +30,55 @@ import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataState;
 
+/**
+ * Batch control class. This controls updating data lists after the commit of the batch.
+ */
 public class BatchControl {
     /**
-     * Default batch size for updates
+     * Default batch size for updates.
      */
-    private int theBatchSize = 50;
+    protected static final int DEF_BATCH_SIZE = 50;
 
     /**
-     * Capacity of Batch Control (0=Unlimited)
+     * Batch size for updates.
+     */
+    private int theBatchSize = DEF_BATCH_SIZE;
+
+    /**
+     * Capacity of Batch Control (0=Unlimited).
      */
     private int theCapacity = theBatchSize;
 
     /**
-     * Number of items in this batch
+     * Number of items in this batch.
      */
     private int theItems = 0;
 
     /**
-     * The List of tables associated with this batch
+     * The List of tables associated with this batch.
      */
     private List<BatchTable> theList = null;
 
     /**
-     * The Currently active Database table
+     * The Currently active Database table.
      */
     private DatabaseTable<?> theCurrTable = null;
 
     /**
-     * The Currently active Mode
+     * The Currently active Mode.
      */
     private DataState theCurrMode = null;
 
     /**
-     * Is the current table in use
+     * Is the current table in use.
      */
     private boolean isTableActive = false;
 
     /**
-     * Constructor
+     * Constructor.
      * @param pBatchSize the batch size
      */
-    protected BatchControl(Integer pBatchSize) {
+    protected BatchControl(final Integer pBatchSize) {
         /* Create the batch table list */
         theList = new ArrayList<BatchTable>();
 
@@ -79,7 +88,7 @@ public class BatchControl {
     }
 
     /**
-     * Is the batch full
+     * Is the batch full.
      * @return true/false is the batch full
      */
     protected boolean isFull() {
@@ -87,7 +96,7 @@ public class BatchControl {
     }
 
     /**
-     * Is the batch active
+     * Is the batch active.
      * @return true/false is the batch active
      */
     protected boolean isActive() {
@@ -95,12 +104,12 @@ public class BatchControl {
     }
 
     /**
-     * Set the currently active state
+     * Set the currently active state.
      * @param pTable the Table being operated on
      * @param pMode the Mode that is in operation
      */
-    protected void setCurrentTable(DatabaseTable<?> pTable,
-                                   DataState pMode) {
+    protected void setCurrentTable(final DatabaseTable<?> pTable,
+                                   final DataState pMode) {
         /* Store details */
         theCurrTable = pTable;
         theCurrMode = pMode;
@@ -108,7 +117,7 @@ public class BatchControl {
     }
 
     /**
-     * Add item to the batch
+     * Add item to the batch.
      */
     protected void addBatchItem() {
         /* Increment batch count */
@@ -126,7 +135,7 @@ public class BatchControl {
     }
 
     /**
-     * Commit the batch
+     * Commit the batch.
      */
     protected void commitItems() {
         /* Access iterator for the list */
@@ -148,21 +157,21 @@ public class BatchControl {
     }
 
     /**
-     * Table step
+     * Table step.
      */
-    private class BatchTable {
+    private final class BatchTable {
         /**
-         * The table that is being controlled
+         * The table that is being controlled.
          */
-        private DatabaseTable<?> theTable = null;
+        private final DatabaseTable<?> theTable;
 
         /**
-         * The State of the table
+         * The State of the table.
          */
-        private DataState theState = null;
+        private final DataState theState;
 
         /**
-         * Constructor
+         * Constructor.
          */
         private BatchTable() {
             /* Store the details */
@@ -171,7 +180,7 @@ public class BatchControl {
         }
 
         /**
-         * Mark a update in the table as committed as committed
+         * Mark a update in the table as committed as committed.
          */
         private void commitBatch() {
             DataListIterator<?> myIterator;
@@ -184,8 +193,9 @@ public class BatchControl {
             /* Loop through the list */
             while ((myCurr = myIterator.next()) != null) {
                 /* Ignore items that are not this type */
-                if (myCurr.getState() != theState)
+                if (myCurr.getState() != theState) {
                     continue;
+                }
 
                 /* Access the underlying element */
                 myBase = myCurr.getBase();
@@ -197,10 +207,9 @@ public class BatchControl {
 
                     /* Remove any registration */
                     myBase.deRegister();
-                }
 
-                /* else we are handling new/changed items */
-                else {
+                    /* else we are handling new/changed items */
+                } else {
                     /* Set the item to clean and clear history */
                     myBase.setState(DataState.CLEAN);
                     myBase.clearHistory();
@@ -210,10 +219,9 @@ public class BatchControl {
                 myCurr.setState(DataState.CLEAN);
 
                 /* If we have to worry about batch space */
-                if (theCapacity > 0) {
-                    /* Adjust batch and break if we are finished */
-                    if (--theItems == 0)
-                        break;
+                /* Adjust batch and break if we are finished */
+                if ((theCapacity > 0) && (--theItems == 0)) {
+                    break;
                 }
             }
         }

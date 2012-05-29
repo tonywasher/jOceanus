@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,85 +25,89 @@ package net.sourceforge.JGordianKnot;
 import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.PreferenceSet;
 
+/**
+ * Security preferences.
+ * @author Tony Washer
+ */
 public class SecurityPreferences extends PreferenceSet {
     /**
-     * Registry name for Security Provider
+     * Registry name for Security Provider.
      */
-    protected final static String nameProvider = "SecurityProvider";
+    protected static final String NAME_PROVIDER = "SecurityProvider";
 
     /**
-     * Registry name for Restricted Security
+     * Registry name for Restricted Security.
      */
-    protected final static String nameRestricted = "RestrictedKeys";
+    protected static final String NAME_RESTRICTED = "RestrictedKeys";
 
     /**
-     * Registry name for Cipher Steps
+     * Registry name for Cipher Steps.
      */
-    protected final static String nameCipherSteps = "CipherSteps";
+    protected static final String NAME_CIPHER_STEPS = "CipherSteps";
 
     /**
-     * Registry name for Hash iterations
+     * Registry name for Hash iterations.
      */
-    protected final static String nameHashIterations = "HashIterations";
+    protected static final String NAME_HASH_ITERATIONS = "HashIterations";
 
     /**
-     * Registry name for SecurityPhrase
+     * Registry name for SecurityPhrase.
      */
-    protected final static String nameSecurityPhrase = "SecurityPhrase";
+    protected static final String NAME_SECURITY_PHRASE = "SecurityPhrase";
 
     /**
-     * Display name for Security Provider
+     * Display name for Security Provider.
      */
-    protected final static String dispProvider = "Security Provider";
+    protected static final String DISPLAY_PROVIDER = "Security Provider";
 
     /**
-     * Display name for Restricted Security
+     * Display name for Restricted Security.
      */
-    protected final static String dispRestricted = "Restricted Keys";
+    protected static final String DISPLAY_RESTRICTED = "Restricted Keys";
 
     /**
-     * Display name for Cipher Steps
+     * Display name for Cipher Steps.
      */
-    protected final static String dispCipherSteps = "Number of CipherSteps";
+    protected static final String DISPLAY_CIPHER_STEPS = "Number of CipherSteps";
 
     /**
-     * Display name for Cipher Steps
+     * Display name for Cipher Steps.
      */
-    protected final static String dispHashIterations = "Hash Iterations";
+    protected static final String DISPLAY_HASH_ITERATIONS = "Hash Iterations";
 
     /**
-     * Display name for Security Phrase
+     * Display name for Security Phrase.
      */
-    protected final static String dispSecurityPhrase = "SecurityPhrase";
+    protected static final String DISPLAY_SECURITY_PHRASE = "SecurityPhrase";
 
     /**
-     * Default Security Provider
+     * Default Security Provider.
      */
-    private final static SecurityProvider defProvider = SecurityProvider.BouncyCastle;
+    private static final SecurityProvider DEFAULT_PROVIDER = SecurityProvider.BouncyCastle;
 
     /**
-     * Default Restricted Security
+     * Default Restricted Security.
      */
-    private final static Boolean defRestricted = Boolean.FALSE;
+    private static final Boolean DEFAULT_RESTRICTED = Boolean.FALSE;
 
     /**
-     * Default Cipher Steps
+     * Default Cipher Steps.
      */
-    private final static Integer defCipherSteps = 3;
+    private static final Integer DEFAULT_CIPHER_STEPS = 3;
 
     /**
-     * Default Hash iterations
+     * Default Hash iterations.
      */
-    private final static Integer defHashIterations = 2051;
+    private static final Integer DEFAULT_HASH_ITERATIONS = 2051;
 
     /**
-     * Default Security Phrase
+     * Default Security Phrase.
      */
-    private final static String defSecurityPhrase = "JG0rdianKn0t";
+    private static final String DEFAULT_SECURITY_PHRASE = "JG0rdianKn0t";
 
     /**
-     * Constructor
-     * @throws ModelException
+     * Constructor.
+     * @throws ModelException on error
      */
     public SecurityPreferences() throws ModelException {
         super();
@@ -111,42 +116,52 @@ public class SecurityPreferences extends PreferenceSet {
     @Override
     protected void definePreferences() {
         /* Define the properties */
-        definePreference(nameProvider, SecurityProvider.class);
-        definePreference(nameRestricted, PreferenceType.Boolean);
-        definePreference(nameCipherSteps, PreferenceType.Integer);
-        definePreference(nameHashIterations, PreferenceType.Integer);
-        definePreference(nameSecurityPhrase, PreferenceType.String);
+        definePreference(NAME_PROVIDER, SecurityProvider.class);
+        definePreference(NAME_RESTRICTED, PreferenceType.Boolean);
+        definePreference(NAME_CIPHER_STEPS, PreferenceType.Integer);
+        definePreference(NAME_HASH_ITERATIONS, PreferenceType.Integer);
+        definePreference(NAME_SECURITY_PHRASE, PreferenceType.String);
     }
 
     @Override
-    protected Object getDefaultValue(String pName) {
+    protected Object getDefaultValue(final String pName) {
         /* Handle default values */
-        if (pName.equals(nameProvider))
-            return defProvider;
-        if (pName.equals(nameRestricted))
-            return defRestricted;
-        if (pName.equals(nameCipherSteps))
-            return defCipherSteps;
-        if (pName.equals(nameHashIterations))
-            return defHashIterations;
-        if (pName.equals(nameSecurityPhrase))
-            return defSecurityPhrase;
+        if (pName.equals(NAME_PROVIDER)) {
+            return DEFAULT_PROVIDER;
+        }
+        if (pName.equals(NAME_RESTRICTED)) {
+            return DEFAULT_RESTRICTED;
+        }
+        if (pName.equals(NAME_CIPHER_STEPS)) {
+            return DEFAULT_CIPHER_STEPS;
+        }
+        if (pName.equals(NAME_HASH_ITERATIONS)) {
+            return DEFAULT_HASH_ITERATIONS;
+        }
+        if (pName.equals(NAME_SECURITY_PHRASE)) {
+            return DEFAULT_SECURITY_PHRASE;
+        }
         return null;
     }
 
     @Override
-    protected String getDisplayName(String pName) {
+    protected String getDisplayName(final String pName) {
         /* Handle default values */
-        if (pName.equals(nameProvider))
-            return dispProvider;
-        if (pName.equals(nameRestricted))
-            return dispRestricted;
-        if (pName.equals(nameCipherSteps))
-            return dispCipherSteps;
-        if (pName.equals(nameHashIterations))
-            return dispHashIterations;
-        if (pName.equals(nameSecurityPhrase))
-            return dispSecurityPhrase;
+        if (pName.equals(NAME_PROVIDER)) {
+            return DISPLAY_PROVIDER;
+        }
+        if (pName.equals(NAME_RESTRICTED)) {
+            return DISPLAY_RESTRICTED;
+        }
+        if (pName.equals(NAME_CIPHER_STEPS)) {
+            return DISPLAY_CIPHER_STEPS;
+        }
+        if (pName.equals(NAME_HASH_ITERATIONS)) {
+            return DISPLAY_HASH_ITERATIONS;
+        }
+        if (pName.equals(NAME_SECURITY_PHRASE)) {
+            return DISPLAY_SECURITY_PHRASE;
+        }
         return null;
     }
 }

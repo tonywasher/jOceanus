@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,29 +31,42 @@ import net.sourceforge.JDataManager.DataConverter;
 import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 
+/**
+ * Class represents the properties of an encrypted file in the Zip file.
+ */
 public class ZipFileProperties {
     /**
-     * The property separator
+     * The property separator.
      */
-    private final static char thePropSeparator = '/';
+    private static final char SEP_PROPERTY = '/';
 
     /**
-     * The value separator
+     * The value separator.
      */
-    private final static char theValuSeparator = '=';
+    private static final char SEP_VALUE = '=';
 
     /**
-     * The value separator
+     * The long separator.
      */
-    private final static char theLongSeparator = '!';
+    private static final char SEP_LONG = '!';
 
     /**
-     * List of properties
+     * The Buffer length.
+     */
+    private static final int BUFFER_LEN = 1000;
+
+    /**
+     * The Value buffer length.
+     */
+    private static final char BUFFER_VALLEN = 200;
+
+    /**
+     * List of properties.
      */
     private final List<Property> theList;
 
     /**
-     * Constructor
+     * Constructor.
      */
     protected ZipFileProperties() {
         /* Allocate the array */
@@ -60,17 +74,17 @@ public class ZipFileProperties {
     }
 
     /**
-     * Constructor from encoded string
+     * Constructor from encoded string.
      * @param pCodedString the encoded string
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected ZipFileProperties(String pCodedString) throws ModelException {
+    protected ZipFileProperties(final String pCodedString) throws ModelException {
         /* Allocate the array */
         theList = new ArrayList<Property>();
 
         /* Wrap string in a string builder */
         StringBuilder myString = new StringBuilder(pCodedString);
-        String myPropSep = Character.toString(thePropSeparator);
+        String myPropSep = Character.toString(SEP_PROPERTY);
         int myLoc;
 
         /* while we have separators in the string */
@@ -85,23 +99,23 @@ public class ZipFileProperties {
     }
 
     /**
-     * Set the named property
+     * Set the named property.
      * @param pName the name of the property
      * @param pValue the Value of the property
      */
-    protected void setProperty(String pName,
-                               String pValue) {
+    protected void setProperty(final String pName,
+                               final String pValue) {
         /* Set the new value */
         setProperty(pName, DataConverter.stringToByteArray(pValue));
     }
 
     /**
-     * Set the named property
+     * Set the named property.
      * @param pName the name of the property
      * @param pValue the Value of the property
      */
-    protected void setProperty(String pName,
-                               byte[] pValue) {
+    protected void setProperty(final String pName,
+                               final byte[] pValue) {
         Property myProperty;
 
         /* Access any existing property */
@@ -118,12 +132,12 @@ public class ZipFileProperties {
     }
 
     /**
-     * Set the named property
+     * Set the named property.
      * @param pName the name of the property
      * @param pValue the Value of the property
      */
-    protected void setProperty(String pName,
-                               long pValue) {
+    protected void setProperty(final String pName,
+                               final long pValue) {
         Property myProperty;
 
         /* Access any existing property */
@@ -140,12 +154,12 @@ public class ZipFileProperties {
     }
 
     /**
-     * Obtain the string value of the named property
+     * Obtain the string value of the named property.
      * @param pName the name of the property
      * @return the value of the property or <code>null</code> if the property does not exist
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected String getStringProperty(String pName) throws ModelException {
+    protected String getStringProperty(final String pName) throws ModelException {
         /* Access the property */
         byte[] myValue = getByteProperty(pName);
 
@@ -154,11 +168,11 @@ public class ZipFileProperties {
     }
 
     /**
-     * Obtain the bytes value of the named property
+     * Obtain the bytes value of the named property.
      * @param pName the name of the property
      * @return the value of the property or <code>null</code> if the property does not exist
      */
-    protected byte[] getByteProperty(String pName) {
+    protected byte[] getByteProperty(final String pName) {
         Property myProperty;
 
         /* Access the property */
@@ -169,11 +183,11 @@ public class ZipFileProperties {
     }
 
     /**
-     * Obtain the long value of the named property
+     * Obtain the long value of the named property.
      * @param pName the name of the property
      * @return the value of the property or <code>-1</code> if the property does not exist
      */
-    protected long getLongProperty(String pName) {
+    protected long getLongProperty(final String pName) {
         Property myProperty;
 
         /* Access the property */
@@ -184,11 +198,11 @@ public class ZipFileProperties {
     }
 
     /**
-     * Obtain the named property from the list
+     * Obtain the named property from the list.
      * @param pName the name of the property
      * @return the value of the property or <code>null</code> if the property does not exist
      */
-    private Property getProperty(String pName) {
+    private Property getProperty(final String pName) {
         /* Loop through the properties */
         Iterator<Property> myIterator = theList.iterator();
         while (myIterator.hasNext()) {
@@ -199,12 +213,14 @@ public class ZipFileProperties {
             int iDiff = pName.compareTo(myProperty.getName());
 
             /* If this is the required property, return it */
-            if (iDiff == 0)
+            if (iDiff == 0) {
                 return myProperty;
+            }
 
             /* If this property is later than the required name, no such property */
-            if (iDiff < 0)
+            if (iDiff < 0) {
                 break;
+            }
         }
 
         /* Return not found */
@@ -212,12 +228,12 @@ public class ZipFileProperties {
     }
 
     /**
-     * Encode the properties
+     * Encode the properties.
      * @return the encoded string
      */
     protected String encodeProperties() {
-        StringBuilder myString = new StringBuilder(1000);
-        StringBuilder myValue = new StringBuilder(200);
+        StringBuilder myString = new StringBuilder(BUFFER_LEN);
+        StringBuilder myValue = new StringBuilder(BUFFER_VALLEN);
 
         /* Loop through the properties */
         Iterator<Property> myIterator = theList.iterator();
@@ -228,7 +244,7 @@ public class ZipFileProperties {
             /* Build the value string */
             myValue.setLength(0);
             myValue.append(myProperty.getName());
-            myValue.append(theValuSeparator);
+            myValue.append(SEP_VALUE);
 
             /* If we have a byte value */
             if (myProperty.getByteValue() != null) {
@@ -237,7 +253,7 @@ public class ZipFileProperties {
             }
 
             /* Add the value separator */
-            myValue.append(theLongSeparator);
+            myValue.append(SEP_LONG);
 
             /* If we have a long value */
             if (myProperty.getLongValue() != -1) {
@@ -246,8 +262,9 @@ public class ZipFileProperties {
             }
 
             /* Add the value to the string */
-            if (myString.length() > 0)
-                myString.append(thePropSeparator);
+            if (myString.length() > 0) {
+                myString.append(SEP_PROPERTY);
+            }
             myString.append(myValue);
         }
 
@@ -256,11 +273,11 @@ public class ZipFileProperties {
     }
 
     /**
-     * Parse the encoded string representation to obtain the property
+     * Parse the encoded string representation to obtain the property.
      * @param pValue the encoded property
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    private void parseEncodedProperty(String pValue) throws ModelException {
+    private void parseEncodedProperty(final String pValue) throws ModelException {
         Property myProperty;
         String myName;
         String myBytes;
@@ -269,11 +286,12 @@ public class ZipFileProperties {
         int myLoc;
 
         /* Locate the Value separator in the string */
-        myLoc = pValue.indexOf(theValuSeparator);
+        myLoc = pValue.indexOf(SEP_VALUE);
 
         /* Check that we found the value separator */
-        if (myLoc == -1)
+        if (myLoc == -1) {
             throw new ModelException(ExceptionClass.DATA, "Missing value separator: " + pValue);
+        }
 
         /* Split the values and name */
         myName = pValue.substring(0, myLoc);
@@ -281,23 +299,26 @@ public class ZipFileProperties {
         myLen = myBytes.length();
 
         /* If the name is already present reject it */
-        if (getProperty(myName) != null)
+        if (getProperty(myName) != null) {
             throw new ModelException(ExceptionClass.DATA, "Duplicate name: " + pValue);
+        }
 
         /* Locate the Long separator in the string */
-        myLoc = myBytes.indexOf(theLongSeparator);
+        myLoc = myBytes.indexOf(SEP_LONG);
 
         /* Check that we found the long separator */
-        if (myLoc == -1)
+        if (myLoc == -1) {
             throw new ModelException(ExceptionClass.DATA, "Missing long separator: " + pValue);
+        }
 
         /* Access the separate byte and long values */
         myLong = (myLoc < myLen - 1) ? myBytes.substring(myLoc + 1) : null;
         myBytes = (myLoc > 0) ? myBytes.substring(0, myLoc) : null;
 
         /* Must have at least one of Bytes/Long */
-        if ((myBytes == null) && (myLong == null))
+        if ((myBytes == null) && (myLong == null)) {
             throw new ModelException(ExceptionClass.DATA, "Missing long separator: " + pValue);
+        }
 
         /* Create a new property */
         myProperty = new Property(myName);
@@ -316,32 +337,33 @@ public class ZipFileProperties {
     }
 
     /**
-     * Individual Property
+     * Individual Property.
      */
-    private class Property {
+    private final class Property {
         /**
-         * Name of property
+         * Name of property.
          */
-        private String theName = null;
+        private final String theName;
 
         /**
-         * Value of property
+         * Value of property.
          */
         private byte[] theByteValue = null;
 
         /**
-         * Value of property
+         * Value of property.
          */
         private long theLongValue = -1;
 
         /**
-         * Standard Constructor
+         * Standard Constructor.
          * @param pName the name of the property
          */
-        private Property(String pName) {
+        private Property(final String pName) {
             /* Check for invalid name */
-            if (pName.indexOf(theValuSeparator) != -1)
+            if (pName.indexOf(SEP_VALUE) != -1) {
                 throw new IllegalArgumentException("Invalid property name - " + pName);
+            }
 
             /* Store name */
             theName = pName;
@@ -357,12 +379,14 @@ public class ZipFileProperties {
                 int iDiff = pName.compareTo(myProperty.getName());
 
                 /* If this property is later than us */
-                if (iDiff < 0)
+                if (iDiff < 0) {
                     break;
+                }
 
                 /* Reject attempt to add duplicate name */
-                if (iDiff == 0)
+                if (iDiff == 0) {
                     throw new IllegalArgumentException("Duplicate property - " + pName);
+                }
 
                 /* Increment index */
                 iIndex++;
@@ -373,7 +397,7 @@ public class ZipFileProperties {
         }
 
         /**
-         * Obtain the name of the property
+         * Obtain the name of the property.
          * @return the name of the property
          */
         private String getName() {
@@ -381,7 +405,7 @@ public class ZipFileProperties {
         }
 
         /**
-         * Obtain the byte value of the property
+         * Obtain the byte value of the property.
          * @return the value of the property
          */
         private byte[] getByteValue() {
@@ -389,7 +413,7 @@ public class ZipFileProperties {
         }
 
         /**
-         * Obtain the long value of the property
+         * Obtain the long value of the property.
          * @return the value of the property
          */
         private long getLongValue() {
@@ -397,18 +421,18 @@ public class ZipFileProperties {
         }
 
         /**
-         * Set the byte value
+         * Set the byte value.
          * @param pValue the new value
          */
-        private void setByteValue(byte[] pValue) {
+        private void setByteValue(final byte[] pValue) {
             theByteValue = Arrays.copyOf(pValue, pValue.length);
         }
 
         /**
-         * Set the long value
+         * Set the long value.
          * @param pValue the new value
          */
-        private void setLongValue(long pValue) {
+        private void setLongValue(final long pValue) {
             theLongValue = pValue;
         }
     }

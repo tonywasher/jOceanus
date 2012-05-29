@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,95 +29,157 @@ import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JDataManager.ReportFields;
 import net.sourceforge.JDataManager.ReportFields.ReportField;
 
+/**
+ * Hash Mode. Encapsulates PasswordHash options.
+ * @author Tony Washer
+ */
 public class HashMode extends SecurityMode {
     /**
-     * Report fields
+     * Report fields.
      */
-    protected static final ReportFields theFields = new ReportFields(AsymKeyMode.class.getSimpleName(),
-            SecurityMode.theFields);
+    protected static final ReportFields FIELD_DEFS = new ReportFields(AsymKeyMode.class.getSimpleName(),
+            SecurityMode.FIELD_DEFS);
 
-    /* Field IDs */
-    public static final ReportField FIELD_PRIMETYPE = theFields.declareLocalField("PrimeDigest");
-    public static final ReportField FIELD_ALTTYPE = theFields.declareLocalField("AlternateDigest");
-    public static final ReportField FIELD_SECRETTYPE = theFields.declareLocalField("SecretDigest");
-    public static final ReportField FIELD_CIPHER = theFields.declareLocalField("CipherDigest");
-    public static final ReportField FIELD_SWITCH = theFields.declareLocalField("SwitchAdjust");
-    public static final ReportField FIELD_FINAL = theFields.declareLocalField("FinalAdjust");
+    /**
+     * Prime digest field.
+     */
+    public static final ReportField FIELD_PRIMETYPE = FIELD_DEFS.declareLocalField("PrimeDigest");
+
+    /**
+     * Alternate digest field.
+     */
+    public static final ReportField FIELD_ALTTYPE = FIELD_DEFS.declareLocalField("AlternateDigest");
+
+    /**
+     * Secret digest field.
+     */
+    public static final ReportField FIELD_SECRETTYPE = FIELD_DEFS.declareLocalField("SecretDigest");
+
+    /**
+     * Cipher digest field.
+     */
+    public static final ReportField FIELD_CIPHER = FIELD_DEFS.declareLocalField("CipherDigest");
+
+    /**
+     * Switch iteration field.
+     */
+    public static final ReportField FIELD_SWITCH = FIELD_DEFS.declareLocalField("SwitchAdjust");
+
+    /**
+     * Final iteration field.
+     */
+    public static final ReportField FIELD_FINAL = FIELD_DEFS.declareLocalField("FinalAdjust");
 
     @Override
     public ReportFields getReportFields() {
-        return theFields;
+        return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(ReportField pField) {
-        if (pField == FIELD_PRIMETYPE)
+    public Object getFieldValue(final ReportField pField) {
+        if (pField == FIELD_PRIMETYPE) {
             return thePrimeDigest;
-        if (pField == FIELD_ALTTYPE)
+        }
+        if (pField == FIELD_ALTTYPE) {
             return theAlternateDigest;
-        if (pField == FIELD_SECRETTYPE)
+        }
+        if (pField == FIELD_SECRETTYPE) {
             return theSecretDigest;
-        if (pField == FIELD_CIPHER)
+        }
+        if (pField == FIELD_CIPHER) {
             return theCipherDigest;
-        if (pField == FIELD_SWITCH)
+        }
+        if (pField == FIELD_SWITCH) {
             return theSwitchAdjust;
-        if (pField == FIELD_FINAL)
+        }
+        if (pField == FIELD_FINAL) {
             return theFinalAdjust;
-        return null;
+        }
+        return super.getFieldValue(pField);
     }
 
     @Override
     public String getObjectSummary() {
-        return theFields.getName();
+        return FIELD_DEFS.getName();
     }
 
     /**
-     * The locations (in nybbles)
+     * Number of digests.
      */
-    private final static int placePRIMETYPE = 0;
-    private final static int placeALTTYPE = 1;
-    private final static int placeSECRETTYPE = 2;
-    private final static int placeCIPHERTYPE = 3;
-    private final static int placeSWITCH = 4;
-    private final static int placeFINAL = 5;
+    private static final int NUM_DIGESTS = 3;
 
     /**
-     * The various versions
+     * Maximum iteration.
      */
-    private final static short versionCURRENT = 1;
+    private static final int MAX_ITERATIONS = 15;
 
     /**
-     * The Prime Digest type
+     * The locations (in nybbles).
+     */
+    private static final int PLACE_PRIMETYPE = 0;
+
+    /**
+     * The locations (in nybbles).
+     */
+    private static final int PLACE_ALTTYPE = 1;
+
+    /**
+     * The locations (in nybbles).
+     */
+    private static final int PLACE_SECRETTYPE = 2;
+
+    /**
+     * The locations (in nybbles).
+     */
+    private static final int PLACE_CIPHERTYPE = 3;
+
+    /**
+     * The locations (in nybbles).
+     */
+    private static final int PLACE_SWITCH = 4;
+
+    /**
+     * The locations (in nybbles).
+     */
+    private static final int PLACE_FINAL = 5;
+
+    /**
+     * The various versions.
+     */
+    private static final short VERSION_CURRENT = 1;
+
+    /**
+     * The Prime Digest type.
      */
     private final DigestType thePrimeDigest;
 
     /**
-     * The Alternate Digest type
+     * The Alternate Digest type.
      */
     private final DigestType theAlternateDigest;
 
     /**
-     * The Secret Digest type
+     * The Secret Digest type.
      */
     private final DigestType theSecretDigest;
 
     /**
-     * The Cipher Digest type
+     * The Cipher Digest type.
      */
     private final DigestType theCipherDigest;
 
     /**
-     * The Switch adjustment
+     * The Switch adjustment.
      */
     private final int theSwitchAdjust;
 
     /**
-     * The Final adjustment
+     * The Final adjustment.
      */
     private final int theFinalAdjust;
 
     /**
-     * Obtain the Prime Digest type
+     * Obtain the Prime Digest type.
      * @return the digest type
      */
     public DigestType getPrimeDigest() {
@@ -124,7 +187,7 @@ public class HashMode extends SecurityMode {
     }
 
     /**
-     * Obtain the Alternate Digest type
+     * Obtain the Alternate Digest type.
      * @return the digest type
      */
     public DigestType getAlternateDigest() {
@@ -132,7 +195,7 @@ public class HashMode extends SecurityMode {
     }
 
     /**
-     * Obtain the Secret Digest type
+     * Obtain the Secret Digest type.
      * @return the digest type
      */
     public DigestType getSecretDigest() {
@@ -140,7 +203,7 @@ public class HashMode extends SecurityMode {
     }
 
     /**
-     * Obtain the Cipher Digest type
+     * Obtain the Cipher Digest type.
      * @return the digest type
      */
     public DigestType getCipherDigest() {
@@ -148,7 +211,7 @@ public class HashMode extends SecurityMode {
     }
 
     /**
-     * Obtain the Switch Adjustment
+     * Obtain the Switch Adjustment.
      * @return the switch adjustment
      */
     public int getSwitchAdjust() {
@@ -156,7 +219,7 @@ public class HashMode extends SecurityMode {
     }
 
     /**
-     * Obtain the Final Adjustment
+     * Obtain the Final Adjustment.
      * @return the final adjustment
      */
     public int getFinalAdjust() {
@@ -164,15 +227,15 @@ public class HashMode extends SecurityMode {
     }
 
     /**
-     * Constructor at random
+     * Constructor at random.
      * @param useRestricted use restricted keys
      * @param pRandom the random generator
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected HashMode(boolean useRestricted,
-                       SecureRandom pRandom) throws ModelException {
+    protected HashMode(final boolean useRestricted,
+                       final SecureRandom pRandom) throws ModelException {
         /* Access a random set of DigestTypes */
-        DigestType[] myDigest = DigestType.getRandomTypes(3, pRandom);
+        DigestType[] myDigest = DigestType.getRandomTypes(NUM_DIGESTS, pRandom);
         DigestType[] mySetDigest = DigestType.getRandomTypes(1, pRandom);
 
         /* Store Digest types */
@@ -182,11 +245,11 @@ public class HashMode extends SecurityMode {
         theCipherDigest = mySetDigest[0];
 
         /* Access random adjustment values */
-        theSwitchAdjust = 1 + pRandom.nextInt(15);
-        theFinalAdjust = 1 + pRandom.nextInt(15);
+        theSwitchAdjust = 1 + pRandom.nextInt(MAX_ITERATIONS);
+        theFinalAdjust = 1 + pRandom.nextInt(MAX_ITERATIONS);
 
         /* Set the version */
-        setVersion(versionCURRENT);
+        setVersion(VERSION_CURRENT);
 
         /* Set restricted flags */
         setRestricted(useRestricted);
@@ -196,45 +259,46 @@ public class HashMode extends SecurityMode {
     }
 
     /**
-     * Constructor from encoded format
+     * Constructor from encoded format.
      * @param pEncoded the encoded format
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected HashMode(byte[] pEncoded) throws ModelException {
+    protected HashMode(final byte[] pEncoded) throws ModelException {
         /* Set the initial encoded version */
         setEncoded(pEncoded);
 
         /* Not allowed unless version is current */
-        if (getVersion() != versionCURRENT)
+        if (getVersion() != VERSION_CURRENT) {
             throw new ModelException(ExceptionClass.LOGIC, "Invalid mode version: " + getVersion());
+        }
 
         /* Store Key type and digest */
-        thePrimeDigest = DigestType.fromId(getDataValue(placePRIMETYPE));
-        theAlternateDigest = DigestType.fromId(getDataValue(placeALTTYPE));
-        theSecretDigest = DigestType.fromId(getDataValue(placeSECRETTYPE));
-        theCipherDigest = DigestType.fromId(getDataValue(placeCIPHERTYPE));
+        thePrimeDigest = DigestType.fromId(getDataValue(PLACE_PRIMETYPE));
+        theAlternateDigest = DigestType.fromId(getDataValue(PLACE_ALTTYPE));
+        theSecretDigest = DigestType.fromId(getDataValue(PLACE_SECRETTYPE));
+        theCipherDigest = DigestType.fromId(getDataValue(PLACE_CIPHERTYPE));
 
         /* Access the adjustments */
-        theSwitchAdjust = getDataValue(placeSWITCH);
-        theFinalAdjust = getDataValue(placeFINAL);
+        theSwitchAdjust = getDataValue(PLACE_SWITCH);
+        theFinalAdjust = getDataValue(PLACE_FINAL);
 
         /* Re-encode the key mode */
         encodeKeyMode();
     }
 
     /**
-     * Encode the key mode
+     * Encode the key mode.
      */
     private void encodeKeyMode() {
         /* Allocate the encoded array */
-        allocateEncoded(placeFINAL);
+        allocateEncoded(PLACE_FINAL);
 
         /* Set the values */
-        setDataValue(placePRIMETYPE, thePrimeDigest.getId());
-        setDataValue(placeALTTYPE, theAlternateDigest.getId());
-        setDataValue(placeSECRETTYPE, theSecretDigest.getId());
-        setDataValue(placeCIPHERTYPE, theCipherDigest.getId());
-        setDataValue(placeSWITCH, theSwitchAdjust);
-        setDataValue(placeFINAL, theFinalAdjust);
+        setDataValue(PLACE_PRIMETYPE, thePrimeDigest.getId());
+        setDataValue(PLACE_ALTTYPE, theAlternateDigest.getId());
+        setDataValue(PLACE_SECRETTYPE, theSecretDigest.getId());
+        setDataValue(PLACE_CIPHERTYPE, theCipherDigest.getId());
+        setDataValue(PLACE_SWITCH, theSwitchAdjust);
+        setDataValue(PLACE_FINAL, theFinalAdjust);
     }
 }

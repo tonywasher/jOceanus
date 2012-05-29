@@ -19,7 +19,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.models.ui;
+package net.sourceforge.JDataManager.ui;
 
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -51,10 +51,10 @@ import net.sourceforge.JDataManager.PreferenceSet.IntegerPreference;
 import net.sourceforge.JDataManager.PreferenceSet.PreferenceItem;
 import net.sourceforge.JDataManager.PreferenceSet.PreferenceType;
 import net.sourceforge.JDataManager.PreferenceSet.StringPreference;
+import net.sourceforge.JDataManager.ui.ValueField.ValueClass;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayButton;
 import uk.co.tolcroft.models.ui.StdInterfaces.stdPanel;
-import uk.co.tolcroft.models.ui.ValueField.ValueClass;
 
 public class PreferenceSetPanel extends JPanel {
     /* Serial Id */
@@ -692,7 +692,7 @@ public class PreferenceSetPanel extends JPanel {
                 theField = new DateDayButton();
 
                 /* Add property change listener */
-                theField.addPropertyChangeListener(DateDayButton.propertyDATE, new PreferenceListener());
+                theField.addPropertyChangeListener(DateDayButton.PROPERTY_DATE, new PreferenceListener());
             }
 
             @Override

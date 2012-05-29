@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,54 +28,57 @@ import uk.co.tolcroft.models.data.DataKey;
 import uk.co.tolcroft.models.data.DataKey.DataKeyList;
 import uk.co.tolcroft.models.data.DataSet;
 
+/**
+ * Database table class for DataKey.
+ */
 public class TableDataKeys extends DatabaseTable<DataKey> {
     /**
-     * The name of the Static table
+     * The name of the Static table.
      */
-    protected final static String TableName = DataKey.listName;
+    protected static final String TABLE_NAME = DataKey.listName;
 
     /**
-     * The table definition
+     * The table definition.
      */
     private TableDefinition theTableDef; /* Set during load */
 
     /**
-     * The DataKey data list
+     * The DataKey data list.
      */
     private DataKeyList theList = null;
 
     /**
-     * Constructor
+     * Constructor.
      * @param pDatabase the database control
      */
-    protected TableDataKeys(Database<?> pDatabase) {
-        super(pDatabase, TableName);
+    protected TableDataKeys(final Database<?> pDatabase) {
+        super(pDatabase, TABLE_NAME);
     }
 
     /**
-     * Define the table columns (called from within super-constructor)
+     * Define the table columns (called from within super-constructor).
      * @param pTableDef the table definition
      */
     @Override
-    protected void defineTable(TableDefinition pTableDef) {
+    protected void defineTable(final TableDefinition pTableDef) {
         /* Define Standard table */
         super.defineTable(pTableDef);
         theTableDef = pTableDef;
 
         /* Define the columns */
-        theTableDef.addReferenceColumn(DataKey.FIELD_CONTROLKEY, TableControlKeys.TableName);
+        theTableDef.addReferenceColumn(DataKey.FIELD_CONTROLKEY, TableControlKeys.TABLE_NAME);
         theTableDef.addIntegerColumn(DataKey.FIELD_KEYTYPE);
         theTableDef.addBinaryColumn(DataKey.FIELD_KEY, DataKey.KEYLEN);
     }
 
     @Override
-    protected void declareData(DataSet<?> pData) {
+    protected void declareData(final DataSet<?> pData) {
         theList = pData.getDataKeys();
         setList(theList);
     }
 
     @Override
-    protected void loadItem(int pId) throws ModelException {
+    protected void loadItem(final int pId) throws ModelException {
         int myControl;
         int myKeyType;
         byte[] myKey;
@@ -89,8 +93,8 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
     }
 
     @Override
-    protected void setFieldValue(DataKey pItem,
-                                 ReportField iField) throws ModelException {
+    protected void setFieldValue(final DataKey pItem,
+                                 final ReportField iField) throws ModelException {
         /* Switch on field id */
         if (iField == DataKey.FIELD_CONTROLKEY) {
             theTableDef.setIntegerValue(iField, pItem.getControlKey().getId());

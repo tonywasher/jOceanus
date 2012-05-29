@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,18 +26,36 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.views.DataControl;
 
+/**
+ * Thread to create tables in a database to represent a data set. Existing tables will be dropped and
+ * redefined. Existing loaded data will be marked as new so that it will be written to the database via the
+ * store command.
+ * @author Tony Washer
+ * @param <T> the DataSet type
+ */
 public class CreateDatabase<T extends DataSet<T>> extends WorkerThread<Void> {
-    /* Task description */
-    private static String theTask = "DataBase Creation";
+    /**
+     * Task description.
+     */
+    private static final String TASK_NAME = "DataBase Creation";
 
-    /* Properties */
-    private DataControl<T> theControl = null;
-    private ThreadStatus<T> theStatus = null;
+    /**
+     * Data Control.
+     */
+    private final DataControl<T> theControl;
 
-    /* Constructor (Event Thread) */
-    public CreateDatabase(DataControl<T> pControl) {
+    /**
+     * Thread Status.
+     */
+    private final ThreadStatus<T> theStatus;
+
+    /**
+     * Constructor (Event Thread).
+     * @param pControl the data control
+     */
+    public CreateDatabase(final DataControl<T> pControl) {
         /* Call super-constructor */
-        super(theTask, pControl.getStatusBar());
+        super(TASK_NAME, pControl.getStatusBar());
 
         /* Store passed parameters */
         theControl = pControl;
@@ -50,22 +69,18 @@ public class CreateDatabase<T extends DataSet<T>> extends WorkerThread<Void> {
 
     @Override
     public Void performTask() throws Exception {
-        Database<T> myDatabase = null;
-        T myData;
-        T myNull;
-
         /* Initialise the status window */
         theStatus.initTask("Creating Database");
 
         /* Access Database */
-        myDatabase = theControl.getDatabase();
+        Database<T> myDatabase = theControl.getDatabase();
 
         /* Load database */
         myDatabase.createTables(theStatus);
 
         /* Re-base this set on a null set */
-        myNull = theControl.getNewData();
-        myData = theControl.getData();
+        T myNull = theControl.getNewData();
+        T myData = theControl.getData();
         myData.reBase(myNull);
 
         /* Return null value */

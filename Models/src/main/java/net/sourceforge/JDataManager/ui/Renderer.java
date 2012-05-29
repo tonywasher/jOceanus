@@ -19,25 +19,25 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.models.ui;
+package net.sourceforge.JDataManager.ui;
 
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import net.sourceforge.JDateDay.DateDayCellRenderer;
-import net.sourceforge.JDecimal.Decimal.DilutedPrice;
-import net.sourceforge.JDecimal.Decimal.Dilution;
-import net.sourceforge.JDecimal.Decimal.Money;
-import net.sourceforge.JDecimal.Decimal.Price;
-import net.sourceforge.JDecimal.Decimal.Rate;
-import net.sourceforge.JDecimal.Decimal.Units;
+import net.sourceforge.JDecimal.DilutedPrice;
+import net.sourceforge.JDecimal.Dilution;
+import net.sourceforge.JDecimal.Money;
+import net.sourceforge.JDecimal.Price;
+import net.sourceforge.JDecimal.Rate;
+import net.sourceforge.JDecimal.Units;
 import uk.co.tolcroft.models.ui.DataTable.DataTableModel;
 import uk.co.tolcroft.models.ui.DataTable.RowTableModel;
 
 public class Renderer {
     /* Properties */
-    protected static String theError = "Error";
+    public static String theError = "Error";
 
     /* Access methods */
     public static String getError() {

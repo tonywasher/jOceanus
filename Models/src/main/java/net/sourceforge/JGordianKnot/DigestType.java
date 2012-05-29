@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,79 +27,95 @@ import java.security.SecureRandom;
 import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 
+/**
+ * Digest types. Available algorithms.
+ * @author Tony Washer
+ */
 public enum DigestType {
     /**
-     * SHA256
+     * SHA256.
      */
     SHA256(1, 256),
 
     /**
-     * Tiger
+     * Tiger.
      */
     Tiger(2, 192),
 
     /**
-     * WhirlPool
+     * WhirlPool.
      */
     WHIRLPOOL(3, 512),
 
     /**
-     * RIPEMD
+     * RIPEMD.
      */
     RIPEMD(4, 320),
 
     /**
-     * GOST
+     * GOST.
      */
     GOST(5, 256),
 
     /**
-     * SHA512
+     * SHA512.
      */
     SHA512(6, 512);
 
     /**
-     * Key values
+     * The external Id of the algorithm.
      */
     private int theId = 0;
+
+    /**
+     * The length of the hash.
+     */
     private int theHashLen = 0;
 
-    /* Access methods */
+    /**
+     * Obtain the external Id.
+     * @return the external Id
+     */
     public int getId() {
         return theId;
     }
 
+    /**
+     * Obtain the length of the hash.
+     * @return the length
+     */
     public int getHashLen() {
         return theHashLen;
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param id the id
      * @param iLen the hash length
      */
-    private DigestType(int id,
-                       int iLen) {
+    private DigestType(final int id,
+                       final int iLen) {
         theId = id;
         theHashLen = iLen;
     }
 
     /**
-     * get value from id
+     * get value from id.
      * @param id the id value
      * @return the corresponding enumeration object
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public static DigestType fromId(int id) throws ModelException {
+    public static DigestType fromId(final int id) throws ModelException {
         for (DigestType myType : values()) {
-            if (myType.getId() == id)
+            if (myType.getId() == id) {
                 return myType;
+            }
         }
         throw new ModelException(ExceptionClass.DATA, "Invalid DigestType: " + id);
     }
 
     /**
-     * Return the associated algorithm
+     * Return the associated algorithm.
      * @return the algorithm
      */
     public String getAlgorithm() {
@@ -117,7 +134,7 @@ public enum DigestType {
     }
 
     /**
-     * Return the associated HMac algorithm
+     * Return the associated HMac algorithm.
      * @return the algorithm
      */
     public String getHMacAlgorithm() {
@@ -132,22 +149,23 @@ public enum DigestType {
     }
 
     /**
-     * Get random unique set of digest types
+     * Get random unique set of digest types.
      * @param pNumTypes the number of types
      * @param pRandom the random generator
      * @return the random set
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public static DigestType[] getRandomTypes(int pNumTypes,
-                                              SecureRandom pRandom) throws ModelException {
+    public static DigestType[] getRandomTypes(final int pNumTypes,
+                                              final SecureRandom pRandom) throws ModelException {
         /* Access the values */
         DigestType[] myValues = values();
         int iNumValues = myValues.length;
         int iIndex;
 
         /* Reject call if invalid number of types */
-        if ((pNumTypes < 1) || (pNumTypes > iNumValues))
+        if ((pNumTypes < 1) || (pNumTypes > iNumValues)) {
             throw new ModelException(ExceptionClass.LOGIC, "Invalid number of digests: " + pNumTypes);
+        }
 
         /* Create the result set */
         DigestType[] myTypes = new DigestType[pNumTypes];

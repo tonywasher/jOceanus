@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JHelpManager: Java Help Manager
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,23 +45,57 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+/**
+ * Help Window class, responsible for displaying the help.
+ */
 public class HelpWindow extends JFrame implements HyperlinkListener, TreeSelectionListener {
+    /**
+     * Serial Id.
+     */
     private static final long serialVersionUID = 3908377793788072474L;
 
-    /* Members */
+    /**
+     * The Height of the window.
+     */
+    private static final int WINDOW_WIDTH = 900;
+
+    /**
+     * The Height of the window.
+     */
+    private static final int WINDOW_HEIGHT = 600;
+
+    /**
+     * The editor pane.
+     */
     private final JEditorPane theEditor;
+
+    /**
+     * The tree.
+     */
     private final JTree theTree;
+
+    /**
+     * The entries.
+     */
     private final HelpEntry[] theEntries;
+
+    /**
+     * The module.
+     */
     private final HelpModule theModule;
+
+    /**
+     * The root of the tree.
+     */
     private final DefaultMutableTreeNode theRoot;
 
     /**
-     * Constructor
+     * Constructor.
      * @param pParent the parent frame
      * @param pModule the help module to display
      */
-    public HelpWindow(JFrame pParent,
-                      HelpModule pModule) {
+    public HelpWindow(final JFrame pParent,
+                      final HelpModule pModule) {
         /* Local variables */
         JSplitPane mySplit;
         JScrollPane myDocScroll;
@@ -122,7 +157,7 @@ public class HelpWindow extends JFrame implements HyperlinkListener, TreeSelecti
         /* Create the split pane */
         mySplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myTreeScroll, myDocScroll);
         mySplit.setOneTouchExpandable(true);
-        mySplit.setPreferredSize(new Dimension(900, 600));
+        mySplit.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
 
         /* Create the error panel */
         JPanel myPanel = new JPanel();
@@ -146,14 +181,19 @@ public class HelpWindow extends JFrame implements HyperlinkListener, TreeSelecti
         setLocationRelativeTo(pParent);
     }
 
-    /* display the dialog */
+    /**
+     * Display the dialog.
+     */
     public void showDialog() {
         /* Display the window */
         setVisible(true);
     }
 
-    /* display the page */
-    private void displayPage(String pName) {
+    /**
+     * Display the page.
+     * @param pName the name
+     */
+    private void displayPage(final String pName) {
         String myInternal = null;
         String myName = pName;
 
@@ -167,8 +207,9 @@ public class HelpWindow extends JFrame implements HyperlinkListener, TreeSelecti
             myInternal = myTokens[1];
 
             /* Handle an internal reference */
-            if (myName.length() == 0)
+            if (myName.length() == 0) {
                 myName = null;
+            }
         }
 
         /* If we are switching pages */
@@ -198,7 +239,7 @@ public class HelpWindow extends JFrame implements HyperlinkListener, TreeSelecti
     }
 
     @Override
-    public void hyperlinkUpdate(HyperlinkEvent e) {
+    public void hyperlinkUpdate(final HyperlinkEvent e) {
         /* If this is an activated event */
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
             if (e instanceof HTMLFrameHyperlinkEvent) {
@@ -206,29 +247,30 @@ public class HelpWindow extends JFrame implements HyperlinkListener, TreeSelecti
                 HTMLDocument doc = (HTMLDocument) theEditor.getDocument();
                 doc.processHTMLFrameHyperlinkEvent(evt);
             } else {
+                URL url = e.getURL();
                 try {
-                    URL url = e.getURL();
                     String desc = e.getDescription();
                     if (url == null) {
                         /* display the new page */
                         displayPage(desc);
-                    } else
+                    } else {
                         theEditor.setPage(e.getURL());
+                    }
                 } catch (Exception t) {
+                    url = null;
                 }
             }
         }
     }
 
     @Override
-    public void valueChanged(TreeSelectionEvent e) {
+    public void valueChanged(final TreeSelectionEvent e) {
         DefaultMutableTreeNode myNode = (DefaultMutableTreeNode) theTree.getLastSelectedPathComponent();
 
         /* Ignore if there is no selection or if this is the root */
-        if (myNode == null)
+        if ((myNode == null) || (myNode == theRoot)) {
             return;
-        if (myNode == theRoot)
-            return;
+        }
 
         /* Access the Help Entry */
         HelpEntry myEntry = (HelpEntry) myNode.getUserObject();

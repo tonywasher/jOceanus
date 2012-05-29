@@ -19,16 +19,18 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.models.data;
+package net.sourceforge.JDataManager;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.JDataManager.ReportFields;
 import net.sourceforge.JDataManager.ReportFields.ReportField;
 import net.sourceforge.JDataManager.ReportObject.ReportDetail;
 import net.sourceforge.JDataManager.ReportObject.ReportElement;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
+import uk.co.tolcroft.models.data.EditState;
 
 public class ValidationControl<T extends DataItem<T>> implements ReportDetail {
     /**
@@ -75,7 +77,7 @@ public class ValidationControl<T extends DataItem<T>> implements ReportDetail {
      * Constructor
      * @param pItem the item to which this validation control belongs
      */
-    protected ValidationControl(T pItem) {
+    public ValidationControl(T pItem) {
         /* Store details */
         theItem = pItem;
         theList = theItem.getList();
@@ -95,8 +97,8 @@ public class ValidationControl<T extends DataItem<T>> implements ReportDetail {
      * @param pText the text for the error
      * @param pField the field for the error
      */
-    protected void addError(String pText,
-                            ReportField pField) {
+    public void addError(String pText,
+                         ReportField pField) {
         /* Create a new error element */
         errorElement myEl = new errorElement(pText, pField);
 
@@ -112,7 +114,7 @@ public class ValidationControl<T extends DataItem<T>> implements ReportDetail {
      * @param pField - the field number to check
      * @return <code>true</code> if there are any errors <code>false</code> otherwise
      */
-    protected boolean hasErrors(ReportField pField) {
+    public boolean hasErrors(ReportField pField) {
         /* Loop through the elements */
         Iterator<errorElement> myIterator = theErrors.iterator();
         while (myIterator.hasNext()) {
@@ -129,7 +131,7 @@ public class ValidationControl<T extends DataItem<T>> implements ReportDetail {
      * @param pField - the field number to check
      * @return the error text
      */
-    protected String getFieldErrors(ReportField pField) {
+    public String getFieldErrors(ReportField pField) {
         String myErrors = null;
 
         /* Loop through the elements */
@@ -154,7 +156,7 @@ public class ValidationControl<T extends DataItem<T>> implements ReportDetail {
      * @param aFields the set of fields
      * @return the error text
      */
-    protected String getFieldErrors(ReportField[] aFields) {
+    public String getFieldErrors(ReportField[] aFields) {
         String myErrors = null;
 
         /* Loop through the elements */
@@ -205,7 +207,7 @@ public class ValidationControl<T extends DataItem<T>> implements ReportDetail {
     /**
      * Clear errors
      */
-    protected void clearErrors() {
+    public void clearErrors() {
         /* Remove all errors */
         theErrors.clear();
     }

@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,40 +29,80 @@ import net.sourceforge.JDataManager.PreferenceSet.PreferenceSetChooser;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.views.DataControl;
 
+/**
+ * Thread Status.
+ * @author Tony Washer
+ * @param <T> the DataSet type
+ */
 public class ThreadStatus<T extends DataSet<T>> implements StatusControl, PreferenceSetChooser {
-    private WorkerThread<?> theThread = null;
-    private StatusData theStatus = null;
-    private DataControl<T> theControl = null;
+    /**
+     * Default Number of steps/stages.
+     */
+    private static final int DEFAULT_NUMBER = 100;
+
+    /**
+     * The worker thread.
+     */
+    private final WorkerThread<?> theThread;
+
+    /**
+     * The status data.
+     */
+    private final StatusData theStatus;
+
+    /**
+     * The data control.
+     */
+    private final DataControl<T> theControl;
+
+    /**
+     * The number of reporting steps.
+     */
     private int theSteps;
 
     /**
-     * ThreadStatus Preferences
+     * ThreadStatus Preferences.
      */
     private ThreadStatusPreferences theTPreferences = null;
 
-    /* Access methods */
+    /**
+     * Get the number of reporting steps.
+     * @return the number of steps
+     */
     public int getReportingSteps() {
         return theSteps;
     }
 
+    /**
+     * Get the data control.
+     * @return the data control
+     */
     public DataControl<T> getControl() {
         return theControl;
     }
 
+    /**
+     * Is the thread cancelled?
+     * @return true/false
+     */
     public boolean isCancelled() {
         return theThread.isCancelled();
     }
 
-    /* Constructor */
-    public ThreadStatus(WorkerThread<?> pThread,
-                        DataControl<T> pControl) {
+    /**
+     * Constructor.
+     * @param pThread the thread
+     * @param pControl the data control
+     */
+    public ThreadStatus(final WorkerThread<?> pThread,
+                        final DataControl<T> pControl) {
         /* Store parameter */
         theThread = pThread;
         theControl = pControl;
 
         /* Access the threadStatus properties */
         theTPreferences = (ThreadStatusPreferences) PreferenceManager.getPreferenceSet(this);
-        theSteps = theTPreferences.getIntegerValue(ThreadStatusPreferences.nameRepSteps);
+        theSteps = theTPreferences.getIntegerValue(ThreadStatusPreferences.NAME_REPSTEPS);
 
         /* Create the status */
         theStatus = new StatusData();
@@ -73,23 +114,24 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl, Prefer
     }
 
     @Override
-    public boolean initTask(String pTask) {
+    public boolean initTask(final String pTask) {
         StatusData myStatus;
 
         /* Check for cancellation */
-        if (theThread.isCancelled())
+        if (theThread.isCancelled()) {
             return false;
+        }
 
         /* Record task and stage */
         theStatus.setTask(pTask);
         theStatus.setStage("");
 
         /* Set number of Stages and set Stages done to -1 */
-        theStatus.setNumStages(100);
+        theStatus.setNumStages(DEFAULT_NUMBER);
         theStatus.setStagesDone(-1);
 
         /* Set number of Steps and set Steps done to -1 */
-        theStatus.setNumSteps(100);
+        theStatus.setNumSteps(DEFAULT_NUMBER);
         theStatus.setStepsDone(-1);
 
         /* Create a new Status */
@@ -103,10 +145,11 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl, Prefer
     }
 
     @Override
-    public boolean setNumStages(int pNumStages) {
+    public boolean setNumStages(final int pNumStages) {
         /* Check for cancellation */
-        if (theThread.isCancelled())
+        if (theThread.isCancelled()) {
             return false;
+        }
 
         /* Initialise the number of stages and Stages done */
         theStatus.setNumStages(pNumStages);
@@ -117,21 +160,23 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl, Prefer
     }
 
     @Override
-    public boolean setNewStage(String pStage) {
+    public boolean setNewStage(final String pStage) {
         StatusData myStatus;
 
         /* Check for cancellation */
-        if (theThread.isCancelled())
+        if (theThread.isCancelled()) {
             return false;
+        }
 
         /* Store the stage and increment stages done */
         theStatus.setStage(pStage);
         theStatus.setStagesDone(theStatus.getStagesDone() + 1);
-        theStatus.setNumSteps(100);
-        if (theStatus.getStagesDone() < theStatus.getNumStages())
+        theStatus.setNumSteps(DEFAULT_NUMBER);
+        if (theStatus.getStagesDone() < theStatus.getNumStages()) {
             theStatus.setStepsDone(0);
-        else
-            theStatus.setStepsDone(100);
+        } else {
+            theStatus.setStepsDone(DEFAULT_NUMBER);
+        }
 
         /* Create a new Status */
         myStatus = new StatusData(theStatus);
@@ -144,10 +189,11 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl, Prefer
     }
 
     @Override
-    public boolean setNumSteps(int pNumSteps) {
+    public boolean setNumSteps(final int pNumSteps) {
         /* Check for cancellation */
-        if (theThread.isCancelled())
+        if (theThread.isCancelled()) {
             return false;
+        }
 
         /* Set number of Steps */
         theStatus.setNumSteps(pNumSteps);
@@ -157,12 +203,13 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl, Prefer
     }
 
     @Override
-    public boolean setStepsDone(int pStepsDone) {
+    public boolean setStepsDone(final int pStepsDone) {
         StatusData myStatus;
 
         /* Check for cancellation */
-        if (theThread.isCancelled())
+        if (theThread.isCancelled()) {
             return false;
+        }
 
         /* Set Steps done */
         theStatus.setStepsDone(pStepsDone);
@@ -178,27 +225,27 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl, Prefer
     }
 
     /**
-     * ThreadStatus Preferences
+     * ThreadStatus Preferences.
      */
-    public static class ThreadStatusPreferences extends PreferenceSet {
+    public static final class ThreadStatusPreferences extends PreferenceSet {
         /**
-         * Registry name for Reporting Steps
+         * Registry name for Reporting Steps.
          */
-        protected final static String nameRepSteps = "ReportingSteps";
+        protected static final String NAME_REPSTEPS = "ReportingSteps";
 
         /**
-         * Display name for Reporting Steps
+         * Display name for Reporting Steps.
          */
-        protected final static String dispRepSteps = "Reporting Steps";
+        protected static final String DISPLAY_REPSTEPS = "Reporting Steps";
 
         /**
-         * Default Reporting Steps
+         * Default Reporting Steps.
          */
-        private final static Integer defRepSteps = 10;
+        private static final Integer DEFAULT_REPSTEPS = 10;
 
         /**
-         * Constructor
-         * @throws ModelException
+         * Constructor.
+         * @throws ModelException on error
          */
         public ThreadStatusPreferences() throws ModelException {
             super();
@@ -207,22 +254,24 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl, Prefer
         @Override
         protected void definePreferences() {
             /* Define the preferences */
-            definePreference(nameRepSteps, PreferenceType.Integer);
+            definePreference(NAME_REPSTEPS, PreferenceType.Integer);
         }
 
         @Override
-        protected Object getDefaultValue(String pName) {
+        protected Object getDefaultValue(final String pName) {
             /* Handle default values */
-            if (pName.equals(nameRepSteps))
-                return defRepSteps;
+            if (pName.equals(NAME_REPSTEPS)) {
+                return DEFAULT_REPSTEPS;
+            }
             return null;
         }
 
         @Override
-        protected String getDisplayName(String pName) {
+        protected String getDisplayName(final String pName) {
             /* Handle default values */
-            if (pName.equals(nameRepSteps))
-                return dispRepSteps;
+            if (pName.equals(NAME_REPSTEPS)) {
+                return DISPLAY_REPSTEPS;
+            }
             return null;
         }
     }

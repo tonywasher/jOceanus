@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,79 +39,82 @@ import net.sourceforge.JGordianKnot.SecurityGenerator;
 import net.sourceforge.JGordianKnot.SymKeyType;
 import net.sourceforge.JGordianKnot.SymmetricKey;
 
+/**
+ * Class used to build a ZipFile.
+ */
 public class ZipWriteFile {
     /**
-     * The FileName prefix
+     * The FileName prefix.
      */
-    protected final static String filePrefix = "File";
+    protected static final String FILE_PREFIX = "File";
 
     /**
-     * Security Hash for this zip file
+     * Security Hash for this zip file.
      */
     private final PasswordHash theHash;
 
     /**
-     * Security Generator for this zip file
+     * Security Generator for this zip file.
      */
     private final SecurityGenerator theGenerator;
 
     /**
-     * The number of encryption steps
+     * The number of encryption steps.
      */
     private final int theNumEncrypts;
 
     /**
-     * Do we debug this file
+     * Do we debug this file.
      */
     private boolean bDebug;
 
     /**
-     * AsymmetricKey for this zip file
+     * AsymmetricKey for this zip file.
      */
     private final AsymmetricKey theAsymKey;
 
     /**
-     * The underlying Zip output stream
+     * The underlying Zip output stream.
      */
     private ZipOutputStream theStream = null;
 
     /**
-     * The list of contents
+     * The list of contents.
      */
     private final ZipFileContents theContents;
 
     /**
-     * The active zipEntry
+     * The active zipEntry.
      */
     private ZipEntry theEntry = null;
 
     /**
-     * The active filename
+     * The active filename.
      */
     private String theFileName = null;
 
     /**
-     * The active output stream
+     * The active output stream.
      */
     private OutputStream theOutput = null;
 
     /**
-     * The compressed output stream
+     * The compressed output stream.
      */
     private DigestOutputStream[] theDigests = null;
 
     /**
-     * The encryption output stream
+     * The encryption output stream.
      */
     private EncryptionOutputStream[] theEncrypts = null;
 
     /**
-     * The fileNumber
+     * The fileNumber.
      */
     private int theFileNo = 0;
 
     /**
-     * Is the ZipFile encrypted
+     * Is the ZipFile encrypted.
      * @return is the Zip File encrypted
      */
     private boolean isEncrypted() {
@@ -118,7 +122,7 @@ public class ZipWriteFile {
     }
 
     /**
-     * Obtain the contents
+     * Obtain the contents.
      * @return the ZipFile Contents
      */
     public ZipFileContents getContents() {
@@ -126,13 +130,13 @@ public class ZipWriteFile {
     }
 
     /**
-     * Constructor for new output zip file with security
+     * Constructor for new output zip file with security.
      * @param pHash the password hash to use
      * @param pFile the file details for the new zip file
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public ZipWriteFile(PasswordHash pHash,
-                        File pFile) throws ModelException {
+    public ZipWriteFile(final PasswordHash pHash,
+                        final File pFile) throws ModelException {
         FileOutputStream myOutFile;
         BufferedOutputStream myOutBuffer;
 
@@ -151,20 +155,19 @@ public class ZipWriteFile {
 
             /* Create the file contents */
             theContents = new ZipFileContents();
-        }
 
-        /* Catch exceptions */
-        catch (Exception e) {
+            /* Catch exceptions */
+        } catch (Exception e) {
             throw new ModelException(ExceptionClass.DATA, "Exception creating new Zip file", e);
         }
     }
 
     /**
-     * Constructor for new output zip file with no security
+     * Constructor for new output zip file with no security.
      * @param pFile the file details for the new zip file
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public ZipWriteFile(File pFile) throws ModelException {
+    public ZipWriteFile(final File pFile) throws ModelException {
         FileOutputStream myOutFile;
         BufferedOutputStream myOutBuffer;
 
@@ -183,45 +186,44 @@ public class ZipWriteFile {
 
             /* Create the file contents */
             theContents = new ZipFileContents();
-        }
 
-        /* Catch exceptions */
-        catch (Exception e) {
+            /* Catch exceptions */
+        } catch (Exception e) {
             throw new ModelException(ExceptionClass.DATA, "Exception creating new Zip file", e);
         }
     }
 
     /**
-     * Obtain a debug output stream for an entry in the zip file
+     * Obtain a debug output stream for an entry in the zip file.
      * @param pFile the file details for the new zip entry
      * @return the output stream
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public OutputStream getDebugOutputStream(File pFile) throws ModelException {
+    public OutputStream getDebugOutputStream(final File pFile) throws ModelException {
         /* Obtain debug output stream */
         return getOutputStream(pFile, true);
     }
 
     /**
-     * Obtain a debug output stream for an entry in the zip file
+     * Obtain a standard output stream for an entry in the zip file.
      * @param pFile the file details for the new zip entry
      * @return the output stream
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public OutputStream getOutputStream(File pFile) throws ModelException {
+    public OutputStream getOutputStream(final File pFile) throws ModelException {
         /* Obtain standard output stream */
         return getOutputStream(pFile, false);
     }
 
     /**
-     * Obtain an output stream for an entry in the zip file
+     * Obtain an output stream for an entry in the zip file.
      * @param pFile the file details for the new zip entry
-     * @param bDebug is this entry to be debugged
+     * @param pDebug is this entry to be debugged
      * @return the output stream
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    private OutputStream getOutputStream(File pFile,
-                                         boolean bDebug) throws ModelException {
+    private OutputStream getOutputStream(final File pFile,
+                                         final boolean pDebug) throws ModelException {
         LZMAOutputStream myZip;
         DigestOutputStream myDigest;
         EncryptionOutputStream myEncrypt;
@@ -229,15 +231,17 @@ public class ZipWriteFile {
         int iEncrypt;
 
         /* Reject call if we have closed the stream */
-        if (theStream == null)
+        if (theStream == null) {
             throw new ModelException(ExceptionClass.LOGIC, "ZipFile is closed");
+        }
 
         /* Reject call if we have an open stream */
-        if (theOutput != null)
+        if (theOutput != null) {
             throw new ModelException(ExceptionClass.LOGIC, "Output stream already open");
+        }
 
         /* Store debug indication */
-        this.bDebug = bDebug;
+        bDebug = pDebug;
 
         /* Increment file number */
         theFileNo++;
@@ -246,11 +250,11 @@ public class ZipWriteFile {
         try {
             /* Start the new entry */
             theFileName = pFile.getPath();
-            theEntry = new ZipEntry(isEncrypted() ? filePrefix + theFileNo : theFileName);
+            theEntry = new ZipEntry(isEncrypted() ? FILE_PREFIX + theFileNo : theFileName);
             theStream.putNextEntry(theEntry);
 
             /* Simply create a wrapper on the output stream */
-            theOutput = new wrapOutputStream();
+            theOutput = new WrapOutputStream();
 
             /* If we are encrypting */
             if (isEncrypted()) {
@@ -296,10 +300,9 @@ public class ZipWriteFile {
                 theOutput = myDigest;
                 theDigests[iDigest++] = myDigest;
             }
-        }
 
-        /* Catch exceptions */
-        catch (Exception e) {
+            /* Catch exceptions */
+        } catch (Exception e) {
             throw new ModelException(ExceptionClass.DATA, "Exception creating new Output stream", e);
         }
 
@@ -308,8 +311,8 @@ public class ZipWriteFile {
     }
 
     /**
-     * Close any active output stream and record digest values
-     * @throws IOException
+     * Close any active output stream and record digest values.
+     * @throws IOException on error
      */
     private void closeOutputStream() throws IOException {
         ZipFileEntry myEntry;
@@ -330,8 +333,9 @@ public class ZipWriteFile {
                 /* If we have encryption */
                 if (isEncrypted()) {
                     /* Add debug indication if required */
-                    if (bDebug)
+                    if (bDebug) {
                         myEntry.setDebug();
+                    }
 
                     /* Record the digests */
                     myEntry.setDigests(theDigests);
@@ -352,10 +356,9 @@ public class ZipWriteFile {
             theOutput = null;
             theDigests = null;
             theEncrypts = null;
-        }
 
-        /* Catch exceptions */
-        catch (IOException e) {
+            /* Catch exceptions */
+        } catch (IOException e) {
             throw e;
         } catch (ModelException e) {
             throw new IOException(e);
@@ -363,8 +366,8 @@ public class ZipWriteFile {
     }
 
     /**
-     * Close the Zip file and write the header
-     * @throws IOException
+     * Close the Zip file and write the header.
+     * @throws IOException on error
      */
     public void close() throws IOException {
         String myHeader;
@@ -389,7 +392,7 @@ public class ZipWriteFile {
 
                     /* Create the header entry */
                     ++theFileNo;
-                    theEntry = new ZipEntry(filePrefix + theFileNo);
+                    theEntry = new ZipEntry(FILE_PREFIX + theFileNo);
 
                     /* Declare the password hash and encrypt the header */
                     theEntry.setExtra(theHash.getHashBytes());
@@ -415,10 +418,9 @@ public class ZipWriteFile {
                 theStream.flush();
                 theStream.close();
                 theStream = null;
-            }
 
-            /* Catch exceptions */
-            catch (IOException e) {
+                /* Catch exceptions */
+            } catch (IOException e) {
                 throw e;
             } catch (Exception e) {
                 throw new IOException(e);
@@ -427,28 +429,28 @@ public class ZipWriteFile {
     }
 
     /**
-     * Wrapper class to catch close of output stream and prevent it from closing the ZipFile
+     * Wrapper class to catch close of output stream and prevent it from closing the ZipFile.
      */
-    private class wrapOutputStream extends java.io.OutputStream {
+    private final class WrapOutputStream extends OutputStream {
         @Override
         public void flush() throws IOException {
             theStream.flush();
         }
 
         @Override
-        public void write(int b) throws IOException {
+        public void write(final int b) throws IOException {
             theStream.write(b);
         }
 
         @Override
-        public void write(byte[] b) throws IOException {
+        public void write(final byte[] b) throws IOException {
             theStream.write(b);
         }
 
         @Override
-        public void write(byte[] b,
-                          int offset,
-                          int length) throws IOException {
+        public void write(final byte[] b,
+                          final int offset,
+                          final int length) throws IOException {
             theStream.write(b, offset, length);
         }
 

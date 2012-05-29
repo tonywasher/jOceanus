@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,28 +29,33 @@ import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JDataManager.ReportFields;
 import net.sourceforge.JDataManager.ReportFields.ReportField;
 
+/**
+ * Encryption Mode. Encapsulates Encryption options.
+ * @author Tony Washer
+ */
 public class EncryptionMode extends NybbleArray {
     /**
-     * Report fields
+     * Report fields.
      */
-    protected static final ReportFields theFields = new ReportFields(EncryptionMode.class.getSimpleName(),
-            NybbleArray.theFields);
+    protected static final ReportFields FIELD_DEFS = new ReportFields(EncryptionMode.class.getSimpleName(),
+            NybbleArray.FIELD_DEFS);
 
     /**
-     * Report fields
+     * Local Report fields.
      */
     private final ReportFields theLocalFields;
 
-    /* Called from constructor */
     /**
-     * Allocate local fields
+     * Allocate local fields.
      * @return the local fields
      */
     private static ReportFields declareFields() {
-        return new ReportFields(theFields.getName(), theFields);
+        return new ReportFields(FIELD_DEFS.getName(), FIELD_DEFS);
     }
 
-    /* Field IDs */
+    /**
+     * Field IDs.
+     */
     public static final String FIELD_SYMKEY = "SymKey";
 
     @Override
@@ -58,36 +64,38 @@ public class EncryptionMode extends NybbleArray {
     }
 
     @Override
-    public Object getFieldValue(ReportField pField) {
+    public Object getFieldValue(final ReportField pField) {
         /* If the field is a symKey, handle specially */
-        if (pField.getAnchor() == theLocalFields) {
-            if (pField.getName().startsWith(FIELD_SYMKEY)) {
-                /* Return the relevant SymKeyType */
-                String myId = pField.getName().substring(FIELD_SYMKEY.length());
-                return theKeyTypes[Integer.parseInt(myId) - 1];
-            }
+        if ((pField.getAnchor() == theLocalFields) && (pField.getName().startsWith(FIELD_SYMKEY))) {
+            /* Return the relevant SymKeyType */
+            String myId = pField.getName().substring(FIELD_SYMKEY.length());
+            return theKeyTypes[Integer.parseInt(myId) - 1];
         }
         return super.getFieldValue(pField);
     }
 
     @Override
     public String getObjectSummary() {
-        return theFields.getName();
+        return FIELD_DEFS.getName();
     }
 
     /**
-     * The locations (in nybbles)
+     * The # types location (in nybbles).
      */
-    private final static int placeNUMTYPES = 0;
-    private final static int placeSYMKEY = 1;
+    private static final int PLACE_NUMTYPES = 0;
 
     /**
-     * The SymKeyTypes
+     * The SymKey location (in nybbles).
+     */
+    private static final int PLACE_SYMKEY = 1;
+
+    /**
+     * The SymKeyTypes.
      */
     private final SymKeyType[] theKeyTypes;
 
     /**
-     * Obtain the SymKeyTypes
+     * Obtain the SymKeyTypes.
      * @return the SymKeyTypes
      */
     public SymKeyType[] getSymKeyTypes() {
@@ -95,13 +103,13 @@ public class EncryptionMode extends NybbleArray {
     }
 
     /**
-     * Constructor at random
+     * Constructor at random.
      * @param pNumEncrypts the number of keys
      * @param pRandom the random generator
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected EncryptionMode(int pNumEncrypts,
-                             SecureRandom pRandom) throws ModelException {
+    protected EncryptionMode(final int pNumEncrypts,
+                             final SecureRandom pRandom) throws ModelException {
         /* Declare local fields */
         theLocalFields = declareFields();
 
@@ -113,11 +121,11 @@ public class EncryptionMode extends NybbleArray {
     }
 
     /**
-     * Constructor from encoded format
+     * Constructor from encoded format.
      * @param pEncoded the encoded format
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected EncryptionMode(byte[] pEncoded) throws ModelException {
+    protected EncryptionMode(final byte[] pEncoded) throws ModelException {
         /* Declare local fields */
         theLocalFields = declareFields();
 
@@ -125,10 +133,11 @@ public class EncryptionMode extends NybbleArray {
         setEncoded(pEncoded);
 
         /* Obtain number of key types */
-        int iNumEncrypts = getValue(placeNUMTYPES);
-        if (iNumEncrypts > SymKeyType.values().length)
-            throw new ModelException(ExceptionClass.LOGIC, "Invalid number of encryption steps: "
+        int iNumEncrypts = getValue(PLACE_NUMTYPES);
+        if (iNumEncrypts > SymKeyType.values().length) {
+            throw new ModelException(ExceptionClass.DATA, "Invalid number of encryption steps: "
                     + iNumEncrypts);
+        }
 
         /* Allocate the array */
         theKeyTypes = new SymKeyType[iNumEncrypts];
@@ -136,7 +145,7 @@ public class EncryptionMode extends NybbleArray {
         /* Loop through the key types */
         for (int i = 0; i < iNumEncrypts; i++) {
             /* Pick up the key type */
-            theKeyTypes[i] = SymKeyType.fromId(getValue(placeSYMKEY + i));
+            theKeyTypes[i] = SymKeyType.fromId(getValue(PLACE_SYMKEY + i));
         }
 
         /* Re-encode the key mode */
@@ -144,21 +153,21 @@ public class EncryptionMode extends NybbleArray {
     }
 
     /**
-     * Encode the key mode
+     * Encode the key mode.
      */
     private void encodeKeyMode() {
         int iNumEncrypts = theKeyTypes.length;
 
         /* Allocate the encoded array */
-        allocateEncoded(placeSYMKEY + iNumEncrypts - 1);
+        allocateEncoded(PLACE_SYMKEY + iNumEncrypts - 1);
 
         /* Set the number of keys */
-        setValue(placeNUMTYPES, iNumEncrypts);
+        setValue(PLACE_NUMTYPES, iNumEncrypts);
 
         /* Loop through the key types */
         for (int i = 0; i < iNumEncrypts; i++) {
             /* Set the key type */
-            setValue(placeSYMKEY + i, theKeyTypes[i].getId());
+            setValue(PLACE_SYMKEY + i, theKeyTypes[i].getId());
 
             /* Declare the field */
             theLocalFields.declareLocalField(FIELD_SYMKEY + (i + 1));

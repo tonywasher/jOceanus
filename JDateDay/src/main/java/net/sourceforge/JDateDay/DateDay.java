@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDateDay: Java Date Day
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,58 +27,65 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import net.sourceforge.JDateButton.JDateConfig;
+
 /**
  * Represents a Date object that is fixed to a particular day. There is no concept of time within the day
- * Calendar objects that are built to represent the Date are set to noon on the day in question
+ * Calendar objects that are built to represent the Date are set to noon on the day in question.
  */
 public class DateDay implements Comparable<DateDay> {
     /**
-     * The format to be used
+     * The Hash prime.
      */
-    private static String theDefaultFormat = "dd-MMM-yyyy";
+    protected static final int HASH_PRIME = 17;
 
     /**
-     * The locale to be used
+     * The format to be used.
+     */
+    private static final String FORMAT_DEFAULT = "dd-MMM-yyyy";
+
+    /**
+     * The locale to be used.
      */
     private Locale theLocale;
 
     /**
-     * The format to be used
+     * The format to be used.
      */
-    private String theFormat = theDefaultFormat;
+    private String theFormat = FORMAT_DEFAULT;
 
     /**
-     * The Simple Date format for the locale and format string
+     * The Simple Date format for the locale and format string.
      */
     private SimpleDateFormat theDateFormat = null;
 
     /**
-     * The Date format
+     * The Date format.
      */
     private String theFormattedDate = null;
 
     /**
-     * The Date object in underlying Java form
+     * The Date object in underlying Java form.
      */
     private Calendar theDate = null;
 
     /**
-     * The year of the date
+     * The year of the date.
      */
     private int theYear = 0;
 
     /**
-     * The month of the date
+     * The month of the date.
      */
     private int theMonth = 0;
 
     /**
-     * The day of the date
+     * The day of the date.
      */
     private int theDay = 0;
 
     /**
-     * Get the year of the date
+     * Get the year of the date.
      * @return the year of the date
      */
     public int getYear() {
@@ -85,7 +93,7 @@ public class DateDay implements Comparable<DateDay> {
     }
 
     /**
-     * Get the month of the date
+     * Get the month of the date.
      * @return the month of the date
      */
     public int getMonth() {
@@ -93,7 +101,7 @@ public class DateDay implements Comparable<DateDay> {
     }
 
     /**
-     * Get the day of the date
+     * Get the day of the date.
      * @return the day of the date
      */
     public int getDay() {
@@ -101,7 +109,7 @@ public class DateDay implements Comparable<DateDay> {
     }
 
     /**
-     * Get the java date associated with this object
+     * Get the java date associated with this object.
      * @return the java date
      */
     public Date getDate() {
@@ -109,7 +117,7 @@ public class DateDay implements Comparable<DateDay> {
     }
 
     /**
-     * Get the java Calendar associated with this object
+     * Get the java Calendar associated with this object.
      * @return the java calendar
      */
     public Calendar getCalendar() {
@@ -117,7 +125,7 @@ public class DateDay implements Comparable<DateDay> {
     }
 
     /**
-     * Get the locale associated with this object
+     * Get the locale associated with this object.
      * @return the java locale
      */
     public Locale getLocale() {
@@ -125,56 +133,57 @@ public class DateDay implements Comparable<DateDay> {
     }
 
     /**
-     * Construct a new Date and initialise with todays date
+     * Construct a new Date and initialise with todays date.
      */
     public DateDay() {
         this(Locale.getDefault());
     }
 
     /**
-     * Construct a new Date and initialise with todays date
+     * Construct a new Date and initialise with todays date.
      * @param pLocale the locale
      */
-    public DateDay(Locale pLocale) {
+    public DateDay(final Locale pLocale) {
         this(Calendar.getInstance(pLocale).getTime());
     }
 
     /**
-     * Construct a new Date and initialise from a java date
+     * Construct a new Date and initialise from a java date.
      * @param pDate the java date to initialise from
      */
-    public DateDay(Date pDate) {
+    public DateDay(final Date pDate) {
         this(pDate, Locale.getDefault());
     }
 
     /**
-     * Construct a new Date and initialise from a java date
+     * Construct a new Date and initialise from a java date.
      * @param pDate the java date to initialise from
      * @param pLocale the locale for this date
      */
-    public DateDay(Date pDate,
-                   Locale pLocale) {
+    public DateDay(final Date pDate,
+                   final Locale pLocale) {
         buildDateDay(pDate, pLocale);
     }
 
     /**
-     * Construct a new DateDay and initialise from a java Calendar
+     * Construct a new DateDay and initialise from a java Calendar.
      * @param pDate the java date to initialise from
      */
-    public DateDay(Calendar pDate) {
+    public DateDay(final Calendar pDate) {
         this(pDate, Locale.getDefault());
     }
 
     /**
-     * Construct a new DateDay and initialise from a java Calendar
+     * Construct a new DateDay and initialise from a java Calendar.
      * @param pDate the java date to initialise from
      * @param pLocale the locale for this date
      */
-    public DateDay(Calendar pDate,
-                   Locale pLocale) {
+    public DateDay(final Calendar pDate,
+                   final Locale pLocale) {
         /* Null dates not allowed */
-        if (pDate == null)
+        if (pDate == null) {
             throw new IllegalArgumentException("Null Date not allowed");
+        }
 
         /* Create the Date */
         buildDateDay(pDate.get(Calendar.YEAR), pDate.get(Calendar.MONTH), pDate.get(Calendar.DAY_OF_MONTH),
@@ -182,75 +191,77 @@ public class DateDay implements Comparable<DateDay> {
     }
 
     /**
-     * Construct a new Date and initialise from a finance date
+     * Construct a new Date and initialise from a finance date.
      * @param pDate the finance date to initialise from
      */
-    public DateDay(DateDay pDate) {
+    public DateDay(final DateDay pDate) {
         /* Null dates not allowed */
-        if (pDate == null)
+        if (pDate == null) {
             throw new IllegalArgumentException("Null Date not allowed");
+        }
 
         /* Create the Date */
         buildDateDay(pDate.getYear(), pDate.getMonth(), pDate.getDay(), pDate.getLocale());
     }
 
     /**
-     * Construct an explicit Date
+     * Construct an explicit Date.
      * @param pYear the year
      * @param pMonth the month (Calendar.JUNE etc)
      * @param pDay the day of the month
      */
-    public DateDay(int pYear,
-                   int pMonth,
-                   int pDay) {
+    public DateDay(final int pYear,
+                   final int pMonth,
+                   final int pDay) {
         this(pYear, pMonth, pDay, Locale.getDefault());
     }
 
     /**
-     * Construct an explicit Date for a locale
+     * Construct an explicit Date for a locale.
      * @param pYear the year
      * @param pMonth the month (Calendar.JUNE etc)
      * @param pDay the day of the month
      * @param pLocale the locale for this date
      */
-    public DateDay(int pYear,
-                   int pMonth,
-                   int pDay,
-                   Locale pLocale) {
+    public DateDay(final int pYear,
+                   final int pMonth,
+                   final int pDay,
+                   final Locale pLocale) {
         buildDateDay(pYear, pMonth, pDay, pLocale);
     }
 
     /**
-     * Construct a Date from a formatted string
+     * Construct a Date from a formatted string.
      * @param pValue the formatted string
      */
-    public DateDay(String pValue) {
+    public DateDay(final String pValue) {
         this(pValue, Locale.getDefault());
     }
 
     /**
-     * Construct a Date from a formatted string
+     * Construct a Date from a formatted string.
      * @param pValue the formatted string
      * @param pLocale the locale for this date
      */
-    public DateDay(String pValue,
-                   Locale pLocale) {
+    public DateDay(final String pValue,
+                   final Locale pLocale) {
         /* Parse using default format */
-        this(pValue, pLocale, theDefaultFormat);
+        this(pValue, pLocale, FORMAT_DEFAULT);
     }
 
     /**
-     * Construct a Date from a formatted string
+     * Construct a Date from a formatted string.
      * @param pValue the formatted string
      * @param pLocale the locale for this date
      * @param pFormat the format to use for parsing
      */
-    public DateDay(String pValue,
-                   Locale pLocale,
-                   String pFormat) {
-        /* Access the parsed date */
-        java.util.Date myDate = null;
+    public DateDay(final String pValue,
+                   final Locale pLocale,
+                   final String pFormat) {
         try {
+            /* Access the parsed date */
+            Date myDate = null;
+
             /* Access the date format */
             theFormat = pFormat;
             theDateFormat = new SimpleDateFormat(theFormat, pLocale);
@@ -264,15 +275,16 @@ public class DateDay implements Comparable<DateDay> {
     }
 
     /**
-     * Construct a date from a java date
+     * Construct a date from a java date.
      * @param pDate the java date to initialise from
      * @param pLocale the locale for this date
      */
-    private void buildDateDay(Date pDate,
-                              Locale pLocale) {
+    private void buildDateDay(final Date pDate,
+                              final Locale pLocale) {
         /* Null dates not allowed */
-        if (pDate == null)
+        if (pDate == null) {
             throw new IllegalArgumentException("Null Date not allowed");
+        }
 
         /* Access Date within calendar */
         Calendar myDate = Calendar.getInstance(pLocale);
@@ -284,33 +296,34 @@ public class DateDay implements Comparable<DateDay> {
     }
 
     /**
-     * Construct an explicit Date for a locale
+     * Construct an explicit Date for a locale.
      * @param pYear the year
      * @param pMonth the month (Calendar.JUNE etc)
      * @param pDay the day of the month
      * @param pLocale the locale for this date
      */
-    private void buildDateDay(int pYear,
-                              int pMonth,
-                              int pDay,
-                              Locale pLocale) {
+    private void buildDateDay(final int pYear,
+                              final int pMonth,
+                              final int pDay,
+                              final Locale pLocale) {
         /* Null locale not allowed */
-        if (pLocale == null)
+        if (pLocale == null) {
             throw new IllegalArgumentException("Null Locale not allowed");
+        }
 
         /* Build date values */
         theLocale = pLocale;
         theDate = Calendar.getInstance(theLocale);
-        theDate.set(pYear, pMonth, pDay, 12, 0, 0);
+        theDate.set(pYear, pMonth, pDay, JDateConfig.NOON_HOUR, 0, 0);
         theDate.set(Calendar.MILLISECOND, 0);
         obtainValues();
     }
 
     /**
-     * Set locale for the DateDay
-     * @param pLocale
+     * Set locale for the DateDay.
+     * @param pLocale the locale
      */
-    public void setLocale(Locale pLocale) {
+    public void setLocale(final Locale pLocale) {
         /* Record the locale */
         theLocale = pLocale;
 
@@ -322,10 +335,10 @@ public class DateDay implements Comparable<DateDay> {
     }
 
     /**
-     * Set the date format
+     * Set the date format.
      * @param pFormat the format string
      */
-    public void setFormat(String pFormat) {
+    public void setFormat(final String pFormat) {
         /* Store the format string */
         theFormat = pFormat;
 
@@ -335,65 +348,67 @@ public class DateDay implements Comparable<DateDay> {
     }
 
     /**
-     * Adjust the date by a number of years
+     * Adjust the date by a number of years.
      * @param iYear the number of years to adjust by
      */
-    public void adjustYear(int iYear) {
+    public void adjustYear(final int iYear) {
         theDate.add(Calendar.YEAR, iYear);
         obtainValues();
     }
 
     /**
-     * Adjust the date by a number of months
+     * Adjust the date by a number of months.
      * @param iMonth the number of months to adjust by
      */
-    public void adjustMonth(int iMonth) {
+    public void adjustMonth(final int iMonth) {
         theDate.add(Calendar.MONTH, iMonth);
         obtainValues();
     }
 
     /**
-     * Adjust the date by a number of days
+     * Adjust the date by a number of days.
      * @param iDay the number of days to adjust by
      */
-    public void adjustDay(int iDay) {
+    public void adjustDay(final int iDay) {
         theDate.add(Calendar.DAY_OF_MONTH, iDay);
         obtainValues();
     }
 
     /**
-     * Adjust the date by a determined amount
+     * Adjust the date by a determined amount.
      * @param iField the field to adjust
      * @param iUnits the number of units to adjust by
      */
-    public void adjustField(int iField,
-                            int iUnits) {
+    public void adjustField(final int iField,
+                            final int iUnits) {
         theDate.add(iField, iUnits);
         obtainValues();
     }
 
     /**
-     * Adjust the date by a period in a forward direction
+     * Adjust the date by a period in a forward direction.
      * @param pPeriod the period to adjust by
      */
-    public void adjustForwardByPeriod(DatePeriod pPeriod) {
-        if (pPeriod == DatePeriod.Unlimited)
+    public void adjustForwardByPeriod(final DatePeriod pPeriod) {
+        if (pPeriod == DatePeriod.Unlimited) {
             return;
+        }
         adjustField(pPeriod.getField(), pPeriod.getAmount(true));
     }
 
     /**
-     * Adjust the date by a period in a backward direction
+     * Adjust the date by a period in a backward direction.
      * @param pPeriod the period to adjust by
      */
-    public void adjustBackwardByPeriod(DatePeriod pPeriod) {
-        if (pPeriod == DatePeriod.Unlimited)
+    public void adjustBackwardByPeriod(final DatePeriod pPeriod) {
+        if (pPeriod == DatePeriod.Unlimited) {
             return;
+        }
         adjustField(pPeriod.getField(), pPeriod.getAmount(false));
     }
 
     /**
-     * Adjust the date to the end of the following month
+     * Adjust the date to the end of the following month.
      */
     public void endNextMonth() {
         /* Move to the first of the current month */
@@ -406,11 +421,11 @@ public class DateDay implements Comparable<DateDay> {
     }
 
     /**
-     * Calculate the age that someone born on this date will be on a given date
+     * Calculate the age that someone born on this date will be on a given date.
      * @param pDate the date for which to calculate the age
      * @return the age on that date
      */
-    public int ageOn(DateDay pDate) {
+    public int ageOn(final DateDay pDate) {
         int myAge = -1;
 
         /* Calculate the initial age assuming same date in year */
@@ -418,24 +433,25 @@ public class DateDay implements Comparable<DateDay> {
         myAge -= theDate.get(Calendar.YEAR);
 
         /* If we are a later day in the year subtract 1 year */
-        if (theDate.get(Calendar.DAY_OF_YEAR) > pDate.theDate.get(Calendar.DAY_OF_YEAR))
+        if (theDate.get(Calendar.DAY_OF_YEAR) > pDate.theDate.get(Calendar.DAY_OF_YEAR)) {
             myAge--;
+        }
 
         /* Return to caller */
         return myAge;
     }
 
     /**
-     * Copy a date from another finance date
+     * Copy a date from another DateDay.
      * @param pDate the date to copy from
      */
-    public void copyDate(DateDay pDate) {
+    public void copyDate(final DateDay pDate) {
         buildDateDay(pDate.getYear(), pDate.getMonth(), pDate.getDay(), theLocale);
         obtainValues();
     }
 
     /**
-     * Obtain the year,month and day values from the date
+     * Obtain the year,month and day values from the date.
      */
     private void obtainValues() {
         /* Access date details */
@@ -450,8 +466,9 @@ public class DateDay implements Comparable<DateDay> {
     @Override
     public String toString() {
         /* If we already have a formatted date */
-        if (theFormattedDate != null)
+        if (theFormattedDate != null) {
             return theFormattedDate;
+        }
 
         /* If we have not obtained the date format */
         if (theDateFormat == null) {
@@ -473,48 +490,53 @@ public class DateDay implements Comparable<DateDay> {
      *         sort order
      */
     @Override
-    public int compareTo(DateDay that) {
-        if (this == that)
+    public int compareTo(final DateDay that) {
+        if (this == that) {
             return 0;
-        if (that == null)
+        } else if (that == null) {
             return -1;
-        if (this.theYear < that.theYear)
+        } else if (this.theYear < that.theYear) {
             return -1;
-        if (this.theYear > that.theYear)
+        } else if (this.theYear > that.theYear) {
             return 1;
-        if (this.theMonth < that.theMonth)
+        } else if (this.theMonth < that.theMonth) {
             return -1;
-        if (this.theMonth > that.theMonth)
+        } else if (this.theMonth > that.theMonth) {
             return 1;
-        if (this.theDay < that.theDay)
+        } else if (this.theDay < that.theDay) {
             return -1;
-        if (this.theDay > that.theDay)
+        } else if (this.theDay > that.theDay) {
             return 1;
+        }
         return 0;
     }
 
     @Override
-    public boolean equals(Object pThat) {
+    public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-        if (this == pThat)
+        if (this == pThat) {
             return true;
-        if (pThat == null)
+        }
+        if (pThat == null) {
             return false;
+        }
 
         /* Make sure that the object is a DateDay */
-        if (pThat.getClass() != this.getClass())
+        if (pThat.getClass() != this.getClass()) {
             return false;
+        }
 
         /* Access the object as a DateDay */
         DateDay myThat = (DateDay) pThat;
 
         /* Check components */
-        if (this.theYear != myThat.theYear)
+        if (this.theYear != myThat.theYear) {
             return false;
-        if (this.theMonth != myThat.theMonth)
+        } else if (this.theMonth != myThat.theMonth) {
             return false;
-        if (this.theDay != myThat.theDay)
+        } else if (this.theDay != myThat.theDay) {
             return false;
+        }
         return true;
     }
 
@@ -522,9 +544,9 @@ public class DateDay implements Comparable<DateDay> {
     public int hashCode() {
         /* Calculate hash based on Year/Month/Day */
         int iHash = theYear;
-        iHash *= 17;
+        iHash *= HASH_PRIME;
         iHash += theMonth + 1;
-        iHash *= 17;
+        iHash *= HASH_PRIME;
         iHash += theDay;
         return iHash;
     }
@@ -535,15 +557,17 @@ public class DateDay implements Comparable<DateDay> {
      * @param pNew The new Date
      * @return <code>true</code> if the objects differ, <code>false</code> otherwise
      */
-    public static boolean isDifferent(DateDay pCurr,
-                                      DateDay pNew) {
+    public static boolean isDifferent(final DateDay pCurr,
+                                      final DateDay pNew) {
         /* Handle case where current value is null */
-        if (pCurr == null)
+        if (pCurr == null) {
             return (pNew != null);
+        }
 
         /* Handle case where new value is null */
-        if (pNew == null)
+        if (pNew == null) {
             return true;
+        }
 
         /* Handle Standard cases */
         return !pCurr.equals(pNew);

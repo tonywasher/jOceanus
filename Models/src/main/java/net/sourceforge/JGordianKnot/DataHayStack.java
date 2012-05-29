@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,31 +27,65 @@ import java.util.Arrays;
 import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 
+/**
+ * Class to hide a small piece of data into a larger piece of data.
+ * @author Tony Washer
+ */
 public class DataHayStack {
     /**
-     * HayStack signature
+     * HayStack signature.
      */
-    private static final byte theSignature = 0x5b;
+    private static final byte SIGN_HAYSTACK = 0x5b;
 
     /**
-     * Hide a needle in a hayStack
+     * Maximum needle length.
+     */
+    private static final int MAX_NEEDLE_LEN = 255;
+
+    /**
+     * Minimum hayStack length.
+     */
+    private static final int MIN_HAYSTACK_LEN = 16;
+
+    /**
+     * Mask shift.
+     */
+    private static final int MASK_SHIFT = 4;
+
+    /**
+     * Shift mask.
+     */
+    private static final int SHIFT_MASK = 0xF;
+
+    /**
+     * Id shift.
+     */
+    private static final int ID_SHIFT = 0x11;
+
+    /**
+     * Id mask.
+     */
+    private static final int ID_MASK = 0xF;
+
+    /**
+     * Hide a needle in a hayStack.
      * @param pNeedle the data to hide
      * @param pHayStack the data to hide within
      * @return the hayStack now containing the needle
      */
-    private static byte[] hideNeedle(byte[] pNeedle,
-                                     byte[] pHayStack) {
+    private static byte[] hideNeedle(final byte[] pNeedle,
+                                     final byte[] pHayStack) {
         /* Determine length of needle and hayStack */
         int iNeedleLen = pNeedle.length;
         int iHayStackLen = pHayStack.length;
 
         /* Needle must be less that 255 bytes */
-        if (iNeedleLen > 0xFF) {
+        if (iNeedleLen > MAX_NEEDLE_LEN) {
             throw new IllegalArgumentException("Needle too Large");
         }
 
         /* HayStackLen must be at least 16 bytes */
-        if (iHayStackLen < 16) {
+        if (iHayStackLen < MIN_HAYSTACK_LEN) {
             throw new IllegalArgumentException("HayStack too Small");
         }
 
@@ -59,15 +94,16 @@ public class DataHayStack {
 
         /* Determine position of needle */
         int iMask = pHayStack[0];
-        int iPos = 1 + ((iMask >> 4) & 0xF);
+        int iPos = 1 + ((iMask >> MASK_SHIFT) & SHIFT_MASK);
 
         /* Store the signature */
-        myHayStack[0] = (byte) (theSignature ^ iMask);
+        myHayStack[0] = (byte) (SIGN_HAYSTACK ^ iMask);
 
         /* Split the hayStack into two parts */
         System.arraycopy(pHayStack, 0, myHayStack, 1, iPos);
-        if (iPos < iHayStackLen)
+        if (iPos < iHayStackLen) {
             System.arraycopy(pHayStack, iPos, myHayStack, iPos + iNeedleLen + 2, iHayStackLen - iPos);
+        }
 
         /* Store the needle length */
         myHayStack[iPos + 1] = (byte) (iNeedleLen ^ iMask);
@@ -89,33 +125,36 @@ public class DataHayStack {
     }
 
     /**
-     * Hide a needle in a hayStack
+     * Hide a needle in a hayStack.
      * @param pHayStack the data to hide within
      * @return the results
      */
-    private static NeedleResult findNeedle(byte[] pHayStack) {
+    private static NeedleResult findNeedle(final byte[] pHayStack) {
         /* HayStackLen must be at least 16+2 bytes */
-        if (pHayStack.length < 18)
+        if (pHayStack.length < MIN_HAYSTACK_LEN + 2) {
             return null;
+        }
 
         /* Determine position of needle */
         int iMask = pHayStack[1];
-        int iPos = 1 + ((iMask >> 4) & 0xF);
+        int iPos = 1 + ((iMask >> MASK_SHIFT) & SHIFT_MASK);
 
         /* Access signature */
         byte mySign = (byte) (pHayStack[0] ^ iMask);
 
         /* Check the signature */
-        if (mySign != theSignature)
+        if (mySign != SIGN_HAYSTACK) {
             return null;
+        }
 
         /* Access the needle length and the hayStack length */
         int iNeedleLen = (byte) (pHayStack[iPos + 1] ^ iMask);
         int iHayStackLen = pHayStack.length - iNeedleLen - 2;
 
         /* Check that we are within range */
-        if ((iNeedleLen + iPos + 2) > pHayStack.length)
+        if ((iNeedleLen + iPos + 2) > pHayStack.length) {
             return null;
+        }
 
         /* Allocate buffers */
         byte[] myNeedle = new byte[iNeedleLen];
@@ -136,21 +175,21 @@ public class DataHayStack {
     }
 
     /**
-     * Results class for finding needle
+     * Results class for finding needle.
      */
-    private static class NeedleResult {
+    private static final class NeedleResult {
         /**
-         * The Needle
+         * The Needle.
          */
         private final byte[] theNeedle;
 
         /**
-         * The HayStack
+         * The HayStack.
          */
         private final byte[] theHayStack;
 
         /**
-         * Obtain the Needle
+         * Obtain the Needle.
          * @return the Needle
          */
         private byte[] getNeedle() {
@@ -158,7 +197,7 @@ public class DataHayStack {
         }
 
         /**
-         * Obtain the HayStack
+         * Obtain the HayStack.
          * @return the HayStack
          */
         private byte[] getHayStack() {
@@ -166,12 +205,12 @@ public class DataHayStack {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pNeedle the needle
          * @param pHayStack the hayStack
          */
-        private NeedleResult(byte[] pNeedle,
-                             byte[] pHayStack) {
+        private NeedleResult(final byte[] pNeedle,
+                             final byte[] pHayStack) {
             /* Store data */
             theNeedle = pNeedle;
             theHayStack = pHayStack;
@@ -179,26 +218,26 @@ public class DataHayStack {
     }
 
     /**
-     * Digest Needle
+     * Digest Needle.
      */
     public static class DigestNeedle {
         /**
-         * DigestType
+         * DigestType.
          */
         private final DigestType theType;
 
         /**
-         * Digest
+         * Digest.
          */
         private final byte[] theDigest;
 
         /**
-         * External format
+         * External format.
          */
         private final byte[] theExternal;
 
         /**
-         * Obtain the Digest Type
+         * Obtain the Digest Type.
          * @return the Digest Type
          */
         public DigestType getDigestType() {
@@ -206,7 +245,7 @@ public class DataHayStack {
         }
 
         /**
-         * Obtain the Digest
+         * Obtain the Digest.
          * @return the Digest
          */
         public byte[] getDigest() {
@@ -214,7 +253,7 @@ public class DataHayStack {
         }
 
         /**
-         * Obtain the External format
+         * Obtain the External format.
          * @return the External format
          */
         public byte[] getExternal() {
@@ -222,30 +261,30 @@ public class DataHayStack {
         }
 
         /**
-         * Constructor to form External format
+         * Constructor to form External format.
          * @param pType the digest type
          * @param pDigest the digest value
          */
-        public DigestNeedle(DigestType pType,
-                            byte[] pDigest) {
+        public DigestNeedle(final DigestType pType,
+                            final byte[] pDigest) {
             /* Store the parameters */
             theType = pType;
             theDigest = pDigest;
 
             /* Create the byte array to hide */
             byte[] myDigest = new byte[1];
-            myDigest[0] = (byte) (pType.getId() * 0x11);
+            myDigest[0] = (byte) (pType.getId() * ID_SHIFT);
 
             /* Hide the digest type into the digest */
             theExternal = hideNeedle(myDigest, pDigest);
         }
 
         /**
-         * Constructor to parse External format
+         * Constructor to parse External format.
          * @param pExternal the external format
-         * @throws ModelException
+         * @throws ModelException on error
          */
-        public DigestNeedle(byte[] pExternal) throws ModelException {
+        public DigestNeedle(final byte[] pExternal) throws ModelException {
             /* Store the parameters */
             theExternal = pExternal;
 
@@ -253,8 +292,9 @@ public class DataHayStack {
             NeedleResult myResult = findNeedle(theExternal);
 
             /* Check that we found the needle */
-            if (myResult == null)
+            if (myResult == null) {
                 throw new ModelException(ExceptionClass.DATA, "Invalid Digest");
+            }
 
             /* Store the digest */
             theDigest = myResult.getHayStack();
@@ -263,35 +303,36 @@ public class DataHayStack {
             byte[] myNeedle = myResult.getNeedle();
 
             /* Check that needle is correct length */
-            if (myNeedle.length != 1)
+            if (myNeedle.length != 1) {
                 throw new ModelException(ExceptionClass.DATA, "Invalid Digest");
+            }
 
             /* Access Digest */
-            theType = DigestType.fromId(myNeedle[0] & 0xF);
+            theType = DigestType.fromId(myNeedle[0] & ID_MASK);
         }
     }
 
     /**
-     * SymKey Needle
+     * SymKey Needle.
      */
     public static class SymKeyNeedle {
         /**
-         * SymKeyType
+         * SymKeyType.
          */
         private final SymKeyType theType;
 
         /**
-         * EncodedKey
+         * EncodedKey.
          */
         private final byte[] theEncodedKey;
 
         /**
-         * External format
+         * External format.
          */
         private final byte[] theExternal;
 
         /**
-         * Obtain the SymKey Type
+         * Obtain the SymKey Type.
          * @return the SymKey Type
          */
         public SymKeyType getSymKeyType() {
@@ -299,7 +340,7 @@ public class DataHayStack {
         }
 
         /**
-         * Obtain the Encoded Key
+         * Obtain the Encoded Key.
          * @return the Encoded Key
          */
         public byte[] getEncodedKey() {
@@ -307,7 +348,7 @@ public class DataHayStack {
         }
 
         /**
-         * Obtain the External format
+         * Obtain the External format.
          * @return the External format
          */
         public byte[] getExternal() {
@@ -315,30 +356,30 @@ public class DataHayStack {
         }
 
         /**
-         * Constructor to form External format
+         * Constructor to form External format.
          * @param pType the symKey type
          * @param pEncodedKey the encodedKey
          */
-        public SymKeyNeedle(SymKeyType pType,
-                            byte[] pEncodedKey) {
+        public SymKeyNeedle(final SymKeyType pType,
+                            final byte[] pEncodedKey) {
             /* Store the parameters */
             theType = pType;
             theEncodedKey = pEncodedKey;
 
             /* Create the byte array to hide */
             byte[] myType = new byte[1];
-            myType[0] = (byte) (pType.getId() * 0x11);
+            myType[0] = (byte) (pType.getId() * ID_SHIFT);
 
             /* Hide the symKey type into the encodedKey */
             theExternal = hideNeedle(myType, pEncodedKey);
         }
 
         /**
-         * Constructor to parse External format
+         * Constructor to parse External format.
          * @param pExternal the external format
-         * @throws ModelException
+         * @throws ModelException on error
          */
-        public SymKeyNeedle(byte[] pExternal) throws ModelException {
+        public SymKeyNeedle(final byte[] pExternal) throws ModelException {
             /* Store the parameters */
             theExternal = pExternal;
 
@@ -346,8 +387,9 @@ public class DataHayStack {
             NeedleResult myResult = findNeedle(theExternal);
 
             /* Check that we found the needle */
-            if (myResult == null)
+            if (myResult == null) {
                 throw new ModelException(ExceptionClass.DATA, "Invalid SymKey");
+            }
 
             /* Store the encodedKey */
             theEncodedKey = myResult.getHayStack();
@@ -356,35 +398,36 @@ public class DataHayStack {
             byte[] myNeedle = myResult.getNeedle();
 
             /* Check that needle is correct length */
-            if (myNeedle.length != 1)
+            if (myNeedle.length != 1) {
                 throw new ModelException(ExceptionClass.DATA, "Invalid SymKey");
+            }
 
             /* Access SymKeyType */
-            theType = SymKeyType.fromId(myNeedle[0] & 0xF);
+            theType = SymKeyType.fromId(myNeedle[0] & ID_MASK);
         }
     }
 
     /**
-     * AsymMode Needle
+     * AsymMode Needle.
      */
     public static class AsymModeNeedle {
         /**
-         * AsymKeyMode
+         * AsymKeyMode.
          */
         private final AsymKeyMode theMode;
 
         /**
-         * PublicKey
+         * PublicKey.
          */
         private final byte[] thePublicKey;
 
         /**
-         * External format
+         * External format.
          */
         private final byte[] theExternal;
 
         /**
-         * Obtain the AsymKeyMode
+         * Obtain the AsymKeyMode.
          * @return the AsymKeyMode
          */
         public AsymKeyMode getAsymKeyMode() {
@@ -392,7 +435,7 @@ public class DataHayStack {
         }
 
         /**
-         * Obtain the Public Key
+         * Obtain the Public Key.
          * @return the Public Key
          */
         public byte[] getPublicKey() {
@@ -400,7 +443,7 @@ public class DataHayStack {
         }
 
         /**
-         * Obtain the External format
+         * Obtain the External format.
          * @return the External format
          */
         public byte[] getExternal() {
@@ -408,12 +451,12 @@ public class DataHayStack {
         }
 
         /**
-         * Constructor to form External format
+         * Constructor to form External format.
          * @param pMode the AsmKeyMode
          * @param pPublicKey the publicKey
          */
-        public AsymModeNeedle(AsymKeyMode pMode,
-                              byte[] pPublicKey) {
+        public AsymModeNeedle(final AsymKeyMode pMode,
+                              final byte[] pPublicKey) {
             /* Store the parameters */
             theMode = pMode;
             thePublicKey = pPublicKey;
@@ -426,11 +469,11 @@ public class DataHayStack {
         }
 
         /**
-         * Constructor to parse External format
+         * Constructor to parse External format.
          * @param pExternal the external format
-         * @throws ModelException
+         * @throws ModelException on error
          */
-        public AsymModeNeedle(byte[] pExternal) throws ModelException {
+        public AsymModeNeedle(final byte[] pExternal) throws ModelException {
             /* Store the parameters */
             theExternal = pExternal;
 
@@ -438,8 +481,9 @@ public class DataHayStack {
             NeedleResult myResult = findNeedle(theExternal);
 
             /* Check that we found the needle */
-            if (myResult == null)
+            if (myResult == null) {
                 throw new ModelException(ExceptionClass.DATA, "Invalid ASymKeyMode");
+            }
 
             /* Store the publicKey */
             thePublicKey = myResult.getHayStack();
@@ -453,31 +497,31 @@ public class DataHayStack {
     }
 
     /**
-     * HashModeNeedle
+     * HashModeNeedle.
      */
     public static class HashModeNeedle {
         /**
-         * HashMode
+         * HashMode.
          */
         private final HashMode theMode;
 
         /**
-         * Salt
+         * Salt.
          */
         private final byte[] theSalt;
 
         /**
-         * Calculated hash
+         * Calculated hash.
          */
         private final byte[] theHash;
 
         /**
-         * External format
+         * External format.
          */
         private final byte[] theExternal;
 
         /**
-         * Obtain the HashMode
+         * Obtain the HashMode.
          * @return the HashMode
          */
         public HashMode getHashMode() {
@@ -485,7 +529,7 @@ public class DataHayStack {
         }
 
         /**
-         * Obtain the Salt
+         * Obtain the Salt.
          * @return the Salt
          */
         public byte[] getSalt() {
@@ -493,7 +537,7 @@ public class DataHayStack {
         }
 
         /**
-         * Obtain the Hash
+         * Obtain the Hash.
          * @return the Hash
          */
         public byte[] getHash() {
@@ -501,7 +545,7 @@ public class DataHayStack {
         }
 
         /**
-         * Obtain the External format
+         * Obtain the External format.
          * @return the External format
          */
         public byte[] getExternal() {
@@ -509,14 +553,14 @@ public class DataHayStack {
         }
 
         /**
-         * Constructor to form External format
+         * Constructor to form External format.
          * @param pMode the HashMode
          * @param pSalt the salt
          * @param pHash the hash
          */
-        public HashModeNeedle(HashMode pMode,
-                              byte[] pSalt,
-                              byte[] pHash) {
+        public HashModeNeedle(final HashMode pMode,
+                              final byte[] pSalt,
+                              final byte[] pHash) {
             /* Store the parameters */
             theMode = pMode;
             theSalt = pSalt;
@@ -531,11 +575,11 @@ public class DataHayStack {
         }
 
         /**
-         * Constructor to parse External format
+         * Constructor to parse External format.
          * @param pExternal the external format
-         * @throws ModelException
+         * @throws ModelException on error
          */
-        public HashModeNeedle(byte[] pExternal) throws ModelException {
+        public HashModeNeedle(final byte[] pExternal) throws ModelException {
             /* Store the parameters */
             theExternal = pExternal;
 
@@ -543,8 +587,9 @@ public class DataHayStack {
             NeedleResult myResult = findNeedle(theExternal);
 
             /* Check that we found the needle */
-            if (myResult == null)
+            if (myResult == null) {
                 throw new ModelException(ExceptionClass.DATA, "Invalid HashMode");
+            }
 
             /* Store the hash */
             theHash = myResult.getHayStack();
@@ -553,8 +598,9 @@ public class DataHayStack {
             myResult = findNeedle(myResult.getNeedle());
 
             /* Check that we found the needle */
-            if (myResult == null)
+            if (myResult == null) {
                 throw new ModelException(ExceptionClass.DATA, "Invalid HashMode");
+            }
 
             /* Store the salt */
             theSalt = myResult.getHayStack();
@@ -568,31 +614,31 @@ public class DataHayStack {
     }
 
     /**
-     * EncryptionModeNeedle
+     * EncryptionModeNeedle.
      */
     public static class EncryptModeNeedle {
         /**
-         * EncryptionMode
+         * EncryptionMode.
          */
         private final EncryptionMode theMode;
 
         /**
-         * InitVector
+         * InitVector.
          */
         private final byte[] theInitVector;
 
         /**
-         * Encrypted bytes
+         * Encrypted bytes.
          */
         private final byte[] theBytes;
 
         /**
-         * External format
+         * External format.
          */
         private final byte[] theExternal;
 
         /**
-         * Obtain the EncryptionMode
+         * Obtain the EncryptionMode.
          * @return the EncryptionMode
          */
         public EncryptionMode getEncryptionMode() {
@@ -600,7 +646,7 @@ public class DataHayStack {
         }
 
         /**
-         * Obtain the InitVector
+         * Obtain the InitVector.
          * @return the InitVector
          */
         public byte[] getInitVector() {
@@ -608,7 +654,7 @@ public class DataHayStack {
         }
 
         /**
-         * Obtain the encrypted bytes
+         * Obtain the encrypted bytes.
          * @return the encrypted bytes
          */
         public byte[] getEncryptedBytes() {
@@ -616,7 +662,7 @@ public class DataHayStack {
         }
 
         /**
-         * Obtain the External format
+         * Obtain the External format.
          * @return the External format
          */
         public byte[] getExternal() {
@@ -624,14 +670,14 @@ public class DataHayStack {
         }
 
         /**
-         * Constructor to form External format
+         * Constructor to form External format.
          * @param pMode the HashMode
          * @param pInitVector the initVector
          * @param pBytes the encrypted bytes
          */
-        public EncryptModeNeedle(EncryptionMode pMode,
-                                 byte[] pInitVector,
-                                 byte[] pBytes) {
+        public EncryptModeNeedle(final EncryptionMode pMode,
+                                 final byte[] pInitVector,
+                                 final byte[] pBytes) {
             /* Store the parameters */
             theMode = pMode;
             theInitVector = pInitVector;
@@ -650,11 +696,11 @@ public class DataHayStack {
         }
 
         /**
-         * Constructor to parse External format
+         * Constructor to parse External format.
          * @param pExternal the external format
-         * @throws ModelException
+         * @throws ModelException on error
          */
-        public EncryptModeNeedle(byte[] pExternal) throws ModelException {
+        public EncryptModeNeedle(final byte[] pExternal) throws ModelException {
             /* Store the parameters */
             theExternal = pExternal;
 
@@ -662,8 +708,9 @@ public class DataHayStack {
             NeedleResult myResult = findNeedle(theExternal);
 
             /* Check that we found the needle */
-            if (myResult == null)
+            if (myResult == null) {
                 throw new ModelException(ExceptionClass.DATA, "Invalid EncryptMode");
+            }
 
             /* Store the bytes */
             byte[] myHayStack = myResult.getHayStack();

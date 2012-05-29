@@ -39,7 +39,7 @@ public class SecurityTest {
         try {
             /* Test zip file creation */
             File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");
-            createStdZipFile(myZipFile, new File("c:\\Users\\Tony\\tester"));
+            createZipFile(myZipFile, new File("c:\\Users\\Tony\\tester"), true);
             extractZipFile(myZipFile, new File("c:\\Users\\Tony\\testcomp"));
         } catch (Exception e) {
             System.out.println("Help");
@@ -52,20 +52,31 @@ public class SecurityTest {
      * Create a Zip File of files in a directory
      * @param pZipFile the name of the zip file to create
      * @param pDirectory the directory to archive
+     * @param bSecure encrypt the zip file (true/false)
      * @return the contents of the zip file
      * @throws ModelException
      */
-    protected static ZipFileContents createStdZipFile(File pZipFile,
-                                                      File pDirectory) throws ModelException {
+    protected static ZipFileContents createZipFile(File pZipFile,
+                                                   File pDirectory,
+                                                   boolean bSecure) throws ModelException {
         ZipWriteFile myZipFile;
 
         try {
-            /* Create new Password Hash */
-            SecureManager myManager = new SecureManager();
-            PasswordHash myHash = myManager.resolvePasswordHash(null, "New");
+            /* If we are creating a secure zip file */
+            if (bSecure) {
+                /* Create new Password Hash */
+                SecureManager myManager = new SecureManager();
+                PasswordHash myHash = myManager.resolvePasswordHash(null, "New");
 
-            /* Initialise the Zip file */
-            myZipFile = new ZipWriteFile(myHash, pZipFile);
+                /* Initialise the Zip file */
+                myZipFile = new ZipWriteFile(myHash, pZipFile);
+            }
+
+            /* else */
+            else {
+                /* Just create a standard zip file */
+                myZipFile = new ZipWriteFile(pZipFile);
+            }
 
             /* Create a read buffer */
             int myBufLen = 1024;

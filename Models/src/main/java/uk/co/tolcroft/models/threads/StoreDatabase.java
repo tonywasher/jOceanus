@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,18 +28,34 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.views.DataControl;
 
+/**
+ * Thread to store changes in the DataSet to a database.
+ * @author Tony Washer
+ * @param <T> the DataSet type
+ */
 public class StoreDatabase<T extends DataSet<T>> extends WorkerThread<Void> {
-    /* Task description */
-    private static String theTask = "DataBase Store";
+    /**
+     * Task description.
+     */
+    private static final String TASK_NAME = "DataBase Store";
 
-    /* Properties */
-    private DataControl<T> theControl = null;
-    private ThreadStatus<T> theStatus = null;
+    /**
+     * Data control.
+     */
+    private final DataControl<T> theControl;
 
-    /* Constructor (Event Thread) */
-    public StoreDatabase(DataControl<T> pControl) {
+    /**
+     * Thread Status.
+     */
+    private final ThreadStatus<T> theStatus;
+
+    /**
+     * Constructor (Event Thread).
+     * @param pControl the data control
+     */
+    public StoreDatabase(final DataControl<T> pControl) {
         /* Call super-constructor */
-        super(theTask, pControl.getStatusBar());
+        super(TASK_NAME, pControl.getStatusBar());
 
         /* Store passed parameters */
         theControl = pControl;
@@ -52,15 +69,11 @@ public class StoreDatabase<T extends DataSet<T>> extends WorkerThread<Void> {
 
     @Override
     public Void performTask() throws Exception {
-        Database<T> myDatabase = null;
-        T myData;
-        DataSet<T> myDiff;
-
         /* Initialise the status window */
         theStatus.initTask("Storing to Database");
 
         /* Create interface */
-        myDatabase = theControl.getDatabase();
+        Database<T> myDatabase = theControl.getDatabase();
 
         /* Store database */
         myDatabase.updateDatabase(theStatus, theControl.getUpdates());
@@ -69,10 +82,10 @@ public class StoreDatabase<T extends DataSet<T>> extends WorkerThread<Void> {
         theStatus.initTask("Verifying Store");
 
         /* Load database */
-        myData = myDatabase.loadDatabase(theStatus);
+        T myData = myDatabase.loadDatabase(theStatus);
 
         /* Create a difference set between the two data copies */
-        myDiff = myData.getDifferenceSet(theControl.getData());
+        DataSet<T> myDiff = myData.getDifferenceSet(theControl.getData());
 
         /* If the difference set is non-empty */
         if (!myDiff.isEmpty()) {

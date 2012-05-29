@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,37 +29,43 @@ import java.io.OutputStream;
 
 import SevenZip.Compression.LZMA.Encoder;
 
+/**
+ * Provides an LZMA compression OutputStream. Due to the design of the 7-Zip libraries the decompression must
+ * be performed on a separate thread. A thread is created to read data from a PipedStream and to compress the
+ * data to the target output stream. This class works as the wrapper to write the data to be compressed to the
+ * PipedStream.
+ */
 public class LZMAOutputStream extends OutputStream {
     /**
-     * The pipe to the worker thread
+     * The pipe to the worker thread.
      */
     private final PipedStream thePipe;
 
     /**
-     * The sink stream to write to the encoder thread
+     * The sink stream to write to the encoder thread.
      */
     private final OutputStream theSink;
 
     /**
-     * The source stream for the encoder thread
+     * The source stream for the encoder thread.
      */
     private final InputStream theSource;
 
     /**
-     * The target stream for the encoder thread
+     * The target stream for the encoder thread.
      */
     private final OutputStream theTarget;
 
     /**
-     * The encoder thread
+     * The encoder thread.
      */
     private final EncoderThread theThread;
 
     /**
-     * Constructor
+     * Constructor.
      * @param pOutput the output stream to wrap
      */
-    public LZMAOutputStream(OutputStream pOutput) {
+    public LZMAOutputStream(final OutputStream pOutput) {
         /* Store the target */
         theTarget = pOutput;
 
@@ -73,9 +80,9 @@ public class LZMAOutputStream extends OutputStream {
     }
 
     @Override
-    public void write(byte[] pBytes,
-                      int pOffset,
-                      int pLength) throws IOException {
+    public void write(final byte[] pBytes,
+                      final int pOffset,
+                      final int pLength) throws IOException {
         /* Check for error */
         theThread.checkForError();
 
@@ -84,7 +91,7 @@ public class LZMAOutputStream extends OutputStream {
     }
 
     @Override
-    public void write(byte[] pBytes) throws IOException {
+    public void write(final byte[] pBytes) throws IOException {
         /* Check for error */
         theThread.checkForError();
 
@@ -93,7 +100,7 @@ public class LZMAOutputStream extends OutputStream {
     }
 
     @Override
-    public void write(int pByte) throws IOException {
+    public void write(final int pByte) throws IOException {
         /* Check for error */
         theThread.checkForError();
 
@@ -122,21 +129,21 @@ public class LZMAOutputStream extends OutputStream {
     }
 
     /**
-     * The encoder thread
+     * The encoder thread.
      */
-    private class EncoderThread extends Thread {
+    private final class EncoderThread extends Thread {
         /**
-         * The encoder
+         * The encoder.
          */
         private final Encoder theEncoder;
 
         /**
-         * The error
+         * The error.
          */
         private IOException theError;
 
         /**
-         * Constructor
+         * Constructor.
          */
         private EncoderThread() {
             /* Create the encoder */
@@ -145,12 +152,13 @@ public class LZMAOutputStream extends OutputStream {
         }
 
         /**
-         * Check for error
-         * @throws IOException
+         * Check for error.
+         * @throws IOException on error
          */
         private void checkForError() throws IOException {
-            if (theError != null)
+            if (theError != null) {
                 throw theError;
+            }
         }
 
         @Override

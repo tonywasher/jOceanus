@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,66 +30,75 @@ import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.ui.StatusBar;
 
+/**
+ * A wrapper for a worker thread.
+ * @author Tony Washer
+ * @param <T> the result type of the thread
+ */
 public abstract class WorkerThread<T> extends SwingWorker<T, StatusData> {
     /**
-     * The Status Bar
+     * The Status Bar.
      */
-    private StatusBar theStatusBar = null;
+    private final StatusBar theStatusBar;
 
     /**
-     * The description of the operation
+     * The description of the operation.
      */
-    private String theTask = null;
+    private final String theTask;
 
     /**
-     * The error for the operation
+     * The error for the operation.
      */
     private ModelException theError = null;
 
     /**
-     * Constructor
+     * Constructor.
      * @param pTask task name
      * @param pStatusBar status bar
      */
-    protected WorkerThread(String pTask,
-                           StatusBar pStatusBar) {
+    protected WorkerThread(final String pTask,
+                           final StatusBar pStatusBar) {
         /* Record the parameters */
         theTask = pTask;
         theStatusBar = pStatusBar;
     }
 
     /**
-     * Set Error
+     * Set Error.
      * @param pError the Error for the task
      */
-    protected void setError(ModelException pError) {
+    protected void setError(final ModelException pError) {
         /* Store the error */
         theError = pError;
     }
 
     /**
-     * Show StatusBar
+     * Show StatusBar.
      */
     protected void showStatusBar() {
         theStatusBar.getProgressPanel().setVisible(true);
     }
 
     /**
-     * Complete Data Load operation
+     * Complete Data Load operation.
      */
     protected void completeStatusBar() {
         /* If we are not cancelled and have no error */
         if ((!isCancelled()) && (theError == null)) {
             /* Set success */
             theStatusBar.setSuccess(theTask);
-        }
 
-        /* Else report the cancellation/failure */
-        else
+            /* Else report the cancellation/failure */
+        } else {
             theStatusBar.setFailure(theTask, theError);
+        }
     }
 
-    /* Task for worker thread */
+    /**
+     * Task for worker thread.
+     * @return the result
+     * @throws Exception on error
+     */
     protected abstract T performTask() throws Exception;
 
     @Override
@@ -101,17 +111,17 @@ public abstract class WorkerThread<T> extends SwingWorker<T, StatusData> {
 
             /* Return result */
             return myResult;
-        }
 
-        /* Catch any exceptions */
-        catch (Exception e) {
+            /* Catch any exceptions */
+        } catch (Exception e) {
             /* If this is an Exception */
-            if (e instanceof ModelException)
+            if (e instanceof ModelException) {
                 setError((ModelException) e);
 
-            /* Else wrap the failure */
-            else
+                /* Else wrap the failure */
+            } else {
                 setError(new ModelException(ExceptionClass.DATA, "Failed " + theTask, e));
+            }
             return null;
         }
     }
@@ -123,7 +133,7 @@ public abstract class WorkerThread<T> extends SwingWorker<T, StatusData> {
     }
 
     @Override
-    protected void process(List<StatusData> pStatus) {
+    protected void process(final List<StatusData> pStatus) {
         /* Access the latest status */
         StatusData myStatus = pStatus.get(pStatus.size() - 1);
 
@@ -132,10 +142,10 @@ public abstract class WorkerThread<T> extends SwingWorker<T, StatusData> {
     }
 
     /**
-     * Publish status
+     * Publish status.
      * @param pStatus the Status to publish
      */
-    public void publish(StatusData pStatus) {
+    public void publish(final StatusData pStatus) {
         super.publish(pStatus);
     }
 }

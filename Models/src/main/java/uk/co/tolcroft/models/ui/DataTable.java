@@ -43,6 +43,8 @@ import javax.swing.table.TableColumn;
 
 import net.sourceforge.JDataManager.DebugManager;
 import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ui.RenderData;
+import net.sourceforge.JDataManager.ui.Renderer;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataState;
@@ -97,18 +99,18 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     @Override
-    public void notifySelection(Object obj) {
+    public void notifySelection(final Object obj) {
     }
 
     public void updateDebug() {
     }
 
-    public void setActive(boolean isActive) {
+    public void setActive(final boolean isActive) {
         isEnabled = isActive;
     }
 
-    public JComboBox getComboBox(int row,
-                                 int col) {
+    public JComboBox getComboBox(final int row,
+                                 final int col) {
         return null;
     }
 
@@ -132,10 +134,10 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pMainWindow the main window
      */
-    public DataTable(MainWindow<?> pMainWindow) {
+    public DataTable(final MainWindow<?> pMainWindow) {
         /* Store parameters */
         theMainWindow = pMainWindow;
         theRowHdrModel = new RowTableModel(this);
@@ -145,10 +147,10 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Set the table model
+     * Set the table model.
      * @param pModel the table model
      */
-    public void setModel(DataTableModel pModel) {
+    public void setModel(final DataTableModel pModel) {
         /* Declare to the super class */
         super.setModel(pModel);
 
@@ -175,33 +177,36 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     @Override
-    public void addMouseListener(MouseListener pListener) {
+    public void addMouseListener(final MouseListener pListener) {
         /* Pass call on */
         super.addMouseListener(pListener);
 
         /* Listen for the row header table as well */
-        if (theRowHdrTable != null)
+        if (theRowHdrTable != null) {
             theRowHdrTable.addMouseListener(pListener);
+        }
     }
 
     @Override
     public EditState getEditState() {
-        if (theList == null)
+        if (theList == null) {
             return EditState.CLEAN;
+        }
         return theList.getEditState();
     }
 
     /**
-     * Set the list for the table
+     * Set the list for the table.
      * @param pList the list
      */
-    public void setList(DataList<?, T> pList) {
+    public void setList(final DataList<?, T> pList) {
         int myZeroRow = hasHeader() ? 1 : 0;
 
         /* Store list and select correct mode */
         theList = pList;
-        if (pList != null)
+        if (pList != null) {
             pList.setShowDeleted(doShowDel);
+        }
         updateDebug();
 
         /* Redraw the table and row headers */
@@ -209,8 +214,9 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
 
         /* If we have elements then set the selection to the first item */
         clearSelection();
-        if (theModel.getRowCount() > myZeroRow)
+        if (theModel.getRowCount() > myZeroRow) {
             selectRowWithScroll(myZeroRow);
+        }
     }
 
     @Override
@@ -220,16 +226,16 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Extract the item at the given index
+     * Extract the item at the given index.
      * @param uIndex the index
      * @return the item
      */
-    public T extractItemAt(int uIndex) {
+    public T extractItemAt(final int uIndex) {
         return ((theList == null) ? null : theList.get(uIndex));
     }
 
     /**
-     * reset the data
+     * reset the data.
      */
     public void resetData() {
         /* If we have a list */
@@ -250,7 +256,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Validate all the items
+     * Validate all the items.
      */
     public void validateAll() {
         /* Validate the list */
@@ -263,16 +269,17 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Cancel any editing that is occurring
+     * Cancel any editing that is occurring.
      */
     public void cancelEditing() {
         /* Cancel any editing */
-        if (isEditing())
+        if (isEditing()) {
             cellEditor.cancelCellEditing();
+        }
     }
 
     @Override
-    public void valueChanged(ListSelectionEvent evt) {
+    public void valueChanged(final ListSelectionEvent evt) {
         super.valueChanged(evt);
         if (evt.getValueIsAdjusting()) {
             return;
@@ -281,10 +288,10 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Select a row and ensure that it is visible
+     * Select a row and ensure that it is visible.
      * @param row the row to select
      */
-    protected void selectRowWithScroll(int row) {
+    protected void selectRowWithScroll(final int row) {
         Rectangle rect;
         Point pt;
         JViewport viewport;
@@ -304,7 +311,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
      * select an explicit row
      * @param row the row to select
      */
-    protected void selectRow(int row) {
+    protected void selectRow(final int row) {
         /* clear existing selection and select the row */
         clearSelection();
         changeSelection(row, 0, false, false);
@@ -312,7 +319,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Get an array of the selected rows
+     * Get an array of the selected rows.
      * @return array of selected rows
      */
     protected T[] cacheSelectedRows() {
@@ -332,10 +339,12 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
         for (i = 0, j = 0; i < mySelected.length; i++) {
             /* Access the index and adjust for header */
             myIndex = mySelected[i];
-            if (hasHeader())
+            if (hasHeader()) {
                 myIndex--;
-            if (myIndex < 0)
+            }
+            if (myIndex < 0) {
                 continue;
+            }
 
             /* Store the row */
             myRows[j] = theList.get(myIndex);
@@ -354,24 +363,25 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
 
     /**
      * Set the show deleted indication
-     * @param doShowDel the new setting
+     * @param pShowDel the new setting
      */
-    protected void setShowDeleted(boolean doShowDel) {
+    protected void setShowDeleted(boolean pShowDel) {
         T[] myRows;
         int myRowNo;
 
         /* If we are changing the value */
-        if (this.doShowDel != doShowDel) {
+        if (doShowDel != pShowDel) {
             /* Cancel any editing */
-            if (isEditing())
+            if (isEditing()) {
                 cellEditor.cancelCellEditing();
+            }
 
             /* Access a cache of the selected rows */
             myRows = cacheSelectedRows();
             clearSelection();
 
             /* Store the new status */
-            this.doShowDel = doShowDel;
+            doShowDel = pShowDel;
             theList.setShowDeleted(doShowDel);
 
             /* Redraw the table */
@@ -380,13 +390,15 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
             /* Loop through the selected rows */
             for (T myRow : myRows) {
                 /* Ignore null/deleted entries */
-                if ((myRow == null) || (myRow.isDeleted()))
+                if ((myRow == null) || (myRow.isDeleted())) {
                     continue;
+                }
 
                 /* Access the row # and adjust for header */
                 myRowNo = myRow.indexOf();
-                if (hasHeader())
+                if (hasHeader()) {
                     myRowNo++;
+                }
 
                 /* Select the row */
                 addRowSelectionInterval(myRowNo, myRowNo);
@@ -395,7 +407,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Check whether insert is allowed for this table
+     * Check whether insert is allowed for this table.
      * @return insert allowed (true/false)
      */
     protected boolean insertAllowed() {
@@ -403,7 +415,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Insert an item
+     * Insert an item.
      */
     protected void insertRow() {
         int myRowNo;
@@ -414,8 +426,9 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
 
         /* Determine the row # allowing for header */
         myRowNo = myItem.indexOf();
-        if (hasHeader())
+        if (hasHeader()) {
             myRowNo++;
+        }
 
         /* Validate the new item */
         myItem.validate();
@@ -428,21 +441,17 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Check whether a row is deletable
+     * Check whether a row is deletable.
      * @param pRow the row
      * @return is the row deletable
      */
-    protected boolean isRowDeletable(T pRow) {
+    protected boolean isRowDeletable(final T pRow) {
         /* Not deletable if already deleted */
-        if (pRow.isDeleted())
-            return false;
-
-        /* Deletable */
-        return true;
+        return (!pRow.isDeleted());
     }
 
     /**
-     * Check whether we should hide deleted rows
+     * Check whether we should hide deleted rows.
      * @return hide deleted rows (true/false)
      */
     protected boolean hideDeletedRows() {
@@ -450,17 +459,17 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Check whether showDeleted should be disabled
+     * Check whether showDeleted should be disabled.
      * @param pRow the row
      * @return disable show deleted
      */
-    protected boolean disableShowDeleted(T pRow) {
+    protected boolean disableShowDeleted(final T pRow) {
         /* Is it deleted */
         return pRow.isDeleted();
     }
 
     /**
-     * Delete the selected items
+     * Delete the selected items.
      */
     protected void deleteRows() {
         T[] myRows;
@@ -477,17 +486,20 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
             myRow = myRows[i];
 
             /* Ignore locked rows */
-            if ((myRow == null) || (myRow.isLocked()))
+            if ((myRow == null) || (myRow.isLocked())) {
                 continue;
+            }
 
             /* Ignore non-Deletable entries */
-            if (!isRowDeletable(myRow))
+            if (!isRowDeletable(myRow)) {
                 continue;
+            }
 
             /* Access the row # and adjust for header */
             myRowNo = myRow.indexOf();
-            if (hasHeader())
+            if (hasHeader()) {
                 myRowNo++;
+            }
 
             /* Mark the row as deleted */
             myRow.setState(DataState.DELETED);
@@ -496,10 +508,9 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
             if (!hideDeleted) {
                 /* Notify of the update of the row */
                 theModel.fireUpdateRowEvents(myRowNo);
-            }
 
-            /* else we are not showing deleted items */
-            else {
+                /* else we are not showing deleted items */
+            } else {
                 /* Notify of the deletion of the row and remove from list */
                 myRows[i] = null;
                 theModel.fireDeleteRowEvents(myRowNo);
@@ -511,21 +522,17 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Check whether a row is duplicatable
+     * Check whether a row is duplicatable.
      * @param pRow the row
      * @return is the row duplicatable
      */
-    protected boolean isRowDuplicatable(T pRow) {
+    protected boolean isRowDuplicatable(final T pRow) {
         /* Not duplicatable if already deleted */
-        if (pRow.isDeleted())
-            return false;
-
-        /* Duplicatable */
-        return true;
+        return (!pRow.isDeleted());
     }
 
     /**
-     * Duplicate the selected items
+     * Duplicate the selected items.
      */
     protected void duplicateRows() {
         T[] myRows;
@@ -542,25 +549,29 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
             myRow = myRows[i];
 
             /* Ignore locked rows */
-            if ((myRow == null) || (myRow.isLocked()))
+            if ((myRow == null) || (myRow.isLocked())) {
                 continue;
+            }
 
             /* Ignore non-Duplicatable entries */
-            if (!isRowDuplicatable(myRow))
+            if (!isRowDuplicatable(myRow)) {
                 continue;
+            }
 
             /* Access the row # and adjust for header */
             myRowNo = myRow.indexOf();
-            if (hasHeader())
+            if (hasHeader()) {
                 myRowNo++;
+            }
 
             /* Create the new Item */
             myItem = theList.addNewItem(myRow);
 
             /* Determine the row # allowing for header */
             myRowNo = myItem.indexOf();
-            if (hasHeader())
+            if (hasHeader()) {
                 myRowNo++;
+            }
 
             /* Validate the new item */
             myItem.validate();
@@ -574,21 +585,17 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Check whether a row is recoverable
+     * Check whether a row is recoverable.
      * @param pRow the row
      * @return is the row recoverable
      */
-    protected boolean isRowRecoverable(T pRow) {
+    protected boolean isRowRecoverable(final T pRow) {
         /* Must be deleted to be recoverable */
-        if (!pRow.isDeleted())
-            return false;
-
-        /* Not recoverable */
-        return true;
+        return pRow.isDeleted();
     }
 
     /**
-     * Recover the selected items
+     * Recover the selected items.
      */
     protected void recoverRows() {
         T[] myRows;
@@ -604,17 +611,20 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
             myRow = myRows[i];
 
             /* Ignore locked rows */
-            if ((myRow == null) || (myRow.isLocked()))
+            if ((myRow == null) || (myRow.isLocked())) {
                 continue;
+            }
 
             /* Ignore non-Recoverable entries */
-            if (!isRowRecoverable(myRow))
+            if (!isRowRecoverable(myRow)) {
                 continue;
+            }
 
             /* Access the row # and adjust for header */
             myRowNo = myRow.indexOf();
-            if (hasHeader())
+            if (hasHeader()) {
                 myRowNo++;
+            }
 
             /* Mark the row as recovered */
             myRow.setState(DataState.RECOVERED);
@@ -630,7 +640,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Validate the selected items
+     * Validate the selected items.
      */
     protected void validateRows() {
         T[] myRows;
@@ -646,21 +656,25 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
             myRow = myRows[i];
 
             /* Ignore locked rows */
-            if ((myRow == null) || (myRow.isLocked()))
+            if ((myRow == null) || (myRow.isLocked())) {
                 continue;
+            }
 
             /* Ignore deleted rows */
-            if (myRow.isDeleted())
+            if (myRow.isDeleted()) {
                 continue;
+            }
 
             /* Skip if validation not required */
-            if ((!myRow.hasHistory()) || (myRow.getEditState() == EditState.VALID))
+            if ((!myRow.hasHistory()) || (myRow.getEditState() == EditState.VALID)) {
                 continue;
+            }
 
             /* Access the row # and adjust for header */
             myRowNo = myRow.indexOf();
-            if (hasHeader())
+            if (hasHeader()) {
                 myRowNo++;
+            }
 
             /* Clear errors and re-validate */
             myRow.clearErrors();
@@ -672,7 +686,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Reset the selected rows
+     * Reset the selected rows.
      */
     protected void resetRows() {
         T[] myRows;
@@ -689,21 +703,25 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
             myRow = myRows[i];
 
             /* Ignore locked rows */
-            if ((myRow == null) || (myRow.isLocked()))
+            if ((myRow == null) || (myRow.isLocked())) {
                 continue;
+            }
 
             /* Ignore deleted rows */
-            if (myRow.isDeleted())
+            if (myRow.isDeleted()) {
                 continue;
+            }
 
             /* Skip if reset not required */
-            if (!myRow.hasHistory())
+            if (!myRow.hasHistory()) {
                 continue;
+            }
 
             /* Access the row # adjust for header */
             myRowNo = myRow.indexOf();
-            if (hasHeader())
+            if (hasHeader()) {
                 myRowNo++;
+            }
 
             /* Mark the row as clean */
             myRow.setState(myRow.isCoreDeleted() ? DataState.RECOVERED : DataState.CLEAN);
@@ -715,18 +733,18 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
 
             /* Determine new row # */
             myNewRowNo = myRow.indexOf();
-            if (hasHeader())
+            if (hasHeader()) {
                 myNewRowNo++;
+            }
 
             /* If the row # has changed */
             if (myRowNo != myNewRowNo) {
                 /* Report the deletion and insertion */
                 theModel.fireMoveRowEvents(myRowNo, myNewRowNo);
                 addRowSelectionInterval(myNewRowNo, myNewRowNo);
-            }
 
-            /* else the row has just been updated */
-            else {
+                /* else the row has just been updated */
+            } else {
                 /* Report the update */
                 theModel.fireUpdateRowEvents(myRowNo);
             }
@@ -737,7 +755,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Undo changes to rows
+     * Undo changes to rows.
      */
     protected void unDoRows() {
         T[] myRows;
@@ -754,21 +772,25 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
             myRow = myRows[i];
 
             /* Ignore locked rows */
-            if ((myRow == null) || (myRow.isLocked()))
+            if ((myRow == null) || (myRow.isLocked())) {
                 continue;
+            }
 
             /* Ignore deleted rows */
-            if (myRow.isDeleted())
+            if (myRow.isDeleted()) {
                 continue;
+            }
 
             /* Skip if undo not required */
-            if (!myRow.hasHistory())
+            if (!myRow.hasHistory()) {
                 continue;
+            }
 
             /* Access the row # and adjust for header */
             myRowNo = myRow.indexOf();
-            if (hasHeader())
+            if (hasHeader()) {
                 myRowNo++;
+            }
 
             /* Pop last value */
             myRow.popHistory();
@@ -786,18 +808,18 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
 
             /* Determine new row # */
             myNewRowNo = myRow.indexOf();
-            if (hasHeader())
+            if (hasHeader()) {
                 myNewRowNo++;
+            }
 
             /* If the row # has changed */
             if (myRowNo != myNewRowNo) {
                 /* Report the deletion and insertion */
                 theModel.fireMoveRowEvents(myRowNo, myNewRowNo);
                 addRowSelectionInterval(myNewRowNo, myNewRowNo);
-            }
 
-            /* else the row has just been updated */
-            else {
+                /* else the row has just been updated */
+            } else {
                 /* Report the update */
                 theModel.fireUpdateRowEvents(myRowNo);
             }
@@ -808,11 +830,12 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     @Override
-    public void performCommand(stdCommand pCmd) {
+    public void performCommand(final stdCommand pCmd) {
 
         /* Cancel any editing */
-        if (isEditing())
+        if (isEditing()) {
             cellEditor.cancelCellEditing();
+        }
 
         /* Switch on command */
         switch (pCmd) {
@@ -822,6 +845,8 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
             case RESETALL:
                 resetData();
                 break;
+            default:
+                break;
         }
 
         /* Notify changes */
@@ -829,24 +854,27 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Row Table model class
+     * Row Table model class.
      */
     public static class RowTableModel extends AbstractTableModel {
+        /**
+         * Serial Id.
+         */
         private static final long serialVersionUID = -7172213268168894124L;
 
         /* Table headers */
         private static final String titleRow = "Row";
 
         /**
-         * The DataTable
+         * The DataTable.
          */
         private DataTable<?> theTable = null;
 
         /**
-         * Constructor
+         * Constructor.
          * @param pTable the table with which this model is associated
          */
-        protected RowTableModel(DataTable<?> pTable) {
+        protected RowTableModel(final DataTable<?> pTable) {
             /* Access rowHdrModel */
             theTable = pTable;
         }
@@ -862,26 +890,26 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
         }
 
         @Override
-        public String getColumnName(int col) {
+        public String getColumnName(final int col) {
             return titleRow;
         }
 
         @Override
-        public Class<?> getColumnClass(int col) {
+        public Class<?> getColumnClass(final int col) {
             return Integer.class;
         }
 
         @Override
-        public Object getValueAt(int row,
-                                 int col) {
+        public Object getValueAt(final int row,
+                                 final int col) {
             return theTable.hasHeader() ? row : row + 1;
         }
 
         /**
-         * Get render data for row
+         * Get render data for row.
          * @param pData the Render details
          */
-        public void getRenderData(RenderData pData) {
+        public void getRenderData(final RenderData pData) {
             DataItem<?> myRow;
             int iRow;
             int myIndex;
@@ -891,8 +919,9 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
             /* If we have a header decrement the index */
             iRow = pData.getRow();
             myIndex = iRow;
-            if (theTable.hasHeader())
+            if (theTable.hasHeader()) {
                 myIndex--;
+            }
 
             /* Obtain defaults from table header */
             pData.initFromHeader(theTable.getTableHeader());
@@ -911,42 +940,45 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Data Table model class
+     * Data Table model class.
      */
     public abstract static class DataTableModel extends AbstractTableModel {
+        /**
+         * Serial Id.
+         */
         private static final long serialVersionUID = 3815818983288519203L;
 
         /**
-         * The DataTable
+         * The DataTable.
          */
         private DataTable<?> theTable = null;
 
         /**
-         * The RowHdrModel
+         * The RowHdrModel.
          */
         private RowTableModel theRowHdrModel = null;
 
         /* Abstract methods */
-        public abstract ReportField getFieldForCell(int row,
-                                                    int col);
+        public abstract ReportField getFieldForCell(final int row,
+                                                    final int col);
 
         /**
-         * Constructor
+         * Constructor.
          * @param pTable the table with which this model is associated
          */
-        protected DataTableModel(DataTable<?> pTable) {
+        protected DataTableModel(final DataTable<?> pTable) {
             /* Access rowHdrModel */
             theTable = pTable;
             theRowHdrModel = pTable.getRowTableModel();
         }
 
         /**
-         * fire events for moving of a row
+         * fire events for moving of a row.
          * @param pFromRow the original row
          * @param pToRow the new row
          */
-        protected void fireMoveRowEvents(int pFromRow,
-                                         int pToRow) {
+        protected void fireMoveRowEvents(final int pFromRow,
+                                         final int pToRow) {
             /* Report the deletion and insertion */
             fireTableRowsDeleted(pFromRow, pFromRow);
             fireTableRowsInserted(pToRow, pToRow);
@@ -955,10 +987,9 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
             if (pToRow > pFromRow) {
                 /* Report the change of headers in the region */
                 theRowHdrModel.fireTableRowsUpdated(pFromRow, pToRow);
-            }
 
-            /* else from row is earlier */
-            else {
+                /* else from row is earlier */
+            } else {
                 /* Report the change of headers in the region */
                 theRowHdrModel.fireTableRowsUpdated(pToRow, pFromRow);
             }
@@ -968,7 +999,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
          * fire events for insertion of a row
          * @param pNewRow the inserted row
          */
-        protected void fireInsertRowEvents(int pNewRow) {
+        protected void fireInsertRowEvents(final int pNewRow) {
             /* Note that we have an inserted row */
             fireTableRowsInserted(pNewRow, pNewRow);
             theRowHdrModel.fireTableRowsInserted(pNewRow, pNewRow);
@@ -984,10 +1015,10 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
         }
 
         /**
-         * fire events for deletion of a row
+         * fire events for deletion of a row.
          * @param pOldRow the deleted row
          */
-        protected void fireDeleteRowEvents(int pOldRow) {
+        protected void fireDeleteRowEvents(final int pOldRow) {
             /* Note that we have an deleted row */
             fireTableRowsDeleted(pOldRow, pOldRow);
             theRowHdrModel.fireTableRowsInserted(pOldRow, pOldRow);
@@ -1003,24 +1034,25 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
         }
 
         /**
-         * fire row updated events
+         * fire row updated events.
          * @param pRow the updated row
          */
-        protected void fireUpdateRowEvents(int pRow) {
+        protected void fireUpdateRowEvents(final int pRow) {
             /* Note that the data for this row and header has changed */
             fireTableRowsUpdated(pRow, pRow);
             theRowHdrModel.fireTableRowsUpdated(pRow, pRow);
         }
 
         /**
-         * fire column updated events
+         * fire column updated events.
          * @param pCol the updated column
          */
-        public void fireUpdateColEvent(int pCol) {
+        public void fireUpdateColEvent(final int pCol) {
             /* Access the size of the table */
             int mySize;
-            if ((mySize = getRowCount()) == 0)
+            if ((mySize = getRowCount()) == 0) {
                 return;
+            }
 
             /* Create the table event */
             TableModelEvent myEvent = new TableModelEvent(this, 0, mySize - 1, pCol);
@@ -1030,7 +1062,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
         }
 
         /**
-         * fire events for new data view
+         * fire events for new data view.
          */
         protected void fireNewDataEvents() {
             /* Note that the data for table and row header has changed */
@@ -1039,10 +1071,10 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
         }
 
         /**
-         * Get render data for row
+         * Get render data for row.
          * @param pData the Render details
          */
-        public void getRenderData(RenderData pData) {
+        public void getRenderData(final RenderData pData) {
             DataItem<?> myRow;
             int iRow;
             int myIndex;
@@ -1051,8 +1083,9 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
             /* If we have a header decrement the index */
             iRow = pData.getRow();
             myIndex = iRow;
-            if (theTable.hasHeader())
+            if (theTable.hasHeader()) {
                 myIndex--;
+            }
 
             /* If this is a data row */
             if (myIndex >= 0) {
@@ -1062,19 +1095,16 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
 
                 /* Has the field changed */
                 pData.processTableRow(myRow, iField);
-            }
 
-            /* else set default values */
-            else
+                /* else set default values */
+            } else {
                 pData.setDefaults();
-
-            /* return to the caller */
-            return;
+            }
         }
     }
 
     /**
-     * TableColumn extension class
+     * TableColumn extension class.
      */
     protected static class DataColumn extends TableColumn {
         private static final long serialVersionUID = 6117303771805259099L;

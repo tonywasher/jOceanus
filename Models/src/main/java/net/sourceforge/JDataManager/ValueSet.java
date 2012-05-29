@@ -19,14 +19,13 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.models.data;
+package net.sourceforge.JDataManager;
 
 import java.util.Arrays;
 import java.util.Iterator;
 
-import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.ReportFields;
 import net.sourceforge.JDataManager.ReportFields.ReportField;
+import uk.co.tolcroft.models.data.DataItem;
 
 /**
  * ValueSet class

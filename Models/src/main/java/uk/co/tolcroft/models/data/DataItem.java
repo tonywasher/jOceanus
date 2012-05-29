@@ -22,11 +22,14 @@
 package uk.co.tolcroft.models.data;
 
 import net.sourceforge.JDataManager.Difference;
+import net.sourceforge.JDataManager.HistoryControl;
 import net.sourceforge.JDataManager.ReportFields;
 import net.sourceforge.JDataManager.ReportFields.ReportField;
 import net.sourceforge.JDataManager.ReportItem;
 import net.sourceforge.JDataManager.ReportObject;
 import net.sourceforge.JDataManager.ReportObject.ReportValues;
+import net.sourceforge.JDataManager.ValidationControl;
+import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JSortedList.LinkObject;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 

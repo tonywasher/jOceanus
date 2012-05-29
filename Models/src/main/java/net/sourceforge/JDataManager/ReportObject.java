@@ -28,9 +28,8 @@ import net.sourceforge.JDataManager.ReportFields.ReportField;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
 import net.sourceforge.JDecimal.Decimal;
+import net.sourceforge.JGordianKnot.EncryptedData.EncryptedField;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.EncryptedData.EncryptedField;
-import uk.co.tolcroft.models.data.ValueSet;
 
 public class ReportObject {
     /**

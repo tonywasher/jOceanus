@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,11 +35,11 @@ import java.util.Map;
 import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JDecimal.Decimal;
-import net.sourceforge.JDecimal.Decimal.Dilution;
-import net.sourceforge.JDecimal.Decimal.Money;
-import net.sourceforge.JDecimal.Decimal.Price;
-import net.sourceforge.JDecimal.Decimal.Rate;
-import net.sourceforge.JDecimal.Decimal.Units;
+import net.sourceforge.JDecimal.Dilution;
+import net.sourceforge.JDecimal.Money;
+import net.sourceforge.JDecimal.Price;
+import net.sourceforge.JDecimal.Rate;
+import net.sourceforge.JDecimal.Units;
 import net.sourceforge.JGordianKnot.PasswordHash;
 import net.sourceforge.JGordianKnot.SecureManager;
 import net.sourceforge.JGordianKnot.ZipFile.ZipWriteFile;
@@ -54,82 +55,106 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 
+/**
+ * Write control for spreadsheets.
+ * @author Tony Washer
+ * @param <T> the DataSet type
+ */
 public abstract class SheetWriter<T extends DataSet<T>> {
     /**
-     * Thread control
+     * Font Height.
      */
-    private ThreadStatus<T> theThread = null;
+    private static final int FONT_HEIGHT = 10;
 
     /**
-     * Writable spreadsheet
+     * Thread control.
+     */
+    private final ThreadStatus<T> theThread;
+
+    /**
+     * Writable spreadsheet.
      */
     private Workbook theWorkBook = null;
 
     /**
-     * The DataSet
+     * The DataSet.
      */
     private T theData = null;
 
     /**
-     * The WorkSheets
+     * The WorkSheets.
      */
     private List<SheetDataItem<?>> theSheets = null;
 
     /**
-     * Class of output sheet
+     * Class of output sheet.
      */
     private SheetType theType = null;
 
     /**
-     * Map of Allocated styles
+     * Map of Allocated styles.
      */
     private Map<CellStyleType, CellStyle> theMap = null;
 
-    /* Access methods */
+    /**
+     * get thread status.
+     * @return the status
+     */
     protected ThreadStatus<T> getThread() {
         return theThread;
     }
 
+    /**
+     * get workbook.
+     * @return the workbook
+     */
     protected Workbook getWorkBook() {
         return theWorkBook;
     }
 
+    /**
+     * get dataSet.
+     * @return the dataSet
+     */
     public T getData() {
         return theData;
     }
 
+    /**
+     * get sheet type.
+     * @return the sheet type
+     */
     public SheetType getType() {
         return theType;
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pThread the Thread control
      */
-    protected SheetWriter(ThreadStatus<T> pThread) {
+    protected SheetWriter(final ThreadStatus<T> pThread) {
         theThread = pThread;
     }
 
     /**
-     * Add Sheet to list
+     * Add Sheet to list.
      * @param pSheet the sheet
      */
-    protected void addSheet(SheetDataItem<?> pSheet) {
+    protected void addSheet(final SheetDataItem<?> pSheet) {
         theSheets.add(pSheet);
     }
 
     /**
-     * Create a Backup Workbook
+     * Create a Backup Workbook.
      * @param pData Data to write out
      * @param pFile the backup file to write to
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public void createBackup(T pData,
-                             File pFile) throws ModelException {
+    public void createBackup(final T pData,
+                             final File pFile) throws ModelException {
         OutputStream myStream = null;
         File myTgtFile = null;
         ZipWriteFile myZipFile = null;
-        PasswordHash myHash;
 
         /* Protect the workbook access */
         try {
@@ -145,11 +170,11 @@ public abstract class SheetWriter<T extends DataSet<T>> {
             /* Create a clone of the security control */
             SecureManager mySecure = pData.getSecurity();
             PasswordHash myBase = pData.getPasswordHash();
-            myHash = mySecure.clonePasswordHash(myBase);
+            PasswordHash myHash = mySecure.clonePasswordHash(myBase);
 
             /* Create the new output Zip file */
             myZipFile = new ZipWriteFile(myHash, myTgtFile);
-            myStream = myZipFile.getOutputStream(new File(SpreadSheet.fileData));
+            myStream = myZipFile.getOutputStream(new File(SpreadSheet.FILE_NAME));
 
             /* Initialise the WorkBook */
             initialiseWorkBook();
@@ -164,27 +189,28 @@ public abstract class SheetWriter<T extends DataSet<T>> {
             /* Close the Zip file */
             myZipFile.close();
             myZipFile = null;
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             /* Protect while cleaning up */
             try {
                 /* Close the output stream */
-                if (myStream != null)
+                if (myStream != null) {
                     myStream.close();
+                }
 
                 /* If we are encrypted close the Zip file */
-                if (myZipFile != null)
+                if (myZipFile != null) {
                     myZipFile.close();
-            }
+                }
 
-            /* Ignore errors */
-            catch (Exception ex) {
+                /* Ignore errors */
+            } catch (Exception ex) {
+                myStream = null;
             }
 
             /* Delete the file on error */
-            if (myTgtFile != null)
+            if (myTgtFile != null) {
                 myTgtFile.delete();
+            }
 
             /* Report the error */
             throw new ModelException(ExceptionClass.EXCEL, "Failed to create Backup Workbook: "
@@ -193,13 +219,13 @@ public abstract class SheetWriter<T extends DataSet<T>> {
     }
 
     /**
-     * Create an Extract Workbook
+     * Create an Extract Workbook.
      * @param pData Data to write out
      * @param pFile the backup file to write to
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public void createExtract(T pData,
-                              File pFile) throws ModelException {
+    public void createExtract(final T pData,
+                              final File pFile) throws ModelException {
         OutputStream myStream = null;
         FileOutputStream myOutFile = null;
         File myTgtFile = null;
@@ -228,23 +254,23 @@ public abstract class SheetWriter<T extends DataSet<T>> {
             /* Close the Stream to force out errors */
             myStream.close();
             myStream = null;
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             /* Protect while cleaning up */
             try {
                 /* Close the output stream */
-                if (myStream != null)
+                if (myStream != null) {
                     myStream.close();
-            }
+                }
 
-            /* Ignore errors */
-            catch (Exception ex) {
+                /* Ignore errors */
+            } catch (Exception ex) {
+                myStream = null;
             }
 
             /* Delete the file on error */
-            if (myTgtFile != null)
+            if (myTgtFile != null) {
                 myTgtFile.delete();
+            }
 
             /* Report the error */
             throw new ModelException(ExceptionClass.EXCEL, "Failed to create Editable Workbook: "
@@ -253,13 +279,13 @@ public abstract class SheetWriter<T extends DataSet<T>> {
     }
 
     /**
-     * Register sheets
+     * Register sheets.
      */
     protected abstract void registerSheets();
 
     /**
-     * Create the list of sheets to write
-     * @throws Exception
+     * Create the list of sheets to write.
+     * @throws Exception on error
      */
     private void initialiseWorkBook() throws Exception {
         /* Create the workbook attached to the output stream */
@@ -284,35 +310,40 @@ public abstract class SheetWriter<T extends DataSet<T>> {
     }
 
     /**
-     * Obtain the required CellStyle
+     * Obtain the required CellStyle.
      * @param pType the CellStyleType
      * @return the required CellStyle
      */
-    protected CellStyle getCellStyle(CellStyleType pType) {
+    protected CellStyle getCellStyle(final CellStyleType pType) {
         return theMap.get(pType);
     }
 
     /**
-     * Obtain the required CellStyle
+     * Obtain the required CellStyle.
      * @param pValue the value
      * @return the required CellStyle
      */
-    protected CellStyle getCellStyle(Decimal pValue) {
-        if (pValue instanceof Money)
+    protected CellStyle getCellStyle(final Decimal pValue) {
+        if (pValue instanceof Money) {
             return getCellStyle(CellStyleType.Money);
-        if (pValue instanceof Units)
+        }
+        if (pValue instanceof Units) {
             return getCellStyle(CellStyleType.Units);
-        if (pValue instanceof Rate)
+        }
+        if (pValue instanceof Rate) {
             return getCellStyle(CellStyleType.Rate);
-        if (pValue instanceof Price)
+        }
+        if (pValue instanceof Price) {
             return getCellStyle(CellStyleType.Price);
-        if (pValue instanceof Dilution)
+        }
+        if (pValue instanceof Dilution) {
             return getCellStyle(CellStyleType.Dilution);
+        }
         return null;
     }
 
     /**
-     * Create the standard CellStyles
+     * Create the standard CellStyles.
      */
     private void createCellStyles() {
         /* Create the map */
@@ -324,14 +355,14 @@ public abstract class SheetWriter<T extends DataSet<T>> {
         /* Create the Standard fonts */
         Font myValueFont = theWorkBook.createFont();
         myValueFont.setFontName("Arial");
-        myValueFont.setFontHeightInPoints((short) 10);
+        myValueFont.setFontHeightInPoints((short) FONT_HEIGHT);
         Font myNumberFont = theWorkBook.createFont();
         myNumberFont.setFontName("Courier");
-        myNumberFont.setFontHeightInPoints((short) 10);
+        myNumberFont.setFontHeightInPoints((short) FONT_HEIGHT);
         Font myHeaderFont = theWorkBook.createFont();
         myHeaderFont.setFontName("Arial");
         myHeaderFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
-        myHeaderFont.setFontHeightInPoints((short) 10);
+        myHeaderFont.setFontHeightInPoints((short) FONT_HEIGHT);
 
         /* Create the Date Cell Style */
         CellStyle myStyle = theWorkBook.createCellStyle();
@@ -411,11 +442,11 @@ public abstract class SheetWriter<T extends DataSet<T>> {
     }
 
     /**
-     * Write the WorkBook
+     * Write the WorkBook.
      * @param pStream the output stream
-     * @throws Exception
+     * @throws Exception on error
      */
-    private void writeWorkBook(OutputStream pStream) throws Exception {
+    private void writeWorkBook(final OutputStream pStream) throws Exception {
         SheetDataItem<?> mySheet;
 
         /* Access the iterator for the list */
@@ -434,8 +465,9 @@ public abstract class SheetWriter<T extends DataSet<T>> {
         }
 
         /* If we have built all the sheets */
-        if (bContinue)
+        if (bContinue) {
             bContinue = theThread.setNewStage("Writing");
+        }
 
         /* If we have created the workbook OK */
         if (bContinue) {
@@ -444,14 +476,68 @@ public abstract class SheetWriter<T extends DataSet<T>> {
         }
 
         /* Check for cancellation */
-        if (!bContinue)
+        if (!bContinue) {
             throw new ModelException(ExceptionClass.EXCEL, "Operation Cancelled");
+        }
     }
 
     /**
-     * Cell Styles
+     * Cell Styles.
      */
     protected enum CellStyleType {
-        Integer, Boolean, Rate, Dilution, Price, Money, Units, Date, String, Header, Trailer;
+        /**
+         * Integer.
+         */
+        Integer,
+
+        /**
+         * Boolean.
+         */
+        Boolean,
+
+        /**
+         * Rate.
+         */
+        Rate,
+
+        /**
+         * Dilution.
+         */
+        Dilution,
+
+        /**
+         * Price.
+         */
+        Price,
+
+        /**
+         * Money.
+         */
+        Money,
+
+        /**
+         * Units.
+         */
+        Units,
+
+        /**
+         * Date.
+         */
+        Date,
+
+        /**
+         * String.
+         */
+        String,
+
+        /**
+         * Header.
+         */
+        Header,
+
+        /**
+         * Trailer.
+         */
+        Trailer;
     }
 }

@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,26 +38,40 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.views.DataControl;
 
+/**
+ * Class that encapsulates a database connection.
+ * @param <T> the dataSet type.
+ */
 public abstract class Database<T extends DataSet<T>> implements PreferenceSetChooser {
     /**
-     * Preferences for database
+     * Number of update steps per table (INSERT/UPDATE/DELETE).
      */
-    private DatabasePreferences thePreferences = null;
+    private static final int NUM_STEPS_PER_TABLE = 3;
 
     /**
-     * Database connection
+     * Buffer length.
+     */
+    private static final int BUFFER_LEN = 100;
+
+    /**
+     * Preferences for database.
+     */
+    private final DatabasePreferences thePreferences;
+
+    /**
+     * Database connection.
      */
     private Connection theConn = null;
 
     /**
-     * Batch Size
+     * Batch Size.
      */
-    private Integer theBatchSize = null;
+    private final Integer theBatchSize;
 
     /**
-     * List of Database tables
+     * List of Database tables.
      */
-    private List<DatabaseTable<?>> theTables = null;
+    private final List<DatabaseTable<?>> theTables;
 
     @Override
     public Class<? extends PreferenceSet> getPreferenceSetClass() {
@@ -64,87 +79,87 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
     }
 
     /**
-     * Database Properties
+     * Database Properties.
      */
     public static class DatabasePreferences extends PreferenceSet {
         /**
-         * Registry name for DataBase driver
+         * Registry name for DataBase driver.
          */
-        protected final static String nameDBDriver = "DBDriver";
+        protected static final String NAME_DBDRIVER = "DBDriver";
 
         /**
-         * Registry name for DataBase server
+         * Registry name for DataBase server.
          */
-        protected final static String nameDBServer = "DBServer";
+        protected static final String NAME_DBSERVER = "DBServer";
 
         /**
-         * Registry name for DataBase instance
+         * Registry name for DataBase instance.
          */
-        protected final static String nameDBInstance = "DBInstance";
+        protected static final String NAME_DBINSTANCE = "DBInstance";
 
         /**
-         * Registry name for DataBase name
+         * Registry name for DataBase name.
          */
-        protected final static String nameDBName = "DBName";
+        protected static final String NAME_DBNAME = "DBName";
 
         /**
-         * Registry name for DataBase batch size
+         * Registry name for DataBase batch size.
          */
-        protected final static String nameDBBatch = "DBBatchSize";
+        protected static final String NAME_DBBATCH = "DBBatchSize";
 
         /**
-         * Display name for DataBase driver
+         * Display name for DataBase driver.
          */
-        protected final static String dispDBDriver = "Database Driver Class";
+        protected static final String DISPLAY_DBDRIVER = "Database Driver Class";
 
         /**
-         * Display name for DataBase server
+         * Display name for DataBase server.
          */
-        protected final static String dispDBServer = "Server Host Machine";
+        protected static final String DISPLAY_DBSERVER = "Server Host Machine";
 
         /**
-         * Display name for DataBase instance
+         * Display name for DataBase instance.
          */
-        protected final static String dispDBInstance = "Server Instance";
+        protected static final String DISPLAY_DBINSTANCE = "Server Instance";
 
         /**
-         * Display name for DataBase name
+         * Display name for DataBase name.
          */
-        protected final static String dispDBName = "Database Name";
+        protected static final String DISPLAY_DBNAME = "Database Name";
 
         /**
-         * Display name for DataBase batch size
+         * Display name for DataBase batch size.
          */
-        protected final static String dispDBBatch = "Batch Size";
+        protected static final String DISPLAY_DBBATCH = "Batch Size";
 
         /**
-         * Default Database driver string
+         * Default Database driver string.
          */
-        private final static JDBCDriver defDBDriver = JDBCDriver.SQLServer;
+        private static final JDBCDriver DEFAULT_DBDRIVER = JDBCDriver.SQLServer;
 
         /**
-         * Default Database connection string
+         * Default Database connection string.
          */
-        private final static String defDBServer = "localhost";
+        private static final String DEFAULT_DBSERVER = "localhost";
 
         /**
-         * Default Database instance
+         * Default Database instance.
          */
-        private final static String defDBInstance = "SQLEXPRESS";
+        private static final String DEFAULT_DBINSTANCE = "SQLEXPRESS";
 
         /**
-         * Default Database name
+         * Default Database name.
          */
-        private final static String defDBName = "Finance";
+        private static final String DEFAULT_DBNAME = "Finance";
 
         /**
-         * Default Database batch size
+         * Default Database batch size.
          */
-        private final static Integer defDBBatch = 50;
+        private static final Integer DEFAULT_DBBATCH = BatchControl.DEF_BATCH_SIZE;
 
         /**
-         * Constructor
-         * @throws ModelException
+         * Constructor.
+         * @throws ModelException on error
          */
         public DatabasePreferences() throws ModelException {
             super();
@@ -153,62 +168,72 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
         @Override
         protected void definePreferences() {
             /* Define the preferences */
-            definePreference(nameDBDriver, JDBCDriver.class);
-            definePreference(nameDBServer, PreferenceType.String);
-            definePreference(nameDBInstance, PreferenceType.String);
-            definePreference(nameDBName, PreferenceType.String);
-            definePreference(nameDBBatch, PreferenceType.Integer);
+            definePreference(NAME_DBDRIVER, JDBCDriver.class);
+            definePreference(NAME_DBSERVER, PreferenceType.String);
+            definePreference(NAME_DBINSTANCE, PreferenceType.String);
+            definePreference(NAME_DBNAME, PreferenceType.String);
+            definePreference(NAME_DBBATCH, PreferenceType.Integer);
         }
 
         @Override
-        protected Object getDefaultValue(String pName) {
+        protected Object getDefaultValue(final String pName) {
             /* Handle default values */
-            if (pName.equals(nameDBDriver))
-                return defDBDriver;
-            if (pName.equals(nameDBServer))
-                return defDBServer;
-            if (pName.equals(nameDBInstance))
-                return defDBInstance;
-            if (pName.equals(nameDBName))
-                return defDBName;
-            if (pName.equals(nameDBBatch))
-                return defDBBatch;
+            if (pName.equals(NAME_DBDRIVER)) {
+                return DEFAULT_DBDRIVER;
+            }
+            if (pName.equals(NAME_DBSERVER)) {
+                return DEFAULT_DBSERVER;
+            }
+            if (pName.equals(NAME_DBINSTANCE)) {
+                return DEFAULT_DBINSTANCE;
+            }
+            if (pName.equals(NAME_DBNAME)) {
+                return DEFAULT_DBNAME;
+            }
+            if (pName.equals(NAME_DBBATCH)) {
+                return DEFAULT_DBBATCH;
+            }
             return null;
         }
 
         @Override
-        protected String getDisplayName(String pName) {
+        protected String getDisplayName(final String pName) {
             /* Handle default values */
-            if (pName.equals(nameDBDriver))
-                return dispDBDriver;
-            if (pName.equals(nameDBServer))
-                return dispDBServer;
-            if (pName.equals(nameDBInstance))
-                return dispDBInstance;
-            if (pName.equals(nameDBName))
-                return dispDBName;
-            if (pName.equals(nameDBBatch))
-                return dispDBBatch;
+            if (pName.equals(NAME_DBDRIVER)) {
+                return DISPLAY_DBDRIVER;
+            }
+            if (pName.equals(NAME_DBSERVER)) {
+                return DISPLAY_DBSERVER;
+            }
+            if (pName.equals(NAME_DBINSTANCE)) {
+                return DISPLAY_DBINSTANCE;
+            }
+            if (pName.equals(NAME_DBNAME)) {
+                return DISPLAY_DBNAME;
+            }
+            if (pName.equals(NAME_DBBATCH)) {
+                return DISPLAY_DBBATCH;
+            }
             return null;
         }
 
         /**
-         * Obtain connection string
+         * Obtain connection string.
          * @return the connection string
          */
         private String getConnectionString() {
-            StringBuilder myBuilder = new StringBuilder(100);
+            StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
             /* Access the driver */
-            JDBCDriver myDriver = getEnumValue(nameDBDriver, JDBCDriver.class);
+            JDBCDriver myDriver = getEnumValue(NAME_DBDRIVER, JDBCDriver.class);
 
             /* Build the connection string */
             myBuilder.append(myDriver.getPrefix());
-            myBuilder.append(getStringValue(nameDBServer));
+            myBuilder.append(getStringValue(NAME_DBSERVER));
             myBuilder.append(";instanceName=");
-            myBuilder.append(getStringValue(nameDBInstance));
+            myBuilder.append(getStringValue(NAME_DBINSTANCE));
             myBuilder.append(";database=");
-            myBuilder.append(getStringValue(nameDBName));
+            myBuilder.append(getStringValue(NAME_DBNAME));
             myBuilder.append(";integratedSecurity=true");
 
             /* Return the string */
@@ -217,13 +242,16 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
     }
 
     /**
-     * JDBCDriver
+     * JDBCDriver class.
      */
     public enum JDBCDriver {
+        /**
+         * SQLServer.
+         */
         SQLServer;
 
         /**
-         * Obtain driver class
+         * Obtain driver class.
          * @return the driver class
          */
         public String getDriver() {
@@ -236,7 +264,7 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
         }
 
         /**
-         * Obtain connection prefix
+         * Obtain connection prefix.
          * @return the connection prefix
          */
         public String getPrefix() {
@@ -250,8 +278,8 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
     }
 
     /**
-     * Construct a new Database class
-     * @throws ModelException
+     * Construct a new Database class.
+     * @throws ModelException on error
      */
     public Database() throws ModelException {
         /* Create the connection */
@@ -260,10 +288,10 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             thePreferences = (DatabasePreferences) PreferenceManager.getPreferenceSet(this);
 
             /* Access the batch size */
-            theBatchSize = thePreferences.getIntegerValue(DatabasePreferences.nameDBBatch);
+            theBatchSize = thePreferences.getIntegerValue(DatabasePreferences.NAME_DBBATCH);
 
             /* Load the database driver */
-            Class.forName(thePreferences.getEnumValue(DatabasePreferences.nameDBDriver, JDBCDriver.class)
+            Class.forName(thePreferences.getEnumValue(DatabasePreferences.NAME_DBDRIVER, JDBCDriver.class)
                     .getDriver());
 
             /* Obtain the connection */
@@ -281,7 +309,7 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
     }
 
     /**
-     * Access the connection
+     * Access the connection.
      * @return the connection
      */
     protected Connection getConn() {
@@ -289,10 +317,10 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
     }
 
     /**
-     * Add a table
+     * Add a table.
      * @param pTable the Table to add
      */
-    protected void addTable(DatabaseTable<?> pTable) {
+    protected void addTable(final DatabaseTable<?> pTable) {
         pTable.getDefinition().resolveReferences(theTables);
         theTables.add(pTable);
     }
@@ -304,12 +332,13 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
     }
 
     /**
-     * Close the connection to the database rolling back any outstanding transaction
+     * Close the connection to the database rolling back any outstanding transaction.
      */
     protected void close() {
         /* Ignore if no connection */
-        if (theConn != null)
+        if (theConn != null) {
             return;
+        }
 
         /* Protect against exceptions */
         try {
@@ -331,25 +360,26 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
 
             /* Close the connection */
             theConn.close();
-        }
 
-        /* Discard Exceptions */
-        catch (Exception e) {
+            /* Discard Exceptions */
+        } catch (Exception e) {
+            theConn = null;
         }
     }
 
     /**
-     * Load data from the database
+     * Load data from the database.
      * @param pThread the thread control
      * @return the new DataSet
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public T loadDatabase(ThreadStatus<T> pThread) throws ModelException {
+    public T loadDatabase(final ThreadStatus<T> pThread) throws ModelException {
         boolean bContinue = true;
 
         /* Set the number of stages */
-        if (!pThread.setNumStages(1 + theTables.size()))
+        if (!pThread.setNumStages(1 + theTables.size())) {
             return null;
+        }
 
         /* Create an empty DataSet */
         DataControl<T> myView = pThread.getControl();
@@ -369,31 +399,34 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
         }
 
         /* analyse the data */
-        if (bContinue)
+        if (bContinue) {
             bContinue = pThread.setNewStage("Refreshing data");
+        }
 
         /* Check for cancellation */
-        if (!bContinue)
+        if (!bContinue) {
             throw new ModelException(ExceptionClass.LOGIC, "Operation Cancelled");
+        }
 
         /* Return the data */
-        return (bContinue) ? myData : null;
+        return myData;
     }
 
     /**
-     * Update data into database
+     * Update data into database.
      * @param pThread the thread control
      * @param pData the data
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public void updateDatabase(ThreadStatus<T> pThread,
-                               T pData) throws ModelException {
+    public void updateDatabase(final ThreadStatus<T> pThread,
+                               final T pData) throws ModelException {
         boolean bContinue = true;
         BatchControl myBatch = new BatchControl(theBatchSize);
 
         /* Set the number of stages */
-        if (!pThread.setNumStages(3 * theTables.size()))
+        if (!pThread.setNumStages(NUM_STEPS_PER_TABLE * theTables.size())) {
             return;
+        }
 
         /* Create the iterator */
         Iterator<DatabaseTable<?>> myIterator;
@@ -443,22 +476,24 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
         }
 
         /* Check for cancellation */
-        if (!bContinue)
+        if (!bContinue) {
             throw new ModelException(ExceptionClass.LOGIC, "Operation Cancelled");
+        }
     }
 
     /**
-     * Create tables
+     * Create tables.
      * @param pThread the thread control
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public void createTables(ThreadStatus<T> pThread) throws ModelException {
+    public void createTables(final ThreadStatus<T> pThread) throws ModelException {
         /* Drop any existing tables */
         dropTables(pThread);
 
         /* Set the number of stages */
-        if (!pThread.setNumStages(1))
+        if (!pThread.setNumStages(1)) {
             return;
+        }
 
         /* Create the iterator */
         Iterator<DatabaseTable<?>> myIterator;
@@ -475,15 +510,15 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
     }
 
     /**
-     * Drop tables
+     * Drop tables.
      * @param pThread the thread control
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    private void dropTables(ThreadStatus<T> pThread) throws ModelException {
-
+    private void dropTables(final ThreadStatus<T> pThread) throws ModelException {
         /* Set the number of stages */
-        if (!pThread.setNumStages(1))
+        if (!pThread.setNumStages(1)) {
             return;
+        }
 
         /* Create the iterator */
         ListIterator<DatabaseTable<?>> myIterator;
@@ -497,21 +532,19 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             /* Drop the table */
             myTable.dropTable();
         }
-
-        /* Return the data */
-        return;
     }
 
     /**
-     * Purge tables
+     * Purge tables.
      * @param pThread the thread control
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public void purgeTables(ThreadStatus<T> pThread) throws ModelException {
+    public void purgeTables(final ThreadStatus<T> pThread) throws ModelException {
 
         /* Set the number of stages */
-        if (!pThread.setNumStages(1))
+        if (!pThread.setNumStages(1)) {
             return;
+        }
 
         /* Create the iterator */
         ListIterator<DatabaseTable<?>> myIterator;
@@ -525,8 +558,5 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             /* Purge the table */
             myTable.purgeTable();
         }
-
-        /* Return the data */
-        return;
     }
 }

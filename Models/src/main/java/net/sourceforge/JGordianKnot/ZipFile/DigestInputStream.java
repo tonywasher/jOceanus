@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,42 +34,42 @@ import net.sourceforge.JGordianKnot.MsgDigest;
  */
 public class DigestInputStream extends InputStream {
     /**
-     * Buffer size for skip reads
+     * Buffer size for skip reads.
      */
-    private final static int BUFSIZE = 1024;
+    private static final int BUFSIZE = 1024;
 
     /**
-     * The underlying input stream
+     * The underlying input stream.
      */
     private final InputStream theStream;
 
     /**
-     * has this stream been closed
+     * has this stream been closed.
      */
     private boolean isClosed = false;
 
     /**
-     * The Message Digest of the data read
+     * The Message Digest of the data read.
      */
     private final MsgDigest theDigest;
 
     /**
-     * The Skip buffer
+     * The Skip buffer.
      */
-    private byte[] theSkipBuffer = new byte[BUFSIZE];
+    private final byte[] theSkipBuffer = new byte[BUFSIZE];
 
     /**
-     * Has EOF been reached
+     * Has EOF been reached.
      */
     private boolean hasEOFbeenSeen = false;
 
     /**
-     * Construct the input stream
+     * Construct the input stream.
      * @param pDigest the message digest
      * @param pStream the Stream to read data from
      */
-    public DigestInputStream(MsgDigest pDigest,
-                             InputStream pStream) {
+    public DigestInputStream(final MsgDigest pDigest,
+                             final InputStream pStream) {
         /* Store the message digest */
         theDigest = pDigest;
 
@@ -93,36 +94,36 @@ public class DigestInputStream extends InputStream {
                     throw new IOException(e.getMessage());
                 }
             }
-
-            /* Release allocated encryption resources */
-            theSkipBuffer = null;
         }
     }
 
     @Override
-    public long skip(long pNumToSkip) throws IOException {
+    public long skip(final long pNumToSkip) throws IOException {
         long iNumToSkip = pNumToSkip;
         long iNumSkipped = 0;
         int iNumToRead;
         int iNumRead;
 
         /* If we are already closed throw IO Exception */
-        if (isClosed)
+        if (isClosed) {
             throw new IOException("Stream is closed");
+        }
 
         /* while we have data left to skip */
         while (iNumToSkip > 0) {
             /* Determine size of next read */
             iNumToRead = BUFSIZE;
-            if (iNumToRead > iNumToSkip)
+            if (iNumToRead > iNumToSkip) {
                 iNumToRead = (int) iNumToSkip;
+            }
 
             /* Read the next set of data */
             iNumRead = read(theSkipBuffer, 0, iNumToRead);
 
             /* Break loop on EOF */
-            if (iNumRead < 0)
+            if (iNumRead < 0) {
                 break;
+            }
 
             /* Adjust count */
             iNumToSkip -= iNumRead;
@@ -135,8 +136,9 @@ public class DigestInputStream extends InputStream {
     @Override
     public int available() throws IOException {
         /* If we are already closed throw IO Exception */
-        if (isClosed)
+        if (isClosed) {
             throw new IOException("Stream is closed");
+        }
 
         /* Determine the number of bytes available */
         return theStream.available();
@@ -149,28 +151,28 @@ public class DigestInputStream extends InputStream {
     }
 
     @Override
-    public void mark(int readLimit) {
-        /* Just ignore the call */
-        return;
+    public void mark(final int readLimit) {
     }
 
     @Override
     public void reset() throws IOException {
         /* If we are already closed throw IO Exception */
-        if (isClosed)
+        if (isClosed) {
             throw new IOException("Stream is closed");
+        }
 
         /* Set the mark */
         throw new IOException("Mark not supported");
     }
 
     @Override
-    public int read(byte[] pBuffer,
-                    int pOffset,
-                    int pLength) throws IOException {
+    public int read(final byte[] pBuffer,
+                    final int pOffset,
+                    final int pLength) throws IOException {
         /* If we are already closed throw IO Exception */
-        if (isClosed)
+        if (isClosed) {
             throw new IOException("Stream is closed");
+        }
 
         /* Read the bytes from the stream */
         int iNumRead = theStream.read(pBuffer, pOffset, pLength);
@@ -182,15 +184,16 @@ public class DigestInputStream extends InputStream {
         }
 
         /* Note if EOF has been seen */
-        if (iNumRead == -1)
+        if (iNumRead == -1) {
             hasEOFbeenSeen = true;
+        }
 
         /* Return the amount of data read */
         return iNumRead;
     }
 
     @Override
-    public int read(byte[] pBytes) throws IOException {
+    public int read(final byte[] pBytes) throws IOException {
         /* Read the bytes from the stream */
         return read(pBytes, 0, pBytes.length);
     }
@@ -198,8 +201,9 @@ public class DigestInputStream extends InputStream {
     @Override
     public int read() throws IOException {
         /* If we are already closed throw IO Exception */
-        if (isClosed)
+        if (isClosed) {
             throw new IOException("Stream is closed");
+        }
 
         /* read the next byte */
         int iByte = theStream.read();
@@ -211,8 +215,9 @@ public class DigestInputStream extends InputStream {
         }
 
         /* Note if EOF has been seen */
-        if (iByte == -1)
+        if (iByte == -1) {
             hasEOFbeenSeen = true;
+        }
 
         /* Return to the caller */
         return iByte;

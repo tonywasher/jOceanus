@@ -180,7 +180,7 @@ public class ReportFields {
         private final Iterator<ReportField> thePreceding;
 
         /**
-         * Preceding iterator
+         * Local iterator
          */
         private final Iterator<ReportField> theIterator;
 

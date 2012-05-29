@@ -19,7 +19,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.models.ui;
+package net.sourceforge.JDataManager.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,12 +36,13 @@ import javax.swing.table.TableCellEditor;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayCellEditor;
 import net.sourceforge.JDateDay.DateDayRange;
-import net.sourceforge.JDecimal.Decimal.DilutedPrice;
-import net.sourceforge.JDecimal.Decimal.Dilution;
-import net.sourceforge.JDecimal.Decimal.Money;
-import net.sourceforge.JDecimal.Decimal.Price;
-import net.sourceforge.JDecimal.Decimal.Rate;
-import net.sourceforge.JDecimal.Decimal.Units;
+import net.sourceforge.JDecimal.DilutedPrice;
+import net.sourceforge.JDecimal.Dilution;
+import net.sourceforge.JDecimal.Money;
+import net.sourceforge.JDecimal.Price;
+import net.sourceforge.JDecimal.Rate;
+import net.sourceforge.JDecimal.Units;
+import uk.co.tolcroft.models.ui.DataTable;
 
 public class Editor {
     /* String Cell Editor */

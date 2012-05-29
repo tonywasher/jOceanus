@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,39 +49,53 @@ import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
 
+/**
+ * Generator class for various security primitives.
+ * @author Tony Washer
+ */
 public class SecurityGenerator {
     /**
-     * Security Preferences
+     * The Hash prime.
+     */
+    protected static final int HASH_PRIME = 19;
+
+    /**
+     * The number of seed bytes.
+     */
+    protected static final int SEED_SIZE = 32;
+
+    /**
+     * Security Preferences.
      */
     private final SecurityPreferences thePreferences;
 
     /**
-     * The Security provider
+     * The Security provider.
      */
     private final SecurityProvider theProvider;
 
     /**
-     * The Security provider name
+     * The Security provider name.
      */
     private final String theProviderName;
 
     /**
-     * The Secure Random generator
+     * The Secure Random generator.
      */
     private final SecureRandom theRandom;
 
     /**
-     * List of asymmetric registrations
+     * List of asymmetric registrations.
      */
     private List<AsymRegistration> theAsymRegister = new ArrayList<AsymRegistration>();
 
     /**
-     * List of asymmetric registrations
+     * List of symmetric registrations.
      */
     private List<SymRegistration> theSymRegister = new ArrayList<SymRegistration>();
 
     /**
-     * Access the Security provider
+     * Access the Security provider.
      * @return the security provider
      */
     protected SecurityProvider getProvider() {
@@ -88,15 +103,15 @@ public class SecurityGenerator {
     }
 
     /**
-     * Access the Default Security provider
+     * Access the Default Security provider.
      * @return the default security provider
      */
     protected SecurityProvider getDefaultProvider() {
-        return thePreferences.getEnumValue(SecurityPreferences.nameProvider, SecurityProvider.class);
+        return thePreferences.getEnumValue(SecurityPreferences.NAME_PROVIDER, SecurityProvider.class);
     }
 
     /**
-     * Access the Secure Random
+     * Access the Secure Random.
      * @return the secure random
      */
     protected SecureRandom getRandom() {
@@ -104,40 +119,40 @@ public class SecurityGenerator {
     }
 
     /**
-     * Access the number of Hash Iterations
+     * Access the number of Hash Iterations.
      * @return the number of hash iterations
      */
     protected int getNumHashIterations() {
-        return thePreferences.getIntegerValue(SecurityPreferences.nameHashIterations);
+        return thePreferences.getIntegerValue(SecurityPreferences.NAME_HASH_ITERATIONS);
     }
 
     /**
-     * Access the security phrase in bytes format
+     * Access the security phrase in bytes format.
      * @return the secure random
      */
     protected byte[] getSecurityBytes() {
-        String myPhrase = thePreferences.getStringValue(SecurityPreferences.nameSecurityPhrase);
+        String myPhrase = thePreferences.getStringValue(SecurityPreferences.NAME_SECURITY_PHRASE);
         return DataConverter.stringToByteArray(myPhrase);
     }
 
     /**
-     * Access the number of Cipher Steps
+     * Access the number of Cipher Steps.
      * @return the number of cipher steps
      */
     public int getNumCipherSteps() {
-        return thePreferences.getIntegerValue(SecurityPreferences.nameCipherSteps);
+        return thePreferences.getIntegerValue(SecurityPreferences.NAME_CIPHER_STEPS);
     }
 
     /**
-     * Do we use restricted security
+     * Do we use restricted security.
      * @return true/false
      */
     protected boolean useRestricted() {
-        return thePreferences.getBooleanValue(SecurityPreferences.nameRestricted);
+        return thePreferences.getBooleanValue(SecurityPreferences.NAME_RESTRICTED);
     }
 
     /**
-     * Constructor for default provider
+     * Constructor for default provider.
      */
     public SecurityGenerator() {
         /* Access with default provider */
@@ -145,10 +160,10 @@ public class SecurityGenerator {
     }
 
     /**
-     * Constructor for explicit provider
+     * Constructor for explicit provider.
      * @param pProvider the Security provider
      */
-    public SecurityGenerator(SecurityProvider pProvider) {
+    public SecurityGenerator(final SecurityProvider pProvider) {
         /* Access the preferences */
         thePreferences = PreferenceManager.getPreferenceSet(SecurityPreferences.class);
 
@@ -164,43 +179,44 @@ public class SecurityGenerator {
     }
 
     /**
-     * ReSeed the random number generator
+     * ReSeed the random number generator.
      */
     public void reSeedRandom() {
         /* Generate and apply the new seed */
-        byte[] mySeed = SecureRandom.getSeed(32);
+        byte[] mySeed = SecureRandom.getSeed(SEED_SIZE);
         theRandom.setSeed(mySeed);
     }
 
     /**
-     * Generate a password Hash for the given password
+     * Generate a password Hash for the given password.
      * @param pPassword the password
      * @return the Password hash
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public PasswordHash generatePasswordHash(char[] pPassword) throws ModelException {
+    public PasswordHash generatePasswordHash(final char[] pPassword) throws ModelException {
         /* Create the new Password Hash */
         return new PasswordHash(this, pPassword);
     }
 
     /**
-     * Derive a password Hash for the given hash and password
+     * Derive a password Hash for the given hash and password.
      * @param pHashBytes the hash bytes
      * @param pPassword the password
      * @return the Password hash
-     * @throws ModelException
-     * @throws WrongPasswordException
+     * @throws ModelException on error
+     * @throws WrongPasswordException if password does not match
      */
-    public PasswordHash derivePasswordHash(byte[] pHashBytes,
-                                           char[] pPassword) throws ModelException, WrongPasswordException {
+    public PasswordHash derivePasswordHash(final byte[] pHashBytes,
+                                           final char[] pPassword) throws ModelException,
+            WrongPasswordException {
         /* Create the new Password Hash */
         return new PasswordHash(this, pHashBytes, pPassword);
     }
 
     /**
-     * Determine a list of random symmetric key types
+     * Determine a list of random symmetric key types.
      * @return the Symmetric Key types
-     * @throws ModelException
+     * @throws ModelException on error
      */
     public SymKeyType[] generateSymKeyTypes() throws ModelException {
         /* Create the new Symmetric Key */
@@ -208,20 +224,20 @@ public class SecurityGenerator {
     }
 
     /**
-     * Generate a new Symmetric Key for the required KeyType
+     * Generate a new Symmetric Key for the required KeyType.
      * @param pKeyType the Symmetric Key type
      * @return the newly created Symmetric Key
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public SymmetricKey generateSymmetricKey(SymKeyType pKeyType) throws ModelException {
+    public SymmetricKey generateSymmetricKey(final SymKeyType pKeyType) throws ModelException {
         /* Create the new Symmetric Key */
         return new SymmetricKey(this, pKeyType, useRestricted());
     }
 
     /**
-     * Generate a new Asymmetric Key of a random type
+     * Generate a new Asymmetric Key of a random type.
      * @return the newly created Asymmetric Key
-     * @throws ModelException
+     * @throws ModelException on error
      */
     public AsymmetricKey generateAsymmetricKey() throws ModelException {
         /* Generate the new asymmetric key mode */
@@ -232,12 +248,12 @@ public class SecurityGenerator {
     }
 
     /**
-     * Generate a new Asymmetric Key of the same type as the partner
+     * Generate a new Asymmetric Key of the same type as the partner.
      * @param pPartner the partner asymmetric key
      * @return the newly created Asymmetric Key
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public AsymmetricKey generateAsymmetricKey(AsymmetricKey pPartner) throws ModelException {
+    public AsymmetricKey generateAsymmetricKey(final AsymmetricKey pPartner) throws ModelException {
         /* Determine the new keyMode */
         AsymKeyMode myMode = new AsymKeyMode(useRestricted(), pPartner.getKeyMode());
 
@@ -246,12 +262,12 @@ public class SecurityGenerator {
     }
 
     /**
-     * Generate new KeyPair
+     * Generate new KeyPair.
      * @param pKeyType the key type
      * @return the KeyPair
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected KeyPair generateKeyPair(AsymKeyType pKeyType) throws ModelException {
+    protected KeyPair generateKeyPair(final AsymKeyType pKeyType) throws ModelException {
         /* Obtain the registration */
         AsymRegistration myReg = getAsymRegistration(pKeyType);
 
@@ -260,16 +276,16 @@ public class SecurityGenerator {
     }
 
     /**
-     * Derive the KeyPair from encoded forms
+     * Derive the KeyPair from encoded forms.
      * @param pKeyType the key type
      * @param pPrivate the Encoded private form (may be null for public-only)
      * @param pPublic the Encoded public form
      * @return the KeyPair
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected KeyPair deriveKeyPair(AsymKeyType pKeyType,
-                                    byte[] pPrivate,
-                                    byte[] pPublic) throws ModelException {
+    protected KeyPair deriveKeyPair(final AsymKeyType pKeyType,
+                                    final byte[] pPrivate,
+                                    final byte[] pPublic) throws ModelException {
         /* Obtain the registration */
         AsymRegistration myReg = getAsymRegistration(pKeyType);
 
@@ -278,14 +294,14 @@ public class SecurityGenerator {
     }
 
     /**
-     * Generate new KeyPair
+     * Generate new KeyPair.
      * @param pKeyType the key type
      * @param pKeyLen the key length
      * @return the SecretKey
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected SecretKey generateSecretKey(SymKeyType pKeyType,
-                                          int pKeyLen) throws ModelException {
+    protected SecretKey generateSecretKey(final SymKeyType pKeyType,
+                                          final int pKeyLen) throws ModelException {
         /* Obtain the registration */
         SymRegistration myReg = getSymRegistration(pKeyType, pKeyLen);
 
@@ -294,74 +310,71 @@ public class SecurityGenerator {
     }
 
     /**
-     * Obtain a KeyAgreement
+     * Obtain a KeyAgreement.
      * @param pAlgorithm the algorithm required
      * @return the key agreement
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected KeyAgreement accessKeyAgreement(String pAlgorithm) throws ModelException {
+    protected KeyAgreement accessKeyAgreement(final String pAlgorithm) throws ModelException {
         /* Protect against exceptions */
         try {
             /* Return the key agreement for the algorithm */
             return KeyAgreement.getInstance(pAlgorithm, theProviderName);
-        }
 
-        /* Catch exceptions */
-        catch (Exception e) {
+            /* Catch exceptions */
+        } catch (Exception e) {
             /* Throw the exception */
             throw new ModelException(ExceptionClass.CRYPTO, "Failed to create KeyAgreement", e);
         }
     }
 
     /**
-     * Obtain a Cipher
+     * Obtain a Cipher.
      * @param pAlgorithm the algorithm required
      * @return the cipher
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected Cipher accessCipher(String pAlgorithm) throws ModelException {
+    protected Cipher accessCipher(final String pAlgorithm) throws ModelException {
         /* Protect against exceptions */
         try {
             /* Return a cipher for the algorithm */
             return Cipher.getInstance(pAlgorithm, theProviderName);
-        }
 
-        /* Catch exceptions */
-        catch (Exception e) {
+            /* Catch exceptions */
+        } catch (Exception e) {
             /* Throw the exception */
             throw new ModelException(ExceptionClass.CRYPTO, "Failed to create Cipher", e);
         }
     }
 
     /**
-     * Obtain a MessageDigest
+     * Obtain a MessageDigest.
      * @param pDigestType the digest type required
      * @return the MessageDigest
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public MessageDigest accessDigest(DigestType pDigestType) throws ModelException {
+    public MessageDigest accessDigest(final DigestType pDigestType) throws ModelException {
         /* Protect against exceptions */
         try {
             /* Return a digest for the algorithm */
             return MessageDigest.getInstance(pDigestType.getAlgorithm(), theProviderName);
-        }
 
-        /* Catch exceptions */
-        catch (Exception e) {
+            /* Catch exceptions */
+        } catch (Exception e) {
             /* Throw the exception */
             throw new ModelException(ExceptionClass.CRYPTO, "Failed to create Cipher", e);
         }
     }
 
     /**
-     * Obtain a MAC for a password
+     * Obtain a MAC for a password.
      * @param pDigestType the digest type required
      * @param pPassword the password in byte format
      * @return the MAC
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected Mac accessMac(DigestType pDigestType,
-                            byte[] pPassword) throws ModelException {
+    protected Mac accessMac(final DigestType pDigestType,
+                            final byte[] pPassword) throws ModelException {
         /* Protect against exceptions */
         try {
             /* Access the MAC */
@@ -373,24 +386,23 @@ public class SecurityGenerator {
 
             /* Return the initialised MAC */
             return myMac;
-        }
 
-        /* Catch exceptions */
-        catch (Exception e) {
+            /* Catch exceptions */
+        } catch (Exception e) {
             /* Throw the exception */
             throw new ModelException(ExceptionClass.CRYPTO, "Failed to create Mac", e);
         }
     }
 
     /**
-     * Obtain a MAC for a symmetricKey
+     * Obtain a MAC for a symmetricKey.
      * @param pDigestType the digest type required
      * @param pKey the symmetricKey
      * @return the MAC
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected Mac accessMac(DigestType pDigestType,
-                            SymmetricKey pKey) throws ModelException {
+    protected Mac accessMac(final DigestType pDigestType,
+                            final SymmetricKey pKey) throws ModelException {
         /* Protect against exceptions */
         try {
             /* Access the MAC */
@@ -401,41 +413,39 @@ public class SecurityGenerator {
 
             /* Return the initialised MAC */
             return myMac;
-        }
 
-        /* Catch exceptions */
-        catch (Exception e) {
+            /* Catch exceptions */
+        } catch (Exception e) {
             /* Throw the exception */
             throw new ModelException(ExceptionClass.CRYPTO, "Failed to create Mac", e);
         }
     }
 
     /**
-     * Obtain a Signature
+     * Obtain a Signature.
      * @param pAlgorithm the algorithm required
      * @return the signature
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected Signature accessSignature(String pAlgorithm) throws ModelException {
+    protected Signature accessSignature(final String pAlgorithm) throws ModelException {
         /* Protect against exceptions */
         try {
             /* Return a signature for the algorithm */
             return Signature.getInstance(pAlgorithm, theProviderName);
-        }
 
-        /* Catch exceptions */
-        catch (Exception e) {
+            /* Catch exceptions */
+        } catch (Exception e) {
             /* Throw the exception */
             throw new ModelException(ExceptionClass.CRYPTO, "Failed to create Signature", e);
         }
     }
 
     /**
-     * Obtain the Asymmetric Registration
+     * Obtain the Asymmetric Registration.
      * @param pKeyType the key type
      * @return the registration
      */
-    private AsymRegistration getAsymRegistration(AsymKeyType pKeyType) {
+    private AsymRegistration getAsymRegistration(final AsymKeyType pKeyType) {
         /* Loop through the list */
         Iterator<AsymRegistration> myIterator = theAsymRegister.iterator();
         while (myIterator.hasNext()) {
@@ -443,8 +453,9 @@ public class SecurityGenerator {
             AsymRegistration myReg = myIterator.next();
 
             /* If this is the right one, return it */
-            if (myReg.getKeyType() == pKeyType)
+            if (myReg.getKeyType() == pKeyType) {
                 return myReg;
+            }
         }
 
         /* Return the new registration */
@@ -452,13 +463,13 @@ public class SecurityGenerator {
     }
 
     /**
-     * Obtain the Symmetric Registration
+     * Obtain the Symmetric Registration.
      * @param pKeyType the key type
      * @param pKeyLen the key length
      * @return the registration
      */
-    private SymRegistration getSymRegistration(SymKeyType pKeyType,
-                                               int pKeyLen) {
+    private SymRegistration getSymRegistration(final SymKeyType pKeyType,
+                                               final int pKeyLen) {
         /* Loop through the list */
         Iterator<SymRegistration> myIterator = theSymRegister.iterator();
         while (myIterator.hasNext()) {
@@ -466,8 +477,9 @@ public class SecurityGenerator {
             SymRegistration myReg = myIterator.next();
 
             /* If this is the right one, return it */
-            if ((myReg.getKeyType() == pKeyType) && (myReg.getKeyLen() == pKeyLen))
+            if ((myReg.getKeyType() == pKeyType) && (myReg.getKeyLen() == pKeyLen)) {
                 return myReg;
+            }
         }
 
         /* Return the new registration */
@@ -475,31 +487,31 @@ public class SecurityGenerator {
     }
 
     /**
-     * AsymRegistration class
+     * AsymRegistration class.
      */
-    private class AsymRegistration {
+    private final class AsymRegistration {
         /**
-         * Asymmetric Key Type
+         * Asymmetric Key Type.
          */
         private final AsymKeyType theKeyType;
 
         /**
-         * Asymmetric Algorithm
+         * Asymmetric Algorithm.
          */
         private final String theAlgorithm;
 
         /**
-         * Key Factory for Asymmetric Key Type
+         * Key Factory for Asymmetric Key Type.
          */
         private KeyFactory theFactory = null;
 
         /**
-         * KeyPair Generator for Asymmetric Key Type
+         * KeyPair Generator for Asymmetric Key Type.
          */
         private KeyPairGenerator theGenerator = null;
 
         /**
-         * Obtain the KeyType
+         * Obtain the KeyType.
          * @return the Key type
          */
         private AsymKeyType getKeyType() {
@@ -507,10 +519,10 @@ public class SecurityGenerator {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pKeyType the key type
          */
-        private AsymRegistration(AsymKeyType pKeyType) {
+        private AsymRegistration(final AsymKeyType pKeyType) {
             /* Store the key type */
             theKeyType = pKeyType;
             theAlgorithm = theKeyType.getAlgorithm();
@@ -520,14 +532,14 @@ public class SecurityGenerator {
         }
 
         /**
-         * Derive the KeyPair from encoded forms
+         * Derive the KeyPair from encoded forms.
          * @param pPrivate the Encoded private form (may be null for public-only)
          * @param pPublic the Encoded public form
          * @return the KeyPair
-         * @throws ModelException
+         * @throws ModelException on error
          */
-        private KeyPair deriveKeyPair(byte[] pPrivate,
-                                      byte[] pPublic) throws ModelException {
+        private KeyPair deriveKeyPair(final byte[] pPrivate,
+                                      final byte[] pPublic) throws ModelException {
             /* If we have not allocated the factory */
             if (theFactory == null) {
                 /* Protect against Exceptions */
@@ -558,19 +570,18 @@ public class SecurityGenerator {
 
                 /* Return the private key */
                 return new KeyPair(myPublic, myPrivate);
-            }
 
-            /* Catch exceptions */
-            catch (Exception e) {
+                /* Catch exceptions */
+            } catch (Exception e) {
                 /* Throw the exception */
                 throw new ModelException(ExceptionClass.CRYPTO, "Failed to re-build KeyPair", e);
             }
         }
 
         /**
-         * Generate new KeyPair
+         * Generate new KeyPair.
          * @return the KeyPair
-         * @throws ModelException
+         * @throws ModelException on error
          */
         private KeyPair generateKeyPair() throws ModelException {
             /* If we have not allocated the generator */
@@ -585,10 +596,9 @@ public class SecurityGenerator {
                         /* Initialise with the parameter specification for the curve */
                         ECGenParameterSpec parms = new ECGenParameterSpec(theKeyType.getCurve());
                         theGenerator.initialize(parms, theRandom);
-                    }
 
-                    /* Else standard RSA type */
-                    else {
+                        /* Else standard RSA type */
+                    } else {
                         /* Initialise to required key size */
                         theGenerator.initialize(theKeyType.getKeySize(), theRandom);
                     }
@@ -604,31 +614,31 @@ public class SecurityGenerator {
     }
 
     /**
-     * SymRegistration class
+     * SymRegistration class.
      */
-    private class SymRegistration {
+    private final class SymRegistration {
         /**
-         * Symmetric Key Type
+         * Symmetric Key Type.
          */
         private final SymKeyType theKeyType;
 
         /**
-         * Symmetric Algorithm
+         * Symmetric Algorithm.
          */
         private final String theAlgorithm;
 
         /**
-         * Key Length
+         * Key Length.
          */
         private final int theKeyLen;
 
         /**
-         * Key Generator for Symmetric Key Type
+         * Key Generator for Symmetric Key Type.
          */
         private KeyGenerator theGenerator = null;
 
         /**
-         * Obtain the KeyType
+         * Obtain the KeyType.
          * @return the Key type
          */
         private SymKeyType getKeyType() {
@@ -636,7 +646,7 @@ public class SecurityGenerator {
         }
 
         /**
-         * Obtain the KeyLength
+         * Obtain the KeyLength.
          * @return the Key length
          */
         private int getKeyLen() {
@@ -644,12 +654,12 @@ public class SecurityGenerator {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pKeyType the key type
          * @param pKeyLen the key length
          */
-        private SymRegistration(SymKeyType pKeyType,
-                                int pKeyLen) {
+        private SymRegistration(final SymKeyType pKeyType,
+                                final int pKeyLen) {
             /* Store the key type */
             theKeyType = pKeyType;
             theKeyLen = pKeyLen;
@@ -660,9 +670,9 @@ public class SecurityGenerator {
         }
 
         /**
-         * Generate a new key of the required keyLength
+         * Generate a new key of the required keyLength.
          * @return the Secret Key
-         * @throws ModelException
+         * @throws ModelException on error
          */
         private SecretKey generateKey() throws ModelException {
             /* If we have not allocated the generator */

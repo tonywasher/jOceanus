@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,39 +28,61 @@ import net.sourceforge.JDataManager.ReportFields;
 import net.sourceforge.JDataManager.ReportFields.ReportField;
 import net.sourceforge.JDataManager.ReportObject.ReportDetail;
 
+/**
+ * An array of bytes treated as an array of nybbles (i.e. two entries per byte).
+ * @author Tony Washer
+ */
 public class NybbleArray implements ReportDetail {
     /**
-     * Report fields
+     * Report fields.
      */
-    protected static final ReportFields theFields = new ReportFields(NybbleArray.class.getSimpleName());
+    protected static final ReportFields FIELD_DEFS = new ReportFields(NybbleArray.class.getSimpleName());
 
-    /* Field IDs */
-    public static final ReportField FIELD_ENCODED = theFields.declareEqualityField("Encoded");
+    /**
+     * Encoded array Field ID.
+     */
+    public static final ReportField FIELD_ENCODED = FIELD_DEFS.declareEqualityField("Encoded");
 
     @Override
     public ReportFields getReportFields() {
-        return theFields;
+        return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(ReportField pField) {
-        if (pField == FIELD_ENCODED)
+    public Object getFieldValue(final ReportField pField) {
+        if (pField == FIELD_ENCODED) {
             return theEncoded;
+        }
         return null;
     }
 
     @Override
     public String getObjectSummary() {
-        return theFields.getName();
+        return FIELD_DEFS.getName();
     }
 
     /**
-     * The encoded format
+     * The low value mask.
+     */
+    private static final int MASK_LOW = 0xF;
+
+    /**
+     * The high value mask.
+     */
+    private static final int MASK_HIGH = 0xF0;
+
+    /**
+     * The mask shift.
+     */
+    private static final int MASK_SHIFT = 4;
+
+    /**
+     * The encoded format.
      */
     private byte[] theEncoded;
 
     /**
-     * Obtain the Encoded format
+     * Obtain the Encoded format.
      * @return the encoded format
      */
     public byte[] getEncoded() {
@@ -67,19 +90,19 @@ public class NybbleArray implements ReportDetail {
     }
 
     /**
-     * Set the encoded value
+     * Set the encoded value.
      * @param pEncoded the encoded array
      */
-    public void setEncoded(byte[] pEncoded) {
+    public void setEncoded(final byte[] pEncoded) {
         /* Store value */
         theEncoded = pEncoded;
     }
 
     /**
-     * Allocate encoded value
+     * Allocate encoded value.
      * @param iMaxPos the maximum data position
      */
-    protected void allocateEncoded(int iMaxPos) {
+    protected void allocateEncoded(final int iMaxPos) {
         /* Allocate the encoded array */
         int encodeLen = 1 + (iMaxPos / 2);
         theEncoded = new byte[encodeLen];
@@ -87,11 +110,11 @@ public class NybbleArray implements ReportDetail {
     }
 
     /**
-     * Obtain value of a nybble in a byte
+     * Obtain value of a nybble in a byte.
      * @param iPos the nybble within the array
      * @return the nybble
      */
-    protected short getValue(int iPos) {
+    protected short getValue(final int iPos) {
         /* Obtain the relevant byte from the array */
         byte myByte = theEncoded[iPos / 2];
 
@@ -99,26 +122,28 @@ public class NybbleArray implements ReportDetail {
         boolean bHigh = ((iPos % 2) == 0);
 
         /* Return the relevant nybble */
-        return (short) ((bHigh) ? ((myByte >> 4) & 0xF) : (myByte & 0xF));
+        return (short) ((bHigh) ? ((myByte >> MASK_SHIFT) & MASK_LOW) : (myByte & MASK_LOW));
     }
 
     /**
-     * Set value of a nybble in a byte array
+     * Set value of a nybble in a byte array.
      * @param iPos the nybble within the array
      * @param pValue the value to set
      */
-    protected void setValue(int iPos,
-                            int pValue) {
+    protected void setValue(final int iPos,
+                            final int pValue) {
         /* Calculate the position in the array */
         int myPos = iPos / 2;
 
         /* Ensure that it is within range */
-        if (myPos >= theEncoded.length)
+        if (myPos >= theEncoded.length) {
             throw new IndexOutOfBoundsException("Invalid data position");
+        }
 
         /* Ensure that it is within range */
-        if ((pValue > 0xF) || (pValue < 0))
+        if ((pValue > MASK_LOW) || (pValue < 0)) {
             throw new IllegalArgumentException("Invalid value - " + pValue);
+        }
 
         /* Obtain the relevant byte from the array */
         byte myByte = theEncoded[myPos];
@@ -129,15 +154,14 @@ public class NybbleArray implements ReportDetail {
         /* If this is a high nybble */
         if (bHigh) {
             /* Set value into byte */
-            myByte &= 0xF;
-            myByte |= (pValue << 4);
-        }
+            myByte &= MASK_LOW;
+            myByte |= (pValue << MASK_SHIFT);
 
-        /* else this is a low nybble */
-        else {
+            /* else this is a low nybble */
+        } else {
             /* Set value into byte */
-            myByte &= 0xF0;
-            myByte |= (pValue & 0xF);
+            myByte &= MASK_HIGH;
+            myByte |= (pValue & MASK_LOW);
         }
 
         /* Store value back into array */
@@ -145,16 +169,19 @@ public class NybbleArray implements ReportDetail {
     }
 
     @Override
-    public boolean equals(Object pThat) {
+    public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-        if (this == pThat)
+        if (this == pThat) {
             return true;
-        if (pThat == null)
+        }
+        if (pThat == null) {
             return false;
+        }
 
         /* Make sure that the object is the same class */
-        if (pThat.getClass() != this.getClass())
+        if (pThat.getClass() != this.getClass()) {
             return false;
+        }
 
         /* Access the object as a NybbleArray */
         NybbleArray myArray = (NybbleArray) pThat;

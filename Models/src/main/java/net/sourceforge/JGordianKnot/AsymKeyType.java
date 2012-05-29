@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,149 +27,197 @@ import java.security.SecureRandom;
 import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 
+/**
+ * Asymmetric Key Types. Available Algorithms
+ * @author Tony Washer
+ */
 public enum AsymKeyType {
     // RSA(1, 2048),
 
     /**
-     * Elliptic Curve 1
+     * Elliptic Curve 1.
      */
     EC1(2, "secp384r1"),
 
     /**
-     * Elliptic Curve 2
+     * Elliptic Curve 2.
      */
     EC2(3, "secp521r1"),
 
     /**
-     * Elliptic Curve 3
+     * Elliptic Curve 3.
      */
     EC3(4, "c2tnb431r1"),
 
     /**
-     * Elliptic Curve 4
+     * Elliptic Curve 4.
      */
     EC4(5, "sect409r1"),
 
     /**
-     * Elliptic Curve 5
+     * Elliptic Curve 5.
      */
     EC5(6, "sect571r1"),
 
     /**
-     * Elliptic Curve 6
+     * Elliptic Curve 6.
      */
     EC6(7, "brainpoolp384t1");
 
     /**
-     * Encryption algorithm
+     * Encryption algorithm.
      */
-    private final static String BASEALGORITHM = "/None/OAEPWithSHA256AndMGF1Padding";
+    private static final String BASEALGORITHM = "/None/OAEPWithSHA256AndMGF1Padding";
 
     /**
-     * Signature algorithm
+     * Signature algorithm.
      */
-    private final static String BASESIGNATURE = "SHA256with";
+    private static final String BASESIGNATURE = "SHA256with";
 
     /**
-     * Key values
+     * The external Id of the algorithm.
      */
-    private int theId = 0;
-    private int theKeySize = 0;
-    private String theCurve = null;
-    private boolean isElliptic = false;
+    private final int theId;
 
-    /* Access methods */
+    /**
+     * The key size of the algorithm.
+     */
+    private final int theKeySize;
+
+    /**
+     * The elliptic curve name.
+     */
+    private final String theCurve;
+
+    /**
+     * Is this key an elliptic curve.
+     */
+    private final boolean isElliptic;
+
+    /**
+     * Obtain the external Id.
+     * @return the external Id
+     */
     public int getId() {
         return theId;
     }
 
+    /**
+     * Obtain the keySize.
+     * @return the keySize
+     */
     public int getKeySize() {
         return theKeySize;
     }
 
+    /**
+     * Obtain the curve name.
+     * @return the curve name
+     */
     public String getCurve() {
         return theCurve;
     }
 
+    /**
+     * Is this key an elliptic curve?
+     * @return true/false
+     */
     public boolean isElliptic() {
         return isElliptic;
     }
 
+    /**
+     * Obtain the algorithm.
+     * @return the algorithm
+     */
     public String getAlgorithm() {
-        if (isElliptic)
+        if (isElliptic) {
             return "EC";
-        else
-            return toString();
-    }
-
-    public String getSignature() {
-        if (isElliptic)
-            return BASESIGNATURE + "ECDSA";
-        else
-            return BASESIGNATURE + toString();
-    }
-
-    public String getCipher() {
-        if (isElliptic)
-            return "Null";
-        else
-            return toString() + BASEALGORITHM;
+        }
+        return toString();
     }
 
     /**
-     * Constructor
+     * Obtain the signature algorithm.
+     * @return the algorithm
+     */
+    public String getSignature() {
+        if (isElliptic) {
+            return BASESIGNATURE + "ECDSA";
+        }
+        return BASESIGNATURE + toString();
+    }
+
+    /**
+     * Obtain the cipher algorithm.
+     * @return the algorithm
+     */
+    public String getCipher() {
+        if (isElliptic) {
+            return "Null";
+        }
+        return toString() + BASEALGORITHM;
+    }
+
+    /**
+     * Constructor.
      * @param id the id
      * @param keySize the RSA Key size
      */
-    private AsymKeyType(int id,
-                        int keySize) {
+    private AsymKeyType(final int id,
+                        final int keySize) {
         theId = id;
         theKeySize = keySize;
+        theCurve = null;
+        isElliptic = false;
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param id the id
      * @param pCurve the keySize the RSA Key size
      */
-    private AsymKeyType(int id,
-                        String pCurve) {
+    private AsymKeyType(final int id,
+                        final String pCurve) {
         theId = id;
+        theKeySize = 0;
         theCurve = pCurve;
         isElliptic = true;
     }
 
     /**
-     * get value from id
+     * get value from id.
      * @param id the id value
      * @return the corresponding enum object
-     * @throws ModelException
+     * @throws ModelException if id is invalid
      */
-    public static AsymKeyType fromId(int id) throws ModelException {
+    public static AsymKeyType fromId(final int id) throws ModelException {
         for (AsymKeyType myType : values()) {
-            if (myType.getId() == id)
+            if (myType.getId() == id) {
                 return myType;
+            }
         }
         throw new ModelException(ExceptionClass.DATA, "Invalid AsymKeyType: " + id);
     }
 
     /**
-     * Get random unique set of key types
+     * Get random unique set of key types.
      * @param pNumTypes the number of types
      * @param pRandom the random generator
      * @return the random set
-     * @throws ModelException
+     * @throws ModelException if the number of types is invalid
      */
-    public static AsymKeyType[] getRandomTypes(int pNumTypes,
-                                               SecureRandom pRandom) throws ModelException {
+    public static AsymKeyType[] getRandomTypes(final int pNumTypes,
+                                               final SecureRandom pRandom) throws ModelException {
         /* Access the values */
         AsymKeyType[] myValues = values();
         int iNumValues = myValues.length;
         int iIndex;
 
         /* Reject call if invalid number of types */
-        if ((pNumTypes < 1) || (pNumTypes > iNumValues))
+        if ((pNumTypes < 1) || (pNumTypes > iNumValues)) {
             throw new ModelException(ExceptionClass.LOGIC, "Invalid number of types: " + pNumTypes);
+        }
 
         /* Create the result set */
         AsymKeyType[] myTypes = new AsymKeyType[pNumTypes];

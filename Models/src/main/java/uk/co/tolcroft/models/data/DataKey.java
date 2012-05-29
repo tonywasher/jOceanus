@@ -25,6 +25,7 @@ import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JDataManager.ReportFields;
 import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JGordianKnot.CipherSet;
 import net.sourceforge.JGordianKnot.DataCipher;
 import net.sourceforge.JGordianKnot.PasswordHash;

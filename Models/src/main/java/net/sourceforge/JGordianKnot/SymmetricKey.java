@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,30 +36,47 @@ import net.sourceforge.JDataManager.ReportFields.ReportField;
 import net.sourceforge.JDataManager.ReportObject.ReportDetail;
 import net.sourceforge.JGordianKnot.ZipFile.StreamCipher;
 
+/**
+ * Symmetric Key implementation.
+ * @author Tony Washer
+ */
 public class SymmetricKey implements ReportDetail {
     /**
-     * Report fields
+     * Report fields.
      */
-    protected static final ReportFields theFields = new ReportFields(SymmetricKey.class.getSimpleName());
+    protected static final ReportFields FIELD_DEFS = new ReportFields(SymmetricKey.class.getSimpleName());
 
-    /* Field IDs */
-    public static final ReportField FIELD_KEYTYPE = theFields.declareLocalField("KeyType");
-    public static final ReportField FIELD_KEYLEN = theFields.declareLocalField("KeyLength");
-    public static final ReportField FIELD_IVLEN = theFields.declareLocalField("IVLength");
+    /**
+     * KeyType Field ID.
+     */
+    public static final ReportField FIELD_KEYTYPE = FIELD_DEFS.declareLocalField("KeyType");
+
+    /**
+     * KeyLength Field ID.
+     */
+    public static final ReportField FIELD_KEYLEN = FIELD_DEFS.declareLocalField("KeyLength");
+
+    /**
+     * InitVector Length Field ID.
+     */
+    public static final ReportField FIELD_IVLEN = FIELD_DEFS.declareLocalField("IVLength");
 
     @Override
     public ReportFields getReportFields() {
-        return theFields;
+        return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(ReportField pField) {
-        if (pField == FIELD_KEYTYPE)
+    public Object getFieldValue(final ReportField pField) {
+        if (pField == FIELD_KEYTYPE) {
             return theKeyType;
-        if (pField == FIELD_KEYLEN)
+        }
+        if (pField == FIELD_KEYLEN) {
             return theKeyLen;
-        if (pField == FIELD_IVLEN)
+        }
+        if (pField == FIELD_IVLEN) {
             return IVSIZE;
+        }
         return null;
     }
 
@@ -68,52 +86,52 @@ public class SymmetricKey implements ReportDetail {
     }
 
     /**
-     * Encrypted ID Key Size
+     * Encrypted ID Key Size.
      */
-    public final static int IDSIZE = 128;
+    public static final int IDSIZE = 128;
 
     /**
-     * Initialisation Vector size
+     * Initialisation Vector size.
      */
-    public final static int IVSIZE = 16;
+    public static final int IVSIZE = 16;
 
     /**
-     * Restricted key length
+     * Restricted key length.
      */
-    private final static int smallKEYLEN = 128;
+    private static final int SMALL_KEYLEN = 128;
 
     /**
-     * Unlimited key length
+     * Unlimited key length.
      */
-    private final static int bigKEYLEN = 256;
+    private static final int BIG_KEYLEN = 256;
 
     /**
-     * The Secret Key
+     * The Secret Key.
      */
-    private SecretKey theKey = null;
+    private final SecretKey theKey;
 
     /**
-     * The Key Type
+     * The Key Type.
      */
-    private SymKeyType theKeyType = null;
+    private final SymKeyType theKeyType;
 
     /**
-     * The security generator
+     * The security generator.
      */
     private final SecurityGenerator theGenerator;
 
     /**
-     * The Key Length
+     * The Key Length.
      */
-    private int theKeyLen = bigKEYLEN;
+    private final int theKeyLen;
 
     /**
-     * The Encoded KeyDef
+     * The Encoded KeyDef.
      */
-    private byte[] theEncodedKeyDef = null;
+    private final byte[] theEncodedKeyDef;
 
     /**
-     * Obtain the secret key
+     * Obtain the secret key.
      * @return the secret key
      */
     protected SecretKey getSecretKey() {
@@ -121,7 +139,7 @@ public class SymmetricKey implements ReportDetail {
     }
 
     /**
-     * Obtain the secret key type
+     * Obtain the secret key type.
      * @return the secret key type
      */
     public SymKeyType getKeyType() {
@@ -129,7 +147,7 @@ public class SymmetricKey implements ReportDetail {
     }
 
     /**
-     * Obtain the key length
+     * Obtain the key length.
      * @return the secret key length
      */
     public int getKeyLength() {
@@ -137,34 +155,34 @@ public class SymmetricKey implements ReportDetail {
     }
 
     /**
-     * Determine key length
+     * Determine key length.
      * @param useRestricted restricted mode?
      * @return key length
      */
-    protected static int getKeyLen(boolean useRestricted) {
-        return useRestricted ? smallKEYLEN : bigKEYLEN;
+    protected static int getKeyLen(final boolean useRestricted) {
+        return useRestricted ? SMALL_KEYLEN : BIG_KEYLEN;
     }
 
     /**
-     * Encryption length
+     * Encryption length.
      * @param pDataLength the length of data to be encrypted
      * @return the length of encrypted data
      */
-    public static int getEncryptionLength(int pDataLength) {
+    public static int getEncryptionLength(final int pDataLength) {
         int iBlocks = 1 + ((pDataLength - 1) % IVSIZE);
         return iBlocks * IVSIZE;
     }
 
     /**
-     * Constructor for a new randomly generated key
+     * Constructor for a new randomly generated key.
      * @param pGenerator the security generator
      * @param pKeyType Symmetric KeyType
      * @param useRestricted use restricted keys
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public SymmetricKey(SecurityGenerator pGenerator,
-                        SymKeyType pKeyType,
-                        boolean useRestricted) throws ModelException {
+    public SymmetricKey(final SecurityGenerator pGenerator,
+                        final SymKeyType pKeyType,
+                        final boolean useRestricted) throws ModelException {
         /* Store the KeyType and the Generator */
         theKeyType = pKeyType;
         theKeyLen = getKeyLen(useRestricted);
@@ -176,15 +194,15 @@ public class SymmetricKey implements ReportDetail {
     }
 
     /**
-     * Constructor for a decoded symmetric key
+     * Constructor for a decoded symmetric key.
      * @param pGenerator the security generator
      * @param pKey Secret Key for algorithm
      * @param pKeyType Symmetric KeyType
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected SymmetricKey(SecurityGenerator pGenerator,
-                           SecretKey pKey,
-                           SymKeyType pKeyType) throws ModelException {
+    protected SymmetricKey(final SecurityGenerator pGenerator,
+                           final SecretKey pKey,
+                           final SymKeyType pKeyType) throws ModelException {
         /* Store the KeyType and the Generator */
         theKeyType = pKeyType;
         theKeyLen = pKey.getEncoded().length;
@@ -196,108 +214,102 @@ public class SymmetricKey implements ReportDetail {
     @Override
     public int hashCode() {
         /* Calculate and return the hashCode for this symmetric key */
-        int hashCode = 19 * theEncodedKeyDef.hashCode();
+        int hashCode = SecurityGenerator.HASH_PRIME * theEncodedKeyDef.hashCode();
         hashCode += theKeyType.hashCode();
         return hashCode;
     }
 
     @Override
-    public boolean equals(Object pThat) {
+    public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-        if (this == pThat)
+        if (this == pThat) {
             return true;
-        if (pThat == null)
+        }
+        if (pThat == null) {
             return false;
+        }
 
         /* Make sure that the object is a Symmetric Key */
-        if (pThat.getClass() != this.getClass())
+        if (pThat.getClass() != this.getClass()) {
             return false;
+        }
 
         /* Access the target Key */
         SymmetricKey myThat = (SymmetricKey) pThat;
 
         /* Not equal if different key-types */
-        if (myThat.theKeyType != theKeyType)
+        if (myThat.theKeyType != theKeyType) {
             return false;
+        }
 
         /* Ensure that the secret key is identical */
         return Arrays.equals(myThat.theEncodedKeyDef, theEncodedKeyDef);
     }
 
     /**
-     * Initialise data cipher for encryption/decryption
+     * Initialise data cipher for encryption/decryption.
      * @return the Data Cipher
-     * @throws ModelException
+     * @throws ModelException on error
      */
     public DataCipher initDataCipher() throws ModelException {
-        Cipher myCipher;
-
         /* Protect against exceptions */
         try {
             /* Create a new cipher */
-            myCipher = theGenerator.accessCipher(theKeyType.getCipher());
+            Cipher myCipher = theGenerator.accessCipher(theKeyType.getCipher());
 
             /* Return the Data Cipher */
             return new DataCipher(myCipher, this);
-        }
 
-        /* catch exceptions */
-        catch (Exception e) {
+            /* catch exceptions */
+        } catch (Exception e) {
             throw new ModelException(ExceptionClass.CRYPTO, "Failed to initialise cipher", e);
         }
     }
 
     /**
-     * Initialise stream cipher for encryption with random initialisation vector
+     * Initialise stream cipher for encryption with random initialisation vector.
      * @return the Stream Cipher
-     * @throws ModelException
+     * @throws ModelException on error
      */
     public StreamCipher initEncryptionStream() throws ModelException {
-        Cipher myCipher;
-
         /* Protect against exceptions */
         try {
             /* Create a new cipher */
-            myCipher = theGenerator.accessCipher(theKeyType.getCipher());
+            Cipher myCipher = theGenerator.accessCipher(theKeyType.getCipher());
 
             /* Initialise the cipher generating a random Initialisation vector */
             myCipher.init(Cipher.ENCRYPT_MODE, theKey, theGenerator.getRandom());
 
             /* Return the Stream Cipher */
             return new StreamCipher(myCipher, myCipher.getIV());
-        }
 
-        /* catch exceptions */
-        catch (Exception e) {
+            /* catch exceptions */
+        } catch (Exception e) {
             throw new ModelException(ExceptionClass.CRYPTO, "Failed to initialise cipher", e);
         }
     }
 
     /**
-     * Initialise Stream cipher for decryption with initialisation vector
+     * Initialise Stream cipher for decryption with initialisation vector.
      * @param pInitVector Initialisation vector for cipher
      * @return the Stream Cipher
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public StreamCipher initDecryptionStream(byte[] pInitVector) throws ModelException {
-        AlgorithmParameterSpec myParms;
-        Cipher myCipher;
-
+    public StreamCipher initDecryptionStream(final byte[] pInitVector) throws ModelException {
         /* Protect against exceptions */
         try {
             /* Create a new cipher */
-            myCipher = theGenerator.accessCipher(theKeyType.getCipher());
+            Cipher myCipher = theGenerator.accessCipher(theKeyType.getCipher());
 
             /* Initialise the cipher using the password */
-            myParms = new IvParameterSpec(pInitVector);
+            AlgorithmParameterSpec myParms = new IvParameterSpec(pInitVector);
             myCipher.init(Cipher.DECRYPT_MODE, theKey, myParms);
 
             /* Return the Stream Cipher */
             return new StreamCipher(myCipher, pInitVector);
-        }
 
-        /* catch exceptions */
-        catch (Exception e) {
+            /* catch exceptions */
+        } catch (Exception e) {
             throw new ModelException(ExceptionClass.CRYPTO, "Failed to initialise cipher", e);
         }
     }

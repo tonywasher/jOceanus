@@ -19,12 +19,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.models.data;
+package net.sourceforge.JGordianKnot;
 
 import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.ReportFields.ReportField;
-import uk.co.tolcroft.models.data.EncryptedData.EncryptedField;
-import uk.co.tolcroft.models.data.EncryptedData.EncryptionGenerator;
+import net.sourceforge.JDataManager.ValueSet;
+import net.sourceforge.JGordianKnot.EncryptedData.EncryptedField;
+import net.sourceforge.JGordianKnot.EncryptedData.EncryptionGenerator;
+import uk.co.tolcroft.models.data.EncryptedItem;
 
 public class EncryptedValueSet<T extends EncryptedItem<T>> extends ValueSet<T> {
     /**

@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,31 +25,35 @@ package uk.co.tolcroft.models.database;
 import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.ReportFields.ReportField;
 import uk.co.tolcroft.models.data.StaticData;
-import uk.co.tolcroft.models.database.TableDefinition.ColumnDefinition;
 import uk.co.tolcroft.models.database.TableDefinition.SortOrder;
 
+/**
+ * Database table class for Static Data Items. Each data type that represents Static Data should extend this
+ * class.
+ * @param <T> the data type
+ */
 public abstract class TableStaticData<T extends StaticData<T, ?>> extends TableEncrypted<T> {
     /**
-     * The table definition
+     * The table definition.
      */
     private TableDefinition theTableDef; /* Set during load */
 
     /**
-     * Constructor
+     * Constructor.
      * @param pDatabase the database control
      * @param pTabName the table name
      */
-    protected TableStaticData(Database<?> pDatabase,
-                              String pTabName) {
+    protected TableStaticData(final Database<?> pDatabase,
+                              final String pTabName) {
         super(pDatabase, pTabName);
     }
 
     /**
-     * Define the table columns (called from within super-constructor)
+     * Define the table columns (called from within super-constructor).
      * @param pTableDef the table definition
      */
     @Override
-    protected void defineTable(TableDefinition pTableDef) {
+    protected void defineTable(final TableDefinition pTableDef) {
         /* Define Standard table */
         super.defineTable(pTableDef);
         theTableDef = pTableDef;
@@ -66,17 +71,26 @@ public abstract class TableStaticData<T extends StaticData<T, ?>> extends TableE
         mySortCol.setSortOrder(SortOrder.ASCENDING);
     }
 
-    /* Load the Static Data */
-    protected abstract void loadTheItem(int pId,
-                                        int pControlId,
-                                        boolean isEnabled,
-                                        int iOrder,
-                                        byte[] pName,
-                                        byte[] pDesc) throws ModelException;
+    /**
+     * Load the static data.
+     * @param pId the id
+     * @param pControlId the control id
+     * @param isEnabled is the item enabled
+     * @param iOrder the sort order
+     * @param pName the name
+     * @param pDesc the description
+     * @throws ModelException on error
+     */
+    protected abstract void loadTheItem(final int pId,
+                                        final int pControlId,
+                                        final boolean isEnabled,
+                                        final int iOrder,
+                                        final byte[] pName,
+                                        final byte[] pDesc) throws ModelException;
 
     @Override
-    protected void loadItem(int pId,
-                            int pControlId) throws ModelException {
+    protected void loadItem(final int pId,
+                            final int pControlId) throws ModelException {
         int myOrder;
         boolean myEnabled;
         byte[] myType;
@@ -90,14 +104,11 @@ public abstract class TableStaticData<T extends StaticData<T, ?>> extends TableE
 
         /* Add into the list */
         loadTheItem(pId, pControlId, myEnabled, myOrder, myType, myDesc);
-
-        /* Return to caller */
-        return;
     }
 
     @Override
-    protected void setFieldValue(T pItem,
-                                 ReportField iField) throws ModelException {
+    protected void setFieldValue(final T pItem,
+                                 final ReportField iField) throws ModelException {
         /* Switch on field id */
         if (iField == StaticData.FIELD_ENABLED) {
             theTableDef.setBooleanValue(iField, pItem.getEnabled());

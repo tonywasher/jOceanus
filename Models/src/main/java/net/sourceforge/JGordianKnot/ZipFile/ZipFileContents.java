@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,29 +29,37 @@ import java.util.zip.ZipEntry;
 
 import net.sourceforge.JDataManager.ModelException;
 
+/**
+ * Class represents the contents of an encrypted Zip file.
+ */
 public class ZipFileContents {
     /**
-     * The Header file name
+     * The Header file name.
      */
-    protected final static String fileHeader = "JGordianKnotHeader";
+    protected static final String NAME_HEADER = "JGordianKnotHeader";
 
     /**
-     * The file separator
+     * The Buffer length.
      */
-    private final static char theFileSeparator = ';';
+    private static final int BUFFER_LEN = 100;
 
     /**
-     * Zip File Header
+     * The file separator.
+     */
+    private static final char SEPARATOR_FILE = ';';
+
+    /**
+     * Zip File Header.
      */
     private ZipFileEntry theHeader;
 
     /**
-     * List of files
+     * List of files.
      */
     private final List<ZipFileEntry> theList;
 
     /**
-     * Obtain the header
+     * Obtain the header.
      * @return the header
      */
     protected ZipFileEntry getHeader() {
@@ -58,7 +67,7 @@ public class ZipFileContents {
     }
 
     /**
-     * Obtain and iterator
+     * Obtain and iterator.
      * @return the header
      */
     public Iterator<ZipFileEntry> iterator() {
@@ -66,7 +75,7 @@ public class ZipFileContents {
     }
 
     /**
-     * Constructor
+     * Constructor.
      */
     protected ZipFileContents() {
         /* Allocate the list */
@@ -74,17 +83,17 @@ public class ZipFileContents {
     }
 
     /**
-     * Constructor from encoded string
+     * Constructor from encoded string.
      * @param pCodedString the encoded string
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected ZipFileContents(String pCodedString) throws ModelException {
+    protected ZipFileContents(final String pCodedString) throws ModelException {
         /* Allocate the list */
         theList = new ArrayList<ZipFileEntry>();
 
         /* Wrap string in a string builder */
         StringBuilder myString = new StringBuilder(pCodedString);
-        String myFileSep = Character.toString(theFileSeparator);
+        String myFileSep = Character.toString(SEPARATOR_FILE);
         int myLoc;
 
         /* while we have separators in the string */
@@ -99,12 +108,12 @@ public class ZipFileContents {
     }
 
     /**
-     * Add a header entry to the contents
+     * Add a header entry to the contents.
      * @return the newly added entry
      */
     protected ZipFileEntry addZipFileHeader() {
         /* Create the new entry */
-        theHeader = new ZipFileEntry(fileHeader);
+        theHeader = new ZipFileEntry(NAME_HEADER);
         theHeader.setHeader();
         theHeader.setParent(this);
 
@@ -113,11 +122,11 @@ public class ZipFileContents {
     }
 
     /**
-     * Add a File entry to the contents
+     * Add a File entry to the contents.
      * @param pName the file name
      * @return the newly added entry
      */
-    protected ZipFileEntry addZipFileEntry(String pName) {
+    protected ZipFileEntry addZipFileEntry(final String pName) {
         /* Create the new entry */
         ZipFileEntry myEntry = new ZipFileEntry(pName);
 
@@ -129,10 +138,10 @@ public class ZipFileContents {
     }
 
     /**
-     * Add a File entry to the contents
+     * Add a File entry to the contents.
      * @param pEntry the zip entry
      */
-    protected void addZipFileEntry(ZipEntry pEntry) {
+    protected void addZipFileEntry(final ZipEntry pEntry) {
         /* Create the new entry */
         ZipFileEntry myEntry = addZipFileEntry(pEntry.getName());
 
@@ -141,10 +150,10 @@ public class ZipFileContents {
     }
 
     /**
-     * Add a File entry to the contents
+     * Add a File entry to the contents.
      * @param pEntry the file entry
      */
-    protected void addZipFileEntry(ZipFileEntry pEntry) {
+    protected void addZipFileEntry(final ZipFileEntry pEntry) {
         /* Access the name */
         String myName = pEntry.getFileName();
 
@@ -159,12 +168,14 @@ public class ZipFileContents {
             int iDiff = myName.compareTo(myEntry.getFileName());
 
             /* If this file is later than us */
-            if (iDiff < 0)
+            if (iDiff < 0) {
                 break;
+            }
 
             /* Reject attempt to add duplicate name */
-            if (iDiff == 0)
+            if (iDiff == 0) {
                 throw new IllegalArgumentException("Duplicate filename - " + myName);
+            }
 
             /* Increment index */
             iIndex++;
@@ -178,11 +189,11 @@ public class ZipFileContents {
     }
 
     /**
-     * Locate the file by name
+     * Locate the file by name.
      * @param pName the name of the file
      * @return the entry or null if not found
      */
-    public ZipFileEntry findFileEntry(String pName) {
+    public ZipFileEntry findFileEntry(final String pName) {
         /* Loop through the file entries */
         Iterator<ZipFileEntry> myIterator = theList.iterator();
         while (myIterator.hasNext()) {
@@ -193,12 +204,14 @@ public class ZipFileContents {
             int iDiff = pName.compareTo(myEntry.getFileName());
 
             /* If this is the required entry, return it */
-            if (iDiff == 0)
+            if (iDiff == 0) {
                 return myEntry;
+            }
 
             /* If this entry is later than the required name, no such entry */
-            if (iDiff < 0)
+            if (iDiff < 0) {
                 break;
+            }
         }
 
         /* Return not found */
@@ -206,11 +219,11 @@ public class ZipFileContents {
     }
 
     /**
-     * Encode the contents
+     * Encode the contents.
      * @return the encoded string
      */
     protected String encodeContents() {
-        StringBuilder myString = new StringBuilder(1000);
+        StringBuilder myString = new StringBuilder(BUFFER_LEN);
         ZipFileProperties myProperties;
 
         /* Loop through the file entries */
@@ -223,16 +236,18 @@ public class ZipFileContents {
             myProperties = myEntry.allocateProperties();
 
             /* Add the value to the string */
-            if (myString.length() > 0)
-                myString.append(theFileSeparator);
+            if (myString.length() > 0) {
+                myString.append(SEPARATOR_FILE);
+            }
 
             /* Encode the properties */
             myString.append(myProperties.encodeProperties());
         }
 
         /* Add the value to the string */
-        if (myString.length() > 0)
-            myString.append(theFileSeparator);
+        if (myString.length() > 0) {
+            myString.append(SEPARATOR_FILE);
+        }
 
         /* Encode the header */
         myProperties = theHeader.allocateProperties();
@@ -243,11 +258,11 @@ public class ZipFileContents {
     }
 
     /**
-     * Add a File Entry from encoded string
+     * Add a File Entry from encoded string.
      * @param pCodedString the encoded string
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    private void parseEncodedEntry(String pCodedString) throws ModelException {
+    private void parseEncodedEntry(final String pCodedString) throws ModelException {
         /* Parse the properties */
         ZipFileProperties myProperties = new ZipFileProperties(pCodedString);
 
@@ -259,10 +274,9 @@ public class ZipFileContents {
             /* Store as header */
             theHeader = myEntry;
             theHeader.setParent(this);
-        }
 
-        /* else standard file */
-        else {
+            /* else standard file */
+        } else {
             /* Add the entry to the list */
             addZipFileEntry(myEntry);
         }

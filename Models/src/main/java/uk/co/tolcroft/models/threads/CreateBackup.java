@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,18 +33,44 @@ import uk.co.tolcroft.models.sheets.BackupPreferences;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.views.DataControl;
 
+/**
+ * Thread to create an encrypted backup of a data set.
+ * @author Tony Washer
+ * @param <T> the DataSet type
+ */
 public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
-    /* Task description */
-    private static String theTask = "Backup Creation";
+    /**
+     * Buffer length.
+     */
+    private static final int BUFFER_LEN = 100;
 
-    /* Properties */
-    private DataControl<T> theControl = null;
-    private ThreadStatus<T> theStatus = null;
+    /**
+     * Number 10.
+     */
+    private static final int TEN = 10;
 
-    /* Constructor (Event Thread) */
-    public CreateBackup(DataControl<T> pControl) {
+    /**
+     * Task description.
+     */
+    private static final String TASK_NAME = "Backup Creation";
+
+    /**
+     * Data Control.
+     */
+    private final DataControl<T> theControl;
+
+    /**
+     * Thread Status.
+     */
+    private final ThreadStatus<T> theStatus;
+
+    /**
+     * Constructor (Event Thread).
+     * @param pControl the data control
+     */
+    public CreateBackup(final DataControl<T> pControl) {
         /* Call super-constructor */
-        super(theTask, pControl);
+        super(TASK_NAME, pControl);
 
         /* Store passed parameters */
         theControl = pControl;
@@ -58,8 +85,6 @@ public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
     @Override
     public T performTask() throws Exception {
         T myData = null;
-        DataSet<T> myDiff = null;
-        SpreadSheet<T> mySheet = null;
         boolean doDelete = false;
         File myFile = null;
 
@@ -71,39 +96,39 @@ public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
             BackupPreferences myProperties = PreferenceManager.getPreferenceSet(BackupPreferences.class);
 
             /* Determine the archive name */
-            File myBackupDir = new File(myProperties.getStringValue(BackupPreferences.nameBackupDir));
-            String myPrefix = myProperties.getStringValue(BackupPreferences.nameBackupPfix);
-            Boolean doTimeStamp = myProperties.getBooleanValue(BackupPreferences.nameBackupTime);
+            File myBackupDir = new File(myProperties.getStringValue(BackupPreferences.NAME_BACKUP_DIR));
+            String myPrefix = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_PFIX);
+            Boolean doTimeStamp = myProperties.getBooleanValue(BackupPreferences.NAME_BACKUP_TIME);
 
             /* If we are not doing time-stamps */
             if (!doTimeStamp) {
                 /* Set the standard backup name */
                 myFile = new File(myBackupDir.getPath() + File.separator + myPrefix);
-            }
 
-            /* else we need to generate a time-stamp (day only) */
-            else {
+                /* else we need to generate a time-stamp (day only) */
+            } else {
                 /* Obtain the current date/time */
                 DateDay myNow = new DateDay();
 
                 /* Create the name of the file */
-                StringBuilder myName = new StringBuilder(100);
+                StringBuilder myName = new StringBuilder(BUFFER_LEN);
                 myName.append(myBackupDir.getPath());
                 myName.append(File.separator);
                 myName.append(myPrefix);
                 myName.append(myNow.getYear());
-                if (myNow.getMonth() < 10)
+                if (myNow.getMonth() < TEN) {
                     myName.append('0');
+                }
                 myName.append(myNow.getMonth());
-                if (myNow.getDay() < 10)
+                if (myNow.getDay() < TEN) {
                     myName.append('0');
+                }
                 myName.append(myNow.getDay());
-                myName.append(".zip");
                 myFile = new File(myName.toString());
             }
 
             /* Create backup */
-            mySheet = theControl.getSpreadSheet();
+            SpreadSheet<T> mySheet = theControl.getSpreadSheet();
             mySheet.createBackup(theStatus, theControl.getData(), myFile);
 
             /* File created, so delete on error */
@@ -119,20 +144,20 @@ public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
             myData = mySheet.loadBackup(theStatus, myFile);
 
             /* Create a difference set between the two data copies */
-            myDiff = myData.getDifferenceSet(theControl.getData());
+            DataSet<T> myDiff = myData.getDifferenceSet(theControl.getData());
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {
                 /* Throw an exception */
                 throw new ModelException(ExceptionClass.DATA, myDiff, "Backup is inconsistent");
             }
-        }
 
-        /* Catch any exceptions */
-        catch (Exception e) {
+            /* Catch any exceptions */
+        } catch (Exception e) {
             /* Delete the file */
-            if (doDelete)
+            if (doDelete) {
                 myFile.delete();
+            }
 
             /* Report the failure */
             throw e;

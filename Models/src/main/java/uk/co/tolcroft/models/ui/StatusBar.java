@@ -78,7 +78,7 @@ public class StatusBar {
         theControl = pControl;
 
         /* Store access to the Debug Entry */
-        theDebug = theControl.getView().getDebugEntry(DataControl.DebugError);
+        theDebug = theControl.getView().getDebugEntry(DataControl.DEBUG_ERROR);
 
         /* Create the boxes */
         theCancel = new JButton("Cancel");

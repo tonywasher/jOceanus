@@ -23,7 +23,7 @@ package net.sourceforge.JDataManager;
 
 import java.util.Arrays;
 
-import uk.co.tolcroft.models.data.EncryptedData.EncryptedField;
+import net.sourceforge.JGordianKnot.EncryptedData.EncryptedField;
 
 public enum Difference {
     /**

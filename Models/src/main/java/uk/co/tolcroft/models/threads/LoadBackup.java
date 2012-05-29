@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,25 +27,43 @@ import java.io.File;
 import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
+import net.sourceforge.JDataManager.ui.FileSelector;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.sheets.BackupPreferences;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
-import uk.co.tolcroft.models.ui.FileSelector;
 import uk.co.tolcroft.models.views.DataControl;
 
+/**
+ * Thread to load changes from an encrypted backup. Once the backup is loaded, the current database is loaded
+ * and the backup is re-based onto the database so that a correct list of additions, changes and deletions is
+ * built. These changes remain in memory and should be committed to the database later.
+ * @author Tony Washer
+ * @param <T> the DataSet type
+ */
 public class LoadBackup<T extends DataSet<T>> extends LoaderThread<T> {
-    /* Task description */
-    private static String theTask = "Backup Restoration";
+    /**
+     * Task description.
+     */
+    private static final String TASK_NAME = "Backup Restoration";
 
-    /* Properties */
-    private DataControl<T> theControl = null;
-    private ThreadStatus<T> theStatus = null;
+    /**
+     * Data control.
+     */
+    private final DataControl<T> theControl;
 
-    /* Constructor (Event Thread) */
-    public LoadBackup(DataControl<T> pControl) {
+    /**
+     * Thread Status.
+     */
+    private final ThreadStatus<T> theStatus;
+
+    /**
+     * Constructor (Event Thread).
+     * @param pControl the data control
+     */
+    public LoadBackup(final DataControl<T> pControl) {
         /* Call super-constructor */
-        super(theTask, pControl);
+        super(TASK_NAME, pControl);
 
         /* Store passed parameters */
         theControl = pControl;
@@ -58,12 +77,6 @@ public class LoadBackup<T extends DataSet<T>> extends LoaderThread<T> {
 
     @Override
     public T performTask() throws Exception {
-        T myData = null;
-        T myStore;
-        Database<T> myDatabase;
-        SpreadSheet<T> mySheet;
-        File myFile;
-
         /* Initialise the status window */
         theStatus.initTask("Loading Backup");
 
@@ -71,14 +84,14 @@ public class LoadBackup<T extends DataSet<T>> extends LoaderThread<T> {
         BackupPreferences myProperties = PreferenceManager.getPreferenceSet(BackupPreferences.class);
 
         /* Determine the archive name */
-        File myBackupDir = new File(myProperties.getStringValue(BackupPreferences.nameBackupDir));
-        String myPrefix = myProperties.getStringValue(BackupPreferences.nameBackupPfix);
+        File myBackupDir = new File(myProperties.getStringValue(BackupPreferences.NAME_BACKUP_DIR));
+        String myPrefix = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_PFIX);
 
         /* Determine the name of the file to load */
         FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Backup to load", myBackupDir,
                 myPrefix, ".zip");
         myDialog.showDialog();
-        myFile = myDialog.getSelectedFile();
+        File myFile = myDialog.getSelectedFile();
 
         /* If we did not select a file */
         if (myFile == null) {
@@ -87,17 +100,17 @@ public class LoadBackup<T extends DataSet<T>> extends LoaderThread<T> {
         }
 
         /* Load workbook */
-        mySheet = theControl.getSpreadSheet();
-        myData = mySheet.loadBackup(theStatus, myFile);
+        SpreadSheet<T> mySheet = theControl.getSpreadSheet();
+        T myData = mySheet.loadBackup(theStatus, myFile);
 
         /* Initialise the status window */
         theStatus.initTask("Accessing DataStore");
 
         /* Create interface */
-        myDatabase = theControl.getDatabase();
+        Database<T> myDatabase = theControl.getDatabase();
 
         /* Load underlying database */
-        myStore = myDatabase.loadDatabase(theStatus);
+        T myStore = myDatabase.loadDatabase(theStatus);
 
         /* Re-base the loaded backup onto the database image */
         myData.reBase(myStore);

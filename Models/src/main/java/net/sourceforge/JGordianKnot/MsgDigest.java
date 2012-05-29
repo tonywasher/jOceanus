@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,39 +29,44 @@ import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JGordianKnot.DataHayStack.DigestNeedle;
 
+/**
+ * Wrapper class for MessageDigest. This allows transformation to and from the external digest format and
+ * handles validation of digests.
+ * @author Tony Washer
+ */
 public class MsgDigest {
     /**
-     * The message digest
+     * The message digest type.
      */
     private final DigestType theType;
 
     /**
-     * The message digest
+     * The message digest.
      */
     private final MessageDigest theDigest;
 
     /**
-     * The length of the data digested
+     * The length of the data digested.
      */
     private long theDataLen = 0;
 
     /**
-     * The expected data length
+     * The expected data length.
      */
     private final long theExpectedDataLen;
 
     /**
-     * The expected digest length
+     * The expected digest length.
      */
     private final byte[] theExpectedDigest;
 
     /**
-     * The digest name
+     * The digest name.
      */
     private final String theName;
 
     /**
-     * Obtain the digest type
+     * Obtain the digest type.
      * @return the digest type
      */
     public DigestType getDigestType() {
@@ -68,7 +74,7 @@ public class MsgDigest {
     }
 
     /**
-     * Obtain the data length
+     * Obtain the data length.
      * @return the data length
      */
     public long getDataLength() {
@@ -76,11 +82,11 @@ public class MsgDigest {
     }
 
     /**
-     * Constructor for random type
+     * Constructor for random type.
      * @param pGenerator the security generator
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public MsgDigest(SecurityGenerator pGenerator) throws ModelException {
+    public MsgDigest(final SecurityGenerator pGenerator) throws ModelException {
         /* Store the type */
         DigestType[] myType = DigestType.getRandomTypes(1, pGenerator.getRandom());
         theType = myType[0];
@@ -95,13 +101,13 @@ public class MsgDigest {
     }
 
     /**
-     * Constructor
+     * Constructor for specific type.
      * @param pGenerator the security generator
      * @param pType the digest type
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public MsgDigest(SecurityGenerator pGenerator,
-                     DigestType pType) throws ModelException {
+    public MsgDigest(final SecurityGenerator pGenerator,
+                     final DigestType pType) throws ModelException {
         /* Store the type */
         theType = pType;
 
@@ -115,17 +121,17 @@ public class MsgDigest {
     }
 
     /**
-     * Constructor from external format
+     * Constructor from external format.
      * @param pGenerator the security generator
      * @param pExternal the external format
      * @param pDataLen the expected data length
      * @param pName the name of the digest
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public MsgDigest(SecurityGenerator pGenerator,
-                     byte[] pExternal,
-                     long pDataLen,
-                     String pName) throws ModelException {
+    public MsgDigest(final SecurityGenerator pGenerator,
+                     final byte[] pExternal,
+                     final long pDataLen,
+                     final String pName) throws ModelException {
         /* Parse the External form */
         DigestNeedle myNeedle = new DigestNeedle(pExternal);
 
@@ -144,7 +150,7 @@ public class MsgDigest {
     }
 
     /**
-     * Build the external format
+     * Build the external format.
      * @return the external format
      */
     public byte[] buildExternal() {
@@ -154,8 +160,8 @@ public class MsgDigest {
     }
 
     /**
-     * Validate digest
-     * @throws ModelException
+     * Validate digest.
+     * @throws ModelException on error
      */
     public void validateDigest() throws ModelException {
         /* If the data lengths do not match */
@@ -172,10 +178,10 @@ public class MsgDigest {
     }
 
     /**
-     * Update the digest
+     * Update the digest.
      * @param pBytes the bytes to add
      */
-    public void update(byte[] pBytes) {
+    public void update(final byte[] pBytes) {
         /* Update the digest */
         theDigest.update(pBytes);
 
@@ -184,10 +190,10 @@ public class MsgDigest {
     }
 
     /**
-     * Update the digest
+     * Update the digest.
      * @param pByte the byte to add
      */
-    public void update(byte pByte) {
+    public void update(final byte pByte) {
         /* Update the digest */
         theDigest.update(pByte);
 
@@ -196,14 +202,14 @@ public class MsgDigest {
     }
 
     /**
-     * Update the digest
+     * Update the digest.
      * @param pBytes the bytes to add
      * @param pOffset the offset in the buffer to start
      * @param pLength the length of data to add
      */
-    public void update(byte[] pBytes,
-                       int pOffset,
-                       int pLength) {
+    public void update(final byte[] pBytes,
+                       final int pOffset,
+                       final int pLength) {
         /* Update the digest */
         theDigest.update(pBytes, pOffset, pLength);
 

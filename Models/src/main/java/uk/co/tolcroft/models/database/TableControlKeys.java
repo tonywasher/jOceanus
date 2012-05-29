@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,36 +28,39 @@ import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
 import uk.co.tolcroft.models.data.DataSet;
 
+/**
+ * Database table class for ControlKey.
+ */
 public class TableControlKeys extends DatabaseTable<ControlKey> {
     /**
-     * The name of the ControlKeys table
+     * The name of the ControlKeys table.
      */
-    protected final static String TableName = ControlKey.listName;
+    protected static final String TABLE_NAME = ControlKey.listName;
 
     /**
-     * The table definition
+     * The table definition.
      */
     private TableDefinition theTableDef; /* Set during load */
 
     /**
-     * The control key list
+     * The control key list.
      */
     private ControlKeyList theList = null;
 
     /**
-     * Constructor
+     * Constructor.
      * @param pDatabase the database control
      */
-    protected TableControlKeys(Database<?> pDatabase) {
-        super(pDatabase, TableName);
+    protected TableControlKeys(final Database<?> pDatabase) {
+        super(pDatabase, TABLE_NAME);
     }
 
     /**
-     * Define the table columns (called from within super-constructor)
+     * Define the table columns (called from within super-constructor).
      * @param pTableDef the table definition
      */
     @Override
-    protected void defineTable(TableDefinition pTableDef) {
+    protected void defineTable(final TableDefinition pTableDef) {
         /* Define Standard table */
         super.defineTable(pTableDef);
         theTableDef = pTableDef;
@@ -66,13 +70,13 @@ public class TableControlKeys extends DatabaseTable<ControlKey> {
     }
 
     @Override
-    protected void declareData(DataSet<?> pData) {
+    protected void declareData(final DataSet<?> pData) {
         theList = pData.getControlKeys();
         setList(theList);
     }
 
     @Override
-    protected void loadItem(int pId) throws ModelException {
+    protected void loadItem(final int pId) throws ModelException {
         byte[] myHash;
 
         /* Get the various fields */
@@ -83,8 +87,8 @@ public class TableControlKeys extends DatabaseTable<ControlKey> {
     }
 
     @Override
-    protected void setFieldValue(ControlKey pItem,
-                                 ReportField iField) throws ModelException {
+    protected void setFieldValue(final ControlKey pItem,
+                                 final ReportField iField) throws ModelException {
         /* Switch on field id */
         if (iField == ControlKey.FIELD_PASSHASH) {
             theTableDef.setBinaryValue(iField, pItem.getHashBytes());

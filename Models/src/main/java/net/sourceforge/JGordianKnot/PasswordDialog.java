@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,69 +39,78 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.LayoutStyle;
 
+/**
+ * Dialog to request a password. Will also ask for password confirmation if required.
+ * @author Tony Washer
+ */
 public class PasswordDialog extends JDialog implements ActionListener {
     /**
-     * Serial version ID
+     * Serial version ID.
      */
     private static final long serialVersionUID = 5867685302365849587L;
 
     /**
-     * Minimum password length
+     * Minimum password length.
      */
-    private static final int minPasswordLen = 8;
+    private static final int MIN_PASSWORD_LEN = 8;
 
     /**
-     * Obtained password
+     * password field width.
+     */
+    private static final int PASSWORD_FIELD_LEN = 30;
+
+    /**
+     * Obtained password.
      */
     private char[] thePassword = null;
 
     /**
-     * Confirmation password
+     * Confirmation password.
      */
     private char[] theConfirm = null;
 
     /**
-     * OK Button
+     * OK Button.
      */
-    private JButton theOKButton = null;
+    private final JButton theOKButton;
 
     /**
-     * Cancel Button
+     * Cancel Button.
      */
-    private JButton theCancelButton = null;
+    private final JButton theCancelButton;
 
     /**
-     * Error field
+     * Error field.
      */
-    private JLabel theErrorField = null;
+    private final JLabel theErrorField;
 
     /**
-     * Password field
+     * Password field.
      */
-    private JPasswordField thePassField = null;
+    private final JPasswordField thePassField;
 
     /**
-     * The error panel
+     * The error panel.
      */
     private JPanel theError = null;
 
     /**
-     * Confirmation field
+     * Confirmation field.
      */
-    private JPasswordField theConfirmField = null;
+    private final JPasswordField theConfirmField;
 
     /**
-     * Is the password set
+     * Is the password set.
      */
     private boolean isPasswordSet = false;
 
     /**
-     * Do we need to confirm the password
+     * Do we need to confirm the password.
      */
-    private boolean needConfirm = false;
+    private final boolean needConfirm;
 
     /**
-     * Obtain the password
+     * Obtain the password.
      * @return the password
      */
     public char[] getPassword() {
@@ -108,7 +118,7 @@ public class PasswordDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * Is the password set
+     * Is the password set.
      * @return true/false
      */
     public boolean isPasswordSet() {
@@ -116,19 +126,19 @@ public class PasswordDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pParent the parent frame for the dialog
      * @param pTitle the title
-     * @param needConfirm true/false
+     * @param pNeedConfirm true/false
      */
-    public PasswordDialog(JFrame pParent,
-                          String pTitle,
-                          boolean needConfirm) {
+    public PasswordDialog(final JFrame pParent,
+                          final String pTitle,
+                          final boolean pNeedConfirm) {
         /* Initialise the dialog (this calls dialogInit) */
         super(pParent, pTitle, true);
 
         /* Store the confirm option */
-        this.needConfirm = needConfirm;
+        needConfirm = pNeedConfirm;
 
         /* Local variables */
         JLabel myPassLabel;
@@ -138,8 +148,8 @@ public class PasswordDialog extends JDialog implements ActionListener {
         /* Create the components */
         myPassLabel = new JLabel("Password:");
         myConfLabel = new JLabel("Confirm:");
-        thePassField = new JPasswordField("", 30);
-        theConfirmField = new JPasswordField("", 30);
+        thePassField = new JPasswordField("", PASSWORD_FIELD_LEN);
+        theConfirmField = new JPasswordField("", PASSWORD_FIELD_LEN);
         theOKButton = new JButton("OK");
         theCancelButton = new JButton("Cancel");
         theErrorField = new JLabel();
@@ -221,10 +231,9 @@ public class PasswordDialog extends JDialog implements ActionListener {
             /* Set a focus traversal policy */
             myPanel.setFocusTraversalPolicy(new TraversalPolicy());
             myPanel.setFocusCycleRoot(true);
-        }
 
-        /* Else we need no confirmation */
-        else {
+            /* Else we need no confirmation */
+        } else {
             /* Set the layout */
             myLayout.setHorizontalGroup(myLayout
                     .createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -260,16 +269,17 @@ public class PasswordDialog extends JDialog implements ActionListener {
 
     @Override
     protected void finalize() throws Exception {
-        if (thePassword != null)
+        if (thePassword != null) {
             Arrays.fill(thePassword, (char) 0);
+        }
     }
 
     @Override
-    public void actionPerformed(ActionEvent evt) {
+    public void actionPerformed(final ActionEvent evt) {
+        Object o = evt.getSource();
 
         /* If this event relates to the OK box or the password field */
-        if ((evt.getSource() == (Object) theOKButton) || (evt.getSource() == (Object) thePassField)
-                || (evt.getSource() == (Object) theConfirmField)) {
+        if ((o == theOKButton) || (o == thePassField) || (o == theConfirmField)) {
             /* Access the password */
             thePassword = thePassField.getPassword();
 
@@ -279,14 +289,14 @@ public class PasswordDialog extends JDialog implements ActionListener {
             /* If we need to confirm the password */
             if (needConfirm) {
                 /* If the password is less than the minimum length */
-                if (thePassword.length < minPasswordLen) {
+                if (thePassword.length < MIN_PASSWORD_LEN) {
                     /* Set error and return */
-                    setError("Password must be at least " + minPasswordLen + " characters long");
+                    setError("Password must be at least " + MIN_PASSWORD_LEN + " characters long");
                     return;
                 }
 
                 /* If the confirm password does not match */
-                if (!java.util.Arrays.equals(thePassword, theConfirm)) {
+                if (!Arrays.equals(thePassword, theConfirm)) {
                     /* Set error and return */
                     setError("Confirmation password does not match password");
                     return;
@@ -298,10 +308,9 @@ public class PasswordDialog extends JDialog implements ActionListener {
 
             /* Close the dialog */
             setVisible(false);
-        }
 
-        /* else if this event relates to the Cancel button */
-        else if (evt.getSource() == (Object) theCancelButton) {
+            /* else if this event relates to the Cancel button */
+        } else if (o == theCancelButton) {
             /* Note that we have set the password */
             isPasswordSet = false;
 
@@ -311,10 +320,10 @@ public class PasswordDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * set the error
+     * set the error.
      * @param pError the error to display
      */
-    public void setError(String pError) {
+    public void setError(final String pError) {
         /* Set the string to the error field */
         theErrorField.setText(pError);
 
@@ -327,63 +336,73 @@ public class PasswordDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * show the dialog
+     * show the dialog.
      */
     public void showDialog() {
         /* Show the dialog */
         setVisible(true);
     }
 
-    /* Focus traversal policy, used so that you tab straight to confirm from password */
+    /**
+     * Focus traversal policy, used so that you tab straight to confirm from password.
+     */
     private class TraversalPolicy extends FocusTraversalPolicy {
         @Override
-        public Component getComponentAfter(Container pRoot,
-                                           Component pCurrent) {
+        public Component getComponentAfter(final Container pRoot,
+                                           final Component pCurrent) {
             /* Handle field order */
-            if (pCurrent == thePassField)
+            if (pCurrent == thePassField) {
                 return theConfirmField;
-            if (pCurrent == theConfirmField)
+            }
+            if (pCurrent == theConfirmField) {
                 return theOKButton;
-            if (pCurrent == theOKButton)
+            }
+            if (pCurrent == theOKButton) {
                 return theCancelButton;
-            if (pCurrent == theCancelButton)
+            }
+            if (pCurrent == theCancelButton) {
                 return thePassField;
+            }
 
             /* Return a default value */
             return getFirstComponent(pRoot);
         }
 
         @Override
-        public Component getComponentBefore(Container pRoot,
-                                            Component pCurrent) {
+        public Component getComponentBefore(final Container pRoot,
+                                            final Component pCurrent) {
             /* Handle field order */
-            if (pCurrent == thePassField)
+            if (pCurrent == thePassField) {
                 return theCancelButton;
-            if (pCurrent == theConfirmField)
+            }
+            if (pCurrent == theConfirmField) {
                 return thePassField;
-            if (pCurrent == theOKButton)
+            }
+            if (pCurrent == theOKButton) {
                 return theConfirmField;
-            if (pCurrent == theCancelButton)
+            }
+            if (pCurrent == theCancelButton) {
                 return theOKButton;
+            }
 
             /* Return a default value */
             return getFirstComponent(pRoot);
         }
 
         @Override
-        public Component getDefaultComponent(Container pRoot) {
+        public Component getDefaultComponent(final Container pRoot) {
             /* Return the first component */
             return getFirstComponent(pRoot);
         }
 
         @Override
-        public Component getFirstComponent(Container pRoot) {
+        public Component getFirstComponent(final Container pRoot) {
             /* Return the password field */
             return thePassField;
         }
 
         @Override
-        public Component getLastComponent(Container pRoot) {
+        public Component getLastComponent(final Container pRoot) {
             /* Return the password field */
             return theCancelButton;
         }

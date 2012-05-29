@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,27 +37,78 @@ import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.threads.WorkerThread;
 import uk.co.tolcroft.models.ui.StatusBar;
 
+/**
+ * Provides top-level control of data.
+ * @param <T> the DataSet type
+ */
 public abstract class DataControl<T extends DataSet<T>> {
-    /* Debug Names */
-    public static final String DebugViews = "DataViews";
-    public static final String DebugData = "UnderlyingData";
-    public static final String DebugUpdates = "DataUpdates";
-    public static final String DebugAnalysis = "Analysis";
-    public static final String DebugError = "Error";
-
-    /* Properties */
-    private T theData = null;
-    private T theUpdates = null;
-    private ModelException theError = null;
-    private StatusBar theStatusBar = null;
-    private JFrame theFrame = null;
-    private SecureManager theSecurity = null;
-    private DebugManager theDebugMgr = null;
-
-    private HashMap<String, DebugEntry> theMap = null;
+    /**
+     * Debug View Name.
+     */
+    public static final String DEBUG_VIEWS = "DataViews";
 
     /**
-     * Constructor
+     * Underlying Data Name.
+     */
+    public static final String DEBUG_DATA = "UnderlyingData";
+
+    /**
+     * Data Updates Name.
+     */
+    public static final String DEBUG_UPDATES = "DataUpdates";
+
+    /**
+     * Analysis Name.
+     */
+    public static final String DEBUG_ANALYSIS = "Analysis";
+
+    /**
+     * Error Name.
+     */
+    public static final String DEBUG_ERROR = "Error";
+
+    /**
+     * The DataSet.
+     */
+    private T theData = null;
+
+    /**
+     * The Update DataSet.
+     */
+    private T theUpdates = null;
+
+    /**
+     * The Error.
+     */
+    private ModelException theError = null;
+
+    /**
+     * The StatusBar.
+     */
+    private StatusBar theStatusBar = null;
+
+    /**
+     * The Frame.
+     */
+    private JFrame theFrame = null;
+
+    /**
+     * The Security Manager.
+     */
+    private final SecureManager theSecurity;
+
+    /**
+     * The Debug Manager.
+     */
+    private DebugManager theDebugMgr = null;
+
+    /**
+     * The Debug Entry hashMap.
+     */
+    private final HashMap<String, DebugEntry> theMap;
+
+    /**
+     * Constructor.
      */
     protected DataControl() {
         /* Create the Secure Manager */
@@ -67,10 +119,10 @@ public abstract class DataControl<T extends DataSet<T>> {
     }
 
     /**
-     * Record new DataSet
+     * Record new DataSet.
      * @param pData the new DataSet
      */
-    public void setData(T pData) {
+    public void setData(final T pData) {
         /* If we already have data */
         if (theData != null) {
             /* Bump the generation */
@@ -81,12 +133,12 @@ public abstract class DataControl<T extends DataSet<T>> {
         theData = pData;
 
         /* Update the Debug entry */
-        DebugEntry myDebug = getDebugEntry(DebugData);
+        DebugEntry myDebug = getDebugEntry(DEBUG_DATA);
         myDebug.setObject(pData);
     }
 
     /**
-     * Obtain current DataSet
+     * Obtain current DataSet.
      * @return the current DataSet
      */
     public T getData() {
@@ -94,20 +146,20 @@ public abstract class DataControl<T extends DataSet<T>> {
     }
 
     /**
-     * Record new Updates
+     * Record new Updates.
      * @param pUpdates the new Updates
      */
-    protected void setUpdates(T pUpdates) {
+    protected void setUpdates(final T pUpdates) {
         /* Store the updates */
         theUpdates = pUpdates;
 
         /* Update the Debug entry */
-        DebugEntry myDebug = getDebugEntry(DebugUpdates);
+        DebugEntry myDebug = getDebugEntry(DEBUG_UPDATES);
         myDebug.setObject(pUpdates);
     }
 
     /**
-     * Obtain current Updates
+     * Obtain current Updates.
      * @return the current Updates
      */
     public T getUpdates() {
@@ -115,22 +167,22 @@ public abstract class DataControl<T extends DataSet<T>> {
     }
 
     /**
-     * Obtain a new ThreadStatus
+     * Obtain a new ThreadStatus.
      * @param pThread the thread to get the status for
      * @return a new ThreadStatus
      */
     public abstract ThreadStatus<T> allocateThreadStatus(WorkerThread<?> pThread);
 
     /**
-     * Set new Error
+     * Set new Error.
      * @param pError the new Error
      */
-    protected void setError(ModelException pError) {
+    protected void setError(final ModelException pError) {
         theError = pError;
     }
 
     /**
-     * Obtain current updates
+     * Obtain current updates.
      * @return the current Updates
      */
     public ModelException getError() {
@@ -138,15 +190,15 @@ public abstract class DataControl<T extends DataSet<T>> {
     }
 
     /**
-     * Set StatusBar
+     * Set StatusBar.
      * @param pStatusBar the StatusBar
      */
-    public void setStatusBar(StatusBar pStatusBar) {
+    public void setStatusBar(final StatusBar pStatusBar) {
         theStatusBar = pStatusBar;
     }
 
     /**
-     * Obtain StatusBar
+     * Obtain StatusBar.
      * @return the StatusBar
      */
     public StatusBar getStatusBar() {
@@ -154,15 +206,15 @@ public abstract class DataControl<T extends DataSet<T>> {
     }
 
     /**
-     * Set Frame
+     * Set Frame.
      * @param pFrame the frame
      */
-    public void setFrame(JFrame pFrame) {
+    public void setFrame(final JFrame pFrame) {
         theFrame = pFrame;
     }
 
     /**
-     * Obtain Frame
+     * Obtain Frame.
      * @return the Frame
      */
     public JFrame getFrame() {
@@ -170,7 +222,7 @@ public abstract class DataControl<T extends DataSet<T>> {
     }
 
     /**
-     * Obtain Secure Manager
+     * Obtain Secure Manager.
      * @return the Secure Manager
      */
     public SecureManager getSecurity() {
@@ -178,19 +230,19 @@ public abstract class DataControl<T extends DataSet<T>> {
     }
 
     /**
-     * Set Debug Manager
+     * Set Debug Manager.
      * @param pDebugMgr the Debug Manager
      */
-    protected void setDebugMgr(DebugManager pDebugMgr) {
+    protected void setDebugMgr(final DebugManager pDebugMgr) {
         /* Store the Manager */
         theDebugMgr = pDebugMgr;
 
         /* Create Debug Entries */
-        DebugEntry myViews = getDebugEntry(DebugViews);
-        DebugEntry myData = getDebugEntry(DebugData);
-        DebugEntry myUpdates = getDebugEntry(DebugUpdates);
-        DebugEntry myAnalysis = getDebugEntry(DebugAnalysis);
-        DebugEntry myError = getDebugEntry(DebugError);
+        DebugEntry myViews = getDebugEntry(DEBUG_VIEWS);
+        DebugEntry myData = getDebugEntry(DEBUG_DATA);
+        DebugEntry myUpdates = getDebugEntry(DEBUG_UPDATES);
+        DebugEntry myAnalysis = getDebugEntry(DEBUG_ANALYSIS);
+        DebugEntry myError = getDebugEntry(DEBUG_ERROR);
 
         /* Create the structure */
         myViews.addAsRootChild();
@@ -204,7 +256,7 @@ public abstract class DataControl<T extends DataSet<T>> {
     }
 
     /**
-     * Obtain Debug Manager
+     * Obtain Debug Manager.
      * @return the Debug Manager
      */
     public DebugManager getDebugMgr() {
@@ -212,11 +264,11 @@ public abstract class DataControl<T extends DataSet<T>> {
     }
 
     /**
-     * Add Debug Entry
+     * Get Debug Entry.
      * @param pName the Name of the entry
      * @return the Debug Entry
      */
-    public DebugEntry getDebugEntry(String pName) {
+    public DebugEntry getDebugEntry(final String pName) {
         /* Access any existing entry */
         DebugEntry myEntry = theMap.get(pName);
 
@@ -232,33 +284,33 @@ public abstract class DataControl<T extends DataSet<T>> {
     }
 
     /**
-     * Obtain SpreadSheet object
+     * Obtain SpreadSheet object.
      * @return SpreadSheet object
      */
     public abstract SpreadSheet<T> getSpreadSheet();
 
     /**
-     * Obtain Database object
+     * Obtain Database object.
      * @return database object
-     * @throws ModelException
+     * @throws ModelException on error
      */
     public abstract Database<T> getDatabase() throws ModelException;
 
     /**
-     * Obtain DataSet object
+     * Obtain DataSet object.
      * @return dataSet object
      */
     public abstract T getNewData();
 
     /**
-     * Refresh the Windows
+     * Refresh the Windows.
      */
     protected abstract void refreshWindow();
 
     /**
-     * Analyse the data in the view
+     * Analyse the data in the view.
      * @param bPreserve preserve any error
      * @return success true/false
      */
-    protected abstract boolean analyseData(boolean bPreserve);
+    protected abstract boolean analyseData(final boolean bPreserve);
 }

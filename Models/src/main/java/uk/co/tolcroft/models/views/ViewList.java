@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,16 +30,25 @@ import java.util.ListIterator;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.EditState;
 
+/**
+ * Provides control of a set of update-able DataLists.
+ */
 public class ViewList {
-    /* Members */
-    private List<ListClass> theList = null;
-    private DataControl<?> theControl = null;
+    /**
+     * The list.
+     */
+    private final List<ListClass> theList;
 
     /**
-     * Constructor for multiple DataLists
+     * The DataControl.
+     */
+    private final DataControl<?> theControl;
+
+    /**
+     * Constructor for multiple DataLists.
      * @param pControl the Data Control
      */
-    public ViewList(DataControl<?> pControl) {
+    public ViewList(final DataControl<?> pControl) {
         /* Store the Control */
         theControl = pControl;
 
@@ -47,11 +57,11 @@ public class ViewList {
     }
 
     /**
-     * Register an entry for a class
+     * Register an entry for a class.
      * @param pClass the class
      * @return the list class entry
      */
-    public ListClass registerClass(Class<?> pClass) {
+    public ListClass registerClass(final Class<?> pClass) {
         ListIterator<ListClass> myIterator;
         ListClass myList;
 
@@ -76,7 +86,7 @@ public class ViewList {
     }
 
     /**
-     * Apply changes in a ViewSet into the core data
+     * Apply changes in a ViewSet into the core data.
      */
     public void applyChanges() {
         /* Apply the changes */
@@ -92,10 +102,9 @@ public class ViewList {
 
             /* Refresh windows */
             theControl.refreshWindow();
-        }
 
-        /* else we failed */
-        else {
+            /* else we failed */
+        } else {
             /* Rollback the changes */
             rollBackChanges();
 
@@ -105,7 +114,7 @@ public class ViewList {
     }
 
     /**
-     * Prepare changes in a ViewSet back into the core data
+     * Prepare changes in a ViewSet back into the core data.
      */
     private void prepareChanges() {
         Iterator<ListClass> myIterator;
@@ -120,13 +129,14 @@ public class ViewList {
             myDataList = myList.theDataList;
 
             /* Prepare the changes */
-            if (myDataList != null)
+            if (myDataList != null) {
                 myDataList.prepareChanges();
+            }
         }
     }
 
     /**
-     * Commit changes in a ViewSet back into the core data
+     * Commit changes in a ViewSet back into the core data.
      */
     private void commitChanges() {
         Iterator<ListClass> myIterator;
@@ -141,13 +151,14 @@ public class ViewList {
             myDataList = myList.theDataList;
 
             /* commit the changes */
-            if (myDataList != null)
+            if (myDataList != null) {
                 myDataList.commitChanges();
+            }
         }
     }
 
     /**
-     * Rollback changes in a ViewSet back into the core data
+     * RollBack changes in a ViewSet back into the core data.
      */
     private void rollBackChanges() {
         ListIterator<ListClass> myIterator;
@@ -162,13 +173,14 @@ public class ViewList {
             myDataList = myList.theDataList;
 
             /* commit the changes */
-            if (myDataList != null)
+            if (myDataList != null) {
                 myDataList.rollBackChanges();
+            }
         }
     }
 
     /**
-     * Has this ViewList got updates
+     * Has this ViewList got updates.
      * @return true/false
      */
     public boolean hasUpdates() {
@@ -184,8 +196,9 @@ public class ViewList {
             myDataList = myList.theDataList;
 
             /* Determine whether there are updates */
-            if ((myDataList != null) && (myDataList.hasUpdates()))
+            if ((myDataList != null) && (myDataList.hasUpdates())) {
                 return true;
+            }
         }
 
         /* Return to caller */
@@ -193,7 +206,7 @@ public class ViewList {
     }
 
     /**
-     * Has this ViewList got errors
+     * Has this ViewList got errors.
      * @return true/false
      */
     public boolean hasErrors() {
@@ -209,8 +222,9 @@ public class ViewList {
             myDataList = myList.theDataList;
 
             /* Determine whether there are errors */
-            if ((myDataList != null) && (myDataList.hasErrors()))
+            if ((myDataList != null) && (myDataList.hasErrors())) {
                 return true;
+            }
         }
 
         /* Return to caller */
@@ -218,7 +232,7 @@ public class ViewList {
     }
 
     /**
-     * Get the edit state of this set of tables
+     * Get the edit state of this set of tables.
      * @return the edit state
      */
     public EditState getEditState() {
@@ -235,8 +249,9 @@ public class ViewList {
             myDataList = myList.theDataList;
 
             /* Combine states if list exists */
-            if (myDataList != null)
+            if (myDataList != null) {
                 myState = myState.combineState(myDataList.getEditState());
+            }
         }
 
         /* Return the state */
@@ -244,26 +259,32 @@ public class ViewList {
     }
 
     /**
-     * DataList items
+     * DataList items.
      */
-    public class ListClass {
-        /* properties */
-        private Class<?> theClass = null;
+    public final class ListClass {
+        /**
+         * The class.
+         */
+        private final Class<?> theClass;
+
+        /**
+         * The DataList.
+         */
         private DataList<?, ?> theDataList = null;
 
         /**
-         * Set the Data list
+         * Set the Data list.
          * @param pDataList the DataList
          */
-        public void setDataList(DataList<?, ?> pDataList) {
+        public void setDataList(final DataList<?, ?> pDataList) {
             theDataList = pDataList;
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pClass the class
          */
-        private ListClass(Class<?> pClass) {
+        private ListClass(final Class<?> pClass) {
             /* Store details */
             theClass = pClass;
         }

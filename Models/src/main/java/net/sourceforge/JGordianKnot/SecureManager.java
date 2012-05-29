@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,23 +33,31 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 
+/**
+ * PasswordHash Manager class which holds a cache of all resolved password hashes. For password hashes that
+ * were not previously resolved, previously used passwords will be attempted. If no match is found, then the
+ * user will be prompted for the password.
+ * @author Tony Washer
+ */
 public class SecureManager {
     /**
-     * Security generator
+     * Security generator.
      */
     private final SecurityGenerator theGenerator;
 
     /**
-     * List of resolved password hashes
+     * List of resolved password hashes.
      */
     private final List<PasswordHash> theHashList;
 
     /**
-     * Frame to use for password dialog
+     * Frame to use for password dialog.
      */
     private JFrame theFrame = null;
 
-    /* Constructor */
+    /**
+     * Constructor.
+     */
     public SecureManager() {
         /* Allocate the security generator */
         theGenerator = new SecurityGenerator();
@@ -58,15 +67,15 @@ public class SecureManager {
     }
 
     /**
-     * Set the Frame for the Secure Manager
+     * Set the Frame for the Secure Manager.
      * @param pFrame the frame
      */
-    public void setFrame(JFrame pFrame) {
+    public void setFrame(final JFrame pFrame) {
         theFrame = pFrame;
     }
 
     /**
-     * Obtain the security generator
+     * Obtain the security generator.
      * @return the security generator
      */
     public SecurityGenerator getSecurityGenerator() {
@@ -74,23 +83,25 @@ public class SecureManager {
     }
 
     /**
-     * Resolve the password Hash
+     * Resolve the password Hash.
      * @param pHashBytes the hash bytes to resolve
      * @param pSource the description of the secured resource
      * @return the password Hash
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public PasswordHash resolvePasswordHash(byte[] pHashBytes,
-                                            String pSource) throws ModelException {
+    public PasswordHash resolvePasswordHash(final byte[] pHashBytes,
+                                            final String pSource) throws ModelException {
         PasswordHash myHash = null;
 
         /* If the hash bytes exist try existing hashes for either absolute or password match */
-        if (pHashBytes != null)
+        if (pHashBytes != null) {
             myHash = attemptKnownPasswords(pHashBytes);
+        }
 
         /* If we have resolved the hash, return it */
-        if (myHash != null)
+        if (myHash != null) {
             return myHash;
+        }
 
         /* Prepare to prompt for password */
         String myTitle;
@@ -98,14 +109,16 @@ public class SecureManager {
         char[] myPassword = null;
 
         /* Determine whether we need confirmation */
-        if (pHashBytes == null)
+        if (pHashBytes == null) {
             needConfirm = true;
+        }
 
         /* Create the title for the window */
-        if (needConfirm)
+        if (needConfirm) {
             myTitle = "Enter New Password for " + pSource;
-        else
+        } else {
             myTitle = "Enter Password for " + pSource;
+        }
 
         /* Create a new password dialog */
         PasswordDialog myPass = new PasswordDialog(theFrame, myTitle, needConfirm);
@@ -118,10 +131,11 @@ public class SecureManager {
                 myPassword = myPass.getPassword();
 
                 /* Check the password */
-                if (needConfirm)
+                if (needConfirm) {
                     myHash = theGenerator.generatePasswordHash(myPassword);
-                else
+                } else {
                     myHash = theGenerator.derivePasswordHash(pHashBytes, myPassword);
+                }
 
                 /* No exception so we are good to go */
                 isPasswordOk = true;
@@ -136,8 +150,9 @@ public class SecureManager {
                 throw e;
             } finally {
                 /* Clear out the password */
-                if (myPassword != null)
+                if (myPassword != null) {
                     Arrays.fill(myPassword, (char) 0);
+                }
             }
         }
 
@@ -152,20 +167,18 @@ public class SecureManager {
     }
 
     /**
-     * Show the dialog under an invokeAndWait clause
+     * Show the dialog under an invokeAndWait clause.
      * @param pDialog the dialog to show
      * @return successful dialog usage true/false
      */
     public boolean showDialog(final PasswordDialog pDialog) {
-
         /* If this is the event dispatcher thread */
         if (SwingUtilities.isEventDispatchThread()) {
             /* invoke the dialog directly */
             pDialog.showDialog();
-        }
 
-        /* else we must use invokeAndWait */
-        else {
+            /* else we must use invokeAndWait */
+        } else {
             try {
                 SwingUtilities.invokeAndWait(new Runnable() {
                     @Override
@@ -174,9 +187,8 @@ public class SecureManager {
                         pDialog.showDialog();
                     }
                 });
-            }
-
-            catch (Exception e) {
+            } catch (Exception e) {
+                return false;
             }
         }
 
@@ -185,12 +197,12 @@ public class SecureManager {
     }
 
     /**
-     * clone password hash
+     * clone password hash.
      * @param pHash the password hash to clone
      * @return the cloned password hash
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public PasswordHash clonePasswordHash(PasswordHash pHash) throws ModelException {
+    public PasswordHash clonePasswordHash(final PasswordHash pHash) throws ModelException {
         /* clone the hash */
         PasswordHash myHash = pHash.cloneHash();
 
@@ -202,11 +214,11 @@ public class SecureManager {
     }
 
     /**
-     * Attempt known passwords
+     * Attempt known passwords.
      * @param pHashBytes the HashBytes to attempt passwords for
      * @return the new PasswordHash if successful, otherwise null
      */
-    private PasswordHash attemptKnownPasswords(byte[] pHashBytes) {
+    private PasswordHash attemptKnownPasswords(final byte[] pHashBytes) {
         Iterator<PasswordHash> myIterator;
         PasswordHash myCurr;
         PasswordHash myPassHash;
@@ -220,15 +232,17 @@ public class SecureManager {
             myCurr = myIterator.next();
 
             /* If this is the hash we are looking for, return it */
-            if (Arrays.equals(pHashBytes, myCurr.getHashBytes()))
+            if (Arrays.equals(pHashBytes, myCurr.getHashBytes())) {
                 return myCurr;
+            }
 
             /* Attempt to initialise the control from this password */
             myPassHash = myCurr.attemptPassword(pHashBytes);
 
             /* Break loop if we matched */
-            if (myPassHash != null)
+            if (myPassHash != null) {
                 return myPassHash;
+            }
         }
 
         /* Return null */

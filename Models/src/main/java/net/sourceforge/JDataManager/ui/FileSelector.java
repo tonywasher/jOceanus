@@ -19,7 +19,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.models.ui;
+package net.sourceforge.JDataManager.ui;
 
 import java.awt.Component;
 import java.io.File;

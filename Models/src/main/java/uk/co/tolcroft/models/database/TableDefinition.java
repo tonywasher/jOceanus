@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,63 +25,78 @@ package uk.co.tolcroft.models.database;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JDataManager.ReportFields.ReportField;
 import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDecimal.Decimal.Money;
-import net.sourceforge.JDecimal.Decimal.Rate;
+import net.sourceforge.JDecimal.Money;
+import net.sourceforge.JDecimal.Rate;
 import net.sourceforge.JGordianKnot.CipherSet;
 import net.sourceforge.JGordianKnot.SymmetricKey;
-import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.database.ColumnDefinition.BinaryColumn;
+import uk.co.tolcroft.models.database.ColumnDefinition.BooleanColumn;
+import uk.co.tolcroft.models.database.ColumnDefinition.DateColumn;
+import uk.co.tolcroft.models.database.ColumnDefinition.IdColumn;
+import uk.co.tolcroft.models.database.ColumnDefinition.IntegerColumn;
+import uk.co.tolcroft.models.database.ColumnDefinition.LongColumn;
+import uk.co.tolcroft.models.database.ColumnDefinition.MoneyColumn;
+import uk.co.tolcroft.models.database.ColumnDefinition.RateColumn;
+import uk.co.tolcroft.models.database.ColumnDefinition.ReferenceColumn;
+import uk.co.tolcroft.models.database.ColumnDefinition.StringColumn;
 
+/**
+ * Database field definition class. Maps each dataType to a database field.
+ */
 public class TableDefinition {
     /**
-     * The Table name
+     * The Buffer length.
      */
-    private String theTableName = null;
+    private static final int BUFFER_LEN = 1000;
 
     /**
-     * The Column Definitions
+     * The Table name.
      */
-    private List<ColumnDefinition> theList = null;
+    private final String theTableName;
 
     /**
-     * The Sort List
+     * The Column Definitions.
      */
-    private List<ColumnDefinition> theSortList = null;
+    private final List<ColumnDefinition> theList;
 
     /**
-     * Are we sorting on a reference column
+     * The Sort List.
+     */
+    private final List<ColumnDefinition> theSortList;
+
+    /**
+     * Are we sorting on a reference column.
      */
     private boolean sortOnReference = false;
 
     /**
-     * The array list for the columns
+     * The array list for the columns.
      */
     private final Map<ReportField, ColumnDefinition> theMap;
 
     /**
-     * The prepared statement for the insert/update
+     * The prepared statement for the insert/update.
      */
     private PreparedStatement theStatement = null;
 
     /**
-     * The result set for the load
+     * The result set for the load.
      */
     private ResultSet theResults = null;
 
     /**
-     * Obtain the table name
+     * Obtain the table name.
      * @return the table name
      */
     protected String getTableName() {
@@ -88,7 +104,15 @@ public class TableDefinition {
     }
 
     /**
-     * Is the table indexed
+     * Obtain the column map.
+     * @return the map
+     */
+    protected Map<ReportField, ColumnDefinition> getMap() {
+        return theMap;
+    }
+
+    /**
+     * Is the table indexed.
      * @return true/false
      */
     protected boolean isIndexed() {
@@ -96,7 +120,7 @@ public class TableDefinition {
     }
 
     /**
-     * Column Definitions array
+     * Column Definitions array.
      * @return the columns
      */
     protected List<ColumnDefinition> getColumns() {
@@ -104,10 +128,25 @@ public class TableDefinition {
     }
 
     /**
-     * Constructor
+     * Sort List.
+     * @return the sort list
+     */
+    protected List<ColumnDefinition> getSortList() {
+        return theSortList;
+    }
+
+    /**
+     * Note that we have a sort on reference.
+     */
+    protected void setSortOnReference() {
+        sortOnReference = true;
+    }
+
+    /**
+     * Constructor.
      * @param pName the table name
      */
-    protected TableDefinition(String pName) {
+    protected TableDefinition(final String pName) {
         /* Record the name */
         theTableName = pName;
 
@@ -121,185 +160,227 @@ public class TableDefinition {
         theMap = new HashMap<ReportField, ColumnDefinition>();
 
         /* Add an Id column */
-        theList.add(new IdColumn());
+        theList.add(new IdColumn(this));
     }
 
     /**
-     * Add a reference column
+     * Add a reference column.
      * @param pId the column id
      * @param pRef the reference table
      * @return the reference column
      */
-    public ReferenceColumn addReferenceColumn(ReportField pId,
-                                              String pRef) {
+    public ReferenceColumn addReferenceColumn(final ReportField pId,
+                                              final String pRef) {
         /* Create the new reference column */
-        ReferenceColumn myColumn = new ReferenceColumn(pId, pRef);
+        ReferenceColumn myColumn = new ReferenceColumn(this, pId, pRef);
 
         /* Add it to the list and return it */
         theList.add(myColumn);
         return myColumn;
     }
 
-    public ReferenceColumn addNullReferenceColumn(ReportField pId,
-                                                  String pRef) {
+    /**
+     * Add a reference column, which can be null.
+     * @param pId the column id
+     * @param pRef the reference table
+     * @return the reference column
+     */
+    public ReferenceColumn addNullReferenceColumn(final ReportField pId,
+                                                  final String pRef) {
         ReferenceColumn myColumn = addReferenceColumn(pId, pRef);
         myColumn.setNullable();
         return myColumn;
     }
 
     /**
-     * Add an integer column
+     * Add an integer column.
      * @param pId the column id
      * @return the integer column
      */
-    public IntegerColumn addIntegerColumn(ReportField pId) {
+    public IntegerColumn addIntegerColumn(final ReportField pId) {
         /* Create the new integer column */
-        IntegerColumn myColumn = new IntegerColumn(pId);
+        IntegerColumn myColumn = new IntegerColumn(this, pId);
 
         /* Add it to the list and return it */
         theList.add(myColumn);
         return myColumn;
     }
 
-    public IntegerColumn addNullIntegerColumn(ReportField pId) {
+    /**
+     * Add an integer column, which can be null.
+     * @param pId the column id
+     * @return the integer column
+     */
+    public IntegerColumn addNullIntegerColumn(final ReportField pId) {
         IntegerColumn myColumn = addIntegerColumn(pId);
         myColumn.setNullable();
         return myColumn;
     }
 
     /**
-     * Add a long column
+     * Add a long column.
      * @param pId the column id
      * @return the long column
      */
-    public LongColumn addLongColumn(ReportField pId) {
+    public LongColumn addLongColumn(final ReportField pId) {
         /* Create the new long column */
-        LongColumn myColumn = new LongColumn(pId);
+        LongColumn myColumn = new LongColumn(this, pId);
 
         /* Add it to the list and return it */
         theList.add(myColumn);
         return myColumn;
     }
 
-    public LongColumn addNullLongColumn(ReportField pId) {
+    /**
+     * Add a long column, which can be null.
+     * @param pId the column id
+     * @return the long column
+     */
+    public LongColumn addNullLongColumn(final ReportField pId) {
         LongColumn myColumn = addLongColumn(pId);
         myColumn.setNullable();
         return myColumn;
     }
 
     /**
-     * Add a boolean column
+     * Add a boolean column.
      * @param pId the column id
      * @return the boolean column
      */
-    public BooleanColumn addBooleanColumn(ReportField pId) {
+    public BooleanColumn addBooleanColumn(final ReportField pId) {
         /* Create the new boolean column */
-        BooleanColumn myColumn = new BooleanColumn(pId);
+        BooleanColumn myColumn = new BooleanColumn(this, pId);
 
         /* Add it to the list and return it */
         theList.add(myColumn);
         return myColumn;
     }
 
-    public BooleanColumn addNullBooleanColumn(ReportField pId) {
+    /**
+     * Add a boolean column, which can be null.
+     * @param pId the column id
+     * @return the boolean column
+     */
+    public BooleanColumn addNullBooleanColumn(final ReportField pId) {
         BooleanColumn myColumn = addBooleanColumn(pId);
         myColumn.setNullable();
         return myColumn;
     }
 
     /**
-     * Add a date column
+     * Add a date column.
      * @param pId the column id
      * @return the date column
      */
-    public DateColumn addDateColumn(ReportField pId) {
-        /* Create the new long column */
-        DateColumn myColumn = new DateColumn(pId);
+    public DateColumn addDateColumn(final ReportField pId) {
+        /* Create the new date column */
+        DateColumn myColumn = new DateColumn(this, pId);
 
         /* Add it to the list and return it */
         theList.add(myColumn);
         return myColumn;
     }
 
-    public DateColumn addNullDateColumn(ReportField pId) {
+    /**
+     * Add a date column, which can be null.
+     * @param pId the column id
+     * @return the date column
+     */
+    public DateColumn addNullDateColumn(final ReportField pId) {
         DateColumn myColumn = addDateColumn(pId);
         myColumn.setNullable();
         return myColumn;
     }
 
     /**
-     * Add a money column
+     * Add a money column.
      * @param pId the column id
      * @return the money column
      */
-    public MoneyColumn addMoneyColumn(ReportField pId) {
+    public MoneyColumn addMoneyColumn(final ReportField pId) {
         /* Create the new money column */
-        MoneyColumn myColumn = new MoneyColumn(pId);
+        MoneyColumn myColumn = new MoneyColumn(this, pId);
 
         /* Add it to the list and return it */
         theList.add(myColumn);
         return myColumn;
     }
 
-    public MoneyColumn addNullMoneyColumn(ReportField pId) {
+    /**
+     * Add a money column, which can be null.
+     * @param pId the column id
+     * @return the money column
+     */
+    public MoneyColumn addNullMoneyColumn(final ReportField pId) {
         MoneyColumn myColumn = addMoneyColumn(pId);
         myColumn.setNullable();
         return myColumn;
     }
 
     /**
-     * Add a rate column
+     * Add a rate column.
      * @param pId the column id
      * @return the rate column
      */
-    public RateColumn addRateColumn(ReportField pId) {
+    public RateColumn addRateColumn(final ReportField pId) {
         /* Create the new rate column */
-        RateColumn myColumn = new RateColumn(pId);
+        RateColumn myColumn = new RateColumn(this, pId);
 
         /* Add it to the list and return it */
         theList.add(myColumn);
         return myColumn;
     }
 
-    public RateColumn addNullRateColumn(ReportField pId) {
+    /**
+     * Add a rate column, which can be null.
+     * @param pId the column id
+     * @return the rate column
+     */
+    public RateColumn addNullRateColumn(final ReportField pId) {
         RateColumn myColumn = addRateColumn(pId);
         myColumn.setNullable();
         return myColumn;
     }
 
     /**
-     * Add a binary column
+     * Add a binary column.
      * @param pId the column id
      * @param pLength the underlying (character) length
      * @return the binary column
      */
-    public BinaryColumn addBinaryColumn(ReportField pId,
-                                        int pLength) {
+    public BinaryColumn addBinaryColumn(final ReportField pId,
+                                        final int pLength) {
         /* Create the new binary column */
-        BinaryColumn myColumn = new BinaryColumn(pId, pLength);
+        BinaryColumn myColumn = new BinaryColumn(this, pId, pLength);
 
         /* Add it to the list and return it */
         theList.add(myColumn);
         return myColumn;
     }
 
-    public BinaryColumn addNullBinaryColumn(ReportField pId,
-                                            int pLength) {
+    /**
+     * Add a binary column, which can be null.
+     * @param pId the column id
+     * @param pLength the underlying (character) length
+     * @return the binary column
+     */
+    public BinaryColumn addNullBinaryColumn(final ReportField pId,
+                                            final int pLength) {
         BinaryColumn myColumn = addBinaryColumn(pId, pLength);
         myColumn.setNullable();
         return myColumn;
     }
 
     /**
-     * Add an encrypted column
+     * Add an encrypted column.
      * @param pId the column id
      * @param pLength the underlying (character) length
      * @return the binary column
      */
-    public BinaryColumn addEncryptedColumn(ReportField pId,
-                                           int pLength) {
+    public BinaryColumn addEncryptedColumn(final ReportField pId,
+                                           final int pLength) {
         /* Create the new binary column */
-        BinaryColumn myColumn = new BinaryColumn(pId, SymmetricKey.IVSIZE + CipherSet.KEYIDLEN
+        BinaryColumn myColumn = new BinaryColumn(this, pId, SymmetricKey.IVSIZE + CipherSet.KEYIDLEN
                 + SymmetricKey.getEncryptionLength(2 * pLength));
 
         /* Add it to the list and return it */
@@ -307,41 +388,53 @@ public class TableDefinition {
         return myColumn;
     }
 
-    public BinaryColumn addNullEncryptedColumn(ReportField pId,
-                                               int pLength) {
+    /**
+     * Add an encrypted column, which can be null.
+     * @param pId the column id
+     * @param pLength the underlying (character) length
+     * @return the binary column
+     */
+    public BinaryColumn addNullEncryptedColumn(final ReportField pId,
+                                               final int pLength) {
         BinaryColumn myColumn = addEncryptedColumn(pId, pLength);
         myColumn.setNullable();
         return myColumn;
     }
 
     /**
-     * Add a string column
+     * Add a string column.
      * @param pId the column id
      * @param pLength the character length
      * @return the binary column
      */
-    public StringColumn addStringColumn(ReportField pId,
-                                        int pLength) {
+    public StringColumn addStringColumn(final ReportField pId,
+                                        final int pLength) {
         /* Create the new string column */
-        StringColumn myColumn = new StringColumn(pId, pLength);
+        StringColumn myColumn = new StringColumn(this, pId, pLength);
 
         /* Add it to the list and return it */
         theList.add(myColumn);
         return myColumn;
     }
 
-    public StringColumn addNullStringColumn(ReportField pId,
-                                            int pLength) {
+    /**
+     * Add a string column, which can be null.
+     * @param pId the column id
+     * @param pLength the character length
+     * @return the binary column
+     */
+    public StringColumn addNullStringColumn(final ReportField pId,
+                                            final int pLength) {
         StringColumn myColumn = addStringColumn(pId, pLength);
         myColumn.setNullable();
         return myColumn;
     }
 
     /**
-     * Locate reference
+     * Locate reference.
      * @param pTables the list of defined tables
      */
-    protected void resolveReferences(List<DatabaseTable<?>> pTables) {
+    protected void resolveReferences(final List<DatabaseTable<?>> pTables) {
         Iterator<ColumnDefinition> myIterator;
         ColumnDefinition myDef;
 
@@ -356,11 +449,11 @@ public class TableDefinition {
     }
 
     /**
-     * Load results
+     * Load results.
      * @param pResults the result set
-     * @throws SQLException
+     * @throws SQLException on error
      */
-    protected void loadResults(ResultSet pResults) throws SQLException {
+    protected void loadResults(final ResultSet pResults) throws SQLException {
         Iterator<ColumnDefinition> myIterator;
         ColumnDefinition myDef;
         int myIndex = 1;
@@ -375,17 +468,17 @@ public class TableDefinition {
         /* Loop through the columns */
         while (myIterator.hasNext()) {
             myDef = myIterator.next();
-            myDef.loadValue(myIndex++);
+            myDef.loadValue(theResults, myIndex++);
         }
     }
 
     /**
-     * Insert values
+     * Insert values.
      * @param pStmt the statement
-     * @throws SQLException
-     * @throws ModelException
+     * @throws SQLException on error
+     * @throws ModelException on error
      */
-    protected void insertValues(PreparedStatement pStmt) throws SQLException, ModelException {
+    protected void insertValues(final PreparedStatement pStmt) throws SQLException, ModelException {
         Iterator<ColumnDefinition> myIterator;
         ColumnDefinition myDef;
         int myIndex = 1;
@@ -401,21 +494,22 @@ public class TableDefinition {
             myDef = myIterator.next();
 
             /* Reject if the value is not set */
-            if (!myDef.isValueSet())
+            if (!myDef.isValueSet()) {
                 throw new ModelException(ExceptionClass.LOGIC, "Column " + myDef.getColumnName()
                         + " in table " + theTableName + " has no value for insert");
+            }
 
-            myDef.storeValue(myIndex++);
+            myDef.storeValue(theStatement, myIndex++);
         }
     }
 
     /**
-     * Update values
+     * Update values.
      * @param pStmt the statement
-     * @throws SQLException
-     * @throws ModelException
+     * @throws SQLException on error
+     * @throws ModelException on error
      */
-    protected void updateValues(PreparedStatement pStmt) throws SQLException, ModelException {
+    protected void updateValues(final PreparedStatement pStmt) throws SQLException, ModelException {
         Iterator<ColumnDefinition> myIterator;
         ColumnDefinition myDef;
         ColumnDefinition myId = null;
@@ -435,19 +529,19 @@ public class TableDefinition {
             if (myDef instanceof IdColumn) {
                 /* Remember the column */
                 myId = myDef;
-            }
 
-            /* Store value if it has been set */
-            else if (myDef.isValueSet())
-                myDef.storeValue(myIndex++);
+                /* Store value if it has been set */
+            } else if (myDef.isValueSet()) {
+                myDef.storeValue(theStatement, myIndex++);
+            }
         }
 
         /* Store the Id */
-        myId.storeValue(myIndex);
+        myId.storeValue(theStatement, myIndex);
     }
 
     /**
-     * Clear values for table
+     * Clear values for table.
      */
     protected void clearValues() {
         /* Loop over the Column Definitions */
@@ -458,19 +552,20 @@ public class TableDefinition {
     }
 
     /**
-     * Get Integer value for column
+     * Get Integer value for column.
      * @param pId the column id
      * @return the integer value
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public Integer getIntegerValue(ReportField pId) throws ModelException {
+    public Integer getIntegerValue(final ReportField pId) throws ModelException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not an integer column */
-        if (!(myCol instanceof IntegerColumn))
+        if (!(myCol instanceof IntegerColumn)) {
             throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Integer type");
+        }
 
         /* Return the value */
         IntegerColumn myIntCol = (IntegerColumn) myCol;
@@ -478,19 +573,20 @@ public class TableDefinition {
     }
 
     /**
-     * Get Long value for column
+     * Get Long value for column.
      * @param pId the column id
      * @return the long value
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public Long getLongValue(ReportField pId) throws ModelException {
+    public Long getLongValue(final ReportField pId) throws ModelException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a long column */
-        if (!(myCol instanceof IntegerColumn))
+        if (!(myCol instanceof LongColumn)) {
             throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Long type");
+        }
 
         /* Return the value */
         LongColumn myLongCol = (LongColumn) myCol;
@@ -498,19 +594,20 @@ public class TableDefinition {
     }
 
     /**
-     * Get Date value for column
+     * Get Date value for column.
      * @param pId the column id
      * @return the Date value
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public Date getDateValue(ReportField pId) throws ModelException {
+    public Date getDateValue(final ReportField pId) throws ModelException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a date column */
-        if (!(myCol instanceof DateColumn))
+        if (!(myCol instanceof DateColumn)) {
             throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Date type");
+        }
 
         /* Return the value */
         DateColumn myDateCol = (DateColumn) myCol;
@@ -518,19 +615,20 @@ public class TableDefinition {
     }
 
     /**
-     * Get Boolean value for column
+     * Get Boolean value for column.
      * @param pId the column id
      * @return the boolean value
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public Boolean getBooleanValue(ReportField pId) throws ModelException {
+    public Boolean getBooleanValue(final ReportField pId) throws ModelException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a boolean column */
-        if (!(myCol instanceof BooleanColumn))
+        if (!(myCol instanceof BooleanColumn)) {
             throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Boolean type");
+        }
 
         /* Return the value */
         BooleanColumn myBoolCol = (BooleanColumn) myCol;
@@ -538,19 +636,20 @@ public class TableDefinition {
     }
 
     /**
-     * Get String value for column
+     * Get String value for column.
      * @param pId the column id
      * @return the String value
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public String getStringValue(ReportField pId) throws ModelException {
+    public String getStringValue(final ReportField pId) throws ModelException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a string column */
-        if (!(myCol instanceof StringColumn))
+        if (!(myCol instanceof StringColumn)) {
             throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not String type");
+        }
 
         /* Return the value */
         StringColumn myStringCol = (StringColumn) myCol;
@@ -558,19 +657,20 @@ public class TableDefinition {
     }
 
     /**
-     * Get Binary value for column
+     * Get Binary value for column.
      * @param pId the column id
      * @return the binary value
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public byte[] getBinaryValue(ReportField pId) throws ModelException {
+    public byte[] getBinaryValue(final ReportField pId) throws ModelException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a string column */
-        if (!(myCol instanceof BinaryColumn))
+        if (!(myCol instanceof BinaryColumn)) {
             throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Binary type");
+        }
 
         /* Return the value */
         BinaryColumn myBinaryCol = (BinaryColumn) myCol;
@@ -578,20 +678,21 @@ public class TableDefinition {
     }
 
     /**
-     * Set Integer value for column
+     * Set Integer value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public void setIntegerValue(ReportField pId,
-                                Integer pValue) throws ModelException {
+    public void setIntegerValue(final ReportField pId,
+                                final Integer pValue) throws ModelException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not an integer column */
-        if (!(myCol instanceof IntegerColumn))
+        if (!(myCol instanceof IntegerColumn)) {
             throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Integer type");
+        }
 
         /* Set the value */
         IntegerColumn myIntCol = (IntegerColumn) myCol;
@@ -599,20 +700,21 @@ public class TableDefinition {
     }
 
     /**
-     * Set Long value for column
+     * Set Long value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public void setLongValue(ReportField pId,
-                             Long pValue) throws ModelException {
+    public void setLongValue(final ReportField pId,
+                             final Long pValue) throws ModelException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a long column */
-        if (!(myCol instanceof LongColumn))
+        if (!(myCol instanceof LongColumn)) {
             throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Long type");
+        }
 
         /* Set the value */
         LongColumn myLongCol = (LongColumn) myCol;
@@ -620,20 +722,21 @@ public class TableDefinition {
     }
 
     /**
-     * Set Boolean value for column
+     * Set Boolean value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public void setBooleanValue(ReportField pId,
-                                Boolean pValue) throws ModelException {
+    public void setBooleanValue(final ReportField pId,
+                                final Boolean pValue) throws ModelException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a boolean column */
-        if (!(myCol instanceof BooleanColumn))
+        if (!(myCol instanceof BooleanColumn)) {
             throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Boolean type");
+        }
 
         /* Set the value */
         BooleanColumn myBoolCol = (BooleanColumn) myCol;
@@ -641,20 +744,21 @@ public class TableDefinition {
     }
 
     /**
-     * Set Date value for column
+     * Set Date value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public void setDateValue(ReportField pId,
-                             DateDay pValue) throws ModelException {
+    public void setDateValue(final ReportField pId,
+                             final DateDay pValue) throws ModelException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a Date column */
-        if (!(myCol instanceof DateColumn))
+        if (!(myCol instanceof DateColumn)) {
             throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Date type");
+        }
 
         /* Set the value */
         DateColumn myDateCol = (DateColumn) myCol;
@@ -662,20 +766,21 @@ public class TableDefinition {
     }
 
     /**
-     * Set String value for column
+     * Set String value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public void setStringValue(ReportField pId,
-                               String pValue) throws ModelException {
+    public void setStringValue(final ReportField pId,
+                               final String pValue) throws ModelException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a string column */
-        if (!(myCol instanceof StringColumn))
+        if (!(myCol instanceof StringColumn)) {
             throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not String type");
+        }
 
         /* Set the value */
         StringColumn myStringCol = (StringColumn) myCol;
@@ -683,20 +788,21 @@ public class TableDefinition {
     }
 
     /**
-     * Set Binary value for column
+     * Set Binary value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public void setBinaryValue(ReportField pId,
-                               byte[] pValue) throws ModelException {
+    public void setBinaryValue(final ReportField pId,
+                               final byte[] pValue) throws ModelException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a binary column */
-        if (!(myCol instanceof BinaryColumn))
+        if (!(myCol instanceof BinaryColumn)) {
             throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Binary type");
+        }
 
         /* Set the value */
         BinaryColumn myBinaryCol = (BinaryColumn) myCol;
@@ -704,20 +810,21 @@ public class TableDefinition {
     }
 
     /**
-     * Set Money value for column
+     * Set Money value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public void setMoneyValue(ReportField pId,
-                              Money pValue) throws ModelException {
+    public void setMoneyValue(final ReportField pId,
+                              final Money pValue) throws ModelException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a money column */
-        if (!(myCol instanceof MoneyColumn))
+        if (!(myCol instanceof MoneyColumn)) {
             throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Money type");
+        }
 
         /* Set the value */
         MoneyColumn myMoneyCol = (MoneyColumn) myCol;
@@ -725,20 +832,21 @@ public class TableDefinition {
     }
 
     /**
-     * Set Rate value for column
+     * Set Rate value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public void setRateValue(ReportField pId,
-                             Rate pValue) throws ModelException {
+    public void setRateValue(final ReportField pId,
+                             final Rate pValue) throws ModelException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a rate column */
-        if (!(myCol instanceof RateColumn))
+        if (!(myCol instanceof RateColumn)) {
             throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Rate type");
+        }
 
         /* Set the value */
         RateColumn myRateCol = (RateColumn) myCol;
@@ -746,30 +854,31 @@ public class TableDefinition {
     }
 
     /**
-     * Locate column for id
+     * Locate column for id.
      * @param pId the id of the column
      * @return the column
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    private ColumnDefinition getColumnForId(ReportField pId) throws ModelException {
+    private ColumnDefinition getColumnForId(final ReportField pId) throws ModelException {
         /* Access the definition */
         ColumnDefinition myDef = theMap.get(pId);
 
         /* Check that the id is in range and present */
-        if (myDef == null)
+        if (myDef == null) {
             throw new ModelException(ExceptionClass.LOGIC, "Invalid Column Id: " + pId + " for "
                     + theTableName);
+        }
 
         /* Return the column definition */
         return myDef;
     }
 
     /**
-     * Build the create table string for the table
+     * Build the create table string for the table.
      * @return the SQL string
      */
     protected String getCreateTableString() {
-        StringBuilder myBuilder = new StringBuilder(1000);
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         Iterator<ColumnDefinition> myIterator;
         ColumnDefinition myDef;
         boolean myFirst = true;
@@ -785,8 +894,9 @@ public class TableDefinition {
         /* Loop through the columns */
         while (myIterator.hasNext()) {
             myDef = myIterator.next();
-            if (!myFirst)
+            if (!myFirst) {
                 myBuilder.append(", ");
+            }
             myDef.buildCreateString(myBuilder);
             myFirst = false;
         }
@@ -797,18 +907,19 @@ public class TableDefinition {
     }
 
     /**
-     * Build the create index string for the table
+     * Build the create index string for the table.
      * @return the SQL string
      */
     protected String getCreateIndexString() {
-        StringBuilder myBuilder = new StringBuilder(1000);
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         Iterator<ColumnDefinition> myIterator;
         ColumnDefinition myDef;
         boolean myFirst = true;
 
         /* Return null if we are not indexed */
-        if (!isIndexed())
+        if (!isIndexed()) {
             return null;
+        }
 
         /* Build the initial create */
         myBuilder.append("create index idx_");
@@ -823,11 +934,13 @@ public class TableDefinition {
         /* Loop through the columns */
         while (myIterator.hasNext()) {
             myDef = myIterator.next();
-            if (!myFirst)
+            if (!myFirst) {
                 myBuilder.append(", ");
+            }
             myBuilder.append(myDef.getColumnName());
-            if (myDef.getSortOrder() == SortOrder.DESCENDING)
+            if (myDef.getSortOrder() == SortOrder.DESCENDING) {
                 myBuilder.append(" DESC");
+            }
             myFirst = false;
         }
 
@@ -837,13 +950,13 @@ public class TableDefinition {
     }
 
     /**
-     * Build the drop table string for the table
+     * Build the drop table string for the table.
      * @return the SQL string
      */
     protected String getDropTableString() {
-        StringBuilder myBuilder = new StringBuilder(1000);
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
-        /* Build the initial create */
+        /* Build the drop command */
         myBuilder.append("if exists (select * from sys.tables where name = '");
         myBuilder.append(theTableName);
         myBuilder.append("') drop table ");
@@ -852,17 +965,18 @@ public class TableDefinition {
     }
 
     /**
-     * Build the drop index string for the table
+     * Build the drop index string for the table.
      * @return the SQL string
      */
     protected String getDropIndexString() {
-        StringBuilder myBuilder = new StringBuilder(1000);
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Return null if we are not indexed */
-        if (!isIndexed())
+        if (!isIndexed()) {
             return null;
+        }
 
-        /* Build the initial create */
+        /* Build the drop command */
         myBuilder.append("if exists (select * from sys.indexes where name = 'idx_");
         myBuilder.append(theTableName);
         myBuilder.append("') drop index idx_");
@@ -873,11 +987,11 @@ public class TableDefinition {
     }
 
     /**
-     * Build the load string for a list of columns
+     * Build the load string for a list of columns.
      * @return the SQL string
      */
     protected String getLoadString() {
-        StringBuilder myBuilder = new StringBuilder(1000);
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         Iterator<ColumnDefinition> myIterator;
         ColumnDefinition myDef;
         boolean myFirst = true;
@@ -891,10 +1005,12 @@ public class TableDefinition {
         /* Loop through the columns */
         while (myIterator.hasNext()) {
             myDef = myIterator.next();
-            if (!myFirst)
+            if (!myFirst) {
                 myBuilder.append(", ");
-            if (sortOnReference)
+            }
+            if (sortOnReference) {
                 myBuilder.append("a.");
+            }
             myBuilder.append(myDef.getColumnName());
             myFirst = false;
         }
@@ -902,14 +1018,16 @@ public class TableDefinition {
         /* Close the statement */
         myBuilder.append(" from ");
         myBuilder.append(theTableName);
-        if (sortOnReference)
+        if (sortOnReference) {
             myBuilder.append(" a");
+        }
 
         /* If we are indexed */
         if (isIndexed()) {
             /* Add Joins */
-            if (sortOnReference)
+            if (sortOnReference) {
                 myBuilder.append(getJoinString('a', 1));
+            }
 
             /* Add the order clause */
             myBuilder.append(" order by ");
@@ -922,14 +1040,14 @@ public class TableDefinition {
     }
 
     /**
-     * Build the Join string for the list of columns
+     * Build the Join string for the list of columns.
      * @param pChar the character for this table
      * @param pOffset the join offset
      * @return the SQL string
      */
-    protected String getJoinString(char pChar,
-                                   Integer pOffset) {
-        StringBuilder myBuilder = new StringBuilder(1000);
+    protected String getJoinString(final char pChar,
+                                   final Integer pOffset) {
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         Iterator<ColumnDefinition> myIterator;
         ColumnDefinition myDef;
 
@@ -940,8 +1058,9 @@ public class TableDefinition {
         while (myIterator.hasNext()) {
             /* Access next column and skip if not reference column */
             myDef = myIterator.next();
-            if (!(myDef instanceof ReferenceColumn))
+            if (!(myDef instanceof ReferenceColumn)) {
                 continue;
+            }
 
             /* Add the join */
             ReferenceColumn myCol = (ReferenceColumn) myDef;
@@ -952,14 +1071,14 @@ public class TableDefinition {
     }
 
     /**
-     * Build the Order string for the list of columns
+     * Build the Order string for the list of columns.
      * @param pChar the character for this table
      * @param pOffset the join offset
      * @return the SQL string
      */
-    protected String getOrderString(char pChar,
-                                    Integer pOffset) {
-        StringBuilder myBuilder = new StringBuilder(1000);
+    protected String getOrderString(final char pChar,
+                                    final Integer pOffset) {
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         Iterator<ColumnDefinition> myIterator;
         ColumnDefinition myDef;
         boolean myFirst;
@@ -972,8 +1091,9 @@ public class TableDefinition {
         while (myIterator.hasNext()) {
             myDef = myIterator.next();
             /* Handle secondary columns */
-            if (!myFirst)
+            if (!myFirst) {
                 myBuilder.append(", ");
+            }
 
             /* If we are using prefixes */
             if ((sortOnReference) || (pChar > 'a')) {
@@ -987,14 +1107,16 @@ public class TableDefinition {
                     myBuilder.append(pChar);
                     myBuilder.append(".");
                     myBuilder.append(myDef.getColumnName());
-                    if (myDef.getSortOrder() == SortOrder.DESCENDING)
+                    if (myDef.getSortOrder() == SortOrder.DESCENDING) {
                         myBuilder.append(" DESC");
+                    }
                 }
             } else {
                 /* Handle standard column */
                 myBuilder.append(myDef.getColumnName());
-                if (myDef.getSortOrder() == SortOrder.DESCENDING)
+                if (myDef.getSortOrder() == SortOrder.DESCENDING) {
                     myBuilder.append(" DESC");
+                }
             }
 
             /* Note secondary columns */
@@ -1005,12 +1127,12 @@ public class TableDefinition {
     }
 
     /**
-     * Build the insert string for a list of columns
+     * Build the insert string for a list of columns.
      * @return the SQL string
      */
     protected String getInsertString() {
-        StringBuilder myBuilder = new StringBuilder(1000);
-        StringBuilder myValues = new StringBuilder(100);
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        StringBuilder myValues = new StringBuilder(BUFFER_LEN);
         Iterator<ColumnDefinition> myIterator;
         ColumnDefinition myDef;
         boolean myFirst = true;
@@ -1026,10 +1148,12 @@ public class TableDefinition {
         /* Loop through the columns */
         while (myIterator.hasNext()) {
             myDef = myIterator.next();
-            if (!myFirst)
+            if (!myFirst) {
                 myBuilder.append(", ");
-            if (!myFirst)
+            }
+            if (!myFirst) {
                 myValues.append(", ");
+            }
             myBuilder.append(myDef.getColumnName());
             myValues.append('?');
             myFirst = false;
@@ -1043,12 +1167,12 @@ public class TableDefinition {
     }
 
     /**
-     * Build the update string for a list of columns
+     * Build the update string for a list of columns.
      * @return the SQL string
-     * @throws ModelException
+     * @throws ModelException on error
      */
     protected String getUpdateString() throws ModelException {
-        StringBuilder myBuilder = new StringBuilder(1000);
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         Iterator<ColumnDefinition> myIterator;
         ColumnDefinition myDef;
         ColumnDefinition myId = null;
@@ -1069,19 +1193,20 @@ public class TableDefinition {
             /* If this is the Id record */
             if (myDef instanceof IdColumn) {
                 /* Reject if the value is not set */
-                if (!myDef.isValueSet())
+                if (!myDef.isValueSet()) {
                     throw new ModelException(ExceptionClass.LOGIC, "Column " + myDef.getColumnName()
                             + " in table " + theTableName + " has no value for update");
+                }
 
                 /* Remember the column */
                 myId = myDef;
-            }
 
-            /* If this column is to be updated */
-            else if (myDef.isValueSet()) {
+                /* If this column is to be updated */
+            } else if (myDef.isValueSet()) {
                 /* Add the update of this column */
-                if (!myFirst)
+                if (!myFirst) {
                     myBuilder.append(", ");
+                }
                 myBuilder.append(myDef.getColumnName());
                 myBuilder.append("=?");
                 myFirst = false;
@@ -1089,8 +1214,9 @@ public class TableDefinition {
         }
 
         /* If we have no values then just return null */
-        if (myFirst)
+        if (myFirst) {
             return null;
+        }
 
         /* Close the statement and return it */
         myBuilder.append(" where ");
@@ -1100,11 +1226,11 @@ public class TableDefinition {
     }
 
     /**
-     * Build the delete string for a table
+     * Build the delete string for a table.
      * @return the SQL string
      */
     protected String getDeleteString() {
-        StringBuilder myBuilder = new StringBuilder(1000);
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         ColumnDefinition myId = null;
 
         /* Build the initial delete */
@@ -1122,11 +1248,11 @@ public class TableDefinition {
     }
 
     /**
-     * Build the purge string for a table
+     * Build the purge string for a table.
      * @return the SQL string
      */
     protected String getPurgeString() {
-        StringBuilder myBuilder = new StringBuilder(1000);
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the initial delete */
         myBuilder.append("delete from ");
@@ -1135,11 +1261,11 @@ public class TableDefinition {
     }
 
     /**
-     * Build the count string for a table
+     * Build the count string for a table.
      * @return the SQL string
      */
     protected String getCountString() {
-        StringBuilder myBuilder = new StringBuilder(1000);
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the initial delete */
         myBuilder.append("select count(*) from ");
@@ -1148,744 +1274,17 @@ public class TableDefinition {
     }
 
     /**
-     * The underlying column definition class
-     */
-    public abstract class ColumnDefinition {
-        /**
-         * Column Identity
-         */
-        protected final ReportField theIdentity;
-
-        /**
-         * Is the column null-able
-         */
-        protected boolean isNullable = false;
-
-        /**
-         * Is the value set
-         */
-        private boolean isValueSet = false;
-
-        /**
-         * The value of the column
-         */
-        protected Object theValue = null;
-
-        /**
-         * The sort order of the column
-         */
-        protected SortOrder theOrder = null;
-
-        /**
-         * Obtain the column name
-         * @return the name
-         */
-        protected String getColumnName() {
-            return theIdentity.getName();
-        }
-
-        /**
-         * Obtain the column id
-         * @return the id
-         */
-        protected ReportField getColumnId() {
-            return theIdentity;
-        }
-
-        /**
-         * Obtain the sort order
-         * @return the sort order
-         */
-        protected SortOrder getSortOrder() {
-            return theOrder;
-        }
-
-        /**
-         * Clear value
-         */
-        private void clearValue() {
-            theValue = null;
-            isValueSet = false;
-        }
-
-        /**
-         * Set value
-         * @param pValue the value
-         */
-        private void setValue(Object pValue) {
-            theValue = pValue;
-            isValueSet = true;
-        }
-
-        /**
-         * Is the value set
-         * @return true/false
-         */
-        private boolean isValueSet() {
-            return isValueSet;
-        }
-
-        /**
-         * Constructor
-         * @param pId the column id
-         */
-        private ColumnDefinition(ReportField pId) {
-            /* Record the identity */
-            theIdentity = pId;
-
-            /* Add to the map */
-            theMap.put(theIdentity, this);
-        }
-
-        /**
-         * Build the creation string for this column
-         * @param pBuilder the String builder
-         */
-        protected void buildCreateString(StringBuilder pBuilder) {
-            /* Add the name of the column */
-            pBuilder.append(getColumnName());
-            pBuilder.append(' ');
-
-            /* Add the type of the column */
-            buildColumnType(pBuilder);
-
-            /* Add null-able indication */
-            if (!isNullable)
-                pBuilder.append(" not");
-            pBuilder.append(" null");
-
-            /* build the key reference */
-            buildKeyReference(pBuilder);
-        }
-
-        /**
-         * Set null-able column
-         */
-        protected void setNullable() {
-            isNullable = true;
-        }
-
-        /**
-         * Set sortOrder
-         * @param pOrder the Sort direction
-         */
-        public void setSortOrder(SortOrder pOrder) {
-            theOrder = pOrder;
-            theSortList.add(this);
-        }
-
-        /**
-         * Build the column type for this column
-         * @param pBuilder the String builder
-         */
-        protected abstract void buildColumnType(StringBuilder pBuilder);
-
-        /**
-         * Load the value for this column
-         * @param pIndex the index of the result column
-         * @throws SQLException
-         */
-        protected abstract void loadValue(int pIndex) throws SQLException;
-
-        /**
-         * Store the value for this column
-         * @param pIndex the index of the statement
-         * @throws SQLException
-         */
-        protected abstract void storeValue(int pIndex) throws SQLException;
-
-        /**
-         * Define the key reference
-         * @param pBuilder the String builder
-         */
-        protected void buildKeyReference(StringBuilder pBuilder) {
-        }
-
-        /**
-         * Locate reference
-         * @param pTables the list of defined tables
-         */
-        protected void locateReference(List<DatabaseTable<?>> pTables) {
-        }
-    }
-
-    /**
-     * The integerColumn Class
-     */
-    protected class IntegerColumn extends ColumnDefinition {
-        /**
-         * Constructor
-         * @param pId the column id
-         */
-        private IntegerColumn(ReportField pId) {
-            /* Record the column type and name */
-            super(pId);
-        }
-
-        @Override
-        protected void buildColumnType(StringBuilder pBuilder) {
-            /* Add the column type */
-            pBuilder.append("int");
-        }
-
-        /**
-         * Set the value
-         * @param pValue the value
-         */
-        private void setValue(Integer pValue) {
-            super.setValue(pValue);
-        }
-
-        /**
-         * Get the value
-         * @return the value
-         */
-        private Integer getValue() {
-            return (Integer) theValue;
-        }
-
-        @Override
-        protected void loadValue(int pIndex) throws SQLException {
-            int myValue = theResults.getInt(pIndex);
-            if ((myValue == 0) && (theResults.wasNull()))
-                setValue(null);
-            else
-                setValue(myValue);
-        }
-
-        @Override
-        protected void storeValue(int pIndex) throws SQLException {
-            Integer myValue = getValue();
-            if (myValue == null)
-                theStatement.setNull(pIndex, Types.INTEGER);
-            else
-                theStatement.setInt(pIndex, myValue);
-        }
-    }
-
-    /**
-     * The idColumn Class
-     */
-    protected class IdColumn extends IntegerColumn {
-        /**
-         * Constructor
-         */
-        private IdColumn() {
-            /* Record the column type */
-            super(DataItem.FIELD_ID);
-        }
-
-        @Override
-        protected void buildKeyReference(StringBuilder pBuilder) {
-            /* Add the column type */
-            pBuilder.append(" primary key");
-        }
-    }
-
-    /**
-     * The referenceColumn Class
-     */
-    protected class ReferenceColumn extends IntegerColumn {
-        /**
-         * The name of the referenced table
-         */
-        private final String theReference;
-
-        /**
-         * The definition of the referenced table
-         */
-        private TableDefinition theDefinition = null;
-
-        /**
-         * Constructor
-         * @param pId the column id
-         * @param pTable the name of the referenced table
-         */
-        private ReferenceColumn(ReportField pId,
-                                String pTable) {
-            /* Record the column type */
-            super(pId);
-            theReference = pTable;
-        }
-
-        @Override
-        public void setSortOrder(SortOrder pOrder) {
-            super.setSortOrder(pOrder);
-            sortOnReference = true;
-        }
-
-        @Override
-        protected void buildKeyReference(StringBuilder pBuilder) {
-            /* Add the reference */
-            pBuilder.append(" references ");
-            pBuilder.append(theReference);
-            pBuilder.append('(');
-            pBuilder.append(DataItem.FIELD_ID.getName());
-            pBuilder.append(')');
-        }
-
-        @Override
-        protected void locateReference(List<DatabaseTable<?>> pTables) {
-            /* Access the Iterator */
-            ListIterator<DatabaseTable<?>> myIterator;
-            myIterator = pTables.listIterator();
-
-            /* Loop through the Tables */
-            while (myIterator.hasNext()) {
-                /* Access Table */
-                DatabaseTable<?> myTable = myIterator.next();
-
-                /* If this is the referenced table */
-                if (theReference.compareTo(myTable.getTableName()) == 0) {
-                    /* Store the reference and break the loop */
-                    theDefinition = myTable.getDefinition();
-                    break;
-                }
-            }
-        }
-
-        /**
-         * build Join String
-         * @param pBuilder the String Builder
-         * @param pChar the character for this table
-         * @param pOffset the join offset
-         */
-        private void buildJoinString(StringBuilder pBuilder,
-                                     char pChar,
-                                     Integer pOffset) {
-            Integer myOffset = pOffset;
-
-            /* Calculate join character */
-            char myChar = (char) ('a' + myOffset);
-
-            /* Build Initial part of string */
-            pBuilder.append(" join ");
-            pBuilder.append(theReference);
-            pBuilder.append(" ");
-            pBuilder.append(myChar);
-
-            /* Build the join */
-            pBuilder.append(" on ");
-            pBuilder.append(pChar);
-            pBuilder.append(".");
-            pBuilder.append(getColumnName());
-            pBuilder.append(" = ");
-            pBuilder.append(myChar);
-            pBuilder.append(".");
-            pBuilder.append(DataItem.FIELD_ID.getName());
-
-            /* Increment offset */
-            myOffset++;
-
-            /* Add the join string for the underlying table */
-            pBuilder.append(theDefinition.getJoinString(myChar, myOffset));
-        }
-
-        /**
-         * build Order String
-         * @param pBuilder the String Builder
-         * @param pOffset the join offset
-         */
-        private void buildOrderString(StringBuilder pBuilder,
-                                      Integer pOffset) {
-            Iterator<ColumnDefinition> myIterator;
-            ColumnDefinition myDef;
-            boolean myFirst = true;
-            Integer myOffset = pOffset;
-
-            /* Calculate join character */
-            char myChar = (char) ('a' + myOffset);
-
-            /* Create the iterator */
-            myIterator = theDefinition.theSortList.iterator();
-
-            /* Loop through the columns */
-            while (myIterator.hasNext()) {
-                /* Access next column */
-                myDef = myIterator.next();
-
-                /* Handle subsequent columns */
-                if (!myFirst)
-                    pBuilder.append(", ");
-
-                /* If this is a reference column */
-                if (myDef instanceof ReferenceColumn) {
-                    /* Increment offset */
-                    myOffset++;
-
-                    /* Determine new char */
-                    char myNewChar = (char) ('a' + pOffset);
-
-                    /* Add the join string for the underlying table */
-                    ReferenceColumn myCol = (ReferenceColumn) myDef;
-                    pBuilder.append(myCol.theDefinition.getOrderString(myNewChar, myOffset));
-                }
-
-                /* else standard column */
-                else {
-                    /* Build the column name */
-                    pBuilder.append(myChar);
-                    pBuilder.append(".");
-                    pBuilder.append(myDef.getColumnName());
-                    if (myDef.getSortOrder() == SortOrder.DESCENDING)
-                        pBuilder.append(" DESC");
-                }
-
-                /* Note we have a column */
-                myFirst = false;
-            }
-        }
-    }
-
-    /**
-     * The longColumn Class
-     */
-    protected class LongColumn extends ColumnDefinition {
-        /**
-         * Constructor
-         * @param pId the column id
-         */
-        private LongColumn(ReportField pId) {
-            /* Record the column type */
-            super(pId);
-        }
-
-        @Override
-        protected void buildColumnType(StringBuilder pBuilder) {
-            /* Add the column type */
-            pBuilder.append("bigint");
-        }
-
-        /**
-         * Set the value
-         * @param pValue the value
-         */
-        private void setValue(Long pValue) {
-            super.setValue(pValue);
-        }
-
-        /**
-         * Get the value
-         * @return the value
-         */
-        private Long getValue() {
-            return (Long) theValue;
-        }
-
-        @Override
-        protected void loadValue(int pIndex) throws SQLException {
-            long myValue = theResults.getLong(pIndex);
-            if ((myValue == 0) && (theResults.wasNull()))
-                setValue(null);
-            else
-                setValue(myValue);
-        }
-
-        @Override
-        protected void storeValue(int pIndex) throws SQLException {
-            Long myValue = getValue();
-            if (myValue == null)
-                theStatement.setNull(pIndex, Types.BIGINT);
-            else
-                theStatement.setLong(pIndex, myValue);
-        }
-    }
-
-    /**
-     * The dateColumn Class
-     */
-    protected class DateColumn extends ColumnDefinition {
-        /**
-         * Constructor
-         * @param pId the column id
-         */
-        private DateColumn(ReportField pId) {
-            /* Record the column type */
-            super(pId);
-        }
-
-        @Override
-        protected void buildColumnType(StringBuilder pBuilder) {
-            /* Add the column type */
-            pBuilder.append("date");
-        }
-
-        /**
-         * Set the value
-         * @param pValue the value
-         */
-        private void setValue(Date pValue) {
-            super.setValue(pValue);
-        }
-
-        /**
-         * Set the value
-         * @param pValue the value
-         */
-        private void setValue(DateDay pValue) {
-            super.setValue((pValue == null) ? null : pValue.getDate());
-        }
-
-        /**
-         * Get the value
-         * @return the value
-         */
-        private Date getValue() {
-            return (Date) theValue;
-        }
-
-        @Override
-        protected void loadValue(int pIndex) throws SQLException {
-            Date myValue = theResults.getDate(pIndex);
-            setValue(myValue);
-        }
-
-        @Override
-        protected void storeValue(int pIndex) throws SQLException {
-            java.sql.Date myDate = null;
-            Date myValue = getValue();
-
-            /* Build the date as a SQL date */
-            if (myValue != null)
-                myDate = new java.sql.Date(myValue.getTime());
-            theStatement.setDate(pIndex, myDate);
-        }
-    }
-
-    /**
-     * The booleanColumn Class
-     */
-    protected class BooleanColumn extends ColumnDefinition {
-        /**
-         * Constructor
-         * @param pId the column id
-         */
-        private BooleanColumn(ReportField pId) {
-            /* Record the column type */
-            super(pId);
-        }
-
-        @Override
-        protected void buildColumnType(StringBuilder pBuilder) {
-            /* Add the column type */
-            pBuilder.append("bit");
-        }
-
-        /**
-         * Set the value
-         * @param pValue the value
-         */
-        private void setValue(Boolean pValue) {
-            super.setValue(pValue);
-        }
-
-        /**
-         * Get the value
-         * @return the value
-         */
-        private Boolean getValue() {
-            return (Boolean) theValue;
-        }
-
-        @Override
-        protected void loadValue(int pIndex) throws SQLException {
-            boolean myValue = theResults.getBoolean(pIndex);
-            if ((myValue == false) && (theResults.wasNull()))
-                setValue(null);
-            else
-                setValue(myValue);
-        }
-
-        @Override
-        protected void storeValue(int pIndex) throws SQLException {
-            Boolean myValue = getValue();
-            if (myValue == null)
-                theStatement.setNull(pIndex, Types.BIT);
-            else
-                theStatement.setBoolean(pIndex, myValue);
-        }
-    }
-
-    /**
-     * The stringColumn Class
-     */
-    protected class StringColumn extends ColumnDefinition {
-        /**
-         * The length of the column
-         */
-        private final int theLength;
-
-        /**
-         * Constructor
-         * @param pId the column id
-         * @param pLength the length
-         */
-        private StringColumn(ReportField pId,
-                             int pLength) {
-            /* Record the column type */
-            super(pId);
-            theLength = pLength;
-        }
-
-        @Override
-        protected void buildColumnType(StringBuilder pBuilder) {
-            /* Add the column type */
-            pBuilder.append("varchar(");
-            pBuilder.append(theLength);
-            pBuilder.append(')');
-        }
-
-        /**
-         * Set the value
-         * @param pValue the value
-         */
-        private void setValue(String pValue) {
-            super.setValue(pValue);
-        }
-
-        /**
-         * Get the value
-         * @return the value
-         */
-        private String getValue() {
-            return (String) theValue;
-        }
-
-        @Override
-        protected void loadValue(int pIndex) throws SQLException {
-            String myValue = theResults.getString(pIndex);
-            setValue(myValue);
-        }
-
-        @Override
-        protected void storeValue(int pIndex) throws SQLException {
-            theStatement.setString(pIndex, getValue());
-        }
-    }
-
-    /**
-     * The moneyColumn Class
-     */
-    protected class MoneyColumn extends StringColumn {
-        /**
-         * Constructor
-         * @param pId the column id
-         */
-        private MoneyColumn(ReportField pId) {
-            /* Record the column type */
-            super(pId, 0);
-        }
-
-        @Override
-        protected void buildColumnType(StringBuilder pBuilder) {
-            /* Add the column type */
-            pBuilder.append("money");
-        }
-
-        /**
-         * Set the value
-         * @param pValue the value
-         */
-        private void setValue(Money pValue) {
-            String myString = null;
-            if (pValue != null)
-                myString = pValue.format(false);
-            super.setValue(myString);
-        }
-    }
-
-    /**
-     * The rateColumn Class
-     */
-    protected class RateColumn extends StringColumn {
-        /**
-         * Constructor
-         * @param pId the column id
-         */
-        private RateColumn(ReportField pId) {
-            /* Record the column type */
-            super(pId, 0);
-        }
-
-        @Override
-        protected void buildColumnType(StringBuilder pBuilder) {
-            /* Add the column type */
-            pBuilder.append("decimal(4,2)");
-        }
-
-        /**
-         * Set the value
-         * @param pValue the value
-         */
-        private void setValue(Rate pValue) {
-            String myString = null;
-            if (pValue != null)
-                myString = pValue.format(false);
-            super.setValue(myString);
-        }
-    }
-
-    /**
-     * The binaryColumn Class
-     */
-    protected class BinaryColumn extends ColumnDefinition {
-        /**
-         * The length of the column
-         */
-        private final int theLength;
-
-        /**
-         * Constructor
-         * @param pId the column id
-         * @param pLength the length of the column
-         */
-        private BinaryColumn(ReportField pId,
-                             int pLength) {
-            /* Record the column type */
-            super(pId);
-            theLength = pLength;
-        }
-
-        @Override
-        protected void buildColumnType(StringBuilder pBuilder) {
-            /* Add the column type */
-            pBuilder.append("varbinary(");
-            pBuilder.append(theLength);
-            pBuilder.append(')');
-        }
-
-        /**
-         * Set the value
-         * @param pValue the value
-         */
-        private void setValue(byte[] pValue) {
-            super.setValue(pValue);
-        }
-
-        /**
-         * Get the value
-         * @return the value
-         */
-        private byte[] getValue() {
-            return (byte[]) theValue;
-        }
-
-        @Override
-        protected void loadValue(int pIndex) throws SQLException {
-            byte[] myValue = theResults.getBytes(pIndex);
-            setValue(myValue);
-        }
-
-        @Override
-        protected void storeValue(int pIndex) throws SQLException {
-            theStatement.setBytes(pIndex, getValue());
-        }
-    }
-
-    /**
-     * Sort order indication
+     * Sort order indication.
      */
     public enum SortOrder {
-        ASCENDING, DESCENDING;
+        /**
+         * Ascending sort order.
+         */
+        ASCENDING,
+
+        /**
+         * Descending sort order.
+         */
+        DESCENDING;
     }
 }

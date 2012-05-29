@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,24 +35,31 @@ import net.sourceforge.JDataManager.ReportFields;
 import net.sourceforge.JDataManager.ReportFields.ReportField;
 import net.sourceforge.JDataManager.ReportObject.ReportDetail;
 
+/**
+ * Wrapper class for Cipher used to encryption data objects.
+ * @author Tony Washer
+ */
 public class DataCipher implements ReportDetail {
     /**
-     * Report fields
+     * Report fields.
      */
-    protected static final ReportFields theFields = new ReportFields(DataCipher.class.getSimpleName());
+    protected static final ReportFields FIELD_DEFS = new ReportFields(DataCipher.class.getSimpleName());
 
-    /* Field IDs */
-    public static final ReportField FIELD_SYMKEY = theFields.declareLocalField("SymmetricKey");
+    /**
+     * Symmetric Key Field ID.
+     */
+    public static final ReportField FIELD_SYMKEY = FIELD_DEFS.declareLocalField("SymmetricKey");
 
     @Override
     public ReportFields getReportFields() {
-        return theFields;
+        return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(ReportField pField) {
-        if (pField == FIELD_SYMKEY)
+    public Object getFieldValue(final ReportField pField) {
+        if (pField == FIELD_SYMKEY) {
             return theSymKey;
+        }
         return null;
     }
 
@@ -61,45 +69,48 @@ public class DataCipher implements ReportDetail {
     }
 
     /**
-     * The cipher
+     * The cipher.
      */
     private Cipher theCipher = null;
 
     /**
-     * The SymmetricKey (if used)
+     * The SymmetricKey.
      */
     private SymmetricKey theSymKey = null;
 
     /**
-     * Get Symmetric Key Type
+     * Get Symmetric Key Type.
      * @return the key type
      */
     protected SymKeyType getSymKeyType() {
-        return (theSymKey == null) ? null : theSymKey.getKeyType();
+        return theSymKey.getKeyType();
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pCipher the initialised cipher
      * @param pKey the Symmetric Key
      */
-    protected DataCipher(Cipher pCipher,
-                         SymmetricKey pKey) {
+    protected DataCipher(final Cipher pCipher,
+                         final SymmetricKey pKey) {
         theCipher = pCipher;
         theSymKey = pKey;
     }
 
     @Override
-    public boolean equals(Object pThat) {
+    public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-        if (this == pThat)
+        if (this == pThat) {
             return true;
-        if (pThat == null)
+        }
+        if (pThat == null) {
             return false;
+        }
 
         /* Make sure that the object is a DataCipher */
-        if (pThat.getClass() != this.getClass())
+        if (pThat.getClass() != this.getClass()) {
             return false;
+        }
 
         /* Access the target Cipher */
         DataCipher myThat = (DataCipher) pThat;
@@ -114,14 +125,14 @@ public class DataCipher implements ReportDetail {
     }
 
     /**
-     * Encrypt bytes
+     * Encrypt bytes.
      * @param pBytes bytes to encrypt
      * @param pVector initialisation vector
      * @return Encrypted bytes
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public byte[] encryptBytes(byte[] pBytes,
-                               byte[] pVector) throws ModelException {
+    public byte[] encryptBytes(final byte[] pBytes,
+                               final byte[] pVector) throws ModelException {
         byte[] myBytes;
 
         /* Protect against exceptions */
@@ -140,14 +151,14 @@ public class DataCipher implements ReportDetail {
     }
 
     /**
-     * Decrypt bytes
+     * Decrypt bytes.
      * @param pBytes bytes to decrypt
      * @param pVector initialisation vector
      * @return Decrypted bytes
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public byte[] decryptBytes(byte[] pBytes,
-                               byte[] pVector) throws ModelException {
+    public byte[] decryptBytes(final byte[] pBytes,
+                               final byte[] pVector) throws ModelException {
         byte[] myBytes;
 
         /* Protect against exceptions */
@@ -166,12 +177,12 @@ public class DataCipher implements ReportDetail {
     }
 
     /**
-     * Encrypt string
+     * Encrypt string.
      * @param pString string to encrypt
      * @return Encrypted bytes
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public byte[] encryptString(String pString) throws ModelException {
+    public byte[] encryptString(final String pString) throws ModelException {
         byte[] myBytes;
 
         /* Protect against exceptions */
@@ -190,12 +201,12 @@ public class DataCipher implements ReportDetail {
     }
 
     /**
-     * Encrypt character array
+     * Encrypt character array.
      * @param pChars Characters to encrypt
      * @return Encrypted bytes
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public byte[] encryptChars(char[] pChars) throws ModelException {
+    public byte[] encryptChars(final char[] pChars) throws ModelException {
         byte[] myBytes;
         byte[] myRawBytes;
 
@@ -218,12 +229,12 @@ public class DataCipher implements ReportDetail {
     }
 
     /**
-     * Decrypt bytes into a string
+     * Decrypt bytes into a string.
      * @param pBytes bytes to decrypt
      * @return Decrypted string
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public String decryptString(byte[] pBytes) throws ModelException {
+    public String decryptString(final byte[] pBytes) throws ModelException {
         byte[] myBytes;
         String myString;
 
@@ -243,12 +254,12 @@ public class DataCipher implements ReportDetail {
     }
 
     /**
-     * Decrypt bytes into a character array
+     * Decrypt bytes into a character array.
      * @param pBytes Bytes to decrypt
      * @return Decrypted character array
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public char[] decryptChars(byte[] pBytes) throws ModelException {
+    public char[] decryptChars(final byte[] pBytes) throws ModelException {
         byte[] myBytes;
         char[] myChars;
 
@@ -271,34 +282,28 @@ public class DataCipher implements ReportDetail {
     }
 
     /**
-     * Initialise encryption
+     * Initialise encryption.
      * @param pVector initialisation vector
-     * @throws Exception
+     * @throws Exception on error
      */
-    private void initialiseEncryption(byte[] pVector) throws Exception {
+    private void initialiseEncryption(final byte[] pVector) throws Exception {
         AlgorithmParameterSpec myParms;
 
-        /* If we have a symmetric key */
-        if (theSymKey != null) {
-            /* Initialise the cipher using the vector */
-            myParms = new IvParameterSpec(pVector);
-            theCipher.init(Cipher.ENCRYPT_MODE, theSymKey.getSecretKey(), myParms);
-        }
+        /* Initialise the cipher using the vector */
+        myParms = new IvParameterSpec(pVector);
+        theCipher.init(Cipher.ENCRYPT_MODE, theSymKey.getSecretKey(), myParms);
     }
 
     /**
-     * Initialise decryption
+     * Initialise decryption.
      * @param pVector initialisation vector
-     * @throws Exception
+     * @throws Exception on error
      */
-    private void initialiseDecryption(byte[] pVector) throws Exception {
+    private void initialiseDecryption(final byte[] pVector) throws Exception {
         AlgorithmParameterSpec myParms;
 
-        /* If we have a symmetric key */
-        if (theSymKey != null) {
-            /* Initialise the cipher using the vector */
-            myParms = new IvParameterSpec(pVector);
-            theCipher.init(Cipher.DECRYPT_MODE, theSymKey.getSecretKey(), myParms);
-        }
+        /* Initialise the cipher using the vector */
+        myParms = new IvParameterSpec(pVector);
+        theCipher.init(Cipher.DECRYPT_MODE, theSymKey.getSecretKey(), myParms);
     }
 }

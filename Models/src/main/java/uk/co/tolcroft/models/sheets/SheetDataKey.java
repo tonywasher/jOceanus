@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,29 +26,53 @@ import uk.co.tolcroft.models.data.DataKey;
 import uk.co.tolcroft.models.data.DataKey.DataKeyList;
 import uk.co.tolcroft.models.data.DataSet;
 
+/**
+ * SheetDataItem extension for DataKey.
+ * @author Tony Washer
+ */
 public class SheetDataKey extends SheetDataItem<DataKey> {
     /**
-     * SheetName for Keys
+     * SheetName for Keys.
      */
-    private static final String Keys = DataKey.class.getSimpleName();
+    private static final String SHEET_NAME = DataKey.class.getSimpleName();
 
     /**
-     * DataKey list
+     * Number of columns.
+     */
+    private static final int NUM_COLS = 4;
+
+    /**
+     * KeyData column.
+     */
+    private static final int COL_CONTROL = 1;
+
+    /**
+     * KeyType column.
+     */
+    private static final int COL_KEYTYPE = 2;
+
+    /**
+     * KeyData column.
+     */
+    private static final int COL_KEYDATA = 3;
+
+    /**
+     * DataKey list.
      */
     private DataKeyList theList = null;
 
     /**
-     * DataSet
+     * DataSet.
      */
     private DataSet<?> theData = null;
 
     /**
-     * Constructor for loading a spreadsheet
+     * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetDataKey(SheetReader<?> pReader) {
+    protected SheetDataKey(final SheetReader<?> pReader) {
         /* Call super constructor */
-        super(pReader, Keys);
+        super(pReader, SHEET_NAME);
 
         /* Access the Lists */
         theData = pReader.getData();
@@ -55,12 +80,12 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
     }
 
     /**
-     * Constructor for creating a spreadsheet
+     * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetDataKey(SheetWriter<?> pWriter) {
+    protected SheetDataKey(final SheetWriter<?> pWriter) {
         /* Call super constructor */
-        super(pWriter, Keys);
+        super(pWriter, SHEET_NAME);
 
         /* Access the Control list */
         theList = pWriter.getData().getDataKeys();
@@ -70,24 +95,24 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
     @Override
     protected void loadItem() throws Exception {
         /* Access the IDs */
-        int myID = loadInteger(0);
-        int myControl = loadInteger(1);
-        int myKeyType = loadInteger(2);
+        int myID = loadInteger(COL_ID);
+        int myControl = loadInteger(COL_CONTROL);
+        int myKeyType = loadInteger(COL_KEYTYPE);
 
         /* Access the Binary values */
-        byte[] myKey = loadBytes(3);
+        byte[] myKey = loadBytes(COL_KEYDATA);
 
         /* Add the DataKey */
         theList.addItem(myID, myControl, myKeyType, myKey);
     }
 
     @Override
-    protected void insertItem(DataKey pItem) throws Exception {
+    protected void insertItem(final DataKey pItem) throws Exception {
         /* Set the fields */
-        writeInteger(0, pItem.getId());
-        writeInteger(1, pItem.getControlKey().getId());
-        writeInteger(2, pItem.getKeyType().getId());
-        writeBytes(3, pItem.getSecuredKeyDef());
+        writeInteger(COL_ID, pItem.getId());
+        writeInteger(COL_CONTROL, pItem.getControlKey().getId());
+        writeInteger(COL_KEYTYPE, pItem.getKeyType().getId());
+        writeBytes(COL_KEYDATA, pItem.getSecuredKeyDef());
     }
 
     @Override
@@ -97,6 +122,6 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
     @Override
     protected void postProcessOnWrite() throws Exception {
         /* Set the four columns as the range */
-        nameRange(4);
+        nameRange(NUM_COLS);
     }
 }

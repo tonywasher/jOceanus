@@ -671,7 +671,7 @@ public abstract class PreferenceSet {
                 boolean myValue = theHandle.getBoolean(pName, false);
 
                 /* Set as initial value */
-                super.setValue(new Boolean(myValue));
+                super.setValue(myValue ? Boolean.TRUE : Boolean.FALSE);
             }
 
             /* else value does not exist */
@@ -690,7 +690,7 @@ public abstract class PreferenceSet {
 
             /* Take a copy if not null */
             if (myNewValue != null)
-                myNewValue = new Boolean(myNewValue);
+                myNewValue = new Boolean(myNewValue ? Boolean.TRUE : Boolean.FALSE);
 
             /* Set the new value */
             super.setNewValue(myNewValue);

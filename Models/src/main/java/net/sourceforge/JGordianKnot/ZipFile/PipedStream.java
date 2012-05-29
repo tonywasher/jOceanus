@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,34 +29,39 @@ import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.util.concurrent.ArrayBlockingQueue;
 
+/**
+ * Class to provide a pipe enabling data to be passed between threads via writing to an output stream and
+ * reading from an input stream.
+ * @author Tony Washer
+ */
 public class PipedStream {
     /**
-     * The Queue Capacity
+     * The Queue Capacity.
      */
-    private static final int queueLEN = 4096;
+    private static final int QUEUE_LEN = 4096;
 
     /**
-     * The output buffer size
+     * The output buffer size.
      */
-    static final int bufferLEN = 16384;
+    private static final int BUFFER_LEN = 16384;
 
     /**
-     * The Array Blocking queue that implements the pipe
+     * The Array Blocking queue that implements the pipe.
      */
-    protected final ArrayBlockingQueue<byte[]> theQueue;
+    private final ArrayBlockingQueue<byte[]> theQueue;
 
     /**
-     * The Input Stream
+     * The Input Stream.
      */
-    protected final PipedInputStream theSource;
+    private final PipedInputStream theSource;
 
     /**
-     * The Output Stream
+     * The Output Stream.
      */
-    protected final BufferedOutputStream theSink;
+    private final BufferedOutputStream theSink;
 
     /**
-     * Obtain the source stream
+     * Obtain the source stream.
      * @return the source stream
      */
     public InputStream getSource() {
@@ -63,7 +69,7 @@ public class PipedStream {
     }
 
     /**
-     * Obtain the sink stream
+     * Obtain the sink stream.
      * @return the sink stream
      */
     public OutputStream getSink() {
@@ -71,55 +77,55 @@ public class PipedStream {
     }
 
     /**
-     * Constructor
+     * Constructor.
      */
     public PipedStream() {
         /* Create the queue */
-        theQueue = new ArrayBlockingQueue<byte[]>(queueLEN);
+        theQueue = new ArrayBlockingQueue<byte[]>(QUEUE_LEN);
 
         /* Create the source stream */
         theSource = new PipedInputStream();
 
         /* Create the sink stream */
-        theSink = new BufferedOutputStream(new PipedOutputStream(), bufferLEN);
+        theSink = new BufferedOutputStream(new PipedOutputStream(), BUFFER_LEN);
     }
 
     /**
-     * The inputStream class
+     * The inputStream class.
      */
     private class PipedInputStream extends InputStream {
         /**
-         * The currently active element
+         * The currently active element.
          */
         private byte[] theElement = null;
 
         /**
-         * The length of the current element
+         * The length of the current element.
          */
-        protected int theDataLen = -1;
+        private int theDataLen = -1;
 
         /**
-         * The offset within the element
+         * The offset within the element.
          */
-        protected int theReadOffset = -1;
+        private int theReadOffset = -1;
 
         /**
-         * has this stream been closed
+         * has this stream been closed.
          */
         private boolean isClosed = false;
 
         /**
-         * have we seen EOF
+         * have we seen EOF.
          */
         private boolean hasEOFbeenSeen = false;
 
         /**
-         * A buffer for single byte reads
+         * A buffer for single byte reads.
          */
-        private byte[] theByte = new byte[1];
+        private final byte[] theByte = new byte[1];
 
         @Override
-        public int read(byte[] pBytes) throws IOException {
+        public int read(final byte[] pBytes) throws IOException {
             /* Read the bytes from the stream */
             return read(pBytes, 0, pBytes.length);
         }
@@ -129,28 +135,32 @@ public class PipedStream {
             int iNumRead;
 
             /* Loop until we get a byte or EOF */
-            while ((iNumRead = read(theByte, 0, 1)) == 0)
-                ;
+            do {
+                iNumRead = read(theByte, 0, 1);
+            } while (iNumRead == 0);
 
             /* Convert the byte read into an integer */
-            if (iNumRead > 0)
-                iNumRead = (theByte[0] & 0xff);
+            if (iNumRead > 0) {
+                iNumRead = (theByte[0] & DecryptionInputStream.BYTE_MASK);
+            }
 
             /* Return to the caller */
             return iNumRead;
         }
 
         @Override
-        public int read(byte[] pBuffer,
-                        int pOffset,
-                        int pLength) throws IOException {
+        public int read(final byte[] pBuffer,
+                        final int pOffset,
+                        final int pLength) throws IOException {
             /* If we are already closed throw IO Exception */
-            if (isClosed)
+            if (isClosed) {
                 throw new IOException("Stream is closed");
+            }
 
             /* If we have already seen EOF return now */
-            if (hasEOFbeenSeen)
+            if (hasEOFbeenSeen) {
                 return -1;
+            }
 
             /* If we have no current element */
             if (theElement == null) {
@@ -193,11 +203,11 @@ public class PipedStream {
                     theDataLen = 0;
                     theReadOffset = 0;
                 }
-            }
 
-            /* else if we have no data check for EOF and report it if required */
-            else if (hasEOFbeenSeen)
+                /* else if we have no data check for EOF and report it if required */
+            } else if (hasEOFbeenSeen) {
                 iNumRead = -1;
+            }
 
             /* Return the number of bytes read */
             return iNumRead;
@@ -211,30 +221,32 @@ public class PipedStream {
     }
 
     /**
-     * The outputStream class
+     * The outputStream class.
      */
     private class PipedOutputStream extends OutputStream {
         /**
-         * has this stream been closed
+         * has this stream been closed.
          */
         private boolean isClosed = false;
 
         /**
-         * A buffer for single byte writes
+         * A buffer for single byte writes.
          */
-        private byte[] theByte = new byte[1];
+        private final byte[] theByte = new byte[1];
 
         @Override
-        public void write(byte[] pBytes,
-                          int pOffset,
-                          int pLength) throws IOException {
+        public void write(final byte[] pBytes,
+                          final int pOffset,
+                          final int pLength) throws IOException {
             /* If we are already closed throw IO Exception */
-            if (isClosed)
+            if (isClosed) {
                 throw new IOException("Stream is closed");
+            }
 
             /* no data is to be written, just ignore */
-            if (pLength == 0)
+            if (pLength == 0) {
                 return;
+            }
 
             /* Create a copy of the data */
             byte[] myBuffer = new byte[pLength];
@@ -249,13 +261,13 @@ public class PipedStream {
         }
 
         @Override
-        public void write(byte[] pBytes) throws IOException {
+        public void write(final byte[] pBytes) throws IOException {
             /* Write the bytes to the stream */
             write(pBytes, 0, pBytes.length);
         }
 
         @Override
-        public void write(int pByte) throws IOException {
+        public void write(final int pByte) throws IOException {
             /* Store the byte */
             theByte[0] = (byte) pByte;
 
@@ -270,8 +282,9 @@ public class PipedStream {
         @Override
         public void close() throws IOException {
             /* Ignore if already closed */
-            if (isClosed)
+            if (isClosed) {
                 return;
+            }
 
             /* Write a zero length element */
             try {

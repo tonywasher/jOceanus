@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JHelpManager: Java Help Manager
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,40 +26,62 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
-
 /**
  * Help Page class. This class maps between the name of a help page and the HTML that the name represents.
  */
 public class HelpPage implements Comparable<Object> {
-    /* Members */
+    /**
+     * The Buffer length.
+     */
+    private static final int BUFFER_LEN = 10000;
+
+    /**
+     * The name of the page.
+     */
     private final String theName;
+
+    /**
+     * The HTML of the page.
+     */
     private final String theHtml;
+
+    /**
+     * The entry for the page.
+     */
     private final HelpEntry theEntry;
 
-    /* Access methods */
+    /**
+     * Obtain the name.
+     * @return the name
+     */
     public String getName() {
         return theName;
     }
 
+    /**
+     * Obtain the HTML.
+     * @return the HTML
+     */
     public String getHtml() {
         return theHtml;
     }
 
+    /**
+     * Obtain the entry.
+     * @return the entry
+     */
     public HelpEntry getEntry() {
         return theEntry;
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pEntry the help entry for the help page
      * @param pStream the stream to read the help page from
-     * @throws ModelException
+     * @throws HelpException on error
      */
-    public HelpPage(HelpEntry pEntry,
-                    InputStream pStream) throws ModelException {
+    public HelpPage(final HelpEntry pEntry,
+                    final InputStream pStream) throws HelpException {
         /* Local variables */
         BufferedReader myReader;
         InputStreamReader myInputReader;
@@ -69,7 +92,7 @@ public class HelpPage implements Comparable<Object> {
         myReader = new BufferedReader(myInputReader);
 
         /* Allocate a string builder */
-        StringBuilder myBuilder = new StringBuilder(10000);
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Protect against exceptions */
         try {
@@ -79,12 +102,11 @@ public class HelpPage implements Comparable<Object> {
                 myBuilder.append(myLine);
                 myBuilder.append('\n');
             }
-        }
 
-        /* Catch exceptions */
-        catch (Exception e) {
+            /* Catch exceptions */
+        } catch (Exception e) {
             /* Throw an exception */
-            throw new ModelException(ExceptionClass.DATA, "Failed to load help file " + pEntry.getName(), e);
+            throw new HelpException("Failed to load help file " + pEntry.getName(), e);
         }
 
         /* Build the values */
@@ -97,63 +119,72 @@ public class HelpPage implements Comparable<Object> {
     }
 
     @Override
-    public boolean equals(Object pThat) {
+    public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-        if (this == pThat)
+        if (this == pThat) {
             return true;
-        if (pThat == null)
+        }
+        if (pThat == null) {
             return false;
+        }
 
         /* Make sure that the object is a HelpPage */
-        if (pThat.getClass() != this.getClass())
+        if (pThat.getClass() != this.getClass()) {
             return false;
+        }
 
         /* Access the object as a Help Page */
         HelpPage myPage = (HelpPage) pThat;
 
         /* Check for equality */
-        if (Difference.getDifference(getName(), myPage.getName()).isDifferent())
-            return false;
-        if (Difference.getDifference(getHtml(), myPage.getHtml()).isDifferent())
-            return false;
-        return true;
+        boolean isEqual = (theName == null) ? (myPage.getName() != null) : theName.equals(myPage.getName());
+        if (isEqual) {
+            isEqual = (theHtml == null) ? (myPage.getHtml() != null) : theHtml.equals(myPage.getHtml());
+        }
+        return isEqual;
     }
 
     @Override
     public int hashCode() {
-        int myHash = 0;
-        if (theName != null)
+        int myHash = 1;
+        if (theName != null) {
             myHash += theName.hashCode();
-        myHash *= 17;
-        if (theHtml != null)
+        }
+        myHash *= HelpModule.HASH_PRIME;
+        if (theHtml != null) {
             myHash += theHtml.hashCode();
+        }
         return myHash;
     }
 
     @Override
-    public int compareTo(Object pThat) {
+    public int compareTo(final Object pThat) {
         int result;
 
         /* Handle the trivial cases */
-        if (this == pThat)
+        if (this == pThat) {
             return 0;
-        if (pThat == null)
+        }
+        if (pThat == null) {
             return -1;
+        }
 
         /* Make sure that the object is a Help Page */
-        if (pThat.getClass() != this.getClass())
+        if (pThat.getClass() != this.getClass()) {
             return -1;
+        }
 
         /* Access the object as a HelpPage */
         HelpPage myThat = (HelpPage) pThat;
 
         /* Compare the name */
         result = theName.compareTo(myThat.theName);
-        if (result == 0)
+        if (result == 0) {
             return 0;
-        else if (result < 0)
+        } else if (result < 0) {
             return -1;
-        else
+        } else {
             return 1;
+        }
     }
 }

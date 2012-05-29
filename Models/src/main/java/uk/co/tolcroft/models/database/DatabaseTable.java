@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,53 +29,56 @@ import java.sql.SQLException;
 import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ValueSet;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
-import uk.co.tolcroft.models.data.ValueSet;
-import uk.co.tolcroft.models.database.TableDefinition.ColumnDefinition;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 
+/**
+ * Database Table class. This controls should be extended for each DataType/Table.
+ * @param <T> the DataType
+ */
 public abstract class DatabaseTable<T extends DataItem<T>> {
     /**
-     * The Database control
+     * The Database control.
      */
-    private Database<?> theDatabase = null;
+    private final Database<?> theDatabase;
 
     /**
-     * The Database connection
+     * The Database connection.
      */
-    private Connection theConn = null;
+    private final Connection theConn;
 
     /**
-     * The list of items for this table
+     * The list of items for this table.
      */
     private DataList<?, T> theList = null;
 
     /**
-     * The prepared statement
+     * The prepared statement.
      */
     private PreparedStatement theStmt = null;
 
     /**
-     * The result set
+     * The result set.
      */
     private ResultSet theResults = null;
 
     /**
-     * The table definition
+     * The table definition.
      */
-    private TableDefinition theTable = null;
+    private final TableDefinition theTable;
 
     /**
-     * Constructor
+     * Constructor.
      * @param pDatabase the database control
      * @param pTable the table name
      */
-    protected DatabaseTable(Database<?> pDatabase,
-                            String pTable) {
+    protected DatabaseTable(final Database<?> pDatabase,
+                            final String pTable) {
         /* Set the table */
         theDatabase = pDatabase;
         theConn = theDatabase.getConn();
@@ -84,14 +87,14 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
     }
 
     /**
-     * define the table columns
+     * define the table columns.
      * @param pTableDef the Table definition
      */
-    protected void defineTable(TableDefinition pTableDef) {
+    protected void defineTable(final TableDefinition pTableDef) {
     }
 
     /**
-     * Access the table name
+     * Access the table name.
      * @return the table name
      */
     protected String getTableName() {
@@ -99,7 +102,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
     }
 
     /**
-     * Access the table definition
+     * Access the table definition.
      * @return the table definition
      */
     protected TableDefinition getDefinition() {
@@ -107,38 +110,40 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
     }
 
     /**
-     * Close the result set and statement
-     * @throws SQLException
+     * Close the result set and statement.
+     * @throws SQLException on error
      */
     protected void closeStmt() throws SQLException {
         theTable.clearValues();
-        if (theResults != null)
+        if (theResults != null) {
             theResults.close();
-        if (theStmt != null)
+        }
+        if (theStmt != null) {
             theStmt.close();
+        }
     }
 
     /**
-     * Shift to next line in result set
+     * Shift to next line in result set.
      * @return is there a next line
-     * @throws SQLException
+     * @throws SQLException on error
      */
     private boolean next() throws SQLException {
         return theResults.next();
     }
 
     /**
-     * Prepare the statement
+     * Prepare the statement.
      * @param pStatement the statement to prepare
-     * @throws SQLException
+     * @throws SQLException on error
      */
-    private void prepareStatement(String pStatement) throws SQLException {
+    private void prepareStatement(final String pStatement) throws SQLException {
         theStmt = theConn.prepareStatement(pStatement);
     }
 
     /**
-     * Execute the prepared statement
-     * @throws SQLException
+     * Execute the prepared statement.
+     * @throws SQLException on error
      */
     private void execute() throws SQLException {
         theStmt.executeUpdate();
@@ -146,8 +151,8 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
     }
 
     /**
-     * Query the prepared statement
-     * @throws SQLException
+     * Query the prepared statement.
+     * @throws SQLException on error
      */
     private void executeQuery() throws SQLException {
         theTable.clearValues();
@@ -155,20 +160,19 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
     }
 
     /**
-     * Commit the update
-     * @throws SQLException
+     * Commit the update.
+     * @throws SQLException on error
      */
     private void commit() throws SQLException {
         theConn.commit();
     }
 
     /**
-     * Execute a statement
+     * Execute a statement.
      * @param pStatement the statement
-     * @throws SQLException
-     * 
+     * @throws SQLException on error
      */
-    private void executeStatement(String pStatement) throws SQLException {
+    private void executeStatement(final String pStatement) throws SQLException {
         /* Prepare the statement */
         prepareStatement(pStatement);
 
@@ -181,9 +185,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
     }
 
     /**
-     * Count the number of items to be loaded
+     * Count the number of items to be loaded.
      * @return the count of items
-     * @throws SQLException
+     * @throws SQLException on error
      */
     protected int countLoadItems() throws SQLException {
         String myString;
@@ -207,21 +211,21 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
     }
 
     /**
-     * Declare DataSet
+     * Declare DataSet.
      * @param pData the Data set
      */
-    protected abstract void declareData(DataSet<?> pData);
+    protected abstract void declareData(final DataSet<?> pData);
 
     /**
-     * Set the list of items
+     * Set the list of items.
      * @param pList the list of items
      */
-    protected void setList(DataList<?, T> pList) {
+    protected void setList(final DataList<?, T> pList) {
         theList = pList;
     }
 
     /**
-     * Obtain the list of items
+     * Obtain the list of items.
      * @return the list of items
      */
     protected DataList<?, T> getList() {
@@ -229,20 +233,20 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
     }
 
     /**
-     * Load an individual item from the result set
+     * Load an individual item from the result set.
      * @param pId the id of the item
-     * @throws ModelException
+     * @throws ModelException on error
      */
     protected abstract void loadItem(int pId) throws ModelException;
 
     /**
-     * Set a field value for an item
+     * Set a field value for an item.
      * @param pItem the item to insert
      * @param pField the field id
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected void setFieldValue(T pItem,
-                                 ReportField pField) throws ModelException {
+    protected void setFieldValue(final T pItem,
+                                 final ReportField pField) throws ModelException {
         /* Switch on field id */
         if (pField == DataItem.FIELD_ID) {
             theTable.setIntegerValue(DataItem.FIELD_ID, pItem.getId());
@@ -250,29 +254,30 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
     }
 
     /**
-     * Post-Process on a load operation
-     * @throws ModelException
+     * Post-Process on a load operation.
+     * @throws ModelException on error
      */
     protected void postProcessOnLoad() throws ModelException {
     }
 
     /**
-     * Load items from the list into the table
+     * Load items from the list into the table.
      * @param pThread the thread control
      * @param pData the data
      * @return Continue <code>true/false</code>
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected boolean loadItems(ThreadStatus<?> pThread,
-                                DataSet<?> pData) throws ModelException {
+    protected boolean loadItems(final ThreadStatus<?> pThread,
+                                final DataSet<?> pData) throws ModelException {
         boolean bContinue = true;
         String myQuery;
         int mySteps;
         int myCount = 0;
 
         /* Declare the new stage */
-        if (!pThread.setNewStage(getTableName()))
+        if (!pThread.setNewStage(getTableName())) {
             return false;
+        }
 
         /* Access reporting steps */
         mySteps = pThread.getReportingSteps();
@@ -283,8 +288,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
         /* Protect the load */
         try {
             /* Count the Items to be loaded */
-            if (!pThread.setNumSteps(countLoadItems()))
+            if (!pThread.setNumSteps(countLoadItems())) {
                 return false;
+            }
 
             /* Load the items from the table */
             myQuery = theTable.getLoadString();
@@ -302,9 +308,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 
                 /* Report the progress */
                 myCount++;
-                if ((myCount % mySteps) == 0)
-                    if (!pThread.setStepsDone(myCount))
-                        return false;
+                if (((myCount % mySteps) == 0) && (!pThread.setStepsDone(myCount))) {
+                    return false;
+                }
             }
 
             /* Close the Statement */
@@ -312,9 +318,8 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 
             /* Perform post process */
             postProcessOnLoad();
-        }
 
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new ModelException(ExceptionClass.SQLSERVER, "Failed to load " + getTableName(), e);
         }
 
@@ -323,11 +328,11 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
     }
 
     /**
-     * Determine the count of items that are in a particular state
+     * Determine the count of items that are in a particular state.
      * @param pState the particular state
      * @return the count of items
      */
-    private int countStateItems(DataState pState) {
+    private int countStateItems(final DataState pState) {
         DataListIterator<T> myIterator;
         T myCurr;
         int iCount = 0;
@@ -338,8 +343,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
         /* Loop through the list */
         while ((myCurr = myIterator.next()) != null) {
             /* Ignore items that are not this type */
-            if (myCurr.getState() != pState)
+            if (myCurr.getState() != pState) {
                 continue;
+            }
 
             /* Increment count */
             ++iCount;
@@ -350,16 +356,16 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
     }
 
     /**
-     * Insert new items from the list
+     * Insert new items from the list.
      * @param pThread the thread control
      * @param pData the data
      * @param pBatch the batch control
      * @return Continue <code>true/false</code>
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected boolean insertItems(ThreadStatus<?> pThread,
-                                  DataSet<?> pData,
-                                  BatchControl pBatch) throws ModelException {
+    protected boolean insertItems(final ThreadStatus<?> pThread,
+                                  final DataSet<?> pData,
+                                  final BatchControl pBatch) throws ModelException {
         DataListIterator<T> myIterator;
         T myCurr = null;
         int myCount = 0;
@@ -368,8 +374,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
         boolean bContinue = true;
 
         /* Declare the new stage */
-        if (!pThread.setNewStage("Inserting " + getTableName()))
+        if (!pThread.setNewStage("Inserting " + getTableName())) {
             return false;
+        }
 
         /* Access reporting steps */
         mySteps = pThread.getReportingSteps();
@@ -380,8 +387,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
         /* Protect the insert */
         try {
             /* Declare the number of steps */
-            if (!pThread.setNumSteps(countStateItems(DataState.NEW)))
+            if (!pThread.setNumSteps(countStateItems(DataState.NEW))) {
                 return false;
+            }
 
             /* Declare the table and mode */
             pBatch.setCurrentTable(this, DataState.NEW);
@@ -396,8 +404,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             /* Loop through the list */
             while ((myCurr = myIterator.next()) != null) {
                 /* Ignore non-new items */
-                if (myCurr.getState() != DataState.NEW)
+                if (myCurr.getState() != DataState.NEW) {
                     continue;
+                }
 
                 /* Loop through the columns */
                 for (ColumnDefinition myCol : theTable.getColumns()) {
@@ -427,16 +436,15 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 
                 /* Report the progress */
                 myCount++;
-                if ((myCount % mySteps) == 0)
-                    if (!pThread.setStepsDone(myCount))
-                        return false;
+                if (((myCount % mySteps) == 0) && (!pThread.setStepsDone(myCount))) {
+                    return false;
+                }
             }
 
             /* Close the Statement */
             closeStmt();
-        }
 
-        catch (Exception e) {
+        } catch (Exception e) {
             theDatabase.close();
             throw new ModelException(ExceptionClass.SQLSERVER, myCurr, "Failed to insert " + getTableName(),
                     e);
@@ -447,14 +455,14 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
     }
 
     /**
-     * Update items from the list
+     * Update items from the list.
      * @param pThread the thread control
      * @param pBatch the batch control
      * @return Continue <code>true/false</code>
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected boolean updateItems(ThreadStatus<?> pThread,
-                                  BatchControl pBatch) throws ModelException {
+    protected boolean updateItems(final ThreadStatus<?> pThread,
+                                  final BatchControl pBatch) throws ModelException {
         DataListIterator<T> myIterator;
         T myCurr = null;
         int myCount = 0;
@@ -463,8 +471,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
         boolean bContinue = true;
 
         /* Declare the new stage */
-        if (!pThread.setNewStage("Updating " + getTableName()))
+        if (!pThread.setNewStage("Updating " + getTableName())) {
             return false;
+        }
 
         /* Access reporting steps */
         mySteps = pThread.getReportingSteps();
@@ -472,8 +481,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
         /* Protect the update */
         try {
             /* Declare the number of steps */
-            if (!pThread.setNumSteps(countStateItems(DataState.CHANGED)))
+            if (!pThread.setNumSteps(countStateItems(DataState.CHANGED))) {
                 return false;
+            }
 
             /* Declare the table and mode */
             pBatch.setCurrentTable(this, DataState.CHANGED);
@@ -484,8 +494,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             /* Loop through the list */
             while ((myCurr = myIterator.next()) != null) {
                 /* Ignore non-changed items */
-                if (myCurr.getState() != DataState.CHANGED)
+                if (myCurr.getState() != DataState.CHANGED) {
                     continue;
+                }
 
                 /* Update the item */
                 if (updateItem(myCurr)) {
@@ -516,14 +527,12 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 
                     /* Report the progress */
                     myCount++;
-                    if ((myCount % mySteps) == 0)
-                        if (!pThread.setStepsDone(myCount))
-                            return false;
+                    if (((myCount % mySteps) == 0) && (!pThread.setStepsDone(myCount))) {
+                        return false;
+                    }
                 }
             }
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             theDatabase.close();
             throw new ModelException(ExceptionClass.SQLSERVER, myCurr, "Failed to update " + getTableName(),
                     e);
@@ -533,8 +542,13 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
         return bContinue;
     }
 
-    /* Update the item */
-    private boolean updateItem(T pItem) throws ModelException {
+    /**
+     * Update the item.
+     * @param pItem the item
+     * @return Continue <code>true/false</code>
+     * @throws ModelException on error
+     */
+    private boolean updateItem(final T pItem) throws ModelException {
         ValueSet<T> myCurr;
         ValueSet<T> myBase;
         boolean isUpdated = false;
@@ -548,15 +562,17 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             /* Loop through the fields */
             for (ColumnDefinition myCol : theTable.getColumns()) {
                 /* Skip null columns */
-                if (myCol == null)
+                if (myCol == null) {
                     continue;
+                }
 
                 /* Access the column id */
                 ReportField iField = myCol.getColumnId();
 
                 /* Ignore ID column */
-                if (iField == DataItem.FIELD_ID)
+                if (iField == DataItem.FIELD_ID) {
                     continue;
+                }
 
                 /* If the field has changed */
                 if (myCurr.fieldChanged(iField, myBase).isDifferent()) {
@@ -565,9 +581,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
                     setFieldValue(pItem, iField);
                 }
             }
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new ModelException(ExceptionClass.SQLSERVER, pItem, "Failed to update item", e);
         }
 
@@ -576,14 +590,14 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
     }
 
     /**
-     * Delete items from the list
+     * Delete items from the list.
      * @param pThread the thread control
      * @param pBatch the batch control
      * @return Continue <code>true/false</code>
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected boolean deleteItems(ThreadStatus<?> pThread,
-                                  BatchControl pBatch) throws ModelException {
+    protected boolean deleteItems(final ThreadStatus<?> pThread,
+                                  final BatchControl pBatch) throws ModelException {
         DataListIterator<T> myIterator;
         T myCurr = null;
         int myCount = 0;
@@ -592,8 +606,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
         boolean bContinue = true;
 
         /* Declare the new stage */
-        if (!pThread.setNewStage("Deleting " + getTableName()))
+        if (!pThread.setNewStage("Deleting " + getTableName())) {
             return false;
+        }
 
         /* Access reporting steps */
         mySteps = pThread.getReportingSteps();
@@ -601,8 +616,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
         /* Protect the delete */
         try {
             /* Declare the number of steps */
-            if (!pThread.setNumSteps(countStateItems(DataState.DELETED)))
+            if (!pThread.setNumSteps(countStateItems(DataState.DELETED))) {
                 return false;
+            }
 
             /* Declare the table and mode */
             pBatch.setCurrentTable(this, DataState.DELETED);
@@ -617,8 +633,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             /* Loop through the list in reverse order */
             while ((myCurr = myIterator.previous()) != null) {
                 /* Ignore non-deleted items */
-                if (myCurr.getState() != DataState.DELETED)
+                if (myCurr.getState() != DataState.DELETED) {
                     continue;
+                }
 
                 /* Declare the item in the batch */
                 pBatch.addBatchItem();
@@ -645,16 +662,14 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 
                 /* Report the progress */
                 myCount++;
-                if ((myCount % mySteps) == 0)
-                    if (!pThread.setStepsDone(myCount))
-                        return false;
+                if (((myCount % mySteps) == 0) && (!pThread.setStepsDone(myCount))) {
+                    return false;
+                }
             }
 
             /* Close the Statement */
             closeStmt();
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             theDatabase.close();
             throw new ModelException(ExceptionClass.SQLSERVER, myCurr, "Failed to delete " + getTableName(),
                     e);
@@ -665,8 +680,8 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
     }
 
     /**
-     * Create the table
-     * @throws ModelException
+     * Create the table.
+     * @throws ModelException on error
      */
     protected void createTable() throws ModelException {
         String myCreate;
@@ -683,20 +698,15 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
                 myCreate = theTable.getCreateIndexString();
                 executeStatement(myCreate);
             }
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             theDatabase.close();
             throw new ModelException(ExceptionClass.SQLSERVER, "Failed to create " + getTableName(), e);
         }
-
-        /* Return to caller */
-        return;
     }
 
     /**
-     * Drop the table
-     * @throws ModelException
+     * Drop the table.
+     * @throws ModelException on error
      */
     protected void dropTable() throws ModelException {
         String myDrop;
@@ -713,37 +723,25 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             /* Execute the drop table statement */
             myDrop = theTable.getDropTableString();
             executeStatement(myDrop);
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             theDatabase.close();
             throw new ModelException(ExceptionClass.SQLSERVER, "Failed to drop " + getTableName(), e);
         }
-
-        /* Return to caller */
-        return;
     }
 
     /**
-     * Truncate the table
-     * @throws ModelException
+     * Truncate the table.
+     * @throws ModelException on error
      */
     protected void purgeTable() throws ModelException {
-        String myTrunc;
-
         /* Protect the truncate */
         try {
             /* Execute the purge statement */
-            myTrunc = theTable.getPurgeString();
+            String myTrunc = theTable.getPurgeString();
             executeStatement(myTrunc);
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             theDatabase.close();
             throw new ModelException(ExceptionClass.SQLSERVER, "Failed to purge " + getTableName(), e);
         }
-
-        /* Return to caller */
-        return;
     }
 }

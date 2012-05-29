@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDateDay: Java Date Day
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,21 +23,21 @@
 package net.sourceforge.JDateDay;
 
 /**
- * Represents a contiguous Range of dates
+ * Represents a contiguous Range of dates.
  */
 public class DateDayRange implements Comparable<DateDayRange> {
     /**
-     * The Start Date for the range
+     * The Start Date for the range.
      */
     private DateDay theStart = null;
 
     /**
-     * The End Date for the range
+     * The End Date for the range.
      */
     private DateDay theEnd = null;
 
     /**
-     * Get the start date for the range
+     * Get the start date for the range.
      * @return the Start date
      */
     public DateDay getStart() {
@@ -44,7 +45,7 @@ public class DateDayRange implements Comparable<DateDayRange> {
     }
 
     /**
-     * Get the end date for the range
+     * Get the end date for the range.
      * @return the End date
      */
     public DateDay getEnd() {
@@ -52,62 +53,87 @@ public class DateDayRange implements Comparable<DateDayRange> {
     }
 
     /**
-     * Construct a Range from a Start Date and an End Date
+     * Construct a Range from a Start Date and an End Date.
      * @param pStart the start date
      * @param pEnd the end date
      */
-    public DateDayRange(DateDay pStart, DateDay pEnd) {
-        if (pStart != null)
+    public DateDayRange(final DateDay pStart,
+                        final DateDay pEnd) {
+        if (pStart != null) {
             theStart = new DateDay(pStart);
-        if (pEnd != null)
+        }
+        if (pEnd != null) {
             theEnd = new DateDay(pEnd);
+        }
     }
 
     /**
-     * Construct a range from another range
+     * Construct a range from another range.
      * @param pRange the range to copy from
      */
-    public DateDayRange(DateDayRange pRange) {
+    public DateDayRange(final DateDayRange pRange) {
         this(pRange.getStart(), pRange.getEnd());
     }
 
     /**
-     * Determine whether a Date is within the date range
+     * Determine whether a Date is within the date range.
      * @param pDate the date to test
      * @return -1, 0, 1 if early, in range or late
      */
-    public short compareTo(DateDay pDate) {
-        if ((theStart != null) && (theStart.compareTo(pDate) > 0))
+    public short compareTo(final DateDay pDate) {
+        if ((theStart != null) && (theStart.compareTo(pDate) > 0)) {
             return 1;
-        if ((theEnd != null) && (theEnd.compareTo(pDate) < 0))
+        }
+        if ((theEnd != null) && (theEnd.compareTo(pDate) < 0)) {
             return -1;
+        }
         return 0;
     }
 
     @Override
-    public int compareTo(DateDayRange that) {
+    public int compareTo(final DateDayRange that) {
         int result;
-        if (this == that)
+
+        /* Handle the trivial cases */
+        if (this == that) {
             return 0;
-        if (that == null)
-            return -1;
-        if (this.getStart() != that.getStart()) {
-            if (this.getStart() == null)
-                return 1;
-            if (that.getStart() == null)
-                return -1;
-            result = theStart.compareTo(that.theStart);
-            if (result != 0)
-                return result;
         }
-        if (this.getEnd() != that.getEnd()) {
-            if (this.getEnd() == null)
+        if (that == null) {
+            return -1;
+        }
+
+        /* If start dates differ */
+        if (this.getStart() != that.getStart()) {
+            /* Handle nulls */
+            if (this.getStart() == null) {
                 return 1;
-            if (that.getEnd() == null)
+            }
+            if (that.getStart() == null) {
                 return -1;
-            result = theEnd.compareTo(that.theEnd);
-            if (result != 0)
+            }
+
+            /* Compare the start dates */
+            result = theStart.compareTo(that.theStart);
+            if (result != 0) {
                 return result;
+            }
+        }
+
+        /* If end dates differ */
+        if (this.getEnd() != that.getEnd()) {
+            /* Handle nulls */
+            if (this.getEnd() == null) {
+                return 1;
+            }
+            if (that.getEnd() == null) {
+                return -1;
+            }
+
+            /* Compare the end dates */
+            result = theEnd.compareTo(that.theEnd);
+            if (result != 0) {
+                return result;
+            }
         }
         return 0;
     }
@@ -127,31 +153,38 @@ public class DateDayRange implements Comparable<DateDayRange> {
     }
 
     @Override
-    public boolean equals(Object pThat) {
+    public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-        if (this == pThat)
+        if (this == pThat) {
             return true;
-        if (pThat == null)
+        }
+        if (pThat == null) {
             return false;
+        }
 
         /* Make sure that the object is a DateDayRange */
-        if (pThat.getClass() != this.getClass())
+        if (pThat.getClass() != this.getClass()) {
             return false;
+        }
 
         /* Access the object as a DateDayRange */
         DateDayRange myThat = (DateDayRange) pThat;
 
         /* Check components */
         if (theStart == null) {
-            if (myThat.getStart() != null)
+            if (myThat.getStart() != null) {
                 return false;
-        } else if (!theStart.equals(myThat.getStart()))
+            }
+        } else if (!theStart.equals(myThat.getStart())) {
             return false;
+        }
         if (theEnd == null) {
-            if (myThat.getEnd() != null)
+            if (myThat.getEnd() != null) {
                 return false;
-        } else if (!theEnd.equals(myThat.getEnd()))
+            }
+        } else if (!theEnd.equals(myThat.getEnd())) {
             return false;
+        }
         return true;
 
     }
@@ -159,11 +192,15 @@ public class DateDayRange implements Comparable<DateDayRange> {
     @Override
     public int hashCode() {
         /* Calculate hash based on Start/End */
-        int iHash = 0;
-        if (theStart != null)
-            iHash += 17 * theStart.hashCode();
-        if (theEnd != null)
+        int iHash = 1;
+        if (theStart != null) {
+            iHash *= DateDay.HASH_PRIME;
+            iHash += theStart.hashCode();
+        }
+        if (theEnd != null) {
+            iHash *= DateDay.HASH_PRIME;
             iHash += theEnd.hashCode();
+        }
         return iHash;
     }
 
@@ -173,15 +210,17 @@ public class DateDayRange implements Comparable<DateDayRange> {
      * @param pNew The new Date
      * @return <code>true</code> if the objects differ, <code>false</code> otherwise
      */
-    public static boolean isDifferent(DateDayRange pCurr,
-                                      DateDayRange pNew) {
+    public static boolean isDifferent(final DateDayRange pCurr,
+                                      final DateDayRange pNew) {
         /* Handle case where current value is null */
-        if (pCurr == null)
+        if (pCurr == null) {
             return (pNew != null);
+        }
 
         /* Handle case where new value is null */
-        if (pNew == null)
+        if (pNew == null) {
             return true;
+        }
 
         /* Handle Standard cases */
         return !pCurr.equals(pNew);

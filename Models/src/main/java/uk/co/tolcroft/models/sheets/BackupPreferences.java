@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,70 +25,74 @@ package uk.co.tolcroft.models.sheets;
 import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.PreferenceSet;
 
+/**
+ * Backup preferences.
+ * @author Tony Washer
+ */
 public class BackupPreferences extends PreferenceSet {
     /**
-     * Registry name for Backup Directory
+     * Registry name for Backup Directory.
      */
-    public final static String nameBackupDir = "BackupDir";
+    public static final String NAME_BACKUP_DIR = "BackupDir";
 
     /**
-     * Registry name for Backup Prefix
+     * Registry name for Backup Prefix.
      */
-    public final static String nameBackupPfix = "BackupPrefix";
+    public static final String NAME_BACKUP_PFIX = "BackupPrefix";
 
     /**
-     * Registry name for Archive FileName
+     * Registry name for Archive FileName.
      */
-    public final static String nameArchiveFile = "ArchiveFile";
+    public static final String NAME_ARCHIVE_FILE = "ArchiveFile";
 
     /**
-     * Registry name for Backup TimeStamp
+     * Registry name for Backup TimeStamp.
      */
-    public final static String nameBackupTime = "BackupTimeStamp";
+    public static final String NAME_BACKUP_TIME = "BackupTimeStamp";
 
     /**
-     * Display name for BackupDirectory
+     * Display name for BackupDirectory.
      */
-    protected final static String dispBackupDir = "Backup Directory";
+    protected static final String DISPLAY_BACKUPDIR = "Backup Directory";
 
     /**
-     * Display name for BackupPrefix
+     * Display name for BackupPrefix.
      */
-    protected final static String dispBackupPfix = "Backup Prefix";
+    protected static final String DISPLAY_BACKUP_PFIX = "Backup Prefix";
 
     /**
-     * Display name for BackupDirectory
+     * Display name for BackupDirectory.
      */
-    protected final static String dispArchiveFile = "Archive File";
+    protected static final String DISPLAY_ARCHIVE_FILE = "Archive File";
 
     /**
-     * Display name for Backup Timestamp
+     * Display name for Backup Timestamp.
      */
-    protected final static String dispBackupTime = "Backup TimeStamps";
+    protected static final String DISPLAY_BACKUP_TIME = "Backup TimeStamps";
 
     /**
-     * Default value for BackupDirectory
+     * Default value for BackupDirectory.
      */
-    private final static String defBackupDir = "C:\\";
+    private static final String DEFAULT_BACKUPDIR = "C:\\";
 
     /**
-     * Default value for BackupPrefix
+     * Default value for BackupPrefix.
      */
-    private final static String defBackupPfix = "FinanceBackup";
+    private static final String DEFAULT_BACKUP_PFIX = "FinanceBackup";
 
     /**
-     * Default value for Archive File
+     * Default value for Archive File.
      */
-    private final static String defArchiveFile = "C:\\Archive.xls";
+    private static final String DEFAULT_ARCHIVE_FILE = "C:\\Archive.xls";
 
     /**
-     * Default value for Archive File
+     * Default value for Backup Time.
      */
-    private final static Boolean defBackupTime = Boolean.FALSE;
+    private static final Boolean DEFAULT_BACKUP_TIME = Boolean.FALSE;
 
     /**
-     * Constructor
-     * @throws ModelException
+     * Constructor.
+     * @throws ModelException on error
      */
     public BackupPreferences() throws ModelException {
         super();
@@ -96,37 +101,45 @@ public class BackupPreferences extends PreferenceSet {
     @Override
     protected void definePreferences() {
         /* Define the preferences */
-        definePreference(nameBackupDir, PreferenceType.Directory);
-        definePreference(nameBackupPfix, PreferenceType.String);
-        definePreference(nameArchiveFile, PreferenceType.File);
-        definePreference(nameBackupTime, PreferenceType.Boolean);
+        definePreference(NAME_BACKUP_DIR, PreferenceType.Directory);
+        definePreference(NAME_BACKUP_PFIX, PreferenceType.String);
+        definePreference(NAME_ARCHIVE_FILE, PreferenceType.File);
+        definePreference(NAME_BACKUP_TIME, PreferenceType.Boolean);
     }
 
     @Override
-    protected Object getDefaultValue(String pName) {
+    protected Object getDefaultValue(final String pName) {
         /* Handle default values */
-        if (pName.equals(nameBackupDir))
-            return defBackupDir;
-        if (pName.equals(nameBackupPfix))
-            return defBackupPfix;
-        if (pName.equals(nameArchiveFile))
-            return defArchiveFile;
-        if (pName.equals(nameBackupTime))
-            return defBackupTime;
+        if (pName.equals(NAME_BACKUP_DIR)) {
+            return DEFAULT_BACKUPDIR;
+        }
+        if (pName.equals(NAME_BACKUP_PFIX)) {
+            return DEFAULT_BACKUP_PFIX;
+        }
+        if (pName.equals(NAME_ARCHIVE_FILE)) {
+            return DEFAULT_ARCHIVE_FILE;
+        }
+        if (pName.equals(NAME_BACKUP_TIME)) {
+            return DEFAULT_BACKUP_TIME;
+        }
         return null;
     }
 
     @Override
-    protected String getDisplayName(String pName) {
+    protected String getDisplayName(final String pName) {
         /* Handle default values */
-        if (pName.equals(nameBackupDir))
-            return dispBackupDir;
-        if (pName.equals(nameBackupPfix))
-            return dispBackupPfix;
-        if (pName.equals(nameArchiveFile))
-            return dispArchiveFile;
-        if (pName.equals(nameBackupTime))
-            return dispBackupTime;
+        if (pName.equals(NAME_BACKUP_DIR)) {
+            return DISPLAY_BACKUPDIR;
+        }
+        if (pName.equals(NAME_BACKUP_PFIX)) {
+            return DISPLAY_BACKUP_PFIX;
+        }
+        if (pName.equals(NAME_ARCHIVE_FILE)) {
+            return DISPLAY_ARCHIVE_FILE;
+        }
+        if (pName.equals(NAME_BACKUP_TIME)) {
+            return DISPLAY_BACKUP_TIME;
+        }
         return null;
     }
 }

@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,139 +31,142 @@ import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JGordianKnot.AsymmetricKey;
 
+/**
+ * Class represents an encrypted file in the Zip file.
+ */
 public class ZipFileEntry {
     /**
-     * The Name property of a file
+     * The Name property of a file.
      */
-    private final static String propName = "Name";
+    private static final String PROP_NAME = "Name";
 
     /**
-     * The Zip Name property of a file
+     * The Zip Name property of a file.
      */
-    private final static String propZipName = "ZipName";
+    private static final String PROP_ZIPNAME = "ZipName";
 
     /**
-     * The Digest property name of a file
+     * The Digest property name of a file.
      */
-    private final static String propDigest = "Digest";
+    private static final String PROP_DIGEST = "Digest";
 
     /**
-     * The Signature property name of a file
+     * The Signature property name of a file.
      */
-    private final static String propSignature = "Signature";
+    private static final String PROP_SIGNATURE = "Signature";
 
     /**
-     * The SecretKey property name of a file
+     * The SecretKey property name of a file.
      */
-    private final static String propSecretKey = "SecretKey";
+    private static final String PROP_SECRETKEY = "SecretKey";
 
     /**
-     * The InitVector property name of a file
+     * The InitVector property name of a file.
      */
-    private final static String propInitVector = "InitVector";
+    private static final String PROP_INITVECTOR = "InitVector";
 
     /**
-     * The PublicKey property name of a file
+     * The PublicKey property name of a file.
      */
-    private final static String propPublicKey = "PublicKey";
+    private static final String PROP_PUBLICKEY = "PublicKey";
 
     /**
-     * The PrivateKey property name of a file
+     * The PrivateKey property name of a file.
      */
-    private final static String propPrivateKey = "PrivateKey";
+    private static final String PROP_PRIVATEKEY = "PrivateKey";
 
     /**
-     * The NumDigests property name of a file
+     * The NumDigests property name of a file.
      */
-    private final static String propNumDigests = "NumDigests";
+    private static final String PROP_NUMDIGESTS = "NumDigests";
 
     /**
-     * The NumEncrypts property name of a file
+     * The NumEncrypts property name of a file.
      */
-    private final static String propNumEncrypts = "NumEncrypts";
+    private static final String PROP_NUMENCRYPTS = "NumEncrypts";
 
     /**
-     * The Header property name of a file
+     * The Header property name of a file.
      */
-    private final static String propHeader = "Header";
+    private static final String PROP_HEADER = "Header";
 
     /**
-     * The Debug property name of a file
+     * The Debug property name of a file.
      */
-    private final static String propDebug = "Debug";
+    private static final String PROP_DEBUG = "Debug";
 
     /**
-     * The parent contents
+     * The parent contents.
      */
     private ZipFileContents theParent = null;
 
     /**
-     * The file name
+     * The file name.
      */
     private String theFileName = null;
 
     /**
-     * The zip name
+     * The zip name.
      */
     private String theZipName = null;
 
     /**
-     * The original file size
+     * The original file size.
      */
     private long theFileSize = 0;
 
     /**
-     * The compressed file size
+     * The compressed file size.
      */
     private long theCompressedSize = 0;
 
     /**
-     * The Secret Keys
+     * The Secret Keys.
      */
     private byte[][] theSecretKeys = null;
 
     /**
-     * The Initialisation vectors
+     * The Initialisation vectors.
      */
     private byte[][] theInitVectors = null;
 
     /**
-     * The Digests
+     * The Digests.
      */
     private byte[][] theDigests = null;
 
     /**
-     * The Digest lengths
+     * The Digest lengths.
      */
     private long[] theDigestLens = null;
 
     /**
-     * The Signature
+     * The Signature.
      */
     private byte[] theSignature = null;
 
     /**
-     * The Private Key
+     * The Private Key.
      */
     private byte[] thePrivateKey = null;
 
     /**
-     * The Public Key
+     * The Public Key.
      */
     private byte[] thePublicKey = null;
 
     /**
-     * Is this the header
+     * Is this the header.
      */
     private boolean isHeader = false;
 
     /**
-     * Is this entry in debug mode
+     * Is this entry in debug mode.
      */
     private boolean isDebug = false;
 
     /**
-     * Obtain the name of the file
+     * Obtain the name of the file.
      * @return the name of the file
      */
     public String getFileName() {
@@ -170,7 +174,7 @@ public class ZipFileEntry {
     }
 
     /**
-     * Obtain the parent of the file
+     * Obtain the parent of the file.
      * @return the parent of the file
      */
     public ZipFileContents getParent() {
@@ -178,7 +182,7 @@ public class ZipFileEntry {
     }
 
     /**
-     * Obtain the zip name of the file
+     * Obtain the zip name of the file.
      * @return the zip name of the file
      */
     public String getZipName() {
@@ -186,7 +190,7 @@ public class ZipFileEntry {
     }
 
     /**
-     * Obtain the original size of a file
+     * Obtain the original size of a file.
      * @return the original size
      */
     public long getSize() {
@@ -194,7 +198,7 @@ public class ZipFileEntry {
     }
 
     /**
-     * Obtain the compressed size of a file
+     * Obtain the compressed size of a file.
      * @return the compressed size
      */
     public long getCompressedSize() {
@@ -202,7 +206,7 @@ public class ZipFileEntry {
     }
 
     /**
-     * Obtain the digest array
+     * Obtain the digest array.
      * @return the digest array
      */
     protected byte[][] getDigests() {
@@ -210,7 +214,7 @@ public class ZipFileEntry {
     }
 
     /**
-     * Obtain the digest length array
+     * Obtain the digest length array.
      * @return the digest length array
      */
     protected long[] getDigestLens() {
@@ -218,7 +222,7 @@ public class ZipFileEntry {
     }
 
     /**
-     * Obtain the secret key array
+     * Obtain the secret key array.
      * @return the secret key array
      */
     protected byte[][] getSecretKeys() {
@@ -226,7 +230,7 @@ public class ZipFileEntry {
     }
 
     /**
-     * Obtain the initVector array
+     * Obtain the initVector array.
      * @return the initVector array
      */
     protected byte[][] getInitVectors() {
@@ -234,7 +238,7 @@ public class ZipFileEntry {
     }
 
     /**
-     * Obtain the signature
+     * Obtain the signature.
      * @return the signature
      */
     public byte[] getSignature() {
@@ -242,7 +246,7 @@ public class ZipFileEntry {
     }
 
     /**
-     * Obtain the private key
+     * Obtain the private key.
      * @return the private key
      */
     protected byte[] getPrivateKey() {
@@ -250,7 +254,7 @@ public class ZipFileEntry {
     }
 
     /**
-     * Obtain the public key
+     * Obtain the public key.
      * @return the public key
      */
     protected byte[] getPublicKey() {
@@ -258,7 +262,7 @@ public class ZipFileEntry {
     }
 
     /**
-     * Is this entry the header
+     * Is this entry the header.
      * @return true/false
      */
     protected boolean isHeader() {
@@ -266,7 +270,7 @@ public class ZipFileEntry {
     }
 
     /**
-     * Is this entry in debug mode
+     * Is this entry in debug mode.
      * @return true/false
      */
     protected boolean isDebug() {
@@ -274,72 +278,71 @@ public class ZipFileEntry {
     }
 
     /**
-     * Standard constructor from filename
+     * Standard constructor from filename.
      * @param pFileName the file name
      */
-    protected ZipFileEntry(String pFileName) {
+    protected ZipFileEntry(final String pFileName) {
         /* Store the file name */
         theFileName = pFileName;
     }
 
     /**
-     * Standard constructor from properties
+     * Standard constructor from properties.
      * @param pProperties the properties
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected ZipFileEntry(ZipFileProperties pProperties) throws ModelException {
+    protected ZipFileEntry(final ZipFileProperties pProperties) throws ModelException {
         /* Access the top-level details */
-        theFileName = pProperties.getStringProperty(propName);
-        theFileSize = pProperties.getLongProperty(propName);
-        theZipName = pProperties.getStringProperty(propZipName);
-        theCompressedSize = pProperties.getLongProperty(propZipName);
+        theFileName = pProperties.getStringProperty(PROP_NAME);
+        theFileSize = pProperties.getLongProperty(PROP_NAME);
+        theZipName = pProperties.getStringProperty(PROP_ZIPNAME);
+        theCompressedSize = pProperties.getLongProperty(PROP_ZIPNAME);
 
         /* Determine whether this is a header */
-        isHeader = (pProperties.getLongProperty(propHeader) != -1);
+        isHeader = (pProperties.getLongProperty(PROP_HEADER) != -1);
 
         /* If this is the header */
         if (isHeader) {
             /* Set private/public keys */
-            thePrivateKey = pProperties.getByteProperty(propPrivateKey);
-            thePublicKey = pProperties.getByteProperty(propPublicKey);
-        }
+            thePrivateKey = pProperties.getByteProperty(PROP_PRIVATEKEY);
+            thePublicKey = pProperties.getByteProperty(PROP_PUBLICKEY);
 
-        /* Else standard entry */
-        else {
+            /* Else standard entry */
+        } else {
             /* Determine whether this is a debug entry */
-            isDebug = (pProperties.getLongProperty(propDebug) != -1);
+            isDebug = (pProperties.getLongProperty(PROP_DEBUG) != -1);
 
             /* Determine the number of digests */
-            int myNumDigests = (int) pProperties.getLongProperty(propNumDigests);
+            int myNumDigests = (int) pProperties.getLongProperty(PROP_NUMDIGESTS);
             theDigests = new byte[myNumDigests][];
             theDigestLens = new long[myNumDigests];
 
             /* Loop through the encrypts */
             for (int iIndex = 1; iIndex <= myNumDigests; iIndex++) {
                 /* Get digest properties */
-                theDigests[iIndex - 1] = pProperties.getByteProperty(propDigest + iIndex);
-                theDigestLens[iIndex - 1] = pProperties.getLongProperty(propDigest + iIndex);
+                theDigests[iIndex - 1] = pProperties.getByteProperty(PROP_DIGEST + iIndex);
+                theDigestLens[iIndex - 1] = pProperties.getLongProperty(PROP_DIGEST + iIndex);
             }
 
             /* Determine the number of encryption steps */
-            int myNumEncrypts = (int) pProperties.getLongProperty(propNumEncrypts);
+            int myNumEncrypts = (int) pProperties.getLongProperty(PROP_NUMENCRYPTS);
             theSecretKeys = new byte[myNumEncrypts][];
             theInitVectors = new byte[myNumEncrypts][];
 
             /* Loop through the encrypts */
             for (int iIndex = 1; iIndex <= myNumEncrypts; iIndex++) {
                 /* Get digest properties */
-                theSecretKeys[iIndex - 1] = pProperties.getByteProperty(propSecretKey + iIndex);
-                theInitVectors[iIndex - 1] = pProperties.getByteProperty(propInitVector + iIndex);
+                theSecretKeys[iIndex - 1] = pProperties.getByteProperty(PROP_SECRETKEY + iIndex);
+                theInitVectors[iIndex - 1] = pProperties.getByteProperty(PROP_INITVECTOR + iIndex);
             }
 
             /* Get signature */
-            theSignature = pProperties.getByteProperty(propSignature);
+            theSignature = pProperties.getByteProperty(PROP_SIGNATURE);
         }
     }
 
     /**
-     * Set the properties of the file
+     * Set the properties of the file.
      * @return the properties
      */
     protected ZipFileProperties allocateProperties() {
@@ -347,51 +350,51 @@ public class ZipFileEntry {
         ZipFileProperties myProperties = new ZipFileProperties();
 
         /* Set the top-level details */
-        myProperties.setProperty(propName, theFileName);
-        myProperties.setProperty(propName, theFileSize);
-        myProperties.setProperty(propZipName, theZipName);
-        myProperties.setProperty(propZipName, theCompressedSize);
+        myProperties.setProperty(PROP_NAME, theFileName);
+        myProperties.setProperty(PROP_NAME, theFileSize);
+        myProperties.setProperty(PROP_ZIPNAME, theZipName);
+        myProperties.setProperty(PROP_ZIPNAME, theCompressedSize);
 
         /* If this is the header */
         if (isHeader) {
             /* Note the header */
-            myProperties.setProperty(propHeader, 1);
+            myProperties.setProperty(PROP_HEADER, 1);
 
             /* Set private/public keys */
-            myProperties.setProperty(propPrivateKey, thePrivateKey);
-            myProperties.setProperty(propPublicKey, thePublicKey);
-        }
+            myProperties.setProperty(PROP_PRIVATEKEY, thePrivateKey);
+            myProperties.setProperty(PROP_PUBLICKEY, thePublicKey);
 
-        /* Else standard entry */
-        else {
+            /* Else standard entry */
+        } else {
             /* Set debug flag if required */
-            if (isDebug)
-                myProperties.setProperty(propDebug, 1);
+            if (isDebug) {
+                myProperties.setProperty(PROP_DEBUG, 1);
+            }
 
             /* Store the number of digests */
             int myNumDigests = theDigests.length;
-            myProperties.setProperty(propNumDigests, myNumDigests);
+            myProperties.setProperty(PROP_NUMDIGESTS, myNumDigests);
 
             /* Loop through the digests */
             for (int iIndex = 1; iIndex <= myNumDigests; iIndex++) {
                 /* Set digest properties */
-                myProperties.setProperty(propDigest + iIndex, theDigests[iIndex - 1]);
-                myProperties.setProperty(propDigest + iIndex, theDigestLens[iIndex - 1]);
+                myProperties.setProperty(PROP_DIGEST + iIndex, theDigests[iIndex - 1]);
+                myProperties.setProperty(PROP_DIGEST + iIndex, theDigestLens[iIndex - 1]);
             }
 
             /* Store the number of encryption steps */
             int myNumEncrypts = theSecretKeys.length;
-            myProperties.setProperty(propNumEncrypts, myNumEncrypts);
+            myProperties.setProperty(PROP_NUMENCRYPTS, myNumEncrypts);
 
             /* Loop through the secret keys and initVectors */
             for (int iIndex = 1; iIndex <= myNumEncrypts; iIndex++) {
                 /* Set Secret key properties */
-                myProperties.setProperty(propSecretKey + iIndex, theSecretKeys[iIndex - 1]);
-                myProperties.setProperty(propInitVector + iIndex, theInitVectors[iIndex - 1]);
+                myProperties.setProperty(PROP_SECRETKEY + iIndex, theSecretKeys[iIndex - 1]);
+                myProperties.setProperty(PROP_INITVECTOR + iIndex, theInitVectors[iIndex - 1]);
             }
 
             /* Store the signature */
-            myProperties.setProperty(propSignature, theSignature);
+            myProperties.setProperty(PROP_SIGNATURE, theSignature);
         }
 
         /* Return the properties */
@@ -399,50 +402,53 @@ public class ZipFileEntry {
     }
 
     /**
-     * Set parent
+     * Set parent.
      * @param pParent the parent
      */
-    protected void setParent(ZipFileContents pParent) {
+    protected void setParent(final ZipFileContents pParent) {
         theParent = pParent;
     }
 
     /**
-     * Set the ZipEntry for the file
+     * Set the ZipEntry for the file.
      * @param pEntry the zip entry
      */
-    protected void setZipEntry(ZipEntry pEntry) {
+    protected void setZipEntry(final ZipEntry pEntry) {
         theZipName = pEntry.getName();
         theFileSize = pEntry.getSize();
         theCompressedSize = pEntry.getCompressedSize();
     }
 
     /**
-     * Set the public key
+     * Set the public key.
      * @param pPublicKey the key value
      */
-    protected void setPublicKey(byte[] pPublicKey) {
-        if (!isHeader)
+    protected void setPublicKey(final byte[] pPublicKey) {
+        if (!isHeader) {
             throw new IllegalArgumentException("Entry is not a header");
+        }
         thePublicKey = pPublicKey;
     }
 
     /**
-     * Set the private key
+     * Set the private key.
      * @param pPrivateKey the key value
      */
-    protected void setPrivateKey(byte[] pPrivateKey) {
-        if (!isHeader)
+    protected void setPrivateKey(final byte[] pPrivateKey) {
+        if (!isHeader) {
             throw new IllegalArgumentException("Entry is not a header");
+        }
         thePrivateKey = pPrivateKey;
     }
 
     /**
-     * Set the digests
+     * Set the digests.
      * @param pDigests the digest streams
      */
-    protected void setDigests(DigestOutputStream[] pDigests) {
-        if (isHeader)
+    protected void setDigests(final DigestOutputStream[] pDigests) {
+        if (isHeader) {
             throw new IllegalArgumentException("Entry is a header");
+        }
 
         /* Allocate new arrays */
         int myLen = pDigests.length;
@@ -461,15 +467,16 @@ public class ZipFileEntry {
     }
 
     /**
-     * Set the secretKeys
+     * Set the secretKeys.
      * @param pEncrypts the encryption streams
      * @param pAsymKey the Asymmetric key to secure the keys
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected void setSecretKeys(EncryptionOutputStream[] pEncrypts,
-                                 AsymmetricKey pAsymKey) throws ModelException {
-        if (isHeader)
+    protected void setSecretKeys(final EncryptionOutputStream[] pEncrypts,
+                                 final AsymmetricKey pAsymKey) throws ModelException {
+        if (isHeader) {
             throw new IllegalArgumentException("Entry is a header");
+        }
 
         /* Allocate new arrays */
         int myLen = pEncrypts.length;
@@ -485,35 +492,36 @@ public class ZipFileEntry {
     }
 
     /**
-     * Set the signature
+     * Set the signature.
      * @param pSignature the signature value
      */
-    protected void setSignature(byte[] pSignature) {
-        if (isHeader)
+    protected void setSignature(final byte[] pSignature) {
+        if (isHeader) {
             throw new IllegalArgumentException("Entry is a header");
+        }
         theSignature = pSignature;
     }
 
     /**
-     * Set header indication
+     * Set header indication.
      */
     protected void setHeader() {
         isHeader = true;
     }
 
     /**
-     * Set debug indication
+     * Set debug indication.
      */
     protected void setDebug() {
         isDebug = true;
     }
 
     /**
-     * Sign the file
+     * Sign the file.
      * @param pSignature the signature
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public void signEntry(Signature pSignature) throws ModelException {
+    public void signEntry(final Signature pSignature) throws ModelException {
         int iIndex;
 
         /* Protect against exceptions */
@@ -528,19 +536,18 @@ public class ZipFileEntry {
                 pSignature.update(theSecretKeys[iIndex]);
                 pSignature.update(theInitVectors[iIndex]);
             }
-        }
-        /* Catch exceptions */
-        catch (Exception e) {
+            /* Catch exceptions */
+        } catch (Exception e) {
             throw new ModelException(ExceptionClass.CRYPTO, "Exception calculating signature", e);
         }
     }
 
     /**
-     * Sign the file
+     * Sign the file.
      * @param pMac the Mac
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public void signEntry(Mac pMac) throws ModelException {
+    public void signEntry(final Mac pMac) throws ModelException {
         int iIndex;
 
         /* Protect against exceptions */
@@ -555,9 +562,8 @@ public class ZipFileEntry {
                 pMac.update(theSecretKeys[iIndex]);
                 pMac.update(theInitVectors[iIndex]);
             }
-        }
-        /* Catch exceptions */
-        catch (Exception e) {
+            /* Catch exceptions */
+        } catch (Exception e) {
             throw new ModelException(ExceptionClass.CRYPTO, "Exception calculating signature", e);
         }
     }

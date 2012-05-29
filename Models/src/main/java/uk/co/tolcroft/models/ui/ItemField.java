@@ -32,6 +32,9 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 
 import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.ui.RenderData;
+import net.sourceforge.JDataManager.ui.Renderer;
+import net.sourceforge.JDataManager.ui.ValueField;
 import uk.co.tolcroft.models.data.DataItem;
 
 public class ItemField extends ValueField {

@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,29 +26,43 @@ import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
 import uk.co.tolcroft.models.data.DataSet;
 
+/**
+ * SheetDataItem extension for ControlKey.
+ * @author Tony Washer
+ */
 public class SheetControlKey extends SheetDataItem<ControlKey> {
     /**
-     * SheetName for Keys
+     * SheetName for Keys.
      */
-    private static final String Keys = ControlKey.class.getSimpleName();
+    private static final String SHEET_NAME = ControlKey.class.getSimpleName();
 
     /**
-     * ControlKey data list
+     * Number of columns.
+     */
+    private static final int NUM_COLS = 2;
+
+    /**
+     * KeyData column.
+     */
+    private static final int COL_KEYDATA = 1;
+
+    /**
+     * ControlKey data list.
      */
     private ControlKeyList theList = null;
 
     /**
-     * DataSet
+     * DataSet.
      */
     private DataSet<?> theData = null;
 
     /**
-     * Constructor for loading a spreadsheet
+     * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetControlKey(SheetReader<?> pReader) {
+    protected SheetControlKey(final SheetReader<?> pReader) {
         /* Call super constructor */
-        super(pReader, Keys);
+        super(pReader, SHEET_NAME);
 
         /* Access the Lists */
         theData = pReader.getData();
@@ -55,12 +70,12 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
     }
 
     /**
-     * Constructor for creating a spreadsheet
+     * Constructor for creating a spreadsheet.
      * @param pWriter the Spreadsheet writer
      */
-    protected SheetControlKey(SheetWriter<?> pWriter) {
+    protected SheetControlKey(final SheetWriter<?> pWriter) {
         /* Call super constructor */
-        super(pWriter, Keys);
+        super(pWriter, SHEET_NAME);
 
         /* Access the Control list */
         theList = pWriter.getData().getControlKeys();
@@ -70,20 +85,20 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
     @Override
     protected void loadItem() throws Exception {
         /* Access the IDs */
-        int myID = loadInteger(0);
+        int myID = loadInteger(COL_ID);
 
         /* Access the binary values */
-        byte[] myHash = loadBytes(1);
+        byte[] myHash = loadBytes(COL_KEYDATA);
 
         /* Add the Control */
         theList.addItem(myID, myHash);
     }
 
     @Override
-    protected void insertItem(ControlKey pItem) throws Exception {
+    protected void insertItem(final ControlKey pItem) throws Exception {
         /* Set the fields */
-        writeInteger(0, pItem.getId());
-        writeBytes(1, pItem.getHashBytes());
+        writeInteger(COL_ID, pItem.getId());
+        writeBytes(COL_KEYDATA, pItem.getHashBytes());
     }
 
     @Override
@@ -93,6 +108,6 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
     @Override
     protected void postProcessOnWrite() throws Exception {
         /* Set the two columns as the range */
-        nameRange(2);
+        nameRange(NUM_COLS);
     }
 }

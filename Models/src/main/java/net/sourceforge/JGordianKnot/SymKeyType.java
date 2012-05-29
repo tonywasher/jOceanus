@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,99 +27,116 @@ import java.security.SecureRandom;
 import net.sourceforge.JDataManager.ModelException;
 import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 
+/**
+ * Symmetric Key Types. Available algorithms.
+ * @author Tony Washer
+ */
 public enum SymKeyType {
     /**
-     * AES
+     * AES.
      */
     AES(1),
 
     /**
-     * TwoFish
+     * TwoFish.
      */
     TwoFish(2),
 
     /**
-     * Serpent
+     * Serpent.
      */
     Serpent(3),
 
     /**
-     * CAMELLIA
+     * CAMELLIA.
      */
     CAMELLIA(4),
 
     /**
-     * RC6
+     * RC6.
      */
     RC6(5),
 
     /**
-     * CAST6
+     * CAST6.
      */
     CAST6(6);
 
     /**
-     * Symmetric full algorithm
+     * Symmetric full algorithm.
      */
-    private final static String FULLALGORITHM = "/CBC/PKCS5PADDING";
+    private static final String FULLALGORITHM = "/CBC/PKCS5PADDING";
 
     /**
-     * Key values
+     * The external Id of the algorithm.
      */
     private final int theId;
 
-    /* Access methods */
+    /**
+     * Obtain the external Id.
+     * @return the external Id
+     */
     public int getId() {
         return theId;
     }
 
+    /**
+     * Obtain the algorithm.
+     * @return the algorithm
+     */
     public String getAlgorithm() {
         return toString();
     }
 
+    /**
+     * Obtain the cipher name.
+     * @return the cipher name
+     */
     public String getCipher() {
         return getAlgorithm() + FULLALGORITHM;
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param id the id
      */
-    private SymKeyType(int id) {
+    private SymKeyType(final int id) {
         theId = id;
     }
 
     /**
-     * get value from id
+     * get value from id.
      * @param id the id value
      * @return the corresponding enum object
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public static SymKeyType fromId(int id) throws ModelException {
+    public static SymKeyType fromId(final int id) throws ModelException {
         for (SymKeyType myType : values()) {
-            if (myType.getId() == id)
+            if (myType.getId() == id) {
                 return myType;
+            }
         }
         throw new ModelException(ExceptionClass.DATA, "Invalid SymKeyType: " + id);
     }
 
     /**
-     * Get random unique set of key types
+     * Get random unique set of key types.
      * @param pNumTypes the number of types
      * @param pRandom the random generator
      * @return the random set
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    public static SymKeyType[] getRandomTypes(int pNumTypes,
-                                              SecureRandom pRandom) throws ModelException {
+    public static SymKeyType[] getRandomTypes(final int pNumTypes,
+                                              final SecureRandom pRandom) throws ModelException {
         /* Access the values */
         SymKeyType[] myValues = values();
         int iNumValues = myValues.length;
         int iIndex;
 
         /* Reject call if invalid number of types */
-        if ((pNumTypes < 1) || (pNumTypes > iNumValues))
+        if ((pNumTypes < 1) || (pNumTypes > iNumValues)) {
             throw new ModelException(ExceptionClass.LOGIC, "Invalid number of types: " + pNumTypes);
+        }
 
         /* Create the result set */
         SymKeyType[] myTypes = new SymKeyType[pNumTypes];

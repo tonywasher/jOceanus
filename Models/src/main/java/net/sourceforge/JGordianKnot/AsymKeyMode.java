@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,59 +29,75 @@ import net.sourceforge.JDataManager.ModelException.ExceptionClass;
 import net.sourceforge.JDataManager.ReportFields;
 import net.sourceforge.JDataManager.ReportFields.ReportField;
 
+/**
+ * Asymmetric Key Mode. Encapsulates Asymmetric Key options
+ * @author Tony Washer
+ */
 public class AsymKeyMode extends SecurityMode {
     /**
-     * Report fields
+     * Report fields.
      */
-    protected static final ReportFields theFields = new ReportFields(AsymKeyMode.class.getSimpleName(),
-            SecurityMode.theFields);
+    protected static final ReportFields FIELD_DEFS = new ReportFields(AsymKeyMode.class.getSimpleName(),
+            SecurityMode.FIELD_DEFS);
 
-    /* Field IDs */
-    public static final ReportField FIELD_CIPHER = theFields.declareLocalField("CipherDigest");
-    public static final ReportField FIELD_ASYMTYPE = theFields.declareLocalField("AsymType");
+    /**
+     * Field ID for Cipher Digest.
+     */
+    public static final ReportField FIELD_CIPHER = FIELD_DEFS.declareLocalField("CipherDigest");
+
+    /**
+     * Field ID for Asymmetric KeyType.
+     */
+    public static final ReportField FIELD_ASYMTYPE = FIELD_DEFS.declareLocalField("AsymType");
 
     @Override
     public ReportFields getReportFields() {
-        return theFields;
+        return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(ReportField pField) {
-        if (pField == FIELD_CIPHER)
+    public Object getFieldValue(final ReportField pField) {
+        if (pField == FIELD_CIPHER) {
             return theCipherDigest;
-        if (pField == FIELD_ASYMTYPE)
+        }
+        if (pField == FIELD_ASYMTYPE) {
             return theAsymKeyType;
+        }
         return super.getFieldValue(pField);
     }
 
     @Override
     public String getObjectSummary() {
-        return theFields.getName();
+        return FIELD_DEFS.getName();
     }
 
     /**
-     * The locations (in nybbles)
+     * The locations of the ASYMTYPE (in nybbles).
      */
-    private final static int placeASYMTYPE = 0;
-    private final static int placeDIGESTTYPE = 1;
+    private static final int PLACE_ASYMTYPE = 0;
 
     /**
-     * The version
+     * The locations of the DIGESTTYPE (in nybbles).
      */
-    public static short versionCURRENT = 1;
+    private static final int PLACE_DIGESTTYPE = 1;
 
     /**
-     * The Asymmetric KeyType
+     * The version.
+     */
+    public static final short VERSION_CURRENT = 1;
+
+    /**
+     * The Asymmetric KeyType.
      */
     private final AsymKeyType theAsymKeyType;
 
     /**
-     * The Cipher Digest type
+     * The Cipher Digest type.
      */
     private final DigestType theCipherDigest;
 
     /**
-     * Obtain the Asymmetric Key Type
+     * Obtain the Asymmetric Key Type.
      * @return the key type
      */
     public AsymKeyType getAsymKeyType() {
@@ -88,7 +105,7 @@ public class AsymKeyMode extends SecurityMode {
     }
 
     /**
-     * Obtain the Cipher Digest type
+     * Obtain the Cipher Digest type.
      * @return the digest type
      */
     public DigestType getCipherDigest() {
@@ -96,13 +113,13 @@ public class AsymKeyMode extends SecurityMode {
     }
 
     /**
-     * Constructor at random
+     * Constructor at random.
      * @param useRestricted use restricted keys
      * @param pRandom the random generator
-     * @throws ModelException
+     * @throws ModelException on error
      */
-    protected AsymKeyMode(boolean useRestricted,
-                          SecureRandom pRandom) throws ModelException {
+    protected AsymKeyMode(final boolean useRestricted,
+                          final SecureRandom pRandom) throws ModelException {
         /* Access a random set of Key/DigestTypes */
         AsymKeyType[] myKeyType = AsymKeyType.getRandomTypes(1, pRandom);
         DigestType[] myDigest = DigestType.getRandomTypes(1, pRandom);
@@ -112,7 +129,7 @@ public class AsymKeyMode extends SecurityMode {
         theCipherDigest = myDigest[0];
 
         /* Set the version */
-        setVersion(versionCURRENT);
+        setVersion(VERSION_CURRENT);
 
         /* Set restricted flags */
         setRestricted(useRestricted);
@@ -122,18 +139,18 @@ public class AsymKeyMode extends SecurityMode {
     }
 
     /**
-     * Constructor from a partner KeyMode
+     * Constructor from a partner KeyMode.
      * @param useRestricted use restricted keys
      * @param pSource the key mode to initialise from
      */
-    protected AsymKeyMode(boolean useRestricted,
-                          AsymKeyMode pSource) {
+    protected AsymKeyMode(final boolean useRestricted,
+                          final AsymKeyMode pSource) {
         /* Store Key type and digest */
         theAsymKeyType = pSource.getAsymKeyType();
         theCipherDigest = pSource.getCipherDigest();
 
         /* Set the version */
-        setVersion(versionCURRENT);
+        setVersion(VERSION_CURRENT);
 
         /* Use restricted if local or source requires it */
         setRestricted(useRestricted || pSource.useRestricted());
@@ -143,35 +160,36 @@ public class AsymKeyMode extends SecurityMode {
     }
 
     /**
-     * Constructor from encoded format
+     * Constructor from encoded format.
      * @param pEncoded the encoded format
-     * @throws ModelException
+     * @throws ModelException if the encoded mode is invalid
      */
-    protected AsymKeyMode(byte[] pEncoded) throws ModelException {
+    protected AsymKeyMode(final byte[] pEncoded) throws ModelException {
         /* Set the initial encoded version */
         setEncoded(pEncoded);
 
         /* Not allowed unless version is current */
-        if (getVersion() != versionCURRENT)
+        if (getVersion() != VERSION_CURRENT) {
             throw new ModelException(ExceptionClass.LOGIC, "Invalid mode version: " + getVersion());
+        }
 
         /* Store Key type and digest */
-        theAsymKeyType = AsymKeyType.fromId(getDataValue(placeASYMTYPE));
-        theCipherDigest = DigestType.fromId(getDataValue(placeDIGESTTYPE));
+        theAsymKeyType = AsymKeyType.fromId(getDataValue(PLACE_ASYMTYPE));
+        theCipherDigest = DigestType.fromId(getDataValue(PLACE_DIGESTTYPE));
 
         /* Re-encode the key mode */
         encodeKeyMode();
     }
 
     /**
-     * Encode the key mode
+     * Encode the key mode.
      */
     private void encodeKeyMode() {
         /* Allocate the encoded array */
-        allocateEncoded(placeDIGESTTYPE);
+        allocateEncoded(PLACE_DIGESTTYPE);
 
         /* Set the values */
-        setDataValue(placeASYMTYPE, theAsymKeyType.getId());
-        setDataValue(placeDIGESTTYPE, theCipherDigest.getId());
+        setDataValue(PLACE_ASYMTYPE, theAsymKeyType.getId());
+        setDataValue(PLACE_DIGESTTYPE, theCipherDigest.getId());
     }
 }
