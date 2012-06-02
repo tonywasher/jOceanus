@@ -1,4 +1,5 @@
 /*******************************************************************************
+ * JDateDay: Java Date Day
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,6 +48,13 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import net.sourceforge.JDateButton.JDateConfig;
+import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.DateDayButton;
+import net.sourceforge.JDateDay.DateDayCellEditor;
+import net.sourceforge.JDateDay.DateDayCellRenderer;
+import net.sourceforge.JDateDay.DateDayConfig;
+import net.sourceforge.JDateDay.DateDayRange;
+import net.sourceforge.JDateDay.DateDayRangeSelect;
 
 /**
  * <p>
@@ -171,7 +179,7 @@ public class DateDayExample extends JApplet {
 
     /**
      * Main function.
-     * @param args
+     * @param args the arguments
      */
     public static void main(final String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -394,33 +402,34 @@ public class DateDayExample extends JApplet {
         /**
          * Column Names.
          */
-        String[] myColumns = { "Date", "Description" };
+        private final String[] theColumns = { "Date", "Description" };
 
         /**
          * Data for table.
          */
-        Object[][] myData = { { DATE_FIRST, "First Entry" }, { DATE_SECOND, "Second Entry" },
+        private final Object[][] theData = { { DATE_FIRST, "First Entry" }, { DATE_SECOND, "Second Entry" },
                 { DATE_THIRD, "Third Entry" }, { DATE_FOURTH, "Fourth Entry" }, { DATE_FIFTH, "Fifth Entry" } };
 
         @Override
         public int getColumnCount() {
-            return myData[0].length;
+            return theData[0].length;
         }
 
         @Override
         public int getRowCount() {
-            return myData.length;
+            return theData.length;
         }
 
         @Override
         public String getColumnName(final int columnIndex) {
-            return myColumns[columnIndex];
+            return theColumns[columnIndex];
         }
 
         @Override
         public Class<?> getColumnClass(final int columnIndex) {
-            if (columnIndex == 0)
+            if (columnIndex == 0) {
                 return DateDay.class;
+            }
             return String.class;
         }
 
@@ -433,14 +442,14 @@ public class DateDayExample extends JApplet {
         @Override
         public Object getValueAt(final int rowIndex,
                                  final int columnIndex) {
-            return myData[rowIndex][columnIndex];
+            return theData[rowIndex][columnIndex];
         }
 
         @Override
         public void setValueAt(final Object pValue,
                                final int rowIndex,
                                final int columnIndex) {
-            myData[rowIndex][columnIndex] = pValue;
+            theData[rowIndex][columnIndex] = pValue;
         }
     }
 
@@ -541,19 +550,18 @@ public class DateDayExample extends JApplet {
     /**
      * Convenience method to create a date from Year, Month, Day.
      * @param pYear the year
-     * @param pMonth the month,
-     * @param pDay
+     * @param pMonth the month
+     * @param pDay the day
      * @return the requested date
      */
     private static DateDay makeDate(final int pYear,
                                     final int pMonth,
                                     final int pDay) {
-        DateDay myDate = new DateDay(pYear, pMonth, pDay);
-        return myDate;
+        return new DateDay(pYear, pMonth, pDay);
     }
 
     /**
-     * Apply Options to underlying objects
+     * Apply Options to underlying objects.
      */
     private void applyOptions() {
         /* Set Null Date options */
@@ -776,7 +784,7 @@ public class DateDayExample extends JApplet {
         private shortLocale(final Locale pLocale) {
             /* Store the Locale */
             theLocale = pLocale;
-            theMaxDayLen = 3;
+            theMaxDayLen = JDateConfig.MAX_DAY_NAME_LEN;
             doShrinkFromRight = true;
         }
 

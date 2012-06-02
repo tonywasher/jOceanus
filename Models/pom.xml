@@ -28,6 +28,11 @@
                 <version>v9.20</version>
   	</dependency>
   	<dependency>
+  		<groupId>net.sourceforge.JHelpManager</groupId>
+  		<artifactId>JHelpManager</artifactId>
+  		<version>v1.0.0-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
   		<groupId>net.sourceforge.JDecimal</groupId>
   		<artifactId>JDecimal</artifactId>
   		<version>v1.0.0-SNAPSHOT</version>

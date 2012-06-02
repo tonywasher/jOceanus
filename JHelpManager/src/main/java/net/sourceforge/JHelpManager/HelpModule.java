@@ -125,7 +125,7 @@ public abstract class HelpModule {
      * @param pName the name of the help page
      * @return the help page
      */
-    public HelpPage searchFor(final String pName) {
+    public final HelpPage searchFor(final String pName) {
         /* Loop through the entries */
         Iterator<HelpPage> myIterator = theList.iterator();
         while (myIterator.hasNext()) {
@@ -194,10 +194,6 @@ public abstract class HelpModule {
             } catch (Exception e) {
                 myStream = null;
             }
-
-            /* Cascade exceptions */
-        } catch (HelpException e) {
-            throw e;
 
             /* Catch exceptions */
         } catch (Exception e) {
