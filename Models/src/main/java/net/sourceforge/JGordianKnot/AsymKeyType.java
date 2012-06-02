@@ -24,8 +24,8 @@ package net.sourceforge.JGordianKnot;
 
 import java.security.SecureRandom;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 
 /**
  * Asymmetric Key Types. Available Algorithms
@@ -189,15 +189,15 @@ public enum AsymKeyType {
      * get value from id.
      * @param id the id value
      * @return the corresponding enum object
-     * @throws ModelException if id is invalid
+     * @throws JDataException if id is invalid
      */
-    public static AsymKeyType fromId(final int id) throws ModelException {
+    public static AsymKeyType fromId(final int id) throws JDataException {
         for (AsymKeyType myType : values()) {
             if (myType.getId() == id) {
                 return myType;
             }
         }
-        throw new ModelException(ExceptionClass.DATA, "Invalid AsymKeyType: " + id);
+        throw new JDataException(ExceptionClass.DATA, "Invalid AsymKeyType: " + id);
     }
 
     /**
@@ -205,10 +205,10 @@ public enum AsymKeyType {
      * @param pNumTypes the number of types
      * @param pRandom the random generator
      * @return the random set
-     * @throws ModelException if the number of types is invalid
+     * @throws JDataException if the number of types is invalid
      */
     public static AsymKeyType[] getRandomTypes(final int pNumTypes,
-                                               final SecureRandom pRandom) throws ModelException {
+                                               final SecureRandom pRandom) throws JDataException {
         /* Access the values */
         AsymKeyType[] myValues = values();
         int iNumValues = myValues.length;
@@ -216,7 +216,7 @@ public enum AsymKeyType {
 
         /* Reject call if invalid number of types */
         if ((pNumTypes < 1) || (pNumTypes > iNumValues)) {
-            throw new ModelException(ExceptionClass.LOGIC, "Invalid number of types: " + pNumTypes);
+            throw new JDataException(ExceptionClass.LOGIC, "Invalid number of types: " + pNumTypes);
         }
 
         /* Create the result set */

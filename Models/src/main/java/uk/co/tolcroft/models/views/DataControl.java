@@ -26,11 +26,12 @@ import java.util.HashMap;
 
 import javax.swing.JFrame;
 
-import net.sourceforge.JDataManager.DebugManager;
-import net.sourceforge.JDataManager.DebugManager.DebugEntry;
-import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataManager;
+import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JGordianKnot.SecureManager;
 import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.data.SecurityPreferences;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.threads.ThreadStatus;
@@ -45,27 +46,27 @@ public abstract class DataControl<T extends DataSet<T>> {
     /**
      * Debug View Name.
      */
-    public static final String DEBUG_VIEWS = "DataViews";
+    public static final String DATA_VIEWS = "DataViews";
 
     /**
      * Underlying Data Name.
      */
-    public static final String DEBUG_DATA = "UnderlyingData";
+    public static final String DATA_DATASET = "UnderlyingData";
 
     /**
      * Data Updates Name.
      */
-    public static final String DEBUG_UPDATES = "DataUpdates";
+    public static final String DATA_UPDATES = "DataUpdates";
 
     /**
      * Analysis Name.
      */
-    public static final String DEBUG_ANALYSIS = "Analysis";
+    public static final String DATA_ANALYSIS = "Analysis";
 
     /**
      * Error Name.
      */
-    public static final String DEBUG_ERROR = "Error";
+    public static final String DATA_ERROR = "Error";
 
     /**
      * The DataSet.
@@ -80,7 +81,7 @@ public abstract class DataControl<T extends DataSet<T>> {
     /**
      * The Error.
      */
-    private ModelException theError = null;
+    private JDataException theError = null;
 
     /**
      * The StatusBar.
@@ -98,24 +99,36 @@ public abstract class DataControl<T extends DataSet<T>> {
     private final SecureManager theSecurity;
 
     /**
-     * The Debug Manager.
+     * The Data Manager.
      */
-    private DebugManager theDebugMgr = null;
+    private JDataManager theDataMgr = null;
 
     /**
-     * The Debug Entry hashMap.
+     * The Data Entry hashMap.
      */
-    private final HashMap<String, DebugEntry> theMap;
+    private final HashMap<String, JDataEntry> theMap;
 
     /**
-     * Constructor.
+     * Constructor for default preferences.
      */
     protected DataControl() {
         /* Create the Secure Manager */
         theSecurity = new SecureManager();
 
         /* Create the Debug Map */
-        theMap = new HashMap<String, DebugEntry>();
+        theMap = new HashMap<String, JDataEntry>();
+    }
+
+    /**
+     * Constructor for security preferences.
+     * @param pPreferences the security preferences
+     */
+    protected DataControl(final SecurityPreferences pPreferences) {
+        /* Create the Secure Manager */
+        theSecurity = pPreferences.getSecurity();
+
+        /* Create the Debug Map */
+        theMap = new HashMap<String, JDataEntry>();
     }
 
     /**
@@ -132,9 +145,9 @@ public abstract class DataControl<T extends DataSet<T>> {
         /* Store the data */
         theData = pData;
 
-        /* Update the Debug entry */
-        DebugEntry myDebug = getDebugEntry(DEBUG_DATA);
-        myDebug.setObject(pData);
+        /* Update the Data entry */
+        JDataEntry myData = getDataEntry(DATA_DATASET);
+        myData.setObject(pData);
     }
 
     /**
@@ -153,9 +166,9 @@ public abstract class DataControl<T extends DataSet<T>> {
         /* Store the updates */
         theUpdates = pUpdates;
 
-        /* Update the Debug entry */
-        DebugEntry myDebug = getDebugEntry(DEBUG_UPDATES);
-        myDebug.setObject(pUpdates);
+        /* Update the Data entry */
+        JDataEntry myData = getDataEntry(DATA_UPDATES);
+        myData.setObject(pUpdates);
     }
 
     /**
@@ -177,7 +190,7 @@ public abstract class DataControl<T extends DataSet<T>> {
      * Set new Error.
      * @param pError the new Error
      */
-    protected void setError(final ModelException pError) {
+    protected void setError(final JDataException pError) {
         theError = pError;
     }
 
@@ -185,7 +198,7 @@ public abstract class DataControl<T extends DataSet<T>> {
      * Obtain current updates.
      * @return the current Updates
      */
-    public ModelException getError() {
+    public JDataException getError() {
         return theError;
     }
 
@@ -230,19 +243,19 @@ public abstract class DataControl<T extends DataSet<T>> {
     }
 
     /**
-     * Set Debug Manager.
-     * @param pDebugMgr the Debug Manager
+     * Set Data Manager.
+     * @param pDataMgr the Data Manager
      */
-    protected void setDebugMgr(final DebugManager pDebugMgr) {
+    protected void setDataMgr(final JDataManager pDataMgr) {
         /* Store the Manager */
-        theDebugMgr = pDebugMgr;
+        theDataMgr = pDataMgr;
 
         /* Create Debug Entries */
-        DebugEntry myViews = getDebugEntry(DEBUG_VIEWS);
-        DebugEntry myData = getDebugEntry(DEBUG_DATA);
-        DebugEntry myUpdates = getDebugEntry(DEBUG_UPDATES);
-        DebugEntry myAnalysis = getDebugEntry(DEBUG_ANALYSIS);
-        DebugEntry myError = getDebugEntry(DEBUG_ERROR);
+        JDataEntry myViews = getDataEntry(DATA_VIEWS);
+        JDataEntry myData = getDataEntry(DATA_DATASET);
+        JDataEntry myUpdates = getDataEntry(DATA_UPDATES);
+        JDataEntry myAnalysis = getDataEntry(DATA_ANALYSIS);
+        JDataEntry myError = getDataEntry(DATA_ERROR);
 
         /* Create the structure */
         myViews.addAsRootChild();
@@ -256,11 +269,11 @@ public abstract class DataControl<T extends DataSet<T>> {
     }
 
     /**
-     * Obtain Debug Manager.
-     * @return the Debug Manager
+     * Obtain Data Manager.
+     * @return the Data Manager
      */
-    public DebugManager getDebugMgr() {
-        return theDebugMgr;
+    public JDataManager getDataMgr() {
+        return theDataMgr;
     }
 
     /**
@@ -268,14 +281,14 @@ public abstract class DataControl<T extends DataSet<T>> {
      * @param pName the Name of the entry
      * @return the Debug Entry
      */
-    public DebugEntry getDebugEntry(final String pName) {
+    public JDataEntry getDataEntry(final String pName) {
         /* Access any existing entry */
-        DebugEntry myEntry = theMap.get(pName);
+        JDataEntry myEntry = theMap.get(pName);
 
         /* If the entry does not exist */
         if (myEntry == null) {
             /* Build the entry and add to the map */
-            myEntry = theDebugMgr.new DebugEntry(pName);
+            myEntry = theDataMgr.new JDataEntry(pName);
             theMap.put(pName, myEntry);
         }
 
@@ -292,9 +305,9 @@ public abstract class DataControl<T extends DataSet<T>> {
     /**
      * Obtain Database object.
      * @return database object
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public abstract Database<T> getDatabase() throws ModelException;
+    public abstract Database<T> getDatabase() throws JDataException;
 
     /**
      * Obtain DataSet object.

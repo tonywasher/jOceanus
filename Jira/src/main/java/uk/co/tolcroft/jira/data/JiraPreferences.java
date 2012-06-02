@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * Jira: Java Jira Link
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,112 +22,124 @@
  ******************************************************************************/
 package uk.co.tolcroft.jira.data;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.PreferenceSet;
+import net.sourceforge.JDataManager.JDataException;
+import uk.co.tolcroft.models.data.PreferenceSet;
 
+/**
+ * Jira Preferences.
+ * @author Tony Washer
+ */
 public class JiraPreferences extends PreferenceSet {
     /**
-     * Registry name for Jira Server
+     * Registry name for Jira Server.
      */
-    public final static String nameJiraServer = "JiraServer";
+    public static final String NAME_SERVER = "JiraServer";
 
     /**
-     * Registry name for Jira User
+     * Registry name for Jira User.
      */
-    public final static String nameJiraUser = "JiraUser";
+    public static final String NAME_USER = "JiraUser";
 
     /**
-     * Registry name for Jira Password
+     * Registry name for Jira Password.
      */
-    public final static String nameJiraPass = "JiraPassword";
+    public static final String NAME_PASS = "JiraPassword";
 
     /**
-     * Registry name for Jira Prefix
+     * Registry name for Jira Prefix.
      */
-    public final static String nameJiraPfix = "JiraPrefix";
+    public static final String NAME_PFIX = "JiraPrefix";
 
     /**
-     * Display name for JiraServer
+     * Display name for JiraServer.
      */
-    protected final static String dispJiraServer = "Jira Server";
+    protected static final String DISPLAY_SERVER = "Jira Server";
 
     /**
-     * Display name for JiraUser
+     * Display name for JiraUser.
      */
-    protected final static String dispJiraUser = "Jira User";
+    protected static final String DISPLAY_USER = "Jira User";
 
     /**
-     * Display name for JiraPassword
+     * Display name for JiraPassword.
      */
-    protected final static String dispJiraPass = "Jira Password";
+    protected static final String DISPLAY_PASS = "Jira Password";
 
     /**
-     * Display name for JiraPrefix
+     * Display name for JiraPrefix.
      */
-    protected final static String dispJiraPfix = "Jira Prefix";
+    protected static final String DISPLAY_PFIX = "Jira Prefix";
 
     /**
-     * Default value for JiraServer
+     * Default value for JiraServer.
      */
-    private final static String defJiraServer = "http://localhost:8080";
+    private static final String DEFAULT_SERVER = "http://localhost:8080";
 
     /**
-     * Default value for JiraUser
+     * Default value for JiraUser.
      */
-    private final static String defJiraUser = "User";
+    private static final String DEFAULT_USER = "User";
 
     /**
-     * Default value for JiraPassword
+     * Default value for JiraPassword.
      */
-    private final static String defJiraPass = "";
+    private static final String DEFAULT_PASS = "";
 
     /**
-     * Default value for JiraPrefix
+     * Default value for JiraPrefix.
      */
-    private final static String defJiraPfix = "Issue #:";
+    private static final String DEFAULT_PFIX = "Issue #:";
 
     /**
-     * Constructor
-     * @throws ModelException
+     * Constructor.
+     * @throws JDataException on error
      */
-    public JiraPreferences() throws ModelException {
+    public JiraPreferences() throws JDataException {
         super();
     }
 
     @Override
     protected void definePreferences() {
         /* Define the preferences */
-        definePreference(nameJiraServer, PreferenceType.String);
-        definePreference(nameJiraUser, PreferenceType.String);
-        definePreference(nameJiraPass, PreferenceType.String);
-        definePreference(nameJiraPfix, PreferenceType.String);
+        definePreference(NAME_SERVER, PreferenceType.String);
+        definePreference(NAME_USER, PreferenceType.String);
+        definePreference(NAME_PASS, PreferenceType.String);
+        definePreference(NAME_PFIX, PreferenceType.String);
     }
 
     @Override
-    protected Object getDefaultValue(String pName) {
+    protected Object getDefaultValue(final String pName) {
         /* Handle default values */
-        if (pName.equals(nameJiraServer))
-            return defJiraServer;
-        if (pName.equals(nameJiraUser))
-            return defJiraUser;
-        if (pName.equals(nameJiraPass))
-            return defJiraPass;
-        if (pName.equals(nameJiraPfix))
-            return defJiraPfix;
+        if (pName.equals(NAME_SERVER)) {
+            return DEFAULT_SERVER;
+        }
+        if (pName.equals(NAME_USER)) {
+            return DEFAULT_USER;
+        }
+        if (pName.equals(NAME_PASS)) {
+            return DEFAULT_PASS;
+        }
+        if (pName.equals(NAME_PFIX)) {
+            return DEFAULT_PFIX;
+        }
         return null;
     }
 
     @Override
-    protected String getDisplayName(String pName) {
+    protected String getDisplayName(final String pName) {
         /* Handle default values */
-        if (pName.equals(nameJiraServer))
-            return dispJiraServer;
-        if (pName.equals(nameJiraUser))
-            return dispJiraUser;
-        if (pName.equals(nameJiraPass))
-            return dispJiraPass;
-        if (pName.equals(nameJiraPfix))
-            return dispJiraPfix;
+        if (pName.equals(NAME_SERVER)) {
+            return DISPLAY_SERVER;
+        }
+        if (pName.equals(NAME_USER)) {
+            return DISPLAY_USER;
+        }
+        if (pName.equals(NAME_PASS)) {
+            return DISPLAY_PASS;
+        }
+        if (pName.equals(NAME_PFIX)) {
+            return DISPLAY_PFIX;
+        }
         return null;
     }
 }

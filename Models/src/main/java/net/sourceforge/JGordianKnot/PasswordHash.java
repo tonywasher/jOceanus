@@ -30,50 +30,50 @@ import java.util.Map;
 import javax.crypto.Mac;
 
 import net.sourceforge.JDataManager.DataConverter;
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
-import net.sourceforge.JDataManager.ReportFields;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
-import net.sourceforge.JDataManager.ReportObject.ReportDetail;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JGordianKnot.DataHayStack.HashModeNeedle;
 
 /**
  * Password Hash implementation.
  * @author Tony Washer
  */
-public class PasswordHash implements ReportDetail {
+public class PasswordHash implements JDataContents {
     /**
      * Report fields.
      */
-    protected static final ReportFields FIELD_DEFS = new ReportFields(PasswordHash.class.getSimpleName());
+    protected static final JDataFields FIELD_DEFS = new JDataFields(PasswordHash.class.getSimpleName());
 
     /**
      * Field ID for mode.
      */
-    public static final ReportField FIELD_MODE = FIELD_DEFS.declareLocalField("Mode");
+    public static final JDataField FIELD_MODE = FIELD_DEFS.declareLocalField("Mode");
 
     /**
      * Field ID for hash.
      */
-    public static final ReportField FIELD_HASH = FIELD_DEFS.declareLocalField("Hash");
+    public static final JDataField FIELD_HASH = FIELD_DEFS.declareLocalField("Hash");
 
     /**
      * Field ID for cipher set.
      */
-    public static final ReportField FIELD_CIPHER = FIELD_DEFS.declareLocalField("CipherSet");
+    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareLocalField("CipherSet");
 
     /**
      * Field ID for symKey map.
      */
-    public static final ReportField FIELD_SYMKEYMAP = FIELD_DEFS.declareLocalField("SymKeyMap");
+    public static final JDataField FIELD_SYMKEYMAP = FIELD_DEFS.declareLocalField("SymKeyMap");
 
     @Override
-    public ReportFields getReportFields() {
+    public JDataFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final ReportField pField) {
+    public Object getFieldValue(final JDataField pField) {
         if (pField == FIELD_MODE) {
             return theHashMode;
         }
@@ -90,7 +90,7 @@ public class PasswordHash implements ReportDetail {
     }
 
     @Override
-    public String getObjectSummary() {
+    public String formatObject() {
         return FIELD_DEFS.getName();
     }
 
@@ -200,10 +200,10 @@ public class PasswordHash implements ReportDetail {
      * Constructor for a completely new password hash.
      * @param pGenerator the security generator
      * @param pPassword the password (cleared after usage)
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     protected PasswordHash(final SecurityGenerator pGenerator,
-                           final char[] pPassword) throws ModelException {
+                           final char[] pPassword) throws JDataException {
         /* Store the secure random generator */
         theGenerator = pGenerator;
         theRandom = theGenerator.getRandom();
@@ -228,11 +228,11 @@ public class PasswordHash implements ReportDetail {
      * @param pHashBytes the Hash bytes
      * @param pPassword the password (cleared after usage)
      * @throws WrongPasswordException if wrong password is given
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     protected PasswordHash(final SecurityGenerator pGenerator,
                            final byte[] pHashBytes,
-                           final char[] pPassword) throws WrongPasswordException, ModelException {
+                           final char[] pPassword) throws WrongPasswordException, JDataException {
         /* Store the hash bytes and extract the mode */
         theHashBytes = pHashBytes;
 
@@ -255,9 +255,9 @@ public class PasswordHash implements ReportDetail {
     /**
      * Constructor for alternate password hash sharing same password.
      * @param pSource the source hash
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    private PasswordHash(final PasswordHash pSource) throws ModelException {
+    private PasswordHash(final PasswordHash pSource) throws JDataException {
         char[] myPassword = null;
 
         /* Build the encryption cipher */
@@ -286,7 +286,7 @@ public class PasswordHash implements ReportDetail {
             theSymKeyMap = new HashMap<SymmetricKey, byte[]>();
 
             /* Catch Exceptions */
-        } catch (ModelException e) {
+        } catch (JDataException e) {
             throw e;
         } finally {
             if (myPassword != null) {
@@ -298,9 +298,9 @@ public class PasswordHash implements ReportDetail {
     /**
      * Clone this password hash.
      * @return the cloned hash
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public PasswordHash cloneHash() throws ModelException {
+    public PasswordHash cloneHash() throws JDataException {
         /* Return the cloned hash */
         return new PasswordHash(this);
     }
@@ -336,9 +336,9 @@ public class PasswordHash implements ReportDetail {
     /**
      * Build the password hash from the password.
      * @param pPassword the password (cleared after usage)
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    private void setPassword(final char[] pPassword) throws ModelException {
+    private void setPassword(final char[] pPassword) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Generate the HashBytes */
@@ -353,10 +353,10 @@ public class PasswordHash implements ReportDetail {
 
             /* Clear out the password */
             Arrays.fill(pPassword, (char) 0);
-        } catch (ModelException e) {
+        } catch (JDataException e) {
             throw e;
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.CRYPTO, "Failed to initialise using password", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise using password", e);
         }
     }
 
@@ -364,9 +364,9 @@ public class PasswordHash implements ReportDetail {
      * Attempt to match the password hash with the password.
      * @param pPassword the password (cleared after usage)
      * @throws WrongPasswordException n wrong password
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    private void attemptPassword(final char[] pPassword) throws WrongPasswordException, ModelException {
+    private void attemptPassword(final char[] pPassword) throws WrongPasswordException, JDataException {
         byte[] myHashBytes;
 
         /* Protect against exceptions */
@@ -391,10 +391,10 @@ public class PasswordHash implements ReportDetail {
             Arrays.fill(pPassword, (char) 0);
         } catch (WrongPasswordException e) {
             throw e;
-        } catch (ModelException e) {
+        } catch (JDataException e) {
             throw e;
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.CRYPTO, "Failed to initialise using password", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise using password", e);
         }
     }
 
@@ -402,9 +402,9 @@ public class PasswordHash implements ReportDetail {
      * Generate Hash bytes.
      * @param pPassword the password for the keys
      * @return the Salt and Hash array
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    private byte[] generateHashBytes(final char[] pPassword) throws ModelException {
+    private byte[] generateHashBytes(final char[] pPassword) throws JDataException {
         byte[] myHashBytes;
         byte[] myPrimeBytes = null;
         byte[] myAlternateBytes = null;
@@ -506,7 +506,7 @@ public class PasswordHash implements ReportDetail {
             HashModeNeedle myNeedle = new HashModeNeedle(theHashMode, theSaltBytes, myExternalHash);
             myHashBytes = myNeedle.getExternal();
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.CRYPTO, "Failed to generate salt and hash", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to generate salt and hash", e);
         } finally {
             if (myPassBytes != null) {
                 Arrays.fill(myPassBytes, (byte) 0);
@@ -515,7 +515,7 @@ public class PasswordHash implements ReportDetail {
 
         /* Check whether the HashBytes is too large */
         if (myHashBytes.length > HASHSIZE) {
-            throw new ModelException(ExceptionClass.DATA, "Password Hash too large: " + myHashBytes.length);
+            throw new JDataException(ExceptionClass.DATA, "Password Hash too large: " + myHashBytes.length);
         }
 
         /* Return to caller */
@@ -526,9 +526,9 @@ public class PasswordHash implements ReportDetail {
      * Get the secured private key definition from an Asymmetric Key.
      * @param pKey the AsymmetricKey whose private key is to be secured
      * @return the secured key
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public byte[] securePrivateKey(final AsymmetricKey pKey) throws ModelException {
+    public byte[] securePrivateKey(final AsymmetricKey pKey) throws JDataException {
         /* Secure the key */
         return theCipherSet.securePrivateKey(pKey);
     }
@@ -538,10 +538,10 @@ public class PasswordHash implements ReportDetail {
      * @param pSecuredPrivateKeyDef the Secured Private Key definition
      * @param pPublicKeyDef the Public KeyDef
      * @return the asymmetric key
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public AsymmetricKey deriveAsymmetricKey(final byte[] pSecuredPrivateKeyDef,
-                                             final byte[] pPublicKeyDef) throws ModelException {
+                                             final byte[] pPublicKeyDef) throws JDataException {
         /* derive the Asymmetric Key */
         return theCipherSet.deriveAsymmetricKey(pSecuredPrivateKeyDef, pPublicKeyDef);
     }
@@ -550,9 +550,9 @@ public class PasswordHash implements ReportDetail {
      * derive a SymmetricKey from secured key definition.
      * @param pSecuredKeyDef the secured key definition
      * @return the Symmetric key
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public SymmetricKey deriveSymmetricKey(final byte[] pSecuredKeyDef) throws ModelException {
+    public SymmetricKey deriveSymmetricKey(final byte[] pSecuredKeyDef) throws JDataException {
         /* Derive the symmetric key */
         SymmetricKey mySymKey = theCipherSet.deriveSymmetricKey(pSecuredKeyDef);
 
@@ -567,9 +567,9 @@ public class PasswordHash implements ReportDetail {
      * Get the Secured Key Definition for a Symmetric Key.
      * @param pKey the Symmetric Key to secure
      * @return the secured key definition
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public byte[] secureSymmetricKey(final SymmetricKey pKey) throws ModelException {
+    public byte[] secureSymmetricKey(final SymmetricKey pKey) throws JDataException {
         byte[] myWrappedKey;
 
         /* Look for an entry in the map and return it if found */
@@ -592,9 +592,9 @@ public class PasswordHash implements ReportDetail {
      * Encrypt string.
      * @param pString the string to encrypt
      * @return the encrypted bytes
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public byte[] encryptString(final String pString) throws ModelException {
+    public byte[] encryptString(final String pString) throws JDataException {
         /* Encrypt the string */
         return theCipherSet.encryptString(pString);
     }
@@ -603,9 +603,9 @@ public class PasswordHash implements ReportDetail {
      * Decrypt string.
      * @param pBytes the string to decrypt
      * @return the decrypted string
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public String decryptString(final byte[] pBytes) throws ModelException {
+    public String decryptString(final byte[] pBytes) throws JDataException {
         /* Decrypt the bytes */
         return theCipherSet.decryptString(pBytes);
     }
@@ -630,7 +630,7 @@ public class PasswordHash implements ReportDetail {
             return myHash;
 
             /* Catch Exceptions */
-        } catch (ModelException e) {
+        } catch (JDataException e) {
             return null;
         } catch (WrongPasswordException e) {
             return null;

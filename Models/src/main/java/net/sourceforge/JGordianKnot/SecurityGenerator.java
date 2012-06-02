@@ -45,9 +45,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import net.sourceforge.JDataManager.DataConverter;
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
-import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 
 /**
  * Generator class for various security primitives.
@@ -65,14 +64,29 @@ public class SecurityGenerator {
     protected static final int SEED_SIZE = 32;
 
     /**
-     * Security Preferences.
-     */
-    private final SecurityPreferences thePreferences;
-
-    /**
      * The Security provider.
      */
     private final SecurityProvider theProvider;
+
+    /**
+     * Do we use restricted keys?
+     */
+    private final boolean useRestricted;
+
+    /**
+     * The Number of cipher steps.
+     */
+    private final int theCipherSteps;
+
+    /**
+     * The Number of hash iterations.
+     */
+    private final int theIterations;
+
+    /**
+     * The Security phrase.
+     */
+    private final String theSecurityPhrase;
 
     /**
      * The Security provider name.
@@ -103,14 +117,6 @@ public class SecurityGenerator {
     }
 
     /**
-     * Access the Default Security provider.
-     * @return the default security provider
-     */
-    protected SecurityProvider getDefaultProvider() {
-        return thePreferences.getEnumValue(SecurityPreferences.NAME_PROVIDER, SecurityProvider.class);
-    }
-
-    /**
      * Access the Secure Random.
      * @return the secure random
      */
@@ -123,15 +129,15 @@ public class SecurityGenerator {
      * @return the number of hash iterations
      */
     protected int getNumHashIterations() {
-        return thePreferences.getIntegerValue(SecurityPreferences.NAME_HASH_ITERATIONS);
+        return theIterations;
     }
 
     /**
      * Access the security phrase in bytes format.
-     * @return the secure random
+     * @return the security phrase
      */
     protected byte[] getSecurityBytes() {
-        String myPhrase = thePreferences.getStringValue(SecurityPreferences.NAME_SECURITY_PHRASE);
+        String myPhrase = theSecurityPhrase;
         return DataConverter.stringToByteArray(myPhrase);
     }
 
@@ -140,7 +146,7 @@ public class SecurityGenerator {
      * @return the number of cipher steps
      */
     public int getNumCipherSteps() {
-        return thePreferences.getIntegerValue(SecurityPreferences.NAME_CIPHER_STEPS);
+        return theCipherSteps;
     }
 
     /**
@@ -148,31 +154,34 @@ public class SecurityGenerator {
      * @return true/false
      */
     protected boolean useRestricted() {
-        return thePreferences.getBooleanValue(SecurityPreferences.NAME_RESTRICTED);
-    }
-
-    /**
-     * Constructor for default provider.
-     */
-    public SecurityGenerator() {
-        /* Access with default provider */
-        this(null);
+        return useRestricted;
     }
 
     /**
      * Constructor for explicit provider.
      * @param pProvider the Security provider
+     * @param pRestricted do we use restricted security
+     * @param pNumCipherSteps the number of cipher steps
+     * @param pHashIterations the number of hash iterations
+     * @param pSecurityPhrase the security phrase
      */
-    public SecurityGenerator(final SecurityProvider pProvider) {
-        /* Access the preferences */
-        thePreferences = PreferenceManager.getPreferenceSet(SecurityPreferences.class);
-
+    public SecurityGenerator(final SecurityProvider pProvider,
+                             final boolean pRestricted,
+                             final int pNumCipherSteps,
+                             final int pHashIterations,
+                             final String pSecurityPhrase) {
         /* Store the provider */
-        theProvider = (pProvider != null) ? pProvider : getDefaultProvider();
+        theProvider = pProvider;
         theProviderName = theProvider.getProvider();
 
         /* Ensure that the provider is installed */
         theProvider.ensureInstalled();
+
+        /* Store parameters */
+        useRestricted = pRestricted;
+        theCipherSteps = pNumCipherSteps;
+        theIterations = pHashIterations;
+        theSecurityPhrase = pSecurityPhrase;
 
         /* Create a new secure random generator */
         theRandom = new SecureRandom();
@@ -191,9 +200,9 @@ public class SecurityGenerator {
      * Generate a password Hash for the given password.
      * @param pPassword the password
      * @return the Password hash
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public PasswordHash generatePasswordHash(final char[] pPassword) throws ModelException {
+    public PasswordHash generatePasswordHash(final char[] pPassword) throws JDataException {
         /* Create the new Password Hash */
         return new PasswordHash(this, pPassword);
     }
@@ -203,11 +212,11 @@ public class SecurityGenerator {
      * @param pHashBytes the hash bytes
      * @param pPassword the password
      * @return the Password hash
-     * @throws ModelException on error
+     * @throws JDataException on error
      * @throws WrongPasswordException if password does not match
      */
     public PasswordHash derivePasswordHash(final byte[] pHashBytes,
-                                           final char[] pPassword) throws ModelException,
+                                           final char[] pPassword) throws JDataException,
             WrongPasswordException {
         /* Create the new Password Hash */
         return new PasswordHash(this, pHashBytes, pPassword);
@@ -216,9 +225,9 @@ public class SecurityGenerator {
     /**
      * Determine a list of random symmetric key types.
      * @return the Symmetric Key types
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public SymKeyType[] generateSymKeyTypes() throws ModelException {
+    public SymKeyType[] generateSymKeyTypes() throws JDataException {
         /* Create the new Symmetric Key */
         return SymKeyType.getRandomTypes(getNumCipherSteps(), theRandom);
     }
@@ -227,9 +236,9 @@ public class SecurityGenerator {
      * Generate a new Symmetric Key for the required KeyType.
      * @param pKeyType the Symmetric Key type
      * @return the newly created Symmetric Key
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public SymmetricKey generateSymmetricKey(final SymKeyType pKeyType) throws ModelException {
+    public SymmetricKey generateSymmetricKey(final SymKeyType pKeyType) throws JDataException {
         /* Create the new Symmetric Key */
         return new SymmetricKey(this, pKeyType, useRestricted());
     }
@@ -237,9 +246,9 @@ public class SecurityGenerator {
     /**
      * Generate a new Asymmetric Key of a random type.
      * @return the newly created Asymmetric Key
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public AsymmetricKey generateAsymmetricKey() throws ModelException {
+    public AsymmetricKey generateAsymmetricKey() throws JDataException {
         /* Generate the new asymmetric key mode */
         AsymKeyMode myMode = new AsymKeyMode(useRestricted(), theRandom);
 
@@ -251,9 +260,9 @@ public class SecurityGenerator {
      * Generate a new Asymmetric Key of the same type as the partner.
      * @param pPartner the partner asymmetric key
      * @return the newly created Asymmetric Key
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public AsymmetricKey generateAsymmetricKey(final AsymmetricKey pPartner) throws ModelException {
+    public AsymmetricKey generateAsymmetricKey(final AsymmetricKey pPartner) throws JDataException {
         /* Determine the new keyMode */
         AsymKeyMode myMode = new AsymKeyMode(useRestricted(), pPartner.getKeyMode());
 
@@ -265,9 +274,9 @@ public class SecurityGenerator {
      * Generate new KeyPair.
      * @param pKeyType the key type
      * @return the KeyPair
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    protected KeyPair generateKeyPair(final AsymKeyType pKeyType) throws ModelException {
+    protected KeyPair generateKeyPair(final AsymKeyType pKeyType) throws JDataException {
         /* Obtain the registration */
         AsymRegistration myReg = getAsymRegistration(pKeyType);
 
@@ -281,11 +290,11 @@ public class SecurityGenerator {
      * @param pPrivate the Encoded private form (may be null for public-only)
      * @param pPublic the Encoded public form
      * @return the KeyPair
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     protected KeyPair deriveKeyPair(final AsymKeyType pKeyType,
                                     final byte[] pPrivate,
-                                    final byte[] pPublic) throws ModelException {
+                                    final byte[] pPublic) throws JDataException {
         /* Obtain the registration */
         AsymRegistration myReg = getAsymRegistration(pKeyType);
 
@@ -298,10 +307,10 @@ public class SecurityGenerator {
      * @param pKeyType the key type
      * @param pKeyLen the key length
      * @return the SecretKey
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     protected SecretKey generateSecretKey(final SymKeyType pKeyType,
-                                          final int pKeyLen) throws ModelException {
+                                          final int pKeyLen) throws JDataException {
         /* Obtain the registration */
         SymRegistration myReg = getSymRegistration(pKeyType, pKeyLen);
 
@@ -313,9 +322,9 @@ public class SecurityGenerator {
      * Obtain a KeyAgreement.
      * @param pAlgorithm the algorithm required
      * @return the key agreement
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    protected KeyAgreement accessKeyAgreement(final String pAlgorithm) throws ModelException {
+    protected KeyAgreement accessKeyAgreement(final String pAlgorithm) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Return the key agreement for the algorithm */
@@ -324,7 +333,7 @@ public class SecurityGenerator {
             /* Catch exceptions */
         } catch (Exception e) {
             /* Throw the exception */
-            throw new ModelException(ExceptionClass.CRYPTO, "Failed to create KeyAgreement", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create KeyAgreement", e);
         }
     }
 
@@ -332,9 +341,9 @@ public class SecurityGenerator {
      * Obtain a Cipher.
      * @param pAlgorithm the algorithm required
      * @return the cipher
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    protected Cipher accessCipher(final String pAlgorithm) throws ModelException {
+    protected Cipher accessCipher(final String pAlgorithm) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Return a cipher for the algorithm */
@@ -343,7 +352,7 @@ public class SecurityGenerator {
             /* Catch exceptions */
         } catch (Exception e) {
             /* Throw the exception */
-            throw new ModelException(ExceptionClass.CRYPTO, "Failed to create Cipher", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Cipher", e);
         }
     }
 
@@ -351,9 +360,9 @@ public class SecurityGenerator {
      * Obtain a MessageDigest.
      * @param pDigestType the digest type required
      * @return the MessageDigest
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public MessageDigest accessDigest(final DigestType pDigestType) throws ModelException {
+    public MessageDigest accessDigest(final DigestType pDigestType) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Return a digest for the algorithm */
@@ -362,7 +371,7 @@ public class SecurityGenerator {
             /* Catch exceptions */
         } catch (Exception e) {
             /* Throw the exception */
-            throw new ModelException(ExceptionClass.CRYPTO, "Failed to create Cipher", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Cipher", e);
         }
     }
 
@@ -371,10 +380,10 @@ public class SecurityGenerator {
      * @param pDigestType the digest type required
      * @param pPassword the password in byte format
      * @return the MAC
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     protected Mac accessMac(final DigestType pDigestType,
-                            final byte[] pPassword) throws ModelException {
+                            final byte[] pPassword) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Access the MAC */
@@ -390,7 +399,7 @@ public class SecurityGenerator {
             /* Catch exceptions */
         } catch (Exception e) {
             /* Throw the exception */
-            throw new ModelException(ExceptionClass.CRYPTO, "Failed to create Mac", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Mac", e);
         }
     }
 
@@ -399,10 +408,10 @@ public class SecurityGenerator {
      * @param pDigestType the digest type required
      * @param pKey the symmetricKey
      * @return the MAC
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     protected Mac accessMac(final DigestType pDigestType,
-                            final SymmetricKey pKey) throws ModelException {
+                            final SymmetricKey pKey) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Access the MAC */
@@ -417,7 +426,7 @@ public class SecurityGenerator {
             /* Catch exceptions */
         } catch (Exception e) {
             /* Throw the exception */
-            throw new ModelException(ExceptionClass.CRYPTO, "Failed to create Mac", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Mac", e);
         }
     }
 
@@ -425,9 +434,9 @@ public class SecurityGenerator {
      * Obtain a Signature.
      * @param pAlgorithm the algorithm required
      * @return the signature
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    protected Signature accessSignature(final String pAlgorithm) throws ModelException {
+    protected Signature accessSignature(final String pAlgorithm) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Return a signature for the algorithm */
@@ -436,7 +445,7 @@ public class SecurityGenerator {
             /* Catch exceptions */
         } catch (Exception e) {
             /* Throw the exception */
-            throw new ModelException(ExceptionClass.CRYPTO, "Failed to create Signature", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Signature", e);
         }
     }
 
@@ -536,10 +545,10 @@ public class SecurityGenerator {
          * @param pPrivate the Encoded private form (may be null for public-only)
          * @param pPublic the Encoded public form
          * @return the KeyPair
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
         private KeyPair deriveKeyPair(final byte[] pPrivate,
-                                      final byte[] pPublic) throws ModelException {
+                                      final byte[] pPublic) throws JDataException {
             /* If we have not allocated the factory */
             if (theFactory == null) {
                 /* Protect against Exceptions */
@@ -548,7 +557,7 @@ public class SecurityGenerator {
                     theFactory = KeyFactory.getInstance(theAlgorithm, theProviderName);
                 } catch (Exception e) {
                     /* Throw the exception */
-                    throw new ModelException(ExceptionClass.CRYPTO, "Failed to create key factory", e);
+                    throw new JDataException(ExceptionClass.CRYPTO, "Failed to create key factory", e);
                 }
             }
 
@@ -574,16 +583,16 @@ public class SecurityGenerator {
                 /* Catch exceptions */
             } catch (Exception e) {
                 /* Throw the exception */
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to re-build KeyPair", e);
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to re-build KeyPair", e);
             }
         }
 
         /**
          * Generate new KeyPair.
          * @return the KeyPair
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private KeyPair generateKeyPair() throws ModelException {
+        private KeyPair generateKeyPair() throws JDataException {
             /* If we have not allocated the generator */
             if (theGenerator == null) {
                 /* Protect against Exceptions */
@@ -604,7 +613,7 @@ public class SecurityGenerator {
                     }
                 } catch (Exception e) {
                     /* Throw the exception */
-                    throw new ModelException(ExceptionClass.CRYPTO, "Failed to create key pair generator", e);
+                    throw new JDataException(ExceptionClass.CRYPTO, "Failed to create key pair generator", e);
                 }
             }
 
@@ -672,9 +681,9 @@ public class SecurityGenerator {
         /**
          * Generate a new key of the required keyLength.
          * @return the Secret Key
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private SecretKey generateKey() throws ModelException {
+        private SecretKey generateKey() throws JDataException {
             /* If we have not allocated the generator */
             if (theGenerator == null) {
                 /* Protect against Exceptions */
@@ -684,7 +693,7 @@ public class SecurityGenerator {
                     theGenerator.init(theKeyLen, theRandom);
                 } catch (Exception e) {
                     /* Throw the exception */
-                    throw new ModelException(ExceptionClass.CRYPTO, "Failed to create key generator", e);
+                    throw new JDataException(ExceptionClass.CRYPTO, "Failed to create key generator", e);
                 }
             }
 

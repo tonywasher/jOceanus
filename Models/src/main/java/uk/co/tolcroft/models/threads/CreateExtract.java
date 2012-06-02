@@ -24,10 +24,10 @@ package uk.co.tolcroft.models.threads;
 
 import java.io.File;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
-import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 import uk.co.tolcroft.models.sheets.BackupPreferences;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.views.DataControl;
@@ -126,7 +126,7 @@ public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {
                 /* Throw an exception */
-                throw new ModelException(ExceptionClass.DATA, myDiff, "Extract is inconsistent");
+                throw new JDataException(ExceptionClass.DATA, myDiff, "Extract is inconsistent");
             }
 
             /* Catch any exceptions */

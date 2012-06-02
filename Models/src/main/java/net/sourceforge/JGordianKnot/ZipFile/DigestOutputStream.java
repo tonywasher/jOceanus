@@ -25,8 +25,8 @@ package net.sourceforge.JGordianKnot.ZipFile;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JGordianKnot.MsgDigest;
 
 /**
@@ -69,10 +69,10 @@ public class DigestOutputStream extends OutputStream {
      * Construct the output stream.
      * @param pDigest the message digest
      * @param pStream the stream to write encrypted data to
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public DigestOutputStream(final MsgDigest pDigest,
-                              final OutputStream pStream) throws ModelException {
+                              final OutputStream pStream) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Store the message digest */
@@ -83,7 +83,7 @@ public class DigestOutputStream extends OutputStream {
 
             /* Catch exceptions */
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.CRYPTO, "Exception creating digest output stream", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Exception creating digest output stream", e);
         }
     }
 

@@ -24,32 +24,33 @@ package net.sourceforge.JGordianKnot;
 
 import java.util.Arrays;
 
-import net.sourceforge.JDataManager.ReportFields;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
-import net.sourceforge.JDataManager.ReportObject.ReportDetail;
+import net.sourceforge.JDataManager.DataConverter;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
 
 /**
  * An array of bytes treated as an array of nybbles (i.e. two entries per byte).
  * @author Tony Washer
  */
-public class NybbleArray implements ReportDetail {
+public class NybbleArray implements JDataContents {
     /**
      * Report fields.
      */
-    protected static final ReportFields FIELD_DEFS = new ReportFields(NybbleArray.class.getSimpleName());
+    protected static final JDataFields FIELD_DEFS = new JDataFields(NybbleArray.class.getSimpleName());
 
     /**
      * Encoded array Field ID.
      */
-    public static final ReportField FIELD_ENCODED = FIELD_DEFS.declareEqualityField("Encoded");
+    public static final JDataField FIELD_ENCODED = FIELD_DEFS.declareEqualityField("Encoded");
 
     @Override
-    public ReportFields getReportFields() {
+    public JDataFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final ReportField pField) {
+    public Object getFieldValue(final JDataField pField) {
         if (pField == FIELD_ENCODED) {
             return theEncoded;
         }
@@ -57,24 +58,24 @@ public class NybbleArray implements ReportDetail {
     }
 
     @Override
-    public String getObjectSummary() {
+    public String formatObject() {
         return FIELD_DEFS.getName();
     }
 
     /**
+     * The mask shift.
+     */
+    private static final int MASK_SHIFT = DataConverter.NYBBLE_SHIFT;
+
+    /**
      * The low value mask.
      */
-    private static final int MASK_LOW = 0xF;
+    private static final int MASK_LOW = DataConverter.NYBBLE_MASK;
 
     /**
      * The high value mask.
      */
-    private static final int MASK_HIGH = 0xF0;
-
-    /**
-     * The mask shift.
-     */
-    private static final int MASK_SHIFT = 4;
+    private static final int MASK_HIGH = MASK_LOW << MASK_SHIFT;
 
     /**
      * The encoded format.

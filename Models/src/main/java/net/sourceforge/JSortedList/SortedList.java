@@ -23,10 +23,10 @@ package net.sourceforge.JSortedList;
 
 import java.util.Iterator;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.PreferenceSet;
-import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
-import net.sourceforge.JDataManager.PreferenceSet.PreferenceSetChooser;
+import net.sourceforge.JDataManager.JDataException;
+import uk.co.tolcroft.models.data.PreferenceSet;
+import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
+import uk.co.tolcroft.models.data.PreferenceSet.PreferenceSetChooser;
 
 /**
  * Extension of {@link java.util.List} that provides a sorted list implementation with the ability for objects
@@ -41,14 +41,13 @@ import net.sourceforge.JDataManager.PreferenceSet.PreferenceSetChooser;
  * <ul>
  * <li>Null objects are not allowed.
  * <li>Duplicate objects are not allowed
- * <li>The semantics of the {@link #add(T)} method are changed such that the element is added at its natural
+ * <li>The semantics of the {@link #add} method are changed such that the element is added at its natural
  * position in the list rather than at the end of the * list.
- * <li>The {@link #subList(int, int)} method is not supported
+ * <li>The {@link #subList} method is not supported
  * </ul>
  * @author Tony Washer
  * @param <T> the SortedItem type for this list
  */
-@SuppressWarnings("javadoc")
 public class SortedList<T extends LinkObject<T>> implements java.util.List<T>, PreferenceSetChooser {
     /**
      * Sorted List Preferences
@@ -947,9 +946,9 @@ public class SortedList<T extends LinkObject<T>> implements java.util.List<T>, P
 
         /**
          * Constructor
-         * @throws ModelException
+         * @throws JDataException
          */
-        public SortedListPreferences() throws ModelException {
+        public SortedListPreferences() throws JDataException {
             super();
         }
 

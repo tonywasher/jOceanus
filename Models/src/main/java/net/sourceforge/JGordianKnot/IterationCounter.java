@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.JGordianKnot;
 
+import net.sourceforge.JDataManager.DataConverter;
+
 import org.bouncycastle.util.Arrays;
 
 /**
@@ -33,7 +35,7 @@ public class IterationCounter {
     /**
      * The default counter length.
      */
-    private static final int COUNTER_LEN = 4;
+    private static final int COUNTER_LEN = DataConverter.BYTES_INTEGER;
 
     /**
      * The counter length.

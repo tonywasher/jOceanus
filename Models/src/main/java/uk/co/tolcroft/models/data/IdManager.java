@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,34 +22,38 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.PreferenceSet;
-import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
-import net.sourceforge.JDataManager.PreferenceSet.PreferenceSetChooser;
+import net.sourceforge.JDataManager.JDataException;
+import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
+import uk.co.tolcroft.models.data.PreferenceSet.PreferenceSetChooser;
 
+/**
+ * Id Manager for data list.
+ * @author Tony Washer
+ * @param <T> list item type
+ */
 public class IdManager<T extends DataItem<T>> implements PreferenceSetChooser {
     /**
-     * IdManager Preferences
+     * IdManager Preferences.
      */
     private IdManagerPreferences thePreferences = null;
 
     /**
-     * The maximum id
+     * The maximum id.
      */
     private int theMaxId = 0;
 
     /**
-     * The id map
+     * The id map.
      */
-    private idMap theMap = null;
+    private IdMap theMap = null;
 
     /**
-     * Constructor
+     * Constructor.
      */
     protected IdManager() {
         /* Access the idManager preferences */
         thePreferences = (IdManagerPreferences) PreferenceManager.getPreferenceSet(this);
-        theMap = new idMap();
+        theMap = new IdMap();
     }
 
     @Override
@@ -57,7 +62,7 @@ public class IdManager<T extends DataItem<T>> implements PreferenceSetChooser {
     }
 
     /**
-     * Get Max Id
+     * Get Max Id.
      * @return the Maximum Id
      */
     protected int getMaxId() {
@@ -65,23 +70,25 @@ public class IdManager<T extends DataItem<T>> implements PreferenceSetChooser {
     }
 
     /**
-     * Set Max Id
+     * Set Max Id.
      * @param uMaxId the Maximum Id
      */
-    protected void setMaxId(int uMaxId) {
-        if (uMaxId > theMaxId)
+    protected void setMaxId(final int uMaxId) {
+        if (uMaxId > theMaxId) {
             theMaxId = uMaxId;
+        }
     }
 
     /**
-     * Is the Id unique in this list
+     * Is the Id unique in this list.
      * @param uId the Id to check
      * @return Whether the id is unique <code>true/false</code>
      */
-    protected boolean isIdUnique(int uId) {
+    protected boolean isIdUnique(final int uId) {
         /* Its unique if its unassigned or greater than the max id */
-        if ((uId == 0) || (uId > theMaxId))
+        if ((uId == 0) || (uId > theMaxId)) {
             return true;
+        }
 
         /* Locate the id if its possible that we have it */
         T myItem = getItem(uId);
@@ -91,10 +98,10 @@ public class IdManager<T extends DataItem<T>> implements PreferenceSetChooser {
     }
 
     /**
-     * Generate/Record new id
+     * Generate/Record new id.
      * @param pItem the item
      */
-    protected void setNewId(T pItem) {
+    protected void setNewId(final T pItem) {
         int myId = pItem.getId();
 
         /* If we need to generate a new id */
@@ -103,131 +110,133 @@ public class IdManager<T extends DataItem<T>> implements PreferenceSetChooser {
             theMaxId++;
             pItem.setId(theMaxId);
             pItem.setState(DataState.NEW);
-        }
 
-        /* else id is already known */
-        else {
+            /* else id is already known */
+        } else {
             /* Update the max Id if required */
-            if (theMaxId < myId)
+            if (theMaxId < myId) {
                 theMaxId = myId;
+            }
             pItem.setState(DataState.CLEAN);
         }
     }
 
     /**
-     * Locate the item by id
+     * Locate the item by id.
      * @param pId the id of the item to retrieve
      * @return the item for the id (or <code>null</code>)
      */
-    public T getItem(int pId) {
+    public T getItem(final int pId) {
         /* Locate the item in the map */
         return theMap.getItem(pId);
     }
 
     /**
-     * Store the item by id
+     * Store the item by id.
      * @param pId the id of the item to retrieve
      * @param pItem the item to store (or <code>null</code>)
      */
-    public void setItem(int pId,
-                        T pItem) {
+    public void setItem(final int pId,
+                        final T pItem) {
         /* Store the item in the map */
         theMap.setItem(pId, pItem);
     }
 
     /**
-     * remove All list items
+     * remove All list items.
      */
     public void clear() {
         /* Reinitialise the map */
-        theMap = new idMap();
+        theMap = new IdMap();
     }
 
     /**
-     * IdManager Preferences
+     * IdManager Preferences.
      */
     public static class IdManagerPreferences extends PreferenceSet {
         /**
-         * Registry name for Node Elements
+         * Registry name for Node Elements.
          */
-        protected final static String nameNodeElems = "NodeElements";
+        protected static final String NAME_NODE_ELEMS = "NodeElements";
 
         /**
-         * Display name for Node Elements
+         * Display name for Node Elements.
          */
-        protected final static String dispNodeElems = "Elements per Node";
+        protected static final String DISPLAY_NODE_ELEMS = "Elements per Node";
 
         /**
-         * Default NodeElements
+         * Default NodeElements.
          */
-        private final static Integer defNodeElems = 10;
+        private static final Integer DEFAULT_NODE_ELEMS = 10;
 
         /**
-         * Constructor
-         * @throws ModelException
+         * Constructor.
+         * @throws JDataException on error
          */
-        public IdManagerPreferences() throws ModelException {
+        public IdManagerPreferences() throws JDataException {
             super();
         }
 
         @Override
         protected void definePreferences() {
             /* Define the preferences */
-            definePreference(nameNodeElems, PreferenceType.Integer);
+            definePreference(NAME_NODE_ELEMS, PreferenceType.Integer);
         }
 
         @Override
-        protected Object getDefaultValue(String pName) {
+        protected Object getDefaultValue(final String pName) {
             /* Handle default values */
-            if (pName.equals(nameNodeElems))
-                return defNodeElems;
+            if (pName.equals(NAME_NODE_ELEMS)) {
+                return DEFAULT_NODE_ELEMS;
+            }
             return null;
         }
 
         @Override
-        protected String getDisplayName(String pName) {
+        protected String getDisplayName(final String pName) {
             /* Handle default values */
-            if (pName.equals(nameNodeElems))
-                return dispNodeElems;
+            if (pName.equals(NAME_NODE_ELEMS)) {
+                return DISPLAY_NODE_ELEMS;
+            }
             return null;
         }
     }
 
     /**
-     * Id map to element
+     * Id map to element.
      */
-    private class idMap {
+    private class IdMap {
         /**
-         * The size of a single map element
+         * The size of a single map element.
          */
-        private final int maxElements = thePreferences.getIntegerValue(IdManagerPreferences.nameNodeElems);
+        private final int maxElements = thePreferences.getIntegerValue(IdManagerPreferences.NAME_NODE_ELEMS);
 
         /**
-         * The depth of this map
+         * The depth of this map.
          */
         private int theDepth = 0;
 
         /**
-         * The map indexed by id
+         * The map indexed by id.
          */
-        private idMap[] theMaps = null;
+        private IdMap[] theMaps = null;
 
         /**
-         * The map indexed by id
+         * The map indexed by id.
          */
         private T[] theObjects = null;
 
         /**
-         * Build a new map array
+         * Build a new map array.
          */
         @SuppressWarnings("unchecked")
         private void newMaps() {
-            theMaps = new IdManager.idMap[maxElements];
+            theMaps = new IdManager.IdMap[maxElements];
             java.util.Arrays.fill(theMaps, null);
         }
 
         /**
-         * Build a new objects array
+         * Build a new objects array.
          */
         @SuppressWarnings("unchecked")
         private void newObjects() {
@@ -236,15 +245,15 @@ public class IdManager<T extends DataItem<T>> implements PreferenceSetChooser {
         }
 
         /**
-         * Locate the item by id
+         * Locate the item by id.
          * @param pId the id of the item to retrieve
          * @return the item for the id (or <code>null</code>)
          */
-        private T getItem(int pId) {
+        private T getItem(final int pId) {
             int myIndex = pId;
             int myId = pId;
             int myAdjust = 1;
-            idMap myMap;
+            IdMap myMap;
 
             /* If we are not the final map pass the call on */
             if (theDepth > 0) {
@@ -255,15 +264,17 @@ public class IdManager<T extends DataItem<T>> implements PreferenceSetChooser {
                 }
 
                 /* If we are beyond the scope of this map return null */
-                if (myIndex >= maxElements)
+                if (myIndex >= maxElements) {
                     return null;
+                }
 
                 /* Access the relevant map */
                 myMap = theMaps[myIndex];
 
                 /* If the map is empty return null */
-                if (myMap == null)
+                if (myMap == null) {
                     return null;
+                }
 
                 /* Adjust the index */
                 myId -= (myIndex * myAdjust);
@@ -273,12 +284,14 @@ public class IdManager<T extends DataItem<T>> implements PreferenceSetChooser {
             }
 
             /* If we are beyond the scope of this map return null */
-            if (myIndex >= maxElements)
+            if (myIndex >= maxElements) {
                 return null;
+            }
 
             /* Return null if we have no objects */
-            if (theObjects == null)
+            if (theObjects == null) {
                 return null;
+            }
 
             /* Calculate final index and return item */
             myIndex = pId % maxElements;
@@ -286,16 +299,16 @@ public class IdManager<T extends DataItem<T>> implements PreferenceSetChooser {
         }
 
         /**
-         * Store the item by id
+         * Store the item by id.
          * @param pId the id of the item to retrieve
          * @param pItem the item to store (or <code>null</code>)
          */
-        private void setItem(int pId,
-                             T pItem) {
+        private void setItem(final int pId,
+                             final T pItem) {
             int myIndex = pId;
             int myId = pId;
             int myAdjust = 1;
-            idMap myMap = null;
+            IdMap myMap = null;
 
             /* Loop to find the index in this map */
             for (int i = theDepth; i > 0; i--) {
@@ -308,7 +321,7 @@ public class IdManager<T extends DataItem<T>> implements PreferenceSetChooser {
                 /* If this map is non-empty */
                 if ((theMaps != null) || (theObjects != null)) {
                     /* Create a sub-map based on this one */
-                    myMap = new idMap();
+                    myMap = new IdMap();
                     myMap.theDepth = theDepth;
                     myMap.theMaps = theMaps;
                     myMap.theObjects = theObjects;
@@ -336,7 +349,7 @@ public class IdManager<T extends DataItem<T>> implements PreferenceSetChooser {
                 /* If the map is empty */
                 if (myMap == null) {
                     /* Create and store a new id map */
-                    myMap = new idMap();
+                    myMap = new IdMap();
                     myMap.newMaps();
                     myMap.theDepth = theDepth - 1;
                     theMaps[myIndex] = myMap;
@@ -351,8 +364,9 @@ public class IdManager<T extends DataItem<T>> implements PreferenceSetChooser {
             }
 
             /* Allocate the objects array if needed */
-            if (theObjects == null)
+            if (theObjects == null) {
                 newObjects();
+            }
 
             /* Store the item */
             myIndex = pId % maxElements;

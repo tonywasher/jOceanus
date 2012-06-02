@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * Subversion: Java SubVersion Management
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,10 +24,8 @@ package uk.co.tolcroft.subversion.tasks;
 
 import java.io.File;
 
-import net.sourceforge.JDataManager.DataConverter;
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
-import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
 import org.tmatesoft.svn.core.SVNCancelException;
@@ -44,6 +43,7 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 
 import uk.co.tolcroft.jira.data.Issue;
+import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 import uk.co.tolcroft.subversion.data.Branch;
 import uk.co.tolcroft.subversion.data.Branch.BranchList;
 import uk.co.tolcroft.subversion.data.Component;
@@ -53,47 +53,52 @@ import uk.co.tolcroft.subversion.data.SubVersionPreferences;
 import uk.co.tolcroft.subversion.data.Tag;
 import uk.co.tolcroft.subversion.data.Tag.TagList;
 
+/**
+ * Handles creating branches/tags in subversion.
+ * @author Tony Washer
+ */
 public class VersionMgr {
     /**
-     * Subversion Work Directory
+     * Subversion Work Directory.
      */
-    private static final String theSvnWorkDir = "svnTempWork";
+    private static final String DIR_SVNWORK = "svnTempWork";
 
     /**
-     * The Client Manager
+     * The Client Manager.
      */
     private final SVNClientManager theMgr;
 
     /**
-     * Repository
+     * Repository.
      */
     private final Repository theRepository;
 
     /**
-     * Constructor
-     * @param pRepository
+     * Constructor.
+     * @param pRepository the repository
      */
-    public VersionMgr(Repository pRepository) {
+    public VersionMgr(final Repository pRepository) {
         /* Store Parameters */
         theRepository = pRepository;
         theMgr = theRepository.getClientManager();
     }
 
     @Override
-    public void finalize() {
+    public void finalize() throws Throwable {
         /* Release the client manager */
         theRepository.releaseClientManager(theMgr);
+        super.finalize();
     }
 
     /**
-     * Create major branch
+     * Create major branch.
      * @param pSource the tag to base the branch on
      * @param pIssue the issue to make changes against
      * @return the new branch
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    protected Branch createMajorBranch(Tag pSource,
-                                       Issue pIssue) throws ModelException {
+    protected Branch createMajorBranch(final Tag pSource,
+                                       final Issue pIssue) throws JDataException {
         /* Obtain the component that we are creating the branch in */
         Component myComponent = pSource.getComponent();
         BranchList myList = myComponent.getBranchList();
@@ -112,14 +117,14 @@ public class VersionMgr {
     }
 
     /**
-     * Create minor branch
+     * Create minor branch.
      * @param pSource the tag to base the branch on
      * @param pIssue the issue to make changes against
      * @return the new branch
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    protected Branch createMinorBranch(Tag pSource,
-                                       Issue pIssue) throws ModelException {
+    protected Branch createMinorBranch(final Tag pSource,
+                                       final Issue pIssue) throws JDataException {
         /* Obtain the component that we are creating the branch in */
         Component myComponent = pSource.getComponent();
         BranchList myList = myComponent.getBranchList();
@@ -138,14 +143,14 @@ public class VersionMgr {
     }
 
     /**
-     * Create revision branch
+     * Create revision branch.
      * @param pSource the tag to base the branch on
      * @param pIssue the issue to make changes against
      * @return the new branch
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    protected Branch createRevisionBranch(Tag pSource,
-                                          Issue pIssue) throws ModelException {
+    protected Branch createRevisionBranch(final Tag pSource,
+                                          final Issue pIssue) throws JDataException {
         /* Obtain the component that we are creating the branch in */
         Component myComponent = pSource.getComponent();
         BranchList myList = myComponent.getBranchList();
@@ -164,14 +169,14 @@ public class VersionMgr {
     }
 
     /**
-     * Create next tag for branch
+     * Create next tag for branch.
      * @param pSource the branch to tag
      * @param pIssue the issue to make changes against
      * @return the new tag
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public Tag createNextTag(Branch pSource,
-                             Issue pIssue) throws ModelException {
+    public Tag createNextTag(final Branch pSource,
+                             final Issue pIssue) throws JDataException {
         /* Access tag list */
         TagList myList = pSource.getTagList();
 
@@ -189,11 +194,11 @@ public class VersionMgr {
     }
 
     /**
-     * Count objects in URL
+     * Count objects in URL.
      * @param pURL the URL
      * @return the object count
      */
-    private Integer countObjects(SVNURL pURL) {
+    private Integer countObjects(final SVNURL pURL) {
         /* Access a LogClient */
         SVNLogClient myClient = theMgr.getLogClient();
         CountHandler myHandler = new CountHandler();
@@ -212,16 +217,16 @@ public class VersionMgr {
     }
 
     /**
-     * The Count Handler
+     * The Count Handler.
      */
-    protected static class CountHandler implements ISVNDirEntryHandler {
+    protected static final class CountHandler implements ISVNDirEntryHandler {
         /**
-         * The object count
+         * The object count.
          */
         private int theCount = 0;
 
         /**
-         * Obtain the object count
+         * Obtain the object count.
          * @return the object count
          */
         public int getObjectCount() {
@@ -229,10 +234,11 @@ public class VersionMgr {
         }
 
         @Override
-        public void handleDirEntry(SVNDirEntry pEntry) throws SVNException {
+        public void handleDirEntry(final SVNDirEntry pEntry) throws SVNException {
             /* Ignore if is top-level */
-            if (pEntry.getRelativePath().length() == 0)
+            if (pEntry.getRelativePath().length() == 0) {
                 return;
+            }
 
             /* Increment the count */
             theCount++;
@@ -240,15 +246,15 @@ public class VersionMgr {
     }
 
     /**
-     * Create branch in temporary working copy
+     * Create branch in temporary working copy.
      * @param pTarget the branch to create
      * @param pSource the tag to base the branch on
      * @param pIssue the issue to make changes against
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    private void createBranch(Branch pTarget,
-                              Tag pSource,
-                              Issue pIssue) throws ModelException {
+    private void createBranch(final Branch pTarget,
+                              final Tag pSource,
+                              final Issue pIssue) throws JDataException {
         /* Access details */
         Component myComp = pTarget.getComponent();
 
@@ -301,26 +307,22 @@ public class VersionMgr {
 
             /* Remove work directory */
             // Utils.removeDirectory(myWork);
-        }
-
-        catch (ModelException e) {
-            throw e;
         } catch (SVNException e) {
-            throw new ModelException(ExceptionClass.SUBVERSION, "Failed to create branch "
+            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to create branch "
                     + pTarget.getBranchName(), e);
         }
     }
 
     /**
-     * Create tag in temporary working copy
+     * Create tag in temporary working copy.
      * @param pTarget the tag to create
      * @param pSource the branch to create the tag for
      * @param pIssue the issue to make changes against
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    private void createTag(Tag pTarget,
-                           Branch pSource,
-                           Issue pIssue) throws ModelException {
+    private void createTag(final Tag pTarget,
+                           final Branch pSource,
+                           final Issue pIssue) throws JDataException {
         /* Access details */
         Component myComp = pTarget.getComponent();
 
@@ -372,49 +374,97 @@ public class VersionMgr {
 
             /* Remove work directory */
             // Utils.removeDirectory(myWork);
-        }
-
-        catch (SVNException e) {
-            throw new ModelException(ExceptionClass.SUBVERSION, "Failed to create tag "
+        } catch (SVNException e) {
+            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to create tag "
                     + pTarget.getTagName(), e);
         }
     }
 
     /**
-     * Prepare temporary work directory
+     * Prepare temporary work directory.
      * @return the work directory
      */
-    private File prepareWorkDir() {
+    private static File prepareWorkDir() {
         /* Access the SubVersion preferences */
         SubVersionPreferences myPreferences = PreferenceManager.getPreferenceSet(SubVersionPreferences.class);
 
         /* Determine the name of the work directory */
-        String myBase = myPreferences.getStringValue(SubVersionPreferences.nameSubVersionBuild);
-        File myWork = new File(myBase + File.separator + theSvnWorkDir);
+        String myBase = myPreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD);
+        File myWork = new File(myBase + File.separator + DIR_SVNWORK);
 
         /* Remove the directory */
-        if (!DataConverter.removeDirectory(myWork))
+        if (!removeDirectory(myWork)) {
             return null;
+        }
 
         /* Create the directory */
-        if (!myWork.mkdir())
+        if (!myWork.mkdir()) {
             return null;
+        }
 
         /* Return the directory */
         return myWork;
     }
 
     /**
-     * Copy Event Handler class
+     * Remove a directory and all of its contents.
+     * @param pDir the directory to remove
+     * @return success/failure
      */
-    private class CopyHandler extends SVNEventAdapter {
+    public static boolean removeDirectory(final File pDir) {
+        /* Clear the directory */
+        if (!clearDirectory(pDir)) {
+            return false;
+        }
+
+        /* Delete the directory itself */
+        return (!pDir.exists()) || (pDir.delete());
+    }
+
+    /**
+     * Clear a directory of all of its contents.
+     * @param pDir the directory to clear
+     * @return success/failure
+     */
+    public static boolean clearDirectory(final File pDir) {
+        /* Handle trivial operations */
+        if ((pDir == null) || (!pDir.exists())) {
+            return true;
+        }
+        if (!pDir.isDirectory()) {
+            return false;
+        }
+
+        /* Loop through all items */
+        for (File myFile : pDir.listFiles()) {
+            /* If the file is a directory */
+            if (myFile.isDirectory()) {
+                /* Remove it recursively */
+                if (!removeDirectory(myFile)) {
+                    return false;
+                }
+
+                /* else remove the file */
+            } else if (!myFile.delete()) {
+                return false;
+            }
+        }
+
+        /* All cleared */
+        return true;
+    }
+
+    /**
+     * Copy Event Handler class.
+     */
+    private final class CopyHandler extends SVNEventAdapter {
         /**
-         * Copy count
+         * Copy count.
          */
         private int theCount = 0;
 
         /**
-         * Obtain the object count
+         * Obtain the object count.
          * @return the copy count
          */
         public int getCopyCount() {
@@ -428,8 +478,8 @@ public class VersionMgr {
         }
 
         @Override
-        public void handleEvent(SVNEvent arg0,
-                                double arg1) throws SVNException {
+        public void handleEvent(final SVNEvent arg0,
+                                final double arg1) throws SVNException {
             /* Increment the count */
             theCount++;
         }

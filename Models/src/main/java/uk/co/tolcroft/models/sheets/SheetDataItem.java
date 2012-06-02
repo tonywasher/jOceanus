@@ -25,8 +25,8 @@ package uk.co.tolcroft.models.sheets;
 import java.util.Date;
 
 import net.sourceforge.JDataManager.DataConverter;
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Decimal;
 
@@ -205,9 +205,9 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
     /**
      * Load the DataItems from a spreadsheet.
      * @return continue to load <code>true/false</code>
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public boolean loadSpreadSheet() throws ModelException {
+    public boolean loadSpreadSheet() throws JDataException {
         /* Local variables */
         AreaReference myRange = null;
         CellReference myTop;
@@ -271,8 +271,8 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
             }
 
             /* Handle exceptions */
-        } catch (Exception e) {
-            throw new ModelException(ExceptionClass.EXCEL, "Failed to Load " + theRangeName, e);
+        } catch (JDataException e) {
+            throw new JDataException(ExceptionClass.EXCEL, "Failed to Load " + theRangeName, e);
         }
 
         /* Return to caller */
@@ -282,9 +282,9 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
     /**
      * Write the DataItems to a spreadsheet.
      * @return continue to write <code>true/false</code>
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    protected boolean writeSpreadSheet() throws ModelException {
+    protected boolean writeSpreadSheet() throws JDataException {
         DataListIterator<T> myIterator;
         T myCurr;
         int myCount;
@@ -347,8 +347,8 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
             if (theCurrRow > theBaseRow) {
                 postProcessOnWrite();
             }
-        } catch (Exception e) {
-            throw new ModelException(ExceptionClass.EXCEL, "Failed to create " + theRangeName, e);
+        } catch (JDataException e) {
+            throw new JDataException(ExceptionClass.EXCEL, "Failed to create " + theRangeName, e);
         }
 
         /* Return to caller */
@@ -357,35 +357,35 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
 
     /**
      * Load item from spreadsheet.
-     * @throws Exception on error
+     * @throws JDataException on error
      */
-    protected abstract void loadItem() throws Exception;
+    protected abstract void loadItem() throws JDataException;
 
     /**
      * Insert item into spreadsheet.
      * @param pItem the item
-     * @throws Exception on error
+     * @throws JDataException on error
      */
-    protected abstract void insertItem(T pItem) throws Exception;
+    protected abstract void insertItem(T pItem) throws JDataException;
 
     /**
      * PostProcess on load.
-     * @throws Exception on error
+     * @throws JDataException on error
      */
-    protected void postProcessOnLoad() throws Exception {
+    protected void postProcessOnLoad() throws JDataException {
     }
 
     /**
      * PreProcess on write.
-     * @throws Exception on error
+     * @throws JDataException on error
      */
-    protected abstract void preProcessOnWrite() throws Exception;
+    protected abstract void preProcessOnWrite() throws JDataException;
 
     /**
      * PostProcess on write.
-     * @throws Exception on error
+     * @throws JDataException on error
      */
-    protected abstract void postProcessOnWrite() throws Exception;
+    protected abstract void postProcessOnWrite() throws JDataException;
 
     /**
      * Adjust for header.
@@ -407,9 +407,8 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
     /**
      * Name the basic range.
      * @param pNumCols number of columns in range
-     * @throws Exception on error
      */
-    protected void nameRange(final int pNumCols) throws Exception {
+    protected void nameRange(final int pNumCols) {
         /* Build the basic name */
         Name myName = theWorkBook.createName();
         String mySheet = theWorkSheet.getSheetName();
@@ -431,10 +430,9 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
      * Name the column range.
      * @param pOffset offset of column
      * @param pName name of range
-     * @throws Exception on error
      */
     protected void nameColumnRange(final int pOffset,
-                                   final String pName) throws Exception {
+                                   final String pName) {
         /* Build the basic name */
         Name myName = theWorkBook.createName();
         String mySheet = theWorkSheet.getSheetName();
@@ -586,9 +584,8 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
      * Access an integer from the WorkSheet.
      * @param pOffset the column offset
      * @return the integer
-     * @throws Exception on error
      */
-    protected Integer loadInteger(final int pOffset) throws Exception {
+    protected Integer loadInteger(final int pOffset) {
         /* Access the cells by reference */
         Cell myCell = theActiveRow.getCell(theBaseCol + pOffset);
         Integer myInt = null;
@@ -604,9 +601,8 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
      * Access a boolean from the WorkSheet.
      * @param pOffset the column offset
      * @return the date
-     * @throws Exception on error
      */
-    protected Boolean loadBoolean(final int pOffset) throws Exception {
+    protected Boolean loadBoolean(final int pOffset) {
         /* Access the cells by reference */
         Cell myCell = theActiveRow.getCell(theBaseCol + pOffset);
         Boolean myValue = null;
@@ -622,9 +618,8 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
      * Access a date from the WorkSheet.
      * @param pOffset the column offset
      * @return the date
-     * @throws Exception on error
      */
-    protected Date loadDate(final int pOffset) throws Exception {
+    protected Date loadDate(final int pOffset) {
         /* Access the cells by reference */
         Cell myCell = theActiveRow.getCell(theBaseCol + pOffset);
         Date myDate = null;
@@ -640,9 +635,8 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
      * Access a string from the WorkSheet.
      * @param pOffset the column offset
      * @return the string
-     * @throws Exception on error
      */
-    protected String loadString(final int pOffset) throws Exception {
+    protected String loadString(final int pOffset) {
         /* Access the cells by reference */
         Cell myCell = theActiveRow.getCell(theBaseCol + pOffset);
         String myValue = null;
@@ -666,9 +660,9 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
      * Access a byte array from the WorkSheet.
      * @param pOffset the column offset
      * @return the byte array
-     * @throws Exception on error
+     * @throws JDataException on error
      */
-    protected byte[] loadBytes(final int pOffset) throws Exception {
+    protected byte[] loadBytes(final int pOffset) throws JDataException {
         /* Access the cells by reference */
         Cell myCell = theActiveRow.getCell(theBaseCol + pOffset);
         byte[] myBytes = null;
@@ -684,9 +678,9 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
      * Access a char array from the WorkSheet.
      * @param pOffset the column offset
      * @return the char array
-     * @throws Exception on error
+     * @throws JDataException on error
      */
-    protected char[] loadChars(final int pOffset) throws Exception {
+    protected char[] loadChars(final int pOffset) throws JDataException {
         /* Access the bytes */
         byte[] myBytes = loadBytes(pOffset);
         char[] myChars = null;
@@ -702,10 +696,9 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
      * Write an integer to the WorkSheet.
      * @param pOffset the column offset
      * @param pValue the integer
-     * @throws Exception on error
      */
     protected void writeInteger(final int pOffset,
-                                final Integer pValue) throws Exception {
+                                final Integer pValue) {
         /* If we have non-null value */
         if (pValue != null) {
             /* Create the cell and set its value */
@@ -719,10 +712,9 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
      * Write a boolean to the WorkSheet.
      * @param pOffset the column offset
      * @param pValue the boolean
-     * @throws Exception on error
      */
     protected void writeBoolean(final int pOffset,
-                                final Boolean pValue) throws Exception {
+                                final Boolean pValue) {
         /* If we have non-null value */
         if (pValue != null) {
             /* Create the cell and set its value */
@@ -736,10 +728,9 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
      * Write a date to the WorkSheet.
      * @param pOffset the column offset
      * @param pValue the date
-     * @throws Exception on error
      */
     protected void writeDate(final int pOffset,
-                             final DateDay pValue) throws Exception {
+                             final DateDay pValue) {
         /* If we have non-null value */
         if (pValue != null) {
             /* Create the cell and set its value */
@@ -753,10 +744,9 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
      * Write a number to the WorkSheet.
      * @param pOffset the column offset
      * @param pValue the number
-     * @throws Exception on error
      */
     protected void writeNumber(final int pOffset,
-                               final Decimal pValue) throws Exception {
+                               final Decimal pValue) {
         /* If we have non-null value */
         if (pValue != null) {
             /* Create the cell and set its value */
@@ -770,10 +760,9 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
      * Write a Header to the WorkSheet.
      * @param pOffset the column offset
      * @param pHeader the header text
-     * @throws Exception on error
      */
     protected void writeHeader(final int pOffset,
-                               final String pHeader) throws Exception {
+                               final String pHeader) {
         /* If we have non-null value */
         if (pHeader != null) {
             /* Create the cell and set its value */
@@ -787,10 +776,9 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
      * Write a string to the WorkSheet.
      * @param pOffset the column offset
      * @param pValue the string
-     * @throws Exception on error
      */
     protected void writeString(final int pOffset,
-                               final String pValue) throws Exception {
+                               final String pValue) {
         /* If we have non-null value */
         if (pValue != null) {
             /* Create the cell and set its value */
@@ -804,10 +792,9 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
      * Write a byte array to the WorkSheet.
      * @param pOffset the column offset
      * @param pBytes the byte array
-     * @throws Exception on error
      */
     protected void writeBytes(final int pOffset,
-                              final byte[] pBytes) throws Exception {
+                              final byte[] pBytes) {
         /* If we have non-null bytes */
         if (pBytes != null) {
             /* Create the cell and set its value */
@@ -821,10 +808,10 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
      * Write a char array to the WorkSheet.
      * @param pOffset the column offset
      * @param pChars the char array
-     * @throws Exception on error
+     * @throws JDataException on error
      */
     protected void writeChars(final int pOffset,
-                              final char[] pChars) throws Exception {
+                              final char[] pChars) throws JDataException {
         /* If we have non-null chars */
         if (pChars != null) {
             /* Create the cell and add to the sheet */

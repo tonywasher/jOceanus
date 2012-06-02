@@ -90,8 +90,7 @@ public class DateDayCellEditor extends JDateCellEditor {
 
     @Override
     public Object getCellEditorValue() {
-        DateDay myDate = theButton.getSelectedDateDay();
-        return myDate;
+        return theButton.getSelectedDateDay();
     }
 
     @Override

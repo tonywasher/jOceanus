@@ -37,15 +37,14 @@ import java.util.List;
  * <ul>
  * <li>Null objects are not allowed.
  * <li>Duplicate objects are not allowed
- * <li>The semantics of the {@link #add(T)} method are changed such that the element is added at its natural
+ * <li>The semantics of the {@link #add} method are changed such that the element is added at its natural
  * position in the list rather than at the end of the * list. Methods that attempt to specify the position of
  * an object are disallowed.
- * <li>The {@link #subList(int, int)} method is not supported
+ * <li>The {@link #subList} method is not supported
  * </ul>
  * @author Tony Washer
  * @param <T> the data-type of the list
  */
-@SuppressWarnings("javadoc")
 public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable {
     /**
      * The Hash prime.

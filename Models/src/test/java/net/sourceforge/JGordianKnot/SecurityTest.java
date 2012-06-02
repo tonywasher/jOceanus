@@ -15,8 +15,8 @@ import java.util.Set;
 
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JGordianKnot.ZipFile.ZipFileContents;
 import net.sourceforge.JGordianKnot.ZipFile.ZipFileEntry;
 import net.sourceforge.JGordianKnot.ZipFile.ZipReadFile;
@@ -54,11 +54,11 @@ public class SecurityTest {
      * @param pDirectory the directory to archive
      * @param bSecure encrypt the zip file (true/false)
      * @return the contents of the zip file
-     * @throws ModelException
+     * @throws JDataException
      */
     protected static ZipFileContents createZipFile(File pZipFile,
                                                    File pDirectory,
-                                                   boolean bSecure) throws ModelException {
+                                                   boolean bSecure) throws JDataException {
         ZipWriteFile myZipFile;
 
         try {
@@ -85,7 +85,7 @@ public class SecurityTest {
 
             /* Make sure that we have a directory */
             if (!pDirectory.isDirectory())
-                throw new ModelException(ExceptionClass.LOGIC, "Invalid source directory");
+                throw new JDataException(ExceptionClass.LOGIC, "Invalid source directory");
 
             /* Loop through the files is the directory */
             for (File myFile : pDirectory.listFiles()) {
@@ -117,10 +117,10 @@ public class SecurityTest {
             /* Return the zip file entries */
             return myZipFile.getContents();
 
-        } catch (ModelException e) {
+        } catch (JDataException e) {
             throw e;
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.DATA, "Failed to create Zip File", e);
+            throw new JDataException(ExceptionClass.DATA, "Failed to create Zip File", e);
         }
     }
 
@@ -128,10 +128,10 @@ public class SecurityTest {
      * Extract a Zip File to a directory
      * @param pZipFile the name of the zip file to extract from
      * @param pDirectory the directory to extract to
-     * @throws ModelException
+     * @throws JDataException
      */
     protected static void extractZipFile(File pZipFile,
-                                         File pDirectory) throws ModelException {
+                                         File pDirectory) throws JDataException {
         ZipReadFile myZipFile;
 
         try {
@@ -157,7 +157,7 @@ public class SecurityTest {
 
             /* Make sure that we have a directory */
             if (!pDirectory.isDirectory())
-                throw new ModelException(ExceptionClass.LOGIC, "Invalid source directory");
+                throw new JDataException(ExceptionClass.LOGIC, "Invalid source directory");
 
             Iterator<ZipFileEntry> myIterator = myContents.iterator();
             while (myIterator.hasNext()) {
@@ -182,18 +182,18 @@ public class SecurityTest {
                 myOutBuffer.close();
             }
 
-        } catch (ModelException e) {
+        } catch (JDataException e) {
             throw e;
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.DATA, "Failed to extract Zip File", e);
+            throw new JDataException(ExceptionClass.DATA, "Failed to extract Zip File", e);
         }
     }
 
     /**
      * Test security algorithms
-     * @throws ModelException
+     * @throws JDataException
      */
-    protected static void testSecurity() throws ModelException {
+    protected static void testSecurity() throws JDataException {
         /* Create new Password Hash */
         SecureManager myManager = new SecureManager();
         PasswordHash myHash = myManager.resolvePasswordHash(null, "New");

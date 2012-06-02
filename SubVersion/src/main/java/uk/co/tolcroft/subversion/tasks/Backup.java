@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * Subversion: Java SubVersion Management
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,13 +23,13 @@
 package uk.co.tolcroft.subversion.tasks;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
-import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JGordianKnot.PasswordHash;
 import net.sourceforge.JGordianKnot.SecureManager;
 import net.sourceforge.JGordianKnot.ZipFile.ZipWriteFile;
@@ -48,46 +49,51 @@ import org.tmatesoft.svn.core.wc.admin.SVNAdminClient;
 import org.tmatesoft.svn.core.wc.admin.SVNAdminEvent;
 import org.tmatesoft.svn.core.wc.admin.SVNAdminEventAction;
 
+import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 import uk.co.tolcroft.models.sheets.BackupPreferences;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.subversion.data.SubVersionPreferences;
 
+/**
+ * Handles backup of a repository.
+ * @author Tony Washer
+ */
 public class Backup {
     /**
-     * The Data file name
+     * The Data file name.
      */
-    public final static String fileData = "zipData";
+    public static final String DATA_NAME = "zipData";
 
     /**
-     * The Subversion preferences
+     * The Subversion preferences.
      */
-    private SubVersionPreferences thePreferences = null;
+    private final SubVersionPreferences thePreferences;
 
     /**
-     * The Authentication manager
+     * The Authentication manager.
      */
-    private ISVNAuthenticationManager theAuth = null;
+    private final ISVNAuthenticationManager theAuth;
 
     /**
-     * The Client Manager
+     * The Client Manager.
      */
-    private SVNClientManager theManager = null;
+    private final SVNClientManager theManager;
 
     /**
-     * The Administration Client
+     * The Administration Client.
      */
-    private SVNAdminClient theAdminClient = null;
+    private final SVNAdminClient theAdminClient;
 
     /**
-     * The Thread Status
+     * The Thread Status.
      */
-    private ThreadStatus<?> theStatus = null;
+    private final ThreadStatus<?> theStatus;
 
     /**
-     * Constructor
+     * Constructor.
      * @param pStatus the thread status
      */
-    public Backup(ThreadStatus<?> pStatus) {
+    public Backup(final ThreadStatus<?> pStatus) {
         /* Store parameters */
         theStatus = pStatus;
 
@@ -96,8 +102,8 @@ public class Backup {
 
         /* Access a default client manager */
         theAuth = SVNWCUtil.createDefaultAuthenticationManager(thePreferences
-                .getStringValue(SubVersionPreferences.nameSubVersionUser), thePreferences
-                .getStringValue(SubVersionPreferences.nameSubVersionPass));
+                .getStringValue(SubVersionPreferences.NAME_SVN_USER), thePreferences
+                .getStringValue(SubVersionPreferences.NAME_SVN_PASS));
 
         /* Access a default client manager */
         theManager = SVNClientManager.newInstance();
@@ -108,35 +114,32 @@ public class Backup {
     }
 
     /**
-     * Load a repository from the input stream
+     * Load a repository from the input stream.
      * @param pRepository the repository directory
      * @param pStream the input stream
-     * @throws SVNException
+     * @throws SVNException on error
      */
-    public void loadRepository(File pRepository,
-                               InputStream pStream) throws SVNException {
+    public void loadRepository(final File pRepository,
+                               final InputStream pStream) throws SVNException {
         /* Re-create the repository */
         theAdminClient.doCreateRepository(pRepository, null, true, true);
 
         /* Read the data from the input stream */
         theAdminClient.doLoad(pRepository, pStream);
-
-        /* Return to caller */
-        return;
     }
 
     /**
-     * Dump a repository to a Backup directory
+     * Dump a repository to a Backup directory.
      * @param pManager the secure manager
      * @param pHash the password hash
      * @param pRepository the repository directory
      * @param pBackupDir the backup directory
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    private void backUpRepository(SecureManager pManager,
-                                  PasswordHash pHash,
-                                  File pRepository,
-                                  File pBackupDir) throws ModelException {
+    private void backUpRepository(final SecureManager pManager,
+                                  final PasswordHash pHash,
+                                  final File pRepository,
+                                  final File pBackupDir) throws JDataException {
         ZipWriteFile myZipFile = null;
         OutputStream myStream = null;
         boolean bSuccess = true;
@@ -148,13 +151,13 @@ public class Backup {
         try {
             /* Access the name of the repository */
             myName = pRepository.getName();
-            myEntryName = new File(fileData);
+            myEntryName = new File(DATA_NAME);
 
             /* Determine the prefix for backups */
-            String myPrefix = thePreferences.getStringValue(SubVersionPreferences.nameRepoPfix);
+            String myPrefix = thePreferences.getStringValue(SubVersionPreferences.NAME_REPO_PFIX);
 
             /* Determine the repository name */
-            String myRepoName = thePreferences.getStringValue(SubVersionPreferences.nameSubVersionRepo) + "/"
+            String myRepoName = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_REPO) + "/"
                     + myName;
             SVNURL myURL = SVNURL.parseURIDecoded(myRepoName);
 
@@ -188,8 +191,9 @@ public class Backup {
             int myNumRevisions = (int) revLast;
 
             /* Declare the number of revisions */
-            if (!theStatus.setNumSteps(myNumRevisions))
+            if (!theStatus.setNumSteps(myNumRevisions)) {
                 return;
+            }
 
             /* Note presumption of failure */
             bSuccess = false;
@@ -215,49 +219,49 @@ public class Backup {
 
             /* Note success */
             bSuccess = true;
-        }
 
-        /* Handle standard exceptions */
-        catch (ModelException e) {
-            throw e;
-        }
+            /* Handle other exceptions */
+        } catch (SVNException e) {
+            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to dump repository to zipfile", e);
 
-        /* Handle other exceptions */
-        catch (Exception e) {
-            throw new ModelException(ExceptionClass.SUBVERSION, "Failed to dump repository to zipfile", e);
-        }
+            /* Handle other exceptions */
+        } catch (IOException e) {
+            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to dump repository to zipfile", e);
 
-        /* Clean up on exit */
-        finally {
+            /* Clean up on exit */
+        } finally {
             /* Protect while cleaning up */
             try {
                 /* Close the output stream */
-                if (myStream != null)
+                if (myStream != null) {
                     myStream.close();
+                }
 
                 /* Close the Zip file */
-                if (myZipFile != null)
+                if (myZipFile != null) {
                     myZipFile.close();
-            }
+                }
 
-            /* Ignore errors */
-            catch (Exception ex) {
+                /* Ignore errors */
+            } catch (Exception ex) {
+                myStream = null;
             }
 
             /* Delete the file on error */
-            if ((!bSuccess) && (myZipName != null))
+            if ((!bSuccess) && (myZipName != null)) {
                 myZipName.delete();
+            }
         }
     }
 
     /**
-     * Backup repositories
+     * Backup repositories.
      * @param pManager the secure manager
      * @param pHash the password hash
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public void backUpRepositories(SecureManager pManager,
-                                   PasswordHash pHash) throws ModelException {
+    public void backUpRepositories(final SecureManager pManager,
+                                   final PasswordHash pHash) throws JDataException {
         int iNumStages = 0;
 
         /* Install an event handler */
@@ -267,32 +271,36 @@ public class Backup {
         BackupPreferences myBUPreferences = PreferenceManager.getPreferenceSet(BackupPreferences.class);
 
         /* Determine the repository and backup directories directory */
-        File myRepo = new File(thePreferences.getStringValue(SubVersionPreferences.nameSubVersionDir));
-        File myBackup = new File(myBUPreferences.getStringValue(BackupPreferences.nameBackupDir));
+        File myRepo = new File(thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_DIR));
+        File myBackup = new File(myBUPreferences.getStringValue(BackupPreferences.NAME_BACKUP_DIR));
 
         /* Loop through the repository directories */
         for (File myRepository : myRepo.listFiles()) {
             /* Count if its is a directory */
-            if (myRepository.isDirectory())
+            if (myRepository.isDirectory()) {
                 iNumStages++;
+            }
         }
 
         /* Declare the number of stages */
         boolean bContinue = theStatus.setNumStages(iNumStages);
 
         /* Ignore if cancelled */
-        if (!bContinue)
+        if (!bContinue) {
             return;
+        }
 
         /* Loop through the repository directories */
         for (File myRepository : myRepo.listFiles()) {
             /* Ignore if its is not a directory */
-            if (!myRepository.isDirectory())
+            if (!myRepository.isDirectory()) {
                 continue;
+            }
 
             /* Set new stage and break if cancelled */
-            if (!theStatus.setNewStage(myRepository.getName()))
+            if (!theStatus.setNewStage(myRepository.getName())) {
                 break;
+            }
 
             /* Backup the repositories */
             backUpRepository(pManager, pHash, myRepository, myBackup);
@@ -300,31 +308,32 @@ public class Backup {
     }
 
     /**
-     * Event Handler class
+     * Event Handler class.
      */
-    private class SubversionHandler implements ISVNAdminEventHandler {
+    private final class SubversionHandler implements ISVNAdminEventHandler {
 
         @Override
         public void checkCancelled() throws SVNCancelException {
-            if (theStatus.isCancelled())
+            if (theStatus.isCancelled()) {
                 throw new SVNCancelException();
+            }
         }
 
         @Override
-        public void handleAdminEvent(SVNAdminEvent pEvent,
-                                     double arg1) throws SVNException {
+        public void handleAdminEvent(final SVNAdminEvent pEvent,
+                                     final double arg1) throws SVNException {
             /* Ignore if not an interesting event */
-            if (pEvent.getAction() != SVNAdminEventAction.REVISION_DUMPED)
+            if (pEvent.getAction() != SVNAdminEventAction.REVISION_DUMPED) {
                 return;
+            }
 
             /* Set steps done value */
             theStatus.setStepsDone((int) pEvent.getRevision());
         }
 
         @Override
-        public void handleEvent(SVNEvent arg0,
-                                double arg1) throws SVNException {
+        public void handleEvent(final SVNEvent arg0,
+                                final double arg1) throws SVNException {
         }
-
     }
 }

@@ -22,8 +22,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.database;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
 import uk.co.tolcroft.models.data.DataSet;
@@ -35,7 +35,7 @@ public class TableControlKeys extends DatabaseTable<ControlKey> {
     /**
      * The name of the ControlKeys table.
      */
-    protected static final String TABLE_NAME = ControlKey.listName;
+    protected static final String TABLE_NAME = ControlKey.LIST_NAME;
 
     /**
      * The table definition.
@@ -76,7 +76,7 @@ public class TableControlKeys extends DatabaseTable<ControlKey> {
     }
 
     @Override
-    protected void loadItem(final int pId) throws ModelException {
+    protected void loadItem(final int pId) throws JDataException {
         byte[] myHash;
 
         /* Get the various fields */
@@ -88,7 +88,7 @@ public class TableControlKeys extends DatabaseTable<ControlKey> {
 
     @Override
     protected void setFieldValue(final ControlKey pItem,
-                                 final ReportField iField) throws ModelException {
+                                 final JDataField iField) throws JDataException {
         /* Switch on field id */
         if (iField == ControlKey.FIELD_PASSHASH) {
             theTableDef.setBinaryValue(iField, pItem.getHashBytes());

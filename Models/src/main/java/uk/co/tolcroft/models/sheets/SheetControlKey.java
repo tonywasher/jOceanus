@@ -22,6 +22,7 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.sheets;
 
+import net.sourceforge.JDataManager.JDataException;
 import uk.co.tolcroft.models.data.ControlKey;
 import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
 import uk.co.tolcroft.models.data.DataSet;
@@ -83,7 +84,7 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
     }
 
     @Override
-    protected void loadItem() throws Exception {
+    protected void loadItem() throws JDataException {
         /* Access the IDs */
         int myID = loadInteger(COL_ID);
 
@@ -95,18 +96,18 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
     }
 
     @Override
-    protected void insertItem(final ControlKey pItem) throws Exception {
+    protected void insertItem(final ControlKey pItem) throws JDataException {
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
         writeBytes(COL_KEYDATA, pItem.getHashBytes());
     }
 
     @Override
-    protected void preProcessOnWrite() throws Exception {
+    protected void preProcessOnWrite() throws JDataException {
     }
 
     @Override
-    protected void postProcessOnWrite() throws Exception {
+    protected void postProcessOnWrite() throws JDataException {
         /* Set the two columns as the range */
         nameRange(NUM_COLS);
     }

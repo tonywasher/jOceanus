@@ -29,45 +29,44 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
-import net.sourceforge.JDataManager.ReportFields;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
-import net.sourceforge.JDataManager.ReportObject.ReportDetail;
-import net.sourceforge.JGordianKnot.ZipFile.StreamCipher;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
 
 /**
  * Symmetric Key implementation.
  * @author Tony Washer
  */
-public class SymmetricKey implements ReportDetail {
+public class SymmetricKey implements JDataContents {
     /**
      * Report fields.
      */
-    protected static final ReportFields FIELD_DEFS = new ReportFields(SymmetricKey.class.getSimpleName());
+    protected static final JDataFields FIELD_DEFS = new JDataFields(SymmetricKey.class.getSimpleName());
 
     /**
      * KeyType Field ID.
      */
-    public static final ReportField FIELD_KEYTYPE = FIELD_DEFS.declareLocalField("KeyType");
+    public static final JDataField FIELD_KEYTYPE = FIELD_DEFS.declareLocalField("KeyType");
 
     /**
      * KeyLength Field ID.
      */
-    public static final ReportField FIELD_KEYLEN = FIELD_DEFS.declareLocalField("KeyLength");
+    public static final JDataField FIELD_KEYLEN = FIELD_DEFS.declareLocalField("KeyLength");
 
     /**
      * InitVector Length Field ID.
      */
-    public static final ReportField FIELD_IVLEN = FIELD_DEFS.declareLocalField("IVLength");
+    public static final JDataField FIELD_IVLEN = FIELD_DEFS.declareLocalField("IVLength");
 
     @Override
-    public ReportFields getReportFields() {
+    public JDataFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final ReportField pField) {
+    public Object getFieldValue(final JDataField pField) {
         if (pField == FIELD_KEYTYPE) {
             return theKeyType;
         }
@@ -81,7 +80,7 @@ public class SymmetricKey implements ReportDetail {
     }
 
     @Override
-    public String getObjectSummary() {
+    public String formatObject() {
         return "SymmetricKey(" + theKeyType + ")";
     }
 
@@ -178,11 +177,11 @@ public class SymmetricKey implements ReportDetail {
      * @param pGenerator the security generator
      * @param pKeyType Symmetric KeyType
      * @param useRestricted use restricted keys
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public SymmetricKey(final SecurityGenerator pGenerator,
                         final SymKeyType pKeyType,
-                        final boolean useRestricted) throws ModelException {
+                        final boolean useRestricted) throws JDataException {
         /* Store the KeyType and the Generator */
         theKeyType = pKeyType;
         theKeyLen = getKeyLen(useRestricted);
@@ -198,11 +197,11 @@ public class SymmetricKey implements ReportDetail {
      * @param pGenerator the security generator
      * @param pKey Secret Key for algorithm
      * @param pKeyType Symmetric KeyType
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     protected SymmetricKey(final SecurityGenerator pGenerator,
                            final SecretKey pKey,
-                           final SymKeyType pKeyType) throws ModelException {
+                           final SymKeyType pKeyType) throws JDataException {
         /* Store the KeyType and the Generator */
         theKeyType = pKeyType;
         theKeyLen = pKey.getEncoded().length;
@@ -249,9 +248,9 @@ public class SymmetricKey implements ReportDetail {
     /**
      * Initialise data cipher for encryption/decryption.
      * @return the Data Cipher
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public DataCipher initDataCipher() throws ModelException {
+    public DataCipher initDataCipher() throws JDataException {
         /* Protect against exceptions */
         try {
             /* Create a new cipher */
@@ -262,16 +261,16 @@ public class SymmetricKey implements ReportDetail {
 
             /* catch exceptions */
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.CRYPTO, "Failed to initialise cipher", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise cipher", e);
         }
     }
 
     /**
      * Initialise stream cipher for encryption with random initialisation vector.
      * @return the Stream Cipher
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public StreamCipher initEncryptionStream() throws ModelException {
+    public StreamCipher initEncryptionStream() throws JDataException {
         /* Protect against exceptions */
         try {
             /* Create a new cipher */
@@ -285,7 +284,7 @@ public class SymmetricKey implements ReportDetail {
 
             /* catch exceptions */
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.CRYPTO, "Failed to initialise cipher", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise cipher", e);
         }
     }
 
@@ -293,9 +292,9 @@ public class SymmetricKey implements ReportDetail {
      * Initialise Stream cipher for decryption with initialisation vector.
      * @param pInitVector Initialisation vector for cipher
      * @return the Stream Cipher
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public StreamCipher initDecryptionStream(final byte[] pInitVector) throws ModelException {
+    public StreamCipher initDecryptionStream(final byte[] pInitVector) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Create a new cipher */
@@ -310,7 +309,7 @@ public class SymmetricKey implements ReportDetail {
 
             /* catch exceptions */
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.CRYPTO, "Failed to initialise cipher", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise cipher", e);
         }
     }
 }

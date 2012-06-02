@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataManager: Java Data Manager
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,50 +24,90 @@ package net.sourceforge.JDataManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
 
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 
-public class DataConverter {
+/**
+ * Data Conversion utility functions.
+ * @author Tony Washer
+ */
+public final class DataConverter {
     /**
-     * Byte encoding
+     * Byte encoding.
      */
-    private final static String ENCODING = "UTF-8";
+    private static final String ENCODING = "UTF-8";
 
     /**
-     * format a byte array as a hexadecimal string
+     * Hexadecimal Radix.
+     */
+    public static final int HEX_RADIX = 16;
+
+    /**
+     * Number of bytes in a long.
+     */
+    public static final int BYTES_LONG = 8;
+
+    /**
+     * Number of bytes in an integer.
+     */
+    public static final int BYTES_INTEGER = 4;
+
+    /**
+     * Byte shift.
+     */
+    public static final int BYTE_SHIFT = 8;
+
+    /**
+     * Byte mask.
+     */
+    public static final int BYTE_MASK = 0xFF;
+
+    /**
+     * Nybble shift.
+     */
+    public static final int NYBBLE_SHIFT = 4;
+
+    /**
+     * Nybble mask.
+     */
+    public static final int NYBBLE_MASK = 0xF;
+
+    /**
+     * Private constructor to avoid instantiation.
+     */
+    private DataConverter() {
+    }
+
+    /**
+     * format a byte array as a hexadecimal string.
      * @param pBytes the byte array
      * @return the string
      */
-    public static String bytesToHexString(byte[] pBytes) {
-        int myInt;
-        int myDigit;
-        char myChar;
-        StringBuilder myValue;
-
+    public static String bytesToHexString(final byte[] pBytes) {
         /* Allocate the string builder */
-        myValue = new StringBuilder(2 * pBytes.length);
+        StringBuilder myValue = new StringBuilder(2 * pBytes.length);
 
         /* For each byte in the value */
         for (Byte b : pBytes) {
             /* Access the byte as an unsigned integer */
-            myInt = (int) b;
-            if (myInt < 0)
-                myInt += 256;
+            int myInt = (int) b;
+            if (myInt < 0) {
+                myInt += BYTE_MASK + 1;
+            }
 
-            /* Access the high digit */
-            myDigit = myInt / 16;
-            myChar = (char) ((myDigit > 9) ? ('a' + (myDigit - 10)) : ('0' + myDigit));
+            /* Access the high nybble */
+            int myDigit = myInt >>> NYBBLE_SHIFT;
+            char myChar = Character.forDigit(myDigit, HEX_RADIX);
 
             /* Add it to the value string */
             myValue.append(myChar);
 
             /* Access the low digit */
-            myDigit = myInt % 16;
-            myChar = (char) ((myDigit > 9) ? ('a' + (myDigit - 10)) : ('0' + myDigit));
+            myDigit = myInt & NYBBLE_MASK;
+            myChar = Character.forDigit(myDigit, HEX_RADIX);
 
             /* Add it to the value string */
             myValue.append(myChar);
@@ -77,49 +118,47 @@ public class DataConverter {
     }
 
     /**
-     * format a long as a hexadecimal string
+     * format a long as a hexadecimal string.
      * @param pValue the long value
      * @return the string
      */
-    public static String longToHexString(long pValue) {
-        int myDigit;
-        char myChar;
-        long myLong;
-        StringBuilder myValue;
-
+    public static String longToHexString(final long pValue) {
         /* Access the long value */
-        myLong = pValue;
+        long myLong = pValue;
 
         /* Allocate the string builder */
-        myValue = new StringBuilder();
+        StringBuilder myValue = new StringBuilder();
 
         /* handle negative values */
         boolean isNegative = (myLong < 0);
-        if (isNegative)
+        if (isNegative) {
             myLong = -myLong;
+        }
 
         /* Special case for zero */
-        if (myLong == 0)
+        if (myLong == 0) {
             myValue.append("00");
 
-        /* else need to loop through the digits */
-        else {
+            /* else need to loop through the digits */
+        } else {
             /* While we have digits to format */
             while (myLong > 0) {
                 /* Access the digit and move to next one */
-                myDigit = (int) (myLong % 16);
-                myChar = (char) ((myDigit > 9) ? ('a' + (myDigit - 10)) : ('0' + myDigit));
+                int myDigit = (int) (myLong & NYBBLE_MASK);
+                char myChar = Character.forDigit(myDigit, HEX_RADIX);
                 myValue.insert(0, myChar);
-                myLong >>= 4;
+                myLong >>>= NYBBLE_SHIFT;
             }
 
             /* If we are odd length prefix a zero */
-            if ((myValue.length() % 2) != 0)
+            if ((myValue.length() & 1) != 0) {
                 myValue.insert(0, '0');
+            }
 
             /* Reinstate negative sign */
-            if (isNegative)
+            if (isNegative) {
                 myValue.insert(0, '-');
+            }
         }
 
         /* Return the string */
@@ -127,48 +166,53 @@ public class DataConverter {
     }
 
     /**
-     * parse a byte array from a hexadecimal string
+     * parse a byte array from a hexadecimal string.
      * @param pHexString the hex string
      * @return the bytes
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public static byte[] hexStringToBytes(String pHexString) throws ModelException {
-        byte[] myByteValue;
-        char myChar;
-        int myInt;
-        int myLen;
-
+    public static byte[] hexStringToBytes(final String pHexString) throws JDataException {
         /* Access the length of the hex string */
-        myLen = pHexString.length();
+        int myLen = pHexString.length();
 
         /* Check that it has an even length */
-        if ((myLen % 2) != 0)
-            throw new ModelException(ExceptionClass.DATA, "Invalid HexString Length: " + pHexString);
+        if ((myLen % 2) != 0) {
+            throw new JDataException(ExceptionClass.DATA, "Invalid HexString Length: " + pHexString);
+        }
 
         /* Allocate the new bytes array */
-        myByteValue = new byte[myLen / 2];
+        byte[] myByteValue = new byte[myLen / 2];
 
         /* Loop through the string */
         for (int i = 0; i < myLen; i += 2) {
             /* Access the top level byte */
-            myChar = pHexString.charAt(i);
-            myInt = 16 * ((myChar >= 'a') ? 10 + (myChar - 'a') : (myChar - '0'));
+            char myChar = pHexString.charAt(i);
+            int myDigit = Character.digit(myChar, HEX_RADIX);
 
             /* Check that the char is a valid hex digit */
-            if (!Character.isDigit(myChar) && ((myChar < 'a') || (myChar > 'f')))
-                throw new ModelException(ExceptionClass.DATA, "Non Hexadecimal Value: " + pHexString);
+            if (myDigit < 0) {
+                throw new JDataException(ExceptionClass.DATA, "Non Hexadecimal Value: " + pHexString);
+            }
+
+            /* Initialise result */
+            int myInt = myDigit << NYBBLE_SHIFT;
 
             /* Access the second byte */
             myChar = pHexString.charAt(i + 1);
-            myInt += ((myChar >= 'a') ? 10 + (myChar - 'a') : (myChar - '0'));
+            myDigit = Character.digit(myChar, HEX_RADIX);
 
             /* Check that the char is a valid hex digit */
-            if (!Character.isDigit(myChar) && ((myChar < 'a') || (myChar > 'f')))
-                throw new ModelException(ExceptionClass.DATA, "Non Hexadecimal Value: " + pHexString);
+            if (myDigit < 0) {
+                throw new JDataException(ExceptionClass.DATA, "Non Hexadecimal Value: " + pHexString);
+            }
+
+            /* Add into result */
+            myInt += myDigit;
 
             /* Convert to byte and store */
-            if (myInt > 127)
-                myInt -= 256;
+            if (myInt > Byte.MAX_VALUE) {
+                myInt -= BYTE_MASK + 1;
+            }
             myByteValue[i / 2] = (byte) myInt;
         }
 
@@ -177,19 +221,16 @@ public class DataConverter {
     }
 
     /**
-     * parse a long from a hexadecimal string
+     * parse a long from a hexadecimal string.
      * @param pHexString the hex string
      * @return the bytes
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public static long hexStringToLong(String pHexString) throws ModelException {
-        int myLen;
-        char myChar;
-        long myValue = 0;
-        String myHexString = pHexString;
-
+    public static long hexStringToLong(final String pHexString) throws JDataException {
         /* Access the length of the hex string */
-        myLen = myHexString.length();
+        String myHexString = pHexString;
+        int myLen = myHexString.length();
+        long myValue = 0;
 
         /* handle negative values */
         boolean isNegative = ((myLen > 0) && (myHexString.charAt(0) == '-'));
@@ -199,38 +240,42 @@ public class DataConverter {
         }
 
         /* Check that it has an even length */
-        if ((myLen % 2) != 0)
-            throw new ModelException(ExceptionClass.DATA, "Invalid HexString Length: " + pHexString);
+        if ((myLen % 2) != 0) {
+            throw new JDataException(ExceptionClass.DATA, "Invalid HexString Length: " + pHexString);
+        }
 
         /* Loop through the string */
         for (int i = 0; i < myLen; i++) {
             /* Access the next character */
-            myChar = myHexString.charAt(i);
+            char myChar = myHexString.charAt(i);
+            int myDigit = Character.digit(myChar, HEX_RADIX);
 
             /* Check that the char is a valid hex digit */
-            if (!Character.isDigit(myChar) && ((myChar < 'a') || (myChar > 'f')))
-                throw new ModelException(ExceptionClass.DATA, "Non Hexadecimal Value: " + myHexString);
+            if (myDigit < 0) {
+                throw new JDataException(ExceptionClass.DATA, "Non Hexadecimal Value: " + pHexString);
+            }
 
             /* Add into the value */
-            myValue <<= 4;
-            myValue += ((myChar >= 'a') ? 10 + (myChar - 'a') : (myChar - '0'));
+            myValue <<= NYBBLE_SHIFT;
+            myValue += myDigit;
         }
 
         /* Reinstate negative values */
-        if (isNegative)
+        if (isNegative) {
             myValue = -myValue;
+        }
 
         /* Return the value */
         return myValue;
     }
 
     /**
-     * Convert character array to byte array
+     * Convert character array to byte array.
      * @param pChars the character array
      * @return the byte array
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public static byte[] charsToByteArray(char[] pChars) throws ModelException {
+    public static byte[] charsToByteArray(final char[] pChars) throws JDataException {
         /* protect against exceptions */
         try {
             /* Transform the character array to a byte array */
@@ -242,17 +287,17 @@ public class DataConverter {
             out.flush();
             return baos.toByteArray();
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.DATA, "Unable to convert character array to bytes");
+            throw new JDataException(ExceptionClass.DATA, "Unable to convert character array to bytes", e);
         }
     }
 
     /**
-     * Convert byte array to character array
+     * Convert byte array to character array.
      * @param pBytes the byte array
      * @return the character array
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public static char[] bytesToCharArray(byte[] pBytes) throws ModelException {
+    public static char[] bytesToCharArray(final byte[] pBytes) throws JDataException {
         /* protect against exceptions */
         try {
             /* Allocate the character array allowing for one character per byte */
@@ -270,27 +315,27 @@ public class DataConverter {
             /* Return the array */
             return myArray;
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.DATA, "Unable to convert byte array to characters");
+            throw new JDataException(ExceptionClass.DATA, "Unable to convert byte array to characters", e);
         }
     }
 
     /**
-     * parse a long from a byte array
+     * parse a long from a byte array.
      * @param pBytes the eight byte array holding the long
      * @return the long value
      */
-    public static long byteArrayToLong(byte[] pBytes) {
+    public static long byteArrayToLong(final byte[] pBytes) {
         int myByte;
         long myValue = 0;
 
         /* Loop through the bytes */
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < BYTES_LONG; i++) {
             /* Access the next byte as an unsigned integer */
             myByte = pBytes[i];
-            myByte &= 255;
+            myByte &= BYTE_MASK;
 
             /* Add in to value */
-            myValue <<= 8;
+            myValue <<= BYTE_SHIFT;
             myValue += myByte;
         }
 
@@ -299,23 +344,23 @@ public class DataConverter {
     }
 
     /**
-     * build a byte array from a long
+     * build a byte array from a long.
      * @param pValue the long value to convert
      * @return the byte array
      */
-    public static byte[] longToByteArray(long pValue) {
+    public static byte[] longToByteArray(final long pValue) {
         byte myByte;
-        byte[] myBytes = new byte[8];
+        byte[] myBytes = new byte[BYTES_LONG];
         long myValue = pValue;
 
         /* Loop through the bytes */
-        for (int i = 8; i > 0; i--) {
+        for (int i = BYTES_LONG; i > 0; i--) {
             /* Access the next byte as an unsigned integer */
-            myByte = (byte) (myValue & 255);
+            myByte = (byte) (myValue & BYTE_MASK);
             myBytes[i - 1] = myByte;
 
             /* Adjust value */
-            myValue >>= 8;
+            myValue >>= BYTE_SHIFT;
         }
 
         /* Return the value */
@@ -323,22 +368,22 @@ public class DataConverter {
     }
 
     /**
-     * parse a long from a byte array
-     * @param pBytes the eight byte array holding the long
-     * @return the long value
+     * parse an integer from a byte array.
+     * @param pBytes the four byte array holding the integer
+     * @return the integer value
      */
-    public static int byteArrayToInteger(byte[] pBytes) {
+    public static int byteArrayToInteger(final byte[] pBytes) {
         int myByte;
         int myValue = 0;
 
         /* Loop through the bytes */
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < BYTES_INTEGER; i++) {
             /* Access the next byte as an unsigned integer */
             myByte = pBytes[i];
-            myByte &= 255;
+            myByte &= BYTE_MASK;
 
             /* Add in to value */
-            myValue <<= 8;
+            myValue <<= BYTE_SHIFT;
             myValue += myByte;
         }
 
@@ -347,23 +392,23 @@ public class DataConverter {
     }
 
     /**
-     * build a byte array from an integer
+     * build a byte array from an integer.
      * @param pValue the integer value to convert
      * @return the byte array
      */
-    public static byte[] integerToByteArray(int pValue) {
+    public static byte[] integerToByteArray(final int pValue) {
         byte myByte;
-        byte[] myBytes = new byte[4];
+        byte[] myBytes = new byte[BYTES_INTEGER];
         int myValue = pValue;
 
         /* Loop through the bytes */
-        for (int i = 4; i > 0; i--) {
+        for (int i = BYTES_INTEGER; i > 0; i--) {
             /* Access the next byte as an unsigned integer */
-            myByte = (byte) (myValue & 255);
+            myByte = (byte) (myValue & BYTE_MASK);
             myBytes[i - 1] = myByte;
 
             /* Adjust value */
-            myValue >>= 8;
+            myValue >>= BYTE_SHIFT;
         }
 
         /* Return the value */
@@ -371,25 +416,25 @@ public class DataConverter {
     }
 
     /**
-     * get Bytes from String
+     * get Bytes from String.
      * @param pInput the bytes to obtain the string from
      * @return the bytes representing the bytes
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public static String byteArrayToString(byte[] pInput) throws ModelException {
+    public static String byteArrayToString(final byte[] pInput) throws JDataException {
         try {
             return new String(pInput, ENCODING);
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.DATA, "Failed to convert bytes to string", e);
+            throw new JDataException(ExceptionClass.DATA, "Failed to convert bytes to string", e);
         }
     }
 
     /**
-     * get Bytes from String
+     * get Bytes from String.
      * @param pInput the string to obtain the bytes from
      * @return the bytes representing the string
      */
-    public static byte[] stringToByteArray(String pInput) {
+    public static byte[] stringToByteArray(final String pInput) {
         try {
             return pInput.getBytes(ENCODING);
         } catch (Exception e) {
@@ -402,20 +447,22 @@ public class DataConverter {
      * @param pFirst the first Hash
      * @param pSecond the second Hash
      * @return the combined hash
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public static byte[] combineHashes(byte[] pFirst,
-                                       byte[] pSecond) throws ModelException {
+    public static byte[] combineHashes(final byte[] pFirst,
+                                       final byte[] pSecond) throws JDataException {
         byte[] myTarget = pSecond;
         byte[] mySource = pFirst;
         int myLen;
         int i;
 
         /* Handle nulls */
-        if (pFirst == null)
+        if (pFirst == null) {
             return pSecond;
-        if (pSecond == null)
+        }
+        if (pSecond == null) {
             return pFirst;
+        }
 
         /* If the target is smaller than the source */
         if (myTarget.length < mySource.length) {
@@ -438,51 +485,5 @@ public class DataConverter {
 
         /* return the array */
         return myTarget;
-    }
-
-    /**
-     * Remove a directory and all of its contents
-     * @param pDir the directory to remove
-     * @return success/failure
-     */
-    public static boolean removeDirectory(File pDir) {
-        /* Clear the directory */
-        if (!clearDirectory(pDir))
-            return false;
-
-        /* Delete the directory itself */
-        return (!pDir.exists()) || (pDir.delete());
-    }
-
-    /**
-     * Clear a directory of all of its contents
-     * @param pDir the directory to clear
-     * @return success/failure
-     */
-    public static boolean clearDirectory(File pDir) {
-        /* Handle trivial operations */
-        if (pDir == null)
-            return true;
-        if (!pDir.exists())
-            return true;
-        if (!pDir.isDirectory())
-            return false;
-
-        /* Loop through all items */
-        for (File myFile : pDir.listFiles()) {
-            /* If the file is a directory */
-            if (myFile.isDirectory()) {
-                /* Remove it recursively */
-                if (!removeDirectory(myFile))
-                    return false;
-            }
-
-            /* else remove the file */
-            else if (!myFile.delete())
-                return false;
-        }
-
-        /* All cleared */
-        return true;
     }
 }

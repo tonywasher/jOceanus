@@ -21,33 +21,33 @@
  ******************************************************************************/
 package net.sourceforge.JSortedList;
 
-import net.sourceforge.JDataManager.ReportFields;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
-import net.sourceforge.JDataManager.ReportObject;
-import net.sourceforge.JDataManager.ReportObject.ReportDetail;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
 
-public class LinkNode<T extends LinkObject<T>> implements ReportDetail {
+public class LinkNode<T extends LinkObject<T>> implements JDataContents {
     /**
      * Report fields
      */
-    protected static final ReportFields theFields = new ReportFields(LinkNode.class.getSimpleName());
+    protected static final JDataFields theFields = new JDataFields(LinkNode.class.getSimpleName());
 
     /* Field IDs */
-    public static final ReportField FIELD_ITEM = theFields.declareLocalField("Item");
-    public static final ReportField FIELD_LIST = theFields.declareLocalField("List");
-    public static final ReportField FIELD_NEXT = theFields.declareLocalField("Next");
-    public static final ReportField FIELD_PREV = theFields.declareLocalField("Previous");
-    public static final ReportField FIELD_HIDN = theFields.declareLocalField("isHidden");
-    public static final ReportField FIELD_IDX = theFields.declareLocalField("Index");
-    public static final ReportField FIELD_HIDX = theFields.declareLocalField("HiddenIndex");
+    public static final JDataField FIELD_ITEM = theFields.declareLocalField("Item");
+    public static final JDataField FIELD_LIST = theFields.declareLocalField("List");
+    public static final JDataField FIELD_NEXT = theFields.declareLocalField("Next");
+    public static final JDataField FIELD_PREV = theFields.declareLocalField("Previous");
+    public static final JDataField FIELD_HIDN = theFields.declareLocalField("isHidden");
+    public static final JDataField FIELD_IDX = theFields.declareLocalField("Index");
+    public static final JDataField FIELD_HIDX = theFields.declareLocalField("HiddenIndex");
 
     @Override
-    public ReportFields getReportFields() {
+    public JDataFields getDataFields() {
         return theFields;
     }
 
     @Override
-    public Object getFieldValue(ReportField pField) {
+    public Object getFieldValue(JDataField pField) {
         if (pField == FIELD_ITEM)
             return theObject;
         if (pField == FIELD_LIST)
@@ -57,7 +57,7 @@ public class LinkNode<T extends LinkObject<T>> implements ReportDetail {
         if (pField == FIELD_PREV)
             return thePrev;
         if (pField == FIELD_HIDN)
-            return (isHidden) ? true : ReportObject.skipField;
+            return (isHidden) ? true : JDataObject.FIELD_SKIP;
         if (pField == FIELD_IDX)
             return theIndex;
         if (pField == FIELD_HIDX)
@@ -66,7 +66,7 @@ public class LinkNode<T extends LinkObject<T>> implements ReportDetail {
     }
 
     @Override
-    public String getObjectSummary() {
+    public String formatObject() {
         return "LinkNode(" + theIndex + "," + theHiddenIndex + ")";
     }
 

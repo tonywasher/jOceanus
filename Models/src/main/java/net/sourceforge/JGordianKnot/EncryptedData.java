@@ -31,8 +31,10 @@ import java.util.Locale;
 
 import net.sourceforge.JDataManager.DataConverter;
 import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataObject;
+import net.sourceforge.JDataManager.JDataObject.JDataFormat;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Decimal;
 import net.sourceforge.JDecimal.Dilution;
@@ -72,207 +74,35 @@ public final class EncryptedData {
     }
 
     /**
-     * Field Generator Helper class.
+     * Encrypted Money length.
      */
-    public static class EncryptionGenerator {
-        /**
-         * The CipherSet to use for generation.
-         */
-        private final CipherSet theCipherSet;
+    public static final int MONEYLEN = 15;
 
-        /**
-         * Constructor.
-         * @param pCipherSet the CipherSet
-         */
-        public EncryptionGenerator(final CipherSet pCipherSet) {
-            /* Store Parameter */
-            theCipherSet = pCipherSet;
-        }
+    /**
+     * Encrypted Units length.
+     */
+    public static final int UNITSLEN = 15;
 
-        /**
-         * Set Encrypted value.
-         * @param pCurrent the current encrypted value
-         * @param pValue the new value to encrypt
-         * @return the encrypted field
-         * @throws ModelException on error
-         */
-        public EncryptedField<?> encryptValue(final EncryptedField<?> pCurrent,
-                                              final Object pValue) throws ModelException {
-            /* If we are passed a null value just return null */
-            if (pValue == null) {
-                return null;
-            }
+    /**
+     * Encrypted Rate length.
+     */
+    public static final int RATELEN = 10;
 
-            /* Access current value */
-            EncryptedField<?> myCurrent = pCurrent;
+    /**
+     * Encrypted Price length.
+     */
+    public static final int PRICELEN = 15;
 
-            /* If we have no cipher or else a different cipher, ignore the current value */
-            if ((myCurrent != null)
-                    && ((theCipherSet == null) || (!theCipherSet.equals(myCurrent.getCipherSet())))) {
-                myCurrent = null;
-            }
-
-            /* If the value is not changed return the current value */
-            if ((myCurrent != null) && (Difference.isEqual(myCurrent.getValue(), pValue))) {
-                return pCurrent;
-            }
-
-            /* We need a new Field so handle each case individually */
-            if (String.class.isInstance(pValue)) {
-                return new EncryptedString(theCipherSet, (String) pValue);
-            }
-            if (Short.class.isInstance(pValue)) {
-                return new EncryptedShort(theCipherSet, (Short) pValue);
-            }
-            if (Integer.class.isInstance(pValue)) {
-                return new EncryptedInteger(theCipherSet, (Integer) pValue);
-            }
-            if (Long.class.isInstance(pValue)) {
-                return new EncryptedLong(theCipherSet, (Long) pValue);
-            }
-            if (Boolean.class.isInstance(pValue)) {
-                return new EncryptedBoolean(theCipherSet, (Boolean) pValue);
-            }
-            if (Date.class.isInstance(pValue)) {
-                return new EncryptedDate(theCipherSet, (Date) pValue);
-            }
-            if (char[].class.isInstance(pValue)) {
-                return new EncryptedCharArray(theCipherSet, (char[]) pValue);
-            }
-            if (Float.class.isInstance(pValue)) {
-                return new EncryptedFloat(theCipherSet, (Float) pValue);
-            }
-            if (Double.class.isInstance(pValue)) {
-                return new EncryptedDouble(theCipherSet, (Double) pValue);
-            }
-
-            /* Handle big integer classes */
-            if (BigInteger.class.isInstance(pValue)) {
-                return new EncryptedBigInteger(theCipherSet, (BigInteger) pValue);
-            }
-            if (BigDecimal.class.isInstance(pValue)) {
-                return new EncryptedBigDecimal(theCipherSet, (BigDecimal) pValue);
-            }
-
-            /* Handle decimal instances */
-            if (DateDay.class.isInstance(pValue)) {
-                return new EncryptedDateDay(theCipherSet, (DateDay) pValue);
-            }
-            if (Money.class.isInstance(pValue)) {
-                return new EncryptedMoney(theCipherSet, (Money) pValue);
-            }
-            if (Units.class.isInstance(pValue)) {
-                return new EncryptedUnits(theCipherSet, (Units) pValue);
-            }
-            if (Rate.class.isInstance(pValue)) {
-                return new EncryptedRate(theCipherSet, (Rate) pValue);
-            }
-            if (Price.class.isInstance(pValue)) {
-                return new EncryptedPrice(theCipherSet, (Price) pValue);
-            }
-            if (Dilution.class.isInstance(pValue)) {
-                return new EncryptedDilution(theCipherSet, (Dilution) pValue);
-            }
-
-            /* Unsupported so reject */
-            throw new ModelException(ExceptionClass.LOGIC, "Invalid Object Class for Encryption"
-                    + pValue.getClass().getCanonicalName());
-        }
-
-        /**
-         * decrypt value.
-         * @param pEncrypted the encrypted value
-         * @param pClass the class of the encrypted value
-         * @return the encrypted field
-         * @throws ModelException on error
-         */
-        public EncryptedField<?> decryptValue(final byte[] pEncrypted,
-                                              final Class<?> pClass) throws ModelException {
-            /* If we are passed a null value just return null */
-            if (pEncrypted == null) {
-                return null;
-            }
-
-            /* We need a new Field so handle each case individually */
-            if (String.class == pClass) {
-                return new EncryptedString(theCipherSet, pEncrypted);
-            }
-            if (Short.class == pClass) {
-                return new EncryptedShort(theCipherSet, pEncrypted);
-            }
-            if (Integer.class == pClass) {
-                return new EncryptedInteger(theCipherSet, pEncrypted);
-            }
-            if (Long.class == pClass) {
-                return new EncryptedLong(theCipherSet, pEncrypted);
-            }
-            if (Boolean.class == pClass) {
-                return new EncryptedBoolean(theCipherSet, pEncrypted);
-            }
-            if (Date.class == pClass) {
-                return new EncryptedDate(theCipherSet, pEncrypted);
-            }
-            if (char[].class == pClass) {
-                return new EncryptedCharArray(theCipherSet, pEncrypted);
-            }
-            if (Float.class == pClass) {
-                return new EncryptedFloat(theCipherSet, pEncrypted);
-            }
-            if (Double.class == pClass) {
-                return new EncryptedDouble(theCipherSet, pEncrypted);
-            }
-
-            /* Handle BigInteger classes */
-            if (BigInteger.class == pClass) {
-                return new EncryptedBigInteger(theCipherSet, pEncrypted);
-            }
-            if (BigDecimal.class == pClass) {
-                return new EncryptedBigDecimal(theCipherSet, pEncrypted);
-            }
-
-            /* Handle decimal instances */
-            if (DateDay.class == pClass) {
-                return new EncryptedDateDay(theCipherSet, pEncrypted);
-            }
-            if (Money.class == pClass) {
-                return new EncryptedMoney(theCipherSet, pEncrypted);
-            }
-            if (Units.class == pClass) {
-                return new EncryptedUnits(theCipherSet, pEncrypted);
-            }
-            if (Rate.class == pClass) {
-                return new EncryptedRate(theCipherSet, pEncrypted);
-            }
-            if (Price.class == pClass) {
-                return new EncryptedPrice(theCipherSet, pEncrypted);
-            }
-            if (Dilution.class == pClass) {
-                return new EncryptedDilution(theCipherSet, pEncrypted);
-            }
-
-            /* Unsupported so reject */
-            throw new ModelException(ExceptionClass.LOGIC, "Invalid Object Class for Encryption"
-                    + pClass.getCanonicalName());
-        }
-
-        /**
-         * Adopt Encryption.
-         * @param pTarget the target field
-         * @param pSource the source field
-         * @throws ModelException on error
-         */
-        public void adoptEncryption(final EncryptedField<?> pTarget,
-                                    final EncryptedField<?> pSource) throws ModelException {
-            /* Adopt the encryption */
-            pTarget.adoptEncryption(theCipherSet, pSource);
-        }
-    }
+    /**
+     * Encrypted Dilution length.
+     */
+    public static final int DILUTELEN = 10;
 
     /**
      * The generic encrypted object class.
      * @param <T> the field type
      */
-    public abstract static class EncryptedField<T> {
+    public abstract static class EncryptedField<T> implements JDataFormat {
         /**
          * Encryption CipherSet.
          */
@@ -292,10 +122,10 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipher set
          * @param pEncrypted the encrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
         private EncryptedField(final CipherSet pCipherSet,
-                               final byte[] pEncrypted) throws ModelException {
+                               final byte[] pEncrypted) throws JDataException {
             /* Store the cipherSet */
             theCipherSet = pCipherSet;
 
@@ -304,7 +134,7 @@ public final class EncryptedData {
 
             /* Reject if encryption is not initialised */
             if (theCipherSet == null) {
-                throw new ModelException(ExceptionClass.LOGIC, "Encryption is not initialised");
+                throw new JDataException(ExceptionClass.LOGIC, "Encryption is not initialised");
             }
 
             /* Decrypt the Bytes */
@@ -316,12 +146,12 @@ public final class EncryptedData {
 
         /**
          * Encrypt the value.
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private void encryptValue() throws ModelException {
+        private void encryptValue() throws JDataException {
             /* Reject if encryption is not initialised */
             if (theCipherSet == null) {
-                throw new ModelException(ExceptionClass.LOGIC, "Encryption is not initialised");
+                throw new JDataException(ExceptionClass.LOGIC, "Encryption is not initialised");
             }
 
             /* Obtain the bytes representation of the value */
@@ -335,10 +165,10 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the CipherSet
          * @param pUnencrypted the unencrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
         private EncryptedField(final CipherSet pCipherSet,
-                               final T pUnencrypted) throws ModelException {
+                               final T pUnencrypted) throws JDataException {
             /* Store the control */
             theCipherSet = pCipherSet;
 
@@ -378,27 +208,33 @@ public final class EncryptedData {
             return theDecrypted;
         }
 
+        @Override
+        public String formatObject() {
+            /* Format the unencrypted field */
+            return JDataObject.formatField(theDecrypted);
+        }
+
         /**
          * Parse the decrypted bytes.
          * @param pBytes the decrypted bytes
          * @return the decrypted value
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        protected abstract T parseBytes(byte[] pBytes) throws ModelException;
+        protected abstract T parseBytes(byte[] pBytes) throws JDataException;
 
         /**
          * Obtain the bytes format to encrypt.
          * @return the bytes to encrypt
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        protected abstract byte[] getBytesForEncryption() throws ModelException;
+        protected abstract byte[] getBytesForEncryption() throws JDataException;
 
         /**
          * Apply fresh encryption to value.
          * @param pCipherSet the cipherSet
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        protected void applyEncryption(final CipherSet pCipherSet) throws ModelException {
+        protected void applyEncryption(final CipherSet pCipherSet) throws JDataException {
             /* Store the CipherSet */
             theCipherSet = pCipherSet;
 
@@ -410,10 +246,10 @@ public final class EncryptedData {
          * Adopt Encryption.
          * @param pCipherSet the cipherSet
          * @param pField field to adopt encryption from
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private void adoptEncryption(final CipherSet pCipherSet,
-                                     final EncryptedField<?> pField) throws ModelException {
+        protected void adoptEncryption(final CipherSet pCipherSet,
+                                       final EncryptedField<?> pField) throws JDataException {
             /* Store the CipherSet */
             theCipherSet = pCipherSet;
 
@@ -510,10 +346,10 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pEncrypted the encrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedString(final CipherSet pCipherSet,
-                                final byte[] pEncrypted) throws ModelException {
+        protected EncryptedString(final CipherSet pCipherSet,
+                                  final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -521,15 +357,15 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pUnencrypted the unencrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedString(final CipherSet pCipherSet,
-                                final String pUnencrypted) throws ModelException {
+        protected EncryptedString(final CipherSet pCipherSet,
+                                  final String pUnencrypted) throws JDataException {
             super(pCipherSet, pUnencrypted);
         }
 
         @Override
-        protected String parseBytes(final byte[] pBytes) throws ModelException {
+        protected String parseBytes(final byte[] pBytes) throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string */
@@ -537,12 +373,12 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value from bytes");
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws ModelException {
+        protected byte[] getBytesForEncryption() throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Convert the string to a byte array */
@@ -550,7 +386,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value to bytes");
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value to bytes", e);
             }
         }
     }
@@ -563,10 +399,10 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pEncrypted the encrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedShort(final CipherSet pCipherSet,
-                               final byte[] pEncrypted) throws ModelException {
+        protected EncryptedShort(final CipherSet pCipherSet,
+                                 final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -574,15 +410,15 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pUnencrypted the unencrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedShort(final CipherSet pCipherSet,
-                               final Short pUnencrypted) throws ModelException {
+        protected EncryptedShort(final CipherSet pCipherSet,
+                                 final Short pUnencrypted) throws JDataException {
             super(pCipherSet, pUnencrypted);
         }
 
         @Override
-        protected Short parseBytes(final byte[] pBytes) throws ModelException {
+        protected Short parseBytes(final byte[] pBytes) throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then a short */
@@ -590,12 +426,12 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value from bytes");
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws ModelException {
+        protected byte[] getBytesForEncryption() throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Convert the short to a string and then a byte array */
@@ -603,7 +439,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value to bytes");
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value to bytes", e);
             }
         }
     }
@@ -616,10 +452,10 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pEncrypted the encrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedInteger(final CipherSet pCipherSet,
-                                 final byte[] pEncrypted) throws ModelException {
+        protected EncryptedInteger(final CipherSet pCipherSet,
+                                   final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -627,15 +463,15 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pUnencrypted the unencrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedInteger(final CipherSet pCipherSet,
-                                 final Integer pUnencrypted) throws ModelException {
+        protected EncryptedInteger(final CipherSet pCipherSet,
+                                   final Integer pUnencrypted) throws JDataException {
             super(pCipherSet, pUnencrypted);
         }
 
         @Override
-        protected Integer parseBytes(final byte[] pBytes) throws ModelException {
+        protected Integer parseBytes(final byte[] pBytes) throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then an integer */
@@ -643,12 +479,12 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value from bytes");
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws ModelException {
+        protected byte[] getBytesForEncryption() throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Convert the integer to a string and then a byte array */
@@ -656,7 +492,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value to bytes");
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value to bytes", e);
             }
         }
     }
@@ -669,10 +505,10 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pEncrypted the encrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedLong(final CipherSet pCipherSet,
-                              final byte[] pEncrypted) throws ModelException {
+        protected EncryptedLong(final CipherSet pCipherSet,
+                                final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -680,15 +516,15 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pUnencrypted the unencrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedLong(final CipherSet pCipherSet,
-                              final Long pUnencrypted) throws ModelException {
+        protected EncryptedLong(final CipherSet pCipherSet,
+                                final Long pUnencrypted) throws JDataException {
             super(pCipherSet, pUnencrypted);
         }
 
         @Override
-        protected Long parseBytes(final byte[] pBytes) throws ModelException {
+        protected Long parseBytes(final byte[] pBytes) throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then a long */
@@ -696,12 +532,12 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value from bytes");
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws ModelException {
+        protected byte[] getBytesForEncryption() throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Convert the long to a string and then a byte array */
@@ -709,7 +545,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value to bytes");
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value to bytes", e);
             }
         }
     }
@@ -722,10 +558,10 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pEncrypted the encrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedFloat(final CipherSet pCipherSet,
-                               final byte[] pEncrypted) throws ModelException {
+        protected EncryptedFloat(final CipherSet pCipherSet,
+                                 final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -733,15 +569,15 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pUnencrypted the unencrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedFloat(final CipherSet pCipherSet,
-                               final Float pUnencrypted) throws ModelException {
+        protected EncryptedFloat(final CipherSet pCipherSet,
+                                 final Float pUnencrypted) throws JDataException {
             super(pCipherSet, pUnencrypted);
         }
 
         @Override
-        protected Float parseBytes(final byte[] pBytes) throws ModelException {
+        protected Float parseBytes(final byte[] pBytes) throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then a float */
@@ -749,12 +585,12 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value from bytes");
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws ModelException {
+        protected byte[] getBytesForEncryption() throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Convert the float to a string and then a byte array */
@@ -762,7 +598,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value to bytes");
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value to bytes", e);
             }
         }
     }
@@ -775,10 +611,10 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pEncrypted the encrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedDouble(final CipherSet pCipherSet,
-                                final byte[] pEncrypted) throws ModelException {
+        protected EncryptedDouble(final CipherSet pCipherSet,
+                                  final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -786,15 +622,15 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pUnencrypted the unencrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedDouble(final CipherSet pCipherSet,
-                                final Double pUnencrypted) throws ModelException {
+        protected EncryptedDouble(final CipherSet pCipherSet,
+                                  final Double pUnencrypted) throws JDataException {
             super(pCipherSet, pUnencrypted);
         }
 
         @Override
-        protected Double parseBytes(final byte[] pBytes) throws ModelException {
+        protected Double parseBytes(final byte[] pBytes) throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then a Double */
@@ -802,12 +638,12 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value from bytes");
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws ModelException {
+        protected byte[] getBytesForEncryption() throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Convert the double to a string and then a byte array */
@@ -815,7 +651,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value to bytes");
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value to bytes", e);
             }
         }
     }
@@ -828,10 +664,10 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pEncrypted the encrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedBoolean(final CipherSet pCipherSet,
-                                 final byte[] pEncrypted) throws ModelException {
+        protected EncryptedBoolean(final CipherSet pCipherSet,
+                                   final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -839,15 +675,15 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pUnencrypted the unencrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedBoolean(final CipherSet pCipherSet,
-                                 final Boolean pUnencrypted) throws ModelException {
+        protected EncryptedBoolean(final CipherSet pCipherSet,
+                                   final Boolean pUnencrypted) throws JDataException {
             super(pCipherSet, pUnencrypted);
         }
 
         @Override
-        protected Boolean parseBytes(final byte[] pBytes) throws ModelException {
+        protected Boolean parseBytes(final byte[] pBytes) throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then an integer */
@@ -855,12 +691,12 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value from bytes");
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws ModelException {
+        protected byte[] getBytesForEncryption() throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Convert the boolean to a string and then a byte array */
@@ -868,7 +704,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value to bytes");
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value to bytes", e);
             }
         }
     }
@@ -888,10 +724,10 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pEncrypted the encrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedDate(final CipherSet pCipherSet,
-                              final byte[] pEncrypted) throws ModelException {
+        protected EncryptedDate(final CipherSet pCipherSet,
+                                final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -899,15 +735,15 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pUnencrypted the unencrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedDate(final CipherSet pCipherSet,
-                              final Date pUnencrypted) throws ModelException {
+        protected EncryptedDate(final CipherSet pCipherSet,
+                                final Date pUnencrypted) throws JDataException {
             super(pCipherSet, pUnencrypted);
         }
 
         @Override
-        protected Date parseBytes(final byte[] pBytes) throws ModelException {
+        protected Date parseBytes(final byte[] pBytes) throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then an integer */
@@ -915,12 +751,12 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value from bytes");
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws ModelException {
+        protected byte[] getBytesForEncryption() throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Convert the date to a string and then a byte array */
@@ -928,7 +764,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value to bytes");
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value to bytes", e);
             }
         }
     }
@@ -941,10 +777,10 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pEncrypted the encrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedDateDay(final CipherSet pCipherSet,
-                                 final byte[] pEncrypted) throws ModelException {
+        protected EncryptedDateDay(final CipherSet pCipherSet,
+                                   final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -952,15 +788,15 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pUnencrypted the unencrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedDateDay(final CipherSet pCipherSet,
-                                 final DateDay pUnencrypted) throws ModelException {
+        protected EncryptedDateDay(final CipherSet pCipherSet,
+                                   final DateDay pUnencrypted) throws JDataException {
             super(pCipherSet, pUnencrypted);
         }
 
         @Override
-        protected DateDay parseBytes(final byte[] pBytes) throws ModelException {
+        protected DateDay parseBytes(final byte[] pBytes) throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then an integer */
@@ -968,12 +804,12 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value from bytes");
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws ModelException {
+        protected byte[] getBytesForEncryption() throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Convert the date to a string and then a byte array */
@@ -981,7 +817,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value to bytes");
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value to bytes", e);
             }
         }
     }
@@ -994,10 +830,10 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pEncrypted the encrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedCharArray(final CipherSet pCipherSet,
-                                   final byte[] pEncrypted) throws ModelException {
+        protected EncryptedCharArray(final CipherSet pCipherSet,
+                                     final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -1005,20 +841,20 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pUnencrypted the unencrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedCharArray(final CipherSet pCipherSet,
-                                   final char[] pUnencrypted) throws ModelException {
+        protected EncryptedCharArray(final CipherSet pCipherSet,
+                                     final char[] pUnencrypted) throws JDataException {
             super(pCipherSet, pUnencrypted);
         }
 
         @Override
-        protected char[] parseBytes(final byte[] pBytes) throws ModelException {
+        protected char[] parseBytes(final byte[] pBytes) throws JDataException {
             return DataConverter.bytesToCharArray(pBytes);
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws ModelException {
+        protected byte[] getBytesForEncryption() throws JDataException {
             return DataConverter.charsToByteArray(getValue());
         }
     }
@@ -1031,10 +867,10 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pEncrypted the encrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedBigInteger(final CipherSet pCipherSet,
-                                    final byte[] pEncrypted) throws ModelException {
+        protected EncryptedBigInteger(final CipherSet pCipherSet,
+                                      final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -1042,20 +878,20 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pUnencrypted the unencrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedBigInteger(final CipherSet pCipherSet,
-                                    final BigInteger pUnencrypted) throws ModelException {
+        protected EncryptedBigInteger(final CipherSet pCipherSet,
+                                      final BigInteger pUnencrypted) throws JDataException {
             super(pCipherSet, pUnencrypted);
         }
 
         @Override
-        protected BigInteger parseBytes(final byte[] pBytes) throws ModelException {
+        protected BigInteger parseBytes(final byte[] pBytes) throws JDataException {
             return new BigInteger(pBytes);
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws ModelException {
+        protected byte[] getBytesForEncryption() throws JDataException {
             return getValue().toByteArray();
         }
     }
@@ -1068,10 +904,10 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pEncrypted the encrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedBigDecimal(final CipherSet pCipherSet,
-                                    final byte[] pEncrypted) throws ModelException {
+        protected EncryptedBigDecimal(final CipherSet pCipherSet,
+                                      final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -1079,20 +915,20 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pUnencrypted the unencrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedBigDecimal(final CipherSet pCipherSet,
-                                    final BigDecimal pUnencrypted) throws ModelException {
+        protected EncryptedBigDecimal(final CipherSet pCipherSet,
+                                      final BigDecimal pUnencrypted) throws JDataException {
             super(pCipherSet, pUnencrypted);
         }
 
         @Override
-        protected BigDecimal parseBytes(final byte[] pBytes) throws ModelException {
+        protected BigDecimal parseBytes(final byte[] pBytes) throws JDataException {
             return new BigDecimal(DataConverter.byteArrayToString(pBytes));
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws ModelException {
+        protected byte[] getBytesForEncryption() throws JDataException {
             return DataConverter.stringToByteArray(getValue().toString());
         }
     }
@@ -1106,10 +942,10 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pEncrypted the encrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
         private EncryptedDecimal(final CipherSet pCipherSet,
-                                 final byte[] pEncrypted) throws ModelException {
+                                 final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -1117,25 +953,25 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pUnencrypted the unencrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
         private EncryptedDecimal(final CipherSet pCipherSet,
-                                 final X pUnencrypted) throws ModelException {
+                                 final X pUnencrypted) throws JDataException {
             super(pCipherSet, pUnencrypted);
         }
 
         @Override
-        protected X parseBytes(final byte[] pBytes) throws ModelException {
+        protected X parseBytes(final byte[] pBytes) throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and parse it */
                 return parseValue(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (ModelException e) {
+            } catch (JDataException e) {
                 throw e;
             } catch (Exception e) {
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value from bytes");
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
             }
         }
 
@@ -1143,12 +979,12 @@ public final class EncryptedData {
          * Parse a string value to get a value.
          * @param pValue the string value
          * @return the value
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        protected abstract X parseValue(final String pValue) throws ModelException;
+        protected abstract X parseValue(final String pValue) throws JDataException;
 
         @Override
-        protected byte[] getBytesForEncryption() throws ModelException {
+        protected byte[] getBytesForEncryption() throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Format the value */
@@ -1159,7 +995,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new ModelException(ExceptionClass.CRYPTO, "Failed to convert value to bytes");
+                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value to bytes", e);
             }
         }
     }
@@ -1172,10 +1008,10 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pEncrypted the encrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedMoney(final CipherSet pCipherSet,
-                               final byte[] pEncrypted) throws ModelException {
+        protected EncryptedMoney(final CipherSet pCipherSet,
+                                 final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -1183,15 +1019,15 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pUnencrypted the unencrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedMoney(final CipherSet pCipherSet,
-                               final Money pUnencrypted) throws ModelException {
+        protected EncryptedMoney(final CipherSet pCipherSet,
+                                 final Money pUnencrypted) throws JDataException {
             super(pCipherSet, pUnencrypted);
         }
 
         @Override
-        protected Money parseValue(final String pValue) throws ModelException {
+        protected Money parseValue(final String pValue) throws JDataException {
             return new Money(pValue);
         }
     }
@@ -1204,10 +1040,10 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pEncrypted the encrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedUnits(final CipherSet pCipherSet,
-                               final byte[] pEncrypted) throws ModelException {
+        protected EncryptedUnits(final CipherSet pCipherSet,
+                                 final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -1215,15 +1051,15 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pUnencrypted the unencrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedUnits(final CipherSet pCipherSet,
-                               final Units pUnencrypted) throws ModelException {
+        protected EncryptedUnits(final CipherSet pCipherSet,
+                                 final Units pUnencrypted) throws JDataException {
             super(pCipherSet, pUnencrypted);
         }
 
         @Override
-        protected Units parseValue(final String pValue) throws ModelException {
+        protected Units parseValue(final String pValue) throws JDataException {
             return new Units(pValue);
         }
     }
@@ -1236,10 +1072,10 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pEncrypted the encrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedRate(final CipherSet pCipherSet,
-                              final byte[] pEncrypted) throws ModelException {
+        protected EncryptedRate(final CipherSet pCipherSet,
+                                final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -1247,15 +1083,15 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pUnencrypted the unencrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedRate(final CipherSet pCipherSet,
-                              final Rate pUnencrypted) throws ModelException {
+        protected EncryptedRate(final CipherSet pCipherSet,
+                                final Rate pUnencrypted) throws JDataException {
             super(pCipherSet, pUnencrypted);
         }
 
         @Override
-        protected Rate parseValue(final String pValue) throws ModelException {
+        protected Rate parseValue(final String pValue) throws JDataException {
             return new Rate(pValue);
         }
     }
@@ -1268,10 +1104,10 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pEncrypted the encrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedPrice(final CipherSet pCipherSet,
-                               final byte[] pEncrypted) throws ModelException {
+        protected EncryptedPrice(final CipherSet pCipherSet,
+                                 final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -1279,15 +1115,15 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pUnencrypted the unencrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedPrice(final CipherSet pCipherSet,
-                               final Price pUnencrypted) throws ModelException {
+        protected EncryptedPrice(final CipherSet pCipherSet,
+                                 final Price pUnencrypted) throws JDataException {
             super(pCipherSet, pUnencrypted);
         }
 
         @Override
-        protected Price parseValue(final String pValue) throws ModelException {
+        protected Price parseValue(final String pValue) throws JDataException {
             return new Price(pValue);
         }
     }
@@ -1300,10 +1136,10 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pEncrypted the encrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedDilution(final CipherSet pCipherSet,
-                                  final byte[] pEncrypted) throws ModelException {
+        protected EncryptedDilution(final CipherSet pCipherSet,
+                                    final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pEncrypted);
         }
 
@@ -1311,15 +1147,15 @@ public final class EncryptedData {
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pUnencrypted the unencrypted value of the field
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        private EncryptedDilution(final CipherSet pCipherSet,
-                                  final Dilution pUnencrypted) throws ModelException {
+        protected EncryptedDilution(final CipherSet pCipherSet,
+                                    final Dilution pUnencrypted) throws JDataException {
             super(pCipherSet, pUnencrypted);
         }
 
         @Override
-        protected Dilution parseValue(final String pValue) throws ModelException {
+        protected Dilution parseValue(final String pValue) throws JDataException {
             return new Dilution(pValue);
         }
     }

@@ -25,8 +25,8 @@ package net.sourceforge.JGordianKnot;
 import java.security.MessageDigest;
 import java.util.Arrays;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JGordianKnot.DataHayStack.DigestNeedle;
 
 /**
@@ -84,9 +84,9 @@ public class MsgDigest {
     /**
      * Constructor for random type.
      * @param pGenerator the security generator
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public MsgDigest(final SecurityGenerator pGenerator) throws ModelException {
+    public MsgDigest(final SecurityGenerator pGenerator) throws JDataException {
         /* Store the type */
         DigestType[] myType = DigestType.getRandomTypes(1, pGenerator.getRandom());
         theType = myType[0];
@@ -104,10 +104,10 @@ public class MsgDigest {
      * Constructor for specific type.
      * @param pGenerator the security generator
      * @param pType the digest type
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public MsgDigest(final SecurityGenerator pGenerator,
-                     final DigestType pType) throws ModelException {
+                     final DigestType pType) throws JDataException {
         /* Store the type */
         theType = pType;
 
@@ -126,12 +126,12 @@ public class MsgDigest {
      * @param pExternal the external format
      * @param pDataLen the expected data length
      * @param pName the name of the digest
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public MsgDigest(final SecurityGenerator pGenerator,
                      final byte[] pExternal,
                      final long pDataLen,
-                     final String pName) throws ModelException {
+                     final String pName) throws JDataException {
         /* Parse the External form */
         DigestNeedle myNeedle = new DigestNeedle(pExternal);
 
@@ -161,19 +161,19 @@ public class MsgDigest {
 
     /**
      * Validate digest.
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public void validateDigest() throws ModelException {
+    public void validateDigest() throws JDataException {
         /* If the data lengths do not match */
         if (theDataLen != theExpectedDataLen) {
             /* Throw an exception */
-            throw new ModelException(ExceptionClass.DATA, "Mismatch on Data lengths for " + theName);
+            throw new JDataException(ExceptionClass.DATA, "Mismatch on Data lengths for " + theName);
         }
 
         /* If the digest does not match */
         if (!Arrays.equals(theDigest.digest(), theExpectedDigest)) {
             /* Throw an exception */
-            throw new ModelException(ExceptionClass.DATA, "Mismatch on Digest for " + theName);
+            throw new JDataException(ExceptionClass.DATA, "Mismatch on Digest for " + theName);
         }
     }
 

@@ -1,0 +1,10 @@
+Models Project
+
+  JDateButton is a Java Swing button that provides the ability to select a date using a popup menu.
+The button can also be used within a JTable as a CellEditor. 
+  
+  Controls are provided to limit the range of dates that may be selected and to allow the user
+to explicitly select no date if required. The locale and date format can also be easily controlled.
+
+  Note that this only allows dates to be selected and not times. The Calendar object that is returned
+is set to be noon on the selected date.

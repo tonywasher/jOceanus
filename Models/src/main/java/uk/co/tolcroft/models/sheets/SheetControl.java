@@ -22,6 +22,7 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.sheets;
 
+import net.sourceforge.JDataManager.JDataException;
 import uk.co.tolcroft.models.data.ControlData;
 import uk.co.tolcroft.models.data.ControlData.ControlDataList;
 import uk.co.tolcroft.models.data.DataItem;
@@ -101,7 +102,7 @@ public class SheetControl extends SheetDataItem<ControlData> {
     }
 
     @Override
-    protected void loadItem() throws Exception {
+    protected void loadItem() throws JDataException {
         /* If this is a backup */
         if (isBackup) {
             /* Access the IDs */
@@ -126,7 +127,7 @@ public class SheetControl extends SheetDataItem<ControlData> {
     }
 
     @Override
-    protected void insertItem(final ControlData pItem) throws Exception {
+    protected void insertItem(final ControlData pItem) throws JDataException {
         /* If this is a backup */
         if (isBackup) {
             /* Set the fields */
@@ -142,7 +143,7 @@ public class SheetControl extends SheetDataItem<ControlData> {
     }
 
     @Override
-    protected void preProcessOnWrite() throws Exception {
+    protected void preProcessOnWrite() throws JDataException {
         /* Ignore if this is a backup */
         if (isBackup) {
             return;
@@ -160,7 +161,7 @@ public class SheetControl extends SheetDataItem<ControlData> {
     }
 
     @Override
-    protected void postProcessOnWrite() throws Exception {
+    protected void postProcessOnWrite() throws JDataException {
         /* If we are creating a backup */
         if (isBackup) {
             /* Set the three columns as the range */

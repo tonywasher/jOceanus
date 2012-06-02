@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,9 +41,9 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 import javax.swing.WindowConstants;
 
-import net.sourceforge.JDataManager.DebugManager;
-import net.sourceforge.JDataManager.DebugWindow;
-import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataManager;
+import net.sourceforge.JDataManager.JDataWindow;
 import net.sourceforge.JHelpManager.HelpModule;
 import net.sourceforge.JHelpManager.HelpWindow;
 import uk.co.tolcroft.models.data.DataSet;
@@ -59,92 +60,214 @@ import uk.co.tolcroft.models.threads.UpdatePassword;
 import uk.co.tolcroft.models.threads.WorkerThread;
 import uk.co.tolcroft.models.views.DataControl;
 
+/**
+ * Main window for application.
+ * @author Tony Washer
+ * @param <T> the data set type
+ */
 public abstract class MainWindow<T extends DataSet<T>> implements ActionListener {
+    /**
+     * The data view.
+     */
     private DataControl<T> theView = null;
-    private JFrame theFrame = null;
-    private JPanel thePanel = null;
-    private StatusBar theStatusBar = null;
-    private JMenuBar theMainMenu = null;
-    private JMenu theDataMenu = null;
-    private JMenu theBackupMenu = null;
-    private JMenu theSecureMenu = null;
-    private JMenu theHelpMenu = null;
-    private JMenuItem theCreateDBase = null;
-    private JMenuItem thePurgeDBase = null;
-    private JMenuItem theLoadDBase = null;
-    private JMenuItem theSaveDBase = null;
-    private JMenuItem theWriteBackup = null;
-    private JMenuItem theLoadBackup = null;
-    private JMenuItem theWriteExtract = null;
-    private JMenuItem theLoadExtract = null;
-    private JMenuItem theUpdatePass = null;
-    private JMenuItem theRenewSec = null;
-    private JMenuItem theShowDebug = null;
-    private JMenuItem theHelpMgr = null;
-    private WorkerThread<?> theThread = null;
-    private ExecutorService theExecutor = null;
-    private HelpWindow theHelpWdw = null;
-    private DebugManager theDebugMgr = null;
-    private DebugWindow theDebugWdw = null;
 
-    /* Access methods */
+    /**
+     * The frame.
+     */
+    private JFrame theFrame = null;
+
+    /**
+     * The panel.
+     */
+    private JPanel thePanel = null;
+
+    /**
+     * The status bar.
+     */
+    private StatusBar theStatusBar = null;
+
+    /**
+     * The data menu.
+     */
+    private JMenu theDataMenu = null;
+
+    /**
+     * The backup menu.
+     */
+    private JMenu theBackupMenu = null;
+
+    /**
+     * The security menu.
+     */
+    private JMenu theSecureMenu = null;
+
+    /**
+     * The help menu.
+     */
+    // private JMenu theHelpMenu = null;
+
+    /**
+     * The Create Database menu item.
+     */
+    private JMenuItem theCreateDBase = null;
+
+    /**
+     * The Purge Database menu item.
+     */
+    private JMenuItem thePurgeDBase = null;
+
+    /**
+     * The Load Database menu item.
+     */
+    private JMenuItem theLoadDBase = null;
+
+    /**
+     * The Save Database menu item.
+     */
+    private JMenuItem theSaveDBase = null;
+
+    /**
+     * The Write Backup menu item.
+     */
+    private JMenuItem theWriteBackup = null;
+
+    /**
+     * The Load Backup menu item.
+     */
+    private JMenuItem theLoadBackup = null;
+
+    /**
+     * The Write Extract menu item.
+     */
+    private JMenuItem theWriteExtract = null;
+
+    /**
+     * The Load Extract menu item.
+     */
+    private JMenuItem theLoadExtract = null;
+
+    /**
+     * The Update password menu item.
+     */
+    private JMenuItem theUpdatePass = null;
+
+    /**
+     * The Renew security menu item.
+     */
+    private JMenuItem theRenewSec = null;
+
+    /**
+     * The Show dataMgr menu item.
+     */
+    private JMenuItem theShowDataMgr = null;
+
+    /**
+     * The Show help menu item.
+     */
+    private JMenuItem theHelpMgr = null;
+
+    /**
+     * The Active thread.
+     */
+    private WorkerThread<?> theThread = null;
+
+    /**
+     * The Thread executor.
+     */
+    private ExecutorService theExecutor = null;
+
+    /**
+     * The Started Help window.
+     */
+    private HelpWindow theHelpWdw = null;
+
+    /**
+     * The Data Manager.
+     */
+    private JDataManager theDataMgr = null;
+
+    /**
+     * The Started data window.
+     */
+    private JDataWindow theDataWdw = null;
+
+    /**
+     * Get the data view.
+     * @return the data view
+     */
     public DataControl<T> getView() {
         return theView;
     }
 
+    /**
+     * Get the frame.
+     * @return the frame
+     */
     public JFrame getFrame() {
         return theFrame;
     }
 
+    /**
+     * Get the panel.
+     * @return the panel
+     */
     public JPanel getPanel() {
         return thePanel;
     }
 
+    /**
+     * Get the status bar.
+     * @return the status bar
+     */
     public StatusBar getStatusBar() {
         return theStatusBar;
     }
 
-    public DebugManager getDebugMgr() {
-        return theDebugMgr;
+    /**
+     * Get the data manager.
+     * @return the data manager
+     */
+    public JDataManager getDataMgr() {
+        return theDataMgr;
     }
 
     /**
-     * Build the main panel
+     * Build the main panel.
      * @return the main panel
      */
     protected abstract JComponent buildMainPanel();
 
     /**
-     * Obtain the frame name
+     * Obtain the frame name.
      * @return the frame name
      */
     protected abstract String getFrameName();
 
     /**
-     * Obtain the Help Module
+     * Obtain the Help Module.
      * @return the help module
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    protected abstract HelpModule getHelpModule() throws ModelException;
+    protected abstract HelpModule getHelpModule() throws JDataException;
 
     /**
-     * Constructor
-     * @throws ModelException
+     * Constructor.
+     * @throws JDataException on error
      */
-    protected MainWindow() throws ModelException {
-        /* Create the debug manager */
-        theDebugMgr = new DebugManager();
+    protected MainWindow() throws JDataException {
+        /* Create the data manager */
+        theDataMgr = new JDataManager();
 
         /* Create the Executor service */
         theExecutor = Executors.newSingleThreadExecutor();
     }
 
     /**
-     * Build the main window
+     * Build the main window.
      * @param pView the Data view
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public void buildMainWindow(DataControl<T> pView) throws ModelException {
+    public void buildMainWindow(final DataControl<T> pView) throws JDataException {
         JPanel myProgress;
         JPanel myStatus;
         JComponent myMainPanel;
@@ -206,42 +329,42 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
     }
 
     /**
-     * Build Main Menu
+     * Build Main Menu.
      */
     protected void buildMainMenu() {
         /* Create the menu bar */
-        theMainMenu = new JMenuBar();
+        JMenuBar myMainMenu = new JMenuBar();
 
         /* Add Data Menu Items */
         theDataMenu = new JMenu("Data");
         addDataMenuItems(theDataMenu);
-        theMainMenu.add(theDataMenu);
+        myMainMenu.add(theDataMenu);
 
         /* Add Backup Menu Items */
         theBackupMenu = new JMenu("Backup");
         addBackupMenuItems(theBackupMenu);
-        theMainMenu.add(theBackupMenu);
+        myMainMenu.add(theBackupMenu);
 
         /* Add Security Menu Items */
         theSecureMenu = new JMenu("Security");
         addSecurityMenuItems(theSecureMenu);
-        theMainMenu.add(theSecureMenu);
+        myMainMenu.add(theSecureMenu);
 
         /* Add Help Menu items */
-        theHelpMenu = new JMenu("Help");
-        addHelpMenuItems(theHelpMenu);
-        theMainMenu.add(Box.createHorizontalGlue());
-        theMainMenu.add(theHelpMenu);
+        JMenu myHelpMenu = new JMenu("Help");
+        addHelpMenuItems(myHelpMenu);
+        myMainMenu.add(Box.createHorizontalGlue());
+        myMainMenu.add(myHelpMenu);
 
         /* Add the Menu bar */
-        theFrame.setJMenuBar(theMainMenu);
+        theFrame.setJMenuBar(myMainMenu);
     }
 
     /**
-     * Add Data Menu items
+     * Add Data Menu items.
      * @param pMenu the menu
      */
-    protected void addDataMenuItems(JMenu pMenu) {
+    protected void addDataMenuItems(final JMenu pMenu) {
         /* Add Standard Data Menu items */
         theLoadDBase = new JMenuItem("Load Database");
         theLoadDBase.addActionListener(this);
@@ -258,10 +381,10 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
     }
 
     /**
-     * Add Backup Menu items
+     * Add Backup Menu items.
      * @param pMenu the menu
      */
-    protected void addBackupMenuItems(JMenu pMenu) {
+    protected void addBackupMenuItems(final JMenu pMenu) {
         /* Add Standard Backup menu items */
         theWriteBackup = new JMenuItem("Create Backup");
         theWriteBackup.addActionListener(this);
@@ -278,10 +401,10 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
     }
 
     /**
-     * Add Security Menu items
+     * Add Security Menu items.
      * @param pMenu the menu
      */
-    protected void addSecurityMenuItems(JMenu pMenu) {
+    protected void addSecurityMenuItems(final JMenu pMenu) {
         /* Add Standard Security menu items */
         theUpdatePass = new JMenuItem("Update Password");
         theUpdatePass.addActionListener(this);
@@ -292,21 +415,24 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
     }
 
     /**
-     * Add Help Menu items
+     * Add Help Menu items.
      * @param pMenu the menu
      */
-    protected void addHelpMenuItems(JMenu pMenu) {
+    protected void addHelpMenuItems(final JMenu pMenu) {
         /* Create the menu items */
         theHelpMgr = new JMenuItem("Help");
         theHelpMgr.addActionListener(this);
         pMenu.add(theHelpMgr);
-        theShowDebug = new JMenuItem("Debug");
-        theShowDebug.addActionListener(this);
-        pMenu.add(theShowDebug);
+        theShowDataMgr = new JMenuItem("Data Manager");
+        theShowDataMgr.addActionListener(this);
+        pMenu.add(theShowDataMgr);
     }
 
-    /* Make the frame */
-    public void makeFrame() throws ModelException {
+    /**
+     * Make the frame.
+     * @throws JDataException on error
+     */
+    public void makeFrame() throws JDataException {
         /* Show the frame */
         theFrame.pack();
         theFrame.setLocationRelativeTo(null);
@@ -322,11 +448,11 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
     }
 
     /**
-     * Window Close Adapter
+     * Window Close Adapter.
      */
     private class WindowClose extends WindowAdapter {
         @Override
-        public void windowClosing(WindowEvent evt) {
+        public void windowClosing(final WindowEvent evt) {
             Object o = evt.getSource();
 
             /* If this is the frame that is closing down */
@@ -338,39 +464,40 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
                                                                  "Confirm Close", JOptionPane.YES_NO_OPTION);
 
                     /* Ignore if no was responded */
-                    if (myOption != JOptionPane.YES_OPTION)
+                    if (myOption != JOptionPane.YES_OPTION) {
                         return;
+                    }
                 }
 
                 /* terminate the executor */
                 theExecutor.shutdown();
 
-                /* Dispose of the debug/help Windows if they exist */
-                if (theDebugWdw != null)
-                    theDebugWdw.dispose();
-                if (theHelpWdw != null)
+                /* Dispose of the data/help Windows if they exist */
+                if (theDataWdw != null) {
+                    theDataWdw.dispose();
+                }
+                if (theHelpWdw != null) {
                     theHelpWdw.dispose();
+                }
 
                 /* Dispose of the frame */
                 theFrame.dispose();
 
                 /* Exit the application */
                 System.exit(0);
-            }
 
-            /* else if this is the Debug Window shutting down */
-            else if (o == theDebugWdw) {
+                /* else if this is the Data Window shutting down */
+            } else if (o == theDataWdw) {
                 /* Re-enable the help menu item */
-                theShowDebug.setEnabled(true);
-                theDebugWdw.dispose();
-                theDebugWdw = null;
+                theShowDataMgr.setEnabled(true);
+                theDataWdw.dispose();
+                theDataWdw = null;
 
-                /* Notify debug manager */
-                theDebugMgr.declareWindow(null);
-            }
+                /* Notify data manager */
+                theDataMgr.declareWindow(null);
 
-            /* else if this is the Help Window shutting down */
-            else if (o == theHelpWdw) {
+                /* else if this is the Help Window shutting down */
+            } else if (o == theHelpWdw) {
                 /* Re-enable the help menu item */
                 theHelpMgr.setEnabled(true);
                 theHelpWdw.dispose();
@@ -380,83 +507,74 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
     }
 
     @Override
-    public void actionPerformed(ActionEvent evt) {
+    public void actionPerformed(final ActionEvent evt) {
         Object o = evt.getSource();
 
         /* If this event relates to the Write Backup item */
         if (o == theWriteBackup) {
             /* Start a write backup operation */
             writeBackup();
-        }
 
-        /* If this event relates to the Write Extract item */
-        else if (o == theWriteExtract) {
+            /* If this event relates to the Write Extract item */
+        } else if (o == theWriteExtract) {
             /* Start a write extract operation */
             writeExtract();
-        }
 
-        /* If this event relates to the Save Database item */
-        else if (o == theSaveDBase) {
+            /* If this event relates to the Save Database item */
+        } else if (o == theSaveDBase) {
             /* Start a store database operation */
             storeDatabase();
-        }
 
-        /* If this event relates to the Load Database item */
-        else if (o == theLoadDBase) {
+            /* If this event relates to the Load Database item */
+        } else if (o == theLoadDBase) {
             /* Start a load database operation */
             loadDatabase();
-        }
 
-        /* If this event relates to the Create Database item */
-        else if (o == theCreateDBase) {
+            /* If this event relates to the Create Database item */
+        } else if (o == theCreateDBase) {
             /* Start a load database operation */
             createDatabase();
-        }
 
-        /* If this event relates to the Purge Database item */
-        else if (o == thePurgeDBase) {
+            /* If this event relates to the Purge Database item */
+        } else if (o == thePurgeDBase) {
             /* Start a load database operation */
             purgeDatabase();
-        }
 
-        /* If this event relates to the Load backup item */
-        else if (o == theLoadBackup) {
+            /* If this event relates to the Load backup item */
+        } else if (o == theLoadBackup) {
             /* Start a restore backup operation */
             restoreBackup();
-        }
 
-        /* If this event relates to the Load extract item */
-        else if (o == theLoadExtract) {
+            /* If this event relates to the Load extract item */
+        } else if (o == theLoadExtract) {
             /* Start a load backup operation */
             loadExtract();
-        }
 
-        /* If this event relates to the Update Password item */
-        else if (o == theUpdatePass) {
+            /* If this event relates to the Update Password item */
+        } else if (o == theUpdatePass) {
             /* Start an Update Password operation */
             updatePassword();
-        }
 
-        /* If this event relates to the Renew Security item */
-        else if (o == theRenewSec) {
+            /* If this event relates to the Renew Security item */
+        } else if (o == theRenewSec) {
             /* Start a reNew Security operation */
             reNewSecurity();
-        }
 
-        /* If this event relates to the Display Debug item */
-        else if (o == theShowDebug) {
-            /* Open the debug window */
-            displayDebug();
-        }
+            /* If this event relates to the Display Data item */
+        } else if (o == theShowDataMgr) {
+            /* Open the DataMgr window */
+            displayDataMgr();
 
-        /* If this event relates to the Display Help item */
-        else if (o == theHelpMgr) {
+            /* If this event relates to the Display Help item */
+        } else if (o == theHelpMgr) {
             /* Open the help window */
             displayHelp();
         }
     }
 
-    /* Set visibility */
+    /**
+     * Set visibility.
+     */
     public void setVisibility() {
         boolean hasUpdates;
         boolean hasChanges;
@@ -494,20 +612,25 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         theSaveDBase.setEnabled(!hasUpdates && hasChanges);
     }
 
-    /* Finish Thread */
+    /**
+     * Finish Thread.
+     */
     public void finishThread() {
         theThread = null;
         setVisibility();
     }
 
-    /* Handle cancel command */
+    /**
+     * Handle cancel command.
+     */
     public void performCancel() {
-        if (theThread != null)
+        if (theThread != null) {
             theThread.cancel(false);
+        }
     }
 
     /**
-     * Has the underlying data got changes
+     * Has the underlying data got changes.
      * @return true/false
      */
     protected boolean hasChanges() {
@@ -515,13 +638,13 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
     }
 
     /**
-     * Has the window got updates
+     * Has the window got updates.
      * @return true/false
      */
     protected abstract boolean hasUpdates();
 
     /**
-     * Is a worker active
+     * Is a worker active.
      * @return true/false
      */
     protected boolean hasWorker() {
@@ -529,10 +652,10 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
     }
 
     /**
-     * Start a thread
+     * Start a thread.
      * @param pThread the thread to start
      */
-    protected void startThread(WorkerThread<?> pThread) {
+    protected void startThread(final WorkerThread<?> pThread) {
         /* Execute the thread and record it */
         theExecutor.execute(pThread);
         theThread = pThread;
@@ -541,7 +664,9 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         setVisibility();
     }
 
-    /* Load Database */
+    /**
+     * Load Database.
+     */
     private void loadDatabase() {
         LoadDatabase<T> myThread;
 
@@ -550,7 +675,9 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         startThread(myThread);
     }
 
-    /* Store Database */
+    /**
+     * Store Database.
+     */
     private void storeDatabase() {
         StoreDatabase<T> myThread;
 
@@ -559,7 +686,9 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         startThread(myThread);
     }
 
-    /* Create Database */
+    /**
+     * Create Database.
+     */
     private void createDatabase() {
         CreateDatabase<T> myThread;
 
@@ -568,7 +697,9 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         startThread(myThread);
     }
 
-    /* Purge Database */
+    /**
+     * Purge Database.
+     */
     private void purgeDatabase() {
         PurgeDatabase<T> myThread;
 
@@ -577,7 +708,9 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         startThread(myThread);
     }
 
-    /* Write Backup */
+    /**
+     * Write Backup.
+     */
     private void writeBackup() {
         CreateBackup<T> myThread;
 
@@ -586,7 +719,9 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         startThread(myThread);
     }
 
-    /* Restore Backup */
+    /**
+     * Restore Backup.
+     */
     private void restoreBackup() {
         LoadBackup<T> myThread;
 
@@ -595,7 +730,9 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         startThread(myThread);
     }
 
-    /* Write Extract */
+    /**
+     * Write Extract.
+     */
     private void writeExtract() {
         CreateExtract<T> myThread;
 
@@ -604,7 +741,9 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         startThread(myThread);
     }
 
-    /* Load Extract */
+    /**
+     * Load Extract.
+     */
     private void loadExtract() {
         LoadExtract<T> myThread;
 
@@ -613,7 +752,9 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         startThread(myThread);
     }
 
-    /* Update Password */
+    /**
+     * Update password.
+     */
     private void updatePassword() {
         UpdatePassword<T> myThread;
 
@@ -622,7 +763,9 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         startThread(myThread);
     }
 
-    /* Load Extract */
+    /**
+     * ReNew Security.
+     */
     private void reNewSecurity() {
         RenewSecurity<T> myThread;
 
@@ -631,25 +774,30 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         startThread(myThread);
     }
 
-    /* Display Debug */
-    private void displayDebug() {
+    /**
+     * Display DataMgr.
+     */
+    private void displayDataMgr() {
         try {
-            /* Create the debug window */
-            theDebugWdw = new DebugWindow(theFrame, theDebugMgr);
+            /* Create the data window */
+            theDataWdw = new JDataWindow(theFrame, theDataMgr);
 
             /* Listen for its closure */
-            theDebugWdw.addWindowListener(new WindowClose());
+            theDataWdw.addWindowListener(new WindowClose());
 
             /* Disable the menu item */
-            theShowDebug.setEnabled(false);
+            theShowDataMgr.setEnabled(false);
 
             /* Display it */
-            theDebugWdw.showDialog();
+            theDataWdw.showDialog();
         } catch (Exception e) {
+            theDataWdw = null;
         }
     }
 
-    /* Display Help */
+    /**
+     * Display Help.
+     */
     private void displayHelp() {
         try {
             /* Create the help window */
@@ -664,6 +812,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
             /* Display it */
             theHelpWdw.showDialog();
         } catch (Exception e) {
+            theHelpWdw = null;
         }
     }
 }

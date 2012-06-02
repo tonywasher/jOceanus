@@ -268,10 +268,11 @@ public class PasswordDialog extends JDialog implements ActionListener {
     }
 
     @Override
-    protected void finalize() throws Exception {
+    protected void finalize() throws Throwable {
         if (thePassword != null) {
             Arrays.fill(thePassword, (char) 0);
         }
+        super.finalize();
     }
 
     @Override

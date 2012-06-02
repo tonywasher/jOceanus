@@ -75,11 +75,6 @@ public class HelpWindow extends JFrame implements HyperlinkListener, TreeSelecti
     private final JTree theTree;
 
     /**
-     * The entries.
-     */
-    private final HelpEntry[] theEntries;
-
-    /**
      * The module.
      */
     private final HelpModule theModule;
@@ -108,7 +103,7 @@ public class HelpWindow extends JFrame implements HyperlinkListener, TreeSelecti
         setTitle("Help Manager");
 
         /* Access the Help entries and list */
-        theEntries = pModule.getHelpEntries();
+        HelpEntry[] myEntries = pModule.getHelpEntries();
         theModule = pModule;
 
         /* Access the initial id */
@@ -137,7 +132,7 @@ public class HelpWindow extends JFrame implements HyperlinkListener, TreeSelecti
         theEditor.setDocument(myDoc);
 
         /* Get the tree node from the help entries */
-        theRoot = HelpEntry.createTree(pModule.getTitle(), theEntries);
+        theRoot = HelpEntry.createTree(pModule.getTitle(), myEntries);
 
         /* Create the JTree object */
         theTree = new JTree(theRoot);

@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,92 +22,136 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
-import net.sourceforge.JDataManager.ReportFields;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
-import net.sourceforge.JDataManager.ValueSet;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
 import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
 
+/**
+ * ControlData definition and list. The Control Data represents the data version of the entire data set,
+ * allowing for migration code to be written to map between different versions. It also holds a pointer to the
+ * active ControlKey.
+ * <p>
+ * When code is loaded from a database, it is possible that more than one control key will be active. This
+ * will occur if a failure occurs when we are writing the results of a renew security request to the database
+ * and we have changed some records, but not all to the required controlKey. This record points to the active
+ * controlKey. All records that are not encrypted by the correct controlKey should be re-encrypted and written
+ * to the database.
+ * @author Tony Washer
+ */
 public class ControlData extends DataItem<ControlData> {
     /**
-     * Object name
+     * Object name.
      */
-    public static String objName = ControlData.class.getSimpleName();
+    public static final String OBJECT_NAME = ControlData.class.getSimpleName();
 
     /**
-     * List name
+     * List name.
      */
-    public static String listName = objName + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
-     * Report fields
+     * Report fields.
      */
-    private static final ReportFields theLocalFields = new ReportFields(objName, DataItem.theLocalFields);
+    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
 
-    /* Called from constructor */
     @Override
-    public ReportFields declareFields() {
-        return theLocalFields;
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
     }
 
-    /* Field IDs */
-    public static final ReportField FIELD_VERSION = theLocalFields.declareEqualityValueField("Version");
-    public static final ReportField FIELD_CONTROLKEY = theLocalFields.declareEqualityValueField("ControlKey");
+    /**
+     * Field ID for Data Version.
+     */
+    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareEqualityValueField("Version");
 
     /**
-     * The active set of values
+     * Field ID for Control Key.
+     */
+    public static final JDataField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField("ControlKey");
+
+    /**
+     * The active set of values.
      */
     private ValueSet<ControlData> theValueSet;
 
     @Override
-    public void declareValues(ValueSet<ControlData> pValues) {
+    public void declareValues(final ValueSet<ControlData> pValues) {
         super.declareValues(pValues);
         theValueSet = pValues;
     }
 
-    /* Access methods */
+    /**
+     * Get the data version.
+     * @return data version
+     */
     public Integer getDataVersion() {
         return getDataVersion(theValueSet);
     }
 
+    /**
+     * Get the control key.
+     * @return the control key
+     */
     public ControlKey getControlKey() {
         return getControlKey(theValueSet);
     }
 
-    public static Integer getDataVersion(ValueSet<ControlData> pValueSet) {
+    /**
+     * Get the data version for a ValueSet.
+     * @param pValueSet the value set
+     * @return data version
+     */
+    public static Integer getDataVersion(final ValueSet<ControlData> pValueSet) {
         return pValueSet.getValue(FIELD_VERSION, Integer.class);
     }
 
-    public static ControlKey getControlKey(ValueSet<ControlData> pValueSet) {
+    /**
+     * Get the control key for a ValueSet.
+     * @param pValueSet the value set
+     * @return control key
+     */
+    public static ControlKey getControlKey(final ValueSet<ControlData> pValueSet) {
         return pValueSet.getValue(FIELD_CONTROLKEY, ControlKey.class);
     }
 
-    private void setValueDataVersion(Integer pId) {
-        theValueSet.setValue(FIELD_VERSION, pId);
+    /**
+     * Set the data version value.
+     * @param pValue the value
+     */
+    private void setValueDataVersion(final Integer pValue) {
+        theValueSet.setValue(FIELD_VERSION, pValue);
     }
 
-    private void setValueControlKey(ControlKey pKey) {
-        theValueSet.setValue(FIELD_CONTROLKEY, pKey);
+    /**
+     * Set the control key value.
+     * @param pValue the value
+     */
+    private void setValueControlKey(final ControlKey pValue) {
+        theValueSet.setValue(FIELD_CONTROLKEY, pValue);
     }
 
-    private void setValueControlKey(Integer pId) {
+    /**
+     * Set the control key value as Id.
+     * @param pId the value
+     */
+    private void setValueControlKey(final Integer pId) {
         theValueSet.setValue(FIELD_CONTROLKEY, pId);
     }
 
-    /* Linking methods */
     @Override
     public ControlData getBase() {
         return (ControlData) super.getBase();
     }
 
     /**
-     * Construct a copy of a ControlData
+     * Construct a copy of a ControlData.
      * @param pList the associated list
      * @param pSource The source
      */
-    protected ControlData(ControlDataList pList,
-                          ControlData pSource) {
+    protected ControlData(final ControlDataList pList,
+                          final ControlData pSource) {
         /* Set standard values */
         super(pList, pSource);
 
@@ -126,14 +171,23 @@ public class ControlData extends DataItem<ControlData> {
                 setBase(pSource);
                 setState(pSource.getState());
                 break;
+            default:
+                break;
         }
     }
 
-    /* Standard constructor */
-    private ControlData(ControlDataList pList,
-                        int uId,
-                        int uVersion,
-                        int uControlId) throws ModelException {
+    /**
+     * Standard Constructor.
+     * @param pList the owning list
+     * @param uId the id
+     * @param uVersion the data version
+     * @param uControlId the control key id
+     * @throws JDataException on error
+     */
+    private ControlData(final ControlDataList pList,
+                        final int uId,
+                        final int uVersion,
+                        final int uControlId) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -145,25 +199,31 @@ public class ControlData extends DataItem<ControlData> {
 
             /* Look up the ControlKey */
             ControlKey myControl = pList.theData.getControlKeys().searchFor(uControlId);
-            if (myControl == null)
-                throw new ModelException(ExceptionClass.DATA, this, "Invalid ControlKey Id");
+            if (myControl == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid ControlKey Id");
+            }
             setValueControlKey(myControl);
 
             /* Allocate the id */
             pList.setNewId(this);
-        }
 
-        /* Catch Exceptions */
-        catch (Exception e) {
+            /* Catch Exceptions */
+        } catch (Exception e) {
             /* Pass on exception */
-            throw new ModelException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
     }
 
-    /* Limited (no security) constructor */
-    private ControlData(ControlDataList pList,
-                        int uId,
-                        int uVersion) throws ModelException {
+    /**
+     * Limited (no security) constructor.
+     * @param pList the owning list
+     * @param uId the id
+     * @param uVersion the data version
+     * @throws JDataException on error
+     */
+    private ControlData(final ControlDataList pList,
+                        final int uId,
+                        final int uVersion) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -174,53 +234,59 @@ public class ControlData extends DataItem<ControlData> {
 
             /* Allocate the id */
             pList.setNewId(this);
-        }
 
-        /* Catch Exceptions */
-        catch (Exception e) {
+            /* Catch Exceptions */
+        } catch (Exception e) {
             /* Pass on exception */
-            throw new ModelException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
     }
 
     @Override
-    public int compareTo(Object pThat) {
+    public int compareTo(final Object pThat) {
         int iDiff;
 
         /* Handle the trivial cases */
-        if (this == pThat)
+        if (this == pThat) {
             return 0;
-        if (pThat == null)
+        }
+        if (pThat == null) {
             return -1;
+        }
 
         /* Make sure that the object is a ControlData */
-        if (pThat.getClass() != this.getClass())
+        if (pThat.getClass() != this.getClass()) {
             return -1;
+        }
 
         /* Access the object as a ControlData */
         ControlData myThat = (ControlData) pThat;
 
         /* Compare the Versions */
         iDiff = (int) (getDataVersion() - myThat.getDataVersion());
-        if (iDiff < 0)
+        if (iDiff < 0) {
             return -1;
-        if (iDiff > 0)
+        }
+        if (iDiff > 0) {
             return 1;
+        }
 
         /* Compare the IDs */
         iDiff = (int) (getId() - myThat.getId());
-        if (iDiff < 0)
+        if (iDiff < 0) {
             return -1;
-        if (iDiff > 0)
+        }
+        if (iDiff > 0) {
             return 1;
+        }
         return 0;
     }
 
     /**
-     * Isolate Data Copy
+     * Isolate Data Copy.
      * @param pData the DataSet
      */
-    private void isolateCopy(DataSet<?> pData) {
+    private void isolateCopy(final DataSet<?> pData) {
         ControlKeyList myKeys = pData.getControlKeys();
 
         /* Update to use the local copy of the ControlKeys */
@@ -230,11 +296,11 @@ public class ControlData extends DataItem<ControlData> {
     }
 
     /**
-     * Set a new ControlKey
+     * Set a new ControlKey.
      * @param pControl the new control key
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    protected void setControlKey(ControlKey pControl) throws ModelException {
+    protected void setControlKey(final ControlKey pControl) throws JDataException {
         /* If we do not have a control Key */
         if (getControlKey() == null) {
             /* Store the control details and return */
@@ -249,57 +315,71 @@ public class ControlData extends DataItem<ControlData> {
         setValueControlKey(pControl);
 
         /* Check for changes */
-        if (checkForHistory())
+        if (checkForHistory()) {
             setState(DataState.CHANGED);
+        }
     }
 
     /**
-     * Static List
+     * Control Data List.
      */
     public static class ControlDataList extends DataList<ControlDataList, ControlData> {
-        /* Members */
+        /**
+         * The owning data set.
+         */
         private DataSet<?> theData = null;
 
+        /**
+         * Get the owning data set.
+         * @return the data set
+         */
         public DataSet<?> getData() {
             return theData;
         }
 
         @Override
         public String listName() {
-            return listName;
+            return LIST_NAME;
         }
 
+        /**
+         * The single element of the list.
+         */
         private ControlData theControl = null;
 
+        /**
+         * Get the single element.
+         * @return the control data
+         */
         public ControlData getControl() {
             return theControl;
         }
 
         /**
-         * Construct an empty CORE static list
+         * Construct an empty CORE Control Data list.
          * @param pData the DataSet for the list
          */
-        protected ControlDataList(DataSet<?> pData) {
+        protected ControlDataList(final DataSet<?> pData) {
             super(ControlDataList.class, ControlData.class, ListStyle.CORE, false);
             theData = pData;
         }
 
         /**
-         * Construct an empty generic ControlData list
+         * Construct an empty generic ControlData list.
          * @param pData the DataSet for the list
          * @param pStyle the style of the list
          */
-        protected ControlDataList(DataSet<?> pData,
-                                  ListStyle pStyle) {
+        protected ControlDataList(final DataSet<?> pData,
+                                  final ListStyle pStyle) {
             super(ControlDataList.class, ControlData.class, pStyle, false);
             theData = pData;
         }
 
         /**
-         * Constructor for a cloned List
+         * Constructor for a cloned List.
          * @param pSource the source List
          */
-        private ControlDataList(ControlDataList pSource) {
+        private ControlDataList(final ControlDataList pSource) {
             super(pSource);
             theData = pSource.theData;
         }
@@ -309,7 +389,7 @@ public class ControlData extends DataItem<ControlData> {
          * @param pStyle the list style
          * @return the update Extract
          */
-        private ControlDataList getExtractList(ListStyle pStyle) {
+        private ControlDataList getExtractList(final ListStyle pStyle) {
             /* Build an empty Extract List */
             ControlDataList myList = new ControlDataList(this);
 
@@ -320,7 +400,6 @@ public class ControlData extends DataItem<ControlData> {
             return myList;
         }
 
-        /* Obtain extract lists. */
         @Override
         public ControlDataList getUpdateList() {
             return getExtractList(ListStyle.UPDATE);
@@ -337,7 +416,7 @@ public class ControlData extends DataItem<ControlData> {
         }
 
         @Override
-        public ControlDataList getDeepCopy(DataSet<?> pDataSet) {
+        public ControlDataList getDeepCopy(final DataSet<?> pDataSet) {
             /* Build an empty Extract List */
             ControlDataList myList = new ControlDataList(this);
             myList.theData = pDataSet;
@@ -351,7 +430,7 @@ public class ControlData extends DataItem<ControlData> {
         }
 
         @Override
-        protected ControlDataList getDifferences(ControlDataList pOld) {
+        protected ControlDataList getDifferences(final ControlDataList pOld) {
             /* Build an empty Difference List */
             ControlDataList myList = new ControlDataList(this);
 
@@ -363,7 +442,7 @@ public class ControlData extends DataItem<ControlData> {
         }
 
         @Override
-        public ControlData addNewItem(DataItem<?> pItem) {
+        public ControlData addNewItem(final DataItem<?> pItem) {
             ControlData myControl = new ControlData(this, (ControlData) pItem);
             add(myControl);
             theControl = myControl;
@@ -376,27 +455,29 @@ public class ControlData extends DataItem<ControlData> {
         }
 
         /**
-         * Add a ControlData item
+         * Add a ControlData item.
          * @param uId the id
          * @param uVersion the version
          * @param uControlId the controlId
-         * @throws ModelException
+         * @throws JDataException on error
          */
-        public void addItem(int uId,
-                            int uVersion,
-                            int uControlId) throws ModelException {
+        public void addItem(final int uId,
+                            final int uVersion,
+                            final int uControlId) throws JDataException {
             ControlData myControl;
 
             /* Create the ControlData */
             myControl = new ControlData(this, uId, uVersion, uControlId);
 
             /* Check that this ControlId has not been previously added */
-            if (!isIdUnique(uId))
-                throw new ModelException(ExceptionClass.DATA, myControl, "Duplicate ControlId (" + uId + ")");
+            if (!isIdUnique(uId)) {
+                throw new JDataException(ExceptionClass.DATA, myControl, "Duplicate ControlId (" + uId + ")");
+            }
 
-            /* Only one static is allowed */
-            if (theControl != null)
-                throw new ModelException(ExceptionClass.DATA, myControl, "Control record already exists");
+            /* Only one control data is allowed */
+            if (theControl != null) {
+                throw new JDataException(ExceptionClass.DATA, myControl, "Control record already exists");
+            }
 
             /* Add to the list */
             theControl = myControl;
@@ -404,21 +485,22 @@ public class ControlData extends DataItem<ControlData> {
         }
 
         /**
-         * Add a ControlData item (with no security as yet)
+         * Add a ControlData item (with no security as yet).
          * @param uId the id
          * @param uVersion the version
-         * @throws ModelException
+         * @throws JDataException on error
          */
-        public void addItem(int uId,
-                            int uVersion) throws ModelException {
+        public void addItem(final int uId,
+                            final int uVersion) throws JDataException {
             ControlData myControl;
 
             /* Create the ControlData */
             myControl = new ControlData(this, uId, uVersion);
 
             /* Only one static is allowed */
-            if (theControl != null)
-                throw new ModelException(ExceptionClass.DATA, myControl, "Control record already exists");
+            if (theControl != null) {
+                throw new JDataException(ExceptionClass.DATA, myControl, "Control record already exists");
+            }
 
             /* Add to the list */
             theControl = myControl;

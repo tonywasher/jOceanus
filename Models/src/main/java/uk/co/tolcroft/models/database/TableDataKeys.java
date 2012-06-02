@@ -22,8 +22,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.database;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
 import uk.co.tolcroft.models.data.DataKey;
 import uk.co.tolcroft.models.data.DataKey.DataKeyList;
 import uk.co.tolcroft.models.data.DataSet;
@@ -35,7 +35,7 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
     /**
      * The name of the Static table.
      */
-    protected static final String TABLE_NAME = DataKey.listName;
+    protected static final String TABLE_NAME = DataKey.LIST_NAME;
 
     /**
      * The table definition.
@@ -78,7 +78,7 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
     }
 
     @Override
-    protected void loadItem(final int pId) throws ModelException {
+    protected void loadItem(final int pId) throws JDataException {
         int myControl;
         int myKeyType;
         byte[] myKey;
@@ -94,7 +94,7 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
 
     @Override
     protected void setFieldValue(final DataKey pItem,
-                                 final ReportField iField) throws ModelException {
+                                 final JDataField iField) throws JDataException {
         /* Switch on field id */
         if (iField == DataKey.FIELD_CONTROLKEY) {
             theTableDef.setIntegerValue(iField, pItem.getControlKey().getId());

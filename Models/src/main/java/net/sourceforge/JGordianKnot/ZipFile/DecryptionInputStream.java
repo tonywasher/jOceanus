@@ -25,8 +25,9 @@ package net.sourceforge.JGordianKnot.ZipFile;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JGordianKnot.StreamCipher;
 import net.sourceforge.JGordianKnot.SymmetricKey;
 
 /**
@@ -80,11 +81,11 @@ public class DecryptionInputStream extends InputStream {
      * @param pKey the symmetric key
      * @param pInitVector the initialisation vector
      * @param pStream the stream to decrypt from
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public DecryptionInputStream(final SymmetricKey pKey,
                                  final byte[] pInitVector,
-                                 final InputStream pStream) throws ModelException {
+                                 final InputStream pStream) throws JDataException {
         /* Protect from exceptions */
         try {
             /* record the input stream */
@@ -94,8 +95,8 @@ public class DecryptionInputStream extends InputStream {
             theCipher = pKey.initDecryptionStream(pInitVector);
 
             /* Catch exceptions */
-        } catch (ModelException e) {
-            throw new ModelException(ExceptionClass.CRYPTO, "Exception deciphering secret key", e);
+        } catch (JDataException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, "Exception deciphering secret key", e);
         }
     }
 
@@ -324,10 +325,10 @@ public class DecryptionInputStream extends InputStream {
          * Decrypt bytes into the buffer and update the message digests.
          * @param pBuffer the buffer from which to store bytes
          * @param pLength the number of bytes read into the buffer (must not be zero)
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
         public void storeBytes(final byte[] pBuffer,
-                               final int pLength) throws ModelException {
+                               final int pLength) throws JDataException {
             int iNumBytes = 0;
             int iLength = pLength;
 

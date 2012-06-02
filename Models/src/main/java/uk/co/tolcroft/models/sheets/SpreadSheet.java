@@ -24,7 +24,7 @@ package uk.co.tolcroft.models.sheets;
 
 import java.io.File;
 
-import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.JDataException;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 
@@ -58,10 +58,10 @@ public abstract class SpreadSheet<T extends DataSet<T>> {
      * @param pThread Thread Control for task
      * @param pFile the backup file to load from
      * @return the newly loaded data
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public T loadBackup(final ThreadStatus<T> pThread,
-                        final File pFile) throws ModelException {
+                        final File pFile) throws JDataException {
         /* Create a sheet reader object */
         SheetReader<T> myReader = getSheetReader(pThread);
 
@@ -77,11 +77,11 @@ public abstract class SpreadSheet<T extends DataSet<T>> {
      * @param pThread Thread Control for task
      * @param pData Data to write out
      * @param pFile the backup file to write to
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public void createBackup(final ThreadStatus<T> pThread,
                              final T pData,
-                             final File pFile) throws ModelException {
+                             final File pFile) throws JDataException {
         /* Create a sheet writer object */
         SheetWriter<T> myWriter = getSheetWriter(pThread);
 
@@ -94,10 +94,10 @@ public abstract class SpreadSheet<T extends DataSet<T>> {
      * @param pThread Thread Control for task
      * @param pFile the extract file to load from
      * @return the newly loaded data
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public T loadExtract(final ThreadStatus<T> pThread,
-                         final File pFile) throws ModelException {
+                         final File pFile) throws JDataException {
         /* Create a Sheet Reader object */
         SheetReader<T> myReader = getSheetReader(pThread);
 
@@ -113,11 +113,11 @@ public abstract class SpreadSheet<T extends DataSet<T>> {
      * @param pThread Thread Control for task
      * @param pData Data to write out
      * @param pFile the extract file to write to
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public void createExtract(final ThreadStatus<T> pThread,
                               final T pData,
-                              final File pFile) throws ModelException {
+                              final File pFile) throws JDataException {
         /* Create a SheetWriter object */
         SheetWriter<T> myWriter = getSheetWriter(pThread);
 

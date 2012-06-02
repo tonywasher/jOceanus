@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * Subversion: Java SubVersion Management
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,8 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
 import org.tmatesoft.svn.core.SVNDepth;
@@ -43,52 +44,62 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
 import uk.co.tolcroft.subversion.data.Tag.TagList;
 
 /**
- * Represents a branch of a component in the repository
- * @author Tony
+ * Represents a branch of a component in the repository.
+ * @author Tony Washer
  */
-public class Branch {
+public final class Branch implements Comparable<Branch> {
     /**
-     * The branch prefix
+     * The branch prefix.
      */
-    protected static final String branchPrefix = "v";
+    private static final String BRANCH_PREFIX = "v";
 
     /**
-     * The branch prefix
+     * The branch prefix.
      */
-    protected static final String branchSep = ".";
+    private static final String BRANCH_SEP = ".";
 
     /**
-     * Parent Repository
+     * The buffer length.
+     */
+    private static final int BUFFER_LEN = 100;
+
+    /**
+     * Number of version parts.
+     */
+    private static final int NUM_VERS_PARTS = 3;
+
+    /**
+     * Parent Repository.
      */
     private final Repository theRepository;
 
     /**
-     * Parent Component
+     * Parent Component.
      */
     private final Component theComponent;
 
     /**
-     * Major version
+     * Major version.
      */
     private final int theMajorVersion;
 
     /**
-     * Minor version
+     * Minor version.
      */
     private final int theMinorVersion;
 
     /**
-     * Revision
+     * Revision.
      */
     private final int theRevision;
 
     /**
-     * TagList
+     * TagList.
      */
     private final TagList theTags;
 
     /**
-     * Get the repository for this branch
+     * Get the repository for this branch.
      * @return the repository
      */
     public Repository getRepository() {
@@ -96,7 +107,7 @@ public class Branch {
     }
 
     /**
-     * Get the component for this branch
+     * Get the component for this branch.
      * @return the component
      */
     public Component getComponent() {
@@ -104,7 +115,7 @@ public class Branch {
     }
 
     /**
-     * Get the tag list for this branch
+     * Get the tag list for this branch.
      * @return the tag list
      */
     public TagList getTagList() {
@@ -112,22 +123,23 @@ public class Branch {
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pParent the Parent component
      * @param pVersion the version string
      */
-    private Branch(Component pParent,
-                   String pVersion) {
+    private Branch(final Component pParent,
+                   final String pVersion) {
         /* Store values */
         theComponent = pParent;
         theRepository = pParent.getRepository();
 
         /* Parse the version */
-        String[] myParts = pVersion.split("\\" + branchSep);
+        String[] myParts = pVersion.split("\\" + BRANCH_SEP);
 
         /* If we do not have three parts reject it */
-        if (myParts.length != 3)
+        if (myParts.length != NUM_VERS_PARTS) {
             throw new IllegalArgumentException();
+        }
 
         /* Determine values */
         theMajorVersion = Integer.parseInt(myParts[0]);
@@ -139,16 +151,16 @@ public class Branch {
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pParent the Parent component
      * @param pMajor the major version
      * @param pMinor the minor version
      * @param pRevision the revision
      */
-    private Branch(Component pParent,
-                   int pMajor,
-                   int pMinor,
-                   int pRevision) {
+    private Branch(final Component pParent,
+                   final int pMajor,
+                   final int pMinor,
+                   final int pRevision) {
         /* Store values */
         theComponent = pParent;
         theRepository = pParent.getRepository();
@@ -163,19 +175,19 @@ public class Branch {
     }
 
     /**
-     * Get the branch name for this tag
+     * Get the branch name for this tag.
      * @return the branch name
      */
     public String getBranchName() {
         /* Build the underlying string */
-        StringBuilder myBuilder = new StringBuilder(100);
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the version directory */
-        myBuilder.append(branchPrefix);
+        myBuilder.append(BRANCH_PREFIX);
         myBuilder.append(theMajorVersion);
-        myBuilder.append(branchSep);
+        myBuilder.append(BRANCH_SEP);
         myBuilder.append(theMinorVersion);
-        myBuilder.append(branchSep);
+        myBuilder.append(BRANCH_SEP);
         myBuilder.append(theRevision);
 
         /* Return the branch name */
@@ -183,16 +195,16 @@ public class Branch {
     }
 
     /**
-     * Obtain repository path
+     * Obtain repository path.
      * @return the Repository path for this branch
      */
     public String getPath() {
         /* Build the underlying string */
-        StringBuilder myBuilder = new StringBuilder(100);
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the initial path */
         myBuilder.append(theComponent.getBranchesPath());
-        myBuilder.append(Repository.theURLSep);
+        myBuilder.append(Repository.SEP_URL);
 
         /* Build the version directory */
         myBuilder.append(getBranchName());
@@ -202,7 +214,7 @@ public class Branch {
     }
 
     /**
-     * Obtain URL
+     * Obtain URL.
      * @return the URL
      */
     public SVNURL getURL() {
@@ -214,57 +226,62 @@ public class Branch {
         }
     }
 
-    /**
-     * Compare this branch to another branch
-     * @param pThat the other branch
-     * @return -1 if earlier branch, 0 if equal branch, 1 if later branch
-     */
-    public int compareTo(Branch pThat) {
+    @Override
+    public int compareTo(final Branch pThat) {
         int iCompare;
 
         /* Handle trivial cases */
-        if (this == pThat)
+        if (this == pThat) {
             return 0;
-        if (pThat == null)
+        }
+        if (pThat == null) {
             return -1;
+        }
 
         /* Compare the components */
         iCompare = theComponent.compareTo(pThat.theComponent);
-        if (iCompare != 0)
+        if (iCompare != 0) {
             return iCompare;
+        }
 
         /* Compare versions numbers */
-        if (theMajorVersion < pThat.theMajorVersion)
+        if (theMajorVersion < pThat.theMajorVersion) {
             return -1;
-        if (theMajorVersion > pThat.theMajorVersion)
+        }
+        if (theMajorVersion > pThat.theMajorVersion) {
             return 1;
-        if (theMinorVersion < pThat.theMinorVersion)
+        }
+        if (theMinorVersion < pThat.theMinorVersion) {
             return -1;
-        if (theMinorVersion > pThat.theMinorVersion)
+        }
+        if (theMinorVersion > pThat.theMinorVersion) {
             return 1;
-        if (theRevision < pThat.theRevision)
+        }
+        if (theRevision < pThat.theRevision) {
             return -1;
-        if (theRevision > pThat.theRevision)
+        }
+        if (theRevision > pThat.theRevision) {
             return 1;
+        }
         return 0;
     }
 
     /**
-     * List of branches
+     * List of branches.
      */
-    public static class BranchList {
+    public static final class BranchList {
         /**
-         * The list of branches
+         * The list of branches.
          */
         private final List<Branch> theList;
 
         /**
-         * The parent component
+         * The parent component.
          */
         private final Component theComponent;
 
         /**
-         * Obtain the branch list
+         * Obtain the branch list.
          * @return the branch list
          */
         public List<Branch> getList() {
@@ -272,10 +289,10 @@ public class Branch {
         }
 
         /**
-         * Discover branch list from repository
+         * Discover branch list from repository.
          * @param pParent the parent component
          */
-        protected BranchList(Component pParent) {
+        protected BranchList(final Component pParent) {
             /* Create the list */
             theList = new ArrayList<Branch>();
 
@@ -284,10 +301,10 @@ public class Branch {
         }
 
         /**
-         * Discover branch list from repository
-         * @throws ModelException
+         * Discover branch list from repository.
+         * @throws JDataException on error
          */
-        public void discover() throws ModelException {
+        public void discover() throws JDataException {
             /* Reset the list */
             theList.clear();
 
@@ -307,20 +324,18 @@ public class Branch {
 
                 /* Release the client manager */
                 myRepo.releaseClientManager(myMgr);
-            }
-
-            catch (SVNException e) {
-                throw new ModelException(ExceptionClass.SUBVERSION, "Failed to discover branches for "
+            } catch (SVNException e) {
+                throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover branches for "
                         + theComponent.getName(), e);
             }
         }
 
         /**
-         * Locate branch
+         * Locate branch.
          * @param pURL the URL to locate
          * @return the relevant branch or Null
          */
-        protected Branch locateBranch(SVNURL pURL) {
+        protected Branch locateBranch(final SVNURL pURL) {
             /* Access list iterator */
             ListIterator<Branch> myIterator = theList.listIterator();
 
@@ -345,11 +360,11 @@ public class Branch {
         }
 
         /**
-         * Locate branch
-         * @param pBranch
+         * Locate branch.
+         * @param pBranch the branch
          * @return the relevant branch or Null
          */
-        public Branch locateBranch(Branch pBranch) {
+        public Branch locateBranch(final Branch pBranch) {
             /* Access list iterator */
             ListIterator<Branch> myIterator = theList.listIterator();
 
@@ -360,10 +375,12 @@ public class Branch {
 
                 /* If this is the correct branch */
                 int iCompare = myBranch.compareTo(pBranch);
-                if (iCompare > 0)
+                if (iCompare > 0) {
                     break;
-                if (iCompare < 0)
+                }
+                if (iCompare < 0) {
                     continue;
+                }
                 return myBranch;
             }
 
@@ -372,7 +389,7 @@ public class Branch {
         }
 
         /**
-         * Determine next major branch
+         * Determine next major branch.
          * @return the major branch
          */
         public Branch nextMajorBranch() {
@@ -394,11 +411,11 @@ public class Branch {
         }
 
         /**
-         * Determine next minor branch
+         * Determine next minor branch.
          * @param pBase the branch to base from
          * @return the minor branch
          */
-        public Branch nextMinorBranch(Branch pBase) {
+        public Branch nextMinorBranch(final Branch pBase) {
             /* Access major version */
             int myMajor = pBase.theMajorVersion;
 
@@ -412,10 +429,12 @@ public class Branch {
                 Branch myTest = myIterator.next();
 
                 /* Handle wrong major version */
-                if (myTest.theMajorVersion > myMajor)
+                if (myTest.theMajorVersion > myMajor) {
                     break;
-                if (myTest.theMajorVersion < myMajor)
+                }
+                if (myTest.theMajorVersion < myMajor) {
                     continue;
+                }
 
                 /* Record branch */
                 myBranch = myTest;
@@ -429,11 +448,11 @@ public class Branch {
         }
 
         /**
-         * Determine next revision branch
+         * Determine next revision branch.
          * @param pBase the branch to base from
          * @return the minor branch
          */
-        public Branch nextRevisionBranch(Branch pBase) {
+        public Branch nextRevisionBranch(final Branch pBase) {
             /* Access major/minor version */
             int myMajor = pBase.theMajorVersion;
             int myMinor = pBase.theMinorVersion;
@@ -448,14 +467,18 @@ public class Branch {
                 Branch myTest = myIterator.next();
 
                 /* Handle wrong major/minor version */
-                if (myTest.theMajorVersion > myMajor)
+                if (myTest.theMajorVersion > myMajor) {
                     break;
-                if (myTest.theMajorVersion < myMajor)
+                }
+                if (myTest.theMajorVersion < myMajor) {
                     continue;
-                if (myTest.theMinorVersion > myMinor)
+                }
+                if (myTest.theMinorVersion > myMinor) {
                     break;
-                if (myTest.theMinorVersion < myMinor)
+                }
+                if (myTest.theMinorVersion < myMinor) {
                     continue;
+                }
 
                 /* Record branch */
                 myBranch = myTest;
@@ -469,24 +492,27 @@ public class Branch {
         }
 
         /**
-         * The Directory Entry Handler
+         * The Directory Entry Handler.
          */
-        private class BranchHandler implements ISVNDirEntryHandler {
+        private final class BranchHandler implements ISVNDirEntryHandler {
 
             @Override
-            public void handleDirEntry(SVNDirEntry pEntry) throws SVNException {
+            public void handleDirEntry(final SVNDirEntry pEntry) throws SVNException {
                 /* Protect against exceptions */
                 try {
                     /* Ignore if not a directory and if it is top-level */
-                    if (pEntry.getKind() != SVNNodeKind.DIR)
+                    if (pEntry.getKind() != SVNNodeKind.DIR) {
                         return;
-                    if (pEntry.getRelativePath().length() == 0)
+                    }
+                    if (pEntry.getRelativePath().length() == 0) {
                         return;
+                    }
 
                     /* Access the name and ignore if it does not start with v */
                     String myName = pEntry.getName();
-                    if (!myName.startsWith(branchPrefix))
+                    if (!myName.startsWith(BRANCH_PREFIX)) {
                         return;
+                    }
                     myName = myName.substring(1);
 
                     /* Create the branch and add to the list */
@@ -495,9 +521,7 @@ public class Branch {
 
                     /* Discover tags */
                     myBranch.getTagList().discover();
-                }
-
-                catch (ModelException e) {
+                } catch (JDataException e) {
                     /* Pass back as SVNException */
                     throw new SVNException(SVNErrorMessage.create(SVNErrorCode.UNKNOWN), e);
                 }

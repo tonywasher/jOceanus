@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * Subversion: Java SubVersion Management
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,8 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
 import org.tmatesoft.svn.core.SVNDepth;
@@ -39,42 +40,47 @@ import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
 /**
- * Represents a tag of a branch
+ * Represents a tag of a branch.
  * @author Tony
  */
-public class Tag {
+public final class Tag implements Comparable<Tag> {
     /**
-     * The tag prefix
+     * The tag prefix.
      */
-    protected static final String tagPrefix = "-b";
+    private static final String PREFIX_TAG = "-b";
 
     /**
-     * Parent Repository
+     * The buffer length.
+     */
+    private static final int BUFFER_LEN = 100;
+
+    /**
+     * Parent Repository.
      */
     private final Repository theRepository;
 
     /**
-     * Parent Component
+     * Parent Component.
      */
     private final Component theComponent;
 
     /**
-     * The Branch to which this Tag belongs
+     * The Branch to which this Tag belongs.
      */
     private final Branch theBranch;
 
     /**
-     * The Tag number
+     * The Tag number.
      */
     private final int theTag;
 
     /**
-     * Constructor
+     * Constructor.
      * @param pParent the Parent branch
      * @param pTag the tag number
      */
-    private Tag(Branch pParent,
-                int pTag) {
+    private Tag(final Branch pParent,
+                final int pTag) {
         /* Store values */
         theBranch = pParent;
         theRepository = pParent.getRepository();
@@ -83,15 +89,15 @@ public class Tag {
     }
 
     /**
-     * Get the tag name for this tag
+     * Get the tag name for this tag.
      * @return the tag name
      */
     public String getTagName() {
-        return theBranch.getBranchName() + tagPrefix + theTag;
+        return theBranch.getBranchName() + PREFIX_TAG + theTag;
     }
 
     /**
-     * Get the repository for this tag
+     * Get the repository for this tag.
      * @return the repository
      */
     public Repository getRepository() {
@@ -99,7 +105,7 @@ public class Tag {
     }
 
     /**
-     * Get the component for this tag
+     * Get the component for this tag.
      * @return the component
      */
     public Component getComponent() {
@@ -107,7 +113,7 @@ public class Tag {
     }
 
     /**
-     * Get the branch for this tag
+     * Get the branch for this tag.
      * @return the branch
      */
     public Branch getBranch() {
@@ -115,16 +121,16 @@ public class Tag {
     }
 
     /**
-     * Obtain repository path for the tag
+     * Obtain repository path for the tag.
      * @return the Repository path for this tag
      */
     public String getPath() {
         /* Allocate a builder */
-        StringBuilder myBuilder = new StringBuilder(100);
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Add the tags directory */
         myBuilder.append(theComponent.getTagsPath());
-        myBuilder.append(Repository.theURLSep);
+        myBuilder.append(Repository.SEP_URL);
 
         /* Build the tag directory */
         myBuilder.append(getTagName());
@@ -134,7 +140,7 @@ public class Tag {
     }
 
     /**
-     * Obtain URL
+     * Obtain URL.
      * @return the URL
      */
     public SVNURL getURL() {
@@ -146,59 +152,60 @@ public class Tag {
         }
     }
 
-    /**
-     * Compare this tag to another tag
-     * @param pThat the other tag
-     * @return -1 if earlier tag, 0 if equal tag, 1 if later tag
-     */
-    public int compareTo(Tag pThat) {
+    @Override
+    public int compareTo(final Tag pThat) {
         int iCompare;
 
         /* Handle trivial cases */
-        if (this == pThat)
+        if (this == pThat) {
             return 0;
-        if (pThat == null)
+        }
+        if (pThat == null) {
             return -1;
+        }
 
         /* Compare the branches */
         iCompare = theBranch.compareTo(pThat.theBranch);
-        if (iCompare != 0)
+        if (iCompare != 0) {
             return iCompare;
+        }
 
         /* Compare tag numbers */
-        if (theTag > pThat.theTag)
+        if (theTag > pThat.theTag) {
             return -1;
-        if (theTag < pThat.theTag)
+        }
+        if (theTag < pThat.theTag) {
             return 1;
+        }
         return 0;
     }
 
     /**
-     * List of tags
+     * List of tags.
      */
-    public static class TagList {
+    public static final class TagList {
         /**
-         * The list of tags
+         * The list of tags.
          */
         private final List<Tag> theList;
 
         /**
-         * Parent Component
+         * Parent Component.
          */
         private final Component theComponent;
 
         /**
-         * The parent branch
+         * The parent branch.
          */
         private final Branch theBranch;
 
         /**
-         * The prefix
+         * The prefix.
          */
         private final String thePrefix;
 
         /**
-         * Obtain the tag list
+         * Obtain the tag list.
          * @return the tag list
          */
         public List<Tag> getList() {
@@ -206,10 +213,10 @@ public class Tag {
         }
 
         /**
-         * Discover tag list from repository
+         * Constructor.
          * @param pParent the parent branch
          */
-        protected TagList(Branch pParent) {
+        protected TagList(final Branch pParent) {
             /* Create the list */
             theList = new ArrayList<Tag>();
 
@@ -218,14 +225,14 @@ public class Tag {
             theComponent = pParent.getComponent();
 
             /* Build prefix */
-            thePrefix = theBranch.getBranchName() + tagPrefix;
+            thePrefix = theBranch.getBranchName() + PREFIX_TAG;
         }
 
         /**
-         * Discover tag list from repository
-         * @throws ModelException
+         * Discover tag list from repository.
+         * @throws JDataException on error
          */
-        public void discover() throws ModelException {
+        public void discover() throws JDataException {
             /* Reset the list */
             theList.clear();
 
@@ -245,20 +252,18 @@ public class Tag {
 
                 /* Release the client manager */
                 myRepo.releaseClientManager(myMgr);
-            }
-
-            catch (SVNException e) {
-                throw new ModelException(ExceptionClass.SUBVERSION, "Failed to discover tags for "
+            } catch (SVNException e) {
+                throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover tags for "
                         + theBranch.getBranchName(), e);
             }
         }
 
         /**
-         * Locate tag
-         * @param pTag
+         * Locate tag.
+         * @param pTag the tag
          * @return the relevant tag or Null
          */
-        public Tag locateTag(Tag pTag) {
+        public Tag locateTag(final Tag pTag) {
             /* Access list iterator */
             ListIterator<Tag> myIterator = theList.listIterator();
 
@@ -269,10 +274,12 @@ public class Tag {
 
                 /* If this is the correct tag */
                 int iCompare = myTag.compareTo(pTag);
-                if (iCompare > 0)
+                if (iCompare > 0) {
                     break;
-                if (iCompare < 0)
+                }
+                if (iCompare < 0) {
                     continue;
+                }
                 return myTag;
             }
 
@@ -281,7 +288,7 @@ public class Tag {
         }
 
         /**
-         * Determine next tag
+         * Determine next tag.
          * @return the next tag
          */
         public Tag nextTag() {
@@ -303,22 +310,25 @@ public class Tag {
         }
 
         /**
-         * The Directory Entry Handler
+         * The Directory Entry Handler.
          */
-        private class TagHandler implements ISVNDirEntryHandler {
+        private final class TagHandler implements ISVNDirEntryHandler {
 
             @Override
-            public void handleDirEntry(SVNDirEntry pEntry) throws SVNException {
+            public void handleDirEntry(final SVNDirEntry pEntry) throws SVNException {
                 /* Ignore if not a directory and if it is top-level */
-                if (pEntry.getKind() != SVNNodeKind.DIR)
+                if (pEntry.getKind() != SVNNodeKind.DIR) {
                     return;
-                if (pEntry.getRelativePath().length() == 0)
+                }
+                if (pEntry.getRelativePath().length() == 0) {
                     return;
+                }
 
                 /* Access the name and ignore if it does not start with correct prefix */
                 String myName = pEntry.getName();
-                if (!myName.startsWith(thePrefix))
+                if (!myName.startsWith(thePrefix)) {
                     return;
+                }
                 myName = myName.substring(thePrefix.length());
 
                 /* Determine tag */

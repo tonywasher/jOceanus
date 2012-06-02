@@ -24,8 +24,8 @@ package net.sourceforge.JGordianKnot;
 
 import java.security.SecureRandom;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 
 /**
  * Digest types. Available algorithms.
@@ -103,15 +103,15 @@ public enum DigestType {
      * get value from id.
      * @param id the id value
      * @return the corresponding enumeration object
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public static DigestType fromId(final int id) throws ModelException {
+    public static DigestType fromId(final int id) throws JDataException {
         for (DigestType myType : values()) {
             if (myType.getId() == id) {
                 return myType;
             }
         }
-        throw new ModelException(ExceptionClass.DATA, "Invalid DigestType: " + id);
+        throw new JDataException(ExceptionClass.DATA, "Invalid DigestType: " + id);
     }
 
     /**
@@ -153,10 +153,10 @@ public enum DigestType {
      * @param pNumTypes the number of types
      * @param pRandom the random generator
      * @return the random set
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public static DigestType[] getRandomTypes(final int pNumTypes,
-                                              final SecureRandom pRandom) throws ModelException {
+                                              final SecureRandom pRandom) throws JDataException {
         /* Access the values */
         DigestType[] myValues = values();
         int iNumValues = myValues.length;
@@ -164,7 +164,7 @@ public enum DigestType {
 
         /* Reject call if invalid number of types */
         if ((pNumTypes < 1) || (pNumTypes > iNumValues)) {
-            throw new ModelException(ExceptionClass.LOGIC, "Invalid number of digests: " + pNumTypes);
+            throw new JDataException(ExceptionClass.LOGIC, "Invalid number of digests: " + pNumTypes);
         }
 
         /* Create the result set */

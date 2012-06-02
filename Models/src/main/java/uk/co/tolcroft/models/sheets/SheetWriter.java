@@ -25,6 +25,7 @@ package uk.co.tolcroft.models.sheets;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -32,8 +33,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDecimal.Decimal;
 import net.sourceforge.JDecimal.Dilution;
 import net.sourceforge.JDecimal.Money;
@@ -148,10 +149,10 @@ public abstract class SheetWriter<T extends DataSet<T>> {
      * Create a Backup Workbook.
      * @param pData Data to write out
      * @param pFile the backup file to write to
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public void createBackup(final T pData,
-                             final File pFile) throws ModelException {
+                             final File pFile) throws JDataException {
         OutputStream myStream = null;
         File myTgtFile = null;
         ZipWriteFile myZipFile = null;
@@ -213,7 +214,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
             }
 
             /* Report the error */
-            throw new ModelException(ExceptionClass.EXCEL, "Failed to create Backup Workbook: "
+            throw new JDataException(ExceptionClass.EXCEL, "Failed to create Backup Workbook: "
                     + pFile.getName(), e);
         }
     }
@@ -222,10 +223,10 @@ public abstract class SheetWriter<T extends DataSet<T>> {
      * Create an Extract Workbook.
      * @param pData Data to write out
      * @param pFile the backup file to write to
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public void createExtract(final T pData,
-                              final File pFile) throws ModelException {
+                              final File pFile) throws JDataException {
         OutputStream myStream = null;
         FileOutputStream myOutFile = null;
         File myTgtFile = null;
@@ -273,7 +274,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
             }
 
             /* Report the error */
-            throw new ModelException(ExceptionClass.EXCEL, "Failed to create Editable Workbook: "
+            throw new JDataException(ExceptionClass.EXCEL, "Failed to create Editable Workbook: "
                     + myTgtFile.getName(), e);
         }
     }
@@ -285,9 +286,9 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 
     /**
      * Create the list of sheets to write.
-     * @throws Exception on error
+     * @throws JDataException on error
      */
-    private void initialiseWorkBook() throws Exception {
+    private void initialiseWorkBook() throws JDataException {
         /* Create the workbook attached to the output stream */
         theWorkBook = new HSSFWorkbook();
         createCellStyles();
@@ -444,9 +445,10 @@ public abstract class SheetWriter<T extends DataSet<T>> {
     /**
      * Write the WorkBook.
      * @param pStream the output stream
-     * @throws Exception on error
+     * @throws JDataException on error
+     * @throws IOException on write error
      */
-    private void writeWorkBook(final OutputStream pStream) throws Exception {
+    private void writeWorkBook(final OutputStream pStream) throws JDataException, IOException {
         SheetDataItem<?> mySheet;
 
         /* Access the iterator for the list */
@@ -477,7 +479,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 
         /* Check for cancellation */
         if (!bContinue) {
-            throw new ModelException(ExceptionClass.EXCEL, "Operation Cancelled");
+            throw new JDataException(ExceptionClass.EXCEL, "Operation Cancelled");
         }
     }
 

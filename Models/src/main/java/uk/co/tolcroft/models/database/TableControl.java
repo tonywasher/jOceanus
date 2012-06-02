@@ -22,8 +22,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.database;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
 import uk.co.tolcroft.models.data.ControlData;
 import uk.co.tolcroft.models.data.ControlData.ControlDataList;
 import uk.co.tolcroft.models.data.DataSet;
@@ -35,7 +35,7 @@ public class TableControl extends DatabaseTable<ControlData> {
     /**
      * The name of the Static table.
      */
-    protected static final String TABLE_NAME = ControlData.listName;
+    protected static final String TABLE_NAME = ControlData.LIST_NAME;
 
     /**
      * The table definition.
@@ -77,7 +77,7 @@ public class TableControl extends DatabaseTable<ControlData> {
     }
 
     @Override
-    protected void loadItem(final int pId) throws ModelException {
+    protected void loadItem(final int pId) throws JDataException {
         int myVers;
         int myControl;
 
@@ -91,7 +91,7 @@ public class TableControl extends DatabaseTable<ControlData> {
 
     @Override
     protected void setFieldValue(final ControlData pItem,
-                                 final ReportField pField) throws ModelException {
+                                 final JDataField pField) throws JDataException {
         /* Switch on field id */
         if (pField == ControlData.FIELD_VERSION) {
             theTableDef.setIntegerValue(pField, pItem.getDataVersion());

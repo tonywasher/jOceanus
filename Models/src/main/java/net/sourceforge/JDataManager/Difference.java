@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataManager: Java Data Manager
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,24 +26,28 @@ import java.util.Arrays;
 
 import net.sourceforge.JGordianKnot.EncryptedData.EncryptedField;
 
+/**
+ * Difference enum and utility.
+ * @author Tony Washer
+ */
 public enum Difference {
     /**
-     * Identical
+     * Identical.
      */
     Identical,
 
     /**
-     * Value Changed
+     * Value Changed.
      */
     Different,
 
     /**
-     * Security Changed
+     * Security Changed.
      */
     Security;
 
     /**
-     * Is there differences
+     * Is there differences?
      * @return true/false
      */
     public boolean isDifferent() {
@@ -55,7 +60,7 @@ public enum Difference {
     }
 
     /**
-     * Is there no differences
+     * Is there no differences?
      * @return true/false
      */
     public boolean isIdentical() {
@@ -63,7 +68,7 @@ public enum Difference {
     }
 
     /**
-     * Is there value differences
+     * Is there value differences?
      * @return true/false
      */
     public boolean isValueChanged() {
@@ -76,7 +81,7 @@ public enum Difference {
     }
 
     /**
-     * Is there security differences
+     * Is there security differences?
      * @return true/false
      */
     public boolean isSecurityChanged() {
@@ -89,11 +94,11 @@ public enum Difference {
     }
 
     /**
-     * Combine Differences
+     * Combine Differences.
      * @param pThat the difference to combine
      * @return the combined difference
      */
-    public Difference combine(Difference pThat) {
+    public Difference combine(final Difference pThat) {
         switch (this) {
             case Identical:
                 return pThat;
@@ -110,27 +115,32 @@ public enum Difference {
      * @param pNew The new object
      * @return the Difference between the objects
      */
-    public static Difference getDifference(Object pCurr,
-                                           Object pNew) {
+    public static Difference getDifference(final Object pCurr,
+                                           final Object pNew) {
         /* Handle identity */
-        if (pCurr == pNew)
+        if (pCurr == pNew) {
             return Identical;
+        }
 
-        /* Neither value can be false */
-        if ((pCurr == null) || (pNew == null))
+        /* Neither value can be null */
+        if ((pCurr == null) || (pNew == null)) {
             return Different;
+        }
 
         /* Handle class differences */
-        if (pCurr.getClass() != pNew.getClass())
+        if (pCurr.getClass() != pNew.getClass()) {
             return Different;
+        }
 
         /* Handle encrypted cases */
-        if (pCurr instanceof EncryptedField)
+        if (pCurr instanceof EncryptedField) {
             return ((EncryptedField<?>) pCurr).getDifference((EncryptedField<?>) pNew);
+        }
 
         /* Handle Report Item cases */
-        if (pCurr instanceof ReportItem)
+        if (pCurr instanceof ReportItem) {
             return ((ReportItem<?>) pCurr).getDifference((ReportItem<?>) pNew);
+        }
 
         /* Handle Standard cases */
         return (pCurr.equals(pNew)) ? Identical : Different;
@@ -142,27 +152,32 @@ public enum Difference {
      * @param pNew The new object
      * @return the Difference between the objects
      */
-    public static boolean isEqual(Object pCurr,
-                                  Object pNew) {
+    public static boolean isEqual(final Object pCurr,
+                                  final Object pNew) {
         /* Handle identity */
-        if (pCurr == pNew)
+        if (pCurr == pNew) {
             return true;
+        }
 
-        /* Neither value can be false */
-        if ((pCurr == null) || (pNew == null))
+        /* Neither value can be null */
+        if ((pCurr == null) || (pNew == null)) {
             return false;
+        }
 
         /* Handle class differences */
-        if (pCurr.getClass() != pNew.getClass())
+        if (pCurr.getClass() != pNew.getClass()) {
             return false;
+        }
 
         /* Handle arrays */
         if (pCurr.getClass().isArray()) {
             /* Handle special cases for efficiency */
-            if (pCurr instanceof byte[])
+            if (pCurr instanceof byte[]) {
                 return Arrays.equals((byte[]) pCurr, (byte[]) pNew);
-            if (pCurr instanceof char[])
+            }
+            if (pCurr instanceof char[]) {
                 return Arrays.equals((char[]) pCurr, (char[]) pNew);
+            }
 
             /* Handle generic arrays */
             return Arrays.equals((Object[]) pCurr, (Object[]) pNew);

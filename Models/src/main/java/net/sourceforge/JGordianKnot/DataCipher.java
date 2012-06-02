@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.JGordianKnot;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
 
@@ -29,34 +31,34 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 
 import net.sourceforge.JDataManager.DataConverter;
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
-import net.sourceforge.JDataManager.ReportFields;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
-import net.sourceforge.JDataManager.ReportObject.ReportDetail;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
 
 /**
  * Wrapper class for Cipher used to encryption data objects.
  * @author Tony Washer
  */
-public class DataCipher implements ReportDetail {
+public class DataCipher implements JDataContents {
     /**
      * Report fields.
      */
-    protected static final ReportFields FIELD_DEFS = new ReportFields(DataCipher.class.getSimpleName());
+    protected static final JDataFields FIELD_DEFS = new JDataFields(DataCipher.class.getSimpleName());
 
     /**
      * Symmetric Key Field ID.
      */
-    public static final ReportField FIELD_SYMKEY = FIELD_DEFS.declareLocalField("SymmetricKey");
+    public static final JDataField FIELD_SYMKEY = FIELD_DEFS.declareLocalField("SymmetricKey");
 
     @Override
-    public ReportFields getReportFields() {
+    public JDataFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final ReportField pField) {
+    public Object getFieldValue(final JDataField pField) {
         if (pField == FIELD_SYMKEY) {
             return theSymKey;
         }
@@ -64,7 +66,7 @@ public class DataCipher implements ReportDetail {
     }
 
     @Override
-    public String getObjectSummary() {
+    public String formatObject() {
         return "DataCipher(" + getSymKeyType() + ")";
     }
 
@@ -129,10 +131,10 @@ public class DataCipher implements ReportDetail {
      * @param pBytes bytes to encrypt
      * @param pVector initialisation vector
      * @return Encrypted bytes
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public byte[] encryptBytes(final byte[] pBytes,
-                               final byte[] pVector) throws ModelException {
+                               final byte[] pVector) throws JDataException {
         byte[] myBytes;
 
         /* Protect against exceptions */
@@ -143,7 +145,7 @@ public class DataCipher implements ReportDetail {
             /* Encrypt the byte array */
             myBytes = theCipher.doFinal(pBytes);
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.CRYPTO, "Failed to encrypt bytes", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to encrypt bytes", e);
         }
 
         /* Return to caller */
@@ -155,10 +157,10 @@ public class DataCipher implements ReportDetail {
      * @param pBytes bytes to decrypt
      * @param pVector initialisation vector
      * @return Decrypted bytes
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public byte[] decryptBytes(final byte[] pBytes,
-                               final byte[] pVector) throws ModelException {
+                               final byte[] pVector) throws JDataException {
         byte[] myBytes;
 
         /* Protect against exceptions */
@@ -169,7 +171,7 @@ public class DataCipher implements ReportDetail {
             /* Encrypt the byte array */
             myBytes = theCipher.doFinal(pBytes);
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.CRYPTO, "Failed to decrypt bytes", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to decrypt bytes", e);
         }
 
         /* Return to caller */
@@ -180,9 +182,9 @@ public class DataCipher implements ReportDetail {
      * Encrypt string.
      * @param pString string to encrypt
      * @return Encrypted bytes
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public byte[] encryptString(final String pString) throws ModelException {
+    public byte[] encryptString(final String pString) throws JDataException {
         byte[] myBytes;
 
         /* Protect against exceptions */
@@ -193,7 +195,7 @@ public class DataCipher implements ReportDetail {
             /* Encrypt the byte array */
             myBytes = theCipher.doFinal(myBytes);
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.CRYPTO, "Failed to encrypt string", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to encrypt string", e);
         }
 
         /* Return to caller */
@@ -204,9 +206,9 @@ public class DataCipher implements ReportDetail {
      * Encrypt character array.
      * @param pChars Characters to encrypt
      * @return Encrypted bytes
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public byte[] encryptChars(final char[] pChars) throws ModelException {
+    public byte[] encryptChars(final char[] pChars) throws JDataException {
         byte[] myBytes;
         byte[] myRawBytes;
 
@@ -221,7 +223,7 @@ public class DataCipher implements ReportDetail {
             /* Clear out the bytes */
             Arrays.fill(myRawBytes, (byte) 0);
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.CRYPTO, "Failed to encrypt character array", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to encrypt character array", e);
         }
 
         /* Return to caller */
@@ -232,9 +234,9 @@ public class DataCipher implements ReportDetail {
      * Decrypt bytes into a string.
      * @param pBytes bytes to decrypt
      * @return Decrypted string
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public String decryptString(final byte[] pBytes) throws ModelException {
+    public String decryptString(final byte[] pBytes) throws JDataException {
         byte[] myBytes;
         String myString;
 
@@ -246,7 +248,7 @@ public class DataCipher implements ReportDetail {
             /* Convert the bytes to a string */
             myString = DataConverter.byteArrayToString(myBytes);
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.CRYPTO, "Failed to decrypt string", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to decrypt string", e);
         }
 
         /* Return to caller */
@@ -257,9 +259,9 @@ public class DataCipher implements ReportDetail {
      * Decrypt bytes into a character array.
      * @param pBytes Bytes to decrypt
      * @return Decrypted character array
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public char[] decryptChars(final byte[] pBytes) throws ModelException {
+    public char[] decryptChars(final byte[] pBytes) throws JDataException {
         byte[] myBytes;
         char[] myChars;
 
@@ -274,7 +276,7 @@ public class DataCipher implements ReportDetail {
             /* Clear out the bytes */
             Arrays.fill(myBytes, (byte) 0);
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.CRYPTO, "Failed to decrypt character array", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to decrypt character array", e);
         }
 
         /* Return to caller */
@@ -284,9 +286,11 @@ public class DataCipher implements ReportDetail {
     /**
      * Initialise encryption.
      * @param pVector initialisation vector
-     * @throws Exception on error
+     * @throws InvalidAlgorithmParameterException on error
+     * @throws InvalidKeyException on error
      */
-    private void initialiseEncryption(final byte[] pVector) throws Exception {
+    private void initialiseEncryption(final byte[] pVector) throws InvalidKeyException,
+            InvalidAlgorithmParameterException {
         AlgorithmParameterSpec myParms;
 
         /* Initialise the cipher using the vector */
@@ -297,9 +301,11 @@ public class DataCipher implements ReportDetail {
     /**
      * Initialise decryption.
      * @param pVector initialisation vector
-     * @throws Exception on error
+     * @throws InvalidAlgorithmParameterException on error
+     * @throws InvalidKeyException on error
      */
-    private void initialiseDecryption(final byte[] pVector) throws Exception {
+    private void initialiseDecryption(final byte[] pVector) throws InvalidKeyException,
+            InvalidAlgorithmParameterException {
         AlgorithmParameterSpec myParms;
 
         /* Initialise the cipher using the vector */

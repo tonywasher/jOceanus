@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * Jira: Java Jira Link
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,45 +27,49 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import uk.co.tolcroft.jira.soap.JiraSoapService;
 import uk.co.tolcroft.jira.soap.RemoteGroup;
 import uk.co.tolcroft.jira.soap.RemoteProjectRole;
 import uk.co.tolcroft.jira.soap.RemoteUser;
 
+/**
+ * Handles security for a jira server.
+ * @author Tony Washer
+ */
 public class Security {
     /**
-     * Server
+     * Server.
      */
     private final Server theServer;
 
     /**
-     * Service
+     * Service.
      */
     private final JiraSoapService theService;
 
     /**
-     * Users
+     * Users.
      */
     private final List<User> theUsers;
 
     /**
-     * Groups
+     * Groups.
      */
     private final List<Group> theGroups;
 
     /**
-     * Roles
+     * Roles.
      */
     private final List<Role> theRoles;
 
     /**
-     * Constructor
+     * Constructor.
      * @param pServer the server
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    protected Security(Server pServer) throws ModelException {
+    protected Security(final Server pServer) throws JDataException {
         /* Store parameters */
         theServer = pServer;
         theService = theServer.getService();
@@ -79,18 +84,19 @@ public class Security {
     }
 
     /**
-     * Obtain User
+     * Obtain User.
      * @param pName the name of the user
      * @return the User
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public User getUser(String pName) throws ModelException {
+    public User getUser(final String pName) throws JDataException {
         /* Return an existing user if found in list */
         Iterator<User> myIterator = theUsers.iterator();
         while (myIterator.hasNext()) {
             User myUser = myIterator.next();
-            if (myUser.getName().equals(pName))
+            if (myUser.getName().equals(pName)) {
                 return myUser;
+            }
         }
 
         /* Protect against exceptions */
@@ -103,26 +109,25 @@ public class Security {
             User myUser = new User(myUserDtl);
             theUsers.add(myUser);
             return myUser;
-        } catch (ModelException e) {
-            throw e;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Failed to load user " + pName, e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to load user " + pName, e);
         }
     }
 
     /**
-     * Obtain User
+     * Obtain User.
      * @param pUser the Remote User definition
      * @return the User
      */
-    private User getUser(RemoteUser pUser) {
+    private User getUser(final RemoteUser pUser) {
         /* Return an existing user if found in list */
         Iterator<User> myIterator = theUsers.iterator();
         while (myIterator.hasNext()) {
             User myUser = myIterator.next();
-            if (myUser.getName().equals(pUser.getName()))
+            if (myUser.getName().equals(pUser.getName())) {
                 return myUser;
+            }
         }
 
         /* Access the user and add to list */
@@ -132,18 +137,19 @@ public class Security {
     }
 
     /**
-     * Obtain Group
+     * Obtain Group.
      * @param pName the name of the group
      * @return the Group
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public Group getGroup(String pName) throws ModelException {
+    public Group getGroup(final String pName) throws JDataException {
         /* Return an existing group if found in list */
         Iterator<Group> myIterator = theGroups.iterator();
         while (myIterator.hasNext()) {
             Group myGroup = myIterator.next();
-            if (myGroup.getName().equals(pName))
+            if (myGroup.getName().equals(pName)) {
                 return myGroup;
+            }
         }
 
         /* Protect against exceptions */
@@ -156,38 +162,37 @@ public class Security {
             Group myGroup = new Group(myGroupDtl);
             theGroups.add(myGroup);
             return myGroup;
-        } catch (ModelException e) {
-            throw e;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Failed to load group " + pName, e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to load group " + pName, e);
         }
     }
 
     /**
-     * Obtain Role
+     * Obtain Role.
      * @param pId the id of the Role
      * @return the Role
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public Role getRole(long pId) throws ModelException {
+    public Role getRole(final long pId) throws JDataException {
         /* Return an existing role if found in list */
         Iterator<Role> myIterator = theRoles.iterator();
         while (myIterator.hasNext()) {
             Role myRole = myIterator.next();
-            if (myRole.getId() == pId)
+            if (myRole.getId() == pId) {
                 return myRole;
+            }
         }
 
         /* throw exception */
-        throw new ModelException(ExceptionClass.JIRA, "Invalid RoleId " + pId);
+        throw new JDataException(ExceptionClass.JIRA, "Invalid RoleId " + pId);
     }
 
     /**
-     * Load Roles
-     * @throws ModelException
+     * Load Roles.
+     * @throws JDataException on error
      */
-    private void loadRoles() throws ModelException {
+    private void loadRoles() throws JDataException {
         /* Protect against exceptions */
         try {
             /* Access the authorization token */
@@ -201,35 +206,33 @@ public class Security {
                 /* Add new role to list */
                 theRoles.add(new Role(myRole));
             }
-        } catch (ModelException e) {
-            throw e;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Failed to load project roles", e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to load project roles", e);
         }
     }
 
     /**
-     * User class
+     * User class.
      */
-    public class User {
+    public final class User {
         /**
-         * The underlying remote user
+         * The underlying remote user.
          */
         private final RemoteUser theUser;
 
         /**
-         * The name of the user
+         * The name of the user.
          */
         private final String theName;
 
         /**
-         * The full name of the user
+         * The full name of the user.
          */
         private final String theFullName;
 
         /**
-         * Get the underlying user
+         * Get the underlying user.
          * @return the user
          */
         public RemoteUser getUser() {
@@ -237,7 +240,7 @@ public class Security {
         }
 
         /**
-         * Get the name of the user
+         * Get the name of the user.
          * @return the name
          */
         public String getName() {
@@ -245,7 +248,7 @@ public class Security {
         }
 
         /**
-         * Get the full name of the user
+         * Get the full name of the user.
          * @return the full name
          */
         public String getFullName() {
@@ -253,10 +256,10 @@ public class Security {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pUser the underlying user
          */
-        private User(RemoteUser pUser) {
+        private User(final RemoteUser pUser) {
             /* Access the details */
             theUser = pUser;
             theName = pUser.getName();
@@ -265,26 +268,26 @@ public class Security {
     }
 
     /**
-     * Group class
+     * Group class.
      */
-    public class Group {
+    public final class Group {
         /**
-         * The underlying remote group
+         * The underlying remote group.
          */
         private final RemoteGroup theGroup;
 
         /**
-         * The name of the group
+         * The name of the group.
          */
         private final String theName;
 
         /**
-         * The list of members
+         * The list of members.
          */
         private final List<User> theMembers;
 
         /**
-         * Get the underlying user
+         * Get the underlying user.
          * @return the user
          */
         public RemoteGroup getGroup() {
@@ -292,7 +295,7 @@ public class Security {
         }
 
         /**
-         * Get the name of the group
+         * Get the name of the group.
          * @return the name
          */
         public String getName() {
@@ -300,11 +303,11 @@ public class Security {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pGroup the underlying group
-         * @throws ModelException
+         * @throws JDataException on error
          */
-        private Group(RemoteGroup pGroup) throws ModelException {
+        private Group(final RemoteGroup pGroup) throws JDataException {
             /* Access the details */
             theGroup = pGroup;
             theName = pGroup.getName();
@@ -321,31 +324,31 @@ public class Security {
     }
 
     /**
-     * Role class
+     * Role class.
      */
-    public class Role {
+    public final class Role {
         /**
-         * The underlying remote role
+         * The underlying remote role.
          */
         private final RemoteProjectRole theRole;
 
         /**
-         * The id of the role
+         * The id of the role.
          */
         private final long theId;
 
         /**
-         * The name of the role
+         * The name of the role.
          */
         private final String theName;
 
         /**
-         * The description of the role
+         * The description of the role.
          */
         private final String theDesc;
 
         /**
-         * Get the underlying role
+         * Get the underlying role.
          * @return the role
          */
         public RemoteProjectRole getRole() {
@@ -353,7 +356,7 @@ public class Security {
         }
 
         /**
-         * Get the id of the role
+         * Get the id of the role.
          * @return the id
          */
         public long getId() {
@@ -361,7 +364,7 @@ public class Security {
         }
 
         /**
-         * Get the name of the role
+         * Get the name of the role.
          * @return the name
          */
         public String getName() {
@@ -369,7 +372,7 @@ public class Security {
         }
 
         /**
-         * Get the description of the role
+         * Get the description of the role.
          * @return the description
          */
         public String getDesc() {
@@ -377,10 +380,10 @@ public class Security {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pRole the underlying role
          */
-        private Role(RemoteProjectRole pRole) {
+        private Role(final RemoteProjectRole pRole) {
             /* Access the details */
             theRole = pRole;
             theId = pRole.getId();

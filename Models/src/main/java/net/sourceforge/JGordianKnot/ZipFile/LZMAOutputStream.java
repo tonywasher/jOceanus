@@ -24,7 +24,6 @@ package net.sourceforge.JGordianKnot.ZipFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InterruptedIOException;
 import java.io.OutputStream;
 
 import SevenZip.Compression.LZMA.Encoder;
@@ -121,7 +120,7 @@ public class LZMAOutputStream extends OutputStream {
         try {
             theThread.join();
         } catch (InterruptedException e) {
-            throw new InterruptedIOException(e.getMessage());
+            throw new IOException(e.getMessage(), e);
         }
 
         /* Check for error */

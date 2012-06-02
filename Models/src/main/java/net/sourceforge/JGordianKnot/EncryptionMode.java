@@ -24,10 +24,10 @@ package net.sourceforge.JGordianKnot;
 
 import java.security.SecureRandom;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
-import net.sourceforge.JDataManager.ReportFields;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
 
 /**
  * Encryption Mode. Encapsulates Encryption options.
@@ -37,20 +37,20 @@ public class EncryptionMode extends NybbleArray {
     /**
      * Report fields.
      */
-    protected static final ReportFields FIELD_DEFS = new ReportFields(EncryptionMode.class.getSimpleName(),
+    protected static final JDataFields FIELD_DEFS = new JDataFields(EncryptionMode.class.getSimpleName(),
             NybbleArray.FIELD_DEFS);
 
     /**
      * Local Report fields.
      */
-    private final ReportFields theLocalFields;
+    private final JDataFields theLocalFields;
 
     /**
      * Allocate local fields.
      * @return the local fields
      */
-    private static ReportFields declareFields() {
-        return new ReportFields(FIELD_DEFS.getName(), FIELD_DEFS);
+    private static JDataFields declareFields() {
+        return new JDataFields(FIELD_DEFS.getName(), FIELD_DEFS);
     }
 
     /**
@@ -59,12 +59,12 @@ public class EncryptionMode extends NybbleArray {
     public static final String FIELD_SYMKEY = "SymKey";
 
     @Override
-    public ReportFields getReportFields() {
+    public JDataFields getDataFields() {
         return theLocalFields;
     }
 
     @Override
-    public Object getFieldValue(final ReportField pField) {
+    public Object getFieldValue(final JDataField pField) {
         /* If the field is a symKey, handle specially */
         if ((pField.getAnchor() == theLocalFields) && (pField.getName().startsWith(FIELD_SYMKEY))) {
             /* Return the relevant SymKeyType */
@@ -75,7 +75,7 @@ public class EncryptionMode extends NybbleArray {
     }
 
     @Override
-    public String getObjectSummary() {
+    public String formatObject() {
         return FIELD_DEFS.getName();
     }
 
@@ -106,10 +106,10 @@ public class EncryptionMode extends NybbleArray {
      * Constructor at random.
      * @param pNumEncrypts the number of keys
      * @param pRandom the random generator
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     protected EncryptionMode(final int pNumEncrypts,
-                             final SecureRandom pRandom) throws ModelException {
+                             final SecureRandom pRandom) throws JDataException {
         /* Declare local fields */
         theLocalFields = declareFields();
 
@@ -123,9 +123,9 @@ public class EncryptionMode extends NybbleArray {
     /**
      * Constructor from encoded format.
      * @param pEncoded the encoded format
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    protected EncryptionMode(final byte[] pEncoded) throws ModelException {
+    protected EncryptionMode(final byte[] pEncoded) throws JDataException {
         /* Declare local fields */
         theLocalFields = declareFields();
 
@@ -135,7 +135,7 @@ public class EncryptionMode extends NybbleArray {
         /* Obtain number of key types */
         int iNumEncrypts = getValue(PLACE_NUMTYPES);
         if (iNumEncrypts > SymKeyType.values().length) {
-            throw new ModelException(ExceptionClass.DATA, "Invalid number of encryption steps: "
+            throw new JDataException(ExceptionClass.DATA, "Invalid number of encryption steps: "
                     + iNumEncrypts);
         }
 

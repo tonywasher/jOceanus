@@ -22,8 +22,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.sheets;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.PreferenceSet;
+import net.sourceforge.JDataManager.JDataException;
+import uk.co.tolcroft.models.data.PreferenceSet;
 
 /**
  * Backup preferences.
@@ -92,9 +92,9 @@ public class BackupPreferences extends PreferenceSet {
 
     /**
      * Constructor.
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public BackupPreferences() throws ModelException {
+    public BackupPreferences() throws JDataException {
         super();
     }
 

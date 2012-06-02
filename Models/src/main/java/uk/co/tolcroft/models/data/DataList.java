@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,110 +24,137 @@ package uk.co.tolcroft.models.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.JDataManager.ReportFields;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.ReportList;
-import net.sourceforge.JDataManager.ReportObject.ReportDetail;
 import net.sourceforge.JSortedList.SortedListIterator;
 
 /**
- * Generic implementation of a DataList for DataItems
+ * Generic implementation of a DataList for DataItems.
  * @author Tony Washer
  * @param <L> the list type
  * @param <T> the item type
  */
 public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> extends ReportList<T>
-        implements ReportDetail {
+        implements JDataContents {
     /**
-     * Local Report fields
+     * Local Report fields.
      */
-    protected static final ReportFields theLocalFields = new ReportFields(DataList.class.getSimpleName(),
+    protected static final JDataFields FIELD_DEFS = new JDataFields(DataList.class.getSimpleName(),
             ReportList.theLocalFields);
 
-    /* Field IDs */
-    public static final ReportField FIELD_STYLE = theLocalFields.declareLocalField("ListStyle");
-    public static final ReportField FIELD_GENERATION = theLocalFields.declareLocalField("Generation");
-    public static final ReportField FIELD_NEXTVERS = theLocalFields.declareLocalField("NextVersion");
-    public static final ReportField FIELD_EDIT = theLocalFields.declareLocalField("EditState");
-    public static final ReportField FIELD_CLASS = theLocalFields.declareLocalField("Class");
-    public static final ReportField FIELD_BASE = theLocalFields.declareLocalField("Base");
+    /**
+     * ListStyle Field Id.
+     */
+    public static final JDataField FIELD_STYLE = FIELD_DEFS.declareLocalField("ListStyle");
 
-    /* Called from constructor */
+    /**
+     * Generation Field Id.
+     */
+    public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField("Generation");
+
+    /**
+     * NextVersion Field Id.
+     */
+    public static final JDataField FIELD_NEXTVERS = FIELD_DEFS.declareLocalField("NextVersion");
+
+    /**
+     * EditState Field Id.
+     */
+    public static final JDataField FIELD_EDIT = FIELD_DEFS.declareLocalField("EditState");
+
+    /**
+     * Class Field Id.
+     */
+    public static final JDataField FIELD_CLASS = FIELD_DEFS.declareLocalField("Class");
+
+    /**
+     * Base Field Id.
+     */
+    public static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField("Base");
+
     @Override
-    public ReportFields declareFields() {
-        return theLocalFields;
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
     }
 
     @Override
-    public String getObjectSummary() {
-        return getReportFields().getName();
+    public String formatObject() {
+        return getDataFields().getName();
     }
 
     @Override
-    public Object getFieldValue(ReportField pField) {
-        if (pField == FIELD_STYLE)
+    public Object getFieldValue(final JDataField pField) {
+        if (pField == FIELD_STYLE) {
             return theStyle;
-        if (pField == FIELD_GENERATION)
+        }
+        if (pField == FIELD_GENERATION) {
             return theGeneration;
-        if (pField == FIELD_NEXTVERS)
+        }
+        if (pField == FIELD_NEXTVERS) {
             return theNextVersion;
-        if (pField == FIELD_EDIT)
+        }
+        if (pField == FIELD_EDIT) {
             return theEdit;
-        if (pField == FIELD_BASE)
+        }
+        if (pField == FIELD_BASE) {
             return theBase;
-        if (pField == FIELD_CLASS)
+        }
+        if (pField == FIELD_CLASS) {
             return theClass;
+        }
         return super.getFieldValue(pField);
     }
 
     /**
-     * Obtain List Name
+     * Obtain List Name.
      * @return the ListName
      */
     public abstract String listName();
 
     /**
-     * The style of the list
+     * The style of the list.
      */
     private ListStyle theStyle = ListStyle.CORE;
 
     /**
-     * The edit state of the list
+     * The edit state of the list.
      */
     private EditState theEdit = EditState.CLEAN;
 
     /**
-     * The id manager
+     * The id manager.
      */
-    private IdManager<T> theMgr = null;
+    private final IdManager<T> theMgr;
 
     /**
-     * The class
+     * The class.
      */
-    private Class<L> theClass = null;
+    private final Class<L> theClass;
 
     /**
-     * The class
+     * The list self reference.
      */
-    private L theList = null;
+    private final L theList;
 
     /**
-     * The base list (for extracts)
+     * The base list (for extracts).
      */
     private DataList<?, ?> theBase = null;
 
     /**
-     * The generation
+     * The generation.
      */
     private int theGeneration = 0;
 
     /**
-     * The next version
+     * The next version.
      */
     private int theNextVersion = 0;
 
     /**
-     * Get the style of the list
+     * Get the style of the list.
      * @return the list style
      */
     public ListStyle getStyle() {
@@ -134,15 +162,15 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * Get the style of the list
+     * Set the style of the list.
      * @param pStyle the list style
      */
-    protected void setStyle(ListStyle pStyle) {
+    protected void setStyle(final ListStyle pStyle) {
         theStyle = pStyle;
     }
 
     /**
-     * Get the EditState of the list
+     * Get the EditState of the list.
      * @return the Edit State
      */
     public EditState getEditState() {
@@ -150,7 +178,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * Get the Generation of the list
+     * Get the Generation of the list.
      * @return the Generation
      */
     public int getGeneration() {
@@ -158,15 +186,15 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * Set the Generation of the list
+     * Set the Generation of the list.
      * @param pGeneration the generation
      */
-    protected void setGeneration(int pGeneration) {
+    protected void setGeneration(final int pGeneration) {
         theGeneration = pGeneration;
     }
 
     /**
-     * Get the NextVersion of the list
+     * Get the NextVersion of the list.
      * @return the NextVersion
      */
     public int getNextVersion() {
@@ -174,7 +202,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * Determine whether the list got any errors
+     * Determine whether the list got any errors.
      * @return <code>true/false</code>
      */
     public boolean hasErrors() {
@@ -182,7 +210,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * Determine whether the list got any changes
+     * Determine whether the list got any changes.
      * @return <code>true/false</code>
      */
     public boolean hasChanges() {
@@ -190,7 +218,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * Determine whether the list is valid (or are there errors/non-validated changes)
+     * Determine whether the list is valid (or are there errors/non-validated changes).
      * @return <code>true/false</code>
      */
     public boolean isValid() {
@@ -198,7 +226,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * Determine whether the list is Locked (overwritten as required)
+     * Determine whether the list is Locked (overwritten as required).
      * @return <code>true/false</code>
      */
     public boolean isLocked() {
@@ -206,7 +234,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * Determine whether we should count deleted items as present
+     * Determine whether we should count deleted items as present.
      * @return <code>true/false</code>
      */
     public boolean getShowDeleted() {
@@ -214,23 +242,23 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * Set whether we should count deleted items as present
+     * Set whether we should count deleted items as present.
      * @param bShow <code>true/false</code>
      */
-    public void setShowDeleted(boolean bShow) {
+    public void setShowDeleted(final boolean bShow) {
         setSkipHidden(!bShow);
     }
 
     /**
-     * Set the base DataList
+     * Set the base DataList.
      * @param pBase the list that this list is based upon
      */
-    protected void setBase(DataList<?, ?> pBase) {
+    protected void setBase(final DataList<?, ?> pBase) {
         theBase = pBase;
     }
 
     /**
-     * Get List
+     * Get List.
      * @return the List
      */
     public L getList() {
@@ -238,7 +266,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * Get ListClass
+     * Get ListClass.
      * @return the ListClass
      */
     protected Class<L> getListClass() {
@@ -246,7 +274,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * Get Max Id
+     * Get Max Id.
      * @return the Maximum Id
      */
     public int getMaxId() {
@@ -254,24 +282,24 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * Set Max Id
+     * Set Max Id.
      * @param uMaxId the Maximum Id
      */
-    public void setMaxId(int uMaxId) {
+    public void setMaxId(final int uMaxId) {
         theMgr.setMaxId(uMaxId);
     }
 
     /**
-     * Construct a new object
+     * Construct a new object.
      * @param pClass the class
      * @param pBaseClass the class of the underlying object
      * @param pStyle the new {@link ListStyle}
      * @param fromStart - should inserts be attempted from start/end of list
      */
-    protected DataList(Class<L> pClass,
-                       Class<T> pBaseClass,
-                       ListStyle pStyle,
-                       boolean fromStart) {
+    protected DataList(final Class<L> pClass,
+                       final Class<T> pBaseClass,
+                       final ListStyle pStyle,
+                       final boolean fromStart) {
         super(pBaseClass, fromStart);
         theClass = pClass;
         theList = pClass.cast(this);
@@ -280,10 +308,10 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * Construct a clone object
+     * Construct a clone object.
      * @param pSource the list to clone
      */
-    protected DataList(L pSource) {
+    protected DataList(final L pSource) {
         super(pSource.getBaseClass());
         theStyle = ListStyle.VIEW;
         theClass = pSource.getListClass();
@@ -297,39 +325,39 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
      * Construct an update extract for a DataList.
      * @return the update extract (or null if not core data list)
      */
-    abstract protected L getUpdateList();
+    protected abstract L getUpdateList();
 
     /**
      * Construct an edit extract for a DataList.
      * @return the edit extract (or null if not edit-able list)
      */
-    abstract public L getEditList();
+    public abstract L getEditList();
 
     /**
-     * Obtain a clone of the list
+     * Obtain a clone of the list.
      * @param pDataSet the new dataSet
      * @return the clone of the list
      */
-    abstract protected L getDeepCopy(DataSet<?> pDataSet);
+    protected abstract L getDeepCopy(final DataSet<?> pDataSet);
 
     /**
-     * Obtain a copy of the list
+     * Obtain a copy of the list.
      * @return the copy of the list
      */
-    abstract protected L getShallowCopy();
+    protected abstract L getShallowCopy();
 
     /**
      * Construct an difference extract for a DataList.
      * @param pOld the old dataList
      * @return the difference extract (or null if not differ-able list)
      */
-    abstract protected L getDifferences(L pOld);
+    protected abstract L getDifferences(final L pOld);
 
     /**
-     * Populate an Extract List
+     * Populate an Extract List.
      * @param pStyle the Style of the extract
      */
-    protected void populateList(ListStyle pStyle) {
+    protected void populateList(final ListStyle pStyle) {
         /* Make this list the correct style */
         theStyle = pStyle;
 
@@ -339,8 +367,9 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
         DataItem<T> myItem;
 
         /* Note that this list should show deleted items on UPDATE */
-        if (pStyle == ListStyle.UPDATE)
+        if (pStyle == ListStyle.UPDATE) {
             setShowDeleted(true);
+        }
 
         /* Create an iterator for all items in the source list */
         myIterator = theBase.listIterator(true);
@@ -348,8 +377,9 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
         /* Loop through the list */
         while ((myCurr = myIterator.next()) != null) {
             /* Ignore this item for UPDATE lists if it is clean */
-            if ((pStyle == ListStyle.UPDATE) && (myCurr.getState() == DataState.CLEAN))
+            if ((pStyle == ListStyle.UPDATE) && (myCurr.getState() == DataState.CLEAN)) {
                 continue;
+            }
 
             /* Copy the item */
             myItem = addNewItem(myCurr);
@@ -362,8 +392,9 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
         }
 
         /* For Clone lists remove base reference */
-        if (theStyle == ListStyle.CLONE)
+        if (theStyle == ListStyle.CLONE) {
             theBase = null;
+        }
     }
 
     /**
@@ -374,8 +405,8 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
      * @param pNew The new list to compare
      * @param pOld The old list to compare
      */
-    protected void getDifferenceList(L pNew,
-                                     L pOld) {
+    protected void getDifferenceList(final L pNew,
+                                     final L pOld) {
         /* Make this list the correct style */
         theStyle = ListStyle.DIFFER;
 
@@ -409,10 +440,9 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
                 myItem = addNewItem(myCurr);
                 myItem.setBase(null);
                 myItem.setState(DataState.NEW);
-            }
 
-            /* else the item exists in the old list */
-            else {
+                /* else the item exists in the old list */
+            } else {
                 /* If the item has changed */
                 if (!myCurr.equals(myItem)) {
                     /* Copy the item */
@@ -446,10 +476,9 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
      * Items that are in this list, but not in the base list will be viewed as inserted. Items that are in the
      * base list but not in this list list will be viewed as deleted. Items that are in both list but differ
      * will be viewed as changed
-     * 
      * @param pBase The base list to re-base on
      */
-    public void reBase(L pBase) {
+    public void reBase(final L pBase) {
         /* Local variables */
         DataListIterator<T> myIterator;
         T myCurr;
@@ -472,10 +501,9 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
                 /* Mark this as a new item */
                 myCurr.setBase(null);
                 myCurr.setState(myCurr.isDeleted() ? DataState.DELNEW : DataState.NEW);
-            }
 
-            /* else the item exists in the old list */
-            else {
+                /* else the item exists in the old list */
+            } else {
                 /* if it has changed */
                 if (!myCurr.equals(myItem)) {
                     /* Mark this as a changed item (go via CLEAN to remove NEW indication) */
@@ -486,10 +514,9 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
                     /* Set correct history */
                     myCurr.setHistory(myItem);
                     myCurr.setBase(null);
-                }
 
-                /* else it is identical */
-                else {
+                    /* else it is identical */
+                } else {
                     /* Mark this as a clean item */
                     myCurr.setBase(null);
                     myCurr.setState(myCurr.isDeleted() ? DataState.DELETED : DataState.CLEAN);
@@ -513,23 +540,25 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     @Override
-    public boolean add(T pItem) {
+    public boolean add(final T pItem) {
         /* Add the item to the underlying list */
         boolean bSuccess = super.add(pItem);
 
         /* Declare to the id Manager */
-        if (bSuccess)
+        if (bSuccess) {
             theMgr.setItem(pItem.getId(), pItem);
+        }
 
         /* Return to caller */
         return bSuccess;
     }
 
     @Override
-    public boolean remove(Object o) {
+    public boolean remove(final Object o) {
         /* Make sure that the object is the same data class */
-        if (!getBaseClass().isInstance(o))
+        if (!getBaseClass().isInstance(o)) {
             return false;
+        }
 
         /* Remove the underlying item */
         boolean bSuccess = super.remove(o);
@@ -538,15 +567,16 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
         DataItem<T> myItem = getBaseClass().cast(o);
 
         /* Declare to the id Manager */
-        if (bSuccess)
+        if (bSuccess) {
             theMgr.setItem(myItem.getId(), null);
+        }
 
         /* Return to caller */
         return bSuccess;
     }
 
     @Override
-    public T remove(int iIndex) {
+    public T remove(final int iIndex) {
         /* Remove the underlying item */
         T myItem = super.remove(iIndex);
 
@@ -570,13 +600,13 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     @Override
-    public DataListIterator<T> listIterator(boolean bShowAll) {
+    public DataListIterator<T> listIterator(final boolean bShowAll) {
         /* Return a new iterator */
         return new DataListIterator<T>(this, bShowAll);
     }
 
     @Override
-    public DataListIterator<T> listIterator(int iIndex) {
+    public DataListIterator<T> listIterator(final int iIndex) {
         /* Throw exception */
         throw new UnsupportedOperationException();
     }
@@ -591,29 +621,29 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * Is the Id unique in this list
+     * Is the Id unique in this list.
      * @param uId the Id to check
      * @return Whether the id is unique <code>true/false</code>
      */
-    public boolean isIdUnique(int uId) {
+    public boolean isIdUnique(final int uId) {
         /* Ask the Id Manager for the answer */
         return theMgr.isIdUnique(uId);
     }
 
     /**
-     * Generate/Record new id for the item
+     * Generate/Record new id for the item.
      * @param pItem the new item
      */
-    public void setNewId(T pItem) {
+    public void setNewId(final T pItem) {
         /* Ask the Id Manager to manage the request */
         theMgr.setNewId(pItem);
     }
 
     /**
-     * Set the EditState for the list (forcible on error/change)
+     * Set the EditState for the list (forcible on error/change).
      * @param pState the new {@link EditState} (only ERROR/DIRTY)
      */
-    public void setEditState(EditState pState) {
+    public void setEditState(final EditState pState) {
         switch (pState) {
             case CLEAN:
             case VALID:
@@ -621,14 +651,17 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
                 theEdit = pState;
                 break;
             case DIRTY:
-                if (theEdit != EditState.ERROR)
+                if (theEdit != EditState.ERROR) {
                     theEdit = pState;
+                }
+                break;
+            default:
                 break;
         }
     }
 
     /**
-     * Calculate the Edit State for the list
+     * Calculate the Edit State for the list.
      */
     public void findEditState() {
         boolean isDirty = false;
@@ -645,12 +678,12 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
             /* If the item is deleted */
             if (myCurr.isDeleted()) {
                 /* If the base element is not deleted we have a valid change */
-                if (!myCurr.isCoreDeleted())
+                if (!myCurr.isCoreDeleted()) {
                     isValid = true;
-            }
+                }
 
-            /* Else the item is active */
-            else {
+                /* Else the item is active */
+            } else {
                 switch (myCurr.getEditState()) {
                     case CLEAN:
                         break;
@@ -663,27 +696,30 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
                     case ERROR:
                         isError = true;
                         break;
+                    default:
+                        break;
                 }
             }
         }
 
         /* Set state */
-        if (isError)
+        if (isError) {
             theEdit = EditState.ERROR;
-        else if (isDirty)
+        } else if (isDirty) {
             theEdit = EditState.DIRTY;
-        else if (isValid)
+        } else if (isValid) {
             theEdit = EditState.VALID;
-        else
+        } else {
             theEdit = EditState.CLEAN;
+        }
     }
 
     /**
-     * Search for a particular item by Id
+     * Search for a particular item by Id.
      * @param uId Id of Item
      * @return The Item if present (or <code>null</code>)
      */
-    public T searchFor(int uId) {
+    public T searchFor(final int uId) {
         /* Access the item from the IdManager */
         T myItem = theMgr.getItem(uId);
 
@@ -692,7 +728,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * Validate the data items
+     * Validate the data items.
      */
     public void validate() {
         DataListIterator<T> myIterator;
@@ -710,8 +746,9 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
             myCurr.clearErrors();
 
             /* Skip deleted items */
-            if (myCurr.isDeleted())
+            if (myCurr.isDeleted()) {
                 continue;
+            }
 
             /* Validate the item */
             myCurr.validate();
@@ -722,7 +759,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * Check whether we have updates
+     * Check whether we have updates.
      * @return <code>true/false</code>
      */
     public boolean hasUpdates() {
@@ -735,8 +772,9 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
         /* Loop through the items */
         while ((myCurr = myIterator.next()) != null) {
             /* Ignore clean items */
-            if (myCurr.getState() == DataState.CLEAN)
+            if (myCurr.getState() == DataState.CLEAN) {
                 continue;
+            }
 
             /* We have an update */
             return true;
@@ -747,7 +785,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * Clear errors
+     * Clear errors.
      */
     public void clearErrors() {
         DataListIterator<T> myIterator;
@@ -763,7 +801,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * Reset active
+     * Reset active.
      */
     public void clearActive() {
         DataListIterator<T> myIterator;
@@ -779,20 +817,20 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * Create a new element in the core list from an edit session (to be over-written)
+     * Create a new element in the core list from an edit session (to be over-written).
      * @param pElement - element to base new item on
      * @return the newly allocated item
      */
-    public abstract T addNewItem(DataItem<?> pElement);
+    public abstract T addNewItem(final DataItem<?> pElement);
 
     /**
-     * Create a new empty element in the edit list (to be over-written)
+     * Create a new empty element in the edit list (to be over-written).
      * @return the newly allocated item
      */
     public abstract T addNewItem();
 
     /**
-     * Reset changes in an edit view
+     * Reset changes in an edit view.
      */
     public void resetChanges() {
         DataListIterator<T> myIterator;
@@ -829,12 +867,14 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
                     myCurr.setState(DataState.CLEAN);
                     myIterator.reSort();
                     break;
+                default:
+                    break;
             }
         }
     }
 
     /**
-     * Prepare changes in an edit view back into the core data
+     * Prepare changes in an edit view back into the core data.
      */
     public void prepareChanges() {
         DataListIterator<T> myIterator;
@@ -881,12 +921,14 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
                     myBase = myCurr.getBase();
 
                     /* Apply changes and note if history has been applied */
-                    if (myBase.applyChanges(myCurr))
+                    if (myBase.applyChanges(myCurr)) {
                         myBase.setChangeing(true);
+                    }
 
                     /* Note if we are restoring an item */
-                    if (myBase.isDeleted())
+                    if (myBase.isDeleted()) {
                         myBase.setRestoring(true);
+                    }
 
                     /* Set new state */
                     myBase.setState(DataState.CHANGED);
@@ -894,12 +936,14 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
                     /* Re-sort the item */
                     theBase.reSort(myBase);
                     break;
+                default:
+                    break;
             }
         }
     }
 
     /**
-     * RollBack changes in an edit view that have been applied to core data
+     * RollBack changes in an edit view that have been applied to core data.
      */
     public void rollBackChanges() {
         DataListIterator<T> myIterator;
@@ -947,18 +991,18 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
                     myBase = myCurr.getBase();
 
                     /* If we were changing pop the changes */
-                    if (myBase.isChangeing())
+                    if (myBase.isChangeing()) {
                         myBase.popHistory();
+                    }
 
                     /* If we were restoring */
                     if (myBase.isRestoring()) {
                         /* Set the item to be deleted again */
                         myBase.setState(DataState.DELETED);
                         myBase.setRestoring(false);
-                    }
 
-                    /* If the item is now clean */
-                    else if (!myBase.hasHistory()) {
+                        /* If the item is now clean */
+                    } else if (!myBase.hasHistory()) {
                         /* Set the new status */
                         myBase.setState(DataState.CLEAN);
                     }
@@ -966,12 +1010,14 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
                     /* Re-sort the item */
                     theBase.reSort(myBase);
                     break;
+                default:
+                    break;
             }
         }
     }
 
     /**
-     * Commit changes in an edit view that have been applied to the core data
+     * Commit changes in an edit view that have been applied to the core data.
      */
     public void commitChanges() {
         DataListIterator<T> myIterator;
@@ -1004,35 +1050,37 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
                     myCurr.setRestoring(false);
                     myCurr.setState(DataState.CLEAN);
                     break;
+                default:
+                    break;
             }
         }
     }
 
     /**
-     * ListIterator class for this list
+     * ListIterator class for this list.
      * @param <X> the item type
      */
-    public static class DataListIterator<X extends DataItem<X>> extends SortedListIterator<X> {
+    public static final class DataListIterator<X extends DataItem<X>> extends SortedListIterator<X> {
         /**
-         * The id manager
+         * The id manager.
          */
         private IdManager<X> theMgr = null;
 
         /**
-         * Constructor for standard iterator
+         * Constructor for standard iterator.
          * @param pList the list to build the iterator on
          */
-        private DataListIterator(DataList<?, X> pList) {
+        private DataListIterator(final DataList<?, X> pList) {
             this(pList, false);
         }
 
         /**
-         * Constructor for iterator that can show all elements
+         * Constructor for iterator that can show all elements.
          * @param pList the list to build the iterator on
          * @param bShowAll show all items in the list
          */
-        private DataListIterator(DataList<?, X> pList,
-                                 boolean bShowAll) {
+        private DataListIterator(final DataList<?, X> pList,
+                                 final boolean bShowAll) {
             super(pList, bShowAll);
             theMgr = pList.theMgr;
         }
@@ -1048,41 +1096,41 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * ListStyles
+     * ListStyles.
      */
     public enum ListStyle {
         /**
-         * Core list holding the true version of the data
+         * Core list holding the true version of the data.
          */
         CORE,
 
         /**
-         * Deep Copy clone for security updates
+         * Deep Copy clone for security updates.
          */
         CLONE,
 
         /**
-         * Shallow Copy list for comparison purposes
+         * Shallow Copy list for comparison purposes.
          */
         COPY,
 
         /**
-         * Partial extract of the data for the purposes of editing
+         * Partial extract of the data for the purposes of editing.
          */
         EDIT,
 
         /**
-         * List of changes to be applied to database
+         * List of changes to be applied to database.
          */
         UPDATE,
 
         /**
-         * Temporary View for validation purposes
+         * Temporary View for validation purposes.
          */
         VIEW,
 
         /**
-         * List of differences
+         * List of differences.
          */
         DIFFER;
     }

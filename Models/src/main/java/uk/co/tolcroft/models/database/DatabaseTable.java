@@ -26,15 +26,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
-import net.sourceforge.JDataManager.ValueSet;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.ValueSet;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 
 /**
@@ -235,18 +235,18 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
     /**
      * Load an individual item from the result set.
      * @param pId the id of the item
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    protected abstract void loadItem(int pId) throws ModelException;
+    protected abstract void loadItem(int pId) throws JDataException;
 
     /**
      * Set a field value for an item.
      * @param pItem the item to insert
      * @param pField the field id
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     protected void setFieldValue(final T pItem,
-                                 final ReportField pField) throws ModelException {
+                                 final JDataField pField) throws JDataException {
         /* Switch on field id */
         if (pField == DataItem.FIELD_ID) {
             theTable.setIntegerValue(DataItem.FIELD_ID, pItem.getId());
@@ -255,9 +255,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 
     /**
      * Post-Process on a load operation.
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    protected void postProcessOnLoad() throws ModelException {
+    protected void postProcessOnLoad() throws JDataException {
     }
 
     /**
@@ -265,10 +265,10 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
      * @param pThread the thread control
      * @param pData the data
      * @return Continue <code>true/false</code>
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     protected boolean loadItems(final ThreadStatus<?> pThread,
-                                final DataSet<?> pData) throws ModelException {
+                                final DataSet<?> pData) throws JDataException {
         boolean bContinue = true;
         String myQuery;
         int mySteps;
@@ -320,7 +320,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             postProcessOnLoad();
 
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.SQLSERVER, "Failed to load " + getTableName(), e);
+            throw new JDataException(ExceptionClass.SQLSERVER, "Failed to load " + getTableName(), e);
         }
 
         /* Return to caller */
@@ -361,11 +361,11 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
      * @param pData the data
      * @param pBatch the batch control
      * @return Continue <code>true/false</code>
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     protected boolean insertItems(final ThreadStatus<?> pThread,
                                   final DataSet<?> pData,
-                                  final BatchControl pBatch) throws ModelException {
+                                  final BatchControl pBatch) throws JDataException {
         DataListIterator<T> myIterator;
         T myCurr = null;
         int myCount = 0;
@@ -411,7 +411,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
                 /* Loop through the columns */
                 for (ColumnDefinition myCol : theTable.getColumns()) {
                     /* Access the column id */
-                    ReportField iField = myCol.getColumnId();
+                    JDataField iField = myCol.getColumnId();
 
                     /* Set the field value */
                     setFieldValue(myCurr, iField);
@@ -446,7 +446,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 
         } catch (Exception e) {
             theDatabase.close();
-            throw new ModelException(ExceptionClass.SQLSERVER, myCurr, "Failed to insert " + getTableName(),
+            throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to insert " + getTableName(),
                     e);
         }
 
@@ -459,10 +459,10 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
      * @param pThread the thread control
      * @param pBatch the batch control
      * @return Continue <code>true/false</code>
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     protected boolean updateItems(final ThreadStatus<?> pThread,
-                                  final BatchControl pBatch) throws ModelException {
+                                  final BatchControl pBatch) throws JDataException {
         DataListIterator<T> myIterator;
         T myCurr = null;
         int myCount = 0;
@@ -534,7 +534,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             }
         } catch (Exception e) {
             theDatabase.close();
-            throw new ModelException(ExceptionClass.SQLSERVER, myCurr, "Failed to update " + getTableName(),
+            throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to update " + getTableName(),
                     e);
         }
 
@@ -546,9 +546,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
      * Update the item.
      * @param pItem the item
      * @return Continue <code>true/false</code>
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    private boolean updateItem(final T pItem) throws ModelException {
+    private boolean updateItem(final T pItem) throws JDataException {
         ValueSet<T> myCurr;
         ValueSet<T> myBase;
         boolean isUpdated = false;
@@ -567,7 +567,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
                 }
 
                 /* Access the column id */
-                ReportField iField = myCol.getColumnId();
+                JDataField iField = myCol.getColumnId();
 
                 /* Ignore ID column */
                 if (iField == DataItem.FIELD_ID) {
@@ -582,7 +582,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
                 }
             }
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.SQLSERVER, pItem, "Failed to update item", e);
+            throw new JDataException(ExceptionClass.SQLSERVER, pItem, "Failed to update item", e);
         }
 
         /* Return to caller */
@@ -594,10 +594,10 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
      * @param pThread the thread control
      * @param pBatch the batch control
      * @return Continue <code>true/false</code>
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     protected boolean deleteItems(final ThreadStatus<?> pThread,
-                                  final BatchControl pBatch) throws ModelException {
+                                  final BatchControl pBatch) throws JDataException {
         DataListIterator<T> myIterator;
         T myCurr = null;
         int myCount = 0;
@@ -671,7 +671,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             closeStmt();
         } catch (Exception e) {
             theDatabase.close();
-            throw new ModelException(ExceptionClass.SQLSERVER, myCurr, "Failed to delete " + getTableName(),
+            throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to delete " + getTableName(),
                     e);
         }
 
@@ -681,9 +681,9 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 
     /**
      * Create the table.
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    protected void createTable() throws ModelException {
+    protected void createTable() throws JDataException {
         String myCreate;
 
         /* Protect the create */
@@ -700,15 +700,15 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             }
         } catch (Exception e) {
             theDatabase.close();
-            throw new ModelException(ExceptionClass.SQLSERVER, "Failed to create " + getTableName(), e);
+            throw new JDataException(ExceptionClass.SQLSERVER, "Failed to create " + getTableName(), e);
         }
     }
 
     /**
      * Drop the table.
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    protected void dropTable() throws ModelException {
+    protected void dropTable() throws JDataException {
         String myDrop;
 
         /* Protect the drop */
@@ -725,15 +725,15 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             executeStatement(myDrop);
         } catch (Exception e) {
             theDatabase.close();
-            throw new ModelException(ExceptionClass.SQLSERVER, "Failed to drop " + getTableName(), e);
+            throw new JDataException(ExceptionClass.SQLSERVER, "Failed to drop " + getTableName(), e);
         }
     }
 
     /**
      * Truncate the table.
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    protected void purgeTable() throws ModelException {
+    protected void purgeTable() throws JDataException {
         /* Protect the truncate */
         try {
             /* Execute the purge statement */
@@ -741,7 +741,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             executeStatement(myTrunc);
         } catch (Exception e) {
             theDatabase.close();
-            throw new ModelException(ExceptionClass.SQLSERVER, "Failed to purge " + getTableName(), e);
+            throw new JDataException(ExceptionClass.SQLSERVER, "Failed to purge " + getTableName(), e);
         }
     }
 }

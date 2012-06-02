@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,13 +26,12 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
-import net.sourceforge.JDataManager.ReportFields;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
-import net.sourceforge.JDataManager.ValueSet;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JGordianKnot.CipherSet;
-import net.sourceforge.JGordianKnot.EncryptedData.EncryptionGenerator;
+import net.sourceforge.JGordianKnot.EncryptionGenerator;
 import net.sourceforge.JGordianKnot.HashMode;
 import net.sourceforge.JGordianKnot.PasswordHash;
 import net.sourceforge.JGordianKnot.SecureManager;
@@ -39,139 +39,201 @@ import net.sourceforge.JGordianKnot.SecurityGenerator;
 import net.sourceforge.JGordianKnot.SymKeyType;
 import uk.co.tolcroft.models.data.DataKey.DataKeyList;
 
+/**
+ * ControlKey definition and list. The Control Key represents the passwordHash that controls securing of the
+ * dataKeys. It maintains a map of the associated DataKeys.
+ * @author Tony Washer
+ */
 public class ControlKey extends DataItem<ControlKey> {
     /**
-     * Object name
+     * Object name.
      */
-    public static String objName = ControlKey.class.getSimpleName();
+    public static final String OBJECT_NAME = ControlKey.class.getSimpleName();
 
     /**
-     * List name
+     * List name.
      */
-    public static String listName = objName + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
-     * Report fields
+     * Report fields.
      */
-    private static final ReportFields theLocalFields = new ReportFields(objName, DataItem.theLocalFields);
+    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
 
-    /* Called from constructor */
     @Override
-    public ReportFields declareFields() {
-        return theLocalFields;
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
     }
 
-    /* Field IDs */
-    public static final ReportField FIELD_PASSHASH = theLocalFields.declareEqualityValueField("PasswordHash");
-    public static final ReportField FIELD_HASHMODE = theLocalFields.declareDerivedValueField("HashMode");
-    public static final ReportField FIELD_HASHBYTES = theLocalFields.declareDerivedValueField("HashBytes");
-    public static final ReportField FIELD_MAP = theLocalFields.declareLocalField("DataKeyMap");
-    public static final ReportField FIELD_CIPHER = theLocalFields.declareLocalField("CipherSet");
-
     /**
-     * PasswordHash Length
+     * Field ID for passwordHash.
      */
-    public final static int HASHLEN = PasswordHash.HASHSIZE;
+    public static final JDataField FIELD_PASSHASH = FIELD_DEFS.declareEqualityValueField("PasswordHash");
 
     /**
-     * The DataKey Map
+     * Field ID for HashMode.
+     */
+    public static final JDataField FIELD_HASHMODE = FIELD_DEFS.declareDerivedValueField("HashMode");
+
+    /**
+     * Field ID for HashBytes.
+     */
+    public static final JDataField FIELD_HASHBYTES = FIELD_DEFS.declareDerivedValueField("HashBytes");
+
+    /**
+     * Field ID for DataKeyMap.
+     */
+    public static final JDataField FIELD_MAP = FIELD_DEFS.declareLocalField("DataKeyMap");
+
+    /**
+     * Field ID for CipherSet.
+     */
+    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareLocalField("CipherSet");
+
+    /**
+     * PasswordHash Length.
+     */
+    public static final int HASHLEN = PasswordHash.HASHSIZE;
+
+    /**
+     * The DataKey Map.
      */
     private Map<SymKeyType, DataKey> theMap = null;
 
     /**
-     * The Encryption CipherSet
+     * The Encryption CipherSet.
      */
     private CipherSet theCipherSet = null;
 
     /**
-     * The Security Generator
+     * The Security Generator.
      */
     private SecurityGenerator theSecurityGenerator = null;
 
     /**
-     * The Encryption Field Generator
+     * The Encryption Field Generator.
      */
     private EncryptionGenerator theFieldGenerator = null;
 
     /**
-     * The active set of values
+     * The active set of values.
      */
     private ValueSet<ControlKey> theValueSet;
 
     @Override
-    public void declareValues(ValueSet<ControlKey> pValues) {
+    public void declareValues(final ValueSet<ControlKey> pValues) {
         super.declareValues(pValues);
         theValueSet = pValues;
     }
 
     @Override
-    public Object getFieldValue(ReportField pField) {
-        /* If the field is not an attribute handle normally */
-        if (pField == FIELD_MAP)
+    public Object getFieldValue(final JDataField pField) {
+        if (pField == FIELD_MAP) {
             return theMap;
-        if (pField == FIELD_CIPHER)
+        }
+        if (pField == FIELD_CIPHER) {
             return theCipherSet;
-
-        /* Pass onwards */
+        }
         return super.getFieldValue(pField);
     }
 
-    /* Access methods */
+    /**
+     * Get the HashBytes.
+     * @return the hash bytes
+     */
     public byte[] getHashBytes() {
         return getHashBytes(theValueSet);
     }
 
+    /**
+     * Get the PassWordHash.
+     * @return the passwordHash
+     */
     protected PasswordHash getPasswordHash() {
         return getPasswordHash(theValueSet);
     }
 
+    /**
+     * Get the HashMode.
+     * @return the hash mode
+     */
     private HashMode getHashMode() {
         return getHashMode(theValueSet);
     }
 
-    public static byte[] getHashBytes(ValueSet<ControlKey> pValueSet) {
+    /**
+     * Get the HashBytes for the valueSet.
+     * @param pValueSet the ValueSet
+     * @return the hash bytes
+     */
+    public static byte[] getHashBytes(final ValueSet<ControlKey> pValueSet) {
         return pValueSet.getValue(FIELD_HASHBYTES, byte[].class);
     }
 
-    protected static PasswordHash getPasswordHash(ValueSet<ControlKey> pValueSet) {
+    /**
+     * Get the PasswordHash for the valueSet.
+     * @param pValueSet the ValueSet
+     * @return the passwordHash
+     */
+    protected static PasswordHash getPasswordHash(final ValueSet<ControlKey> pValueSet) {
         return pValueSet.getValue(FIELD_PASSHASH, PasswordHash.class);
     }
 
-    private static HashMode getHashMode(ValueSet<ControlKey> pValueSet) {
+    /**
+     * Get the HashMode for the valueSet.
+     * @param pValueSet the ValueSet
+     * @return the hash mode
+     */
+    private static HashMode getHashMode(final ValueSet<ControlKey> pValueSet) {
         return pValueSet.getValue(FIELD_HASHMODE, HashMode.class);
     }
 
+    /**
+     * Get the Encryption Field Generator.
+     * @return the field generator
+     */
     public EncryptionGenerator getFieldGenerator() {
         return theFieldGenerator;
     }
 
-    private void setValuePasswordHash(PasswordHash pHash) {
-        theValueSet.setValue(FIELD_PASSHASH, pHash);
-        setValueHashMode((pHash == null) ? null : pHash.getHashMode());
-        setValueHashBytes((pHash == null) ? null : pHash.getHashBytes());
+    /**
+     * Set the PasswordHash.
+     * @param pValue the PasswordHash
+     */
+    private void setValuePasswordHash(final PasswordHash pValue) {
+        theValueSet.setValue(FIELD_PASSHASH, pValue);
+        setValueHashMode((pValue == null) ? null : pValue.getHashMode());
+        setValueHashBytes((pValue == null) ? null : pValue.getHashBytes());
     }
 
-    private void setValueHashBytes(byte[] pHash) {
-        theValueSet.setValue(FIELD_HASHBYTES, pHash);
+    /**
+     * Set the Hash Bytes.
+     * @param pValue the Hash bytes
+     */
+    private void setValueHashBytes(final byte[] pValue) {
+        theValueSet.setValue(FIELD_HASHBYTES, pValue);
     }
 
-    private void setValueHashMode(HashMode pMode) {
-        theValueSet.setValue(FIELD_HASHMODE, pMode);
+    /**
+     * Set the Hash Mode.
+     * @param pValue the Hash Mode
+     */
+    private void setValueHashMode(final HashMode pValue) {
+        theValueSet.setValue(FIELD_HASHMODE, pValue);
     }
 
-    /* Linking methods */
     @Override
     public ControlKey getBase() {
         return (ControlKey) super.getBase();
     }
 
     /**
-     * Construct a copy of a ControlKey
+     * Construct a copy of a ControlKey.
      * @param pList the list the copy belongs to
      * @param pSource The Key to copy
      */
-    protected ControlKey(ControlKeyList pList,
-                         ControlKey pSource) {
+    protected ControlKey(final ControlKeyList pList,
+                         final ControlKey pSource) {
         /* Set standard values */
         super(pList, pSource);
 
@@ -194,19 +256,21 @@ public class ControlKey extends DataItem<ControlKey> {
                 setBase(pSource);
                 setState(pSource.getState());
                 break;
+            default:
+                break;
         }
     }
 
     /**
-     * Constructor for loading an encrypted ControlKey
+     * Constructor for loading an encrypted ControlKey.
      * @param pList the list to which to add the key to
      * @param uId the id of the ControlKey
      * @param pHashBytes the hash bytes
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    private ControlKey(ControlKeyList pList,
-                       int uId,
-                       byte[] pHashBytes) throws ModelException {
+    private ControlKey(final ControlKeyList pList,
+                       final int uId,
+                       final byte[] pHashBytes) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -237,21 +301,20 @@ public class ControlKey extends DataItem<ControlKey> {
 
             /* Allocate the id */
             pList.setNewId(this);
-        }
 
-        /* Catch Exceptions */
-        catch (Exception e) {
+            /* Catch Exceptions */
+        } catch (Exception e) {
             /* Pass on exception */
-            throw new ModelException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
     }
 
     /**
-     * Constructor for a new ControlKey. This will create a set of DataKeys
+     * Constructor for a new ControlKey. This will create a set of DataKeys.
      * @param pList the list to which to add the key to
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    private ControlKey(ControlKeyList pList) throws ModelException {
+    private ControlKey(final ControlKeyList pList) throws JDataException {
         /* Initialise the item */
         super(pList, 0);
 
@@ -282,21 +345,20 @@ public class ControlKey extends DataItem<ControlKey> {
 
             /* Allocate the DataKeys */
             allocateDataKeys(pList.getData());
-        }
 
-        /* Catch Exceptions */
-        catch (Exception e) {
+            /* Catch Exceptions */
+        } catch (Exception e) {
             /* Pass on exception */
-            throw new ModelException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
     }
 
     /**
-     * Constructor for a new ControlKey with the same password. This will create a set of DataKeys
+     * Constructor for a new ControlKey with the same password. This will create a set of DataKeys.
      * @param pKey the key to copy
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    private ControlKey(ControlKey pKey) throws ModelException {
+    private ControlKey(final ControlKey pKey) throws JDataException {
         /* Initialise the item */
         super(pKey.getList(), 0);
 
@@ -328,47 +390,51 @@ public class ControlKey extends DataItem<ControlKey> {
 
             /* Allocate the DataKeys */
             allocateDataKeys(myData);
-        }
 
-        /* Catch Exceptions */
-        catch (Exception e) {
+            /* Catch Exceptions */
+        } catch (Exception e) {
             /* Pass on exception */
-            throw new ModelException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
     }
 
     @Override
-    public int compareTo(Object pThat) {
+    public int compareTo(final Object pThat) {
         int iDiff;
 
         /* Handle the trivial cases */
-        if (this == pThat)
+        if (this == pThat) {
             return 0;
-        if (pThat == null)
+        }
+        if (pThat == null) {
             return -1;
+        }
 
         /* Make sure that the object is a ControlKey */
-        if (pThat.getClass() != this.getClass())
+        if (pThat.getClass() != this.getClass()) {
             return -1;
+        }
 
         /* Access the object as a ControlKey */
         ControlKey myThat = (ControlKey) pThat;
 
         /* Compare the IDs */
         iDiff = (int) (getId() - myThat.getId());
-        if (iDiff < 0)
+        if (iDiff < 0) {
             return -1;
-        if (iDiff > 0)
+        }
+        if (iDiff > 0) {
             return 1;
+        }
         return 0;
     }
 
     /**
-     * Allocate a new set of DataKeys
+     * Allocate a new set of DataKeys.
      * @param pData the DataSet
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    private void allocateDataKeys(DataSet<?> pData) throws ModelException {
+    private void allocateDataKeys(final DataSet<?> pData) throws JDataException {
         /* Access the DataKey List */
         DataKeyList myKeys = pData.getDataKeys();
 
@@ -386,7 +452,7 @@ public class ControlKey extends DataItem<ControlKey> {
     }
 
     /**
-     * Delete the old set of ControlKey and DataKeys
+     * Delete the old set of ControlKey and DataKeys.
      */
     private void deleteControlSet() {
         /* Loop through the SymKeyType values */
@@ -395,8 +461,9 @@ public class ControlKey extends DataItem<ControlKey> {
             DataKey myKey = theMap.get(myType);
 
             /* Mark as deleted */
-            if (myKey != null)
+            if (myKey != null) {
                 myKey.setState(DataState.DELETED);
+            }
         }
 
         /* Mark this control key as deleted */
@@ -404,11 +471,11 @@ public class ControlKey extends DataItem<ControlKey> {
     }
 
     /**
-     * Update password hash
+     * Update password hash.
      * @param pHash the new password hash
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    protected void updatePasswordHash(PasswordHash pHash) throws ModelException {
+    protected void updatePasswordHash(final PasswordHash pHash) throws JDataException {
         /* Store the current detail into history */
         pushHistory();
 
@@ -421,20 +488,22 @@ public class ControlKey extends DataItem<ControlKey> {
             DataKey myKey = theMap.get(myType);
 
             /* Update the password hash */
-            if (myKey != null)
+            if (myKey != null) {
                 myKey.updatePasswordHash();
+            }
         }
 
         /* Check for changes */
-        if (checkForHistory())
+        if (checkForHistory()) {
             setState(DataState.CHANGED);
+        }
     }
 
     /**
-     * Register DataKey
+     * Register DataKey.
      * @param pKey the DataKey to register
      */
-    protected void registerDataKey(DataKey pKey) {
+    protected void registerDataKey(final DataKey pKey) {
         /* Store the DataKey into the map */
         theMap.put(pKey.getKeyType(), pKey);
 
@@ -443,46 +512,52 @@ public class ControlKey extends DataItem<ControlKey> {
     }
 
     /**
-     * ControlKey List
+     * ControlKey List.
      */
     public static class ControlKeyList extends DataList<ControlKeyList, ControlKey> {
-        /* Members */
+        /**
+         * The owning data set.
+         */
         private DataSet<?> theData = null;
 
+        /**
+         * Get the owning data set.
+         * @return the data set
+         */
         public DataSet<?> getData() {
             return theData;
         }
 
         @Override
         public String listName() {
-            return listName;
+            return LIST_NAME;
         }
 
         /**
-         * Construct an empty CORE ControlKey list
+         * Construct an empty CORE ControlKey list.
          * @param pData the DataSet for the list
          */
-        protected ControlKeyList(DataSet<?> pData) {
+        protected ControlKeyList(final DataSet<?> pData) {
             super(ControlKeyList.class, ControlKey.class, ListStyle.CORE, false);
             theData = pData;
         }
 
         /**
-         * Construct an empty generic ControlKey list
+         * Construct an empty generic ControlKey list.
          * @param pData the DataSet for the list
          * @param pStyle the style of the list
          */
-        protected ControlKeyList(DataSet<?> pData,
-                                 ListStyle pStyle) {
+        protected ControlKeyList(final DataSet<?> pData,
+                                 final ListStyle pStyle) {
             super(ControlKeyList.class, ControlKey.class, pStyle, false);
             theData = pData;
         }
 
         /**
-         * Constructor for a cloned List
+         * Constructor for a cloned List.
          * @param pSource the source List
          */
-        private ControlKeyList(ControlKeyList pSource) {
+        private ControlKeyList(final ControlKeyList pSource) {
             super(pSource);
             theData = pSource.theData;
         }
@@ -492,7 +567,7 @@ public class ControlKey extends DataItem<ControlKey> {
          * @param pStyle the style of list
          * @return the update Extract
          */
-        private ControlKeyList getExtractList(ListStyle pStyle) {
+        private ControlKeyList getExtractList(final ListStyle pStyle) {
             /* Build an empty Extract List */
             ControlKeyList myList = new ControlKeyList(this);
 
@@ -503,7 +578,6 @@ public class ControlKey extends DataItem<ControlKey> {
             return myList;
         }
 
-        /* Obtain extract lists. */
         @Override
         public ControlKeyList getUpdateList() {
             return getExtractList(ListStyle.UPDATE);
@@ -520,7 +594,7 @@ public class ControlKey extends DataItem<ControlKey> {
         }
 
         @Override
-        public ControlKeyList getDeepCopy(DataSet<?> pDataSet) {
+        public ControlKeyList getDeepCopy(final DataSet<?> pDataSet) {
             /* Build an empty Extract List */
             ControlKeyList myList = new ControlKeyList(this);
             myList.theData = pDataSet;
@@ -534,7 +608,7 @@ public class ControlKey extends DataItem<ControlKey> {
         }
 
         @Override
-        protected ControlKeyList getDifferences(ControlKeyList pOld) {
+        protected ControlKeyList getDifferences(final ControlKeyList pOld) {
             /* Build an empty Difference List */
             ControlKeyList myList = new ControlKeyList(this);
 
@@ -546,7 +620,7 @@ public class ControlKey extends DataItem<ControlKey> {
         }
 
         @Override
-        public ControlKey addNewItem(DataItem<?> pItem) {
+        public ControlKey addNewItem(final DataItem<?> pItem) {
             ControlKey myKey = new ControlKey(this, (ControlKey) pItem);
             add(myKey);
             return myKey;
@@ -558,22 +632,23 @@ public class ControlKey extends DataItem<ControlKey> {
         }
 
         /**
-         * Add a ControlKey item from a Database/Backup
+         * Add a ControlKey item from a Database/Backup.
          * @param uId the id of the ControlKey
          * @param pHashBytes the HashBytes
          * @return the new item
-         * @throws ModelException
+         * @throws JDataException on error
          */
-        public ControlKey addItem(int uId,
-                                  byte[] pHashBytes) throws ModelException {
+        public ControlKey addItem(final int uId,
+                                  final byte[] pHashBytes) throws JDataException {
             ControlKey myKey;
 
             /* Create the ControlKey */
             myKey = new ControlKey(this, uId, pHashBytes);
 
             /* Check that this KeyId has not been previously added */
-            if (!isIdUnique(uId))
-                throw new ModelException(ExceptionClass.DATA, myKey, "Duplicate ControlKeyId (" + uId + ")");
+            if (!isIdUnique(uId)) {
+                throw new JDataException(ExceptionClass.DATA, myKey, "Duplicate ControlKeyId (" + uId + ")");
+            }
 
             /* Add to the list */
             add(myKey);
@@ -581,11 +656,11 @@ public class ControlKey extends DataItem<ControlKey> {
         }
 
         /**
-         * Add a new ControlKey (with associated DataKeys)
+         * Add a new ControlKey (with associated DataKeys).
          * @return the new item
-         * @throws ModelException
+         * @throws JDataException on error
          */
-        public ControlKey addItem() throws ModelException {
+        public ControlKey addItem() throws JDataException {
             ControlKey myKey;
 
             /* Create the key */
@@ -597,17 +672,18 @@ public class ControlKey extends DataItem<ControlKey> {
         }
 
         /**
-         * Add a cloned ControlKey (with associated DataKeys)
+         * Add a cloned ControlKey (with associated DataKeys).
          * @param pSource the source key
          * @return the new item
-         * @throws ModelException
+         * @throws JDataException on error
          */
-        public ControlKey addItem(ControlKey pSource) throws ModelException {
+        public ControlKey addItem(final ControlKey pSource) throws JDataException {
             ControlKey myKey;
 
             /* Check that we are the same list */
-            if (pSource.getList() != this)
-                throw new ModelException(ExceptionClass.LOGIC, "Invalid clone operation");
+            if (pSource.getList() != this) {
+                throw new JDataException(ExceptionClass.LOGIC, "Invalid clone operation");
+            }
 
             /* Create the key */
             myKey = new ControlKey(pSource);
@@ -618,11 +694,11 @@ public class ControlKey extends DataItem<ControlKey> {
         }
 
         /**
-         * Initialise Security from a DataBase for a SpreadSheet load
+         * Initialise Security from a DataBase for a SpreadSheet load.
          * @param pDatabase the DataSet for the Database
-         * @throws ModelException
+         * @throws JDataException on error
          */
-        protected void initialiseSecurity(DataSet<?> pDatabase) throws ModelException {
+        protected void initialiseSecurity(final DataSet<?> pDatabase) throws JDataException {
             /* Access the active control key from the database */
             ControlKey myDatabaseKey = pDatabase.getControlKey();
             ControlKey myKey;
@@ -631,10 +707,9 @@ public class ControlKey extends DataItem<ControlKey> {
             if (myDatabaseKey != null) {
                 /* Clone the Control Key and its DataKeys */
                 myKey = cloneControlKey(myDatabaseKey);
-            }
 
-            /* else create a new security set */
-            else {
+                /* else create a new security set */
+            } else {
                 /* Create the new security set */
                 myKey = addItem();
             }
@@ -644,7 +719,7 @@ public class ControlKey extends DataItem<ControlKey> {
         }
 
         /**
-         * Delete old controlKeys
+         * Delete old controlKeys.
          */
         protected void purgeOldControlKeys() {
             /* Access the current control Key */
@@ -655,18 +730,19 @@ public class ControlKey extends DataItem<ControlKey> {
             ControlKey myCurr;
             while ((myCurr = myIterator.next()) != null) {
                 /* Delete if this is not the active key */
-                if (!myKey.equals(myCurr))
+                if (!myKey.equals(myCurr)) {
                     myCurr.deleteControlSet();
+                }
             }
         }
 
         /**
-         * Clone Security from a DataBase
+         * Clone Security from a DataBase.
          * @param pControlKey the ControlKey to clone
          * @return the new control key
-         * @throws ModelException
+         * @throws JDataException on error
          */
-        private ControlKey cloneControlKey(ControlKey pControlKey) throws ModelException {
+        private ControlKey cloneControlKey(final ControlKey pControlKey) throws JDataException {
             /* Clone the control key */
             ControlKey myControl = addItem(pControlKey.getId(), pControlKey.getHashBytes());
 

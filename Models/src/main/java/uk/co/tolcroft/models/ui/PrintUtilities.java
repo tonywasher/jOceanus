@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,49 +32,78 @@ import java.awt.print.PrinterJob;
 import javax.swing.JComponent;
 import javax.swing.RepaintManager;
 
-public class PrintUtilities  implements Printable {
-	  private JComponent componentToBePrinted;
+/**
+ * Print Utilities class.
+ * @author Tony Washer
+ */
+public class PrintUtilities implements Printable {
+    /**
+     * Component to be printed.
+     */
+    private JComponent componentToBePrinted;
 
-	  public static void printComponent(JComponent c) {
-	    new PrintUtilities(c).print();
-	  }
-	  
-	  public PrintUtilities(JComponent componentToBePrinted) {
-	    this.componentToBePrinted = componentToBePrinted;
-	  }
-	  
-	  public void print() {
-	    PrinterJob printJob = PrinterJob.getPrinterJob();
-	    printJob.setPrintable(this);
-	    if (printJob.printDialog())
-	      try {
-	        printJob.print();
-	      } catch(PrinterException pe) {
-	        System.out.println("Error printing: " + pe);
-	      }
-	  }
+    /**
+     * Print the component.
+     * @param c the component
+     */
+    public static void printComponent(final JComponent c) {
+        new PrintUtilities(c).print();
+    }
 
-	  @Override
-	  public int print(Graphics g, PageFormat pageFormat, int pageIndex) {
-	    if (pageIndex > 0) {
-	      return(NO_SUCH_PAGE);
-	    } else {
-	      Graphics2D g2d = (Graphics2D)g;
-	      g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
-	      disableDoubleBuffering(componentToBePrinted);
-	      componentToBePrinted.paint(g2d);
-	      enableDoubleBuffering(componentToBePrinted);
-	      return(PAGE_EXISTS);
-	    }
-	  }
+    /**
+     * Constructor.
+     * @param pComponentToBePrinted the component
+     */
+    public PrintUtilities(final JComponent pComponentToBePrinted) {
+        componentToBePrinted = pComponentToBePrinted;
+    }
 
-	  public static void disableDoubleBuffering(JComponent c) {
-	    RepaintManager currentManager = RepaintManager.currentManager(c);
-	    currentManager.setDoubleBufferingEnabled(false);
-	  }
+    /**
+     * Print it.
+     */
+    public void print() {
+        PrinterJob printJob = PrinterJob.getPrinterJob();
+        printJob.setPrintable(this);
+        if (printJob.printDialog()) {
+            try {
+                printJob.print();
+            } catch (PrinterException pe) {
+                System.out.println("Error printing: " + pe);
+            }
+        }
+    }
 
-	  public static void enableDoubleBuffering(JComponent c) {
-	    RepaintManager currentManager = RepaintManager.currentManager(c);
-	    currentManager.setDoubleBufferingEnabled(true);
-	  }
+    @Override
+    public int print(final Graphics g,
+                     final PageFormat pageFormat,
+                     final int pageIndex) {
+        if (pageIndex > 0) {
+            return (NO_SUCH_PAGE);
+        } else {
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
+            disableDoubleBuffering(componentToBePrinted);
+            componentToBePrinted.paint(g2d);
+            enableDoubleBuffering(componentToBePrinted);
+            return (PAGE_EXISTS);
+        }
+    }
+
+    /**
+     * Disable double buffering.
+     * @param c the component
+     */
+    public static void disableDoubleBuffering(final JComponent c) {
+        RepaintManager currentManager = RepaintManager.currentManager(c);
+        currentManager.setDoubleBufferingEnabled(false);
+    }
+
+    /**
+     * Enable double buffering.
+     * @param c the component
+     */
+    public static void enableDoubleBuffering(final JComponent c) {
+        RepaintManager currentManager = RepaintManager.currentManager(c);
+        currentManager.setDoubleBufferingEnabled(true);
+    }
 }

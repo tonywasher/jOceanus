@@ -22,7 +22,7 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.sheets;
 
-import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.JDataException;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
@@ -71,14 +71,14 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetD
      * @param iOrder the sort order
      * @param pName the name
      * @param pDesc the description
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     protected abstract void loadEncryptedItem(final int pId,
                                               final int pControlId,
                                               final boolean isEnabled,
                                               final int iOrder,
                                               final byte[] pName,
-                                              final byte[] pDesc) throws ModelException;
+                                              final byte[] pDesc) throws JDataException;
 
     /**
      * Load the static data from extract.
@@ -87,13 +87,13 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetD
      * @param iOrder the sort order
      * @param pName the name
      * @param pDesc the description
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     protected abstract void loadClearTextItem(final int pId,
                                               final boolean isEnabled,
                                               final int iOrder,
                                               final String pName,
-                                              final String pDesc) throws ModelException;
+                                              final String pDesc) throws JDataException;
 
     /**
      * Is the spreadsheet a backup spreadsheet or an edit-able one.
@@ -139,7 +139,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetD
     }
 
     @Override
-    protected void loadItem() throws Exception {
+    protected void loadItem() throws JDataException {
         /* If this is a backup load */
         if (isBackup) {
             /* Access the IDs */
@@ -172,7 +172,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetD
     }
 
     @Override
-    protected void insertItem(final T pItem) throws Exception {
+    protected void insertItem(final T pItem) throws JDataException {
         /* If we are creating a backup */
         if (isBackup) {
             /* Set the fields */
@@ -195,7 +195,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetD
     }
 
     @Override
-    protected void preProcessOnWrite() throws Exception {
+    protected void preProcessOnWrite() throws JDataException {
         /* Ignore if this is a backup */
         if (isBackup) {
             return;
@@ -216,7 +216,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetD
     }
 
     @Override
-    protected void postProcessOnWrite() throws Exception {
+    protected void postProcessOnWrite() throws JDataException {
         /* If we are creating a backup */
         if (isBackup) {
             /* Set the six columns as the range */

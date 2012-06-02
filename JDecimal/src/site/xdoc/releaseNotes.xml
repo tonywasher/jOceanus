@@ -1,14 +1,19 @@
 <document>
   <properties>
     <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
-    <title>JDateDay Release Notes</title>
+    <title>JDecimal Release Notes</title>
   </properties>
   <body>
     <section name="Overview">
-      <p>This project was the original version of JDateButton. When I decided to upload the project to sourceforge, I
-felt that it would be more useful to split the JDateButton functionality out, based on the standard Java Calendar object.</p>
-       <p>This project utilises a data object called DateDay, which is simply a Calendar object with the time information split out, so that it represents a whole day, rather than an instant of time within that day</p>
-       <p>In addition to this object, a DateDayRange object is defined to represent a contiguous range of dates. Various helper classes are provided to support these two objects</p>
+      <p>This project was built in order to provide a better handling of decimals that is provided in the standard Java library, in particular to support handling of monetary values in a financial application.</p>
+      <p>Java provides support for Decimals in two ways.</p>
+        <dl>
+	  <dt>Double/Float</dt>
+	  <dd>Decimals can be represented as float/double. However adding two floats together is a notoriously unreliable method and provides some shocking results for the unwary <a href="http://stackoverflow.com/questions/1661273/floating-point-arithmetic-not-producing-exact-results-in-java">(see article)</a></dd>
+	  <dt>BigDecimal</dt>
+	  <dd>This provides accurate and predictable results, but is slow due to the fact that BigDecimal is immutable</dd>
+	</dl>
+       <p>The aim of this project is to provide a cut down BigDecimal object that is not immutable and hence is more appropriate for usage in financial applications</p>
     </section>
     <section name="Build History">
       <dl>

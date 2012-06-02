@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,15 +46,83 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
+import net.sourceforge.JDateButton.JDateConfig;
+
 /**
  * <p>
- * Provides a simple application that illustrates the features of JDateButton
- * 
+ * Provides a simple application that illustrates the features of JDateDay.
  * @author Tony Washer
  */
 public class DateDayExample extends JApplet {
-    /* Serial Id */
+    /**
+     * Serial Id.
+     */
     private static final long serialVersionUID = 2036674133513416250L;
+
+    /**
+     * Inset depth.
+     */
+    private static final int INSET_DEPTH = 5;
+
+    /**
+     * First Column Width.
+     */
+    private static final int COL_1_WIDTH = 100;
+
+    /**
+     * Second Column Width.
+     */
+    private static final int COL_2_WIDTH = 200;
+
+    /**
+     * Scroll Width.
+     */
+    private static final int SCROLL_WIDTH = 400;
+
+    /**
+     * Scroll Height.
+     */
+    private static final int SCROLL_HEIGHT = 90;
+
+    /**
+     * Neutral Weight.
+     */
+    private static final double WEIGHT_NEUTRAL = 0.5f;
+
+    /**
+     * Start sample date.
+     */
+    private static final DateDay DATE_START = makeDate(2007, Calendar.JANUARY, 25);
+
+    /**
+     * End sample date.
+     */
+    private static final DateDay DATE_END = makeDate(2014, Calendar.AUGUST, 9);
+
+    /**
+     * First sample date.
+     */
+    private static final DateDay DATE_FIRST = makeDate(2011, Calendar.JULY, 1);
+
+    /**
+     * Second sample date.
+     */
+    private static final DateDay DATE_SECOND = makeDate(2012, Calendar.MARCH, 14);
+
+    /**
+     * Third sample date.
+     */
+    private static final DateDay DATE_THIRD = makeDate(2012, Calendar.NOVEMBER, 19);
+
+    /**
+     * Fourth sample date.
+     */
+    private static final DateDay DATE_FOURTH = makeDate(2013, Calendar.MAY, 31);
+
+    /**
+     * Fifth sample date.
+     */
+    private static final DateDay DATE_FIFTH = makeDate(2014, Calendar.FEBRUARY, 28);
 
     @Override
     public void init() {
@@ -73,6 +141,9 @@ public class DateDayExample extends JApplet {
         }
     }
 
+    /**
+     * Create and show the GUI.
+     */
     private static void createAndShowGUI() {
         try {
             /* Create the frame */
@@ -99,9 +170,10 @@ public class DateDayExample extends JApplet {
     }
 
     /**
+     * Main function.
      * @param args
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -110,24 +182,78 @@ public class DateDayExample extends JApplet {
         });
     }
 
-    /* Members */
+    /**
+     * The table.
+     */
     private JTable theTable = null;
+
+    /**
+     * The cell renderer.
+     */
     private DateDayCellRenderer theRenderer = null;
+
+    /**
+     * The cell editor.
+     */
     private DateDayCellEditor theEditor = null;
+
+    /**
+     * The list of locales.
+     */
     private JComboBox theLocaleList = null;
+
+    /**
+     * The list of formats.
+     */
     private JComboBox theFormatList = null;
+
+    /**
+     * The start date.
+     */
     private DateDayButton theStartDate = null;
+
+    /**
+     * The end date.
+     */
     private DateDayButton theEndDate = null;
-    private DateDayRangeSelect theRangeSelect = null;
+
+    /**
+     * The selected locale.
+     */
     private Locale theLocale = Locale.UK;
-    private int theMaxDayLen = 3;
+
+    /**
+     * The maximum day length.
+     */
+    private int theMaxDayLen = JDateConfig.MAX_DAY_NAME_LEN;
+
+    /**
+     * shrink day name from right.
+     */
     private boolean doShrinkFromRight = true;
+
+    /**
+     * Prettify the days and months.
+     */
     private boolean doPretty = true;
+
+    /**
+     * The selected format.
+     */
     private String theFormat = "dd-MMM-yyyy";
+
+    /**
+     * The listener.
+     */
     private DateListener theListener = new DateListener();
 
     /**
-     * Create the panel
+     * The range selection.
+     */
+    private DateDayRangeSelect theRangeSelect = null;
+
+    /**
+     * Create the panel.
      * @return the panel
      */
     private JPanel makePanel() {
@@ -161,7 +287,7 @@ public class DateDayExample extends JApplet {
         myConstraints.gridwidth = 1;
         myConstraints.weightx = 0.0;
         myConstraints.anchor = GridBagConstraints.LINE_END;
-        myConstraints.insets = new Insets(5, 5, 5, 5);
+        myConstraints.insets = new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH);
         myRange.add(myStart, myConstraints);
         myConstraints.gridx = 1;
         myConstraints.gridy = 0;
@@ -173,7 +299,7 @@ public class DateDayExample extends JApplet {
         myConstraints.gridwidth = 1;
         myConstraints.weightx = 0.0;
         myConstraints.anchor = GridBagConstraints.LINE_END;
-        myConstraints.insets = new Insets(5, 5, 5, 5);
+        myConstraints.insets = new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH);
         myRange.add(myEnd, myConstraints);
         myConstraints.gridx = 1;
         myConstraints.gridy = 1;
@@ -191,7 +317,7 @@ public class DateDayExample extends JApplet {
         myConstraints.gridwidth = 1;
         myConstraints.weightx = 0.0;
         myConstraints.anchor = GridBagConstraints.LINE_END;
-        myConstraints.insets = new Insets(5, 5, 5, 5);
+        myConstraints.insets = new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH);
         myStyle.add(myLocale, myConstraints);
         myConstraints.gridx = 1;
         myConstraints.gridy = 0;
@@ -203,7 +329,7 @@ public class DateDayExample extends JApplet {
         myConstraints.gridwidth = 1;
         myConstraints.weightx = 0.0;
         myConstraints.anchor = GridBagConstraints.LINE_END;
-        myConstraints.insets = new Insets(5, 5, 5, 5);
+        myConstraints.insets = new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH);
         myStyle.add(myFormat, myConstraints);
         myConstraints.gridx = 1;
         myConstraints.gridy = 1;
@@ -226,24 +352,23 @@ public class DateDayExample extends JApplet {
         myConstraints.gridx = 0;
         myConstraints.gridy = 0;
         myConstraints.gridwidth = 1;
-        myConstraints.weightx = 0.5;
+        myConstraints.weightx = WEIGHT_NEUTRAL;
         myPanel.add(myRange, myConstraints);
         myConstraints = new GridBagConstraints();
         myConstraints.gridx = 1;
         myConstraints.gridy = 0;
         myConstraints.gridwidth = 1;
-        myConstraints.weightx = 0.5;
+        myConstraints.weightx = WEIGHT_NEUTRAL;
         myPanel.add(myStyle, myConstraints);
 
         myConstraints = new GridBagConstraints();
         myConstraints.gridx = 0;
         myConstraints.gridy = 1;
         myConstraints.gridwidth = 2;
-        myConstraints.weightx = 0.5;
+        myConstraints.weightx = WEIGHT_NEUTRAL;
         myConstraints.fill = GridBagConstraints.HORIZONTAL;
         myPanel.add(myOptions, myConstraints);
 
-        theTable.setPreferredScrollableViewportSize(new Dimension(400, 90));
         myConstraints = new GridBagConstraints();
         myConstraints.gridx = 0;
         myConstraints.gridy = 2;
@@ -251,71 +376,76 @@ public class DateDayExample extends JApplet {
         myConstraints.gridheight = GridBagConstraints.REMAINDER;
         myConstraints.fill = GridBagConstraints.HORIZONTAL;
         myPanel.add(new JScrollPane(theTable), myConstraints);
-        theTable.setPreferredScrollableViewportSize(new Dimension(400, 90));
+        theTable.setPreferredScrollableViewportSize(new Dimension(SCROLL_WIDTH, SCROLL_HEIGHT));
 
         /* Return the panel */
         return myPanel;
     }
 
     /**
-     * Table Model
+     * Table Model.
      */
     private class DateTable extends AbstractTableModel {
-        /* Serial Id */
+        /**
+         * Serial Id.
+         */
         private static final long serialVersionUID = -4842107163051671807L;
 
-        /* Create the data for a table */
+        /**
+         * Column Names.
+         */
         String[] myColumns = { "Date", "Description" };
-        Object[][] myData = { { makeDate(2011, Calendar.JULY, 1), "First Entry" },
-                { makeDate(2012, Calendar.MARCH, 14), "Second Entry" },
-                { makeDate(2012, Calendar.NOVEMBER, 19), "Third Entry" },
-                { makeDate(2013, Calendar.MAY, 31), "Fourth Entry" },
-                { makeDate(2014, Calendar.FEBRUARY, 28), "Fifth Entry" } };
+
+        /**
+         * Data for table.
+         */
+        Object[][] myData = { { DATE_FIRST, "First Entry" }, { DATE_SECOND, "Second Entry" },
+                { DATE_THIRD, "Third Entry" }, { DATE_FOURTH, "Fourth Entry" }, { DATE_FIFTH, "Fifth Entry" } };
 
         @Override
         public int getColumnCount() {
-            return 2;
+            return myData[0].length;
         }
 
         @Override
         public int getRowCount() {
-            return 5;
+            return myData.length;
         }
 
         @Override
-        public String getColumnName(int columnIndex) {
+        public String getColumnName(final int columnIndex) {
             return myColumns[columnIndex];
         }
 
         @Override
-        public Class<?> getColumnClass(int columnIndex) {
+        public Class<?> getColumnClass(final int columnIndex) {
             if (columnIndex == 0)
                 return DateDay.class;
             return String.class;
         }
 
         @Override
-        public boolean isCellEditable(int rowIndex,
-                                      int columnIndex) {
+        public boolean isCellEditable(final int rowIndex,
+                                      final int columnIndex) {
             return (columnIndex == 0);
         }
 
         @Override
-        public Object getValueAt(int rowIndex,
-                                 int columnIndex) {
+        public Object getValueAt(final int rowIndex,
+                                 final int columnIndex) {
             return myData[rowIndex][columnIndex];
         }
 
         @Override
-        public void setValueAt(Object pValue,
-                               int rowIndex,
-                               int columnIndex) {
+        public void setValueAt(final Object pValue,
+                               final int rowIndex,
+                               final int columnIndex) {
             myData[rowIndex][columnIndex] = pValue;
         }
     }
 
     /**
-     * Create the Table
+     * Create the Table.
      */
     private void makeTable() {
         /* Create the table */
@@ -334,7 +464,7 @@ public class DateDayExample extends JApplet {
 
         /* Set the width of the column */
         TableColumn myFirstCol = myColModel.getColumn(0);
-        myFirstCol.setPreferredWidth(100);
+        myFirstCol.setPreferredWidth(COL_1_WIDTH);
 
         /* Set the renderer */
         myFirstCol.setCellRenderer(theRenderer);
@@ -342,11 +472,11 @@ public class DateDayExample extends JApplet {
 
         /* Set the width of the column */
         TableColumn mySecondCol = myColModel.getColumn(1);
-        mySecondCol.setPreferredWidth(200);
+        mySecondCol.setPreferredWidth(COL_2_WIDTH);
     }
 
     /**
-     * Create the list of available locales
+     * Create the list of available locales.
      */
     private void makeLocaleList() {
         /* Create the Combo box and populate it */
@@ -364,7 +494,7 @@ public class DateDayExample extends JApplet {
     }
 
     /**
-     * Create the list of available formats
+     * Create the list of available formats.
      */
     private void makeFormatList() {
         /* Create the Combo box and populate it */
@@ -381,7 +511,7 @@ public class DateDayExample extends JApplet {
     }
 
     /**
-     * Create the range buttons
+     * Create the range buttons.
      */
     private void makeRangeButtons() {
         /* Create the buttons */
@@ -393,8 +523,8 @@ public class DateDayExample extends JApplet {
         theRangeSelect.addPropertyChangeListener(DateDayRangeSelect.PROPERTY_RANGE, theListener);
 
         /* Initialise the values */
-        DateDay myStart = makeDate(2007, Calendar.JANUARY, 25);
-        DateDay myEnd = makeDate(2014, Calendar.AUGUST, 9);
+        DateDay myStart = DATE_START;
+        DateDay myEnd = DATE_END;
 
         /* Set the values */
         theStartDate.setSelectedDateDay(myStart);
@@ -409,15 +539,15 @@ public class DateDayExample extends JApplet {
     }
 
     /**
-     * Convenience method to create a date from Year, Month, Day
+     * Convenience method to create a date from Year, Month, Day.
      * @param pYear the year
      * @param pMonth the month,
      * @param pDay
      * @return the requested date
      */
-    private static DateDay makeDate(int pYear,
-                                    int pMonth,
-                                    int pDay) {
+    private static DateDay makeDate(final int pYear,
+                                    final int pMonth,
+                                    final int pDay) {
         DateDay myDate = new DateDay(pYear, pMonth, pDay);
         return myDate;
     }
@@ -436,7 +566,7 @@ public class DateDayExample extends JApplet {
     }
 
     /**
-     * Apply Locale to underlying objects
+     * Apply Locale to underlying objects.
      */
     private void applyLocale() {
         /* Set the Renderer and Editor Locale */
@@ -463,7 +593,7 @@ public class DateDayExample extends JApplet {
     }
 
     /**
-     * Apply format to underlying objects
+     * Apply format to underlying objects.
      */
     private void applyFormat() {
         /* Set the Renderer and Editor Format */
@@ -482,7 +612,7 @@ public class DateDayExample extends JApplet {
     }
 
     /**
-     * Apply Range to underlying objects
+     * Apply Range to underlying objects.
      */
     private void applyRange() {
         /* Access the Start/End Dates */
@@ -502,11 +632,11 @@ public class DateDayExample extends JApplet {
     }
 
     /**
-     * Listener class
+     * Listener class.
      */
     private class DateListener implements PropertyChangeListener, ItemListener {
         @Override
-        public void propertyChange(PropertyChangeEvent evt) {
+        public void propertyChange(final PropertyChangeEvent evt) {
             /* Access source object */
             Object o = evt.getSource();
 
@@ -514,10 +644,9 @@ public class DateDayExample extends JApplet {
             if ((o == theStartDate) || (o == theEndDate)) {
                 /* Apply the new range */
                 applyRange();
-            }
 
-            /* If this is the selectable range */
-            if (o == theRangeSelect) {
+                /* If this is the selectable range */
+            } else if (o == theRangeSelect) {
                 /* Apply the new range */
                 DateDayRange myRange = theRangeSelect.getRange();
                 System.out.println(myRange);
@@ -525,13 +654,14 @@ public class DateDayExample extends JApplet {
         }
 
         @Override
-        public void itemStateChanged(ItemEvent evt) {
+        public void itemStateChanged(final ItemEvent evt) {
             /* Access source object */
             Object o = evt.getSource();
 
             /* Ignore if we are not selecting */
-            if (evt.getStateChange() != ItemEvent.SELECTED)
+            if (evt.getStateChange() != ItemEvent.SELECTED) {
                 return;
+            }
 
             /* If this is the Locale list */
             if (o == theLocaleList) {
@@ -543,10 +673,9 @@ public class DateDayExample extends JApplet {
 
                 /* Apply the new locale */
                 applyLocale();
-            }
 
-            /* If this is the Format list */
-            else if (o == theFormatList) {
+                /* If this is the Format list */
+            } else if (o == theFormatList) {
                 /* Store the new format */
                 theFormat = (String) evt.getItem();
 
@@ -557,67 +686,67 @@ public class DateDayExample extends JApplet {
     }
 
     /**
-     * Some useful locales
+     * Some useful locales.
      */
     private enum shortLocale {
         /**
          * China (shorten day names to one character, and shrink from the right to make sure they are
-         * different)
+         * different).
          */
         China(Locale.CHINA, 1, false),
 
         /**
-         * Germany
+         * Germany.
          */
         Germany(Locale.GERMANY),
 
         /**
-         * France
+         * France.
          */
         France(Locale.FRANCE),
 
         /**
-         * Italy
+         * Italy.
          */
         Italy(Locale.ITALY),
 
         /**
-         * Japan (shorten day names to one character)
+         * Japan (shorten day names to one character).
          */
         Japan(Locale.JAPAN, 1),
 
         /**
-         * Korea (shorten day names to one character)
+         * Korea (shorten day names to one character).
          */
         Korea(Locale.KOREA, 1),
 
         /**
-         * US
+         * US.
          */
         UnitedStates(Locale.US),
 
         /**
-         * UK (shorten day names to two characters)
+         * UK (shorten day names to two characters).
          */
         UnitedKingdom(Locale.UK, 2);
 
         /**
-         * Locale property
+         * Locale property.
          */
         private final Locale theLocale;
 
         /**
-         * Maximum day length
+         * Maximum day length.
          */
         private final int theMaxDayLen;
 
         /**
-         * Shrink from right
+         * Shrink from right.
          */
         private final boolean doShrinkFromRight;
 
         /**
-         * Obtain locale value
+         * Obtain locale value.
          * @return the locale
          */
         public Locale getLocale() {
@@ -625,7 +754,7 @@ public class DateDayExample extends JApplet {
         }
 
         /**
-         * Obtain maximum day length
+         * Obtain maximum day length.
          * @return the maximum day length
          */
         public int getMaxDayLen() {
@@ -633,7 +762,7 @@ public class DateDayExample extends JApplet {
         }
 
         /**
-         * Shrink names from right
+         * Shrink names from right.
          * @return true/false
          */
         public boolean doShrinkFromRight() {
@@ -641,10 +770,10 @@ public class DateDayExample extends JApplet {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pLocale the locale
          */
-        private shortLocale(Locale pLocale) {
+        private shortLocale(final Locale pLocale) {
             /* Store the Locale */
             theLocale = pLocale;
             theMaxDayLen = 3;
@@ -652,11 +781,12 @@ public class DateDayExample extends JApplet {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pLocale the locale
          * @param iMaxDayLen the maximum day length
          */
-        private shortLocale(Locale pLocale, int iMaxDayLen) {
+        private shortLocale(final Locale pLocale,
+                            final int iMaxDayLen) {
             /* Store the Locale */
             theLocale = pLocale;
             theMaxDayLen = iMaxDayLen;
@@ -664,12 +794,14 @@ public class DateDayExample extends JApplet {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pLocale the locale
          * @param iMaxDayLen the maximum day length
          * @param bShrinkFromRight shrink day names from right
          */
-        private shortLocale(Locale pLocale, int iMaxDayLen, boolean bShrinkFromRight) {
+        private shortLocale(final Locale pLocale,
+                            final int iMaxDayLen,
+                            final boolean bShrinkFromRight) {
             /* Store the Locale */
             theLocale = pLocale;
             theMaxDayLen = iMaxDayLen;

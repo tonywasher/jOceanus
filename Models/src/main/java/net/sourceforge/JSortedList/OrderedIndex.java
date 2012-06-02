@@ -33,12 +33,12 @@ public class OrderedIndex<T extends Comparable<T>> {
     /**
      * Expansion rate of map.
      */
-    private final int theExpansion = 5;
+    private static final int EXPANSION_SIZE = 5;
 
     /**
      * Granularity of map.
      */
-    private final int theGranularity = 50;
+    private static final int MAP_GRANULARITY = 50;
 
     /**
      * The list to which this index is attached.
@@ -70,9 +70,9 @@ public class OrderedIndex<T extends Comparable<T>> {
         theList = pList;
 
         /* Allocate and initialise the map */
-        theMap = (OrderedNode<T>[]) new OrderedNode[theExpansion];
+        theMap = (OrderedNode<T>[]) new OrderedNode[EXPANSION_SIZE];
         Arrays.fill(theMap, null);
-        theMapLength = theExpansion;
+        theMapLength = EXPANSION_SIZE;
     }
 
     /**
@@ -85,7 +85,7 @@ public class OrderedIndex<T extends Comparable<T>> {
         OrderedNode<T> myNode;
 
         /* Calculate the map index */
-        iMapIndex = iIndex / theGranularity;
+        iMapIndex = iIndex / MAP_GRANULARITY;
 
         /* Handle out of range */
         if (iMapIndex > theActiveMapLength - 1) {
@@ -315,25 +315,25 @@ public class OrderedIndex<T extends Comparable<T>> {
      */
     protected void insertNode(final OrderedNode<T> pNode) {
         /* Determine the active map length */
-        theActiveMapLength = 1 + ((theList.sizeAll() - 1) / theGranularity);
+        theActiveMapLength = 1 + ((theList.sizeAll() - 1) / MAP_GRANULARITY);
 
         /* If we need to extend the map */
         if (theActiveMapLength > theMapLength - 1) {
             /* Extend the map by expansion number of entries */
-            theMap = Arrays.copyOf(theMap, theMapLength + theExpansion);
+            theMap = Arrays.copyOf(theMap, theMapLength + EXPANSION_SIZE);
 
             /* Adjust the map length */
-            theMapLength += theExpansion;
+            theMapLength += EXPANSION_SIZE;
         }
 
         /* Access the index of the node */
         int iIndex = pNode.getIndex();
 
         /* Calculate the map index */
-        int iMapIndex = iIndex / theGranularity;
+        int iMapIndex = iIndex / MAP_GRANULARITY;
 
         /* If this is a mapped node */
-        if ((iIndex % theGranularity) == 0) {
+        if ((iIndex % MAP_GRANULARITY) == 0) {
             /* Store the node into the map */
             theMap[iMapIndex] = pNode;
         }
@@ -356,7 +356,7 @@ public class OrderedIndex<T extends Comparable<T>> {
         OrderedNode<T> myLast = theList.getTail();
 
         /* If the last node has been shifted and needs storing, then store it */
-        if ((pNode != myLast) && ((myLast.getIndex() % theGranularity) == 0)) {
+        if ((pNode != myLast) && ((myLast.getIndex() % MAP_GRANULARITY) == 0)) {
             insertNode(myLast);
         }
     }
@@ -367,13 +367,13 @@ public class OrderedIndex<T extends Comparable<T>> {
      */
     protected void removeNode(final OrderedNode<T> pNode) {
         /* Determine the active map length */
-        theActiveMapLength = 1 + ((theList.sizeAll() - 1) / theGranularity);
+        theActiveMapLength = 1 + ((theList.sizeAll() - 1) / MAP_GRANULARITY);
 
         /* Access the index of the node */
         int iIndex = pNode.getIndex();
 
         /* Calculate the map index */
-        int iMapIndex = iIndex / theGranularity;
+        int iMapIndex = iIndex / MAP_GRANULARITY;
 
         /* Ignore node if it is past end of map */
         if (iMapIndex > theMapLength - 1) {
@@ -381,7 +381,7 @@ public class OrderedIndex<T extends Comparable<T>> {
         }
 
         /* If this is a mapped node */
-        if ((iIndex % theGranularity) == 0) {
+        if ((iIndex % MAP_GRANULARITY) == 0) {
             /* Adjust this node explicitly */
             theMap[iMapIndex] = pNode.getNext();
         }

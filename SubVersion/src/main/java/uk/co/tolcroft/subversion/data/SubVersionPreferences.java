@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * Subversion: Java SubVersion Management
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,172 +22,190 @@
  ******************************************************************************/
 package uk.co.tolcroft.subversion.data;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.PreferenceSet;
+import net.sourceforge.JDataManager.JDataException;
+import uk.co.tolcroft.models.data.PreferenceSet;
 
+/**
+ * Preferences for SubVersion.
+ * @author Tony Washer
+ */
 public class SubVersionPreferences extends PreferenceSet {
     /**
-     * Registry name for Subversion Repository
+     * Registry name for Subversion Repository.
      */
-    public final static String nameSubVersionRepo = "SubVersionRepo";
+    public static final String NAME_SVN_REPO = "SubVersionRepo";
 
     /**
-     * Registry name for Subversion Repository User
+     * Registry name for Subversion Repository User.
      */
-    public final static String nameSubVersionUser = "SubVersionUser";
+    public static final String NAME_SVN_USER = "SubVersionUser";
 
     /**
-     * Registry name for Subversion Repository Password
+     * Registry name for Subversion Repository Password.
      */
-    public final static String nameSubVersionPass = "SubVersionPassword";
+    public static final String NAME_SVN_PASS = "SubVersionPassword";
 
     /**
-     * Registry name for Subversion WorkSpace
+     * Registry name for Subversion WorkSpace.
      */
-    public final static String nameSubVersionWork = "SubVersionWork";
+    public static final String NAME_SVN_WORK = "SubVersionWork";
 
     /**
-     * Registry name for Subversion BuildSpace
+     * Registry name for Subversion BuildSpace.
      */
-    public final static String nameSubVersionBuild = "SubVersionBuild";
+    public static final String NAME_SVN_BUILD = "SubVersionBuild";
 
     /**
-     * Registry name for Subversion Directory
+     * Registry name for Subversion Directory.
      */
-    public final static String nameSubVersionDir = "SubVersionDir";
+    public static final String NAME_SVN_DIR = "SubVersionDir";
 
     /**
-     * Registry name for Repo Prefix
+     * Registry name for Repo Prefix.
      */
-    public final static String nameRepoPfix = "RepoPrefix";
+    public static final String NAME_REPO_PFIX = "RepoPrefix";
 
     /**
-     * Display name for SubversionRepository
+     * Display name for SubversionRepository.
      */
-    protected final static String dispSubVersionRepo = "Subversion Repository";
+    protected static final String DISPLAY_SVN_REPO = "Subversion Repository";
 
     /**
-     * Display name for SubversionUser
+     * Display name for SubversionUser.
      */
-    protected final static String dispSubVersionUser = "Subversion User";
+    protected static final String DISPLAY_SVN_USER = "Subversion User";
 
     /**
-     * Display name for SubversionPassword
+     * Display name for SubversionPassword.
      */
-    protected final static String dispSubVersionPass = "Subversion Password";
+    protected static final String DISPLAY_SVN_PASS = "Subversion Password";
 
     /**
-     * Display name for SubversionWorkSpace
+     * Display name for SubversionWorkSpace.
      */
-    protected final static String dispSubVersionWork = "Subversion WorkSpace";
+    protected static final String DISPLAY_SVN_WORK = "Subversion WorkSpace";
 
     /**
-     * Display name for SubversionBuildSpace
+     * Display name for SubversionBuildSpace.
      */
-    protected final static String dispSubVersionBuild = "Subversion BuildSpace";
+    protected static final String DISPLAY_SVN_BUILD = "Subversion BuildSpace";
 
     /**
-     * Display name for SubversionDirectory
+     * Display name for SubversionDirectory.
      */
-    protected final static String dispSubVersionDir = "Subversion Directory";
+    protected static final String DISPLAY_SVN_DIR = "Subversion Directory";
 
     /**
-     * Display name for Repository Prefix
+     * Display name for Repository Prefix.
      */
-    protected final static String dispRepoPfix = "Repository Prefix";
+    protected static final String DISPLAY_REPO_PFIX = "Repository Prefix";
 
     /**
-     * Default value for SubversionRepository
+     * Default value for SubversionRepository.
      */
-    private final static String defSubVersionRepo = "http://localhost/svn";
+    private static final String DEFAULT_SVN_REPO = "http://localhost/svn";
 
     /**
-     * Default value for SubversionUser
+     * Default value for SubversionUser.
      */
-    private final static String defSubVersionUser = "User";
+    private static final String DEFAULT_SVN_USER = "User";
 
     /**
-     * Default value for SubversionPassword
+     * Default value for SubversionPassword.
      */
-    private final static String defSubVersionPass = "";
+    private static final String DEFAULT_SVN_PASS = "";
 
     /**
-     * Default value for SubversionWorkSpace
+     * Default value for SubversionWorkSpace.
      */
-    private final static String defSubVersionWork = "C:\\";
+    private static final String DEFAULT_SVN_WORK = "C:\\";
 
     /**
-     * Default value for SubversionBuildSpace
+     * Default value for SubversionBuildSpace.
      */
-    private final static String defSubVersionBuild = "C:\\Users\\Unknown";
+    private static final String DEFAULT_SVN_BUILD = "C:\\Users\\Unknown";
 
     /**
-     * Default value for SubversionDirectory
+     * Default value for SubversionDirectory.
      */
-    private final static String defSubVersionDir = "C:\\Program Files\\csvn\\data\\repositories";
+    private static final String DEFAULT_SVN_DIR = "C:\\Program Files\\csvn\\data\\repositories";
 
     /**
-     * Default value for BackupPrefix
+     * Default value for BackupPrefix.
      */
-    private final static String defRepoPfix = "SvnRepo";
+    private static final String DEFAULT_REPO_PFIX = "SvnRepo";
 
     /**
-     * Constructor
-     * @throws ModelException
+     * Constructor.
+     * @throws JDataException on error
      */
-    public SubVersionPreferences() throws ModelException {
+    public SubVersionPreferences() throws JDataException {
         super();
     }
 
     @Override
     protected void definePreferences() {
         /* Define the preferences */
-        definePreference(nameSubVersionRepo, PreferenceType.String);
-        definePreference(nameSubVersionUser, PreferenceType.String);
-        definePreference(nameSubVersionPass, PreferenceType.String);
-        definePreference(nameSubVersionWork, PreferenceType.Directory);
-        definePreference(nameSubVersionBuild, PreferenceType.Directory);
-        definePreference(nameSubVersionDir, PreferenceType.Directory);
-        definePreference(nameRepoPfix, PreferenceType.String);
+        definePreference(NAME_SVN_REPO, PreferenceType.String);
+        definePreference(NAME_SVN_USER, PreferenceType.String);
+        definePreference(NAME_SVN_PASS, PreferenceType.String);
+        definePreference(NAME_SVN_WORK, PreferenceType.Directory);
+        definePreference(NAME_SVN_BUILD, PreferenceType.Directory);
+        definePreference(NAME_SVN_DIR, PreferenceType.Directory);
+        definePreference(NAME_REPO_PFIX, PreferenceType.String);
     }
 
     @Override
-    protected Object getDefaultValue(String pName) {
+    protected Object getDefaultValue(final String pName) {
         /* Handle default values */
-        if (pName.equals(nameSubVersionRepo))
-            return defSubVersionRepo;
-        if (pName.equals(nameSubVersionUser))
-            return defSubVersionUser;
-        if (pName.equals(nameSubVersionPass))
-            return defSubVersionPass;
-        if (pName.equals(nameSubVersionWork))
-            return defSubVersionWork;
-        if (pName.equals(nameSubVersionBuild))
-            return defSubVersionBuild;
-        if (pName.equals(nameSubVersionDir))
-            return defSubVersionDir;
-        if (pName.equals(nameRepoPfix))
-            return defRepoPfix;
+        if (pName.equals(NAME_SVN_REPO)) {
+            return DEFAULT_SVN_REPO;
+        }
+        if (pName.equals(NAME_SVN_USER)) {
+            return DEFAULT_SVN_USER;
+        }
+        if (pName.equals(NAME_SVN_PASS)) {
+            return DEFAULT_SVN_PASS;
+        }
+        if (pName.equals(NAME_SVN_WORK)) {
+            return DEFAULT_SVN_WORK;
+        }
+        if (pName.equals(NAME_SVN_BUILD)) {
+            return DEFAULT_SVN_BUILD;
+        }
+        if (pName.equals(NAME_SVN_DIR)) {
+            return DEFAULT_SVN_DIR;
+        }
+        if (pName.equals(NAME_REPO_PFIX)) {
+            return DEFAULT_REPO_PFIX;
+        }
         return null;
     }
 
     @Override
-    protected String getDisplayName(String pName) {
-        /* Handle default values */
-        if (pName.equals(nameSubVersionRepo))
-            return dispSubVersionRepo;
-        if (pName.equals(nameSubVersionUser))
-            return dispSubVersionUser;
-        if (pName.equals(nameSubVersionPass))
-            return dispSubVersionPass;
-        if (pName.equals(nameSubVersionWork))
-            return dispSubVersionWork;
-        if (pName.equals(nameSubVersionBuild))
-            return dispSubVersionBuild;
-        if (pName.equals(nameSubVersionDir))
-            return dispSubVersionDir;
-        if (pName.equals(nameRepoPfix))
-            return dispRepoPfix;
+    protected String getDisplayName(final String pName) {
+        /* Handle display names */
+        if (pName.equals(NAME_SVN_REPO)) {
+            return DISPLAY_SVN_REPO;
+        }
+        if (pName.equals(NAME_SVN_USER)) {
+            return DISPLAY_SVN_USER;
+        }
+        if (pName.equals(NAME_SVN_PASS)) {
+            return DISPLAY_SVN_PASS;
+        }
+        if (pName.equals(NAME_SVN_WORK)) {
+            return DISPLAY_SVN_WORK;
+        }
+        if (pName.equals(NAME_SVN_BUILD)) {
+            return DISPLAY_SVN_BUILD;
+        }
+        if (pName.equals(NAME_SVN_DIR)) {
+            return DISPLAY_SVN_DIR;
+        }
+        if (pName.equals(NAME_REPO_PFIX)) {
+            return DISPLAY_REPO_PFIX;
+        }
         return null;
     }
 }

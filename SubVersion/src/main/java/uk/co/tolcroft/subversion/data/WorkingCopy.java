@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * Subversion: Java SubVersion Management
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,8 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNErrorCode;
@@ -40,29 +41,33 @@ import org.tmatesoft.svn.core.wc.SVNStatusClient;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 import org.tmatesoft.svn.core.wc.SVNWCClient;
 
+/**
+ * Represents a Working extract copy of subversion.
+ * @author Tony Washer
+ */
 public class WorkingCopy {
     /**
-     * The branch associated with the working copy
+     * The branch associated with the working copy.
      */
-    private Branch theBranch = null;
+    private final Branch theBranch;
 
     /**
-     * The sub-path of the branch that is checked out
+     * The sub-path of the branch that is checked out.
      */
-    private String theSubPath = null;
+    private final String theSubPath;
 
     /**
-     * The path at which the branch is checked out
+     * The path at which the branch is checked out.
      */
-    private File theLocation = null;
+    private final File theLocation;
 
     /**
-     * The project definition
+     * The project definition.
      */
     private ProjectDefinition theProject = null;
 
     /**
-     * Get branch
+     * Get branch.
      * @return the branch
      */
     public Branch getBranch() {
@@ -70,7 +75,7 @@ public class WorkingCopy {
     }
 
     /**
-     * Get subPath
+     * Get subPath.
      * @return the subPath
      */
     public String getSubPath() {
@@ -78,7 +83,7 @@ public class WorkingCopy {
     }
 
     /**
-     * Get Location
+     * Get Location.
      * @return the location
      */
     public File getLocation() {
@@ -86,7 +91,7 @@ public class WorkingCopy {
     }
 
     /**
-     * Get Project Definition
+     * Get Project Definition.
      * @return the project definition
      */
     public ProjectDefinition getProjectDefinition() {
@@ -94,15 +99,15 @@ public class WorkingCopy {
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pLocation the location
      * @param pBranch the branch
      * @param pSource the source URL
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    protected WorkingCopy(File pLocation,
-                          Branch pBranch,
-                          SVNURL pSource) throws ModelException {
+    protected WorkingCopy(final File pLocation,
+                          final Branch pBranch,
+                          final SVNURL pSource) throws JDataException {
         /* Store parameters */
         theBranch = pBranch;
         theLocation = pLocation;
@@ -116,25 +121,27 @@ public class WorkingCopy {
 
         /* Determine the location of the project definition */
         File myPom = ProjectDefinition.getProjectDefFile(theLocation);
-        if (myPom != null)
+        if (myPom != null) {
             theProject = new ProjectDefinition(myPom);
+        }
     }
 
     /**
-     * Get status for a file in a working copy
+     * Get status for a file in a working copy.
      * @param pRepo the repository
      * @param pFile the file to get status for
      * @return the status (null if not under VC)
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public static SVNStatus getFileStatus(Repository pRepo,
-                                          File pFile) throws ModelException {
+    public static SVNStatus getFileStatus(final Repository pRepo,
+                                          final File pFile) throws JDataException {
         SVNClientManager myMgr = pRepo.getClientManager();
         SVNStatusClient myClient = myMgr.getStatusClient();
 
         /* File must exist */
-        if (!pFile.exists())
+        if (!pFile.exists()) {
             return null;
+        }
 
         /* Initialise the status */
         SVNStatus myStatus;
@@ -148,8 +155,9 @@ public class WorkingCopy {
             SVNErrorCode myCode = e.getErrorMessage().getErrorCode();
 
             /* Allow file/directory exists but is not WC */
-            if ((myCode != SVNErrorCode.WC_NOT_FILE) && (myCode != SVNErrorCode.WC_NOT_DIRECTORY))
-                throw new ModelException(ExceptionClass.SUBVERSION, "Unable to get status", e);
+            if ((myCode != SVNErrorCode.WC_NOT_FILE) && (myCode != SVNErrorCode.WC_NOT_DIRECTORY)) {
+                throw new JDataException(ExceptionClass.SUBVERSION, "Unable to get status", e);
+            }
 
             /* Set status to null */
             myStatus = null;
@@ -161,32 +169,32 @@ public class WorkingCopy {
     }
 
     /**
-     * Working Copy Set
+     * Working Copy Set.
      */
-    public static class WorkingCopySet {
+    public static final class WorkingCopySet {
         /**
-         * The repository for which these are working sets
+         * The repository for which these are working sets.
          */
-        private Repository theRepository = null;
+        private final Repository theRepository;
 
         /**
-         * The base location for the working sets
+         * The base location for the working sets.
          */
-        private File theLocation = null;
+        private final File theLocation;
 
         /**
-         * The list of WorkingCopys
+         * The list of WorkingCopys.
          */
-        private List<WorkingCopy> theList = null;
+        private final List<WorkingCopy> theList;
 
         /**
-         * Constructor
+         * Constructor.
          * @param pRepository the repository
          * @param pLocation the location
-         * @throws ModelException
+         * @throws JDataException on error
          */
-        public WorkingCopySet(Repository pRepository,
-                              String pLocation) throws ModelException {
+        public WorkingCopySet(final Repository pRepository,
+                              final String pLocation) throws JDataException {
             /* Store parameters */
             theRepository = pRepository;
             theLocation = new File(pLocation);
@@ -199,24 +207,27 @@ public class WorkingCopy {
         }
 
         /**
-         * Locate working copies
+         * Locate working copies.
          * @param pLocation location
-         * @throws ModelException
+         * @throws JDataException on error
          */
-        private void locateWorkingDirectories(File pLocation) throws ModelException {
+        private void locateWorkingDirectories(final File pLocation) throws JDataException {
             /* Return if file is not a directory */
-            if (!pLocation.isDirectory())
+            if (!pLocation.isDirectory()) {
                 return;
+            }
 
             /* Access underlying files */
             for (File myFile : pLocation.listFiles()) {
                 /* Ignore if file is not a directory */
-                if (!myFile.isDirectory())
+                if (!myFile.isDirectory()) {
                     continue;
+                }
 
                 /* Ignore if file is special file/directory */
-                if (myFile.getName().startsWith("."))
+                if (myFile.getName().startsWith(".")) {
                     continue;
+                }
 
                 /* Access status for the file */
                 SVNStatus myStatus = getFileStatus(theRepository, myFile);
@@ -237,16 +248,16 @@ public class WorkingCopy {
                         /* Add to the list */
                         theList.add(myCopy);
                     }
-                }
 
-                /* else try under this directory */
-                else
+                    /* else try under this directory */
+                } else {
                     locateWorkingDirectories(myFile);
+                }
             }
         }
 
         /**
-         * Obtain locations array
+         * Obtain locations array.
          * @return locations array
          */
         protected File[] getLocationsArray() {
@@ -269,11 +280,11 @@ public class WorkingCopy {
         }
 
         /**
-         * Obtain active branch for component in working set
+         * Obtain active branch for component in working set.
          * @param pComponent the component
          * @return the active branch
          */
-        public Branch getActiveBranch(String pComponent) {
+        public Branch getActiveBranch(final String pComponent) {
             /* Allocate the iterator */
             ListIterator<WorkingCopy> myIterator = theList.listIterator();
 
@@ -296,8 +307,8 @@ public class WorkingCopy {
         }
 
         /**
-         * Revert changes across working set
-         * @throws SVNException
+         * Revert changes across working set.
+         * @throws SVNException on error
          */
         public void revertChanges() throws SVNException {
             /* Access the array of locations */
@@ -311,8 +322,8 @@ public class WorkingCopy {
         }
 
         /**
-         * Access updates across working set
-         * @throws SVNException
+         * Access updates across working set.
+         * @throws SVNException on error
          */
         public void updateWorkingSets() throws SVNException {
             /* Access the array of locations */

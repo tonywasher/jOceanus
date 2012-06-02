@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,51 +35,147 @@ import javax.swing.LayoutStyle;
 import javax.swing.Timer;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 
-import net.sourceforge.JDataManager.DebugManager.DebugEntry;
-import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import uk.co.tolcroft.models.threads.StatusData;
 import uk.co.tolcroft.models.views.DataControl;
 
+/**
+ * Status bar panel.
+ * @author Tony Washer
+ */
 public class StatusBar {
-    /* Members */
-    private JPanel theProgPanel = null;
-    private JPanel theStatPanel = null;
-    private JProgressBar theSteps = null;
-    private JProgressBar theStages = null;
-    private JButton theCancel = null;
-    private JButton theClear = null;
-    private JLabel theStageLabel = null;
-    private JLabel theTaskLabel = null;
-    private JLabel theStatusLabel = null;
-    private MainWindow<?> theControl = null;
-    private ModelException theError = null;
-    private Timer theTimer = null;
-    private DebugEntry theDebug = null;
-    private StatusData theCurrent = null;
-    private StatusListener theListener = null;
+    /**
+     * Maximum progress.
+     */
+    private static final int MAX_PROGRESS = 100;
 
-    /* Access methods */
+    /**
+     * Stage width.
+     */
+    private static final int STAGE_WIDTH = 130;
+
+    /**
+     * Stage width.
+     */
+    private static final int STAGE_CHARS = 20;
+
+    /**
+     * Timer duration.
+     */
+    private static final int TIMER_DURATION = 5000;
+
+    /**
+     * Progress panel.
+     */
+    private final JPanel theProgPanel;
+
+    /**
+     * Status panel.
+     */
+    private final JPanel theStatPanel;
+
+    /**
+     * Steps progress.
+     */
+    private final JProgressBar theSteps;
+
+    /**
+     * Stages progress.
+     */
+    private final JProgressBar theStages;
+
+    /**
+     * Cancel button.
+     */
+    private final JButton theCancel;
+
+    /**
+     * Clear button.
+     */
+    private final JButton theClear;
+
+    /**
+     * Stage label.
+     */
+    private final JLabel theStageLabel;
+
+    /**
+     * Task label.
+     */
+    private final JLabel theTaskLabel;
+
+    /**
+     * Status label.
+     */
+    private final JLabel theStatusLabel;
+
+    /**
+     * Parent window.
+     */
+    private final MainWindow<?> theControl;
+
+    /**
+     * Error.
+     */
+    private JDataException theError = null;
+
+    /**
+     * Timer.
+     */
+    private Timer theTimer = null;
+
+    /**
+     * Data entry.
+     */
+    private final JDataEntry theDataEntry;
+
+    /**
+     * Current status.
+     */
+    private StatusData theCurrent = null;
+
+    /**
+     * Listener.
+     */
+    private final StatusListener theListener;
+
+    /**
+     * Get progress panel.
+     * @return the panel
+     */
     public JPanel getProgressPanel() {
         return theProgPanel;
     }
 
+    /**
+     * Get status panel.
+     * @return the panel
+     */
     public JPanel getStatusPanel() {
         return theStatPanel;
     }
 
-    public ModelException getError() {
+    /**
+     * Get error.
+     * @return the error
+     */
+    public JDataException getError() {
         return theError;
     }
 
-    /* Constructor */
-    public StatusBar(MainWindow<?> pControl) {
+    /**
+     * Constructor.
+     * @param pControl the main window
+     */
+    public StatusBar(final MainWindow<?> pControl) {
         GroupLayout panelLayout;
 
         /* Record passed parameters */
         theControl = pControl;
 
-        /* Store access to the Debug Entry */
-        theDebug = theControl.getView().getDebugEntry(DataControl.DEBUG_ERROR);
+        /* Store access to the Data Entry */
+        theDataEntry = theControl.getView().getDataEntry(DataControl.DATA_ERROR);
 
         /* Create the boxes */
         theCancel = new JButton("Cancel");
@@ -96,11 +193,11 @@ public class StatusBar {
         theStages.setUI(new ProgressUI());
 
         /* Initialise progress bars */
-        theStages.setMaximum(100);
+        theStages.setMaximum(MAX_PROGRESS);
         theStages.setMinimum(0);
         theStages.setValue(0);
         theStages.setStringPainted(true);
-        theSteps.setMaximum(100);
+        theSteps.setMaximum(MAX_PROGRESS);
         theSteps.setMinimum(0);
         theSteps.setValue(0);
         theSteps.setStringPainted(true);
@@ -127,7 +224,7 @@ public class StatusBar {
                                   .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                   .addComponent(theStages)
                                   .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                  .addComponent(theStageLabel, GroupLayout.PREFERRED_SIZE, 130,
+                                  .addComponent(theStageLabel, GroupLayout.PREFERRED_SIZE, STAGE_WIDTH,
                                                 GroupLayout.PREFERRED_SIZE)
                                   .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                   .addComponent(theSteps)
@@ -202,7 +299,7 @@ public class StatusBar {
     }
 
     /**
-     * ProgressBar UI
+     * ProgressBar UI.
      */
     private class ProgressUI extends BasicProgressBarUI {
         @Override
@@ -217,10 +314,10 @@ public class StatusBar {
     }
 
     /**
-     * Update StatusBar
-     * @param pStatus
+     * Update StatusBar.
+     * @param pStatus the status data
      */
-    public void updateStatusBar(StatusData pStatus) {
+    public void updateStatusBar(final StatusData pStatus) {
         /* Update Task if required */
         if (pStatus.differTask(theCurrent)) {
             /* Set Task */
@@ -231,7 +328,7 @@ public class StatusBar {
         if (pStatus.differStage(theCurrent)) {
             /* Expand stage text to 20 */
             String myStage = pStatus.getStage() + "                              ";
-            myStage = myStage.substring(0, 20);
+            myStage = myStage.substring(0, STAGE_CHARS);
             theStageLabel.setText(myStage);
         }
 
@@ -263,8 +360,11 @@ public class StatusBar {
         theCurrent = pStatus;
     }
 
-    /* Set Success string */
-    public void setSuccess(String pOperation) {
+    /**
+     * Set Success string.
+     * @param pOperation the operation
+     */
+    public void setSuccess(final String pOperation) {
         /* Set the status text field */
         theStatusLabel.setText(pOperation + " succeeded");
 
@@ -273,15 +373,20 @@ public class StatusBar {
         theProgPanel.setVisible(false);
 
         /* Set up a timer for 5 seconds and no repeats */
-        if (theTimer == null)
-            theTimer = new Timer(5000, theListener);
+        if (theTimer == null) {
+            theTimer = new Timer(TIMER_DURATION, theListener);
+        }
         theTimer.setRepeats(false);
         theTimer.start();
     }
 
-    /* Set Failure string */
-    public void setFailure(String pOperation,
-                           ModelException pError) {
+    /**
+     * Set Failure string.
+     * @param pOperation the operation
+     * @param pError the error
+     */
+    public void setFailure(final String pOperation,
+                           final JDataException pError) {
         /* Initialise the message */
         String myText = pOperation + " failed";
 
@@ -289,19 +394,19 @@ public class StatusBar {
         if (pError != null) {
             /* Add the error detail */
             myText += ". " + pError.getMessage();
-        }
 
-        /* else no failure - must have cancelled */
-        else
+            /* else no failure - must have cancelled */
+        } else {
             myText += ". Operation cancelled";
+        }
 
         /* Store the error */
         theError = pError;
 
-        /* Enable debug for this error */
-        theDebug.setObject(theError);
-        theDebug.showPrimeEntry();
-        theDebug.setFocus();
+        /* Enable data show for this error */
+        theDataEntry.setObject(theError);
+        theDataEntry.showPrimeEntry();
+        theDataEntry.setFocus();
 
         /* Set the status text field */
         theStatusLabel.setText(myText);
@@ -312,24 +417,24 @@ public class StatusBar {
     }
 
     /**
-     * Listener class
+     * Listener class.
      */
     private class StatusListener implements ActionListener {
         @Override
-        public void actionPerformed(ActionEvent evt) {
+        public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();
 
             /* If this event relates to the Cancel box */
             if (o == theCancel) {
                 /* Pass command to the table */
                 theControl.performCancel();
-            }
 
-            /* If this event relates to the Clear box */
-            else if (o == theClear) {
+                /* If this event relates to the Clear box */
+            } else if (o == theClear) {
                 /* Stop any timer */
-                if (theTimer != null)
+                if (theTimer != null) {
                     theTimer.stop();
+                }
 
                 /* Make the Status window invisible */
                 theStatPanel.setVisible(false);
@@ -337,16 +442,15 @@ public class StatusBar {
 
                 /* Finish the thread */
                 theControl.finishThread();
-            }
 
-            /* If this event relates to the Clear or the timer box */
-            else if (o == theTimer) {
+                /* If this event relates to the Clear or the timer box */
+            } else if (o == theTimer) {
                 /* Make the Status window invisible */
                 theStatPanel.setVisible(false);
 
                 /* Clear the error */
                 theError = null;
-                theDebug.hideEntry();
+                theDataEntry.hideEntry();
 
                 /* Finish the thread */
                 theControl.finishThread();

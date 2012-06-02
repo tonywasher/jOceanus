@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * Subversion: Java SubVersion Management
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,8 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
 import org.tmatesoft.svn.core.SVNDepth;
@@ -43,37 +44,42 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
 import uk.co.tolcroft.subversion.data.Branch.BranchList;
 
 /**
- * Represents a component in the repository
- * @author Tony
+ * Represents a component in the repository.
+ * @author Tony Washer
  */
-public class Component {
+public final class Component implements Comparable<Component> {
     /**
-     * The branches directory
+     * The branches directory.
      */
-    protected static final String branchesDir = "branches";
+    private static final String DIR_BRANCHES = "branches";
 
     /**
-     * The tags directory
+     * The tags directory.
      */
-    protected static final String tagsDir = "tags";
+    private static final String DIR_TAGS = "tags";
 
     /**
-     * Parent Repository
+     * The buffer length.
+     */
+    private static final int BUFFER_LEN = 100;
+
+    /**
+     * Parent Repository.
      */
     private final Repository theRepository;
 
     /**
-     * Component Name
+     * Component Name.
      */
     private final String theName;
 
     /**
-     * BranchList
+     * BranchList.
      */
     private final BranchList theBranches;
 
     /**
-     * Get the repository for this component
+     * Get the repository for this component.
      * @return the repository
      */
     public Repository getRepository() {
@@ -81,7 +87,7 @@ public class Component {
     }
 
     /**
-     * Obtain the component name
+     * Obtain the component name.
      * @return the component name
      */
     public String getName() {
@@ -89,7 +95,7 @@ public class Component {
     }
 
     /**
-     * Get the branch list for this branch
+     * Get the branch list for this branch.
      * @return the branch list
      */
     public BranchList getBranchList() {
@@ -97,12 +103,12 @@ public class Component {
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pParent the Parent repository
      * @param pName the component name
      */
-    private Component(Repository pParent,
-                      String pName) {
+    private Component(final Repository pParent,
+                      final String pName) {
         /* Store values */
         theName = pName;
         theRepository = pParent;
@@ -112,56 +118,56 @@ public class Component {
     }
 
     /**
-     * Obtain repository path for the branches
+     * Obtain repository path for the branches.
      * @return the Branches path for the component
      */
     public String getBranchesPath() {
         /* Allocate a builder */
-        StringBuilder myBuilder = new StringBuilder(100);
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Access the branch path */
         myBuilder.append(getPath());
 
         /* Add the tags directory */
-        myBuilder.append(Repository.theURLSep);
-        myBuilder.append(branchesDir);
+        myBuilder.append(Repository.SEP_URL);
+        myBuilder.append(DIR_BRANCHES);
 
         /* Create the repository path */
         return myBuilder.toString();
     }
 
     /**
-     * Obtain repository path for the tags
+     * Obtain repository path for the tags.
      * @return the Tags path for the component
      */
     public String getTagsPath() {
         /* Allocate a builder */
-        StringBuilder myBuilder = new StringBuilder(100);
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Access the branch path */
         myBuilder.append(getPath());
 
         /* Add the tags directory */
-        myBuilder.append(Repository.theURLSep);
-        myBuilder.append(tagsDir);
+        myBuilder.append(Repository.SEP_URL);
+        myBuilder.append(DIR_TAGS);
 
         /* Create the repository path */
         return myBuilder.toString();
     }
 
     /**
-     * Obtain own path
+     * Obtain own path.
      * @return the path for this component
      */
     public String getPath() {
         /* Build the underlying string */
-        StringBuilder myBuilder = new StringBuilder(100);
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the repository */
         myBuilder.append(theRepository.getPath());
 
         /* Build the component directory */
-        myBuilder.append(Repository.theURLSep);
+        myBuilder.append(Repository.SEP_URL);
         myBuilder.append(getName());
 
         /* Create the repository path */
@@ -169,7 +175,7 @@ public class Component {
     }
 
     /**
-     * Obtain URL
+     * Obtain URL.
      * @return the URL
      */
     public SVNURL getURL() {
@@ -181,45 +187,44 @@ public class Component {
         }
     }
 
-    /**
-     * Compare this component to another component
-     * @param pThat the other component
-     * @return -1 if earlier component, 0 if equal component, 1 if later component
-     */
-    public int compareTo(Component pThat) {
+    @Override
+    public int compareTo(final Component pThat) {
         int iCompare;
 
         /* Handle trivial cases */
-        if (this == pThat)
+        if (this == pThat) {
             return 0;
-        if (pThat == null)
+        }
+        if (pThat == null) {
             return -1;
+        }
 
         /* Compare the repositories */
         iCompare = theRepository.compareTo(pThat.theRepository);
-        if (iCompare != 0)
+        if (iCompare != 0) {
             return iCompare;
+        }
 
         /* Compare names */
         return theName.compareTo(pThat.theName);
     }
 
     /**
-     * List of components
+     * List of components.
      */
-    public static class ComponentList {
+    public static final class ComponentList {
         /**
-         * The list of components
+         * The list of components.
          */
         private final List<Component> theList;
 
         /**
-         * Parent Repository
+         * Parent Repository.
          */
         private final Repository theRepository;
 
         /**
-         * Obtain the component list
+         * Obtain the component list.
          * @return the component list
          */
         public List<Component> getList() {
@@ -227,10 +232,10 @@ public class Component {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pParent the parent repository
          */
-        public ComponentList(Repository pParent) {
+        public ComponentList(final Repository pParent) {
             /* Create the list */
             theList = new ArrayList<Component>();
 
@@ -239,10 +244,10 @@ public class Component {
         }
 
         /**
-         * Discover component list from repository
-         * @throws ModelException
+         * Discover component list from repository.
+         * @throws JDataException on error
          */
-        public void discover() throws ModelException {
+        public void discover() throws JDataException {
             /* Reset the list */
             theList.clear();
 
@@ -261,20 +266,18 @@ public class Component {
 
                 /* Release the client manager */
                 theRepository.releaseClientManager(myMgr);
-            }
-
-            catch (SVNException e) {
-                throw new ModelException(ExceptionClass.SUBVERSION, "Failed to discover components for "
+            } catch (SVNException e) {
+                throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover components for "
                         + theRepository.getName(), e);
             }
         }
 
         /**
-         * Locate branch
+         * Locate branch.
          * @param pURL the URL to locate
          * @return the relevant branch or Null
          */
-        protected Branch locateBranch(SVNURL pURL) {
+        protected Branch locateBranch(final SVNURL pURL) {
             /* Access list iterator */
             ListIterator<Component> myIterator = theList.listIterator();
 
@@ -287,8 +290,9 @@ public class Component {
                 SVNURL myCompURL = myComponent.getURL();
 
                 /* Skip if the repositories are different */
-                if (!pURL.getHost().equals(myCompURL.getHost()))
+                if (!pURL.getHost().equals(myCompURL.getHost())) {
                     continue;
+                }
 
                 /* If this is parent of the passed URL */
                 if (pURL.getPath().startsWith(myCompURL.getPath())) {
@@ -302,19 +306,21 @@ public class Component {
         }
 
         /**
-         * The Directory Entry Handler
+         * The Directory Entry Handler.
          */
-        private class ComponentHandler implements ISVNDirEntryHandler {
+        private final class ComponentHandler implements ISVNDirEntryHandler {
 
             @Override
-            public void handleDirEntry(SVNDirEntry pEntry) throws SVNException {
+            public void handleDirEntry(final SVNDirEntry pEntry) throws SVNException {
                 /* Protect against exceptions */
                 try {
                     /* Ignore if not a directory and if it is top-level */
-                    if (pEntry.getKind() != SVNNodeKind.DIR)
+                    if (pEntry.getKind() != SVNNodeKind.DIR) {
                         return;
-                    if (pEntry.getRelativePath().length() == 0)
+                    }
+                    if (pEntry.getRelativePath().length() == 0) {
                         return;
+                    }
 
                     /* Access the name */
                     String myName = pEntry.getName();
@@ -325,9 +331,7 @@ public class Component {
 
                     /* Discover tags */
                     myComp.getBranchList().discover();
-                }
-
-                catch (ModelException e) {
+                } catch (JDataException e) {
                     /* Pass back as SVNException */
                     throw new SVNException(SVNErrorMessage.create(SVNErrorCode.UNKNOWN), e);
                 }

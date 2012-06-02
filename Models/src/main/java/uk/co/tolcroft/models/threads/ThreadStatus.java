@@ -22,11 +22,11 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.threads;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.PreferenceSet;
-import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
-import net.sourceforge.JDataManager.PreferenceSet.PreferenceSetChooser;
+import net.sourceforge.JDataManager.JDataException;
 import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.data.PreferenceSet;
+import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
+import uk.co.tolcroft.models.data.PreferenceSet.PreferenceSetChooser;
 import uk.co.tolcroft.models.views.DataControl;
 
 /**
@@ -138,7 +138,7 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl, Prefer
         myStatus = new StatusData(theStatus);
 
         /* Publish it */
-        theThread.publish(myStatus);
+        theThread.publishIt(myStatus);
 
         /* Return to caller */
         return true;
@@ -182,7 +182,7 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl, Prefer
         myStatus = new StatusData(theStatus);
 
         /* Publish it */
-        theThread.publish(myStatus);
+        theThread.publishIt(myStatus);
 
         /* Return to caller */
         return true;
@@ -218,7 +218,7 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl, Prefer
         myStatus = new StatusData(theStatus);
 
         /* Publish it */
-        theThread.publish(myStatus);
+        theThread.publishIt(myStatus);
 
         /* Return to caller */
         return true;
@@ -245,9 +245,9 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl, Prefer
 
         /**
          * Constructor.
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        public ThreadStatusPreferences() throws ModelException {
+        public ThreadStatusPreferences() throws JDataException {
             super();
         }
 

@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
-import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.JDataException;
 
 /**
  * Class represents the contents of an encrypted Zip file.
@@ -85,9 +85,9 @@ public class ZipFileContents {
     /**
      * Constructor from encoded string.
      * @param pCodedString the encoded string
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    protected ZipFileContents(final String pCodedString) throws ModelException {
+    protected ZipFileContents(final String pCodedString) throws JDataException {
         /* Allocate the list */
         theList = new ArrayList<ZipFileEntry>();
 
@@ -260,9 +260,9 @@ public class ZipFileContents {
     /**
      * Add a File Entry from encoded string.
      * @param pCodedString the encoded string
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    private void parseEncodedEntry(final String pCodedString) throws ModelException {
+    private void parseEncodedEntry(final String pCodedString) throws JDataException {
         /* Parse the properties */
         ZipFileProperties myProperties = new ZipFileProperties(pCodedString);
 

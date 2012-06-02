@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.JGordianKnot;
 
-import net.sourceforge.JDataManager.ReportFields;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
 
 /**
  * Security mode base class.
@@ -33,26 +33,26 @@ public abstract class SecurityMode extends NybbleArray {
     /**
      * Report fields.
      */
-    protected static final ReportFields FIELD_DEFS = new ReportFields(SecurityMode.class.getSimpleName(),
+    protected static final JDataFields FIELD_DEFS = new JDataFields(SecurityMode.class.getSimpleName(),
             NybbleArray.FIELD_DEFS);
 
     /**
      * Version Field ID.
      */
-    public static final ReportField FIELD_VERSION = FIELD_DEFS.declareLocalField("Version");
+    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField("Version");
 
     /**
      * Restricted Field ID.
      */
-    public static final ReportField FIELD_RESTRICT = FIELD_DEFS.declareLocalField("Restricted");
+    public static final JDataField FIELD_RESTRICT = FIELD_DEFS.declareLocalField("Restricted");
 
     @Override
-    public ReportFields getReportFields() {
+    public JDataFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final ReportField pField) {
+    public Object getFieldValue(final JDataField pField) {
         if (pField == FIELD_VERSION) {
             return theVersion;
         }
@@ -63,7 +63,7 @@ public abstract class SecurityMode extends NybbleArray {
     }
 
     @Override
-    public String getObjectSummary() {
+    public String formatObject() {
         return FIELD_DEFS.getName();
     }
 

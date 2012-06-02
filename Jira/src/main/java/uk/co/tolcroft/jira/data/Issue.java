@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * Jira: Java Jira Link
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,8 +28,8 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import uk.co.tolcroft.jira.data.Project.Component;
 import uk.co.tolcroft.jira.data.Project.Version;
 import uk.co.tolcroft.jira.data.Security.User;
@@ -43,114 +44,118 @@ import uk.co.tolcroft.jira.soap.RemoteFieldValue;
 import uk.co.tolcroft.jira.soap.RemoteIssue;
 import uk.co.tolcroft.jira.soap.RemoteVersion;
 
+/**
+ * Represents a Jira issue.
+ * @author Tony Washer
+ */
 public class Issue {
     /**
-     * Server
+     * Server.
      */
     private final Server theServer;
 
     /**
-     * Jira Soap service
+     * Jira Soap service.
      */
     private final JiraSoapService theService;
 
     /**
-     * Underlying Issue
+     * Underlying Issue.
      */
     private final RemoteIssue theIssue;
 
     /**
-     * Id of Issue
+     * Id of Issue.
      */
     private final String theId;
 
     /**
-     * Key of Issue
+     * Key of Issue.
      */
     private final String theKey;
 
     /**
-     * Project of Issue
+     * Project of Issue.
      */
     private final Project theProject;
 
     /**
-     * Summary of Issue
+     * Summary of Issue.
      */
     private final String theSummary;
 
     /**
-     * Description of Issue
+     * Description of Issue.
      */
     private final String theDesc;
 
     /**
-     * Type of Issue
+     * Type of Issue.
      */
     private final IssueType theIssueType;
 
     /**
-     * Environment of Issue
+     * Status of Issue.
      */
     private final Status theStatus;
 
     /**
-     * Environment of Issue
+     * Resolution of Issue.
      */
     private final Resolution theResolution;
 
     /**
-     * Environment of Issue
+     * Priority of Issue.
      */
     private final Priority thePriority;
 
     /**
-     * Environment of Issue
+     * Environment of Issue.
      */
     private final String theEnv;
 
     /**
-     * Assignee of Issue
+     * Assignee of Issue.
      */
     private final User theAssignee;
 
     /**
-     * Reporter of Issue
+     * Reporter of Issue.
      */
     private final User theReporter;
 
     /**
-     * Creation Date of Issue
+     * Creation Date of Issue.
      */
     private final Calendar theCreated;
 
     /**
-     * Due Date of Issue
+     * Due Date of Issue.
      */
     private final Calendar theDueDate;
 
     /**
-     * Last Updated Date of Issue
+     * Last Updated Date of Issue.
      */
     private final Calendar theUpdated;
 
     /**
-     * Components
+     * Components.
      */
     private final List<Component> theComponents;
 
     /**
-     * Versions
+     * Versions.
      */
     private final List<Version> theAffectsVers;
 
     /**
-     * Versions
+     * Fix Versions.
      */
     private final List<Version> theFixVers;
 
     /**
-     * Get the underlying issue
+     * Get the underlying issue.
      * @return the issue
      */
     public RemoteIssue getIssue() {
@@ -158,7 +163,7 @@ public class Issue {
     }
 
     /**
-     * Get the id of the issue
+     * Get the id of the issue.
      * @return the id
      */
     public String getId() {
@@ -166,7 +171,7 @@ public class Issue {
     }
 
     /**
-     * Get the key of the issue
+     * Get the key of the issue.
      * @return the key
      */
     public String getKey() {
@@ -174,7 +179,7 @@ public class Issue {
     }
 
     /**
-     * Get the summary
+     * Get the summary.
      * @return the summary
      */
     public String getSummary() {
@@ -182,7 +187,7 @@ public class Issue {
     }
 
     /**
-     * Get the description of the issue
+     * Get the description of the issue.
      * @return the description
      */
     public String getDesc() {
@@ -190,7 +195,7 @@ public class Issue {
     }
 
     /**
-     * Get the environment of the issue
+     * Get the environment of the issue.
      * @return the environment
      */
     public String getEnvironment() {
@@ -198,7 +203,7 @@ public class Issue {
     }
 
     /**
-     * Get the project of the issue
+     * Get the project of the issue.
      * @return the project
      */
     public Project getProject() {
@@ -206,7 +211,7 @@ public class Issue {
     }
 
     /**
-     * Get the issue type of the issue
+     * Get the issue type of the issue.
      * @return the issue type
      */
     public IssueType getIssueType() {
@@ -214,7 +219,7 @@ public class Issue {
     }
 
     /**
-     * Get the status of the issue
+     * Get the status of the issue.
      * @return the status
      */
     public Status getStatus() {
@@ -222,7 +227,7 @@ public class Issue {
     }
 
     /**
-     * Get the resolution of the issue
+     * Get the resolution of the issue.
      * @return the resolution
      */
     public Resolution getResolution() {
@@ -230,7 +235,7 @@ public class Issue {
     }
 
     /**
-     * Get the priority of the issue
+     * Get the priority of the issue.
      * @return the priority
      */
     public Priority getPriority() {
@@ -238,7 +243,7 @@ public class Issue {
     }
 
     /**
-     * Get the reported
+     * Get the reporter.
      * @return the reporter
      */
     public User getReporter() {
@@ -246,7 +251,7 @@ public class Issue {
     }
 
     /**
-     * Get the assignee
+     * Get the assignee.
      * @return the assignee
      */
     public User getAssignee() {
@@ -254,7 +259,7 @@ public class Issue {
     }
 
     /**
-     * Get the createdDate of the issue
+     * Get the createdDate of the issue.
      * @return the createdDate
      */
     public Calendar getCreateOn() {
@@ -262,7 +267,7 @@ public class Issue {
     }
 
     /**
-     * Get the updatedDate of the issue
+     * Get the updatedDate of the issue.
      * @return the updatedDate
      */
     public Calendar getLastUpdated() {
@@ -270,7 +275,7 @@ public class Issue {
     }
 
     /**
-     * Get the dueDate of the issue
+     * Get the dueDate of the issue.
      * @return the dueDate
      */
     public Calendar getDueDate() {
@@ -278,7 +283,7 @@ public class Issue {
     }
 
     /**
-     * Get the linked components
+     * Get the linked components.
      * @return the linked components
      */
     public List<Component> getComponents() {
@@ -286,7 +291,7 @@ public class Issue {
     }
 
     /**
-     * Get the linked affected Versions
+     * Get the linked affected Versions.
      * @return the linked affected Versions
      */
     public List<Version> getAffectsVersions() {
@@ -294,7 +299,7 @@ public class Issue {
     }
 
     /**
-     * Get the linked fix Versions
+     * Get the linked fix Versions.
      * @return the linked fix Versions
      */
     public List<Version> getFixVersions() {
@@ -302,13 +307,13 @@ public class Issue {
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pServer the server
      * @param pIssue the underlying issue
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public Issue(Server pServer,
-                 RemoteIssue pIssue) throws ModelException {
+    public Issue(final Server pServer,
+                 final RemoteIssue pIssue) throws JDataException {
         /* Store parameters */
         theServer = pServer;
         theService = theServer.getService();
@@ -363,11 +368,11 @@ public class Issue {
     }
 
     /**
-     * Add Comment to issue
+     * Add Comment to issue.
      * @param pComment the comment to add
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public void addComment(String pComment) throws ModelException {
+    public void addComment(final String pComment) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Create the remote comment */
@@ -379,36 +384,33 @@ public class Issue {
 
             /* Add it to the issue */
             theService.addComment(myToken, theId, myComment);
-        }
-
-        catch (ModelException e) {
-            throw e;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Failed to add comment", e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to add comment", e);
         }
     }
 
     /**
-     * Link Component to issue
+     * Link Component to issue.
      * @param pComponent the component to link
      * @return the component
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public Component linkComponent(String pComponent) throws ModelException {
+    public Component linkComponent(final String pComponent) throws JDataException {
         /* Check whether the component is already linked */
         Iterator<Component> myIterator = theComponents.iterator();
         while (myIterator.hasNext()) {
             Component myComp = myIterator.next();
-            if (myComp.getName().equals(pComponent))
+            if (myComp.getName().equals(pComponent)) {
                 return myComp;
+            }
         }
 
         /* Access component to link */
         Component myNewComp = theProject.getComponentByName(pComponent);
         if (myNewComp == null) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Component does not exists " + pComponent);
+            throw new JDataException(ExceptionClass.JIRA, "Component does not exists " + pComponent);
         }
 
         /* Protect against exceptions */
@@ -437,36 +439,33 @@ public class Issue {
             /* Add the component */
             theComponents.add(myNewComp);
             return myNewComp;
-        }
-
-        catch (ModelException e) {
-            throw e;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Failed to link component", e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to link component", e);
         }
     }
 
     /**
-     * Link Affects Version to issue
+     * Link Affects Version to issue.
      * @param pVersion the version to link
      * @return the version
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public Version linkAffectsVersion(String pVersion) throws ModelException {
+    public Version linkAffectsVersion(final String pVersion) throws JDataException {
         /* Check whether the version is already linked */
         Iterator<Version> myIterator = theAffectsVers.iterator();
         while (myIterator.hasNext()) {
             Version myVers = myIterator.next();
-            if (myVers.getName().equals(pVersion))
+            if (myVers.getName().equals(pVersion)) {
                 return myVers;
+            }
         }
 
         /* Access version to link */
         Version myNewVers = theProject.getVersionByName(pVersion);
         if (myNewVers == null) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Version does not exists " + pVersion);
+            throw new JDataException(ExceptionClass.JIRA, "Version does not exists " + pVersion);
         }
 
         /* Protect against exceptions */
@@ -495,36 +494,33 @@ public class Issue {
             /* Add the affects Version */
             theAffectsVers.add(myNewVers);
             return myNewVers;
-        }
-
-        catch (ModelException e) {
-            throw e;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Failed to link component", e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to link component", e);
         }
     }
 
     /**
-     * Link Fix Version to issue
+     * Link Fix Version to issue.
      * @param pVersion the version to link
      * @return the version
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public Version linkFixVersion(String pVersion) throws ModelException {
+    public Version linkFixVersion(final String pVersion) throws JDataException {
         /* Check whether the version is already linked */
         Iterator<Version> myIterator = theFixVers.iterator();
         while (myIterator.hasNext()) {
             Version myVers = myIterator.next();
-            if (myVers.getName().equals(pVersion))
+            if (myVers.getName().equals(pVersion)) {
                 return myVers;
+            }
         }
 
         /* Access version to link */
         Version myNewVers = theProject.getVersionByName(pVersion);
         if (myNewVers == null) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Version does not exists " + pVersion);
+            throw new JDataException(ExceptionClass.JIRA, "Version does not exists " + pVersion);
         }
 
         /* Protect against exceptions */
@@ -553,13 +549,9 @@ public class Issue {
             /* Add the fix Version */
             theFixVers.add(myNewVers);
             return myNewVers;
-        }
-
-        catch (ModelException e) {
-            throw e;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Failed to link component", e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to link component", e);
         }
     }
 }

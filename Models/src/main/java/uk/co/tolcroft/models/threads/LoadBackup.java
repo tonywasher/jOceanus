@@ -24,14 +24,14 @@ package uk.co.tolcroft.models.threads;
 
 import java.io.File;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
-import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
-import net.sourceforge.JDataManager.ui.FileSelector;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.sheets.BackupPreferences;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
+import uk.co.tolcroft.models.ui.FileSelector;
 import uk.co.tolcroft.models.views.DataControl;
 
 /**
@@ -96,7 +96,7 @@ public class LoadBackup<T extends DataSet<T>> extends LoaderThread<T> {
         /* If we did not select a file */
         if (myFile == null) {
             /* Throw cancelled exception */
-            throw new ModelException(ExceptionClass.EXCEL, "Operation Cancelled");
+            throw new JDataException(ExceptionClass.EXCEL, "Operation Cancelled");
         }
 
         /* Load workbook */

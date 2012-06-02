@@ -31,7 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Money;
 import net.sourceforge.JDecimal.Rate;
@@ -51,7 +51,7 @@ public abstract class ColumnDefinition {
     /**
      * Column Identity.
      */
-    private final ReportField theIdentity;
+    private final JDataField theIdentity;
 
     /**
      * Is the column null-able.
@@ -85,7 +85,7 @@ public abstract class ColumnDefinition {
      * Obtain the column id.
      * @return the id
      */
-    protected ReportField getColumnId() {
+    protected JDataField getColumnId() {
         return theIdentity;
     }
 
@@ -136,7 +136,7 @@ public abstract class ColumnDefinition {
      * @param pId the column id
      */
     protected ColumnDefinition(final TableDefinition pTable,
-                               final ReportField pId) {
+                               final JDataField pId) {
         /* Record the identity and table */
         theIdentity = pId;
         theTable = pTable;
@@ -238,7 +238,7 @@ public abstract class ColumnDefinition {
          * @param pId the column id
          */
         protected IntegerColumn(final TableDefinition pTable,
-                                final ReportField pId) {
+                                final JDataField pId) {
             /* Record the column type and name */
             super(pTable, pId);
         }
@@ -329,7 +329,7 @@ public abstract class ColumnDefinition {
          * @param pRefTable the name of the referenced table
          */
         protected ReferenceColumn(final TableDefinition pTable,
-                                  final ReportField pId,
+                                  final JDataField pId,
                                   final String pRefTable) {
             /* Record the column type */
             super(pTable, pId);
@@ -476,7 +476,7 @@ public abstract class ColumnDefinition {
          * @param pId the column id
          */
         protected LongColumn(final TableDefinition pTable,
-                             final ReportField pId) {
+                             final JDataField pId) {
             /* Record the column type */
             super(pTable, pId);
         }
@@ -536,7 +536,7 @@ public abstract class ColumnDefinition {
          * @param pId the column id
          */
         protected DateColumn(final TableDefinition pTable,
-                             final ReportField pId) {
+                             final JDataField pId) {
             /* Record the column type */
             super(pTable, pId);
         }
@@ -602,7 +602,7 @@ public abstract class ColumnDefinition {
          * @param pId the column id
          */
         protected BooleanColumn(final TableDefinition pTable,
-                                final ReportField pId) {
+                                final JDataField pId) {
             /* Record the column type */
             super(pTable, pId);
         }
@@ -668,7 +668,7 @@ public abstract class ColumnDefinition {
          * @param pLength the length
          */
         protected StringColumn(final TableDefinition pTable,
-                               final ReportField pId,
+                               final JDataField pId,
                                final int pLength) {
             /* Record the column type */
             super(pTable, pId);
@@ -723,7 +723,7 @@ public abstract class ColumnDefinition {
          * @param pId the column id
          */
         protected MoneyColumn(final TableDefinition pTable,
-                              final ReportField pId) {
+                              final JDataField pId) {
             /* Record the column type */
             super(pTable, pId, 0);
         }
@@ -757,7 +757,7 @@ public abstract class ColumnDefinition {
          * @param pId the column id
          */
         protected RateColumn(final TableDefinition pTable,
-                             final ReportField pId) {
+                             final JDataField pId) {
             /* Record the column type */
             super(pTable, pId, 0);
         }
@@ -797,7 +797,7 @@ public abstract class ColumnDefinition {
          * @param pLength the length of the column
          */
         protected BinaryColumn(final TableDefinition pTable,
-                               final ReportField pId,
+                               final JDataField pId,
                                final int pLength) {
             /* Record the column type */
             super(pTable, pId);

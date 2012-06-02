@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,34 +22,90 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.ui;
 
-import net.sourceforge.JDataManager.DebugManager;
-import net.sourceforge.JDataManager.DebugManager.DebugEntry;
+import net.sourceforge.JDataManager.JDataManager;
+import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import uk.co.tolcroft.models.data.EditState;
 
+/**
+ * Standard panel interfaces.
+ * @author Tony Washer
+ */
 public class StdInterfaces {
+    /**
+     * Standard commands.
+     */
     public enum stdCommand {
-        OK, RESETALL;
+        /**
+         * OK.
+         */
+        OK,
+
+        /**
+         * Reset all changes.
+         */
+        RESETALL;
     }
 
-    public interface stdPanel {
-        public void notifySelection(Object o);
+    /**
+     * Standard panel.
+     */
+    public interface StdPanel {
+        /**
+         * Notify selection.
+         * @param o source object
+         */
+        void notifySelection(final Object o);
 
-        public void notifyChanges();
+        /**
+         * Notify changes.
+         */
+        void notifyChanges();
 
-        public boolean hasUpdates();
+        /**
+         * Does the panel have updates?
+         * @return true/false
+         */
+        boolean hasUpdates();
 
-        public void printIt();
+        /**
+         * Print the panel.
+         */
+        void printIt();
 
-        public boolean isLocked();
+        /**
+         * Is the panel locked?
+         * @return true/false
+         */
+        boolean isLocked();
 
-        public void performCommand(stdCommand pCmd);
+        /**
+         * Perform the command.
+         * @param pCmd the command
+         */
+        void performCommand(final stdCommand pCmd);
 
-        public EditState getEditState();
+        /**
+         * Get the edit state.
+         * @return the edit state
+         */
+        EditState getEditState();
 
-        public DebugManager getDebugManager();
+        /**
+         * Get the data manager.
+         * @return the data manager
+         */
+        JDataManager getDataManager();
 
-        public DebugEntry getDebugEntry();
+        /**
+         * Get the data entry.
+         * @return the data entry
+         */
+        JDataEntry getDataEntry();
 
-        public void lockOnError(boolean isError);
+        /**
+         * Lock/unlock on error.
+         * @param isError true/false
+         */
+        void lockOnError(final boolean isError);
     }
 }

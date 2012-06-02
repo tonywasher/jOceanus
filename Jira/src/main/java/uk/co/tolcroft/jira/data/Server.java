@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * Jira: Java Jira Link
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,9 +30,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
-import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 
 import org.apache.log4j.PropertyConfigurator;
 
@@ -48,65 +48,70 @@ import uk.co.tolcroft.jira.soap.RemotePriority;
 import uk.co.tolcroft.jira.soap.RemoteProject;
 import uk.co.tolcroft.jira.soap.RemoteResolution;
 import uk.co.tolcroft.jira.soap.RemoteStatus;
+import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 
+/**
+ * Represents a Jira server.
+ * @author Tony Washer
+ */
 public class Server {
     /**
-     * Jira Soap location
+     * Jira Soap location.
      */
-    private static final String theLocation = "/rpc/soap/jirasoapservice-v2";
+    private static final String LOCATION = "/rpc/soap/jirasoapservice-v2";
 
     /**
-     * Authorization Token
+     * Authorization Token.
      */
     private String theAuthToken;
 
     /**
-     * The Soap Service
+     * The Soap Service.
      */
     private final JiraSoapService theService;
 
     /**
-     * The Security
+     * The Security.
      */
     private final Security theSecurity;
 
     /**
-     * Issues
+     * Issues.
      */
     private final List<Issue> theIssues;
 
     /**
-     * Projects
+     * Projects.
      */
     private final List<Project> theProjects;
 
     /**
-     * Filters
+     * Filters.
      */
     private final List<Filter> theFilters;
 
     /**
-     * IssueTypes
+     * IssueTypes.
      */
     private final List<IssueType> theIssueTypes;
 
     /**
-     * Statuses
+     * Statuses.
      */
     private final List<Status> theStatuses;
 
     /**
-     * Resolutions
+     * Resolutions.
      */
     private final List<Resolution> theResolutions;
 
     /**
-     * Priorities
+     * Priorities.
      */
     private final List<Priority> thePriorities;
 
     /**
-     * Obtain the service
+     * Obtain the service.
      * @return the service
      */
     public JiraSoapService getService() {
@@ -114,10 +119,11 @@ public class Server {
     }
 
     /**
-     * Constructor
-     * @throws ModelException
+     * Constructor.
+     * @throws JDataException on error
      */
-    public Server() throws ModelException {
+    public Server() throws JDataException {
+        /* Configure log4j */
         Properties myLogProp = new Properties();
         myLogProp.setProperty("log4j.rootLogger", "ERROR, A1");
         myLogProp.setProperty("log4j.appender.A1", "org.apache.log4j.ConsoleAppender");
@@ -141,7 +147,7 @@ public class Server {
         try {
             /* Access the Jira preferences */
             JiraPreferences myPreferences = PreferenceManager.getPreferenceSet(JiraPreferences.class);
-            String baseUrl = myPreferences.getStringValue(JiraPreferences.nameJiraServer) + theLocation;
+            String baseUrl = myPreferences.getStringValue(JiraPreferences.NAME_SERVER) + LOCATION;
 
             /* Locate the service */
             theService = myLocator.getJirasoapserviceV2(new URL(baseUrl));
@@ -155,23 +161,22 @@ public class Server {
             loadStatuses();
             loadResolutions();
             loadPriorities();
-        } catch (ModelException e) {
-            throw e;
         } catch (Exception e) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Failed to locate service", e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to locate service", e);
         }
     }
 
     /**
-     * Get Authentication Token
+     * Get Authentication Token.
      * @return the authentication token
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public String getAuthToken() throws ModelException {
+    public final String getAuthToken() throws JDataException {
         /* If we have a token, return it */
-        if (theAuthToken != null)
+        if (theAuthToken != null) {
             return theAuthToken;
+        }
 
         /* Protect against exceptions */
         try {
@@ -179,28 +184,29 @@ public class Server {
             JiraPreferences myPreferences = PreferenceManager.getPreferenceSet(JiraPreferences.class);
 
             /* Login to the service */
-            theAuthToken = theService.login(myPreferences.getStringValue(JiraPreferences.nameJiraUser),
-                                            myPreferences.getStringValue(JiraPreferences.nameJiraPass));
+            theAuthToken = theService.login(myPreferences.getStringValue(JiraPreferences.NAME_USER),
+                                            myPreferences.getStringValue(JiraPreferences.NAME_PASS));
             return theAuthToken;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Failed to login to server", e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to login to server", e);
         }
     }
 
     /**
-     * Obtain Project
+     * Obtain Project.
      * @param pKey the key for the project
      * @return the Project
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public Project getProject(String pKey) throws ModelException {
+    public Project getProject(final String pKey) throws JDataException {
         /* Return an existing project if found in list */
         Iterator<Project> myIterator = theProjects.iterator();
         while (myIterator.hasNext()) {
             Project myProject = myIterator.next();
-            if (myProject.getKey().equals(pKey))
+            if (myProject.getKey().equals(pKey)) {
                 return myProject;
+            }
         }
 
         /* Protect against exceptions */
@@ -213,34 +219,33 @@ public class Server {
             Project myProject = new Project(this, myProjDtl);
             theProjects.add(myProject);
             return myProject;
-        } catch (ModelException e) {
-            throw e;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Failed to load project " + pKey, e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to load project " + pKey, e);
         }
     }
 
     /**
-     * Load Issues from Filter
+     * Load Issues from Filter.
      * @param pFilter the filter name
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public void loadIssuesFromFilter(String pFilter) throws ModelException {
+    public void loadIssuesFromFilter(final String pFilter) throws JDataException {
         /* Access the filter */
         Filter myFilter = null;
         Iterator<Filter> myIterator = theFilters.iterator();
         while (myIterator.hasNext()) {
             myFilter = myIterator.next();
-            if (myFilter.getName().equals(pFilter))
+            if (myFilter.getName().equals(pFilter)) {
                 break;
+            }
             myFilter = null;
         }
 
         /* Handle filter not found */
         if (myFilter == null) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Filter does not exists " + pFilter);
+            throw new JDataException(ExceptionClass.JIRA, "Filter does not exists " + pFilter);
         }
 
         /* Protect against exceptions */
@@ -256,129 +261,131 @@ public class Server {
                 /* Add new issue to list */
                 theIssues.add(new Issue(this, myIssue));
             }
-        } catch (ModelException e) {
-            throw e;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Failed to load issues from filter", e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to load issues from filter", e);
         }
 
     }
 
     /**
-     * Obtain User
+     * Obtain User.
      * @param pName the name of the user
      * @return the User
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public User getUser(String pName) throws ModelException {
+    public User getUser(final String pName) throws JDataException {
         /* Pass the call to the security service */
         return theSecurity.getUser(pName);
     }
 
     /**
-     * Obtain Group
+     * Obtain Group.
      * @param pName the name of the group
      * @return the Group
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public Group getGroup(String pName) throws ModelException {
+    public Group getGroup(final String pName) throws JDataException {
         /* Pass the call to the security service */
         return theSecurity.getGroup(pName);
     }
 
     /**
-     * Obtain Role
+     * Obtain Role.
      * @param pId the Id of the role
      * @return the Role
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public Role getRole(long pId) throws ModelException {
+    public Role getRole(final long pId) throws JDataException {
         /* Pass the call to the security service */
         return theSecurity.getRole(pId);
     }
 
     /**
-     * Obtain IssueType
+     * Obtain IssueType.
      * @param pId the id of the IssueType
      * @return the IssueType
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public IssueType getIssueType(String pId) throws ModelException {
+    public IssueType getIssueType(final String pId) throws JDataException {
         /* Return an existing issue type if found in list */
         Iterator<IssueType> myIterator = theIssueTypes.iterator();
         while (myIterator.hasNext()) {
             IssueType myType = myIterator.next();
-            if (myType.getId().equals(pId))
+            if (myType.getId().equals(pId)) {
                 return myType;
+            }
         }
 
         /* throw exception */
-        throw new ModelException(ExceptionClass.JIRA, "Invalid IssueTypeId " + pId);
+        throw new JDataException(ExceptionClass.JIRA, "Invalid IssueTypeId " + pId);
     }
 
     /**
-     * Obtain Status
+     * Obtain Status.
      * @param pId the id of the Status
      * @return the Status
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public Status getStatus(String pId) throws ModelException {
+    public Status getStatus(final String pId) throws JDataException {
         /* Return an existing status if found in list */
         Iterator<Status> myIterator = theStatuses.iterator();
         while (myIterator.hasNext()) {
             Status myStatus = myIterator.next();
-            if (myStatus.getId().equals(pId))
+            if (myStatus.getId().equals(pId)) {
                 return myStatus;
+            }
         }
 
         /* throw exception */
-        throw new ModelException(ExceptionClass.JIRA, "Invalid StatusId " + pId);
+        throw new JDataException(ExceptionClass.JIRA, "Invalid StatusId " + pId);
     }
 
     /**
-     * Obtain Resolution
+     * Obtain Resolution.
      * @param pId the id of the Resolution
      * @return the Resolution
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public Resolution getResolution(String pId) throws ModelException {
+    public Resolution getResolution(final String pId) throws JDataException {
         /* Return an existing resolution if found in list */
         Iterator<Resolution> myIterator = theResolutions.iterator();
         while (myIterator.hasNext()) {
             Resolution myRes = myIterator.next();
-            if (myRes.getId().equals(pId))
+            if (myRes.getId().equals(pId)) {
                 return myRes;
+            }
         }
 
         /* throw exception */
-        throw new ModelException(ExceptionClass.JIRA, "Invalid ResolutionId " + pId);
+        throw new JDataException(ExceptionClass.JIRA, "Invalid ResolutionId " + pId);
     }
 
     /**
-     * Obtain Priority
+     * Obtain Priority.
      * @param pId the id of the Priority
      * @return the Priority
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public Priority getPriority(String pId) throws ModelException {
+    public Priority getPriority(final String pId) throws JDataException {
         /* Return an existing priority if found in list */
         Iterator<Priority> myIterator = thePriorities.iterator();
         while (myIterator.hasNext()) {
             Priority myPriority = myIterator.next();
-            if (myPriority.getId().equals(pId))
+            if (myPriority.getId().equals(pId)) {
                 return myPriority;
+            }
         }
 
         /* throw exception */
-        throw new ModelException(ExceptionClass.JIRA, "Invalid PriorityId " + pId);
+        throw new JDataException(ExceptionClass.JIRA, "Invalid PriorityId " + pId);
     }
 
     /**
-     * Load Filters
-     * @throws ModelException
+     * Load Filters.
+     * @throws JDataException on error
      */
-    private void loadFilters() throws ModelException {
+    private void loadFilters() throws JDataException {
         /* Protect against exceptions */
         try {
             /* Access the authorization token */
@@ -392,19 +399,17 @@ public class Server {
                 /* Add new filter to list */
                 theFilters.add(new Filter(myFilter));
             }
-        } catch (ModelException e) {
-            throw e;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Failed to load filters", e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to load filters", e);
         }
     }
 
     /**
-     * Load IssueTypes
-     * @throws ModelException
+     * Load IssueTypes.
+     * @throws JDataException on error
      */
-    private void loadIssueTypes() throws ModelException {
+    private void loadIssueTypes() throws JDataException {
         /* Protect against exceptions */
         try {
             /* Access the authorization token */
@@ -427,19 +432,17 @@ public class Server {
                 /* Add new type to list */
                 theIssueTypes.add(new IssueType(myType));
             }
-        } catch (ModelException e) {
-            throw e;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Failed to load issue types", e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to load issue types", e);
         }
     }
 
     /**
-     * Load Statuses
-     * @throws ModelException
+     * Load Statuses.
+     * @throws JDataException on error
      */
-    private void loadStatuses() throws ModelException {
+    private void loadStatuses() throws JDataException {
         /* Protect against exceptions */
         try {
             /* Access the authorization token */
@@ -453,19 +456,17 @@ public class Server {
                 /* Add new status to list */
                 theStatuses.add(new Status(myStatus));
             }
-        } catch (ModelException e) {
-            throw e;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Failed to load statuses", e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to load statuses", e);
         }
     }
 
     /**
-     * Load Resolutions
-     * @throws ModelException
+     * Load Resolutions.
+     * @throws JDataException on error
      */
-    private void loadResolutions() throws ModelException {
+    private void loadResolutions() throws JDataException {
         /* Protect against exceptions */
         try {
             /* Access the authorization token */
@@ -479,19 +480,17 @@ public class Server {
                 /* Add new resolution to list */
                 theResolutions.add(new Resolution(myResolution));
             }
-        } catch (ModelException e) {
-            throw e;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Failed to load resolutions", e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to load resolutions", e);
         }
     }
 
     /**
-     * Load Priorities
-     * @throws ModelException
+     * Load Priorities.
+     * @throws JDataException on error
      */
-    private void loadPriorities() throws ModelException {
+    private void loadPriorities() throws JDataException {
         /* Protect against exceptions */
         try {
             /* Access the authorization token */
@@ -505,35 +504,33 @@ public class Server {
                 /* Add new priority to list */
                 thePriorities.add(new Priority(myPriority));
             }
-        } catch (ModelException e) {
-            throw e;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Failed to load priorities", e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to load priorities", e);
         }
     }
 
     /**
-     * Server constant class
+     * Server constant class.
      */
     private abstract class ServerConstant {
         /**
-         * The id of the constant
+         * The id of the constant.
          */
         private final String theId;
 
         /**
-         * The name of the constant
+         * The name of the constant.
          */
         private final String theName;
 
         /**
-         * The description of the constant
+         * The description of the constant.
          */
         private final String theDesc;
 
         /**
-         * Get the id of the constant
+         * Get the id of the constant.
          * @return the id
          */
         public String getId() {
@@ -541,7 +538,7 @@ public class Server {
         }
 
         /**
-         * Get the name of the constant
+         * Get the name of the constant.
          * @return the name
          */
         public String getName() {
@@ -549,7 +546,7 @@ public class Server {
         }
 
         /**
-         * Get the description of the constant
+         * Get the description of the constant.
          * @return the description
          */
         public String getDesc() {
@@ -557,10 +554,10 @@ public class Server {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pConstant the underlying constant
          */
-        private ServerConstant(AbstractRemoteConstant pConstant) {
+        private ServerConstant(final AbstractRemoteConstant pConstant) {
             /* Access the details */
             theId = pConstant.getId();
             theName = pConstant.getName();
@@ -569,16 +566,16 @@ public class Server {
     }
 
     /**
-     * IssueType class
+     * IssueType class.
      */
-    public class IssueType extends ServerConstant {
+    public final class IssueType extends ServerConstant {
         /**
-         * Is this IssueType a sub-task
+         * Is this IssueType a sub-task.
          */
         private final boolean isSubTask;
 
         /**
-         * Is the Issue type a subTask
+         * Is the Issue type a subTask.
          * @return true/false
          */
         public boolean isSubTask() {
@@ -586,10 +583,10 @@ public class Server {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pIssueType the underlying issue type
          */
-        private IssueType(RemoteIssueType pIssueType) {
+        private IssueType(final RemoteIssueType pIssueType) {
             /* Access the details */
             super(pIssueType);
             isSubTask = pIssueType.isSubTask();
@@ -597,55 +594,55 @@ public class Server {
     }
 
     /**
-     * Status class
+     * Status class.
      */
-    public class Status extends ServerConstant {
+    public final class Status extends ServerConstant {
         /**
-         * Constructor
+         * Constructor.
          * @param pStatus the underlying status
          */
-        private Status(RemoteStatus pStatus) {
+        private Status(final RemoteStatus pStatus) {
             /* Access the details */
             super(pStatus);
         }
     }
 
     /**
-     * Resolution class
+     * Resolution class.
      */
-    public class Resolution extends ServerConstant {
+    public final class Resolution extends ServerConstant {
         /**
-         * Constructor
+         * Constructor.
          * @param pResolution the underlying resolution
          */
-        private Resolution(RemoteResolution pResolution) {
+        private Resolution(final RemoteResolution pResolution) {
             /* Access the details */
             super(pResolution);
         }
     }
 
     /**
-     * Priority class
+     * Priority class.
      */
-    public class Priority extends ServerConstant {
+    public final class Priority extends ServerConstant {
         /**
-         * The color for this priority
+         * The colour for this priority.
          */
         private final Color theColor;
 
         /**
-         * Obtain the color for this priority
-         * @return the color
+         * Obtain the colour for this priority.
+         * @return the colour
          */
         public Color getColor() {
             return theColor;
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pPriority the underlying priority
          */
-        private Priority(RemotePriority pPriority) {
+        private Priority(final RemotePriority pPriority) {
             /* Access the details */
             super(pPriority);
             theColor = Color.decode(pPriority.getColor());
@@ -653,31 +650,31 @@ public class Server {
     }
 
     /**
-     * Filter class
+     * Filter class.
      */
-    public class Filter {
+    public final class Filter {
         /**
-         * The underlying remote filter
+         * The underlying remote filter.
          */
         private final RemoteFilter theFilter;
 
         /**
-         * The id of the filter
+         * The id of the filter.
          */
         private final String theId;
 
         /**
-         * The name of the filter
+         * The name of the filter.
          */
         private final String theName;
 
         /**
-         * The description of the filter
+         * The description of the filter.
          */
         private final String theDesc;
 
         /**
-         * Get the underlying filter
+         * Get the underlying filter.
          * @return the version
          */
         public RemoteFilter getFilter() {
@@ -685,7 +682,7 @@ public class Server {
         }
 
         /**
-         * Get the id of the filter
+         * Get the id of the filter.
          * @return the id
          */
         public String getId() {
@@ -693,7 +690,7 @@ public class Server {
         }
 
         /**
-         * Get the name of the filter
+         * Get the name of the filter.
          * @return the name
          */
         public String getName() {
@@ -701,7 +698,7 @@ public class Server {
         }
 
         /**
-         * Get the description of the filter
+         * Get the description of the filter.
          * @return the description
          */
         public String getDesc() {
@@ -709,10 +706,10 @@ public class Server {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pFilter the underlying filter
          */
-        private Filter(RemoteFilter pFilter) {
+        private Filter(final RemoteFilter pFilter) {
             /* Access the details */
             theFilter = pFilter;
             theId = pFilter.getId();

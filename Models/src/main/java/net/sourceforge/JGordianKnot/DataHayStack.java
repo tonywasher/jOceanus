@@ -24,8 +24,8 @@ package net.sourceforge.JGordianKnot;
 
 import java.util.Arrays;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 
 /**
  * Class to hide a small piece of data into a larger piece of data.
@@ -282,9 +282,9 @@ public class DataHayStack {
         /**
          * Constructor to parse External format.
          * @param pExternal the external format
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        public DigestNeedle(final byte[] pExternal) throws ModelException {
+        public DigestNeedle(final byte[] pExternal) throws JDataException {
             /* Store the parameters */
             theExternal = pExternal;
 
@@ -293,7 +293,7 @@ public class DataHayStack {
 
             /* Check that we found the needle */
             if (myResult == null) {
-                throw new ModelException(ExceptionClass.DATA, "Invalid Digest");
+                throw new JDataException(ExceptionClass.DATA, "Invalid Digest");
             }
 
             /* Store the digest */
@@ -304,7 +304,7 @@ public class DataHayStack {
 
             /* Check that needle is correct length */
             if (myNeedle.length != 1) {
-                throw new ModelException(ExceptionClass.DATA, "Invalid Digest");
+                throw new JDataException(ExceptionClass.DATA, "Invalid Digest");
             }
 
             /* Access Digest */
@@ -377,9 +377,9 @@ public class DataHayStack {
         /**
          * Constructor to parse External format.
          * @param pExternal the external format
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        public SymKeyNeedle(final byte[] pExternal) throws ModelException {
+        public SymKeyNeedle(final byte[] pExternal) throws JDataException {
             /* Store the parameters */
             theExternal = pExternal;
 
@@ -388,7 +388,7 @@ public class DataHayStack {
 
             /* Check that we found the needle */
             if (myResult == null) {
-                throw new ModelException(ExceptionClass.DATA, "Invalid SymKey");
+                throw new JDataException(ExceptionClass.DATA, "Invalid SymKey");
             }
 
             /* Store the encodedKey */
@@ -399,7 +399,7 @@ public class DataHayStack {
 
             /* Check that needle is correct length */
             if (myNeedle.length != 1) {
-                throw new ModelException(ExceptionClass.DATA, "Invalid SymKey");
+                throw new JDataException(ExceptionClass.DATA, "Invalid SymKey");
             }
 
             /* Access SymKeyType */
@@ -471,9 +471,9 @@ public class DataHayStack {
         /**
          * Constructor to parse External format.
          * @param pExternal the external format
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        public AsymModeNeedle(final byte[] pExternal) throws ModelException {
+        public AsymModeNeedle(final byte[] pExternal) throws JDataException {
             /* Store the parameters */
             theExternal = pExternal;
 
@@ -482,7 +482,7 @@ public class DataHayStack {
 
             /* Check that we found the needle */
             if (myResult == null) {
-                throw new ModelException(ExceptionClass.DATA, "Invalid ASymKeyMode");
+                throw new JDataException(ExceptionClass.DATA, "Invalid ASymKeyMode");
             }
 
             /* Store the publicKey */
@@ -577,9 +577,9 @@ public class DataHayStack {
         /**
          * Constructor to parse External format.
          * @param pExternal the external format
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        public HashModeNeedle(final byte[] pExternal) throws ModelException {
+        public HashModeNeedle(final byte[] pExternal) throws JDataException {
             /* Store the parameters */
             theExternal = pExternal;
 
@@ -588,7 +588,7 @@ public class DataHayStack {
 
             /* Check that we found the needle */
             if (myResult == null) {
-                throw new ModelException(ExceptionClass.DATA, "Invalid HashMode");
+                throw new JDataException(ExceptionClass.DATA, "Invalid HashMode");
             }
 
             /* Store the hash */
@@ -599,7 +599,7 @@ public class DataHayStack {
 
             /* Check that we found the needle */
             if (myResult == null) {
-                throw new ModelException(ExceptionClass.DATA, "Invalid HashMode");
+                throw new JDataException(ExceptionClass.DATA, "Invalid HashMode");
             }
 
             /* Store the salt */
@@ -698,9 +698,9 @@ public class DataHayStack {
         /**
          * Constructor to parse External format.
          * @param pExternal the external format
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        public EncryptModeNeedle(final byte[] pExternal) throws ModelException {
+        public EncryptModeNeedle(final byte[] pExternal) throws JDataException {
             /* Store the parameters */
             theExternal = pExternal;
 
@@ -709,7 +709,7 @@ public class DataHayStack {
 
             /* Check that we found the needle */
             if (myResult == null) {
-                throw new ModelException(ExceptionClass.DATA, "Invalid EncryptMode");
+                throw new JDataException(ExceptionClass.DATA, "Invalid EncryptMode");
             }
 
             /* Store the bytes */

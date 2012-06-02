@@ -24,11 +24,11 @@ package uk.co.tolcroft.models.threads;
 
 import java.io.File;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
-import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDateDay.DateDay;
 import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 import uk.co.tolcroft.models.sheets.BackupPreferences;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.views.DataControl;
@@ -149,7 +149,7 @@ public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {
                 /* Throw an exception */
-                throw new ModelException(ExceptionClass.DATA, myDiff, "Backup is inconsistent");
+                throw new JDataException(ExceptionClass.DATA, myDiff, "Backup is inconsistent");
             }
 
             /* Catch any exceptions */

@@ -21,7 +21,7 @@
  ******************************************************************************/
 package uk.co.tolcroft.subversion;
 
-import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.JDataException;
 import uk.co.tolcroft.subversion.data.Branch;
 import uk.co.tolcroft.subversion.data.Repository;
 import uk.co.tolcroft.subversion.data.WorkingCopy.WorkingCopySet;
@@ -38,7 +38,7 @@ public class TestSubVersion {
             VersionMgr myVersionMgr = new VersionMgr(myRepository);
             Branch myBranch = myWorkingSet.getActiveBranch("JDateButton");
             myVersionMgr.createNextTag(myBranch, null);
-        } catch (ModelException e) {
+        } catch (JDataException e) {
         }
     }
 }

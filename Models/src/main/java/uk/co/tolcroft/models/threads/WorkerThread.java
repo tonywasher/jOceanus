@@ -26,8 +26,8 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import uk.co.tolcroft.models.ui.StatusBar;
 
 /**
@@ -49,7 +49,7 @@ public abstract class WorkerThread<T> extends SwingWorker<T, StatusData> {
     /**
      * The error for the operation.
      */
-    private ModelException theError = null;
+    private JDataException theError = null;
 
     /**
      * Constructor.
@@ -67,7 +67,7 @@ public abstract class WorkerThread<T> extends SwingWorker<T, StatusData> {
      * Set Error.
      * @param pError the Error for the task
      */
-    protected void setError(final ModelException pError) {
+    protected void setError(final JDataException pError) {
         /* Store the error */
         theError = pError;
     }
@@ -113,15 +113,11 @@ public abstract class WorkerThread<T> extends SwingWorker<T, StatusData> {
             return myResult;
 
             /* Catch any exceptions */
+        } catch (JDataException e) {
+            setError(e);
+            return null;
         } catch (Exception e) {
-            /* If this is an Exception */
-            if (e instanceof ModelException) {
-                setError((ModelException) e);
-
-                /* Else wrap the failure */
-            } else {
-                setError(new ModelException(ExceptionClass.DATA, "Failed " + theTask, e));
-            }
+            setError(new JDataException(ExceptionClass.DATA, "Failed " + theTask, e));
             return null;
         }
     }
@@ -145,7 +141,7 @@ public abstract class WorkerThread<T> extends SwingWorker<T, StatusData> {
      * Publish status.
      * @param pStatus the Status to publish
      */
-    public void publish(final StatusData pStatus) {
+    public void publishIt(final StatusData pStatus) {
         super.publish(pStatus);
     }
 }

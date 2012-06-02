@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,10 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ReportFields;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
-import net.sourceforge.JDataManager.ReportObject.ReportDetail;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JGordianKnot.PasswordHash;
 import net.sourceforge.JGordianKnot.SecureManager;
 import uk.co.tolcroft.models.data.ControlData.ControlDataList;
@@ -38,82 +39,157 @@ import uk.co.tolcroft.models.data.EncryptedItem.EncryptedList;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.views.DataControl;
 
-public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
+/**
+ * DataSet definition and list. A DataSet is a set of DataLists backed by the three security lists.
+ * @author Tony Washer
+ * @param <T> the data type
+ */
+public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
     /**
-     * Report fields
+     * The Hash prime.
      */
-    protected static final ReportFields theFields = new ReportFields(DataSet.class.getSimpleName());
+    protected static final int HASH_PRIME = 19;
 
-    /* Field IDs */
-    public static final ReportField FIELD_GENERATION = theFields.declareLocalField("Generation");
-    public static final ReportField FIELD_SECURITY = theFields.declareLocalField("Security");
-    public static final ReportField FIELD_CONTROLKEYS = theFields.declareLocalField("ControlKeys");
-    public static final ReportField FIELD_DATAKEYS = theFields.declareLocalField("DataKeys");
-    public static final ReportField FIELD_CONTROLDATA = theFields.declareLocalField("ControlData");
+    /**
+     * Report fields.
+     */
+    protected static final JDataFields FIELD_DEFS = new JDataFields(DataSet.class.getSimpleName());
+
+    /**
+     * Generation Field Id.
+     */
+    public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField("Generation");
+
+    /**
+     * Security Field Id.
+     */
+    public static final JDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField("Security");
+
+    /**
+     * ControlKeys Field Id.
+     */
+    public static final JDataField FIELD_CONTROLKEYS = FIELD_DEFS.declareLocalField("ControlKeys");
+
+    /**
+     * DataKeys Field Id.
+     */
+    public static final JDataField FIELD_DATAKEYS = FIELD_DEFS.declareLocalField("DataKeys");
+
+    /**
+     * ControlData Field Id.
+     */
+    public static final JDataField FIELD_CONTROLDATA = FIELD_DEFS.declareLocalField("ControlData");
 
     @Override
-    public ReportFields getReportFields() {
-        return theFields;
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(ReportField pField) {
-        if (pField == FIELD_GENERATION)
+    public Object getFieldValue(final JDataField pField) {
+        if (pField == FIELD_GENERATION) {
             return theGeneration;
-        if (pField == FIELD_SECURITY)
+        }
+        if (pField == FIELD_SECURITY) {
             return theSecurity;
-        if (pField == FIELD_CONTROLKEYS)
+        }
+        if (pField == FIELD_CONTROLKEYS) {
             return theControlKeys;
-        if (pField == FIELD_DATAKEYS)
+        }
+        if (pField == FIELD_DATAKEYS) {
             return theDataKeys;
-        if (pField == FIELD_CONTROLDATA)
+        }
+        if (pField == FIELD_CONTROLDATA) {
             return theDataKeys;
+        }
         return null;
     }
 
     @Override
-    public String getObjectSummary() {
+    public String formatObject() {
         return DataSet.class.getSimpleName();
     }
 
-    private SecureManager theSecurity = null;
+    /**
+     * Security Manager.
+     */
+    private final SecureManager theSecurity;
+
+    /**
+     * ControlKeys.
+     */
     private ControlKeyList theControlKeys = null;
+
+    /**
+     * DataKeys.
+     */
     private DataKeyList theDataKeys = null;
+
+    /**
+     * ControlData.
+     */
     private ControlDataList theControlData = null;
+
+    /**
+     * Number of encrypted lists.
+     */
     private int theNumEncrypted = 0;
+
+    /**
+     * Generation of dataSet.
+     */
     private int theGeneration = 0;
 
     /**
-     * The DataList Array
+     * The DataList Array.
      */
-    private List<DataList<?, ?>> theList = null;
+    private final List<DataList<?, ?>> theList;
 
-    /* Access methods */
+    /**
+     * Get Security Manager.
+     * @return the security manager
+     */
     public SecureManager getSecurity() {
         return theSecurity;
     }
 
+    /**
+     * Get ControlKeys.
+     * @return the controlKeys
+     */
     public ControlKeyList getControlKeys() {
         return theControlKeys;
     }
 
+    /**
+     * Get DataKeys.
+     * @return the dataKeys
+     */
     public DataKeyList getDataKeys() {
         return theDataKeys;
     }
 
+    /**
+     * Get ControlData.
+     * @return the controlData
+     */
     public ControlDataList getControlData() {
         return theControlData;
     }
 
+    /**
+     * Get Generation.
+     * @return the generation
+     */
     public int getGeneration() {
         return theGeneration;
     }
 
     /**
-     * Constructor for new empty DataSet
+     * Constructor for new empty DataSet.
      * @param pSecurity the secure manager
      */
-    protected DataSet(SecureManager pSecurity) {
+    protected DataSet(final SecureManager pSecurity) {
         /* Store the security manager and class */
         theSecurity = pSecurity;
 
@@ -127,10 +203,10 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
     }
 
     /**
-     * Constructor for a cloned DataSet
+     * Constructor for a cloned DataSet.
      * @param pSource the source DataSet
      */
-    protected DataSet(DataSet<T> pSource) {
+    protected DataSet(final DataSet<T> pSource) {
         /* Store the security manager and class */
         theSecurity = pSource.getSecurity();
 
@@ -148,7 +224,7 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
      * Construct a Deep Copy for a DataSet.
      * @param pSource the source DataSet
      */
-    protected void getDeepCopy(DataSet<T> pSource) {
+    protected void getDeepCopy(final DataSet<T> pSource) {
         /* Deep Copy the Security items */
         theControlKeys = pSource.getControlKeys().getDeepCopy(this);
         theDataKeys = pSource.getDataKeys().getDeepCopy(this);
@@ -159,7 +235,7 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
      * Construct an update extract for a DataSet.
      * @param pSource the source of the extract
      */
-    protected void getUpdateSet(T pSource) {
+    protected void getUpdateSet(final T pSource) {
         /* Build the static differences */
         theControlKeys = pSource.getControlKeys().getUpdateList();
         theDataKeys = pSource.getDataKeys().getUpdateList();
@@ -173,9 +249,9 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
      * Items that are in both list but differ will be viewed as changed
      * @param pOld The old list to extract from
      * @return the difference set
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public abstract T getDifferenceSet(T pOld) throws ModelException;
+    public abstract T getDifferenceSet(final T pOld) throws JDataException;
 
     /**
      * Construct a difference extract between two DataSets. The difference extract will only contain items
@@ -184,10 +260,10 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
      * Items that are in both list but differ will be viewed as changed
      * @param pNew The new list to compare
      * @param pOld The old list to compare
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    protected void getDifferenceSet(T pNew,
-                                    T pOld) throws ModelException {
+    protected void getDifferenceSet(final T pNew,
+                                    final T pOld) throws JDataException {
         /* Build the security differences */
         theControlKeys = pNew.getControlKeys().getDifferences(pOld.getControlKeys());
         theDataKeys = pNew.getDataKeys().getDifferences(pOld.getDataKeys());
@@ -197,9 +273,9 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
     /**
      * ReBase this data set against an earlier version.
      * @param pOld The old data to reBase against
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public void reBase(T pOld) throws ModelException {
+    public void reBase(final T pOld) throws JDataException {
         /* ReBase the security items */
         theControlKeys.reBase(pOld.getControlKeys());
         theDataKeys.reBase(pOld.getDataKeys());
@@ -207,26 +283,27 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
     }
 
     /**
-     * Add DataList to list of lists
+     * Add DataList to list of lists.
      * @param pList the list to add
      */
-    protected void addList(DataList<?, ?> pList) {
+    protected void addList(final DataList<?, ?> pList) {
         /* Add the DataList to the list */
         theList.add(pList);
 
         /* Note if the list is an encrypted list */
-        if (pList instanceof EncryptedList)
+        if (pList instanceof EncryptedList) {
             theNumEncrypted++;
+        }
     }
 
     /**
-     * Obtain DataList for an item type
+     * Obtain DataList for an item type.
      * @param <L> the List type
      * @param <D> the item type
      * @param pItemType the type of items
      * @return the list of items
      */
-    public <L extends DataList<L, D>, D extends DataItem<D>> L getDataList(Class<L> pItemType) {
+    public <L extends DataList<L, D>, D extends DataItem<D>> L getDataList(final Class<L> pItemType) {
         /* Access the class */
         DataList<?, ?> myList = getDataListForClass(pItemType);
 
@@ -235,11 +312,11 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
     }
 
     /**
-     * Obtain DataList for an item type
+     * Obtain DataList for an item type.
      * @param pItemType the type of items
      * @return the list of items
      */
-    protected DataList<?, ?> getDataListForClass(Class<?> pItemType) {
+    protected DataList<?, ?> getDataListForClass(final Class<?> pItemType) {
         /* Create the iterator */
         ListIterator<DataList<?, ?>> myIterator = theList.listIterator();
 
@@ -247,8 +324,9 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
         while (myIterator.hasNext()) {
             /* Return list if it is requested one */
             DataList<?, ?> myList = myIterator.next();
-            if (pItemType == myList.getClass())
+            if (pItemType == myList.getClass()) {
                 return myList;
+            }
         }
 
         /* Return not found */
@@ -256,10 +334,10 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
     }
 
     /**
-     * Set Generation
+     * Set Generation.
      * @param pGeneration the generation
      */
-    public void setGeneration(int pGeneration) {
+    public void setGeneration(final int pGeneration) {
         /* Record the generation */
         theGeneration = pGeneration;
 
@@ -276,34 +354,40 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
     }
 
     /**
-     * Analyse the DataSet
+     * Analyse the DataSet.
      * @param pControl The DataControl
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public abstract void analyseData(DataControl<?> pControl) throws ModelException;
+    public abstract void analyseData(final DataControl<?> pControl) throws JDataException;
 
     @Override
-    public boolean equals(Object pThat) {
+    public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-        if (this == pThat)
+        if (this == pThat) {
             return true;
-        if (pThat == null)
+        }
+        if (pThat == null) {
             return false;
+        }
 
         /* Make sure that the object is a DataSet */
-        if (pThat.getClass() != this.getClass())
+        if (pThat.getClass() != this.getClass()) {
             return false;
+        }
 
         /* Access the object as a DataSet */
         DataSet<?> myThat = (DataSet<?>) pThat;
 
         /* Compare security data */
-        if (!theControlKeys.equals(myThat.getControlKeys()))
+        if (!theControlKeys.equals(myThat.getControlKeys())) {
             return false;
-        if (!theDataKeys.equals(myThat.getDataKeys()))
+        }
+        if (!theDataKeys.equals(myThat.getDataKeys())) {
             return false;
-        if (!theControlData.equals(myThat.getControlData()))
+        }
+        if (!theControlData.equals(myThat.getControlData())) {
             return false;
+        }
 
         /* Loop through the List values */
         for (DataList<?, ?> myThisList : theList) {
@@ -311,12 +395,14 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
             DataList<?, ?> myThatList = myThat.getDataListForClass(myThisList.getClass());
 
             /* Handle trivial cases */
-            if (myThisList == myThatList)
+            if (myThisList == myThatList) {
                 continue;
+            }
 
             /* Compare list */
-            if (!myThisList.equals(myThatList))
+            if (!myThisList.equals(myThatList)) {
                 return false;
+            }
         }
 
         /* We are identical */
@@ -327,15 +413,15 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
     public int hashCode() {
         /* Build initial hashCode */
         int myHashCode = theControlKeys.hashCode();
-        myHashCode *= 17;
+        myHashCode *= HASH_PRIME;
         myHashCode += theDataKeys.hashCode();
-        myHashCode *= 17;
+        myHashCode *= HASH_PRIME;
         myHashCode += theControlData.hashCode();
 
         /* Loop through the List values */
         for (DataList<?, ?> myList : theList) {
             /* Access equivalent list */
-            myHashCode *= 17;
+            myHashCode *= HASH_PRIME;
             myHashCode += myList.hashCode();
         }
 
@@ -344,19 +430,21 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
     }
 
     /**
-     * Determine whether a DataSet has entries
+     * Determine whether a DataSet has entries.
      * @return <code>true</code> if the DataSet has entries
      */
     public boolean isEmpty() {
         /* Determine whether the security data is empty */
-        if (!theControlKeys.isEmpty() || !theDataKeys.isEmpty() || !theControlData.isEmpty())
+        if (!theControlKeys.isEmpty() || !theDataKeys.isEmpty() || !theControlData.isEmpty()) {
             return false;
+        }
 
         /* Loop through the List values */
         for (DataList<?, ?> myList : theList) {
             /* Determine whether the list is empty */
-            if (!myList.isEmpty())
+            if (!myList.isEmpty()) {
                 return false;
+            }
         }
 
         /* Return the indication */
@@ -364,23 +452,21 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
     }
 
     /**
-     * Determine whether the Data-set has updates
+     * Determine whether the Data-set has updates.
      * @return <code>true</code> if the Data-set has updates, <code>false</code> if not
      */
     public boolean hasUpdates() {
         /* Determine whether we have updates */
-        if (theControlKeys.hasUpdates())
+        if ((theControlKeys.hasUpdates()) || (theDataKeys.hasUpdates()) || (theControlData.hasUpdates())) {
             return true;
-        if (theDataKeys.hasUpdates())
-            return true;
-        if (theControlData.hasUpdates())
-            return true;
+        }
 
         /* Loop through the List values */
         for (DataList<?, ?> myList : theList) {
             /* Determine whether the list has updates */
-            if (myList.hasUpdates())
+            if (myList.hasUpdates()) {
                 return true;
+            }
         }
 
         /* We have no updates */
@@ -388,7 +474,7 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
     }
 
     /**
-     * Get the control record
+     * Get the control record.
      * @return the control record
      */
     public ControlData getControl() {
@@ -397,7 +483,7 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
     }
 
     /**
-     * Get the active control key
+     * Get the active control key.
      * @return the control key
      */
     public ControlKey getControlKey() {
@@ -406,25 +492,27 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
         ControlKey myKey = null;
 
         /* Access control key from control data */
-        if (myControl != null)
+        if (myControl != null) {
             myKey = myControl.getControlKey();
+        }
 
         /* Return the key */
         return myKey;
     }
 
     /**
-     * Initialise Security from database (if present)
+     * Initialise Security from database (if present).
      * @param pThread the thread status
      * @param pBase the database data
      * @return Continue <code>true/false</code>
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public boolean initialiseSecurity(ThreadStatus<T> pThread,
-                                      T pBase) throws ModelException {
+    public boolean initialiseSecurity(final ThreadStatus<T> pThread,
+                                      final T pBase) throws JDataException {
         /* Set the number of stages */
-        if (!pThread.setNumStages(1 + theNumEncrypted))
+        if (!pThread.setNumStages(1 + theNumEncrypted)) {
             return false;
+        }
 
         /* Initialise Security */
         theControlKeys.initialiseSecurity(pBase);
@@ -441,8 +529,9 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
             if (myList instanceof EncryptedList) {
                 /* Adopt the security */
                 EncryptedList<?, ?> myEncrypted = (EncryptedList<?, ?>) myList;
-                if (!myEncrypted.adoptSecurity(pThread, myControl, (EncryptedList<?, ?>) myBase))
+                if (!myEncrypted.adoptSecurity(pThread, myControl, (EncryptedList<?, ?>) myBase)) {
                     return false;
+                }
             }
         }
 
@@ -451,12 +540,12 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
     }
 
     /**
-     * Renew Security
+     * Renew Security.
      * @param pThread the thread status
      * @return Continue <code>true/false</code>
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public boolean renewSecurity(ThreadStatus<T> pThread) throws ModelException {
+    public boolean renewSecurity(final ThreadStatus<T> pThread) throws JDataException {
         /* Access ControlData */
         ControlData myControl = getControl();
 
@@ -471,18 +560,19 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
     }
 
     /**
-     * Update Security
+     * Update Security.
      * @param pThread the thread status
      * @return Continue <code>true/false</code>
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public boolean updateSecurity(ThreadStatus<T> pThread) throws ModelException {
+    public boolean updateSecurity(final ThreadStatus<T> pThread) throws JDataException {
         /* Access the control key */
         ControlKey myControl = getControlKey();
 
         /* Set the number of stages */
-        if (!pThread.setNumStages(1 + theNumEncrypted))
+        if (!pThread.setNumStages(1 + theNumEncrypted)) {
             return false;
+        }
 
         /* Loop through the List values */
         for (DataList<?, ?> myList : theList) {
@@ -490,8 +580,9 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
             if (myList instanceof EncryptedList) {
                 /* Update the security */
                 EncryptedList<?, ?> myEncrypted = (EncryptedList<?, ?>) myList;
-                if (!myEncrypted.updateSecurity(pThread, myControl))
+                if (!myEncrypted.updateSecurity(pThread, myControl)) {
                     return false;
+                }
             }
         }
 
@@ -503,11 +594,11 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
     }
 
     /**
-     * Get the Password Hash
+     * Get the Password Hash.
      * @return the password hash
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public PasswordHash getPasswordHash() throws ModelException {
+    public PasswordHash getPasswordHash() throws JDataException {
         /* Access the active control key */
         ControlKey myKey = getControlKey();
 
@@ -516,13 +607,13 @@ public abstract class DataSet<T extends DataSet<T>> implements ReportDetail {
     }
 
     /**
-     * Update data with a new password
+     * Update data with a new password.
      * @param pThread the thread status
      * @param pSource the source of the data
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public void updatePasswordHash(ThreadStatus<T> pThread,
-                                   String pSource) throws ModelException {
+    public void updatePasswordHash(final ThreadStatus<T> pThread,
+                                   final String pSource) throws JDataException {
         /* Obtain a new password hash */
         PasswordHash myHash = theSecurity.resolvePasswordHash(null, pSource);
 

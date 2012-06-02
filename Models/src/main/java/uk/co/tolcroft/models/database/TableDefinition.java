@@ -32,9 +32,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Money;
 import net.sourceforge.JDecimal.Rate;
@@ -83,17 +83,12 @@ public class TableDefinition {
     /**
      * The array list for the columns.
      */
-    private final Map<ReportField, ColumnDefinition> theMap;
+    private final Map<JDataField, ColumnDefinition> theMap;
 
     /**
      * The prepared statement for the insert/update.
      */
     private PreparedStatement theStatement = null;
-
-    /**
-     * The result set for the load.
-     */
-    private ResultSet theResults = null;
 
     /**
      * Obtain the table name.
@@ -107,7 +102,7 @@ public class TableDefinition {
      * Obtain the column map.
      * @return the map
      */
-    protected Map<ReportField, ColumnDefinition> getMap() {
+    protected Map<JDataField, ColumnDefinition> getMap() {
         return theMap;
     }
 
@@ -157,7 +152,7 @@ public class TableDefinition {
         theSortList = new ArrayList<ColumnDefinition>();
 
         /* Create the initial column map */
-        theMap = new HashMap<ReportField, ColumnDefinition>();
+        theMap = new HashMap<JDataField, ColumnDefinition>();
 
         /* Add an Id column */
         theList.add(new IdColumn(this));
@@ -169,7 +164,7 @@ public class TableDefinition {
      * @param pRef the reference table
      * @return the reference column
      */
-    public ReferenceColumn addReferenceColumn(final ReportField pId,
+    public ReferenceColumn addReferenceColumn(final JDataField pId,
                                               final String pRef) {
         /* Create the new reference column */
         ReferenceColumn myColumn = new ReferenceColumn(this, pId, pRef);
@@ -185,7 +180,7 @@ public class TableDefinition {
      * @param pRef the reference table
      * @return the reference column
      */
-    public ReferenceColumn addNullReferenceColumn(final ReportField pId,
+    public ReferenceColumn addNullReferenceColumn(final JDataField pId,
                                                   final String pRef) {
         ReferenceColumn myColumn = addReferenceColumn(pId, pRef);
         myColumn.setNullable();
@@ -197,7 +192,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the integer column
      */
-    public IntegerColumn addIntegerColumn(final ReportField pId) {
+    public IntegerColumn addIntegerColumn(final JDataField pId) {
         /* Create the new integer column */
         IntegerColumn myColumn = new IntegerColumn(this, pId);
 
@@ -211,7 +206,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the integer column
      */
-    public IntegerColumn addNullIntegerColumn(final ReportField pId) {
+    public IntegerColumn addNullIntegerColumn(final JDataField pId) {
         IntegerColumn myColumn = addIntegerColumn(pId);
         myColumn.setNullable();
         return myColumn;
@@ -222,7 +217,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the long column
      */
-    public LongColumn addLongColumn(final ReportField pId) {
+    public LongColumn addLongColumn(final JDataField pId) {
         /* Create the new long column */
         LongColumn myColumn = new LongColumn(this, pId);
 
@@ -236,7 +231,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the long column
      */
-    public LongColumn addNullLongColumn(final ReportField pId) {
+    public LongColumn addNullLongColumn(final JDataField pId) {
         LongColumn myColumn = addLongColumn(pId);
         myColumn.setNullable();
         return myColumn;
@@ -247,7 +242,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the boolean column
      */
-    public BooleanColumn addBooleanColumn(final ReportField pId) {
+    public BooleanColumn addBooleanColumn(final JDataField pId) {
         /* Create the new boolean column */
         BooleanColumn myColumn = new BooleanColumn(this, pId);
 
@@ -261,7 +256,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the boolean column
      */
-    public BooleanColumn addNullBooleanColumn(final ReportField pId) {
+    public BooleanColumn addNullBooleanColumn(final JDataField pId) {
         BooleanColumn myColumn = addBooleanColumn(pId);
         myColumn.setNullable();
         return myColumn;
@@ -272,7 +267,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the date column
      */
-    public DateColumn addDateColumn(final ReportField pId) {
+    public DateColumn addDateColumn(final JDataField pId) {
         /* Create the new date column */
         DateColumn myColumn = new DateColumn(this, pId);
 
@@ -286,7 +281,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the date column
      */
-    public DateColumn addNullDateColumn(final ReportField pId) {
+    public DateColumn addNullDateColumn(final JDataField pId) {
         DateColumn myColumn = addDateColumn(pId);
         myColumn.setNullable();
         return myColumn;
@@ -297,7 +292,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the money column
      */
-    public MoneyColumn addMoneyColumn(final ReportField pId) {
+    public MoneyColumn addMoneyColumn(final JDataField pId) {
         /* Create the new money column */
         MoneyColumn myColumn = new MoneyColumn(this, pId);
 
@@ -311,7 +306,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the money column
      */
-    public MoneyColumn addNullMoneyColumn(final ReportField pId) {
+    public MoneyColumn addNullMoneyColumn(final JDataField pId) {
         MoneyColumn myColumn = addMoneyColumn(pId);
         myColumn.setNullable();
         return myColumn;
@@ -322,7 +317,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the rate column
      */
-    public RateColumn addRateColumn(final ReportField pId) {
+    public RateColumn addRateColumn(final JDataField pId) {
         /* Create the new rate column */
         RateColumn myColumn = new RateColumn(this, pId);
 
@@ -336,7 +331,7 @@ public class TableDefinition {
      * @param pId the column id
      * @return the rate column
      */
-    public RateColumn addNullRateColumn(final ReportField pId) {
+    public RateColumn addNullRateColumn(final JDataField pId) {
         RateColumn myColumn = addRateColumn(pId);
         myColumn.setNullable();
         return myColumn;
@@ -348,7 +343,7 @@ public class TableDefinition {
      * @param pLength the underlying (character) length
      * @return the binary column
      */
-    public BinaryColumn addBinaryColumn(final ReportField pId,
+    public BinaryColumn addBinaryColumn(final JDataField pId,
                                         final int pLength) {
         /* Create the new binary column */
         BinaryColumn myColumn = new BinaryColumn(this, pId, pLength);
@@ -364,7 +359,7 @@ public class TableDefinition {
      * @param pLength the underlying (character) length
      * @return the binary column
      */
-    public BinaryColumn addNullBinaryColumn(final ReportField pId,
+    public BinaryColumn addNullBinaryColumn(final JDataField pId,
                                             final int pLength) {
         BinaryColumn myColumn = addBinaryColumn(pId, pLength);
         myColumn.setNullable();
@@ -377,7 +372,7 @@ public class TableDefinition {
      * @param pLength the underlying (character) length
      * @return the binary column
      */
-    public BinaryColumn addEncryptedColumn(final ReportField pId,
+    public BinaryColumn addEncryptedColumn(final JDataField pId,
                                            final int pLength) {
         /* Create the new binary column */
         BinaryColumn myColumn = new BinaryColumn(this, pId, SymmetricKey.IVSIZE + CipherSet.KEYIDLEN
@@ -394,7 +389,7 @@ public class TableDefinition {
      * @param pLength the underlying (character) length
      * @return the binary column
      */
-    public BinaryColumn addNullEncryptedColumn(final ReportField pId,
+    public BinaryColumn addNullEncryptedColumn(final JDataField pId,
                                                final int pLength) {
         BinaryColumn myColumn = addEncryptedColumn(pId, pLength);
         myColumn.setNullable();
@@ -407,7 +402,7 @@ public class TableDefinition {
      * @param pLength the character length
      * @return the binary column
      */
-    public StringColumn addStringColumn(final ReportField pId,
+    public StringColumn addStringColumn(final JDataField pId,
                                         final int pLength) {
         /* Create the new string column */
         StringColumn myColumn = new StringColumn(this, pId, pLength);
@@ -423,7 +418,7 @@ public class TableDefinition {
      * @param pLength the character length
      * @return the binary column
      */
-    public StringColumn addNullStringColumn(final ReportField pId,
+    public StringColumn addNullStringColumn(final JDataField pId,
                                             final int pLength) {
         StringColumn myColumn = addStringColumn(pId, pLength);
         myColumn.setNullable();
@@ -459,7 +454,7 @@ public class TableDefinition {
         int myIndex = 1;
 
         /* Store the result set and clear values */
-        theResults = pResults;
+        ResultSet myResults = pResults;
         clearValues();
 
         /* Create the iterator */
@@ -468,7 +463,7 @@ public class TableDefinition {
         /* Loop through the columns */
         while (myIterator.hasNext()) {
             myDef = myIterator.next();
-            myDef.loadValue(theResults, myIndex++);
+            myDef.loadValue(myResults, myIndex++);
         }
     }
 
@@ -476,9 +471,9 @@ public class TableDefinition {
      * Insert values.
      * @param pStmt the statement
      * @throws SQLException on error
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    protected void insertValues(final PreparedStatement pStmt) throws SQLException, ModelException {
+    protected void insertValues(final PreparedStatement pStmt) throws SQLException, JDataException {
         Iterator<ColumnDefinition> myIterator;
         ColumnDefinition myDef;
         int myIndex = 1;
@@ -495,7 +490,7 @@ public class TableDefinition {
 
             /* Reject if the value is not set */
             if (!myDef.isValueSet()) {
-                throw new ModelException(ExceptionClass.LOGIC, "Column " + myDef.getColumnName()
+                throw new JDataException(ExceptionClass.LOGIC, "Column " + myDef.getColumnName()
                         + " in table " + theTableName + " has no value for insert");
             }
 
@@ -507,9 +502,9 @@ public class TableDefinition {
      * Update values.
      * @param pStmt the statement
      * @throws SQLException on error
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    protected void updateValues(final PreparedStatement pStmt) throws SQLException, ModelException {
+    protected void updateValues(final PreparedStatement pStmt) throws SQLException, JDataException {
         Iterator<ColumnDefinition> myIterator;
         ColumnDefinition myDef;
         ColumnDefinition myId = null;
@@ -555,15 +550,15 @@ public class TableDefinition {
      * Get Integer value for column.
      * @param pId the column id
      * @return the integer value
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public Integer getIntegerValue(final ReportField pId) throws ModelException {
+    public Integer getIntegerValue(final JDataField pId) throws JDataException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not an integer column */
         if (!(myCol instanceof IntegerColumn)) {
-            throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
+            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Integer type");
         }
 
@@ -576,15 +571,15 @@ public class TableDefinition {
      * Get Long value for column.
      * @param pId the column id
      * @return the long value
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public Long getLongValue(final ReportField pId) throws ModelException {
+    public Long getLongValue(final JDataField pId) throws JDataException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a long column */
         if (!(myCol instanceof LongColumn)) {
-            throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
+            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Long type");
         }
 
@@ -597,15 +592,15 @@ public class TableDefinition {
      * Get Date value for column.
      * @param pId the column id
      * @return the Date value
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public Date getDateValue(final ReportField pId) throws ModelException {
+    public Date getDateValue(final JDataField pId) throws JDataException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a date column */
         if (!(myCol instanceof DateColumn)) {
-            throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
+            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Date type");
         }
 
@@ -618,15 +613,15 @@ public class TableDefinition {
      * Get Boolean value for column.
      * @param pId the column id
      * @return the boolean value
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public Boolean getBooleanValue(final ReportField pId) throws ModelException {
+    public Boolean getBooleanValue(final JDataField pId) throws JDataException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a boolean column */
         if (!(myCol instanceof BooleanColumn)) {
-            throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
+            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Boolean type");
         }
 
@@ -639,15 +634,15 @@ public class TableDefinition {
      * Get String value for column.
      * @param pId the column id
      * @return the String value
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public String getStringValue(final ReportField pId) throws ModelException {
+    public String getStringValue(final JDataField pId) throws JDataException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof StringColumn)) {
-            throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
+            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not String type");
         }
 
@@ -660,15 +655,15 @@ public class TableDefinition {
      * Get Binary value for column.
      * @param pId the column id
      * @return the binary value
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public byte[] getBinaryValue(final ReportField pId) throws ModelException {
+    public byte[] getBinaryValue(final JDataField pId) throws JDataException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof BinaryColumn)) {
-            throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
+            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Binary type");
         }
 
@@ -681,16 +676,16 @@ public class TableDefinition {
      * Set Integer value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public void setIntegerValue(final ReportField pId,
-                                final Integer pValue) throws ModelException {
+    public void setIntegerValue(final JDataField pId,
+                                final Integer pValue) throws JDataException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not an integer column */
         if (!(myCol instanceof IntegerColumn)) {
-            throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
+            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Integer type");
         }
 
@@ -703,16 +698,16 @@ public class TableDefinition {
      * Set Long value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public void setLongValue(final ReportField pId,
-                             final Long pValue) throws ModelException {
+    public void setLongValue(final JDataField pId,
+                             final Long pValue) throws JDataException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a long column */
         if (!(myCol instanceof LongColumn)) {
-            throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
+            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Long type");
         }
 
@@ -725,16 +720,16 @@ public class TableDefinition {
      * Set Boolean value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public void setBooleanValue(final ReportField pId,
-                                final Boolean pValue) throws ModelException {
+    public void setBooleanValue(final JDataField pId,
+                                final Boolean pValue) throws JDataException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a boolean column */
         if (!(myCol instanceof BooleanColumn)) {
-            throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
+            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Boolean type");
         }
 
@@ -747,16 +742,16 @@ public class TableDefinition {
      * Set Date value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public void setDateValue(final ReportField pId,
-                             final DateDay pValue) throws ModelException {
+    public void setDateValue(final JDataField pId,
+                             final DateDay pValue) throws JDataException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a Date column */
         if (!(myCol instanceof DateColumn)) {
-            throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
+            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Date type");
         }
 
@@ -769,16 +764,16 @@ public class TableDefinition {
      * Set String value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public void setStringValue(final ReportField pId,
-                               final String pValue) throws ModelException {
+    public void setStringValue(final JDataField pId,
+                               final String pValue) throws JDataException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof StringColumn)) {
-            throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
+            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not String type");
         }
 
@@ -791,16 +786,16 @@ public class TableDefinition {
      * Set Binary value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public void setBinaryValue(final ReportField pId,
-                               final byte[] pValue) throws ModelException {
+    public void setBinaryValue(final JDataField pId,
+                               final byte[] pValue) throws JDataException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a binary column */
         if (!(myCol instanceof BinaryColumn)) {
-            throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
+            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Binary type");
         }
 
@@ -813,16 +808,16 @@ public class TableDefinition {
      * Set Money value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public void setMoneyValue(final ReportField pId,
-                              final Money pValue) throws ModelException {
+    public void setMoneyValue(final JDataField pId,
+                              final Money pValue) throws JDataException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a money column */
         if (!(myCol instanceof MoneyColumn)) {
-            throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
+            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Money type");
         }
 
@@ -835,16 +830,16 @@ public class TableDefinition {
      * Set Rate value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public void setRateValue(final ReportField pId,
-                             final Rate pValue) throws ModelException {
+    public void setRateValue(final JDataField pId,
+                             final Rate pValue) throws JDataException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a rate column */
         if (!(myCol instanceof RateColumn)) {
-            throw new ModelException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
+            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
                     + theTableName + " is not Rate type");
         }
 
@@ -857,15 +852,15 @@ public class TableDefinition {
      * Locate column for id.
      * @param pId the id of the column
      * @return the column
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    private ColumnDefinition getColumnForId(final ReportField pId) throws ModelException {
+    private ColumnDefinition getColumnForId(final JDataField pId) throws JDataException {
         /* Access the definition */
         ColumnDefinition myDef = theMap.get(pId);
 
         /* Check that the id is in range and present */
         if (myDef == null) {
-            throw new ModelException(ExceptionClass.LOGIC, "Invalid Column Id: " + pId + " for "
+            throw new JDataException(ExceptionClass.LOGIC, "Invalid Column Id: " + pId + " for "
                     + theTableName);
         }
 
@@ -1169,9 +1164,9 @@ public class TableDefinition {
     /**
      * Build the update string for a list of columns.
      * @return the SQL string
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    protected String getUpdateString() throws ModelException {
+    protected String getUpdateString() throws JDataException {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         Iterator<ColumnDefinition> myIterator;
         ColumnDefinition myDef;
@@ -1194,7 +1189,7 @@ public class TableDefinition {
             if (myDef instanceof IdColumn) {
                 /* Reject if the value is not set */
                 if (!myDef.isValueSet()) {
-                    throw new ModelException(ExceptionClass.LOGIC, "Column " + myDef.getColumnName()
+                    throw new JDataException(ExceptionClass.LOGIC, "Column " + myDef.getColumnName()
                             + " in table " + theTableName + " has no value for update");
                 }
 

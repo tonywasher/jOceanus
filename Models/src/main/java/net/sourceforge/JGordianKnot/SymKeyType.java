@@ -24,8 +24,8 @@ package net.sourceforge.JGordianKnot;
 
 import java.security.SecureRandom;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 
 /**
  * Symmetric Key Types. Available algorithms.
@@ -108,15 +108,15 @@ public enum SymKeyType {
      * get value from id.
      * @param id the id value
      * @return the corresponding enum object
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public static SymKeyType fromId(final int id) throws ModelException {
+    public static SymKeyType fromId(final int id) throws JDataException {
         for (SymKeyType myType : values()) {
             if (myType.getId() == id) {
                 return myType;
             }
         }
-        throw new ModelException(ExceptionClass.DATA, "Invalid SymKeyType: " + id);
+        throw new JDataException(ExceptionClass.DATA, "Invalid SymKeyType: " + id);
     }
 
     /**
@@ -124,10 +124,10 @@ public enum SymKeyType {
      * @param pNumTypes the number of types
      * @param pRandom the random generator
      * @return the random set
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public static SymKeyType[] getRandomTypes(final int pNumTypes,
-                                              final SecureRandom pRandom) throws ModelException {
+                                              final SecureRandom pRandom) throws JDataException {
         /* Access the values */
         SymKeyType[] myValues = values();
         int iNumValues = myValues.length;
@@ -135,7 +135,7 @@ public enum SymKeyType {
 
         /* Reject call if invalid number of types */
         if ((pNumTypes < 1) || (pNumTypes > iNumValues)) {
-            throw new ModelException(ExceptionClass.LOGIC, "Invalid number of types: " + pNumTypes);
+            throw new JDataException(ExceptionClass.LOGIC, "Invalid number of types: " + pNumTypes);
         }
 
         /* Create the result set */

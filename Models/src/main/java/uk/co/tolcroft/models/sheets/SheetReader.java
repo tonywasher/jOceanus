@@ -25,13 +25,14 @@ package uk.co.tolcroft.models.sheets;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JGordianKnot.PasswordHash;
 import net.sourceforge.JGordianKnot.SecureManager;
 import net.sourceforge.JGordianKnot.ZipFile.ZipReadFile;
@@ -140,9 +141,9 @@ public abstract class SheetReader<T extends DataSet<T>> {
      * Load a Backup Workbook.
      * @param pFile the backup file to write to
      * @return the loaded DataSet
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public T loadBackup(final File pFile) throws ModelException {
+    public T loadBackup(final File pFile) throws JDataException {
         InputStream myStream = null;
 
         /* Protect the workbook retrieval */
@@ -183,7 +184,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
 
             /* Check for cancellation */
             if (!bContinue) {
-                throw new ModelException(ExceptionClass.EXCEL, "Operation Cancelled");
+                throw new JDataException(ExceptionClass.EXCEL, "Operation Cancelled");
             }
         } catch (Exception e) {
             /* Protect while cleaning up */
@@ -199,7 +200,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
             }
 
             /* Report the error */
-            throw new ModelException(ExceptionClass.EXCEL, "Failed to load Backup Workbook: "
+            throw new JDataException(ExceptionClass.EXCEL, "Failed to load Backup Workbook: "
                     + pFile.getName(), e);
         }
 
@@ -211,9 +212,9 @@ public abstract class SheetReader<T extends DataSet<T>> {
      * Load an Extract Workbook.
      * @param pFile the Extract file to load from
      * @return the loaded DataSet
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public T loadExtract(final File pFile) throws ModelException {
+    public T loadExtract(final File pFile) throws JDataException {
         InputStream myStream = null;
 
         /* Protect the workbook retrieval */
@@ -239,7 +240,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
 
             /* Check for cancellation */
             if (!bContinue) {
-                throw new ModelException(ExceptionClass.EXCEL, "Operation Cancelled");
+                throw new JDataException(ExceptionClass.EXCEL, "Operation Cancelled");
             }
         } catch (Exception e) {
             /* Protect while cleaning up */
@@ -255,7 +256,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
             }
 
             /* Report the error */
-            throw new ModelException(ExceptionClass.EXCEL, "Failed to load Edit-able Workbook: "
+            throw new JDataException(ExceptionClass.EXCEL, "Failed to load Edit-able Workbook: "
                     + pFile.getName(), e);
         }
 
@@ -278,9 +279,10 @@ public abstract class SheetReader<T extends DataSet<T>> {
      * Create the list of sheets to load.
      * @param pStream the input stream
      * @return continue true/false
-     * @throws Exception on error
+     * @throws JDataException on error
+     * @throws IOException on read error
      */
-    private boolean initialiseWorkBook(final InputStream pStream) throws Exception {
+    private boolean initialiseWorkBook(final InputStream pStream) throws JDataException, IOException {
         /* Create the new DataSet */
         theData = newDataSet();
 
@@ -323,9 +325,9 @@ public abstract class SheetReader<T extends DataSet<T>> {
     /**
      * Load the WorkBook.
      * @return continue true/false
-     * @throws Exception on error
+     * @throws JDataException on error
      */
-    private boolean loadWorkBook() throws Exception {
+    private boolean loadWorkBook() throws JDataException {
         SheetDataItem<?> mySheet;
 
         /* Access the iterator for the list */

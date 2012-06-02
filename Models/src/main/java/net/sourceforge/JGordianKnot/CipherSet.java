@@ -33,11 +33,11 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import net.sourceforge.JDataManager.DataConverter;
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
-import net.sourceforge.JDataManager.ReportFields;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
-import net.sourceforge.JDataManager.ReportObject.ReportDetail;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JGordianKnot.DataHayStack.EncryptModeNeedle;
 import net.sourceforge.JGordianKnot.DataHayStack.SymKeyNeedle;
 
@@ -45,29 +45,29 @@ import net.sourceforge.JGordianKnot.DataHayStack.SymKeyNeedle;
  * Set of DataCiphers used for encryption.
  * @author Tony Washer
  */
-public class CipherSet implements ReportDetail {
+public class CipherSet implements JDataContents {
     /**
      * Report fields.
      */
-    protected static final ReportFields FIELD_DEFS = new ReportFields(CipherSet.class.getSimpleName());
+    protected static final JDataFields FIELD_DEFS = new JDataFields(CipherSet.class.getSimpleName());
 
     /**
      * Field IDs for number of steps.
      */
-    public static final ReportField FIELD_STEPS = FIELD_DEFS.declareLocalField("NumSteps");
+    public static final JDataField FIELD_STEPS = FIELD_DEFS.declareLocalField("NumSteps");
 
     /**
      * Field IDs for data key map.
      */
-    public static final ReportField FIELD_MAP = FIELD_DEFS.declareLocalField("DataKeyMap");
+    public static final JDataField FIELD_MAP = FIELD_DEFS.declareLocalField("DataKeyMap");
 
     @Override
-    public ReportFields getReportFields() {
+    public JDataFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final ReportField pField) {
+    public Object getFieldValue(final JDataField pField) {
         if (pField == FIELD_STEPS) {
             return theNumSteps;
         }
@@ -78,7 +78,7 @@ public class CipherSet implements ReportDetail {
     }
 
     @Override
-    public String getObjectSummary() {
+    public String formatObject() {
         return FIELD_DEFS.getName();
     }
 
@@ -213,9 +213,9 @@ public class CipherSet implements ReportDetail {
     /**
      * Build Secret Ciphers.
      * @param pSecret the Secret bytes
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public void buildCiphers(final byte[] pSecret) throws ModelException {
+    public void buildCiphers(final byte[] pSecret) throws JDataException {
         /* Loop through the Cipher values */
         for (SymKeyType myType : SymKeyType.values()) {
             /* Build the Cipher */
@@ -227,10 +227,10 @@ public class CipherSet implements ReportDetail {
      * Build Secret Cipher for a Key Type.
      * @param pKeyType the Key type
      * @param pSecret the Secret Key
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     private void buildCipher(final SymKeyType pKeyType,
-                             final byte[] pSecret) throws ModelException {
+                             final byte[] pSecret) throws JDataException {
         /* Determine the key length in bytes */
         int myKeyLen = SymmetricKey.getKeyLen(useRestricted) / Byte.SIZE;
 
@@ -263,7 +263,7 @@ public class CipherSet implements ReportDetail {
             /* Catch exceptions */
         } catch (Exception e) {
             /* Throw exception */
-            throw new ModelException(ExceptionClass.CRYPTO, "Failed to Derive KeyDefinition", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to Derive KeyDefinition", e);
         }
 
         /* Build the secret key specification */
@@ -285,11 +285,11 @@ public class CipherSet implements ReportDetail {
      * @param pSection the section count
      * @param pKeyType the Key type
      * @return the section
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     private byte[] buildCipherSection(final Mac pMac,
                                       final byte[] pSection,
-                                      final SymKeyType pKeyType) throws ModelException {
+                                      final SymKeyType pKeyType) throws JDataException {
         /* Declare initial value */
         byte[] myResult = null;
 
@@ -327,9 +327,9 @@ public class CipherSet implements ReportDetail {
      * Encrypt item.
      * @param pBytes the bytes to encrypt
      * @return the encrypted bytes
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public byte[] encryptBytes(final byte[] pBytes) throws ModelException {
+    public byte[] encryptBytes(final byte[] pBytes) throws JDataException {
         /* Allocate a new initialisation vector */
         byte[] myVector = new byte[SymmetricKey.IVSIZE];
         theRandom.nextBytes(myVector);
@@ -377,9 +377,9 @@ public class CipherSet implements ReportDetail {
      * Decrypt item.
      * @param pBytes the bytes to decrypt
      * @return the decrypted bytes
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public byte[] decryptBytes(final byte[] pBytes) throws ModelException {
+    public byte[] decryptBytes(final byte[] pBytes) throws JDataException {
         /* Parse the bytes into the separate parts */
         EncryptModeNeedle myNeedle = new EncryptModeNeedle(pBytes);
         byte[] myVector = myNeedle.getInitVector();
@@ -438,9 +438,9 @@ public class CipherSet implements ReportDetail {
      * Encrypt string.
      * @param pString the string to encrypt
      * @return the encrypted bytes
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public byte[] encryptString(final String pString) throws ModelException {
+    public byte[] encryptString(final String pString) throws JDataException {
         /* Access the bytes */
         byte[] myBytes = DataConverter.stringToByteArray(pString);
 
@@ -452,9 +452,9 @@ public class CipherSet implements ReportDetail {
      * Decrypt string.
      * @param pBytes the string to decrypt
      * @return the decrypted string
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public String decryptString(final byte[] pBytes) throws ModelException {
+    public String decryptString(final byte[] pBytes) throws JDataException {
         /* Decrypt the bytes */
         byte[] myBytes = decryptBytes(pBytes);
 
@@ -466,9 +466,9 @@ public class CipherSet implements ReportDetail {
      * Encrypt character array.
      * @param pChars Characters to encrypt
      * @return Encrypted bytes
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public byte[] encryptChars(final char[] pChars) throws ModelException {
+    public byte[] encryptChars(final char[] pChars) throws JDataException {
         byte[] myBytes;
         byte[] myRawBytes;
 
@@ -486,9 +486,9 @@ public class CipherSet implements ReportDetail {
      * Decrypt bytes into a character array.
      * @param pBytes Bytes to decrypt
      * @return Decrypted character array
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public char[] decryptChars(final byte[] pBytes) throws ModelException {
+    public char[] decryptChars(final byte[] pBytes) throws JDataException {
         byte[] myBytes;
         char[] myChars;
 
@@ -509,9 +509,9 @@ public class CipherSet implements ReportDetail {
      * secure SymmetricKey.
      * @param pKey the key to wrap
      * @return the wrapped symmetric key
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public byte[] secureSymmetricKey(final SymmetricKey pKey) throws ModelException {
+    public byte[] secureSymmetricKey(final SymmetricKey pKey) throws JDataException {
         /* Extract the encoded version of the key */
         byte[] myEncoded = pKey.getSecretKey().getEncoded();
 
@@ -527,9 +527,9 @@ public class CipherSet implements ReportDetail {
      * derive SymmetricKey.
      * @param pKeySpec the wrapped symmetric key
      * @return the symmetric key
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public SymmetricKey deriveSymmetricKey(final byte[] pKeySpec) throws ModelException {
+    public SymmetricKey deriveSymmetricKey(final byte[] pKeySpec) throws JDataException {
         /* Parse the KeySpec */
         SymKeyNeedle myNeedle = new SymKeyNeedle(pKeySpec);
 
@@ -551,9 +551,9 @@ public class CipherSet implements ReportDetail {
      * secure AsymmetricKey (privateKey).
      * @param pKey the key to wrap
      * @return the wrapped Asymmetric key
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public byte[] securePrivateKey(final AsymmetricKey pKey) throws ModelException {
+    public byte[] securePrivateKey(final AsymmetricKey pKey) throws JDataException {
         /* Access the Private Key */
         PrivateKey myPrivate = pKey.getPrivateKey();
 
@@ -570,7 +570,7 @@ public class CipherSet implements ReportDetail {
 
         /* Check whether the SecuredKey is too large */
         if (myEncrypted.length > AsymmetricKey.PRIVATESIZE) {
-            throw new ModelException(ExceptionClass.DATA, "PrivateKey too large: " + myEncrypted.length);
+            throw new JDataException(ExceptionClass.DATA, "PrivateKey too large: " + myEncrypted.length);
         }
 
         /* Return the wrapped key */
@@ -582,10 +582,10 @@ public class CipherSet implements ReportDetail {
      * @param pEncrypted the wrapped private key
      * @param pPublicKey the public key
      * @return the Asymmetric key
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public AsymmetricKey deriveAsymmetricKey(final byte[] pEncrypted,
-                                             final byte[] pPublicKey) throws ModelException {
+                                             final byte[] pPublicKey) throws JDataException {
         /* Decrypt the encoded bytes */
         byte[] myEncoded = (pEncrypted == null) ? null : decryptBytes(pEncrypted);
 

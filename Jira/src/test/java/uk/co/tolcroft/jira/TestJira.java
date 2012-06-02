@@ -21,7 +21,7 @@
  ******************************************************************************/
 package uk.co.tolcroft.jira;
 
-import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.JDataException;
 import uk.co.tolcroft.jira.data.Server;
 
 public class TestJira {
@@ -32,7 +32,7 @@ public class TestJira {
         try {
             Server myServer = new Server();
             myServer.loadIssuesFromFilter("AllIssues");
-        } catch (ModelException e) {
+        } catch (JDataException e) {
         }
     }
 }

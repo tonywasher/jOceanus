@@ -23,12 +23,13 @@
 package net.sourceforge.JGordianKnot.ZipFile;
 
 import java.security.Signature;
+import java.security.SignatureException;
 import java.util.zip.ZipEntry;
 
 import javax.crypto.Mac;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JGordianKnot.AsymmetricKey;
 
 /**
@@ -289,9 +290,9 @@ public class ZipFileEntry {
     /**
      * Standard constructor from properties.
      * @param pProperties the properties
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    protected ZipFileEntry(final ZipFileProperties pProperties) throws ModelException {
+    protected ZipFileEntry(final ZipFileProperties pProperties) throws JDataException {
         /* Access the top-level details */
         theFileName = pProperties.getStringProperty(PROP_NAME);
         theFileSize = pProperties.getLongProperty(PROP_NAME);
@@ -470,10 +471,10 @@ public class ZipFileEntry {
      * Set the secretKeys.
      * @param pEncrypts the encryption streams
      * @param pAsymKey the Asymmetric key to secure the keys
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     protected void setSecretKeys(final EncryptionOutputStream[] pEncrypts,
-                                 final AsymmetricKey pAsymKey) throws ModelException {
+                                 final AsymmetricKey pAsymKey) throws JDataException {
         if (isHeader) {
             throw new IllegalArgumentException("Entry is a header");
         }
@@ -519,9 +520,11 @@ public class ZipFileEntry {
     /**
      * Sign the file.
      * @param pSignature the signature
-     * @throws ModelException on error
+     * @param bVerify verify signature rather than calculate it?
+     * @throws JDataException on error
      */
-    public void signEntry(final Signature pSignature) throws ModelException {
+    public void signEntry(final Signature pSignature,
+                          final boolean bVerify) throws JDataException {
         int iIndex;
 
         /* Protect against exceptions */
@@ -536,18 +539,30 @@ public class ZipFileEntry {
                 pSignature.update(theSecretKeys[iIndex]);
                 pSignature.update(theInitVectors[iIndex]);
             }
+
+            if (bVerify) {
+                /* Check the signature */
+                if (!pSignature.verify(getSignature())) {
+                    /* Throw an exception */
+                    throw new JDataException(ExceptionClass.CRYPTO, "Signature does not match");
+                }
+            } else {
+                /* Set the signature */
+                setSignature(pSignature.sign());
+            }
+
             /* Catch exceptions */
-        } catch (Exception e) {
-            throw new ModelException(ExceptionClass.CRYPTO, "Exception calculating signature", e);
+        } catch (SignatureException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, "Exception calculating signature", e);
         }
     }
 
     /**
      * Sign the file.
      * @param pMac the Mac
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public void signEntry(final Mac pMac) throws ModelException {
+    public void signEntry(final Mac pMac) throws JDataException {
         int iIndex;
 
         /* Protect against exceptions */
@@ -564,7 +579,7 @@ public class ZipFileEntry {
             }
             /* Catch exceptions */
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.CRYPTO, "Exception calculating signature", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Exception calculating signature", e);
         }
     }
 }

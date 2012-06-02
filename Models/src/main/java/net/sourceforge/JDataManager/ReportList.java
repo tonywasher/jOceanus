@@ -21,42 +21,42 @@
  ******************************************************************************/
 package net.sourceforge.JDataManager;
 
-import net.sourceforge.JDataManager.ReportFields.ReportField;
-import net.sourceforge.JDataManager.ReportObject.ReportDetail;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JSortedList.SortedList;
 
-public abstract class ReportList<T extends ReportItem<T>> extends SortedList<T> implements ReportDetail {
+public abstract class ReportList<T extends ReportItem<T>> extends SortedList<T> implements JDataContents {
     /**
      * Local Report fields
      */
-    protected static final ReportFields theLocalFields = new ReportFields(ReportList.class.getSimpleName());
+    protected static final JDataFields theLocalFields = new JDataFields(ReportList.class.getSimpleName());
 
     /**
      * Instance ReportFields
      */
-    private final ReportFields theFields;
+    private final JDataFields theFields;
 
     /**
      * Declare fields
      * @return the fields
      */
-    public abstract ReportFields declareFields();
+    public abstract JDataFields declareFields();
 
     /* Field IDs */
-    public static final ReportField FIELD_SIZE = theLocalFields.declareLocalField("ListSize");
+    public static final JDataField FIELD_SIZE = theLocalFields.declareLocalField("ListSize");
 
     @Override
-    public ReportFields getReportFields() {
+    public JDataFields getDataFields() {
         return theFields;
     }
 
     @Override
-    public String getObjectSummary() {
-        return getReportFields().getName();
+    public String formatObject() {
+        return getDataFields().getName();
     }
 
     @Override
-    public Object getFieldValue(ReportField pField) {
+    public Object getFieldValue(JDataField pField) {
         if (pField == FIELD_SIZE)
             return sizeAll();
         return null;

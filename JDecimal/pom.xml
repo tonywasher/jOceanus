@@ -3,7 +3,7 @@
   <groupId>net.sourceforge.JDecimal</groupId>
   <artifactId>JDecimal</artifactId>
   <version>v1.0.0-SNAPSHOT</version>
-  <name>Small Decimal implementation</name>
+  <name>Java Small Decimal implementation</name>
   <description>Small decimal implementation for Java</description>
   <licenses>
     <license>

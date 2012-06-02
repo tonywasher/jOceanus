@@ -1,0 +1,3 @@
+Jira Project
+
+  Jira is a wrapper function ontop of the SOAP Jira access to make it easy for a source control system such as SubVersion to interface with Jira, without having to deal with the interface method.

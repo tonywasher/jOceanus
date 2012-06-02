@@ -25,13 +25,15 @@ package net.sourceforge.JGordianKnot.ZipFile;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.security.Signature;
 import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JGordianKnot.AsymmetricKey;
 import net.sourceforge.JGordianKnot.MsgDigest;
 import net.sourceforge.JGordianKnot.PasswordHash;
@@ -109,9 +111,9 @@ public class ZipReadFile {
     /**
      * Constructor.
      * @param pFile the file to read
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public ZipReadFile(final File pFile) throws ModelException {
+    public ZipReadFile(final File pFile) throws JDataException {
         FileInputStream myInFile;
         BufferedInputStream myInBuffer;
         ZipEntry myEntry;
@@ -145,16 +147,16 @@ public class ZipReadFile {
 
             /* Catch exceptions */
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.DATA, "Exception accessing Zip file", e);
+            throw new JDataException(ExceptionClass.DATA, "Exception accessing Zip file", e);
         }
     }
 
     /**
      * Set the password hash.
      * @param pHash the password hash
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public void setPasswordHash(final PasswordHash pHash) throws ModelException {
+    public void setPasswordHash(final PasswordHash pHash) throws JDataException {
         byte[] myBuffer = new byte[BUFFERSIZE];
         int myRead;
         int myLen;
@@ -169,7 +171,7 @@ public class ZipReadFile {
         try {
             /* Reject this is the wrong security control */
             if (!Arrays.equals(pHash.getHashBytes(), theHashBytes)) {
-                throw new ModelException(ExceptionClass.LOGIC,
+                throw new JDataException(ExceptionClass.LOGIC,
                         "Password Hash does not match ZipFile Security.");
             }
 
@@ -206,7 +208,7 @@ public class ZipReadFile {
 
             /* Reject if the entry is not found */
             if (myHeader == null) {
-                throw new ModelException(ExceptionClass.LOGIC, "Header record not found.");
+                throw new JDataException(ExceptionClass.LOGIC, "Header record not found.");
             }
 
             /* Obtain encoded private/public keys */
@@ -217,10 +219,10 @@ public class ZipReadFile {
             theAsymKey = theHash.deriveAsymmetricKey(myPrivate, myPublic);
 
             /* Catch exceptions */
-        } catch (ModelException e) {
+        } catch (JDataException e) {
             throw e;
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.DATA, "Exception reading header of Zip file", e);
+            throw new JDataException(ExceptionClass.DATA, "Exception reading header of Zip file", e);
         } finally {
             /* Close the file */
             try {
@@ -238,9 +240,9 @@ public class ZipReadFile {
      * Obtain an input stream for an entry in the zip file.
      * @param pFile the file details for the new zip entry
      * @return the input stream
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public InputStream getInputStream(final ZipFileEntry pFile) throws ModelException {
+    public InputStream getInputStream(final ZipFileEntry pFile) throws JDataException {
         FileInputStream myInFile;
         BufferedInputStream myInBuffer;
         ZipInputStream myZipFile;
@@ -258,7 +260,7 @@ public class ZipReadFile {
         try {
             /* Check that entry belongs to this zip file */
             if (pFile.getParent() != theContents) {
-                throw new ModelException(ExceptionClass.DATA, "File does not belong to Zip file");
+                throw new JDataException(ExceptionClass.DATA, "File does not belong to Zip file");
             }
 
             /* Open the zip file for reading */
@@ -279,7 +281,7 @@ public class ZipReadFile {
 
             /* Handle entry not found */
             if (myEntry == null) {
-                throw new ModelException(ExceptionClass.DATA, "File not found - " + pFile.getFileName());
+                throw new JDataException(ExceptionClass.DATA, "File not found - " + pFile.getFileName());
             }
 
             /* Note the current input stream */
@@ -288,8 +290,9 @@ public class ZipReadFile {
 
             /* If the file is encrypted */
             if (isEncrypted()) {
-                /* Verify Encryption details and set for decryption */
-                theAsymKey.verifyFile(pFile);
+                /* Verify Encryption details */
+                Signature mySignature = theAsymKey.getSignature(false);
+                pFile.signEntry(mySignature, true);
 
                 /* Determine whether we are debugging */
                 bDebug = pFile.isDebug();
@@ -335,10 +338,8 @@ public class ZipReadFile {
             }
 
             /* Catch exceptions */
-        } catch (ModelException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ModelException(ExceptionClass.DATA, "Exception creating new Input stream", e);
+        } catch (IOException e) {
+            throw new JDataException(ExceptionClass.DATA, "Exception creating new Input stream", e);
         }
 
         /* return the new stream */

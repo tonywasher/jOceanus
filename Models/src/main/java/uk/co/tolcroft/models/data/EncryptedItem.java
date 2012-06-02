@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,32 +23,37 @@
 package uk.co.tolcroft.models.data;
 
 import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
-import net.sourceforge.JDataManager.ReportFields;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
-import net.sourceforge.JDataManager.ReportItem;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JGordianKnot.EncryptedData.EncryptedField;
-import net.sourceforge.JGordianKnot.EncryptedData.EncryptionGenerator;
-import net.sourceforge.JGordianKnot.EncryptedValueSet;
+import net.sourceforge.JGordianKnot.EncryptionGenerator;
 import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 
+/**
+ * Encrypted Data Item and List.
+ * @author Tony Washer
+ * @param <T> the data type
+ */
 public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem<T> {
     /**
-     * Report fields
+     * Report fields.
      */
-    protected static final ReportFields theLocalFields = new ReportFields(
-            EncryptedItem.class.getSimpleName(), ReportItem.theLocalFields);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(EncryptedItem.class.getSimpleName(),
+            DataItem.FIELD_DEFS);
 
-    /* Members */
+    /**
+     * Value set for item.
+     */
     private EncryptedValueSet<T> theValueSet;
 
     /**
-     * Declare values
+     * Declare values.
      * @param pValues the values
      */
-    public void declareValues(EncryptedValueSet<T> pValues) {
+    public void declareValues(final EncryptedValueSet<T> pValues) {
         theValueSet = pValues;
         super.declareValues(pValues);
     }
@@ -57,42 +63,23 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
         return theValueSet;
     }
 
-    /* Field IDs */
-    public static final ReportField FIELD_CONTROL = theLocalFields.declareEqualityValueField("ControlKey");
-    public static final ReportField FIELD_GENERATOR = theLocalFields.declareLocalField("Generator");
-
     /**
-     * Encrypted Money length
+     * Control Key Field Id.
      */
-    public final static int MONEYLEN = 10;
+    public static final JDataField FIELD_CONTROL = FIELD_DEFS.declareEqualityValueField("ControlKey");
 
     /**
-     * Encrypted Units length
+     * Generator Field Id.
      */
-    public final static int UNITSLEN = 10;
+    public static final JDataField FIELD_GENERATOR = FIELD_DEFS.declareLocalField("Generator");
 
     /**
-     * Encrypted Rate length
-     */
-    public final static int RATELEN = 10;
-
-    /**
-     * Encrypted Price length
-     */
-    public final static int PRICELEN = 10;
-
-    /**
-     * Encrypted Dilution length
-     */
-    public final static int DILUTELEN = 10;
-
-    /**
-     * Generator field
+     * Generator field.
      */
     private EncryptionGenerator theGenerator = null;
 
     /**
-     * Get the ControlKey for this item
+     * Get the ControlKey for this item.
      * @return the ControlKey
      */
     public ControlKey getControlKey() {
@@ -100,60 +87,69 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
     }
 
     /**
-     * Get the ControlKey for this item
+     * Get the ControlKey for this item.
      * @param pValueSet the valueSet
      * @param <X> the Encrypted type
      * @return the ControlKey
      */
-    public static <X extends EncryptedItem<X>> ControlKey getControlKey(EncryptedValueSet<X> pValueSet) {
+    public static <X extends EncryptedItem<X>> ControlKey getControlKey(final EncryptedValueSet<X> pValueSet) {
         return pValueSet.getValue(FIELD_CONTROL, ControlKey.class);
     }
 
-    private void setValueControlKey(ControlKey pKey) {
+    /**
+     * Set the control Key for this item.
+     * @param pKey the control key
+     */
+    private void setValueControlKey(final ControlKey pKey) {
         theValueSet.setValue(FIELD_CONTROL, pKey);
         theGenerator = pKey.getFieldGenerator();
     }
 
-    private void setValueControlKey(Integer pId) {
+    /**
+     * Set the control Key id for this item.
+     * @param pId the control key id
+     */
+    private void setValueControlKey(final Integer pId) {
         theValueSet.setValue(FIELD_CONTROL, pId);
     }
 
     /**
-     * Constructor
+     * Constructor. This creates a null encryption generator. This will be overridden when a ControlKey is
+     * assigned to the item.
      * @param pList the list that this item is associated with
      * @param uId the Id of the new item (or 0 if not yet known)
      */
-    public EncryptedItem(EncryptedList<?, T> pList,
-                         int uId) {
+    public EncryptedItem(final EncryptedList<?, T> pList,
+                         final int uId) {
         super(pList, uId);
         theGenerator = new EncryptionGenerator(null);
     }
 
     /**
-     * Constructor
+     * Constructor. This picks up the generator from the source item.
      * @param pList the list that this item is associated with
      * @param pSource the source item
      */
-    public EncryptedItem(EncryptedList<?, T> pList,
-                         T pSource) {
+    public EncryptedItem(final EncryptedList<?, T> pList,
+                         final T pSource) {
         super(pList, pSource);
         theGenerator = pSource.theGenerator;
     }
 
     /**
-     * Set ControlKey
+     * Set ControlKey.
      * @param pControlKey the Control Key
      */
-    protected void setControlKey(ControlKey pControlKey) {
+    protected void setControlKey(final ControlKey pControlKey) {
         setValueControlKey(pControlKey);
     }
 
     /**
-     * Set ControlKey
+     * Set ControlKey id.
      * @param uControlId the Control Id
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    protected void setControlKey(int uControlId) throws ModelException {
+    protected void setControlKey(final int uControlId) throws JDataException {
         /* Store the id */
         setValueControlKey(uControlId);
 
@@ -163,27 +159,29 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 
         /* Look up the ControlKey */
         ControlKey myControl = myKeys.searchFor(uControlId);
-        if (myControl == null)
-            throw new ModelException(ExceptionClass.DATA, this, "Invalid ControlKey Id");
+        if (myControl == null) {
+            throw new JDataException(ExceptionClass.DATA, this, "Invalid ControlKey Id");
+        }
 
         /* Store the ControlKey */
         setValueControlKey(myControl);
     }
 
     /**
-     * Set encrypted value
+     * Set encrypted value.
      * @param pField the field to set
      * @param pValue the value to set
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    protected void setEncryptedValue(ReportField pField,
-                                     Object pValue) throws ModelException {
+    protected void setEncryptedValue(final JDataField pField,
+                                     final Object pValue) throws JDataException {
         /* Obtain the existing value */
         Object myCurrent = theValueSet.getValue(pField);
 
         /* Handle bad usage */
-        if ((myCurrent != null) && (!EncryptedField.class.isInstance(myCurrent)))
+        if ((myCurrent != null) && (!EncryptedField.class.isInstance(myCurrent))) {
             throw new IllegalArgumentException("Encrypted access for non-encrypted field " + pField.getName());
+        }
 
         /* Create the new encrypted value */
         EncryptedField<?> myCurr = (EncryptedField<?>) myCurrent;
@@ -194,15 +192,15 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
     }
 
     /**
-     * Set encrypted value
+     * Set encrypted value.
      * @param pField the field to set
      * @param pEncrypted the encrypted value to set
      * @param pClass the class of the value
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    protected void setEncryptedValue(ReportField pField,
-                                     byte[] pEncrypted,
-                                     Class<?> pClass) throws ModelException {
+    protected void setEncryptedValue(final JDataField pField,
+                                     final byte[] pEncrypted,
+                                     final Class<?> pClass) throws JDataException {
         /* Create the new encrypted value */
         EncryptedField<?> myField = theGenerator.decryptValue(pEncrypted, pClass);
 
@@ -216,25 +214,27 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
      * @param pNew The new Pair
      * @return <code>true</code> if the objects differ, <code>false</code> otherwise
      */
-    public static Difference getDifference(EncryptedField<?> pCurr,
-                                           EncryptedField<?> pNew) {
+    public static Difference getDifference(final EncryptedField<?> pCurr,
+                                           final EncryptedField<?> pNew) {
         /* Handle case where current value is null */
-        if (pCurr == null)
+        if (pCurr == null) {
             return (pNew != null) ? Difference.Different : Difference.Identical;
+        }
 
         /* Handle case where new value is null */
-        if (pNew == null)
+        if (pNew == null) {
             return Difference.Different;
+        }
 
         /* Handle Standard cases */
         return pCurr.getDifference(pNew);
     }
 
     /**
-     * Rebuild Links to partner data
+     * Rebuild Links to partner data.
      * @param pData the DataSet
      */
-    protected void reBuildLinks(DataSet<?> pData) {
+    protected void reBuildLinks(final DataSet<?> pData) {
         ControlKeyList myKeys = pData.getControlKeys();
 
         /* Update to use the local copy of the ControlKeys */
@@ -244,34 +244,36 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
     }
 
     /**
-     * Initialise security for all encrypted values
+     * Initialise security for all encrypted values.
      * @param pControl the new Control Key
-     * @param pBase
-     * @throws ModelException
+     * @param pBase the base item
+     * @throws JDataException on error
      */
-    protected void adoptSecurity(ControlKey pControl,
-                                 T pBase) throws ModelException {
+    protected void adoptSecurity(final ControlKey pControl,
+                                 final T pBase) throws JDataException {
         /* Set the Control Key */
         setValueControlKey(pControl);
 
         /* Access underlying values if they exist */
         EncryptedValueSet<T> myBaseValues = null;
-        if (pBase != null)
+        if (pBase != null) {
             myBaseValues = pBase.getValueSet();
+        }
 
         /* Try to adopt the underlying */
         theValueSet.adoptSecurity(theGenerator, myBaseValues);
     }
 
     /**
-     * Update security for all encrypted values
+     * Update security for all encrypted values.
      * @param pControl the new Control Key
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    protected void updateSecurity(ControlKey pControl) throws ModelException {
+    protected void updateSecurity(final ControlKey pControl) throws JDataException {
         /* Ignore call if we have the same control key */
-        if (pControl.equals(getControlKey()))
+        if (pControl.equals(getControlKey())) {
             return;
+        }
 
         /* Store the current detail into history */
         pushHistory();
@@ -287,88 +289,105 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
     }
 
     /**
-     * Encrypted DataList
+     * Encrypted DataList.
      * @param <L> the list type
      * @param <T> the item type
      */
     public abstract static class EncryptedList<L extends EncryptedList<L, T>, T extends EncryptedItem<T>>
             extends DataList<L, T> {
+        /**
+         * The owning data set.
+         */
         private DataSet<?> theData = null;
 
+        /**
+         * Get the owning data set.
+         * @return the data set
+         */
         public DataSet<?> getData() {
             return theData;
         }
 
-        protected void setData(DataSet<?> pData) {
+        /**
+         * Set the owning data set.
+         * @param pData the data set
+         */
+        protected void setData(final DataSet<?> pData) {
             theData = pData;
         }
 
+        /**
+         * Get the active controlKey.
+         * @return the active controlKey
+         */
         public ControlKey getControlKey() {
             return theData.getControl().getControlKey();
         }
 
         /**
-         * Construct an empty CORE encrypted list
+         * Construct an empty CORE encrypted list.
          * @param pClass the class
          * @param pBaseClass the class of the underlying object
          * @param pData the DataSet for the list
          */
-        protected EncryptedList(Class<L> pClass,
-                                Class<T> pBaseClass,
-                                DataSet<?> pData) {
+        protected EncryptedList(final Class<L> pClass,
+                                final Class<T> pBaseClass,
+                                final DataSet<?> pData) {
             super(pClass, pBaseClass, ListStyle.CORE, true);
             theData = pData;
         }
 
         /**
-         * Construct a generic encrypted list
+         * Construct a generic encrypted list.
          * @param pClass the class
          * @param pBaseClass the class of the underlying object
          * @param pData the DataSet for the list
          * @param pStyle the style of the list
          */
-        public EncryptedList(Class<L> pClass,
-                             Class<T> pBaseClass,
-                             DataSet<?> pData,
-                             ListStyle pStyle) {
+        public EncryptedList(final Class<L> pClass,
+                             final Class<T> pBaseClass,
+                             final DataSet<?> pData,
+                             final ListStyle pStyle) {
             super(pClass, pBaseClass, pStyle, true);
             theData = pData;
             setGeneration(pData.getGeneration());
         }
 
         /**
-         * Constructor for a cloned List
+         * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected EncryptedList(L pSource) {
+        protected EncryptedList(final L pSource) {
             super(pSource);
             theData = pSource.getData();
         }
 
         /**
-         * Update Security for items in the list
+         * Update Security for items in the list.
          * @param pThread the thread status
          * @param pControl the control key to apply
          * @return Continue <code>true/false</code>
-         * @throws ModelException
+         * @throws JDataException on error
          */
-        public boolean updateSecurity(ThreadStatus<?> pThread,
-                                      ControlKey pControl) throws ModelException {
+        public boolean updateSecurity(final ThreadStatus<?> pThread,
+                                      final ControlKey pControl) throws JDataException {
             DataListIterator<T> myIterator;
             T myCurr;
             int mySteps;
             int myCount = 0;
 
             /* Declare the new stage */
-            if (!pThread.setNewStage(listName()))
+            if (!pThread.setNewStage(listName())) {
                 return false;
+            }
 
             /* Access reporting steps */
             mySteps = pThread.getReportingSteps();
 
             /* Count the Number of items */
-            if (!pThread.setNumSteps(sizeAll()))
+            if (!pThread.setNumSteps(sizeAll())) {
                 return false;
+            }
 
             /* Access the iterator */
             myIterator = listIterator();
@@ -380,9 +399,9 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 
                 /* Report the progress */
                 myCount++;
-                if ((myCount % mySteps) == 0)
-                    if (!pThread.setStepsDone(myCount))
-                        return false;
+                if (((myCount % mySteps) == 0) && (!pThread.setStepsDone(myCount))) {
+                    return false;
+                }
             }
 
             /* Return to caller */
@@ -396,11 +415,11 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
          * @param pControl the control key to initialise from
          * @param pBase The base list to adopt from
          * @return Continue <code>true/false</code>
-         * @throws ModelException
+         * @throws JDataException on error
          */
-        protected boolean adoptSecurity(ThreadStatus<?> pThread,
-                                        ControlKey pControl,
-                                        EncryptedList<?, ?> pBase) throws ModelException {
+        protected boolean adoptSecurity(final ThreadStatus<?> pThread,
+                                        final ControlKey pControl,
+                                        final EncryptedList<?, ?> pBase) throws JDataException {
             /* Local variables */
             DataListIterator<T> myIterator;
             EncryptedItem<T> myCurr;
@@ -412,15 +431,17 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
             int myCount = 0;
 
             /* Declare the new stage */
-            if (!pThread.setNewStage(listName()))
+            if (!pThread.setNewStage(listName())) {
                 return false;
+            }
 
             /* Access reporting steps */
             mySteps = pThread.getReportingSteps();
 
             /* Count the Number of items */
-            if (!pThread.setNumSteps(sizeAll()))
+            if (!pThread.setNumSteps(sizeAll())) {
                 return false;
+            }
 
             /* Create an iterator for our new list */
             myIterator = listIterator(true);
@@ -439,9 +460,9 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 
                 /* Report the progress */
                 myCount++;
-                if ((myCount % mySteps) == 0)
-                    if (!pThread.setStepsDone(myCount))
-                        return false;
+                if (((myCount % mySteps) == 0) && (!pThread.setStepsDone(myCount))) {
+                    return false;
+                }
             }
 
             /* Return to caller */

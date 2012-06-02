@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * Subversion: Java SubVersion Management
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,30 +25,34 @@ package uk.co.tolcroft.subversion.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
-
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
+import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
+
+/**
+ * Manages connections to the server.
+ * @author Tony Washer
+ */
 public class ClientManager {
     /**
-     * Available pool of connections
+     * Available pool of connections.
      */
-    private List<SVNClientManager> thePool = null;
+    private final List<SVNClientManager> thePool;
 
     /**
-     * Subversion User name
+     * Subversion User name.
      */
-    private String theUser = null;
+    private final String theUser;
 
     /**
-     * Subversion Password
+     * Subversion Password.
      */
-    private String thePass = null;
+    private final String thePass;
 
     /**
-     * Constructor
+     * Constructor.
      */
     protected ClientManager() {
         /* Allocate the pool */
@@ -57,12 +62,12 @@ public class ClientManager {
         SubVersionPreferences myPreferences = PreferenceManager.getPreferenceSet(SubVersionPreferences.class);
 
         /* Access UserId and password */
-        theUser = myPreferences.getStringValue(SubVersionPreferences.nameSubVersionUser);
-        thePass = myPreferences.getStringValue(SubVersionPreferences.nameSubVersionPass);
+        theUser = myPreferences.getStringValue(SubVersionPreferences.NAME_SVN_USER);
+        thePass = myPreferences.getStringValue(SubVersionPreferences.NAME_SVN_PASS);
     }
 
     /**
-     * Allocate new Client Manager instance
+     * Allocate new Client Manager instance.
      * @return the instance
      */
     public SVNClientManager getClientMgr() {
@@ -81,10 +86,10 @@ public class ClientManager {
     }
 
     /**
-     * Return an allocated Client Manager instance to the pool
+     * Return an allocated Client Manager instance to the pool.
      * @param pMgr the instance to return
      */
-    public void releaseClientMgr(SVNClientManager pMgr) {
+    public void releaseClientMgr(final SVNClientManager pMgr) {
         /* Set event handler to null */
         pMgr.setEventHandler(null);
 
@@ -93,7 +98,7 @@ public class ClientManager {
     }
 
     /**
-     * Allocate new Client Manager instance
+     * Allocate new Client Manager instance.
      * @return the instance
      */
     private SVNClientManager allocateClientMgr() {

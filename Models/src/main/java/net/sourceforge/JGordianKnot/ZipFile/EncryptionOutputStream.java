@@ -25,8 +25,9 @@ package net.sourceforge.JGordianKnot.ZipFile;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JGordianKnot.StreamCipher;
 import net.sourceforge.JGordianKnot.SymmetricKey;
 
 /**
@@ -84,10 +85,10 @@ public class EncryptionOutputStream extends OutputStream {
      * Construct a symmetric key encryption output stream.
      * @param pKey the symmetric key to use
      * @param pStream the stream to encrypt to
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public EncryptionOutputStream(final SymmetricKey pKey,
-                                  final OutputStream pStream) throws ModelException {
+                                  final OutputStream pStream) throws JDataException {
         /* Protect against exceptions */
         try {
             /* record the output stream */
@@ -102,7 +103,7 @@ public class EncryptionOutputStream extends OutputStream {
 
             /* Catch exceptions */
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.CRYPTO, "Exception creating encryption output stream", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Exception creating encryption output stream", e);
         }
     }
 
@@ -129,7 +130,7 @@ public class EncryptionOutputStream extends OutputStream {
             /* Catch exceptions */
         } catch (IOException e) {
             throw e;
-        } catch (ModelException e) {
+        } catch (JDataException e) {
             throw new IOException(e);
         }
     }
@@ -174,7 +175,7 @@ public class EncryptionOutputStream extends OutputStream {
             /* Catch exceptions */
         } catch (IOException e) {
             throw e;
-        } catch (ModelException e) {
+        } catch (JDataException e) {
             throw new IOException(e);
         }
     }

@@ -24,10 +24,10 @@ package net.sourceforge.JGordianKnot;
 
 import java.security.SecureRandom;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
-import net.sourceforge.JDataManager.ReportFields;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
 
 /**
  * Asymmetric Key Mode. Encapsulates Asymmetric Key options
@@ -37,26 +37,26 @@ public class AsymKeyMode extends SecurityMode {
     /**
      * Report fields.
      */
-    protected static final ReportFields FIELD_DEFS = new ReportFields(AsymKeyMode.class.getSimpleName(),
+    protected static final JDataFields FIELD_DEFS = new JDataFields(AsymKeyMode.class.getSimpleName(),
             SecurityMode.FIELD_DEFS);
 
     /**
      * Field ID for Cipher Digest.
      */
-    public static final ReportField FIELD_CIPHER = FIELD_DEFS.declareLocalField("CipherDigest");
+    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareLocalField("CipherDigest");
 
     /**
      * Field ID for Asymmetric KeyType.
      */
-    public static final ReportField FIELD_ASYMTYPE = FIELD_DEFS.declareLocalField("AsymType");
+    public static final JDataField FIELD_ASYMTYPE = FIELD_DEFS.declareLocalField("AsymType");
 
     @Override
-    public ReportFields getReportFields() {
+    public JDataFields getDataFields() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final ReportField pField) {
+    public Object getFieldValue(final JDataField pField) {
         if (pField == FIELD_CIPHER) {
             return theCipherDigest;
         }
@@ -67,7 +67,7 @@ public class AsymKeyMode extends SecurityMode {
     }
 
     @Override
-    public String getObjectSummary() {
+    public String formatObject() {
         return FIELD_DEFS.getName();
     }
 
@@ -116,10 +116,10 @@ public class AsymKeyMode extends SecurityMode {
      * Constructor at random.
      * @param useRestricted use restricted keys
      * @param pRandom the random generator
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     protected AsymKeyMode(final boolean useRestricted,
-                          final SecureRandom pRandom) throws ModelException {
+                          final SecureRandom pRandom) throws JDataException {
         /* Access a random set of Key/DigestTypes */
         AsymKeyType[] myKeyType = AsymKeyType.getRandomTypes(1, pRandom);
         DigestType[] myDigest = DigestType.getRandomTypes(1, pRandom);
@@ -162,15 +162,15 @@ public class AsymKeyMode extends SecurityMode {
     /**
      * Constructor from encoded format.
      * @param pEncoded the encoded format
-     * @throws ModelException if the encoded mode is invalid
+     * @throws JDataException if the encoded mode is invalid
      */
-    protected AsymKeyMode(final byte[] pEncoded) throws ModelException {
+    protected AsymKeyMode(final byte[] pEncoded) throws JDataException {
         /* Set the initial encoded version */
         setEncoded(pEncoded);
 
         /* Not allowed unless version is current */
         if (getVersion() != VERSION_CURRENT) {
-            throw new ModelException(ExceptionClass.LOGIC, "Invalid mode version: " + getVersion());
+            throw new JDataException(ExceptionClass.LOGIC, "Invalid mode version: " + getVersion());
         }
 
         /* Store Key type and digest */

@@ -377,8 +377,7 @@ public abstract class Decimal {
         StringBuilder myWork;
         StringBuilder myDecimals = null;
         int myPos;
-        char myDigit = '0';
-        char myChar;
+        char myLastDigit = '0';
         boolean isNegative;
 
         /* Create a working copy */
@@ -450,20 +449,11 @@ public abstract class Decimal {
             myWork.append("0");
         }
 
-        /* Loop through the characters of the integer part of the value */
-        myLen = myWork.length();
-        for (int i = 0; i < myLen; i++) {
-            /* Access the next character */
-            myChar = myWork.charAt(i);
-
-            /* Check that the char is a valid digit */
-            if (!Character.isDigit(myChar)) {
-                throw new IllegalArgumentException("Non Decimal Numeric Value: " + pString);
-            }
-
-            /* Add into the value */
-            theValue *= RADIX_TEN;
-            theValue += (myChar - '0');
+        /* Parse the integer part */
+        try {
+            Long.parseLong(myWork.toString());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Non Decimal Numeric Value: " + pString, e);
         }
 
         /* If we have a decimal part */
@@ -476,28 +466,19 @@ public abstract class Decimal {
             /* If we have too many decimals */
             if (myLen > theDecimals) {
                 /* Extract most significant trailing digit and truncate the value */
-                myDigit = myDecimals.charAt(theDecimals);
+                myLastDigit = myDecimals.charAt(theDecimals);
                 myDecimals.setLength(theDecimals);
             }
 
-            /* Loop through the characters of the decimal part of the value */
-            myLen = myDecimals.length();
-            for (int i = 0; i < myLen; i++) {
-                /* Access the next character */
-                myChar = myDecimals.charAt(i);
-
-                /* Check that the char is a valid hex digit */
-                if (!Character.isDigit(myChar)) {
-                    throw new IllegalArgumentException("Non Decimal Numeric Value: " + pString);
-                }
-
-                /* Add into the value */
-                theValue *= RADIX_TEN;
-                theValue += (myChar - '0');
+            /* Parse the decimals */
+            try {
+                Long.parseLong(myDecimals.toString());
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Non Decimal Numeric Value: " + pString, e);
             }
 
             /* Round value according to most significant discarded decimal digit */
-            if (myDigit >= '5') {
+            if (myLastDigit >= '5') {
                 theValue++;
             }
 
@@ -537,19 +518,8 @@ public abstract class Decimal {
             myValue = -myValue;
         }
 
-        /* Special case for zero */
-        if (myValue == 0) {
-            myString.append('0');
-
-            /* else need to loop through the digits */
-        } else {
-            /* While we have digits to format */
-            while (myValue > 0) {
-                /* Format the digit and move to next one */
-                myString.insert(0, (char) ('0' + (myValue % RADIX_TEN)));
-                myValue /= RADIX_TEN;
-            }
-        }
+        /* Format the string */
+        myString.append(Long.toString(myValue));
 
         /* Add leading zeroes */
         while ((myLen = myString.length()) < (theDecimals + 1)) {

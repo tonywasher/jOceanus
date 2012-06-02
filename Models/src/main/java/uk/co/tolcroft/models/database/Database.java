@@ -29,12 +29,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
-import net.sourceforge.JDataManager.PreferenceSet;
-import net.sourceforge.JDataManager.PreferenceSet.PreferenceManager;
-import net.sourceforge.JDataManager.PreferenceSet.PreferenceSetChooser;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.data.PreferenceSet;
+import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
+import uk.co.tolcroft.models.data.PreferenceSet.PreferenceSetChooser;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.views.DataControl;
 
@@ -52,11 +52,6 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
      * Buffer length.
      */
     private static final int BUFFER_LEN = 100;
-
-    /**
-     * Preferences for database.
-     */
-    private final DatabasePreferences thePreferences;
 
     /**
      * Database connection.
@@ -159,9 +154,9 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
 
         /**
          * Constructor.
-         * @throws ModelException on error
+         * @throws JDataException on error
          */
-        public DatabasePreferences() throws ModelException {
+        public DatabasePreferences() throws JDataException {
             super();
         }
 
@@ -279,26 +274,27 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
 
     /**
      * Construct a new Database class.
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public Database() throws ModelException {
+    public Database() throws JDataException {
         /* Create the connection */
         try {
             /* Access the database preferences */
-            thePreferences = (DatabasePreferences) PreferenceManager.getPreferenceSet(this);
+            DatabasePreferences myPreferences = (DatabasePreferences) PreferenceManager
+                    .getPreferenceSet(this);
 
             /* Access the batch size */
-            theBatchSize = thePreferences.getIntegerValue(DatabasePreferences.NAME_DBBATCH);
+            theBatchSize = myPreferences.getIntegerValue(DatabasePreferences.NAME_DBBATCH);
 
             /* Load the database driver */
-            Class.forName(thePreferences.getEnumValue(DatabasePreferences.NAME_DBDRIVER, JDBCDriver.class)
+            Class.forName(myPreferences.getEnumValue(DatabasePreferences.NAME_DBDRIVER, JDBCDriver.class)
                     .getDriver());
 
             /* Obtain the connection */
-            theConn = DriverManager.getConnection(thePreferences.getConnectionString());
+            theConn = DriverManager.getConnection(myPreferences.getConnectionString());
             theConn.setAutoCommit(false);
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.SQLSERVER, "Failed to load driver", e);
+            throw new JDataException(ExceptionClass.SQLSERVER, "Failed to load driver", e);
         }
 
         /* Create table list and add the tables to the list */
@@ -371,9 +367,9 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
      * Load data from the database.
      * @param pThread the thread control
      * @return the new DataSet
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public T loadDatabase(final ThreadStatus<T> pThread) throws ModelException {
+    public T loadDatabase(final ThreadStatus<T> pThread) throws JDataException {
         boolean bContinue = true;
 
         /* Set the number of stages */
@@ -405,7 +401,7 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
 
         /* Check for cancellation */
         if (!bContinue) {
-            throw new ModelException(ExceptionClass.LOGIC, "Operation Cancelled");
+            throw new JDataException(ExceptionClass.LOGIC, "Operation Cancelled");
         }
 
         /* Return the data */
@@ -416,10 +412,10 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
      * Update data into database.
      * @param pThread the thread control
      * @param pData the data
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public void updateDatabase(final ThreadStatus<T> pThread,
-                               final T pData) throws ModelException {
+                               final T pData) throws JDataException {
         boolean bContinue = true;
         BatchControl myBatch = new BatchControl(theBatchSize);
 
@@ -468,7 +464,7 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
                 theConn.commit();
             } catch (Exception e) {
                 close();
-                throw new ModelException(ExceptionClass.SQLSERVER, "Failed to commit transction");
+                throw new JDataException(ExceptionClass.SQLSERVER, "Failed to commit transction", e);
             }
 
             /* Commit the batch */
@@ -477,16 +473,16 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
 
         /* Check for cancellation */
         if (!bContinue) {
-            throw new ModelException(ExceptionClass.LOGIC, "Operation Cancelled");
+            throw new JDataException(ExceptionClass.LOGIC, "Operation Cancelled");
         }
     }
 
     /**
      * Create tables.
      * @param pThread the thread control
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public void createTables(final ThreadStatus<T> pThread) throws ModelException {
+    public void createTables(final ThreadStatus<T> pThread) throws JDataException {
         /* Drop any existing tables */
         dropTables(pThread);
 
@@ -512,9 +508,9 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
     /**
      * Drop tables.
      * @param pThread the thread control
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    private void dropTables(final ThreadStatus<T> pThread) throws ModelException {
+    private void dropTables(final ThreadStatus<T> pThread) throws JDataException {
         /* Set the number of stages */
         if (!pThread.setNumStages(1)) {
             return;
@@ -537,9 +533,9 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
     /**
      * Purge tables.
      * @param pThread the thread control
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public void purgeTables(final ThreadStatus<T> pThread) throws ModelException {
+    public void purgeTables(final ThreadStatus<T> pThread) throws JDataException {
 
         /* Set the number of stages */
         if (!pThread.setNumStages(1)) {

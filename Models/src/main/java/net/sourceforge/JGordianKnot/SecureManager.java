@@ -30,8 +30,8 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 
 /**
  * PasswordHash Manager class which holds a cache of all resolved password hashes. For password hashes that
@@ -40,6 +40,31 @@ import net.sourceforge.JDataManager.ModelException.ExceptionClass;
  * @author Tony Washer
  */
 public class SecureManager {
+    /**
+     * Default Security Provider.
+     */
+    public static final SecurityProvider DEFAULT_PROVIDER = SecurityProvider.BouncyCastle;
+
+    /**
+     * Default Restricted Security.
+     */
+    public static final Boolean DEFAULT_RESTRICTED = Boolean.FALSE;
+
+    /**
+     * Default Cipher Steps.
+     */
+    public static final Integer DEFAULT_CIPHER_STEPS = 3;
+
+    /**
+     * Default Hash iterations.
+     */
+    public static final Integer DEFAULT_HASH_ITERATIONS = 2048;
+
+    /**
+     * Default Security Phrase.
+     */
+    public static final String DEFAULT_SECURITY_PHRASE = "JG0rdianKn0t";
+
     /**
      * Security generator.
      */
@@ -56,11 +81,30 @@ public class SecureManager {
     private JFrame theFrame = null;
 
     /**
-     * Constructor.
+     * Constructor for default values.
      */
     public SecureManager() {
+        /* Access with defaults */
+        this(DEFAULT_PROVIDER, DEFAULT_RESTRICTED, DEFAULT_CIPHER_STEPS, DEFAULT_HASH_ITERATIONS,
+                DEFAULT_SECURITY_PHRASE);
+    }
+
+    /**
+     * Constructor.
+     * @param pProvider the Security provider
+     * @param pRestricted do we use restricted security
+     * @param pNumCipherSteps the number of cipher steps
+     * @param pHashIterations the number of hash iterations
+     * @param pSecurityPhrase the security phrase
+     */
+    public SecureManager(final SecurityProvider pProvider,
+                         final boolean pRestricted,
+                         final int pNumCipherSteps,
+                         final int pHashIterations,
+                         final String pSecurityPhrase) {
         /* Allocate the security generator */
-        theGenerator = new SecurityGenerator();
+        theGenerator = new SecurityGenerator(pProvider, pRestricted, pNumCipherSteps, pHashIterations,
+                pSecurityPhrase);
 
         /* Allocate a new Hash list */
         theHashList = new ArrayList<PasswordHash>();
@@ -87,10 +131,10 @@ public class SecureManager {
      * @param pHashBytes the hash bytes to resolve
      * @param pSource the description of the secured resource
      * @return the password Hash
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public PasswordHash resolvePasswordHash(final byte[] pHashBytes,
-                                            final String pSource) throws ModelException {
+                                            final String pSource) throws JDataException {
         PasswordHash myHash = null;
 
         /* If the hash bytes exist try existing hashes for either absolute or password match */
@@ -146,7 +190,7 @@ public class SecureManager {
             } catch (WrongPasswordException e) {
                 myPass.setError("Incorrect password. Please re-enter");
                 continue;
-            } catch (ModelException e) {
+            } catch (JDataException e) {
                 throw e;
             } finally {
                 /* Clear out the password */
@@ -159,7 +203,7 @@ public class SecureManager {
         /* If we did not get a password */
         if (!isPasswordOk) {
             /* Throw an exception */
-            throw new ModelException(ExceptionClass.DATA, "Invalid Password");
+            throw new JDataException(ExceptionClass.DATA, "Invalid Password");
         }
 
         /* Return the password hash */
@@ -200,9 +244,9 @@ public class SecureManager {
      * clone password hash.
      * @param pHash the password hash to clone
      * @return the cloned password hash
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public PasswordHash clonePasswordHash(final PasswordHash pHash) throws ModelException {
+    public PasswordHash clonePasswordHash(final PasswordHash pHash) throws JDataException {
         /* clone the hash */
         PasswordHash myHash = pHash.cloneHash();
 

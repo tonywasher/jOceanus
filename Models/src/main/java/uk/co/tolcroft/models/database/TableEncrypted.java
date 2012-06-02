@@ -22,8 +22,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.database;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
 import uk.co.tolcroft.models.data.EncryptedItem;
 
 /**
@@ -61,13 +61,13 @@ public abstract class TableEncrypted<T extends EncryptedItem<T>> extends Databas
      * Load an individual item from the result set.
      * @param pId the Id of the item
      * @param pControlId the ControlKey id of the item
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     protected abstract void loadItem(final int pId,
-                                     final int pControlId) throws ModelException;
+                                     final int pControlId) throws JDataException;
 
     @Override
-    protected void loadItem(final int pId) throws ModelException {
+    protected void loadItem(final int pId) throws JDataException {
         int myControlId;
 
         /* Get the various fields */
@@ -79,7 +79,7 @@ public abstract class TableEncrypted<T extends EncryptedItem<T>> extends Databas
 
     @Override
     protected void setFieldValue(final T pItem,
-                                 final ReportField iField) throws ModelException {
+                                 final JDataField iField) throws JDataException {
         /* Switch on field id */
         if (iField == EncryptedItem.FIELD_CONTROL) {
             theTableDef.setIntegerValue(iField, pItem.getControlKey().getId());

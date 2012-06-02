@@ -27,11 +27,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.Signature;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JGordianKnot.AsymmetricKey;
 import net.sourceforge.JGordianKnot.MsgDigest;
 import net.sourceforge.JGordianKnot.PasswordHash;
@@ -133,10 +134,10 @@ public class ZipWriteFile {
      * Constructor for new output zip file with security.
      * @param pHash the password hash to use
      * @param pFile the file details for the new zip file
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     public ZipWriteFile(final PasswordHash pHash,
-                        final File pFile) throws ModelException {
+                        final File pFile) throws JDataException {
         FileOutputStream myOutFile;
         BufferedOutputStream myOutBuffer;
 
@@ -158,16 +159,16 @@ public class ZipWriteFile {
 
             /* Catch exceptions */
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.DATA, "Exception creating new Zip file", e);
+            throw new JDataException(ExceptionClass.DATA, "Exception creating new Zip file", e);
         }
     }
 
     /**
      * Constructor for new output zip file with no security.
      * @param pFile the file details for the new zip file
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public ZipWriteFile(final File pFile) throws ModelException {
+    public ZipWriteFile(final File pFile) throws JDataException {
         FileOutputStream myOutFile;
         BufferedOutputStream myOutBuffer;
 
@@ -189,7 +190,7 @@ public class ZipWriteFile {
 
             /* Catch exceptions */
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.DATA, "Exception creating new Zip file", e);
+            throw new JDataException(ExceptionClass.DATA, "Exception creating new Zip file", e);
         }
     }
 
@@ -197,9 +198,9 @@ public class ZipWriteFile {
      * Obtain a debug output stream for an entry in the zip file.
      * @param pFile the file details for the new zip entry
      * @return the output stream
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public OutputStream getDebugOutputStream(final File pFile) throws ModelException {
+    public OutputStream getDebugOutputStream(final File pFile) throws JDataException {
         /* Obtain debug output stream */
         return getOutputStream(pFile, true);
     }
@@ -208,9 +209,9 @@ public class ZipWriteFile {
      * Obtain a standard output stream for an entry in the zip file.
      * @param pFile the file details for the new zip entry
      * @return the output stream
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
-    public OutputStream getOutputStream(final File pFile) throws ModelException {
+    public OutputStream getOutputStream(final File pFile) throws JDataException {
         /* Obtain standard output stream */
         return getOutputStream(pFile, false);
     }
@@ -220,10 +221,10 @@ public class ZipWriteFile {
      * @param pFile the file details for the new zip entry
      * @param pDebug is this entry to be debugged
      * @return the output stream
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     private OutputStream getOutputStream(final File pFile,
-                                         final boolean pDebug) throws ModelException {
+                                         final boolean pDebug) throws JDataException {
         LZMAOutputStream myZip;
         DigestOutputStream myDigest;
         EncryptionOutputStream myEncrypt;
@@ -232,12 +233,12 @@ public class ZipWriteFile {
 
         /* Reject call if we have closed the stream */
         if (theStream == null) {
-            throw new ModelException(ExceptionClass.LOGIC, "ZipFile is closed");
+            throw new JDataException(ExceptionClass.LOGIC, "ZipFile is closed");
         }
 
         /* Reject call if we have an open stream */
         if (theOutput != null) {
-            throw new ModelException(ExceptionClass.LOGIC, "Output stream already open");
+            throw new JDataException(ExceptionClass.LOGIC, "Output stream already open");
         }
 
         /* Store debug indication */
@@ -303,7 +304,7 @@ public class ZipWriteFile {
 
             /* Catch exceptions */
         } catch (Exception e) {
-            throw new ModelException(ExceptionClass.DATA, "Exception creating new Output stream", e);
+            throw new JDataException(ExceptionClass.DATA, "Exception creating new Output stream", e);
         }
 
         /* return the new stream */
@@ -344,7 +345,8 @@ public class ZipWriteFile {
                     myEntry.setSecretKeys(theEncrypts, theAsymKey);
 
                     /* Calculate the signature and declare it */
-                    myEntry.setSignature(theAsymKey.signFile(myEntry));
+                    Signature mySignature = theAsymKey.getSignature(true);
+                    myEntry.signEntry(mySignature, false);
                 }
 
                 /* Release the entry */
@@ -358,9 +360,7 @@ public class ZipWriteFile {
             theEncrypts = null;
 
             /* Catch exceptions */
-        } catch (IOException e) {
-            throw e;
-        } catch (ModelException e) {
+        } catch (JDataException e) {
             throw new IOException(e);
         }
     }

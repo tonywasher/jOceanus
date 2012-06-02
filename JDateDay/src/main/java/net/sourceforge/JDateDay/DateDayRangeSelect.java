@@ -74,16 +74,6 @@ public class DateDayRangeSelect extends JPanel {
     private final JButton thePrevButton;
 
     /**
-     * The Start Label.
-     */
-    private final JLabel theStartLabel;
-
-    /**
-     * The Period label.
-     */
-    private final JLabel thePeriodLabel;
-
-    /**
      * The published range.
      */
     private DateDayRange thePublishedRange = null;
@@ -148,8 +138,8 @@ public class DateDayRangeSelect extends JPanel {
         }
 
         /* Create the labels */
-        theStartLabel = new JLabel("Start Date:");
-        thePeriodLabel = new JLabel("Period:");
+        JLabel myStartLabel = new JLabel("Start Date:");
+        JLabel myPeriodLabel = new JLabel("Period:");
 
         /* Create the buttons */
         theNextButton = new JButton("Next");
@@ -167,13 +157,13 @@ public class DateDayRangeSelect extends JPanel {
                 .addGroup(panelLayout
                                   .createSequentialGroup()
                                   .addContainerGap()
-                                  .addComponent(theStartLabel)
+                                  .addComponent(myStartLabel)
                                   .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                   .addComponent(theDateButton, GroupLayout.PREFERRED_SIZE,
                                                 GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                   .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
                                                    GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                  .addComponent(thePeriodLabel)
+                                  .addComponent(myPeriodLabel)
                                   .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                   .addComponent(thePeriodBox, GroupLayout.PREFERRED_SIZE,
                                                 GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -184,10 +174,10 @@ public class DateDayRangeSelect extends JPanel {
         panelLayout.setVerticalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addGroup(panelLayout
                                   .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                  .addComponent(theStartLabel)
+                                  .addComponent(myStartLabel)
                                   .addComponent(theDateButton, GroupLayout.PREFERRED_SIZE,
                                                 GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                  .addComponent(thePeriodLabel)
+                                  .addComponent(myPeriodLabel)
                                   .addComponent(thePeriodBox, GroupLayout.PREFERRED_SIZE,
                                                 GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                   .addComponent(theNextButton).addComponent(thePrevButton)));
@@ -205,7 +195,7 @@ public class DateDayRangeSelect extends JPanel {
     }
 
     @Override
-    public void setLocale(final Locale pLocale) {
+    public final void setLocale(final Locale pLocale) {
         /* Record the locale */
         theLocale = pLocale;
         theDateButton.setLocale(pLocale);
@@ -226,7 +216,7 @@ public class DateDayRangeSelect extends JPanel {
      * Set the overall range for the control.
      * @param pRange the range
      */
-    public void setOverallRange(final DateDayRange pRange) {
+    public final void setOverallRange(final DateDayRange pRange) {
         /* Record total possible range */
         theFirstDate = (pRange == null) ? null : pRange.getStart();
         theFinalDate = (pRange == null) ? null : pRange.getEnd();
@@ -322,7 +312,7 @@ public class DateDayRangeSelect extends JPanel {
     /**
      * The Date Listener.
      */
-    private class DateListener implements ActionListener, PropertyChangeListener, ItemListener {
+    private final class DateListener implements ActionListener, PropertyChangeListener, ItemListener {
         @Override
         public void itemStateChanged(final ItemEvent evt) {
             DatePeriod myPeriod = null;
@@ -333,15 +323,13 @@ public class DateDayRangeSelect extends JPanel {
             }
 
             /* If this event relates to the period box */
-            if (evt.getSource() == thePeriodBox) {
-                if (evt.getStateChange() == ItemEvent.SELECTED) {
-                    /* Determine the new period */
-                    myPeriod = (DatePeriod) evt.getItem();
+            if ((evt.getSource() == thePeriodBox) && (evt.getStateChange() == ItemEvent.SELECTED)) {
+                /* Determine the new period */
+                myPeriod = (DatePeriod) evt.getItem();
 
-                    /* Apply period and build the range */
-                    theState.setPeriod(myPeriod);
-                    notifyChangedRange();
-                }
+                /* Apply period and build the range */
+                theState.setPeriod(myPeriod);
+                notifyChangedRange();
             }
         }
 

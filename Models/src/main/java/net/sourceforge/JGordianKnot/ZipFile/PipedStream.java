@@ -25,7 +25,6 @@ package net.sourceforge.JGordianKnot.ZipFile;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -168,7 +167,7 @@ public class PipedStream {
                 try {
                     theElement = theQueue.take();
                 } catch (InterruptedException e) {
-                    throw new InterruptedIOException(e.getMessage());
+                    throw new IOException(e.getMessage(), e);
                 }
 
                 /* Set variables */
@@ -256,7 +255,7 @@ public class PipedStream {
             try {
                 theQueue.put(myBuffer);
             } catch (InterruptedException e) {
-                throw new InterruptedIOException(e.getMessage());
+                throw new IOException(e.getMessage(), e);
             }
         }
 
@@ -290,7 +289,7 @@ public class PipedStream {
             try {
                 theQueue.put(new byte[0]);
             } catch (InterruptedException e) {
-                throw new InterruptedIOException(e.getMessage());
+                throw new IOException(e);
             }
 
             /* Note that we have closed */

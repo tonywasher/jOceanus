@@ -22,8 +22,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.threads;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.views.DataControl;
 
@@ -70,7 +70,7 @@ public abstract class LoaderThread<T extends DataSet<T>> extends WorkerThread<T>
             completeStatusBar();
         } catch (Exception e) {
             /* Report the failure */
-            setError(new ModelException(ExceptionClass.DATA, "Failed to obtain and activate new data", e));
+            setError(new JDataException(ExceptionClass.DATA, "Failed to obtain and activate new data", e));
             completeStatusBar();
         }
     }

@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,34 +32,59 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
-import net.sourceforge.JDataManager.DebugManager;
-import net.sourceforge.JDataManager.DebugManager.DebugEntry;
-import net.sourceforge.JDataManager.ModelException;
-import uk.co.tolcroft.models.ui.StdInterfaces.stdPanel;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataManager;
+import net.sourceforge.JDataManager.JDataManager.JDataEntry;
+import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
 
+/**
+ * Error panel.
+ * @author Tony Washer
+ */
 public class ErrorPanel extends JPanel {
+    /**
+     * Serial Id.
+     */
     private static final long serialVersionUID = -1868069138054965874L;
 
-    /* Members */
-    private stdPanel theParent = null;
-    private JLabel theErrorField = null;
-    private JButton theClearButton = null;
-    private DebugEntry theDebugError = null;
-    private ModelException theError = null;
+    /**
+     * The parent panel.
+     */
+    private final StdPanel theParent;
 
     /**
-     * Constructor
+     * The error field.
+     */
+    private final JLabel theErrorField;
+
+    /**
+     * The clear button.
+     */
+    private final JButton theClearButton;
+
+    /**
+     * The data entry for the error.
+     */
+    private final JDataEntry theDataError;
+
+    /**
+     * The error itself.
+     */
+    private JDataException theError = null;
+
+    /**
+     * Constructor.
      * @param pParent the parent
      */
-    public ErrorPanel(stdPanel pParent) {
+    public ErrorPanel(final StdPanel pParent) {
         /* Store parent */
         theParent = pParent;
 
         /* Create the error debug entry for this view */
-        DebugManager myDebugMgr = theParent.getDebugManager();
-        theDebugError = myDebugMgr.new DebugEntry("Error");
-        theDebugError.addAsChildOf(theParent.getDebugEntry());
-        theDebugError.hideEntry();
+        JDataManager myDataMgr = theParent.getDataManager();
+        theDataError = myDataMgr.new JDataEntry("Error");
+        theDataError.addAsChildOf(theParent.getDataEntry());
+        theDataError.hideEntry();
 
         /* Create the error field */
         theErrorField = new JLabel();
@@ -90,10 +116,10 @@ public class ErrorPanel extends JPanel {
     }
 
     /**
-     * Set error indication for window
+     * Set error indication for window.
      * @param pException the exception
      */
-    public void setError(ModelException pException) {
+    public void setError(final JDataException pException) {
         /* Record the error */
         theError = pException;
 
@@ -104,23 +130,23 @@ public class ErrorPanel extends JPanel {
         setVisible(true);
 
         /* Show the debug */
-        theDebugError.setObject(theError);
-        theDebugError.showEntry();
+        theDataError.setObject(theError);
+        theDataError.showEntry();
 
         /* Call the parent to lock other windows */
         theParent.lockOnError(true);
     }
 
     /**
-     * Clear error indication for this window
+     * Clear error indication for this window.
      */
     public void clearError() {
         /* If we currently have an error */
         if (theError != null) {
             /* Clear the error */
             theError = null;
-            theDebugError.setObject(theError);
-            theDebugError.hideEntry();
+            theDataError.setObject(theError);
+            theDataError.hideEntry();
         }
 
         /* Make the panel invisible */
@@ -131,11 +157,11 @@ public class ErrorPanel extends JPanel {
     }
 
     /**
-     * Listener class
+     * Listener class.
      */
     private class ErrorListener implements ActionListener {
         @Override
-        public void actionPerformed(ActionEvent evt) {
+        public void actionPerformed(final ActionEvent evt) {
             /* If this event relates to the Clear box */
             if (evt.getSource() == theClearButton) {
                 /* Clear the error */

@@ -25,7 +25,7 @@ package net.sourceforge.JGordianKnot.ZipFile;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.sourceforge.JDataManager.ModelException;
+import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JGordianKnot.MsgDigest;
 
 /**
@@ -90,8 +90,8 @@ public class DigestInputStream extends InputStream {
                 /* Validate the digest */
                 try {
                     theDigest.validateDigest();
-                } catch (ModelException e) {
-                    throw new IOException(e.getMessage());
+                } catch (JDataException e) {
+                    throw new IOException(e);
                 }
             }
         }

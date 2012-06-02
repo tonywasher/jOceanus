@@ -22,8 +22,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.database;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.database.TableDefinition.SortOrder;
 
@@ -79,18 +79,18 @@ public abstract class TableStaticData<T extends StaticData<T, ?>> extends TableE
      * @param iOrder the sort order
      * @param pName the name
      * @param pDesc the description
-     * @throws ModelException on error
+     * @throws JDataException on error
      */
     protected abstract void loadTheItem(final int pId,
                                         final int pControlId,
                                         final boolean isEnabled,
                                         final int iOrder,
                                         final byte[] pName,
-                                        final byte[] pDesc) throws ModelException;
+                                        final byte[] pDesc) throws JDataException;
 
     @Override
     protected void loadItem(final int pId,
-                            final int pControlId) throws ModelException {
+                            final int pControlId) throws JDataException {
         int myOrder;
         boolean myEnabled;
         byte[] myType;
@@ -108,7 +108,7 @@ public abstract class TableStaticData<T extends StaticData<T, ?>> extends TableE
 
     @Override
     protected void setFieldValue(final T pItem,
-                                 final ReportField iField) throws ModelException {
+                                 final JDataField iField) throws JDataException {
         /* Switch on field id */
         if (iField == StaticData.FIELD_ENABLED) {
             theTableDef.setBooleanValue(iField, pItem.getEnabled());

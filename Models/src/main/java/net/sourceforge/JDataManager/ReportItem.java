@@ -23,43 +23,43 @@ package net.sourceforge.JDataManager;
 
 import java.util.Iterator;
 
-import net.sourceforge.JDataManager.ReportFields.ReportField;
-import net.sourceforge.JDataManager.ReportObject.ReportDetail;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JSortedList.SortedItem;
 
-public abstract class ReportItem<T extends ReportItem<T>> extends SortedItem<T> implements ReportDetail {
+public abstract class ReportItem<T extends ReportItem<T>> extends SortedItem<T> implements JDataContents {
     /**
      * Local Report fields
      */
-    protected static final ReportFields theLocalFields = new ReportFields(ReportItem.class.getSimpleName());
+    protected static final JDataFields theLocalFields = new JDataFields(ReportItem.class.getSimpleName());
 
     /**
      * Instance ReportFields
      */
-    private final ReportFields theFields;
+    private final JDataFields theFields;
 
     /**
      * Declare fields
      * @return the fields
      */
-    public abstract ReportFields declareFields();
+    public abstract JDataFields declareFields();
 
     /* Field IDs */
-    public static final ReportField FIELD_LIST = theLocalFields.declareLocalField("List");
-    public static final ReportField FIELD_NODE = theLocalFields.declareLocalField("Node");
+    public static final JDataField FIELD_LIST = theLocalFields.declareLocalField("List");
+    public static final JDataField FIELD_NODE = theLocalFields.declareLocalField("Node");
 
     @Override
-    public ReportFields getReportFields() {
+    public JDataFields getDataFields() {
         return theFields;
     }
 
     @Override
-    public String getObjectSummary() {
-        return getReportFields().getName();
+    public String formatObject() {
+        return getDataFields().getName();
     }
 
     @Override
-    public Object getFieldValue(ReportField pField) {
+    public Object getFieldValue(JDataField pField) {
         if (pField == FIELD_LIST)
             return getList();
         if (pField == FIELD_NODE)
@@ -95,10 +95,10 @@ public abstract class ReportItem<T extends ReportItem<T>> extends SortedItem<T> 
         ReportItem<?> myItem = (ReportItem<?>) pThat;
 
         /* Loop through the fields */
-        Iterator<ReportField> myIterator = theFields.fieldIterator();
+        Iterator<JDataField> myIterator = theFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Access Field */
-            ReportField myField = myIterator.next();
+            JDataField myField = myIterator.next();
 
             /* Skip if not used in equality */
             if (!myField.isEqualityField())
@@ -124,10 +124,10 @@ public abstract class ReportItem<T extends ReportItem<T>> extends SortedItem<T> 
         int myHash = 1;
 
         /* Loop through the fields */
-        Iterator<ReportField> myIterator = theFields.fieldIterator();
+        Iterator<JDataField> myIterator = theFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Access Field */
-            ReportField myField = myIterator.next();
+            JDataField myField = myIterator.next();
 
             /* Skip if not used in equality */
             if (!myField.isEqualityField())
@@ -165,10 +165,10 @@ public abstract class ReportItem<T extends ReportItem<T>> extends SortedItem<T> 
             return Difference.Different;
 
         /* Loop through the fields */
-        Iterator<ReportField> myIterator = theFields.fieldIterator();
+        Iterator<JDataField> myIterator = theFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Access Field */
-            ReportField myField = myIterator.next();
+            JDataField myField = myIterator.next();
 
             /* Skip if not used in equality */
             if (!myField.isEqualityField())

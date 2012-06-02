@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JDataModel: Data models
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,30 +42,80 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import net.sourceforge.JDataManager.DebugManager;
-import net.sourceforge.JDataManager.ReportFields.ReportField;
-import net.sourceforge.JDataManager.ui.RenderData;
-import net.sourceforge.JDataManager.ui.Renderer;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataManager;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
+import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
 import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
-import uk.co.tolcroft.models.ui.StdInterfaces.stdPanel;
 
-public abstract class DataTable<T extends DataItem<T>> extends JTable implements stdPanel {
-    /* Members */
+/**
+ * Template class to provide a table to handle a data type.
+ * @author Tony Washer
+ * @param <T> the data type.
+ */
+public abstract class DataTable<T extends DataItem<T>> extends JTable implements StdPanel {
+    /**
+     * Serial Id.
+     */
     private static final long serialVersionUID = 1258025191244933784L;
+
+    /**
+     * Row Header Width.
+     */
+    private static final int ROWHDR_WIDTH = 30;
+
+    /**
+     * Row Header Height.
+     */
+    private static final int ROWHDR_HEIGHT = 200;
+
+    /**
+     * The Row Header Table.
+     */
     private JTable theRowHdrTable = null;
+
+    /**
+     * Data Table Model.
+     */
     private DataTableModel theModel = null;
+
+    /**
+     * The Row Header Model.
+     */
     private RowTableModel theRowHdrModel = null;
+
+    /**
+     * The Data List associated with the table.
+     */
     private DataList<?, T> theList = null;
+
+    /**
+     * The Scroll Pane.
+     */
     private JScrollPane theScroll = null;
+
+    /**
+     * Show deleted?
+     */
     private boolean doShowDel = false;
+
+    /**
+     * Is Enabled?
+     */
     private boolean isEnabled = false;
+
+    /**
+     * The Main Window.
+     */
     private MainWindow<?> theMainWindow = null;
 
-    /* Access methods */
+    /**
+     * Does the table have a header row?
+     * @return true/false
+     */
     public boolean hasHeader() {
         return false;
     }
@@ -74,10 +125,18 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
         return (theList != null) && theList.hasUpdates();
     }
 
+    /**
+     * Does the table have errors?
+     * @return true/false
+     */
     public boolean hasErrors() {
         return (theList != null) && theList.hasErrors();
     }
 
+    /**
+     * Is the table active?
+     * @return true/false
+     */
     public boolean isActive() {
         return isEnabled;
     }
@@ -86,14 +145,26 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     public void printIt() {
     }
 
+    /**
+     * Get the table model.
+     * @return the model
+     */
     public DataTableModel getTableModel() {
         return theModel;
     }
 
+    /**
+     * Get the data list.
+     * @return the data list
+     */
     public DataList<?, T> getList() {
         return theList;
     }
 
+    /**
+     * Get the scroll pane.
+     * @return the scroll pane
+     */
     public JScrollPane getScrollPane() {
         return theScroll;
     }
@@ -102,13 +173,26 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     public void notifySelection(final Object obj) {
     }
 
+    /**
+     * Update debug entry.
+     */
     public void updateDebug() {
     }
 
+    /**
+     * Set the active flag.
+     * @param isActive true/false
+     */
     public void setActive(final boolean isActive) {
         isEnabled = isActive;
     }
 
+    /**
+     * Get the combo box for the item at row and column.
+     * @param row the row
+     * @param col the column
+     * @return the combo box
+     */
     public JComboBox getComboBox(final int row,
                                  final int col) {
         return null;
@@ -121,14 +205,19 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     // }
 
     @Override
-    public DebugManager getDebugManager() {
-        return theMainWindow.getDebugMgr();
+    public JDataManager getDataManager() {
+        return theMainWindow.getDataMgr();
     }
 
-    /* Abstract methods */
+    /**
+     * Save the data.
+     */
     public abstract void saveData();
 
-    /* Internal helpers */
+    /**
+     * Get the RowTableModel.
+     * @return the model
+     */
     protected RowTableModel getRowTableModel() {
         return theRowHdrModel;
     }
@@ -172,7 +261,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
 
         /* Add as the row header */
         theScroll.setRowHeaderView(theRowHdrTable);
-        theScroll.getRowHeader().setPreferredSize(new Dimension(30, 200));
+        theScroll.getRowHeader().setPreferredSize(new Dimension(ROWHDR_WIDTH, ROWHDR_HEIGHT));
         theScroll.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, theRowHdrTable.getTableHeader());
     }
 
@@ -308,7 +397,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * select an explicit row
+     * select an explicit row.
      * @param row the row to select
      */
     protected void selectRow(final int row) {
@@ -356,16 +445,16 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Perform additional validation after change
+     * Perform additional validation after change.
      */
     protected void validateAfterChange() {
     }
 
     /**
-     * Set the show deleted indication
+     * Set the show deleted indication.
      * @param pShowDel the new setting
      */
-    protected void setShowDeleted(boolean pShowDel) {
+    protected void setShowDeleted(final boolean pShowDel) {
         T[] myRows;
         int myRowNo;
 
@@ -862,8 +951,10 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
          */
         private static final long serialVersionUID = -7172213268168894124L;
 
-        /* Table headers */
-        private static final String titleRow = "Row";
+        /**
+         * Table header.
+         */
+        private static final String TITLE_ROW = "Row";
 
         /**
          * The DataTable.
@@ -891,7 +982,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
 
         @Override
         public String getColumnName(final int col) {
-            return titleRow;
+            return TITLE_ROW;
         }
 
         @Override
@@ -913,7 +1004,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
             DataItem<?> myRow;
             int iRow;
             int myIndex;
-            ReportField[] iFields;
+            JDataField[] iFields;
             DataColumnModel myColModel;
 
             /* If we have a header decrement the index */
@@ -958,9 +1049,14 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
          */
         private RowTableModel theRowHdrModel = null;
 
-        /* Abstract methods */
-        public abstract ReportField getFieldForCell(final int row,
-                                                    final int col);
+        /**
+         * Get the field associated with the cell.
+         * @param row the row
+         * @param col the column
+         * @return the field
+         */
+        public abstract JDataField getFieldForCell(final int row,
+                                                   final int col);
 
         /**
          * Constructor.
@@ -996,7 +1092,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
         }
 
         /**
-         * fire events for insertion of a row
+         * fire events for insertion of a row.
          * @param pNewRow the inserted row
          */
         protected void fireInsertRowEvents(final int pNewRow) {
@@ -1049,8 +1145,8 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
          */
         public void fireUpdateColEvent(final int pCol) {
             /* Access the size of the table */
-            int mySize;
-            if ((mySize = getRowCount()) == 0) {
+            int mySize = getRowCount();
+            if (mySize == 0) {
                 return;
             }
 
@@ -1078,7 +1174,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
             DataItem<?> myRow;
             int iRow;
             int myIndex;
-            ReportField iField;
+            JDataField iField;
 
             /* If we have a header decrement the index */
             iRow = pData.getRow();
@@ -1107,38 +1203,56 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
      * TableColumn extension class.
      */
     protected static class DataColumn extends TableColumn {
+        /**
+         * Serial Id.
+         */
         private static final long serialVersionUID = 6117303771805259099L;
 
-        /* Is the column currently in the model */
+        /**
+         * Is the column currently in the model.
+         */
         private boolean isMember = false;
 
-        /* The Model for the Table */
+        /**
+         * The Model for the Table.
+         */
         private AbstractTableModel theModel = null;
 
-        /* Access methods */
+        /**
+         * Is the column currently a member?
+         * @return true/false
+         */
         public boolean isMember() {
             return isMember;
         }
 
-        public void setMember(boolean isMember) {
-            this.isMember = isMember;
+        /**
+         * Set whether the column is a member.
+         * @param pMember true/false
+         */
+        public void setMember(final boolean pMember) {
+            isMember = pMember;
         }
 
-        public void setModel(AbstractTableModel pModel) {
+        /**
+         * Set the table model.
+         * @param pModel the table model
+         */
+        public void setModel(final AbstractTableModel pModel) {
             theModel = pModel;
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param modelIndex model index
          * @param width column width
          * @param cellRenderer cell renderer
          * @param cellEditor cell editor
          */
-        public DataColumn(int modelIndex,
-                          int width,
-                          TableCellRenderer cellRenderer,
-                          TableCellEditor cellEditor) {
+        public DataColumn(final int modelIndex,
+                          final int width,
+                          final TableCellRenderer cellRenderer,
+                          final TableCellEditor cellEditor) {
             /* Call super-constructor */
             super(modelIndex, width, cellRenderer, cellEditor);
         }
@@ -1151,30 +1265,33 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Column Model class
+     * Column Model class.
      */
     protected static class DataColumnModel extends DefaultTableColumnModel {
+        /**
+         * Serial Id.
+         */
         private static final long serialVersionUID = -5503203201580691221L;
 
         /**
-         * The DataTableModel
+         * The DataTableModel.
          */
-        private DataTableModel theModel = null;
+        private final DataTableModel theModel;
 
         /**
-         * Constructor
+         * Constructor.
          * @param pTable the table with which this model is associated
          */
-        protected DataColumnModel(DataTable<?> pTable) {
+        protected DataColumnModel(final DataTable<?> pTable) {
             /* Access TableModel */
             theModel = pTable.getTableModel();
         }
 
         /**
-         * Add a column to the end of the model
-         * @param pColumn
+         * Add a column to the end of the model.
+         * @param pColumn the column
          */
-        protected void addColumn(DataColumn pColumn) {
+        protected void addColumn(final DataColumn pColumn) {
             /* Set the range */
             super.addColumn(pColumn);
             pColumn.setMember(true);
@@ -1182,22 +1299,22 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
         }
 
         /**
-         * Remove a column from the model
-         * @param pColumn
+         * Remove a column from the model.
+         * @param pColumn the column
          */
-        protected void removeColumn(DataColumn pColumn) {
+        protected void removeColumn(final DataColumn pColumn) {
             /* Set the range */
             super.removeColumn(pColumn);
             pColumn.setMember(false);
         }
 
         /**
-         * Access the array of displayed column indices
+         * Access the array of displayed column indices.
          * @return the array of columns
          */
-        protected ReportField[] getColumnFields() {
+        protected JDataField[] getColumnFields() {
             /* Declare the field array */
-            ReportField[] myFields = new ReportField[getColumnCount()];
+            JDataField[] myFields = new JDataField[getColumnCount()];
             int myCol;
 
             /* Loop through the columns */
@@ -1215,19 +1332,24 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     }
 
     /**
-     * Row Column Model class
+     * Row Column Model class.
      */
-    private static class RowColumnModel extends DataColumnModel {
+    private static final class RowColumnModel extends DataColumnModel {
+        /**
+         * Serial Id.
+         */
         private static final long serialVersionUID = -579928883936388389L;
 
-        /* Renderers/Editors */
+        /**
+         * Row renderer.
+         */
         private Renderer.RowCell theRowRenderer = null;
 
         /**
-         * Constructor
+         * Constructor.
          * @param pTable the table with which this model is associated
          */
-        private RowColumnModel(DataTable<?> pTable) {
+        private RowColumnModel(final DataTable<?> pTable) {
             /* Call super-constructor */
             super(pTable);
 
@@ -1238,7 +1360,8 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
             theRowRenderer = new Renderer.RowCell();
 
             /* Create the columns */
-            addColumn(myCol = new DataColumn(0, 30, theRowRenderer, null));
+            myCol = new DataColumn(0, ROWHDR_WIDTH, theRowRenderer, null);
+            addColumn(myCol);
             myCol.setModel(pTable.getRowTableModel());
         }
     }

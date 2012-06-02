@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * Jira: Java Jira Link
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,8 +28,8 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.JDataManager.ModelException;
-import net.sourceforge.JDataManager.ModelException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import uk.co.tolcroft.jira.data.Security.User;
 import uk.co.tolcroft.jira.data.Server.IssueType;
 import uk.co.tolcroft.jira.soap.JiraSoapService;
@@ -37,74 +38,78 @@ import uk.co.tolcroft.jira.soap.RemoteIssueType;
 import uk.co.tolcroft.jira.soap.RemoteProject;
 import uk.co.tolcroft.jira.soap.RemoteVersion;
 
+/**
+ * Represents a Jira project.
+ * @author Tony Washer
+ */
 public class Project {
     /**
-     * Self reference
+     * Self reference.
      */
     private final Project theSelf = this;
 
     /**
-     * Server
+     * Server.
      */
     private final Server theServer;
 
     /**
-     * Service
+     * Service.
      */
     private final JiraSoapService theService;
 
     /**
-     * Project
+     * Project.
      */
     private final RemoteProject theProject;
 
     /**
-     * Id of Project
+     * Id of Project.
      */
     private final String theId;
 
     /**
-     * Key of Project
+     * Key of Project.
      */
     private final String theKey;
 
     /**
-     * Name of Project
+     * Name of Project.
      */
     private final String theName;
 
     /**
-     * Description of Project
+     * Description of Project.
      */
     private final String theDesc;
 
     /**
-     * Project Lead
+     * Project Lead.
      */
     private final User theLead;
 
     /**
-     * Project URL
+     * Project URL.
      */
     private final String theURL;
 
     /**
-     * IssueTypes
+     * IssueTypes.
      */
     private final List<IssueType> theIssueTypes;
 
     /**
-     * Components
+     * Components.
      */
     private final List<Component> theComponents;
 
     /**
-     * Versions
+     * Versions.
      */
     private final List<Version> theVersions;
 
     /**
-     * Get the underlying project
+     * Get the underlying project.
      * @return the project
      */
     public RemoteProject getProject() {
@@ -112,7 +117,7 @@ public class Project {
     }
 
     /**
-     * Get the id of the project
+     * Get the id of the project.
      * @return the id
      */
     public String getId() {
@@ -120,7 +125,7 @@ public class Project {
     }
 
     /**
-     * Get the key of the project
+     * Get the key of the project.
      * @return the key
      */
     public String getKey() {
@@ -128,7 +133,7 @@ public class Project {
     }
 
     /**
-     * Get the name of the project
+     * Get the name of the project.
      * @return the name
      */
     public String getName() {
@@ -136,7 +141,7 @@ public class Project {
     }
 
     /**
-     * Get the description of the project
+     * Get the description of the project.
      * @return the description
      */
     public String getDesc() {
@@ -144,7 +149,7 @@ public class Project {
     }
 
     /**
-     * Get the lead of the project
+     * Get the lead of the project.
      * @return the lead
      */
     public User getLead() {
@@ -152,7 +157,7 @@ public class Project {
     }
 
     /**
-     * Get the URL of the project
+     * Get the URL of the project.
      * @return the URL
      */
     public String getURL() {
@@ -160,13 +165,13 @@ public class Project {
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pServer the server
      * @param pProject the underlying project
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    protected Project(Server pServer,
-                      RemoteProject pProject) throws ModelException {
+    protected Project(final Server pServer,
+                      final RemoteProject pProject) throws JDataException {
         /* Store parameters */
         theServer = pServer;
         theService = theServer.getService();
@@ -194,99 +199,104 @@ public class Project {
     }
 
     /**
-     * Obtain IssueType
+     * Obtain IssueType.
      * @param pId the id of the IssueType
      * @return the IssueType
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public IssueType getIssueType(String pId) throws ModelException {
+    public IssueType getIssueType(final String pId) throws JDataException {
         /* Return an existing issue type if found in list */
         Iterator<IssueType> myIterator = theIssueTypes.iterator();
         while (myIterator.hasNext()) {
             IssueType myType = myIterator.next();
-            if (myType.getId().equals(pId))
+            if (myType.getId().equals(pId)) {
                 return myType;
+            }
         }
 
         /* throw exception */
-        throw new ModelException(ExceptionClass.JIRA, "Invalid IssueTypeId " + pId);
+        throw new JDataException(ExceptionClass.JIRA, "Invalid IssueTypeId " + pId);
     }
 
     /**
-     * Obtain Component
+     * Obtain Component.
      * @param pId the id of the Component
      * @return the Component
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public Component getComponent(String pId) throws ModelException {
+    public Component getComponent(final String pId) throws JDataException {
         /* Return an existing component if found in list */
         Iterator<Component> myIterator = theComponents.iterator();
         while (myIterator.hasNext()) {
             Component myComp = myIterator.next();
-            if (myComp.getId().equals(pId))
+            if (myComp.getId().equals(pId)) {
                 return myComp;
+            }
         }
 
         /* throw exception */
-        throw new ModelException(ExceptionClass.JIRA, "Invalid ComponentId " + pId);
+        throw new JDataException(ExceptionClass.JIRA, "Invalid ComponentId " + pId);
     }
 
     /**
-     * Obtain Component by Name
+     * Obtain Component by Name.
      * @param pName the name of the Component
      * @return the Component
      */
-    public Component getComponentByName(String pName) {
+    public Component getComponentByName(final String pName) {
         /* Return an existing component if found in list */
         Iterator<Component> myIterator = theComponents.iterator();
         while (myIterator.hasNext()) {
             Component myComp = myIterator.next();
-            if (myComp.getName().equals(pName))
+            if (myComp.getName().equals(pName)) {
                 return myComp;
+            }
         }
         return null;
     }
 
     /**
-     * Obtain Version
+     * Obtain Version.
      * @param pId the id of the Version
      * @return the Version
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public Version getVersion(String pId) throws ModelException {
+    public Version getVersion(final String pId) throws JDataException {
         /* Return an existing version if found in list */
         Iterator<Version> myIterator = theVersions.iterator();
         while (myIterator.hasNext()) {
             Version myVers = myIterator.next();
-            if (myVers.getId().equals(pId))
+            if (myVers.getId().equals(pId)) {
                 return myVers;
+            }
         }
 
         /* throw exception */
-        throw new ModelException(ExceptionClass.JIRA, "Invalid VersionId " + pId);
+        throw new JDataException(ExceptionClass.JIRA, "Invalid VersionId " + pId);
     }
 
     /**
-     * Obtain Version by Name
+     * Obtain Version by Name.
      * @param pName the name of the Version
      * @return the Version
      */
-    public Version getVersionByName(String pName) {
+    public Version getVersionByName(final String pName) {
         /* Return an existing component if found in list */
         Iterator<Version> myIterator = theVersions.iterator();
         while (myIterator.hasNext()) {
             Version myVers = myIterator.next();
-            if (myVers.getName().equals(pName))
+            if (myVers.getName().equals(pName)) {
                 return myVers;
+            }
         }
         return null;
     }
 
     /**
-     * Load IssueTypes
-     * @throws ModelException
+     * Load IssueTypes.
+     * @throws JDataException on error
      */
-    private void loadIssueTypes() throws ModelException {
+    private void loadIssueTypes() throws JDataException {
         /* Protect against exceptions */
         try {
             /* Access the authorization token */
@@ -309,19 +319,17 @@ public class Project {
                 /* Add new type to list */
                 theIssueTypes.add(theServer.getIssueType(myType.getId()));
             }
-        } catch (ModelException e) {
-            throw e;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Failed to load issue types", e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to load issue types", e);
         }
     }
 
     /**
-     * Load Components
-     * @throws ModelException
+     * Load Components.
+     * @throws JDataException on error
      */
-    private void loadComponents() throws ModelException {
+    private void loadComponents() throws JDataException {
         /* Protect against exceptions */
         try {
             /* Access the authorization token */
@@ -335,19 +343,17 @@ public class Project {
                 /* Add new component to list */
                 theComponents.add(new Component(myComp));
             }
-        } catch (ModelException e) {
-            throw e;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Failed to load components", e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to load components", e);
         }
     }
 
     /**
-     * Load Versions
-     * @throws ModelException
+     * Load Versions.
+     * @throws JDataException on error
      */
-    private void loadVersions() throws ModelException {
+    private void loadVersions() throws JDataException {
         /* Protect against exceptions */
         try {
             /* Access the authorization token */
@@ -361,26 +367,25 @@ public class Project {
                 /* Add new version to list */
                 theVersions.add(new Version(myVersion));
             }
-        } catch (ModelException e) {
-            throw e;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Failed to load versions", e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to load versions", e);
         }
     }
 
     /**
-     * Add new Version
+     * Add new Version.
      * @param pVersion the version to add
-     * @throws ModelException
+     * @throws JDataException on error
      */
-    public void addVersion(String pVersion) throws ModelException {
+    public void addVersion(final String pVersion) throws JDataException {
         /* Check whether the version is already linked */
         Iterator<Version> myIterator = theVersions.iterator();
         while (myIterator.hasNext()) {
             Version myVers = myIterator.next();
-            if (myVers.getName().equals(pVersion))
+            if (myVers.getName().equals(pVersion)) {
                 return;
+            }
         }
 
         /* Protect against exceptions */
@@ -397,37 +402,33 @@ public class Project {
 
             /* Add the Version */
             theVersions.add(new Version(myVersion));
-        }
-
-        catch (ModelException e) {
-            throw e;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new ModelException(ExceptionClass.JIRA, "Failed to link component", e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to link component", e);
         }
     }
 
     /**
-     * Component class
+     * Component class.
      */
-    public class Component {
+    public final class Component {
         /**
-         * The underlying remote component
+         * The underlying remote component.
          */
         private final RemoteComponent theComp;
 
         /**
-         * The id of the component
+         * The id of the component.
          */
         private final String theId;
 
         /**
-         * The name of the component
+         * The name of the component.
          */
         private final String theName;
 
         /**
-         * Get the underlying component
+         * Get the underlying component.
          * @return the component
          */
         public RemoteComponent getComp() {
@@ -435,7 +436,7 @@ public class Project {
         }
 
         /**
-         * Get the id of the component
+         * Get the id of the component.
          * @return the id
          */
         public String getId() {
@@ -443,7 +444,7 @@ public class Project {
         }
 
         /**
-         * Get the name of the component
+         * Get the name of the component.
          * @return the name
          */
         public String getName() {
@@ -451,10 +452,10 @@ public class Project {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pComp the underlying component
          */
-        private Component(RemoteComponent pComp) {
+        private Component(final RemoteComponent pComp) {
             /* Access the details */
             theComp = pComp;
             theId = pComp.getId();
@@ -463,41 +464,41 @@ public class Project {
     }
 
     /**
-     * Version class
+     * Version class.
      */
-    public class Version {
+    public final class Version {
         /**
-         * The underlying remote version
+         * The underlying remote version.
          */
         private final RemoteVersion theVers;
 
         /**
-         * The id of the component
+         * The id of the component.
          */
         private final String theId;
 
         /**
-         * The name of the component
+         * The name of the component.
          */
         private final String theName;
 
         /**
-         * Release Date of version
+         * Release Date of version.
          */
         private Calendar theReleaseDate;
 
         /**
-         * is the version archived
+         * is the version archived.
          */
         private boolean isArchived;
 
         /**
-         * is the version released
+         * is the version released.
          */
         private boolean isReleased;
 
         /**
-         * Get the underlying version
+         * Get the underlying version.
          * @return the version
          */
         public RemoteVersion getVersion() {
@@ -505,7 +506,7 @@ public class Project {
         }
 
         /**
-         * Get the id of the version
+         * Get the id of the version.
          * @return the id
          */
         public String getId() {
@@ -513,7 +514,7 @@ public class Project {
         }
 
         /**
-         * Get the name of the version
+         * Get the name of the version.
          * @return the name
          */
         public String getName() {
@@ -521,7 +522,7 @@ public class Project {
         }
 
         /**
-         * Get the releaseDate of the version
+         * Get the releaseDate of the version.
          * @return the releaseDate
          */
         public Calendar getReleaseDate() {
@@ -529,7 +530,7 @@ public class Project {
         }
 
         /**
-         * Is the version archived
+         * Is the version archived?
          * @return true/false
          */
         public boolean isArchived() {
@@ -537,7 +538,7 @@ public class Project {
         }
 
         /**
-         * Is the version released
+         * Is the version released?
          * @return true/false
          */
         public boolean isReleased() {
@@ -545,10 +546,10 @@ public class Project {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pVers the underlying version
          */
-        private Version(RemoteVersion pVers) {
+        private Version(final RemoteVersion pVers) {
             /* Access the details */
             theVers = pVers;
             theId = pVers.getId();
@@ -559,16 +560,17 @@ public class Project {
         }
 
         /**
-         * Archive the version
+         * Archive the version.
          * @param doArchive archive/restore version
-         * @throws ModelException
+         * @throws JDataException on error
          */
-        public void setArchive(boolean doArchive) throws ModelException {
+        public void setArchive(final boolean doArchive) throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Ignore if already in correct state */
-                if (doArchive == isArchived)
+                if (doArchive == isArchived) {
                     return;
+                }
 
                 /* Access the authorization token */
                 String myToken = theServer.getAuthToken();
@@ -579,26 +581,23 @@ public class Project {
                 /* Update status */
                 isArchived = doArchive;
                 theVers.setArchived(doArchive);
-            }
-
-            catch (ModelException e) {
-                throw e;
             } catch (RemoteException e) {
                 /* Pass the exception on */
-                throw new ModelException(ExceptionClass.JIRA, "Failed to archive version", e);
+                throw new JDataException(ExceptionClass.JIRA, "Failed to archive version", e);
             }
         }
 
         /**
-         * Release the version
-         * @throws ModelException
+         * Release the version.
+         * @throws JDataException on error
          */
-        public void setReleased() throws ModelException {
+        public void setReleased() throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Ignore if already in correct state */
-                if (isReleased)
+                if (isReleased) {
                     return;
+                }
 
                 /* Access the authorization token */
                 String myToken = theServer.getAuthToken();
@@ -613,13 +612,9 @@ public class Project {
 
                 /* Call the service */
                 theService.releaseVersion(myToken, theSelf.getId(), theVers);
-            }
-
-            catch (ModelException e) {
-                throw e;
             } catch (RemoteException e) {
                 /* Pass the exception on */
-                throw new ModelException(ExceptionClass.JIRA, "Failed to archive version", e);
+                throw new JDataException(ExceptionClass.JIRA, "Failed to archive version", e);
             }
         }
     }
