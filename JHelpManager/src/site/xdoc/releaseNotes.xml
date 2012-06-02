@@ -1,0 +1,16 @@
+<document>
+  <properties>
+    <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
+    <title>JHelpManager Release Notes</title>
+  </properties>
+  <body>
+    <section name="Overview">
+      <p>This project was started to provide a simple Help System for a Java app. The only available systems seemed to be inordinately complicated. This project is a skeleton and is still under development</p>
+    </section>
+    <section name="Build History">
+      <dl>
+<dt>v1.0.0-b1</dt> <dd>initial upload of code</dd>
+      </dl>
+    </section>
+  </body>
+</document>

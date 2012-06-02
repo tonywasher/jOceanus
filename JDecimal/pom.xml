@@ -81,7 +81,7 @@
         <configuration>
           <archive>
             <manifest>
-              <packageName>uk.co.tolcroft.Models</packageName>
+              <packageName>net.sourceforge.JDecimal</packageName>
               <addClasspath>true</addClasspath>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>

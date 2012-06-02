@@ -1,0 +1,5 @@
+JHelpManager Project
+
+  JDateDay is an extension of the JDateButton project. It modifies JDateButton so that a DateDay object is returned instead of a Calendar object. This DateDay objet has no concept of time of day, merely the date. All functionality of JDateButton is provided. 
+  
+  In addition to the facilities provided by JDateButton, JDateDay provides a DateDayRange class which handles a contiguous range of Dates with a start and and end. A small JPanel selecto object is provided to enable selection of such ranges.

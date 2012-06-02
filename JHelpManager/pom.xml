@@ -1,17 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>net.sourceforge.JDateDay</groupId>
-  <artifactId>JDateDay</artifactId>
+  <groupId>net.sourceforge.JHelpManager</groupId>
+  <artifactId>JHelpManager</artifactId>
   <version>v1.0.0-SNAPSHOT</version>
-  <name>Java DateDay</name>
-  <description>Implementation of a DateDay</description>
-  <dependencies>
-  	<dependency>
-  		<groupId>net.sourceforge.JDateButton</groupId>
-  		<artifactId>JDateButton</artifactId>
-  		<version>v1.1.0-SNAPSHOT</version>
-  	</dependency>
-  </dependencies>
+  <name>Java Help Manager</name>
+  <description>Simple Java Help Manager allowing a quick help system to be bult for an application</description>
+  <inceptionYear>2012</inceptionYear>
+  <!--<url>http://sourceforge.net/projects/jdatebutton/</url>-->
   <licenses>
     <license>
       <name>Apache 2</name>
@@ -35,10 +30,10 @@
     <url>http://Tony-LapTop:8080/</url>
   </issueManagement>
   <scm>
-    <connection>scm:svn:http://Tony-LapTop/svn/finance/JDateDay</connection>
-    <developerConnection>scm:svn:https://Tony-LapTop/svn/finance/JDateDay</developerConnection>
+    <connection>scm:svn:http://Tony-LapTop/svn/finance/JHelpManager</connection>
+    <developerConnection>scm:svn:https://Tony-LapTop/svn/finance/JHelpManager</developerConnection>
     <tag>HEAD</tag>
-    <url>http://Tony-LapTop/viewvc/finance/JDateDay</url>
+    <url>http://Tony-LapTop/viewvc/finance/JHelpManager</url>
   </scm>
   <properties>
     <backup-dir>../../backup/lib</backup-dir>
@@ -88,10 +83,8 @@
         <configuration>
           <archive>
             <manifest>
-              <packageName>net.sourceforge.JDateDay</packageName>
-              <addClasspath>true</addClasspath>
+              <packageName>net.sourceforge.JHelpManager</packageName>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-              <MainClass>net.sourceforge.JDateDay.Demo.DateExample</MainClass>
             </manifest>
           </archive>
         </configuration>

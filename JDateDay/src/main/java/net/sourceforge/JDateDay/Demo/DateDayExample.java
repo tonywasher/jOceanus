@@ -19,7 +19,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDateDay;
+package net.sourceforge.JDateDay.Demo;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
