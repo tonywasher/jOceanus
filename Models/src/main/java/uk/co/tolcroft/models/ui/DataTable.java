@@ -108,9 +108,9 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
     private boolean isEnabled = false;
 
     /**
-     * The Main Window.
+     * The Data Manager.
      */
-    private MainWindow<?> theMainWindow = null;
+    private final JDataManager theDataManager;
 
     /**
      * Does the table have a header row?
@@ -198,15 +198,9 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
         return null;
     }
 
-    // @Override
-    // public boolean isValidHistory(DataItem<T> pItem,
-    // HistoryValues<?> pValues) {
-    // return true;
-    // }
-
     @Override
     public JDataManager getDataManager() {
-        return theMainWindow.getDataMgr();
+        return theDataManager;
     }
 
     /**
@@ -224,11 +218,11 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
 
     /**
      * Constructor.
-     * @param pMainWindow the main window
+     * @param pDataManager the data manager
      */
-    public DataTable(final MainWindow<?> pMainWindow) {
+    public DataTable(final JDataManager pDataManager) {
         /* Store parameters */
-        theMainWindow = pMainWindow;
+        theDataManager = pDataManager;
         theRowHdrModel = new RowTableModel(this);
 
         /* Set the selection mode */

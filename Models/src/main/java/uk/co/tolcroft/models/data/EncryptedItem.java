@@ -30,7 +30,6 @@ import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JGordianKnot.EncryptedData.EncryptedField;
 import net.sourceforge.JGordianKnot.EncryptionGenerator;
 import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
-import uk.co.tolcroft.models.threads.ThreadStatus;
 
 /**
  * Encrypted Data Item and List.
@@ -227,7 +226,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
         }
 
         /* Handle Standard cases */
-        return pCurr.getDifference(pNew);
+        return pCurr.differs(pNew);
     }
 
     /**
@@ -364,12 +363,12 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 
         /**
          * Update Security for items in the list.
-         * @param pThread the thread status
+         * @param pTask the task control
          * @param pControl the control key to apply
          * @return Continue <code>true/false</code>
          * @throws JDataException on error
          */
-        public boolean updateSecurity(final ThreadStatus<?> pThread,
+        public boolean updateSecurity(final TaskControl<?> pTask,
                                       final ControlKey pControl) throws JDataException {
             DataListIterator<T> myIterator;
             T myCurr;
@@ -377,15 +376,15 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
             int myCount = 0;
 
             /* Declare the new stage */
-            if (!pThread.setNewStage(listName())) {
+            if (!pTask.setNewStage(listName())) {
                 return false;
             }
 
             /* Access reporting steps */
-            mySteps = pThread.getReportingSteps();
+            mySteps = pTask.getReportingSteps();
 
             /* Count the Number of items */
-            if (!pThread.setNumSteps(sizeAll())) {
+            if (!pTask.setNumSteps(sizeAll())) {
                 return false;
             }
 
@@ -399,7 +398,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0) && (!pThread.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }
@@ -411,13 +410,13 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
         /**
          * Adopt security from underlying list. If a match for the item is found in the underlying list, its
          * security is adopted. If no match is found then the security is initialised.
-         * @param pThread the thread status
+         * @param pTask the task control
          * @param pControl the control key to initialise from
          * @param pBase The base list to adopt from
          * @return Continue <code>true/false</code>
          * @throws JDataException on error
          */
-        protected boolean adoptSecurity(final ThreadStatus<?> pThread,
+        protected boolean adoptSecurity(final TaskControl<?> pTask,
                                         final ControlKey pControl,
                                         final EncryptedList<?, ?> pBase) throws JDataException {
             /* Local variables */
@@ -431,15 +430,15 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
             int myCount = 0;
 
             /* Declare the new stage */
-            if (!pThread.setNewStage(listName())) {
+            if (!pTask.setNewStage(listName())) {
                 return false;
             }
 
             /* Access reporting steps */
-            mySteps = pThread.getReportingSteps();
+            mySteps = pTask.getReportingSteps();
 
             /* Count the Number of items */
-            if (!pThread.setNumSteps(sizeAll())) {
+            if (!pTask.setNumSteps(sizeAll())) {
                 return false;
             }
 
@@ -460,7 +459,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0) && (!pThread.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }

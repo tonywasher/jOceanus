@@ -47,7 +47,7 @@ public abstract class Decimal {
     /**
      * The Buffer length for building decimal strings.
      */
-    public static final int INITIAL_BUFLEN = 20;
+    private static final int INITIAL_BUFLEN = 20;
 
     /**
      * The Maximum # of Decimals.
@@ -63,6 +63,12 @@ public abstract class Decimal {
      * The Decimal radix.
      */
     public static final int RADIX_TEN = 10;
+
+    /**
+     * Powers of Ten.
+     */
+    private static final long[] POWERS_OF_TEN = { 1L, 10L, 100L, 1000L, 10000L, 100000L, 1000000L, 10000000L,
+            100000000L, 1000000000L, 10000000000L };
 
     /**
      * The number of decimals for this object.
@@ -170,11 +176,7 @@ public abstract class Decimal {
      * @return the decimal part of the number
      */
     private static long getFactor(final int pDecimals) {
-        long myFactor = 1;
-        for (int i = 0; i < pDecimals; i++) {
-            myFactor *= RADIX_TEN;
-        }
-        return myFactor;
+        return POWERS_OF_TEN[pDecimals];
     }
 
     /**
@@ -485,9 +487,7 @@ public abstract class Decimal {
             /* else we have no decimals */
         } else {
             /* Raise to appropriate factor given by number of decimals */
-            for (int i = 0; i < theDecimals; i++) {
-                theValue *= RADIX_TEN;
-            }
+            theValue *= getFactor(theDecimals);
         }
 
         /* If the value is negative, negate the number */

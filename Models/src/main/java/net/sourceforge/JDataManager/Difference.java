@@ -24,8 +24,6 @@ package net.sourceforge.JDataManager;
 
 import java.util.Arrays;
 
-import net.sourceforge.JGordianKnot.EncryptedData.EncryptedField;
-
 /**
  * Difference enum and utility.
  * @author Tony Washer
@@ -132,14 +130,9 @@ public enum Difference {
             return Different;
         }
 
-        /* Handle encrypted cases */
-        if (pCurr instanceof EncryptedField) {
-            return ((EncryptedField<?>) pCurr).getDifference((EncryptedField<?>) pNew);
-        }
-
-        /* Handle Report Item cases */
-        if (pCurr instanceof ReportItem) {
-            return ((ReportItem<?>) pCurr).getDifference((ReportItem<?>) pNew);
+        /* Handle differs support */
+        if (pCurr instanceof Differs) {
+            return ((Differs) pCurr).differs(pNew);
         }
 
         /* Handle Standard cases */
@@ -185,5 +178,17 @@ public enum Difference {
 
         /* Handle Standard cases */
         return pCurr.equals(pNew);
+    }
+
+    /**
+     * Difference interface.
+     */
+    public interface Differs {
+        /**
+         * Test for difference with another object.
+         * @param pThat the other object
+         * @return the difference
+         */
+        Difference differs(final Object pThat);
     }
 }

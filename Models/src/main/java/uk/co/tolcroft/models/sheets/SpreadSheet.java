@@ -26,7 +26,7 @@ import java.io.File;
 
 import net.sourceforge.JDataManager.JDataException;
 import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.threads.ThreadStatus;
+import uk.co.tolcroft.models.data.TaskControl;
 
 /**
  * Spreadsheet control.
@@ -41,29 +41,29 @@ public abstract class SpreadSheet<T extends DataSet<T>> {
 
     /**
      * Obtain a sheet reader.
-     * @param pThread Thread Control for task
+     * @param pTask Task Control for task
      * @return the sheet reader
      */
-    protected abstract SheetReader<T> getSheetReader(final ThreadStatus<T> pThread);
+    protected abstract SheetReader<T> getSheetReader(final TaskControl<T> pTask);
 
     /**
      * Obtain a sheet writer.
-     * @param pThread Thread Control for task
+     * @param pTask Task Control for task
      * @return the sheet writer
      */
-    protected abstract SheetWriter<T> getSheetWriter(final ThreadStatus<T> pThread);
+    protected abstract SheetWriter<T> getSheetWriter(final TaskControl<T> pTask);
 
     /**
      * Load a Backup Workbook.
-     * @param pThread Thread Control for task
+     * @param pTask Task Control for task
      * @param pFile the backup file to load from
      * @return the newly loaded data
      * @throws JDataException on error
      */
-    public T loadBackup(final ThreadStatus<T> pThread,
+    public T loadBackup(final TaskControl<T> pTask,
                         final File pFile) throws JDataException {
         /* Create a sheet reader object */
-        SheetReader<T> myReader = getSheetReader(pThread);
+        SheetReader<T> myReader = getSheetReader(pTask);
 
         /* Load the backup */
         T myData = myReader.loadBackup(pFile);
@@ -74,16 +74,16 @@ public abstract class SpreadSheet<T extends DataSet<T>> {
 
     /**
      * Create a Backup Workbook.
-     * @param pThread Thread Control for task
+     * @param pTask Task Control for task
      * @param pData Data to write out
      * @param pFile the backup file to write to
      * @throws JDataException on error
      */
-    public void createBackup(final ThreadStatus<T> pThread,
+    public void createBackup(final TaskControl<T> pTask,
                              final T pData,
                              final File pFile) throws JDataException {
         /* Create a sheet writer object */
-        SheetWriter<T> myWriter = getSheetWriter(pThread);
+        SheetWriter<T> myWriter = getSheetWriter(pTask);
 
         /* Create the backup */
         myWriter.createBackup(pData, pFile);
@@ -91,15 +91,15 @@ public abstract class SpreadSheet<T extends DataSet<T>> {
 
     /**
      * Load an Extract Workbook.
-     * @param pThread Thread Control for task
+     * @param pTask Task Control for task
      * @param pFile the extract file to load from
      * @return the newly loaded data
      * @throws JDataException on error
      */
-    public T loadExtract(final ThreadStatus<T> pThread,
+    public T loadExtract(final TaskControl<T> pTask,
                          final File pFile) throws JDataException {
         /* Create a Sheet Reader object */
-        SheetReader<T> myReader = getSheetReader(pThread);
+        SheetReader<T> myReader = getSheetReader(pTask);
 
         /* Load the extract file */
         T myData = myReader.loadExtract(pFile);
@@ -110,16 +110,16 @@ public abstract class SpreadSheet<T extends DataSet<T>> {
 
     /**
      * Create an Extract Workbook.
-     * @param pThread Thread Control for task
+     * @param pTask Task Control for task
      * @param pData Data to write out
      * @param pFile the extract file to write to
      * @throws JDataException on error
      */
-    public void createExtract(final ThreadStatus<T> pThread,
+    public void createExtract(final TaskControl<T> pTask,
                               final T pData,
                               final File pFile) throws JDataException {
         /* Create a SheetWriter object */
-        SheetWriter<T> myWriter = getSheetWriter(pThread);
+        SheetWriter<T> myWriter = getSheetWriter(pTask);
 
         /* Create the Extract file */
         myWriter.createExtract(pData, pFile);

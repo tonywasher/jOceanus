@@ -46,8 +46,8 @@ import org.apache.poi.ss.util.CellReference;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataList.DataListIterator;
+import uk.co.tolcroft.models.data.TaskControl;
 import uk.co.tolcroft.models.sheets.SheetWriter.CellStyleType;
-import uk.co.tolcroft.models.threads.ThreadStatus;
 
 /**
  * SheetDataItem class for accessing a sheet that is related to a data type.
@@ -106,9 +106,9 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
     protected static final int WIDTH_PRICE = 15;
 
     /**
-     * The thread control.
+     * The task control.
      */
-    private ThreadStatus<?> theThread = null;
+    private final TaskControl<?> theTask;
 
     /**
      * The input sheet.
@@ -173,7 +173,7 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
     protected SheetDataItem(final SheetReader<?> pReader,
                             final String pRange) {
         /* Store parameters */
-        theThread = pReader.getThread();
+        theTask = pReader.getTask();
         theReader = pReader;
         theRangeName = pRange;
         theFormatter = new DataFormatter();
@@ -187,7 +187,7 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
     protected SheetDataItem(final SheetWriter<?> pWriter,
                             final String pRange) {
         /* Store parameters */
-        theThread = pWriter.getThread();
+        theTask = pWriter.getTask();
         theWriter = pWriter;
         theWorkBook = pWriter.getWorkBook();
         theRangeName = pRange;
@@ -228,12 +228,12 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
             }
 
             /* Declare the new stage */
-            if (!theThread.setNewStage(theRangeName)) {
+            if (!theTask.setNewStage(theRangeName)) {
                 return false;
             }
 
             /* Access the number of reporting steps */
-            mySteps = theThread.getReportingSteps();
+            mySteps = theTask.getReportingSteps();
 
             /* If we found the range OK */
             if (myRange != null) {
@@ -247,7 +247,7 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
                 myTotal = myBottom.getRow() - myTop.getRow() + 1;
 
                 /* Declare the number of steps */
-                if (!theThread.setNumSteps(myTotal)) {
+                if (!theTask.setNumSteps(myTotal)) {
                     return false;
                 }
 
@@ -261,7 +261,7 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
 
                     /* Report the progress */
                     myCount++;
-                    if (((myCount % mySteps) == 0) && (!theThread.setStepsDone(myCount))) {
+                    if (((myCount % mySteps) == 0) && (!theTask.setStepsDone(myCount))) {
                         return false;
                     }
                 }
@@ -294,7 +294,7 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
         /* Protect against exceptions */
         try {
             /* Declare the new stage */
-            if (!theThread.setNewStage(theRangeName)) {
+            if (!theTask.setNewStage(theRangeName)) {
                 return false;
             }
 
@@ -302,13 +302,13 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
             theWorkSheet = theWorkBook.createSheet(theRangeName);
 
             /* Access the number of reporting steps */
-            mySteps = theThread.getReportingSteps();
+            mySteps = theTask.getReportingSteps();
 
             /* Count the number of items */
             myTotal = theList.size();
 
             /* Declare the number of steps */
-            if (!theThread.setNumSteps(myTotal)) {
+            if (!theTask.setNumSteps(myTotal)) {
                 return false;
             }
 
@@ -335,7 +335,7 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
                 /* Report the progress */
                 myCount++;
                 theCurrRow++;
-                if (((myCount % mySteps) == 0) && (!theThread.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!theTask.setStepsDone(myCount))) {
                     return false;
                 }
             }

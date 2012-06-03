@@ -36,7 +36,6 @@ import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.threads.WorkerThread;
-import uk.co.tolcroft.models.ui.StatusBar;
 
 /**
  * Provides top-level control of data.
@@ -82,11 +81,6 @@ public abstract class DataControl<T extends DataSet<T>> {
      * The Error.
      */
     private JDataException theError = null;
-
-    /**
-     * The StatusBar.
-     */
-    private StatusBar theStatusBar = null;
 
     /**
      * The Frame.
@@ -200,22 +194,6 @@ public abstract class DataControl<T extends DataSet<T>> {
      */
     public JDataException getError() {
         return theError;
-    }
-
-    /**
-     * Set StatusBar.
-     * @param pStatusBar the StatusBar
-     */
-    public void setStatusBar(final StatusBar pStatusBar) {
-        theStatusBar = pStatusBar;
-    }
-
-    /**
-     * Obtain StatusBar.
-     * @return the StatusBar
-     */
-    public StatusBar getStatusBar() {
-        return theStatusBar;
     }
 
     /**

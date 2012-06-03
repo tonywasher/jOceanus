@@ -50,8 +50,8 @@ import org.tmatesoft.svn.core.wc.admin.SVNAdminEvent;
 import org.tmatesoft.svn.core.wc.admin.SVNAdminEventAction;
 
 import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
+import uk.co.tolcroft.models.data.TaskControl;
 import uk.co.tolcroft.models.sheets.BackupPreferences;
-import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.subversion.data.SubVersionPreferences;
 
 /**
@@ -85,17 +85,17 @@ public class Backup {
     private final SVNAdminClient theAdminClient;
 
     /**
-     * The Thread Status.
+     * The Task Control.
      */
-    private final ThreadStatus<?> theStatus;
+    private final TaskControl<?> theTask;
 
     /**
      * Constructor.
-     * @param pStatus the thread status
+     * @param pTask the task control
      */
-    public Backup(final ThreadStatus<?> pStatus) {
+    public Backup(final TaskControl<?> pTask) {
         /* Store parameters */
-        theStatus = pStatus;
+        theTask = pTask;
 
         /* Access the SubVersion preferences */
         thePreferences = PreferenceManager.getPreferenceSet(SubVersionPreferences.class);
@@ -191,7 +191,7 @@ public class Backup {
             int myNumRevisions = (int) revLast;
 
             /* Declare the number of revisions */
-            if (!theStatus.setNumSteps(myNumRevisions)) {
+            if (!theTask.setNumSteps(myNumRevisions)) {
                 return;
             }
 
@@ -283,7 +283,7 @@ public class Backup {
         }
 
         /* Declare the number of stages */
-        boolean bContinue = theStatus.setNumStages(iNumStages);
+        boolean bContinue = theTask.setNumStages(iNumStages);
 
         /* Ignore if cancelled */
         if (!bContinue) {
@@ -298,7 +298,7 @@ public class Backup {
             }
 
             /* Set new stage and break if cancelled */
-            if (!theStatus.setNewStage(myRepository.getName())) {
+            if (!theTask.setNewStage(myRepository.getName())) {
                 break;
             }
 
@@ -314,7 +314,7 @@ public class Backup {
 
         @Override
         public void checkCancelled() throws SVNCancelException {
-            if (theStatus.isCancelled()) {
+            if (theTask.isCancelled()) {
                 throw new SVNCancelException();
             }
         }
@@ -328,7 +328,7 @@ public class Backup {
             }
 
             /* Set steps done value */
-            theStatus.setStepsDone((int) pEvent.getRevision());
+            theTask.setStepsDone((int) pEvent.getRevision());
         }
 
         @Override

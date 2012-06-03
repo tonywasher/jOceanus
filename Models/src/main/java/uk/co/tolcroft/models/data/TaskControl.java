@@ -20,13 +20,16 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.models.threads;
+package uk.co.tolcroft.models.data;
+
+import net.sourceforge.JGordianKnot.SecureManager;
 
 /**
  * Status control interface for use by threads to report status and to detect cancellation.
  * @author Tony Washer
+ * @param <T> the dataset type
  */
-public interface StatusControl {
+public interface TaskControl<T extends DataSet<T>> {
     /**
      * Initialise task.
      * @param pTask task name
@@ -61,4 +64,28 @@ public interface StatusControl {
      * @return continue true/false
      */
     boolean setStepsDone(final int pStepsDone);
+
+    /**
+     * Get the number of reporting steps.
+     * @return the number of steps
+     */
+    int getReportingSteps();
+
+    /**
+     * Obtain a new, empty DataSet.
+     * @return the new DataSet
+     */
+    T getNewDataSet();
+
+    /**
+     * Access the security manager.
+     * @return the security manager
+     */
+    SecureManager getSecurity();
+
+    /**
+     * Is the task cancelled?
+     * @return true/false
+     */
+    boolean isCancelled();
 }

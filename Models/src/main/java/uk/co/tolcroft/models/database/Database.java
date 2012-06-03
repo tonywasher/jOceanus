@@ -35,8 +35,7 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.PreferenceSet;
 import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 import uk.co.tolcroft.models.data.PreferenceSet.PreferenceSetChooser;
-import uk.co.tolcroft.models.threads.ThreadStatus;
-import uk.co.tolcroft.models.views.DataControl;
+import uk.co.tolcroft.models.data.TaskControl;
 
 /**
  * Class that encapsulates a database connection.
@@ -365,21 +364,20 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
 
     /**
      * Load data from the database.
-     * @param pThread the thread control
+     * @param pTask the task control
      * @return the new DataSet
      * @throws JDataException on error
      */
-    public T loadDatabase(final ThreadStatus<T> pThread) throws JDataException {
+    public T loadDatabase(final TaskControl<T> pTask) throws JDataException {
         boolean bContinue = true;
 
         /* Set the number of stages */
-        if (!pThread.setNumStages(1 + theTables.size())) {
+        if (!pTask.setNumStages(1 + theTables.size())) {
             return null;
         }
 
         /* Create an empty DataSet */
-        DataControl<T> myView = pThread.getControl();
-        T myData = myView.getNewData();
+        T myData = pTask.getNewDataSet();
 
         /* Create the iterator */
         Iterator<DatabaseTable<?>> myIterator;
@@ -391,12 +389,12 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             myTable = myIterator.next();
 
             /* Load the items */
-            bContinue = myTable.loadItems(pThread, myData);
+            bContinue = myTable.loadItems(pTask, myData);
         }
 
         /* analyse the data */
         if (bContinue) {
-            bContinue = pThread.setNewStage("Refreshing data");
+            bContinue = pTask.setNewStage("Refreshing data");
         }
 
         /* Check for cancellation */
@@ -410,17 +408,17 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
 
     /**
      * Update data into database.
-     * @param pThread the thread control
+     * @param pTask the task control
      * @param pData the data
      * @throws JDataException on error
      */
-    public void updateDatabase(final ThreadStatus<T> pThread,
+    public void updateDatabase(final TaskControl<T> pTask,
                                final T pData) throws JDataException {
         boolean bContinue = true;
         BatchControl myBatch = new BatchControl(theBatchSize);
 
         /* Set the number of stages */
-        if (!pThread.setNumStages(NUM_STEPS_PER_TABLE * theTables.size())) {
+        if (!pTask.setNumStages(NUM_STEPS_PER_TABLE * theTables.size())) {
             return;
         }
 
@@ -434,7 +432,7 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             myTable = myIterator.next();
 
             /* Load the items */
-            bContinue = myTable.insertItems(pThread, pData, myBatch);
+            bContinue = myTable.insertItems(pTask, pData, myBatch);
         }
 
         /* Create the list iterator */
@@ -446,7 +444,7 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             myTable = myListIterator.next();
 
             /* Load the items */
-            bContinue = myTable.updateItems(pThread, myBatch);
+            bContinue = myTable.updateItems(pTask, myBatch);
         }
 
         /* Loop through the tables in reverse order */
@@ -454,7 +452,7 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             myTable = myListIterator.previous();
 
             /* Delete items from the table */
-            bContinue = myTable.deleteItems(pThread, myBatch);
+            bContinue = myTable.deleteItems(pTask, myBatch);
         }
 
         /* If we have active work in the batch */
@@ -479,15 +477,15 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
 
     /**
      * Create tables.
-     * @param pThread the thread control
+     * @param pTask the task control
      * @throws JDataException on error
      */
-    public void createTables(final ThreadStatus<T> pThread) throws JDataException {
+    public void createTables(final TaskControl<T> pTask) throws JDataException {
         /* Drop any existing tables */
-        dropTables(pThread);
+        dropTables(pTask);
 
         /* Set the number of stages */
-        if (!pThread.setNumStages(1)) {
+        if (!pTask.setNumStages(1)) {
             return;
         }
 
@@ -507,12 +505,12 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
 
     /**
      * Drop tables.
-     * @param pThread the thread control
+     * @param pTask the task control
      * @throws JDataException on error
      */
-    private void dropTables(final ThreadStatus<T> pThread) throws JDataException {
+    public void dropTables(final TaskControl<T> pTask) throws JDataException {
         /* Set the number of stages */
-        if (!pThread.setNumStages(1)) {
+        if (!pTask.setNumStages(1)) {
             return;
         }
 
@@ -532,13 +530,13 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
 
     /**
      * Purge tables.
-     * @param pThread the thread control
+     * @param pTask the task control
      * @throws JDataException on error
      */
-    public void purgeTables(final ThreadStatus<T> pThread) throws JDataException {
+    public void purgeTables(final TaskControl<T> pTask) throws JDataException {
 
         /* Set the number of stages */
-        if (!pThread.setNumStages(1)) {
+        if (!pTask.setNumStages(1)) {
             return;
         }
 

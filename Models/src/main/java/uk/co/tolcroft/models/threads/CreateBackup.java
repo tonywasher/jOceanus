@@ -31,6 +31,7 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 import uk.co.tolcroft.models.sheets.BackupPreferences;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
+import uk.co.tolcroft.models.ui.StatusBar;
 import uk.co.tolcroft.models.views.DataControl;
 
 /**
@@ -67,16 +68,18 @@ public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
     /**
      * Constructor (Event Thread).
      * @param pControl the data control
+     * @param pStatusBar the status bar
      */
-    public CreateBackup(final DataControl<T> pControl) {
+    public CreateBackup(final DataControl<T> pControl,
+                        final StatusBar pStatusBar) {
         /* Call super-constructor */
-        super(TASK_NAME, pControl);
+        super(TASK_NAME, pControl, pStatusBar);
 
         /* Store passed parameters */
         theControl = pControl;
 
         /* Create the status */
-        theStatus = new ThreadStatus<T>(this, theControl);
+        theStatus = new ThreadStatus<T>(this, theControl, pStatusBar);
 
         /* Show the status window */
         showStatusBar();

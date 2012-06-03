@@ -31,6 +31,7 @@ import java.util.Locale;
 
 import net.sourceforge.JDataManager.DataConverter;
 import net.sourceforge.JDataManager.Difference;
+import net.sourceforge.JDataManager.Difference.Differs;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataObject;
@@ -102,7 +103,7 @@ public final class EncryptedData {
      * The generic encrypted object class.
      * @param <T> the field type
      */
-    public abstract static class EncryptedField<T> implements JDataFormat {
+    public abstract static class EncryptedField<T> implements JDataFormat, Differs {
         /**
          * Encryption CipherSet.
          */
@@ -304,24 +305,20 @@ public final class EncryptedData {
             return myHashCode;
         }
 
-        /**
-         * Compare two EncryptedFields for differences.
-         * @param pNew the other field
-         * @return the difference
-         */
-        public Difference getDifference(final EncryptedField<?> pNew) {
+        @Override
+        public Difference differs(final Object pThat) {
             /* Reject if null */
-            if (pNew == null) {
+            if (pThat == null) {
                 return Difference.Different;
             }
 
             /* Reject if wrong class */
-            if (this.getClass() != pNew.getClass()) {
+            if (getClass() != pThat.getClass()) {
                 return Difference.Different;
             }
 
             /* Access as correct class */
-            EncryptedField<?> myField = (EncryptedField<?>) pNew;
+            EncryptedField<?> myField = (EncryptedField<?>) pThat;
 
             /* Compare Unencrypted value */
             if (Difference.getDifference(getValue(), myField.getValue()).isDifferent()) {

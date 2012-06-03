@@ -53,8 +53,8 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.data.TaskControl;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
-import uk.co.tolcroft.models.threads.ThreadStatus;
 
 /**
  * Write control for spreadsheets.
@@ -68,9 +68,9 @@ public abstract class SheetWriter<T extends DataSet<T>> {
     private static final int FONT_HEIGHT = 10;
 
     /**
-     * Thread control.
+     * Task control.
      */
-    private final ThreadStatus<T> theThread;
+    private final TaskControl<T> theTask;
 
     /**
      * Writable spreadsheet.
@@ -101,8 +101,8 @@ public abstract class SheetWriter<T extends DataSet<T>> {
      * get thread status.
      * @return the status
      */
-    protected ThreadStatus<T> getThread() {
-        return theThread;
+    protected TaskControl<T> getTask() {
+        return theTask;
     }
 
     /**
@@ -131,10 +131,10 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 
     /**
      * Constructor.
-     * @param pThread the Thread control
+     * @param pTask the Task control
      */
-    protected SheetWriter(final ThreadStatus<T> pThread) {
-        theThread = pThread;
+    protected SheetWriter(final TaskControl<T> pTask) {
+        theTask = pTask;
     }
 
     /**
@@ -455,7 +455,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
         Iterator<SheetDataItem<?>> myIterator = theSheets.iterator();
 
         /* Declare the number of stages */
-        boolean bContinue = theThread.setNumStages(theSheets.size() + 1);
+        boolean bContinue = theTask.setNumStages(theSheets.size() + 1);
 
         /* Loop through the sheets */
         while ((bContinue) && (myIterator.hasNext())) {
@@ -468,7 +468,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 
         /* If we have built all the sheets */
         if (bContinue) {
-            bContinue = theThread.setNewStage("Writing");
+            bContinue = theTask.setNewStage("Writing");
         }
 
         /* If we have created the workbook OK */

@@ -25,6 +25,7 @@ package uk.co.tolcroft.models.threads;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.ui.StatusBar;
 import uk.co.tolcroft.models.views.DataControl;
 
 /**
@@ -42,11 +43,13 @@ public abstract class LoaderThread<T extends DataSet<T>> extends WorkerThread<T>
      * Constructor.
      * @param pTask task name
      * @param pControl data control
+     * @param pStatusBar the status bar
      */
     protected LoaderThread(final String pTask,
-                           final DataControl<T> pControl) {
+                           final DataControl<T> pControl,
+                           final StatusBar pStatusBar) {
         /* Record the parameters */
-        super(pTask, pControl.getStatusBar());
+        super(pTask, pStatusBar);
         theControl = pControl;
     }
 

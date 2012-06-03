@@ -23,10 +23,14 @@
 package uk.co.tolcroft.models.threads;
 
 import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JGordianKnot.SecureManager;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.PreferenceSet;
 import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 import uk.co.tolcroft.models.data.PreferenceSet.PreferenceSetChooser;
+import uk.co.tolcroft.models.data.TaskControl;
+import uk.co.tolcroft.models.ui.StatusBar;
+import uk.co.tolcroft.models.ui.StatusBar.StatusData;
 import uk.co.tolcroft.models.views.DataControl;
 
 /**
@@ -34,7 +38,7 @@ import uk.co.tolcroft.models.views.DataControl;
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public class ThreadStatus<T extends DataSet<T>> implements StatusControl, PreferenceSetChooser {
+public class ThreadStatus<T extends DataSet<T>> implements TaskControl<T>, PreferenceSetChooser {
     /**
      * Default Number of steps/stages.
      */
@@ -56,6 +60,11 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl, Prefer
     private final DataControl<T> theControl;
 
     /**
+     * The StatusBar.
+     */
+    private final StatusBar theStatusBar;
+
+    /**
      * The number of reporting steps.
      */
     private int theSteps;
@@ -65,12 +74,19 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl, Prefer
      */
     private ThreadStatusPreferences theTPreferences = null;
 
-    /**
-     * Get the number of reporting steps.
-     * @return the number of steps
-     */
+    @Override
     public int getReportingSteps() {
         return theSteps;
+    }
+
+    @Override
+    public T getNewDataSet() {
+        return theControl.getNewData();
+    }
+
+    @Override
+    public SecureManager getSecurity() {
+        return theControl.getSecurity();
     }
 
     /**
@@ -81,24 +97,32 @@ public class ThreadStatus<T extends DataSet<T>> implements StatusControl, Prefer
         return theControl;
     }
 
-    /**
-     * Is the thread cancelled?
-     * @return true/false
-     */
+    @Override
     public boolean isCancelled() {
         return theThread.isCancelled();
+    }
+
+    /**
+     * Obtain StatusBar.
+     * @return the StatusBar
+     */
+    public StatusBar getStatusBar() {
+        return theStatusBar;
     }
 
     /**
      * Constructor.
      * @param pThread the thread
      * @param pControl the data control
+     * @param pStatusBar the status bar
      */
     public ThreadStatus(final WorkerThread<?> pThread,
-                        final DataControl<T> pControl) {
+                        final DataControl<T> pControl,
+                        final StatusBar pStatusBar) {
         /* Store parameter */
         theThread = pThread;
         theControl = pControl;
+        theStatusBar = pStatusBar;
 
         /* Access the threadStatus properties */
         theTPreferences = (ThreadStatusPreferences) PreferenceManager.getPreferenceSet(this);

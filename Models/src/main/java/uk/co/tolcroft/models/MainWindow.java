@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.models.ui;
+package uk.co.tolcroft.models;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -58,6 +58,8 @@ import uk.co.tolcroft.models.threads.RenewSecurity;
 import uk.co.tolcroft.models.threads.StoreDatabase;
 import uk.co.tolcroft.models.threads.UpdatePassword;
 import uk.co.tolcroft.models.threads.WorkerThread;
+import uk.co.tolcroft.models.ui.StatusBar;
+import uk.co.tolcroft.models.ui.ThreadControl;
 import uk.co.tolcroft.models.views.DataControl;
 
 /**
@@ -65,7 +67,7 @@ import uk.co.tolcroft.models.views.DataControl;
  * @author Tony Washer
  * @param <T> the data set type
  */
-public abstract class MainWindow<T extends DataSet<T>> implements ActionListener {
+public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl, ActionListener {
     /**
      * The data view.
      */
@@ -100,11 +102,6 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
      * The security menu.
      */
     private JMenu theSecureMenu = null;
-
-    /**
-     * The help menu.
-     */
-    // private JMenu theHelpMenu = null;
 
     /**
      * The Create Database menu item.
@@ -276,12 +273,11 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         theView = pView;
 
         /* Create the new status bar */
-        theStatusBar = new StatusBar(this);
+        theStatusBar = new StatusBar(this, theView);
         myProgress = theStatusBar.getProgressPanel();
         myProgress.setVisible(false);
         myStatus = theStatusBar.getStatusPanel();
         myStatus.setVisible(false);
-        theView.setStatusBar(theStatusBar);
 
         /* Create the panel */
         thePanel = new JPanel();
@@ -612,17 +608,13 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         theSaveDBase.setEnabled(!hasUpdates && hasChanges);
     }
 
-    /**
-     * Finish Thread.
-     */
+    @Override
     public void finishThread() {
         theThread = null;
         setVisibility();
     }
 
-    /**
-     * Handle cancel command.
-     */
+    @Override
     public void performCancel() {
         if (theThread != null) {
             theThread.cancel(false);
@@ -671,7 +663,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         LoadDatabase<T> myThread;
 
         /* Create the worker thread */
-        myThread = new LoadDatabase<T>(theView);
+        myThread = new LoadDatabase<T>(theView, theStatusBar);
         startThread(myThread);
     }
 
@@ -682,7 +674,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         StoreDatabase<T> myThread;
 
         /* Create the worker thread */
-        myThread = new StoreDatabase<T>(theView);
+        myThread = new StoreDatabase<T>(theView, theStatusBar);
         startThread(myThread);
     }
 
@@ -693,7 +685,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         CreateDatabase<T> myThread;
 
         /* Create the worker thread */
-        myThread = new CreateDatabase<T>(theView);
+        myThread = new CreateDatabase<T>(theView, theStatusBar);
         startThread(myThread);
     }
 
@@ -704,7 +696,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         PurgeDatabase<T> myThread;
 
         /* Create the worker thread */
-        myThread = new PurgeDatabase<T>(theView);
+        myThread = new PurgeDatabase<T>(theView, theStatusBar);
         startThread(myThread);
     }
 
@@ -715,7 +707,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         CreateBackup<T> myThread;
 
         /* Create the worker thread */
-        myThread = new CreateBackup<T>(theView);
+        myThread = new CreateBackup<T>(theView, theStatusBar);
         startThread(myThread);
     }
 
@@ -726,7 +718,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         LoadBackup<T> myThread;
 
         /* Create the worker thread */
-        myThread = new LoadBackup<T>(theView);
+        myThread = new LoadBackup<T>(theView, theStatusBar);
         startThread(myThread);
     }
 
@@ -737,7 +729,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         CreateExtract<T> myThread;
 
         /* Create the worker thread */
-        myThread = new CreateExtract<T>(theView);
+        myThread = new CreateExtract<T>(theView, theStatusBar);
         startThread(myThread);
     }
 
@@ -748,7 +740,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         LoadExtract<T> myThread;
 
         /* Create the worker thread */
-        myThread = new LoadExtract<T>(theView);
+        myThread = new LoadExtract<T>(theView, theStatusBar);
         startThread(myThread);
     }
 
@@ -759,7 +751,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         UpdatePassword<T> myThread;
 
         /* Create the worker thread */
-        myThread = new UpdatePassword<T>(theView);
+        myThread = new UpdatePassword<T>(theView, theStatusBar);
         startThread(myThread);
     }
 
@@ -770,7 +762,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ActionListener
         RenewSecurity<T> myThread;
 
         /* Create the worker thread */
-        myThread = new RenewSecurity<T>(theView);
+        myThread = new RenewSecurity<T>(theView, theStatusBar);
         startThread(myThread);
     }
 

@@ -24,6 +24,7 @@ package uk.co.tolcroft.models.threads;
 
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
+import uk.co.tolcroft.models.ui.StatusBar;
 import uk.co.tolcroft.models.views.DataControl;
 
 /**
@@ -52,16 +53,18 @@ public class CreateDatabase<T extends DataSet<T>> extends WorkerThread<Void> {
     /**
      * Constructor (Event Thread).
      * @param pControl the data control
+     * @param pStatusBar the status bar
      */
-    public CreateDatabase(final DataControl<T> pControl) {
+    public CreateDatabase(final DataControl<T> pControl,
+                          final StatusBar pStatusBar) {
         /* Call super-constructor */
-        super(TASK_NAME, pControl.getStatusBar());
+        super(TASK_NAME, pStatusBar);
 
         /* Store passed parameters */
         theControl = pControl;
 
         /* Create the status */
-        theStatus = new ThreadStatus<T>(this, theControl);
+        theStatus = new ThreadStatus<T>(this, theControl, pStatusBar);
 
         /* Show the status window */
         showStatusBar();

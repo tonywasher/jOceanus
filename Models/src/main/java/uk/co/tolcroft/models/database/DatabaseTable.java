@@ -34,8 +34,8 @@ import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
+import uk.co.tolcroft.models.data.TaskControl;
 import uk.co.tolcroft.models.data.ValueSet;
-import uk.co.tolcroft.models.threads.ThreadStatus;
 
 /**
  * Database Table class. This controls should be extended for each DataType/Table.
@@ -262,12 +262,12 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 
     /**
      * Load items from the list into the table.
-     * @param pThread the thread control
+     * @param pTask the task control
      * @param pData the data
      * @return Continue <code>true/false</code>
      * @throws JDataException on error
      */
-    protected boolean loadItems(final ThreadStatus<?> pThread,
+    protected boolean loadItems(final TaskControl<?> pTask,
                                 final DataSet<?> pData) throws JDataException {
         boolean bContinue = true;
         String myQuery;
@@ -275,12 +275,12 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
         int myCount = 0;
 
         /* Declare the new stage */
-        if (!pThread.setNewStage(getTableName())) {
+        if (!pTask.setNewStage(getTableName())) {
             return false;
         }
 
         /* Access reporting steps */
-        mySteps = pThread.getReportingSteps();
+        mySteps = pTask.getReportingSteps();
 
         /* Declare the Data */
         declareData(pData);
@@ -288,7 +288,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
         /* Protect the load */
         try {
             /* Count the Items to be loaded */
-            if (!pThread.setNumSteps(countLoadItems())) {
+            if (!pTask.setNumSteps(countLoadItems())) {
                 return false;
             }
 
@@ -308,7 +308,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0) && (!pThread.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }
@@ -357,13 +357,13 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 
     /**
      * Insert new items from the list.
-     * @param pThread the thread control
+     * @param pTask the task control
      * @param pData the data
      * @param pBatch the batch control
      * @return Continue <code>true/false</code>
      * @throws JDataException on error
      */
-    protected boolean insertItems(final ThreadStatus<?> pThread,
+    protected boolean insertItems(final TaskControl<?> pTask,
                                   final DataSet<?> pData,
                                   final BatchControl pBatch) throws JDataException {
         DataListIterator<T> myIterator;
@@ -374,12 +374,12 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
         boolean bContinue = true;
 
         /* Declare the new stage */
-        if (!pThread.setNewStage("Inserting " + getTableName())) {
+        if (!pTask.setNewStage("Inserting " + getTableName())) {
             return false;
         }
 
         /* Access reporting steps */
-        mySteps = pThread.getReportingSteps();
+        mySteps = pTask.getReportingSteps();
 
         /* Declare the Data */
         declareData(pData);
@@ -387,7 +387,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
         /* Protect the insert */
         try {
             /* Declare the number of steps */
-            if (!pThread.setNumSteps(countStateItems(DataState.NEW))) {
+            if (!pTask.setNumSteps(countStateItems(DataState.NEW))) {
                 return false;
             }
 
@@ -436,7 +436,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0) && (!pThread.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }
@@ -456,12 +456,12 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 
     /**
      * Update items from the list.
-     * @param pThread the thread control
+     * @param pTask the task control
      * @param pBatch the batch control
      * @return Continue <code>true/false</code>
      * @throws JDataException on error
      */
-    protected boolean updateItems(final ThreadStatus<?> pThread,
+    protected boolean updateItems(final TaskControl<?> pTask,
                                   final BatchControl pBatch) throws JDataException {
         DataListIterator<T> myIterator;
         T myCurr = null;
@@ -471,17 +471,17 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
         boolean bContinue = true;
 
         /* Declare the new stage */
-        if (!pThread.setNewStage("Updating " + getTableName())) {
+        if (!pTask.setNewStage("Updating " + getTableName())) {
             return false;
         }
 
         /* Access reporting steps */
-        mySteps = pThread.getReportingSteps();
+        mySteps = pTask.getReportingSteps();
 
         /* Protect the update */
         try {
             /* Declare the number of steps */
-            if (!pThread.setNumSteps(countStateItems(DataState.CHANGED))) {
+            if (!pTask.setNumSteps(countStateItems(DataState.CHANGED))) {
                 return false;
             }
 
@@ -527,7 +527,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 
                     /* Report the progress */
                     myCount++;
-                    if (((myCount % mySteps) == 0) && (!pThread.setStepsDone(myCount))) {
+                    if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                         return false;
                     }
                 }
@@ -591,12 +591,12 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 
     /**
      * Delete items from the list.
-     * @param pThread the thread control
+     * @param pTask the task control
      * @param pBatch the batch control
      * @return Continue <code>true/false</code>
      * @throws JDataException on error
      */
-    protected boolean deleteItems(final ThreadStatus<?> pThread,
+    protected boolean deleteItems(final TaskControl<?> pTask,
                                   final BatchControl pBatch) throws JDataException {
         DataListIterator<T> myIterator;
         T myCurr = null;
@@ -606,17 +606,17 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
         boolean bContinue = true;
 
         /* Declare the new stage */
-        if (!pThread.setNewStage("Deleting " + getTableName())) {
+        if (!pTask.setNewStage("Deleting " + getTableName())) {
             return false;
         }
 
         /* Access reporting steps */
-        mySteps = pThread.getReportingSteps();
+        mySteps = pTask.getReportingSteps();
 
         /* Protect the delete */
         try {
             /* Declare the number of steps */
-            if (!pThread.setNumSteps(countStateItems(DataState.DELETED))) {
+            if (!pTask.setNumSteps(countStateItems(DataState.DELETED))) {
                 return false;
             }
 
@@ -662,7 +662,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0) && (!pThread.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }

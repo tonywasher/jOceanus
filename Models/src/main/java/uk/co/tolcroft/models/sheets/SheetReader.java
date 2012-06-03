@@ -49,9 +49,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 
 import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.data.TaskControl;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
-import uk.co.tolcroft.models.threads.ThreadStatus;
-import uk.co.tolcroft.models.views.DataControl;
 
 /**
  * Load control for spreadsheets.
@@ -65,9 +64,9 @@ public abstract class SheetReader<T extends DataSet<T>> {
     private static final int RATE_CONVERSION = 100;
 
     /**
-     * Thread control.
+     * Task control.
      */
-    private final ThreadStatus<T> theThread;
+    private final TaskControl<T> theTask;
 
     /**
      * Spreadsheet.
@@ -90,11 +89,11 @@ public abstract class SheetReader<T extends DataSet<T>> {
     private SheetType theType = null;
 
     /**
-     * get thread status.
-     * @return the status
+     * get task control.
+     * @return the task control
      */
-    protected ThreadStatus<T> getThread() {
-        return theThread;
+    protected TaskControl<T> getTask() {
+        return theTask;
     }
 
     /**
@@ -123,10 +122,10 @@ public abstract class SheetReader<T extends DataSet<T>> {
 
     /**
      * Constructor.
-     * @param pThread the Thread control
+     * @param pTask the Task control
      */
-    public SheetReader(final ThreadStatus<T> pThread) {
-        theThread = pThread;
+    public SheetReader(final TaskControl<T> pTask) {
+        theTask = pTask;
     }
 
     /**
@@ -158,8 +157,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
             byte[] myHashBytes = myFile.getHashBytes();
 
             /* Access the Security manager */
-            DataControl<T> myControl = theThread.getControl();
-            SecureManager mySecurity = myControl.getSecurity();
+            SecureManager mySecurity = theTask.getSecurity();
 
             /* Obtain the initialised password hash */
             PasswordHash myHash = mySecurity.resolvePasswordHash(myHashBytes, pFile.getName());
@@ -303,11 +301,11 @@ public abstract class SheetReader<T extends DataSet<T>> {
         registerSheets();
 
         /* Declare the number of stages */
-        boolean bContinue = theThread.setNumStages(theSheets.size() + 2);
+        boolean bContinue = theTask.setNumStages(theSheets.size() + 2);
 
         /* Note the stage */
         if (bContinue) {
-            bContinue = theThread.setNewStage("Loading");
+            bContinue = theTask.setNewStage("Loading");
         }
 
         /* Access the workbook from the stream */
@@ -334,7 +332,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
         Iterator<SheetDataItem<?>> myIterator = theSheets.iterator();
 
         /* Declare the number of stages */
-        boolean bContinue = theThread.setNumStages(theSheets.size() + 1);
+        boolean bContinue = theTask.setNumStages(theSheets.size() + 1);
 
         /* Loop through the sheets */
         while ((bContinue) && (myIterator.hasNext())) {
@@ -346,7 +344,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
         }
 
         /* Analyse the data */
-        if (!theThread.setNewStage("Refreshing data")) {
+        if (!theTask.setNewStage("Refreshing data")) {
             bContinue = false;
         }
 

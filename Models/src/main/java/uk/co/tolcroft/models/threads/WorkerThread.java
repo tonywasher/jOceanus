@@ -29,6 +29,7 @@ import javax.swing.SwingWorker;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import uk.co.tolcroft.models.ui.StatusBar;
+import uk.co.tolcroft.models.ui.StatusBar.StatusData;
 
 /**
  * A wrapper for a worker thread.

@@ -36,7 +36,6 @@ import uk.co.tolcroft.models.data.ControlData.ControlDataList;
 import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
 import uk.co.tolcroft.models.data.DataKey.DataKeyList;
 import uk.co.tolcroft.models.data.EncryptedItem.EncryptedList;
-import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.views.DataControl;
 
 /**
@@ -502,15 +501,15 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
 
     /**
      * Initialise Security from database (if present).
-     * @param pThread the thread status
+     * @param pTask the task control
      * @param pBase the database data
      * @return Continue <code>true/false</code>
      * @throws JDataException on error
      */
-    public boolean initialiseSecurity(final ThreadStatus<T> pThread,
+    public boolean initialiseSecurity(final TaskControl<T> pTask,
                                       final T pBase) throws JDataException {
         /* Set the number of stages */
-        if (!pThread.setNumStages(1 + theNumEncrypted)) {
+        if (!pTask.setNumStages(1 + theNumEncrypted)) {
             return false;
         }
 
@@ -529,7 +528,7 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
             if (myList instanceof EncryptedList) {
                 /* Adopt the security */
                 EncryptedList<?, ?> myEncrypted = (EncryptedList<?, ?>) myList;
-                if (!myEncrypted.adoptSecurity(pThread, myControl, (EncryptedList<?, ?>) myBase)) {
+                if (!myEncrypted.adoptSecurity(pTask, myControl, (EncryptedList<?, ?>) myBase)) {
                     return false;
                 }
             }
@@ -541,11 +540,11 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
 
     /**
      * Renew Security.
-     * @param pThread the thread status
+     * @param pTask the task control
      * @return Continue <code>true/false</code>
      * @throws JDataException on error
      */
-    public boolean renewSecurity(final ThreadStatus<T> pThread) throws JDataException {
+    public boolean renewSecurity(final TaskControl<T> pTask) throws JDataException {
         /* Access ControlData */
         ControlData myControl = getControl();
 
@@ -556,21 +555,21 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
         myControl.setControlKey(myKey);
 
         /* Update Security */
-        return updateSecurity(pThread);
+        return updateSecurity(pTask);
     }
 
     /**
      * Update Security.
-     * @param pThread the thread status
+     * @param pTask the task control
      * @return Continue <code>true/false</code>
      * @throws JDataException on error
      */
-    public boolean updateSecurity(final ThreadStatus<T> pThread) throws JDataException {
+    public boolean updateSecurity(final TaskControl<T> pTask) throws JDataException {
         /* Access the control key */
         ControlKey myControl = getControlKey();
 
         /* Set the number of stages */
-        if (!pThread.setNumStages(1 + theNumEncrypted)) {
+        if (!pTask.setNumStages(1 + theNumEncrypted)) {
             return false;
         }
 
@@ -580,7 +579,7 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
             if (myList instanceof EncryptedList) {
                 /* Update the security */
                 EncryptedList<?, ?> myEncrypted = (EncryptedList<?, ?>) myList;
-                if (!myEncrypted.updateSecurity(pThread, myControl)) {
+                if (!myEncrypted.updateSecurity(pTask, myControl)) {
                     return false;
                 }
             }
@@ -608,11 +607,11 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
 
     /**
      * Update data with a new password.
-     * @param pThread the thread status
+     * @param pTask the task control
      * @param pSource the source of the data
      * @throws JDataException on error
      */
-    public void updatePasswordHash(final ThreadStatus<T> pThread,
+    public void updatePasswordHash(final TaskControl<T> pTask,
                                    final String pSource) throws JDataException {
         /* Obtain a new password hash */
         PasswordHash myHash = theSecurity.resolvePasswordHash(null, pSource);
