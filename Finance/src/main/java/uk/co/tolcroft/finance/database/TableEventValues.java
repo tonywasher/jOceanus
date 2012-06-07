@@ -21,92 +21,102 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.database;
 
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
 import uk.co.tolcroft.finance.data.EventValue;
+import uk.co.tolcroft.finance.data.EventValue.EventValueList;
 import uk.co.tolcroft.finance.data.FinanceData;
-import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.models.database.ColumnDefinition;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.database.DatabaseTable;
 import uk.co.tolcroft.models.database.TableDefinition;
-import uk.co.tolcroft.models.database.TableDefinition.ColumnDefinition;
 import uk.co.tolcroft.models.database.TableDefinition.SortOrder;
 
 public class TableEventValues extends DatabaseTable<EventValue> {
-	/**
-	 * The name of the EventValues table
-	 */
-	protected final static String TableName 	= EventValue.listName;
+    /**
+     * The name of the EventValues table
+     */
+    protected final static String TableName = EventValue.LIST_NAME;
 
-	/**
-	 * The table definition
-	 */
-	private TableDefinition theTableDef;	/* Set during load */
+    /**
+     * The table definition
+     */
+    private TableDefinition theTableDef; /* Set during load */
 
-	/**
-	 * The EventValues list
-	 */
-	private EventValue.List	theList 			= null;
+    /**
+     * The EventValues list
+     */
+    private EventValueList theList = null;
 
-	/**
-	 * Constructor
-	 * @param pDatabase the database control
-	 */
-	protected TableEventValues(Database<?>	pDatabase) {
-		super(pDatabase, TableName);
-	}
-	
-	/**
-	 * Define the table columns (called from within super-constructor)
-	 * @param pTableDef the table definition
-	 */
-	protected void defineTable(TableDefinition	pTableDef) {
-		/* Define sort column variable */
-		super.defineTable(pTableDef);
-		theTableDef = pTableDef;
-		
-		/* Define sort column variable */
-		ColumnDefinition myEvtCol;
-		
-		/* Declare the columns */
-		theTableDef.addReferenceColumn(EventValue.FIELD_INFOTYPE, EventValue.fieldName(EventValue.FIELD_INFOTYPE), TableEventInfoType.TableName);
-		myEvtCol = theTableDef.addReferenceColumn(EventValue.FIELD_EVENT, EventValue.fieldName(EventValue.FIELD_EVENT), TableEvent.TableName);
-		theTableDef.addIntegerColumn(EventValue.FIELD_VALUE, EventValue.fieldName(EventValue.FIELD_VALUE));
-		
-		/* Declare the sort order */
-		myEvtCol.setSortOrder(SortOrder.ASCENDING);
-	}
-	
-	/* Declare DataSet */
-	protected void declareData(DataSet<?> pData) {
-		FinanceData myData = (FinanceData)pData;
-		theList = myData.getEventValues();
-		setList(theList);
-	}
+    /**
+     * Constructor
+     * @param pDatabase the database control
+     */
+    protected TableEventValues(Database<?> pDatabase) {
+        super(pDatabase, TableName);
+    }
 
-	/* Load the tax year */
-	public void loadItem(int pId) throws ModelException {
-		int		  		myInfoType;
-		int		  		myEvent;
-		int				myValue;
-		
-		/* Get the various fields */
-		myInfoType  = theTableDef.getIntegerValue(EventValue.FIELD_INFOTYPE);
-		myEvent     = theTableDef.getIntegerValue(EventValue.FIELD_EVENT);
-		myValue		= theTableDef.getIntegerValue(EventValue.FIELD_VALUE);
-	
-		/* Add into the list */
-		theList.addItem(pId, myInfoType, myEvent, myValue); 
-	}
-	
-	/* Set a field value */
-	protected void setFieldValue(EventValue	pItem, int iField) throws ModelException  {
-		/* Switch on field id */
-		switch (iField) {
-			case EventValue.FIELD_INFOTYPE:	theTableDef.setIntegerValue(iField, pItem.getInfoType().getId());	break;
-			case EventValue.FIELD_EVENT:	theTableDef.setIntegerValue(iField, pItem.getEvent().getId());		break;
-			case EventValue.FIELD_VALUE:	theTableDef.setIntegerValue(iField, pItem.getValue());				break;
-			default:						super.setFieldValue(pItem, iField);									break;
-		}
-	}
+    /**
+     * Define the table columns (called from within super-constructor)
+     * @param pTableDef the table definition
+     */
+    @Override
+    protected void defineTable(TableDefinition pTableDef) {
+        /* Define sort column variable */
+        super.defineTable(pTableDef);
+        theTableDef = pTableDef;
+
+        /* Define sort column variable */
+        ColumnDefinition myEvtCol;
+
+        /* Declare the columns */
+        theTableDef.addReferenceColumn(EventValue.FIELD_INFOTYPE, TableEventInfoType.TABLE_NAME);
+        myEvtCol = theTableDef.addReferenceColumn(EventValue.FIELD_EVENT, TableEvent.TableName);
+        theTableDef.addIntegerColumn(EventValue.FIELD_VALUE);
+
+        /* Declare the sort order */
+        myEvtCol.setSortOrder(SortOrder.ASCENDING);
+    }
+
+    /* Declare DataSet */
+    @Override
+    protected void declareData(DataSet<?> pData) {
+        FinanceData myData = (FinanceData) pData;
+        theList = myData.getEventValues();
+        setList(theList);
+    }
+
+    /* Load the tax year */
+    @Override
+    public void loadItem(int pId) throws JDataException {
+        int myInfoType;
+        int myEvent;
+        int myValue;
+
+        /* Get the various fields */
+        myInfoType = theTableDef.getIntegerValue(EventValue.FIELD_INFOTYPE);
+        myEvent = theTableDef.getIntegerValue(EventValue.FIELD_EVENT);
+        myValue = theTableDef.getIntegerValue(EventValue.FIELD_VALUE);
+
+        /* Add into the list */
+        theList.addItem(pId, myInfoType, myEvent, myValue);
+    }
+
+    /* Set a field value */
+    @Override
+    protected void setFieldValue(EventValue pItem,
+                                 JDataField iField) throws JDataException {
+        /* Switch on field id */
+        if (iField == EventValue.FIELD_INFOTYPE) {
+            theTableDef.setIntegerValue(iField, pItem.getInfoType().getId());
+        } else if (iField == EventValue.FIELD_EVENT) {
+            theTableDef.setIntegerValue(iField, pItem.getEvent().getId());
+        } else if (iField == EventValue.FIELD_VALUE) {
+            theTableDef.setIntegerValue(iField, pItem.getValue());
+        } else {
+            super.setFieldValue(pItem, iField);
+        }
+    }
 
 }

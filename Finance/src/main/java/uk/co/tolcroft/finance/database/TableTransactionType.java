@@ -21,47 +21,48 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.database;
 
-import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.ModelException;
+import net.sourceforge.JDataManager.JDataException;
+import uk.co.tolcroft.finance.data.FinanceData;
+import uk.co.tolcroft.finance.data.TransactionType;
+import uk.co.tolcroft.finance.data.TransactionType.TransTypeList;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.database.TableStaticData;
 
 public class TableTransactionType extends TableStaticData<TransactionType> {
-	/**
-	 * The name of the TransType table
-	 */
-	protected final static String 	TableName	= TransactionType.listName;
-				
-	/**
-	 * The transaction type list
-	 */
-	private TransactionType.List	theList 	= null;
+    /**
+     * The name of the TransType table.
+     */
+    protected static final String TABLE_NAME = TransactionType.LIST_NAME;
 
-	/**
-	 * Obtain the data column name
-	 * @return the data column name
-	 */
-	protected String getDataName()  { return TransactionType.objName; }
-	
-	/**
-	 * Constructor
-	 * @param pDatabase the database control
-	 */
-	protected TableTransactionType(Database<?> 	pDatabase) { 
-		super(pDatabase, TableName); 
-	}
-	
-	/* Declare DataSet */
-	protected void declareData(DataSet<?> pData) {
-		FinanceData myData = (FinanceData)pData;
-		theList = myData.getTransTypes();
-		setList(theList);
-	}
+    /**
+     * The transaction type list.
+     */
+    private TransTypeList theList = null;
 
-	/* Load the transaction type */
-	protected void loadTheItem(int pId, int pControlId, boolean isEnabled, int iOrder, byte[] pTrans, byte[] pDesc) throws ModelException {
-		/* Add into the list */
-		theList.addItem(pId, pControlId, isEnabled, iOrder, pTrans, pDesc);
-	}
+    /**
+     * Constructor.
+     * @param pDatabase the database control
+     */
+    protected TableTransactionType(final Database<?> pDatabase) {
+        super(pDatabase, TABLE_NAME);
+    }
+
+    @Override
+    protected void declareData(final DataSet<?> pData) {
+        FinanceData myData = (FinanceData) pData;
+        theList = myData.getTransTypes();
+        setList(theList);
+    }
+
+    @Override
+    protected void loadTheItem(final int pId,
+                               final int pControlId,
+                               final boolean isEnabled,
+                               final int iOrder,
+                               final byte[] pTrans,
+                               final byte[] pDesc) throws JDataException {
+        /* Add into the list */
+        theList.addItem(pId, pControlId, isEnabled, iOrder, pTrans, pDesc);
+    }
 }

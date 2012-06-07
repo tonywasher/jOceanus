@@ -21,14 +21,15 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.help;
 
-import uk.co.tolcroft.models.help.HelpModule;
-import uk.co.tolcroft.models.ModelException;
+import net.sourceforge.JHelpManager.HelpException;
+import net.sourceforge.JHelpManager.HelpModule;
 
 public class FinanceHelp extends HelpModule {
-	/**
-	 * Constructor
-	 */
-	public FinanceHelp() throws ModelException {
-		super("help.xml");
-	}
+    /**
+     * Constructor
+     * @throws HelpException
+     */
+    public FinanceHelp() throws HelpException {
+        super("help.xml");
+    }
 }

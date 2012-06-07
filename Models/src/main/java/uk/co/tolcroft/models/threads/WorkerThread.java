@@ -55,13 +55,13 @@ public abstract class WorkerThread<T> extends SwingWorker<T, StatusData> {
     /**
      * Constructor.
      * @param pTask task name
-     * @param pStatusBar status bar
+     * @param pStatus the thread status
      */
     protected WorkerThread(final String pTask,
-                           final StatusBar pStatusBar) {
+                           final ThreadStatus<?> pStatus) {
         /* Record the parameters */
         theTask = pTask;
-        theStatusBar = pStatusBar;
+        theStatusBar = pStatus.getStatusBar();
     }
 
     /**

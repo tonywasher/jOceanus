@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JDataModel: Data models
+ * JDataManager: Java Data Manager
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,25 +20,22 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.models.data;
+package net.sourceforge.JDataManager;
 
 import java.util.Arrays;
 import java.util.Iterator;
 
-import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.EventManager;
-import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataValues;
 
 /**
  * ValueSet class.
- * @param <T> the type for the valueSet
  */
-public class ValueSet<T extends DataItem<T>> {
+public class ValueSet {
     /**
      * The item to which the valueSet belongs.
      */
-    private final T theItem;
+    private final JDataValues theItem;
 
     /**
      * The fields for this valueSet.
@@ -77,7 +74,7 @@ public class ValueSet<T extends DataItem<T>> {
      * Obtain the underlying item.
      * @return the item
      */
-    protected T getItem() {
+    protected JDataValues getItem() {
         return theItem;
     }
 
@@ -117,7 +114,7 @@ public class ValueSet<T extends DataItem<T>> {
      * Constructor.
      * @param pItem the associated item
      */
-    public ValueSet(final T pItem) {
+    public ValueSet(final JDataValues pItem) {
         /* Create the values array and initialise to null */
         theItem = pItem;
         theFields = pItem.getDataFields();
@@ -132,9 +129,9 @@ public class ValueSet<T extends DataItem<T>> {
      * Clone this ValueSet.
      * @return the cloned set
      */
-    public ValueSet<T> cloneIt() {
+    public ValueSet cloneIt() {
         /* Create the valueSet and initialise to existing values */
-        ValueSet<T> mySet = new ValueSet<T>(theItem);
+        ValueSet mySet = new ValueSet(theItem);
         mySet.copyFrom(this);
         return mySet;
     }
@@ -143,7 +140,7 @@ public class ValueSet<T extends DataItem<T>> {
      * Initialise values from a previous set.
      * @param pPrevious the previous valueSet
      */
-    public void copyFrom(final ValueSet<?> pPrevious) {
+    public void copyFrom(final ValueSet pPrevious) {
         /* Create the values array */
         Object[] mySrc = pPrevious.theValues;
         int myCopyLen = pPrevious.theNumValues;
@@ -222,7 +219,7 @@ public class ValueSet<T extends DataItem<T>> {
         }
 
         /* Access the object as a ValueSet */
-        ValueSet<?> mySet = (ValueSet<?>) pThat;
+        ValueSet mySet = (ValueSet) pThat;
         Object[] myObj = mySet.theValues;
 
         /* Check for number of values */
@@ -280,7 +277,7 @@ public class ValueSet<T extends DataItem<T>> {
      * @param pOriginal the object to check for differences
      * @return the difference
      */
-    public Difference differs(final ValueSet<T> pOriginal) {
+    public Difference differs(final ValueSet pOriginal) {
         boolean isSecureDiff = false;
 
         /* Access the test values */
@@ -315,7 +312,7 @@ public class ValueSet<T extends DataItem<T>> {
      * @return the difference
      */
     public Difference fieldChanged(final JDataField pField,
-                                   final ValueSet<T> pOriginal) {
+                                   final ValueSet pOriginal) {
         /*
          * No difference if field does not exist, is not-equality or is not valueSet
          */

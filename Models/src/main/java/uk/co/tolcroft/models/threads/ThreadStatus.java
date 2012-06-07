@@ -47,7 +47,7 @@ public class ThreadStatus<T extends DataSet<T>> implements TaskControl<T>, Prefe
     /**
      * The worker thread.
      */
-    private final WorkerThread<?> theThread;
+    private WorkerThread<?> theThread = null;
 
     /**
      * The status data.
@@ -112,15 +112,12 @@ public class ThreadStatus<T extends DataSet<T>> implements TaskControl<T>, Prefe
 
     /**
      * Constructor.
-     * @param pThread the thread
      * @param pControl the data control
      * @param pStatusBar the status bar
      */
-    public ThreadStatus(final WorkerThread<?> pThread,
-                        final DataControl<T> pControl,
+    public ThreadStatus(final DataControl<T> pControl,
                         final StatusBar pStatusBar) {
         /* Store parameter */
-        theThread = pThread;
         theControl = pControl;
         theStatusBar = pStatusBar;
 
@@ -130,6 +127,15 @@ public class ThreadStatus<T extends DataSet<T>> implements TaskControl<T>, Prefe
 
         /* Create the status */
         theStatus = new StatusData();
+    }
+
+    /**
+     * Register thread
+     * @param pThread the thread that will use this ThreadStatus
+     */
+    public void registerThread(final WorkerThread<?> pThread) {
+        /* Store parameter */
+        theThread = pThread;
     }
 
     @Override

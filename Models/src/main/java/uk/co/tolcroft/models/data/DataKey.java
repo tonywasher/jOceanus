@@ -26,6 +26,7 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JGordianKnot.CipherSet;
 import net.sourceforge.JGordianKnot.DataCipher;
 import net.sourceforge.JGordianKnot.PasswordHash;
@@ -99,10 +100,10 @@ public class DataKey extends DataItem<DataKey> {
     /**
      * The active set of values.
      */
-    private ValueSet<DataKey> theValueSet;
+    private ValueSet theValueSet;
 
     @Override
-    public void declareValues(final ValueSet<DataKey> pValues) {
+    public void declareValues(final ValueSet pValues) {
         super.declareValues(pValues);
         theValueSet = pValues;
     }
@@ -160,7 +161,7 @@ public class DataKey extends DataItem<DataKey> {
      * @param pValueSet the valueSet
      * @return the control Key
      */
-    public static ControlKey getControlKey(final ValueSet<DataKey> pValueSet) {
+    public static ControlKey getControlKey(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CONTROLKEY, ControlKey.class);
     }
 
@@ -169,7 +170,7 @@ public class DataKey extends DataItem<DataKey> {
      * @param pValueSet the valueSet
      * @return the Key type
      */
-    public static SymKeyType getKeyType(final ValueSet<DataKey> pValueSet) {
+    public static SymKeyType getKeyType(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_KEYTYPE, SymKeyType.class);
     }
 
@@ -178,7 +179,7 @@ public class DataKey extends DataItem<DataKey> {
      * @param pValueSet the valueSet
      * @return the Key Definition
      */
-    public static byte[] getSecuredKeyDef(final ValueSet<DataKey> pValueSet) {
+    public static byte[] getSecuredKeyDef(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_KEYDEF, byte[].class);
     }
 
@@ -187,7 +188,7 @@ public class DataKey extends DataItem<DataKey> {
      * @param pValueSet the valueSet
      * @return the data Key
      */
-    protected static SymmetricKey getDataKey(final ValueSet<DataKey> pValueSet) {
+    protected static SymmetricKey getDataKey(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_KEY, SymmetricKey.class);
     }
 
@@ -196,7 +197,7 @@ public class DataKey extends DataItem<DataKey> {
      * @param pValueSet the valueSet
      * @return the cipher
      */
-    protected static DataCipher getCipher(final ValueSet<DataKey> pValueSet) {
+    protected static DataCipher getCipher(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CIPHER, DataCipher.class);
     }
 
@@ -205,7 +206,7 @@ public class DataKey extends DataItem<DataKey> {
      * @param pValueSet the valueSet
      * @return the passwordHash
      */
-    protected static PasswordHash getPasswordHash(final ValueSet<DataKey> pValueSet) {
+    protected static PasswordHash getPasswordHash(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_HASH, PasswordHash.class);
     }
 

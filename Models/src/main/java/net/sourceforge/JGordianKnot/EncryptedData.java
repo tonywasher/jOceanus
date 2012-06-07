@@ -31,10 +31,10 @@ import java.util.Locale;
 
 import net.sourceforge.JDataManager.DataConverter;
 import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.Difference.Differs;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataObject;
+import net.sourceforge.JDataManager.JDataObject.JDataDiffers;
 import net.sourceforge.JDataManager.JDataObject.JDataFormat;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Decimal;
@@ -103,7 +103,7 @@ public final class EncryptedData {
      * The generic encrypted object class.
      * @param <T> the field type
      */
-    public abstract static class EncryptedField<T> implements JDataFormat, Differs {
+    public abstract static class EncryptedField<T> implements JDataFormat, JDataDiffers {
         /**
          * Encryption CipherSet.
          */

@@ -23,7 +23,6 @@
 package uk.co.tolcroft.models.threads;
 
 import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.ui.StatusBar;
 import uk.co.tolcroft.models.views.DataControl;
 
 /**
@@ -52,19 +51,15 @@ public class RenewSecurity<T extends DataSet<T>> extends LoaderThread<T> {
 
     /**
      * Constructor (Event Thread).
-     * @param pControl the data control
-     * @param pStatusBar the status bar
+     * @param pStatus the thread status
      */
-    public RenewSecurity(final DataControl<T> pControl,
-                         final StatusBar pStatusBar) {
+    public RenewSecurity(final ThreadStatus<T> pStatus) {
         /* Call super-constructor */
-        super(TASK_NAME, pControl, pStatusBar);
+        super(TASK_NAME, pStatus);
 
         /* Store passed parameters */
-        theControl = pControl;
-
-        /* Create the status */
-        theStatus = new ThreadStatus<T>(this, theControl, pStatusBar);
+        theStatus = pStatus;
+        theControl = pStatus.getControl();
 
         /* show the status window */
         showStatusBar();

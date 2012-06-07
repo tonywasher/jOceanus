@@ -34,8 +34,6 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.SecurityPreferences;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
-import uk.co.tolcroft.models.threads.ThreadStatus;
-import uk.co.tolcroft.models.threads.WorkerThread;
 
 /**
  * Provides top-level control of data.
@@ -172,13 +170,6 @@ public abstract class DataControl<T extends DataSet<T>> {
     public T getUpdates() {
         return theUpdates;
     }
-
-    /**
-     * Obtain a new ThreadStatus.
-     * @param pThread the thread to get the status for
-     * @return a new ThreadStatus
-     */
-    public abstract ThreadStatus<T> allocateThreadStatus(WorkerThread<?> pThread);
 
     /**
      * Set new Error.

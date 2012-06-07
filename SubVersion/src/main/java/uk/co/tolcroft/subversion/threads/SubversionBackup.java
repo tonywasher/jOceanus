@@ -33,8 +33,9 @@ import uk.co.tolcroft.subversion.tasks.Backup;
 /**
  * Thread to handle subVersion backups.
  * @author Tony Washer
+ * @param <T> the dataset type
  */
-public class SubversionBackup extends WorkerThread<Void> {
+public class SubversionBackup<T extends DataSet<T>> extends WorkerThread<Void> {
     /**
      * Task description.
      */
@@ -52,17 +53,15 @@ public class SubversionBackup extends WorkerThread<Void> {
 
     /**
      * Constructor (Event Thread).
-     * @param pControl the data control
+     * @param pStatus the thread status
      */
-    public SubversionBackup(final DataControl<?> pControl) {
+    public SubversionBackup(final ThreadStatus<T> pStatus) {
         /* Call super-constructor */
-        super(TASK_NAME, pControl.getStatusBar());
+        super(TASK_NAME, pStatus);
 
         /* Store passed parameters */
-        theControl = pControl;
-
-        /* Create the status */
-        theStatus = theControl.allocateThreadStatus(this);
+        theStatus = pStatus;
+        theControl = pStatus.getControl();
 
         /* Show the status window */
         showStatusBar();

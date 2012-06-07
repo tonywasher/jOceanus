@@ -56,6 +56,7 @@ import uk.co.tolcroft.models.threads.LoadExtract;
 import uk.co.tolcroft.models.threads.PurgeDatabase;
 import uk.co.tolcroft.models.threads.RenewSecurity;
 import uk.co.tolcroft.models.threads.StoreDatabase;
+import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.threads.UpdatePassword;
 import uk.co.tolcroft.models.threads.WorkerThread;
 import uk.co.tolcroft.models.ui.StatusBar;
@@ -660,10 +661,11 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
      * Load Database.
      */
     private void loadDatabase() {
-        LoadDatabase<T> myThread;
+        /* Allocate the status */
+        ThreadStatus<T> myStatus = new ThreadStatus<T>(theView, theStatusBar);
 
         /* Create the worker thread */
-        myThread = new LoadDatabase<T>(theView, theStatusBar);
+        LoadDatabase<T> myThread = new LoadDatabase<T>(myStatus);
         startThread(myThread);
     }
 
@@ -671,10 +673,11 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
      * Store Database.
      */
     private void storeDatabase() {
-        StoreDatabase<T> myThread;
+        /* Allocate the status */
+        ThreadStatus<T> myStatus = new ThreadStatus<T>(theView, theStatusBar);
 
         /* Create the worker thread */
-        myThread = new StoreDatabase<T>(theView, theStatusBar);
+        StoreDatabase<T> myThread = new StoreDatabase<T>(myStatus);
         startThread(myThread);
     }
 
@@ -682,10 +685,11 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
      * Create Database.
      */
     private void createDatabase() {
-        CreateDatabase<T> myThread;
+        /* Allocate the status */
+        ThreadStatus<T> myStatus = new ThreadStatus<T>(theView, theStatusBar);
 
         /* Create the worker thread */
-        myThread = new CreateDatabase<T>(theView, theStatusBar);
+        CreateDatabase<T> myThread = new CreateDatabase<T>(myStatus);
         startThread(myThread);
     }
 
@@ -693,10 +697,11 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
      * Purge Database.
      */
     private void purgeDatabase() {
-        PurgeDatabase<T> myThread;
+        /* Allocate the status */
+        ThreadStatus<T> myStatus = new ThreadStatus<T>(theView, theStatusBar);
 
         /* Create the worker thread */
-        myThread = new PurgeDatabase<T>(theView, theStatusBar);
+        PurgeDatabase<T> myThread = new PurgeDatabase<T>(myStatus);
         startThread(myThread);
     }
 
@@ -704,10 +709,11 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
      * Write Backup.
      */
     private void writeBackup() {
-        CreateBackup<T> myThread;
+        /* Allocate the status */
+        ThreadStatus<T> myStatus = new ThreadStatus<T>(theView, theStatusBar);
 
         /* Create the worker thread */
-        myThread = new CreateBackup<T>(theView, theStatusBar);
+        CreateBackup<T> myThread = new CreateBackup<T>(myStatus);
         startThread(myThread);
     }
 
@@ -715,10 +721,11 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
      * Restore Backup.
      */
     private void restoreBackup() {
-        LoadBackup<T> myThread;
+        /* Allocate the status */
+        ThreadStatus<T> myStatus = new ThreadStatus<T>(theView, theStatusBar);
 
         /* Create the worker thread */
-        myThread = new LoadBackup<T>(theView, theStatusBar);
+        LoadBackup<T> myThread = new LoadBackup<T>(myStatus);
         startThread(myThread);
     }
 
@@ -726,10 +733,11 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
      * Write Extract.
      */
     private void writeExtract() {
-        CreateExtract<T> myThread;
+        /* Allocate the status */
+        ThreadStatus<T> myStatus = new ThreadStatus<T>(theView, theStatusBar);
 
         /* Create the worker thread */
-        myThread = new CreateExtract<T>(theView, theStatusBar);
+        CreateExtract<T> myThread = new CreateExtract<T>(myStatus);
         startThread(myThread);
     }
 
@@ -737,10 +745,11 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
      * Load Extract.
      */
     private void loadExtract() {
-        LoadExtract<T> myThread;
+        /* Allocate the status */
+        ThreadStatus<T> myStatus = new ThreadStatus<T>(theView, theStatusBar);
 
         /* Create the worker thread */
-        myThread = new LoadExtract<T>(theView, theStatusBar);
+        LoadExtract<T> myThread = new LoadExtract<T>(myStatus);
         startThread(myThread);
     }
 
@@ -748,10 +757,11 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
      * Update password.
      */
     private void updatePassword() {
-        UpdatePassword<T> myThread;
+        /* Allocate the status */
+        ThreadStatus<T> myStatus = new ThreadStatus<T>(theView, theStatusBar);
 
         /* Create the worker thread */
-        myThread = new UpdatePassword<T>(theView, theStatusBar);
+        UpdatePassword<T> myThread = new UpdatePassword<T>(myStatus);
         startThread(myThread);
     }
 
@@ -759,10 +769,11 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
      * ReNew Security.
      */
     private void reNewSecurity() {
-        RenewSecurity<T> myThread;
+        /* Allocate the status */
+        ThreadStatus<T> myStatus = new ThreadStatus<T>(theView, theStatusBar);
 
         /* Create the worker thread */
-        myThread = new RenewSecurity<T>(theView, theStatusBar);
+        RenewSecurity<T> myThread = new RenewSecurity<T>(myStatus);
         startThread(myThread);
     }
 

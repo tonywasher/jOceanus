@@ -26,6 +26,7 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.ValueSet;
 import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
 
 /**
@@ -74,10 +75,10 @@ public class ControlData extends DataItem<ControlData> {
     /**
      * The active set of values.
      */
-    private ValueSet<ControlData> theValueSet;
+    private ValueSet theValueSet;
 
     @Override
-    public void declareValues(final ValueSet<ControlData> pValues) {
+    public void declareValues(final ValueSet pValues) {
         super.declareValues(pValues);
         theValueSet = pValues;
     }
@@ -103,7 +104,7 @@ public class ControlData extends DataItem<ControlData> {
      * @param pValueSet the value set
      * @return data version
      */
-    public static Integer getDataVersion(final ValueSet<ControlData> pValueSet) {
+    public static Integer getDataVersion(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_VERSION, Integer.class);
     }
 
@@ -112,7 +113,7 @@ public class ControlData extends DataItem<ControlData> {
      * @param pValueSet the value set
      * @return control key
      */
-    public static ControlKey getControlKey(final ValueSet<ControlData> pValueSet) {
+    public static ControlKey getControlKey(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CONTROLKEY, ControlKey.class);
     }
 

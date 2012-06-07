@@ -33,8 +33,11 @@ import java.util.ListIterator;
 
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDecimal.Dilution;
 import net.sourceforge.JDecimal.Money;
+import net.sourceforge.JDecimal.Price;
 import net.sourceforge.JDecimal.Rate;
+import net.sourceforge.JDecimal.Units;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.database.TableDefinition.SortOrder;
 
@@ -467,6 +470,66 @@ public abstract class ColumnDefinition {
     }
 
     /**
+     * The shortColumn Class.
+     */
+    protected static class ShortColumn extends ColumnDefinition {
+        /**
+         * Constructor.
+         * @param pTable the table to which the column belongs
+         * @param pId the column id
+         */
+        protected ShortColumn(final TableDefinition pTable,
+                              final JDataField pId) {
+            /* Record the column type */
+            super(pTable, pId);
+        }
+
+        @Override
+        protected void buildColumnType(final StringBuilder pBuilder) {
+            /* Add the column type */
+            pBuilder.append("smallint");
+        }
+
+        /**
+         * Set the value.
+         * @param pValue the value
+         */
+        protected void setValue(final Short pValue) {
+            super.setObject(pValue);
+        }
+
+        /**
+         * Get the value.
+         * @return the value
+         */
+        protected Short getValue() {
+            return (Short) super.getObject();
+        }
+
+        @Override
+        protected void loadValue(final ResultSet pResults,
+                                 final int pIndex) throws SQLException {
+            short myValue = pResults.getShort(pIndex);
+            if ((myValue == 0) && (pResults.wasNull())) {
+                setValue(null);
+            } else {
+                setValue(myValue);
+            }
+        }
+
+        @Override
+        protected void storeValue(final PreparedStatement pStatement,
+                                  final int pIndex) throws SQLException {
+            Short myValue = getValue();
+            if (myValue == null) {
+                pStatement.setNull(pIndex, Types.SMALLINT);
+            } else {
+                pStatement.setShort(pIndex, myValue);
+            }
+        }
+    }
+
+    /**
      * The longColumn Class.
      */
     protected static class LongColumn extends ColumnDefinition {
@@ -522,6 +585,126 @@ public abstract class ColumnDefinition {
                 pStatement.setNull(pIndex, Types.BIGINT);
             } else {
                 pStatement.setLong(pIndex, myValue);
+            }
+        }
+    }
+
+    /**
+     * The floatColumn Class.
+     */
+    protected static class FloatColumn extends ColumnDefinition {
+        /**
+         * Constructor.
+         * @param pTable the table to which the column belongs
+         * @param pId the column id
+         */
+        protected FloatColumn(final TableDefinition pTable,
+                              final JDataField pId) {
+            /* Record the column type */
+            super(pTable, pId);
+        }
+
+        @Override
+        protected void buildColumnType(final StringBuilder pBuilder) {
+            /* Add the column type */
+            pBuilder.append("real");
+        }
+
+        /**
+         * Set the value.
+         * @param pValue the value
+         */
+        protected void setValue(final Float pValue) {
+            super.setObject(pValue);
+        }
+
+        /**
+         * Get the value.
+         * @return the value
+         */
+        protected Float getValue() {
+            return (Float) super.getObject();
+        }
+
+        @Override
+        protected void loadValue(final ResultSet pResults,
+                                 final int pIndex) throws SQLException {
+            float myValue = pResults.getFloat(pIndex);
+            if ((myValue == 0) && (pResults.wasNull())) {
+                setValue(null);
+            } else {
+                setValue(myValue);
+            }
+        }
+
+        @Override
+        protected void storeValue(final PreparedStatement pStatement,
+                                  final int pIndex) throws SQLException {
+            Float myValue = getValue();
+            if (myValue == null) {
+                pStatement.setNull(pIndex, Types.REAL);
+            } else {
+                pStatement.setFloat(pIndex, myValue);
+            }
+        }
+    }
+
+    /**
+     * The doubleColumn Class.
+     */
+    protected static class DoubleColumn extends ColumnDefinition {
+        /**
+         * Constructor.
+         * @param pTable the table to which the column belongs
+         * @param pId the column id
+         */
+        protected DoubleColumn(final TableDefinition pTable,
+                               final JDataField pId) {
+            /* Record the column type */
+            super(pTable, pId);
+        }
+
+        @Override
+        protected void buildColumnType(final StringBuilder pBuilder) {
+            /* Add the column type */
+            pBuilder.append("float");
+        }
+
+        /**
+         * Set the value.
+         * @param pValue the value
+         */
+        protected void setValue(final Double pValue) {
+            super.setObject(pValue);
+        }
+
+        /**
+         * Get the value.
+         * @return the value
+         */
+        protected Double getValue() {
+            return (Double) super.getObject();
+        }
+
+        @Override
+        protected void loadValue(final ResultSet pResults,
+                                 final int pIndex) throws SQLException {
+            double myValue = pResults.getDouble(pIndex);
+            if ((myValue == 0) && (pResults.wasNull())) {
+                setValue(null);
+            } else {
+                setValue(myValue);
+            }
+        }
+
+        @Override
+        protected void storeValue(final PreparedStatement pStatement,
+                                  final int pIndex) throws SQLException {
+            Double myValue = getValue();
+            if (myValue == null) {
+                pStatement.setNull(pIndex, Types.FLOAT);
+            } else {
+                pStatement.setDouble(pIndex, myValue);
             }
         }
     }
@@ -765,7 +948,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append("decimal(4,2)");
+            pBuilder.append("decimal(18,2)");
         }
 
         /**
@@ -773,6 +956,108 @@ public abstract class ColumnDefinition {
          * @param pValue the value
          */
         protected void setValue(final Rate pValue) {
+            String myString = null;
+            if (pValue != null) {
+                myString = pValue.format(false);
+            }
+            super.setObject(myString);
+        }
+    }
+
+    /**
+     * The priceColumn Class.
+     */
+    protected static final class PriceColumn extends StringColumn {
+        /**
+         * Constructor.
+         * @param pTable the table to which the column belongs
+         * @param pId the column id
+         */
+        protected PriceColumn(final TableDefinition pTable,
+                              final JDataField pId) {
+            /* Record the column type */
+            super(pTable, pId, 0);
+        }
+
+        @Override
+        protected void buildColumnType(final StringBuilder pBuilder) {
+            /* Add the column type */
+            pBuilder.append("decimal(18,4)");
+        }
+
+        /**
+         * Set the value.
+         * @param pValue the value
+         */
+        protected void setValue(final Price pValue) {
+            String myString = null;
+            if (pValue != null) {
+                myString = pValue.format(false);
+            }
+            super.setObject(myString);
+        }
+    }
+
+    /**
+     * The unitsColumn Class.
+     */
+    protected static final class UnitsColumn extends StringColumn {
+        /**
+         * Constructor.
+         * @param pTable the table to which the column belongs
+         * @param pId the column id
+         */
+        protected UnitsColumn(final TableDefinition pTable,
+                              final JDataField pId) {
+            /* Record the column type */
+            super(pTable, pId, 0);
+        }
+
+        @Override
+        protected void buildColumnType(final StringBuilder pBuilder) {
+            /* Add the column type */
+            pBuilder.append("decimal(18,4)");
+        }
+
+        /**
+         * Set the value.
+         * @param pValue the value
+         */
+        protected void setValue(final Units pValue) {
+            String myString = null;
+            if (pValue != null) {
+                myString = pValue.format(false);
+            }
+            super.setObject(myString);
+        }
+    }
+
+    /**
+     * The dilutionColumn Class.
+     */
+    protected static final class DilutionColumn extends StringColumn {
+        /**
+         * Constructor.
+         * @param pTable the table to which the column belongs
+         * @param pId the column id
+         */
+        protected DilutionColumn(final TableDefinition pTable,
+                                 final JDataField pId) {
+            /* Record the column type */
+            super(pTable, pId, 0);
+        }
+
+        @Override
+        protected void buildColumnType(final StringBuilder pBuilder) {
+            /* Add the column type */
+            pBuilder.append("decimal(18,6)");
+        }
+
+        /**
+         * Set the value.
+         * @param pValue the value
+         */
+        protected void setValue(final Dilution pValue) {
             String myString = null;
             if (pValue != null) {
                 myString = pValue.format(false);

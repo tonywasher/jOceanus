@@ -27,7 +27,9 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JGordianKnot.EncryptedData.EncryptedString;
+import net.sourceforge.JGordianKnot.EncryptedValueSet;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.data.StaticData.StaticInterface;
 
@@ -78,10 +80,10 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     /**
      * The active set of values.
      */
-    private EncryptedValueSet<T> theValueSet;
+    private EncryptedValueSet theValueSet;
 
     @Override
-    public void declareValues(final EncryptedValueSet<T> pValues) {
+    public void declareValues(final EncryptedValueSet pValues) {
         super.declareValues(pValues);
         theValueSet = pValues;
     }
@@ -198,93 +200,84 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     /**
      * Return the name of the Static Data.
      * @param pValueSet the valueSet
-     * @param <X> the static type
      * @return the name
      */
-    public static <X extends StaticData<X, ?>> String getName(final EncryptedValueSet<X> pValueSet) {
+    public static String getName(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_NAME, String.class);
     }
 
     /**
      * Return the encrypted name of the Static Data.
      * @param pValueSet the valueSet
-     * @param <X> the static type
      * @return the encrypted name
      */
-    public static <X extends StaticData<X, ?>> byte[] getNameBytes(final EncryptedValueSet<X> pValueSet) {
+    public static byte[] getNameBytes(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_NAME);
     }
 
     /**
      * Return the encrypted name field of the Static Data.
      * @param pValueSet the valueSet
-     * @param <X> the static type
      * @return the encrypted name field
      */
-    private static <X extends StaticData<X, ?>> EncryptedString getNameField(final ValueSet<X> pValueSet) {
+    private static EncryptedString getNameField(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_NAME, EncryptedString.class);
     }
 
     /**
      * Return the description of the Static Data.
      * @param pValueSet the valueSet
-     * @param <X> the static type
      * @return the description
      */
-    public static <X extends StaticData<X, ?>> String getDesc(final EncryptedValueSet<X> pValueSet) {
+    public static String getDesc(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_DESC, String.class);
     }
 
     /**
      * Return the encrypted description of the Static Data.
      * @param pValueSet the valueSet
-     * @param <X> the static type
      * @return the encrypted description
      */
-    public static <X extends StaticData<X, ?>> byte[] getDescBytes(final EncryptedValueSet<X> pValueSet) {
+    public static byte[] getDescBytes(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_DESC);
     }
 
     /**
      * Return the encrypted description field of the Static Data.
      * @param pValueSet the valueSet
-     * @param <X> the static type
      * @return the encrypted description field
      */
-    private static <X extends StaticData<X, ?>> EncryptedString getDescField(final ValueSet<X> pValueSet) {
+    private static EncryptedString getDescField(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_DESC, EncryptedString.class);
     }
 
     /**
      * Return the sort order of the Static Data.
-     * @param <X> the static type
      * @param pValueSet the valueSet
      * @return the order
      */
-    public static <X extends StaticData<X, ?>> int getOrder(final ValueSet<X> pValueSet) {
+    public static int getOrder(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_ORDER, Integer.class);
     }
 
     /**
      * Return the Static class of the Static Data.
      * @param pValueSet the Value Set
-     * @param <X> the Static type
      * @param <Y> the Enum Type
      * @param pClass the Enum class
      * @return the class
      */
-    public static <X extends StaticData<X, Y>, Y extends Enum<Y> & StaticInterface> Y getStaticClass(final ValueSet<X> pValueSet,
-                                                                                                     final Class<Y> pClass) {
+    public static <Y extends Enum<Y> & StaticInterface> Y getStaticClass(final ValueSet pValueSet,
+                                                                         final Class<Y> pClass) {
         return pValueSet.getValue(FIELD_CLASS, pClass);
     }
 
     /**
      * Is the Static item enabled.
      * @param pValueSet the valueSet
-     * @param <X> the static type
      * @return <code>true/false</code>
      */
-    public static <X extends StaticData<X, ?>> boolean getEnabled(final ValueSet<X> pValueSet) {
+    public static boolean getEnabled(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_ENABLED, Boolean.class);
     }
 
@@ -726,12 +719,12 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
         pushHistory();
 
         /* Update the name if required */
-        if (Difference.getDifference(getName(), myData.getName()).isDifferent()) {
+        if (!Difference.isEqual(getName(), myData.getName())) {
             setValueName(myData.getNameField());
         }
 
         /* Update the description if required */
-        if (Difference.getDifference(getDesc(), myData.getDesc()).isDifferent()) {
+        if (!Difference.isEqual(getDesc(), myData.getDesc())) {
             setValueDesc(myData.getDescField());
         }
 

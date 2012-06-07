@@ -146,7 +146,7 @@ public class Editor {
     /**
      * ComboBox Cell Editor.
      */
-    public static class ComboBoxCell extends AbstractCellEditor implements TableCellEditor {
+    public static class ComboBoxEditor extends AbstractCellEditor implements TableCellEditor {
         /**
          * Serial Id.
          */
@@ -239,7 +239,7 @@ public class Editor {
     /**
      * Calendar Cell Editor.
      */
-    public static class CalendarCell extends DateDayCellEditor {
+    public static class CalendarEditor extends DateDayCellEditor {
         /**
          * Serial Id.
          */

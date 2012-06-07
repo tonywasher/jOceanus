@@ -190,7 +190,7 @@ public final class Renderer {
     /**
      * Calendar Cell Renderer.
      */
-    public static class CalendarCell extends DateDayCellRenderer {
+    public static class CalendarRenderer extends DateDayCellRenderer {
         /**
          * Serial Id.
          */
@@ -204,7 +204,7 @@ public final class Renderer {
         /**
          * Constructor.
          */
-        public CalendarCell() {
+        public CalendarRenderer() {
             theData = new RenderData(true);
         }
 

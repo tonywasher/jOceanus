@@ -1,0 +1,311 @@
+/*******************************************************************************
+ * Copyright 2012 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
+package uk.co.tolcroft.finance.sheets;
+
+import java.util.Date;
+
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
+
+import uk.co.tolcroft.finance.data.Account;
+import uk.co.tolcroft.finance.data.AccountPrice;
+import uk.co.tolcroft.finance.data.AccountPrice.AccountPriceList;
+import uk.co.tolcroft.finance.data.FinanceData;
+import uk.co.tolcroft.finance.views.DilutionEvent.DilutionEventList;
+import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.sheets.SheetDataItem;
+import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
+import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
+import uk.co.tolcroft.models.threads.ThreadStatus;
+
+public class SheetAccountPrice extends SheetDataItem<AccountPrice> {
+    /**
+     * NamedArea for Prices
+     */
+    private static final String Prices = AccountPrice.LIST_NAME;
+
+    /**
+     * Alternate NamedArea for Prices
+     */
+    private static final String Prices1 = "SpotPricesData";
+
+    /**
+     * Is the spreadsheet a backup spreadsheet or an edit-able one
+     */
+    private boolean isBackup = false;
+
+    /**
+     * Prices data list
+     */
+    private AccountPriceList theList = null;
+
+    /**
+     * Constructor for loading a spreadsheet
+     * @param pReader the spreadsheet reader
+     */
+    protected SheetAccountPrice(FinanceReader pReader) {
+        /* Call super constructor */
+        super(pReader, Prices);
+
+        /* Note whether this is a backup */
+        isBackup = (pReader.getType() == SheetType.BACKUP);
+
+        /* Access the Prices list */
+        theList = pReader.getData().getPrices();
+    }
+
+    /**
+     * Constructor for creating a spreadsheet
+     * @param pWriter the spreadsheet writer
+     */
+    protected SheetAccountPrice(FinanceWriter pWriter) {
+        /* Call super constructor */
+        super(pWriter, Prices);
+
+        /* Note whether this is a backup */
+        isBackup = (pWriter.getType() == SheetType.BACKUP);
+
+        /* Access the Prices list */
+        theList = pWriter.getData().getPrices();
+        setDataList(theList);
+    }
+
+    /**
+     * Load an item from the spreadsheet
+     */
+    @Override
+    protected void loadItem() throws JDataException {
+        /* If this is a backup load */
+        if (isBackup) {
+            /* Access the IDs */
+            int myID = loadInteger(0);
+            int myControlId = loadInteger(1);
+            int myActId = loadInteger(2);
+
+            /* Access the rates and end-date */
+            Date myDate = loadDate(3);
+            byte[] myPriceBytes = loadBytes(4);
+
+            /* Load the item */
+            theList.addItem(myID, myControlId, myDate, myActId, myPriceBytes);
+        }
+
+        /* else this is a load from an edit-able spreadsheet */
+        else {
+            /* Access the Account */
+            int myID = loadInteger(0);
+            String myAccount = loadString(1);
+
+            /* Access the name and description bytes */
+            Date myDate = loadDate(2);
+            String myPrice = loadString(3);
+
+            /* Load the item */
+            theList.addItem(myID, myDate, myAccount, myPrice);
+        }
+    }
+
+    /**
+     * Insert a item into the spreadsheet
+     * @param pItem the Item to insert
+     */
+    @Override
+    protected void insertItem(AccountPrice pItem) throws JDataException {
+        /* If we are creating a backup */
+        if (isBackup) {
+            /* Set the fields */
+            writeInteger(0, pItem.getId());
+            writeInteger(1, pItem.getControlKey().getId());
+            writeInteger(2, pItem.getAccount().getId());
+            writeDate(3, pItem.getDate());
+            writeBytes(4, pItem.getPriceBytes());
+        }
+
+        /* else we are creating an edit-able spreadsheet */
+        else {
+            /* Set the fields */
+            writeInteger(0, pItem.getId());
+            writeString(1, pItem.getAccount().getName());
+            writeDate(2, pItem.getDate());
+            writeNumber(3, pItem.getPrice());
+        }
+    }
+
+    @Override
+    protected void preProcessOnWrite() throws JDataException {
+        /* Ignore if we are creating a backup */
+        if (isBackup)
+            return;
+
+        /* Create a new row */
+        newRow();
+
+        /* Write titles */
+        writeHeader(0, DataItem.FIELD_ID.getName());
+        writeHeader(1, AccountPrice.FIELD_ACCOUNT.getName());
+        writeHeader(2, AccountPrice.FIELD_DATE.getName());
+        writeHeader(3, AccountPrice.FIELD_PRICE.getName());
+
+        /* Adjust for Header */
+        adjustForHeader();
+    }
+
+    @Override
+    protected void postProcessOnWrite() throws JDataException {
+        /* If we are creating a backup */
+        if (isBackup) {
+            /* Set the five columns as the range */
+            nameRange(5);
+        }
+
+        /* else this is an edit-able spreadsheet */
+        else {
+            /* Set the four columns as the range */
+            nameRange(4);
+
+            /* Hide the ID Column */
+            setHiddenColumn(0);
+            setIntegerColumn(0);
+
+            /* Set the Account column width */
+            setColumnWidth(1, Account.NAMELEN);
+            applyDataValidation(1, SheetAccount.AccountNames);
+
+            /* Set Price and Date columns */
+            setDateColumn(2);
+            setPriceColumn(3);
+        }
+    }
+
+    /**
+     * Load the Prices from an archive
+     * @param pThread the thread status control
+     * @param pHelper the sheet helper
+     * @param pData the data set to load into
+     * @param pDilution the dilution events to modify the prices with
+     * @return continue to load <code>true/false</code>
+     * @throws JDataException
+     */
+    protected static boolean loadArchive(ThreadStatus<FinanceData> pThread,
+                                         SheetHelper pHelper,
+                                         FinanceData pData,
+                                         DilutionEventList pDilution) throws JDataException {
+        /* Local variables */
+        AreaReference myRange;
+        Sheet mySheet;
+        CellReference myTop;
+        CellReference myBottom;
+        Row myActRow;
+        int myDateCol;
+        String myAccount;
+        String myPrice;
+        Date myDate;
+        Cell myCell;
+        int myTotal;
+        int mySteps;
+        int myCount = 0;
+
+        /* Protect against exceptions */
+        try {
+            /* Find the range of cells */
+            myRange = pHelper.resolveAreaReference(Prices1);
+
+            /* Access the number of reporting steps */
+            mySteps = pThread.getReportingSteps();
+
+            /* Declare the new stage */
+            if (!pThread.setNewStage(Prices))
+                return false;
+
+            /* If we found the range OK */
+            if (myRange != null) {
+                /* Access the relevant sheet and Cell references */
+                myTop = myRange.getFirstCell();
+                myBottom = myRange.getLastCell();
+                mySheet = pHelper.getSheetByName(myTop.getSheetName());
+                myDateCol = myTop.getCol();
+                myActRow = mySheet.getRow(myTop.getRow());
+
+                /* Count the number of tax classes */
+                myTotal = (myBottom.getRow() - myTop.getRow() + 1);
+                myTotal *= (myBottom.getCol() - myTop.getCol() - 1);
+
+                /* Declare the number of steps */
+                if (!pThread.setNumSteps(myTotal))
+                    return false;
+
+                /* Loop through the rows of the table */
+                for (int i = myTop.getRow() + 1; i <= myBottom.getRow(); i++) {
+
+                    /* Access the row */
+                    Row myRow = mySheet.getRow(i);
+
+                    /* Access date */
+                    myCell = myRow.getCell(myDateCol);
+                    myDate = myCell.getDateCellValue();
+
+                    /* Loop through the columns of the table */
+                    for (int j = myTop.getCol() + 2; j <= myBottom.getCol(); j++) {
+
+                        /* Access account */
+                        myCell = myActRow.getCell(j);
+                        myAccount = myCell.getStringCellValue();
+
+                        /* Handle price which may be missing */
+                        myCell = myRow.getCell(j);
+                        myPrice = null;
+                        if (myCell != null) {
+                            /* Access the formatted cell */
+                            myPrice = pHelper.formatNumericCell(myCell);
+
+                            /* If the price is non-zero */
+                            if (!myPrice.equals("0.0")) {
+                                /* Add the item to the data set */
+                                pDilution.addPrice(myAccount, myDate, myPrice);
+                            }
+                        }
+
+                        /* Report the progress */
+                        myCount++;
+                        if ((myCount % mySteps) == 0)
+                            if (!pThread.setStepsDone(myCount))
+                                return false;
+                    }
+                }
+            }
+        }
+
+        /* Handle exceptions */
+        catch (Exception e) {
+            throw new JDataException(ExceptionClass.EXCEL, "Failed to Load Prices", e);
+        }
+
+        /* Return to caller */
+        return true;
+    }
+}

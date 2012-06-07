@@ -21,579 +21,568 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.views;
 
-import uk.co.tolcroft.finance.data.*;
-import uk.co.tolcroft.models.*;
-import uk.co.tolcroft.models.Decimal.*;
-import uk.co.tolcroft.models.data.ControlKey;
+import net.sourceforge.JDataManager.Difference;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDecimal.Price;
+import uk.co.tolcroft.finance.data.Account;
+import uk.co.tolcroft.finance.data.AccountPrice;
+import uk.co.tolcroft.finance.data.AccountPrice.AccountPriceList;
+import uk.co.tolcroft.finance.data.AccountType;
+import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
-import uk.co.tolcroft.models.data.EncryptedValues;
-import uk.co.tolcroft.models.data.HistoryValues;
-import uk.co.tolcroft.models.help.DebugDetail;
-import uk.co.tolcroft.models.help.DebugManager;
-import uk.co.tolcroft.models.help.DebugObject;
-import uk.co.tolcroft.models.help.DebugManager.DebugEntry;
 
-public class SpotPrices implements DebugObject {
-	/**
-	 * The name of the object
-	 */
-	private static final String objName = "SpotPrice";
+public class SpotPrices implements JDataContents {
+    /**
+     * Report fields
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(SpotPrices.class.getSimpleName());
 
-	/* Members */
-	private View		theView		= null;
-	private AccountType	theType     = null;
-	private DateDay    	theDate     = null;
-	private DateDay    	theNext     = null;
-	private DateDay    	thePrev     = null;
-	private SpotList	thePrices	= null;
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
 
-	/* Access methods */
-	public AccountType	getAccountType()    { return theType; }
-	public DateDay		getDate()    		{ return theDate; }
-	public DateDay     	getNext()    		{ return theNext; }
-	public DateDay     	getPrev()    		{ return thePrev; }
-	public SpotList 	getPrices()     	{ return thePrices; }
-	public SpotPrice get(long uIndex) {
-		return (SpotPrice)thePrices.get((int)uIndex); }
- 	
- 	/* Constructor */
-	public SpotPrices(View pView, AccountType pType, DateDay pDate) {
-		/* Create a copy of the date and initiate the list */
-		theView		= pView;
-		theDate    	= pDate;
-		theType		= pType;
-		thePrices  	= new SpotList(this);
-	}
-	
-	/**
-	 * Create a string form of the object suitable for inclusion in an HTML document
-	 * @param pDetail the debug detail
-	 * @return the formatted string
-	 */
-	public StringBuilder buildDebugDetail(DebugDetail pDetail) {
-		StringBuilder	myString = new StringBuilder(10000);
-			
-		/* Format the table headers */
-		myString.append("<table border=\"1\" width=\"90%\" align=\"center\">");
-		myString.append("<thead><th>SpotPrices</th>");
-		myString.append("<th>Property</th><th>Value</th></thead><tbody>");
-			
-		/* Start the Fields section */
-		myString.append("<tr><th rowspan=\"5\">Fields</th></tr>");
-			
-		/* Format the range */
-		myString.append("<tr><td>AccountType</td><td>"); 
-		myString.append(pDetail.addDebugLink(theType, AccountType.format(theType))); 
-		myString.append("</td></tr>");
-		myString.append("<tr><td>Date</td><td>"); 
-		myString.append(DateDay.format(theDate)); 
-		myString.append("</td></tr>");
-		myString.append("<tr><td>Next</td><td>"); 
-		myString.append(DateDay.format(theNext)); 
-		myString.append("</td></tr>");
-		myString.append("<tr><td>Previous</td><td>"); 
-		myString.append(DateDay.format(thePrev)); 
-		myString.append("</td></tr>");
-		myString.append("</tbody></table>"); 
+    /* Field IDs */
+    public static final JDataField FIELD_VIEW = FIELD_DEFS.declareLocalField("View");
+    public static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField("AccountType");
+    public static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
+    public static final JDataField FIELD_NEXT = FIELD_DEFS.declareLocalField("Next");
+    public static final JDataField FIELD_PREV = FIELD_DEFS.declareLocalField("Previous");
+    public static final JDataField FIELD_PRICES = FIELD_DEFS.declareLocalField("Prices");
 
-		/* Return the data */
-		return myString;
-	}		
-	
-	/**
-	 * Add child entries for the debug object
-	 * @param pManager the debug manager
-	 * @param pParent the parent debug entry
-	 */
-	public void addChildEntries(DebugManager 	pManager,
-								DebugEntry		pParent) {
-		/* Add lines child */
-		pManager.addChildEntry(pParent, "Prices", thePrices);		
-	}
-	
-	/* The List class */
-	public class SpotList extends AcctPrice.List {
-		/* Members */
-		private DateDay 		theDate 	= null;
-		
-		/* Constructors */
-		public SpotList(SpotPrices pPrices) {
-			/* Build initial list */
-			super(theView.getData());
-			setStyle(ListStyle.EDIT);
-			theDate   = pPrices.theDate;
+    @Override
+    public Object getFieldValue(JDataField pField) {
+        if (pField == FIELD_VIEW)
+            return theView;
+        if (pField == FIELD_TYPE)
+            return theType;
+        if (pField == FIELD_DATE)
+            return theDate;
+        if (pField == FIELD_NEXT)
+            return getNext();
+        if (pField == FIELD_PREV)
+            return getPrev();
+        if (pField == FIELD_PRICES)
+            return thePrices;
+        return null;
+    }
 
-			/* Declare variables */
-			FinanceData					myData;
-			DataListIterator<Account> 	myActIterator;
-			Account 					myAccount;
-			SpotPrice					mySpot;
-			DataListIterator<AcctPrice> myIterator;
-			AcctPrice					myPrice;
-			int							iDiff;
-			SpotPrice.Values			myValues;
-			
-			/* Loop through the Accounts */
-			myData			= theView.getData();
-			myActIterator	= myData.getAccounts().listIterator();
-			while ((myAccount = myActIterator.next()) != null) {
-				/* Ignore accounts that are wrong type */
-				if (AccountType.differs(myAccount.getActType(), theType).isDifferent()) continue;
-				
-				/* Ignore accounts that do not have prices */
-				if (!myAccount.isPriced()) continue;
-				
-				/* Ignore aliases */
-				if (myAccount.isAlias()) continue;
-				
-				/* Create a SpotPrice entry */
-				mySpot = new SpotPrice(this, myAccount);
-				add(mySpot);
-				
-				/* If the account is closed then hide the entry */
-				if (myAccount.isClosed()) mySpot.setHidden();
-			}
-			
-			/* Set the base for this list */
-			AcctPrice.List myPrices = myData.getPrices();
-			setBase(myPrices);
-			
-			/* Loop through the prices */
-			myIterator 	= myPrices.listIterator(true);
-			while ((myPrice = myIterator.next()) != null) {
-				/* Ignore accounts that are wrong type */
-				if (AccountType.differs(myPrice.getAccount().getActType(), theType).isDifferent()) continue;
-				
-				/* Test the Date */
-				iDiff 	= theDate.compareTo(myPrice.getDate());
-				
-				/* If we are past the date */
-				if (iDiff < 0) {
-					/* Record the next date and break the loop */
-					theNext = myPrice.getDate();
-					break;
-				}
-				
-				/* Access the Spot Price */
-				myAccount 	= myPrice.getAccount();
-				mySpot 		= (SpotPrice)searchFor(myAccount.getId());
-				myValues	= mySpot.getValues();
-				
-				/* If we are exactly the date */
-				if (iDiff == 0) {
-					/* Set price */
-					myValues.setPrice(myPrice.getPricePair());
-					
-					/* Link to base and re-establish state */
-					mySpot.setBase(myPrice);
-					mySpot.setState(DataState.CLEAN);
-				}
-				
-				/* else we are a previous date */
-				else {
-					/* Set previous date and value */
-					myValues.setPrevDate(myPrice.getDate());
-					myValues.setPrevPrice(myPrice.getPrice());
-					
-					/* Record the latest previous date */
-					thePrev = myPrice.getDate();
-				}
-			}
-			
-		}
-		
-		/* Disable extract lists. */
-		public SpotList getUpdateList() { return null; }
-		public SpotList getEditList() 	{ return null; }
-		public SpotList getShallowCopy() { return null; }
-		public SpotList getDeepCopy(DataSet<?> pData) { return null; }
-		public SpotList getDifferences(SpotList pOld) { return null; }
+    @Override
+    public String formatObject() {
+        return FIELD_DEFS.getName();
+    }
 
-		/* Is this list locked */
-		public boolean isLocked() { return false; }
-		
-		/* Disable Add a new item */
-		public SpotPrice addNewItem(DataItem<?> pElement) {	return null; }
-		public SpotPrice addNewItem() { return null; }
-	
-		/**
-		 * Obtain the type of the item
-		 * @return the type of the item
-		 */
-		public String itemType() { return objName; }
-		
-		/**
-		 * Calculate the Edit State for the list
-		 */
-		public void findEditState() {
-			DataListIterator<AcctPrice>	myIterator;
-			AcctPrice 					myCurr;
-			EditState					myEdit;
-			
-			/* Access the iterator */
-			myIterator 	= listIterator();
-			myEdit		= EditState.CLEAN;
-			
-			/* Loop through the list */
-			while ((myCurr = myIterator.next()) != null) {
-				/* Switch on new state */
-				switch (myCurr.getState()) {
-					case CLEAN:
-					case DELNEW:
-						break;
-					case NEW:
-					case DELETED:
-					case DELCHG:
-					case CHANGED:
-					case RECOVERED:
-						myEdit = EditState.VALID;
-						break;
-				}
-			}
-			
-			/* Set the Edit State */
-			setEditState(myEdit);
-		}
+    /* Members */
+    private View theView = null;
+    private AccountType theType = null;
+    private DateDay theDate = null;
+    private SpotList thePrices = null;
 
-		/**
-		 * Does the list have updates
-		 */
-		public boolean hasUpdates() {
-			DataListIterator<AcctPrice>	myIterator;
-			AcctPrice 					myCurr;
-			
-			/* Access the iterator */
-			myIterator 	= listIterator();
-			
-			/* Loop through the list */
-			while ((myCurr = myIterator.next()) != null) {
-				/* Switch on state */
-				switch (myCurr.getState()) {
-					case CLEAN:
-					case DELNEW:
-						break;
-					case DELETED:
-					case DELCHG:
-					case CHANGED:
-					case RECOVERED:
-						return true;
-				}
-			}
-			
-			/* Return no updates */
-			return false;
-		}
+    /* Access methods */
+    public AccountType getAccountType() {
+        return theType;
+    }
 
-		/** 
-		 * Reset changes in an edit view
-		 */
-		public void resetChanges() {
-			DataListIterator<AcctPrice> myIterator;
-			AcctPrice					myCurr;
-				
-			/* Create an iterator for the list */
-			myIterator = listIterator(true);
-				
-			/* Loop through the elements */
-			while ((myCurr = myIterator.next()) != null) {		
-				/* Switch on the state */
-				switch (myCurr.getState()) {
-					/* If this is a clean item, just ignore */
-					case CLEAN:
-					case DELNEW:
-						break;
-							
-					/* If this is a changed or DELCHG item */
-					case NEW:
-					case CHANGED:
-					case DELCHG:
-						/* Clear changes and fall through */
-						myCurr.resetHistory();
+    protected View getView() {
+        return theView;
+    }
 
-					/* If this is a deleted or recovered item */
-					case DELETED:
-					case RECOVERED:				
-						/* Clear errors and mark the item as clean */
-						myCurr.clearErrors();
-						myCurr.setState(DataState.CLEAN);
-						break;
-				}
-			}
-		}
-	}
-			
-	public static class SpotPrice extends AcctPrice {
-		/* Access methods */
-		public Values      	getValues()    { return (Values)super.getValues(); }
-		public Price 		getPrevPrice() { return getValues().getPrevPrice(); }
-		public DateDay		getPrevDate()  { return getValues().getPrevDate(); }
+    protected FinanceData getData() {
+        return theView.getData();
+    }
 
-		/* Linking methods */
-		public AcctPrice	 getBase() { return (AcctPrice)super.getBase(); }
+    public DateDay getDate() {
+        return theDate;
+    }
 
-		/* Field IDs */
-		public static final int FIELD_PRVDATE  = AcctPrice.NUMFIELDS;
-		public static final int FIELD_PRVPRICE = AcctPrice.NUMFIELDS+1;
-		public static final int NUMFIELDS	   = AcctPrice.NUMFIELDS+2;
-		
-		/**
-		 * Obtain the type of the item
-		 * @return the type of the item
-		 */
-		public String itemType() { return objName; }
-		
-		/**
-		 * Obtain the number of fields for an item
-		 * @return the number of fields
-		 */
-		public int	numFields() {return NUMFIELDS; }
-		
-		/**
-		 * Determine the field name for a particular field
-		 * @return the field name
-		 */
-		public static String	fieldName(int iField) {
-			switch (iField) {
-				case FIELD_PRVDATE: 	return "PreviousDate";
-				case FIELD_PRVPRICE: 	return "PreviousPrice";
-				default:		  		return AcctPrice.fieldName(iField);
-			}
-		}
-		
-		/**
-		 * Determine the field name in a non-static fashion 
-		 */
-		public String getFieldName(int iField) { return fieldName(iField); }
-		
-		/**
-		 * Format the value of a particular field as a table row
-		 * @param pDetail the debug detail
-		 * @param iField the field number
-		 * @param pValues the values to use
-		 * @return the formatted field
-		 */
-		public String formatField(DebugDetail pDetail, int iField, HistoryValues<AcctPrice> pValues) {
-			String 	myString = "";
-			Values 	myValues = (Values)pValues;
-			switch (iField) {
-				case FIELD_PRVDATE: 	
-					myString += DateDay.format(myValues.getPrevDate());	
-					break;
-				case FIELD_PRVPRICE: 	
-					myString += Price.format(myValues.getPrevPrice());	
-					break;
-				default: 		
-					myString += super.formatField(pDetail, iField, pValues); 
-					break;
-			}
-			return myString;
-		}
-					
-		/**
-		 * Get an initial set of values 
-		 * @return an initial set of values 
-		 */
-		protected HistoryValues<AcctPrice> getNewValues() { return new Values(); }
-		
-		/**
-		 *  Constructor for a new SpotPrice where no price data exists
-		 *  @param pList the Spot Price List
-		 *  @param pAccount the price for the date
-		 *  @param pLast the last price for the account
-		 */
-		private SpotPrice(SpotList pList, Account pAccount) {
-			super(pList, pAccount);
-	
-			/* Variables */
-			Values 	myValues = getValues();
-			
-			/* Store base values */
-			setControlKey(pList.getControlKey());
-			myValues.setDate(pList.theDate);
-			myValues.setAccount(pAccount);
-			
-			/* Set the state */
-			setState(DataState.CLEAN);
-		}
-					
-		/**
-		 * Validate the line
-		 */
-		public void validate() {
-			setValidEdit();
-		}
+    public DateDay getNext() {
+        return thePrices.getNext();
+    }
 
-		/* Is this row locked */
-		public boolean isLocked() { return isHidden(); }
-		
-		/**
-		 * Note that this item has been validated 
-		 */
-		public	  void					setValidEdit() {
-			setEditState((hasHistory()) ? EditState.VALID : EditState.CLEAN);
-		}
+    public DateDay getPrev() {
+        return thePrices.getPrev();
+    }
 
-		/**
-		 * Obtain the price of the item
-		 */
-		public Price getPrice() {
-			/* Switch on state */
-			switch (getState()) {
-				case NEW:
-				case CHANGED:
-				case RECOVERED:
-					return getValues().getPriceValue();
-				case CLEAN:
-					return (getBase().isDeleted()) ? null : getValues().getPriceValue();
-				default:
-					return null;
-			}
-		}
+    public SpotList getPrices() {
+        return thePrices;
+    }
 
-		/* Disable setDate */
-		public void setDate(DateDay pDate) {}
-		
-		/**
-		 * Set the state of the item
-		 * A Spot list has some minor changes to the algorithm in that there are 
-		 * no NEW or DELETED states, leaving just CLEAN and CHANGED. The isDeleted
-		 * flags is changed in usage to an isVisible flag
-		 * @param newState the new state to set
-		 */
-		public void setState(DataState newState) {
-			/* Switch on new state */
-			switch (newState) {
-				case CLEAN:
-					setDataState((getBase()==null) ? DataState.DELNEW : newState);
-					setEditState(EditState.CLEAN);
-					break;
-				case CHANGED:
-					setDataState((getBase()==null) ? DataState.NEW : newState);
-					setEditState(EditState.DIRTY);
-					break;
-				case DELETED:
-					switch (getState()) {
-						case NEW:
-							setDataState(DataState.DELNEW);
-							break;
-						case CHANGED:
-							setDataState(DataState.DELCHG);
-							break;
-						default:
-							setDataState(DataState.DELETED);
-							break;
-					}
-					setEditState(EditState.DIRTY);
-					break;
-				case RECOVERED:
-					switch (getState()) {
-						case DELNEW:
-							setDataState(DataState.NEW);
-							break;
-						case DELCHG:
-							setDataState(DataState.CHANGED);
-							break;
-						case DELETED:
-							setDataState(DataState.CLEAN);
-							break;
-						default:
-							setDataState(DataState.RECOVERED);
-							break;
-					}
-					setEditState(EditState.DIRTY);
-					break;
-			}
-		}
-		
-		/**
-		 * Compare the price
-		 */
-		public boolean equals(Object that) { return (this == that); }
-		
-		/* SpotValues */
-		public class Values extends AcctPrice.Values {
-			private Price		thePrevPrice	= null;
-			private DateDay		thePrevDate		= null;
-			
-			/* Access methods */
-			public Price	getPrevPrice()  	{ return thePrevPrice; }
-			public DateDay	getPrevDate()   	{ return thePrevDate; }
-			
-			public void setPrevPrice(Price pPrice) {
-				thePrevPrice  = pPrice; }
-			public void setPrevDate(DateDay pDate) {
-				thePrevDate   = pDate; }
+    public SpotPrice get(long uIndex) {
+        return (SpotPrice) thePrices.get((int) uIndex);
+    }
 
-			/* Constructor */
-			public Values() {}
-			public Values(Values 			pValues) { copyFrom(pValues); }
-			public Values(AcctPrice.Values 	pValues) { copyFrom(pValues); }
-			
-			/* Check whether this object is equal to that passed */
-			public Difference histEquals(HistoryValues<AcctPrice> pCompare) {
-				/* Make sure that the object is the same class */
-				if (pCompare.getClass() != this.getClass()) return Difference.Different;
-				
-				/* Cast correctly */
-				Values myValues = (Values)pCompare;
+    /* Constructor */
+    public SpotPrices(View pView,
+                      AccountType pType,
+                      DateDay pDate) {
+        /* Create a copy of the date and initiate the list */
+        theView = pView;
+        theDate = pDate;
+        theType = pType;
+        thePrices = new SpotList(this);
+    }
 
-				/* Determine underlying differences */
-				Difference myDifference = super.histEquals(pCompare);
-				
-				/* Compare underlying values */
-				myDifference = myDifference.combine(Price.differs(thePrevPrice, 	myValues.thePrevPrice));
-				myDifference = myDifference.combine(DateDay.differs(thePrevDate,	myValues.thePrevDate));
-				
-				/* Return differences */
-				return myDifference;
-			}
-			
-			/* Copy values */
-			public HistoryValues<AcctPrice> copySelf() {
-				return new Values(this);
-			}
-			public void    copyFrom(HistoryValues<?> pSource) {
-				/* Handle a SpotPrice Values */
-				if (pSource instanceof Values) {
-					Values myValues = (Values)pSource;
-					super.copyFrom(myValues);
-					thePrevPrice	= myValues.getPrevPrice();
-					thePrevDate		= myValues.getPrevDate();
-				}
+    /* The List class */
+    public static class SpotList extends AccountPriceList {
+        /**
+         * Local Report fields
+         */
+        protected static final JDataFields theLocalFields = new JDataFields(SpotList.class.getSimpleName(),
+                AccountPriceList.FIELD_DEFS);
 
-				/* Handle an AcctPrice Values */
-				else if (pSource instanceof AcctPrice.Values) {
-					AcctPrice.Values myValues = (AcctPrice.Values)pSource;
-					super.copyFrom(myValues);
-				}
-			}
-			
-			public Difference	fieldChanged(int fieldNo, HistoryValues<AcctPrice> pOriginal) {
-				Values		pValues = (Values)pOriginal;
-				Difference	bResult = Difference.Identical;
-				switch (fieldNo) {
-					case FIELD_PRVPRICE:
-						bResult = (Price.differs(thePrevPrice,  pValues.thePrevPrice));
-						break;
-					case FIELD_PRVDATE:
-						bResult = (DateDay.differs(thePrevDate, pValues.thePrevDate));
-						break;
-					default:
-						bResult = super.fieldChanged(fieldNo, pValues);
-						break;
-				}
-				return bResult;
-			}
+        /* Field IDs */
+        public static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField("AccountType");
+        public static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
+        public static final JDataField FIELD_NEXT = FIELD_DEFS.declareLocalField("Next");
+        public static final JDataField FIELD_PREV = FIELD_DEFS.declareLocalField("Previous");
 
-			/**
-			 * Disable encryption methods
-			 */
-			protected void updateSecurity() throws ModelException {}
-			protected void applySecurity() throws ModelException {}
-			protected void adoptSecurity(ControlKey pControl, EncryptedValues<AcctPrice> pBase) throws ModelException {}
-		}		
-	}
+        /* Called from constructor */
+        @Override
+        public JDataFields declareFields() {
+            return theLocalFields;
+        }
+
+        @Override
+        public Object getFieldValue(JDataField pField) {
+            if (pField == FIELD_TYPE)
+                return theType;
+            if (pField == FIELD_DATE)
+                return theDate;
+            if (pField == FIELD_NEXT)
+                return getNext();
+            if (pField == FIELD_PREV)
+                return getPrev();
+            return super.getFieldValue(pField);
+        }
+
+        /* Members */
+        private final DateDay theDate;
+        private final View theView;
+        private final AccountType theType;
+        private DateDay theNext = null;
+        private DateDay thePrev = null;
+
+        public DateDay getNext() {
+            return theNext;
+        }
+
+        public DateDay getPrev() {
+            return thePrev;
+        }
+
+        /* Constructors */
+        public SpotList(SpotPrices pPrices) {
+            /* Build initial list */
+            super(pPrices.getData());
+            setStyle(ListStyle.EDIT);
+            theDate = pPrices.getDate();
+            theView = pPrices.getView();
+            theType = pPrices.getAccountType();
+
+            /* Declare variables */
+            FinanceData myData;
+            DataListIterator<Account> myActIterator;
+            Account myAccount;
+            SpotPrice mySpot;
+            DataListIterator<AccountPrice> myIterator;
+            AccountPrice myPrice;
+            int iDiff;
+
+            /* Loop through the Accounts */
+            myData = theView.getData();
+            myActIterator = myData.getAccounts().listIterator();
+            while ((myAccount = myActIterator.next()) != null) {
+                /* Ignore accounts that are wrong type */
+                if (!Difference.isEqual(myAccount.getActType(), theType))
+                    continue;
+
+                /* Ignore accounts that do not have prices */
+                if (!myAccount.isPriced())
+                    continue;
+
+                /* Ignore aliases */
+                if (myAccount.isAlias())
+                    continue;
+
+                /* Create a SpotPrice entry */
+                mySpot = new SpotPrice(this, myAccount);
+                add(mySpot);
+
+                /* If the account is closed then hide the entry */
+                if (myAccount.isClosed())
+                    mySpot.setHidden();
+            }
+
+            /* Set the base for this list */
+            AccountPriceList myPrices = myData.getPrices();
+            setBase(myPrices);
+
+            /* Loop through the prices */
+            myIterator = myPrices.listIterator(true);
+            while ((myPrice = myIterator.next()) != null) {
+                /* Ignore accounts that are wrong type */
+                if (!Difference.isEqual(myPrice.getAccount().getActType(), theType))
+                    continue;
+
+                /* Test the Date */
+                iDiff = theDate.compareTo(myPrice.getDate());
+
+                /* If we are past the date */
+                if (iDiff < 0) {
+                    /* Record the next date and break the loop */
+                    theNext = myPrice.getDate();
+                    break;
+                }
+
+                /* Access the Spot Price */
+                myAccount = myPrice.getAccount();
+                mySpot = (SpotPrice) searchFor(myAccount.getId());
+
+                /* If we are exactly the date */
+                if (iDiff == 0) {
+                    /* Set price */
+                    mySpot.setValuePrice(myPrice.getPriceField());
+
+                    /* Link to base and re-establish state */
+                    mySpot.setBase(myPrice);
+                    mySpot.setState(DataState.CLEAN);
+                }
+
+                /* else we are a previous date */
+                else {
+                    /* Set previous date and value */
+                    mySpot.thePrevDate = myPrice.getDate();
+                    mySpot.thePrevPrice = myPrice.getPrice();
+
+                    /* Record the latest previous date */
+                    thePrev = myPrice.getDate();
+                }
+            }
+
+        }
+
+        /* Disable extract lists. */
+        @Override
+        public SpotList getUpdateList() {
+            return null;
+        }
+
+        @Override
+        public SpotList getEditList() {
+            return null;
+        }
+
+        @Override
+        public SpotList getShallowCopy() {
+            return null;
+        }
+
+        @Override
+        public SpotList getDeepCopy(DataSet<?> pData) {
+            return null;
+        }
+
+        public SpotList getDifferences(SpotList pOld) {
+            return null;
+        }
+
+        /* Is this list locked */
+        @Override
+        public boolean isLocked() {
+            return false;
+        }
+
+        /* Disable Add a new item */
+        @Override
+        public SpotPrice addNewItem(DataItem<?> pElement) {
+            return null;
+        }
+
+        @Override
+        public SpotPrice addNewItem() {
+            return null;
+        }
+
+        /**
+         * Calculate the Edit State for the list
+         */
+        @Override
+        public void findEditState() {
+            DataListIterator<AccountPrice> myIterator;
+            AccountPrice myCurr;
+            EditState myEdit;
+
+            /* Access the iterator */
+            myIterator = listIterator();
+            myEdit = EditState.CLEAN;
+
+            /* Loop through the list */
+            while ((myCurr = myIterator.next()) != null) {
+                /* Switch on new state */
+                switch (myCurr.getState()) {
+                    case CLEAN:
+                    case DELNEW:
+                        break;
+                    case NEW:
+                    case DELETED:
+                    case DELCHG:
+                    case CHANGED:
+                    case RECOVERED:
+                        myEdit = EditState.VALID;
+                        break;
+                }
+            }
+
+            /* Set the Edit State */
+            setEditState(myEdit);
+        }
+
+        /**
+         * Does the list have updates
+         */
+        @Override
+        public boolean hasUpdates() {
+            DataListIterator<AccountPrice> myIterator;
+            AccountPrice myCurr;
+
+            /* Access the iterator */
+            myIterator = listIterator();
+
+            /* Loop through the list */
+            while ((myCurr = myIterator.next()) != null) {
+                /* Switch on state */
+                switch (myCurr.getState()) {
+                    case CLEAN:
+                    case DELNEW:
+                        break;
+                    case DELETED:
+                    case DELCHG:
+                    case CHANGED:
+                    case RECOVERED:
+                        return true;
+                }
+            }
+
+            /* Return no updates */
+            return false;
+        }
+
+        /**
+         * Reset changes in an edit view
+         */
+        @Override
+        public void resetChanges() {
+            DataListIterator<AccountPrice> myIterator;
+            AccountPrice myCurr;
+
+            /* Create an iterator for the list */
+            myIterator = listIterator(true);
+
+            /* Loop through the elements */
+            while ((myCurr = myIterator.next()) != null) {
+                /* Switch on the state */
+                switch (myCurr.getState()) {
+                /* If this is a clean item, just ignore */
+                    case CLEAN:
+                    case DELNEW:
+                        break;
+
+                    /* If this is a changed or DELCHG item */
+                    case NEW:
+                    case CHANGED:
+                    case DELCHG:
+                        /* Clear changes and fall through */
+                        myCurr.resetHistory();
+
+                        /* If this is a deleted or recovered item */
+                    case DELETED:
+                    case RECOVERED:
+                        /* Clear errors and mark the item as clean */
+                        myCurr.clearErrors();
+                        myCurr.setState(DataState.CLEAN);
+                        break;
+                }
+            }
+        }
+    }
+
+    public static class SpotPrice extends AccountPrice {
+        /**
+         * Object name
+         */
+        public static String objName = SpotPrice.class.getSimpleName();
+
+        /**
+         * List name
+         */
+        public static String listName = objName + "s";
+
+        /**
+         * Report fields
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(objName, AccountPrice.FIELD_DEFS);
+
+        /* Called from constructor */
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
+        /* Field IDs */
+        public static final JDataField FIELD_PREVDATE = FIELD_DEFS.declareEqualityField("PreviousDate");
+        public static final JDataField FIELD_PREVPRICE = FIELD_DEFS.declareEqualityField("PreviousPrice");
+
+        /**
+         * the previous date
+         */
+        private DateDay thePrevDate;
+
+        /**
+         * the previous price
+         */
+        private Price thePrevPrice;
+
+        public Price getPrevPrice() {
+            return thePrevPrice;
+        }
+
+        public DateDay getPrevDate() {
+            return thePrevDate;
+        }
+
+        /* Linking methods */
+        @Override
+        public AccountPrice getBase() {
+            return (AccountPrice) super.getBase();
+        }
+
+        /**
+         * Constructor for a new SpotPrice where no price data exists
+         * @param pList the Spot Price List
+         * @param pAccount the price for the date
+         */
+        private SpotPrice(SpotList pList,
+                          Account pAccount) {
+            super(pList, pAccount);
+
+            /* Store base values */
+            setControlKey(pList.getControlKey());
+            setDate(pList.theDate);
+            setAccount(pAccount);
+
+            /* Set the state */
+            setState(DataState.CLEAN);
+        }
+
+        /**
+         * Validate the line
+         */
+        @Override
+        public void validate() {
+            setValidEdit();
+        }
+
+        /* Is this row locked */
+        @Override
+        public boolean isLocked() {
+            return isHidden();
+        }
+
+        /**
+         * Note that this item has been validated
+         */
+        @Override
+        public void setValidEdit() {
+            setEditState((hasHistory()) ? EditState.VALID : EditState.CLEAN);
+        }
+
+        /**
+         * Obtain the price of the item
+         */
+        @Override
+        public Price getPrice() {
+            /* Switch on state */
+            switch (getState()) {
+                case NEW:
+                case CHANGED:
+                case RECOVERED:
+                    return getPrice();
+                case CLEAN:
+                    return (getBase().isDeleted()) ? null : getPrice();
+                default:
+                    return null;
+            }
+        }
+
+        /* Disable setDate */
+        @Override
+        public void setDate(DateDay pDate) {
+        }
+
+        /**
+         * Set the state of the item A Spot list has some minor changes to the algorithm in that there are no
+         * NEW or DELETED states, leaving just CLEAN and CHANGED. The isDeleted flags is changed in usage to
+         * an isVisible flag
+         * @param newState the new state to set
+         */
+        @Override
+        public void setState(DataState newState) {
+            /* Switch on new state */
+            switch (newState) {
+                case CLEAN:
+                    setDataState((getBase() == null) ? DataState.DELNEW : newState);
+                    setEditState(EditState.CLEAN);
+                    break;
+                case CHANGED:
+                    setDataState((getBase() == null) ? DataState.NEW : newState);
+                    setEditState(EditState.DIRTY);
+                    break;
+                case DELETED:
+                    switch (getState()) {
+                        case NEW:
+                            setDataState(DataState.DELNEW);
+                            break;
+                        case CHANGED:
+                            setDataState(DataState.DELCHG);
+                            break;
+                        default:
+                            setDataState(DataState.DELETED);
+                            break;
+                    }
+                    setEditState(EditState.DIRTY);
+                    break;
+                case RECOVERED:
+                    switch (getState()) {
+                        case DELNEW:
+                            setDataState(DataState.NEW);
+                            break;
+                        case DELCHG:
+                            setDataState(DataState.CHANGED);
+                            break;
+                        case DELETED:
+                            setDataState(DataState.CLEAN);
+                            break;
+                        default:
+                            setDataState(DataState.RECOVERED);
+                            break;
+                    }
+                    setEditState(EditState.DIRTY);
+                    break;
+            }
+        }
+
+        /**
+         * Compare the price
+         */
+        @Override
+        public boolean equals(Object that) {
+            return (this == that);
+        }
+    }
 }

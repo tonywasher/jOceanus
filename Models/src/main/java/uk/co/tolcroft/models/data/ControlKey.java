@@ -30,6 +30,7 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JGordianKnot.CipherSet;
 import net.sourceforge.JGordianKnot.EncryptionGenerator;
 import net.sourceforge.JGordianKnot.HashMode;
@@ -118,10 +119,10 @@ public class ControlKey extends DataItem<ControlKey> {
     /**
      * The active set of values.
      */
-    private ValueSet<ControlKey> theValueSet;
+    private ValueSet theValueSet;
 
     @Override
-    public void declareValues(final ValueSet<ControlKey> pValues) {
+    public void declareValues(final ValueSet pValues) {
         super.declareValues(pValues);
         theValueSet = pValues;
     }
@@ -166,7 +167,7 @@ public class ControlKey extends DataItem<ControlKey> {
      * @param pValueSet the ValueSet
      * @return the hash bytes
      */
-    public static byte[] getHashBytes(final ValueSet<ControlKey> pValueSet) {
+    public static byte[] getHashBytes(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_HASHBYTES, byte[].class);
     }
 
@@ -175,7 +176,7 @@ public class ControlKey extends DataItem<ControlKey> {
      * @param pValueSet the ValueSet
      * @return the passwordHash
      */
-    protected static PasswordHash getPasswordHash(final ValueSet<ControlKey> pValueSet) {
+    protected static PasswordHash getPasswordHash(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PASSHASH, PasswordHash.class);
     }
 
@@ -184,7 +185,7 @@ public class ControlKey extends DataItem<ControlKey> {
      * @param pValueSet the ValueSet
      * @return the hash mode
      */
-    private static HashMode getHashMode(final ValueSet<ControlKey> pValueSet) {
+    private static HashMode getHashMode(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_HASHMODE, HashMode.class);
     }
 

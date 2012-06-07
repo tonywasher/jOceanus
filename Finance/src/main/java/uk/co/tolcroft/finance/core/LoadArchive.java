@@ -21,74 +21,76 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.core;
 
+import net.sourceforge.JDataManager.JDataException;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.sheets.FinanceSheet;
-import uk.co.tolcroft.models.ModelException;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.threads.LoaderThread;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.views.DataControl;
 
 public class LoadArchive extends LoaderThread<FinanceData> {
-	/* Task description */
-	private static String  	theTask		= "Archive Load";
+    /* Task description */
+    private static final String TASK_NAME = "Archive Load";
 
-	/* Properties */
-	private DataControl<FinanceData>	theControl 	= null;
-	private ThreadStatus<FinanceData>	theStatus    	= null;
+    /* Properties */
+    private DataControl<FinanceData> theControl = null;
+    private ThreadStatus<FinanceData> theStatus = null;
 
-	/* Constructor (Event Thread)*/
-	public LoadArchive(DataControl<FinanceData> pControl) {
-		/* Call super-constructor */
-		super(theTask, pControl);
-		
-		/* Store passed parameters */
-		theControl	= pControl;
+    /**
+     * Constructor (Event Thread).
+     * @param pStatus the thread status
+     */
+    public LoadArchive(final ThreadStatus<FinanceData> pStatus) {
+        /* Call super-constructor */
+        super(TASK_NAME, pStatus);
 
-		/* Create the status */
-		theStatus = new ThreadStatus<FinanceData>(this, theControl);
+        /* Store passed parameters */
+        theStatus = pStatus;
+        theControl = pStatus.getControl();
 
-		/* Show the status window */
-		showStatusBar();
-	}
+        /* Show the status window */
+        showStatusBar();
+    }
 
-	/* Background task (Worker Thread)*/
-	public FinanceData performTask() throws ModelException {
-		FinanceData				myData   = null;
-		FinanceData				myStore;
-		Database<FinanceData>	myDatabase;
+    /* Background task (Worker Thread) */
+    @Override
+    public FinanceData performTask() throws JDataException {
+        FinanceData myData = null;
+        FinanceData myStore;
+        Database<FinanceData> myDatabase;
 
-		/* Initialise the status window */
-		theStatus.initTask("Loading Extract");
+        /* Initialise the status window */
+        theStatus.initTask("Loading Extract");
 
-		/* Load workbook */
-		myData   = FinanceSheet.loadArchive(theStatus);
+        /* Load workbook */
+        myData = FinanceSheet.loadArchive(theStatus);
 
-		/* Initialise the status window */
-		theStatus.initTask("Accessing DataStore");
+        /* Initialise the status window */
+        theStatus.initTask("Accessing DataStore");
 
-		/* Create interface */
-		myDatabase = theControl.getDatabase();
+        /* Create interface */
+        myDatabase = theControl.getDatabase();
 
-		/* Load underlying database */
-		myStore	= myDatabase.loadDatabase(theStatus);
+        /* Load underlying database */
+        myStore = myDatabase.loadDatabase(theStatus);
 
-		/* Initialise the status window */
-		theStatus.initTask("Applying Security");
-	
-		/* Initialise the security, either from database or with a new security control */
-		myData.initialiseSecurity(theStatus, myStore);
-			
-		/* Initialise the status window */
-		theStatus.initTask("Analysing Data");
-	
-		/* Analyse the Data to ensure that close dates are updated */
-		myData.analyseData(theControl);
-			
-		/* Re-base the loaded spreadsheet onto the database image */
-		myData.reBase(myStore);
+        /* Initialise the status window */
+        theStatus.initTask("Applying Security");
 
-		/* Return the loaded data */
-		return myData;
-	}
+        /* Initialise the security, either from database or with a new security control */
+        myData.initialiseSecurity(theStatus, myStore);
+
+        /* Initialise the status window */
+        theStatus.initTask("Analysing Data");
+
+        /* Analyse the Data to ensure that close dates are updated */
+        myData.analyseData(theControl);
+
+        /* Re-base the loaded spreadsheet onto the database image */
+        myData.reBase(myStore);
+
+        /* Return the loaded data */
+        return myData;
+    }
 }

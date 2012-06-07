@@ -29,13 +29,13 @@ import java.sql.SQLException;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.ValueSet;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.TaskControl;
-import uk.co.tolcroft.models.data.ValueSet;
 
 /**
  * Database Table class. This controls should be extended for each DataType/Table.
@@ -549,8 +549,8 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
      * @throws JDataException on error
      */
     private boolean updateItem(final T pItem) throws JDataException {
-        ValueSet<T> myCurr;
-        ValueSet<T> myBase;
+        ValueSet myCurr;
+        ValueSet myBase;
         boolean isUpdated = false;
 
         /* Access the object and base */

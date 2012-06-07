@@ -28,6 +28,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JGordianKnot.EncryptedData.EncryptedField;
+import net.sourceforge.JGordianKnot.EncryptedValueSet;
 import net.sourceforge.JGordianKnot.EncryptionGenerator;
 import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
 
@@ -46,19 +47,19 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
     /**
      * Value set for item.
      */
-    private EncryptedValueSet<T> theValueSet;
+    private EncryptedValueSet theValueSet;
 
     /**
      * Declare values.
      * @param pValues the values
      */
-    public void declareValues(final EncryptedValueSet<T> pValues) {
+    public void declareValues(final EncryptedValueSet pValues) {
         theValueSet = pValues;
         super.declareValues(pValues);
     }
 
     @Override
-    public EncryptedValueSet<T> getValueSet() {
+    public EncryptedValueSet getValueSet() {
         return theValueSet;
     }
 
@@ -88,10 +89,9 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
     /**
      * Get the ControlKey for this item.
      * @param pValueSet the valueSet
-     * @param <X> the Encrypted type
      * @return the ControlKey
      */
-    public static <X extends EncryptedItem<X>> ControlKey getControlKey(final EncryptedValueSet<X> pValueSet) {
+    public static ControlKey getControlKey(final EncryptedValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CONTROL, ControlKey.class);
     }
 
@@ -254,7 +254,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
         setValueControlKey(pControl);
 
         /* Access underlying values if they exist */
-        EncryptedValueSet<T> myBaseValues = null;
+        EncryptedValueSet myBaseValues = null;
         if (pBase != null) {
             myBaseValues = pBase.getValueSet();
         }

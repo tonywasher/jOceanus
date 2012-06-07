@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JDataModel: Data models
+ * JDataManager: Java Data Manager
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,58 +20,46 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.models.data;
+package net.sourceforge.JDataManager;
 
 import java.util.Stack;
 
-import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import uk.co.tolcroft.models.data.DataList.ListStyle;
 
 /**
  * Provides the implementation of a history buffer for a DataItem. Each element represents a changed set of
  * values and refers to a {@link ValueSet} object which is the set of changeable values for the object.
- * @param <T> the item type
  * @see ValueSet
  */
-public class HistoryControl<T extends DataItem<T>> {
-    /**
-     * The item to which this History Control belongs.
-     */
-    private final T theItem;
-
+public class HistoryControl {
     /**
      * The current set of values for this object.
      */
-    private ValueSet<T> theCurr = null;
+    private ValueSet theCurr = null;
 
     /**
      * The original set of values if any changes have been made.
      */
-    private ValueSet<T> theOriginal = null;
+    private ValueSet theOriginal = null;
 
     /**
      * The stack of valueSet changes.
      */
-    private final Stack<ValueSet<T>> theStack;
+    private final Stack<ValueSet> theStack;
 
     /**
      * Constructor.
-     * @param pItem the item to which this validation control belongs
      */
-    public HistoryControl(final T pItem) {
-        /* Store details */
-        theItem = pItem;
-
+    public HistoryControl() {
         /* Allocate the stack */
-        theStack = new Stack<ValueSet<T>>();
+        theStack = new Stack<ValueSet>();
     }
 
     /**
      * Initialise the current values.
      * @param pValues the current values
      */
-    public void setValues(final ValueSet<T> pValues) {
+    public void setValues(final ValueSet pValues) {
         /* Store details and clear the stack */
         theCurr = pValues;
         theOriginal = theCurr;
@@ -82,7 +70,7 @@ public class HistoryControl<T extends DataItem<T>> {
      * Get the changeable values object for this item.
      * @return the object
      */
-    public ValueSet<T> getValueSet() {
+    public ValueSet getValueSet() {
         return theCurr;
     }
 
@@ -90,7 +78,7 @@ public class HistoryControl<T extends DataItem<T>> {
      * Get original values.
      * @return original values
      */
-    public ValueSet<T> getOriginalValues() {
+    public ValueSet getOriginalValues() {
         return theOriginal;
     }
 
@@ -98,85 +86,85 @@ public class HistoryControl<T extends DataItem<T>> {
      * Determine State of item.
      * @return the state of the item
      */
-    protected DataState determineState() {
-        /* If we have no history we are clean */
-        if (theCurr == null) {
-            return DataState.CLEAN;
-        }
+    // protected DataState determineState() {
+    // /* If we have no history we are clean */
+    // if (theCurr == null) {
+    // return DataState.CLEAN;
+    // }
 
-        /* If we are an edit extract */
-        if (theItem.getStyle() == ListStyle.EDIT) {
-            /* Access the base item */
-            DataItem<?> myBase = theItem.getBase();
+    /* If we are an edit extract */
+    // if (theItem.getStyle() == ListStyle.EDIT) {
+    // /* Access the base item */
+    // DataItem<?> myBase = theItem.getBase();
 
-            /* If the item is deleted */
-            if (theCurr.isDeletion()) {
-                /* If we have no base then we are DelNew */
-                if (myBase == null) {
-                    return DataState.DELNEW;
-                }
+    /* If the item is deleted */
+    // if (theCurr.isDeletion()) {
+    // /* If we have no base then we are DelNew */
+    // if (myBase == null) {
+    // return DataState.DELNEW;
+    // }
 
-                /* If we have no history then we are clean */
-                if (theOriginal == null) {
-                    return DataState.CLEAN;
-                }
+    // /* If we have no history then we are clean */
+    // if (theOriginal == null) {
+    // return DataState.CLEAN;
+    // }
 
-                /* We are simply deleted */
-                return DataState.DELETED;
-            }
+    /* We are simply deleted */
+    // return DataState.DELETED;
+    // }
 
-            /* If we have no base then we are New */
-            if (myBase == null) {
-                return DataState.NEW;
-            }
+    /* If we have no base then we are New */
+    // if (myBase == null) {
+    // return DataState.NEW;
+    // }
 
-            /* If we have no history we are Clean */
-            if (theOriginal == null) {
-                return DataState.CLEAN;
-            }
+    /* If we have no history we are Clean */
+    // if (theOriginal == null) {
+    // return DataState.CLEAN;
+    // }
 
-            /* If we have a single change that is to undelete then we are Recovered */
-            if ((theCurr == theOriginal) && (myBase.isDeleted())) {
-                return DataState.RECOVERED;
-            }
+    /* If we have a single change that is to undelete then we are Recovered */
+    // if ((theCurr == theOriginal) && (myBase.isDeleted())) {
+    // return DataState.RECOVERED;
+    // }
 
-            /* else we are changed */
-            return DataState.CHANGED;
-        }
+    /* else we are changed */
+    // return DataState.CHANGED;
+    // }
 
-        /* If the item is deleted */
-        if (theCurr.isDeletion()) {
-            /* We must have a change */
-            if (theOriginal == null) {
-                throw new IllegalArgumentException();
-            } else if (theOriginal.getVersion() != 0) {
-                return DataState.DELNEW;
-            }
+    /* If the item is deleted */
+    // if (theCurr.isDeletion()) {
+    /* We must have a change */
+    // if (theOriginal == null) {
+    // throw new IllegalArgumentException();
+    // } else if (theOriginal.getVersion() != 0) {
+    // return DataState.DELNEW;
+    // }
 
-            /* Return deleted */
-            return DataState.DELETED;
-        }
+    /* Return deleted */
+    // return DataState.DELETED;
+    // }
 
-        /* If we have no changes we are either Clean or New */
-        if (theOriginal == null) {
-            return (theCurr.getVersion() == 0) ? DataState.CLEAN : DataState.NEW;
-        }
+    /* If we have no changes we are either Clean or New */
+    // if (theOriginal == null) {
+    // return (theCurr.getVersion() == 0) ? DataState.CLEAN : DataState.NEW;
+    // }
 
-        /* If we have the original values have version 0 */
-        if (theOriginal.getVersion() == 0) {
-            return DataState.CHANGED;
-        }
+    /* If we have the original values have version 0 */
+    // if (theOriginal.getVersion() == 0) {
+    // return DataState.CHANGED;
+    // }
 
-        /* Return new state */
-        return DataState.NEW;
-    }
+    /* Return new state */
+    // return DataState.NEW;
+    // }
 
     /**
      * Push Item to the history.
      */
     public void pushHistory() {
         /* Create a new ValueSet */
-        ValueSet<T> mySet = theCurr.cloneIt();
+        ValueSet mySet = theCurr.cloneIt();
 
         /* Add old values to the stack and record new values */
         theStack.push(theCurr);
@@ -247,11 +235,11 @@ public class HistoryControl<T extends DataItem<T>> {
      * Set history explicitly.
      * @param pBase the base item
      */
-    public void setHistory(final DataItem<?> pBase) {
-        ValueSet<?> mySource = pBase.getOriginalValues();
+    public void setHistory(final ValueSet pBase) {
+        // ValueSet mySource = pBase.getOriginalValues();
         theStack.clear();
         theOriginal = theCurr.cloneIt();
-        theOriginal.copyFrom(mySource);
+        theOriginal.copyFrom(pBase);
         theStack.push(theOriginal);
     }
 

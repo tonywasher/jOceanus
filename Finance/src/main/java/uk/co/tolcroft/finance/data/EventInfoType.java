@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,292 +21,320 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.data;
 
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataFields;
 import uk.co.tolcroft.finance.data.StaticClass.EventInfoClass;
-import uk.co.tolcroft.models.ModelException;
-import uk.co.tolcroft.models.ModelException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
 
 public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
-	/**
-	 * The name of the object
-	 */
-	public static final String objName = "EventInfoType";
+    /**
+     * Object name.
+     */
+    public static final String OBJECT_NAME = EventInfoType.class.getSimpleName();
 
-	/**
-	 * The name of the object
-	 */
-	public static final String listName = objName + "s";
+    /**
+     * List name.
+     */
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
-	/**
-	 * Return the EventInfo class of the EventInfoType
-	 * @return the class
-	 */
-	public EventInfoClass getInfoClass()         { return super.getStaticClass(); }
-	
-	/* Linking methods */
-	public EventInfoType getBase() { return (EventInfoType)super.getBase(); }
+    /**
+     * Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, StaticData.FIELD_DEFS);
 
-	/* Override the isActive method */
-	public boolean isActive() { return true; }
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
 
-	/**
-	 * Obtain the type of the item
-	 * @return the type of the item
-	 */
-	public String itemType() { return objName; }
-	
-	/**
-	 * Construct a copy of a InfoType.
-	 * @param pList	The list to associate the EventInfoType with
-	 * @param pType The InfoType to copy 
-	 */
-	protected EventInfoType(List  			pList,
-			            	EventInfoType	pType) { 
-		super(pList, pType);
-	}
-	
-	/**
-	 * Construct a standard InfoType on load
-	 * @param pList	The list to associate the EventInfoType with
-	 * @param sName Name of InfoType
-	 */
-	private EventInfoType(List 	 pList,
-			          	  String sName) throws ModelException {
-		super(pList, sName);
-	}
-	
-	/**
-	 * Construct an InfoType on load
-	 * @param pList	The list to associate the InfoType with
-	 * @param uId the id of the new item
-	 * @param isEnabled is the type enabled
-	 * @param uOrder the sort order
-	 * @param pName Name of InfoType
-	 * @param pDesc Description of InfoType
-	 */
-	private EventInfoType(List 		pList,
-					  	  int		uId,
-					  	  boolean	isEnabled,
-					  	  int		uOrder, 
-					  	  String	pName,
-					  	  String	pDesc) throws ModelException {
-		super(pList, uId, isEnabled, uOrder , pName, pDesc);
-	}
-	
-	/**
-	 * Construct a standard InfoType on load
-	 * @param pList	The list to associate the InfoType with
-	 * @param uId   ID of InfoType
-	 * @param uControlId the control id of the new item
-	 * @param isEnabled is the InfoType enabled
-	 * @param uOrder the sort order
-	 * @param pName Encrypted Name of InfoType
-	 * @param pDesc Encrypted Description of InfoType
-	 */
-	private EventInfoType(List 		pList,
-			      	  	  int		uId,
-			      	  	  int		uControlId,
-			      	  	  boolean	isEnabled,
-			      	  	  int		uOrder, 
-			      	  	  byte[]	pName,
-			      	  	  byte[]	pDesc) throws ModelException {
-		super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
-	}
+    /**
+     * Return the EventInfo class of the EventInfoType.
+     * @return the class
+     */
+    public EventInfoClass getInfoClass() {
+        return super.getStaticClass();
+    }
 
-	/**
-	 * Represents a list of {@link TaxRegime} objects. 
-	 */
-	public static class List  extends StaticList<List, EventInfoType, EventInfoClass> {
-		protected Class<EventInfoClass> getEnumClass() { return EventInfoClass.class; }
-		
-	 	/** 
-	 	 * Construct an empty CORE eventInfo list
-	 	 * @param pData the DataSet for the list
-	 	 */
-		protected List(FinanceData pData) { 
-			super(List.class, EventInfoType.class, pData, ListStyle.CORE); }
+    @Override
+    public EventInfoType getBase() {
+        return (EventInfoType) super.getBase();
+    }
 
-		/**
-		 * Constructor for a cloned List
-		 * @param pSource the source List
-		 */
-		private List(List pSource) { 
-			super(pSource);
-		}
-		
-		/**
-		 * Construct an update extract for the List.
-		 * @return the update Extract
-		 */
-		private List getExtractList(ListStyle pStyle) {
-			/* Build an empty Extract List */
-			List myList = new List(this);
-			
-			/* Obtain underlying updates */
-			myList.populateList(pStyle);
-			
-			/* Return the list */
-			return myList;
-		}
+    /* Override the isActive method */
+    @Override
+    public boolean isActive() {
+        return true;
+    }
 
-		/* Obtain extract lists. */
-		public List getUpdateList() { return getExtractList(ListStyle.UPDATE); }
-		public List getEditList() 	{ return getExtractList(ListStyle.EDIT); }
-		public List getShallowCopy() 	{ return getExtractList(ListStyle.COPY); }
-		public List getDeepCopy(DataSet<?> pDataSet)	{ 
-			/* Build an empty Extract List */
-			List myList = new List(this);
-			myList.setData(pDataSet);
-			
-			/* Obtain underlying clones */
-			myList.populateList(ListStyle.CLONE);
-			myList.setStyle(ListStyle.CORE);
-			
-			/* Return the list */
-			return myList;
-		}
+    /**
+     * Construct a copy of a InfoType.
+     * @param pList The list to associate the EventInfoType with
+     * @param pType The InfoType to copy
+     */
+    protected EventInfoType(final EventInfoTypeList pList,
+                            final EventInfoType pType) {
+        super(pList, pType);
+    }
 
-		/** 
-		 * Construct a difference ControlData list
-		 * @param pNew the new ControlData list 
-		 * @param pOld the old ControlData list 
-		 */
-		protected List getDifferences(List pOld) { 
-			/* Build an empty Difference List */
-			List myList = new List(this);
-			
-			/* Calculate the differences */
-			myList.getDifferenceList(this, pOld);
-			
-			/* Return the list */
-			return myList;
-		}
+    /**
+     * Construct a standard InfoType on load.
+     * @param pList The list to associate the EventInfoType with
+     * @param sName Name of InfoType
+     * @throws JDataException on error
+     */
+    private EventInfoType(final EventInfoTypeList pList,
+                          final String sName) throws JDataException {
+        super(pList, sName);
+    }
 
-		/**
-		 * Add a new item to the list
-		 * @param pItem item to be added
-		 * @return the newly added item
-		 */
-		public EventInfoType addNewItem(DataItem<?> pItem) {
-			EventInfoType myType = new EventInfoType(this, (EventInfoType)pItem);
-			add(myType);
-			return myType;
-		}
-	
-		/**
-		 * Create a new empty element in the edit list (null-operation)
-		 * @return the newly added item
-		 */
-		public EventInfoType addNewItem() { return null; }
-			
-		/**
-		 * Obtain the type of the item
-		 * @return the type of the item
-		 */
-		public String itemType() { return listName; }
-				
-		/**
-		 * Add an InfoType
-		 * @param pType the Name of the InfoType
-		 */ 
-		public void addItem(String pType) throws ModelException {
-			EventInfoType	myType;
-			
-			/* Create a new InfoType */
-			myType = new EventInfoType(this, pType);
-				
-			/* Check that this InfoId has not been previously added */
-			if (!isIdUnique(myType.getId())) 
-				throw new ModelException(ExceptionClass.DATA,
-	  					  			myType,
-			  			            "Duplicate EventInfoTypeId");
-				 
-			/* Check that this InfoType has not been previously added */
-			if (searchFor(pType) != null) 
-				throw new ModelException(ExceptionClass.DATA,
-	  					  			myType,
-			                        "Duplicate EventInfoType");
-								
-			/* Add the Type to the list */
-			add(myType);		
-		}			
+    /**
+     * Construct an InfoType on load.
+     * @param pList The list to associate the InfoType with
+     * @param uId the id of the new item
+     * @param isEnabled is the type enabled
+     * @param uOrder the sort order
+     * @param pName Name of InfoType
+     * @param pDesc Description of InfoType
+     * @throws JDataException on error
+     */
+    private EventInfoType(final EventInfoTypeList pList,
+                          final int uId,
+                          final boolean isEnabled,
+                          final int uOrder,
+                          final String pName,
+                          final String pDesc) throws JDataException {
+        super(pList, uId, isEnabled, uOrder, pName, pDesc);
+    }
 
-		/**
-		 * Add an InfoType to the list
-		 * @param uId the id of the new item
-		 * @param isEnabled is the type enabled
-		 * @param uOrder the sort order
-		 * @param pInfoType the Name of the InfoType
-		 * @param pDesc the Description of the InfoType
-		 */ 
-		public void addItem(int	   	uId,
-							boolean	isEnabled,
-							int		uOrder,
-				            String 	pInfoType,
-				            String 	pDesc) throws ModelException {
-			EventInfoType myType;
-				
-			/* Create a new InfoType */
-			myType = new EventInfoType(this, uId, isEnabled, uOrder, pInfoType, pDesc);
-				
-			/* Check that this InfoId has not been previously added */
-			if (!isIdUnique(myType.getId())) 
-				throw new ModelException(ExceptionClass.DATA,
-	  					  			myType,
-			  			            "Duplicate EventInfoTypeId");
-				 
-			/* Add the InfoType to the list */
-			add(myType);
-				
-			/* Validate the TaxRegime */
-			myType.validate();
+    /**
+     * Construct a standard InfoType on load.
+     * @param pList The list to associate the InfoType with
+     * @param uId ID of InfoType
+     * @param uControlId the control id of the new item
+     * @param isEnabled is the InfoType enabled
+     * @param uOrder the sort order
+     * @param pName Encrypted Name of InfoType
+     * @param pDesc Encrypted Description of InfoType
+     * @throws JDataException on error
+     */
+    private EventInfoType(final EventInfoTypeList pList,
+                          final int uId,
+                          final int uControlId,
+                          final boolean isEnabled,
+                          final int uOrder,
+                          final byte[] pName,
+                          final byte[] pDesc) throws JDataException {
+        super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
+    }
 
-			/* Handle validation failure */
-			if (myType.hasErrors()) 
-				throw new ModelException(ExceptionClass.VALIDATE,
-									myType,
-									"Failed validation");
-		}	
+    /**
+     * Represents a list of {@link EventInfoType} objects.
+     */
+    public static class EventInfoTypeList extends
+            StaticList<EventInfoTypeList, EventInfoType, EventInfoClass> {
+        @Override
+        public String listName() {
+            return LIST_NAME;
+        }
 
-		/**
-		 * Add an InfoType
-		 * @param uId the Id of the InfoType
-		 * @param uControlId the control id of the new item
-		 * @param isEnabled is the regime enabled
-		 * @param uOrder the sort order
-		 * @param pInfoType the Encrypted Name of the InfoType
-		 * @param pDesc the Encrypted Description of the InfoType
-		 */ 
-		public void addItem(int    	uId,
-							int	   	uControlId,
-							boolean	isEnabled,
-							int		uOrder,
-				            byte[] 	pInfoType,
-				            byte[] 	pDesc) throws ModelException {
-			EventInfoType	myType;
-			
-			/* Create a new InfoType */
-			myType = new EventInfoType(this, uId, uControlId, isEnabled, uOrder, pInfoType, pDesc);
-				
-			/* Check that this TaxRegimeId has not been previously added */
-			if (!isIdUnique(uId)) 
-				throw new ModelException(ExceptionClass.DATA,
-	  					  			myType,
-			  			            "Duplicate EventInfoTypeId");
-				 
-			/* Add the InfoType to the list */
-			add(myType);		
-				
-			/* Validate the InfoType */
-			myType.validate();
+        @Override
+        protected Class<EventInfoClass> getEnumClass() {
+            return EventInfoClass.class;
+        }
 
-			/* Handle validation failure */
-			if (myType.hasErrors()) 
-				throw new ModelException(ExceptionClass.VALIDATE,
-									myType,
-									"Failed validation");
-		}			
-	}
+        /**
+         * Construct an empty CORE eventInfo list
+         * @param pData the DataSet for the list
+         */
+        protected EventInfoTypeList(final FinanceData pData) {
+            super(EventInfoTypeList.class, EventInfoType.class, pData, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List
+         * @param pSource the source List
+         */
+        private EventInfoTypeList(final EventInfoTypeList pSource) {
+            super(pSource);
+        }
+
+        /**
+         * Construct an update extract for the List.
+         * @param pStyle the list style
+         * @return the update Extract
+         */
+        private EventInfoTypeList getExtractList(final ListStyle pStyle) {
+            /* Build an empty Extract List */
+            EventInfoTypeList myList = new EventInfoTypeList(this);
+
+            /* Obtain underlying updates */
+            myList.populateList(pStyle);
+
+            /* Return the list */
+            return myList;
+        }
+
+        @Override
+        public EventInfoTypeList getUpdateList() {
+            return getExtractList(ListStyle.UPDATE);
+        }
+
+        @Override
+        public EventInfoTypeList getEditList() {
+            return getExtractList(ListStyle.EDIT);
+        }
+
+        @Override
+        public EventInfoTypeList getShallowCopy() {
+            return getExtractList(ListStyle.COPY);
+        }
+
+        @Override
+        public EventInfoTypeList getDeepCopy(final DataSet<?> pDataSet) {
+            /* Build an empty Extract List */
+            EventInfoTypeList myList = new EventInfoTypeList(this);
+            myList.setData(pDataSet);
+
+            /* Obtain underlying clones */
+            myList.populateList(ListStyle.CLONE);
+            myList.setStyle(ListStyle.CORE);
+
+            /* Return the list */
+            return myList;
+        }
+
+        @Override
+        protected EventInfoTypeList getDifferences(final EventInfoTypeList pOld) {
+            /* Build an empty Difference List */
+            EventInfoTypeList myList = new EventInfoTypeList(this);
+
+            /* Calculate the differences */
+            myList.getDifferenceList(this, pOld);
+
+            /* Return the list */
+            return myList;
+        }
+
+        @Override
+        public EventInfoType addNewItem(final DataItem<?> pItem) {
+            EventInfoType myType = new EventInfoType(this, (EventInfoType) pItem);
+            add(myType);
+            return myType;
+        }
+
+        @Override
+        public EventInfoType addNewItem() {
+            return null;
+        }
+
+        /**
+         * Obtain the type of the item.
+         * @return the type of the item
+         */
+        public String itemType() {
+            return LIST_NAME;
+        }
+
+        /**
+         * Add an InfoType.
+         * @param pType the Name of the InfoType
+         * @throws JDataException on error
+         */
+        public void addItem(final String pType) throws JDataException {
+            EventInfoType myType;
+
+            /* Create a new InfoType */
+            myType = new EventInfoType(this, pType);
+
+            /* Check that this InfoId has not been previously added */
+            if (!isIdUnique(myType.getId())) {
+                throw new JDataException(ExceptionClass.DATA, myType, "Duplicate EventInfoTypeId");
+            }
+
+            /* Check that this InfoType has not been previously added */
+            if (searchFor(pType) != null) {
+                throw new JDataException(ExceptionClass.DATA, myType, "Duplicate EventInfoType");
+            }
+
+            /* Add the Type to the list */
+            add(myType);
+        }
+
+        /**
+         * Add an InfoType to the list.
+         * @param uId the id of the new item
+         * @param isEnabled is the type enabled
+         * @param uOrder the sort order
+         * @param pInfoType the Name of the InfoType
+         * @param pDesc the Description of the InfoType
+         * @throws JDataException on error
+         */
+        public void addItem(final int uId,
+                            final boolean isEnabled,
+                            final int uOrder,
+                            final String pInfoType,
+                            final String pDesc) throws JDataException {
+            EventInfoType myType;
+
+            /* Create a new InfoType */
+            myType = new EventInfoType(this, uId, isEnabled, uOrder, pInfoType, pDesc);
+
+            /* Check that this InfoId has not been previously added */
+            if (!isIdUnique(myType.getId())) {
+                throw new JDataException(ExceptionClass.DATA, myType, "Duplicate EventInfoTypeId");
+            }
+
+            /* Add the InfoType to the list */
+            add(myType);
+
+            /* Validate the TaxRegime */
+            myType.validate();
+
+            /* Handle validation failure */
+            if (myType.hasErrors()) {
+                throw new JDataException(ExceptionClass.VALIDATE, myType, "Failed validation");
+            }
+        }
+
+        /**
+         * Add an InfoType.
+         * @param uId the Id of the InfoType
+         * @param uControlId the control id of the new item
+         * @param isEnabled is the regime enabled
+         * @param uOrder the sort order
+         * @param pInfoType the Encrypted Name of the InfoType
+         * @param pDesc the Encrypted Description of the InfoType
+         * @throws JDataException on error
+         */
+        public void addItem(final int uId,
+                            final int uControlId,
+                            final boolean isEnabled,
+                            final int uOrder,
+                            final byte[] pInfoType,
+                            final byte[] pDesc) throws JDataException {
+            EventInfoType myType;
+
+            /* Create a new InfoType */
+            myType = new EventInfoType(this, uId, uControlId, isEnabled, uOrder, pInfoType, pDesc);
+
+            /* Check that this InfoTypeId has not been previously added */
+            if (!isIdUnique(uId)) {
+                throw new JDataException(ExceptionClass.DATA, myType, "Duplicate EventInfoTypeId");
+            }
+
+            /* Add the InfoType to the list */
+            add(myType);
+
+            /* Validate the InfoType */
+            myType.validate();
+
+            /* Handle validation failure */
+            if (myType.hasErrors()) {
+                throw new JDataException(ExceptionClass.VALIDATE, myType, "Failed validation");
+            }
+        }
+    }
 }

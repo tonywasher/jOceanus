@@ -31,8 +31,6 @@ import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
 import net.sourceforge.JDecimal.Decimal;
-import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.ValueSet;
 
 /**
  * Data object formatting and interfaces.
@@ -81,14 +79,19 @@ public final class JDataObject {
 
     /**
      * ValueSet object interface.
-     * @param <T> the item type
      */
-    public interface JDataValues<T extends DataItem<T>> extends JDataContents {
+    public interface JDataValues extends JDataContents {
         /**
          * Obtain Object ValueSet.
          * @return the ValueSet of the object
          */
-        ValueSet<T> getValueSet();
+        ValueSet getValueSet();
+
+        /**
+         * Declare the valueSet as active.
+         * @param pValues the active values
+         */
+        void declareValues(final ValueSet pValues);
     }
 
     /**
@@ -106,6 +109,18 @@ public final class JDataObject {
          * @return the Value of the object
          */
         Object getElementValue();
+    }
+
+    /**
+     * Difference interface.
+     */
+    public interface JDataDiffers {
+        /**
+         * Test for difference with another object.
+         * @param pThat the other object
+         * @return the difference
+         */
+        Difference differs(final Object pThat);
     }
 
     /**
@@ -289,13 +304,13 @@ public final class JDataObject {
         StringBuilder myResults = new StringBuilder(BUFFER_LEN);
         StringBuilder myEntries = new StringBuilder(BUFFER_LEN);
         JDataFields myFields = myDetail.getDataFields();
-        ValueSet<?> myValues = null;
+        ValueSet myValues = null;
         int iNumEntries = 0;
         Object myValue;
 
         /* Access valueSet if it exists */
         if (JDataValues.class.isInstance(pObject)) {
-            myValues = ((JDataValues<?>) pObject).getValueSet();
+            myValues = ((JDataValues) pObject).getValueSet();
         }
 
         /* Loop through the fields */

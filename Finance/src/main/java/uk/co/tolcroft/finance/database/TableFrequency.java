@@ -21,48 +21,48 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.database;
 
+import net.sourceforge.JDataManager.JDataException;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.Frequency;
-import uk.co.tolcroft.models.ModelException;
+import uk.co.tolcroft.finance.data.Frequency.FrequencyList;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.database.TableStaticData;
 
 public class TableFrequency extends TableStaticData<Frequency> {
-	/**
-	 * The name of the table
-	 */
-	protected final static String 	TableName	= Frequency.listName;
-				
-	/**
-	 * The frequency list
-	 */
-	private Frequency.List	theList 			= null;
+    /**
+     * The name of the table.
+     */
+    protected final static String TABLE_NAME = Frequency.listName;
 
-	/**
-	 * Obtain the data column name
-	 * @return the data column name
-	 */
-	protected String getDataName()  { return Frequency.objName; }
-	
-	/**
-	 * Constructor
-	 * @param pDatabase the database control
-	 */
-	protected TableFrequency(Database<?> 	pDatabase) { 
-		super(pDatabase, TableName); 
-	}
-	
-	/* Declare DataSet */
-	protected void declareData(DataSet<?> pData) {
-		FinanceData myData = (FinanceData)pData;
-		theList = myData.getFrequencys();
-		setList(theList);
-	}
+    /**
+     * The frequency list.
+     */
+    private FrequencyList theList = null;
 
-	/* Load the frequency */
-	protected void loadTheItem(int pId, int pControlId, boolean isEnabled, int iOrder, byte[] pFreq, byte[] pDesc) throws ModelException {
-		/* Add into the list */
-		theList.addItem(pId, pControlId, isEnabled, iOrder, pFreq, pDesc);
-	}
+    /**
+     * Constructor.
+     * @param pDatabase the database control
+     */
+    protected TableFrequency(final Database<?> pDatabase) {
+        super(pDatabase, TABLE_NAME);
+    }
+
+    @Override
+    protected void declareData(final DataSet<?> pData) {
+        FinanceData myData = (FinanceData) pData;
+        theList = myData.getFrequencys();
+        setList(theList);
+    }
+
+    @Override
+    protected void loadTheItem(final int pId,
+                               final int pControlId,
+                               final boolean isEnabled,
+                               final int iOrder,
+                               final byte[] pFreq,
+                               final byte[] pDesc) throws JDataException {
+        /* Add into the list */
+        theList.addItem(pId, pControlId, isEnabled, iOrder, pFreq, pDesc);
+    }
 }

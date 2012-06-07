@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JDataModel: Data models
+ * JGordianKnot: Security Suite
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,43 +20,37 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.models.data;
+package net.sourceforge.JGordianKnot;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataValues;
+import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JGordianKnot.EncryptedData.EncryptedField;
-import net.sourceforge.JGordianKnot.EncryptionGenerator;
 
 /**
  * Encrypted ValueSet class.
- * @param <T> the type for the valueSet
  */
-public class EncryptedValueSet<T extends EncryptedItem<T>> extends ValueSet<T> {
-    /**
-     * The item to which the valueSet belongs.
-     */
-    private final T theItem;
-
+public class EncryptedValueSet extends ValueSet {
     /**
      * Constructor.
      * @param pItem the item
      */
-    public EncryptedValueSet(final T pItem) {
+    public EncryptedValueSet(final JDataValues pItem) {
         super(pItem);
-        theItem = pItem;
     }
 
     @Override
-    public EncryptedValueSet<T> cloneIt() {
+    public EncryptedValueSet cloneIt() {
         /* Create the valueSet and initialise to existing values */
-        EncryptedValueSet<T> mySet = new EncryptedValueSet<T>(getItem());
+        EncryptedValueSet mySet = new EncryptedValueSet(getItem());
         mySet.copyFrom(this);
         return mySet;
     }
 
     @Override
     public void declareActive() {
-        theItem.declareValues(this);
+        getItem().declareValues(this);
     }
 
     /**
@@ -138,7 +132,7 @@ public class EncryptedValueSet<T extends EncryptedItem<T>> extends ValueSet<T> {
      * @throws JDataException on error
      */
     public void adoptSecurity(final EncryptionGenerator pGenerator,
-                              final EncryptedValueSet<T> pBaseValues) throws JDataException {
+                              final EncryptedValueSet pBaseValues) throws JDataException {
         /* Access the values */
         Object[] myValues = getValues();
         int iLen = myValues.length;

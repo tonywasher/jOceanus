@@ -23,11 +23,13 @@
 package uk.co.tolcroft.models.data;
 
 import net.sourceforge.JDataManager.Difference;
+import net.sourceforge.JDataManager.HistoryControl;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject;
 import net.sourceforge.JDataManager.JDataObject.JDataValues;
 import net.sourceforge.JDataManager.ReportItem;
+import net.sourceforge.JDataManager.ValueSet;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 
 /**
@@ -36,7 +38,7 @@ import uk.co.tolcroft.models.data.DataList.ListStyle;
  * @param <T> the data type
  * @see uk.co.tolcroft.models.data.DataList
  */
-public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> implements JDataValues<T> {
+public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> implements JDataValues {
     /**
      * Report fields.
      */
@@ -46,18 +48,15 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
     /**
      * ValueSet.
      */
-    private ValueSet<T> theValueSet;
+    private ValueSet theValueSet;
 
-    /**
-     * Declare values.
-     * @param pValues the values
-     */
-    public void declareValues(final ValueSet<T> pValues) {
+    @Override
+    public void declareValues(final ValueSet pValues) {
         theValueSet = pValues;
     }
 
     @Override
-    public ValueSet<T> getValueSet() {
+    public ValueSet getValueSet() {
         return theValueSet;
     }
 
@@ -197,7 +196,7 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
     /**
      * The history control {@link HistoryControl}.
      */
-    private HistoryControl<T> theHistory = null;
+    private HistoryControl theHistory = null;
 
     /**
      * The validation control {@link ValidationControl}.
@@ -266,7 +265,7 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
      * Get the base item for this item.
      * @return the Base item or <code>null</code>
      */
-    protected HistoryControl<T> getHistory() {
+    protected HistoryControl getHistory() {
         return theHistory;
     }
 
@@ -460,14 +459,14 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
      * @param pBase the base item
      */
     public void setHistory(final DataItem<?> pBase) {
-        theHistory.setHistory(pBase);
+        theHistory.setHistory(pBase.getOriginalValues());
     }
 
     /**
      * Return the base history object.
      * @return the original values for this object
      */
-    public ValueSet<T> getOriginalValues() {
+    public ValueSet getOriginalValues() {
         return theHistory.getOriginalValues();
     }
 
@@ -621,10 +620,10 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
         theErrors = new ValidationControl<T>(theItem);
 
         /* Allocate history control */
-        theHistory = new HistoryControl<T>(theItem);
+        theHistory = new HistoryControl();
 
         /* Allocate initial value set and declare it */
-        ValueSet<T> myValues = new ValueSet<T>(theItem);
+        ValueSet myValues = new ValueSet(theItem);
         declareValues(myValues);
         theHistory.setValues(myValues);
     }
