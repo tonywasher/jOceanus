@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,39 +39,158 @@ import uk.co.tolcroft.finance.data.TaxYear.TaxYearList;
 import uk.co.tolcroft.finance.sheets.FinanceSheet.YearRange;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.StaticData;
+import uk.co.tolcroft.models.data.TaskControl;
 import uk.co.tolcroft.models.sheets.SheetDataItem;
 import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
-import uk.co.tolcroft.models.threads.ThreadStatus;
 
+/**
+ * SheetStaticData extension for TaxYear.
+ * @author Tony Washer
+ */
 public class SheetTaxYear extends SheetDataItem<TaxYear> {
     /**
-     * NamedArea for TaxYears
+     * NamedArea for TaxYears.
      */
-    private static final String TaxYears = "TaxParameters";
+    private static final String AREA_TAXYEARS = "TaxParameters";
 
     /**
-     * Is the spreadsheet a backup spreadsheet or an edit-able one
+     * Number of columns.
      */
-    private boolean isBackup = false;
+    private static final int NUM_COLS = 23;
 
     /**
-     * TaxYear data list
+     * TaxYear column.
      */
-    private TaxYearList theList = null;
+    private static final int COL_TAXYEAR = 1;
 
     /**
-     * DataSet
+     * Regime column.
      */
-    private FinanceData theData = null;
+    private static final int COL_REGIME = 2;
 
     /**
-     * Constructor for loading a spreadsheet
+     * Allowance column.
+     */
+    private static final int COL_ALLOW = 3;
+
+    /**
+     * LoAgeAllow column.
+     */
+    private static final int COL_LOAGEALLOW = 4;
+
+    /**
+     * HiAgeAllow column.
+     */
+    private static final int COL_HIAGEALLOW = 5;
+
+    /**
+     * CapitalAllow column.
+     */
+    private static final int COL_CAPALLOW = 6;
+
+    /**
+     * RentalAllow column.
+     */
+    private static final int COL_RENTALLOW = 7;
+
+    /**
+     * AgeAllowLimit column.
+     */
+    private static final int COL_AGEALLOWLMT = 8;
+
+    /**
+     * LoTaxBand column.
+     */
+    private static final int COL_LOBAND = 9;
+
+    /**
+     * BasicTaxBand column.
+     */
+    private static final int COL_BASICBAND = 10;
+
+    /**
+     * LoTaxRate column.
+     */
+    private static final int COL_LOTAX = 11;
+
+    /**
+     * BasicTaxRate column.
+     */
+    private static final int COL_BASICTAX = 12;
+
+    /**
+     * HiTaxRate column.
+     */
+    private static final int COL_HITAX = 13;
+
+    /**
+     * AddTaxRate column.
+     */
+    private static final int COL_ADDTAX = 14;
+
+    /**
+     * IntTaxRate column.
+     */
+    private static final int COL_INTTAX = 15;
+
+    /**
+     * DivTaxRate column.
+     */
+    private static final int COL_DIVTAX = 16;
+
+    /**
+     * HiDivTaxRate column.
+     */
+    private static final int COL_HIDIVTAX = 17;
+
+    /**
+     * AddDivTaxRate column.
+     */
+    private static final int COL_ADDDIVTAX = 18;
+
+    /**
+     * CapTaxRate column.
+     */
+    private static final int COL_CAPTAX = 19;
+
+    /**
+     * HiCapTaxRate column.
+     */
+    private static final int COL_HICAPTAX = 20;
+
+    /**
+     * AddIncomeLimit column.
+     */
+    private static final int COL_ADDINCLMT = 21;
+
+    /**
+     * AddIncomeBoundary column.
+     */
+    private static final int COL_ADDINCBND = 22;
+
+    /**
+     * Is the spreadsheet a backup spreadsheet or an edit-able one?
+     */
+    private final boolean isBackup;
+
+    /**
+     * TaxYear data list.
+     */
+    private final TaxYearList theList;
+
+    /**
+     * DataSet.
+     */
+    private final FinanceData theData;
+
+    /**
+     * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetTaxYear(FinanceReader pReader) {
+    protected SheetTaxYear(final FinanceReader pReader) {
         /* Call super constructor */
-        super(pReader, TaxYears);
+        super(pReader, AREA_TAXYEARS);
 
         /* Note whether this is a backup */
         isBackup = (pReader.getType() == SheetType.BACKUP);
@@ -81,98 +201,94 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
     }
 
     /**
-     * Constructor for creating a spreadsheet
+     * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetTaxYear(FinanceWriter pWriter) {
+    protected SheetTaxYear(final FinanceWriter pWriter) {
         /* Call super constructor */
-        super(pWriter, TaxYears);
+        super(pWriter, AREA_TAXYEARS);
 
         /* Note whether this is a backup */
         isBackup = (pWriter.getType() == SheetType.BACKUP);
 
         /* Access the TaxYears list */
-        theList = pWriter.getData().getTaxYears();
+        theData = pWriter.getData();
+        theList = theData.getTaxYears();
         setDataList(theList);
     }
 
-    /**
-     * Load an item from the spreadsheet
-     * @throws JDataException
-     */
     @Override
     protected void loadItem() throws JDataException {
 
         /* If this is a backup load */
         if (isBackup) {
             /* Access the IDs */
-            int myID = loadInteger(0);
-            int myRegimeId = loadInteger(2);
+            int myID = loadInteger(COL_ID);
+            int myRegimeId = loadInteger(COL_REGIME);
 
             /* Access the dates */
-            Date myYear = loadDate(1);
+            Date myYear = loadDate(COL_TAXYEAR);
 
             /* Access the String values */
-            String myAllowance = loadString(3);
-            String myLoAgeAllw = loadString(4);
-            String myHiAgeAllw = loadString(5);
-            String myCapAllow = loadString(6);
-            String myRental = loadString(7);
-            String myAgeLimit = loadString(8);
-            String myLoBand = loadString(9);
-            String myBasicBand = loadString(10);
-            String myLoTax = loadString(11);
-            String myBasicTax = loadString(12);
-            String myHiTax = loadString(13);
-            String myAddTax = loadString(14);
-            String myIntTax = loadString(15);
-            String myDivTax = loadString(16);
-            String myHiDivTax = loadString(17);
-            String myAddDivTax = loadString(18);
-            String myCapTax = loadString(19);
-            String myHiCapTax = loadString(20);
-            String myAddLimit = loadString(21);
-            String myAddBound = loadString(22);
+            String myAllowance = loadString(COL_ALLOW);
+            String myLoAgeAllw = loadString(COL_LOAGEALLOW);
+            String myHiAgeAllw = loadString(COL_HIAGEALLOW);
+            String myCapAllow = loadString(COL_CAPALLOW);
+            String myRental = loadString(COL_RENTALLOW);
+            String myAgeLimit = loadString(COL_AGEALLOWLMT);
+            String myLoBand = loadString(COL_LOBAND);
+            String myBasicBand = loadString(COL_BASICBAND);
+            String myLoTax = loadString(COL_LOTAX);
+            String myBasicTax = loadString(COL_BASICTAX);
+            String myHiTax = loadString(COL_HITAX);
+            String myAddTax = loadString(COL_ADDTAX);
+            String myIntTax = loadString(COL_INTTAX);
+            String myDivTax = loadString(COL_DIVTAX);
+            String myHiDivTax = loadString(COL_HIDIVTAX);
+            String myAddDivTax = loadString(COL_ADDDIVTAX);
+            String myCapTax = loadString(COL_CAPTAX);
+            String myHiCapTax = loadString(COL_HICAPTAX);
+            String myAddLimit = loadString(COL_ADDINCLMT);
+            String myAddBound = loadString(COL_ADDINCBND);
 
             /* Add the Tax Year */
             theList.addItem(myID, myRegimeId, myYear, myAllowance, myRental, myLoAgeAllw, myHiAgeAllw,
                             myCapAllow, myAgeLimit, myAddLimit, myLoBand, myBasicBand, myAddBound, myLoTax,
                             myBasicTax, myHiTax, myIntTax, myDivTax, myHiDivTax, myAddTax, myAddDivTax,
                             myCapTax, myHiCapTax);
-        }
 
-        /* else this is a load from an edit-able spreadsheet */
-        else {
+            /* else this is a load from an edit-able spreadsheet */
+        } else {
             /* Access the ID */
-            int myID = loadInteger(0);
+            int myID = loadInteger(COL_ID);
 
             /* Access the Strings */
-            String myTaxRegime = loadString(2);
+            String myTaxRegime = loadString(COL_REGIME);
 
             /* Access the year */
-            Date myYear = loadDate(1);
+            Date myYear = loadDate(COL_TAXYEAR);
 
             /* Access the binary values */
-            String myAllowance = loadString(3);
-            String myLoAgeAllw = loadString(4);
-            String myHiAgeAllw = loadString(5);
-            String myCapAllow = loadString(6);
-            String myRental = loadString(7);
-            String myAgeLimit = loadString(8);
-            String myLoBand = loadString(9);
-            String myBasicBand = loadString(10);
-            String myLoTax = loadString(11);
-            String myBasicTax = loadString(12);
-            String myHiTax = loadString(13);
-            String myAddTax = loadString(14);
-            String myIntTax = loadString(15);
-            String myDivTax = loadString(16);
-            String myHiDivTax = loadString(17);
-            String myAddDivTax = loadString(18);
-            String myCapTax = loadString(19);
-            String myHiCapTax = loadString(20);
-            String myAddLimit = loadString(21);
-            String myAddBound = loadString(22);
+            String myAllowance = loadString(COL_ALLOW);
+            String myLoAgeAllw = loadString(COL_LOAGEALLOW);
+            String myHiAgeAllw = loadString(COL_HIAGEALLOW);
+            String myCapAllow = loadString(COL_CAPALLOW);
+            String myRental = loadString(COL_RENTALLOW);
+            String myAgeLimit = loadString(COL_AGEALLOWLMT);
+            String myLoBand = loadString(COL_LOBAND);
+            String myBasicBand = loadString(COL_BASICBAND);
+            String myLoTax = loadString(COL_LOTAX);
+            String myBasicTax = loadString(COL_BASICTAX);
+            String myHiTax = loadString(COL_HITAX);
+            String myAddTax = loadString(COL_ADDTAX);
+            String myIntTax = loadString(COL_INTTAX);
+            String myDivTax = loadString(COL_DIVTAX);
+            String myHiDivTax = loadString(COL_HIDIVTAX);
+            String myAddDivTax = loadString(COL_ADDDIVTAX);
+            String myCapTax = loadString(COL_CAPTAX);
+            String myHiCapTax = loadString(COL_HICAPTAX);
+            String myAddLimit = loadString(COL_ADDINCLMT);
+            String myAddBound = loadString(COL_ADDINCBND);
 
             /* Add the Tax Year */
             theList.addItem(myID, myTaxRegime, myYear, myAllowance, myRental, myLoAgeAllw, myHiAgeAllw,
@@ -183,103 +299,98 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
         }
     }
 
-    /**
-     * Insert a item into the spreadsheet
-     * @param pItem the Item to insert
-     * @throws JDataException
-     */
     @Override
-    protected void insertItem(TaxYear pItem) throws JDataException {
+    protected void insertItem(final TaxYear pItem) throws JDataException {
         /* If we are creating a backup */
         if (isBackup) {
             /* Set the fields */
-            writeInteger(0, pItem.getId());
-            writeDate(1, pItem.getTaxYear());
-            writeInteger(2, pItem.getTaxRegime().getId());
-            writeNumber(3, pItem.getAllowance());
-            writeNumber(4, pItem.getLoAgeAllow());
-            writeNumber(5, pItem.getHiAgeAllow());
-            writeNumber(6, pItem.getCapitalAllow());
-            writeNumber(7, pItem.getRentalAllowance());
-            writeNumber(8, pItem.getAgeAllowLimit());
-            writeNumber(9, pItem.getLoBand());
-            writeNumber(10, pItem.getBasicBand());
-            writeNumber(11, pItem.getLoTaxRate());
-            writeNumber(12, pItem.getBasicTaxRate());
-            writeNumber(13, pItem.getHiTaxRate());
-            writeNumber(14, pItem.getAddTaxRate());
-            writeNumber(15, pItem.getIntTaxRate());
-            writeNumber(16, pItem.getDivTaxRate());
-            writeNumber(17, pItem.getHiDivTaxRate());
-            writeNumber(18, pItem.getAddDivTaxRate());
-            writeNumber(19, pItem.getCapTaxRate());
-            writeNumber(20, pItem.getHiCapTaxRate());
-            writeNumber(21, pItem.getAddAllowLimit());
-            writeNumber(22, pItem.getAddIncBound());
-        }
+            writeInteger(COL_ID, pItem.getId());
+            writeDate(COL_TAXYEAR, pItem.getTaxYear());
+            writeInteger(COL_REGIME, pItem.getTaxRegime().getId());
+            writeNumber(COL_ALLOW, pItem.getAllowance());
+            writeNumber(COL_LOAGEALLOW, pItem.getLoAgeAllow());
+            writeNumber(COL_HIAGEALLOW, pItem.getHiAgeAllow());
+            writeNumber(COL_CAPALLOW, pItem.getCapitalAllow());
+            writeNumber(COL_RENTALLOW, pItem.getRentalAllowance());
+            writeNumber(COL_AGEALLOWLMT, pItem.getAgeAllowLimit());
+            writeNumber(COL_LOBAND, pItem.getLoBand());
+            writeNumber(COL_BASICBAND, pItem.getBasicBand());
+            writeNumber(COL_LOTAX, pItem.getLoTaxRate());
+            writeNumber(COL_BASICTAX, pItem.getBasicTaxRate());
+            writeNumber(COL_HITAX, pItem.getHiTaxRate());
+            writeNumber(COL_ADDTAX, pItem.getAddTaxRate());
+            writeNumber(COL_INTTAX, pItem.getIntTaxRate());
+            writeNumber(COL_DIVTAX, pItem.getDivTaxRate());
+            writeNumber(COL_HIDIVTAX, pItem.getHiDivTaxRate());
+            writeNumber(COL_ADDDIVTAX, pItem.getAddDivTaxRate());
+            writeNumber(COL_CAPTAX, pItem.getCapTaxRate());
+            writeNumber(COL_HICAPTAX, pItem.getHiCapTaxRate());
+            writeNumber(COL_ADDINCLMT, pItem.getAddAllowLimit());
+            writeNumber(COL_ADDINCBND, pItem.getAddIncBound());
 
-        /* else we are creating an edit-able spreadsheet */
-        else {
+            /* else we are creating an edit-able spreadsheet */
+        } else {
             /* Set the fields */
-            writeInteger(0, pItem.getId());
-            writeDate(1, pItem.getTaxYear());
-            writeString(2, pItem.getTaxRegime().getName());
-            writeNumber(3, pItem.getAllowance());
-            writeNumber(4, pItem.getLoAgeAllow());
-            writeNumber(5, pItem.getHiAgeAllow());
-            writeNumber(6, pItem.getCapitalAllow());
-            writeNumber(7, pItem.getRentalAllowance());
-            writeNumber(8, pItem.getAgeAllowLimit());
-            writeNumber(9, pItem.getLoBand());
-            writeNumber(10, pItem.getBasicBand());
-            writeNumber(11, pItem.getLoTaxRate());
-            writeNumber(12, pItem.getBasicTaxRate());
-            writeNumber(13, pItem.getHiTaxRate());
-            writeNumber(14, pItem.getAddTaxRate());
-            writeNumber(15, pItem.getIntTaxRate());
-            writeNumber(16, pItem.getDivTaxRate());
-            writeNumber(17, pItem.getHiDivTaxRate());
-            writeNumber(18, pItem.getAddDivTaxRate());
-            writeNumber(19, pItem.getCapTaxRate());
-            writeNumber(20, pItem.getHiCapTaxRate());
-            writeNumber(21, pItem.getAddAllowLimit());
-            writeNumber(22, pItem.getAddIncBound());
+            writeInteger(COL_ID, pItem.getId());
+            writeDate(COL_TAXYEAR, pItem.getTaxYear());
+            writeString(COL_REGIME, pItem.getTaxRegime().getName());
+            writeNumber(COL_ALLOW, pItem.getAllowance());
+            writeNumber(COL_LOAGEALLOW, pItem.getLoAgeAllow());
+            writeNumber(COL_HIAGEALLOW, pItem.getHiAgeAllow());
+            writeNumber(COL_CAPALLOW, pItem.getCapitalAllow());
+            writeNumber(COL_RENTALLOW, pItem.getRentalAllowance());
+            writeNumber(COL_AGEALLOWLMT, pItem.getAgeAllowLimit());
+            writeNumber(COL_LOBAND, pItem.getLoBand());
+            writeNumber(COL_BASICBAND, pItem.getBasicBand());
+            writeNumber(COL_LOTAX, pItem.getLoTaxRate());
+            writeNumber(COL_BASICTAX, pItem.getBasicTaxRate());
+            writeNumber(COL_HITAX, pItem.getHiTaxRate());
+            writeNumber(COL_ADDTAX, pItem.getAddTaxRate());
+            writeNumber(COL_INTTAX, pItem.getIntTaxRate());
+            writeNumber(COL_DIVTAX, pItem.getDivTaxRate());
+            writeNumber(COL_HIDIVTAX, pItem.getHiDivTaxRate());
+            writeNumber(COL_ADDDIVTAX, pItem.getAddDivTaxRate());
+            writeNumber(COL_CAPTAX, pItem.getCapTaxRate());
+            writeNumber(COL_HICAPTAX, pItem.getHiCapTaxRate());
+            writeNumber(COL_ADDINCLMT, pItem.getAddAllowLimit());
+            writeNumber(COL_ADDINCBND, pItem.getAddIncBound());
         }
     }
 
     @Override
     protected void preProcessOnWrite() throws JDataException {
         /* Ignore if this is a backup */
-        if (isBackup)
+        if (isBackup) {
             return;
+        }
 
         /* Create a new row */
         newRow();
 
         /* Write titles */
-        writeHeader(0, DataItem.FIELD_ID.getName());
-        writeHeader(1, TaxYear.FIELD_TAXYEAR.getName());
-        writeHeader(2, TaxYear.FIELD_REGIME.getName());
-        writeHeader(3, TaxYear.FIELD_ALLOW.getName());
-        writeHeader(4, TaxYear.FIELD_LOAGAL.getName());
-        writeHeader(5, TaxYear.FIELD_HIAGAL.getName());
-        writeHeader(6, TaxYear.FIELD_CAPALW.getName());
-        writeHeader(7, TaxYear.FIELD_RENTAL.getName());
-        writeHeader(8, TaxYear.FIELD_AGELMT.getName());
-        writeHeader(9, TaxYear.FIELD_LOBAND.getName());
-        writeHeader(10, TaxYear.FIELD_BSBAND.getName());
-        writeHeader(11, TaxYear.FIELD_LOTAX.getName());
-        writeHeader(12, TaxYear.FIELD_BASTAX.getName());
-        writeHeader(13, TaxYear.FIELD_HITAX.getName());
-        writeHeader(14, TaxYear.FIELD_ADDTAX.getName());
-        writeHeader(15, TaxYear.FIELD_INTTAX.getName());
-        writeHeader(16, TaxYear.FIELD_DIVTAX.getName());
-        writeHeader(17, TaxYear.FIELD_HDVTAX.getName());
-        writeHeader(18, TaxYear.FIELD_ADVTAX.getName());
-        writeHeader(19, TaxYear.FIELD_CAPTAX.getName());
-        writeHeader(20, TaxYear.FIELD_HCPTAX.getName());
-        writeHeader(21, TaxYear.FIELD_ADDLMT.getName());
-        writeHeader(22, TaxYear.FIELD_ADDBDY.getName());
+        writeHeader(COL_ID, DataItem.FIELD_ID.getName());
+        writeHeader(COL_TAXYEAR, TaxYear.FIELD_TAXYEAR.getName());
+        writeHeader(COL_REGIME, TaxYear.FIELD_REGIME.getName());
+        writeHeader(COL_ALLOW, TaxYear.FIELD_ALLOW.getName());
+        writeHeader(COL_LOAGEALLOW, TaxYear.FIELD_LOAGAL.getName());
+        writeHeader(COL_HIAGEALLOW, TaxYear.FIELD_HIAGAL.getName());
+        writeHeader(COL_CAPALLOW, TaxYear.FIELD_CAPALW.getName());
+        writeHeader(COL_RENTALLOW, TaxYear.FIELD_RENTAL.getName());
+        writeHeader(COL_AGEALLOWLMT, TaxYear.FIELD_AGELMT.getName());
+        writeHeader(COL_LOBAND, TaxYear.FIELD_LOBAND.getName());
+        writeHeader(COL_BASICBAND, TaxYear.FIELD_BSBAND.getName());
+        writeHeader(COL_LOTAX, TaxYear.FIELD_LOTAX.getName());
+        writeHeader(COL_BASICTAX, TaxYear.FIELD_BASTAX.getName());
+        writeHeader(COL_HITAX, TaxYear.FIELD_HITAX.getName());
+        writeHeader(COL_ADDTAX, TaxYear.FIELD_ADDTAX.getName());
+        writeHeader(COL_INTTAX, TaxYear.FIELD_INTTAX.getName());
+        writeHeader(COL_DIVTAX, TaxYear.FIELD_DIVTAX.getName());
+        writeHeader(COL_HIDIVTAX, TaxYear.FIELD_HDVTAX.getName());
+        writeHeader(COL_ADDDIVTAX, TaxYear.FIELD_ADVTAX.getName());
+        writeHeader(COL_CAPTAX, TaxYear.FIELD_CAPTAX.getName());
+        writeHeader(COL_HICAPTAX, TaxYear.FIELD_HCPTAX.getName());
+        writeHeader(COL_ADDINCLMT, TaxYear.FIELD_ADDLMT.getName());
+        writeHeader(COL_ADDINCBND, TaxYear.FIELD_ADDBDY.getName());
 
         /* Adjust for Header */
         adjustForHeader();
@@ -290,44 +401,43 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
         /* If we are creating a backup */
         if (isBackup) {
             /* Set the twenty-three columns as the range */
-            nameRange(23);
-        }
+            nameRange(NUM_COLS);
 
-        /* else this is an edit-able spreadsheet */
-        else {
+            /* else this is an edit-able spreadsheet */
+        } else {
             /* Set the twenty-three columns as the range */
-            nameRange(23);
+            nameRange(NUM_COLS);
 
             /* Set the Id column as hidden */
-            setHiddenColumn(0);
-            setIntegerColumn(0);
+            setHiddenColumn(COL_ID);
+            setIntegerColumn(COL_ID);
 
             /* Set the String column width */
-            setColumnWidth(2, StaticData.NAMELEN);
-            applyDataValidation(2, SheetTaxRegime.TaxRegNames);
+            setColumnWidth(COL_REGIME, StaticData.NAMELEN);
+            applyDataValidation(COL_REGIME, SheetTaxRegime.AREA_TAXREGIMENAMES);
 
             /* Set Number columns */
-            setDateColumn(1);
-            setMoneyColumn(3);
-            setMoneyColumn(4);
-            setMoneyColumn(5);
-            setMoneyColumn(6);
-            setMoneyColumn(7);
-            setMoneyColumn(8);
-            setMoneyColumn(9);
-            setMoneyColumn(10);
-            setMoneyColumn(21);
-            setMoneyColumn(22);
-            setRateColumn(11);
-            setRateColumn(12);
-            setRateColumn(13);
-            setRateColumn(14);
-            setRateColumn(15);
-            setRateColumn(16);
-            setRateColumn(17);
-            setRateColumn(18);
-            setRateColumn(19);
-            setRateColumn(20);
+            setDateColumn(COL_TAXYEAR);
+            setMoneyColumn(COL_ALLOW);
+            setMoneyColumn(COL_LOAGEALLOW);
+            setMoneyColumn(COL_HIAGEALLOW);
+            setMoneyColumn(COL_CAPALLOW);
+            setMoneyColumn(COL_RENTALLOW);
+            setMoneyColumn(COL_AGEALLOWLMT);
+            setMoneyColumn(COL_LOBAND);
+            setMoneyColumn(COL_BASICBAND);
+            setMoneyColumn(COL_ADDINCLMT);
+            setMoneyColumn(COL_ADDINCBND);
+            setRateColumn(COL_LOTAX);
+            setRateColumn(COL_BASICTAX);
+            setRateColumn(COL_HITAX);
+            setRateColumn(COL_ADDTAX);
+            setRateColumn(COL_INTTAX);
+            setRateColumn(COL_DIVTAX);
+            setRateColumn(COL_HIDIVTAX);
+            setRateColumn(COL_ADDDIVTAX);
+            setRateColumn(COL_CAPTAX);
+            setRateColumn(COL_HICAPTAX);
         }
     }
 
@@ -337,144 +447,132 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
     }
 
     /**
-     * Load the TaxYears from an archive
-     * @param pThread the thread status control
+     * Load the TaxYears from an archive.
+     * @param pTask the task control
      * @param pHelper the sheet helper
      * @param pData the data set to load into
      * @param pRange the range of tax years
      * @return continue to load <code>true/false</code>
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    protected static boolean loadArchive(ThreadStatus<FinanceData> pThread,
-                                         SheetHelper pHelper,
-                                         FinanceData pData,
-                                         YearRange pRange) throws JDataException {
-        /* Local variables */
-        TaxYearList myList;
-        AreaReference myRange;
-        Sheet mySheet;
-        CellReference myTop;
-        CellReference myBottom;
-        String myAllowance;
-        String myRentalAllow;
-        String myCapitalAllow;
-        String myLoTaxBand;
-        String myBasicTaxBand;
-        String myLoAgeAllow;
-        String myHiAgeAllow;
-        String myAgeAllowLimit;
-        String myAddAllowLimit;
-        String myAddIncBound;
-        String myLoTaxRate;
-        String myBasicTaxRate;
-        String myHiTaxRate;
-        String myIntTaxRate;
-        String myDivTaxRate;
-        String myHiDivTaxRate;
-        String myAddTaxRate;
-        String myAddDivTaxRate;
-        String myCapTaxRate;
-        String myHiCapTaxRate;
-        String myTaxRegime;
-        Calendar myYear;
-        Cell myCell;
-        int myAllRow;
-        int myTotal;
-        int mySteps;
-        int myCount = 0;
-
+    protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
+                                         final SheetHelper pHelper,
+                                         final FinanceData pData,
+                                         final YearRange pRange) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            myRange = pHelper.resolveAreaReference(TaxYears);
+            AreaReference myRange = pHelper.resolveAreaReference(AREA_TAXYEARS);
 
             /* Access the number of reporting steps */
-            mySteps = pThread.getReportingSteps();
+            int mySteps = pTask.getReportingSteps();
+            int myCount = 0;
 
             /* Declare the new stage */
-            if (!pThread.setNewStage(TaxYears))
+            if (!pTask.setNewStage(AREA_TAXYEARS)) {
                 return false;
+            }
 
             /* If we found the range OK */
             if (myRange != null) {
                 /* Access the relevant sheet and Cell references */
-                myTop = myRange.getFirstCell();
-                myBottom = myRange.getLastCell();
-                mySheet = pHelper.getSheetByName(myTop.getSheetName());
-                myAllRow = myTop.getRow();
+                CellReference myTop = myRange.getFirstCell();
+                CellReference myBottom = myRange.getLastCell();
+                Sheet mySheet = pHelper.getSheetByName(myTop.getSheetName());
+                int myAllRow = myTop.getRow();
 
                 /* Count the number of TaxYears */
-                myTotal = myBottom.getRow() - myTop.getRow() + 1;
+                int myTotal = myBottom.getRow() - myTop.getRow() + 1;
 
                 /* Access the list of tax years */
-                myList = pData.getTaxYears();
+                TaxYearList myList = pData.getTaxYears();
 
                 /* Declare the number of steps */
-                if (!pThread.setNumSteps(myTotal))
+                if (!pTask.setNumSteps(myTotal)) {
                     return false;
+                }
 
                 /* Create the calendar instance */
-                myYear = Calendar.getInstance();
-                myYear.set(pRange.getMaxYear(), Calendar.APRIL, 5, 0, 0, 0);
+                Calendar myYear = Calendar.getInstance();
+                myYear.set(pRange.getMaxYear(), Calendar.APRIL, TaxYear.END_OF_MONTH_DAY, 0, 0, 0);
 
                 /* Loop through the columns of the table */
                 for (int i = myTop.getCol(); i <= myBottom.getCol(); i++, myYear.add(Calendar.YEAR, -1)) {
+                    int iAdjust = 0;
 
                     /* Access the values */
-                    myAllowance = pHelper.formatNumericCell(mySheet.getRow(myAllRow).getCell(i));
-                    myLoTaxBand = pHelper.formatNumericCell(mySheet.getRow(myAllRow + 1).getCell(i));
-                    myBasicTaxBand = pHelper.formatNumericCell(mySheet.getRow(myAllRow + 2).getCell(i));
-                    myRentalAllow = pHelper.formatNumericCell(mySheet.getRow(myAllRow + 3).getCell(i));
-                    myLoTaxRate = pHelper.formatRateCell(mySheet.getRow(myAllRow + 4).getCell(i));
-                    myBasicTaxRate = pHelper.formatRateCell(mySheet.getRow(myAllRow + 5).getCell(i));
-                    myIntTaxRate = pHelper.formatRateCell(mySheet.getRow(myAllRow + 6).getCell(i));
-                    myDivTaxRate = pHelper.formatRateCell(mySheet.getRow(myAllRow + 7).getCell(i));
-                    myHiTaxRate = pHelper.formatRateCell(mySheet.getRow(myAllRow + 8).getCell(i));
-                    myHiDivTaxRate = pHelper.formatRateCell(mySheet.getRow(myAllRow + 9).getCell(i));
-                    myTaxRegime = mySheet.getRow(myAllRow + 10).getCell(i).getStringCellValue();
-                    myLoAgeAllow = pHelper.formatNumericCell(mySheet.getRow(myAllRow + 13).getCell(i));
-                    myHiAgeAllow = pHelper.formatNumericCell(mySheet.getRow(myAllRow + 14).getCell(i));
-                    myAgeAllowLimit = pHelper.formatNumericCell(mySheet.getRow(myAllRow + 15).getCell(i));
-                    myCapitalAllow = pHelper.formatNumericCell(mySheet.getRow(myAllRow + 18).getCell(i));
+                    String myAllowance = pHelper.formatNumericCell(mySheet.getRow(myAllRow + iAdjust++)
+                            .getCell(i));
+                    String myLoTaxBand = pHelper.formatNumericCell(mySheet.getRow(myAllRow + iAdjust++)
+                            .getCell(i));
+                    String myBasicTaxBand = pHelper.formatNumericCell(mySheet.getRow(myAllRow + iAdjust++)
+                            .getCell(i));
+                    String myRentalAllow = pHelper.formatNumericCell(mySheet.getRow(myAllRow + iAdjust++)
+                            .getCell(i));
+                    String myLoTaxRate = pHelper.formatRateCell(mySheet.getRow(myAllRow + iAdjust++)
+                            .getCell(i));
+                    String myBasicTaxRate = pHelper.formatRateCell(mySheet.getRow(myAllRow + iAdjust++)
+                            .getCell(i));
+                    String myIntTaxRate = pHelper.formatRateCell(mySheet.getRow(myAllRow + iAdjust++)
+                            .getCell(i));
+                    String myDivTaxRate = pHelper.formatRateCell(mySheet.getRow(myAllRow + iAdjust++)
+                            .getCell(i));
+                    String myHiTaxRate = pHelper.formatRateCell(mySheet.getRow(myAllRow + iAdjust++)
+                            .getCell(i));
+                    String myHiDivTaxRate = pHelper.formatRateCell(mySheet.getRow(myAllRow + iAdjust++)
+                            .getCell(i));
+                    String myTaxRegime = mySheet.getRow(myAllRow + iAdjust++).getCell(i).getStringCellValue();
 
                     /* Handle AddTaxRate which may be missing */
-                    myCell = mySheet.getRow(myAllRow + 11).getCell(i);
-                    myAddTaxRate = null;
+                    Cell myCell = mySheet.getRow(myAllRow + iAdjust++).getCell(i);
+                    String myAddTaxRate = null;
                     if (myCell != null) {
                         myAddTaxRate = pHelper.formatRateCell(myCell);
                     }
 
                     /* Handle AddDivTaxRate which may be missing */
-                    myCell = mySheet.getRow(myAllRow + 12).getCell(i);
-                    myAddDivTaxRate = null;
+                    myCell = mySheet.getRow(myAllRow + iAdjust++).getCell(i);
+                    String myAddDivTaxRate = null;
                     if (myCell != null) {
                         myAddDivTaxRate = pHelper.formatRateCell(myCell);
                     }
 
+                    /* Access the values */
+                    String myLoAgeAllow = pHelper.formatNumericCell(mySheet.getRow(myAllRow + iAdjust++)
+                            .getCell(i));
+                    String myHiAgeAllow = pHelper.formatNumericCell(mySheet.getRow(myAllRow + iAdjust++)
+                            .getCell(i));
+                    String myAgeAllowLimit = pHelper.formatNumericCell(mySheet.getRow(myAllRow + iAdjust++)
+                            .getCell(i));
+
                     /* Handle AddAllowLimit which may be missing */
-                    myCell = mySheet.getRow(myAllRow + 16).getCell(i);
-                    myAddAllowLimit = null;
+                    myCell = mySheet.getRow(myAllRow + iAdjust++).getCell(i);
+                    String myAddAllowLimit = null;
                     if (myCell != null) {
                         myAddAllowLimit = pHelper.formatNumericCell(myCell);
                     }
 
                     /* Handle AddIncomeBoundary which may be missing */
-                    myCell = mySheet.getRow(myAllRow + 17).getCell(i);
-                    myAddIncBound = null;
+                    myCell = mySheet.getRow(myAllRow + iAdjust++).getCell(i);
+                    String myAddIncBound = null;
                     if (myCell != null) {
                         myAddIncBound = pHelper.formatNumericCell(myCell);
                     }
 
+                    /* Access the values */
+                    String myCapitalAllow = pHelper.formatNumericCell(mySheet.getRow(myAllRow + iAdjust++)
+                            .getCell(i));
+
                     /* Handle CapTaxRate which may be missing */
-                    myCell = mySheet.getRow(myAllRow + 19).getCell(i);
-                    myCapTaxRate = null;
+                    myCell = mySheet.getRow(myAllRow + iAdjust++).getCell(i);
+                    String myCapTaxRate = null;
                     if (myCell != null) {
                         myCapTaxRate = pHelper.formatRateCell(myCell);
                     }
 
                     /* Handle HiCapTaxRate which may be missing */
-                    myCell = mySheet.getRow(myAllRow + 20).getCell(i);
-                    myHiCapTaxRate = null;
+                    myCell = mySheet.getRow(myAllRow + iAdjust++).getCell(i);
+                    String myHiCapTaxRate = null;
                     if (myCell != null) {
                         myHiCapTaxRate = pHelper.formatRateCell(myCell);
                     }
@@ -488,9 +586,9 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
 
                     /* Report the progress */
                     myCount++;
-                    if ((myCount % mySteps) == 0)
-                        if (!pThread.setStepsDone(myCount))
-                            return false;
+                    if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                        return false;
+                    }
                 }
             }
 

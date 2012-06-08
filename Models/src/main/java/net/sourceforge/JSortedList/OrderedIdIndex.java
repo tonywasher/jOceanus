@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.JSortedList;
 
+import java.util.HashMap;
+
 /**
  * Index for an Ordered Id list. This provides improved lookup from object to node.
  * @author Tony Washer
@@ -32,7 +34,7 @@ public class OrderedIdIndex<I, T extends Comparable<T> & OrderedIdItem<I>> exten
     /**
      * Hash map.
      */
-    private final NestedHashMap<I, OrderedNode<T>> theHashMap;
+    private final HashMap<I, OrderedNode<T>> theHashMap;
 
     /**
      * Constructor.
@@ -43,7 +45,7 @@ public class OrderedIdIndex<I, T extends Comparable<T> & OrderedIdItem<I>> exten
         super(pList);
 
         /* Allocate hash map */
-        theHashMap = new NestedHashMap<I, OrderedNode<T>>();
+        theHashMap = new HashMap<I, OrderedNode<T>>();
     }
 
     @Override

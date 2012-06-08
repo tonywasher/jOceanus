@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,17 +26,21 @@ import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.models.data.TaskControl;
 import uk.co.tolcroft.models.sheets.SheetReader;
 
+/**
+ * SheetReader extension for FinanceData.
+ * @author Tony Washer
+ */
 public class FinanceReader extends SheetReader<FinanceData> {
     /**
-     * Thread control
+     * Thread control.
      */
     private final TaskControl<FinanceData> theTask;
 
     /**
-     * Constructor
+     * Constructor.
      * @param pTask the Task control
      */
-    public FinanceReader(TaskControl<FinanceData> pTask) {
+    public FinanceReader(final TaskControl<FinanceData> pTask) {
         /* Call super-constructor */
         super(pTask);
 
@@ -44,7 +49,7 @@ public class FinanceReader extends SheetReader<FinanceData> {
     }
 
     /**
-     * Register sheets
+     * Register sheets.
      */
     @Override
     protected void registerSheets() {
@@ -65,9 +70,6 @@ public class FinanceReader extends SheetReader<FinanceData> {
         addSheet(new SheetEventValues(this));
     }
 
-    /**
-     * Obtain empty DataSet
-     */
     @Override
     protected FinanceData newDataSet() {
         /* Create the new DataSet */

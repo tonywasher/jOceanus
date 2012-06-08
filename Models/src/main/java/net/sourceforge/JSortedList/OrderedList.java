@@ -597,7 +597,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
         T myItem = theClass.cast(o);
 
         /* Access the node of the item */
-        OrderedNode<T> myNode = theIndexMap.findUnsortedNodeForObject(myItem);
+        OrderedNode<T> myNode = theIndexMap.findNodeForObject(myItem);
 
         /* If the node does not belong to the list then ignore */
         if (myNode == null) {

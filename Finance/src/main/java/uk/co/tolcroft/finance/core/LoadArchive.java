@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,13 +30,25 @@ import uk.co.tolcroft.models.threads.LoaderThread;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.models.views.DataControl;
 
+/**
+ * LoaderThread extension to load an archive spreadsheet.
+ * @author Tony
+ */
 public class LoadArchive extends LoaderThread<FinanceData> {
-    /* Task description */
+    /**
+     * Task description.
+     */
     private static final String TASK_NAME = "Archive Load";
 
-    /* Properties */
-    private DataControl<FinanceData> theControl = null;
-    private ThreadStatus<FinanceData> theStatus = null;
+    /**
+     * Data Control.
+     */
+    private final DataControl<FinanceData> theControl;
+
+    /**
+     * Thread status.
+     */
+    private final ThreadStatus<FinanceData> theStatus;
 
     /**
      * Constructor (Event Thread).
@@ -53,27 +66,22 @@ public class LoadArchive extends LoaderThread<FinanceData> {
         showStatusBar();
     }
 
-    /* Background task (Worker Thread) */
     @Override
     public FinanceData performTask() throws JDataException {
-        FinanceData myData = null;
-        FinanceData myStore;
-        Database<FinanceData> myDatabase;
-
         /* Initialise the status window */
         theStatus.initTask("Loading Extract");
 
         /* Load workbook */
-        myData = FinanceSheet.loadArchive(theStatus);
+        FinanceData myData = FinanceSheet.loadArchive(theStatus);
 
         /* Initialise the status window */
         theStatus.initTask("Accessing DataStore");
 
         /* Create interface */
-        myDatabase = theControl.getDatabase();
+        Database<FinanceData> myDatabase = theControl.getDatabase();
 
         /* Load underlying database */
-        myStore = myDatabase.loadDatabase(theStatus);
+        FinanceData myStore = myDatabase.loadDatabase(theStatus);
 
         /* Initialise the status window */
         theStatus.initTask("Applying Security");

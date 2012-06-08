@@ -154,6 +154,13 @@ public class ZipWriteFile {
             myOutBuffer = new BufferedOutputStream(myOutFile);
             theStream = new ZipOutputStream(myOutBuffer);
 
+            /*
+             * Set compression level to zero to speed things up. It would be nice to use the STORED method,
+             * but this requires calculating the CRC and file size prior to writing data to the Zip file which
+             * will badly affect performance.
+             */
+            theStream.setLevel(ZipOutputStream.STORED);
+
             /* Create the file contents */
             theContents = new ZipFileContents();
 

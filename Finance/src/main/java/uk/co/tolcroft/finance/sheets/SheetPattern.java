@@ -38,10 +38,10 @@ import uk.co.tolcroft.finance.data.Pattern;
 import uk.co.tolcroft.finance.data.Pattern.PatternList;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.StaticData;
+import uk.co.tolcroft.models.data.TaskControl;
 import uk.co.tolcroft.models.sheets.SheetDataItem;
 import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
-import uk.co.tolcroft.models.threads.ThreadStatus;
 
 public class SheetPattern extends SheetDataItem<Event> {
     /**
@@ -223,14 +223,14 @@ public class SheetPattern extends SheetDataItem<Event> {
 
             /* Set the Account column width */
             setColumnWidth(1, Account.NAMELEN);
-            applyDataValidation(1, SheetAccount.AccountNames);
+            applyDataValidation(1, SheetAccount.AREA_ACCOUNTNAMES);
             setColumnWidth(3, Event.DESCLEN);
             setColumnWidth(6, Account.NAMELEN);
-            applyDataValidation(6, SheetAccount.AccountNames);
+            applyDataValidation(6, SheetAccount.AREA_ACCOUNTNAMES);
             setColumnWidth(7, StaticData.NAMELEN);
             applyDataValidation(7, SheetTransactionType.AREA_TRANSTYPENAMES);
             setColumnWidth(8, StaticData.NAMELEN);
-            applyDataValidation(8, SheetFrequency.FrequencyNames);
+            applyDataValidation(8, SheetFrequency.AREA_FREQUENCYNAMES);
 
             /* Set Number columns */
             setDateColumn(2);
@@ -252,7 +252,7 @@ public class SheetPattern extends SheetDataItem<Event> {
      * @return continue to load <code>true/false</code>
      * @throws JDataException
      */
-    protected static boolean loadArchive(ThreadStatus<FinanceData> pThread,
+    protected static boolean loadArchive(TaskControl<FinanceData> pThread,
                                          SheetHelper pHelper,
                                          FinanceData pData) throws JDataException {
         /* Local variables */

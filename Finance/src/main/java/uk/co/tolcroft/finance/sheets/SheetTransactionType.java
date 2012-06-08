@@ -191,7 +191,7 @@ public class SheetTransactionType extends SheetStaticData<TransactionType> {
             }
 
             /* Handle exceptions */
-        } catch (Exception e) {
+        } catch (JDataException e) {
             throw new JDataException(ExceptionClass.EXCEL, "Failed to Load Transaction Types", e);
         }
 

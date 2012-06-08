@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,26 +43,29 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 
 /**
- * Tax Year Class representing taxation parameters for a tax year
+ * Tax Year Class representing taxation parameters for a tax year.
  * @author Tony Washer
  */
 public class TaxYear extends DataItem<TaxYear> {
     /**
-     * Object name
+     * Object name.
      */
     public static final String OBJECT_NAME = TaxYear.class.getSimpleName();
 
     /**
-     * List name
+     * List name.
      */
     public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
-     * Report fields
+     * TaxYear end of month day.
+     */
+    public static final int END_OF_MONTH_DAY = 5;
+    /**
+     * Report fields.
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
 
-    /* Called from constructor */
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -101,7 +104,7 @@ public class TaxYear extends DataItem<TaxYear> {
     private ValueSet theValueSet;
 
     @Override
-    public void declareValues(ValueSet pValues) {
+    public void declareValues(final ValueSet pValues) {
         super.declareValues(pValues);
         theValueSet = pValues;
     }
@@ -195,91 +198,91 @@ public class TaxYear extends DataItem<TaxYear> {
         return getHiCapTaxRate(theValueSet);
     }
 
-    public static DateDay getTaxYear(ValueSet pValueSet) {
+    public static DateDay getTaxYear(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_TAXYEAR, DateDay.class);
     }
 
-    public static TaxRegime getTaxRegime(ValueSet pValueSet) {
+    public static TaxRegime getTaxRegime(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_REGIME, TaxRegime.class);
     }
 
-    public static Money getAllowance(ValueSet pValueSet) {
+    public static Money getAllowance(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_ALLOW, Money.class);
     }
 
-    public static Money getRentalAllowance(ValueSet pValueSet) {
+    public static Money getRentalAllowance(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_RENTAL, Money.class);
     }
 
-    public static Money getLoBand(ValueSet pValueSet) {
+    public static Money getLoBand(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_LOBAND, Money.class);
     }
 
-    public static Money getBasicBand(ValueSet pValueSet) {
+    public static Money getBasicBand(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_BSBAND, Money.class);
     }
 
-    public static Money getCapitalAllow(ValueSet pValueSet) {
+    public static Money getCapitalAllow(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CAPALW, Money.class);
     }
 
-    public static Money getLoAgeAllow(ValueSet pValueSet) {
+    public static Money getLoAgeAllow(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_LOAGAL, Money.class);
     }
 
-    public static Money getHiAgeAllow(ValueSet pValueSet) {
+    public static Money getHiAgeAllow(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_HIAGAL, Money.class);
     }
 
-    public static Money getAgeAllowLimit(ValueSet pValueSet) {
+    public static Money getAgeAllowLimit(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_AGELMT, Money.class);
     }
 
-    public static Money getAddAllowLimit(ValueSet pValueSet) {
+    public static Money getAddAllowLimit(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_ADDLMT, Money.class);
     }
 
-    public static Money getAddIncBound(ValueSet pValueSet) {
+    public static Money getAddIncBound(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_ADDBDY, Money.class);
     }
 
-    public static Rate getLoTaxRate(ValueSet pValueSet) {
+    public static Rate getLoTaxRate(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_LOTAX, Rate.class);
     }
 
-    public static Rate getBasicTaxRate(ValueSet pValueSet) {
+    public static Rate getBasicTaxRate(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_BASTAX, Rate.class);
     }
 
-    public static Rate getHiTaxRate(ValueSet pValueSet) {
+    public static Rate getHiTaxRate(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_HITAX, Rate.class);
     }
 
-    public static Rate getIntTaxRate(ValueSet pValueSet) {
+    public static Rate getIntTaxRate(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_INTTAX, Rate.class);
     }
 
-    public static Rate getDivTaxRate(ValueSet pValueSet) {
+    public static Rate getDivTaxRate(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_DIVTAX, Rate.class);
     }
 
-    public static Rate getHiDivTaxRate(ValueSet pValueSet) {
+    public static Rate getHiDivTaxRate(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_HDVTAX, Rate.class);
     }
 
-    public static Rate getAddTaxRate(ValueSet pValueSet) {
+    public static Rate getAddTaxRate(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_ADDTAX, Rate.class);
     }
 
-    public static Rate getAddDivTaxRate(ValueSet pValueSet) {
+    public static Rate getAddDivTaxRate(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_ADVTAX, Rate.class);
     }
 
-    public static Rate getCapTaxRate(ValueSet pValueSet) {
+    public static Rate getCapTaxRate(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CAPTAX, Rate.class);
     }
 
-    public static Rate getHiCapTaxRate(ValueSet pValueSet) {
+    public static Rate getHiCapTaxRate(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_HCPTAX, Rate.class);
     }
 
@@ -295,95 +298,95 @@ public class TaxYear extends DataItem<TaxYear> {
         return getTaxRegime().hasCapitalGainsAsIncome();
     }
 
-    private void setValueTaxYear(DateDay pDate) {
+    private void setValueTaxYear(final DateDay pDate) {
         theValueSet.setValue(FIELD_TAXYEAR, pDate);
     }
 
-    private void setValueTaxRegime(TaxRegime pRegime) {
+    private void setValueTaxRegime(final TaxRegime pRegime) {
         theValueSet.setValue(FIELD_REGIME, pRegime);
     }
 
-    private void setValueTaxRegime(Integer pId) {
+    private void setValueTaxRegime(final Integer pId) {
         theValueSet.setValue(FIELD_REGIME, pId);
     }
 
-    private void setValueAllowance(Money pValue) {
+    private void setValueAllowance(final Money pValue) {
         theValueSet.setValue(FIELD_ALLOW, pValue);
     }
 
-    private void setValueRental(Money pValue) {
+    private void setValueRental(final Money pValue) {
         theValueSet.setValue(FIELD_RENTAL, pValue);
     }
 
-    private void setValueLoBand(Money pValue) {
+    private void setValueLoBand(final Money pValue) {
         theValueSet.setValue(FIELD_LOBAND, pValue);
     }
 
-    private void setValueBasicBand(Money pValue) {
+    private void setValueBasicBand(final Money pValue) {
         theValueSet.setValue(FIELD_BSBAND, pValue);
     }
 
-    private void setValueCapitalAllowance(Money pValue) {
+    private void setValueCapitalAllowance(final Money pValue) {
         theValueSet.setValue(FIELD_CAPALW, pValue);
     }
 
-    private void setValueLoAgeAllowance(Money pValue) {
+    private void setValueLoAgeAllowance(final Money pValue) {
         theValueSet.setValue(FIELD_LOAGAL, pValue);
     }
 
-    private void setValueHiAgeAllowance(Money pValue) {
+    private void setValueHiAgeAllowance(final Money pValue) {
         theValueSet.setValue(FIELD_HIAGAL, pValue);
     }
 
-    private void setValueAgeAllowLimit(Money pValue) {
+    private void setValueAgeAllowLimit(final Money pValue) {
         theValueSet.setValue(FIELD_AGELMT, pValue);
     }
 
-    private void setValueAddAllowLimit(Money pValue) {
+    private void setValueAddAllowLimit(final Money pValue) {
         theValueSet.setValue(FIELD_ADDLMT, pValue);
     }
 
-    private void setValueAddIncBound(Money pValue) {
+    private void setValueAddIncBound(final Money pValue) {
         theValueSet.setValue(FIELD_ADDBDY, pValue);
     }
 
-    private void setValueLoTaxRate(Rate pValue) {
+    private void setValueLoTaxRate(final Rate pValue) {
         theValueSet.setValue(FIELD_LOTAX, pValue);
     }
 
-    private void setValueBasicTaxRate(Rate pValue) {
+    private void setValueBasicTaxRate(final Rate pValue) {
         theValueSet.setValue(FIELD_BASTAX, pValue);
     }
 
-    private void setValueHiTaxRate(Rate pValue) {
+    private void setValueHiTaxRate(final Rate pValue) {
         theValueSet.setValue(FIELD_HITAX, pValue);
     }
 
-    private void setValueIntTaxRate(Rate pValue) {
+    private void setValueIntTaxRate(final Rate pValue) {
         theValueSet.setValue(FIELD_INTTAX, pValue);
     }
 
-    private void setValueDivTaxRate(Rate pValue) {
+    private void setValueDivTaxRate(final Rate pValue) {
         theValueSet.setValue(FIELD_DIVTAX, pValue);
     }
 
-    private void setValueHiDivTaxRate(Rate pValue) {
+    private void setValueHiDivTaxRate(final Rate pValue) {
         theValueSet.setValue(FIELD_HDVTAX, pValue);
     }
 
-    private void setValueAddTaxRate(Rate pValue) {
+    private void setValueAddTaxRate(final Rate pValue) {
         theValueSet.setValue(FIELD_ADDTAX, pValue);
     }
 
-    private void setValueAddDivTaxRate(Rate pValue) {
+    private void setValueAddDivTaxRate(final Rate pValue) {
         theValueSet.setValue(FIELD_ADVTAX, pValue);
     }
 
-    private void setValueCapTaxRate(Rate pValue) {
+    private void setValueCapTaxRate(final Rate pValue) {
         theValueSet.setValue(FIELD_CAPTAX, pValue);
     }
 
-    private void setValueHiCapTaxRate(Rate pValue) {
+    private void setValueHiCapTaxRate(final Rate pValue) {
         theValueSet.setValue(FIELD_HCPTAX, pValue);
     }
 
@@ -394,13 +397,12 @@ public class TaxYear extends DataItem<TaxYear> {
     }
 
     /**
-     * Construct a copy of a TaxYear
-     * 
+     * Construct a copy of a TaxYear.
      * @param pList The List to build into
      * @param pTaxYear The TaxYear to copy
      */
-    public TaxYear(TaxYearList pList,
-                   TaxYear pTaxYear) {
+    public TaxYear(final TaxYearList pList,
+                   final TaxYear pTaxYear) {
         super(pList, pTaxYear);
         ListStyle myOldStyle = pTaxYear.getStyle();
 
@@ -437,30 +439,30 @@ public class TaxYear extends DataItem<TaxYear> {
     }
 
     /* Standard constructor */
-    private TaxYear(TaxYearList pList,
-                    int uId,
-                    int uRegimeId,
-                    Date pDate,
-                    String pAllowance,
-                    String pRentalAllow,
-                    String pLoAgeAllow,
-                    String pHiAgeAllow,
-                    String pCapAllow,
-                    String pAgeAllowLimit,
-                    String pAddAllowLimit,
-                    String pLoTaxBand,
-                    String pBasicTaxBand,
-                    String pAddIncBound,
-                    String pLoTaxRate,
-                    String pBasicTaxRate,
-                    String pHiTaxRate,
-                    String pIntTaxRate,
-                    String pDivTaxRate,
-                    String pHiDivTaxRate,
-                    String pAddTaxRate,
-                    String pAddDivTaxRate,
-                    String pCapTaxRate,
-                    String pHiCapTaxRate) throws JDataException {
+    private TaxYear(final TaxYearList pList,
+                    final int uId,
+                    final int uRegimeId,
+                    final Date pDate,
+                    final String pAllowance,
+                    final String pRentalAllow,
+                    final String pLoAgeAllow,
+                    final String pHiAgeAllow,
+                    final String pCapAllow,
+                    final String pAgeAllowLimit,
+                    final String pAddAllowLimit,
+                    final String pLoTaxBand,
+                    final String pBasicTaxBand,
+                    final String pAddIncBound,
+                    final String pLoTaxRate,
+                    final String pBasicTaxRate,
+                    final String pHiTaxRate,
+                    final String pIntTaxRate,
+                    final String pDivTaxRate,
+                    final String pHiDivTaxRate,
+                    final String pAddTaxRate,
+                    final String pAddDivTaxRate,
+                    final String pCapTaxRate,
+                    final String pHiCapTaxRate) throws JDataException {
         /* Initialise item */
         super(pList, uId);
 
@@ -591,17 +593,16 @@ public class TaxYear extends DataItem<TaxYear> {
 
             /* Allocate the id */
             pList.setNewId(this);
-        }
 
-        /* Catch Exceptions */
-        catch (Exception e) {
+            /* Catch Exceptions */
+        } catch (Exception e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
     }
 
     /* Standard constructor for a newly inserted account */
-    public TaxYear(TaxYearList pList) {
+    public TaxYear(final TaxYearList pList) {
         super(pList, 0);
         setState(DataState.NEW);
     }
@@ -613,18 +614,21 @@ public class TaxYear extends DataItem<TaxYear> {
      *         sort order
      */
     @Override
-    public int compareTo(Object pThat) {
+    public int compareTo(final Object pThat) {
         int iDiff;
 
         /* Handle the trivial cases */
-        if (this == pThat)
+        if (this == pThat) {
             return 0;
-        if (pThat == null)
+        }
+        if (pThat == null) {
             return -1;
+        }
 
         /* Make sure that the object is a TaxYear */
-        if (pThat.getClass() != this.getClass())
+        if (pThat.getClass() != this.getClass()) {
             return -1;
+        }
 
         /* Access the target taxYear */
         TaxYear myThat = (TaxYear) pThat;
@@ -632,29 +636,34 @@ public class TaxYear extends DataItem<TaxYear> {
         /* If the dates differ */
         if (this.getTaxYear() != myThat.getTaxYear()) {
             /* Compare on date */
-            if (this.getTaxYear() == null)
+            if (this.getTaxYear() == null) {
                 return 1;
-            if (myThat.getTaxYear() == null)
+            }
+            if (myThat.getTaxYear() == null) {
                 return -1;
+            }
             iDiff = getTaxYear().compareTo(myThat.getTaxYear());
-            if (iDiff != 0)
+            if (iDiff != 0) {
                 return iDiff;
+            }
         }
 
         /* Compare on id */
         iDiff = (int) (getId() - myThat.getId());
-        if (iDiff < 0)
+        if (iDiff < 0) {
             return -1;
-        if (iDiff > 0)
+        }
+        if (iDiff > 0) {
             return 1;
+        }
         return 0;
     }
 
     /**
-     * Rebuild Links to partner data
+     * Rebuild Links to partner data.
      * @param pData the DataSet
      */
-    private void reBuildLinks(FinanceData pData) {
+    private void reBuildLinks(final FinanceData pData) {
         TaxRegimeList myRegimes = pData.getTaxRegimes();
 
         /* Update to use the local copy of the TaxRegimes */
@@ -664,7 +673,7 @@ public class TaxYear extends DataItem<TaxYear> {
     }
 
     /**
-     * Validate the taxYear
+     * Validate the taxYear.
      */
     @Override
     public void validate() {
@@ -683,7 +692,7 @@ public class TaxYear extends DataItem<TaxYear> {
                 addError("Date must be unique", FIELD_TAXYEAR);
 
             /* The day and month must be 5th April */
-            if ((myDate.getDay() != 5) || (myDate.getMonth() != Calendar.APRIL))
+            if ((myDate.getDay() != END_OF_MONTH_DAY) || (myDate.getMonth() != Calendar.APRIL))
                 addError("Date must be 5th April", FIELD_TAXYEAR);
 
             /* The year must be one greater than the preceding element */

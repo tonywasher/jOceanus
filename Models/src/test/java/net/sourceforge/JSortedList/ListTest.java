@@ -1,6 +1,11 @@
 package net.sourceforge.JSortedList;
 
-import java.util.Map.Entry;
+import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.SwingUtilities;
 
@@ -19,11 +24,17 @@ public class ListTest {
 
     public static void createAndShowGUI() {
         try {
-            for (int i = 90; i < 100; i++) {
-                int iIndex = binaryChop(i);
-                if (iIndex != (i / 10))
-                    System.out.println(iIndex);
-            }
+            /*
+             * for (int i = 90; i < 100; i++) { int iIndex = binaryChop(i); if (iIndex != (i / 10))
+             * System.out.println(iIndex); }
+             */
+            // long One = testHashMap(false);
+            // long Two = testHashMap(true);
+            testOrderedList();
+
+            // if (One > Two) {
+            // System.out.println("Great");
+            // }
         } catch (Exception e) {
             System.out.println("Help");
             e.printStackTrace();
@@ -31,37 +42,91 @@ public class ListTest {
         System.exit(0);
     }
 
-    protected static void testHashMap() {
-        /* Create a nested hash map */
-        NestedHashMap<String, String> myMap = new NestedHashMap<String, String>();
+    protected static void testOrderedList() {
+        OrderedList<Integer> myList = new OrderedList<Integer>(Integer.class);
+        List<Integer> myCache = new LinkedList<Integer>();
 
-        /* Put a few entries in */
-        myMap.put("FirstEntry", "FirstValue");
-        myMap.put("SecondEntry", "SecondValue");
-        myMap.put("ThirdEntry", "FirstValue");
-        myMap.put("FourthEntry", "SecondValue");
-        myMap.put("FifthEntry", "FirstValue");
-        myMap.put("SixthEntry", "SecondValue");
-        myMap.put("SeventhEntry", "FirstValue");
-        myMap.put("EighthEntry", "SecondValue");
-        myMap.put("NinthEntry", "FirstValue");
-        myMap.put("TenthEntry", "SecondValue");
-        myMap.put("EleventhEntry", "FirstValue");
-        myMap.put("TwelfthEntry", "SecondValue");
-        myMap.put("ThirteenthEntry", "FirstValue");
-        myMap.put("FourteenthEntry", "SecondValue");
-        myMap.put("FifthteenthEntry", "FirstValue");
-        myMap.put("SixteenthEntry", "SecondValue");
+        /* Access a Random generator */
+        SecureRandom myRandom = new SecureRandom();
 
-        /* Loop through the entries */
-        for (Entry<String, String> myEntry : myMap.entrySet()) {
-            System.out.println(myEntry.getKey());
+        /* Add 10 random elements */
+        for (int i = 0; i < 10000; i++) {
+            Integer j = myRandom.nextInt();
+            myList.add(j);
+            myCache.add(j);
         }
+
+        /* Loop through the list elements */
+        Integer myLast = null;
+        boolean ok = true;
+        Iterator<Integer> myIterator = myList.iterator();
+        while (myIterator.hasNext()) {
+            /* Access the element */
+            Integer myElement = myIterator.next();
+            if (myLast == null)
+                continue;
+            if (myElement < myLast) {
+                /* Print it */
+                System.out.println("Out of sequence " + myElement);
+                ok = false;
+            }
+        }
+        if (ok) {
+            long myStart = System.nanoTime();
+            System.out.println("OK " + myList.size());
+            myIterator = myList.iterator();
+            while (myIterator.hasNext()) {
+                /* Access the element */
+                Integer myElement = myIterator.next();
+
+                /* Remove it from the list */
+                if (!myCache.remove(myElement))
+                    System.out.println("Failed to remove " + myElement);
+            }
+            System.out.println("OK " + myList.size() + ":" + (System.nanoTime() - myStart));
+        }
+    }
+
+    protected static long testHashMap(boolean useNested) {
+        /* Access timing */
+        long myStart = System.nanoTime();
+        Map<String, Integer> myMap;
+        int iNumElements = 10000;
+        int iNumLoops = 100;
+
+        /* Create a nested hash map */
+        if (useNested) {
+            myMap = new NestedHashMap<String, Integer>(8);
+        } else {
+            myMap = new HashMap<String, Integer>();
+        }
+
+        /* Build the map */
+        for (Integer i = 0; i < iNumElements; i++) {
+            myMap.put(i.toString(), i);
+        }
+
+        /* Read all the entries */
+        for (int j = 0; j < iNumLoops; j++) {
+            for (Integer i = 0; i < iNumElements; i++) {
+                Integer myValue = myMap.get(i.toString());
+                if (!i.equals(myValue)) {
+                    System.out.println("Help " + useNested + " " + myValue + " " + i);
+                }
+            }
+        }
+
+        /* Remove all the entries */
+        for (Integer i = 0; i < iNumElements; i++) {
+            myMap.remove(i.toString());
+        }
+
+        return System.nanoTime() - myStart;
     }
 
     static Integer[] myTable = { 0, 10, 20, 30, 40, 50, 60, 70, 80, 90 };
 
-    private static int binaryChop(Integer pValue) {
+    protected static int binaryChop(Integer pValue) {
         int iMinimum = 0;
         int iMaximum = myTable.length - 1;
 

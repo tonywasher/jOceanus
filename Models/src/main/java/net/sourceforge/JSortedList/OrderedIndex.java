@@ -160,7 +160,7 @@ public class OrderedIndex<T extends Comparable<T>> {
             /* If the element is before the last element */
             if (iDiff > 0) {
                 /*
-                 * Binary chop to find the search start point We need to loop while we have a search span
+                 * Binary chop to find the search start point. We need to loop while we have a search span
                  * greater than granularity
                  */
                 while (iMinimum < iMaximum - 1) {
@@ -187,6 +187,7 @@ public class OrderedIndex<T extends Comparable<T>> {
         }
 
         /* We now have a window of granularity in which to search for the item */
+        myTest = theMap[iMinimum];
         myTest = myTest.getNext();
         while (myTest != null) {
             /* Break if we have found the node */
@@ -366,9 +367,6 @@ public class OrderedIndex<T extends Comparable<T>> {
      * @param pNode the node to remove
      */
     protected void removeNode(final OrderedNode<T> pNode) {
-        /* Determine the active map length */
-        theActiveMapLength = 1 + ((theList.sizeAll() - 1) / MAP_GRANULARITY);
-
         /* Access the index of the node */
         int iIndex = pNode.getIndex();
 
@@ -399,6 +397,9 @@ public class OrderedIndex<T extends Comparable<T>> {
             /* Shift the index to the next item */
             theMap[iMapIndex] = myNode.getNext();
         }
+
+        /* Determine the active map length (note that list is one too large) */
+        theActiveMapLength = 1 + ((theList.sizeAll() - 2) / MAP_GRANULARITY);
     }
 
     /**

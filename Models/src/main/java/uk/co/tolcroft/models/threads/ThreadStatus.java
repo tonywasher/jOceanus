@@ -130,7 +130,7 @@ public class ThreadStatus<T extends DataSet<T>> implements TaskControl<T>, Prefe
     }
 
     /**
-     * Register thread
+     * Register thread.
      * @param pThread the thread that will use this ThreadStatus
      */
     public void registerThread(final WorkerThread<?> pThread) {

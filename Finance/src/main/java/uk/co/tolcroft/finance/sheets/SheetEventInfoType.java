@@ -33,20 +33,24 @@ import org.apache.poi.ss.util.CellReference;
 import uk.co.tolcroft.finance.data.EventInfoType;
 import uk.co.tolcroft.finance.data.EventInfoType.EventInfoTypeList;
 import uk.co.tolcroft.finance.data.FinanceData;
+import uk.co.tolcroft.models.data.TaskControl;
 import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.sheets.SheetStaticData;
-import uk.co.tolcroft.models.threads.ThreadStatus;
 
+/**
+ * SheetStaticData extension for EventInfoType.
+ * @author Tony Washer
+ */
 public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
     /**
      * NamedArea for EventInfoType.
      */
-    private static final String EventInfoTypes = EventInfoType.LIST_NAME;
+    private static final String AREA_EVENTINFOTYPES = EventInfoType.LIST_NAME;
 
     /**
      * NameList for EventInfoType.
      */
-    protected static final String EventInfoTypeNames = EventInfoType.OBJECT_NAME + "Names";
+    protected static final String AREA_EVENTINFOTYPENAMES = EventInfoType.OBJECT_NAME + "Names";
 
     /**
      * EventInfoTypes data list.
@@ -59,7 +63,7 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
      */
     protected SheetEventInfoType(final FinanceReader pReader) {
         /* Call super-constructor */
-        super(pReader, EventInfoTypes);
+        super(pReader, AREA_EVENTINFOTYPES);
 
         /* Access the InfoType list */
         theList = pReader.getData().getInfoTypes();
@@ -71,7 +75,7 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
      */
     protected SheetEventInfoType(final FinanceWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, EventInfoTypes, EventInfoTypeNames);
+        super(pWriter, AREA_EVENTINFOTYPES, AREA_EVENTINFOTYPENAMES);
 
         /* Access the InfoType list */
         theList = pWriter.getData().getInfoTypes();
@@ -101,28 +105,28 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
 
     /**
      * Load the InfoTypes from an archive.
-     * @param pThread the thread status control
+     * @param pTask the task control
      * @param pHelper the sheet helper
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
      * @throws JDataException on error
      */
-    protected static boolean loadArchive(final ThreadStatus<FinanceData> pThread,
+    protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
                                          final SheetHelper pHelper,
                                          final FinanceData pData) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            AreaReference myRange = pHelper.resolveAreaReference(EventInfoTypes);
+            AreaReference myRange = pHelper.resolveAreaReference(AREA_EVENTINFOTYPES);
 
             /* Declare the new stage */
-            if (!pThread.setNewStage(EventInfoTypes)) {
+            if (!pTask.setNewStage(AREA_EVENTINFOTYPES)) {
                 return false;
             }
 
             /* Access the number of reporting steps */
             int myCount = 0;
-            int mySteps = pThread.getReportingSteps();
+            int mySteps = pTask.getReportingSteps();
 
             /* If we found the range OK */
             if (myRange != null) {
@@ -139,7 +143,7 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
                 EventInfoTypeList myList = pData.getInfoTypes();
 
                 /* Declare the number of steps */
-                if (!pThread.setNumSteps(myTotal)) {
+                if (!pTask.setNumSteps(myTotal)) {
                     return false;
                 }
 
@@ -154,12 +158,12 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
 
                     /* Report the progress */
                     myCount++;
-                    if (((myCount % mySteps) == 0) && (!pThread.setStepsDone(myCount))) {
+                    if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                         return false;
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (JDataException e) {
             throw new JDataException(ExceptionClass.EXCEL, "Failed to load EventInfoTypes", e);
         }
 

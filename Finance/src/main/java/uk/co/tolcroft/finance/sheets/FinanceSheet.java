@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,250 +47,265 @@ import uk.co.tolcroft.models.sheets.SheetReader;
 import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.sheets.SheetWriter;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
-import uk.co.tolcroft.models.threads.ThreadStatus;
-import uk.co.tolcroft.models.views.DataControl;
 
+/**
+ * SpreadSheet extension for FinanceData.
+ * @author Tony Washer
+ */
 public class FinanceSheet extends SpreadSheet<FinanceData> {
     /**
-     * Obtain a sheet reader
+     * Number of base archive load areas. 6xStatic,Dilution,Pattern,Rate,Price,Account,TaxYear,Range+Event.
+     */
+    private static final int NUM_ARCHIVE_AREAS = 14;
+
+    /**
+     * Obtain a sheet reader.
      * @param pTask Thread Control for task
      * @return the sheet reader
      */
     @Override
-    protected SheetReader<FinanceData> getSheetReader(TaskControl<FinanceData> pTask) {
+    protected SheetReader<FinanceData> getSheetReader(final TaskControl<FinanceData> pTask) {
         /* Create a Finance Reader object and return it */
         return new FinanceReader(pTask);
     }
 
     /**
-     * Obtain a sheet writer
+     * Obtain a sheet writer.
      * @param pTask Task Control for task
      * @return the sheet writer
      */
     @Override
-    protected SheetWriter<FinanceData> getSheetWriter(TaskControl<FinanceData> pTask) {
+    protected SheetWriter<FinanceData> getSheetWriter(final TaskControl<FinanceData> pTask) {
         /* Create a Finance Writer object and return it */
         return new FinanceWriter(pTask);
     }
 
     /**
-     * NamedRange for Static
+     * NamedRange for Static.
      */
-    private static final String YearRange = "YearRange";
+    private static final String AREA_YEARRANGE = "YearRange";
 
     /**
-     * Simple class to hold YearRange
+     * Simple class to hold YearRange.
      */
-    protected static class YearRange {
+    protected static final class YearRange {
+        /**
+         * The minimum Year.
+         */
         private int theMinYear = 0;
+
+        /**
+         * The maximum Year.
+         */
         private int theMaxYear = 0;
 
+        /**
+         * Get the minimum Year.
+         * @return the year
+         */
         protected int getMinYear() {
             return theMinYear;
         }
 
+        /**
+         * Get the maximum Year.
+         * @return the year
+         */
         protected int getMaxYear() {
             return theMaxYear;
         }
 
-        protected void setMinYear(int pYear) {
+        /**
+         * Set the minimum Year.
+         * @param pYear the year
+         */
+        protected void setMinYear(final int pYear) {
             theMinYear = pYear;
         }
 
-        protected void setMaxYear(int pYear) {
+        /**
+         * Set the maximum Year.
+         * @param pYear the year
+         */
+        protected void setMaxYear(final int pYear) {
             theMaxYear = pYear;
         }
     }
 
     /**
-     * Load the Static from an archive
-     * @param pThread the thread status control
+     * Load the Static from an archive.
+     * @param pTask the task control
      * @param pHelper the sheet helper
      * @param pData the data set to load into
      * @param pRange the range of tax years
      * @return continue to load <code>true/false</code>
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    protected static boolean loadArchive(ThreadStatus<FinanceData> pThread,
-                                         SheetHelper pHelper,
-                                         FinanceData pData,
-                                         YearRange pRange) throws JDataException {
-        /* Local variables */
-        AreaReference myRange;
-        Sheet mySheet;
-        CellReference myTop;
-        Cell myCell;
-        int myCol;
-        int myStages;
-        ControlDataList myStatic;
-
+    protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
+                                         final SheetHelper pHelper,
+                                         final FinanceData pData,
+                                         final YearRange pRange) throws JDataException {
         /* Find the range of cells */
-        myRange = pHelper.resolveAreaReference(YearRange);
+        AreaReference myRange = pHelper.resolveAreaReference(AREA_YEARRANGE);
 
         /* If we found the range OK */
         if (myRange != null) {
             /* Access the relevant sheet and Cell references */
-            myTop = myRange.getFirstCell();
-            mySheet = pHelper.getSheetByName(myTop.getSheetName());
-            myCol = myTop.getCol();
+            CellReference myTop = myRange.getFirstCell();
+            Sheet mySheet = pHelper.getSheetByName(myTop.getSheetName());
+            int myCol = myTop.getCol();
 
             /* Access the Year Range */
             Row myRow = mySheet.getRow(myTop.getRow() + 1);
-            myCell = myRow.getCell(myCol);
+            Cell myCell = myRow.getCell(myCol);
             pRange.setMinYear(pHelper.parseIntegerCell(myCell));
             myCell = myRow.getCell(myCol + 1);
             pRange.setMaxYear(pHelper.parseIntegerCell(myCell));
 
             /* Access the static */
-            myStatic = pData.getControlData();
+            ControlDataList myStatic = pData.getControlData();
 
             /* Add the value into the finance tables (with no security as yet) */
             myStatic.addItem(0, 0);
         }
 
         /* Calculate the number of stages */
-        myStages = 14 + pRange.getMaxYear() - pRange.getMinYear();
+        int myStages = NUM_ARCHIVE_AREAS + pRange.getMaxYear() - pRange.getMinYear();
 
         /* Declare the number of stages */
-        return pThread.setNumStages(myStages);
+        return pTask.setNumStages(myStages);
     }
 
     /**
-     * Load an Archive Workbook
-     * @param pThread Thread Control for task
+     * Load an Archive Workbook.
+     * @param pTask Task Control for task
      * @return the newly loaded data
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    public static FinanceData loadArchive(ThreadStatus<FinanceData> pThread) throws JDataException {
-        InputStream myStream = null;
-        FileInputStream myInFile = null;
-        File myArchive = null;
-        FinanceData myData;
+    public static FinanceData loadArchive(final TaskControl<FinanceData> pTask) throws JDataException {
+        /* Access the Backup properties */
+        BackupPreferences myPreferences = (BackupPreferences) PreferenceManager
+                .getPreferenceSet(BackupPreferences.class);
+
+        /* Determine the archive name */
+        File myArchive = new File(myPreferences.getStringValue(BackupPreferences.NAME_ARCHIVE_FILE));
 
         /* Protect the workbook retrieval */
         try {
-            /* Access the Backup properties */
-            BackupPreferences myPreferences = (BackupPreferences) PreferenceManager
-                    .getPreferenceSet(BackupPreferences.class);
-
-            /* Determine the archive name */
-            myArchive = new File(myPreferences.getStringValue(BackupPreferences.NAME_ARCHIVE_FILE));
-
             /* Create an input stream to the file */
-            myInFile = new FileInputStream(myArchive);
-            myStream = new BufferedInputStream(myInFile);
+            FileInputStream myInFile = new FileInputStream(myArchive);
+            InputStream myStream = new BufferedInputStream(myInFile);
 
             /* Load the data from the stream */
-            myData = loadArchiveStream(pThread, myStream);
+            FinanceData myData = loadArchiveStream(pTask, myStream);
 
             /* Close the Stream to force out errors */
             myStream.close();
-        }
-
-        catch (Throwable e) {
+            return myData;
+        } catch (Exception e) {
             /* Report the error */
             throw new JDataException(ExceptionClass.EXCEL, "Failed to load Workbook: " + myArchive.getName(),
                     e);
         }
-
-        /* Return the new DataSet */
-        return myData;
     }
 
     /**
-     * Load an Archive Workbook from a stream
-     * @param pThread Thread Control for task
+     * Load an Archive Workbook from a stream.
+     * @param pTask Task Control for task
      * @param pStream Input stream to load from
      * @return the newly loaded data
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    private static FinanceData loadArchiveStream(ThreadStatus<FinanceData> pThread,
-                                                 InputStream pStream) throws JDataException {
-        boolean bContinue;
-        HSSFWorkbook myWorkbook = null;
-        FinanceData myData = null;
-        DataControl<FinanceData> myControl = null;
-        YearRange myRange = null;
-        DilutionEventList myDilution = null;
-        SheetHelper myHelper = null;
-
+    private static FinanceData loadArchiveStream(final TaskControl<FinanceData> pTask,
+                                                 final InputStream pStream) throws JDataException {
         /* Protect the workbook retrieval */
         try {
             /* Create the Data */
-            myControl = pThread.getControl();
-            myData = myControl.getNewData();
+            FinanceData myData = pTask.getNewDataSet();
 
             /* Access the workbook from the stream */
-            myWorkbook = new HSSFWorkbook(pStream);
+            HSSFWorkbook myWorkbook = new HSSFWorkbook(pStream);
 
             /* Set the missing Cell Policy */
             myWorkbook.setMissingCellPolicy(Row.RETURN_BLANK_AS_NULL);
 
             /* Create the helper */
-            myHelper = new SheetHelper(myWorkbook);
+            SheetHelper myHelper = new SheetHelper(myWorkbook);
 
             /* Create a YearRange */
-            myRange = new YearRange();
+            YearRange myRange = new YearRange();
 
             /* Create the dilution event list */
-            myDilution = new DilutionEventList(myData);
+            DilutionEventList myDilution = new DilutionEventList(myData);
 
             /* Determine Year Range */
-            bContinue = loadArchive(pThread, myHelper, myData, myRange);
+            boolean bContinue = loadArchive(pTask, myHelper, myData, myRange);
 
             /* Load Tables */
-            if (bContinue)
-                bContinue = SheetAccountType.loadArchive(pThread, myHelper, myData);
-            if (bContinue)
-                bContinue = SheetTransactionType.loadArchive(pThread, myHelper, myData);
-            if (bContinue)
-                bContinue = SheetTaxType.loadArchive(pThread, myHelper, myData);
-            if (bContinue)
-                bContinue = SheetTaxRegime.loadArchive(pThread, myHelper, myData);
-            if (bContinue)
-                bContinue = SheetFrequency.loadArchive(pThread, myHelper, myData);
-            if (bContinue)
-                bContinue = SheetEventInfoType.loadArchive(pThread, myHelper, myData);
-            if (bContinue)
-                bContinue = SheetTaxYear.loadArchive(pThread, myHelper, myData, myRange);
-            if (bContinue)
+            if (bContinue) {
+                bContinue = SheetAccountType.loadArchive(pTask, myHelper, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetTransactionType.loadArchive(pTask, myHelper, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetTaxType.loadArchive(pTask, myHelper, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetTaxRegime.loadArchive(pTask, myHelper, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetFrequency.loadArchive(pTask, myHelper, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetEventInfoType.loadArchive(pTask, myHelper, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetTaxYear.loadArchive(pTask, myHelper, myData, myRange);
+            }
+            if (bContinue) {
                 myData.calculateDateRange();
-            if (bContinue)
-                bContinue = SheetAccount.loadArchive(pThread, myHelper, myData);
-            if (bContinue)
-                bContinue = SheetAccountRate.loadArchive(pThread, myHelper, myData);
-            if (bContinue)
-                bContinue = SheetDilution.loadArchive(pThread, myHelper, myData, myDilution);
-            if (bContinue)
-                bContinue = SheetAccountPrice.loadArchive(pThread, myHelper, myData, myDilution);
-            if (bContinue)
-                bContinue = SheetPattern.loadArchive(pThread, myHelper, myData);
-            if (bContinue)
+            }
+            if (bContinue) {
+                bContinue = SheetAccount.loadArchive(pTask, myHelper, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetAccountRate.loadArchive(pTask, myHelper, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetDilution.loadArchive(pTask, myHelper, myData, myDilution);
+            }
+            if (bContinue) {
+                bContinue = SheetAccountPrice.loadArchive(pTask, myHelper, myData, myDilution);
+            }
+            if (bContinue) {
+                bContinue = SheetPattern.loadArchive(pTask, myHelper, myData);
+            }
+            if (bContinue) {
                 myData.getAccounts().validateLoadedAccounts();
-            if (bContinue)
-                bContinue = SheetEvent.loadArchive(pThread, myHelper, myData, myRange);
+            }
+            if (bContinue) {
+                bContinue = SheetEvent.loadArchive(pTask, myHelper, myData, myRange);
+            }
 
             /* Close the stream */
             pStream.close();
 
             /* Set the next stage */
-            if (!pThread.setNewStage("Refreshing data"))
+            if (!pTask.setNewStage("Refreshing data")) {
                 bContinue = false;
+            }
 
             /* Check for cancellation */
-            if (!bContinue)
+            if (!bContinue) {
                 throw new JDataException(ExceptionClass.EXCEL, "Operation Cancelled");
-        }
+            }
 
-        catch (Throwable e) {
-            /* Show we are cancelled */
-            bContinue = false;
-
+            /* Return the data */
+            return myData;
+        } catch (Exception e) {
             /* Report the error */
             throw new JDataException(ExceptionClass.EXCEL, "Failed to load Workbook", e);
         }
-
-        /* Return the new data */
-        return (bContinue) ? myData : null;
     }
 }

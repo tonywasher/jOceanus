@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,29 +29,58 @@ import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.models.sheets.SheetDataItem;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 
+/**
+ * SheetStaticData extension for EventData.
+ * @author Tony Washer
+ */
 public class SheetEventData extends SheetDataItem<EventData> {
     /**
-     * NamedArea for Events
+     * NamedArea for Events.
      */
-    private static final String EventDataName = EventData.LIST_NAME;
+    private static final String AREA_EVENTDATA = EventData.LIST_NAME;
 
     /**
-     * Is the spreadsheet a backup spreadsheet or an edit-able one
+     * Number of columns.
+     */
+    private static final int NUM_COLS = 5;
+
+    /**
+     * ControlKey column.
+     */
+    private static final int COL_CONTROL = 1;
+
+    /**
+     * Event column.
+     */
+    private static final int COL_EVENT = 2;
+
+    /**
+     * InfoType column.
+     */
+    private static final int COL_INFOTYPE = 3;
+
+    /**
+     * Data column.
+     */
+    private static final int COL_DATA = 4;
+
+    /**
+     * Is the spreadsheet a backup spreadsheet or an edit-able one?
      */
     private boolean isBackup = false;
 
     /**
-     * Events data list
+     * Events data list.
      */
     private EventDataList theList = null;
 
     /**
-     * Constructor for loading a spreadsheet
+     * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetEventData(FinanceReader pReader) {
+    protected SheetEventData(final FinanceReader pReader) {
         /* Call super constructor */
-        super(pReader, EventDataName);
+        super(pReader, AREA_EVENTDATA);
 
         /* Note whether this is a backup */
         isBackup = (pReader.getType() == SheetType.BACKUP);
@@ -61,12 +91,12 @@ public class SheetEventData extends SheetDataItem<EventData> {
     }
 
     /**
-     * Constructor for creating a spreadsheet
+     * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetEventData(FinanceWriter pWriter) {
+    protected SheetEventData(final FinanceWriter pWriter) {
         /* Call super constructor */
-        super(pWriter, EventDataName);
+        super(pWriter, AREA_EVENTDATA);
 
         /* Note whether this is a backup */
         isBackup = (pWriter.getType() == SheetType.BACKUP);
@@ -77,7 +107,7 @@ public class SheetEventData extends SheetDataItem<EventData> {
     }
 
     /**
-     * Load an item from the spreadsheet
+     * Load an item from the spreadsheet.
      * @throws JDataException on error
      */
     @Override
@@ -86,20 +116,19 @@ public class SheetEventData extends SheetDataItem<EventData> {
         /* If this is a backup load */
         if (isBackup) {
             /* Access the IDs */
-            int myID = loadInteger(0);
-            int myControlId = loadInteger(1);
-            int myInfoId = loadInteger(2);
-            int myEventId = loadInteger(3);
+            int myID = loadInteger(COL_ID);
+            int myControlId = loadInteger(COL_CONTROL);
+            int myEventId = loadInteger(COL_EVENT);
+            int myInfoId = loadInteger(COL_INFOTYPE);
 
             /* Access the binary values */
-            byte[] myValue = loadBytes(4);
+            byte[] myValue = loadBytes(COL_DATA);
 
             /* Load the item */
             theList.addItem(myID, myControlId, myInfoId, myEventId, myValue);
-        }
 
-        /* else this is a load from an edit-able spreadsheet */
-        else {
+            /* else this is a load from an edit-able spreadsheet */
+            // } else {
             /* Access the Account */
             // int myID = loadInteger(0);
 
@@ -110,19 +139,18 @@ public class SheetEventData extends SheetDataItem<EventData> {
     }
 
     @Override
-    protected void insertItem(EventData pItem) throws JDataException {
+    protected void insertItem(final EventData pItem) throws JDataException {
         /* If we are creating a backup */
         if (isBackup) {
             /* Set the fields */
-            writeInteger(0, pItem.getId());
-            writeInteger(1, pItem.getControlKey().getId());
-            writeInteger(2, pItem.getInfoType().getId());
-            writeInteger(3, pItem.getEvent().getId());
-            writeBytes(4, pItem.getValueBytes());
-        }
+            writeInteger(COL_ID, pItem.getId());
+            writeInteger(COL_CONTROL, pItem.getControlKey().getId());
+            writeInteger(COL_EVENT, pItem.getEvent().getId());
+            writeInteger(COL_INFOTYPE, pItem.getInfoType().getId());
+            writeBytes(COL_DATA, pItem.getValueBytes());
 
-        /* else we are creating an edit-able spreadsheet */
-        else {
+            /* else we are creating an edit-able spreadsheet */
+            // } else {
             /* Set the fields */
             // writeInteger(0, pItem.getId());
         }
@@ -131,8 +159,9 @@ public class SheetEventData extends SheetDataItem<EventData> {
     @Override
     protected void preProcessOnWrite() throws JDataException {
         /* Ignore if we are creating a backup */
-        if (isBackup)
+        if (isBackup) {
             return;
+        }
 
         /* Write titles */
         // writeString(0, Event.fieldName(Event.FIELD_ID));
@@ -144,11 +173,10 @@ public class SheetEventData extends SheetDataItem<EventData> {
         /* If we are creating a backup */
         if (isBackup) {
             /* Set the five columns as the range */
-            nameRange(5);
-        }
+            nameRange(NUM_COLS);
 
-        /* else this is an edit-able spreadsheet */
-        else {
+            /* else this is an edit-able spreadsheet */
+            // } else {
             /* Set the four columns as the range */
             // nameRange(4);
 

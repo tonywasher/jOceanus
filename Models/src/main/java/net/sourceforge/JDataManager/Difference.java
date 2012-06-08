@@ -142,10 +142,10 @@ public enum Difference {
     }
 
     /**
-     * Determine whether two Generic objects differ.
+     * Determine whether two Generic objects are equal.
      * @param pCurr The current object
      * @param pNew The new object
-     * @return the Difference between the objects
+     * @return true/false
      */
     public static boolean isEqual(final Object pCurr,
                                   final Object pNew) {

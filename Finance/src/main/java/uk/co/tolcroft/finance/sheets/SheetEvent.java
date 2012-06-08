@@ -39,10 +39,10 @@ import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.sheets.FinanceSheet.YearRange;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.StaticData;
+import uk.co.tolcroft.models.data.TaskControl;
 import uk.co.tolcroft.models.sheets.SheetDataItem;
 import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
-import uk.co.tolcroft.models.threads.ThreadStatus;
 
 public class SheetEvent extends SheetDataItem<Event> {
     /**
@@ -231,9 +231,9 @@ public class SheetEvent extends SheetDataItem<Event> {
             /* Set the Account column width */
             setColumnWidth(2, Event.DESCLEN);
             setColumnWidth(4, Account.NAMELEN);
-            applyDataValidation(4, SheetAccount.AccountNames);
+            applyDataValidation(4, SheetAccount.AREA_ACCOUNTNAMES);
             setColumnWidth(5, Account.NAMELEN);
-            applyDataValidation(5, SheetAccount.AccountNames);
+            applyDataValidation(5, SheetAccount.AREA_ACCOUNTNAMES);
             setColumnWidth(8, StaticData.NAMELEN);
             applyDataValidation(8, SheetTransactionType.AREA_TRANSTYPENAMES);
 
@@ -256,7 +256,7 @@ public class SheetEvent extends SheetDataItem<Event> {
      * @return continue to load <code>true/false</code>
      * @throws JDataException
      */
-    protected static boolean loadArchive(ThreadStatus<FinanceData> pThread,
+    protected static boolean loadArchive(TaskControl<FinanceData> pThread,
                                          SheetHelper pHelper,
                                          FinanceData pData,
                                          YearRange pRange) throws JDataException {

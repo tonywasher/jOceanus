@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,26 +38,60 @@ import uk.co.tolcroft.finance.data.AccountRate;
 import uk.co.tolcroft.finance.data.AccountRate.AccountRateList;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.TaskControl;
 import uk.co.tolcroft.models.sheets.SheetDataItem;
 import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
-import uk.co.tolcroft.models.threads.ThreadStatus;
 
+/**
+ * SheetStaticData extension for AccountRate.
+ * @author Tony Washer
+ */
 public class SheetAccountRate extends SheetDataItem<AccountRate> {
     /**
-     * NamedArea for Rates
+     * NamedArea for Rates.
      */
-    private static final String Rates = AccountRate.LIST_NAME;
+    private static final String AREA_RATES = AccountRate.LIST_NAME;
 
     /**
-     * Is the spreadsheet a backup spreadsheet or an edit-able one
+     * Number of columns.
      */
-    private boolean isBackup = false;
+    private static final int NUM_COLS = 6;
 
     /**
-     * Rates data list
+     * ControlKey column.
      */
-    private AccountRateList theList = null;
+    private static final int COL_CONTROL = 1;
+
+    /**
+     * Account column.
+     */
+    private static final int COL_ACCOUNT = 2;
+
+    /**
+     * Rate column.
+     */
+    private static final int COL_RATE = 3;
+
+    /**
+     * Bonus column.
+     */
+    private static final int COL_BONUS = 4;
+
+    /**
+     * EndDate column.
+     */
+    private static final int COL_ENDDATE = 5;
+
+    /**
+     * Is the spreadsheet a backup spreadsheet or an edit-able one?
+     */
+    private final boolean isBackup;
+
+    /**
+     * Rates data list.
+     */
+    private final AccountRateList theList;
 
     /**
      * Constructor for loading a spreadsheet.
@@ -64,7 +99,7 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
      */
     protected SheetAccountRate(final FinanceReader pReader) {
         /* Call super constructor */
-        super(pReader, Rates);
+        super(pReader, AREA_RATES);
 
         /* Note whether this is a backup */
         isBackup = (pReader.getType() == SheetType.BACKUP);
@@ -79,7 +114,7 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
      */
     protected SheetAccountRate(final FinanceWriter pWriter) {
         /* Call super constructor */
-        super(pWriter, Rates);
+        super(pWriter, AREA_RATES);
 
         /* Note whether this is a backup */
         isBackup = (pWriter.getType() == SheetType.BACKUP);
@@ -89,88 +124,78 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
         setDataList(theList);
     }
 
-    /**
-     * Load an item from the spreadsheet
-     * @throws JDataException
-     */
     @Override
     protected void loadItem() throws JDataException {
         /* If this is a backup load */
         if (isBackup) {
             /* Access the IDs */
-            int myID = loadInteger(0);
-            int myControlId = loadInteger(1);
-            int myActId = loadInteger(2);
+            int myID = loadInteger(COL_ID);
+            int myControlId = loadInteger(COL_CONTROL);
+            int myActId = loadInteger(COL_ACCOUNT);
 
             /* Access the rates and end-date */
-            byte[] myRateBytes = loadBytes(3);
-            byte[] myBonusBytes = loadBytes(4);
-            Date myEndDate = loadDate(5);
+            byte[] myRateBytes = loadBytes(COL_RATE);
+            byte[] myBonusBytes = loadBytes(COL_BONUS);
+            Date myEndDate = loadDate(COL_ENDDATE);
 
             /* Load the item */
             theList.addItem(myID, myControlId, myActId, myRateBytes, myEndDate, myBonusBytes);
-        }
 
-        /* else this is a load from an edit-able spreadsheet */
-        else {
+            /* else this is a load from an edit-able spreadsheet */
+        } else {
             /* Access the account */
-            int myID = loadInteger(0);
-            String myAccount = loadString(1);
+            int myID = loadInteger(COL_ID);
+            String myAccount = loadString(COL_ACCOUNT - 1);
 
             /* Access the name and description bytes */
-            String myRate = loadString(2);
-            String myBonus = loadString(3);
-            Date myEndDate = loadDate(4);
+            String myRate = loadString(COL_RATE - 1);
+            String myBonus = loadString(COL_BONUS - 1);
+            Date myEndDate = loadDate(COL_ENDDATE - 1);
 
             /* Load the item */
             theList.addItem(myID, myAccount, myRate, myEndDate, myBonus);
         }
     }
 
-    /**
-     * Insert a item into the spreadsheet
-     * @param pItem the Item to insert
-     * @throws JDataException
-     */
     @Override
     protected void insertItem(final AccountRate pItem) throws JDataException {
         /* If we are creating a backup */
         if (isBackup) {
             /* Set the fields */
-            writeInteger(0, pItem.getId());
-            writeInteger(1, pItem.getControlKey().getId());
-            writeInteger(2, pItem.getAccount().getId());
-            writeBytes(3, pItem.getRateBytes());
-            writeBytes(4, pItem.getBonusBytes());
-            writeDate(5, pItem.getEndDate());
-        }
+            writeInteger(COL_ID, pItem.getId());
+            writeInteger(COL_CONTROL, pItem.getControlKey().getId());
+            writeInteger(COL_ACCOUNT, pItem.getAccount().getId());
+            writeBytes(COL_RATE, pItem.getRateBytes());
+            writeBytes(COL_BONUS, pItem.getBonusBytes());
+            writeDate(COL_ENDDATE, pItem.getEndDate());
 
-        /* else we are creating an edit-able spreadsheet */
-        else {
+            /* else we are creating an edit-able spreadsheet */
+        } else {
             /* Set the fields */
-            writeInteger(0, pItem.getId());
-            writeString(1, pItem.getAccount().getName());
-            writeNumber(2, pItem.getRate());
-            writeNumber(3, pItem.getBonus());
-            writeDate(4, pItem.getEndDate());
+            writeInteger(COL_ID, pItem.getId());
+            writeString(COL_ACCOUNT - 1, pItem.getAccount().getName());
+            writeNumber(COL_RATE - 1, pItem.getRate());
+            writeNumber(COL_BONUS - 1, pItem.getBonus());
+            writeDate(COL_ENDDATE - 1, pItem.getEndDate());
         }
     }
 
     @Override
     protected void preProcessOnWrite() throws JDataException {
         /* Ignore if we are creating a backup */
-        if (isBackup)
+        if (isBackup) {
             return;
+        }
 
         /* Create a new row */
         newRow();
 
         /* Write titles */
-        writeHeader(0, DataItem.FIELD_ID.getName());
-        writeHeader(1, AccountRate.FIELD_ACCOUNT.getName());
-        writeHeader(2, AccountRate.FIELD_RATE.getName());
-        writeHeader(3, AccountRate.FIELD_BONUS.getName());
-        writeHeader(4, AccountRate.FIELD_ENDDATE.getName());
+        writeHeader(COL_ID, DataItem.FIELD_ID.getName());
+        writeHeader(COL_ACCOUNT - 1, AccountRate.FIELD_ACCOUNT.getName());
+        writeHeader(COL_RATE - 1, AccountRate.FIELD_RATE.getName());
+        writeHeader(COL_BONUS - 1, AccountRate.FIELD_BONUS.getName());
+        writeHeader(COL_ENDDATE - 1, AccountRate.FIELD_ENDDATE.getName());
 
         /* Adjust for Header */
         adjustForHeader();
@@ -181,109 +206,96 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
         /* If we are creating a backup */
         if (isBackup) {
             /* Set the six columns as the range */
-            nameRange(6);
-        }
+            nameRange(NUM_COLS);
 
-        /* else this is an edit-able spreadsheet */
-        else {
+            /* else this is an edit-able spreadsheet */
+        } else {
             /* Set the five columns as the range */
-            nameRange(5);
+            nameRange(NUM_COLS - 1);
 
             /* Hide the ID column */
-            setHiddenColumn(0);
-            setIntegerColumn(0);
+            setHiddenColumn(COL_ID);
+            setIntegerColumn(COL_ID);
 
             /* Set the Account column width */
-            setColumnWidth(1, Account.NAMELEN);
-            applyDataValidation(1, SheetAccount.AccountNames);
+            setColumnWidth(COL_ACCOUNT - 1, Account.NAMELEN);
+            applyDataValidation(COL_ACCOUNT - 1, SheetAccount.AREA_ACCOUNTNAMES);
 
             /* Set Rate and Date columns */
-            setRateColumn(2);
-            setRateColumn(3);
-            setDateColumn(4);
+            setRateColumn(COL_RATE - 1);
+            setRateColumn(COL_RATE - 1);
+            setDateColumn(COL_ENDDATE - 1);
         }
     }
 
     /**
-     * Load the Rates from an archive
-     * @param pThread the thread status control
+     * Load the Rates from an archive.
+     * @param pTask the task control
      * @param pHelper the sheet helper
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    protected static boolean loadArchive(ThreadStatus<FinanceData> pThread,
-                                         SheetHelper pHelper,
-                                         FinanceData pData) throws JDataException {
-        /* Local variables */
-        AccountRateList myList;
-        AreaReference myRange;
-        Sheet mySheet;
-        CellReference myTop;
-        CellReference myBottom;
-        int myCol;
-        String myAccount;
-        String myRate;
-        String myBonus;
-        Date myExpiry;
-        Cell myCell;
-        int myTotal;
-        int mySteps;
-        int myCount = 0;
-
+    protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
+                                         final SheetHelper pHelper,
+                                         final FinanceData pData) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            myRange = pHelper.resolveAreaReference(Rates);
+            AreaReference myRange = pHelper.resolveAreaReference(AREA_RATES);
 
             /* Access the number of reporting steps */
-            mySteps = pThread.getReportingSteps();
+            int mySteps = pTask.getReportingSteps();
+            int myCount = 0;
 
             /* Declare the new stage */
-            if (!pThread.setNewStage(Rates))
+            if (!pTask.setNewStage(AREA_RATES)) {
                 return false;
+            }
 
             /* If we found the range OK */
             if (myRange != null) {
                 /* Access the relevant sheet and Cell references */
-                myTop = myRange.getFirstCell();
-                myBottom = myRange.getLastCell();
-                mySheet = pHelper.getSheetByName(myTop.getSheetName());
-                myCol = myTop.getCol();
+                CellReference myTop = myRange.getFirstCell();
+                CellReference myBottom = myRange.getLastCell();
+                Sheet mySheet = pHelper.getSheetByName(myTop.getSheetName());
+                int myCol = myTop.getCol();
 
                 /* Count the number of rates */
-                myTotal = myBottom.getRow() - myTop.getRow() + 1;
+                int myTotal = myBottom.getRow() - myTop.getRow() + 1;
 
                 /* Access the list of rates */
-                myList = pData.getRates();
+                AccountRateList myList = pData.getRates();
 
                 /* Declare the number of steps */
-                if (!pThread.setNumSteps(myTotal))
+                if (!pTask.setNumSteps(myTotal)) {
                     return false;
+                }
 
                 /* Loop through the rows of the table */
                 for (int i = myTop.getRow(); i <= myBottom.getRow(); i++) {
                     /* Access the row */
                     Row myRow = mySheet.getRow(i);
+                    int iAdjust = 0;
 
                     /* Access account */
-                    myCell = myRow.getCell(myCol);
-                    myAccount = myCell.getStringCellValue();
+                    Cell myCell = myRow.getCell(myCol + iAdjust++);
+                    String myAccount = myCell.getStringCellValue();
 
                     /* Handle Rate */
-                    myCell = myRow.getCell(myCol + 1);
-                    myRate = pHelper.formatRateCell(myCell);
+                    myCell = myRow.getCell(myCol + iAdjust++);
+                    String myRate = pHelper.formatRateCell(myCell);
 
                     /* Handle bonus which may be missing */
-                    myCell = myRow.getCell(myCol + 2);
-                    myBonus = null;
+                    myCell = myRow.getCell(myCol + iAdjust++);
+                    String myBonus = null;
                     if (myCell != null) {
                         myBonus = pHelper.formatRateCell(myCell);
                     }
 
                     /* Handle expiration which may be missing */
-                    myCell = myRow.getCell(myCol + 3);
-                    myExpiry = null;
+                    myCell = myRow.getCell(myCol + iAdjust++);
+                    Date myExpiry = null;
                     if (myCell != null) {
                         myExpiry = myCell.getDateCellValue();
                     }
@@ -293,15 +305,14 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
 
                     /* Report the progress */
                     myCount++;
-                    if ((myCount % mySteps) == 0)
-                        if (!pThread.setStepsDone(myCount))
-                            return false;
+                    if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                        return false;
+                    }
                 }
             }
-        }
 
-        /* Handle exceptions */
-        catch (Exception e) {
+            /* Handle exceptions */
+        } catch (Exception e) {
             throw new JDataException(ExceptionClass.EXCEL, "Failed to Load Rates", e);
         }
 

@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,45 +34,49 @@ import org.apache.poi.ss.util.CellReference;
 import uk.co.tolcroft.finance.data.AccountType;
 import uk.co.tolcroft.finance.data.AccountType.AccountTypeList;
 import uk.co.tolcroft.finance.data.FinanceData;
+import uk.co.tolcroft.models.data.TaskControl;
 import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.sheets.SheetStaticData;
-import uk.co.tolcroft.models.threads.ThreadStatus;
 
+/**
+ * SheetStaticData extension for AccountType.
+ * @author Tony Washer
+ */
 public class SheetAccountType extends SheetStaticData<AccountType> {
     /**
-     * NamedArea for AccountTypes
+     * NamedArea for AccountTypes.
      */
-    private static final String AccountTypes = AccountType.LIST_NAME;
+    private static final String AREA_ACCOUNTTYPES = AccountType.LIST_NAME;
 
     /**
-     * NameList for AccountTypes
+     * NameList for AccountTypes.
      */
-    protected static final String ActTypeNames = AccountType.OBJECT_NAME + "Names";
+    protected static final String AREA_ACCOUNTTYPENAMES = AccountType.OBJECT_NAME + "Names";
 
     /**
-     * AccountTypes data list
+     * AccountTypes data list.
      */
-    private AccountTypeList theList = null;
+    private final AccountTypeList theList;
 
     /**
-     * Constructor for loading a spreadsheet
+     * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetAccountType(FinanceReader pReader) {
+    protected SheetAccountType(final FinanceReader pReader) {
         /* Call super-constructor */
-        super(pReader, AccountTypes);
+        super(pReader, AREA_ACCOUNTTYPES);
 
         /* Access the Account Type list */
         theList = pReader.getData().getAccountTypes();
     }
 
     /**
-     * Constructor for creating a spreadsheet
+     * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetAccountType(FinanceWriter pWriter) {
+    protected SheetAccountType(final FinanceWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, AccountTypes, ActTypeNames);
+        super(pWriter, AREA_ACCOUNTTYPES, AREA_ACCOUNTTYPENAMES);
 
         /* Access the Account Type list */
         theList = pWriter.getData().getAccountTypes();
@@ -79,118 +84,107 @@ public class SheetAccountType extends SheetStaticData<AccountType> {
     }
 
     /**
-     * Load encrypted
+     * Load encrypted.
      * @param pId the id
      * @param pControlId the control id
      * @param isEnabled isEnabled
      * @param iOrder the sort order
      * @param pName the name
      * @param pDesc the description
-     * @throws JDataException
+     * @throws JDataException on error
      */
     @Override
-    protected void loadEncryptedItem(int pId,
-                                     int pControlId,
-                                     boolean isEnabled,
-                                     int iOrder,
-                                     byte[] pName,
-                                     byte[] pDesc) throws JDataException {
+    protected void loadEncryptedItem(final int pId,
+                                     final int pControlId,
+                                     final boolean isEnabled,
+                                     final int iOrder,
+                                     final byte[] pName,
+                                     final byte[] pDesc) throws JDataException {
         /* Create the item */
         theList.addItem(pId, pControlId, isEnabled, iOrder, pName, pDesc);
     }
 
     /**
-     * Load clear text
+     * Load clear text.
      * @param uId the id
      * @param isEnabled isEnabled
      * @param iOrder the sort order
      * @param pName the name
      * @param pDesc the description
-     * @throws JDataException
+     * @throws JDataException on error
      */
     @Override
-    protected void loadClearTextItem(int uId,
-                                     boolean isEnabled,
-                                     int iOrder,
-                                     String pName,
-                                     String pDesc) throws JDataException {
+    protected void loadClearTextItem(final int uId,
+                                     final boolean isEnabled,
+                                     final int iOrder,
+                                     final String pName,
+                                     final String pDesc) throws JDataException {
         /* Create the item */
         theList.addItem(uId, isEnabled, iOrder, pName, pDesc);
     }
 
     /**
-     * Load the Account Types from an archive
-     * @param pThread the thread status control
+     * Load the Account Types from an archive.
+     * @param pTask the task control
      * @param pHelper the sheet helper
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    protected static boolean loadArchive(ThreadStatus<FinanceData> pThread,
-                                         SheetHelper pHelper,
-                                         FinanceData pData) throws JDataException {
-        /* Local variables */
-        AccountTypeList myList;
-        AreaReference myRange;
-        Sheet mySheet;
-        CellReference myTop;
-        CellReference myBottom;
-        Cell myCell;
-        int myCol;
-        int myTotal;
-        int mySteps;
-        int myCount = 0;
-
+    protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
+                                         final SheetHelper pHelper,
+                                         final FinanceData pData) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            myRange = pHelper.resolveAreaReference(AccountTypes);
+            AreaReference myRange = pHelper.resolveAreaReference(AREA_ACCOUNTTYPES);
 
             /* Declare the new stage */
-            if (!pThread.setNewStage(AccountTypes))
+            if (!pTask.setNewStage(AREA_ACCOUNTTYPES)) {
                 return false;
+            }
 
             /* Access the number of reporting steps */
-            mySteps = pThread.getReportingSteps();
+            int mySteps = pTask.getReportingSteps();
+            int myCount = 0;
 
             /* If we found the range OK */
             if (myRange != null) {
                 /* Access the relevant sheet and Cell references */
-                myTop = myRange.getFirstCell();
-                myBottom = myRange.getLastCell();
-                mySheet = pHelper.getSheetByName(myTop.getSheetName());
-                myCol = myTop.getCol();
+                CellReference myTop = myRange.getFirstCell();
+                CellReference myBottom = myRange.getLastCell();
+                Sheet mySheet = pHelper.getSheetByName(myTop.getSheetName());
+                int myCol = myTop.getCol();
 
                 /* Count the number of account types */
-                myTotal = myBottom.getRow() - myTop.getRow() + 1;
+                int myTotal = myBottom.getRow() - myTop.getRow() + 1;
 
                 /* Access the list of account types */
-                myList = pData.getAccountTypes();
+                AccountTypeList myList = pData.getAccountTypes();
 
                 /* Declare the number of steps */
-                if (!pThread.setNumSteps(myTotal))
+                if (!pTask.setNumSteps(myTotal)) {
                     return false;
+                }
 
                 /* Loop through the rows of the single column range */
                 for (int i = myTop.getRow(); i <= myBottom.getRow(); i++) {
                     /* Access the cell by reference */
                     Row myRow = mySheet.getRow(i);
-                    myCell = myRow.getCell(myCol);
+                    Cell myCell = myRow.getCell(myCol);
 
                     /* Add the value into the finance tables */
                     myList.addItem(myCell.getStringCellValue());
 
                     /* Report the progress */
                     myCount++;
-                    if ((myCount % mySteps) == 0)
-                        if (!pThread.setStepsDone(myCount))
-                            return false;
+                    if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                        return false;
+                    }
                 }
             }
-        }
-
-        /* Handle exceptions */
-        catch (Throwable e) {
+            /* Handle exceptions */
+        } catch (JDataException e) {
             throw new JDataException(ExceptionClass.EXCEL, "Failed to Load Account Types", e);
         }
 
