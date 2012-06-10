@@ -27,7 +27,7 @@ import java.util.HashMap;
 /**
  * Index for an Ordered Id list. This provides improved lookup from object to node.
  * @author Tony Washer
- * @param <I> the date-type of the id
+ * @param <I> the data-type of the id
  * @param <T> the data-type of the list
  */
 public class OrderedIdIndex<I, T extends Comparable<T> & OrderedIdItem<I>> extends OrderedIndex<T> {
@@ -51,10 +51,7 @@ public class OrderedIdIndex<I, T extends Comparable<T> & OrderedIdItem<I>> exten
     @Override
     protected OrderedNode<T> findNodeForObject(final T pItem) {
         /* Lookup the node in the map */
-        OrderedNode<T> myNode = theHashMap.get(pItem.getOrderedId());
-
-        /* Return the correct node */
-        return myNode;
+        return theHashMap.get(pItem.getOrderedId());
     }
 
     @Override

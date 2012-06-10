@@ -36,14 +36,34 @@ public class OrderedIndex<T extends Comparable<T>> {
     private static final int EXPANSION_SIZE = 5;
 
     /**
-     * Granularity of map.
+     * Default Granularity Shift for map. (gives 2^5 = 32)
      */
-    private static final int MAP_GRANULARITY = 50;
+    protected static final int DEFAULT_GRANULARITY_SHIFT = 5;
+
+    /**
+     * Minimum Granularity Shift for map. (gives 2^4 = 16)
+     */
+    protected static final int MIN_GRANULARITY_SHIFT = 4;
+
+    /**
+     * Maximum Granularity Shift for map. (gives 2^10 = 1024)
+     */
+    protected static final int MAX_GRANULARITY_SHIFT = 10;
 
     /**
      * The list to which this index is attached.
      */
     private final OrderedList<T> theList;
+
+    /**
+     * The granularity shift of the index.
+     */
+    private final int theGranularityShift;
+
+    /**
+     * The granularity mask of the index.
+     */
+    private final int theGranularityMask;
 
     /**
      * Array of standard indexes.
@@ -68,6 +88,8 @@ public class OrderedIndex<T extends Comparable<T>> {
     protected OrderedIndex(final OrderedList<T> pList) {
         /* Store the list */
         theList = pList;
+        theGranularityShift = theList.getGranularity();
+        theGranularityMask = (1 << theGranularityShift) - 1;
 
         /* Allocate and initialise the map */
         theMap = (OrderedNode<T>[]) new OrderedNode[EXPANSION_SIZE];
@@ -85,7 +107,7 @@ public class OrderedIndex<T extends Comparable<T>> {
         OrderedNode<T> myNode;
 
         /* Calculate the map index */
-        iMapIndex = iIndex / MAP_GRANULARITY;
+        iMapIndex = iIndex >>> theGranularityShift;
 
         /* Handle out of range */
         if (iMapIndex > theActiveMapLength - 1) {
@@ -95,18 +117,15 @@ public class OrderedIndex<T extends Comparable<T>> {
         /* Access the start node for the search */
         myNode = theMap[iMapIndex];
 
-        /* Determine which index we are looking for */
-        boolean doSkipHidden = theList.getSkipHidden();
-
         /* Search for the correct node */
         while (myNode != null) {
             /* Break if we have found the node */
-            if (myNode.getIndex(doSkipHidden) == iIndex) {
+            if (myNode.getIndex() == iIndex) {
                 break;
             }
 
             /* Shift to next node */
-            myNode = myNode.getNext(doSkipHidden);
+            myNode = myNode.getNext();
         }
 
         /* Return the correct node */
@@ -134,13 +153,10 @@ public class OrderedIndex<T extends Comparable<T>> {
         /* Check it against the object */
         int iDiff = myTest.compareTo(pItem);
 
-        /* If we have found the object, return it */
+        /* Handle the cases where we have matched or passed the object */
         if (iDiff == 0) {
             return myTest;
-        }
-
-        /* If the object is before the first in list, then not found */
-        if (iDiff > 0) {
+        } else if (iDiff > 0) {
             return null;
         }
 
@@ -155,10 +171,9 @@ public class OrderedIndex<T extends Comparable<T>> {
             /* If we have found the object, return it */
             if (iDiff == 0) {
                 return myTest;
-            }
 
-            /* If the element is before the last element */
-            if (iDiff > 0) {
+                /* If the element is before the last element */
+            } else if (iDiff > 0) {
                 /*
                  * Binary chop to find the search start point. We need to loop while we have a search span
                  * greater than granularity
@@ -183,23 +198,24 @@ public class OrderedIndex<T extends Comparable<T>> {
                         iMaximum = iTest;
                     }
                 }
+                /* else the maximum element is still before the item */
+            } else {
+                /* Start search at the maximum element */
+                iMinimum = iMaximum;
             }
         }
 
-        /* We now have a window of granularity in which to search for the item */
+        /* We now have a better starting point for the search */
         myTest = theMap[iMinimum];
         myTest = myTest.getNext();
         while (myTest != null) {
-            /* Break if we have found the node */
+            /* Check against the object */
             iDiff = myTest.compareTo(pItem);
 
-            /* If we have found the object, return it */
+            /* Handle the results */
             if (iDiff == 0) {
                 return myTest;
-            }
-
-            /* If we are past the object, then not found */
-            if (iDiff > 0) {
+            } else if (iDiff > 0) {
                 return null;
             }
 
@@ -219,7 +235,7 @@ public class OrderedIndex<T extends Comparable<T>> {
      */
     protected OrderedNode<T> findUnsortedNodeForObject(final T pItem) {
         /* Access the first nodes */
-        OrderedNode<T> myNode = theList.getHead();
+        OrderedNode<T> myNode = theList.getFirst();
 
         /* Search for the correct node */
         while (myNode != null) {
@@ -245,8 +261,8 @@ public class OrderedIndex<T extends Comparable<T>> {
         OrderedNode<T> myCurr;
 
         /* Access first and last nodes */
-        OrderedNode<T> myFirst = theList.getHead();
-        OrderedNode<T> myLast = theList.getTail();
+        OrderedNode<T> myFirst = theList.getFirst();
+        OrderedNode<T> myLast = theList.getLast();
 
         /* Check whether we should add at the end */
         if (myLast.compareTo(pNode) < 0) {
@@ -274,8 +290,8 @@ public class OrderedIndex<T extends Comparable<T>> {
         OrderedNode<T> myCurr;
 
         /* Access first and last nodes */
-        OrderedNode<T> myFirst = theList.getHead();
-        OrderedNode<T> myLast = theList.getTail();
+        OrderedNode<T> myFirst = theList.getFirst();
+        OrderedNode<T> myLast = theList.getLast();
 
         /* Check whether we should add at the head */
         if (myFirst.compareTo(pNode) > 0) {
@@ -316,7 +332,7 @@ public class OrderedIndex<T extends Comparable<T>> {
      */
     protected void insertNode(final OrderedNode<T> pNode) {
         /* Determine the active map length */
-        theActiveMapLength = 1 + ((theList.sizeAll() - 1) / MAP_GRANULARITY);
+        theActiveMapLength = 1 + ((theList.size() - 1) >>> theGranularityShift);
 
         /* If we need to extend the map */
         if (theActiveMapLength > theMapLength - 1) {
@@ -331,10 +347,10 @@ public class OrderedIndex<T extends Comparable<T>> {
         int iIndex = pNode.getIndex();
 
         /* Calculate the map index */
-        int iMapIndex = iIndex / MAP_GRANULARITY;
+        int iMapIndex = iIndex >>> theGranularityShift;
 
         /* If this is a mapped node */
-        if ((iIndex % MAP_GRANULARITY) == 0) {
+        if ((iIndex & theGranularityMask) == 0) {
             /* Store the node into the map */
             theMap[iMapIndex] = pNode;
         }
@@ -354,10 +370,10 @@ public class OrderedIndex<T extends Comparable<T>> {
         }
 
         /* Access the last node */
-        OrderedNode<T> myLast = theList.getTail();
+        OrderedNode<T> myLast = theList.getLast();
 
         /* If the last node has been shifted and needs storing, then store it */
-        if ((pNode != myLast) && ((myLast.getIndex() % MAP_GRANULARITY) == 0)) {
+        if ((pNode != myLast) && ((myLast.getIndex() & theGranularityMask) == 0)) {
             insertNode(myLast);
         }
     }
@@ -371,7 +387,7 @@ public class OrderedIndex<T extends Comparable<T>> {
         int iIndex = pNode.getIndex();
 
         /* Calculate the map index */
-        int iMapIndex = iIndex / MAP_GRANULARITY;
+        int iMapIndex = iIndex >>> theGranularityShift;
 
         /* Ignore node if it is past end of map */
         if (iMapIndex > theMapLength - 1) {
@@ -379,7 +395,7 @@ public class OrderedIndex<T extends Comparable<T>> {
         }
 
         /* If this is a mapped node */
-        if ((iIndex % MAP_GRANULARITY) == 0) {
+        if ((iIndex & theGranularityMask) == 0) {
             /* Adjust this node explicitly */
             theMap[iMapIndex] = pNode.getNext();
         }
@@ -398,8 +414,11 @@ public class OrderedIndex<T extends Comparable<T>> {
             theMap[iMapIndex] = myNode.getNext();
         }
 
-        /* Determine the active map length (note that list is one too large) */
-        theActiveMapLength = 1 + ((theList.sizeAll() - 2) / MAP_GRANULARITY);
+        /*
+         * Determine the active map length (note that list is one too large since we have yet to remove this
+         * item)
+         */
+        theActiveMapLength = 1 + ((theList.size() - 2) >>> theGranularityShift);
     }
 
     /**

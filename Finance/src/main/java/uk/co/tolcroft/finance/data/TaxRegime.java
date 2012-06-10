@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,6 +30,10 @@ import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
 
+/**
+ * TaxRegime data type.
+ * @author Tony Washer
+ */
 public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
     /**
      * Object name.
@@ -43,23 +48,21 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
     /**
      * Report fields.
      */
-    private static final JDataFields theLocalFields = new JDataFields(OBJECT_NAME, StaticData.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, StaticData.FIELD_DEFS);
 
-    /* Called from constructor */
     @Override
     public JDataFields declareFields() {
-        return theLocalFields;
+        return FIELD_DEFS;
     }
 
     /**
-     * Return the TaxRegime class of the TaxRegime
+     * Return the TaxRegime class of the TaxRegime.
      * @return the class
      */
     public TaxRegClass getRegime() {
         return super.getStaticClass();
     }
 
-    /* Linking methods */
     @Override
     public TaxRegime getBase() {
         return (TaxRegime) super.getBase();
@@ -70,44 +73,43 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
      * @param pList The list to associate the TaxRegime with
      * @param pTaxRegime The TaxRegime to copy
      */
-    protected TaxRegime(TaxRegimeList pList,
-                        TaxRegime pTaxRegime) {
+    protected TaxRegime(final TaxRegimeList pList,
+                        final TaxRegime pTaxRegime) {
         super(pList, pTaxRegime);
     }
 
     /**
-     * Construct a standard TaxRegime on load
-     * 
+     * Construct a standard TaxRegime on load.
      * @param pList The list to associate the TaxRegime with
      * @param sName Name of TaxRegime
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    private TaxRegime(TaxRegimeList pList,
-                      String sName) throws JDataException {
+    private TaxRegime(final TaxRegimeList pList,
+                      final String sName) throws JDataException {
         super(pList, sName);
     }
 
     /**
-     * Construct a tax regime on load
+     * Construct a tax regime on load.
      * @param pList The list to associate the TaxRegime with
      * @param uId the id of the new item
      * @param isEnabled is the regime enabled
      * @param uOrder the sort order
      * @param pName Name of Tax Regime
      * @param pDesc Description of Tax Regime
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    private TaxRegime(TaxRegimeList pList,
-                      int uId,
-                      boolean isEnabled,
-                      int uOrder,
-                      String pName,
-                      String pDesc) throws JDataException {
+    private TaxRegime(final TaxRegimeList pList,
+                      final int uId,
+                      final boolean isEnabled,
+                      final int uOrder,
+                      final String pName,
+                      final String pDesc) throws JDataException {
         super(pList, uId, isEnabled, uOrder, pName, pDesc);
     }
 
     /**
-     * Construct a standard TaxRegime on load
+     * Construct a standard TaxRegime on load.
      * @param pList The list to associate the TaxRegime with
      * @param uId ID of TaxRegime
      * @param uControlId the control id of the new item
@@ -115,20 +117,20 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
      * @param uOrder the sort order
      * @param pName Encrypted Name of TaxRegime
      * @param pDesc Encrypted Description of TaxRegime
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    private TaxRegime(TaxRegimeList pList,
-                      int uId,
-                      int uControlId,
-                      boolean isEnabled,
-                      int uOrder,
-                      byte[] pName,
-                      byte[] pDesc) throws JDataException {
+    private TaxRegime(final TaxRegimeList pList,
+                      final int uId,
+                      final int uControlId,
+                      final boolean isEnabled,
+                      final int uOrder,
+                      final byte[] pName,
+                      final byte[] pDesc) throws JDataException {
         super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
     }
 
     /**
-     * Determine whether this tax regime supports a Low Salary Band
+     * Determine whether this tax regime supports a Low Salary Band.
      * @return <code>true/false</code>
      */
     public boolean hasLoSalaryBand() {
@@ -143,7 +145,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
     }
 
     /**
-     * Determine whether this tax regime treats capital gains as standard income
+     * Determine whether this tax regime treats capital gains as standard income.
      * @return <code>true/false</code>
      */
     public boolean hasCapitalGainsAsIncome() {
@@ -156,7 +158,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
     }
 
     /**
-     * Determine whether this tax regime supports an additional taxation band
+     * Determine whether this tax regime supports an additional taxation band.
      * @return <code>true/false</code>
      */
     public boolean hasAdditionalTaxBand() {
@@ -183,18 +185,18 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
         }
 
         /**
-         * Construct an empty CORE tax regime list
+         * Construct an empty CORE tax regime list.
          * @param pData the DataSet for the list
          */
-        protected TaxRegimeList(FinanceData pData) {
+        protected TaxRegimeList(final FinanceData pData) {
             super(TaxRegimeList.class, TaxRegime.class, pData, ListStyle.CORE);
         }
 
         /**
-         * Constructor for a cloned List
+         * Constructor for a cloned List.
          * @param pSource the source List
          */
-        private TaxRegimeList(TaxRegimeList pSource) {
+        private TaxRegimeList(final TaxRegimeList pSource) {
             super(pSource);
         }
 
@@ -203,7 +205,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
          * @param pStyle the list style
          * @return the update Extract
          */
-        private TaxRegimeList getExtractList(ListStyle pStyle) {
+        private TaxRegimeList getExtractList(final ListStyle pStyle) {
             /* Build an empty Extract List */
             TaxRegimeList myList = new TaxRegimeList(this);
 
@@ -214,7 +216,6 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
             return myList;
         }
 
-        /* Obtain extract lists. */
         @Override
         public TaxRegimeList getUpdateList() {
             return getExtractList(ListStyle.UPDATE);
@@ -231,7 +232,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
         }
 
         @Override
-        public TaxRegimeList getDeepCopy(DataSet<?> pDataSet) {
+        public TaxRegimeList getDeepCopy(final DataSet<?> pDataSet) {
             /* Build an empty Extract List */
             TaxRegimeList myList = new TaxRegimeList(this);
             myList.setData(pDataSet);
@@ -245,7 +246,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
         }
 
         @Override
-        protected TaxRegimeList getDifferences(TaxRegimeList pOld) {
+        protected TaxRegimeList getDifferences(final TaxRegimeList pOld) {
             /* Build an empty Difference List */
             TaxRegimeList myList = new TaxRegimeList(this);
 
@@ -257,19 +258,19 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
         }
 
         /**
-         * Add a new item to the list
+         * Add a new item to the list.
          * @param pItem item to be added
          * @return the newly added item
          */
         @Override
-        public TaxRegime addNewItem(DataItem<?> pItem) {
+        public TaxRegime addNewItem(final DataItem<?> pItem) {
             TaxRegime myRegime = new TaxRegime(this, (TaxRegime) pItem);
             add(myRegime);
             return myRegime;
         }
 
         /**
-         * Create a new empty element in the edit list (null-operation)
+         * Create a new empty element in the edit list (null-operation).
          * @return the newly added item
          */
         @Override
@@ -278,7 +279,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
         }
 
         /**
-         * Obtain the type of the item
+         * Obtain the type of the item.
          * @return the type of the item
          */
         public String itemType() {
@@ -286,50 +287,53 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
         }
 
         /**
-         * Add a TaxRegime
+         * Add a TaxRegime.
          * @param pTaxRegime the Name of the tax regime
-         * @throws JDataException
+         * @throws JDataException on error
          */
-        public void addItem(String pTaxRegime) throws JDataException {
+        public void addItem(final String pTaxRegime) throws JDataException {
             TaxRegime myTaxRegime;
 
             /* Create a new tax regime */
             myTaxRegime = new TaxRegime(this, pTaxRegime);
 
             /* Check that this TaxRegimeId has not been previously added */
-            if (!isIdUnique(myTaxRegime.getId()))
+            if (!isIdUnique(myTaxRegime.getId())) {
                 throw new JDataException(ExceptionClass.DATA, myTaxRegime, "Duplicate TaxRegimeId");
+            }
 
             /* Check that this TaxRegime has not been previously added */
-            if (searchFor(pTaxRegime) != null)
+            if (searchFor(pTaxRegime) != null) {
                 throw new JDataException(ExceptionClass.DATA, myTaxRegime, "Duplicate TaxRegime");
+            }
 
             /* Add the TaxRegime to the list */
             add(myTaxRegime);
         }
 
         /**
-         * Add a TaxRegime to the list
+         * Add a TaxRegime to the list.
          * @param uId the id of the new item
          * @param isEnabled is the regime enabled
          * @param uOrder the sort order
          * @param pTaxRegime the Name of the tax regime
          * @param pDesc the Description of the tax regime
-         * @throws JDataException
+         * @throws JDataException on error
          */
-        public void addItem(int uId,
-                            boolean isEnabled,
-                            int uOrder,
-                            String pTaxRegime,
-                            String pDesc) throws JDataException {
+        public void addItem(final int uId,
+                            final boolean isEnabled,
+                            final int uOrder,
+                            final String pTaxRegime,
+                            final String pDesc) throws JDataException {
             TaxRegime myTaxReg;
 
             /* Create a new Tax Regime */
             myTaxReg = new TaxRegime(this, uId, isEnabled, uOrder, pTaxRegime, pDesc);
 
             /* Check that this TaxRegimeId has not been previously added */
-            if (!isIdUnique(myTaxReg.getId()))
+            if (!isIdUnique(myTaxReg.getId())) {
                 throw new JDataException(ExceptionClass.DATA, myTaxReg, "Duplicate TaxRegimeId");
+            }
 
             /* Add the Tax Regime to the list */
             add(myTaxReg);
@@ -338,34 +342,36 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
             myTaxReg.validate();
 
             /* Handle validation failure */
-            if (myTaxReg.hasErrors())
+            if (myTaxReg.hasErrors()) {
                 throw new JDataException(ExceptionClass.VALIDATE, myTaxReg, "Failed validation");
+            }
         }
 
         /**
-         * Add a TaxRegime
+         * Add a TaxRegime.
          * @param uId the Id of the tax regime
          * @param uControlId the control id of the new item
          * @param isEnabled is the regime enabled
          * @param uOrder the sort order
          * @param pTaxRegime the Encrypted Name of the tax regime
          * @param pDesc the Encrypted Description of the tax regime
-         * @throws JDataException
+         * @throws JDataException on error
          */
-        public void addItem(int uId,
-                            int uControlId,
-                            boolean isEnabled,
-                            int uOrder,
-                            byte[] pTaxRegime,
-                            byte[] pDesc) throws JDataException {
+        public void addItem(final int uId,
+                            final int uControlId,
+                            final boolean isEnabled,
+                            final int uOrder,
+                            final byte[] pTaxRegime,
+                            final byte[] pDesc) throws JDataException {
             TaxRegime myTaxReg;
 
             /* Create a new tax regime */
             myTaxReg = new TaxRegime(this, uId, uControlId, isEnabled, uOrder, pTaxRegime, pDesc);
 
             /* Check that this TaxRegimeId has not been previously added */
-            if (!isIdUnique(uId))
+            if (!isIdUnique(uId)) {
                 throw new JDataException(ExceptionClass.DATA, myTaxReg, "Duplicate TaxRegimeId");
+            }
 
             /* Add the TaxRegime to the list */
             add(myTaxReg);
@@ -374,8 +380,9 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
             myTaxReg.validate();
 
             /* Handle validation failure */
-            if (myTaxReg.hasErrors())
+            if (myTaxReg.hasErrors()) {
                 throw new JDataException(ExceptionClass.VALIDATE, myTaxReg, "Failed validation");
+            }
         }
     }
 }

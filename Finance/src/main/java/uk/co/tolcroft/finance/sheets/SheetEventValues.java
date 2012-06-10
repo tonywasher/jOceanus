@@ -30,7 +30,7 @@ import uk.co.tolcroft.models.sheets.SheetDataItem;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 
 /**
- * SheetStaticData extension for Event Values.
+ * SheetDataItem extension for Event Values.
  * @author Tony Washer
  */
 public class SheetEventValues extends SheetDataItem<EventValue> {
@@ -163,7 +163,6 @@ public class SheetEventValues extends SheetDataItem<EventValue> {
 
         /* Write titles */
         // writeString(0, TaxYear.fieldName(TaxYear.FIELD_ID));
-        return;
     }
 
     @Override

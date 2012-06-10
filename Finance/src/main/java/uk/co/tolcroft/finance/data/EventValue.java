@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,6 +35,10 @@ import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.data.DataSet;
 
+/**
+ * EventValue data type.
+ * @author Tony Washer
+ */
 public class EventValue extends DataItem<EventValue> {
     /**
      * Object name.
@@ -55,10 +60,24 @@ public class EventValue extends DataItem<EventValue> {
         return FIELD_DEFS;
     }
 
-    /* Field IDs */
+    /**
+     * InfoType Field Id.
+     */
     public static final JDataField FIELD_INFOTYPE = FIELD_DEFS.declareEqualityValueField("InfoType");
+
+    /**
+     * Event Field Id.
+     */
     public static final JDataField FIELD_EVENT = FIELD_DEFS.declareEqualityValueField("Event");
+
+    /**
+     * Value Field Id.
+     */
     public static final JDataField FIELD_VALUE = FIELD_DEFS.declareEqualityValueField("Value");
+
+    /**
+     * Account Field Id.
+     */
     public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareDerivedValueField("Account");
 
     /**
@@ -67,81 +86,139 @@ public class EventValue extends DataItem<EventValue> {
     private ValueSet theValueSet;
 
     @Override
-    public void declareValues(ValueSet pValues) {
+    public void declareValues(final ValueSet pValues) {
         super.declareValues(pValues);
         theValueSet = pValues;
     }
 
-    /* Access methods */
+    /**
+     * Obtain InfoType.
+     * @return the Info type
+     */
     public EventInfoType getInfoType() {
         return getInfoType(theValueSet);
     }
 
+    /**
+     * Obtain Event.
+     * @return the Event
+     */
     public Event getEvent() {
         return getEvent(theValueSet);
     }
 
+    /**
+     * Obtain Value.
+     * @return the Value
+     */
     public Integer getValue() {
         return getValue(theValueSet);
     }
 
+    /**
+     * Obtain Account.
+     * @return the Account
+     */
     public Account getAccount() {
         return getAccount(theValueSet);
     }
 
-    public static EventInfoType getInfoType(ValueSet pValueSet) {
+    /**
+     * Obtain InfoType.
+     * @param pValueSet the valueSet
+     * @return the Info types
+     */
+    public static EventInfoType getInfoType(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_INFOTYPE, EventInfoType.class);
     }
 
-    public static Event getEvent(ValueSet pValueSet) {
+    /**
+     * Obtain Event.
+     * @param pValueSet the valueSet
+     * @return the Event
+     */
+    public static Event getEvent(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_EVENT, Event.class);
     }
 
-    public static Integer getValue(ValueSet pValueSet) {
+    /**
+     * Obtain Value.
+     * @param pValueSet the valueSet
+     * @return the Value
+     */
+    public static Integer getValue(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_VALUE, Integer.class);
     }
 
-    public static Account getAccount(ValueSet pValueSet) {
+    /**
+     * Obtain Account.
+     * @param pValueSet the valueSet
+     * @return the Account
+     */
+    public static Account getAccount(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_ACCOUNT, Account.class);
     }
 
-    private void setValueInfoType(EventInfoType pInfoType) {
-        theValueSet.setValue(FIELD_INFOTYPE, pInfoType);
+    /**
+     * Set InfoType.
+     * @param pValue the info Type
+     */
+    private void setValueInfoType(final EventInfoType pValue) {
+        theValueSet.setValue(FIELD_INFOTYPE, pValue);
     }
 
-    private void setValueInfoType(Integer pInfoType) {
-        theValueSet.setValue(FIELD_INFOTYPE, pInfoType);
+    /**
+     * Set InfoType Id.
+     * @param pId the info Type id
+     */
+    private void setValueInfoType(final Integer pId) {
+        theValueSet.setValue(FIELD_INFOTYPE, pId);
     }
 
-    private void setValueEvent(Event pEvent) {
-        theValueSet.setValue(FIELD_EVENT, pEvent);
+    /**
+     * Set Event.
+     * @param pValue the event
+     */
+    private void setValueEvent(final Event pValue) {
+        theValueSet.setValue(FIELD_EVENT, pValue);
     }
 
-    private void setValueEvent(Integer pEvent) {
-        theValueSet.setValue(FIELD_EVENT, pEvent);
+    /**
+     * Set Event id.
+     * @param pId the event id
+     */
+    private void setValueEvent(final Integer pId) {
+        theValueSet.setValue(FIELD_EVENT, pId);
     }
 
-    private void setValueValue(Integer pValue) {
+    /**
+     * Set Value.
+     * @param pValue the value
+     */
+    private void setValueValue(final Integer pValue) {
         theValueSet.setValue(FIELD_VALUE, pValue);
     }
 
-    private void setValueAccount(Account pAccount) {
-        theValueSet.setValue(FIELD_ACCOUNT, pAccount);
+    /**
+     * Set Account.
+     * @param pValue the account
+     */
+    private void setValueAccount(final Account pValue) {
+        theValueSet.setValue(FIELD_ACCOUNT, pValue);
     }
 
-    /* Linking methods */
     @Override
     public EventValue getBase() {
         return (EventValue) super.getBase();
     }
 
     /**
-     * Construct a copy of an EventInfo
-     * @param pList
+     * Construct a copy of an EventInfo.
+     * @param pList the list
      * @param pInfo The Info to copy
      */
-    protected EventValue(EventValueList pList,
-                         EventValue pInfo) {
+    protected EventValue(final EventValueList pList,
+                         final EventValue pInfo) {
         /* Set standard values */
         super(pList, pInfo);
         ListStyle myOldStyle = pInfo.getStyle();
@@ -166,71 +243,96 @@ public class EventValue extends DataItem<EventValue> {
             case COPY:
             case CORE:
                 /* Reset Id if this is an insert from a view */
-                if (myOldStyle == ListStyle.EDIT)
+                if (myOldStyle == ListStyle.EDIT) {
                     setId(0);
+                }
                 pList.setNewId(this);
                 break;
             case UPDATE:
                 setBase(pInfo);
                 setState(pInfo.getState());
                 break;
+            default:
+                break;
         }
     }
 
-    /* Encryption constructor */
-    private EventValue(EventValueList pList,
-                       int uId,
-                       int uInfoTypeId,
-                       int uEventId,
-                       Integer pValue) throws JDataException {
+    /**
+     * Encryption constructor.
+     * @param pList the list
+     * @param uId the id
+     * @param uInfoTypeId the infoType Id
+     * @param uEventId the Event Id
+     * @param pValue the value
+     * @throws JDataException on error
+     */
+    private EventValue(final EventValueList pList,
+                       final int uId,
+                       final int uInfoTypeId,
+                       final int uEventId,
+                       final Integer pValue) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
 
-        /* Record the Ids */
-        setValueInfoType(uInfoTypeId);
-        setValueEvent(uEventId);
+        /* Protect against exceptions */
+        try {
+            /* Record the Ids */
+            setValueInfoType(uInfoTypeId);
+            setValueEvent(uEventId);
 
-        /* Look up the EventType */
-        FinanceData myData = pList.getData();
-        EventInfoType myType = myData.getInfoTypes().searchFor(uInfoTypeId);
-        if (myType == null)
-            throw new JDataException(ExceptionClass.DATA, this, "Invalid EventInfoType Id");
-        setValueInfoType(myType);
+            /* Look up the EventType */
+            FinanceData myData = pList.getData();
+            EventInfoType myType = myData.getInfoTypes().searchFor(uInfoTypeId);
+            if (myType == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid EventInfoType Id");
+            }
+            setValueInfoType(myType);
 
-        /* Look up the Event */
-        Event myEvent = myData.getEvents().searchFor(uEventId);
-        if (myEvent == null)
-            throw new JDataException(ExceptionClass.DATA, this, "Invalid Event Id");
-        setValueEvent(myEvent);
+            /* Look up the Event */
+            Event myEvent = myData.getEvents().searchFor(uEventId);
+            if (myEvent == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid Event Id");
+            }
+            setValueEvent(myEvent);
 
-        /* Switch on Info Class */
-        switch (myType.getInfoClass()) {
-            case QualifyYears:
-            case XferDelay:
-                setValueValue(pValue);
-                break;
-            case ThirdParty:
-                /* Look up the Account */
-                setValueValue(pValue);
-                Account myAccount = myData.getAccounts().searchFor(pValue);
-                if (myAccount == null) {
-                    throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
-                }
-                setValueAccount(myAccount);
-                break;
-            default:
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Event Type");
+            /* Switch on Info Class */
+            switch (myType.getInfoClass()) {
+                case QualifyYears:
+                case XferDelay:
+                    setValueValue(pValue);
+                    break;
+                case ThirdParty:
+                    /* Look up the Account */
+                    setValueValue(pValue);
+                    Account myAccount = myData.getAccounts().searchFor(pValue);
+                    if (myAccount == null) {
+                        throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
+                    }
+                    setValueAccount(myAccount);
+                    break;
+                default:
+                    throw new JDataException(ExceptionClass.DATA, this, "Invalid Event Type");
+            }
+
+            /* Access the EventInfoSet and register this value */
+            EventInfoSet mySet = myEvent.getInfoSet();
+            mySet.registerValue(this);
+
+            /* Allocate the id */
+            pList.setNewId(this);
+            /* Catch Exceptions */
+        } catch (Exception e) {
+            /* Pass on exception */
+            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
-
-        /* Access the EventInfoSet and register this value */
-        EventInfoSet mySet = myEvent.getInfoSet();
-        mySet.registerValue(this);
-
-        /* Allocate the id */
-        pList.setNewId(this);
     }
 
-    /* Edit constructor */
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     * @param pType the type
+     * @param pEvent the event
+     */
     private EventValue(final EventValueList pList,
                        final EventInfoType pType,
                        final Event pEvent) {
@@ -263,14 +365,17 @@ public class EventValue extends DataItem<EventValue> {
         int iDiff;
 
         /* Handle the trivial cases */
-        if (this == pThat)
+        if (this == pThat) {
             return 0;
-        if (pThat == null)
+        }
+        if (pThat == null) {
             return -1;
+        }
 
         /* Make sure that the object is an EventValue */
-        if (pThat.getClass() != this.getClass())
+        if (pThat.getClass() != this.getClass()) {
             return -1;
+        }
 
         /* Access the object as an EventValue */
         EventValue myThat = (EventValue) pThat;
@@ -299,10 +404,10 @@ public class EventValue extends DataItem<EventValue> {
     }
 
     /**
-     * Rebuild Links to partner data
+     * Rebuild Links to partner data.
      * @param pData the DataSet
      */
-    protected void reBuildLinks(FinanceData pData) {
+    protected void reBuildLinks(final FinanceData pData) {
         /* Access Events and InfoTypes */
         EventList myEvents = pData.getEvents();
         EventInfoTypeList myTypes = pData.getInfoTypes();
@@ -319,7 +424,7 @@ public class EventValue extends DataItem<EventValue> {
     }
 
     /**
-     * Validate the Event Info
+     * Validate the Event Info.
      */
     @Override
     public void validate() {
@@ -334,24 +439,26 @@ public class EventValue extends DataItem<EventValue> {
         /* InfoType must be non-null */
         if (myType == null) {
             addError("EventInfoType must be non-null", FIELD_INFOTYPE);
-        } else if (!myType.getEnabled())
+        } else if (!myType.getEnabled()) {
             addError("EventInfoType must be enabled", FIELD_INFOTYPE);
-        else {
+        } else {
             /* Switch on Info Class */
             switch (myType.getInfoClass()) {
                 case QualifyYears:
                 case XferDelay:
-                    if (getValue() == null)
+                    if (getValue() == null) {
                         addError(myType.getName() + " must be non-null", FIELD_VALUE);
-                    else if (getValue() <= 0)
+                    } else if (getValue() <= 0) {
                         addError(myType.getName() + " must be positive", FIELD_VALUE);
+                    }
                     break;
                 case ThirdParty:
                     Account myAccount = getAccount();
-                    if (myAccount == null)
+                    if (myAccount == null) {
                         addError(myType.getName() + " must be non-null", FIELD_VALUE);
-                    else if (!myAccount.isMoney())
+                    } else if (!myAccount.isMoney()) {
                         addError(myType.getName() + " must be money account", FIELD_VALUE);
+                    }
                     break;
                 default:
                     addError("Invalid Event Type", FIELD_INFOTYPE);
@@ -360,28 +467,27 @@ public class EventValue extends DataItem<EventValue> {
         }
 
         /* Set validation flag */
-        if (!hasErrors())
+        if (!hasErrors()) {
             setValidEdit();
+        }
     }
 
-    /**
-     * Format an Event Value.
-     * @param pValue the value to format
-     * @return the formatted value
-     */
-    public static String format(final EventValue pValue) {
+    @Override
+    public String formatObject() {
+        Integer myValue = getValue();
+
         /* If we have null, return it */
-        if ((pValue == null) || (pValue.getValue() == null)) {
+        if (myValue == null) {
             return "null";
         }
 
         /* Switch on type of Value */
-        switch (pValue.getInfoType().getInfoClass()) {
+        switch (getInfoType().getInfoClass()) {
             case ThirdParty:
-                return JDataObject.formatField(pValue.getAccount());
+                return JDataObject.formatField(getAccount());
             case QualifyYears:
             case XferDelay:
-                return JDataObject.formatField(pValue.getValue());
+                return JDataObject.formatField(myValue);
             default:
                 return "null";
         }
@@ -422,52 +528,60 @@ public class EventValue extends DataItem<EventValue> {
         }
     }
 
-    /* List class */
+    /**
+     * List class for EventValues.
+     */
     public static class EventValueList extends DataList<EventValueList, EventValue> {
-        /* Access Extra Variables correctly */
+        /**
+         * The DataSet.
+         */
         private FinanceData theData = null;
 
+        /**
+         * Obtain dataSet.
+         * @return the dataSet
+         */
         public FinanceData getData() {
             return theData;
         }
 
         /**
-         * Construct an empty CORE list
+         * Construct an empty CORE list.
          * @param pData the DataSet for the list
          */
-        protected EventValueList(FinanceData pData) {
+        protected EventValueList(final FinanceData pData) {
             super(EventValueList.class, EventValue.class, ListStyle.CORE, false);
             theData = pData;
             setGeneration(pData.getGeneration());
         }
 
         /**
-         * Construct an empty list
+         * Construct an empty list.
          * @param pData the DataSet for the list
          * @param pStyle the required style
          */
-        protected EventValueList(FinanceData pData,
-                                 ListStyle pStyle) {
+        protected EventValueList(final FinanceData pData,
+                                 final ListStyle pStyle) {
             super(EventValueList.class, EventValue.class, pStyle, false);
             theData = pData;
             setGeneration(pData.getGeneration());
         }
 
         /**
-         * Constructor for a cloned List
+         * Constructor for a cloned List.
          * @param pSource the source List
          */
-        private EventValueList(EventValueList pSource) {
+        private EventValueList(final EventValueList pSource) {
             super(pSource);
             theData = pSource.theData;
         }
 
         /**
          * Construct an update extract for the List.
-         * @param pStyle
+         * @param pStyle the style
          * @return the update Extract
          */
-        private EventValueList getExtractList(ListStyle pStyle) {
+        private EventValueList getExtractList(final ListStyle pStyle) {
             /* Build an empty Extract List */
             EventValueList myList = new EventValueList(this);
 
@@ -478,7 +592,6 @@ public class EventValue extends DataItem<EventValue> {
             return myList;
         }
 
-        /* Obtain extract lists. */
         @Override
         public EventValueList getUpdateList() {
             return getExtractList(ListStyle.UPDATE);
@@ -495,7 +608,7 @@ public class EventValue extends DataItem<EventValue> {
         }
 
         @Override
-        public EventValueList getDeepCopy(DataSet<?> pDataSet) {
+        public EventValueList getDeepCopy(final DataSet<?> pDataSet) {
             /* Build an empty Extract List */
             EventValueList myList = new EventValueList(this);
             myList.theData = (FinanceData) pDataSet;
@@ -508,12 +621,8 @@ public class EventValue extends DataItem<EventValue> {
             return myList;
         }
 
-        /**
-         * Construct a difference Info list
-         * @param pOld the old Info list
-         */
         @Override
-        protected EventValueList getDifferences(EventValueList pOld) {
+        protected EventValueList getDifferences(final EventValueList pOld) {
             /* Build an empty Difference List */
             EventValueList myList = new EventValueList(this);
 
@@ -525,7 +634,7 @@ public class EventValue extends DataItem<EventValue> {
         }
 
         /**
-         * Obtain the type of the item
+         * Obtain the type of the item.
          * @return the type of the item
          */
         @Override
@@ -534,45 +643,47 @@ public class EventValue extends DataItem<EventValue> {
         }
 
         /**
-         * Allow an EventInfo to be loaded
-         * @param uId
-         * @param uInfoTypeId
-         * @param uEventId
-         * @param pValue
-         * @throws JDataException
+         * Allow an EventInfo to be loaded.
+         * @param uId the id
+         * @param uInfoTypeId the infoType
+         * @param uEventId the event id
+         * @param pValue the value
+         * @throws JDataException on error
          */
         public void addItem(final int uId,
                             final int uInfoTypeId,
                             final int uEventId,
-                            Integer pValue) throws JDataException {
+                            final Integer pValue) throws JDataException {
             EventValue myInfo;
 
             /* Create the info */
             myInfo = new EventValue(this, uId, uInfoTypeId, uEventId, pValue);
 
             /* Check that this InfoId has not been previously added */
-            if (!isIdUnique(uId))
+            if (!isIdUnique(uId)) {
                 throw new JDataException(ExceptionClass.DATA, myInfo, "Duplicate ValueId");
+            }
 
             /* Validate the information */
             myInfo.validate();
 
             /* Handle validation failure */
-            if (myInfo.hasErrors())
+            if (myInfo.hasErrors()) {
                 throw new JDataException(ExceptionClass.VALIDATE, myInfo, "Failed validation");
+            }
 
             /* Add to the list */
             add(myInfo);
         }
 
         /**
-         * Add new item type (into edit session)
+         * Add new item type (into edit session).
          * @param pType the Item Type
          * @param pEvent the Event
          * @return the value
          */
-        protected EventValue addNewItem(EventInfoType pType,
-                                        Event pEvent) {
+        protected EventValue addNewItem(final EventInfoType pType,
+                                        final Event pEvent) {
             /* Create the new Value */
             EventValue myValue = new EventValue(this, pType, pEvent);
 
@@ -582,7 +693,7 @@ public class EventValue extends DataItem<EventValue> {
         }
 
         @Override
-        public EventValue addNewItem(DataItem<?> pElement) {
+        public EventValue addNewItem(final DataItem<?> pElement) {
             /* Create the new item */
             EventValue mySource = (EventValue) pElement;
             EventValue myValue = new EventValue(this, mySource);

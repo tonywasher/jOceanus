@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,11 +30,15 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.database.TableStaticData;
 
+/**
+ * TableStaticData extension for Frequency.
+ * @author Tony Washer
+ */
 public class TableFrequency extends TableStaticData<Frequency> {
     /**
      * The name of the table.
      */
-    protected final static String TABLE_NAME = Frequency.listName;
+    protected static final String TABLE_NAME = Frequency.LIST_NAME;
 
     /**
      * The frequency list.

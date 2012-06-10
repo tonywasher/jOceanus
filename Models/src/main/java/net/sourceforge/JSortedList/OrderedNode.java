@@ -39,19 +39,9 @@ public class OrderedNode<T extends Comparable<T>> {
     private final OrderedList<T> theList;
 
     /**
-     * Is the object hidden.
-     */
-    private boolean isHidden = false;
-
-    /**
      * The standard index of this item.
      */
     private int theIndex = -1;
-
-    /**
-     * The hidden index of this item.
-     */
-    private int theHiddenIndex = -1;
 
     /**
      * The next node in the sequence.
@@ -62,14 +52,6 @@ public class OrderedNode<T extends Comparable<T>> {
      * The previous node in the sequence.
      */
     private OrderedNode<T> thePrev = null;
-
-    /**
-     * Is the Node hidden.
-     * @return <code>true/false</code>
-     */
-    public boolean isHidden() {
-        return isHidden;
-    }
 
     /**
      * Get object.
@@ -92,49 +74,16 @@ public class OrderedNode<T extends Comparable<T>> {
     }
 
     /**
-     * Set Hidden flag.
-     * @param pHidden <code>true/false</code>
-     */
-    protected void setHidden(final boolean pHidden) {
-        /* Start with this node */
-        OrderedNode<T> myNode = this;
-
-        /* Record the hidden flag */
-        isHidden = pHidden;
-
-        /* Determine adjustment factor */
-        int iAdjust = (isHidden) ? -1 : 1;
-
-        /* Loop through nodes */
-        while (myNode != null) {
-            /* Adjust hidden index */
-            myNode.theHiddenIndex += iAdjust;
-
-            /* Shift to next node */
-            myNode = myNode.theNext;
-        }
-    }
-
-    /**
      * add Node to the list immediately before the passed node.
      * @param pPoint the node before which we have to insert
      */
     protected void addBeforeNode(final OrderedNode<T> pPoint) {
-        /* Determine whether this item is hidden */
-        boolean isVisible = !isHidden;
-
         /* Set values for the new item */
         thePrev = pPoint.thePrev;
         theNext = pPoint;
 
-        /* Copy Indices from insert point */
+        /* Copy Index from insert point */
         theIndex = pPoint.theIndex;
-        theHiddenIndex = pPoint.theHiddenIndex;
-
-        /* If hidden status differs, adjust hidden index */
-        if (pPoint.isHidden == isVisible) {
-            theHiddenIndex += (isVisible) ? 1 : -1;
-        }
 
         /* Add to the list */
         pPoint.thePrev = this;
@@ -143,23 +92,19 @@ public class OrderedNode<T extends Comparable<T>> {
         }
 
         /* Loop through subsequent elements increasing the indices */
-        adjustIndicesAfterInsert(theNext, isVisible);
+        adjustIndicesAfterInsert(theNext);
     }
 
     /**
      * add Node to the tail of the list (note that we cannot be an empty list at this point).
      */
     protected void addToTail() {
-        /* Determine whether this item is hidden */
-        boolean isVisible = !isHidden;
-
         /* Set values for the new item */
-        thePrev = theList.getTail();
+        thePrev = theList.getLast();
         theNext = null;
 
-        /* Set new indices */
+        /* Set new index */
         theIndex = thePrev.theIndex + 1;
-        theHiddenIndex = (isVisible) ? thePrev.theHiddenIndex + 1 : thePrev.theHiddenIndex;
 
         /* Add to the list */
         thePrev.theNext = this;
@@ -170,19 +115,12 @@ public class OrderedNode<T extends Comparable<T>> {
      * @param pPoint the node after which we have to insert
      */
     protected void addAfterNode(final OrderedNode<T> pPoint) {
-        /* Determine whether this item is hidden */
-        boolean isVisible = !isHidden;
-
         /* Set values for the new item */
         theNext = pPoint.theNext;
         thePrev = pPoint;
 
-        /* Set new indices from insert point */
+        /* Set new index from insert point */
         theIndex = pPoint.theIndex + 1;
-        theHiddenIndex = pPoint.theHiddenIndex + 1;
-        if (!isVisible) {
-            theHiddenIndex--;
-        }
 
         /* Add to the list */
         pPoint.theNext = this;
@@ -191,23 +129,19 @@ public class OrderedNode<T extends Comparable<T>> {
         }
 
         /* Adjust following indices */
-        adjustIndicesAfterInsert(theNext, isVisible);
+        adjustIndicesAfterInsert(theNext);
     }
 
     /**
      * add Node to the head of the list.
      */
     protected void addToHead() {
-        /* Determine whether this item is hidden */
-        boolean isVisible = !isHidden;
-
         /* Set values for the new item */
-        theNext = theList.getHead();
+        theNext = theList.getFirst();
         thePrev = null;
 
-        /* Set new indices */
+        /* Set new index */
         theIndex = 0;
-        theHiddenIndex = (isVisible) ? 0 : -1;
 
         /* Adjust the following link */
         if (theNext != null) {
@@ -215,23 +149,18 @@ public class OrderedNode<T extends Comparable<T>> {
         }
 
         /* Adjust following indices */
-        adjustIndicesAfterInsert(theNext, isVisible);
+        adjustIndicesAfterInsert(theNext);
     }
 
     /**
      * Adjust indexes after insert.
      * @param pNode the first node to adjust
-     * @param isVisible is the insert visible
      */
-    private static void adjustIndicesAfterInsert(final OrderedNode<?> pNode,
-                                                 final boolean isVisible) {
+    private static void adjustIndicesAfterInsert(final OrderedNode<?> pNode) {
         OrderedNode<?> myCurr = pNode;
         while (myCurr != null) {
-            /* Increment indices */
+            /* Increment index */
             myCurr.theIndex++;
-            if (isVisible) {
-                myCurr.theHiddenIndex++;
-            }
             myCurr = myCurr.theNext;
         }
     }
@@ -239,17 +168,12 @@ public class OrderedNode<T extends Comparable<T>> {
     /**
      * Adjust indexes after remove.
      * @param pNode the first node to adjust
-     * @param isVisible is the removal visible
      */
-    private static void adjustIndicesAfterRemove(final OrderedNode<?> pNode,
-                                                 final boolean isVisible) {
+    private static void adjustIndicesAfterRemove(final OrderedNode<?> pNode) {
         OrderedNode<?> myCurr = pNode;
         while (myCurr != null) {
-            /* Decrement indices */
+            /* Decrement index */
             myCurr.theIndex--;
-            if (isVisible) {
-                myCurr.theHiddenIndex--;
-            }
             myCurr = myCurr.theNext;
         }
     }
@@ -258,11 +182,6 @@ public class OrderedNode<T extends Comparable<T>> {
      * Remove node from list.
      */
     protected void remove() {
-        boolean isVisible;
-
-        /* Determine whether this item is visible */
-        isVisible = !isHidden;
-
         /* Adjust nodes either side of this node */
         if (thePrev != null) {
             thePrev.theNext = theNext;
@@ -272,7 +191,7 @@ public class OrderedNode<T extends Comparable<T>> {
         }
 
         /* Adjust following indices */
-        adjustIndicesAfterRemove(theNext, isVisible);
+        adjustIndicesAfterRemove(theNext);
 
         /* clean our links */
         theNext = null;
@@ -288,27 +207,6 @@ public class OrderedNode<T extends Comparable<T>> {
     }
 
     /**
-     * Get the next node in the sequence.
-     * @param doSkipHidden skip hidden items
-     * @return the Next visible node
-     */
-    protected OrderedNode<T> getNext(final boolean doSkipHidden) {
-        /* Access the next item */
-        OrderedNode<T> myNext = theNext;
-
-        /* If we should skip hidden items */
-        if (doSkipHidden) {
-            /* Loop skipping hidden items */
-            while ((myNext != null) && (myNext.isHidden)) {
-                myNext = myNext.theNext;
-            }
-        }
-
-        /* Return to caller */
-        return myNext;
-    }
-
-    /**
      * Get the previous node in the sequence.
      * @return the Previous node
      */
@@ -317,42 +215,11 @@ public class OrderedNode<T extends Comparable<T>> {
     }
 
     /**
-     * Get the previous node in the sequence.
-     * @param doSkipHidden skip hidden items
-     * @return the previous visible node
-     */
-    protected OrderedNode<T> getPrev(final boolean doSkipHidden) {
-        /* Access the previous item */
-        OrderedNode<T> myPrev = thePrev;
-
-        /* If we should skip hidden items */
-        if (doSkipHidden) {
-            /* Loop skipping hidden items */
-            while ((myPrev != null) && (myPrev.isHidden)) {
-                myPrev = myPrev.thePrev;
-            }
-        }
-
-        /* Return to caller */
-        return myPrev;
-    }
-
-    /**
      * Get the index of the item.
      * @return the relevant index of the item
      */
     public int getIndex() {
         return theIndex;
-    }
-
-    /**
-     * Get the index of the item.
-     * @param doSkipHidden skip hidden items
-     * @return the relevant index of the item
-     */
-    public int getIndex(final boolean doSkipHidden) {
-        /* Return the relevant index */
-        return (doSkipHidden) ? theHiddenIndex : theIndex;
     }
 
     /**

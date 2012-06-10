@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,36 +37,40 @@ import uk.co.tolcroft.models.database.TableDefinition;
 import uk.co.tolcroft.models.database.TableDefinition.SortOrder;
 import uk.co.tolcroft.models.database.TableEncrypted;
 
+/**
+ * TableEncrypted extension for AccountRate.
+ * @author Tony Washer
+ */
 public class TableAccountRate extends TableEncrypted<AccountRate> {
     /**
-     * The name of the Rates table
+     * The name of the Rates table.
      */
-    protected final static String TableName = AccountRate.LIST_NAME;
+    protected static final String TABLE_NAME = AccountRate.LIST_NAME;
 
     /**
-     * The table definition
+     * The table definition.
      */
     private TableDefinition theTableDef; /* Set during load */
 
     /**
-     * The rate list
+     * The rate list.
      */
     private AccountRateList theList = null;
 
     /**
-     * Constructor
+     * Constructor.
      * @param pDatabase the database control
      */
-    protected TableAccountRate(Database<?> pDatabase) {
-        super(pDatabase, TableName);
+    protected TableAccountRate(final Database<?> pDatabase) {
+        super(pDatabase, TABLE_NAME);
     }
 
     /**
-     * Define the table columns (called from within super-constructor)
+     * Define the table columns (called from within super-constructor).
      * @param pTableDef the table definition
      */
     @Override
-    protected void defineTable(TableDefinition pTableDef) {
+    protected void defineTable(final TableDefinition pTableDef) {
         /* Define sort column variable */
         super.defineTable(pTableDef);
         theTableDef = pTableDef;
@@ -75,7 +80,7 @@ public class TableAccountRate extends TableEncrypted<AccountRate> {
         ColumnDefinition myActCol;
 
         /* Declare the columns */
-        myActCol = theTableDef.addReferenceColumn(AccountRate.FIELD_ACCOUNT, TableAccount.TableName);
+        myActCol = theTableDef.addReferenceColumn(AccountRate.FIELD_ACCOUNT, TableAccount.TABLE_NAME);
         theTableDef.addEncryptedColumn(AccountRate.FIELD_RATE, EncryptedData.RATELEN);
         theTableDef.addNullEncryptedColumn(AccountRate.FIELD_BONUS, EncryptedData.RATELEN);
         myDateCol = theTableDef.addNullDateColumn(AccountRate.FIELD_ENDDATE);
@@ -85,40 +90,29 @@ public class TableAccountRate extends TableEncrypted<AccountRate> {
         myActCol.setSortOrder(SortOrder.ASCENDING);
     }
 
-    /* Declare DataSet */
     @Override
-    protected void declareData(DataSet<?> pData) {
+    protected void declareData(final DataSet<?> pData) {
         FinanceData myData = (FinanceData) pData;
         theList = myData.getRates();
         setList(theList);
     }
 
-    /* Load the rate */
     @Override
-    protected void loadItem(int pId,
-                            int pControlId) throws JDataException {
-        int myAccountId;
-        byte[] myRate;
-        byte[] myBonus;
-        Date myEndDate;
-
+    protected void loadItem(final int pId,
+                            final int pControlId) throws JDataException {
         /* Get the various fields */
-        myAccountId = theTableDef.getIntegerValue(AccountRate.FIELD_ACCOUNT);
-        myRate = theTableDef.getBinaryValue(AccountRate.FIELD_RATE);
-        myBonus = theTableDef.getBinaryValue(AccountRate.FIELD_BONUS);
-        myEndDate = theTableDef.getDateValue(AccountRate.FIELD_ENDDATE);
+        int myAccountId = theTableDef.getIntegerValue(AccountRate.FIELD_ACCOUNT);
+        byte[] myRate = theTableDef.getBinaryValue(AccountRate.FIELD_RATE);
+        byte[] myBonus = theTableDef.getBinaryValue(AccountRate.FIELD_BONUS);
+        Date myEndDate = theTableDef.getDateValue(AccountRate.FIELD_ENDDATE);
 
         /* Add into the list */
         theList.addItem(pId, pControlId, myAccountId, myRate, myEndDate, myBonus);
-
-        /* Return to caller */
-        return;
     }
 
-    /* Set a field value */
     @Override
-    protected void setFieldValue(AccountRate pItem,
-                                 JDataField iField) throws JDataException {
+    protected void setFieldValue(final AccountRate pItem,
+                                 final JDataField iField) throws JDataException {
         /* Switch on field id */
         if (iField == AccountRate.FIELD_ACCOUNT) {
             theTableDef.setIntegerValue(iField, pItem.getAccount().getId());

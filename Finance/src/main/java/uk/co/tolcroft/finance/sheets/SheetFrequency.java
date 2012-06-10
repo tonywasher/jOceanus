@@ -47,7 +47,7 @@ public class SheetFrequency extends SheetStaticData<Frequency> {
     /**
      * NamedArea for Frequencies.
      */
-    private static final String AREA_FREQUENCIES = Frequency.listName;
+    private static final String AREA_FREQUENCIES = Frequency.LIST_NAME;
 
     /**
      * NameList for Frequencies.

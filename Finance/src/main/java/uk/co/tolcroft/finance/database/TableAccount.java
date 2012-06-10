@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,36 +36,40 @@ import uk.co.tolcroft.models.database.TableDefinition;
 import uk.co.tolcroft.models.database.TableDefinition.SortOrder;
 import uk.co.tolcroft.models.database.TableEncrypted;
 
+/**
+ * TableEncrypted extension for Account.
+ * @author Tony Washer
+ */
 public class TableAccount extends TableEncrypted<Account> {
     /**
-     * The name of the Account table
+     * The name of the Account table.
      */
-    protected final static String TableName = Account.LIST_NAME;
+    protected static final String TABLE_NAME = Account.LIST_NAME;
 
     /**
-     * The table definition
+     * The table definition.
      */
     private TableDefinition theTableDef; /* Set during load */
 
     /**
-     * The account list
+     * The account list.
      */
     private AccountList theList = null;
 
     /**
-     * Constructor
+     * Constructor.
      * @param pDatabase the database control
      */
-    protected TableAccount(Database<FinanceData> pDatabase) {
-        super(pDatabase, TableName);
+    protected TableAccount(final Database<FinanceData> pDatabase) {
+        super(pDatabase, TABLE_NAME);
     }
 
     /**
-     * Define the table columns (called from within super-constructor)
+     * Define the table columns (called from within super-constructor).
      * @param pTableDef the table definition
      */
     @Override
-    protected void defineTable(TableDefinition pTableDef) {
+    protected void defineTable(final TableDefinition pTableDef) {
         /* Define Standard table */
         super.defineTable(pTableDef);
         theTableDef = pTableDef;
@@ -78,8 +83,8 @@ public class TableAccount extends TableEncrypted<Account> {
         theTableDef.addNullEncryptedColumn(Account.FIELD_DESC, Account.DESCLEN);
         theTableDef.addNullDateColumn(Account.FIELD_MATURITY);
         theTableDef.addNullDateColumn(Account.FIELD_CLOSE);
-        theTableDef.addNullReferenceColumn(Account.FIELD_PARENT, TableName);
-        theTableDef.addNullReferenceColumn(Account.FIELD_ALIAS, TableName);
+        theTableDef.addNullReferenceColumn(Account.FIELD_PARENT, TABLE_NAME);
+        theTableDef.addNullReferenceColumn(Account.FIELD_ALIAS, TABLE_NAME);
         theTableDef.addNullEncryptedColumn(Account.FIELD_WEBSITE, Account.WSITELEN);
         theTableDef.addNullEncryptedColumn(Account.FIELD_CUSTNO, Account.CUSTLEN);
         theTableDef.addNullEncryptedColumn(Account.FIELD_USERID, Account.UIDLEN);
@@ -91,56 +96,39 @@ public class TableAccount extends TableEncrypted<Account> {
         mySortCol.setSortOrder(SortOrder.ASCENDING);
     }
 
-    /* Declare DataSet */
     @Override
-    protected void declareData(DataSet<?> pData) {
+    protected void declareData(final DataSet<?> pData) {
         FinanceData myData = (FinanceData) pData;
         theList = myData.getAccounts();
         setList(theList);
     }
 
-    /* Load the account */
     @Override
-    protected void loadItem(int pId,
-                            int pControlId) throws JDataException {
-        byte[] myName;
-        int myActTypeId;
-        Integer myParentId;
-        Integer myAliasId;
-        byte[] myDesc;
-        Date myMaturity;
-        Date myClosed;
-        byte[] myWebSite;
-        byte[] myCustNo;
-        byte[] myUserId;
-        byte[] myPassword;
-        byte[] myAccount;
-        byte[] myNotes;
-
+    protected void loadItem(final int pId,
+                            final int pControlId) throws JDataException {
         /* Get the various fields */
-        myName = theTableDef.getBinaryValue(Account.FIELD_NAME);
-        myActTypeId = theTableDef.getIntegerValue(Account.FIELD_TYPE);
-        myDesc = theTableDef.getBinaryValue(Account.FIELD_DESC);
-        myMaturity = theTableDef.getDateValue(Account.FIELD_MATURITY);
-        myClosed = theTableDef.getDateValue(Account.FIELD_CLOSE);
-        myParentId = theTableDef.getIntegerValue(Account.FIELD_PARENT);
-        myAliasId = theTableDef.getIntegerValue(Account.FIELD_ALIAS);
-        myWebSite = theTableDef.getBinaryValue(Account.FIELD_WEBSITE);
-        myCustNo = theTableDef.getBinaryValue(Account.FIELD_CUSTNO);
-        myUserId = theTableDef.getBinaryValue(Account.FIELD_USERID);
-        myPassword = theTableDef.getBinaryValue(Account.FIELD_PASSWORD);
-        myAccount = theTableDef.getBinaryValue(Account.FIELD_ACCOUNT);
-        myNotes = theTableDef.getBinaryValue(Account.FIELD_NOTES);
+        byte[] myName = theTableDef.getBinaryValue(Account.FIELD_NAME);
+        int myActTypeId = theTableDef.getIntegerValue(Account.FIELD_TYPE);
+        byte[] myDesc = theTableDef.getBinaryValue(Account.FIELD_DESC);
+        Date myMaturity = theTableDef.getDateValue(Account.FIELD_MATURITY);
+        Date myClosed = theTableDef.getDateValue(Account.FIELD_CLOSE);
+        Integer myParentId = theTableDef.getIntegerValue(Account.FIELD_PARENT);
+        Integer myAliasId = theTableDef.getIntegerValue(Account.FIELD_ALIAS);
+        byte[] myWebSite = theTableDef.getBinaryValue(Account.FIELD_WEBSITE);
+        byte[] myCustNo = theTableDef.getBinaryValue(Account.FIELD_CUSTNO);
+        byte[] myUserId = theTableDef.getBinaryValue(Account.FIELD_USERID);
+        byte[] myPassword = theTableDef.getBinaryValue(Account.FIELD_PASSWORD);
+        byte[] myAccount = theTableDef.getBinaryValue(Account.FIELD_ACCOUNT);
+        byte[] myNotes = theTableDef.getBinaryValue(Account.FIELD_NOTES);
 
         /* Add into the list */
         theList.addItem(pId, pControlId, myName, myActTypeId, myDesc, myMaturity, myClosed, myParentId,
                         myAliasId, myWebSite, myCustNo, myUserId, myPassword, myAccount, myNotes);
     }
 
-    /* Set a field value */
     @Override
-    protected void setFieldValue(Account pItem,
-                                 JDataField iField) throws JDataException {
+    protected void setFieldValue(final Account pItem,
+                                 final JDataField iField) throws JDataException {
         /* Switch on field id */
         if (iField == Account.FIELD_NAME) {
             theTableDef.setBinaryValue(iField, pItem.getNameBytes());

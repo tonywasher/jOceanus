@@ -32,19 +32,16 @@ import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
- * Nested Hash map implementation. Provides hash map functionality using nested child hash maps as an
- * expansion method rather than expansion an rehashing as is performed by {@link java.util.HashMap}.
+ * Nested Hash map implementation. Provides hash map functionality using nested child arrays as an expansion
+ * method rather than expansion and rehashing as is performed by {@link java.util.HashMap}.
  * <ul>
  * <li>Null keys are not supported.
  * <li>Null values are supported.
  * <li>Collisions can only occur if hashCodes are identical.
- * <li>Nested HashMaps are promoted when no longer needed.
- * <li>The remove operation of iterators is disallowed due to the structural changes that this can cause. This
- * may be revisited in future.
+ * <li>Nested ChildArrays are reduced when no longer needed.
  * </ul>
  * @author Tony Washer
  * @param <K> the key type
@@ -92,16 +89,6 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
     private transient int theSize = 0;
 
     /**
-     * The number of hash entries in this hashMap array.
-     */
-    private transient int theNumEntries = 0;
-
-    /**
-     * The number of hash maps in this hashMap array.
-     */
-    private transient int theNumMaps = 0;
-
-    /**
      * The cached entrySet.
      */
     private transient EntrySet theEntrySet = null;
@@ -119,7 +106,7 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
     /**
      * The hashMap array.
      */
-    private transient Object[] theArray;
+    private transient ArrayElement theArray;
 
     /**
      * The modification count.
@@ -145,11 +132,79 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
     }
 
     /**
-     * Is the nested map promotable?
-     * @return true/false
+     * ArrayElement holds the array and data about the array.
      */
-    private boolean isPromotable() {
-        return (theNumMaps == 0) && (theNumEntries <= 1);
+    private static final class ArrayElement {
+        /**
+         * The array.
+         */
+        private final Object[] theArray;
+
+        /**
+         * The number of elements in the array.
+         */
+        private int theNumElements;
+
+        /**
+         * The Parent reference.
+         */
+        private final ArrayElement theParent;
+
+        /**
+         * The Parental index.
+         */
+        private final int theIndex;
+
+        /**
+         * Constructor.
+         * @param pSize the array size
+         */
+        private ArrayElement(final int pSize) {
+            theNumElements = 0;
+            theParent = null;
+            theIndex = -1;
+            theArray = new Object[pSize];
+        }
+
+        /**
+         * Constructor.
+         * @param pParent the parent
+         * @param iIndex the entry index of the parent
+         */
+        private ArrayElement(final ArrayElement pParent,
+                             final int iIndex) {
+            int iArraySize = pParent.theArray.length;
+            theNumElements = 0;
+            theParent = pParent;
+            theParent.theNumElements += iArraySize;
+            theIndex = iIndex;
+            theArray = new Object[iArraySize];
+        }
+
+        /**
+         * Collapse the array.
+         */
+        private void collapseArray() {
+            /* Ignore if too busy or already at top */
+            if ((theParent == null) || (theNumElements > 1)) {
+                return;
+            }
+
+            /* Locate the remaining element */
+            Object myObject = null;
+            int iArraySize = theArray.length;
+            for (int i = 0; i < iArraySize; i++) {
+                if (theArray[i] != null) {
+                    myObject = theArray[i];
+                    break;
+                }
+            }
+
+            /* Place into parent and try to collapse parent */
+            theParent.theArray[theIndex] = myObject;
+            theParent.theNumElements -= iArraySize;
+            theParent.collapseArray();
+        }
     }
 
     /**
@@ -175,30 +230,7 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
         theArraySize = getArraySize();
 
         /* Create the array */
-        theArray = new Object[theArraySize];
-    }
-
-    /**
-     * Constructor for nested map.
-     * @param pShiftBits the number of shift bits
-     * @param pHash the existing entries
-     */
-    private NestedHashMap(final int pShiftBits,
-                          final HashEntry<K, V> pHash) {
-        /* Call standard map */
-        this(pShiftBits);
-
-        /* Determine adjusted hash and index */
-        int iHash = pHash.getHash() >>> pShiftBits;
-        int iIndex = iHash & (theArraySize - 1);
-
-        /* Record the entry and adjust the hash values */
-        theArray[iIndex] = pHash;
-        pHash.updateHash(iHash);
-
-        /* Set size of map */
-        theSize = pHash.countSiblings();
-        theNumEntries = 1;
+        theArray = new ArrayElement(theArraySize);
     }
 
     /**
@@ -277,18 +309,26 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
         /* Increment modification count */
         theModCount++;
 
+        /* Clear the array */
+        clearArray(theArray);
+
+        /* Reset size */
+        theSize = 0;
+    }
+
+    /**
+     * Clear array.
+     * @param pArray the array to clear
+     */
+    private void clearArray(final ArrayElement pArray) {
         /* Loop through the array */
         for (int iIndex = 0; iIndex < theArraySize; iIndex++) {
             /* Access current value and remove from array */
-            Object myEntry = theArray[iIndex];
-            theArray[iIndex] = null;
+            Object[] myArray = pArray.theArray;
+            Object myEntry = myArray[iIndex];
+            myArray[iIndex] = null;
 
-            /* Case 1 null entry, just ignore */
-            if (myEntry == null) {
-                continue;
-            }
-
-            /* Case 2 we have an existing entry */
+            /* If we have an existing entry */
             if (myEntry instanceof HashEntry) {
                 /* Access the Hash Entry */
                 @SuppressWarnings("unchecked")
@@ -297,21 +337,12 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
                 /* Clear values */
                 myHash.clear();
 
-                /* Case 3 we have an existing map */
-            } else if (myEntry instanceof NestedHashMap) {
-                /* Access the Hash Entry */
-                @SuppressWarnings("unchecked")
-                NestedHashMap<K, V> myMap = (NestedHashMap<K, V>) myEntry;
-
-                /* Clear and reset */
-                myMap.clear();
+                /* if we have an extension array */
+            } else if (myEntry instanceof ArrayElement) {
+                /* Clear the array */
+                clearArray((ArrayElement) myEntry);
             }
         }
-
-        /* Reset size and counts */
-        theSize = 0;
-        theNumEntries = 0;
-        theNumMaps = 0;
     }
 
     @Override
@@ -322,41 +353,49 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
 
     @Override
     public boolean containsValue(final Object pValue) {
+        /* Check the array */
+        return containsValue(theArray, pValue);
+    }
+
+    /**
+     * Check whether the array contains the value.
+     * @param pArray the array to check
+     * @param pValue the value to check
+     * @return true/false
+     */
+    private boolean containsValue(final ArrayElement pArray,
+                                  final Object pValue) {
+        /* Determine whether we have a null value */
+        boolean isNullValue = (pValue == null);
+
         /* Loop through the array */
         for (int iIndex = 0; iIndex < theArraySize; iIndex++) {
             /* Access current value */
-            Object myEntry = theArray[iIndex];
+            Object[] myArray = pArray.theArray;
+            Object myEntry = myArray[iIndex];
 
-            /* Case 1 null entry, just ignore */
-            if (myEntry == null) {
-                continue;
-            }
-
-            /* Case 2 we have an existing entry */
+            /* If we have an existing entry */
             if (myEntry instanceof HashEntry) {
                 /* Access the Hash Entry */
                 @SuppressWarnings("unchecked")
                 HashEntry<K, V> myHash = (HashEntry<K, V>) myEntry;
 
-                /* Check for value */
-                if (myHash.containsValue(pValue)) {
-                    return true;
+                if (isNullValue) {
+                    /* Check for null value */
+                    if (myHash.containsNullValue()) {
+                        return true;
+                    }
+
+                } else {
+                    /* Check for value */
+                    if (myHash.containsValue(pValue)) {
+                        return true;
+                    }
                 }
 
-                /* move to next entry */
-                continue;
-            }
-
-            /* Case 3 we have an existing map */
-            if (myEntry instanceof NestedHashMap) {
-                /* Access the Hash Entry */
-                @SuppressWarnings("unchecked")
-                NestedHashMap<K, V> myMap = (NestedHashMap<K, V>) myEntry;
-
-                /* Check for value */
-                if (myMap.containsValue(pValue)) {
-                    return true;
-                }
+                /* if we have an extension array pass, check its contents */
+            } else if ((myEntry instanceof ArrayElement) && (containsValue((ArrayElement) myEntry, pValue))) {
+                return true;
             }
         }
 
@@ -403,8 +442,12 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
             Entry<K, V> myEntry = myIterator.next();
 
             /* Check that the entry is contained in the other map and has equal value */
-            Object myValue = myThat.get(myEntry.getKey());
-            if (!areEqual(myEntry.getValue(), myValue)) {
+            K myKey = myEntry.getKey();
+            V myValue = myEntry.getValue();
+            int myHash = myKey.hashCode();
+            HashEntry<?, ?> myTest = myThat.getEntry(myHash, myKey);
+            if ((myTest == null)
+                    || (myTest.isValueNull ? (myValue != null) : !myTest.theValue.equals(myValue))) {
                 return false;
             }
         }
@@ -479,70 +522,93 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
     private V putEntry(final int pHash,
                        final K pKey,
                        final V pValue) {
-        /* Calculate the index into the array */
-        int iIndex = pHash & (theArraySize - 1);
+        /* Initialise the state */
+        int myShift = 0;
+        int myMask = theArraySize - 1;
+        int myCurHash = pHash;
+        ArrayElement myArray = theArray;
+        int myIndex;
 
-        /* Access current value */
-        Object myEntry = theArray[iIndex];
+        /* Loop to locate HashEntry location */
+        for (;;) {
+            /* Calculate the index into the array */
+            myIndex = myCurHash & myMask;
 
-        /* Case 1 no existing entry */
-        if (myEntry == null) {
-            /* Create the new entry */
-            theArray[iIndex] = new HashEntry<K, V>(pHash, pKey, pValue);
+            /* Access current entry */
+            Object myEntry = myArray.theArray[myIndex];
 
-            /* Increment the count of entries and modification count */
-            theSize++;
-            theModCount++;
-            theNumEntries++;
+            /* If this is a nested array */
+            if (myEntry instanceof ArrayElement) {
+                /* Adjust array and index */
+                myShift += theShiftBits;
+                myCurHash >>>= theShiftBits;
+                myArray = (ArrayElement) myEntry;
 
-            /* return that there was no previous mapping */
-            return null;
-        }
+                /* Re-loop */
+                continue;
 
-        /* Case 2 we have an existing entry */
-        if (myEntry instanceof HashEntry) {
-            /* Access the Hash Entry */
-            @SuppressWarnings("unchecked")
-            HashEntry<K, V> myHash = (HashEntry<K, V>) myEntry;
+                /* If this is an empty slot */
+            } else if (myEntry == null) {
+                /* Create and store the new entry */
+                HashEntry<K, V> myHashEntry = new HashEntry<K, V>(pHash, pKey);
+                myHashEntry.setValue(pValue);
+                myArray.theArray[myIndex] = myHashEntry;
 
-            /* If the hash code is identical */
-            if (myHash.theHash == pHash) {
-                /* Find the entry */
-                myHash = myHash.findKey(pKey);
-
-                /* Set the new value */
-                return myHash.setValue(pValue);
-            }
-
-            /* Create a new hash map based on this entry */
-            myEntry = new NestedHashMap<K, V>(theShiftBits, myHash);
-
-            /* Store the entry and drop through */
-            theArray[iIndex] = myEntry;
-            theNumMaps++;
-        }
-
-        /* Case 3 we have a nested HashMap */
-        if (myEntry instanceof NestedHashMap) {
-            /* Access the Hash Map */
-            @SuppressWarnings("unchecked")
-            NestedHashMap<K, V> myMap = (NestedHashMap<K, V>) myEntry;
-
-            /* Put the entry into the map */
-            V myValue = myMap.putEntry((pHash >>> theShiftBits), pKey, pValue);
-
-            /* Increment size and modification count if the entry did not exist */
-            if (myValue == null) {
+                /* Increment the count of entries and modification count */
                 theSize++;
                 theModCount++;
+                myArray.theNumElements++;
+
+                /* return that there was no previous mapping */
+                return null;
+
+                /* If this is an entry */
+            } else if (myEntry instanceof HashEntry) {
+                /* Access the Hash Entry */
+                @SuppressWarnings("unchecked")
+                HashEntry<K, V> myHashEntry = (HashEntry<K, V>) myEntry;
+
+                /* If the hash code is identical */
+                if (myHashEntry.theHash == pHash) {
+                    /* Obtain the entry for the key */
+                    myHashEntry = myHashEntry.accessKeyEntry(pKey);
+
+                    /* If the entry already exists */
+                    if (myHashEntry.valueSet()) {
+                        /* Set the new value and return old value */
+                        return myHashEntry.setValue(pValue);
+                    }
+
+                    /* Set the value */
+                    myHashEntry.setValue(pValue);
+
+                    /* Increment the count of entries and modification count */
+                    theSize++;
+                    theModCount++;
+                    myArray.theNumElements++;
+
+                    /* Return null as old value */
+                    return null;
+                }
+
+                /* Hash does not match so we need to extend the map */
+                ArrayElement myNewArray = new ArrayElement(myArray, myIndex);
+
+                /* Calculate index of existing entry */
+                myShift += theShiftBits;
+                int myNewIndex = (myHashEntry.theHash >>> myShift) & myMask;
+                myNewArray.theArray[myNewIndex] = myHashEntry;
+                myNewArray.theNumElements++;
+                myArray.theArray[myIndex] = myNewArray;
+
+                /* Adjust array and index */
+                myCurHash >>>= theShiftBits;
+                myArray = myNewArray;
+
+                /* Re-loop */
+                continue;
             }
-
-            /* Return the value */
-            return myValue;
         }
-
-        /* Invalid object in array */
-        throw new IllegalStateException("Invalid Map state : " + myEntry.getClass());
     }
 
     /**
@@ -553,49 +619,53 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
      */
     private HashEntry<K, V> getEntry(final int pHash,
                                      final Object pKey) {
-        /* Calculate the index into the array */
-        int iIndex = pHash & (theArraySize - 1);
+        /* Initialise the state */
+        int myMask = theArraySize - 1;
+        int myCurHash = pHash;
+        ArrayElement myCurArray = theArray;
+        int myIndex;
 
-        /* Access current value */
-        Object myEntry = theArray[iIndex];
+        /* Loop to locate HashEntry location */
+        for (;;) {
+            /* Calculate the index into the array */
+            myIndex = myCurHash & myMask;
 
-        /* Case 1 no existing entry */
-        if (myEntry == null) {
-            /* return that there is no mapping */
-            return null;
-        }
+            /* Access current entry */
+            Object myEntry = myCurArray.theArray[myIndex];
 
-        /* Case 2 we have an existing entry */
-        if (myEntry instanceof HashEntry) {
-            /* Access the Hash Entry */
-            @SuppressWarnings("unchecked")
-            HashEntry<K, V> myHash = (HashEntry<K, V>) myEntry;
+            /* If this is an extension array */
+            if (myEntry instanceof ArrayElement) {
+                /* Adjust array and index */
+                myCurHash >>>= theShiftBits;
+                myCurArray = (ArrayElement) myEntry;
 
-            /* If the hash code is identical */
-            if (myHash.theHash == pHash) {
-                /* Find the entry */
-                myHash = myHash.checkKey(pKey);
+                /* Re-loop */
+                continue;
 
-                /* Return the entry */
-                return myHash;
+                /* if this is an empty slot */
+            } else if (myEntry == null) {
+                /* Key not found */
+                return null;
+
+                /* If this is an entry */
+            } else if (myEntry instanceof HashEntry) {
+                /* Access the Hash Entry */
+                @SuppressWarnings("unchecked")
+                HashEntry<K, V> myHash = (HashEntry<K, V>) myEntry;
+
+                /* If the hash code is identical */
+                if (myHash.theHash == pHash) {
+                    /* Find the entry */
+                    myHash = myHash.findExistingKey(pKey);
+
+                    /* Return the entry */
+                    return myHash;
+                }
+
+                /* return that there is no mapping */
+                return null;
             }
-
-            /* return that there is no mapping */
-            return null;
         }
-
-        /* Case 3 we have a nested HashMap */
-        if (myEntry instanceof NestedHashMap) {
-            /* Access the Hash Map */
-            @SuppressWarnings("unchecked")
-            NestedHashMap<K, V> myMap = (NestedHashMap<K, V>) myEntry;
-
-            /* Look for the entry in the nested map */
-            return myMap.getEntry((pHash >>> theShiftBits), pKey);
-        }
-
-        /* Invalid object in array */
-        throw new IllegalStateException("Invalid Map state : " + myEntry.getClass());
     }
 
     /**
@@ -606,153 +676,77 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
      */
     private HashEntry<K, V> removeEntry(final int pHash,
                                         final Object pKey) {
-        /* Calculate the index into the array */
-        int iIndex = pHash & (theArraySize - 1);
+        /* Initialise the state */
+        int myMask = theArraySize - 1;
+        int myCurHash = pHash;
+        ArrayElement myCurArray = theArray;
+        int myIndex;
 
-        /* Access current value */
-        Object myEntry = theArray[iIndex];
+        /* Loop to locate HashEntry location */
+        for (;;) {
+            /* Calculate the index into the array */
+            myIndex = myCurHash & myMask;
 
-        /* Case 1 no existing entry */
-        if (myEntry == null) {
-            /* return that there is no mapping */
-            return null;
-        }
+            /* Access current entry */
+            Object myEntry = myCurArray.theArray[myIndex];
 
-        /* Case 2 we have an existing entry */
-        if (myEntry instanceof HashEntry) {
-            /* Access the Hash Entry */
-            @SuppressWarnings("unchecked")
-            HashEntry<K, V> myHash = (HashEntry<K, V>) myEntry;
+            /* If this is an extension array */
+            if (myEntry instanceof ArrayElement) {
+                /* Adjust array and index */
+                myCurHash >>>= theShiftBits;
+                myCurArray = (ArrayElement) myEntry;
 
-            /* If the hash code is identical */
-            if (myHash.theHash == pHash) {
-                /* If the top entry is not a match */
-                if (!myHash.getKey().equals(pKey)) {
-                    /* Find/remove the entry */
-                    myHash = myHash.removeKey(pKey);
-
-                    /* If not found then return null */
-                    if (myHash == null) {
-                        return null;
-                    }
-
-                    /* else we have found the entry */
-                } else {
-                    /* remove the top-level index */
-                    theArray[iIndex] = myHash.getNext();
-
-                    /* If we no longer have an entry at this position */
-                    if (theArray[iIndex] == null) {
-                        /* Decrement number of entries */
-                        theNumEntries--;
-                    }
-                }
-
-                /* adjust size and modification count */
-                theSize--;
-                theModCount++;
-
-                /* return the entry */
-                return myHash;
-            }
-
-            /* return that there is no mapping */
-            return null;
-        }
-
-        /* Case 3 we have a nested HashMap */
-        if (myEntry instanceof NestedHashMap) {
-            /* Access the Hash Map */
-            @SuppressWarnings("unchecked")
-            NestedHashMap<K, V> myMap = (NestedHashMap<K, V>) myEntry;
-
-            /* Remove the entry from the sub-map */
-            HashEntry<K, V> myHash = myMap.removeEntry((pHash >>> theShiftBits), pKey);
-
-            /* If the entry was present. */
-            if (myHash != null) {
-                /* Adjust size and ModCount */
-                theSize--;
-                theModCount++;
-
-                /* If the underlying map is promotable */
-                if (myMap.isPromotable()) {
-                    /* Promote it */
-                    theArray[iIndex] = myMap.promoteEntry(iIndex);
-
-                    /* Decrement hashMap count */
-                    theNumMaps--;
-                }
-            }
-
-            /* Return the value */
-            return myHash;
-        }
-
-        /* Invalid object in array */
-        throw new IllegalStateException("Invalid Map state : " + myEntry.getClass());
-    }
-
-    /**
-     * Promote entry.
-     * @param pIndex the index to promote to
-     * @return the promoted entry
-     */
-    private HashEntry<K, V> promoteEntry(final int pIndex) {
-        /* Find the non-null entry */
-        for (Object myEntry : theArray) {
-            /* Ignore null entries */
-            if (myEntry == null) {
+                /* Re-loop */
                 continue;
+
+                /* if this is an empty slot */
+            } else if (myEntry == null) {
+                /* Key not found */
+                return null;
+
+                /* If this is an entry */
+            } else if (myEntry instanceof HashEntry) {
+                /* Access the Hash Entry */
+                @SuppressWarnings("unchecked")
+                HashEntry<K, V> myHash = (HashEntry<K, V>) myEntry;
+
+                /* If the hash code is identical */
+                if (myHash.theHash == pHash) {
+                    /* If the top entry is not a match */
+                    if (!myHash.theKey.equals(pKey)) {
+                        /* Find/remove the entry */
+                        myHash = myHash.removeKey(pKey);
+
+                        /* If not found then return null */
+                        if (myHash == null) {
+                            return null;
+                        }
+
+                        /* else we have found the entry at the top */
+                    } else {
+                        /* remove the top-level hash */
+                        myCurArray.theArray[myIndex] = myHash.theNext;
+
+                        /* If we no longer have an entry at this position */
+                        if (myHash.theNext == null) {
+                            /* Decrement number of entries and try to collapse the array */
+                            myCurArray.theNumElements--;
+                            myCurArray.collapseArray();
+                        }
+                    }
+
+                    /* adjust size and modification count */
+                    theSize--;
+                    theModCount++;
+
+                    /* return the entry */
+                    return myHash;
+                }
+
+                /* return that there is no mapping */
+                return null;
             }
-
-            /* Access the entry */
-            if (!(myEntry instanceof HashEntry)) {
-                /* Invalid object in array */
-                throw new IllegalStateException("Invalid Map state : " + myEntry.getClass());
-            }
-
-            /* Access as hash Entry */
-            @SuppressWarnings("unchecked")
-            HashEntry<K, V> myHash = (HashEntry<K, V>) myEntry;
-
-            /* Check the size */
-            if (myHash.countSiblings() != theSize) {
-                /* Invalid object in array */
-                throw new IllegalStateException("Invalid Map state : " + myEntry.getClass());
-            }
-
-            /* Promote the entry and return it */
-            int iHash = myHash.getHash();
-            iHash <<= theShiftBits;
-            myHash.updateHash(iHash | pIndex);
-            return myHash;
         }
-
-        /* Empty map, return null */
-        return null;
-    }
-
-    /**
-     * Determine whether two objects are equal, handling nulls.
-     * @param pFirst The first object
-     * @param pSecond The second object
-     * @return true/false
-     */
-    private static boolean areEqual(final Object pFirst,
-                                    final Object pSecond) {
-        /* Handle identity */
-        if (pFirst == pSecond) {
-            return true;
-        }
-
-        /* Neither value can be null */
-        if ((pFirst == null) || (pSecond == null)) {
-            return false;
-        }
-
-        /* Handle Standard cases */
-        return pFirst.equals(pSecond);
     }
 
     /**
@@ -777,24 +771,26 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
         private V theValue;
 
         /**
+         * Has the value been set?.
+         */
+        private boolean valueSet;
+
+        /**
+         * Is the value null?.
+         */
+        private boolean isValueNull;
+
+        /**
          * The next entry.
          */
         private HashEntry<K, V> theNext = null;
 
         /**
-         * Get the hash code.
-         * @return the hash code
+         * Is the value set?.
+         * @return true/false
          */
-        private int getHash() {
-            return theHash;
-        }
-
-        /**
-         * Get the next entry.
-         * @return the next entry
-         */
-        private HashEntry<K, V> getNext() {
-            return theNext;
+        private boolean valueSet() {
+            return valueSet;
         }
 
         @Override
@@ -814,6 +810,8 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
 
             /* Set the new value */
             theValue = pNewValue;
+            valueSet = true;
+            isValueNull = (theValue == null);
 
             /* Return the old value */
             return myOld;
@@ -823,15 +821,13 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
          * Constructor.
          * @param pHash the hash code
          * @param pKey the key
-         * @param pValue the Value
          */
         private HashEntry(final int pHash,
-                          final K pKey,
-                          final V pValue) {
+                          final K pKey) {
             /* Set the hash, key and value */
             theHash = pHash;
             theKey = pKey;
-            theValue = pValue;
+            valueSet = false;
         }
 
         /**
@@ -839,16 +835,17 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
          * @param pKey the key
          * @return the matching entry or null
          */
-        private HashEntry<K, V> checkKey(final Object pKey) {
-            /* If this is the key, return it */
-            if (theKey.equals(pKey)) {
-                return this;
-            }
+        private HashEntry<K, V> findExistingKey(final Object pKey) {
+            /* Loop through all the siblings */
+            HashEntry<K, V> myHash = this;
+            while (myHash != null) {
+                /* Check item */
+                if (myHash.theKey.equals(pKey)) {
+                    return myHash;
+                }
 
-            /* If we have further siblings */
-            if (theNext != null) {
-                /* pass call on */
-                return theNext.checkKey(pKey);
+                /* Move to next item */
+                myHash = myHash.theNext;
             }
 
             /* No matching entry so return null */
@@ -861,15 +858,37 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
          * @return true/false
          */
         private boolean containsValue(final Object pValue) {
-            /* If the value matches return true */
-            if (areEqual(theValue, pValue)) {
-                return true;
+            /* Loop through all the siblings */
+            HashEntry<K, V> myHash = this;
+            while (myHash != null) {
+                /* Check item */
+                if ((!myHash.isValueNull) && (myHash.theValue.equals(pValue))) {
+                    return true;
+                }
+
+                /* Move to next item */
+                myHash = myHash.theNext;
             }
 
-            /* If we have further siblings */
-            if (theNext != null) {
-                /* Pass call on */
-                return theNext.containsValue(pValue);
+            /* No matching entry so return false */
+            return false;
+        }
+
+        /**
+         * Check whether this entry (or any sibling) contains the null value.
+         * @return true/false
+         */
+        private boolean containsNullValue() {
+            /* Loop through all the siblings */
+            HashEntry<K, V> myHash = this;
+            while (myHash != null) {
+                /* Check item */
+                if (myHash.isValueNull) {
+                    return true;
+                }
+
+                /* Move to next item */
+                myHash = myHash.theNext;
             }
 
             /* No matching entry so return false */
@@ -882,21 +901,27 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
          * @return the entry
          */
         private HashEntry<K, V> removeKey(final Object pKey) {
-            /* If we have no next entry, just return */
-            if (theNext == null) {
-                return null;
-            }
+            /* Loop through all the siblings */
+            HashEntry<K, V> myHash = this;
+            for (;;) {
+                /* Access next item */
+                HashEntry<K, V> myNext = myHash.theNext;
 
-            /* If the next holds the key */
-            if (theNext.getKey().equals(pKey)) {
-                /* remove from list and return */
-                HashEntry<K, V> myHash = theNext;
-                theNext = myHash.getNext();
-                return myHash;
-            }
+                /* If no next entry, return null */
+                if (myNext == null) {
+                    return null;
+                }
 
-            /* pass call on */
-            return theNext.removeKey(pKey);
+                /* If the next holds the key */
+                if (myNext.theKey.equals(pKey)) {
+                    /* Unlink the entry and return it */
+                    myHash.theNext = myNext.theNext;
+                    return myNext;
+                }
+
+                /* Move to next item */
+                myHash = myNext;
+            }
         }
 
         /**
@@ -904,49 +929,27 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
          * @param pKey the key
          * @return the entry
          */
-        private HashEntry<K, V> findKey(final K pKey) {
-            /* If this is the key, return it */
-            if (theKey.equals(pKey)) {
-                return this;
-            }
+        private HashEntry<K, V> accessKeyEntry(final K pKey) {
+            /* Loop through all the siblings */
+            HashEntry<K, V> myHash = this;
+            for (;;) {
+                /* If we match the key */
+                if (myHash.theKey.equals(pKey)) {
+                    /* Return it */
+                    return myHash;
+                }
 
-            /* If we have further siblings */
-            if (theNext != null) {
-                /* pass call on */
-                return theNext.findKey(pKey);
-            }
+                /* Access next item */
+                HashEntry<K, V> myNext = myHash.theNext;
 
-            /* No matching entry so create new entry */
-            theNext = new HashEntry<K, V>(theHash, pKey, null);
-            return theNext;
-        }
+                /* If no next entry, allocate new entry */
+                if (myNext == null) {
+                    theNext = new HashEntry<K, V>(theHash, pKey);
+                    return theNext;
+                }
 
-        /**
-         * Count number of siblings.
-         * @return number of siblings
-         */
-        private int countSiblings() {
-            /* If this is last entry, count is one */
-            if (theNext == null) {
-                return 1;
-            }
-
-            /* Pass call on */
-            return 1 + theNext.countSiblings();
-        }
-
-        /**
-         * Adjust hash for this entry, plus siblings.
-         * @param pHash the new hash
-         */
-        private void updateHash(final int pHash) {
-            /* If this is the key, return it */
-            theHash = pHash;
-
-            /* If we have further siblings */
-            if (theNext != null) {
-                /* Pass call on */
-                theNext.updateHash(pHash);
+                /* Move to next item */
+                myHash = myNext;
             }
         }
 
@@ -954,16 +957,18 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
          * Clear entries.
          */
         private void clear() {
-            /* If we have no next element just return */
-            if (theNext == null) {
-                return;
+            /* Loop through all the siblings */
+            HashEntry<K, V> myHash = this;
+            while (myHash != null) {
+                /* Access next item */
+                HashEntry<K, V> myNext = myHash.theNext;
+
+                /* Clear entry */
+                myHash.theNext = null;
+
+                /* Move to next item */
+                myHash = myNext;
             }
-
-            /* Clear further elements */
-            theNext.clear();
-
-            /* Clear entry */
-            theNext = null;
         }
 
         @Override
@@ -985,33 +990,174 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
             HashEntry<?, ?> myThat = (HashEntry<?, ?>) pThat;
 
             /* Check hashCode */
-            if (theHash != myThat.getHash()) {
+            if (theHash != myThat.theHash) {
                 return false;
             }
 
             /* Check key */
-            if (theKey.equals(myThat.getKey())) {
+            if (theKey.equals(myThat.theKey)) {
                 return false;
             }
 
             /* Check value */
-            return areEqual(theValue, myThat.getValue());
+            return (isValueNull) ? myThat.isValueNull : theValue.equals(myThat.theValue);
         }
 
         @Override
         public int hashCode() {
-            /* Handle null value */
-            if (theValue == null) {
-                return theKey.hashCode();
-            }
-
             /* Create combined hashCode */
-            return theKey.hashCode() ^ theValue.hashCode();
+            return (isValueNull) ? theHash : theHash ^ theValue.hashCode();
         }
 
         @Override
         public String toString() {
             return theKey + "=" + theValue;
+        }
+    }
+
+    /**
+     * Array IteratorClass.
+     */
+    private final class ArrayIterator {
+        /**
+         * The array to operate on.
+         */
+        private final ArrayElement theArray;
+
+        /**
+         * The current index.
+         */
+        private int theIndex;
+
+        /**
+         * Last Hash entry.
+         */
+        private HashEntry<K, V> theLast = null;
+
+        /**
+         * Next Hash entry to return.
+         */
+        private HashEntry<K, V> theNext = null;
+
+        /**
+         * Nested Array iterator.
+         */
+        private ArrayIterator theIterator = null;
+
+        /**
+         * Constructor.
+         * @param pArray the array to iterate.
+         */
+        private ArrayIterator(final ArrayElement pArray) {
+            theArray = pArray;
+            theIndex = -1;
+        }
+
+        /**
+         * Is there another element in the array?
+         * @return true/false
+         */
+        private boolean hasNext() {
+            /* If we have an iterator */
+            if (theIterator != null) {
+                /* Check for further elements */
+                if (theIterator.hasNext()) {
+                    return true;
+                }
+
+                /* else check whether we have more in the current hash */
+            } else if (theNext != null) {
+                return true;
+            }
+
+            /* Loop through the remaining array looking for elements */
+            for (int i = theIndex + 1; i < theArraySize; i++) {
+                if (theArray.theArray[i] != null) {
+                    return true;
+                }
+            }
+
+            /* No more elements */
+            return false;
+        }
+
+        /**
+         * Obtain the next element in the array.
+         * @return the next element
+         */
+        private HashEntry<K, V> next() {
+            /* If we have an iterator */
+            if (theIterator != null) {
+                /* If we have further elements */
+                if (theIterator.hasNext()) {
+                    /* Pass the call on */
+                    return theIterator.next();
+                }
+
+                /* No further use for iterator */
+                theIterator = null;
+
+                /* If we have a next entry */
+            } else if (theNext != null) {
+                /* Record and return it */
+                theLast = theNext;
+                theNext = theNext.theNext;
+                return theLast;
+            }
+
+            /* Loop through the remaining array looking for elements */
+            for (int i = theIndex + 1; i < theArraySize; i++) {
+                /* Access entry */
+                Object myEntry = theArray.theArray[i];
+
+                /* If this is an entry */
+                if (myEntry instanceof HashEntry) {
+                    /* Access the Hash Entry */
+                    @SuppressWarnings("unchecked")
+                    HashEntry<K, V> myHash = (HashEntry<K, V>) myEntry;
+
+                    /* Record and return it */
+                    theIndex = i;
+                    theLast = myHash;
+                    theNext = myHash.theNext;
+                    return myHash;
+                }
+
+                /* If this is an extension array */
+                if (myEntry instanceof ArrayElement) {
+                    /* Create a nested iterator */
+                    theIndex = i;
+                    theLast = null;
+                    theNext = null;
+                    theIterator = new ArrayIterator((ArrayElement) myEntry);
+
+                    /* Pass the call on */
+                    return theIterator.next();
+                }
+            }
+
+            /* No more elements */
+            return null;
+        }
+
+        /**
+         * Remove last entry.
+         */
+        private void remove() {
+            /* If we have an iterator */
+            if (theIterator != null) {
+                /* Pass the call on */
+                theIterator.remove();
+            }
+
+            /* Reject if we do not have a last element */
+            if (theLast == null) {
+                throw new IllegalStateException();
+            }
+
+            /* Remove the entry */
+            removeEntry(theLast.theHash, theLast.theKey);
+            theLast = null;
         }
     }
 
@@ -1023,17 +1169,7 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
         /**
          * The next entry to return.
          */
-        private Object theNext = null;
-
-        /**
-         * The last entry returned.
-         */
-        private HashEntry<K, V> theLast = null;
-
-        /**
-         * Current slot.
-         */
-        private int theIndex = 0;
+        private final ArrayIterator theIterator;
 
         /**
          * The expected modification count.
@@ -1044,100 +1180,41 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
          * Constructor.
          */
         private HashIterator() {
-            /* If there are elements */
-            if (!isEmpty()) {
-                /* Shift to first element */
-                advanceIndex();
-            }
-        }
-
-        /**
-         * Advance the index to the next slot.
-         */
-        private void advanceIndex() {
-            theNext = null;
-            while (theIndex < theArraySize) {
-                /* Access the next entry */
-                theNext = theArray[theIndex++];
-                if (theNext != null) {
-                    break;
-                }
-            }
+            /* Allocate the iterator */
+            theIterator = new ArrayIterator(theArray);
         }
 
         @Override
         public final boolean hasNext() {
-            return theNext != null;
+            return theIterator.hasNext();
         }
 
         /**
          * Obtain next entry.
          * @return the next entry
          */
-        @SuppressWarnings("unchecked")
         protected final HashEntry<K, V> nextEntry() {
             /* Handle changed list */
             if (theModCount != theExpectedModCount) {
                 throw new ConcurrentModificationException();
             }
 
-            /* Handle end of list */
-            if (theNext == null) {
-                throw new NoSuchElementException();
-            }
-
-            /* If the next item is a HashEntry */
-            if (theNext instanceof HashEntry) {
-                /* Access the next entry */
-                theLast = (HashEntry<K, V>) theNext;
-
-                /* Shift entry */
-                theNext = theLast.getNext();
-
-                /* If we have reached the end */
-                if (theNext == null) {
-                    /* Advance the index */
-                    advanceIndex();
-                }
-
-                /* Return the next element */
-                return theLast;
-            }
-
-            /* If the next item is a NestedHashMap */
-            if (theNext instanceof NestedHashMap) {
-                /* Access the map */
-                NestedHashMap<K, V> myMap = (NestedHashMap<K, V>) theNext;
-
-                /* Access an iterator and store as next element */
-                theNext = myMap.new EntryIterator();
-            }
-
-            /* If the next item is an iterator */
-            if (theNext instanceof Iterator<?>) {
-                /* Access the entry */
-                Iterator<HashEntry<K, V>> myIterator = (Iterator<HashEntry<K, V>>) theNext;
-
-                /* Shift entry */
-                theLast = myIterator.next();
-
-                /* If we have reached the end */
-                if (!myIterator.hasNext()) {
-                    /* Advance the index */
-                    advanceIndex();
-                }
-
-                /* Return the next element */
-                return theLast;
-            }
-
-            /* Handle invalid state */
-            throw new IllegalStateException("Invalid Iterator state : " + theNext.getClass());
+            /* Return the next element */
+            return theIterator.next();
         }
 
         @Override
         public void remove() {
-            throw new UnsupportedOperationException();
+            /* Handle changed list */
+            if (theModCount != theExpectedModCount) {
+                throw new ConcurrentModificationException();
+            }
+
+            /* Remove the element */
+            theIterator.remove();
+
+            /* Adjust modification count */
+            theExpectedModCount = theModCount;
         }
     }
 
@@ -1290,8 +1367,9 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
             HashEntry<K, V> myEntry = (HashEntry<K, V>) o;
 
             /* Check that this key exists with this value */
-            V myValue = get(myEntry.getKey());
-            return areEqual(myValue, myEntry.getValue());
+            HashEntry<?, ?> myTest = getEntry(myEntry.theHash, myEntry.theKey);
+            return (myTest != null)
+                    && (myEntry.isValueNull ? myTest.isValueNull : myEntry.theValue.equals(myTest.theValue));
         }
 
         @Override
@@ -1326,11 +1404,9 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
         /* Re-initialise the fields */
         myResult.theShiftBits = theShiftBits;
         myResult.theArraySize = theArraySize;
-        myResult.theArray = new Object[theArraySize];
+        myResult.theArray = new ArrayElement(theArraySize);
         myResult.theSelf = myResult;
         myResult.theSize = 0;
-        myResult.theNumEntries = 0;
-        myResult.theNumMaps = 0;
         myResult.theEntrySet = null;
         myResult.theKeySet = null;
         myResult.theValueCollection = null;
@@ -1395,7 +1471,7 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
         /* Read in number of shift bits */
         theShiftBits = pInput.readInt();
         theArraySize = getArraySize();
-        theArray = new Object[theArraySize];
+        theArray = new ArrayElement(theArraySize);
 
         /* Finish initialisation */
         theSelf = this;

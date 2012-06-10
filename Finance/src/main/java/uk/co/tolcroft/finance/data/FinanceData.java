@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +23,6 @@
 package uk.co.tolcroft.finance.data;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDateDay.DateDayRange;
@@ -46,64 +46,136 @@ import uk.co.tolcroft.finance.views.MetaAnalysis;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.views.DataControl;
 
+/**
+ * FinanceData dataSet.
+ * @author Tony Washer
+ */
 public class FinanceData extends DataSet<FinanceData> {
     /**
      * Report fields.
      */
-    protected static final JDataFields theFields = new JDataFields(FinanceData.class.getSimpleName(),
+    protected static final JDataFields FIELD_DEFS = new JDataFields(FinanceData.class.getSimpleName(),
             DataSet.FIELD_DEFS);
 
-    /* Field IDs */
-    public static final JDataField FIELD_ACTTYPES = theFields.declareLocalField("AccountTypes");
-    public static final JDataField FIELD_TRANTYPES = theFields.declareLocalField("TransactionTypes");
-    public static final JDataField FIELD_TAXTYPES = theFields.declareLocalField("TaxTypes");
-    public static final JDataField FIELD_FREQS = theFields.declareLocalField("Frequencies");
-    public static final JDataField FIELD_TAXREGS = theFields.declareLocalField("TaxRegimes");
-    public static final JDataField FIELD_INFOTYPES = theFields.declareLocalField("EventInfoTypes");
-    public static final JDataField FIELD_TAXYEARS = theFields.declareLocalField("TaxYears");
-    public static final JDataField FIELD_ACCOUNTS = theFields.declareLocalField("Accounts");
-    public static final JDataField FIELD_RATES = theFields.declareLocalField("AccountRates");
-    public static final JDataField FIELD_PRICES = theFields.declareLocalField("AccountPrices");
-    public static final JDataField FIELD_PATTERNS = theFields.declareLocalField("AccountPatterns");
-    public static final JDataField FIELD_EVENTS = theFields.declareLocalField("Events");
-    public static final JDataField FIELD_EVENTVALUES = theFields.declareLocalField("EventValues");
-    public static final JDataField FIELD_EVENTDATA = theFields.declareLocalField("EventData");
+    /**
+     * AccountTypes Field Id.
+     */
+    public static final JDataField FIELD_ACTTYPES = FIELD_DEFS.declareLocalField("AccountTypes");
+
+    /**
+     * TransactionTypes Field Id.
+     */
+    public static final JDataField FIELD_TRANTYPES = FIELD_DEFS.declareLocalField("TransactionTypes");
+
+    /**
+     * TaxTypes Field Id.
+     */
+    public static final JDataField FIELD_TAXTYPES = FIELD_DEFS.declareLocalField("TaxTypes");
+
+    /**
+     * Frequencies Field Id.
+     */
+    public static final JDataField FIELD_FREQS = FIELD_DEFS.declareLocalField("Frequencies");
+
+    /**
+     * TaxRegimes Field Id.
+     */
+    public static final JDataField FIELD_TAXREGS = FIELD_DEFS.declareLocalField("TaxRegimes");
+
+    /**
+     * EventInfoTypes Field Id.
+     */
+    public static final JDataField FIELD_INFOTYPES = FIELD_DEFS.declareLocalField("EventInfoTypes");
+
+    /**
+     * TaxYears Field Id.
+     */
+    public static final JDataField FIELD_TAXYEARS = FIELD_DEFS.declareLocalField("TaxYears");
+
+    /**
+     * Accounts Field Id.
+     */
+    public static final JDataField FIELD_ACCOUNTS = FIELD_DEFS.declareLocalField("Accounts");
+
+    /**
+     * Rates Field Id.
+     */
+    public static final JDataField FIELD_RATES = FIELD_DEFS.declareLocalField("AccountRates");
+
+    /**
+     * Prices Field Id.
+     */
+    public static final JDataField FIELD_PRICES = FIELD_DEFS.declareLocalField("AccountPrices");
+
+    /**
+     * Patterns Field Id.
+     */
+    public static final JDataField FIELD_PATTERNS = FIELD_DEFS.declareLocalField("AccountPatterns");
+
+    /**
+     * Events Field Id.
+     */
+    public static final JDataField FIELD_EVENTS = FIELD_DEFS.declareLocalField("Events");
+
+    /**
+     * EventValues Field Id.
+     */
+    public static final JDataField FIELD_EVENTVALUES = FIELD_DEFS.declareLocalField("EventValues");
+
+    /**
+     * EventData Field Id.
+     */
+    public static final JDataField FIELD_EVENTDATA = FIELD_DEFS.declareLocalField("EventData");
 
     @Override
     public JDataFields getDataFields() {
-        return theFields;
+        return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(JDataField pField) {
-        if (pField == FIELD_ACTTYPES)
+    public Object getFieldValue(final JDataField pField) {
+        if (pField == FIELD_ACTTYPES) {
             return theActTypes;
-        if (pField == FIELD_TRANTYPES)
+        }
+        if (pField == FIELD_TRANTYPES) {
             return theTransTypes;
-        if (pField == FIELD_TAXTYPES)
+        }
+        if (pField == FIELD_TAXTYPES) {
             return theTaxTypes;
-        if (pField == FIELD_TAXREGS)
+        }
+        if (pField == FIELD_TAXREGS) {
             return theTaxRegimes;
-        if (pField == FIELD_FREQS)
+        }
+        if (pField == FIELD_FREQS) {
             return theFrequencys;
-        if (pField == FIELD_INFOTYPES)
+        }
+        if (pField == FIELD_INFOTYPES) {
             return theInfoTypes;
-        if (pField == FIELD_TAXYEARS)
+        }
+        if (pField == FIELD_TAXYEARS) {
             return theTaxYears;
-        if (pField == FIELD_ACCOUNTS)
+        }
+        if (pField == FIELD_ACCOUNTS) {
             return theAccounts;
-        if (pField == FIELD_RATES)
+        }
+        if (pField == FIELD_RATES) {
             return theRates;
-        if (pField == FIELD_PRICES)
+        }
+        if (pField == FIELD_PRICES) {
             return thePrices;
-        if (pField == FIELD_PATTERNS)
+        }
+        if (pField == FIELD_PATTERNS) {
             return thePatterns;
-        if (pField == FIELD_EVENTS)
+        }
+        if (pField == FIELD_EVENTS) {
             return theEvents;
-        if (pField == FIELD_EVENTVALUES)
+        }
+        if (pField == FIELD_EVENTVALUES) {
             return theEventValues;
-        if (pField == FIELD_EVENTDATA)
+        }
+        if (pField == FIELD_EVENTDATA) {
             return theEventData;
+        }
         return super.getFieldValue(pField);
     }
 
@@ -112,99 +184,232 @@ public class FinanceData extends DataSet<FinanceData> {
         return FinanceData.class.getSimpleName();
     }
 
-    /* Members */
+    /**
+     * AccountTypes.
+     */
     private AccountTypeList theActTypes = null;
+
+    /**
+     * TransactionTypes.
+     */
     private TransTypeList theTransTypes = null;
+
+    /**
+     * TaxTypes.
+     */
     private TaxTypeList theTaxTypes = null;
+
+    /**
+     * TaxRegimes.
+     */
     private TaxRegimeList theTaxRegimes = null;
+
+    /**
+     * Frequencies.
+     */
     private FrequencyList theFrequencys = null;
+
+    /**
+     * EventInfoTypes.
+     */
     private EventInfoTypeList theInfoTypes = null;
+
+    /**
+     * TaxYears.
+     */
     private TaxYearList theTaxYears = null;
+
+    /**
+     * Accounts.
+     */
     private AccountList theAccounts = null;
+
+    /**
+     * Rates.
+     */
     private AccountRateList theRates = null;
+
+    /**
+     * Prices.
+     */
     private AccountPriceList thePrices = null;
+
+    /**
+     * Patterns.
+     */
     private PatternList thePatterns = null;
+
+    /**
+     * Events.
+     */
     private EventList theEvents = null;
+
+    /**
+     * EventValues.
+     */
     private EventValueList theEventValues = null;
+
+    /**
+     * EventData.
+     */
     private EventDataList theEventData = null;
+
+    /**
+     * DataSet range.
+     */
     private DateDayRange theDateRange = null;
+
+    /**
+     * Analysis.
+     */
     private EventAnalysis theAnalysis = null;
+
+    /**
+     * LoadState.
+     */
     private LoadState theLoadState = LoadState.INITIAL;
 
-    /* Access Methods */
+    /**
+     * Obtain AccountTypes.
+     * @return the Account types
+     */
     public AccountTypeList getAccountTypes() {
         return theActTypes;
     }
 
+    /**
+     * Obtain TransactionTypes.
+     * @return the Transaction types
+     */
     public TransTypeList getTransTypes() {
         return theTransTypes;
     }
 
+    /**
+     * Obtain TaxTypes.
+     * @return the Tax types
+     */
     public TaxTypeList getTaxTypes() {
         return theTaxTypes;
     }
 
+    /**
+     * Obtain TaxRegimes.
+     * @return the TaxRegimes
+     */
     public TaxRegimeList getTaxRegimes() {
         return theTaxRegimes;
     }
 
+    /**
+     * Obtain Frequencies.
+     * @return the Frequencies
+     */
     public FrequencyList getFrequencys() {
         return theFrequencys;
     }
 
+    /**
+     * Obtain EventInfoTypes.
+     * @return the Event Info types
+     */
     public EventInfoTypeList getInfoTypes() {
         return theInfoTypes;
     }
 
+    /**
+     * Obtain TaxYears.
+     * @return the TaxYears
+     */
     public TaxYearList getTaxYears() {
         return theTaxYears;
     }
 
+    /**
+     * Obtain Accounts.
+     * @return the Accounts
+     */
     public AccountList getAccounts() {
         return theAccounts;
     }
 
+    /**
+     * Obtain AccountRates.
+     * @return the Account rates
+     */
     public AccountRateList getRates() {
         return theRates;
     }
 
+    /**
+     * Obtain AccountPrices.
+     * @return the Account prices
+     */
     public AccountPriceList getPrices() {
         return thePrices;
     }
 
+    /**
+     * Obtain Patterns.
+     * @return the Patterns
+     */
     public PatternList getPatterns() {
         return thePatterns;
     }
 
+    /**
+     * Obtain Events.
+     * @return the Events
+     */
     public EventList getEvents() {
         return theEvents;
     }
 
+    /**
+     * Obtain EventValues.
+     * @return the Event Values
+     */
     public EventValueList getEventValues() {
         return theEventValues;
     }
 
+    /**
+     * Obtain EventData.
+     * @return the Event Data
+     */
     public EventDataList getEventData() {
         return theEventData;
     }
 
+    /**
+     * Obtain Date range.
+     * @return the Date Range
+     */
     public DateDayRange getDateRange() {
         return theDateRange;
     }
 
+    /**
+     * Obtain Analysis.
+     * @return the Analysis
+     */
     public EventAnalysis getAnalysis() {
         return theAnalysis;
     }
 
+    /**
+     * Obtain Load State.
+     * @return the Load State
+     */
     public LoadState getLoadState() {
         return theLoadState;
     }
 
     /**
-     * Standard constructor
+     * Standard constructor.
      * @param pSecurity the secure manager
      */
-    public FinanceData(SecureManager pSecurity) {
+    public FinanceData(final SecureManager pSecurity) {
         /* Call Super-constructor */
         super(pSecurity);
 
@@ -229,10 +434,10 @@ public class FinanceData extends DataSet<FinanceData> {
     }
 
     /**
-     * Constructor for a cloned DataSet
+     * Constructor for a cloned DataSet.
      * @param pSource the source DataSet
      */
-    private FinanceData(FinanceData pSource) {
+    private FinanceData(final FinanceData pSource) {
         super(pSource);
     }
 
@@ -316,40 +521,33 @@ public class FinanceData extends DataSet<FinanceData> {
      * Items that are in both lists but differ will be viewed as changed
      * @param pOld The DataSet to compare to
      * @return the difference extract
-     * @throws JDataException
+     * @throws JDataException on error
      */
     @Override
-    public FinanceData getDifferenceSet(FinanceData pOld) throws JDataException {
-        /* Make sure that the DataSet if the same type */
-        if (!(pOld instanceof FinanceData))
-            throw new JDataException(ExceptionClass.LOGIC, "Invalid DataSet type");
-
-        /* Cast correctly */
-        FinanceData myOld = (FinanceData) pOld;
-
+    public FinanceData getDifferenceSet(final FinanceData pOld) throws JDataException {
         /* Build an empty DataSet */
         FinanceData myDiffers = new FinanceData(this);
 
         /* Obtain underlying differences */
-        myDiffers.getDifferenceSet(this, myOld);
+        myDiffers.getDifferenceSet(this, pOld);
 
         /* Build the static differences */
-        myDiffers.theActTypes = theActTypes.getDifferences(myOld.getAccountTypes());
-        myDiffers.theTransTypes = theTransTypes.getDifferences(myOld.getTransTypes());
-        myDiffers.theTaxTypes = theTaxTypes.getDifferences(myOld.getTaxTypes());
-        myDiffers.theTaxRegimes = theTaxRegimes.getDifferences(myOld.getTaxRegimes());
-        myDiffers.theFrequencys = theFrequencys.getDifferences(myOld.getFrequencys());
-        myDiffers.theInfoTypes = theInfoTypes.getDifferences(myOld.getInfoTypes());
+        myDiffers.theActTypes = theActTypes.getDifferences(pOld.getAccountTypes());
+        myDiffers.theTransTypes = theTransTypes.getDifferences(pOld.getTransTypes());
+        myDiffers.theTaxTypes = theTaxTypes.getDifferences(pOld.getTaxTypes());
+        myDiffers.theTaxRegimes = theTaxRegimes.getDifferences(pOld.getTaxRegimes());
+        myDiffers.theFrequencys = theFrequencys.getDifferences(pOld.getFrequencys());
+        myDiffers.theInfoTypes = theInfoTypes.getDifferences(pOld.getInfoTypes());
 
         /* Build the data differences */
-        myDiffers.theTaxYears = theTaxYears.getDifferences(myOld.getTaxYears());
-        myDiffers.theAccounts = theAccounts.getDifferences(myOld.getAccounts());
-        myDiffers.theRates = theRates.getDifferences(myOld.getRates());
-        myDiffers.thePrices = thePrices.getDifferences(myOld.getPrices());
-        myDiffers.thePatterns = thePatterns.getDifferences(myOld.getPatterns());
-        myDiffers.theEvents = theEvents.getDifferences(myOld.getEvents());
-        myDiffers.theEventData = theEventData.getDifferences(myOld.getEventData());
-        myDiffers.theEventValues = theEventValues.getDifferences(myOld.getEventValues());
+        myDiffers.theTaxYears = theTaxYears.getDifferences(pOld.getTaxYears());
+        myDiffers.theAccounts = theAccounts.getDifferences(pOld.getAccounts());
+        myDiffers.theRates = theRates.getDifferences(pOld.getRates());
+        myDiffers.thePrices = thePrices.getDifferences(pOld.getPrices());
+        myDiffers.thePatterns = thePatterns.getDifferences(pOld.getPatterns());
+        myDiffers.theEvents = theEvents.getDifferences(pOld.getEvents());
+        myDiffers.theEventData = theEventData.getDifferences(pOld.getEventData());
+        myDiffers.theEventValues = theEventValues.getDifferences(pOld.getEventValues());
 
         /* Declare the lists */
         myDiffers.declareLists();
@@ -361,41 +559,34 @@ public class FinanceData extends DataSet<FinanceData> {
     /**
      * ReBase this data set against an earlier version.
      * @param pOld The old data to reBase against
-     * @throws JDataException
+     * @throws JDataException on error
      */
     @Override
-    public void reBase(FinanceData pOld) throws JDataException {
-        /* Make sure that the DataSet if the same type */
-        if (!(pOld instanceof FinanceData))
-            throw new JDataException(ExceptionClass.LOGIC, "Invalid DataSet type");
-
-        /* Cast correctly */
-        FinanceData myOld = (FinanceData) pOld;
-
+    public void reBase(final FinanceData pOld) throws JDataException {
         /* Call super-class */
-        super.reBase(myOld);
+        super.reBase(pOld);
 
         /* ReBase the static items */
-        theActTypes.reBase(myOld.getAccountTypes());
-        theTransTypes.reBase(myOld.getTransTypes());
-        theTaxTypes.reBase(myOld.getTaxTypes());
-        theTaxRegimes.reBase(myOld.getTaxRegimes());
-        theFrequencys.reBase(myOld.getFrequencys());
-        theInfoTypes.reBase(myOld.getInfoTypes());
+        theActTypes.reBase(pOld.getAccountTypes());
+        theTransTypes.reBase(pOld.getTransTypes());
+        theTaxTypes.reBase(pOld.getTaxTypes());
+        theTaxRegimes.reBase(pOld.getTaxRegimes());
+        theFrequencys.reBase(pOld.getFrequencys());
+        theInfoTypes.reBase(pOld.getInfoTypes());
 
         /* ReBase the data items */
-        theTaxYears.reBase(myOld.getTaxYears());
-        theAccounts.reBase(myOld.getAccounts());
-        theRates.reBase(myOld.getRates());
-        thePrices.reBase(myOld.getPrices());
-        thePatterns.reBase(myOld.getPatterns());
-        theEvents.reBase(myOld.getEvents());
-        theEventData.reBase(myOld.getEventData());
-        theEventValues.reBase(myOld.getEventValues());
+        theTaxYears.reBase(pOld.getTaxYears());
+        theAccounts.reBase(pOld.getAccounts());
+        theRates.reBase(pOld.getRates());
+        thePrices.reBase(pOld.getPrices());
+        thePatterns.reBase(pOld.getPatterns());
+        theEvents.reBase(pOld.getEvents());
+        theEventData.reBase(pOld.getEventData());
+        theEventValues.reBase(pOld.getEventValues());
     }
 
     /**
-     * Declare lists
+     * Declare lists.
      */
     private void declareLists() {
         /* Declare the lists */
@@ -416,7 +607,7 @@ public class FinanceData extends DataSet<FinanceData> {
     }
 
     /**
-     * Calculate the allowed Date Range
+     * Calculate the allowed Date Range.
      */
     public void calculateDateRange() {
         theDateRange = theTaxYears.getRange();
@@ -424,17 +615,18 @@ public class FinanceData extends DataSet<FinanceData> {
     }
 
     /**
-     * Analyse the data
+     * Analyse the data.
      * @param pControl the data view
-     * @throws JDataException
+     * @throws JDataException on error
      */
     @Override
-    public void analyseData(DataControl<?> pControl) throws JDataException {
+    public void analyseData(final DataControl<?> pControl) throws JDataException {
         MetaAnalysis myMetaAnalysis;
 
         /* Update INITIAL Load status */
-        if (theLoadState == LoadState.INITIAL)
+        if (theLoadState == LoadState.INITIAL) {
             theLoadState = LoadState.FINAL;
+        }
 
         /* Reset the flags on static data (ignoring TaxTypes) */
         theActTypes.clearActive();
@@ -465,8 +657,9 @@ public class FinanceData extends DataSet<FinanceData> {
         myMetaAnalysis = theAnalysis.getMetaAnalysis();
 
         /* Note active accounts by asset */
-        if (myMetaAnalysis != null)
+        if (myMetaAnalysis != null) {
             myMetaAnalysis.markActiveAccounts();
+        }
 
         /* Note active accounts */
         theAccounts.markActiveItems();
@@ -476,21 +669,21 @@ public class FinanceData extends DataSet<FinanceData> {
     }
 
     /**
-     * Enumeration of load states of data
+     * Enumeration of load states of data.
      */
     public static enum LoadState {
         /**
-         * Initial loading, with parental account links and close-ability not yet done
+         * Initial loading, with parental account links and close-ability not yet done.
          */
         INITIAL,
 
         /**
-         * Final loading with parental links and close-ability done
+         * Final loading with parental links and close-ability done.
          */
         FINAL,
 
         /**
-         * Fully loaded
+         * Fully loaded.
          */
         LOADED;
     }

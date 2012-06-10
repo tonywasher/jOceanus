@@ -1,4 +1,5 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,6 +30,10 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.database.TableStaticData;
 
+/**
+ * TableStaticData extension for EventInfoType.
+ * @author Tony Washer
+ */
 public class TableEventInfoType extends TableStaticData<EventInfoType> {
     /**
      * The name of the table.

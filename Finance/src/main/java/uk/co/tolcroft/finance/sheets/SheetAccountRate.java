@@ -44,7 +44,7 @@ import uk.co.tolcroft.models.sheets.SheetReader.SheetHelper;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 
 /**
- * SheetStaticData extension for AccountRate.
+ * SheetDataItem extension for AccountRate.
  * @author Tony Washer
  */
 public class SheetAccountRate extends SheetDataItem<AccountRate> {

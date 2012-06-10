@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,36 +34,40 @@ import uk.co.tolcroft.models.database.DatabaseTable;
 import uk.co.tolcroft.models.database.TableDefinition;
 import uk.co.tolcroft.models.database.TableDefinition.SortOrder;
 
+/**
+ * DatabaseTable extension for EventValue.
+ * @author Tony Washer
+ */
 public class TableEventValues extends DatabaseTable<EventValue> {
     /**
-     * The name of the EventValues table
+     * The name of the EventValues table.
      */
-    protected final static String TableName = EventValue.LIST_NAME;
+    protected static final String TABLE_NAME = EventValue.LIST_NAME;
 
     /**
-     * The table definition
+     * The table definition.
      */
     private TableDefinition theTableDef; /* Set during load */
 
     /**
-     * The EventValues list
+     * The EventValues list.
      */
     private EventValueList theList = null;
 
     /**
-     * Constructor
+     * Constructor.
      * @param pDatabase the database control
      */
-    protected TableEventValues(Database<?> pDatabase) {
-        super(pDatabase, TableName);
+    protected TableEventValues(final Database<?> pDatabase) {
+        super(pDatabase, TABLE_NAME);
     }
 
     /**
-     * Define the table columns (called from within super-constructor)
+     * Define the table columns (called from within super-constructor).
      * @param pTableDef the table definition
      */
     @Override
-    protected void defineTable(TableDefinition pTableDef) {
+    protected void defineTable(final TableDefinition pTableDef) {
         /* Define sort column variable */
         super.defineTable(pTableDef);
         theTableDef = pTableDef;
@@ -72,41 +77,34 @@ public class TableEventValues extends DatabaseTable<EventValue> {
 
         /* Declare the columns */
         theTableDef.addReferenceColumn(EventValue.FIELD_INFOTYPE, TableEventInfoType.TABLE_NAME);
-        myEvtCol = theTableDef.addReferenceColumn(EventValue.FIELD_EVENT, TableEvent.TableName);
+        myEvtCol = theTableDef.addReferenceColumn(EventValue.FIELD_EVENT, TableEvent.TABLE_NAME);
         theTableDef.addIntegerColumn(EventValue.FIELD_VALUE);
 
         /* Declare the sort order */
         myEvtCol.setSortOrder(SortOrder.ASCENDING);
     }
 
-    /* Declare DataSet */
     @Override
-    protected void declareData(DataSet<?> pData) {
+    protected void declareData(final DataSet<?> pData) {
         FinanceData myData = (FinanceData) pData;
         theList = myData.getEventValues();
         setList(theList);
     }
 
-    /* Load the tax year */
     @Override
-    public void loadItem(int pId) throws JDataException {
-        int myInfoType;
-        int myEvent;
-        int myValue;
-
+    public void loadItem(final int pId) throws JDataException {
         /* Get the various fields */
-        myInfoType = theTableDef.getIntegerValue(EventValue.FIELD_INFOTYPE);
-        myEvent = theTableDef.getIntegerValue(EventValue.FIELD_EVENT);
-        myValue = theTableDef.getIntegerValue(EventValue.FIELD_VALUE);
+        int myInfoType = theTableDef.getIntegerValue(EventValue.FIELD_INFOTYPE);
+        int myEvent = theTableDef.getIntegerValue(EventValue.FIELD_EVENT);
+        int myValue = theTableDef.getIntegerValue(EventValue.FIELD_VALUE);
 
         /* Add into the list */
         theList.addItem(pId, myInfoType, myEvent, myValue);
     }
 
-    /* Set a field value */
     @Override
-    protected void setFieldValue(EventValue pItem,
-                                 JDataField iField) throws JDataException {
+    protected void setFieldValue(final EventValue pItem,
+                                 final JDataField iField) throws JDataException {
         /* Switch on field id */
         if (iField == EventValue.FIELD_INFOTYPE) {
             theTableDef.setIntegerValue(iField, pItem.getInfoType().getId());

@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,6 +30,10 @@ import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
 
+/**
+ * TransactionType data type.
+ * @author Tony Washer
+ */
 public class TransactionType extends StaticData<TransactionType, TransClass> {
     /**
      * Object name.
@@ -73,8 +78,8 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
      * @param pList The list to associate the Transaction Type with
      * @param pTransType The Transaction Type to copy
      */
-    protected TransactionType(TransTypeList pList,
-                              TransactionType pTransType) {
+    protected TransactionType(final TransTypeList pList,
+                              final TransactionType pTransType) {
         super(pList, pTransType);
     }
 
@@ -82,10 +87,10 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
      * Construct a standard Transaction type on load.
      * @param pList The list to associate the Transaction Type with
      * @param sName Name of Transaction Type
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    private TransactionType(TransTypeList pList,
-                            String sName) throws JDataException {
+    private TransactionType(final TransTypeList pList,
+                            final String sName) throws JDataException {
         super(pList, sName);
     }
 
@@ -97,14 +102,14 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
      * @param uOrder the sort order
      * @param pName Name of Transaction Type
      * @param pDesc Description of Transaction Type
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    private TransactionType(TransTypeList pList,
-                            int uId,
-                            boolean isEnabled,
-                            int uOrder,
-                            String pName,
-                            String pDesc) throws JDataException {
+    private TransactionType(final TransTypeList pList,
+                            final int uId,
+                            final boolean isEnabled,
+                            final int uOrder,
+                            final String pName,
+                            final String pDesc) throws JDataException {
         super(pList, uId, isEnabled, uOrder, pName, pDesc);
     }
 
@@ -117,21 +122,20 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
      * @param uOrder the sort order
      * @param pName Encrypted Name of Transaction Type
      * @param pDesc Encrypted Description of Transaction Type
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    private TransactionType(TransTypeList pList,
-                            int uId,
-                            int uControlId,
-                            boolean isEnabled,
-                            int uOrder,
-                            byte[] pName,
-                            byte[] pDesc) throws JDataException {
+    private TransactionType(final TransTypeList pList,
+                            final int uId,
+                            final int uControlId,
+                            final boolean isEnabled,
+                            final int uOrder,
+                            final byte[] pName,
+                            final byte[] pDesc) throws JDataException {
         super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
     }
 
     /**
      * Determine whether the TransactionType is a transfer.
-     * 
      * @return <code>true</code> if the transaction is transfer, <code>false</code> otherwise.
      */
     public boolean isTransfer() {
@@ -140,7 +144,6 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 
     /**
      * Determine whether the TransactionType is a dividend.
-     * 
      * @return <code>true</code> if the transaction is dividend, <code>false</code> otherwise.
      */
     public boolean isDividend() {
@@ -148,8 +151,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a interest
-     * 
+     * Determine whether the TransactionType is an interest.
      * @return <code>true</code> if the transaction is interest, <code>false</code> otherwise.
      */
     public boolean isInterest() {
@@ -157,8 +159,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a cash payment
-     * 
+     * Determine whether the TransactionType is a cash payment.
      * @return <code>true</code> if the transaction is cash payment, <code>false</code> otherwise.
      */
     public boolean isCashPayment() {
@@ -166,8 +167,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a cash recovery
-     * 
+     * Determine whether the TransactionType is a cash recovery.
      * @return <code>true</code> if the transaction is cash recovery, <code>false</code> otherwise.
      */
     public boolean isCashRecovery() {
@@ -175,8 +175,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a write off
-     * 
+     * Determine whether the TransactionType is a write off.
      * @return <code>true</code> if the transaction is write off, <code>false</code> otherwise.
      */
     protected boolean isWriteOff() {
@@ -184,8 +183,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a inheritance
-     * 
+     * Determine whether the TransactionType is a inheritance.
      * @return <code>true</code> if the transaction is inheritance, <code>false</code> otherwise.
      */
     protected boolean isInherited() {
@@ -193,8 +191,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a tax owed
-     * 
+     * Determine whether the TransactionType is a tax owed.
      * @return <code>true</code> if the transaction is tax owed, <code>false</code> otherwise.
      */
     protected boolean isTaxOwed() {
@@ -202,8 +199,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a tax refund
-     * 
+     * Determine whether the TransactionType is a tax refund.
      * @return <code>true</code> if the transaction is tax refund, <code>false</code> otherwise.
      */
     protected boolean isTaxRefund() {
@@ -211,8 +207,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a tax relief
-     * 
+     * Determine whether the TransactionType is a tax relief.
      * @return <code>true</code> if the transaction is tax relief, <code>false</code> otherwise.
      */
     protected boolean isTaxRelief() {
@@ -220,8 +215,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a debt interest
-     * 
+     * Determine whether the TransactionType is a debt interest.
      * @return <code>true</code> if the transaction is debt interest, <code>false</code> otherwise.
      */
     protected boolean isDebtInterest() {
@@ -229,8 +223,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a rental income
-     * 
+     * Determine whether the TransactionType is a rental income.
      * @return <code>true</code> if the transaction is rental income, <code>false</code> otherwise.
      */
     protected boolean isRentalIncome() {
@@ -238,8 +231,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a benefit
-     * 
+     * Determine whether the TransactionType is a benefit.
      * @return <code>true</code> if the transaction is benefit, <code>false</code> otherwise.
      */
     protected boolean isBenefit() {
@@ -247,8 +239,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a taxable gain
-     * 
+     * Determine whether the TransactionType is a taxable gain.
      * @return <code>true</code> if the transaction is taxable gain, <code>false</code> otherwise.
      */
     public boolean isTaxableGain() {
@@ -256,8 +247,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a capital gain
-     * 
+     * Determine whether the TransactionType is a capital gain.
      * @return <code>true</code> if the transaction is capital gain, <code>false</code> otherwise.
      */
     public boolean isCapitalGain() {
@@ -265,8 +255,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a capital loss
-     * 
+     * Determine whether the TransactionType is a capital loss.
      * @return <code>true</code> if the transaction is capital loss, <code>false</code> otherwise.
      */
     public boolean isCapitalLoss() {
@@ -274,8 +263,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a stock split
-     * 
+     * Determine whether the TransactionType is a stock split.
      * @return <code>true</code> if the transaction is stock split, <code>false</code> otherwise.
      */
     public boolean isStockSplit() {
@@ -283,8 +271,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is an admin charge
-     * 
+     * Determine whether the TransactionType is an admin charge.
      * @return <code>true</code> if the transaction is admin charge, <code>false</code> otherwise.
      */
     public boolean isAdminCharge() {
@@ -292,8 +279,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a stock demerger
-     * 
+     * Determine whether the TransactionType is a stock demerger.
      * @return <code>true</code> if the transaction is stock demerger, <code>false</code> otherwise.
      */
     public boolean isStockDemerger() {
@@ -301,8 +287,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a stock right taken
-     * 
+     * Determine whether the TransactionType is a stock right taken.
      * @return <code>true</code> if the transaction is stock right taken, <code>false</code> otherwise.
      */
     public boolean isStockRightTaken() {
@@ -310,8 +295,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a stock right waived
-     * 
+     * Determine whether the TransactionType is a stock right waived.
      * @return <code>true</code> if the transaction is stock right waived, <code>false</code> otherwise.
      */
     public boolean isStockRightWaived() {
@@ -319,8 +303,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a cash takeover
-     * 
+     * Determine whether the TransactionType is a cash takeover.
      * @return <code>true</code> if the transaction is cash takeover, <code>false</code> otherwise.
      */
     public boolean isCashTakeover() {
@@ -328,8 +311,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a stock takeover
-     * 
+     * Determine whether the TransactionType is a stock takeover.
      * @return <code>true</code> if the transaction is stock takeover, <code>false</code> otherwise.
      */
     public boolean isStockTakeover() {
@@ -337,8 +319,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is a recovery
-     * 
+     * Determine whether the TransactionType is a recovery.
      * @return <code>true</code> if the transaction is recovery, <code>false</code> otherwise.
      */
     public boolean isRecovered() {
@@ -353,8 +334,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is hidden type
-     * 
+     * Determine whether the TransactionType is hidden type.
      * @return <code>true</code> if the transaction is hidden, <code>false</code> otherwise.
      */
     public boolean isHiddenType() {
@@ -374,22 +354,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * /** Determine whether the TransactionType is a tax credit
-     * 
-     * @return <code>true</code> if the transaction is tax credit, <code>false</code> otherwise.
-     */
-    protected boolean isTaxCredit() {
-        switch (getTranClass()) {
-            case NATINSURANCE:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Determine whether the TransactionType should have a tax credit
-     * 
+     * Determine whether the TransactionType should have a tax credit.
      * @return <code>true</code> if the transaction should have a tax credit, <code>false</code> otherwise.
      */
     public boolean needsTaxCredit() {
@@ -406,8 +371,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is an income
-     * 
+     * Determine whether the TransactionType is an income.
      * @return <code>true</code> if the transaction is income, <code>false</code> otherwise.
      */
     protected boolean isIncome() {
@@ -425,8 +389,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is an expense
-     * 
+     * Determine whether the TransactionType is an expense.
      * @return <code>true</code> if the transaction is expense, <code>false</code> otherwise.
      */
     protected boolean isExpense() {
@@ -443,8 +406,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Determine whether the TransactionType is dilutable
-     * 
+     * Determine whether the TransactionType is dilutable.
      * @return <code>true</code> if the transaction is dilutable, <code>false</code> otherwise.
      */
     public boolean isDilutable() {
@@ -474,18 +436,18 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
         }
 
         /**
-         * Construct an empty CORE transaction type list
+         * Construct an empty CORE transaction type list.
          * @param pData the DataSet for the list
          */
-        protected TransTypeList(FinanceData pData) {
+        protected TransTypeList(final FinanceData pData) {
             super(TransTypeList.class, TransactionType.class, pData, ListStyle.CORE);
         }
 
         /**
-         * Constructor for a cloned List
+         * Constructor for a cloned List.
          * @param pSource the source List
          */
-        private TransTypeList(TransTypeList pSource) {
+        private TransTypeList(final TransTypeList pSource) {
             super(pSource);
         }
 
@@ -494,7 +456,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
          * @param pStyle the list style
          * @return the update Extract
          */
-        private TransTypeList getExtractList(ListStyle pStyle) {
+        private TransTypeList getExtractList(final ListStyle pStyle) {
             /* Build an empty Extract List */
             TransTypeList myList = new TransTypeList(this);
 
@@ -505,7 +467,6 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
             return myList;
         }
 
-        /* Obtain extract lists. */
         @Override
         public TransTypeList getUpdateList() {
             return getExtractList(ListStyle.UPDATE);
@@ -522,7 +483,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
         }
 
         @Override
-        public TransTypeList getDeepCopy(DataSet<?> pDataSet) {
+        public TransTypeList getDeepCopy(final DataSet<?> pDataSet) {
             /* Build an empty Extract List */
             TransTypeList myList = new TransTypeList(this);
             myList.setData(pDataSet);
@@ -536,12 +497,12 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
         }
 
         /**
-         * Construct a difference ControlData list
+         * Construct a difference ControlData list.
          * @param pOld the old ControlData list
          * @return the difference list
          */
         @Override
-        protected TransTypeList getDifferences(TransTypeList pOld) {
+        protected TransTypeList getDifferences(final TransTypeList pOld) {
             /* Build an empty Difference List */
             TransTypeList myList = new TransTypeList(this);
 
@@ -553,19 +514,19 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
         }
 
         /**
-         * Add a new item to the list
+         * Add a new item to the list.
          * @param pItem item to be added
          * @return the newly added item
          */
         @Override
-        public TransactionType addNewItem(DataItem<?> pItem) {
+        public TransactionType addNewItem(final DataItem<?> pItem) {
             TransactionType myType = new TransactionType(this, (TransactionType) pItem);
             add(myType);
             return myType;
         }
 
         /**
-         * Create a new empty element in the edit list (null-operation)
+         * Create a new empty element in the edit list (null-operation).
          * @return the newly added item
          */
         @Override
@@ -574,7 +535,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
         }
 
         /**
-         * Obtain the type of the item
+         * Obtain the type of the item.
          * @return the type of the item
          */
         public String itemType() {
@@ -582,50 +543,53 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
         }
 
         /**
-         * Add a TransactionType
+         * Add a TransactionType.
          * @param pTransType the Name of the transaction type
-         * @throws JDataException
+         * @throws JDataException on error
          */
-        public void addItem(String pTransType) throws JDataException {
+        public void addItem(final String pTransType) throws JDataException {
             TransactionType myTransType;
 
             /* Create a new Transaction Type */
             myTransType = new TransactionType(this, pTransType);
 
             /* Check that this TransTypeId has not been previously added */
-            if (!isIdUnique(myTransType.getId()))
+            if (!isIdUnique(myTransType.getId())) {
                 throw new JDataException(ExceptionClass.DATA, myTransType, "Duplicate TranTypeId");
+            }
 
             /* Check that this TransactionType has not been previously added */
-            if (searchFor(pTransType) != null)
+            if (searchFor(pTransType) != null) {
                 throw new JDataException(ExceptionClass.DATA, myTransType, "Duplicate Transaction Type");
+            }
 
             /* Add the Transaction Type to the list */
             add(myTransType);
         }
 
         /**
-         * Add a TransactionType to the list
+         * Add a TransactionType to the list.
          * @param uId ID of Transaction Type
          * @param isEnabled is the TransType enabled
          * @param uOrder the sort order
          * @param pTranType the Name of the transaction type
          * @param pDesc the Description of the transaction type
-         * @throws JDataException
+         * @throws JDataException on error
          */
-        public void addItem(int uId,
-                            boolean isEnabled,
-                            int uOrder,
-                            String pTranType,
-                            String pDesc) throws JDataException {
+        public void addItem(final int uId,
+                            final boolean isEnabled,
+                            final int uOrder,
+                            final String pTranType,
+                            final String pDesc) throws JDataException {
             TransactionType myTransType;
 
             /* Create a new Transaction Type */
             myTransType = new TransactionType(this, uId, isEnabled, uOrder, pTranType, pDesc);
 
             /* Check that this TransTypeId has not been previously added */
-            if (!isIdUnique(myTransType.getId()))
+            if (!isIdUnique(myTransType.getId())) {
                 throw new JDataException(ExceptionClass.DATA, myTransType, "Duplicate TranTypeId");
+            }
 
             /* Add the Transaction Type to the list */
             add(myTransType);
@@ -634,34 +598,36 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
             myTransType.validate();
 
             /* Handle validation failure */
-            if (myTransType.hasErrors())
+            if (myTransType.hasErrors()) {
                 throw new JDataException(ExceptionClass.VALIDATE, myTransType, "Failed validation");
+            }
         }
 
         /**
-         * Add a TransactionType
+         * Add a TransactionType.
          * @param uId the Id of the transaction type
          * @param uControlId the control id of the new item
          * @param isEnabled is the TransType enabled
          * @param uOrder the sort order
          * @param pTransType the Encrypted Name of the transaction type
          * @param pDesc the Encrypted Description of the transaction type
-         * @throws JDataException
+         * @throws JDataException on error
          */
-        public void addItem(int uId,
-                            int uControlId,
-                            boolean isEnabled,
-                            int uOrder,
-                            byte[] pTransType,
-                            byte[] pDesc) throws JDataException {
+        public void addItem(final int uId,
+                            final int uControlId,
+                            final boolean isEnabled,
+                            final int uOrder,
+                            final byte[] pTransType,
+                            final byte[] pDesc) throws JDataException {
             TransactionType myTransType;
 
             /* Create a new Transaction Type */
             myTransType = new TransactionType(this, uId, uControlId, isEnabled, uOrder, pTransType, pDesc);
 
             /* Check that this TransTypeId has not been previously added */
-            if (!isIdUnique(uId))
+            if (!isIdUnique(uId)) {
                 throw new JDataException(ExceptionClass.DATA, myTransType, "Duplicate TransTypeId");
+            }
 
             /* Add the Transaction Type to the list */
             add(myTransType);
@@ -670,8 +636,9 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
             myTransType.validate();
 
             /* Handle validation failure */
-            if (myTransType.hasErrors())
+            if (myTransType.hasErrors()) {
                 throw new JDataException(ExceptionClass.VALIDATE, myTransType, "Failed validation");
+            }
         }
     }
 }

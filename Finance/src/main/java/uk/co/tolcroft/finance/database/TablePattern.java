@@ -1,4 +1,5 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,41 +39,45 @@ import uk.co.tolcroft.models.database.TableDefinition;
 import uk.co.tolcroft.models.database.TableDefinition.SortOrder;
 import uk.co.tolcroft.models.database.TableEncrypted;
 
+/**
+ * TabelEncrypted extension for Pattern.
+ * @author Tony Washer
+ */
 public class TablePattern extends TableEncrypted<Event> {
     /**
-     * The name of the Patterns table
+     * The name of the Patterns table.
      */
-    protected final static String TableName = Pattern.LIST_NAME;
+    protected static final String TABLE_NAME = Pattern.LIST_NAME;
 
     /**
-     * The table definition
+     * The table definition.
      */
     private TableDefinition theTableDef; /* Set during load */
 
     /**
-     * The pattern list
+     * The pattern list.
      */
     private PatternList theList = null;
 
     /**
-     * The accounts list
+     * The accounts list.
      */
     private Account.AccountList theAccounts = null;
 
     /**
-     * Constructor
+     * Constructor.
      * @param pDatabase the database control
      */
-    protected TablePattern(Database<?> pDatabase) {
-        super(pDatabase, TableName);
+    protected TablePattern(final Database<?> pDatabase) {
+        super(pDatabase, TABLE_NAME);
     }
 
     /**
-     * Define the table columns (called from within super-constructor)
+     * Define the table columns (called from within super-constructor).
      * @param pTableDef the table definition
      */
     @Override
-    protected void defineTable(TableDefinition pTableDef) {
+    protected void defineTable(final TableDefinition pTableDef) {
         /* Define sort column variable */
         super.defineTable(pTableDef);
         theTableDef = pTableDef;
@@ -82,11 +87,11 @@ public class TablePattern extends TableEncrypted<Event> {
         ColumnDefinition myActCol;
 
         /* Declare the columns */
-        myActCol = theTableDef.addReferenceColumn(Pattern.FIELD_ACCOUNT, TableAccount.TableName);
+        myActCol = theTableDef.addReferenceColumn(Pattern.FIELD_ACCOUNT, TableAccount.TABLE_NAME);
         myDateCol = theTableDef.addDateColumn(Event.FIELD_DATE);
         theTableDef.addEncryptedColumn(Event.FIELD_DESC, Event.DESCLEN);
         theTableDef.addEncryptedColumn(Event.FIELD_AMOUNT, EncryptedData.MONEYLEN);
-        theTableDef.addReferenceColumn(Pattern.FIELD_PARTNER, TableAccount.TableName);
+        theTableDef.addReferenceColumn(Pattern.FIELD_PARTNER, TableAccount.TABLE_NAME);
         theTableDef.addReferenceColumn(Event.FIELD_TRNTYP, TableTransactionType.TABLE_NAME);
         theTableDef.addBooleanColumn(Pattern.FIELD_ISCREDIT);
         theTableDef.addReferenceColumn(Pattern.FIELD_FREQ, TableFrequency.TABLE_NAME);
@@ -96,58 +101,40 @@ public class TablePattern extends TableEncrypted<Event> {
         myActCol.setSortOrder(SortOrder.ASCENDING);
     }
 
-    /* Declare DataSet */
     @Override
-    protected void declareData(DataSet<?> pData) {
+    protected void declareData(final DataSet<?> pData) {
         FinanceData myData = (FinanceData) pData;
         theList = myData.getPatterns();
         theAccounts = myData.getAccounts();
         setList(theList);
     }
 
-    /**
-     * postProcess on Load
-     */
     @Override
     protected void postProcessOnLoad() throws JDataException {
         theAccounts.validateLoadedAccounts();
     }
 
-    /* Load the pattern */
     @Override
-    protected void loadItem(int pId,
-                            int pControlId) throws JDataException {
-        int myAccountId;
-        int myPartnerId;
-        int myTranType;
-        int myFreq;
-        boolean isCredit;
-        byte[] myDesc;
-        byte[] myAmount;
-        Date myDate;
-
+    protected void loadItem(final int pId,
+                            final int pControlId) throws JDataException {
         /* Get the various fields */
-        myAccountId = theTableDef.getIntegerValue(Pattern.FIELD_ACCOUNT);
-        myDate = theTableDef.getDateValue(Event.FIELD_DATE);
-        myDesc = theTableDef.getBinaryValue(Event.FIELD_DESC);
-        myAmount = theTableDef.getBinaryValue(Event.FIELD_AMOUNT);
-        myPartnerId = theTableDef.getIntegerValue(Pattern.FIELD_PARTNER);
-        myTranType = theTableDef.getIntegerValue(Event.FIELD_TRNTYP);
-        isCredit = theTableDef.getBooleanValue(Pattern.FIELD_ISCREDIT);
-        myFreq = theTableDef.getIntegerValue(Pattern.FIELD_FREQ);
+        int myAccountId = theTableDef.getIntegerValue(Pattern.FIELD_ACCOUNT);
+        Date myDate = theTableDef.getDateValue(Event.FIELD_DATE);
+        byte[] myDesc = theTableDef.getBinaryValue(Event.FIELD_DESC);
+        byte[] myAmount = theTableDef.getBinaryValue(Event.FIELD_AMOUNT);
+        int myPartnerId = theTableDef.getIntegerValue(Pattern.FIELD_PARTNER);
+        int myTranType = theTableDef.getIntegerValue(Event.FIELD_TRNTYP);
+        boolean isCredit = theTableDef.getBooleanValue(Pattern.FIELD_ISCREDIT);
+        int myFreq = theTableDef.getIntegerValue(Pattern.FIELD_FREQ);
 
         /* Add into the list */
         theList.addItem(pId, pControlId, myDate, myDesc, myAmount, myAccountId, myPartnerId, myTranType,
                         myFreq, isCredit);
-
-        /* Return to caller */
-        return;
     }
 
-    /* Set a field value */
     @Override
-    protected void setFieldValue(Event pItem,
-                                 JDataField iField) throws JDataException {
+    protected void setFieldValue(final Event pItem,
+                                 final JDataField iField) throws JDataException {
         Pattern myItem = (Pattern) pItem;
 
         /* Switch on field id */

@@ -28,13 +28,14 @@ public class ListTest {
              * for (int i = 90; i < 100; i++) { int iIndex = binaryChop(i); if (iIndex != (i / 10))
              * System.out.println(iIndex); }
              */
-            // long One = testHashMap(false);
-            // long Two = testHashMap(true);
-            testOrderedList();
+            long One = testHashMap(false);
+            long Two = testHashMap(true);
+            // testOrderedList();
+            // testHashMapIterator();
 
-            // if (One > Two) {
-            // System.out.println("Great");
-            // }
+            if (One > Two) {
+                System.out.println("Great");
+            }
         } catch (Exception e) {
             System.out.println("Help");
             e.printStackTrace();
@@ -43,14 +44,14 @@ public class ListTest {
     }
 
     protected static void testOrderedList() {
-        OrderedList<Integer> myList = new OrderedList<Integer>(Integer.class);
+        OrderedList<Integer> myList = new OrderedList<Integer>(Integer.class, 6);
         List<Integer> myCache = new LinkedList<Integer>();
 
         /* Access a Random generator */
         SecureRandom myRandom = new SecureRandom();
 
-        /* Add 10 random elements */
-        for (int i = 0; i < 10000; i++) {
+        /* Add random elements */
+        for (int i = 0; i < 1000; i++) {
             Integer j = myRandom.nextInt();
             myList.add(j);
             myCache.add(j);
@@ -63,24 +64,23 @@ public class ListTest {
         while (myIterator.hasNext()) {
             /* Access the element */
             Integer myElement = myIterator.next();
-            if (myLast == null)
-                continue;
-            if (myElement < myLast) {
+            if ((myLast != null) && (myElement < myLast)) {
                 /* Print it */
                 System.out.println("Out of sequence " + myElement);
                 ok = false;
             }
+            myLast = myElement;
         }
         if (ok) {
             long myStart = System.nanoTime();
             System.out.println("OK " + myList.size());
-            myIterator = myList.iterator();
+            myIterator = myCache.iterator();
             while (myIterator.hasNext()) {
                 /* Access the element */
                 Integer myElement = myIterator.next();
 
                 /* Remove it from the list */
-                if (!myCache.remove(myElement))
+                if (!myList.remove(myElement))
                     System.out.println("Failed to remove " + myElement);
             }
             System.out.println("OK " + myList.size() + ":" + (System.nanoTime() - myStart));
@@ -91,8 +91,8 @@ public class ListTest {
         /* Access timing */
         long myStart = System.nanoTime();
         Map<String, Integer> myMap;
-        int iNumElements = 10000;
-        int iNumLoops = 100;
+        int iNumElements = 100;
+        int iNumLoops = 10000;
 
         /* Create a nested hash map */
         if (useNested) {
@@ -120,34 +120,40 @@ public class ListTest {
         for (Integer i = 0; i < iNumElements; i++) {
             myMap.remove(i.toString());
         }
+        if (myMap.size() != 0) {
+            System.out.println("HelpRemove " + useNested + " " + myMap.size());
+        }
 
         return System.nanoTime() - myStart;
     }
 
-    static Integer[] myTable = { 0, 10, 20, 30, 40, 50, 60, 70, 80, 90 };
+    protected static void testHashMapIterator() {
+        /* Access timing */
+        Map<String, Integer> myMap;
+        Map<String, Integer> myBaseMap;
+        int iNumElements = 1000;
 
-    protected static int binaryChop(Integer pValue) {
-        int iMinimum = 0;
-        int iMaximum = myTable.length - 1;
+        /* Create the maps */
+        myMap = new NestedHashMap<String, Integer>(8);
+        myBaseMap = new HashMap<String, Integer>();
 
-        /* Binary chop to find the search start point */
-        while (iMinimum < iMaximum - 1) {
-            /* Access test item */
-            int iTest = (iMinimum + iMaximum) >>> 1;
-            Integer myTest = myTable[iTest];
-
-            /* Check it against the object */
-            int iDiff = myTest.compareTo(pValue);
-            if (iDiff == 0)
-                return iTest;
-
-            /* Adjust limits */
-            if (iDiff < 0)
-                iMinimum = iTest;
-            else
-                iMaximum = iTest;
+        /* Build the map */
+        for (Integer i = 0; i < iNumElements; i++) {
+            myMap.put(i.toString(), i);
+            myBaseMap.put(i.toString(), i);
         }
 
-        return iMinimum;
+        /* Iterate over the Hash Map */
+        Iterator<String> myIterator = myMap.keySet().iterator();
+        while (myIterator.hasNext()) {
+            String myKey = myIterator.next();
+            if (myBaseMap.remove(myKey) == null) {
+                System.out.println("failed to remove " + myKey);
+            }
+        }
+
+        if (myBaseMap.size() != 0) {
+            System.out.println("failed to remove all keys" + myBaseMap.size());
+        }
     }
 }

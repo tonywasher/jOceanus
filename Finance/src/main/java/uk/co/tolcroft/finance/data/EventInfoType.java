@@ -1,4 +1,5 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,6 +30,10 @@ import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
 
+/**
+ * EventInfoType data type.
+ * @author Tony Washer
+ */
 public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
     /**
      * Object name.
@@ -146,7 +151,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
         }
 
         /**
-         * Construct an empty CORE eventInfo list
+         * Construct an empty CORE eventInfo list.
          * @param pData the DataSet for the list
          */
         protected EventInfoTypeList(final FinanceData pData) {
@@ -154,7 +159,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
         }
 
         /**
-         * Constructor for a cloned List
+         * Constructor for a cloned List.
          * @param pSource the source List
          */
         private EventInfoTypeList(final EventInfoTypeList pSource) {

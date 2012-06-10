@@ -108,7 +108,7 @@ public class MaintStatic implements StdPanel, ItemListener {
         theSelectBox.addItem(TransactionType.LIST_NAME);
         theSelectBox.addItem(TaxType.LIST_NAME);
         theSelectBox.addItem(TaxRegime.LIST_NAME);
-        theSelectBox.addItem(Frequency.listName);
+        theSelectBox.addItem(Frequency.LIST_NAME);
         theSelectBox.addItem(EventInfoType.LIST_NAME);
 
         /* Add the listener for item changes */
@@ -232,7 +232,7 @@ public class MaintStatic implements StdPanel, ItemListener {
                     setSelection(theTaxTypes);
                 else if (myName == TaxRegime.LIST_NAME)
                     setSelection(theTaxRegimes);
-                else if (myName == Frequency.listName)
+                else if (myName == Frequency.LIST_NAME)
                     setSelection(theFrequencys);
                 else if (myName == EventInfoType.LIST_NAME)
                     setSelection(theInfoTypes);

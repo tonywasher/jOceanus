@@ -30,7 +30,7 @@ import uk.co.tolcroft.models.sheets.SheetDataItem;
 import uk.co.tolcroft.models.sheets.SpreadSheet.SheetType;
 
 /**
- * SheetStaticData extension for EventData.
+ * SheetDataItem extension for EventData.
  * @author Tony Washer
  */
 public class SheetEventData extends SheetDataItem<EventData> {
@@ -165,7 +165,6 @@ public class SheetEventData extends SheetDataItem<EventData> {
 
         /* Write titles */
         // writeString(0, Event.fieldName(Event.FIELD_ID));
-        return;
     }
 
     @Override

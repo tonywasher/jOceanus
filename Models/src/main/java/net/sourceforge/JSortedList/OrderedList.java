@@ -38,8 +38,8 @@ import java.util.List;
  * <li>Null objects are not allowed.
  * <li>Duplicate objects are not allowed
  * <li>The semantics of the {@link #add} method are changed such that the element is added at its natural
- * position in the list rather than at the end of the * list. Methods that attempt to specify the position of
- * an object are disallowed.
+ * position in the list rather than at the end of the list. Methods that attempt to specify the position of an
+ * object are disallowed.
  * <li>The {@link #subList} method is not supported
  * </ul>
  * @author Tony Washer
@@ -62,11 +62,6 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
     private transient OrderedNode<T> theLast = null;
 
     /**
-     * Do we skip hidden elements.
-     */
-    private transient boolean doSkipHidden = true;
-
-    /**
      * The modification count.
      */
     private transient int theModCount = 0;
@@ -77,14 +72,14 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
     private transient OrderedIndex<T> theIndexMap;
 
     /**
-     * Self reference.
-     */
-    private transient OrderedList<T> theSelf = this;
-
-    /**
      * Class of the objects held in this list.
      */
     private transient Class<T> theClass;
+
+    /**
+     * List granularity.
+     */
+    private transient int theGranularity;
 
     /**
      * Obtain the class of objects in this sorted list.
@@ -95,11 +90,11 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
     }
 
     /**
-     * get setting of option as to whether to skip hidden elements.
-     * @return should we skip hidden elements
+     * Obtain the granularity of the index.
+     * @return the granularity
      */
-    public boolean getSkipHidden() {
-        return doSkipHidden;
+    public int getGranularity() {
+        return theGranularity;
     }
 
     /**
@@ -123,19 +118,29 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
      * @param pClass the class of the sortedItem
      */
     public OrderedList(final Class<T> pClass) {
-        /* Store the class */
-        theClass = pClass;
-
-        /* Create the indexMap */
-        theIndexMap = allocateIndexMap();
+        /* Use default granularity */
+        this(pClass, OrderedIndex.DEFAULT_GRANULARITY_SHIFT);
     }
 
     /**
-     * Set option as to whether to skip hidden elements.
-     * @param skipHidden - should we skip hidden elements
+     * Construct a list.
+     * @param pClass the class of the sortedItem
+     * @param pIndexGranularity the index granularity
      */
-    public void setSkipHidden(final boolean skipHidden) {
-        doSkipHidden = skipHidden;
+    public OrderedList(final Class<T> pClass,
+                       final int pIndexGranularity) {
+        /* Reject if granularity is out of range */
+        if ((pIndexGranularity < OrderedIndex.MIN_GRANULARITY_SHIFT)
+                || (pIndexGranularity > OrderedIndex.MAX_GRANULARITY_SHIFT)) {
+            throw new IllegalArgumentException("Invalid Granularity " + pIndexGranularity);
+        }
+
+        /* Store the class and granularity */
+        theClass = pClass;
+        theGranularity = pIndexGranularity;
+
+        /* Create the indexMap */
+        theIndexMap = allocateIndexMap();
     }
 
     @Override
@@ -238,10 +243,10 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
         }
 
         /* Adjust first and last if necessary */
-        if (pNode.getPrev(false) == null) {
+        if (pNode.getPrev() == null) {
             theFirst = pNode;
         }
-        if (pNode.getNext(false) == null) {
+        if (pNode.getNext() == null) {
             theLast = pNode;
         }
 
@@ -259,44 +264,14 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
 
         /* Adjust first and last indicators if required */
         if (theFirst == pNode) {
-            theFirst = pNode.getNext(false);
+            theFirst = pNode.getNext();
         }
         if (theLast == pNode) {
-            theLast = pNode.getPrev(false);
+            theLast = pNode.getPrev();
         }
 
         /* Remove the node from the list */
         pNode.remove();
-    }
-
-    /**
-     * set an object as hidden/visible.
-     * @param pItem - the relevant object
-     * @param isHidden - is the object hidden
-     */
-    public void setHidden(final T pItem,
-                          final boolean isHidden) {
-        /* Reject if these object is null */
-        if (pItem == null) {
-            throw new NullPointerException();
-        }
-
-        /* Access the node of the item */
-        OrderedNode<T> myNode = theIndexMap.findNodeForObject(pItem);
-
-        /* If the node does not belong to the list then ignore */
-        if ((myNode == null) || (myNode.getList() != theSelf)) {
-            return;
-        }
-
-        /* If we are changing things */
-        if (isHidden != myNode.isHidden()) {
-            /* Increment the modification count */
-            theModCount++;
-
-            /* set the hidden value */
-            myNode.setHidden(isHidden);
-        }
     }
 
     @Override
@@ -308,7 +283,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
         while (theLast != null) {
             /* Access and unlink the node */
             OrderedNode<T> myNode = theLast;
-            theLast = myNode.getNext(false);
+            theLast = myNode.getNext();
 
             /* Remove links from node and list */
             theIndexMap.deRegisterLink(myNode);
@@ -323,15 +298,6 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
     @Override
     public boolean isEmpty() {
         /* Return details */
-        return (getFirst() == null);
-    }
-
-    /**
-     * is the list empty of all (including hidden) items.
-     * @return <code>true/false</code>
-     */
-    public boolean isEmptyAll() {
-        /* Return details */
         return (theFirst == null);
     }
 
@@ -344,27 +310,15 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
     @Override
     public OrderedListIterator<T> listIterator() {
         /* Return a new iterator */
-        return listIterator(false);
-    }
-
-    /**
-     * obtain a list Iterator for this list.
-     * @param bShowAll show all items in the list
-     * @return List iterator
-     */
-    public OrderedListIterator<T> listIterator(final boolean bShowAll) {
-        /* Return a new iterator */
-        return new OrderedListIterator<T>(this, bShowAll);
+        return new OrderedListIterator<T>(this);
     }
 
     /**
      * obtain a list Iterator for this list initialised to an item.
      * @param pItem the item to initialise to
-     * @param bShowAll show all items in the list
      * @return List iterator
      */
-    public OrderedListIterator<T> listIterator(final T pItem,
-                                               final boolean bShowAll) {
+    public OrderedListIterator<T> listIterator(final T pItem) {
         /* Reject if the object is null */
         if (pItem == null) {
             throw new NullPointerException();
@@ -378,13 +332,8 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
             return null;
         }
 
-        /* If the item is hidden and we are not showing all then ignore */
-        if ((!bShowAll) && (myNode.isHidden())) {
-            return null;
-        }
-
         /* Create a list iterator */
-        return new OrderedListIterator<T>(this, myNode, bShowAll);
+        return new OrderedListIterator<T>(this, myNode);
     }
 
     @Override
@@ -408,7 +357,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
         }
 
         /* Create a list iterator */
-        return new OrderedListIterator<T>(this, myNode, false);
+        return new OrderedListIterator<T>(this, myNode);
     }
 
     @Override
@@ -440,14 +389,9 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
 
         /* Loop through the list */
         for (myCurr = theFirst, myOther = myThat.theFirst; (myCurr != null) || (myOther != null); myCurr = myCurr
-                .getNext(false), myOther = myOther.getNext(false)) {
+                .getNext(), myOther = myOther.getNext()) {
             /* If either entry is null then we differ */
             if ((myCurr == null) || (myOther == null)) {
-                return false;
-            }
-
-            /* If the entries differ in hidden character */
-            if (myCurr.isHidden() != myOther.isHidden()) {
                 return false;
             }
 
@@ -467,13 +411,10 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
         int myHash = 1;
 
         /* Loop through the list */
-        for (OrderedNode<?> myCurr = theFirst; myCurr != null; myCurr = myCurr.getNext(false)) {
+        for (OrderedNode<?> myCurr = theFirst; myCurr != null; myCurr = myCurr.getNext()) {
             /* Calculate hash */
             myHash *= HASH_PRIME;
             myHash += myCurr.getObject().hashCode();
-            if (myCurr.isHidden()) {
-                myHash++;
-            }
         }
 
         return myHash;
@@ -486,41 +427,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
         /* If we have an element in the list */
         if (theLast != null) {
             /* Get the relevant index and add 1 */
-            iSize = 1 + theLast.getIndex(doSkipHidden);
-        }
-
-        /* Return the count */
-        return iSize;
-    }
-
-    /**
-     * obtain the full size of the list (including hidden items).
-     * @return the number of visible items in the list
-     */
-    public int sizeAll() {
-        int iSize = 0;
-
-        /* If we have an element in the list */
-        if (theLast != null) {
-            /* Get the full index and add 1 */
-            iSize = 1 + theLast.getIndex(false);
-        }
-
-        /* Return the count */
-        return iSize;
-    }
-
-    /**
-     * obtain the size of the list (not including hidden items).
-     * @return the number of visible items in the list
-     */
-    public int sizeNormal() {
-        int iSize = 0;
-
-        /* If we have an element in the list */
-        if (theLast != null) {
-            /* Get the hidden index and add 1 */
-            iSize = 1 + theLast.getIndex(true);
+            iSize = 1 + theLast.getIndex();
         }
 
         /* Return the count */
@@ -677,38 +584,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
         }
 
         /* Access the index of the item */
-        return myNode.getIndex(doSkipHidden);
-    }
-
-    /**
-     * obtain the index within the list of the object.
-     * @param o the object to find the index of
-     * @return the index within the list (or -1 if not visible/present in the list)
-     */
-    public int indexAllOf(final Object o) {
-        /* Reject if the object is null */
-        if (o == null) {
-            throw new NullPointerException();
-        }
-
-        /* Reject if the object is invalid */
-        if (!(theClass.isInstance(o))) {
-            throw new ClassCastException();
-        }
-
-        /* Access as link object */
-        T myItem = theClass.cast(o);
-
-        /* Access the node of the item */
-        OrderedNode<T> myNode = theIndexMap.findNodeForObject(myItem);
-
-        /* If the node does not belong to the list then ignore */
-        if (myNode == null) {
-            return -1;
-        }
-
-        /* Return the index of the item */
-        return myNode.getIndex(false);
+        return myNode.getIndex();
     }
 
     @Override
@@ -748,7 +624,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
      * Peek at the first item.
      * @return the first item or <code>null</code>
      */
-    protected T peekFirst() {
+    public T peekFirst() {
         /* Access the first item */
         OrderedNode<T> myNode = getFirst();
 
@@ -760,7 +636,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
      * Peek at the first item.
      * @return the first item or <code>null</code>
      */
-    protected T peekLast() {
+    public T peekLast() {
         /* Access the last item */
         OrderedNode<T> myNode = getLast();
 
@@ -788,7 +664,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
         }
 
         /* Access the next node */
-        myNode = myNode.getNext(doSkipHidden);
+        myNode = myNode.getNext();
 
         /* Return the next object */
         return (myNode == null) ? null : myNode.getObject();
@@ -814,7 +690,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
         }
 
         /* Access the previous node */
-        myNode = myNode.getPrev(doSkipHidden);
+        myNode = myNode.getPrev();
 
         /* Return the previous object */
         return (myNode == null) ? null : myNode.getObject();
@@ -848,7 +724,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
         Object[] myArray = new Object[iSize];
 
         /* Loop through the list */
-        OrderedListIterator<?> myIterator = listIterator(false);
+        OrderedListIterator<?> myIterator = listIterator();
         for (int i = 0; i < iSize; i++) {
             /* Store the next item */
             myArray[i] = myIterator.next();
@@ -959,18 +835,13 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
         int myModCount = theModCount;
 
         /* Obtain an iterator over the collection */
-        OrderedListIterator<? extends T> myIterator = pList.listIterator(true);
+        OrderedListIterator<? extends T> myIterator = pList.listIterator();
         while (myIterator.hasNext()) {
             /* Access the item */
             T myItem = myIterator.next();
 
             /* Add it to the list */
             addAtEnd(myItem);
-
-            /* If the item is hidden record it */
-            if (myIterator.wasHidden()) {
-                setHidden(myItem, true);
-            }
         }
 
         /* Return indication of change */
@@ -1001,7 +872,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
         int myModCount = theModCount;
 
         /* Obtain an iterator over the collection */
-        Iterator<T> myIterator = listIterator(true);
+        Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
             /* Access the item */
             T myItem = myIterator.next();
@@ -1030,7 +901,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
         int myModCount = theModCount;
 
         /* Obtain an iterator over the collection */
-        Iterator<T> myIterator = listIterator(true);
+        Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
             /* Access the item */
             T myItem = myIterator.next();
@@ -1049,52 +920,18 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
     }
 
     /**
-     * Get the first visible node in the sequence.
-     * @return the First visible node
-     */
-    protected OrderedNode<T> getFirst() {
-        /* Get the first item */
-        OrderedNode<T> myFirst = theFirst;
-
-        /* Skip to next visible item if required */
-        if ((myFirst != null) && (myFirst.isHidden()) && (doSkipHidden)) {
-            myFirst = myFirst.getNext(true);
-        }
-
-        /* Return to caller */
-        return myFirst;
-    }
-
-    /**
-     * Get the last visible node in the sequence.
-     * @return the Last visible node
-     */
-    protected OrderedNode<T> getLast() {
-        /* Get the last item */
-        OrderedNode<T> myLast = theLast;
-
-        /* Skip to previous visible item if required */
-        if ((myLast != null) && (myLast.isHidden()) && (doSkipHidden)) {
-            myLast = myLast.getPrev(true);
-        }
-
-        /* Return to caller */
-        return myLast;
-    }
-
-    /**
      * Get the first node in the sequence.
      * @return the First node
      */
-    protected OrderedNode<T> getHead() {
+    protected OrderedNode<T> getFirst() {
         return theFirst;
     }
 
     /**
      * Get the last node in the sequence.
-     * @return the Last visible node
+     * @return the Last node
      */
-    protected OrderedNode<T> getTail() {
+    protected OrderedNode<T> getLast() {
         return theLast;
     }
 
@@ -1105,8 +942,6 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
         OrderedList<T> myResult = (OrderedList<T>) super.clone();
 
         /* Re-initialise the fields */
-        myResult.theSelf = myResult;
-        myResult.doSkipHidden = doSkipHidden;
         myResult.theClass = theClass;
         myResult.theIndexMap = allocateIndexMap();
 
@@ -1131,19 +966,18 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
         pOutput.defaultWriteObject();
 
         /* Write out number of Mappings */
-        int mySize = sizeAll();
+        int mySize = size();
         pOutput.writeInt(mySize);
         if (mySize == 0) {
             return;
         }
 
-        /* Write out keys and values (alternating) */
-        OrderedListIterator<T> myIterator = listIterator(false);
-        T myItem;
-        while ((myItem = myIterator.next()) != null) {
-            /* Write out hidden status and object */
+        /* Write out elements */
+        Iterator<T> myIterator = iterator();
+        while (myIterator.hasNext()) {
+            /* Access and write out element */
+            T myItem = myIterator.next();
             pOutput.writeObject(myItem);
-            pOutput.writeBoolean(myIterator.wasHidden());
         }
 
         /* Throw exception if modifications occurred */
@@ -1170,15 +1004,9 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
         for (int i = 0; i < mySize; i++) {
             /* Read the values in */
             T myItem = (T) pInput.readObject();
-            boolean isHidden = pInput.readBoolean();
 
             /* Add to list */
             addAtEnd(myItem);
-
-            /* If the item is hidden record it */
-            if (isHidden) {
-                setHidden(myItem, true);
-            }
         }
     }
 }

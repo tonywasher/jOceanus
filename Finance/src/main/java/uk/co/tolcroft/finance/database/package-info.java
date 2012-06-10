@@ -20,21 +20,8 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.finance.help;
-
-import net.sourceforge.JHelpManager.HelpException;
-import net.sourceforge.JHelpManager.HelpModule;
-
 /**
- * Help Module for FinanceApp.
- * @author Tony Washer
+ * Database support details for FinanceApp.
  */
-public class FinanceHelp extends HelpModule {
-    /**
-     * Constructor.
-     * @throws HelpException on error
-     */
-    public FinanceHelp() throws HelpException {
-        super("help.xml");
-    }
-}
+package uk.co.tolcroft.finance.database;
+

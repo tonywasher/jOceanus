@@ -57,11 +57,6 @@ public class OrderedListIterator<T extends Comparable<T>> implements ListIterato
     private boolean wasForward = true;
 
     /**
-     * Should we show all elements.
-     */
-    private boolean showAll = true;
-
-    /**
      * The modification count.
      */
     private int theExpectedModCount = 0;
@@ -69,11 +64,8 @@ public class OrderedListIterator<T extends Comparable<T>> implements ListIterato
     /**
      * Constructor for iterator that can show all elements.
      * @param pList the list to build the iterator on
-     * @param bShowAll show all items in the list
      */
-    protected OrderedListIterator(final OrderedList<T> pList,
-                                  final boolean bShowAll) {
-        showAll = bShowAll;
+    protected OrderedListIterator(final OrderedList<T> pList) {
         theList = pList;
         theExpectedModCount = theList.getModCount();
     }
@@ -82,25 +74,39 @@ public class OrderedListIterator<T extends Comparable<T>> implements ListIterato
      * Constructor for iterator at particular position.
      * @param pList the list to build the iterator on
      * @param pNode the node at which to start
-     * @param bShowAll show all items in the list
      */
     protected OrderedListIterator(final OrderedList<T> pList,
-                                  final OrderedNode<T> pNode,
-                                  final boolean bShowAll) {
+                                  final OrderedNode<T> pNode) {
         /* Call standard constructor */
-        this(pList, bShowAll);
+        this(pList);
 
         /* Record position */
         theNodeAfter = pNode;
-        theNodeBefore = pNode.getPrev(!showAll);
+        theNodeBefore = pNode.getPrev();
+    }
+
+    /**
+     * Obtain the next node.
+     * @return the next node (or null)
+     */
+    private OrderedNode<T> nextNode() {
+        /* Return the next node */
+        return (theNodeBefore != null) ? theNodeBefore.getNext() : theList.getFirst();
+    }
+
+    /**
+     * Obtain the previous node.
+     * @return the previous node (or null)
+     */
+    private OrderedNode<T> previousNode() {
+        /* Return the previous node */
+        return (theNodeAfter != null) ? theNodeAfter.getPrev() : theList.getLast();
     }
 
     @Override
     public boolean hasNext() {
         /* Access the next node */
-        OrderedNode<T> myNext = (theNodeBefore != null)
-                                                       ? theNodeBefore.getNext(!showAll)
-                                                       : ((showAll) ? theList.getHead() : theList.getFirst());
+        OrderedNode<T> myNext = nextNode();
 
         /* Return whether we have a next node */
         return (myNext != null);
@@ -108,10 +114,8 @@ public class OrderedListIterator<T extends Comparable<T>> implements ListIterato
 
     @Override
     public boolean hasPrevious() {
-        /* Access the next node */
-        OrderedNode<T> myPrev = (theNodeAfter != null)
-                                                      ? theNodeAfter.getPrev(!showAll)
-                                                      : ((showAll) ? theList.getTail() : theList.getLast());
+        /* Access the previous node */
+        OrderedNode<T> myPrev = previousNode();
 
         /* Return whether we have a previous node */
         return (myPrev != null);
@@ -123,12 +127,10 @@ public class OrderedListIterator<T extends Comparable<T>> implements ListIterato
      */
     public T peekNext() {
         /* Access the next node */
-        OrderedNode<T> myNext = (theNodeBefore != null)
-                                                       ? theNodeBefore.getNext(!showAll)
-                                                       : ((showAll) ? theList.getHead() : theList.getFirst());
+        OrderedNode<T> myNext = nextNode();
 
         /* Return the next object */
-        return (myNext == null) ? null : myNext.getObject();
+        return (myNext != null) ? myNext.getObject() : null;
     }
 
     /**
@@ -137,12 +139,10 @@ public class OrderedListIterator<T extends Comparable<T>> implements ListIterato
      */
     public T peekPrevious() {
         /* Access the next node */
-        OrderedNode<T> myPrev = (theNodeAfter != null)
-                                                      ? theNodeAfter.getPrev(!showAll)
-                                                      : ((showAll) ? theList.getTail() : theList.getLast());
+        OrderedNode<T> myPrev = previousNode();
 
         /* Return the previous object */
-        return (myPrev == null) ? null : myPrev.getObject();
+        return (myPrev != null) ? myPrev.getObject() : null;
     }
 
     /**
@@ -151,10 +151,10 @@ public class OrderedListIterator<T extends Comparable<T>> implements ListIterato
      */
     public T peekFirst() {
         /* Access the first node */
-        OrderedNode<T> myFirst = ((showAll) ? theList.getHead() : theList.getFirst());
+        OrderedNode<T> myFirst = theList.getFirst();
 
         /* Return the next object */
-        return (myFirst == null) ? null : myFirst.getObject();
+        return (myFirst != null) ? myFirst.getObject() : null;
     }
 
     /**
@@ -163,10 +163,10 @@ public class OrderedListIterator<T extends Comparable<T>> implements ListIterato
      */
     public T peekLast() {
         /* Access the last node */
-        OrderedNode<T> myLast = ((showAll) ? theList.getTail() : theList.getLast());
+        OrderedNode<T> myLast = theList.getLast();
 
         /* Return the previous object */
-        return (myLast == null) ? null : myLast.getObject();
+        return (myLast != null) ? myLast.getObject() : null;
     }
 
     @Override
@@ -177,9 +177,7 @@ public class OrderedListIterator<T extends Comparable<T>> implements ListIterato
         }
 
         /* Access the next node */
-        OrderedNode<T> myNext = (theNodeBefore != null)
-                                                       ? theNodeBefore.getNext(!showAll)
-                                                       : ((showAll) ? theList.getHead() : theList.getFirst());
+        OrderedNode<T> myNext = nextNode();
 
         /* If we have a next then move the cursor */
         if (myNext != null) {
@@ -202,9 +200,7 @@ public class OrderedListIterator<T extends Comparable<T>> implements ListIterato
         }
 
         /* Access the previous node */
-        OrderedNode<T> myPrev = (theNodeAfter != null)
-                                                      ? theNodeAfter.getPrev(!showAll)
-                                                      : ((showAll) ? theList.getTail() : theList.getLast());
+        OrderedNode<T> myPrev = previousNode();
 
         /* If we have a previous then move the cursor */
         if (myPrev != null) {
@@ -222,52 +218,19 @@ public class OrderedListIterator<T extends Comparable<T>> implements ListIterato
     @Override
     public int nextIndex() {
         /* Access the next node */
-        OrderedNode<T> myNext = (theNodeBefore != null)
-                                                       ? theNodeBefore.getNext(!showAll)
-                                                       : ((showAll) ? theList.getHead() : theList.getFirst());
+        OrderedNode<T> myNext = nextNode();
 
-        /* If we have a next then calculate its index */
-        if (myNext != null) {
-            return myNext.getIndex(!showAll);
-        }
-
-        /* Return the next item */
-        return -1;
+        /* Return the index */
+        return (myNext != null) ? myNext.getIndex() : -1;
     }
 
     @Override
     public int previousIndex() {
         /* Access the previous node */
-        OrderedNode<T> myPrev = (theNodeAfter != null)
-                                                      ? theNodeAfter.getPrev(!showAll)
-                                                      : ((showAll) ? theList.getTail() : theList.getLast());
-
-        /* If we have a previous then calculate its index */
-        if (myPrev != null) {
-            return myPrev.getIndex(!showAll);
-        }
+        OrderedNode<T> myPrev = previousNode();
 
         /* Return the index */
-        return -1;
-    }
-
-    /**
-     * Was the last item hidden.
-     * @return true/false
-     */
-    public boolean wasHidden() {
-        /* Handle changed list */
-        if (theExpectedModCount != theList.getModCount()) {
-            throw new ConcurrentModificationException();
-        }
-
-        /* If we cannot remove the last item throw exception */
-        if (!canRemove) {
-            throw new IllegalStateException();
-        }
-
-        /* If the last operation was forward */
-        return (wasForward) ? theNodeBefore.isHidden() : theNodeAfter.isHidden();
+        return (myPrev != null) ? myPrev.getIndex() : -1;
     }
 
     /**
@@ -311,7 +274,7 @@ public class OrderedListIterator<T extends Comparable<T>> implements ListIterato
             theList.removeNode(theNodeBefore);
 
             /* Record the new node before */
-            theNodeBefore = (theNodeAfter != null) ? theNodeAfter.getPrev() : theList.getTail();
+            theNodeBefore = previousNode();
 
             /* else the last operation was backwards */
         } else {
@@ -319,7 +282,7 @@ public class OrderedListIterator<T extends Comparable<T>> implements ListIterato
             theList.removeNode(theNodeAfter);
 
             /* Record the new node after */
-            theNodeAfter = (theNodeBefore != null) ? theNodeBefore.getNext() : theList.getHead();
+            theNodeAfter = nextNode();
         }
 
         /* Record new modification count */
@@ -352,7 +315,7 @@ public class OrderedListIterator<T extends Comparable<T>> implements ListIterato
             theList.removeNode(myNode);
 
             /* Record the new node before */
-            theNodeBefore = (theNodeAfter != null) ? theNodeAfter.getPrev() : theList.getTail();
+            theNodeBefore = previousNode();
 
             /* Re-insert the node */
             theList.insertNode(myNode, false);
@@ -366,7 +329,7 @@ public class OrderedListIterator<T extends Comparable<T>> implements ListIterato
             theList.removeNode(myNode);
 
             /* Record the new node after */
-            theNodeAfter = (theNodeBefore != null) ? theNodeBefore.getNext() : theList.getHead();
+            theNodeAfter = nextNode();
 
             /* Re-insert the node */
             theList.insertNode(myNode, false);
@@ -399,11 +362,11 @@ public class OrderedListIterator<T extends Comparable<T>> implements ListIterato
         /* If the last operation was forward */
         if (wasForward) {
             /* Remove the item */
-            theList.removeNode(theNodeBefore);
             myItem = theNodeBefore.getObject();
+            theList.removeNode(theNodeBefore);
 
             /* Record the new node before */
-            theNodeBefore = (theNodeAfter != null) ? theNodeAfter.getPrev() : theList.getTail();
+            theNodeBefore = previousNode();
 
             /* else the last operation was backwards */
         } else {
@@ -412,7 +375,7 @@ public class OrderedListIterator<T extends Comparable<T>> implements ListIterato
             theList.removeNode(theNodeAfter);
 
             /* Record the new node after */
-            theNodeAfter = (theNodeBefore != null) ? theNodeBefore.getNext() : theList.getHead();
+            theNodeAfter = nextNode();
         }
 
         /* Record new modification count */
