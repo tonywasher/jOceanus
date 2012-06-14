@@ -57,10 +57,10 @@ public class AsymKeyMode extends SecurityMode {
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (pField == FIELD_CIPHER) {
+        if (FIELD_CIPHER.equals(pField)) {
             return theCipherDigest;
         }
-        if (pField == FIELD_ASYMTYPE) {
+        if (FIELD_ASYMTYPE.equals(pField)) {
             return theAsymKeyType;
         }
         return super.getFieldValue(pField);

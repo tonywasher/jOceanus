@@ -22,6 +22,9 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.core;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import uk.co.tolcroft.finance.ui.MainTab;
 
 /**
@@ -33,6 +36,11 @@ public final class Control {
      * The Main window.
      */
     private static MainTab theWindow = null;
+
+    /**
+     * Logger.
+     */
+    private static Logger theLogger = Logger.getLogger("FinanceApp");
 
     /**
      * Private constructor to avoid instantiation.
@@ -48,8 +56,8 @@ public final class Control {
             theWindow = new MainTab();
             theWindow.makeFrame();
 
-        } catch (Throwable e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            theLogger.log(Level.SEVERE, "createGUI didn't complete successfully", e);
         }
     }
 

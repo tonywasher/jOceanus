@@ -115,6 +115,11 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
         return getName();
     }
 
+    @Override
+    public String toString() {
+        return formatObject();
+    }
+
     /**
      * StaticData Name length.
      */

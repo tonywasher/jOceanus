@@ -263,7 +263,7 @@ public class HelpWindow extends JFrame implements HyperlinkListener, TreeSelecti
         DefaultMutableTreeNode myNode = (DefaultMutableTreeNode) theTree.getLastSelectedPathComponent();
 
         /* Ignore if there is no selection or if this is the root */
-        if ((myNode == null) || (myNode == theRoot)) {
+        if ((myNode == null) || (theRoot.equals(myNode))) {
             return;
         }
 

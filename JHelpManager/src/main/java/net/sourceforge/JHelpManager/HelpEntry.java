@@ -247,7 +247,7 @@ public class HelpEntry {
                      final HelpEntry[] pChildren) {
         theName = pName;
         theTitle = pTitle;
-        theChildren = pChildren;
+        theChildren = Arrays.copyOf(pChildren, pChildren.length);
     }
 
     /**
@@ -264,7 +264,7 @@ public class HelpEntry {
         theName = pName;
         theTitle = pTitle;
         theFileName = pFileName;
-        theChildren = pChildren;
+        theChildren = Arrays.copyOf(pChildren, pChildren.length);
     }
 
     @Override

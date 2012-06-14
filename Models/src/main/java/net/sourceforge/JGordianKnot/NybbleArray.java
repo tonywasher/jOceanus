@@ -51,7 +51,7 @@ public class NybbleArray implements JDataContents {
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (pField == FIELD_ENCODED) {
+        if (FIELD_ENCODED.equals(pField)) {
             return theEncoded;
         }
         return null;

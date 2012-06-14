@@ -108,7 +108,7 @@ public class Dilution extends Decimal {
      * Is the dilution factor outside the valid range.
      * @return true/false
      */
-    public boolean outOfRange() {
+    public final boolean outOfRange() {
         return ((getValue() > MAX_VALUE) || (getValue() < MIN_VALUE));
     }
 

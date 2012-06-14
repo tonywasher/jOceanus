@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,55 +25,78 @@ package uk.co.tolcroft.finance.ui.controls;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
+import net.sourceforge.JDataManager.EventManager;
 import uk.co.tolcroft.finance.data.Account;
-import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
 
+/**
+ * Statement type selection panel.
+ * @author Tony Washer
+ */
 public class StatementSelect extends JPanel {
+    /**
+     * Serial Id.
+     */
     private static final long serialVersionUID = 5497562263117308110L;
 
-    /* Members */
-    private StatementSelect theSelf = this;
-    private StdPanel theParent = null;
-    private JComboBox theStateBox = null;
-    private JLabel theStateLabel = null;
+    /**
+     * Width of box.
+     */
+    private static final int BOX_WIDTH = 150;
+
+    /**
+     * The State Box.
+     */
+    private final JComboBox theStateBox;
+
+    /**
+     * The Statement type.
+     */
     private StatementType theType = null;
-    private boolean statePopulated = false;
+
+    /**
+     * Are we refreshing data?
+     */
     private boolean refreshingData = false;
 
-    /* Access methods */
+    /**
+     * Event Manager.
+     */
+    private final EventManager theManager;
+
+    /**
+     * Get the selected statement type.
+     * @return the statement type
+     */
     public StatementType getStatementType() {
         return theType;
     }
 
-    /* Statement descriptions */
-    private static final String Extract = "Extract";
-    private static final String Value = "Value";
-    private static final String Units = "Units";
-
-    /* Constructor */
-    public StatementSelect(StdPanel pParent) {
-        StatementListener myListener = new StatementListener();
-
-        /* Store table and view details */
-        theParent = pParent;
+    /**
+     * Constructor.
+     */
+    public StatementSelect() {
+        /* Create the Event Manager */
+        theManager = new EventManager(this);
 
         /* Create the boxes */
         theStateBox = new JComboBox();
 
         /* Create the labels */
-        theStateLabel = new JLabel("View:");
+        JLabel myStateLabel = new JLabel("View:");
 
         /* Add the listener for item changes */
+        StatementListener myListener = new StatementListener();
         theStateBox.addItemListener(myListener);
 
         /* Create the panel */
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Statement View"));
+        setBorder(BorderFactory.createTitledBorder("Statement View"));
 
         /* Create the layout for the panel */
         GroupLayout panelLayout = new GroupLayout(this);
@@ -83,137 +107,133 @@ public class StatementSelect extends JPanel {
                 .addGroup(panelLayout
                                   .createSequentialGroup()
                                   .addContainerGap()
-                                  .addComponent(theStateLabel)
+                                  .addComponent(myStateLabel)
                                   .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(theStateBox, GroupLayout.PREFERRED_SIZE, 150,
+                                  .addComponent(theStateBox, GroupLayout.PREFERRED_SIZE, BOX_WIDTH,
                                                 GroupLayout.PREFERRED_SIZE).addContainerGap()));
         panelLayout.setVerticalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addGroup(panelLayout
                                   .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                  .addComponent(theStateLabel)
+                                  .addComponent(myStateLabel)
                                   .addComponent(theStateBox, GroupLayout.PREFERRED_SIZE,
                                                 GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
     }
 
-    /* Lock/Unlock the selection */
-    public void setLockDown() {
+    @Override
+    public void setEnabled(final boolean bEnabled) {
         /* Lock/Unlock the selection */
-        theStateBox.setEnabled(theType != StatementType.NULL);
+        theStateBox.setEnabled(bEnabled && (theType != StatementType.Null));
     }
 
-    /* setSelection */
-    public void setSelection(Account pAccount) {
-        String myText = null;
-
+    /**
+     * setSelection.
+     * @param pAccount the account
+     */
+    public void setSelection(final Account pAccount) {
         /* Note that we are refreshing data */
         refreshingData = true;
 
         /* If we have state already populated */
-        if (statePopulated) {
+        if (theStateBox.getItemCount() > 0) {
             /* Remove the types */
             theStateBox.removeAllItems();
-            statePopulated = false;
         }
 
         /* If we have an account */
         if (pAccount != null) {
             /* Add Value if the account is Money/Debt */
-            if (pAccount.isMoney() || pAccount.isDebt())
-                theStateBox.addItem(Value);
-            else if (theType == StatementType.VALUE)
-                theType = StatementType.NULL;
-
-            /* Add Units if the account is Priced */
-            if (pAccount.isPriced())
-                theStateBox.addItem(Units);
-            else if (theType == StatementType.UNITS)
-                theType = StatementType.NULL;
-
-            /* Always add Extract */
-            theStateBox.addItem(Extract);
-            statePopulated = true;
-
-            /* If we have no type */
-            if (theType == StatementType.NULL) {
-                /* Select the default type for the account */
-                if (pAccount.isMoney())
-                    theType = StatementType.VALUE;
-                else if (pAccount.isDebt())
-                    theType = StatementType.VALUE;
-                else if (pAccount.isPriced())
-                    theType = StatementType.UNITS;
-                else
-                    theType = StatementType.EXTRACT;
+            if (pAccount.isMoney() || pAccount.isDebt()) {
+                theStateBox.addItem(StatementType.Value);
+            } else if (theType == StatementType.Value) {
+                theType = StatementType.Null;
             }
 
-            /* Obtain the text value for the type */
-            switch (theType) {
-                case VALUE:
-                    myText = Value;
-                    break;
-                case UNITS:
-                    myText = Units;
-                    break;
-                default:
-                    myText = Extract;
-                    break;
+            /* Add Units if the account is Priced */
+            if (pAccount.isPriced()) {
+                theStateBox.addItem(StatementType.Units);
+            } else if (theType == StatementType.Units) {
+                theType = StatementType.Null;
+            }
+
+            /* Always add Extract */
+            theStateBox.addItem(StatementType.Extract);
+
+            /* If we have no type */
+            if (theType == StatementType.Null) {
+                /* Select the default type for the account */
+                if (pAccount.isMoney()) {
+                    theType = StatementType.Value;
+                } else if (pAccount.isDebt()) {
+                    theType = StatementType.Value;
+                } else if (pAccount.isPriced()) {
+                    theType = StatementType.Units;
+                } else {
+                    theType = StatementType.Extract;
+                }
             }
 
             /* Select the correct type */
-            theStateBox.setSelectedItem(myText);
+            theStateBox.setSelectedItem(theType);
+
+            /* Else we have no selected type */
+        } else {
+            theType = StatementType.Null;
         }
 
-        /* Else we have no selected type */
-        else
-            theType = StatementType.NULL;
-
         /* Enable/Disable the box */
-        setLockDown();
+        setEnabled(true);
 
         /* Note that we have finished refreshing data */
         refreshingData = false;
     }
 
     /**
-     * TaxYear Listener class
+     * TaxYear Listener class.
      */
-    private class StatementListener implements ItemListener {
+    private final class StatementListener implements ItemListener {
         /* ItemStateChanged listener event */
         @Override
-        public void itemStateChanged(ItemEvent evt) {
-            boolean bChange = false;
-
+        public void itemStateChanged(final ItemEvent evt) {
             /* Ignore selection if refreshing data */
-            if (refreshingData)
+            if (refreshingData) {
                 return;
-
-            /* If this event relates to the Statement box */
-            if (evt.getSource() == theStateBox) {
-                if (evt.getStateChange() == ItemEvent.SELECTED) {
-                    String myName = (String) evt.getItem();
-
-                    /* Determine the new report */
-                    bChange = true;
-                    if (myName == Value)
-                        theType = StatementType.VALUE;
-                    else if (myName == Units)
-                        theType = StatementType.UNITS;
-                    else if (myName == Extract)
-                        theType = StatementType.EXTRACT;
-                    else
-                        bChange = false;
-                }
             }
 
-            /* If we have a change, alert the table */
-            if (bChange) {
-                theParent.notifySelection(theSelf);
+            /* If this event relates to the Statement box */
+            if ((evt.getSource() == theStateBox) && (evt.getStateChange() == ItemEvent.SELECTED)) {
+                /* If the type has changed */
+                StatementType myType = (StatementType) evt.getItem();
+                if (!theType.equals(myType)) {
+                    /* Record it and alert listeners */
+                    theType = myType;
+                    theManager.fireStateChanged();
+                }
             }
         }
     }
 
-    /* Statement Types */
+    /**
+     * Statement Types.
+     */
     public enum StatementType {
-        NULL, EXTRACT, VALUE, UNITS;
+        /**
+         * Null type.
+         */
+        Null,
+
+        /**
+         * Extract type.
+         */
+        Extract,
+
+        /**
+         * Value Type.
+         */
+        Value,
+
+        /**
+         * Units Type.
+         */
+        Units;
     }
 }

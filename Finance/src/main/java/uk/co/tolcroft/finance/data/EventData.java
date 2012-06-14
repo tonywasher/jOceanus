@@ -26,11 +26,14 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDecimal.Dilution;
 import net.sourceforge.JDecimal.Money;
 import net.sourceforge.JDecimal.Units;
-import net.sourceforge.JGordianKnot.EncryptedData.EncryptedField;
+import net.sourceforge.JGordianKnot.EncryptedData.EncryptedDilution;
+import net.sourceforge.JGordianKnot.EncryptedData.EncryptedMoney;
+import net.sourceforge.JGordianKnot.EncryptedData.EncryptedUnits;
 import net.sourceforge.JGordianKnot.EncryptedValueSet;
 import uk.co.tolcroft.finance.data.Event.EventList;
 import uk.co.tolcroft.finance.data.EventInfoType.EventInfoTypeList;
@@ -45,12 +48,12 @@ import uk.co.tolcroft.models.data.EncryptedItem;
  */
 public class EventData extends EncryptedItem<EventData> {
     /**
-     * The name of the object
+     * The name of the object.
      */
     public static final String OBJECT_NAME = "EventData";
 
     /**
-     * The name of the object
+     * The name of the object.
      */
     public static final String LIST_NAME = OBJECT_NAME;
 
@@ -64,132 +67,244 @@ public class EventData extends EncryptedItem<EventData> {
         return FIELD_DEFS;
     }
 
-    /* Field IDs */
+    /**
+     * InfoType Field Id.
+     */
     public static final JDataField FIELD_INFOTYPE = FIELD_DEFS.declareEqualityValueField("InfoType");
+
+    /**
+     * Event Field Id.
+     */
     public static final JDataField FIELD_EVENT = FIELD_DEFS.declareEqualityValueField("Event");
+
+    /**
+     * Value Field Id.
+     */
     public static final JDataField FIELD_VALUE = FIELD_DEFS.declareEqualityValueField("Value");
 
     /**
-     * The active set of values
+     * The active set of values.
      */
     private EncryptedValueSet theValueSet;
 
     @Override
-    public void declareValues(EncryptedValueSet pValues) {
+    public void declareValues(final EncryptedValueSet pValues) {
         super.declareValues(pValues);
         theValueSet = pValues;
     }
 
-    /* Access methods */
+    /**
+     * Obtain InfoType.
+     * @return the Info type
+     */
     public EventInfoType getInfoType() {
         return getInfoType(theValueSet);
     }
 
+    /**
+     * Obtain Event.
+     * @return the Event
+     */
     public Event getEvent() {
         return getEvent(theValueSet);
     }
 
+    /**
+     * Obtain Units.
+     * @return the Units
+     */
     public Units getUnits() {
         return getUnits(theValueSet);
     }
 
+    /**
+     * Obtain Money.
+     * @return the Money
+     */
     public Money getMoney() {
         return getMoney(theValueSet);
     }
 
+    /**
+     * Obtain Dilution.
+     * @return the Dilution
+     */
     public Dilution getDilution() {
         return getDilution(theValueSet);
     }
 
+    /**
+     * Obtain Encrypted Bytes.
+     * @return the Bytes
+     */
     public byte[] getValueBytes() {
         return getValueBytes(theValueSet);
     }
 
-    private Object getValueField() {
-        return getValueField(theValueSet);
-    }
-
-    public static EventInfoType getInfoType(ValueSet pValueSet) {
+    /**
+     * Obtain InfoType.
+     * @param pValueSet the valueSet
+     * @return the Info types
+     */
+    public static EventInfoType getInfoType(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_INFOTYPE, EventInfoType.class);
     }
 
-    public static Event getEvent(ValueSet pValueSet) {
+    /**
+     * Obtain Event.
+     * @param pValueSet the valueSet
+     * @return the Event
+     */
+    public static Event getEvent(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_EVENT, Event.class);
     }
 
-    public static Units getUnits(EncryptedValueSet pValueSet) {
+    /**
+     * Obtain Units.
+     * @param pValueSet the valueSet
+     * @return the Units
+     */
+    public static Units getUnits(final EncryptedValueSet pValueSet) {
+        Object myField = pValueSet.getValue(FIELD_VALUE, Object.class);
+        if (!(myField instanceof EncryptedUnits)) {
+            return null;
+        }
         return pValueSet.getEncryptedFieldValue(FIELD_VALUE, Units.class);
     }
 
-    public static Money getMoney(EncryptedValueSet pValueSet) {
+    /**
+     * Obtain Money.
+     * @param pValueSet the valueSet
+     * @return the Money
+     */
+    public static Money getMoney(final EncryptedValueSet pValueSet) {
+        Object myField = pValueSet.getValue(FIELD_VALUE, Object.class);
+        if (!(myField instanceof EncryptedMoney)) {
+            return null;
+        }
         return pValueSet.getEncryptedFieldValue(FIELD_VALUE, Money.class);
     }
 
-    public static Dilution getDilution(EncryptedValueSet pValueSet) {
+    /**
+     * Obtain Dilution.
+     * @param pValueSet the valueSet
+     * @return the Dilution
+     */
+    public static Dilution getDilution(final EncryptedValueSet pValueSet) {
+        Object myField = pValueSet.getValue(FIELD_VALUE, Object.class);
+        if (!(myField instanceof EncryptedDilution)) {
+            return null;
+        }
         return pValueSet.getEncryptedFieldValue(FIELD_VALUE, Dilution.class);
     }
 
-    public static byte[] getValueBytes(EncryptedValueSet pValueSet) {
+    /**
+     * Obtain Encrypted Bytes.
+     * @param pValueSet the valueSet
+     * @return the Bytes
+     */
+    public static byte[] getValueBytes(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_VALUE);
     }
 
-    private static EncryptedField<?> getValueField(ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_VALUE, EncryptedField.class);
+    /**
+     * Set InfoType.
+     * @param pValue the info Type
+     */
+    private void setValueInfoType(final EventInfoType pValue) {
+        theValueSet.setValue(FIELD_INFOTYPE, pValue);
     }
 
-    private void setValueInfoType(EventInfoType pInfoType) {
-        theValueSet.setValue(FIELD_INFOTYPE, pInfoType);
+    /**
+     * Set InfoType Id.
+     * @param pId the info Type id
+     */
+    private void setValueInfoType(final Integer pId) {
+        theValueSet.setValue(FIELD_INFOTYPE, pId);
     }
 
-    private void setValueInfoType(Integer pInfoType) {
-        theValueSet.setValue(FIELD_INFOTYPE, pInfoType);
+    /**
+     * Set Event.
+     * @param pValue the event
+     */
+    private void setValueEvent(final Event pValue) {
+        theValueSet.setValue(FIELD_EVENT, pValue);
     }
 
-    private void setValueEvent(Event pEvent) {
-        theValueSet.setValue(FIELD_EVENT, pEvent);
+    /**
+     * Set Event id.
+     * @param pId the event id
+     */
+    private void setValueEvent(final Integer pId) {
+        theValueSet.setValue(FIELD_EVENT, pId);
     }
 
-    private void setValueEvent(Integer pEvent) {
-        theValueSet.setValue(FIELD_EVENT, pEvent);
+    /**
+     * Set Units.
+     * @param pValue the units
+     * @throws JDataException on error
+     */
+    private void setValueUnits(final Units pValue) throws JDataException {
+        setEncryptedValue(FIELD_VALUE, pValue);
     }
 
-    private void setValueUnits(Units pUnits) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pUnits);
+    /**
+     * Set Money.
+     * @param pValue the money
+     * @throws JDataException on error
+     */
+    private void setValueMoney(final Money pValue) throws JDataException {
+        setEncryptedValue(FIELD_VALUE, pValue);
     }
 
-    private void setValueMoney(Money pMoney) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pMoney);
+    /**
+     * Set Dilution.
+     * @param pValue the dilution
+     * @throws JDataException on error
+     */
+    private void setValueDilution(final Dilution pValue) throws JDataException {
+        setEncryptedValue(FIELD_VALUE, pValue);
     }
 
-    private void setValueDilution(Dilution pDilution) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pDilution);
+    /**
+     * Set Units.
+     * @param pBytes the units
+     * @throws JDataException on error
+     */
+    private void setValueUnits(final byte[] pBytes) throws JDataException {
+        setEncryptedValue(FIELD_VALUE, pBytes, Units.class);
     }
 
-    private void setValueUnits(byte[] pUnits) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pUnits, Units.class);
+    /**
+     * Set Money.
+     * @param pBytes the money
+     * @throws JDataException on error
+     */
+    private void setValueMoney(final byte[] pBytes) throws JDataException {
+        setEncryptedValue(FIELD_VALUE, pBytes, Money.class);
     }
 
-    private void setValueMoney(byte[] pMoney) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pMoney, Money.class);
+    /**
+     * Set Dilution.
+     * @param pBytes the dilution
+     * @throws JDataException on error
+     */
+    private void setValueDilution(final byte[] pBytes) throws JDataException {
+        setEncryptedValue(FIELD_VALUE, pBytes, Dilution.class);
     }
 
-    private void setValueDilution(byte[] pDilution) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pDilution, Dilution.class);
-    }
-
-    /* Linking methods */
     @Override
     public EventData getBase() {
         return (EventData) super.getBase();
     }
 
     /**
-     * Construct a copy of an EventInfo
+     * Construct a copy of an EventInfo.
      * @param pList the list
      * @param pInfo The Info to copy
      */
-    protected EventData(EventDataList pList,
-                        EventData pInfo) {
+    protected EventData(final EventDataList pList,
+                        final EventData pInfo) {
         /* Set standard values */
         super(pList, pInfo);
         ListStyle myOldStyle = pInfo.getStyle();
@@ -214,73 +329,91 @@ public class EventData extends EncryptedItem<EventData> {
             case COPY:
             case CORE:
                 /* Reset Id if this is an insert from a view */
-                if (myOldStyle == ListStyle.EDIT)
+                if (myOldStyle == ListStyle.EDIT) {
                     setId(0);
+                }
                 pList.setNewId(this);
                 break;
             case UPDATE:
                 setBase(pInfo);
                 setState(pInfo.getState());
                 break;
+            default:
+                break;
         }
     }
 
-    /* Encryption constructor */
-    private EventData(EventDataList pList,
-                      int uId,
-                      int uControlId,
-                      int uInfoTypeId,
-                      int uEventId,
-                      byte[] pValue) throws JDataException {
+    /**
+     * Encrypted constructor.
+     * @param pList the list
+     * @param uId the id
+     * @param uControlId the control id
+     * @param uInfoTypeId the info id
+     * @param uEventId the event id
+     * @param pValue the value
+     * @throws JDataException on error
+     */
+    private EventData(final EventDataList pList,
+                      final int uId,
+                      final int uControlId,
+                      final int uInfoTypeId,
+                      final int uEventId,
+                      final byte[] pValue) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
 
-        /* Record the Ids */
-        setValueInfoType(uInfoTypeId);
-        setValueEvent(uEventId);
+        /* Protect against exceptions */
+        try {
+            /* Record the Ids */
+            setValueInfoType(uInfoTypeId);
+            setValueEvent(uEventId);
 
-        /* Store the controlId */
-        setControlKey(uControlId);
+            /* Store the controlId */
+            setControlKey(uControlId);
 
-        /* Look up the EventType */
-        FinanceData myData = pList.getData();
-        EventInfoType myType = myData.getInfoTypes().searchFor(uInfoTypeId);
-        if (myType == null) {
-            throw new JDataException(ExceptionClass.DATA, this, "Invalid EventInfoType Id");
+            /* Look up the EventType */
+            FinanceData myData = pList.getData();
+            EventInfoType myType = myData.getInfoTypes().searchFor(uInfoTypeId);
+            if (myType == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid EventInfoType Id");
+            }
+            setValueInfoType(myType);
+
+            /* Look up the Event */
+            Event myEvent = myData.getEvents().searchFor(uEventId);
+            if (myEvent == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid Event Id");
+            }
+            setValueEvent(myEvent);
+
+            /* Switch on Info Class */
+            switch (myType.getInfoClass()) {
+                case TaxCredit:
+                case NatInsurance:
+                case Benefit:
+                    setValueMoney(pValue);
+                    break;
+                case Dilution:
+                    setValueDilution(pValue);
+                    break;
+                case CreditUnits:
+                case DebitUnits:
+                    setValueUnits(pValue);
+                    break;
+                default:
+                    throw new JDataException(ExceptionClass.DATA, this, "Invalid Event Type");
+            }
+
+            /* Access the EventInfoSet and register this data */
+            EventInfoSet mySet = myEvent.getInfoSet();
+            mySet.registerData(this);
+
+            /* Allocate the id */
+            pList.setNewId(this);
+        } catch (Exception e) {
+            /* Pass on exception */
+            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
-        setValueInfoType(myType);
-
-        /* Look up the Event */
-        Event myEvent = myData.getEvents().searchFor(uEventId);
-        if (myEvent == null) {
-            throw new JDataException(ExceptionClass.DATA, this, "Invalid Event Id");
-        }
-        setValueEvent(myEvent);
-
-        /* Switch on Info Class */
-        switch (myType.getInfoClass()) {
-            case TaxCredit:
-            case NatInsurance:
-            case Benefit:
-                setValueMoney(pValue);
-                break;
-            case Dilution:
-                setValueDilution(pValue);
-                break;
-            case CreditUnits:
-            case DebitUnits:
-                setValueUnits(pValue);
-                break;
-            default:
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Event Type");
-        }
-
-        /* Access the EventInfoSet and register this data */
-        EventInfoSet mySet = myEvent.getInfoSet();
-        mySet.registerData(this);
-
-        /* Allocate the id */
-        pList.setNewId(this);
     }
 
     @Override
@@ -290,10 +423,15 @@ public class EventData extends EncryptedItem<EventData> {
         mySet.deRegisterData(this);
     }
 
-    /* Edit constructor */
-    private EventData(EventDataList pList,
-                      EventInfoType pType,
-                      Event pEvent) {
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     * @param pType the type
+     * @param pEvent the event
+     */
+    private EventData(final EventDataList pList,
+                      final EventInfoType pType,
+                      final Event pEvent) {
         /* Initialise the item */
         super(pList, 0);
 
@@ -312,46 +450,53 @@ public class EventData extends EncryptedItem<EventData> {
      *         sort order
      */
     @Override
-    public int compareTo(Object pThat) {
+    public int compareTo(final Object pThat) {
         int iDiff;
 
         /* Handle the trivial cases */
-        if (this == pThat)
+        if (this == pThat) {
             return 0;
-        if (pThat == null)
+        }
+        if (pThat == null) {
             return -1;
+        }
 
         /* Make sure that the object is an EventData */
-        if (pThat.getClass() != this.getClass())
+        if (pThat.getClass() != this.getClass()) {
             return -1;
+        }
 
         /* Access the object as an EventData */
         EventData myThat = (EventData) pThat;
 
         /* Compare the Events */
         iDiff = getEvent().compareTo(myThat.getEvent());
-        if (iDiff != 0)
+        if (iDiff != 0) {
             return iDiff;
+        }
 
         /* Compare the Info Types */
         iDiff = getInfoType().compareTo(myThat.getInfoType());
-        if (iDiff != 0)
+        if (iDiff != 0) {
             return iDiff;
+        }
 
         /* Compare the IDs */
         iDiff = (int) (getId() - myThat.getId());
-        if (iDiff < 0)
+        if (iDiff < 0) {
             return -1;
-        if (iDiff > 0)
+        }
+        if (iDiff > 0) {
             return 1;
+        }
         return 0;
     }
 
     /**
-     * Rebuild Links to partner data
+     * Rebuild Links to partner data.
      * @param pData the DataSet
      */
-    protected void reBuildLinks(FinanceData pData) {
+    protected void reBuildLinks(final FinanceData pData) {
         /* Update the Encryption details */
         super.reBuildLinks(pData);
 
@@ -371,7 +516,7 @@ public class EventData extends EncryptedItem<EventData> {
     }
 
     /**
-     * Validate the Event Data
+     * Validate the Event Data.
      */
     @Override
     public void validate() {
@@ -386,75 +531,74 @@ public class EventData extends EncryptedItem<EventData> {
         /* InfoType must be non-null */
         if (myType == null) {
             addError("EventInfoType must be non-null", FIELD_INFOTYPE);
-        } else if (!myType.getEnabled())
+        } else if (!myType.getEnabled()) {
             addError("EventInfoType must be enabled", FIELD_INFOTYPE);
-        else {
+        } else {
             /* Switch on Info Class */
             switch (myType.getInfoClass()) {
                 case TaxCredit:
                 case NatInsurance:
                 case Benefit:
                     Money myMoney = getMoney();
-                    if (myMoney == null)
+                    if (myMoney == null) {
                         addError(myType.getName() + " must be non-null", FIELD_VALUE);
-                    else if (!myMoney.isPositive())
+                    } else if (!myMoney.isPositive()) {
                         addError(myType.getName() + " must be positive", FIELD_VALUE);
+                    }
                     break;
                 case Dilution:
                     Dilution myDilution = getDilution();
-                    if (myDilution == null)
+                    if (myDilution == null) {
                         addError(myType.getName() + " must be non-null", FIELD_VALUE);
-                    else if (myDilution.outOfRange())
+                    } else if (myDilution.outOfRange()) {
                         addError("Dilution factor value is outside allowed range (0-1)", FIELD_VALUE);
+                    }
                     break;
                 case CreditUnits:
                 case DebitUnits:
                     Units myUnits = getUnits();
-                    if (myUnits == null)
+                    if (myUnits == null) {
                         addError(myType.getName() + " must be non-null", FIELD_VALUE);
-                    else if (!myUnits.isPositive())
+                    } else if (!myUnits.isPositive()) {
                         addError(myType.getName() + " must be positive", FIELD_VALUE);
+                    }
+                    break;
+                default:
+                    addError("Invalid Event Type", FIELD_INFOTYPE);
                     break;
             }
         }
 
         /* Set validation flag */
-        if (!hasErrors())
+        if (!hasErrors()) {
             setValidEdit();
+        }
     }
 
-    /**
-     * Format an Event Data
-     * @param pData the data to format
-     * @return the formatted data
-     */
-    public static String format(EventData pData) {
-        /* If we have null, return it */
-        if ((pData == null) || (pData.getValueField() == null))
-            return "null";
-
+    @Override
+    public String formatObject() {
         /* Switch on type of Data */
-        switch (pData.getInfoType().getInfoClass()) {
+        switch (getInfoType().getInfoClass()) {
             case TaxCredit:
             case NatInsurance:
             case Benefit:
-                return Money.format(pData.getMoney());
+                return JDataObject.formatField(getMoney());
             case CreditUnits:
             case DebitUnits:
-                return Units.format(pData.getUnits());
+                return JDataObject.formatField(getUnits());
             case Dilution:
-                return Dilution.format(pData.getDilution());
+                return JDataObject.formatField(getDilution());
             default:
                 return "null";
         }
     }
 
     /**
-     * Set Money
+     * Set Money.
      * @param pValue the Value
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    protected void setMoney(Money pValue) throws JDataException {
+    protected void setMoney(final Money pValue) throws JDataException {
         /* Switch on Info type */
         switch (getInfoType().getInfoClass()) {
             case TaxCredit:
@@ -469,11 +613,11 @@ public class EventData extends EncryptedItem<EventData> {
     }
 
     /**
-     * Set Units
+     * Set Units.
      * @param pValue the Value
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    protected void setUnits(Units pValue) throws JDataException {
+    protected void setUnits(final Units pValue) throws JDataException {
         /* Switch on Info type */
         switch (getInfoType().getInfoClass()) {
             case CreditUnits:
@@ -487,11 +631,11 @@ public class EventData extends EncryptedItem<EventData> {
     }
 
     /**
-     * Set Dilution
+     * Set Dilution.
      * @param pValue the Value
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    protected void setDilution(Dilution pValue) throws JDataException {
+    protected void setDilution(final Dilution pValue) throws JDataException {
         /* Switch on Info type */
         switch (getInfoType().getInfoClass()) {
             case Dilution:
@@ -503,39 +647,40 @@ public class EventData extends EncryptedItem<EventData> {
         }
     }
 
-    /* List class */
+    /**
+     * List class for EventData.
+     */
     public static class EventDataList extends EncryptedList<EventDataList, EventData> {
-        /* Access Extra Variables correctly */
         @Override
         public FinanceData getData() {
             return (FinanceData) super.getData();
         }
 
         /**
-         * Construct an empty CORE rate list
+         * Construct an empty CORE rate list.
          * @param pData the DataSet for the list
          */
-        protected EventDataList(FinanceData pData) {
+        protected EventDataList(final FinanceData pData) {
             super(EventDataList.class, EventData.class, pData);
         }
 
         /**
-         * Construct an empty list
+         * Construct an empty list.
          * @param pData the DataSet for the list
          * @param pStyle the required style
          */
-        protected EventDataList(FinanceData pData,
-                                ListStyle pStyle) {
+        protected EventDataList(final FinanceData pData,
+                                final ListStyle pStyle) {
             super(EventDataList.class, EventData.class, pData);
             setStyle(pStyle);
             setGeneration(pData.getGeneration());
         }
 
         /**
-         * Constructor for a cloned List
+         * Constructor for a cloned List.
          * @param pSource the source List
          */
-        private EventDataList(EventDataList pSource) {
+        private EventDataList(final EventDataList pSource) {
             super(pSource);
         }
 
@@ -544,7 +689,7 @@ public class EventData extends EncryptedItem<EventData> {
          * @param pStyle the list style
          * @return the update Extract
          */
-        private EventDataList getExtractList(ListStyle pStyle) {
+        private EventDataList getExtractList(final ListStyle pStyle) {
             /* Build an empty Extract List */
             EventDataList myList = new EventDataList(this);
 
@@ -555,7 +700,6 @@ public class EventData extends EncryptedItem<EventData> {
             return myList;
         }
 
-        /* Obtain extract lists. */
         @Override
         public EventDataList getUpdateList() {
             return getExtractList(ListStyle.UPDATE);
@@ -572,7 +716,7 @@ public class EventData extends EncryptedItem<EventData> {
         }
 
         @Override
-        public EventDataList getDeepCopy(DataSet<?> pDataSet) {
+        public EventDataList getDeepCopy(final DataSet<?> pDataSet) {
             /* Build an empty Extract List */
             EventDataList myList = new EventDataList(this);
             myList.setData(pDataSet);
@@ -586,12 +730,12 @@ public class EventData extends EncryptedItem<EventData> {
         }
 
         /**
-         * Construct a difference Info list
+         * Construct a difference Info list.
          * @param pOld the old Info list
          * @return the difference list
          */
         @Override
-        protected EventDataList getDifferences(EventDataList pOld) {
+        protected EventDataList getDifferences(final EventDataList pOld) {
             /* Build an empty Difference List */
             EventDataList myList = new EventDataList(this);
 
@@ -603,55 +747,49 @@ public class EventData extends EncryptedItem<EventData> {
         }
 
         /**
-         * Obtain the type of the item
-         * @return the type of the item
+         * Allow an EventData to be added.
+         * @param uId the id
+         * @param uControlId the control id
+         * @param uInfoTypeId the info type id
+         * @param uEventId the event id
+         * @param pValue the data
+         * @throws JDataException on error
          */
-        public String itemType() {
-            return LIST_NAME;
-        }
-
-        /**
-         * Allow an EventData to be added
-         * @param uId
-         * @param uControlId
-         * @param uInfoTypeId
-         * @param uEventId
-         * @param pValue
-         * @throws JDataException
-         */
-        public void addItem(int uId,
-                            int uControlId,
-                            int uInfoTypeId,
-                            int uEventId,
-                            byte[] pValue) throws JDataException {
+        public void addItem(final int uId,
+                            final int uControlId,
+                            final int uInfoTypeId,
+                            final int uEventId,
+                            final byte[] pValue) throws JDataException {
             EventData myInfo;
 
             /* Create the info */
             myInfo = new EventData(this, uId, uControlId, uInfoTypeId, uEventId, pValue);
 
             /* Check that this DataId has not been previously added */
-            if (!isIdUnique(uId))
+            if (!isIdUnique(uId)) {
                 throw new JDataException(ExceptionClass.DATA, myInfo, "Duplicate DataId");
+            }
 
             /* Validate the information */
             myInfo.validate();
 
             /* Handle validation failure */
-            if (myInfo.hasErrors())
+            if (myInfo.hasErrors()) {
                 throw new JDataException(ExceptionClass.VALIDATE, myInfo, "Failed validation");
+            }
 
             /* Add to the list */
             add(myInfo);
         }
 
         /**
-         * Add new item type (into edit session)
+         * Add new item type (into edit session).
          * @param pType the Item Type
          * @param pEvent the Event
          * @return the new item
          */
-        protected EventData addNewItem(EventInfoType pType,
-                                       Event pEvent) {
+        protected EventData addNewItem(final EventInfoType pType,
+                                       final Event pEvent) {
             /* Create the new Data */
             EventData myData = new EventData(this, pType, pEvent);
 
@@ -661,7 +799,7 @@ public class EventData extends EncryptedItem<EventData> {
         }
 
         @Override
-        public EventData addNewItem(DataItem<?> pElement) {
+        public EventData addNewItem(final DataItem<?> pElement) {
             /* Create the new item */
             EventData mySource = (EventData) pElement;
             EventData myInfo = new EventData(this, mySource);

@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +41,7 @@ import uk.co.tolcroft.finance.data.Account.AccountList;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.ui.controls.AccountSelect;
 import uk.co.tolcroft.finance.ui.controls.ComboSelect;
-import uk.co.tolcroft.finance.views.Statement;
+import uk.co.tolcroft.finance.views.Statement.StatementLine;
 import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.ui.ErrorPanel;
@@ -50,44 +51,122 @@ import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
 import uk.co.tolcroft.models.views.DataControl;
 import uk.co.tolcroft.models.views.ViewList;
 
+/**
+ * Account Tab panel.
+ * @author Tony Washer
+ */
 public class AccountTab implements StdPanel, ChangeListener {
-    private View theView = null;
-    private JPanel thePanel = null;
-    private MainTab theParent = null;
-    private JTabbedPane theTabs = null;
-    private AccountSelect theSelect = null;
-    private AccountStatement theStatement = null;
-    private AccountPatterns thePatterns = null;
-    private AccountPrices thePrices = null;
-    private AccountRates theRates = null;
-    private ViewList theViewSet = null;
-    private Account theAccount = null;
-    private AccountList theAcList = null;
-    private SaveButtons theTabButs = null;
-    private JDataEntry theDataEntry = null;
-    private ErrorPanel theError = null;
+    /**
+     * Data View.
+     */
+    private final View theView;
 
-    /* Access methods */
+    /**
+     * The panel.
+     */
+    private final JPanel thePanel;
+
+    /**
+     * The parent.
+     */
+    private final MainTab theParent;
+
+    /**
+     * The Tabs.
+     */
+    private final JTabbedPane theTabs;
+
+    /**
+     * The Account Selection panel.
+     */
+    private final AccountSelect theSelect;
+
+    /**
+     * The Statement panel.
+     */
+    private final AccountStatement theStatement;
+
+    /**
+     * The Patterns panel.
+     */
+    private final AccountPatterns thePatterns;
+
+    /**
+     * The Prices panel.
+     */
+    private final AccountPrices thePrices;
+
+    /**
+     * The Rates panel.
+     */
+    private final AccountRates theRates;
+
+    /**
+     * The View Set.
+     */
+    private final ViewList theViewSet;
+
+    /**
+     * The Account.
+     */
+    private Account theAccount = null;
+
+    /**
+     * The Account list.
+     */
+    private AccountList theAcList = null;
+
+    /**
+     * The Save buttons.
+     */
+    private final SaveButtons theTabButs;
+
+    /**
+     * The data Entry.
+     */
+    private final JDataEntry theDataEntry;
+
+    /**
+     * The Error panel.
+     */
+    private final ErrorPanel theError;
+
+    /**
+     * Obtain view.
+     * @return the view
+     */
     public View getView() {
         return theView;
     }
 
+    /**
+     * Obtain top window.
+     * @return the top window
+     */
     public MainTab getTopWindow() {
         return theParent;
     }
 
+    /**
+     * Obtain panel.
+     * @return the panel
+     */
     public JPanel getPanel() {
         return thePanel;
     }
 
-    public int getFieldForCol(int col) {
-        return -1;
-    }
-
+    /**
+     * Obtain the comboList.
+     * @return the comboList
+     */
     public ComboSelect getComboList() {
         return theParent.getComboList();
     }
 
+    /**
+     * Obtain the viewSet.
+     * @return the viewSet
+     */
     public ViewList getViewSet() {
         return theViewSet;
     }
@@ -106,17 +185,31 @@ public class AccountTab implements StdPanel, ChangeListener {
     public void printIt() {
     }
 
-    /* Tab headers */
-    private static final String titleStatement = "Statement";
-    private static final String titlePatterns = "Patterns";
-    private static final String titlePrices = "Prices";
-    private static final String titleRates = "Rates";
+    /**
+     * Statement panel title.
+     */
+    private static final String TITLE_STATEMENT = "Statement";
 
     /**
-     * Constructor for Account Window
+     * Patterns panel title.
+     */
+    private static final String TITLE_PATTERNS = "Patterns";
+
+    /**
+     * Prices panel title.
+     */
+    private static final String TITLE_PRICES = "Prices";
+
+    /**
+     * Rates panel title.
+     */
+    private static final String TITLE_RATES = "Rates";
+
+    /**
+     * Constructor for Account Window.
      * @param pParent the parent window
      */
-    public AccountTab(MainTab pParent) {
+    public AccountTab(final MainTab pParent) {
         GroupLayout myLayout;
         JDataEntry mySection;
 
@@ -138,7 +231,7 @@ public class AccountTab implements StdPanel, ChangeListener {
 
         /* Create the Statement table and add to tabbed pane */
         theStatement = new AccountStatement(this);
-        theTabs.addTab(titleStatement, theStatement.getPanel());
+        theTabs.addTab(TITLE_STATEMENT, theStatement.getPanel());
         theTabs.addChangeListener(this);
 
         /* Create the optional tables */
@@ -147,7 +240,7 @@ public class AccountTab implements StdPanel, ChangeListener {
         thePrices = new AccountPrices(this);
 
         /* Create the Account selection panel */
-        theSelect = new AccountSelect(theView, this, false);
+        theSelect = new AccountSelect(theView, false);
 
         /* Create the table buttons */
         theTabButs = new SaveButtons(this);
@@ -194,11 +287,11 @@ public class AccountTab implements StdPanel, ChangeListener {
     }
 
     /**
-     * Lock on error
+     * Lock on error.
      * @param isError is there an error (True/False)
      */
     @Override
-    public void lockOnError(boolean isError) {
+    public void lockOnError(final boolean isError) {
         /* Hide selection panel */
         theSelect.setVisible(!isError);
 
@@ -208,7 +301,7 @@ public class AccountTab implements StdPanel, ChangeListener {
     }
 
     /**
-     * Refresh views/controls after a load/update of underlying data
+     * Refresh views/controls after a load/update of underlying data.
      * @throws JDataException on error
      */
     public void refreshData() throws JDataException {
@@ -229,7 +322,7 @@ public class AccountTab implements StdPanel, ChangeListener {
     }
 
     /**
-     * Has this set of tables got updates
+     * Has this set of tables got updates?
      * @return true/false
      */
     @Override
@@ -239,7 +332,7 @@ public class AccountTab implements StdPanel, ChangeListener {
     }
 
     /**
-     * Has this set of tables got errors
+     * Has this set of tables got errors.
      * @return true/false
      */
     public boolean hasErrors() {
@@ -248,7 +341,7 @@ public class AccountTab implements StdPanel, ChangeListener {
     }
 
     /**
-     * Get the edit state of this set of tables
+     * Get the edit state of this set of tables.
      * @return the edit state
      */
     @Override
@@ -258,11 +351,11 @@ public class AccountTab implements StdPanel, ChangeListener {
     }
 
     /**
-     * Perform a command
+     * Perform a command.
      * @param pCmd the command to perform
      */
     @Override
-    public void performCommand(stdCommand pCmd) {
+    public void performCommand(final stdCommand pCmd) {
         /* Cancel any editing */
         cancelEditing();
 
@@ -274,12 +367,14 @@ public class AccountTab implements StdPanel, ChangeListener {
             case RESETALL:
                 resetData();
                 break;
+            default:
+                break;
         }
         notifyChanges();
     }
 
     /**
-     * Is this table locked
+     * Is this table locked?
      * @return true/false
      */
     @Override
@@ -289,7 +384,7 @@ public class AccountTab implements StdPanel, ChangeListener {
     }
 
     /**
-     * Validate all tables
+     * Validate all tables.
      */
     public void validateAll() {
         /* Validate the data */
@@ -301,7 +396,7 @@ public class AccountTab implements StdPanel, ChangeListener {
     }
 
     /**
-     * Cancel all editing
+     * Cancel all editing.
      */
     public void cancelEditing() {
         /* cancel editing */
@@ -312,7 +407,7 @@ public class AccountTab implements StdPanel, ChangeListener {
     }
 
     /**
-     * Reset all table data
+     * Reset all table data.
      */
     public void resetData() {
         /* reset the data */
@@ -323,15 +418,16 @@ public class AccountTab implements StdPanel, ChangeListener {
     }
 
     /**
-     * Save changes from the view into the underlying data
+     * Save changes from the view into the underlying data.
      */
     public void saveData() {
         /* Validate the changes */
         validateAll();
 
         /* Stop now if there are validation errors */
-        if (hasErrors())
+        if (hasErrors()) {
             return;
+        }
 
         /* Apply changes in the view set */
         theViewSet.applyChanges();
@@ -340,8 +436,9 @@ public class AccountTab implements StdPanel, ChangeListener {
         JDataException myError = theView.getError();
 
         /* Show the error */
-        if (myError != null)
+        if (myError != null) {
             theError.setError(myError);
+        }
 
         /* Update the debug of the underlying entries */
         theRates.saveData();
@@ -351,13 +448,13 @@ public class AccountTab implements StdPanel, ChangeListener {
     }
 
     /**
-     * Notify table that there has been a change in selection by an underlying control
+     * Notify table that there has been a change in selection by an underlying control.
      * @param obj the underlying control that has changed selection
      */
     @Override
-    public void notifySelection(Object obj) {
+    public void notifySelection(final Object obj) {
         /* If this is a change from the account selection */
-        if (obj == (Object) theSelect) {
+        if (theSelect.equals(obj)) {
             /* Protect against exceptions */
             try {
                 /* Select the account */
@@ -365,9 +462,7 @@ public class AccountTab implements StdPanel, ChangeListener {
 
                 /* Create SavePoint */
                 theSelect.createSavePoint();
-            }
-
-            catch (Throwable e) {
+            } catch (Exception e) {
                 /* Build the error */
                 JDataException myError = new JDataException(ExceptionClass.DATA,
                         "Failed to change selection", e);
@@ -382,29 +477,30 @@ public class AccountTab implements StdPanel, ChangeListener {
     }
 
     /**
-     * Call underlying controls to take notice of changes in view/selection
+     * Call underlying controls to take notice of changes in view/selection.
      */
     @Override
     public void notifyChanges() {
         /* Lock down the table buttons and the selection */
         theTabButs.setLockDown();
-        theSelect.setLockDown();
+        theSelect.setEnabled(!hasUpdates());
 
         /* Adjust the visibility of the tabs */
         setVisibleTabs();
     }
 
     /**
-     * Select an explicit account
+     * Select an explicit account.
      * @param pAccount the account to select
      * @throws JDataException on error
      */
-    public void setSelection(Account pAccount) throws JDataException {
+    public void setSelection(final Account pAccount) throws JDataException {
         FinanceData myData = theView.getData();
 
         /* Release old list */
-        if (theAcList != null)
+        if (theAcList != null) {
             theAcList.clear();
+        }
 
         /* Reset controls */
         theAcList = null;
@@ -430,7 +526,7 @@ public class AccountTab implements StdPanel, ChangeListener {
     }
 
     /**
-     * Set tabs to be visible or not depending on the type of account
+     * Set tabs to be visible or not depending on the type of account.
      */
     private void setVisibleTabs() {
         int iIndex;
@@ -438,35 +534,36 @@ public class AccountTab implements StdPanel, ChangeListener {
         boolean isPricesSelected = false;
 
         /* Access the Rates index */
-        iIndex = theTabs.indexOfTab(titleRates);
+        iIndex = theTabs.indexOfTab(TITLE_RATES);
 
         /* If the account has rates */
         if ((theAccount != null) && (theAccount.isMoney())) {
 
             /* Add the Rates if not present */
             if (iIndex == -1) {
-                theTabs.addTab(titleRates, theRates.getPanel());
+                theTabs.addTab(TITLE_RATES, theRates.getPanel());
                 theRates.getDataEntry().showEntry();
 
                 /* Remove the patterns tab if present */
-                iIndex = theTabs.indexOfTab(titlePatterns);
+                iIndex = theTabs.indexOfTab(TITLE_PATTERNS);
                 if (iIndex != -1) {
                     /* Remember if Patterns are selected since we need to restore this */
-                    if ((iIndex == theTabs.getSelectedIndex()) && (!isPricesSelected))
+                    if ((iIndex == theTabs.getSelectedIndex()) && (!isPricesSelected)) {
                         isPatternsSelected = true;
+                    }
 
                     /* Remove the patterns tab */
                     theTabs.removeTabAt(iIndex);
                     thePatterns.getDataEntry().hideEntry();
                 }
             }
-        }
 
-        /* else if not rates but tab is present */
-        else if (iIndex != -1) {
+            /* else if not rates but tab is present */
+        } else if (iIndex != -1) {
             /* If the tab is selected then set statement as selected */
-            if (iIndex == theTabs.getSelectedIndex())
+            if (iIndex == theTabs.getSelectedIndex()) {
                 theTabs.setSelectedIndex(0);
+            }
 
             /* Remove the units tab */
             theTabs.removeTabAt(iIndex);
@@ -474,42 +571,43 @@ public class AccountTab implements StdPanel, ChangeListener {
         }
 
         /* Access the Prices index */
-        iIndex = theTabs.indexOfTab(titlePrices);
+        iIndex = theTabs.indexOfTab(TITLE_PRICES);
 
         /* If the account has prices */
         if ((theAccount != null) && (theAccount.isPriced())) {
 
             /* Add the Prices if not present */
             if (iIndex == -1) {
-                theTabs.addTab(titlePrices, thePrices.getPanel());
+                theTabs.addTab(TITLE_PRICES, thePrices.getPanel());
                 thePrices.getDataEntry().showEntry();
 
                 /* If the prices were selected */
                 if (isPricesSelected) {
                     /* Re-select the prices */
-                    iIndex = theTabs.indexOfTab(titlePrices);
+                    iIndex = theTabs.indexOfTab(TITLE_PRICES);
                     theTabs.setSelectedIndex(iIndex);
                 }
 
                 /* Remove the patterns tab if present */
-                iIndex = theTabs.indexOfTab(titlePatterns);
+                iIndex = theTabs.indexOfTab(TITLE_PATTERNS);
                 if (iIndex != -1) {
                     /* Remember if Patterns are selected since we need to restore this */
-                    if (iIndex == theTabs.getSelectedIndex())
+                    if (iIndex == theTabs.getSelectedIndex()) {
                         isPatternsSelected = true;
+                    }
 
                     /* Remove the patterns tab */
                     theTabs.removeTabAt(iIndex);
                     thePatterns.getDataEntry().hideEntry();
                 }
             }
-        }
 
-        /* else if not rates but tab is present */
-        else if (iIndex != -1) {
+            /* else if not rates but tab is present */
+        } else if (iIndex != -1) {
             /* If the tab is selected then set statement as selected */
-            if (iIndex == theTabs.getSelectedIndex())
+            if (iIndex == theTabs.getSelectedIndex()) {
                 theTabs.setSelectedIndex(0);
+            }
 
             /* Remove the units tab */
             theTabs.removeTabAt(iIndex);
@@ -517,30 +615,30 @@ public class AccountTab implements StdPanel, ChangeListener {
         }
 
         /* Access the Patterns index */
-        iIndex = theTabs.indexOfTab(titlePatterns);
+        iIndex = theTabs.indexOfTab(TITLE_PATTERNS);
 
         /* If the account is not closed */
         if ((theAccount != null) && (!theAccount.isClosed())) {
 
             /* Add the Patterns if not present */
             if (iIndex == -1) {
-                theTabs.addTab(titlePatterns, thePatterns.getPanel());
+                theTabs.addTab(TITLE_PATTERNS, thePatterns.getPanel());
                 thePatterns.getDataEntry().showEntry();
 
                 /* If the patterns were selected */
                 if (isPatternsSelected) {
                     /* Re-select the patterns */
-                    iIndex = theTabs.indexOfTab(titlePatterns);
+                    iIndex = theTabs.indexOfTab(TITLE_PATTERNS);
                     theTabs.setSelectedIndex(iIndex);
                 }
             }
-        }
 
-        /* else if not patterned but tab is present */
-        else if (iIndex != -1) {
+            /* else if not patterned but tab is present */
+        } else if (iIndex != -1) {
             /* If the tab is selected then set statement as selected */
-            if (iIndex == theTabs.getSelectedIndex())
+            if (iIndex == theTabs.getSelectedIndex()) {
                 theTabs.setSelectedIndex(0);
+            }
 
             /* Remove the units tab */
             theTabs.removeTabAt(iIndex);
@@ -552,12 +650,12 @@ public class AccountTab implements StdPanel, ChangeListener {
     }
 
     /**
-     * Select an explicit account and period
+     * Select an explicit account and period.
      * @param pAccount the account to select
      * @param pSource the period source
      */
-    public void selectAccount(Account pAccount,
-                              DateDayRangeSelect pSource) {
+    public void selectAccount(final Account pAccount,
+                              final DateDayRangeSelect pSource) {
         /* Protect against exceptions */
         try {
             /* Adjust the date selection for the statements appropriately */
@@ -569,9 +667,7 @@ public class AccountTab implements StdPanel, ChangeListener {
 
             /* Create SavePoint */
             theSelect.createSavePoint();
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             /* Build the error */
             JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to change selection", e);
 
@@ -584,15 +680,15 @@ public class AccountTab implements StdPanel, ChangeListener {
     }
 
     /**
-     * Add a pattern from a statement line
+     * Add a pattern from a statement line.
      * @param pLine the line to add
      */
-    public void addPattern(final Statement.StatementLine pLine) {
+    public void addPattern(final StatementLine pLine) {
         /* Pass through to the Patterns table */
         thePatterns.addPattern(pLine);
 
         /* Change focus to the Patterns */
-        gotoNamedTab(titlePatterns);
+        gotoNamedTab(TITLE_PATTERNS);
     }
 
     /**
@@ -614,8 +710,9 @@ public class AccountTab implements StdPanel, ChangeListener {
     @Override
     public void stateChanged(final ChangeEvent e) {
         /* Ignore if it is not the tabs */
-        if (e.getSource() != theTabs)
+        if (!theTabs.equals(e.getSource())) {
             return;
+        }
 
         /* Determine the focus */
         determineFocus();
@@ -629,28 +726,25 @@ public class AccountTab implements StdPanel, ChangeListener {
         Component myComponent = theTabs.getSelectedComponent();
 
         /* If the selected component is Statement */
-        if (myComponent == (Component) theStatement.getPanel()) {
+        if (myComponent.equals(theStatement.getPanel())) {
             /* Set the debug focus */
             theStatement.getDataEntry().setFocus();
             theStatement.requestFocusInWindow();
-        }
 
-        /* If the selected component is Rates */
-        else if (myComponent == (Component) theRates.getPanel()) {
+            /* If the selected component is Rates */
+        } else if (myComponent.equals(theRates.getPanel())) {
             /* Set the debug focus */
             theRates.getDataEntry().setFocus();
             theRates.requestFocusInWindow();
-        }
 
-        /* If the selected component is Prices */
-        else if (myComponent == (Component) thePrices.getPanel()) {
+            /* If the selected component is Prices */
+        } else if (myComponent.equals(thePrices.getPanel())) {
             /* Set the debug focus */
             thePrices.getDataEntry().setFocus();
             thePrices.requestFocusInWindow();
-        }
 
-        /* If the selected component is Patterns */
-        else if (myComponent == (Component) thePatterns.getPanel()) {
+            /* If the selected component is Patterns */
+        } else if (myComponent.equals(thePatterns.getPanel())) {
             /* Set the debug focus */
             thePatterns.getDataEntry().setFocus();
             thePatterns.requestFocusInWindow();

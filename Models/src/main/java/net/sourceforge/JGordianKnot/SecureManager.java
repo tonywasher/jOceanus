@@ -190,8 +190,6 @@ public class SecureManager {
             } catch (WrongPasswordException e) {
                 myPass.setError("Incorrect password. Please re-enter");
                 continue;
-            } catch (JDataException e) {
-                throw e;
             } finally {
                 /* Clear out the password */
                 if (myPassword != null) {

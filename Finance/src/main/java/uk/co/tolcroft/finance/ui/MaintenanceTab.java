@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +23,6 @@
 package uk.co.tolcroft.finance.ui;
 
 import java.awt.Component;
-import java.awt.Font;
 
 import javax.swing.GroupLayout;
 import javax.swing.JPanel;
@@ -37,57 +37,131 @@ import uk.co.tolcroft.finance.data.Account;
 import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.views.DataControl;
 
+/**
+ * Maintenance Tab panel.
+ * @author Tony Washer
+ */
 public class MaintenanceTab implements ChangeListener {
-    /* properties */
-    private View theView = null;
-    private MainTab theParent = null;
-    private JPanel thePanel = null;
-    private JTabbedPane theTabs = null;
-    private MaintAccount theAccountTab = null;
-    private MaintTaxYear theTaxYearTab = null;
-    private MaintProperties theProperties = null;
-    private MaintNewYear thePatternYear = null;
-    private MaintStatic theStatic = null;
-    private JDataEntry theDataEntry = null;
+    /**
+     * The Data View.
+     */
+    private final View theView;
 
-    /* Access methods */
+    /**
+     * The Parent.
+     */
+    private final MainTab theParent;
+
+    /**
+     * The Panel.
+     */
+    private final JPanel thePanel;
+
+    /**
+     * The Tabs.
+     */
+    private final JTabbedPane theTabs;
+
+    /**
+     * The Account Panel.
+     */
+    private final MaintAccount theAccountTab;
+
+    /**
+     * The TaxYear Panel.
+     */
+    private final MaintTaxYear theTaxYearTab;
+
+    /**
+     * The Properties Panel.
+     */
+    private final MaintProperties theProperties;
+
+    /**
+     * The NewYear Panel.
+     */
+    private final MaintNewYear thePatternYear;
+
+    /**
+     * The Static Panel.
+     */
+    private final MaintStatic theStatic;
+
+    /**
+     * The DataEntry.
+     */
+    private final JDataEntry theDataEntry;
+
+    /**
+     * Obtain the panel.
+     * @return the panel
+     */
     protected JPanel getPanel() {
         return thePanel;
     }
 
+    /**
+     * Obtain the view.
+     * @return the view
+     */
     protected View getView() {
         return theView;
     }
 
-    protected Font getStdFont(boolean isFixed) {
-        return null;
-    }
-
-    protected Font getChgFont(boolean isFixed) {
-        return null;
-    }
-
+    /**
+     * Obtain the top window.
+     * @return the window
+     */
     protected MainTab getTopWindow() {
         return theParent;
     }
 
+    /**
+     * Obtain the DataEntry.
+     * @return the entry
+     */
     public JDataEntry getDataEntry() {
         return theDataEntry;
     }
 
+    /**
+     * Obtain the data manager.
+     * @return the manager
+     */
     public JDataManager getDataManager() {
         return theParent.getDataMgr();
     }
 
-    /* Tab titles */
-    private static final String titleAccounts = "Accounts";
-    private static final String titleTaxYear = "TaxYears";
-    private static final String titleProperties = "Properties";
-    private static final String titlePattern = "PatternYear";
-    private static final String titleStatic = "Static";
+    /**
+     * Accounts tab title.
+     */
+    private static final String TITLE_ACCOUNTS = "Accounts";
 
-    /* Constructor */
-    public MaintenanceTab(MainTab pTop) {
+    /**
+     * TaxYears tab title.
+     */
+    private static final String TITLE_TAXYEARS = "TaxYears";
+
+    /**
+     * Properties tab title.
+     */
+    private static final String TITLE_PROPERTIES = "Properties";
+
+    /**
+     * NewYear tab title.
+     */
+    private static final String TITLE_NEWYEAR = "PatternYear";
+
+    /**
+     * Static tab title.
+     */
+    private static final String TITLE_STATIC = "Static";
+
+    /**
+     * Constructor.
+     * @param pTop top window
+     */
+    public MaintenanceTab(final MainTab pTop) {
         /* Store details */
         theView = pTop.getView();
         theParent = pTop;
@@ -104,23 +178,23 @@ public class MaintenanceTab implements ChangeListener {
 
         /* Create the account Tab and add it */
         theAccountTab = new MaintAccount(this);
-        theTabs.addTab(titleAccounts, theAccountTab.getPanel());
+        theTabs.addTab(TITLE_ACCOUNTS, theAccountTab.getPanel());
 
         /* Create the TaxYears Tab */
         theTaxYearTab = new MaintTaxYear(this);
-        theTabs.addTab(titleTaxYear, theTaxYearTab.getPanel());
+        theTabs.addTab(TITLE_TAXYEARS, theTaxYearTab.getPanel());
 
         /* Create the Properties Tab */
         theProperties = new MaintProperties(this);
-        theTabs.addTab(titleProperties, theProperties.getPanel());
+        theTabs.addTab(TITLE_PROPERTIES, theProperties.getPanel());
 
         /* Create the PatternYear Tab */
         thePatternYear = new MaintNewYear(this);
-        theTabs.addTab(titlePattern, thePatternYear.getPanel());
+        theTabs.addTab(TITLE_NEWYEAR, thePatternYear.getPanel());
 
         /* Create the Static Tab */
         theStatic = new MaintStatic(this);
-        theTabs.addTab(titleStatic, theStatic.getPanel());
+        theTabs.addTab(TITLE_STATIC, theStatic.getPanel());
 
         /* Create the panel */
         thePanel = new JPanel();
@@ -144,7 +218,10 @@ public class MaintenanceTab implements ChangeListener {
                           myLayout.createSequentialGroup().addComponent(theTabs)));
     }
 
-    /* refresh data */
+    /**
+     * Refresh data.
+     * @throws JDataException on error
+     */
     public void refreshData() throws JDataException {
         /* Refresh sub-panels */
         theAccountTab.refreshData();
@@ -153,34 +230,46 @@ public class MaintenanceTab implements ChangeListener {
         theStatic.refreshData();
     }
 
-    /* Has this set of tables got updates */
+    /**
+     * Has this set of tables got updates.
+     * @return true/false
+     */
     public boolean hasUpdates() {
         boolean hasUpdates = false;
 
         /* Determine whether we have updates */
         hasUpdates = theAccountTab.hasUpdates();
-        if (!hasUpdates)
+        if (!hasUpdates) {
             hasUpdates = theTaxYearTab.hasUpdates();
-        if (!hasUpdates)
+        }
+        if (!hasUpdates) {
             hasUpdates = theProperties.hasUpdates();
-        if (!hasUpdates)
+        }
+        if (!hasUpdates) {
             hasUpdates = theStatic.hasUpdates();
+        }
 
         /* Return to caller */
         return hasUpdates;
     }
 
-    /* Select an explicit account for maintenance */
-    public void selectAccount(Account pAccount) {
+    /**
+     * Select an explicit account for maintenance.
+     * @param pAccount the account
+     */
+    public void selectAccount(final Account pAccount) {
         /* Pass through to the Account control */
         theAccountTab.selectAccount(pAccount);
 
         /* Goto the Accounts tab */
-        gotoNamedTab(titleAccounts);
+        gotoNamedTab(TITLE_ACCOUNTS);
     }
 
-    /* Goto the specific tab */
-    private void gotoNamedTab(String pTabName) {
+    /**
+     * Goto the specific tab.
+     * @param pTabName the tab name
+     */
+    private void gotoNamedTab(final String pTabName) {
         /* Access the Named index */
         int iIndex = theTabs.indexOfTab(pTabName);
 
@@ -188,7 +277,9 @@ public class MaintenanceTab implements ChangeListener {
         theTabs.setSelectedIndex(iIndex);
     }
 
-    /* Set visibility */
+    /**
+     * Set visibility.
+     */
     protected void setVisibility() {
         int iIndex;
         boolean hasUpdates;
@@ -197,81 +288,85 @@ public class MaintenanceTab implements ChangeListener {
         hasUpdates = hasUpdates();
 
         /* Access the Accounts index */
-        iIndex = theTabs.indexOfTab(titleAccounts);
+        iIndex = theTabs.indexOfTab(TITLE_ACCOUNTS);
 
         /* Enable/Disable the Accounts tab */
-        if (iIndex != -1)
+        if (iIndex != -1) {
             theTabs.setEnabledAt(iIndex, !hasUpdates || theAccountTab.hasUpdates());
+        }
 
         /* Access the TaxYear index */
-        iIndex = theTabs.indexOfTab(titleTaxYear);
+        iIndex = theTabs.indexOfTab(TITLE_TAXYEARS);
 
         /* Enable/Disable the TaxYear tab */
-        if (iIndex != -1)
+        if (iIndex != -1) {
             theTabs.setEnabledAt(iIndex, !hasUpdates || theTaxYearTab.hasUpdates());
+        }
 
         /* Access the Properties panel */
-        iIndex = theTabs.indexOfTab(titleProperties);
+        iIndex = theTabs.indexOfTab(TITLE_PROPERTIES);
 
         /* Enable/Disable the Properties tab */
-        if (iIndex != -1)
+        if (iIndex != -1) {
             theTabs.setEnabledAt(iIndex, !hasUpdates || theProperties.hasUpdates());
+        }
 
         /* Access the PatternYear panel */
-        iIndex = theTabs.indexOfTab(titlePattern);
+        iIndex = theTabs.indexOfTab(TITLE_NEWYEAR);
 
         /* Enable/Disable the patternYear tab */
-        if (iIndex != -1)
+        if (iIndex != -1) {
             theTabs.setEnabledAt(iIndex, !hasUpdates);
+        }
 
         /* Access the Static panel */
-        iIndex = theTabs.indexOfTab(titleStatic);
+        iIndex = theTabs.indexOfTab(TITLE_STATIC);
 
         /* Enable/Disable the static tab */
-        if (iIndex != -1)
+        if (iIndex != -1) {
             theTabs.setEnabledAt(iIndex, !hasUpdates || theStatic.hasUpdates());
+        }
 
         /* Update the top level tabs */
         theParent.setVisibility();
     }
 
-    /* Change listener */
     @Override
-    public void stateChanged(ChangeEvent e) {
+    public void stateChanged(final ChangeEvent e) {
         /* Ignore if it is not the tabs */
-        if (e.getSource() != theTabs)
+        if (e.getSource() != theTabs) {
             return;
+        }
 
         /* Determine the focus */
         determineFocus();
     }
 
-    /* Determine Focus */
+    /**
+     * Determine Focus.
+     */
     protected void determineFocus() {
         /* Access the selected component */
         Component myComponent = theTabs.getSelectedComponent();
 
         /* If the selected component is Accounts */
-        if (myComponent == (Component) theAccountTab.getPanel()) {
+        if (myComponent.equals(theAccountTab.getPanel())) {
             /* Set the debug focus */
             theAccountTab.getDataEntry().setFocus();
-        }
 
-        /* If the selected component is TaxYear */
-        else if (myComponent == (Component) theTaxYearTab.getPanel()) {
+            /* If the selected component is TaxYear */
+        } else if (myComponent.equals(theTaxYearTab.getPanel())) {
             /* Set the debug focus */
             theTaxYearTab.getDataEntry().setFocus();
-        }
 
-        /* If the selected component is NewYear */
-        else if (myComponent == (Component) thePatternYear.getPanel()) {
+            /* If the selected component is NewYear */
+        } else if (myComponent.equals(thePatternYear.getPanel())) {
             /* Set the debug focus */
             thePatternYear.getDataEntry().setFocus();
             thePatternYear.requestFocusInWindow();
-        }
 
-        /* If the selected component is Static */
-        else if (myComponent == (Component) theStatic.getPanel()) {
+            /* If the selected component is Static */
+        } else if (myComponent.equals(theStatic.getPanel())) {
             /* Set the debug focus */
             theStatic.determineFocus();
         }

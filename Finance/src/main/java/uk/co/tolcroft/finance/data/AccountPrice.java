@@ -70,108 +70,196 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
         return FIELD_DEFS;
     }
 
-    /* Field IDs */
+    /**
+     * Account Field Id.
+     */
     public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField("Account");
+
+    /**
+     * Date Field Id.
+     */
     public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField("Date");
+
+    /**
+     * Price Field Id.
+     */
     public static final JDataField FIELD_PRICE = FIELD_DEFS.declareEqualityValueField("Price");
 
     /**
-     * The active set of values
+     * The active set of values.
      */
     private EncryptedValueSet theValueSet;
 
     @Override
-    public void declareValues(EncryptedValueSet pValues) {
+    public void declareValues(final EncryptedValueSet pValues) {
         super.declareValues(pValues);
         theValueSet = pValues;
     }
 
-    /* Access methods */
+    /**
+     * Obtain Price.
+     * @return the price
+     */
     public Price getPrice() {
         return getPrice(theValueSet);
     }
 
+    /**
+     * Obtain Encrypted Price.
+     * @return the Bytes
+     */
     public byte[] getPriceBytes() {
         return getPriceBytes(theValueSet);
     }
 
+    /**
+     * Obtain Encrypted Price Field.
+     * @return the field
+     */
     public EncryptedPrice getPriceField() {
         return getPriceField(theValueSet);
     }
 
+    /**
+     * Obtain Date.
+     * @return the date
+     */
     public DateDay getDate() {
         return getDate(theValueSet);
     }
 
+    /**
+     * Obtain Account.
+     * @return the account
+     */
     public Account getAccount() {
         return getAccount(theValueSet);
     }
 
-    public static Account getAccount(ValueSet pValueSet) {
+    /**
+     * Obtain Account.
+     * @param pValueSet the valueSet
+     * @return the Account
+     */
+    public static Account getAccount(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_ACCOUNT, Account.class);
     }
 
-    public static DateDay getDate(ValueSet pValueSet) {
+    /**
+     * Obtain Date.
+     * @param pValueSet the valueSet
+     * @return the Date
+     */
+    public static DateDay getDate(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_DATE, DateDay.class);
     }
 
-    public static Price getPrice(EncryptedValueSet pValueSet) {
+    /**
+     * Obtain Price.
+     * @param pValueSet the valueSet
+     * @return the Price
+     */
+    public static Price getPrice(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_PRICE, Price.class);
     }
 
-    public static byte[] getPriceBytes(EncryptedValueSet pValueSet) {
+    /**
+     * Obtain Encrypted Price.
+     * @param pValueSet the valueSet
+     * @return the Price
+     */
+    public static byte[] getPriceBytes(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_PRICE);
     }
 
-    private static EncryptedPrice getPriceField(ValueSet pValueSet) {
+    /**
+     * Obtain Price Field.
+     * @param pValueSet the valueSet
+     * @return the Field
+     */
+    private static EncryptedPrice getPriceField(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PRICE, EncryptedPrice.class);
     }
 
-    protected void setAccount(Account pAccount) {
-        setValueAccount(pAccount);
+    /**
+     * Set the account.
+     * @param pValue the account
+     */
+    protected void setAccount(final Account pValue) {
+        setValueAccount(pValue);
     }
 
-    private void setValueAccount(Account pAccount) {
-        theValueSet.setValue(FIELD_ACCOUNT, pAccount);
+    /**
+     * Set the account.
+     * @param pValue the account
+     */
+    private void setValueAccount(final Account pValue) {
+        theValueSet.setValue(FIELD_ACCOUNT, pValue);
     }
 
-    private void setValueAccount(Integer pAccount) {
-        theValueSet.setValue(FIELD_ACCOUNT, pAccount);
+    /**
+     * Set the account id.
+     * @param pId the account id
+     */
+    private void setValueAccount(final Integer pId) {
+        theValueSet.setValue(FIELD_ACCOUNT, pId);
     }
 
-    private void setValuePrice(String pPrice) throws JDataException {
-        setValuePrice(new Price(pPrice));
+    /**
+     * Set the price.
+     * @param pValue the price
+     * @throws JDataException on error
+     */
+    private void setValuePrice(final String pValue) throws JDataException {
+        setValuePrice(new Price(pValue));
     }
 
-    private void setValuePrice(Price pPrice) throws JDataException {
-        setEncryptedValue(FIELD_PRICE, pPrice);
+    /**
+     * Set the price.
+     * @param pValue the price
+     * @throws JDataException on error
+     */
+    private void setValuePrice(final Price pValue) throws JDataException {
+        setEncryptedValue(FIELD_PRICE, pValue);
     }
 
-    private void setValuePrice(byte[] pPrice) throws JDataException {
-        setEncryptedValue(FIELD_PRICE, pPrice, Price.class);
+    /**
+     * Set the encrypted price.
+     * @param pBytes the encrypted price
+     * @throws JDataException on error
+     */
+    private void setValuePrice(final byte[] pBytes) throws JDataException {
+        setEncryptedValue(FIELD_PRICE, pBytes, Price.class);
     }
 
-    public void setValuePrice(EncryptedPrice pPrice) {
-        theValueSet.setValue(FIELD_PRICE, pPrice);
+    /**
+     * Set the price.
+     * @param pValue the price
+     */
+    public void setValuePrice(final EncryptedPrice pValue) {
+        theValueSet.setValue(FIELD_PRICE, pValue);
     }
 
-    private void setValueDate(DateDay pDate) {
-        theValueSet.setValue(FIELD_DATE, pDate);
+    /**
+     * Set the date.
+     * @param pValue the date
+     */
+    private void setValueDate(final DateDay pValue) {
+        theValueSet.setValue(FIELD_DATE, pValue);
     }
 
-    /* Linking methods */
     @Override
     public AccountPrice getBase() {
         return (AccountPrice) super.getBase();
     }
 
     /**
-     * Construct a copy of a Price
+     * Construct a copy of a Price.
      * @param pList the list
      * @param pPrice The Price
      */
-    protected AccountPrice(AccountPriceList pList,
-                           AccountPrice pPrice) {
+    protected AccountPrice(final AccountPriceList pList,
+                           final AccountPrice pPrice) {
         /* Set standard values */
         super(pList, pPrice.getId());
         ListStyle myOldStyle = pPrice.getStyle();
@@ -209,44 +297,58 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
                 setBase(pPrice);
                 setState(pPrice.getState());
                 break;
+            default:
+                break;
         }
     }
 
     /**
-     * Construct a new price from a SpotPrice
+     * Construct a new price from a SpotPrice.
      * @param pList the list
      * @param pPrice the price to copy
      */
-    private AccountPrice(AccountPriceList pList,
-                         SpotPrice pPrice) {
+    private AccountPrice(final AccountPriceList pList,
+                         final SpotPrice pPrice) {
 
         /* Set standard values */
         super(pList, pPrice);
     }
 
-    /* Standard constructor for a newly inserted price */
-    protected AccountPrice(AccountPriceList pList) {
-        super(pList, 0);
-        setControlKey(pList.getControlKey());
-        setValueAccount(pList.getAccount());
-        pList.setNewId(this);
+    /**
+     * Constructor.
+     * @param pList the account list
+     */
+    protected AccountPrice(final AccountPriceList pList) {
+        this(pList, pList.getAccount());
     }
 
-    /* Standard constructor for a newly inserted price */
-    protected AccountPrice(AccountPriceList pList,
-                           Account pAccount) {
+    /**
+     * Constructor for a newly inserted price.
+     * @param pList the list
+     * @param pAccount the account
+     */
+    protected AccountPrice(final AccountPriceList pList,
+                           final Account pAccount) {
         super(pList, pAccount.getId());
         setControlKey(pList.getControlKey());
         setValueAccount(pAccount);
         pList.setNewId(this);
     }
 
-    /* Extract constructor */
-    private AccountPrice(AccountPriceList pList,
-                         int uId,
-                         int uAccountId,
-                         Date pDate,
-                         String pPrice) throws JDataException {
+    /**
+     * Constructor.
+     * @param pList the list
+     * @param uId the id
+     * @param uAccountId the account id
+     * @param pDate the date
+     * @param pPrice the price
+     * @throws JDataException on error
+     */
+    private AccountPrice(final AccountPriceList pList,
+                         final int uId,
+                         final int uAccountId,
+                         final Date pDate,
+                         final String pPrice) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -271,22 +373,30 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
 
             /* Allocate the id */
             pList.setNewId(this);
-        }
 
-        /* Catch Exceptions */
-        catch (Exception e) {
+            /* Catch Exceptions */
+        } catch (Exception e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
     }
 
-    /* Encryption constructor */
-    private AccountPrice(AccountPriceList pList,
-                         int uId,
-                         int uControlId,
-                         int uAccountId,
-                         Date pDate,
-                         byte[] pPrice) throws JDataException {
+    /**
+     * Constructor.
+     * @param pList the list
+     * @param uId the id
+     * @param uControlId the control id
+     * @param uAccountId the account id
+     * @param pDate the date
+     * @param pPrice the price
+     * @throws JDataException on error
+     */
+    private AccountPrice(final AccountPriceList pList,
+                         final int uId,
+                         final int uControlId,
+                         final int uAccountId,
+                         final Date pDate,
+                         final byte[] pPrice) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -314,20 +424,26 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
 
             /* Allocate the id */
             pList.setNewId(this);
-        }
 
-        /* Catch Exceptions */
-        catch (Exception e) {
+            /* Catch Exceptions */
+        } catch (Exception e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
     }
 
-    /* Special price constructor for diluted prices */
-    private AccountPrice(AccountPriceList pList,
-                         Account pAccount,
-                         DateDay pDate,
-                         Price pPrice) throws JDataException {
+    /**
+     * Special price constructor for diluted prices.
+     * @param pList the list
+     * @param pAccount the account
+     * @param pDate the date
+     * @param pPrice the price
+     * @throws JDataException on error
+     */
+    private AccountPrice(final AccountPriceList pList,
+                         final Account pAccount,
+                         final DateDay pDate,
+                         final Price pPrice) throws JDataException {
         /* Initialise the item */
         super(pList, 0);
 
@@ -349,18 +465,21 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
      *         sort order
      */
     @Override
-    public int compareTo(Object pThat) {
+    public int compareTo(final Object pThat) {
         int iDiff;
 
         /* Handle the trivial cases */
-        if (this == pThat)
+        if (this == pThat) {
             return 0;
-        if (pThat == null)
+        }
+        if (pThat == null) {
             return -1;
+        }
 
         /* Make sure that the object is an Price */
-        if (pThat.getClass() != this.getClass())
+        if (pThat.getClass() != this.getClass()) {
             return -1;
+        }
 
         /* Access the object as a Price */
         AccountPrice myThat = (AccountPrice) pThat;
@@ -368,36 +487,42 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
         /* If the date differs */
         if (this.getDate() != myThat.getDate()) {
             /* Handle null dates */
-            if (this.getDate() == null)
+            if (this.getDate() == null) {
                 return 1;
-            if (myThat.getDate() == null)
+            }
+            if (myThat.getDate() == null) {
                 return -1;
+            }
 
             /* Compare the dates */
             iDiff = getDate().compareTo(myThat.getDate());
-            if (iDiff != 0)
+            if (iDiff != 0) {
                 return iDiff;
+            }
         }
 
         /* Compare the accounts */
         iDiff = getAccount().compareTo(myThat.getAccount());
-        if (iDiff != 0)
+        if (iDiff != 0) {
             return iDiff;
+        }
 
         /* Compare the IDs */
         iDiff = (int) (getId() - myThat.getId());
-        if (iDiff < 0)
+        if (iDiff < 0) {
             return -1;
-        if (iDiff > 0)
+        }
+        if (iDiff > 0) {
             return 1;
+        }
         return 0;
     }
 
     /**
-     * Rebuild Links to partner data
+     * Rebuild Links to partner data.
      * @param pData the DataSet
      */
-    protected void reBuildLinks(FinanceData pData) {
+    protected void reBuildLinks(final FinanceData pData) {
         /* Update the Encryption details */
         super.reBuildLinks(pData);
 
@@ -411,7 +536,7 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
     }
 
     /**
-     * Validate the price
+     * Validate the price.
      */
     @Override
     public void validate() {
@@ -422,10 +547,9 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
         /* The date must be non-null */
         if (myDate == null) {
             addError("Null Date is not allowed", FIELD_DATE);
-        }
 
-        /* else date is non-null */
-        else {
+            /* else date is non-null */
+        } else {
             /* Date must be unique for this account */
             if (myList.countInstances(myDate, getAccount()) > 1) {
                 addError("Date must be unique", FIELD_DATE);
@@ -443,34 +567,35 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
         }
 
         /* Set validation flag */
-        if (!hasErrors())
+        if (!hasErrors()) {
             setValidEdit();
+        }
     }
 
     /**
-     * Set a new price
+     * Set a new price.
      * @param pPrice the price
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    public void setPrice(Price pPrice) throws JDataException {
+    public void setPrice(final Price pPrice) throws JDataException {
         setValuePrice(pPrice);
     }
 
     /**
-     * Set a new date
+     * Set a new date.
      * @param pDate the new date
      */
-    public void setDate(DateDay pDate) {
+    public void setDate(final DateDay pDate) {
         setValueDate(pDate);
     }
 
     /**
-     * Update Price from an item Element
+     * Update Price from an item Element.
      * @param pItem the price extract
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(DataItem<?> pItem) {
+    public boolean applyChanges(final DataItem<?> pItem) {
         boolean bChanged = false;
         if (pItem instanceof SpotPrice) {
             SpotPrice mySpot = (SpotPrice) pItem;
@@ -483,23 +608,25 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
     }
 
     /**
-     * Update Price from a Price extract
+     * Update Price from a Price extract.
      * @param pPrice the price extract
      * @return whether changes have been made
      */
-    private boolean applyChanges(AccountPrice pPrice) {
+    private boolean applyChanges(final AccountPrice pPrice) {
         boolean bChanged = false;
 
         /* Store the current detail into history */
         pushHistory();
 
         /* Update the price if required */
-        if (!Difference.isEqual(getPrice(), pPrice.getPrice()))
+        if (!Difference.isEqual(getPrice(), pPrice.getPrice())) {
             setValuePrice(pPrice.getPriceField());
+        }
 
         /* Update the date if required */
-        if (!Difference.isEqual(getDate(), pPrice.getDate()))
+        if (!Difference.isEqual(getDate(), pPrice.getDate())) {
             setValueDate(pPrice.getDate());
+        }
 
         /* Check for changes */
         if (checkForHistory()) {
@@ -513,27 +640,27 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
     }
 
     /**
-     * Update Price from a Price extract
+     * Update Price from a Price extract.
      * @param pPrice the price extract
      * @return whether changes have been made
      */
-    private boolean applyChanges(SpotPrice pPrice) {
+    private boolean applyChanges(final SpotPrice pPrice) {
         boolean bChanged = false;
 
         /* If we are setting a null price */
         if (pPrice.getPrice() == null) {
             /* We are actually deleting the price */
             setState(DataState.DELETED);
-        }
 
-        /* else we have a price to set */
-        else {
+            /* else we have a price to set */
+        } else {
             /* Store the current detail into history */
             pushHistory();
 
             /* Update the price if required */
-            if (!Difference.isEqual(getPrice(), pPrice.getPrice()))
+            if (!Difference.isEqual(getPrice(), pPrice.getPrice())) {
                 setValuePrice(pPrice.getPriceField());
+            }
 
             /* Check for changes */
             if (checkForHistory()) {
@@ -548,33 +675,36 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
     }
 
     /**
-     * Price List
+     * Price List.
      */
     public static class AccountPriceList extends EncryptedList<AccountPriceList, AccountPrice> {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(
                 AccountPriceList.class.getSimpleName(), DataList.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * Account field id.
+         */
         public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField("Account");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_ACCOUNT) {
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_ACCOUNT.equals(pField)) {
                 return (theAccount == null) ? JDataObject.FIELD_SKIP : theAccount;
             }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
+        /**
+         * The account.
+         */
         private Account theAccount = null;
 
         @Override
@@ -582,29 +712,32 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
             return LIST_NAME;
         }
 
-        /* Access Extra Variables correctly */
         @Override
         public FinanceData getData() {
             return (FinanceData) super.getData();
         }
 
+        /**
+         * Obtain the account.
+         * @return the account
+         */
         public Account getAccount() {
             return theAccount;
         }
 
         /**
-         * Construct an empty CORE price list
+         * Construct an empty CORE price list.
          * @param pData the DataSet for the list
          */
-        protected AccountPriceList(FinanceData pData) {
+        protected AccountPriceList(final FinanceData pData) {
             super(AccountPriceList.class, AccountPrice.class, pData);
         }
 
         /**
-         * Constructor for a cloned List
+         * Constructor for a cloned List.
          * @param pSource the source List
          */
-        private AccountPriceList(AccountPriceList pSource) {
+        private AccountPriceList(final AccountPriceList pSource) {
             super(pSource);
         }
 
@@ -613,7 +746,7 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
          * @param pStyle the list style
          * @return the update Extract
          */
-        private AccountPriceList getExtractList(ListStyle pStyle) {
+        private AccountPriceList getExtractList(final ListStyle pStyle) {
             /* Build an empty Extract List */
             AccountPriceList myList = new AccountPriceList(this);
 
@@ -624,7 +757,6 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
             return myList;
         }
 
-        /* Obtain extract lists. */
         @Override
         public AccountPriceList getUpdateList() {
             return getExtractList(ListStyle.UPDATE);
@@ -641,7 +773,7 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
         }
 
         @Override
-        public AccountPriceList getDeepCopy(DataSet<?> pDataSet) {
+        public AccountPriceList getDeepCopy(final DataSet<?> pDataSet) {
             /* Build an empty Extract List */
             AccountPriceList myList = new AccountPriceList(this);
             myList.setData(pDataSet);
@@ -655,12 +787,12 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
         }
 
         /**
-         * Construct a difference Price list
+         * Construct a difference Price list.
          * @param pOld the old Price list
          * @return the difference list
          */
         @Override
-        protected AccountPriceList getDifferences(AccountPriceList pOld) {
+        protected AccountPriceList getDifferences(final AccountPriceList pOld) {
             /* Build an empty Difference List */
             AccountPriceList myList = new AccountPriceList(this);
 
@@ -672,11 +804,11 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
         }
 
         /**
-         * Construct an edit extract of a Pattern list
+         * Construct an edit extract of a Pattern list.
          * @param pAccount The account to extract patterns for
          * @return the edit list
          */
-        public AccountPriceList getEditList(Account pAccount) {
+        public AccountPriceList getEditList(final Account pAccount) {
             /* Build an empty Update */
             AccountPriceList myList = new AccountPriceList(this);
 
@@ -700,8 +832,9 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
                 int myResult = pAccount.compareTo(myCurr.getAccount());
 
                 /* Skip different accounts */
-                if (myResult != 0)
+                if (myResult != 0) {
                     continue;
+                }
 
                 /* Copy the item */
                 myItem = new AccountPrice(myList, myCurr);
@@ -713,13 +846,12 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
         }
 
         /**
-         * Add a new item to the core list
-         * 
+         * Add a new item to the core list.
          * @param pPrice item
          * @return the newly added item
          */
         @Override
-        public AccountPrice addNewItem(DataItem<?> pPrice) {
+        public AccountPrice addNewItem(final DataItem<?> pPrice) {
             if (pPrice instanceof SpotPrice) {
                 AccountPrice myPrice = new AccountPrice(this, (SpotPrice) pPrice);
                 add(myPrice);
@@ -728,12 +860,13 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
                 AccountPrice myPrice = new AccountPrice(this, (AccountPrice) pPrice);
                 add(myPrice);
                 return myPrice;
-            } else
+            } else {
                 return null;
+            }
         }
 
         /**
-         * Add a new item to the edit list
+         * Add a new item to the edit list.
          * @return the newly added item
          */
         @Override
@@ -745,21 +878,13 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
         }
 
         /**
-         * Obtain the type of the item
-         * @return the type of the item
-         */
-        public String itemType() {
-            return LIST_NAME;
-        }
-
-        /**
-         * Count the instances of a date
+         * Count the instances of a date.
          * @param pDate the date
          * @param pAccount the account
          * @return The Item if present (or null)
          */
-        public int countInstances(DateDay pDate,
-                                  Account pAccount) {
+        public int countInstances(final DateDay pDate,
+                                  final Account pAccount) {
             DataListIterator<AccountPrice> myIterator;
             AccountPrice myCurr;
             int iDiff;
@@ -771,11 +896,13 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
             /* Loop through the items to find the entry */
             while ((myCurr = myIterator.next()) != null) {
                 iDiff = pDate.compareTo(myCurr.getDate());
-                if (iDiff != 0)
+                if (iDiff != 0) {
                     continue;
+                }
                 iDiff = pAccount.compareTo(myCurr.getAccount());
-                if (iDiff == 0)
+                if (iDiff == 0) {
                     iCount++;
+                }
             }
 
             /* return to caller */
@@ -783,21 +910,22 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
         }
 
         /**
-         * Obtain the most relevant price for a Date
+         * Obtain the most relevant price for a Date.
          * @param pAccount the account
          * @param pDate the date from which a price is required
          * @return The relevant Price record
          */
-        public AccountPrice getLatestPrice(Account pAccount,
-                                           DateDay pDate) {
+        public AccountPrice getLatestPrice(final Account pAccount,
+                                           final DateDay pDate) {
             DataListIterator<AccountPrice> myIterator;
             AccountPrice myPrice = null;
             AccountPrice myCurr;
             Account myAccount = pAccount;
 
             /* Skip to alias if required */
-            if (myAccount.getAlias() != null)
+            if (myAccount.getAlias() != null) {
                 myAccount = pAccount.getAlias();
+            }
 
             /* Access the list iterator */
             myIterator = listIterator();
@@ -805,12 +933,14 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
             /* Loop through the Prices */
             while ((myCurr = myIterator.next()) != null) {
                 /* Skip records that do not belong to this account */
-                if (!Difference.isEqual(myCurr.getAccount(), myAccount))
+                if (!Difference.isEqual(myCurr.getAccount(), myAccount)) {
                     continue;
+                }
 
                 /* break loop if we have passed the date */
-                if (myCurr.getDate().compareTo(pDate) > 0)
+                if (myCurr.getDate().compareTo(pDate) > 0) {
                     break;
+                }
 
                 /* Record the best case so far */
                 myPrice = myCurr;
@@ -821,7 +951,7 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
         }
 
         /**
-         * Mark active prices
+         * Mark active prices.
          */
         protected void markActiveItems() {
             DataListIterator<AccountPrice> myIterator;
@@ -838,10 +968,10 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
         }
 
         /**
-         * Apply changes from a Spot Price list
+         * Apply changes from a Spot Price list.
          * @param pPrices the spot prices
          */
-        public void applyChanges(SpotPrices pPrices) {
+        public void applyChanges(final SpotPrices pPrices) {
             DataListIterator<AccountPrice> myIterator;
             AccountPriceList myList;
             AccountPrice mySpot;
@@ -868,10 +998,9 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
                     if (myPrice != null) {
                         /* Apply changes to the underlying entry */
                         myPrice.applyChanges(mySpot);
-                    }
 
-                    /* else if we have a new price with no underlying */
-                    else if (myPoint != null) {
+                        /* else if we have a new price with no underlying */
+                    } else if (myPoint != null) {
                         /* Create the new Price */
                         myPrice = new AccountPrice(this);
 
@@ -893,112 +1022,117 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
         }
 
         /**
-         * Add a Price
+         * Add a Price.
          * @param uId the id
          * @param pDate the date
          * @param pAccount the account
          * @param pPrice the price
-         * @throws JDataException
+         * @throws JDataException on error
          */
-        public void addItem(int uId,
-                            Date pDate,
-                            String pAccount,
-                            String pPrice) throws JDataException {
+        public void addItem(final int uId,
+                            final Date pDate,
+                            final String pAccount,
+                            final String pPrice) throws JDataException {
             Account myAccount;
-            Account.AccountList myAccounts;
+            AccountList myAccounts;
 
             /* Access the Accounts */
             myAccounts = getData().getAccounts();
 
             /* Look up the Account */
             myAccount = myAccounts.searchFor(pAccount);
-            if (myAccount == null)
+            if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, "Price on ["
                         + JDataObject.formatField(new DateDay(pDate)) + "] has invalid Account [" + pAccount
                         + "]");
+            }
 
             /* Add the price */
             addItem(uId, pDate, myAccount.getId(), pPrice);
         }
 
         /**
-         * Allow a price to be added
+         * Allow a price to be added.
          * @param uId the id
          * @param pDate the date
          * @param uAccountId the account
          * @param pPrice the price
-         * @throws JDataException
+         * @throws JDataException on error
          */
-        public void addItem(int uId,
-                            Date pDate,
-                            int uAccountId,
-                            String pPrice) throws JDataException {
+        public void addItem(final int uId,
+                            final Date pDate,
+                            final int uAccountId,
+                            final String pPrice) throws JDataException {
             AccountPrice myPrice;
 
             /* Create the price and PricePoint */
             myPrice = new AccountPrice(this, uId, uAccountId, pDate, pPrice);
 
             /* Check that this PriceId has not been previously added */
-            if (!isIdUnique(myPrice.getId()))
+            if (!isIdUnique(myPrice.getId())) {
                 throw new JDataException(ExceptionClass.DATA, myPrice, "Duplicate PriceId <"
                         + myPrice.getId() + ">");
+            }
 
             /* Validate the price */
             myPrice.validate();
 
             /* Handle validation failure */
-            if (myPrice.hasErrors())
+            if (myPrice.hasErrors()) {
                 throw new JDataException(ExceptionClass.VALIDATE, myPrice, "Failed validation");
+            }
 
             /* Add to the list */
             add(myPrice);
         }
 
         /**
-         * Load an Encrypted price
+         * Load an Encrypted price.
          * @param uId the id
          * @param uControlId the control id
          * @param pDate the date
          * @param uAccountId the account id
          * @param pPrice the price
-         * @throws JDataException
+         * @throws JDataException on error
          */
-        public void addItem(int uId,
-                            int uControlId,
-                            Date pDate,
-                            int uAccountId,
-                            byte[] pPrice) throws JDataException {
+        public void addItem(final int uId,
+                            final int uControlId,
+                            final Date pDate,
+                            final int uAccountId,
+                            final byte[] pPrice) throws JDataException {
             AccountPrice myPrice;
 
             /* Create the price and PricePoint */
             myPrice = new AccountPrice(this, uId, uControlId, uAccountId, pDate, pPrice);
 
             /* Check that this PriceId has not been previously added */
-            if (!isIdUnique(uId))
+            if (!isIdUnique(uId)) {
                 throw new JDataException(ExceptionClass.DATA, myPrice, "Duplicate PriceId <" + uId + ">");
+            }
 
             /* Validate the price */
             myPrice.validate();
 
             /* Handle validation failure */
-            if (myPrice.hasErrors())
+            if (myPrice.hasErrors()) {
                 throw new JDataException(ExceptionClass.VALIDATE, myPrice, "Failed validation");
+            }
 
             /* Add to the list */
             add(myPrice);
         }
 
         /**
-         * Allow a price to be added
+         * Allow a price to be added.
          * @param pAccount the account
          * @param pDate the date
          * @param pPrice the price
          * @return the new item
-         * @throws JDataException
+         * @throws JDataException on error
          */
-        public AccountPrice addItem(Account pAccount,
-                                    DateDay pDate,
-                                    Price pPrice) throws JDataException {
+        public AccountPrice addItem(final Account pAccount,
+                                    final DateDay pDate,
+                                    final Price pPrice) throws JDataException {
             AccountPrice myPrice;
 
             /* Create the price and PricePoint */
@@ -1008,8 +1142,9 @@ public class AccountPrice extends EncryptedItem<AccountPrice> {
             myPrice.validate();
 
             /* Handle validation failure */
-            if (myPrice.hasErrors())
+            if (myPrice.hasErrors()) {
                 throw new JDataException(ExceptionClass.VALIDATE, myPrice, "Failed validation");
+            }
 
             /* Add to the list */
             add(myPrice);

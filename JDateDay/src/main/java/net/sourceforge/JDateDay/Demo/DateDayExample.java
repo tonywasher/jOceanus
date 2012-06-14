@@ -32,6 +32,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JApplet;
 import javax.swing.JComboBox;
@@ -48,6 +50,7 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import net.sourceforge.JDateButton.JDateConfig;
+import net.sourceforge.JDateButton.Demo.DateExample;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayButton;
 import net.sourceforge.JDateDay.DateDayCellEditor;
@@ -132,6 +135,11 @@ public class DateDayExample extends JApplet {
      */
     private static final DateDay DATE_FIFTH = makeDate(2014, Calendar.FEBRUARY, 28);
 
+    /**
+     * Logger.
+     */
+    private static Logger theLogger = Logger.getLogger(DateExample.class.getName());
+
     @Override
     public void init() {
         // Execute a job on the event-dispatching thread; creating this applet's GUI.
@@ -145,7 +153,7 @@ public class DateDayExample extends JApplet {
                 }
             });
         } catch (Exception e) {
-            System.err.println("createGUI didn't complete successfully");
+            theLogger.log(Level.SEVERE, "createGUI didn't complete successfully", e);
         }
     }
 
@@ -173,7 +181,7 @@ public class DateDayExample extends JApplet {
             myFrame.setLocationRelativeTo(null);
             myFrame.setVisible(true);
         } catch (Exception e) {
-            System.out.println("Help");
+            theLogger.log(Level.SEVERE, "createGUI didn't complete successfully", e);
         }
     }
 
@@ -224,6 +232,11 @@ public class DateDayExample extends JApplet {
      * The end date.
      */
     private DateDayButton theEndDate = null;
+
+    /**
+     * The selected range.
+     */
+    private JLabel theSelectedRange = null;
 
     /**
      * The selected locale.
@@ -285,6 +298,8 @@ public class DateDayExample extends JApplet {
         JLabel myLocale = new JLabel("Locale:");
         JLabel myStart = new JLabel("Start:");
         JLabel myEnd = new JLabel("End:");
+        JLabel mySelRange = new JLabel("SelectedRange:");
+        theSelectedRange = new JLabel(theRangeSelect.getRange().toString());
 
         /* Create a Range sub-panel */
         JPanel myRange = new JPanel(new GridBagLayout());
@@ -353,6 +368,20 @@ public class DateDayExample extends JApplet {
         myConstraints.gridy = 0;
         myConstraints.gridwidth = 2;
         myOptions.add(theRangeSelect, myConstraints);
+        myConstraints = new GridBagConstraints();
+        myConstraints.gridx = 0;
+        myConstraints.gridy = 1;
+        myConstraints.gridwidth = 1;
+        myConstraints.weightx = 0.0;
+        myConstraints.insets = new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH);
+        myConstraints.anchor = GridBagConstraints.LINE_END;
+        myOptions.add(mySelRange, myConstraints);
+        myConstraints = new GridBagConstraints();
+        myConstraints.gridx = 1;
+        myConstraints.gridy = 1;
+        myConstraints.gridwidth = 1;
+        myConstraints.weightx = 1.0;
+        myOptions.add(theSelectedRange, myConstraints);
 
         /* Create the panel */
         JPanel myPanel = new JPanel(new GridBagLayout());
@@ -373,18 +402,18 @@ public class DateDayExample extends JApplet {
         myConstraints.gridx = 0;
         myConstraints.gridy = 1;
         myConstraints.gridwidth = 2;
-        myConstraints.weightx = WEIGHT_NEUTRAL;
         myConstraints.fill = GridBagConstraints.HORIZONTAL;
-        myPanel.add(myOptions, myConstraints);
+        myPanel.add(new JScrollPane(theTable), myConstraints);
+        theTable.setPreferredScrollableViewportSize(new Dimension(SCROLL_WIDTH, SCROLL_HEIGHT));
 
         myConstraints = new GridBagConstraints();
         myConstraints.gridx = 0;
         myConstraints.gridy = 2;
         myConstraints.gridwidth = 2;
         myConstraints.gridheight = GridBagConstraints.REMAINDER;
+        myConstraints.weightx = WEIGHT_NEUTRAL;
         myConstraints.fill = GridBagConstraints.HORIZONTAL;
-        myPanel.add(new JScrollPane(theTable), myConstraints);
-        theTable.setPreferredScrollableViewportSize(new Dimension(SCROLL_WIDTH, SCROLL_HEIGHT));
+        myPanel.add(myOptions, myConstraints);
 
         /* Return the panel */
         return myPanel;
@@ -649,15 +678,17 @@ public class DateDayExample extends JApplet {
             Object o = evt.getSource();
 
             /* If this is the start/end date */
-            if ((o == theStartDate) || (o == theEndDate)) {
+            if ((theStartDate.equals(o)) || (theEndDate.equals(o))) {
                 /* Apply the new range */
                 applyRange();
 
                 /* If this is the selectable range */
-            } else if (o == theRangeSelect) {
+            } else if (theRangeSelect.equals(o)) {
                 /* Apply the new range */
                 DateDayRange myRange = theRangeSelect.getRange();
-                System.out.println(myRange);
+                if (theSelectedRange != null) {
+                    theSelectedRange.setText(myRange.toString());
+                }
             }
         }
 
@@ -672,7 +703,7 @@ public class DateDayExample extends JApplet {
             }
 
             /* If this is the Locale list */
-            if (o == theLocaleList) {
+            if (theLocaleList.equals(o)) {
                 /* Store the new locale */
                 shortLocale myLocale = (shortLocale) evt.getItem();
                 theLocale = myLocale.getLocale();
@@ -683,7 +714,7 @@ public class DateDayExample extends JApplet {
                 applyLocale();
 
                 /* If this is the Format list */
-            } else if (o == theFormatList) {
+            } else if (theFormatList.equals(o)) {
                 /* Store the new format */
                 theFormat = (String) evt.getItem();
 

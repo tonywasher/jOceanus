@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,12 +38,15 @@ import net.sourceforge.JDecimal.Rate;
 import net.sourceforge.JDecimal.Units;
 import uk.co.tolcroft.finance.data.Account;
 import uk.co.tolcroft.finance.data.AccountPrice;
+import uk.co.tolcroft.finance.data.AccountPrice.AccountPriceList;
 import uk.co.tolcroft.finance.data.Event;
 import uk.co.tolcroft.finance.data.Event.EventList;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.StaticClass.TransClass;
 import uk.co.tolcroft.finance.data.TaxYear;
+import uk.co.tolcroft.finance.data.TaxYear.TaxYearList;
 import uk.co.tolcroft.finance.data.TransactionType;
+import uk.co.tolcroft.finance.data.TransactionType.TransTypeList;
 import uk.co.tolcroft.finance.views.Analysis.ActDetail;
 import uk.co.tolcroft.finance.views.Analysis.AnalysisState;
 import uk.co.tolcroft.finance.views.Analysis.AssetAccount;
@@ -50,100 +54,183 @@ import uk.co.tolcroft.finance.views.Analysis.BucketList;
 import uk.co.tolcroft.finance.views.Analysis.ExternalAccount;
 import uk.co.tolcroft.finance.views.Analysis.TransDetail;
 import uk.co.tolcroft.finance.views.DilutionEvent.DilutionEventList;
+import uk.co.tolcroft.finance.views.Statement.StatementLine;
+import uk.co.tolcroft.finance.views.Statement.StatementLines;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.views.DataControl;
 
+/**
+ * Class to analyse events.
+ * @author Tony Washer
+ */
 public class EventAnalysis implements JDataContents {
     /**
-     * Report fields
+     * Report fields.
      */
-    protected static final JDataFields theFields = new JDataFields(EventAnalysis.class.getSimpleName());
+    protected static final JDataFields FIELD_DEFS = new JDataFields(EventAnalysis.class.getSimpleName());
 
-    /* Field IDs */
-    public static final JDataField FIELD_ANALYSIS = theFields.declareLocalField("Analysis");
-    public static final JDataField FIELD_YEARS = theFields.declareLocalField("Years");
-    public static final JDataField FIELD_ACCOUNT = theFields.declareLocalField("Account");
-    public static final JDataField FIELD_DATE = theFields.declareLocalField("Date");
-    public static final JDataField FIELD_DILUTIONS = theFields.declareLocalField("Dilutions");
+    /**
+     * Analysis field Id.
+     */
+    public static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField("Analysis");
+
+    /**
+     * Years field Id.
+     */
+    public static final JDataField FIELD_YEARS = FIELD_DEFS.declareLocalField("Years");
+
+    /**
+     * Account field Id.
+     */
+    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField("Account");
+
+    /**
+     * Date field Id.
+     */
+    public static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
+
+    /**
+     * Dilutions field Id.
+     */
+    public static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareLocalField("Dilutions");
 
     @Override
     public JDataFields getDataFields() {
-        return theFields;
+        return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(JDataField pField) {
-        if (pField == FIELD_ANALYSIS)
+    public Object getFieldValue(final JDataField pField) {
+        if (FIELD_ANALYSIS.equals(pField)) {
             return (theAnalysis == null) ? JDataObject.FIELD_SKIP : theAnalysis;
-        if (pField == FIELD_YEARS)
+        }
+        if (FIELD_YEARS.equals(pField)) {
             return (theYears == null) ? JDataObject.FIELD_SKIP : theYears;
-        if (pField == FIELD_ACCOUNT)
+        }
+        if (FIELD_ACCOUNT.equals(pField)) {
             return (theAccount == null) ? JDataObject.FIELD_SKIP : theAccount;
-        if (pField == FIELD_DATE)
+        }
+        if (FIELD_DATE.equals(pField)) {
             return (theDate == null) ? JDataObject.FIELD_SKIP : theDate;
-        if (pField == FIELD_DILUTIONS)
+        }
+        if (FIELD_DILUTIONS.equals(pField)) {
             return (theDilutions == null) ? JDataObject.FIELD_SKIP : theDilutions;
+        }
         return null;
     }
 
     @Override
     public String formatObject() {
-        return theFields.getName();
+        return FIELD_DEFS.getName();
     }
 
     /**
-     * The Amount Tax threshold for "small" transactions (£3000)
+     * The Amount Tax threshold for "small" transactions (£3000).
      */
-    private final static Money valueLimit = new Money(Money.convertToValue(3000));
+    private static final Money LIMIT_VALUE = new Money(Money.convertToValue(3000));
 
     /**
-     * The Rate Tax threshold for "small" transactions (5%)
+     * The Rate Tax threshold for "small" transactions (5%).
      */
-    private final static Rate rateLimit = new Rate(Rate.convertToValue(5));
+    private static final Rate LIMIT_RATE = new Rate(Rate.convertToValue(5));
 
-    /* Members */
-    private FinanceData theData = null;
+    /**
+     * The dataSet being analysed.
+     */
+    private final FinanceData theData;
+
+    /**
+     * The analysis.
+     */
     private Analysis theAnalysis = null;
+
+    /**
+     * The metaAnalysis.
+     */
     private MetaAnalysis theMetaAnalysis = null;
+
+    /**
+     * The set of TaxYear analyses.
+     */
     private AnalysisYearList theYears = null;
+
+    /**
+     * The account being analysed.
+     */
     private ActDetail theAccount = null;
+
+    /**
+     * The date for the analysis.
+     */
     private DateDay theDate = null;
+
+    /**
+     * The dilutions.
+     */
     private DilutionEventList theDilutions = null;
+
+    /**
+     * The taxMan account.
+     */
     private ExternalAccount theTaxMan = null;
+
+    /**
+     * The taxPaid bucket.
+     */
     private TransDetail theTaxPaid = null;
 
-    /* Access methods */
+    /**
+     * Obtain the analysis.
+     * @return the analysis
+     */
     public Analysis getAnalysis() {
         return theAnalysis;
     }
 
+    /**
+     * Obtain the metaAnalysis.
+     * @return the analysis
+     */
     public MetaAnalysis getMetaAnalysis() {
         return theMetaAnalysis;
     }
 
+    /**
+     * Obtain the list of taxYear analyses.
+     * @return the list
+     */
     public AnalysisYearList getAnalysisYears() {
         return theYears;
     }
 
-    public AnalysisYear getAnalysisYear(TaxYear pYear) {
+    /**
+     * Obtain the analysis for a tax year.
+     * @param pYear the tax year
+     * @return the analysis
+     */
+    public AnalysisYear getAnalysisYear(final TaxYear pYear) {
         return (theYears == null) ? null : theYears.searchFor(pYear);
     }
 
+    /**
+     * Obtain the dilutions.
+     * @return the dilutions
+     */
     public DilutionEventList getDilutions() {
         return theDilutions;
     }
 
     /**
-     * Constructor for a dated analysis
+     * Constructor for a dated analysis.
      * @param pData the data to analyse events for
      * @param pDate the Date for the analysis
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    public EventAnalysis(FinanceData pData,
-                         DateDay pDate) throws JDataException {
+    public EventAnalysis(final FinanceData pData,
+                         final DateDay pDate) throws JDataException {
         DataListIterator<Event> myIterator;
         EventList myEvents;
         Event myCurr;
@@ -175,8 +262,9 @@ public class EventAnalysis implements JDataContents {
             myResult = theDate.compareTo(myCurr.getDate());
 
             /* Handle out of range */
-            if (myResult == -1)
+            if (myResult == -1) {
                 break;
+            }
 
             /* Process the event in the asset report */
             processEvent(myCurr);
@@ -190,20 +278,20 @@ public class EventAnalysis implements JDataContents {
     }
 
     /**
-     * Constructor for a statement analysis
+     * Constructor for a statement analysis.
      * @param pData the data to analyse events for
      * @param pStatement the statement to prepare
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    public EventAnalysis(FinanceData pData,
-                         Statement pStatement) throws JDataException {
+    public EventAnalysis(final FinanceData pData,
+                         final Statement pStatement) throws JDataException {
         DataListIterator<Event> myIterator;
         EventList myEvents;
         Event myCurr;
         DateDayRange myRange;
         Account myAccount;
-        Statement.StatementLine myLine;
-        Statement.StatementLines myList;
+        StatementLine myLine;
+        StatementLines myList;
         int myResult;
 
         /* Access key points of the statement */
@@ -235,12 +323,14 @@ public class EventAnalysis implements JDataContents {
             myResult = myRange.compareTo(myCurr.getDate());
 
             /* If we are at or past the range break the loop */
-            if (myResult != 1)
+            if (myResult != 1) {
                 break;
+            }
 
             /* Ignore items that do not relate to this account */
-            if (!myCurr.relatesTo(myAccount))
+            if (!myCurr.relatesTo(myAccount)) {
                 continue;
+            }
 
             /* Process the event in the asset report */
             processEvent(myCurr);
@@ -261,12 +351,14 @@ public class EventAnalysis implements JDataContents {
             myResult = myRange.compareTo(myCurr.getDate());
 
             /* Handle past limit */
-            if (myResult == -1)
+            if (myResult == -1) {
                 break;
+            }
 
             /* Ignore items that do not relate to this account */
-            if (!myCurr.relatesTo(myAccount))
+            if (!myCurr.relatesTo(myAccount)) {
                 continue;
+            }
 
             /* Add a statement line to the statement */
             myLine = new Statement.StatementLine(myList, myCurr);
@@ -278,13 +370,13 @@ public class EventAnalysis implements JDataContents {
     }
 
     /**
-     * recalculate statement balance
+     * recalculate statement balance.
      * @param pStatement the statement
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    protected void resetStatementBalance(Statement pStatement) throws JDataException {
-        Statement.StatementLine myLine;
-        Statement.StatementLines myLines;
+    protected void resetStatementBalance(final Statement pStatement) throws JDataException {
+        StatementLine myLine;
+        StatementLines myLines;
         DataListIterator<Event> myIterator;
 
         /* Access the iterator */
@@ -292,8 +384,9 @@ public class EventAnalysis implements JDataContents {
         myIterator = myLines.listIterator();
 
         /* If we don't have balances just return */
-        if (theAccount instanceof ExternalAccount)
+        if (theAccount instanceof ExternalAccount) {
             return;
+        }
 
         /* Restore the SavePoint */
         theAccount.restoreSavePoint();
@@ -301,16 +394,15 @@ public class EventAnalysis implements JDataContents {
         /* Loop through the lines adjusting the balance */
         while ((myLine = (Statement.StatementLine) myIterator.next()) != null) {
             /* Skip deleted lines */
-            if (myLine.isDeleted())
+            if (myLine.isDeleted()) {
                 continue;
+            }
 
             /* Ignore if it is not a valid event */
-            if (myLine.getPartner() == null)
+            if ((myLine.getPartner() == null) || (myLine.getTransType() == null)
+                    || (myLine.getAmount() == null)) {
                 continue;
-            if (myLine.getTransType() == null)
-                continue;
-            if (myLine.getAmount() == null)
-                continue;
+            }
 
             /* Process the event */
             processEvent(myLine);
@@ -324,19 +416,19 @@ public class EventAnalysis implements JDataContents {
     }
 
     /**
-     * Constructor for a full year set of accounts
+     * Constructor for a full year set of accounts.
      * @param pView the Data view
      * @param pData the Data to analyse
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    public EventAnalysis(DataControl<?> pView,
-                         FinanceData pData) throws JDataException {
+    public EventAnalysis(final View pView,
+                         final FinanceData pData) throws JDataException {
         Event myCurr;
         DataListIterator<Event> myIterator;
         int myResult = -1;
         TaxYear myTax = null;
         DateDay myDate = null;
-        TaxYear.TaxYearList myList;
+        TaxYearList myList;
         AnalysisYear myYear;
         Account myAccount;
         TransactionType myTransType;
@@ -424,82 +516,142 @@ public class EventAnalysis implements JDataContents {
         }
 
         /* Value priced assets of the most recent set */
-        if (theMetaAnalysis != null)
+        if (theMetaAnalysis != null) {
             theMetaAnalysis.valueAssets();
+        }
 
         /* Update analysis object */
         mySection.setObject(this);
     }
 
-    /* Public class for analysis year */
-    public static class AnalysisYear extends DataItem<AnalysisYear> {
+    /**
+     * An analysis of a taxYear.
+     */
+    public static final class AnalysisYear extends DataItem<AnalysisYear> {
         /**
-         * Report fields
+         * Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(AnalysisYear.class.getSimpleName(),
                 DataItem.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * Analysis field id.
+         */
         public static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField("Analysis");
+
+        /**
+         * TaxYear field id.
+         */
         public static final JDataField FIELD_YEAR = FIELD_DEFS.declareEqualityField("TaxYear");
+
+        /**
+         * Breakdown field id.
+         */
         public static final JDataField FIELD_BREAKDOWN = FIELD_DEFS.declareLocalField("IncomeBreakdown");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_ANALYSIS)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_ANALYSIS.equals(pField)) {
                 return theAnalysis;
-            if (pField == FIELD_YEAR)
+            }
+            if (FIELD_YEAR.equals(pField)) {
                 return theYear;
-            if (pField == FIELD_BREAKDOWN)
+            }
+            if (FIELD_BREAKDOWN.equals(pField)) {
                 return theBreakdown;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
-        private Analysis theAnalysis = null;
-        private MetaAnalysis theMetaAnalysis = null;
-        private IncomeBreakdown theBreakdown = null;
-        private TaxYear theYear = null;
-        private JDataEntry theListDebug = null;
-        private JDataEntry theChargeDebug = null;
-        private FinanceData theData = null;
+        /**
+         * The analysis.
+         */
+        private final Analysis theAnalysis;
 
-        /* Access methods */
+        /**
+         * The metaAnalysis.
+         */
+        private final MetaAnalysis theMetaAnalysis;
+
+        /**
+         * The incomeBreakdown.
+         */
+        private final IncomeBreakdown theBreakdown;
+
+        /**
+         * The taxYear.
+         */
+        private final TaxYear theYear;
+
+        /**
+         * The list data entry.
+         */
+        private JDataEntry theListDebug = null;
+
+        /**
+         * The charge data entry.
+         */
+        private JDataEntry theChargeDebug = null;
+
+        /**
+         * The dataSet.
+         */
+        private final FinanceData theData;
+
+        /**
+         * Obtain the Date.
+         * @return the date.
+         */
         public DateDay getDate() {
             return theYear.getTaxYear();
         }
 
+        /**
+         * Obtain the TaxYear.
+         * @return the taxYear.
+         */
         public TaxYear getTaxYear() {
             return theYear;
         }
 
+        /**
+         * Obtain the Analysis.
+         * @return the Analysis.
+         */
         public Analysis getAnalysis() {
             return theAnalysis;
         }
 
+        /**
+         * Obtain the MetaAnalysis.
+         * @return the metaAnalysis.
+         */
         public MetaAnalysis getMetaAnalysis() {
             return theMetaAnalysis;
         }
 
+        /**
+         * Obtain the Income Breakdown.
+         * @return the breakdown.
+         */
         public IncomeBreakdown getBreakdown() {
             return theBreakdown;
         }
 
         /**
-         * Constructor for the Analysis Year
+         * Constructor for the Analysis Year.
          * @param pList the list
          * @param pYear the Tax Year
          * @param pPrevious the previous analysis
          */
-        private AnalysisYear(AnalysisYearList pList,
-                             TaxYear pYear,
-                             Analysis pPrevious) {
+        private AnalysisYear(final AnalysisYearList pList,
+                             final TaxYear pYear,
+                             final Analysis pPrevious) {
             /* Call super-constructor */
             super(pList, 0);
             theData = pList.theEvents.theData;
@@ -519,35 +671,34 @@ public class EventAnalysis implements JDataContents {
 
         /**
          * Compare this Bucket to another to establish sort order.
-         * 
          * @param pThat The Bucket to compare to
          * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in
          *         the sort order
          */
         @Override
-        public int compareTo(Object pThat) {
-            int result;
-
+        public int compareTo(final Object pThat) {
             /* Handle the trivial cases */
-            if (this == pThat)
+            if (this == pThat) {
                 return 0;
-            if (pThat == null)
+            }
+            if (pThat == null) {
                 return -1;
+            }
 
             /* Make sure that the object is the same class */
-            if (pThat.getClass() != this.getClass())
+            if (pThat.getClass() != this.getClass()) {
                 return -1;
+            }
 
             /* Access the object as am Analysis Year */
             AnalysisYear myThat = (AnalysisYear) pThat;
 
             /* Compare the bucket order */
-            result = getDate().compareTo(myThat.getDate());
-            return result;
+            return getDate().compareTo(myThat.getDate());
         }
 
         /**
-         * Produce totals for an analysis year
+         * Produce totals for an analysis year.
          */
         public void produceTotals() {
             /* If we are in valued state */
@@ -561,7 +712,7 @@ public class EventAnalysis implements JDataContents {
         }
 
         /**
-         * Calculate tax for an analysis year
+         * Calculate tax for an analysis year.
          */
         public void calculateTax() {
             /* If we are not in taxed state */
@@ -578,54 +729,60 @@ public class EventAnalysis implements JDataContents {
         }
     }
 
-    /* the list class */
+    /**
+     * The AnalysisYear list class.
+     */
     public static class AnalysisYearList extends DataList<AnalysisYearList, AnalysisYear> {
         /**
-         * List name
+         * List name.
          */
-        public static String listName = "AnalysisYears";
+        public static final String LIST_NAME = "AnalysisYears";
 
         @Override
         public String listName() {
-            return listName;
+            return LIST_NAME;
         }
 
         /**
-         * Report fields
+         * Report fields.
          */
-        protected static final JDataFields theFields = new JDataFields(
+        protected static final JDataFields FIELD_DEFS = new JDataFields(
                 AnalysisYearList.class.getSimpleName(), DataList.FIELD_DEFS);
 
-        /* Field IDs */
-        public static final JDataField FIELD_EVENTS = theFields.declareLocalField("Events");
+        /**
+         * Events Field Id.
+         */
+        public static final JDataField FIELD_EVENTS = FIELD_DEFS.declareLocalField("Events");
 
         /* Called from constructor */
         @Override
         public JDataFields declareFields() {
-            return theFields;
+            return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_EVENTS)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_EVENTS.equals(pField)) {
                 return theEvents;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
-        private EventAnalysis theEvents = null;
+        /**
+         * The events.
+         */
+        private final EventAnalysis theEvents;
 
         /**
-         * Construct a top-level List
+         * Construct a top-level List.
          * @param pEvents the events
          */
-        public AnalysisYearList(EventAnalysis pEvents) {
+        public AnalysisYearList(final EventAnalysis pEvents) {
             /* Call super constructor */
             super(AnalysisYearList.class, AnalysisYear.class, ListStyle.VIEW, false);
             theEvents = pEvents;
         }
 
-        /* Obtain extract lists. */
         @Override
         public AnalysisYearList getUpdateList() {
             return null;
@@ -642,27 +799,27 @@ public class EventAnalysis implements JDataContents {
         }
 
         @Override
-        public AnalysisYearList getDeepCopy(DataSet<?> pData) {
+        public AnalysisYearList getDeepCopy(final DataSet<?> pData) {
             return null;
         }
 
         @Override
-        public AnalysisYearList getDifferences(AnalysisYearList pOld) {
+        public AnalysisYearList getDifferences(final AnalysisYearList pOld) {
             return null;
         }
 
         /**
-         * Add a new item to the list
+         * Add a new item to the list.
          * @param pItem the item to add
          * @return the newly added item
          */
         @Override
-        public AnalysisYear addNewItem(DataItem<?> pItem) {
+        public AnalysisYear addNewItem(final DataItem<?> pItem) {
             return null;
         }
 
         /**
-         * Add a new item to the edit list
+         * Add a new item to the edit list.
          * @return the newly added item
          */
         @Override
@@ -671,13 +828,13 @@ public class EventAnalysis implements JDataContents {
         }
 
         /**
-         * Add new analysis based on the previous analysis
+         * Add new analysis based on the previous analysis.
          * @param pYear the tax year
          * @param pAnalysis the previous analysis
          * @return the bucket
          */
-        protected AnalysisYear getNewAnalysis(TaxYear pYear,
-                                              Analysis pAnalysis) {
+        protected AnalysisYear getNewAnalysis(final TaxYear pYear,
+                                              final Analysis pAnalysis) {
             /* Locate the bucket in the list */
             AnalysisYear myYear = new AnalysisYear(this, pYear, pAnalysis);
             add(myYear);
@@ -685,11 +842,11 @@ public class EventAnalysis implements JDataContents {
         }
 
         /**
-         * Search for tax year
+         * Search for tax year.
          * @param pYear the tax year to search for
          * @return the analysis
          */
-        public AnalysisYear searchFor(TaxYear pYear) {
+        public AnalysisYear searchFor(final TaxYear pYear) {
             DataListIterator<AnalysisYear> myIterator;
             AnalysisYear myCurr;
 
@@ -699,8 +856,9 @@ public class EventAnalysis implements JDataContents {
             /* Loop through the tax parameters */
             while ((myCurr = myIterator.next()) != null) {
                 /* Break on match */
-                if (myCurr.theYear.compareTo(pYear) == 0)
+                if (myCurr.theYear.compareTo(pYear) == 0) {
                     break;
+                }
             }
 
             /* Return to caller */
@@ -709,11 +867,11 @@ public class EventAnalysis implements JDataContents {
     }
 
     /**
-     * Process an event
+     * Process an event.
      * @param pEvent the event to process
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    private void processEvent(Event pEvent) throws JDataException {
+    private void processEvent(final Event pEvent) throws JDataException {
         Account myDebit = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
 
@@ -721,12 +879,11 @@ public class EventAnalysis implements JDataContents {
         if ((myDebit.isPriced()) || (myCredit.isPriced())) {
             /* Process as a Capital event */
             processCapitalEvent(pEvent);
-        }
 
-        /* Else handle the event normally */
-        else {
+            /* Else handle the event normally */
+        } else {
             TransactionType myTrans = pEvent.getTransType();
-            TransactionType.TransTypeList myTranList = theData.getTransTypes();
+            TransTypeList myTranList = theData.getTransTypes();
             BucketList myBuckets = theAnalysis.getList();
 
             /* If the event is interest */
@@ -763,11 +920,11 @@ public class EventAnalysis implements JDataContents {
     }
 
     /**
-     * Process a capital event
+     * Process a capital event.
      * @param pEvent the event to process
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    void processCapitalEvent(Event pEvent) throws JDataException {
+    private void processCapitalEvent(final Event pEvent) throws JDataException {
         TransactionType myTrans = pEvent.getTransType();
 
         /* Switch on the transaction */
@@ -811,10 +968,11 @@ public class EventAnalysis implements JDataContents {
             case EXPENSE:
             case INHERITED:
             case TAXFREEINCOME:
-                if (pEvent.getCredit().isPriced())
+                if (pEvent.getCredit().isPriced()) {
                     processTransferIn(pEvent);
-                else
+                } else {
                     processTransferOut(pEvent);
+                }
                 break;
             /* Throw an Exception */
             default:
@@ -827,7 +985,7 @@ public class EventAnalysis implements JDataContents {
      * Process an event that is a stock split. This capital event relates only to the Debit Account
      * @param pEvent the event
      */
-    private void processStockSplit(Event pEvent) {
+    private void processStockSplit(final Event pEvent) {
         /* Stock split has identical credit/debit and always has Units */
         Account myAccount = pEvent.getCredit();
         Units myUnits = pEvent.getUnits();
@@ -838,12 +996,12 @@ public class EventAnalysis implements JDataContents {
 
         /* Allocate a Capital event and record Current and delta units */
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
-        myEvent.addAttribute(CapitalEvent.capitalInitialUnits, myAsset.getUnits());
-        myEvent.addAttribute(CapitalEvent.capitalDeltaUnits, myUnits);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALUNITS, myAsset.getUnits());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_DELTAUNITS, myUnits);
 
         /* Add/Subtract the units movement for the account */
         myAsset.getUnits().addUnits(myUnits);
-        myEvent.addAttribute(CapitalEvent.capitalFinalUnits, myAsset.getUnits());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALUNITS, myAsset.getUnits());
     }
 
     /**
@@ -851,7 +1009,7 @@ public class EventAnalysis implements JDataContents {
      * This capital event relates only to the Credit Account
      * @param pEvent the event
      */
-    private void processTransferIn(Event pEvent) {
+    private void processTransferIn(final Event pEvent) {
         /* Transfer in is to the credit account and may or may not have units */
         Account myAccount = pEvent.getCredit();
         Account myDebit = pEvent.getDebit();
@@ -865,31 +1023,31 @@ public class EventAnalysis implements JDataContents {
 
         /* Allocate a Capital event and record Current and delta costs */
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
-        myEvent.addAttribute(CapitalEvent.capitalInitialCost, myAsset.getCost());
-        myEvent.addAttribute(CapitalEvent.capitalDeltaCost, myAmount);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALCOST, myAsset.getCost());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_DELTACOST, myAmount);
 
         /* Adjust the cost of this account */
         myAsset.getCost().addAmount(myAmount);
-        myEvent.addAttribute(CapitalEvent.capitalFinalCost, myAsset.getCost());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALCOST, myAsset.getCost());
 
         /* If we have new units */
         if (myUnits != null) {
             /* Record current and delta units */
-            myEvent.addAttribute(CapitalEvent.capitalInitialUnits, myAsset.getUnits());
-            myEvent.addAttribute(CapitalEvent.capitalDeltaUnits, myUnits);
+            myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALUNITS, myAsset.getUnits());
+            myEvent.addAttribute(CapitalEvent.CAPITAL_DELTAUNITS, myUnits);
 
             /* Add the units movement for the account */
             myAsset.getUnits().addUnits(myUnits);
-            myEvent.addAttribute(CapitalEvent.capitalFinalUnits, myAsset.getUnits());
+            myEvent.addAttribute(CapitalEvent.CAPITAL_FINALUNITS, myAsset.getUnits());
         }
 
         /* Record the current/delta investment */
-        myEvent.addAttribute(CapitalEvent.capitalInitialInvest, myAsset.getInvested());
-        myEvent.addAttribute(CapitalEvent.capitalDeltaInvest, myAmount);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALINVEST, myAsset.getInvested());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_DELTAINVEST, myAmount);
 
         /* Adjust the total money invested into this account */
         myAsset.getInvested().addAmount(myAmount);
-        myEvent.addAttribute(CapitalEvent.capitalFinalInvest, myAsset.getInvested());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALINVEST, myAsset.getInvested());
 
         /* If the event causes a tax credit */
         if (pEvent.getTaxCredit() != null) {
@@ -911,12 +1069,12 @@ public class EventAnalysis implements JDataContents {
      * Process a dividend event. This capital event relates to the only to Debit account,
      * @param pEvent the event
      */
-    private void processDividend(Event pEvent) {
+    private void processDividend(final Event pEvent) {
         /* The main account that we are interested in is the debit account */
         Account myAccount = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
         TransactionType myTrans = pEvent.getTransType();
-        TransactionType.TransTypeList myTranList = theData.getTransTypes();
+        TransTypeList myTranList = theData.getTransTypes();
         Money myAmount = pEvent.getAmount();
         Money myTaxCredit = pEvent.getTaxCredit();
         Units myUnits = pEvent.getUnits();
@@ -926,10 +1084,9 @@ public class EventAnalysis implements JDataContents {
         if (myAccount.isTaxFree()) {
             /* The true transaction type is TaxFreeDividend */
             myTrans = myTranList.searchFor(TransClass.TAXFREEDIVIDEND);
-        }
 
-        /* else if the account is a unit trust */
-        else if (myAccount.isUnitTrust()) {
+            /* else if the account is a unit trust */
+        } else if (myAccount.isUnitTrust()) {
             /* The true transaction type is UnitTrustDividend */
             myTrans = myTranList.searchFor(TransClass.UNITTRUSTDIVIDEND);
         }
@@ -951,60 +1108,60 @@ public class EventAnalysis implements JDataContents {
         /* If this is a re-investment */
         if (myAccount.equals(myCredit)) {
             /* This amount is added to the cost, so record as the delta cost */
-            myEvent.addAttribute(CapitalEvent.capitalInitialCost, myAsset.getCost());
-            myEvent.addAttribute(CapitalEvent.capitalDeltaCost, myAmount);
+            myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALCOST, myAsset.getCost());
+            myEvent.addAttribute(CapitalEvent.CAPITAL_DELTACOST, myAmount);
 
             /* Adjust the cost of this account */
             myAsset.getCost().addAmount(myAmount);
-            myEvent.addAttribute(CapitalEvent.capitalFinalCost, myAsset.getCost());
+            myEvent.addAttribute(CapitalEvent.CAPITAL_FINALCOST, myAsset.getCost());
 
             /* Record the current/delta investment */
-            myEvent.addAttribute(CapitalEvent.capitalInitialInvest, myAsset.getInvested());
-            myEvent.addAttribute(CapitalEvent.capitalDeltaInvest, myAmount);
+            myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALINVEST, myAsset.getInvested());
+            myEvent.addAttribute(CapitalEvent.CAPITAL_DELTAINVEST, myAmount);
 
             /* Adjust the total money invested into this account */
             myAsset.getInvested().addAmount(myAmount);
-            myEvent.addAttribute(CapitalEvent.capitalFinalInvest, myAsset.getInvested());
+            myEvent.addAttribute(CapitalEvent.CAPITAL_FINALINVEST, myAsset.getInvested());
 
             /* If we have new units */
             if (myUnits != null) {
                 /* Record current and delta units */
-                myEvent.addAttribute(CapitalEvent.capitalInitialUnits, myAsset.getUnits());
-                myEvent.addAttribute(CapitalEvent.capitalDeltaUnits, myUnits);
+                myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALUNITS, myAsset.getUnits());
+                myEvent.addAttribute(CapitalEvent.CAPITAL_DELTAUNITS, myUnits);
 
                 /* Add the units movement for the account */
                 myAsset.getUnits().addUnits(myUnits);
-                myEvent.addAttribute(CapitalEvent.capitalFinalUnits, myAsset.getUnits());
+                myEvent.addAttribute(CapitalEvent.CAPITAL_FINALUNITS, myAsset.getUnits());
             }
 
             /* If we have a tax credit */
             if (myTaxCredit != null) {
                 /* The Tax Credit is viewed as a gain from the account */
-                myEvent.addAttribute(CapitalEvent.capitalInitialDiv, myAsset.getDividend());
-                myEvent.addAttribute(CapitalEvent.capitalDeltaDiv, myTaxCredit);
+                myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALDIVIDEND, myAsset.getDividend());
+                myEvent.addAttribute(CapitalEvent.CAPITAL_DELTADIVIDEND, myTaxCredit);
 
                 /* The Tax Credit is viewed as a gain from the account */
                 myAsset.getDividend().addAmount(myTaxCredit);
-                myEvent.addAttribute(CapitalEvent.capitalFinalDiv, myAsset.getDividend());
+                myEvent.addAttribute(CapitalEvent.CAPITAL_FINALDIVIDEND, myAsset.getDividend());
             }
-        }
 
-        /* else we are paying out to another account */
-        else {
+            /* else we are paying out to another account */
+        } else {
             /* Adjust the gains total for this asset */
             Money myDividends = new Money(myAmount);
 
             /* Any tax credit is viewed as a realised gain from the account */
-            if (myTaxCredit != null)
+            if (myTaxCredit != null) {
                 myDividends.addAmount(myTaxCredit);
+            }
 
             /* The Dividend is viewed as a dividend from the account */
-            myEvent.addAttribute(CapitalEvent.capitalInitialDiv, myAsset.getDividend());
-            myEvent.addAttribute(CapitalEvent.capitalDeltaDiv, myDividends);
+            myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALDIVIDEND, myAsset.getDividend());
+            myEvent.addAttribute(CapitalEvent.CAPITAL_DELTADIVIDEND, myDividends);
 
             /* The Dividend is viewed as a gain from the account */
             myAsset.getDividend().addAmount(myDividends);
-            myEvent.addAttribute(CapitalEvent.capitalFinalDiv, myAsset.getDividend());
+            myEvent.addAttribute(CapitalEvent.CAPITAL_FINALDIVIDEND, myAsset.getDividend());
 
             /* Adjust the credit account bucket */
             myBucket = myBuckets.getAccountDetail(myCredit);
@@ -1027,7 +1184,7 @@ public class EventAnalysis implements JDataContents {
      * Process an event that is a transfer from capital. This capital event relates only to the Debit Account
      * @param pEvent the event
      */
-    private void processTransferOut(Event pEvent) {
+    private void processTransferOut(final Event pEvent) {
         /* Transfer out is from the debit account and may or may not have units */
         Account myAccount = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
@@ -1047,12 +1204,12 @@ public class EventAnalysis implements JDataContents {
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
 
         /* Record the current/delta investment */
-        myEvent.addAttribute(CapitalEvent.capitalInitialInvest, myAsset.getInvested());
-        myEvent.addAttribute(CapitalEvent.capitalDeltaInvest, myAmount);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALINVEST, myAsset.getInvested());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_DELTAINVEST, myAmount);
 
         /* Adjust the total amount invested into this account */
         myAsset.getInvested().subtractAmount(myAmount);
-        myEvent.addAttribute(CapitalEvent.capitalFinalInvest, myAsset.getInvested());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALINVEST, myAsset.getInvested());
 
         /* Assume the the cost reduction is the full value */
         myReduction = new Money(myAmount);
@@ -1077,12 +1234,12 @@ public class EventAnalysis implements JDataContents {
         /* If we have a delta to the cost */
         if (myDeltaCost.isNonZero()) {
             /* This amount is subtracted from the cost, so record as the delta cost */
-            myEvent.addAttribute(CapitalEvent.capitalInitialCost, myCost);
-            myEvent.addAttribute(CapitalEvent.capitalDeltaCost, myDeltaCost);
+            myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALCOST, myCost);
+            myEvent.addAttribute(CapitalEvent.CAPITAL_DELTACOST, myDeltaCost);
 
             /* Adjust the cost appropriately */
             myCost.addAmount(myDeltaCost);
-            myEvent.addAttribute(CapitalEvent.capitalFinalCost, myCost);
+            myEvent.addAttribute(CapitalEvent.CAPITAL_FINALCOST, myCost);
         }
 
         /* Determine the delta to the gains */
@@ -1092,12 +1249,12 @@ public class EventAnalysis implements JDataContents {
         /* If we have a delta to the gains */
         if (myDeltaGains.isNonZero()) {
             /* This amount is subtracted from the cost, so record as the delta cost */
-            myEvent.addAttribute(CapitalEvent.capitalInitialGains, myAsset.getGains());
-            myEvent.addAttribute(CapitalEvent.capitalDeltaGains, myDeltaGains);
+            myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALGAINS, myAsset.getGains());
+            myEvent.addAttribute(CapitalEvent.CAPITAL_DELTAGAINS, myDeltaGains);
 
             /* Adjust the cost appropriately */
             myAsset.getGains().addAmount(myDeltaGains);
-            myEvent.addAttribute(CapitalEvent.capitalFinalGains, myAsset.getGains());
+            myEvent.addAttribute(CapitalEvent.CAPITAL_FINALGAINS, myAsset.getGains());
         }
 
         /* If we have reduced units */
@@ -1107,12 +1264,12 @@ public class EventAnalysis implements JDataContents {
             myDeltaUnits.negate();
 
             /* Record current and delta units */
-            myEvent.addAttribute(CapitalEvent.capitalInitialUnits, myAsset.getUnits());
-            myEvent.addAttribute(CapitalEvent.capitalDeltaUnits, myDeltaUnits);
+            myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALUNITS, myAsset.getUnits());
+            myEvent.addAttribute(CapitalEvent.CAPITAL_DELTAUNITS, myDeltaUnits);
 
             /* Add the units movement for the account */
             myAsset.getUnits().subtractUnits(myUnits);
-            myEvent.addAttribute(CapitalEvent.capitalFinalUnits, myAsset.getUnits());
+            myEvent.addAttribute(CapitalEvent.CAPITAL_FINALUNITS, myAsset.getUnits());
         }
 
         /* Adjust the credit account bucket */
@@ -1128,7 +1285,7 @@ public class EventAnalysis implements JDataContents {
      * Process an event that is a taxable gain. This capital event relates only to the Debit Account
      * @param pEvent the event
      */
-    private void processTaxableGain(Event pEvent) {
+    private void processTaxableGain(final Event pEvent) {
         /* Transfer in is from the debit account and may or may not have units */
         Account myAccount = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
@@ -1149,12 +1306,12 @@ public class EventAnalysis implements JDataContents {
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
 
         /* Record the current/delta investment */
-        myEvent.addAttribute(CapitalEvent.capitalInitialInvest, myAsset.getInvested());
-        myEvent.addAttribute(CapitalEvent.capitalDeltaInvest, myAmount);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALINVEST, myAsset.getInvested());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_DELTAINVEST, myAmount);
 
         /* Adjust the total amount invested into this account */
         myAsset.getInvested().subtractAmount(myAmount);
-        myEvent.addAttribute(CapitalEvent.capitalFinalInvest, myAsset.getInvested());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALINVEST, myAsset.getInvested());
 
         /* Assume the the cost reduction is the full value */
         myReduction = new Money(myAmount);
@@ -1179,12 +1336,12 @@ public class EventAnalysis implements JDataContents {
         /* If we have a delta to the cost */
         if (myDeltaCost.isNonZero()) {
             /* This amount is subtracted from the cost, so record as the delta cost */
-            myEvent.addAttribute(CapitalEvent.capitalInitialCost, myCost);
-            myEvent.addAttribute(CapitalEvent.capitalDeltaCost, myDeltaCost);
+            myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALCOST, myCost);
+            myEvent.addAttribute(CapitalEvent.CAPITAL_DELTACOST, myDeltaCost);
 
             /* Adjust the cost appropriately */
             myCost.addAmount(myDeltaCost);
-            myEvent.addAttribute(CapitalEvent.capitalFinalCost, myCost);
+            myEvent.addAttribute(CapitalEvent.CAPITAL_FINALCOST, myCost);
         }
 
         /* Determine the delta to the gains */
@@ -1194,12 +1351,12 @@ public class EventAnalysis implements JDataContents {
         /* If we have a delta to the gains */
         if (myDeltaGains.isNonZero()) {
             /* This amount is subtracted from the cost, so record as the delta cost */
-            myEvent.addAttribute(CapitalEvent.capitalInitialGains, myAsset.getGains());
-            myEvent.addAttribute(CapitalEvent.capitalDeltaGains, myDeltaGains);
+            myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALGAINS, myAsset.getGains());
+            myEvent.addAttribute(CapitalEvent.CAPITAL_DELTAGAINS, myDeltaGains);
 
             /* Adjust the cost appropriately */
             myAsset.getGains().addAmount(myDeltaGains);
-            myEvent.addAttribute(CapitalEvent.capitalFinalGains, myAsset.getGains());
+            myEvent.addAttribute(CapitalEvent.CAPITAL_FINALGAINS, myAsset.getGains());
         }
 
         /* If we have reduced units */
@@ -1209,12 +1366,12 @@ public class EventAnalysis implements JDataContents {
             myDeltaUnits.negate();
 
             /* Record current and delta units */
-            myEvent.addAttribute(CapitalEvent.capitalInitialUnits, myAsset.getUnits());
-            myEvent.addAttribute(CapitalEvent.capitalDeltaUnits, myDeltaUnits);
+            myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALUNITS, myAsset.getUnits());
+            myEvent.addAttribute(CapitalEvent.CAPITAL_DELTAUNITS, myDeltaUnits);
 
             /* Add the units movement for the account */
             myAsset.getUnits().subtractUnits(myUnits);
-            myEvent.addAttribute(CapitalEvent.capitalFinalUnits, myAsset.getUnits());
+            myEvent.addAttribute(CapitalEvent.CAPITAL_FINALUNITS, myAsset.getUnits());
         }
 
         /* True debit account is the parent */
@@ -1245,11 +1402,11 @@ public class EventAnalysis implements JDataContents {
      * Process an event that is stock right waived. This capital event relates only to the Debit Account
      * @param pEvent the event
      */
-    private void processStockRightWaived(Event pEvent) {
+    private void processStockRightWaived(final Event pEvent) {
         /* Stock Right Waived is from the debit account */
         Account myAccount = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
-        AccountPrice.AccountPriceList myPrices = theData.getPrices();
+        AccountPriceList myPrices = theData.getPrices();
         Money myAmount = pEvent.getAmount();
         TransactionType myTrans = pEvent.getTransType();
         AccountPrice myActPrice;
@@ -1269,40 +1426,39 @@ public class EventAnalysis implements JDataContents {
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
 
         /* Record the current/delta investment */
-        myEvent.addAttribute(CapitalEvent.capitalInitialInvest, myAsset.getInvested());
-        myEvent.addAttribute(CapitalEvent.capitalDeltaInvest, myAmount);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALINVEST, myAsset.getInvested());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_DELTAINVEST, myAmount);
 
         /* Adjust the total amount invested into this account */
         myAsset.getInvested().subtractAmount(myAmount);
-        myEvent.addAttribute(CapitalEvent.capitalFinalInvest, myAsset.getInvested());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALINVEST, myAsset.getInvested());
 
         /* Get the appropriate price for the account */
         myActPrice = myPrices.getLatestPrice(myAccount, pEvent.getDate());
         myPrice = myActPrice.getPrice();
-        myEvent.addAttribute(CapitalEvent.capitalInitialPrice, myPrice);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALPRICE, myPrice);
 
         /* Determine value of this stock at the current time */
         myValue = myAsset.getUnits().valueAtPrice(myPrice);
-        myEvent.addAttribute(CapitalEvent.capitalInitialValue, myValue);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALVALUE, myValue);
 
         /* Access the current cost */
         myCost = myAsset.getCost();
 
         /* Calculate the portion of the value that creates a large transaction */
-        myPortion = myValue.valueAtRate(rateLimit);
+        myPortion = myValue.valueAtRate(LIMIT_RATE);
 
         /* If this is a large stock waiver (> both valueLimit and rateLimit of value) */
-        if ((myAmount.getValue() > valueLimit.getValue()) && (myAmount.getValue() > myPortion.getValue())) {
+        if ((myAmount.getValue() > LIMIT_VALUE.getValue()) && (myAmount.getValue() > myPortion.getValue())) {
             /* Determine the total value of rights plus share value */
             Money myTotalValue = new Money(myAmount);
             myTotalValue.addAmount(myValue);
 
             /* Determine the reduction as a proportion of the total value */
             myReduction = myAsset.getCost().valueAtWeight(myAmount, myTotalValue);
-        }
 
-        /* else this is viewed as small and is taken out of the cost */
-        else {
+            /* else this is viewed as small and is taken out of the cost */
+        } else {
             /* Set the reduction to be the entire amount */
             myReduction = new Money(myAmount);
         }
@@ -1318,24 +1474,24 @@ public class EventAnalysis implements JDataContents {
         myDeltaCost.negate();
 
         /* Record the current/delta cost */
-        myEvent.addAttribute(CapitalEvent.capitalInitialCost, myCost);
-        myEvent.addAttribute(CapitalEvent.capitalDeltaCost, myDeltaCost);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALCOST, myCost);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_DELTACOST, myDeltaCost);
 
         /* Adjust the cost */
         myCost.addAmount(myDeltaCost);
-        myEvent.addAttribute(CapitalEvent.capitalFinalCost, myCost);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALCOST, myCost);
 
         /* Calculate the delta gains */
         myDeltaGains = new Money(myAmount);
         myDeltaGains.addAmount(myDeltaCost);
 
         /* Record the current/delta gains */
-        myEvent.addAttribute(CapitalEvent.capitalInitialGains, myAsset.getGains());
-        myEvent.addAttribute(CapitalEvent.capitalDeltaGains, myDeltaGains);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALGAINS, myAsset.getGains());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_DELTAGAINS, myDeltaGains);
 
         /* Adjust the gains */
         myAsset.getGains().addAmount(myDeltaGains);
-        myEvent.addAttribute(CapitalEvent.capitalFinalGains, myAsset.getGains());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALGAINS, myAsset.getGains());
 
         /* Adjust the credit account bucket */
         ActDetail myBucket = myBuckets.getAccountDetail(myCredit);
@@ -1351,7 +1507,7 @@ public class EventAnalysis implements JDataContents {
      * accounts
      * @param pEvent the event
      */
-    private void processStockDeMerger(Event pEvent) {
+    private void processStockDeMerger(final Event pEvent) {
         Account myDebit = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
         Dilution myDilution = pEvent.getDilution();
@@ -1376,20 +1532,20 @@ public class EventAnalysis implements JDataContents {
         myDeltaCost.subtractAmount(myCost);
 
         /* Record the current/delta cost */
-        myEvent.addAttribute(CapitalEvent.capitalInitialCost, myCost);
-        myEvent.addAttribute(CapitalEvent.capitalDeltaCost, myDeltaCost);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALCOST, myCost);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_DELTACOST, myDeltaCost);
 
         /* Record the new total cost */
         myCost.addAmount(myDeltaCost);
-        myEvent.addAttribute(CapitalEvent.capitalFinalCost, myCost);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALCOST, myCost);
 
         /* Record the current/delta investment */
-        myEvent.addAttribute(CapitalEvent.capitalInitialInvest, myAsset.getInvested());
-        myEvent.addAttribute(CapitalEvent.capitalDeltaInvest, myDeltaCost);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALINVEST, myAsset.getInvested());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_DELTAINVEST, myDeltaCost);
 
         /* Adjust the investment for the debit account */
         myAsset.getInvested().addAmount(myDeltaCost);
-        myEvent.addAttribute(CapitalEvent.capitalFinalInvest, myAsset.getInvested());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALINVEST, myAsset.getInvested());
 
         /* Access the Credit Asset Account Bucket */
         myAsset = (AssetAccount) myBuckets.getAccountDetail(myCredit);
@@ -1402,28 +1558,28 @@ public class EventAnalysis implements JDataContents {
         myDeltaCost.negate();
 
         /* Record the current/delta cost */
-        myEvent.addAttribute(CapitalEvent.capitalInitialCost, myAsset.getCost());
-        myEvent.addAttribute(CapitalEvent.capitalDeltaCost, myDeltaCost);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALCOST, myAsset.getCost());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_DELTACOST, myDeltaCost);
 
         /* Adjust the cost */
         myAsset.getCost().addAmount(myDeltaCost);
-        myEvent.addAttribute(CapitalEvent.capitalFinalCost, myAsset.getCost());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALCOST, myAsset.getCost());
 
         /* Record the current/delta investment */
-        myEvent.addAttribute(CapitalEvent.capitalInitialInvest, myAsset.getInvested());
-        myEvent.addAttribute(CapitalEvent.capitalDeltaInvest, myDeltaCost);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALINVEST, myAsset.getInvested());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_DELTAINVEST, myDeltaCost);
 
         /* Adjust the investment */
         myAsset.getInvested().addAmount(myDeltaCost);
-        myEvent.addAttribute(CapitalEvent.capitalFinalInvest, myAsset.getInvested());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALINVEST, myAsset.getInvested());
 
         /* Record the current/delta units */
-        myEvent.addAttribute(CapitalEvent.capitalInitialUnits, myAsset.getUnits());
-        myEvent.addAttribute(CapitalEvent.capitalDeltaUnits, myUnits);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALUNITS, myAsset.getUnits());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_DELTAUNITS, myUnits);
 
         /* Adjust the units for the credit account */
         myAsset.getUnits().addUnits(myUnits);
-        myEvent.addAttribute(CapitalEvent.capitalFinalUnits, myAsset.getUnits());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALUNITS, myAsset.getUnits());
     }
 
     /**
@@ -1431,10 +1587,10 @@ public class EventAnalysis implements JDataContents {
      * Debit Account
      * @param pEvent the event
      */
-    private void processCashTakeover(Event pEvent) {
+    private void processCashTakeover(final Event pEvent) {
         Account myDebit = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
-        AccountPrice.AccountPriceList myPrices = theData.getPrices();
+        AccountPriceList myPrices = theData.getPrices();
         Money myAmount = pEvent.getAmount();
         TransactionType myTrans = pEvent.getTransType();
         AccountPrice myActPrice;
@@ -1455,36 +1611,35 @@ public class EventAnalysis implements JDataContents {
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
 
         /* Record the current/delta investment */
-        myEvent.addAttribute(CapitalEvent.capitalInitialInvest, myAsset.getInvested());
-        myEvent.addAttribute(CapitalEvent.capitalDeltaInvest, myAmount);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALINVEST, myAsset.getInvested());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_DELTAINVEST, myAmount);
 
         /* Adjust the total amount invested into this account */
         myAsset.getInvested().subtractAmount(myAmount);
-        myEvent.addAttribute(CapitalEvent.capitalFinalInvest, myAsset.getInvested());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALINVEST, myAsset.getInvested());
 
         /* Get the appropriate price for the account */
         myActPrice = myPrices.getLatestPrice(myDebit, pEvent.getDate());
         myPrice = myActPrice.getPrice();
-        myEvent.addAttribute(CapitalEvent.capitalInitialPrice, myPrice);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALPRICE, myPrice);
 
         /* Determine value of this stock at the current time */
         myValue = myAsset.getUnits().valueAtPrice(myPrice);
-        myEvent.addAttribute(CapitalEvent.capitalInitialValue, myValue);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALVALUE, myValue);
 
         /* Access the current cost */
         myCost = myAsset.getCost();
 
         /* Calculate the portion of the value that creates a large transaction */
-        myPortion = myValue.valueAtRate(rateLimit);
+        myPortion = myValue.valueAtRate(LIMIT_RATE);
 
         /* If this is a large cash takeover portion (> both valueLimit and rateLimit of value) */
-        if ((myAmount.getValue() > valueLimit.getValue()) && (myAmount.getValue() > myPortion.getValue())) {
+        if ((myAmount.getValue() > LIMIT_VALUE.getValue()) && (myAmount.getValue() > myPortion.getValue())) {
             /* We have to defer the allocation of cost until we know of the Stock TakeOver part */
-            myEvent.addAttribute(CapitalEvent.capitalTakeoverCash, myAmount);
-        }
+            myEvent.addAttribute(CapitalEvent.CAPITAL_TAKEOVERCASH, myAmount);
 
-        /* else this is viewed as small and is taken out of the cost */
-        else {
+            /* else this is viewed as small and is taken out of the cost */
+        } else {
             /* Set the reduction to be the entire amount */
             myReduction = new Money(myAmount);
 
@@ -1500,31 +1655,31 @@ public class EventAnalysis implements JDataContents {
             myResidualCost.addAmount(myCost);
 
             /* Record the residual cost */
-            myEvent.addAttribute(CapitalEvent.capitalTakeoverCost, myResidualCost);
+            myEvent.addAttribute(CapitalEvent.CAPITAL_TAKEOVERCOST, myResidualCost);
 
             /* Calculate the delta cost */
             myDeltaCost = new Money(myCost);
             myDeltaCost.negate();
 
             /* Record the current/delta cost */
-            myEvent.addAttribute(CapitalEvent.capitalInitialCost, myCost);
-            myEvent.addAttribute(CapitalEvent.capitalDeltaCost, myDeltaCost);
+            myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALCOST, myCost);
+            myEvent.addAttribute(CapitalEvent.CAPITAL_DELTACOST, myDeltaCost);
 
             /* Adjust the cost */
             myCost.addAmount(myDeltaCost);
-            myEvent.addAttribute(CapitalEvent.capitalFinalCost, myCost);
+            myEvent.addAttribute(CapitalEvent.CAPITAL_FINALCOST, myCost);
 
             /* Calculate the gains */
             myDeltaGains = new Money(myAmount);
             myDeltaGains.addAmount(myDeltaCost);
 
             /* Record the current/delta cost */
-            myEvent.addAttribute(CapitalEvent.capitalInitialGains, myAsset.getGains());
-            myEvent.addAttribute(CapitalEvent.capitalDeltaGains, myDeltaGains);
+            myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALGAINS, myAsset.getGains());
+            myEvent.addAttribute(CapitalEvent.CAPITAL_DELTAGAINS, myDeltaGains);
 
             /* Adjust the gained */
             myAsset.getGained().addAmount(myDeltaGains);
-            myEvent.addAttribute(CapitalEvent.capitalFinalGains, myAsset.getGains());
+            myEvent.addAttribute(CapitalEvent.CAPITAL_FINALGAINS, myAsset.getGains());
         }
 
         /* Adjust the credit account bucket */
@@ -1541,10 +1696,10 @@ public class EventAnalysis implements JDataContents {
      * accounts In particular it makes reference to the CashTakeOver aspect of the debit account
      * @param pEvent the event
      */
-    private void processStockTakeover(Event pEvent) {
+    private void processStockTakeover(final Event pEvent) {
         Account myDebit = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
-        AccountPrice.AccountPriceList myPrices = theData.getPrices();
+        AccountPriceList myPrices = theData.getPrices();
         Units myUnits = pEvent.getUnits();
         TransactionType myTrans = pEvent.getTransType();
         AccountPrice myActPrice;
@@ -1571,7 +1726,7 @@ public class EventAnalysis implements JDataContents {
         /* If we have had a cash takeover event */
         if (myDebEvent != null) {
             /* Access the residual cost/cash */
-            myResidualCash = (Money) myDebEvent.findAttribute(CapitalEvent.capitalTakeoverCash);
+            myResidualCash = (Money) myDebEvent.findAttribute(CapitalEvent.CAPITAL_TAKEOVERCASH);
         }
 
         /* Allocate new Capital events */
@@ -1583,11 +1738,11 @@ public class EventAnalysis implements JDataContents {
             /* Get the appropriate price for the credit account */
             myActPrice = myPrices.getLatestPrice(myCredit, pEvent.getDate());
             myPrice = myActPrice.getPrice();
-            myDebEvent.addAttribute(CapitalEvent.capitalTakeoverPrice, myPrice);
+            myDebEvent.addAttribute(CapitalEvent.CAPITAL_TAKEOVERPRICE, myPrice);
 
             /* Determine value of the stock part of the takeover */
             myValue = myUnits.valueAtPrice(myPrice);
-            myDebEvent.addAttribute(CapitalEvent.capitalTakeoverValue, myValue);
+            myDebEvent.addAttribute(CapitalEvent.CAPITAL_TAKEOVERVALUE, myValue);
 
             /* Calculate the total cost of the takeover */
             myTotalCost = new Money(myResidualCash);
@@ -1599,35 +1754,34 @@ public class EventAnalysis implements JDataContents {
             myCashCost.subtractAmount(myStockCost);
 
             /* Record the values */
-            myDebEvent.addAttribute(CapitalEvent.capitalTakeoverCash, myCashCost);
-            myDebEvent.addAttribute(CapitalEvent.capitalTakeoverStock, myStockCost);
-            myDebEvent.addAttribute(CapitalEvent.capitalTakeoverTotal, myTotalCost);
+            myDebEvent.addAttribute(CapitalEvent.CAPITAL_TAKEOVERCASH, myCashCost);
+            myDebEvent.addAttribute(CapitalEvent.CAPITAL_TAKEOVERSTOCK, myStockCost);
+            myDebEvent.addAttribute(CapitalEvent.CAPITAL_TAKEOVERTOTAL, myTotalCost);
 
             /* The Delta Gains is the Amount minus the CashCost */
             myDeltaGains = new Money(myResidualCash);
             myDeltaGains.subtractAmount(myCashCost);
 
             /* Record the gains */
-            myDebEvent.addAttribute(CapitalEvent.capitalInitialGains, myDebAsset.getGains());
-            myDebEvent.addAttribute(CapitalEvent.capitalDeltaGains, myDeltaGains);
+            myDebEvent.addAttribute(CapitalEvent.CAPITAL_INITIALGAINS, myDebAsset.getGains());
+            myDebEvent.addAttribute(CapitalEvent.CAPITAL_DELTAGAINS, myDeltaGains);
             myDebAsset.getGained().addAmount(myDeltaGains);
-            myDebEvent.addAttribute(CapitalEvent.capitalFinalGains, myDebAsset.getGains());
+            myDebEvent.addAttribute(CapitalEvent.CAPITAL_FINALGAINS, myDebAsset.getGains());
 
             /* The cost of the new stock is the stock cost */
-            myCredEvent.addAttribute(CapitalEvent.capitalInitialCost, myCredAsset.getCost());
-            myCredEvent.addAttribute(CapitalEvent.capitalDeltaCost, myStockCost);
+            myCredEvent.addAttribute(CapitalEvent.CAPITAL_INITIALCOST, myCredAsset.getCost());
+            myCredEvent.addAttribute(CapitalEvent.CAPITAL_DELTACOST, myStockCost);
             myCredAsset.getCost().addAmount(myStockCost);
-            myCredEvent.addAttribute(CapitalEvent.capitalFinalCost, myCredAsset.getCost());
-        }
+            myCredEvent.addAttribute(CapitalEvent.CAPITAL_FINALCOST, myCredAsset.getCost());
 
-        /* else there is no cash part to this takeover */
-        else {
+            /* else there is no cash part to this takeover */
+        } else {
             /* The cost of the new stock is the residual debit cost */
             myDeltaCost = myDebAsset.getCost();
-            myCredEvent.addAttribute(CapitalEvent.capitalInitialCost, myCredAsset.getCost());
-            myCredEvent.addAttribute(CapitalEvent.capitalDeltaCost, myDeltaCost);
+            myCredEvent.addAttribute(CapitalEvent.CAPITAL_INITIALCOST, myCredAsset.getCost());
+            myCredEvent.addAttribute(CapitalEvent.CAPITAL_DELTACOST, myDeltaCost);
             myCredAsset.getCost().addAmount(myDeltaCost);
-            myCredEvent.addAttribute(CapitalEvent.capitalFinalCost, myCredAsset.getCost());
+            myCredEvent.addAttribute(CapitalEvent.CAPITAL_FINALCOST, myCredAsset.getCost());
         }
 
         /* Calculate the delta cost */
@@ -1635,30 +1789,30 @@ public class EventAnalysis implements JDataContents {
         myDeltaCost.negate();
 
         /* Record the current/delta cost */
-        myDebEvent.addAttribute(CapitalEvent.capitalInitialCost, myDebAsset.getCost());
-        myDebEvent.addAttribute(CapitalEvent.capitalDeltaCost, myDeltaCost);
+        myDebEvent.addAttribute(CapitalEvent.CAPITAL_INITIALCOST, myDebAsset.getCost());
+        myDebEvent.addAttribute(CapitalEvent.CAPITAL_DELTACOST, myDeltaCost);
 
         /* Adjust the cost */
         myDebAsset.getCost().addAmount(myDeltaCost);
-        myDebEvent.addAttribute(CapitalEvent.capitalFinalCost, myDebAsset.getCost());
+        myDebEvent.addAttribute(CapitalEvent.CAPITAL_FINALCOST, myDebAsset.getCost());
 
         /* Calculate the delta units */
         myDeltaUnits = new Units(myDebAsset.getUnits());
         myDeltaUnits.negate();
 
         /* Record the current/delta units */
-        myDebEvent.addAttribute(CapitalEvent.capitalInitialUnits, myDebAsset.getUnits());
-        myDebEvent.addAttribute(CapitalEvent.capitalDeltaUnits, myDeltaUnits);
+        myDebEvent.addAttribute(CapitalEvent.CAPITAL_INITIALUNITS, myDebAsset.getUnits());
+        myDebEvent.addAttribute(CapitalEvent.CAPITAL_DELTAUNITS, myDeltaUnits);
 
         /* Adjust the Units */
         myDebAsset.getUnits().addUnits(myDeltaUnits);
-        myDebEvent.addAttribute(CapitalEvent.capitalFinalUnits, myDebAsset.getUnits());
+        myDebEvent.addAttribute(CapitalEvent.CAPITAL_FINALUNITS, myDebAsset.getUnits());
 
         /* Record the current/delta units */
-        myCredEvent.addAttribute(CapitalEvent.capitalInitialUnits, myCredAsset.getUnits());
-        myCredEvent.addAttribute(CapitalEvent.capitalDeltaUnits, myUnits);
+        myCredEvent.addAttribute(CapitalEvent.CAPITAL_INITIALUNITS, myCredAsset.getUnits());
+        myCredEvent.addAttribute(CapitalEvent.CAPITAL_DELTAUNITS, myUnits);
         myCredAsset.getUnits().addUnits(myUnits);
-        myCredEvent.addAttribute(CapitalEvent.capitalFinalUnits, myCredAsset.getUnits());
+        myCredEvent.addAttribute(CapitalEvent.CAPITAL_FINALUNITS, myCredAsset.getUnits());
 
         /* Adjust the relevant transaction bucket */
         TransDetail myTranBucket = myBuckets.getTransDetail(myTrans);

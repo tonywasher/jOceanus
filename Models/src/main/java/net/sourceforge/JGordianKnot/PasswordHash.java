@@ -74,16 +74,16 @@ public class PasswordHash implements JDataContents {
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (pField == FIELD_MODE) {
+        if (FIELD_MODE.equals(pField)) {
             return theHashMode;
         }
-        if (pField == FIELD_HASH) {
+        if (FIELD_HASH.equals(pField)) {
             return theHashBytes;
         }
-        if (pField == FIELD_CIPHER) {
+        if (FIELD_CIPHER.equals(pField)) {
             return theCipherSet;
         }
-        if (pField == FIELD_SYMKEYMAP) {
+        if (FIELD_SYMKEYMAP.equals(pField)) {
             return theSymKeyMap;
         }
         return null;
@@ -353,8 +353,6 @@ public class PasswordHash implements JDataContents {
 
             /* Clear out the password */
             Arrays.fill(pPassword, (char) 0);
-        } catch (JDataException e) {
-            throw e;
         } catch (Exception e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise using password", e);
         }
@@ -369,33 +367,24 @@ public class PasswordHash implements JDataContents {
     private void attemptPassword(final char[] pPassword) throws WrongPasswordException, JDataException {
         byte[] myHashBytes;
 
-        /* Protect against exceptions */
-        try {
-            /* Generate the HashBytes */
-            myHashBytes = generateHashBytes(pPassword);
+        /* Generate the HashBytes */
+        myHashBytes = generateHashBytes(pPassword);
 
-            /* Check that the arrays match */
-            if (!Arrays.equals(theHashBytes, myHashBytes)) {
-                /* Fail the password attempt */
-                throw new WrongPasswordException("Invalid Password");
-            }
-
-            /* Create the Cipher Set */
-            theCipherSet = new CipherSet(theGenerator, theHashMode);
-            theCipherSet.buildCiphers(theSecretHash);
-
-            /* Encrypt the password */
-            thePassword = theCipherSet.encryptChars(pPassword);
-
-            /* Clear out the password */
-            Arrays.fill(pPassword, (char) 0);
-        } catch (WrongPasswordException e) {
-            throw e;
-        } catch (JDataException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise using password", e);
+        /* Check that the arrays match */
+        if (!Arrays.equals(theHashBytes, myHashBytes)) {
+            /* Fail the password attempt */
+            throw new WrongPasswordException("Invalid Password");
         }
+
+        /* Create the Cipher Set */
+        theCipherSet = new CipherSet(theGenerator, theHashMode);
+        theCipherSet.buildCiphers(theSecretHash);
+
+        /* Encrypt the password */
+        thePassword = theCipherSet.encryptChars(pPassword);
+
+        /* Clear out the password */
+        Arrays.fill(pPassword, (char) 0);
     }
 
     /**

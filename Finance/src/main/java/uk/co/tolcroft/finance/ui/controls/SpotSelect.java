@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,6 +29,7 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -37,58 +39,128 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
 import net.sourceforge.JDataManager.Difference;
+import net.sourceforge.JDataManager.EventManager;
 import net.sourceforge.JDateButton.JDateButton;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayButton;
 import net.sourceforge.JDateDay.DateDayRange;
 import uk.co.tolcroft.finance.data.Account;
 import uk.co.tolcroft.finance.data.AccountType;
+import uk.co.tolcroft.finance.data.AccountType.AccountTypeList;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.data.DataList.DataListIterator;
-import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
 
+/**
+ * SpotPrice Date selection panel.
+ * @author Tony Washer
+ */
 public class SpotSelect extends JPanel {
+    /**
+     * Serial Id.
+     */
     private static final long serialVersionUID = -361214955549174070L;
 
-    /* Members */
-    private SpotSelect theSelf = this;
-    private StdPanel theParent = null;
-    private View theView = null;
-    private DateDayButton theDateButton = null;
-    private JCheckBox theShowClosed = null;
-    private JButton theNext = null;
-    private JButton thePrev = null;
-    private JComboBox theTypesBox = null;
-    private AccountType.AccountTypeList theTypes = null;
+    /**
+     * The data view.
+     */
+    private final View theView;
+
+    /**
+     * The date button.
+     */
+    private final DateDayButton theDateButton;
+
+    /**
+     * The showClosed checkBox.
+     */
+    private final JCheckBox theShowClosed;
+
+    /**
+     * The next button.
+     */
+    private final JButton theNext;
+
+    /**
+     * The previous button.
+     */
+    private final JButton thePrev;
+
+    /**
+     * The accountTypes comboBox.
+     */
+    private final JComboBox theTypesBox;
+
+    /**
+     * The current state.
+     */
     private SpotState theState = null;
+
+    /**
+     * The saved state.
+     */
     private SpotState theSavePoint = null;
+
+    /**
+     * Do we show closed accounts.
+     */
     private boolean doShowClosed = false;
-    private boolean typesPopulated = false;
+
+    /**
+     * Are we refreshing data?
+     */
     private boolean refreshingData = false;
 
-    /* Access methods */
+    /**
+     * Event Manager.
+     */
+    private final EventManager theManager;
+
+    /**
+     * Get the selected date.
+     * @return the date
+     */
     public DateDay getDate() {
         return theState.getDate();
     }
 
-    public AccountType getAccountType() {
+    /**
+     * Get the selected account type.
+     * @return the account type
+     */
+    public final AccountType getAccountType() {
         return theState.getAccountType();
     }
 
+    /**
+     * Do we show closed accounts?.
+     * @return the date
+     */
     public boolean getShowClosed() {
         return doShowClosed;
     }
 
-    /* Constructor */
-    public SpotSelect(View pView,
-                      StdPanel pTable) {
+    /**
+     * Obtain the event manager.
+     * @return the event manager.
+     */
+    public EventManager getManager() {
+        return theManager;
+    }
+
+    /**
+     * Constructor.
+     * @param pView the data view
+     */
+    public SpotSelect(final View pView) {
         /* Create listener */
         SpotListener myListener = new SpotListener();
 
         /* Store table and view details */
         theView = pView;
-        theParent = pTable;
+
+        /* Create the Event Manager */
+        theManager = new EventManager(this);
 
         /* Create Labels */
         JLabel myDate = new JLabel("Date:");
@@ -115,7 +187,7 @@ public class SpotSelect extends JPanel {
         refreshData();
 
         /* Create the panel */
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Spot Selection"));
+        setBorder(BorderFactory.createTitledBorder("Spot Selection"));
 
         /* Create the layout for the panel */
         GroupLayout panelLayout = new GroupLayout(this);
@@ -163,9 +235,9 @@ public class SpotSelect extends JPanel {
     }
 
     /**
-     * Refresh data
+     * Refresh data.
      */
-    public void refreshData() {
+    public final void refreshData() {
         DateDayRange myRange;
         AccountType myType = null;
         AccountType myFirst = null;
@@ -183,23 +255,22 @@ public class SpotSelect extends JPanel {
         FinanceData myData = theView.getData();
 
         /* Access types and accounts */
-        theTypes = myData.getAccountTypes();
+        AccountTypeList myTypes = myData.getAccountTypes();
         myAccounts = myData.getAccounts();
 
         /* Note that we are refreshing data */
         refreshingData = true;
 
         /* If we have types already populated */
-        if (typesPopulated) {
+        if (theTypesBox.getItemCount() > 0) {
             /* If we have a selected type */
             if (getAccountType() != null) {
                 /* Find it in the new list */
-                theState.setType(theTypes.searchFor(getAccountType().getName()));
+                theState.setType(myTypes.searchFor(getAccountType().getName()));
             }
 
             /* Remove the types */
             theTypesBox.removeAllItems();
-            typesPopulated = false;
         }
 
         /* Access the iterator */
@@ -207,43 +278,36 @@ public class SpotSelect extends JPanel {
 
         /* Loop through the non-owner accounts */
         while ((myAccount = myIterator.next()) != null) {
-            /* Skip non-priced items */
-            if (!myAccount.isPriced())
+            /* Skip non-priced, deleted and alias items */
+            if ((!myAccount.isPriced()) || (myAccount.isDeleted()) || (myAccount.isAlias())) {
                 continue;
-
-            /* Skip deleted items */
-            if (myAccount.isDeleted())
-                continue;
-
-            /* Skip alias items */
-            if (myAccount.isAlias())
-                continue;
+            }
 
             /* Skip closed items if required */
-            if ((!doShowClosed) && (myAccount.isClosed()))
+            if ((!doShowClosed) && (myAccount.isClosed())) {
                 continue;
+            }
 
             /* If the type of this account is new */
             if (!Difference.isEqual(myType, myAccount.getActType())) {
                 /* Note the type */
                 myType = myAccount.getActType();
-                if (myFirst == null)
+                if (myFirst == null) {
                     myFirst = myType;
+                }
 
                 /* Add the item to the list */
-                theTypesBox.addItem(myType.getName());
-                typesPopulated = true;
+                theTypesBox.addItem(myType);
             }
         }
 
         /* If we have a selected type */
         if (getAccountType() != null) {
             /* Select it in the new list */
-            theTypesBox.setSelectedItem(getAccountType().getName());
-        }
+            theTypesBox.setSelectedItem(getAccountType());
 
-        /* Else we have no type currently selected */
-        else if (typesPopulated) {
+            /* Else we have no type currently selected */
+        } else if (theTypesBox.getItemCount() > 0) {
             /* Select the first account type */
             theTypesBox.setSelectedIndex(0);
             theState.setType(myFirst);
@@ -254,10 +318,10 @@ public class SpotSelect extends JPanel {
     }
 
     /**
-     * Set the range for the date box
+     * Set the range for the date box.
      * @param pRange the Range to set
      */
-    public void setRange(DateDayRange pRange) {
+    public final void setRange(final DateDayRange pRange) {
         DateDay myStart = (pRange == null) ? null : pRange.getStart();
         DateDay myEnd = (pRange == null) ? null : pRange.getEnd();
 
@@ -266,19 +330,16 @@ public class SpotSelect extends JPanel {
         theDateButton.setLatestDateDay(myEnd);
     }
 
-    /* Lock/Unlock the selection */
-    public void setLockDown() {
-        boolean bLock = theParent.hasUpdates();
-
-        theNext.setEnabled(theState.getNextDate() != null);
-        thePrev.setEnabled(theState.getPrevDate() != null);
-
-        theDateButton.setEnabled(!bLock);
-        theTypesBox.setEnabled(!bLock);
+    @Override
+    public void setEnabled(final boolean bEnabled) {
+        theNext.setEnabled(bEnabled && (theState.getNextDate() != null));
+        thePrev.setEnabled(bEnabled && (theState.getPrevDate() != null));
+        theDateButton.setEnabled(bEnabled);
+        theTypesBox.setEnabled(bEnabled);
     }
 
     /**
-     * Create SavePoint
+     * Create SavePoint.
      */
     public void createSavePoint() {
         /* Create the savePoint */
@@ -286,7 +347,7 @@ public class SpotSelect extends JPanel {
     }
 
     /**
-     * Restore SavePoint
+     * Restore SavePoint.
      */
     public void restoreSavePoint() {
         /* Restore the savePoint */
@@ -297,143 +358,168 @@ public class SpotSelect extends JPanel {
     }
 
     /**
-     * Set Adjacent dates
+     * Set Adjacent dates.
      * @param pPrev the previous Date
      * @param pNext the next Date
      */
-    public void setAdjacent(DateDay pPrev,
-                            DateDay pNext) {
+    public void setAdjacent(final DateDay pPrev,
+                            final DateDay pNext) {
         /* Record the dates */
         theState.setAdjacent(pPrev, pNext);
     }
 
     /**
-     * Listener class
+     * Listener class.
      */
-    private class SpotListener implements ActionListener, PropertyChangeListener, ItemListener {
+    private final class SpotListener implements ActionListener, PropertyChangeListener, ItemListener {
         @Override
-        public void actionPerformed(ActionEvent evt) {
+        public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();
 
             /* If this event relates to the Next button */
-            if (o == theNext) {
+            if (theNext.equals(o)) {
                 /* Set the Date to be the Next date */
                 theState.setNext();
-            }
 
-            /* If this event relates to the previous button */
-            else if (o == thePrev) {
+                /* If this event relates to the previous button */
+            } else if (thePrev.equals(o)) {
                 /* Set the Date to be the Previous date */
                 theState.setPrev();
             }
-
-            /* No need to notify the parent since this will have been done by state update */
         }
 
         @Override
-        public void propertyChange(PropertyChangeEvent evt) {
+        public void propertyChange(final PropertyChangeEvent evt) {
             /* if this date relates to the Date button */
-            if (evt.getSource() == theDateButton) {
-                /* Access the value */
-                if (theState.setDate(theDateButton))
-                    theParent.notifySelection(theSelf);
+            if ((theDateButton.equals(evt.getSource())) && (theState.setDate(theDateButton))) {
+                theManager.fireStateChanged();
             }
         }
 
         @Override
-        public void itemStateChanged(ItemEvent evt) {
-            boolean bChange = false;
+        public void itemStateChanged(final ItemEvent evt) {
             Object o = evt.getSource();
 
             /* Ignore selection if refreshing data */
-            if (refreshingData)
+            if (refreshingData) {
                 return;
+            }
 
             /* If this event relates to the showClosed box */
-            if (o == theShowClosed) {
+            if (theShowClosed.equals(o)) {
                 /* Note the new criteria and re-build lists */
                 doShowClosed = theShowClosed.isSelected();
-                bChange = true;
-            }
 
-            /* If this event relates to the Account Type box */
-            else if ((o == theTypesBox) && (evt.getStateChange() == ItemEvent.SELECTED)) {
-                String myName = (String) evt.getItem();
+                /* If this event relates to the Account Type box */
+            } else if ((theTypesBox.equals(o)) && (evt.getStateChange() == ItemEvent.SELECTED)) {
+                AccountType myType = (AccountType) evt.getItem();
 
                 /* Select the new type */
-                theState.setType(theTypes.searchFor(myName));
-                bChange = true;
-            }
-
-            /* If we have a change, alert the table */
-            if (bChange) {
-                theParent.notifySelection(theSelf);
+                if (theState.setType(myType)) {
+                    theManager.fireStateChanged();
+                }
             }
         }
     }
 
     /**
-     * SavePoint values
+     * SavePoint values.
      */
-    private class SpotState {
-        /* Members */
+    private final class SpotState {
+        /**
+         * AccountType.
+         */
         private AccountType theType = null;
+
+        /**
+         * Selected date.
+         */
         private DateDay theDate = null;
+
+        /**
+         * Next date.
+         */
         private DateDay theNextDate = null;
+
+        /**
+         * Previous date.
+         */
         private DateDay thePrevDate = null;
 
-        /* Access methods */
+        /**
+         * Get the account type.
+         * @return the account type
+         */
         private AccountType getAccountType() {
             return theType;
         }
 
+        /**
+         * Get the selected date.
+         * @return the date
+         */
         private DateDay getDate() {
             return theDate;
         }
 
+        /**
+         * Get the next date.
+         * @return the date
+         */
         private DateDay getNextDate() {
             return theNextDate;
         }
 
+        /**
+         * Get the previous date.
+         * @return the date
+         */
         private DateDay getPrevDate() {
             return thePrevDate;
         }
 
         /**
-         * Constructor
+         * Constructor.
          */
         private SpotState() {
             theDate = new DateDay();
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pState state to copy from
          */
-        private SpotState(SpotState pState) {
+        private SpotState(final SpotState pState) {
             theType = pState.getAccountType();
             theDate = new DateDay(pState.getDate());
-            if (pState.getNextDate() != null)
+            if (pState.getNextDate() != null) {
                 theNextDate = new DateDay(pState.getNextDate());
-            if (pState.getPrevDate() != null)
+            }
+            if (pState.getPrevDate() != null) {
                 thePrevDate = new DateDay(pState.getPrevDate());
+            }
         }
 
         /**
-         * Set new Account Type
+         * Set new Account Type.
          * @param pType the AccountType
+         * @return true/false did a change occur
          */
-        private void setType(AccountType pType) {
-            /* Adjust the type */
-            theType = pType;
+        private boolean setType(final AccountType pType) {
+            /* Adjust the selected account */
+            if (!Difference.isEqual(pType, theType)) {
+                theType = pType;
+                return true;
+            }
+            return false;
         }
 
         /**
-         * Set new Date
+         * Set new Date.
          * @param pButton the Button with the new date
          * @return true/false did a change occur
          */
-        private boolean setDate(JDateButton pButton) {
+        private boolean setDate(final JDateButton pButton) {
             /* Adjust the date and build the new range */
             DateDay myDate = new DateDay(pButton.getSelectedDate());
             if (!Difference.isEqual(myDate, theDate)) {
@@ -444,7 +530,7 @@ public class SpotSelect extends JPanel {
         }
 
         /**
-         * Set Next Date
+         * Set Next Date.
          */
         private void setNext() {
             /* Copy date */
@@ -453,7 +539,7 @@ public class SpotSelect extends JPanel {
         }
 
         /**
-         * Set Previous Date
+         * Set Previous Date.
          */
         private void setPrev() {
             /* Copy date */
@@ -462,30 +548,29 @@ public class SpotSelect extends JPanel {
         }
 
         /**
-         * Set Adjacent dates
+         * Set Adjacent dates.
          * @param pPrev the previous Date
          * @param pNext the next Date
          */
-        private void setAdjacent(DateDay pPrev,
-                                 DateDay pNext) {
+        private void setAdjacent(final DateDay pPrev,
+                                 final DateDay pNext) {
             /* Record the dates */
             thePrevDate = pPrev;
             theNextDate = pNext;
 
             /* Adjust values */
-            setLockDown();
+            setEnabled(true);
         }
 
         /**
-         * Apply the State
+         * Apply the State.
          */
         private void applyState() {
             /* Adjust the lock-down */
-            setLockDown();
+            setEnabled(true);
             theDateButton.setSelectedDateDay(theDate);
-            theTypesBox.setSelectedIndex(-1);
-            if (theType != null)
-                theTypesBox.setSelectedItem(theType.getName());
+            theTypesBox.setSelectedItem(theType);
+
         }
     }
 }

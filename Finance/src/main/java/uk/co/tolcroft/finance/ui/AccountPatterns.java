@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,7 +48,7 @@ import uk.co.tolcroft.finance.data.Pattern;
 import uk.co.tolcroft.finance.data.Pattern.PatternList;
 import uk.co.tolcroft.finance.data.TransactionType.TransTypeList;
 import uk.co.tolcroft.finance.ui.controls.ComboSelect;
-import uk.co.tolcroft.finance.views.Statement;
+import uk.co.tolcroft.finance.views.Statement.StatementLine;
 import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList.DataListIterator;
@@ -65,30 +66,100 @@ import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
 import uk.co.tolcroft.models.ui.Renderer.StringRenderer;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 
+/**
+ * Account Patterns Table.
+ * @author Tony Washer
+ */
 public class AccountPatterns extends DataTable<Event> {
-    /* Members */
+    /**
+     * Serial Id.
+     */
     private static final long serialVersionUID = 1968946370981616222L;
 
-    private View theView = null;
-    private PatternsModel theModel = null;
-    private PatternList thePatterns = null;
-    private AccountList theAccounts = null;
-    private FrequencyList theFreqs = null;
-    private TransTypeList theTransTypes = null;
-    private JPanel thePanel = null;
-    private JComboBox theFreqBox = null;
-    private AccountPatterns theTable = this;
-    private PatternMouse theMouse = null;
-    private PatternColumnModel theColumns = null;
-    private AccountTab theParent = null;
-    private Account theAccount = null;
-    private ListClass theViewList = null;
-    private ComboSelect theComboList = null;
-    private JDataEntry theDataEntry = null;
-    private ErrorPanel theError = null;
-    private boolean freqsPopulated = false;
+    /**
+     * Date view.
+     */
+    private final View theView;
 
-    /* Access methods */
+    /**
+     * Table Model.
+     */
+    private final PatternsModel theModel;
+
+    /**
+     * Patterns list.
+     */
+    private PatternList thePatterns = null;
+
+    /**
+     * Account List.
+     */
+    private AccountList theAccounts = null;
+
+    /**
+     * Frequency list.
+     */
+    private FrequencyList theFreqs = null;
+
+    /**
+     * Transaction type list.
+     */
+    private TransTypeList theTransTypes = null;
+
+    /**
+     * The Panel.
+     */
+    private final JPanel thePanel;
+
+    /**
+     * Frequency Box.
+     */
+    private final JComboBox theFreqBox;
+
+    /**
+     * Self Reference.
+     */
+    private final AccountPatterns theTable = this;
+
+    /**
+     * Column Model.
+     */
+    private final PatternColumnModel theColumns;
+
+    /**
+     * The parent.
+     */
+    private final AccountTab theParent;
+
+    /**
+     * The account.
+     */
+    private Account theAccount = null;
+
+    /**
+     * List Class.
+     */
+    private final ListClass theViewList;
+
+    /**
+     * ComboList.
+     */
+    private ComboSelect theComboList = null;
+
+    /**
+     * Data Entry.
+     */
+    private final JDataEntry theDataEntry;
+
+    /**
+     * Error Panel.
+     */
+    private final ErrorPanel theError;
+
+    /**
+     * Obtain panel.
+     * @return the panel
+     */
     public JPanel getPanel() {
         return thePanel;
     }
@@ -103,29 +174,121 @@ public class AccountPatterns extends DataTable<Event> {
         return theDataEntry;
     }
 
-    /* Table headers */
-    private static final String titleDate = "Date";
-    private static final String titleDesc = "Description";
-    private static final String titleTrans = "TransactionType";
-    private static final String titlePartner = "Partner";
-    private static final String titleCredit = "Credit";
-    private static final String titleDebit = "Debit";
-    private static final String titleFreq = "Frequency";
+    /**
+     * Date column title.
+     */
+    private static final String TITLE_DATE = "Date";
 
-    /* Table columns */
+    /**
+     * Description column title.
+     */
+    private static final String TITLE_DESC = "Description";
+
+    /**
+     * Transaction type column title.
+     */
+    private static final String TITLE_TRANS = "TransactionType";
+
+    /**
+     * Partner column title.
+     */
+    private static final String TITLE_PARTNER = "Partner";
+
+    /**
+     * Credit column title.
+     */
+    private static final String TITLE_CREDIT = "Credit";
+
+    /**
+     * Debit column title.
+     */
+    private static final String TITLE_DEBIT = "Debit";
+
+    /**
+     * Frequency column title.
+     */
+    private static final String TITLE_FREQ = "Frequency";
+
+    /**
+     * Date column id.
+     */
     private static final int COLUMN_DATE = 0;
+
+    /**
+     * Date column id.
+     */
     private static final int COLUMN_TRANTYP = 1;
+
+    /**
+     * Description column id.
+     */
     private static final int COLUMN_DESC = 2;
+
+    /**
+     * Partner column id.
+     */
     private static final int COLUMN_PARTNER = 3;
+
+    /**
+     * Credit column id.
+     */
     private static final int COLUMN_CREDIT = 4;
+
+    /**
+     * Debit column id.
+     */
     private static final int COLUMN_DEBIT = 5;
+
+    /**
+     * Frequency column id.
+     */
     private static final int COLUMN_FREQ = 6;
 
     /**
-     * Constructor for Patterns Window
+     * Date column width.
+     */
+    private static final int WIDTH_DATE = 80;
+
+    /**
+     * Date column width.
+     */
+    private static final int WIDTH_TRANTYP = 110;
+
+    /**
+     * Description column width.
+     */
+    private static final int WIDTH_DESC = 150;
+
+    /**
+     * Partner column width.
+     */
+    private static final int WIDTH_PARTNER = 130;
+
+    /**
+     * Credit column width.
+     */
+    private static final int WIDTH_CREDIT = 90;
+
+    /**
+     * Debit column width.
+     */
+    private static final int WIDTH_DEBIT = 90;
+
+    /**
+     * Frequency column width.
+     */
+    private static final int WIDTH_FREQ = 110;
+
+    /**
+     * Panel width.
+     */
+    private static final int WIDTH_PANEL = 900;
+
+    /**
+     * Constructor for Patterns Window.
      * @param pParent the parent window
      */
-    public AccountPatterns(AccountTab pParent) {
+    public AccountPatterns(final AccountTab pParent) {
         /* Initialise superclass */
         super(pParent.getDataManager());
 
@@ -158,8 +321,8 @@ public class AccountPatterns extends DataTable<Event> {
         theDataEntry.hideEntry();
 
         /* Add the mouse listener */
-        theMouse = new PatternMouse();
-        addMouseListener(theMouse);
+        PatternMouse myMouse = new PatternMouse();
+        addMouseListener(myMouse);
 
         /* Create the error panel for this view */
         theError = new ErrorPanel(this);
@@ -182,7 +345,7 @@ public class AccountPatterns extends DataTable<Event> {
                                                                   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                     .addComponent(getScrollPane(),
                                                                   GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE, 900,
+                                                                  GroupLayout.DEFAULT_SIZE, WIDTH_PANEL,
                                                                   Short.MAX_VALUE)).addContainerGap()));
         myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addGroup(GroupLayout.Alignment.TRAILING,
@@ -191,7 +354,7 @@ public class AccountPatterns extends DataTable<Event> {
     }
 
     /**
-     * Refresh views/controls after a load/update of underlying data
+     * Refresh views/controls after a load/update of underlying data.
      */
     public void refreshData() {
         FinanceData myData;
@@ -211,10 +374,9 @@ public class AccountPatterns extends DataTable<Event> {
         theComboList = theParent.getComboList();
 
         /* If we have frequencies already populated */
-        if (freqsPopulated) {
+        if (theFreqBox.getItemCount() > 0) {
             /* Remove the frequencies */
             theFreqBox.removeAllItems();
-            freqsPopulated = false;
         }
 
         /* Access the frequency iterator */
@@ -223,17 +385,17 @@ public class AccountPatterns extends DataTable<Event> {
         /* Add the Frequency values to the frequencies box */
         while ((myFreq = myIterator.next()) != null) {
             /* Ignore the frequency if it is not enabled */
-            if (!myFreq.getEnabled())
+            if (!myFreq.getEnabled()) {
                 continue;
+            }
 
             /* Add the item to the list */
             theFreqBox.addItem(myFreq.getName());
-            freqsPopulated = true;
         }
     }
 
     /**
-     * Update Debug view
+     * Update Debug view.
      */
     @Override
     public void updateDebug() {
@@ -241,7 +403,7 @@ public class AccountPatterns extends DataTable<Event> {
     }
 
     /**
-     * Save changes from the view into the underlying data
+     * Save changes from the view into the underlying data.
      */
     @Override
     public void saveData() {
@@ -250,34 +412,35 @@ public class AccountPatterns extends DataTable<Event> {
     }
 
     /**
-     * Lock on error
+     * Lock on error.
      * @param isError is there an error (True/False)
      */
     @Override
-    public void lockOnError(boolean isError) {
+    public void lockOnError(final boolean isError) {
         /* Lock scroll-able area */
         getScrollPane().setEnabled(!isError);
     }
 
     /**
-     * Call underlying controls to take notice of changes in view/selection
+     * Call underlying controls to take notice of changes in view/selection.
      */
     @Override
     public void notifyChanges() {
         /* Find the edit state */
-        if (thePatterns != null)
+        if (thePatterns != null) {
             thePatterns.findEditState();
+        }
 
         /* Update the parent panel */
         theParent.notifyChanges();
     }
 
     /**
-     * Set Selection to the specified account
+     * Set Selection to the specified account.
      * @param pAccount the Account for the extract
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    public void setSelection(Account pAccount) throws JDataException {
+    public void setSelection(final Account pAccount) throws JDataException {
         /* Record the account */
         theAccount = pAccount;
         thePatterns = null;
@@ -296,15 +459,16 @@ public class AccountPatterns extends DataTable<Event> {
     }
 
     /**
-     * Obtain the correct ComboBox for the given row/column
+     * Obtain the correct ComboBox for the given row/column.
+     * @param row the row
+     * @param column the column
+     * @return the comboBox
      */
     @Override
-    public JComboBox getComboBox(int row,
-                                 int column) {
-        Pattern myPattern;
-
+    public JComboBox getComboBox(final int row,
+                                 final int column) {
         /* Access the pattern */
-        myPattern = (Pattern) thePatterns.get(row);
+        Pattern myPattern = (Pattern) thePatterns.get(row);
 
         /* Switch on column */
         switch (column) {
@@ -324,10 +488,10 @@ public class AccountPatterns extends DataTable<Event> {
     }
 
     /**
-     * Add a pattern based on a statement line
+     * Add a pattern based on a statement line.
      * @param pLine the statement line
      */
-    public void addPattern(Statement.StatementLine pLine) {
+    public void addPattern(final StatementLine pLine) {
         Pattern myPattern;
         int myRow;
 
@@ -343,28 +507,36 @@ public class AccountPatterns extends DataTable<Event> {
         myRow = myPattern.indexOf();
 
         /* Notify of the insertion of the row */
-        theModel.fireInsertRowEvents(myRow);
+        theModel.fireInsertRows(myRow);
     }
 
-    /* Patterns table model */
-    public class PatternsModel extends DataTableModel {
+    /**
+     * Patterns table model.
+     */
+    public final class PatternsModel extends DataTableModel {
+        /**
+         * Serial Id.
+         */
         private static final long serialVersionUID = -8445100544184045930L;
 
         /**
-         * Constructor
+         * Constructor.
          */
         private PatternsModel() {
             /* call constructor */
             super(theTable);
         }
 
-        @Override
-        protected void fireInsertRowEvents(int pRow) {
-            super.fireInsertRowEvents(pRow);
+        /**
+         * Invoke Insert row events.
+         * @param pRow row for insert.
+         */
+        protected void fireInsertRows(final int pRow) {
+            fireInsertRowEvents(pRow);
         }
 
         /**
-         * Get the number of display columns
+         * Get the number of display columns.
          * @return the columns
          */
         @Override
@@ -373,7 +545,7 @@ public class AccountPatterns extends DataTable<Event> {
         }
 
         /**
-         * Get the number of rows in the current table
+         * Get the number of rows in the current table.
          * @return the number of rows
          */
         @Override
@@ -382,39 +554,39 @@ public class AccountPatterns extends DataTable<Event> {
         }
 
         /**
-         * Get the name of the column
+         * Get the name of the column.
          * @param col the column
          * @return the name of the column
          */
         @Override
-        public String getColumnName(int col) {
+        public String getColumnName(final int col) {
             switch (col) {
                 case COLUMN_DATE:
-                    return titleDate;
+                    return TITLE_DATE;
                 case COLUMN_DESC:
-                    return titleDesc;
+                    return TITLE_DESC;
                 case COLUMN_TRANTYP:
-                    return titleTrans;
+                    return TITLE_TRANS;
                 case COLUMN_PARTNER:
-                    return titlePartner;
+                    return TITLE_PARTNER;
                 case COLUMN_CREDIT:
-                    return titleCredit;
+                    return TITLE_CREDIT;
                 case COLUMN_DEBIT:
-                    return titleDebit;
+                    return TITLE_DEBIT;
                 case COLUMN_FREQ:
-                    return titleFreq;
+                    return TITLE_FREQ;
                 default:
                     return null;
             }
         }
 
         /**
-         * Get the object class of the column
+         * Get the object class of the column.
          * @param col the column
          * @return the class of the objects associated with the column
          */
         @Override
-        public Class<?> getColumnClass(int col) {
+        public Class<?> getColumnClass(final int col) {
             switch (col) {
                 case COLUMN_DESC:
                     return String.class;
@@ -434,13 +606,14 @@ public class AccountPatterns extends DataTable<Event> {
         }
 
         /**
-         * Obtain the Field id associated with the column
+         * Obtain the Field id associated with the column.
          * @param row the row
          * @param column the column
+         * @return the field id
          */
         @Override
-        public JDataField getFieldForCell(int row,
-                                          int column) {
+        public JDataField getFieldForCell(final int row,
+                                          final int column) {
             /* Switch on column */
             switch (column) {
                 case COLUMN_DATE:
@@ -463,23 +636,26 @@ public class AccountPatterns extends DataTable<Event> {
         }
 
         /**
-         * Is the cell at (row, col) editable
+         * Is the cell at (row, col) editable?
+         * @param row the row
+         * @param col the column
+         * @return true/false
          */
         @Override
-        public boolean isCellEditable(int row,
-                                      int col) {
-            Pattern myPattern;
-
+        public boolean isCellEditable(final int row,
+                                      final int col) {
             /* If the account is not editable */
-            if (theAccount.isLocked())
+            if (theAccount.isLocked()) {
                 return false;
+            }
 
             /* Access the pattern */
-            myPattern = (Pattern) thePatterns.get(row);
+            Pattern myPattern = (Pattern) thePatterns.get(row);
 
             /* Cannot edit if row is deleted or locked */
-            if (myPattern.isDeleted() || myPattern.isLocked())
+            if (myPattern.isDeleted() || myPattern.isLocked()) {
                 return false;
+            }
 
             switch (col) {
                 case COLUMN_CREDIT:
@@ -492,12 +668,14 @@ public class AccountPatterns extends DataTable<Event> {
         }
 
         /**
-         * Get the value at (row, col)
+         * Get the value at (row, col).
+         * @param row the row
+         * @param col the column
          * @return the object value
          */
         @Override
-        public Object getValueAt(int row,
-                                 int col) {
+        public Object getValueAt(final int row,
+                                 final int col) {
             Pattern myPattern;
             Object o;
 
@@ -511,8 +689,9 @@ public class AccountPatterns extends DataTable<Event> {
                     break;
                 case COLUMN_DESC:
                     o = myPattern.getDesc();
-                    if ((o != null) && (((String) o).length() == 0))
+                    if ((o != null) && (((String) o).length() == 0)) {
                         o = null;
+                    }
                     break;
                 case COLUMN_TRANTYP:
                     o = (myPattern.getTransType() == null) ? null : myPattern.getTransType().getName();
@@ -535,25 +714,26 @@ public class AccountPatterns extends DataTable<Event> {
             }
 
             /* If we have a null value for an error field, set error description */
-            if ((o == null) && (myPattern.hasErrors(getFieldForCell(row, col))))
+            if ((o == null) && (myPattern.hasErrors(getFieldForCell(row, col)))) {
                 o = Renderer.getError();
+            }
 
             /* Return to caller */
             return o;
         }
 
         /**
-         * Set the value at (row, col)
+         * Set the value at (row, col).
+         * @param row the row
+         * @param col the column
          * @param obj the object value to set
          */
         @Override
-        public void setValueAt(Object obj,
-                               int row,
-                               int col) {
-            Pattern myPattern;
-
+        public void setValueAt(final Object obj,
+                               final int row,
+                               final int col) {
             /* Access the pattern */
-            myPattern = (Pattern) thePatterns.get(row);
+            Pattern myPattern = (Pattern) thePatterns.get(row);
 
             /* Push history */
             myPattern.pushHistory();
@@ -583,10 +763,9 @@ public class AccountPatterns extends DataTable<Event> {
                         myPattern.setFrequency(theFreqs.searchFor((String) obj));
                         break;
                 }
-            }
 
-            /* Handle Exceptions */
-            catch (Exception e) {
+                /* Handle Exceptions */
+            } catch (Exception e) {
                 /* Reset values */
                 myPattern.popHistory();
                 myPattern.pushHistory();
@@ -645,16 +824,21 @@ public class AccountPatterns extends DataTable<Event> {
     }
 
     /**
-     * Pattern mouse listener
+     * Pattern mouse listener.
      */
-    private class PatternMouse extends DataMouse<Event> {
-
-        /* Pop-up Menu items */
-        private static final String popupCredit = "Set As Credit";
-        private static final String popupDebit = "Set As Debit";
+    private final class PatternMouse extends DataMouse<Event> {
+        /**
+         * Credit menu item.
+         */
+        private static final String POPUP_CREDIT = "Set As Credit";
 
         /**
-         * Constructor
+         * Debit menu item.
+         */
+        private static final String POPUP_DEBIT = "Set As Debit";
+
+        /**
+         * Constructor.
          */
         private PatternMouse() {
             /* Call super-constructor */
@@ -662,40 +846,39 @@ public class AccountPatterns extends DataTable<Event> {
         }
 
         /**
-         * Add Special commands to menu
+         * Add Special commands to menu.
          * @param pMenu the menu to add to
          */
         @Override
-        protected void addSpecialCommands(JPopupMenu pMenu) {
+        protected void addSpecialCommands(final JPopupMenu pMenu) {
             JMenuItem myItem;
             Pattern myLine;
             boolean enableCredit = false;
             boolean enableDebit = false;
 
             /* Nothing to do if the table is locked */
-            if (theTable.isLocked())
+            if (theTable.isLocked()) {
                 return;
+            }
 
             /* Loop through the selected rows */
             for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
-                /* Ignore locked rows */
-                if ((myRow == null) || (myRow.isLocked()))
+                /* Ignore locked/deleted rows */
+                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
-
-                /* Ignore deleted rows */
-                if (myRow.isDeleted())
-                    continue;
+                }
 
                 /* Access as line */
                 myLine = (Pattern) myRow;
 
                 /* Enable Debit if we have credit */
-                if (myLine.isCredit())
+                if (myLine.isCredit()) {
                     enableDebit = true;
 
-                /* Enable Credit otherwise */
-                else
+                    /* Enable Credit otherwise */
+                } else {
                     enableCredit = true;
+                }
             }
 
             /* If there is something to add and there are already items in the menu */
@@ -707,8 +890,8 @@ public class AccountPatterns extends DataTable<Event> {
             /* If we can set credit */
             if (enableCredit) {
                 /* Add the credit choice */
-                myItem = new JMenuItem(popupCredit);
-                myItem.setActionCommand(popupCredit);
+                myItem = new JMenuItem(POPUP_CREDIT);
+                myItem.setActionCommand(POPUP_CREDIT);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
@@ -716,18 +899,18 @@ public class AccountPatterns extends DataTable<Event> {
             /* If we can set debit */
             if (enableDebit) {
                 /* Add the debit choice */
-                myItem = new JMenuItem(popupDebit);
-                myItem.setActionCommand(popupDebit);
+                myItem = new JMenuItem(POPUP_DEBIT);
+                myItem.setActionCommand(POPUP_DEBIT);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
         }
 
         /**
-         * Set the specified column to credit/debit
+         * Set the specified column to credit/debit.
          * @param isCredit set to Credit or else Debit
          */
-        protected void setIsCredit(boolean isCredit) {
+        protected void setIsCredit(final boolean isCredit) {
             AbstractTableModel myModel;
             Pattern myPattern;
             int row;
@@ -737,21 +920,19 @@ public class AccountPatterns extends DataTable<Event> {
 
             /* Loop through the selected rows */
             for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
-                /* Ignore locked rows */
-                if ((myRow == null) || (myRow.isLocked()))
+                /* Ignore locked/deleted rows */
+                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
-
-                /* Ignore deleted rows */
-                if (myRow.isDeleted())
-                    continue;
+                }
 
                 /* Determine row */
                 row = myRow.indexOf();
                 myPattern = (Pattern) myRow;
 
                 /* Ignore rows that are already correct */
-                if (myPattern.isCredit() == isCredit)
+                if (myPattern.isCredit() == isCredit) {
                     continue;
+                }
 
                 /* set the credit value */
                 myPattern.pushHistory();
@@ -774,30 +955,28 @@ public class AccountPatterns extends DataTable<Event> {
         }
 
         /**
-         * Perform actions for controls/pop-ups on this table
+         * Perform actions for controls/pop-ups on this table.
          * @param evt the event
          */
         @Override
-        public void actionPerformed(ActionEvent evt) {
+        public void actionPerformed(final ActionEvent evt) {
             String myCmd = evt.getActionCommand();
 
             /* Cancel any editing */
             theTable.cancelEditing();
 
             /* If this is a credit command */
-            if (myCmd.equals(popupCredit)) {
+            if (myCmd.equals(POPUP_CREDIT)) {
                 /* Set Credit indication */
                 setIsCredit(true);
-            }
 
-            /* If this is a debit command */
-            else if (myCmd.equals(popupDebit)) {
+                /* If this is a debit command */
+            } else if (myCmd.equals(POPUP_DEBIT)) {
                 /* Set Debit indication */
                 setIsCredit(false);
-            }
 
-            /* else we do not recognise the action */
-            else {
+                /* else we do not recognise the action */
+            } else {
                 /* Pass it to the superclass */
                 super.actionPerformed(evt);
                 return;
@@ -810,22 +989,51 @@ public class AccountPatterns extends DataTable<Event> {
     }
 
     /**
-     * Column Model class
+     * Column Model class.
      */
-    private class PatternColumnModel extends DataColumnModel {
+    private final class PatternColumnModel extends DataColumnModel {
+        /**
+         * Serial Id.
+         */
         private static final long serialVersionUID = 520785956133901998L;
 
-        /* Renderers/Editors */
-        private CalendarRenderer theDateRenderer = null;
-        private CalendarEditor theDateEditor = null;
-        private DecimalRenderer theDecimalRenderer = null;
-        private MoneyEditor theMoneyEditor = null;
-        private StringRenderer theStringRenderer = null;
-        private StringEditor theStringEditor = null;
-        private ComboBoxEditor theComboEditor = null;
+        /**
+         * Date Renderer.
+         */
+        private final CalendarRenderer theDateRenderer;
 
         /**
-         * Constructor
+         * Date Editor.
+         */
+        private final CalendarEditor theDateEditor;
+
+        /**
+         * Decimal Renderer.
+         */
+        private final DecimalRenderer theDecimalRenderer;
+
+        /**
+         * Money Editor.
+         */
+        private final MoneyEditor theMoneyEditor;
+
+        /**
+         * String Renderer.
+         */
+        private final StringRenderer theStringRenderer;
+
+        /**
+         * String Editor.
+         */
+        private final StringEditor theStringEditor;
+
+        /**
+         * Combo Editor.
+         */
+        private final ComboBoxEditor theComboEditor;
+
+        /**
+         * Constructor.
          */
         private PatternColumnModel() {
             /* call constructor */
@@ -841,16 +1049,16 @@ public class AccountPatterns extends DataTable<Event> {
             theComboEditor = new ComboBoxEditor();
 
             /* Restrict the date editor to pattern range */
-            theDateEditor.setRange(Pattern.thePatternRange);
+            theDateEditor.setRange(Pattern.RANGE_PATTERN);
 
             /* Create the columns */
-            addColumn(new DataColumn(COLUMN_DATE, 80, theDateRenderer, theDateEditor));
-            addColumn(new DataColumn(COLUMN_TRANTYP, 110, theStringRenderer, theComboEditor));
-            addColumn(new DataColumn(COLUMN_DESC, 150, theStringRenderer, theStringEditor));
-            addColumn(new DataColumn(COLUMN_PARTNER, 130, theStringRenderer, theComboEditor));
-            addColumn(new DataColumn(COLUMN_CREDIT, 90, theDecimalRenderer, theMoneyEditor));
-            addColumn(new DataColumn(COLUMN_DEBIT, 90, theDecimalRenderer, theMoneyEditor));
-            addColumn(new DataColumn(COLUMN_FREQ, 110, theStringRenderer, theComboEditor));
+            addColumn(new DataColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
+            addColumn(new DataColumn(COLUMN_TRANTYP, WIDTH_TRANTYP, theStringRenderer, theComboEditor));
+            addColumn(new DataColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
+            addColumn(new DataColumn(COLUMN_PARTNER, WIDTH_PARTNER, theStringRenderer, theComboEditor));
+            addColumn(new DataColumn(COLUMN_CREDIT, WIDTH_CREDIT, theDecimalRenderer, theMoneyEditor));
+            addColumn(new DataColumn(COLUMN_DEBIT, WIDTH_DEBIT, theDecimalRenderer, theMoneyEditor));
+            addColumn(new DataColumn(COLUMN_FREQ, WIDTH_FREQ, theStringRenderer, theComboEditor));
         }
     }
 }

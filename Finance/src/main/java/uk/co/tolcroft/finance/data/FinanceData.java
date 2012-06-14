@@ -41,10 +41,7 @@ import uk.co.tolcroft.finance.data.TaxRegime.TaxRegimeList;
 import uk.co.tolcroft.finance.data.TaxType.TaxTypeList;
 import uk.co.tolcroft.finance.data.TaxYear.TaxYearList;
 import uk.co.tolcroft.finance.data.TransactionType.TransTypeList;
-import uk.co.tolcroft.finance.views.EventAnalysis;
-import uk.co.tolcroft.finance.views.MetaAnalysis;
 import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.views.DataControl;
 
 /**
  * FinanceData dataSet.
@@ -134,46 +131,46 @@ public class FinanceData extends DataSet<FinanceData> {
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (pField == FIELD_ACTTYPES) {
+        if (FIELD_ACTTYPES.equals(pField)) {
             return theActTypes;
         }
-        if (pField == FIELD_TRANTYPES) {
+        if (FIELD_TRANTYPES.equals(pField)) {
             return theTransTypes;
         }
-        if (pField == FIELD_TAXTYPES) {
+        if (FIELD_TAXTYPES.equals(pField)) {
             return theTaxTypes;
         }
-        if (pField == FIELD_TAXREGS) {
+        if (FIELD_TAXREGS.equals(pField)) {
             return theTaxRegimes;
         }
-        if (pField == FIELD_FREQS) {
+        if (FIELD_FREQS.equals(pField)) {
             return theFrequencys;
         }
-        if (pField == FIELD_INFOTYPES) {
+        if (FIELD_INFOTYPES.equals(pField)) {
             return theInfoTypes;
         }
-        if (pField == FIELD_TAXYEARS) {
+        if (FIELD_TAXYEARS.equals(pField)) {
             return theTaxYears;
         }
-        if (pField == FIELD_ACCOUNTS) {
+        if (FIELD_ACCOUNTS.equals(pField)) {
             return theAccounts;
         }
-        if (pField == FIELD_RATES) {
+        if (FIELD_RATES.equals(pField)) {
             return theRates;
         }
-        if (pField == FIELD_PRICES) {
+        if (FIELD_PRICES.equals(pField)) {
             return thePrices;
         }
-        if (pField == FIELD_PATTERNS) {
+        if (FIELD_PATTERNS.equals(pField)) {
             return thePatterns;
         }
-        if (pField == FIELD_EVENTS) {
+        if (FIELD_EVENTS.equals(pField)) {
             return theEvents;
         }
-        if (pField == FIELD_EVENTVALUES) {
+        if (FIELD_EVENTVALUES.equals(pField)) {
             return theEventValues;
         }
-        if (pField == FIELD_EVENTDATA) {
+        if (FIELD_EVENTDATA.equals(pField)) {
             return theEventData;
         }
         return super.getFieldValue(pField);
@@ -258,11 +255,6 @@ public class FinanceData extends DataSet<FinanceData> {
      * DataSet range.
      */
     private DateDayRange theDateRange = null;
-
-    /**
-     * Analysis.
-     */
-    private EventAnalysis theAnalysis = null;
 
     /**
      * LoadState.
@@ -387,14 +379,6 @@ public class FinanceData extends DataSet<FinanceData> {
      */
     public DateDayRange getDateRange() {
         return theDateRange;
-    }
-
-    /**
-     * Obtain Analysis.
-     * @return the Analysis
-     */
-    public EventAnalysis getAnalysis() {
-        return theAnalysis;
     }
 
     /**
@@ -615,14 +599,10 @@ public class FinanceData extends DataSet<FinanceData> {
     }
 
     /**
-     * Analyse the data.
-     * @param pControl the data view
+     * Initialise the analysis.
      * @throws JDataException on error
      */
-    @Override
-    public void analyseData(final DataControl<?> pControl) throws JDataException {
-        MetaAnalysis myMetaAnalysis;
-
+    public void initialiseAnalysis() throws JDataException {
         /* Update INITIAL Load status */
         if (theLoadState == LoadState.INITIAL) {
             theLoadState = LoadState.FINAL;
@@ -640,10 +620,13 @@ public class FinanceData extends DataSet<FinanceData> {
 
         /* Note active items referenced by tax years */
         theTaxYears.markActiveItems();
+    }
 
-        /* Create the analysis */
-        theAnalysis = new EventAnalysis(pControl, this);
-
+    /**
+     * Analyse the data.
+     * @throws JDataException on error
+     */
+    public void houseKeepAnalysis() throws JDataException {
         /* Note active items referenced by rates */
         theRates.markActiveItems();
 
@@ -652,15 +635,13 @@ public class FinanceData extends DataSet<FinanceData> {
 
         /* Mark active items referenced by patterns */
         thePatterns.markActiveItems();
+    }
 
-        /* Access the most recent metaAnalysis */
-        myMetaAnalysis = theAnalysis.getMetaAnalysis();
-
-        /* Note active accounts by asset */
-        if (myMetaAnalysis != null) {
-            myMetaAnalysis.markActiveAccounts();
-        }
-
+    /**
+     * Complete the data analysis.
+     * @throws JDataException on error
+     */
+    public void completeAnalysis() throws JDataException {
         /* Note active accounts */
         theAccounts.markActiveItems();
 

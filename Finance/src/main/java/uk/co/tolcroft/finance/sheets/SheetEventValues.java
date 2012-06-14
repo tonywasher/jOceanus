@@ -70,11 +70,6 @@ public class SheetEventValues extends SheetDataItem<EventValue> {
     private EventValueList theList = null;
 
     /**
-     * DataSet.
-     */
-    private FinanceData theData = null;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -86,8 +81,8 @@ public class SheetEventValues extends SheetDataItem<EventValue> {
         isBackup = (pReader.getType() == SheetType.BACKUP);
 
         /* Access the Lists */
-        theData = pReader.getData();
-        theList = theData.getEventValues();
+        FinanceData myData = pReader.getData();
+        theList = myData.getEventValues();
     }
 
     /**

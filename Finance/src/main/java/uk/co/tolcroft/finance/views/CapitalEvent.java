@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,82 +40,223 @@ import uk.co.tolcroft.finance.data.Event;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.StaticClass.TransClass;
 
-public class CapitalEvent extends ReportItem<CapitalEvent> {
+/**
+ * Capital Events relating to asset movements.
+ * @author Tony Washer
+ */
+public final class CapitalEvent extends ReportItem<CapitalEvent> {
     /**
-     * Report fields
+     * Report fields.
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(CapitalEvent.class.getSimpleName(),
             ReportItem.theLocalFields);
 
     /**
-     * Report fields
+     * Report fields.
      */
     private JDataFields theLocalFields;
 
-    /* Called from constructor */
     @Override
     public JDataFields declareFields() {
-        return theLocalFields = new JDataFields(FIELD_DEFS.getName(), FIELD_DEFS);
+        theLocalFields = new JDataFields(FIELD_DEFS.getName(), FIELD_DEFS);
+        return theLocalFields;
     }
 
     /**
-     * The attributes
+     * The Initial Cost Attribute.
      */
-    public static final String capitalInitialCost = "CostInitial";
-    public static final String capitalDeltaCost = "CostDelta";
-    public static final String capitalFinalCost = "CostFinal";
-    public static final String capitalInitialUnits = "UnitsInitial";
-    public static final String capitalDeltaUnits = "UnitsDelta";
-    public static final String capitalFinalUnits = "UnitsFinal";
-    public static final String capitalInitialGains = "GainsInitial";
-    public static final String capitalDeltaGains = "GainsDelta";
-    public static final String capitalFinalGains = "GainsFinal";
-    public static final String capitalInitialGained = "GainedInitial";
-    public static final String capitalDeltaGained = "GainedDelta";
-    public static final String capitalFinalGained = "GainedFinal";
-    public static final String capitalInitialDiv = "DividendInitial";
-    public static final String capitalDeltaDiv = "DividendDelta";
-    public static final String capitalFinalDiv = "DividendFinal";
-    public static final String capitalInitialInvest = "InvestedInitial";
-    public static final String capitalDeltaInvest = "InvestedDelta";
-    public static final String capitalFinalInvest = "InvestedFinal";
-    public static final String capitalInitialValue = "ValueInitial";
-    public static final String capitalFinalValue = "ValueFinal";
-    public static final String capitalInitialPrice = "PriceInitial";
-    public static final String capitalFinalPrice = "PriceFinal";
-    public static final String capitalMarket = "MarketMovement";
-    public static final String capitalTakeoverCost = "TakeoverCost";
-    public static final String capitalTakeoverCash = "TakeoverCash";
-    public static final String capitalTakeoverStock = "TakeoverStock";
-    public static final String capitalTakeoverTotal = "TakeoverTotal";
-    public static final String capitalTakeoverPrice = "TakeoverPrice";
-    public static final String capitalTakeoverValue = "TakeoverValue";
+    public static final String CAPITAL_INITIALCOST = "CostInitial";
 
-    /* Members */
+    /**
+     * The Delta Cost Attribute.
+     */
+    public static final String CAPITAL_DELTACOST = "CostDelta";
+
+    /**
+     * The Final Cost Attribute.
+     */
+    public static final String CAPITAL_FINALCOST = "CostFinal";
+
+    /**
+     * The Initial Units Attribute.
+     */
+    public static final String CAPITAL_INITIALUNITS = "UnitsInitial";
+
+    /**
+     * The Delta Units Attribute.
+     */
+    public static final String CAPITAL_DELTAUNITS = "UnitsDelta";
+
+    /**
+     * The Final Units Attribute.
+     */
+    public static final String CAPITAL_FINALUNITS = "UnitsFinal";
+
+    /**
+     * The Initial Gains Attribute.
+     */
+    public static final String CAPITAL_INITIALGAINS = "GainsInitial";
+
+    /**
+     * The Delta Gains Attribute.
+     */
+    public static final String CAPITAL_DELTAGAINS = "GainsDelta";
+
+    /**
+     * The Final Gains Attribute.
+     */
+    public static final String CAPITAL_FINALGAINS = "GainsFinal";
+
+    /**
+     * The Initial Gained Attribute.
+     */
+    public static final String CAPITAL_INITIALGAINED = "GainedInitial";
+
+    /**
+     * The Delta Gained Attribute.
+     */
+    public static final String CAPITAL_DELTAGAINED = "GainedDelta";
+
+    /**
+     * The Final Gained Attribute.
+     */
+    public static final String CAPITAL_FINALGAINED = "GainedFinal";
+
+    /**
+     * The Initial Dividend Attribute.
+     */
+    public static final String CAPITAL_INITIALDIVIDEND = "DividendInitial";
+
+    /**
+     * The Delta Dividend Attribute.
+     */
+    public static final String CAPITAL_DELTADIVIDEND = "DividendDelta";
+
+    /**
+     * The Final Dividend Attribute.
+     */
+    public static final String CAPITAL_FINALDIVIDEND = "DividendFinal";
+
+    /**
+     * The Initial Invest Attribute.
+     */
+    public static final String CAPITAL_INITIALINVEST = "InvestedInitial";
+
+    /**
+     * The Delta Invest Attribute.
+     */
+    public static final String CAPITAL_DELTAINVEST = "InvestedDelta";
+
+    /**
+     * The Final Invest Attribute.
+     */
+    public static final String CAPITAL_FINALINVEST = "InvestedFinal";
+
+    /**
+     * The Initial Value Attribute.
+     */
+    public static final String CAPITAL_INITIALVALUE = "ValueInitial";
+
+    /**
+     * The Final Value Attribute.
+     */
+    public static final String CAPITAL_FINALVALUE = "ValueFinal";
+
+    /**
+     * The Initial Price Attribute.
+     */
+    public static final String CAPITAL_INITIALPRICE = "PriceInitial";
+
+    /**
+     * The Final Price Attribute.
+     */
+    public static final String CAPITAL_FINALPRICE = "PriceFinal";
+
+    /**
+     * The Market Attribute.
+     */
+    public static final String CAPITAL_MARKET = "MarketMovement";
+
+    /**
+     * The Takeover Cost.
+     */
+    public static final String CAPITAL_TAKEOVERCOST = "TakeoverCost";
+
+    /**
+     * The Takeover Cash.
+     */
+    public static final String CAPITAL_TAKEOVERCASH = "TakeoverCash";
+
+    /**
+     * The Takeover Stock.
+     */
+    public static final String CAPITAL_TAKEOVERSTOCK = "TakeoverStock";
+
+    /**
+     * The Takeover Total.
+     */
+    public static final String CAPITAL_TAKEOVERTOTAL = "TakeoverTotal";
+
+    /**
+     * The Takeover Price.
+     */
+    public static final String CAPITAL_TAKEOVERPRICE = "TakeoverPrice";
+
+    /**
+     * The Takeover Value.
+     */
+    public static final String CAPITAL_TAKEOVERVALUE = "TakeoverValue";
+
+    /**
+     * Attribute List.
+     */
     private final AttributeList theAttributes;
+
+    /**
+     * The event.
+     */
     private final Event theEvent;
+
+    /**
+     * The Date of the event.
+     */
     private final DateDay theDate;
 
-    /* Field IDs */
+    /**
+     * Date field id.
+     */
     public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityField("Date");
+
+    /**
+     * Event Field id.
+     */
     public static final JDataField FIELD_EVENT = FIELD_DEFS.declareEqualityField("Event");
 
-    /* Access methods */
+    /**
+     * Obtain the date.
+     * @return the date.
+     */
     public DateDay getDate() {
         return theDate;
     }
 
+    /**
+     * Obtain the event.
+     * @return the event.
+     */
     public Event getEvent() {
         return theEvent;
     }
 
     @Override
-    public Object getFieldValue(JDataField pField) {
+    public Object getFieldValue(final JDataField pField) {
         /* Handle standard fields */
-        if (pField == FIELD_DATE)
+        if (FIELD_DATE.equals(pField)) {
             return theDate;
-        if (pField == FIELD_EVENT)
+        }
+        if (FIELD_EVENT.equals(pField)) {
             return theEvent;
+        }
 
         /* If the field is an attribute handle specially */
         if (pField.getAnchor() == theLocalFields) {
@@ -122,16 +264,17 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
             return findAttribute(pField.getName());
         }
 
+        /* Pass onwards */
         return super.getFieldValue(pField);
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pList the list to belong to
      * @param pEvent the underlying event
      */
-    private CapitalEvent(CapitalEventList pList,
-                         Event pEvent) {
+    private CapitalEvent(final CapitalEventList pList,
+                         final Event pEvent) {
         /* Call super-constructor */
         super(pList);
 
@@ -144,12 +287,12 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pList the list to belong to
      * @param pDate the date of the event
      */
-    private CapitalEvent(CapitalEventList pList,
-                         DateDay pDate) {
+    private CapitalEvent(final CapitalEventList pList,
+                         final DateDay pDate) {
         /* Call super-constructor */
         super(pList);
 
@@ -168,44 +311,50 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
      *         sort order
      */
     @Override
-    public int compareTo(Object pThat) {
+    public int compareTo(final Object pThat) {
         /* Handle the trivial cases */
-        if (this == pThat)
+        if (this == pThat) {
             return 0;
-        if (pThat == null)
+        }
+        if (pThat == null) {
             return -1;
+        }
 
         /* Make sure that the object is a CapitalEvent */
-        if (pThat.getClass() != this.getClass())
+        if (pThat.getClass() != this.getClass()) {
             return -1;
+        }
 
         /* Access the object as a CapitalEvent */
         CapitalEvent myThat = (CapitalEvent) pThat;
 
         /* Compare the dates */
         int iResult = getDate().compareTo(myThat.getDate());
-        if (iResult != 0)
+        if (iResult != 0) {
             return iResult;
+        }
 
         /* If we have a null event then we are after non-null and equal to null */
-        if (getEvent() == null)
+        if (getEvent() == null) {
             return (myThat.getEvent() == null) ? 0 : 1;
+        }
 
         /* If we don't have null event then before any null event */
-        if (myThat.getEvent() == null)
+        if (myThat.getEvent() == null) {
             return -1;
+        }
 
         /* Compare the underlying events */
         return getEvent().compareTo(myThat.getEvent());
     }
 
     /**
-     * Add Money Attribute
+     * Add Money Attribute.
      * @param pName the name of the attribute
      * @param pValue the value of the attribute
      */
-    protected void addAttribute(String pName,
-                                Money pValue) {
+    protected void addAttribute(final String pName,
+                                final Money pValue) {
         /* Create the attribute and add to the list */
         MoneyAttribute myAttr = new MoneyAttribute(pName, new Money(pValue));
         theAttributes.add(myAttr);
@@ -213,12 +362,12 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
     }
 
     /**
-     * Add Units Attribute
+     * Add Units Attribute.
      * @param pName the name of the attribute
      * @param pValue the value of the attribute
      */
-    protected void addAttribute(String pName,
-                                Units pValue) {
+    protected void addAttribute(final String pName,
+                                final Units pValue) {
         /* Create the attribute and add to the list */
         UnitsAttribute myAttr = new UnitsAttribute(pName, new Units(pValue));
         theAttributes.add(myAttr);
@@ -226,12 +375,12 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
     }
 
     /**
-     * Add Price Attribute
+     * Add Price Attribute.
      * @param pName the name of the attribute
      * @param pValue the value of the attribute
      */
-    protected void addAttribute(String pName,
-                                Price pValue) {
+    protected void addAttribute(final String pName,
+                                final Price pValue) {
         /* Create the attribute and add to the list */
         PriceAttribute myAttr = new PriceAttribute(pName, new Price(pValue));
         theAttributes.add(myAttr);
@@ -239,52 +388,79 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
     }
 
     /**
-     * Find an attribute
+     * Find an attribute.
      * @param pName the name of the attribute
      * @return the value of the attribute or null
      */
-    public Object findAttribute(String pName) {
+    public Object findAttribute(final String pName) {
         /* Search for the attribute */
         return theAttributes.findAttribute(pName);
     }
 
-    /* The List of capital events */
+    /**
+     * The List of capital events.
+     */
     public static class CapitalEventList extends ReportList<CapitalEvent> {
         /**
-         * Report fields
+         * Report fields.
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(CapitalEventList.class.getSimpleName(),
                 ReportList.theLocalFields);
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
-        /* Field IDs */
+        /**
+         * The Account Field Id.
+         */
         public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField("Account");
 
-        /* Members */
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            /* Handle standard fields */
+            if (FIELD_ACCOUNT.equals(pField)) {
+                return theAccount;
+            }
+
+            /* Pass onwards */
+            return super.getFieldValue(pField);
+        }
+
+        /**
+         * The DataSet.
+         */
         private final FinanceData theData;
+
+        /**
+         * The Account.
+         */
         private final Account theAccount;
 
-        /* Access methods */
+        /**
+         * Obtain the dataSet.
+         * @return the data
+         */
         public FinanceData getData() {
             return theData;
         }
 
+        /**
+         * Obtain the account.
+         * @return the account
+         */
         public Account getAccount() {
             return theAccount;
         }
 
         /**
-         * Construct an empty Capital event list
+         * Construct an empty Capital event list.
          * @param pData the DataSet
          * @param pAccount the Account for the list
          */
-        protected CapitalEventList(FinanceData pData,
-                                   Account pAccount) {
+        protected CapitalEventList(final FinanceData pData,
+                                   final Account pAccount) {
             super(CapitalEvent.class);
 
             /* Store the data */
@@ -293,11 +469,11 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
         }
 
         /**
-         * Add an event to the list
+         * Add an event to the list.
          * @param pEvent the Event to add
          * @return the Capital Event
          */
-        protected CapitalEvent addEvent(Event pEvent) {
+        protected CapitalEvent addEvent(final Event pEvent) {
             CapitalEvent myEvent;
 
             /* Create the Capital Event and add to list */
@@ -309,11 +485,11 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
         }
 
         /**
-         * Add a date event to the list
+         * Add a date event to the list.
          * @param pDate the Date for the event
          * @return the Capital Event
          */
-        protected CapitalEvent addEvent(DateDay pDate) {
+        protected CapitalEvent addEvent(final DateDay pDate) {
             CapitalEvent myEvent;
 
             /* Create the Capital Event and add to list */
@@ -325,7 +501,7 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
         }
 
         /**
-         * Find the cash takeover event (if present)
+         * Find the cash takeover event (if present).
          * @return the Capital Event
          */
         protected CapitalEvent getCashTakeOver() {
@@ -340,18 +516,19 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
 
             /* If the element is a cash takeover */
             if ((myEvent != null) && (myEvent.getEvent() != null)
-                    && (myEvent.getEvent().getTransType().getTranClass() == TransClass.CASHTAKEOVER))
+                    && (myEvent.getEvent().getTransType().getTranClass() == TransClass.CASHTAKEOVER)) {
                 return myEvent;
+            }
 
             /* Return no such event */
             return null;
         }
 
         /**
-         * Purge events after date
+         * Purge events after date.
          * @param pDate date from which to purge events
          */
-        protected void purgeAfterDate(DateDay pDate) {
+        protected void purgeAfterDate(final DateDay pDate) {
             SortedListIterator<CapitalEvent> myIterator;
             CapitalEvent myEvent;
 
@@ -361,37 +538,50 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
             /* Loop through the events */
             while ((myEvent = myIterator.next()) != null) {
                 /* If this is past (or on) the date remove it */
-                if (pDate.compareTo(myEvent.getDate()) <= 0)
+                if (pDate.compareTo(myEvent.getDate()) <= 0) {
                     myIterator.remove();
+                }
             }
-
-            /* Return */
-            return;
         }
     }
 
-    /* Attribute class */
+    /**
+     * Attribute class.
+     */
     private abstract class Attribute {
-        /* Members */
-        private String theName = null;
-        private Object theValue = null;
+        /**
+         * The Name.
+         */
+        private final String theName;
 
-        /* Access methods */
+        /**
+         * The value.
+         */
+        private final Object theValue;
+
+        /**
+         * Obtain the name.
+         * @return the name
+         */
         public String getName() {
             return theName;
         }
 
+        /**
+         * Obtain the value.
+         * @return the value
+         */
         public Object getValue() {
             return theValue;
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pName the name
          * @param pValue the value
          */
-        private Attribute(String pName,
-                          Object pValue) {
+        private Attribute(final String pName,
+                          final Object pValue) {
             /* Store the values */
             theName = pName;
             theValue = pValue;
@@ -399,21 +589,23 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
 
         /**
          * Compare this Attribute to another to establish sort order.
-         * 
          * @param pThat The Attribute to compare to
          * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in
          *         the sort order
          */
-        public int compareTo(Object pThat) {
+        public int compareTo(final Object pThat) {
             /* Handle the trivial cases */
-            if (this == pThat)
+            if (this == pThat) {
                 return 0;
-            if (pThat == null)
+            }
+            if (pThat == null) {
                 return -1;
+            }
 
             /* Make sure that the object is an Attributer */
-            if (pThat.getClass() != this.getClass())
+            if (pThat.getClass() != this.getClass()) {
                 return -1;
+            }
 
             /* Access the object as an Attribute */
             Attribute myThat = (Attribute) pThat;
@@ -423,91 +615,34 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
         }
 
         /**
-         * Format the element
+         * Format the element.
          * @return the formatted element
          */
         public abstract String format();
     }
 
-    /* MoneyAttribute class */
-    public class MoneyAttribute extends Attribute {
-        /* Access methods */
+    /**
+     * MoneyAttribute class.
+     */
+    public final class MoneyAttribute extends Attribute {
         @Override
         public Money getValue() {
             return (Money) super.getValue();
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pName the name
          * @param pValue the value
          */
-        private MoneyAttribute(String pName,
-                               Money pValue) {
+        private MoneyAttribute(final String pName,
+                               final Money pValue) {
             /* Store the values */
             super(pName, pValue);
         }
 
         /**
-         * Format the element
-         * @return the formatted element
-         */
-        @Override
-        public String format() {
-            return getValue().format(true);
-        }
-    }
-
-    /* UnitsAttribute class */
-    public class UnitsAttribute extends Attribute {
-        /* Access methods */
-        @Override
-        public Units getValue() {
-            return (Units) super.getValue();
-        }
-
-        /**
-         * Constructor
-         * @param pName the name
-         * @param pValue the value
-         */
-        private UnitsAttribute(String pName,
-                               Units pValue) {
-            /* Store the values */
-            super(pName, pValue);
-        }
-
-        /**
-         * Format the element
-         * @return the formatted element
-         */
-        @Override
-        public String format() {
-            return getValue().format(true);
-        }
-    }
-
-    /* PricesAttribute class */
-    public class PriceAttribute extends Attribute {
-        /* Access methods */
-        @Override
-        public Price getValue() {
-            return (Price) super.getValue();
-        }
-
-        /**
-         * Constructor
-         * @param pName the name
-         * @param pValue the value
-         */
-        private PriceAttribute(String pName,
-                               Price pValue) {
-            /* Store the values */
-            super(pName, pValue);
-        }
-
-        /**
-         * Format the element
+         * Format the element.
          * @return the formatted element
          */
         @Override
@@ -517,11 +652,71 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
     }
 
     /**
-     * List of Attributes
+     * UnitsAttribute class.
      */
-    public class AttributeList {
+    public final class UnitsAttribute extends Attribute {
+        @Override
+        public Units getValue() {
+            return (Units) super.getValue();
+        }
+
         /**
-         * List of attributes
+         * Constructor.
+         * @param pName the name
+         * @param pValue the value
+         */
+        private UnitsAttribute(final String pName,
+                               final Units pValue) {
+            /* Store the values */
+            super(pName, pValue);
+        }
+
+        /**
+         * Format the element.
+         * @return the formatted element
+         */
+        @Override
+        public String format() {
+            return getValue().format(true);
+        }
+    }
+
+    /**
+     * PriceAttribute class.
+     */
+    public final class PriceAttribute extends Attribute {
+        @Override
+        public Price getValue() {
+            return (Price) super.getValue();
+        }
+
+        /**
+         * Constructor.
+         * @param pName the name
+         * @param pValue the value
+         */
+        private PriceAttribute(final String pName,
+                               final Price pValue) {
+            /* Store the values */
+            super(pName, pValue);
+        }
+
+        /**
+         * Format the element.
+         * @return the formatted element
+         */
+        @Override
+        public String format() {
+            return getValue().format(true);
+        }
+    }
+
+    /**
+     * List of Attributes.
+     */
+    public final class AttributeList {
+        /**
+         * List of attributes.
          */
         private List<Attribute> theAttributes;
 
@@ -533,11 +728,11 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
         }
 
         /**
-         * Find an attribute
+         * Find an attribute.
          * @param pName the name of the attribute
          * @return the value of the attribute or null
          */
-        protected Object findAttribute(String pName) {
+        protected Object findAttribute(final String pName) {
             Iterator<Attribute> myIterator;
             Attribute myCurr;
 
@@ -548,8 +743,9 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
             while (myIterator.hasNext()) {
                 /* If we found the name return its value */
                 myCurr = myIterator.next();
-                if (myCurr.getName().equals(pName))
+                if (myCurr.getName().equals(pName)) {
                     return myCurr.getValue();
+                }
             }
 
             /* return attribute not found */
@@ -557,10 +753,10 @@ public class CapitalEvent extends ReportItem<CapitalEvent> {
         }
 
         /**
-         * Add an attribute to the list
+         * Add an attribute to the list.
          * @param pAttr the attribute to add
          */
-        private void add(Attribute pAttr) {
+        private void add(final Attribute pAttr) {
             /* Add the attribute */
             theAttributes.add(pAttr);
         }

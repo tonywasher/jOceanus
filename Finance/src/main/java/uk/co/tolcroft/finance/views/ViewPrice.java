@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,82 +37,114 @@ import uk.co.tolcroft.finance.views.DilutionEvent.DilutionEventList;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 
+/**
+ * Extension of AccountPrice to cater for diluted prices.
+ * @author Tony Washer
+ */
 public class ViewPrice extends AccountPrice {
     /**
-     * Object name
+     * Object name.
      */
-    public static String objName = ViewPrice.class.getSimpleName();
+    public static final String OBJECT_NAME = ViewPrice.class.getSimpleName();
 
     /**
-     * List name
+     * List name.
      */
-    public static String listName = objName + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
-     * Report fields
+     * Report fields.
      */
-    protected static final JDataFields theLocalFields = new JDataFields(objName, AccountPrice.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AccountPrice.FIELD_DEFS);
 
-    /* Called from constructor */
     @Override
     public JDataFields declareFields() {
-        return theLocalFields;
+        return FIELD_DEFS;
     }
 
-    /* Field IDs */
-    public static final JDataField FIELD_DILUTION = theLocalFields.declareEqualityValueField("Dilution");
-    public static final JDataField FIELD_DILUTEDPRICE = theLocalFields
-            .declareEqualityValueField("DilutedPrice");
+    /**
+     * Dilution Field Id.
+     */
+    public static final JDataField FIELD_DILUTION = FIELD_DEFS.declareEqualityValueField("Dilution");
 
     /**
-     * Is the account subject to dilutions
+     * Diluted Price Field Id.
+     */
+    public static final JDataField FIELD_DILUTEDPRICE = FIELD_DEFS.declareEqualityValueField("DilutedPrice");
+
+    /**
+     * Is the account subject to dilutions?
      */
     private final boolean hasDilutions;
 
     /**
-     * The active set of values
+     * The active set of values.
      */
     private EncryptedValueSet theValueSet;
 
     @Override
-    public void declareValues(EncryptedValueSet pValues) {
+    public void declareValues(final EncryptedValueSet pValues) {
         super.declareValues(pValues);
         theValueSet = pValues;
     }
 
-    /* Access methods */
+    /**
+     * Obtain dilution.
+     * @return the dilution
+     */
     public Dilution getDilution() {
         return getDilution(theValueSet);
     }
 
+    /**
+     * Obtain diluted price.
+     * @return the diluted price
+     */
     public DilutedPrice getDilutedPrice() {
         return getDilutedPrice(theValueSet);
     }
 
-    public static Dilution getDilution(ValueSet pValueSet) {
+    /**
+     * Obtain dilution.
+     * @param pValueSet the valueSet
+     * @return the dilution
+     */
+    public static Dilution getDilution(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_DILUTION, Dilution.class);
     }
 
-    public static DilutedPrice getDilutedPrice(ValueSet pValueSet) {
+    /**
+     * Obtain diluted price.
+     * @param pValueSet the valueSet
+     * @return the diluted price
+     */
+    public static DilutedPrice getDilutedPrice(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_DILUTEDPRICE, DilutedPrice.class);
     }
 
-    private void setValueDilution(Dilution pDilution) {
-        theValueSet.setValue(FIELD_DILUTION, pDilution);
+    /**
+     * Set dilution.
+     * @param pValue the dilution
+     */
+    private void setValueDilution(final Dilution pValue) {
+        theValueSet.setValue(FIELD_DILUTION, pValue);
     }
 
-    private void setValueDilutedPrice(DilutedPrice pPrice) {
-        theValueSet.setValue(FIELD_DILUTEDPRICE, pPrice);
+    /**
+     * Set diluted price.
+     * @param pValue the diluted price
+     */
+    private void setValueDilutedPrice(final DilutedPrice pValue) {
+        theValueSet.setValue(FIELD_DILUTEDPRICE, pValue);
     }
 
-    /* Linking methods */
     @Override
     public AccountPrice getBase() {
         return (AccountPrice) super.getBase();
     }
 
     /**
-     * Calculate Diluted values
+     * Calculate Diluted values.
      */
     protected void calculateDiluted() {
         /* Access the list for the item */
@@ -141,12 +174,12 @@ public class ViewPrice extends AccountPrice {
     }
 
     /**
-     * Construct a copy of a Price
+     * Construct a copy of a Price.
      * @param pList the list
      * @param pPrice The Price
      */
-    protected ViewPrice(ViewPriceList pList,
-                        AccountPrice pPrice) {
+    protected ViewPrice(final ViewPriceList pList,
+                        final AccountPrice pPrice) {
         /* Set standard values */
         super(pList, pPrice);
 
@@ -157,61 +190,104 @@ public class ViewPrice extends AccountPrice {
         calculateDiluted();
     }
 
-    /* Standard constructor for a newly inserted price */
-    private ViewPrice(ViewPriceList pList) {
+    /**
+     * Standard constructor for a newly inserted price.
+     * @param pList the list
+     */
+    private ViewPrice(final ViewPriceList pList) {
         super(pList);
 
         /* Determine whether the account has dilutions */
         hasDilutions = ((ViewPriceList) getList()).hasDilutions;
     }
 
-    /**
-     * Set a new price
-     * @param pPrice the price
-     */
     @Override
-    public void setPrice(Price pPrice) throws JDataException {
+    public void setPrice(final Price pPrice) throws JDataException {
         super.setPrice(pPrice);
         calculateDiluted();
     }
 
-    /**
-     * Set a new date
-     * @param pDate the new date
-     */
     @Override
-    public void setDate(DateDay pDate) {
+    public void setDate(final DateDay pDate) {
         /* Store date */
         super.setDate(pDate);
         calculateDiluted();
     }
 
     /**
-     * Price List
+     * Price List.
      */
     public static class ViewPriceList extends AccountPriceList {
-        /* Members */
-        private Account theAccount = null;
-        private DilutionEventList theDilutions = null;
+        /**
+         * Report fields.
+         */
+        private static final JDataFields FIELD_DEFS = new JDataFields(ViewPriceList.class.getSimpleName(),
+                AccountPriceList.FIELD_DEFS);
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
+        /**
+         * The Account field id.
+         */
+        public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField("Account");
+
+        /**
+         * The Dilutions field id.
+         */
+        public static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareEqualityField("Dilutions");
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_ACCOUNT.equals(pField)) {
+                return theAccount;
+            }
+            if (FIELD_DILUTIONS.equals(pField)) {
+                return theDilutions;
+            }
+            return super.getFieldValue(pField);
+        }
+
+        /**
+         * The account.
+         */
+        private final Account theAccount;
+
+        /**
+         * Dilutions list.
+         */
+        private final DilutionEventList theDilutions;
+
+        /**
+         * Does the account have dilutions?
+         */
         private boolean hasDilutions = false;
 
-        /* Access methods */
+        /**
+         * Obtain dilutions.
+         * @return the dilutions
+         */
         private DilutionEventList getDilutions() {
             return theDilutions;
         }
 
+        /**
+         * Do we have dilutions?
+         * @return true/false
+         */
         public boolean hasDilutions() {
             return hasDilutions;
         }
 
         /**
-         * Construct an edit extract of a Price list
-         * 
+         * Construct an edit extract of a Price list.
          * @param pView The master view
          * @param pAccount The account to extract rates for
          */
-        public ViewPriceList(View pView,
-                             Account pAccount) {
+        public ViewPriceList(final View pView,
+                             final Account pAccount) {
             /* Declare the data and set the style */
             super(pView.getData());
             setStyle(ListStyle.EDIT);
@@ -222,12 +298,12 @@ public class ViewPrice extends AccountPrice {
             ViewPrice myItem;
             DataListIterator<AccountPrice> myIterator;
 
-            /* Store the account */
-            theAccount = pAccount;
-
             /* Skip to alias if required */
-            if ((theAccount != null) && (theAccount.getAlias() != null))
-                theAccount = theAccount.getAlias();
+            if ((pAccount != null) && (pAccount.getAlias() != null)) {
+                theAccount = pAccount.getAlias();
+            } else {
+                theAccount = pAccount;
+            }
 
             /* Access the base prices */
             myPrices = getData().getPrices();
@@ -246,8 +322,9 @@ public class ViewPrice extends AccountPrice {
                 int myResult = theAccount.compareTo(myCurr.getAccount());
 
                 /* Skip different accounts */
-                if (myResult != 0)
+                if (myResult != 0) {
                     continue;
+                }
 
                 /* Copy the item */
                 myItem = new ViewPrice(this, myCurr);
@@ -255,7 +332,6 @@ public class ViewPrice extends AccountPrice {
             }
         }
 
-        /* Disable extract lists. */
         @Override
         public ViewPriceList getUpdateList() {
             return null;
@@ -272,13 +348,13 @@ public class ViewPrice extends AccountPrice {
         }
 
         @Override
-        public ViewPriceList getDeepCopy(DataSet<?> pData) {
+        public ViewPriceList getDeepCopy(final DataSet<?> pData) {
             return null;
         }
 
-        public ViewPriceList getDifferences(ViewPriceList pOld) {
-            return null;
-        }
+        // public ViewPriceList getDifferences(final ViewPriceList pOld) {
+        // return null;
+        // }
 
         /* Is this list locked */
         @Override
@@ -286,17 +362,13 @@ public class ViewPrice extends AccountPrice {
             return ((theAccount != null) && (theAccount.isLocked()));
         }
 
-        /**
-         * Disable Add a new item
-         * @return the new item
-         */
         @Override
-        public ViewPrice addNewItem(DataItem<?> pElement) {
+        public ViewPrice addNewItem(final DataItem<?> pElement) {
             return null;
         }
 
         /**
-         * Add a new item to the edit list
+         * Add a new item to the edit list.
          * @return the newly added item
          */
         @Override

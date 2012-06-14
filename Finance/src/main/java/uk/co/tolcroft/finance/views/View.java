@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,33 +34,73 @@ import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.sheets.SpreadSheet;
 import uk.co.tolcroft.models.views.DataControl;
 
+/**
+ * Data Control for FinanceApp.
+ * @author Tony Washer
+ */
 public class View extends DataControl<FinanceData> {
-    /* Members */
+    /**
+     * The DataSet.
+     */
     private FinanceData theData = null;
+
+    /**
+     * The Date range for the view.
+     */
     private DateDayRange theRange = null;
-    private MainTab theCtl = null;
+
+    /**
+     * The Main window.
+     */
+    private final MainTab theCtl;
+
+    /**
+     * The event analysis.
+     */
     private EventAnalysis theAnalysis = null;
+
+    /**
+     * The dilution event list.
+     */
     private DilutionEventList theDilutions = null;
 
-    /* Access methods */
+    /**
+     * Obtain the main window.
+     * @return the main window.
+     */
     public MainTab getControl() {
         return theCtl;
     }
 
+    /**
+     * Obtain the date range.
+     * @return the date range
+     */
     public DateDayRange getRange() {
         return theRange;
     }
 
+    /**
+     * Obtain the analysis.
+     * @return the analysis.
+     */
     public EventAnalysis getAnalysis() {
         return theAnalysis;
     }
 
+    /**
+     * Obtain the dilution list.
+     * @return the dilution list.
+     */
     public DilutionEventList getDilutions() {
         return theDilutions;
     }
 
-    /* Constructor */
-    public View(MainTab pCtl) {
+    /**
+     * Constructor.
+     * @param pCtl the main window.
+     */
+    public View(final MainTab pCtl) {
         /* Store access to the main window */
         theCtl = pCtl;
 
@@ -71,7 +112,7 @@ public class View extends DataControl<FinanceData> {
     }
 
     /**
-     * Obtain a new DataSet
+     * Obtain a new DataSet.
      * @return new DataSet
      */
     @Override
@@ -79,17 +120,13 @@ public class View extends DataControl<FinanceData> {
         return new FinanceData(getSecurity());
     }
 
-    /**
-     * Obtain a Database interface
-     * @return new Database object
-     */
     @Override
     public Database<FinanceData> getDatabase() throws JDataException {
         return new FinanceDatabase();
     }
 
     /**
-     * Obtain a Database interface
+     * Obtain a Database interface.
      * @return new DataSet
      */
     @Override
@@ -98,11 +135,11 @@ public class View extends DataControl<FinanceData> {
     }
 
     /**
-     * Update the data for a view
+     * Update the data for a view.
      * @param pData the new data set
      */
     @Override
-    public void setData(FinanceData pData) {
+    public void setData(final FinanceData pData) {
         /* Record the data */
         super.setData(pData);
         theData = pData;
@@ -115,14 +152,42 @@ public class View extends DataControl<FinanceData> {
     }
 
     /**
-     * Analyse the data in the view
-     * @param bPreserve preserve any error
+     * Analyse the data.
+     * @param pData the data
+     * @return the analysis
+     * @throws JDataException on error
      */
+    public EventAnalysis analyseData(final FinanceData pData) throws JDataException {
+        /* Initialise the analysis */
+        pData.initialiseAnalysis();
+
+        /* Create the analysis */
+        EventAnalysis myAnalysis = new EventAnalysis(this, pData);
+
+        /* HouseKeep the analysis */
+        pData.houseKeepAnalysis();
+
+        /* Access the most recent metaAnalysis */
+        MetaAnalysis myMetaAnalysis = myAnalysis.getMetaAnalysis();
+
+        /* Note active accounts by asset */
+        if (myMetaAnalysis != null) {
+            myMetaAnalysis.markActiveAccounts();
+        }
+
+        /* Complete the analysis */
+        pData.completeAnalysis();
+
+        /* Return the analysis */
+        return myAnalysis;
+    }
+
     @Override
-    protected boolean analyseData(boolean bPreserve) {
+    protected boolean analyseData(final boolean bPreserve) {
         /* Clear the error */
-        if (!bPreserve)
+        if (!bPreserve) {
             setError(null);
+        }
 
         /* Calculate the Data Range */
         theData.calculateDateRange();
@@ -133,27 +198,26 @@ public class View extends DataControl<FinanceData> {
         /* Protect against exceptions */
         try {
             /* Analyse the data */
-            theData.analyseData(this);
-            theAnalysis = theData.getAnalysis();
+            theAnalysis = analyseData(theData);
 
             /* Access the dilutions */
             theDilutions = theAnalysis.getDilutions();
 
             /* Adjust the updates debug view */
             setUpdates(theData.getUpdateSet());
-        }
 
-        /* Catch any exceptions */
-        catch (JDataException e) {
-            if (!bPreserve)
+            /* Catch any exceptions */
+        } catch (JDataException e) {
+            if (!bPreserve) {
                 setError(e);
-        }
+            }
 
-        /* Catch any exceptions */
-        catch (Throwable e) {
+            /* Catch any exceptions */
+        } catch (Exception e) {
             /* Report the failure */
-            if (!bPreserve)
+            if (!bPreserve) {
                 setError(new JDataException(ExceptionClass.DATA, "Failed to analyse data", e));
+            }
         }
 
         /* Return whether there was success */
@@ -161,7 +225,7 @@ public class View extends DataControl<FinanceData> {
     }
 
     /**
-     * refresh the window view
+     * refresh the window view.
      */
     @Override
     protected void refreshWindow() {
@@ -169,15 +233,13 @@ public class View extends DataControl<FinanceData> {
         try {
             /* Refresh the Control */
             theCtl.refreshData();
-        }
 
-        /* Catch any exceptions */
-        catch (JDataException e) {
+            /* Catch any exceptions */
+        } catch (JDataException e) {
             setError(e);
-        }
 
-        /* Catch any exceptions */
-        catch (Exception e) {
+            /* Catch any exceptions */
+        } catch (Exception e) {
             /* Report the failure */
             setError(new JDataException(ExceptionClass.DATA, "Failed refresh window", e));
         }

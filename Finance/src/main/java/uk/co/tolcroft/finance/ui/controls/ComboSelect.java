@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,22 +34,26 @@ import uk.co.tolcroft.finance.data.TransactionType;
 import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.data.DataList.DataListIterator;
 
+/**
+ * ComboBox selection class.
+ * @author Tony Washer
+ */
 public class ComboSelect {
     /**
-     * The JComboBox for the whole set of transaction types
+     * The JComboBox for the whole set of transaction types.
      */
-    private JComboBox theTranTypeBox = null;
+    private final JComboBox theTranTypeBox;
 
     /**
-     * The DataSet
+     * The DataSet.
      */
-    private FinanceData theData = null;
+    private final FinanceData theData;
 
     /**
-     * Constructor
-     * @param pView
+     * Constructor.
+     * @param pView the data view
      */
-    public ComboSelect(View pView) {
+    public ComboSelect(final View pView) {
         /* Store the data */
         theData = pView.getData();
 
@@ -65,21 +70,18 @@ public class ComboSelect {
 
         /* Loop through the Transaction types */
         while ((myTrans = myIterator.next()) != null) {
-            /* Skip hidden values */
-            if (myTrans.isHiddenType())
+            /* Skip hidden/disabled values */
+            if ((myTrans.isHiddenType()) || (!myTrans.getEnabled())) {
                 continue;
-
-            /* Skip disabled values */
-            if (!myTrans.getEnabled())
-                continue;
+            }
 
             /* Add the item to the list */
-            theTranTypeBox.addItem(myTrans.getName());
+            theTranTypeBox.addItem(myTrans);
         }
     }
 
     /**
-     * Obtain the pure transaction type ComboBox
+     * Obtain the pure transaction type ComboBox.
      * @return a ComboBox with all the transaction types
      */
     public JComboBox getAllTransTypes() {
@@ -88,11 +90,11 @@ public class ComboSelect {
     }
 
     /**
-     * Obtain the ComboBox of transaction types for a Credit to an AccountType
+     * Obtain the ComboBox of transaction types for a Credit to an AccountType.
      * @param pType the account type
      * @return the ComboBox
      */
-    public JComboBox getCreditTranTypes(AccountType pType) {
+    public JComboBox getCreditTranTypes(final AccountType pType) {
         TransactionType.TransTypeList myList = theData.getTransTypes();
         TransactionType myTrans;
         JComboBox myCombo;
@@ -107,18 +109,15 @@ public class ComboSelect {
 
         /* Loop through the Transaction types */
         while ((myTrans = myIterator.next()) != null) {
-            /* Skip hidden values */
-            if (myTrans.isHiddenType())
+            /* Skip hidden/disabled values */
+            if ((myTrans.isHiddenType()) || (!myTrans.getEnabled())) {
                 continue;
-
-            /* Skip disabled values */
-            if (!myTrans.getEnabled())
-                continue;
+            }
 
             /* If this is OK for a credit to this account type */
             if (Event.isValidEvent(myTrans, pType, true)) {
                 /* Add the item to the list */
-                myCombo.addItem(myTrans.getName());
+                myCombo.addItem(myTrans);
             }
         }
 
@@ -127,11 +126,11 @@ public class ComboSelect {
     }
 
     /**
-     * Obtain the ComboBox of transaction types for a Debit from an AccountType
+     * Obtain the ComboBox of transaction types for a Debit from an AccountType.
      * @param pType the transaction type
      * @return the ComboBox
      */
-    public JComboBox getDebitTranTypes(AccountType pType) {
+    public JComboBox getDebitTranTypes(final AccountType pType) {
         TransactionType.TransTypeList myList = theData.getTransTypes();
         TransactionType myTrans;
         JComboBox myCombo;
@@ -146,18 +145,15 @@ public class ComboSelect {
 
         /* Loop through the Transaction types */
         while ((myTrans = myIterator.next()) != null) {
-            /* Skip hidden values */
-            if (myTrans.isHiddenType())
+            /* Skip hidden/disabled values */
+            if ((myTrans.isHiddenType()) || (!myTrans.getEnabled())) {
                 continue;
-
-            /* Skip disabled values */
-            if (!myTrans.getEnabled())
-                continue;
+            }
 
             /* If this is OK for a debit from this account type */
             if (Event.isValidEvent(myTrans, pType, false)) {
                 /* Add the item to the list */
-                myCombo.addItem(myTrans.getName());
+                myCombo.addItem(myTrans);
             }
         }
 
@@ -166,11 +162,11 @@ public class ComboSelect {
     }
 
     /**
-     * Obtain the ComboBox of accounts for a Debit for a Transaction Type
+     * Obtain the ComboBox of accounts for a Debit for a Transaction Type.
      * @param pType the transaction type
      * @return the ComboBox
      */
-    public JComboBox getDebitAccounts(TransactionType pType) {
+    public JComboBox getDebitAccounts(final TransactionType pType) {
         Account.AccountList myList = theData.getAccounts();
         Account myAccount;
         AccountType myType = null;
@@ -196,16 +192,13 @@ public class ComboSelect {
                 isValid = Event.isValidEvent(pType, myType, false);
             }
 
-            /* Skip invalid types */
-            if (!isValid)
+            /* Skip invalid types/closed accounts */
+            if ((!isValid) || (myAccount.isClosed())) {
                 continue;
-
-            /* Skip closed items if required */
-            if (myAccount.isClosed())
-                continue;
+            }
 
             /* Add the item to the list */
-            myCombo.addItem(myAccount.getName());
+            myCombo.addItem(myAccount);
         }
 
         /* return to caller */
@@ -213,13 +206,13 @@ public class ComboSelect {
     }
 
     /**
-     * Obtain the ComboBox of accounts for a Credit for a Transaction Type and Account
+     * Obtain the ComboBox of accounts for a Credit for a Transaction Type and Account.
      * @param pType the transaction type
      * @param pDebit the debit account
      * @return the ComboBox
      */
-    public JComboBox getCreditAccounts(TransactionType pType,
-                                       Account pDebit) {
+    public JComboBox getCreditAccounts(final TransactionType pType,
+                                       final Account pDebit) {
         AccountList myList = theData.getAccounts();
         Account myAccount;
         AccountType myType = null;
@@ -245,29 +238,25 @@ public class ComboSelect {
                 isValid = Event.isValidEvent(pType, myType, true);
             }
 
-            /* Skip invalid types */
-            if (!isValid)
+            /* Skip invalid types/closed accounts */
+            if ((!isValid) || (myAccount.isClosed())) {
                 continue;
-
-            /* Skip closed items if required */
-            if (myAccount.isClosed())
-                continue;
+            }
 
             /* If the account is identical to the selected account */
             if (Difference.isEqual(myAccount, pDebit)) {
                 /* If this combination is allowed */
                 if (Event.isValidEvent(pType, pDebit, myAccount)) {
                     /* Add to beginning of list */
-                    myCombo.insertItemAt(myAccount.getName(), 0);
+                    myCombo.insertItemAt(myAccount, 0);
                 }
-            }
 
-            /* else it is a different account */
-            else {
+                /* else it is a different account */
+            } else {
                 /* If this combination is allowed */
                 if (Event.isValidEvent(pType, pDebit, myAccount)) {
                     /* Add the item to the list */
-                    myCombo.addItem(myAccount.getName());
+                    myCombo.addItem(myAccount);
                 }
             }
         }
@@ -277,13 +266,13 @@ public class ComboSelect {
     }
 
     /**
-     * Obtain the ComboBox of accounts for a Debit for a Transaction Type and Account
+     * Obtain the ComboBox of accounts for a Debit for a Transaction Type and Account.
      * @param pType the transaction type
      * @param pCredit the credit account
      * @return the ComboBox
      */
-    public JComboBox getDebitAccounts(TransactionType pType,
-                                      Account pCredit) {
+    public JComboBox getDebitAccounts(final TransactionType pType,
+                                      final Account pCredit) {
         Account.AccountList myList = theData.getAccounts();
         Account myAccount;
         AccountType myType = null;
@@ -309,29 +298,25 @@ public class ComboSelect {
                 isValid = Event.isValidEvent(pType, myType, false);
             }
 
-            /* Skip invalid types */
-            if (!isValid)
+            /* Skip invalid types/closed accounts */
+            if ((!isValid) || (myAccount.isClosed())) {
                 continue;
-
-            /* Skip closed items if required */
-            if (myAccount.isClosed())
-                continue;
+            }
 
             /* If the account is identical to the selected account */
             if (Difference.isEqual(myAccount, pCredit)) {
                 /* If this combination is allowed */
                 if (Event.isValidEvent(pType, myAccount, pCredit)) {
                     /* Add to beginning of list */
-                    myCombo.insertItemAt(myAccount.getName(), 0);
+                    myCombo.insertItemAt(myAccount, 0);
                 }
-            }
 
-            /* else it is a different account */
-            else {
+                /* else it is a different account */
+            } else {
                 /* If this combination is allowed */
                 if (Event.isValidEvent(pType, myAccount, pCredit)) {
                     /* Add the item to the list */
-                    myCombo.addItem(myAccount.getName());
+                    myCombo.addItem(myAccount);
                 }
             }
         }

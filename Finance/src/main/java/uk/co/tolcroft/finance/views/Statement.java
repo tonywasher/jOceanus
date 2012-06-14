@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,6 +44,10 @@ import uk.co.tolcroft.finance.views.Analysis.ValueAccount;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
 
+/**
+ * Extension of Event to cater for statements.
+ * @author Tony Washer
+ */
 public class Statement implements JDataContents {
     /**
      * Report fields.
@@ -59,100 +64,209 @@ public class Statement implements JDataContents {
         return FIELD_DEFS;
     }
 
-    /* Field IDs */
+    /**
+     * Account Field Id.
+     */
     public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField("Account");
+
+    /**
+     * DateRange Field Id.
+     */
     public static final JDataField FIELD_RANGE = FIELD_DEFS.declareLocalField("DateRange");
+
+    /**
+     * Starting Balance Field Id.
+     */
     public static final JDataField FIELD_BALSTART = FIELD_DEFS.declareLocalField("StartBalance");
+
+    /**
+     * Ending Balance Field Id.
+     */
     public static final JDataField FIELD_BALEND = FIELD_DEFS.declareLocalField("EndBalance");
+
+    /**
+     * Starting Units Field Id.
+     */
     public static final JDataField FIELD_UNITSTART = FIELD_DEFS.declareLocalField("StartUnits");
+
+    /**
+     * Ending Units Field Id.
+     */
     public static final JDataField FIELD_UNITEND = FIELD_DEFS.declareLocalField("EndUnits");
+
+    /**
+     * Lines Field Id.
+     */
     public static final JDataField FIELD_LINES = FIELD_DEFS.declareLocalField("StatementLines");
+
+    /**
+     * Analysis Field Id.
+     */
     public static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField("Analysis");
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        /* If the field is not an attribute handle normally */
-        if (pField == FIELD_ACCOUNT) {
+        if (FIELD_ACCOUNT.equals(pField)) {
             return theAccount;
         }
-        if (pField == FIELD_RANGE) {
+        if (FIELD_RANGE.equals(pField)) {
             return theRange;
         }
-        if (pField == FIELD_BALSTART) {
+        if (FIELD_BALSTART.equals(pField)) {
             return theStartBalance;
         }
-        if (pField == FIELD_BALEND) {
+        if (FIELD_BALEND.equals(pField)) {
             return theEndBalance;
         }
-        if (pField == FIELD_UNITSTART) {
+        if (FIELD_UNITSTART.equals(pField)) {
             return theStartUnits;
         }
-        if (pField == FIELD_UNITEND) {
+        if (FIELD_UNITEND.equals(pField)) {
             return theEndUnits;
         }
-        if (pField == FIELD_LINES) {
+        if (FIELD_LINES.equals(pField)) {
             return theLines;
         }
-        if (pField == FIELD_ANALYSIS) {
+        if (FIELD_ANALYSIS.equals(pField)) {
             return theAnalysis;
         }
         /* Pass onwards */
         return null;
     }
 
-    /* Members */
-    private View theView = null;
-    private Account theAccount = null;
-    private ActDetail theBucket = null;
-    private DateDayRange theRange = null;
-    private Money theStartBalance = null;
-    private Money theEndBalance = null;
-    private Units theStartUnits = null;
-    private Units theEndUnits = null;
-    private EventAnalysis theAnalysis = null;
-    private StatementLines theLines = null;
+    /**
+     * The view.
+     */
+    private final View theView;
 
-    /* Access methods */
+    /**
+     * The view.
+     */
+    private final Account theAccount;
+
+    /**
+     * The Account bucket.
+     */
+    private ActDetail theBucket = null;
+
+    /**
+     * The date range.
+     */
+    private final DateDayRange theRange;
+
+    /**
+     * The starting balance.
+     */
+    private Money theStartBalance = null;
+
+    /**
+     * The ending balance.
+     */
+    private Money theEndBalance = null;
+
+    /**
+     * The starting units.
+     */
+    private Units theStartUnits = null;
+
+    /**
+     * The ending units.
+     */
+    private Units theEndUnits = null;
+
+    /**
+     * The analysis.
+     */
+    private EventAnalysis theAnalysis = null;
+
+    /**
+     * The lines.
+     */
+    private final StatementLines theLines;
+
+    /**
+     * Obtain the account.
+     * @return the account
+     */
     public Account getAccount() {
         return theAccount;
     }
 
+    /**
+     * Obtain the Date range.
+     * @return the range
+     */
     public DateDayRange getDateRange() {
         return theRange;
     }
 
+    /**
+     * Obtain the starting balance.
+     * @return the balance
+     */
     public Money getStartBalance() {
         return theStartBalance;
     }
 
+    /**
+     * Obtain the ending balance.
+     * @return the balance
+     */
     public Money getEndBalance() {
         return theEndBalance;
     }
 
+    /**
+     * Obtain the starting units.
+     * @return the units
+     */
     public Units getStartUnits() {
         return theStartUnits;
     }
 
+    /**
+     * Obtain the ending units.
+     * @return the units
+     */
     public Units getEndUnits() {
         return theEndUnits;
     }
 
+    /**
+     * Obtain the account type.
+     * @return the type
+     */
     public AccountType getActType() {
         return theAccount.getActType();
     }
 
+    /**
+     * Obtain the statement lines.
+     * @return the lines
+     */
     public StatementLines getLines() {
         return theLines;
     }
 
-    public StatementLine extractItemAt(long uIndex) {
+    /**
+     * Obtain the line at the index.
+     * @param uIndex the index
+     * @return the line
+     */
+    public StatementLine extractItemAt(final long uIndex) {
         return (StatementLine) theLines.get((int) uIndex);
     }
 
-    /* Constructor */
-    public Statement(View pView,
-                     Account pAccount,
-                     DateDayRange pRange) throws JDataException {
+    /**
+     * Constructor.
+     * @param pView the view
+     * @param pAccount the account
+     * @param pRange the date range
+     * @throws JDataException on error
+     */
+    public Statement(final View pView,
+                     final Account pAccount,
+                     final DateDayRange pRange) throws JDataException {
         /* Create a copy of the account (plus surrounding list) */
         theView = pView;
         theAccount = pAccount;
@@ -164,10 +278,10 @@ public class Statement implements JDataContents {
     }
 
     /**
-     * Set the ending balances for the statement
+     * Set the ending balances for the statement.
      * @param pAccount the Account Bucket
      */
-    protected void setStartBalances(ActDetail pAccount) {
+    protected void setStartBalances(final ActDetail pAccount) {
         /* Record the bucket and access bucket type */
         theBucket = pAccount;
 
@@ -185,7 +299,7 @@ public class Statement implements JDataContents {
     }
 
     /**
-     * Set the ending balances for the statement
+     * Set the ending balances for the statement.
      */
     protected void setEndBalances() {
         /* If the bucket has a balance */
@@ -202,8 +316,8 @@ public class Statement implements JDataContents {
     }
 
     /**
-     * Reset the balances
-     * @throws JDataException
+     * Reset the balances.
+     * @throws JDataException on error
      */
     public void resetBalances() throws JDataException {
         /* Reset the balances */
@@ -211,7 +325,7 @@ public class Statement implements JDataContents {
     }
 
     /**
-     * Does the statement have a money balance
+     * Does the statement have a money balance?
      * @return TRUE/FALSE
      */
     public boolean hasBalance() {
@@ -219,7 +333,7 @@ public class Statement implements JDataContents {
     }
 
     /**
-     * Does the statement have units
+     * Does the statement have units?
      * @return TRUE/FALSE
      */
     public boolean hasUnits() {
@@ -227,7 +341,7 @@ public class Statement implements JDataContents {
     }
 
     /**
-     * Prepare changes in a statement back into the underlying finance objects
+     * Prepare changes in a statement back into the underlying finance objects.
      */
     protected void prepareChanges() {
         /* Prepare the changes from this list */
@@ -235,32 +349,48 @@ public class Statement implements JDataContents {
     }
 
     /**
-     * Commit/RollBack changes in a statement back into the underlying finance objects
+     * Commit/RollBack changes in a statement back into the underlying finance objects.
      * @param bCommit <code>true/false</code>
      */
-    protected void commitChanges(boolean bCommit) {
+    protected void commitChanges(final boolean bCommit) {
         /* Commit/RollBack the changes */
-        if (bCommit)
+        if (bCommit) {
             theLines.commitChanges();
-        else
+        } else {
             theLines.rollBackChanges();
+        }
     }
 
-    /* The List class */
+    /**
+     * The Statement Lines.
+     */
     public static class StatementLines extends EventList {
-        private Statement theStatement = null;
+        /**
+         * Statement.
+         */
+        private final Statement theStatement;
 
-        /* Access functions */
+        /**
+         * Obtain the statement.
+         * @return the statement
+         */
         private Statement getStatement() {
             return theStatement;
         }
 
+        /**
+         * Obtain the account.
+         * @return the account
+         */
         private Account getAccount() {
             return theStatement.getAccount();
         }
 
-        /* Constructors */
-        public StatementLines(Statement pStatement) {
+        /**
+         * Constructor.
+         * @param pStatement the statement
+         */
+        public StatementLines(final Statement pStatement) {
             /* Declare the data and set the style */
             super(pStatement.theView.getData());
             setStyle(ListStyle.EDIT);
@@ -269,7 +399,6 @@ public class Statement implements JDataContents {
             setBase(theStatement.theView.getData().getEvents());
         }
 
-        /* Obtain extract lists. */
         @Override
         public StatementLines getUpdateList() {
             return null;
@@ -286,13 +415,13 @@ public class Statement implements JDataContents {
         }
 
         @Override
-        public StatementLines getDeepCopy(DataSet<?> pData) {
+        public StatementLines getDeepCopy(final DataSet<?> pData) {
             return null;
         }
 
-        public StatementLines getDifferences(StatementLines pOld) {
-            return null;
-        }
+        // public StatementLines getDifferences(StatementLines pOld) {
+        // return null;
+        // }
 
         /* Is this list locked */
         @Override
@@ -300,18 +429,15 @@ public class Statement implements JDataContents {
             return theStatement.theAccount.isLocked();
         }
 
-        /**
-         * Add a new item (never used)
-         */
         @Override
-        public StatementLine addNewItem(DataItem<?> pElement) {
+        public StatementLine addNewItem(final DataItem<?> pElement) {
             StatementLine myLine = new StatementLine(this, (StatementLine) pElement);
             add(myLine);
             return myLine;
         }
 
         /**
-         * Add a new item to the edit list
+         * Add a new item to the edit list.
          * @return the newly added item
          */
         @Override
@@ -326,17 +452,11 @@ public class Statement implements JDataContents {
             add(myLine);
             return myLine;
         }
-
-        /**
-         * Obtain the type of the item
-         * @return the type of the item
-         */
-        @Override
-        public String itemType() {
-            return "StatementLine";
-        }
     }
 
+    /**
+     * Statement line.
+     */
     public static class StatementLine extends Event {
         /**
          * Report fields.
@@ -348,107 +468,184 @@ public class Statement implements JDataContents {
             return FIELD_DEFS;
         }
 
-        /* Field IDs */
+        /**
+         * IsCredit Field Id.
+         */
         public static final JDataField FIELD_ISCREDIT = FIELD_DEFS.declareEqualityValueField("IsCredit");
+
+        /**
+         * Account Field Id.
+         */
         public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField("Account");
+
+        /**
+         * Partner Field Id.
+         */
         public static final JDataField FIELD_PARTNER = FIELD_DEFS.declareLocalField("Partner");
+
+        /**
+         * Balance Field Id.
+         */
+        public static final JDataField FIELD_BALANCE = FIELD_DEFS.declareLocalField("Balance");
+
+        /**
+         * Units Balance Field Id.
+         */
+        public static final JDataField FIELD_UNITS = FIELD_DEFS.declareLocalField("UnitsBalance");
 
         @Override
         public Object getFieldValue(final JDataField pField) {
-            /* If the field is not an attribute handle normally */
-            if (pField == FIELD_ACCOUNT) {
+            if (FIELD_ACCOUNT.equals(pField)) {
                 return JDataObject.FIELD_SKIP;
             }
-            if (pField == FIELD_PARTNER) {
+            if (FIELD_PARTNER.equals(pField)) {
                 return JDataObject.FIELD_SKIP;
+            }
+            if (FIELD_BALANCE.equals(pField)) {
+                return theBalance;
+            }
+            if (FIELD_UNITS.equals(pField)) {
+                return theBalUnits;
             }
             /* Pass onwards */
             return super.getFieldValue(pField);
         }
 
         /**
-         * The active set of values
+         * The active set of values.
          */
         private EncryptedValueSet theValueSet;
 
         @Override
-        public void declareValues(EncryptedValueSet pValues) {
+        public void declareValues(final EncryptedValueSet pValues) {
             super.declareValues(pValues);
             theValueSet = pValues;
         }
 
-        /* Access methods */
+        /**
+         * Is this a credit to the account?
+         * @return true/false
+         */
         public boolean isCredit() {
             return isCredit(theValueSet);
         }
 
+        /**
+         * Obtain the account.
+         * @return the account
+         */
         public Account getAccount() {
             return isCredit() ? getCredit() : getDebit();
         }
 
+        /**
+         * Obtain the account type.
+         * @return the type
+         */
         public AccountType getActType() {
             Account myAccount = getAccount();
             return (myAccount == null) ? null : myAccount.getActType();
         }
 
+        /**
+         * Obtain the partner.
+         * @return the partner
+         */
         public Account getPartner() {
-            return isCredit() ? getCredit() : getDebit();
+            return isCredit() ? getDebit() : getCredit();
         }
 
-        public static Boolean isCredit(ValueSet pValueSet) {
+        /**
+         * Is this a credit to the account?
+         * @param pValueSet the valueSet
+         * @return true/false
+         */
+        public static Boolean isCredit(final ValueSet pValueSet) {
             return pValueSet.getValue(FIELD_ISCREDIT, Boolean.class);
         }
 
-        private void setValueIsCredit(Boolean isCredit) {
+        /**
+         * Set whether this a credit to the account.
+         * @param isCredit true/false
+         */
+        private void setValueIsCredit(final Boolean isCredit) {
             theValueSet.setValue(FIELD_ISCREDIT, isCredit);
         }
 
+        /**
+         * The running balance.
+         */
         private Money theBalance = null;
-        private Units theBalUnits = null;
-        private Statement theStatement = null;
 
-        /* Access methods */
+        /**
+         * The running units balance.
+         */
+        private Units theBalUnits = null;
+
+        /**
+         * The statement.
+         */
+        private final Statement theStatement;
+
+        /**
+         * Obtain the balance.
+         * @return the balance
+         */
         public Money getBalance() {
             return theBalance;
         }
 
+        /**
+         * Obtain the units balance.
+         * @return the balance
+         */
         public Units getBalanceUnits() {
             return theBalUnits;
         }
 
+        /**
+         * Obtain the bucket.
+         * @return the bucket
+         */
         private ActDetail getBucket() {
             return theStatement.theBucket;
         }
 
-        /* Linking methods */
         @Override
         public Event getBase() {
             return (Event) super.getBase();
         }
 
         /**
-         * Construct a copy of a Line
+         * Construct a copy of a Line.
          * @param pList the list
          * @param pLine The Line
          */
-        protected StatementLine(StatementLines pList,
-                                StatementLine pLine) {
+        protected StatementLine(final StatementLines pList,
+                                final StatementLine pLine) {
             /* Set standard values */
             super(pList, pLine);
             theStatement = pList.getStatement();
             pList.setNewId(this);
         }
 
-        /* Standard constructor for a newly inserted line */
-        public StatementLine(StatementLines pList) {
+        /**
+         * Constructor for new line.
+         * @param pList the list
+         */
+        public StatementLine(final StatementLines pList) {
             super(pList);
             theStatement = pList.getStatement();
             setDebit(pList.getAccount());
         }
 
-        /* Standard constructor */
-        public StatementLine(StatementLines pList,
-                             Event pEvent) {
+        /**
+         * Constructor from event.
+         * @param pList the list
+         * @param pEvent the event
+         */
+        public StatementLine(final StatementLines pList,
+                             final Event pEvent) {
             /* Make this an element */
             super(pList, pEvent);
             theStatement = pList.getStatement();
@@ -459,7 +656,7 @@ public class Statement implements JDataContents {
         }
 
         /**
-         * Set Balances
+         * Set Balances.
          */
         protected void setBalances() {
             /* If the bucket has a balance */
@@ -476,29 +673,22 @@ public class Statement implements JDataContents {
         }
 
         /**
-         * Compare the line
-         */
-        @Override
-        public boolean equals(Object that) {
-            return (this == that);
-        }
-
-        /**
-         * Set a new partner
+         * Set a new partner.
          * @param pPartner the new partner
          */
-        public void setPartner(Account pPartner) {
-            if (isCredit())
+        public void setPartner(final Account pPartner) {
+            if (isCredit()) {
                 setDebit(pPartner);
-            else
+            } else {
                 setCredit(pPartner);
+            }
         }
 
         /**
-         * Set a new isCredit indication
-         * @param isCredit
+         * Set a new isCredit indication.
+         * @param isCredit true/false
          */
-        public void setIsCredit(boolean isCredit) {
+        public void setIsCredit(final boolean isCredit) {
             /* If we are changing values */
             if (isCredit != isCredit()) {
                 /* Swap credit/debit values */
@@ -510,13 +700,13 @@ public class Statement implements JDataContents {
         }
 
         /**
-         * Add an error for this item
+         * Add an error for this item.
          * @param pError the error text
          * @param iField the associated field
          */
         @Override
-        protected void addError(String pError,
-                                JDataField iField) {
+        protected void addError(final String pError,
+                                final JDataField iField) {
             JDataField myField = iField;
             /* Re-Map Credit/Debit field errors */
             if (iField == FIELD_CREDIT) {

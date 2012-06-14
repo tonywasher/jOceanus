@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,26 +52,87 @@ import uk.co.tolcroft.models.ui.SaveButtons;
 import uk.co.tolcroft.models.views.ViewList;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 
+/**
+ * Static Data Table.
+ * @author Tony Washer
+ * @param <L> the list type
+ * @param <T> the data type
+ */
 public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData<T, ?>> extends DataTable<T> {
+    /**
+     * Serial Id.
+     */
     private static final long serialVersionUID = -8747707037700378702L;
 
-    /* Properties */
-    private View theView = null;
-    private JPanel thePanel = null;
-    private MaintStatic theParent = null;
-    private Class<L> theClass = null;
-    private L theStatic = null;
-    private MaintStaticData<L, T> theTable = this;
-    private StaticModel theModel = null;
-    private StaticMouse theMouse = null;
-    private StaticColumnModel theColumns = null;
-    private ViewList theViewSet = null;
-    private ListClass theDataView = null;
-    private JDataEntry theDataEntry = null;
-    private SaveButtons theTabButs = null;
-    private ErrorPanel theError = null;
+    /**
+     * The Data view.
+     */
+    private final View theView;
 
-    /* Access methods */
+    /**
+     * The Panel.
+     */
+    private final JPanel thePanel;
+
+    /**
+     * The Parent.
+     */
+    private final MaintStatic theParent;
+
+    /**
+     * The Data class.
+     */
+    private final Class<L> theClass;
+
+    /**
+     * The List.
+     */
+    private L theStatic = null;
+
+    /**
+     * Self reference.
+     */
+    private final MaintStaticData<L, T> theTable = this;
+
+    /**
+     * The Tavle Model.
+     */
+    private final StaticModel theModel;
+
+    /**
+     * The Columns model.
+     */
+    private final StaticColumnModel theColumns;
+
+    /**
+     * The view set.
+     */
+    private final ViewList theViewSet;
+
+    /**
+     * The List class.
+     */
+    private final ListClass theDataView;
+
+    /**
+     * The Data entry.
+     */
+    private final JDataEntry theDataEntry;
+
+    /**
+     * The Save buttons.
+     */
+    private final SaveButtons theTabButs;
+
+    /**
+     * The Error panel.
+     */
+    private final ErrorPanel theError;
+
+    /**
+     * Obtain the panel.
+     * @return the panel
+     */
     public JPanel getPanel() {
         return thePanel;
     }
@@ -80,24 +142,113 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
         return false;
     }
 
-    /* Table headers */
-    private static final String titleClass = "Class";
-    private static final String titleName = "Name";
-    private static final String titleDesc = "Description";
-    private static final String titleOrder = "SortOrder";
-    private static final String titleEnabled = "Enabled";
-    private static final String titleActive = "Active";
+    /**
+     * Class column title.
+     */
+    private static final String TITLE_CLASS = "Class";
 
-    /* Table columns */
+    /**
+     * Name column title.
+     */
+    private static final String TITLE_NAME = "Name";
+
+    /**
+     * Description column title.
+     */
+    private static final String TITLE_DESC = "Description";
+
+    /**
+     * Order column title.
+     */
+    private static final String TITLE_ORDER = "SortOrder";
+
+    /**
+     * Enabled column title.
+     */
+    private static final String TITLE_ENABLED = "Enabled";
+
+    /**
+     * Active column title.
+     */
+    private static final String TITLE_ACTIVE = "Active";
+
+    /**
+     * Class column id.
+     */
     private static final int COLUMN_CLASS = 0;
+
+    /**
+     * Name column id.
+     */
     private static final int COLUMN_NAME = 1;
+
+    /**
+     * Description column id.
+     */
     private static final int COLUMN_DESC = 2;
+
+    /**
+     * Order column id.
+     */
     private static final int COLUMN_ORDER = 3;
+
+    /**
+     * Enabled column id.
+     */
     private static final int COLUMN_ENABLED = 4;
+
+    /**
+     * Active column id.
+     */
     private static final int COLUMN_ACTIVE = 5;
 
-    public MaintStaticData(MaintStatic pParent,
-                           Class<L> pClass) {
+    /**
+     * Class column width.
+     */
+    private static final int WIDTH_CLASS = 90;
+
+    /**
+     * Name column width.
+     */
+    private static final int WIDTH_NAME = 80;
+
+    /**
+     * Description column width.
+     */
+    private static final int WIDTH_DESC = 200;
+
+    /**
+     * Order column width.
+     */
+    private static final int WIDTH_ORDER = 20;
+
+    /**
+     * Enabled column width.
+     */
+    private static final int WIDTH_ENABLED = 20;
+
+    /**
+     * Active column width.
+     */
+    private static final int WIDTH_ACTIVE = 20;
+
+    /**
+     * Panel width.
+     */
+    private static final int WIDTH_PANEL = 800;
+
+    /**
+     * Panel height.
+     */
+    private static final int HEIGHT_PANEL = 200;
+
+    /**
+     * Constructor.
+     * @param pParent the parent
+     * @param pClass the list class
+     */
+    public MaintStaticData(final MaintStatic pParent,
+                           final Class<L> pClass) {
         /* Call super constructor */
         super(pParent.getDataManager());
 
@@ -131,11 +282,11 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
         setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
 
         /* Set the number of visible rows */
-        setPreferredScrollableViewportSize(new Dimension(800, 200));
+        setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Add the mouse listener */
-        theMouse = new StaticMouse();
-        addMouseListener(theMouse);
+        StaticMouse myMouse = new StaticMouse();
+        addMouseListener(myMouse);
 
         /* Create the sub panels */
         theTabButs = new SaveButtons(this);
@@ -161,7 +312,7 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
                                                                   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                     .addComponent(getScrollPane(),
                                                                   GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE, 800,
+                                                                  GroupLayout.DEFAULT_SIZE, WIDTH_PANEL,
                                                                   Short.MAX_VALUE)
                                                     .addComponent(theTabButs, GroupLayout.Alignment.LEADING,
                                                                   GroupLayout.DEFAULT_SIZE,
@@ -178,16 +329,13 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
         return theDataEntry;
     }
 
-    /**
-     * Update Debug view
-     */
     @Override
     public void updateDebug() {
         theDataEntry.setObject(theStatic);
     }
 
     @Override
-    public void lockOnError(boolean isError) {
+    public void lockOnError(final boolean isError) {
         /* Lock scroll-able area */
         getScrollPane().setEnabled(!isError);
 
@@ -198,8 +346,9 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
     @Override
     public void notifyChanges() {
         /* Find the edit state */
-        if (theStatic != null)
+        if (theStatic != null) {
             theStatic.findEditState();
+        }
 
         /* Update the table buttons */
         theTabButs.setLockDown();
@@ -212,14 +361,15 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
     public void saveData() {
         if (theStatic != null) {
             super.validateAll();
-            if (!hasErrors())
+            if (!hasErrors()) {
                 theViewSet.applyChanges();
+            }
         }
     }
 
     /**
-     * Refresh views/controls after a load/update of underlying data
-     * @throws JDataException
+     * Refresh views/controls after a load/update of underlying data.
+     * @throws JDataException on error
      */
     public void refreshData() throws JDataException {
         FinanceData myData;
@@ -239,12 +389,17 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
         theTabButs.setLockDown();
     }
 
-    /* Static table model */
-    public class StaticModel extends DataTableModel {
+    /**
+     * Static table model.
+     */
+    public final class StaticModel extends DataTableModel {
+        /**
+         * Serial Id.
+         */
         private static final long serialVersionUID = -6428052539280821038L;
 
         /**
-         * Constructor
+         * Constructor.
          */
         private StaticModel() {
             /* call constructor */
@@ -252,7 +407,7 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
         }
 
         /**
-         * Get the number of display columns
+         * Get the number of display columns.
          * @return the columns
          */
         @Override
@@ -261,7 +416,7 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
         }
 
         /**
-         * Get the number of rows in the current table
+         * Get the number of rows in the current table.
          * @return the number of rows
          */
         @Override
@@ -270,38 +425,39 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
         }
 
         /**
-         * Get the name of the column
+         * Get the name of the column.
          * @param col the column
          * @return the name of the column
          */
         @Override
-        public String getColumnName(int col) {
+        public String getColumnName(final int col) {
             switch (col) {
                 case COLUMN_CLASS:
-                    return titleClass;
+                    return TITLE_CLASS;
                 case COLUMN_NAME:
-                    return titleName;
+                    return TITLE_NAME;
                 case COLUMN_DESC:
-                    return titleDesc;
+                    return TITLE_DESC;
                 case COLUMN_ORDER:
-                    return titleOrder;
+                    return TITLE_ORDER;
                 case COLUMN_ENABLED:
-                    return titleEnabled;
+                    return TITLE_ENABLED;
                 case COLUMN_ACTIVE:
-                    return titleActive;
+                    return TITLE_ACTIVE;
                 default:
                     return null;
             }
         }
 
         /**
-         * Obtain the Field id associated with the column
+         * Obtain the Field id associated with the column.
          * @param row the row
          * @param column the column
+         * @return the field id.
          */
         @Override
-        public JDataField getFieldForCell(int row,
-                                          int column) {
+        public JDataField getFieldForCell(final int row,
+                                          final int column) {
             /* Switch on column */
             switch (column) {
                 case COLUMN_CLASS:
@@ -320,12 +476,12 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
         }
 
         /**
-         * Get the object class of the column
+         * Get the object class of the column.
          * @param col the column
          * @return the class of the objects associated with the column
          */
         @Override
-        public Class<?> getColumnClass(int col) {
+        public Class<?> getColumnClass(final int col) {
             switch (col) {
                 case COLUMN_DESC:
                     return String.class;
@@ -345,19 +501,21 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
         }
 
         /**
-         * Is the cell at (row, col) editable
+         * Is the cell at (row, col) editable?
+         * @param row the row
+         * @param col the column
+         * @return true/false
          */
         @Override
-        public boolean isCellEditable(int row,
-                                      int col) {
-            T myData;
-
+        public boolean isCellEditable(final int row,
+                                      final int col) {
             /* Access the data */
-            myData = theStatic.get(row);
+            T myData = theStatic.get(row);
 
             /* Not edit-able is not enabled */
-            if (!myData.getEnabled())
+            if (!myData.getEnabled()) {
                 return false;
+            }
 
             /* switch on column */
             switch (col) {
@@ -374,12 +532,14 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
         }
 
         /**
-         * Get the value at (row, col)
+         * Get the value at (row, col).
+         * @param row the row
+         * @param col the column
          * @return the object value
          */
         @Override
-        public Object getValueAt(int row,
-                                 int col) {
+        public Object getValueAt(final int row,
+                                 final int col) {
             T myData;
             Object o;
 
@@ -396,8 +556,9 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
                     break;
                 case COLUMN_DESC:
                     o = myData.getDesc();
-                    if ((o != null) && (((String) o).length() == 0))
+                    if ((o != null) && (((String) o).length() == 0)) {
                         o = null;
+                    }
                     break;
                 case COLUMN_ENABLED:
                     o = myData.getEnabled() ? "true" : "false";
@@ -414,25 +575,26 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
             }
 
             /* If we have a null value for an error field, set error description */
-            if ((o == null) && (myData.hasErrors(getFieldForCell(row, col))))
+            if ((o == null) && (myData.hasErrors(getFieldForCell(row, col)))) {
                 o = Renderer.getError();
+            }
 
             /* Return to caller */
             return o;
         }
 
         /**
-         * Set the value at (row, col)
+         * Set the value at (row, col).
          * @param obj the object value to set
+         * @param row the row
+         * @param col the column
          */
         @Override
-        public void setValueAt(Object obj,
-                               int row,
-                               int col) {
-            T myData;
-
+        public void setValueAt(final Object obj,
+                               final int row,
+                               final int col) {
             /* Access the line */
-            myData = theStatic.get(row);
+            T myData = theStatic.get(row);
 
             /* Push history */
             myData.pushHistory();
@@ -447,11 +609,12 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
                     case COLUMN_DESC:
                         myData.setDescription((String) obj);
                         break;
+                    default:
+                        break;
                 }
-            }
 
-            /* Handle Exceptions */
-            catch (Throwable e) {
+                /* Handle Exceptions */
+            } catch (Exception e) {
                 /* Reset values */
                 myData.popHistory();
                 myData.pushHistory();
@@ -474,13 +637,8 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
                 myData.validate();
                 theStatic.findEditState();
 
-                /* Switch on the updated column */
-                switch (col) {
                 /* note that we have updated this cell */
-                    default:
-                        fireTableRowsUpdated(row, row);
-                        break;
-                }
+                fireTableRowsUpdated(row, row);
 
                 /* Note that changes have occurred */
                 notifyChanges();
@@ -490,16 +648,21 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
     }
 
     /**
-     * Static mouse listener
+     * Static mouse listener.
      */
-    private class StaticMouse extends DataMouse<T> {
-
-        /* Pop-up Menu items */
-        private static final String popupSetEnabled = "Set As Enabled";
-        private static final String popupSetDisabled = "Set As Disabled";
+    private final class StaticMouse extends DataMouse<T> {
+        /**
+         * Enabled Popup.
+         */
+        private static final String POPUP_ENABLED = "Set As Enabled";
 
         /**
-         * Constructor
+         * Disabled Popup.
+         */
+        private static final String POPUP_DISABLED = "Set As Disabled";
+
+        /**
+         * Constructor.
          */
         private StaticMouse() {
             /* Call super-constructor */
@@ -507,19 +670,19 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
         }
 
         /**
-         * Disable Insert/Delete
+         * Disable Insert/Delete.
          * @param pMenu the menu to add to
          */
         @Override
-        protected void addInsertDelete(JPopupMenu pMenu) {
+        protected void addInsertDelete(final JPopupMenu pMenu) {
         }
 
         /**
-         * Add Special commands to menu
+         * Add Special commands to menu.
          * @param pMenu the menu to add to
          */
         @Override
-        protected void addSpecialCommands(JPopupMenu pMenu) {
+        protected void addSpecialCommands(final JPopupMenu pMenu) {
             JMenuItem myItem;
             T myData;
             Class<T> myClass = (theStatic != null) ? theStatic.getBaseClass() : null;
@@ -529,18 +692,16 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
             boolean isActive;
 
             /* Nothing to do if the table is locked */
-            if (theTable.isLocked())
+            if (theTable.isLocked()) {
                 return;
+            }
 
             /* Loop through the selected rows */
             for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
-                /* Ignore locked rows */
-                if ((myRow == null) || (myRow.isLocked()))
+                /* Ignore locked/deleted rows */
+                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
-
-                /* Ignore deleted rows */
-                if (myRow.isDeleted())
-                    continue;
+                }
 
                 /* Access as data */
                 myData = myClass.cast(myRow);
@@ -550,10 +711,11 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
                 isActive = myData.isActive();
 
                 /* Determine whether we can enable/disable */
-                if (!isEnabled)
+                if (!isEnabled) {
                     enableEnable = true;
-                else if (!isActive)
+                } else if (!isActive) {
                     enableDisable = true;
+                }
             }
 
             /* If there is something to add and there are already items in the menu */
@@ -565,8 +727,8 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
             /* If we can Enable the item */
             if (enableEnable) {
                 /* Add the undo change choice */
-                myItem = new JMenuItem(popupSetEnabled);
-                myItem.setActionCommand(popupSetEnabled);
+                myItem = new JMenuItem(POPUP_ENABLED);
+                myItem.setActionCommand(POPUP_ENABLED);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
@@ -574,38 +736,36 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
             /* If we can Disable the item */
             if (enableDisable) {
                 /* Add the undo change choice */
-                myItem = new JMenuItem(popupSetDisabled);
-                myItem.setActionCommand(popupSetDisabled);
+                myItem = new JMenuItem(POPUP_DISABLED);
+                myItem.setActionCommand(POPUP_DISABLED);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
         }
 
         /**
-         * Perform actions for controls/pop-ups on this table
+         * Perform actions for controls/pop-ups on this table.
          * @param evt the event
          */
         @Override
-        public void actionPerformed(ActionEvent evt) {
+        public void actionPerformed(final ActionEvent evt) {
             String myCmd = evt.getActionCommand();
 
             /* Cancel any editing */
             theTable.cancelEditing();
 
             /* If this is a set null units command */
-            if (myCmd.equals(popupSetEnabled)) {
+            if (myCmd.equals(POPUP_ENABLED)) {
                 /* Enable disabled rows */
                 setEnabledRows(true);
-            }
 
-            /* else if this is a set null tax command */
-            else if (myCmd.equals(popupSetDisabled)) {
+                /* else if this is a set null tax command */
+            } else if (myCmd.equals(POPUP_DISABLED)) {
                 /* Disable rows */
                 setEnabledRows(false);
-            }
 
-            /* else we do not recognise the action */
-            else {
+                /* else we do not recognise the action */
+            } else {
                 /* Pass it to the superclass */
                 super.actionPerformed(evt);
                 return;
@@ -617,10 +777,10 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
         }
 
         /**
-         * Enable/Disable Rows
+         * Enable/Disable Rows.
          * @param doEnable true/false
          */
-        private void setEnabledRows(boolean doEnable) {
+        private void setEnabledRows(final boolean doEnable) {
             T myData;
             Class<T> myClass = (theStatic != null) ? theStatic.getBaseClass() : null;
             boolean isEnabled;
@@ -629,13 +789,10 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
 
             /* Loop through the selected rows */
             for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
-                /* Ignore locked rows */
-                if ((myRow == null) || (myRow.isLocked()))
+                /* Ignore locked/deleted rows */
+                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
-
-                /* Ignore deleted rows */
-                if (myRow.isDeleted())
-                    continue;
+                }
 
                 /* Determine row */
                 row = myRow.indexOf();
@@ -650,18 +807,19 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
                 /* If we are enabling */
                 if (doEnable) {
                     /* Ignore enabled rows */
-                    if (isEnabled)
+                    if (isEnabled) {
                         continue;
+                    }
 
                     /* Enable the row */
                     myData.setEnabled(true);
-                }
 
-                /* If we are disabling */
-                else {
+                    /* If we are disabling */
+                } else {
                     /* Ignore disabled/active rows */
-                    if ((!isEnabled) || (isActive))
+                    if ((!isEnabled) || (isActive)) {
                         continue;
+                    }
 
                     /* Enable the row */
                     myData.setEnabled(false);
@@ -674,18 +832,31 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
     }
 
     /**
-     * Column Model class
+     * Column Model class.
      */
-    private class StaticColumnModel extends DataColumnModel {
+    private final class StaticColumnModel extends DataColumnModel {
+        /**
+         * Serial Id.
+         */
         private static final long serialVersionUID = 676363206266447113L;
 
-        /* Renderers/Editors */
+        /**
+         * Integer renderer.
+         */
         private final IntegerRenderer theIntegerRenderer;
+
+        /**
+         * String renderer.
+         */
         private final StringRenderer theStringRenderer;
+
+        /**
+         * String Editor.
+         */
         private final StringEditor theStringEditor;
 
         /**
-         * Constructor
+         * Constructor.
          */
         private StaticColumnModel() {
             /* call constructor */
@@ -697,12 +868,12 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
             theStringEditor = new StringEditor();
 
             /* Create the columns */
-            addColumn(new DataColumn(COLUMN_CLASS, 90, theStringRenderer, null));
-            addColumn(new DataColumn(COLUMN_NAME, 80, theStringRenderer, theStringEditor));
-            addColumn(new DataColumn(COLUMN_DESC, 200, theStringRenderer, theStringEditor));
-            addColumn(new DataColumn(COLUMN_ORDER, 20, theIntegerRenderer, null));
-            addColumn(new DataColumn(COLUMN_ENABLED, 20, theStringRenderer, null));
-            addColumn(new DataColumn(COLUMN_ACTIVE, 20, theStringRenderer, null));
+            addColumn(new DataColumn(COLUMN_CLASS, WIDTH_CLASS, theStringRenderer, null));
+            addColumn(new DataColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
+            addColumn(new DataColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
+            addColumn(new DataColumn(COLUMN_ORDER, WIDTH_ORDER, theIntegerRenderer, null));
+            addColumn(new DataColumn(COLUMN_ENABLED, WIDTH_ENABLED, theStringRenderer, null));
+            addColumn(new DataColumn(COLUMN_ACTIVE, WIDTH_ACTIVE, theStringRenderer, null));
         }
     }
 }

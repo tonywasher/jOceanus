@@ -280,7 +280,7 @@ public class PasswordDialog extends JDialog implements ActionListener {
         Object o = evt.getSource();
 
         /* If this event relates to the OK box or the password field */
-        if ((o == theOKButton) || (o == thePassField) || (o == theConfirmField)) {
+        if ((theOKButton.equals(o)) || (thePassField.equals(o)) || (theConfirmField.equals(o))) {
             /* Access the password */
             thePassword = thePassField.getPassword();
 
@@ -311,7 +311,7 @@ public class PasswordDialog extends JDialog implements ActionListener {
             setVisible(false);
 
             /* else if this event relates to the Cancel button */
-        } else if (o == theCancelButton) {
+        } else if (theCancelButton.equals(o)) {
             /* Note that we have set the password */
             isPasswordSet = false;
 
@@ -352,16 +352,16 @@ public class PasswordDialog extends JDialog implements ActionListener {
         public Component getComponentAfter(final Container pRoot,
                                            final Component pCurrent) {
             /* Handle field order */
-            if (pCurrent == thePassField) {
+            if (thePassField.equals(pCurrent)) {
                 return theConfirmField;
             }
-            if (pCurrent == theConfirmField) {
+            if (theConfirmField.equals(pCurrent)) {
                 return theOKButton;
             }
-            if (pCurrent == theOKButton) {
+            if (theOKButton.equals(pCurrent)) {
                 return theCancelButton;
             }
-            if (pCurrent == theCancelButton) {
+            if (theCancelButton.equals(pCurrent)) {
                 return thePassField;
             }
 
@@ -373,16 +373,16 @@ public class PasswordDialog extends JDialog implements ActionListener {
         public Component getComponentBefore(final Container pRoot,
                                             final Component pCurrent) {
             /* Handle field order */
-            if (pCurrent == thePassField) {
+            if (thePassField.equals(pCurrent)) {
                 return theCancelButton;
             }
-            if (pCurrent == theConfirmField) {
+            if (theConfirmField.equals(pCurrent)) {
                 return thePassField;
             }
-            if (pCurrent == theOKButton) {
+            if (theOKButton.equals(pCurrent)) {
                 return theConfirmField;
             }
-            if (pCurrent == theCancelButton) {
+            if (theCancelButton.equals(pCurrent)) {
                 return theOKButton;
             }
 

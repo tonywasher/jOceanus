@@ -965,8 +965,6 @@ public final class EncryptedData {
                 return parseValue(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw e;
             } catch (Exception e) {
                 throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
             }

@@ -23,6 +23,7 @@
 package uk.co.tolcroft.models.views;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JFrame;
 
@@ -98,7 +99,7 @@ public abstract class DataControl<T extends DataSet<T>> {
     /**
      * The Data Entry hashMap.
      */
-    private final HashMap<String, JDataEntry> theMap;
+    private final Map<String, JDataEntry> theMap;
 
     /**
      * Constructor for default preferences.

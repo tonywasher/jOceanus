@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,64 +66,242 @@ import uk.co.tolcroft.models.ui.ValueField.ValueClass;
 import uk.co.tolcroft.models.views.ViewList;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 
+/**
+ * Account maintenance panel.
+ * @author Tony Washer
+ */
 public class MaintAccount implements StdPanel {
-    /* Properties */
-    private MaintenanceTab theParent = null;
-    private JPanel thePanel = null;
-    private JPanel theDetail = null;
-    private JPanel theStatus = null;
-    private JPanel theButtons = null;
-    private JPanel theSecure = null;
-    private AccountSelect theSelect = null;
-    private SaveButtons theSaveButs = null;
-    private FieldSet theFieldSet = null;
-    private ItemField theName = null;
-    private ItemField theDesc = null;
-    private ItemField theWebSite = null;
-    private ItemField theCustNo = null;
-    private ItemField theUserId = null;
-    private ItemField thePassword = null;
-    private ItemField theActDetail = null;
-    private ItemField theNotes = null;
-    private JLabel theFirst = null;
-    private JLabel theLast = null;
-    private JComboBox theTypesBox = null;
-    private JComboBox theParentBox = null;
-    private JComboBox theAliasBox = null;
-    private DateDayButton theMatButton = null;
-    private JLabel theTypLabel = null;
-    private JLabel theParLabel = null;
-    private JLabel theAlsLabel = null;
-    private JLabel theMatLabel = null;
-    private JButton theInsButton = null;
-    private JButton theDelButton = null;
-    private JButton theClsButton = null;
-    private JButton theUndoButton = null;
-    private Account theAccount = null;
-    private AccountList theAccounts = null;
-    private AccountList theActView = null;
-    private AccountTypeList theAcTypList = null;
-    private JDataEntry theDataEntry = null;
-    private ErrorPanel theError = null;
-    private boolean doShowClosed = false;
-    private boolean refreshingData = false;
-    private boolean typesPopulated = false;
-    private boolean parPopulated = false;
-    private boolean alsPopulated = false;
-    private View theView = null;
-    private ViewList theViewSet = null;
-    private ListClass theViewList = null;
+    /**
+     * Container gap 1.
+     */
+    private static final int GAP_TEN = 10;
 
-    /* Access methods */
+    /**
+     * Container gap 2.
+     */
+    private static final int GAP_THIRTY = 30;
+
+    /**
+     * The parent.
+     */
+    private final MaintenanceTab theParent;
+
+    /**
+     * The panel.
+     */
+    private final JPanel thePanel;
+
+    /**
+     * The detail panel.
+     */
+    private final JPanel theDetail;
+
+    /**
+     * The buttons panel.
+     */
+    private final JPanel theButtons;
+
+    /**
+     * The security panel.
+     */
+    private final JPanel theSecure;
+
+    /**
+     * The select panel.
+     */
+    private final AccountSelect theSelect;
+
+    /**
+     * The save panel.
+     */
+    private final SaveButtons theSaveButs;
+
+    /**
+     * The fieldSet.
+     */
+    private final FieldSet theFieldSet;
+
+    /**
+     * The name field.
+     */
+    private final ItemField theName;
+
+    /**
+     * The description field.
+     */
+    private final ItemField theDesc;
+
+    /**
+     * The WebSite field.
+     */
+    private final ItemField theWebSite;
+
+    /**
+     * The customerNo field.
+     */
+    private final ItemField theCustNo;
+
+    /**
+     * The userId field.
+     */
+    private final ItemField theUserId;
+
+    /**
+     * The password field.
+     */
+    private final ItemField thePassword;
+
+    /**
+     * The account field.
+     */
+    private final ItemField theActDetail;
+
+    /**
+     * The notes field.
+     */
+    private final ItemField theNotes;
+
+    /**
+     * The first event.
+     */
+    private final JLabel theFirst;
+
+    /**
+     * The last event.
+     */
+    private final JLabel theLast;
+
+    /**
+     * The types comboBox.
+     */
+    private final JComboBox theTypesBox;
+
+    /**
+     * The parent comboBox.
+     */
+    private final JComboBox theParentBox;
+
+    /**
+     * The alias comboBox.
+     */
+    private final JComboBox theAliasBox;
+
+    /**
+     * The maturity button.
+     */
+    private final DateDayButton theMatButton;
+
+    /**
+     * The Account type label.
+     */
+    private final JLabel theTypLabel;
+
+    /**
+     * The parent label.
+     */
+    private final JLabel theParLabel;
+
+    /**
+     * The Alias label.
+     */
+    private final JLabel theAlsLabel;
+
+    /**
+     * The Maturity label.
+     */
+    private final JLabel theMatLabel;
+
+    /**
+     * The insert button.
+     */
+    private final JButton theInsButton;
+
+    /**
+     * The delete button.
+     */
+    private final JButton theDelButton;
+
+    /**
+     * The Close button.
+     */
+    private final JButton theClsButton;
+
+    /**
+     * The Undo button.
+     */
+    private final JButton theUndoButton;
+
+    /**
+     * The Account.
+     */
+    private Account theAccount = null;
+
+    /**
+     * The Accounts List.
+     */
+    private AccountList theAccounts = null;
+
+    /**
+     * The Account view.
+     */
+    private AccountList theActView = null;
+
+    /**
+     * The Account type list.
+     */
+    private AccountTypeList theAcTypList = null;
+
+    /**
+     * The data entry.
+     */
+    private final JDataEntry theDataEntry;
+
+    /**
+     * The error panel.
+     */
+    private final ErrorPanel theError;
+
+    /**
+     * Are we showing closed accounts?
+     */
+    private boolean doShowClosed = false;
+
+    /**
+     * Are we refreshing data?
+     */
+    private boolean refreshingData = false;
+
+    /**
+     * The data view.
+     */
+    private final View theView;
+
+    /**
+     * The view class.
+     */
+    private final ViewList theViewSet;
+
+    /**
+     * The view list.
+     */
+    private final ListClass theViewList;
+
+    /**
+     * Obtain the panel.
+     * @return the panel
+     */
     public JPanel getPanel() {
         return thePanel;
     }
 
+    /**
+     * Obtain the account.
+     * @return the account
+     */
     public Account getAccount() {
         return theAccount;
     }
 
-    /* Access the debug entry */
     @Override
     public JDataEntry getDataEntry() {
         return theDataEntry;
@@ -133,8 +312,11 @@ public class MaintAccount implements StdPanel {
         return theParent.getDataManager();
     }
 
-    /* Constructor */
-    public MaintAccount(MaintenanceTab pParent) {
+    /**
+     * Constructor.
+     * @param pParent the parent
+     */
+    public MaintAccount(final MaintenanceTab pParent) {
         JLabel myName;
         JLabel myDesc;
         JLabel myFirst;
@@ -254,7 +436,7 @@ public class MaintAccount implements StdPanel {
         theUndoButton.addActionListener(myListener);
 
         /* Create the Account Selection panel */
-        theSelect = new AccountSelect(theView, this, true);
+        theSelect = new AccountSelect(theView, true);
 
         /* Create the Save buttons panel */
         theSaveButs = new SaveButtons(this);
@@ -475,12 +657,12 @@ public class MaintAccount implements StdPanel {
                                   .addContainerGap()));
 
         /* Create the status panel */
-        theStatus = new JPanel();
-        theStatus.setBorder(javax.swing.BorderFactory.createTitledBorder("Account Status"));
+        JPanel myStatus = new JPanel();
+        myStatus.setBorder(javax.swing.BorderFactory.createTitledBorder("Account Status"));
 
         /* Create the layout for the panel */
-        myLayout = new GroupLayout(theStatus);
-        theStatus.setLayout(myLayout);
+        myLayout = new GroupLayout(myStatus);
+        myStatus.setLayout(myLayout);
 
         /* Set the layout */
         myLayout.setHorizontalGroup(myLayout
@@ -530,7 +712,7 @@ public class MaintAccount implements StdPanel {
                                                     .addComponent(theSaveButs)
                                                     .addGroup(myLayout.createSequentialGroup()
                                                                       .addComponent(theDetail)
-                                                                      .addComponent(theStatus))
+                                                                      .addComponent(myStatus))
                                                     .addComponent(theSecure).addComponent(theButtons))
                                   .addContainerGap()));
         myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -538,48 +720,50 @@ public class MaintAccount implements StdPanel {
                                   .addContainerGap()
                                   .addComponent(theError)
                                   .addComponent(theSelect)
-                                  .addContainerGap(10, 30)
+                                  .addContainerGap(GAP_TEN, GAP_THIRTY)
                                   .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                    .addComponent(theDetail).addComponent(theStatus))
-                                  .addContainerGap(10, 30).addComponent(theSecure).addContainerGap(10, 30)
-                                  .addComponent(theButtons).addContainerGap(10, 30).addComponent(theSaveButs)
+                                                    .addComponent(theDetail).addComponent(myStatus))
+                                  .addContainerGap(GAP_TEN, GAP_THIRTY).addComponent(theSecure)
+                                  .addContainerGap(GAP_TEN, GAP_THIRTY).addComponent(theButtons)
+                                  .addContainerGap(GAP_TEN, GAP_THIRTY).addComponent(theSaveButs)
                                   .addContainerGap()));
 
         /* Set initial display */
         showAccount();
     }
 
-    /* hasUpdates */
     @Override
     public boolean hasUpdates() {
         return ((theAccount != null) && (theAccount.hasChanges()));
     }
 
-    /* hasErrors */
+    /**
+     * Do we have errors?
+     * @return true/false
+     */
     public boolean hasErrors() {
         return ((theAccount != null) && (theAccount.hasErrors()));
     }
 
-    /* isLocked */
     @Override
     public boolean isLocked() {
         return false;
     }
 
-    /* getEditState */
     @Override
     public EditState getEditState() {
-        if (theAccount == null)
+        if (theAccount == null) {
             return EditState.CLEAN;
+        }
         return theAccount.getEditState();
     }
 
     /**
-     * Lock on error
+     * Lock on error.
      * @param isError is there an error (True/False)
      */
     @Override
-    public void lockOnError(boolean isError) {
+    public void lockOnError(final boolean isError) {
         /* Hide selection panel */
         theSelect.setVisible(!isError);
 
@@ -592,9 +776,8 @@ public class MaintAccount implements StdPanel {
         theSaveButs.setEnabled(!isError);
     }
 
-    /* performCommand */
     @Override
-    public void performCommand(stdCommand pCmd) {
+    public void performCommand(final stdCommand pCmd) {
         /* Switch on command */
         switch (pCmd) {
             case OK:
@@ -603,16 +786,17 @@ public class MaintAccount implements StdPanel {
             case RESETALL:
                 resetData();
                 break;
+            default:
+                break;
         }
         notifyChanges();
     }
 
-    /* Note that changes have been made */
     @Override
     public void notifyChanges() {
         /* Lock down the table buttons and the selection */
         theSaveButs.setLockDown();
-        theSelect.setLockDown();
+        theSelect.setEnabled(!hasUpdates());
 
         /* Show the account */
         showAccount();
@@ -622,13 +806,15 @@ public class MaintAccount implements StdPanel {
     }
 
     /**
-     * Update Debug view
+     * Update Debug view.
      */
     public void updateDebug() {
         theDataEntry.setObject(theActView);
     }
 
-    /* resetData */
+    /**
+     * resetData.
+     */
     public void resetData() {
         theAccount.clearErrors();
         theAccount.resetHistory();
@@ -648,19 +834,22 @@ public class MaintAccount implements StdPanel {
         updateDebug();
     }
 
-    /* print */
     @Override
     public void printIt() {
     }
 
-    /* validate */
+    /**
+     * validate.
+     */
     public void validate() {
         theAccount.clearErrors();
         theAccount.validate();
         updateDebug();
     }
 
-    /* saveData */
+    /**
+     * saveData.
+     */
     public void saveData() {
         /* Validate the data */
         validate();
@@ -670,7 +859,9 @@ public class MaintAccount implements StdPanel {
         }
     }
 
-    /* refreshData */
+    /**
+     * refreshData.
+     */
     public void refreshData() {
         FinanceData myData;
         AccountType myType;
@@ -691,10 +882,9 @@ public class MaintAccount implements StdPanel {
         theSelect.refreshData();
 
         /* If we have types already populated */
-        if (typesPopulated) {
+        if (theTypesBox.getItemCount() > 0) {
             /* Remove the types */
             theTypesBox.removeAllItems();
-            typesPopulated = false;
         }
 
         /* Create an account type iterator */
@@ -702,17 +892,13 @@ public class MaintAccount implements StdPanel {
 
         /* Add the AccountType values to the types box */
         while ((myType = myTypeIterator.next()) != null) {
-            /* Ignore the type if it is reserved */
-            if (myType.isReserved())
+            /* Ignore the type if it is reserved or not enabled */
+            if ((myType.isReserved()) || (!myType.getEnabled())) {
                 continue;
-
-            /* Ignore the type if it is not enabled */
-            if (!myType.getEnabled())
-                continue;
+            }
 
             /* Add the item to the list */
             theTypesBox.addItem(myType.getName());
-            typesPopulated = true;
         }
 
         /* Note that we have finished refreshing data */
@@ -722,14 +908,17 @@ public class MaintAccount implements StdPanel {
         refreshParents();
 
         /* Adjust the account selection */
-        if (theAccount != null)
+        if (theAccount != null) {
             theSelect.setSelection(theAccount);
+        }
 
         /* Show the account */
         setSelection(theSelect.getSelected());
     }
 
-    /* refreshParents */
+    /**
+     * refreshParents.
+     */
     private void refreshParents() {
         Account myAcct;
         AccountType myType;
@@ -739,10 +928,9 @@ public class MaintAccount implements StdPanel {
         refreshingData = true;
 
         /* If we have parents already populated */
-        if (parPopulated) {
-            /* Remove the types */
+        if (theParentBox.getItemCount() > 0) {
+            /* Remove them */
             theParentBox.removeAllItems();
-            parPopulated = false;
         }
 
         /* Create an account iterator */
@@ -754,27 +942,27 @@ public class MaintAccount implements StdPanel {
             myType = myAcct.getActType();
 
             /* Ignore the account if it is not an owner */
-            if (!myType.isOwner())
+            if (!myType.isOwner()) {
                 continue;
+            }
 
             /* Ignore the account if it is closed and we are not showing closed */
-            if (myAcct.isClosed() && (!doShowClosed))
+            if (myAcct.isClosed() && (!doShowClosed)) {
                 continue;
+            }
 
             /* Add the item to the list */
-            theParentBox.addItem(myAcct.getName());
-            parPopulated = true;
+            theParentBox.addItem(myAcct);
         }
 
         /* Note that we have finished refreshing data */
         refreshingData = false;
     }
 
-    /* Note that there has been a selection change */
     @Override
-    public void notifySelection(Object obj) {
+    public void notifySelection(final Object obj) {
         /* If this is a change from the account selection */
-        if (obj == (Object) theSelect) {
+        if (theSelect.equals(obj)) {
             /* If we have changed the show closed option */
             if (theSelect.doShowClosed() != doShowClosed) {
                 /* Record details and refresh parents */
@@ -787,8 +975,11 @@ public class MaintAccount implements StdPanel {
         }
     }
 
-    /* Select an explicit account and period */
-    public void selectAccount(Account pAccount) {
+    /**
+     * Select an explicit account.
+     * @param pAccount the account
+     */
+    public void selectAccount(final Account pAccount) {
         /* Adjust the account selection */
         theSelect.setSelection(pAccount);
 
@@ -796,8 +987,11 @@ public class MaintAccount implements StdPanel {
         setSelection(theSelect.getSelected());
     }
 
-    /* Set Selection */
-    public void setSelection(Account pAccount) {
+    /**
+     * Set Selection.
+     * @param pAccount the account
+     */
+    public void setSelection(final Account pAccount) {
         /* Reset controls */
         theActView = null;
         theAccount = null;
@@ -819,6 +1013,9 @@ public class MaintAccount implements StdPanel {
         updateDebug();
     }
 
+    /**
+     * Show the account.
+     */
     private void showAccount() {
         AccountType myType;
         boolean isClosed;
@@ -885,10 +1082,11 @@ public class MaintAccount implements StdPanel {
 
             /* Handle parent */
             if (myType.isChild()) {
-                if (theAccount.getParent() != null)
+                if (theAccount.getParent() != null) {
                     theParentBox.setSelectedItem(theAccount.getParent().getName());
-                else
+                } else {
                     theParentBox.setSelectedItem(null);
+                }
                 theParentBox.setVisible(true);
                 theParLabel.setVisible(true);
             } else {
@@ -900,10 +1098,9 @@ public class MaintAccount implements StdPanel {
             /* Handle alias */
             if (myType.canAlias() && (!theAccount.isAliasedTo())) {
                 /* If we have alias already populated */
-                if (alsPopulated) {
+                if (theAliasBox.getItemCount() > 0) {
                     /* Remove the items */
                     theAliasBox.removeAllItems();
-                    alsPopulated = false;
                 }
 
                 /* Create an account iterator */
@@ -916,31 +1113,35 @@ public class MaintAccount implements StdPanel {
                     myType = myAcct.getActType();
 
                     /* Ignore the account if it cannot alias */
-                    if (!myType.canAlias())
+                    if (!myType.canAlias()) {
                         continue;
+                    }
 
                     /* Ignore the account if it is same type */
-                    if (myType.equals(theAccount.getActType()))
+                    if (myType.equals(theAccount.getActType())) {
                         continue;
+                    }
 
                     /* Ignore the account if it is an alias */
-                    if (myAcct.getAlias() != null)
+                    if (myAcct.getAlias() != null) {
                         continue;
+                    }
 
                     /* Ignore the account if it is us */
-                    if (myAcct.compareTo(theAccount) == 0)
+                    if (myAcct.compareTo(theAccount) == 0) {
                         continue;
+                    }
 
                     /* Add the item to the list */
-                    theAliasBox.addItem(myAcct.getName());
-                    alsPopulated = true;
+                    theAliasBox.addItem(myAcct);
                 }
 
                 /* Set up the aliases */
-                if (theAccount.getAlias() != null)
-                    theAliasBox.setSelectedItem(theAccount.getAlias().getName());
-                else
+                if (theAccount.getAlias() != null) {
+                    theAliasBox.setSelectedItem(theAccount.getAlias());
+                } else {
                     theAliasBox.setSelectedItem(null);
+                }
                 theAliasBox.setVisible(true);
                 theAlsLabel.setVisible(true);
             } else {
@@ -976,10 +1177,9 @@ public class MaintAccount implements StdPanel {
 
             /* Note that we are finished refreshing data */
             refreshingData = false;
-        }
 
-        /* else no account selected */
-        else {
+            /* else no account selected */
+        } else {
             /* Clear details */
             theName.setValue(null);
             theDesc.setValue(null);
@@ -1020,13 +1220,17 @@ public class MaintAccount implements StdPanel {
         }
     }
 
-    /* Delete New Account */
+    /**
+     * Delete New Account.
+     */
     private void delNewAccount() {
         /* Set the previously selected account */
         setSelection(theSelect.getSelected());
     }
 
-    /* New Account */
+    /**
+     * New Account.
+     */
     private void newAccount() {
         /* Create a account View for an empty account */
         theActView = theAccounts.getEditList(theSelect.getType());
@@ -1042,7 +1246,9 @@ public class MaintAccount implements StdPanel {
         updateDebug();
     }
 
-    /* Undo changes */
+    /**
+     * Undo changes.
+     */
     private void undoChanges() {
         /* If the account has changes */
         if (theAccount.hasHistory()) {
@@ -1062,27 +1268,27 @@ public class MaintAccount implements StdPanel {
             /* Notify changes */
             notifyChanges();
             updateDebug();
-        }
 
-        /* else if this is a new account */
-        else if (theAccount.getState() == DataState.NEW) {
+            /* else if this is a new account */
+        } else if (theAccount.getState() == DataState.NEW) {
             /* Delete the new account */
             delNewAccount();
         }
     }
 
     /**
-     * AccountListener class
+     * AccountListener class.
      */
-    private class AccountListener implements ActionListener, ItemListener, PropertyChangeListener {
+    private final class AccountListener implements ActionListener, ItemListener, PropertyChangeListener {
         @Override
-        public void itemStateChanged(ItemEvent evt) {
+        public void itemStateChanged(final ItemEvent evt) {
             String myName;
             Object o = evt.getSource();
 
             /* Ignore selection if refreshing data */
-            if (refreshingData)
+            if ((refreshingData) || (evt.getStateChange() != ItemEvent.SELECTED)) {
                 return;
+            }
 
             /* Push history */
             theAccount.pushHistory();
@@ -1090,53 +1296,45 @@ public class MaintAccount implements StdPanel {
             /* Protect against exceptions */
             try {
                 /* If this event relates to the period box */
-                if (o == theTypesBox) {
-                    if (evt.getStateChange() == ItemEvent.SELECTED) {
-                        /* Store the appropriate value */
-                        myName = (String) evt.getItem();
-                        theAccount.setActType(theAcTypList.searchFor(myName));
+                if (theTypesBox.equals(o)) {
+                    /* Store the appropriate value */
+                    myName = (String) evt.getItem();
+                    theAccount.setActType(theAcTypList.searchFor(myName));
 
-                        /* If the account is now a bond */
-                        if (theAccount.isBond()) {
-                            /* If it doesn't have a maturity */
-                            if (theAccount.getMaturity() == null) {
-                                /* Create a default maturity */
-                                theAccount.setMaturity(new DateDay());
-                                theAccount.getMaturity().adjustYear(1);
-                            }
+                    /* If the account is now a bond */
+                    if (theAccount.isBond()) {
+                        /* If it doesn't have a maturity */
+                        if (theAccount.getMaturity() == null) {
+                            /* Create a default maturity */
+                            theAccount.setMaturity(new DateDay());
+                            theAccount.getMaturity().adjustYear(1);
                         }
 
                         /* Else set maturity to null for non-bonds */
-                        else
-                            theAccount.setMaturity(null);
-
-                        /* Set parent to null for non-child accounts */
-                        if (!theAccount.isChild())
-                            theAccount.setParent(null);
+                    } else {
+                        theAccount.setMaturity(null);
                     }
+
+                    /* Set parent to null for non-child accounts */
+                    if (!theAccount.isChild()) {
+                        theAccount.setParent(null);
+                    }
+
+                    /* If this event relates to the parent box */
+                } else if (theParentBox.equals(o)) {
+                    /* Store the appropriate value */
+                    Account myParent = (Account) evt.getItem();
+                    theAccount.setParent(myParent);
+
+                    /* If this event relates to the alias box */
+                } else if (theAliasBox.equals(o)) {
+                    /* Store the appropriate value */
+                    Account myAlias = (Account) evt.getItem();
+                    theAccount.setAlias(myAlias);
                 }
 
-                /* If this event relates to the parent box */
-                else if (o == theParentBox) {
-                    if (evt.getStateChange() == ItemEvent.SELECTED) {
-                        /* Store the appropriate value */
-                        myName = (String) evt.getItem();
-                        theAccount.setParent(theAccounts.searchFor(myName));
-                    }
-                }
-
-                /* If this event relates to the alias box */
-                else if (o == theAliasBox) {
-                    if (evt.getStateChange() == ItemEvent.SELECTED) {
-                        /* Store the appropriate value */
-                        myName = (String) evt.getItem();
-                        theAccount.setAlias(theAccounts.searchFor(myName));
-                    }
-                }
-            }
-
-            /* Handle Exceptions */
-            catch (Throwable e) {
+                /* Handle Exceptions */
+            } catch (Exception e) {
                 /* Reset values */
                 theAccount.popHistory();
                 theAccount.pushHistory();
@@ -1164,26 +1362,24 @@ public class MaintAccount implements StdPanel {
         }
 
         @Override
-        public void actionPerformed(ActionEvent evt) {
+        public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();
 
             /* If this event relates to the new button */
-            if (o == theInsButton) {
+            if (theInsButton.equals(o)) {
                 /* Create the new account */
                 newAccount();
                 return;
-            }
 
-            /* If this event relates to the del button */
-            else if (o == theDelButton) {
+                /* If this event relates to the del button */
+            } else if (theDelButton.equals(o)) {
                 /* else if this is a new account */
                 if (theAccount.getState() == DataState.NEW) {
                     /* Delete the new account */
                     delNewAccount();
-                }
 
-                /* Else we should just delete/recover the account */
-                else {
+                    /* Else we should just delete/recover the account */
+                } else {
                     /* Set the appropriate state */
                     theAccount.setState(theAccount.isDeleted() ? DataState.RECOVERED : DataState.DELETED);
 
@@ -1192,10 +1388,9 @@ public class MaintAccount implements StdPanel {
                     updateDebug();
                 }
                 return;
-            }
 
-            /* If this event relates to the undo button */
-            else if (o == theUndoButton) {
+                /* If this event relates to the undo button */
+            } else if (theUndoButton.equals(o)) {
                 /* Undo the changes */
                 undoChanges();
                 return;
@@ -1207,17 +1402,17 @@ public class MaintAccount implements StdPanel {
             /* Protect against exceptions */
             try {
                 /* If this event relates to the close button */
-                if (o == theClsButton) {
+                if (theClsButton.equals(o)) {
                     /* Re-open or close the account as required */
-                    if (theAccount.isClosed())
+                    if (theAccount.isClosed()) {
                         theAccount.reOpenAccount();
-                    else
+                    } else {
                         theAccount.closeAccount();
+                    }
                 }
-            }
 
-            /* Handle Exceptions */
-            catch (Throwable e) {
+                /* Handle Exceptions */
+            } catch (Exception e) {
                 /* Reset values */
                 theAccount.popHistory();
                 theAccount.pushHistory();
@@ -1245,7 +1440,7 @@ public class MaintAccount implements StdPanel {
         }
 
         @Override
-        public void propertyChange(PropertyChangeEvent evt) {
+        public void propertyChange(final PropertyChangeEvent evt) {
             Object o = evt.getSource();
 
             /* Push history */
@@ -1254,71 +1449,62 @@ public class MaintAccount implements StdPanel {
             /* Protect against exceptions */
             try {
                 /* If this is the name */
-                if (o == theName) {
+                if (theName.equals(o)) {
                     /* Update the Account */
                     String myValue = (String) theName.getValue();
                     theAccount.setAccountName(myValue);
-                }
 
-                /* If this is the description */
-                else if (o == theDesc) {
+                    /* If this is the description */
+                } else if (theDesc.equals(o)) {
                     /* Update the Account */
                     String myValue = (String) theDesc.getValue();
                     theAccount.setDescription(myValue);
-                }
 
-                /* If this is our WebSite */
-                else if (o == theWebSite) {
+                    /* If this is our WebSite */
+                } else if (theWebSite.equals(o)) {
                     /* Update the Account */
                     char[] myValue = (char[]) theWebSite.getValue();
                     theAccount.setWebSite(myValue);
-                }
 
-                /* If this is our CustNo */
-                else if (o == theCustNo) {
+                    /* If this is our CustNo */
+                } else if (theCustNo.equals(o)) {
                     /* Update the Account */
                     char[] myValue = (char[]) theCustNo.getValue();
                     theAccount.setCustNo(myValue);
-                }
 
-                /* If this is our UserId */
-                else if (o == theUserId) {
+                    /* If this is our UserId */
+                } else if (theUserId.equals(o)) {
                     /* Update the Account */
                     char[] myValue = (char[]) theUserId.getValue();
                     theAccount.setUserId(myValue);
-                }
 
-                /* If this is our Password */
-                else if (o == thePassword) {
+                    /* If this is our Password */
+                } else if (thePassword.equals(o)) {
                     /* Update the Account */
                     char[] myValue = (char[]) thePassword.getValue();
                     theAccount.setPassword(myValue);
-                }
 
-                /* If this is our Account Detail */
-                else if (o == theActDetail) {
+                    /* If this is our Account Detail */
+                } else if (theActDetail.equals(o)) {
                     /* Update the Account */
                     char[] myValue = (char[]) theActDetail.getValue();
                     theAccount.setAccount(myValue);
-                }
 
-                /* If this is our Notes */
-                else if (o == theNotes) {
+                    /* If this is our Notes */
+                } else if (theNotes.equals(o)) {
                     /* Update the Account */
                     char[] myValue = (char[]) theNotes.getValue();
                     theAccount.setNotes(myValue);
-                }
 
-                /* If this event relates to the maturity box */
-                else if (o == theMatButton) {
+                    /* If this event relates to the maturity box */
+                } else if (theMatButton.equals(o)) {
                     /* Access the value */
                     DateDay myDate = new DateDay(theMatButton.getSelectedDate());
                     theAccount.setMaturity(myDate);
                 }
-            }
 
-            /* Handle Exceptions */
-            catch (Throwable e) {
+                /* Handle Exceptions */
+            } catch (Exception e) {
                 /* Reset values */
                 theAccount.popHistory();
                 theAccount.pushHistory();

@@ -49,173 +49,314 @@ import uk.co.tolcroft.models.data.EncryptedItem;
  */
 public class AccountRate extends EncryptedItem<AccountRate> {
     /**
-     * Object name
+     * Object name.
      */
     public static final String OBJECT_NAME = AccountRate.class.getSimpleName();
 
     /**
-     * List name
+     * List name.
      */
     public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
-     * Report fields
+     * Report fields.
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
 
-    /* Called from constructor */
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
     }
 
-    /* Field IDs */
+    /**
+     * Account Field Id.
+     */
     public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField("Account");
+
+    /**
+     * Rate Field Id.
+     */
     public static final JDataField FIELD_RATE = FIELD_DEFS.declareEqualityValueField("Rate");
+
+    /**
+     * Bonus Field Id.
+     */
     public static final JDataField FIELD_BONUS = FIELD_DEFS.declareEqualityValueField("Bonus");
+
+    /**
+     * EndDate Field Id.
+     */
     public static final JDataField FIELD_ENDDATE = FIELD_DEFS.declareEqualityValueField("EndDate");
 
     /**
-     * The active set of values
+     * The active set of values.
      */
     private EncryptedValueSet theValueSet;
 
     @Override
-    public void declareValues(EncryptedValueSet pValues) {
+    public void declareValues(final EncryptedValueSet pValues) {
         super.declareValues(pValues);
         theValueSet = pValues;
     }
 
-    /* Access methods */
+    /**
+     * Obtain Rate.
+     * @return the rate
+     */
     public Rate getRate() {
         return getRate(theValueSet);
     }
 
+    /**
+     * Obtain Encrypted rate.
+     * @return the Bytes
+     */
     public byte[] getRateBytes() {
         return getRateBytes(theValueSet);
     }
 
+    /**
+     * Obtain Encrypted Rate Field.
+     * @return the Field
+     */
     private EncryptedRate getRateField() {
         return getRateField(theValueSet);
     }
 
+    /**
+     * Obtain Bonus.
+     * @return the bonus rate
+     */
     public Rate getBonus() {
         return getBonus(theValueSet);
     }
 
+    /**
+     * Obtain Encrypted bonus.
+     * @return the Bytes
+     */
     public byte[] getBonusBytes() {
         return getBonusBytes(theValueSet);
     }
 
+    /**
+     * Obtain Encrypted Rate Field.
+     * @return the Field
+     */
     private EncryptedRate getBonusField() {
         return getBonusField(theValueSet);
     }
 
+    /**
+     * Obtain date.
+     * @return the date
+     */
     public DateDay getDate() {
         return getEndDate();
     }
 
+    /**
+     * Obtain End Date.
+     * @return the End Date
+     */
     public DateDay getEndDate() {
         return getEndDate(theValueSet);
     }
 
+    /**
+     * Obtain Account.
+     * @return the account
+     */
     public Account getAccount() {
         return getAccount(theValueSet);
     }
 
-    public static Account getAccount(ValueSet pValueSet) {
+    /**
+     * Obtain Account.
+     * @param pValueSet the valueSet
+     * @return the Account
+     */
+    public static Account getAccount(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_ACCOUNT, Account.class);
     }
 
-    public static Rate getRate(EncryptedValueSet pValueSet) {
+    /**
+     * Obtain Rate.
+     * @param pValueSet the valueSet
+     * @return the Rate
+     */
+    public static Rate getRate(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_RATE, Rate.class);
     }
 
-    public static byte[] getRateBytes(EncryptedValueSet pValueSet) {
+    /**
+     * Obtain Encrypted Rate.
+     * @param pValueSet the valueSet
+     * @return the Bytes
+     */
+    public static byte[] getRateBytes(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_RATE);
     }
 
-    private static EncryptedRate getRateField(ValueSet pValueSet) {
+    /**
+     * Obtain Rate Field.
+     * @param pValueSet the valueSet
+     * @return the Field
+     */
+    private static EncryptedRate getRateField(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_RATE, EncryptedRate.class);
     }
 
-    public static Rate getBonus(EncryptedValueSet pValueSet) {
+    /**
+     * Obtain Bonus.
+     * @param pValueSet the valueSet
+     * @return the Bonus
+     */
+    public static Rate getBonus(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldValue(FIELD_BONUS, Rate.class);
     }
 
-    public static byte[] getBonusBytes(EncryptedValueSet pValueSet) {
+    /**
+     * Obtain Encrypted Bonus.
+     * @param pValueSet the valueSet
+     * @return the Bytes
+     */
+    public static byte[] getBonusBytes(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_BONUS);
     }
 
-    private static EncryptedRate getBonusField(ValueSet pValueSet) {
+    /**
+     * Obtain Bonus field.
+     * @param pValueSet the valueSet
+     * @return the Field
+     */
+    private static EncryptedRate getBonusField(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_BONUS, EncryptedRate.class);
     }
 
-    public static DateDay getEndDate(ValueSet pValueSet) {
+    /**
+     * Obtain End Date.
+     * @param pValueSet the valueSet
+     * @return the End Date
+     */
+    public static DateDay getEndDate(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_ENDDATE, DateDay.class);
     }
 
-    protected void setAccount(Account pAccount) {
-        setValueAccount(pAccount);
+    /**
+     * Set the account.
+     * @param pValue the account
+     */
+    protected void setAccount(final Account pValue) {
+        setValueAccount(pValue);
     }
 
-    private void setValueAccount(Account pAccount) {
-        theValueSet.setValue(FIELD_ACCOUNT, pAccount);
+    /**
+     * Set the account.
+     * @param pValue the account
+     */
+    private void setValueAccount(final Account pValue) {
+        theValueSet.setValue(FIELD_ACCOUNT, pValue);
     }
 
-    private void setValueAccount(Integer pAccount) {
-        theValueSet.setValue(FIELD_ACCOUNT, pAccount);
+    /**
+     * Set the account id.
+     * @param pId the account id
+     */
+    private void setValueAccount(final Integer pId) {
+        theValueSet.setValue(FIELD_ACCOUNT, pId);
     }
 
-    private void setValueRate(String pRate) throws JDataException {
-        setValueRate(new Rate(pRate));
+    /**
+     * Set the rate.
+     * @param pValue the rate
+     * @throws JDataException on error
+     */
+    private void setValueRate(final String pValue) throws JDataException {
+        setValueRate(new Rate(pValue));
     }
 
-    private void setValueRate(Rate pRate) throws JDataException {
-        setEncryptedValue(FIELD_RATE, pRate);
+    /**
+     * Set the rate.
+     * @param pValue the rate
+     * @throws JDataException on error
+     */
+    private void setValueRate(final Rate pValue) throws JDataException {
+        setEncryptedValue(FIELD_RATE, pValue);
     }
 
-    private void setValueRate(byte[] pRate) throws JDataException {
-        setEncryptedValue(FIELD_RATE, pRate, Rate.class);
+    /**
+     * Set the rate.
+     * @param pBytes the encrypted rate
+     * @throws JDataException on error
+     */
+    private void setValueRate(final byte[] pBytes) throws JDataException {
+        setEncryptedValue(FIELD_RATE, pBytes, Rate.class);
     }
 
-    private void setValueRate(EncryptedRate pRate) {
-        theValueSet.setValue(FIELD_RATE, pRate);
+    /**
+     * Set the rate.
+     * @param pValue the rate
+     */
+    private void setValueRate(final EncryptedRate pValue) {
+        theValueSet.setValue(FIELD_RATE, pValue);
     }
 
-    private void setValueBonus(String pRate) throws JDataException {
-        setValueBonus(new Rate(pRate));
+    /**
+     * Set the bonus rate.
+     * @param pValue the bonus rate
+     * @throws JDataException on error
+     */
+    private void setValueBonus(final String pValue) throws JDataException {
+        setValueBonus(new Rate(pValue));
     }
 
-    private void setValueBonus(Rate pRate) throws JDataException {
-        setEncryptedValue(FIELD_BONUS, pRate);
+    /**
+     * Set the bonus rate.
+     * @param pValue the bonus rate
+     * @throws JDataException on error
+     */
+    private void setValueBonus(final Rate pValue) throws JDataException {
+        setEncryptedValue(FIELD_BONUS, pValue);
     }
 
-    private void setValueBonus(byte[] pRate) throws JDataException {
-        setEncryptedValue(FIELD_BONUS, pRate, Rate.class);
+    /**
+     * Set the encrypted bonus.
+     * @param pBytes the encrypted bonus
+     * @throws JDataException on error
+     */
+    private void setValueBonus(final byte[] pBytes) throws JDataException {
+        setEncryptedValue(FIELD_BONUS, pBytes, Rate.class);
     }
 
-    private void setValueBonus(EncryptedRate pRate) {
-        theValueSet.setValue(FIELD_BONUS, pRate);
+    /**
+     * Set the bonus.
+     * @param pValue the bonus
+     */
+    private void setValueBonus(final EncryptedRate pValue) {
+        theValueSet.setValue(FIELD_BONUS, pValue);
     }
 
-    private void setValueEndDate(DateDay pDate) {
-        theValueSet.setValue(FIELD_ENDDATE, pDate);
+    /**
+     * Set the end date rate.
+     * @param pValue the date
+     */
+    private void setValueEndDate(final DateDay pValue) {
+        theValueSet.setValue(FIELD_ENDDATE, pValue);
     }
 
-    /* Linking methods */
     @Override
     public AccountRate getBase() {
         return (AccountRate) super.getBase();
     }
 
     /**
-     * Construct a copy of a Rate Period
-     * @param pList
+     * Construct a copy of a Rate Period.
+     * @param pList the list
      * @param pPeriod The Period to copy
      */
-    protected AccountRate(AccountRateList pList,
-                          AccountRate pPeriod) {
+    protected AccountRate(final AccountRateList pList,
+                          final AccountRate pPeriod) {
         /* Set standard values */
         super(pList, pPeriod);
         ListStyle myOldStyle = pPeriod.getStyle();
@@ -240,31 +381,46 @@ public class AccountRate extends EncryptedItem<AccountRate> {
             case COPY:
             case CORE:
                 /* Reset Id if this is an insert from a view */
-                if (myOldStyle == ListStyle.EDIT)
+                if (myOldStyle == ListStyle.EDIT) {
                     setId(0);
+                }
                 pList.setNewId(this);
                 break;
             case UPDATE:
                 setBase(pPeriod);
                 setState(pPeriod.getState());
                 break;
+            default:
+                break;
         }
     }
 
-    /* Insert constructor */
-    public AccountRate(AccountRateList pList) {
+    /**
+     * Constructor.
+     * @param pList the list
+     */
+    public AccountRate(final AccountRateList pList) {
         super(pList, 0);
         setValueAccount(pList.theAccount);
         pList.setNewId(this);
     }
 
-    /* Extract constructor */
-    private AccountRate(AccountRateList pList,
-                        int uId,
-                        int uAccountId,
-                        Date pEndDate,
-                        String pRate,
-                        String pBonus) throws JDataException {
+    /**
+     * Constructor.
+     * @param pList the list
+     * @param uId the id
+     * @param uAccountId the account id
+     * @param pEndDate the end date
+     * @param pRate the rate
+     * @param pBonus the bonus
+     * @throws JDataException on error
+     */
+    private AccountRate(final AccountRateList pList,
+                        final int uId,
+                        final int uAccountId,
+                        final Date pEndDate,
+                        final String pRate,
+                        final String pBonus) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -276,13 +432,15 @@ public class AccountRate extends EncryptedItem<AccountRate> {
             /* Look up the Account */
             FinanceData myData = pList.getData();
             Account myAccount = myData.getAccounts().searchFor(uAccountId);
-            if (myAccount == null)
+            if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
+            }
             setValueAccount(myAccount);
 
             /* Record the date */
-            if (pEndDate != null)
+            if (pEndDate != null) {
                 setValueEndDate(new DateDay(pEndDate));
+            }
 
             /* Set the encrypted objects */
             setValueRate(pRate);
@@ -290,23 +448,32 @@ public class AccountRate extends EncryptedItem<AccountRate> {
 
             /* Allocate the id */
             pList.setNewId(this);
-        }
 
-        /* Catch Exceptions */
-        catch (Exception e) {
+            /* Catch Exceptions */
+        } catch (Exception e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
     }
 
-    /* Encryption constructor */
-    private AccountRate(AccountRateList pList,
-                        int uId,
-                        int uControlId,
-                        int uAccountId,
-                        Date pEndDate,
-                        byte[] pRate,
-                        byte[] pBonus) throws JDataException {
+    /**
+     * Constructor.
+     * @param pList the list
+     * @param uId the id
+     * @param uControlId the control id
+     * @param uAccountId the account id
+     * @param pEndDate the end date
+     * @param pRate the rate
+     * @param pBonus the bonus
+     * @throws JDataException on error
+     */
+    private AccountRate(final AccountRateList pList,
+                        final int uId,
+                        final int uControlId,
+                        final int uAccountId,
+                        final Date pEndDate,
+                        final byte[] pRate,
+                        final byte[] pBonus) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -321,13 +488,15 @@ public class AccountRate extends EncryptedItem<AccountRate> {
             /* Look up the Account */
             FinanceData myData = pList.getData();
             Account myAccount = myData.getAccounts().searchFor(uAccountId);
-            if (myAccount == null)
+            if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
+            }
             setValueAccount(myAccount);
 
             /* Record the date */
-            if (pEndDate != null)
+            if (pEndDate != null) {
                 setValueEndDate(new DateDay(pEndDate));
+            }
 
             /* Set the encrypted objects */
             setValueRate(pRate);
@@ -335,10 +504,9 @@ public class AccountRate extends EncryptedItem<AccountRate> {
 
             /* Allocate the id */
             pList.setNewId(this);
-        }
 
-        /* Catch Exceptions */
-        catch (Exception e) {
+            /* Catch Exceptions */
+        } catch (Exception e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
@@ -351,18 +519,21 @@ public class AccountRate extends EncryptedItem<AccountRate> {
      *         sort order
      */
     @Override
-    public int compareTo(Object pThat) {
+    public int compareTo(final Object pThat) {
         int iDiff;
 
         /* Handle the trivial cases */
-        if (this == pThat)
+        if (this == pThat) {
             return 0;
-        if (pThat == null)
+        }
+        if (pThat == null) {
             return -1;
+        }
 
         /* Make sure that the object is a Rate */
-        if (pThat.getClass() != this.getClass())
+        if (pThat.getClass() != this.getClass()) {
             return -1;
+        }
 
         /* Access the object as a Rate */
         AccountRate myThat = (AccountRate) pThat;
@@ -370,36 +541,42 @@ public class AccountRate extends EncryptedItem<AccountRate> {
         /* If the date differs */
         if (this.getEndDate() != myThat.getEndDate()) {
             /* Handle null dates */
-            if (this.getEndDate() == null)
+            if (this.getEndDate() == null) {
                 return 1;
-            if (myThat.getEndDate() == null)
+            }
+            if (myThat.getEndDate() == null) {
                 return -1;
+            }
 
             /* Compare the dates */
             iDiff = getEndDate().compareTo(myThat.getEndDate());
-            if (iDiff != 0)
+            if (iDiff != 0) {
                 return iDiff;
+            }
         }
 
         /* Compare the accounts */
         iDiff = getAccount().compareTo(myThat.getAccount());
-        if (iDiff != 0)
+        if (iDiff != 0) {
             return iDiff;
+        }
 
         /* Compare the IDs */
         iDiff = (int) (getId() - myThat.getId());
-        if (iDiff < 0)
+        if (iDiff < 0) {
             return -1;
-        if (iDiff > 0)
+        }
+        if (iDiff > 0) {
             return 1;
+        }
         return 0;
     }
 
     /**
-     * Rebuild Links to partner data
+     * Rebuild Links to partner data.
      * @param pData the DataSet
      */
-    protected void reBuildLinks(FinanceData pData) {
+    protected void reBuildLinks(final FinanceData pData) {
         /* Update the Encryption details */
         super.reBuildLinks(pData);
 
@@ -413,7 +590,7 @@ public class AccountRate extends EncryptedItem<AccountRate> {
     }
 
     /**
-     * Validate the rate
+     * Validate the rate.
      */
     @Override
     public void validate() {
@@ -431,10 +608,9 @@ public class AccountRate extends EncryptedItem<AccountRate> {
             if ((myCurr != null) && (Difference.isEqual(myCurr.getAccount(), getAccount()))) {
                 addError("Null date is only allowed on last date", FIELD_ENDDATE);
             }
-        }
 
-        /* If we have a date */
-        else if (myDate != null) {
+            /* If we have a date */
+        } else if (myDate != null) {
             /* The date must be unique for this account */
             if (myList.countInstances(myDate, getAccount()) > 1) {
                 addError("Rate Date must be unique", FIELD_ENDDATE);
@@ -457,44 +633,44 @@ public class AccountRate extends EncryptedItem<AccountRate> {
         }
 
         /* Set validation flag */
-        if (!hasErrors())
+        if (!hasErrors()) {
             setValidEdit();
+        }
     }
 
     /**
-     * Set a new rate
+     * Set a new rate.
      * @param pRate the rate
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    public void setRate(Rate pRate) throws JDataException {
+    public void setRate(final Rate pRate) throws JDataException {
         setValueRate(pRate);
     }
 
     /**
-     * Set a new bonus
+     * Set a new bonus.
      * @param pBonus the rate
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    public void setBonus(Rate pBonus) throws JDataException {
+    public void setBonus(final Rate pBonus) throws JDataException {
         setValueBonus(pBonus);
     }
 
     /**
-     * Set a new date
-     * 
+     * Set a new date.
      * @param pDate the new date
      */
-    public void setEndDate(DateDay pDate) {
+    public void setEndDate(final DateDay pDate) {
         setValueEndDate(new DateDay(pDate));
     }
 
     /**
-     * Update Rate from a Rate extract
+     * Update Rate from a Rate extract.
      * @param pRate the updated item
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(DataItem<?> pRate) {
+    public boolean applyChanges(final DataItem<?> pRate) {
         AccountRate myRate = (AccountRate) pRate;
         boolean bChanged = false;
 
@@ -502,16 +678,19 @@ public class AccountRate extends EncryptedItem<AccountRate> {
         pushHistory();
 
         /* Update the rate if required */
-        if (!Difference.isEqual(getRate(), myRate.getRate()))
+        if (!Difference.isEqual(getRate(), myRate.getRate())) {
             setValueRate(myRate.getRateField());
+        }
 
         /* Update the bonus if required */
-        if (!Difference.isEqual(getBonus(), myRate.getBonus()))
+        if (!Difference.isEqual(getBonus(), myRate.getBonus())) {
             setValueBonus(myRate.getBonusField());
+        }
 
         /* Update the date if required */
-        if (!Difference.isEqual(getEndDate(), myRate.getEndDate()))
+        if (!Difference.isEqual(getEndDate(), myRate.getEndDate())) {
             setValueEndDate(myRate.getEndDate());
+        }
 
         /* Check for changes */
         if (checkForHistory()) {
@@ -524,30 +703,37 @@ public class AccountRate extends EncryptedItem<AccountRate> {
         return bChanged;
     }
 
+    /**
+     * List class.
+     */
     public static class AccountRateList extends EncryptedList<AccountRateList, AccountRate> {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(
                 AccountRateList.class.getSimpleName(), DataList.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * Account Field Id.
+         */
         public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField("Account");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_ACCOUNT)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_ACCOUNT.equals(pField)) {
                 return (theAccount == null) ? JDataObject.FIELD_SKIP : theAccount;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
+        /**
+         * The Account.
+         */
         private Account theAccount = null;
 
         @Override
@@ -555,29 +741,32 @@ public class AccountRate extends EncryptedItem<AccountRate> {
             return LIST_NAME;
         }
 
-        /* Access Extra Variables correctly */
         @Override
         public FinanceData getData() {
             return (FinanceData) super.getData();
         }
 
+        /**
+         * Obtain the account.
+         * @return the account
+         */
         public Account getAccount() {
             return theAccount;
         }
 
         /**
-         * Construct an empty CORE rate list
+         * Construct an empty CORE rate list.
          * @param pData the DataSet for the list
          */
-        protected AccountRateList(FinanceData pData) {
+        protected AccountRateList(final FinanceData pData) {
             super(AccountRateList.class, AccountRate.class, pData);
         }
 
         /**
-         * Constructor for a cloned List
+         * Constructor for a cloned List.
          * @param pSource the source List
          */
-        private AccountRateList(AccountRateList pSource) {
+        private AccountRateList(final AccountRateList pSource) {
             super(pSource);
         }
 
@@ -586,7 +775,7 @@ public class AccountRate extends EncryptedItem<AccountRate> {
          * @param pStyle the list style
          * @return the update Extract
          */
-        private AccountRateList getExtractList(ListStyle pStyle) {
+        private AccountRateList getExtractList(final ListStyle pStyle) {
             /* Build an empty Extract List */
             AccountRateList myList = new AccountRateList(this);
 
@@ -597,7 +786,6 @@ public class AccountRate extends EncryptedItem<AccountRate> {
             return myList;
         }
 
-        /* Obtain extract lists. */
         @Override
         public AccountRateList getUpdateList() {
             return getExtractList(ListStyle.UPDATE);
@@ -614,7 +802,7 @@ public class AccountRate extends EncryptedItem<AccountRate> {
         }
 
         @Override
-        public AccountRateList getDeepCopy(DataSet<?> pDataSet) {
+        public AccountRateList getDeepCopy(final DataSet<?> pDataSet) {
             /* Build an empty Extract List */
             AccountRateList myList = new AccountRateList(this);
             myList.setData(pDataSet);
@@ -628,12 +816,12 @@ public class AccountRate extends EncryptedItem<AccountRate> {
         }
 
         /**
-         * Construct a difference Rate list
+         * Construct a difference Rate list.
          * @param pOld the old Rate list
          * @return the difference list
          */
         @Override
-        protected AccountRateList getDifferences(AccountRateList pOld) {
+        protected AccountRateList getDifferences(final AccountRateList pOld) {
             /* Build an empty Difference List */
             AccountRateList myList = new AccountRateList(this);
 
@@ -645,11 +833,11 @@ public class AccountRate extends EncryptedItem<AccountRate> {
         }
 
         /**
-         * Construct an edit extract of a Rate list
+         * Construct an edit extract of a Rate list.
          * @param pAccount The account to extract rates for
          * @return the edit list
          */
-        public AccountRateList getEditList(Account pAccount) {
+        public AccountRateList getEditList(final Account pAccount) {
             /* Build an empty List */
             AccountRateList myList = new AccountRateList(this);
 
@@ -673,8 +861,9 @@ public class AccountRate extends EncryptedItem<AccountRate> {
                 int myResult = pAccount.compareTo(myCurr.getAccount());
 
                 /* Skip different accounts */
-                if (myResult != 0)
+                if (myResult != 0) {
                     continue;
+                }
 
                 /* Copy the item */
                 myItem = new AccountRate(myList, myCurr);
@@ -692,19 +881,19 @@ public class AccountRate extends EncryptedItem<AccountRate> {
         }
 
         /**
-         * Add a new item to the core list
+         * Add a new item to the core list.
          * @param pRate item
          * @return the newly added item
          */
         @Override
-        public AccountRate addNewItem(DataItem<?> pRate) {
+        public AccountRate addNewItem(final DataItem<?> pRate) {
             AccountRate myRate = new AccountRate(this, (AccountRate) pRate);
             add(myRate);
             return myRate;
         }
 
         /**
-         * Add a new item to the edit list
+         * Add a new item to the edit list.
          * @return the new item
          */
         @Override
@@ -716,13 +905,13 @@ public class AccountRate extends EncryptedItem<AccountRate> {
         }
 
         /**
-         * Count the instances of a date
+         * Count the instances of a date.
          * @param pDate the date
-         * @param pAccount
+         * @param pAccount the account
          * @return The Item if present (or null)
          */
-        protected int countInstances(DateDay pDate,
-                                     Account pAccount) {
+        protected int countInstances(final DateDay pDate,
+                                     final Account pAccount) {
             DataListIterator<AccountRate> myIterator;
             AccountRate myCurr;
             int iDiff;
@@ -734,10 +923,12 @@ public class AccountRate extends EncryptedItem<AccountRate> {
             /* Loop through the items to find the entry */
             while ((myCurr = myIterator.next()) != null) {
                 iDiff = pDate.compareTo(myCurr.getEndDate());
-                if (iDiff == 0)
+                if (iDiff == 0) {
                     iDiff = pAccount.compareTo(myCurr.getAccount());
-                if (iDiff == 0)
+                }
+                if (iDiff == 0) {
                     iCount++;
+                }
             }
 
             /* Return to caller */
@@ -745,7 +936,7 @@ public class AccountRate extends EncryptedItem<AccountRate> {
         }
 
         /**
-         * Mark active rates
+         * Mark active rates.
          */
         protected void markActiveItems() {
             DataListIterator<AccountRate> myIterator;
@@ -762,13 +953,13 @@ public class AccountRate extends EncryptedItem<AccountRate> {
         }
 
         /**
-         * Obtain the most relevant rate for an Account and a Date
+         * Obtain the most relevant rate for an Account and a Date.
          * @param pAccount the Account for which to get the rate
          * @param pDate the date from which a rate is required
          * @return The relevant Rate record
          */
-        public AccountRate getLatestRate(Account pAccount,
-                                         DateDay pDate) {
+        public AccountRate getLatestRate(final Account pAccount,
+                                         final DateDay pDate) {
             DataListIterator<AccountRate> myIterator;
             AccountRate myRate = null;
             AccountRate myCurr;
@@ -780,8 +971,9 @@ public class AccountRate extends EncryptedItem<AccountRate> {
             /* Loop through the Rates */
             while ((myCurr = myIterator.next()) != null) {
                 /* Skip records that do not belong to this account */
-                if (!Difference.isEqual(myCurr.getAccount(), pAccount))
+                if (!Difference.isEqual(myCurr.getAccount(), pAccount)) {
                     continue;
+                }
 
                 /* Access the date */
                 myDate = myCurr.getDate();
@@ -798,101 +990,106 @@ public class AccountRate extends EncryptedItem<AccountRate> {
         }
 
         /**
-         * Allow a rate to be added
+         * Allow a rate to be added.
          * @param uId the id
          * @param pAccount the account
          * @param pRate the Rate
          * @param pDate the end date
          * @param pBonus the Bonus
-         * @throws JDataException
+         * @throws JDataException on error
          */
-        public void addItem(int uId,
-                            String pAccount,
-                            String pRate,
-                            Date pDate,
-                            String pBonus) throws JDataException {
+        public void addItem(final int uId,
+                            final String pAccount,
+                            final String pRate,
+                            final Date pDate,
+                            final String pBonus) throws JDataException {
             Account myAccount;
-            Account.AccountList myAccounts;
+            AccountList myAccounts;
 
             /* Access the Accounts */
             myAccounts = getData().getAccounts();
 
             /* Look up the Account */
             myAccount = myAccounts.searchFor(pAccount);
-            if (myAccount == null)
+            if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, "Rate on ["
                         + JDataObject.formatField(new DateDay(pDate)) + "] has invalid Account [" + pAccount
                         + "]");
+            }
 
             /* Add the rate */
             addItem(uId, myAccount.getId(), pRate, pDate, pBonus);
         }
 
         /**
-         * Load an Extract Rate
+         * Load an Extract Rate.
          * @param uId the id
          * @param uAccountId the account id
          * @param pRate the Rate
          * @param pDate the end date
          * @param pBonus the Bonus
-         * @throws JDataException
+         * @throws JDataException on error
          */
-        private void addItem(int uId,
-                             int uAccountId,
-                             String pRate,
-                             Date pDate,
-                             String pBonus) throws JDataException {
+        private void addItem(final int uId,
+                             final int uAccountId,
+                             final String pRate,
+                             final Date pDate,
+                             final String pBonus) throws JDataException {
             AccountRate myRate;
 
             /* Create the period */
             myRate = new AccountRate(this, uId, uAccountId, pDate, pRate, pBonus);
 
             /* Check that this RateId has not been previously added */
-            if (!isIdUnique(myRate.getId()))
+            if (!isIdUnique(myRate.getId())) {
                 throw new JDataException(ExceptionClass.DATA, myRate, "Duplicate RateId");
+            }
 
             /* Validate the rate */
             myRate.validate();
 
             /* Handle validation failure */
-            if (myRate.hasErrors())
+            if (myRate.hasErrors()) {
                 throw new JDataException(ExceptionClass.VALIDATE, myRate, "Failed validation");
+            }
 
             /* Add to the list */
             add(myRate);
         }
 
         /**
-         * Load an Encrypted Rate
+         * Load an Encrypted Rate.
          * @param uId the id
          * @param uControlId the control id
          * @param uAccountId the account id
          * @param pRate the Rate
          * @param pDate the end date
          * @param pBonus the Bonus
-         * @throws JDataException
+         * @throws JDataException on error
          */
-        public void addItem(int uId,
-                            int uControlId,
-                            int uAccountId,
-                            byte[] pRate,
-                            Date pDate,
-                            byte[] pBonus) throws JDataException {
+        public void addItem(final int uId,
+                            final int uControlId,
+                            final int uAccountId,
+                            final byte[] pRate,
+                            final Date pDate,
+                            final byte[] pBonus) throws JDataException {
             AccountRate myRate;
 
             /* Create the period */
             myRate = new AccountRate(this, uId, uControlId, uAccountId, pDate, pRate, pBonus);
 
             /* Check that this RateId has not been previously added */
-            if (!isIdUnique(uId))
+            if (!isIdUnique(uId)) {
                 throw new JDataException(ExceptionClass.DATA, myRate, "Duplicate RateId");
+            }
 
             /* Validate the rate */
             myRate.validate();
 
             /* Handle validation failure */
-            if (myRate.hasErrors())
+            if (myRate.hasErrors()) {
                 throw new JDataException(ExceptionClass.VALIDATE, myRate, "Failed validation");
+            }
 
             /* Add to the list */
             add(myRate);

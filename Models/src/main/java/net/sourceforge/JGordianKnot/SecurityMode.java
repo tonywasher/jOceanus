@@ -53,10 +53,10 @@ public abstract class SecurityMode extends NybbleArray {
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (pField == FIELD_VERSION) {
+        if (FIELD_VERSION.equals(pField)) {
             return theVersion;
         }
-        if (pField == FIELD_RESTRICT) {
+        if (FIELD_RESTRICT.equals(pField)) {
             return useRestricted;
         }
         return super.getFieldValue(pField);

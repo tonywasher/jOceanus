@@ -86,22 +86,22 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (pField == FIELD_STYLE) {
+        if (FIELD_STYLE.equals(pField)) {
             return theStyle;
         }
-        if (pField == FIELD_GENERATION) {
+        if (FIELD_GENERATION.equals(pField)) {
             return theGeneration;
         }
-        if (pField == FIELD_NEXTVERS) {
+        if (FIELD_NEXTVERS.equals(pField)) {
             return theNextVersion;
         }
-        if (pField == FIELD_EDIT) {
+        if (FIELD_EDIT.equals(pField)) {
             return theEdit;
         }
-        if (pField == FIELD_BASE) {
+        if (FIELD_BASE.equals(pField)) {
             return theBase;
         }
-        if (pField == FIELD_CLASS) {
+        if (FIELD_CLASS.equals(pField)) {
             return theClass;
         }
         return super.getFieldValue(pField);

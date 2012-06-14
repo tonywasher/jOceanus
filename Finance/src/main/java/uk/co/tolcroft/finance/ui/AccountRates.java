@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,25 +55,75 @@ import uk.co.tolcroft.models.ui.Renderer.CalendarRenderer;
 import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 
+/**
+ * Account Rates Table.
+ * @author Tony Washer
+ */
 public class AccountRates extends DataTable<AccountRate> {
-    /* Members */
+    /**
+     * Serial Id.
+     */
     private static final long serialVersionUID = 36193763696660335L;
 
-    private View theView = null;
-    private RatesModel theModel = null;
-    private AccountRateList theRates = null;
-    private JPanel thePanel = null;
-    private AccountRates theTable = this;
-    private RatesMouse theMouse = null;
-    private RatesColumnModel theColumns = null;
-    private AccountTab theParent = null;
-    private DateDayRange theRange = null;
-    private Account theAccount = null;
-    private ListClass theViewList = null;
-    private JDataEntry theDataEntry = null;
-    private ErrorPanel theError = null;
+    /**
+     * The Data View.
+     */
+    private final View theView;
 
-    /* Access methods */
+    /**
+     * The Table Model.
+     */
+    private final RatesModel theModel;
+
+    /**
+     * The rates List.
+     */
+    private AccountRateList theRates = null;
+
+    /**
+     * The Panel.
+     */
+    private final JPanel thePanel;
+
+    /**
+     * Self Reference.
+     */
+    private final AccountRates theTable = this;
+
+    /**
+     * The Columns Model.
+     */
+    private final RatesColumnModel theColumns;
+
+    /**
+     * The Parent.
+     */
+    private final AccountTab theParent;
+
+    /**
+     * The Account.
+     */
+    private Account theAccount = null;
+
+    /**
+     * The View List.
+     */
+    private final ListClass theViewList;
+
+    /**
+     * The Data Entry.
+     */
+    private final JDataEntry theDataEntry;
+
+    /**
+     * The Error Panel.
+     */
+    private final ErrorPanel theError;
+
+    /**
+     * Obtain the panel.
+     * @return the panel
+     */
     public JPanel getPanel() {
         return thePanel;
     }
@@ -82,27 +133,61 @@ public class AccountRates extends DataTable<AccountRate> {
         return false;
     }
 
-    /* Access the debug entry */
     @Override
     public JDataEntry getDataEntry() {
         return theDataEntry;
     }
 
-    /* Table headers */
-    private static final String titleRate = "Rate";
-    private static final String titleBonus = "Bonus";
-    private static final String titleDate = "EndDate";
+    /**
+     * Rate Table column name.
+     */
+    private static final String TITLE_RATE = "Rate";
 
-    /* Table columns */
+    /**
+     * Rate Table column name.
+     */
+    private static final String TITLE_BONUS = "Bonus";
+
+    /**
+     * Rate Table column name.
+     */
+    private static final String TITLE_DATE = "EndDate";
+
+    /**
+     * Rate Table column id.
+     */
     private static final int COLUMN_RATE = 0;
+
+    /**
+     * Bonus Table column id.
+     */
     private static final int COLUMN_BONUS = 1;
+
+    /**
+     * Date Table column id.
+     */
     private static final int COLUMN_DATE = 2;
 
     /**
-     * Constructor for Rates Window
+     * Rate Table column width.
+     */
+    private static final int WIDTH_RATE = 90;
+
+    /**
+     * Bonus Table column width.
+     */
+    private static final int WIDTH_BONUS = 90;
+
+    /**
+     * Date Table column width.
+     */
+    private static final int WIDTH_DATE = 100;
+
+    /**
+     * Constructor for Rates Window.
      * @param pParent the parent window
      */
-    public AccountRates(AccountTab pParent) {
+    public AccountRates(final AccountTab pParent) {
         /* Initialise superclass */
         super(pParent.getDataManager());
 
@@ -127,8 +212,8 @@ public class AccountRates extends DataTable<AccountRate> {
         setAutoResizeMode(AUTO_RESIZE_OFF);
 
         /* Create the mouse listener (automatically added) */
-        theMouse = new RatesMouse();
-        addMouseListener(theMouse);
+        RatesMouse myMouse = new RatesMouse();
+        addMouseListener(myMouse);
 
         /* Create the debug entry, attach to AccountDebug entry and hide it */
         JDataManager myDataMgr = theView.getDataMgr();
@@ -167,7 +252,7 @@ public class AccountRates extends DataTable<AccountRate> {
     }
 
     /**
-     * Save changes from the view into the underlying data
+     * Save changes from the view into the underlying data.
      */
     @Override
     public void saveData() {
@@ -176,26 +261,26 @@ public class AccountRates extends DataTable<AccountRate> {
     }
 
     /**
-     * Lock on error
+     * Lock on error.
      * @param isError is there an error (True/False)
      */
     @Override
-    public void lockOnError(boolean isError) {
+    public void lockOnError(final boolean isError) {
         /* Lock scroll-able area */
         getScrollPane().setEnabled(!isError);
     }
 
     /**
-     * Refresh views/controls after a load/update of underlying data
+     * Refresh views/controls after a load/update of underlying data.
      */
     public void refreshData() {
-        theRange = theView.getRange();
-        theRange = new DateDayRange(theRange.getStart(), null);
-        theColumns.setDateEditorRange(theRange);
+        DateDayRange myRange = theView.getRange();
+        myRange = new DateDayRange(myRange.getStart(), null);
+        theColumns.setDateEditorRange(myRange);
     }
 
     /**
-     * Update Debug view
+     * Update Debug view.
      */
     @Override
     public void updateDebug() {
@@ -203,13 +288,14 @@ public class AccountRates extends DataTable<AccountRate> {
     }
 
     /**
-     * Call underlying controls to take notice of changes in view/selection
+     * Call underlying controls to take notice of changes in view/selection.
      */
     @Override
     public void notifyChanges() {
         /* Find the edit state */
-        if (theRates != null)
+        if (theRates != null) {
             theRates.findEditState();
+        }
 
         /* Update the parent panel */
         theParent.notifyChanges();
@@ -220,7 +306,7 @@ public class AccountRates extends DataTable<AccountRate> {
      * @param pAccount the Account for the extract
      * @throws JDataException on error
      */
-    public void setSelection(Account pAccount) throws JDataException {
+    public void setSelection(final Account pAccount) throws JDataException {
         /* Record the account */
         theAccount = pAccount;
         theRates = null;
@@ -239,7 +325,7 @@ public class AccountRates extends DataTable<AccountRate> {
     }
 
     /**
-     * Perform additional validation after change
+     * Perform additional validation after change.
      */
     @Override
     protected void validateAfterChange() {
@@ -254,8 +340,9 @@ public class AccountRates extends DataTable<AccountRate> {
         while ((myCurr = myIterator.previous()) != null) {
             /* Break loop if we have a date */
             DateDay myDate = myCurr.getDate();
-            if (myDate != null)
+            if (myDate != null) {
                 break;
+            }
 
             /* Validate rate */
             myCurr.clearErrors();
@@ -270,12 +357,17 @@ public class AccountRates extends DataTable<AccountRate> {
         theRates.findEditState();
     }
 
-    /* Rates table model */
-    public class RatesModel extends DataTableModel {
+    /**
+     * Rates table model.
+     */
+    public final class RatesModel extends DataTableModel {
+        /**
+         * Serial Id.
+         */
         private static final long serialVersionUID = 296797947278000196L;
 
         /**
-         * Constructor
+         * Constructor.
          */
         private RatesModel() {
             /* call constructor */
@@ -283,7 +375,7 @@ public class AccountRates extends DataTable<AccountRate> {
         }
 
         /**
-         * Get the number of display columns
+         * Get the number of display columns.
          * @return the columns
          */
         @Override
@@ -292,7 +384,7 @@ public class AccountRates extends DataTable<AccountRate> {
         }
 
         /**
-         * Get the number of rows in the current table
+         * Get the number of rows in the current table.
          * @return the number of rows
          */
         @Override
@@ -301,32 +393,33 @@ public class AccountRates extends DataTable<AccountRate> {
         }
 
         /**
-         * Get the name of the column
+         * Get the name of the column.
          * @param col the column
          * @return the name of the column
          */
         @Override
-        public String getColumnName(int col) {
+        public String getColumnName(final int col) {
             switch (col) {
                 case COLUMN_RATE:
-                    return titleRate;
+                    return TITLE_RATE;
                 case COLUMN_BONUS:
-                    return titleBonus;
+                    return TITLE_BONUS;
                 case COLUMN_DATE:
-                    return titleDate;
+                    return TITLE_DATE;
                 default:
                     return null;
             }
         }
 
         /**
-         * Obtain the Field id associated with the column
+         * Obtain the Field id associated with the column.
          * @param row the row
          * @param column the column
+         * @return the field id
          */
         @Override
-        public JDataField getFieldForCell(int row,
-                                          int column) {
+        public JDataField getFieldForCell(final int row,
+                                          final int column) {
             /* Switch on column */
             switch (column) {
                 case COLUMN_RATE:
@@ -341,26 +434,27 @@ public class AccountRates extends DataTable<AccountRate> {
         }
 
         /**
-         * Is the cell at (row, col) editable
+         * Is the cell editable?
+         * @param row the row
+         * @param col the column
+         * @return true/false
          */
         @Override
-        public boolean isCellEditable(int row,
-                                      int col) {
+        public boolean isCellEditable(final int row,
+                                      final int col) {
             /* Locked if the account is closed */
-            if (theAccount.isClosed())
-                return false;
-
-            /* Otherwise edit-able */
-            return true;
+            return !theAccount.isClosed();
         }
 
         /**
-         * Get the value at (row, col)
+         * Get the value at (row, col).
+         * @param row the row
+         * @param col the column
          * @return the object value
          */
         @Override
-        public Object getValueAt(int row,
-                                 int col) {
+        public Object getValueAt(final int row,
+                                 final int col) {
             AccountRate myRate;
             Object o;
 
@@ -384,21 +478,24 @@ public class AccountRates extends DataTable<AccountRate> {
             }
 
             /* If we have a null value for an error field, set error description */
-            if ((o == null) && (myRate.hasErrors(getFieldForCell(row, col))))
+            if ((o == null) && (myRate.hasErrors(getFieldForCell(row, col)))) {
                 o = Renderer.getError();
+            }
 
             /* Return to caller */
             return o;
         }
 
         /**
-         * Set the value at (row, col)
+         * Set the value at (row, col).
          * @param obj the object value to set
+         * @param row the row
+         * @param col the column
          */
         @Override
-        public void setValueAt(Object obj,
-                               int row,
-                               int col) {
+        public void setValueAt(final Object obj,
+                               final int row,
+                               final int col) {
             AccountRate myRate;
 
             /* Access the rate */
@@ -420,11 +517,12 @@ public class AccountRates extends DataTable<AccountRate> {
                     case COLUMN_DATE:
                         myRate.setEndDate((DateDay) obj);
                         break;
+                    default:
+                        break;
                 }
-            }
 
-            /* Handle Exceptions */
-            catch (Throwable e) {
+                /* Handle Exceptions */
+            } catch (Exception e) {
                 /* Reset values */
                 myRate.popHistory();
                 myRate.pushHistory();
@@ -481,16 +579,21 @@ public class AccountRates extends DataTable<AccountRate> {
     }
 
     /**
-     * Rates mouse listener
+     * Rates mouse listener.
      */
-    private class RatesMouse extends DataMouse<AccountRate> {
-
-        /* Pop-up Menu items */
-        private static final String popupSetNullDate = "Set Null Date";
-        private static final String popupSetNullBonus = "Set Null Bonus";
+    private final class RatesMouse extends DataMouse<AccountRate> {
+        /**
+         * Pop-up Null Date.
+         */
+        private static final String POPUP_NULLDATE = "Set Null Date";
 
         /**
-         * Constructor
+         * Pop-up Null Bonus.
+         */
+        private static final String POPUP_NULLBONUS = "Set Null Bonus";
+
+        /**
+         * Constructor.
          */
         private RatesMouse() {
             /* Call super-constructor */
@@ -498,40 +601,40 @@ public class AccountRates extends DataTable<AccountRate> {
         }
 
         /**
-         * Add Null commands to menu
+         * Add Null commands to menu.
          * @param pMenu the menu to add to
          */
         @Override
-        protected void addNullCommands(JPopupMenu pMenu) {
+        protected void addNullCommands(final JPopupMenu pMenu) {
             JMenuItem myItem;
             AccountRate myRate;
             boolean enableNullDate = false;
             boolean enableNullBonus = false;
 
             /* Nothing to do if the table is locked */
-            if (theTable.isLocked())
+            if (theTable.isLocked()) {
                 return;
+            }
 
             /* Loop through the selected rows */
             for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
-                /* Ignore locked rows */
-                if ((myRow == null) || (myRow.isLocked()))
+                /* Ignore locked rows/deleted rows */
+                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
-
-                /* Ignore deleted rows */
-                if (myRow.isDeleted())
-                    continue;
+                }
 
                 /* Access as rate */
                 myRate = (AccountRate) myRow;
 
                 /* Enable null Date if we have date */
-                if (myRate.getDate() != null)
+                if (myRate.getDate() != null) {
                     enableNullDate = true;
+                }
 
                 /* Enable null Tax if we have tax */
-                if (myRate.getBonus() != null)
+                if (myRate.getBonus() != null) {
                     enableNullBonus = true;
+                }
             }
 
             /* If there is something to add and there are already items in the menu */
@@ -543,8 +646,8 @@ public class AccountRates extends DataTable<AccountRate> {
             /* If we can set null date */
             if (enableNullDate) {
                 /* Add the undo change choice */
-                myItem = new JMenuItem(popupSetNullDate);
-                myItem.setActionCommand(popupSetNullDate);
+                myItem = new JMenuItem(POPUP_NULLDATE);
+                myItem.setActionCommand(POPUP_NULLDATE);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
@@ -552,38 +655,36 @@ public class AccountRates extends DataTable<AccountRate> {
             /* If we can set null bonus */
             if (enableNullBonus) {
                 /* Add the undo change choice */
-                myItem = new JMenuItem(popupSetNullBonus);
-                myItem.setActionCommand(popupSetNullBonus);
+                myItem = new JMenuItem(POPUP_NULLBONUS);
+                myItem.setActionCommand(POPUP_NULLBONUS);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
         }
 
         /**
-         * Perform actions for controls/pop-ups on this table
+         * Perform actions for controls/pop-ups on this table.
          * @param evt the event
          */
         @Override
-        public void actionPerformed(ActionEvent evt) {
+        public void actionPerformed(final ActionEvent evt) {
             String myCmd = evt.getActionCommand();
 
             /* Cancel any editing */
             theTable.cancelEditing();
 
             /* If this is a set null date command */
-            if (myCmd.equals(popupSetNullDate)) {
+            if (myCmd.equals(POPUP_NULLDATE)) {
                 /* Set Date column to null */
                 setColumnToNull(COLUMN_DATE);
-            }
 
-            /* else if this is a set null bonus command */
-            else if (myCmd.equals(popupSetNullBonus)) {
+                /* else if this is a set null bonus command */
+            } else if (myCmd.equals(POPUP_NULLBONUS)) {
                 /* Set Bonus column to null */
                 setColumnToNull(COLUMN_BONUS);
-            }
 
-            /* else we do not recognise the action */
-            else {
+                /* else we do not recognise the action */
+            } else {
                 /* Pass it to the superclass */
                 super.actionPerformed(evt);
                 return;
@@ -596,19 +697,36 @@ public class AccountRates extends DataTable<AccountRate> {
     }
 
     /**
-     * Column Model class
+     * Column Model class.
      */
-    private class RatesColumnModel extends DataColumnModel {
+    private final class RatesColumnModel extends DataColumnModel {
+        /**
+         * Serial Id.
+         */
         private static final long serialVersionUID = -3431873508431574944L;
 
-        /* Renderers/Editors */
-        private CalendarRenderer theDateRenderer = null;
-        private CalendarEditor theDateEditor = null;
-        private DecimalRenderer theRateRenderer = null;
-        private RateEditor theRateEditor = null;
+        /**
+         * DateRenderer.
+         */
+        private final CalendarRenderer theDateRenderer;
 
         /**
-         * Constructor
+         * DateEditor.
+         */
+        private final CalendarEditor theDateEditor;
+
+        /**
+         * RateRenderer.
+         */
+        private final DecimalRenderer theRateRenderer;
+
+        /**
+         * RateEditor.
+         */
+        private final RateEditor theRateEditor;
+
+        /**
+         * Constructor.
          */
         private RatesColumnModel() {
             /* call constructor */
@@ -621,16 +739,16 @@ public class AccountRates extends DataTable<AccountRate> {
             theRateEditor = new RateEditor();
 
             /* Create the columns */
-            addColumn(new DataColumn(COLUMN_RATE, 90, theRateRenderer, theRateEditor));
-            addColumn(new DataColumn(COLUMN_BONUS, 90, theRateRenderer, theRateEditor));
-            addColumn(new DataColumn(COLUMN_DATE, 100, theDateRenderer, theDateEditor));
+            addColumn(new DataColumn(COLUMN_RATE, WIDTH_RATE, theRateRenderer, theRateEditor));
+            addColumn(new DataColumn(COLUMN_BONUS, WIDTH_BONUS, theRateRenderer, theRateEditor));
+            addColumn(new DataColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
         }
 
         /**
-         * Set the date editor range
-         * @param pRange
+         * Set the date editor range.
+         * @param pRange the range
          */
-        private void setDateEditorRange(DateDayRange pRange) {
+        private void setDateEditorRange(final DateDayRange pRange) {
             /* Set the range */
             theDateEditor.setRange(pRange);
         }

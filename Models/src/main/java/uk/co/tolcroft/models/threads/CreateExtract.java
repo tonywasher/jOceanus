@@ -116,7 +116,7 @@ public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
             theStatus.initTask("Verifying Extract");
 
             /* Analyse the Data to ensure that close dates are updated */
-            myData.analyseData(theControl);
+            // theControl.analyseData(myData);
 
             /* Create a difference set between the two data copies */
             DataSet<T> myDiff = myData.getDifferenceSet(theControl.getData());

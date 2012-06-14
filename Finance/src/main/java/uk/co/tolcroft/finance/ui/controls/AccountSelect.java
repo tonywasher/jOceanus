@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,6 +25,7 @@ package uk.co.tolcroft.finance.ui.controls;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -32,6 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
 import net.sourceforge.JDataManager.Difference;
+import net.sourceforge.JDataManager.EventManager;
 import uk.co.tolcroft.finance.data.Account;
 import uk.co.tolcroft.finance.data.Account.AccountList;
 import uk.co.tolcroft.finance.data.AccountType;
@@ -39,55 +42,126 @@ import uk.co.tolcroft.finance.data.AccountType.AccountTypeList;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.data.DataList.DataListIterator;
-import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
 
+/**
+ * Account selection panel.
+ * @author Tony Washer
+ */
 public class AccountSelect extends JPanel {
+    /**
+     * Serial Id.
+     */
     private static final long serialVersionUID = -3537658425524334120L;
 
-    /* Members */
-    private AccountSelect theSelf = this;
-    private StdPanel theParent = null;
-    private View theView = null;
-    private JComboBox theTypesBox = null;
-    private JComboBox theAccountBox = null;
-    private JLabel theTypeLabel = null;
-    private JLabel theAccountLabel = null;
-    private JCheckBox theShowClosed = null;
-    private JCheckBox theShowDeleted = null;
-    private AccountTypeList theTypes = null;
+    /**
+     * Width of Account Types box.
+     */
+    private static final int TYPES_WIDTH = 100;
+
+    /**
+     * Data view.
+     */
+    private final View theView;
+
+    /**
+     * Account types comboBox.
+     */
+    private final JComboBox theTypesBox;
+
+    /**
+     * Accounts comboBox.
+     */
+    private final JComboBox theAccountBox;
+
+    /**
+     * Show closed checkBox.
+     */
+    private final JCheckBox theShowClosed;
+
+    /**
+     * Show deleted checkBox.
+     */
+    private final JCheckBox theShowDeleted;
+
+    /**
+     * Accounts list.
+     */
     private AccountList theAccounts = null;
+
+    /**
+     * Current State.
+     */
     private AccountState theState = null;
+
+    /**
+     * Saved state.
+     */
     private AccountState theSavePoint = null;
-    private boolean acctsPopulated = false;
-    private boolean typesPopulated = false;
+
+    /**
+     * Are we refreshing data?
+     */
     private boolean refreshingData = false;
 
-    /* Access methods */
-    public Account getSelected() {
+    /**
+     * Event Manager.
+     */
+    private final EventManager theManager;
+
+    /**
+     * Get the selected account.
+     * @return the account
+     */
+    public final Account getSelected() {
         return theState.getSelected();
     }
 
-    public AccountType getType() {
+    /**
+     * Get the account type.
+     * @return the account type
+     */
+    public final AccountType getType() {
         return theState.getType();
     }
 
-    public boolean doShowClosed() {
+    /**
+     * Are we showing closed accounts?
+     * @return true/false
+     */
+    public final boolean doShowClosed() {
         return theState.doShowClosed();
     }
 
-    public boolean doShowDeleted() {
+    /**
+     * Are we showing deleted accounts?
+     * @return true/false
+     */
+    public final boolean doShowDeleted() {
         return theState.doShowDeleted();
     }
 
-    /* Constructor */
-    public AccountSelect(View pView,
-                         StdPanel pParent,
-                         boolean showDeleted) {
+    /**
+     * Obtain the event manager.
+     * @return the event manager.
+     */
+    public EventManager getManager() {
+        return theManager;
+    }
+
+    /**
+     * Constructor.
+     * @param pView the data view
+     * @param showDeleted should we show deleted accounts.
+     */
+    public AccountSelect(final View pView,
+                         final boolean showDeleted) {
         AccountListener myListener = new AccountListener();
 
         /* Store table and view details */
-        theParent = pParent;
         theView = pView;
+
+        /* Create the Event Manager */
+        theManager = new EventManager(this);
 
         /* Create the boxes */
         theTypesBox = new JComboBox();
@@ -99,7 +173,8 @@ public class AccountSelect extends JPanel {
         theState = new AccountState();
 
         /* Initialise the data from the view */
-        refreshData();
+        buildAccountTypes();
+        buildAccounts();
 
         /* Set the text for the check-box */
         theShowClosed.setText("Show Closed");
@@ -110,11 +185,11 @@ public class AccountSelect extends JPanel {
         theShowDeleted.setSelected(doShowDeleted());
 
         /* Create the labels */
-        theTypeLabel = new JLabel("Account Type:");
-        theAccountLabel = new JLabel("Account:");
+        JLabel myTypeLabel = new JLabel("Account Type:");
+        JLabel myAccountLabel = new JLabel("Account:");
 
         /* Create the panel */
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Account Selection"));
+        setBorder(BorderFactory.createTitledBorder("Account Selection"));
 
         /* Create the layout for the panel */
         GroupLayout panelLayout = new GroupLayout(this);
@@ -127,12 +202,12 @@ public class AccountSelect extends JPanel {
                     .addGroup(panelLayout
                                       .createSequentialGroup()
                                       .addContainerGap()
-                                      .addComponent(theTypeLabel)
+                                      .addComponent(myTypeLabel)
                                       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                      .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE, 100,
+                                      .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE, TYPES_WIDTH,
                                                     GroupLayout.PREFERRED_SIZE)
                                       .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                      .addComponent(theAccountLabel)
+                                      .addComponent(myAccountLabel)
                                       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                       .addComponent(theAccountBox)
                                       .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
@@ -146,28 +221,26 @@ public class AccountSelect extends JPanel {
                     .createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addGroup(panelLayout
                                       .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                      .addComponent(theTypeLabel)
+                                      .addComponent(myTypeLabel)
                                       .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE,
                                                     GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                      .addComponent(theAccountLabel)
+                                      .addComponent(myAccountLabel)
                                       .addComponent(theAccountBox, GroupLayout.PREFERRED_SIZE,
                                                     GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addComponent(theShowClosed).addComponent(theShowDeleted));
-        }
-
-        else {
+        } else {
             /* Set the layout */
             panelLayout.setHorizontalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addGroup(panelLayout
                                       .createSequentialGroup()
                                       .addContainerGap()
-                                      .addComponent(theTypeLabel)
+                                      .addComponent(myTypeLabel)
                                       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                      .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE, 100,
+                                      .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE, TYPES_WIDTH,
                                                     GroupLayout.PREFERRED_SIZE)
                                       .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
                                                        GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                      .addComponent(theAccountLabel)
+                                      .addComponent(myAccountLabel)
                                       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                       .addComponent(theAccountBox)
                                       .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
@@ -179,10 +252,10 @@ public class AccountSelect extends JPanel {
                     .createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addGroup(panelLayout
                                       .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                      .addComponent(theTypeLabel)
+                                      .addComponent(myTypeLabel)
                                       .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE,
                                                     GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                      .addComponent(theAccountLabel)
+                                      .addComponent(myAccountLabel)
                                       .addComponent(theAccountBox, GroupLayout.PREFERRED_SIZE,
                                                     GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addComponent(theShowClosed));
@@ -199,7 +272,7 @@ public class AccountSelect extends JPanel {
     }
 
     /**
-     * Create SavePoint
+     * Create SavePoint.
      */
     public void createSavePoint() {
         /* Create the savePoint */
@@ -207,7 +280,7 @@ public class AccountSelect extends JPanel {
     }
 
     /**
-     * Restore SavePoint
+     * Restore SavePoint.
      */
     public void restoreSavePoint() {
         /* Restore the savePoint */
@@ -219,9 +292,9 @@ public class AccountSelect extends JPanel {
     }
 
     /**
-     * refresh data
+     * refresh data.
      */
-    public void refreshData() {
+    public final void refreshData() {
         /* Build the account types */
         buildAccountTypes();
 
@@ -230,7 +303,7 @@ public class AccountSelect extends JPanel {
     }
 
     /**
-     * build the account types
+     * build the account types.
      */
     private void buildAccountTypes() {
         FinanceData myData;
@@ -246,7 +319,7 @@ public class AccountSelect extends JPanel {
         myData = theView.getData();
 
         /* Access types and accounts */
-        theTypes = myData.getAccountTypes();
+        AccountTypeList myTypes = myData.getAccountTypes();
         theAccounts = myData.getAccounts();
 
         /* Access current values */
@@ -257,16 +330,15 @@ public class AccountSelect extends JPanel {
         refreshingData = true;
 
         /* If we have types already populated */
-        if (typesPopulated) {
+        if (theTypesBox.getItemCount() > 0) {
             /* If we have a selected type */
             if (getType() != null) {
                 /* Find it in the new list */
-                theState.setType(theTypes.searchFor(getType().getName()));
+                theState.setType(myTypes.searchFor(getType().getName()));
             }
 
             /* Remove the types */
             theTypesBox.removeAllItems();
-            typesPopulated = false;
         }
 
         /* Access the iterator */
@@ -275,27 +347,30 @@ public class AccountSelect extends JPanel {
         /* Loop through the non-owner accounts */
         while ((myAccount = myIterator.next()) != null) {
             /* Skip owner items */
-            if (myAccount.isOwner())
+            if (myAccount.isOwner()) {
                 continue;
+            }
 
             /* Skip deleted items */
-            if ((!doShowDeleted) && (myAccount.isDeleted()))
+            if ((!doShowDeleted) && (myAccount.isDeleted())) {
                 continue;
+            }
 
             /* Skip closed items if required */
-            if ((!doShowClosed) && (myAccount.isClosed()))
+            if ((!doShowClosed) && (myAccount.isClosed())) {
                 continue;
+            }
 
             /* If the type of this account is new */
             if (!Difference.isEqual(myType, myAccount.getActType())) {
                 /* Note the type */
                 myType = myAccount.getActType();
-                if (myFirst == null)
+                if (myFirst == null) {
                     myFirst = myType;
+                }
 
                 /* Add the item to the list */
-                theTypesBox.addItem(myType.getName());
-                typesPopulated = true;
+                theTypesBox.addItem(myType);
             }
         }
 
@@ -305,38 +380,40 @@ public class AccountSelect extends JPanel {
         /* Loop through the owner accounts */
         while ((myAccount = myIterator.next()) != null) {
             /* Skip child items */
-            if (!myAccount.isOwner())
+            if (!myAccount.isOwner()) {
                 continue;
+            }
 
             /* Skip deleted items */
-            if ((!doShowDeleted) && (myAccount.isDeleted()))
+            if ((!doShowDeleted) && (myAccount.isDeleted())) {
                 continue;
+            }
 
             /* Skip closed items if required */
-            if ((!doShowClosed) && (myAccount.isClosed()))
+            if ((!doShowClosed) && (myAccount.isClosed())) {
                 continue;
+            }
 
             /* If the type of this account is new */
             if (!Difference.isEqual(myType, myAccount.getActType())) {
                 /* Note the type */
                 myType = myAccount.getActType();
-                if (myFirst == null)
+                if (myFirst == null) {
                     myFirst = myType;
+                }
 
                 /* Add the item to the list */
-                theTypesBox.addItem(myType.getName());
-                typesPopulated = true;
+                theTypesBox.addItem(myType);
             }
         }
 
         /* If we have a selected type */
         if (getType() != null) {
             /* Select it in the new list */
-            theTypesBox.setSelectedItem(getType().getName());
-        }
+            theTypesBox.setSelectedItem(getType());
 
-        /* Else we have no type currently selected */
-        else if (typesPopulated) {
+            /* Else we have no type currently selected */
+        } else if (theTypesBox.getItemCount() > 0) {
             /* Select the first account type */
             theTypesBox.setSelectedIndex(0);
             theState.setType(myFirst);
@@ -347,7 +424,7 @@ public class AccountSelect extends JPanel {
     }
 
     /**
-     * build the accounts comboBox
+     * build the accounts comboBox.
      * @return true/false
      */
     private boolean buildAccounts() {
@@ -372,7 +449,7 @@ public class AccountSelect extends JPanel {
         refreshingData = true;
 
         /* If we have accounts already populated */
-        if (acctsPopulated) {
+        if (theAccountBox.getItemCount() > 0) {
             /* If we have a selected account */
             if (mySelected != null) {
                 /* Find it in the new list */
@@ -382,17 +459,21 @@ public class AccountSelect extends JPanel {
 
             /* Remove the accounts from the box */
             theAccountBox.removeAllItems();
-            acctsPopulated = false;
         }
 
-        /* If the selected item is no longer valid */
-        if ((mySelected != null)
-                && (((doShowDeleted) && (mySelected.isDeleted()))
-                        || ((!doShowClosed) && (mySelected.isClosed())) || (myType.compareTo(mySelected
-                        .getActType()) != 0))) {
-            /* Remove selection */
-            theState.setSelected(null);
-            mySelected = null;
+        /* If we have a selected item */
+        if (mySelected != null) {
+            /* Check its validity */
+            boolean isInvalid = ((!doShowDeleted) && (mySelected.isDeleted()));
+            isInvalid |= ((!doShowClosed) && (mySelected.isClosed()));
+            isInvalid |= (myType.compareTo(mySelected.getActType()) != 0);
+
+            /* If it is no longer valid */
+            if (isInvalid) {
+                /* Remove selection */
+                theState.setSelected(null);
+                mySelected = null;
+            }
         }
 
         /* Access the iterator */
@@ -402,34 +483,36 @@ public class AccountSelect extends JPanel {
         /* Add the Account values to the types box */
         while ((myAcct = myIterator.next()) != null) {
             /* Skip deleted items */
-            if ((!doShowDeleted) && (myAcct.isDeleted()))
+            if ((!doShowDeleted) && (myAcct.isDeleted())) {
                 continue;
+            }
 
             /* Skip closed items if required */
-            if ((!doShowClosed) && (myAcct.isClosed()))
+            if ((!doShowClosed) && (myAcct.isClosed())) {
                 continue;
+            }
 
             /* Skip items that are the wrong type */
-            if (myType.compareTo(myAcct.getActType()) != 0)
+            if (myType.compareTo(myAcct.getActType()) != 0) {
                 continue;
+            }
 
             /* Note the first in the list */
-            if (myFirst == null)
+            if (myFirst == null) {
                 myFirst = myAcct;
+            }
 
             /* Add the item to the list */
-            theAccountBox.addItem(myAcct.getName());
-            acctsPopulated = true;
+            theAccountBox.addItem(myAcct);
         }
 
         /* If we have a selected account */
         if (mySelected != null) {
             /* Select it in the new list */
             theAccountBox.setSelectedItem(mySelected.getName());
-        }
 
-        /* Else we have no account currently selected */
-        else if (acctsPopulated) {
+            /* Else we have no account currently selected */
+        } else if (theAccountBox.getItemCount() > 0) {
             /* Select the first account */
             theAccountBox.setSelectedIndex(0);
             theState.setSelected(myFirst);
@@ -443,10 +526,10 @@ public class AccountSelect extends JPanel {
     }
 
     /**
-     * Set account explicitly
+     * Set account explicitly.
      * @param pAccount the account
      */
-    public void setSelection(Account pAccount) {
+    public void setSelection(final Account pAccount) {
         Account myAccount;
 
         /* Set the refreshing data flag */
@@ -457,7 +540,7 @@ public class AccountSelect extends JPanel {
 
         /* Select the correct account type */
         theState.setType(pAccount.getActType());
-        theTypesBox.setSelectedItem(getType().getName());
+        theTypesBox.setSelectedItem(getType());
 
         /* If we need to show closed items */
         if ((!doShowClosed()) && (myAccount != null) && (myAccount.isClosed())) {
@@ -483,179 +566,205 @@ public class AccountSelect extends JPanel {
         buildAccounts();
     }
 
-    /**
-     * Lock/Unlock the selection
-     */
-    public void setLockDown() {
-        boolean bLock = theParent.hasUpdates();
+    @Override
+    public void setEnabled(final boolean bEnable) {
         Account mySelected = getSelected();
 
         /* Lock/Unlock the selection */
-        theTypesBox.setEnabled(!bLock);
-        theAccountBox.setEnabled(!bLock);
+        theTypesBox.setEnabled(bEnable);
+        theAccountBox.setEnabled(bEnable);
 
         /* Can't switch off show closed if account is closed */
-        if ((mySelected != null) && (mySelected.isClosed()))
-            bLock = true;
+        boolean bLock = ((mySelected != null) && (mySelected.isClosed()));
 
         /* Lock Show Closed */
-        theShowClosed.setEnabled(!bLock);
-
-        /* Reset the lock */
-        bLock = theParent.hasUpdates();
+        theShowClosed.setEnabled(bEnable && !bLock);
 
         /* Can't switch off show deleted if account is deleted */
-        if ((mySelected != null) && (mySelected.isDeleted()))
-            bLock = true;
+        bLock = ((mySelected != null) && (mySelected.isDeleted()));
 
         /* Lock Show Deleted */
-        theShowDeleted.setEnabled(!bLock);
+        theShowDeleted.setEnabled(bEnable && !bLock);
     }
 
     /**
-     * TaxYear Listener class
+     * Account Listener class.
      */
-    private class AccountListener implements ItemListener {
-        /**
-         * ItemStateChanged listener event
-         */
+    private final class AccountListener implements ItemListener {
         @Override
-        public void itemStateChanged(ItemEvent evt) {
-            String myName;
-            boolean bChange = false;
+        public void itemStateChanged(final ItemEvent evt) {
             Object o = evt.getSource();
 
             /* Ignore selection if refreshing data */
-            if (refreshingData)
+            if (refreshingData) {
                 return;
+            }
 
             /* If this event relates to the types box */
-            if (o == theTypesBox) {
-                if (evt.getStateChange() == ItemEvent.SELECTED) {
-                    myName = (String) evt.getItem();
-
-                    /* Select the new type and rebuild account list */
-                    theState.setType(theTypes.searchFor(myName));
-                    bChange = buildAccounts();
+            if ((theTypesBox.equals(o)) && (evt.getStateChange() == ItemEvent.SELECTED)) {
+                /* Select the new type and rebuild account list */
+                AccountType myType = (AccountType) evt.getItem();
+                if (theState.setType(myType)) {
+                    /* Rebuild accounts */
+                    buildAccounts();
+                    theManager.fireStateChanged();
                 }
-            }
 
-            /* If this event relates to the account box */
-            else if (o == theAccountBox) {
-                if (evt.getStateChange() == ItemEvent.SELECTED) {
-                    myName = (String) evt.getItem();
-
-                    /* Select the new account */
-                    theState.setSelected(theAccounts.searchFor(myName));
-                    bChange = true;
+                /* If this event relates to the account box */
+            } else if ((theAccountBox.equals(o)) && (evt.getStateChange() == ItemEvent.SELECTED)) {
+                /* Select the new account */
+                Account myAcct = (Account) evt.getItem();
+                if (theState.setSelected(myAcct)) {
+                    theManager.fireStateChanged();
                 }
-            }
 
-            /* If this event relates to the showClosed box */
-            else if (o == theShowClosed) {
-                /* Note the new criteria and re-build lists */
-                theState.setDoShowClosed(theShowClosed.isSelected());
+                /* If this event relates to the showClosed box */
+            } else if ((theShowClosed.equals(o)) && (theState.setDoShowClosed(theShowClosed.isSelected()))) {
+                /* Build lists */
                 buildAccountTypes();
-                bChange = buildAccounts();
-            }
+                buildAccounts();
 
-            /* If this event relates to the showDeleted box */
-            else if (o == theShowDeleted) {
-                /* Note the new criteria and re-build lists */
-                theState.setDoShowDeleted(theShowDeleted.isSelected());
+                /* If this event relates to the showDeleted box */
+            } else if ((theShowDeleted.equals(o)) && (theState.setDoShowDeleted(theShowDeleted.isSelected()))) {
+                /* Build lists */
                 buildAccountTypes();
-                bChange = buildAccounts();
-            }
-
-            /* If we have a change, alert the table */
-            if (bChange) {
-                theParent.notifySelection(theSelf);
+                buildAccounts();
             }
         }
     }
 
-    /* SavePoint values */
-    private class AccountState {
-        /* Members */
+    /**
+     * SavePoint class.
+     */
+    private final class AccountState {
+        /**
+         * Account type.
+         */
         private AccountType theType = null;
+
+        /**
+         * Selected account.
+         */
         private Account theSelected = null;
+
+        /**
+         * Should we show closed accounts?
+         */
         private boolean doShowClosed = false;
+
+        /**
+         * Should we show deleted accounts?
+         */
         private boolean doShowDeleted = false;
 
-        /* Access methods */
+        /**
+         * Get the account type.
+         * @return the account type
+         */
         private AccountType getType() {
             return theType;
         }
 
+        /**
+         * Get the selected account.
+         * @return the account type
+         */
         private Account getSelected() {
             return theSelected;
         }
 
+        /**
+         * Are we showing closed accounts?
+         * @return true/false
+         */
         private boolean doShowClosed() {
             return doShowClosed;
         }
 
+        /**
+         * Are we showing deleted accounts?
+         * @return true/false
+         */
         private boolean doShowDeleted() {
             return doShowDeleted;
         }
 
         /**
-         * Constructor
+         * Constructor.
          */
         private AccountState() {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pState state to copy from
          */
-        private AccountState(AccountState pState) {
+        private AccountState(final AccountState pState) {
             theType = pState.getType();
             theSelected = pState.getSelected();
         }
 
         /**
-         * Set new Account Type
+         * Set new Account Type.
          * @param pType the AccountType
+         * @return true/false did a change occur
          */
-        private void setType(AccountType pType) {
-            /* Adjust the type */
-            theType = pType;
+        private boolean setType(final AccountType pType) {
+            if (!Difference.isEqual(pType, theType)) {
+                theType = pType;
+                return true;
+            }
+            return false;
         }
 
         /**
-         * Set new Account
+         * Set new Account.
          * @param pAccount the Account
+         * @return true/false did a change occur
          */
-        private void setSelected(Account pAccount) {
+        private boolean setSelected(final Account pAccount) {
             /* Adjust the selected account */
-            theSelected = pAccount;
+            if (!Difference.isEqual(pAccount, theSelected)) {
+                theSelected = pAccount;
+                return true;
+            }
+            return false;
         }
 
         /**
-         * Set doShowClosed indication
-         * @param doShowClosed true/false
+         * Set doShowClosed indication.
+         * @return true/false did a change occur
+         * @param pShowClosed true/false
          */
-        private void setDoShowClosed(boolean doShowClosed) {
+        private boolean setDoShowClosed(final boolean pShowClosed) {
             /* Adjust the flag */
-            this.doShowClosed = doShowClosed;
+            if (doShowClosed != pShowClosed) {
+                doShowClosed = pShowClosed;
+                return true;
+            }
+            return false;
         }
 
         /**
-         * Set doShowDeleted indication
-         * @param doShowDeleted true/false
+         * Set doShowDeleted indication.
+         * @param pShowDeleted true/false
+         * @return true/false did a change occur
          */
-        private void setDoShowDeleted(boolean doShowDeleted) {
+        private boolean setDoShowDeleted(final boolean pShowDeleted) {
             /* Adjust the flag */
-            this.doShowDeleted = doShowDeleted;
+            if (doShowDeleted != pShowDeleted) {
+                doShowDeleted = pShowDeleted;
+                return true;
+            }
+            return false;
         }
 
         /**
-         * Apply the State
+         * Apply the State.
          */
         private void applyState() {
             /* Adjust the lock-down */
-            setLockDown();
+            setEnabled(true);
             theShowClosed.setSelected(doShowClosed);
             theShowDeleted.setSelected(doShowDeleted);
             theTypesBox.setSelectedItem((theType == null) ? null : theType.getName());

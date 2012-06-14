@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,26 +48,84 @@ import uk.co.tolcroft.models.ui.PreferenceSetPanel;
 import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
 import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
 
+/**
+ * Preference maintenance panel.
+ * @author Tony Washer
+ */
 public class MaintProperties implements StdPanel {
-    /* Properties */
-    private MaintenanceTab theParent = null;
-    private JPanel thePanel = null;
-    private JPanel theSelection = null;
-    private JPanel theButtons = null;
-    private JButton theOKButton = null;
-    private JButton theResetButton = null;
-    private JComboBox theSelect = null;
-    private JPanel theProperties = null;
-    private CardLayout theLayout = null;
+    /**
+     * The panel width.
+     */
+    private static final int PANEL_WIDTH = 300;
+
+    /**
+     * The panel height.
+     */
+    private static final int PANEL_HEIGHT = 25;
+
+    /**
+     * The parent.
+     */
+    private final MaintenanceTab theParent;
+
+    /**
+     * The parent.
+     */
+    private final JPanel thePanel;
+
+    /**
+     * The selection panel.
+     */
+    // private final JPanel theSelection;
+
+    /**
+     * The butoons panel.
+     */
+    // private final JPanel theButtons;
+
+    /**
+     * The ok button.
+     */
+    private final JButton theOKButton;
+
+    /**
+     * The reset button.
+     */
+    private final JButton theResetButton;
+
+    /**
+     * The selection panel.
+     */
+    private final JComboBox theSelect;
+
+    /**
+     * The properties panel.
+     */
+    private final JPanel theProperties;
+
+    /**
+     * The layout.
+     */
+    private final CardLayout theLayout;
+
+    /**
+     * The active set.
+     */
     private PreferenceSetPanel theActive = null;
 
-    /* Access methods */
+    /**
+     * Obtain panel.
+     * @return the panel
+     */
     public JPanel getPanel() {
         return thePanel;
     }
 
-    /* Constructor */
-    public MaintProperties(MaintenanceTab pParent) {
+    /**
+     * Constructor.
+     * @param pParent the parent
+     */
+    public MaintProperties(final MaintenanceTab pParent) {
         /* Store parent */
         theParent = pParent;
 
@@ -75,12 +134,12 @@ public class MaintProperties implements StdPanel {
         theResetButton = new JButton("Reset");
 
         /* Create the buttons panel */
-        theButtons = new JPanel();
-        theButtons.setBorder(javax.swing.BorderFactory.createTitledBorder("Save Options"));
+        JPanel myButtons = new JPanel();
+        myButtons.setBorder(javax.swing.BorderFactory.createTitledBorder("Save Options"));
 
         /* Create the layout for the panel */
-        GroupLayout myLayout = new GroupLayout(theButtons);
-        theButtons.setLayout(myLayout);
+        GroupLayout myLayout = new GroupLayout(myButtons);
+        myButtons.setLayout(myLayout);
 
         /* Set the layout */
         myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -96,15 +155,15 @@ public class MaintProperties implements StdPanel {
         /* Create selection box and label */
         JLabel myLabel = new JLabel("PropertySet:");
         theSelect = new JComboBox();
-        theSelect.setMaximumSize(new Dimension(300, 25));
+        theSelect.setMaximumSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
 
         /* Create the selection panel */
-        theSelection = new JPanel();
-        theSelection.setBorder(javax.swing.BorderFactory.createTitledBorder("Selection"));
+        JPanel mySelection = new JPanel();
+        mySelection.setBorder(javax.swing.BorderFactory.createTitledBorder("Selection"));
 
         /* Create the layout for the panel */
-        myLayout = new GroupLayout(theSelection);
-        theSelection.setLayout(myLayout);
+        myLayout = new GroupLayout(mySelection);
+        mySelection.setLayout(myLayout);
 
         /* Set the layout */
         myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -144,10 +203,10 @@ public class MaintProperties implements StdPanel {
         /* Now define the panel */
         thePanel = new JPanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(theSelection);
+        thePanel.add(mySelection);
         thePanel.add(myScroll);
         thePanel.add(Box.createVerticalGlue());
-        thePanel.add(theButtons);
+        thePanel.add(myButtons);
 
         /* Determine the active items */
         theActive = (PreferenceSetPanel) theSelect.getSelectedItem();
@@ -161,10 +220,10 @@ public class MaintProperties implements StdPanel {
     }
 
     /**
-     * RegisterSet
+     * RegisterSet.
      * @param pSet the set to register
      */
-    private void registerSet(PreferenceSet pSet) {
+    private void registerSet(final PreferenceSet pSet) {
         /* Create the underlying panel */
         PreferenceSetPanel myPanel = new PreferenceSetPanel(this, pSet);
 
@@ -175,25 +234,26 @@ public class MaintProperties implements StdPanel {
         theSelect.addItem(myPanel);
     }
 
-    /* hasUpdates */
     @Override
     public boolean hasUpdates() {
         return ((theActive != null) && (theActive.hasChanges()));
     }
 
-    /* performCommand */
     @Override
-    public void performCommand(stdCommand pCmd) {
+    public void performCommand(final stdCommand pCmd) {
         /* Switch on command */
         switch (pCmd) {
             case OK:
                 try {
                     theActive.storeChanges();
-                } catch (Throwable e) {
+                } catch (Exception e) {
+                    e = null;
                 }
                 break;
             case RESETALL:
                 theActive.resetChanges();
+                break;
+            default:
                 break;
         }
 
@@ -201,7 +261,6 @@ public class MaintProperties implements StdPanel {
         notifyChanges();
     }
 
-    /* Note that changes have been made */
     @Override
     public void notifyChanges() {
         /* Set the visibility */
@@ -211,7 +270,9 @@ public class MaintProperties implements StdPanel {
         theParent.setVisibility();
     }
 
-    /* Set Visibility */
+    /**
+     * Set the visibility.
+     */
     public void setVisibility() {
         /* Enable selection */
         theSelect.setEnabled((theActive != null) && !theActive.hasChanges());
@@ -222,30 +283,29 @@ public class MaintProperties implements StdPanel {
     }
 
     /**
-     * PropertyListener class
+     * PropertyListener class.
      */
-    private class PropertyListener implements ActionListener, ItemListener {
+    private final class PropertyListener implements ActionListener, ItemListener {
         @Override
-        public void actionPerformed(ActionEvent evt) {
+        public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();
 
             /* If this event relates to the OK button */
-            if (o == theOKButton) {
+            if (theOKButton.equals(o)) {
                 /* Perform the command */
                 performCommand(stdCommand.OK);
-            }
 
-            /* If this event relates to the reset button */
-            else if (o == theResetButton) {
+                /* If this event relates to the reset button */
+            } else if (theResetButton.equals(o)) {
                 /* Perform the command */
                 performCommand(stdCommand.RESETALL);
             }
         }
 
         @Override
-        public void itemStateChanged(ItemEvent evt) {
+        public void itemStateChanged(final ItemEvent evt) {
             /* If this event relates to the selected box */
-            if (evt.getSource() == theSelect) {
+            if (theSelect.equals(evt.getSource())) {
                 /* Set the Active component */
                 theActive = (PreferenceSetPanel) evt.getItem();
 
@@ -259,11 +319,11 @@ public class MaintProperties implements StdPanel {
     }
 
     /**
-     * PropertyListener class
+     * PropertySetListener class.
      */
-    private class PropertySetListener implements ActionListener {
+    private final class PropertySetListener implements ActionListener {
         @Override
-        public void actionPerformed(ActionEvent evt) {
+        public void actionPerformed(final ActionEvent evt) {
             /* Source is the property set that has been added */
             PreferenceSet mySet = (PreferenceSet) evt.getSource();
 
@@ -276,7 +336,7 @@ public class MaintProperties implements StdPanel {
     }
 
     @Override
-    public void notifySelection(Object o) {
+    public void notifySelection(final Object o) {
     }
 
     @Override
@@ -304,6 +364,6 @@ public class MaintProperties implements StdPanel {
     }
 
     @Override
-    public void lockOnError(boolean isError) {
+    public void lockOnError(final boolean isError) {
     }
 }

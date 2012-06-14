@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -60,25 +61,56 @@ import uk.co.tolcroft.finance.views.IncomeBreakdown.IncomeTotals;
 import uk.co.tolcroft.finance.views.IncomeBreakdown.RecordList;
 import uk.co.tolcroft.models.data.DataList.DataListIterator;
 
+/**
+ * Reporting class to build HTML from analysis.
+ * @author Tony Washer
+ */
 public class AnalysisReport {
-    /* Properties */
-    private Analysis theAnalysis = null;
-    private AnalysisYear theAnalysisYear = null;
-    private DateDay theDate = null;
-    private TaxYear theYear = null;
+    /**
+     * The buffer length.
+     */
+    private static final int BUFFER_LEN = 10000;
 
-    /* Constructor */
-    public AnalysisReport(EventAnalysis pAnalysis) {
+    /**
+     * The analysis.
+     */
+    private final Analysis theAnalysis;
+
+    /**
+     * The Tax year analysis.
+     */
+    private final AnalysisYear theAnalysisYear;
+
+    /**
+     * The reporting date.
+     */
+    private final DateDay theDate;
+
+    /**
+     * The reporting TaxYear.
+     */
+    private final TaxYear theYear;
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     */
+    public AnalysisReport(final EventAnalysis pAnalysis) {
         /* Record the details */
         theAnalysis = pAnalysis.getAnalysis();
         theDate = theAnalysis.getDate();
+        theYear = null;
+        theAnalysisYear = null;
 
         /* Produce totals */
         pAnalysis.getMetaAnalysis().produceTotals();
     }
 
-    /* Constructor */
-    public AnalysisReport(AnalysisYear pAnalysisYear) {
+    /**
+     * Constructor.
+     * @param pAnalysisYear the years analysis.
+     */
+    public AnalysisReport(final AnalysisYear pAnalysisYear) {
         /* Record the details */
         theAnalysisYear = pAnalysisYear;
         theAnalysis = pAnalysisYear.getAnalysis();
@@ -90,14 +122,14 @@ public class AnalysisReport {
     }
 
     /**
-     * Build a web output of the Year report
+     * Build a web output of the Year report.
      * @return Web output
      */
     public String getYearReport() {
         DataListIterator<AnalysisBucket> myIterator;
         AnalysisBucket myBucket;
-        StringBuilder myOutput = new StringBuilder(10000);
-        StringBuilder myDetail = new StringBuilder(10000);
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
+        StringBuilder myDetail = new StringBuilder(BUFFER_LEN);
         BucketList myList;
         AssetSummary mySummary;
         AssetTotal myTotal;
@@ -125,8 +157,9 @@ public class AnalysisReport {
         /* Loop through the Summary Buckets */
         while ((myBucket = myIterator.next()) != null) {
             /* Only process summary items */
-            if (myBucket.getBucketType() != BucketType.ASSETSUMMARY)
+            if (myBucket.getBucketType() != BucketType.ASSETSUMMARY) {
                 continue;
+            }
 
             /* Access the summary bucket */
             mySummary = (AssetSummary) myBucket;
@@ -171,14 +204,14 @@ public class AnalysisReport {
     }
 
     /**
-     * Build a web output of the instant report
+     * Build a web output of the instant report.
      * @return Web output
      */
     public String getInstantReport() {
         DataListIterator<AnalysisBucket> myIterator;
         AnalysisBucket myBucket;
-        StringBuilder myOutput = new StringBuilder(10000);
-        StringBuilder myDetail = new StringBuilder(10000);
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
+        StringBuilder myDetail = new StringBuilder(BUFFER_LEN);
         AccountType myType;
         AssetSummary mySummary;
         AssetTotal myTotal;
@@ -202,8 +235,9 @@ public class AnalysisReport {
         /* Loop through the Summary Buckets */
         while ((myBucket = myIterator.next()) != null) {
             /* Only process summary items */
-            if (myBucket.getBucketType() != BucketType.ASSETSUMMARY)
+            if (myBucket.getBucketType() != BucketType.ASSETSUMMARY) {
                 continue;
+            }
 
             /* Access the summary bucket */
             mySummary = (AssetSummary) myBucket;
@@ -222,12 +256,13 @@ public class AnalysisReport {
             myType = mySummary.getAccountType();
 
             /* Format the detail */
-            if (myType.isMoney())
+            if (myType.isMoney()) {
                 myDetail.append(makeRatedReport(mySummary));
-            else if (myType.isPriced())
+            } else if (myType.isPriced()) {
                 myDetail.append(makePricedReport(mySummary));
-            else
+            } else {
                 myDetail.append(makeDebtReport(mySummary));
+            }
         }
 
         /* Access the totals */
@@ -249,14 +284,14 @@ public class AnalysisReport {
     }
 
     /**
-     * Build a web output of the market report
+     * Build a web output of the market report.
      * @return Web output
      */
     public String getMarketReport() {
         DataListIterator<AnalysisBucket> myIterator;
         AnalysisBucket myBucket;
-        StringBuilder myOutput = new StringBuilder(10000);
-        StringBuilder myDetail = new StringBuilder(10000);
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
+        StringBuilder myDetail = new StringBuilder(BUFFER_LEN);
         AccountType myType;
         BucketList myList;
         AssetAccount myAsset;
@@ -282,8 +317,9 @@ public class AnalysisReport {
         /* Loop through the Detail Buckets */
         while ((myBucket = myIterator.next()) != null) {
             /* Only process detail items */
-            if (myBucket.getBucketType() != BucketType.ASSETDETAIL)
+            if (myBucket.getBucketType() != BucketType.ASSETDETAIL) {
                 continue;
+            }
 
             /* Access the summary bucket */
             myAsset = (AssetAccount) myBucket;
@@ -292,8 +328,9 @@ public class AnalysisReport {
             myType = myAsset.getAccountType();
 
             /* Ignore non-priced items */
-            if (!myType.isPriced())
+            if (!myType.isPriced()) {
                 continue;
+            }
 
             /* Format the Asset */
             myOutput.append("<tr><th align=\"center\">");
@@ -337,12 +374,12 @@ public class AnalysisReport {
     }
 
     /**
-     * Build a web output of the income/expense report
+     * Build a web output of the income/expense report.
      * @return Web output
      */
     public String getIncomeReport() {
         AnalysisBucket myBucket;
-        StringBuilder myOutput = new StringBuilder(10000);
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
         BucketList myList;
         DataListIterator<AnalysisBucket> myIterator;
         ExternalAccount myExternal;
@@ -374,8 +411,9 @@ public class AnalysisReport {
         /* Loop through the Detail Buckets */
         while ((myBucket = myIterator.next()) != null) {
             /* Skip bucket if this is not an external account */
-            if (myBucket.getBucketType() != BucketType.EXTERNALDETAIL)
+            if (myBucket.getBucketType() != BucketType.EXTERNALDETAIL) {
                 continue;
+            }
 
             /* Access the account */
             myExternal = (ExternalAccount) myBucket;
@@ -413,13 +451,13 @@ public class AnalysisReport {
     }
 
     /**
-     * Build a standard yearly report element
+     * Build a standard yearly report element.
      * @param pSummary the class of the element
      * @return Web output
      */
-    public StringBuilder makeStandardReport(AssetSummary pSummary) {
+    public StringBuilder makeStandardReport(final AssetSummary pSummary) {
         DataListIterator<AnalysisBucket> myIterator;
-        StringBuilder myOutput = new StringBuilder(10000);
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
         AccountType myType;
         AnalysisBucket myBucket;
         BucketList myList;
@@ -453,15 +491,17 @@ public class AnalysisReport {
         /* Loop through the Detail Buckets */
         while ((myBucket = myIterator.next()) != null) {
             /* Skip record if not a value account */
-            if (!(myBucket instanceof ValueAccount))
+            if (!(myBucket instanceof ValueAccount)) {
                 continue;
+            }
 
             /* Access the bucket */
             myValue = (ValueAccount) myBucket;
 
             /* Skip record if incorrect type */
-            if (!Difference.isEqual(myValue.getAccountType(), myType))
+            if (!Difference.isEqual(myValue.getAccountType(), myType)) {
                 continue;
+            }
 
             /* Format the detail */
             myOutput.append("<tr><th align=\"center\">");
@@ -482,13 +522,13 @@ public class AnalysisReport {
     }
 
     /**
-     * Build a rated instant report element
+     * Build a rated instant report element.
      * @param pSummary the class of the element
      * @return Web output
      */
-    private StringBuilder makeRatedReport(AssetSummary pSummary) {
+    private StringBuilder makeRatedReport(final AssetSummary pSummary) {
         DataListIterator<AnalysisBucket> myIterator;
-        StringBuilder myOutput = new StringBuilder(10000);
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
         AccountType myType;
         AnalysisBucket myBucket;
         BucketList myList;
@@ -518,15 +558,17 @@ public class AnalysisReport {
         /* Loop through the Detail Buckets */
         while ((myBucket = myIterator.next()) != null) {
             /* Skip record if this is not a money detail */
-            if (myBucket.getBucketType() != BucketType.MONEYDETAIL)
+            if (myBucket.getBucketType() != BucketType.MONEYDETAIL) {
                 continue;
+            }
 
             /* Access the bucket */
             myMoney = (MoneyAccount) myBucket;
 
             /* Skip record if incorrect type */
-            if (!Difference.isEqual(myMoney.getAccountType(), myType))
+            if (!Difference.isEqual(myMoney.getAccountType(), myType)) {
                 continue;
+            }
 
             /* Format the detail */
             myOutput.append("<tr><th align=\"center\">");
@@ -548,13 +590,13 @@ public class AnalysisReport {
     }
 
     /**
-     * Build a debt instant report element
+     * Build a debt instant report element.
      * @param pSummary the class of element
      * @return Web output
      */
-    public StringBuilder makeDebtReport(AssetSummary pSummary) {
+    public StringBuilder makeDebtReport(final AssetSummary pSummary) {
         DataListIterator<AnalysisBucket> myIterator;
-        StringBuilder myOutput = new StringBuilder(10000);
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
         AccountType myType;
         AnalysisBucket myBucket;
         BucketList myList;
@@ -583,15 +625,17 @@ public class AnalysisReport {
         /* Loop through the Detail Buckets */
         while ((myBucket = myIterator.next()) != null) {
             /* Skip record if this is not debt detail */
-            if (myBucket.getBucketType() != BucketType.DEBTDETAIL)
+            if (myBucket.getBucketType() != BucketType.DEBTDETAIL) {
                 continue;
+            }
 
             /* Access the bucket */
             myDebt = (DebtAccount) myBucket;
 
             /* Skip record if incorrect type */
-            if (!Difference.isEqual(myDebt.getAccountType(), myType))
+            if (!Difference.isEqual(myDebt.getAccountType(), myType)) {
                 continue;
+            }
 
             /* Format the detail */
             myOutput.append("<tr><th align=\"center\">");
@@ -610,13 +654,13 @@ public class AnalysisReport {
     }
 
     /**
-     * Build a priced instant report element
+     * Build a priced instant report element.
      * @param pSummary the class of element
      * @return Web output
      */
-    public StringBuilder makePricedReport(AssetSummary pSummary) {
+    public StringBuilder makePricedReport(final AssetSummary pSummary) {
         DataListIterator<AnalysisBucket> myIterator;
-        StringBuilder myOutput = new StringBuilder(10000);
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
         AccountType myType;
         AnalysisBucket myBucket;
         BucketList myList;
@@ -646,19 +690,22 @@ public class AnalysisReport {
         /* Loop through the Detail Buckets */
         while ((myBucket = myIterator.next()) != null) {
             /* Skip record if this is not asset detail */
-            if (myBucket.getBucketType() != BucketType.ASSETDETAIL)
+            if (myBucket.getBucketType() != BucketType.ASSETDETAIL) {
                 continue;
+            }
 
             /* Access the bucket */
             myAsset = (AssetAccount) myBucket;
 
             /* Skip record if incorrect type */
-            if (!Difference.isEqual(myAsset.getAccountType(), myType))
+            if (!Difference.isEqual(myAsset.getAccountType(), myType)) {
                 continue;
+            }
 
             /* Skip irrelevant records */
-            if (!myAsset.isRelevant())
+            if (!myAsset.isRelevant()) {
                 continue;
+            }
 
             /* Format the detail */
             myOutput.append("<tr><th align=\"center\">");
@@ -680,13 +727,13 @@ public class AnalysisReport {
     }
 
     /**
-     * Build a capital event report element
+     * Build a capital event report element.
      * @param pAsset the asset to report on
      * @return Web output
      */
-    public StringBuilder makeCapitalEventReport(AssetAccount pAsset) {
+    public StringBuilder makeCapitalEventReport(final AssetAccount pAsset) {
         Iterator<CapitalEvent> myIterator;
-        StringBuilder myOutput = new StringBuilder(10000);
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
         CapitalEvent myEvent;
         CapitalEventList myList;
 
@@ -711,19 +758,22 @@ public class AnalysisReport {
         /* Loop through the Events */
         while ((myEvent = myIterator.next()) != null) {
             /* Skip record if this is not based on an event (at present) */
-            if (myEvent.getEvent() == null)
+            if (myEvent.getEvent() == null) {
                 continue;
+            }
 
             /* Format the detail */
             myOutput.append("<tr><th>");
             myOutput.append(JDataObject.formatField(myEvent.getDate()));
             myOutput.append("</th>");
             myOutput.append(Report.makeUnitsItem((Units) myEvent
-                    .findAttribute(CapitalEvent.capitalDeltaUnits)));
-            myOutput.append(Report.makeMoneyItem((Money) myEvent.findAttribute(CapitalEvent.capitalDeltaCost)));
+                    .findAttribute(CapitalEvent.CAPITAL_DELTAUNITS)));
             myOutput.append(Report.makeMoneyItem((Money) myEvent
-                    .findAttribute(CapitalEvent.capitalDeltaGains)));
-            myOutput.append(Report.makeMoneyItem((Money) myEvent.findAttribute(CapitalEvent.capitalDeltaDiv)));
+                    .findAttribute(CapitalEvent.CAPITAL_DELTACOST)));
+            myOutput.append(Report.makeMoneyItem((Money) myEvent
+                    .findAttribute(CapitalEvent.CAPITAL_DELTAGAINS)));
+            myOutput.append(Report.makeMoneyItem((Money) myEvent
+                    .findAttribute(CapitalEvent.CAPITAL_DELTADIVIDEND)));
             myOutput.append("</tr>");
         }
 
@@ -738,12 +788,12 @@ public class AnalysisReport {
     }
 
     /**
-     * Build a web output of the transaction report
+     * Build a web output of the transaction report.
      * @return Web output
      */
     public String getTransReport() {
         AnalysisBucket myBucket;
-        StringBuilder myOutput = new StringBuilder(10000);
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
         BucketList myList;
         DataListIterator<AnalysisBucket> myIterator;
         TransSummary mySummary;
@@ -795,6 +845,8 @@ public class AnalysisReport {
                     myOutput.append(Report.makeMoneyItem(myTotal.getPrevAmount()));
                     myOutput.append("</tr>");
                     break;
+                default:
+                    break;
             }
         }
 
@@ -817,8 +869,9 @@ public class AnalysisReport {
         /* Loop through the Transaction Summary Buckets */
         while ((myBucket = myIterator.next()) != null) {
             /* Skip entries that are not TransDetail */
-            if (myBucket.getBucketType() != BucketType.TRANSDETAIL)
+            if (myBucket.getBucketType() != BucketType.TRANSDETAIL) {
                 continue;
+            }
 
             /* Access the detail */
             myDetail = (TransDetail) myBucket;
@@ -842,13 +895,13 @@ public class AnalysisReport {
     }
 
     /**
-     * Build a web output of the taxation report
+     * Build a web output of the taxation report.
      * @return Web output
      */
     public String getTaxReport() {
         AnalysisBucket myBucket;
-        StringBuilder myOutput = new StringBuilder(10000);
-        StringBuilder myDetail = new StringBuilder(10000);
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
+        StringBuilder myDetail = new StringBuilder(BUFFER_LEN);
         BucketList myList;
         DataListIterator<AnalysisBucket> myIterator;
         TaxDetail myTax;
@@ -879,8 +932,9 @@ public class AnalysisReport {
         /* Loop through the Transaction Summary Buckets */
         while ((myBucket = myIterator.next()) != null) {
             /* Skip the non-summary elements */
-            if (myBucket.getBucketType() != BucketType.TAXSUMMARY)
+            if (myBucket.getBucketType() != BucketType.TAXSUMMARY) {
                 continue;
+            }
 
             /* Access the tax detail */
             myTax = (TaxDetail) myBucket;
@@ -968,43 +1022,49 @@ public class AnalysisReport {
         myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">");
         myOutput.append("<thead><th>IncomeType</th><th>LoRate</th>");
         myOutput.append("<th>BasicRate</th><th>HiRate</th>");
-        if (theYear.hasAdditionalTaxBand())
+        if (theYear.hasAdditionalTaxBand()) {
             myOutput.append("<th>AdditionalRate</th>");
+        }
         myOutput.append("</thead><tbody>");
         myOutput.append("<tr><th>Salary/Rental</th>");
         myOutput.append(Report.makeRateItem(theYear.hasLoSalaryBand() ? theYear.getLoTaxRate() : null));
         myOutput.append(Report.makeRateItem(theYear.getBasicTaxRate()));
         myOutput.append(Report.makeRateItem(theYear.getHiTaxRate()));
-        if (theYear.hasAdditionalTaxBand())
+        if (theYear.hasAdditionalTaxBand()) {
             myOutput.append(Report.makeRateItem(theYear.getAddTaxRate()));
+        }
         myOutput.append("</tr>");
         myOutput.append("<tr><th>Interest</th>");
         myOutput.append(Report.makeRateItem(theYear.getLoTaxRate()));
         myOutput.append(Report.makeRateItem(theYear.getIntTaxRate()));
         myOutput.append(Report.makeRateItem(theYear.getHiTaxRate()));
-        if (theYear.hasAdditionalTaxBand())
+        if (theYear.hasAdditionalTaxBand()) {
             myOutput.append(Report.makeRateItem(theYear.getAddTaxRate()));
+        }
         myOutput.append("</tr>");
         myOutput.append("<tr><th>Dividends</th>");
         myOutput.append(Report.makeRateItem(null));
         myOutput.append(Report.makeRateItem(theYear.getDivTaxRate()));
         myOutput.append(Report.makeRateItem(theYear.getHiDivTaxRate()));
-        if (theYear.hasAdditionalTaxBand())
+        if (theYear.hasAdditionalTaxBand()) {
             myOutput.append(Report.makeRateItem(theYear.getAddDivTaxRate()));
+        }
         myOutput.append("</tr>");
         myOutput.append("<tr><th>TaxableGains</th>");
         myOutput.append(Report.makeRateItem(null));
         myOutput.append(Report.makeRateItem(theYear.getBasicTaxRate()));
         myOutput.append(Report.makeRateItem(theYear.getHiTaxRate()));
-        if (theYear.hasAdditionalTaxBand())
+        if (theYear.hasAdditionalTaxBand()) {
             myOutput.append(Report.makeRateItem(theYear.getAddTaxRate()));
+        }
         myOutput.append("</tr>");
         myOutput.append("<tr><th>CapitalGains</th>");
         myOutput.append(Report.makeRateItem(null));
         myOutput.append(Report.makeRateItem(theYear.getCapTaxRate()));
         myOutput.append(Report.makeRateItem(theYear.getHiCapTaxRate()));
-        if (theYear.hasAdditionalTaxBand())
+        if (theYear.hasAdditionalTaxBand()) {
             myOutput.append(Report.makeRateItem(null));
+        }
         myOutput.append("</tr>");
         myOutput.append("</tbody></table>");
 
@@ -1065,8 +1125,9 @@ public class AnalysisReport {
         myOutput.append(myDetail);
 
         /* If we need a tax slice report */
-        if (theAnalysis.hasGainsSlices())
+        if (theAnalysis.hasGainsSlices()) {
             myOutput.append(makeTaxSliceReport());
+        }
 
         /* Close the document */
         myOutput.append("</body></html>");
@@ -1076,12 +1137,12 @@ public class AnalysisReport {
     }
 
     /**
-     * Build a standard tax report element
+     * Build a standard tax report element.
      * @param pSummary the summary
      * @return Web output
      */
-    public StringBuilder makeTaxReport(TaxDetail pSummary) {
-        StringBuilder myOutput = new StringBuilder(1000);
+    public StringBuilder makeTaxReport(final TaxDetail pSummary) {
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
         AnalysisBucket myBucket;
         BucketList myList;
         TaxDetail myTax;
@@ -1108,15 +1169,17 @@ public class AnalysisReport {
         /* Loop through the Transaction Detail Buckets */
         while ((myBucket = myIterator.next()) != null) {
             /* Skip non-detail buckets */
-            if (myBucket.getBucketType() != BucketType.TAXDETAIL)
+            if (myBucket.getBucketType() != BucketType.TAXDETAIL) {
                 continue;
+            }
 
             /* Access the bucket */
             myTax = (TaxDetail) myBucket;
 
             /* Skip record if incorrect parent */
-            if (myTax.getParent() != pSummary)
+            if (myTax.getParent() != pSummary) {
                 continue;
+            }
 
             /* Format the detail */
             myOutput.append("<tr><th align=\"center\">");
@@ -1139,11 +1202,11 @@ public class AnalysisReport {
     }
 
     /**
-     * Build a tax slice report
+     * Build a tax slice report.
      * @return Web output
      */
     public StringBuilder makeTaxSliceReport() {
-        StringBuilder myOutput = new StringBuilder(1000);
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
         TaxDetail myTax;
         BucketList myList;
         ChargeableEvent myCharge;
@@ -1203,7 +1266,7 @@ public class AnalysisReport {
     }
 
     /**
-     * Build income breakdown report
+     * Build income breakdown report.
      * @return Web output
      */
     public String getBreakdownReport() {
@@ -1224,22 +1287,23 @@ public class AnalysisReport {
     }
 
     /**
-     * Build a standard income child report element
+     * Build a standard income child report element.
      * @param pList the record list
      * @param pReturn return link
      * @return Web output
      */
-    public StringBuilder makeAccountListReport(RecordList pList,
-                                               String pReturn) {
-        StringBuilder myOutput = new StringBuilder(1000);
-        StringBuilder myDetail = new StringBuilder(1000);
+    public StringBuilder makeAccountListReport(final RecordList pList,
+                                               final String pReturn) {
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
+        StringBuilder myDetail = new StringBuilder(BUFFER_LEN);
         AccountRecord myAccount;
         String myListName;
         DataListIterator<AccountRecord> myIterator;
 
         /* If there is zero income return empty string */
-        if (!pList.getTotals().getGrossIncome().isNonZero())
+        if (!pList.getTotals().getGrossIncome().isNonZero()) {
             return myOutput;
+        }
 
         /* Format the detail */
         myOutput.append("<a name=\"Income");
@@ -1279,10 +1343,9 @@ public class AnalysisReport {
             if (myAccount.getEvents().size() > 0) {
                 /* Add the child report */
                 myDetail.append(makeAccountEventReport(myAccount, pList.getName()));
-            }
 
-            /* If we have children */
-            else if (myAccount.getChildren().size() > 0) {
+                /* If we have children */
+            } else if (myAccount.getChildren().size() > 0) {
                 /* Add the child report */
                 myDetail.append(makeAccountListReport(myAccount.getChildren(), pList.getName()));
             }
@@ -1295,8 +1358,9 @@ public class AnalysisReport {
             myOutput.append("<a href=\"#Income");
             myOutput.append(pReturn);
             myOutput.append("\">Total</a>");
-        } else
+        } else {
             myOutput.append("Total");
+        }
         myOutput.append("</th>");
         myOutput.append(Report.makeMoneyTotal(myTotals.getGrossIncome()));
         myOutput.append(Report.makeMoneyTotal(myTotals.getNetIncome()));
@@ -1311,14 +1375,14 @@ public class AnalysisReport {
     }
 
     /**
-     * Build a standard income event report element
+     * Build a standard income event report element.
      * @param pAccount the account
      * @param pReturn return link
      * @return Web output
      */
-    public StringBuilder makeAccountEventReport(AccountRecord pAccount,
-                                                String pReturn) {
-        StringBuilder myOutput = new StringBuilder(1000);
+    public StringBuilder makeAccountEventReport(final AccountRecord pAccount,
+                                                final String pReturn) {
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
         Event myEvent;
         Account myAccount = pAccount.getAccount();
         DataListIterator<Event> myIterator;
@@ -1357,10 +1421,9 @@ public class AnalysisReport {
                     || (myTrans.getTranClass() == TransClass.BENEFIT)) {
                 /* Just add to gross */
                 myNet = new Money(0);
-            }
-
-            else if (myEvent.getTaxCredit() != null)
+            } else if (myEvent.getTaxCredit() != null) {
                 myGross.addAmount(myEvent.getTaxCredit());
+            }
 
             /* Report the values */
             myOutput.append(Report.makeMoneyItem(myGross));

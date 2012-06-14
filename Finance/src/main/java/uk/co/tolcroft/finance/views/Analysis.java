@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,7 +33,9 @@ import net.sourceforge.JDecimal.Rate;
 import net.sourceforge.JDecimal.Units;
 import uk.co.tolcroft.finance.data.Account;
 import uk.co.tolcroft.finance.data.AccountPrice;
+import uk.co.tolcroft.finance.data.AccountPrice.AccountPriceList;
 import uk.co.tolcroft.finance.data.AccountRate;
+import uk.co.tolcroft.finance.data.AccountRate.AccountRateList;
 import uk.co.tolcroft.finance.data.AccountType;
 import uk.co.tolcroft.finance.data.Event;
 import uk.co.tolcroft.finance.data.FinanceData;
@@ -50,9 +53,13 @@ import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 
+/**
+ * Data Analysis.
+ * @author Tony Washer
+ */
 public class Analysis implements JDataContents {
     /**
-     * Report fields
+     * Report fields.
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(Analysis.class.getSimpleName());
 
@@ -61,28 +68,56 @@ public class Analysis implements JDataContents {
         return FIELD_DEFS;
     }
 
-    /* Field IDs */
+    /**
+     * State Field Id.
+     */
     public static final JDataField FIELD_STATE = FIELD_DEFS.declareLocalField("State");
+
+    /**
+     * Buckets Field Id.
+     */
     public static final JDataField FIELD_LIST = FIELD_DEFS.declareLocalField("BucketList");
+
+    /**
+     * Charges Field Id.
+     */
     public static final JDataField FIELD_CHARGES = FIELD_DEFS.declareLocalField("Charges");
+
+    /**
+     * TaxYear Field Id.
+     */
     public static final JDataField FIELD_TAXYEAR = FIELD_DEFS.declareLocalField("TaxYear");
+
+    /**
+     * Date Field Id.
+     */
     public static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
+
+    /**
+     * Account Field Id.
+     */
     public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField("Account");
 
     @Override
-    public Object getFieldValue(JDataField pField) {
-        if (pField == FIELD_STATE)
+    public Object getFieldValue(final JDataField pField) {
+        if (FIELD_STATE.equals(pField)) {
             return theAnalysisState;
-        if (pField == FIELD_LIST)
+        }
+        if (FIELD_LIST.equals(pField)) {
             return theList;
-        if (pField == FIELD_CHARGES)
+        }
+        if (FIELD_CHARGES.equals(pField)) {
             return theCharges;
-        if (pField == FIELD_TAXYEAR)
+        }
+        if (FIELD_TAXYEAR.equals(pField)) {
             return (theYear == null) ? JDataObject.FIELD_SKIP : theYear;
-        if (pField == FIELD_DATE)
+        }
+        if (FIELD_DATE.equals(pField)) {
             return theDate;
-        if (pField == FIELD_ACCOUNT)
+        }
+        if (FIELD_ACCOUNT.equals(pField)) {
             return (theAccount == null) ? JDataObject.FIELD_SKIP : theAccount;
+        }
         return null;
     }
 
@@ -91,86 +126,180 @@ public class Analysis implements JDataContents {
         return FIELD_DEFS.getName();
     }
 
-    /* Members */
-    private FinanceData theData = null;
+    /**
+     * The DataSet.
+     */
+    private final FinanceData theData;
+
+    /**
+     * The State.
+     */
     private AnalysisState theAnalysisState = AnalysisState.RAW;
-    private BucketList theList = null;
-    private ChargeableEventList theCharges = null;
-    private TaxYear theYear = null;
-    private DateDay theDate = null;
-    private Account theAccount = null;
+
+    /**
+     * The buckets.
+     */
+    private final BucketList theList;
+
+    /**
+     * The charges.
+     */
+    private final ChargeableEventList theCharges;
+
+    /**
+     * The taxYear.
+     */
+    private final TaxYear theYear;
+
+    /**
+     * The Date.
+     */
+    private final DateDay theDate;
+
+    /**
+     * The account.
+     */
+    private final Account theAccount;
+
+    /**
+     * Are there Gains slices.
+     */
     private boolean hasGainsSlices = false;
+
+    /**
+     * Is there a reduced allowance?
+     */
     private boolean hasReducedAllow = false;
+
+    /**
+     * User age.
+     */
     private int theAge = 0;
 
-    /* Access methods */
+    /**
+     * Obtain the data.
+     * @return the data
+     */
     public FinanceData getData() {
         return theData;
     }
 
+    /**
+     * Obtain the state.
+     * @return the state
+     */
     public AnalysisState getState() {
         return theAnalysisState;
     }
 
+    /**
+     * Obtain the bucket list.
+     * @return the list
+     */
     public BucketList getList() {
         return theList;
     }
 
+    /**
+     * Obtain the taxYear.
+     * @return the year
+     */
     public TaxYear getTaxYear() {
         return theYear;
     }
 
+    /**
+     * Obtain the date.
+     * @return the date
+     */
     public DateDay getDate() {
         return theDate;
     }
 
+    /**
+     * Obtain the account.
+     * @return the account
+     */
     public Account getAccount() {
         return theAccount;
     }
 
+    /**
+     * Obtain the charges.
+     * @return the charges
+     */
     public ChargeableEventList getCharges() {
         return theCharges;
     }
 
+    /**
+     * Have we a reduced allowance?
+     * @return true/false
+     */
     public boolean hasReducedAllow() {
         return hasReducedAllow;
     }
 
+    /**
+     * Do we have gains slices?
+     * @return true/false
+     */
     public boolean hasGainsSlices() {
         return hasGainsSlices;
     }
 
+    /**
+     * Obtain the user age.
+     * @return the age
+     */
     public int getAge() {
         return theAge;
     }
 
-    /* Set methods */
-    protected void setState(AnalysisState pState) {
+    /**
+     * Set the state.
+     * @param pState the state
+     */
+    protected void setState(final AnalysisState pState) {
         theAnalysisState = pState;
     }
 
-    protected void setAge(int pAge) {
+    /**
+     * Set the age.
+     * @param pAge the age
+     */
+    protected void setAge(final int pAge) {
         theAge = pAge;
     }
 
-    protected void setHasReducedAllow(boolean hasReduced) {
+    /**
+     * Set whether the allowance is reduced.
+     * @param hasReduced true/false
+     */
+    protected void setHasReducedAllow(final boolean hasReduced) {
         hasReducedAllow = hasReduced;
     }
 
-    protected void setHasGainsSlices(boolean hasSlices) {
+    /**
+     * Set whether we have gains slices.
+     * @param hasSlices true/false
+     */
+    protected void setHasGainsSlices(final boolean hasSlices) {
         hasGainsSlices = hasSlices;
     }
 
     /**
-     * Constructor for a dated analysis
+     * Constructor for a dated analysis.
      * @param pData the data to analyse events for
      * @param pDate the Date for the analysis
      */
-    public Analysis(FinanceData pData,
-                    DateDay pDate) {
+    public Analysis(final FinanceData pData,
+                    final DateDay pDate) {
         /* Store the data */
         theData = pData;
         theDate = pDate;
+        theYear = null;
+        theAccount = null;
 
         /* Create a new list */
         theList = new BucketList(this);
@@ -178,18 +307,19 @@ public class Analysis implements JDataContents {
     }
 
     /**
-     * Constructor for a dated account analysis
+     * Constructor for a dated account analysis.
      * @param pData the data to analyse events for
      * @param pAccount the account to analyse
      * @param pDate the Date for the analysis
      */
-    public Analysis(FinanceData pData,
-                    Account pAccount,
-                    DateDay pDate) {
+    public Analysis(final FinanceData pData,
+                    final Account pAccount,
+                    final DateDay pDate) {
         /* Store the data */
         theData = pData;
         theDate = pDate;
         theAccount = pAccount;
+        theYear = null;
 
         /* Create a new list */
         theList = new BucketList(this);
@@ -197,14 +327,14 @@ public class Analysis implements JDataContents {
     }
 
     /**
-     * Constructor for a dated account analysis
+     * Constructor for a dated account analysis.
      * @param pData the data to analyse events for
      * @param pYear the year to analyse
      * @param pAnalysis the previous year analysis (if present)
      */
-    public Analysis(FinanceData pData,
-                    TaxYear pYear,
-                    Analysis pAnalysis) {
+    public Analysis(final FinanceData pData,
+                    final TaxYear pYear,
+                    final Analysis pAnalysis) {
         /* Local variables */
         DataListIterator<AnalysisBucket> myIterator;
         AnalysisBucket myCurr;
@@ -218,14 +348,16 @@ public class Analysis implements JDataContents {
         theData = pData;
         theYear = pYear;
         theDate = pYear.getTaxYear();
+        theAccount = null;
 
         /* Create a new list */
         theList = new BucketList(this);
         theCharges = new ChargeableEventList();
 
         /* Return if we are the first analysis */
-        if (pAnalysis == null)
+        if (pAnalysis == null) {
             return;
+        }
 
         /* Access the iterator */
         myIterator = pAnalysis.getList().listIterator();
@@ -264,61 +396,97 @@ public class Analysis implements JDataContents {
                         theList.add(myTrans);
                     }
                     break;
+                default:
+                    break;
             }
         }
     }
 
-    /* The core AnalysisBucket Class */
-    protected static abstract class AnalysisBucket extends DataItem<AnalysisBucket> {
+    /**
+     * AnalysisBucket Class.
+     */
+    protected abstract static class AnalysisBucket extends DataItem<AnalysisBucket> {
         /**
-         * Report fields
+         * Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(AnalysisBucket.class.getSimpleName(),
                 DataItem.FIELD_DEFS);
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
-        /* Field IDs */
+        /**
+         * Bucket type field id.
+         */
         public static final JDataField FIELD_BUCKETTYPE = FIELD_DEFS.declareEqualityField("BucketType");
+
+        /**
+         * Date field id.
+         */
         public static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_BUCKETTYPE)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_BUCKETTYPE.equals(pField)) {
                 return theBucketType;
-            if (pField == FIELD_DATE)
+            }
+            if (FIELD_DATE.equals(pField)) {
                 return theDate;
-
+            }
             /* Pass onwards */
             return super.getFieldValue(pField);
         }
 
-        /* Members */
-        private BucketType theBucketType = null;
-        private FinanceData theData = null;
-        private DateDay theDate = null;
+        /**
+         * The bucket type.
+         */
+        private final BucketType theBucketType;
 
-        /* Access methods */
+        /**
+         * The data.
+         */
+        private final FinanceData theData;
+
+        /**
+         * The date.
+         */
+        private final DateDay theDate;
+
+        /**
+         * Obtain the bucket type.
+         * @return the type
+         */
         public BucketType getBucketType() {
             return theBucketType;
         }
 
+        /**
+         * Obtain the dataSet.
+         * @return the data
+         */
         protected FinanceData getData() {
             return theData;
         }
 
+        /**
+         * Obtain the date.
+         * @return the date
+         */
         protected DateDay getDate() {
             return theDate;
         }
 
-        /* Constructor */
-        public AnalysisBucket(BucketList pList,
-                              BucketType pType,
-                              int uId) {
+        /**
+         * Constructor.
+         * @param pList the list
+         * @param pType the bucket type
+         * @param uId the id
+         */
+        public AnalysisBucket(final BucketList pList,
+                              final BucketType pType,
+                              final int uId) {
             /* Call super-constructor */
             super(pList, uId + pType.getIdShift());
             theData = pList.theAnalysis.theData;
@@ -330,89 +498,98 @@ public class Analysis implements JDataContents {
 
         /**
          * Compare this Bucket to another to establish sort order.
-         * 
          * @param pThat The Bucket to compare to
          * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in
          *         the sort order
          */
         @Override
-        public int compareTo(Object pThat) {
-            int result;
-
+        public int compareTo(final Object pThat) {
             /* Handle the trivial cases */
-            if (this == pThat)
+            if (this == pThat) {
                 return 0;
-            if (pThat == null)
+            }
+            if (pThat == null) {
                 return -1;
+            }
 
             /* Make sure that the object is an Analysis Bucket */
-            if (!(pThat instanceof AnalysisBucket))
+            if (!(pThat instanceof AnalysisBucket)) {
                 return -1;
+            }
 
             /* Access the object as am Analysis Bucket */
             AnalysisBucket myThat = (AnalysisBucket) pThat;
 
             /* Compare the bucket order */
-            result = getBucketType().compareTo(myThat.getBucketType());
-            return result;
+            return getBucketType().compareTo(myThat.getBucketType());
         }
 
         /**
-         * is the bucket relevant (i.e. should it be reported)
+         * is the bucket relevant (i.e. should it be reported)?
          * @return TRUE/FALSE
          */
         protected abstract boolean isRelevant();
     }
 
-    /* The List class */
+    /**
+     * The Bucket List class.
+     * @author Tony Washer
+     */
     public static class BucketList extends DataList<BucketList, AnalysisBucket> {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(BucketList.class.getSimpleName(),
                 DataList.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * Analysis field Id.
+         */
         public static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField("Analysis");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_ANALYSIS)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_ANALYSIS.equals(pField)) {
                 return theAnalysis;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
+        /**
+         * The analysis.
+         */
         private final Analysis theAnalysis;
+
+        /**
+         * The data.
+         */
         private final FinanceData theData;
 
         /**
-         * The name of the object
+         * The name of the object.
          */
-        private static final String listName = "AnalysisBuckets";
+        private static final String LIST_NAME = "AnalysisBuckets";
 
         @Override
         public String listName() {
-            return listName;
+            return LIST_NAME;
         }
 
         /**
-         * Construct a top-level List
+         * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        public BucketList(Analysis pAnalysis) {
+        public BucketList(final Analysis pAnalysis) {
             super(BucketList.class, AnalysisBucket.class, ListStyle.VIEW, false);
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
         }
 
-        /* Obtain extract lists. */
         @Override
         public BucketList getUpdateList() {
             return null;
@@ -429,27 +606,27 @@ public class Analysis implements JDataContents {
         }
 
         @Override
-        public BucketList getDeepCopy(DataSet<?> pData) {
+        public BucketList getDeepCopy(final DataSet<?> pData) {
             return null;
         }
 
         @Override
-        public BucketList getDifferences(BucketList pOld) {
+        public BucketList getDifferences(final BucketList pOld) {
             return null;
         }
 
         /**
-         * Add a new item to the list
+         * Add a new item to the list.
          * @param pItem the item to add
          * @return the newly added item
          */
         @Override
-        public AnalysisBucket addNewItem(DataItem<?> pItem) {
+        public AnalysisBucket addNewItem(final DataItem<?> pItem) {
             return null;
         }
 
         /**
-         * Add a new item to the edit list
+         * Add a new item to the edit list.
          * @return the newly added item
          */
         @Override
@@ -458,11 +635,11 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Obtain the AccountDetail Bucket for a given account
+         * Obtain the AccountDetail Bucket for a given account.
          * @param pAccount the account
          * @return the bucket
          */
-        protected ActDetail getAccountDetail(Account pAccount) {
+        protected ActDetail getAccountDetail(final Account pAccount) {
             /* Calculate the id that we are looking for */
             BucketType myBucket = BucketType.MONEYDETAIL;
             int uId = pAccount.getId() + myBucket.getIdShift();
@@ -501,11 +678,11 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Obtain the Asset Summary Bucket for a given account type
+         * Obtain the Asset Summary Bucket for a given account type.
          * @param pActType the account type
          * @return the bucket
          */
-        protected AssetSummary getAssetSummary(AccountType pActType) {
+        protected AssetSummary getAssetSummary(final AccountType pActType) {
             /* Calculate the id that we are looking for */
             BucketType myBucket = BucketType.ASSETSUMMARY;
             int uId = pActType.getId() + myBucket.getIdShift();
@@ -525,11 +702,11 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Obtain the Transaction Detail Bucket for a given transaction class
+         * Obtain the Transaction Detail Bucket for a given transaction class.
          * @param pTransClass the transaction class
          * @return the bucket
          */
-        protected TransDetail getTransDetail(TransClass pTransClass) {
+        protected TransDetail getTransDetail(final TransClass pTransClass) {
             /* Calculate the id that we are looking for */
             TransactionType myTrans = theData.getTransTypes().searchFor(pTransClass);
 
@@ -538,11 +715,11 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Obtain the Transaction Detail Bucket for a given transaction type
+         * Obtain the Transaction Detail Bucket for a given transaction type.
          * @param pTransType the transaction type
          * @return the bucket
          */
-        protected TransDetail getTransDetail(TransactionType pTransType) {
+        protected TransDetail getTransDetail(final TransactionType pTransType) {
             /* Calculate the id that we are looking for */
             BucketType myBucket = BucketType.TRANSDETAIL;
             int uId = pTransType.getId() + myBucket.getIdShift();
@@ -562,11 +739,11 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Obtain the Transaction Summary Bucket for a given tax type
+         * Obtain the Transaction Summary Bucket for a given tax type.
          * @param pTaxClass the taxation class
          * @return the bucket
          */
-        protected TransSummary getTransSummary(TaxClass pTaxClass) {
+        protected TransSummary getTransSummary(final TaxClass pTaxClass) {
             /* Calculate the id that we are looking for */
             BucketType myBucket = BucketType.TRANSSUMMARY;
             TaxType myTaxType = theData.getTaxTypes().searchFor(pTaxClass);
@@ -587,11 +764,11 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Obtain the Taxation Detail Bucket for a given tax type
+         * Obtain the Taxation Detail Bucket for a given tax type.
          * @param pTaxClass the taxation class
          * @return the bucket
          */
-        protected TaxDetail getTaxDetail(TaxClass pTaxClass) {
+        protected TaxDetail getTaxDetail(final TaxClass pTaxClass) {
             /* Calculate the id that we are looking for */
             BucketType myBucket = BucketType.TAXDETAIL;
             TaxType myTaxType = theData.getTaxTypes().searchFor(pTaxClass);
@@ -612,7 +789,7 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Obtain the Asset Total Bucket
+         * Obtain the Asset Total Bucket.
          * @return the bucket
          */
         protected AssetTotal getAssetTotal() {
@@ -635,7 +812,7 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Obtain the External Total Bucket
+         * Obtain the External Total Bucket.
          * @return the bucket
          */
         protected ExternalTotal getExternalTotal() {
@@ -658,7 +835,7 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Obtain the Market Total Bucket
+         * Obtain the Market Total Bucket.
          * @return the bucket
          */
         protected MarketTotal getMarketTotal() {
@@ -681,11 +858,11 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Obtain the Transaction Total Bucket
+         * Obtain the Transaction Total Bucket.
          * @param pTaxClass the taxation class
          * @return the bucket
          */
-        protected TransTotal getTransTotal(TaxClass pTaxClass) {
+        protected TransTotal getTransTotal(final TaxClass pTaxClass) {
             /* Calculate the id that we are looking for */
             BucketType myBucket = BucketType.TRANSTOTAL;
             TaxType myTaxType = theData.getTaxTypes().searchFor(pTaxClass);
@@ -706,7 +883,7 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Prune the list to remove irrelevant items
+         * Prune the list to remove irrelevant items.
          */
         protected void prune() {
             DataListIterator<AnalysisBucket> myIterator;
@@ -724,58 +901,81 @@ public class Analysis implements JDataContents {
                         break;
                     /* Remove item if it is irrelevant */
                     default:
-                        if (!myCurr.isRelevant())
+                        if (!myCurr.isRelevant()) {
                             myIterator.remove();
+                        }
                         break;
                 }
             }
         }
     }
 
-    /* The Account Bucket class */
-    protected static abstract class ActDetail extends AnalysisBucket {
+    /**
+     * The Account Bucket class.
+     */
+    protected abstract static class ActDetail extends AnalysisBucket {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(ActDetail.class.getSimpleName(),
                 AnalysisBucket.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * Account Field Id.
+         */
         public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField("Account");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_ACCOUNT)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_ACCOUNT.equals(pField)) {
                 return theAccount;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
-        private Account theAccount = null;
+        /**
+         * The account.
+         */
+        private final Account theAccount;
 
-        /* Access methods */
+        /**
+         * Obtain the name.
+         * @return the name
+         */
         public String getName() {
             return theAccount.getName();
         }
 
+        /**
+         * Obtain the account.
+         * @return the account
+         */
         public Account getAccount() {
             return theAccount;
         }
 
+        /**
+         * Obtain the account type.
+         * @return the account type
+         */
         public AccountType getAccountType() {
             return theAccount.getActType();
         }
 
-        /* Constructor */
-        private ActDetail(BucketList pList,
-                          BucketType pType,
-                          Account pAccount) {
+        /**
+         * Constructor.
+         * @param pList the list
+         * @param pType the type
+         * @param pAccount the account
+         */
+        private ActDetail(final BucketList pList,
+                          final BucketType pType,
+                          final Account pAccount) {
             /* Call super-constructor */
             super(pList, pType, pAccount.getId());
 
@@ -785,103 +985,122 @@ public class Analysis implements JDataContents {
 
         /**
          * Compare this Bucket to another to establish sort order.
-         * 
          * @param pThat The Bucket to compare to
          * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in
          *         the sort order
          */
         @Override
-        public int compareTo(Object pThat) {
+        public int compareTo(final Object pThat) {
             int result;
 
             /* Handle the trivial cases */
-            if (this == pThat)
+            if (this == pThat) {
                 return 0;
-            if (pThat == null)
+            }
+            if (pThat == null) {
                 return -1;
+            }
 
             /* Make sure that the object is an Analysis Bucket */
-            if (!(pThat instanceof AnalysisBucket))
+            if (!(pThat instanceof AnalysisBucket)) {
                 return -1;
+            }
 
             /* Access the object as an Analysis Bucket */
             AnalysisBucket myBucket = (AnalysisBucket) pThat;
 
             /* Compare the bucket types */
             result = super.compareTo(myBucket);
-            if (result != 0)
+            if (result != 0) {
                 return result;
+            }
 
             /* Access the object as an Act Bucket */
             ActDetail myThat = (ActDetail) pThat;
 
             /* Compare the Accounts */
-            result = getAccount().compareTo(myThat.getAccount());
-            return result;
+            return getAccount().compareTo(myThat.getAccount());
         }
 
         /**
-         * Adjust account for debit
+         * Adjust account for debit.
          * @param pEvent the event causing the debit
          */
-        protected abstract void adjustForDebit(Event pEvent);
+        protected abstract void adjustForDebit(final Event pEvent);
 
         /**
-         * Adjust account for credit
+         * Adjust account for credit.
          * @param pEvent the event causing the credit
          */
-        protected abstract void adjustForCredit(Event pEvent);
+        protected abstract void adjustForCredit(final Event pEvent);
 
         /**
-         * Create a save point
+         * Create a save point.
          */
         protected abstract void createSavePoint();
 
         /**
-         * Restore a save point
+         * Restore a save point.
          */
         protected abstract void restoreSavePoint();
     }
 
-    /* The Account Type Bucket class */
-    private static abstract class ActType extends AnalysisBucket {
+    /**
+     * The Account Type Bucket class.
+     */
+    private abstract static class ActType extends AnalysisBucket {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(ActType.class.getSimpleName(),
                 AnalysisBucket.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * Account Type Field Id.
+         */
         public static final JDataField FIELD_ACTTYPE = FIELD_DEFS.declareEqualityField("AccountType");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_ACTTYPE)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_ACTTYPE.equals(pField)) {
                 return theAccountType;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
-        private AccountType theAccountType = null;
+        /**
+         * The AccountType.
+         */
+        private final AccountType theAccountType;
 
-        /* Access methods */
+        /**
+         * Obtain name.
+         * @return the name
+         */
         public String getName() {
             return theAccountType.getName();
         }
 
+        /**
+         * Obtain account type.
+         * @return the type
+         */
         public AccountType getAccountType() {
             return theAccountType;
         }
 
-        /* Constructor */
-        private ActType(BucketList pList,
-                        AccountType pAccountType) {
+        /**
+         * Constructor.
+         * @param pList the list
+         * @param pAccountType the account type
+         */
+        private ActType(final BucketList pList,
+                        final AccountType pAccountType) {
             /* Call super-constructor */
             super(pList, BucketType.ASSETSUMMARY, pAccountType.getId());
 
@@ -891,81 +1110,100 @@ public class Analysis implements JDataContents {
 
         /**
          * Compare this Bucket to another to establish sort order.
-         * 
          * @param pThat The Bucket to compare to
          * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in
          *         the sort order
          */
         @Override
-        public int compareTo(Object pThat) {
+        public int compareTo(final Object pThat) {
             int result;
 
             /* Handle the trivial cases */
-            if (this == pThat)
+            if (this == pThat) {
                 return 0;
-            if (pThat == null)
+            }
+            if (pThat == null) {
                 return -1;
+            }
 
             /* Make sure that the object is an Analysis Bucket */
-            if (!(pThat instanceof AnalysisBucket))
+            if (!(pThat instanceof AnalysisBucket)) {
                 return -1;
+            }
 
             /* Access the object as an Analysis Bucket */
             AnalysisBucket myBucket = (AnalysisBucket) pThat;
 
             /* Compare the bucket types */
             result = super.compareTo(myBucket);
-            if (result != 0)
+            if (result != 0) {
                 return result;
+            }
 
             /* Access the object as an ActType Bucket */
             ActType myThat = (ActType) pThat;
 
             /* Compare the AccountTypes */
-            result = getAccountType().compareTo(myThat.getAccountType());
-            return result;
+            return getAccountType().compareTo(myThat.getAccountType());
         }
     }
 
-    /* The TransType Bucket class */
-    private static abstract class TransType extends AnalysisBucket {
+    /**
+     * The TransType Bucket class.
+     */
+    private abstract static class TransType extends AnalysisBucket {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(TransType.class.getSimpleName(),
                 AnalysisBucket.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * TransactionType Field Id.
+         */
         public static final JDataField FIELD_TRANSTYPE = FIELD_DEFS.declareEqualityField("TransactionType");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_TRANSTYPE)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_TRANSTYPE.equals(pField)) {
                 return theTransType;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
-        private TransactionType theTransType = null;
+        /**
+         * The Transaction Type.
+         */
+        private final TransactionType theTransType;
 
-        /* Access methods */
+        /**
+         * Obtain name.
+         * @return the name
+         */
         public String getName() {
             return theTransType.getName();
         }
 
+        /**
+         * Obtain transaction type.
+         * @return the type
+         */
         public TransactionType getTransType() {
             return theTransType;
         }
 
-        /* Constructor */
-        private TransType(BucketList pList,
-                          TransactionType pTransType) {
+        /**
+         * Constructor.
+         * @param pList the list
+         * @param pTransType the type
+         */
+        private TransType(final BucketList pList,
+                          final TransactionType pTransType) {
             /* Call super-constructor */
             super(pList, BucketType.TRANSDETAIL, pTransType.getId());
 
@@ -975,81 +1213,100 @@ public class Analysis implements JDataContents {
 
         /**
          * Compare this Bucket to another to establish sort order.
-         * 
          * @param pThat The Bucket to compare to
          * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in
          *         the sort order
          */
         @Override
-        public int compareTo(Object pThat) {
+        public int compareTo(final Object pThat) {
             int result;
 
             /* Handle the trivial cases */
-            if (this == pThat)
+            if (this == pThat) {
                 return 0;
-            if (pThat == null)
+            }
+            if (pThat == null) {
                 return -1;
+            }
 
             /* Make sure that the object is an Analysis Bucket */
-            if (!(pThat instanceof AnalysisBucket))
+            if (!(pThat instanceof AnalysisBucket)) {
                 return -1;
+            }
 
             /* Access the object as an Analysis Bucket */
             AnalysisBucket myBucket = (AnalysisBucket) pThat;
 
             /* Compare the bucket types */
             result = super.compareTo(myBucket);
-            if (result != 0)
+            if (result != 0) {
                 return result;
+            }
 
             /* Access the object as an TransType Bucket */
             TransType myThat = (TransType) pThat;
 
             /* Compare the TransactionTypes */
-            result = getTransType().compareTo(myThat.getTransType());
-            return result;
+            return getTransType().compareTo(myThat.getTransType());
         }
     }
 
-    /* The Tax Bucket class */
-    private static abstract class Tax extends AnalysisBucket {
+    /**
+     * The Tax Bucket class.
+     */
+    private abstract static class Tax extends AnalysisBucket {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(Tax.class.getSimpleName(),
                 AnalysisBucket.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * Tax Type Field Id.
+         */
         public static final JDataField FIELD_TAXTYPE = FIELD_DEFS.declareEqualityField("TaxType");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_TAXTYPE)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_TAXTYPE.equals(pField)) {
                 return theTaxType;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
-        private TaxType theTaxType = null;
+        /**
+         * Tax Type.
+         */
+        private final TaxType theTaxType;
 
-        /* Access methods */
+        /**
+         * Obtain name.
+         * @return the name
+         */
         public String getName() {
             return theTaxType.getName();
         }
 
+        /**
+         * Obtain tax type.
+         * @return the type
+         */
         public TaxType getTaxType() {
             return theTaxType;
         }
 
-        /* Constructor */
-        private Tax(BucketList pList,
-                    TaxType pTaxType) {
+        /**
+         * Constructor.
+         * @param pList the list
+         * @param pTaxType the type
+         */
+        private Tax(final BucketList pList,
+                    final TaxType pTaxType) {
             /* Call super-constructor */
             super(pList, BucketType.getTaxBucketType(pTaxType), pTaxType.getId());
 
@@ -1059,92 +1316,115 @@ public class Analysis implements JDataContents {
 
         /**
          * Compare this Bucket to another to establish sort order.
-         * 
          * @param pThat The Bucket to compare to
          * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in
          *         the sort order
          */
         @Override
-        public int compareTo(Object pThat) {
+        public int compareTo(final Object pThat) {
             int result;
 
             /* Handle the trivial cases */
-            if (this == pThat)
+            if (this == pThat) {
                 return 0;
-            if (pThat == null)
+            }
+            if (pThat == null) {
                 return -1;
+            }
 
             /* Make sure that the object is an Analysis Bucket */
-            if (!(pThat instanceof AnalysisBucket))
+            if (!(pThat instanceof AnalysisBucket)) {
                 return -1;
+            }
 
             /* Access the object as an Analysis Bucket */
             AnalysisBucket myBucket = (AnalysisBucket) pThat;
 
             /* Compare the bucket types */
             result = super.compareTo(myBucket);
-            if (result != 0)
+            if (result != 0) {
                 return result;
+            }
 
             /* Access the object as an Tax Bucket */
             Tax myThat = (Tax) pThat;
 
             /* Compare the TaxTypes */
-            result = getTaxType().compareTo(myThat.getTaxType());
-            return result;
+            return getTaxType().compareTo(myThat.getTaxType());
         }
     }
 
-    /* The ValueAccount Bucket class */
-    protected static abstract class ValueAccount extends ActDetail {
+    /**
+     * The ValueAccount Bucket class.
+     */
+    protected abstract static class ValueAccount extends ActDetail {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(ValueAccount.class.getSimpleName(),
                 ActDetail.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * Value Field Id.
+         */
         public static final JDataField FIELD_VALUE = FIELD_DEFS.declareLocalField("Value");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_VALUE)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_VALUE.equals(pField)) {
                 return theValue;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
+        /**
+         * The value.
+         */
         private Money theValue = null;
 
-        /* Override of getBase method */
         @Override
         public ValueAccount getBase() {
             return (ValueAccount) super.getBase();
         }
 
-        /* Access methods */
+        /**
+         * Obtain the value.
+         * @return the value
+         */
         public Money getValue() {
             return theValue;
         }
 
+        /**
+         * Obtain the previous value.
+         * @return the value
+         */
         public Money getPrevValue() {
             return (getBase() != null) ? getBase().getValue() : null;
         }
 
-        protected void setValue(Money pValue) {
+        /**
+         * Set the value.
+         * @param pValue the value
+         */
+        protected void setValue(final Money pValue) {
             theValue = pValue;
         }
 
-        /* Constructor */
-        private ValueAccount(BucketList pList,
-                             BucketType pType,
-                             Account pAccount) {
+        /**
+         * Constructor.
+         * @param pList the list
+         * @param pType the type
+         * @param pAccount the account
+         */
+        private ValueAccount(final BucketList pList,
+                             final BucketType pType,
+                             final Account pAccount) {
             /* Call super-constructor */
             super(pList, pType, pAccount);
 
@@ -1152,18 +1432,12 @@ public class Analysis implements JDataContents {
             theValue = new Money(0);
         }
 
-        /**
-         * is the bucket active (i.e. should it be copied)
-         */
         @Override
         public boolean isActive() {
             /* Copy if the value is non-zero */
             return theValue.isNonZero();
         }
 
-        /**
-         * is the bucket relevant (i.e. should it be reported)
-         */
         @Override
         protected boolean isRelevant() {
             /* Relevant if this value or the previous value is non-zero */
@@ -1171,76 +1445,105 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Adjust account for debit
+         * Adjust account for debit.
          * @param pEvent the event causing the debit
          */
         @Override
-        protected void adjustForDebit(Event pEvent) {
+        protected void adjustForDebit(final Event pEvent) {
             /* Adjust for debit */
             theValue.subtractAmount(pEvent.getAmount());
         }
 
         /**
-         * Adjust account for credit
+         * Adjust account for credit.
          * @param pEvent the event causing the credit
          */
         @Override
-        protected void adjustForCredit(Event pEvent) {
+        protected void adjustForCredit(final Event pEvent) {
             /* Adjust for credit */
             theValue.addAmount(pEvent.getAmount());
         }
     }
 
-    /* The MoneyAccount Bucket class */
-    public static class MoneyAccount extends ValueAccount {
+    /**
+     * The MoneyAccount Bucket class.
+     */
+    public static final class MoneyAccount extends ValueAccount {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(MoneyAccount.class.getSimpleName(),
                 ValueAccount.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * Rate field Id.
+         */
         public static final JDataField FIELD_RATE = FIELD_DEFS.declareLocalField("Rate");
+
+        /**
+         * Maturity field Id.
+         */
         public static final JDataField FIELD_MATURITY = FIELD_DEFS.declareLocalField("Maturity");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_RATE)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_RATE.equals(pField)) {
                 return theRate;
-            if (pField == FIELD_MATURITY)
+            }
+            if (FIELD_MATURITY.equals(pField)) {
                 return theMaturity;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
+        /**
+         * The rate.
+         */
         private Rate theRate = null;
+
+        /**
+         * The maturity.
+         */
         private DateDay theMaturity = null;
+
+        /**
+         * The savepoint.
+         */
         private MoneyAccount theSavePoint = null;
 
-        /* Override of getBase method */
         @Override
         public MoneyAccount getBase() {
             return (MoneyAccount) super.getBase();
         }
 
-        /* Access methods */
+        /**
+         * Obtain the rate.
+         * @return the rate
+         */
         public Rate getRate() {
             return theRate;
         }
 
+        /**
+         * Obtain the maturity.
+         * @return the maturity
+         */
         public DateDay getMaturity() {
             return theMaturity;
         }
 
-        /* Constructor */
-        private MoneyAccount(BucketList pList,
-                             Account pAccount) {
+        /**
+         * Constructor.
+         * @param pList the list
+         * @param pAccount the account
+         */
+        private MoneyAccount(final BucketList pList,
+                             final Account pAccount) {
             /* Call super-constructor */
             super(pList, BucketType.MONEYDETAIL, pAccount);
 
@@ -1248,9 +1551,13 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /* Constructor */
-        private MoneyAccount(BucketList pList,
-                             MoneyAccount pPrevious) {
+        /**
+         * Constructor.
+         * @param pList the list
+         * @param pPrevious the previous
+         */
+        private MoneyAccount(final BucketList pList,
+                             final MoneyAccount pPrevious) {
             /* Call super-constructor */
             super(pList, BucketType.MONEYDETAIL, pPrevious.getAccount());
 
@@ -1264,28 +1571,33 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /* Constructor */
-        private MoneyAccount(MoneyAccount pPrevious) {
+        /**
+         * Constructor.
+         * @param pPrevious the previous.
+         */
+        private MoneyAccount(final MoneyAccount pPrevious) {
             /* Call super-constructor */
             super((BucketList) pPrevious.getList(), BucketType.MONEYDETAIL, pPrevious.getAccount());
 
             /* Initialise the Money values */
             setValue(new Money(pPrevious.getValue()));
-            if (pPrevious.getRate() != null)
+            if (pPrevious.getRate() != null) {
                 theRate = new Rate(pPrevious.getRate());
-            if (pPrevious.getMaturity() != null)
+            }
+            if (pPrevious.getMaturity() != null) {
                 theMaturity = new DateDay(pPrevious.getMaturity());
+            }
 
             /* Set status */
             setState(DataState.CLEAN);
         }
 
         /**
-         * record the rate of the account at a given date
+         * record the rate of the account at a given date.
          * @param pDate the date of valuation
          */
-        protected void recordRate(DateDay pDate) {
-            AccountRate.AccountRateList myRates = getData().getRates();
+        protected void recordRate(final DateDay pDate) {
+            AccountRateList myRates = getData().getRates();
             AccountRate myRate;
             DateDay myDate;
 
@@ -1296,8 +1608,9 @@ public class Analysis implements JDataContents {
             /* If we have a rate */
             if (myRate != null) {
                 /* Use Rate date instead */
-                if (myDate == null)
+                if (myDate == null) {
                     myDate = myRate.getDate();
+                }
 
                 /* Store the rate */
                 theRate = myRate.getRate();
@@ -1308,7 +1621,7 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Create a Save Point
+         * Create a Save Point.
          */
         @Override
         protected void createSavePoint() {
@@ -1317,7 +1630,7 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Restore a Save Point
+         * Restore a Save Point.
          */
         @Override
         protected void restoreSavePoint() {
@@ -1329,48 +1642,64 @@ public class Analysis implements JDataContents {
         }
     }
 
-    /* The DebtAccount Bucket class */
-    public static class DebtAccount extends ValueAccount {
+    /**
+     * The DebtAccount Bucket class.
+     */
+    public static final class DebtAccount extends ValueAccount {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(DebtAccount.class.getSimpleName(),
                 ValueAccount.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * Spend Field Id.
+         */
         public static final JDataField FIELD_SPEND = FIELD_DEFS.declareLocalField("Spend");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_SPEND)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_SPEND.equals(pField)) {
                 return theSpend;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
+        /**
+         * The spend.
+         */
         private Money theSpend = null;
+
+        /**
+         * The savePoint.
+         */
         private DebtAccount theSavePoint = null;
 
-        /* Override of getBase method */
         @Override
         public DebtAccount getBase() {
             return (DebtAccount) super.getBase();
         }
 
-        /* Access methods */
+        /**
+         * Obtain the spend.
+         * @return the spend
+         */
         public Money getSpend() {
             return theSpend;
         }
 
-        /* Constructor */
-        private DebtAccount(BucketList pList,
-                            Account pAccount) {
+        /**
+         * Constructor.
+         * @param pList the list
+         * @param pAccount the account
+         */
+        private DebtAccount(final BucketList pList,
+                            final Account pAccount) {
             /* Call super-constructor */
             super(pList, BucketType.DEBTDETAIL, pAccount);
 
@@ -1381,9 +1710,13 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /* Constructor */
-        private DebtAccount(BucketList pList,
-                            DebtAccount pPrevious) {
+        /**
+         * Constructor.
+         * @param pList the list
+         * @param pPrevious the previous
+         */
+        private DebtAccount(final BucketList pList,
+                            final DebtAccount pPrevious) {
             /* Call super-constructor */
             super(pList, BucketType.DEBTDETAIL, pPrevious.getAccount());
 
@@ -1398,8 +1731,11 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /* Constructor */
-        private DebtAccount(DebtAccount pPrevious) {
+        /**
+         * Constructor.
+         * @param pPrevious the previous
+         */
+        private DebtAccount(final DebtAccount pPrevious) {
             /* Call super-constructor */
             super((BucketList) pPrevious.getList(), BucketType.DEBTDETAIL, pPrevious.getAccount());
 
@@ -1412,7 +1748,7 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Create a Save Point
+         * Create a Save Point.
          */
         @Override
         protected void createSavePoint() {
@@ -1421,7 +1757,7 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Restore a Save Point
+         * Restore a Save Point.
          */
         @Override
         protected void restoreSavePoint() {
@@ -1434,123 +1770,248 @@ public class Analysis implements JDataContents {
         }
     }
 
-    /* The AssetAccount Bucket class */
-    public static class AssetAccount extends ValueAccount {
+    /**
+     * The AssetAccount Bucket class.
+     */
+    public static final class AssetAccount extends ValueAccount {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(AssetAccount.class.getSimpleName(),
                 ValueAccount.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * Cost field id.
+         */
         public static final JDataField FIELD_COST = FIELD_DEFS.declareLocalField("Cost");
+
+        /**
+         * Units field id.
+         */
         public static final JDataField FIELD_UNITS = FIELD_DEFS.declareLocalField("Units");
+
+        /**
+         * Gained field id.
+         */
         public static final JDataField FIELD_GAINED = FIELD_DEFS.declareLocalField("Gained");
+
+        /**
+         * Invested field id.
+         */
         public static final JDataField FIELD_INVESTED = FIELD_DEFS.declareLocalField("Invested");
+
+        /**
+         * Dividend field id.
+         */
         public static final JDataField FIELD_DIVIDEND = FIELD_DEFS.declareLocalField("Cost");
+
+        /**
+         * Gains field id.
+         */
         public static final JDataField FIELD_GAINS = FIELD_DEFS.declareLocalField("Gains");
+
+        /**
+         * Price field id.
+         */
         public static final JDataField FIELD_PRICE = FIELD_DEFS.declareLocalField("Price");
+
+        /**
+         * Profit field id.
+         */
         public static final JDataField FIELD_PROFIT = FIELD_DEFS.declareLocalField("Profit");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_COST)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_COST.equals(pField)) {
                 return theCost;
-            if (pField == FIELD_UNITS)
+            }
+            if (FIELD_UNITS.equals(pField)) {
                 return theUnits;
-            if (pField == FIELD_GAINED)
+            }
+            if (FIELD_GAINED.equals(pField)) {
                 return theGained;
-            if (pField == FIELD_INVESTED)
+            }
+            if (FIELD_INVESTED.equals(pField)) {
                 return theInvested;
-            if (pField == FIELD_DIVIDEND)
+            }
+            if (FIELD_DIVIDEND.equals(pField)) {
                 return theDividend;
-            if (pField == FIELD_GAINS)
+            }
+            if (FIELD_GAINS.equals(pField)) {
                 return theGains;
-            if (pField == FIELD_PRICE)
+            }
+            if (FIELD_PRICE.equals(pField)) {
                 return thePrice;
-            if (pField == FIELD_PROFIT)
+            }
+            if (FIELD_PROFIT.equals(pField)) {
                 return theProfit;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
+        /**
+         * CapitalEvent list.
+         */
         private CapitalEventList theEvents = null;
+
+        /**
+         * The cost.
+         */
         private Money theCost = null;
+
+        /**
+         * The units.
+         */
         private Units theUnits = null;
+
+        /**
+         * The gained.
+         */
         private Money theGained = null;
 
+        /**
+         * The invested.
+         */
         private Money theInvested = null;
+
+        /**
+         * The dividend.
+         */
         private Money theDividend = null;
+
+        /**
+         * The gains.
+         */
         private Money theGains = null;
 
+        /**
+         * The profit.
+         */
         private Money theProfit = null;
+
+        /**
+         * The price.
+         */
         private Price thePrice = null;
+
+        /**
+         * The savePoint.
+         */
         private AssetAccount theSavePoint = null;
 
-        /* Override of getBase method */
         @Override
         public AssetAccount getBase() {
             return (AssetAccount) super.getBase();
         }
 
-        /* Access methods */
+        /**
+         * Obtain cost.
+         * @return the cost
+         */
         public Money getCost() {
             return theCost;
         }
 
+        /**
+         * Obtain units.
+         * @return the units
+         */
         public Units getUnits() {
             return theUnits;
         }
 
+        /**
+         * Obtain gained.
+         * @return the gained
+         */
         public Money getGained() {
             return theGained;
         }
 
+        /**
+         * Obtain invested.
+         * @return the invested
+         */
         public Money getInvested() {
             return theInvested;
         }
 
+        /**
+         * Obtain dividend.
+         * @return the dividend
+         */
         public Money getDividend() {
             return theDividend;
         }
 
+        /**
+         * Obtain gains.
+         * @return the gains
+         */
         public Money getGains() {
             return theGains;
         }
 
+        /**
+         * Obtain profit.
+         * @return the profit
+         */
         public Money getProfit() {
             return theProfit;
         }
 
+        /**
+         * Obtain price.
+         * @return the price
+         */
         public Price getPrice() {
             return thePrice;
         }
 
+        /**
+         * Obtain previous cost.
+         * @return the cost
+         */
         public Money getPrevCost() {
             return (getBase() != null) ? getBase().getCost() : null;
         }
 
+        /**
+         * Obtain previous units.
+         * @return the units
+         */
         public Units getPrevUnits() {
             return (getBase() != null) ? getBase().getUnits() : null;
         }
 
+        /**
+         * Obtain previous gained.
+         * @return the gained
+         */
         public Money getPrevGained() {
             return (getBase() != null) ? getBase().getGained() : null;
         }
 
+        /**
+         * Obtain capital events.
+         * @return the events
+         */
         public CapitalEventList getCapitalEvents() {
             return theEvents;
         }
 
-        /* Constructor */
-        private AssetAccount(BucketList pList,
-                             Account pAccount) {
+        /**
+         * Constructor.
+         * @param pList the list
+         * @param pAccount the account
+         */
+        private AssetAccount(final BucketList pList,
+                             final Account pAccount) {
             /* Call super-constructor */
             super(pList, BucketType.ASSETDETAIL, pAccount);
 
@@ -1570,9 +2031,13 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /* Constructor */
-        private AssetAccount(BucketList pList,
-                             AssetAccount pPrevious) {
+        /**
+         * Constructor.
+         * @param pList the list
+         * @param pPrevious the previous
+         */
+        private AssetAccount(final BucketList pList,
+                             final AssetAccount pPrevious) {
             /* Call super-constructor */
             super(pList, BucketType.ASSETDETAIL, pPrevious.getAccount());
 
@@ -1594,8 +2059,11 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /* Constructor */
-        private AssetAccount(AssetAccount pPrevious) {
+        /**
+         * Constructor.
+         * @param pPrevious the previous
+         */
+        private AssetAccount(final AssetAccount pPrevious) {
             /* Call super-constructor */
             super((BucketList) pPrevious.getList(), BucketType.ASSETDETAIL, pPrevious.getAccount());
 
@@ -1608,8 +2076,9 @@ public class Analysis implements JDataContents {
             theGains = new Money(pPrevious.getGains());
 
             /* Copy price if available */
-            if (pPrevious.getPrice() != null)
+            if (pPrevious.getPrice() != null) {
                 thePrice = new Price(pPrevious.getPrice());
+            }
 
             /* Initialise the Money values */
             setValue(new Money(pPrevious.getValue()));
@@ -1618,18 +2087,12 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /**
-         * is the bucket active (i.e. should it be copied)
-         */
         @Override
         public boolean isActive() {
             /* Copy if the units is non-zero */
             return theUnits.isNonZero();
         }
 
-        /**
-         * is the bucket relevant (i.e. should it be reported)
-         */
         @Override
         protected boolean isRelevant() {
             /* Relevant if this value or the previous value is non-zero */
@@ -1637,11 +2100,11 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * value the asset at a particular date
+         * value the asset at a particular date.
          * @param pDate the date of valuation
          */
-        protected void valueAsset(DateDay pDate) {
-            AccountPrice.AccountPriceList myPrices = getData().getPrices();
+        protected void valueAsset(final DateDay pDate) {
+            AccountPriceList myPrices = getData().getPrices();
             AccountPrice myActPrice;
 
             /* Obtain the appropriate price record */
@@ -1651,18 +2114,18 @@ public class Analysis implements JDataContents {
             if (myActPrice != null) {
                 /* Store the price */
                 thePrice = myActPrice.getPrice();
-            }
 
-            /* else assume zero price */
-            else
+                /* else assume zero price */
+            } else {
                 thePrice = new Price(0);
+            }
 
             /* Calculate the value */
             setValue(theUnits.valueAtPrice(thePrice));
         }
 
         /**
-         * Calculate profit
+         * Calculate profit.
          */
         protected void calculateProfit() {
             /* Calculate the profit */
@@ -1672,29 +2135,31 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Adjust account for debit
+         * Adjust account for debit.
          * @param pEvent the event causing the debit
          */
         @Override
-        protected void adjustForDebit(Event pEvent) {
+        protected void adjustForDebit(final Event pEvent) {
             /* Adjust for debit */
-            if (pEvent.getUnits() != null)
+            if (pEvent.getUnits() != null) {
                 theUnits.subtractUnits(pEvent.getUnits());
+            }
         }
 
         /**
-         * Adjust account for credit
+         * Adjust account for credit.
          * @param pEvent the event causing the credit
          */
         @Override
-        protected void adjustForCredit(Event pEvent) {
+        protected void adjustForCredit(final Event pEvent) {
             /* Adjust for credit */
-            if (pEvent.getUnits() != null)
+            if (pEvent.getUnits() != null) {
                 theUnits.addUnits(pEvent.getUnits());
+            }
         }
 
         /**
-         * Create a Save Point
+         * Create a Save Point.
          */
         @Override
         protected void createSavePoint() {
@@ -1703,7 +2168,7 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Restore a Save Point
+         * Restore a Save Point.
          */
         @Override
         protected void restoreSavePoint() {
@@ -1721,8 +2186,9 @@ public class Analysis implements JDataContents {
                 theGains = new Money(theSavePoint.getGains());
 
                 /* Copy price if available */
-                if (theSavePoint.getPrice() != null)
+                if (theSavePoint.getPrice() != null) {
                     thePrice = new Price(theSavePoint.getPrice());
+                }
 
                 /* Trim back the capital events */
                 theEvents.purgeAfterDate(getDate());
@@ -1730,64 +2196,101 @@ public class Analysis implements JDataContents {
         }
     }
 
-    /* The ExternalAccount Bucket class */
-    public static class ExternalAccount extends ActDetail {
+    /**
+     * The ExternalAccount Bucket class.
+     */
+    public static final class ExternalAccount extends ActDetail {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(
                 ExternalAccount.class.getSimpleName(), ActDetail.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * Income Field Id.
+         */
         public static final JDataField FIELD_INCOME = FIELD_DEFS.declareLocalField("Income");
+
+        /**
+         * Expense Field Id.
+         */
         public static final JDataField FIELD_EXPENSE = FIELD_DEFS.declareLocalField("Expense");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_INCOME)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_INCOME.equals(pField)) {
                 return theIncome;
-            if (pField == FIELD_EXPENSE)
+            }
+            if (FIELD_EXPENSE.equals(pField)) {
                 return theExpense;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
+        /**
+         * The income.
+         */
         private Money theIncome = null;
+
+        /**
+         * The expense.
+         */
         private Money theExpense = null;
+
+        /**
+         * The save point.
+         */
         private ExternalAccount theSavePoint = null;
 
-        /* Override of getBase method */
         @Override
         public ExternalAccount getBase() {
             return (ExternalAccount) super.getBase();
         }
 
-        /* Access methods */
+        /**
+         * Obtain income.
+         * @return the income
+         */
         public Money getIncome() {
             return theIncome;
         }
 
+        /**
+         * Obtain expense.
+         * @return the expense
+         */
         public Money getExpense() {
             return theExpense;
         }
 
+        /**
+         * Obtain previous income.
+         * @return the income
+         */
         public Money getPrevIncome() {
             return (getBase() != null) ? getBase().getIncome() : null;
         }
 
+        /**
+         * Obtain previous expense.
+         * @return the expense
+         */
         public Money getPrevExpense() {
             return (getBase() != null) ? getBase().getExpense() : null;
         }
 
-        /* Constructor */
-        private ExternalAccount(BucketList pList,
-                                Account pAccount) {
+        /**
+         * Constructor.
+         * @param pList the list
+         * @param pAccount the account
+         */
+        private ExternalAccount(final BucketList pList,
+                                final Account pAccount) {
             /* Call super-constructor */
             super(pList, BucketType.EXTERNALDETAIL, pAccount);
 
@@ -1799,9 +2302,13 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /* Constructor */
-        private ExternalAccount(BucketList pList,
-                                ExternalAccount pPrevious) {
+        /**
+         * Constructor.
+         * @param pList the list
+         * @param pPrevious the previous
+         */
+        private ExternalAccount(final BucketList pList,
+                                final ExternalAccount pPrevious) {
             /* Call super-constructor */
             super(pList, BucketType.EXTERNALDETAIL, pPrevious.getAccount());
 
@@ -1816,8 +2323,11 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /* Constructor */
-        private ExternalAccount(ExternalAccount pPrevious) {
+        /**
+         * Constructor.
+         * @param pPrevious the previous
+         */
+        private ExternalAccount(final ExternalAccount pPrevious) {
             /* Call super-constructor */
             super((BucketList) pPrevious.getList(), BucketType.EXTERNALDETAIL, pPrevious.getAccount());
 
@@ -1829,18 +2339,12 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /**
-         * is the bucket active (i.e. should it be copied)
-         */
         @Override
         public boolean isActive() {
             /* Copy if the income or expense is non-zero */
             return (theIncome.isNonZero() || theExpense.isNonZero());
         }
 
-        /**
-         * is the bucket relevant (i.e. should it be reported)
-         */
         @Override
         protected boolean isRelevant() {
             /* Relevant if this value or the previous value is non-zero */
@@ -1850,11 +2354,11 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Adjust account for debit
+         * Adjust account for debit.
          * @param pEvent the event causing the debit
          */
         @Override
-        protected void adjustForDebit(Event pEvent) {
+        protected void adjustForDebit(final Event pEvent) {
             TransactionType myTransType = pEvent.getTransType();
             Money myAmount = pEvent.getAmount();
             Money myTaxCred = pEvent.getTaxCredit();
@@ -1863,10 +2367,9 @@ public class Analysis implements JDataContents {
             if (myTransType.isRecovered()) {
                 /* This is a negative expense */
                 theExpense.subtractAmount(myAmount);
-            }
 
-            /* else this is a standard income */
-            else {
+                /* else this is a standard income */
+            } else {
                 /* Adjust for income */
                 theIncome.addAmount(myAmount);
 
@@ -1879,35 +2382,35 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Adjust account for credit
+         * Adjust account for credit.
          * @param pEvent the event causing the credit
          */
         @Override
-        protected void adjustForCredit(Event pEvent) {
+        protected void adjustForCredit(final Event pEvent) {
             /* Adjust for expense */
             theExpense.addAmount(pEvent.getAmount());
         }
 
         /**
-         * Adjust account for tax credit
+         * Adjust account for tax credit.
          * @param pEvent the event causing the tax credit
          */
-        protected void adjustForTaxCredit(Event pEvent) {
+        protected void adjustForTaxCredit(final Event pEvent) {
             /* Adjust for expense */
             theExpense.addAmount(pEvent.getTaxCredit());
         }
 
         /**
-         * Adjust account for taxable gain tax credit
+         * Adjust account for taxable gain tax credit.
          * @param pEvent the event causing the tax credit
          */
-        protected void adjustForTaxGainTaxCredit(Event pEvent) {
+        protected void adjustForTaxGainTaxCredit(final Event pEvent) {
             /* Adjust for expense */
             theIncome.addAmount(pEvent.getTaxCredit());
         }
 
         /**
-         * Create a Save Point
+         * Create a Save Point.
          */
         @Override
         protected void createSavePoint() {
@@ -1916,7 +2419,7 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Restore a Save Point
+         * Restore a Save Point.
          */
         @Override
         protected void restoreSavePoint() {
@@ -1929,51 +2432,67 @@ public class Analysis implements JDataContents {
         }
     }
 
-    /* The AssetSummary Bucket class */
-    public static class AssetSummary extends ActType {
+    /**
+     * The AssetSummary Bucket class.
+     */
+    public static final class AssetSummary extends ActType {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(
-                AssetSummary.class.getSimpleName(), ActType.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(AssetSummary.class.getSimpleName(),
+                ActType.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * Value Field Id.
+         */
         public static final JDataField FIELD_VALUE = FIELD_DEFS.declareLocalField("Value");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_VALUE)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_VALUE.equals(pField)) {
                 return theValue;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
+        /**
+         * The value.
+         */
         private Money theValue = null;
 
-        /* Override of getBase method */
         @Override
         public AssetSummary getBase() {
             return (AssetSummary) super.getBase();
         }
 
-        /* Access methods */
+        /**
+         * Obtain value.
+         * @return the value
+         */
         public Money getValue() {
             return theValue;
         }
 
+        /**
+         * Obtain previous value.
+         * @return the value
+         */
         public Money getPrevValue() {
             return getBase().getValue();
         }
 
-        /* Constructor */
-        private AssetSummary(BucketList pList,
-                             AccountType pAccountType) {
+        /**
+         * Constructor.
+         * @param pList the list
+         * @param pAccountType the account type
+         */
+        private AssetSummary(final BucketList pList,
+                             final AccountType pAccountType) {
             /* Call super-constructor */
             super(pList, pAccountType);
 
@@ -1987,8 +2506,11 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /* Constructor */
-        private AssetSummary(AssetSummary pMaster) {
+        /**
+         * Constructor.
+         * @param pMaster the master
+         */
+        private AssetSummary(final AssetSummary pMaster) {
             /* Call super-constructor */
             super((BucketList) pMaster.getList(), pMaster.getAccountType());
 
@@ -1999,27 +2521,21 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /**
-         * is the bucket active (i.e. should it be copied)
-         */
         @Override
         public boolean isActive() {
             return false;
         }
 
-        /**
-         * is the bucket relevant (i.e. should it be reported)
-         */
         @Override
         protected boolean isRelevant() {
             return true;
         }
 
         /**
-         * Add values to the summary value
+         * Add values to the summary value.
          * @param pBucket the bucket
          */
-        protected void addValues(ValueAccount pBucket) {
+        protected void addValues(final ValueAccount pBucket) {
             ValueAccount myPrevious = pBucket.getBase();
 
             /* the total */
@@ -2032,16 +2548,24 @@ public class Analysis implements JDataContents {
         }
     }
 
-    /* The AssetTotal Bucket class */
-    public static class AssetTotal extends AnalysisBucket {
+    /**
+     * The AssetTotal Bucket class.
+     */
+    public static final class AssetTotal extends AnalysisBucket {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(AssetTotal.class.getSimpleName(),
                 AnalysisBucket.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * Value Field Id.
+         */
         public static final JDataField FIELD_VALUE = FIELD_DEFS.declareLocalField("Value");
+
+        /**
+         * Profit Field Id.
+         */
         public static final JDataField FIELD_PROFIT = FIELD_DEFS.declareLocalField("Profit");
 
         /* Called from constructor */
@@ -2051,39 +2575,60 @@ public class Analysis implements JDataContents {
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_VALUE)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_VALUE.equals(pField)) {
                 return theValue;
-            if (pField == FIELD_PROFIT)
+            }
+            if (FIELD_PROFIT.equals(pField)) {
                 return theProfit;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
+        /**
+         * The value.
+         */
         private Money theValue = null;
+
+        /**
+         * The profit.
+         */
         private Money theProfit = null;
 
-        /* Override of getBase method */
         @Override
         public AssetTotal getBase() {
             return (AssetTotal) super.getBase();
         }
 
-        /* Access methods */
+        /**
+         * Obtain value.
+         * @return the value
+         */
         public Money getValue() {
             return theValue;
         }
 
+        /**
+         * Obtain profit.
+         * @return the profit
+         */
         public Money getProfit() {
             return theProfit;
         }
 
+        /**
+         * Obtain previous value.
+         * @return the value
+         */
         public Money getPrevValue() {
             return getBase().getValue();
         }
 
-        /* Constructor */
-        private AssetTotal(BucketList pList) {
+        /**
+         * Constructor.
+         * @param pList the list
+         */
+        private AssetTotal(final BucketList pList) {
             /* Call super-constructor */
             super(pList, BucketType.ASSETTOTAL, 0);
 
@@ -2097,8 +2642,11 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /* Constructor */
-        private AssetTotal(AssetTotal pMaster) {
+        /**
+         * Constructor.
+         * @param pMaster the master total
+         */
+        private AssetTotal(final AssetTotal pMaster) {
             /* Call super-constructor */
             super((BucketList) pMaster.getList(), BucketType.ASSETTOTAL, 0);
 
@@ -2109,27 +2657,21 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /**
-         * is the bucket active (i.e. should it be copied)
-         */
         @Override
         public boolean isActive() {
             return false;
         }
 
-        /**
-         * is the bucket relevant (i.e. should it be reported)
-         */
         @Override
         protected boolean isRelevant() {
             return true;
         }
 
         /**
-         * Add values to the total value
+         * Add values to the total value.
          * @param pBucket the bucket
          */
-        protected void addValues(AssetSummary pBucket) {
+        protected void addValues(final AssetSummary pBucket) {
             AssetSummary myPrevious = pBucket.getBase();
 
             /* the total */
@@ -2142,83 +2684,133 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Calculate profit
+         * Calculate profit.
          */
         protected void calculateProfit() {
             theProfit = new Money(theValue);
-            if (getBase() != null)
+            if (getBase() != null) {
                 theProfit.subtractAmount(getPrevValue());
+            }
         }
     }
 
-    /* The ExternalTotal Bucket class */
-    public static class ExternalTotal extends AnalysisBucket {
+    /**
+     * The ExternalTotal Bucket class.
+     */
+    public static final class ExternalTotal extends AnalysisBucket {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(
-                ExternalTotal.class.getSimpleName(), AnalysisBucket.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(ExternalTotal.class.getSimpleName(),
+                AnalysisBucket.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * Income Field Id.
+         */
         public static final JDataField FIELD_INCOME = FIELD_DEFS.declareLocalField("Income");
+
+        /**
+         * Expense Field Id.
+         */
         public static final JDataField FIELD_EXPENSE = FIELD_DEFS.declareLocalField("Expense");
+
+        /**
+         * Profit Field Id.
+         */
         public static final JDataField FIELD_PROFIT = FIELD_DEFS.declareLocalField("Profit");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_INCOME)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_INCOME.equals(pField)) {
                 return theIncome;
-            if (pField == FIELD_EXPENSE)
+            }
+            if (FIELD_EXPENSE.equals(pField)) {
                 return theExpense;
-            if (pField == FIELD_PROFIT)
+            }
+            if (FIELD_PROFIT.equals(pField)) {
                 return theProfit;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
+        /**
+         * The income.
+         */
         private Money theIncome = null;
+
+        /**
+         * The expense.
+         */
         private Money theExpense = null;
+
+        /**
+         * The profit.
+         */
         private Money theProfit = null;
 
-        /* Override of getBase method */
         @Override
         public ExternalTotal getBase() {
             return (ExternalTotal) super.getBase();
         }
 
-        /* Access methods */
+        /**
+         * Obtain income.
+         * @return the income
+         */
         public Money getIncome() {
             return theIncome;
         }
 
+        /**
+         * Obtain expense.
+         * @return the expense
+         */
         public Money getExpense() {
             return theExpense;
         }
 
+        /**
+         * Obtain profit.
+         * @return the profit
+         */
         public Money getProfit() {
             return theProfit;
         }
 
+        /**
+         * Obtain previous income.
+         * @return the income
+         */
         public Money getPrevIncome() {
             return getBase().getIncome();
         }
 
+        /**
+         * Obtain previous expense.
+         * @return the expense
+         */
         public Money getPrevExpense() {
             return getBase().getExpense();
         }
 
+        /**
+         * Obtain previous profit.
+         * @return the profit
+         */
         public Money getPrevProfit() {
             return getBase().getProfit();
         }
 
-        /* Constructor */
-        private ExternalTotal(BucketList pList) {
+        /**
+         * Constructor.
+         * @param pList the list
+         */
+        private ExternalTotal(final BucketList pList) {
             /* Call super-constructor */
             super(pList, BucketType.EXTERNALTOTAL, 0);
 
@@ -2233,8 +2825,11 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /* Constructor */
-        private ExternalTotal(ExternalTotal pMaster) {
+        /**
+         * Constructor.
+         * @param pMaster the master
+         */
+        private ExternalTotal(final ExternalTotal pMaster) {
             /* Call super-constructor */
             super((BucketList) pMaster.getList(), BucketType.EXTERNALTOTAL, 0);
 
@@ -2246,27 +2841,21 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /**
-         * is the bucket active (i.e. should it be copied)
-         */
         @Override
         public boolean isActive() {
             return false;
         }
 
-        /**
-         * is the bucket relevant (i.e. should it be reported)
-         */
         @Override
         protected boolean isRelevant() {
             return true;
         }
 
         /**
-         * Add values to the total value
+         * Add values to the total value.
          * @param pBucket the bucket
          */
-        protected void addValues(ExternalAccount pBucket) {
+        protected void addValues(final ExternalAccount pBucket) {
             ExternalAccount myPrevious = pBucket.getBase();
 
             /* Add the values */
@@ -2281,80 +2870,131 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Calculate profit
+         * Calculate profit.
          */
         protected void calculateProfit() {
             theProfit = new Money(theIncome);
             theProfit.subtractAmount(theExpense);
-            if (getBase() != null)
+            if (getBase() != null) {
                 getBase().calculateProfit();
+            }
         }
     }
 
-    /* The MarketTotal Bucket class */
-    public static class MarketTotal extends AnalysisBucket {
+    /**
+     * The MarketTotal Bucket class.
+     */
+    public static final class MarketTotal extends AnalysisBucket {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(
-                ExternalTotal.class.getSimpleName(), AnalysisBucket.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(ExternalTotal.class.getSimpleName(),
+                AnalysisBucket.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * Cost field Id.
+         */
         public static final JDataField FIELD_COST = FIELD_DEFS.declareLocalField("Cost");
+
+        /**
+         * Value field Id.
+         */
         public static final JDataField FIELD_VALUE = FIELD_DEFS.declareLocalField("Value");
+
+        /**
+         * Gained field Id.
+         */
         public static final JDataField FIELD_GAINED = FIELD_DEFS.declareLocalField("Gained");
+
+        /**
+         * Profit field Id.
+         */
         public static final JDataField FIELD_PROFIT = FIELD_DEFS.declareLocalField("Profit");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_COST)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_COST.equals(pField)) {
                 return theCost;
-            if (pField == FIELD_VALUE)
+            }
+            if (FIELD_VALUE.equals(pField)) {
                 return theValue;
-            if (pField == FIELD_GAINED)
+            }
+            if (FIELD_GAINED.equals(pField)) {
                 return theGained;
-            if (pField == FIELD_PROFIT)
+            }
+            if (FIELD_PROFIT.equals(pField)) {
                 return theProfit;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
+        /**
+         * The cost.
+         */
         private Money theCost = null;
+
+        /**
+         * The value.
+         */
         private Money theValue = null;
+
+        /**
+         * The gained.
+         */
         private Money theGained = null;
+
+        /**
+         * The profit.
+         */
         private Money theProfit = null;
 
-        /* Override of getBase method */
         @Override
         public MarketTotal getBase() {
             return (MarketTotal) super.getBase();
         }
 
-        /* Access methods */
+        /**
+         * Obtain cost.
+         * @return the cost
+         */
         public Money getCost() {
             return theCost;
         }
 
+        /**
+         * Obtain gained.
+         * @return the gained
+         */
         public Money getGained() {
             return theGained;
         }
 
+        /**
+         * Obtain value.
+         * @return the value
+         */
         public Money getValue() {
             return theValue;
         }
 
+        /**
+         * Obtain profit.
+         * @return the profit
+         */
         public Money getProfit() {
             return theProfit;
         }
 
-        /* Constructor */
-        private MarketTotal(BucketList pList) {
+        /**
+         * Constructor.
+         * @param pList the list
+         */
+        private MarketTotal(final BucketList pList) {
             /* Call super-constructor */
             super(pList, BucketType.MARKETTOTAL, 0);
 
@@ -2368,27 +3008,21 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /**
-         * is the bucket active (i.e. should it be copied)
-         */
         @Override
         public boolean isActive() {
             return false;
         }
 
-        /**
-         * is the bucket relevant (i.e. should it be reported)
-         */
         @Override
         protected boolean isRelevant() {
             return true;
         }
 
         /**
-         * Add values to the total value
+         * Add values to the total value.
          * @param pBucket the source bucket to add
          */
-        protected void addValues(AssetAccount pBucket) {
+        protected void addValues(final AssetAccount pBucket) {
             theCost.addAmount(pBucket.getCost());
             theGained.addAmount(pBucket.getGained());
             theProfit.addAmount(pBucket.getProfit());
@@ -2396,63 +3030,96 @@ public class Analysis implements JDataContents {
         }
     }
 
-    /* The Transaction Detail Bucket class */
-    public static class TransDetail extends TransType {
+    /**
+     * The Transaction Detail Bucket class.
+     */
+    public static final class TransDetail extends TransType {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(
-                TransDetail.class.getSimpleName(), TransType.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(TransDetail.class.getSimpleName(),
+                TransType.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * Amount Field Id.
+         */
         public static final JDataField FIELD_AMOUNT = FIELD_DEFS.declareLocalField("Amount");
+
+        /**
+         * TaxCredit Field Id.
+         */
         public static final JDataField FIELD_TAXCREDIT = FIELD_DEFS.declareLocalField("TaxCredit");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_AMOUNT)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_AMOUNT.equals(pField)) {
                 return theAmount;
-            if (pField == FIELD_TAXCREDIT)
+            }
+            if (FIELD_TAXCREDIT.equals(pField)) {
                 return theTaxCredit;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
+        /**
+         * The amount.
+         */
         private Money theAmount = null;
+
+        /**
+         * The tax credit.
+         */
         private Money theTaxCredit = null;
 
-        /* Override of getBase method */
         @Override
         public TransDetail getBase() {
             return (TransDetail) super.getBase();
         }
 
-        /* Access methods */
+        /**
+         * Obtain the amount.
+         * @return the amount
+         */
         public Money getAmount() {
             return theAmount;
         }
 
+        /**
+         * Obtain the tax credit.
+         * @return the tax credit
+         */
         public Money getTaxCredit() {
             return theTaxCredit;
         }
 
+        /**
+         * Obtain the previous amount.
+         * @return the amount
+         */
         public Money getPrevAmount() {
             return (getBase() != null) ? getBase().getAmount() : null;
         }
 
+        /**
+         * Obtain the previous tax credit.
+         * @return the tax credit
+         */
         public Money getPrevTax() {
             return (getBase() != null) ? getBase().getTaxCredit() : null;
         }
 
-        /* Constructor */
-        private TransDetail(BucketList pList,
-                            TransactionType pTransType) {
+        /**
+         * Constructor.
+         * @param pList the list
+         * @param pTransType the transaction type
+         */
+        private TransDetail(final BucketList pList,
+                            final TransactionType pTransType) {
             /* Call super-constructor */
             super(pList, pTransType);
 
@@ -2464,9 +3131,13 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /* Constructor */
-        private TransDetail(BucketList pList,
-                            TransDetail pPrevious) {
+        /**
+         * Constructor.
+         * @param pList the list
+         * @param pPrevious the previous
+         */
+        private TransDetail(final BucketList pList,
+                            final TransDetail pPrevious) {
             /* Call super-constructor */
             super(pList, pPrevious.getTransType());
 
@@ -2481,8 +3152,11 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /* Constructor */
-        private TransDetail(TransDetail pPrevious) {
+        /**
+         * Constructor.
+         * @param pPrevious the previous
+         */
+        private TransDetail(final TransDetail pPrevious) {
             /* Call super-constructor */
             super((BucketList) pPrevious.getList(), pPrevious.getTransType());
 
@@ -2494,18 +3168,12 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /**
-         * is the bucket active (i.e. should it be copied)
-         */
         @Override
         public boolean isActive() {
             /* Copy if the amount is non-zero */
             return theAmount.isNonZero();
         }
 
-        /**
-         * is the bucket relevant (i.e. should it be reported)
-         */
         @Override
         protected boolean isRelevant() {
             /* Relevant if this value or the previous value is non-zero */
@@ -2513,73 +3181,90 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Adjust account for transaction
+         * Adjust account for transaction.
          * @param pEvent the source event
          */
-        protected void adjustAmount(Event pEvent) {
+        protected void adjustAmount(final Event pEvent) {
             /* Adjust for transaction */
             theAmount.addAmount(pEvent.getAmount());
 
             /* Adjust for tax credit */
-            if (pEvent.getTaxCredit() != null)
+            if (pEvent.getTaxCredit() != null) {
                 theTaxCredit.addAmount(pEvent.getTaxCredit());
+            }
         }
 
         /**
-         * Adjust account for tax credit
+         * Adjust account for tax credit.
          * @param pEvent the source event
          */
-        protected void adjustForTaxCredit(Event pEvent) {
+        protected void adjustForTaxCredit(final Event pEvent) {
             /* Adjust for tax credit */
             theAmount.addAmount(pEvent.getTaxCredit());
         }
     }
 
-    /* The Transaction Summary Bucket class */
-    public static class TransSummary extends Tax {
+    /**
+     * The Transaction Summary Bucket class.
+     */
+    public static final class TransSummary extends Tax {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(
-                TransSummary.class.getSimpleName(), Tax.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(TransSummary.class.getSimpleName(),
+                Tax.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * Amount Field Id.
+         */
         public static final JDataField FIELD_AMOUNT = FIELD_DEFS.declareLocalField("Amount");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_AMOUNT)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_AMOUNT.equals(pField)) {
                 return theAmount;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
+        /**
+         * The amount.
+         */
         private Money theAmount = null;
 
-        /* Override of getBase method */
         @Override
         public TransSummary getBase() {
             return (TransSummary) super.getBase();
         }
 
-        /* Access methods */
+        /**
+         * Obtain the amount.
+         * @return the amount.
+         */
         public Money getAmount() {
             return theAmount;
         }
 
+        /**
+         * Obtain the previous amount.
+         * @return the amount.
+         */
         public Money getPrevAmount() {
             return getBase().getAmount();
         }
 
-        /* Constructor */
-        private TransSummary(BucketList pList,
-                             TaxType pTaxType) {
+        /**
+         * Constructor.
+         * @param pList the list
+         * @param pTaxType the tax type
+         */
+        private TransSummary(final BucketList pList,
+                             final TaxType pTaxType) {
             /* Call super-constructor */
             super(pList, pTaxType);
 
@@ -2593,8 +3278,11 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /* Constructor */
-        private TransSummary(TransSummary pPrevious) {
+        /**
+         * Constructor.
+         * @param pPrevious the previous
+         */
+        private TransSummary(final TransSummary pPrevious) {
             /* Call super-constructor */
             super((BucketList) pPrevious.getList(), pPrevious.getTaxType());
 
@@ -2605,27 +3293,21 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /**
-         * is the bucket active (i.e. should it be copied)
-         */
         @Override
         public boolean isActive() {
             return false;
         }
 
-        /**
-         * is the bucket relevant (i.e. should it be reported)
-         */
         @Override
         protected boolean isRelevant() {
             return true;
         }
 
         /**
-         * Add values to the total value
+         * Add values to the total value.
          * @param pBucket the bucket
          */
-        protected void addValues(TransDetail pBucket) {
+        protected void addValues(final TransDetail pBucket) {
             TransDetail myPrevious = pBucket.getBase();
 
             /* Add the values */
@@ -2640,10 +3322,10 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Subtract values from the total value
+         * Subtract values from the total value.
          * @param pBucket the bucket
          */
-        protected void subtractValues(TransDetail pBucket) {
+        protected void subtractValues(final TransDetail pBucket) {
             TransDetail myPrevious = pBucket.getBase();
 
             /* Add the values */
@@ -2657,51 +3339,67 @@ public class Analysis implements JDataContents {
         }
     }
 
-    /* The Transaction Total Bucket class */
-    public static class TransTotal extends Tax {
+    /**
+     * The Transaction Total Bucket class.
+     */
+    public static final class TransTotal extends Tax {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(TransTotal.class.getSimpleName(),
                 Tax.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * Amount Field Id.
+         */
         public static final JDataField FIELD_AMOUNT = FIELD_DEFS.declareLocalField("Amount");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_AMOUNT)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_AMOUNT.equals(pField)) {
                 return theAmount;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
+        /**
+         * The amount.
+         */
         private Money theAmount = null;
 
-        /* Override of getBase method */
         @Override
         public TransTotal getBase() {
             return (TransTotal) super.getBase();
         }
 
-        /* Access methods */
+        /**
+         * Obtain amount.
+         * @return the amount
+         */
         public Money getAmount() {
             return theAmount;
         }
 
+        /**
+         * Obtain previous amount.
+         * @return the amount
+         */
         public Money getPrevAmount() {
             return getBase().getAmount();
         }
 
-        /* Constructor */
-        private TransTotal(BucketList pList,
-                           TaxType pTaxType) {
+        /**
+         * Constructor.
+         * @param pList the list
+         * @param pTaxType the tax type
+         */
+        private TransTotal(final BucketList pList,
+                           final TaxType pTaxType) {
             /* Call super-constructor */
             super(pList, pTaxType);
 
@@ -2715,8 +3413,11 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /* Constructor */
-        private TransTotal(TransTotal pMaster) {
+        /**
+         * Constructor.
+         * @param pMaster the master
+         */
+        private TransTotal(final TransTotal pMaster) {
             /* Call super-constructor */
             super((BucketList) pMaster.getList(), pMaster.getTaxType());
 
@@ -2727,27 +3428,21 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /**
-         * is the bucket active (i.e. should it be copied)
-         */
         @Override
         public boolean isActive() {
             return false;
         }
 
-        /**
-         * is the bucket relevant (i.e. should it be reported)
-         */
         @Override
         protected boolean isRelevant() {
             return true;
         }
 
         /**
-         * Add values to the total value
+         * Add values to the total value.
          * @param pBucket the bucket
          */
-        protected void addValues(TransSummary pBucket) {
+        protected void addValues(final TransSummary pBucket) {
             TransSummary myPrevious = pBucket.getBase();
 
             /* Add the values */
@@ -2761,10 +3456,10 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Subtract values from the total value
+         * Subtract values from the total value.
          * @param pBucket the bucket
          */
-        protected void subtractValues(TransSummary pBucket) {
+        protected void subtractValues(final TransSummary pBucket) {
             TransSummary myPrevious = pBucket.getBase();
 
             /* Add the values */
@@ -2778,80 +3473,138 @@ public class Analysis implements JDataContents {
         }
     }
 
-    /* The Taxation Detail Bucket class */
-    public static class TaxDetail extends Tax {
+    /**
+     * The Taxation Detail Bucket class.
+     */
+    public static final class TaxDetail extends Tax {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(TaxDetail.class.getSimpleName(),
                 Tax.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * Amount Field Id.
+         */
         public static final JDataField FIELD_AMOUNT = FIELD_DEFS.declareLocalField("Amount");
+
+        /**
+         * Taxation Field Id.
+         */
         public static final JDataField FIELD_TAXATION = FIELD_DEFS.declareLocalField("Taxation");
+
+        /**
+         * Rate Field Id.
+         */
         public static final JDataField FIELD_RATE = FIELD_DEFS.declareLocalField("Rate");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_AMOUNT)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_AMOUNT.equals(pField)) {
                 return theAmount;
-            if (pField == FIELD_TAXATION)
+            }
+            if (FIELD_TAXATION.equals(pField)) {
                 return theTaxation;
-            if (pField == FIELD_RATE)
+            }
+            if (FIELD_RATE.equals(pField)) {
                 return theRate;
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
+        /**
+         * The amount.
+         */
         private Money theAmount = null;
+
+        /**
+         * The taxation.
+         */
         private Money theTaxation = null;
+
+        /**
+         * The rate.
+         */
         private Rate theRate = null;
+
+        /**
+         * The parent.
+         */
         private TaxDetail theParent = null;
 
-        /* Override of getBase method */
         @Override
         public TaxDetail getBase() {
             return (TaxDetail) super.getBase();
         }
 
-        /* Access methods */
+        /**
+         * Obtain the amount.
+         * @return the amount
+         */
         public Money getAmount() {
             return theAmount;
         }
 
+        /**
+         * Obtain the taxation.
+         * @return the taxation
+         */
         public Money getTaxation() {
             return theTaxation;
         }
 
+        /**
+         * Obtain the rate.
+         * @return the rate
+         */
         public Rate getRate() {
             return theRate;
         }
 
+        /**
+         * Obtain the parent.
+         * @return the parent
+         */
         public TaxDetail getParent() {
             return theParent;
         }
 
+        /**
+         * Obtain the previous amount.
+         * @return the amount
+         */
         public Money getPrevAmount() {
             return (getBase() != null) ? getBase().getAmount() : null;
         }
 
+        /**
+         * Obtain the previous taxation.
+         * @return the taxation
+         */
         public Money getPrevTax() {
             return (getBase() != null) ? getBase().getTaxation() : null;
         }
 
+        /**
+         * Obtain the previous rate.
+         * @return the rate
+         */
         public Rate getPrevRate() {
             return (getBase() != null) ? getBase().getRate() : null;
         }
 
-        /* Constructor */
-        private TaxDetail(BucketList pList,
-                          TaxType pTaxType) {
+        /**
+         * Constructor.
+         * @param pList the list
+         * @param pTaxType the tax type
+         */
+        private TaxDetail(final BucketList pList,
+                          final TaxType pTaxType) {
             /* Call super-constructor */
             super(pList, pTaxType);
 
@@ -2862,8 +3615,11 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /* Constructor */
-        private TaxDetail(TaxDetail pMaster) {
+        /**
+         * Constructor.
+         * @param pMaster the master
+         */
+        private TaxDetail(final TaxDetail pMaster) {
             /* Call super-constructor */
             super((BucketList) pMaster.getList(), pMaster.getTaxType());
 
@@ -2871,17 +3627,11 @@ public class Analysis implements JDataContents {
             setState(DataState.CLEAN);
         }
 
-        /**
-         * is the bucket active (i.e. should it be copied)
-         */
         @Override
         public boolean isActive() {
             return false;
         }
 
-        /**
-         * is the bucket relevant (i.e. should it be reported)
-         */
         @Override
         protected boolean isRelevant() {
             /* Relevant if this value or the previous value is non-zero */
@@ -2891,12 +3641,11 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Set a taxation amount and calculate the tax on it
-         * 
+         * Set a taxation amount and calculate the tax on it.
          * @param pAmount Amount to set
          * @return the taxation on this bucket
          */
-        protected Money setAmount(Money pAmount) {
+        protected Money setAmount(final Money pAmount) {
             /* Set the value */
             theAmount = new Money(pAmount);
 
@@ -2908,97 +3657,152 @@ public class Analysis implements JDataContents {
         }
 
         /**
-         * Set explicit taxation value
-         * 
+         * Set explicit taxation value.
          * @param pAmount Amount to set
          */
-        protected void setTaxation(Money pAmount) {
+        protected void setTaxation(final Money pAmount) {
             /* Set the value */
             theTaxation = new Money(pAmount);
         }
 
         /**
-         * Set parent bucket for reporting purposes
+         * Set parent bucket for reporting purposes.
          * @param pParent the parent bucket
          */
-        protected void setParent(TaxDetail pParent) {
+        protected void setParent(final TaxDetail pParent) {
             /* Set the value */
             theParent = pParent;
         }
 
         /**
-         * Set a tax rate
-         * 
+         * Set a tax rate.
          * @param pRate Amount to set
          */
-        protected void setRate(Rate pRate) {
+        protected void setRate(final Rate pRate) {
             /* Set the value */
             theRate = pRate;
         }
     }
 
     /**
-     * Bucket Types
+     * Bucket Types.
      */
     public static enum BucketType {
-        /* Enum values */
-        MONEYDETAIL, ASSETDETAIL, DEBTDETAIL, EXTERNALDETAIL, ASSETSUMMARY, ASSETTOTAL, MARKETTOTAL, EXTERNALTOTAL, TRANSDETAIL, TRANSSUMMARY, TRANSTOTAL, TAXDETAIL, TAXSUMMARY, TAXTOTAL;
+        /**
+         * Money Detail.
+         */
+        MONEYDETAIL(1000),
 
         /**
-         * Get the Id shift for this BucketType
+         * Asset Detail.
+         */
+        ASSETDETAIL(1000),
+
+        /**
+         * Debt Detail.
+         */
+        DEBTDETAIL(1000),
+
+        /**
+         * External Detail.
+         */
+        EXTERNALDETAIL(1000),
+
+        /**
+         * Asset Summary.
+         */
+        ASSETSUMMARY(100),
+
+        /**
+         * Asset Total.
+         */
+        ASSETTOTAL(1),
+
+        /**
+         * Market Total.
+         */
+        MARKETTOTAL(2),
+
+        /**
+         * External total.
+         */
+        EXTERNALTOTAL(3),
+
+        /**
+         * Transaction detail.
+         */
+        TRANSDETAIL(200),
+
+        /**
+         * Transaction Summary.
+         */
+        TRANSSUMMARY(300),
+
+        /**
+         * Transaction Total.
+         */
+        TRANSTOTAL(300),
+
+        /**
+         * Tax Detail.
+         */
+        TAXDETAIL(300),
+
+        /**
+         * Tax Summary.
+         */
+        TAXSUMMARY(300),
+
+        /**
+         * Tax Total.
+         */
+        TAXTOTAL(300);
+
+        /**
+         * The id shift.
+         */
+        private final int theShift;
+
+        /**
+         * Get the Id shift for this BucketType.
          * @return the id shift
          */
         private int getIdShift() {
-            switch (this) {
-                case MONEYDETAIL:
-                case DEBTDETAIL:
-                case EXTERNALDETAIL:
-                case ASSETDETAIL:
-                    return 1000; /* Account IDs */
-                case ASSETSUMMARY:
-                    return 100; /* AccountType IDs */
-                case TRANSDETAIL:
-                    return 200; /* TransactionType IDs */
-                case TRANSSUMMARY:
-                case TRANSTOTAL:
-                case TAXDETAIL:
-                case TAXSUMMARY:
-                case TAXTOTAL:
-                    return 300; /* TaxType IDs */
-                case ASSETTOTAL:
-                    return 1;
-                case MARKETTOTAL:
-                    return 2;
-                case EXTERNALTOTAL:
-                    return 3;
-                default:
-                    return 0;
+            return theShift;
+        }
+
+        /**
+         * Constructor.
+         * @param pShift he id shift
+         */
+        private BucketType(final int pShift) {
+            theShift = pShift;
+        }
+
+        /**
+         * Get the BucketType for this Account.
+         * @param pAccount the account
+         * @return the Bucket type
+         */
+        private static BucketType getActBucketType(final Account pAccount) {
+            /* If this is a external/benefit */
+            if (pAccount.isExternal() || pAccount.isBenefit()) {
+                return EXTERNALDETAIL;
+            } else if (pAccount.isMoney()) {
+                return MONEYDETAIL;
+            } else if (pAccount.isPriced()) {
+                return ASSETDETAIL;
+            } else {
+                return DEBTDETAIL;
             }
         }
 
         /**
-         * Get the BucketType for this Account
-         * @param pAccount the account
-         * @return the Bucket type
-         */
-        private static BucketType getActBucketType(Account pAccount) {
-            /* If this is a external/benefit */
-            if (pAccount.isExternal() || pAccount.isBenefit())
-                return EXTERNALDETAIL;
-            else if (pAccount.isMoney())
-                return MONEYDETAIL;
-            else if (pAccount.isPriced())
-                return ASSETDETAIL;
-            else
-                return DEBTDETAIL;
-        }
-
-        /**
-         * Get the BucketType for this TaxType
+         * Get the BucketType for this TaxType.
          * @param pTaxType the tax type
          * @return the id shift
          */
-        private static BucketType getTaxBucketType(TaxType pTaxType) {
+        private static BucketType getTaxBucketType(final TaxType pTaxType) {
             TaxBucket myBucket = pTaxType.getTaxClass().getClassBucket();
             switch (myBucket) {
                 case TRANSTOTAL:
@@ -3015,8 +3819,28 @@ public class Analysis implements JDataContents {
         }
     }
 
-    /* Analysis state */
+    /**
+     * Analysis state.
+     */
     protected enum AnalysisState {
-        RAW, VALUED, TOTALLED, TAXED;
+        /**
+         * Raw.
+         */
+        RAW,
+
+        /**
+         * Valued.
+         */
+        VALUED,
+
+        /**
+         * Totalled.
+         */
+        TOTALLED,
+
+        /**
+         * Taxed.
+         */
+        TAXED;
     }
 }

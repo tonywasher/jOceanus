@@ -25,10 +25,10 @@ package uk.co.tolcroft.finance.core;
 import net.sourceforge.JDataManager.JDataException;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.sheets.FinanceSheet;
+import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.threads.LoaderThread;
 import uk.co.tolcroft.models.threads.ThreadStatus;
-import uk.co.tolcroft.models.views.DataControl;
 
 /**
  * LoaderThread extension to load an archive spreadsheet.
@@ -43,7 +43,7 @@ public class LoadArchive extends LoaderThread<FinanceData> {
     /**
      * Data Control.
      */
-    private final DataControl<FinanceData> theControl;
+    private final View theControl;
 
     /**
      * Thread status.
@@ -60,7 +60,7 @@ public class LoadArchive extends LoaderThread<FinanceData> {
 
         /* Store passed parameters */
         theStatus = pStatus;
-        theControl = pStatus.getControl();
+        theControl = (View) pStatus.getControl();
 
         /* Show the status window */
         showStatusBar();
@@ -93,7 +93,7 @@ public class LoadArchive extends LoaderThread<FinanceData> {
         theStatus.initTask("Analysing Data");
 
         /* Analyse the Data to ensure that close dates are updated */
-        myData.analyseData(theControl);
+        theControl.analyseData(myData);
 
         /* Re-base the loaded spreadsheet onto the database image */
         myData.reBase(myStore);

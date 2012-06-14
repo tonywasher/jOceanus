@@ -309,5 +309,47 @@ public class JDataFields {
             /* Allocate value index if required */
             theIndex = isValueSetField ? theNextValue++ : -1;
         }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (getClass() != pThat.getClass()) {
+                return false;
+            }
+
+            /* Access as JDataField */
+            JDataField myThat = (JDataField) pThat;
+
+            /* Must belong to the same anchor */
+            if (theSelf != myThat.getAnchor()) {
+                return false;
+            }
+
+            /* Check the name and index is the same */
+            if ((!theName.equals(myThat.theName)) || (theIndex != myThat.theIndex)) {
+                return false;
+            }
+
+            /* Check the flags are the same */
+            if ((isEqualityField != myThat.isEqualityField) || (isValueSetField != myThat.isValueSetField)) {
+                return false;
+            }
+
+            /* Its the same */
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return theName.hashCode();
+        }
     }
 }

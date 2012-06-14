@@ -113,34 +113,34 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
     @Override
     public Object getFieldValue(final JDataField pField) {
         /* If the field is not an attribute handle normally */
-        if (pField == FIELD_ID) {
+        if (FIELD_ID.equals(pField)) {
             return getId();
         }
-        if (pField == FIELD_ACTIVE) {
+        if (FIELD_ACTIVE.equals(pField)) {
             return isActive();
         }
-        if (pField == FIELD_BASE) {
+        if (FIELD_BASE.equals(pField)) {
             return getBase();
         }
-        if (pField == FIELD_STATE) {
+        if (FIELD_STATE.equals(pField)) {
             return getState();
         }
-        if (pField == FIELD_EDITSTATE) {
+        if (FIELD_EDITSTATE.equals(pField)) {
             return getEditState();
         }
-        if (pField == FIELD_DELETED) {
+        if (FIELD_DELETED.equals(pField)) {
             return isDeleted ? isDeleted : JDataObject.FIELD_SKIP;
         }
-        if (pField == FIELD_NEXTVERS) {
+        if (FIELD_NEXTVERS.equals(pField)) {
             return (theHistory != null) ? getList().getNextVersion() : JDataObject.FIELD_SKIP;
         }
-        if (pField == FIELD_VERSION) {
+        if (FIELD_VERSION.equals(pField)) {
             return (theValueSet != null) ? theValueSet.getVersion() : JDataObject.FIELD_SKIP;
         }
-        if (pField == FIELD_HISTORY) {
+        if (FIELD_HISTORY.equals(pField)) {
             return hasHistory() ? theHistory : JDataObject.FIELD_SKIP;
         }
-        if (pField == FIELD_ERRORS) {
+        if (FIELD_ERRORS.equals(pField)) {
             return hasErrors() ? theErrors : JDataObject.FIELD_SKIP;
         }
 

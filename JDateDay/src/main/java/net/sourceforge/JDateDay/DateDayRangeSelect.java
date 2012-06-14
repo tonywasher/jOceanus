@@ -184,7 +184,7 @@ public class DateDayRangeSelect extends JPanel {
 
         /* Create initial state and limit the selection to the Range */
         theState = new DateRangeState();
-        setOverallRange(null);
+        setInitialRange();
         theState.buildRange();
 
         /* Add the listeners for item changes */
@@ -210,6 +210,22 @@ public class DateDayRangeSelect extends JPanel {
      */
     public void setFormat(final String pFormat) {
         theDateButton.setFormat(pFormat);
+    }
+
+    /**
+     * Set the initial range for the control.
+     */
+    private void setInitialRange() {
+        /* Record total possible range */
+        theFirstDate = null;
+        theFinalDate = null;
+
+        /* Set range into DateButton */
+        theDateButton.setEarliestDateDay(theFirstDate);
+        theDateButton.setLatestDateDay(theFinalDate);
+
+        /* Adjust the overall range */
+        theState.adjustOverallRange();
     }
 
     /**
@@ -278,16 +294,13 @@ public class DateDayRangeSelect extends JPanel {
         refreshingData = false;
     }
 
-    /**
-     * Lock/Unlock the selection.
-     * @param parentalLock is the parent locked
-     */
-    public void setLockDown(final boolean parentalLock) {
+    @Override
+    public void setEnabled(final boolean pEnable) {
         /* Lock/Unlock the selection */
-        theDateButton.setEnabled(!parentalLock);
-        thePeriodBox.setEnabled(!parentalLock);
-        theNextButton.setEnabled((!parentalLock) && theState.isNextOK());
-        thePrevButton.setEnabled((!parentalLock) && theState.isPrevOK());
+        theDateButton.setEnabled(pEnable);
+        thePeriodBox.setEnabled(pEnable);
+        theNextButton.setEnabled(pEnable && theState.isNextOK());
+        thePrevButton.setEnabled(pEnable && theState.isPrevOK());
     }
 
     /**
@@ -323,7 +336,7 @@ public class DateDayRangeSelect extends JPanel {
             }
 
             /* If this event relates to the period box */
-            if ((evt.getSource() == thePeriodBox) && (evt.getStateChange() == ItemEvent.SELECTED)) {
+            if ((thePeriodBox.equals(evt.getSource())) && (evt.getStateChange() == ItemEvent.SELECTED)) {
                 /* Determine the new period */
                 myPeriod = (DatePeriod) evt.getItem();
 
@@ -335,16 +348,16 @@ public class DateDayRangeSelect extends JPanel {
 
         @Override
         public void actionPerformed(final ActionEvent evt) {
-            Object o = evt.getSource();
+            Object src = evt.getSource();
 
             /* If this event relates to the next button */
-            if (o == theNextButton) {
+            if (theNextButton.equals(src)) {
                 /* Set the next date */
                 theState.setNextDate();
                 notifyChangedRange();
 
                 /* If this event relates to the previous button */
-            } else if (o == thePrevButton) {
+            } else if (thePrevButton.equals(src)) {
                 /* Set the previous date */
                 theState.setPreviousDate();
                 notifyChangedRange();
@@ -354,7 +367,7 @@ public class DateDayRangeSelect extends JPanel {
         @Override
         public void propertyChange(final PropertyChangeEvent evt) {
             /* if this date relates to the Date button */
-            if (evt.getSource() == theDateButton) {
+            if (theDateButton.equals(evt.getSource())) {
                 /* Access the value */
                 theState.setDate(theDateButton);
                 notifyChangedRange();
@@ -606,7 +619,7 @@ public class DateDayRangeSelect extends JPanel {
          */
         private void applyState() {
             /* Adjust the lock-down */
-            setLockDown(false);
+            setEnabled(true);
             theDateButton.setSelectedDateDay(theStartDate);
             thePeriodBox.setSelectedItem(thePeriod);
         }

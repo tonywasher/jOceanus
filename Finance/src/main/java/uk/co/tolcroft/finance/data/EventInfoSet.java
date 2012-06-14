@@ -26,7 +26,6 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.JDataDetail;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
@@ -42,22 +41,64 @@ import uk.co.tolcroft.finance.data.EventValue.EventValueList;
 import uk.co.tolcroft.finance.data.StaticClass.EventInfoClass;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 
+/**
+ * EventInfoSet data type.
+ * @author Tony Washer
+ */
 public class EventInfoSet implements JDataContents {
     /**
      * Report fields.
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(EventInfoSet.class.getSimpleName());
 
-    /* Field IDs */
+    /**
+     * Event Field Id.
+     */
     public static final JDataField FIELD_EVENT = FIELD_DEFS.declareEqualityField("Event");
+
+    /**
+     * Tax Credit Field Id.
+     */
     public static final JDataField FIELD_TAXCREDIT = FIELD_DEFS.declareEqualityField("TaxCredit");
+
+    /**
+     * NatInsurance Field Id.
+     */
     public static final JDataField FIELD_NATINSURE = FIELD_DEFS.declareEqualityField("NatInsurance");
+
+    /**
+     * Benefit Field Id.
+     */
     public static final JDataField FIELD_BENEFIT = FIELD_DEFS.declareEqualityField("Benefit");
+
+    /**
+     * Credit Units Field Id.
+     */
     public static final JDataField FIELD_CREDITUNITS = FIELD_DEFS.declareEqualityField("CreditUnits");
+
+    /**
+     * Debit Units Field Id.
+     */
     public static final JDataField FIELD_DEBITUNITS = FIELD_DEFS.declareEqualityField("DebitUnits");
+
+    /**
+     * Dilution Field Id.
+     */
     public static final JDataField FIELD_DILUTION = FIELD_DEFS.declareEqualityField("Dilution");
+
+    /**
+     * Xfer Delay Field Id.
+     */
     public static final JDataField FIELD_XFERDELAY = FIELD_DEFS.declareEqualityField("XferDelay");
+
+    /**
+     * QualifyYears Field Id.
+     */
     public static final JDataField FIELD_QUALIFYYEARS = FIELD_DEFS.declareEqualityField("QualifyYears");
+
+    /**
+     * Third Party Field Id.
+     */
     public static final JDataField FIELD_THIRDPARTY = FIELD_DEFS.declareEqualityField("ThirdParty");
 
     @Override
@@ -67,34 +108,34 @@ public class EventInfoSet implements JDataContents {
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (pField == FIELD_EVENT) {
+        if (FIELD_EVENT.equals(pField)) {
             return theEvent;
         }
-        if (pField == FIELD_TAXCREDIT) {
+        if (FIELD_TAXCREDIT.equals(pField)) {
             return theDataMap.get(EventInfoClass.TaxCredit);
         }
-        if (pField == FIELD_NATINSURE) {
+        if (FIELD_NATINSURE.equals(pField)) {
             return theDataMap.get(EventInfoClass.NatInsurance);
         }
-        if (pField == FIELD_BENEFIT) {
+        if (FIELD_BENEFIT.equals(pField)) {
             return theDataMap.get(EventInfoClass.Benefit);
         }
-        if (pField == FIELD_CREDITUNITS) {
+        if (FIELD_CREDITUNITS.equals(pField)) {
             return theDataMap.get(EventInfoClass.CreditUnits);
         }
-        if (pField == FIELD_DEBITUNITS) {
+        if (FIELD_DEBITUNITS.equals(pField)) {
             return theDataMap.get(EventInfoClass.DebitUnits);
         }
-        if (pField == FIELD_DILUTION) {
+        if (FIELD_DILUTION.equals(pField)) {
             return theDataMap.get(EventInfoClass.Dilution);
         }
-        if (pField == FIELD_XFERDELAY) {
+        if (FIELD_XFERDELAY.equals(pField)) {
             return theValueMap.get(EventInfoClass.XferDelay);
         }
-        if (pField == FIELD_QUALIFYYEARS) {
+        if (FIELD_QUALIFYYEARS.equals(pField)) {
             return theValueMap.get(EventInfoClass.QualifyYears);
         }
-        if (pField == FIELD_THIRDPARTY) {
+        if (FIELD_THIRDPARTY.equals(pField)) {
             return theValueMap.get(EventInfoClass.ThirdParty);
         }
         return null;
@@ -106,40 +147,40 @@ public class EventInfoSet implements JDataContents {
     }
 
     /**
-     * The Event to which this set belongs
+     * The Event to which this set belongs.
      */
     private Event theEvent = null;
 
     /**
-     * The list of EventInfoTypes
+     * The list of EventInfoTypes.
      */
     private EventInfoTypeList theTypes = null;
 
     /**
-     * The EventData list for new data
+     * The EventData list for new data.
      */
     private EventDataList theDataList = null;
 
     /**
-     * The EventValue list for new data
+     * The EventValue list for new data.
      */
     private EventValueList theValueList = null;
 
     /**
-     * The Map of the Event Values
+     * The Map of the Event Values.
      */
     private Map<EventInfoClass, EventValue> theValueMap = null;
 
     /**
-     * The Map of the Event Data
+     * The Map of the Event Data.
      */
     private Map<EventInfoClass, EventData> theDataMap = null;
 
     /**
-     * Constructor
+     * Constructor.
      * @param pEvent the Event to which this Set belongs
      */
-    protected EventInfoSet(Event pEvent) {
+    protected EventInfoSet(final Event pEvent) {
         /* Store the Event */
         theEvent = pEvent;
 
@@ -155,10 +196,9 @@ public class EventInfoSet implements JDataContents {
             /* Create the lists for the Info */
             theValueList = new EventValueList(myData, ListStyle.EDIT);
             theDataList = new EventDataList(myData, ListStyle.EDIT);
-        }
 
-        /* else use the ones for the DataSet */
-        else {
+            /* else use the ones for the DataSet */
+        } else {
             /* Register the Value and Data lists */
             theValueList = myData.getEventValues();
             theDataList = myData.getEventData();
@@ -169,18 +209,19 @@ public class EventInfoSet implements JDataContents {
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pEvent the event to which this is linked
      * @param pSet the InfoSet to clone
      */
-    protected EventInfoSet(Event pEvent,
-                           EventInfoSet pSet) {
+    protected EventInfoSet(final Event pEvent,
+                           final EventInfoSet pSet) {
         /* Call standard constructor */
         this(pEvent);
 
         /* Return if there is no infoSet */
-        if (pSet == null)
+        if (pSet == null) {
             return;
+        }
 
         /* Clone the InfoSetor each EventInfo in the underlying ValueMap */
         for (EventValue myValue : pSet.theValueMap.values()) {
@@ -204,12 +245,12 @@ public class EventInfoSet implements JDataContents {
     }
 
     /**
-     * Create a new EventValue
+     * Create a new EventValue.
      * @param pClass the class of the item
      * @return the new value
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    protected EventValue getNewValue(EventInfoClass pClass) throws JDataException {
+    protected EventValue getNewValue(final EventInfoClass pClass) throws JDataException {
         /* Access the EventInfoType */
         EventInfoType myType = theTypes.searchFor(pClass);
 
@@ -222,12 +263,12 @@ public class EventInfoSet implements JDataContents {
     }
 
     /**
-     * Create a new EventData
+     * Create a new EventData.
      * @param pClass the class of the item
      * @return the new data
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    protected EventData getNewData(EventInfoClass pClass) throws JDataException {
+    protected EventData getNewData(final EventInfoClass pClass) throws JDataException {
         /* Access the EventInfoType */
         EventInfoType myType = theTypes.searchFor(pClass);
 
@@ -240,7 +281,7 @@ public class EventInfoSet implements JDataContents {
     }
 
     /**
-     * Validate an InfoSet
+     * Validate an InfoSet.
      */
     protected void validate() {
         /* Access Event values */
@@ -313,14 +354,14 @@ public class EventInfoSet implements JDataContents {
                     theEvent.addError("Cannot credit and debit same account", FIELD_CREDITUNITS);
                 }
             }
-        }
 
-        /* Else check for required units */
-        else {
-            if (theEvent.isStockSplit())
+            /* Else check for required units */
+        } else {
+            if (theEvent.isStockSplit()) {
                 theEvent.addError("Stock Split requires non-zero Units", FIELD_CREDITUNITS);
-            else if (theEvent.isAdminCharge())
+            } else if (theEvent.isAdminCharge()) {
                 theEvent.addError("Admin Charge requires non-zero Units", FIELD_DEBITUNITS);
+            }
         }
 
         /* Access Dilution */
@@ -329,16 +370,17 @@ public class EventInfoSet implements JDataContents {
         /* If we have a dilution */
         if (myDilution != null) {
             /* If the dilution is not allowed */
-            if ((!Event.needsDilution(myTrans)) && (!myTrans.isStockSplit()))
+            if ((!Event.needsDilution(myTrans)) && (!myTrans.isStockSplit())) {
                 theEvent.addError("Dilution factor given where not allowed", FIELD_DILUTION);
+            }
 
             /* If the dilution is out of range */
-            if (myDilution.outOfRange())
+            if (myDilution.outOfRange()) {
                 theEvent.addError("Dilution factor value is outside allowed range (0-1)", FIELD_DILUTION);
-        }
+            }
 
-        /* else if we are missing a required dilution factor */
-        else if (Event.needsDilution(myTrans)) {
+            /* else if we are missing a required dilution factor */
+        } else if (Event.needsDilution(myTrans)) {
             theEvent.addError("Dilution factor missing where required", FIELD_DILUTION);
         }
 
@@ -357,10 +399,9 @@ public class EventInfoSet implements JDataContents {
             if ((myTax == null) || (!myTax.isPositive())) {
                 theEvent.addError("TaxCredit must be non-null", FIELD_TAXCREDIT);
             }
-        }
 
-        /* If we need a tax credit */
-        else if ((myTrans != null) && (Event.needsTaxCredit(myTrans, myDebit))) {
+            /* If we need a tax credit */
+        } else if ((myTrans != null) && (Event.needsTaxCredit(myTrans, myDebit))) {
             /* Tax Credit must be non-null and positive */
             if ((myTax == null) || (!myTax.isPositive())) {
                 theEvent.addError("TaxCredit must be non-null", FIELD_TAXCREDIT);
@@ -370,10 +411,9 @@ public class EventInfoSet implements JDataContents {
             if (myYears != null) {
                 theEvent.addError("Years must be null", FIELD_QUALIFYYEARS);
             }
-        }
 
-        /* else we should not have a tax credit */
-        else if (myTrans != null) {
+            /* else we should not have a tax credit */
+        } else if (myTrans != null) {
             /* Tax Credit must be null */
             if (myTax != null) {
                 theEvent.addError("TaxCredit must be null", FIELD_TAXCREDIT);
@@ -387,29 +427,30 @@ public class EventInfoSet implements JDataContents {
     }
 
     /**
-     * Register the event value
+     * Register the event value.
      * @param pValue the Value
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    protected void registerValue(EventValue pValue) throws JDataException {
+    protected void registerValue(final EventValue pValue) throws JDataException {
         /* Obtain the Map value */
         EventInfoType myType = pValue.getInfoType();
         EventValue myValue = theValueMap.get(myType.getInfoClass());
 
         /* If we already have a value */
-        if (myValue != null)
+        if (myValue != null) {
             throw new JDataException(ExceptionClass.LOGIC, theEvent, "InfoClass " + myType.getName()
                     + " already registered");
+        }
 
         /* Store the value to the map */
         theValueMap.put(myType.getInfoClass(), pValue);
     }
 
     /**
-     * DeRegister the event value
+     * DeRegister the event value.
      * @param pValue the Value
      */
-    protected void deRegisterValue(EventValue pValue) {
+    protected void deRegisterValue(final EventValue pValue) {
         /* Obtain the Type */
         EventInfoType myType = pValue.getInfoType();
 
@@ -418,29 +459,30 @@ public class EventInfoSet implements JDataContents {
     }
 
     /**
-     * Register the event data
+     * Register the event data.
      * @param pData the Data
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    protected void registerData(EventData pData) throws JDataException {
+    protected void registerData(final EventData pData) throws JDataException {
         /* Obtain the Map value */
         EventInfoType myType = pData.getInfoType();
         EventData myData = theDataMap.get(myType.getInfoClass());
 
         /* If we already have a value */
-        if (myData != null)
+        if (myData != null) {
             throw new JDataException(ExceptionClass.LOGIC, theEvent, "InfoClass " + myType.getName()
                     + " already registered");
+        }
 
         /* Store the value to the map */
         theDataMap.put(myType.getInfoClass(), pData);
     }
 
     /**
-     * DeRegister the event data
+     * DeRegister the event data.
      * @param pData the Data
      */
-    protected void deRegisterData(EventData pData) {
+    protected void deRegisterData(final EventData pData) {
         /* Obtain the Type */
         EventInfoType myType = pData.getInfoType();
 
@@ -449,11 +491,11 @@ public class EventInfoSet implements JDataContents {
     }
 
     /**
-     * Obtain the required Event Value
+     * Obtain the required Event Value.
      * @param pType the Value Type
      * @return the value
      */
-    protected Integer getValue(EventInfoClass pType) {
+    protected Integer getValue(final EventInfoClass pType) {
         /* Obtain the Map value */
         EventValue myValue = theValueMap.get(pType);
 
@@ -462,11 +504,11 @@ public class EventInfoSet implements JDataContents {
     }
 
     /**
-     * Obtain the required Event Account
+     * Obtain the required Event Account.
      * @param pType the Value Type
      * @return the account
      */
-    protected Account getAccount(EventInfoClass pType) {
+    protected Account getAccount(final EventInfoClass pType) {
         /* Obtain the Map value */
         EventValue myValue = theValueMap.get(pType);
 
@@ -475,11 +517,11 @@ public class EventInfoSet implements JDataContents {
     }
 
     /**
-     * Obtain the required Event Data Money
+     * Obtain the required Event Data Money.
      * @param pType the Value Type
      * @return the money
      */
-    protected Money getMoney(EventInfoClass pType) {
+    protected Money getMoney(final EventInfoClass pType) {
         /* Obtain the Map value */
         EventData myData = theDataMap.get(pType);
 
@@ -488,11 +530,11 @@ public class EventInfoSet implements JDataContents {
     }
 
     /**
-     * Obtain the required Event Data Units
+     * Obtain the required Event Data Units.
      * @param pType the Value Type
      * @return the units
      */
-    protected Units getUnits(EventInfoClass pType) {
+    protected Units getUnits(final EventInfoClass pType) {
         /* Obtain the Map value */
         EventData myData = theDataMap.get(pType);
 
@@ -501,11 +543,11 @@ public class EventInfoSet implements JDataContents {
     }
 
     /**
-     * Obtain the required Event Data Dilution
+     * Obtain the required Event Data Dilution.
      * @param pType the Value Type
      * @return the dilution
      */
-    protected Dilution getDilution(EventInfoClass pType) {
+    protected Dilution getDilution(final EventInfoClass pType) {
         /* Obtain the Map value */
         EventData myData = theDataMap.get(pType);
 
@@ -514,13 +556,13 @@ public class EventInfoSet implements JDataContents {
     }
 
     /**
-     * Set the required Event Value
+     * Set the required Event Value.
      * @param pType the Value Type
      * @param pValue the Value (may be null)
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    protected void setValue(EventInfoType pType,
-                            Integer pValue) throws JDataException {
+    protected void setValue(final EventInfoType pType,
+                            final Integer pValue) throws JDataException {
         /* Obtain the Map value */
         EventValue myValue = theValueMap.get(pType.getInfoClass());
 
@@ -538,13 +580,13 @@ public class EventInfoSet implements JDataContents {
     }
 
     /**
-     * Set the required Event Account
+     * Set the required Event Account.
      * @param pType the Value Type
      * @param pValue the Value (may be null)
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    protected void setAccount(EventInfoType pType,
-                              Account pValue) throws JDataException {
+    protected void setAccount(final EventInfoType pType,
+                              final Account pValue) throws JDataException {
         /* Obtain the Map value */
         EventValue myValue = theValueMap.get(pType.getInfoClass());
 
@@ -562,13 +604,13 @@ public class EventInfoSet implements JDataContents {
     }
 
     /**
-     * Set the required Event Money
+     * Set the required Event Money.
      * @param pType the Value Type
      * @param pValue the Value (may be null)
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    protected void setMoney(EventInfoType pType,
-                            Money pValue) throws JDataException {
+    protected void setMoney(final EventInfoType pType,
+                            final Money pValue) throws JDataException {
         /* Obtain the Map data */
         EventData myData = theDataMap.get(pType.getInfoClass());
 
@@ -586,13 +628,13 @@ public class EventInfoSet implements JDataContents {
     }
 
     /**
-     * Set the required Event Units
+     * Set the required Event Units.
      * @param pType the Value Type
      * @param pValue the Value (may be null)
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    protected void setUnits(EventInfoType pType,
-                            Units pValue) throws JDataException {
+    protected void setUnits(final EventInfoType pType,
+                            final Units pValue) throws JDataException {
         /* Obtain the Map data */
         EventData myData = theDataMap.get(pType.getInfoClass());
 
@@ -610,13 +652,13 @@ public class EventInfoSet implements JDataContents {
     }
 
     /**
-     * Set the required Event Dilution
+     * Set the required Event Dilution.
      * @param pType the Value Type
      * @param pValue the Value (may be null)
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    protected void setDilution(EventInfoType pType,
-                               Dilution pValue) throws JDataException {
+    protected void setDilution(final EventInfoType pType,
+                               final Dilution pValue) throws JDataException {
         /* Obtain the Map data */
         EventData myData = theDataMap.get(pType.getInfoClass());
 
@@ -631,80 +673,5 @@ public class EventInfoSet implements JDataContents {
 
         /* Store the value */
         myData.setDilution(pValue);
-    }
-
-    /**
-     * Add additional fields to HTML String
-     * @param pDetail the debug detail
-     * @param pBuffer the string buffer
-     */
-    public void addHTMLFields(JDataDetail pDetail,
-                              StringBuilder pBuffer) {
-        /* Create new String Builder */
-        StringBuilder myBuilder = new StringBuilder(1000);
-        int myEntries = 0;
-
-        /* Loop through the InfoType values */
-        for (EventInfoClass myClass : EventInfoClass.values()) {
-            switch (myClass) {
-            /* Handle values */
-                case XferDelay:
-                case QualifyYears:
-                case ThirdParty:
-                    /* Access the EventValue */
-                    EventValue myValue = theValueMap.get(myClass);
-
-                    /* Ignore null entry */
-                    if (myValue == null)
-                        break;
-
-                    /* Format the Info */
-                    myBuilder.append("<tr><td>");
-                    myBuilder.append(myClass.name());
-                    myBuilder.append("</td><td>");
-                    myBuilder.append(pDetail.addDataLink(myValue, EventValue.format(myValue)));
-                    myBuilder.append("</td></tr>");
-
-                    /* Increment values and break loop */
-                    myEntries++;
-                    break;
-
-                /* Handle Data */
-                case TaxCredit:
-                case NatInsurance:
-                case Benefit:
-                case CreditUnits:
-                case DebitUnits:
-                case Dilution:
-                    /* Access the EventData */
-                    EventData myData = theDataMap.get(myClass);
-
-                    /* Ignore null entry */
-                    if (myData == null)
-                        break;
-
-                    /* Format the Info */
-                    myBuilder.append("<tr><td>");
-                    myBuilder.append(myClass.name());
-                    myBuilder.append("</td><td>");
-                    myBuilder.append(pDetail.addDataLink(myData, EventData.format(myData)));
-                    myBuilder.append("</td></tr>");
-
-                    /* Increment values and break loop */
-                    myEntries++;
-                    break;
-            }
-        }
-
-        /* If we have any entries */
-        if (myEntries > 0) {
-            /* Start the Info Section */
-            pBuffer.append("<tr><th rowspan=\"");
-            pBuffer.append(myEntries + 1);
-            pBuffer.append("\">Fields</th></tr>");
-
-            /* Add the detail */
-            pBuffer.append(myBuilder);
-        }
     }
 }

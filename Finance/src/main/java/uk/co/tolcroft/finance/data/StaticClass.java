@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,6 +26,10 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import uk.co.tolcroft.models.data.StaticData.StaticInterface;
 
+/**
+ * Static classes.
+ * @author Tony Washer
+ */
 public class StaticClass {
     /**
      * Enumeration of Account Type Classes.
@@ -33,147 +38,147 @@ public class StaticClass {
         /**
          * Current Banking Account.
          */
-        CURRENT(1),
+        CURRENT(1, 0),
 
         /**
          * Instant Access Savings Account.
          */
-        INSTANT(2),
+        INSTANT(2, 1),
 
         /**
          * Savings Account Requiring Notice for Withdrawals.
          */
-        NOTICE(3),
+        NOTICE(3, 2),
 
         /**
          * Fixed Rate Savings Bond.
          */
-        BOND(4),
+        BOND(4, 3),
 
         /**
          * Instant Access Cash ISA Account.
          */
-        CASHISA(5),
+        CASHISA(5, 4),
 
         /**
          * Fixed Rate Cash ISA Bond.
          */
-        ISABOND(6),
+        ISABOND(6, 5),
 
         /**
          * Index Linked Bond.
          */
-        TAXFREEBOND(7),
+        TAXFREEBOND(7, 6),
 
         /**
          * Equity Bond.
          */
-        EQUITYBOND(8),
+        EQUITYBOND(8, 7),
 
         /**
          * Shares.
          */
-        SHARES(9),
+        SHARES(9, 8),
 
         /**
          * Unit Trust or OEIC.
          */
-        UNITTRUST(10),
+        UNITTRUST(10, 9),
 
         /**
          * Life Bond.
          */
-        LIFEBOND(11),
+        LIFEBOND(11, 10),
 
         /**
          * Unit Trust or OEIC in ISA wrapper.
          */
-        UNITISA(12),
+        UNITISA(12, 11),
 
         /**
          * Car.
          */
-        CAR(13),
+        CAR(13, 12),
 
         /**
          * House.
          */
-        HOUSE(14),
+        HOUSE(14, 13),
 
         /**
          * Debts.
          */
-        DEBTS(15),
+        DEBTS(15, 16),
 
         /**
          * CreditCard.
          */
-        CREDITCARD(16),
+        CREDITCARD(16, 15),
 
         /**
          * WriteOff.
          */
-        WRITEOFF(17),
+        WRITEOFF(17, 22),
 
         /**
          * External Account.
          */
-        EXTERNAL(18),
+        EXTERNAL(18, 24),
 
         /**
          * Employer Account.
          */
-        EMPLOYER(19),
+        EMPLOYER(19, 18),
 
         /**
          * Asset Owner Account.
          */
-        OWNER(20),
+        OWNER(20, 25),
 
         /**
          * Market.
          */
-        MARKET(21),
+        MARKET(21, 26),
 
         /**
          * Inland Revenue.
          */
-        TAXMAN(22),
+        TAXMAN(22, 20),
 
         /**
          * Cash.
          */
-        CASH(23),
+        CASH(23, 19),
 
         /**
          * Inheritance.
          */
-        INHERITANCE(24),
+        INHERITANCE(24, 21),
 
         /**
          * Endowment.
          */
-        ENDOWMENT(25),
+        ENDOWMENT(25, 14),
 
         /**
          * Benefit.
          */
-        BENEFIT(26),
+        BENEFIT(26, 23),
 
         /**
          * Deferred between tax years.
          */
-        DEFERRED(27);
+        DEFERRED(27, 17);
 
         /**
          * Class Id.
          */
-        private int theId = -1;
+        private final int theId;
 
         /**
          * Class Order.
          */
-        private int theOrder = -1;
+        private final int theOrder;
 
         /**
          * Obtain Class Id.
@@ -190,96 +195,31 @@ public class StaticClass {
          */
         @Override
         public int getOrder() {
-            if (theOrder == -1) {
-                theOrder = calculateOrder(this);
-            }
             return theOrder;
-        }
-
-        /**
-         * Obtain order.
-         * @param pClass the account class
-         * @return the order
-         */
-        private static int calculateOrder(final AccountClass pClass) {
-            /* Switch on id */
-            switch (pClass) {
-                case CURRENT:
-                    return 0;
-                case INSTANT:
-                    return 1;
-                case NOTICE:
-                    return 2;
-                case BOND:
-                    return 3;
-                case CASHISA:
-                    return 4;
-                case ISABOND:
-                    return 5;
-                case TAXFREEBOND:
-                    return 6;
-                case EQUITYBOND:
-                    return 7;
-                case SHARES:
-                    return 8;
-                case UNITTRUST:
-                    return 9;
-                case LIFEBOND:
-                    return 10;
-                case UNITISA:
-                    return 11;
-                case CAR:
-                    return 12;
-                case HOUSE:
-                    return 13;
-                case ENDOWMENT:
-                    return 14;
-                case CREDITCARD:
-                    return 15;
-                case DEBTS:
-                    return 16;
-                case DEFERRED:
-                    return 17;
-                case EMPLOYER:
-                    return 18;
-                case CASH:
-                    return 19;
-                case TAXMAN:
-                    return 20;
-                case INHERITANCE:
-                    return 21;
-                case WRITEOFF:
-                    return 22;
-                case BENEFIT:
-                    return 23;
-                case EXTERNAL:
-                    return 24;
-                case OWNER:
-                    return 25;
-                case MARKET:
-                default:
-                    return 26;
-            }
         }
 
         /**
          * Constructor.
          * @param uId the Id
+         * @param uOrder the default order.
          */
-        private AccountClass(final int uId) {
+        private AccountClass(final int uId,
+                             final int uOrder) {
             theId = uId;
+            theOrder = uOrder;
         }
 
         /**
-         * get value from id
+         * get value from id.
          * @param id the id value
          * @return the corresponding enum object
-         * @throws JDataException
+         * @throws JDataException on error
          */
-        public static AccountClass fromId(int id) throws JDataException {
+        public static AccountClass fromId(final int id) throws JDataException {
             for (AccountClass myClass : values()) {
-                if (myClass.getClassId() == id)
+                if (myClass.getClassId() == id) {
                     return myClass;
+                }
             }
             throw new JDataException(ExceptionClass.DATA, "Invalid Frequency Class Id: " + id);
         }
@@ -290,207 +230,207 @@ public class StaticClass {
      */
     public enum TransClass implements StaticInterface {
         /**
-         * Taxed Salary Income
+         * Taxed Salary Income.
          */
-        TAXEDINCOME(1),
+        TAXEDINCOME(1, 0),
 
         /**
-         * Interest Income
+         * Interest Income.
          */
-        INTEREST(2),
+        INTEREST(2, 1),
 
         /**
-         * Dividend Income
+         * Dividend Income.
          */
-        DIVIDEND(3),
+        DIVIDEND(3, 2),
 
         /**
-         * Unit Trust Dividend Income
+         * Unit Trust Dividend Income.
          */
-        UNITTRUSTDIVIDEND(4),
+        UNITTRUSTDIVIDEND(4, 33),
 
         /**
-         * Taxable Gain
+         * Taxable Gain.
          */
-        TAXABLEGAIN(5),
+        TAXABLEGAIN(5, 18),
 
         /**
-         * Capital Gain
+         * Capital Gain.
          */
-        CAPITALGAIN(6),
+        CAPITALGAIN(6, 35),
 
         /**
-         * Capital Loss
+         * Capital Loss.
          */
-        CAPITALLOSS(7),
+        CAPITALLOSS(7, 36),
 
         /**
-         * Tax Free Interest
+         * Tax Free Interest.
          */
-        TAXFREEINTEREST(8),
+        TAXFREEINTEREST(8, 34),
 
         /**
-         * Tax Free Dividend
+         * Tax Free Dividend.
          */
-        TAXFREEDIVIDEND(9),
+        TAXFREEDIVIDEND(9, 35),
 
         /**
-         * Tax Free Income
+         * Tax Free Income.
          */
-        TAXFREEINCOME(10),
+        TAXFREEINCOME(10, 3),
 
         /**
-         * Benefit
+         * Benefit.
          */
-        BENEFIT(11),
+        BENEFIT(11, 7),
 
         /**
-         * Inheritance
+         * Inheritance.
          */
-        INHERITED(12),
+        INHERITED(12, 4),
 
         /**
-         * Market Growth
+         * Market Growth.
          */
-        MARKETGROWTH(13),
+        MARKETGROWTH(13, 31),
 
         /**
-         * Market Shrinkage
+         * Market Shrinkage.
          */
-        MARKETSHRINK(14),
+        MARKETSHRINK(14, 32),
 
         /**
-         * Expense
+         * Expense.
          */
-        EXPENSE(15),
+        EXPENSE(15, 22),
 
         /**
-         * Recovered Expense
+         * Recovered Expense.
          */
-        RECOVERED(16),
+        RECOVERED(16, 9),
 
         /**
-         * Transfer
+         * Transfer.
          */
-        TRANSFER(17),
+        TRANSFER(17, 19),
 
         /**
-         * Admin charge
+         * Admin charge.
          */
-        ADMINCHARGE(18),
+        ADMINCHARGE(18, 12),
 
         /**
-         * Stock Split
+         * Stock Split.
          */
-        STOCKSPLIT(19),
+        STOCKSPLIT(19, 13),
 
         /**
-         * Stock Demerger
+         * Stock Demerger.
          */
-        STOCKDEMERGER(20),
+        STOCKDEMERGER(20, 11),
 
         /**
-         * Stock Rights Taken
+         * Stock Rights Taken.
          */
-        STOCKRIGHTTAKEN(21),
+        STOCKRIGHTTAKEN(21, 14),
 
         /**
-         * Stock Rights Waived
+         * Stock Rights Waived.
          */
-        STOCKRIGHTWAIVED(22),
+        STOCKRIGHTWAIVED(22, 15),
 
         /**
-         * CashTakeover (For the cash part of a stock and cash takeover)
+         * CashTakeover (For the cash part of a stock and cash takeover).
          */
-        CASHTAKEOVER(23),
+        CASHTAKEOVER(23, 16),
 
         /**
-         * Stock Takeover (for the stock part of a stock and cash takeover)
+         * Stock Takeover (for the stock part of a stock and cash takeover).
          */
-        STOCKTAKEOVER(24),
+        STOCKTAKEOVER(24, 17),
 
         /**
-         * Expense Recovered directly to Cash
+         * Expense Recovered directly to Cash.
          */
-        CASHRECOVERY(25),
+        CASHRECOVERY(25, 20),
 
         /**
-         * Expense paid directly from Cash
+         * Expense paid directly from Cash.
          */
-        CASHPAYMENT(26),
+        CASHPAYMENT(26, 21),
 
         /**
-         * Endowment payment
+         * Endowment payment.
          */
-        ENDOWMENT(27),
+        ENDOWMENT(27, 23),
 
         /**
-         * Mortgage charge
+         * Mortgage charge.
          */
-        MORTGAGE(28),
+        MORTGAGE(28, 24),
 
         /**
-         * Insurance payment
+         * Insurance payment.
          */
-        INSURANCE(29),
+        INSURANCE(29, 25),
 
         /**
-         * National Insurance
+         * National Insurance.
          */
-        NATINSURANCE(30),
+        NATINSURANCE(30, 28),
 
         /**
-         * Tax Relief
+         * Tax Relief.
          */
-        TAXRELIEF(31),
+        TAXRELIEF(31, 10),
 
         /**
-         * Tax Owed
+         * Tax Owed.
          */
-        TAXOWED(32),
+        TAXOWED(32, 29),
 
         /**
-         * Tax Refund
+         * Tax Refund.
          */
-        TAXREFUND(33),
+        TAXREFUND(33, 8),
 
         /**
-         * Additional taxation
+         * Additional taxation.
          */
-        EXTRATAX(34),
+        EXTRATAX(34, 26),
 
         /**
-         * Interest on Debts
+         * Interest on Debts.
          */
-        DEBTINTEREST(35),
+        DEBTINTEREST(35, 5),
 
         /**
-         * Write Off
+         * Write Off.
          */
-        WRITEOFF(36),
+        WRITEOFF(36, 27),
 
         /**
-         * Tax Credit
+         * Tax Credit.
          */
-        TAXCREDIT(37),
+        TAXCREDIT(37, 30),
 
         /**
-         * Rental Income
+         * Rental Income.
          */
-        RENTALINCOME(38);
+        RENTALINCOME(38, 6);
 
         /**
-         * Class Id
+         * Class Id.
          */
-        private int theId = -1;
+        private final int theId;
 
         /**
-         * Class Order
+         * Class Order.
          */
-        private int theOrder = -1;
+        private final int theOrder;
 
         /**
-         * Obtain Class Id
+         * Obtain Class Id.
          * @return the class id
          */
         @Override
@@ -499,132 +439,90 @@ public class StaticClass {
         }
 
         /**
-         * Obtain Class Order
+         * Obtain Class Order.
          * @return the class order
          */
         @Override
         public int getOrder() {
-            if (theOrder == -1)
-                theOrder = calculateOrder(this);
             return theOrder;
         }
 
         /**
-         * Obtain order
-         * @param pClass the account class
-         * @return the order
-         */
-        private static int calculateOrder(TransClass pClass) {
-            /* Switch on id */
-            switch (pClass) {
-                case TAXEDINCOME:
-                    return 0;
-                case INTEREST:
-                    return 1;
-                case DIVIDEND:
-                    return 2;
-                case TAXFREEINCOME:
-                    return 3;
-                case INHERITED:
-                    return 4;
-                case DEBTINTEREST:
-                    return 5;
-                case RENTALINCOME:
-                    return 6;
-                case BENEFIT:
-                    return 7;
-                case TAXREFUND:
-                    return 8;
-                case RECOVERED:
-                    return 9;
-                case TAXRELIEF:
-                    return 10;
-                case STOCKDEMERGER:
-                    return 11;
-                case ADMINCHARGE:
-                    return 12;
-                case STOCKSPLIT:
-                    return 13;
-                case STOCKRIGHTTAKEN:
-                    return 14;
-                case STOCKRIGHTWAIVED:
-                    return 15;
-                case CASHTAKEOVER:
-                    return 16;
-                case STOCKTAKEOVER:
-                    return 17;
-                case TAXABLEGAIN:
-                    return 18;
-                case TRANSFER:
-                    return 19;
-                case CASHRECOVERY:
-                    return 20;
-                case CASHPAYMENT:
-                    return 21;
-                case EXPENSE:
-                    return 22;
-                case ENDOWMENT:
-                    return 23;
-                case MORTGAGE:
-                    return 24;
-                case INSURANCE:
-                    return 25;
-                case EXTRATAX:
-                    return 26;
-                case WRITEOFF:
-                    return 27;
-                case NATINSURANCE:
-                    return 28;
-                case TAXOWED:
-                    return 29;
-                case TAXCREDIT:
-                    return 30;
-                case MARKETGROWTH:
-                    return 31;
-                case MARKETSHRINK:
-                    return 32;
-                case UNITTRUSTDIVIDEND:
-                    return 33;
-                case TAXFREEINTEREST:
-                    return 34;
-                case TAXFREEDIVIDEND:
-                    return 35;
-                case CAPITALGAIN:
-                    return 36;
-                case CAPITALLOSS:
-                default:
-                    return 37;
-            }
-        }
-
-        /**
-         * Constructor
+         * Constructor.
          * @param uId the id
+         * @param uOrder the default order.
          */
-        private TransClass(int uId) {
+        private TransClass(final int uId,
+                           final int uOrder) {
             theId = uId;
+            theOrder = uOrder;
         }
 
         /**
-         * get value from id
+         * get value from id.
          * @param id the id value
          * @return the corresponding enum object
-         * @throws JDataException
+         * @throws JDataException on error
          */
-        public static TransClass fromId(int id) throws JDataException {
+        public static TransClass fromId(final int id) throws JDataException {
             for (TransClass myClass : values()) {
-                if (myClass.getClassId() == id)
+                if (myClass.getClassId() == id) {
                     return myClass;
+                }
             }
             throw new JDataException(ExceptionClass.DATA, "Invalid Frequency Class Id: " + id);
         }
     }
 
     /**
-     * Enumeration of Tax Type Buckets
+     * Enumeration of Tax Type Buckets.
      */
     public enum TaxBucket {
-        TRANSSUMM, TRANSTOTAL, TAXDETAIL, TAXSUMM, TAXTOTAL;
+        /**
+         * Transaction Summary.
+         */
+        TRANSSUMM(0),
+
+        /**
+         * Transaction Total.
+         */
+        TRANSTOTAL(100),
+
+        /**
+         * Tax Detail.
+         */
+        TAXDETAIL(200),
+
+        /**
+         * Tax Summary.
+         */
+        TAXSUMM(300),
+
+        /**
+         * Tax Total.
+         */
+        TAXTOTAL(400);
+
+        /**
+         * Order base.
+         */
+        private final int theBase;
+
+        /**
+         * Get the order base.
+         * @return the order base
+         */
+        private int getBase() {
+            return theBase;
+        }
+
+        /**
+         * Constructor.
+         * @param pBase the base
+         */
+        private TaxBucket(final int pBase) {
+            theBase = pBase;
+        }
     }
 
     /**
@@ -632,302 +530,302 @@ public class StaticClass {
      */
     public enum TaxClass implements StaticInterface {
         /**
-         * Gross Salary Income
+         * Gross Salary Income.
          */
-        GROSSSALARY(1, TaxBucket.TRANSSUMM),
+        GROSSSALARY(1, 0, TaxBucket.TRANSSUMM),
 
         /**
-         * Gross Interest Income
+         * Gross Interest Income.
          */
-        GROSSINTEREST(2, TaxBucket.TRANSSUMM),
+        GROSSINTEREST(2, 1, TaxBucket.TRANSSUMM),
 
         /**
-         * Gross Dividend Income
+         * Gross Dividend Income.
          */
-        GROSSDIVIDEND(3, TaxBucket.TRANSSUMM),
+        GROSSDIVIDEND(3, 2, TaxBucket.TRANSSUMM),
 
         /**
-         * Gross Unit Trust Dividend Income
+         * Gross Unit Trust Dividend Income.
          */
-        GROSSUTDIVS(4, TaxBucket.TRANSSUMM),
+        GROSSUTDIVS(4, 3, TaxBucket.TRANSSUMM),
 
         /**
-         * Gross Rental Income
+         * Gross Rental Income.
          */
-        GROSSRENTAL(5, TaxBucket.TRANSSUMM),
+        GROSSRENTAL(5, 4, TaxBucket.TRANSSUMM),
 
         /**
-         * Gross Taxable gains
+         * Gross Taxable gains.
          */
-        GROSSTAXGAINS(6, TaxBucket.TRANSSUMM),
+        GROSSTAXGAINS(6, 5, TaxBucket.TRANSSUMM),
 
         /**
-         * Gross Capital gains
+         * Gross Capital gains.
          */
-        GROSSCAPGAINS(7, TaxBucket.TRANSSUMM),
+        GROSSCAPGAINS(7, 6, TaxBucket.TRANSSUMM),
 
         /**
-         * Total Tax Paid
+         * Total Tax Paid.
          */
-        TAXPAID(8, TaxBucket.TRANSSUMM),
+        TAXPAID(8, 7, TaxBucket.TRANSSUMM),
 
         /**
-         * Market Growth/Shrinkage
+         * Market Growth/Shrinkage.
          */
-        MARKET(9, TaxBucket.TRANSSUMM),
+        MARKET(9, 8, TaxBucket.TRANSSUMM),
 
         /**
-         * Tax Free Income
+         * Tax Free Income.
          */
-        TAXFREE(10, TaxBucket.TRANSSUMM),
+        TAXFREE(10, 9, TaxBucket.TRANSSUMM),
 
         /**
-         * Gross Expense
+         * Gross Expense.
          */
-        EXPENSE(11, TaxBucket.TRANSSUMM),
+        EXPENSE(11, 10, TaxBucket.TRANSSUMM),
 
         /**
-         * Virtual Income
+         * Virtual Income.
          */
-        VIRTUAL(12, TaxBucket.TRANSSUMM),
+        VIRTUAL(12, 11, TaxBucket.TRANSSUMM),
 
         /**
-         * Non-Core Income
+         * Non-Core Income.
          */
-        NONCORE(13, TaxBucket.TRANSSUMM),
+        NONCORE(13, 12, TaxBucket.TRANSSUMM),
 
         /**
-         * Profit on Year
+         * Profit on Year.
          */
-        PROFITLOSS(14, TaxBucket.TRANSTOTAL),
+        PROFITLOSS(14, 0, TaxBucket.TRANSTOTAL),
 
         /**
-         * Core Income after tax ignoring market movements and inheritance
+         * Core Income after tax ignoring market movements and inheritance.
          */
-        COREINCOME(15, TaxBucket.TRANSTOTAL),
+        COREINCOME(15, 1, TaxBucket.TRANSTOTAL),
 
         /**
-         * Profit on year after ignoring market movements and inheritance
+         * Profit on year after ignoring market movements and inheritance.
          */
-        COREPROFITLOSS(16, TaxBucket.TRANSTOTAL),
+        COREPROFITLOSS(16, 2, TaxBucket.TRANSTOTAL),
 
         /**
-         * Gross Income
+         * Gross Income.
          */
-        GROSSINCOME(17, TaxBucket.TAXDETAIL),
+        GROSSINCOME(17, 0, TaxBucket.TAXDETAIL),
 
         /**
-         * Original Allowance
+         * Original Allowance.
          */
-        ORIGALLOW(18, TaxBucket.TAXDETAIL),
+        ORIGALLOW(18, 1, TaxBucket.TAXDETAIL),
 
         /**
-         * Adjusted Allowance
+         * Adjusted Allowance.
          */
-        ADJALLOW(19, TaxBucket.TAXDETAIL),
+        ADJALLOW(19, 2, TaxBucket.TAXDETAIL),
 
         /**
-         * High Tax Band
+         * High Tax Band.
          */
-        HITAXBAND(20, TaxBucket.TAXDETAIL),
+        HITAXBAND(20, 3, TaxBucket.TAXDETAIL),
 
         /**
-         * Salary at nil-rate
+         * Salary at nil-rate.
          */
-        SALARYFREE(21, TaxBucket.TAXDETAIL),
+        SALARYFREE(21, 4, TaxBucket.TAXDETAIL),
 
         /**
-         * Salary at low-rate
+         * Salary at low-rate.
          */
-        SALARYLO(22, TaxBucket.TAXDETAIL),
+        SALARYLO(22, 5, TaxBucket.TAXDETAIL),
 
         /**
-         * Salary at basic-rate
+         * Salary at basic-rate.
          */
-        SALARYBASIC(23, TaxBucket.TAXDETAIL),
+        SALARYBASIC(23, 6, TaxBucket.TAXDETAIL),
 
         /**
-         * Salary at high-rate
+         * Salary at high-rate.
          */
-        SALARYHI(24, TaxBucket.TAXDETAIL),
+        SALARYHI(24, 7, TaxBucket.TAXDETAIL),
 
         /**
-         * Salary at additional-rate
+         * Salary at additional-rate.
          */
-        SALARYADD(25, TaxBucket.TAXDETAIL),
+        SALARYADD(25, 8, TaxBucket.TAXDETAIL),
 
         /**
-         * Rental at nil-rate
+         * Rental at nil-rate.
          */
-        RENTALFREE(26, TaxBucket.TAXDETAIL),
+        RENTALFREE(26, 9, TaxBucket.TAXDETAIL),
 
         /**
-         * Rental at low-rate
+         * Rental at low-rate.
          */
-        RENTALLO(27, TaxBucket.TAXDETAIL),
+        RENTALLO(27, 10, TaxBucket.TAXDETAIL),
 
         /**
-         * Rental at basic-rate
+         * Rental at basic-rate.
          */
-        RENTALBASIC(28, TaxBucket.TAXDETAIL),
+        RENTALBASIC(28, 11, TaxBucket.TAXDETAIL),
 
         /**
-         * Rental at high-rate
+         * Rental at high-rate.
          */
-        RENTALHI(29, TaxBucket.TAXDETAIL),
+        RENTALHI(29, 12, TaxBucket.TAXDETAIL),
 
         /**
-         * Rental at additional-rate
+         * Rental at additional-rate.
          */
-        RENTALADD(30, TaxBucket.TAXDETAIL),
+        RENTALADD(30, 13, TaxBucket.TAXDETAIL),
 
         /**
-         * Interest at nil-rate
+         * Interest at nil-rate.
          */
-        INTERESTFREE(31, TaxBucket.TAXDETAIL),
+        INTERESTFREE(31, 14, TaxBucket.TAXDETAIL),
 
         /**
-         * Interest at low-rate
+         * Interest at low-rate.
          */
-        INTERESTLO(32, TaxBucket.TAXDETAIL),
+        INTERESTLO(32, 15, TaxBucket.TAXDETAIL),
 
         /**
-         * Interest at basic-rate
+         * Interest at basic-rate.
          */
-        INTERESTBASIC(33, TaxBucket.TAXDETAIL),
+        INTERESTBASIC(33, 16, TaxBucket.TAXDETAIL),
 
         /**
-         * Interest at high-rate
+         * Interest at high-rate.
          */
-        INTERESTHI(34, TaxBucket.TAXDETAIL),
+        INTERESTHI(34, 17, TaxBucket.TAXDETAIL),
 
         /**
-         * Interest at additional-rate
+         * Interest at additional-rate.
          */
-        INTERESTADD(35, TaxBucket.TAXDETAIL),
+        INTERESTADD(35, 18, TaxBucket.TAXDETAIL),
 
         /**
-         * Dividends at basic-rate
+         * Dividends at basic-rate.
          */
-        DIVIDENDBASIC(36, TaxBucket.TAXDETAIL),
+        DIVIDENDBASIC(36, 19, TaxBucket.TAXDETAIL),
 
         /**
-         * Dividends at high-rate
+         * Dividends at high-rate.
          */
-        DIVIDENDHI(37, TaxBucket.TAXDETAIL),
+        DIVIDENDHI(37, 20, TaxBucket.TAXDETAIL),
 
         /**
-         * Dividends at additional-rate
+         * Dividends at additional-rate.
          */
-        DIVIDENDADD(38, TaxBucket.TAXDETAIL),
+        DIVIDENDADD(38, 21, TaxBucket.TAXDETAIL),
 
         /**
-         * Slice at basic-rate
+         * Slice at basic-rate.
          */
-        SLICEBASIC(39, TaxBucket.TAXDETAIL),
+        SLICEBASIC(39, 22, TaxBucket.TAXDETAIL),
 
         /**
-         * Slice at high-rate
+         * Slice at high-rate.
          */
-        SLICEHI(40, TaxBucket.TAXDETAIL),
+        SLICEHI(40, 23, TaxBucket.TAXDETAIL),
 
         /**
-         * Slice at additional-rate
+         * Slice at additional-rate.
          */
-        SLICEADD(41, TaxBucket.TAXDETAIL),
+        SLICEADD(41, 24, TaxBucket.TAXDETAIL),
 
         /**
-         * Gains at basic-rate
+         * Gains at basic-rate.
          */
-        GAINSBASIC(42, TaxBucket.TAXDETAIL),
+        GAINSBASIC(42, 25, TaxBucket.TAXDETAIL),
 
         /**
-         * Gains at high-rate
+         * Gains at high-rate.
          */
-        GAINSHI(43, TaxBucket.TAXDETAIL),
+        GAINSHI(43, 26, TaxBucket.TAXDETAIL),
 
         /**
-         * Gains at additional-rate
+         * Gains at additional-rate.
          */
-        GAINSADD(44, TaxBucket.TAXDETAIL),
+        GAINSADD(44, 27, TaxBucket.TAXDETAIL),
 
         /**
-         * Capital at nil-rate
+         * Capital at nil-rate.
          */
-        CAPITALFREE(45, TaxBucket.TAXDETAIL),
+        CAPITALFREE(45, 28, TaxBucket.TAXDETAIL),
 
         /**
-         * Capital at basic-rate
+         * Capital at basic-rate.
          */
-        CAPITALBASIC(46, TaxBucket.TAXDETAIL),
+        CAPITALBASIC(46, 29, TaxBucket.TAXDETAIL),
 
         /**
-         * Capital at high-rate
+         * Capital at high-rate.
          */
-        CAPITALHI(47, TaxBucket.TAXDETAIL),
+        CAPITALHI(47, 30, TaxBucket.TAXDETAIL),
 
         /**
-         * Total Taxation Due on Salary
+         * Total Taxation Due on Salary.
          */
-        TAXDUESALARY(48, TaxBucket.TAXSUMM),
+        TAXDUESALARY(48, 0, TaxBucket.TAXSUMM),
 
         /**
-         * Total Taxation Due on Rental
+         * Total Taxation Due on Rental.
          */
-        TAXDUERENTAL(49, TaxBucket.TAXSUMM),
+        TAXDUERENTAL(49, 1, TaxBucket.TAXSUMM),
 
         /**
-         * Total Taxation Due on Interest
+         * Total Taxation Due on Interest.
          */
-        TAXDUEINTEREST(50, TaxBucket.TAXSUMM),
+        TAXDUEINTEREST(50, 2, TaxBucket.TAXSUMM),
 
         /**
-         * Total Taxation Due on Dividends
+         * Total Taxation Due on Dividends.
          */
-        TAXDUEDIVIDEND(51, TaxBucket.TAXSUMM),
+        TAXDUEDIVIDEND(51, 3, TaxBucket.TAXSUMM),
 
         /**
-         * Total Taxation Due on Taxable Gains
+         * Total Taxation Due on Taxable Gains.
          */
-        TAXDUETAXGAINS(52, TaxBucket.TAXSUMM),
+        TAXDUETAXGAINS(52, 4, TaxBucket.TAXSUMM),
 
         /**
-         * Total Taxation Due on Slice
+         * Total Taxation Due on Slice.
          */
-        TAXDUESLICE(53, TaxBucket.TAXSUMM),
+        TAXDUESLICE(53, 5, TaxBucket.TAXSUMM),
 
         /**
-         * Total Taxation Due on Capital Gains
+         * Total Taxation Due on Capital Gains.
          */
-        TAXDUECAPGAINS(54, TaxBucket.TAXSUMM),
+        TAXDUECAPGAINS(54, 6, TaxBucket.TAXSUMM),
 
         /**
-         * Total Taxation Due
+         * Total Taxation Due.
          */
-        TOTALTAXATION(55, TaxBucket.TAXTOTAL),
+        TOTALTAXATION(55, 0, TaxBucket.TAXTOTAL),
 
         /**
-         * Taxation Profit (TaxDue-TaxPaid)
+         * Taxation Profit (TaxDue-TaxPaid).
          */
-        TAXPROFITLOSS(56, TaxBucket.TAXTOTAL);
+        TAXPROFITLOSS(56, 1, TaxBucket.TAXTOTAL);
 
         /**
-         * Class Id
+         * Class Id.
          */
-        private int theId = -1;
+        private final int theId;
 
         /**
-         * Class Order
+         * Class Order.
          */
-        private int theOrder = -1;
+        private final int theOrder;
 
         /**
-         * Class Bucket
+         * Class Bucket.
          */
         private TaxBucket theBucket = null;
 
         /**
-         * Obtain Class Id
+         * Obtain Class Id.
          * @return the class id
          */
         @Override
@@ -936,7 +834,7 @@ public class StaticClass {
         }
 
         /**
-         * Obtain Class Bucket
+         * Obtain Class Bucket.
          * @return the class bucket
          */
         public TaxBucket getClassBucket() {
@@ -944,186 +842,40 @@ public class StaticClass {
         }
 
         /**
-         * Obtain Class Order
+         * Obtain Class Order.
          * @return the class order
          */
         @Override
         public int getOrder() {
-            if (theOrder == -1)
-                theOrder = calculateOrder(this);
             return theOrder;
         }
 
         /**
-         * Obtain order
-         * @param pClass the frequency class
-         * @return the order
-         */
-        private static int calculateOrder(TaxClass pClass) {
-            int myClassBase = 0;
-
-            /* switch on bucket */
-            switch (pClass.getClassBucket()) {
-                case TRANSSUMM:
-                    myClassBase = 0;
-                    break;
-                case TRANSTOTAL:
-                    myClassBase = 100;
-                    break;
-                case TAXDETAIL:
-                    myClassBase = 200;
-                    break;
-                case TAXSUMM:
-                    myClassBase = 300;
-                    break;
-                case TAXTOTAL:
-                    myClassBase = 400;
-                    break;
-            }
-
-            /* Switch on id */
-            switch (pClass) {
-                case GROSSSALARY:
-                    return myClassBase + 0;
-                case GROSSINTEREST:
-                    return myClassBase + 1;
-                case GROSSDIVIDEND:
-                    return myClassBase + 2;
-                case GROSSUTDIVS:
-                    return myClassBase + 3;
-                case GROSSRENTAL:
-                    return myClassBase + 4;
-                case GROSSTAXGAINS:
-                    return myClassBase + 5;
-                case GROSSCAPGAINS:
-                    return myClassBase + 6;
-                case TAXPAID:
-                    return myClassBase + 7;
-                case TAXFREE:
-                    return myClassBase + 8;
-                case MARKET:
-                    return myClassBase + 9;
-                case EXPENSE:
-                    return myClassBase + 10;
-                case VIRTUAL:
-                    return myClassBase + 11;
-                case NONCORE:
-                    return myClassBase + 12;
-
-                case PROFITLOSS:
-                    return myClassBase + 0;
-                case COREPROFITLOSS:
-                    return myClassBase + 1;
-                case COREINCOME:
-                    return myClassBase + 2;
-
-                case GROSSINCOME:
-                    return myClassBase + 0;
-                case ORIGALLOW:
-                    return myClassBase + 1;
-                case ADJALLOW:
-                    return myClassBase + 2;
-                case HITAXBAND:
-                    return myClassBase + 3;
-                case SALARYFREE:
-                    return myClassBase + 4;
-                case RENTALFREE:
-                    return myClassBase + 5;
-                case INTERESTFREE:
-                    return myClassBase + 6;
-                case CAPITALFREE:
-                    return myClassBase + 7;
-                case SALARYLO:
-                    return myClassBase + 8;
-                case RENTALLO:
-                    return myClassBase + 9;
-                case INTERESTLO:
-                    return myClassBase + 10;
-                case SALARYBASIC:
-                    return myClassBase + 11;
-                case RENTALBASIC:
-                    return myClassBase + 12;
-                case INTERESTBASIC:
-                    return myClassBase + 13;
-                case DIVIDENDBASIC:
-                    return myClassBase + 14;
-                case SLICEBASIC:
-                    return myClassBase + 15;
-                case GAINSBASIC:
-                    return myClassBase + 16;
-                case CAPITALBASIC:
-                    return myClassBase + 17;
-                case SALARYHI:
-                    return myClassBase + 18;
-                case RENTALHI:
-                    return myClassBase + 19;
-                case INTERESTHI:
-                    return myClassBase + 20;
-                case DIVIDENDHI:
-                    return myClassBase + 21;
-                case SLICEHI:
-                    return myClassBase + 22;
-                case GAINSHI:
-                    return myClassBase + 23;
-                case CAPITALHI:
-                    return myClassBase + 24;
-                case SALARYADD:
-                    return myClassBase + 25;
-                case RENTALADD:
-                    return myClassBase + 26;
-                case INTERESTADD:
-                    return myClassBase + 27;
-                case DIVIDENDADD:
-                    return myClassBase + 28;
-                case SLICEADD:
-                    return myClassBase + 29;
-                case GAINSADD:
-                    return myClassBase + 30;
-                case TAXDUESLICE:
-                    return myClassBase + 31;
-
-                case TAXDUESALARY:
-                    return myClassBase + 0;
-                case TAXDUERENTAL:
-                    return myClassBase + 1;
-                case TAXDUEINTEREST:
-                    return myClassBase + 2;
-                case TAXDUEDIVIDEND:
-                    return myClassBase + 3;
-                case TAXDUETAXGAINS:
-                    return myClassBase + 4;
-                case TAXDUECAPGAINS:
-                    return myClassBase + 5;
-
-                case TOTALTAXATION:
-                    return myClassBase + 0;
-                case TAXPROFITLOSS:
-                default:
-                    return myClassBase + 1;
-            }
-        }
-
-        /**
-         * Constructor
+         * Constructor.
          * @param uId the id
+         * @param uOrder the order
          * @param pBucket the bucket
          */
-        private TaxClass(int uId,
-                         TaxBucket pBucket) {
+        private TaxClass(final int uId,
+                         final int uOrder,
+                         final TaxBucket pBucket) {
+            /* Set values */
             theId = uId;
+            theOrder = pBucket.getBase() + uOrder;
             theBucket = pBucket;
         }
 
         /**
-         * get value from id
+         * get value from id.
          * @param id the id value
          * @return the corresponding enum object
-         * @throws JDataException
+         * @throws JDataException on error
          */
-        public static TaxClass fromId(int id) throws JDataException {
+        public static TaxClass fromId(final int id) throws JDataException {
             for (TaxClass myClass : values()) {
-                if (myClass.getClassId() == id)
+                if (myClass.getClassId() == id) {
                     return myClass;
+                }
             }
             throw new JDataException(ExceptionClass.DATA, "Invalid Tax Class Id: " + id);
         }
@@ -1134,52 +886,67 @@ public class StaticClass {
      */
     public enum FreqClass implements StaticInterface {
         /**
-         * Monthly Frequency
+         * Weekly Frequency.
          */
-        MONTHLY(1),
+        WEEKLY(1, 0, 7),
 
         /**
-         * Monthly Frequency (at end of month)
+         * Monthly Frequency.
          */
-        ENDOFMONTH(2),
+        FORTNIGHTLY(2, 1, 14),
 
         /**
-         * Quarterly Frequency
+         * Monthly Frequency.
          */
-        QUARTERLY(3),
+        MONTHLY(3, 2, 1),
 
         /**
-         * Half Yearly Frequency
+         * Monthly Frequency (at end of month).
          */
-        HALFYEARLY(4),
+        ENDOFMONTH(2, 1, 1),
 
         /**
-         * Annual Frequency
+         * Quarterly Frequency.
          */
-        ANNUALLY(5),
+        QUARTERLY(3, 2, 3),
 
         /**
-         * Only on Maturity
+         * Half Yearly Frequency.
          */
-        MATURITY(6),
+        HALFYEARLY(4, 3, 6),
 
         /**
-         * Monthly for up to ten-months
+         * Annual Frequency.
          */
-        TENMONTHS(7);
+        ANNUALLY(5, 4, 0),
 
         /**
-         * Class Id
+         * Only on Maturity.
          */
-        private int theId = -1;
+        MATURITY(6, 5, 0),
 
         /**
-         * Class Order
+         * Monthly for up to ten-months.
          */
-        private int theOrder = -1;
+        TENMONTHS(7, 6, 1);
 
         /**
-         * Obtain Class Id
+         * Class Id.
+         */
+        private final int theId;
+
+        /**
+         * Class Order.
+         */
+        private final int theOrder;
+
+        /**
+         * Adjustment factor.
+         */
+        private final int theAdjust;
+
+        /**
+         * Obtain Class Id.
          * @return the class id
          */
         @Override
@@ -1188,60 +955,47 @@ public class StaticClass {
         }
 
         /**
-         * Obtain Class Order
+         * Obtain Class Order.
          * @return the class order
          */
         @Override
         public int getOrder() {
-            if (theOrder == -1)
-                theOrder = calculateOrder(this);
             return theOrder;
         }
 
         /**
-         * Obtain order
-         * @param pClass the frequency class
-         * @return the order
+         * Obtain Adjustment.
+         * @return the adjustment
          */
-        private static int calculateOrder(FreqClass pClass) {
-            /* Switch on id */
-            switch (pClass) {
-                case MONTHLY:
-                    return 0;
-                case ENDOFMONTH:
-                    return 1;
-                case QUARTERLY:
-                    return 2;
-                case HALFYEARLY:
-                    return 3;
-                case ANNUALLY:
-                    return 4;
-                case MATURITY:
-                    return 5;
-                case TENMONTHS:
-                default:
-                    return 6;
-            }
+        public int getAdjustment() {
+            return theAdjust;
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param uId the id
+         * @param uOrder the default order
+         * @param uAdjust the adjustment
          */
-        private FreqClass(int uId) {
+        private FreqClass(final int uId,
+                          final int uOrder,
+                          final int uAdjust) {
             theId = uId;
+            theOrder = uOrder;
+            theAdjust = uAdjust;
         }
 
         /**
-         * get value from id
+         * get value from id.
          * @param id the id value
          * @return the corresponding enum object
-         * @throws JDataException
+         * @throws JDataException on error
          */
-        public static FreqClass fromId(int id) throws JDataException {
+        public static FreqClass fromId(final int id) throws JDataException {
             for (FreqClass myClass : values()) {
-                if (myClass.getClassId() == id)
+                if (myClass.getClassId() == id) {
                     return myClass;
+                }
             }
             throw new JDataException(ExceptionClass.DATA, "Invalid Frequency Class Id: " + id);
         }
@@ -1252,37 +1006,37 @@ public class StaticClass {
      */
     public enum TaxRegClass implements StaticInterface {
         /**
-         * Archive tax regime
+         * Archive tax regime.
          */
-        ARCHIVE(1),
+        ARCHIVE(1, 0),
 
         /**
-         * Standard tax regime
+         * Standard tax regime.
          */
-        STANDARD(2),
+        STANDARD(2, 1),
 
         /**
-         * Low Interest Tax Band
+         * Low Interest Tax Band.
          */
-        LOINTEREST(3),
+        LOINTEREST(3, 2),
 
         /**
-         * Additional tax band
+         * Additional tax band.
          */
-        ADDITIONALBAND(4);
+        ADDITIONALBAND(4, 3);
 
         /**
-         * Class Id
+         * Class Id.
          */
-        private int theId = -1;
+        private final int theId;
 
         /**
-         * Class Order
+         * Class Order.
          */
-        private int theOrder = -1;
+        private final int theOrder;
 
         /**
-         * Obtain Class Id
+         * Obtain Class Id.
          * @return the class id
          */
         @Override
@@ -1291,54 +1045,36 @@ public class StaticClass {
         }
 
         /**
-         * Obtain Class Order
+         * Obtain Class Order.
          * @return the class order
          */
         @Override
         public int getOrder() {
-            if (theOrder == -1)
-                theOrder = calculateOrder(this);
             return theOrder;
         }
 
         /**
-         * Obtain order
-         * @param pClass the Tax Regime class
-         * @return the order
-         */
-        private static int calculateOrder(TaxRegClass pClass) {
-            /* Switch on id */
-            switch (pClass) {
-                case ARCHIVE:
-                    return 0;
-                case STANDARD:
-                    return 1;
-                case LOINTEREST:
-                    return 2;
-                case ADDITIONALBAND:
-                default:
-                    return 3;
-            }
-        }
-
-        /**
-         * Constructor
+         * Constructor.
          * @param uId the id
+         * @param uOrder the default order
          */
-        private TaxRegClass(int uId) {
+        private TaxRegClass(final int uId,
+                            final int uOrder) {
             theId = uId;
+            theOrder = uOrder;
         }
 
         /**
-         * get value from id
+         * get value from id.
          * @param id the id value
          * @return the corresponding enum object
-         * @throws JDataException
+         * @throws JDataException on error
          */
-        public static TaxRegClass fromId(int id) throws JDataException {
+        public static TaxRegClass fromId(final int id) throws JDataException {
             for (TaxRegClass myClass : values()) {
-                if (myClass.getClassId() == id)
+                if (myClass.getClassId() == id) {
                     return myClass;
+                }
             }
             throw new JDataException(ExceptionClass.DATA, "Invalid Tax Regime Class Id: " + id);
         }
@@ -1351,17 +1087,17 @@ public class StaticClass {
         /**
          * Tax Credit.
          */
-        TaxCredit(1),
+        TaxCredit(1, 0),
 
         /**
          * National Insurance.
          */
-        NatInsurance(2),
+        NatInsurance(2, 1),
 
         /**
          * Benefit.
          */
-        Benefit(3),
+        Benefit(3, 2),
 
         /**
          * Pension.
@@ -1371,27 +1107,27 @@ public class StaticClass {
         /**
          * QualifyingYears.
          */
-        QualifyYears(5),
+        QualifyYears(5, 3),
 
         /**
          * TransferDelay.
          */
-        XferDelay(6),
+        XferDelay(6, 4),
 
         /**
          * Credit Units.
          */
-        CreditUnits(7),
+        CreditUnits(7, 5),
 
         /**
          * Debit Units.
          */
-        DebitUnits(8),
+        DebitUnits(8, 6),
 
         /**
          * Dilution.
          */
-        Dilution(9),
+        Dilution(9, 7),
 
         /**
          * CashConsideration.
@@ -1401,17 +1137,17 @@ public class StaticClass {
         /**
          * ThirdParty Account.
          */
-        ThirdParty(11);
+        ThirdParty(11, 8);
 
         /**
          * Class Id.
          */
-        private int theId = -1;
+        private final int theId;
 
         /**
          * Class Order.
          */
-        private int theOrder = -1;
+        private final int theOrder;
 
         /**
          * Obtain Class Id.
@@ -1428,48 +1164,18 @@ public class StaticClass {
          */
         @Override
         public int getOrder() {
-            if (theOrder == -1) {
-                theOrder = calculateOrder(this);
-            }
             return theOrder;
-        }
-
-        /**
-         * Obtain order.
-         * @param pClass the EventInfo class
-         * @return the order
-         */
-        private static int calculateOrder(final EventInfoClass pClass) {
-            /* Switch on id */
-            switch (pClass) {
-                case TaxCredit:
-                    return 0;
-                case NatInsurance:
-                    return 1;
-                case Benefit:
-                    return 2;
-                case QualifyYears:
-                    return 4;
-                case XferDelay:
-                    return 5;
-                case CreditUnits:
-                    return 6;
-                case DebitUnits:
-                    return 7;
-                case Dilution:
-                    return 8;
-                case ThirdParty:
-                default:
-                    return 10;
-            }
         }
 
         /**
          * Constructor.
          * @param uId the id
+         * @param uOrder the default order
          */
-        private EventInfoClass(final int uId) {
+        private EventInfoClass(final int uId,
+                               final int uOrder) {
             theId = uId;
+            theOrder = uOrder;
         }
 
         /**
@@ -1480,8 +1186,9 @@ public class StaticClass {
          */
         public static EventInfoClass fromId(final int id) throws JDataException {
             for (EventInfoClass myClass : values()) {
-                if (myClass.getClassId() == id)
+                if (myClass.getClassId() == id) {
                     return myClass;
+                }
             }
             throw new JDataException(ExceptionClass.DATA, "Invalid EventInfo Class Id: " + id);
         }

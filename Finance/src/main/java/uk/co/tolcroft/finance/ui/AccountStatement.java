@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -76,77 +77,294 @@ import uk.co.tolcroft.models.ui.Renderer.IntegerRenderer;
 import uk.co.tolcroft.models.ui.Renderer.StringRenderer;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 
+/**
+ * Account Statement Table.
+ * @author Tony Washer
+ */
 public class AccountStatement extends DataTable<Event> {
-    /* Members */
+    /**
+     * Serial Id.
+     */
     private static final long serialVersionUID = -9123840084764342499L;
 
-    private View theView = null;
-    private StatementModel theModel = null;
+    /**
+     * Date view.
+     */
+    private final View theView;
+
+    /**
+     * Table Model.
+     */
+    private final StatementModel theModel;
+
+    /**
+     * Account.
+     */
     private Account theAccount = null;
-    private ListClass theViewList = null;
+
+    /**
+     * ListClass.
+     */
+    private final ListClass theViewList;
+
+    /**
+     * Statement.
+     */
     private Statement theStatement = null;
+
+    /**
+     * Statement Lines.
+     */
     private StatementLines theLines = null;
+
+    /**
+     * Account List.
+     */
     private AccountList theAccounts = null;
+
+    /**
+     * TransactionType list.
+     */
     private TransTypeList theTransTypes = null;
-    private JPanel thePanel = null;
-    private AccountStatement theTable = this;
-    private StatementMouse theMouse = null;
-    private StatementColumnModel theColumns = null;
-    private AccountTab theParent = null;
-    private MainTab theTopWindow = null;
+
+    /**
+     * The panel.
+     */
+    private final JPanel thePanel;
+
+    /**
+     * Self Reference.
+     */
+    private final AccountStatement theTable = this;
+
+    /**
+     * Column Model.
+     */
+    private final StatementColumnModel theColumns;
+
+    /**
+     * The parent.
+     */
+    private final AccountTab theParent;
+
+    /**
+     * The top window.
+     */
+    private final MainTab theTopWindow;
+
+    /**
+     * Selected range.
+     */
     private DateDayRange theRange = null;
+
+    /**
+     * Range selection panel.
+     */
     private DateDayRangeSelect theSelect = null;
-    private StatementSelect theStateBox = null;
-    private JDataEntry theDataEntry = null;
-    private ErrorPanel theError = null;
+
+    /**
+     * Statement type selection panel.
+     */
+    private final StatementSelect theStateBox;
+
+    /**
+     * Data Entry.
+     */
+    private final JDataEntry theDataEntry;
+
+    /**
+     * Error Panel.
+     */
+    private final ErrorPanel theError;
+
+    /**
+     * ComboSelect.
+     */
     private ComboSelect theComboList = null;
+
+    /**
+     * Statement Type.
+     */
     private StatementType theStateType = null;
 
-    /* Access methods */
     @Override
     public boolean hasHeader() {
         return true;
     }
 
+    /**
+     * Obtain the panel.
+     * @return the panel
+     */
     public JPanel getPanel() {
         return thePanel;
     }
 
-    /* Access the debug entry */
     @Override
     public JDataEntry getDataEntry() {
         return theDataEntry;
     }
 
-    /* Table headers */
-    private static final String titleDate = "Date";
-    private static final String titleDesc = "Description";
-    private static final String titleTrans = "TransactionType";
-    private static final String titlePartner = "Partner";
-    private static final String titleCredit = "Credit";
-    private static final String titleDebit = "Debit";
-    private static final String titleBalance = "Balance";
-    private static final String titleDilution = "Dilution";
-    private static final String titleTaxCredit = "TaxCredit";
-    private static final String titleYears = "Years";
+    /**
+     * Date column header.
+     */
+    private static final String TITLE_DATE = "Date";
 
-    /* Table columns */
+    /**
+     * Description column header.
+     */
+    private static final String TITLE_DESC = "Description";
+
+    /**
+     * Transaction Type column header.
+     */
+    private static final String TITLE_TRANS = "TransactionType";
+
+    /**
+     * Partner column header.
+     */
+    private static final String TITLE_PARTNER = "Partner";
+
+    /**
+     * Credit column header.
+     */
+    private static final String TITLE_CREDIT = "Credit";
+
+    /**
+     * Debit column header.
+     */
+    private static final String TITLE_DEBIT = "Debit";
+
+    /**
+     * Balance column header.
+     */
+    private static final String TITLE_BALANCE = "Balance";
+
+    /**
+     * Dilution column header.
+     */
+    private static final String TITLE_DILUTION = "Dilution";
+
+    /**
+     * TaxCredit column header.
+     */
+    private static final String TITLE_TAXCREDIT = "TaxCredit";
+
+    /**
+     * Years column header.
+     */
+    private static final String TITLE_YEARS = "Years";
+
+    /**
+     * Date column id.
+     */
     private static final int COLUMN_DATE = 0;
+
+    /**
+     * Date column id.
+     */
     private static final int COLUMN_TRANTYP = 1;
+
+    /**
+     * Description column id.
+     */
     private static final int COLUMN_DESC = 2;
+
+    /**
+     * Partner column id.
+     */
     private static final int COLUMN_PARTNER = 3;
+
+    /**
+     * Credit column id.
+     */
     private static final int COLUMN_CREDIT = 4;
+
+    /**
+     * Debit column id.
+     */
     private static final int COLUMN_DEBIT = 5;
+
+    /**
+     * Balance column id.
+     */
     private static final int COLUMN_BALANCE = 6;
+
+    /**
+     * Dilution column id.
+     */
     private static final int COLUMN_DILUTION = 7;
+
+    /**
+     * TaxCredit column id.
+     */
     private static final int COLUMN_TAXCREDIT = 8;
+
+    /**
+     * Years column id.
+     */
     private static final int COLUMN_YEARS = 9;
 
     /**
-     * Constructor for Statement Window
+     * Date column width.
+     */
+    private static final int WIDTH_DATE = 80;
+
+    /**
+     * Date column width.
+     */
+    private static final int WIDTH_TRANTYP = 110;
+
+    /**
+     * Description column width.
+     */
+    private static final int WIDTH_DESC = 150;
+
+    /**
+     * Partner column width.
+     */
+    private static final int WIDTH_PARTNER = 130;
+
+    /**
+     * Credit column width.
+     */
+    private static final int WIDTH_CREDIT = 90;
+
+    /**
+     * Debit column width.
+     */
+    private static final int WIDTH_DEBIT = 90;
+
+    /**
+     * Balance column width.
+     */
+    private static final int WIDTH_BALANCE = 90;
+
+    /**
+     * Dilution column width.
+     */
+    private static final int WIDTH_DILUTION = 80;
+
+    /**
+     * TaxCredit column width.
+     */
+    private static final int WIDTH_TAXCREDIT = 90;
+
+    /**
+     * Years column width.
+     */
+    private static final int WIDTH_YEARS = 50;
+
+    /**
+     * Panel width.
+     */
+    private static final int WIDTH_PANEL = 900;
+
+    /**
+     * Constructor for Statement Window.
      * @param pParent the parent window
      */
-    public AccountStatement(AccountTab pParent) {
+    public AccountStatement(final AccountTab pParent) {
         /* Initialise superclass */
         super(pParent.getDataManager());
 
@@ -171,12 +389,12 @@ public class AccountStatement extends DataTable<Event> {
         getTableHeader().setReorderingAllowed(false);
 
         /* Add the mouse listener */
-        theMouse = new StatementMouse();
-        addMouseListener(theMouse);
+        StatementMouse myMouse = new StatementMouse();
+        addMouseListener(myMouse);
 
         /* Create the sub panels */
         theSelect = new DateDayRangeSelect();
-        theStateBox = new StatementSelect(this);
+        theStateBox = new StatementSelect();
 
         /* Create the debug entry, attach to AccountDebug entry and hide it */
         JDataManager myDataMgr = theView.getDataMgr();
@@ -219,7 +437,7 @@ public class AccountStatement extends DataTable<Event> {
                                                                                                       Short.MAX_VALUE)))
                                                     .addComponent(getScrollPane(),
                                                                   GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE, 900,
+                                                                  GroupLayout.DEFAULT_SIZE, WIDTH_PANEL,
                                                                   Short.MAX_VALUE)).addContainerGap()));
         myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addGroup(GroupLayout.Alignment.TRAILING,
@@ -241,9 +459,9 @@ public class AccountStatement extends DataTable<Event> {
                 /* Reset the balances and update the column */
                 theStatement.resetBalances();
                 theModel.fireUpdateColEvent(COLUMN_BALANCE);
-            }
-            /* Catch Exceptions */
-            catch (JDataException e) {
+
+                /* Catch Exceptions */
+            } catch (JDataException e) {
                 /* Build the error */
                 JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to calculate table",
                         e);
@@ -255,7 +473,7 @@ public class AccountStatement extends DataTable<Event> {
     }
 
     /**
-     * Save changes from the view into the underlying data
+     * Save changes from the view into the underlying data.
      */
     @Override
     public void saveData() {
@@ -264,7 +482,7 @@ public class AccountStatement extends DataTable<Event> {
     }
 
     /**
-     * Update Debug view
+     * Update Debug view.
      */
     @Override
     public void updateDebug() {
@@ -272,11 +490,11 @@ public class AccountStatement extends DataTable<Event> {
     }
 
     /**
-     * Lock on error
+     * Lock on error.
      * @param isError is there an error (True/False)
      */
     @Override
-    public void lockOnError(boolean isError) {
+    public void lockOnError(final boolean isError) {
         /* Hide selection panel */
         theSelect.setVisible(!isError);
         theStateBox.setVisible(!isError);
@@ -286,13 +504,13 @@ public class AccountStatement extends DataTable<Event> {
     }
 
     /**
-     * Notify table that there has been a change in selection by an underlying control
+     * Notify table that there has been a change in selection by an underlying control.
      * @param obj the underlying control that has changed selection
      */
     @Override
-    public void notifySelection(Object obj) {
+    public void notifySelection(final Object obj) {
         /* if this is a change from the range */
-        if (obj == (Object) theSelect) {
+        if (theSelect.equals(obj)) {
             /* Protect against exceptions */
             try {
                 /* Set the new range */
@@ -300,10 +518,9 @@ public class AccountStatement extends DataTable<Event> {
 
                 /* Create SavePoint */
                 theSelect.createSavePoint();
-            }
 
-            /* Catch Exceptions */
-            catch (JDataException e) {
+                /* Catch Exceptions */
+            } catch (JDataException e) {
                 /* Build the error */
                 JDataException myError = new JDataException(ExceptionClass.DATA,
                         "Failed to change selection", e);
@@ -314,20 +531,20 @@ public class AccountStatement extends DataTable<Event> {
                 /* Restore SavePoint */
                 theSelect.restoreSavePoint();
             }
-        }
 
-        /* else if this is a change from the type */
-        else if (obj == (Object) theStateBox) {
+            /* else if this is a change from the type */
+        } else if (theStateBox.equals(obj)) {
             /* Reset the account */
             try {
                 setSelection(theAccount);
-            } catch (Throwable e) {
+            } catch (Exception e) {
+                e = null;
             }
         }
     }
 
     /**
-     * Refresh views/controls after a load/update of underlying data
+     * Refresh views/controls after a load/update of underlying data.
      */
     public void refreshData() {
         FinanceData myData;
@@ -351,11 +568,11 @@ public class AccountStatement extends DataTable<Event> {
     }
 
     /**
-     * Set Selection to the specified account
+     * Set Selection to the specified account.
      * @param pAccount the Account for the extract
      * @throws JDataException on error
      */
-    public void setSelection(Account pAccount) throws JDataException {
+    public void setSelection(final Account pAccount) throws JDataException {
         theStatement = null;
         theLines = null;
         theRange = theSelect.getRange();
@@ -370,33 +587,34 @@ public class AccountStatement extends DataTable<Event> {
         theColumns.setColumns();
         super.setList(theLines);
         theViewList.setDataList(theLines);
-        theSelect.setLockDown(false);
-        theStateBox.setLockDown();
+        theSelect.setEnabled(!hasUpdates());
+        theStateBox.setEnabled(!hasUpdates());
     }
 
     /**
-     * Call underlying controls to take notice of changes in view/selection
+     * Call underlying controls to take notice of changes in view/selection.
      */
     @Override
     public void notifyChanges() {
         /* Update the date range and the state box */
-        theSelect.setLockDown(true);
-        theStateBox.setLockDown();
+        theSelect.setEnabled(!hasUpdates());
+        theStateBox.setEnabled(!hasUpdates());
 
         /* Find the edit state */
-        if (theLines != null)
+        if (theLines != null) {
             theLines.findEditState();
+        }
 
         /* Update the parent panel */
         theParent.notifyChanges();
     }
 
     /**
-     * Set Selection to the specified date range
+     * Set Selection to the specified date range.
      * @param pRange the Date range for the extract
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    public void setSelection(DateDayRange pRange) throws JDataException {
+    public void setSelection(final DateDayRange pRange) throws JDataException {
         theStatement = null;
         theLines = null;
         if (theAccount != null) {
@@ -410,29 +628,30 @@ public class AccountStatement extends DataTable<Event> {
         theColumns.setColumns();
         super.setList(theLines);
         theViewList.setDataList(theLines);
-        theSelect.setLockDown(false);
-        theStateBox.setLockDown();
+        theSelect.setEnabled(!hasUpdates());
+        theStateBox.setEnabled(!hasUpdates());
     }
 
     /**
-     * Set selection to the period designated by the referenced control
+     * Set selection to the period designated by the referenced control.
      * @param pSource the source control
      */
-    public void selectPeriod(DateDayRangeSelect pSource) {
+    public void selectPeriod(final DateDayRangeSelect pSource) {
         /* Adjust the period selection */
         theSelect.setSelection(pSource);
     }
 
     /**
-     * Obtain the correct ComboBox for the given row/column
+     * Obtain the correct ComboBox for the given row/column.
+     * @param row the row
+     * @param column the column
+     * @return the comboBox
      */
     @Override
-    public JComboBox getComboBox(int row,
-                                 int column) {
-        StatementLine myLine;
-
+    public JComboBox getComboBox(final int row,
+                                 final int column) {
         /* Access the line */
-        myLine = (StatementLine) theLines.get(row - 1);
+        StatementLine myLine = (StatementLine) theLines.get(row - 1);
 
         /* Switch on column */
         switch (column) {
@@ -451,12 +670,17 @@ public class AccountStatement extends DataTable<Event> {
         }
     }
 
-    /* Statement table model */
-    public class StatementModel extends DataTableModel {
+    /**
+     * Statement table model.
+     */
+    public final class StatementModel extends DataTableModel {
+        /**
+         * Serial Id.
+         */
         private static final long serialVersionUID = 269477444398236458L;
 
         /**
-         * Constructor
+         * Constructor.
          */
         private StatementModel() {
             /* call constructor */
@@ -464,7 +688,7 @@ public class AccountStatement extends DataTable<Event> {
         }
 
         /**
-         * Get the number of display columns
+         * Get the number of display columns.
          * @return the columns
          */
         @Override
@@ -473,7 +697,7 @@ public class AccountStatement extends DataTable<Event> {
         }
 
         /**
-         * Get the number of rows in the current table
+         * Get the number of rows in the current table.
          * @return the number of rows
          */
         @Override
@@ -482,45 +706,45 @@ public class AccountStatement extends DataTable<Event> {
         }
 
         /**
-         * Get the name of the column
+         * Get the name of the column.
          * @param col the column
          * @return the name of the column
          */
         @Override
-        public String getColumnName(int col) {
+        public String getColumnName(final int col) {
             switch (col) {
                 case COLUMN_DATE:
-                    return titleDate;
+                    return TITLE_DATE;
                 case COLUMN_DESC:
-                    return titleDesc;
+                    return TITLE_DESC;
                 case COLUMN_TRANTYP:
-                    return titleTrans;
+                    return TITLE_TRANS;
                 case COLUMN_PARTNER:
-                    return titlePartner;
+                    return TITLE_PARTNER;
                 case COLUMN_CREDIT:
-                    return titleCredit;
+                    return TITLE_CREDIT;
                 case COLUMN_DEBIT:
-                    return titleDebit;
+                    return TITLE_DEBIT;
                 case COLUMN_BALANCE:
-                    return titleBalance;
+                    return TITLE_BALANCE;
                 case COLUMN_DILUTION:
-                    return titleDilution;
+                    return TITLE_DILUTION;
                 case COLUMN_TAXCREDIT:
-                    return titleTaxCredit;
+                    return TITLE_TAXCREDIT;
                 case COLUMN_YEARS:
-                    return titleYears;
+                    return TITLE_YEARS;
                 default:
                     return null;
             }
         }
 
         /**
-         * Get the object class of the column
+         * Get the object class of the column.
          * @param col the column
          * @return the class of the objects associated with the column
          */
         @Override
-        public Class<?> getColumnClass(int col) {
+        public Class<?> getColumnClass(final int col) {
             switch (col) {
                 case COLUMN_DESC:
                     return String.class;
@@ -534,16 +758,18 @@ public class AccountStatement extends DataTable<Event> {
         }
 
         /**
-         * Obtain the Field id associated with the column
+         * Obtain the Field id associated with the column.
          * @param row the row
          * @param column the column
+         * @return the field id
          */
         @Override
-        public JDataField getFieldForCell(int row,
-                                          int column) {
+        public JDataField getFieldForCell(final int row,
+                                          final int column) {
             StatementLine myLine = null;
-            if (row > 0)
+            if (row > 0) {
                 myLine = (StatementLine) theLines.get(row - 1);
+            }
 
             /* Switch on column */
             switch (column) {
@@ -562,46 +788,52 @@ public class AccountStatement extends DataTable<Event> {
                 case COLUMN_YEARS:
                     return Event.FIELD_YEARS;
                 case COLUMN_CREDIT:
-                    if ((myLine == null) || (myLine.isCredit()))
-                        return ((theStateType == StatementType.UNITS)
+                    if ((myLine == null) || (myLine.isCredit())) {
+                        return ((theStateType == StatementType.Units)
                                                                      ? Event.FIELD_UNITS
                                                                      : Event.FIELD_AMOUNT);
-                    else
+                    } else {
                         return null;
+                    }
                 case COLUMN_DEBIT:
-                    if ((myLine == null) || (!myLine.isCredit()))
-                        return ((theStateType == StatementType.UNITS)
+                    if ((myLine == null) || (!myLine.isCredit())) {
+                        return ((theStateType == StatementType.Units)
                                                                      ? Event.FIELD_UNITS
                                                                      : Event.FIELD_AMOUNT);
-                    else
+                    } else {
                         return null;
+                    }
                 default:
                     return null;
             }
         }
 
         /**
-         * Is the cell at (row, col) editable
+         * Is the cell at (row, col) editable?
+         * @param row the row
+         * @param col the column
+         * @return true/false
          */
         @Override
-        public boolean isCellEditable(int row,
-                                      int col) {
-            StatementLine myLine;
-
+        public boolean isCellEditable(final int row,
+                                      final int col) {
             /* Locked if the account is closed */
-            if (theStatement.getAccount().isClosed())
+            if (theStatement.getAccount().isClosed()) {
                 return false;
+            }
 
             /* Lock the start balance */
-            if (row == 0)
+            if (row == 0) {
                 return false;
+            }
 
             /* Access the line */
-            myLine = (StatementLine) theLines.get(row - 1);
+            StatementLine myLine = (StatementLine) theLines.get(row - 1);
 
             /* Cannot edit if row is deleted or locked */
-            if (myLine.isDeleted() || myLine.isLocked())
+            if (myLine.isDeleted() || myLine.isLocked()) {
                 return false;
+            }
 
             /* switch on column */
             switch (col) {
@@ -615,8 +847,9 @@ public class AccountStatement extends DataTable<Event> {
                     return ((myLine.getDate() != null) && (myLine.getTransType() != null));
                 default:
                     if ((myLine.getDate() == null) || (myLine.getDesc() == null)
-                            || (myLine.getTransType() == null))
+                            || (myLine.getTransType() == null)) {
                         return false;
+                    }
 
                     /* Access the transaction type */
                     TransactionType myType = myLine.getTransType();
@@ -641,12 +874,14 @@ public class AccountStatement extends DataTable<Event> {
         }
 
         /**
-         * Get the value at (row, col)
+         * Get the value at (row, col).
+         * @param row the row
+         * @param col the column
          * @return the object value
          */
         @Override
-        public Object getValueAt(int row,
-                                 int col) {
+        public Object getValueAt(final int row,
+                                 final int col) {
             StatementLine myLine;
             StatementLine myNext;
             Object o = null;
@@ -660,7 +895,7 @@ public class AccountStatement extends DataTable<Event> {
                     case COLUMN_DESC:
                         return "Starting Balance";
                     case COLUMN_BALANCE:
-                        return (theStateType == StatementType.UNITS)
+                        return (theStateType == StatementType.Units)
                                                                     ? theStatement.getStartUnits()
                                                                     : theStatement.getStartBalance();
                     default:
@@ -684,26 +919,30 @@ public class AccountStatement extends DataTable<Event> {
                     o = (myLine.getPartner() == null) ? null : myLine.getPartner().getName();
                     break;
                 case COLUMN_BALANCE:
-                    if ((myNext != null) && (Difference.isEqual(myNext.getDate(), myLine.getDate())))
+                    if ((myNext != null) && (Difference.isEqual(myNext.getDate(), myLine.getDate()))) {
                         o = null;
-                    else
-                        o = (theStateType == StatementType.UNITS) ? myLine.getBalanceUnits() : myLine
+                    } else {
+                        o = (theStateType == StatementType.Units) ? myLine.getBalanceUnits() : myLine
                                 .getBalance();
+                    }
                     break;
                 case COLUMN_CREDIT:
                     bShow = myLine.isCredit();
-                    if (bShow)
-                        o = ((theStateType == StatementType.UNITS) ? myLine.getUnits() : myLine.getAmount());
+                    if (bShow) {
+                        o = ((theStateType == StatementType.Units) ? myLine.getUnits() : myLine.getAmount());
+                    }
                     break;
                 case COLUMN_DEBIT:
                     bShow = !myLine.isCredit();
-                    if (bShow)
-                        o = ((theStateType == StatementType.UNITS) ? myLine.getUnits() : myLine.getAmount());
+                    if (bShow) {
+                        o = ((theStateType == StatementType.Units) ? myLine.getUnits() : myLine.getAmount());
+                    }
                     break;
                 case COLUMN_DESC:
                     o = myLine.getDesc();
-                    if ((o != null) && (((String) o).length() == 0))
+                    if ((o != null) && (((String) o).length() == 0)) {
                         o = null;
+                    }
                     break;
                 case COLUMN_DILUTION:
                     o = myLine.getDilution();
@@ -720,25 +959,26 @@ public class AccountStatement extends DataTable<Event> {
             }
 
             /* If we have a null value for an error field, set error description */
-            if ((o == null) && (bShow) && (myLine.hasErrors(getFieldForCell(row, col))))
+            if ((o == null) && (bShow) && (myLine.hasErrors(getFieldForCell(row, col)))) {
                 o = Renderer.getError();
+            }
 
             /* Return to caller */
             return o;
         }
 
         /**
-         * Set the value at (row, col)
+         * Set the value at (row, col).
          * @param obj the object value to set
+         * @param row the row
+         * @param col the column
          */
         @Override
-        public void setValueAt(Object obj,
-                               int row,
-                               int col) {
-            StatementLine myLine;
-
+        public void setValueAt(final Object obj,
+                               final int row,
+                               final int col) {
             /* Access the line */
-            myLine = (StatementLine) theLines.get(row - 1);
+            StatementLine myLine = (StatementLine) theLines.get(row - 1);
 
             /* Push history */
             myLine.pushHistory();
@@ -766,20 +1006,22 @@ public class AccountStatement extends DataTable<Event> {
                                                                                     ? myLine.getPartner()
                                                                                     : myLine.getAccount())) {
                             /* Determine new Tax Credit */
-                            if (needsTaxCredit)
+                            if (needsTaxCredit) {
                                 myLine.setTaxCredit(null);
-                            else
+                            } else {
                                 myLine.setTaxCredit(myLine.calculateTaxCredit());
+                            }
                         }
                         break;
                     case COLUMN_CREDIT:
                     case COLUMN_DEBIT:
-                        if (theStateType == StatementType.UNITS)
+                        if (theStateType == StatementType.Units) {
                             myLine.setUnits((Units) obj);
-                        else {
+                        } else {
                             myLine.setAmount((Money) obj);
-                            if (needsTaxCredit)
+                            if (needsTaxCredit) {
                                 myLine.setTaxCredit(myLine.calculateTaxCredit());
+                            }
                         }
                         break;
                     case COLUMN_PARTNER:
@@ -794,11 +1036,12 @@ public class AccountStatement extends DataTable<Event> {
                     case COLUMN_YEARS:
                         myLine.setYears((Integer) obj);
                         break;
+                    default:
+                        break;
                 }
-            }
 
-            /* Handle Exceptions */
-            catch (Throwable e) {
+                /* Handle Exceptions */
+            } catch (Exception e) {
                 /* Reset values */
                 myLine.popHistory();
                 myLine.pushHistory();
@@ -865,28 +1108,81 @@ public class AccountStatement extends DataTable<Event> {
     }
 
     /**
-     * Statement mouse listener
+     * Statement mouse listener.
      */
-    private class StatementMouse extends DataMouse<Event> {
-
-        /* Pop-up Menu items */
-        private static final String popupExtract = "View Extract";
-        private static final String popupMaint = "Maintain Account";
-        private static final String popupParent = "View Parent";
-        private static final String popupMParent = "Maintain Parent";
-        private static final String popupPartner = "View Partner";
-        private static final String popupMPartner = "Maintain Partner";
-        private static final String popupSetNullUnits = "Set Null Units";
-        private static final String popupSetNullTax = "Set Null TaxCredit";
-        private static final String popupSetNullYears = "Set Null Years";
-        private static final String popupSetNullDilute = "Set Null Dilution";
-        private static final String popupPattern = "Add to Pattern";
-        private static final String popupCalcTax = "Calculate Tax Credit";
-        private static final String popupCredit = "Set As Credit";
-        private static final String popupDebit = "Set As Debit";
+    private final class StatementMouse extends DataMouse<Event> {
+        /**
+         * Pop-up View Extract.
+         */
+        private static final String POPUP_EXTRACT = "View Extract";
 
         /**
-         * Constructor
+         * Pop-up Maintain account.
+         */
+        private static final String POPUP_MAINT = "Maintain Account";
+
+        /**
+         * Pop-up View Parent.
+         */
+        private static final String POPUP_PARENT = "View Parent";
+
+        /**
+         * Pop-up Maintain parent.
+         */
+        private static final String POPUP_MAINT_PARENT = "Maintain Parent";
+
+        /**
+         * Pop-up View Partner.
+         */
+        private static final String POPUP_PARTNER = "View Partner";
+
+        /**
+         * Pop-up maintain partner.
+         */
+        private static final String POPUP_MAINT_PARTNER = "Maintain Partner";
+
+        /**
+         * Pop-up Set null units.
+         */
+        private static final String POPUP_NULLUNITS = "Set Null Units";
+
+        /**
+         * Pop-up Set null Tax Credit.
+         */
+        private static final String POPUP_NULLTAX = "Set Null TaxCredit";
+
+        /**
+         * Pop-up Set null Years.
+         */
+        private static final String POPUP_NULLYEARS = "Set Null Years";
+
+        /**
+         * Pop-up Set null dilution.
+         */
+        private static final String POPUP_NULLDILUTE = "Set Null Dilution";
+
+        /**
+         * Pop-up Add Pattern.
+         */
+        private static final String POPUP_PATTERN = "Add to Pattern";
+
+        /**
+         * Pop-up Calculate Tax.
+         */
+        private static final String POPUP_CALCTAX = "Calculate Tax Credit";
+
+        /**
+         * Pop-up Set Credit.
+         */
+        private static final String POPUP_CREDIT = "Set As Credit";
+
+        /**
+         * Pop-up Set Debit.
+         */
+        private static final String POPUP_DEBIT = "Set As Debit";
+
+        /**
+         * Constructor.
          */
         private StatementMouse() {
             /* Call super-constructor */
@@ -894,11 +1190,11 @@ public class AccountStatement extends DataTable<Event> {
         }
 
         /**
-         * Add Null commands to menu
+         * Add Null commands to menu.
          * @param pMenu the menu to add to
          */
         @Override
-        protected void addNullCommands(JPopupMenu pMenu) {
+        protected void addNullCommands(final JPopupMenu pMenu) {
             JMenuItem myItem;
             StatementLine myLine;
             boolean enableNullUnits = false;
@@ -907,37 +1203,39 @@ public class AccountStatement extends DataTable<Event> {
             boolean enableNullDilution = false;
 
             /* Nothing to do if the table is locked */
-            if (theTable.isLocked())
+            if (theTable.isLocked()) {
                 return;
+            }
 
             /* Loop through the selected rows */
             for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
-                /* Ignore locked rows */
-                if ((myRow == null) || (myRow.isLocked()))
+                /* Ignore locked rows/deleted rows */
+                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
-
-                /* Ignore deleted rows */
-                if (myRow.isDeleted())
-                    continue;
+                }
 
                 /* Access as line */
                 myLine = (StatementLine) myRow;
 
                 /* Enable null Units if we have units and are showing units */
-                if ((theStateType == StatementType.UNITS) && (myLine.getUnits() != null))
+                if ((theStateType == StatementType.Units) && (myLine.getUnits() != null)) {
                     enableNullUnits = true;
+                }
 
                 /* Enable null Tax if we have tax and are showing tax */
-                if ((theColumns.isColumnVisible(COLUMN_TAXCREDIT)) && (myLine.getTaxCredit() != null))
+                if ((theColumns.isColumnVisible(COLUMN_TAXCREDIT)) && (myLine.getTaxCredit() != null)) {
                     enableNullTax = true;
+                }
 
                 /* Enable null Years if we have years and are showing years */
-                if ((theColumns.isColumnVisible(COLUMN_YEARS)) && (myLine.getYears() != null))
+                if ((theColumns.isColumnVisible(COLUMN_YEARS)) && (myLine.getYears() != null)) {
                     enableNullYears = true;
+                }
 
                 /* Enable null Dilution if we have dilution and are showing dilution */
-                if ((theColumns.isColumnVisible(COLUMN_DILUTION)) && (myLine.getDilution() != null))
+                if ((theColumns.isColumnVisible(COLUMN_DILUTION)) && (myLine.getDilution() != null)) {
                     enableNullDilution = true;
+                }
             }
 
             /* If there is something to add and there are already items in the menu */
@@ -950,8 +1248,8 @@ public class AccountStatement extends DataTable<Event> {
             /* If we can set null units */
             if (enableNullUnits) {
                 /* Add the undo change choice */
-                myItem = new JMenuItem(popupSetNullUnits);
-                myItem.setActionCommand(popupSetNullUnits);
+                myItem = new JMenuItem(POPUP_NULLUNITS);
+                myItem.setActionCommand(POPUP_NULLUNITS);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
@@ -959,8 +1257,8 @@ public class AccountStatement extends DataTable<Event> {
             /* If we can set null tax */
             if (enableNullTax) {
                 /* Add the undo change choice */
-                myItem = new JMenuItem(popupSetNullTax);
-                myItem.setActionCommand(popupSetNullTax);
+                myItem = new JMenuItem(POPUP_NULLTAX);
+                myItem.setActionCommand(POPUP_NULLTAX);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
@@ -968,8 +1266,8 @@ public class AccountStatement extends DataTable<Event> {
             /* If we can set null years */
             if (enableNullYears) {
                 /* Add the undo change choice */
-                myItem = new JMenuItem(popupSetNullYears);
-                myItem.setActionCommand(popupSetNullYears);
+                myItem = new JMenuItem(POPUP_NULLYEARS);
+                myItem.setActionCommand(POPUP_NULLYEARS);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
@@ -977,19 +1275,19 @@ public class AccountStatement extends DataTable<Event> {
             /* If we can set null dilution */
             if (enableNullDilution) {
                 /* Add the undo change choice */
-                myItem = new JMenuItem(popupSetNullDilute);
-                myItem.setActionCommand(popupSetNullDilute);
+                myItem = new JMenuItem(POPUP_NULLDILUTE);
+                myItem.setActionCommand(POPUP_NULLDILUTE);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
         }
 
         /**
-         * Add Special commands to menu
+         * Add Special commands to menu.
          * @param pMenu the menu to add to
          */
         @Override
-        protected void addSpecialCommands(JPopupMenu pMenu) {
+        protected void addSpecialCommands(final JPopupMenu pMenu) {
             JMenuItem myItem;
             StatementLine myLine;
             Money myTax;
@@ -1000,18 +1298,16 @@ public class AccountStatement extends DataTable<Event> {
             boolean enableDebit = false;
 
             /* Nothing to do if the table is locked */
-            if (theTable.isLocked())
+            if (theTable.isLocked()) {
                 return;
+            }
 
             /* Loop through the selected rows */
             for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
-                /* Ignore locked rows */
-                if ((myRow == null) || (myRow.isLocked()))
+                /* Ignore locked rows/deleted rows */
+                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
-
-                /* Ignore deleted rows */
-                if (myRow.isDeleted())
-                    continue;
+                }
 
                 /* Enable add pattern */
                 enablePattern = true;
@@ -1022,18 +1318,18 @@ public class AccountStatement extends DataTable<Event> {
                 myTrans = myLine.getTransType();
 
                 /* Enable Debit if we have credit */
-                if (myLine.isCredit())
+                if (myLine.isCredit()) {
                     enableDebit = true;
 
-                /* Enable Credit otherwise */
-                else
+                    /* Enable Credit otherwise */
+                } else {
                     enableCredit = true;
+                }
 
-                /* If we have a calculable tax credit */
-                if ((myTrans != null) && ((myTrans.isInterest()) || (myTrans.isDividend()))) {
-                    /* Enable calculation of tax if tax is null or zero */
-                    if ((myTax == null) || (!myTax.isNonZero()))
-                        enableCalcTax = true;
+                /* If we have a calculable tax credit that is null/zero */
+                if ((myTrans != null) && ((myTrans.isInterest()) || (myTrans.isDividend()))
+                        && ((myTax == null) || (!myTax.isNonZero()))) {
+                    enableCalcTax = true;
                 }
             }
 
@@ -1047,8 +1343,8 @@ public class AccountStatement extends DataTable<Event> {
             /* If we can set credit */
             if (enableCredit) {
                 /* Add the credit choice */
-                myItem = new JMenuItem(popupCredit);
-                myItem.setActionCommand(popupCredit);
+                myItem = new JMenuItem(POPUP_CREDIT);
+                myItem.setActionCommand(POPUP_CREDIT);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
@@ -1056,8 +1352,8 @@ public class AccountStatement extends DataTable<Event> {
             /* If we can set debit */
             if (enableDebit) {
                 /* Add the debit choice */
-                myItem = new JMenuItem(popupDebit);
-                myItem.setActionCommand(popupDebit);
+                myItem = new JMenuItem(POPUP_DEBIT);
+                myItem.setActionCommand(POPUP_DEBIT);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
@@ -1065,8 +1361,8 @@ public class AccountStatement extends DataTable<Event> {
             /* If we can calculate tax */
             if (enableCalcTax) {
                 /* Add the calculate tax choice */
-                myItem = new JMenuItem(popupCalcTax);
-                myItem.setActionCommand(popupCalcTax);
+                myItem = new JMenuItem(POPUP_CALCTAX);
+                myItem.setActionCommand(POPUP_CALCTAX);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
@@ -1074,19 +1370,19 @@ public class AccountStatement extends DataTable<Event> {
             /* If we can add a pattern */
             if (enablePattern) {
                 /* Add the add pattern choice */
-                myItem = new JMenuItem(popupPattern);
-                myItem.setActionCommand(popupPattern);
+                myItem = new JMenuItem(POPUP_PATTERN);
+                myItem.setActionCommand(POPUP_PATTERN);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
         }
 
         /**
-         * Add Navigation commands to menu
+         * Add Navigation commands to menu.
          * @param pMenu the menu to add to
          */
         @Override
-        protected void addNavigationCommands(JPopupMenu pMenu) {
+        protected void addNavigationCommands(final JPopupMenu pMenu) {
             JMenuItem myItem;
             StatementLine myLine;
             Account myAccount = null;
@@ -1095,8 +1391,9 @@ public class AccountStatement extends DataTable<Event> {
             boolean enablePartner = false;
 
             /* Nothing to do if the table is locked */
-            if (theTable.isLocked())
+            if (theTable.isLocked()) {
                 return;
+            }
 
             /* Access the popUp row */
             myRow = getPopupRow();
@@ -1108,8 +1405,9 @@ public class AccountStatement extends DataTable<Event> {
                 myAccount = myLine.getPartner();
 
                 /* If we have a different account then we can navigate */
-                if ((!Difference.isEqual(myAccount, theAccount)) && (myAccount != null))
+                if ((!Difference.isEqual(myAccount, theAccount)) && (myAccount != null)) {
                     enablePartner = true;
+                }
             }
 
             /* If there is something to add and there are already items in the menu */
@@ -1119,14 +1417,14 @@ public class AccountStatement extends DataTable<Event> {
             }
 
             /* Create the View extract choice */
-            myItem = new JMenuItem(popupExtract);
-            myItem.setActionCommand(popupExtract);
+            myItem = new JMenuItem(POPUP_EXTRACT);
+            myItem.setActionCommand(POPUP_EXTRACT);
             myItem.addActionListener(this);
             pMenu.add(myItem);
 
             /* Create the Maintain account choice */
-            myItem = new JMenuItem(popupMaint);
-            myItem.setActionCommand(popupMaint);
+            myItem = new JMenuItem(POPUP_MAINT);
+            myItem.setActionCommand(POPUP_MAINT);
             myItem.addActionListener(this);
             pMenu.add(myItem);
 
@@ -1136,14 +1434,14 @@ public class AccountStatement extends DataTable<Event> {
                 myParent = theAccount.getParent();
 
                 /* Create the View account choice */
-                myItem = new JMenuItem(popupParent + ": " + myParent.getName());
-                myItem.setActionCommand(popupParent);
+                myItem = new JMenuItem(POPUP_PARENT + ": " + myParent.getName());
+                myItem.setActionCommand(POPUP_PARENT);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
 
                 /* Create the Maintain account choice */
-                myItem = new JMenuItem(popupMParent + ": " + myParent.getName());
-                myItem.setActionCommand(popupMParent);
+                myItem = new JMenuItem(POPUP_MAINT_PARENT + ": " + myParent.getName());
+                myItem.setActionCommand(POPUP_MAINT_PARENT);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
@@ -1151,24 +1449,24 @@ public class AccountStatement extends DataTable<Event> {
             /* If we can navigate to partner */
             if (enablePartner) {
                 /* Create the View account choice */
-                myItem = new JMenuItem(popupPartner + ": " + myAccount.getName());
-                myItem.setActionCommand(popupPartner + ":" + myAccount.getName());
+                myItem = new JMenuItem(POPUP_PARTNER + ": " + myAccount.getName());
+                myItem.setActionCommand(POPUP_PARTNER + ":" + myAccount.getName());
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
 
                 /* Create the Maintain account choice */
-                myItem = new JMenuItem(popupMPartner + ": " + myAccount.getName());
-                myItem.setActionCommand(popupMPartner + ":" + myAccount.getName());
+                myItem = new JMenuItem(POPUP_MAINT_PARTNER + ": " + myAccount.getName());
+                myItem.setActionCommand(POPUP_MAINT_PARTNER + ":" + myAccount.getName());
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
         }
 
         /**
-         * Set the specified column to credit/debit
+         * Set the specified column to credit/debit.
          * @param isCredit set to Credit or else Debit
          */
-        protected void setIsCredit(boolean isCredit) {
+        protected void setIsCredit(final boolean isCredit) {
             AbstractTableModel myModel;
             StatementLine myLine;
             int row;
@@ -1178,13 +1476,10 @@ public class AccountStatement extends DataTable<Event> {
 
             /* Loop through the selected rows */
             for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
-                /* Ignore locked rows */
-                if ((myRow == null) || (myRow.isLocked()))
+                /* Ignore locked rows/deleted rows */
+                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
-
-                /* Ignore deleted rows */
-                if (myRow.isDeleted())
-                    continue;
+                }
 
                 /* Determine row */
                 row = myRow.indexOf() + 1;
@@ -1193,8 +1488,9 @@ public class AccountStatement extends DataTable<Event> {
                 myLine = (StatementLine) myRow;
 
                 /* Ignore rows that are already correct */
-                if (myLine.isCredit() == isCredit)
+                if (myLine.isCredit() == isCredit) {
                     continue;
+                }
 
                 /* set the credit value */
                 myLine.pushHistory();
@@ -1220,75 +1516,66 @@ public class AccountStatement extends DataTable<Event> {
         }
 
         /**
-         * Perform actions for controls/pop-ups on this table
+         * Perform actions for controls/pop-ups on this table.
          * @param evt the event
          */
         @Override
-        public void actionPerformed(ActionEvent evt) {
+        public void actionPerformed(final ActionEvent evt) {
             String myCmd = evt.getActionCommand();
 
             /* Cancel any editing */
             theTable.cancelEditing();
 
             /* If this is a set null units command */
-            if (myCmd.equals(popupSetNullUnits)) {
+            if (myCmd.equals(POPUP_NULLUNITS)) {
                 /* Set Units column to null */
                 setColumnToNull(COLUMN_DEBIT);
                 setColumnToNull(COLUMN_CREDIT);
-            }
 
-            /* else if this is a set null tax command */
-            else if (myCmd.equals(popupSetNullTax)) {
+                /* else if this is a set null tax command */
+            } else if (myCmd.equals(POPUP_NULLTAX)) {
                 /* Set Tax column to null */
                 setColumnToNull(COLUMN_TAXCREDIT);
-            }
 
-            /* If this is a set null years command */
-            else if (myCmd.equals(popupSetNullYears)) {
+                /* If this is a set null years command */
+            } else if (myCmd.equals(POPUP_NULLYEARS)) {
                 /* Set Years column to null */
                 setColumnToNull(COLUMN_YEARS);
-            }
 
-            /* If this is a set null dilute command */
-            else if (myCmd.equals(popupSetNullDilute)) {
+                /* If this is a set null dilute command */
+            } else if (myCmd.equals(POPUP_NULLDILUTE)) {
                 /* Set Dilution column to null */
                 setColumnToNull(COLUMN_DILUTION);
-            }
 
-            /* If this is a calculate Tax Credits command */
-            else if (myCmd.equals(popupCalcTax)) {
+                /* If this is a calculate Tax Credits command */
+            } else if (myCmd.equals(POPUP_CALCTAX)) {
                 /* Calculate the tax credits */
                 calculateTaxCredits();
-            }
 
-            /* If this is an add Pattern command */
-            else if (myCmd.equals(popupPattern)) {
+                /* If this is an add Pattern command */
+            } else if (myCmd.equals(POPUP_PATTERN)) {
                 /* Add the patterns */
                 addPatterns();
-            }
 
-            /* If this is a navigate command */
-            else if ((myCmd.equals(popupExtract)) || (myCmd.equals(popupMaint))
-                    || (myCmd.equals(popupParent)) || (myCmd.equals(popupMParent))
-                    || (myCmd.startsWith(popupPartner)) || (myCmd.startsWith(popupMPartner))) {
+                /* If this is a navigate command */
+            } else if ((myCmd.equals(POPUP_EXTRACT)) || (myCmd.equals(POPUP_MAINT))
+                    || (myCmd.equals(POPUP_PARENT)) || (myCmd.equals(POPUP_MAINT_PARENT))
+                    || (myCmd.startsWith(POPUP_PARTNER)) || (myCmd.startsWith(POPUP_MAINT_PARTNER))) {
                 /* perform the navigation */
                 performNavigation(myCmd);
-            }
 
-            /* If this is a credit command */
-            else if (myCmd.equals(popupCredit)) {
+                /* If this is a credit command */
+            } else if (myCmd.equals(POPUP_CREDIT)) {
                 /* Set Credit indication */
                 setIsCredit(true);
-            }
 
-            /* If this is a debit command */
-            else if (myCmd.equals(popupDebit)) {
+                /* If this is a debit command */
+            } else if (myCmd.equals(POPUP_DEBIT)) {
                 /* Set Debit indication */
                 setIsCredit(false);
-            }
 
-            /* else we do not recognise the action */
-            else {
+                /* else we do not recognise the action */
+            } else {
                 /* Pass it to the superclass */
                 super.actionPerformed(evt);
                 return;
@@ -1300,7 +1587,7 @@ public class AccountStatement extends DataTable<Event> {
         }
 
         /**
-         * Calculate tax credits
+         * Calculate tax credits.
          */
         private void calculateTaxCredits() {
             StatementLine myLine;
@@ -1310,18 +1597,16 @@ public class AccountStatement extends DataTable<Event> {
 
             /* Loop through the selected rows */
             for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
-                /* Ignore locked rows */
-                if ((myRow == null) || (myRow.isLocked()))
+                /* Ignore locked rows/deleted rows */
+                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
-
-                /* Ignore deleted rows */
-                if (myRow.isDeleted())
-                    continue;
+                }
 
                 /* Determine row */
                 row = myRow.indexOf();
-                if (theTable.hasHeader())
+                if (theTable.hasHeader()) {
                     row++;
+                }
 
                 /* Access the line */
                 myLine = (StatementLine) myRow;
@@ -1329,12 +1614,14 @@ public class AccountStatement extends DataTable<Event> {
                 myTax = myLine.getTaxCredit();
 
                 /* Ignore rows with invalid transaction type */
-                if ((myTrans == null) || ((!myTrans.isInterest()) && (!myTrans.isDividend())))
+                if ((myTrans == null) || ((!myTrans.isInterest()) && (!myTrans.isDividend()))) {
                     continue;
+                }
 
                 /* Ignore rows with tax credit already set */
-                if ((myTax != null) && (myTax.isNonZero()))
+                if ((myTax != null) && (myTax.isNonZero())) {
                     continue;
+                }
 
                 /* Calculate the tax credit */
                 myTax = myLine.calculateTaxCredit();
@@ -1346,20 +1633,17 @@ public class AccountStatement extends DataTable<Event> {
         }
 
         /**
-         * Add patterns
+         * Add patterns.
          */
         private void addPatterns() {
             StatementLine myLine;
 
             /* Loop through the selected rows */
             for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
-                /* Ignore locked rows */
-                if ((myRow == null) || (myRow.isLocked()))
+                /* Ignore locked rows/deleted rows */
+                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
-
-                /* Ignore deleted rows */
-                if (myRow.isDeleted())
-                    continue;
+                }
 
                 /* Access the line */
                 myLine = (StatementLine) myRow;
@@ -1370,67 +1654,139 @@ public class AccountStatement extends DataTable<Event> {
         }
 
         /**
-         * Perform a navigation command
+         * Perform a navigation command.
          * @param pCmd the navigation command
          */
-        private void performNavigation(String pCmd) {
-            String tokens[];
+        private void performNavigation(final String pCmd) {
+            String[] tokens;
             String myName = null;
             Account myAccount = null;
 
             /* Access the action command */
             tokens = pCmd.split(":");
             String myCmd = tokens[0];
-            if (tokens.length > 1)
+            if (tokens.length > 1) {
                 myName = tokens[1];
+            }
 
             /* Access the correct account */
-            if (myName != null)
+            if (myName != null) {
                 myAccount = theView.getData().getAccounts().searchFor(myName);
+            }
 
             /* Handle commands */
-            if (myCmd.equals(popupExtract))
+            if (myCmd.equals(POPUP_EXTRACT)) {
                 theTopWindow.selectPeriod(theSelect);
-            else if (myCmd.equals(popupMaint))
+            } else if (myCmd.equals(POPUP_MAINT)) {
                 theTopWindow.selectAccountMaint(theAccount);
-            else if (myCmd.equals(popupParent))
+            } else if (myCmd.equals(POPUP_PARENT)) {
                 theTopWindow.selectAccount(theAccount.getParent(), theSelect);
-            else if (myCmd.equals(popupMParent))
+            } else if (myCmd.equals(POPUP_MAINT_PARENT)) {
                 theTopWindow.selectAccountMaint(theAccount.getParent());
-            else if (myCmd.equals(popupPartner))
+            } else if (myCmd.equals(POPUP_PARTNER)) {
                 theTopWindow.selectAccount(myAccount, theSelect);
-            else if (myCmd.equals(popupMPartner))
+            } else if (myCmd.equals(POPUP_MAINT_PARTNER)) {
                 theTopWindow.selectAccountMaint(myAccount);
+            }
         }
     }
 
     /**
-     * Column Model class
+     * Column Model class.
      */
-    private class StatementColumnModel extends DataColumnModel {
+    private final class StatementColumnModel extends DataColumnModel {
+        /**
+         * Serial Id.
+         */
         private static final long serialVersionUID = -183944035127105952L;
 
-        /* Renderers/Editors */
+        /**
+         * Date Renderer.
+         */
         private final CalendarRenderer theDateRenderer;
-        private final CalendarEditor theDateEditor;
-        private final DecimalRenderer theDecimalRenderer;
-        private final MoneyEditor theMoneyEditor;
-        private final UnitsEditor theUnitsEditor;
-        private final StringRenderer theStringRenderer;
-        private final StringEditor theStringEditor;
-        private final DilutionEditor theDilutionEditor;
-        private final IntegerRenderer theIntegerRenderer;
-        private final IntegerEditor theIntegerEditor;
-        private final ComboBoxEditor theComboEditor;
-        private DataColumn theCreditCol = null;
-        private DataColumn theDebitCol = null;
-        private DataColumn theBalanceCol = null;
-        private DataColumn theDiluteCol = null;
-        private DataColumn theTaxCredCol = null;
-        private DataColumn theYearsCol = null;
 
         /**
-         * Constructor
+         * Date Editor.
+         */
+        private final CalendarEditor theDateEditor;
+
+        /**
+         * Decimal Renderer.
+         */
+        private final DecimalRenderer theDecimalRenderer;
+
+        /**
+         * Money Editor.
+         */
+        private final MoneyEditor theMoneyEditor;
+
+        /**
+         * Units Editor.
+         */
+        private final UnitsEditor theUnitsEditor;
+
+        /**
+         * String Renderer.
+         */
+        private final StringRenderer theStringRenderer;
+
+        /**
+         * String Editor.
+         */
+        private final StringEditor theStringEditor;
+
+        /**
+         * Dilution Editor.
+         */
+        private final DilutionEditor theDilutionEditor;
+
+        /**
+         * Integer Renderer.
+         */
+        private final IntegerRenderer theIntegerRenderer;
+
+        /**
+         * Integer Editor.
+         */
+        private final IntegerEditor theIntegerEditor;
+
+        /**
+         * ComboBox Editor.
+         */
+        private final ComboBoxEditor theComboEditor;
+
+        /**
+         * Credit Column.
+         */
+        private final DataColumn theCreditCol;
+
+        /**
+         * Debit Column.
+         */
+        private final DataColumn theDebitCol;
+
+        /**
+         * Balance Column.
+         */
+        private final DataColumn theBalanceCol;
+
+        /**
+         * Dilution Column.
+         */
+        private final DataColumn theDiluteCol;
+
+        /**
+         * Tax Credit column.
+         */
+        private final DataColumn theTaxCredCol;
+
+        /**
+         * Years Column.
+         */
+        private final DataColumn theYearsCol;
+
+        /**
+         * Constructor.
          */
         private StatementColumnModel() {
             /* call constructor */
@@ -1450,34 +1806,41 @@ public class AccountStatement extends DataTable<Event> {
             theComboEditor = new ComboBoxEditor();
 
             /* Create the columns */
-            addColumn(new DataColumn(COLUMN_DATE, 80, theDateRenderer, theDateEditor));
-            addColumn(new DataColumn(COLUMN_TRANTYP, 110, theStringRenderer, theComboEditor));
-            addColumn(new DataColumn(COLUMN_DESC, 150, theStringRenderer, theStringEditor));
-            addColumn(new DataColumn(COLUMN_PARTNER, 130, theStringRenderer, theComboEditor));
-            addColumn(theCreditCol = new DataColumn(COLUMN_CREDIT, 90, theDecimalRenderer, theMoneyEditor));
-            addColumn(theDebitCol = new DataColumn(COLUMN_DEBIT, 90, theDecimalRenderer, theMoneyEditor));
-            addColumn(theBalanceCol = new DataColumn(COLUMN_BALANCE, 90, theDecimalRenderer, theMoneyEditor));
-            addColumn(theDiluteCol = new DataColumn(COLUMN_DILUTION, 80, theDecimalRenderer,
-                    theDilutionEditor));
-            addColumn(theTaxCredCol = new DataColumn(COLUMN_TAXCREDIT, 90, theDecimalRenderer, theMoneyEditor));
-            addColumn(theYearsCol = new DataColumn(COLUMN_YEARS, 50, theIntegerRenderer, theIntegerEditor));
+            addColumn(new DataColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
+            addColumn(new DataColumn(COLUMN_TRANTYP, WIDTH_TRANTYP, theStringRenderer, theComboEditor));
+            addColumn(new DataColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
+            addColumn(new DataColumn(COLUMN_PARTNER, WIDTH_PARTNER, theStringRenderer, theComboEditor));
+            theCreditCol = new DataColumn(COLUMN_CREDIT, WIDTH_CREDIT, theDecimalRenderer, theMoneyEditor);
+            theDebitCol = new DataColumn(COLUMN_DEBIT, WIDTH_DEBIT, theDecimalRenderer, theMoneyEditor);
+            theBalanceCol = new DataColumn(COLUMN_BALANCE, WIDTH_BALANCE, theDecimalRenderer, theMoneyEditor);
+            theDiluteCol = new DataColumn(COLUMN_DILUTION, WIDTH_DILUTION, theDecimalRenderer,
+                    theDilutionEditor);
+            theTaxCredCol = new DataColumn(COLUMN_TAXCREDIT, WIDTH_TAXCREDIT, theDecimalRenderer,
+                    theMoneyEditor);
+            theYearsCol = new DataColumn(COLUMN_YEARS, WIDTH_YEARS, theIntegerRenderer, theIntegerEditor);
+            addColumn(theCreditCol);
+            addColumn(theDebitCol);
+            addColumn(theBalanceCol);
+            addColumn(theDiluteCol);
+            addColumn(theTaxCredCol);
+            addColumn(theYearsCol);
         }
 
         /**
-         * Set the date editor range
-         * @param pRange
+         * Set the date editor range.
+         * @param pRange the range
          */
-        private void setDateEditorRange(DateDayRange pRange) {
+        private void setDateEditorRange(final DateDayRange pRange) {
             /* Set the range */
             theDateEditor.setRange(pRange);
         }
 
         /**
-         * Determine whether a column is visible
+         * Determine whether a column is visible.
          * @param pCol the column id
          * @return true/false
          */
-        private boolean isColumnVisible(int pCol) {
+        private boolean isColumnVisible(final int pCol) {
             switch (pCol) {
                 case COLUMN_TAXCREDIT:
                     return theTaxCredCol.isMember();
@@ -1491,38 +1854,45 @@ public class AccountStatement extends DataTable<Event> {
         }
 
         /**
-         * Set visible columns according to the statement type
+         * Set visible columns according to the statement type.
          */
         private void setColumns() {
             AccountType myType;
 
             /* Hide optional columns */
-            if (theBalanceCol.isMember())
+            if (theBalanceCol.isMember()) {
                 removeColumn(theBalanceCol);
-            if (theDiluteCol.isMember())
+            }
+            if (theDiluteCol.isMember()) {
                 removeColumn(theDiluteCol);
-            if (theTaxCredCol.isMember())
+            }
+            if (theTaxCredCol.isMember()) {
                 removeColumn(theTaxCredCol);
-            if (theYearsCol.isMember())
+            }
+            if (theYearsCol.isMember()) {
                 removeColumn(theYearsCol);
+            }
 
             /* Switch on statement type */
             switch (theStateType) {
-                case EXTRACT:
+                case Extract:
                     /* Access account type */
                     myType = theAccount.getActType();
 
                     /* Show Dilution column for shares */
-                    if (myType.isShares())
+                    if (myType.isShares()) {
                         addColumn(theDiluteCol);
+                    }
 
                     /* Show the TaxCredit column as required */
-                    if (myType.isMoney() && !myType.isTaxFree())
+                    if (myType.isMoney() && !myType.isTaxFree()) {
                         addColumn(theTaxCredCol);
+                    }
 
                     /* Show the years column for LifeBonds */
-                    if (myType.isLifeBond())
+                    if (myType.isLifeBond()) {
                         addColumn(theYearsCol);
+                    }
 
                     /* Set money Renderers */
                     theCreditCol.setCellRenderer(theDecimalRenderer);
@@ -1532,7 +1902,7 @@ public class AccountStatement extends DataTable<Event> {
                     theCreditCol.setCellEditor(theMoneyEditor);
                     theDebitCol.setCellEditor(theMoneyEditor);
                     break;
-                case VALUE:
+                case Value:
                     /* Access account type */
                     myType = theAccount.getActType();
 
@@ -1540,12 +1910,14 @@ public class AccountStatement extends DataTable<Event> {
                     addColumn(theBalanceCol);
 
                     /* Show the TaxCredit column as required */
-                    if (myType.isMoney() && !myType.isTaxFree())
+                    if (myType.isMoney() && !myType.isTaxFree()) {
                         addColumn(theTaxCredCol);
+                    }
 
                     /* Show the years column for LifeBonds */
-                    if (myType.isLifeBond())
+                    if (myType.isLifeBond()) {
                         addColumn(theYearsCol);
+                    }
 
                     /* Set money Renderers */
                     theCreditCol.setCellRenderer(theDecimalRenderer);
@@ -1556,7 +1928,7 @@ public class AccountStatement extends DataTable<Event> {
                     theCreditCol.setCellEditor(theMoneyEditor);
                     theDebitCol.setCellEditor(theMoneyEditor);
                     break;
-                case UNITS:
+                case Units:
                     /* Show Balance and dilution columns */
                     addColumn(theBalanceCol);
                     addColumn(theDiluteCol);
@@ -1569,6 +1941,8 @@ public class AccountStatement extends DataTable<Event> {
                     /* Set units Editors */
                     theCreditCol.setCellEditor(theUnitsEditor);
                     theDebitCol.setCellEditor(theUnitsEditor);
+                    break;
+                default:
                     break;
             }
         }

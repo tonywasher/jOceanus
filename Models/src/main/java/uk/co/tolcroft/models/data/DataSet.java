@@ -36,7 +36,6 @@ import uk.co.tolcroft.models.data.ControlData.ControlDataList;
 import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
 import uk.co.tolcroft.models.data.DataKey.DataKeyList;
 import uk.co.tolcroft.models.data.EncryptedItem.EncryptedList;
-import uk.co.tolcroft.models.views.DataControl;
 
 /**
  * DataSet definition and list. A DataSet is a set of DataLists backed by the three security lists.
@@ -86,19 +85,19 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (pField == FIELD_GENERATION) {
+        if (FIELD_GENERATION.equals(pField)) {
             return theGeneration;
         }
-        if (pField == FIELD_SECURITY) {
+        if (FIELD_SECURITY.equals(pField)) {
             return theSecurity;
         }
-        if (pField == FIELD_CONTROLKEYS) {
+        if (FIELD_CONTROLKEYS.equals(pField)) {
             return theControlKeys;
         }
-        if (pField == FIELD_DATAKEYS) {
+        if (FIELD_DATAKEYS.equals(pField)) {
             return theDataKeys;
         }
-        if (pField == FIELD_CONTROLDATA) {
+        if (FIELD_CONTROLDATA.equals(pField)) {
             return theDataKeys;
         }
         return null;
@@ -352,12 +351,12 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
         }
     }
 
-    /**
-     * Analyse the DataSet.
-     * @param pControl The DataControl
-     * @throws JDataException on error
-     */
-    public abstract void analyseData(final DataControl<?> pControl) throws JDataException;
+    // /**
+    // * Analyse the DataSet.
+    // * @param pControl The DataControl
+    // * @throws JDataException on error
+    // */
+    // public abstract void analyseData(final DataControl<?> pControl) throws JDataException;
 
     @Override
     public boolean equals(final Object pThat) {

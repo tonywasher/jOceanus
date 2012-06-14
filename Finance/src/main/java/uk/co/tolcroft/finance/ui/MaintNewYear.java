@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,25 +51,80 @@ import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
 import uk.co.tolcroft.models.views.ViewList;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 
+/**
+ * NewYear maintenance panel.
+ * @author Tony Washer
+ */
 public class MaintNewYear extends DataTable<Event> implements ActionListener {
+    /**
+     * Serial Id.
+     */
     private static final long serialVersionUID = 7406051901546832781L;
 
-    private MaintNewYear theTable = this;
-    private View theView = null;
-    private TaxYearList theTaxYears = null;
-    private EventList theEvents = null;
-    private MaintenanceTab theParent = null;
-    private JPanel thePanel = null;
-    private YearColumnModel theColumns = null;
-    private PatternYearModel theModel = null;
-    private JButton thePattern = null;
-    private JDataEntry theDataYear = null;
-    private JDataEntry theDataEvents = null;
-    private ViewList theViewSet = null;
-    private ListClass theYearView = null;
-    private ListClass theEventView = null;
+    /**
+     * Self reference.
+     */
+    private final MaintNewYear theTable = this;
 
-    /* Access methods */
+    /**
+     * The Data View.
+     */
+    private final View theView;
+
+    /**
+     * The events.
+     */
+    private EventList theEvents = null;
+
+    /**
+     * The parent.
+     */
+    private final MaintenanceTab theParent;
+
+    /**
+     * The panel.
+     */
+    private final JPanel thePanel;
+
+    /**
+     * Column Model.
+     */
+    private final YearColumnModel theColumns;
+
+    /**
+     * Pattern button.
+     */
+    private final JButton thePattern;
+
+    /**
+     * Data Year.
+     */
+    private final JDataEntry theDataYear;
+
+    /**
+     * Data Events.
+     */
+    private final JDataEntry theDataEvents;
+
+    /**
+     * View Set.
+     */
+    private final ViewList theViewSet;
+
+    /**
+     * Year View.
+     */
+    private final ListClass theYearView;
+
+    /**
+     * Event View.
+     */
+    private final ListClass theEventView;
+
+    /**
+     * Obtain the panel.
+     * @return the panel
+     */
     public JPanel getPanel() {
         return thePanel;
     }
@@ -78,33 +134,116 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
         return false;
     }
 
-    /* Access the debug entry */
     @Override
     public JDataEntry getDataEntry() {
         return theDataYear;
     }
 
-    /* Table headers */
-    private static final String titleDate = "Date";
-    private static final String titleDesc = "Description";
-    private static final String titleTrans = "TransactionType";
-    private static final String titleAmount = "Amount";
-    private static final String titleDebit = "Debit";
-    private static final String titleCredit = "Credit";
+    /**
+     * Date column title.
+     */
+    private static final String TITLE_DATE = "Date";
 
-    /* Table columns */
+    /**
+     * Description column title.
+     */
+    private static final String TITLE_DESC = "Description";
+
+    /**
+     * Transaction Type column title.
+     */
+    private static final String TITLE_TRANTYPE = "TransactionType";
+
+    /**
+     * Amount column title.
+     */
+    private static final String TITLE_AMOUNT = "Amount";
+
+    /**
+     * Debit column title.
+     */
+    private static final String TITLE_DEBIT = "Debit";
+
+    /**
+     * Credit column title.
+     */
+    private static final String TITLE_CREDIT = "Credit";
+
+    /**
+     * Date column id.
+     */
     private static final int COLUMN_DATE = 0;
+
+    /**
+     * Description column id.
+     */
     private static final int COLUMN_DESC = 1;
+
+    /**
+     * Transaction Type column id.
+     */
     private static final int COLUMN_TRANTYP = 2;
+
+    /**
+     * Amount column id.
+     */
     private static final int COLUMN_AMOUNT = 3;
+
+    /**
+     * Debit column id.
+     */
     private static final int COLUMN_DEBIT = 4;
+
+    /**
+     * Credit column id.
+     */
     private static final int COLUMN_CREDIT = 5;
 
     /**
-     * Constructor for New Year Window
+     * Date column width.
+     */
+    private static final int WIDTH_DATE = 80;
+
+    /**
+     * Description column width.
+     */
+    private static final int WIDTH_DESC = 150;
+
+    /**
+     * Transaction Type column width.
+     */
+    private static final int WIDTH_TRANTYP = 110;
+
+    /**
+     * Amount column width.
+     */
+    private static final int WIDTH_AMOUNT = 90;
+
+    /**
+     * Debit column width.
+     */
+    private static final int WIDTH_DEBIT = 130;
+
+    /**
+     * Credit column width.
+     */
+    private static final int WIDTH_CREDIT = 130;
+
+    /**
+     * Panel width.
+     */
+    private static final int PANEL_WIDTH = 800;
+
+    /**
+     * Panel height.
+     */
+    private static final int PANEL_HEIGHT = 200;
+
+    /**
+     * Constructor for New Year Window.
      * @param pParent the parent window
      */
-    public MaintNewYear(MaintenanceTab pParent) {
+    public MaintNewYear(final MaintenanceTab pParent) {
         /* Initialise superclass */
         super(pParent.getDataManager());
 
@@ -121,10 +260,8 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
         theEventView = theViewSet.registerClass(Event.class);
 
         /* Set the table model */
-        theModel = new PatternYearModel();
-
-        /* Set the table model */
-        setModel(theModel);
+        PatternYearModel myModel = new PatternYearModel();
+        setModel(myModel);
 
         /* Create the data column model and declare it */
         theColumns = new YearColumnModel();
@@ -135,7 +272,7 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
         setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
 
         /* Set the number of visible rows */
-        setPreferredScrollableViewportSize(new Dimension(800, 200));
+        setPreferredScrollableViewportSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
 
         /* Create the button */
         thePattern = new JButton("Apply");
@@ -156,7 +293,7 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
                                   .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, true)
                                                     .addComponent(getScrollPane(),
                                                                   GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE, 800,
+                                                                  GroupLayout.DEFAULT_SIZE, PANEL_WIDTH,
                                                                   Short.MAX_VALUE).addComponent(thePattern))
                                   .addContainerGap()));
         myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -174,7 +311,6 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
         theDataEvents.addAsChildOf(myEntry);
     }
 
-    /* Stubs */
     @Override
     public void saveData() {
     }
@@ -199,20 +335,20 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
     }
 
     @Override
-    public void performCommand(stdCommand pCmd) {
+    public void performCommand(final stdCommand pCmd) {
     }
 
     @Override
-    public void notifySelection(Object pObj) {
+    public void notifySelection(final Object pObj) {
     }
 
     @Override
-    public void lockOnError(boolean isError) {
+    public void lockOnError(final boolean isError) {
     }
 
     /**
-     * Refresh views/controls after a load/update of underlying data
-     * @throws JDataException
+     * Refresh views/controls after a load/update of underlying data.
+     * @throws JDataException on error
      */
     public void refreshData() throws JDataException {
         FinanceData myData = theView.getData();
@@ -225,48 +361,53 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
     }
 
     /**
-     * Set Selection
+     * Set Selection.
      * @param pTaxYear the last active tax year
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    public void setSelection(TaxYear pTaxYear) throws JDataException {
-        theTaxYears = null;
+    public void setSelection(final TaxYear pTaxYear) throws JDataException {
+        TaxYearList myTaxYears = null;
         theEvents = null;
         thePattern.setVisible(false);
         if (pTaxYear != null) {
             FinanceData myData = theView.getData();
-            theTaxYears = myData.getTaxYears().getNewEditList();
-            theEvents = myData.getEvents().getEditList(theTaxYears.getNewYear());
+            myTaxYears = myData.getTaxYears().getNewEditList();
+            theEvents = myData.getEvents().getEditList(myTaxYears.getNewYear());
             thePattern.setVisible(true);
             thePattern.setEnabled(!theEvents.isEmpty());
         }
         setList(theEvents);
-        theYearView.setDataList(theTaxYears);
+        theYearView.setDataList(myTaxYears);
         theEventView.setDataList(theEvents);
-        theDataYear.setObject(theTaxYears);
+        theDataYear.setObject(myTaxYears);
         theDataEvents.setObject(theEvents);
         theParent.setVisibility();
     }
 
     /**
-     * Perform actions for controls/pop-ups on this table
+     * Perform actions for controls/pop-ups on this table.
      * @param evt the event
      */
     @Override
-    public void actionPerformed(ActionEvent evt) {
+    public void actionPerformed(final ActionEvent evt) {
         /* If this event relates to the pattern button */
-        if (evt.getSource() == (Object) thePattern) {
+        if (thePattern.equals(evt.getSource())) {
             /* Apply the extract changes */
             theViewSet.applyChanges();
         }
     }
 
-    /* PatternYear table model */
-    public class PatternYearModel extends DataTableModel {
+    /**
+     * PatternYear table model.
+     */
+    public final class PatternYearModel extends DataTableModel {
+        /**
+         * Serial Id.
+         */
         private static final long serialVersionUID = 4796112294536415723L;
 
         /**
-         * Constructor
+         * Constructor.
          */
         private PatternYearModel() {
             /* call constructor */
@@ -274,7 +415,7 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
         }
 
         /**
-         * Get the number of display columns
+         * Get the number of display columns.
          * @return the columns
          */
         @Override
@@ -283,7 +424,7 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
         }
 
         /**
-         * Get the number of rows in the current table
+         * Get the number of rows in the current table.
          * @return the number of rows
          */
         @Override
@@ -292,38 +433,39 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
         }
 
         /**
-         * Get the name of the column
+         * Get the name of the column.
          * @param col the column
          * @return the name of the column
          */
         @Override
-        public String getColumnName(int col) {
+        public String getColumnName(final int col) {
             switch (col) {
                 case COLUMN_DATE:
-                    return titleDate;
+                    return TITLE_DATE;
                 case COLUMN_DESC:
-                    return titleDesc;
+                    return TITLE_DESC;
                 case COLUMN_TRANTYP:
-                    return titleTrans;
+                    return TITLE_TRANTYPE;
                 case COLUMN_AMOUNT:
-                    return titleAmount;
+                    return TITLE_AMOUNT;
                 case COLUMN_CREDIT:
-                    return titleCredit;
+                    return TITLE_CREDIT;
                 case COLUMN_DEBIT:
-                    return titleDebit;
+                    return TITLE_DEBIT;
                 default:
                     return null;
             }
         }
 
         /**
-         * Obtain the Field id associated with the column
+         * Obtain the Field id associated with the column.
          * @param row the row
          * @param column the column
+         * @return the field id
          */
         @Override
-        public JDataField getFieldForCell(int row,
-                                          int column) {
+        public JDataField getFieldForCell(final int row,
+                                          final int column) {
             /* Switch on column */
             switch (column) {
                 default:
@@ -332,12 +474,12 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
         }
 
         /**
-         * Get the object class of the column
+         * Get the object class of the column.
          * @param col the column
          * @return the class of the objects associated with the column
          */
         @Override
-        public Class<?> getColumnClass(int col) {
+        public Class<?> getColumnClass(final int col) {
             switch (col) {
                 case COLUMN_DESC:
                     return String.class;
@@ -353,21 +495,26 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
         }
 
         /**
-         * Is the cell at (row, col) editable
+         * Is the cell at (row, col) editable?
+         * @param row the row
+         * @param col the column
+         * @return true/false
          */
         @Override
-        public boolean isCellEditable(int row,
-                                      int col) {
+        public boolean isCellEditable(final int row,
+                                      final int col) {
             return false;
         }
 
         /**
-         * Get the value at (row, col)
+         * Get the value at (row, col).
+         * @param row the row
+         * @param col the column
          * @return the object value
          */
         @Override
-        public Object getValueAt(int row,
-                                 int col) {
+        public Object getValueAt(final int row,
+                                 final int col) {
             Event myEvent;
             Object o;
 
@@ -393,8 +540,9 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
                     break;
                 case COLUMN_DESC:
                     o = myEvent.getDesc();
-                    if ((o != null) & (((String) o).length() == 0))
+                    if ((o != null) & (((String) o).length() == 0)) {
                         o = null;
+                    }
                     break;
                 default:
                     o = null;
@@ -402,8 +550,9 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
             }
 
             /* If we have a null value for an error field, set error description */
-            if ((o == null) && (myEvent.hasErrors(getFieldForCell(row, col))))
+            if ((o == null) && (myEvent.hasErrors(getFieldForCell(row, col)))) {
                 o = Renderer.getError();
+            }
 
             /* Return to caller */
             return o;
@@ -411,18 +560,31 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
     }
 
     /**
-     * Column Model class
+     * Column Model class.
      */
-    private class YearColumnModel extends DataColumnModel {
+    private final class YearColumnModel extends DataColumnModel {
+        /**
+         * Serial Id.
+         */
         private static final long serialVersionUID = -894489367275603586L;
 
-        /* Renderers/Editors */
-        private CalendarRenderer theDateRenderer = null;
-        private DecimalRenderer theDecimalRenderer = null;
-        private StringRenderer theStringRenderer = null;
+        /**
+         * Date Renderer.
+         */
+        private final CalendarRenderer theDateRenderer;
 
         /**
-         * Constructor
+         * Decimal Renderer.
+         */
+        private final DecimalRenderer theDecimalRenderer;
+
+        /**
+         * String Renderer.
+         */
+        private final StringRenderer theStringRenderer;
+
+        /**
+         * Constructor.
          */
         private YearColumnModel() {
             /* call constructor */
@@ -434,12 +596,12 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
             theStringRenderer = new StringRenderer();
 
             /* Create the columns */
-            addColumn(new DataColumn(COLUMN_DATE, 80, theDateRenderer, null));
-            addColumn(new DataColumn(COLUMN_DESC, 150, theStringRenderer, null));
-            addColumn(new DataColumn(COLUMN_TRANTYP, 110, theStringRenderer, null));
-            addColumn(new DataColumn(COLUMN_AMOUNT, 90, theDecimalRenderer, null));
-            addColumn(new DataColumn(COLUMN_DEBIT, 130, theStringRenderer, null));
-            addColumn(new DataColumn(COLUMN_CREDIT, 130, theStringRenderer, null));
+            addColumn(new DataColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, null));
+            addColumn(new DataColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, null));
+            addColumn(new DataColumn(COLUMN_TRANTYP, WIDTH_TRANTYP, theStringRenderer, null));
+            addColumn(new DataColumn(COLUMN_AMOUNT, WIDTH_AMOUNT, theDecimalRenderer, null));
+            addColumn(new DataColumn(COLUMN_DEBIT, WIDTH_DEBIT, theStringRenderer, null));
+            addColumn(new DataColumn(COLUMN_CREDIT, WIDTH_CREDIT, theStringRenderer, null));
         }
     }
 }

@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,16 +47,59 @@ import uk.co.tolcroft.models.MainWindow;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 import uk.co.tolcroft.subversion.threads.SubversionBackup;
 
+/**
+ * Main Window for JFinanceApp.
+ * @author Tony Washer
+ */
 public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
-    private View theView = null;
+    /**
+     * The data view.
+     */
+    private final View theView;
+
+    /**
+     * The tabs.
+     */
     private JTabbedPane theTabs = null;
+
+    /**
+     * The Events panel.
+     */
     private Extract theExtract = null;
+
+    /**
+     * The Account panel.
+     */
     private AccountTab theAccountCtl = null;
+
+    /**
+     * The report panel.
+     */
     private ReportTab theReportTab = null;
+
+    /**
+     * The SpotPricesPanel.
+     */
     private PricePoint theSpotView = null;
+
+    /**
+     * The maintenance panel.
+     */
     private MaintenanceTab theMaint = null;
+
+    /**
+     * The comboList.
+     */
     private ComboSelect theComboList = null;
+
+    /**
+     * The Load Sheet menus.
+     */
     private JMenuItem theLoadSheet = null;
+
+    /**
+     * The SubversionBackup menu.
+     */
     private JMenuItem theSVBackup = null;
 
     @Override
@@ -63,19 +107,41 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
         return theView;
     }
 
+    /**
+     * Obtain the comboList.
+     * @return the comboList
+     */
     protected ComboSelect getComboList() {
         return theComboList;
     }
 
-    /* Tab headers */
-    private static final String titleExtract = "Extract";
-    private static final String titleAccount = "Account";
-    private static final String titleReport = "Report";
-    private static final String titleSpotView = "SpotPrices";
-    private static final String titleMaint = "Maintenance";
+    /**
+     * Extract tab title.
+     */
+    private static final String TITLE_EXTRACT = "Extract";
 
     /**
-     * Obtain the frame name
+     * Account tab title.
+     */
+    private static final String TITLE_ACCOUNT = "Account";
+
+    /**
+     * Report tab title.
+     */
+    private static final String TITLE_REPORT = "Report";
+
+    /**
+     * SpotPrices tab title.
+     */
+    private static final String TITLE_SPOTVIEW = "SpotPrices";
+
+    /**
+     * Maintenance tab title.
+     */
+    private static final String TITLE_MAINT = "Maintenance";
+
+    /**
+     * Obtain the frame name.
      * @return the frame name
      */
     @Override
@@ -83,10 +149,6 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
         return "Finance";
     }
 
-    /**
-     * Obtain the Help Module
-     * @return the help module
-     */
     @Override
     protected HelpModule getHelpModule() throws JDataException {
         try {
@@ -96,7 +158,10 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
         }
     }
 
-    /* Constructor */
+    /**
+     * Constructor.
+     * @throws JDataException on error
+     */
     public MainTab() throws JDataException {
         /* Create the view */
         theView = new View(this);
@@ -109,7 +174,7 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
     }
 
     /**
-     * Build the main panel
+     * Build the main panel.
      * @return the main panel
      */
     @Override
@@ -119,23 +184,23 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
 
         /* Create the extract table and add to tabbed pane */
         theExtract = new Extract(this);
-        theTabs.addTab(titleExtract, theExtract.getPanel());
+        theTabs.addTab(TITLE_EXTRACT, theExtract.getPanel());
 
         /* Create the accounts control and add to tabbed pane */
         theAccountCtl = new AccountTab(this);
-        theTabs.addTab(titleAccount, theAccountCtl.getPanel());
+        theTabs.addTab(TITLE_ACCOUNT, theAccountCtl.getPanel());
 
         /* Create the Report Tab */
         theReportTab = new ReportTab(this);
-        theTabs.addTab(titleReport, theReportTab.getPanel());
+        theTabs.addTab(TITLE_REPORT, theReportTab.getPanel());
 
         /* Create the SpotView Tab */
         theSpotView = new PricePoint(this);
-        theTabs.addTab(titleSpotView, theSpotView.getPanel());
+        theTabs.addTab(TITLE_SPOTVIEW, theSpotView.getPanel());
 
         /* Create the Maintenance Tab */
         theMaint = new MaintenanceTab(this);
-        theTabs.addTab(titleMaint, theMaint.getPanel());
+        theTabs.addTab(TITLE_MAINT, theMaint.getPanel());
 
         /* Add change listener */
         theTabs.addChangeListener(this);
@@ -146,11 +211,11 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
     }
 
     /**
-     * Add Data Menu items
+     * Add Data Menu items.
      * @param pMenu the menu
      */
     @Override
-    protected void addDataMenuItems(JMenu pMenu) {
+    protected void addDataMenuItems(final JMenu pMenu) {
         /* Create the file menu items */
         theLoadSheet = new JMenuItem("Load Spreadsheet");
         theLoadSheet.addActionListener(this);
@@ -173,27 +238,28 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent evt) {
+    public void actionPerformed(final ActionEvent evt) {
         Object o = evt.getSource();
 
         /* If this event relates to the Load spreadsheet item */
-        if (o == theLoadSheet) {
+        if (theLoadSheet.equals(o)) {
             /* Start a write backup operation */
             loadSpreadsheet();
-        }
 
-        /* If this event relates to the Load spreadsheet item */
-        else if (o == theSVBackup) {
+            /* If this event relates to the Load spreadsheet item */
+        } else if (theSVBackup.equals(o)) {
             /* Start a write backup operation */
             backupSubversion();
-        }
 
-        /* else pass the event on */
-        else
+            /* else pass the event on */
+        } else {
             super.actionPerformed(evt);
+        }
     }
 
-    /* Load Spreadsheet */
+    /**
+     * Load Spreadsheet.
+     */
     public void loadSpreadsheet() {
         /* Allocate the status */
         ThreadStatus<FinanceData> myStatus = new ThreadStatus<FinanceData>(theView, getStatusBar());
@@ -203,7 +269,9 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
         startThread(myThread);
     }
 
-    /* Backup subversion */
+    /**
+     * Backup subversion.
+     */
     public void backupSubversion() {
         /* Allocate the status */
         ThreadStatus<FinanceData> myStatus = new ThreadStatus<FinanceData>(theView, getStatusBar());
@@ -213,36 +281,49 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
         startThread(myThread);
     }
 
-    /* Select an explicit account and period */
-    public void selectAccount(Account pAccount,
-                              DateDayRangeSelect pSource) {
+    /**
+     * Select an explicit account and period.
+     * @param pAccount the account
+     * @param pSource the range
+     */
+    public void selectAccount(final Account pAccount,
+                              final DateDayRangeSelect pSource) {
         /* Pass through to the Account control */
         theAccountCtl.selectAccount(pAccount, pSource);
 
         /* Goto the Accounts tab */
-        gotoNamedTab(titleAccount);
+        gotoNamedTab(TITLE_ACCOUNT);
     }
 
-    /* Select an explicit extract period */
-    public void selectPeriod(DateDayRangeSelect pSource) {
+    /**
+     * Select an explicit extract period.
+     * @param pSource the range
+     */
+    public void selectPeriod(final DateDayRangeSelect pSource) {
         /* Pass through to the Extract */
         theExtract.selectPeriod(pSource);
 
         /* Goto the Extract tab */
-        gotoNamedTab(titleExtract);
+        gotoNamedTab(TITLE_EXTRACT);
     }
 
-    /* Select an explicit account for maintenance */
-    public void selectAccountMaint(Account pAccount) {
+    /**
+     * Select an explicit account for maintenance.
+     * @param pAccount the account
+     */
+    public void selectAccountMaint(final Account pAccount) {
         /* Pass through to the Account control */
         theMaint.selectAccount(pAccount);
 
         /* Goto the Accounts tab */
-        gotoNamedTab(titleMaint);
+        gotoNamedTab(TITLE_MAINT);
     }
 
-    /* Goto the specific tab */
-    public void gotoNamedTab(String pTabName) {
+    /**
+     * Goto the specific tab.
+     * @param pTabName the tab name
+     */
+    public void gotoNamedTab(final String pTabName) {
         /* Access the Named index */
         int iIndex = theTabs.indexOfTab(pTabName);
 
@@ -250,7 +331,10 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
         theTabs.setSelectedIndex(iIndex);
     }
 
-    /* refresh data */
+    /**
+     * refresh data.
+     * @throws JDataException on error
+     */
     public void refreshData() throws JDataException {
         /* Create the combo list */
         theComboList = new ComboSelect(theView);
@@ -266,7 +350,6 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
         setVisibility();
     }
 
-    /* Set visibility */
     @Override
     public void setVisibility() {
         int iIndex;
@@ -284,87 +367,95 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
         hasWorker = hasWorker();
 
         /* Access the Extract panel and determine its status */
-        iIndex = theTabs.indexOfTab(titleExtract);
+        iIndex = theTabs.indexOfTab(TITLE_EXTRACT);
         showTab = (!hasWorker && (!hasUpdates || theExtract.hasUpdates()));
 
         /* Enable/Disable the extract tab */
-        if (iIndex != -1)
+        if (iIndex != -1) {
             theTabs.setEnabledAt(iIndex, showTab);
+        }
 
         /* Access the AccountCtl panel and determine its status */
-        iIndex = theTabs.indexOfTab(titleAccount);
+        iIndex = theTabs.indexOfTab(TITLE_ACCOUNT);
         showTab = (!hasWorker && (!hasUpdates || theAccountCtl.hasUpdates()));
 
         /* Enable/Disable the account control tab */
-        if (iIndex != -1)
+        if (iIndex != -1) {
             theTabs.setEnabledAt(iIndex, showTab);
+        }
 
         /* Access the Report panel */
-        iIndex = theTabs.indexOfTab(titleReport);
+        iIndex = theTabs.indexOfTab(TITLE_REPORT);
         showTab = (!hasWorker && !hasUpdates);
 
         /* Enable/Disable the reports tab */
-        if (iIndex != -1)
+        if (iIndex != -1) {
             theTabs.setEnabledAt(iIndex, showTab);
+        }
 
         /* Access the SpotView panel and determine its status */
-        iIndex = theTabs.indexOfTab(titleSpotView);
+        iIndex = theTabs.indexOfTab(TITLE_SPOTVIEW);
         showTab = (!hasWorker && (!hasUpdates || theSpotView.hasUpdates()));
 
         /* Enable/Disable the spotView tab */
-        if (iIndex != -1)
+        if (iIndex != -1) {
             theTabs.setEnabledAt(iIndex, showTab);
+        }
 
         /* Access the Maintenance panel */
-        iIndex = theTabs.indexOfTab(titleMaint);
+        iIndex = theTabs.indexOfTab(TITLE_MAINT);
         showTab = (!hasWorker && (!hasUpdates || theMaint.hasUpdates()));
 
         /* Enable/Disable the maintenance tab */
-        if (iIndex != -1)
+        if (iIndex != -1) {
             theTabs.setEnabledAt(iIndex, showTab);
+        }
 
         /* If we have updates disable the load backup/database option */
         theLoadSheet.setEnabled(!hasUpdates);
     }
 
-    /* Change listener */
+    /**
+     * Change listener.
+     * @param e the event
+     */
     @Override
-    public void stateChanged(ChangeEvent e) {
+    public void stateChanged(final ChangeEvent e) {
         /* Ignore if it is not the tabs */
-        if (e.getSource() != theTabs)
+        if (!theTabs.equals(e.getSource())) {
             return;
+        }
 
         /* Determine the focus */
         determineFocus();
     }
 
-    /* Change listener */
+    /**
+     * Determine focus.
+     */
     private void determineFocus() {
         /* Access the selected component */
         Component myComponent = theTabs.getSelectedComponent();
 
         /* If the selected component is extract */
-        if (myComponent == (Component) theExtract.getPanel()) {
+        if (myComponent.equals(theExtract.getPanel())) {
             /* Set the debug focus */
             theExtract.getDataEntry().setFocus();
             theExtract.requestFocusInWindow();
-        }
 
-        /* If the selected component is account */
-        else if (myComponent == (Component) theAccountCtl.getPanel()) {
+            /* If the selected component is account */
+        } else if (myComponent.equals(theAccountCtl.getPanel())) {
             /* Determine focus of accounts */
             theAccountCtl.determineFocus();
-        }
 
-        /* If the selected component is SpotView */
-        else if (myComponent == (Component) theSpotView.getPanel()) {
+            /* If the selected component is SpotView */
+        } else if (myComponent.equals(theSpotView.getPanel())) {
             /* Set the debug focus */
             theSpotView.getDataEntry().setFocus();
             theSpotView.requestFocusInWindow();
-        }
 
-        /* If the selected component is Maintenance */
-        else if (myComponent == (Component) theMaint.getPanel()) {
+            /* If the selected component is Maintenance */
+        } else if (myComponent.equals(theMaint.getPanel())) {
             /* Determine focus of maintenance */
             theMaint.determineFocus();
         }

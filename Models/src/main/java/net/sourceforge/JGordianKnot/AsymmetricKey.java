@@ -78,13 +78,13 @@ public class AsymmetricKey implements JDataContents {
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (pField == FIELD_KEYMODE) {
+        if (FIELD_KEYMODE.equals(pField)) {
             return theKeyMode;
         }
-        if (pField == FIELD_CIPHERMAP) {
+        if (FIELD_CIPHERMAP.equals(pField)) {
             return theCipherMap;
         }
-        if (pField == FIELD_SYMKEYMAP) {
+        if (FIELD_SYMKEYMAP.equals(pField)) {
             return theSymKeyMap;
         }
         return null;

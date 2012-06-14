@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,6 +25,7 @@ package uk.co.tolcroft.finance.ui.controls;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -31,46 +33,96 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
+import net.sourceforge.JDataManager.Difference;
+import net.sourceforge.JDataManager.EventManager;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.TaxYear;
 import uk.co.tolcroft.finance.data.TaxYear.TaxYearList;
 import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.data.DataList.DataListIterator;
-import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
 
+/**
+ * TaxYear selection panel.
+ * @author Tony Washer
+ */
 public class TaxYearSelect extends JPanel {
+    /**
+     * Serial Id.
+     */
     private static final long serialVersionUID = 1313452754119158982L;
 
-    /* Members */
-    private TaxYearSelect theSelf = this;
-    private StdPanel theParent = null;
-    private View theView = null;
-    private JComboBox theYearsBox = null;
-    private JCheckBox theShowDeleted = null;
-    private TaxYearList theTaxYears = null;
+    /**
+     * Data view.
+     */
+    private final View theView;
+
+    /**
+     * Years box.
+     */
+    private final JComboBox theYearsBox;
+
+    /**
+     * Show Deleted check box.
+     */
+    private final JCheckBox theShowDeleted;
+
+    /**
+     * Current state.
+     */
     private YearState theState = null;
+
+    /**
+     * Saved state.
+     */
     private YearState theSavePoint = null;
-    private boolean yearsPopulated = false;
+
+    /**
+     * Are we refreshing data?
+     */
     private boolean refreshingData = false;
 
-    /* Access methods */
-    public TaxYear getTaxYear() {
+    /**
+     * Event Manager.
+     */
+    private final EventManager theManager;
+
+    /**
+     * Get the selected TaxYear.
+     * @return the tax year
+     */
+    public final TaxYear getTaxYear() {
         return theState.getTaxYear();
     }
 
-    public boolean doShowDeleted() {
+    /**
+     * Are we showing deleted Years?
+     * @return true/false
+     */
+    public final boolean doShowDeleted() {
         return theState.doShowDeleted();
     }
 
-    /* Constructor */
-    public TaxYearSelect(View pView,
-                         StdPanel pMaint) {
+    /**
+     * Obtain the event manager.
+     * @return the event manager.
+     */
+    public EventManager getManager() {
+        return theManager;
+    }
+
+    /**
+     * Constructor.
+     * @param pView the data view
+     */
+    public TaxYearSelect(final View pView) {
         JLabel mySelect;
         TaxYearListener myListener = new TaxYearListener();
 
         /* Store table and view details */
         theView = pView;
-        theParent = pMaint;
+
+        /* Create the Event Manager */
+        theManager = new EventManager(this);
 
         /* Create initial state */
         theState = new YearState();
@@ -93,7 +145,7 @@ public class TaxYearSelect extends JPanel {
         theShowDeleted.addItemListener(myListener);
 
         /* Create the selection panel */
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Selection"));
+        setBorder(BorderFactory.createTitledBorder("Selection"));
 
         /* Create the layout for the panel */
         GroupLayout myLayout = new GroupLayout(this);
@@ -114,7 +166,7 @@ public class TaxYearSelect extends JPanel {
     }
 
     /**
-     * Create SavePoint
+     * Create SavePoint.
      */
     public void createSavePoint() {
         /* Create the savePoint */
@@ -122,7 +174,7 @@ public class TaxYearSelect extends JPanel {
     }
 
     /**
-     * Restore SavePoint
+     * Restore SavePoint.
      */
     public void restoreSavePoint() {
         /* Restore the savePoint */
@@ -132,63 +184,63 @@ public class TaxYearSelect extends JPanel {
         theState.applyState();
     }
 
-    /* refreshData */
-    public void refreshData() {
+    /**
+     * refresh Data.
+     */
+    public final void refreshData() {
         FinanceData myData;
         TaxYear myYear;
         TaxYear myFirst;
-
         DataListIterator<TaxYear> myYearIterator;
 
         /* Access the data */
         myData = theView.getData();
 
         /* Access years and regimes */
-        theTaxYears = myData.getTaxYears();
+        TaxYearList myTaxYears = myData.getTaxYears();
 
         /* Note that we are refreshing data */
         refreshingData = true;
 
         /* If we have years already populated */
-        if (yearsPopulated) {
+        if (theYearsBox.getItemCount() > 0) {
             /* If we have a selected year */
             if (getTaxYear() != null) {
                 /* Find it in the new list */
-                theState.setTaxYear(theTaxYears.searchFor(getTaxYear().getTaxYear()));
+                theState.setTaxYear(myTaxYears.searchFor(getTaxYear().getTaxYear()));
             }
 
             /* Remove the years */
             theYearsBox.removeAllItems();
-            yearsPopulated = false;
         }
 
         /* Create a Tax Year iterator */
-        myYearIterator = theTaxYears.listIterator(true);
+        myYearIterator = myTaxYears.listIterator(true);
         myFirst = null;
 
         /* Add the Tax Years to the years box in reverse order */
         while ((myYear = myYearIterator.previous()) != null) {
             /* If the year is not deleted */
-            if ((!doShowDeleted()) && (myYear.isDeleted()))
+            if ((!doShowDeleted()) && (myYear.isDeleted())) {
                 continue;
+            }
 
             /* Note the first in the list */
-            if (myFirst == null)
+            if (myFirst == null) {
                 myFirst = myYear;
+            }
 
             /* Add the item to the list */
             theYearsBox.addItem(Integer.toString(myYear.getTaxYear().getYear()));
-            yearsPopulated = true;
         }
 
         /* If we have a selected year */
         if (getTaxYear() != null) {
             /* Select it in the new list */
             theYearsBox.setSelectedItem(Integer.toString(getTaxYear().getTaxYear().getYear()));
-        }
 
-        /* Else we have no year currently selected */
-        else if (yearsPopulated) {
+            /* Else we have no year currently selected */
+        } else if (theYearsBox.getItemCount() > 0) {
             /* Select the first account */
             theYearsBox.setSelectedIndex(0);
             theState.setTaxYear(myFirst);
@@ -199,96 +251,115 @@ public class TaxYearSelect extends JPanel {
     }
 
     /**
-     * TaxYear Listener class
+     * TaxYear Listener class.
      */
-    private class TaxYearListener implements ItemListener {
+    private final class TaxYearListener implements ItemListener {
         /* ItemStateChanged listener event */
         @Override
-        public void itemStateChanged(ItemEvent evt) {
+        public void itemStateChanged(final ItemEvent evt) {
             Object o = evt.getSource();
 
             /* Ignore selection if refreshing data */
-            if (refreshingData)
+            if (refreshingData) {
                 return;
-
-            /* If this event relates to the years box */
-            if (o == theYearsBox) {
-                if (evt.getStateChange() == ItemEvent.SELECTED) {
-                    String myName = (String) evt.getItem();
-
-                    /* Select the new year and notify the change */
-                    theState.setTaxYear(theTaxYears.searchFor(myName));
-                    theParent.notifySelection(theSelf);
-                }
             }
 
-            /* If this event relates to the showDeleted box */
-            if (o == theShowDeleted) {
-                /* Note the new criteria and re-build lists */
-                theState.setDoShowDeleted(theShowDeleted.isSelected());
+            /* If this event relates to the years box */
+            if ((theYearsBox.equals(o)) && (evt.getStateChange() == ItemEvent.SELECTED)) {
+                /* Select the new year and notify the change */
+                TaxYear myYear = (TaxYear) evt.getItem();
+                if (theState.setTaxYear(myYear)) {
+                    theManager.fireStateChanged();
+                }
+
+                /* If this event relates to the showDeleted box */
+            } else if ((theShowDeleted.equals(o)) && (theState.setDoShowDeleted(theShowDeleted.isSelected()))) {
+                /* Rebuild lists */
                 refreshData();
             }
         }
     }
 
-    /* SavePoint values */
-    private class YearState {
-        /* Members */
+    /**
+     * SavePoint class.
+     */
+    private final class YearState {
+        /**
+         * Selected tax year.
+         */
         private TaxYear theTaxYear = null;
+
+        /**
+         * Are we showing deleted items?
+         */
         private boolean doShowDeleted = false;
 
-        /* Access methods */
+        /**
+         * Get selected tax year.
+         * @return the tax year
+         */
         private TaxYear getTaxYear() {
             return theTaxYear;
         }
 
+        /**
+         * Are we showing deleted items?
+         * @return true/false
+         */
         private boolean doShowDeleted() {
             return doShowDeleted;
         }
 
         /**
-         * Constructor
+         * Constructor.
          */
         private YearState() {
             theTaxYear = null;
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pState state to copy from
          */
-        private YearState(YearState pState) {
+        private YearState(final YearState pState) {
             theTaxYear = pState.getTaxYear();
             doShowDeleted = pState.doShowDeleted();
         }
 
         /**
-         * Set new Tax Year
+         * Set new Tax Year.
          * @param pYear the new Tax Year
+         * @return true/false
          */
-        private void setTaxYear(TaxYear pYear) {
-            /* Set the new year and apply State */
-            theTaxYear = pYear;
+        private boolean setTaxYear(final TaxYear pYear) {
+            /* Adjust the selected account */
+            if (!Difference.isEqual(pYear, theTaxYear)) {
+                theTaxYear = pYear;
+                return true;
+            }
+            return false;
         }
 
         /**
-         * Set doShowDeleted indication
-         * @param doShowDeleted true/false
+         * Set doShowDeleted indication.
+         * @param pShowDeleted true/false
+         * @return true/false
          */
-        private void setDoShowDeleted(boolean doShowDeleted) {
+        private boolean setDoShowDeleted(final boolean pShowDeleted) {
             /* Adjust the flag */
-            this.doShowDeleted = doShowDeleted;
+            if (doShowDeleted != pShowDeleted) {
+                doShowDeleted = pShowDeleted;
+                return true;
+            }
+            return false;
         }
 
         /**
-         * Apply the State
+         * Apply the State.
          */
         private void applyState() {
             /* Adjust the lock-down */
-            if (theTaxYear != null)
-                theYearsBox.setSelectedItem(Integer.toString(theTaxYear.getTaxYear().getYear()));
-            else
-                theYearsBox.setSelectedItem(null);
+            theYearsBox.setSelectedItem(theTaxYear);
             theShowDeleted.setSelected(doShowDeleted);
         }
     }

@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,6 +29,7 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -36,68 +38,133 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
 import net.sourceforge.JDataManager.Difference;
+import net.sourceforge.JDataManager.EventManager;
 import net.sourceforge.JDateButton.JDateButton;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayButton;
 import net.sourceforge.JDateDay.DateDayRange;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.TaxYear;
+import uk.co.tolcroft.finance.data.TaxYear.TaxYearList;
 import uk.co.tolcroft.finance.views.EventAnalysis;
 import uk.co.tolcroft.finance.views.EventAnalysis.AnalysisYear;
 import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.data.DataList.DataListIterator;
-import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
 
+/**
+ * Report selection panel.
+ * @author Tony Washer
+ */
 public class ReportSelect extends JPanel {
+    /**
+     * Serial Id.
+     */
     private static final long serialVersionUID = 4943254899793653170L;
 
-    /* Members */
-    private ReportSelect theSelf = this;
-    private StdPanel theParent = null;
-    private View theView = null;
-    private DateDayButton theDateButton = null;
-    private JComboBox theReportBox = null;
-    private JComboBox theYearsBox = null;
-    private JLabel theRepLabel = null;
+    /**
+     * Print operation string.
+     */
+    public static final String ACTION_PRINT = "PrintRequest";
+
+    /**
+     * Data view.
+     */
+    private final View theView;
+
+    /**
+     * Date button.
+     */
+    private final DateDayButton theDateButton;
+
+    /**
+     * Reports comboBox.
+     */
+    private final JComboBox theReportBox;
+
+    /**
+     * Years comboBox.
+     */
+    private final JComboBox theYearsBox;
+
+    /**
+     * Years label.
+     */
     private JLabel theYearLabel = null;
+
+    /**
+     * Date label.
+     */
     private JLabel theDateLabel = null;
-    private JButton thePrintButton = null;
-    private TaxYear.TaxYearList theYears = null;
+
+    /**
+     * Print button.
+     */
+    private final JButton thePrintButton;
+
+    /**
+     * Current state.
+     */
     private ReportState theState = null;
+
+    /**
+     * Saved state.
+     */
     private ReportState theSavePoint = null;
-    private boolean yearsPopulated = false;
+
+    /**
+     * Are we refreshing data?.
+     */
     private boolean refreshingData = false;
 
-    /* Access methods */
+    /**
+     * Event Manager.
+     */
+    private final EventManager theManager;
+
+    /**
+     * Obtain the report type.
+     * @return the report type
+     */
     public ReportType getReportType() {
         return theState.getType();
     }
 
+    /**
+     * Obtain the selected taxYear.
+     * @return the tax year
+     */
     public TaxYear getTaxYear() {
         return theState.getYear();
     }
 
+    /**
+     * Obtain the report date.
+     * @return the report date.
+     */
     public DateDay getReportDate() {
         return theState.getDate();
     }
 
-    /* Report descriptions */
-    private static final String Assets = "Asset";
-    private static final String IncomeExp = "Income/Expense";
-    private static final String Transaction = "Transaction";
-    private static final String Taxation = "Taxation";
-    private static final String Instant = "Instant";
-    private static final String Market = "Market";
-    private static final String Breakdown = "Breakdown";
+    /**
+     * Obtain the event manager.
+     * @return the event manager.
+     */
+    public EventManager getManager() {
+        return theManager;
+    }
 
-    /* Constructor */
-    public ReportSelect(View pView,
-                        StdPanel pReport) {
+    /**
+     * Constructor.
+     * @param pView the data view
+     */
+    public ReportSelect(final View pView) {
         ReportListener myListener = new ReportListener();
 
         /* Store table and view details */
         theView = pView;
-        theParent = pReport;
+
+        /* Create the Event Manager */
+        theManager = new EventManager(this);
 
         /* Create the boxes */
         theReportBox = new JComboBox();
@@ -113,17 +180,17 @@ public class ReportSelect extends JPanel {
         refreshData(null);
 
         /* Add the ReportTypes to the report box */
-        theReportBox.addItem(Instant);
-        theReportBox.addItem(Assets);
-        theReportBox.addItem(IncomeExp);
-        theReportBox.addItem(Transaction);
-        theReportBox.addItem(Taxation);
-        theReportBox.addItem(Breakdown);
-        theReportBox.addItem(Market);
-        theReportBox.setSelectedItem(Instant);
+        theReportBox.addItem(ReportType.INSTANT);
+        theReportBox.addItem(ReportType.ASSET);
+        theReportBox.addItem(ReportType.INCOME);
+        theReportBox.addItem(ReportType.TRANSACTION);
+        theReportBox.addItem(ReportType.TAX);
+        theReportBox.addItem(ReportType.BREAKDOWN);
+        theReportBox.addItem(ReportType.MARKET);
+        theReportBox.setSelectedItem(ReportType.INSTANT);
 
         /* Create the labels */
-        theRepLabel = new JLabel("Report:");
+        JLabel myRepLabel = new JLabel("Report:");
         theYearLabel = new JLabel("Year:");
         theDateLabel = new JLabel("Date:");
 
@@ -132,7 +199,7 @@ public class ReportSelect extends JPanel {
         thePrintButton.addActionListener(myListener);
 
         /* Create the selection panel */
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Report Selection"));
+        setBorder(BorderFactory.createTitledBorder("Report Selection"));
 
         /* Create the layout for the panel */
         GroupLayout panelLayout = new GroupLayout(this);
@@ -143,7 +210,7 @@ public class ReportSelect extends JPanel {
                 .addGroup(panelLayout
                                   .createSequentialGroup()
                                   .addContainerGap()
-                                  .addComponent(theRepLabel)
+                                  .addComponent(myRepLabel)
                                   .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                   .addComponent(theReportBox)
                                   .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
@@ -163,7 +230,7 @@ public class ReportSelect extends JPanel {
         panelLayout.setVerticalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addGroup(panelLayout
                                   .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                  .addComponent(theRepLabel)
+                                  .addComponent(myRepLabel)
                                   .addComponent(theReportBox)
                                   .addComponent(theYearLabel)
                                   .addComponent(theYearsBox, GroupLayout.PREFERRED_SIZE,
@@ -182,13 +249,15 @@ public class ReportSelect extends JPanel {
         theDateButton.addPropertyChangeListener(DateDayButton.PROPERTY_DATE, myListener);
     }
 
-    /* refresh data */
-    public void refreshData(EventAnalysis pAnalysis) {
+    /**
+     * Refresh data.
+     * @param pAnalysis the analysis.
+     */
+    public final void refreshData(final EventAnalysis pAnalysis) {
         FinanceData myData;
         AnalysisYear myYear;
         DateDayRange myRange;
         TaxYear myTaxYear = theState.getYear();
-
         DataListIterator<AnalysisYear> myIterator;
 
         /* Access the data */
@@ -196,7 +265,7 @@ public class ReportSelect extends JPanel {
         myRange = theView.getRange();
 
         /* Access tax Years */
-        theYears = myData.getTaxYears();
+        TaxYearList myYears = myData.getTaxYears();
 
         /* Note that we are refreshing data */
         refreshingData = true;
@@ -205,16 +274,15 @@ public class ReportSelect extends JPanel {
         setRange(myRange);
 
         /* If we have years already populated */
-        if (yearsPopulated) {
+        if (theYearsBox.getItemCount() > 0) {
             /* If we have a selected year */
             if (myTaxYear != null) {
                 /* Find it in the new list */
-                myTaxYear = theYears.searchFor(myTaxYear.getTaxYear());
+                myTaxYear = myYears.searchFor(myTaxYear.getTaxYear());
             }
 
             /* Remove the types */
             theYearsBox.removeAllItems();
-            yearsPopulated = false;
         }
 
         /* If we have an analysis */
@@ -225,18 +293,16 @@ public class ReportSelect extends JPanel {
             /* Add the Year values to the years box in reverse order */
             while ((myYear = myIterator.previous()) != null) {
                 /* Add the item to the list */
-                theYearsBox.addItem(Integer.toString(myYear.getDate().getYear()));
-                yearsPopulated = true;
+                theYearsBox.addItem(myYear);
             }
 
             /* If we have a selected year */
             if (myTaxYear != null) {
                 /* Select it in the new list */
-                theYearsBox.setSelectedItem(Integer.toString(myTaxYear.getTaxYear().getYear()));
-            }
+                theYearsBox.setSelectedItem(myTaxYear);
 
-            /* Else we have no year currently selected */
-            else if (yearsPopulated) {
+                /* Else we have no year currently selected */
+            } else if (theYearsBox.getItemCount() > 0) {
                 /* Select the first year */
                 theYearsBox.setSelectedIndex(0);
                 theState.setYear(myIterator.peekLast().getTaxYear());
@@ -247,8 +313,11 @@ public class ReportSelect extends JPanel {
         refreshingData = false;
     }
 
-    /* Set the range for the date box */
-    public void setRange(DateDayRange pRange) {
+    /**
+     * Set the range for the date box.
+     * @param pRange the date range
+     */
+    public final void setRange(final DateDayRange pRange) {
         DateDay myStart = (pRange == null) ? null : pRange.getStart();
         DateDay myEnd = (pRange == null) ? null : pRange.getEnd();
 
@@ -258,7 +327,7 @@ public class ReportSelect extends JPanel {
     }
 
     /**
-     * Create SavePoint
+     * Create SavePoint.
      */
     public void createSavePoint() {
         /* Create the savePoint */
@@ -266,7 +335,7 @@ public class ReportSelect extends JPanel {
     }
 
     /**
-     * Restore SavePoint
+     * Restore SavePoint.
      */
     public void restoreSavePoint() {
         /* Restore the savePoint */
@@ -276,8 +345,8 @@ public class ReportSelect extends JPanel {
         theState.applyState();
     }
 
-    /* Lock/Unlock the selection */
-    public void setLockDown() {
+    @Override
+    public void setEnabled(final boolean bEnable) {
         ReportType myType = theState.getType();
 
         boolean isDate = ((myType == ReportType.INSTANT) || (myType == ReportType.MARKET));
@@ -288,114 +357,108 @@ public class ReportSelect extends JPanel {
         theDateLabel.setVisible(isDate);
         theYearsBox.setVisible(isYear);
         theYearLabel.setVisible(isYear);
+
+        theYearsBox.setEnabled(bEnable);
+        theDateButton.setEnabled(bEnable);
+        theReportBox.setEnabled(bEnable);
     }
 
     /**
-     * Report Listener class
+     * Report Listener class.
      */
-    private class ReportListener implements ActionListener, PropertyChangeListener, ItemListener {
-        /* actionPerformed listener event */
+    private final class ReportListener implements ActionListener, PropertyChangeListener, ItemListener {
         @Override
-        public void actionPerformed(ActionEvent evt) {
+        public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();
 
             /* If this event relates to the Print button */
-            if (o == thePrintButton) {
-                /* Pass command to the table */
-                theParent.printIt();
+            if (thePrintButton.equals(o)) {
+                /* Request a print operation */
+                theManager.fireActionPerformed(ACTION_PRINT);
             }
         }
 
         @Override
-        public void propertyChange(PropertyChangeEvent evt) {
+        public void propertyChange(final PropertyChangeEvent evt) {
             /* if this date relates to the Date button */
-            if (evt.getSource() == theDateButton) {
-                /* Access the value */
-                if (theState.setDate(theDateButton))
-                    theParent.notifySelection(theSelf);
+            if ((theDateButton.equals(evt.getSource())) && (theState.setDate(theDateButton))) {
+                /* Notify that the state has changed */
+                theManager.fireStateChanged();
             }
         }
 
-        /* ItemStateChanged listener event */
         @Override
-        public void itemStateChanged(ItemEvent evt) {
-            String myName;
-            ReportType myType = null;
-            boolean bChange = false;
+        public void itemStateChanged(final ItemEvent evt) {
             Object o = evt.getSource();
 
             /* Ignore selection if refreshing data */
-            if (refreshingData)
+            if (refreshingData) {
                 return;
+            }
 
             /* If this event relates to the years box */
-            if (o == theYearsBox) {
-                myName = (String) evt.getItem();
-                if (evt.getStateChange() == ItemEvent.SELECTED) {
-                    /* Select the new year */
-                    theState.setYear(theYears.searchFor(myName));
-                    bChange = true;
+            if ((theYearsBox.equals(o)) && (evt.getStateChange() == ItemEvent.SELECTED)) {
+                TaxYear myYear = (TaxYear) evt.getItem();
+                if (theState.setYear(myYear)) {
+                    theManager.fireStateChanged();
                 }
-            }
 
-            /* If this event relates to the report box */
-            else if (o == theReportBox) {
-                if (evt.getStateChange() == ItemEvent.SELECTED) {
-                    /* Determine the new report */
-                    myName = (String) evt.getItem();
-                    bChange = true;
-                    if (myName == Assets)
-                        myType = ReportType.ASSET;
-                    else if (myName == IncomeExp)
-                        myType = ReportType.INCOME;
-                    else if (myName == Transaction)
-                        myType = ReportType.TRANSACTION;
-                    else if (myName == Taxation)
-                        myType = ReportType.TAX;
-                    else if (myName == Instant)
-                        myType = ReportType.INSTANT;
-                    else if (myName == Market)
-                        myType = ReportType.MARKET;
-                    else if (myName == Breakdown)
-                        myType = ReportType.BREAKDOWN;
-                    else
-                        bChange = false;
-
-                    /* Update state if we have a change */
-                    if (bChange)
-                        theState.setType(myType);
+                /* If this event relates to the report box */
+            } else if ((theReportBox.equals(o)) && (evt.getStateChange() == ItemEvent.SELECTED)) {
+                /* Determine the new report */
+                ReportType myType = (ReportType) evt.getItem();
+                if (theState.setType(myType)) {
+                    theManager.fireStateChanged();
                 }
-            }
-
-            /* If we have a change, notify the main program */
-            if (bChange) {
-                theParent.notifySelection(theSelf);
             }
         }
     }
 
-    /* SavePoint values */
-    private class ReportState {
-        /* Members */
+    /**
+     * SavePoint values.
+     */
+    private final class ReportState {
+        /**
+         * The selected date.
+         */
         private DateDay theDate = null;
+
+        /**
+         * The selected tax year.
+         */
         private TaxYear theYear = null;
+
+        /**
+         * The selected report type.
+         */
         private ReportType theType = null;
 
-        /* Access methods */
+        /**
+         * Obtain the selected date.
+         * @return the date
+         */
         private DateDay getDate() {
             return theDate;
         }
 
+        /**
+         * Obtain the selected tax year.
+         * @return the tax year
+         */
         private TaxYear getYear() {
             return theYear;
         }
 
+        /**
+         * Obtain the selected report type.
+         * @return the report type
+         */
         private ReportType getType() {
             return theType;
         }
 
         /**
-         * Constructor
+         * Constructor.
          */
         private ReportState() {
             theDate = new DateDay();
@@ -404,21 +467,21 @@ public class ReportSelect extends JPanel {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pState state to copy from
          */
-        private ReportState(ReportState pState) {
+        private ReportState(final ReportState pState) {
             theDate = new DateDay(pState.getDate());
             theYear = pState.getYear();
             theType = pState.getType();
         }
 
         /**
-         * Set new Date
+         * Set new Date.
          * @param pButton the Button with the new date
          * @return true/false did a change occur
          */
-        private boolean setDate(JDateButton pButton) {
+        private boolean setDate(final JDateButton pButton) {
             /* Adjust the date and build the new range */
             DateDay myDate = new DateDay(pButton.getSelectedDate());
             if (!Difference.isEqual(myDate, theDate)) {
@@ -429,41 +492,99 @@ public class ReportSelect extends JPanel {
         }
 
         /**
-         * Set new Tax Year
+         * Set new Tax Year.
          * @param pYear the new Tax Year
+         * @return true/false did a change occur
          */
-        private void setYear(TaxYear pYear) {
-            /* Set the new year and apply State */
-            theYear = pYear;
-            applyState();
+        private boolean setYear(final TaxYear pYear) {
+            if (!Difference.isEqual(pYear, theYear)) {
+                theYear = pYear;
+                return true;
+            }
+            return false;
         }
 
         /**
-         * Set new Report Type
+         * Set new Report Type.
          * @param pType the new type
+         * @return true/false did a change occur
          */
-        private void setType(ReportType pType) {
-            /* Set the new type and apply State */
-            theType = pType;
-            applyState();
+        private boolean setType(final ReportType pType) {
+            if (!theType.equals(pType)) {
+                /* Set the new type and apply State */
+                theType = pType;
+                applyState();
+                return true;
+            }
+            return false;
         }
 
         /**
-         * Apply the State
+         * Apply the State.
          */
         private void applyState() {
             /* Adjust the lock-down */
-            setLockDown();
+            setEnabled(true);
             theDateButton.setSelectedDateDay(theDate);
-            if (theYear != null)
-                theYearsBox.setSelectedItem(Integer.toString(theYear.getTaxYear().getYear()));
-            else
-                theYearsBox.setSelectedItem(null);
+            theYearsBox.setSelectedItem(theYear);
         }
     }
 
-    /* Report Types */
+    /**
+     * Report Types.
+     */
     public enum ReportType {
-        ASSET, INCOME, TAX, TRANSACTION, INSTANT, BREAKDOWN, MARKET;
+        /**
+         * Asset Report.
+         */
+        ASSET("Assets"),
+
+        /**
+         * Income/Expense Report.
+         */
+        INCOME("Income/Expense"),
+
+        /**
+         * Tax Report.
+         */
+        TAX("Taxation"),
+
+        /**
+         * Transaction Report.
+         */
+        TRANSACTION("Transaction"),
+
+        /**
+         * Instant Asset Report.
+         */
+        INSTANT("Instant"),
+
+        /**
+         * IncomeBreakdown Report.
+         */
+        BREAKDOWN("IncomeBreakdown"),
+
+        /**
+         * Market Report.
+         */
+        MARKET("Market");
+
+        /**
+         * Report Name.
+         */
+        private final String theName;
+
+        @Override
+        public String toString() {
+            return theName;
+        }
+
+        /**
+         * Constructor.
+         * @param pName the report name
+         */
+        private ReportType(final String pName) {
+            theName = pName;
+        }
     }
 }

@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,9 +38,13 @@ import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
 
+/**
+ * Extension of AccountPrice to cater for spot prices.
+ * @author Tony Washer
+ */
 public class SpotPrices implements JDataContents {
     /**
-     * Report fields
+     * Report fields.
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(SpotPrices.class.getSimpleName());
 
@@ -48,28 +53,56 @@ public class SpotPrices implements JDataContents {
         return FIELD_DEFS;
     }
 
-    /* Field IDs */
+    /**
+     * View Field Id.
+     */
     public static final JDataField FIELD_VIEW = FIELD_DEFS.declareLocalField("View");
+
+    /**
+     * AccountType Field Id.
+     */
     public static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField("AccountType");
+
+    /**
+     * Date Field Id.
+     */
     public static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
+
+    /**
+     * Next Field Id.
+     */
     public static final JDataField FIELD_NEXT = FIELD_DEFS.declareLocalField("Next");
+
+    /**
+     * Previous Field Id.
+     */
     public static final JDataField FIELD_PREV = FIELD_DEFS.declareLocalField("Previous");
+
+    /**
+     * Prices Field Id.
+     */
     public static final JDataField FIELD_PRICES = FIELD_DEFS.declareLocalField("Prices");
 
     @Override
-    public Object getFieldValue(JDataField pField) {
-        if (pField == FIELD_VIEW)
+    public Object getFieldValue(final JDataField pField) {
+        if (FIELD_VIEW.equals(pField)) {
             return theView;
-        if (pField == FIELD_TYPE)
+        }
+        if (FIELD_TYPE.equals(pField)) {
             return theType;
-        if (pField == FIELD_DATE)
+        }
+        if (FIELD_DATE.equals(pField)) {
             return theDate;
-        if (pField == FIELD_NEXT)
+        }
+        if (FIELD_NEXT.equals(pField)) {
             return getNext();
-        if (pField == FIELD_PREV)
+        }
+        if (FIELD_PREV.equals(pField)) {
             return getPrev();
-        if (pField == FIELD_PRICES)
+        }
+        if (FIELD_PRICES.equals(pField)) {
             return thePrices;
+        }
         return null;
     }
 
@@ -78,49 +111,100 @@ public class SpotPrices implements JDataContents {
         return FIELD_DEFS.getName();
     }
 
-    /* Members */
-    private View theView = null;
-    private AccountType theType = null;
-    private DateDay theDate = null;
-    private SpotList thePrices = null;
+    /**
+     * The view.
+     */
+    private final View theView;
 
-    /* Access methods */
+    /**
+     * The account type.
+     */
+    private final AccountType theType;
+
+    /**
+     * The date.
+     */
+    private final DateDay theDate;
+
+    /**
+     * The prices.
+     */
+    private final SpotList thePrices;
+
+    /**
+     * Obtain account type.
+     * @return the account type
+     */
     public AccountType getAccountType() {
         return theType;
     }
 
+    /**
+     * Obtain view.
+     * @return the view
+     */
     protected View getView() {
         return theView;
     }
 
+    /**
+     * Obtain dataSet.
+     * @return the dataSet
+     */
     protected FinanceData getData() {
         return theView.getData();
     }
 
+    /**
+     * Obtain date.
+     * @return the date
+     */
     public DateDay getDate() {
         return theDate;
     }
 
+    /**
+     * Obtain next date.
+     * @return the date
+     */
     public DateDay getNext() {
         return thePrices.getNext();
     }
 
+    /**
+     * Obtain previous date.
+     * @return the date
+     */
     public DateDay getPrev() {
         return thePrices.getPrev();
     }
 
+    /**
+     * Obtain prices.
+     * @return the prices
+     */
     public SpotList getPrices() {
         return thePrices;
     }
 
-    public SpotPrice get(long uIndex) {
+    /**
+     * Obtain spotPrice at index.
+     * @param uIndex the index
+     * @return the spotPrice
+     */
+    public SpotPrice get(final long uIndex) {
         return (SpotPrice) thePrices.get((int) uIndex);
     }
 
-    /* Constructor */
-    public SpotPrices(View pView,
-                      AccountType pType,
-                      DateDay pDate) {
+    /**
+     * Constructor.
+     * @param pView the view
+     * @param pType the account type
+     * @param pDate the date
+     */
+    public SpotPrices(final View pView,
+                      final AccountType pType,
+                      final DateDay pDate) {
         /* Create a copy of the date and initiate the list */
         theView = pView;
         theDate = pDate;
@@ -128,56 +212,104 @@ public class SpotPrices implements JDataContents {
         thePrices = new SpotList(this);
     }
 
-    /* The List class */
+    /**
+     * The Spot Prices List class.
+     */
     public static class SpotList extends AccountPriceList {
         /**
-         * Local Report fields
+         * Local Report fields.
          */
-        protected static final JDataFields theLocalFields = new JDataFields(SpotList.class.getSimpleName(),
+        protected static final JDataFields FIELD_DEFS = new JDataFields(SpotList.class.getSimpleName(),
                 AccountPriceList.FIELD_DEFS);
 
-        /* Field IDs */
+        /**
+         * The account type field Id.
+         */
         public static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField("AccountType");
+
+        /**
+         * The date field Id.
+         */
         public static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
+
+        /**
+         * The next date field Id.
+         */
         public static final JDataField FIELD_NEXT = FIELD_DEFS.declareLocalField("Next");
+
+        /**
+         * The previous date field Id.
+         */
         public static final JDataField FIELD_PREV = FIELD_DEFS.declareLocalField("Previous");
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
-            return theLocalFields;
+            return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_TYPE)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_TYPE.equals(pField)) {
                 return theType;
-            if (pField == FIELD_DATE)
+            }
+            if (FIELD_DATE.equals(pField)) {
                 return theDate;
-            if (pField == FIELD_NEXT)
+            }
+            if (FIELD_NEXT.equals(pField)) {
                 return getNext();
-            if (pField == FIELD_PREV)
+            }
+            if (FIELD_PREV.equals(pField)) {
                 return getPrev();
+            }
             return super.getFieldValue(pField);
         }
 
-        /* Members */
+        /**
+         * The date.
+         */
         private final DateDay theDate;
+
+        /**
+         * The view.
+         */
         private final View theView;
+
+        /**
+         * The account type.
+         */
         private final AccountType theType;
+
+        /**
+         * The next date.
+         */
         private DateDay theNext = null;
+
+        /**
+         * The previous date.
+         */
         private DateDay thePrev = null;
 
+        /**
+         * Obtain the next date.
+         * @return the date
+         */
         public DateDay getNext() {
             return theNext;
         }
 
+        /**
+         * Obtain the previous date.
+         * @return the date
+         */
         public DateDay getPrev() {
             return thePrev;
         }
 
-        /* Constructors */
-        public SpotList(SpotPrices pPrices) {
+        /**
+         * Constructor.
+         * @param pPrices the spot price control
+         */
+        public SpotList(final SpotPrices pPrices) {
             /* Build initial list */
             super(pPrices.getData());
             setStyle(ListStyle.EDIT);
@@ -198,25 +330,20 @@ public class SpotPrices implements JDataContents {
             myData = theView.getData();
             myActIterator = myData.getAccounts().listIterator();
             while ((myAccount = myActIterator.next()) != null) {
-                /* Ignore accounts that are wrong type */
-                if (!Difference.isEqual(myAccount.getActType(), theType))
+                /* Ignore accounts that are wrong type, have no prices or are aliases */
+                if ((!Difference.isEqual(myAccount.getActType(), theType)) || (!myAccount.isPriced())
+                        || (myAccount.isAlias())) {
                     continue;
-
-                /* Ignore accounts that do not have prices */
-                if (!myAccount.isPriced())
-                    continue;
-
-                /* Ignore aliases */
-                if (myAccount.isAlias())
-                    continue;
+                }
 
                 /* Create a SpotPrice entry */
                 mySpot = new SpotPrice(this, myAccount);
                 add(mySpot);
 
                 /* If the account is closed then hide the entry */
-                if (myAccount.isClosed())
+                if (myAccount.isClosed()) {
                     mySpot.setHidden();
+                }
             }
 
             /* Set the base for this list */
@@ -227,8 +354,9 @@ public class SpotPrices implements JDataContents {
             myIterator = myPrices.listIterator(true);
             while ((myPrice = myIterator.next()) != null) {
                 /* Ignore accounts that are wrong type */
-                if (!Difference.isEqual(myPrice.getAccount().getActType(), theType))
+                if (!Difference.isEqual(myPrice.getAccount().getActType(), theType)) {
                     continue;
+                }
 
                 /* Test the Date */
                 iDiff = theDate.compareTo(myPrice.getDate());
@@ -252,10 +380,9 @@ public class SpotPrices implements JDataContents {
                     /* Link to base and re-establish state */
                     mySpot.setBase(myPrice);
                     mySpot.setState(DataState.CLEAN);
-                }
 
-                /* else we are a previous date */
-                else {
+                    /* else we are a previous date */
+                } else {
                     /* Set previous date and value */
                     mySpot.thePrevDate = myPrice.getDate();
                     mySpot.thePrevPrice = myPrice.getPrice();
@@ -267,7 +394,6 @@ public class SpotPrices implements JDataContents {
 
         }
 
-        /* Disable extract lists. */
         @Override
         public SpotList getUpdateList() {
             return null;
@@ -284,13 +410,13 @@ public class SpotPrices implements JDataContents {
         }
 
         @Override
-        public SpotList getDeepCopy(DataSet<?> pData) {
+        public SpotList getDeepCopy(final DataSet<?> pData) {
             return null;
         }
 
-        public SpotList getDifferences(SpotList pOld) {
-            return null;
-        }
+        // public SpotList getDifferences(final SpotList pOld) {
+        // return null;
+        // }
 
         /* Is this list locked */
         @Override
@@ -300,7 +426,7 @@ public class SpotPrices implements JDataContents {
 
         /* Disable Add a new item */
         @Override
-        public SpotPrice addNewItem(DataItem<?> pElement) {
+        public SpotPrice addNewItem(final DataItem<?> pElement) {
             return null;
         }
 
@@ -310,7 +436,7 @@ public class SpotPrices implements JDataContents {
         }
 
         /**
-         * Calculate the Edit State for the list
+         * Calculate the Edit State for the list.
          */
         @Override
         public void findEditState() {
@@ -326,15 +452,16 @@ public class SpotPrices implements JDataContents {
             while ((myCurr = myIterator.next()) != null) {
                 /* Switch on new state */
                 switch (myCurr.getState()) {
-                    case CLEAN:
-                    case DELNEW:
-                        break;
                     case NEW:
                     case DELETED:
                     case DELCHG:
                     case CHANGED:
                     case RECOVERED:
                         myEdit = EditState.VALID;
+                        break;
+                    case CLEAN:
+                    case DELNEW:
+                    default:
                         break;
                 }
             }
@@ -343,9 +470,6 @@ public class SpotPrices implements JDataContents {
             setEditState(myEdit);
         }
 
-        /**
-         * Does the list have updates
-         */
         @Override
         public boolean hasUpdates() {
             DataListIterator<AccountPrice> myIterator;
@@ -358,14 +482,15 @@ public class SpotPrices implements JDataContents {
             while ((myCurr = myIterator.next()) != null) {
                 /* Switch on state */
                 switch (myCurr.getState()) {
-                    case CLEAN:
-                    case DELNEW:
-                        break;
                     case DELETED:
                     case DELCHG:
                     case CHANGED:
                     case RECOVERED:
                         return true;
+                    case CLEAN:
+                    case DELNEW:
+                    default:
+                        break;
                 }
             }
 
@@ -374,7 +499,7 @@ public class SpotPrices implements JDataContents {
         }
 
         /**
-         * Reset changes in an edit view
+         * Reset changes in an edit view.
          */
         @Override
         public void resetChanges() {
@@ -388,12 +513,7 @@ public class SpotPrices implements JDataContents {
             while ((myCurr = myIterator.next()) != null) {
                 /* Switch on the state */
                 switch (myCurr.getState()) {
-                /* If this is a clean item, just ignore */
-                    case CLEAN:
-                    case DELNEW:
-                        break;
-
-                    /* If this is a changed or DELCHG item */
+                /* If this is a changed or DELCHG item */
                     case NEW:
                     case CHANGED:
                     case DELCHG:
@@ -407,68 +527,90 @@ public class SpotPrices implements JDataContents {
                         myCurr.clearErrors();
                         myCurr.setState(DataState.CLEAN);
                         break;
+
+                    /* If this is a clean item, just ignore */
+                    case CLEAN:
+                    case DELNEW:
+                    default:
+                        break;
                 }
             }
         }
     }
 
-    public static class SpotPrice extends AccountPrice {
+    /**
+     * Spot Price class.
+     * @author Tony Washer
+     */
+    public static final class SpotPrice extends AccountPrice {
         /**
-         * Object name
+         * Object name.
          */
-        public static String objName = SpotPrice.class.getSimpleName();
+        public static final String OBJECT_NAME = SpotPrice.class.getSimpleName();
 
         /**
-         * List name
+         * List name.
          */
-        public static String listName = objName + "s";
+        public static final String LIST_NAME = OBJECT_NAME + "s";
 
         /**
-         * Report fields
+         * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(objName, AccountPrice.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AccountPrice.FIELD_DEFS);
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
-        /* Field IDs */
+        /**
+         * Previous Date field Id.
+         */
         public static final JDataField FIELD_PREVDATE = FIELD_DEFS.declareEqualityField("PreviousDate");
+
+        /**
+         * Previous Price field Id.
+         */
         public static final JDataField FIELD_PREVPRICE = FIELD_DEFS.declareEqualityField("PreviousPrice");
 
         /**
-         * the previous date
+         * the previous date.
          */
         private DateDay thePrevDate;
 
         /**
-         * the previous price
+         * the previous price.
          */
         private Price thePrevPrice;
 
+        /**
+         * Obtain previous price.
+         * @return the price.
+         */
         public Price getPrevPrice() {
             return thePrevPrice;
         }
 
+        /**
+         * Obtain previous date.
+         * @return the date.
+         */
         public DateDay getPrevDate() {
             return thePrevDate;
         }
 
-        /* Linking methods */
         @Override
         public AccountPrice getBase() {
             return (AccountPrice) super.getBase();
         }
 
         /**
-         * Constructor for a new SpotPrice where no price data exists
+         * Constructor for a new SpotPrice where no price data exists.
          * @param pList the Spot Price List
          * @param pAccount the price for the date
          */
-        private SpotPrice(SpotList pList,
-                          Account pAccount) {
+        private SpotPrice(final SpotList pList,
+                          final Account pAccount) {
             super(pList, pAccount);
 
             /* Store base values */
@@ -481,7 +623,7 @@ public class SpotPrices implements JDataContents {
         }
 
         /**
-         * Validate the line
+         * Validate the line.
          */
         @Override
         public void validate() {
@@ -495,16 +637,13 @@ public class SpotPrices implements JDataContents {
         }
 
         /**
-         * Note that this item has been validated
+         * Note that this item has been validated.
          */
         @Override
         public void setValidEdit() {
             setEditState((hasHistory()) ? EditState.VALID : EditState.CLEAN);
         }
 
-        /**
-         * Obtain the price of the item
-         */
         @Override
         public Price getPrice() {
             /* Switch on state */
@@ -522,7 +661,7 @@ public class SpotPrices implements JDataContents {
 
         /* Disable setDate */
         @Override
-        public void setDate(DateDay pDate) {
+        public void setDate(final DateDay pDate) {
         }
 
         /**
@@ -532,7 +671,7 @@ public class SpotPrices implements JDataContents {
          * @param newState the new state to set
          */
         @Override
-        public void setState(DataState newState) {
+        public void setState(final DataState newState) {
             /* Switch on new state */
             switch (newState) {
                 case CLEAN:
@@ -574,15 +713,9 @@ public class SpotPrices implements JDataContents {
                     }
                     setEditState(EditState.DIRTY);
                     break;
+                default:
+                    break;
             }
-        }
-
-        /**
-         * Compare the price
-         */
-        @Override
-        public boolean equals(Object that) {
-            return (this == that);
         }
     }
 }

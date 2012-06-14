@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,8 +25,6 @@ package uk.co.tolcroft.finance.views;
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataManager;
-import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDecimal.Money;
 import uk.co.tolcroft.finance.data.Account;
@@ -38,19 +37,54 @@ import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataSet;
 
+/**
+ * Income Breakdown analysis.
+ * @author Tony Washer
+ */
 public class IncomeBreakdown implements JDataContents {
     /**
-     * Report fields
+     * Buffer length.
+     */
+    private static final int BUFFER_LEN = 100;
+
+    /**
+     * Report fields.
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(IncomeBreakdown.class.getSimpleName());
 
-    /* Field IDs */
+    /**
+     * Salary Field Id.
+     */
     public static final JDataField FIELD_SALARY = FIELD_DEFS.declareLocalField("Salary");
+
+    /**
+     * Rental Field Id.
+     */
     public static final JDataField FIELD_RENTAL = FIELD_DEFS.declareLocalField("Rental");
+
+    /**
+     * Interest Field Id.
+     */
     public static final JDataField FIELD_INTEREST = FIELD_DEFS.declareLocalField("TaxedInterest");
+
+    /**
+     * Tax Free Interest Field Id.
+     */
     public static final JDataField FIELD_TFINTEREST = FIELD_DEFS.declareLocalField("TaxFreeInterest");
+
+    /**
+     * Dividend Field Id.
+     */
     public static final JDataField FIELD_DIVIDEND = FIELD_DEFS.declareLocalField("TaxedDividends");
+
+    /**
+     * Tax Free Dividend Field Id.
+     */
     public static final JDataField FIELD_TFDIVIDEND = FIELD_DEFS.declareLocalField("TaxFreeDividends");
+
+    /**
+     * Unit Trust Dividend Field Id.
+     */
     public static final JDataField FIELD_UTDIVIDEND = FIELD_DEFS.declareLocalField("UnitTrustDividend");
 
     @Override
@@ -59,21 +93,28 @@ public class IncomeBreakdown implements JDataContents {
     }
 
     @Override
-    public Object getFieldValue(JDataField pField) {
-        if (pField == FIELD_SALARY)
+    public Object getFieldValue(final JDataField pField) {
+        if (FIELD_SALARY.equals(pField)) {
             return theSalary;
-        if (pField == FIELD_RENTAL)
+        }
+        if (FIELD_RENTAL.equals(pField)) {
             return theRental;
-        if (pField == FIELD_INTEREST)
+        }
+        if (FIELD_INTEREST.equals(pField)) {
             return theTaxedInterest;
-        if (pField == FIELD_TFINTEREST)
+        }
+        if (FIELD_TFINTEREST.equals(pField)) {
             return theTaxFreeInterest;
-        if (pField == FIELD_DIVIDEND)
+        }
+        if (FIELD_DIVIDEND.equals(pField)) {
             return theTaxedDividend;
-        if (pField == FIELD_TFDIVIDEND)
+        }
+        if (FIELD_TFDIVIDEND.equals(pField)) {
             return theTaxFreeDividend;
-        if (pField == FIELD_UTDIVIDEND)
+        }
+        if (FIELD_UTDIVIDEND.equals(pField)) {
             return theUnitTrustDividend;
+        }
         return null;
     }
 
@@ -83,74 +124,101 @@ public class IncomeBreakdown implements JDataContents {
     }
 
     /**
-     * The Salary analysis
+     * The Salary analysis.
      */
-    private RecordList theSalary = null;
+    private final RecordList theSalary;
 
     /**
-     * The Rental analysis
+     * The Rental analysis.
      */
-    private RecordList theRental = null;
+    private final RecordList theRental;
 
     /**
-     * The Taxable Interest analysis
+     * The Taxable Interest analysis.
      */
-    private RecordList theTaxedInterest = null;
+    private final RecordList theTaxedInterest;
 
     /**
-     * The TaxFree Interest analysis
+     * The TaxFree Interest analysis.
      */
-    private RecordList theTaxFreeInterest = null;
+    private final RecordList theTaxFreeInterest;
 
     /**
-     * The Taxable Dividend analysis
+     * The Taxable Dividend analysis.
      */
-    private RecordList theTaxedDividend = null;
+    private final RecordList theTaxedDividend;
 
     /**
-     * The TaxFree Dividend analysis
+     * The TaxFree Dividend analysis.
      */
-    private RecordList theTaxFreeDividend = null;
+    private final RecordList theTaxFreeDividend;
 
     /**
-     * The Taxable UnitTrust Dividend analysis
+     * The Taxable UnitTrust Dividend analysis.
      */
-    private RecordList theUnitTrustDividend = null;
+    private final RecordList theUnitTrustDividend;
 
-    /* Access functions */
+    /**
+     * Obtain Salary totals.
+     * @return the totals
+     */
     public RecordList getSalary() {
         return theSalary;
     }
 
+    /**
+     * Obtain Rental totals.
+     * @return the totals
+     */
     public RecordList getRental() {
         return theRental;
     }
 
+    /**
+     * Obtain Taxable interest totals.
+     * @return the totals
+     */
     public RecordList getTaxableInterest() {
         return theTaxedInterest;
     }
 
+    /**
+     * Obtain Tax Free interest totals.
+     * @return the totals
+     */
     public RecordList getTaxFreeInterest() {
         return theTaxFreeInterest;
     }
 
+    /**
+     * Obtain Taxable Dividend totals.
+     * @return the totals
+     */
     public RecordList getTaxableDividend() {
         return theTaxedDividend;
     }
 
+    /**
+     * Obtain Tax Free Dividend totals.
+     * @return the totals
+     */
     public RecordList getTaxFreeDividend() {
         return theTaxFreeDividend;
     }
 
+    /**
+     * Obtain Unit Trust Dividend totals.
+     * @return the totals
+     */
     public RecordList getUnitTrustDividend() {
         return theUnitTrustDividend;
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pData the DataSet
      */
-    protected IncomeBreakdown(FinanceData pData) {
+    protected IncomeBreakdown(final FinanceData pData) {
         /* Allocate lists */
         theSalary = new RecordList(pData, "Salary");
         theRental = new RecordList(pData, "Rental");
@@ -162,10 +230,10 @@ public class IncomeBreakdown implements JDataContents {
     }
 
     /**
-     * Process event
+     * Process event.
      * @param pEvent the event to process
      */
-    protected void processEvent(Event pEvent) {
+    protected void processEvent(final Event pEvent) {
         AccountRecord myRecord;
         Account myDebit = pEvent.getDebit();
         TransactionType myTrans = pEvent.getTransType();
@@ -173,25 +241,27 @@ public class IncomeBreakdown implements JDataContents {
         /* Switch on Transaction Type */
         switch (myTrans.getTranClass()) {
             case INTEREST:
-                if (myDebit.isTaxFree())
+                if (myDebit.isTaxFree()) {
                     myRecord = theTaxFreeInterest.findAccountRecord(myDebit.getParent());
-                else
+                } else {
                     myRecord = theTaxedInterest.findAccountRecord(myDebit.getParent());
+                }
                 myRecord.processEvent(pEvent);
                 break;
             case DIVIDEND:
-                if (myDebit.isTaxFree())
+                if (myDebit.isTaxFree()) {
                     myRecord = theTaxFreeDividend.findAccountRecord(myDebit.isChild()
                                                                                      ? myDebit.getParent()
                                                                                      : myDebit);
-                else if (myDebit.isUnitTrust())
+                } else if (myDebit.isUnitTrust()) {
                     myRecord = theUnitTrustDividend.findAccountRecord(myDebit.isChild()
                                                                                        ? myDebit.getParent()
                                                                                        : myDebit);
-                else
+                } else {
                     myRecord = theTaxedDividend.findAccountRecord(myDebit.isChild()
                                                                                    ? myDebit.getParent()
                                                                                    : myDebit);
+                }
                 myRecord.processEvent(pEvent);
                 break;
             case TAXEDINCOME:
@@ -204,21 +274,33 @@ public class IncomeBreakdown implements JDataContents {
                 myRecord = theRental.findAccountRecord(myDebit);
                 myRecord.processEvent(pEvent);
                 break;
+            default:
+                break;
         }
     }
 
     /**
-     * Totals
+     * Totals class.
      */
     protected static class IncomeTotals implements JDataContents {
         /**
-         * Report fields
+         * Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(IncomeBreakdown.class.getSimpleName());
 
-        /* Field IDs */
+        /**
+         * Gross field id.
+         */
         public static final JDataField FIELD_GROSS = FIELD_DEFS.declareLocalField("GrossIncome");
+
+        /**
+         * Net field id.
+         */
         public static final JDataField FIELD_NET = FIELD_DEFS.declareLocalField("NetIncome");
+
+        /**
+         * Tax Credit field id.
+         */
         public static final JDataField FIELD_TAX = FIELD_DEFS.declareLocalField("TaxCredit");
 
         @Override
@@ -227,13 +309,16 @@ public class IncomeBreakdown implements JDataContents {
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
-            if (pField == FIELD_GROSS)
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_GROSS.equals(pField)) {
                 return theGrossIncome;
-            if (pField == FIELD_NET)
+            }
+            if (FIELD_NET.equals(pField)) {
                 return theNetIncome;
-            if (pField == FIELD_TAX)
+            }
+            if (FIELD_TAX.equals(pField)) {
                 return theTaxCredit;
+            }
             return null;
         }
 
@@ -243,22 +328,22 @@ public class IncomeBreakdown implements JDataContents {
         }
 
         /**
-         * The Gross income
+         * The Gross income.
          */
         private Money theGrossIncome = new Money(0);
 
         /**
-         * The Net income
+         * The Net income.
          */
         private Money theNetIncome = new Money(0);
 
         /**
-         * The Tax Credit
+         * The Tax Credit.
          */
         private Money theTaxCredit = new Money(0);
 
         /**
-         * Obtain the Gross Income
+         * Obtain the Gross Income.
          * @return the gross income
          */
         protected Money getGrossIncome() {
@@ -266,7 +351,7 @@ public class IncomeBreakdown implements JDataContents {
         }
 
         /**
-         * Obtain the Net Income
+         * Obtain the Net Income.
          * @return the net income
          */
         protected Money getNetIncome() {
@@ -274,7 +359,7 @@ public class IncomeBreakdown implements JDataContents {
         }
 
         /**
-         * Obtain the Tax Credit
+         * Obtain the Tax Credit.
          * @return the tax credit
          */
         protected Money getTaxCredit() {
@@ -283,77 +368,99 @@ public class IncomeBreakdown implements JDataContents {
     }
 
     /**
-     * The Account record class
+     * The Account record class.
      */
-    protected static class AccountRecord extends DataItem<AccountRecord> {
+    protected static final class AccountRecord extends DataItem<AccountRecord> {
         /**
-         * Object name
+         * Object name.
          */
-        public static String objName = AccountRecord.class.getSimpleName();
+        public static final String OBJECT_NAME = AccountRecord.class.getSimpleName();
 
         /**
-         * Report fields
+         * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(objName, DataItem.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
 
-        /* Called from constructor */
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
 
-        /* Field IDs */
+        /**
+         * Account Field Id.
+         */
         public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField("Account");
+
+        /**
+         * Totals Field Id.
+         */
         public static final JDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField("Totals");
+
+        /**
+         * List Totals Field Id.
+         */
         public static final JDataField FIELD_LISTTOTALS = FIELD_DEFS.declareLocalField("ListTotals");
+
+        /**
+         * Events Field Id.
+         */
         public static final JDataField FIELD_EVENTS = FIELD_DEFS.declareLocalField("Events");
+
+        /**
+         * Children Field Id.
+         */
         public static final JDataField FIELD_CHILDREN = FIELD_DEFS.declareLocalField("Children");
 
         @Override
-        public Object getFieldValue(JDataField pField) {
+        public Object getFieldValue(final JDataField pField) {
             /* If the field is not an attribute handle normally */
-            if (pField == FIELD_ACCOUNT)
+            if (FIELD_ACCOUNT.equals(pField)) {
                 return theAccount;
-            if (pField == FIELD_TOTALS)
+            }
+            if (FIELD_TOTALS.equals(pField)) {
                 return theTotals;
-            if (pField == FIELD_LISTTOTALS)
+            }
+            if (FIELD_LISTTOTALS.equals(pField)) {
                 return theListTotals;
-            if (pField == FIELD_EVENTS)
+            }
+            if (FIELD_EVENTS.equals(pField)) {
                 return theEvents;
-            if (pField == FIELD_CHILDREN)
+            }
+            if (FIELD_CHILDREN.equals(pField)) {
                 return theChildren;
+            }
 
             /* Pass onwards */
             return super.getFieldValue(pField);
         }
 
         /**
-         * The account for the record
+         * The account for the record.
          */
-        private Account theAccount = null;
+        private final Account theAccount;
 
         /**
-         * The Totals
+         * The Totals.
          */
-        private IncomeTotals theTotals = null;
+        private final IncomeTotals theTotals;
 
         /**
-         * The List Totals
+         * The List Totals.
          */
-        private IncomeTotals theListTotals = null;
+        private final IncomeTotals theListTotals;
 
         /**
-         * The Events relating to this account
+         * The Events relating to this account.
          */
-        private EventList theEvents = null;
+        private final EventList theEvents;
 
         /**
-         * The Children relating to this account
+         * The Children relating to this account.
          */
-        private RecordList theChildren = null;
+        private final RecordList theChildren;
 
         /**
-         * Obtain the Account
+         * Obtain the Account.
          * @return the account
          */
         protected Account getAccount() {
@@ -361,7 +468,7 @@ public class IncomeBreakdown implements JDataContents {
         }
 
         /**
-         * Obtain the Totals
+         * Obtain the Totals.
          * @return the totals
          */
         protected IncomeTotals getTotals() {
@@ -369,7 +476,7 @@ public class IncomeBreakdown implements JDataContents {
         }
 
         /**
-         * Obtain the List of events
+         * Obtain the List of events.
          * @return the events
          */
         protected EventList getEvents() {
@@ -377,7 +484,7 @@ public class IncomeBreakdown implements JDataContents {
         }
 
         /**
-         * Obtain the List of children
+         * Obtain the List of children.
          * @return the children
          */
         protected RecordList getChildren() {
@@ -385,12 +492,12 @@ public class IncomeBreakdown implements JDataContents {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pList the list to which the record belongs
          * @param pAccount the account
          */
-        private AccountRecord(RecordList pList,
-                              Account pAccount) {
+        private AccountRecord(final RecordList pList,
+                              final Account pAccount) {
             /* Call super-constructor */
             super(pList, pAccount.getId());
 
@@ -405,7 +512,7 @@ public class IncomeBreakdown implements JDataContents {
             theListTotals = pList.theTotals;
 
             /* Build the name of the child list */
-            StringBuilder myNameBuilder = new StringBuilder(100);
+            StringBuilder myNameBuilder = new StringBuilder(BUFFER_LEN);
             myNameBuilder.append(pList.getName());
             myNameBuilder.append("-");
             myNameBuilder.append(pAccount.getName());
@@ -419,10 +526,10 @@ public class IncomeBreakdown implements JDataContents {
         }
 
         /**
-         * Process Event
+         * Process Event.
          * @param pEvent the event to process
          */
-        private void processEvent(Event pEvent) {
+        private void processEvent(final Event pEvent) {
             /* Add the event to the list */
             // theEvents.addNewItem(pEvent);
 
@@ -438,9 +545,7 @@ public class IncomeBreakdown implements JDataContents {
                 /* Just add to gross */
                 theTotals.theGrossIncome.addAmount(myAmount);
                 theListTotals.theGrossIncome.addAmount(myAmount);
-            }
-
-            else {
+            } else {
                 /* Add to gross and net */
                 theTotals.theGrossIncome.addAmount(myAmount);
                 theTotals.theNetIncome.addAmount(myAmount);
@@ -464,31 +569,28 @@ public class IncomeBreakdown implements JDataContents {
 
                 /* Process the record for the child */
                 myChild.processEvent(pEvent);
-            }
 
-            /* else we need to record the event */
-            else {
+                /* else we need to record the event */
+            } else {
                 /* Add a copy of the event to the list */
                 theEvents.addNewItem(pEvent);
             }
         }
 
         @Override
-        public boolean equals(Object that) {
-            return this == that;
-        }
-
-        @Override
-        public int compareTo(Object pThat) {
+        public int compareTo(final Object pThat) {
             /* Handle the trivial cases */
-            if (this == pThat)
+            if (this == pThat) {
                 return 0;
-            if (pThat == null)
+            }
+            if (pThat == null) {
                 return -1;
+            }
 
             /* Make sure that the object is an AccountRecord */
-            if (!(pThat instanceof AccountRecord))
+            if (!(pThat instanceof AccountRecord)) {
                 return -1;
+            }
 
             /* Access as AccountRecord and compare Accounts */
             AccountRecord myThat = (AccountRecord) pThat;
@@ -497,44 +599,44 @@ public class IncomeBreakdown implements JDataContents {
     }
 
     /**
-     * The RecordList class
+     * The RecordList class.
      */
     public static class RecordList extends DataList<RecordList, AccountRecord> {
         /**
-         * The name of the object
+         * The name of the object.
          */
-        private static final String listName = "RecordList";
+        private static final String LIST_NAME = RecordList.class.getSimpleName();
 
         @Override
         public String listName() {
-            return listName;
+            return LIST_NAME;
         }
 
         /**
-         * The DataSet that this list is based on
+         * The DataSet that this list is based on.
          */
-        private FinanceData theData = null;
+        private final FinanceData theData;
 
         /**
-         * The Totals for the record list
+         * The Totals for the record list.
          */
         private IncomeTotals theTotals = new IncomeTotals();
 
         /**
-         * The Name for the record list
+         * The Name for the record list.
          */
-        private String theName = null;
+        private final String theName;
 
         /**
-         * Access the DataSet for a RecordList
-         * @return the DataSet
+         * Access the DataSet for a RecordList.
+         * @return the DataSet.
          */
         private FinanceData getData() {
             return theData;
         }
 
         /**
-         * Access the Totals
+         * Access the Totals.
          * @return the Totals
          */
         public IncomeTotals getTotals() {
@@ -542,7 +644,7 @@ public class IncomeBreakdown implements JDataContents {
         }
 
         /**
-         * Access the Name
+         * Access the Name.
          * @return the Name
          */
         public String getName() {
@@ -550,18 +652,17 @@ public class IncomeBreakdown implements JDataContents {
         }
 
         /**
-         * Construct a top-level List
+         * Construct a top-level List.
          * @param pData the data
          * @param pName the name of the list
          */
-        public RecordList(FinanceData pData,
-                          String pName) {
+        public RecordList(final FinanceData pData,
+                          final String pName) {
             super(RecordList.class, AccountRecord.class, ListStyle.VIEW, false);
             theData = pData;
             theName = pName;
         }
 
-        /* Obtain extract lists. */
         @Override
         public RecordList getUpdateList() {
             return null;
@@ -578,17 +679,17 @@ public class IncomeBreakdown implements JDataContents {
         }
 
         @Override
-        public RecordList getDeepCopy(DataSet<?> pData) {
+        public RecordList getDeepCopy(final DataSet<?> pData) {
             return null;
         }
 
         @Override
-        public RecordList getDifferences(RecordList pOld) {
+        public RecordList getDifferences(final RecordList pOld) {
             return null;
         }
 
         @Override
-        public AccountRecord addNewItem(DataItem<?> pElement) {
+        public AccountRecord addNewItem(final DataItem<?> pElement) {
             return null;
         }
 
@@ -598,11 +699,11 @@ public class IncomeBreakdown implements JDataContents {
         }
 
         /**
-         * Obtain the AccountRecord for a given account
+         * Obtain the AccountRecord for a given account.
          * @param pAccount the account
          * @return the record
          */
-        protected AccountRecord findAccountRecord(Account pAccount) {
+        protected AccountRecord findAccountRecord(final Account pAccount) {
             /* Locate the record in the list */
             AccountRecord myRecord = (AccountRecord) searchFor(pAccount.getId());
 
@@ -617,23 +718,6 @@ public class IncomeBreakdown implements JDataContents {
 
             /* Return the record */
             return myRecord;
-        }
-
-        /**
-         * Add child entries for the debug object
-         * @param pManager the debug manager
-         * @param pParent the parent debug entry
-         */
-        public void addChildEntries(JDataManager pManager,
-                                    JDataEntry pParent) {
-            DataListIterator<AccountRecord> myIterator = listIterator();
-            AccountRecord myRecord;
-
-            /* Loop through the records */
-            while ((myRecord = myIterator.previous()) != null) {
-                /* Add child */
-                pManager.addChildEntry(pParent, myRecord.getAccount().getName(), myRecord);
-            }
         }
     }
 }

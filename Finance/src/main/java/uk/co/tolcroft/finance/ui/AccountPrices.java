@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,25 +49,75 @@ import uk.co.tolcroft.models.ui.Renderer.CalendarRenderer;
 import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 
+/**
+ * Account Prices Table.
+ * @author Tony Washer
+ */
 public class AccountPrices extends DataTable<AccountPrice> {
-    /* Members */
+    /**
+     * Serial Id.
+     */
     private static final long serialVersionUID = 1035380774297559650L;
 
-    private View theView = null;
-    private PricesModel theModel = null;
-    private ViewPriceList thePrices = null;
-    private JPanel thePanel = null;
-    private AccountTab theParent = null;
-    private DateDayRange theRange = null;
-    private Account theAccount = null;
-    private ListClass theViewList = null;
-    private AccountPrices theTable = this;
-    private PricesMouse theMouse = null;
-    private PricesColumnModel theColumns = null;
-    private JDataEntry theDataEntry = null;
-    private ErrorPanel theError = null;
+    /**
+     * Date View.
+     */
+    private final View theView;
 
-    /* Access methods */
+    /**
+     * Price List.
+     */
+    private ViewPriceList thePrices = null;
+
+    /**
+     * The Panel.
+     */
+    private final JPanel thePanel;
+
+    /**
+     * Parent.
+     */
+    private final AccountTab theParent;
+
+    /**
+     * DataSet range.
+     */
+    private DateDayRange theRange = null;
+
+    /**
+     * Account.
+     */
+    private Account theAccount = null;
+
+    /**
+     * List Class.
+     */
+    private final ListClass theViewList;
+
+    /**
+     * Self Reference.
+     */
+    private final AccountPrices theTable = this;
+
+    /**
+     * Column Model.
+     */
+    private final PricesColumnModel theColumns;
+
+    /**
+     * Data Entry.
+     */
+    private final JDataEntry theDataEntry;
+
+    /**
+     * Error Panel.
+     */
+    private final ErrorPanel theError;
+
+    /**
+     * Obtain the panel.
+     * @return the panel
+     */
     public JPanel getPanel() {
         return thePanel;
     }
@@ -81,28 +132,79 @@ public class AccountPrices extends DataTable<AccountPrice> {
         return theDataEntry;
     }
 
-    /* Hooks */
+    /**
+     * Do we need members?
+     * @return true/false
+     */
     public boolean needsMembers() {
         return true;
     }
 
-    /* Table headers */
-    private static final String titleDate = "Date";
-    private static final String titlePrice = "Price";
-    private static final String titleDilution = "Dilution";
-    private static final String titleDilPrice = "DilutedPrice";
+    /**
+     * Date column title.
+     */
+    private static final String TITLE_DATE = "Date";
 
-    /* Table columns */
+    /**
+     * Price column title.
+     */
+    private static final String TITLE_PRICE = "Price";
+
+    /**
+     * Dilution column title.
+     */
+    private static final String TITLE_DILUTION = "Dilution";
+
+    /**
+     * Diluted price column title.
+     */
+    private static final String TITLE_DILUTEDPRICE = "DilutedPrice";
+
+    /**
+     * Date column id.
+     */
     private static final int COLUMN_DATE = 0;
+
+    /**
+     * Price column title.
+     */
     private static final int COLUMN_PRICE = 1;
+
+    /**
+     * Dilution column title.
+     */
     private static final int COLUMN_DILUTION = 2;
+
+    /**
+     * Diluted Price column title.
+     */
     private static final int COLUMN_DILUTEDPRICE = 3;
 
     /**
-     * Constructor for Prices Window
+     * Date column width.
+     */
+    private static final int WIDTH_DATE = 80;
+
+    /**
+     * Price column width.
+     */
+    private static final int WIDTH_PRICE = 90;
+
+    /**
+     * Dilution column width.
+     */
+    private static final int WIDTH_DILUTION = 90;
+
+    /**
+     * Diluted Price column width.
+     */
+    private static final int WIDTH_DILUTEDPRICE = 100;
+
+    /**
+     * Constructor for Prices Window.
      * @param pParent the parent window
      */
-    public AccountPrices(AccountTab pParent) {
+    public AccountPrices(final AccountTab pParent) {
         /* Initialise superclass */
         super(pParent.getDataManager());
 
@@ -115,8 +217,8 @@ public class AccountPrices extends DataTable<AccountPrice> {
         theViewList = pParent.getViewSet().registerClass(ViewPrice.class);
 
         /* Create the model and declare it to our superclass */
-        theModel = new PricesModel();
-        setModel(theModel);
+        PricesModel myModel = new PricesModel();
+        setModel(myModel);
 
         /* Create the data column model and declare it */
         theColumns = new PricesColumnModel();
@@ -133,8 +235,8 @@ public class AccountPrices extends DataTable<AccountPrice> {
         theDataEntry.hideEntry();
 
         /* Add the mouse listener */
-        theMouse = new PricesMouse();
-        addMouseListener(theMouse);
+        PricesMouse myMouse = new PricesMouse();
+        addMouseListener(myMouse);
 
         /* Create the error panel for this view */
         theError = new ErrorPanel(this);
@@ -167,7 +269,7 @@ public class AccountPrices extends DataTable<AccountPrice> {
     }
 
     /**
-     * Refresh views/controls after a load/update of underlying data
+     * Refresh views/controls after a load/update of underlying data.
      */
     public void refreshData() {
         theRange = theView.getRange();
@@ -175,7 +277,7 @@ public class AccountPrices extends DataTable<AccountPrice> {
     }
 
     /**
-     * Update Debug view
+     * Update Debug view.
      */
     @Override
     public void updateDebug() {
@@ -183,7 +285,7 @@ public class AccountPrices extends DataTable<AccountPrice> {
     }
 
     /**
-     * Save changes from the view into the underlying data
+     * Save changes from the view into the underlying data.
      */
     @Override
     public void saveData() {
@@ -192,34 +294,35 @@ public class AccountPrices extends DataTable<AccountPrice> {
     }
 
     /**
-     * Lock on error
+     * Lock on error.
      * @param isError is there an error (True/False)
      */
     @Override
-    public void lockOnError(boolean isError) {
+    public void lockOnError(final boolean isError) {
         /* Lock scroll-able area */
         getScrollPane().setEnabled(!isError);
     }
 
     /**
-     * Call underlying controls to take notice of changes in view/selection
+     * Call underlying controls to take notice of changes in view/selection.
      */
     @Override
     public void notifyChanges() {
         /* Find the edit state */
-        if (thePrices != null)
+        if (thePrices != null) {
             thePrices.findEditState();
+        }
 
         /* Update the parent panel */
         theParent.notifyChanges();
     }
 
     /**
-     * Set Selection to the specified account
+     * Set Selection to the specified account.
      * @param pAccount the Account for the extract
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    public void setSelection(Account pAccount) throws JDataException {
+    public void setSelection(final Account pAccount) throws JDataException {
         /* Record the account */
         theAccount = pAccount;
         thePrices = null;
@@ -237,37 +340,35 @@ public class AccountPrices extends DataTable<AccountPrice> {
     }
 
     /**
-     * Check whether a row is deletable
+     * Check whether a row is deletable.
      * @param pRow the row
      * @return is the row deletable
      */
-    protected boolean isRowDeletable(ViewPrice pRow) {
-        /* If the row is not deleted */
-        if (!pRow.isDeleted()) {
-            /* we can delete if the list size is greater than one */
-            if (thePrices.sizeNormal() > 1)
-                return true;
-        }
+    protected boolean isRowDeletable(final ViewPrice pRow) {
+        /* If the row is not deleted, we can delete if the list size is greater than one */
+        return ((!pRow.isDeleted()) && (thePrices.sizeNormal() > 1));
+    }
 
-        /* Not Deletable */
+    /**
+     * Check whether we duplicate a row.
+     * @param pRow the row
+     * @return false
+     */
+    protected boolean isRowDuplicatable(final ViewPrice pRow) {
         return false;
     }
 
     /**
-     * Check whether we duplicate a row
-     * @param pRow the row
-     * @return false
+     * Prices table model.
      */
-    protected boolean isRowDuplicatable(ViewPrice pRow) {
-        return false;
-    }
-
-    /* Prices table model */
-    public class PricesModel extends DataTableModel {
+    public final class PricesModel extends DataTableModel {
+        /**
+         * Serial Id.
+         */
         private static final long serialVersionUID = -2613779599240142148L;
 
         /**
-         * Constructor
+         * Constructor.
          */
         private PricesModel() {
             /* call constructor */
@@ -275,7 +376,7 @@ public class AccountPrices extends DataTable<AccountPrice> {
         }
 
         /**
-         * Get the number of display columns
+         * Get the number of display columns.
          * @return the columns
          */
         @Override
@@ -284,7 +385,7 @@ public class AccountPrices extends DataTable<AccountPrice> {
         }
 
         /**
-         * Get the number of rows in the current table
+         * Get the number of rows in the current table.
          * @return the number of rows
          */
         @Override
@@ -293,34 +394,35 @@ public class AccountPrices extends DataTable<AccountPrice> {
         }
 
         /**
-         * Get the name of the column
+         * Get the name of the column.
          * @param col the column
          * @return the name of the column
          */
         @Override
-        public String getColumnName(int col) {
+        public String getColumnName(final int col) {
             switch (col) {
                 case COLUMN_DATE:
-                    return titleDate;
+                    return TITLE_DATE;
                 case COLUMN_PRICE:
-                    return titlePrice;
+                    return TITLE_PRICE;
                 case COLUMN_DILUTION:
-                    return titleDilution;
+                    return TITLE_DILUTION;
                 case COLUMN_DILUTEDPRICE:
-                    return titleDilPrice;
+                    return TITLE_DILUTEDPRICE;
                 default:
                     return null;
             }
         }
 
         /**
-         * Obtain the Field id associated with the column
+         * Obtain the Field id associated with the column.
          * @param row the row
          * @param column the column
+         * @return the fieldId
          */
         @Override
-        public JDataField getFieldForCell(int row,
-                                          int column) {
+        public JDataField getFieldForCell(final int row,
+                                          final int column) {
             /* Switch on column */
             switch (column) {
                 case COLUMN_DATE:
@@ -333,14 +435,18 @@ public class AccountPrices extends DataTable<AccountPrice> {
         }
 
         /**
-         * Is the cell at (row, col) editable
+         * Is the cell at (row, col) editable?
+         * @param row the row
+         * @param col the column
+         * @return true/false
          */
         @Override
-        public boolean isCellEditable(int row,
-                                      int col) {
+        public boolean isCellEditable(final int row,
+                                      final int col) {
             /* Locked if the account is closed */
-            if (theAccount.isClosed())
+            if (theAccount.isClosed()) {
                 return false;
+            }
 
             switch (col) {
                 case COLUMN_DATE:
@@ -357,12 +463,14 @@ public class AccountPrices extends DataTable<AccountPrice> {
         }
 
         /**
-         * Get the value at (row, col)
+         * Get the value at (row, col).
+         * @param row the row
+         * @param col the column
          * @return the object value
          */
         @Override
-        public Object getValueAt(int row,
-                                 int col) {
+        public Object getValueAt(final int row,
+                                 final int col) {
             ViewPrice myPrice;
             Object o;
 
@@ -389,21 +497,24 @@ public class AccountPrices extends DataTable<AccountPrice> {
             }
 
             /* If we have a null value for an error field, set error description */
-            if ((o == null) && (myPrice.hasErrors(getFieldForCell(row, col))))
+            if ((o == null) && (myPrice.hasErrors(getFieldForCell(row, col)))) {
                 o = Renderer.getError();
+            }
 
             /* Return to caller */
             return o;
         }
 
         /**
-         * Set the value at (row, col)
+         * Set the value at (row, col).
          * @param obj the object value to set
+         * @param row the row
+         * @param col the column
          */
         @Override
-        public void setValueAt(Object obj,
-                               int row,
-                               int col) {
+        public void setValueAt(final Object obj,
+                               final int row,
+                               final int col) {
             ViewPrice myPrice;
 
             /* Access the price */
@@ -422,11 +533,12 @@ public class AccountPrices extends DataTable<AccountPrice> {
                     case COLUMN_PRICE:
                         myPrice.setPrice((Price) obj);
                         break;
+                    default:
+                        break;
                 }
-            }
 
-            /* Handle Exceptions */
-            catch (Throwable e) {
+                /* Handle Exceptions */
+            } catch (Exception e) {
                 /* Reset values */
                 myPrice.popHistory();
                 myPrice.pushHistory();
@@ -482,11 +594,11 @@ public class AccountPrices extends DataTable<AccountPrice> {
     }
 
     /**
-     * Prices mouse listener
+     * Prices mouse listener.
      */
-    private class PricesMouse extends DataMouse<AccountPrice> {
+    private final class PricesMouse extends DataMouse<AccountPrice> {
         /**
-         * Constructor
+         * Constructor.
          */
         private PricesMouse() {
             /* Call super-constructor */
@@ -495,22 +607,51 @@ public class AccountPrices extends DataTable<AccountPrice> {
     }
 
     /**
-     * Column Model class
+     * Column Model class.
      */
-    private class PricesColumnModel extends DataColumnModel {
+    private final class PricesColumnModel extends DataColumnModel {
+        /**
+         * Serial Id.
+         */
         private static final long serialVersionUID = -851990835577845594L;
 
-        /* Renderers/Editors */
-        private CalendarRenderer theDateRenderer = null;
-        private CalendarEditor theDateEditor = null;
-        private DecimalRenderer theDecimalRenderer = null;
-        private PriceEditor thePriceEditor = null;
-        private DataColumn theDiluteCol = null;
-        private DataColumn theDilPriceCol = null;
+        /**
+         * Date Renderer.
+         */
+        private final CalendarRenderer theDateRenderer;
+
+        /**
+         * Date Editor.
+         */
+        private final CalendarEditor theDateEditor;
+
+        /**
+         * Decimal Renderer.
+         */
+        private final DecimalRenderer theDecimalRenderer;
+
+        /**
+         * Price Editor.
+         */
+        private final PriceEditor thePriceEditor;
+
+        /**
+         * Dilution column.
+         */
+        private final DataColumn theDiluteCol;
+
+        /**
+         * Diluted Price column.
+         */
+        private final DataColumn theDilPriceCol;
+
+        /**
+         * Do we have dilutions?
+         */
         private boolean hasDilutions = true;
 
         /**
-         * Constructor
+         * Constructor.
          */
         private PricesColumnModel() {
             /* call constructor */
@@ -523,23 +664,25 @@ public class AccountPrices extends DataTable<AccountPrice> {
             thePriceEditor = new PriceEditor();
 
             /* Create the columns */
-            addColumn(new DataColumn(COLUMN_DATE, 80, theDateRenderer, theDateEditor));
-            addColumn(new DataColumn(COLUMN_PRICE, 90, theDecimalRenderer, thePriceEditor));
-            addColumn(theDiluteCol = new DataColumn(COLUMN_DILUTION, 90, theDecimalRenderer, null));
-            addColumn(theDilPriceCol = new DataColumn(COLUMN_DILUTEDPRICE, 100, theDecimalRenderer, null));
+            addColumn(new DataColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
+            addColumn(new DataColumn(COLUMN_PRICE, WIDTH_PRICE, theDecimalRenderer, thePriceEditor));
+            theDiluteCol = new DataColumn(COLUMN_DILUTION, WIDTH_DILUTION, theDecimalRenderer, null);
+            theDilPriceCol = new DataColumn(COLUMN_DILUTEDPRICE, WIDTH_DILUTEDPRICE, theDecimalRenderer, null);
+            addColumn(theDiluteCol);
+            addColumn(theDilPriceCol);
         }
 
         /**
-         * Set the date editor range
-         * @param pRange
+         * Set the date editor range.
+         * @param pRange the range
          */
-        private void setDateEditorRange(DateDayRange pRange) {
+        private void setDateEditorRange(final DateDayRange pRange) {
             /* Set the range */
             theDateEditor.setRange(pRange);
         }
 
         /**
-         * Set column selection for this view
+         * Set column selection for this view.
          */
         private void setColumnSelection() {
             /* If we should show dilutions */
@@ -551,10 +694,9 @@ public class AccountPrices extends DataTable<AccountPrice> {
                     addColumn(theDilPriceCol);
                     hasDilutions = true;
                 }
-            }
 
-            /* else If we are showing dilutions */
-            else if (hasDilutions) {
+                /* else If we are showing dilutions */
+            } else if (hasDilutions) {
                 /* Remove the dilutions columns and record the fact */
                 removeColumn(theDiluteCol);
                 removeColumn(theDilPriceCol);

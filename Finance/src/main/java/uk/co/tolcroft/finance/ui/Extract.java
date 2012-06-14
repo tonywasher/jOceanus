@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -72,30 +73,105 @@ import uk.co.tolcroft.models.views.DataControl;
 import uk.co.tolcroft.models.views.ViewList;
 import uk.co.tolcroft.models.views.ViewList.ListClass;
 
+/**
+ * Event Extract Table.
+ * @author Tony Washer
+ */
 public class Extract extends DataTable<Event> {
-    /* Members */
+    /**
+     * Serial Id.
+     */
     private static final long serialVersionUID = -5531752729052421790L;
 
-    private View theView = null;
-    private ViewList theViewSet = null;
-    private ListClass theViewList = null;
-    private ExtractModel theModel = null;
+    /**
+     * Data View.
+     */
+    private final View theView;
+
+    /**
+     * View Set.
+     */
+    private final ViewList theViewSet;
+
+    /**
+     * View List.
+     */
+    private final ListClass theViewList;
+
+    /**
+     * Table Model.
+     */
+    private final ExtractModel theModel;
+
+    /**
+     * Events.
+     */
     private EventList theEvents = null;
+
+    /**
+     * Accounts List.
+     */
     private AccountList theAccounts = null;
+
+    /**
+     * TransType list.
+     */
     private TransTypeList theTransTypes = null;
-    private MainTab theParent = null;
-    private JPanel thePanel = null;
-    private Extract theTable = this;
-    private extractMouse theMouse = null;
-    private ExtractColumnModel theColumns = null;
+
+    /**
+     * The parent.
+     */
+    private final MainTab theParent;
+
+    /**
+     * The panel.
+     */
+    private final JPanel thePanel;
+
+    /**
+     * Self Reference.
+     */
+    private final Extract theTable = this;
+
+    /**
+     * Column Model.
+     */
+    private final ExtractColumnModel theColumns;
+
+    /**
+     * Selected range.
+     */
     private DateDayRange theRange = null;
+
+    /**
+     * Range selection panel.
+     */
     private DateDayRangeSelect theSelect = null;
-    private SaveButtons theTabButs = null;
-    private JDataEntry theDataExtract = null;
-    private ErrorPanel theError = null;
+
+    /**
+     * Save Buttons.
+     */
+    private final SaveButtons theTabButs;
+
+    /**
+     * Data Entry.
+     */
+    private final JDataEntry theDataExtract;
+
+    /**
+     * Error Panel.
+     */
+    private final ErrorPanel theError;
+
+    /**
+     * ComboList.
+     */
     private ComboSelect theComboList = null;
 
-    /* Access methods */
+    /**
+     * Obtain the panel.
+     * @return the panel
+     */
     public JPanel getPanel() {
         return thePanel;
     }
@@ -105,41 +181,176 @@ public class Extract extends DataTable<Event> {
         return false;
     }
 
-    /* Access the debug entry */
     @Override
     public JDataEntry getDataEntry() {
         return theDataExtract;
     }
 
-    /* Table headers */
-    private static final String titleDate = "Date";
-    private static final String titleDesc = "Description";
-    private static final String titleTrans = "TransactionType";
-    private static final String titleAmount = "Amount";
-    private static final String titleDebit = "Debit";
-    private static final String titleCredit = "Credit";
-    private static final String titleUnits = "Units";
-    private static final String titleDilute = "Dilution";
-    private static final String titleTaxCred = "TaxCredit";
-    private static final String titleYears = "Yrs";
+    /**
+     * Date column title.
+     */
+    private static final String TITLE_DATE = "Date";
 
-    /* Table columns */
+    /**
+     * Description column title.
+     */
+    private static final String TITLE_DESC = "Description";
+
+    /**
+     * TransType column title.
+     */
+    private static final String TITLE_TRANS = "TransactionType";
+
+    /**
+     * Amount column title.
+     */
+    private static final String TITLE_AMOUNT = "Amount";
+
+    /**
+     * Debit column title.
+     */
+    private static final String TITLE_DEBIT = "Debit";
+
+    /**
+     * Credit column title.
+     */
+    private static final String TITLE_CREDIT = "Credit";
+
+    /**
+     * Units column title.
+     */
+    private static final String TITLE_UNITS = "Units";
+
+    /**
+     * Dilution column title.
+     */
+    private static final String TITLE_DILUTE = "Dilution";
+
+    /**
+     * TaxCredit column title.
+     */
+    private static final String TITLE_TAXCRED = "TaxCredit";
+
+    /**
+     * Years column title.
+     */
+    private static final String TITLE_YEARS = "Yrs";
+
+    /**
+     * Date column id.
+     */
     private static final int COLUMN_DATE = 0;
+
+    /**
+     * TransType column id.
+     */
     private static final int COLUMN_TRANTYP = 1;
+
+    /**
+     * Description column id.
+     */
     private static final int COLUMN_DESC = 2;
+
+    /**
+     * Amount column id.
+     */
     private static final int COLUMN_AMOUNT = 3;
+
+    /**
+     * Debit column id.
+     */
     private static final int COLUMN_DEBIT = 4;
+
+    /**
+     * Credit column id.
+     */
     private static final int COLUMN_CREDIT = 5;
+
+    /**
+     * Units column id.
+     */
     private static final int COLUMN_UNITS = 6;
+
+    /**
+     * Dilution column id.
+     */
     private static final int COLUMN_DILUTE = 7;
+
+    /**
+     * Tax Credit column id.
+     */
     private static final int COLUMN_TAXCRED = 8;
+
+    /**
+     * Years column id.
+     */
     private static final int COLUMN_YEARS = 9;
 
     /**
-     * Constructor for Extract Window
+     * Date column width.
+     */
+    private static final int WIDTH_DATE = 90;
+
+    /**
+     * TransType column width.
+     */
+    private static final int WIDTH_TRANTYP = 110;
+
+    /**
+     * Description column width.
+     */
+    private static final int WIDTH_DESC = 140;
+
+    /**
+     * Amount column width.
+     */
+    private static final int WIDTH_AMOUNT = 90;
+
+    /**
+     * Debit column width.
+     */
+    private static final int WIDTH_DEBIT = 130;
+
+    /**
+     * Credit column width.
+     */
+    private static final int WIDTH_CREDIT = 130;
+
+    /**
+     * Units column width.
+     */
+    private static final int WIDTH_UNITS = 80;
+
+    /**
+     * Dilution column width.
+     */
+    private static final int WIDTH_DILUTE = 70;
+
+    /**
+     * Tax Credit column width.
+     */
+    private static final int WIDTH_TAXCRED = 90;
+
+    /**
+     * Years column width.
+     */
+    private static final int WIDTH_YEARS = 30;
+
+    /**
+     * Panel width.
+     */
+    private static final int PANEL_WIDTH = 900;
+
+    /**
+     * Panel height.
+     */
+    private static final int PANEL_HEIGHT = 200;
+
+    /**
+     * Constructor for Extract Window.
      * @param pParent the parent window
      */
-    public Extract(MainTab pParent) {
+    public Extract(final MainTab pParent) {
         /* Initialise superclass */
         super(pParent.getDataMgr());
 
@@ -174,11 +385,11 @@ public class Extract extends DataTable<Event> {
         setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
 
         /* Set the number of visible rows */
-        setPreferredScrollableViewportSize(new Dimension(900, 200));
+        setPreferredScrollableViewportSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
 
         /* Add the mouse listener */
-        theMouse = new extractMouse();
-        addMouseListener(theMouse);
+        ExtractMouse myMouse = new ExtractMouse();
+        addMouseListener(myMouse);
 
         /* Create the sub panels */
         theSelect = new DateDayRangeSelect();
@@ -208,7 +419,7 @@ public class Extract extends DataTable<Event> {
                                                                   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                     .addComponent(getScrollPane(),
                                                                   GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE, 900,
+                                                                  GroupLayout.DEFAULT_SIZE, PANEL_WIDTH,
                                                                   Short.MAX_VALUE)
                                                     .addComponent(theTabButs, GroupLayout.Alignment.LEADING,
                                                                   GroupLayout.DEFAULT_SIZE,
@@ -221,19 +432,20 @@ public class Extract extends DataTable<Event> {
     }
 
     /**
-     * Save changes from the view into the underlying data
+     * Save changes from the view into the underlying data.
      */
     @Override
     public void saveData() {
         if (theEvents != null) {
             super.validateAll();
-            if (!hasErrors())
+            if (!hasErrors()) {
                 theViewSet.applyChanges();
+            }
         }
     }
 
     /**
-     * Update Debug view
+     * Update Debug view.
      */
     @Override
     public void updateDebug() {
@@ -241,11 +453,11 @@ public class Extract extends DataTable<Event> {
     }
 
     /**
-     * Lock on error
+     * Lock on error.
      * @param isError is there an error (True/False)
      */
     @Override
-    public void lockOnError(boolean isError) {
+    public void lockOnError(final boolean isError) {
         /* Hide selection panel */
         theSelect.setVisible(!isError);
 
@@ -257,13 +469,13 @@ public class Extract extends DataTable<Event> {
     }
 
     /**
-     * Notify table that there has been a change in selection by an underlying control
+     * Notify table that there has been a change in selection by an underlying control.
      * @param obj the underlying control that has changed selection
      */
     @Override
-    public void notifySelection(Object obj) {
+    public void notifySelection(final Object obj) {
         /* if this is a change from the range */
-        if (obj == (Object) theSelect) {
+        if (theSelect.equals(obj)) {
             /* Protect against exceptions */
             try {
                 /* Set the new range */
@@ -271,10 +483,9 @@ public class Extract extends DataTable<Event> {
 
                 /* Create SavePoint */
                 theSelect.createSavePoint();
-            }
 
-            /* Catch Exceptions */
-            catch (JDataException e) {
+                /* Catch Exceptions */
+            } catch (JDataException e) {
                 /* Build the error */
                 JDataException myError = new JDataException(ExceptionClass.DATA,
                         "Failed to change selection", e);
@@ -289,8 +500,8 @@ public class Extract extends DataTable<Event> {
     }
 
     /**
-     * Refresh views/controls after a load/update of underlying data
-     * @throws JDataException
+     * Refresh views/controls after a load/update of underlying data.
+     * @throws JDataException on error
      */
     public void refreshData() throws JDataException {
         FinanceData myData;
@@ -316,28 +527,29 @@ public class Extract extends DataTable<Event> {
     }
 
     /**
-     * Call underlying controls to take notice of changes in view/selection
+     * Call underlying controls to take notice of changes in view/selection.
      */
     @Override
     public void notifyChanges() {
         /* Find the edit state */
-        if (theEvents != null)
+        if (theEvents != null) {
             theEvents.findEditState();
+        }
 
         /* Update the table buttons */
         theTabButs.setLockDown();
-        theSelect.setLockDown(true);
+        theSelect.setEnabled(!hasUpdates());
 
         /* Update the top level tabs */
         theParent.setVisibility();
     }
 
     /**
-     * Set Selection to the specified date range
+     * Set Selection to the specified date range.
      * @param pRange the Date range for the extract
-     * @throws JDataException
+     * @throws JDataException on error
      */
-    public void setSelection(DateDayRange pRange) throws JDataException {
+    public void setSelection(final DateDayRange pRange) throws JDataException {
         theRange = pRange;
         theEvents = null;
         if (theRange != null) {
@@ -351,15 +563,15 @@ public class Extract extends DataTable<Event> {
         setList(theEvents);
         theViewList.setDataList(theEvents);
         theTabButs.setLockDown();
-        theSelect.setLockDown(false);
+        theSelect.setEnabled(!hasUpdates());
         theParent.setVisibility();
     }
 
     /**
-     * Set selection to the period designated by the referenced control
+     * Set selection to the period designated by the referenced control.
      * @param pSource the source control
      */
-    public void selectPeriod(DateDayRangeSelect pSource) {
+    public void selectPeriod(final DateDayRangeSelect pSource) {
         /* Protect against exceptions */
         try {
             /* Adjust the period selection (this will not call back) */
@@ -367,10 +579,9 @@ public class Extract extends DataTable<Event> {
 
             /* Utilise the selection */
             setSelection(theSelect.getRange());
-        }
 
-        /* Catch exceptions */
-        catch (JDataException e) {
+            /* Catch exceptions */
+        } catch (JDataException e) {
             /* Build the error */
             JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to select Period", e);
 
@@ -383,15 +594,16 @@ public class Extract extends DataTable<Event> {
     }
 
     /**
-     * Obtain the correct ComboBox for the given row/column
+     * Obtain the correct ComboBox for the given row/column.
+     * @param row the row
+     * @param column the column
+     * @return the comboBox
      */
     @Override
-    public JComboBox getComboBox(int row,
-                                 int column) {
-        Event myEvent;
-
+    public JComboBox getComboBox(final int row,
+                                 final int column) {
         /* Access the event */
-        myEvent = theEvents.get(row);
+        Event myEvent = theEvents.get(row);
 
         /* Switch on column */
         switch (column) {
@@ -406,12 +618,17 @@ public class Extract extends DataTable<Event> {
         }
     }
 
-    /* Extract table model */
-    public class ExtractModel extends DataTableModel {
+    /**
+     * Extract table model.
+     */
+    public final class ExtractModel extends DataTableModel {
+        /**
+         * Serial Id.
+         */
         private static final long serialVersionUID = 7997087757206121152L;
 
         /**
-         * Constructor
+         * Constructor.
          */
         private ExtractModel() {
             /* call constructor */
@@ -419,7 +636,7 @@ public class Extract extends DataTable<Event> {
         }
 
         /**
-         * Get the number of display columns
+         * Get the number of display columns.
          * @return the columns
          */
         @Override
@@ -428,7 +645,7 @@ public class Extract extends DataTable<Event> {
         }
 
         /**
-         * Get the number of rows in the current table
+         * Get the number of rows in the current table.
          * @return the number of rows
          */
         @Override
@@ -437,45 +654,45 @@ public class Extract extends DataTable<Event> {
         }
 
         /**
-         * Get the name of the column
+         * Get the name of the column.
          * @param col the column
          * @return the name of the column
          */
         @Override
-        public String getColumnName(int col) {
+        public String getColumnName(final int col) {
             switch (col) {
                 case COLUMN_DATE:
-                    return titleDate;
+                    return TITLE_DATE;
                 case COLUMN_DESC:
-                    return titleDesc;
+                    return TITLE_DESC;
                 case COLUMN_TRANTYP:
-                    return titleTrans;
+                    return TITLE_TRANS;
                 case COLUMN_AMOUNT:
-                    return titleAmount;
+                    return TITLE_AMOUNT;
                 case COLUMN_CREDIT:
-                    return titleCredit;
+                    return TITLE_CREDIT;
                 case COLUMN_DEBIT:
-                    return titleDebit;
+                    return TITLE_DEBIT;
                 case COLUMN_UNITS:
-                    return titleUnits;
+                    return TITLE_UNITS;
                 case COLUMN_DILUTE:
-                    return titleDilute;
+                    return TITLE_DILUTE;
                 case COLUMN_TAXCRED:
-                    return titleTaxCred;
+                    return TITLE_TAXCRED;
                 case COLUMN_YEARS:
-                    return titleYears;
+                    return TITLE_YEARS;
                 default:
                     return null;
             }
         }
 
         /**
-         * Get the object class of the column
+         * Get the object class of the column.
          * @param col the column
          * @return the class of the objects associated with the column
          */
         @Override
-        public Class<?> getColumnClass(int col) {
+        public Class<?> getColumnClass(final int col) {
             switch (col) {
                 case COLUMN_DESC:
                     return String.class;
@@ -491,13 +708,14 @@ public class Extract extends DataTable<Event> {
         }
 
         /**
-         * Obtain the Field id associated with the column
+         * Obtain the Field id associated with the column.
          * @param row the row
          * @param column the column
+         * @return the fieldId
          */
         @Override
-        public JDataField getFieldForCell(int row,
-                                          int column) {
+        public JDataField getFieldForCell(final int row,
+                                          final int column) {
             /* Switch on column */
             switch (column) {
                 case COLUMN_DATE:
@@ -526,19 +744,21 @@ public class Extract extends DataTable<Event> {
         }
 
         /**
-         * Is the cell at (row, col) editable
+         * Is the cell at (row, col) editable?
+         * @param row the row
+         * @param col the column
+         * @return true/false
          */
         @Override
-        public boolean isCellEditable(int row,
-                                      int col) {
-            Event myEvent;
-
+        public boolean isCellEditable(final int row,
+                                      final int col) {
             /* Access the event */
-            myEvent = theEvents.get(row);
+            Event myEvent = theEvents.get(row);
 
             /* Cannot edit if row is deleted or locked */
-            if (myEvent.isDeleted() || myEvent.isLocked())
+            if (myEvent.isDeleted() || myEvent.isLocked()) {
                 return false;
+            }
 
             /* switch on column */
             switch (col) {
@@ -550,8 +770,9 @@ public class Extract extends DataTable<Event> {
                     return ((myEvent.getDate() != null) && (myEvent.getTransType() != null));
                 default:
                     if ((myEvent.getDate() == null) || (myEvent.getDesc() == null)
-                            || (myEvent.getTransType() == null))
+                            || (myEvent.getTransType() == null)) {
                         return false;
+                    }
                     switch (col) {
                         case COLUMN_UNITS:
                             return ((myEvent.getDebit() != null) && (myEvent.getCredit() != null) && (myEvent
@@ -570,17 +791,18 @@ public class Extract extends DataTable<Event> {
         }
 
         /**
-         * Get the value at (row, col)
+         * Get the value at (row, col).
+         * @param row the row
+         * @param col the column
          * @return the object value
          */
         @Override
-        public Object getValueAt(int row,
-                                 int col) {
-            Event myEvent;
+        public Object getValueAt(final int row,
+                                 final int col) {
             Object o;
 
             /* Access the event */
-            myEvent = theEvents.get(row);
+            Event myEvent = theEvents.get(row);
 
             /* Return the appropriate value */
             switch (col) {
@@ -613,8 +835,9 @@ public class Extract extends DataTable<Event> {
                     break;
                 case COLUMN_DESC:
                     o = myEvent.getDesc();
-                    if ((o != null) && (((String) o).length() == 0))
+                    if ((o != null) && (((String) o).length() == 0)) {
                         o = null;
+                    }
                     break;
                 default:
                     o = null;
@@ -622,21 +845,24 @@ public class Extract extends DataTable<Event> {
             }
 
             /* If we have a null value for an error field, set error description */
-            if ((o == null) && (myEvent.hasErrors(getFieldForCell(row, col))))
+            if ((o == null) && (myEvent.hasErrors(getFieldForCell(row, col)))) {
                 o = Renderer.getError();
+            }
 
             /* Return to caller */
             return o;
         }
 
         /**
-         * Set the value at (row, col)
+         * Set the value at (row, col).
          * @param obj the object value to set
+         * @param row the row
+         * @param col the column
          */
         @Override
-        public void setValueAt(Object obj,
-                               int row,
-                               int col) {
+        public void setValueAt(final Object obj,
+                               final int row,
+                               final int col) {
             Event myEvent;
 
             /* Access the line */
@@ -664,17 +890,19 @@ public class Extract extends DataTable<Event> {
                         if (needsTaxCredit != Event
                                 .needsTaxCredit(myEvent.getTransType(), myEvent.getDebit())) {
                             /* Determine new Tax Credit */
-                            if (needsTaxCredit)
+                            if (needsTaxCredit) {
                                 myEvent.setTaxCredit(null);
-                            else
+                            } else {
                                 myEvent.setTaxCredit(myEvent.calculateTaxCredit());
+                            }
                         }
                         break;
                     case COLUMN_AMOUNT:
                         myEvent.setAmount((Money) obj);
                         /* Determine new Tax Credit if required */
-                        if (needsTaxCredit)
+                        if (needsTaxCredit) {
                             myEvent.setTaxCredit(myEvent.calculateTaxCredit());
+                        }
                         break;
                     case COLUMN_DILUTE:
                         myEvent.setDilution((Dilution) obj);
@@ -694,11 +922,12 @@ public class Extract extends DataTable<Event> {
                     case COLUMN_DEBIT:
                         myEvent.setDebit(theAccounts.searchFor((String) obj));
                         break;
+                    default:
+                        break;
                 }
-            }
 
-            /* Handle Exceptions */
-            catch (Exception e) {
+                /* Handle Exceptions */
+            } catch (Exception e) {
                 /* Reset values */
                 myEvent.popHistory();
                 myEvent.pushHistory();
@@ -757,33 +986,58 @@ public class Extract extends DataTable<Event> {
     }
 
     /**
-     * Extract mouse listener
+     * Extract mouse listener.
      */
-    private class extractMouse extends DataMouse<Event> {
-
-        /* Pop-up Menu items */
-        private static final String popupView = "View Account";
-        private static final String popupMaint = "Maintain Account";
-        private static final String popupSetNullUnits = "Set Null Units";
-        private static final String popupSetNullTax = "Set Null TaxCredit";
-        private static final String popupSetNullYears = "Set Null Years";
-        private static final String popupSetNullDilute = "Set Null Dilution";
-        private static final String popupCalcTax = "Calculate Tax Credit";
+    private final class ExtractMouse extends DataMouse<Event> {
+        /**
+         * PopUp viewAccount.
+         */
+        private static final String POPUP_VIEW = "View Account";
 
         /**
-         * Constructor
+         * PopUp maintAccount.
          */
-        private extractMouse() {
+        private static final String POPUP_MAINT = "Maintain Account";
+
+        /**
+         * PopUp nullUnits.
+         */
+        private static final String POPUP_NULLUNITS = "Set Null Units";
+
+        /**
+         * PopUp nullTaxCredit.
+         */
+        private static final String POPUP_NULLTAX = "Set Null TaxCredit";
+
+        /**
+         * PopUp nullYears.
+         */
+        private static final String POPUP_NULLYEARS = "Set Null Years";
+
+        /**
+         * PopUp nullDilution.
+         */
+        private static final String POPUP_NULLDILUTE = "Set Null Dilution";
+
+        /**
+         * PopUp calcTax.
+         */
+        private static final String POPUP_CALCTAX = "Calculate Tax Credit";
+
+        /**
+         * Constructor.
+         */
+        private ExtractMouse() {
             /* Call super-constructor */
             super(theTable);
         }
 
         /**
-         * Add Null commands to menu
+         * Add Null commands to menu.
          * @param pMenu the menu to add to
          */
         @Override
-        protected void addNullCommands(JPopupMenu pMenu) {
+        protected void addNullCommands(final JPopupMenu pMenu) {
             JMenuItem myItem;
             Event myEvent;
             boolean enableNullUnits = false;
@@ -792,37 +1046,39 @@ public class Extract extends DataTable<Event> {
             boolean enableNullDilution = false;
 
             /* Nothing to do if the table is locked */
-            if (theTable.isLocked())
+            if (theTable.isLocked()) {
                 return;
+            }
 
             /* Loop through the selected rows */
             for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
-                /* Ignore locked rows */
-                if ((myRow == null) || (myRow.isLocked()))
+                /* Ignore locked/deleted rows */
+                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
-
-                /* Ignore deleted rows */
-                if (myRow.isDeleted())
-                    continue;
+                }
 
                 /* Access as event */
                 myEvent = (Event) myRow;
 
                 /* Enable null Units if we have units */
-                if (myEvent.getUnits() != null)
+                if (myEvent.getUnits() != null) {
                     enableNullUnits = true;
+                }
 
                 /* Enable null Tax if we have tax */
-                if (myEvent.getTaxCredit() != null)
+                if (myEvent.getTaxCredit() != null) {
                     enableNullTax = true;
+                }
 
                 /* Enable null Years if we have years */
-                if (myEvent.getYears() != null)
+                if (myEvent.getYears() != null) {
                     enableNullYears = true;
+                }
 
                 /* Enable null Dilution if we have dilution */
-                if (myEvent.getDilution() != null)
+                if (myEvent.getDilution() != null) {
                     enableNullDilution = true;
+                }
             }
 
             /* If there is something to add and there are already items in the menu */
@@ -835,8 +1091,8 @@ public class Extract extends DataTable<Event> {
             /* If we can set null units */
             if (enableNullUnits) {
                 /* Add the undo change choice */
-                myItem = new JMenuItem(popupSetNullUnits);
-                myItem.setActionCommand(popupSetNullUnits);
+                myItem = new JMenuItem(POPUP_NULLUNITS);
+                myItem.setActionCommand(POPUP_NULLUNITS);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
@@ -844,8 +1100,8 @@ public class Extract extends DataTable<Event> {
             /* If we can set null tax */
             if (enableNullTax) {
                 /* Add the undo change choice */
-                myItem = new JMenuItem(popupSetNullTax);
-                myItem.setActionCommand(popupSetNullTax);
+                myItem = new JMenuItem(POPUP_NULLTAX);
+                myItem.setActionCommand(POPUP_NULLTAX);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
@@ -853,8 +1109,8 @@ public class Extract extends DataTable<Event> {
             /* If we can set null years */
             if (enableNullYears) {
                 /* Add the undo change choice */
-                myItem = new JMenuItem(popupSetNullYears);
-                myItem.setActionCommand(popupSetNullYears);
+                myItem = new JMenuItem(POPUP_NULLYEARS);
+                myItem.setActionCommand(POPUP_NULLYEARS);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
@@ -862,19 +1118,19 @@ public class Extract extends DataTable<Event> {
             /* If we can set null dilution */
             if (enableNullDilution) {
                 /* Add the undo change choice */
-                myItem = new JMenuItem(popupSetNullDilute);
-                myItem.setActionCommand(popupSetNullDilute);
+                myItem = new JMenuItem(POPUP_NULLDILUTE);
+                myItem.setActionCommand(POPUP_NULLDILUTE);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
         }
 
         /**
-         * Add Special commands to menu
+         * Add Special commands to menu.
          * @param pMenu the menu to add to
          */
         @Override
-        protected void addSpecialCommands(JPopupMenu pMenu) {
+        protected void addSpecialCommands(final JPopupMenu pMenu) {
             JMenuItem myItem;
             Event myEvent;
             Money myTax;
@@ -882,29 +1138,26 @@ public class Extract extends DataTable<Event> {
             boolean enableCalcTax = false;
 
             /* Nothing to do if the table is locked */
-            if (theTable.isLocked())
+            if (theTable.isLocked()) {
                 return;
+            }
 
             /* Loop through the selected rows */
             for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
-                /* Ignore locked rows */
-                if ((myRow == null) || (myRow.isLocked()))
+                /* Ignore locked/deleted rows */
+                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
-
-                /* Ignore deleted rows */
-                if (myRow.isDeleted())
-                    continue;
+                }
 
                 /* Access as event */
                 myEvent = (Event) myRow;
                 myTax = myEvent.getTaxCredit();
                 myTrans = myEvent.getTransType();
 
-                /* If we have a calculable tax credit */
-                if ((myTrans != null) && ((myTrans.isInterest()) || (myTrans.isDividend()))) {
-                    /* Enable calculation of tax if tax is null or zero */
-                    if ((myTax == null) || (!myTax.isNonZero()))
-                        enableCalcTax = true;
+                /* If we have a calculable tax credit that is null/zero */
+                if ((myTrans != null) && ((myTrans.isInterest()) || (myTrans.isDividend()))
+                        && ((myTax == null) || (!myTax.isNonZero()))) {
+                    enableCalcTax = true;
                 }
             }
 
@@ -917,19 +1170,19 @@ public class Extract extends DataTable<Event> {
             /* If we can calculate tax */
             if (enableCalcTax) {
                 /* Add the undo change choice */
-                myItem = new JMenuItem(popupCalcTax);
-                myItem.setActionCommand(popupCalcTax);
+                myItem = new JMenuItem(POPUP_CALCTAX);
+                myItem.setActionCommand(POPUP_CALCTAX);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
         }
 
         /**
-         * Add Navigation commands to menu
+         * Add Navigation commands to menu.
          * @param pMenu the menu to add to
          */
         @Override
-        protected void addNavigationCommands(JPopupMenu pMenu) {
+        protected void addNavigationCommands(final JPopupMenu pMenu) {
             JMenuItem myItem;
             Event myEvent;
             Account myAccount;
@@ -938,29 +1191,33 @@ public class Extract extends DataTable<Event> {
             boolean enableNavigate = false;
 
             /* Nothing to do if the table is locked */
-            if (theTable.isLocked())
+            if (theTable.isLocked()) {
                 return;
+            }
 
             /* Access the popUp row/column and ignore if not valid */
             myRow = getPopupRow();
             myCol = getPopupCol();
-            if (myRow < 0)
+            if (myRow < 0) {
                 return;
+            }
 
             /* Access the event */
             myEvent = theTable.extractItemAt(myRow);
 
             /* If the column is Credit */
-            if (myCol == COLUMN_CREDIT)
+            if (myCol == COLUMN_CREDIT) {
                 myAccount = myEvent.getCredit();
-            else if (myCol == COLUMN_DEBIT)
+            } else if (myCol == COLUMN_DEBIT) {
                 myAccount = myEvent.getDebit();
-            else
+            } else {
                 myAccount = null;
+            }
 
             /* If we have an account we can navigate */
-            if (myAccount != null)
+            if (myAccount != null) {
                 enableNavigate = true;
+            }
 
             /* If there is something to add and there are already items in the menu */
             if ((enableNavigate) && (pMenu.getComponentCount() > 0)) {
@@ -971,72 +1228,66 @@ public class Extract extends DataTable<Event> {
             /* If we can navigate */
             if (enableNavigate) {
                 /* Create the View account choice */
-                myItem = new JMenuItem(popupView + ": " + myAccount.getName());
+                myItem = new JMenuItem(POPUP_VIEW + ": " + myAccount.getName());
 
                 /* Set the command and add to menu */
-                myItem.setActionCommand(popupView + ":" + myAccount.getName());
+                myItem.setActionCommand(POPUP_VIEW + ":" + myAccount.getName());
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
 
                 /* Create the Maintain account choice */
-                myItem = new JMenuItem(popupMaint + ": " + myAccount.getName());
+                myItem = new JMenuItem(POPUP_MAINT + ": " + myAccount.getName());
 
                 /* Set the command and add to menu */
-                myItem.setActionCommand(popupMaint + ":" + myAccount.getName());
+                myItem.setActionCommand(POPUP_MAINT + ":" + myAccount.getName());
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
         }
 
         /**
-         * Perform actions for controls/pop-ups on this table
+         * Perform actions for controls/pop-ups on this table.
          * @param evt the event
          */
         @Override
-        public void actionPerformed(ActionEvent evt) {
+        public void actionPerformed(final ActionEvent evt) {
             String myCmd = evt.getActionCommand();
 
             /* Cancel any editing */
             theTable.cancelEditing();
 
             /* If this is a set null units command */
-            if (myCmd.equals(popupSetNullUnits)) {
+            if (myCmd.equals(POPUP_NULLUNITS)) {
                 /* Set Units column to null */
                 setColumnToNull(COLUMN_UNITS);
-            }
 
-            /* else if this is a set null tax command */
-            else if (myCmd.equals(popupSetNullTax)) {
+                /* else if this is a set null tax command */
+            } else if (myCmd.equals(POPUP_NULLTAX)) {
                 /* Set Tax column to null */
                 setColumnToNull(COLUMN_TAXCRED);
-            }
 
-            /* If this is a set null years command */
-            else if (myCmd.equals(popupSetNullYears)) {
+                /* If this is a set null years command */
+            } else if (myCmd.equals(POPUP_NULLYEARS)) {
                 /* Set Years column to null */
                 setColumnToNull(COLUMN_YEARS);
-            }
 
-            /* If this is a set null dilute command */
-            else if (myCmd.equals(popupSetNullDilute)) {
+                /* If this is a set null dilute command */
+            } else if (myCmd.equals(POPUP_NULLDILUTE)) {
                 /* Set Dilution column to null */
                 setColumnToNull(COLUMN_DILUTE);
-            }
 
-            /* If this is a calculate Tax Credits command */
-            else if (myCmd.equals(popupCalcTax)) {
+                /* If this is a calculate Tax Credits command */
+            } else if (myCmd.equals(POPUP_CALCTAX)) {
                 /* Calculate the tax credits */
                 calculateTaxCredits();
-            }
 
-            /* If this is a navigate command */
-            else if ((myCmd.startsWith(popupView)) || (myCmd.startsWith(popupMaint))) {
+                /* If this is a navigate command */
+            } else if ((myCmd.startsWith(POPUP_VIEW)) || (myCmd.startsWith(POPUP_MAINT))) {
                 /* perform the navigation */
                 performNavigation(myCmd);
-            }
 
-            /* else we do not recognise the action */
-            else {
+                /* else we do not recognise the action */
+            } else {
                 /* Pass it to the superclass */
                 super.actionPerformed(evt);
                 return;
@@ -1048,7 +1299,7 @@ public class Extract extends DataTable<Event> {
         }
 
         /**
-         * Calculate tax credits
+         * Calculate tax credits.
          */
         private void calculateTaxCredits() {
             Event myEvent;
@@ -1058,18 +1309,16 @@ public class Extract extends DataTable<Event> {
 
             /* Loop through the selected rows */
             for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
-                /* Ignore locked rows */
-                if ((myRow == null) || (myRow.isLocked()))
+                /* Ignore locked/deleted rows */
+                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
-
-                /* Ignore deleted rows */
-                if (myRow.isDeleted())
-                    continue;
+                }
 
                 /* Determine row */
                 row = myRow.indexOf();
-                if (theTable.hasHeader())
+                if (theTable.hasHeader()) {
                     row--;
+                }
 
                 /* Access the event */
                 myEvent = (Event) myRow;
@@ -1077,12 +1326,14 @@ public class Extract extends DataTable<Event> {
                 myTax = myEvent.getTaxCredit();
 
                 /* Ignore rows with invalid transaction type */
-                if ((myTrans == null) || ((!myTrans.isInterest()) && (!myTrans.isDividend())))
+                if ((myTrans == null) || ((!myTrans.isInterest()) && (!myTrans.isDividend()))) {
                     continue;
+                }
 
                 /* Ignore rows with tax credit already set */
-                if ((myTax != null) && (myTax.isNonZero()))
+                if ((myTax != null) && (myTax.isNonZero())) {
                     continue;
+                }
 
                 /* Calculate the tax credit */
                 myTax = myEvent.calculateTaxCredit();
@@ -1094,31 +1345,31 @@ public class Extract extends DataTable<Event> {
         }
 
         /**
-         * Perform a navigation command
+         * Perform a navigation command.
          * @param pCmd the navigation command
          */
-        private void performNavigation(String pCmd) {
-            String tokens[];
+        private void performNavigation(final String pCmd) {
+            String[] tokens;
             String myName = null;
             Account myAccount;
 
             /* Access the action command */
             tokens = pCmd.split(":");
             String myCmd = tokens[0];
-            if (tokens.length > 1)
+            if (tokens.length > 1) {
                 myName = tokens[1];
+            }
 
             /* Access the correct account */
             myAccount = theView.getData().getAccounts().searchFor(myName);
 
             /* If this is an account view request */
-            if (myCmd.compareTo(popupView) == 0) {
+            if (myCmd.compareTo(POPUP_VIEW) == 0) {
                 /* Switch view */
                 theParent.selectAccount(myAccount, theSelect);
-            }
 
-            /* If this is an account maintenance request */
-            else if (myCmd.compareTo(popupMaint) == 0) {
+                /* If this is an account maintenance request */
+            } else if (myCmd.compareTo(POPUP_MAINT) == 0) {
                 /* Switch view */
                 theParent.selectAccountMaint(myAccount);
             }
@@ -1126,26 +1377,71 @@ public class Extract extends DataTable<Event> {
     }
 
     /**
-     * Column Model class
+     * Column Model class.
      */
-    private class ExtractColumnModel extends DataColumnModel {
+    private final class ExtractColumnModel extends DataColumnModel {
+        /**
+         * Serial Id.
+         */
         private static final long serialVersionUID = -7502445487118370020L;
 
-        /* Renderers/Editors */
-        private CalendarRenderer theDateRenderer = null;
-        private CalendarEditor theDateEditor = null;
-        private DecimalRenderer theDecimalRenderer = null;
-        private MoneyEditor theMoneyEditor = null;
-        private UnitsEditor theUnitsEditor = null;
-        private IntegerRenderer theIntegerRenderer = null;
-        private IntegerEditor theIntegerEditor = null;
-        private StringRenderer theStringRenderer = null;
-        private StringEditor theStringEditor = null;
-        private DilutionEditor theDiluteEditor = null;
-        private ComboBoxEditor theComboEditor = null;
+        /**
+         * Date Renderer.
+         */
+        private final CalendarRenderer theDateRenderer;
 
         /**
-         * Constructor
+         * Date Editor.
+         */
+        private final CalendarEditor theDateEditor;
+
+        /**
+         * Decimal Renderer.
+         */
+        private final DecimalRenderer theDecimalRenderer;
+
+        /**
+         * Money Editor.
+         */
+        private final MoneyEditor theMoneyEditor;
+
+        /**
+         * Units Editor.
+         */
+        private final UnitsEditor theUnitsEditor;
+
+        /**
+         * Integer Renderer.
+         */
+        private final IntegerRenderer theIntegerRenderer;
+
+        /**
+         * Integer Editor.
+         */
+        private final IntegerEditor theIntegerEditor;
+
+        /**
+         * String Renderer.
+         */
+        private final StringRenderer theStringRenderer;
+
+        /**
+         * String Editor.
+         */
+        private final StringEditor theStringEditor;
+
+        /**
+         * Dilution Editor.
+         */
+        private final DilutionEditor theDiluteEditor;
+
+        /**
+         * comboBox Editor.
+         */
+        private final ComboBoxEditor theComboEditor;
+
+        /**
+         * Constructor.
          */
         private ExtractColumnModel() {
             /* call constructor */
@@ -1165,23 +1461,23 @@ public class Extract extends DataTable<Event> {
             theComboEditor = new ComboBoxEditor();
 
             /* Create the columns */
-            addColumn(new DataColumn(COLUMN_DATE, 90, theDateRenderer, theDateEditor));
-            addColumn(new DataColumn(COLUMN_TRANTYP, 110, theStringRenderer, theComboEditor));
-            addColumn(new DataColumn(COLUMN_DESC, 140, theStringRenderer, theStringEditor));
-            addColumn(new DataColumn(COLUMN_AMOUNT, 90, theDecimalRenderer, theMoneyEditor));
-            addColumn(new DataColumn(COLUMN_DEBIT, 130, theStringRenderer, theComboEditor));
-            addColumn(new DataColumn(COLUMN_CREDIT, 130, theStringRenderer, theComboEditor));
-            addColumn(new DataColumn(COLUMN_UNITS, 80, theDecimalRenderer, theUnitsEditor));
-            addColumn(new DataColumn(COLUMN_DILUTE, 70, theDecimalRenderer, theDiluteEditor));
-            addColumn(new DataColumn(COLUMN_TAXCRED, 90, theDecimalRenderer, theMoneyEditor));
-            addColumn(new DataColumn(COLUMN_YEARS, 30, theIntegerRenderer, theIntegerEditor));
+            addColumn(new DataColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
+            addColumn(new DataColumn(COLUMN_TRANTYP, WIDTH_TRANTYP, theStringRenderer, theComboEditor));
+            addColumn(new DataColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
+            addColumn(new DataColumn(COLUMN_AMOUNT, WIDTH_AMOUNT, theDecimalRenderer, theMoneyEditor));
+            addColumn(new DataColumn(COLUMN_DEBIT, WIDTH_DEBIT, theStringRenderer, theComboEditor));
+            addColumn(new DataColumn(COLUMN_CREDIT, WIDTH_CREDIT, theStringRenderer, theComboEditor));
+            addColumn(new DataColumn(COLUMN_UNITS, WIDTH_UNITS, theDecimalRenderer, theUnitsEditor));
+            addColumn(new DataColumn(COLUMN_DILUTE, WIDTH_DILUTE, theDecimalRenderer, theDiluteEditor));
+            addColumn(new DataColumn(COLUMN_TAXCRED, WIDTH_TAXCRED, theDecimalRenderer, theMoneyEditor));
+            addColumn(new DataColumn(COLUMN_YEARS, WIDTH_YEARS, theIntegerRenderer, theIntegerEditor));
         }
 
         /**
-         * Set the date editor range
-         * @param pRange
+         * Set the date editor range.
+         * @param pRange the range
          */
-        private void setDateEditorRange(DateDayRange pRange) {
+        private void setDateEditorRange(final DateDayRange pRange) {
             /* Set the range */
             theDateEditor.setRange(pRange);
         }

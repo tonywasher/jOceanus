@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,6 +28,7 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Money;
 import uk.co.tolcroft.finance.data.Account;
+import uk.co.tolcroft.finance.data.Account.AccountList;
 import uk.co.tolcroft.finance.data.AccountType;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.StaticClass.TaxClass;
@@ -41,6 +43,7 @@ import uk.co.tolcroft.finance.views.Analysis.AnalysisState;
 import uk.co.tolcroft.finance.views.Analysis.AssetAccount;
 import uk.co.tolcroft.finance.views.Analysis.AssetSummary;
 import uk.co.tolcroft.finance.views.Analysis.AssetTotal;
+import uk.co.tolcroft.finance.views.Analysis.BucketList;
 import uk.co.tolcroft.finance.views.Analysis.DebtAccount;
 import uk.co.tolcroft.finance.views.Analysis.ExternalAccount;
 import uk.co.tolcroft.finance.views.Analysis.ExternalTotal;
@@ -57,28 +60,124 @@ import uk.co.tolcroft.models.data.PreferenceSet;
 import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 import uk.co.tolcroft.models.data.PreferenceSet.PreferenceSetChooser;
 
+/**
+ * Class to further analyse an analysis, primarily to calculare tax liability.
+ * @author Tony Washer
+ */
 public class MetaAnalysis implements PreferenceSetChooser {
-    /* Members */
-    private Analysis theAnalysis = null;
-    private Analysis.BucketList theList = null;
-    private ChargeableEventList theCharges = null;
-    private DateDay theDate = null;
-    private TaxYear theYear = null;
+    /**
+     * Low Age Limit.
+     */
+    private static final int LIMIT_AGE_LO = 65;
+
+    /**
+     * High Age Limit.
+     */
+    private static final int LIMIT_AGE_HI = 75;
+
+    /**
+     * Allowance Quotient.
+     */
+    private static final int ALLOWANCE_QUOTIENT = 200;
+
+    /**
+     * Allowance Multiplier.
+     */
+    private static final int ALLOWANCE_MULTIPLIER = 100;
+
+    /**
+     * Analysis.
+     */
+    private final Analysis theAnalysis;
+
+    /**
+     * Analysis Buckets.
+     */
+    private final BucketList theList;
+
+    /**
+     * Chargeable events.
+     */
+    private final ChargeableEventList theCharges;
+
+    /**
+     * The date of the analysis.
+     */
+    private final DateDay theDate;
+
+    /**
+     * The TaxYear of the analysis.
+     */
+    private final TaxYear theYear;
+
+    /**
+     * The Assets Summary.
+     */
     private AssetSummary theAssetSummary = null;
-    private AssetTotal theAssetTotals = null;
-    private MarketTotal theMarketTotals = null;
+
+    /**
+     * The external totals.
+     */
     private ExternalTotal theExternalTotals = null;
+
+    /**
+     * The Transaction profit.
+     */
     private TransTotal theTransProfit = null;
+
+    /**
+     * The core profit.
+     */
     private TransTotal theCoreProfit = null;
+
+    /**
+     * The core income.
+     */
     private TransTotal theCoreIncome = null;
+
+    /**
+     * The market account.
+     */
     private ExternalAccount theMarketAccount = null;
+
+    /**
+     * The market growth.
+     */
     private TransDetail theMarketGrowth = null;
+
+    /**
+     * The market shrink.
+     */
     private TransDetail theMarketShrink = null;
+
+    /**
+     * The capital Gains.
+     */
     private TransDetail theCapitalGains = null;
+
+    /**
+     * The capital loss.
+     */
     private TransDetail theCapitalLoss = null;
+
+    /**
+     * Do we have an age allowance?
+     */
     private boolean hasAgeAllowance = false;
+
+    /**
+     * Do we have Gains slices?
+     */
     private boolean hasGainsSlices = false;
+
+    /**
+     * Do we have a reduced allowance?
+     */
     private boolean hasReducedAllow = false;
+
+    /**
+     * Age of User.
+     */
     private int theAge = 0;
 
     @Override
@@ -87,27 +186,27 @@ public class MetaAnalysis implements PreferenceSetChooser {
     }
 
     /**
-     * Taxation Preferences
+     * Taxation Preferences.
      */
     public static class TaxationPreferences extends PreferenceSet {
         /**
-         * Registry name for BirthDate
+         * Registry name for BirthDate.
          */
-        protected final static String nameBirthDate = "BirthDate";
+        protected static final String NAME_BIRTHDATE = "BirthDate";
 
         /**
-         * Display name for BirthDate
+         * Display name for BirthDate.
          */
-        protected final static String dispBirthDate = "Birth Date";
+        protected static final String DISPLAY_BIRTHDATE = "Birth Date";
 
         /**
-         * Default value for BirthDate
+         * Default value for BirthDate.
          */
-        private final static DateDay defBirthDate = new DateDay(1970, Calendar.JANUARY, 1);
+        private static final DateDay DEFAULT_BIRTHDATE = new DateDay(1970, Calendar.JANUARY, 1);
 
         /**
-         * Constructor
-         * @throws JDataException
+         * Constructor.
+         * @throws JDataException on error
          */
         public TaxationPreferences() throws JDataException {
             super();
@@ -116,31 +215,33 @@ public class MetaAnalysis implements PreferenceSetChooser {
         @Override
         protected void definePreferences() {
             /* Define the preferences */
-            definePreference(nameBirthDate, PreferenceType.Date);
+            definePreference(NAME_BIRTHDATE, PreferenceType.Date);
         }
 
         @Override
-        protected Object getDefaultValue(String pName) {
+        protected Object getDefaultValue(final String pName) {
             /* Handle default values */
-            if (pName.equals(nameBirthDate))
-                return defBirthDate;
+            if (pName.equals(NAME_BIRTHDATE)) {
+                return DEFAULT_BIRTHDATE;
+            }
             return null;
         }
 
         @Override
-        protected String getDisplayName(String pName) {
+        protected String getDisplayName(final String pName) {
             /* Handle default values */
-            if (pName.equals(nameBirthDate))
-                return dispBirthDate;
+            if (pName.equals(NAME_BIRTHDATE)) {
+                return DISPLAY_BIRTHDATE;
+            }
             return null;
         }
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pAnalysis the analysis
      */
-    protected MetaAnalysis(Analysis pAnalysis) {
+    protected MetaAnalysis(final Analysis pAnalysis) {
         /* Store the analysis */
         theAnalysis = pAnalysis;
         theDate = theAnalysis.getDate();
@@ -150,7 +251,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
     }
 
     /**
-     * Value the priced assets
+     * Value the priced assets.
      */
     protected void valueAssets() {
         DataListIterator<AnalysisBucket> myIterator;
@@ -159,14 +260,15 @@ public class MetaAnalysis implements PreferenceSetChooser {
         AssetAccount myAsset;
         MoneyAccount myMoney;
         FinanceData myData;
-        Account.AccountList myAccounts;
+        AccountList myAccounts;
 
         /* Access the state of the analysis */
         myState = theAnalysis.getState();
 
         /* Ignore request if we are not in raw state */
-        if (myState != AnalysisState.RAW)
+        if (myState != AnalysisState.RAW) {
             return;
+        }
 
         /* Obtain access to account list */
         myData = theAnalysis.getData();
@@ -209,6 +311,8 @@ public class MetaAnalysis implements PreferenceSetChooser {
                     /* Calculate the profit */
                     myAsset.calculateProfit();
                     break;
+                default:
+                    break;
             }
         }
 
@@ -217,28 +321,30 @@ public class MetaAnalysis implements PreferenceSetChooser {
     }
 
     /**
-     * Process market movement for asset
+     * Process market movement for asset.
      * @param pAsset the asset
      */
-    private void processMarketMovement(AssetAccount pAsset) {
+    private void processMarketMovement(final AssetAccount pAsset) {
         /* Create a capital event */
         CapitalEvent myEvent = pAsset.getCapitalEvents().addEvent(theDate);
 
         /* Add price and value */
-        myEvent.addAttribute(CapitalEvent.capitalFinalPrice, pAsset.getPrice());
-        if (pAsset.getPrevValue() != null)
-            myEvent.addAttribute(CapitalEvent.capitalInitialValue, pAsset.getPrevValue());
-        myEvent.addAttribute(CapitalEvent.capitalFinalValue, pAsset.getValue());
-        myEvent.addAttribute(CapitalEvent.capitalFinalInvest, pAsset.getInvested());
-        myEvent.addAttribute(CapitalEvent.capitalFinalGains, pAsset.getGains());
-        myEvent.addAttribute(CapitalEvent.capitalFinalDiv, pAsset.getDividend());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALPRICE, pAsset.getPrice());
+        if (pAsset.getPrevValue() != null) {
+            myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALVALUE, pAsset.getPrevValue());
+        }
+        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALVALUE, pAsset.getValue());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALINVEST, pAsset.getInvested());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALGAINS, pAsset.getGains());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALDIVIDEND, pAsset.getDividend());
 
         /*
          * Calculate basic market movement which is defined as currentValue - previousValue - amountInvested
          */
         Money myMarket = new Money(pAsset.getValue());
-        if (pAsset.getBase() != null)
+        if (pAsset.getBase() != null) {
             myMarket.subtractAmount(pAsset.getPrevValue());
+        }
         myMarket.subtractAmount(pAsset.getInvested());
 
         /* Access the amount that has been gained in this period */
@@ -257,18 +363,16 @@ public class MetaAnalysis implements PreferenceSetChooser {
                     /* Add to capital Gains and market income */
                     theCapitalGains.getAmount().addAmount(myGain);
                     theMarketAccount.getIncome().addAmount(myGain);
-                }
 
-                /* else the gains are negative */
-                else {
+                    /* else the gains are negative */
+                } else {
                     /* Add to capital Loss and market expense */
                     theCapitalLoss.getAmount().subtractAmount(myGain);
                     theMarketAccount.getExpense().subtractAmount(myGain);
                 }
-            }
 
-            /* else if this is a LifeBond */
-            else if (myAccount.isLifeBond()) {
+                /* else if this is a LifeBond */
+            } else if (myAccount.isLifeBond()) {
                 /* Subtract them from the market movement */
                 myMarket.subtractAmount(myGain);
 
@@ -285,33 +389,32 @@ public class MetaAnalysis implements PreferenceSetChooser {
         myDeltaGained.addAmount(pAsset.getDividend());
 
         /* Record initial and delta gained */
-        myEvent.addAttribute(CapitalEvent.capitalInitialGained, pAsset.getGained());
-        myEvent.addAttribute(CapitalEvent.capitalDeltaGained, myDeltaGained);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALGAINED, pAsset.getGained());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_DELTAGAINED, myDeltaGained);
 
         /* Adjust the Gained Total */
         pAsset.getGained().addAmount(myDeltaGained);
-        myEvent.addAttribute(CapitalEvent.capitalFinalGained, pAsset.getGained());
+        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALGAINED, pAsset.getGained());
 
         /* If the market movement is positive */
         if (myMarket.isPositive()) {
             /* Add to market income and growth */
             theMarketAccount.getIncome().addAmount(myMarket);
             theMarketGrowth.getAmount().addAmount(myMarket);
-        }
 
-        /* else the market movement is negative */
-        else {
+            /* else the market movement is negative */
+        } else {
             /* Add to market expense and shrink */
             theMarketAccount.getExpense().subtractAmount(myMarket);
             theMarketShrink.getAmount().subtractAmount(myMarket);
         }
 
         /* Record market details */
-        myEvent.addAttribute(CapitalEvent.capitalMarket, myMarket);
+        myEvent.addAttribute(CapitalEvent.CAPITAL_MARKET, myMarket);
     }
 
     /**
-     * Produce totals
+     * Produce totals.
      */
     protected void produceTotals() {
         DataListIterator<AnalysisBucket> myIterator;
@@ -322,12 +425,13 @@ public class MetaAnalysis implements PreferenceSetChooser {
         myState = theAnalysis.getState();
 
         /* Ignore request if we are not in valued state */
-        if (myState != AnalysisState.VALUED)
+        if (myState != AnalysisState.VALUED) {
             return;
+        }
 
         /* Obtain access to key elements */
-        theAssetTotals = theList.getAssetTotal();
-        theMarketTotals = theList.getMarketTotal();
+        AssetTotal myAssetTotals = theList.getAssetTotal();
+        MarketTotal myMarketTotals = theList.getMarketTotal();
         theExternalTotals = theList.getExternalTotal();
         theTransProfit = theList.getTransTotal(TaxClass.PROFITLOSS);
         theCoreProfit = theList.getTransTotal(TaxClass.COREPROFITLOSS);
@@ -343,19 +447,21 @@ public class MetaAnalysis implements PreferenceSetChooser {
             /* Accounts with valuations */
                 case ASSETDETAIL:
                     /* Adjust Asset Summaries if the account is relevant */
-                    if (myCurr.isRelevant())
+                    if (myCurr.isRelevant()) {
                         adjustAssetSummary((ActDetail) myCurr);
+                    }
 
                     /* Adjust Market Totals */
-                    theMarketTotals.addValues((AssetAccount) myCurr);
+                    myMarketTotals.addValues((AssetAccount) myCurr);
                     break;
 
                 /* Accounts with valuations */
                 case MONEYDETAIL:
                 case DEBTDETAIL:
                     /* Adjust Value Summaries */
-                    if (myCurr.isRelevant())
+                    if (myCurr.isRelevant()) {
                         adjustAssetSummary((ActDetail) myCurr);
+                    }
                     break;
 
                 /* External Accounts */
@@ -373,7 +479,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 /* Asset Summaries */
                 case ASSETSUMMARY:
                     /* Adjust Asset Totals */
-                    theAssetTotals.addValues((AssetSummary) myCurr);
+                    myAssetTotals.addValues((AssetSummary) myCurr);
                     break;
 
                 /* Transaction Summaries */
@@ -396,6 +502,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
 
                 /* Market Totals etc */
                 case MARKETTOTAL:
+                default:
                     /* Nothing to do */
                     break;
             }
@@ -409,10 +516,10 @@ public class MetaAnalysis implements PreferenceSetChooser {
     }
 
     /**
-     * Calculate tax
+     * Calculate tax.
      */
     protected void calculateTax() {
-        taxBands myBands;
+        TaxBands myBands;
         Money myIncome = new Money(0);
         Money myTax = new Money(0);
         TaxDetail myBucket;
@@ -432,12 +539,14 @@ public class MetaAnalysis implements PreferenceSetChooser {
         }
 
         /* Ignore request if we are not in totalled state */
-        if (myState != AnalysisState.TOTALLED)
+        if (myState != AnalysisState.TOTALLED) {
             return;
+        }
 
         /* Ignore request if we do not have a TaxYear */
-        if (theYear == null)
+        if (theYear == null) {
             return;
+        }
 
         /* Calculate the gross income */
         calculateGrossIncome();
@@ -502,7 +611,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
     }
 
     /**
-     * Mark active accounts
+     * Mark active accounts.
      */
     public void markActiveAccounts() {
         DataListIterator<AnalysisBucket> myIterator;
@@ -554,15 +663,17 @@ public class MetaAnalysis implements PreferenceSetChooser {
                         myAccount.setNonCloseable();
                     }
                     break;
+                default:
+                    break;
             }
         }
     }
 
     /**
-     * Adjust Asset Summary
+     * Adjust Asset Summary.
      * @param pBucket the bucket
      */
-    private void adjustAssetSummary(ActDetail pBucket) {
+    private void adjustAssetSummary(final ActDetail pBucket) {
         ValueAccount myAccount = null;
         AccountType myType = pBucket.getAccountType();
 
@@ -584,14 +695,16 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 /* Add the value to the asset summary */
                 theAssetSummary.addValues(myAccount);
                 break;
+            default:
+                break;
         }
     }
 
     /**
-     * Adjust Transaction Summary
+     * Adjust Transaction Summary.
      * @param pBucket the bucket
      */
-    private void adjustTransSummary(TransDetail pBucket) {
+    private void adjustTransSummary(final TransDetail pBucket) {
         TransactionType myType = pBucket.getTransType();
         TransSummary myBucket;
 
@@ -718,15 +831,16 @@ public class MetaAnalysis implements PreferenceSetChooser {
             case ENDOWMENT:
             case CASHPAYMENT:
             case CASHRECOVERY:
+            default:
                 break;
         }
     }
 
     /**
-     * Adjust Transaction Total
+     * Adjust Transaction Total.
      * @param pBucket the bucket
      */
-    private void adjustTransTotals(TransSummary pBucket) {
+    private void adjustTransTotals(final TransSummary pBucket) {
         TaxType myType = pBucket.getTaxType();
 
         /* Switch on the tax type */
@@ -764,14 +878,16 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 theCoreProfit.subtractValues(pBucket);
                 theCoreIncome.subtractValues(pBucket);
                 break;
+            default:
+                break;
         }
     }
 
     /**
-     * Adjust External Totals
+     * Adjust External Totals.
      * @param pBucket the bucket
      */
-    private void adjustExternalTotals(ExternalAccount pBucket) {
+    private void adjustExternalTotals(final ExternalAccount pBucket) {
         Money myMoney;
 
         /* If the expense is negative */
@@ -795,7 +911,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
     }
 
     /**
-     * Calculate the gross income for tax purposes
+     * Calculate the gross income for tax purposes.
      */
     private void calculateGrossIncome() {
         TaxDetail myBucket;
@@ -856,11 +972,11 @@ public class MetaAnalysis implements PreferenceSetChooser {
     }
 
     /**
-     * Calculate the allowances and tax bands
+     * Calculate the allowances and tax bands.
      * @return the taxBands
      */
-    private taxBands calculateAllowances() {
-        taxBands myBands;
+    private TaxBands calculateAllowances() {
+        TaxBands myBands;
         TaxDetail myBucket;
         TaxDetail myParentBucket;
         Money myGrossIncome;
@@ -869,23 +985,24 @@ public class MetaAnalysis implements PreferenceSetChooser {
         long myValue;
 
         /* Allocate the tax bands class */
-        myBands = new taxBands();
+        myBands = new TaxBands();
 
         /* Access the taxation properties */
         TaxationPreferences myPreferences = (TaxationPreferences) PreferenceManager.getPreferenceSet(this);
 
         /* Determine the relevant age for this tax year */
-        theAge = myPreferences.getDateValue(TaxationPreferences.nameBirthDate).ageOn(theYear.getTaxYear());
+        theAge = myPreferences.getDateValue(TaxationPreferences.NAME_BIRTHDATE).ageOn(theYear.getTaxYear());
 
         /* Determine the relevant allowance */
-        if (theAge >= 75) {
+        if (theAge >= LIMIT_AGE_HI) {
             myAllowance = theYear.getHiAgeAllow();
             hasAgeAllowance = true;
-        } else if (theAge >= 65) {
+        } else if (theAge >= LIMIT_AGE_LO) {
             myAllowance = theYear.getLoAgeAllow();
             hasAgeAllowance = true;
-        } else
+        } else {
             myAllowance = theYear.getAllowance();
+        }
 
         /* Set Allowance and Tax Bands */
         myBands.theAllowance = new Money(myAllowance);
@@ -914,18 +1031,17 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 /* Personal allowance is reduced to standard allowance */
                 myBands.theAllowance = new Money(theYear.getAllowance());
                 hasAgeAllowance = false;
-            }
 
-            /* else we need to reduce the personal allowance */
-            else {
+                /* else we need to reduce the personal allowance */
+            } else {
                 /* Calculate the margin */
                 myAdjust = new Money(myGrossIncome);
                 myAdjust.subtractAmount(theYear.getAgeAllowLimit());
                 myValue = myAdjust.getValue();
 
                 /* Divide by £2 and then multiply up to £1 */
-                myValue /= 200;
-                myValue *= 100;
+                myValue /= ALLOWANCE_QUOTIENT;
+                myValue *= ALLOWANCE_MULTIPLIER;
                 myAdjust = new Money(myValue);
 
                 /* Adjust the allowance by this value */
@@ -965,18 +1081,17 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 if (myGrossIncome.compareTo(myAdjust) > 0) {
                     /* Personal allowance is reduced to zero */
                     myBands.theAllowance = new Money(0);
-                }
 
-                /* else we need to reduce the personal allowance */
-                else {
+                    /* else we need to reduce the personal allowance */
+                } else {
                     /* Calculate the margin */
                     myAdjust = new Money(myGrossIncome);
                     myAdjust.subtractAmount(theYear.getAddAllowLimit());
                     myValue = myAdjust.getValue();
 
                     /* Divide by £2 and then multiply up to £1 */
-                    myValue /= 200;
-                    myValue *= 100;
+                    myValue /= ALLOWANCE_QUOTIENT;
+                    myValue *= ALLOWANCE_MULTIPLIER;
                     myAdjust = new Money(myValue);
 
                     /* Adjust the allowance by this value */
@@ -997,11 +1112,11 @@ public class MetaAnalysis implements PreferenceSetChooser {
     }
 
     /**
-     * Calculate the tax due on salary
+     * Calculate the tax due on salary.
      * @param pBands the remaining allowances and tax bands
      * @return the salary taxation bucket
      */
-    private TaxDetail calculateSalaryTax(taxBands pBands) {
+    private TaxDetail calculateSalaryTax(final TaxBands pBands) {
         TransSummary mySrcBucket;
         TaxDetail myTaxBucket;
         TaxDetail myTopBucket;
@@ -1029,10 +1144,9 @@ public class MetaAnalysis implements PreferenceSetChooser {
             /* Adjust the salary to remove allowance */
             mySalary.subtractAmount(pBands.theAllowance);
             pBands.theAllowance.setZero();
-        }
 
-        /* else still have allowance left after salary */
-        else {
+            /* else still have allowance left after salary */
+        } else {
             /* Set the tax bucket and add the tax */
             myTax.addAmount(myTaxBucket.setAmount(mySalary));
 
@@ -1058,10 +1172,9 @@ public class MetaAnalysis implements PreferenceSetChooser {
                     /* Adjust the salary to remove LoBand */
                     mySalary.subtractAmount(pBands.theLoBand);
                     pBands.theLoBand.setZero();
-                }
 
-                /* else we still have band left after salary */
-                else {
+                    /* else we still have band left after salary */
+                } else {
                     /* Set the tax bucket and add the tax */
                     myTax.addAmount(myTaxBucket.setAmount(mySalary));
 
@@ -1069,10 +1182,9 @@ public class MetaAnalysis implements PreferenceSetChooser {
                     pBands.theLoBand.subtractAmount(mySalary);
                     isFinished = true;
                 }
-            }
 
-            /* Else use up the Low Tax band */
-            else {
+                /* Else use up the Low Tax band */
+            } else {
                 /* If the salary is greater than the Low Tax Band */
                 if (mySalary.compareTo(pBands.theLoBand) > 0) {
                     /* We have used up the band */
@@ -1099,10 +1211,9 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 /* Adjust the salary to remove BasicBand */
                 mySalary.subtractAmount(pBands.theBasicBand);
                 pBands.theBasicBand.setZero();
-            }
 
-            /* else we still have band left after salary */
-            else {
+                /* else we still have band left after salary */
+            } else {
                 /* Set the tax bucket and add the tax */
                 myTax.addAmount(myTaxBucket.setAmount(mySalary));
 
@@ -1127,16 +1238,16 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 /* Adjust the salary to remove HiBand */
                 mySalary.subtractAmount(pBands.theHiBand);
                 pBands.theHiBand.setZero();
-            }
 
-            /* else we still have band left after salary */
-            else {
+                /* else we still have band left after salary */
+            } else {
                 /* Set the tax bucket and add the tax */
                 myTax.addAmount(myTaxBucket.setAmount(mySalary));
 
                 /* Adjust the hiBand to remove salary and note that we have finished */
-                if (theYear.hasAdditionalTaxBand())
+                if (theYear.hasAdditionalTaxBand()) {
                     pBands.theHiBand.subtractAmount(mySalary);
+                }
                 isFinished = true;
             }
         }
@@ -1160,11 +1271,11 @@ public class MetaAnalysis implements PreferenceSetChooser {
     }
 
     /**
-     * Calculate the tax due on rental
+     * Calculate the tax due on rental.
      * @param pBands the remaining allowances and tax bands
      * @return the rental tax bucket
      */
-    private TaxDetail calculateRentalTax(taxBands pBands) {
+    private TaxDetail calculateRentalTax(final TaxBands pBands) {
         TransSummary mySrcBucket;
         TaxDetail myTaxBucket;
         TaxDetail myTopBucket;
@@ -1211,10 +1322,9 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 /* Adjust the rental to remove allowance */
                 myRental.subtractAmount(pBands.theAllowance);
                 pBands.theAllowance.setZero();
-            }
 
-            /* else still have allowance left after rental */
-            else {
+                /* else still have allowance left after rental */
+            } else {
                 /* Determine the remaining allowance */
                 myAllowance.addAmount(myRental);
 
@@ -1244,10 +1354,9 @@ public class MetaAnalysis implements PreferenceSetChooser {
                     /* Adjust the rental to remove LoBand */
                     myRental.subtractAmount(pBands.theLoBand);
                     pBands.theLoBand.setZero();
-                }
 
-                /* else we still have band left after salary */
-                else {
+                    /* else we still have band left after salary */
+                } else {
                     /* Set the tax bucket and add the tax */
                     myTax.addAmount(myTaxBucket.setAmount(myRental));
 
@@ -1255,10 +1364,9 @@ public class MetaAnalysis implements PreferenceSetChooser {
                     pBands.theLoBand.subtractAmount(myRental);
                     isFinished = true;
                 }
-            }
 
-            /* Else use up the Low Tax band */
-            else {
+                /* Else use up the Low Tax band */
+            } else {
                 /* If the rental is greater than the Low Tax Band */
                 if (myRental.compareTo(pBands.theLoBand) > 0) {
                     /* We have used up the band */
@@ -1285,10 +1393,9 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 /* Adjust the rental to remove BasicBand */
                 myRental.subtractAmount(pBands.theBasicBand);
                 pBands.theBasicBand.setZero();
-            }
 
-            /* else we still have band left after rental */
-            else {
+                /* else we still have band left after rental */
+            } else {
                 /* Set the tax bucket and add the tax */
                 myTax.addAmount(myTaxBucket.setAmount(myRental));
 
@@ -1313,16 +1420,16 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 /* Adjust the rental to remove HiBand */
                 myRental.subtractAmount(pBands.theHiBand);
                 pBands.theHiBand.setZero();
-            }
 
-            /* else we still have band left after rental */
-            else {
+                /* else we still have band left after rental */
+            } else {
                 /* Set the tax bucket and add the tax */
                 myTax.addAmount(myTaxBucket.setAmount(myRental));
 
                 /* Adjust the hiBand to remove rental and note that we have finished */
-                if (theYear.hasAdditionalTaxBand())
+                if (theYear.hasAdditionalTaxBand()) {
                     pBands.theHiBand.subtractAmount(myRental);
+                }
                 isFinished = true;
             }
         }
@@ -1346,11 +1453,11 @@ public class MetaAnalysis implements PreferenceSetChooser {
     }
 
     /**
-     * Calculate the tax due on Interest
+     * Calculate the tax due on Interest.
      * @param pBands the remaining allowances and tax bands
      * @return the interest tax bucket
      */
-    private TaxDetail calculateInterestTax(taxBands pBands) {
+    private TaxDetail calculateInterestTax(final TaxBands pBands) {
         TransSummary mySrcBucket;
         TaxDetail myTaxBucket;
         TaxDetail myTopBucket;
@@ -1384,10 +1491,9 @@ public class MetaAnalysis implements PreferenceSetChooser {
             /* Adjust the interest to remove allowance */
             myInterest.subtractAmount(pBands.theAllowance);
             pBands.theAllowance.setZero();
-        }
 
-        /* else still have allowance left after interest */
-        else {
+            /* else still have allowance left after interest */
+        } else {
             /* Set the tax bucket and add the tax */
             myTax.addAmount(myTaxBucket.setAmount(myInterest));
 
@@ -1411,10 +1517,9 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 /* Adjust the interest to remove LoBand */
                 myInterest.subtractAmount(pBands.theLoBand);
                 pBands.theLoBand.setZero();
-            }
 
-            /* else we still have band left after interest */
-            else {
+                /* else we still have band left after interest */
+            } else {
                 /* Set the tax bucket and add the tax */
                 myTax.addAmount(myTaxBucket.setAmount(myInterest));
 
@@ -1439,10 +1544,9 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 /* Adjust the interest to remove BasicBand */
                 myInterest.subtractAmount(pBands.theBasicBand);
                 pBands.theBasicBand.setZero();
-            }
 
-            /* else we still have band left after interest */
-            else {
+                /* else we still have band left after interest */
+            } else {
                 /* Set the tax bucket and add the tax */
                 myTax.addAmount(myTaxBucket.setAmount(myInterest));
 
@@ -1467,16 +1571,16 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 /* Adjust the interest to remove HiBand */
                 myInterest.subtractAmount(pBands.theHiBand);
                 pBands.theHiBand.setZero();
-            }
 
-            /* else we still have band left after interest */
-            else {
+                /* else we still have band left after interest */
+            } else {
                 /* Set the tax bucket and add the tax */
                 myTax.addAmount(myTaxBucket.setAmount(myInterest));
 
                 /* Adjust the hiBand to remove interest and note that we have finished */
-                if (theYear.hasAdditionalTaxBand())
+                if (theYear.hasAdditionalTaxBand()) {
                     pBands.theHiBand.subtractAmount(myInterest);
+                }
                 isFinished = true;
             }
         }
@@ -1507,11 +1611,11 @@ public class MetaAnalysis implements PreferenceSetChooser {
     }
 
     /**
-     * calculate the tax due on dividends
+     * calculate the tax due on dividends.
      * @param pBands the remaining allowances and tax bands
      * @return the dividends tax bucket
      */
-    private TaxDetail calculateDividendsTax(taxBands pBands) {
+    private TaxDetail calculateDividendsTax(final TaxBands pBands) {
         TransSummary mySrcBucket;
         TaxDetail myTaxBucket;
         TaxDetail myTopBucket;
@@ -1544,10 +1648,9 @@ public class MetaAnalysis implements PreferenceSetChooser {
             /* Adjust the dividends to remove BasicBand */
             myDividends.subtractAmount(pBands.theBasicBand);
             pBands.theBasicBand.setZero();
-        }
 
-        /* else we still have band left after dividends */
-        else {
+            /* else we still have band left after dividends */
+        } else {
             /* Set the tax bucket and add the tax */
             myTax.addAmount(myTaxBucket.setAmount(myDividends));
 
@@ -1571,16 +1674,16 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 /* Adjust the dividends to remove HiBand */
                 myDividends.subtractAmount(pBands.theHiBand);
                 pBands.theHiBand.setZero();
-            }
 
-            /* else we still have band left after dividends */
-            else {
+                /* else we still have band left after dividends */
+            } else {
                 /* Set the tax bucket and add the tax */
                 myTax.addAmount(myTaxBucket.setAmount(myDividends));
 
                 /* Adjust the hiBand to remove dividends and note that we have finished */
-                if (theYear.hasAdditionalTaxBand())
+                if (theYear.hasAdditionalTaxBand()) {
                     pBands.theHiBand.subtractAmount(myDividends);
+                }
                 isFinished = true;
             }
         }
@@ -1604,11 +1707,11 @@ public class MetaAnalysis implements PreferenceSetChooser {
     }
 
     /**
-     * calculate the tax due on taxable gains
+     * calculate the tax due on taxable gains.
      * @param pBands the remaining allowances and tax bands
      * @return the taxable gains bucket
      */
-    private TaxDetail calculateTaxableGainsTax(taxBands pBands) {
+    private TaxDetail calculateTaxableGainsTax(final TaxBands pBands) {
         TransSummary mySrcBucket;
         TaxDetail myTaxBucket;
         TaxDetail myTopBucket;
@@ -1676,16 +1779,16 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 /* Adjust the gains to remove HiBand */
                 myGains.subtractAmount(pBands.theHiBand);
                 pBands.theHiBand.setZero();
-            }
 
-            /* else we still have band left after gains */
-            else {
+                /* else we still have band left after gains */
+            } else {
                 /* Set the tax bucket and add the tax */
                 myTax.addAmount(myTaxBucket.setAmount(myGains));
 
                 /* Adjust the hiBand to remove dividends and note that we have finished */
-                if (theYear.hasAdditionalTaxBand())
+                if (theYear.hasAdditionalTaxBand()) {
                     pBands.theHiBand.subtractAmount(myGains);
+                }
                 isFinished = true;
             }
 
@@ -1732,10 +1835,9 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 /* Only basic rate tax is payable */
                 myTaxBucket.setAmount(myGains);
                 mySliceBucket.setTaxation(myTax);
-            }
 
-            /* else we are using up the basic rate tax band */
-            else {
+                /* else we are using up the basic rate tax band */
+            } else {
                 /* Set the slice details */
                 myTax.addAmount(myTaxBucket.setAmount(pBands.theBasicBand));
 
@@ -1773,10 +1875,9 @@ public class MetaAnalysis implements PreferenceSetChooser {
 
                     /* Set the tax bucket and add the tax */
                     myTax.addAmount(myTaxBucket.setAmount(mySlice));
-                }
 
-                /* else we still have band left after slice */
-                else {
+                    /* else we still have band left after slice */
+                } else {
                     /* Set the tax bucket and add the tax */
                     myTax.addAmount(myTaxBucket.setAmount(mySlice));
                 }
@@ -1812,8 +1913,9 @@ public class MetaAnalysis implements PreferenceSetChooser {
             /* Subtract the gains from the tax bands */
             myGains.subtractAmount(pBands.theBasicBand);
             pBands.theBasicBand.setZero();
-            if (theYear.hasAdditionalTaxBand())
+            if (theYear.hasAdditionalTaxBand()) {
                 pBands.theHiBand.subtractAmount(myGains);
+            }
         }
 
         /* Access the TaxDueTaxableGains Bucket */
@@ -1825,11 +1927,11 @@ public class MetaAnalysis implements PreferenceSetChooser {
     }
 
     /**
-     * calculate the tax due on capital gains
+     * calculate the tax due on capital gains.
      * @param pBands the remaining allowances and tax bands
      * @return the capital gains tax bucket
      */
-    private TaxDetail calculateCapitalGainsTax(taxBands pBands) {
+    private TaxDetail calculateCapitalGainsTax(final TaxBands pBands) {
         TransSummary mySrcBucket;
         TaxDetail myTaxBucket;
         TaxDetail myTopBucket;
@@ -1861,10 +1963,9 @@ public class MetaAnalysis implements PreferenceSetChooser {
 
             /* Adjust the gains to remove allowance */
             myCapital.subtractAmount(myAllowance);
-        }
 
-        /* else allowance is sufficient */
-        else {
+            /* else allowance is sufficient */
+        } else {
             /* Set the correct value for the tax bucket and note that we have finished */
             myTax.addAmount(myTaxBucket.setAmount(myCapital));
             isFinished = true;
@@ -1889,16 +1990,16 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 /* Adjust the gains to remove BasicBand */
                 myCapital.subtractAmount(pBands.theBasicBand);
                 pBands.theBasicBand.setZero();
-            }
 
-            /* else we still have band left after gains */
-            else {
+                /* else we still have band left after gains */
+            } else {
                 /* Set the tax bucket and add the tax */
                 myTax.addAmount(myTaxBucket.setAmount(myCapital));
 
                 /* Adjust the basicBand to remove capital and note that we have finished */
-                if (bUseBasicBand)
+                if (bUseBasicBand) {
                     pBands.theBasicBand.subtractAmount(myCapital);
+                }
                 isFinished = true;
             }
         }
@@ -1923,13 +2024,27 @@ public class MetaAnalysis implements PreferenceSetChooser {
     }
 
     /**
-     * Class to hold active allowances and tax bands
+     * Class to hold active allowances and tax bands.
      */
-    private class taxBands {
-        /* properties */
+    private class TaxBands {
+        /**
+         * The allowance.
+         */
         private Money theAllowance = null;
+
+        /**
+         * The Lo Tax Band.
+         */
         private Money theLoBand = null;
+
+        /**
+         * The Basic Tax Band.
+         */
         private Money theBasicBand = null;
+
+        /**
+         * The High Tax Band.
+         */
         private Money theHiBand = null;
     }
 }

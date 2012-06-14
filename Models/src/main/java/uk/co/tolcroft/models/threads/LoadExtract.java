@@ -122,7 +122,7 @@ public class LoadExtract<T extends DataSet<T>> extends LoaderThread<T> {
         theStatus.initTask("Analysing Data");
 
         /* Analyse the Data to ensure that close dates are updated */
-        myData.analyseData(theControl);
+        // myData.analyseData(theControl);
 
         /* Re-base the loaded backup onto the database image */
         myData.reBase(myStore);

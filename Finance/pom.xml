@@ -107,7 +107,7 @@
 	      <mainClass>uk.co.tolcroft.finance.core.Control</mainClass>
               <packageName>uk.co.tolcroft.Finance</packageName>
               <addClasspath>true</addClasspath>
-              <classpathPrefix>lib/</classpathPrefix>                                          <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <classpathPrefix>lib/</classpathPrefix>                                                        <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
           </archive>   
         </configuration>

@@ -77,22 +77,22 @@ public class HashMode extends SecurityMode {
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (pField == FIELD_PRIMETYPE) {
+        if (FIELD_PRIMETYPE.equals(pField)) {
             return thePrimeDigest;
         }
-        if (pField == FIELD_ALTTYPE) {
+        if (FIELD_ALTTYPE.equals(pField)) {
             return theAlternateDigest;
         }
-        if (pField == FIELD_SECRETTYPE) {
+        if (FIELD_SECRETTYPE.equals(pField)) {
             return theSecretDigest;
         }
-        if (pField == FIELD_CIPHER) {
+        if (FIELD_CIPHER.equals(pField)) {
             return theCipherDigest;
         }
-        if (pField == FIELD_SWITCH) {
+        if (FIELD_SWITCH.equals(pField)) {
             return theSwitchAdjust;
         }
-        if (pField == FIELD_FINAL) {
+        if (FIELD_FINAL.equals(pField)) {
             return theFinalAdjust;
         }
         return super.getFieldValue(pField);

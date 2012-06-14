@@ -1,12 +1,13 @@
 /*******************************************************************************
+ * JFinanceApp: Finance Application
  * Copyright 2012 Tony Washer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +22,7 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.ui;
 
+import java.awt.print.PrinterException;
 import java.net.URL;
 
 import javax.swing.GroupLayout;
@@ -53,25 +55,70 @@ import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
 import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
 import uk.co.tolcroft.models.views.DataControl;
 
-/* Report Tab */
+/**
+ * Report Panel.
+ * @author Tony Washer
+ */
 public class ReportTab implements HyperlinkListener, StdPanel {
-    /* Properties */
-    private View theView = null;
-    private MainTab theParent = null;
-    private JPanel thePanel = null;
-    private JScrollPane theScroll = null;
-    private JEditorPane theEditor = null;
-    private ReportSelect theSelect = null;
-    private ReportType theReportType = null;
-    private DateDay theDate = null;
-    private TaxYear theYear = null;
+    /**
+     * Panel width.
+     */
+    private static final int PANEL_WIDTH = 800;
+
+    /**
+     * The Data View.
+     */
+    private final View theView;
+
+    /**
+     * The Parent.
+     */
+    private final MainTab theParent;
+
+    /**
+     * The Panel.
+     */
+    private final JPanel thePanel;
+
+    /**
+     * The Scroll Pane.
+     */
+    private final JScrollPane theScroll;
+
+    /**
+     * The Editor.
+     */
+    private final JEditorPane theEditor;
+
+    /**
+     * The Report selection Panel.
+     */
+    private final ReportSelect theSelect;
+
+    /**
+     * The Analysis.
+     */
     private EventAnalysis theAnalysis = null;
-    private JDataEntry theDataReport = null;
-    private JDataEntry theSpotEntry = null;
 
-    private ErrorPanel theError = null;
+    /**
+     * The Report entry.
+     */
+    private final JDataEntry theDataReport;
 
-    /* Access methods */
+    /**
+     * The Spot Analysis Entry.
+     */
+    private final JDataEntry theSpotEntry;
+
+    /**
+     * The Error Panel.
+     */
+    private final ErrorPanel theError;
+
+    /**
+     * Obtain the panel.
+     * @return the panel
+     */
     public JPanel getPanel() {
         return thePanel;
     }
@@ -92,10 +139,9 @@ public class ReportTab implements HyperlinkListener, StdPanel {
     }
 
     @Override
-    public void performCommand(stdCommand pCmd) {
+    public void performCommand(final stdCommand pCmd) {
     }
 
-    /* Access the debug entry */
     @Override
     public JDataEntry getDataEntry() {
         return theDataReport;
@@ -107,10 +153,10 @@ public class ReportTab implements HyperlinkListener, StdPanel {
     }
 
     /**
-     * Constructor for Report Window
+     * Constructor for Report Window.
      * @param pWindow the parent window
      */
-    public ReportTab(MainTab pWindow) {
+    public ReportTab(final MainTab pWindow) {
         HTMLEditorKit myKit;
         StyleSheet myStyle;
         Document myDoc;
@@ -152,7 +198,7 @@ public class ReportTab implements HyperlinkListener, StdPanel {
         theEditor.setDocument(myDoc);
 
         /* Create the Report Selection panel */
-        theSelect = new ReportSelect(theView, this);
+        theSelect = new ReportSelect(theView);
 
         /* Create the error panel for this view */
         theError = new ErrorPanel(this);
@@ -177,7 +223,7 @@ public class ReportTab implements HyperlinkListener, StdPanel {
                                                                   GroupLayout.DEFAULT_SIZE,
                                                                   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                     .addComponent(theScroll, GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE, 800,
+                                                                  GroupLayout.DEFAULT_SIZE, PANEL_WIDTH,
                                                                   Short.MAX_VALUE)).addContainerGap()));
         myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addGroup(GroupLayout.Alignment.TRAILING,
@@ -186,8 +232,8 @@ public class ReportTab implements HyperlinkListener, StdPanel {
     }
 
     /**
-     * Refresh views/controls after a load/update of underlying data
-     * @throws JDataException
+     * Refresh views/controls after a load/update of underlying data.
+     * @throws JDataException on error
      */
     public void refreshData() throws JDataException {
         /* Hide the instant debug since it is now invalid */
@@ -207,11 +253,11 @@ public class ReportTab implements HyperlinkListener, StdPanel {
     }
 
     /**
-     * Lock on error
+     * Lock on error.
      * @param isError is there an error (True/False)
      */
     @Override
-    public void lockOnError(boolean isError) {
+    public void lockOnError(final boolean isError) {
         /* Hide selection panel */
         theSelect.setVisible(!isError);
 
@@ -220,13 +266,13 @@ public class ReportTab implements HyperlinkListener, StdPanel {
     }
 
     /**
-     * Notify window that there has been a change in selection by an underlying control
+     * Notify window that there has been a change in selection by an underlying control.
      * @param obj the underlying control that has changed selection
      */
     @Override
-    public void notifySelection(Object obj) {
+    public void notifySelection(final Object obj) {
         /* If this is a change from the report selection */
-        if (obj == (Object) theSelect) {
+        if (theSelect.equals(obj)) {
             /* Protect against exceptions */
             try {
                 /* Build the report */
@@ -234,10 +280,9 @@ public class ReportTab implements HyperlinkListener, StdPanel {
 
                 /* Create SavePoint */
                 theSelect.createSavePoint();
-            }
 
-            /* Catch Exceptions */
-            catch (JDataException e) {
+                /* Catch Exceptions */
+            } catch (JDataException e) {
                 /* Build the error */
                 JDataException myError = new JDataException(ExceptionClass.DATA,
                         "Failed to change selection", e);
@@ -252,73 +297,75 @@ public class ReportTab implements HyperlinkListener, StdPanel {
     }
 
     /**
-     * Print the report
+     * Print the report.
      */
     @Override
     public void printIt() {
         /* Print the current report */
         try {
             theEditor.print();
-        } catch (java.awt.print.PrinterException e) {
+        } catch (PrinterException e) {
+            e = null;
         }
     }
 
     /**
-     * Build the report
-     * @throws JDataException
+     * Build the report.
+     * @throws JDataException on error
      */
     private void buildReport() throws JDataException {
-        AnalysisYear myYear;
+        AnalysisYear myAnalysis;
         EventAnalysis mySnapshot;
         AnalysisReport myReport;
         String myText = "";
 
         /* Access the values from the selection */
-        theReportType = theSelect.getReportType();
-        theDate = theSelect.getReportDate();
-        theYear = theSelect.getTaxYear();
+        ReportType myReportType = theSelect.getReportType();
+        DateDay myDate = theSelect.getReportDate();
+        TaxYear myYear = theSelect.getTaxYear();
 
         /* set lockdown of selection */
-        theSelect.setLockDown();
+        theSelect.setEnabled(true);
 
         /* Skip if year is null */
-        if (theYear == null)
+        if (myYear == null) {
             return;
+        }
 
         /* Switch on report type */
-        switch (theReportType) {
+        switch (myReportType) {
             case ASSET:
-                myYear = theAnalysis.getAnalysisYear(theYear);
-                myReport = new AnalysisReport(myYear);
+                myAnalysis = theAnalysis.getAnalysisYear(myYear);
+                myReport = new AnalysisReport(myAnalysis);
                 myText = myReport.getYearReport();
                 break;
 
             case INCOME:
-                myYear = theAnalysis.getAnalysisYear(theYear);
-                myReport = new AnalysisReport(myYear);
+                myAnalysis = theAnalysis.getAnalysisYear(myYear);
+                myReport = new AnalysisReport(myAnalysis);
                 myText = myReport.getIncomeReport();
                 break;
 
             case TRANSACTION:
-                myYear = theAnalysis.getAnalysisYear(theYear);
-                myReport = new AnalysisReport(myYear);
+                myAnalysis = theAnalysis.getAnalysisYear(myYear);
+                myReport = new AnalysisReport(myAnalysis);
                 myText = myReport.getTransReport();
                 break;
 
             case TAX:
-                myYear = theAnalysis.getAnalysisYear(theYear);
-                myReport = new AnalysisReport(myYear);
+                myAnalysis = theAnalysis.getAnalysisYear(myYear);
+                myReport = new AnalysisReport(myAnalysis);
                 myText = myReport.getTaxReport();
                 break;
 
             case BREAKDOWN:
-                myYear = theAnalysis.getAnalysisYear(theYear);
-                myReport = new AnalysisReport(myYear);
+                myAnalysis = theAnalysis.getAnalysisYear(myYear);
+                myReport = new AnalysisReport(myAnalysis);
                 myText = myReport.getBreakdownReport();
                 break;
 
             case INSTANT:
-                mySnapshot = new EventAnalysis(theView.getData(), theDate);
+                mySnapshot = new EventAnalysis(theView.getData(), myDate);
                 myReport = new AnalysisReport(mySnapshot);
                 myText = myReport.getInstantReport();
                 theSpotEntry.setObject(mySnapshot);
@@ -326,12 +373,14 @@ public class ReportTab implements HyperlinkListener, StdPanel {
                 break;
 
             case MARKET:
-                mySnapshot = new EventAnalysis(theView.getData(), theDate);
+                mySnapshot = new EventAnalysis(theView.getData(), myDate);
                 myReport = new AnalysisReport(mySnapshot);
                 myText = myReport.getMarketReport();
                 theSpotEntry.setObject(mySnapshot);
                 theSpotEntry.showEntry();
                 break;
+            default:
+                return;
         }
 
         /* Set the report text */
@@ -341,11 +390,11 @@ public class ReportTab implements HyperlinkListener, StdPanel {
     }
 
     /**
-     * Handle a HyperLink event
+     * Handle a HyperLink event.
      * @param e the event
      */
     @Override
-    public void hyperlinkUpdate(HyperlinkEvent e) {
+    public void hyperlinkUpdate(final HyperlinkEvent e) {
         /* If this is an activated event */
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
             if (e instanceof HTMLFrameHyperlinkEvent) {
@@ -358,9 +407,11 @@ public class ReportTab implements HyperlinkListener, StdPanel {
                     String desc = e.getDescription();
                     if ((url == null) && (desc.startsWith("#"))) {
                         theEditor.scrollToReference(desc.substring(1));
-                    } else
+                    } else {
                         theEditor.setPage(e.getURL());
-                } catch (Throwable t) {
+                    }
+                } catch (Exception t) {
+                    t = null;
                 }
             }
         }

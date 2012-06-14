@@ -59,7 +59,7 @@ public class DataCipher implements JDataContents {
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (pField == FIELD_SYMKEY) {
+        if (FIELD_SYMKEY.equals(pField)) {
             return theSymKey;
         }
         return null;

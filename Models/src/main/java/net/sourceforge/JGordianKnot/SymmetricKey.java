@@ -67,13 +67,13 @@ public class SymmetricKey implements JDataContents {
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (pField == FIELD_KEYTYPE) {
+        if (FIELD_KEYTYPE.equals(pField)) {
             return theKeyType;
         }
-        if (pField == FIELD_KEYLEN) {
+        if (FIELD_KEYLEN.equals(pField)) {
             return theKeyLen;
         }
-        if (pField == FIELD_IVLEN) {
+        if (FIELD_IVLEN.equals(pField)) {
             return IVSIZE;
         }
         return null;
