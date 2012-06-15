@@ -34,11 +34,16 @@ public class OrderedIdList<I, T extends Comparable<T> & OrderedIdItem<I>> extend
      * @param pClass the class of the sortedItem
      */
     public OrderedIdList(final Class<T> pClass) {
-        super(pClass);
+        super(pClass, new OrderedIdIndex<I, T>());
     }
 
-    @Override
-    protected OrderedIndex<T> allocateIndexMap() {
-        return new OrderedIdIndex<I, T>(this);
+    /**
+     * Construct a list.
+     * @param pClass the class of the sortedItem
+     * @param pIndexGranularity the index granularity
+     */
+    public OrderedIdList(final Class<T> pClass,
+                         final int pIndexGranularity) {
+        super(pClass, new OrderedIdIndex<I, T>(pIndexGranularity));
     }
 }

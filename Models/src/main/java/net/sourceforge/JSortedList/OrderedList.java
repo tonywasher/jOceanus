@@ -52,6 +52,11 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
     protected static final int HASH_PRIME = 31;
 
     /**
+     * Null Argument message.
+     */
+    private static final String NULL_DISALLOWED = "Null elements not allowed";
+
+    /**
      * The first node in the list.
      */
     private transient OrderedNode<T> theFirst = null;
@@ -106,20 +111,12 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
     }
 
     /**
-     * Allocate the index map.
-     * @return the indexMap
-     */
-    protected OrderedIndex<T> allocateIndexMap() {
-        return new OrderedIndex<T>(this);
-    }
-
-    /**
      * Construct a list.
      * @param pClass the class of the sortedItem
      */
     public OrderedList(final Class<T> pClass) {
-        /* Use default granularity */
-        this(pClass, OrderedIndex.DEFAULT_GRANULARITY_SHIFT);
+        /* Use default index */
+        this(pClass, new OrderedIndex<T>());
     }
 
     /**
@@ -129,25 +126,29 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
      */
     public OrderedList(final Class<T> pClass,
                        final int pIndexGranularity) {
-        /* Reject if granularity is out of range */
-        if ((pIndexGranularity < OrderedIndex.MIN_GRANULARITY_SHIFT)
-                || (pIndexGranularity > OrderedIndex.MAX_GRANULARITY_SHIFT)) {
-            throw new IllegalArgumentException("Invalid Granularity " + pIndexGranularity);
-        }
+        this(pClass, new OrderedIndex<T>(pIndexGranularity));
+    }
 
-        /* Store the class and granularity */
+    /**
+     * Construct a list.
+     * @param pClass the class of the sortedItem
+     * @param pIndex the list index.
+     */
+    protected OrderedList(final Class<T> pClass,
+                          final OrderedIndex<T> pIndex) {
+        /* Store the class and index */
         theClass = pClass;
-        theGranularity = pIndexGranularity;
+        theIndexMap = pIndex;
 
-        /* Create the indexMap */
-        theIndexMap = allocateIndexMap();
+        /* Link the index */
+        theIndexMap.declareList(this);
     }
 
     @Override
     public boolean add(final T pItem) {
         /* Reject if the object is null */
         if (pItem == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException(NULL_DISALLOWED);
         }
 
         /* Reject if the object is already a link member of this list */
@@ -177,7 +178,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
     public boolean addAtEnd(final T pItem) {
         /* Reject if the object is null */
         if (pItem == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException(NULL_DISALLOWED);
         }
 
         /* Reject if the object is already a link member of this list */
@@ -263,10 +264,10 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
         theIndexMap.removeNode(pNode);
 
         /* Adjust first and last indicators if required */
-        if (theFirst == pNode) {
+        if (theFirst.equals(pNode)) {
             theFirst = pNode.getNext();
         }
-        if (theLast == pNode) {
+        if (theLast.equals(pNode)) {
             theLast = pNode.getPrev();
         }
 
@@ -321,7 +322,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
     public OrderedListIterator<T> listIterator(final T pItem) {
         /* Reject if the object is null */
         if (pItem == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException(NULL_DISALLOWED);
         }
 
         /* Access the node of the item */
@@ -492,7 +493,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
     public boolean remove(final Object o) {
         /* Reject if the object is null */
         if (o == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException(NULL_DISALLOWED);
         }
 
         /* Reject if the object is invalid */
@@ -531,7 +532,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
     public void reSort(final Object o) {
         /* Reject if the object is null */
         if (o == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException(NULL_DISALLOWED);
         }
 
         /* Reject if the object is invalid */
@@ -564,7 +565,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
     public int indexOf(final Object o) {
         /* Reject if the object is null */
         if (o == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException(NULL_DISALLOWED);
         }
 
         /* Reject if the object is invalid */
@@ -597,7 +598,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
     public boolean contains(final Object o) {
         /* Reject if the object is null */
         if (o == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException(NULL_DISALLOWED);
         }
 
         /* Reject if the object is invalid */
@@ -652,7 +653,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
     public T peekNext(final T pItem) {
         /* Reject if the object is null */
         if (pItem == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException(NULL_DISALLOWED);
         }
 
         /* Access the node of the item */
@@ -678,7 +679,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
     public T peekPrevious(final T pItem) {
         /* Reject if the object is null */
         if (pItem == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException(NULL_DISALLOWED);
         }
 
         /* Access the node of the item */
@@ -700,7 +701,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
     public boolean containsAll(final Collection<?> pCollection) {
         /* Reject if the collection is null */
         if (pCollection == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException(NULL_DISALLOWED);
         }
 
         /* Loop through the collection */
@@ -741,7 +742,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
 
         /* Reject if the sample array is null or wrong type */
         if (a == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException("Null array not allowed");
         }
         Class<?> myClass = a[0].getClass();
         if (!myClass.isAssignableFrom(theClass)) {
@@ -943,7 +944,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
 
         /* Re-initialise the fields */
         myResult.theClass = theClass;
-        myResult.theIndexMap = allocateIndexMap();
+        myResult.theIndexMap = theIndexMap.newIndex(myResult);
 
         /* Copy all the entries */
         myResult.addAll(this);

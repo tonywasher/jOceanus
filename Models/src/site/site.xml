@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/DECORATION/1.3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/DECORATION/1.3.0 http://maven.apache.org/xsd/decoration-1.3.0.xsd" name="Models">
   <bannerLeft>
-    <name>Models</name>
+    <name>JDataModel</name>
     <!--<src>http://maven.apache.org/images/apache-maven-project-2.png</src>
     <href>http://maven.apache.org/</href>-->
   </bannerLeft>

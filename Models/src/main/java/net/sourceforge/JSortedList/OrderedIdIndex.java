@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.JSortedList;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -39,14 +38,29 @@ public class OrderedIdIndex<I, T extends Comparable<T> & OrderedIdItem<I>> exten
 
     /**
      * Constructor.
-     * @param pList the list
      */
-    protected OrderedIdIndex(final OrderedList<T> pList) {
-        /* Call super-constructor */
-        super(pList);
+    protected OrderedIdIndex() {
+        /* Use default granularity */
+        this(DEFAULT_GRANULARITY_SHIFT);
+    }
+
+    /**
+     * Constructor.
+     * @param pIndexGranularity the granularity
+     */
+    protected OrderedIdIndex(final int pIndexGranularity) {
+        /* Call super constructor */
+        super(pIndexGranularity);
 
         /* Allocate hash map */
-        theHashMap = new HashMap<I, OrderedNode<T>>();
+        theHashMap = new NestedHashMap<I, OrderedNode<T>>();
+    }
+
+    @Override
+    protected OrderedIndex<T> newIndex(final OrderedList<T> pList) {
+        OrderedIndex<T> myIndex = new OrderedIdIndex<I, T>(getGranularityShift());
+        myIndex.declareList(pList);
+        return myIndex;
     }
 
     @Override

@@ -36,10 +36,9 @@ import java.util.Set;
 
 /**
  * Nested Hash map implementation. Provides hash map functionality using nested child arrays as an expansion
- * method rather than expansion and rehashing as is performed by {@link java.util.HashMap}.
+ * method, rather than expansion and rehashing as is performed by {@link java.util.HashMap}.
  * <ul>
- * <li>Null keys are not supported.
- * <li>Null values are supported.
+ * <li>Null keys/values are supported.
  * <li>Collisions can only occur if hashCodes are identical.
  * <li>Nested ChildArrays are reduced when no longer needed.
  * </ul>
@@ -129,6 +128,16 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
      */
     private int getArraySize() {
         return 1 << theShiftBits;
+    }
+
+    /**
+     * Calculate the hash code.
+     * @param pKey the key
+     * @return the hash code
+     */
+    private static int hashKey(final Object pKey) {
+        /* Return the hash for the key */
+        return (pKey == null) ? 0 : pKey.hashCode();
     }
 
     /**
@@ -241,20 +250,18 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
         /* Call standard map */
         this();
 
-        /* Put all the entries */
-        putAll(pMap);
+        /* Loop through the entry set */
+        for (Entry<? extends K, ? extends V> e : pMap.entrySet()) {
+            /* Put the entry */
+            putEntry(hashKey(e.getKey()), e.getKey(), e.getValue());
+        }
     }
 
     @Override
     public V put(final K pKey,
                  final V pValue) {
-        /* Reject null keys */
-        if (pKey == null) {
-            throw new NullPointerException();
-        }
-
         /* Calculate the hash */
-        int iHash = pKey.hashCode();
+        int iHash = hashKey(pKey);
 
         /* Put the value into the table */
         return putEntry(iHash, pKey, pValue);
@@ -262,18 +269,13 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
 
     @Override
     public V get(final Object pKey) {
-        /* Reject null keys */
-        if (pKey == null) {
-            throw new NullPointerException();
-        }
-
         /* If we are empty there can be no mapping */
         if (isEmpty()) {
             return null;
         }
 
         /* Calculate the hash */
-        int iHash = pKey.hashCode();
+        int iHash = hashKey(pKey);
 
         /* Locate the value */
         HashEntry<K, V> myEntry = getEntry(iHash, pKey);
@@ -284,18 +286,13 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
 
     @Override
     public V remove(final Object pKey) {
-        /* Reject null keys */
-        if (pKey == null) {
-            throw new NullPointerException();
-        }
-
         /* If we are empty there can be no mapping */
         if (isEmpty()) {
             return null;
         }
 
         /* Calculate the hash */
-        int iHash = pKey.hashCode();
+        int iHash = hashKey(pKey);
 
         /* Remove the value if it exists */
         HashEntry<K, V> myEntry = removeEntry(iHash, pKey);
@@ -348,7 +345,7 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
     @Override
     public boolean containsKey(final Object pKey) {
         /* Return whether a mapping exists */
-        return (get(pKey) == null);
+        return (getEntry(hashKey(pKey), pKey) != null);
     }
 
     @Override
@@ -444,10 +441,10 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
             /* Check that the entry is contained in the other map and has equal value */
             K myKey = myEntry.getKey();
             V myValue = myEntry.getValue();
-            int myHash = myKey.hashCode();
+            int myHash = hashKey(myKey);
             HashEntry<?, ?> myTest = myThat.getEntry(myHash, myKey);
             if ((myTest == null)
-                    || (myTest.isValueNull ? (myValue != null) : !myTest.theValue.equals(myValue))) {
+                    || ((myTest.theValue == null) ? (myValue != null) : !myTest.theValue.equals(myValue))) {
                 return false;
             }
         }
@@ -713,7 +710,7 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
                 /* If the hash code is identical */
                 if (myHash.theHash == pHash) {
                     /* If the top entry is not a match */
-                    if (!myHash.theKey.equals(pKey)) {
+                    if ((pKey == null) ? (myHash.theKey != null) : (!pKey.equals(myHash.theKey))) {
                         /* Find/remove the entry */
                         myHash = myHash.removeKey(pKey);
 
@@ -776,11 +773,6 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
         private boolean valueSet;
 
         /**
-         * Is the value null?.
-         */
-        private boolean isValueNull;
-
-        /**
          * The next entry.
          */
         private HashEntry<K, V> theNext = null;
@@ -811,7 +803,6 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
             /* Set the new value */
             theValue = pNewValue;
             valueSet = true;
-            isValueNull = (theValue == null);
 
             /* Return the old value */
             return myOld;
@@ -840,7 +831,7 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
             HashEntry<K, V> myHash = this;
             while (myHash != null) {
                 /* Check item */
-                if (myHash.theKey.equals(pKey)) {
+                if ((pKey == null) ? (myHash.theKey == null) : (pKey.equals(myHash.theKey))) {
                     return myHash;
                 }
 
@@ -862,7 +853,7 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
             HashEntry<K, V> myHash = this;
             while (myHash != null) {
                 /* Check item */
-                if ((!myHash.isValueNull) && (myHash.theValue.equals(pValue))) {
+                if (pValue.equals(myHash.theValue)) {
                     return true;
                 }
 
@@ -883,7 +874,7 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
             HashEntry<K, V> myHash = this;
             while (myHash != null) {
                 /* Check item */
-                if (myHash.isValueNull) {
+                if (myHash.theValue == null) {
                     return true;
                 }
 
@@ -913,7 +904,7 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
                 }
 
                 /* If the next holds the key */
-                if (myNext.theKey.equals(pKey)) {
+                if ((pKey == null) ? (myNext.theKey == null) : (pKey.equals(myNext.theKey))) {
                     /* Unlink the entry and return it */
                     myHash.theNext = myNext.theNext;
                     return myNext;
@@ -934,7 +925,7 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
             HashEntry<K, V> myHash = this;
             for (;;) {
                 /* If we match the key */
-                if (myHash.theKey.equals(pKey)) {
+                if ((pKey == null) ? (myHash.theKey == null) : (pKey.equals(myHash.theKey))) {
                     /* Return it */
                     return myHash;
                 }
@@ -995,18 +986,18 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
             }
 
             /* Check key */
-            if (theKey.equals(myThat.theKey)) {
+            if ((theKey == null) ? (myThat.theKey != null) : (!theKey.equals(myThat.theKey))) {
                 return false;
             }
 
             /* Check value */
-            return (isValueNull) ? myThat.isValueNull : theValue.equals(myThat.theValue);
+            return (theValue == null) ? (myThat.theValue == null) : theValue.equals(myThat.theValue);
         }
 
         @Override
         public int hashCode() {
             /* Create combined hashCode */
-            return (isValueNull) ? theHash : theHash ^ theValue.hashCode();
+            return (theValue == null) ? theHash : theHash ^ theValue.hashCode();
         }
 
         @Override
@@ -1369,7 +1360,8 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
             /* Check that this key exists with this value */
             HashEntry<?, ?> myTest = getEntry(myEntry.theHash, myEntry.theKey);
             return (myTest != null)
-                    && (myEntry.isValueNull ? myTest.isValueNull : myEntry.theValue.equals(myTest.theValue));
+                    && ((myEntry.theValue == null) ? (myTest.theValue == null) : myEntry.theValue
+                            .equals(myTest.theValue));
         }
 
         @Override

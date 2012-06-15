@@ -53,7 +53,7 @@ public class OrderedIndex<T extends Comparable<T>> {
     /**
      * The list to which this index is attached.
      */
-    private final OrderedList<T> theList;
+    private OrderedList<T> theList = null;
 
     /**
      * The granularity shift of the index.
@@ -81,20 +81,60 @@ public class OrderedIndex<T extends Comparable<T>> {
     private int theActiveMapLength = 0;
 
     /**
+     * Declare list.
+     * @param pList the list that this index is associated with
+     */
+    protected void declareList(final OrderedList<T> pList) {
+        theList = pList;
+    }
+
+    /**
+     * Obtain the granularity shift.
+     * @return the granularity shift
+     */
+    protected int getGranularityShift() {
+        return theGranularityShift;
+    }
+
+    /**
      * Constructor.
-     * @param pList the list
+     */
+    protected OrderedIndex() {
+        /* Use default shift */
+        this(DEFAULT_GRANULARITY_SHIFT);
+    }
+
+    /**
+     * Constructor.
+     * @param pIndexGranularity the granularity
      */
     @SuppressWarnings("unchecked")
-    protected OrderedIndex(final OrderedList<T> pList) {
-        /* Store the list */
-        theList = pList;
-        theGranularityShift = theList.getGranularity();
+    protected OrderedIndex(final int pIndexGranularity) {
+        /* Reject if granularity is out of range */
+        if ((pIndexGranularity < OrderedIndex.MIN_GRANULARITY_SHIFT)
+                || (pIndexGranularity > OrderedIndex.MAX_GRANULARITY_SHIFT)) {
+            throw new IllegalArgumentException("Invalid Granularity " + pIndexGranularity);
+        }
+
+        /* Store the granularity */
+        theGranularityShift = pIndexGranularity;
         theGranularityMask = (1 << theGranularityShift) - 1;
 
         /* Allocate and initialise the map */
         theMap = (OrderedNode<T>[]) new OrderedNode[EXPANSION_SIZE];
         Arrays.fill(theMap, null);
         theMapLength = EXPANSION_SIZE;
+    }
+
+    /**
+     * Create new index for the specified list.
+     * @param pList the new list.
+     * @return the new index
+     */
+    protected OrderedIndex<T> newIndex(final OrderedList<T> pList) {
+        OrderedIndex<T> myIndex = new OrderedIndex<T>(theGranularityShift);
+        myIndex.declareList(pList);
+        return myIndex;
     }
 
     /**
@@ -254,11 +294,11 @@ public class OrderedIndex<T extends Comparable<T>> {
 
     /**
      * Locate the insert point (note that we cannot be an empty list at this point).
-     * @param pNode the node
+     * @param pNode the node to insert.
      * @return the node before which the item should be inserted (or null to insert at end of list)
      */
     protected OrderedNode<T> findNodeAfter(final OrderedNode<T> pNode) {
-        OrderedNode<T> myCurr;
+        OrderedNode<T> myTest;
 
         /* Access first and last nodes */
         OrderedNode<T> myFirst = theList.getFirst();
@@ -269,21 +309,73 @@ public class OrderedIndex<T extends Comparable<T>> {
             return null;
         }
 
-        /* Loop through the current items */
-        for (myCurr = myFirst; myCurr != null; myCurr = myCurr.getNext()) {
-            /* Break if we have found an element that should be later */
-            if (myCurr.compareTo(pNode) >= 0) {
-                break;
+        /* Check whether we should add at the beginning */
+        if (myFirst.compareTo(pNode) > 0) {
+            return myFirst;
+        }
+
+        /* Determine limits to map search */
+        int iMinimum = 0;
+        int iMaximum = theActiveMapLength - 1;
+
+        /* If we have a maximum element distinct from the first element */
+        if (iMaximum > 0) {
+            /* Access the last element in the map */
+            myTest = theMap[iMaximum];
+
+            /* Check it against the object */
+            int iDiff = myTest.compareTo(pNode);
+
+            /* If the element is before the last element */
+            if (iDiff > 0) {
+                /*
+                 * Binary chop to find the search start point. We need to loop while we have a search span
+                 * greater than granularity
+                 */
+                while (iMinimum < iMaximum - 1) {
+                    /* Access test item */
+                    int iTest = (iMinimum + iMaximum) >>> 1;
+                    myTest = theMap[iTest];
+
+                    /* Check it against the object */
+                    iDiff = myTest.compareTo(pNode);
+
+                    /* Adjust limits */
+                    if (iDiff < 0) {
+                        iMinimum = iTest;
+                    } else {
+                        iMaximum = iTest;
+                    }
+                }
+                /* else the maximum element is still before the item */
+            } else {
+                /* Start search at the maximum element */
+                iMinimum = iMaximum;
             }
         }
 
+        /* We now have a better starting point for the search */
+        myTest = theMap[iMinimum];
+        myTest = myTest.getNext();
+        while (myTest != null) {
+            /* Break if we have found an element that should be later */
+            if (myTest.compareTo(pNode) >= 0) {
+                break;
+            }
+
+            /* Shift to next node */
+            myTest = myTest.getNext();
+        }
+
         /* Return the node */
-        return myCurr;
+        return myTest;
     }
 
     /**
-     * Locate the insert point (note that we cannot be an empty list at this point).
-     * @param pNode the node
+     * Locate the insert point (note that we cannot be an empty list at this point). This can be a slow
+     * algorithm, and should only be used if we are nearly certain that the insert point is close to the end
+     * of the list, i.e. that we are inserting very nearly in sort order.
+     * @param pNode the node to insert
      * @return the node after which the item should be inserted (or null to insert at head of list)
      */
     protected OrderedNode<T> findNodeBefore(final OrderedNode<T> pNode) {
@@ -373,7 +465,7 @@ public class OrderedIndex<T extends Comparable<T>> {
         OrderedNode<T> myLast = theList.getLast();
 
         /* If the last node has been shifted and needs storing, then store it */
-        if ((pNode != myLast) && ((myLast.getIndex() & theGranularityMask) == 0)) {
+        if ((!pNode.equals(myLast)) && ((myLast.getIndex() & theGranularityMask) == 0)) {
             insertNode(myLast);
         }
     }

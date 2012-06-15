@@ -28,14 +28,14 @@ public class ListTest {
              * for (int i = 90; i < 100; i++) { int iIndex = binaryChop(i); if (iIndex != (i / 10))
              * System.out.println(iIndex); }
              */
-            long One = testHashMap(false);
-            long Two = testHashMap(true);
-            // testOrderedList();
+            // long One = testHashMap(false);
+            // long Two = testHashMap(true);
+            testOrderedList();
             // testHashMapIterator();
 
-            if (One > Two) {
-                System.out.println("Great");
-            }
+            // if (One > Two) {
+            // System.out.println("Great");
+            // }
         } catch (Exception e) {
             System.out.println("Help");
             e.printStackTrace();
@@ -51,11 +51,13 @@ public class ListTest {
         SecureRandom myRandom = new SecureRandom();
 
         /* Add random elements */
-        for (int i = 0; i < 1000; i++) {
+        long myStart = System.nanoTime();
+        for (int i = 0; i < 30000; i++) {
             Integer j = myRandom.nextInt();
             myList.add(j);
             myCache.add(j);
         }
+        System.out.println("InsertOK " + myList.size() + ":" + (System.nanoTime() - myStart));
 
         /* Loop through the list elements */
         Integer myLast = null;
@@ -72,8 +74,7 @@ public class ListTest {
             myLast = myElement;
         }
         if (ok) {
-            long myStart = System.nanoTime();
-            System.out.println("OK " + myList.size());
+            myStart = System.nanoTime();
             myIterator = myCache.iterator();
             while (myIterator.hasNext()) {
                 /* Access the element */
@@ -83,7 +84,7 @@ public class ListTest {
                 if (!myList.remove(myElement))
                     System.out.println("Failed to remove " + myElement);
             }
-            System.out.println("OK " + myList.size() + ":" + (System.nanoTime() - myStart));
+            System.out.println("RemoveOK " + myList.size() + ":" + (System.nanoTime() - myStart));
         }
     }
 
@@ -143,11 +144,27 @@ public class ListTest {
             myBaseMap.put(i.toString(), i);
         }
 
+        /* Add null key */
+        myMap.put(null, -10);
+        myBaseMap.put(null, -10);
+
+        /* Add null value */
+        myMap.put("nullValue", null);
+        myBaseMap.put("nullValue", null);
+
+        if ((!myMap.containsKey(null)) || (!myMap.containsValue(null))) {
+            System.out.println("failed to check null keyy/value");
+        }
+
+        if ((myMap.containsKey("BadKey")) || (myMap.containsValue(-14))) {
+            System.out.println("failed to check missing key/value with nulls");
+        }
+
         /* Iterate over the Hash Map */
         Iterator<String> myIterator = myMap.keySet().iterator();
         while (myIterator.hasNext()) {
             String myKey = myIterator.next();
-            if (myBaseMap.remove(myKey) == null) {
+            if ((myBaseMap.remove(myKey) == null) && (!myKey.equals("nullValue"))) {
                 System.out.println("failed to remove " + myKey);
             }
         }
