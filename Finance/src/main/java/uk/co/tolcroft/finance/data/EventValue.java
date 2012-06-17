@@ -28,6 +28,7 @@ import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject;
 import net.sourceforge.JDataManager.ValueSet;
+import uk.co.tolcroft.finance.data.Account.AccountList;
 import uk.co.tolcroft.finance.data.Event.EventList;
 import uk.co.tolcroft.finance.data.EventInfoType.EventInfoTypeList;
 import uk.co.tolcroft.models.data.DataItem;
@@ -39,7 +40,7 @@ import uk.co.tolcroft.models.data.DataSet;
  * EventValue data type.
  * @author Tony Washer
  */
-public class EventValue extends DataItem<EventValue> {
+public class EventValue extends DataItem implements Comparable<EventValue> {
     /**
      * Object name.
      */
@@ -282,14 +283,16 @@ public class EventValue extends DataItem<EventValue> {
 
             /* Look up the EventType */
             FinanceData myData = pList.getData();
-            EventInfoType myType = myData.getInfoTypes().searchFor(uInfoTypeId);
+            EventInfoTypeList myTypes = myData.getInfoTypes();
+            EventInfoType myType = myTypes.findItemById(uInfoTypeId);
             if (myType == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid EventInfoType Id");
             }
             setValueInfoType(myType);
 
             /* Look up the Event */
-            Event myEvent = myData.getEvents().searchFor(uEventId);
+            EventList myEvents = myData.getEvents();
+            Event myEvent = myEvents.findItemById(uEventId);
             if (myEvent == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Event Id");
             }
@@ -304,7 +307,8 @@ public class EventValue extends DataItem<EventValue> {
                 case ThirdParty:
                     /* Look up the Account */
                     setValueValue(pValue);
-                    Account myAccount = myData.getAccounts().searchFor(pValue);
+                    AccountList myAccounts = myData.getAccounts();
+                    Account myAccount = myAccounts.findItemById(pValue);
                     if (myAccount == null) {
                         throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
                     }
@@ -354,16 +358,8 @@ public class EventValue extends DataItem<EventValue> {
         mySet.deRegisterValue(this);
     }
 
-    /**
-     * Compare this value to another to establish sort order.
-     * @param pThat The EventValue to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the
-     *         sort order
-     */
     @Override
-    public int compareTo(final Object pThat) {
-        int iDiff;
-
+    public int compareTo(final EventValue pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -372,35 +368,20 @@ public class EventValue extends DataItem<EventValue> {
             return -1;
         }
 
-        /* Make sure that the object is an EventValue */
-        if (pThat.getClass() != this.getClass()) {
-            return -1;
-        }
-
-        /* Access the object as an EventValue */
-        EventValue myThat = (EventValue) pThat;
-
         /* Compare the Events */
-        iDiff = getEvent().compareTo(myThat.getEvent());
+        int iDiff = getEvent().compareTo(pThat.getEvent());
         if (iDiff != 0) {
             return iDiff;
         }
 
         /* Compare the Info Types */
-        iDiff = getInfoType().compareTo(myThat.getInfoType());
+        iDiff = getInfoType().compareTo(pThat.getInfoType());
         if (iDiff != 0) {
             return iDiff;
         }
 
-        /* Compare the IDs */
-        iDiff = (int) (getId() - myThat.getId());
-        if (iDiff < 0) {
-            return -1;
-        }
-        if (iDiff > 0) {
-            return 1;
-        }
-        return 0;
+        /* Compare the underlying id */
+        return super.compareId(pThat);
     }
 
     /**
@@ -414,12 +395,12 @@ public class EventValue extends DataItem<EventValue> {
 
         /* Update to use the local copy of the Types */
         EventInfoType myType = getInfoType();
-        EventInfoType myNewType = myTypes.searchFor(myType.getId());
+        EventInfoType myNewType = myTypes.findItemById(myType.getId());
         setValueInfoType(myNewType);
 
         /* Update to use the local copy of the Events */
         Event myEvent = getEvent();
-        Event myNewEvt = myEvents.searchFor(myEvent.getId());
+        Event myNewEvt = myEvents.findItemById(myEvent.getId());
         setValueEvent(myNewEvt);
     }
 
@@ -550,7 +531,7 @@ public class EventValue extends DataItem<EventValue> {
          * @param pData the DataSet for the list
          */
         protected EventValueList(final FinanceData pData) {
-            super(EventValueList.class, EventValue.class, ListStyle.CORE, false);
+            super(EventValueList.class, EventValue.class, ListStyle.CORE);
             theData = pData;
             setGeneration(pData.getGeneration());
         }
@@ -562,7 +543,7 @@ public class EventValue extends DataItem<EventValue> {
          */
         protected EventValueList(final FinanceData pData,
                                  final ListStyle pStyle) {
-            super(EventValueList.class, EventValue.class, pStyle, false);
+            super(EventValueList.class, EventValue.class, pStyle);
             theData = pData;
             setGeneration(pData.getGeneration());
         }
@@ -688,12 +669,12 @@ public class EventValue extends DataItem<EventValue> {
             EventValue myValue = new EventValue(this, pType, pEvent);
 
             /* Add it to the list and return */
-            add(myValue);
+            addAtEnd(myValue);
             return myValue;
         }
 
         @Override
-        public EventValue addNewItem(final DataItem<?> pElement) {
+        public EventValue addNewItem(final DataItem pElement) {
             /* Create the new item */
             EventValue mySource = (EventValue) pElement;
             EventValue myValue = new EventValue(this, mySource);

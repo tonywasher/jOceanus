@@ -24,6 +24,7 @@ package net.sourceforge.JDataManager;
 
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 
 /**
  * Exception extension class. Provides capability of attaching ExceptionClass and Causing object to exception.
@@ -91,7 +92,7 @@ public class JDataException extends Exception implements JDataContents {
                 return myWrapped.getCause();
             }
             if (pField == FIELD_OBJECT) {
-                return JDataObject.FIELD_SKIP;
+                return JDataFieldValue.SkipField;
             }
             if (pField == FIELD_STACK) {
                 return myWrapped.getStackTrace();
@@ -109,7 +110,7 @@ public class JDataException extends Exception implements JDataContents {
                 return getCause();
             }
             if (pField == FIELD_OBJECT) {
-                return (theObject == null) ? JDataObject.FIELD_SKIP : theObject;
+                return (theObject == null) ? JDataFieldValue.SkipField : theObject;
             }
             if (pField == FIELD_STACK) {
                 return getStackTrace();
@@ -124,7 +125,9 @@ public class JDataException extends Exception implements JDataContents {
             }
             return myResult;
         }
-        return null;
+
+        /* Unknown field */
+        return JDataFieldValue.UnknownField;
     }
 
     @Override

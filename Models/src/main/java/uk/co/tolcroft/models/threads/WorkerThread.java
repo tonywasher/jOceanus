@@ -98,9 +98,9 @@ public abstract class WorkerThread<T> extends SwingWorker<T, StatusData> {
     /**
      * Task for worker thread.
      * @return the result
-     * @throws Exception on error
+     * @throws JDataException on error
      */
-    protected abstract T performTask() throws Exception;
+    protected abstract T performTask() throws JDataException;
 
     @Override
     public T doInBackground() {

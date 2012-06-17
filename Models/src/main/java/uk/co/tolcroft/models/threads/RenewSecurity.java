@@ -22,6 +22,7 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.threads;
 
+import net.sourceforge.JDataManager.JDataException;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.views.DataControl;
 
@@ -66,7 +67,7 @@ public class RenewSecurity<T extends DataSet<T>> extends LoaderThread<T> {
     }
 
     @Override
-    public T performTask() throws Exception {
+    public T performTask() throws JDataException {
         /* Initialise the status window */
         theStatus.initTask("Renewing Security");
 

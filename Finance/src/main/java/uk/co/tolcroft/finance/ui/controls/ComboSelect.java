@@ -22,6 +22,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.ui.controls;
 
+import java.util.Iterator;
+
 import javax.swing.JComboBox;
 
 import net.sourceforge.JDataManager.Difference;
@@ -31,8 +33,8 @@ import uk.co.tolcroft.finance.data.AccountType;
 import uk.co.tolcroft.finance.data.Event;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.TransactionType;
+import uk.co.tolcroft.finance.data.TransactionType.TransTypeList;
 import uk.co.tolcroft.finance.views.View;
-import uk.co.tolcroft.models.data.DataList.DataListIterator;
 
 /**
  * ComboBox selection class.
@@ -61,15 +63,15 @@ public class ComboSelect {
         theTranTypeBox = new JComboBox();
 
         /* Access the transaction types */
-        TransactionType.TransTypeList myList = theData.getTransTypes();
-        TransactionType myTrans;
-        DataListIterator<TransactionType> myIterator;
+        TransTypeList myList = theData.getTransTypes();
 
         /* Create the iterator */
-        myIterator = myList.listIterator();
+        Iterator<TransactionType> myIterator = myList.iterator();
 
         /* Loop through the Transaction types */
-        while ((myTrans = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            TransactionType myTrans = myIterator.next();
+
             /* Skip hidden/disabled values */
             if ((myTrans.isHiddenType()) || (!myTrans.getEnabled())) {
                 continue;
@@ -95,20 +97,17 @@ public class ComboSelect {
      * @return the ComboBox
      */
     public JComboBox getCreditTranTypes(final AccountType pType) {
-        TransactionType.TransTypeList myList = theData.getTransTypes();
-        TransactionType myTrans;
-        JComboBox myCombo;
-
-        DataListIterator<TransactionType> myIterator;
-
         /* Create the iterator */
-        myIterator = myList.listIterator();
+        TransTypeList myList = theData.getTransTypes();
+        Iterator<TransactionType> myIterator = myList.iterator();
 
         /* Create the ComboBox */
-        myCombo = new JComboBox();
+        JComboBox myCombo = new JComboBox();
 
         /* Loop through the Transaction types */
-        while ((myTrans = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            TransactionType myTrans = myIterator.next();
+
             /* Skip hidden/disabled values */
             if ((myTrans.isHiddenType()) || (!myTrans.getEnabled())) {
                 continue;
@@ -131,20 +130,17 @@ public class ComboSelect {
      * @return the ComboBox
      */
     public JComboBox getDebitTranTypes(final AccountType pType) {
-        TransactionType.TransTypeList myList = theData.getTransTypes();
-        TransactionType myTrans;
-        JComboBox myCombo;
-
-        DataListIterator<TransactionType> myIterator;
-
         /* Create the iterator */
-        myIterator = myList.listIterator();
+        TransTypeList myList = theData.getTransTypes();
+        Iterator<TransactionType> myIterator = myList.listIterator();
 
         /* Create the ComboBox */
-        myCombo = new JComboBox();
+        JComboBox myCombo = new JComboBox();
 
         /* Loop through the Transaction types */
-        while ((myTrans = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            TransactionType myTrans = myIterator.next();
+
             /* Skip hidden/disabled values */
             if ((myTrans.isHiddenType()) || (!myTrans.getEnabled())) {
                 continue;
@@ -167,22 +163,20 @@ public class ComboSelect {
      * @return the ComboBox
      */
     public JComboBox getDebitAccounts(final TransactionType pType) {
-        Account.AccountList myList = theData.getAccounts();
-        Account myAccount;
         AccountType myType = null;
         boolean isValid = false;
-        JComboBox myCombo;
-
-        DataListIterator<Account> myIterator;
 
         /* Access the iterator */
-        myIterator = myList.listIterator();
+        AccountList myList = theData.getAccounts();
+        Iterator<Account> myIterator = myList.listIterator();
 
         /* Create the ComboBox */
-        myCombo = new JComboBox();
+        JComboBox myCombo = new JComboBox();
 
         /* Loop through the accounts */
-        while ((myAccount = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            Account myAccount = myIterator.next();
+
             /* If the type of this account is new */
             if (!Difference.isEqual(myType, myAccount.getActType())) {
                 /* Note the type */
@@ -213,22 +207,20 @@ public class ComboSelect {
      */
     public JComboBox getCreditAccounts(final TransactionType pType,
                                        final Account pDebit) {
-        AccountList myList = theData.getAccounts();
-        Account myAccount;
         AccountType myType = null;
         boolean isValid = false;
-        JComboBox myCombo;
-
-        DataListIterator<Account> myIterator;
 
         /* Access the iterator */
-        myIterator = myList.listIterator();
+        AccountList myList = theData.getAccounts();
+        Iterator<Account> myIterator = myList.listIterator();
 
         /* Create the ComboBox */
-        myCombo = new JComboBox();
+        JComboBox myCombo = new JComboBox();
 
         /* Loop through the accounts */
-        while ((myAccount = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            Account myAccount = myIterator.next();
+
             /* If the type of this account is new */
             if (!Difference.isEqual(myType, myAccount.getActType())) {
                 /* Note the type */
@@ -273,22 +265,20 @@ public class ComboSelect {
      */
     public JComboBox getDebitAccounts(final TransactionType pType,
                                       final Account pCredit) {
-        Account.AccountList myList = theData.getAccounts();
-        Account myAccount;
         AccountType myType = null;
         boolean isValid = false;
-        JComboBox myCombo;
-
-        DataListIterator<Account> myIterator;
 
         /* Access the iterator */
-        myIterator = myList.listIterator();
+        AccountList myList = theData.getAccounts();
+        Iterator<Account> myIterator = myList.listIterator();
 
         /* Create the ComboBox */
-        myCombo = new JComboBox();
+        JComboBox myCombo = new JComboBox();
 
         /* Loop through the accounts */
-        while ((myAccount = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            Account myAccount = myIterator.next();
+
             /* If the type of this account is new */
             if (!Difference.isEqual(myType, myAccount.getActType())) {
                 /* Note the type */

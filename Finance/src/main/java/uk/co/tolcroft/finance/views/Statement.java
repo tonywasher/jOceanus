@@ -26,8 +26,8 @@ import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDateDay.DateDayRange;
 import net.sourceforge.JDecimal.Money;
@@ -430,7 +430,7 @@ public class Statement implements JDataContents {
         }
 
         @Override
-        public StatementLine addNewItem(final DataItem<?> pElement) {
+        public StatementLine addNewItem(final DataItem pElement) {
             StatementLine myLine = new StatementLine(this, (StatementLine) pElement);
             add(myLine);
             return myLine;
@@ -496,10 +496,10 @@ public class Statement implements JDataContents {
         @Override
         public Object getFieldValue(final JDataField pField) {
             if (FIELD_ACCOUNT.equals(pField)) {
-                return JDataObject.FIELD_SKIP;
+                return JDataFieldValue.SkipField;
             }
             if (FIELD_PARTNER.equals(pField)) {
-                return JDataObject.FIELD_SKIP;
+                return JDataFieldValue.SkipField;
             }
             if (FIELD_BALANCE.equals(pField)) {
                 return theBalance;

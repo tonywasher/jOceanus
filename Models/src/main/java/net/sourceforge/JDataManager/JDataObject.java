@@ -154,9 +154,19 @@ public final class JDataObject {
     }
 
     /**
-     * The value to return if the field is to be skipped.
+     * Special values for return by getFieldValue.
      */
-    public static final String FIELD_SKIP = "SkipField";
+    public enum JDataFieldValue {
+        /**
+         * Field not known.
+         */
+        UnknownField,
+
+        /**
+         * Field to be skipped.
+         */
+        SkipField;
+    }
 
     /**
      * Format a field value.
@@ -327,7 +337,7 @@ public final class JDataObject {
             }
 
             /* Skip value if required */
-            if (myValue == FIELD_SKIP) {
+            if (myValue == JDataFieldValue.SkipField) {
                 continue;
             }
 

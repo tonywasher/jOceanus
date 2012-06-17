@@ -111,6 +111,14 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
     }
 
     /**
+     * obtain index.
+     * @return the index
+     */
+    protected OrderedIndex<T> getIndex() {
+        return theIndexMap;
+    }
+
+    /**
      * Construct a list.
      * @param pClass the class of the sortedItem
      */

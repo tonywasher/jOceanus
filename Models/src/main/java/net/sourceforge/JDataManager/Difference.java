@@ -181,4 +181,30 @@ public enum Difference {
         /* Handle Standard cases */
         return pCurr.equals(pNew);
     }
+
+    /**
+     * Compare two similar objects for order.
+     * @param <X> the object type
+     * @param pCurr The current object
+     * @param pNew The new object
+     * @return true/false
+     */
+    public static <X extends Comparable<X>> int compareObject(final X pCurr,
+                                                              final X pNew) {
+        /* Handle identity */
+        if (pCurr == pNew) {
+            return 0;
+        }
+
+        /* Null is at the end of the list */
+        if (pCurr == null) {
+            return 1;
+        }
+        if (pNew == null) {
+            return -1;
+        }
+
+        /* Pass the call on */
+        return pCurr.compareTo(pNew);
+    }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JSortedList: A random access linked list implementation
+ * JSortedList: A randomaccess linked list implementation
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,6 +29,12 @@ package net.sourceforge.JSortedList;
  * @param <T> the data-type of the list
  */
 public class OrderedIdList<I, T extends Comparable<T> & OrderedIdItem<I>> extends OrderedList<T> {
+    @SuppressWarnings("unchecked")
+    @Override
+    protected OrderedIdIndex<I, T> getIndex() {
+        return (OrderedIdIndex<I, T>) super.getIndex();
+    }
+
     /**
      * Construct a list.
      * @param pClass the class of the sortedItem
@@ -45,5 +51,25 @@ public class OrderedIdList<I, T extends Comparable<T> & OrderedIdItem<I>> extend
     public OrderedIdList(final Class<T> pClass,
                          final int pIndexGranularity) {
         super(pClass, new OrderedIdIndex<I, T>(pIndexGranularity));
+    }
+
+    /**
+     * Construct a list.
+     * @param pClass the class of the sortedItem
+     * @param pIndex the index.
+     */
+    protected OrderedIdList(final Class<T> pClass,
+                            final OrderedIdIndex<I, T> pIndex) {
+        super(pClass, pIndex);
+    }
+
+    /**
+     * Obtain item by id.
+     * @param pId the id to lookup
+     * @return the item (or null if not present)
+     */
+    public T findItemById(final I pId) {
+        /* Return results */
+        return getIndex().findItemById(pId);
     }
 }

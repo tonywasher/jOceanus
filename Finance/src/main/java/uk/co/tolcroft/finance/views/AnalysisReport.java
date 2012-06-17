@@ -29,7 +29,6 @@ import net.sourceforge.JDataManager.JDataObject;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Money;
 import net.sourceforge.JDecimal.Units;
-import net.sourceforge.JSortedList.SortedListIterator;
 import uk.co.tolcroft.finance.data.Account;
 import uk.co.tolcroft.finance.data.AccountType;
 import uk.co.tolcroft.finance.data.Event;
@@ -59,7 +58,6 @@ import uk.co.tolcroft.finance.views.EventAnalysis.AnalysisYear;
 import uk.co.tolcroft.finance.views.IncomeBreakdown.AccountRecord;
 import uk.co.tolcroft.finance.views.IncomeBreakdown.IncomeTotals;
 import uk.co.tolcroft.finance.views.IncomeBreakdown.RecordList;
-import uk.co.tolcroft.models.data.DataList.DataListIterator;
 
 /**
  * Reporting class to build HTML from analysis.
@@ -126,16 +124,10 @@ public class AnalysisReport {
      * @return Web output
      */
     public String getYearReport() {
-        DataListIterator<AnalysisBucket> myIterator;
-        AnalysisBucket myBucket;
+        /* Access the bucket lists */
+        BucketList myList = theAnalysis.getList();
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
         StringBuilder myDetail = new StringBuilder(BUFFER_LEN);
-        BucketList myList;
-        AssetSummary mySummary;
-        AssetTotal myTotal;
-
-        /* Access the bucket lists */
-        myList = theAnalysis.getList();
 
         /* Format the header */
         myOutput.append("<html><body><a name=\"Top\">");
@@ -152,17 +144,19 @@ public class AnalysisReport {
         myOutput.append("<tbody>");
 
         /* Access the iterator */
-        myIterator = myList.listIterator();
+        Iterator<AnalysisBucket> myIterator = myList.iterator();
 
         /* Loop through the Summary Buckets */
-        while ((myBucket = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            AnalysisBucket myBucket = myIterator.next();
+
             /* Only process summary items */
             if (myBucket.getBucketType() != BucketType.ASSETSUMMARY) {
                 continue;
             }
 
             /* Access the summary bucket */
-            mySummary = (AssetSummary) myBucket;
+            AssetSummary mySummary = (AssetSummary) myBucket;
 
             /* Format the Summary */
             myOutput.append("<tr><th align=\"center\">");
@@ -180,7 +174,7 @@ public class AnalysisReport {
         }
 
         /* Access the totals */
-        myTotal = myList.getAssetTotal();
+        AssetTotal myTotal = myList.getAssetTotal();
 
         /* Format the totals */
         myOutput.append("<tr><th>Totals</th>");
@@ -208,17 +202,10 @@ public class AnalysisReport {
      * @return Web output
      */
     public String getInstantReport() {
-        DataListIterator<AnalysisBucket> myIterator;
-        AnalysisBucket myBucket;
+        /* Access the bucket list */
+        BucketList myList = theAnalysis.getList();
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
         StringBuilder myDetail = new StringBuilder(BUFFER_LEN);
-        AccountType myType;
-        AssetSummary mySummary;
-        AssetTotal myTotal;
-        BucketList myList;
-
-        /* Access the bucket list */
-        myList = theAnalysis.getList();
 
         /* Format the header */
         myOutput.append("<html><body><a name=\"Top\">");
@@ -230,17 +217,19 @@ public class AnalysisReport {
         myOutput.append("<tbody>");
 
         /* Access the iterator */
-        myIterator = myList.listIterator();
+        Iterator<AnalysisBucket> myIterator = myList.iterator();
 
         /* Loop through the Summary Buckets */
-        while ((myBucket = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            AnalysisBucket myBucket = myIterator.next();
+
             /* Only process summary items */
             if (myBucket.getBucketType() != BucketType.ASSETSUMMARY) {
                 continue;
             }
 
             /* Access the summary bucket */
-            mySummary = (AssetSummary) myBucket;
+            AssetSummary mySummary = (AssetSummary) myBucket;
 
             /* Format the Summary */
             myOutput.append("<tr><th align=\"center\">");
@@ -253,7 +242,7 @@ public class AnalysisReport {
             myOutput.append("</tr>");
 
             /* Access the type */
-            myType = mySummary.getAccountType();
+            AccountType myType = mySummary.getAccountType();
 
             /* Format the detail */
             if (myType.isMoney()) {
@@ -266,7 +255,7 @@ public class AnalysisReport {
         }
 
         /* Access the totals */
-        myTotal = myList.getAssetTotal();
+        AssetTotal myTotal = myList.getAssetTotal();
 
         /* Format the totals */
         myOutput.append("<tr><th>Totals</th>");
@@ -288,17 +277,10 @@ public class AnalysisReport {
      * @return Web output
      */
     public String getMarketReport() {
-        DataListIterator<AnalysisBucket> myIterator;
-        AnalysisBucket myBucket;
+        /* Access the bucket lists */
+        BucketList myList = theAnalysis.getList();
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
         StringBuilder myDetail = new StringBuilder(BUFFER_LEN);
-        AccountType myType;
-        BucketList myList;
-        AssetAccount myAsset;
-        MarketTotal myTotal;
-
-        /* Access the bucket lists */
-        myList = theAnalysis.getList();
 
         /* Format the header */
         myOutput.append("<html><body><a name=\"Top\">");
@@ -312,20 +294,22 @@ public class AnalysisReport {
         myOutput.append("<tbody>");
 
         /* Access the iterator */
-        myIterator = myList.listIterator();
+        Iterator<AnalysisBucket> myIterator = myList.iterator();
 
         /* Loop through the Detail Buckets */
-        while ((myBucket = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            AnalysisBucket myBucket = myIterator.next();
+
             /* Only process detail items */
             if (myBucket.getBucketType() != BucketType.ASSETDETAIL) {
                 continue;
             }
 
             /* Access the summary bucket */
-            myAsset = (AssetAccount) myBucket;
+            AssetAccount myAsset = (AssetAccount) myBucket;
 
             /* Access the type */
-            myType = myAsset.getAccountType();
+            AccountType myType = myAsset.getAccountType();
 
             /* Ignore non-priced items */
             if (!myType.isPriced()) {
@@ -353,7 +337,7 @@ public class AnalysisReport {
         }
 
         /* Access the totals */
-        myTotal = myList.getMarketTotal();
+        MarketTotal myTotal = myList.getMarketTotal();
 
         /* Format the totals */
         myOutput.append("<tr><th>Totals</th>");
@@ -378,15 +362,9 @@ public class AnalysisReport {
      * @return Web output
      */
     public String getIncomeReport() {
-        AnalysisBucket myBucket;
-        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
-        BucketList myList;
-        DataListIterator<AnalysisBucket> myIterator;
-        ExternalAccount myExternal;
-        ExternalTotal myTotal;
-
         /* Access the bucket lists */
-        myList = theAnalysis.getList();
+        BucketList myList = theAnalysis.getList();
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Format the header */
         myOutput.append("<html><body><a name=\"Top\">");
@@ -406,17 +384,19 @@ public class AnalysisReport {
         myOutput.append("<tbody>");
 
         /* Create the bucket iterator */
-        myIterator = myList.listIterator();
+        Iterator<AnalysisBucket> myIterator = myList.iterator();
 
         /* Loop through the Detail Buckets */
-        while ((myBucket = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            AnalysisBucket myBucket = myIterator.next();
+
             /* Skip bucket if this is not an external account */
             if (myBucket.getBucketType() != BucketType.EXTERNALDETAIL) {
                 continue;
             }
 
             /* Access the account */
-            myExternal = (ExternalAccount) myBucket;
+            ExternalAccount myExternal = (ExternalAccount) myBucket;
 
             /* Format the detail */
             myOutput.append("<tr><th align=\"center\">");
@@ -430,7 +410,7 @@ public class AnalysisReport {
         }
 
         /* Access the totals */
-        myTotal = myList.getExternalTotal();
+        ExternalTotal myTotal = myList.getExternalTotal();
 
         /* Format the totals */
         myOutput.append("<tr><th>Totals</th>");
@@ -456,18 +436,12 @@ public class AnalysisReport {
      * @return Web output
      */
     public StringBuilder makeStandardReport(final AssetSummary pSummary) {
-        DataListIterator<AnalysisBucket> myIterator;
-        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
-        AccountType myType;
-        AnalysisBucket myBucket;
-        BucketList myList;
-        ValueAccount myValue;
-
         /* Access the bucket lists */
-        myList = theAnalysis.getList();
+        BucketList myList = theAnalysis.getList();
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Access the type */
-        myType = pSummary.getAccountType();
+        AccountType myType = pSummary.getAccountType();
 
         /* Format the detail */
         myOutput.append("<a name=\"Detail");
@@ -486,17 +460,19 @@ public class AnalysisReport {
         myOutput.append("<tbody>");
 
         /* Access the iterator */
-        myIterator = myList.listIterator();
+        Iterator<AnalysisBucket> myIterator = myList.iterator();
 
         /* Loop through the Detail Buckets */
-        while ((myBucket = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            AnalysisBucket myBucket = myIterator.next();
+
             /* Skip record if not a value account */
             if (!(myBucket instanceof ValueAccount)) {
                 continue;
             }
 
             /* Access the bucket */
-            myValue = (ValueAccount) myBucket;
+            ValueAccount myValue = (ValueAccount) myBucket;
 
             /* Skip record if incorrect type */
             if (!Difference.isEqual(myValue.getAccountType(), myType)) {
@@ -527,18 +503,12 @@ public class AnalysisReport {
      * @return Web output
      */
     private StringBuilder makeRatedReport(final AssetSummary pSummary) {
-        DataListIterator<AnalysisBucket> myIterator;
-        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
-        AccountType myType;
-        AnalysisBucket myBucket;
-        BucketList myList;
-        MoneyAccount myMoney;
-
         /* Access the bucket lists */
-        myList = theAnalysis.getList();
+        BucketList myList = theAnalysis.getList();
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Access the type */
-        myType = pSummary.getAccountType();
+        AccountType myType = pSummary.getAccountType();
 
         /* Format the detail */
         myOutput.append("<a name=\"Detail");
@@ -553,17 +523,19 @@ public class AnalysisReport {
         myOutput.append("<tbody>");
 
         /* Access the iterator */
-        myIterator = myList.listIterator();
+        Iterator<AnalysisBucket> myIterator = myList.iterator();
 
         /* Loop through the Detail Buckets */
-        while ((myBucket = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            AnalysisBucket myBucket = myIterator.next();
+
             /* Skip record if this is not a money detail */
             if (myBucket.getBucketType() != BucketType.MONEYDETAIL) {
                 continue;
             }
 
             /* Access the bucket */
-            myMoney = (MoneyAccount) myBucket;
+            MoneyAccount myMoney = (MoneyAccount) myBucket;
 
             /* Skip record if incorrect type */
             if (!Difference.isEqual(myMoney.getAccountType(), myType)) {
@@ -595,18 +567,12 @@ public class AnalysisReport {
      * @return Web output
      */
     public StringBuilder makeDebtReport(final AssetSummary pSummary) {
-        DataListIterator<AnalysisBucket> myIterator;
-        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
-        AccountType myType;
-        AnalysisBucket myBucket;
-        BucketList myList;
-        DebtAccount myDebt;
-
         /* Access the bucket lists */
-        myList = theAnalysis.getList();
+        BucketList myList = theAnalysis.getList();
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Access the type */
-        myType = pSummary.getAccountType();
+        AccountType myType = pSummary.getAccountType();
 
         /* Format the detail */
         myOutput.append("<a name=\"Detail");
@@ -620,17 +586,19 @@ public class AnalysisReport {
         myOutput.append("<tbody>");
 
         /* Access the iterator */
-        myIterator = myList.listIterator();
+        Iterator<AnalysisBucket> myIterator = myList.iterator();
 
         /* Loop through the Detail Buckets */
-        while ((myBucket = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            AnalysisBucket myBucket = myIterator.next();
+
             /* Skip record if this is not debt detail */
             if (myBucket.getBucketType() != BucketType.DEBTDETAIL) {
                 continue;
             }
 
             /* Access the bucket */
-            myDebt = (DebtAccount) myBucket;
+            DebtAccount myDebt = (DebtAccount) myBucket;
 
             /* Skip record if incorrect type */
             if (!Difference.isEqual(myDebt.getAccountType(), myType)) {
@@ -659,18 +627,12 @@ public class AnalysisReport {
      * @return Web output
      */
     public StringBuilder makePricedReport(final AssetSummary pSummary) {
-        DataListIterator<AnalysisBucket> myIterator;
-        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
-        AccountType myType;
-        AnalysisBucket myBucket;
-        BucketList myList;
-        AssetAccount myAsset;
-
         /* Access the bucket lists */
-        myList = theAnalysis.getList();
+        BucketList myList = theAnalysis.getList();
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Access the type */
-        myType = pSummary.getAccountType();
+        AccountType myType = pSummary.getAccountType();
 
         /* Format the detail */
         myOutput.append("<a name=\"Detail");
@@ -685,17 +647,19 @@ public class AnalysisReport {
         myOutput.append("<tbody>");
 
         /* Access the iterator */
-        myIterator = myList.listIterator();
+        Iterator<AnalysisBucket> myIterator = myList.iterator();
 
         /* Loop through the Detail Buckets */
-        while ((myBucket = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            AnalysisBucket myBucket = myIterator.next();
+
             /* Skip record if this is not asset detail */
             if (myBucket.getBucketType() != BucketType.ASSETDETAIL) {
                 continue;
             }
 
             /* Access the bucket */
-            myAsset = (AssetAccount) myBucket;
+            AssetAccount myAsset = (AssetAccount) myBucket;
 
             /* Skip record if incorrect type */
             if (!Difference.isEqual(myAsset.getAccountType(), myType)) {
@@ -732,13 +696,9 @@ public class AnalysisReport {
      * @return Web output
      */
     public StringBuilder makeCapitalEventReport(final AssetAccount pAsset) {
-        Iterator<CapitalEvent> myIterator;
-        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
-        CapitalEvent myEvent;
-        CapitalEventList myList;
-
         /* Access the event lists */
-        myList = pAsset.getCapitalEvents();
+        CapitalEventList myList = pAsset.getCapitalEvents();
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Format the detail */
         myOutput.append("<a name=\"Detail");
@@ -753,10 +713,12 @@ public class AnalysisReport {
         myOutput.append("<tbody>");
 
         /* Access the iterator */
-        myIterator = myList.listIterator();
+        Iterator<CapitalEvent> myIterator = myList.iterator();
 
         /* Loop through the Events */
-        while ((myEvent = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            CapitalEvent myEvent = myIterator.next();
+
             /* Skip record if this is not based on an event (at present) */
             if (myEvent.getEvent() == null) {
                 continue;
@@ -792,16 +754,9 @@ public class AnalysisReport {
      * @return Web output
      */
     public String getTransReport() {
-        AnalysisBucket myBucket;
-        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
-        BucketList myList;
-        DataListIterator<AnalysisBucket> myIterator;
-        TransSummary mySummary;
-        TransTotal myTotal;
-        TransDetail myDetail;
-
         /* Access the bucket lists */
-        myList = theAnalysis.getList();
+        BucketList myList = theAnalysis.getList();
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Format the header */
         myOutput.append("<html><body><a name=\"Top\">");
@@ -819,15 +774,17 @@ public class AnalysisReport {
         myOutput.append("<tbody>");
 
         /* Access the bucket iterator */
-        myIterator = myList.listIterator();
+        Iterator<AnalysisBucket> myIterator = myList.iterator();
 
         /* Loop through the Transaction Summary Buckets */
-        while ((myBucket = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            AnalysisBucket myBucket = myIterator.next();
+
             /* Switch on bucket type */
             switch (myBucket.getBucketType()) {
             /* Summary */
                 case TRANSSUMMARY:
-                    mySummary = (TransSummary) myBucket;
+                    TransSummary mySummary = (TransSummary) myBucket;
 
                     /* Format the detail */
                     myOutput.append("<tr><th align=\"center\">" + mySummary.getName() + "</th>");
@@ -837,7 +794,7 @@ public class AnalysisReport {
                     break;
                 /* Total */
                 case TRANSTOTAL:
-                    myTotal = (TransTotal) myBucket;
+                    TransTotal myTotal = (TransTotal) myBucket;
 
                     /* Format the detail */
                     myOutput.append("<tr><th align=\"center\">" + myTotal.getName() + "</th>");
@@ -864,17 +821,19 @@ public class AnalysisReport {
         myOutput.append("<tbody>");
 
         /* Access a new bucket iterator */
-        myIterator = myList.listIterator();
+        myIterator = myList.iterator();
 
         /* Loop through the Transaction Summary Buckets */
-        while ((myBucket = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            AnalysisBucket myBucket = myIterator.next();
+
             /* Skip entries that are not TransDetail */
             if (myBucket.getBucketType() != BucketType.TRANSDETAIL) {
                 continue;
             }
 
             /* Access the detail */
-            myDetail = (TransDetail) myBucket;
+            TransDetail myDetail = (TransDetail) myBucket;
 
             /* Format the detail */
             myOutput.append("<tr><th align=\"center\">");
@@ -899,19 +858,14 @@ public class AnalysisReport {
      * @return Web output
      */
     public String getTaxReport() {
-        AnalysisBucket myBucket;
-        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
-        StringBuilder myDetail = new StringBuilder(BUFFER_LEN);
-        BucketList myList;
-        DataListIterator<AnalysisBucket> myIterator;
-        TaxDetail myTax;
-        TransSummary myTrans;
-
         /* Ensure that tax has been calculated */
         theAnalysisYear.calculateTax();
 
         /* Access the bucket lists */
-        myList = theAnalysis.getList();
+        BucketList myList = theAnalysis.getList();
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
+        StringBuilder myDetail = new StringBuilder(BUFFER_LEN);
+        TaxDetail myTax;
 
         /* Initialise the detail */
         myDetail.append("<h1 align=\"center\">Taxation Breakdown</h1>");
@@ -927,10 +881,12 @@ public class AnalysisReport {
         myOutput.append("<tbody>");
 
         /* Access the tax bucket iterator */
-        myIterator = myList.listIterator();
+        Iterator<AnalysisBucket> myIterator = myList.iterator();
 
-        /* Loop through the Transaction Summary Buckets */
-        while ((myBucket = myIterator.next()) != null) {
+        /* Loop through the Tax Summary Buckets */
+        while (myIterator.hasNext()) {
+            AnalysisBucket myBucket = myIterator.next();
+
             /* Skip the non-summary elements */
             if (myBucket.getBucketType() != BucketType.TAXSUMMARY) {
                 continue;
@@ -964,7 +920,7 @@ public class AnalysisReport {
         myOutput.append("</tr>");
 
         /* Access the Tax Paid bucket */
-        myTrans = myList.getTransSummary(TaxClass.TAXPAID);
+        TransSummary myTrans = myList.getTransSummary(TaxClass.TAXPAID);
         myOutput.append("<tr><th align=\"center\">");
         myOutput.append(myTrans.getName());
         myOutput.append("</th>");
@@ -1142,14 +1098,9 @@ public class AnalysisReport {
      * @return Web output
      */
     public StringBuilder makeTaxReport(final TaxDetail pSummary) {
-        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
-        AnalysisBucket myBucket;
-        BucketList myList;
-        TaxDetail myTax;
-        DataListIterator<AnalysisBucket> myIterator;
-
         /* Access the bucket lists */
-        myList = theAnalysis.getList();
+        BucketList myList = theAnalysis.getList();
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Format the detail */
         myOutput.append("<a name=\"Detail");
@@ -1164,17 +1115,19 @@ public class AnalysisReport {
         myOutput.append("<tbody>");
 
         /* Access the tax bucket iterator */
-        myIterator = myList.listIterator();
+        Iterator<AnalysisBucket> myIterator = myList.iterator();
 
         /* Loop through the Transaction Detail Buckets */
-        while ((myBucket = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            AnalysisBucket myBucket = myIterator.next();
+
             /* Skip non-detail buckets */
             if (myBucket.getBucketType() != BucketType.TAXDETAIL) {
                 continue;
             }
 
             /* Access the bucket */
-            myTax = (TaxDetail) myBucket;
+            TaxDetail myTax = (TaxDetail) myBucket;
 
             /* Skip record if incorrect parent */
             if (myTax.getParent() != pSummary) {
@@ -1206,16 +1159,10 @@ public class AnalysisReport {
      * @return Web output
      */
     public StringBuilder makeTaxSliceReport() {
-        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
-        TaxDetail myTax;
-        BucketList myList;
-        ChargeableEvent myCharge;
-        ChargeableEventList myCharges;
-        SortedListIterator<ChargeableEvent> myIterator;
-
         /* Access the bucket lists */
-        myList = theAnalysis.getList();
-        myCharges = theAnalysis.getCharges();
+        BucketList myList = theAnalysis.getList();
+        ChargeableEventList myCharges = theAnalysis.getCharges();
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Format the detail */
         myOutput.append("<a name=\"DetailChargeableEvents>");
@@ -1227,10 +1174,12 @@ public class AnalysisReport {
         myOutput.append("<tbody>");
 
         /* Create the list iterator */
-        myIterator = theAnalysis.getCharges().listIterator();
+        Iterator<ChargeableEvent> myIterator = theAnalysis.getCharges().iterator();
 
         /* Loop through the Charges */
-        while ((myCharge = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            ChargeableEvent myCharge = myIterator.next();
+
             /* Format the detail */
             myOutput.append("<tr><td>");
             myOutput.append(JDataObject.formatField(myCharge.getDate()));
@@ -1256,7 +1205,7 @@ public class AnalysisReport {
         myOutput.append("</tr></tbody></table>");
 
         /* Access the Summary Tax Due Slice */
-        myTax = myList.getTaxDetail(TaxClass.TAXDUESLICE);
+        TaxDetail myTax = myList.getTaxDetail(TaxClass.TAXDUESLICE);
 
         /* Add the Slice taxation details */
         myOutput.append(makeTaxReport(myTax));
@@ -1294,13 +1243,9 @@ public class AnalysisReport {
      */
     public StringBuilder makeAccountListReport(final RecordList pList,
                                                final String pReturn) {
+        /* If there is zero income return empty string */
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
         StringBuilder myDetail = new StringBuilder(BUFFER_LEN);
-        AccountRecord myAccount;
-        String myListName;
-        DataListIterator<AccountRecord> myIterator;
-
-        /* If there is zero income return empty string */
         if (!pList.getTotals().getGrossIncome().isNonZero()) {
             return myOutput;
         }
@@ -1318,12 +1263,14 @@ public class AnalysisReport {
         myOutput.append("<tbody>");
 
         /* Access the account iterator */
-        myIterator = pList.listIterator();
+        Iterator<AccountRecord> myIterator = pList.iterator();
 
         /* Loop through the Accounts associated with this List */
-        while ((myAccount = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            AccountRecord myAccount = myIterator.next();
+
             /* Access the name of the sublist */
-            myListName = myAccount.getChildren().getName();
+            String myListName = myAccount.getChildren().getName();
 
             /* Format the detail */
             myOutput.append("<tr><th align=\"center\"><a href=\"#Income");
@@ -1382,12 +1329,9 @@ public class AnalysisReport {
      */
     public StringBuilder makeAccountEventReport(final AccountRecord pAccount,
                                                 final String pReturn) {
-        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
-        Event myEvent;
-        Account myAccount = pAccount.getAccount();
-        DataListIterator<Event> myIterator;
-
         /* Format the detail */
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
+        Account myAccount = pAccount.getAccount();
         myOutput.append("<a name=\"Income");
         myOutput.append(pAccount.getChildren().getName());
         myOutput.append("\">");
@@ -1400,10 +1344,12 @@ public class AnalysisReport {
         myOutput.append("<tbody>");
 
         /* Access the event iterator */
-        myIterator = pAccount.getEvents().listIterator();
+        Iterator<Event> myIterator = pAccount.getEvents().iterator();
 
         /* Loop through the Events associated with this Account */
-        while ((myEvent = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            Event myEvent = myIterator.next();
+
             /* Format the detail */
             myOutput.append("<tr><th align=\"center\">");
             myOutput.append(JDataObject.formatField(myEvent.getDate()));

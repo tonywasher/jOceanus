@@ -24,6 +24,7 @@ package uk.co.tolcroft.finance.ui.controls;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ListIterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
@@ -39,7 +40,6 @@ import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.TaxYear;
 import uk.co.tolcroft.finance.data.TaxYear.TaxYearList;
 import uk.co.tolcroft.finance.views.View;
-import uk.co.tolcroft.models.data.DataList.DataListIterator;
 
 /**
  * TaxYear selection panel.
@@ -188,13 +188,8 @@ public class TaxYearSelect extends JPanel {
      * refresh Data.
      */
     public final void refreshData() {
-        FinanceData myData;
-        TaxYear myYear;
-        TaxYear myFirst;
-        DataListIterator<TaxYear> myYearIterator;
-
         /* Access the data */
-        myData = theView.getData();
+        FinanceData myData = theView.getData();
 
         /* Access years and regimes */
         TaxYearList myTaxYears = myData.getTaxYears();
@@ -207,7 +202,7 @@ public class TaxYearSelect extends JPanel {
             /* If we have a selected year */
             if (getTaxYear() != null) {
                 /* Find it in the new list */
-                theState.setTaxYear(myTaxYears.searchFor(getTaxYear().getTaxYear()));
+                theState.setTaxYear(myTaxYears.findTaxYearForDate(getTaxYear().getTaxYear()));
             }
 
             /* Remove the years */
@@ -215,11 +210,13 @@ public class TaxYearSelect extends JPanel {
         }
 
         /* Create a Tax Year iterator */
-        myYearIterator = myTaxYears.listIterator(true);
-        myFirst = null;
+        ListIterator<TaxYear> myYearIterator = myTaxYears.listIterator();
+        TaxYear myFirst = null;
 
         /* Add the Tax Years to the years box in reverse order */
-        while ((myYear = myYearIterator.previous()) != null) {
+        while (myYearIterator.hasPrevious()) {
+            TaxYear myYear = myYearIterator.previous();
+
             /* If the year is not deleted */
             if ((!doShowDeleted()) && (myYear.isDeleted())) {
                 continue;

@@ -22,28 +22,45 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
+import java.util.Iterator;
+
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.HistoryControl;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.JDataObject.JDataValues;
-import net.sourceforge.JDataManager.ReportItem;
 import net.sourceforge.JDataManager.ValueSet;
+import net.sourceforge.JSortedList.OrderedIdItem;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
+import uk.co.tolcroft.models.data.ValidationControl.ErrorElement;
 
 /**
  * Provides the abstract DataItem class as the basis for data items. The implementation of the interface means
  * that this object can only be held in one list at a time and is unique within that list
- * @param <T> the data type
  * @see uk.co.tolcroft.models.data.DataList
  */
-public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> implements JDataValues {
+public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(DataItem.class.getSimpleName(),
-            ReportItem.theLocalFields);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(DataItem.class.getSimpleName());
+
+    /**
+     * Instance ReportFields.
+     */
+    private final JDataFields theFields;
+
+    @Override
+    public JDataFields getDataFields() {
+        return theFields;
+    }
+
+    /**
+     * Declare fields.
+     * @return the fields
+     */
+    public abstract JDataFields declareFields();
 
     /**
      * ValueSet.
@@ -64,6 +81,11 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
      * Id Field Id.
      */
     public static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField("Id");
+
+    /**
+     * List Field Id.
+     */
+    public static final JDataField FIELD_LIST = FIELD_DEFS.declareLocalField("List");
 
     /**
      * Base Field Id.
@@ -111,10 +133,18 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
     public static final JDataField FIELD_ERRORS = FIELD_DEFS.declareLocalField("Errors");
 
     @Override
+    public String formatObject() {
+        return getDataFields().getName();
+    }
+
+    @Override
     public Object getFieldValue(final JDataField pField) {
         /* If the field is not an attribute handle normally */
         if (FIELD_ID.equals(pField)) {
             return getId();
+        }
+        if (FIELD_LIST.equals(pField)) {
+            return getList();
         }
         if (FIELD_ACTIVE.equals(pField)) {
             return isActive();
@@ -129,39 +159,39 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
             return getEditState();
         }
         if (FIELD_DELETED.equals(pField)) {
-            return isDeleted ? isDeleted : JDataObject.FIELD_SKIP;
+            return isDeleted ? isDeleted : JDataFieldValue.SkipField;
         }
         if (FIELD_NEXTVERS.equals(pField)) {
-            return (theHistory != null) ? getList().getNextVersion() : JDataObject.FIELD_SKIP;
+            return (theHistory != null) ? getList().getNextVersion() : JDataFieldValue.SkipField;
         }
         if (FIELD_VERSION.equals(pField)) {
-            return (theValueSet != null) ? theValueSet.getVersion() : JDataObject.FIELD_SKIP;
+            return (theValueSet != null) ? theValueSet.getVersion() : JDataFieldValue.SkipField;
         }
         if (FIELD_HISTORY.equals(pField)) {
-            return hasHistory() ? theHistory : JDataObject.FIELD_SKIP;
+            return hasHistory() ? theHistory : JDataFieldValue.SkipField;
         }
         if (FIELD_ERRORS.equals(pField)) {
-            return hasErrors() ? theErrors : JDataObject.FIELD_SKIP;
+            return hasErrors() ? theErrors : JDataFieldValue.SkipField;
         }
 
-        /* Pass onwards */
-        return super.getFieldValue(pField);
+        /* Not recognised */
+        return JDataFieldValue.UnknownField;
     }
 
     /**
      * The list to which this item belongs.
      */
-    private DataList<?, T> theList = null;
+    private DataList<?, ?> theList = null;
 
     /**
-     * Self reference (built as cast during constructor).
+     * Self reference.
      */
-    private T theItem;
+    private DataItem theItem;
 
     /**
      * The item that this DataItem is based upon.
      */
-    private DataItem<?> theBase = null;
+    private DataItem theBase = null;
 
     /**
      * The Change state of this item {@link DataState}.
@@ -201,15 +231,18 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
     /**
      * The validation control {@link ValidationControl}.
      */
-    private ValidationControl<T> theErrors = null;
+    private ValidationControl theErrors = null;
 
     /**
      * Is the item active.
      */
     private boolean isActive = false;
 
-    @Override
-    public DataList<?, T> getList() {
+    /**
+     * Obtain the list.
+     * @return the list
+     */
+    public DataList<?, ?> getList() {
         return theList;
     }
 
@@ -226,6 +259,11 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
      * @return the Id
      */
     public int getId() {
+        return theId;
+    }
+
+    @Override
+    public Integer getOrderedId() {
         return theId;
     }
 
@@ -275,7 +313,6 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
      */
     private void setDeleted(final boolean bDeleted) {
         isDeleted = bDeleted;
-        theList.setHidden(theItem, isDeleted);
     }
 
     /**
@@ -341,17 +378,12 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
         return isRestoring;
     }
 
-    @Override
-    public boolean isHidden() {
-        return isDeleted;
-    }
-
     /**
      * Determine whether the underlying base item is deleted.
      * @return <code>true/false</code>
      */
     public boolean isCoreDeleted() {
-        DataItem<?> myBase = getBase();
+        DataItem myBase = getBase();
         return (myBase != null) && (myBase.isDeleted);
     }
 
@@ -396,7 +428,7 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
      * Touch the item.
      * @param pObject object that references the item
      */
-    public void touchItem(final DataItem<?> pObject) {
+    public void touchItem(final DataItem pObject) {
         isActive = true;
     }
 
@@ -404,7 +436,7 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
      * Obtain properly cast reference to self.
      * @return self reference
      */
-    public T getItem() {
+    public DataItem getItem() {
         return theItem;
     }
 
@@ -412,7 +444,7 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
      * Get the base item for this item.
      * @return the Base item or <code>null</code>
      */
-    public DataItem<?> getBase() {
+    public DataItem getBase() {
         return theBase;
     }
 
@@ -420,7 +452,7 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
      * Set the base item for this item.
      * @param pBase the Base item
      */
-    public void setBase(final DataItem<?> pBase) {
+    public void setBase(final DataItem pBase) {
         theBase = pBase;
     }
 
@@ -458,7 +490,7 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
      * original values of the base.
      * @param pBase the base item
      */
-    public void setHistory(final DataItem<?> pBase) {
+    public void setHistory(final DataItem pBase) {
         theHistory.setHistory(pBase.getOriginalValues());
     }
 
@@ -600,7 +632,7 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
      * Get the first error element for an item.
      * @return the first error (or <code>null</code>)
      */
-    public ValidationControl<T>.ErrorElement getFirstError() {
+    public ErrorElement getFirstError() {
         return theErrors.getFirst();
     }
 
@@ -608,7 +640,7 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
      * Copy flags.
      * @param pItem the original item
      */
-    protected void copyFlags(final T pItem) {
+    protected void copyFlags(final DataItem pItem) {
         isActive = pItem.isActive();
     }
 
@@ -617,7 +649,7 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
      */
     public void allocateValueSet() {
         /* Create history and validation control */
-        theErrors = new ValidationControl<T>(theItem);
+        theErrors = new ValidationControl(theItem);
 
         /* Allocate history control */
         theHistory = new HistoryControl();
@@ -633,15 +665,15 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
      * @param pList the list that this item is associated with
      * @param uId the Id of the new item (or 0 if not yet known)
      */
-    public DataItem(final DataList<?, T> pList,
+    public DataItem(final DataList<?, ?> pList,
                     final Integer uId) {
-        /* Initialise as a ReportItem */
-        super(pList);
-
         /* Record list and item references */
         theId = uId;
         theList = pList;
         theItem = pList.getBaseClass().cast(this);
+
+        /* Declare fields (allowing for subclasses) */
+        theFields = declareFields();
 
         /* Allocate the value set */
         allocateValueSet();
@@ -652,8 +684,8 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
      * @param pList the list that this item is associated with
      * @param pBase the old item
      */
-    protected DataItem(final DataList<?, T> pList,
-                       final T pBase) {
+    protected DataItem(final DataList<?, ?> pList,
+                       final DataItem pBase) {
         /* Initialise as a ReportItem */
         this(pList, pBase.getId());
 
@@ -661,12 +693,101 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
         theValueSet.copyFrom(pBase.getValueSet());
     }
 
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the object is the same class */
+        if (pThat.getClass() != getClass()) {
+            return false;
+        }
+
+        /* Access the object as a DataItem */
+        DataItem myItem = (DataItem) pThat;
+
+        /* Check the id */
+        if (compareId(myItem) != 0) {
+            return false;
+        }
+
+        /* Loop through the fields */
+        Iterator<JDataField> myIterator = theFields.fieldIterator();
+        while (myIterator.hasNext()) {
+            /* Access Field */
+            JDataField myField = myIterator.next();
+
+            /* Skip if not used in equality */
+            if (!myField.isEqualityField()) {
+                continue;
+            }
+
+            /* Access the values */
+            Object myValue = getFieldValue(myField);
+            Object myNew = myItem.getFieldValue(myField);
+
+            /* Check the field */
+            if (!Difference.isEqual(myValue, myNew)) {
+                return false;
+            }
+        }
+
+        /* Return identical */
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        /* Initialise hash code */
+        int myHash = theId;
+
+        /* Loop through the fields */
+        Iterator<JDataField> myIterator = theFields.fieldIterator();
+        while (myIterator.hasNext()) {
+            /* Access Field */
+            JDataField myField = myIterator.next();
+
+            /* Skip if not used in equality */
+            if (!myField.isEqualityField()) {
+                continue;
+            }
+
+            /* Access the values */
+            Object myValue = getFieldValue(myField);
+
+            /* Adjust existing hash */
+            myHash *= DataSet.HASH_PRIME;
+
+            /* Add the hash for the field */
+            if (myValue != null) {
+                myHash += myValue.hashCode();
+            }
+        }
+
+        /* Return the hash */
+        return myHash;
+    }
+
+    /**
+     * compareTo another dataItem.
+     * @param pThat the DataItem to compare
+     * @return the order
+     */
+    protected int compareId(final DataItem pThat) {
+        return (theId - pThat.theId);
+    }
+
     /**
      * Get the state of the underlying record.
      * @return the underlying state
      */
     protected DataState getBaseState() {
-        DataItem<?> myBase = getBase();
+        DataItem myBase = getBase();
         return (myBase == null) ? DataState.NOSTATE : myBase.getState();
     }
 
@@ -684,7 +805,7 @@ public abstract class DataItem<T extends DataItem<T>> extends ReportItem<T> impl
      * @param pElement the changed element.
      * @return were changes made
      */
-    public boolean applyChanges(final DataItem<?> pElement) {
+    public boolean applyChanges(final DataItem pElement) {
         return false;
     };
 

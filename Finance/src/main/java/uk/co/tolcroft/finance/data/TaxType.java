@@ -262,7 +262,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
          * @return the newly added item
          */
         @Override
-        public TaxType addNewItem(final DataItem<?> pItem) {
+        public TaxType addNewItem(final DataItem pItem) {
             TaxType myType = new TaxType(this, (TaxType) pItem);
             add(myType);
             return myType;
@@ -302,7 +302,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
             }
 
             /* Check that this TaxType has not been previously added */
-            if (searchFor(pTaxType) != null) {
+            if (findItemByName(pTaxType) != null) {
                 throw new JDataException(ExceptionClass.DATA, myTaxType, "Duplicate Tax Type");
             }
 
@@ -373,7 +373,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
             }
 
             /* Add the Tax Type to the list */
-            add(myTaxType);
+            addAtEnd(myTaxType);
 
             /* Validate the TaxType */
             myTaxType.validate();

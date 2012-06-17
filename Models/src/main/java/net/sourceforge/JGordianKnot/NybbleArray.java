@@ -28,6 +28,7 @@ import net.sourceforge.JDataManager.DataConverter;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 
 /**
  * An array of bytes treated as an array of nybbles (i.e. two entries per byte).
@@ -54,7 +55,7 @@ public class NybbleArray implements JDataContents {
         if (FIELD_ENCODED.equals(pField)) {
             return theEncoded;
         }
-        return null;
+        return JDataFieldValue.UnknownField;
     }
 
     @Override

@@ -567,7 +567,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
         }
 
         @Override
-        public AccountType addNewItem(final DataItem<?> pItem) {
+        public AccountType addNewItem(final DataItem pItem) {
             AccountType myType = new AccountType(this, (AccountType) pItem);
             add(myType);
             return myType;
@@ -598,7 +598,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
             myActType = new AccountType(this, pActType);
 
             /* Check that this AccountType has not been previously added */
-            if (searchFor(pActType) != null) {
+            if (findItemByName(pActType) != null) {
                 throw new JDataException(ExceptionClass.DATA, myActType, "Duplicate Account Type");
             }
 
@@ -674,7 +674,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
             }
 
             /* Add the Account Type to the list */
-            add(myActType);
+            addAtEnd(myActType);
 
             /* Validate the AccountType */
             myActType.validate();

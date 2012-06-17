@@ -81,7 +81,7 @@ public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
     }
 
     @Override
-    public T performTask() throws Exception {
+    public T performTask() throws JDataException {
         T myData = null;
         boolean doDelete = false;
         File myFile = null;
@@ -151,7 +151,7 @@ public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
             }
 
             /* Catch any exceptions */
-        } catch (Exception e) {
+        } catch (JDataException e) {
             /* Delete the file */
             if (doDelete) {
                 myFile.delete();

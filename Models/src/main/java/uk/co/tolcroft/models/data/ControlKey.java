@@ -45,7 +45,7 @@ import uk.co.tolcroft.models.data.DataKey.DataKeyList;
  * dataKeys. It maintains a map of the associated DataKeys.
  * @author Tony Washer
  */
-public class ControlKey extends DataItem<ControlKey> {
+public class ControlKey extends DataItem implements Comparable<ControlKey> {
     /**
      * Object name.
      */
@@ -400,9 +400,7 @@ public class ControlKey extends DataItem<ControlKey> {
     }
 
     @Override
-    public int compareTo(final Object pThat) {
-        int iDiff;
-
+    public int compareTo(final ControlKey pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -411,23 +409,8 @@ public class ControlKey extends DataItem<ControlKey> {
             return -1;
         }
 
-        /* Make sure that the object is a ControlKey */
-        if (pThat.getClass() != this.getClass()) {
-            return -1;
-        }
-
-        /* Access the object as a ControlKey */
-        ControlKey myThat = (ControlKey) pThat;
-
-        /* Compare the IDs */
-        iDiff = (int) (getId() - myThat.getId());
-        if (iDiff < 0) {
-            return -1;
-        }
-        if (iDiff > 0) {
-            return 1;
-        }
-        return 0;
+        /* Compare the underlying object */
+        return super.compareId(pThat);
     }
 
     /**
@@ -539,7 +522,7 @@ public class ControlKey extends DataItem<ControlKey> {
          * @param pData the DataSet for the list
          */
         protected ControlKeyList(final DataSet<?> pData) {
-            super(ControlKeyList.class, ControlKey.class, ListStyle.CORE, false);
+            super(ControlKeyList.class, ControlKey.class, ListStyle.CORE);
             theData = pData;
         }
 
@@ -550,7 +533,7 @@ public class ControlKey extends DataItem<ControlKey> {
          */
         protected ControlKeyList(final DataSet<?> pData,
                                  final ListStyle pStyle) {
-            super(ControlKeyList.class, ControlKey.class, pStyle, false);
+            super(ControlKeyList.class, ControlKey.class, pStyle);
             theData = pData;
         }
 
@@ -621,7 +604,7 @@ public class ControlKey extends DataItem<ControlKey> {
         }
 
         @Override
-        public ControlKey addNewItem(final DataItem<?> pItem) {
+        public ControlKey addNewItem(final DataItem pItem) {
             ControlKey myKey = new ControlKey(this, (ControlKey) pItem);
             add(myKey);
             return myKey;

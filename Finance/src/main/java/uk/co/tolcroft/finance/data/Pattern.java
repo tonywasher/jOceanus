@@ -24,6 +24,7 @@ package uk.co.tolcroft.finance.data;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
@@ -31,6 +32,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
@@ -112,10 +114,10 @@ public class Pattern extends Event {
     public Object getFieldValue(final JDataField pField) {
         /* If the field is not an attribute handle normally */
         if (FIELD_ACCOUNT.equals(pField)) {
-            return JDataObject.FIELD_SKIP;
+            return JDataFieldValue.SkipField;
         }
         if (FIELD_PARTNER.equals(pField)) {
-            return JDataObject.FIELD_SKIP;
+            return JDataFieldValue.SkipField;
         }
         /* Pass onwards */
         return super.getFieldValue(pField);
@@ -313,7 +315,8 @@ public class Pattern extends Event {
 
         /* Access the Frequencys */
         FinanceData myData = pList.getData();
-        myFreq = myData.getFrequencys().searchFor(uFreqId);
+        FrequencyList myFrequencies = myData.getFrequencys();
+        myFreq = myFrequencies.findItemById(uFreqId);
         if (myFreq == null) {
             throw new JDataException(ExceptionClass.DATA, this, "Invalid Frequency Id");
         }
@@ -356,103 +359,6 @@ public class Pattern extends Event {
     }
 
     /**
-     * Compare this pattern to another to establish sort order.
-     * @param pThat The Pattern to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the
-     *         sort order
-     */
-    @Override
-    public int compareTo(final Object pThat) {
-        int iDiff;
-
-        /* Handle the trivial cases */
-        if (this == pThat) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Make sure that the object is a Pattern */
-        if (pThat.getClass() != this.getClass()) {
-            return -1;
-        }
-
-        /* Access the object as a Pattern */
-        Pattern myThat = (Pattern) pThat;
-
-        /* If the date differs */
-        if (this.getDate() != myThat.getDate()) {
-            /* Handle null dates */
-            if (this.getDate() == null) {
-                return 1;
-            }
-            if (myThat.getDate() == null) {
-                return -1;
-            }
-
-            /* Compare the dates */
-            iDiff = getDate().compareTo(myThat.getDate());
-            if (iDiff != 0) {
-                return iDiff;
-            }
-        }
-
-        /* Compare the accounts */
-        iDiff = getAccount().compareTo(myThat.getAccount());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* If the descriptions differ */
-        if (this.getDesc() != myThat.getDesc()) {
-            /* Handle null descriptions */
-            if (this.getDesc() == null) {
-                return 1;
-            }
-            if (myThat.getDesc() == null) {
-                return -1;
-            }
-
-            /* Compare the descriptions */
-            iDiff = getDesc().compareTo(myThat.getDesc());
-            if (iDiff < 0) {
-                return -1;
-            }
-            if (iDiff > 0) {
-                return 1;
-            }
-        }
-
-        /* If the transaction types differ */
-        if (this.getTransType() != myThat.getTransType()) {
-            /* Handle null transaction types */
-            if (this.getTransType() == null) {
-                return 1;
-            }
-            if (myThat.getTransType() == null) {
-                return -1;
-            }
-
-            /* Compare the transaction types */
-            iDiff = getTransType().compareTo(myThat.getTransType());
-            if (iDiff != 0) {
-                return iDiff;
-            }
-        }
-
-        /* Compare the IDs */
-        iDiff = (int) (getId() - myThat.getId());
-        if (iDiff < 0) {
-            return -1;
-        }
-        if (iDiff > 0) {
-            return 1;
-        }
-        return 0;
-    }
-
-    /**
      * Rebuild Links to partner data.
      * @param pData the DataSet
      */
@@ -466,7 +372,7 @@ public class Pattern extends Event {
 
         /* Update frequency to use the local copy */
         Frequency myFreq = getFrequency();
-        Frequency myNewFreq = myFrequencys.searchFor(myFreq.getId());
+        Frequency myNewFreq = myFrequencys.findItemById(myFreq.getId());
         setValueFrequency(myNewFreq);
     }
 
@@ -517,7 +423,7 @@ public class Pattern extends Event {
                 myDate = getAccount().getMaturity();
 
                 /* Obtain the relevant tax year */
-                myBase = myList.searchFor(getDate());
+                myBase = myList.findTaxYearForDate(getDate());
 
                 /* Ignore if no maturity or else not this year */
                 if ((myDate == null) || (myBase == null) || (myBase.compareTo(pTaxYear) != 0)) {
@@ -640,7 +546,7 @@ public class Pattern extends Event {
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pPattern) {
+    public boolean applyChanges(final DataItem pPattern) {
         Pattern myPattern = (Pattern) pPattern;
         boolean bChanged = false;
 
@@ -736,7 +642,7 @@ public class Pattern extends Event {
         @Override
         public Object getFieldValue(final JDataField pField) {
             if (FIELD_ACCOUNT.equals(pField)) {
-                return (theAccount == null) ? JDataObject.FIELD_SKIP : theAccount;
+                return (theAccount == null) ? JDataFieldValue.SkipField : theAccount;
             }
             return super.getFieldValue(pField);
         }
@@ -850,32 +756,23 @@ public class Pattern extends Event {
 
             /* Make this list the correct style */
             myList.setStyle(ListStyle.EDIT);
-
-            /* Local variables */
-            Event myCurr;
-            Pattern myItem;
-            DataListIterator<Event> myIterator;
-
-            /* Store the account */
             myList.theAccount = pAccount;
 
             /* Access the list iterator */
-            myIterator = listIterator(true);
+            Iterator<Event> myIterator = listIterator();
 
             /* Loop through the Prices */
-            while ((myCurr = myIterator.next()) != null) {
-                /* Check the account */
-                myItem = (Pattern) myCurr;
-                int myResult = pAccount.compareTo(myItem.getAccount());
+            while (myIterator.hasNext()) {
+                Pattern myCurr = (Pattern) myIterator.next();
 
                 /* Skip differing accounts */
-                if (myResult != 0) {
+                if (!pAccount.equals(myCurr.getAccount())) {
                     continue;
                 }
 
                 /* Copy the item */
-                myItem = new Pattern(myList, myItem);
-                myList.add(myItem);
+                Pattern myItem = new Pattern(myList, myCurr);
+                myList.addAtEnd(myItem);
             }
 
             /* Return the List */
@@ -893,7 +790,7 @@ public class Pattern extends Event {
          * @return the newly added item
          */
         @Override
-        public Pattern addNewItem(final DataItem<?> pPattern) {
+        public Pattern addNewItem(final DataItem pPattern) {
             Pattern myPattern = new Pattern(this, (Pattern) pPattern);
             add(myPattern);
             return myPattern;
@@ -916,29 +813,24 @@ public class Pattern extends Event {
          * Mark Active items.
          */
         public void markActiveItems() {
-            DataListIterator<Event> myIterator;
-            Event myCurr;
-            Pattern myItem;
-
             /* Access the list iterator */
-            myIterator = listIterator();
+            Iterator<Event> myIterator = listIterator();
 
             /* Loop through the Prices */
-            while ((myCurr = myIterator.next()) != null) {
-                /* * Access as a pattern */
-                myItem = (Pattern) myCurr;
+            while (myIterator.hasNext()) {
+                Pattern myCurr = (Pattern) myIterator.next();
 
                 /* Touch the patterned account */
-                myItem.getAccount().touchItem(myCurr);
+                myCurr.getAccount().touchItem(myCurr);
 
                 /* Touch the patterned partner */
-                myItem.getPartner().touchItem(myCurr);
+                myCurr.getPartner().touchItem(myCurr);
 
                 /* Touch the patterned frequency */
-                myItem.getFrequency().touchItem(myCurr);
+                myCurr.getFrequency().touchItem(myCurr);
 
                 /* Touch the patterned transaction type */
-                myItem.getTransType().touchItem(myCurr);
+                myCurr.getTransType().touchItem(myCurr);
             }
         }
 
@@ -971,7 +863,7 @@ public class Pattern extends Event {
             FrequencyList myFrequencies = myData.getFrequencys();
 
             /* Look up the Account */
-            Account myAccount = myAccounts.searchFor(pAccount);
+            Account myAccount = myAccounts.findItemByName(pAccount);
             if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, "Pattern on ["
                         + JDataObject.formatField(new DateDay(pDate)) + "] has invalid Account [" + pAccount
@@ -979,7 +871,7 @@ public class Pattern extends Event {
             }
 
             /* Look up the Partner */
-            Account myPartner = myAccounts.searchFor(pPartner);
+            Account myPartner = myAccounts.findItemByName(pPartner);
             if (myPartner == null) {
                 throw new JDataException(ExceptionClass.DATA, "Pattern on ["
                         + JDataObject.formatField(new DateDay(pDate)) + "] has invalid Partner [" + pPartner
@@ -987,7 +879,7 @@ public class Pattern extends Event {
             }
 
             /* Look up the TransType */
-            TransactionType myTransType = myTranTypes.searchFor(pTransType);
+            TransactionType myTransType = myTranTypes.findItemByName(pTransType);
             if (myTransType == null) {
                 throw new JDataException(ExceptionClass.DATA, "Pattern on ["
                         + JDataObject.formatField(new DateDay(pDate)) + "] has invalid TransType ["
@@ -995,7 +887,7 @@ public class Pattern extends Event {
             }
 
             /* Look up the Frequency */
-            Frequency myFrequency = myFrequencies.searchFor(pFrequency);
+            Frequency myFrequency = myFrequencies.findItemByName(pFrequency);
             if (myFrequency == null) {
                 throw new JDataException(ExceptionClass.DATA, "Pattern on ["
                         + JDataObject.formatField(new DateDay(pDate)) + "] has invalid Frequency ["
@@ -1042,11 +934,9 @@ public class Pattern extends Event {
                             final int uTransId,
                             final int uFreqId,
                             final boolean isCredit) throws JDataException {
-            Pattern myPattern;
-
             /* Create the new pattern */
-            myPattern = new Pattern(this, uId, uControlId, uAccountId, pDate, pDesc, pAmount, uPartnerId,
-                    uTransId, uFreqId, isCredit);
+            Pattern myPattern = new Pattern(this, uId, uControlId, uAccountId, pDate, pDesc, pAmount,
+                    uPartnerId, uTransId, uFreqId, isCredit);
 
             /* Check that this PatternId has not been previously added */
             if (!isIdUnique(uId)) {
@@ -1062,7 +952,7 @@ public class Pattern extends Event {
             }
 
             /* Add to the list */
-            add(myPattern);
+            addAtEnd(myPattern);
         }
     }
 }

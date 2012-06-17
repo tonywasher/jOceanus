@@ -24,6 +24,7 @@ package uk.co.tolcroft.finance.data;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
@@ -36,6 +37,7 @@ import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
 import net.sourceforge.JDecimal.Money;
 import net.sourceforge.JDecimal.Rate;
+import net.sourceforge.JSortedList.OrderedListIterator;
 import uk.co.tolcroft.finance.data.TaxRegime.TaxRegimeList;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
@@ -47,7 +49,7 @@ import uk.co.tolcroft.models.data.DataState;
  * Tax Year Class representing taxation parameters for a tax year.
  * @author Tony Washer
  */
-public class TaxYear extends DataItem<TaxYear> {
+public class TaxYear extends DataItem implements Comparable<TaxYear> {
     /**
      * Object name.
      */
@@ -899,7 +901,9 @@ public class TaxYear extends DataItem<TaxYear> {
             setValueTaxYear(new DateDay(pDate));
 
             /* Look up the Regime */
-            myRegime = pList.theData.getTaxRegimes().searchFor(uRegimeId);
+            FinanceData myData = pList.theData;
+            TaxRegimeList myRegimes = myData.getTaxRegimes();
+            myRegime = myRegimes.findItemById(uRegimeId);
             if (myRegime == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Tax Regime Id");
             }
@@ -1054,16 +1058,8 @@ public class TaxYear extends DataItem<TaxYear> {
         setState(DataState.NEW);
     }
 
-    /**
-     * Compare this tax year to another to establish sort order.
-     * @param pThat The TaxYear to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the
-     *         sort order
-     */
     @Override
-    public int compareTo(final Object pThat) {
-        int iDiff;
-
+    public int compareTo(final TaxYear pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -1072,38 +1068,14 @@ public class TaxYear extends DataItem<TaxYear> {
             return -1;
         }
 
-        /* Make sure that the object is a TaxYear */
-        if (pThat.getClass() != this.getClass()) {
-            return -1;
-        }
-
-        /* Access the target taxYear */
-        TaxYear myThat = (TaxYear) pThat;
-
         /* If the dates differ */
-        if (this.getTaxYear() != myThat.getTaxYear()) {
-            /* Compare on date */
-            if (this.getTaxYear() == null) {
-                return 1;
-            }
-            if (myThat.getTaxYear() == null) {
-                return -1;
-            }
-            iDiff = getTaxYear().compareTo(myThat.getTaxYear());
-            if (iDiff != 0) {
-                return iDiff;
-            }
+        int iDiff = Difference.compareObject(getTaxYear(), pThat.getTaxYear());
+        if (iDiff != 0) {
+            return iDiff;
         }
 
-        /* Compare on id */
-        iDiff = (int) (getId() - myThat.getId());
-        if (iDiff < 0) {
-            return -1;
-        }
-        if (iDiff > 0) {
-            return 1;
-        }
-        return 0;
+        /* Compare the underlying id */
+        return super.compareId(pThat);
     }
 
     /**
@@ -1115,7 +1087,7 @@ public class TaxYear extends DataItem<TaxYear> {
 
         /* Update to use the local copy of the TaxRegimes */
         TaxRegime myRegime = getTaxRegime();
-        TaxRegime myNewReg = myRegimes.searchFor(myRegime.getId());
+        TaxRegime myNewReg = myRegimes.findItemById(myRegime.getId());
         setValueTaxRegime(myNewReg);
     }
 
@@ -1490,7 +1462,7 @@ public class TaxYear extends DataItem<TaxYear> {
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pTaxYear) {
+    public boolean applyChanges(final DataItem pTaxYear) {
         TaxYear myTaxYear = (TaxYear) pTaxYear;
         boolean bChanged = false;
 
@@ -1648,7 +1620,7 @@ public class TaxYear extends DataItem<TaxYear> {
          * @param pData the DataSet for the list
          */
         protected TaxYearList(final FinanceData pData) {
-            super(TaxYearList.class, TaxYear.class, ListStyle.CORE, false);
+            super(TaxYearList.class, TaxYear.class, ListStyle.CORE);
             theData = pData;
         }
 
@@ -1757,11 +1729,11 @@ public class TaxYear extends DataItem<TaxYear> {
             /* Local Variables */
             TaxYear.TaxYearList myTaxYears;
             TaxYear myBase;
-            DataListIterator<TaxYear> myIterator;
+            OrderedListIterator<TaxYear> myIterator;
 
             /* Access the existing tax years */
             myTaxYears = theData.getTaxYears();
-            myIterator = myTaxYears.listIterator(true);
+            myIterator = myTaxYears.listIterator();
 
             /* Create a new tax year for the list */
             myBase = myIterator.peekLast();
@@ -1788,7 +1760,7 @@ public class TaxYear extends DataItem<TaxYear> {
          * @return the newly added item
          */
         @Override
-        public TaxYear addNewItem(final DataItem<?> pTaxYear) {
+        public TaxYear addNewItem(final DataItem pTaxYear) {
             TaxYear myYear = new TaxYear(this, (TaxYear) pTaxYear);
             add(myYear);
             return myYear;
@@ -1808,22 +1780,20 @@ public class TaxYear extends DataItem<TaxYear> {
          * @param pDate Date of item
          * @return The TaxYear if present (or null)
          */
-        public TaxYear searchFor(final DateDay pDate) {
-            DataListIterator<TaxYear> myIterator;
-            TaxYear myCurr;
-            DateDayRange myRange;
-            int iDiff;
-
+        public TaxYear findTaxYearForDate(final DateDay pDate) {
             /* Access the iterator */
-            myIterator = listIterator(true);
+            Iterator<TaxYear> myIterator = iterator();
+            TaxYear myCurr = null;
 
             /* Loop through the items to find the entry */
-            while ((myCurr = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                myCurr = myIterator.next();
+
                 /* Access the range for this tax year */
-                myRange = myCurr.getRange();
+                DateDayRange myRange = myCurr.getRange();
 
                 /* Determine whether the date is owned by the tax year */
-                iDiff = myRange.compareTo(pDate);
+                int iDiff = myRange.compareTo(pDate);
                 if (iDiff == 0) {
                     break;
                 }
@@ -1839,17 +1809,14 @@ public class TaxYear extends DataItem<TaxYear> {
          * @return The Item if present (or null)
          */
         protected int countInstances(final DateDay pDate) {
-            DataListIterator<TaxYear> myIterator;
-            TaxYear myCurr;
-            int iDiff;
+            /* Access the iterator */
+            Iterator<TaxYear> myIterator = listIterator();
             int iCount = 0;
 
-            /* Access the iterator */
-            myIterator = listIterator(true);
-
             /* Loop through the items to find the entry */
-            while ((myCurr = myIterator.next()) != null) {
-                iDiff = pDate.compareTo(myCurr.getTaxYear());
+            while (myIterator.hasNext()) {
+                TaxYear myCurr = myIterator.next();
+                int iDiff = pDate.compareTo(myCurr.getTaxYear());
                 if (iDiff == 0) {
                     iCount++;
                 }
@@ -1864,24 +1831,14 @@ public class TaxYear extends DataItem<TaxYear> {
          * @return the range of tax years
          */
         public DateDayRange getRange() {
-            DataListIterator<TaxYear> myIterator;
-            TaxYear myCurr;
-            DateDay myStart;
-            DateDay myEnd;
-            DateDayRange myRange;
-
             /* Access the iterator */
-            myIterator = listIterator(true);
+            OrderedListIterator<TaxYear> myIterator = listIterator();
+            DateDay myStart = null;
+            DateDay myEnd = null;
 
             /* Extract the first item */
-            myCurr = myIterator.peekFirst();
-            if (myCurr == null) {
-                /* Set null values */
-                myStart = null;
-                myEnd = null;
-
-                /* else we have a tax year */
-            } else {
+            TaxYear myCurr = myIterator.peekFirst();
+            if (myCurr != null) {
                 /* Access start date */
                 myStart = new DateDay(myCurr.getTaxYear());
 
@@ -1895,24 +1852,20 @@ public class TaxYear extends DataItem<TaxYear> {
             }
 
             /* Create the range */
-            myRange = new DateDayRange(myStart, myEnd);
-
-            /* Return the range */
-            return myRange;
+            return new DateDayRange(myStart, myEnd);
         }
 
         /**
          * Mark active items.
          */
         protected void markActiveItems() {
-            DataListIterator<TaxYear> myIterator;
-            TaxYear myCurr;
-
             /* Access the list iterator */
-            myIterator = listIterator();
+            Iterator<TaxYear> myIterator = listIterator();
 
             /* Loop through the Prices */
-            while ((myCurr = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                TaxYear myCurr = myIterator.next();
+
                 /* mark the tax regime referred to */
                 myCurr.getTaxRegime().touchItem(myCurr);
             }
@@ -1969,11 +1922,8 @@ public class TaxYear extends DataItem<TaxYear> {
                             final String pAddDivTaxRate,
                             final String pCapTaxRate,
                             final String pHiCapTaxRate) throws JDataException {
-            /* Local variables */
-            TaxRegime myTaxRegime;
-
             /* Look up the Tax Regime */
-            myTaxRegime = theData.getTaxRegimes().searchFor(pRegime);
+            TaxRegime myTaxRegime = theData.getTaxRegimes().findItemByName(pRegime);
             if (myTaxRegime == null) {
                 throw new JDataException(ExceptionClass.DATA, "TaxYear on <"
                         + JDataObject.formatField(new DateDay(pDate)) + "> has invalid TaxRegime <" + pRegime
@@ -2053,7 +2003,7 @@ public class TaxYear extends DataItem<TaxYear> {
             }
 
             /* Check that this TaxYear has not been previously added */
-            if (searchFor(new DateDay(pDate)) != null) {
+            if (findTaxYearForDate(new DateDay(pDate)) != null) {
                 throw new JDataException(ExceptionClass.DATA, myTaxYear, "Duplicate TaxYear");
             }
 
@@ -2065,8 +2015,8 @@ public class TaxYear extends DataItem<TaxYear> {
                 throw new JDataException(ExceptionClass.VALIDATE, myTaxYear, "Failed validation");
             }
 
-            /* Add the TaxYear to the list */
-            add(myTaxYear);
+            /* Add the TaxYear to the end of the list */
+            addAtEnd(myTaxYear);
         }
     }
 }

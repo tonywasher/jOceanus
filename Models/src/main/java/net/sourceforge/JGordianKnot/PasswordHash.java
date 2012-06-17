@@ -35,6 +35,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JGordianKnot.DataHayStack.HashModeNeedle;
 
 /**
@@ -86,7 +87,7 @@ public class PasswordHash implements JDataContents {
         if (FIELD_SYMKEYMAP.equals(pField)) {
             return theSymKeyMap;
         }
-        return null;
+        return JDataFieldValue.UnknownField;
     }
 
     @Override

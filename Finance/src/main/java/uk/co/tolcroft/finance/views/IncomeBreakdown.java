@@ -26,16 +26,17 @@ import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDecimal.Money;
+import net.sourceforge.JSortedList.OrderedIdItem;
+import net.sourceforge.JSortedList.OrderedIdList;
 import uk.co.tolcroft.finance.data.Account;
 import uk.co.tolcroft.finance.data.Event;
 import uk.co.tolcroft.finance.data.Event.EventList;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.StaticClass.TransClass;
 import uk.co.tolcroft.finance.data.TransactionType;
-import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataSet;
+import uk.co.tolcroft.finance.views.ChargeableEvent.ChargeableEventList;
 
 /**
  * Income Breakdown analysis.
@@ -115,7 +116,7 @@ public class IncomeBreakdown implements JDataContents {
         if (FIELD_UTDIVIDEND.equals(pField)) {
             return theUnitTrustDividend;
         }
-        return null;
+        return JDataFieldValue.UnknownField;
     }
 
     @Override
@@ -319,7 +320,7 @@ public class IncomeBreakdown implements JDataContents {
             if (FIELD_TAX.equals(pField)) {
                 return theTaxCredit;
             }
-            return null;
+            return JDataFieldValue.UnknownField;
         }
 
         @Override
@@ -370,7 +371,8 @@ public class IncomeBreakdown implements JDataContents {
     /**
      * The Account record class.
      */
-    protected static final class AccountRecord extends DataItem<AccountRecord> {
+    protected static final class AccountRecord implements OrderedIdItem<Integer>, JDataContents,
+            Comparable<AccountRecord> {
         /**
          * Object name.
          */
@@ -379,11 +381,16 @@ public class IncomeBreakdown implements JDataContents {
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME);
 
         @Override
-        public JDataFields declareFields() {
+        public JDataFields getDataFields() {
             return FIELD_DEFS;
+        }
+
+        @Override
+        public String formatObject() {
+            return getDataFields().getName();
         }
 
         /**
@@ -430,8 +437,8 @@ public class IncomeBreakdown implements JDataContents {
                 return theChildren;
             }
 
-            /* Pass onwards */
-            return super.getFieldValue(pField);
+            /* Unknown */
+            return JDataFieldValue.UnknownField;
         }
 
         /**
@@ -491,6 +498,11 @@ public class IncomeBreakdown implements JDataContents {
             return theChildren;
         }
 
+        @Override
+        public Integer getOrderedId() {
+            return theAccount.getId();
+        }
+
         /**
          * Constructor.
          * @param pList the list to which the record belongs
@@ -498,9 +510,6 @@ public class IncomeBreakdown implements JDataContents {
          */
         private AccountRecord(final RecordList pList,
                               final Account pAccount) {
-            /* Call super-constructor */
-            super(pList, pAccount.getId());
-
             /* Access the Data for the account */
             FinanceData myData = pList.getData();
 
@@ -578,7 +587,7 @@ public class IncomeBreakdown implements JDataContents {
         }
 
         @Override
-        public int compareTo(final Object pThat) {
+        public int compareTo(final AccountRecord pThat) {
             /* Handle the trivial cases */
             if (this == pThat) {
                 return 0;
@@ -587,29 +596,42 @@ public class IncomeBreakdown implements JDataContents {
                 return -1;
             }
 
-            /* Make sure that the object is an AccountRecord */
-            if (!(pThat instanceof AccountRecord)) {
-                return -1;
-            }
-
-            /* Access as AccountRecord and compare Accounts */
-            AccountRecord myThat = (AccountRecord) pThat;
-            return theAccount.compareTo(myThat.theAccount);
+            /* Compare Accounts */
+            return theAccount.compareTo(pThat.theAccount);
         }
     }
 
     /**
      * The RecordList class.
      */
-    public static class RecordList extends DataList<RecordList, AccountRecord> {
+    public static class RecordList extends OrderedIdList<Integer, AccountRecord> implements JDataContents {
         /**
-         * The name of the object.
+         * Report fields.
          */
-        private static final String LIST_NAME = RecordList.class.getSimpleName();
+        private static final JDataFields FIELD_DEFS = new JDataFields(
+                ChargeableEventList.class.getSimpleName());
 
         @Override
-        public String listName() {
-            return LIST_NAME;
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String formatObject() {
+            return getDataFields().getName();
+        }
+
+        /**
+         * Size Field Id.
+         */
+        public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_SIZE.equals(pField)) {
+                return size();
+            }
+            return JDataFieldValue.UnknownField;
         }
 
         /**
@@ -658,44 +680,9 @@ public class IncomeBreakdown implements JDataContents {
          */
         public RecordList(final FinanceData pData,
                           final String pName) {
-            super(RecordList.class, AccountRecord.class, ListStyle.VIEW, false);
+            super(AccountRecord.class);
             theData = pData;
             theName = pName;
-        }
-
-        @Override
-        public RecordList getUpdateList() {
-            return null;
-        }
-
-        @Override
-        public RecordList getEditList() {
-            return null;
-        }
-
-        @Override
-        public RecordList getShallowCopy() {
-            return null;
-        }
-
-        @Override
-        public RecordList getDeepCopy(final DataSet<?> pData) {
-            return null;
-        }
-
-        @Override
-        public RecordList getDifferences(final RecordList pOld) {
-            return null;
-        }
-
-        @Override
-        public AccountRecord addNewItem(final DataItem<?> pElement) {
-            return null;
-        }
-
-        @Override
-        public AccountRecord addNewItem() {
-            return null;
         }
 
         /**
@@ -705,7 +692,7 @@ public class IncomeBreakdown implements JDataContents {
          */
         protected AccountRecord findAccountRecord(final Account pAccount) {
             /* Locate the record in the list */
-            AccountRecord myRecord = (AccountRecord) searchFor(pAccount.getId());
+            AccountRecord myRecord = findItemById(pAccount.getId());
 
             /* If the record does not yet exist */
             if (myRecord == null) {

@@ -22,6 +22,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.views;
 
+import java.util.Iterator;
+
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
@@ -292,12 +294,6 @@ public class ViewPrice extends AccountPrice {
             super(pView.getData());
             setStyle(ListStyle.EDIT);
 
-            /* Local variables */
-            AccountPrice.AccountPriceList myPrices;
-            AccountPrice myCurr;
-            ViewPrice myItem;
-            DataListIterator<AccountPrice> myIterator;
-
             /* Skip to alias if required */
             if ((pAccount != null) && (pAccount.getAlias() != null)) {
                 theAccount = pAccount.getAlias();
@@ -306,7 +302,7 @@ public class ViewPrice extends AccountPrice {
             }
 
             /* Access the base prices */
-            myPrices = getData().getPrices();
+            AccountPriceList myPrices = getData().getPrices();
             setBase(myPrices);
 
             /* Store dilution list and record whether we have dilutions */
@@ -314,10 +310,11 @@ public class ViewPrice extends AccountPrice {
             hasDilutions = theDilutions.hasDilution(theAccount);
 
             /* Access the list iterator */
-            myIterator = myPrices.listIterator(true);
+            Iterator<AccountPrice> myIterator = myPrices.listIterator();
 
             /* Loop through the list */
-            while ((myCurr = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                AccountPrice myCurr = myIterator.next();
                 /* Check the account */
                 int myResult = theAccount.compareTo(myCurr.getAccount());
 
@@ -327,7 +324,7 @@ public class ViewPrice extends AccountPrice {
                 }
 
                 /* Copy the item */
-                myItem = new ViewPrice(this, myCurr);
+                ViewPrice myItem = new ViewPrice(this, myCurr);
                 add(myItem);
             }
         }
@@ -363,7 +360,7 @@ public class ViewPrice extends AccountPrice {
         }
 
         @Override
-        public ViewPrice addNewItem(final DataItem<?> pElement) {
+        public ViewPrice addNewItem(final DataItem pElement) {
             return null;
         }
 

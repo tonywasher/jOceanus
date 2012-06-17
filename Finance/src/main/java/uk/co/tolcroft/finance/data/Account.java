@@ -23,13 +23,14 @@
 package uk.co.tolcroft.finance.data;
 
 import java.util.Date;
+import java.util.Iterator;
 
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Money;
@@ -41,7 +42,6 @@ import uk.co.tolcroft.finance.data.Event.EventList;
 import uk.co.tolcroft.finance.data.FinanceData.LoadState;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
@@ -51,7 +51,7 @@ import uk.co.tolcroft.models.data.EncryptedItem;
  * Account data type.
  * @author Tony Washer
  */
-public class Account extends EncryptedItem<Account> {
+public class Account extends EncryptedItem implements Comparable<Account> {
     /**
      * Object name.
      */
@@ -1287,22 +1287,23 @@ public class Account extends EncryptedItem<Account> {
      * @param pItem the original item
      */
     @Override
-    protected void copyFlags(final Account pItem) {
+    protected void copyFlags(final DataItem pItem) {
         /* Copy Main flags */
         super.copyFlags(pItem);
 
         /* Copy Remaining flags */
-        theEarliest = pItem.theEarliest;
-        theLatest = pItem.theLatest;
-        theInitPrice = pItem.theInitPrice;
-        isCloseable = pItem.isCloseable();
-        isAliasedTo = pItem.isAliasedTo();
-        isParent = pItem.isParent();
-        isPatterned = pItem.isPatterned;
-        hasPatterns = pItem.hasPatterns;
-        hasRates = pItem.hasRates;
-        hasPrices = pItem.hasPrices;
-        hasDebts = pItem.hasDebts;
+        Account myItem = (Account) pItem;
+        theEarliest = myItem.theEarliest;
+        theLatest = myItem.theLatest;
+        theInitPrice = myItem.theInitPrice;
+        isCloseable = myItem.isCloseable();
+        isAliasedTo = myItem.isAliasedTo();
+        isParent = myItem.isParent();
+        isPatterned = myItem.isPatterned;
+        hasPatterns = myItem.hasPatterns;
+        hasRates = myItem.hasRates;
+        hasPrices = myItem.hasPrices;
+        hasDebts = myItem.hasDebts;
     }
 
     /**
@@ -1405,7 +1406,8 @@ public class Account extends EncryptedItem<Account> {
 
             /* Look up the Account Type */
             FinanceData myData = pList.getData();
-            myActType = myData.getAccountTypes().searchFor(uAcTypeId);
+            AccountTypeList myTypes = myData.getAccountTypes();
+            myActType = myTypes.findItemById(uAcTypeId);
             if (myActType == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Type Id");
             }
@@ -1500,7 +1502,8 @@ public class Account extends EncryptedItem<Account> {
 
             /* Look up the Account Type */
             FinanceData myData = pList.getData();
-            myActType = myData.getAccountTypes().searchFor(uAcTypeId);
+            AccountTypeList myTypes = myData.getAccountTypes();
+            myActType = myTypes.findItemById(uAcTypeId);
             if (myActType == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Type Id");
             }
@@ -1536,16 +1539,8 @@ public class Account extends EncryptedItem<Account> {
         pList.setNewId(this);
     }
 
-    /**
-     * Compare this account to another to establish sort order.
-     * @param pThat The Account to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the
-     *         sort order
-     */
     @Override
-    public int compareTo(final Object pThat) {
-        long result;
-
+    public int compareTo(final Account pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -1554,63 +1549,32 @@ public class Account extends EncryptedItem<Account> {
             return -1;
         }
 
-        /* Make sure that the object is an Account */
-        if (pThat.getClass() != this.getClass()) {
-            return -1;
-        }
-
-        /* Access the object as an Account */
-        Account myThat = (Account) pThat;
-
         /* If we are comparing owner with non-owner */
-        if (isOwner() != myThat.isOwner()) {
+        if (isOwner() != pThat.isOwner()) {
             /* List owners first */
             return (isOwner()) ? -1 : 1;
         }
 
         /* If we are comparing alias with non-alias */
-        if (isAlias() != myThat.isAlias()) {
+        if (isAlias() != pThat.isAlias()) {
             /* List alias after non-alias */
             return (isAlias()) ? 1 : -1;
         }
 
-        /* If the order differs */
-        if (getOrder() < myThat.getOrder()) {
-            return -1;
-        }
-        if (getOrder() > myThat.getOrder()) {
-            return 1;
+        /* Check the order */
+        int iDiff = (getOrder() - pThat.getOrder());
+        if (iDiff != 0) {
+            return iDiff;
         }
 
-        /* If the names differ */
-        if (getName() != myThat.getName()) {
-            /* Handle nulls */
-            if (this.getName() == null) {
-                return 1;
-            }
-            if (myThat.getName() == null) {
-                return -1;
-            }
-
-            /* Compare the names */
-            result = getName().compareTo(myThat.getName());
-            if (result < 0) {
-                return -1;
-            }
-            if (result > 0) {
-                return 1;
-            }
+        /* Check the names */
+        iDiff = Difference.compareObject(getName(), pThat.getName());
+        if (iDiff != 0) {
+            return iDiff;
         }
 
-        /* Compare the IDs */
-        result = (int) (getId() - myThat.getId());
-        if (result == 0) {
-            return 0;
-        } else if (result < 0) {
-            return -1;
-        } else {
-            return 1;
-        }
+        /* Compare the underlying id */
+        return super.compareId(pThat);
     }
 
     /**
@@ -1628,14 +1592,14 @@ public class Account extends EncryptedItem<Account> {
 
         /* Update to use the local copy of the AccountTypes */
         AccountType myType = getActType();
-        AccountType myNewType = myTypes.searchFor(myType.getId());
+        AccountType myNewType = myTypes.findItemById(myType.getId());
         setValueType(myNewType);
 
         /* If we have a parent */
         Account myAct = getParent();
         if (myAct != null) {
             /* Update it */
-            Account myNewAct = pList.searchFor(myAct.getId());
+            Account myNewAct = pList.findItemById(myAct.getId());
             setValueParent(myNewAct);
         }
 
@@ -1643,7 +1607,7 @@ public class Account extends EncryptedItem<Account> {
         myAct = getAlias();
         if (myAct != null) {
             /* Update it */
-            Account myNewAct = pList.searchFor(myAct.getId());
+            Account myNewAct = pList.findItemById(myAct.getId());
             setValueAlias(myNewAct);
         }
     }
@@ -2015,19 +1979,17 @@ public class Account extends EncryptedItem<Account> {
     public Money getValue(final DateDay pDate) {
         Event myCurr;
         EventList myEvents;
-        DataListIterator<Event> myIterator;
         int myResult;
         Money myAmount;
-        Money myValue;
         AccountList myList = (AccountList) getList();
         FinanceData mySet = myList.getData();
 
         /* Initialise money */
-        myValue = new Money(0);
+        Money myValue = new Money(0);
 
         /* Access the Events and create an iterator on the events */
         myEvents = mySet.getEvents();
-        myIterator = myEvents.listIterator();
+        Iterator<Event> myIterator = myEvents.iterator();
 
         /* Loop through the Events extracting relevant elements */
         while ((myCurr = myIterator.next()) != null) {
@@ -2085,7 +2047,7 @@ public class Account extends EncryptedItem<Account> {
      * @param pObject the object touch the account
      */
     @Override
-    public void touchItem(final DataItem<?> pObject) {
+    public void touchItem(final DataItem pObject) {
         /* Note that the account is Active */
         super.touchItem(pObject);
 
@@ -2309,7 +2271,7 @@ public class Account extends EncryptedItem<Account> {
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pAccount) {
+    public boolean applyChanges(final DataItem pAccount) {
         Account myAccount = (Account) pAccount;
         boolean bChanged = false;
 
@@ -2415,7 +2377,7 @@ public class Account extends EncryptedItem<Account> {
         @Override
         public Object getFieldValue(final JDataField pField) {
             if (FIELD_ACCOUNT.equals(pField)) {
-                return (theAccount == null) ? JDataObject.FIELD_SKIP : theAccount;
+                return (theAccount == null) ? JDataFieldValue.SkipField : theAccount;
             }
             return super.getFieldValue(pField);
         }
@@ -2568,7 +2530,7 @@ public class Account extends EncryptedItem<Account> {
          * @return the newly added item
          */
         @Override
-        public Account addNewItem(final DataItem<?> pAccount) {
+        public Account addNewItem(final DataItem pAccount) {
             Account myAccount = new Account(this, (Account) pAccount);
             add(myAccount);
             return myAccount;
@@ -2588,15 +2550,13 @@ public class Account extends EncryptedItem<Account> {
          * @throws JDataException on error
          */
         public void markActiveItems() throws JDataException {
-            DataListIterator<Account> myIterator;
-            Account myCurr;
-            AccountType myType;
-
             /* Access the iterator */
-            myIterator = listIterator();
+            Iterator<Account> myIterator = iterator();
+            Account myCurr;
 
             /* Loop through the accounts */
-            while ((myCurr = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                myCurr = myIterator.next();
                 /* If we have a parent, mark the parent */
                 if (myCurr.getParent() != null) {
                     myCurr.getParent().touchItem(myCurr);
@@ -2614,7 +2574,7 @@ public class Account extends EncryptedItem<Account> {
                 }
 
                 /* Mark the AccountType */
-                myType = myCurr.getActType();
+                AccountType myType = myCurr.getActType();
                 myType.touchItem(myCurr);
 
                 /* If we are a child and have no latest event, then we are not close-able */
@@ -2640,7 +2600,9 @@ public class Account extends EncryptedItem<Account> {
                 myIterator = listIterator();
 
                 /* Loop through the accounts */
-                while ((myCurr = myIterator.next()) != null) {
+                while (myIterator.hasNext()) {
+                    myCurr = myIterator.next();
+
                     /* Validate the account */
                     myCurr.validate();
                     if (myCurr.hasErrors()) {
@@ -2656,18 +2618,14 @@ public class Account extends EncryptedItem<Account> {
          * @return The Item if present (or null)
          */
         protected int countInstances(final String pName) {
-            DataListIterator<Account> myIterator;
-            Account myCurr;
-            int iDiff;
+            /* Access the iterator */
+            Iterator<Account> myIterator = iterator();
             int iCount = 0;
 
-            /* Access the iterator */
-            myIterator = listIterator(true);
-
             /* Loop through the items to find the entry */
-            while ((myCurr = myIterator.next()) != null) {
-                iDiff = pName.compareTo(myCurr.getName());
-                if (iDiff == 0) {
+            while (myIterator.hasNext()) {
+                Account myCurr = myIterator.next();
+                if (pName.equals(myCurr.getName())) {
                     iCount++;
                 }
             }
@@ -2678,27 +2636,23 @@ public class Account extends EncryptedItem<Account> {
 
         /**
          * Search for a particular item by Name.
-         * @param sName Name of item
+         * @param pName Name of item
          * @return The Item if present (or null)
          */
-        public Account searchFor(final String sName) {
-            DataListIterator<Account> myIterator;
-            Account myCurr;
-            int iDiff;
-
+        public Account findItemByName(final String pName) {
             /* Access the iterator */
-            myIterator = listIterator(true);
+            Iterator<Account> myIterator = iterator();
 
             /* Loop through the items to find the entry */
-            while ((myCurr = myIterator.next()) != null) {
-                iDiff = sName.compareTo(myCurr.getName());
-                if (iDiff == 0) {
-                    break;
+            while (myIterator.hasNext()) {
+                Account myCurr = myIterator.next();
+                if (pName.equals(myCurr.getName())) {
+                    return myCurr;
                 }
             }
 
-            /* Return to caller */
-            return myCurr;
+            /* Return not found */
+            return null;
         }
 
         /**
@@ -2706,21 +2660,19 @@ public class Account extends EncryptedItem<Account> {
          * @return the Market account
          */
         public Account getMarket() {
-            DataListIterator<Account> myIterator;
-            Account myCurr;
-
             /* Access the iterator */
-            myIterator = listIterator(true);
+            Iterator<Account> myIterator = iterator();
 
             /* Loop through the items to find the entry */
-            while ((myCurr = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                Account myCurr = myIterator.next();
                 if (myCurr.isMarket()) {
-                    break;
+                    return myCurr;
                 }
             }
 
-            /* Return */
-            return myCurr;
+            /* Return not found */
+            return null;
         }
 
         /**
@@ -2728,21 +2680,19 @@ public class Account extends EncryptedItem<Account> {
          * @return the TaxMan account
          */
         public Account getTaxMan() {
-            DataListIterator<Account> myIterator;
-            Account myCurr;
-
             /* Access the iterator */
-            myIterator = listIterator(true);
+            Iterator<Account> myIterator = iterator();
 
             /* Loop through the items to find the entry */
-            while ((myCurr = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                Account myCurr = myIterator.next();
                 if (myCurr.isTaxMan()) {
-                    break;
+                    return myCurr;
                 }
             }
 
-            /* Return */
-            return myCurr;
+            /* Return not found */
+            return null;
         }
 
         /**
@@ -2755,7 +2705,7 @@ public class Account extends EncryptedItem<Account> {
          * @param pClosed the Close Date for the account (or null)
          * @param pParent the Name of the parent account (or null)
          * @param pAlias the Name of the alias account (or null)
-         * @param pWebSite the website
+         * @param pWebSite the webSite
          * @param pCustNo the customer no
          * @param pUserId the user id
          * @param pPassword the password
@@ -2777,19 +2727,16 @@ public class Account extends EncryptedItem<Account> {
                             final char[] pPassword,
                             final char[] pAccount,
                             final char[] pNotes) throws JDataException {
-            AccountTypeList myActTypes;
-            AccountType myActType;
-            Account myAccount;
             Account myParent;
             Account myAlias;
             Integer myParentId = null;
             Integer myAliasId = null;
 
             /* Access the account types and accounts */
-            myActTypes = getData().getAccountTypes();
+            AccountTypeList myActTypes = getData().getAccountTypes();
 
             /* Look up the Account Type */
-            myActType = myActTypes.searchFor(pAcType);
+            AccountType myActType = myActTypes.findItemByName(pAcType);
             if (myActType == null) {
                 throw new JDataException(ExceptionClass.DATA, "Account [" + pName
                         + "] has invalid Account Type [" + pAcType + "]");
@@ -2798,7 +2745,7 @@ public class Account extends EncryptedItem<Account> {
             /* If we have a parent */
             if (pParent != null) {
                 /* Look up the Parent */
-                myParent = searchFor(pParent);
+                myParent = findItemByName(pParent);
                 if (myParent == null) {
                     throw new JDataException(ExceptionClass.DATA, "Account [" + pName
                             + "] has invalid Parent [" + pParent + "]");
@@ -2809,7 +2756,7 @@ public class Account extends EncryptedItem<Account> {
             /* If we have a parent */
             if (pAlias != null) {
                 /* Look up the Parent */
-                myAlias = searchFor(pAlias);
+                myAlias = findItemByName(pAlias);
                 if (myAlias == null) {
                     throw new JDataException(ExceptionClass.DATA, "Account [" + pName
                             + "] has invalid Alias [" + pAlias + "]");
@@ -2818,11 +2765,11 @@ public class Account extends EncryptedItem<Account> {
             }
 
             /* Create the new account */
-            myAccount = new Account(this, uId, pName, myActType.getId(), pDesc, pMaturity, pClosed,
+            Account myAccount = new Account(this, uId, pName, myActType.getId(), pDesc, pMaturity, pClosed,
                     myParentId, myAliasId, pWebSite, pCustNo, pUserId, pPassword, pAccount, pNotes);
 
             /* Check that this Account has not been previously added */
-            if (searchFor(myAccount.getName()) != null) {
+            if (findItemByName(myAccount.getName()) != null) {
                 throw new JDataException(ExceptionClass.DATA, myAccount, "Duplicate Account");
             }
 
@@ -2864,11 +2811,9 @@ public class Account extends EncryptedItem<Account> {
                             final byte[] pPassword,
                             final byte[] pAccount,
                             final byte[] pNotes) throws JDataException {
-            Account myAccount;
-
             /* Create the new account */
-            myAccount = new Account(this, uId, uControlId, pName, uAcTypeId, pDesc, pMaturity, pClosed,
-                    pParentId, pAliasId, pWebSite, pCustNo, pUserId, pPassword, pAccount, pNotes);
+            Account myAccount = new Account(this, uId, uControlId, pName, uAcTypeId, pDesc, pMaturity,
+                    pClosed, pParentId, pAliasId, pWebSite, pCustNo, pUserId, pPassword, pAccount, pNotes);
 
             /* Check that this AccountId has not been previously added */
             if (!isIdUnique(uId)) {
@@ -2876,12 +2821,12 @@ public class Account extends EncryptedItem<Account> {
             }
 
             /* Check that this Account has not been previously added */
-            if (searchFor(myAccount.getName()) != null) {
+            if (findItemByName(myAccount.getName()) != null) {
                 throw new JDataException(ExceptionClass.DATA, myAccount, "Duplicate Account");
             }
 
             /* Add the Account to the list */
-            add(myAccount);
+            addAtEnd(myAccount);
         }
 
         /**
@@ -2890,7 +2835,6 @@ public class Account extends EncryptedItem<Account> {
          * @throws JDataException on error
          */
         public void validateLoadedAccounts() throws JDataException {
-            DataListIterator<Account> myIterator;
             Account myCurr;
             AccountType myType;
             FinanceData myData = getData();
@@ -2905,21 +2849,23 @@ public class Account extends EncryptedItem<Account> {
             myData.getPatterns().markActiveItems();
 
             /* Access the iterator */
-            myIterator = listIterator(true);
+            Iterator<Account> myIterator = iterator();
 
-            /* Loop through the items to find the entry */
-            while ((myCurr = myIterator.next()) != null) {
+            /* Loop through the items */
+            while (myIterator.hasNext()) {
+                myCurr = myIterator.next();
+
                 /* If the account has a parent Id */
                 if (myCurr.getParentId() != null) {
                     /* Set the parent */
-                    myCurr.setParent(searchFor(myCurr.getParentId()));
+                    myCurr.setParent(findItemById(myCurr.getParentId()));
                     myCurr.getParent().touchItem(myCurr);
                 }
 
                 /* If the account has an alias Id */
                 if (myCurr.getAliasId() != null) {
                     /* Set the alias */
-                    myCurr.setAlias(searchFor(myCurr.getAliasId()));
+                    myCurr.setAlias(findItemById(myCurr.getAliasId()));
                     myCurr.getAlias().touchItem(myCurr);
                 }
 
@@ -2929,10 +2875,12 @@ public class Account extends EncryptedItem<Account> {
             }
 
             /* Create another iterator */
-            myIterator = listIterator(true);
+            myIterator = iterator();
 
-            /* Loop through the items to find the entry */
-            while ((myCurr = myIterator.next()) != null) {
+            /* Loop through the items */
+            while (myIterator.hasNext()) {
+                myCurr = myIterator.next();
+
                 /* Validate the account */
                 myCurr.validate();
 

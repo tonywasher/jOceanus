@@ -28,6 +28,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
@@ -45,11 +46,11 @@ import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayButton;
 import net.sourceforge.JDateDay.DateDayRange;
 import uk.co.tolcroft.finance.data.Account;
+import uk.co.tolcroft.finance.data.Account.AccountList;
 import uk.co.tolcroft.finance.data.AccountType;
 import uk.co.tolcroft.finance.data.AccountType.AccountTypeList;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.View;
-import uk.co.tolcroft.models.data.DataList.DataListIterator;
 
 /**
  * SpotPrice Date selection panel.
@@ -238,15 +239,11 @@ public class SpotSelect extends JPanel {
      * Refresh data.
      */
     public final void refreshData() {
-        DateDayRange myRange;
         AccountType myType = null;
         AccountType myFirst = null;
-        Account myAccount;
-        Account.AccountList myAccounts;
-        DataListIterator<Account> myIterator;
 
         /* Access the data */
-        myRange = theView.getRange();
+        DateDayRange myRange = theView.getRange();
 
         /* Set the range for the Date Button */
         setRange(myRange);
@@ -256,7 +253,7 @@ public class SpotSelect extends JPanel {
 
         /* Access types and accounts */
         AccountTypeList myTypes = myData.getAccountTypes();
-        myAccounts = myData.getAccounts();
+        AccountList myAccounts = myData.getAccounts();
 
         /* Note that we are refreshing data */
         refreshingData = true;
@@ -266,7 +263,7 @@ public class SpotSelect extends JPanel {
             /* If we have a selected type */
             if (getAccountType() != null) {
                 /* Find it in the new list */
-                theState.setType(myTypes.searchFor(getAccountType().getName()));
+                theState.setType(myTypes.findItemByName(getAccountType().getName()));
             }
 
             /* Remove the types */
@@ -274,10 +271,12 @@ public class SpotSelect extends JPanel {
         }
 
         /* Access the iterator */
-        myIterator = myAccounts.listIterator(true);
+        Iterator<Account> myIterator = myAccounts.iterator();
 
         /* Loop through the non-owner accounts */
-        while ((myAccount = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            Account myAccount = myIterator.next();
+
             /* Skip non-priced, deleted and alias items */
             if ((!myAccount.isPriced()) || (myAccount.isDeleted()) || (myAccount.isAlias())) {
                 continue;

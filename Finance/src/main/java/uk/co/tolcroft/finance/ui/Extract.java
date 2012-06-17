@@ -43,15 +43,12 @@ import net.sourceforge.JDecimal.Dilution;
 import net.sourceforge.JDecimal.Money;
 import net.sourceforge.JDecimal.Units;
 import uk.co.tolcroft.finance.data.Account;
-import uk.co.tolcroft.finance.data.Account.AccountList;
 import uk.co.tolcroft.finance.data.Event;
 import uk.co.tolcroft.finance.data.Event.EventList;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.TransactionType;
-import uk.co.tolcroft.finance.data.TransactionType.TransTypeList;
 import uk.co.tolcroft.finance.ui.controls.ComboSelect;
 import uk.co.tolcroft.finance.views.View;
-import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.ui.DataMouse;
 import uk.co.tolcroft.models.ui.DataTable;
@@ -107,16 +104,6 @@ public class Extract extends DataTable<Event> {
      * Events.
      */
     private EventList theEvents = null;
-
-    /**
-     * Accounts List.
-     */
-    private AccountList theAccounts = null;
-
-    /**
-     * TransType list.
-     */
-    private TransTypeList theTransTypes = null;
 
     /**
      * The parent.
@@ -504,15 +491,6 @@ public class Extract extends DataTable<Event> {
      * @throws JDataException on error
      */
     public void refreshData() throws JDataException {
-        FinanceData myData;
-
-        /* Access data */
-        myData = theView.getData();
-
-        /* Access lists */
-        theTransTypes = myData.getTransTypes();
-        theAccounts = myData.getAccounts();
-
         /* Access the combo list from parent */
         theComboList = theParent.getComboList();
 
@@ -810,13 +788,13 @@ public class Extract extends DataTable<Event> {
                     o = myEvent.getDate();
                     break;
                 case COLUMN_TRANTYP:
-                    o = (myEvent.getTransType() == null) ? null : myEvent.getTransType().getName();
+                    o = myEvent.getTransType();
                     break;
                 case COLUMN_CREDIT:
-                    o = (myEvent.getCredit() == null) ? null : myEvent.getCredit().getName();
+                    o = myEvent.getCredit();
                     break;
                 case COLUMN_DEBIT:
-                    o = (myEvent.getDebit() == null) ? null : myEvent.getDebit().getName();
+                    o = myEvent.getDebit();
                     break;
                 case COLUMN_AMOUNT:
                     o = myEvent.getAmount();
@@ -885,7 +863,7 @@ public class Extract extends DataTable<Event> {
                         myEvent.setDescription((String) obj);
                         break;
                     case COLUMN_TRANTYP:
-                        myEvent.setTransType(theTransTypes.searchFor((String) obj));
+                        myEvent.setTransType((TransactionType) obj);
                         /* If the need for a tax credit has changed */
                         if (needsTaxCredit != Event
                                 .needsTaxCredit(myEvent.getTransType(), myEvent.getDebit())) {
@@ -917,10 +895,10 @@ public class Extract extends DataTable<Event> {
                         myEvent.setUnits((Units) obj);
                         break;
                     case COLUMN_CREDIT:
-                        myEvent.setCredit(theAccounts.searchFor((String) obj));
+                        myEvent.setCredit((Account) obj);
                         break;
                     case COLUMN_DEBIT:
-                        myEvent.setDebit(theAccounts.searchFor((String) obj));
+                        myEvent.setDebit((Account) obj);
                         break;
                     default:
                         break;
@@ -1051,7 +1029,7 @@ public class Extract extends DataTable<Event> {
             }
 
             /* Loop through the selected rows */
-            for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
+            for (Event myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
@@ -1143,7 +1121,7 @@ public class Extract extends DataTable<Event> {
             }
 
             /* Loop through the selected rows */
-            for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
+            for (Event myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
@@ -1308,7 +1286,7 @@ public class Extract extends DataTable<Event> {
             int row;
 
             /* Loop through the selected rows */
-            for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
+            for (Event myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
@@ -1361,7 +1339,7 @@ public class Extract extends DataTable<Event> {
             }
 
             /* Access the correct account */
-            myAccount = theView.getData().getAccounts().searchFor(myName);
+            myAccount = theView.getData().getAccounts().findItemByName(myName);
 
             /* If this is an account view request */
             if (myCmd.compareTo(POPUP_VIEW) == 0) {

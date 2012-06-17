@@ -43,13 +43,13 @@ import net.sourceforge.JDateButton.JDateButton;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayButton;
 import net.sourceforge.JDateDay.DateDayRange;
+import net.sourceforge.JSortedList.OrderedListIterator;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.TaxYear;
 import uk.co.tolcroft.finance.data.TaxYear.TaxYearList;
 import uk.co.tolcroft.finance.views.EventAnalysis;
 import uk.co.tolcroft.finance.views.EventAnalysis.AnalysisYear;
 import uk.co.tolcroft.finance.views.View;
-import uk.co.tolcroft.models.data.DataList.DataListIterator;
 
 /**
  * Report selection panel.
@@ -254,15 +254,10 @@ public class ReportSelect extends JPanel {
      * @param pAnalysis the analysis.
      */
     public final void refreshData(final EventAnalysis pAnalysis) {
-        FinanceData myData;
-        AnalysisYear myYear;
-        DateDayRange myRange;
-        TaxYear myTaxYear = theState.getYear();
-        DataListIterator<AnalysisYear> myIterator;
-
         /* Access the data */
-        myData = theView.getData();
-        myRange = theView.getRange();
+        FinanceData myData = theView.getData();
+        DateDayRange myRange = theView.getRange();
+        TaxYear myTaxYear = theState.getYear();
 
         /* Access tax Years */
         TaxYearList myYears = myData.getTaxYears();
@@ -278,7 +273,7 @@ public class ReportSelect extends JPanel {
             /* If we have a selected year */
             if (myTaxYear != null) {
                 /* Find it in the new list */
-                myTaxYear = myYears.searchFor(myTaxYear.getTaxYear());
+                myTaxYear = myYears.findTaxYearForDate(myTaxYear.getTaxYear());
             }
 
             /* Remove the types */
@@ -288,12 +283,14 @@ public class ReportSelect extends JPanel {
         /* If we have an analysis */
         if (pAnalysis != null) {
             /* Access the iterator */
-            myIterator = pAnalysis.getAnalysisYears().listIterator();
+            OrderedListIterator<AnalysisYear> myIterator = pAnalysis.getAnalysisYears().listIterator();
 
             /* Add the Year values to the years box in reverse order */
-            while ((myYear = myIterator.previous()) != null) {
+            while (myIterator.hasPrevious()) {
+                AnalysisYear myYear = myIterator.previous();
+
                 /* Add the item to the list */
-                theYearsBox.addItem(myYear);
+                theYearsBox.addItem(myYear.getTaxYear());
             }
 
             /* If we have a selected year */

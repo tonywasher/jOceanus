@@ -28,6 +28,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Iterator;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -50,7 +51,6 @@ import uk.co.tolcroft.finance.data.TaxYear;
 import uk.co.tolcroft.finance.data.TaxYear.TaxYearList;
 import uk.co.tolcroft.finance.ui.controls.TaxYearSelect;
 import uk.co.tolcroft.finance.views.View;
-import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.ui.ErrorPanel;
@@ -912,13 +912,8 @@ public class MaintTaxYear implements StdPanel {
      * RefreshData.
      */
     public void refreshData() {
-        FinanceData myData;
-        TaxRegime myRegime;
-
-        DataListIterator<TaxRegime> myRegIterator;
-
         /* Access the data */
-        myData = theView.getData();
+        FinanceData myData = theView.getData();
 
         /* Access years and regimes */
         theTaxYears = myData.getTaxYears();
@@ -937,10 +932,12 @@ public class MaintTaxYear implements StdPanel {
         }
 
         /* Create a Tax Year iterator */
-        myRegIterator = myRegimes.listIterator();
+        Iterator<TaxRegime> myRegIterator = myRegimes.iterator();
 
         /* Add the Tax Regimes to the regimes box */
-        while ((myRegime = myRegIterator.next()) != null) {
+        while (myRegIterator.hasNext()) {
+            TaxRegime myRegime = myRegIterator.next();
+
             /* Skip regime if not enabled */
             if (!myRegime.getEnabled()) {
                 continue;
@@ -978,7 +975,7 @@ public class MaintTaxYear implements StdPanel {
             theTaxView = theTaxYears.getEditList(pTaxYear);
 
             /* Access the tax year */
-            theTaxYear = theTaxView.searchFor(pTaxYear.getTaxYear());
+            theTaxYear = theTaxView.findTaxYearForDate(pTaxYear.getTaxYear());
         }
 
         /* Store list */

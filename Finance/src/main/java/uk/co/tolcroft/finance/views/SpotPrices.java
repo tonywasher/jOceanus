@@ -22,6 +22,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.views;
 
+import java.util.Iterator;
+
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
@@ -317,19 +319,11 @@ public class SpotPrices implements JDataContents {
             theView = pPrices.getView();
             theType = pPrices.getAccountType();
 
-            /* Declare variables */
-            FinanceData myData;
-            DataListIterator<Account> myActIterator;
-            Account myAccount;
-            SpotPrice mySpot;
-            DataListIterator<AccountPrice> myIterator;
-            AccountPrice myPrice;
-            int iDiff;
-
             /* Loop through the Accounts */
-            myData = theView.getData();
-            myActIterator = myData.getAccounts().listIterator();
-            while ((myAccount = myActIterator.next()) != null) {
+            FinanceData myData = theView.getData();
+            Iterator<Account> myActIterator = myData.getAccounts().listIterator();
+            while (myActIterator.hasNext()) {
+                Account myAccount = myActIterator.next();
                 /* Ignore accounts that are wrong type, have no prices or are aliases */
                 if ((!Difference.isEqual(myAccount.getActType(), theType)) || (!myAccount.isPriced())
                         || (myAccount.isAlias())) {
@@ -337,7 +331,7 @@ public class SpotPrices implements JDataContents {
                 }
 
                 /* Create a SpotPrice entry */
-                mySpot = new SpotPrice(this, myAccount);
+                SpotPrice mySpot = new SpotPrice(this, myAccount);
                 add(mySpot);
 
                 /* If the account is closed then hide the entry */
@@ -351,15 +345,16 @@ public class SpotPrices implements JDataContents {
             setBase(myPrices);
 
             /* Loop through the prices */
-            myIterator = myPrices.listIterator(true);
-            while ((myPrice = myIterator.next()) != null) {
+            Iterator<AccountPrice> myIterator = myPrices.listIterator();
+            while (myIterator.hasNext()) {
+                AccountPrice myPrice = myIterator.next();
                 /* Ignore accounts that are wrong type */
                 if (!Difference.isEqual(myPrice.getAccount().getActType(), theType)) {
                     continue;
                 }
 
                 /* Test the Date */
-                iDiff = theDate.compareTo(myPrice.getDate());
+                int iDiff = theDate.compareTo(myPrice.getDate());
 
                 /* If we are past the date */
                 if (iDiff < 0) {
@@ -369,8 +364,8 @@ public class SpotPrices implements JDataContents {
                 }
 
                 /* Access the Spot Price */
-                myAccount = myPrice.getAccount();
-                mySpot = (SpotPrice) searchFor(myAccount.getId());
+                Account myAccount = myPrice.getAccount();
+                SpotPrice mySpot = (SpotPrice) findItemById(myAccount.getId());
 
                 /* If we are exactly the date */
                 if (iDiff == 0) {
@@ -426,7 +421,7 @@ public class SpotPrices implements JDataContents {
 
         /* Disable Add a new item */
         @Override
-        public SpotPrice addNewItem(final DataItem<?> pElement) {
+        public SpotPrice addNewItem(final DataItem pElement) {
             return null;
         }
 
@@ -440,16 +435,13 @@ public class SpotPrices implements JDataContents {
          */
         @Override
         public void findEditState() {
-            DataListIterator<AccountPrice> myIterator;
-            AccountPrice myCurr;
-            EditState myEdit;
-
             /* Access the iterator */
-            myIterator = listIterator();
-            myEdit = EditState.CLEAN;
+            Iterator<AccountPrice> myIterator = listIterator();
+            EditState myEdit = EditState.CLEAN;
 
             /* Loop through the list */
-            while ((myCurr = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                AccountPrice myCurr = myIterator.next();
                 /* Switch on new state */
                 switch (myCurr.getState()) {
                     case NEW:
@@ -472,14 +464,12 @@ public class SpotPrices implements JDataContents {
 
         @Override
         public boolean hasUpdates() {
-            DataListIterator<AccountPrice> myIterator;
-            AccountPrice myCurr;
-
             /* Access the iterator */
-            myIterator = listIterator();
+            Iterator<AccountPrice> myIterator = listIterator();
 
             /* Loop through the list */
-            while ((myCurr = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                AccountPrice myCurr = myIterator.next();
                 /* Switch on state */
                 switch (myCurr.getState()) {
                     case DELETED:
@@ -503,14 +493,12 @@ public class SpotPrices implements JDataContents {
          */
         @Override
         public void resetChanges() {
-            DataListIterator<AccountPrice> myIterator;
-            AccountPrice myCurr;
-
             /* Create an iterator for the list */
-            myIterator = listIterator(true);
+            Iterator<AccountPrice> myIterator = iterator();
 
             /* Loop through the elements */
-            while ((myCurr = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                AccountPrice myCurr = myIterator.next();
                 /* Switch on the state */
                 switch (myCurr.getState()) {
                 /* If this is a changed or DELCHG item */
@@ -633,7 +621,7 @@ public class SpotPrices implements JDataContents {
         /* Is this row locked */
         @Override
         public boolean isLocked() {
-            return isHidden();
+            return isDeleted();
         }
 
         /**

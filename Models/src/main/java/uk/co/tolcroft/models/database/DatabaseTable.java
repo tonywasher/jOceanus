@@ -25,6 +25,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.ListIterator;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
@@ -32,7 +34,6 @@ import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.ValueSet;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.TaskControl;
@@ -41,7 +42,7 @@ import uk.co.tolcroft.models.data.TaskControl;
  * Database Table class. This controls should be extended for each DataType/Table.
  * @param <T> the DataType
  */
-public abstract class DatabaseTable<T extends DataItem<T>> {
+public abstract class DatabaseTable<T extends DataItem & Comparable<T>> {
     /**
      * The Database control.
      */
@@ -333,15 +334,14 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
      * @return the count of items
      */
     private int countStateItems(final DataState pState) {
-        DataListIterator<T> myIterator;
-        T myCurr;
+        /* Access the iterator */
+        Iterator<T> myIterator = theList.iterator();
         int iCount = 0;
 
-        /* Access the iterator */
-        myIterator = theList.listIterator(true);
-
         /* Loop through the list */
-        while ((myCurr = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            T myCurr = myIterator.next();
+
             /* Ignore items that are not this type */
             if (myCurr.getState() != pState) {
                 continue;
@@ -366,20 +366,16 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
     protected boolean insertItems(final TaskControl<?> pTask,
                                   final DataSet<?> pData,
                                   final BatchControl pBatch) throws JDataException {
-        DataListIterator<T> myIterator;
-        T myCurr = null;
-        int myCount = 0;
-        int mySteps;
-        String myInsert;
-        boolean bContinue = true;
-
         /* Declare the new stage */
         if (!pTask.setNewStage("Inserting " + getTableName())) {
             return false;
         }
 
         /* Access reporting steps */
-        mySteps = pTask.getReportingSteps();
+        boolean bContinue = true;
+        int mySteps = pTask.getReportingSteps();
+        int myCount = 0;
+        T myCurr = null;
 
         /* Declare the Data */
         declareData(pData);
@@ -395,15 +391,16 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             pBatch.setCurrentTable(this, DataState.NEW);
 
             /* Prepare the insert statement */
-            myInsert = theTable.getInsertString();
+            String myInsert = theTable.getInsertString();
             prepareStatement(myInsert);
 
             /* Access the iterator */
-            myIterator = theList.listIterator(true);
+            Iterator<T> myIterator = theList.iterator();
 
             /* Loop through the list */
-            while ((myCurr = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
                 /* Ignore non-new items */
+                myCurr = myIterator.next();
                 if (myCurr.getState() != DataState.NEW) {
                     continue;
                 }
@@ -463,20 +460,16 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
      */
     protected boolean updateItems(final TaskControl<?> pTask,
                                   final BatchControl pBatch) throws JDataException {
-        DataListIterator<T> myIterator;
-        T myCurr = null;
-        int myCount = 0;
-        int mySteps;
-        String myUpdate;
-        boolean bContinue = true;
-
         /* Declare the new stage */
         if (!pTask.setNewStage("Updating " + getTableName())) {
             return false;
         }
 
         /* Access reporting steps */
-        mySteps = pTask.getReportingSteps();
+        boolean bContinue = true;
+        int mySteps = pTask.getReportingSteps();
+        int myCount = 0;
+        T myCurr = null;
 
         /* Protect the update */
         try {
@@ -489,11 +482,12 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             pBatch.setCurrentTable(this, DataState.CHANGED);
 
             /* Access the iterator */
-            myIterator = theList.listIterator(true);
+            Iterator<T> myIterator = theList.iterator();
 
             /* Loop through the list */
-            while ((myCurr = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
                 /* Ignore non-changed items */
+                myCurr = myIterator.next();
                 if (myCurr.getState() != DataState.CHANGED) {
                     continue;
                 }
@@ -502,7 +496,7 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
                 if (updateItem(myCurr)) {
                     /* Record the id and access the update string */
                     theTable.setIntegerValue(DataItem.FIELD_ID, myCurr.getId());
-                    myUpdate = theTable.getUpdateString();
+                    String myUpdate = theTable.getUpdateString();
 
                     /* Prepare the statement and declare values */
                     prepareStatement(myUpdate);
@@ -598,20 +592,16 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
      */
     protected boolean deleteItems(final TaskControl<?> pTask,
                                   final BatchControl pBatch) throws JDataException {
-        DataListIterator<T> myIterator;
-        T myCurr = null;
-        int myCount = 0;
-        int mySteps;
-        String myDelete;
-        boolean bContinue = true;
-
         /* Declare the new stage */
         if (!pTask.setNewStage("Deleting " + getTableName())) {
             return false;
         }
 
         /* Access reporting steps */
-        mySteps = pTask.getReportingSteps();
+        boolean bContinue = true;
+        int mySteps = pTask.getReportingSteps();
+        int myCount = 0;
+        T myCurr = null;
 
         /* Protect the delete */
         try {
@@ -624,15 +614,16 @@ public abstract class DatabaseTable<T extends DataItem<T>> {
             pBatch.setCurrentTable(this, DataState.DELETED);
 
             /* Prepare the delete statement */
-            myDelete = theTable.getDeleteString();
+            String myDelete = theTable.getDeleteString();
             prepareStatement(myDelete);
 
             /* Access the iterator */
-            myIterator = theList.listIterator(true);
+            ListIterator<T> myIterator = theList.listIterator();
 
             /* Loop through the list in reverse order */
-            while ((myCurr = myIterator.previous()) != null) {
+            while (myIterator.hasPrevious()) {
                 /* Ignore non-deleted items */
+                myCurr = myIterator.previous();
                 if (myCurr.getState() != DataState.DELETED) {
                     continue;
                 }

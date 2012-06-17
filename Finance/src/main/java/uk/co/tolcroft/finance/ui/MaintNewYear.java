@@ -34,13 +34,13 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
+import net.sourceforge.JSortedList.OrderedListIterator;
 import uk.co.tolcroft.finance.data.Event;
 import uk.co.tolcroft.finance.data.Event.EventList;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.TaxYear;
 import uk.co.tolcroft.finance.data.TaxYear.TaxYearList;
 import uk.co.tolcroft.finance.views.View;
-import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.ui.DataTable;
 import uk.co.tolcroft.models.ui.Renderer;
@@ -353,7 +353,7 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
     public void refreshData() throws JDataException {
         FinanceData myData = theView.getData();
         TaxYear.TaxYearList myList = myData.getTaxYears();
-        DataListIterator<TaxYear> myIterator;
+        OrderedListIterator<TaxYear> myIterator;
 
         myIterator = myList.listIterator();
         // theYear = myIterator.peekLast();
@@ -527,13 +527,13 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
                     o = myEvent.getDate();
                     break;
                 case COLUMN_TRANTYP:
-                    o = (myEvent.getTransType() == null) ? null : myEvent.getTransType().getName();
+                    o = myEvent.getTransType();
                     break;
                 case COLUMN_CREDIT:
-                    o = (myEvent.getCredit() == null) ? null : myEvent.getCredit().getName();
+                    o = myEvent.getCredit();
                     break;
                 case COLUMN_DEBIT:
-                    o = (myEvent.getDebit() == null) ? null : myEvent.getDebit().getName();
+                    o = myEvent.getDebit();
                     break;
                 case COLUMN_AMOUNT:
                     o = myEvent.getAmount();

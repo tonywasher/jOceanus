@@ -24,6 +24,7 @@ package net.sourceforge.JSortedList;
 
 import java.util.ConcurrentModificationException;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 /**
  * Sorted Linked list iterator.
@@ -178,18 +179,18 @@ public class OrderedListIterator<T extends Comparable<T>> implements ListIterato
 
         /* Access the next node */
         OrderedNode<T> myNext = nextNode();
-
-        /* If we have a next then move the cursor */
-        if (myNext != null) {
-            /* Record the cursor */
-            theNodeBefore = myNext;
-            theNodeAfter = myNext.getNext();
-            wasForward = true;
-            canRemove = true;
+        if (myNext == null) {
+            throw new NoSuchElementException();
         }
 
+        /* Record the cursor */
+        theNodeBefore = myNext;
+        theNodeAfter = myNext.getNext();
+        wasForward = true;
+        canRemove = true;
+
         /* Return the next item */
-        return (myNext != null) ? myNext.getObject() : null;
+        return myNext.getObject();
     }
 
     @Override
@@ -201,18 +202,18 @@ public class OrderedListIterator<T extends Comparable<T>> implements ListIterato
 
         /* Access the previous node */
         OrderedNode<T> myPrev = previousNode();
-
-        /* If we have a previous then move the cursor */
-        if (myPrev != null) {
-            /* Record the cursor */
-            theNodeBefore = myPrev.getPrev();
-            theNodeAfter = myPrev;
-            wasForward = false;
-            canRemove = true;
+        if (myPrev == null) {
+            throw new NoSuchElementException();
         }
 
+        /* Record the cursor */
+        theNodeBefore = myPrev.getPrev();
+        theNodeAfter = myPrev;
+        wasForward = false;
+        canRemove = true;
+
         /* Return the previous item */
-        return (myPrev != null) ? myPrev.getObject() : null;
+        return myPrev.getObject();
     }
 
     @Override
@@ -221,7 +222,7 @@ public class OrderedListIterator<T extends Comparable<T>> implements ListIterato
         OrderedNode<T> myNext = nextNode();
 
         /* Return the index */
-        return (myNext != null) ? myNext.getIndex() : -1;
+        return (myNext != null) ? myNext.getIndex() : theList.size();
     }
 
     @Override

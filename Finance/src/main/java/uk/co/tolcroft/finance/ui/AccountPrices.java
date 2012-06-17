@@ -346,7 +346,7 @@ public class AccountPrices extends DataTable<AccountPrice> {
      */
     protected boolean isRowDeletable(final ViewPrice pRow) {
         /* If the row is not deleted, we can delete if the list size is greater than one */
-        return ((!pRow.isDeleted()) && (thePrices.sizeNormal() > 1));
+        return ((!pRow.isDeleted()) && (thePrices.size() > 1));
     }
 
     /**

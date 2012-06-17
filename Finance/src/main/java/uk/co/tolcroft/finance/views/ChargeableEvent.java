@@ -22,29 +22,37 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.views;
 
+import java.util.Iterator;
+
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.ReportItem;
-import net.sourceforge.JDataManager.ReportList;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Money;
-import net.sourceforge.JSortedList.SortedListIterator;
+import net.sourceforge.JSortedList.OrderedIdItem;
+import net.sourceforge.JSortedList.OrderedIdList;
 import uk.co.tolcroft.finance.data.Event;
 
 /**
  * Chargeable event for LifeBonds.
  * @author Tony
  */
-public final class ChargeableEvent extends ReportItem<ChargeableEvent> {
+public final class ChargeableEvent implements OrderedIdItem<Integer>, JDataContents,
+        Comparable<ChargeableEvent> {
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ChargeableEvent.class.getSimpleName(),
-            ReportItem.theLocalFields);
+    private static final JDataFields FIELD_DEFS = new JDataFields(ChargeableEvent.class.getSimpleName());
 
     @Override
-    public JDataFields declareFields() {
+    public JDataFields getDataFields() {
         return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject() {
+        return getDataFields().getName();
     }
 
     /**
@@ -81,7 +89,7 @@ public final class ChargeableEvent extends ReportItem<ChargeableEvent> {
         if (FIELD_EVENT.equals(pField)) {
             return theEvent;
         }
-        return super.getFieldValue(pField);
+        return JDataFieldValue.UnknownField;
     }
 
     /**
@@ -136,6 +144,11 @@ public final class ChargeableEvent extends ReportItem<ChargeableEvent> {
         return theEvent;
     }
 
+    @Override
+    public Integer getOrderedId() {
+        return getEvent().getId();
+    }
+
     /**
      * Obtain the date.
      * @return the date
@@ -170,16 +183,11 @@ public final class ChargeableEvent extends ReportItem<ChargeableEvent> {
 
     /**
      * Constructor.
-     * @param pList the list
      * @param pEvent the Event
      * @param pGains the Gains
      */
-    private ChargeableEvent(final ChargeableEventList pList,
-                            final Event pEvent,
+    private ChargeableEvent(final Event pEvent,
                             final Money pGains) {
-        /* Call super constructor */
-        super(pList);
-
         /* Local variables */
         long myValue;
 
@@ -193,14 +201,8 @@ public final class ChargeableEvent extends ReportItem<ChargeableEvent> {
         theEvent = pEvent;
     }
 
-    /**
-     * Compare this ChargeableEvent to another to establish sort order.
-     * @param pThat The Event to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the
-     *         sort order
-     */
     @Override
-    public int compareTo(final Object pThat) {
+    public int compareTo(final ChargeableEvent pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -240,16 +242,35 @@ public final class ChargeableEvent extends ReportItem<ChargeableEvent> {
     /**
      * List of ChargeableEvents.
      */
-    public static class ChargeableEventList extends ReportList<ChargeableEvent> {
+    public static class ChargeableEventList extends OrderedIdList<Integer, ChargeableEvent> implements
+            JDataContents {
         /**
          * Report fields.
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(
-                ChargeableEventList.class.getSimpleName(), ReportList.theLocalFields);
+                ChargeableEventList.class.getSimpleName());
 
         @Override
-        public JDataFields declareFields() {
+        public JDataFields getDataFields() {
             return FIELD_DEFS;
+        }
+
+        @Override
+        public String formatObject() {
+            return getDataFields().getName();
+        }
+
+        /**
+         * Size Field Id.
+         */
+        public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_SIZE.equals(pField)) {
+                return size();
+            }
+            return JDataFieldValue.UnknownField;
         }
 
         /**
@@ -267,10 +288,10 @@ public final class ChargeableEvent extends ReportItem<ChargeableEvent> {
         public void addEvent(final Event pEvent,
                              final Money pGains) {
             /* Create the chargeable event */
-            ChargeableEvent myEvent = new ChargeableEvent(this, pEvent, pGains);
+            ChargeableEvent myEvent = new ChargeableEvent(pEvent, pGains);
 
             /* Add it to the list */
-            add(myEvent);
+            addAtEnd(myEvent);
         }
 
         /**
@@ -280,14 +301,15 @@ public final class ChargeableEvent extends ReportItem<ChargeableEvent> {
          */
         public Money getSliceTotal() {
             /* Access the iterator */
-            SortedListIterator<ChargeableEvent> myIterator = listIterator();
+            Iterator<ChargeableEvent> myIterator = iterator();
 
             /* Initialise the total */
             Money myTotal = new Money(0);
 
             /* Loop through the list */
-            ChargeableEvent myEvent;
-            while ((myEvent = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                ChargeableEvent myEvent = myIterator.next();
+
                 /* Add in this slice */
                 myTotal.addAmount(myEvent.getSlice());
             }
@@ -303,14 +325,15 @@ public final class ChargeableEvent extends ReportItem<ChargeableEvent> {
          */
         public Money getTaxTotal() {
             /* Access the iterator */
-            SortedListIterator<ChargeableEvent> myIterator = listIterator();
+            Iterator<ChargeableEvent> myIterator = iterator();
 
             /* Initialise the total */
             Money myTotal = new Money(0);
 
             /* Loop through the list */
-            ChargeableEvent myEvent;
-            while ((myEvent = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                ChargeableEvent myEvent = myIterator.next();
+
                 /* Add in this slice */
                 myTotal.addAmount(myEvent.getTaxation());
             }
@@ -326,14 +349,15 @@ public final class ChargeableEvent extends ReportItem<ChargeableEvent> {
          */
         public Money getGainsTotal() {
             /* Access the iterator */
-            SortedListIterator<ChargeableEvent> myIterator = listIterator();
+            Iterator<ChargeableEvent> myIterator = iterator();
 
             /* Initialise the total */
             Money myTotal = new Money(0);
 
             /* Loop through the list */
-            ChargeableEvent myEvent;
-            while ((myEvent = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                ChargeableEvent myEvent = myIterator.next();
+
                 /* Add in this slice */
                 myTotal.addAmount(myEvent.getAmount());
             }
@@ -351,11 +375,12 @@ public final class ChargeableEvent extends ReportItem<ChargeableEvent> {
         public void applyTax(final Money pTax,
                              final Money pTotal) {
             /* Access the iterator */
-            SortedListIterator<ChargeableEvent> myIterator = listIterator();
+            Iterator<ChargeableEvent> myIterator = iterator();
 
             /* Loop through the list */
-            ChargeableEvent myEvent;
-            while ((myEvent = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                ChargeableEvent myEvent = myIterator.next();
+
                 /* Apply tax to this slice */
                 myEvent.applyTax(pTax, pTotal);
             }

@@ -23,6 +23,7 @@
 package uk.co.tolcroft.finance.views;
 
 import java.util.Calendar;
+import java.util.Iterator;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDateDay.DateDay;
@@ -55,13 +56,12 @@ import uk.co.tolcroft.finance.views.Analysis.TransSummary;
 import uk.co.tolcroft.finance.views.Analysis.TransTotal;
 import uk.co.tolcroft.finance.views.Analysis.ValueAccount;
 import uk.co.tolcroft.finance.views.ChargeableEvent.ChargeableEventList;
-import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.PreferenceSet;
 import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 import uk.co.tolcroft.models.data.PreferenceSet.PreferenceSetChooser;
 
 /**
- * Class to further analyse an analysis, primarily to calculare tax liability.
+ * Class to further analyse an analysis, primarily to calculate tax liability.
  * @author Tony Washer
  */
 public class MetaAnalysis implements PreferenceSetChooser {
@@ -254,16 +254,8 @@ public class MetaAnalysis implements PreferenceSetChooser {
      * Value the priced assets.
      */
     protected void valueAssets() {
-        DataListIterator<AnalysisBucket> myIterator;
-        AnalysisBucket myCurr;
-        AnalysisState myState;
-        AssetAccount myAsset;
-        MoneyAccount myMoney;
-        FinanceData myData;
-        AccountList myAccounts;
-
         /* Access the state of the analysis */
-        myState = theAnalysis.getState();
+        AnalysisState myState = theAnalysis.getState();
 
         /* Ignore request if we are not in raw state */
         if (myState != AnalysisState.RAW) {
@@ -271,8 +263,8 @@ public class MetaAnalysis implements PreferenceSetChooser {
         }
 
         /* Obtain access to account list */
-        myData = theAnalysis.getData();
-        myAccounts = myData.getAccounts();
+        FinanceData myData = theAnalysis.getData();
+        AccountList myAccounts = myData.getAccounts();
 
         /* Obtain access to key elements */
         theMarketAccount = (ExternalAccount) theList.getAccountDetail(myAccounts.getMarket());
@@ -282,25 +274,27 @@ public class MetaAnalysis implements PreferenceSetChooser {
         theCapitalLoss = theList.getTransDetail(TransClass.CAPITALLOSS);
 
         /* Access the iterator */
-        myIterator = theList.listIterator();
+        Iterator<AnalysisBucket> myIterator = theList.iterator();
 
         /* Loop through the buckets */
-        while ((myCurr = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            AnalysisBucket myCurr = myIterator.next();
+
             /* Switch on bucket Type */
             switch (myCurr.getBucketType()) {
             /* Money */
                 case MONEYDETAIL:
                     /* Access the Money account */
-                    myMoney = (MoneyAccount) myCurr;
+                    MoneyAccount myMoney = (MoneyAccount) myCurr;
 
                     /* Record the Rate */
-                    myMoney.recordRate(theDate);
+                    myMoney.recordRate(myData, theDate);
                     break;
 
                 /* Assets */
                 case ASSETDETAIL:
                     /* Access the Asset account */
-                    myAsset = (AssetAccount) myCurr;
+                    AssetAccount myAsset = (AssetAccount) myCurr;
 
                     /* Value the asset */
                     myAsset.valueAsset(theDate);
@@ -417,12 +411,8 @@ public class MetaAnalysis implements PreferenceSetChooser {
      * Produce totals.
      */
     protected void produceTotals() {
-        DataListIterator<AnalysisBucket> myIterator;
-        AnalysisBucket myCurr;
-        AnalysisState myState;
-
         /* Access the state of the analysis */
-        myState = theAnalysis.getState();
+        AnalysisState myState = theAnalysis.getState();
 
         /* Ignore request if we are not in valued state */
         if (myState != AnalysisState.VALUED) {
@@ -438,10 +428,12 @@ public class MetaAnalysis implements PreferenceSetChooser {
         theCoreIncome = theList.getTransTotal(TaxClass.COREINCOME);
 
         /* Access the iterator */
-        myIterator = theList.listIterator();
+        Iterator<AnalysisBucket> myIterator = theList.iterator();
 
         /* Loop through the buckets */
-        while ((myCurr = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            AnalysisBucket myCurr = myIterator.next();
+
             /* Switch on the bucket type */
             switch (myCurr.getBucketType()) {
             /* Accounts with valuations */
@@ -614,23 +606,19 @@ public class MetaAnalysis implements PreferenceSetChooser {
      * Mark active accounts.
      */
     public void markActiveAccounts() {
-        DataListIterator<AnalysisBucket> myIterator;
-        Account myAccount;
-        AnalysisBucket myCurr;
-        MoneyAccount myMoney;
-        DebtAccount myDebt;
-        AssetAccount myAsset;
-
         /* Access the iterator */
-        myIterator = theList.listIterator();
+        Iterator<AnalysisBucket> myIterator = theList.listIterator();
+        Account myAccount;
 
         /* Loop through the items to find the match */
-        while ((myCurr = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            AnalysisBucket myCurr = myIterator.next();
+
             /* Switch on bucket type */
             switch (myCurr.getBucketType()) {
                 case ASSETDETAIL:
                     /* Access the Asset */
-                    myAsset = (AssetAccount) myCurr;
+                    AssetAccount myAsset = (AssetAccount) myCurr;
 
                     /* If we have non-zero units */
                     if (myAsset.getUnits().isNonZero()) {
@@ -642,7 +630,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
 
                 case MONEYDETAIL:
                     /* Access the Account */
-                    myMoney = (MoneyAccount) myCurr;
+                    MoneyAccount myMoney = (MoneyAccount) myCurr;
 
                     /* If we have non-zero value */
                     if (myMoney.getValue().isNonZero()) {
@@ -654,7 +642,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
 
                 case DEBTDETAIL:
                     /* Access the Account */
-                    myDebt = (DebtAccount) myCurr;
+                    DebtAccount myDebt = (DebtAccount) myCurr;
 
                     /* If we have non-zero value */
                     if (myDebt.getValue().isNonZero()) {

@@ -22,43 +22,24 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
-import net.sourceforge.JDataManager.JDataException;
-import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
-import uk.co.tolcroft.models.data.PreferenceSet.PreferenceSetChooser;
+import net.sourceforge.JSortedList.OrderedIdIndex;
 
 /**
- * Id Manager for data list.
+ * Id Manager for data list. Allocates new IDs and checks for uniqueness.
  * @author Tony Washer
- * @param <T> list item type
+ * @param <T> the dataType
  */
-public class IdManager<T extends DataItem<T>> implements PreferenceSetChooser {
-    /**
-     * IdManager Preferences.
-     */
-    private IdManagerPreferences thePreferences = null;
-
+public class IdManager<T extends DataItem & Comparable<T>> extends OrderedIdIndex<Integer, T> {
     /**
      * The maximum id.
      */
     private int theMaxId = 0;
 
     /**
-     * The id map.
-     */
-    private IdMap theMap = null;
-
-    /**
      * Constructor.
      */
     protected IdManager() {
-        /* Access the idManager preferences */
-        thePreferences = (IdManagerPreferences) PreferenceManager.getPreferenceSet(this);
-        theMap = new IdMap();
-    }
-
-    @Override
-    public Class<? extends PreferenceSet> getPreferenceSetClass() {
-        return IdManagerPreferences.class;
+        super();
     }
 
     /**
@@ -90,18 +71,15 @@ public class IdManager<T extends DataItem<T>> implements PreferenceSetChooser {
             return true;
         }
 
-        /* Locate the id if its possible that we have it */
-        T myItem = getItem(uId);
-
-        /* Return result */
-        return (myItem == null);
+        /* Check in index */
+        return !isIdPresent(uId);
     }
 
     /**
      * Generate/Record new id.
      * @param pItem the item
      */
-    protected void setNewId(final T pItem) {
+    protected void setNewId(final DataItem pItem) {
         int myId = pItem.getId();
 
         /* If we need to generate a new id */
@@ -121,256 +99,12 @@ public class IdManager<T extends DataItem<T>> implements PreferenceSetChooser {
         }
     }
 
-    /**
-     * Locate the item by id.
-     * @param pId the id of the item to retrieve
-     * @return the item for the id (or <code>null</code>)
-     */
-    public T getItem(final int pId) {
-        /* Locate the item in the map */
-        return theMap.getItem(pId);
-    }
-
-    /**
-     * Store the item by id.
-     * @param pId the id of the item to retrieve
-     * @param pItem the item to store (or <code>null</code>)
-     */
-    public void setItem(final int pId,
-                        final T pItem) {
-        /* Store the item in the map */
-        theMap.setItem(pId, pItem);
-    }
-
-    /**
-     * remove All list items.
-     */
+    @Override
     public void clear() {
-        /* Reinitialise the map */
-        theMap = new IdMap();
-    }
+        /* Call super-class */
+        super.clear();
 
-    /**
-     * IdManager Preferences.
-     */
-    public static class IdManagerPreferences extends PreferenceSet {
-        /**
-         * Registry name for Node Elements.
-         */
-        protected static final String NAME_NODE_ELEMS = "NodeElements";
-
-        /**
-         * Display name for Node Elements.
-         */
-        protected static final String DISPLAY_NODE_ELEMS = "Elements per Node";
-
-        /**
-         * Default NodeElements.
-         */
-        private static final Integer DEFAULT_NODE_ELEMS = 10;
-
-        /**
-         * Constructor.
-         * @throws JDataException on error
-         */
-        public IdManagerPreferences() throws JDataException {
-            super();
-        }
-
-        @Override
-        protected void definePreferences() {
-            /* Define the preferences */
-            definePreference(NAME_NODE_ELEMS, PreferenceType.Integer);
-        }
-
-        @Override
-        protected Object getDefaultValue(final String pName) {
-            /* Handle default values */
-            if (pName.equals(NAME_NODE_ELEMS)) {
-                return DEFAULT_NODE_ELEMS;
-            }
-            return null;
-        }
-
-        @Override
-        protected String getDisplayName(final String pName) {
-            /* Handle default values */
-            if (pName.equals(NAME_NODE_ELEMS)) {
-                return DISPLAY_NODE_ELEMS;
-            }
-            return null;
-        }
-    }
-
-    /**
-     * Id map to element.
-     */
-    private class IdMap {
-        /**
-         * The size of a single map element.
-         */
-        private final int maxElements = thePreferences.getIntegerValue(IdManagerPreferences.NAME_NODE_ELEMS);
-
-        /**
-         * The depth of this map.
-         */
-        private int theDepth = 0;
-
-        /**
-         * The map indexed by id.
-         */
-        private IdMap[] theMaps = null;
-
-        /**
-         * The map indexed by id.
-         */
-        private T[] theObjects = null;
-
-        /**
-         * Build a new map array.
-         */
-        @SuppressWarnings("unchecked")
-        private void newMaps() {
-            theMaps = new IdManager.IdMap[maxElements];
-            java.util.Arrays.fill(theMaps, null);
-        }
-
-        /**
-         * Build a new objects array.
-         */
-        @SuppressWarnings("unchecked")
-        private void newObjects() {
-            theObjects = (T[]) new DataItem[maxElements];
-            java.util.Arrays.fill(theObjects, null);
-        }
-
-        /**
-         * Locate the item by id.
-         * @param pId the id of the item to retrieve
-         * @return the item for the id (or <code>null</code>)
-         */
-        private T getItem(final int pId) {
-            int myIndex = pId;
-            int myId = pId;
-            int myAdjust = 1;
-            IdMap myMap;
-
-            /* If we are not the final map pass the call on */
-            if (theDepth > 0) {
-                /* Loop to find the index in this map */
-                for (int i = theDepth; i > 0; i--) {
-                    myIndex /= maxElements;
-                    myAdjust *= maxElements;
-                }
-
-                /* If we are beyond the scope of this map return null */
-                if (myIndex >= maxElements) {
-                    return null;
-                }
-
-                /* Access the relevant map */
-                myMap = theMaps[myIndex];
-
-                /* If the map is empty return null */
-                if (myMap == null) {
-                    return null;
-                }
-
-                /* Adjust the index */
-                myId -= (myIndex * myAdjust);
-
-                /* Pass the call on */
-                return myMap.getItem(myId);
-            }
-
-            /* If we are beyond the scope of this map return null */
-            if (myIndex >= maxElements) {
-                return null;
-            }
-
-            /* Return null if we have no objects */
-            if (theObjects == null) {
-                return null;
-            }
-
-            /* Calculate final index and return item */
-            myIndex = pId % maxElements;
-            return theObjects[myIndex];
-        }
-
-        /**
-         * Store the item by id.
-         * @param pId the id of the item to retrieve
-         * @param pItem the item to store (or <code>null</code>)
-         */
-        private void setItem(final int pId,
-                             final T pItem) {
-            int myIndex = pId;
-            int myId = pId;
-            int myAdjust = 1;
-            IdMap myMap = null;
-
-            /* Loop to find the index in this map */
-            for (int i = theDepth; i > 0; i--) {
-                myIndex /= maxElements;
-                myAdjust *= maxElements;
-            }
-
-            /* If we are beyond the scope of this map */
-            if (myIndex >= maxElements) {
-                /* If this map is non-empty */
-                if ((theMaps != null) || (theObjects != null)) {
-                    /* Create a sub-map based on this one */
-                    myMap = new IdMap();
-                    myMap.theDepth = theDepth;
-                    myMap.theMaps = theMaps;
-                    myMap.theObjects = theObjects;
-                }
-
-                /* Increase the depth of this map */
-                theDepth++;
-
-                /* Create a new maps array for this map */
-                newMaps();
-
-                /* Store the map */
-                theMaps[0] = myMap;
-
-                /* Try with the adjusted map depth */
-                setItem(pId, pItem);
-                return;
-            }
-
-            /* If we are not the final map */
-            if (theDepth > 0) {
-                /* Access the relevant map */
-                myMap = theMaps[myIndex];
-
-                /* If the map is empty */
-                if (myMap == null) {
-                    /* Create and store a new id map */
-                    myMap = new IdMap();
-                    myMap.newMaps();
-                    myMap.theDepth = theDepth - 1;
-                    theMaps[myIndex] = myMap;
-                }
-
-                /* Adjust the index */
-                myId -= (myIndex * myAdjust);
-
-                /* Pass the call on with adjusted id */
-                myMap.setItem(myId, pItem);
-                return;
-            }
-
-            /* Allocate the objects array if needed */
-            if (theObjects == null) {
-                newObjects();
-            }
-
-            /* Store the item */
-            myIndex = pId % maxElements;
-            theObjects[myIndex] = pItem;
-        }
+        /* Reset the maximum id */
+        theMaxId = 0;
     }
 }

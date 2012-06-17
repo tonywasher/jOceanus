@@ -41,7 +41,7 @@ import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
  * CipherSet for encryption purposes.
  * @author Tony Washer
  */
-public class DataKey extends DataItem<DataKey> {
+public class DataKey extends DataItem implements Comparable<DataKey> {
     /**
      * Object name.
      */
@@ -342,7 +342,9 @@ public class DataKey extends DataItem<DataKey> {
             }
 
             /* Look up the ControlKey */
-            ControlKey myControlKey = pList.theData.getControlKeys().searchFor(uControlId);
+            DataSet<?> myData = pList.theData;
+            ControlKeyList myKeys = myData.getControlKeys();
+            ControlKey myControlKey = myKeys.findItemById(uControlId);
             if (myControlKey == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid ControlKey Id");
             }
@@ -461,9 +463,7 @@ public class DataKey extends DataItem<DataKey> {
     }
 
     @Override
-    public int compareTo(final Object pThat) {
-        int iDiff;
-
+    public int compareTo(final DataKey pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -472,23 +472,8 @@ public class DataKey extends DataItem<DataKey> {
             return -1;
         }
 
-        /* Make sure that the object is a DataKey */
-        if (pThat.getClass() != this.getClass()) {
-            return -1;
-        }
-
-        /* Access the object as a DataKey */
-        DataKey myThat = (DataKey) pThat;
-
-        /* Compare the IDs */
-        iDiff = (int) (getId() - myThat.getId());
-        if (iDiff < 0) {
-            return -1;
-        }
-        if (iDiff > 0) {
-            return 1;
-        }
-        return 0;
+        /* Compare the underlying object */
+        return super.compareId(pThat);
     }
 
     /**
@@ -500,7 +485,7 @@ public class DataKey extends DataItem<DataKey> {
 
         /* Update to use the local copy of the ControlKeys */
         ControlKey myKey = getControlKey();
-        ControlKey myNewKey = myKeys.searchFor(myKey.getId());
+        ControlKey myNewKey = myKeys.findItemById(myKey.getId());
         setValueControlKey(myNewKey);
 
         /* Register the Key */
@@ -555,7 +540,7 @@ public class DataKey extends DataItem<DataKey> {
          * @param pData the DataSet for the list
          */
         protected DataKeyList(final DataSet<?> pData) {
-            super(DataKeyList.class, DataKey.class, ListStyle.CORE, false);
+            super(DataKeyList.class, DataKey.class, ListStyle.CORE);
             theData = pData;
         }
 
@@ -566,7 +551,7 @@ public class DataKey extends DataItem<DataKey> {
          */
         protected DataKeyList(final DataSet<?> pData,
                               final ListStyle pStyle) {
-            super(DataKeyList.class, DataKey.class, pStyle, false);
+            super(DataKeyList.class, DataKey.class, pStyle);
             theData = pData;
         }
 
@@ -637,7 +622,7 @@ public class DataKey extends DataItem<DataKey> {
         }
 
         @Override
-        public DataKey addNewItem(final DataItem<?> pItem) {
+        public DataKey addNewItem(final DataItem pItem) {
             DataKey myKey = new DataKey(this, (DataKey) pItem);
             add(myKey);
             return myKey;

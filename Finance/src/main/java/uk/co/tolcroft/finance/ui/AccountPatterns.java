@@ -23,6 +23,7 @@
 package uk.co.tolcroft.finance.ui;
 
 import java.awt.event.ActionEvent;
+import java.util.Iterator;
 
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
@@ -39,19 +40,16 @@ import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Money;
 import uk.co.tolcroft.finance.data.Account;
-import uk.co.tolcroft.finance.data.Account.AccountList;
 import uk.co.tolcroft.finance.data.Event;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.Frequency;
 import uk.co.tolcroft.finance.data.Frequency.FrequencyList;
 import uk.co.tolcroft.finance.data.Pattern;
 import uk.co.tolcroft.finance.data.Pattern.PatternList;
-import uk.co.tolcroft.finance.data.TransactionType.TransTypeList;
+import uk.co.tolcroft.finance.data.TransactionType;
 import uk.co.tolcroft.finance.ui.controls.ComboSelect;
 import uk.co.tolcroft.finance.views.Statement.StatementLine;
 import uk.co.tolcroft.finance.views.View;
-import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.ui.DataMouse;
 import uk.co.tolcroft.models.ui.DataTable;
@@ -92,19 +90,9 @@ public class AccountPatterns extends DataTable<Event> {
     private PatternList thePatterns = null;
 
     /**
-     * Account List.
-     */
-    private AccountList theAccounts = null;
-
-    /**
      * Frequency list.
      */
     private FrequencyList theFreqs = null;
-
-    /**
-     * Transaction type list.
-     */
-    private TransTypeList theTransTypes = null;
 
     /**
      * The Panel.
@@ -357,18 +345,11 @@ public class AccountPatterns extends DataTable<Event> {
      * Refresh views/controls after a load/update of underlying data.
      */
     public void refreshData() {
-        FinanceData myData;
-        Frequency myFreq;
-
-        DataListIterator<Frequency> myIterator;
-
         /* Access the data */
-        myData = theView.getData();
+        FinanceData myData = theView.getData();
 
         /* Access Frequencies, TransTypes and Accounts */
         theFreqs = myData.getFrequencys();
-        theTransTypes = myData.getTransTypes();
-        theAccounts = myData.getAccounts();
 
         /* Access the combo list from parent */
         theComboList = theParent.getComboList();
@@ -380,17 +361,19 @@ public class AccountPatterns extends DataTable<Event> {
         }
 
         /* Access the frequency iterator */
-        myIterator = theFreqs.listIterator();
+        Iterator<Frequency> myIterator = theFreqs.listIterator();
 
         /* Add the Frequency values to the frequencies box */
-        while ((myFreq = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            Frequency myFreq = myIterator.next();
+
             /* Ignore the frequency if it is not enabled */
             if (!myFreq.getEnabled()) {
                 continue;
             }
 
             /* Add the item to the list */
-            theFreqBox.addItem(myFreq.getName());
+            theFreqBox.addItem(myFreq);
         }
     }
 
@@ -694,10 +677,10 @@ public class AccountPatterns extends DataTable<Event> {
                     }
                     break;
                 case COLUMN_TRANTYP:
-                    o = (myPattern.getTransType() == null) ? null : myPattern.getTransType().getName();
+                    o = myPattern.getTransType();
                     break;
                 case COLUMN_PARTNER:
-                    o = (myPattern.getPartner() == null) ? null : myPattern.getPartner().getName();
+                    o = myPattern.getPartner();
                     break;
                 case COLUMN_CREDIT:
                     o = (myPattern.isCredit()) ? myPattern.getAmount() : null;
@@ -706,7 +689,7 @@ public class AccountPatterns extends DataTable<Event> {
                     o = (!myPattern.isCredit()) ? myPattern.getAmount() : null;
                     break;
                 case COLUMN_FREQ:
-                    o = (myPattern.getFrequency() == null) ? null : myPattern.getFrequency().getName();
+                    o = myPattern.getFrequency();
                     break;
                 default:
                     o = null;
@@ -749,18 +732,18 @@ public class AccountPatterns extends DataTable<Event> {
                         myPattern.setDescription((String) obj);
                         break;
                     case COLUMN_TRANTYP:
-                        myPattern.setTransType(theTransTypes.searchFor((String) obj));
+                        myPattern.setTransType((TransactionType) obj);
                         break;
                     case COLUMN_CREDIT:
                     case COLUMN_DEBIT:
                         myPattern.setAmount((Money) obj);
                         break;
                     case COLUMN_PARTNER:
-                        myPattern.setPartner(theAccounts.searchFor((String) obj));
+                        myPattern.setPartner((Account) obj);
                         break;
                     case COLUMN_FREQ:
                     default:
-                        myPattern.setFrequency(theFreqs.searchFor((String) obj));
+                        myPattern.setFrequency((Frequency) obj);
                         break;
                 }
 
@@ -862,7 +845,7 @@ public class AccountPatterns extends DataTable<Event> {
             }
 
             /* Loop through the selected rows */
-            for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
+            for (Event myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
@@ -919,7 +902,7 @@ public class AccountPatterns extends DataTable<Event> {
             myModel = theTable.getTableModel();
 
             /* Loop through the selected rows */
-            for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
+            for (Event myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;

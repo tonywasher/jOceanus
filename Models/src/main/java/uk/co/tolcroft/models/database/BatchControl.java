@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataState;
 
 /**
@@ -183,22 +182,20 @@ public class BatchControl {
          * Mark a update in the table as committed as committed.
          */
         private void commitBatch() {
-            DataListIterator<?> myIterator;
-            DataItem<?> myCurr;
-            DataItem<?> myBase;
-
             /* Access the iterator */
-            myIterator = theTable.getList().listIterator(true);
+            Iterator<?> myIterator = theTable.getList().iterator();
 
             /* Loop through the list */
-            while ((myCurr = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                DataItem myCurr = (DataItem) myIterator.next();
+
                 /* Ignore items that are not this type */
                 if (myCurr.getState() != theState) {
                     continue;
                 }
 
                 /* Access the underlying element */
-                myBase = myCurr.getBase();
+                DataItem myBase = myCurr.getBase();
 
                 /* If we are handling deletions */
                 if (theState == DataState.DELETED) {

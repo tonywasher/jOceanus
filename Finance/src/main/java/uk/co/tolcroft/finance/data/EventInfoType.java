@@ -224,7 +224,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
         }
 
         @Override
-        public EventInfoType addNewItem(final DataItem<?> pItem) {
+        public EventInfoType addNewItem(final DataItem pItem) {
             EventInfoType myType = new EventInfoType(this, (EventInfoType) pItem);
             add(myType);
             return myType;
@@ -260,7 +260,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
             }
 
             /* Check that this InfoType has not been previously added */
-            if (searchFor(pType) != null) {
+            if (findItemByName(pType) != null) {
                 throw new JDataException(ExceptionClass.DATA, myType, "Duplicate EventInfoType");
             }
 
@@ -331,7 +331,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
             }
 
             /* Add the InfoType to the list */
-            add(myType);
+            addAtEnd(myType);
 
             /* Validate the InfoType */
             myType.validate();

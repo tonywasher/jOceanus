@@ -34,6 +34,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 
 /**
  * Symmetric Key implementation.
@@ -76,7 +77,7 @@ public class SymmetricKey implements JDataContents {
         if (FIELD_IVLEN.equals(pField)) {
             return IVSIZE;
         }
-        return null;
+        return JDataFieldValue.UnknownField;
     }
 
     @Override

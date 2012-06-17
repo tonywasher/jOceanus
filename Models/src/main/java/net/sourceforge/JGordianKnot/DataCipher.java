@@ -36,6 +36,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 
 /**
  * Wrapper class for Cipher used to encryption data objects.
@@ -62,7 +63,7 @@ public class DataCipher implements JDataContents {
         if (FIELD_SYMKEY.equals(pField)) {
             return theSymKey;
         }
-        return null;
+        return JDataFieldValue.UnknownField;
     }
 
     @Override

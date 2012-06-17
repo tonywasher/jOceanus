@@ -29,6 +29,7 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Arrays;
+import java.util.Iterator;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -51,7 +52,6 @@ import uk.co.tolcroft.finance.data.AccountType.AccountTypeList;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.ui.controls.AccountSelect;
 import uk.co.tolcroft.finance.views.View;
-import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.data.StaticData;
@@ -863,13 +863,8 @@ public class MaintAccount implements StdPanel {
      * refreshData.
      */
     public void refreshData() {
-        FinanceData myData;
-        AccountType myType;
-
-        DataListIterator<AccountType> myTypeIterator;
-
         /* Access the data */
-        myData = theView.getData();
+        FinanceData myData = theView.getData();
 
         /* Access type */
         theAcTypList = myData.getAccountTypes();
@@ -888,17 +883,18 @@ public class MaintAccount implements StdPanel {
         }
 
         /* Create an account type iterator */
-        myTypeIterator = theAcTypList.listIterator();
+        Iterator<AccountType> myTypeIterator = theAcTypList.iterator();
 
         /* Add the AccountType values to the types box */
-        while ((myType = myTypeIterator.next()) != null) {
+        while (myTypeIterator.hasNext()) {
+            AccountType myType = myTypeIterator.next();
             /* Ignore the type if it is reserved or not enabled */
             if ((myType.isReserved()) || (!myType.getEnabled())) {
                 continue;
             }
 
             /* Add the item to the list */
-            theTypesBox.addItem(myType.getName());
+            theTypesBox.addItem(myType);
         }
 
         /* Note that we have finished refreshing data */
@@ -920,10 +916,6 @@ public class MaintAccount implements StdPanel {
      * refreshParents.
      */
     private void refreshParents() {
-        Account myAcct;
-        AccountType myType;
-        DataListIterator<Account> myActIterator;
-
         /* Note that we are refreshing data */
         refreshingData = true;
 
@@ -934,12 +926,14 @@ public class MaintAccount implements StdPanel {
         }
 
         /* Create an account iterator */
-        myActIterator = theAccounts.listIterator();
+        Iterator<Account> myActIterator = theAccounts.iterator();
 
         /* Add the Account values to the parents box */
-        while ((myAcct = myActIterator.next()) != null) {
+        while (myActIterator.hasNext()) {
+            Account myAcct = myActIterator.next();
+
             /* Access the type */
-            myType = myAcct.getActType();
+            AccountType myType = myAcct.getActType();
 
             /* Ignore the account if it is not an owner */
             if (!myType.isOwner()) {
@@ -1002,7 +996,7 @@ public class MaintAccount implements StdPanel {
             theActView = theAccounts.getEditList();
 
             /* Access the account */
-            theAccount = theActView.searchFor(pAccount.getName());
+            theAccount = theActView.findItemByName(pAccount.getName());
         }
 
         /* Set ViewList */
@@ -1104,11 +1098,12 @@ public class MaintAccount implements StdPanel {
                 }
 
                 /* Create an account iterator */
-                DataListIterator<Account> myActIterator = theAccounts.listIterator();
-                Account myAcct;
+                Iterator<Account> myActIterator = theAccounts.iterator();
 
                 /* Add the Account values to the parents box */
-                while ((myAcct = myActIterator.next()) != null) {
+                while (myActIterator.hasNext()) {
+                    Account myAcct = myActIterator.next();
+
                     /* Access the type */
                     myType = myAcct.getActType();
 
@@ -1282,7 +1277,6 @@ public class MaintAccount implements StdPanel {
     private final class AccountListener implements ActionListener, ItemListener, PropertyChangeListener {
         @Override
         public void itemStateChanged(final ItemEvent evt) {
-            String myName;
             Object o = evt.getSource();
 
             /* Ignore selection if refreshing data */
@@ -1298,8 +1292,8 @@ public class MaintAccount implements StdPanel {
                 /* If this event relates to the period box */
                 if (theTypesBox.equals(o)) {
                     /* Store the appropriate value */
-                    myName = (String) evt.getItem();
-                    theAccount.setActType(theAcTypList.searchFor(myName));
+                    AccountType myType = (AccountType) evt.getItem();
+                    theAccount.setActType(myType);
 
                     /* If the account is now a bond */
                     if (theAccount.isBond()) {

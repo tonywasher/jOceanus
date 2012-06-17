@@ -66,7 +66,7 @@ public class StoreDatabase<T extends DataSet<T>> extends WorkerThread<Void> {
     }
 
     @Override
-    public Void performTask() throws Exception {
+    public Void performTask() throws JDataException {
         /* Initialise the status window */
         theStatus.initTask("Storing to Database");
 

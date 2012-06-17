@@ -30,7 +30,7 @@ import uk.co.tolcroft.models.data.EncryptedItem;
  * Database table class for Encrypted Items. Each data type that uses encrypted data should extend this class.
  * @param <T> the data type
  */
-public abstract class TableEncrypted<T extends EncryptedItem<T>> extends DatabaseTable<T> {
+public abstract class TableEncrypted<T extends EncryptedItem & Comparable<T>> extends DatabaseTable<T> {
     /**
      * The table definition.
      */

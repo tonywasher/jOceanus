@@ -30,13 +30,13 @@ import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataElement;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 
 /**
  * Provides the implementation of a error buffer for a DataItem. Each element represents an error that relates
  * to a field.
- * @param <T> the item type
  */
-public class ValidationControl<T extends DataItem<T>> implements JDataContents {
+public class ValidationControl implements JDataContents {
     /**
      * Report fields.
      */
@@ -62,18 +62,18 @@ public class ValidationControl<T extends DataItem<T>> implements JDataContents {
         if (pField == FIELD_ERRORS) {
             return theErrors.iterator();
         }
-        return null;
+        return JDataFieldValue.UnknownField;
     }
 
     /**
      * The item to which this Validation Control belongs.
      */
-    private final T theItem;
+    private final DataItem theItem;
 
     /**
      * The list to which this Validation Control belongs.
      */
-    private final DataList<?, T> theList;
+    private final DataList<?, ?> theList;
 
     /**
      * The first error in the list.
@@ -84,7 +84,7 @@ public class ValidationControl<T extends DataItem<T>> implements JDataContents {
      * Constructor.
      * @param pItem the item to which this validation control belongs
      */
-    public ValidationControl(final T pItem) {
+    public ValidationControl(final DataItem pItem) {
         /* Store details */
         theItem = pItem;
         theList = theItem.getList();

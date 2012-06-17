@@ -23,6 +23,7 @@
 package uk.co.tolcroft.models.sheets;
 
 import java.util.Date;
+import java.util.Iterator;
 
 import net.sourceforge.JDataManager.DataConverter;
 import net.sourceforge.JDataManager.JDataException;
@@ -45,7 +46,6 @@ import org.apache.poi.ss.util.CellReference;
 
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.TaskControl;
 import uk.co.tolcroft.models.sheets.SheetWriter.CellStyleType;
 
@@ -54,7 +54,7 @@ import uk.co.tolcroft.models.sheets.SheetWriter.CellStyleType;
  * @author Tony Washer
  * @param <T> the data type
  */
-public abstract class SheetDataItem<T extends DataItem<T>> {
+public abstract class SheetDataItem<T extends DataItem & Comparable<T>> {
     /**
      * Version column.
      */
@@ -285,12 +285,6 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
      * @throws JDataException on error
      */
     protected boolean writeSpreadSheet() throws JDataException {
-        DataListIterator<T> myIterator;
-        T myCurr;
-        int myCount;
-        int myTotal;
-        int mySteps;
-
         /* Protect against exceptions */
         try {
             /* Declare the new stage */
@@ -302,10 +296,10 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
             theWorkSheet = theWorkBook.createSheet(theRangeName);
 
             /* Access the number of reporting steps */
-            mySteps = theTask.getReportingSteps();
+            int mySteps = theTask.getReportingSteps();
 
             /* Count the number of items */
-            myTotal = theList.size();
+            int myTotal = theList.size();
 
             /* Declare the number of steps */
             if (!theTask.setNumSteps(myTotal)) {
@@ -316,16 +310,18 @@ public abstract class SheetDataItem<T extends DataItem<T>> {
             theBaseRow = 0;
             theBaseCol = 0;
             theCurrRow = theBaseRow;
-            myCount = 0;
+            int myCount = 0;
 
             /* PreProcess the write */
             preProcessOnWrite();
 
             /* Access the iterator */
-            myIterator = theList.listIterator();
+            Iterator<T> myIterator = theList.iterator();
 
             /* Loop through the data items */
-            while ((myCurr = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                T myCurr = myIterator.next();
+
                 /* Create the new row */
                 newRow();
 

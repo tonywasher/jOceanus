@@ -56,7 +56,7 @@ import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
  * @author Tony Washer
  * @param <T> the data type.
  */
-public abstract class DataTable<T extends DataItem<T>> extends JTable implements StdPanel {
+public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTable implements StdPanel {
     /**
      * Serial Id.
      */
@@ -995,7 +995,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
          * @param pData the Render details
          */
         public void getRenderData(final RenderData pData) {
-            DataItem<?> myRow;
+            DataItem myRow;
             int iRow;
             int myIndex;
             JDataField[] iFields;
@@ -1165,7 +1165,7 @@ public abstract class DataTable<T extends DataItem<T>> extends JTable implements
          * @param pData the Render details
          */
         public void getRenderData(final RenderData pData) {
-            DataItem<?> myRow;
+            DataItem myRow;
             int iRow;
             int myIndex;
             JDataField iField;

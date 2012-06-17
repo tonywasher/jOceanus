@@ -41,7 +41,8 @@ import uk.co.tolcroft.models.data.EditState;
  * @author Tony Washer
  * @param <T> the data type.
  */
-public abstract class DataMouse<T extends DataItem<T>> extends MouseAdapter implements ActionListener {
+public abstract class DataMouse<T extends DataItem & Comparable<T>> extends MouseAdapter implements
+        ActionListener {
     /**
      * The underlying data table.
      */

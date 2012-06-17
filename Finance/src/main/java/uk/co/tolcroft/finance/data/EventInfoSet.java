@@ -252,7 +252,7 @@ public class EventInfoSet implements JDataContents {
      */
     protected EventValue getNewValue(final EventInfoClass pClass) throws JDataException {
         /* Access the EventInfoType */
-        EventInfoType myType = theTypes.searchFor(pClass);
+        EventInfoType myType = theTypes.findItemByClass(pClass);
 
         /* Create the new value and add to the list */
         EventValue myValue = theValueList.addNewItem(myType, theEvent);
@@ -270,7 +270,7 @@ public class EventInfoSet implements JDataContents {
      */
     protected EventData getNewData(final EventInfoClass pClass) throws JDataException {
         /* Access the EventInfoType */
-        EventInfoType myType = theTypes.searchFor(pClass);
+        EventInfoType myType = theTypes.findItemByClass(pClass);
 
         /* Create the new data and add to the list */
         EventData myData = theDataList.addNewItem(myType, theEvent);

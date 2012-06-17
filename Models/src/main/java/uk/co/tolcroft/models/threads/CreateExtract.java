@@ -70,7 +70,7 @@ public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
     }
 
     @Override
-    public Void performTask() throws Exception {
+    public Void performTask() throws JDataException {
         T myData = null;
         boolean doDelete = false;
         File myFile = null;
@@ -128,7 +128,7 @@ public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
             }
 
             /* Catch any exceptions */
-        } catch (Exception e) {
+        } catch (JDataException e) {
             /* Delete the file */
             if (doDelete) {
                 myFile.delete();

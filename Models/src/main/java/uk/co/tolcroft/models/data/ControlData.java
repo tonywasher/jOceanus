@@ -41,7 +41,7 @@ import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
  * to the database.
  * @author Tony Washer
  */
-public class ControlData extends DataItem<ControlData> {
+public class ControlData extends DataItem implements Comparable<ControlData> {
     /**
      * Object name.
      */
@@ -199,7 +199,9 @@ public class ControlData extends DataItem<ControlData> {
             setValueControlKey(uControlId);
 
             /* Look up the ControlKey */
-            ControlKey myControl = pList.theData.getControlKeys().searchFor(uControlId);
+            DataSet<?> myData = pList.theData;
+            ControlKeyList myKeys = myData.getControlKeys();
+            ControlKey myControl = myKeys.findItemById(uControlId);
             if (myControl == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid ControlKey Id");
             }
@@ -244,9 +246,7 @@ public class ControlData extends DataItem<ControlData> {
     }
 
     @Override
-    public int compareTo(final Object pThat) {
-        int iDiff;
-
+    public int compareTo(final ControlData pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -255,32 +255,14 @@ public class ControlData extends DataItem<ControlData> {
             return -1;
         }
 
-        /* Make sure that the object is a ControlData */
-        if (pThat.getClass() != this.getClass()) {
-            return -1;
-        }
-
-        /* Access the object as a ControlData */
-        ControlData myThat = (ControlData) pThat;
-
         /* Compare the Versions */
-        iDiff = (int) (getDataVersion() - myThat.getDataVersion());
-        if (iDiff < 0) {
-            return -1;
-        }
-        if (iDiff > 0) {
-            return 1;
+        int iDiff = getDataVersion() - pThat.getDataVersion();
+        if (iDiff != 0) {
+            return iDiff;
         }
 
-        /* Compare the IDs */
-        iDiff = (int) (getId() - myThat.getId());
-        if (iDiff < 0) {
-            return -1;
-        }
-        if (iDiff > 0) {
-            return 1;
-        }
-        return 0;
+        /* Compare the underlying id */
+        return super.compareId(pThat);
     }
 
     /**
@@ -292,7 +274,7 @@ public class ControlData extends DataItem<ControlData> {
 
         /* Update to use the local copy of the ControlKeys */
         ControlKey myKey = getControlKey();
-        ControlKey myNewKey = myKeys.searchFor(myKey.getId());
+        ControlKey myNewKey = myKeys.findItemById(myKey.getId());
         setValueControlKey(myNewKey);
     }
 
@@ -361,7 +343,7 @@ public class ControlData extends DataItem<ControlData> {
          * @param pData the DataSet for the list
          */
         protected ControlDataList(final DataSet<?> pData) {
-            super(ControlDataList.class, ControlData.class, ListStyle.CORE, false);
+            super(ControlDataList.class, ControlData.class, ListStyle.CORE);
             theData = pData;
         }
 
@@ -372,7 +354,7 @@ public class ControlData extends DataItem<ControlData> {
          */
         protected ControlDataList(final DataSet<?> pData,
                                   final ListStyle pStyle) {
-            super(ControlDataList.class, ControlData.class, pStyle, false);
+            super(ControlDataList.class, ControlData.class, pStyle);
             theData = pData;
         }
 
@@ -443,7 +425,7 @@ public class ControlData extends DataItem<ControlData> {
         }
 
         @Override
-        public ControlData addNewItem(final DataItem<?> pItem) {
+        public ControlData addNewItem(final DataItem pItem) {
             ControlData myControl = new ControlData(this, (ControlData) pItem);
             add(myControl);
             theControl = myControl;

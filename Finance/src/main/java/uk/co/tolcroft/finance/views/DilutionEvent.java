@@ -23,19 +23,21 @@
 package uk.co.tolcroft.finance.views;
 
 import java.util.Date;
+import java.util.Iterator;
 
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.ReportItem;
-import net.sourceforge.JDataManager.ReportList;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.DilutedPrice;
 import net.sourceforge.JDecimal.Dilution;
 import net.sourceforge.JDecimal.Price;
-import net.sourceforge.JSortedList.SortedListIterator;
+import net.sourceforge.JSortedList.OrderedIdItem;
+import net.sourceforge.JSortedList.OrderedIdList;
 import uk.co.tolcroft.finance.data.Account;
 import uk.co.tolcroft.finance.data.Account.AccountList;
 import uk.co.tolcroft.finance.data.AccountPrice.AccountPriceList;
@@ -47,16 +49,20 @@ import uk.co.tolcroft.finance.data.TransactionType;
  * Dilution Events relating to stock dilution.
  * @author Tony Washer
  */
-public final class DilutionEvent extends ReportItem<DilutionEvent> {
+public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContents, Comparable<DilutionEvent> {
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(DilutionEvent.class.getSimpleName(),
-            ReportItem.theLocalFields);
+    private static final JDataFields FIELD_DEFS = new JDataFields(DilutionEvent.class.getSimpleName());
 
     @Override
-    public JDataFields declareFields() {
+    public JDataFields getDataFields() {
         return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject() {
+        return getDataFields().getName();
     }
 
     /**
@@ -93,7 +99,7 @@ public final class DilutionEvent extends ReportItem<DilutionEvent> {
         if (FIELD_EVENT.equals(pField)) {
             return theEvent;
         }
-        return super.getFieldValue(pField);
+        return JDataFieldValue.UnknownField;
     }
 
     /**
@@ -148,14 +154,13 @@ public final class DilutionEvent extends ReportItem<DilutionEvent> {
         return theEvent;
     }
 
-    /**
-     * Compare this DilutionEvent to another to establish sort order.
-     * @param pThat The Event to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the
-     *         sort order
-     */
     @Override
-    public int compareTo(final Object pThat) {
+    public Integer getOrderedId() {
+        return getEvent().getId();
+    }
+
+    @Override
+    public int compareTo(final DilutionEvent pThat) {
         int iDiff;
 
         /* Handle the trivial cases */
@@ -166,45 +171,21 @@ public final class DilutionEvent extends ReportItem<DilutionEvent> {
             return -1;
         }
 
-        /* Make sure that the object is a Dilution Event */
-        if (pThat.getClass() != this.getClass()) {
-            return -1;
-        }
-
-        /* Access the object as a Dilution Event */
-        DilutionEvent myThat = (DilutionEvent) pThat;
-
         /* If the dates differ */
-        if (this.getDate() != myThat.getDate()) {
-            /* Handle null dates */
-            if (this.getDate() == null) {
-                return 1;
-            }
-            if (myThat.getDate() == null) {
-                return -1;
-            }
-
-            /* Compare the dates */
-            iDiff = getDate().compareTo(myThat.getDate());
-            if (iDiff != 0) {
-                return iDiff;
-            }
+        iDiff = Difference.compareObject(getDate(), pThat.getDate());
+        if (iDiff != 0) {
+            return iDiff;
         }
 
         /* Compare the account */
-        return getAccount().compareTo(myThat.getAccount());
+        return getAccount().compareTo(pThat.getAccount());
     }
 
     /**
      * Create a dilution event from an event.
-     * @param pList the list
      * @param pEvent the underlying event
      */
-    private DilutionEvent(final DilutionEventList pList,
-                          final Event pEvent) {
-        /* Call super constructor */
-        super(pList);
-
+    private DilutionEvent(final Event pEvent) {
         /* Local variables */
         Account myAccount;
         TransactionType myType;
@@ -234,18 +215,13 @@ public final class DilutionEvent extends ReportItem<DilutionEvent> {
 
     /**
      * Create a dilution event from details.
-     * @param pList the list
      * @param pAccount the account
      * @param pDate the Date
      * @param pDilution the dilution
      */
-    private DilutionEvent(final DilutionEventList pList,
-                          final Account pAccount,
+    private DilutionEvent(final Account pAccount,
                           final DateDay pDate,
                           final Dilution pDilution) {
-        /* Call super constructor */
-        super(pList);
-
         /* Store the values */
         theAccount = pAccount;
         theDate = pDate;
@@ -255,16 +231,34 @@ public final class DilutionEvent extends ReportItem<DilutionEvent> {
     /**
      * List of DilutionEvents.
      */
-    public static class DilutionEventList extends ReportList<DilutionEvent> {
+    public static class DilutionEventList extends OrderedIdList<Integer, DilutionEvent> implements
+            JDataContents {
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(
-                DilutionEventList.class.getSimpleName(), ReportList.theLocalFields);
+        private static final JDataFields FIELD_DEFS = new JDataFields(DilutionEventList.class.getSimpleName());
 
         @Override
-        public JDataFields declareFields() {
+        public JDataFields getDataFields() {
             return FIELD_DEFS;
+        }
+
+        @Override
+        public String formatObject() {
+            return getDataFields().getName();
+        }
+
+        /**
+         * Size Field Id.
+         */
+        public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_SIZE.equals(pField)) {
+                return size();
+            }
+            return JDataFieldValue.UnknownField;
         }
 
         /**
@@ -289,7 +283,7 @@ public final class DilutionEvent extends ReportItem<DilutionEvent> {
             DilutionEvent myDilution;
 
             /* Create the dilution event */
-            myDilution = new DilutionEvent(this, pEvent);
+            myDilution = new DilutionEvent(pEvent);
 
             /* Add it to the list */
             add(myDilution);
@@ -305,32 +299,26 @@ public final class DilutionEvent extends ReportItem<DilutionEvent> {
         public void addDilution(final String pAccount,
                                 final Date pDate,
                                 final String pDilution) throws JDataException {
-            DilutionEvent myEvent;
-            Account myAccount;
-            DateDay myDate;
-            Dilution myDilution;
-            Account.AccountList myAccounts;
-
             /* Access account list */
-            myAccounts = theData.getAccounts();
+            AccountList myAccounts = theData.getAccounts();
 
             /* Search for the account */
-            myAccount = myAccounts.searchFor(pAccount);
+            Account myAccount = myAccounts.findItemByName(pAccount);
             if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, "Invalid Dilution account [" + pAccount + "]");
             }
 
             /* Create the date */
-            myDate = new DateDay(pDate);
+            DateDay myDate = new DateDay(pDate);
 
             /* Record the dilution */
-            myDilution = Dilution.parseString(pDilution);
+            Dilution myDilution = Dilution.parseString(pDilution);
             if (myDilution == null) {
                 throw new JDataException(ExceptionClass.DATA, "Invalid Dilution: " + pDilution);
             }
 
             /* Create the dilution event */
-            myEvent = new DilutionEvent(this, myAccount, myDate, myDilution);
+            DilutionEvent myEvent = new DilutionEvent(myAccount, myDate, myDilution);
 
             /* Add it to the list */
             add(myEvent);
@@ -342,25 +330,22 @@ public final class DilutionEvent extends ReportItem<DilutionEvent> {
          * @return <code>true</code> if the account has diluted prices, <code>false</code> otherwise
          */
         public boolean hasDilution(final Account pAccount) {
-            SortedListIterator<DilutionEvent> myIterator;
-            DilutionEvent myEvent;
-            boolean myResult = false;
-
             /* Create the iterator */
-            myIterator = listIterator();
+            Iterator<DilutionEvent> myIterator = listIterator();
 
             /* Loop through the items */
-            while ((myEvent = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                DilutionEvent myEvent = myIterator.next();
+
                 /* If the event is for this account */
                 if (!Difference.isEqual(pAccount, myEvent.getAccount())) {
                     /* Set result and break loop */
-                    myResult = true;
-                    break;
+                    return true;
                 }
             }
 
-            /* Return to caller */
-            return myResult;
+            /* Return no dilution */
+            return false;
         }
 
         /**
@@ -371,20 +356,18 @@ public final class DilutionEvent extends ReportItem<DilutionEvent> {
          */
         public Dilution getDilutionFactor(final Account pAccount,
                                           final DateDay pDate) {
-            SortedListIterator<DilutionEvent> myIterator;
-            DilutionEvent myEvent;
-            Dilution myDilution = new Dilution(Dilution.MAX_VALUE);
-
             /* No factor if the account has no dilutions */
             if (!hasDilution(pAccount)) {
                 return null;
             }
 
             /* Create the iterator */
-            myIterator = listIterator();
+            Iterator<DilutionEvent> myIterator = listIterator();
+            Dilution myDilution = new Dilution(Dilution.MAX_VALUE);
 
             /* Loop through the items */
-            while ((myEvent = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                DilutionEvent myEvent = myIterator.next();
                 /* If the event is for this account, and if the dilution date is later */
                 if ((Difference.isEqual(pAccount, myEvent.getAccount()))
                         && (pDate.compareTo(myEvent.getDate()) < 0)) {
@@ -412,32 +395,25 @@ public final class DilutionEvent extends ReportItem<DilutionEvent> {
         public void addPrice(final String pAccount,
                              final Date pDate,
                              final String pPrice) throws JDataException {
-            Account myAccount;
-            AccountList myAccounts;
-            AccountPriceList myPrices;
-            DateDay myDate;
-            Price myPrice;
-            DilutedPrice myDilutedPrice;
-            Dilution myDilution;
-
             /* Obtain the prices and accounts */
-            myAccounts = theData.getAccounts();
-            myPrices = theData.getPrices();
+            AccountList myAccounts = theData.getAccounts();
+            AccountPriceList myPrices = theData.getPrices();
 
             /* Search for the account */
-            myAccount = myAccounts.searchFor(pAccount);
+            Account myAccount = myAccounts.findItemByName(pAccount);
             if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, "Invalid Price account [" + pAccount + "]");
             }
 
             /* Create the date */
-            myDate = new DateDay(pDate);
+            DateDay myDate = new DateDay(pDate);
+            Price myPrice;
 
             /* If the account has diluted prices for this date */
-            myDilution = getDilutionFactor(myAccount, myDate);
+            Dilution myDilution = getDilutionFactor(myAccount, myDate);
             if (myDilution != null) {
                 /* Obtain the diluted price */
-                myDilutedPrice = DilutedPrice.parseString(pPrice);
+                DilutedPrice myDilutedPrice = DilutedPrice.parseString(pPrice);
                 if (myDilutedPrice == null) {
                     throw new JDataException(ExceptionClass.DATA, "Invalid DilutedPrice: " + pPrice);
                 }

@@ -519,7 +519,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
          * @return the newly added item
          */
         @Override
-        public TransactionType addNewItem(final DataItem<?> pItem) {
+        public TransactionType addNewItem(final DataItem pItem) {
             TransactionType myType = new TransactionType(this, (TransactionType) pItem);
             add(myType);
             return myType;
@@ -559,7 +559,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
             }
 
             /* Check that this TransactionType has not been previously added */
-            if (searchFor(pTransType) != null) {
+            if (findItemByName(pTransType) != null) {
                 throw new JDataException(ExceptionClass.DATA, myTransType, "Duplicate Transaction Type");
             }
 
@@ -630,7 +630,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
             }
 
             /* Add the Transaction Type to the list */
-            add(myTransType);
+            addAtEnd(myTransType);
 
             /* Validate the TransType */
             myTransType.validate();

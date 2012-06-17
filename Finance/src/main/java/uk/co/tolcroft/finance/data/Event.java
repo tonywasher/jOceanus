@@ -23,6 +23,7 @@
 package uk.co.tolcroft.finance.data;
 
 import java.util.Date;
+import java.util.Iterator;
 
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
@@ -30,6 +31,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
@@ -59,7 +61,7 @@ import uk.co.tolcroft.models.data.EncryptedItem;
  * Event data type.
  * @author Tony Washer
  */
-public class Event extends EncryptedItem<Event> {
+public class Event extends EncryptedItem implements Comparable<Event> {
     /**
      * The name of the object.
      */
@@ -143,7 +145,7 @@ public class Event extends EncryptedItem<Event> {
     @Override
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_INFOSET.equals(pField)) {
-            return requiredInfoSet() ? theInfoSet : JDataObject.FIELD_SKIP;
+            return requiredInfoSet() ? theInfoSet : JDataFieldValue.SkipField;
         }
         return super.getFieldValue(pField);
     }
@@ -878,21 +880,21 @@ public class Event extends EncryptedItem<Event> {
             setValueDate(new DateDay(pDate));
 
             /* Look up the Debit Account */
-            myAccount = myAccounts.searchFor(uDebit);
+            myAccount = myAccounts.findItemById(uDebit);
             if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Debit Account Id");
             }
             setValueDebit(myAccount);
 
             /* Look up the Debit Account */
-            myAccount = myAccounts.searchFor(uCredit);
+            myAccount = myAccounts.findItemById(uCredit);
             if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Credit Account Id");
             }
             setValueCredit(myAccount);
 
             /* Look up the Transaction Type */
-            myTransType = myData.getTransTypes().searchFor(uTransType);
+            myTransType = myData.getTransTypes().findItemById(uTransType);
             if (myTransType == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Transaction Type Id");
             }
@@ -1030,9 +1032,7 @@ public class Event extends EncryptedItem<Event> {
      *         sort order
      */
     @Override
-    public int compareTo(final Object pThat) {
-        int iDiff;
-
+    public int compareTo(final Event pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -1041,77 +1041,26 @@ public class Event extends EncryptedItem<Event> {
             return -1;
         }
 
-        /* Make sure that the object is an Event */
-        if (pThat.getClass() != this.getClass()) {
-            return -1;
-        }
-
-        /* Access the object as an Event */
-        Event myThat = (Event) pThat;
-
         /* If the dates differ */
-        if (this.getDate() != myThat.getDate()) {
-            /* Handle null dates */
-            if (this.getDate() == null) {
-                return 1;
-            }
-            if (myThat.getDate() == null) {
-                return -1;
-            }
-
-            /* Compare the dates */
-            iDiff = getDate().compareTo(myThat.getDate());
-            if (iDiff != 0) {
-                return iDiff;
-            }
+        int iDiff = Difference.compareObject(getDate(), pThat.getDate());
+        if (iDiff != 0) {
+            return iDiff;
         }
 
         /* If the transaction types differ */
-        if (this.getTransType() != myThat.getTransType()) {
-            /* Handle nulls */
-            if (this.getTransType() == null) {
-                return 1;
-            }
-            if (myThat.getTransType() == null) {
-                return -1;
-            }
-
-            /* Compare transaction types */
-            iDiff = getTransType().compareTo(myThat.getTransType());
-            if (iDiff != 0) {
-                return iDiff;
-            }
+        iDiff = Difference.compareObject(getTransType(), pThat.getTransType());
+        if (iDiff != 0) {
+            return iDiff;
         }
 
         /* If the descriptions differ */
-        if (this.getDesc() != myThat.getDesc()) {
-            /* Handle null descriptions */
-            if (this.getDesc() == null) {
-                return 1;
-            }
-            if (myThat.getDesc() == null) {
-                return -1;
-            }
-
-            /* Compare the descriptions */
-            iDiff = getDesc().compareTo(myThat.getDesc());
-            if (iDiff < 0) {
-                return -1;
-            }
-            if (iDiff > 0) {
-                return 1;
-            }
+        iDiff = Difference.compareObject(getDesc(), pThat.getDesc());
+        if (iDiff != 0) {
+            return iDiff;
         }
 
-        /* Compare ids */
-        iDiff = (int) (getId() - myThat.getId());
-        if (iDiff < 0) {
-            return -1;
-        }
-        if (iDiff > 0) {
-            return 1;
-        }
-        return 0;
+        /* Compare the underlying id */
+        return super.compareId(pThat);
     }
 
     /**
@@ -1128,17 +1077,17 @@ public class Event extends EncryptedItem<Event> {
 
         /* Update credit to use the local copy of the Accounts */
         Account myAct = getCredit();
-        Account myNewAct = myAccounts.searchFor(myAct.getId());
+        Account myNewAct = myAccounts.findItemById(myAct.getId());
         setValueCredit(myNewAct);
 
         /* Update debit to use the local copy of the Accounts */
         myAct = getDebit();
-        myNewAct = myAccounts.searchFor(myAct.getId());
+        myNewAct = myAccounts.findItemById(myAct.getId());
         setValueDebit(myNewAct);
 
         /* Update transtype to use the local copy */
         TransactionType myTran = getTransType();
-        TransactionType myNewTran = myTranTypes.searchFor(myTran.getId());
+        TransactionType myNewTran = myTranTypes.findItemById(myTran.getId());
         setValueTransType(myNewTran);
     }
 
@@ -1610,9 +1559,9 @@ public class Event extends EncryptedItem<Event> {
         boolean myResult = false;
 
         /* Check credit and debit accounts */
-        if (getCredit().compareTo(pAccount) == 0) {
+        if (getCredit().equals(pAccount)) {
             myResult = true;
-        } else if (getDebit().compareTo(pAccount) == 0) {
+        } else if (getDebit().equals(pAccount)) {
             myResult = true;
         }
 
@@ -1763,7 +1712,7 @@ public class Event extends EncryptedItem<Event> {
         }
 
         /* Access the relevant tax year */
-        myTax = myList.searchFor(getDate());
+        myTax = myList.findTaxYearForDate(getDate());
 
         /* Determine the tax credit rate */
         if (getTransType().isInterest()) {
@@ -1870,7 +1819,7 @@ public class Event extends EncryptedItem<Event> {
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pItem) {
+    public boolean applyChanges(final DataItem pItem) {
         boolean bChanged = false;
         if (pItem instanceof Event) {
             Event myEvent = (Event) pItem;
@@ -2116,21 +2065,15 @@ public class Event extends EncryptedItem<Event> {
 
             /* Make this list the correct style */
             myList.setStyle(ListStyle.EDIT);
-
-            /* local variable */
-            DataListIterator<Event> myIterator;
-            Event myCurr;
-            Event myEvent;
-            int myResult;
-
-            /* Record range and initialise the list */
             myList.theRange = pRange;
 
             /* Loop through the Events extracting relevant elements */
-            myIterator = listIterator(true);
-            while ((myCurr = myIterator.next()) != null) {
+            Iterator<Event> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                Event myCurr = myIterator.next();
+
                 /* Check the range */
-                myResult = pRange.compareTo(myCurr.getDate());
+                int myResult = pRange.compareTo(myCurr.getDate());
 
                 /* Handle out of range */
                 if (myResult == 1) {
@@ -2140,8 +2083,8 @@ public class Event extends EncryptedItem<Event> {
                 }
 
                 /* Build the new linked event and add it to the extract */
-                myEvent = new Event(myList, myCurr);
-                myList.add(myEvent);
+                Event myEvent = new Event(myList, myCurr);
+                myList.addAtEnd(myEvent);
             }
 
             /* Return the List */
@@ -2160,32 +2103,22 @@ public class Event extends EncryptedItem<Event> {
 
             /* Make this list the correct style */
             myList.setStyle(ListStyle.EDIT);
-
-            /* Local variables */
-            DataListIterator<Event> myIterator;
-            PatternList myPatterns;
-            Event myCurr;
-            Pattern myPattern;
-            Event myEvent;
-            DateDay myDate;
-
-            /* Record range and initialise the list */
             myList.theRange = pTaxYear.getRange();
 
             /* Access the underlying data */
-            myPatterns = getData().getPatterns();
-            myIterator = myPatterns.listIterator();
+            PatternList myPatterns = getData().getPatterns();
+            Iterator<Event> myIterator = myPatterns.iterator();
+            Event myEvent;
 
             /* Loop through the Patterns */
-            while ((myCurr = myIterator.next()) != null) {
-                /* Access as pattern */
-                myPattern = (Pattern) myCurr;
+            while (myIterator.hasNext()) {
+                Pattern myCurr = (Pattern) myIterator.next();
 
                 /* Access a copy of the base date */
-                myDate = new DateDay(myCurr.getDate());
+                DateDay myDate = new DateDay(myCurr.getDate());
 
                 /* Loop while we have an event to add */
-                while ((myEvent = myPattern.nextEvent(myList, pTaxYear, myDate)) != null) {
+                while ((myEvent = myCurr.nextEvent(myList, pTaxYear, myDate)) != null) {
                     /* Add it to the extract */
                     myList.add(myEvent);
                 }
@@ -2200,17 +2133,15 @@ public class Event extends EncryptedItem<Event> {
          */
         @Override
         public void validate() {
-            DataListIterator<Event> myIterator;
-            Event myCurr;
-
             /* Clear the errors */
             clearErrors();
 
             /* Access the underlying data */
-            myIterator = listIterator();
+            Iterator<Event> myIterator = listIterator();
 
             /* Loop through the lines */
-            while ((myCurr = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                Event myCurr = myIterator.next();
                 /* Validate it */
                 myCurr.validate();
             }
@@ -2222,7 +2153,7 @@ public class Event extends EncryptedItem<Event> {
          * @return the newly added item
          */
         @Override
-        public Event addNewItem(final DataItem<?> pItem) {
+        public Event addNewItem(final DataItem pItem) {
             if (pItem instanceof Event) {
                 Event myEvent = new Event(this, (Event) pItem);
                 add(myEvent);
@@ -2283,7 +2214,7 @@ public class Event extends EncryptedItem<Event> {
             AccountList myAccounts = myData.getAccounts();
 
             /* Look up the Transaction Type */
-            TransactionType myTransType = myData.getTransTypes().searchFor(pTransType);
+            TransactionType myTransType = myData.getTransTypes().findItemByName(pTransType);
             if (myTransType == null) {
                 throw new JDataException(ExceptionClass.DATA, "Event on ["
                         + JDataObject.formatField(new DateDay(pDate)) + "] has invalid Transact Type ["
@@ -2291,7 +2222,7 @@ public class Event extends EncryptedItem<Event> {
             }
 
             /* Look up the Credit Account */
-            Account myCredit = myAccounts.searchFor(pCredit);
+            Account myCredit = myAccounts.findItemByName(pCredit);
             if (myCredit == null) {
                 throw new JDataException(ExceptionClass.DATA, "Event on ["
                         + JDataObject.formatField(new DateDay(pDate)) + "] has invalid Credit account ["
@@ -2299,7 +2230,7 @@ public class Event extends EncryptedItem<Event> {
             }
 
             /* Look up the Debit Account */
-            Account myDebit = myAccounts.searchFor(pDebit);
+            Account myDebit = myAccounts.findItemByName(pDebit);
             if (myDebit == null) {
                 throw new JDataException(ExceptionClass.DATA, "Event on ["
                         + JDataObject.formatField(new DateDay(pDate)) + "] has invalid Debit account ["
@@ -2368,7 +2299,7 @@ public class Event extends EncryptedItem<Event> {
             }
 
             /* Add the Event to the list */
-            add(myEvent);
+            addAtEnd(myEvent);
         }
 
         @Override

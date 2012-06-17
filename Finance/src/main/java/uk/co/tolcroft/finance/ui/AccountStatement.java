@@ -45,12 +45,9 @@ import net.sourceforge.JDecimal.Dilution;
 import net.sourceforge.JDecimal.Money;
 import net.sourceforge.JDecimal.Units;
 import uk.co.tolcroft.finance.data.Account;
-import uk.co.tolcroft.finance.data.Account.AccountList;
 import uk.co.tolcroft.finance.data.AccountType;
 import uk.co.tolcroft.finance.data.Event;
-import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.TransactionType;
-import uk.co.tolcroft.finance.data.TransactionType.TransTypeList;
 import uk.co.tolcroft.finance.ui.controls.ComboSelect;
 import uk.co.tolcroft.finance.ui.controls.StatementSelect;
 import uk.co.tolcroft.finance.ui.controls.StatementSelect.StatementType;
@@ -58,7 +55,6 @@ import uk.co.tolcroft.finance.views.Statement;
 import uk.co.tolcroft.finance.views.Statement.StatementLine;
 import uk.co.tolcroft.finance.views.Statement.StatementLines;
 import uk.co.tolcroft.finance.views.View;
-import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.ui.DataMouse;
 import uk.co.tolcroft.models.ui.DataTable;
@@ -116,16 +112,6 @@ public class AccountStatement extends DataTable<Event> {
      * Statement Lines.
      */
     private StatementLines theLines = null;
-
-    /**
-     * Account List.
-     */
-    private AccountList theAccounts = null;
-
-    /**
-     * TransactionType list.
-     */
-    private TransTypeList theTransTypes = null;
 
     /**
      * The panel.
@@ -547,15 +533,6 @@ public class AccountStatement extends DataTable<Event> {
      * Refresh views/controls after a load/update of underlying data.
      */
     public void refreshData() {
-        FinanceData myData;
-
-        /* Access the data */
-        myData = theView.getData();
-
-        /* Access TransTypes and Accounts */
-        theTransTypes = myData.getTransTypes();
-        theAccounts = myData.getAccounts();
-
         /* Access the combo list from parent */
         theComboList = theParent.getComboList();
 
@@ -913,10 +890,10 @@ public class AccountStatement extends DataTable<Event> {
                     o = myLine.getDate();
                     break;
                 case COLUMN_TRANTYP:
-                    o = (myLine.getTransType() == null) ? null : myLine.getTransType().getName();
+                    o = myLine.getTransType();
                     break;
                 case COLUMN_PARTNER:
-                    o = (myLine.getPartner() == null) ? null : myLine.getPartner().getName();
+                    o = myLine.getPartner();
                     break;
                 case COLUMN_BALANCE:
                     if ((myNext != null) && (Difference.isEqual(myNext.getDate(), myLine.getDate()))) {
@@ -999,7 +976,7 @@ public class AccountStatement extends DataTable<Event> {
                         myLine.setDescription((String) obj);
                         break;
                     case COLUMN_TRANTYP:
-                        myLine.setTransType(theTransTypes.searchFor((String) obj));
+                        myLine.setTransType((TransactionType) obj);
                         /* If the need for a tax credit has changed */
                         if (needsTaxCredit != Event.needsTaxCredit(myLine.getTransType(),
                                                                    myLine.isCredit()
@@ -1025,7 +1002,7 @@ public class AccountStatement extends DataTable<Event> {
                         }
                         break;
                     case COLUMN_PARTNER:
-                        myLine.setPartner(theAccounts.searchFor((String) obj));
+                        myLine.setPartner((Account) obj);
                         break;
                     case COLUMN_DILUTION:
                         myLine.setDilution((Dilution) obj);
@@ -1208,7 +1185,7 @@ public class AccountStatement extends DataTable<Event> {
             }
 
             /* Loop through the selected rows */
-            for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
+            for (Event myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
@@ -1303,7 +1280,7 @@ public class AccountStatement extends DataTable<Event> {
             }
 
             /* Loop through the selected rows */
-            for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
+            for (Event myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
@@ -1475,7 +1452,7 @@ public class AccountStatement extends DataTable<Event> {
             myModel = theTable.getTableModel();
 
             /* Loop through the selected rows */
-            for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
+            for (Event myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
@@ -1596,7 +1573,7 @@ public class AccountStatement extends DataTable<Event> {
             int row;
 
             /* Loop through the selected rows */
-            for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
+            for (Event myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
@@ -1639,7 +1616,7 @@ public class AccountStatement extends DataTable<Event> {
             StatementLine myLine;
 
             /* Loop through the selected rows */
-            for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
+            for (Event myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
@@ -1671,7 +1648,7 @@ public class AccountStatement extends DataTable<Event> {
 
             /* Access the correct account */
             if (myName != null) {
-                myAccount = theView.getData().getAccounts().searchFor(myName);
+                myAccount = theView.getData().getAccounts().findItemByName(myName);
             }
 
             /* Handle commands */

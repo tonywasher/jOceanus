@@ -263,7 +263,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
          * @return the newly added item
          */
         @Override
-        public TaxRegime addNewItem(final DataItem<?> pItem) {
+        public TaxRegime addNewItem(final DataItem pItem) {
             TaxRegime myRegime = new TaxRegime(this, (TaxRegime) pItem);
             add(myRegime);
             return myRegime;
@@ -303,7 +303,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
             }
 
             /* Check that this TaxRegime has not been previously added */
-            if (searchFor(pTaxRegime) != null) {
+            if (findItemByName(pTaxRegime) != null) {
                 throw new JDataException(ExceptionClass.DATA, myTaxRegime, "Duplicate TaxRegime");
             }
 
@@ -374,7 +374,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
             }
 
             /* Add the TaxRegime to the list */
-            add(myTaxReg);
+            addAtEnd(myTaxReg);
 
             /* Validate the TaxRegime */
             myTaxReg.validate();

@@ -30,6 +30,7 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JGordianKnot.PasswordHash;
 import net.sourceforge.JGordianKnot.SecureManager;
 import uk.co.tolcroft.models.data.ControlData.ControlDataList;
@@ -100,7 +101,7 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
         if (FIELD_CONTROLDATA.equals(pField)) {
             return theDataKeys;
         }
-        return null;
+        return JDataFieldValue.UnknownField;
     }
 
     @Override
@@ -301,7 +302,7 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
      * @param pItemType the type of items
      * @return the list of items
      */
-    public <L extends DataList<L, D>, D extends DataItem<D>> L getDataList(final Class<L> pItemType) {
+    public <L extends DataList<L, D>, D extends DataItem & Comparable<D>> L getDataList(final Class<L> pItemType) {
         /* Access the class */
         DataList<?, ?> myList = getDataListForClass(pItemType);
 

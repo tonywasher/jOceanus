@@ -26,15 +26,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.ReportItem;
-import net.sourceforge.JDataManager.ReportList;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Money;
 import net.sourceforge.JDecimal.Price;
 import net.sourceforge.JDecimal.Units;
-import net.sourceforge.JSortedList.SortedListIterator;
+import net.sourceforge.JSortedList.OrderedIdItem;
+import net.sourceforge.JSortedList.OrderedIdList;
+import net.sourceforge.JSortedList.OrderedListIterator;
 import uk.co.tolcroft.finance.data.Account;
 import uk.co.tolcroft.finance.data.Event;
 import uk.co.tolcroft.finance.data.FinanceData;
@@ -44,22 +47,33 @@ import uk.co.tolcroft.finance.data.StaticClass.TransClass;
  * Capital Events relating to asset movements.
  * @author Tony Washer
  */
-public final class CapitalEvent extends ReportItem<CapitalEvent> {
+public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents, Comparable<CapitalEvent> {
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(CapitalEvent.class.getSimpleName(),
-            ReportItem.theLocalFields);
+    private static final JDataFields FIELD_DEFS = new JDataFields(CapitalEvent.class.getSimpleName());
 
     /**
      * Report fields.
      */
-    private JDataFields theLocalFields;
+    private final JDataFields theLocalFields;
 
     @Override
-    public JDataFields declareFields() {
-        theLocalFields = new JDataFields(FIELD_DEFS.getName(), FIELD_DEFS);
-        return theLocalFields;
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject() {
+        return getDataFields().getName();
+    }
+
+    /**
+     * Declare local data fields.
+     * @return the local fields
+     */
+    public static JDataFields declareFields() {
+        return new JDataFields(FIELD_DEFS.getName(), FIELD_DEFS);
     }
 
     /**
@@ -249,13 +263,19 @@ public final class CapitalEvent extends ReportItem<CapitalEvent> {
     }
 
     @Override
+    public Integer getOrderedId() {
+        /* This is the id of the event, or in the case where there is no event, the negative Date id */
+        return (theEvent != null) ? theEvent.getId() : -theDate.getId();
+    }
+
+    @Override
     public Object getFieldValue(final JDataField pField) {
         /* Handle standard fields */
         if (FIELD_DATE.equals(pField)) {
             return theDate;
         }
         if (FIELD_EVENT.equals(pField)) {
-            return theEvent;
+            return (theEvent == null) ? JDataFieldValue.SkipField : theEvent;
         }
 
         /* If the field is an attribute handle specially */
@@ -264,19 +284,17 @@ public final class CapitalEvent extends ReportItem<CapitalEvent> {
             return findAttribute(pField.getName());
         }
 
-        /* Pass onwards */
-        return super.getFieldValue(pField);
+        /* Unknown */
+        return JDataFieldValue.UnknownField;
     }
 
     /**
      * Constructor.
-     * @param pList the list to belong to
      * @param pEvent the underlying event
      */
-    private CapitalEvent(final CapitalEventList pList,
-                         final Event pEvent) {
-        /* Call super-constructor */
-        super(pList);
+    private CapitalEvent(final Event pEvent) {
+        /* declare local fields */
+        theLocalFields = declareFields();
 
         /* Create the attributes list */
         theAttributes = new AttributeList();
@@ -288,13 +306,11 @@ public final class CapitalEvent extends ReportItem<CapitalEvent> {
 
     /**
      * Constructor.
-     * @param pList the list to belong to
      * @param pDate the date of the event
      */
-    private CapitalEvent(final CapitalEventList pList,
-                         final DateDay pDate) {
-        /* Call super-constructor */
-        super(pList);
+    private CapitalEvent(final DateDay pDate) {
+        /* declare local fields */
+        theLocalFields = declareFields();
 
         /* Create the attributes list */
         theAttributes = new AttributeList();
@@ -304,14 +320,8 @@ public final class CapitalEvent extends ReportItem<CapitalEvent> {
         theEvent = null;
     }
 
-    /**
-     * Compare this capital event to another to establish sort order.
-     * @param pThat The Capital Event to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the
-     *         sort order
-     */
     @Override
-    public int compareTo(final Object pThat) {
+    public int compareTo(final CapitalEvent pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -320,32 +330,14 @@ public final class CapitalEvent extends ReportItem<CapitalEvent> {
             return -1;
         }
 
-        /* Make sure that the object is a CapitalEvent */
-        if (pThat.getClass() != this.getClass()) {
-            return -1;
-        }
-
-        /* Access the object as a CapitalEvent */
-        CapitalEvent myThat = (CapitalEvent) pThat;
-
         /* Compare the dates */
-        int iResult = getDate().compareTo(myThat.getDate());
+        int iResult = getDate().compareTo(pThat.getDate());
         if (iResult != 0) {
             return iResult;
         }
 
-        /* If we have a null event then we are after non-null and equal to null */
-        if (getEvent() == null) {
-            return (myThat.getEvent() == null) ? 0 : 1;
-        }
-
-        /* If we don't have null event then before any null event */
-        if (myThat.getEvent() == null) {
-            return -1;
-        }
-
         /* Compare the underlying events */
-        return getEvent().compareTo(myThat.getEvent());
+        return Difference.compareObject(getEvent(), pThat.getEvent());
     }
 
     /**
@@ -400,17 +392,27 @@ public final class CapitalEvent extends ReportItem<CapitalEvent> {
     /**
      * The List of capital events.
      */
-    public static class CapitalEventList extends ReportList<CapitalEvent> {
+    public static class CapitalEventList extends OrderedIdList<Integer, CapitalEvent> implements
+            JDataContents {
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(CapitalEventList.class.getSimpleName(),
-                ReportList.theLocalFields);
+        private static final JDataFields FIELD_DEFS = new JDataFields(CapitalEventList.class.getSimpleName());
 
         @Override
-        public JDataFields declareFields() {
+        public JDataFields getDataFields() {
             return FIELD_DEFS;
         }
+
+        @Override
+        public String formatObject() {
+            return getDataFields().getName();
+        }
+
+        /**
+         * Size Field Id.
+         */
+        public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
 
         /**
          * The Account Field Id.
@@ -420,12 +422,15 @@ public final class CapitalEvent extends ReportItem<CapitalEvent> {
         @Override
         public Object getFieldValue(final JDataField pField) {
             /* Handle standard fields */
+            if (FIELD_SIZE.equals(pField)) {
+                return size();
+            }
             if (FIELD_ACCOUNT.equals(pField)) {
                 return theAccount;
             }
 
-            /* Pass onwards */
-            return super.getFieldValue(pField);
+            /* Unknown */
+            return JDataFieldValue.UnknownField;
         }
 
         /**
@@ -477,8 +482,8 @@ public final class CapitalEvent extends ReportItem<CapitalEvent> {
             CapitalEvent myEvent;
 
             /* Create the Capital Event and add to list */
-            myEvent = new CapitalEvent(this, pEvent);
-            add(myEvent);
+            myEvent = new CapitalEvent(pEvent);
+            addAtEnd(myEvent);
 
             /* return the new event */
             return myEvent;
@@ -493,8 +498,8 @@ public final class CapitalEvent extends ReportItem<CapitalEvent> {
             CapitalEvent myEvent;
 
             /* Create the Capital Event and add to list */
-            myEvent = new CapitalEvent(this, pDate);
-            add(myEvent);
+            myEvent = new CapitalEvent(pDate);
+            addAtEnd(myEvent);
 
             /* return the new event */
             return myEvent;
@@ -505,14 +510,11 @@ public final class CapitalEvent extends ReportItem<CapitalEvent> {
          * @return the Capital Event
          */
         protected CapitalEvent getCashTakeOver() {
-            SortedListIterator<CapitalEvent> myIterator;
-            CapitalEvent myEvent;
-
             /* Create the iterator */
-            myIterator = listIterator();
+            OrderedListIterator<CapitalEvent> myIterator = listIterator();
 
             /* Access the last element */
-            myEvent = myIterator.peekLast();
+            CapitalEvent myEvent = myIterator.peekLast();
 
             /* If the element is a cash takeover */
             if ((myEvent != null) && (myEvent.getEvent() != null)
@@ -529,14 +531,12 @@ public final class CapitalEvent extends ReportItem<CapitalEvent> {
          * @param pDate date from which to purge events
          */
         protected void purgeAfterDate(final DateDay pDate) {
-            SortedListIterator<CapitalEvent> myIterator;
-            CapitalEvent myEvent;
-
             /* Access the iterator */
-            myIterator = listIterator();
+            Iterator<CapitalEvent> myIterator = listIterator();
 
             /* Loop through the events */
-            while ((myEvent = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                CapitalEvent myEvent = myIterator.next();
                 /* If this is past (or on) the date remove it */
                 if (pDate.compareTo(myEvent.getDate()) <= 0) {
                     myIterator.remove();

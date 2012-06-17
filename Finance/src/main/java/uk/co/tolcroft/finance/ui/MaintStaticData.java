@@ -37,7 +37,6 @@ import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.View;
-import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.data.StaticData.StaticList;
@@ -697,7 +696,7 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
             }
 
             /* Loop through the selected rows */
-            for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
+            for (T myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
@@ -788,7 +787,7 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
             int row;
 
             /* Loop through the selected rows */
-            for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
+            for (T myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;

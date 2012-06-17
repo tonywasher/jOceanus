@@ -63,6 +63,29 @@ public class OrderedIdIndex<I, T extends Comparable<T> & OrderedIdItem<I>> exten
         return myIndex;
     }
 
+    /**
+     * Is id present in list?
+     * @param pId the id to lookup
+     * @return true/false
+     */
+    protected boolean isIdPresent(final I pId) {
+        /* Lookup the node in the map */
+        return (findItemById(pId) != null);
+    }
+
+    /**
+     * Obtain item by id?
+     * @param pId the id to lookup
+     * @return the item (or null if not present)
+     */
+    protected T findItemById(final I pId) {
+        /* Look up the node */
+        OrderedNode<T> myNode = theHashMap.get(pId);
+
+        /* Return results */
+        return (myNode == null) ? null : myNode.getObject();
+    }
+
     @Override
     protected OrderedNode<T> findNodeForObject(final T pItem) {
         /* Lookup the node in the map */

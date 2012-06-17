@@ -22,6 +22,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
+import java.util.Iterator;
+
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
@@ -40,7 +42,7 @@ import uk.co.tolcroft.models.data.StaticData.StaticInterface;
  * @param <E> the static class
  */
 public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> & StaticInterface> extends
-        EncryptedItem<T> {
+        EncryptedItem implements Comparable<T> {
     /**
      * Report fields.
      */
@@ -371,9 +373,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     }
 
     @Override
-    public int compareTo(final Object pThat) {
-        long result;
-
+    public int compareTo(final T pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -382,44 +382,26 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
             return -1;
         }
 
-        /* Make sure that the object is the same class */
-        if (pThat.getClass() != this.getClass()) {
-            return -1;
-        }
-
-        /* Access the target Static Data */
-        StaticData<?, ?> myThat = (StaticData<?, ?>) pThat;
-
         /* Make sure that the object is the same enumeration class */
-        if (myThat.getEnumClass() != this.getEnumClass()) {
-            return -1;
+        if (pThat.getEnumClass() != getEnumClass()) {
+            /* Compare the classes */
+            return getEnumClass().getCanonicalName().compareTo(pThat.getEnumClass().getCanonicalName());
         }
 
         /* Compare on order */
-        if (getOrder() < myThat.getOrder()) {
-            return -1;
-        }
-        if (getOrder() > myThat.getOrder()) {
-            return 1;
+        int iDiff = getOrder() - pThat.getOrder();
+        if (iDiff != 0) {
+            return iDiff;
         }
 
         /* Compare on name */
-        result = getName().compareTo(myThat.getName());
-        if (result < 0) {
-            return -1;
-        }
-        if (result > 0) {
-            return 1;
+        iDiff = Difference.compareObject(getName(), pThat.getName());
+        if (iDiff != 0) {
+            return iDiff;
         }
 
-        /* Compare on id */
-        result = (int) (getId() - myThat.getId());
-        if (result == 0) {
-            return 0;
-        } else if (result < 0) {
-            return -1;
-        }
-        return 1;
+        /* Compare the underlying id */
+        return super.compareId(pThat);
     }
 
     @Override
@@ -716,7 +698,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     }
 
     @Override
-    public boolean applyChanges(final DataItem<?> pData) {
+    public boolean applyChanges(final DataItem pData) {
         StaticData<?, ?> myData = (StaticData<?, ?>) pData;
         boolean bChanged = false;
 
@@ -791,7 +773,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
         }
 
         @Override
-        public void setNewId(final T pItem) {
+        public void setNewId(final DataItem pItem) {
             super.setNewId(pItem);
         }
 
@@ -800,67 +782,57 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
          * @param eClass The class of the item to search for
          * @return The Item if present (or <code>null</code> if not found)
          */
-        public T searchFor(final E eClass) {
-            DataListIterator<T> myIterator;
-            T myCurr;
-
+        public T findItemByClass(final E eClass) {
             /* Access the iterator */
-            myIterator = listIterator();
+            Iterator<T> myIterator = iterator();
 
             /* Loop through the items to find the entry */
-            while ((myCurr = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                T myCurr = myIterator.next();
                 if (myCurr.getStaticClass() == eClass) {
-                    break;
+                    return myCurr;
                 }
             }
 
-            /* Return to caller */
-            return myCurr;
+            /* Return not found */
+            return null;
         }
 
         /**
          * Search for a particular item by Name.
-         * @param sName The name of the item to search for
+         * @param pName The name of the item to search for
          * @return The Item if present (or <code>null</code> if not found)
          */
-        public T searchFor(final String sName) {
-            DataListIterator<T> myIterator;
-            T myCurr;
-            int iDiff;
-
+        public T findItemByName(final String pName) {
             /* Access the iterator */
-            myIterator = listIterator();
+            Iterator<T> myIterator = iterator();
 
             /* Loop through the items to find the entry */
-            while ((myCurr = myIterator.next()) != null) {
-                iDiff = sName.compareTo(myCurr.getName());
-                if (iDiff == 0) {
-                    break;
+            while (myIterator.hasNext()) {
+                T myCurr = myIterator.next();
+                if (pName.equals(myCurr.getName())) {
+                    return myCurr;
                 }
             }
 
-            /* Return to caller */
-            return myCurr;
+            /* Return not found */
+            return null;
         }
 
         /**
-         * Count the instances of a string.
-         * @param pName the string to check for
+         * Count the instances of a name.
+         * @param pName the name to check for
          * @return The # of instances of the name
          */
         protected int countInstances(final String pName) {
-            DataListIterator<T> myIterator;
-            T myCurr;
-            int iDiff;
+            /* Access the iterator */
+            Iterator<T> myIterator = iterator();
             int iCount = 0;
 
-            /* Access the iterator */
-            myIterator = listIterator(true);
-
             /* Loop through the items to find the entry */
-            while ((myCurr = myIterator.next()) != null) {
-                iDiff = pName.compareTo(myCurr.getName());
-                if (iDiff == 0) {
+            while (myIterator.hasNext()) {
+                T myCurr = myIterator.next();
+                if (pName.equals(myCurr.getName())) {
                     iCount++;
                 }
             }
@@ -875,15 +847,13 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
          * @return The # of instances of the order
          */
         protected int countInstances(final int iOrder) {
-            DataListIterator<T> myIterator;
-            T myCurr;
+            /* Access the iterator */
+            Iterator<T> myIterator = iterator();
             int iCount = 0;
 
-            /* Access the iterator */
-            myIterator = listIterator(true);
-
             /* Loop through the items to find the entry */
-            while ((myCurr = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                T myCurr = myIterator.next();
                 if (iOrder == myCurr.getOrder()) {
                     iCount++;
                 }

@@ -22,6 +22,7 @@
  ******************************************************************************/
 package uk.co.tolcroft.subversion.threads;
 
+import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JGordianKnot.PasswordHash;
 import net.sourceforge.JGordianKnot.SecureManager;
 import uk.co.tolcroft.models.data.DataSet;
@@ -68,7 +69,7 @@ public class SubversionBackup<T extends DataSet<T>> extends WorkerThread<Void> {
     }
 
     @Override
-    public Void performTask() throws Exception {
+    public Void performTask() throws JDataException {
         Backup myAccess = null;
 
         /* Initialise the status window */

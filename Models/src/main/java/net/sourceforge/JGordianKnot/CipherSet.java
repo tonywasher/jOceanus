@@ -38,6 +38,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JGordianKnot.DataHayStack.EncryptModeNeedle;
 import net.sourceforge.JGordianKnot.DataHayStack.SymKeyNeedle;
 
@@ -74,7 +75,7 @@ public class CipherSet implements JDataContents {
         if (FIELD_MAP.equals(pField)) {
             return theMap;
         }
-        return null;
+        return JDataFieldValue.UnknownField;
     }
 
     @Override

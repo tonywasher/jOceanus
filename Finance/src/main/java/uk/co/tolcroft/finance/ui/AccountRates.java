@@ -23,6 +23,7 @@
 package uk.co.tolcroft.finance.ui;
 
 import java.awt.event.ActionEvent;
+import java.util.ListIterator;
 
 import javax.swing.GroupLayout;
 import javax.swing.JMenuItem;
@@ -42,8 +43,6 @@ import uk.co.tolcroft.finance.data.AccountRate;
 import uk.co.tolcroft.finance.data.AccountRate.AccountRateList;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.View;
-import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList.DataListIterator;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.ui.DataMouse;
 import uk.co.tolcroft.models.ui.DataTable;
@@ -329,15 +328,13 @@ public class AccountRates extends DataTable<AccountRate> {
      */
     @Override
     protected void validateAfterChange() {
-        DataListIterator<AccountRate> myIterator;
-        AccountRate myCurr;
-        int myIndex = -1;
-
         /* Access the list iterator */
-        myIterator = theRates.listIterator();
+        ListIterator<AccountRate> myIterator = theRates.listIterator();
 
         /* Loop through the Rates in reverse order */
-        while ((myCurr = myIterator.previous()) != null) {
+        while (myIterator.hasPrevious()) {
+            AccountRate myCurr = myIterator.previous();
+
             /* Break loop if we have a date */
             DateDay myDate = myCurr.getDate();
             if (myDate != null) {
@@ -349,7 +346,7 @@ public class AccountRates extends DataTable<AccountRate> {
             myCurr.validate();
 
             /* Fire row update */
-            myIndex = myCurr.indexOf();
+            int myIndex = myCurr.indexOf();
             theModel.fireTableRowsUpdated(myIndex, myIndex);
         }
 
@@ -617,7 +614,7 @@ public class AccountRates extends DataTable<AccountRate> {
             }
 
             /* Loop through the selected rows */
-            for (DataItem<?> myRow : theTable.cacheSelectedRows()) {
+            for (AccountRate myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;

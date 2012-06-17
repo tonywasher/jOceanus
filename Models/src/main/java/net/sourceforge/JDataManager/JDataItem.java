@@ -27,6 +27,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.net.URL;
+import java.util.List;
+import java.util.ListIterator;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -45,7 +47,6 @@ import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
 
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import net.sourceforge.JSortedList.SortedListIterator;
 
 /**
  * Data Item.
@@ -88,19 +89,19 @@ public class JDataItem {
     private final JPanel theListPanel;
 
     /**
-     * The report list.
+     * The list.
      */
-    private ReportList<?> theList = null;
+    private List<?> theList = null;
 
     /**
      * The report item.
      */
-    private ReportItem<?> theItem = null;
+    private Object theItem = null;
 
     /**
      * The iterator.
      */
-    private SortedListIterator<?> theIterator = null;
+    private ListIterator<?> theIterator = null;
 
     /**
      * The entry.
@@ -316,7 +317,7 @@ public class JDataItem {
             theListPanel.setVisible(true);
 
             /* Declare the list to the list window */
-            ReportList<?> myList = (ReportList<?>) theObject;
+            List<?> myList = (List<?>) theObject;
             setList(myList);
 
             /* Else hide the list window */
@@ -338,7 +339,7 @@ public class JDataItem {
         Object myObject = pEntry.getObject();
 
         /* If we should use the ReportList window */
-        if ((myObject != null) && (myObject instanceof ReportList) && (!pEntry.hasChildren())) {
+        if ((myObject != null) && (myObject instanceof List) && (!pEntry.hasChildren())) {
             return true;
         }
 
@@ -409,15 +410,15 @@ public class JDataItem {
      * Set List.
      * @param pList the list that we are using
      */
-    private void setList(final ReportList<?> pList) {
+    private void setList(final List<?> pList) {
         /* Record list */
         theList = pList;
 
         /* If the list has items */
-        if (theList.sizeAll() > 0) {
+        if (theList.size() > 0) {
             /* Create iterator and obtain first item */
-            theIterator = theList.listIterator(true);
-            theItem = (ReportItem<?>) theIterator.next();
+            theIterator = theList.listIterator();
+            theItem = theIterator.next();
 
             /* Display header initially */
             theToggle.setSelected(false);
@@ -439,8 +440,8 @@ public class JDataItem {
      */
     private void displayItem() {
         /* Access the list size */
-        int mySize = theList.sizeAll();
-        int myPos = theList.indexAllOf(theItem);
+        int mySize = theList.size();
+        int myPos = theList.indexOf(theItem);
 
         /* Show/hide movement buttons */
         theNextThou.setVisible(mySize >= SHIFT_THOU);
@@ -500,7 +501,7 @@ public class JDataItem {
      * @param iNumSteps the number of steps to shift (positive or negative)
      */
     private void shiftIterator(final int iNumSteps) {
-        ReportItem<?> myNext = null;
+        Object myNext = null;
         int myNumSteps = iNumSteps;
 
         /* If we are stepping forwards */
@@ -508,12 +509,12 @@ public class JDataItem {
             /* Loop through the steps */
             while (myNumSteps-- > 0) {
                 /* Shift to next element */
-                myNext = (ReportItem<?>) theIterator.next();
+                myNext = theIterator.next();
 
                 /* If we have reached the end of the list (should never happen) */
                 if (myNext == null) {
                     /* Set next element to the last in the list and break loop */
-                    myNext = (ReportItem<?>) theIterator.peekLast();
+                    myNext = null;
                     break;
                 }
             }
@@ -529,12 +530,12 @@ public class JDataItem {
             /* Loop through the steps */
             while (myNumSteps++ < 0) {
                 /* Shift to previous element */
-                myNext = (ReportItem<?>) theIterator.previous();
+                myNext = theIterator.previous();
 
                 /* If we have reached the end of the list (should never happen) */
                 if (myNext == null) {
                     /* Set next element to the last in the list and break loop */
-                    myNext = (ReportItem<?>) theIterator.peekFirst();
+                    myNext = null;
                     break;
                 }
             }

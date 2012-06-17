@@ -148,7 +148,7 @@ public class ItemField extends ValueField {
      * Render the item.
      * @param pItem the item to use for rendering
      */
-    public void renderField(final DataItem<?> pItem) {
+    public void renderField(final DataItem pItem) {
         Font myFont;
         Color myBack;
         Color myFore;
@@ -225,7 +225,7 @@ public class ItemField extends ValueField {
          * Render the FieldSet.
          * @param pItem the item to use for rendering
          */
-        public void renderSet(final DataItem<?> pItem) {
+        public void renderSet(final DataItem pItem) {
             /* List Iterator */
             Iterator<ItemField> myIterator = theList.iterator();
             ItemField myField;

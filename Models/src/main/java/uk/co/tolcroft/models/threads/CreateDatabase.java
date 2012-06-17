@@ -22,6 +22,7 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.threads;
 
+import net.sourceforge.JDataManager.JDataException;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.views.DataControl;
@@ -66,7 +67,7 @@ public class CreateDatabase<T extends DataSet<T>> extends WorkerThread<Void> {
     }
 
     @Override
-    public Void performTask() throws Exception {
+    public Void performTask() throws JDataException {
         /* Initialise the status window */
         theStatus.initTask("Creating Database");
 

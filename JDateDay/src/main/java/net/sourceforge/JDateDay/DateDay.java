@@ -40,6 +40,11 @@ public class DateDay implements Comparable<DateDay> {
     protected static final int HASH_PRIME = 17;
 
     /**
+     * The Year shift for DateDay Id. This is 9 corresponding to (1<<9) = 512
+     */
+    protected static final int SHIFT_ID_YEAR = 9;
+
+    /**
      * The format to be used.
      */
     private static final String FORMAT_DEFAULT = "dd-MMM-yyyy";
@@ -85,6 +90,11 @@ public class DateDay implements Comparable<DateDay> {
     private int theDay = 0;
 
     /**
+     * The day id.
+     */
+    private int theId = 0;
+
+    /**
      * Get the year of the date.
      * @return the year of the date
      */
@@ -106,6 +116,15 @@ public class DateDay implements Comparable<DateDay> {
      */
     public int getDay() {
         return theDay;
+    }
+
+    /**
+     * Get the id of the date. This is a unique integer representation of the date usable as an id for the
+     * date.
+     * @return the id of the date
+     */
+    public int getId() {
+        return theId;
     }
 
     /**
@@ -459,6 +478,9 @@ public class DateDay implements Comparable<DateDay> {
         theMonth = theDate.get(Calendar.MONTH);
         theDay = theDate.get(Calendar.DAY_OF_MONTH);
 
+        /* Calculate the id (512*year + dayofYear) */
+        theId = (theYear << SHIFT_ID_YEAR) + theDate.get(Calendar.DAY_OF_YEAR);
+
         /* Reset formatted date */
         theFormattedDate = null;
     }
@@ -483,32 +505,25 @@ public class DateDay implements Comparable<DateDay> {
         return theFormattedDate;
     }
 
-    /**
-     * Compare this Date to another to establish sort order.
-     * @param that The Number to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the
-     *         sort order
-     */
     @Override
-    public int compareTo(final DateDay that) {
-        if (this == that) {
+    public int compareTo(final DateDay pThat) {
+        /* Handle trivial compares */
+        if (this == pThat) {
             return 0;
-        } else if (that == null) {
+        } else if (pThat == null) {
             return -1;
-        } else if (this.theYear < that.theYear) {
-            return -1;
-        } else if (this.theYear > that.theYear) {
-            return 1;
-        } else if (this.theMonth < that.theMonth) {
-            return -1;
-        } else if (this.theMonth > that.theMonth) {
-            return 1;
-        } else if (this.theDay < that.theDay) {
-            return -1;
-        } else if (this.theDay > that.theDay) {
-            return 1;
         }
-        return 0;
+
+        /* Compare the year, month and date */
+        int iDiff = theYear - pThat.theYear;
+        if (iDiff != 0) {
+            return iDiff;
+        }
+        iDiff = theMonth - pThat.theMonth;
+        if (iDiff != 0) {
+            return iDiff;
+        }
+        return (theDay - pThat.theDay);
     }
 
     @Override
@@ -530,11 +545,11 @@ public class DateDay implements Comparable<DateDay> {
         DateDay myThat = (DateDay) pThat;
 
         /* Check components */
-        if (this.theYear != myThat.theYear) {
+        if (theYear != myThat.theYear) {
             return false;
-        } else if (this.theMonth != myThat.theMonth) {
+        } else if (theMonth != myThat.theMonth) {
             return false;
-        } else if (this.theDay != myThat.theDay) {
+        } else if (theDay != myThat.theDay) {
             return false;
         }
         return true;

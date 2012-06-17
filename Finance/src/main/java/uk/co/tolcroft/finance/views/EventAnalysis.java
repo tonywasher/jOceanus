@@ -22,13 +22,15 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.views;
 
+import java.util.Iterator;
+
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import net.sourceforge.JDataManager.JDataObject;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
 import net.sourceforge.JDecimal.Dilution;
@@ -36,6 +38,9 @@ import net.sourceforge.JDecimal.Money;
 import net.sourceforge.JDecimal.Price;
 import net.sourceforge.JDecimal.Rate;
 import net.sourceforge.JDecimal.Units;
+import net.sourceforge.JSortedList.OrderedIdItem;
+import net.sourceforge.JSortedList.OrderedIdList;
+import net.sourceforge.JSortedList.OrderedListIterator;
 import uk.co.tolcroft.finance.data.Account;
 import uk.co.tolcroft.finance.data.AccountPrice;
 import uk.co.tolcroft.finance.data.AccountPrice.AccountPriceList;
@@ -56,10 +61,6 @@ import uk.co.tolcroft.finance.views.Analysis.TransDetail;
 import uk.co.tolcroft.finance.views.DilutionEvent.DilutionEventList;
 import uk.co.tolcroft.finance.views.Statement.StatementLine;
 import uk.co.tolcroft.finance.views.Statement.StatementLines;
-import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataList.DataListIterator;
-import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.views.DataControl;
 
 /**
@@ -105,21 +106,23 @@ public class EventAnalysis implements JDataContents {
     @Override
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_ANALYSIS.equals(pField)) {
-            return (theAnalysis == null) ? JDataObject.FIELD_SKIP : theAnalysis;
+            return (theAnalysis == null) ? JDataFieldValue.SkipField : theAnalysis;
         }
         if (FIELD_YEARS.equals(pField)) {
-            return (theYears == null) ? JDataObject.FIELD_SKIP : theYears;
+            return (theYears == null) ? JDataFieldValue.SkipField : theYears;
         }
         if (FIELD_ACCOUNT.equals(pField)) {
-            return (theAccount == null) ? JDataObject.FIELD_SKIP : theAccount;
+            return (theAccount == null) ? JDataFieldValue.SkipField : theAccount;
         }
         if (FIELD_DATE.equals(pField)) {
-            return (theDate == null) ? JDataObject.FIELD_SKIP : theDate;
+            return (theDate == null) ? JDataFieldValue.SkipField : theDate;
         }
         if (FIELD_DILUTIONS.equals(pField)) {
-            return (theDilutions == null) ? JDataObject.FIELD_SKIP : theDilutions;
+            return (theDilutions == null) ? JDataFieldValue.SkipField : theDilutions;
         }
-        return null;
+
+        /* Unknown */
+        return JDataFieldValue.UnknownField;
     }
 
     @Override
@@ -212,7 +215,7 @@ public class EventAnalysis implements JDataContents {
      * @return the analysis
      */
     public AnalysisYear getAnalysisYear(final TaxYear pYear) {
-        return (theYears == null) ? null : theYears.searchFor(pYear);
+        return (theYears == null) ? null : theYears.findItemForYear(pYear);
     }
 
     /**
@@ -231,11 +234,6 @@ public class EventAnalysis implements JDataContents {
      */
     public EventAnalysis(final FinanceData pData,
                          final DateDay pDate) throws JDataException {
-        DataListIterator<Event> myIterator;
-        EventList myEvents;
-        Event myCurr;
-        int myResult;
-
         /* Store the parameters */
         theData = pData;
         theDate = pDate;
@@ -253,15 +251,15 @@ public class EventAnalysis implements JDataContents {
         theTaxPaid = myBuckets.getTransDetail(TransClass.TAXCREDIT);
 
         /* Access the events and the iterator */
-        myEvents = pData.getEvents();
-        myIterator = myEvents.listIterator();
+        EventList myEvents = pData.getEvents();
+        Iterator<Event> myIterator = myEvents.iterator();
 
         /* Loop through the Events extracting relevant elements */
-        while ((myCurr = myIterator.next()) != null) {
-            /* Check the range */
-            myResult = theDate.compareTo(myCurr.getDate());
+        while (myIterator.hasNext()) {
+            Event myCurr = myIterator.next();
 
-            /* Handle out of range */
+            /* Check the range and exit loop if necessary */
+            int myResult = theDate.compareTo(myCurr.getDate());
             if (myResult == -1) {
                 break;
             }
@@ -285,19 +283,10 @@ public class EventAnalysis implements JDataContents {
      */
     public EventAnalysis(final FinanceData pData,
                          final Statement pStatement) throws JDataException {
-        DataListIterator<Event> myIterator;
-        EventList myEvents;
-        Event myCurr;
-        DateDayRange myRange;
-        Account myAccount;
-        StatementLine myLine;
-        StatementLines myList;
-        int myResult;
-
         /* Access key points of the statement */
-        myRange = pStatement.getDateRange();
-        myAccount = pStatement.getAccount();
-        myList = pStatement.getLines();
+        DateDayRange myRange = pStatement.getDateRange();
+        Account myAccount = pStatement.getAccount();
+        StatementLines myList = pStatement.getLines();
 
         /* Store the parameters */
         theData = pData;
@@ -314,15 +303,15 @@ public class EventAnalysis implements JDataContents {
         theAccount = myBuckets.getAccountDetail(myAccount);
 
         /* Access the events and the iterator */
-        myEvents = pData.getEvents();
-        myIterator = myEvents.listIterator();
+        EventList myEvents = pData.getEvents();
+        OrderedListIterator<Event> myIterator = myEvents.listIterator();
 
         /* Loop through the Events extracting relevant elements */
-        while ((myCurr = myIterator.next()) != null) {
-            /* Check the range */
-            myResult = myRange.compareTo(myCurr.getDate());
+        while (myIterator.hasNext()) {
+            Event myCurr = myIterator.next();
 
-            /* If we are at or past the range break the loop */
+            /* Check the range and exit loop if required */
+            int myResult = myRange.compareTo(myCurr.getDate());
             if (myResult != 1) {
                 break;
             }
@@ -346,11 +335,11 @@ public class EventAnalysis implements JDataContents {
         pStatement.setStartBalances(theAccount);
 
         /* Continue looping through the Events extracting relevant elements */
-        while ((myCurr = myIterator.next()) != null) {
-            /* Check the range */
-            myResult = myRange.compareTo(myCurr.getDate());
+        while (myIterator.hasNext()) {
+            Event myCurr = myIterator.next();
 
-            /* Handle past limit */
+            /* Check the range and exit loop if required */
+            int myResult = myRange.compareTo(myCurr.getDate());
             if (myResult == -1) {
                 break;
             }
@@ -361,8 +350,8 @@ public class EventAnalysis implements JDataContents {
             }
 
             /* Add a statement line to the statement */
-            myLine = new Statement.StatementLine(myList, myCurr);
-            myList.add(myLine);
+            StatementLine myLine = new StatementLine(myList, myCurr);
+            myList.addAtEnd(myLine);
         }
 
         /* Reset the statement balances */
@@ -375,13 +364,9 @@ public class EventAnalysis implements JDataContents {
      * @throws JDataException on error
      */
     protected void resetStatementBalance(final Statement pStatement) throws JDataException {
-        StatementLine myLine;
-        StatementLines myLines;
-        DataListIterator<Event> myIterator;
-
         /* Access the iterator */
-        myLines = pStatement.getLines();
-        myIterator = myLines.listIterator();
+        StatementLines myLines = pStatement.getLines();
+        Iterator<Event> myIterator = myLines.listIterator();
 
         /* If we don't have balances just return */
         if (theAccount instanceof ExternalAccount) {
@@ -389,26 +374,27 @@ public class EventAnalysis implements JDataContents {
         }
 
         /* Restore the SavePoint */
-        theAccount.restoreSavePoint();
+        theAccount.restoreSavePoint(theDate);
 
         /* Loop through the lines adjusting the balance */
-        while ((myLine = (Statement.StatementLine) myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            StatementLine myCurr = (StatementLine) myIterator.next();
             /* Skip deleted lines */
-            if (myLine.isDeleted()) {
+            if (myCurr.isDeleted()) {
                 continue;
             }
 
             /* Ignore if it is not a valid event */
-            if ((myLine.getPartner() == null) || (myLine.getTransType() == null)
-                    || (myLine.getAmount() == null)) {
+            if ((myCurr.getPartner() == null) || (myCurr.getTransType() == null)
+                    || (myCurr.getAmount() == null)) {
                 continue;
             }
 
             /* Process the event */
-            processEvent(myLine);
+            processEvent(myCurr);
 
             /* Update the balances */
-            myLine.setBalances();
+            myCurr.setBalances();
         }
 
         /* Set the ending balances */
@@ -423,27 +409,14 @@ public class EventAnalysis implements JDataContents {
      */
     public EventAnalysis(final View pView,
                          final FinanceData pData) throws JDataException {
-        Event myCurr;
-        DataListIterator<Event> myIterator;
-        int myResult = -1;
-        TaxYear myTax = null;
-        DateDay myDate = null;
-        TaxYearList myList;
-        AnalysisYear myYear;
-        Account myAccount;
-        TransactionType myTransType;
-        Account myTaxMan;
-        JDataEntry mySection;
-        IncomeBreakdown myBreakdown = null;
-
         /* Store the parameters */
         theData = pData;
 
         /* Access the TaxMan account */
-        myTaxMan = theData.getAccounts().getTaxMan();
+        Account myTaxMan = theData.getAccounts().getTaxMan();
 
         /* Access the top level debug entry for this analysis */
-        mySection = pView.getDataEntry(DataControl.DATA_ANALYSIS);
+        JDataEntry mySection = pView.getDataEntry(DataControl.DATA_ANALYSIS);
 
         /* Create a list of AnalysisYears */
         theYears = new AnalysisYearList(this);
@@ -452,13 +425,19 @@ public class EventAnalysis implements JDataContents {
         theDilutions = new DilutionEventList(theData);
 
         /* Access the tax years list */
-        myList = theData.getTaxYears();
+        TaxYearList myList = theData.getTaxYears();
 
         /* Access the Event iterator */
-        myIterator = theData.getEvents().listIterator();
+        Iterator<Event> myIterator = theData.getEvents().listIterator();
+        TaxYear myTax = null;
+        DateDay myDate = null;
+        IncomeBreakdown myBreakdown = null;
+        int myResult = -1;
 
         /* Loop through the Events extracting relevant elements */
-        while ((myCurr = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            Event myCurr = myIterator.next();
+
             /* If we have a current tax year */
             if (myTax != null) {
                 /* Check that this event is still in the tax year */
@@ -468,7 +447,7 @@ public class EventAnalysis implements JDataContents {
             /* If we have exhausted the tax year or else this is the first tax year */
             if (myResult == -1) {
                 /* Access the relevant tax year */
-                myTax = myList.searchFor(myCurr.getDate());
+                myTax = myList.findTaxYearForDate(myCurr.getDate());
                 myDate = myTax.getTaxYear();
 
                 /* If we have an existing meta analysis year */
@@ -478,7 +457,7 @@ public class EventAnalysis implements JDataContents {
                 }
 
                 /* Create the new Analysis */
-                myYear = theYears.getNewAnalysis(myTax, theAnalysis);
+                AnalysisYear myYear = theYears.getNewAnalysis(myTax, theAnalysis);
                 theAnalysis = myYear.getAnalysis();
                 theMetaAnalysis = myYear.getMetaAnalysis();
                 myBreakdown = myYear.getBreakdown();
@@ -490,7 +469,7 @@ public class EventAnalysis implements JDataContents {
             }
 
             /* Touch credit account */
-            myAccount = myCurr.getCredit();
+            Account myAccount = myCurr.getCredit();
             myAccount.touchItem(myCurr);
 
             /* Touch debit accounts */
@@ -498,7 +477,7 @@ public class EventAnalysis implements JDataContents {
             myAccount.touchItem(myCurr);
 
             /* Touch Transaction Type */
-            myTransType = myCurr.getTransType();
+            TransactionType myTransType = myCurr.getTransType();
             myTransType.touchItem(myCurr);
 
             /* If the event has a dilution factor */
@@ -527,12 +506,12 @@ public class EventAnalysis implements JDataContents {
     /**
      * An analysis of a taxYear.
      */
-    public static final class AnalysisYear extends DataItem<AnalysisYear> {
+    public static final class AnalysisYear implements OrderedIdItem<Integer>, JDataContents,
+            Comparable<AnalysisYear> {
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(AnalysisYear.class.getSimpleName(),
-                DataItem.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(AnalysisYear.class.getSimpleName());
 
         /**
          * Analysis field id.
@@ -550,7 +529,7 @@ public class EventAnalysis implements JDataContents {
         public static final JDataField FIELD_BREAKDOWN = FIELD_DEFS.declareLocalField("IncomeBreakdown");
 
         @Override
-        public JDataFields declareFields() {
+        public JDataFields getDataFields() {
             return FIELD_DEFS;
         }
 
@@ -565,7 +544,12 @@ public class EventAnalysis implements JDataContents {
             if (FIELD_BREAKDOWN.equals(pField)) {
                 return theBreakdown;
             }
-            return super.getFieldValue(pField);
+            return JDataFieldValue.UnknownField;
+        }
+
+        @Override
+        public String formatObject() {
+            return theYear.toString() + " Analysis";
         }
 
         /**
@@ -643,18 +627,22 @@ public class EventAnalysis implements JDataContents {
             return theBreakdown;
         }
 
+        @Override
+        public Integer getOrderedId() {
+            return theYear.getId();
+        }
+
         /**
          * Constructor for the Analysis Year.
-         * @param pList the list
+         * @param pData the DataSet
          * @param pYear the Tax Year
          * @param pPrevious the previous analysis
          */
-        private AnalysisYear(final AnalysisYearList pList,
+        private AnalysisYear(final FinanceData pData,
                              final TaxYear pYear,
                              final Analysis pPrevious) {
-            /* Call super-constructor */
-            super(pList, 0);
-            theData = pList.theEvents.theData;
+            /* Store data */
+            theData = pData;
 
             /* Store tax year */
             theYear = pYear;
@@ -669,14 +657,8 @@ public class EventAnalysis implements JDataContents {
             theBreakdown = new IncomeBreakdown(theData);
         }
 
-        /**
-         * Compare this Bucket to another to establish sort order.
-         * @param pThat The Bucket to compare to
-         * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in
-         *         the sort order
-         */
         @Override
-        public int compareTo(final Object pThat) {
+        public int compareTo(final AnalysisYear pThat) {
             /* Handle the trivial cases */
             if (this == pThat) {
                 return 0;
@@ -685,16 +667,8 @@ public class EventAnalysis implements JDataContents {
                 return -1;
             }
 
-            /* Make sure that the object is the same class */
-            if (pThat.getClass() != this.getClass()) {
-                return -1;
-            }
-
-            /* Access the object as am Analysis Year */
-            AnalysisYear myThat = (AnalysisYear) pThat;
-
             /* Compare the bucket order */
-            return getDate().compareTo(myThat.getDate());
+            return getDate().compareTo(pThat.getDate());
         }
 
         /**
@@ -732,32 +706,31 @@ public class EventAnalysis implements JDataContents {
     /**
      * The AnalysisYear list class.
      */
-    public static class AnalysisYearList extends DataList<AnalysisYearList, AnalysisYear> {
+    public static class AnalysisYearList extends OrderedIdList<Integer, AnalysisYear> implements
+            JDataContents {
         /**
          * List name.
          */
-        public static final String LIST_NAME = "AnalysisYears";
-
-        @Override
-        public String listName() {
-            return LIST_NAME;
-        }
+        public static final String LIST_NAME = AnalysisYearList.class.getSimpleName();
 
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(
-                AnalysisYearList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME);
 
         /**
          * Events Field Id.
          */
         public static final JDataField FIELD_EVENTS = FIELD_DEFS.declareLocalField("Events");
 
-        /* Called from constructor */
         @Override
-        public JDataFields declareFields() {
+        public JDataFields getDataFields() {
             return FIELD_DEFS;
+        }
+
+        @Override
+        public String formatObject() {
+            return getDataFields().getName();
         }
 
         @Override
@@ -765,7 +738,9 @@ public class EventAnalysis implements JDataContents {
             if (FIELD_EVENTS.equals(pField)) {
                 return theEvents;
             }
-            return super.getFieldValue(pField);
+
+            /* Unknown */
+            return JDataFieldValue.UnknownField;
         }
 
         /**
@@ -779,52 +754,8 @@ public class EventAnalysis implements JDataContents {
          */
         public AnalysisYearList(final EventAnalysis pEvents) {
             /* Call super constructor */
-            super(AnalysisYearList.class, AnalysisYear.class, ListStyle.VIEW, false);
+            super(AnalysisYear.class);
             theEvents = pEvents;
-        }
-
-        @Override
-        public AnalysisYearList getUpdateList() {
-            return null;
-        }
-
-        @Override
-        public AnalysisYearList getEditList() {
-            return null;
-        }
-
-        @Override
-        public AnalysisYearList getShallowCopy() {
-            return null;
-        }
-
-        @Override
-        public AnalysisYearList getDeepCopy(final DataSet<?> pData) {
-            return null;
-        }
-
-        @Override
-        public AnalysisYearList getDifferences(final AnalysisYearList pOld) {
-            return null;
-        }
-
-        /**
-         * Add a new item to the list.
-         * @param pItem the item to add
-         * @return the newly added item
-         */
-        @Override
-        public AnalysisYear addNewItem(final DataItem<?> pItem) {
-            return null;
-        }
-
-        /**
-         * Add a new item to the edit list.
-         * @return the newly added item
-         */
-        @Override
-        public AnalysisYear addNewItem() {
-            return null;
         }
 
         /**
@@ -836,8 +767,8 @@ public class EventAnalysis implements JDataContents {
         protected AnalysisYear getNewAnalysis(final TaxYear pYear,
                                               final Analysis pAnalysis) {
             /* Locate the bucket in the list */
-            AnalysisYear myYear = new AnalysisYear(this, pYear, pAnalysis);
-            add(myYear);
+            AnalysisYear myYear = new AnalysisYear(theEvents.theData, pYear, pAnalysis);
+            addAtEnd(myYear);
             return myYear;
         }
 
@@ -846,23 +777,21 @@ public class EventAnalysis implements JDataContents {
          * @param pYear the tax year to search for
          * @return the analysis
          */
-        public AnalysisYear searchFor(final TaxYear pYear) {
-            DataListIterator<AnalysisYear> myIterator;
-            AnalysisYear myCurr;
-
+        public AnalysisYear findItemForYear(final TaxYear pYear) {
             /* Access the list iterator */
-            myIterator = listIterator();
+            Iterator<AnalysisYear> myIterator = listIterator();
 
             /* Loop through the tax parameters */
-            while ((myCurr = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                AnalysisYear myCurr = myIterator.next();
                 /* Break on match */
                 if (myCurr.theYear.compareTo(pYear) == 0) {
-                    break;
+                    return myCurr;
                 }
             }
 
-            /* Return to caller */
-            return myCurr;
+            /* Return not found */
+            return null;
         }
     }
 
@@ -891,7 +820,7 @@ public class EventAnalysis implements JDataContents {
                 /* If the account is tax free */
                 if (myDebit.isTaxFree()) {
                     /* The true transaction type is TaxFreeInterest */
-                    myTrans = myTranList.searchFor(TransClass.TAXFREEINTEREST);
+                    myTrans = myTranList.findItemByClass(TransClass.TAXFREEINTEREST);
                 }
 
                 /* True debit account is the parent */
@@ -1083,12 +1012,12 @@ public class EventAnalysis implements JDataContents {
         /* If the account is tax free */
         if (myAccount.isTaxFree()) {
             /* The true transaction type is TaxFreeDividend */
-            myTrans = myTranList.searchFor(TransClass.TAXFREEDIVIDEND);
+            myTrans = myTranList.findItemByClass(TransClass.TAXFREEDIVIDEND);
 
             /* else if the account is a unit trust */
         } else if (myAccount.isUnitTrust()) {
             /* The true transaction type is UnitTrustDividend */
-            myTrans = myTranList.searchFor(TransClass.UNITTRUSTDIVIDEND);
+            myTrans = myTranList.findItemByClass(TransClass.UNITTRUSTDIVIDEND);
         }
 
         /* True debit account is the parent */

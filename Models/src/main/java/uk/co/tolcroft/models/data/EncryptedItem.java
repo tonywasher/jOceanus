@@ -22,6 +22,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
+import java.util.Iterator;
+
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
@@ -35,9 +37,8 @@ import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
 /**
  * Encrypted Data Item and List.
  * @author Tony Washer
- * @param <T> the data type
  */
-public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem<T> {
+public abstract class EncryptedItem extends DataItem {
     /**
      * Report fields.
      */
@@ -118,7 +119,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
      * @param pList the list that this item is associated with
      * @param uId the Id of the new item (or 0 if not yet known)
      */
-    public EncryptedItem(final EncryptedList<?, T> pList,
+    public EncryptedItem(final EncryptedList<?, ?> pList,
                          final int uId) {
         super(pList, uId);
         theGenerator = new EncryptionGenerator(null);
@@ -129,8 +130,8 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
      * @param pList the list that this item is associated with
      * @param pSource the source item
      */
-    public EncryptedItem(final EncryptedList<?, T> pList,
-                         final T pSource) {
+    public EncryptedItem(final EncryptedList<?, ?> pList,
+                         final EncryptedItem pSource) {
         super(pList, pSource);
         theGenerator = pSource.theGenerator;
     }
@@ -157,7 +158,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
         ControlKeyList myKeys = myData.getControlKeys();
 
         /* Look up the ControlKey */
-        ControlKey myControl = myKeys.searchFor(uControlId);
+        ControlKey myControl = myKeys.findItemById(uControlId);
         if (myControl == null) {
             throw new JDataException(ExceptionClass.DATA, this, "Invalid ControlKey Id");
         }
@@ -238,7 +239,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
 
         /* Update to use the local copy of the ControlKeys */
         ControlKey myKey = getControlKey();
-        ControlKey myNewKey = myKeys.searchFor(myKey.getId());
+        ControlKey myNewKey = myKeys.findItemById(myKey.getId());
         setValueControlKey(myNewKey);
     }
 
@@ -249,7 +250,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
      * @throws JDataException on error
      */
     protected void adoptSecurity(final ControlKey pControl,
-                                 final T pBase) throws JDataException {
+                                 final EncryptedItem pBase) throws JDataException {
         /* Set the Control Key */
         setValueControlKey(pControl);
 
@@ -292,7 +293,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
      * @param <L> the list type
      * @param <T> the item type
      */
-    public abstract static class EncryptedList<L extends EncryptedList<L, T>, T extends EncryptedItem<T>>
+    public abstract static class EncryptedList<L extends EncryptedList<L, T>, T extends EncryptedItem & Comparable<T>>
             extends DataList<L, T> {
         /**
          * The owning data set.
@@ -332,7 +333,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
         protected EncryptedList(final Class<L> pClass,
                                 final Class<T> pBaseClass,
                                 final DataSet<?> pData) {
-            super(pClass, pBaseClass, ListStyle.CORE, true);
+            super(pClass, pBaseClass, ListStyle.CORE);
             theData = pData;
         }
 
@@ -347,7 +348,7 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
                              final Class<T> pBaseClass,
                              final DataSet<?> pData,
                              final ListStyle pStyle) {
-            super(pClass, pBaseClass, pStyle, true);
+            super(pClass, pBaseClass, pStyle);
             theData = pData;
             setGeneration(pData.getGeneration());
         }
@@ -370,30 +371,27 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
          */
         public boolean updateSecurity(final TaskControl<?> pTask,
                                       final ControlKey pControl) throws JDataException {
-            DataListIterator<T> myIterator;
-            T myCurr;
-            int mySteps;
-            int myCount = 0;
-
             /* Declare the new stage */
             if (!pTask.setNewStage(listName())) {
                 return false;
             }
 
             /* Access reporting steps */
-            mySteps = pTask.getReportingSteps();
+            int mySteps = pTask.getReportingSteps();
+            int myCount = 0;
 
             /* Count the Number of items */
-            if (!pTask.setNumSteps(sizeAll())) {
+            if (!pTask.setNumSteps(size())) {
                 return false;
             }
 
             /* Access the iterator */
-            myIterator = listIterator();
+            Iterator<T> myIterator = iterator();
 
             /* Loop through the items */
-            while ((myCurr = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
                 /* Ensure encryption of the item */
+                T myCurr = myIterator.next();
                 myCurr.updateSecurity(pControl);
 
                 /* Report the progress */
@@ -419,40 +417,33 @@ public abstract class EncryptedItem<T extends EncryptedItem<T>> extends DataItem
         protected boolean adoptSecurity(final TaskControl<?> pTask,
                                         final ControlKey pControl,
                                         final EncryptedList<?, ?> pBase) throws JDataException {
-            /* Local variables */
-            DataListIterator<T> myIterator;
-            EncryptedItem<T> myCurr;
-            EncryptedItem<?> myBase;
-            T mySource;
-            T myTarget;
-            Class<T> myClass = getBaseClass();
-            int mySteps;
-            int myCount = 0;
-
             /* Declare the new stage */
             if (!pTask.setNewStage(listName())) {
                 return false;
             }
 
             /* Access reporting steps */
-            mySteps = pTask.getReportingSteps();
+            int mySteps = pTask.getReportingSteps();
+            int myCount = 0;
 
             /* Count the Number of items */
-            if (!pTask.setNumSteps(sizeAll())) {
+            if (!pTask.setNumSteps(size())) {
                 return false;
             }
 
             /* Create an iterator for our new list */
-            myIterator = listIterator(true);
+            Iterator<T> myIterator = iterator();
+            Class<T> myClass = getBaseClass();
 
             /* Loop through this list */
-            while ((myCurr = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
                 /* Locate the item in the base list */
-                myBase = pBase.searchFor(myCurr.getId());
+                EncryptedItem myCurr = myIterator.next();
+                EncryptedItem myBase = pBase.findItemById(myCurr.getId());
 
                 /* Cast the items correctly */
-                mySource = (myBase == null) ? null : myClass.cast(myBase);
-                myTarget = myClass.cast(myCurr);
+                T mySource = (myBase == null) ? null : myClass.cast(myBase);
+                T myTarget = myClass.cast(myCurr);
 
                 /* Adopt/initialise the security */
                 myTarget.adoptSecurity(pControl, mySource);

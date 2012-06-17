@@ -230,7 +230,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
          * @return the newly added item
          */
         @Override
-        public Frequency addNewItem(final DataItem<?> pItem) {
+        public Frequency addNewItem(final DataItem pItem) {
             Frequency myFreq = new Frequency(this, (Frequency) pItem);
             add(myFreq);
             return myFreq;
@@ -262,7 +262,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
             }
 
             /* Check that this Frequency has not been previously added */
-            if (searchFor(pFrequency) != null) {
+            if (findItemByName(pFrequency) != null) {
                 throw new JDataException(ExceptionClass.DATA, myFrequency, "Duplicate Frequency");
             }
 
@@ -333,7 +333,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
             }
 
             /* Add the Frequency to the list */
-            add(myFreq);
+            addAtEnd(myFreq);
 
             /* Validate the Frequency */
             myFreq.validate();

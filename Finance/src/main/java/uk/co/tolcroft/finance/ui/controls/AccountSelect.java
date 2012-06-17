@@ -24,6 +24,7 @@ package uk.co.tolcroft.finance.ui.controls;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
@@ -41,7 +42,6 @@ import uk.co.tolcroft.finance.data.AccountType;
 import uk.co.tolcroft.finance.data.AccountType.AccountTypeList;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.View;
-import uk.co.tolcroft.models.data.DataList.DataListIterator;
 
 /**
  * Account selection panel.
@@ -309,11 +309,8 @@ public class AccountSelect extends JPanel {
         FinanceData myData;
         AccountType myType = null;
         AccountType myFirst = null;
-        Account myAccount;
         boolean doShowDeleted;
         boolean doShowClosed;
-
-        DataListIterator<Account> myIterator;
 
         /* Access the data */
         myData = theView.getData();
@@ -334,7 +331,7 @@ public class AccountSelect extends JPanel {
             /* If we have a selected type */
             if (getType() != null) {
                 /* Find it in the new list */
-                theState.setType(myTypes.searchFor(getType().getName()));
+                theState.setType(myTypes.findItemByName(getType().getName()));
             }
 
             /* Remove the types */
@@ -342,10 +339,11 @@ public class AccountSelect extends JPanel {
         }
 
         /* Access the iterator */
-        myIterator = theAccounts.listIterator(true);
+        Iterator<Account> myIterator = theAccounts.iterator();
 
         /* Loop through the non-owner accounts */
-        while ((myAccount = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            Account myAccount = myIterator.next();
             /* Skip owner items */
             if (myAccount.isOwner()) {
                 continue;
@@ -375,10 +373,11 @@ public class AccountSelect extends JPanel {
         }
 
         /* Access the iterator */
-        myIterator = theAccounts.listIterator(true);
+        myIterator = theAccounts.iterator();
 
         /* Loop through the owner accounts */
-        while ((myAccount = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            Account myAccount = myIterator.next();
             /* Skip child items */
             if (!myAccount.isOwner()) {
                 continue;
@@ -428,22 +427,12 @@ public class AccountSelect extends JPanel {
      * @return true/false
      */
     private boolean buildAccounts() {
-        Account myAcct;
-        Account myFirst;
-        Account mySelected;
-        Account myOld;
-        boolean doShowDeleted;
-        boolean doShowClosed;
-        AccountType myType;
-
-        DataListIterator<Account> myIterator;
-
         /* Access current values */
-        doShowDeleted = doShowDeleted();
-        doShowClosed = doShowClosed();
-        myType = getType();
-        mySelected = getSelected();
-        myOld = mySelected;
+        boolean doShowDeleted = doShowDeleted();
+        boolean doShowClosed = doShowClosed();
+        AccountType myType = getType();
+        Account mySelected = getSelected();
+        Account myOld = mySelected;
 
         /* Note that we are refreshing data */
         refreshingData = true;
@@ -453,7 +442,7 @@ public class AccountSelect extends JPanel {
             /* If we have a selected account */
             if (mySelected != null) {
                 /* Find it in the new list */
-                theState.setSelected(theAccounts.searchFor(mySelected.getName()));
+                theState.setSelected(theAccounts.findItemByName(mySelected.getName()));
                 mySelected = getSelected();
             }
 
@@ -477,11 +466,12 @@ public class AccountSelect extends JPanel {
         }
 
         /* Access the iterator */
-        myIterator = theAccounts.listIterator(true);
-        myFirst = null;
+        Iterator<Account> myIterator = theAccounts.iterator();
+        Account myFirst = null;
 
         /* Add the Account values to the types box */
-        while ((myAcct = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            Account myAcct = myIterator.next();
             /* Skip deleted items */
             if ((!doShowDeleted) && (myAcct.isDeleted())) {
                 continue;
@@ -536,7 +526,7 @@ public class AccountSelect extends JPanel {
         refreshingData = true;
 
         /* Access the edit-able account */
-        myAccount = theAccounts.searchFor(pAccount.getName());
+        myAccount = theAccounts.findItemByName(pAccount.getName());
 
         /* Select the correct account type */
         theState.setType(pAccount.getActType());

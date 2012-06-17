@@ -46,11 +46,11 @@ import uk.co.tolcroft.models.data.EncryptedItem;
  * EventData data type.
  * @author Tony Washer
  */
-public class EventData extends EncryptedItem<EventData> {
+public class EventData extends EncryptedItem implements Comparable<EventData> {
     /**
      * The name of the object.
      */
-    public static final String OBJECT_NAME = "EventData";
+    public static final String OBJECT_NAME = EventData.class.getSimpleName();
 
     /**
      * The name of the object.
@@ -373,14 +373,16 @@ public class EventData extends EncryptedItem<EventData> {
 
             /* Look up the EventType */
             FinanceData myData = pList.getData();
-            EventInfoType myType = myData.getInfoTypes().searchFor(uInfoTypeId);
+            EventInfoTypeList myTypes = myData.getInfoTypes();
+            EventInfoType myType = myTypes.findItemById(uInfoTypeId);
             if (myType == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid EventInfoType Id");
             }
             setValueInfoType(myType);
 
             /* Look up the Event */
-            Event myEvent = myData.getEvents().searchFor(uEventId);
+            EventList myEvents = myData.getEvents();
+            Event myEvent = myEvents.findItemById(uEventId);
             if (myEvent == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Event Id");
             }
@@ -450,9 +452,7 @@ public class EventData extends EncryptedItem<EventData> {
      *         sort order
      */
     @Override
-    public int compareTo(final Object pThat) {
-        int iDiff;
-
+    public int compareTo(final EventData pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -461,35 +461,20 @@ public class EventData extends EncryptedItem<EventData> {
             return -1;
         }
 
-        /* Make sure that the object is an EventData */
-        if (pThat.getClass() != this.getClass()) {
-            return -1;
-        }
-
-        /* Access the object as an EventData */
-        EventData myThat = (EventData) pThat;
-
         /* Compare the Events */
-        iDiff = getEvent().compareTo(myThat.getEvent());
+        int iDiff = getEvent().compareTo(pThat.getEvent());
         if (iDiff != 0) {
             return iDiff;
         }
 
         /* Compare the Info Types */
-        iDiff = getInfoType().compareTo(myThat.getInfoType());
+        iDiff = getInfoType().compareTo(pThat.getInfoType());
         if (iDiff != 0) {
             return iDiff;
         }
 
-        /* Compare the IDs */
-        iDiff = (int) (getId() - myThat.getId());
-        if (iDiff < 0) {
-            return -1;
-        }
-        if (iDiff > 0) {
-            return 1;
-        }
-        return 0;
+        /* Compare the underlying id */
+        return super.compareId(pThat);
     }
 
     /**
@@ -506,12 +491,12 @@ public class EventData extends EncryptedItem<EventData> {
 
         /* Update to use the local copy of the Types */
         EventInfoType myType = getInfoType();
-        EventInfoType myNewType = myTypes.searchFor(myType.getId());
+        EventInfoType myNewType = myTypes.findItemById(myType.getId());
         setValueInfoType(myNewType);
 
         /* Update to use the local copy of the Events */
         Event myEvent = getEvent();
-        Event myNewEvt = myEvents.searchFor(myEvent.getId());
+        Event myNewEvt = myEvents.findItemById(myEvent.getId());
         setValueEvent(myNewEvt);
     }
 
@@ -779,7 +764,7 @@ public class EventData extends EncryptedItem<EventData> {
             }
 
             /* Add to the list */
-            add(myInfo);
+            addAtEnd(myInfo);
         }
 
         /**
@@ -799,7 +784,7 @@ public class EventData extends EncryptedItem<EventData> {
         }
 
         @Override
-        public EventData addNewItem(final DataItem<?> pElement) {
+        public EventData addNewItem(final DataItem pElement) {
             /* Create the new item */
             EventData mySource = (EventData) pElement;
             EventData myInfo = new EventData(this, mySource);

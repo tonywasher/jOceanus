@@ -27,8 +27,9 @@ import java.util.Iterator;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
-import net.sourceforge.JDataManager.ReportList;
-import net.sourceforge.JSortedList.SortedListIterator;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.JSortedList.OrderedIdList;
+import net.sourceforge.JSortedList.OrderedListIterator;
 
 /**
  * Generic implementation of a DataList for DataItems.
@@ -36,13 +37,35 @@ import net.sourceforge.JSortedList.SortedListIterator;
  * @param <L> the list type
  * @param <T> the item type
  */
-public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> extends ReportList<T>
-        implements JDataContents {
+public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Comparable<T>> extends
+        OrderedIdList<Integer, T> implements JDataContents {
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(DataList.class.getSimpleName(),
-            ReportList.theLocalFields);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(DataList.class.getSimpleName());
+
+    /**
+     * Instance ReportFields.
+     */
+    private final JDataFields theFields;
+
+    @Override
+    public JDataFields getDataFields() {
+        return theFields;
+    }
+
+    /**
+     * Declare fields.
+     * @return the fields
+     */
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
+
+    /**
+     * Size Field Id.
+     */
+    public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
 
     /**
      * ListStyle Field Id.
@@ -75,17 +98,15 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     public static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField("Base");
 
     @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
     public String formatObject() {
         return getDataFields().getName();
     }
 
     @Override
     public Object getFieldValue(final JDataField pField) {
+        if (FIELD_SIZE.equals(pField)) {
+            return size();
+        }
         if (FIELD_STYLE.equals(pField)) {
             return theStyle;
         }
@@ -104,7 +125,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
         if (FIELD_CLASS.equals(pField)) {
             return theClass;
         }
-        return super.getFieldValue(pField);
+        return JDataFieldValue.UnknownField;
     }
 
     /**
@@ -152,6 +173,11 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
      * The next version.
      */
     private int theNextVersion = 0;
+
+    /**
+     * Do we show deleted items.
+     */
+    private boolean doShowDeleted = false;
 
     /**
      * Get the style of the list.
@@ -238,7 +264,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
      * @return <code>true/false</code>
      */
     public boolean getShowDeleted() {
-        return !getSkipHidden();
+        return doShowDeleted;
     }
 
     /**
@@ -246,7 +272,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
      * @param bShow <code>true/false</code>
      */
     public void setShowDeleted(final boolean bShow) {
-        setSkipHidden(!bShow);
+        doShowDeleted = bShow;
     }
 
     /**
@@ -294,17 +320,18 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
      * @param pClass the class
      * @param pBaseClass the class of the underlying object
      * @param pStyle the new {@link ListStyle}
-     * @param fromStart - should inserts be attempted from start/end of list
      */
     protected DataList(final Class<L> pClass,
                        final Class<T> pBaseClass,
-                       final ListStyle pStyle,
-                       final boolean fromStart) {
-        super(pBaseClass, fromStart);
+                       final ListStyle pStyle) {
+        super(pBaseClass, new IdManager<T>());
         theClass = pClass;
         theList = pClass.cast(this);
         theStyle = pStyle;
-        theMgr = new IdManager<T>();
+        theMgr = (IdManager<T>) getIndex();
+
+        /* Declare fields (allowing for subclasses) */
+        theFields = declareFields();
     }
 
     /**
@@ -312,13 +339,16 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
      * @param pSource the list to clone
      */
     protected DataList(final L pSource) {
-        super(pSource.getBaseClass());
+        super(pSource.getBaseClass(), new IdManager<T>());
         theStyle = ListStyle.VIEW;
         theClass = pSource.getListClass();
         theList = theClass.cast(this);
-        theMgr = new IdManager<T>();
+        theMgr = (IdManager<T>) getIndex();
         theBase = pSource;
         theGeneration = pSource.getGeneration();
+
+        /* Declare fields (allowing for subclasses) */
+        theFields = declareFields();
     }
 
     /**
@@ -361,28 +391,26 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
         /* Make this list the correct style */
         theStyle = pStyle;
 
-        /* Local variables */
-        DataListIterator<?> myIterator;
-        DataItem<?> myCurr;
-        DataItem<T> myItem;
-
         /* Note that this list should show deleted items on UPDATE */
         if (pStyle == ListStyle.UPDATE) {
             setShowDeleted(true);
         }
 
         /* Create an iterator for all items in the source list */
-        myIterator = theBase.listIterator(true);
+        Iterator<?> myIterator = theBase.iterator();
 
         /* Loop through the list */
-        while ((myCurr = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            /* Access the item */
+            DataItem myCurr = (DataItem) myIterator.next();
+
             /* Ignore this item for UPDATE lists if it is clean */
             if ((pStyle == ListStyle.UPDATE) && (myCurr.getState() == DataState.CLEAN)) {
                 continue;
             }
 
             /* Copy the item */
-            myItem = addNewItem(myCurr);
+            DataItem myItem = addNewItem(myCurr);
 
             /* If the item is a changed object */
             if ((pStyle == ListStyle.UPDATE) && (myItem.getState() == DataState.CHANGED)) {
@@ -410,15 +438,8 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
         /* Make this list the correct style */
         theStyle = ListStyle.DIFFER;
 
-        /* Local variables */
-        DataListIterator<T> myIterator;
-        DataItem<T> myCurr;
-        DataItem<T> myItem;
-        DataItem<T> myNew;
-        L myOld;
-
         /* Create a shallow copy of the old list */
-        myOld = pOld.getShallowCopy();
+        L myOld = pOld.getShallowCopy();
 
         /* Store the New as the base */
         theBase = pNew.getShallowCopy();
@@ -427,12 +448,13 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
         setShowDeleted(true);
 
         /* Create an iterator for all items in the source new list */
-        myIterator = pNew.listIterator(true);
+        Iterator<T> myIterator = pNew.iterator();
 
         /* Loop through the new list */
-        while ((myCurr = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
             /* Locate the item in the old list */
-            myItem = myOld.searchFor(myCurr.getId());
+            DataItem myCurr = myIterator.next();
+            DataItem myItem = myOld.findItemById(myCurr.getId());
 
             /* If the item does not exist */
             if (myItem == null) {
@@ -446,7 +468,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
                 /* If the item has changed */
                 if (!myCurr.equals(myItem)) {
                     /* Copy the item */
-                    myNew = addNewItem(myCurr);
+                    DataItem myNew = addNewItem(myCurr);
                     myNew.setBase(myItem);
                     myNew.setState(DataState.CHANGED);
 
@@ -460,12 +482,13 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
         }
 
         /* Create an iterator for all items in the source old list */
-        myIterator = myOld.listIterator(true);
+        myIterator = myOld.iterator();
 
         /* Loop through the remaining items in the old list */
-        while ((myCurr = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
             /* Insert a new item */
-            myItem = addNewItem(myCurr);
+            DataItem myCurr = myIterator.next();
+            DataItem myItem = addNewItem(myCurr);
             myItem.setBase(null);
             myItem.setState(DataState.DELETED);
         }
@@ -479,22 +502,17 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
      * @param pBase The base list to re-base on
      */
     public void reBase(final L pBase) {
-        /* Local variables */
-        DataListIterator<T> myIterator;
-        T myCurr;
-        T myItem;
-        L myBase;
-
         /* Create a shallow copy of the base list */
-        myBase = pBase.getShallowCopy();
+        L myBase = pBase.getShallowCopy();
 
         /* Create an iterator for our new list */
-        myIterator = listIterator(true);
+        Iterator<T> myIterator = iterator();
 
         /* Loop through this list */
-        while ((myCurr = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
             /* Locate the item in the base list */
-            myItem = myBase.searchFor(myCurr.getId());
+            T myCurr = myIterator.next();
+            T myItem = myBase.findItemById(myCurr.getId());
 
             /* If the underlying item does not exist */
             if (myItem == null) {
@@ -528,96 +546,16 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
         }
 
         /* Create an iterator for the source base list */
-        myIterator = myBase.listIterator(true);
+        myIterator = myBase.iterator();
 
         /* Loop through the remaining items in the base list */
-        while ((myCurr = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
             /* Insert a new item */
-            myItem = addNewItem(myCurr);
+            T myCurr = myIterator.next();
+            T myItem = addNewItem(myCurr);
             myItem.setBase(null);
             myItem.setState(DataState.DELETED);
         }
-    }
-
-    @Override
-    public boolean add(final T pItem) {
-        /* Add the item to the underlying list */
-        boolean bSuccess = super.add(pItem);
-
-        /* Declare to the id Manager */
-        if (bSuccess) {
-            theMgr.setItem(pItem.getId(), pItem);
-        }
-
-        /* Return to caller */
-        return bSuccess;
-    }
-
-    @Override
-    public boolean remove(final Object o) {
-        /* Make sure that the object is the same data class */
-        if (!getBaseClass().isInstance(o)) {
-            return false;
-        }
-
-        /* Remove the underlying item */
-        boolean bSuccess = super.remove(o);
-
-        /* Access the object */
-        DataItem<T> myItem = getBaseClass().cast(o);
-
-        /* Declare to the id Manager */
-        if (bSuccess) {
-            theMgr.setItem(myItem.getId(), null);
-        }
-
-        /* Return to caller */
-        return bSuccess;
-    }
-
-    @Override
-    public T remove(final int iIndex) {
-        /* Remove the underlying item */
-        T myItem = super.remove(iIndex);
-
-        /* Declare to the id Manager */
-        theMgr.setItem(myItem.getId(), null);
-
-        /* Return to caller */
-        return myItem;
-    }
-
-    @Override
-    public Iterator<T> iterator() {
-        /* Return a new iterator */
-        return new DataListIterator<T>(this);
-    }
-
-    @Override
-    public DataListIterator<T> listIterator() {
-        /* Return a new iterator */
-        return new DataListIterator<T>(this);
-    }
-
-    @Override
-    public DataListIterator<T> listIterator(final boolean bShowAll) {
-        /* Return a new iterator */
-        return new DataListIterator<T>(this, bShowAll);
-    }
-
-    @Override
-    public DataListIterator<T> listIterator(final int iIndex) {
-        /* Throw exception */
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void clear() {
-        /* Clear the underlying list */
-        super.clear();
-
-        /* Reset the id manager */
-        theMgr.clear();
     }
 
     /**
@@ -634,7 +572,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
      * Generate/Record new id for the item.
      * @param pItem the new item
      */
-    public void setNewId(final T pItem) {
+    public void setNewId(final DataItem pItem) {
         /* Ask the Id Manager to manage the request */
         theMgr.setNewId(pItem);
     }
@@ -667,14 +605,14 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
         boolean isDirty = false;
         boolean isError = false;
         boolean isValid = false;
-        DataListIterator<T> myIterator;
-        T myCurr;
 
         /* Create an iterator for the list */
-        myIterator = listIterator(true);
+        Iterator<T> myIterator = iterator();
 
         /* Loop through the items to find the match */
-        while ((myCurr = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            T myCurr = myIterator.next();
+
             /* If the item is deleted */
             if (myCurr.isDeleted()) {
                 /* If the base element is not deleted we have a valid change */
@@ -715,33 +653,19 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
     }
 
     /**
-     * Search for a particular item by Id.
-     * @param uId Id of Item
-     * @return The Item if present (or <code>null</code>)
-     */
-    public T searchFor(final int uId) {
-        /* Access the item from the IdManager */
-        T myItem = theMgr.getItem(uId);
-
-        /* Return result */
-        return myItem;
-    }
-
-    /**
      * Validate the data items.
      */
     public void validate() {
-        DataListIterator<T> myIterator;
-        T myCurr;
-
         /* Clear the errors */
         clearErrors();
 
         /* Create an iterator for the list */
-        myIterator = listIterator(true);
+        Iterator<T> myIterator = iterator();
 
         /* Loop through the items */
-        while ((myCurr = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            T myCurr = myIterator.next();
+
             /* Clear Errors */
             myCurr.clearErrors();
 
@@ -763,14 +687,13 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
      * @return <code>true/false</code>
      */
     public boolean hasUpdates() {
-        DataListIterator<T> myIterator;
-        T myCurr;
-
         /* Create an iterator for the list */
-        myIterator = listIterator(true);
+        Iterator<T> myIterator = iterator();
 
         /* Loop through the items */
-        while ((myCurr = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            T myCurr = myIterator.next();
+
             /* Ignore clean items */
             if (myCurr.getState() == DataState.CLEAN) {
                 continue;
@@ -788,14 +711,12 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
      * Clear errors.
      */
     public void clearErrors() {
-        DataListIterator<T> myIterator;
-        T myCurr;
-
         /* Create an iterator for the list */
-        myIterator = listIterator(true);
+        Iterator<T> myIterator = iterator();
 
         /* Loop through items clearing validation errors */
-        while ((myCurr = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            T myCurr = myIterator.next();
             myCurr.clearErrors();
         }
     }
@@ -804,14 +725,12 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
      * Reset active.
      */
     public void clearActive() {
-        DataListIterator<T> myIterator;
-        T myCurr;
-
         /* Create an iterator for the list */
-        myIterator = listIterator(true);
+        Iterator<T> myIterator = iterator();
 
         /* Loop through items clearing active flag */
-        while ((myCurr = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            T myCurr = myIterator.next();
             myCurr.clearActive();
         }
     }
@@ -821,7 +740,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
      * @param pElement - element to base new item on
      * @return the newly allocated item
      */
-    public abstract T addNewItem(final DataItem<?> pElement);
+    public abstract T addNewItem(final DataItem pElement);
 
     /**
      * Create a new empty element in the edit list (to be over-written).
@@ -833,14 +752,13 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
      * Reset changes in an edit view.
      */
     public void resetChanges() {
-        DataListIterator<T> myIterator;
-        T myCurr;
-
         /* Create an iterator for the list */
-        myIterator = listIterator(true);
+        OrderedListIterator<T> myIterator = listIterator();
 
         /* Loop through the elements */
-        while ((myCurr = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            T myCurr = myIterator.next();
+
             /* Switch on the state */
             switch (myCurr.getState()) {
             /* Delete the item if it is new or a deleted new item */
@@ -877,15 +795,14 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
      * Prepare changes in an edit view back into the core data.
      */
     public void prepareChanges() {
-        DataListIterator<T> myIterator;
-        DataItem<T> myCurr;
-        DataItem<?> myBase;
-
         /* Create an iterator for the changes list */
-        myIterator = listIterator(true);
+        Iterator<T> myIterator = iterator();
 
         /* Loop through the elements */
-        while ((myCurr = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            T myCurr = myIterator.next();
+            DataItem myBase;
+
             /* Switch on the state */
             switch (myCurr.getState()) {
             /* Ignore the item if it is clean or DELNEW */
@@ -946,15 +863,14 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
      * RollBack changes in an edit view that have been applied to core data.
      */
     public void rollBackChanges() {
-        DataListIterator<T> myIterator;
-        DataItem<T> myCurr;
-        DataItem<?> myBase;
-
         /* Create an iterator for this list */
-        myIterator = listIterator(true);
+        Iterator<T> myIterator = iterator();
 
         /* Loop through the elements */
-        while ((myCurr = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
+            T myCurr = myIterator.next();
+            DataItem myBase;
+
             /* Switch on the state */
             switch (myCurr.getState()) {
             /* Ignore the item if it is clean or DelNew */
@@ -1020,11 +936,11 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
      * Commit changes in an edit view that have been applied to the core data.
      */
     public void commitChanges() {
-        DataListIterator<T> myIterator;
-        DataItem<T> myCurr;
+        Iterator<T> myIterator;
+        DataItem myCurr;
 
         /* Create an iterator for this list */
-        myIterator = listIterator(true);
+        myIterator = iterator();
 
         /* Loop through the elements */
         while ((myCurr = myIterator.next()) != null) {
@@ -1053,45 +969,6 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem<T>> 
                 default:
                     break;
             }
-        }
-    }
-
-    /**
-     * ListIterator class for this list.
-     * @param <X> the item type
-     */
-    public static final class DataListIterator<X extends DataItem<X>> extends SortedListIterator<X> {
-        /**
-         * The id manager.
-         */
-        private IdManager<X> theMgr = null;
-
-        /**
-         * Constructor for standard iterator.
-         * @param pList the list to build the iterator on
-         */
-        private DataListIterator(final DataList<?, X> pList) {
-            this(pList, false);
-        }
-
-        /**
-         * Constructor for iterator that can show all elements.
-         * @param pList the list to build the iterator on
-         * @param bShowAll show all items in the list
-         */
-        private DataListIterator(final DataList<?, X> pList,
-                                 final boolean bShowAll) {
-            super(pList, bShowAll);
-            theMgr = pList.theMgr;
-        }
-
-        @Override
-        public void remove() {
-            /* Remove the last Item */
-            X myItem = super.removeLastItem();
-
-            /* Declare to the id Manager */
-            theMgr.setItem(myItem.getId(), null);
         }
     }
 

@@ -235,7 +235,7 @@ public class RenderData {
      * @param pRow the Table row
      * @param iField the field id
      */
-    public void processTableRow(final DataItem<?> pRow,
+    public void processTableRow(final DataItem pRow,
                                 final JDataField iField) {
         String myTip = null;
         Color myFore;
@@ -300,7 +300,7 @@ public class RenderData {
      * @param pRow the Table row
      * @param iFields the field IDs
      */
-    public void processRowHeader(final DataItem<?> pRow,
+    public void processRowHeader(final DataItem pRow,
                                  final JDataField[] iFields) {
         boolean isChanged;
 
@@ -329,7 +329,7 @@ public class RenderData {
      * @param iField the Field number
      * @return the standard foreground for the item
      */
-    public static Color getForeground(final DataItem<?> pItem,
+    public static Color getForeground(final DataItem pItem,
                                       final JDataField iField) {
         /* Handle deleted items */
         if (pItem.isDeleted()) {
@@ -382,7 +382,7 @@ public class RenderData {
      * @param isFixed is the field fixed width
      * @return the standard Font for the item
      */
-    public static Font getFont(final DataItem<?> pItem,
+    public static Font getFont(final DataItem pItem,
                                final JDataField iField,
                                final boolean isFixed) {
         if (pItem.fieldChanged(iField).isDifferent()) {
@@ -412,7 +412,7 @@ public class RenderData {
      * @param iField the Field number
      * @return the standard ToolTip for the item
      */
-    public static String getToolTip(final DataItem<?> pItem,
+    public static String getToolTip(final DataItem pItem,
                                     final JDataField iField) {
         /* Handle deleted items */
         if (pItem.isDeleted()) {
