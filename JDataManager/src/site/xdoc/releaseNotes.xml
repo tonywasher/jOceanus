@@ -1,0 +1,17 @@
+<document>
+  <properties>
+    <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
+    <title>JDataManager Release Notes</title>
+  </properties>
+  <body>
+    <section name="Overview">
+      <p>This project was started because I was in need of this feature for my program, but I could not find a suitable openSource option. The main problem was my desire to limit the range of selectable dates. So I built my own, and have released it in case anyone else has the same requirements that I did.</p>
+    </section>
+
+    <section name="Build History">
+      <dl>
+        <dt>v1.0.0-b1</dt> <dd>initial upload of code</dd>
+      </dl>
+    </section>
+  </body>
+</document>

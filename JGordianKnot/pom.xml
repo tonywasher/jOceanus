@@ -1,30 +1,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>uk.co.tolcroft.JFinanceApp</groupId>
-  <artifactId>JFinanceApp</artifactId>
-  <version>v1.1.0-SNAPSHOT</version>
-  <name>JFinanceApp</name>
-  <description>Finance Application</description>
+  <groupId>net.sourceforge.JGordianKnot</groupId>
+  <artifactId>JGordianKnot</artifactId>
+  <version>v1.0.0-SNAPSHOT</version>
+  <name>JGordianKnot Security Framework</name>
+  <description>A Security framework for Java</description>
+  <inceptionYear>2012</inceptionYear>
   <dependencies>
   	<dependency>
-  		<groupId>uk.co.tolcroft.finapp</groupId>
-  		<artifactId>finsvn</artifactId>
-  		<version>v1.1.0-SNAPSHOT</version>
+  		<groupId>org.bouncycastle</groupId>
+  		<artifactId>bcprov-jdk15on</artifactId>
+  		<version>1.47</version>
   	</dependency>
   	<dependency>
-  		<groupId>uk.co.tolcroft.JFinanceApp</groupId>
-  		<artifactId>JFinanceApp</artifactId>
-  		<version>v1.1.0-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.apache.poi</groupId>
-  		<artifactId>poi</artifactId>
-  		<version>3.8</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>net.sourceforge.JGordianKnot</groupId>
-  		<artifactId>JGordianKnot</artifactId>
-  		<version>v1.0.0-SNAPSHOT</version>
+                <groupId>org.7-Zip</groupId>
+                <artifactId>lzmaSDK</artifactId>
+                <version>v9.20</version>
   	</dependency>
   	<dependency>
   		<groupId>net.sourceforge.JDataManager</groupId>
@@ -32,19 +23,9 @@
   		<version>v1.0.0-SNAPSHOT</version>
   	</dependency>
   	<dependency>
-                <groupId>net.sourceforge.JSortedList</groupId>
-                <artifactId>JSortedList</artifactId>
-                <version>v1.0.0-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-                <groupId>net.sourceforge.JHelpManager</groupId>
-                <artifactId>JHelpManager</artifactId>
-                <version>v1.0.0-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-                <groupId>net.sourceforge.JDecimal</groupId>
-                <artifactId>JDecimal</artifactId>
-                <version>v1.0.0-SNAPSHOT</version>
+  		<groupId>net.sourceforge.JDecimal</groupId>
+  		<artifactId>JDecimal</artifactId>
+  		<version>v1.0.0-SNAPSHOT</version>
   	</dependency>
   	<dependency>
   		<groupId>net.sourceforge.JDateDay</groupId>
@@ -75,14 +56,13 @@
     <url>http://Tony-LapTop:8080/</url>
   </issueManagement>
   <scm>
-    <connection>scm:svn:http://Tony-LapTop/svn/finance/Finance</connection>
-    <developerConnection>scm:svn:https://Tony-LapTop/svn/finance/Finance</developerConnection>
+    <connection>scm:svn:http://Tony-LapTop/svn/finance/JGordianKnot</connection>
+    <developerConnection>scm:svn:https://Tony-LapTop/svn/finance/JGordianKnot</developerConnection>
     <tag>HEAD</tag>
-    <url>http://Tony-LapTop/viewvc/finance/Finance</url>
+    <url>http://Tony-LapTop/viewvc/finance/JGordianKnot</url>
   </scm>
   <properties>
-    <backup-dir>../../backup</backup-dir>
-    <backuplib-dir>../../backup/lib</backuplib-dir>
+    <backup-dir>../../backup/lib</backup-dir>
     <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
   </properties>
   <build>
@@ -117,7 +97,7 @@
               <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-              <outputDirectory>${backuplib-dir}</outputDirectory>
+              <outputDirectory>${backup-dir}</outputDirectory>
             </configuration>
           </execution>
         </executions>
@@ -129,12 +109,11 @@
         <configuration>
           <archive>
             <manifest>
-	      <mainClass>uk.co.tolcroft.finance.core.Control</mainClass>
-              <packageName>uk.co.tolcroft.Finance</packageName>
+              <packageName>net.sourceforge.JGordianKnot</packageName>
               <addClasspath>true</addClasspath>
-              <classpathPrefix>lib/</classpathPrefix>                                                        <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
-          </archive>   
+          </archive>
         </configuration>
       </plugin>
       <plugin>

@@ -1,57 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>uk.co.tolcroft.JFinanceApp</groupId>
-  <artifactId>JFinanceApp</artifactId>
-  <version>v1.1.0-SNAPSHOT</version>
-  <name>JFinanceApp</name>
-  <description>Finance Application</description>
-  <dependencies>
-  	<dependency>
-  		<groupId>uk.co.tolcroft.finapp</groupId>
-  		<artifactId>finsvn</artifactId>
-  		<version>v1.1.0-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>uk.co.tolcroft.JFinanceApp</groupId>
-  		<artifactId>JFinanceApp</artifactId>
-  		<version>v1.1.0-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.apache.poi</groupId>
-  		<artifactId>poi</artifactId>
-  		<version>3.8</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>net.sourceforge.JGordianKnot</groupId>
-  		<artifactId>JGordianKnot</artifactId>
-  		<version>v1.0.0-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>net.sourceforge.JDataManager</groupId>
-  		<artifactId>JDataManager</artifactId>
-  		<version>v1.0.0-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-                <groupId>net.sourceforge.JSortedList</groupId>
-                <artifactId>JSortedList</artifactId>
-                <version>v1.0.0-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-                <groupId>net.sourceforge.JHelpManager</groupId>
-                <artifactId>JHelpManager</artifactId>
-                <version>v1.0.0-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-                <groupId>net.sourceforge.JDecimal</groupId>
-                <artifactId>JDecimal</artifactId>
-                <version>v1.0.0-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>net.sourceforge.JDateDay</groupId>
-  		<artifactId>JDateDay</artifactId>
-  		<version>v1.0.0-SNAPSHOT</version>
-  	</dependency>
-  </dependencies>
+  <groupId>net.sourceforge.JSortedList</groupId>
+  <artifactId>JSortedList</artifactId>
+  <version>v1.0.0-SNAPSHOT</version>
+  <name>Java Sorted Linked Lists</name>
+  <description>Java Sorted Linked Lists</description>
+  <inceptionYear>2012</inceptionYear>
   <licenses>
     <license>
       <name>Apache 2</name>
@@ -75,14 +29,13 @@
     <url>http://Tony-LapTop:8080/</url>
   </issueManagement>
   <scm>
-    <connection>scm:svn:http://Tony-LapTop/svn/finance/Finance</connection>
-    <developerConnection>scm:svn:https://Tony-LapTop/svn/finance/Finance</developerConnection>
+    <connection>scm:svn:http://Tony-LapTop/svn/finance/JSortedList</connection>
+    <developerConnection>scm:svn:https://Tony-LapTop/svn/finance/JSortedList</developerConnection>
     <tag>HEAD</tag>
-    <url>http://Tony-LapTop/viewvc/finance/Finance</url>
+    <url>http://Tony-LapTop/viewvc/finance/JSortedList</url>
   </scm>
   <properties>
-    <backup-dir>../../backup</backup-dir>
-    <backuplib-dir>../../backup/lib</backuplib-dir>
+    <backup-dir>../../backup/lib</backup-dir>
     <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
   </properties>
   <build>
@@ -117,7 +70,7 @@
               <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-              <outputDirectory>${backuplib-dir}</outputDirectory>
+              <outputDirectory>${backup-dir}</outputDirectory>
             </configuration>
           </execution>
         </executions>
@@ -129,12 +82,10 @@
         <configuration>
           <archive>
             <manifest>
-	      <mainClass>uk.co.tolcroft.finance.core.Control</mainClass>
-              <packageName>uk.co.tolcroft.Finance</packageName>
-              <addClasspath>true</addClasspath>
-              <classpathPrefix>lib/</classpathPrefix>                                                        <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <packageName>net.sourceforge.JSortedList</packageName>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
-          </archive>   
+          </archive>
         </configuration>
       </plugin>
       <plugin>

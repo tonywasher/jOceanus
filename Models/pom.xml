@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>uk.co.tolcroft.finapp</groupId>
-  <artifactId>finmdl</artifactId>
+  <groupId>uk.co.tolcroft.JFinanceApp</groupId>
+  <artifactId>JDataModel</artifactId>
   <version>v1.1.0-SNAPSHOT</version>
-  <name>Finance Models</name>
-  <description>Generic Framework for Finance Application</description>
+  <name>Java Data Model</name>
+  <description>Generic Data Model Framework</description>
   <inceptionYear>2012</inceptionYear>
   <dependencies>
   	<dependency>
@@ -13,24 +13,24 @@
   		<version>3.8</version>
   	</dependency>
   	<dependency>
-  		<groupId>org.bouncycastle</groupId>
-  		<artifactId>bcprov-jdk15on</artifactId>
-  		<version>1.47</version>
-  	</dependency>
-  	<dependency>
   		<groupId>microsoft</groupId>
   		<artifactId>sqljdbc</artifactId>
   		<version>4.0</version>
   	</dependency>
   	<dependency>
-                <groupId>org.7-Zip</groupId>
-                <artifactId>lzmaSDK</artifactId>
-                <version>v9.20</version>
+  		<groupId>net.sourceforge.JGordianKnot</groupId>
+  		<artifactId>JGordianKnot</artifactId>
+  		<version>v1.0.0-SNAPSHOT</version>
   	</dependency>
   	<dependency>
-  		<groupId>net.sourceforge.JHelpManager</groupId>
-  		<artifactId>JHelpManager</artifactId>
+  		<groupId>net.sourceforge.JDataManager</groupId>
+  		<artifactId>JDataManager</artifactId>
   		<version>v1.0.0-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
+                <groupId>net.sourceforge.JSortedList</groupId>
+                <artifactId>JSortedList</artifactId>
+                <version>v1.0.0-SNAPSHOT</version>
   	</dependency>
   	<dependency>
   		<groupId>net.sourceforge.JDecimal</groupId>

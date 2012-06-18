@@ -1,0 +1,39 @@
+JGordianKnot Project
+
+  JGordianKnot is a security suite for Java based on the BouncyCastle cryptography library. 
+  
+  Encryption is performed using a set of keys called a <<CipherSet>> (one for each algorithm). A subset of the keys is selected at random from the CipherSet and the plaintext is encrypted by each key in turn. The types of the keys used 
+are encoded into output ciphertext along with the randomly chosen initialisation vector.
+
+  A CipherSet may be defined by a <<PasswordHash>>. This PasswordHash is build from a randomly selected set of three
+MessageDigest algorithms using an interleaved variant of PBKDF2. Three hashes are created from the combination of the 
+password and digest set. Two are combined to provide the external hash representation. The third is used to generate the
+key definitions for a CipherSet.
+
+  Asymmetric Keys based on the Elliptic Curve algorithm are also supported. Elliptic Curve Diffie-Hellman is used to derive a CipherSet for a pair of AsymmetricKeys. RSA is not supported owing to issues with KeySize. It is in fact coded but disabled.
+
+  The library uses the following symmetric key algorithms for 128/256 byte keys.
+  * AES
+  * Serpent
+  * TwoFish
+  * CAMELLIA
+  * CAST6
+  * RC6
+
+  The library uses the following MessageDigest algorithms.
+  * SHA256
+  * Tiger
+  * WHIRLPOOL
+  * GOST1411
+  * RIPEMD320
+  * SHA512
+
+  The following Elliptic Curves are supported
+  * secp384r1
+  * secp521r1
+  * c2tnb431r1
+  * sect409r1
+  * sect571r1
+  * brainpoolp384t1
+
+  In addition to Encryption services, JGordianKnot also supports reading and writing encrypted ZipFiles using the algorithms above. LZMA compression is also used.
