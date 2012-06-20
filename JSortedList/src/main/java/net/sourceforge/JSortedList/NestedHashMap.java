@@ -676,7 +676,7 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
         /* Initialise the state */
         int myMask = theArraySize - 1;
         int myCurHash = pHash;
-        ArrayElement myCurArray = theArray;
+        ArrayElement myArray = theArray;
         int myIndex;
 
         /* Loop to locate HashEntry location */
@@ -685,13 +685,13 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
             myIndex = myCurHash & myMask;
 
             /* Access current entry */
-            Object myEntry = myCurArray.theArray[myIndex];
+            Object myEntry = myArray.theArray[myIndex];
 
             /* If this is an extension array */
             if (myEntry instanceof ArrayElement) {
                 /* Adjust array and index */
                 myCurHash >>>= theShiftBits;
-                myCurArray = (ArrayElement) myEntry;
+                myArray = (ArrayElement) myEntry;
 
                 /* Re-loop */
                 continue;
@@ -722,13 +722,13 @@ public class NestedHashMap<K, V> implements Serializable, Cloneable, Map<K, V> {
                         /* else we have found the entry at the top */
                     } else {
                         /* remove the top-level hash */
-                        myCurArray.theArray[myIndex] = myHash.theNext;
+                        myArray.theArray[myIndex] = myHash.theNext;
 
                         /* If we no longer have an entry at this position */
                         if (myHash.theNext == null) {
                             /* Decrement number of entries and try to collapse the array */
-                            myCurArray.theNumElements--;
-                            myCurArray.collapseArray();
+                            myArray.theNumElements--;
+                            myArray.collapseArray();
                         }
                     }
 

@@ -903,32 +903,32 @@ public class StaticClass {
         /**
          * Monthly Frequency (at end of month).
          */
-        ENDOFMONTH(2, 1, 1),
+        ENDOFMONTH(4, 3, 1),
 
         /**
          * Quarterly Frequency.
          */
-        QUARTERLY(3, 2, 3),
+        QUARTERLY(5, 4, 3),
 
         /**
          * Half Yearly Frequency.
          */
-        HALFYEARLY(4, 3, 6),
+        HALFYEARLY(6, 5, 6),
 
         /**
          * Annual Frequency.
          */
-        ANNUALLY(5, 4, 0),
+        ANNUALLY(7, 6, 0),
 
         /**
          * Only on Maturity.
          */
-        MATURITY(6, 5, 0),
+        MATURITY(8, 7, 0),
 
         /**
          * Monthly for up to ten-months.
          */
-        TENMONTHS(7, 6, 1);
+        TENMONTHS(9, 8, 1);
 
         /**
          * Class Id.
@@ -1102,42 +1102,43 @@ public class StaticClass {
         /**
          * Pension.
          */
-        // Pension(4),
+        Pension(4, 3),
 
         /**
          * QualifyingYears.
          */
-        QualifyYears(5, 3),
+        QualifyYears(5, 4),
 
         /**
          * TransferDelay.
          */
-        XferDelay(6, 4),
+        XferDelay(6, 5),
 
         /**
          * Credit Units.
          */
-        CreditUnits(7, 5),
+        CreditUnits(7, 6),
 
         /**
          * Debit Units.
          */
-        DebitUnits(8, 6),
+        DebitUnits(8, 7),
 
         /**
          * Dilution.
          */
-        Dilution(9, 7),
+        Dilution(9, 8),
 
         /**
          * CashConsideration.
          */
-        // CashConsider(10),
+        CashConsider(10, 9),
 
         /**
          * ThirdParty Account.
          */
-        ThirdParty(11, 8);
+        // ThirdParty(11, 10);
+        CashAccount(11, 10);
 
         /**
          * Class Id.

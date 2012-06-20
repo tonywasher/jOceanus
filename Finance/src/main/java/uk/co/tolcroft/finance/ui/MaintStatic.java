@@ -48,13 +48,13 @@ import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
 import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
-import uk.co.tolcroft.models.views.ViewList;
+import uk.co.tolcroft.models.views.UpdateSet;
 
 /**
  * Top level panel for static data.
  * @author Tony Washer
  */
-public class MaintStatic implements StdPanel, ItemListener {
+public class MaintStatic implements StdPanel {
     /**
      * Panel width.
      */
@@ -111,9 +111,9 @@ public class MaintStatic implements StdPanel, ItemListener {
     private MaintStaticData<?, ?> theCurrent = null;
 
     /**
-     * The View List panel.
+     * The UpdateSet.
      */
-    private final ViewList theViewSet;
+    private final UpdateSet theUpdateSet;
 
     /**
      * The data entry.
@@ -145,11 +145,11 @@ public class MaintStatic implements StdPanel, ItemListener {
     }
 
     /**
-     * Obtain the viewSet.
+     * Obtain the updateList.
      * @return the viewSet
      */
-    protected ViewList getViewSet() {
-        return theViewSet;
+    protected UpdateSet getUpdateSet() {
+        return theUpdateSet;
     }
 
     /**
@@ -160,8 +160,8 @@ public class MaintStatic implements StdPanel, ItemListener {
         /* Store parameters */
         theParent = pParent;
 
-        /* Build the View set */
-        theViewSet = new ViewList(getView());
+        /* Build the Update set */
+        theUpdateSet = new UpdateSet(getView());
 
         /* Create the top level debug entry for this view */
         View myView = getView();
@@ -187,7 +187,7 @@ public class MaintStatic implements StdPanel, ItemListener {
         theSelectBox.addItem(EventInfoType.LIST_NAME);
 
         /* Add the listener for item changes */
-        theSelectBox.addItemListener(this);
+        theSelectBox.addItemListener(new StaticListener());
 
         /* Create the selection panel */
         JPanel mySelect = new JPanel();
@@ -291,29 +291,34 @@ public class MaintStatic implements StdPanel, ItemListener {
         theInfoTypes.getPanel().setVisible(theInfoTypes.equals(pClass));
     }
 
-    @Override
-    public void itemStateChanged(final ItemEvent evt) {
-        /* Ignore if this is not a selection event */
-        if (evt.getStateChange() != ItemEvent.SELECTED) {
-            return;
-        }
+    /**
+     * Listener class
+     */
+    private final class StaticListener implements ItemListener {
+        @Override
+        public void itemStateChanged(final ItemEvent evt) {
+            /* Ignore if this is not a selection event */
+            if (evt.getStateChange() != ItemEvent.SELECTED) {
+                return;
+            }
 
-        /* If this event relates to the Select box */
-        if (evt.getSource() == theSelectBox) {
-            String myName = (String) evt.getItem();
-            /* Determine the new table */
-            if (myName == AccountType.LIST_NAME) {
-                setSelection(theActTypes);
-            } else if (myName == TransactionType.LIST_NAME) {
-                setSelection(theTranTypes);
-            } else if (myName == TaxType.LIST_NAME) {
-                setSelection(theTaxTypes);
-            } else if (myName == TaxRegime.LIST_NAME) {
-                setSelection(theTaxRegimes);
-            } else if (myName == Frequency.LIST_NAME) {
-                setSelection(theFrequencys);
-            } else if (myName == EventInfoType.LIST_NAME) {
-                setSelection(theInfoTypes);
+            /* If this event relates to the Select box */
+            if (evt.getSource() == theSelectBox) {
+                String myName = (String) evt.getItem();
+                /* Determine the new table */
+                if (myName == AccountType.LIST_NAME) {
+                    setSelection(theActTypes);
+                } else if (myName == TransactionType.LIST_NAME) {
+                    setSelection(theTranTypes);
+                } else if (myName == TaxType.LIST_NAME) {
+                    setSelection(theTaxTypes);
+                } else if (myName == TaxRegime.LIST_NAME) {
+                    setSelection(theTaxRegimes);
+                } else if (myName == Frequency.LIST_NAME) {
+                    setSelection(theFrequencys);
+                } else if (myName == EventInfoType.LIST_NAME) {
+                    setSelection(theInfoTypes);
+                }
             }
         }
     }
@@ -325,7 +330,7 @@ public class MaintStatic implements StdPanel, ItemListener {
     @Override
     public boolean hasUpdates() {
         /* Return to caller */
-        return theViewSet.hasUpdates();
+        return theUpdateSet.hasUpdates();
     }
 
     /**
@@ -334,7 +339,7 @@ public class MaintStatic implements StdPanel, ItemListener {
      */
     public boolean hasErrors() {
         /* Return to caller */
-        return theViewSet.hasErrors();
+        return theUpdateSet.hasErrors();
     }
 
     @Override
@@ -353,7 +358,7 @@ public class MaintStatic implements StdPanel, ItemListener {
     @Override
     public EditState getEditState() {
         /* Return to caller */
-        return theViewSet.getEditState();
+        return theUpdateSet.getEditState();
     }
 
     @Override

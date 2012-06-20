@@ -47,7 +47,7 @@ import uk.co.tolcroft.models.ui.ErrorPanel;
 import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.ui.Renderer.CalendarRenderer;
 import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
-import uk.co.tolcroft.models.views.ViewList.ListClass;
+import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
 /**
  * Account Prices Table.
@@ -90,9 +90,9 @@ public class AccountPrices extends DataTable<AccountPrice> {
     private Account theAccount = null;
 
     /**
-     * List Class.
+     * UpdateEntry Class.
      */
-    private final ListClass theViewList;
+    private final UpdateEntry theUpdateEntry;
 
     /**
      * Self Reference.
@@ -214,7 +214,7 @@ public class AccountPrices extends DataTable<AccountPrice> {
         /* Store details about the parent */
         theParent = pParent;
         theView = pParent.getView();
-        theViewList = pParent.getViewSet().registerClass(ViewPrice.class);
+        theUpdateEntry = pParent.getUpdateSet().registerClass(ViewPrice.class);
 
         /* Create the model and declare it to our superclass */
         PricesModel myModel = new PricesModel();
@@ -336,7 +336,7 @@ public class AccountPrices extends DataTable<AccountPrice> {
         /* Declare the list */
         theColumns.setColumnSelection();
         super.setList(thePrices);
-        theViewList.setDataList(thePrices);
+        theUpdateEntry.setDataList(thePrices);
     }
 
     /**

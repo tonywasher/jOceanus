@@ -500,6 +500,17 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
      */
     public static class ControlKeyList extends DataList<ControlKeyList, ControlKey> {
         /**
+         * Local Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(ControlKeyList.class.getSimpleName(),
+                DataList.FIELD_DEFS);
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
+        /**
          * The owning data set.
          */
         private DataSet<?> theData = null;

@@ -25,15 +25,15 @@ package uk.co.tolcroft.models.data;
 import java.util.Iterator;
 
 import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.HistoryControl;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.JDataObject.JDataValues;
 import net.sourceforge.JDataManager.ValueSet;
+import net.sourceforge.JDataManager.ValueSetHistory;
 import net.sourceforge.JSortedList.OrderedIdItem;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
-import uk.co.tolcroft.models.data.ValidationControl.ErrorElement;
+import uk.co.tolcroft.models.data.ItemValidation.ErrorElement;
 
 /**
  * Provides the abstract DataItem class as the basis for data items. The implementation of the interface means
@@ -108,14 +108,14 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     public static final JDataField FIELD_STATE = FIELD_DEFS.declareLocalField("State");
 
     /**
+     * DerivedDataState Field Id.
+     */
+    public static final JDataField FIELD_DSTATE = FIELD_DEFS.declareLocalField("DerivedState");
+
+    /**
      * Edit State Field Id.
      */
     public static final JDataField FIELD_EDITSTATE = FIELD_DEFS.declareLocalField("EditState");
-
-    /**
-     * Next Version Field Id.
-     */
-    public static final JDataField FIELD_NEXTVERS = FIELD_DEFS.declareLocalField("NextVersion");
 
     /**
      * Version Field Id.
@@ -155,14 +155,14 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
         if (FIELD_STATE.equals(pField)) {
             return getState();
         }
+        if (FIELD_DSTATE.equals(pField)) {
+            return DataState.determineState(theHistory);
+        }
         if (FIELD_EDITSTATE.equals(pField)) {
             return getEditState();
         }
         if (FIELD_DELETED.equals(pField)) {
             return isDeleted ? isDeleted : JDataFieldValue.SkipField;
-        }
-        if (FIELD_NEXTVERS.equals(pField)) {
-            return (theHistory != null) ? getList().getNextVersion() : JDataFieldValue.SkipField;
         }
         if (FIELD_VERSION.equals(pField)) {
             return (theValueSet != null) ? theValueSet.getVersion() : JDataFieldValue.SkipField;
@@ -224,14 +224,14 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     private Integer theId = 0;
 
     /**
-     * The history control {@link HistoryControl}.
+     * The history control {@link ValueSetHistory}.
      */
-    private HistoryControl theHistory = null;
+    private ValueSetHistory theHistory = null;
 
     /**
-     * The validation control {@link ValidationControl}.
+     * The validation control {@link ItemValidation}.
      */
-    private ValidationControl theErrors = null;
+    private ItemValidation theErrors = null;
 
     /**
      * Is the item active.
@@ -300,10 +300,10 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     }
 
     /**
-     * Get the base item for this item.
-     * @return the Base item or <code>null</code>
+     * Get the history for this item.
+     * @return the history
      */
-    protected HistoryControl getHistory() {
+    protected ValueSetHistory getHistory() {
         return theHistory;
     }
 
@@ -472,6 +472,13 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     }
 
     /**
+     * Set new version.
+     */
+    protected void setNewVersion() {
+        theValueSet.setVersion(theList.getVersion() + 1);
+    }
+
+    /**
      * Clear the history for the item (leaving current values).
      */
     public void clearHistory() {
@@ -515,7 +522,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
      * Push current values into history buffer ready for changes to be made.
      */
     public void pushHistory() {
-        theHistory.pushHistory();
+        theHistory.pushHistory(theList.getVersion() + 1);
     }
 
     /**
@@ -646,18 +653,11 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
 
     /**
      * Allocate the initial value set and associated controls.
+     * @return the new value set
      */
-    public void allocateValueSet() {
-        /* Create history and validation control */
-        theErrors = new ValidationControl(theItem);
-
-        /* Allocate history control */
-        theHistory = new HistoryControl();
-
+    public ValueSet allocateValueSet() {
         /* Allocate initial value set and declare it */
-        ValueSet myValues = new ValueSet(theItem);
-        declareValues(myValues);
-        theHistory.setValues(myValues);
+        return new ValueSet(theItem);
     }
 
     /**
@@ -675,8 +675,16 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
         /* Declare fields (allowing for subclasses) */
         theFields = declareFields();
 
-        /* Allocate the value set */
-        allocateValueSet();
+        /* Create validation control */
+        theErrors = new ItemValidation(theItem);
+
+        /* Create history control */
+        theHistory = new ValueSetHistory();
+
+        /* Allocate initial value set and declare it */
+        ValueSet myValues = allocateValueSet();
+        declareValues(myValues);
+        theHistory.setValues(myValues);
     }
 
     /**

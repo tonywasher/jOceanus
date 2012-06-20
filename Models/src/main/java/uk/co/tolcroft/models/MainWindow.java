@@ -441,7 +441,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
         theView.setFrame(theFrame);
 
         /* Load data from the database */
-        loadDatabase();
+        // loadDatabase();
     }
 
     /**
@@ -666,6 +666,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
 
         /* Create the worker thread */
         LoadDatabase<T> myThread = new LoadDatabase<T>(myStatus);
+        myStatus.registerThread(myThread);
         startThread(myThread);
     }
 
@@ -678,6 +679,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
 
         /* Create the worker thread */
         StoreDatabase<T> myThread = new StoreDatabase<T>(myStatus);
+        myStatus.registerThread(myThread);
         startThread(myThread);
     }
 
@@ -690,6 +692,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
 
         /* Create the worker thread */
         CreateDatabase<T> myThread = new CreateDatabase<T>(myStatus);
+        myStatus.registerThread(myThread);
         startThread(myThread);
     }
 
@@ -702,6 +705,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
 
         /* Create the worker thread */
         PurgeDatabase<T> myThread = new PurgeDatabase<T>(myStatus);
+        myStatus.registerThread(myThread);
         startThread(myThread);
     }
 
@@ -714,6 +718,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
 
         /* Create the worker thread */
         CreateBackup<T> myThread = new CreateBackup<T>(myStatus);
+        myStatus.registerThread(myThread);
         startThread(myThread);
     }
 
@@ -726,6 +731,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
 
         /* Create the worker thread */
         LoadBackup<T> myThread = new LoadBackup<T>(myStatus);
+        myStatus.registerThread(myThread);
         startThread(myThread);
     }
 
@@ -738,6 +744,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
 
         /* Create the worker thread */
         CreateExtract<T> myThread = new CreateExtract<T>(myStatus);
+        myStatus.registerThread(myThread);
         startThread(myThread);
     }
 
@@ -750,6 +757,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
 
         /* Create the worker thread */
         LoadExtract<T> myThread = new LoadExtract<T>(myStatus);
+        myStatus.registerThread(myThread);
         startThread(myThread);
     }
 
@@ -762,6 +770,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
 
         /* Create the worker thread */
         UpdatePassword<T> myThread = new UpdatePassword<T>(myStatus);
+        myStatus.registerThread(myThread);
         startThread(myThread);
     }
 
@@ -774,6 +783,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
 
         /* Create the worker thread */
         RenewSecurity<T> myThread = new RenewSecurity<T>(myStatus);
+        myStatus.registerThread(myThread);
         startThread(myThread);
     }
 

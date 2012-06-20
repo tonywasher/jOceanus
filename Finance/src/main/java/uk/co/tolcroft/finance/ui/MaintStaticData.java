@@ -37,6 +37,7 @@ import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.View;
+import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.data.StaticData.StaticList;
@@ -48,8 +49,8 @@ import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.ui.Renderer.IntegerRenderer;
 import uk.co.tolcroft.models.ui.Renderer.StringRenderer;
 import uk.co.tolcroft.models.ui.SaveButtons;
-import uk.co.tolcroft.models.views.ViewList;
-import uk.co.tolcroft.models.views.ViewList.ListClass;
+import uk.co.tolcroft.models.views.UpdateSet;
+import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
 /**
  * Static Data Table.
@@ -94,7 +95,7 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
     private final MaintStaticData<L, T> theTable = this;
 
     /**
-     * The Tavle Model.
+     * The Table Model.
      */
     private final StaticModel theModel;
 
@@ -104,14 +105,14 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
     private final StaticColumnModel theColumns;
 
     /**
-     * The view set.
+     * The UpdateSet.
      */
-    private final ViewList theViewSet;
+    private final UpdateSet theUpdateSet;
 
     /**
-     * The List class.
+     * The UpdateEntry.
      */
-    private final ListClass theDataView;
+    private final UpdateEntry theUpdateEntry;
 
     /**
      * The Data entry.
@@ -259,9 +260,9 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
         theClass = pClass;
         theView = pParent.getView();
 
-        /* Build the View set and List */
-        theViewSet = theParent.getViewSet();
-        theDataView = theViewSet.registerClass(pClass);
+        /* Build the Update set and List */
+        theUpdateSet = theParent.getUpdateSet();
+        theUpdateEntry = theUpdateSet.registerClass(pClass);
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
@@ -359,9 +360,9 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
     @Override
     public void saveData() {
         if (theStatic != null) {
-            super.validateAll();
-            if (!hasErrors()) {
-                theViewSet.applyChanges();
+            validateAll();
+            if (!theUpdateSet.hasErrors()) {
+                theUpdateSet.applyChanges();
             }
         }
     }
@@ -382,7 +383,7 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
 
         /* Update the Data View */
         setList(theStatic);
-        theDataView.setDataList(theStatic);
+        theUpdateEntry.setDataList(theStatic);
 
         /* Update the table buttons */
         theTabButs.setLockDown();
@@ -469,6 +470,8 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
                     return StaticData.FIELD_ENABLED;
                 case COLUMN_ORDER:
                     return StaticData.FIELD_ORDER;
+                case COLUMN_ACTIVE:
+                    return DataItem.FIELD_ACTIVE;
                 default:
                     return null;
             }
@@ -696,7 +699,7 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
             }
 
             /* Loop through the selected rows */
-            for (T myRow : theTable.cacheSelectedRows()) {
+            for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
@@ -787,7 +790,7 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
             int row;
 
             /* Loop through the selected rows */
-            for (T myRow : theTable.cacheSelectedRows()) {
+            for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
@@ -803,26 +806,24 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
                 isEnabled = myData.getEnabled();
                 isActive = myData.isActive();
 
-                /* If we are enabling */
-                if (doEnable) {
-                    /* Ignore enabled rows */
-                    if (isEnabled) {
-                        continue;
-                    }
-
-                    /* Enable the row */
-                    myData.setEnabled(true);
-
-                    /* If we are disabling */
-                } else {
-                    /* Ignore disabled/active rows */
-                    if ((!isEnabled) || (isActive)) {
-                        continue;
-                    }
-
-                    /* Enable the row */
-                    myData.setEnabled(false);
+                /* Ignore if we are already correct state or are active */
+                if ((doEnable == isEnabled) || (isActive)) {
+                    continue;
                 }
+
+                /* Push history */
+                myData.pushHistory();
+
+                /* Enable/Disable the row */
+                myData.setEnabled(doEnable);
+
+                /* Note that the item has changed */
+                myData.clearErrors();
+                myData.setState(DataState.CHANGED);
+
+                /* Validate the item and update the edit state */
+                myData.validate();
+                theStatic.findEditState();
 
                 /* set the tax credit value */
                 theModel.fireTableCellUpdated(row, COLUMN_ENABLED);

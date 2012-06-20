@@ -38,6 +38,7 @@ import net.sourceforge.JGordianKnot.EncryptedValueSet;
 import uk.co.tolcroft.finance.data.Event.EventList;
 import uk.co.tolcroft.finance.data.EventInfoType.EventInfoTypeList;
 import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.EncryptedItem;
@@ -88,9 +89,9 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
     private EncryptedValueSet theValueSet;
 
     @Override
-    public void declareValues(final EncryptedValueSet pValues) {
+    public void declareValues(final ValueSet pValues) {
         super.declareValues(pValues);
-        theValueSet = pValues;
+        theValueSet = (EncryptedValueSet) pValues;
     }
 
     /**
@@ -636,6 +637,17 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * List class for EventData.
      */
     public static class EventDataList extends EncryptedList<EventDataList, EventData> {
+        /**
+         * Local Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(EventDataList.class.getSimpleName(),
+                DataList.FIELD_DEFS);
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
         @Override
         public FinanceData getData() {
             return (FinanceData) super.getData();

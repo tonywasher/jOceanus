@@ -53,8 +53,8 @@ import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
 import uk.co.tolcroft.models.ui.Renderer.StringRenderer;
 import uk.co.tolcroft.models.ui.SaveButtons;
 import uk.co.tolcroft.models.views.DataControl;
-import uk.co.tolcroft.models.views.ViewList;
-import uk.co.tolcroft.models.views.ViewList.ListClass;
+import uk.co.tolcroft.models.views.UpdateSet;
+import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
 /**
  * SpotPrices panel.
@@ -74,12 +74,12 @@ public class PricePoint extends DataTable<AccountPrice> {
     /**
      * The View list.
      */
-    private final ViewList theViewSet;
+    private final UpdateSet theUpdateSet;
 
     /**
-     * The list class.
+     * The update entry.
      */
-    private final ListClass theViewList;
+    private final UpdateEntry theUpdateEntry;
 
     /**
      * The Spot prices.
@@ -236,9 +236,9 @@ public class PricePoint extends DataTable<AccountPrice> {
         theParent = pParent;
         theView = pParent.getView();
 
-        /* Build the View set */
-        theViewSet = new ViewList(theView);
-        theViewList = theViewSet.registerClass(SpotPrice.class);
+        /* Build the Update set and entry */
+        theUpdateSet = new UpdateSet(theView);
+        theUpdateEntry = theUpdateSet.registerClass(SpotPrice.class);
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
@@ -312,8 +312,8 @@ public class PricePoint extends DataTable<AccountPrice> {
     public void saveData() {
         if (theSnapshot != null) {
             validateAll();
-            if (!hasErrors()) {
-                theViewSet.applyChanges();
+            if (!theUpdateSet.hasErrors()) {
+                theUpdateSet.applyChanges();
             }
         }
     }
@@ -449,7 +449,7 @@ public class PricePoint extends DataTable<AccountPrice> {
 
         /* Update other details */
         setList(thePrices);
-        theViewList.setDataList(thePrices);
+        theUpdateEntry.setDataList(thePrices);
         theTabButs.setLockDown();
         theSelect.setEnabled(true);
         theParent.setVisibility();

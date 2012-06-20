@@ -50,11 +50,6 @@ public class ZipReadFile {
     private static final int BUFFERSIZE = 1024;
 
     /**
-     * PasswordHash for this zip file.
-     */
-    private PasswordHash theHash = null;
-
-    /**
      * HashBytes for this zip file.
      */
     private final byte[] theHashBytes;
@@ -176,8 +171,8 @@ public class ZipReadFile {
             }
 
             /* Store the hash and obtain the generator */
-            theHash = pHash;
-            theGenerator = theHash.getSecurityGenerator();
+            PasswordHash myHash = pHash;
+            theGenerator = myHash.getSecurityGenerator();
 
             /* Initialise variables */
             myLen = 0;
@@ -201,7 +196,7 @@ public class ZipReadFile {
             myBuffer = Arrays.copyOf(myBuffer, myLen);
 
             /* Parse the decrypted header */
-            theContents = new ZipFileContents(theHash.decryptString(myBuffer));
+            theContents = new ZipFileContents(myHash.decryptString(myBuffer));
 
             /* Access the security details */
             ZipFileEntry myHeader = theContents.getHeader();
@@ -216,12 +211,10 @@ public class ZipReadFile {
             byte[] myPrivate = myHeader.getPrivateKey();
 
             /* Obtain the asymmetric key */
-            theAsymKey = theHash.deriveAsymmetricKey(myPrivate, myPublic);
+            theAsymKey = myHash.deriveAsymmetricKey(myPrivate, myPublic);
 
             /* Catch exceptions */
-        } catch (JDataException e) {
-            throw e;
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new JDataException(ExceptionClass.DATA, "Exception reading header of Zip file", e);
         } finally {
             /* Close the file */

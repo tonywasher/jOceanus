@@ -55,6 +55,7 @@ import uk.co.tolcroft.finance.views.Statement;
 import uk.co.tolcroft.finance.views.Statement.StatementLine;
 import uk.co.tolcroft.finance.views.Statement.StatementLines;
 import uk.co.tolcroft.finance.views.View;
+import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.ui.DataMouse;
 import uk.co.tolcroft.models.ui.DataTable;
@@ -71,7 +72,7 @@ import uk.co.tolcroft.models.ui.Renderer.CalendarRenderer;
 import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
 import uk.co.tolcroft.models.ui.Renderer.IntegerRenderer;
 import uk.co.tolcroft.models.ui.Renderer.StringRenderer;
-import uk.co.tolcroft.models.views.ViewList.ListClass;
+import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
 /**
  * Account Statement Table.
@@ -99,9 +100,9 @@ public class AccountStatement extends DataTable<Event> {
     private Account theAccount = null;
 
     /**
-     * ListClass.
+     * Update Entry.
      */
-    private final ListClass theViewList;
+    private final UpdateEntry theUpdateEntry;
 
     /**
      * Statement.
@@ -360,7 +361,7 @@ public class AccountStatement extends DataTable<Event> {
         /* Store passed details */
         theParent = pParent;
         theView = pParent.getView();
-        theViewList = pParent.getViewSet().registerClass(StatementLine.class);
+        theUpdateEntry = pParent.getUpdateSet().registerClass(StatementLine.class);
         theTopWindow = pParent.getTopWindow();
 
         /* Create the model and declare it to our superclass */
@@ -563,7 +564,7 @@ public class AccountStatement extends DataTable<Event> {
         }
         theColumns.setColumns();
         super.setList(theLines);
-        theViewList.setDataList(theLines);
+        theUpdateEntry.setDataList(theLines);
         theSelect.setEnabled(!hasUpdates());
         theStateBox.setEnabled(!hasUpdates());
     }
@@ -604,7 +605,7 @@ public class AccountStatement extends DataTable<Event> {
         theStateType = theStateBox.getStatementType();
         theColumns.setColumns();
         super.setList(theLines);
-        theViewList.setDataList(theLines);
+        theUpdateEntry.setDataList(theLines);
         theSelect.setEnabled(!hasUpdates());
         theStateBox.setEnabled(!hasUpdates());
     }
@@ -1185,7 +1186,7 @@ public class AccountStatement extends DataTable<Event> {
             }
 
             /* Loop through the selected rows */
-            for (Event myRow : theTable.cacheSelectedRows()) {
+            for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
@@ -1280,7 +1281,7 @@ public class AccountStatement extends DataTable<Event> {
             }
 
             /* Loop through the selected rows */
-            for (Event myRow : theTable.cacheSelectedRows()) {
+            for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
@@ -1452,7 +1453,7 @@ public class AccountStatement extends DataTable<Event> {
             myModel = theTable.getTableModel();
 
             /* Loop through the selected rows */
-            for (Event myRow : theTable.cacheSelectedRows()) {
+            for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
@@ -1573,7 +1574,7 @@ public class AccountStatement extends DataTable<Event> {
             int row;
 
             /* Loop through the selected rows */
-            for (Event myRow : theTable.cacheSelectedRows()) {
+            for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
@@ -1616,7 +1617,7 @@ public class AccountStatement extends DataTable<Event> {
             StatementLine myLine;
 
             /* Loop through the selected rows */
-            for (Event myRow : theTable.cacheSelectedRows()) {
+            for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;

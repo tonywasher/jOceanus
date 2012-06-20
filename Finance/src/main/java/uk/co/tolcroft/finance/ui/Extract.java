@@ -49,6 +49,7 @@ import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.TransactionType;
 import uk.co.tolcroft.finance.ui.controls.ComboSelect;
 import uk.co.tolcroft.finance.views.View;
+import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.ui.DataMouse;
 import uk.co.tolcroft.models.ui.DataTable;
@@ -67,8 +68,8 @@ import uk.co.tolcroft.models.ui.Renderer.IntegerRenderer;
 import uk.co.tolcroft.models.ui.Renderer.StringRenderer;
 import uk.co.tolcroft.models.ui.SaveButtons;
 import uk.co.tolcroft.models.views.DataControl;
-import uk.co.tolcroft.models.views.ViewList;
-import uk.co.tolcroft.models.views.ViewList.ListClass;
+import uk.co.tolcroft.models.views.UpdateSet;
+import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
 /**
  * Event Extract Table.
@@ -86,14 +87,14 @@ public class Extract extends DataTable<Event> {
     private final View theView;
 
     /**
-     * View Set.
+     * Update Set.
      */
-    private final ViewList theViewSet;
+    private final UpdateSet theUpdateSet;
 
     /**
-     * View List.
+     * Update Entry.
      */
-    private final ListClass theViewList;
+    private final UpdateEntry theUpdateEntry;
 
     /**
      * Table Model.
@@ -349,9 +350,9 @@ public class Extract extends DataTable<Event> {
         theParent = pParent;
         theView = pParent.getView();
 
-        /* Build the View set and List */
-        theViewSet = new ViewList(theView);
-        theViewList = theViewSet.registerClass(Event.class);
+        /* Build the Update set and Entry */
+        theUpdateSet = new UpdateSet(theView);
+        theUpdateEntry = theUpdateSet.registerClass(Event.class);
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
@@ -425,8 +426,8 @@ public class Extract extends DataTable<Event> {
     public void saveData() {
         if (theEvents != null) {
             super.validateAll();
-            if (!hasErrors()) {
-                theViewSet.applyChanges();
+            if (!theUpdateSet.hasErrors()) {
+                theUpdateSet.applyChanges();
             }
         }
     }
@@ -539,7 +540,7 @@ public class Extract extends DataTable<Event> {
             theColumns.setDateEditorRange(theRange);
         }
         setList(theEvents);
-        theViewList.setDataList(theEvents);
+        theUpdateEntry.setDataList(theEvents);
         theTabButs.setLockDown();
         theSelect.setEnabled(!hasUpdates());
         theParent.setVisibility();
@@ -1029,7 +1030,7 @@ public class Extract extends DataTable<Event> {
             }
 
             /* Loop through the selected rows */
-            for (Event myRow : theTable.cacheSelectedRows()) {
+            for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
@@ -1121,7 +1122,7 @@ public class Extract extends DataTable<Event> {
             }
 
             /* Loop through the selected rows */
-            for (Event myRow : theTable.cacheSelectedRows()) {
+            for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
@@ -1286,7 +1287,7 @@ public class Extract extends DataTable<Event> {
             int row;
 
             /* Loop through the selected rows */
-            for (Event myRow : theTable.cacheSelectedRows()) {
+            for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;

@@ -37,6 +37,11 @@ import net.sourceforge.JGordianKnot.SymmetricKey;
  */
 public class DecryptionInputStream extends InputStream {
     /**
+     * Stream closed failure message.
+     */
+    private static final String MSG_STREAM_CLOSED = "Stream is closed";
+
+    /**
      * Buffer size for transfers.
      */
     protected static final int BUFSIZE = 1024;
@@ -120,7 +125,7 @@ public class DecryptionInputStream extends InputStream {
 
         /* If we are already closed throw IO Exception */
         if (isClosed) {
-            throw new IOException("Stream is closed");
+            throw new IOException(MSG_STREAM_CLOSED);
         }
 
         /* while we have data left to skip */
@@ -151,7 +156,7 @@ public class DecryptionInputStream extends InputStream {
     public int available() throws IOException {
         /* If we are already closed throw IO Exception */
         if (isClosed) {
-            throw new IOException("Stream is closed");
+            throw new IOException(MSG_STREAM_CLOSED);
         }
 
         /* Determine the number of bytes available */
@@ -172,7 +177,7 @@ public class DecryptionInputStream extends InputStream {
     public void reset() throws IOException {
         /* If we are already closed throw IO Exception */
         if (isClosed) {
-            throw new IOException("Stream is closed");
+            throw new IOException(MSG_STREAM_CLOSED);
         }
 
         /* Not supported */
@@ -187,7 +192,7 @@ public class DecryptionInputStream extends InputStream {
 
         /* If we are already closed throw IO Exception */
         if (isClosed) {
-            throw new IOException("Stream is closed");
+            throw new IOException(MSG_STREAM_CLOSED);
         }
 
         /* Protect against exceptions */
@@ -218,8 +223,6 @@ public class DecryptionInputStream extends InputStream {
             return iNumRead;
 
             /* Catch exceptions */
-        } catch (IOException e) {
-            throw e;
         } catch (Exception e) {
             throw new IOException(e);
         }

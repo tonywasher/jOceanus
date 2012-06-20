@@ -15,7 +15,7 @@
   	<dependency>
   		<groupId>microsoft</groupId>
   		<artifactId>sqljdbc</artifactId>
-  		<version>4.0</version>
+  		<version>3.0</version>
   	</dependency>
   	<dependency>
   		<groupId>net.sourceforge.JGordianKnot</groupId>
@@ -30,6 +30,11 @@
   	<dependency>
                 <groupId>net.sourceforge.JSortedList</groupId>
                 <artifactId>JSortedList</artifactId>
+                <version>v1.0.0-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
+                <groupId>net.sourceforge.JHelpManager</groupId>
+                <artifactId>JHelpManager</artifactId>
                 <version>v1.0.0-SNAPSHOT</version>
   	</dependency>
   	<dependency>

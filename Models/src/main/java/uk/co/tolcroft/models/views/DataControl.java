@@ -144,6 +144,14 @@ public abstract class DataControl<T extends DataSet<T>> {
     }
 
     /**
+     * Increment data version.
+     */
+    public void incrementVersion() {
+        int myVersion = theData.getVersion();
+        theData.setVersion(myVersion + 1);
+    }
+
+    /**
      * Obtain current DataSet.
      * @return the current DataSet
      */

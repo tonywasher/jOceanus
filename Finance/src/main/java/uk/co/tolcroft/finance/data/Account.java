@@ -198,9 +198,9 @@ public class Account extends EncryptedItem implements Comparable<Account> {
     private EncryptedValueSet theValueSet;
 
     @Override
-    public void declareValues(final EncryptedValueSet pValues) {
+    public void declareValues(final ValueSet pValues) {
         super.declareValues(pValues);
-        theValueSet = pValues;
+        theValueSet = (EncryptedValueSet) pValues;
     }
 
     @Override
@@ -2361,7 +2361,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(Account.class.getSimpleName(),
+        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountList.class.getSimpleName(),
                 DataList.FIELD_DEFS);
 
         /**

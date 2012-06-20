@@ -63,7 +63,7 @@ public class EncryptionOutputStream extends OutputStream {
     /**
      * A buffer for single byte writes.
      */
-    private final byte[] theByte = new byte[1];
+    private final byte[] theByte;
 
     /**
      * Access the initialisation vector.
@@ -91,6 +91,9 @@ public class EncryptionOutputStream extends OutputStream {
                                   final OutputStream pStream) throws JDataException {
         /* Protect against exceptions */
         try {
+            /* Create the byte buffer */
+            theByte = new byte[1];
+
             /* record the output stream */
             theStream = pStream;
 
@@ -128,8 +131,6 @@ public class EncryptionOutputStream extends OutputStream {
             }
 
             /* Catch exceptions */
-        } catch (IOException e) {
-            throw e;
         } catch (JDataException e) {
             throw new IOException(e);
         }
@@ -173,8 +174,6 @@ public class EncryptionOutputStream extends OutputStream {
             theStream.write(myBytes, 0, iNumBytes);
 
             /* Catch exceptions */
-        } catch (IOException e) {
-            throw e;
         } catch (JDataException e) {
             throw new IOException(e);
         }

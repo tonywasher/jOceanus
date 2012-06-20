@@ -43,6 +43,7 @@ import uk.co.tolcroft.finance.data.AccountRate;
 import uk.co.tolcroft.finance.data.AccountRate.AccountRateList;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.View;
+import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.ui.DataMouse;
 import uk.co.tolcroft.models.ui.DataTable;
@@ -52,7 +53,7 @@ import uk.co.tolcroft.models.ui.ErrorPanel;
 import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.ui.Renderer.CalendarRenderer;
 import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
-import uk.co.tolcroft.models.views.ViewList.ListClass;
+import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
 /**
  * Account Rates Table.
@@ -105,9 +106,9 @@ public class AccountRates extends DataTable<AccountRate> {
     private Account theAccount = null;
 
     /**
-     * The View List.
+     * The Update Entry.
      */
-    private final ListClass theViewList;
+    private final UpdateEntry theUpdateEntry;
 
     /**
      * The Data Entry.
@@ -196,7 +197,7 @@ public class AccountRates extends DataTable<AccountRate> {
         /* Store details about the parent */
         theParent = pParent;
         theView = pParent.getView();
-        theViewList = pParent.getViewSet().registerClass(AccountRate.class);
+        theUpdateEntry = pParent.getUpdateSet().registerClass(AccountRate.class);
 
         /* Create the table model and declare it to our superclass */
         theModel = new RatesModel();
@@ -320,7 +321,7 @@ public class AccountRates extends DataTable<AccountRate> {
 
         /* Declare the list to the underlying table and ViewList */
         setList(theRates);
-        theViewList.setDataList(theRates);
+        theUpdateEntry.setDataList(theRates);
     }
 
     /**
@@ -614,7 +615,7 @@ public class AccountRates extends DataTable<AccountRate> {
             }
 
             /* Loop through the selected rows */
-            for (AccountRate myRow : theTable.cacheSelectedRows()) {
+            for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;

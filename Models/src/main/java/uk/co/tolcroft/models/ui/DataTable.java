@@ -48,6 +48,8 @@ import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
+import uk.co.tolcroft.models.ui.RenderData.PopulateRenderData;
+import uk.co.tolcroft.models.ui.Renderer.RowCell;
 import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
 import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
 
@@ -91,6 +93,11 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      * The Data List associated with the table.
      */
     private DataList<?, T> theList = null;
+
+    /**
+     * The Class associated with the table.
+     */
+    private Class<T> theClass = null;
 
     /**
      * The Scroll Pane.
@@ -159,6 +166,14 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      */
     public DataList<?, T> getList() {
         return theList;
+    }
+
+    /**
+     * Get the data class.
+     * @return the data class
+     */
+    protected Class<T> getDataClass() {
+        return theClass;
     }
 
     /**
@@ -289,6 +304,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         theList = pList;
         if (pList != null) {
             pList.setShowDeleted(doShowDel);
+            theClass = pList.getBaseClass();
         }
         updateDebug();
 
@@ -405,7 +421,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      * Get an array of the selected rows.
      * @return array of selected rows
      */
-    protected T[] cacheSelectedRows() {
+    protected DataItem[] cacheSelectedRows() {
         int[] mySelected;
         int myIndex;
         int i, j;
@@ -414,8 +430,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         mySelected = getSelectedRows();
 
         /* Create a row array relating to the selections */
-        @SuppressWarnings("unchecked")
-        T[] myRows = (T[]) new DataItem[mySelected.length];
+        DataItem[] myRows = new DataItem[mySelected.length];
         Arrays.fill(myRows, null);
 
         /* Loop through the selection indices */
@@ -449,7 +464,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      * @param pShowDel the new setting
      */
     protected void setShowDeleted(final boolean pShowDel) {
-        T[] myRows;
+        DataItem[] myRows;
         int myRowNo;
 
         /* If we are changing the value */
@@ -471,7 +486,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
             theModel.fireNewDataEvents();
 
             /* Loop through the selected rows */
-            for (T myRow : myRows) {
+            for (DataItem myRow : myRows) {
                 /* Ignore null/deleted entries */
                 if ((myRow == null) || (myRow.isDeleted())) {
                     continue;
@@ -555,7 +570,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      * Delete the selected items.
      */
     protected void deleteRows() {
-        T[] myRows;
+        DataItem[] myRows;
         T myRow;
         int myRowNo;
         boolean hideDeleted = hideDeletedRows();
@@ -566,7 +581,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         /* Loop through the selected rows */
         for (int i = 0; i < myRows.length; i++) {
             /* Access the row */
-            myRow = myRows[i];
+            myRow = theClass.cast(myRows[i]);
 
             /* Ignore locked rows */
             if ((myRow == null) || (myRow.isLocked())) {
@@ -618,7 +633,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      * Duplicate the selected items.
      */
     protected void duplicateRows() {
-        T[] myRows;
+        DataItem[] myRows;
         T myRow;
         T myItem;
         int myRowNo;
@@ -629,7 +644,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         /* Loop through the selected rows */
         for (int i = 0; i < myRows.length; i++) {
             /* Access the row */
-            myRow = myRows[i];
+            myRow = theClass.cast(myRows[i]);
 
             /* Ignore locked rows */
             if ((myRow == null) || (myRow.isLocked())) {
@@ -681,7 +696,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      * Recover the selected items.
      */
     protected void recoverRows() {
-        T[] myRows;
+        DataItem[] myRows;
         T myRow;
         int myRowNo;
 
@@ -691,7 +706,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         /* Loop through the selected rows */
         for (int i = 0; i < myRows.length; i++) {
             /* Access the row */
-            myRow = myRows[i];
+            myRow = theClass.cast(myRows[i]);
 
             /* Ignore locked rows */
             if ((myRow == null) || (myRow.isLocked())) {
@@ -726,7 +741,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      * Validate the selected items.
      */
     protected void validateRows() {
-        T[] myRows;
+        DataItem[] myRows;
         T myRow;
         int myRowNo;
 
@@ -736,7 +751,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         /* Loop through the selected rows */
         for (int i = 0; i < myRows.length; i++) {
             /* Access the row */
-            myRow = myRows[i];
+            myRow = theClass.cast(myRows[i]);
 
             /* Ignore locked rows */
             if ((myRow == null) || (myRow.isLocked())) {
@@ -772,7 +787,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      * Reset the selected rows.
      */
     protected void resetRows() {
-        T[] myRows;
+        DataItem[] myRows;
         T myRow;
         int myRowNo;
         int myNewRowNo;
@@ -783,7 +798,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         /* Loop through the selected rows */
         for (int i = 0; i < myRows.length; i++) {
             /* Access the row */
-            myRow = myRows[i];
+            myRow = theClass.cast(myRows[i]);
 
             /* Ignore locked rows */
             if ((myRow == null) || (myRow.isLocked())) {
@@ -841,7 +856,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      * Undo changes to rows.
      */
     protected void unDoRows() {
-        T[] myRows;
+        DataItem[] myRows;
         T myRow;
         int myRowNo;
         int myNewRowNo;
@@ -852,7 +867,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         /* Loop through the selected rows */
         for (int i = 0; i < myRows.length; i++) {
             /* Access the row */
-            myRow = myRows[i];
+            myRow = theClass.cast(myRows[i]);
 
             /* Ignore locked rows */
             if ((myRow == null) || (myRow.isLocked())) {
@@ -939,7 +954,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
     /**
      * Row Table model class.
      */
-    public static class RowTableModel extends AbstractTableModel {
+    public static class RowTableModel extends AbstractTableModel implements PopulateRenderData {
         /**
          * Serial Id.
          */
@@ -990,11 +1005,8 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
             return theTable.hasHeader() ? row : row + 1;
         }
 
-        /**
-         * Get render data for row.
-         * @param pData the Render details
-         */
-        public void getRenderData(final RenderData pData) {
+        @Override
+        public void populateRenderData(final RenderData pData) {
             DataItem myRow;
             int iRow;
             int myIndex;
@@ -1027,7 +1039,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
     /**
      * Data Table model class.
      */
-    public abstract static class DataTableModel extends AbstractTableModel {
+    public abstract static class DataTableModel extends AbstractTableModel implements PopulateRenderData {
         /**
          * Serial Id.
          */
@@ -1160,11 +1172,8 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
             theRowHdrModel.fireTableDataChanged();
         }
 
-        /**
-         * Get render data for row.
-         * @param pData the Render details
-         */
-        public void getRenderData(final RenderData pData) {
+        @Override
+        public void populateRenderData(final RenderData pData) {
             DataItem myRow;
             int iRow;
             int myIndex;
@@ -1337,7 +1346,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         /**
          * Row renderer.
          */
-        private Renderer.RowCell theRowRenderer = null;
+        private RowCell theRowRenderer = null;
 
         /**
          * Constructor.
@@ -1351,7 +1360,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
             DataColumn myCol;
 
             /* Create the relevant formatters/editors */
-            theRowRenderer = new Renderer.RowCell();
+            theRowRenderer = new RowCell();
 
             /* Create the columns */
             myCol = new DataColumn(0, ROWHDR_WIDTH, theRowRenderer, null);

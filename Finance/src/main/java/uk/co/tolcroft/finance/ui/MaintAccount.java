@@ -63,8 +63,8 @@ import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
 import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
 import uk.co.tolcroft.models.ui.ValueField;
 import uk.co.tolcroft.models.ui.ValueField.ValueClass;
-import uk.co.tolcroft.models.views.ViewList;
-import uk.co.tolcroft.models.views.ViewList.ListClass;
+import uk.co.tolcroft.models.views.UpdateSet;
+import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
 /**
  * Account maintenance panel.
@@ -277,14 +277,14 @@ public class MaintAccount implements StdPanel {
     private final View theView;
 
     /**
-     * The view class.
+     * The Update Set.
      */
-    private final ViewList theViewSet;
+    private final UpdateSet theUpdateSet;
 
     /**
      * The view list.
      */
-    private final ListClass theViewList;
+    private final UpdateEntry theUpdateEntry;
 
     /**
      * Obtain the panel.
@@ -336,9 +336,9 @@ public class MaintAccount implements StdPanel {
         /* Access the view */
         theView = pParent.getView();
 
-        /* Build the View set and List */
-        theViewSet = new ViewList(theView);
-        theViewList = theViewSet.registerClass(Account.class);
+        /* Build the Update set and Entry */
+        theUpdateSet = new UpdateSet(theView);
+        theUpdateEntry = theUpdateSet.registerClass(Account.class);
 
         /* Create the labels */
         myName = new JLabel("Name:");
@@ -853,9 +853,9 @@ public class MaintAccount implements StdPanel {
     public void saveData() {
         /* Validate the data */
         validate();
-        if (!hasErrors()) {
+        if (!theUpdateSet.hasErrors()) {
             /* Save details for the account */
-            theViewSet.applyChanges();
+            theUpdateSet.applyChanges();
         }
     }
 
@@ -999,8 +999,8 @@ public class MaintAccount implements StdPanel {
             theAccount = theActView.findItemByName(pAccount.getName());
         }
 
-        /* Set ViewList */
-        theViewList.setDataList(theActView);
+        /* Set List */
+        theUpdateEntry.setDataList(theActView);
 
         /* notify changes */
         notifyChanges();
@@ -1233,8 +1233,8 @@ public class MaintAccount implements StdPanel {
         /* Access the account */
         theAccount = theActView.getAccount();
 
-        /* Set ViewList */
-        theViewList.setDataList(theActView);
+        /* Set List */
+        theUpdateEntry.setDataList(theActView);
 
         /* Notify changes */
         notifyChanges();

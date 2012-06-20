@@ -264,7 +264,7 @@ public class AsymmetricKey implements JDataContents {
         theKeyMode = myNeedle.getAsymKeyMode();
         theKeyType = theKeyMode.getAsymKeyType();
         theGenerator = pGenerator;
-        theExternalKeyDef = pKeySpec;
+        theExternalKeyDef = Arrays.copyOf(pKeySpec, pKeySpec.length);
 
         /* Derive the KeyPair */
         theKeyPair = theGenerator.deriveKeyPair(theKeyType, null, myNeedle.getPublicKey());
@@ -301,7 +301,7 @@ public class AsymmetricKey implements JDataContents {
         theKeyMode = myNeedle.getAsymKeyMode();
         theKeyType = theKeyMode.getAsymKeyType();
         theGenerator = pGenerator;
-        theExternalKeyDef = pKeySpec;
+        theExternalKeyDef = Arrays.copyOf(pKeySpec, pKeySpec.length);
 
         /* Derive the KeyPair */
         theKeyPair = theGenerator.deriveKeyPair(theKeyType, pPrivateKey, myNeedle.getPublicKey());
@@ -428,9 +428,6 @@ public class AsymmetricKey implements JDataContents {
      */
     public SymmetricKey deriveSymmetricKey(final byte[] pSecuredKeyDef) throws JDataException {
         SymmetricKey mySymKey;
-        CipherSet mySet;
-        SecretKey myKey;
-        Cipher myCipher;
 
         /* Cannot unwrap unless we have the private key */
         if (isPublicOnly()) {
@@ -442,7 +439,7 @@ public class AsymmetricKey implements JDataContents {
             /* If we are elliptic */
             if (theKeyType.isElliptic()) {
                 /* Access the internal CipherSet */
-                mySet = getCipherSet();
+                CipherSet mySet = getCipherSet();
 
                 /* Unwrap the Key */
                 mySymKey = mySet.deriveSymmetricKey(pSecuredKeyDef);
@@ -450,7 +447,7 @@ public class AsymmetricKey implements JDataContents {
                 /* else we use RAS semantics */
             } else {
                 /* Initialise the cipher */
-                myCipher = theGenerator.accessCipher(theKeyType.getAlgorithm());
+                Cipher myCipher = theGenerator.accessCipher(theKeyType.getAlgorithm());
                 myCipher.init(Cipher.UNWRAP_MODE, getPrivateKey());
 
                 /* Parse the KeySpec */
@@ -458,8 +455,8 @@ public class AsymmetricKey implements JDataContents {
 
                 /* unwrap the key */
                 SymKeyType myType = myNeedle.getSymKeyType();
-                myKey = (SecretKey) myCipher.unwrap(myNeedle.getEncodedKey(), myType.getAlgorithm(),
-                                                    Cipher.SECRET_KEY);
+                SecretKey myKey = (SecretKey) myCipher.unwrap(myNeedle.getEncodedKey(),
+                                                              myType.getAlgorithm(), Cipher.SECRET_KEY);
 
                 /* Build the symmetric key */
                 mySymKey = new SymmetricKey(theGenerator, myKey, myType);
@@ -486,8 +483,6 @@ public class AsymmetricKey implements JDataContents {
      */
     public byte[] secureSymmetricKey(final SymmetricKey pKey) throws JDataException {
         byte[] myWrappedKey;
-        Cipher myCipher;
-        CipherSet mySet;
 
         /* Look for an entry in the map and return it if found */
         myWrappedKey = theSymKeyMap.get(pKey);
@@ -500,7 +495,7 @@ public class AsymmetricKey implements JDataContents {
             /* If we are elliptic */
             if (theKeyType.isElliptic()) {
                 /* Access the internal CipherSet */
-                mySet = getCipherSet();
+                CipherSet mySet = getCipherSet();
 
                 /* Wrap the Key */
                 myWrappedKey = mySet.secureSymmetricKey(pKey);
@@ -508,7 +503,7 @@ public class AsymmetricKey implements JDataContents {
                 /* else we are using RSA semantics */
             } else {
                 /* Initialise the cipher */
-                myCipher = theGenerator.accessCipher(theKeyType.getAlgorithm());
+                Cipher myCipher = theGenerator.accessCipher(theKeyType.getAlgorithm());
                 myCipher.init(Cipher.WRAP_MODE, getPublicKey());
 
                 /* wrap the key */
@@ -639,44 +634,34 @@ public class AsymmetricKey implements JDataContents {
      */
     private byte[] encryptRSAString(final String pString,
                                     final AsymmetricKey pTarget) throws JDataException {
-        byte[] myBytes;
-        byte[] myOutput;
-        int iBlockSize;
-        int iOutSize;
-        int iNumBlocks;
-        int iNumBytes;
-        int iOffset;
-        int iOutOffs;
-        Cipher myCipher;
-
         /* Protect against exceptions */
         try {
             /* Create the cipher */
-            myCipher = theGenerator.accessCipher(theKeyType.getCipher());
+            Cipher myCipher = theGenerator.accessCipher(theKeyType.getCipher());
             myCipher.init(Cipher.ENCRYPT_MODE, pTarget.getPublicKey());
 
             /* Convert the string to a byte array */
-            myBytes = DataConverter.stringToByteArray(pString);
+            byte[] myBytes = DataConverter.stringToByteArray(pString);
 
             /* Determine the block sizes */
-            iBlockSize = myCipher.getBlockSize();
-            iOutSize = myCipher.getOutputSize(iBlockSize);
+            int iBlockSize = myCipher.getBlockSize();
+            int iOutSize = myCipher.getOutputSize(iBlockSize);
 
             /* Determine the number of blocks */
             int iDataLen = myBytes.length;
-            iNumBlocks = 1 + ((iDataLen - 1) / iBlockSize);
+            int iNumBlocks = 1 + ((iDataLen - 1) / iBlockSize);
 
             /* Allocate the output buffer */
-            myOutput = new byte[iNumBlocks * iOutSize];
+            byte[] myOutput = new byte[iNumBlocks * iOutSize];
 
             /* Initialise offsets */
-            iOffset = 0;
-            iOutOffs = 0;
+            int iOffset = 0;
+            int iOutOffs = 0;
 
             /* Loop through the bytes in units of iBlockSize */
             while (iDataLen > 0) {
                 /* Determine the length of data to process */
-                iNumBytes = iDataLen;
+                int iNumBytes = iDataLen;
                 if (iNumBytes > iBlockSize) {
                     iNumBytes = iBlockSize;
                 }
@@ -694,12 +679,12 @@ public class AsymmetricKey implements JDataContents {
             if (iOutOffs < myOutput.length) {
                 myOutput = Arrays.copyOf(myOutput, iOutOffs);
             }
+
+            /* Return to caller */
+            return myOutput;
         } catch (Exception e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to encrypt string", e);
         }
-
-        /* Return to caller */
-        return myOutput;
     }
 
     /**
@@ -743,41 +728,31 @@ public class AsymmetricKey implements JDataContents {
      * @throws JDataException on error
      */
     private String decryptRSAString(final byte[] pBytes) throws JDataException {
-        String myString;
-        byte[] myOutput;
-        int iBlockSize;
-        int iOutSize;
-        int iNumBlocks;
-        int iNumBytes;
-        int iOffset;
-        int iOutOffs;
-        Cipher myCipher;
-
         /* Protect against exceptions */
         try {
             /* Create the cipher */
-            myCipher = theGenerator.accessCipher(theKeyType.getCipher());
+            Cipher myCipher = theGenerator.accessCipher(theKeyType.getCipher());
             myCipher.init(Cipher.DECRYPT_MODE, getPrivateKey());
 
             /* Determine the block sizes */
-            iBlockSize = myCipher.getBlockSize();
-            iOutSize = myCipher.getOutputSize(iBlockSize);
+            int iBlockSize = myCipher.getBlockSize();
+            int iOutSize = myCipher.getOutputSize(iBlockSize);
 
             /* Determine the number of blocks */
             int iDataLen = pBytes.length;
-            iNumBlocks = 1 + ((iDataLen - 1) / iBlockSize);
+            int iNumBlocks = 1 + ((iDataLen - 1) / iBlockSize);
 
             /* Allocate the output buffer */
-            myOutput = new byte[iNumBlocks * iOutSize];
+            byte[] myOutput = new byte[iNumBlocks * iOutSize];
 
             /* Initialise offsets */
-            iOffset = 0;
-            iOutOffs = 0;
+            int iOffset = 0;
+            int iOutOffs = 0;
 
             /* Loop through the bytes in units of iBlockSize */
             while (iDataLen > 0) {
                 /* Determine the length of data to process */
-                iNumBytes = iDataLen;
+                int iNumBytes = iDataLen;
                 if (iNumBytes > iBlockSize) {
                     iNumBytes = iBlockSize;
                 }
@@ -797,12 +772,9 @@ public class AsymmetricKey implements JDataContents {
             }
 
             /* Create the string */
-            myString = DataConverter.byteArrayToString(myOutput);
+            return DataConverter.byteArrayToString(myOutput);
         } catch (Exception e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to decrypt string", e);
         }
-
-        /* Return to caller */
-        return myString;
     }
 }

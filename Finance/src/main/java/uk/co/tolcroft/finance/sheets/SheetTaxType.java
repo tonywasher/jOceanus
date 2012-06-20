@@ -46,7 +46,7 @@ public class SheetTaxType extends SheetStaticData<TaxType> {
     /**
      * NamedArea for Tax Types.
      */
-    private static final String AREA_TAXCLASSES = TaxType.LIST_NAME;
+    private static final String AREA_TAXCLASSES = "TaxClasses";
 
     /**
      * NameList for TaxTypes.

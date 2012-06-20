@@ -49,7 +49,7 @@ import uk.co.tolcroft.models.ui.SaveButtons;
 import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
 import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
 import uk.co.tolcroft.models.views.DataControl;
-import uk.co.tolcroft.models.views.ViewList;
+import uk.co.tolcroft.models.views.UpdateSet;
 
 /**
  * Account Tab panel.
@@ -102,9 +102,9 @@ public class AccountTab implements StdPanel, ChangeListener {
     private final AccountRates theRates;
 
     /**
-     * The View Set.
+     * The Update Set.
      */
-    private final ViewList theViewSet;
+    private final UpdateSet theUpdateSet;
 
     /**
      * The Account.
@@ -164,11 +164,11 @@ public class AccountTab implements StdPanel, ChangeListener {
     }
 
     /**
-     * Obtain the viewSet.
-     * @return the viewSet
+     * Obtain the updateSet.
+     * @return the updateSet
      */
-    public ViewList getViewSet() {
-        return theViewSet;
+    public UpdateSet getUpdateSet() {
+        return theUpdateSet;
     }
 
     @Override
@@ -217,8 +217,8 @@ public class AccountTab implements StdPanel, ChangeListener {
         theParent = pParent;
         theView = pParent.getView();
 
-        /* Build the View set */
-        theViewSet = new ViewList(theView);
+        /* Build the Update set */
+        theUpdateSet = new UpdateSet(theView);
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
@@ -328,7 +328,7 @@ public class AccountTab implements StdPanel, ChangeListener {
     @Override
     public boolean hasUpdates() {
         /* Return to caller */
-        return theViewSet.hasUpdates();
+        return theUpdateSet.hasUpdates();
     }
 
     /**
@@ -337,7 +337,7 @@ public class AccountTab implements StdPanel, ChangeListener {
      */
     public boolean hasErrors() {
         /* Return to caller */
-        return theViewSet.hasErrors();
+        return theUpdateSet.hasErrors();
     }
 
     /**
@@ -347,7 +347,7 @@ public class AccountTab implements StdPanel, ChangeListener {
     @Override
     public EditState getEditState() {
         /* Return to caller */
-        return theViewSet.getEditState();
+        return theUpdateSet.getEditState();
     }
 
     /**
@@ -425,12 +425,12 @@ public class AccountTab implements StdPanel, ChangeListener {
         validateAll();
 
         /* Stop now if there are validation errors */
-        if (hasErrors()) {
+        if (theUpdateSet.hasErrors()) {
             return;
         }
 
         /* Apply changes in the view set */
-        theViewSet.applyChanges();
+        theUpdateSet.applyChanges();
 
         /* Access any error */
         JDataException myError = theView.getError();

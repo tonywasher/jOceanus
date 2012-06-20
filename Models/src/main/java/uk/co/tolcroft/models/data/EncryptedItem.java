@@ -29,6 +29,7 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JGordianKnot.EncryptedData.EncryptedField;
 import net.sourceforge.JGordianKnot.EncryptedValueSet;
 import net.sourceforge.JGordianKnot.EncryptionGenerator;
@@ -50,12 +51,9 @@ public abstract class EncryptedItem extends DataItem {
      */
     private EncryptedValueSet theValueSet;
 
-    /**
-     * Declare values.
-     * @param pValues the values
-     */
-    public void declareValues(final EncryptedValueSet pValues) {
-        theValueSet = pValues;
+    @Override
+    public void declareValues(final ValueSet pValues) {
+        theValueSet = (EncryptedValueSet) pValues;
         super.declareValues(pValues);
     }
 
@@ -64,15 +62,16 @@ public abstract class EncryptedItem extends DataItem {
         return theValueSet;
     }
 
+    @Override
+    public ValueSet allocateValueSet() {
+        /* Allocate initial value set */
+        return new EncryptedValueSet(getItem());
+    }
+
     /**
      * Control Key Field Id.
      */
     public static final JDataField FIELD_CONTROL = FIELD_DEFS.declareEqualityValueField("ControlKey");
-
-    /**
-     * Generator Field Id.
-     */
-    public static final JDataField FIELD_GENERATOR = FIELD_DEFS.declareLocalField("Generator");
 
     /**
      * Generator field.

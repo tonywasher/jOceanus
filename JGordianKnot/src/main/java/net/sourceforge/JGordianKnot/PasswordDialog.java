@@ -38,6 +38,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.LayoutStyle;
+import javax.swing.SwingUtilities;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
@@ -342,6 +343,36 @@ public class PasswordDialog extends JDialog implements ActionListener {
     public void showDialog() {
         /* Show the dialog */
         setVisible(true);
+    }
+
+    /**
+     * Show the dialog under an invokeAndWait clause.
+     * @param pDialog the dialog to show
+     * @return successful dialog usage true/false
+     */
+    public static boolean showTheDialog(final PasswordDialog pDialog) {
+        /* If this is the event dispatcher thread */
+        if (SwingUtilities.isEventDispatchThread()) {
+            /* invoke the dialog directly */
+            pDialog.showDialog();
+
+            /* else we must use invokeAndWait */
+        } else {
+            try {
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                        /* invoke the dialog */
+                        pDialog.showDialog();
+                    }
+                });
+            } catch (Exception e) {
+                return false;
+            }
+        }
+
+        /* Return to caller */
+        return pDialog.isPasswordSet();
     }
 
     /**

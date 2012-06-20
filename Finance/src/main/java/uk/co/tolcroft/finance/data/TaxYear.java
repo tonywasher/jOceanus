@@ -1585,6 +1585,17 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      */
     public static class TaxYearList extends DataList<TaxYearList, TaxYear> {
         /**
+         * Local Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(TaxYearList.class.getSimpleName(),
+                DataList.FIELD_DEFS);
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
+        /**
          * The Data.
          */
         private FinanceData theData = null;

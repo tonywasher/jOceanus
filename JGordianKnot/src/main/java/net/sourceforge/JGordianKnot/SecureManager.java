@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
@@ -169,7 +168,7 @@ public class SecureManager {
 
         /* Prompt for the password */
         boolean isPasswordOk = false;
-        while (showDialog(myPass)) {
+        while (PasswordDialog.showTheDialog(myPass)) {
             try {
                 /* Access the password */
                 myPassword = myPass.getPassword();
@@ -206,36 +205,6 @@ public class SecureManager {
 
         /* Return the password hash */
         return myHash;
-    }
-
-    /**
-     * Show the dialog under an invokeAndWait clause.
-     * @param pDialog the dialog to show
-     * @return successful dialog usage true/false
-     */
-    public boolean showDialog(final PasswordDialog pDialog) {
-        /* If this is the event dispatcher thread */
-        if (SwingUtilities.isEventDispatchThread()) {
-            /* invoke the dialog directly */
-            pDialog.showDialog();
-
-            /* else we must use invokeAndWait */
-        } else {
-            try {
-                SwingUtilities.invokeAndWait(new Runnable() {
-                    @Override
-                    public void run() {
-                        /* invoke the dialog */
-                        pDialog.showDialog();
-                    }
-                });
-            } catch (Exception e) {
-                return false;
-            }
-        }
-
-        /* Return to caller */
-        return pDialog.isPasswordSet();
     }
 
     /**

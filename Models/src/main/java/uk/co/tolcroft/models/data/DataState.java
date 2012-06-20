@@ -22,6 +22,9 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
+import net.sourceforge.JDataManager.ValueSet;
+import net.sourceforge.JDataManager.ValueSetHistory;
+
 /**
  * Enumeration of states of DataItem and DataList objects.
  */
@@ -65,4 +68,34 @@ public enum DataState {
      * Recovered deleted object.
      */
     RECOVERED;
+
+    /**
+     * Determine State of item.
+     * @param pHistory the history to derive state from
+     * @return the state of the item
+     */
+    public static DataState determineState(ValueSetHistory pHistory) {
+        /* Access the current values and base values */
+        ValueSet myCurr = pHistory.getValueSet();
+        ValueSet myBase = pHistory.getOriginalValues();
+
+        /* If we are a new element */
+        if (myBase.getVersion() > 0) {
+            /* Return status */
+            return NEW;
+        }
+
+        /* If we have no changes we are CLEAN */
+        if (myCurr.getVersion() == 0) {
+            return CLEAN;
+        }
+
+        /* If we are deleted return so */
+        if (myCurr.isDeletion()) {
+            return DELETED;
+        }
+
+        /* Return RECOVERED or CHANGED depending on whether we started as deleted */
+        return (myBase.isDeletion()) ? RECOVERED : CHANGED;
+    }
 }

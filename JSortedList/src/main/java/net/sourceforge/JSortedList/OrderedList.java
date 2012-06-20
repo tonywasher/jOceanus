@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.RandomAccess;
 
 /**
  * Sorted Linked list. Extension of {@link java.util.List} that provides a sorted linked list implementation
@@ -45,7 +46,7 @@ import java.util.List;
  * @author Tony Washer
  * @param <T> the data-type of the list
  */
-public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable {
+public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable, RandomAccess {
     /**
      * The Hash prime.
      */
@@ -169,6 +170,9 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable 
 
         /* Allocate the new node */
         OrderedNode<T> myNode = new OrderedNode<T>(this, pItem);
+
+        /* Register link between object and node */
+        theIndexMap.registerLink(myNode);
 
         /* Insert the node into the list */
         insertNode(myNode, false);

@@ -85,9 +85,9 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     private EncryptedValueSet theValueSet;
 
     @Override
-    public void declareValues(final EncryptedValueSet pValues) {
+    public void declareValues(final ValueSet pValues) {
         super.declareValues(pValues);
-        theValueSet = pValues;
+        theValueSet = (EncryptedValueSet) pValues;
     }
 
     /**
@@ -448,6 +448,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
                          final T pSource) {
         super(pList, pSource);
         ListStyle myOldStyle = pSource.getStyle();
+        theEnumClass = pSource.getEnumClass();
 
         /* Switch on the ListStyle */
         switch (getStyle()) {
@@ -501,6 +502,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
 
         /* Record the name */
         setValueName(pValue);
+        setValueEnabled(Boolean.TRUE);
 
         /* Set the new Id */
         pList.setNewId(getItem());

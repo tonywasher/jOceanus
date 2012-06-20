@@ -231,11 +231,7 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
     protected void addInsertDelete(final JPopupMenu pMenu) {
         JMenuItem myItem;
         JCheckBoxMenuItem myCheckBox;
-        boolean enableIns = false;
-        boolean enableRecov = false;
-        boolean enableDel = false;
-        boolean enableShow = true;
-        boolean enableDupl = false;
+        Class<T> myClass = theTable.getDataClass();
 
         /* Nothing to do if the table is locked */
         if (theTable.isLocked()) {
@@ -243,20 +239,27 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
         }
 
         /* Determine whether insert is allowed */
-        enableIns = theTable.insertAllowed();
+        boolean enableIns = theTable.insertAllowed();
+        boolean enableRecov = false;
+        boolean enableDel = false;
+        boolean enableShow = true;
+        boolean enableDupl = false;
 
         /* Loop through the selected rows */
-        for (T myRow : theTable.cacheSelectedRows()) {
+        for (DataItem myRow : theTable.cacheSelectedRows()) {
             /* Ignore locked rows */
             if ((myRow == null) || (myRow.isLocked())) {
                 continue;
             }
 
+            /* Access data correctly */
+            T myData = myClass.cast(myRow);
+
             /* Determine actions for row */
-            enableDel |= theTable.isRowDeletable(myRow);
-            enableDupl |= theTable.isRowDuplicatable(myRow);
-            enableShow &= !theTable.disableShowDeleted(myRow);
-            enableRecov |= theTable.isRowRecoverable(myRow);
+            enableDel |= theTable.isRowDeletable(myData);
+            enableDupl |= theTable.isRowDuplicatable(myData);
+            enableShow &= !theTable.disableShowDeleted(myData);
+            enableRecov |= theTable.isRowRecoverable(myData);
         }
 
         /* If there is something to add and there are already items in the menu */
@@ -330,7 +333,7 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
         }
 
         /* Loop through the selected rows */
-        for (T myRow : theTable.cacheSelectedRows()) {
+        for (DataItem myRow : theTable.cacheSelectedRows()) {
             /* Ignore locked rows */
             if ((myRow == null) || (myRow.isLocked())) {
                 continue;
@@ -436,7 +439,7 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
         myModel = theTable.getTableModel();
 
         /* Loop through the selected rows */
-        for (T myRow : theTable.cacheSelectedRows()) {
+        for (DataItem myRow : theTable.cacheSelectedRows()) {
             /* Ignore locked rows */
             if ((myRow == null) || (myRow.isLocked())) {
                 continue;

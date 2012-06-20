@@ -34,6 +34,11 @@ import net.sourceforge.JGordianKnot.MsgDigest;
  */
 public class DigestInputStream extends InputStream {
     /**
+     * Stream closed failure message.
+     */
+    private static final String MSG_STREAM_CLOSED = "Stream is closed";
+
+    /**
      * Buffer size for skip reads.
      */
     private static final int BUFSIZE = 1024;
@@ -106,7 +111,7 @@ public class DigestInputStream extends InputStream {
 
         /* If we are already closed throw IO Exception */
         if (isClosed) {
-            throw new IOException("Stream is closed");
+            throw new IOException(MSG_STREAM_CLOSED);
         }
 
         /* while we have data left to skip */
@@ -137,7 +142,7 @@ public class DigestInputStream extends InputStream {
     public int available() throws IOException {
         /* If we are already closed throw IO Exception */
         if (isClosed) {
-            throw new IOException("Stream is closed");
+            throw new IOException(MSG_STREAM_CLOSED);
         }
 
         /* Determine the number of bytes available */
@@ -158,7 +163,7 @@ public class DigestInputStream extends InputStream {
     public void reset() throws IOException {
         /* If we are already closed throw IO Exception */
         if (isClosed) {
-            throw new IOException("Stream is closed");
+            throw new IOException(MSG_STREAM_CLOSED);
         }
 
         /* Set the mark */
@@ -171,7 +176,7 @@ public class DigestInputStream extends InputStream {
                     final int pLength) throws IOException {
         /* If we are already closed throw IO Exception */
         if (isClosed) {
-            throw new IOException("Stream is closed");
+            throw new IOException(MSG_STREAM_CLOSED);
         }
 
         /* Read the bytes from the stream */
@@ -202,7 +207,7 @@ public class DigestInputStream extends InputStream {
     public int read() throws IOException {
         /* If we are already closed throw IO Exception */
         if (isClosed) {
-            throw new IOException("Stream is closed");
+            throw new IOException(MSG_STREAM_CLOSED);
         }
 
         /* read the next byte */

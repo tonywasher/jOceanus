@@ -126,7 +126,7 @@ public class ZipFileContents {
      * @param pName the file name
      * @return the newly added entry
      */
-    protected ZipFileEntry addZipFileEntry(final String pName) {
+    protected final ZipFileEntry addZipFileEntry(final String pName) {
         /* Create the new entry */
         ZipFileEntry myEntry = new ZipFileEntry(pName);
 
@@ -141,7 +141,7 @@ public class ZipFileContents {
      * Add a File entry to the contents.
      * @param pEntry the zip entry
      */
-    protected void addZipFileEntry(final ZipEntry pEntry) {
+    protected final void addZipFileEntry(final ZipEntry pEntry) {
         /* Create the new entry */
         ZipFileEntry myEntry = addZipFileEntry(pEntry.getName());
 
@@ -153,7 +153,7 @@ public class ZipFileContents {
      * Add a File entry to the contents.
      * @param pEntry the file entry
      */
-    protected void addZipFileEntry(final ZipFileEntry pEntry) {
+    protected final void addZipFileEntry(final ZipFileEntry pEntry) {
         /* Access the name */
         String myName = pEntry.getFileName();
 

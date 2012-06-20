@@ -36,11 +36,11 @@ import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
  * Provides the implementation of a error buffer for a DataItem. Each element represents an error that relates
  * to a field.
  */
-public class ValidationControl implements JDataContents {
+public class ItemValidation implements JDataContents {
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ValidationControl.class.getSimpleName());
+    private static final JDataFields FIELD_DEFS = new JDataFields(ItemValidation.class.getSimpleName());
 
     @Override
     public JDataFields getDataFields() {
@@ -84,7 +84,7 @@ public class ValidationControl implements JDataContents {
      * Constructor.
      * @param pItem the item to which this validation control belongs
      */
-    public ValidationControl(final DataItem pItem) {
+    public ItemValidation(final DataItem pItem) {
         /* Store details */
         theItem = pItem;
         theList = theItem.getList();

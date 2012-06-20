@@ -50,6 +50,7 @@ import uk.co.tolcroft.finance.data.TransactionType;
 import uk.co.tolcroft.finance.ui.controls.ComboSelect;
 import uk.co.tolcroft.finance.views.Statement.StatementLine;
 import uk.co.tolcroft.finance.views.View;
+import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.ui.DataMouse;
 import uk.co.tolcroft.models.ui.DataTable;
@@ -62,7 +63,7 @@ import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.ui.Renderer.CalendarRenderer;
 import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
 import uk.co.tolcroft.models.ui.Renderer.StringRenderer;
-import uk.co.tolcroft.models.views.ViewList.ListClass;
+import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
 /**
  * Account Patterns Table.
@@ -125,9 +126,9 @@ public class AccountPatterns extends DataTable<Event> {
     private Account theAccount = null;
 
     /**
-     * List Class.
+     * Update Entry.
      */
-    private final ListClass theViewList;
+    private final UpdateEntry theUpdateEntry;
 
     /**
      * ComboList.
@@ -286,7 +287,7 @@ public class AccountPatterns extends DataTable<Event> {
         /* Store details about the parent */
         theParent = pParent;
         theView = pParent.getView();
-        theViewList = pParent.getViewSet().registerClass(Pattern.class);
+        theUpdateEntry = pParent.getUpdateSet().registerClass(Pattern.class);
 
         /* Create the model and declare it to our superclass */
         theModel = new PatternsModel();
@@ -438,7 +439,7 @@ public class AccountPatterns extends DataTable<Event> {
 
         /* Declare the list to the underlying table and view list */
         super.setList(thePatterns);
-        theViewList.setDataList(thePatterns);
+        theUpdateEntry.setDataList(thePatterns);
     }
 
     /**
@@ -845,7 +846,7 @@ public class AccountPatterns extends DataTable<Event> {
             }
 
             /* Loop through the selected rows */
-            for (Event myRow : theTable.cacheSelectedRows()) {
+            for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
@@ -902,7 +903,7 @@ public class AccountPatterns extends DataTable<Event> {
             myModel = theTable.getTableModel();
 
             /* Loop through the selected rows */
-            for (Event myRow : theTable.cacheSelectedRows()) {
+            for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;

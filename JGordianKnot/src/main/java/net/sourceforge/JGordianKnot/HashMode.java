@@ -61,14 +61,9 @@ public class HashMode extends SecurityMode {
     public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareLocalField("CipherDigest");
 
     /**
-     * Switch iteration field.
-     */
-    public static final JDataField FIELD_SWITCH = FIELD_DEFS.declareLocalField("SwitchAdjust");
-
-    /**
      * Final iteration field.
      */
-    public static final JDataField FIELD_FINAL = FIELD_DEFS.declareLocalField("FinalAdjust");
+    public static final JDataField FIELD_ADJUST = FIELD_DEFS.declareLocalField("Adjust");
 
     @Override
     public JDataFields getDataFields() {
@@ -89,11 +84,8 @@ public class HashMode extends SecurityMode {
         if (FIELD_CIPHER.equals(pField)) {
             return theCipherDigest;
         }
-        if (FIELD_SWITCH.equals(pField)) {
-            return theSwitchAdjust;
-        }
-        if (FIELD_FINAL.equals(pField)) {
-            return theFinalAdjust;
+        if (FIELD_ADJUST.equals(pField)) {
+            return theAdjust;
         }
         return super.getFieldValue(pField);
     }
@@ -136,12 +128,7 @@ public class HashMode extends SecurityMode {
     /**
      * The locations (in nybbles).
      */
-    private static final int PLACE_SWITCH = 4;
-
-    /**
-     * The locations (in nybbles).
-     */
-    private static final int PLACE_FINAL = 5;
+    private static final int PLACE_ADJUST = 4;
 
     /**
      * The various versions.
@@ -169,14 +156,9 @@ public class HashMode extends SecurityMode {
     private final DigestType theCipherDigest;
 
     /**
-     * The Switch adjustment.
+     * The Adjustment.
      */
-    private final int theSwitchAdjust;
-
-    /**
-     * The Final adjustment.
-     */
-    private final int theFinalAdjust;
+    private final int theAdjust;
 
     /**
      * Obtain the Prime Digest type.
@@ -211,19 +193,11 @@ public class HashMode extends SecurityMode {
     }
 
     /**
-     * Obtain the Switch Adjustment.
-     * @return the switch adjustment
+     * Obtain the Adjustment.
+     * @return the adjustment
      */
-    public int getSwitchAdjust() {
-        return theSwitchAdjust;
-    }
-
-    /**
-     * Obtain the Final Adjustment.
-     * @return the final adjustment
-     */
-    public int getFinalAdjust() {
-        return theFinalAdjust;
+    public int getAdjustment() {
+        return theAdjust;
     }
 
     /**
@@ -244,9 +218,8 @@ public class HashMode extends SecurityMode {
         theSecretDigest = myDigest[2];
         theCipherDigest = mySetDigest[0];
 
-        /* Access random adjustment values */
-        theSwitchAdjust = 1 + pRandom.nextInt(MAX_ITERATIONS);
-        theFinalAdjust = 1 + pRandom.nextInt(MAX_ITERATIONS);
+        /* Access random adjustment value */
+        theAdjust = 1 + pRandom.nextInt(MAX_ITERATIONS);
 
         /* Set the version */
         setVersion(VERSION_CURRENT);
@@ -278,9 +251,8 @@ public class HashMode extends SecurityMode {
         theSecretDigest = DigestType.fromId(getDataValue(PLACE_SECRETTYPE));
         theCipherDigest = DigestType.fromId(getDataValue(PLACE_CIPHERTYPE));
 
-        /* Access the adjustments */
-        theSwitchAdjust = getDataValue(PLACE_SWITCH);
-        theFinalAdjust = getDataValue(PLACE_FINAL);
+        /* Access the adjustment */
+        theAdjust = getDataValue(PLACE_ADJUST);
 
         /* Re-encode the key mode */
         encodeKeyMode();
@@ -291,14 +263,13 @@ public class HashMode extends SecurityMode {
      */
     private void encodeKeyMode() {
         /* Allocate the encoded array */
-        allocateEncoded(PLACE_FINAL);
+        allocateEncoded(PLACE_ADJUST);
 
         /* Set the values */
         setDataValue(PLACE_PRIMETYPE, thePrimeDigest.getId());
         setDataValue(PLACE_ALTTYPE, theAlternateDigest.getId());
         setDataValue(PLACE_SECRETTYPE, theSecretDigest.getId());
         setDataValue(PLACE_CIPHERTYPE, theCipherDigest.getId());
-        setDataValue(PLACE_SWITCH, theSwitchAdjust);
-        setDataValue(PLACE_FINAL, theFinalAdjust);
+        setDataValue(PLACE_ADJUST, theAdjust);
     }
 }

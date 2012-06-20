@@ -24,6 +24,7 @@ package net.sourceforge.JGordianKnot.ZipFile;
 
 import java.security.Signature;
 import java.security.SignatureException;
+import java.util.Arrays;
 import java.util.zip.ZipEntry;
 
 import javax.crypto.Mac;
@@ -428,7 +429,7 @@ public class ZipFileEntry {
         if (!isHeader) {
             throw new IllegalArgumentException("Entry is not a header");
         }
-        thePublicKey = pPublicKey;
+        thePublicKey = Arrays.copyOf(pPublicKey, pPublicKey.length);
     }
 
     /**
@@ -439,7 +440,7 @@ public class ZipFileEntry {
         if (!isHeader) {
             throw new IllegalArgumentException("Entry is not a header");
         }
-        thePrivateKey = pPrivateKey;
+        thePrivateKey = Arrays.copyOf(pPrivateKey, pPrivateKey.length);
     }
 
     /**
@@ -500,7 +501,7 @@ public class ZipFileEntry {
         if (isHeader) {
             throw new IllegalArgumentException("Entry is a header");
         }
-        theSignature = pSignature;
+        theSignature = Arrays.copyOf(pSignature, pSignature.length);
     }
 
     /**

@@ -24,13 +24,16 @@ package uk.co.tolcroft.models.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Properties;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JGordianKnot.PasswordDialog;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.PreferenceSet;
 import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
@@ -46,6 +49,16 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
      * Number of update steps per table (INSERT/UPDATE/DELETE).
      */
     private static final int NUM_STEPS_PER_TABLE = 3;
+
+    /**
+     * User property name.
+     */
+    private static final String PROPERTY_USER = "user";
+
+    /**
+     * Password property name.
+     */
+    private static final String PROPERTY_PASS = "password";
 
     /**
      * Buffer length.
@@ -102,6 +115,11 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
         protected static final String NAME_DBBATCH = "DBBatchSize";
 
         /**
+         * Registry name for DataBase user.
+         */
+        protected static final String NAME_DBUSER = "DBUser";
+
+        /**
          * Display name for DataBase driver.
          */
         protected static final String DISPLAY_DBDRIVER = "Database Driver Class";
@@ -125,6 +143,11 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
          * Display name for DataBase batch size.
          */
         protected static final String DISPLAY_DBBATCH = "Batch Size";
+
+        /**
+         * Display name for DataBase user.
+         */
+        protected static final String DISPLAY_DBUSER = "Database User";
 
         /**
          * Default Database driver string.
@@ -152,6 +175,11 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
         private static final Integer DEFAULT_DBBATCH = BatchControl.DEF_BATCH_SIZE;
 
         /**
+         * Default Database user.
+         */
+        private static final String DEFAULT_DBUSER = "FinanceUser";
+
+        /**
          * Constructor.
          * @throws JDataException on error
          */
@@ -167,6 +195,7 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             definePreference(NAME_DBINSTANCE, PreferenceType.String);
             definePreference(NAME_DBNAME, PreferenceType.String);
             definePreference(NAME_DBBATCH, PreferenceType.Integer);
+            definePreference(NAME_DBUSER, PreferenceType.String);
         }
 
         @Override
@@ -186,6 +215,9 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             }
             if (pName.equals(NAME_DBBATCH)) {
                 return DEFAULT_DBBATCH;
+            }
+            if (pName.equals(NAME_DBUSER)) {
+                return DEFAULT_DBUSER;
             }
             return null;
         }
@@ -208,30 +240,10 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             if (pName.equals(NAME_DBBATCH)) {
                 return DISPLAY_DBBATCH;
             }
+            if (pName.equals(NAME_DBUSER)) {
+                return DISPLAY_DBUSER;
+            }
             return null;
-        }
-
-        /**
-         * Obtain connection string.
-         * @return the connection string
-         */
-        private String getConnectionString() {
-            StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-
-            /* Access the driver */
-            JDBCDriver myDriver = getEnumValue(NAME_DBDRIVER, JDBCDriver.class);
-
-            /* Build the connection string */
-            myBuilder.append(myDriver.getPrefix());
-            myBuilder.append(getStringValue(NAME_DBSERVER));
-            myBuilder.append(";instanceName=");
-            myBuilder.append(getStringValue(NAME_DBINSTANCE));
-            myBuilder.append(";database=");
-            myBuilder.append(getStringValue(NAME_DBNAME));
-            myBuilder.append(";integratedSecurity=true");
-
-            /* Return the string */
-            return myBuilder.toString();
         }
     }
 
@@ -242,7 +254,12 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
         /**
          * SQLServer.
          */
-        SQLServer;
+        SQLServer,
+
+        /**
+         * PostgreSQL.
+         */
+        PostgreSQL;
 
         /**
          * Obtain driver class.
@@ -252,8 +269,24 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             switch (this) {
                 case SQLServer:
                     return "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+                case PostgreSQL:
+                    return "org.postgresql.Driver";
                 default:
                     return null;
+            }
+        }
+
+        /**
+         * Determine whether we use integrated security.
+         * @return true/false
+         */
+        public boolean useIntegratedSecurity() {
+            switch (this) {
+                case SQLServer:
+                    return true;
+                case PostgreSQL:
+                default:
+                    return false;
             }
         }
 
@@ -265,9 +298,46 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             switch (this) {
                 case SQLServer:
                     return "jdbc:sqlserver://";
+                case PostgreSQL:
+                    return "jdbc:postgresql://";
                 default:
                     return null;
             }
+        }
+
+        /**
+         * Get connection string
+         * @param pPreferences the preferences
+         * @return the connection string
+         */
+        public String getConnectionString(DatabasePreferences pPreferences) {
+            /* Create the buffer */
+            StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+
+            switch (this) {
+                case SQLServer:
+                    /* Build the connection string */
+                    myBuilder.append(getPrefix());
+                    myBuilder.append(pPreferences.getStringValue(DatabasePreferences.NAME_DBSERVER));
+                    myBuilder.append(";instanceName=");
+                    myBuilder.append(pPreferences.getStringValue(DatabasePreferences.NAME_DBINSTANCE));
+                    myBuilder.append(";database=");
+                    myBuilder.append(pPreferences.getStringValue(DatabasePreferences.NAME_DBNAME));
+                    myBuilder.append(";integratedSecurity=true");
+                    break;
+                case PostgreSQL:
+                    /* Build the connection string */
+                    myBuilder.append(getPrefix());
+                    myBuilder.append(pPreferences.getStringValue(DatabasePreferences.NAME_DBSERVER));
+                    myBuilder.append("/");
+                    myBuilder.append(pPreferences.getStringValue(DatabasePreferences.NAME_DBNAME));
+                    break;
+                default:
+                    break;
+            }
+
+            /* Return the string */
+            return myBuilder.toString();
         }
     }
 
@@ -285,14 +355,50 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             /* Access the batch size */
             theBatchSize = myPreferences.getIntegerValue(DatabasePreferences.NAME_DBBATCH);
 
+            /* Access the JDBC Driver */
+            JDBCDriver myDriver = myPreferences.getEnumValue(DatabasePreferences.NAME_DBDRIVER,
+                                                             JDBCDriver.class);
+
             /* Load the database driver */
-            Class.forName(myPreferences.getEnumValue(DatabasePreferences.NAME_DBDRIVER, JDBCDriver.class)
-                    .getDriver());
+            Class.forName(myDriver.getDriver());
 
             /* Obtain the connection */
-            theConn = DriverManager.getConnection(myPreferences.getConnectionString());
+            String myConnString = myDriver.getConnectionString(myPreferences);
+
+            /* If we are using integrated security */
+            if (myDriver.useIntegratedSecurity()) {
+                /* Connect without userId/password */
+                theConn = DriverManager.getConnection(myConnString);
+
+                /* else we must use userId and password */
+            } else {
+                /* Create the properties and record user */
+                Properties myProperties = new Properties();
+                String myUser = myPreferences.getStringValue(DatabasePreferences.NAME_DBUSER);
+                myProperties.setProperty(PROPERTY_USER, myUser);
+
+                /* Create a new password dialog */
+                PasswordDialog myPassDlg = new PasswordDialog(null, "Enter Database password for " + myUser,
+                        false);
+
+                /* Prompt for the password */
+                if (PasswordDialog.showTheDialog(myPassDlg)) {
+                    /* Access the password */
+                    char[] myPassword = myPassDlg.getPassword();
+                    myProperties.setProperty(PROPERTY_PASS, new String(myPassword));
+
+                    /* Connect using properties */
+                    theConn = DriverManager.getConnection(myConnString, myProperties);
+                } else {
+                    throw new JDataException(ExceptionClass.SQLSERVER, "Invalid Password");
+                }
+            }
+
             theConn.setAutoCommit(false);
-        } catch (Exception e) {
+        } catch (ClassNotFoundException e) {
+            throw new JDataException(ExceptionClass.SQLSERVER, "Failed to locate driver", e);
+
+        } catch (SQLException e) {
             throw new JDataException(ExceptionClass.SQLSERVER, "Failed to load driver", e);
         }
 

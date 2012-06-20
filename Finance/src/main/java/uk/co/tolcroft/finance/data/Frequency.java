@@ -27,6 +27,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import uk.co.tolcroft.finance.data.StaticClass.FreqClass;
 import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
 
@@ -133,6 +134,17 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
      * Represents a list of {@link Frequency} objects.
      */
     public static class FrequencyList extends StaticList<FrequencyList, Frequency, FreqClass> {
+        /**
+         * Local Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(FrequencyList.class.getSimpleName(),
+                DataList.FIELD_DEFS);
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
         @Override
         public String listName() {
             return LIST_NAME;

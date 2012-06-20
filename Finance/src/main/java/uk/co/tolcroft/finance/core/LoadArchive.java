@@ -26,7 +26,6 @@ import net.sourceforge.JDataManager.JDataException;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.sheets.FinanceSheet;
 import uk.co.tolcroft.finance.views.View;
-import uk.co.tolcroft.models.database.Database;
 import uk.co.tolcroft.models.threads.LoaderThread;
 import uk.co.tolcroft.models.threads.ThreadStatus;
 
@@ -78,25 +77,25 @@ public class LoadArchive extends LoaderThread<FinanceData> {
         theStatus.initTask("Accessing DataStore");
 
         /* Create interface */
-        Database<FinanceData> myDatabase = theControl.getDatabase();
+        // Database<FinanceData> myDatabase = theControl.getDatabase();
 
         /* Load underlying database */
-        FinanceData myStore = myDatabase.loadDatabase(theStatus);
+        // FinanceData myStore = myDatabase.loadDatabase(theStatus);
 
         /* Initialise the status window */
-        theStatus.initTask("Applying Security");
+        // theStatus.initTask("Applying Security");
 
         /* Initialise the security, either from database or with a new security control */
-        myData.initialiseSecurity(theStatus, myStore);
+        // myData.initialiseSecurity(theStatus, myStore);
 
         /* Initialise the status window */
-        theStatus.initTask("Analysing Data");
+        // theStatus.initTask("Analysing Data");
 
         /* Analyse the Data to ensure that close dates are updated */
         theControl.analyseData(myData);
 
         /* Re-base the loaded spreadsheet onto the database image */
-        myData.reBase(myStore);
+        // myData.reBase(myStore);
 
         /* Return the loaded data */
         return myData;

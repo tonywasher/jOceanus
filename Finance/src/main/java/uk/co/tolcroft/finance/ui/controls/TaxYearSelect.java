@@ -127,9 +127,6 @@ public class TaxYearSelect extends JPanel {
         /* Create initial state */
         theState = new YearState();
 
-        /* Initialise the data from the view */
-        refreshData();
-
         /* Create the labels */
         mySelect = new JLabel("Select Year:");
 
@@ -163,6 +160,9 @@ public class TaxYearSelect extends JPanel {
                                   .addComponent(theShowDeleted).addContainerGap()));
         myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addComponent(mySelect).addComponent(theYearsBox).addComponent(theShowDeleted));
+
+        /* Initialise the data from the view */
+        refreshData();
     }
 
     /**

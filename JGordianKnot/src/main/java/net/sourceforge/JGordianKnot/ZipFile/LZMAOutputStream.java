@@ -36,11 +36,6 @@ import SevenZip.Compression.LZMA.Encoder;
  */
 public class LZMAOutputStream extends OutputStream {
     /**
-     * The pipe to the worker thread.
-     */
-    private final PipedStream thePipe;
-
-    /**
      * The sink stream to write to the encoder thread.
      */
     private final OutputStream theSink;
@@ -69,9 +64,9 @@ public class LZMAOutputStream extends OutputStream {
         theTarget = pOutput;
 
         /* Create the piped stream */
-        thePipe = new PipedStream();
-        theSink = thePipe.getSink();
-        theSource = thePipe.getSource();
+        PipedStream myPipe = new PipedStream();
+        theSink = myPipe.getSink();
+        theSource = myPipe.getSource();
 
         /* Create encoder thread */
         theThread = new EncoderThread();

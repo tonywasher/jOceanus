@@ -134,6 +134,17 @@ public class RenderData {
     private boolean isFixed = false;
 
     /**
+     * Populate RenderData interface.
+     */
+    protected interface PopulateRenderData {
+        /**
+         * Get render data for row.
+         * @param pData the Render details
+         */
+        void populateRenderData(final RenderData pData);
+    }
+
+    /**
      * Get the foreground.
      * @return the foreground
      */

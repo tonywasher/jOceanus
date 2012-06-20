@@ -304,7 +304,8 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
                 case XferDelay:
                     setValueValue(pValue);
                     break;
-                case ThirdParty:
+                // case ThirdParty:
+                case CashAccount:
                     /* Look up the Account */
                     setValueValue(pValue);
                     AccountList myAccounts = myData.getAccounts();
@@ -433,7 +434,8 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
                         addError(myType.getName() + " must be positive", FIELD_VALUE);
                     }
                     break;
-                case ThirdParty:
+                // case ThirdParty:
+                case CashAccount:
                     Account myAccount = getAccount();
                     if (myAccount == null) {
                         addError(myType.getName() + " must be non-null", FIELD_VALUE);
@@ -464,7 +466,8 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
 
         /* Switch on type of Value */
         switch (getInfoType().getInfoClass()) {
-            case ThirdParty:
+        // case ThirdParty:
+            case CashAccount:
                 return JDataObject.formatField(getAccount());
             case QualifyYears:
             case XferDelay:
@@ -500,7 +503,8 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
     protected void setAccount(final Account pValue) throws JDataException {
         /* Switch on Info type */
         switch (getInfoType().getInfoClass()) {
-            case ThirdParty:
+        // case ThirdParty:
+            case CashAccount:
                 setValueAccount(pValue);
                 setValueValue((pValue == null) ? null : pValue.getId());
                 break;
@@ -513,6 +517,17 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
      * List class for EventValues.
      */
     public static class EventValueList extends DataList<EventValueList, EventValue> {
+        /**
+         * Local Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(EventValueList.class.getSimpleName(),
+                DataList.FIELD_DEFS);
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
         /**
          * The DataSet.
          */

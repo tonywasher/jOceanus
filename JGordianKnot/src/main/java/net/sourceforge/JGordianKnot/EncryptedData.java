@@ -50,6 +50,16 @@ import net.sourceforge.JDecimal.Units;
  */
 public final class EncryptedData {
     /**
+     * Encrypted data conversion failure message.
+     */
+    private static final String MSG_BYTES_CONVERT = "Failed to convert value from bytes";
+
+    /**
+     * Encrypted data conversion failure message.
+     */
+    private static final String MSG_VALUE_CONVERT = "Failed to convert value to bytes";
+
+    /**
      * Private constructor to avoid instantiation.
      */
     private EncryptedData() {
@@ -131,7 +141,7 @@ public final class EncryptedData {
             theCipherSet = pCipherSet;
 
             /* Store the encrypted value */
-            theEncrypted = pEncrypted;
+            theEncrypted = Arrays.copyOf(pEncrypted, pEncrypted.length);
 
             /* Reject if encryption is not initialised */
             if (theCipherSet == null) {
@@ -370,7 +380,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
 
@@ -383,7 +393,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value to bytes", e);
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
             }
         }
     }
@@ -423,7 +433,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
 
@@ -436,7 +446,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value to bytes", e);
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
             }
         }
     }
@@ -476,7 +486,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
 
@@ -489,7 +499,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value to bytes", e);
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
             }
         }
     }
@@ -529,7 +539,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
 
@@ -542,7 +552,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value to bytes", e);
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
             }
         }
     }
@@ -582,7 +592,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
 
@@ -595,7 +605,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value to bytes", e);
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
             }
         }
     }
@@ -635,7 +645,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
 
@@ -648,7 +658,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value to bytes", e);
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
             }
         }
     }
@@ -688,7 +698,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
 
@@ -701,7 +711,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value to bytes", e);
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
             }
         }
     }
@@ -748,7 +758,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
 
@@ -761,7 +771,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value to bytes", e);
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
             }
         }
     }
@@ -801,7 +811,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
 
@@ -814,7 +824,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value to bytes", e);
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
             }
         }
     }
@@ -966,7 +976,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value from bytes", e);
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
 
@@ -990,7 +1000,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (Exception e) {
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to convert value to bytes", e);
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
             }
         }
     }

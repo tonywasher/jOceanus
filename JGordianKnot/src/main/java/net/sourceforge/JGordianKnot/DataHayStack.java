@@ -220,7 +220,7 @@ public class DataHayStack {
     /**
      * Digest Needle.
      */
-    public static class DigestNeedle {
+    protected static class DigestNeedle {
         /**
          * DigestType.
          */
@@ -265,8 +265,8 @@ public class DataHayStack {
          * @param pType the digest type
          * @param pDigest the digest value
          */
-        public DigestNeedle(final DigestType pType,
-                            final byte[] pDigest) {
+        protected DigestNeedle(final DigestType pType,
+                               final byte[] pDigest) {
             /* Store the parameters */
             theType = pType;
             theDigest = pDigest;
@@ -284,7 +284,7 @@ public class DataHayStack {
          * @param pExternal the external format
          * @throws JDataException on error
          */
-        public DigestNeedle(final byte[] pExternal) throws JDataException {
+        protected DigestNeedle(final byte[] pExternal) throws JDataException {
             /* Store the parameters */
             theExternal = pExternal;
 
@@ -315,7 +315,7 @@ public class DataHayStack {
     /**
      * SymKey Needle.
      */
-    public static class SymKeyNeedle {
+    protected static class SymKeyNeedle {
         /**
          * SymKeyType.
          */
@@ -360,8 +360,8 @@ public class DataHayStack {
          * @param pType the symKey type
          * @param pEncodedKey the encodedKey
          */
-        public SymKeyNeedle(final SymKeyType pType,
-                            final byte[] pEncodedKey) {
+        protected SymKeyNeedle(final SymKeyType pType,
+                               final byte[] pEncodedKey) {
             /* Store the parameters */
             theType = pType;
             theEncodedKey = pEncodedKey;
@@ -379,7 +379,7 @@ public class DataHayStack {
          * @param pExternal the external format
          * @throws JDataException on error
          */
-        public SymKeyNeedle(final byte[] pExternal) throws JDataException {
+        protected SymKeyNeedle(final byte[] pExternal) throws JDataException {
             /* Store the parameters */
             theExternal = pExternal;
 
@@ -410,7 +410,7 @@ public class DataHayStack {
     /**
      * AsymMode Needle.
      */
-    public static class AsymModeNeedle {
+    protected static class AsymModeNeedle {
         /**
          * AsymKeyMode.
          */
@@ -455,8 +455,8 @@ public class DataHayStack {
          * @param pMode the AsmKeyMode
          * @param pPublicKey the publicKey
          */
-        public AsymModeNeedle(final AsymKeyMode pMode,
-                              final byte[] pPublicKey) {
+        protected AsymModeNeedle(final AsymKeyMode pMode,
+                                 final byte[] pPublicKey) {
             /* Store the parameters */
             theMode = pMode;
             thePublicKey = pPublicKey;
@@ -473,7 +473,7 @@ public class DataHayStack {
          * @param pExternal the external format
          * @throws JDataException on error
          */
-        public AsymModeNeedle(final byte[] pExternal) throws JDataException {
+        protected AsymModeNeedle(final byte[] pExternal) throws JDataException {
             /* Store the parameters */
             theExternal = pExternal;
 
@@ -499,7 +499,7 @@ public class DataHayStack {
     /**
      * HashModeNeedle.
      */
-    public static class HashModeNeedle {
+    protected static class HashModeNeedle {
         /**
          * HashMode.
          */
@@ -558,9 +558,9 @@ public class DataHayStack {
          * @param pSalt the salt
          * @param pHash the hash
          */
-        public HashModeNeedle(final HashMode pMode,
-                              final byte[] pSalt,
-                              final byte[] pHash) {
+        protected HashModeNeedle(final HashMode pMode,
+                                 final byte[] pSalt,
+                                 final byte[] pHash) {
             /* Store the parameters */
             theMode = pMode;
             theSalt = pSalt;
@@ -579,7 +579,7 @@ public class DataHayStack {
          * @param pExternal the external format
          * @throws JDataException on error
          */
-        public HashModeNeedle(final byte[] pExternal) throws JDataException {
+        protected HashModeNeedle(final byte[] pExternal) throws JDataException {
             /* Store the parameters */
             theExternal = pExternal;
 
@@ -616,7 +616,7 @@ public class DataHayStack {
     /**
      * EncryptionModeNeedle.
      */
-    public static class EncryptModeNeedle {
+    protected static class EncryptModeNeedle {
         /**
          * EncryptionMode.
          */
@@ -675,9 +675,9 @@ public class DataHayStack {
          * @param pInitVector the initVector
          * @param pBytes the encrypted bytes
          */
-        public EncryptModeNeedle(final EncryptionMode pMode,
-                                 final byte[] pInitVector,
-                                 final byte[] pBytes) {
+        protected EncryptModeNeedle(final EncryptionMode pMode,
+                                    final byte[] pInitVector,
+                                    final byte[] pBytes) {
             /* Store the parameters */
             theMode = pMode;
             theInitVector = pInitVector;
@@ -700,7 +700,7 @@ public class DataHayStack {
          * @param pExternal the external format
          * @throws JDataException on error
          */
-        public EncryptModeNeedle(final byte[] pExternal) throws JDataException {
+        protected EncryptModeNeedle(final byte[] pExternal) throws JDataException {
             /* Store the parameters */
             theExternal = pExternal;
 

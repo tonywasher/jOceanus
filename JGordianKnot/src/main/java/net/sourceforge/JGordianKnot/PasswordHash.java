@@ -108,7 +108,7 @@ public class PasswordHash implements JDataContents {
     /**
      * Sample point for prime hash.
      */
-    public static final int SAMPLE_PRIME = 3;
+    public static final int SAMPLE_PRIME = 7;
 
     /**
      * Sample point for alternate hash.
@@ -118,7 +118,7 @@ public class PasswordHash implements JDataContents {
     /**
      * Sample point for secret hash.
      */
-    public static final int SAMPLE_SECRET = 7;
+    public static final int SAMPLE_SECRET = 3;
 
     /**
      * Hash Mode.
@@ -235,7 +235,7 @@ public class PasswordHash implements JDataContents {
                            final byte[] pHashBytes,
                            final char[] pPassword) throws WrongPasswordException, JDataException {
         /* Store the hash bytes and extract the mode */
-        theHashBytes = pHashBytes;
+        theHashBytes = Arrays.copyOf(pHashBytes, pHashBytes.length);
 
         /* Parse the hash */
         HashModeNeedle myNeedle = new HashModeNeedle(theHashBytes);
@@ -286,9 +286,6 @@ public class PasswordHash implements JDataContents {
             /* Build the SymmetricKey map */
             theSymKeyMap = new HashMap<SymmetricKey, byte[]>();
 
-            /* Catch Exceptions */
-        } catch (JDataException e) {
-            throw e;
         } finally {
             if (myPassword != null) {
                 Arrays.fill(myPassword, (char) 0);
@@ -366,10 +363,8 @@ public class PasswordHash implements JDataContents {
      * @throws JDataException on error
      */
     private void attemptPassword(final char[] pPassword) throws WrongPasswordException, JDataException {
-        byte[] myHashBytes;
-
         /* Generate the HashBytes */
-        myHashBytes = generateHashBytes(pPassword);
+        byte[] myHashBytes = generateHashBytes(pPassword);
 
         /* Check that the arrays match */
         if (!Arrays.equals(theHashBytes, myHashBytes)) {
@@ -395,43 +390,38 @@ public class PasswordHash implements JDataContents {
      * @throws JDataException on error
      */
     private byte[] generateHashBytes(final char[] pPassword) throws JDataException {
-        byte[] myHashBytes;
-        byte[] myPrimeBytes = null;
-        byte[] myAlternateBytes = null;
-        byte[] mySecretBytes = null;
-        byte[] myPrimeHash;
-        byte[] myAlternateHash;
-        byte[] mySecretHash;
         byte[] myPassBytes = null;
-        IterationCounter myCounter = new IterationCounter();
-        byte[] mySeed = theGenerator.getSecurityBytes();
-        Mac myPrimeMac;
-        Mac myAlternateMac;
-        Mac mySecretMac;
-        int iIterations = theGenerator.getNumHashIterations();
-        int iSwitch = theHashMode.getSwitchAdjust() + (iIterations / 2);
-        int iFinal = theHashMode.getFinalAdjust() + iIterations;
 
         /* Protect against exceptions */
         try {
+            /* Initialise hash bytes and counter */
+            byte[] myPrimeBytes = null;
+            byte[] myAlternateBytes = null;
+            byte[] mySecretBytes = null;
+            IterationCounter myCounter = new IterationCounter();
+
+            /* Obtain configuration details */
+            byte[] mySeed = theGenerator.getSecurityBytes();
+            int iIterations = theGenerator.getNumHashIterations();
+            int iFinal = theHashMode.getAdjustment() + iIterations;
+
             /* Convert password to bytes */
             myPassBytes = DataConverter.charsToByteArray(pPassword);
 
             /* Access the MACs */
-            myPrimeMac = theGenerator.accessMac(theHashMode.getPrimeDigest(), myPassBytes);
-            myAlternateMac = theGenerator.accessMac(theHashMode.getAlternateDigest(), myPassBytes);
-            mySecretMac = theGenerator.accessMac(theHashMode.getSecretDigest(), myPassBytes);
+            Mac myPrimeMac = theGenerator.accessMac(theHashMode.getPrimeDigest(), myPassBytes);
+            Mac myAlternateMac = theGenerator.accessMac(theHashMode.getAlternateDigest(), myPassBytes);
+            Mac mySecretMac = theGenerator.accessMac(theHashMode.getSecretDigest(), myPassBytes);
 
             /* Initialise the hash values as the salt bytes */
-            myPrimeHash = theSaltBytes;
-            myAlternateHash = theSaltBytes;
-            mySecretHash = theSaltBytes;
+            byte[] myPrimeHash = theSaltBytes;
+            byte[] myAlternateHash = theSaltBytes;
+            byte[] mySecretHash = theSaltBytes;
 
             /* Loop through the iterations */
             for (int i = 0; i < iFinal; i++) {
                 /* Note the final pass */
                 int iPass = i + 1;
-                boolean bFinalPass = (iPass == iFinal);
 
                 /* Iterate the counter */
                 byte[] myCountBuffer = myCounter.iterate();
@@ -441,10 +431,10 @@ public class PasswordHash implements JDataContents {
                 myPrimeMac.update(myCountBuffer);
                 myPrimeMac.update(mySeed);
 
-                /* Recalculate the prime hash skipping every third time */
-                if ((bFinalPass) || ((iPass % SAMPLE_PRIME) != 0)) {
-                    myPrimeHash = myPrimeMac.doFinal();
-                    myPrimeBytes = DataConverter.combineHashes(myPrimeBytes, myPrimeHash);
+                /* Add in Alternate Hash every so often */
+                if ((iPass % SAMPLE_PRIME) == 0) {
+                    /* Add in the Alternate hash */
+                    myPrimeMac.update(myPrimeHash);
                 }
 
                 /* Update the alternate Mac */
@@ -452,10 +442,10 @@ public class PasswordHash implements JDataContents {
                 myAlternateMac.update(myCountBuffer);
                 myAlternateMac.update(mySeed);
 
-                /* Recalculate the alternate hash skipping every fifth time */
-                if ((bFinalPass) || ((iPass % SAMPLE_ALT) != 0)) {
-                    myAlternateHash = myAlternateMac.doFinal();
-                    myAlternateBytes = DataConverter.combineHashes(myAlternateBytes, myAlternateHash);
+                /* Add in prime hash every so often */
+                if ((iPass % SAMPLE_ALT) == 0) {
+                    /* Add in the Prime hash */
+                    myAlternateMac.update(myPrimeHash);
                 }
 
                 /* Update the secret Mac */
@@ -463,27 +453,20 @@ public class PasswordHash implements JDataContents {
                 mySecretMac.update(myCountBuffer);
                 mySecretMac.update(mySeed);
 
-                /* Recalculate the secret hash skipping every seventh time */
-                if ((bFinalPass) || ((iPass % SAMPLE_SECRET) != 0)) {
-                    mySecretHash = mySecretMac.doFinal();
-                    mySecretBytes = DataConverter.combineHashes(mySecretBytes, mySecretHash);
-
-                    /* Every seventh time */
-                } else {
+                /* Add in prime/alternate hashes every so often */
+                if ((iPass % SAMPLE_SECRET) == 0) {
                     /* Add in the Prime and Alternate hashes */
                     mySecretMac.update(myPrimeHash);
                     mySecretMac.update(myAlternateHash);
                 }
 
-                /* If we have hit the switch point */
-                if (iPass == iSwitch) {
-                    /* Save the alternate hash value */
-                    byte[] myAlt = myAlternateHash;
-
-                    /* Switch the hashes */
-                    myAlternateHash = myPrimeHash;
-                    myPrimeHash = myAlt;
-                }
+                /* Recalculate hashes and combine them */
+                myPrimeHash = myPrimeMac.doFinal();
+                myPrimeBytes = DataConverter.combineHashes(myPrimeBytes, myPrimeHash);
+                myAlternateHash = myAlternateMac.doFinal();
+                myAlternateBytes = DataConverter.combineHashes(myAlternateBytes, myAlternateHash);
+                mySecretHash = mySecretMac.doFinal();
+                mySecretBytes = DataConverter.combineHashes(mySecretBytes, mySecretHash);
             }
 
             /* Combine the Primary and Alternate hashes */
@@ -494,22 +477,22 @@ public class PasswordHash implements JDataContents {
 
             /* Create the external hash */
             HashModeNeedle myNeedle = new HashModeNeedle(theHashMode, theSaltBytes, myExternalHash);
-            myHashBytes = myNeedle.getExternal();
-        } catch (Exception e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to generate salt and hash", e);
+            byte[] myHashBytes = myNeedle.getExternal();
+
+            /* Check whether the HashBytes is too large */
+            if (myHashBytes.length > HASHSIZE) {
+                throw new JDataException(ExceptionClass.DATA, "Password Hash too large: "
+                        + myHashBytes.length);
+            }
+
+            /* Return to caller */
+            return myHashBytes;
+
         } finally {
             if (myPassBytes != null) {
                 Arrays.fill(myPassBytes, (byte) 0);
             }
         }
-
-        /* Check whether the HashBytes is too large */
-        if (myHashBytes.length > HASHSIZE) {
-            throw new JDataException(ExceptionClass.DATA, "Password Hash too large: " + myHashBytes.length);
-        }
-
-        /* Return to caller */
-        return myHashBytes;
     }
 
     /**
@@ -605,7 +588,7 @@ public class PasswordHash implements JDataContents {
      * @param pHashBytes the Hash to test against
      * @return the new PasswordHash if successful, otherwise null
      */
-    protected PasswordHash attemptPassword(final byte[] pHashBytes) {
+    protected final PasswordHash attemptPassword(final byte[] pHashBytes) {
         char[] myPassword = null;
 
         /* Protect against exceptions */

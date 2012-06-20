@@ -48,8 +48,8 @@ import uk.co.tolcroft.models.ui.Renderer.CalendarRenderer;
 import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
 import uk.co.tolcroft.models.ui.Renderer.StringRenderer;
 import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
-import uk.co.tolcroft.models.views.ViewList;
-import uk.co.tolcroft.models.views.ViewList.ListClass;
+import uk.co.tolcroft.models.views.UpdateSet;
+import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
 /**
  * NewYear maintenance panel.
@@ -109,17 +109,17 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
     /**
      * View Set.
      */
-    private final ViewList theViewSet;
+    private final UpdateSet theUpdateSet;
 
     /**
      * Year View.
      */
-    private final ListClass theYearView;
+    private final UpdateEntry theYearEntry;
 
     /**
      * Event View.
      */
-    private final ListClass theEventView;
+    private final UpdateEntry theEventEntry;
 
     /**
      * Obtain the panel.
@@ -254,10 +254,10 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
         theParent = pParent;
         theView = pParent.getView();
 
-        /* Build the View set and List */
-        theViewSet = new ViewList(theView);
-        theYearView = theViewSet.registerClass(TaxYear.class);
-        theEventView = theViewSet.registerClass(Event.class);
+        /* Build the Update set and entries */
+        theUpdateSet = new UpdateSet(theView);
+        theYearEntry = theUpdateSet.registerClass(TaxYear.class);
+        theEventEntry = theUpdateSet.registerClass(Event.class);
 
         /* Set the table model */
         PatternYearModel myModel = new PatternYearModel();
@@ -377,8 +377,8 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
             thePattern.setEnabled(!theEvents.isEmpty());
         }
         setList(theEvents);
-        theYearView.setDataList(myTaxYears);
-        theEventView.setDataList(theEvents);
+        theYearEntry.setDataList(myTaxYears);
+        theEventEntry.setDataList(theEvents);
         theDataYear.setObject(myTaxYears);
         theDataEvents.setObject(theEvents);
         theParent.setVisibility();
@@ -393,7 +393,7 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
         /* If this event relates to the pattern button */
         if (thePattern.equals(evt.getSource())) {
             /* Apply the extract changes */
-            theViewSet.applyChanges();
+            theUpdateSet.applyChanges();
         }
     }
 

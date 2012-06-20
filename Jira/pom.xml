@@ -49,8 +49,8 @@
   </profiles>
   <dependencies>
     <dependency>
-      <groupId>uk.co.tolcroft.finapp</groupId>
-      <artifactId>finmdl</artifactId>
+      <groupId>uk.co.tolcroft.JFinanceApp</groupId>
+      <artifactId>JDataModel</artifactId>
       <version>v1.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>

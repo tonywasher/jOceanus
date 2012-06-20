@@ -308,6 +308,17 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
      */
     public static class ControlDataList extends DataList<ControlDataList, ControlData> {
         /**
+         * Local Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(
+                ControlDataList.class.getSimpleName(), DataList.FIELD_DEFS);
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
+        /**
          * The owning data set.
          */
         private DataSet<?> theData = null;

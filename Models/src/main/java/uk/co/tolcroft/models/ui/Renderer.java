@@ -29,7 +29,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import net.sourceforge.JDateDay.DateDayCellRenderer;
 import net.sourceforge.JDecimal.Decimal;
-import uk.co.tolcroft.models.ui.DataTable.DataTableModel;
+import uk.co.tolcroft.models.ui.RenderData.PopulateRenderData;
 
 /**
  * Cell renderers.
@@ -67,10 +67,10 @@ public final class Renderer {
                                         final RenderData pData,
                                         final int pAlignment) {
         /* Access the table model. */
-        DataTableModel myModel = (DataTableModel) pTable.getModel();
+        PopulateRenderData myModel = (PopulateRenderData) pTable.getModel();
 
         /* Determine the render data */
-        myModel.getRenderData(pData);
+        myModel.populateRenderData(pData);
 
         /* Apply the Render Data */
         pComponent.setForeground(pData.getForeGround());
@@ -175,11 +175,7 @@ public final class Renderer {
             if (value instanceof Integer) {
                 /* Convert to a string */
                 Integer i = (Integer) value;
-                if (i == 0) {
-                    o = "";
-                } else {
-                    o = i.toString();
-                }
+                o = i.toString();
             }
 
             /* Pass value on */

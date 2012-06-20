@@ -96,9 +96,9 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
     private EncryptedValueSet theValueSet;
 
     @Override
-    public void declareValues(final EncryptedValueSet pValues) {
+    public void declareValues(final ValueSet pValues) {
         super.declareValues(pValues);
-        theValueSet = pValues;
+        theValueSet = (EncryptedValueSet) pValues;
     }
 
     /**

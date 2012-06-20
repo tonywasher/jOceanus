@@ -266,6 +266,7 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
 
         /* Create the worker thread */
         LoadArchive myThread = new LoadArchive(myStatus);
+        myStatus.registerThread(myThread);
         startThread(myThread);
     }
 
@@ -278,6 +279,7 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
 
         /* Create the worker thread */
         SubversionBackup<FinanceData> myThread = new SubversionBackup<FinanceData>(myStatus);
+        myStatus.registerThread(myThread);
         startThread(myThread);
     }
 

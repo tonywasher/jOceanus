@@ -31,6 +31,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDecimal.Dilution;
 import net.sourceforge.JDecimal.Money;
 import net.sourceforge.JDecimal.Units;
@@ -136,9 +137,10 @@ public class EventInfoSet implements JDataContents {
             return theValueMap.get(EventInfoClass.QualifyYears);
         }
         if (FIELD_THIRDPARTY.equals(pField)) {
-            return theValueMap.get(EventInfoClass.ThirdParty);
+            return theValueMap.get(EventInfoClass.CashAccount);
+            // return theValueMap.get(EventInfoClass.ThirdParty);
         }
-        return null;
+        return JDataFieldValue.UnknownField;
     }
 
     @Override

@@ -427,9 +427,7 @@ public class ZipWriteFile {
                 theStream = null;
 
                 /* Catch exceptions */
-            } catch (IOException e) {
-                throw e;
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 throw new IOException(e);
             }
         }

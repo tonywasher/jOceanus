@@ -229,14 +229,16 @@ public class ValueSet {
 
         /* Loop through the values */
         Iterator<JDataField> myIterator = theFields.fieldIterator();
-        for (int i = 0; myIterator.hasNext(); i++) {
-            /* Ignore non-equality fields */
-            if (!myIterator.next().isEqualityField()) {
+        while (myIterator.hasNext()) {
+            /* Ignore non-equality and non-valueSet fields */
+            JDataField myField = myIterator.next();
+            if ((!myField.isEqualityField()) || (!myField.isValueSetField())) {
                 continue;
             }
 
             /* Not equal if the value is different */
-            if (Difference.getDifference(theValues[i], myObj[i]).isDifferent()) {
+            int iIndex = myField.getIndex();
+            if (Difference.getDifference(theValues[iIndex], myObj[iIndex]).isDifferent()) {
                 return false;
             }
         }
@@ -251,9 +253,10 @@ public class ValueSet {
 
         /* Loop through the values */
         Iterator<JDataField> myIterator = theFields.fieldIterator();
-        for (int i = 0; myIterator.hasNext(); i++) {
-            /* Ignore non-equality fields */
-            if (!myIterator.next().isEqualityField()) {
+        while (myIterator.hasNext()) {
+            /* Ignore non-equality and non-valueSet fields */
+            JDataField myField = myIterator.next();
+            if ((!myField.isEqualityField()) || (!myField.isValueSetField())) {
                 continue;
             }
 
@@ -261,7 +264,7 @@ public class ValueSet {
             iHashCode *= EventManager.HASH_PRIME;
 
             /* Access value and add hash if non-null */
-            Object o = theValues[i];
+            Object o = theValues[myField.getIndex()];
             if (o != null) {
                 iHashCode += o.hashCode();
             }
@@ -285,14 +288,16 @@ public class ValueSet {
 
         /* Loop through the values */
         Iterator<JDataField> myIterator = theFields.fieldIterator();
-        for (int i = 0; myIterator.hasNext(); i++) {
-            /* Ignore non-equality fields */
-            if (!myIterator.next().isEqualityField()) {
+        while (myIterator.hasNext()) {
+            /* Ignore non-equality and non-valueSet fields */
+            JDataField myField = myIterator.next();
+            if ((!myField.isEqualityField()) || (!myField.isValueSetField())) {
                 continue;
             }
 
             /* Check the field */
-            Difference myDiff = Difference.getDifference(theValues[i], myObj[i]);
+            int iIndex = myField.getIndex();
+            Difference myDiff = Difference.getDifference(theValues[iIndex], myObj[iIndex]);
             if (myDiff == Difference.Different) {
                 return myDiff;
             }

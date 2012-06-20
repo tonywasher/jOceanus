@@ -60,6 +60,11 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
     public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField("Generation");
 
     /**
+     * Version Field Id.
+     */
+    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField("Version");
+
+    /**
      * Security Field Id.
      */
     public static final JDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField("Security");
@@ -88,6 +93,9 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_GENERATION.equals(pField)) {
             return theGeneration;
+        }
+        if (FIELD_VERSION.equals(pField)) {
+            return theVersion;
         }
         if (FIELD_SECURITY.equals(pField)) {
             return theSecurity;
@@ -140,6 +148,11 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
     private int theGeneration = 0;
 
     /**
+     * Version of dataSet.
+     */
+    private int theVersion = 0;
+
+    /**
      * The DataList Array.
      */
     private final List<DataList<?, ?>> theList;
@@ -182,6 +195,14 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
      */
     public int getGeneration() {
         return theGeneration;
+    }
+
+    /**
+     * Get Version.
+     * @return the version
+     */
+    public int getVersion() {
+        return theVersion;
     }
 
     /**
@@ -352,12 +373,25 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
         }
     }
 
-    // /**
-    // * Analyse the DataSet.
-    // * @param pControl The DataControl
-    // * @throws JDataException on error
-    // */
-    // public abstract void analyseData(final DataControl<?> pControl) throws JDataException;
+    /**
+     * Set Version.
+     * @param pVersion the version
+     */
+    public void setVersion(final int pVersion) {
+        /* Record the version */
+        theVersion = pVersion;
+
+        /* Set the security lists */
+        theControlKeys.setVersion(pVersion);
+        theDataKeys.setVersion(pVersion);
+        theControlData.setVersion(pVersion);
+
+        /* Loop through the List values */
+        for (DataList<?, ?> myList : theList) {
+            /* Set the Version */
+            myList.setVersion(pVersion);
+        }
+    }
 
     @Override
     public boolean equals(final Object pThat) {

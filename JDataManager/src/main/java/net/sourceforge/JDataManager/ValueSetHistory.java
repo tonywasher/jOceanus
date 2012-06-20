@@ -25,13 +25,43 @@ package net.sourceforge.JDataManager;
 import java.util.Stack;
 
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 
 /**
  * Provides the implementation of a history buffer for a DataItem. Each element represents a changed set of
  * values and refers to a {@link ValueSet} object which is the set of changeable values for the object.
  * @see ValueSet
  */
-public class HistoryControl {
+public class ValueSetHistory implements JDataContents {
+    /**
+     * Report fields.
+     */
+    protected static final JDataFields FIELD_DEFS = new JDataFields(ValueSetHistory.class.getSimpleName());
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    /**
+     * Stack Field Id.
+     */
+    public static final JDataField FIELD_STACK = FIELD_DEFS.declareEqualityField("Stack");
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        if (FIELD_STACK.equals(pField)) {
+            return theStack;
+        }
+        return JDataFieldValue.UnknownField;
+    }
+
+    @Override
+    public String formatObject() {
+        return FIELD_DEFS.getName() + "(" + theStack.size() + ")";
+    }
+
     /**
      * The current set of values for this object.
      */
@@ -50,7 +80,7 @@ public class HistoryControl {
     /**
      * Constructor.
      */
-    public HistoryControl() {
+    public ValueSetHistory() {
         /* Allocate the stack */
         theStack = new Stack<ValueSet>();
     }
@@ -83,88 +113,13 @@ public class HistoryControl {
     }
 
     /**
-     * Determine State of item.
-     * @return the state of the item
-     */
-    // protected DataState determineState() {
-    // /* If we have no history we are clean */
-    // if (theCurr == null) {
-    // return DataState.CLEAN;
-    // }
-
-    /* If we are an edit extract */
-    // if (theItem.getStyle() == ListStyle.EDIT) {
-    // /* Access the base item */
-    // DataItem<?> myBase = theItem.getBase();
-
-    /* If the item is deleted */
-    // if (theCurr.isDeletion()) {
-    // /* If we have no base then we are DelNew */
-    // if (myBase == null) {
-    // return DataState.DELNEW;
-    // }
-
-    // /* If we have no history then we are clean */
-    // if (theOriginal == null) {
-    // return DataState.CLEAN;
-    // }
-
-    /* We are simply deleted */
-    // return DataState.DELETED;
-    // }
-
-    /* If we have no base then we are New */
-    // if (myBase == null) {
-    // return DataState.NEW;
-    // }
-
-    /* If we have no history we are Clean */
-    // if (theOriginal == null) {
-    // return DataState.CLEAN;
-    // }
-
-    /* If we have a single change that is to undelete then we are Recovered */
-    // if ((theCurr == theOriginal) && (myBase.isDeleted())) {
-    // return DataState.RECOVERED;
-    // }
-
-    /* else we are changed */
-    // return DataState.CHANGED;
-    // }
-
-    /* If the item is deleted */
-    // if (theCurr.isDeletion()) {
-    /* We must have a change */
-    // if (theOriginal == null) {
-    // throw new IllegalArgumentException();
-    // } else if (theOriginal.getVersion() != 0) {
-    // return DataState.DELNEW;
-    // }
-
-    /* Return deleted */
-    // return DataState.DELETED;
-    // }
-
-    /* If we have no changes we are either Clean or New */
-    // if (theOriginal == null) {
-    // return (theCurr.getVersion() == 0) ? DataState.CLEAN : DataState.NEW;
-    // }
-
-    /* If we have the original values have version 0 */
-    // if (theOriginal.getVersion() == 0) {
-    // return DataState.CHANGED;
-    // }
-
-    /* Return new state */
-    // return DataState.NEW;
-    // }
-
-    /**
      * Push Item to the history.
+     * @param pVersion the new version
      */
-    public void pushHistory() {
+    public void pushHistory(int pVersion) {
         /* Create a new ValueSet */
         ValueSet mySet = theCurr.cloneIt();
+        mySet.setVersion(pVersion);
 
         /* Add old values to the stack and record new values */
         theStack.push(theCurr);
@@ -194,7 +149,7 @@ public class HistoryControl {
      */
     public boolean maybePopHistory() {
         /* If there is no change */
-        if (theCurr.differs(theStack.peek()).isValueChanged()) {
+        if (theCurr.differs(theStack.peek()).isIdentical()) {
             /* Just pop the history */
             popTheHistory();
             return false;
@@ -219,6 +174,7 @@ public class HistoryControl {
         /* Remove all history */
         theStack.clear();
         theOriginal = theCurr;
+        theOriginal.setVersion(0);
     }
 
     /**
@@ -236,7 +192,6 @@ public class HistoryControl {
      * @param pBase the base item
      */
     public void setHistory(final ValueSet pBase) {
-        // ValueSet mySource = pBase.getOriginalValues();
         theStack.clear();
         theOriginal = theCurr.cloneIt();
         theOriginal.copyFrom(pBase);

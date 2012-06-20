@@ -65,7 +65,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     /**
      * The name of the object.
      */
-    public static final String OBJECT_NAME = "Event";
+    public static final String OBJECT_NAME = Event.class.getSimpleName();
 
     /**
      * The name of the object.
@@ -156,9 +156,9 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     private EncryptedValueSet theValueSet;
 
     @Override
-    public void declareValues(final EncryptedValueSet pValues) {
+    public void declareValues(final ValueSet pValues) {
         super.declareValues(pValues);
-        theValueSet = pValues;
+        theValueSet = (EncryptedValueSet) pValues;
     }
 
     /**

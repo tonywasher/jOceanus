@@ -80,7 +80,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
     /**
      * NextVersion Field Id.
      */
-    public static final JDataField FIELD_NEXTVERS = FIELD_DEFS.declareLocalField("NextVersion");
+    public static final JDataField FIELD_VERS = FIELD_DEFS.declareLocalField("Version");
 
     /**
      * EditState Field Id.
@@ -99,7 +99,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
 
     @Override
     public String formatObject() {
-        return getDataFields().getName();
+        return getDataFields().getName() + "(" + size() + ")";
     }
 
     @Override
@@ -113,8 +113,8 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
         if (FIELD_GENERATION.equals(pField)) {
             return theGeneration;
         }
-        if (FIELD_NEXTVERS.equals(pField)) {
-            return theNextVersion;
+        if (FIELD_VERS.equals(pField)) {
+            return theVersion;
         }
         if (FIELD_EDIT.equals(pField)) {
             return theEdit;
@@ -123,7 +123,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
             return theBase;
         }
         if (FIELD_CLASS.equals(pField)) {
-            return theClass;
+            return getBaseClass().getSimpleName();
         }
         return JDataFieldValue.UnknownField;
     }
@@ -170,9 +170,9 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
     private int theGeneration = 0;
 
     /**
-     * The next version.
+     * The version.
      */
-    private int theNextVersion = 0;
+    private int theVersion = 0;
 
     /**
      * Do we show deleted items.
@@ -185,6 +185,14 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      */
     public ListStyle getStyle() {
         return theStyle;
+    }
+
+    /**
+     * Set the version.
+     * @param pVersion the version
+     */
+    public void setVersion(int pVersion) {
+        theVersion = pVersion;
     }
 
     /**
@@ -220,11 +228,11 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
     }
 
     /**
-     * Get the NextVersion of the list.
-     * @return the NextVersion
+     * Get the Version of the list.
+     * @return the Version
      */
-    public int getNextVersion() {
-        return theNextVersion;
+    public int getVersion() {
+        return theVersion;
     }
 
     /**
@@ -813,7 +821,9 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
                 /* If this is a new item, add it to the list */
                 case NEW:
                     /* Link this item to the new item */
-                    myCurr.setBase(theBase.addNewItem(myCurr));
+                    myBase = theBase.addNewItem(myCurr);
+                    myBase.setNewVersion();
+                    myCurr.setBase(myBase);
                     break;
 
                 /* If this is a deleted or deleted-changed item */

@@ -27,6 +27,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import uk.co.tolcroft.finance.data.StaticClass.TransClass;
 import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
 
@@ -425,6 +426,17 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
      * Represents a list of {@link TransactionType} objects.
      */
     public static class TransTypeList extends StaticList<TransTypeList, TransactionType, TransClass> {
+        /**
+         * Local Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(TransTypeList.class.getSimpleName(),
+                DataList.FIELD_DEFS);
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
         @Override
         public String listName() {
             return LIST_NAME;

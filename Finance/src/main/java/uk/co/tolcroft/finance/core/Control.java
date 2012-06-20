@@ -40,7 +40,7 @@ public final class Control {
     /**
      * Logger.
      */
-    private static Logger theLogger = Logger.getLogger("FinanceApp");
+    private static Logger theLogger = Logger.getLogger("JFinanceApp");
 
     /**
      * Private constructor to avoid instantiation.

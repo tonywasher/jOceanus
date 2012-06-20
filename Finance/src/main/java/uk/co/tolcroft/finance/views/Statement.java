@@ -517,9 +517,9 @@ public class Statement implements JDataContents {
         private EncryptedValueSet theValueSet;
 
         @Override
-        public void declareValues(final EncryptedValueSet pValues) {
+        public void declareValues(final ValueSet pValues) {
             super.declareValues(pValues);
-            theValueSet = pValues;
+            theValueSet = (EncryptedValueSet) pValues;
         }
 
         /**

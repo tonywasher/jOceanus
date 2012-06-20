@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.JGordianKnot;
 
+import java.util.Arrays;
+
 import javax.crypto.Cipher;
 
 import net.sourceforge.JDataManager.JDataException;
@@ -68,7 +70,7 @@ public class StreamCipher {
     public StreamCipher(final Cipher pCipher,
                         final byte[] pVector) {
         theCipher = pCipher;
-        theInitVector = pVector;
+        theInitVector = Arrays.copyOf(pVector, pVector.length);
         theBuffer = new byte[BUFSIZE];
     }
 

@@ -33,11 +33,11 @@ import uk.co.tolcroft.models.data.EditState;
 /**
  * Provides control of a set of update-able DataLists.
  */
-public class ViewList {
+public class UpdateSet {
     /**
      * The list.
      */
-    private final List<ListClass> theList;
+    private final List<UpdateEntry> theList;
 
     /**
      * The DataControl.
@@ -45,15 +45,20 @@ public class ViewList {
     private final DataControl<?> theControl;
 
     /**
-     * Constructor for multiple DataLists.
+     * The version.
+     */
+    private int theVersion = 0;
+
+    /**
+     * Constructor for an update list.
      * @param pControl the Data Control
      */
-    public ViewList(final DataControl<?> pControl) {
+    public UpdateSet(final DataControl<?> pControl) {
         /* Store the Control */
         theControl = pControl;
 
         /* Create the list */
-        theList = new ArrayList<ListClass>();
+        theList = new ArrayList<UpdateEntry>();
     }
 
     /**
@@ -61,12 +66,12 @@ public class ViewList {
      * @param pClass the class
      * @return the list class entry
      */
-    public ListClass registerClass(final Class<?> pClass) {
-        ListIterator<ListClass> myIterator;
-        ListClass myList;
+    public UpdateEntry registerClass(final Class<?> pClass) {
+        Iterator<UpdateEntry> myIterator;
+        UpdateEntry myList;
 
         /* Loop through the items in the list */
-        myIterator = theList.listIterator();
+        myIterator = theList.iterator();
         while (myIterator.hasNext()) {
             /* Access list */
             myList = myIterator.next();
@@ -80,9 +85,30 @@ public class ViewList {
         }
 
         /* Not found , so add it */
-        myList = new ListClass(pClass);
+        myList = new UpdateEntry(pClass);
         theList.add(myList);
         return myList;
+    }
+
+    /**
+     * Increment Version.
+     */
+    public void incrementVersion() {
+        /* Increment the version */
+        theVersion++;
+
+        /* Loop through the items in the list */
+        Iterator<UpdateEntry> myIterator = theList.iterator();
+        while (myIterator.hasNext()) {
+            /* Access list */
+            UpdateEntry myList = myIterator.next();
+            DataList<?, ?> myDataList = myList.theDataList;
+
+            /* Prepare the changes */
+            if (myDataList != null) {
+                myDataList.setVersion(theVersion);
+            }
+        }
     }
 
     /**
@@ -117,16 +143,12 @@ public class ViewList {
      * Prepare changes in a ViewSet back into the core data.
      */
     private void prepareChanges() {
-        Iterator<ListClass> myIterator;
-        ListClass myList;
-        DataList<?, ?> myDataList;
-
         /* Loop through the items in the list */
-        myIterator = theList.iterator();
+        Iterator<UpdateEntry> myIterator = theList.iterator();
         while (myIterator.hasNext()) {
             /* Access list */
-            myList = myIterator.next();
-            myDataList = myList.theDataList;
+            UpdateEntry myList = myIterator.next();
+            DataList<?, ?> myDataList = myList.theDataList;
 
             /* Prepare the changes */
             if (myDataList != null) {
@@ -139,16 +161,15 @@ public class ViewList {
      * Commit changes in a ViewSet back into the core data.
      */
     private void commitChanges() {
-        Iterator<ListClass> myIterator;
-        ListClass myList;
-        DataList<?, ?> myDataList;
+        /* Increment the version */
+        theControl.incrementVersion();
 
         /* Loop through the items in the list */
-        myIterator = theList.iterator();
+        Iterator<UpdateEntry> myIterator = theList.iterator();
         while (myIterator.hasNext()) {
             /* Access list */
-            myList = myIterator.next();
-            myDataList = myList.theDataList;
+            UpdateEntry myList = myIterator.next();
+            DataList<?, ?> myDataList = myList.theDataList;
 
             /* commit the changes */
             if (myDataList != null) {
@@ -161,16 +182,12 @@ public class ViewList {
      * RollBack changes in a ViewSet back into the core data.
      */
     private void rollBackChanges() {
-        ListIterator<ListClass> myIterator;
-        ListClass myList;
-        DataList<?, ?> myDataList;
-
         /* Loop backwards through the items in the list */
-        myIterator = theList.listIterator(theList.size());
+        ListIterator<UpdateEntry> myIterator = theList.listIterator(theList.size());
         while (myIterator.hasPrevious()) {
             /* Access list */
-            myList = myIterator.previous();
-            myDataList = myList.theDataList;
+            UpdateEntry myList = myIterator.previous();
+            DataList<?, ?> myDataList = myList.theDataList;
 
             /* commit the changes */
             if (myDataList != null) {
@@ -184,16 +201,12 @@ public class ViewList {
      * @return true/false
      */
     public boolean hasUpdates() {
-        ListIterator<ListClass> myIterator;
-        ListClass myList;
-        DataList<?, ?> myDataList;
-
         /* Loop through the items in the list */
-        myIterator = theList.listIterator();
+        Iterator<UpdateEntry> myIterator = theList.iterator();
         while (myIterator.hasNext()) {
             /* Access list */
-            myList = myIterator.next();
-            myDataList = myList.theDataList;
+            UpdateEntry myList = myIterator.next();
+            DataList<?, ?> myDataList = myList.theDataList;
 
             /* Determine whether there are updates */
             if ((myDataList != null) && (myDataList.hasUpdates())) {
@@ -210,16 +223,12 @@ public class ViewList {
      * @return true/false
      */
     public boolean hasErrors() {
-        ListIterator<ListClass> myIterator;
-        ListClass myList;
-        DataList<?, ?> myDataList;
-
         /* Loop through the items in the list */
-        myIterator = theList.listIterator();
+        Iterator<UpdateEntry> myIterator = theList.listIterator();
         while (myIterator.hasNext()) {
             /* Access list */
-            myList = myIterator.next();
-            myDataList = myList.theDataList;
+            UpdateEntry myList = myIterator.next();
+            DataList<?, ?> myDataList = myList.theDataList;
 
             /* Determine whether there are errors */
             if ((myDataList != null) && (myDataList.hasErrors())) {
@@ -236,17 +245,14 @@ public class ViewList {
      * @return the edit state
      */
     public EditState getEditState() {
-        EditState myState = EditState.CLEAN;
-        ListIterator<ListClass> myIterator;
-        ListClass myList;
-        DataList<?, ?> myDataList;
 
         /* Loop through the items in the list */
-        myIterator = theList.listIterator();
+        Iterator<UpdateEntry> myIterator = theList.listIterator();
+        EditState myState = EditState.CLEAN;
         while (myIterator.hasNext()) {
             /* Access list */
-            myList = myIterator.next();
-            myDataList = myList.theDataList;
+            UpdateEntry myList = myIterator.next();
+            DataList<?, ?> myDataList = myList.theDataList;
 
             /* Combine states if list exists */
             if (myDataList != null) {
@@ -259,9 +265,9 @@ public class ViewList {
     }
 
     /**
-     * DataList items.
+     * Update entry items.
      */
-    public final class ListClass {
+    public final class UpdateEntry {
         /**
          * The class.
          */
@@ -284,7 +290,7 @@ public class ViewList {
          * Constructor.
          * @param pClass the class
          */
-        private ListClass(final Class<?> pClass) {
+        private UpdateEntry(final Class<?> pClass) {
             /* Store details */
             theClass = pClass;
         }

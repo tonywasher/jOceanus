@@ -61,8 +61,8 @@ import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
 import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
 import uk.co.tolcroft.models.ui.ValueField;
 import uk.co.tolcroft.models.ui.ValueField.ValueClass;
-import uk.co.tolcroft.models.views.ViewList;
-import uk.co.tolcroft.models.views.ViewList.ListClass;
+import uk.co.tolcroft.models.views.UpdateSet;
+import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
 /**
  * TaxYear maintenance panel.
@@ -315,14 +315,14 @@ public class MaintTaxYear implements StdPanel {
     private final View theView;
 
     /**
-     * The View Set.
+     * The Update Set.
      */
-    private final ViewList theViewSet;
+    private final UpdateSet theUpdateSet;
 
     /**
-     * The View List.
+     * The Update Entry.
      */
-    private final ListClass theViewList;
+    private final UpdateEntry theUpdateEntry;
 
     /**
      * Obtain the panel.
@@ -384,9 +384,9 @@ public class MaintTaxYear implements StdPanel {
         /* Access the view */
         theView = pParent.getView();
 
-        /* Build the View set and List */
-        theViewSet = new ViewList(theView);
-        theViewList = theViewSet.registerClass(TaxYear.class);
+        /* Build the Update set and Entry */
+        theUpdateSet = new UpdateSet(theView);
+        theUpdateEntry = theUpdateSet.registerClass(TaxYear.class);
 
         /* Create the labels */
         myYear = new JLabel("Year:");
@@ -875,9 +875,9 @@ public class MaintTaxYear implements StdPanel {
     public void saveData() {
         /* Validate the data */
         validate();
-        if (!hasErrors()) {
+        if (!theUpdateSet.hasErrors()) {
             /* Save details for the tax year */
-            theViewSet.applyChanges();
+            theUpdateSet.applyChanges();
         }
     }
 
@@ -979,7 +979,7 @@ public class MaintTaxYear implements StdPanel {
         }
 
         /* Store list */
-        theViewList.setDataList(theTaxView);
+        theUpdateEntry.setDataList(theTaxView);
 
         /* notify changes */
         notifyChanges();

@@ -518,6 +518,17 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
      */
     public static class DataKeyList extends DataList<DataKeyList, DataKey> {
         /**
+         * Local Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(DataKeyList.class.getSimpleName(),
+                DataList.FIELD_DEFS);
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
+        /**
          * The owning data set.
          */
         private DataSet<?> theData = null;

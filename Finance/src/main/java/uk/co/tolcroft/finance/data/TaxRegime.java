@@ -27,6 +27,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import uk.co.tolcroft.finance.data.StaticClass.TaxRegClass;
 import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
 
@@ -174,6 +175,17 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
      * Represents a list of {@link TaxRegime} objects.
      */
     public static class TaxRegimeList extends StaticList<TaxRegimeList, TaxRegime, TaxRegClass> {
+        /**
+         * Local Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(TaxRegimeList.class.getSimpleName(),
+                DataList.FIELD_DEFS);
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
         @Override
         public String listName() {
             return LIST_NAME;

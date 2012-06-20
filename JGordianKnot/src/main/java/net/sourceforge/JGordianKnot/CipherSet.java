@@ -295,7 +295,7 @@ public class CipherSet implements JDataContents {
         byte[] myResult = null;
 
         /* Access number of iterations */
-        int iIterations = theGenerator.getNumHashIterations();
+        int iIterations = theGenerator.getNumHashIterations() >>> 1;
 
         /* Create the standard data */
         IterationCounter myCount = new IterationCounter();
