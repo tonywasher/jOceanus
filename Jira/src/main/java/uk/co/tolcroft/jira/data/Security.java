@@ -159,7 +159,7 @@ public class Security {
 
             /* Access the group and add to list */
             RemoteGroup myGroupDtl = theService.getGroup(myToken, pName);
-            Group myGroup = new Group(myGroupDtl);
+            Group myGroup = new Group(this, myGroupDtl);
             theGroups.add(myGroup);
             return myGroup;
         } catch (RemoteException e) {
@@ -215,7 +215,7 @@ public class Security {
     /**
      * User class.
      */
-    public final class User {
+    public static final class User {
         /**
          * The underlying remote user.
          */
@@ -251,7 +251,7 @@ public class Security {
          * Get the full name of the user.
          * @return the full name
          */
-        public String getFullName() {
+        public String getFullname() {
             return theFullName;
         }
 
@@ -270,7 +270,7 @@ public class Security {
     /**
      * Group class.
      */
-    public final class Group {
+    public static final class Group {
         /**
          * The underlying remote group.
          */
@@ -304,10 +304,12 @@ public class Security {
 
         /**
          * Constructor.
+         * @param pSecurity the security
          * @param pGroup the underlying group
          * @throws JDataException on error
          */
-        private Group(final RemoteGroup pGroup) throws JDataException {
+        private Group(final Security pSecurity,
+                      final RemoteGroup pGroup) throws JDataException {
             /* Access the details */
             theGroup = pGroup;
             theName = pGroup.getName();
@@ -318,7 +320,7 @@ public class Security {
             /* Loop through the members */
             for (RemoteUser myUser : pGroup.getUsers()) {
                 /* Access the cached user and add it */
-                theMembers.add(getUser(myUser));
+                theMembers.add(pSecurity.getUser(myUser));
             }
         }
     }
@@ -326,7 +328,7 @@ public class Security {
     /**
      * Role class.
      */
-    public final class Role {
+    public static final class Role {
         /**
          * The underlying remote role.
          */

@@ -214,7 +214,7 @@ public class SymmetricKey implements JDataContents {
     @Override
     public int hashCode() {
         /* Calculate and return the hashCode for this symmetric key */
-        int hashCode = SecurityGenerator.HASH_PRIME * theEncodedKeyDef.hashCode();
+        int hashCode = SecurityGenerator.HASH_PRIME * Arrays.hashCode(theEncodedKeyDef);
         hashCode += theKeyType.hashCode();
         return hashCode;
     }

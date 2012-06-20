@@ -291,38 +291,6 @@ public class MaintStatic implements StdPanel {
         theInfoTypes.getPanel().setVisible(theInfoTypes.equals(pClass));
     }
 
-    /**
-     * Listener class
-     */
-    private final class StaticListener implements ItemListener {
-        @Override
-        public void itemStateChanged(final ItemEvent evt) {
-            /* Ignore if this is not a selection event */
-            if (evt.getStateChange() != ItemEvent.SELECTED) {
-                return;
-            }
-
-            /* If this event relates to the Select box */
-            if (evt.getSource() == theSelectBox) {
-                String myName = (String) evt.getItem();
-                /* Determine the new table */
-                if (myName == AccountType.LIST_NAME) {
-                    setSelection(theActTypes);
-                } else if (myName == TransactionType.LIST_NAME) {
-                    setSelection(theTranTypes);
-                } else if (myName == TaxType.LIST_NAME) {
-                    setSelection(theTaxTypes);
-                } else if (myName == TaxRegime.LIST_NAME) {
-                    setSelection(theTaxRegimes);
-                } else if (myName == Frequency.LIST_NAME) {
-                    setSelection(theFrequencys);
-                } else if (myName == EventInfoType.LIST_NAME) {
-                    setSelection(theInfoTypes);
-                }
-            }
-        }
-    }
-
     @Override
     public void notifySelection(final Object o) {
     }
@@ -398,5 +366,37 @@ public class MaintStatic implements StdPanel {
 
         /* Pass call on to parent */
         theParent.setVisibility();
+    }
+
+    /**
+     * Listener class.
+     */
+    private final class StaticListener implements ItemListener {
+        @Override
+        public void itemStateChanged(final ItemEvent evt) {
+            /* Ignore if this is not a selection event */
+            if (evt.getStateChange() != ItemEvent.SELECTED) {
+                return;
+            }
+
+            /* If this event relates to the Select box */
+            if (evt.getSource() == theSelectBox) {
+                String myName = (String) evt.getItem();
+                /* Determine the new table */
+                if (AccountType.LIST_NAME.equals(myName)) {
+                    setSelection(theActTypes);
+                } else if (TransactionType.LIST_NAME.equals(myName)) {
+                    setSelection(theTranTypes);
+                } else if (TaxType.LIST_NAME.equals(myName)) {
+                    setSelection(theTaxTypes);
+                } else if (TaxRegime.LIST_NAME.equals(myName)) {
+                    setSelection(theTaxRegimes);
+                } else if (Frequency.LIST_NAME.equals(myName)) {
+                    setSelection(theFrequencys);
+                } else if (EventInfoType.LIST_NAME.equals(myName)) {
+                    setSelection(theInfoTypes);
+                }
+            }
+        }
     }
 }

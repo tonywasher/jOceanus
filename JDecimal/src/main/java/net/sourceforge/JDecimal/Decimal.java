@@ -50,6 +50,11 @@ public abstract class Decimal {
     private static final int INITIAL_BUFLEN = 20;
 
     /**
+     * The Shift factor to move top part of long to an int.
+     */
+    private static final int INT_SHIFT = 32;
+
+    /**
      * The Maximum # of Decimals.
      */
     public static final int MAX_DECIMALS = 10;
@@ -571,6 +576,38 @@ public abstract class Decimal {
 
         /* Return the string */
         return myString;
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the object is the same class */
+        if (getClass() != pThat.getClass()) {
+            return false;
+        }
+
+        /* Cast as decimal */
+        Decimal myThat = (Decimal) pThat;
+
+        /* Check decimals */
+        if ((theDecimals != myThat.theDecimals) || (theHiddenDecimals != myThat.theHiddenDecimals)) {
+            return false;
+        }
+
+        /* Check value */
+        return (theValue == myThat.theValue);
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (theValue ^ (theValue >>> INT_SHIFT));
     }
 
     /**

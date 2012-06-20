@@ -23,12 +23,15 @@
 package uk.co.tolcroft.jira.data;
 
 import java.awt.Color;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+
+import javax.xml.rpc.ServiceException;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
@@ -161,7 +164,11 @@ public class Server {
             loadStatuses();
             loadResolutions();
             loadPriorities();
-        } catch (Exception e) {
+        } catch (MalformedURLException e) {
+            /* Pass the exception on */
+            throw new JDataException(ExceptionClass.JIRA, "Failed to locate service", e);
+
+        } catch (ServiceException e) {
             /* Pass the exception on */
             throw new JDataException(ExceptionClass.JIRA, "Failed to locate service", e);
         }
@@ -652,7 +659,7 @@ public class Server {
     /**
      * Filter class.
      */
-    public final class Filter {
+    public static final class Filter {
         /**
          * The underlying remote filter.
          */

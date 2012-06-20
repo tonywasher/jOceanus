@@ -104,9 +104,31 @@ public class UpdateSet {
             UpdateEntry myList = myIterator.next();
             DataList<?, ?> myDataList = myList.theDataList;
 
-            /* Prepare the changes */
+            /* Increment the version */
             if (myDataList != null) {
                 myDataList.setVersion(theVersion);
+            }
+        }
+    }
+
+    /**
+     * Rewind items to the require version.
+     * @param pVersion the version to rewind to
+     */
+    public void rewindToVersion(final int pVersion) {
+        /* Record the version */
+        theVersion = pVersion;
+
+        /* Loop through the items in the list */
+        Iterator<UpdateEntry> myIterator = theList.iterator();
+        while (myIterator.hasNext()) {
+            /* Access list */
+            UpdateEntry myList = myIterator.next();
+            DataList<?, ?> myDataList = myList.theDataList;
+
+            /* rewind to the version */
+            if (myDataList != null) {
+                myDataList.rewindToVersion(theVersion);
             }
         }
     }

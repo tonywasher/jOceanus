@@ -266,7 +266,7 @@ public class DateDayExample extends JApplet {
     /**
      * The listener.
      */
-    private DateListener theListener = new DateListener();
+    private transient DateListener theListener = new DateListener();
 
     /**
      * The range selection.
@@ -422,7 +422,7 @@ public class DateDayExample extends JApplet {
     /**
      * Table Model.
      */
-    private class DateTable extends AbstractTableModel {
+    private static class DateTable extends AbstractTableModel {
         /**
          * Serial Id.
          */
@@ -519,7 +519,7 @@ public class DateDayExample extends JApplet {
     private void makeLocaleList() {
         /* Create the Combo box and populate it */
         theLocaleList = new JComboBox();
-        for (shortLocale myLocale : shortLocale.values()) {
+        for (ShortLocale myLocale : ShortLocale.values()) {
             /* Add the Locale to the list */
             theLocaleList.addItem(myLocale);
         }
@@ -528,7 +528,7 @@ public class DateDayExample extends JApplet {
         theLocaleList.addItemListener(theListener);
 
         /* Set the default item */
-        theLocaleList.setSelectedItem(shortLocale.UnitedKingdom);
+        theLocaleList.setSelectedItem(ShortLocale.UnitedKingdom);
     }
 
     /**
@@ -705,7 +705,7 @@ public class DateDayExample extends JApplet {
             /* If this is the Locale list */
             if (theLocaleList.equals(o)) {
                 /* Store the new locale */
-                shortLocale myLocale = (shortLocale) evt.getItem();
+                ShortLocale myLocale = (ShortLocale) evt.getItem();
                 theLocale = myLocale.getLocale();
                 theMaxDayLen = myLocale.getMaxDayLen();
                 doShrinkFromRight = myLocale.doShrinkFromRight();
@@ -727,7 +727,7 @@ public class DateDayExample extends JApplet {
     /**
      * Some useful locales.
      */
-    private enum shortLocale {
+    private enum ShortLocale {
         /**
          * China (shorten day names to one character, and shrink from the right to make sure they are
          * different).
@@ -812,7 +812,7 @@ public class DateDayExample extends JApplet {
          * Constructor.
          * @param pLocale the locale
          */
-        private shortLocale(final Locale pLocale) {
+        private ShortLocale(final Locale pLocale) {
             /* Store the Locale */
             theLocale = pLocale;
             theMaxDayLen = JDateConfig.MAX_DAY_NAME_LEN;
@@ -824,7 +824,7 @@ public class DateDayExample extends JApplet {
          * @param pLocale the locale
          * @param iMaxDayLen the maximum day length
          */
-        private shortLocale(final Locale pLocale,
+        private ShortLocale(final Locale pLocale,
                             final int iMaxDayLen) {
             /* Store the Locale */
             theLocale = pLocale;
@@ -838,7 +838,7 @@ public class DateDayExample extends JApplet {
          * @param iMaxDayLen the maximum day length
          * @param bShrinkFromRight shrink day names from right
          */
-        private shortLocale(final Locale pLocale,
+        private ShortLocale(final Locale pLocale,
                             final int iMaxDayLen,
                             final boolean bShrinkFromRight) {
             /* Store the Locale */

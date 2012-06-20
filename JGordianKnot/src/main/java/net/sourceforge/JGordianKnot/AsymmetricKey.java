@@ -326,12 +326,12 @@ public class AsymmetricKey implements JDataContents {
         /* Calculate and return the hashCode for this asymmetric key */
         int hashCode = 1;
         if (thePrivateKeyDef != null) {
-            hashCode += thePrivateKeyDef.hashCode();
+            hashCode += Arrays.hashCode(thePrivateKeyDef);
         }
         hashCode *= SecurityGenerator.HASH_PRIME;
         hashCode += theKeyMode.hashCode();
         hashCode *= SecurityGenerator.HASH_PRIME;
-        hashCode += thePublicKeyDef.hashCode();
+        hashCode += Arrays.hashCode(thePublicKeyDef);
         return hashCode;
     }
 

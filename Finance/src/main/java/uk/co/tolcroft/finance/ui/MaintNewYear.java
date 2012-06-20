@@ -540,7 +540,7 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
                     break;
                 case COLUMN_DESC:
                     o = myEvent.getDesc();
-                    if ((o != null) & (((String) o).length() == 0)) {
+                    if ((o != null) && (((String) o).length() == 0)) {
                         o = null;
                     }
                     break;

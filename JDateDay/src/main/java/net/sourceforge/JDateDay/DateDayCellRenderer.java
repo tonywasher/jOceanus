@@ -37,7 +37,7 @@ public class DateDayCellRenderer extends JDateCellRenderer {
     /**
      * The Date Configuration.
      */
-    private final DateDayConfig theConfig;
+    private final transient DateDayConfig theConfig;
 
     /**
      * Constructor.

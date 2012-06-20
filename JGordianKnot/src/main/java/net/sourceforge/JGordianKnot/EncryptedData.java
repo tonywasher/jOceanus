@@ -310,7 +310,7 @@ public final class EncryptedData {
             /* Calculate hash allowing for field that has not been encrypted yet */
             int myHashCode = SecurityGenerator.HASH_PRIME * getValue().hashCode();
             if (theEncrypted != null) {
-                myHashCode += theEncrypted.hashCode();
+                myHashCode += Arrays.hashCode(theEncrypted);
             }
             return myHashCode;
         }

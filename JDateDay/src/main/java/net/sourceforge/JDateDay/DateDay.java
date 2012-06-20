@@ -40,7 +40,7 @@ public class DateDay implements Comparable<DateDay> {
     protected static final int HASH_PRIME = 17;
 
     /**
-     * The Year shift for DateDay Id. This is 9 corresponding to (1<<9) = 512
+     * The Year shift for DateDay Id. This is 9 corresponding to (1 shiftLeft 9 places) = 512
      */
     protected static final int SHIFT_ID_YEAR = 9;
 

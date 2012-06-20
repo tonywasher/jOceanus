@@ -306,11 +306,11 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
         }
 
         /**
-         * Get connection string
+         * Get connection string.
          * @param pPreferences the preferences
          * @return the connection string
          */
-        public String getConnectionString(DatabasePreferences pPreferences) {
+        public String getConnectionString(final DatabasePreferences pPreferences) {
             /* Create the buffer */
             StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 

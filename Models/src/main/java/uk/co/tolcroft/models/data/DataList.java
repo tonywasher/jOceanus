@@ -191,7 +191,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      * Set the version.
      * @param pVersion the version
      */
-    public void setVersion(int pVersion) {
+    public void setVersion(final int pVersion) {
         theVersion = pVersion;
     }
 
@@ -755,6 +755,42 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      * @return the newly allocated item
      */
     public abstract T addNewItem();
+
+    /**
+     * Rewind items to the require version.
+     * @param pVersion the version to rewind to
+     */
+    public void rewindToVersion(final int pVersion) {
+        /* Create an iterator for the list */
+        OrderedListIterator<T> myIterator = listIterator();
+
+        /* Loop through the elements */
+        while (myIterator.hasNext()) {
+            T myCurr = myIterator.next();
+
+            /* If the version is before required version */
+            if (myCurr.getValueSet().getVersion() <= pVersion) {
+                /* Ignore */
+                continue;
+            }
+
+            /* If the item was created after the required version */
+            if (myCurr.getOriginalValues().getVersion() > pVersion) {
+                /* Remove from list */
+                myIterator.remove();
+
+                /* Re-Loop */
+                continue;
+            }
+
+            /* Adjust values and reSort */
+            myCurr.rewindToVersion(pVersion);
+            myIterator.reSort();
+        }
+
+        /* Adjust list value */
+        setVersion(pVersion);
+    }
 
     /**
      * Reset changes in an edit view.

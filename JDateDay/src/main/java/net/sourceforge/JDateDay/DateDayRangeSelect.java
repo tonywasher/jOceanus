@@ -76,27 +76,27 @@ public class DateDayRangeSelect extends JPanel {
     /**
      * The published range.
      */
-    private DateDayRange thePublishedRange = null;
+    private transient DateDayRange thePublishedRange = null;
 
     /**
      * The First select-able date.
      */
-    private DateDay theFirstDate = null;
+    private transient DateDay theFirstDate = null;
 
     /**
      * The Last select-able date.
      */
-    private DateDay theFinalDate = null;
+    private transient DateDay theFinalDate = null;
 
     /**
      * The Active state.
      */
-    private DateRangeState theState = null;
+    private transient DateRangeState theState = null;
 
     /**
      * The Saved state.
      */
-    private DateRangeState theSavePoint = null;
+    private transient DateRangeState theSavePoint = null;
 
     /**
      * Are we refreshing data.

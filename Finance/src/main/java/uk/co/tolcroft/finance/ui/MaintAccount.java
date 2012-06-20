@@ -247,11 +247,6 @@ public class MaintAccount implements StdPanel {
     private AccountList theActView = null;
 
     /**
-     * The Account type list.
-     */
-    private AccountTypeList theAcTypList = null;
-
-    /**
      * The data entry.
      */
     private final JDataEntry theDataEntry;
@@ -867,7 +862,7 @@ public class MaintAccount implements StdPanel {
         FinanceData myData = theView.getData();
 
         /* Access type */
-        theAcTypList = myData.getAccountTypes();
+        AccountTypeList myAcTypList = myData.getAccountTypes();
         theAccounts = myData.getAccounts();
 
         /* Note that we are refreshing data */
@@ -883,7 +878,7 @@ public class MaintAccount implements StdPanel {
         }
 
         /* Create an account type iterator */
-        Iterator<AccountType> myTypeIterator = theAcTypList.iterator();
+        Iterator<AccountType> myTypeIterator = myAcTypList.iterator();
 
         /* Add the AccountType values to the types box */
         while (myTypeIterator.hasNext()) {

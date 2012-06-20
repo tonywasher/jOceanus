@@ -116,7 +116,7 @@ public class ValueSetHistory implements JDataContents {
      * Push Item to the history.
      * @param pVersion the new version
      */
-    public void pushHistory(int pVersion) {
+    public void pushHistory(final int pVersion) {
         /* Create a new ValueSet */
         ValueSet mySet = theCurr.cloneIt();
         mySet.setVersion(pVersion);

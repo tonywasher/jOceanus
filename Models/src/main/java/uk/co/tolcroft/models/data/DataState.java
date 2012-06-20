@@ -74,7 +74,7 @@ public enum DataState {
      * @param pHistory the history to derive state from
      * @return the state of the item
      */
-    public static DataState determineState(ValueSetHistory pHistory) {
+    public static DataState determineState(final ValueSetHistory pHistory) {
         /* Access the current values and base values */
         ValueSet myCurr = pHistory.getValueSet();
         ValueSet myBase = pHistory.getOriginalValues();

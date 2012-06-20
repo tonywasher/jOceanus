@@ -31,6 +31,11 @@ import java.io.InputStreamReader;
  */
 public class HelpPage implements Comparable<Object> {
     /**
+     * Byte encoding.
+     */
+    private static final String ENCODING = "UTF-8";
+
+    /**
      * The Buffer length.
      */
     private static final int BUFFER_LEN = 10000;
@@ -87,15 +92,15 @@ public class HelpPage implements Comparable<Object> {
         InputStreamReader myInputReader;
         String myLine;
 
-        /* Allocate a buffered reader on top of the input stream */
-        myInputReader = new InputStreamReader(pStream);
-        myReader = new BufferedReader(myInputReader);
-
         /* Allocate a string builder */
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Protect against exceptions */
         try {
+            /* Allocate a buffered reader on top of the input stream */
+            myInputReader = new InputStreamReader(pStream, ENCODING);
+            myReader = new BufferedReader(myInputReader);
+
             /* Read the header entry */
             while ((myLine = myReader.readLine()) != null) {
                 /* Add to the string buffer */

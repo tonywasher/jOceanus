@@ -1069,10 +1069,10 @@ public class AccountStatement extends DataTable<Event> {
                     case COLUMN_CREDIT:
                     case COLUMN_DEBIT:
                         validateAfterChange();
+                        fireTableRowsUpdated(row, row);
+                        break;
 
-                        /* fall through */
-
-                        /* else note that we have updated this cell */
+                    /* else note that we have updated this cell */
                     default:
                         fireTableRowsUpdated(row, row);
                         break;

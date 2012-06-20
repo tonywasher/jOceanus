@@ -44,12 +44,12 @@ public class DateDayButton extends JDateButton {
     /**
      * DateDayConfig.
      */
-    private DateDayConfig theConfig = new DateDayConfig();
+    private transient DateDayConfig theConfig = new DateDayConfig();
 
     /**
      * Published DateDay value.
      */
-    private DateDay thePublishedDate = null;
+    private transient DateDay thePublishedDate = null;
 
     /**
      * Constructor.

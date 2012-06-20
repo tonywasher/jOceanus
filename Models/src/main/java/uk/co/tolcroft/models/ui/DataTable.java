@@ -52,6 +52,7 @@ import uk.co.tolcroft.models.ui.RenderData.PopulateRenderData;
 import uk.co.tolcroft.models.ui.Renderer.RowCell;
 import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
 import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
+import uk.co.tolcroft.models.views.UpdateSet;
 
 /**
  * Template class to provide a table to handle a data type.
@@ -93,6 +94,11 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      * The Data List associated with the table.
      */
     private DataList<?, T> theList = null;
+
+    /**
+     * The UpdateSet associated with the table.
+     */
+    private UpdateSet theUpdateSet = null;
 
     /**
      * The Class associated with the table.
@@ -287,17 +293,25 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
 
     @Override
     public EditState getEditState() {
-        if (theList == null) {
+        if (theUpdateSet == null) {
             return EditState.CLEAN;
         }
-        return theList.getEditState();
+        return theUpdateSet.getEditState();
+    }
+
+    /**
+     * Set the update Set for the table.
+     * @param pUpdateSet the update set
+     */
+    protected void setUpdateSet(final UpdateSet pUpdateSet) {
+        theUpdateSet = pUpdateSet;
     }
 
     /**
      * Set the list for the table.
      * @param pList the list
      */
-    public void setList(final DataList<?, T> pList) {
+    protected void setList(final DataList<?, T> pList) {
         int myZeroRow = hasHeader() ? 1 : 0;
 
         /* Store list and select correct mode */
@@ -521,6 +535,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
 
         /* Create the new Item */
         myItem = theList.addNewItem();
+        myItem.setNewVersion();
 
         /* Determine the row # allowing for header */
         myRowNo = myItem.indexOf();

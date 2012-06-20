@@ -160,7 +160,7 @@ public class Project {
      * Get the URL of the project.
      * @return the URL
      */
-    public String getURL() {
+    public String getUrl() {
         return theURL;
     }
 
@@ -411,7 +411,7 @@ public class Project {
     /**
      * Component class.
      */
-    public final class Component {
+    public static final class Component {
         /**
          * The underlying remote component.
          */

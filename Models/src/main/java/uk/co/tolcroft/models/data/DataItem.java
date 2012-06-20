@@ -474,7 +474,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     /**
      * Set new version.
      */
-    protected void setNewVersion() {
+    public void setNewVersion() {
         theValueSet.setVersion(theList.getVersion() + 1);
     }
 
@@ -530,6 +530,18 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
      */
     public void popHistory() {
         theHistory.popTheHistory();
+    }
+
+    /**
+     * Rewind item to the required version.
+     * @param pVersion the version to rewind to
+     */
+    protected void rewindToVersion(final int pVersion) {
+        /* Loop while version is too high */
+        while (theValueSet.getVersion() > pVersion) {
+            /* Pop history */
+            popHistory();
+        }
     }
 
     /**

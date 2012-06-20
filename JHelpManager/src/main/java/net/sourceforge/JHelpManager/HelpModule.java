@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.JHelpManager;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,9 +30,11 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 /**
  * The help module that is implemented by each Help System.
@@ -196,9 +199,17 @@ public abstract class HelpModule {
             }
 
             /* Catch exceptions */
-        } catch (Exception e) {
+        } catch (SAXException e) {
             /* Throw Exception */
-            throw new HelpException("Failed to load XML Help Definitions", e);
+            throw new HelpException("Failed to parse XML Help Definitions", e);
+
+        } catch (IOException e) {
+            /* Throw Exception */
+            throw new HelpException("Failed to read XML Help Definitions", e);
+
+        } catch (ParserConfigurationException e) {
+            /* Throw Exception */
+            throw new HelpException("Failed to initiate parser", e);
         }
     }
 

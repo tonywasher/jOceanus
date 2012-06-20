@@ -278,7 +278,7 @@ public class Issue {
      * Get the dueDate of the issue.
      * @return the dueDate
      */
-    public Calendar getDueDate() {
+    public Calendar getDuedate() {
         return theDueDate;
     }
 

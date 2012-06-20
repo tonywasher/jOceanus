@@ -393,6 +393,26 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
         }
     }
 
+    /**
+     * Rewind items to the require version.
+     * @param pVersion the version to rewind to
+     */
+    public void rewindToVersion(final int pVersion) {
+        /* Record the version */
+        theVersion = pVersion;
+
+        /* rewind the security lists */
+        theControlKeys.rewindToVersion(pVersion);
+        theDataKeys.rewindToVersion(pVersion);
+        theControlData.rewindToVersion(pVersion);
+
+        /* Loop through the List values */
+        for (DataList<?, ?> myList : theList) {
+            /* Rewind the list */
+            myList.rewindToVersion(pVersion);
+        }
+    }
+
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */

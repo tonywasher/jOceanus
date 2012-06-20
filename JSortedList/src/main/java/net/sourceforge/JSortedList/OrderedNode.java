@@ -248,4 +248,31 @@ public class OrderedNode<T extends Comparable<T>> {
     protected int compareTo(final T pThat) {
         return theObject.compareTo(pThat);
     }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the object is the same class */
+        if (getClass() != pThat.getClass()) {
+            return false;
+        }
+
+        /* Access as ordered node */
+        OrderedNode<?> myThat = (OrderedNode<?>) pThat;
+
+        /* Compare the objects */
+        return theObject.equals(myThat.theObject);
+    }
+
+    @Override
+    public int hashCode() {
+        return theObject.hashCode();
+    }
 }

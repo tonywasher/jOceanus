@@ -77,7 +77,7 @@ public class HelpWindow extends JFrame implements HyperlinkListener, TreeSelecti
     /**
      * The module.
      */
-    private final HelpModule theModule;
+    private final transient HelpModule theModule;
 
     /**
      * The root of the tree.

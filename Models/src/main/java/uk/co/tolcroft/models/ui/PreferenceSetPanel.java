@@ -362,11 +362,7 @@ public class PreferenceSetPanel extends JPanel {
             switch (theType) {
             /* Create the Underlying field */
                 case String:
-                    theField = new StringField(thePreference);
-                    break;
                 case Directory:
-                    theField = new StringField(thePreference);
-                    break;
                 case File:
                     theField = new StringField(thePreference);
                     break;

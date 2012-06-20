@@ -91,11 +91,6 @@ public class AccountPatterns extends DataTable<Event> {
     private PatternList thePatterns = null;
 
     /**
-     * Frequency list.
-     */
-    private FrequencyList theFreqs = null;
-
-    /**
      * The Panel.
      */
     private final JPanel thePanel;
@@ -350,7 +345,7 @@ public class AccountPatterns extends DataTable<Event> {
         FinanceData myData = theView.getData();
 
         /* Access Frequencies, TransTypes and Accounts */
-        theFreqs = myData.getFrequencys();
+        FrequencyList myFreqs = myData.getFrequencys();
 
         /* Access the combo list from parent */
         theComboList = theParent.getComboList();
@@ -362,7 +357,7 @@ public class AccountPatterns extends DataTable<Event> {
         }
 
         /* Access the frequency iterator */
-        Iterator<Frequency> myIterator = theFreqs.listIterator();
+        Iterator<Frequency> myIterator = myFreqs.listIterator();
 
         /* Add the Frequency values to the frequencies box */
         while (myIterator.hasNext()) {
