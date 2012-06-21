@@ -69,7 +69,7 @@ public class ReportSelect extends JPanel {
     /**
      * Data view.
      */
-    private final View theView;
+    private final transient View theView;
 
     /**
      * Date button.
@@ -104,12 +104,12 @@ public class ReportSelect extends JPanel {
     /**
      * Current state.
      */
-    private ReportState theState = null;
+    private transient ReportState theState = null;
 
     /**
      * Saved state.
      */
-    private ReportState theSavePoint = null;
+    private transient ReportState theSavePoint = null;
 
     /**
      * Are we refreshing data?.
@@ -119,7 +119,7 @@ public class ReportSelect extends JPanel {
     /**
      * Event Manager.
      */
-    private final EventManager theManager;
+    private final transient EventManager theManager;
 
     /**
      * Obtain the report type.

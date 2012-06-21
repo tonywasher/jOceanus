@@ -43,9 +43,9 @@ import uk.co.tolcroft.finance.data.TaxYear.TaxYearList;
 import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.ui.DataTable;
-import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.ui.Renderer.CalendarRenderer;
 import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
+import uk.co.tolcroft.models.ui.Renderer.RendererFieldValue;
 import uk.co.tolcroft.models.ui.Renderer.StringRenderer;
 import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
 import uk.co.tolcroft.models.views.UpdateSet;
@@ -69,17 +69,17 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
     /**
      * The Data View.
      */
-    private final View theView;
+    private final transient View theView;
 
     /**
      * The events.
      */
-    private EventList theEvents = null;
+    private transient EventList theEvents = null;
 
     /**
      * The parent.
      */
-    private final MaintenanceTab theParent;
+    private final transient MaintenanceTab theParent;
 
     /**
      * The panel.
@@ -99,27 +99,27 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
     /**
      * Data Year.
      */
-    private final JDataEntry theDataYear;
+    private final transient JDataEntry theDataYear;
 
     /**
      * Data Events.
      */
-    private final JDataEntry theDataEvents;
+    private final transient JDataEntry theDataEvents;
 
     /**
      * View Set.
      */
-    private final UpdateSet theUpdateSet;
+    private final transient UpdateSet theUpdateSet;
 
     /**
      * Year View.
      */
-    private final UpdateEntry theYearEntry;
+    private final transient UpdateEntry theYearEntry;
 
     /**
      * Event View.
      */
-    private final UpdateEntry theEventEntry;
+    private final transient UpdateEntry theEventEntry;
 
     /**
      * Obtain the panel.
@@ -551,7 +551,7 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
 
             /* If we have a null value for an error field, set error description */
             if ((o == null) && (myEvent.hasErrors(getFieldForCell(row, col)))) {
-                o = Renderer.getError();
+                o = RendererFieldValue.Error;
             }
 
             /* Return to caller */

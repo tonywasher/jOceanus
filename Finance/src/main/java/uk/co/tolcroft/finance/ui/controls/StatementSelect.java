@@ -68,7 +68,7 @@ public class StatementSelect extends JPanel {
     /**
      * Event Manager.
      */
-    private final EventManager theManager;
+    private final transient EventManager theManager;
 
     /**
      * Get the selected statement type.

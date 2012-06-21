@@ -170,7 +170,7 @@ public class PasswordHash implements JDataContents {
      * @return the HashBytes
      */
     public byte[] getHashBytes() {
-        return theHashBytes;
+        return Arrays.copyOf(theHashBytes, theHashBytes.length);
     }
 
     /**
@@ -530,7 +530,7 @@ public class PasswordHash implements JDataContents {
         SymmetricKey mySymKey = theCipherSet.deriveSymmetricKey(pSecuredKeyDef);
 
         /* Add the key definition to the map */
-        theSymKeyMap.put(mySymKey, pSecuredKeyDef);
+        theSymKeyMap.put(mySymKey, Arrays.copyOf(pSecuredKeyDef, pSecuredKeyDef.length));
 
         /* Return the new key */
         return mySymKey;
@@ -548,14 +548,14 @@ public class PasswordHash implements JDataContents {
         /* Look for an entry in the map and return it if found */
         myWrappedKey = theSymKeyMap.get(pKey);
         if (myWrappedKey != null) {
-            return myWrappedKey;
+            return Arrays.copyOf(myWrappedKey, myWrappedKey.length);
         }
 
         /* Wrap the Key */
         myWrappedKey = theCipherSet.secureSymmetricKey(pKey);
 
         /* Add the key definition to the map */
-        theSymKeyMap.put(pKey, myWrappedKey);
+        theSymKeyMap.put(pKey, Arrays.copyOf(myWrappedKey, myWrappedKey.length));
 
         /* Return to caller */
         return myWrappedKey;

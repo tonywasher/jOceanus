@@ -50,6 +50,7 @@ import uk.co.tolcroft.models.database.ColumnDefinition.MoneyColumn;
 import uk.co.tolcroft.models.database.ColumnDefinition.RateColumn;
 import uk.co.tolcroft.models.database.ColumnDefinition.ReferenceColumn;
 import uk.co.tolcroft.models.database.ColumnDefinition.StringColumn;
+import uk.co.tolcroft.models.database.Database.JDBCDriver;
 
 /**
  * Database field definition class. Maps each dataType to a database field.
@@ -61,9 +62,19 @@ public class TableDefinition {
     private static final int BUFFER_LEN = 1000;
 
     /**
+     * The index prefix.
+     */
+    protected static final String PREFIX_INDEX = "idx_";
+
+    /**
      * The Table name.
      */
     private final String theTableName;
+
+    /**
+     * The Database driver.
+     */
+    private final JDBCDriver theDriver;
 
     /**
      * The Column Definitions.
@@ -131,6 +142,14 @@ public class TableDefinition {
     }
 
     /**
+     * Obtain the driver.
+     * @return the driver
+     */
+    protected JDBCDriver getDriver() {
+        return theDriver;
+    }
+
+    /**
      * Note that we have a sort on reference.
      */
     protected void setSortOnReference() {
@@ -139,11 +158,14 @@ public class TableDefinition {
 
     /**
      * Constructor.
+     * @param pDriver the driver
      * @param pName the table name
      */
-    protected TableDefinition(final String pName) {
-        /* Record the name */
+    protected TableDefinition(final JDBCDriver pDriver,
+                              final String pName) {
+        /* Record the name and driver */
         theTableName = pName;
+        theDriver = pDriver;
 
         /* Create the column list */
         theList = new ArrayList<ColumnDefinition>();
@@ -917,7 +939,8 @@ public class TableDefinition {
         }
 
         /* Build the initial create */
-        myBuilder.append("create index idx_");
+        myBuilder.append("create index ");
+        myBuilder.append(PREFIX_INDEX);
         myBuilder.append(theTableName);
         myBuilder.append(" on ");
         myBuilder.append(theTableName);
@@ -949,14 +972,7 @@ public class TableDefinition {
      * @return the SQL string
      */
     protected String getDropTableString() {
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-
-        /* Build the drop command */
-        myBuilder.append("if exists (select * from sys.tables where name = '");
-        myBuilder.append(theTableName);
-        myBuilder.append("') drop table ");
-        myBuilder.append(theTableName);
-        return myBuilder.toString();
+        return theDriver.getDropTableCommand(theTableName);
     }
 
     /**
@@ -964,21 +980,13 @@ public class TableDefinition {
      * @return the SQL string
      */
     protected String getDropIndexString() {
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-
         /* Return null if we are not indexed */
         if (!isIndexed()) {
             return null;
         }
 
         /* Build the drop command */
-        myBuilder.append("if exists (select * from sys.indexes where name = 'idx_");
-        myBuilder.append(theTableName);
-        myBuilder.append("') drop index idx_");
-        myBuilder.append(theTableName);
-        myBuilder.append(" on ");
-        myBuilder.append(theTableName);
-        return myBuilder.toString();
+        return theDriver.getDropIndexCommand(theTableName);
     }
 
     /**

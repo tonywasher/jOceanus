@@ -240,7 +240,7 @@ public class DataHayStack {
          * Obtain the Digest Type.
          * @return the Digest Type
          */
-        public DigestType getDigestType() {
+        protected DigestType getDigestType() {
             return theType;
         }
 
@@ -248,7 +248,7 @@ public class DataHayStack {
          * Obtain the Digest.
          * @return the Digest
          */
-        public byte[] getDigest() {
+        protected byte[] getDigest() {
             return theDigest;
         }
 
@@ -256,7 +256,7 @@ public class DataHayStack {
          * Obtain the External format.
          * @return the External format
          */
-        public byte[] getExternal() {
+        protected byte[] getExternal() {
             return theExternal;
         }
 
@@ -335,7 +335,7 @@ public class DataHayStack {
          * Obtain the SymKey Type.
          * @return the SymKey Type
          */
-        public SymKeyType getSymKeyType() {
+        protected SymKeyType getSymKeyType() {
             return theType;
         }
 
@@ -343,7 +343,7 @@ public class DataHayStack {
          * Obtain the Encoded Key.
          * @return the Encoded Key
          */
-        public byte[] getEncodedKey() {
+        protected byte[] getEncodedKey() {
             return theEncodedKey;
         }
 
@@ -351,7 +351,7 @@ public class DataHayStack {
          * Obtain the External format.
          * @return the External format
          */
-        public byte[] getExternal() {
+        protected byte[] getExternal() {
             return theExternal;
         }
 
@@ -430,7 +430,7 @@ public class DataHayStack {
          * Obtain the AsymKeyMode.
          * @return the AsymKeyMode
          */
-        public AsymKeyMode getAsymKeyMode() {
+        protected AsymKeyMode getAsymKeyMode() {
             return theMode;
         }
 
@@ -438,7 +438,7 @@ public class DataHayStack {
          * Obtain the Public Key.
          * @return the Public Key
          */
-        public byte[] getPublicKey() {
+        protected byte[] getPublicKey() {
             return thePublicKey;
         }
 
@@ -446,7 +446,7 @@ public class DataHayStack {
          * Obtain the External format.
          * @return the External format
          */
-        public byte[] getExternal() {
+        protected byte[] getExternal() {
             return theExternal;
         }
 
@@ -524,7 +524,7 @@ public class DataHayStack {
          * Obtain the HashMode.
          * @return the HashMode
          */
-        public HashMode getHashMode() {
+        protected HashMode getHashMode() {
             return theMode;
         }
 
@@ -532,7 +532,7 @@ public class DataHayStack {
          * Obtain the Salt.
          * @return the Salt
          */
-        public byte[] getSalt() {
+        protected byte[] getSalt() {
             return theSalt;
         }
 
@@ -540,7 +540,7 @@ public class DataHayStack {
          * Obtain the Hash.
          * @return the Hash
          */
-        public byte[] getHash() {
+        protected byte[] getHash() {
             return theHash;
         }
 
@@ -548,7 +548,7 @@ public class DataHayStack {
          * Obtain the External format.
          * @return the External format
          */
-        public byte[] getExternal() {
+        protected byte[] getExternal() {
             return theExternal;
         }
 
@@ -641,7 +641,7 @@ public class DataHayStack {
          * Obtain the EncryptionMode.
          * @return the EncryptionMode
          */
-        public EncryptionMode getEncryptionMode() {
+        protected EncryptionMode getEncryptionMode() {
             return theMode;
         }
 
@@ -649,7 +649,7 @@ public class DataHayStack {
          * Obtain the InitVector.
          * @return the InitVector
          */
-        public byte[] getInitVector() {
+        protected byte[] getInitVector() {
             return theInitVector;
         }
 
@@ -657,7 +657,7 @@ public class DataHayStack {
          * Obtain the encrypted bytes.
          * @return the encrypted bytes
          */
-        public byte[] getEncryptedBytes() {
+        protected byte[] getEncryptedBytes() {
             return theBytes;
         }
 
@@ -665,7 +665,7 @@ public class DataHayStack {
          * Obtain the External format.
          * @return the External format
          */
-        public byte[] getExternal() {
+        protected byte[] getExternal() {
             return theExternal;
         }
 

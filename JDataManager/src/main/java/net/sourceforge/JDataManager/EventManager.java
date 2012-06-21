@@ -72,7 +72,7 @@ public class EventManager {
     /**
      * Registration class.
      */
-    private final class Registration {
+    private static final class Registration {
         /**
          * Registration Type.
          */

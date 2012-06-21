@@ -243,7 +243,7 @@ public class ZipFileEntry {
      * Obtain the signature.
      * @return the signature
      */
-    public byte[] getSignature() {
+    protected byte[] getSignature() {
         return theSignature;
     }
 

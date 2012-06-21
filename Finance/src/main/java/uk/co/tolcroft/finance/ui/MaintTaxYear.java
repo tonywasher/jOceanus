@@ -1369,7 +1369,7 @@ public class MaintTaxYear implements StdPanel {
                 }
 
                 /* Handle Exceptions */
-            } catch (Exception e) {
+            } catch (ClassCastException e) {
                 /* Reset values */
                 theTaxYear.popHistory();
                 theTaxYear.pushHistory();

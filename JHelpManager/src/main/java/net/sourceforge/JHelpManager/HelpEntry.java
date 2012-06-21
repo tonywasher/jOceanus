@@ -114,7 +114,7 @@ public class HelpEntry {
      * Obtain the children.
      * @return the children
      */
-    public HelpEntry[] getChildren() {
+    protected HelpEntry[] getChildren() {
         return theChildren;
     }
 

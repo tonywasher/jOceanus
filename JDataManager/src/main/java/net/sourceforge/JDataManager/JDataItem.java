@@ -26,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ListIterator;
@@ -578,7 +579,7 @@ public class JDataItem {
                         } else {
                             theEditor.setPage(pEvent.getURL());
                         }
-                    } catch (Exception e) {
+                    } catch (IOException e) {
                         url = null;
                     }
                 }
@@ -587,22 +588,23 @@ public class JDataItem {
 
         @Override
         public void actionPerformed(final ActionEvent pEvent) {
+            Object o = pEvent.getSource();
             /* If we asked for the next item */
-            if (pEvent.getSource() == theNext) {
+            if (theNext.equals(o)) {
                 shiftIterator(SHIFT_ONE);
-            } else if (pEvent.getSource() == theNextTen) {
+            } else if (theNextTen.equals(o)) {
                 shiftIterator(SHIFT_TEN);
-            } else if (pEvent.getSource() == theNextHun) {
+            } else if (theNextHun.equals(o)) {
                 shiftIterator(SHIFT_HUNDRED);
-            } else if (pEvent.getSource() == theNextThou) {
+            } else if (theNextThou.equals(o)) {
                 shiftIterator(SHIFT_THOU);
-            } else if (pEvent.getSource() == thePrev) {
+            } else if (thePrev.equals(o)) {
                 shiftIterator(-SHIFT_ONE);
-            } else if (pEvent.getSource() == thePrevTen) {
+            } else if (thePrevTen.equals(o)) {
                 shiftIterator(-SHIFT_TEN);
-            } else if (pEvent.getSource() == thePrevHun) {
+            } else if (thePrevHun.equals(o)) {
                 shiftIterator(-SHIFT_HUNDRED);
-            } else if (pEvent.getSource() == thePrevThou) {
+            } else if (thePrevThou.equals(o)) {
                 shiftIterator(-SHIFT_THOU);
             }
         }
@@ -610,7 +612,7 @@ public class JDataItem {
         @Override
         public void itemStateChanged(final ItemEvent pEvent) {
             /* If the event was the toggle button */
-            if (pEvent.getSource() == theToggle) {
+            if (theToggle.equals(pEvent.getSource())) {
                 /* If we are selecting list view */
                 if (pEvent.getStateChange() == ItemEvent.SELECTED) {
                     /* If we need to switch to item view */

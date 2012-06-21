@@ -53,11 +53,6 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
     private ControlKeyList theList = null;
 
     /**
-     * DataSet.
-     */
-    private DataSet<?> theData = null;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -66,8 +61,8 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
         super(pReader, SHEET_NAME);
 
         /* Access the Lists */
-        theData = pReader.getData();
-        theList = theData.getControlKeys();
+        DataSet<?> myData = pReader.getData();
+        theList = myData.getControlKeys();
     }
 
     /**

@@ -153,8 +153,8 @@ public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
             /* Catch any exceptions */
         } catch (JDataException e) {
             /* Delete the file */
-            if (doDelete) {
-                myFile.delete();
+            if ((doDelete) && (!myFile.delete())) {
+                doDelete = false;
             }
 
             /* Report the failure */

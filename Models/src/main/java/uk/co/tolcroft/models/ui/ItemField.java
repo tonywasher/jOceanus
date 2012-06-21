@@ -34,6 +34,7 @@ import javax.swing.JComponent;
 
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.ui.Renderer.RendererFieldValue;
 
 /**
  * Extension of ValueField to handle a DataItem field.
@@ -178,7 +179,7 @@ public class ItemField extends ValueField {
                 /* If the value is null */
                 if (myField.getValue() == null) {
                     /* Set the display text to Error */
-                    myField.setDisplay(Renderer.getError());
+                    myField.setDisplay(RendererFieldValue.Error);
                 }
 
                 /* else if the component is a ComboBox */

@@ -103,24 +103,26 @@ public abstract class HelpModule {
      * Obtain the help entries.
      * @return the help entries
      */
-    public HelpEntry[] getHelpEntries() {
+    protected HelpEntry[] getHelpEntries() {
         return theEntries;
     }
 
     /**
      * Constructor.
+     * @param pClass the class representing the resource
      * @param pDefinitions the definitions file name
      * @throws HelpException on error
      */
-    public HelpModule(final String pDefinitions) throws HelpException {
+    public HelpModule(final Class<?> pClass,
+                      final String pDefinitions) throws HelpException {
         /* Allocate the list */
         theList = new ArrayList<HelpPage>();
 
         /* Parse the help definitions */
-        parseHelpDefinition(pDefinitions);
+        parseHelpDefinition(pClass, pDefinitions);
 
         /* Loop through the entities */
-        loadHelpPages(theEntries);
+        loadHelpPages(pClass, theEntries);
     }
 
     /**
@@ -147,11 +149,13 @@ public abstract class HelpModule {
 
     /**
      * Parse Help Definition.
+     * @param pClass the class representing the resource
      * @param pFile the XML file containing the definitions
      * @throws HelpException on error
      */
-    private void parseHelpDefinition(final String pFile) throws HelpException {
-        InputStream myStream;
+    private void parseHelpDefinition(final Class<?> pClass,
+                                     final String pFile) throws HelpException {
+        InputStream myStream = null;
         DocumentBuilderFactory myFactory;
         DocumentBuilder myBuilder;
         Document myDoc;
@@ -160,7 +164,7 @@ public abstract class HelpModule {
         /* Protect against exceptions */
         try {
             /* Access the input stream for the entity */
-            myStream = this.getClass().getResourceAsStream(pFile);
+            myStream = pClass.getResourceAsStream(pFile);
 
             /* Create the document builder */
             myFactory = DocumentBuilderFactory.newInstance();
@@ -210,16 +214,30 @@ public abstract class HelpModule {
         } catch (ParserConfigurationException e) {
             /* Throw Exception */
             throw new HelpException("Failed to initiate parser", e);
+        } finally {
+            /* Protect while cleaning up */
+            try {
+                /* Close the output stream */
+                if (myStream != null) {
+                    myStream.close();
+                }
+
+                /* Ignore errors */
+            } catch (Exception ex) {
+                myStream = null;
+            }
         }
     }
 
     /**
      * Load Help entries from the file system.
+     * @param pClass the class representing the resource
      * @param pEntries the Help Entries
      * @throws HelpException on error
      */
-    private void loadHelpPages(final HelpEntry[] pEntries) throws HelpException {
-        InputStream myStream;
+    private void loadHelpPages(final Class<?> pClass,
+                               final HelpEntry[] pEntries) throws HelpException {
+        InputStream myStream = null;
 
         /* Loop through the entities */
         for (HelpEntry myEntry : pEntries) {
@@ -230,27 +248,35 @@ public abstract class HelpModule {
 
             /* If we have a file name */
             if (myEntry.getFileName() != null) {
-                /* Access the input stream for the entity */
-                myStream = this.getClass().getResourceAsStream(myEntry.getFileName());
-
-                /* Build the help page */
-                HelpPage myPage = new HelpPage(myEntry, myStream);
-
-                /* Add it to the list */
-                theList.add(myPage);
-
-                /* Close the stream */
                 try {
-                    myStream.close();
-                } catch (Exception e) {
-                    myStream = null;
+                    /* Access the input stream for the entity */
+                    myStream = pClass.getResourceAsStream(myEntry.getFileName());
+
+                    /* Build the help page */
+                    HelpPage myPage = new HelpPage(myEntry, myStream);
+
+                    /* Add it to the list */
+                    theList.add(myPage);
+
+                } finally {
+                    /* Protect while cleaning up */
+                    try {
+                        /* Close the output stream */
+                        if (myStream != null) {
+                            myStream.close();
+                        }
+
+                        /* Ignore errors */
+                    } catch (Exception ex) {
+                        myStream = null;
+                    }
                 }
             }
 
             /* If we have children */
             if (myEntry.getChildren() != null) {
                 /* Load the entries */
-                loadHelpPages(myEntry.getChildren());
+                loadHelpPages(pClass, myEntry.getChildren());
             }
         }
     }

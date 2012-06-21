@@ -586,7 +586,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
             }
 
             /* If we have a date */
-        } else if (myDate != null) {
+        } else {
             /* The date must be unique for this account */
             if (myList.countInstances(myDate, getAccount()) > 1) {
                 addError("Rate Date must be unique", FIELD_ENDDATE);

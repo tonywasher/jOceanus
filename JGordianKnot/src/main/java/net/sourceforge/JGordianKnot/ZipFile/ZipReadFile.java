@@ -100,7 +100,7 @@ public class ZipReadFile {
      * @return the hash bytes
      */
     public byte[] getHashBytes() {
-        return theHashBytes;
+        return Arrays.copyOf(theHashBytes, theHashBytes.length);
     }
 
     /**

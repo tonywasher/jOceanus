@@ -290,6 +290,7 @@ public final class JDataObject {
         switch (getDataType(o)) {
             case Exception:
                 o = new JDataException((Throwable) o);
+                return formatHTMLDetail(pDetail, o);
             case Contents:
                 return formatHTMLDetail(pDetail, o);
             case Map:

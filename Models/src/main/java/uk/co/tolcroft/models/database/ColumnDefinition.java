@@ -39,6 +39,7 @@ import net.sourceforge.JDecimal.Price;
 import net.sourceforge.JDecimal.Rate;
 import net.sourceforge.JDecimal.Units;
 import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.database.Database.JDBCDriver;
 import uk.co.tolcroft.models.database.TableDefinition.SortOrder;
 
 /**
@@ -106,6 +107,14 @@ public abstract class ColumnDefinition {
      */
     protected Object getObject() {
         return theValue;
+    }
+
+    /**
+     * Obtain the value.
+     * @return the value
+     */
+    protected JDBCDriver getDriver() {
+        return theTable.getDriver();
     }
 
     /**
@@ -249,7 +258,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append("int");
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.Integer));
         }
 
         /**
@@ -487,7 +496,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append("smallint");
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.Short));
         }
 
         /**
@@ -547,7 +556,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append("bigint");
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.Long));
         }
 
         /**
@@ -607,7 +616,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append("real");
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.Float));
         }
 
         /**
@@ -667,7 +676,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append("float");
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.Double));
         }
 
         /**
@@ -727,7 +736,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append("date");
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.Date));
         }
 
         /**
@@ -793,7 +802,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append("bit");
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.Boolean));
         }
 
         /**
@@ -861,7 +870,8 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append("varchar(");
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.String));
+            pBuilder.append("(");
             pBuilder.append(theLength);
             pBuilder.append(')');
         }
@@ -914,7 +924,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append("money");
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.Money));
         }
 
         /**
@@ -948,7 +958,8 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append("decimal(18,2)");
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.Decimal));
+            pBuilder.append("(18,2)");
         }
 
         /**
@@ -982,7 +993,8 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append("decimal(18,4)");
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.Decimal));
+            pBuilder.append("(18,4)");
         }
 
         /**
@@ -1016,7 +1028,8 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append("decimal(18,4)");
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.Decimal));
+            pBuilder.append("(18,4)");
         }
 
         /**
@@ -1050,7 +1063,8 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append("decimal(18,6)");
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.Decimal));
+            pBuilder.append("(18,6)");
         }
 
         /**
@@ -1092,9 +1106,13 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append("varbinary(");
-            pBuilder.append(theLength);
-            pBuilder.append(')');
+            JDBCDriver myDriver = getDriver();
+            pBuilder.append(myDriver.getDatabaseType(ColumnType.Binary));
+            if (myDriver.defineBinaryLength()) {
+                pBuilder.append("(");
+                pBuilder.append(theLength);
+                pBuilder.append(')');
+            }
         }
 
         /**
@@ -1125,5 +1143,65 @@ public abstract class ColumnDefinition {
                                   final int pIndex) throws SQLException {
             pStatement.setBytes(pIndex, getValue());
         }
+    }
+
+    /**
+     * Column types.
+     */
+    public enum ColumnType {
+        /**
+         * Boolean.
+         */
+        Boolean,
+
+        /**
+         * Short.
+         */
+        Short,
+
+        /**
+         * Integer.
+         */
+        Integer,
+
+        /**
+         * Long.
+         */
+        Long,
+
+        /**
+         * Float.
+         */
+        Float,
+
+        /**
+         * Double.
+         */
+        Double,
+
+        /**
+         * String.
+         */
+        String,
+
+        /**
+         * Date.
+         */
+        Date,
+
+        /**
+         * Money.
+         */
+        Money,
+
+        /**
+         * Decimal.
+         */
+        Decimal,
+
+        /**
+         * Binary.
+         */
+        Binary;
     }
 }

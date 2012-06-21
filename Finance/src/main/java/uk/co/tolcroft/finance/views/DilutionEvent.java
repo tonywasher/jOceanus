@@ -181,6 +181,40 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
         return getAccount().compareTo(pThat.getAccount());
     }
 
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check class */
+        if (getClass() != pThat.getClass()) {
+            return false;
+        }
+
+        /* Access as Dilution Event */
+        DilutionEvent myThat = (DilutionEvent) pThat;
+
+        /* Check equality */
+        return Difference.isEqual(getDate(), myThat.getDate())
+                && Difference.isEqual(getAccount(), myThat.getAccount())
+                && Difference.isEqual(getEvent(), myThat.getEvent());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = getDate().hashCode();
+        hash ^= getAccount().hashCode();
+        if (getEvent() != null) {
+            hash ^= getEvent().hashCode();
+        }
+        return hash;
+    }
+
     /**
      * Create a dilution event from an event.
      * @param pEvent the underlying event

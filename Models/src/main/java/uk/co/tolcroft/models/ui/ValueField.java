@@ -37,6 +37,7 @@ import net.sourceforge.JDecimal.Money;
 import net.sourceforge.JDecimal.Price;
 import net.sourceforge.JDecimal.Rate;
 import net.sourceforge.JDecimal.Units;
+import uk.co.tolcroft.models.ui.Renderer.RendererFieldValue;
 
 /**
  * ValueField provides a JTextField which is geared to a particular type of data.
@@ -124,6 +125,14 @@ public class ValueField extends JTextField {
 
         /* Add Focus Listener */
         addFocusListener(new TextFocus());
+    }
+
+    /**
+     * Set Standard display string.
+     * @param pValue the value
+     */
+    public void setDisplay(RendererFieldValue pValue) {
+        setDisplay(pValue.toString());
     }
 
     /**
@@ -316,7 +325,7 @@ public class ValueField extends JTextField {
          * @param pValue the value
          */
         protected void setDisplay(final String pValue) {
-            if ((pValue.length() > 0) || (theDisplay != Renderer.getError())) {
+            if (pValue.length() > 0) {
                 theDisplay = pValue;
             }
         }

@@ -35,52 +35,52 @@ public class SecurityPreferences extends PreferenceSet {
     /**
      * Registry name for Security Provider.
      */
-    protected static final String NAME_PROVIDER = "SecurityProvider";
+    public static final String NAME_PROVIDER = "SecurityProvider";
 
     /**
      * Registry name for Restricted Security.
      */
-    protected static final String NAME_RESTRICTED = "RestrictedKeys";
+    public static final String NAME_RESTRICTED = "RestrictedKeys";
 
     /**
      * Registry name for Cipher Steps.
      */
-    protected static final String NAME_CIPHER_STEPS = "CipherSteps";
+    public static final String NAME_CIPHER_STEPS = "CipherSteps";
 
     /**
      * Registry name for Hash iterations.
      */
-    protected static final String NAME_HASH_ITERATIONS = "HashIterations";
+    public static final String NAME_HASH_ITERATIONS = "HashIterations";
 
     /**
      * Registry name for SecurityPhrase.
      */
-    protected static final String NAME_SECURITY_PHRASE = "SecurityPhrase";
+    public static final String NAME_SECURITY_PHRASE = "SecurityPhrase";
 
     /**
      * Display name for Security Provider.
      */
-    protected static final String DISPLAY_PROVIDER = "Security Provider";
+    private static final String DISPLAY_PROVIDER = "Security Provider";
 
     /**
      * Display name for Restricted Security.
      */
-    protected static final String DISPLAY_RESTRICTED = "Restricted Keys";
+    private static final String DISPLAY_RESTRICTED = "Restricted Keys";
 
     /**
      * Display name for Cipher Steps.
      */
-    protected static final String DISPLAY_CIPHER_STEPS = "Number of CipherSteps";
+    private static final String DISPLAY_CIPHER_STEPS = "Number of CipherSteps";
 
     /**
      * Display name for Cipher Steps.
      */
-    protected static final String DISPLAY_HASH_ITERATIONS = "Hash Iterations";
+    private static final String DISPLAY_HASH_ITERATIONS = "Hash Iterations";
 
     /**
      * Display name for Security Phrase.
      */
-    protected static final String DISPLAY_SECURITY_PHRASE = "SecurityPhrase";
+    private static final String DISPLAY_SECURITY_PHRASE = "SecurityPhrase";
 
     /**
      * Default Security Provider.

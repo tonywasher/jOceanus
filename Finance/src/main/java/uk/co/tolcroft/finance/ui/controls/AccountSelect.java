@@ -61,7 +61,7 @@ public class AccountSelect extends JPanel {
     /**
      * Data view.
      */
-    private final View theView;
+    private final transient View theView;
 
     /**
      * Account types comboBox.
@@ -86,17 +86,17 @@ public class AccountSelect extends JPanel {
     /**
      * Accounts list.
      */
-    private AccountList theAccounts = null;
+    private transient AccountList theAccounts = null;
 
     /**
      * Current State.
      */
-    private AccountState theState = null;
+    private transient AccountState theState = null;
 
     /**
      * Saved state.
      */
-    private AccountState theSavePoint = null;
+    private transient AccountState theSavePoint = null;
 
     /**
      * Are we refreshing data?
@@ -106,7 +106,7 @@ public class AccountSelect extends JPanel {
     /**
      * Event Manager.
      */
-    private final EventManager theManager;
+    private final transient EventManager theManager;
 
     /**
      * Get the selected account.

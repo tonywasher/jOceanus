@@ -1248,6 +1248,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
                 }
                 break;
             case DEBTINTEREST:
+            case RENTALINCOME:
                 if (!isCredit) {
                     myResult = (pType.isExternal() && !pType.isCash());
                 } else {
@@ -1259,13 +1260,6 @@ public class Event extends EncryptedItem implements Comparable<Event> {
                     myResult = pType.isDebt();
                 } else {
                     myResult = pType.isWriteOff();
-                }
-                break;
-            case RENTALINCOME:
-                if (!isCredit) {
-                    myResult = (pType.isExternal() && !pType.isCash());
-                } else {
-                    myResult = pType.isDebt();
                 }
                 break;
             default:

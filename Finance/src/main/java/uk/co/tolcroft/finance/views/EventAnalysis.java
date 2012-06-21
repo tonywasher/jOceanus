@@ -24,6 +24,7 @@ package uk.co.tolcroft.finance.views;
 
 import java.util.Iterator;
 
+import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
@@ -669,6 +670,33 @@ public class EventAnalysis implements JDataContents {
 
             /* Compare the bucket order */
             return getDate().compareTo(pThat.getDate());
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (getClass() != pThat.getClass()) {
+                return false;
+            }
+
+            /* Access as AnalysisYear */
+            AnalysisYear myThat = (AnalysisYear) pThat;
+
+            /* Check equality */
+            return Difference.isEqual(getDate(), myThat.getDate());
+        }
+
+        @Override
+        public int hashCode() {
+            return getDate().hashCode();
         }
 
         /**

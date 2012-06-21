@@ -381,7 +381,7 @@ public class IncomeBreakdown implements JDataContents {
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME);
+        private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME);
 
         @Override
         public JDataFields getDataFields() {
@@ -598,6 +598,33 @@ public class IncomeBreakdown implements JDataContents {
 
             /* Compare Accounts */
             return theAccount.compareTo(pThat.theAccount);
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (getClass() != pThat.getClass()) {
+                return false;
+            }
+
+            /* Access as AccountRecord */
+            AccountRecord myThat = (AccountRecord) pThat;
+
+            /* Check equality */
+            return Difference.isEqual(getAccount(), myThat.getAccount());
+        }
+
+        @Override
+        public int hashCode() {
+            return getAccount().hashCode();
         }
     }
 

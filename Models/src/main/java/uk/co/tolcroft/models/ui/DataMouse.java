@@ -263,8 +263,10 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
         }
 
         /* If there is something to add and there are already items in the menu */
-        if ((enableIns || enableDel || enableDupl || enableShow || enableRecov)
-                && (pMenu.getComponentCount() > 0)) {
+        boolean addSeparator = (pMenu.getComponentCount() > 0);
+        addSeparator |= enableIns || enableDel || enableDupl;
+        addSeparator |= enableShow || enableRecov;
+        if (addSeparator) {
             /* Add a separator */
             pMenu.addSeparator();
         }

@@ -63,11 +63,6 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
     private DataKeyList theList = null;
 
     /**
-     * DataSet.
-     */
-    private DataSet<?> theData = null;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -76,8 +71,8 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
         super(pReader, SHEET_NAME);
 
         /* Access the Lists */
-        theData = pReader.getData();
-        theList = theData.getDataKeys();
+        DataSet<?> myData = pReader.getData();
+        theList = myData.getDataKeys();
     }
 
     /**

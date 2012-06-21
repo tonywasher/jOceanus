@@ -98,7 +98,7 @@ public class EncryptionMode extends NybbleArray {
      * Obtain the SymKeyTypes.
      * @return the SymKeyTypes
      */
-    public SymKeyType[] getSymKeyTypes() {
+    protected SymKeyType[] getSymKeyTypes() {
         return theKeyTypes;
     }
 

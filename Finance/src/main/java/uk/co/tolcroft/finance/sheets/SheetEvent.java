@@ -417,7 +417,7 @@ public class SheetEvent extends SheetDataItem<Event> {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (JDataException e) {
             throw new JDataException(ExceptionClass.EXCEL, "Failed to load Events", e);
         }
 

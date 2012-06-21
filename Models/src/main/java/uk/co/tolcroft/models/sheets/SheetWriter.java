@@ -154,8 +154,11 @@ public abstract class SheetWriter<T extends DataSet<T>> {
     public void createBackup(final T pData,
                              final File pFile) throws JDataException {
         OutputStream myStream = null;
-        File myTgtFile = null;
         ZipWriteFile myZipFile = null;
+        boolean bSuccess = false;
+
+        /* The Target file has ".zip" appended */
+        File myTgtFile = new File(pFile.getPath() + ".zip");
 
         /* Protect the workbook access */
         try {
@@ -164,9 +167,6 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 
             /* Record the DataSet */
             theData = pData;
-
-            /* The Target file has ".zip" appended */
-            myTgtFile = new File(pFile.getPath() + ".zip");
 
             /* Create a clone of the security control */
             SecureManager mySecure = pData.getSecurity();
@@ -189,17 +189,19 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 
             /* Close the Zip file */
             myZipFile.close();
+
+            /* Set success to avoid deleting file */
+            bSuccess = true;
         } catch (IOException e) {
+            /* Report the error */
+            throw new JDataException(ExceptionClass.EXCEL, "Failed to create Backup Workbook: "
+                    + pFile.getName(), e);
+        } finally {
             /* Protect while cleaning up */
             try {
                 /* Close the output stream */
                 if (myStream != null) {
                     myStream.close();
-                }
-
-                /* If we are encrypted close the Zip file */
-                if (myZipFile != null) {
-                    myZipFile.close();
                 }
 
                 /* Ignore errors */
@@ -208,13 +210,10 @@ public abstract class SheetWriter<T extends DataSet<T>> {
             }
 
             /* Delete the file on error */
-            if (myTgtFile != null) {
-                myTgtFile.delete();
+            if ((!bSuccess) && (!myTgtFile.delete())) {
+                /* Nothing that we can do. At least we tried */
+                myStream = null;
             }
-
-            /* Report the error */
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to create Backup Workbook: "
-                    + pFile.getName(), e);
         }
     }
 
@@ -228,6 +227,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
                               final File pFile) throws JDataException {
         OutputStream myStream = null;
         FileOutputStream myOutFile = null;
+        boolean bSuccess = false;
 
         /* The Target file has ".xls" appended */
         File myTgtFile = new File(pFile.getPath() + ".xls");
@@ -252,7 +252,14 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 
             /* Close the Stream to force out errors */
             myStream.close();
-        } catch (Exception e) {
+
+            /* Set success to avoid deleting file */
+            bSuccess = true;
+        } catch (IOException e) {
+            /* Report the error */
+            throw new JDataException(ExceptionClass.EXCEL, "Failed to create Editable Workbook: "
+                    + myTgtFile.getName(), e);
+        } finally {
             /* Protect while cleaning up */
             try {
                 /* Close the output stream */
@@ -266,13 +273,11 @@ public abstract class SheetWriter<T extends DataSet<T>> {
             }
 
             /* Delete the file on error */
-            myTgtFile.delete();
-
-            /* Report the error */
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to create Editable Workbook: "
-                    + myTgtFile.getName(), e);
+            if ((!bSuccess) && (!myTgtFile.delete())) {
+                /* Nothing that we can do. At least we tried */
+                myStream = null;
+            }
         }
-
     }
 
     /**

@@ -83,24 +83,11 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable,
     private transient Class<T> theClass;
 
     /**
-     * List granularity.
-     */
-    private transient int theGranularity;
-
-    /**
      * Obtain the class of objects in this sorted list.
      * @return should we skip hidden elements
      */
     public Class<T> getBaseClass() {
         return theClass;
-    }
-
-    /**
-     * Obtain the granularity of the index.
-     * @return the granularity
-     */
-    public int getGranularity() {
-        return theGranularity;
     }
 
     /**

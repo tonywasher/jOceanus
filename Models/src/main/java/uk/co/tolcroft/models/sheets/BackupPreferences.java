@@ -53,22 +53,22 @@ public class BackupPreferences extends PreferenceSet {
     /**
      * Display name for BackupDirectory.
      */
-    protected static final String DISPLAY_BACKUPDIR = "Backup Directory";
+    private static final String DISPLAY_BACKUPDIR = "Backup Directory";
 
     /**
      * Display name for BackupPrefix.
      */
-    protected static final String DISPLAY_BACKUP_PFIX = "Backup Prefix";
+    private static final String DISPLAY_BACKUP_PFIX = "Backup Prefix";
 
     /**
      * Display name for BackupDirectory.
      */
-    protected static final String DISPLAY_ARCHIVE_FILE = "Archive File";
+    private static final String DISPLAY_ARCHIVE_FILE = "Archive File";
 
     /**
      * Display name for Backup Timestamp.
      */
-    protected static final String DISPLAY_BACKUP_TIME = "Backup TimeStamps";
+    private static final String DISPLAY_BACKUP_TIME = "Backup TimeStamps";
 
     /**
      * Default value for BackupDirectory.

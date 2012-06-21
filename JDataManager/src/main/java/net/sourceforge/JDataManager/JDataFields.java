@@ -98,10 +98,10 @@ public class JDataFields {
         return theName;
     }
 
-    @Override
-    public int hashCode() {
-        return theName.hashCode();
-    }
+    // @Override
+    // public int hashCode() {
+    // return theName.hashCode();
+    // }
 
     /**
      * Obtain the number of values.
@@ -116,7 +116,7 @@ public class JDataFields {
      * @return the field iterator
      */
     public Iterator<JDataField> fieldIterator() {
-        return new FieldIterator();
+        return new FieldIterator(this);
     }
 
     /**
@@ -178,7 +178,7 @@ public class JDataFields {
     /**
      * Iterator class.
      */
-    private final class FieldIterator implements Iterator<JDataField> {
+    private static final class FieldIterator implements Iterator<JDataField> {
         /**
          * Preceding iterator.
          */
@@ -191,13 +191,15 @@ public class JDataFields {
 
         /**
          * Constructor.
+         * @param pFields the fields
          */
-        private FieldIterator() {
+        private FieldIterator(JDataFields pFields) {
             /* Allocate iterator */
-            theIterator = theFields.iterator();
+            theIterator = pFields.theFields.iterator();
 
             /* Allocate preceding iterator */
-            thePreceding = (theUnderlying == null) ? null : theUnderlying.fieldIterator();
+            JDataFields myUnderlying = pFields.theUnderlying;
+            thePreceding = (myUnderlying == null) ? null : myUnderlying.fieldIterator();
         }
 
         @Override

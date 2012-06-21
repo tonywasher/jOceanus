@@ -1493,7 +1493,7 @@ public class MaintAccount implements StdPanel {
                 }
 
                 /* Handle Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 /* Reset values */
                 theAccount.popHistory();
                 theAccount.pushHistory();

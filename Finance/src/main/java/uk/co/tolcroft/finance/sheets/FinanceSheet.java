@@ -25,6 +25,7 @@ package uk.co.tolcroft.finance.sheets;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import net.sourceforge.JDataManager.JDataException;
@@ -38,7 +39,6 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 
 import uk.co.tolcroft.finance.data.FinanceData;
-import uk.co.tolcroft.finance.views.DilutionEvent.DilutionEventList;
 import uk.co.tolcroft.models.data.ControlData.ControlDataList;
 import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 import uk.co.tolcroft.models.data.TaskControl;
@@ -183,6 +183,8 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
      * @throws JDataException on error
      */
     public static FinanceData loadArchive(final TaskControl<FinanceData> pTask) throws JDataException {
+        InputStream myStream = null;
+
         /* Access the Backup properties */
         BackupPreferences myPreferences = (BackupPreferences) PreferenceManager
                 .getPreferenceSet(BackupPreferences.class);
@@ -194,18 +196,31 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
         try {
             /* Create an input stream to the file */
             FileInputStream myInFile = new FileInputStream(myArchive);
-            InputStream myStream = new BufferedInputStream(myInFile);
+            myStream = new BufferedInputStream(myInFile);
 
             /* Load the data from the stream */
             FinanceData myData = loadArchiveStream(pTask, myStream);
 
             /* Close the Stream to force out errors */
             myStream.close();
+            myStream = null;
             return myData;
-        } catch (Exception e) {
+        } catch (IOException e) {
             /* Report the error */
             throw new JDataException(ExceptionClass.EXCEL, "Failed to load Workbook: " + myArchive.getName(),
                     e);
+        } finally {
+            /* Protect while cleaning up */
+            try {
+                /* Close the output stream */
+                if (myStream != null) {
+                    myStream.close();
+                }
+
+                /* Ignore errors */
+            } catch (Exception ex) {
+                myStream = null;
+            }
         }
     }
 
@@ -236,7 +251,7 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
             YearRange myRange = new YearRange();
 
             /* Create the dilution event list */
-            DilutionEventList myDilution = new DilutionEventList(myData);
+            // DilutionEventList myDilution = new DilutionEventList(myData);
 
             /* Determine Year Range */
             boolean bContinue = loadArchive(pTask, myHelper, myData, myRange);
@@ -287,7 +302,7 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
 
             /* Return the data */
             return myData;
-        } catch (Exception e) {
+        } catch (IOException e) {
             /* Report the error */
             throw new JDataException(ExceptionClass.EXCEL, "Failed to load Workbook", e);
         }

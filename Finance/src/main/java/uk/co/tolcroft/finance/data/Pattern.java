@@ -396,7 +396,7 @@ public class Pattern extends Event {
      * Adjust date that is built from a pattern.
      * @param pEvents the event list
      * @param pTaxYear the new tax year
-     * @param pDate the data for the event
+     * @param pDate the date for the event
      * @return the new event
      * @throws JDataException on error
      */
@@ -409,7 +409,7 @@ public class Pattern extends Event {
 
         /* Access the frequency */
         FreqClass myFreq = getFrequency().getFrequency();
-        DateDay myDate = pDate;
+        DateDay myDate;
 
         /* Access the Tax Year list */
         FinanceData myData = pEvents.getData();
@@ -442,18 +442,10 @@ public class Pattern extends Event {
         } else {
             /* switch on frequency type */
             switch (myFreq) {
-            /* Monthly and TenMonthly add one month */
+            /* Monthly etc add relevant months */
                 case MONTHLY:
                 case TENMONTHS:
-                    pDate.adjustMonth(myFreq.getAdjustment());
-                    break;
-
-                /* Quarterly add three months */
                 case QUARTERLY:
-                    pDate.adjustMonth(myFreq.getAdjustment());
-                    break;
-
-                /* HalfYearly add six months */
                 case HALFYEARLY:
                     pDate.adjustMonth(myFreq.getAdjustment());
                     break;

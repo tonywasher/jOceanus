@@ -37,16 +37,13 @@ import uk.co.tolcroft.models.ui.RenderData.PopulateRenderData;
  */
 public final class Renderer {
     /**
-     * Error string.
+     * Special values for renderer.
      */
-    private static final String ERROR_VALUE = "Error";
-
-    /**
-     * Get the error value.
-     * @return the error value
-     */
-    public static String getError() {
-        return ERROR_VALUE;
+    public enum RendererFieldValue {
+        /**
+         * Error.
+         */
+        Error;
     }
 
     /**

@@ -66,11 +66,6 @@ public class ItemValidation implements JDataContents {
     }
 
     /**
-     * The item to which this Validation Control belongs.
-     */
-    private final DataItem theItem;
-
-    /**
      * The list to which this Validation Control belongs.
      */
     private final DataList<?, ?> theList;
@@ -86,8 +81,7 @@ public class ItemValidation implements JDataContents {
      */
     public ItemValidation(final DataItem pItem) {
         /* Store details */
-        theItem = pItem;
-        theList = theItem.getList();
+        theList = pItem.getList();
         theErrors = new ArrayList<ErrorElement>();
     }
 

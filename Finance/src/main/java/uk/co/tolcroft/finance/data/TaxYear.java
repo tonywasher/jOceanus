@@ -1043,7 +1043,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
             pList.setNewId(this);
 
             /* Catch Exceptions */
-        } catch (Exception e) {
+        } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }

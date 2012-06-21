@@ -44,6 +44,7 @@ import net.sourceforge.JDecimal.Money;
 import net.sourceforge.JDecimal.Price;
 import net.sourceforge.JDecimal.Rate;
 import net.sourceforge.JDecimal.Units;
+import uk.co.tolcroft.models.ui.Renderer.RendererFieldValue;
 
 /**
  * Cell editors.
@@ -77,7 +78,9 @@ public class Editor {
                                                       final boolean isSelected,
                                                       final int row,
                                                       final int col) {
-            theField.setText(((value == null) || (value == Renderer.getError())) ? "" : (String) value);
+            theField.setText(((value == null) || (RendererFieldValue.Error.equals(value)))
+                                                                                          ? ""
+                                                                                          : (String) value);
             return theField;
         }
 
@@ -155,7 +158,7 @@ public class Editor {
         /**
          * The ComboBox.
          */
-        private JComboBox theCombo;
+        private JComboBox theCombo = null;
 
         /**
          * The action Listener.
@@ -175,9 +178,10 @@ public class Editor {
                                                       final int col) {
             DataTable<?> myTable = (DataTable<?>) table;
             theCombo = myTable.getComboBox(row, col);
-            theCombo.setSelectedIndex(-1);
             if (value != null) {
-                theCombo.setSelectedItem((String) value);
+                theCombo.setSelectedItem(value);
+            } else {
+                theCombo.setSelectedIndex(-1);
             }
             theCombo.addActionListener(theActionListener);
             theCombo.addPopupMenuListener(thePopupListener);
@@ -214,24 +218,25 @@ public class Editor {
 
         @Override
         public Object getCellEditorValue() {
-            String s = (String) theCombo.getSelectedItem();
-            if ((s != null) && (s.equals(""))) {
-                s = null;
-            }
-            return s;
+            return (theCombo != null) ? theCombo.getSelectedItem() : null;
         }
 
         @Override
         public void cancelCellEditing() {
-            theCombo.removePopupMenuListener(thePopupListener);
-            theCombo.removeActionListener(theActionListener);
+            if (theCombo != null) {
+                theCombo.removePopupMenuListener(thePopupListener);
+                theCombo.removeActionListener(theActionListener);
+                theCombo = null;
+            }
             super.cancelCellEditing();
         }
 
         @Override
         public boolean stopCellEditing() {
-            theCombo.removePopupMenuListener(thePopupListener);
-            theCombo.removeActionListener(theActionListener);
+            if (theCombo != null) {
+                theCombo.removePopupMenuListener(thePopupListener);
+                theCombo.removeActionListener(theActionListener);
+            }
             return super.stopCellEditing();
         }
     }
@@ -270,7 +275,7 @@ public class Editor {
             DateDay myCurr;
 
             /* If the value is null */
-            if ((value == null) || (value == Renderer.getError())) {
+            if ((value == null) || (RendererFieldValue.Error.equals(value))) {
                 myCurr = new DateDay();
             } else {
                 myCurr = (DateDay) value;

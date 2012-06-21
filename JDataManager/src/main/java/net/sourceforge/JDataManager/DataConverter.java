@@ -24,6 +24,7 @@ package net.sourceforge.JDataManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
@@ -286,8 +287,8 @@ public final class DataConverter {
             }
             out.flush();
             return baos.toByteArray();
-        } catch (Exception e) {
-            throw new JDataException(ExceptionClass.DATA, "Unable to convert character array to bytes", e);
+        } catch (IOException e) {
+            throw new JDataException(ExceptionClass.DATA, e.getMessage(), e);
         }
     }
 
@@ -314,8 +315,8 @@ public final class DataConverter {
 
             /* Return the array */
             return myArray;
-        } catch (Exception e) {
-            throw new JDataException(ExceptionClass.DATA, "Unable to convert byte array to characters", e);
+        } catch (IOException e) {
+            throw new JDataException(ExceptionClass.DATA, e.getMessage(), e);
         }
     }
 
@@ -424,8 +425,8 @@ public final class DataConverter {
     public static String byteArrayToString(final byte[] pInput) throws JDataException {
         try {
             return new String(pInput, ENCODING);
-        } catch (Exception e) {
-            throw new JDataException(ExceptionClass.DATA, "Failed to convert bytes to string", e);
+        } catch (IOException e) {
+            throw new JDataException(ExceptionClass.DATA, e.getMessage(), e);
         }
     }
 
@@ -433,12 +434,13 @@ public final class DataConverter {
      * get Bytes from String.
      * @param pInput the string to obtain the bytes from
      * @return the bytes representing the string
+     * @throws JDataException on error
      */
-    public static byte[] stringToByteArray(final String pInput) {
+    public static byte[] stringToByteArray(final String pInput) throws JDataException {
         try {
             return pInput.getBytes(ENCODING);
-        } catch (Exception e) {
-            return null;
+        } catch (IOException e) {
+            throw new JDataException(ExceptionClass.DATA, e.getMessage(), e);
         }
     }
 

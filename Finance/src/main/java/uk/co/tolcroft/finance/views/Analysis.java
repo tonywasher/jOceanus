@@ -523,6 +523,33 @@ public class Analysis implements JDataContents {
             return (theId - pThat.theId);
         }
 
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (getClass() != pThat.getClass()) {
+                return false;
+            }
+
+            /* Access as AnalysisBucket */
+            AnalysisBucket myThat = (AnalysisBucket) pThat;
+
+            /* Check equality */
+            return (getBucketType() == myThat.getBucketType()) && (theId.equals(myThat.theId));
+        }
+
+        @Override
+        public int hashCode() {
+            return getBucketType().hashCode() ^ theId;
+        }
+
         /**
          * is the bucket active?
          * @return TRUE/FALSE

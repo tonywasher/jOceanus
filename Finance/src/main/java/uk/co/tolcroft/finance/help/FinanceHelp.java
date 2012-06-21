@@ -35,6 +35,6 @@ public class FinanceHelp extends HelpModule {
      * @throws HelpException on error
      */
     public FinanceHelp() throws HelpException {
-        super("help.xml");
+        super(FinanceHelp.class, "help.xml");
     }
 }

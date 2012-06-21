@@ -130,8 +130,8 @@ public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
             /* Catch any exceptions */
         } catch (JDataException e) {
             /* Delete the file */
-            if (doDelete) {
-                myFile.delete();
+            if ((doDelete) && (!myFile.delete())) {
+                doDelete = false;
             }
 
             /* Report the failure */

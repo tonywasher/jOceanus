@@ -51,7 +51,7 @@ public class IterationCounter {
      * get buffer pointer.
      * @return the buffer
      */
-    public byte[] getBuffer() {
+    protected byte[] getBuffer() {
         return theBuffer;
     }
 

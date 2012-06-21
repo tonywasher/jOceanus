@@ -65,7 +65,7 @@ public class SpotSelect extends JPanel {
     /**
      * The data view.
      */
-    private final View theView;
+    private final transient View theView;
 
     /**
      * The date button.
@@ -95,12 +95,12 @@ public class SpotSelect extends JPanel {
     /**
      * The current state.
      */
-    private SpotState theState = null;
+    private transient SpotState theState = null;
 
     /**
      * The saved state.
      */
-    private SpotState theSavePoint = null;
+    private transient SpotState theSavePoint = null;
 
     /**
      * Do we show closed accounts.
@@ -115,7 +115,7 @@ public class SpotSelect extends JPanel {
     /**
      * Event Manager.
      */
-    private final EventManager theManager;
+    private final transient EventManager theManager;
 
     /**
      * Get the selected date.

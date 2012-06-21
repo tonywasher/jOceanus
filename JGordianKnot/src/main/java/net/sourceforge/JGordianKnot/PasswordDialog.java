@@ -115,7 +115,7 @@ public class PasswordDialog extends JDialog implements ActionListener {
      * Obtain the password.
      * @return the password
      */
-    public char[] getPassword() {
+    protected char[] getPassword() {
         return thePassword;
     }
 

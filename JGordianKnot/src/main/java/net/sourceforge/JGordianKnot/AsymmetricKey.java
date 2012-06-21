@@ -209,7 +209,7 @@ public class AsymmetricKey implements JDataContents {
      * @return the key definition
      */
     public byte[] getExternalDef() {
-        return theExternalKeyDef;
+        return Arrays.copyOf(theExternalKeyDef, theExternalKeyDef.length);
     }
 
     /**
@@ -472,7 +472,7 @@ public class AsymmetricKey implements JDataContents {
         }
 
         /* Add the key definition to the map */
-        theSymKeyMap.put(mySymKey, pSecuredKeyDef);
+        theSymKeyMap.put(mySymKey, Arrays.copyOf(pSecuredKeyDef, pSecuredKeyDef.length));
 
         /* Return the new key */
         return mySymKey;
@@ -490,7 +490,7 @@ public class AsymmetricKey implements JDataContents {
         /* Look for an entry in the map and return it if found */
         myWrappedKey = theSymKeyMap.get(pKey);
         if (myWrappedKey != null) {
-            return myWrappedKey;
+            return Arrays.copyOf(myWrappedKey, myWrappedKey.length);
         }
 
         /* Protect against exceptions */
@@ -525,7 +525,7 @@ public class AsymmetricKey implements JDataContents {
         }
 
         /* Add the key definition to the map */
-        theSymKeyMap.put(pKey, myWrappedKey);
+        theSymKeyMap.put(pKey, Arrays.copyOf(myWrappedKey, myWrappedKey.length));
 
         /* Return to caller */
         return myWrappedKey;

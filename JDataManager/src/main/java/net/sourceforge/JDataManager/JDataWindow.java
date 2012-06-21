@@ -61,7 +61,7 @@ public class JDataWindow extends JFrame implements TreeSelectionListener {
     /**
      * The Data Manager.
      */
-    private final JDataManager theDataMgr;
+    private final transient JDataManager theDataMgr;
 
     /**
      * The JTree component.
@@ -71,7 +71,7 @@ public class JDataWindow extends JFrame implements TreeSelectionListener {
     /**
      * The Item pane.
      */
-    private final JDataItem theItemPane;
+    private final transient JDataItem theItemPane;
 
     /**
      * Constructor.

@@ -185,9 +185,13 @@ public abstract class SheetReader<T extends DataSet<T>> {
                 throw new JDataException(ExceptionClass.EXCEL, "Operation Cancelled");
             }
         } catch (IOException e) {
+            /* Report the error */
+            throw new JDataException(ExceptionClass.EXCEL, "Failed to load Backup Workbook: "
+                    + pFile.getName(), e);
+        } finally {
             /* Protect while cleaning up */
             try {
-                /* Close the input stream */
+                /* Close the output stream */
                 if (myStream != null) {
                     myStream.close();
                 }
@@ -196,10 +200,6 @@ public abstract class SheetReader<T extends DataSet<T>> {
             } catch (Exception ex) {
                 myStream = null;
             }
-
-            /* Report the error */
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to load Backup Workbook: "
-                    + pFile.getName(), e);
         }
 
         /* Return the new DataSet */
@@ -241,9 +241,13 @@ public abstract class SheetReader<T extends DataSet<T>> {
                 throw new JDataException(ExceptionClass.EXCEL, "Operation Cancelled");
             }
         } catch (IOException e) {
+            /* Report the error */
+            throw new JDataException(ExceptionClass.EXCEL, "Failed to load Edit-able Workbook: "
+                    + pFile.getName(), e);
+        } finally {
             /* Protect while cleaning up */
             try {
-                /* Close the input stream */
+                /* Close the output stream */
                 if (myStream != null) {
                     myStream.close();
                 }
@@ -252,10 +256,6 @@ public abstract class SheetReader<T extends DataSet<T>> {
             } catch (Exception ex) {
                 myStream = null;
             }
-
-            /* Report the error */
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to load Edit-able Workbook: "
-                    + pFile.getName(), e);
         }
 
         /* Return the new DataSet */

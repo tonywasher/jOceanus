@@ -74,6 +74,14 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<T>> {
     private final TableDefinition theTable;
 
     /**
+     * Obtain database.
+     * @return the database
+     */
+    protected Database<?> getDatabase() {
+        return theDatabase;
+    }
+
+    /**
      * Constructor.
      * @param pDatabase the database control
      * @param pTable the table name
@@ -83,7 +91,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<T>> {
         /* Set the table */
         theDatabase = pDatabase;
         theConn = theDatabase.getConn();
-        theTable = new TableDefinition(pTable);
+        theTable = new TableDefinition(theDatabase.getDriver(), pTable);
         defineTable(theTable);
     }
 
@@ -655,7 +663,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<T>> {
 
             /* Close the Statement */
             closeStmt();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             theDatabase.close();
             throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to delete " + getTableName(),
                     e);
@@ -684,7 +692,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<T>> {
                 myCreate = theTable.getCreateIndexString();
                 executeStatement(myCreate);
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             theDatabase.close();
             throw new JDataException(ExceptionClass.SQLSERVER, "Failed to create " + getTableName(), e);
         }
@@ -709,7 +717,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<T>> {
             /* Execute the drop table statement */
             myDrop = theTable.getDropTableString();
             executeStatement(myDrop);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             theDatabase.close();
             throw new JDataException(ExceptionClass.SQLSERVER, "Failed to drop " + getTableName(), e);
         }
@@ -725,7 +733,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<T>> {
             /* Execute the purge statement */
             String myTrunc = theTable.getPurgeString();
             executeStatement(myTrunc);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             theDatabase.close();
             throw new JDataException(ExceptionClass.SQLSERVER, "Failed to purge " + getTableName(), e);
         }

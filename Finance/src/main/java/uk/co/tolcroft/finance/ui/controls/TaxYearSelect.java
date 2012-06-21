@@ -54,7 +54,7 @@ public class TaxYearSelect extends JPanel {
     /**
      * Data view.
      */
-    private final View theView;
+    private final transient View theView;
 
     /**
      * Years box.
@@ -69,12 +69,12 @@ public class TaxYearSelect extends JPanel {
     /**
      * Current state.
      */
-    private YearState theState = null;
+    private transient YearState theState = null;
 
     /**
      * Saved state.
      */
-    private YearState theSavePoint = null;
+    private transient YearState theSavePoint = null;
 
     /**
      * Are we refreshing data?
@@ -84,7 +84,7 @@ public class TaxYearSelect extends JPanel {
     /**
      * Event Manager.
      */
-    private final EventManager theManager;
+    private final transient EventManager theManager;
 
     /**
      * Get the selected TaxYear.

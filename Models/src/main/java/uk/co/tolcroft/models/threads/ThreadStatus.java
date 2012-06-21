@@ -69,11 +69,6 @@ public class ThreadStatus<T extends DataSet<T>> implements TaskControl<T>, Prefe
      */
     private int theSteps;
 
-    /**
-     * ThreadStatus Preferences.
-     */
-    private ThreadStatusPreferences theTPreferences = null;
-
     @Override
     public int getReportingSteps() {
         return theSteps;
@@ -122,8 +117,9 @@ public class ThreadStatus<T extends DataSet<T>> implements TaskControl<T>, Prefe
         theStatusBar = pStatusBar;
 
         /* Access the threadStatus properties */
-        theTPreferences = (ThreadStatusPreferences) PreferenceManager.getPreferenceSet(this);
-        theSteps = theTPreferences.getIntegerValue(ThreadStatusPreferences.NAME_REPSTEPS);
+        ThreadStatusPreferences myPreferences = (ThreadStatusPreferences) PreferenceManager
+                .getPreferenceSet(this);
+        theSteps = myPreferences.getIntegerValue(ThreadStatusPreferences.NAME_REPSTEPS);
 
         /* Create the status */
         theStatus = new StatusData();
@@ -261,12 +257,12 @@ public class ThreadStatus<T extends DataSet<T>> implements TaskControl<T>, Prefe
         /**
          * Registry name for Reporting Steps.
          */
-        protected static final String NAME_REPSTEPS = "ReportingSteps";
+        public static final String NAME_REPSTEPS = "ReportingSteps";
 
         /**
          * Display name for Reporting Steps.
          */
-        protected static final String DISPLAY_REPSTEPS = "Reporting Steps";
+        private static final String DISPLAY_REPSTEPS = "Reporting Steps";
 
         /**
          * Default Reporting Steps.

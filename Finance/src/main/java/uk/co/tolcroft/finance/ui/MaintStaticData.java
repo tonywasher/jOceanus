@@ -45,8 +45,8 @@ import uk.co.tolcroft.models.ui.DataMouse;
 import uk.co.tolcroft.models.ui.DataTable;
 import uk.co.tolcroft.models.ui.Editor.StringEditor;
 import uk.co.tolcroft.models.ui.ErrorPanel;
-import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.ui.Renderer.IntegerRenderer;
+import uk.co.tolcroft.models.ui.Renderer.RendererFieldValue;
 import uk.co.tolcroft.models.ui.Renderer.StringRenderer;
 import uk.co.tolcroft.models.ui.SaveButtons;
 import uk.co.tolcroft.models.views.UpdateSet;
@@ -67,7 +67,7 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
     /**
      * The Data view.
      */
-    private final View theView;
+    private final transient View theView;
 
     /**
      * The Panel.
@@ -77,7 +77,7 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
     /**
      * The Parent.
      */
-    private final MaintStatic theParent;
+    private final transient MaintStatic theParent;
 
     /**
      * The Data class.
@@ -87,7 +87,7 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
     /**
      * The List.
      */
-    private L theStatic = null;
+    private transient L theStatic = null;
 
     /**
      * Self reference.
@@ -107,17 +107,17 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
     /**
      * The UpdateSet.
      */
-    private final UpdateSet theUpdateSet;
+    private final transient UpdateSet theUpdateSet;
 
     /**
      * The UpdateEntry.
      */
-    private final UpdateEntry theUpdateEntry;
+    private final transient UpdateEntry theUpdateEntry;
 
     /**
      * The Data entry.
      */
-    private final JDataEntry theDataEntry;
+    private final transient JDataEntry theDataEntry;
 
     /**
      * The Save buttons.
@@ -578,7 +578,7 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
 
             /* If we have a null value for an error field, set error description */
             if ((o == null) && (myData.hasErrors(getFieldForCell(row, col)))) {
-                o = Renderer.getError();
+                o = RendererFieldValue.Error;
             }
 
             /* Return to caller */

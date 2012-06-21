@@ -47,9 +47,9 @@ import uk.co.tolcroft.models.ui.DataMouse;
 import uk.co.tolcroft.models.ui.DataTable;
 import uk.co.tolcroft.models.ui.Editor.PriceEditor;
 import uk.co.tolcroft.models.ui.ErrorPanel;
-import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.ui.Renderer.CalendarRenderer;
 import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
+import uk.co.tolcroft.models.ui.Renderer.RendererFieldValue;
 import uk.co.tolcroft.models.ui.Renderer.StringRenderer;
 import uk.co.tolcroft.models.ui.SaveButtons;
 import uk.co.tolcroft.models.views.DataControl;
@@ -69,32 +69,32 @@ public class PricePoint extends DataTable<AccountPrice> {
     /**
      * The data view.
      */
-    private final View theView;
+    private final transient View theView;
 
     /**
      * The View list.
      */
-    private final UpdateSet theUpdateSet;
+    private final transient UpdateSet theUpdateSet;
 
     /**
      * The update entry.
      */
-    private final UpdateEntry theUpdateEntry;
+    private final transient UpdateEntry theUpdateEntry;
 
     /**
      * The Spot prices.
      */
-    private SpotPrices theSnapshot = null;
+    private transient SpotPrices theSnapshot = null;
 
     /**
      * The account price list.
      */
-    private AccountPriceList thePrices = null;
+    private transient AccountPriceList thePrices = null;
 
     /**
      * The parent.
      */
-    private final MainTab theParent;
+    private final transient MainTab theParent;
 
     /**
      * The panel.
@@ -114,12 +114,12 @@ public class PricePoint extends DataTable<AccountPrice> {
     /**
      * The selected date.
      */
-    private DateDay theDate = null;
+    private transient DateDay theDate = null;
 
     /**
      * The Account type.
      */
-    private AccountType theAccountType = null;
+    private transient AccountType theAccountType = null;
 
     /**
      * The Spot selection panel.
@@ -134,7 +134,7 @@ public class PricePoint extends DataTable<AccountPrice> {
     /**
      * The data entry.
      */
-    private final JDataEntry theDataPrice;
+    private final transient JDataEntry theDataPrice;
 
     /**
      * The error panel.
@@ -682,7 +682,7 @@ public class PricePoint extends DataTable<AccountPrice> {
 
             /* If we have a null value */
             if ((o == null) && (mySpot.hasErrors(getFieldForCell(row, col)))) {
-                o = Renderer.getError();
+                o = RendererFieldValue.Error;
             }
 
             /* Return to caller */

@@ -24,6 +24,7 @@ package net.sourceforge.JGordianKnot.ZipFile;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
@@ -70,7 +71,7 @@ public class EncryptionOutputStream extends OutputStream {
      * @return the initialisation vector
      */
     public byte[] getInitVector() {
-        return theInitVector;
+        return Arrays.copyOf(theInitVector, theInitVector.length);
     }
 
     /**

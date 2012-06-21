@@ -774,10 +774,10 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
             super(pSource);
         }
 
-        @Override
-        public void setNewId(final DataItem pItem) {
-            super.setNewId(pItem);
-        }
+        // @Override
+        // public void setNewId(final DataItem pItem) {
+        // super.setNewId(pItem);
+        // }
 
         /**
          * Search for a particular item by class.

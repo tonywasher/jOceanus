@@ -23,6 +23,7 @@
 package uk.co.tolcroft.finance.ui;
 
 import java.awt.print.PrinterException;
+import java.io.IOException;
 import java.net.URL;
 
 import javax.swing.GroupLayout;
@@ -410,7 +411,7 @@ public class ReportTab implements HyperlinkListener, StdPanel {
                     } else {
                         theEditor.setPage(e.getURL());
                     }
-                } catch (Exception t) {
+                } catch (IOException t) {
                     t = null;
                 }
             }

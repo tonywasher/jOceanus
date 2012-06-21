@@ -61,10 +61,10 @@ import uk.co.tolcroft.models.ui.Editor.MoneyEditor;
 import uk.co.tolcroft.models.ui.Editor.StringEditor;
 import uk.co.tolcroft.models.ui.Editor.UnitsEditor;
 import uk.co.tolcroft.models.ui.ErrorPanel;
-import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.ui.Renderer.CalendarRenderer;
 import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
 import uk.co.tolcroft.models.ui.Renderer.IntegerRenderer;
+import uk.co.tolcroft.models.ui.Renderer.RendererFieldValue;
 import uk.co.tolcroft.models.ui.Renderer.StringRenderer;
 import uk.co.tolcroft.models.ui.SaveButtons;
 import uk.co.tolcroft.models.views.DataControl;
@@ -84,17 +84,17 @@ public class Extract extends DataTable<Event> {
     /**
      * Data View.
      */
-    private final View theView;
+    private final transient View theView;
 
     /**
      * Update Set.
      */
-    private final UpdateSet theUpdateSet;
+    private final transient UpdateSet theUpdateSet;
 
     /**
      * Update Entry.
      */
-    private final UpdateEntry theUpdateEntry;
+    private final transient UpdateEntry theUpdateEntry;
 
     /**
      * Table Model.
@@ -104,12 +104,12 @@ public class Extract extends DataTable<Event> {
     /**
      * Events.
      */
-    private EventList theEvents = null;
+    private transient EventList theEvents = null;
 
     /**
      * The parent.
      */
-    private final MainTab theParent;
+    private final transient MainTab theParent;
 
     /**
      * The panel.
@@ -129,7 +129,7 @@ public class Extract extends DataTable<Event> {
     /**
      * Selected range.
      */
-    private DateDayRange theRange = null;
+    private transient DateDayRange theRange = null;
 
     /**
      * Range selection panel.
@@ -144,7 +144,7 @@ public class Extract extends DataTable<Event> {
     /**
      * Data Entry.
      */
-    private final JDataEntry theDataExtract;
+    private final transient JDataEntry theDataExtract;
 
     /**
      * Error Panel.
@@ -154,7 +154,7 @@ public class Extract extends DataTable<Event> {
     /**
      * ComboList.
      */
-    private ComboSelect theComboList = null;
+    private transient ComboSelect theComboList = null;
 
     /**
      * Obtain the panel.
@@ -825,7 +825,7 @@ public class Extract extends DataTable<Event> {
 
             /* If we have a null value for an error field, set error description */
             if ((o == null) && (myEvent.hasErrors(getFieldForCell(row, col)))) {
-                o = Renderer.getError();
+                o = RendererFieldValue.Error;
             }
 
             /* Return to caller */

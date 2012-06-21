@@ -23,6 +23,7 @@
 package net.sourceforge.JHelpManager;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -109,7 +110,7 @@ public class HelpPage implements Comparable<Object> {
             }
 
             /* Catch exceptions */
-        } catch (Exception e) {
+        } catch (IOException e) {
             /* Throw an exception */
             throw new HelpException("Failed to load help file " + pEntry.getName(), e);
         }

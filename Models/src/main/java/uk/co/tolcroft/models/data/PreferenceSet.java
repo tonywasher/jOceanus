@@ -24,6 +24,7 @@ package uk.co.tolcroft.models.data;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -872,7 +873,7 @@ public abstract class PreferenceSet {
          * @return the values of the preference
          */
         public E[] getValues() {
-            return theValues;
+            return Arrays.copyOf(theValues, theValues.length);
         }
 
         /**

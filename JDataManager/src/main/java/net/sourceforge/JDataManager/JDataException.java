@@ -82,43 +82,43 @@ public class JDataException extends Exception implements JDataContents {
         if (theClass == ExceptionClass.WRAPPED) {
             /* Access the wrapped Exception */
             Throwable myWrapped = getCause();
-            if (pField == FIELD_CLASS) {
+            if (FIELD_CLASS.equals(pField)) {
                 return myWrapped.getClass().getName();
             }
-            if (pField == FIELD_MESSAGE) {
+            if (FIELD_MESSAGE.equals(pField)) {
                 return myWrapped.getMessage();
             }
-            if (pField == FIELD_CAUSE) {
+            if (FIELD_CAUSE.equals(pField)) {
                 return myWrapped.getCause();
             }
-            if (pField == FIELD_OBJECT) {
+            if (FIELD_OBJECT.equals(pField)) {
                 return JDataFieldValue.SkipField;
             }
-            if (pField == FIELD_STACK) {
+            if (FIELD_STACK.equals(pField)) {
                 return myWrapped.getStackTrace();
             }
 
             /* Else this is a proper exception */
         } else {
-            if (pField == FIELD_CLASS) {
+            if (FIELD_CLASS.equals(pField)) {
                 return theClass;
             }
-            if (pField == FIELD_MESSAGE) {
+            if (FIELD_MESSAGE.equals(pField)) {
                 return getMessage();
             }
-            if (pField == FIELD_CAUSE) {
+            if (FIELD_CAUSE.equals(pField)) {
                 return getCause();
             }
-            if (pField == FIELD_OBJECT) {
+            if (FIELD_OBJECT.equals(pField)) {
                 return (theObject == null) ? JDataFieldValue.SkipField : theObject;
             }
-            if (pField == FIELD_STACK) {
+            if (FIELD_STACK.equals(pField)) {
                 return getStackTrace();
             }
         }
 
         /* Handle Origin separately */
-        if (pField == FIELD_ORIGIN) {
+        if (FIELD_ORIGIN.equals(pField)) {
             Throwable myResult = this;
             while (myResult.getCause() != null) {
                 myResult = myResult.getCause();

@@ -24,6 +24,7 @@ package uk.co.tolcroft.finance.views;
 
 import java.util.Iterator;
 
+import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
@@ -221,6 +222,33 @@ public final class ChargeableEvent implements OrderedIdItem<Integer>, JDataConte
 
         /* Compare the underlying events */
         return getEvent().compareTo(myThat.getEvent());
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check class */
+        if (getClass() != pThat.getClass()) {
+            return false;
+        }
+
+        /* Access as Chargeable Event */
+        ChargeableEvent myThat = (ChargeableEvent) pThat;
+
+        /* Check equality */
+        return Difference.isEqual(getEvent(), myThat.getEvent());
+    }
+
+    @Override
+    public int hashCode() {
+        return getEvent().hashCode();
     }
 
     /**

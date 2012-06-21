@@ -87,7 +87,7 @@ public class NybbleArray implements JDataContents {
      * Obtain the Encoded format.
      * @return the encoded format
      */
-    public byte[] getEncoded() {
+    protected byte[] getEncoded() {
         return theEncoded;
     }
 
@@ -95,7 +95,7 @@ public class NybbleArray implements JDataContents {
      * Set the encoded value.
      * @param pEncoded the encoded array
      */
-    public void setEncoded(final byte[] pEncoded) {
+    protected void setEncoded(final byte[] pEncoded) {
         /* Store value */
         theEncoded = Arrays.copyOf(pEncoded, pEncoded.length);
     }

@@ -67,10 +67,10 @@ import uk.co.tolcroft.models.ui.Editor.MoneyEditor;
 import uk.co.tolcroft.models.ui.Editor.StringEditor;
 import uk.co.tolcroft.models.ui.Editor.UnitsEditor;
 import uk.co.tolcroft.models.ui.ErrorPanel;
-import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.ui.Renderer.CalendarRenderer;
 import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
 import uk.co.tolcroft.models.ui.Renderer.IntegerRenderer;
+import uk.co.tolcroft.models.ui.Renderer.RendererFieldValue;
 import uk.co.tolcroft.models.ui.Renderer.StringRenderer;
 import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
@@ -938,7 +938,7 @@ public class AccountStatement extends DataTable<Event> {
 
             /* If we have a null value for an error field, set error description */
             if ((o == null) && (bShow) && (myLine.hasErrors(getFieldForCell(row, col)))) {
-                o = Renderer.getError();
+                o = RendererFieldValue.Error;
             }
 
             /* Return to caller */

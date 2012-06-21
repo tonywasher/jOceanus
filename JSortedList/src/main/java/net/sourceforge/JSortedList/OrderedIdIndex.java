@@ -30,7 +30,7 @@ import java.util.Map;
  * @param <I> the data-type of the id
  * @param <T> the data-type of the list
  */
-public class OrderedIdIndex<I, T extends Comparable<T> & OrderedIdItem<I>> extends OrderedIndex<T> {
+public class OrderedIdIndex<I, T extends OrderedIdItem<I> & Comparable<T>> extends OrderedIndex<T> {
     /**
      * Hash map.
      */
@@ -89,7 +89,8 @@ public class OrderedIdIndex<I, T extends Comparable<T> & OrderedIdItem<I>> exten
     @Override
     protected OrderedNode<T> findNodeForObject(final T pItem) {
         /* Lookup the node in the map */
-        return theHashMap.get(pItem.getOrderedId());
+        I myId = pItem.getOrderedId();
+        return theHashMap.get(myId);
     }
 
     @Override

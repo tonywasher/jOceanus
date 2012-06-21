@@ -59,9 +59,9 @@ import uk.co.tolcroft.models.ui.Editor.ComboBoxEditor;
 import uk.co.tolcroft.models.ui.Editor.MoneyEditor;
 import uk.co.tolcroft.models.ui.Editor.StringEditor;
 import uk.co.tolcroft.models.ui.ErrorPanel;
-import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.ui.Renderer.CalendarRenderer;
 import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
+import uk.co.tolcroft.models.ui.Renderer.RendererFieldValue;
 import uk.co.tolcroft.models.ui.Renderer.StringRenderer;
 import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
@@ -78,7 +78,7 @@ public class AccountPatterns extends DataTable<Event> {
     /**
      * Date view.
      */
-    private final View theView;
+    private final transient View theView;
 
     /**
      * Table Model.
@@ -88,7 +88,7 @@ public class AccountPatterns extends DataTable<Event> {
     /**
      * Patterns list.
      */
-    private PatternList thePatterns = null;
+    private transient PatternList thePatterns = null;
 
     /**
      * The Panel.
@@ -113,27 +113,27 @@ public class AccountPatterns extends DataTable<Event> {
     /**
      * The parent.
      */
-    private final AccountTab theParent;
+    private final transient AccountTab theParent;
 
     /**
      * The account.
      */
-    private Account theAccount = null;
+    private transient Account theAccount = null;
 
     /**
      * Update Entry.
      */
-    private final UpdateEntry theUpdateEntry;
+    private final transient UpdateEntry theUpdateEntry;
 
     /**
      * ComboList.
      */
-    private ComboSelect theComboList = null;
+    private transient ComboSelect theComboList = null;
 
     /**
      * Data Entry.
      */
-    private final JDataEntry theDataEntry;
+    private final transient JDataEntry theDataEntry;
 
     /**
      * Error Panel.
@@ -694,7 +694,7 @@ public class AccountPatterns extends DataTable<Event> {
 
             /* If we have a null value for an error field, set error description */
             if ((o == null) && (myPattern.hasErrors(getFieldForCell(row, col)))) {
-                o = Renderer.getError();
+                o = RendererFieldValue.Error;
             }
 
             /* Return to caller */

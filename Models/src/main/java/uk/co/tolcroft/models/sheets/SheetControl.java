@@ -65,11 +65,6 @@ public class SheetControl extends SheetDataItem<ControlData> {
     private ControlDataList theList = null;
 
     /**
-     * DataSet.
-     */
-    private DataSet<?> theData = null;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -81,8 +76,8 @@ public class SheetControl extends SheetDataItem<ControlData> {
         isBackup = (pReader.getType() == SheetType.BACKUP);
 
         /* Access the Lists */
-        theData = pReader.getData();
-        theList = theData.getControlData();
+        DataSet<?> myData = pReader.getData();
+        theList = myData.getControlData();
     }
 
     /**

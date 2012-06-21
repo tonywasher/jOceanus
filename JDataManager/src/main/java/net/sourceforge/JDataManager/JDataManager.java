@@ -50,7 +50,7 @@ public class JDataManager {
     /**
      * The title.
      */
-    private final String theTitle = "Data Manager";
+    private static final String WINDOW_TITLE = "Data Manager";
 
     /**
      * The owning window.
@@ -70,7 +70,7 @@ public class JDataManager {
      * @return the title
      */
     public String getTitle() {
-        return theTitle;
+        return WINDOW_TITLE;
     }
 
     /**
@@ -86,7 +86,7 @@ public class JDataManager {
      */
     public JDataManager() {
         /* Create the root node */
-        theRoot = new JDataEntry(theTitle);
+        theRoot = new JDataEntry(WINDOW_TITLE);
 
         /* Create the tree model */
         theModel = new DefaultTreeModel(theRoot.getNode());

@@ -342,7 +342,10 @@ public class EventInfoSet implements JDataContents {
                                     .isStockTakeover()))) {
                     theEvent.addError("Units can only refer to a single priced asset unless "
                                               + "transaction is StockSplit/AdminCharge/Demerger/Takeover or Dividend",
-                                      (myCredit != null) ? FIELD_CREDITUNITS : FIELD_DEBITUNITS);
+                                      FIELD_CREDITUNITS);
+                    theEvent.addError("Units can only refer to a single priced asset unless "
+                                              + "transaction is StockSplit/AdminCharge/Demerger/Takeover or Dividend",
+                                      FIELD_DEBITUNITS);
                 }
 
                 /* Dividend between priced requires identical credit/debit */

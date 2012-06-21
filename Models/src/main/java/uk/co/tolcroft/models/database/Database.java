@@ -33,12 +33,12 @@ import java.util.Properties;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JGordianKnot.PasswordDialog;
 import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.PreferenceSet;
 import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 import uk.co.tolcroft.models.data.PreferenceSet.PreferenceSetChooser;
 import uk.co.tolcroft.models.data.TaskControl;
+import uk.co.tolcroft.models.database.ColumnDefinition.ColumnType;
 
 /**
  * Class that encapsulates a database connection.
@@ -76,6 +76,11 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
     private final Integer theBatchSize;
 
     /**
+     * Database Driver.
+     */
+    private final JDBCDriver theDriver;
+
+    /**
      * List of Database tables.
      */
     private final List<DatabaseTable<?>> theTables;
@@ -86,68 +91,86 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
     }
 
     /**
+     * Obtain the Driver.
+     * @return the driver
+     */
+    protected JDBCDriver getDriver() {
+        return theDriver;
+    }
+
+    /**
      * Database Properties.
      */
     public static class DatabasePreferences extends PreferenceSet {
         /**
          * Registry name for DataBase driver.
          */
-        protected static final String NAME_DBDRIVER = "DBDriver";
+        public static final String NAME_DBDRIVER = "DBDriver";
 
         /**
          * Registry name for DataBase server.
          */
-        protected static final String NAME_DBSERVER = "DBServer";
+        public static final String NAME_DBSERVER = "DBServer";
 
         /**
          * Registry name for DataBase instance.
          */
-        protected static final String NAME_DBINSTANCE = "DBInstance";
+        public static final String NAME_DBINSTANCE = "DBInstance";
 
         /**
          * Registry name for DataBase name.
          */
-        protected static final String NAME_DBNAME = "DBName";
+        public static final String NAME_DBNAME = "DBName";
 
         /**
          * Registry name for DataBase batch size.
          */
-        protected static final String NAME_DBBATCH = "DBBatchSize";
+        public static final String NAME_DBBATCH = "DBBatchSize";
 
         /**
          * Registry name for DataBase user.
          */
-        protected static final String NAME_DBUSER = "DBUser";
+        public static final String NAME_DBUSER = "DBUser";
+
+        /**
+         * Registry name for DataBase password.
+         */
+        public static final String NAME_DBPASS = "DBPass";
 
         /**
          * Display name for DataBase driver.
          */
-        protected static final String DISPLAY_DBDRIVER = "Database Driver Class";
+        private static final String DISPLAY_DBDRIVER = "Database Driver Class";
 
         /**
          * Display name for DataBase server.
          */
-        protected static final String DISPLAY_DBSERVER = "Server Host Machine";
+        private static final String DISPLAY_DBSERVER = "Server Host Machine";
 
         /**
          * Display name for DataBase instance.
          */
-        protected static final String DISPLAY_DBINSTANCE = "Server Instance";
+        private static final String DISPLAY_DBINSTANCE = "Server Instance";
 
         /**
          * Display name for DataBase name.
          */
-        protected static final String DISPLAY_DBNAME = "Database Name";
+        private static final String DISPLAY_DBNAME = "Database Name";
 
         /**
          * Display name for DataBase batch size.
          */
-        protected static final String DISPLAY_DBBATCH = "Batch Size";
+        private static final String DISPLAY_DBBATCH = "Batch Size";
 
         /**
          * Display name for DataBase user.
          */
-        protected static final String DISPLAY_DBUSER = "Database User";
+        private static final String DISPLAY_DBUSER = "Database User";
+
+        /**
+         * Display name for DataBase password.
+         */
+        private static final String DISPLAY_DBPASS = "Database Password";
 
         /**
          * Default Database driver string.
@@ -180,6 +203,11 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
         private static final String DEFAULT_DBUSER = "FinanceUser";
 
         /**
+         * Default Database password.
+         */
+        private static final String DEFAULT_DBPASS = "secret";
+
+        /**
          * Constructor.
          * @throws JDataException on error
          */
@@ -196,6 +224,7 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             definePreference(NAME_DBNAME, PreferenceType.String);
             definePreference(NAME_DBBATCH, PreferenceType.Integer);
             definePreference(NAME_DBUSER, PreferenceType.String);
+            definePreference(NAME_DBPASS, PreferenceType.String);
         }
 
         @Override
@@ -218,6 +247,9 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             }
             if (pName.equals(NAME_DBUSER)) {
                 return DEFAULT_DBUSER;
+            }
+            if (pName.equals(NAME_DBPASS)) {
+                return DEFAULT_DBPASS;
             }
             return null;
         }
@@ -242,6 +274,9 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             }
             if (pName.equals(NAME_DBUSER)) {
                 return DISPLAY_DBUSER;
+            }
+            if (pName.equals(NAME_DBPASS)) {
+                return DISPLAY_DBPASS;
             }
             return null;
         }
@@ -270,9 +305,8 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
                 case SQLServer:
                     return "com.microsoft.sqlserver.jdbc.SQLServerDriver";
                 case PostgreSQL:
-                    return "org.postgresql.Driver";
                 default:
-                    return null;
+                    return "org.postgresql.Driver";
             }
         }
 
@@ -299,9 +333,8 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
                 case SQLServer:
                     return "jdbc:sqlserver://";
                 case PostgreSQL:
-                    return "jdbc:postgresql://";
                 default:
-                    return null;
+                    return "jdbc:postgresql://";
             }
         }
 
@@ -326,18 +359,118 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
                     myBuilder.append(";integratedSecurity=true");
                     break;
                 case PostgreSQL:
+                default:
                     /* Build the connection string */
                     myBuilder.append(getPrefix());
                     myBuilder.append(pPreferences.getStringValue(DatabasePreferences.NAME_DBSERVER));
                     myBuilder.append("/");
                     myBuilder.append(pPreferences.getStringValue(DatabasePreferences.NAME_DBNAME));
                     break;
-                default:
-                    break;
             }
 
             /* Return the string */
             return myBuilder.toString();
+        }
+
+        /**
+         * Obtain the database type for the field.
+         * @param pType the data type
+         * @return the database column type
+         */
+        public String getDatabaseType(final ColumnType pType) {
+            boolean isSQLServer = this.equals(SQLServer);
+            switch (pType) {
+                case Boolean:
+                    return (isSQLServer) ? "bit" : "boolean";
+                case Short:
+                    return "smallint";
+                case Integer:
+                    return "int";
+                case Long:
+                    return "bigint";
+                case Float:
+                    return "real";
+                case Double:
+                    return (isSQLServer) ? "float" : "double precision";
+                case Date:
+                    return "date";
+                case Money:
+                    return "money";
+                case Decimal:
+                    return (isSQLServer) ? "decimal" : "numeric";
+                case Binary:
+                    return (isSQLServer) ? "varbinary" : "bytea";
+                case String:
+                default:
+                    return "varchar";
+            }
+        }
+
+        /**
+         * Get Drop table command.
+         * @param pName the table name
+         * @return the command
+         */
+        public String getDropTableCommand(final String pName) {
+            StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+            switch (this) {
+                case SQLServer:
+                    myBuilder.append("if exists (select * from sys.tables where name = '");
+                    myBuilder.append(pName);
+                    myBuilder.append("') drop table ");
+                    myBuilder.append(pName);
+                    break;
+                case PostgreSQL:
+                default:
+                    myBuilder.append("drop table if exists ");
+                    myBuilder.append(pName);
+                    break;
+            }
+
+            /* Return the command */
+            return myBuilder.toString();
+        }
+
+        /**
+         * Get Drop index command.
+         * @param pName the table name
+         * @return the command
+         */
+        public String getDropIndexCommand(final String pName) {
+            StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+            switch (this) {
+                case SQLServer:
+                    myBuilder.append("if exists (select * from sys.indexes where name = '");
+                    myBuilder.append(TableDefinition.PREFIX_INDEX);
+                    myBuilder.append(pName);
+                    myBuilder.append("') drop index ");
+                    myBuilder.append(TableDefinition.PREFIX_INDEX);
+                    myBuilder.append(pName);
+                    break;
+                case PostgreSQL:
+                default:
+                    myBuilder.append("drop index if exists ");
+                    myBuilder.append(TableDefinition.PREFIX_INDEX);
+                    myBuilder.append(pName);
+                    break;
+            }
+
+            /* Return the command */
+            return myBuilder.toString();
+        }
+
+        /**
+         * Should we define binary length?
+         * @return true/false
+         */
+        public boolean defineBinaryLength() {
+            switch (this) {
+                case SQLServer:
+                    return true;
+                case PostgreSQL:
+                default:
+                    return false;
+            }
         }
     }
 
@@ -356,17 +489,16 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             theBatchSize = myPreferences.getIntegerValue(DatabasePreferences.NAME_DBBATCH);
 
             /* Access the JDBC Driver */
-            JDBCDriver myDriver = myPreferences.getEnumValue(DatabasePreferences.NAME_DBDRIVER,
-                                                             JDBCDriver.class);
+            theDriver = myPreferences.getEnumValue(DatabasePreferences.NAME_DBDRIVER, JDBCDriver.class);
 
             /* Load the database driver */
-            Class.forName(myDriver.getDriver());
+            Class.forName(theDriver.getDriver());
 
             /* Obtain the connection */
-            String myConnString = myDriver.getConnectionString(myPreferences);
+            String myConnString = theDriver.getConnectionString(myPreferences);
 
             /* If we are using integrated security */
-            if (myDriver.useIntegratedSecurity()) {
+            if (theDriver.useIntegratedSecurity()) {
                 /* Connect without userId/password */
                 theConn = DriverManager.getConnection(myConnString);
 
@@ -375,23 +507,12 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
                 /* Create the properties and record user */
                 Properties myProperties = new Properties();
                 String myUser = myPreferences.getStringValue(DatabasePreferences.NAME_DBUSER);
+                String myPass = myPreferences.getStringValue(DatabasePreferences.NAME_DBPASS);
                 myProperties.setProperty(PROPERTY_USER, myUser);
+                myProperties.setProperty(PROPERTY_PASS, myPass);
 
-                /* Create a new password dialog */
-                PasswordDialog myPassDlg = new PasswordDialog(null, "Enter Database password for " + myUser,
-                        false);
-
-                /* Prompt for the password */
-                if (PasswordDialog.showTheDialog(myPassDlg)) {
-                    /* Access the password */
-                    char[] myPassword = myPassDlg.getPassword();
-                    myProperties.setProperty(PROPERTY_PASS, new String(myPassword));
-
-                    /* Connect using properties */
-                    theConn = DriverManager.getConnection(myConnString, myProperties);
-                } else {
-                    throw new JDataException(ExceptionClass.SQLSERVER, "Invalid Password");
-                }
+                /* Connect using properties */
+                theConn = DriverManager.getConnection(myConnString, myProperties);
             }
 
             theConn.setAutoCommit(false);
@@ -588,7 +709,7 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
      */
     public void createTables(final TaskControl<T> pTask) throws JDataException {
         /* Drop any existing tables */
-        // dropTables(pTask);
+        dropTables(pTask);
 
         /* Set the number of stages */
         if (!pTask.setNumStages(1)) {

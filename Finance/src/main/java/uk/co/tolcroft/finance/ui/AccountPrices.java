@@ -44,9 +44,9 @@ import uk.co.tolcroft.models.ui.DataTable;
 import uk.co.tolcroft.models.ui.Editor.CalendarEditor;
 import uk.co.tolcroft.models.ui.Editor.PriceEditor;
 import uk.co.tolcroft.models.ui.ErrorPanel;
-import uk.co.tolcroft.models.ui.Renderer;
 import uk.co.tolcroft.models.ui.Renderer.CalendarRenderer;
 import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
+import uk.co.tolcroft.models.ui.Renderer.RendererFieldValue;
 import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
 /**
@@ -62,12 +62,12 @@ public class AccountPrices extends DataTable<AccountPrice> {
     /**
      * Date View.
      */
-    private final View theView;
+    private final transient View theView;
 
     /**
      * Price List.
      */
-    private ViewPriceList thePrices = null;
+    private transient ViewPriceList thePrices = null;
 
     /**
      * The Panel.
@@ -77,22 +77,22 @@ public class AccountPrices extends DataTable<AccountPrice> {
     /**
      * Parent.
      */
-    private final AccountTab theParent;
+    private final transient AccountTab theParent;
 
     /**
      * DataSet range.
      */
-    private DateDayRange theRange = null;
+    private transient DateDayRange theRange = null;
 
     /**
      * Account.
      */
-    private Account theAccount = null;
+    private transient Account theAccount = null;
 
     /**
      * UpdateEntry Class.
      */
-    private final UpdateEntry theUpdateEntry;
+    private final transient UpdateEntry theUpdateEntry;
 
     /**
      * Self Reference.
@@ -107,7 +107,7 @@ public class AccountPrices extends DataTable<AccountPrice> {
     /**
      * Data Entry.
      */
-    private final JDataEntry theDataEntry;
+    private final transient JDataEntry theDataEntry;
 
     /**
      * Error Panel.
@@ -498,7 +498,7 @@ public class AccountPrices extends DataTable<AccountPrice> {
 
             /* If we have a null value for an error field, set error description */
             if ((o == null) && (myPrice.hasErrors(getFieldForCell(row, col)))) {
-                o = Renderer.getError();
+                o = RendererFieldValue.Error;
             }
 
             /* Return to caller */
