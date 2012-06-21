@@ -544,7 +544,7 @@ public class SpotPrices implements JDataContents {
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AccountPrice.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AccountPrice.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

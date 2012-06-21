@@ -320,7 +320,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<T>> {
             /* Perform post process */
             postProcessOnLoad();
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new JDataException(ExceptionClass.SQLSERVER, "Failed to load " + getTableName(), e);
         }
 
@@ -441,7 +441,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<T>> {
             /* Close the Statement */
             closeStmt();
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             theDatabase.close();
             throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to insert " + getTableName(),
                     e);
@@ -526,7 +526,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<T>> {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             theDatabase.close();
             throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to update " + getTableName(),
                     e);
@@ -551,32 +551,27 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<T>> {
         myCurr = pItem.getValueSet();
         myBase = pItem.getOriginalValues();
 
-        /* Protect the update */
-        try {
-            /* Loop through the fields */
-            for (ColumnDefinition myCol : theTable.getColumns()) {
-                /* Skip null columns */
-                if (myCol == null) {
-                    continue;
-                }
-
-                /* Access the column id */
-                JDataField iField = myCol.getColumnId();
-
-                /* Ignore ID column */
-                if (iField == DataItem.FIELD_ID) {
-                    continue;
-                }
-
-                /* If the field has changed */
-                if (myCurr.fieldChanged(iField, myBase).isDifferent()) {
-                    /* Record the change */
-                    isUpdated = true;
-                    setFieldValue(pItem, iField);
-                }
+        /* Loop through the fields */
+        for (ColumnDefinition myCol : theTable.getColumns()) {
+            /* Skip null columns */
+            if (myCol == null) {
+                continue;
             }
-        } catch (Exception e) {
-            throw new JDataException(ExceptionClass.SQLSERVER, pItem, "Failed to update item", e);
+
+            /* Access the column id */
+            JDataField iField = myCol.getColumnId();
+
+            /* Ignore ID column */
+            if (iField == DataItem.FIELD_ID) {
+                continue;
+            }
+
+            /* If the field has changed */
+            if (myCurr.fieldChanged(iField, myBase).isDifferent()) {
+                /* Record the change */
+                isUpdated = true;
+                setFieldValue(pItem, iField);
+            }
         }
 
         /* Return to caller */

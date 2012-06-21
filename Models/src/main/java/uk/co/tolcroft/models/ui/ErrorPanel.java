@@ -65,7 +65,7 @@ public class ErrorPanel extends JPanel {
     /**
      * The data entry for the error.
      */
-    private final JDataEntry theDataError;
+    private final transient JDataEntry theDataError;
 
     /**
      * The error itself.

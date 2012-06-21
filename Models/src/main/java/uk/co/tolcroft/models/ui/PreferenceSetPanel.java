@@ -91,7 +91,7 @@ public class PreferenceSetPanel extends JPanel {
     /**
      * The PreferenceSet for this panel.
      */
-    private final PreferenceSet thePreferences;
+    private final transient PreferenceSet thePreferences;
 
     /**
      * The Self Reference.
@@ -101,7 +101,7 @@ public class PreferenceSetPanel extends JPanel {
     /**
      * The individual preference elements.
      */
-    private List<PreferenceElement> theList = null;
+    private transient List<PreferenceElement> theList = null;
 
     /**
      * The Set name.
@@ -380,6 +380,7 @@ public class PreferenceSetPanel extends JPanel {
                     break;
                 default:
                     theField = null;
+                    return;
             }
 
             /* Initialise the field */
@@ -505,7 +506,7 @@ public class PreferenceSetPanel extends JPanel {
                 public void propertyChange(final PropertyChangeEvent evt) {
                     Object o = evt.getSource();
                     /* If this is our preference */
-                    if (o == theField) {
+                    if (theField.equals(o)) {
                         /* Set the new value of the preference */
                         String myValue = (String) theField.getValue();
                         theString.setValue(myValue);
@@ -520,7 +521,7 @@ public class PreferenceSetPanel extends JPanel {
                     Object o = evt.getSource();
 
                     /* If this is our button */
-                    if (o == theButton) {
+                    if (theButton.equals(o)) {
                         /* Switch on the preference type */
                         switch (theType) {
                         /* If we are a directory preference */
@@ -618,7 +619,7 @@ public class PreferenceSetPanel extends JPanel {
                 public void propertyChange(final PropertyChangeEvent evt) {
                     Object o = evt.getSource();
                     /* If this is our preference */
-                    if (o == theField) {
+                    if (theField.equals(o)) {
                         /* Set the new value of the preference */
                         Integer myValue = (Integer) theField.getValue();
                         theInteger.setValue(myValue);
@@ -681,7 +682,7 @@ public class PreferenceSetPanel extends JPanel {
                 public void itemStateChanged(final ItemEvent evt) {
                     Object o = evt.getSource();
                     /* If this is our preference */
-                    if (o == theField) {
+                    if (theField.equals(o)) {
                         /* Set the new value of the preference */
                         Boolean myValue = theField.isSelected();
                         theBoolean.setValue(myValue);
@@ -744,7 +745,7 @@ public class PreferenceSetPanel extends JPanel {
                 public void propertyChange(final PropertyChangeEvent evt) {
                     Object o = evt.getSource();
                     /* If this is our preference */
-                    if (o == theField) {
+                    if (theField.equals(o)) {
                         /* Set the new value of the preference */
                         DateDay myValue = new DateDay(theField.getSelectedDate());
                         theDate.setValue(myValue);
@@ -813,7 +814,7 @@ public class PreferenceSetPanel extends JPanel {
                 public void itemStateChanged(final ItemEvent evt) {
                     Object o = evt.getSource();
                     /* If this is our preference */
-                    if ((o == theField) && (evt.getStateChange() == ItemEvent.SELECTED)) {
+                    if ((theField.equals(o)) && (evt.getStateChange() == ItemEvent.SELECTED)) {
                         /* Set the new value of the preference */
                         String myName = (String) evt.getItem();
                         theEnum.setValue(myName);

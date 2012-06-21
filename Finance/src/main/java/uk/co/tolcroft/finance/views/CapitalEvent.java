@@ -340,6 +340,38 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
         return Difference.compareObject(getEvent(), pThat.getEvent());
     }
 
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check class */
+        if (getClass() != pThat.getClass()) {
+            return false;
+        }
+
+        /* Access as Capital Event */
+        CapitalEvent myThat = (CapitalEvent) pThat;
+
+        /* Check equality */
+        return Difference.isEqual(getDate(), myThat.getDate())
+                && Difference.isEqual(getEvent(), myThat.getEvent());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = getDate().hashCode();
+        if (getEvent() != null) {
+            hash ^= getEvent().hashCode();
+        }
+        return hash;
+    }
+
     /**
      * Add Money Attribute.
      * @param pName the name of the attribute
@@ -614,6 +646,33 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
             return theName.compareTo(myThat.theName);
         }
 
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Make sure that the object is an Attributer */
+            if (pThat.getClass() != this.getClass()) {
+                return false;
+            }
+
+            /* Access the object as an Attribute */
+            Attribute myThat = (Attribute) pThat;
+
+            /* Compare the year */
+            return theName.equals(myThat.theName);
+        }
+
+        @Override
+        public int hashCode() {
+            return theName.hashCode();
+        }
+
         /**
          * Format the element.
          * @return the formatted element
@@ -714,7 +773,7 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
     /**
      * List of Attributes.
      */
-    public final class AttributeList {
+    public static final class AttributeList {
         /**
          * List of attributes.
          */

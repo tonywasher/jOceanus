@@ -48,7 +48,7 @@ public class ItemField extends ValueField {
     /**
      * The field id corresponding to this field.
      */
-    private final JDataField theField;
+    private final transient JDataField theField;
 
     /**
      * Determine whether the field is fixed width or not.

@@ -303,7 +303,7 @@ public class StatusBar {
     /**
      * ProgressBar UI.
      */
-    private class ProgressUI extends BasicProgressBarUI {
+    private static final class ProgressUI extends BasicProgressBarUI {
         @Override
         protected Color getSelectionBackground() {
             return Color.black;
@@ -427,12 +427,12 @@ public class StatusBar {
             Object o = evt.getSource();
 
             /* If this event relates to the Cancel box */
-            if (o == theCancel) {
+            if (theCancel.equals(o)) {
                 /* Pass command to the table */
                 theControl.performCancel();
 
                 /* If this event relates to the Clear box */
-            } else if (o == theClear) {
+            } else if (theClear.equals(o)) {
                 /* Stop any timer */
                 if (theTimer != null) {
                     theTimer.stop();
@@ -446,7 +446,7 @@ public class StatusBar {
                 theControl.finishThread();
 
                 /* If this event relates to the Clear or the timer box */
-            } else if (o == theTimer) {
+            } else if (theTimer.equals(o)) {
                 /* Make the Status window invisible */
                 theStatPanel.setVisible(false);
 

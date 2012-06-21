@@ -87,7 +87,7 @@ public class AccountStatement extends DataTable<Event> {
     /**
      * Date view.
      */
-    private final View theView;
+    private final transient View theView;
 
     /**
      * Table Model.
@@ -97,22 +97,22 @@ public class AccountStatement extends DataTable<Event> {
     /**
      * Account.
      */
-    private Account theAccount = null;
+    private transient Account theAccount = null;
 
     /**
      * Update Entry.
      */
-    private final UpdateEntry theUpdateEntry;
+    private final transient UpdateEntry theUpdateEntry;
 
     /**
      * Statement.
      */
-    private Statement theStatement = null;
+    private transient Statement theStatement = null;
 
     /**
      * Statement Lines.
      */
-    private StatementLines theLines = null;
+    private transient StatementLines theLines = null;
 
     /**
      * The panel.
@@ -132,17 +132,17 @@ public class AccountStatement extends DataTable<Event> {
     /**
      * The parent.
      */
-    private final AccountTab theParent;
+    private final transient AccountTab theParent;
 
     /**
      * The top window.
      */
-    private final MainTab theTopWindow;
+    private final transient MainTab theTopWindow;
 
     /**
      * Selected range.
      */
-    private DateDayRange theRange = null;
+    private transient DateDayRange theRange = null;
 
     /**
      * Range selection panel.
@@ -157,7 +157,7 @@ public class AccountStatement extends DataTable<Event> {
     /**
      * Data Entry.
      */
-    private final JDataEntry theDataEntry;
+    private final transient JDataEntry theDataEntry;
 
     /**
      * Error Panel.
@@ -167,7 +167,7 @@ public class AccountStatement extends DataTable<Event> {
     /**
      * ComboSelect.
      */
-    private ComboSelect theComboList = null;
+    private transient ComboSelect theComboList = null;
 
     /**
      * Statement Type.

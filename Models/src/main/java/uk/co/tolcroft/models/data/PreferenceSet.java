@@ -139,7 +139,7 @@ public abstract class PreferenceSet {
                 myPref = new DatePreference(pName);
                 break;
             default:
-                break;
+                return null;
         }
 
         /* Add it to the list of preferences */
@@ -638,15 +638,8 @@ public abstract class PreferenceSet {
          * @param pNewValue the new value
          */
         public void setValue(final Integer pNewValue) {
-            Integer myNewValue = pNewValue;
-
-            /* Take a copy if not null */
-            if (myNewValue != null) {
-                myNewValue = Integer.valueOf(myNewValue);
-            }
-
             /* Set the new value */
-            super.setNewValue(myNewValue);
+            super.setNewValue(pNewValue);
         }
 
         @Override
@@ -928,8 +921,8 @@ public abstract class PreferenceSet {
             for (E myEnum : theValues) {
                 /* If we match */
                 if (pNewValue.equals(myEnum.name())) {
-                    /* Set as initial value */
-                    super.setValue(myEnum);
+                    /* Set as new value */
+                    super.setNewValue(myEnum);
                     return true;
                 }
             }
@@ -1081,7 +1074,9 @@ public abstract class PreferenceSet {
 
                     /* Fire the action performed */
                     theListeners.fireActionPerformed(mySet, ActionEvent.ACTION_PERFORMED, null);
-                } catch (Exception e) {
+                } catch (IllegalAccessException e) {
+                    mySet = null;
+                } catch (InstantiationException e) {
                     mySet = null;
                 }
             }

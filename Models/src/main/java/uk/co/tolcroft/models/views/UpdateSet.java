@@ -289,7 +289,7 @@ public class UpdateSet {
     /**
      * Update entry items.
      */
-    public final class UpdateEntry {
+    public static final class UpdateEntry {
         /**
          * The class.
          */

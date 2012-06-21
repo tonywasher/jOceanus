@@ -32,9 +32,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyAgreement;
 import javax.crypto.SecretKey;
+import javax.crypto.ShortBufferException;
 
 import net.sourceforge.JDataManager.DataConverter;
 import net.sourceforge.JDataManager.JDataException;
@@ -514,8 +517,11 @@ public class AsymmetricKey implements JDataContents {
                 myWrappedKey = myNeedle.getExternal();
             }
 
-        } catch (Exception e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to wrap key", e);
+        } catch (InvalidKeyException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, "Invalid key", e);
+
+        } catch (IllegalBlockSizeException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, "Invalid BlockSize", e);
         }
 
         /* Add the key definition to the map */
@@ -559,7 +565,7 @@ public class AsymmetricKey implements JDataContents {
             return theKeyAgreement.generateSecret();
 
             /* Handle exceptions */
-        } catch (Exception e) {
+        } catch (InvalidKeyException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to negotiate key agreement", e);
         }
     }
@@ -682,8 +688,17 @@ public class AsymmetricKey implements JDataContents {
 
             /* Return to caller */
             return myOutput;
-        } catch (Exception e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to encrypt string", e);
+        } catch (ShortBufferException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+
+        } catch (IllegalBlockSizeException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+
+        } catch (BadPaddingException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+
+        } catch (InvalidKeyException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
         }
     }
 
@@ -773,8 +788,17 @@ public class AsymmetricKey implements JDataContents {
 
             /* Create the string */
             return DataConverter.byteArrayToString(myOutput);
-        } catch (Exception e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to decrypt string", e);
+        } catch (ShortBufferException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+
+        } catch (IllegalBlockSizeException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+
+        } catch (BadPaddingException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+
+        } catch (InvalidKeyException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
         }
     }
 }

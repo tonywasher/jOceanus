@@ -124,7 +124,7 @@ public class ZipFileProperties {
         /* If the property does not exist */
         if (myProperty == null) {
             /* Create the new property */
-            myProperty = new Property(pName);
+            myProperty = new Property(theList, pName);
         }
 
         /* Set the new value */
@@ -146,7 +146,7 @@ public class ZipFileProperties {
         /* If the property does not exist */
         if (myProperty == null) {
             /* Create the new property */
-            myProperty = new Property(pName);
+            myProperty = new Property(theList, pName);
         }
 
         /* Set the new value */
@@ -321,7 +321,7 @@ public class ZipFileProperties {
         }
 
         /* Create a new property */
-        myProperty = new Property(myName);
+        myProperty = new Property(theList, myName);
 
         /* If we have a bytes array */
         if (myBytes != null) {
@@ -339,7 +339,7 @@ public class ZipFileProperties {
     /**
      * Individual Property.
      */
-    private final class Property {
+    private static final class Property {
         /**
          * Name of property.
          */
@@ -357,9 +357,11 @@ public class ZipFileProperties {
 
         /**
          * Standard Constructor.
+         * @param pList property list
          * @param pName the name of the property
          */
-        private Property(final String pName) {
+        private Property(final List<Property> pList,
+                         final String pName) {
             /* Check for invalid name */
             if (pName.indexOf(SEP_VALUE) != -1) {
                 throw new IllegalArgumentException("Invalid property name - " + pName);
@@ -370,7 +372,7 @@ public class ZipFileProperties {
 
             /* Loop through the properties in the list */
             int iIndex = 0;
-            Iterator<Property> myIterator = theList.iterator();
+            Iterator<Property> myIterator = pList.iterator();
             while (myIterator.hasNext()) {
                 /* Access next property */
                 Property myProperty = myIterator.next();
@@ -393,7 +395,7 @@ public class ZipFileProperties {
             }
 
             /* Add into the list at the correct point */
-            theList.add(iIndex, this);
+            pList.add(iIndex, this);
         }
 
         /**

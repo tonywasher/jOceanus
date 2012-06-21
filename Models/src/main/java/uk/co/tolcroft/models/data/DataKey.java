@@ -335,11 +335,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
             setValueSecuredKeyDef(pSecurityKey);
 
             /* Determine the SymKeyType */
-            try {
-                setValueKeyType(SymKeyType.fromId(uKeyTypeId));
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid KeyType Id " + uKeyTypeId, e);
-            }
+            setValueKeyType(SymKeyType.fromId(uKeyTypeId));
 
             /* Look up the ControlKey */
             DataSet<?> myData = pList.theData;

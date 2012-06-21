@@ -239,32 +239,24 @@ public class CipherSet implements JDataContents {
         byte[] myKeyBytes = new byte[myKeyLen];
         int myBuilt = 0;
 
-        /* Protect against exceptions */
-        try {
-            /* Create the Mac and standard data */
-            IterationCounter myCount = new IterationCounter();
-            Mac myMac = theGenerator.accessMac(theDigest, pSecret);
+        /* Create the Mac and standard data */
+        IterationCounter myCount = new IterationCounter();
+        Mac myMac = theGenerator.accessMac(theDigest, pSecret);
 
-            /* while we need to generate more bytes */
-            while (myBuilt < myKeyLen) {
-                /* Build the cipher section */
-                byte[] mySection = buildCipherSection(myMac, myCount.iterate(), pKeyType);
+        /* while we need to generate more bytes */
+        while (myBuilt < myKeyLen) {
+            /* Build the cipher section */
+            byte[] mySection = buildCipherSection(myMac, myCount.iterate(), pKeyType);
 
-                /* Determine how many bytes of this hash should be used */
-                int myNeeded = myKeyLen - myBuilt;
-                if (myNeeded > mySection.length) {
-                    myNeeded = mySection.length;
-                }
-
-                /* Copy bytes across */
-                System.arraycopy(mySection, 0, myKeyBytes, myBuilt, myNeeded);
-                myBuilt += myNeeded;
+            /* Determine how many bytes of this hash should be used */
+            int myNeeded = myKeyLen - myBuilt;
+            if (myNeeded > mySection.length) {
+                myNeeded = mySection.length;
             }
 
-            /* Catch exceptions */
-        } catch (Exception e) {
-            /* Throw exception */
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to Derive KeyDefinition", e);
+            /* Copy bytes across */
+            System.arraycopy(mySection, 0, myKeyBytes, myBuilt, myNeeded);
+            myBuilt += myNeeded;
         }
 
         /* Build the secret key specification */
@@ -560,7 +552,7 @@ public class CipherSet implements JDataContents {
 
         /* Return null if there is no PrivateKey */
         if (myPrivate == null) {
-            return null;
+            throw new JDataException(ExceptionClass.DATA, "No PrivateKey");
         }
 
         /* Extract the encoded version of the key */

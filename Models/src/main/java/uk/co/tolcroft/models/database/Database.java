@@ -437,7 +437,7 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
      */
     protected void close() {
         /* Ignore if no connection */
-        if (theConn != null) {
+        if (theConn == null) {
             return;
         }
 
@@ -463,7 +463,7 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             theConn.close();
 
             /* Discard Exceptions */
-        } catch (Exception e) {
+        } catch (SQLException e) {
             theConn = null;
         }
     }
@@ -588,7 +588,7 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
      */
     public void createTables(final TaskControl<T> pTask) throws JDataException {
         /* Drop any existing tables */
-        dropTables(pTask);
+        // dropTables(pTask);
 
         /* Set the number of stages */
         if (!pTask.setNumStages(1)) {

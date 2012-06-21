@@ -24,6 +24,7 @@ package uk.co.tolcroft.models.ui;
 
 import java.awt.Component;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
@@ -142,7 +143,9 @@ public class FileSelector extends JFileChooser {
                         showTheDialog();
                     }
                 });
-            } catch (Exception e) {
+            } catch (InvocationTargetException e) {
+                theResult = null;
+            } catch (InterruptedException e) {
                 theResult = null;
             }
         }

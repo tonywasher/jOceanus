@@ -189,8 +189,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 
             /* Close the Zip file */
             myZipFile.close();
-            myZipFile = null;
-        } catch (Exception e) {
+        } catch (IOException e) {
             /* Protect while cleaning up */
             try {
                 /* Close the output stream */
@@ -229,7 +228,9 @@ public abstract class SheetWriter<T extends DataSet<T>> {
                               final File pFile) throws JDataException {
         OutputStream myStream = null;
         FileOutputStream myOutFile = null;
-        File myTgtFile = null;
+
+        /* The Target file has ".xls" appended */
+        File myTgtFile = new File(pFile.getPath() + ".xls");
 
         /* Protect the workbook access */
         try {
@@ -238,9 +239,6 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 
             /* Record the DataSet */
             theData = pData;
-
-            /* The Target file has ".xls" appended */
-            myTgtFile = new File(pFile.getPath() + ".xls");
 
             /* Create an output stream to the file */
             myOutFile = new FileOutputStream(myTgtFile);
@@ -254,7 +252,6 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 
             /* Close the Stream to force out errors */
             myStream.close();
-            myStream = null;
         } catch (Exception e) {
             /* Protect while cleaning up */
             try {
@@ -269,14 +266,13 @@ public abstract class SheetWriter<T extends DataSet<T>> {
             }
 
             /* Delete the file on error */
-            if (myTgtFile != null) {
-                myTgtFile.delete();
-            }
+            myTgtFile.delete();
 
             /* Report the error */
             throw new JDataException(ExceptionClass.EXCEL, "Failed to create Editable Workbook: "
                     + myTgtFile.getName(), e);
         }
+
     }
 
     /**

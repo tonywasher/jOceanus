@@ -28,6 +28,7 @@ import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 import javax.swing.GroupLayout;
@@ -366,7 +367,9 @@ public class PasswordDialog extends JDialog implements ActionListener {
                         pDialog.showDialog();
                     }
                 });
-            } catch (Exception e) {
+            } catch (InvocationTargetException e) {
+                return false;
+            } catch (InterruptedException e) {
                 return false;
             }
         }

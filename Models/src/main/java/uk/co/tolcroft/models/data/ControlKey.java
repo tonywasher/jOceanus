@@ -129,10 +129,10 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (pField == FIELD_MAP) {
+        if (FIELD_MAP.equals(pField)) {
             return theMap;
         }
-        if (pField == FIELD_CIPHER) {
+        if (FIELD_CIPHER.equals(pField)) {
             return theCipherSet;
         }
         return super.getFieldValue(pField);

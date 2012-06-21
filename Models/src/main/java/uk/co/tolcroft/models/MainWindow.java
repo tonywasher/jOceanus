@@ -453,7 +453,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
             Object o = evt.getSource();
 
             /* If this is the frame that is closing down */
-            if (o == theFrame) {
+            if (theFrame.equals(o)) {
                 /* If we have updates or changes */
                 if ((hasUpdates()) || (hasChanges())) {
                     /* Ask whether to continue */
@@ -484,7 +484,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
                 System.exit(0);
 
                 /* else if this is the Data Window shutting down */
-            } else if (o == theDataWdw) {
+            } else if (o.equals(theDataWdw)) {
                 /* Re-enable the help menu item */
                 theShowDataMgr.setEnabled(true);
                 theDataWdw.dispose();
@@ -494,7 +494,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
                 theDataMgr.declareWindow(null);
 
                 /* else if this is the Help Window shutting down */
-            } else if (o == theHelpWdw) {
+            } else if (o.equals(theHelpWdw)) {
                 /* Re-enable the help menu item */
                 theHelpMgr.setEnabled(true);
                 theHelpWdw.dispose();
@@ -508,62 +508,62 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
         Object o = evt.getSource();
 
         /* If this event relates to the Write Backup item */
-        if (o == theWriteBackup) {
+        if (theWriteBackup.equals(o)) {
             /* Start a write backup operation */
             writeBackup();
 
             /* If this event relates to the Write Extract item */
-        } else if (o == theWriteExtract) {
+        } else if (theWriteExtract.equals(o)) {
             /* Start a write extract operation */
             writeExtract();
 
             /* If this event relates to the Save Database item */
-        } else if (o == theSaveDBase) {
+        } else if (theSaveDBase.equals(o)) {
             /* Start a store database operation */
             storeDatabase();
 
             /* If this event relates to the Load Database item */
-        } else if (o == theLoadDBase) {
+        } else if (theLoadDBase.equals(o)) {
             /* Start a load database operation */
             loadDatabase();
 
             /* If this event relates to the Create Database item */
-        } else if (o == theCreateDBase) {
+        } else if (theCreateDBase.equals(o)) {
             /* Start a load database operation */
             createDatabase();
 
             /* If this event relates to the Purge Database item */
-        } else if (o == thePurgeDBase) {
+        } else if (thePurgeDBase.equals(o)) {
             /* Start a load database operation */
             purgeDatabase();
 
             /* If this event relates to the Load backup item */
-        } else if (o == theLoadBackup) {
+        } else if (theLoadBackup.equals(o)) {
             /* Start a restore backup operation */
             restoreBackup();
 
             /* If this event relates to the Load extract item */
-        } else if (o == theLoadExtract) {
+        } else if (theLoadExtract.equals(o)) {
             /* Start a load backup operation */
             loadExtract();
 
             /* If this event relates to the Update Password item */
-        } else if (o == theUpdatePass) {
+        } else if (theUpdatePass.equals(o)) {
             /* Start an Update Password operation */
             updatePassword();
 
             /* If this event relates to the Renew Security item */
-        } else if (o == theRenewSec) {
+        } else if (theRenewSec.equals(o)) {
             /* Start a reNew Security operation */
             reNewSecurity();
 
             /* If this event relates to the Display Data item */
-        } else if (o == theShowDataMgr) {
+        } else if (theShowDataMgr.equals(o)) {
             /* Open the DataMgr window */
             displayDataMgr();
 
             /* If this event relates to the Display Help item */
-        } else if (o == theHelpMgr) {
+        } else if (theHelpMgr.equals(o)) {
             /* Open the help window */
             displayHelp();
         }
@@ -791,21 +791,17 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
      * Display DataMgr.
      */
     private void displayDataMgr() {
-        try {
-            /* Create the data window */
-            theDataWdw = new JDataWindow(theFrame, theDataMgr);
+        /* Create the data window */
+        theDataWdw = new JDataWindow(theFrame, theDataMgr);
 
-            /* Listen for its closure */
-            theDataWdw.addWindowListener(new WindowClose());
+        /* Listen for its closure */
+        theDataWdw.addWindowListener(new WindowClose());
 
-            /* Disable the menu item */
-            theShowDataMgr.setEnabled(false);
+        /* Disable the menu item */
+        theShowDataMgr.setEnabled(false);
 
-            /* Display it */
-            theDataWdw.showDialog();
-        } catch (Exception e) {
-            theDataWdw = null;
-        }
+        /* Display it */
+        theDataWdw.showDialog();
     }
 
     /**
@@ -824,7 +820,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
 
             /* Display it */
             theHelpWdw.showDialog();
-        } catch (Exception e) {
+        } catch (JDataException e) {
             theHelpWdw = null;
         }
     }

@@ -71,7 +71,7 @@ public class EventAnalysis implements JDataContents {
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(EventAnalysis.class.getSimpleName());
+    private static final JDataFields FIELD_DEFS = new JDataFields(EventAnalysis.class.getSimpleName());
 
     /**
      * Analysis field Id.
@@ -511,7 +511,7 @@ public class EventAnalysis implements JDataContents {
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(AnalysisYear.class.getSimpleName());
+        private static final JDataFields FIELD_DEFS = new JDataFields(AnalysisYear.class.getSimpleName());
 
         /**
          * Analysis field id.

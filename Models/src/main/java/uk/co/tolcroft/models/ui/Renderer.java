@@ -92,7 +92,7 @@ public final class Renderer {
         /**
          * The Render Data.
          */
-        private final RenderData theData;
+        private final transient RenderData theData;
 
         /**
          * Cell alignment.
@@ -195,7 +195,7 @@ public final class Renderer {
         /**
          * The Render Data.
          */
-        private final RenderData theData;
+        private final transient RenderData theData;
 
         /**
          * Constructor.

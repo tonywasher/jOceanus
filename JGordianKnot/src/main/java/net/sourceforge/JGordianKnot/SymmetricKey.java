@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.JGordianKnot;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
 
@@ -252,18 +254,11 @@ public class SymmetricKey implements JDataContents {
      * @throws JDataException on error
      */
     public DataCipher initDataCipher() throws JDataException {
-        /* Protect against exceptions */
-        try {
-            /* Create a new cipher */
-            Cipher myCipher = theGenerator.accessCipher(theKeyType.getCipher());
+        /* Create a new cipher */
+        Cipher myCipher = theGenerator.accessCipher(theKeyType.getCipher());
 
-            /* Return the Data Cipher */
-            return new DataCipher(myCipher, this);
-
-            /* catch exceptions */
-        } catch (Exception e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise cipher", e);
-        }
+        /* Return the Data Cipher */
+        return new DataCipher(myCipher, this);
     }
 
     /**
@@ -284,7 +279,7 @@ public class SymmetricKey implements JDataContents {
             return new StreamCipher(myCipher, myCipher.getIV());
 
             /* catch exceptions */
-        } catch (Exception e) {
+        } catch (InvalidKeyException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise cipher", e);
         }
     }
@@ -309,7 +304,9 @@ public class SymmetricKey implements JDataContents {
             return new StreamCipher(myCipher, pInitVector);
 
             /* catch exceptions */
-        } catch (Exception e) {
+        } catch (InvalidAlgorithmParameterException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise cipher", e);
+        } catch (InvalidKeyException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise cipher", e);
         }
     }

@@ -165,7 +165,7 @@ public class ZipWriteFile {
             theContents = new ZipFileContents();
 
             /* Catch exceptions */
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new JDataException(ExceptionClass.DATA, "Exception creating new Zip file", e);
         }
     }
@@ -196,7 +196,7 @@ public class ZipWriteFile {
             theContents = new ZipFileContents();
 
             /* Catch exceptions */
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new JDataException(ExceptionClass.DATA, "Exception creating new Zip file", e);
         }
     }
@@ -310,7 +310,7 @@ public class ZipWriteFile {
             }
 
             /* Catch exceptions */
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new JDataException(ExceptionClass.DATA, "Exception creating new Output stream", e);
         }
 

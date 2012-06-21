@@ -35,7 +35,7 @@ import SevenZip.Compression.LZMA.Encoder;
  * decompress the data and write the output to a PipeStream. This class works as the wrapper to read the
  * decompressed data from the PipedStream.
  */
-public class LZMAInputStream extends InputStream {
+public final class LZMAInputStream extends InputStream {
     /**
      * The sink stream to write to for the decoder thread.
      */

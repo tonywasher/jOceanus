@@ -1388,7 +1388,7 @@ public class Analysis implements JDataContents {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(MoneyAccount.class.getSimpleName(),
+        private static final JDataFields FIELD_DEFS = new JDataFields(MoneyAccount.class.getSimpleName(),
                 ValueAccount.FIELD_DEFS);
 
         /**
@@ -1551,7 +1551,7 @@ public class Analysis implements JDataContents {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(DebtAccount.class.getSimpleName(),
+        private static final JDataFields FIELD_DEFS = new JDataFields(DebtAccount.class.getSimpleName(),
                 ValueAccount.FIELD_DEFS);
 
         @Override
@@ -1666,7 +1666,7 @@ public class Analysis implements JDataContents {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(AssetAccount.class.getSimpleName(),
+        private static final JDataFields FIELD_DEFS = new JDataFields(AssetAccount.class.getSimpleName(),
                 ValueAccount.FIELD_DEFS);
 
         @Override
@@ -2090,8 +2090,8 @@ public class Analysis implements JDataContents {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(
-                ExternalAccount.class.getSimpleName(), ActDetail.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(ExternalAccount.class.getSimpleName(),
+                ActDetail.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {
@@ -2314,7 +2314,7 @@ public class Analysis implements JDataContents {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(AssetSummary.class.getSimpleName(),
+        private static final JDataFields FIELD_DEFS = new JDataFields(AssetSummary.class.getSimpleName(),
                 ActType.FIELD_DEFS);
 
         @Override
@@ -2421,7 +2421,7 @@ public class Analysis implements JDataContents {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(AssetTotal.class.getSimpleName(),
+        private static final JDataFields FIELD_DEFS = new JDataFields(AssetTotal.class.getSimpleName(),
                 AnalysisBucket.FIELD_DEFS);
 
         @Override
@@ -2550,7 +2550,7 @@ public class Analysis implements JDataContents {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(ExternalTotal.class.getSimpleName(),
+        private static final JDataFields FIELD_DEFS = new JDataFields(ExternalTotal.class.getSimpleName(),
                 AnalysisBucket.FIELD_DEFS);
 
         @Override
@@ -2755,7 +2755,7 @@ public class Analysis implements JDataContents {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(ExternalTotal.class.getSimpleName(),
+        private static final JDataFields FIELD_DEFS = new JDataFields(ExternalTotal.class.getSimpleName(),
                 AnalysisBucket.FIELD_DEFS);
 
         @Override
@@ -2900,7 +2900,7 @@ public class Analysis implements JDataContents {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(TransDetail.class.getSimpleName(),
+        private static final JDataFields FIELD_DEFS = new JDataFields(TransDetail.class.getSimpleName(),
                 TransType.FIELD_DEFS);
 
         @Override
@@ -3061,7 +3061,7 @@ public class Analysis implements JDataContents {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(TransSummary.class.getSimpleName(),
+        private static final JDataFields FIELD_DEFS = new JDataFields(TransSummary.class.getSimpleName(),
                 Tax.FIELD_DEFS);
 
         @Override
@@ -3188,7 +3188,7 @@ public class Analysis implements JDataContents {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(TransTotal.class.getSimpleName(),
+        private static final JDataFields FIELD_DEFS = new JDataFields(TransTotal.class.getSimpleName(),
                 Tax.FIELD_DEFS);
 
         @Override
@@ -3313,7 +3313,7 @@ public class Analysis implements JDataContents {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(TaxDetail.class.getSimpleName(),
+        private static final JDataFields FIELD_DEFS = new JDataFields(TaxDetail.class.getSimpleName(),
                 Tax.FIELD_DEFS);
 
         @Override

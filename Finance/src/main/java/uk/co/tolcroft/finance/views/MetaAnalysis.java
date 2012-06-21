@@ -2014,7 +2014,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
     /**
      * Class to hold active allowances and tax bands.
      */
-    private class TaxBands {
+    private static class TaxBands {
         /**
          * The allowance.
          */

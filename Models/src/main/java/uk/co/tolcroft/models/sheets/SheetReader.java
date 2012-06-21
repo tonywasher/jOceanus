@@ -184,7 +184,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
             if (!bContinue) {
                 throw new JDataException(ExceptionClass.EXCEL, "Operation Cancelled");
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             /* Protect while cleaning up */
             try {
                 /* Close the input stream */
@@ -240,7 +240,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
             if (!bContinue) {
                 throw new JDataException(ExceptionClass.EXCEL, "Operation Cancelled");
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             /* Protect while cleaning up */
             try {
                 /* Close the input stream */

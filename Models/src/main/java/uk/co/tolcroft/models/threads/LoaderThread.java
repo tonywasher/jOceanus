@@ -22,6 +22,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.threads;
 
+import java.util.concurrent.ExecutionException;
+
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import uk.co.tolcroft.models.data.DataSet;
@@ -66,12 +68,16 @@ public abstract class LoaderThread<T extends DataSet<T>> extends WorkerThread<T>
                 }
             }
 
-            /* Update the Status Bar */
             completeStatusBar();
-        } catch (Exception e) {
+        } catch (InterruptedException e) {
             /* Report the failure */
             setError(new JDataException(ExceptionClass.DATA, "Failed to obtain and activate new data", e));
-            completeStatusBar();
+        } catch (ExecutionException e) {
+            /* Report the failure */
+            setError(new JDataException(ExceptionClass.DATA, "Failed to obtain and activate new data", e));
         }
+
+        /* Update the Status Bar */
+        completeStatusBar();
     }
 }

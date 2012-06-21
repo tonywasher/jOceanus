@@ -59,7 +59,7 @@ public class ItemValidation implements JDataContents {
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (pField == FIELD_ERRORS) {
+        if (FIELD_ERRORS.equals(pField)) {
             return theErrors.iterator();
         }
         return JDataFieldValue.UnknownField;
@@ -225,7 +225,7 @@ public class ItemValidation implements JDataContents {
     /**
      * represents an instance of an error for an object.
      */
-    public final class ErrorElement implements JDataElement {
+    public static final class ErrorElement implements JDataElement {
         /**
          * The text of the error.
          */

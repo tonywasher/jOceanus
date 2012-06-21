@@ -34,7 +34,7 @@ import SevenZip.Compression.LZMA.Encoder;
  * data to the target output stream. This class works as the wrapper to write the data to be compressed to the
  * PipedStream.
  */
-public class LZMAOutputStream extends OutputStream {
+public final class LZMAOutputStream extends OutputStream {
     /**
      * The sink stream to write to the encoder thread.
      */

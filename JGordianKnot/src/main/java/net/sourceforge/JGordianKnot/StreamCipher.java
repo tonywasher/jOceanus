@@ -24,7 +24,10 @@ package net.sourceforge.JGordianKnot;
 
 import java.util.Arrays;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.ShortBufferException;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
@@ -108,7 +111,7 @@ public class StreamCipher {
 
             /* Return to caller */
             return iNumBytes;
-        } catch (Exception e) {
+        } catch (ShortBufferException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to update cipher", e);
         }
     }
@@ -134,8 +137,12 @@ public class StreamCipher {
 
             /* Return to caller */
             return iNumBytes;
-        } catch (Exception e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to finish cipher operation", e);
+        } catch (IllegalBlockSizeException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+        } catch (BadPaddingException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+        } catch (ShortBufferException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
         }
     }
 }

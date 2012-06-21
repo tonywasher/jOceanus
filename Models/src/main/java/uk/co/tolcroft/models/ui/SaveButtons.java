@@ -155,12 +155,12 @@ public class SaveButtons extends JPanel {
             Object o = evt.getSource();
 
             /* If this event relates to the OK box */
-            if (o == theOKButton) {
+            if (theOKButton.equals(o)) {
                 /* Pass command to the table */
                 theParent.performCommand(stdCommand.OK);
 
                 /* If this event relates to the Reset box */
-            } else if (o == theResetButton) {
+            } else if (theResetButton.equals(o)) {
                 /* Pass command to the table */
                 theParent.performCommand(stdCommand.RESETALL);
             }

@@ -56,7 +56,7 @@ public class ValueField extends JTextField {
     /**
      * The Data Model.
      */
-    private DataModel theModel = null;
+    private transient DataModel theModel = null;
 
     /**
      * The Cached foreground colour.
@@ -367,7 +367,7 @@ public class ValueField extends JTextField {
         @Override
         protected void setValue(final Object pValue) {
             /* Store the new value */
-            super.setValue((pValue == null) ? null : new String((String) pValue));
+            super.setValue(pValue);
 
             /* Establish strings */
             establishStrings();
@@ -422,7 +422,7 @@ public class ValueField extends JTextField {
         @Override
         protected void setValue(final Object pValue) {
             /* Store the new value */
-            super.setValue((pValue == null) ? null : Integer.valueOf((Integer) pValue));
+            super.setValue(pValue);
 
             /* Set edit and display values */
             theString = (pValue == null) ? "" : Integer.toString(getValue());

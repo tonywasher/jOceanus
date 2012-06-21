@@ -721,11 +721,21 @@ public final class EncryptedData {
      */
     public static final class EncryptedDate extends EncryptedField<Date> {
         /**
-         * The Date format.
+         * Date Formatter
          */
-        private static final DateFormat FORMAT_US = DateFormat.getDateTimeInstance(DateFormat.SHORT,
-                                                                                   DateFormat.SHORT,
-                                                                                   Locale.US);
+        private DateFormat theFormat = null;
+
+        /**
+         * Obtain the Date format.
+         * @return the format
+         */
+        private DateFormat getDateFormat() {
+            /* Allocate format if it does not exist */
+            if (theFormat == null) {
+                theFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.US);
+            }
+            return theFormat;
+        }
 
         /**
          * Constructor.
@@ -736,6 +746,7 @@ public final class EncryptedData {
         protected EncryptedDate(final CipherSet pCipherSet,
                                 final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pEncrypted);
+
         }
 
         /**
@@ -754,7 +765,7 @@ public final class EncryptedData {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then an integer */
-                return FORMAT_US.parse(DataConverter.byteArrayToString(pBytes));
+                return getDateFormat().parse(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
             } catch (Exception e) {
@@ -767,7 +778,7 @@ public final class EncryptedData {
             /* Protect against exceptions */
             try {
                 /* Convert the date to a string and then a byte array */
-                return DataConverter.stringToByteArray(FORMAT_US.format(getValue()));
+                return DataConverter.stringToByteArray(getDateFormat().format(getValue()));
 
                 /* Catch Exceptions */
             } catch (Exception e) {

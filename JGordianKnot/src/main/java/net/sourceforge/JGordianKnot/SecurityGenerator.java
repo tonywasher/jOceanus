@@ -22,10 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.JGordianKnot;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
@@ -397,9 +401,15 @@ public class SecurityGenerator {
             return myMac;
 
             /* Catch exceptions */
-        } catch (Exception e) {
+        } catch (NoSuchAlgorithmException e) {
             /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Mac", e);
+            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+        } catch (NoSuchProviderException e) {
+            /* Throw the exception */
+            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+        } catch (InvalidKeyException e) {
+            /* Throw the exception */
+            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
         }
     }
 
@@ -424,9 +434,15 @@ public class SecurityGenerator {
             return myMac;
 
             /* Catch exceptions */
-        } catch (Exception e) {
+        } catch (NoSuchAlgorithmException e) {
             /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Mac", e);
+            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+        } catch (NoSuchProviderException e) {
+            /* Throw the exception */
+            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+        } catch (InvalidKeyException e) {
+            /* Throw the exception */
+            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
         }
     }
 
@@ -611,9 +627,15 @@ public class SecurityGenerator {
                         /* Initialise to required key size */
                         theGenerator.initialize(theKeyType.getKeySize(), theRandom);
                     }
-                } catch (Exception e) {
+                } catch (NoSuchProviderException e) {
                     /* Throw the exception */
-                    throw new JDataException(ExceptionClass.CRYPTO, "Failed to create key pair generator", e);
+                    throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+                } catch (NoSuchAlgorithmException e) {
+                    /* Throw the exception */
+                    throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+                } catch (InvalidAlgorithmParameterException e) {
+                    /* Throw the exception */
+                    throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
                 }
             }
 
@@ -691,9 +713,12 @@ public class SecurityGenerator {
                     /* Create the key generator */
                     theGenerator = KeyGenerator.getInstance(theAlgorithm, theProviderName);
                     theGenerator.init(theKeyLen, theRandom);
-                } catch (Exception e) {
+                } catch (NoSuchProviderException e) {
                     /* Throw the exception */
-                    throw new JDataException(ExceptionClass.CRYPTO, "Failed to create key generator", e);
+                    throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+                } catch (NoSuchAlgorithmException e) {
+                    /* Throw the exception */
+                    throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
                 }
             }
 

@@ -141,7 +141,7 @@ public class ZipReadFile {
             theHashBytes = (myEntry == null) ? null : myEntry.getExtra();
 
             /* Catch exceptions */
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new JDataException(ExceptionClass.DATA, "Exception accessing Zip file", e);
         }
     }

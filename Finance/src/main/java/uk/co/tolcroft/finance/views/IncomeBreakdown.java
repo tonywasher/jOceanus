@@ -51,7 +51,7 @@ public class IncomeBreakdown implements JDataContents {
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(IncomeBreakdown.class.getSimpleName());
+    private static final JDataFields FIELD_DEFS = new JDataFields(IncomeBreakdown.class.getSimpleName());
 
     /**
      * Salary Field Id.
@@ -287,7 +287,7 @@ public class IncomeBreakdown implements JDataContents {
         /**
          * Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(IncomeBreakdown.class.getSimpleName());
+        private static final JDataFields FIELD_DEFS = new JDataFields(IncomeBreakdown.class.getSimpleName());
 
         /**
          * Gross field id.

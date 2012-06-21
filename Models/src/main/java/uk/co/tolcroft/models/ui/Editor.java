@@ -160,12 +160,12 @@ public class Editor {
         /**
          * The action Listener.
          */
-        private final ComboAction theActionListener = new ComboAction();
+        private final transient ComboAction theActionListener = new ComboAction();
 
         /**
          * The popUp listener.
          */
-        private final ComboPopup thePopupListener = new ComboPopup();
+        private final transient ComboPopup thePopupListener = new ComboPopup();
 
         @Override
         public JComponent getTableCellEditorComponent(final JTable table,
@@ -248,7 +248,7 @@ public class Editor {
         /**
          * The Selectable range.
          */
-        private DateDayRange theRange = null;
+        private transient DateDayRange theRange = null;
 
         /**
          * Set the selectable range.
